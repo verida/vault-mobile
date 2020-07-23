@@ -10,7 +10,7 @@ import { editable } from "../../helpers/profile";
 const list = [
     { label: "Name", value: "Chris Were", action: "arrow", type: "input" },
     { label: "Email", value: "chris.were@gmail.com", action: "arrow", type: "input" },
-    { label: "Phone", value: "+61 (214) 428-346", action: "arrow" },
+    { label: "Phone", value: "+61 (214) 428-346", action: "arrow", type: "phone" },
     { label: "Date of Birth", value: "03/03/86", action: "arrow" },
     { label: "Address", value: "Not Set", action: "arrow", type: "input" }
 ];

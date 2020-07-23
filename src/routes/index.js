@@ -85,8 +85,8 @@ const Routes = () => {
                 <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone />
                 <Scene key={LOGIN_REQUEST} component={LoginRequest} title="Login Request" back={true} />
 
-                <Scene key={PUBLIC_PROFILE} component={PublicProfile} title="Public Profile" back={true} clone={true} initial={true} />
-                <Scene key={PRIVATE_PROFILE} component={PrivateProfile} title="Private Identity" back={true} clone={true} />
+                <Scene key={PUBLIC_PROFILE} component={PublicProfile} title="Public Profile" back={true} clone={true} />
+                <Scene key={PRIVATE_PROFILE} component={PrivateProfile} title="Private Identity" back={true} clone={true} initial={true} />
                 <Scene key={EDIT_PROFILE} component={EditProfile} title="Edit Profile" back={true} />
                 <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} title="Seed Phrase" back={true} clone />
             </Scene>

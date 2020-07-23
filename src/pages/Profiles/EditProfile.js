@@ -8,9 +8,10 @@ import InputStyles from "../../styles/inputs";
 import {COUNTRIES} from "../../helpers/country-list";
 import DropDownPicker from "../../components/Select";
 
+import IntlPhoneInput from 'react-native-intl-phone-input';
+
 export default ({ option }) => {
    const [edited, setEdited] = useState(option.value);
-
     const onChangeItem = (e) => setEdited(e);
 
    return (
@@ -43,6 +44,10 @@ export default ({ option }) => {
                         maxLength={255}
                         editable
                         onChangeText={setEdited} /> }
+                { option.type === "phone" &&
+                    <IntlPhoneInput
+                        onChangeText={onChangeItem}
+                        defaultCountry="SG" /> }
             </View>
             <Button style={{bottom: 16}}>Save Changes</Button>
         </Layout>
