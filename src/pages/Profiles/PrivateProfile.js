@@ -5,13 +5,14 @@ import ProfileLayout from "../../components/Layouts/ProfileLayout";
 import Text from "../../components/Text";
 
 import { getWalletInfo } from "../../api";
+import { editable } from "../../helpers/profile";
 
 const list = [
-    { label: "Name", value: "Chris Were", action: "arrow", onPress: () => {} },
-    { label: "Email", value: "chris.were@gmail.com", action: "arrow" },
+    { label: "Name", value: "Chris Were", action: "arrow", type: "input" },
+    { label: "Email", value: "chris.were@gmail.com", action: "arrow", type: "input" },
     { label: "Phone", value: "+61 (214) 428-346", action: "arrow" },
     { label: "Date of Birth", value: "03/03/86", action: "arrow" },
-    { label: "Address", value: "Not Set", action: "arrow" }
+    { label: "Address", value: "Not Set", action: "arrow", type: "input" }
 ];
 
 export default () => {
@@ -34,7 +35,7 @@ export default () => {
     return (
         <ProfileLayout
             userInfo={UserInfo}
-            list={list}
+            list={editable(list)}
             description={"This profile is private, but can be requested and shared with your consent"} />
     )
 }

@@ -9,7 +9,6 @@
   "dependencies": {
     "@react-native-community/async-storage": "~1.11.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@verida/datastore": "https://github.com/verida/datastore.git#react-native",
     "@verida/wallet-utils": "^1.0.0",
     "assert": "^1.5.0",
     "asyncstorage-down": "^4.2.0",
@@ -20,6 +19,7 @@
     "country-list": "^2.2.0",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
+    "ethers": "4.0",
     "events": "^1.1.1",
     "expo": "^38.0.0",
     "expo-font": "~8.2.1",

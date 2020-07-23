@@ -3,9 +3,6 @@ import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import Routes from "./routes";
 
-import { connect } from "./api/verida";
-// import { connect } from "./api/datastore"
-
 export default () => {
     const [loading, setLoading] = useState(true);
 
@@ -13,7 +10,6 @@ export default () => {
         (async () => {
             const Avenir = require("./assets/fonts/Avenir.otf");
             await Font.loadAsync({ Avenir });
-            await connect();
             setLoading(false);
         })();
     }, []);

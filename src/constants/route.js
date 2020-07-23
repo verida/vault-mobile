@@ -21,3 +21,4 @@ export const LOGIN_REQUEST = "login-request";
 export const PUBLIC_PROFILE = "public-profile";
 export const PRIVATE_PROFILE = "private-profile";
 export const SEED_PHRASE_VIEW = "seed-phrase-view";
+export const EDIT_PROFILE = "edit-profile";

@@ -16,9 +16,7 @@ import {
 
 export default () => (
     <View style={LayoutStyle.layout}>
-        <View>
-            <PropertyList list={list} />
-        </View>
+        <PropertyList list={list} />
     </View>
 )
 
