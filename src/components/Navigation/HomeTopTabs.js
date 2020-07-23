@@ -5,13 +5,15 @@ import EnvelopeSvg from "../../assets/icons/envelope.svg";
 import SettingsSvg from "../../assets/icons/settings.svg";
 import {Actions} from "react-native-router-flux";
 
+import {INBOX, SETTINGS} from "../../constants/route";
+
 export default () => {
     return (
         <View style={style.navigation}>
-            <TouchableOpacity onPress={() => {}}>
+            <TouchableOpacity onPress={() => Actions[INBOX]()}>
                 <EnvelopeSvg/>
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Actions.settings()}>
+            <TouchableOpacity onPress={() => Actions[SETTINGS]()}>
                 <SettingsSvg/>
             </TouchableOpacity>
         </View>

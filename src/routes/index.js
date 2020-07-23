@@ -7,6 +7,7 @@ import CreateAccount from '../pages/CreateAccount.js'
 import VerifyPhrase from "../pages/VerifyPhrase"
 import Success from "../pages/Success"
 import Settings from "../pages/Settings";
+import Inbox from "../pages/Inbox";
 
 import LoginRequest from "../pages/Login/LoginRequest";
 import LoginHistory from "../pages/Login/LoginHistory";
@@ -44,7 +45,8 @@ import {
     SETTINGS,
     START, SUCCESS,
     VERIFY_PHRASE,
-    EDIT_PROFILE
+    EDIT_PROFILE,
+    INBOX
 } from "../constants/route";
 
 import HomeSvg from "../assets/navigation/home.svg";
@@ -81,6 +83,7 @@ const Routes = () => {
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase}/>
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
+                <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
 
                 <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone />
                 <Scene key={LOGIN_REQUEST} component={LoginRequest} title="Login Request" back={true} />

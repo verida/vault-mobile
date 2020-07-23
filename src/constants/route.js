@@ -7,6 +7,7 @@ export const SEED_PHRASE_GENERATED = "seed-phrase-generated";
 export const VERIFY_PHRASE = "verify-phrase";
 export const SUCCESS = "success";
 export const SETTINGS = "settings";
+export const INBOX = "inbox";
 
 export const IMPORT_ACCOUNT = "import-account";
 
