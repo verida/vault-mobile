@@ -46,6 +46,7 @@ export default ({ option }) => {
                         onChangeText={setEdited} /> }
                 { option.type === "phone" &&
                     <IntlPhoneInput
+                        containerStyle={{...InputStyles.input, paddingVertical: 4}}
                         onChangeText={onChangeItem}
                         defaultCountry="SG" /> }
             </View>
