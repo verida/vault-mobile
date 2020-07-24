@@ -1,3 +1,5 @@
+import './global'
+
 import React, { useState, useEffect } from "react";
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
