@@ -9,8 +9,8 @@
   "dependencies": {
     "@react-native-community/async-storage": "~1.11.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@verida/datastore": "https://github.com/verida/datastore.git#react-native",
-    "@verida/wallet-utils": "^1.0.0",
+    "@verida/datastore": "https://github.com/verida/datastore#react-native",
+    "@verida/wallet-utils": "^1.1.0",
     "assert": "^1.5.0",
     "asyncstorage-down": "^4.2.0",
     "browserify-zlib": "^0.1.4",

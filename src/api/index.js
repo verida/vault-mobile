@@ -1,11 +1,14 @@
-import * as ethers from "ethers";
+import walletUtils from "@verida/wallet-utils";
 import AsyncStorage from "@react-native-community/async-storage";
 
 const WALLET_KEY = "@VaultMobile:wallet";
 
-export const generateMnemonic = () => ethers.utils.HDNode.entropyToMnemonic(ethers.utils.randomBytes(16));
+export const generateMnemonic = function() {
+    const wallet = walletUtils.createWallet('ethr')
+    return wallet.mnemonic
+}
 export const walletByMnemonic = async (mnemonic) => {
-    const wallet = ethers.Wallet.fromMnemonic(mnemonic);
+    const wallet = walletUtils.getWallet('ethr', mnemonic)
     await AsyncStorage.setItem(WALLET_KEY, JSON.stringify(wallet));
 };
 export const clearWallet = async () => {
@@ -21,12 +24,5 @@ export const isAuthorized = async () => {
 };
 export const getWalletInfo = async () => {
     const wallet = await getWallet();
-
-    const { address, mnemonic } = wallet.signingKey;
-    const prefix = "did:ethr:";
-
-    return {
-        address: prefix + address,
-        mnemonic
-    };
+    return wallet;
 };
