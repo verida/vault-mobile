@@ -25,6 +25,10 @@ import Home from "../pages/Dashboard/Home";
 import Credentials from "../pages/Dashboard/Credentials";
 import Data from "../pages/Dashboard/Data";
 
+import EmploymentReference from "../pages/Inbox/EmploymentReference";
+import DataSnapshot from "../pages/Inbox/DataSnapshot";
+import DataSynchronization from "../pages/Inbox/DataSynchronization";
+
 import DashboardTabs from "../components/Navigation/DashboardTabs";
 import { isAuthorized } from "../api";
 
@@ -46,7 +50,7 @@ import {
     START, SUCCESS,
     VERIFY_PHRASE,
     EDIT_PROFILE,
-    INBOX
+    INBOX, EMPLOYMENT_REFERENCE, DATA_SNAPSHOT, DATA_SYNCHRONIZATION
 } from "../constants/route";
 
 import HomeSvg from "../assets/navigation/home.svg";
@@ -83,7 +87,11 @@ const Routes = () => {
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase}/>
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
+
                 <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
+                <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} title="Request details" back={true} initial={true} />
+                <Scene key={DATA_SNAPSHOT} component={DataSnapshot} title="Request details" back={true} />
+                <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} title="Request details" back={true} />
 
                 <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone />
                 <Scene key={LOGIN_REQUEST} component={LoginRequest} title="Login Request" back={true} />

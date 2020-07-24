@@ -8,7 +8,7 @@ import LayoutStyle from "../styles/layouts";
 import {Actions} from "react-native-router-flux";
 
 import {LOGIN_HISTORY, SEED_PHRASE_VIEW, START} from "../constants/route";
-import {BLACK_COLOR_OPACITY} from "../constants/color";
+import {BLACK_COLOR_OPACITY, ORANGE_COLOR} from "../constants/color";
 
 import {clearWallet} from "../api";
 
@@ -31,7 +31,7 @@ const style = StyleSheet.create({
         marginBottom: 6
     },
     logoutText: {
-        color: "#FF6E6E"
+        color: ORANGE_COLOR
     }
 });
 

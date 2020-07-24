@@ -10,6 +10,6 @@ export default (props) => (
 const style = StyleSheet.create({
     text: {
         color: '#041133',
-        fontFamily: 'Avenir'
+        fontFamily: "Avenir"
     }
 });
