@@ -7,13 +7,15 @@ import CreateAccount from '../pages/CreateAccount.js'
 import VerifyPhrase from "../pages/VerifyPhrase"
 import Success from "../pages/Success"
 import Settings from "../pages/Settings";
+import Inbox from "../pages/Inbox";
 
 import LoginRequest from "../pages/Login/LoginRequest";
 import LoginHistory from "../pages/Login/LoginHistory";
 
-// import Profiles from "../pages/Dashboard/Profiles";
+import Profiles from "../pages/Dashboard/Profiles";
 import PublicProfile from "../pages/Profiles/PublicProfile";
 import PrivateProfile from "../pages/Profiles/PrivateProfile";
+import EditProfile from "../pages/Profiles/EditProfile";
 
 import SeedPhrase from '../pages/SeedPhrase/SeedPhrase.js'
 import SeedPhraseGenerated from "../pages/SeedPhrase/SeedPhraseGenerated"
@@ -42,7 +44,9 @@ import {
     SEED_PHRASE_VIEW,
     SETTINGS,
     START, SUCCESS,
-    VERIFY_PHRASE
+    VERIFY_PHRASE,
+    EDIT_PROFILE,
+    INBOX
 } from "../constants/route";
 
 import HomeSvg from "../assets/navigation/home.svg";
@@ -69,21 +73,24 @@ const Routes = () => {
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
                     <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} />
                     <Scene key={DATA} component={Data} title="Data" icon={DataSvg} />
+                    <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} />
                 </Scene>
 
-                <Scene key={CREATE_ACCOUNT} component={CreateAccount} title="Create An Account" back={true}/>
+                <Scene key={CREATE_ACCOUNT} component={CreateAccount} title="Create An Account" back={true} />
                 <Scene key={SEED_PHRASE} component={SeedPhrase} title="Create An Account" back={true}/>
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title="Create An Account"
                        back={true}/>
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase}/>
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
+                <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
 
                 <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone />
                 <Scene key={LOGIN_REQUEST} component={LoginRequest} title="Login Request" back={true} />
 
                 <Scene key={PUBLIC_PROFILE} component={PublicProfile} title="Public Profile" back={true} clone={true} />
                 <Scene key={PRIVATE_PROFILE} component={PrivateProfile} title="Private Identity" back={true} clone={true} />
+                <Scene key={EDIT_PROFILE} component={EditProfile} title="Edit Profile" back={true} />
                 <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} title="Seed Phrase" back={true} clone />
             </Scene>
         </Router>
