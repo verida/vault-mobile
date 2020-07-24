@@ -3,6 +3,7 @@ import {View, Image, StyleSheet} from "react-native";
 import Layout from "../../components/Layouts/Layout";
 import Text from "../../components/Text";
 import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
+import FileSvg from "../../assets/inbox/file.svg";
 
 export default ({ id }) => {
     return (
@@ -28,9 +29,26 @@ export default ({ id }) => {
                     <Text style={style.label}>Start Date</Text>
                     <Text style={style.value}>22/10/2016</Text>
                 </View>
-                <View style={style.section}>
+                <View style={{...style.section, marginBottom: 22}}>
                     <Text style={style.label}>End Date</Text>
                     <Text style={style.value}>11/02/2018</Text>
+                </View>
+                <View style={style.divider} />
+                <View style={{flexDirection: "row"}}>
+                    <View style={{ flexDirection: "row", alignItems: "center", flex: 0.5 }}>
+                        <FileSvg />
+                        <View style={{paddingLeft: 12}}>
+                            <Text style={{fontFamily: "AvenirBold", fontSize: 15}}>File.pdf</Text>
+                            <Text style={{fontSize: 13}}>200 mb</Text>
+                        </View>
+                    </View>
+                    <View style={{ flexDirection: "row", alignItems: "center", flex: 0.5 }}>
+                        <FileSvg />
+                        <View style={{paddingLeft: 12}}>
+                            <Text style={{fontFamily: "AvenirBold", fontSize: 15}}>File.pdf</Text>
+                            <Text style={{fontSize: 13}}>200 mb</Text>
+                        </View>
+                    </View>
                 </View>
             </View>
         </Layout>
@@ -69,7 +87,8 @@ const style = StyleSheet.create({
         borderWidth: 1,
         borderRadius: 4,
         paddingVertical: 22,
-        paddingHorizontal: 16
+        paddingHorizontal: 16,
+        flexDirection: "row"
     },
     text: {
         color: BLACK_COLOR_OPACITY(0.6),
@@ -80,6 +99,12 @@ const style = StyleSheet.create({
         fontSize: 15
     },
     value: {
-        fontSize: 17
+        fontSize: 17,
+        marginTop: 4
+    },
+    divider: {
+        height: 1,
+        backgroundColor: LIGHTGREY_COLOR,
+        marginBottom: 24
     }
 });
