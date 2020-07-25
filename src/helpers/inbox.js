@@ -15,13 +15,13 @@ export const TYPES = [
         id: 2,
         title: "Data Snapshot Request",
         action: DATA_SNAPSHOT,
-        svg: <DataSnapshot />
+        svg: (width = 20, height = 20, style = {}) => <DataSnapshot width={width} height={height} style={style} />
     },
     {
         id: 3,
         title: "Data Synchronization Request",
         action: DATA_SYNCHRONIZATION,
-        svg: <DataSynchronization />
+        svg: (width = 20, height = 20, style= {}) => <DataSynchronization width={width} height={height} style={style}/>
     }
 ];
 

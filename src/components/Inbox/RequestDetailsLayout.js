@@ -1,18 +1,25 @@
 import React from "react";
-import {View, StyleSheet} from "react-native";
+import {View, StyleSheet, ScrollView} from "react-native";
 import Layout from "../../components/Layouts/Layout";
 import Button from "../../components/Button";
 import Text from "../Text";
 import Description from "./Description";
 
+import {findTypeById} from "../../helpers/inbox";
+
 export default ({ company, children }) => {
+    const type = findTypeById(company.type);
+
     return (
         <Layout style={style.layout}>
-            <View>
-                <Text style={style.title}>Employment Reference</Text>
-                <Description details={company} />
-                    { children }
+            <View style={style.header}>
+                <Text style={style.title}>{ type.title }</Text>
+                { type.svg && type.svg(40,40, style.svg) }
             </View>
+            <Description details={company} />
+            <ScrollView>
+                { children }
+            </ScrollView>
             <View style={style.action}>
                 <Button style={{...style.btn, marginRight: 20}}>Accept</Button>
                 <Button color="grey" style={style.btn}>Decline</Button>
@@ -22,22 +29,35 @@ export default ({ company, children }) => {
 }
 
 const style = StyleSheet.create({
+    layout: {
+        flex: 1,
+        flexWrap: "wrap"
+    },
+    header: {
+        flexDirection: "row",
+        alignItems: "center"
+    },
     title: {
         fontSize: 22,
         lineHeight: 41,
         fontFamily: "AvenirBold",
         marginTop: 24
     },
-    layout: {
-        justifyContent: "space-between",
-        flex: 1
-    },
     action: {
         flexDirection: "row",
-        marginBottom: 30,
+        marginVertical: 30,
+        bottom: 0,
     },
     btn: {
         flex: 0.5,
         height: 40
+    },
+    scrollable: {
+        flexGrow: 0
+    },
+    svg: {
+        position: "absolute",
+        right: 0,
+        top: 25
     }
 });
