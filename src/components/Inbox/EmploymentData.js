@@ -6,7 +6,7 @@ import {BLACK_COLOR_OPACITY} from "../../constants/color";
 
 export default ({ label, value }) => {
     return (
-        <View style={{ marginBottom: 22}}>
+        <View style={{ flex: 0.5 }}>
             <Text style={style.label}>{ label }</Text>
             <Text style={style.value}>{ value }</Text>
         </View>

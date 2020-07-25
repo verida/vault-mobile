@@ -24,10 +24,14 @@ export default ({ id }) => {
             <Text style={style.title}>Employment Reference</Text>
             <Description details={company} />
             <View style={style.info}>
-                <EmploymentData label="Company name" value="IBM" />
-                <EmploymentData label="Position" value="Manager" />
-                <EmploymentData label="Start Date" value="22/10/2016" />
-                <EmploymentData label="End Date" value="11/02/2018" />
+                <View style={{flexDirection: "row", marginBottom: 23}}>
+                    <EmploymentData label="Company name" value="IBM" />
+                    <EmploymentData label="Start Date" value="22/10/2016" />
+                </View>
+                <View style={{flexDirection: "row", marginBottom: 23}}>
+                    <EmploymentData label="Position" value="Manager" />
+                    <EmploymentData label="End Date" value="11/02/2018" />
+                </View>
                 <View style={style.divider} />
                 <View style={{flexDirection: "row"}}>
                     <Attachment options={file} />
