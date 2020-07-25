@@ -21,7 +21,7 @@ export default (props) => {
         <TouchableOpacity style={[ButtonStyles.button, styles, type]}
           onPress={props.onPress}
           disabled={props.disabled}>
-            <Text style={[TextStyles[textColor], {fontWeight: '800'}]}>
+            <Text style={TextStyles[textColor]}>
                 {props.children}
             </Text>
         </TouchableOpacity>
