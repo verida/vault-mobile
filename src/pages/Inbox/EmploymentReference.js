@@ -2,53 +2,36 @@ import React from "react";
 import {View, Image, StyleSheet} from "react-native";
 import Layout from "../../components/Layouts/Layout";
 import Text from "../../components/Text";
-import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
-import FileSvg from "../../assets/inbox/file.svg";
+import EmploymentData from "../../components/Inbox/EmploymentData";
+import Attachment from "../../components/Inbox/Attachment";
+
+import {LIGHTGREY_COLOR} from "../../constants/color";
+import Description from "../../components/Inbox/Description";
+
+const file = {
+    title: "File.pdf",
+    size: "200 mb"
+};
+const company = {
+    uri: "http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png",
+    name: "IBM HR",
+    createdAt: "May 25"
+};
 
 export default ({ id }) => {
     return (
         <Layout>
             <Text style={style.title}>Employment Reference</Text>
-            <View style={style.card}>
-                <Image style={style.logo} source={{ uri: "http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png" }} />
-                <View style={style.tile}>
-                    <Text style={style.organization}>IBM HR</Text>
-                    <Text style={style.text}>May 25</Text>
-                </View>
-            </View>
+            <Description details={company} />
             <View style={style.info}>
-                <View style={{...style.section, marginBottom: 22}}>
-                    <Text style={style.label}>Company name</Text>
-                    <Text style={style.value}>IBM</Text>
-                </View>
-                <View style={{...style.section, marginBottom: 22}}>
-                    <Text style={style.label}>Position</Text>
-                    <Text style={style.value}>Manager</Text>
-                </View>
-                <View style={{...style.section, marginBottom: 22}}>
-                    <Text style={style.label}>Start Date</Text>
-                    <Text style={style.value}>22/10/2016</Text>
-                </View>
-                <View style={{...style.section, marginBottom: 22}}>
-                    <Text style={style.label}>End Date</Text>
-                    <Text style={style.value}>11/02/2018</Text>
-                </View>
+                <EmploymentData label="Company name" value="IBM" />
+                <EmploymentData label="Position" value="Manager" />
+                <EmploymentData label="Start Date" value="22/10/2016" />
+                <EmploymentData label="End Date" value="11/02/2018" />
                 <View style={style.divider} />
                 <View style={{flexDirection: "row"}}>
-                    <View style={{ flexDirection: "row", alignItems: "center", flex: 0.5 }}>
-                        <FileSvg />
-                        <View style={{paddingLeft: 12}}>
-                            <Text style={{fontFamily: "AvenirBold", fontSize: 15}}>File.pdf</Text>
-                            <Text style={{fontSize: 13}}>200 mb</Text>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: "row", alignItems: "center", flex: 0.5 }}>
-                        <FileSvg />
-                        <View style={{paddingLeft: 12}}>
-                            <Text style={{fontFamily: "AvenirBold", fontSize: 15}}>File.pdf</Text>
-                            <Text style={{fontSize: 13}}>200 mb</Text>
-                        </View>
-                    </View>
+                    <Attachment options={file} />
+                    <Attachment options={file} />
                 </View>
             </View>
         </Layout>
@@ -62,45 +45,12 @@ const style = StyleSheet.create({
         fontFamily: "AvenirBold",
         marginTop: 24
     },
-    card: {
-        paddingVertical: 16,
-        flexDirection: "row",
-        alignItems: "center"
-    },
-    logo: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
-        borderColor: LIGHTGREY_COLOR,
-        borderWidth: 1
-    },
-    tile: {
-        marginLeft: 16
-    },
-    organization: {
-        fontFamily: "AvenirBold",
-        fontSize: 17,
-        lineHeight: 28
-    },
     info: {
         borderColor: LIGHTGREY_COLOR,
         borderWidth: 1,
         borderRadius: 4,
         paddingVertical: 22,
         paddingHorizontal: 16,
-        flexDirection: "row"
-    },
-    text: {
-        color: BLACK_COLOR_OPACITY(0.6),
-        fontSize: 13
-    },
-    label: {
-        color: BLACK_COLOR_OPACITY(0.6),
-        fontSize: 15
-    },
-    value: {
-        fontSize: 17,
-        marginTop: 4
     },
     divider: {
         height: 1,
