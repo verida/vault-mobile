@@ -41,7 +41,8 @@ const style = StyleSheet.create({
         fontSize: 22,
         lineHeight: 41,
         fontFamily: "AvenirBold",
-        marginTop: 24
+        marginTop: 24,
+        paddingRight: 60
     },
     action: {
         flexDirection: "row",

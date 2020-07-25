@@ -90,7 +90,7 @@ const Routes = () => {
 
                 <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
                 <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} title="Request details" back={true} />
-                <Scene key={DATA_SNAPSHOT} component={DataSnapshot} title="Request details" back={true} initial={true} />
+                <Scene key={DATA_SNAPSHOT} component={DataSnapshot} title="Request details" back={true} />
                 <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} title="Request details" back={true} />
 
                 <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone />

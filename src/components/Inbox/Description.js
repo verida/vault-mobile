@@ -35,7 +35,7 @@ const style = StyleSheet.create({
     organization: {
         fontFamily: "AvenirBold",
         fontSize: 17,
-        lineHeight: 28
+        lineHeight: 28,
     },
     text: {
         color: BLACK_COLOR_OPACITY(0.6),
