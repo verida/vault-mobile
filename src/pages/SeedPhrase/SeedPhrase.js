@@ -8,7 +8,7 @@ import TextStyles from "../../styles/text";
 import SafeImg from "../../assets/safe.svg";
 
 import { Actions } from "react-native-router-flux";
-import {SEED_PHRASE_GENERATED} from "../../constants/route";
+import { SEED_PHRASE_GENERATED } from "../../constants/route";
 
 const Items = [
   "The seed phrase is composed of 12 words. Please record them carefully and store your phrase in a safe place.",

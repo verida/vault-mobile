@@ -21,7 +21,7 @@ import PublicProfile from "../pages/Profiles/PublicProfile";
 import PrivateProfile from "../pages/Profiles/PrivateProfile";
 import EditProfile from "../pages/Profiles/EditProfile";
 
-import SeedPhrase from '../pages/SeedPhrase/SeedPhrase.js'
+import SeedPhrase from '../pages/SeedPhrase/SeedPhrase'
 import SeedPhraseGenerated from "../pages/SeedPhrase/SeedPhraseGenerated"
 import SeedPhraseView from "../pages/SeedPhrase/SeedPhraseView";
 
