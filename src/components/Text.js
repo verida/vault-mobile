@@ -1,9 +1,9 @@
 import React from 'react'
 import {StyleSheet, Text} from "react-native";
 
-export default (props) => (
-    <Text style={[style.text, props.style]}>
-        {props.children}
+export default ({ style, children, ...props }) => (
+    <Text style={[style.text, style]} {...props}>
+        {children}
     </Text>
 )
 

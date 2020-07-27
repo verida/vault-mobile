@@ -16,7 +16,13 @@ export default ({ styles, item }) => {
                     <Text style={[style.text, styles.text]}>{item.label}</Text>
                 </View>
                 <View style={[style.section, style.alignRight]}>
-                    { !item.optional && <Text style={[style.text, style.value]}>{ item.value || "Not set" }</Text> }
+                    { !item.optional &&
+                        <Text
+                            numberOfLines={1}
+                            ellipsizeMode='tail'
+                            style={[style.text, style.value]}>
+                            { item.value || "Not set" }
+                        </Text> }
                     { item.custom }
                     <View style={{marginRight: 16}}>
                         {item.action === "arrow" &&
@@ -43,7 +49,8 @@ const style = StyleSheet.create({
     text: {
         fontWeight: "500",
         fontSize: 17,
-        height: 17
+        height: 20,
+        maxWidth: 120
     },
     section: {
         flexDirection: "row",
