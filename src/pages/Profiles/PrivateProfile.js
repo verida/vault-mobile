@@ -12,7 +12,7 @@ const list = [
     { label: "Email", value: "chris.were@gmail.com", action: "arrow", type: "input" },
     { label: "Phone", value: "+61 (214) 428-346", action: "arrow", type: "phone" },
     { label: "Date of Birth", value: "03/03/86", action: "arrow" },
-    { label: "Address", value: "Not Set", action: "arrow", type: "input" }
+    { label: "Address", value: null, action: "arrow", type: "input" }
 ];
 
 export default () => {

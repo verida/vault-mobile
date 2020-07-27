@@ -1,14 +1,14 @@
 import React from "react";
-import {StyleSheet, View} from "react-native";
+import {ScrollView, StyleSheet} from "react-native";
 import Text from "../Text";
 import {BLACK_COLOR} from "../../constants/color";
 
 export default (props) => {
     return (
-        <View style={[style.container, props.style]}>
+        <ScrollView contentContainerStyle={[style.container, props.style]}>
             { props.title && <Text style={style.title}>{ props.title }</Text> }
             { props.children }
-        </View>
+        </ScrollView>
     )
 };
 

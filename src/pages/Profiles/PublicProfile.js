@@ -6,7 +6,7 @@ import { editable } from "../../helpers/profile";
 const list = [
     { label: "Name", value: "Chris Were", action: "arrow", type: "input" },
     { label: "Country", value: "Australia", action: "arrow", type: "select" },
-    { label: "Description", value: "Not Set", action: "arrow", type: "textarea" }
+    { label: "Description", value: null, action: "arrow", type: "textarea" }
 ];
 
 export default () => (

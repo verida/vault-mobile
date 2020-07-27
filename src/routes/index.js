@@ -77,7 +77,7 @@ const Routes = () => {
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
                     <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} />
                     <Scene key={DATA} component={Data} title="Data" icon={DataSvg} />
-                    <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} />
+                    <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} initial={true} />
                 </Scene>
 
                 <Scene key={CREATE_ACCOUNT} component={CreateAccount} title="Create An Account" back={true} />

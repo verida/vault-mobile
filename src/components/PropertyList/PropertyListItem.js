@@ -16,7 +16,7 @@ export default ({ styles, item }) => {
                     <Text style={[style.text, styles.text]}>{item.label}</Text>
                 </View>
                 <View style={[style.section, style.alignRight]}>
-                    { item.value && <Text style={[style.text, style.value]}>{ item.value }</Text>}
+                    { !item.optional && <Text style={[style.text, style.value]}>{ item.value || "Not set" }</Text> }
                     <View style={{marginRight: 16}}>
                         {item.action === "arrow" &&
                         <Icon
@@ -41,10 +41,12 @@ export default ({ styles, item }) => {
 const style = StyleSheet.create({
     text: {
         fontWeight: "500",
-        fontSize: 17
+        fontSize: 17,
+        height: 17
     },
     section: {
-        flexDirection: "row"
+        flexDirection: "row",
+        alignItems: "center"
     },
     icon: {
         marginRight: 18

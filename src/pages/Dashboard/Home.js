@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { View, StyleSheet, Image } from "react-native";
+import { View, StyleSheet, Image, SafeAreaView, ScrollView } from "react-native";
 import { QRCode } from 'react-native-custom-qr-codes-expo';
 
 import Text from "../../components/Text";
@@ -7,6 +7,7 @@ import HomeTopTabs from "../../components/Navigation/HomeTopTabs";
 
 import { getWalletInfo } from "../../api";
 import {BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../../constants/color";
+import Layout from "../../components/Layouts/Layout";
 
 const UserImg = require("../../assets/stubs/user.png");
 const LogoImg = require("../../assets/vault-logo.png");
@@ -23,14 +24,14 @@ export default () => {
     }, []);
 
     return (
-        <View style={style.container}>
+        <Layout style={style.container}>
             <HomeTopTabs />
             <Image
                 width={80}
                 height={80}
                 source={UserImg}
                 style={style.userImg} />
-            <Text style={[style.title, {marginTop: 16}]}>
+            <Text style={style.title}>
                 chris_were
             </Text>
             <Text style={style.text}>
@@ -49,31 +50,33 @@ export default () => {
             <Text style={style.notes}>
                 This is your QR-Code. Present it to others so they can scan it and connect to you
             </Text>
-        </View>
+        </Layout>
     )
 };
 
 const style = StyleSheet.create ({
     container: {
-        flex: 1,
-        alignItems: 'center'
+        alignItems: "center"
     },
     userImg: {
         marginTop: 104
     },
     title: {
-        fontWeight: '800',
         fontSize: 22,
-        lineHeight: 30
+        lineHeight: 30,
+        marginTop: 16,
+        fontFamily: 'AvenirBold'
     },
     text: {
+        height: 50,
         fontWeight: '800',
         fontSize: 14,
         opacity: 0.6,
         marginTop: 4,
-        marginBottom: 32,
+        marginBottom: 16,
         maxWidth: 260,
-        textAlign: "center"
+        textAlign: "center",
+        fontFamily: 'AvenirBold'
     },
     qr: {
         width: 240,

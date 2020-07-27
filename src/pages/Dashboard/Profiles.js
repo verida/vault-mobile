@@ -21,6 +21,6 @@ export default () => (
 )
 
 const list = [
-    { label: "Public Profile", icon: <EarthSvg />, action: "arrow", onPress: () => Actions[PUBLIC_PROFILE]() },
-    { label: "Private Identity", icon: <LockSvg />, action: "arrow", onPress: () => Actions[PRIVATE_PROFILE]() }
+    { label: "Public Profile", icon: <EarthSvg />, action: "arrow", onPress: () => Actions[PUBLIC_PROFILE](), optional: true },
+    { label: "Private Identity", icon: <LockSvg />, action: "arrow", onPress: () => Actions[PRIVATE_PROFILE](), optional: true }
 ];

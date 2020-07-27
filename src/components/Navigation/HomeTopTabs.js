@@ -24,7 +24,7 @@ const style = StyleSheet.create({
     navigation: {
         position: "absolute",
         left: 0,
-        top: 56,
+        top: 36,
         paddingHorizontal: 18,
         width: Dimensions.get('window').width,
         flexDirection: "row",
