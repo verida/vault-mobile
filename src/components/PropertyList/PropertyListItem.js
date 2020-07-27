@@ -50,7 +50,7 @@ const style = StyleSheet.create({
         fontWeight: "500",
         fontSize: 17,
         height: 20,
-        maxWidth: 120
+        flexShrink: 1,
     },
     section: {
         flexDirection: "row",
@@ -60,7 +60,9 @@ const style = StyleSheet.create({
         marginRight: 18
     },
     alignRight: {
-        justifyContent: "flex-end"
+        paddingLeft: 32,
+        justifyContent: "flex-end",
+        flexShrink: 1,
     },
     value: {
         marginRight: 25,
