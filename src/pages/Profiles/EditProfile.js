@@ -11,10 +11,13 @@ import DropDownPicker from "../../components/Select";
 import IntlPhoneInput from 'react-native-intl-phone-input';
 
 export default ({ option }) => {
-   const [edited, setEdited] = useState(option.value);
+    // const [selectRef, setSelectRef] = useState(null);
+    // const [phoneInputRef, setPhoneInputRef] = useState(null);
+
+    const [edited, setEdited] = useState(option.value);
     const onChangeItem = (e) => setEdited(e);
 
-   return (
+    return (
         <Layout style={{flex: 1, justifyContent: "space-between"}}>
             <View>
                 <Label>{ option.label }</Label>
@@ -23,9 +26,12 @@ export default ({ option }) => {
                         placeholder={`Enter the ${option.label}`}
                         style={InputStyles.input}
                         value={edited}
+                        autoFocus={true}
                         onChangeText={setEdited} /> }
                 { option.type === "select" &&
                     <DropDownPicker
+                        // ref={el => setSelectRef(el)}
+                        isVisible={true}
                         searchable={true}
                         searchablePlaceholder="Search..."
                         placeholder=""
@@ -43,9 +49,11 @@ export default ({ option }) => {
                         numberOfLines={4}
                         maxLength={255}
                         editable
+                        autoFocus={true}
                         onChangeText={setEdited} /> }
                 { option.type === "phone" &&
                     <IntlPhoneInput
+                        // ref={el => setPhoneInputRef(el)}
                         containerStyle={{...InputStyles.input, paddingVertical: 4}}
                         onChangeText={onChangeItem}
                         defaultCountry="SG" /> }
