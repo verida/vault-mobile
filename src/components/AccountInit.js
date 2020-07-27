@@ -1,22 +1,21 @@
-import React, { useState } from 'react'
-import { TextInput, StyleSheet } from "react-native";
-import DropDownPicker from "../components/Select";
-
-import Button from "../components/Button";
-import Layout from "../components/Layouts/Layout";
+import React, { useState } from 'react';
 import { Actions } from "react-native-router-flux";
-import {SEED_PHRASE} from "../constants/route";
-import Label from "../components/Label";
+import { TextInput, StyleSheet } from "react-native";
+
+import DropDownPicker from "./Select";
+import Button from "./Button";
+import Layout from "./Layouts/Layout";
+import Label from "./Label";
 
 import InputStyles from "../styles/inputs";
 import {COUNTRIES} from "../helpers/country-list";
 
-export default () => {
+export default ({ action }) => {
     const [username, setUsername] = useState(null);
     const [country, setCountry] = useState(null);
 
     const onCountryChange = (e) => setCountry(e);
-    const onContinue = () => Actions[SEED_PHRASE]();
+    const onContinue = () => Actions[action]();
 
     return (
         <Layout title="Select Username">
@@ -37,9 +36,9 @@ export default () => {
                 onChangeItem={onCountryChange}
             />
             <Button style={style.mt}
-                color="primary"
-                disabled={!country}
-                onPress={onContinue}>
+                    color="primary"
+                    disabled={!country}
+                    onPress={onContinue}>
                 Continue
             </Button>
         </Layout>

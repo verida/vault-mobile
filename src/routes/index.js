@@ -1,12 +1,16 @@
 import React, {useState, useEffect} from 'react'
 import {Router, Scene} from 'react-native-router-flux'
 
-import Start from '../pages/CreateAccount/Start.js'
-import CreateAccount from '../pages/CreateAccount.js'
+import Start from '../pages/Account/Start'
 
+import CreateAccount from '../pages/Account/Create'
 import VerifyPhrase from "../pages/VerifyPhrase"
 import Success from "../pages/Success"
 import Settings from "../pages/Settings";
+
+import ImportAccount from '../pages/Account/Import'
+import SelectNetwork from "../pages/SelectNetwork";
+
 import Inbox from "../pages/Inbox";
 
 import LoginRequest from "../pages/Login/LoginRequest";
@@ -50,7 +54,12 @@ import {
     START, SUCCESS,
     VERIFY_PHRASE,
     EDIT_PROFILE,
-    INBOX, EMPLOYMENT_REFERENCE, DATA_SNAPSHOT, DATA_SYNCHRONIZATION
+    INBOX,
+    EMPLOYMENT_REFERENCE,
+    DATA_SNAPSHOT,
+    DATA_SYNCHRONIZATION,
+    IMPORT_ACCOUNT,
+    SELECT_NETWORK
 } from "../constants/route";
 
 import HomeSvg from "../assets/navigation/home.svg";
@@ -87,6 +96,9 @@ const Routes = () => {
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase}/>
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
+
+                <Scene key={IMPORT_ACCOUNT} component={ImportAccount} title="Import An Account" back={true} />
+                <Scene key={SELECT_NETWORK} component={SelectNetwork} title="Import An Account" back={true} />
 
                 <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
                 <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} title="Request details" back={true} />

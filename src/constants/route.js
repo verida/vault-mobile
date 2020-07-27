@@ -14,6 +14,8 @@ export const DATA_SNAPSHOT = "data-snapshot";
 export const DATA_SYNCHRONIZATION = "data-synchronization";
 
 export const IMPORT_ACCOUNT = "import-account";
+export const SELECT_ACCOUNT = "select-account";
+export const SELECT_NETWORK = "select-network";
 
 export const HOME = "home";
 export const CREDENTIALS = "credentials";
