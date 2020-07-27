@@ -88,7 +88,7 @@ const Routes = () => {
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
 
-                <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} initial={true} />
+                <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
                 <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} title="Request details" back={true} />
                 <Scene key={DATA_SNAPSHOT} component={DataSnapshot} title="Request details" back={true} />
                 <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} title="Request details" back={true} />
