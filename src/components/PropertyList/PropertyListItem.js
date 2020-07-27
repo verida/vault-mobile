@@ -17,6 +17,7 @@ export default ({ styles, item }) => {
                 </View>
                 <View style={[style.section, style.alignRight]}>
                     { !item.optional && <Text style={[style.text, style.value]}>{ item.value || "Not set" }</Text> }
+                    { item.custom }
                     <View style={{marginRight: 16}}>
                         {item.action === "arrow" &&
                         <Icon
@@ -46,7 +47,7 @@ const style = StyleSheet.create({
     },
     section: {
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "center",
     },
     icon: {
         marginRight: 18
@@ -56,7 +57,6 @@ const style = StyleSheet.create({
     },
     value: {
         marginRight: 25,
-        color: "#041133",
-        opacity: 0.6
+        color: BLACK_COLOR_OPACITY(0.6)
     }
 });

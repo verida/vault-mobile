@@ -6,12 +6,16 @@ import Text from "../../components/Text";
 
 import { getWalletInfo } from "../../api";
 import { editable } from "../../helpers/profile";
+import DateOfBirth from "../../components/DateOfBirth";
 
 const list = [
     { label: "Name", value: "Chris Were", action: "arrow", type: "input" },
     { label: "Email", value: "chris.were@gmail.com", action: "arrow", type: "input" },
     { label: "Phone", value: "+61 (214) 428-346", action: "arrow", type: "phone" },
-    { label: "Date of Birth", value: "03/03/86", action: "arrow" },
+    { label: "Date of Birth", action: "arrow",
+        onPress: () => {},
+        optional: true,
+        custom: <DateOfBirth selected={null} /> },
     { label: "Address", value: null, action: "arrow", type: "input" }
 ];
 
@@ -30,7 +34,7 @@ export default () => {
         <View>
             <Text style={style.user}>{ info.username || "[Name Surname]" }</Text>
             <Text style={style.did}>{ info.address }</Text>
-        </View>
+        </View>;
 
     return (
         <ProfileLayout
