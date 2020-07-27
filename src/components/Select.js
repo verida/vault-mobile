@@ -264,6 +264,7 @@ class DropDownPicker extends React.Component {
                         this.props.searchable && (
                             <View style={{width: '100%', flexDirection: 'row'}}>
                                 <TextInput
+                                    autoFocus={this.props.autoFocus}
                                     style={[styles.input, this.props.searchableStyle]}
                                     defaultValue={this.state.searchableText}
                                     placeholder={this.props.searchablePlaceholder}

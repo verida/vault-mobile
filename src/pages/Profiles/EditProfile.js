@@ -11,7 +11,6 @@ import DropDownPicker from "../../components/Select";
 import IntlPhoneInput from 'react-native-intl-phone-input';
 
 export default ({ option }) => {
-    // const [selectRef, setSelectRef] = useState(null);
     // const [phoneInputRef, setPhoneInputRef] = useState(null);
 
     const [edited, setEdited] = useState(option.value);
@@ -30,7 +29,7 @@ export default ({ option }) => {
                         onChangeText={setEdited} /> }
                 { option.type === "select" &&
                     <DropDownPicker
-                        // ref={el => setSelectRef(el)}
+                        autoFocus={true}
                         isVisible={true}
                         searchable={true}
                         searchablePlaceholder="Search..."
