@@ -3,7 +3,7 @@ import Card from "./Card";
 import {View, StyleSheet} from "react-native";
 
 export default ({ list }) => {
-    const cards = list.map(options => (<Card options={options} />))
+    const cards = list.map(options => (<Card options={options} key={`inbox - ${options.id}`} />))
 
     return (
         <View style={style.mt}>

@@ -34,7 +34,7 @@ export default ({ options }) => {
                 </View>
                 <View style={style.tile}>
                     <Text style={{...style.text, marginTop: 4}}>{type.title}</Text>
-                    { type.svg }
+                    { type.svg && type.svg() }
                 </View>
             </View>
         </TouchableOpacity>

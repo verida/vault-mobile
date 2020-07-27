@@ -20,7 +20,7 @@ const style = StyleSheet.create({
     card: {
         paddingVertical: 16,
         flexDirection: "row",
-        alignItems: "center"
+        alignItems: "flex-start"
     },
     logo: {
         width: 40,
@@ -35,7 +35,8 @@ const style = StyleSheet.create({
     organization: {
         fontFamily: "AvenirBold",
         fontSize: 17,
-        lineHeight: 28,
+        lineHeight: 25,
+        marginRight: 60
     },
     text: {
         color: BLACK_COLOR_OPACITY(0.6),

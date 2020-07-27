@@ -30,8 +30,7 @@ export default ({ company, children }) => {
 
 const style = StyleSheet.create({
     layout: {
-        flex: 1,
-        flexWrap: "wrap"
+        flex: 1
     },
     header: {
         flexDirection: "row",

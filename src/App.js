@@ -1,6 +1,6 @@
 import './global'
 
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
 import Routes from "./routes";
@@ -18,12 +18,10 @@ export default () => {
         ]);
     };
 
-    useEffect(() => {
-        (async () => {
-            await loadFonts();
-            setLoading(false);
-        })();
-    }, []);
-
-    return (loading && <AppLoading />) || <Routes />;
+    return (loading ?
+        <AppLoading
+            startAsync={loadFonts}
+            onFinish={() => setLoading(false)}
+            onError={console.warn} /> :
+        <Routes />)
 };
