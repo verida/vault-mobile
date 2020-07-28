@@ -15,6 +15,7 @@ export const DATA_SYNCHRONIZATION = "data-synchronization";
 
 export const IMPORT_ACCOUNT = "import-account";
 export const SELECT_NETWORK = "select-network";
+export const SEED_PHRASE_ENTERED = "enter-seed-phrase";
 
 export const HOME = "home";
 export const CREDENTIALS = "credentials";

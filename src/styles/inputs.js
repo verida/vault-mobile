@@ -17,6 +17,7 @@ export default StyleSheet.create({
     },
     textarea: {
         ...input,
-        minHeight: 68
+        minHeight: 68,
+        paddingTop: 16
     }
 });

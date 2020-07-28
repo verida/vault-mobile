@@ -59,13 +59,18 @@ import {
     DATA_SNAPSHOT,
     DATA_SYNCHRONIZATION,
     IMPORT_ACCOUNT,
-    SELECT_NETWORK
+    SELECT_NETWORK,
+    SEED_PHRASE_ENTERED
 } from "../constants/route";
 
 import HomeSvg from "../assets/navigation/home.svg";
 import CredentialSvg from "../assets/navigation/credential.svg";
 import DataSvg from "../assets/navigation/data.svg";
 import ProfilesSvg from "../assets/navigation/profiles.svg";
+import SeedPhraseEntered from "../pages/SeedPhrase/SeedPhraseEntered";
+
+const CREATE_ACCOUNT_TITLE = "Create An Account";
+const IMPORT_ACCOUNT_TITLE = "Import An Account";
 
 const Routes = () => {
     const [authorized, setAuthorized] = useState(null);
@@ -89,16 +94,17 @@ const Routes = () => {
                     <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} />
                 </Scene>
 
-                <Scene key={CREATE_ACCOUNT} component={CreateAccount} title="Create An Account" back={true} />
-                <Scene key={SEED_PHRASE} component={SeedPhrase} title="Create An Account" back={true}/>
-                <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title="Create An Account"
+                <Scene key={CREATE_ACCOUNT} component={CreateAccount} title={CREATE_ACCOUNT_TITLE} back={true} />
+                <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true}/>
+                <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title={CREATE_ACCOUNT_TITLE}
                        back={true}/>
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase}/>
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
 
-                <Scene key={IMPORT_ACCOUNT} component={ImportAccount} title="Import An Account" back={true} />
-                <Scene key={SELECT_NETWORK} component={SelectNetwork} title="Import An Account" back={true} />
+                <Scene key={IMPORT_ACCOUNT} component={ImportAccount} title={IMPORT_ACCOUNT_TITLE} back={true} />
+                <Scene key={SELECT_NETWORK} component={SelectNetwork} title={IMPORT_ACCOUNT_TITLE} back={true} />
+                <Scene key={SEED_PHRASE_ENTERED} component={SeedPhraseEntered} title={IMPORT_ACCOUNT_TITLE} back={true} />
 
                 <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
                 <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} title="Request details" back={true} />

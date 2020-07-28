@@ -4,7 +4,7 @@ import {BLACK_COLOR_OPACITY} from "../constants/color";
 
 export default (props) => {
     return (
-        <Text style={style.label}> { props.children } </Text>
+        <Text style={[style.label, props.style]}> { props.children } </Text>
     )
 }
 

@@ -2,13 +2,14 @@ import walletUtils from "@verida/wallet-utils";
 import AsyncStorage from "@react-native-community/async-storage";
 
 const WALLET_KEY = "@VaultMobile:wallet";
+export const MNEMONIC_LENGTH = 12;
 
-export const generateMnemonic = function() {
-    const wallet = walletUtils.createWallet('ethr')
+export const generateMnemonic = () => {
+    const wallet = walletUtils.createWallet('ethr');
     return wallet.mnemonic
-}
+};
 export const walletByMnemonic = async (mnemonic) => {
-    const wallet = walletUtils.getWallet('ethr', mnemonic)
+    const wallet = walletUtils.getWallet('ethr', mnemonic);
     await AsyncStorage.setItem(WALLET_KEY, JSON.stringify(wallet));
 };
 export const clearWallet = async () => {

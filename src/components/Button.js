@@ -21,7 +21,7 @@ export default (props) => {
         <TouchableOpacity style={[ButtonStyles.button, styles, type]}
           onPress={props.onPress}
           disabled={props.disabled}>
-            <Text style={TextStyles[textColor]}>
+            <Text style={{...TextStyles[textColor], paddingTop: 4}}>
                 {props.children}
             </Text>
         </TouchableOpacity>

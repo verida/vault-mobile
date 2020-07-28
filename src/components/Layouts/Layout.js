@@ -18,7 +18,7 @@ const style = StyleSheet.create ({
     },
     title: {
         marginTop: 16,
-        fontWeight: '800',
+        fontFamily: "AvenirBold",
         fontSize: 22,
         lineHeight: 41,
         color: BLACK_COLOR
