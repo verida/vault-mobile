@@ -49,7 +49,6 @@ const style = StyleSheet.create({
     text: {
         fontWeight: "500",
         fontSize: 17,
-        height: 20,
         flexShrink: 1,
     },
     section: {

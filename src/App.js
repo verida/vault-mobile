@@ -1,9 +1,13 @@
 import './global'
 
 import React, { useState } from "react";
+import { Provider } from "react-redux";
+
 import { AppLoading } from "expo";
 import * as Font from "expo-font";
+
 import Routes from "./routes";
+import store from "./store";
 
 export default () => {
     const [loading, setLoading] = useState(true);
@@ -18,10 +22,16 @@ export default () => {
         ]);
     };
 
+    const App =
+        <Provider store={store}>
+            <Routes />
+        </Provider>;
+
     return (loading ?
         <AppLoading
             startAsync={loadFonts}
             onFinish={() => setLoading(false)}
             onError={console.warn} /> :
-        <Routes />)
+        App
+    )
 };

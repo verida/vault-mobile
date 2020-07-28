@@ -1,46 +1,66 @@
-import React, { useState } from "react";
+import React from "react";
+import { View, StyleSheet } from "react-native";
+import { connect } from "react-redux";
+
+import { addWord, removeWord } from "../../store/words/actions";
+
+import Text from "../Text";
 import Words from "./Words";
-import {View, StyleSheet, Text} from "react-native";
+
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from "../../constants/color";
 import TextStyles from "../../styles/text";
 
-import _ from "underscore";
-import {LIGHTGREY_COLOR} from "../../constants/color";
+const WordLayout = ({ words, template, ...props }) => (
+    <View style={style.layout}>
+        <View style={style.container}>
+            { !template.length && <Text>None words in the order</Text>}
+            <Words
+                id="selected"
+                words={template}
+                template={[]}
+                onSelect={props.removeWord} />
+        </View>
+        <Text style={[TextStyles.darkgrey, style.text]}>
+            Please tap each word in the correct order.
+        </Text>
+        <View style={[style.vocabulary]}>
+            <Words
+                id="vocabulary"
+                words={words}
+                template={template}
+                onSelect={props.addWord}/>
+        </View>
+    </View>
+);
 
-/*mnemonic: {
-    origin: mnemonic,
-    shuffled: _.shuffle(mnemonic)
-}*/
+const mapStateToProps = state => {
+    return { template: state.template };
+};
 
-export default ({ words }) => {
-    const mnemonic = words.split(" ");
-    const shuffled = _.shuffle(mnemonic);
-    const [template, setTemplate] = useState([]);
+const mapDispatchToProps = dispatch => {
+    return {
+        addWord: item => dispatch(addWord(item)),
+        removeWord: item => dispatch(removeWord(item))
+    };
+};
 
-    return (
-        <>
-            <View style={[style.container, {marginTop: 32}]}>
-                <Words words={template} />
-            </View>
-            <Text style={[TextStyles.darkgrey, style.text]}>
-                Please tap each word in the correct order.
-            </Text>
-            <View style={[style.vocabulary]}>
-                <Words words={shuffled} />
-            </View>
-        </>
-    )
-}
+export default connect(mapStateToProps, mapDispatchToProps)(WordLayout);
 
 const style = StyleSheet.create ({
+    layout: {
+        justifyContent: "flex-start",
+        flex: 1
+    },
     container: {
         justifyContent: 'center',
-        alignItems: 'center',
+        alignItems: 'flex-start',
         borderWidth: 1,
         borderColor: LIGHTGREY_COLOR,
         borderRadius: 4,
         padding: 16,
         flexDirection:'row',
-        flexWrap:'wrap'
+        flexWrap:'wrap',
+        marginTop: 32
     },
     vocabulary: {
         justifyContent: 'center',
@@ -50,6 +70,9 @@ const style = StyleSheet.create ({
     },
     text: {
         marginVertical: 24,
-        textAlign: 'center'
+        textAlign: 'center',
+        fontSize: 12,
+        fontFamily: 'Avenir',
+        color: BLACK_COLOR_OPACITY(0.8)
     }
 });

@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from "react";
 import {Actions} from "react-native-router-flux";
-import {TextInput, StyleSheet} from "react-native";
+import {TextInput} from "react-native";
 
 import Layout from "../../components/Layouts/Layout";
 import Button from "../../components/Button";
 import Label from "../../components/Label";
 
-import InputStyles from "../../styles/inputs";
-import {ORANGE_COLOR} from "../../constants/color";
-
-import _ from "underscore";
 import {walletByMnemonic, MNEMONIC_LENGTH} from "../../api";
 import {SUCCESS} from "../../constants/route";
+import ErrorPhrase from "../../components/ErrorPhrase";
+
+import ModifierStyles from "../../styles/modifier";
+import InputStyles from "../../styles/inputs";
+
+import _ from "underscore";
 
 export default () => {
     const [phrase, setPhrase] = useState("");
@@ -44,7 +46,7 @@ export default () => {
 
     return (
         <Layout title="Seed Phrase">
-            <Label style={[style.label, error && style.errorText]}>
+            <Label style={[ModifierStyles.label, error && ModifierStyles.errorText]}>
                 Enter your Ethereum seed phrase below
             </Label>
             <TextInput
@@ -55,12 +57,9 @@ export default () => {
                 autoCorrect={false}
                 autoCapitalize="none"
                 onChangeText={setPhrase}
-                style={[InputStyles.textarea, error && style.error]}
+                style={[InputStyles.textarea, error && ModifierStyles.error]}
             />
-            { error &&
-                <Label style={[style.label, style.errorText]}>
-                    Error: Please, enter a valid seed phrase
-                </Label> }
+            <ErrorPhrase visible={error} />
             <Button style={{marginTop: 24}}
                     color="primary"
                     onPress={onContinue}
@@ -70,16 +69,3 @@ export default () => {
         </Layout>
     );
 }
-
-const style = StyleSheet.create({
-    label: {
-        marginTop: 5,
-        marginBottom: 7
-    },
-    error: {
-        borderColor: ORANGE_COLOR
-    },
-    errorText: {
-        color: ORANGE_COLOR
-    }
-});

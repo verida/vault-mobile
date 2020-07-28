@@ -10,14 +10,19 @@ import TextStyles from "../../styles/text";
 import {Actions} from "react-native-router-flux";
 
 import {generateMnemonic, walletByMnemonic} from "../../api";
-import {SUCCESS} from "../../constants/route";
+import {VERIFY_PHRASE} from "../../constants/route";
+import _ from "underscore";
 
 const words = generateMnemonic();
 
 export default () => {
     const onSaved = async () => {
         await walletByMnemonic(words);
-        Actions[SUCCESS]();
+
+        const mnemonic = words.split(" ");
+        const shuffled = _.shuffle(mnemonic);
+
+        Actions[VERIFY_PHRASE]({ shuffled });
     };
 
     return (

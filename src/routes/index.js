@@ -4,7 +4,7 @@ import {Router, Scene} from 'react-native-router-flux'
 import Start from '../pages/Account/Start'
 
 import CreateAccount from '../pages/Account/Create'
-import VerifyPhrase from "../pages/VerifyPhrase"
+import VerifyPhrase from "../pages/SeedPhrase/VerifyPhrase"
 import Success from "../pages/Success"
 import Settings from "../pages/Settings";
 
@@ -97,8 +97,8 @@ const Routes = () => {
                 <Scene key={CREATE_ACCOUNT} component={CreateAccount} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true}/>
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title={CREATE_ACCOUNT_TITLE}
-                       back={true}/>
-                <Scene key={VERIFY_PHRASE} component={VerifyPhrase}/>
+                       back={true} />
+                <Scene key={VERIFY_PHRASE} component={VerifyPhrase} title={CREATE_ACCOUNT_TITLE} />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
 
