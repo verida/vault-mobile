@@ -11,8 +11,8 @@ const onPress = (credential) => {
     Actions[CREDENTIAL_DETAILS]({ credential })
 };
 
-export default ({ item, ...props }) => (
-    <TouchableOpacity style={[style.card, props.style]} onPress={() => onPress(item)}>
+export default ({ item, active, ...props }) => (
+    <TouchableOpacity style={[style.card, props.style]} onPress={() => active && onPress(item)}>
         <View style={{ flexDirection: "row", alignItems: "center" }}>
             <Image source={{uri: item.logo}} style={style.img}/>
             <View>
@@ -21,10 +21,10 @@ export default ({ item, ...props }) => (
                 <Text style={style.text}>{ item.createdAt }</Text>
             </View>
         </View>
-        <Icon
+        { active && <Icon
             size={22}
             name="keyboard-arrow-right"
-            color={BLACK_COLOR_OPACITY(0.45)} />
+            color={BLACK_COLOR_OPACITY(0.45)} /> }
     </TouchableOpacity>
 )
 

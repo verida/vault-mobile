@@ -25,4 +25,9 @@ const credentials = [
     },
 ];
 
-export default () => credentials.map(item => <CredentialCard key={`credential-card-${item.id}`} item={item}/>);
+export default () => credentials.map(item =>
+    <CredentialCard
+        key={`credential-card-${item.id}`}
+        item={item}
+        active={true} />
+);

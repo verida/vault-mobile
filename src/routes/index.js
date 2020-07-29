@@ -91,7 +91,7 @@ const Routes = () => {
 
                 <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} initial={authorized} hideNavBar={true}>
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
-                    <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} initial={true} />
+                    <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} />
                     <Scene key={DATA} component={Data} title="Data" icon={DataSvg} />
                     <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} />
                 </Scene>

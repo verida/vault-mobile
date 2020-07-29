@@ -4,28 +4,54 @@ import {StyleSheet, View} from "react-native";
 import Text from "./Text";
 import Label from "./Label";
 
-const info = [
+import { BLACK_COLOR_OPACITY } from "../constants/color";
 
+const info = [
+    {
+        title: "Name",
+        value: "Robert Brown"
+    },
+    {
+        title: "Date of birth",
+        value: "03/03/86"
+    },
+    {
+        title: "Test type",
+        value: "COVID-19 PCR"
+    },
+    {
+        title: "Test result",
+        value: "Negative"
+    },
+    {
+        title: "Issued by",
+        value: "SA Pathology, Adelaide City"
+    }
 ];
 
-const details = info.map(item =>
-    <View>
-        <Label>{ item.title }:</Label>
-        <Text>{ item.value }</Text>
-    </View>
-);
+export default () => {
+    const details = info.map(item =>
+        <View key={item.title}>
+            <Label style={style.label}>{item.title}:</Label>
+            <Text>{ item.value }</Text>
+        </View>
+    );
 
-export default () => (
-    <View>
-        <Text style={style.title}>Test Details</Text>
-        { details }
-    </View>
-)
+    return (
+        <View>
+            <Text style={style.title}>Test Details</Text>
+            { details }
+        </View>
+    );
+}
 
 const style = StyleSheet.create({
     title: {
         fontSize: 18,
-        fontFamily: "AvenirBold",
-        marginBottom: 13
+        fontFamily: "AvenirBold"
+    },
+    label: {
+        color: BLACK_COLOR_OPACITY(0.6),
+        marginLeft: -2
     }
 });
