@@ -28,5 +28,8 @@ export default StyleSheet.create({
     },
     grey: {
         borderColor: LIGHTGREY_COLOR
+    },
+    disabled: {
+        opacity: 0.5
     }
 });
