@@ -94,7 +94,7 @@ const style = StyleSheet.create ({
         elevation: 3
     },
     notes: {
-        paddingVertical: 24,
+        marginTop: 24,
         paddingHorizontal: 43,
         textAlign: 'center',
         opacity: 0.4

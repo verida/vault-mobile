@@ -6,8 +6,7 @@ YellowBox.ignoreWarnings([
     'SplashScreen',
     'DatePickerIOS',
     'Native splash screen',
-    'componentWillReceiveProps',
-    'useNativeDriver'
+    'componentWillReceiveProps'
 ]);
 
 registerRootComponent(App);
