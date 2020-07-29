@@ -17,7 +17,12 @@ export const clearWallet = async () => {
 };
 export const getWallet = async () => {
     const wallet = await AsyncStorage.getItem(WALLET_KEY);
-    return (wallet && JSON.parse(wallet)) || {};
+    if (wallet) {
+        const result = JSON.parse(wallet);
+        result.address = "did:ethr:" + result.address.toLowerCase();
+        return result;
+    }
+    return {};
 };
 export const isAuthorized = async () => {
     const wallet = await AsyncStorage.getItem(WALLET_KEY);
