@@ -24,14 +24,17 @@ import EditProfile from "../pages/Profiles/EditProfile";
 import SeedPhrase from '../pages/SeedPhrase/SeedPhrase'
 import SeedPhraseGenerated from "../pages/SeedPhrase/SeedPhraseGenerated"
 import SeedPhraseView from "../pages/SeedPhrase/SeedPhraseView";
+import SeedPhraseEntered from "../pages/SeedPhrase/SeedPhraseEntered";
 
 import Home from "../pages/Dashboard/Home";
-import Credentials from "../pages/Dashboard/Credentials";
 import Data from "../pages/Dashboard/Data";
 
 import EmploymentReference from "../pages/Inbox/EmploymentReference";
 import DataSnapshot from "../pages/Inbox/DataSnapshot";
 import DataSynchronization from "../pages/Inbox/DataSynchronization";
+
+import Credentials from "../pages/Dashboard/Credentials";
+import Credential from "../pages/Credential";
 
 import DashboardTabs from "../components/Navigation/DashboardTabs";
 import { isAuthorized } from "../api";
@@ -60,14 +63,13 @@ import {
     DATA_SYNCHRONIZATION,
     IMPORT_ACCOUNT,
     SELECT_NETWORK,
-    SEED_PHRASE_ENTERED
+    SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS
 } from "../constants/route";
 
 import HomeSvg from "../assets/navigation/home.svg";
 import CredentialSvg from "../assets/navigation/credential.svg";
 import DataSvg from "../assets/navigation/data.svg";
 import ProfilesSvg from "../assets/navigation/profiles.svg";
-import SeedPhraseEntered from "../pages/SeedPhrase/SeedPhraseEntered";
 
 const CREATE_ACCOUNT_TITLE = "Create An Account";
 const IMPORT_ACCOUNT_TITLE = "Import An Account";
@@ -89,10 +91,12 @@ const Routes = () => {
 
                 <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} initial={authorized} hideNavBar={true}>
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
-                    <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} />
+                    <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} initial={true} />
                     <Scene key={DATA} component={Data} title="Data" icon={DataSvg} />
                     <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} />
                 </Scene>
+
+                <Scene key={CREDENTIAL_DETAILS} component={Credential} title="Credential" clone={true} back={true} />
 
                 <Scene key={CREATE_ACCOUNT} component={CreateAccount} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true}/>

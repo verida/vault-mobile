@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { View, StyleSheet, Image, SafeAreaView, ScrollView } from "react-native";
+import { View, StyleSheet, Image } from "react-native";
 import { QRCode } from 'react-native-custom-qr-codes-expo';
 
 import Text from "../../components/Text";

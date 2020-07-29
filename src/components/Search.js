@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import {TextInput, StyleSheet} from "react-native";
+import { TextInput, StyleSheet } from "react-native";
 import { BLACK_COLOR_OPACITY } from "../constants/color";
 
 export default () => {
@@ -20,6 +20,7 @@ const style = StyleSheet.create({
         backgroundColor: BLACK_COLOR_OPACITY(0.05),
         borderRadius: 10,
         marginTop: 16,
+        marginBottom: 24,
         fontSize: 17,
         padding: 7
     }

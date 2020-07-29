@@ -6,6 +6,8 @@ import Attachment from "../../components/Inbox/Attachment";
 import RequestDetailsLayout from "../../components/Inbox/RequestDetailsLayout";
 import {LIGHTGREY_COLOR} from "../../constants/color";
 
+import StyleDivider from "../../styles/divider";
+
 const file = {
     title: "File.pdf",
     size: "200 mb"
@@ -30,7 +32,7 @@ export default ({ id }) => {
                     <EmploymentData label="Position" value="Manager" />
                     <EmploymentData label="End Date" value="11/02/2018" />
                 </View>
-                <View style={style.divider} />
+                <View style={StyleDivider.divider} />
                 <View style={{flexDirection: "row"}}>
                     <Attachment options={file} />
                     <Attachment options={file} />
@@ -47,10 +49,5 @@ const style = StyleSheet.create({
         borderRadius: 4,
         paddingVertical: 22,
         paddingHorizontal: 16,
-    },
-    divider: {
-        height: 1,
-        backgroundColor: LIGHTGREY_COLOR,
-        marginBottom: 24
     }
 });

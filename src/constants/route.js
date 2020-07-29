@@ -22,6 +22,8 @@ export const CREDENTIALS = "credentials";
 export const DATA = "data";
 export const PROFILES = "profiles";
 
+export const CREDENTIAL_DETAILS = "credential-details";
+
 export const LOGIN_HISTORY = "login-history";
 export const LOGIN_REQUEST = "login-request";
 
