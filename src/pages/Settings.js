@@ -41,10 +41,10 @@ const logout = async () => {
 };
 
 const list = [
-    { label: "PIN", action: "arrow", onPress: () => {} },
-    { label: "Face ID", action: "switch" },
-    { label: "Seed Phrase", action: "arrow", onPress: () => Actions[SEED_PHRASE_VIEW]() },
+    { label: "PIN", action: "arrow", optional: true, onPress: () => {} },
+    { label: "Face ID", action: "switch", optional: true },
+    { label: "Seed Phrase", action: "arrow", optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
     // { label: "Notifications", action: "arrow" },
-    { label: "Login History", action: "arrow", onPress: () => Actions[LOGIN_HISTORY]() },
-    { label: "Log Out", text: style.logoutText, onPress: logout }
+    { label: "Login History", action: "arrow", optional: true, onPress: () => Actions[LOGIN_HISTORY]() },
+    { label: "Log Out", text: style.logoutText, optional: true, onPress: logout }
 ];

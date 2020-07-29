@@ -104,7 +104,7 @@ const Routes = () => {
                        back={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
-                <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} />
+                <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} back={true} />
 
                 <Scene key={IMPORT_ACCOUNT} component={ImportAccount} title={IMPORT_ACCOUNT_TITLE} back={true} />
                 <Scene key={SELECT_NETWORK} component={SelectNetwork} title={IMPORT_ACCOUNT_TITLE} back={true} />
