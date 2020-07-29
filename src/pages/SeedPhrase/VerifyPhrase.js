@@ -15,14 +15,18 @@ import ErrorPhrase from "../../components/ErrorPhrase";
 const VerifyPhrase = ({ words, shuffled, ...props }) => {
     const [error, showError] = useState(null);
 
+    useEffect(() => showError(false), [words]);
     useEffect(() => {
-        showError(false);
-    }, [words]);
+        return () => {
+            props.resetPhrase();
+        };
+    }, []);
 
     const onConfirm = async () => {
         try {
             const phrase = words.join(" ");
             await walletByMnemonic(phrase);
+            props.resetPhrase();
             Actions[SUCCESS]();
         } catch (e) {
             showError(true);

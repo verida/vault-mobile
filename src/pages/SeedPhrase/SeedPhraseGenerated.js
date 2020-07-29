@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import {StyleSheet} from "react-native";
 
 import Text from "../../components/Text";
@@ -9,19 +9,21 @@ import WordCard from "../../components/Words/WordCard";
 import TextStyles from "../../styles/text";
 import {Actions} from "react-native-router-flux";
 
-import {generateMnemonic, walletByMnemonic} from "../../api";
+import {generateMnemonic} from "../../api";
 import {VERIFY_PHRASE} from "../../constants/route";
 import _ from "underscore";
 
-const words = generateMnemonic();
-
 export default () => {
-    const onSaved = async () => {
-        await walletByMnemonic(words);
+    const [words, setWords] = useState("Generating seed phrase ...");
 
+    useEffect(() => {
+        const mnemonic = generateMnemonic();
+        setWords(mnemonic);
+    }, []);
+
+    const onSaved = async () => {
         const mnemonic = words.split(" ");
         const shuffled = _.shuffle(mnemonic);
-
         Actions[VERIFY_PHRASE]({ shuffled });
     };
 
