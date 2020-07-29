@@ -5,12 +5,12 @@ import {connect} from "react-redux";
 
 import Button from '../../components/Button';
 import Layout from '../../components/Layouts/Layout';
-import ErrorPhrase from "../../components/ErrorPhrase";
 import Words from '../../components/Words';
 
 import {SUCCESS} from '../../constants/route';
 import {resetPhrase} from "../../store/words/actions";
 import {walletByMnemonic} from "../../api";
+import ErrorPhrase from "../../components/ErrorPhrase";
 
 const VerifyPhrase = ({ words, shuffled, ...props }) => {
     const [error, showError] = useState(null);
@@ -32,12 +32,12 @@ const VerifyPhrase = ({ words, shuffled, ...props }) => {
 
     return (
         <Layout title="Verify Your Phrase" style={style.layout}>
-            <View style={style.words}>
+            <View>
                 <Words words={shuffled} />
-                <ErrorPhrase shown={error} />
+                <ErrorPhrase shown={error} style={style.error} />
             </View>
             <View>
-                <Button style={{marginTop: 99}} color="primary" onPress={onConfirm}>
+                <Button style={{marginTop: 20}} color="primary" onPress={onConfirm}>
                     Confirm
                 </Button>
                 <Button style={{marginTop: 10}} color="transparent" onPress={props.resetPhrase}>
@@ -62,15 +62,11 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyPhrase);
 
 const style = StyleSheet.create({
-    words: {
-        flex: 1,
-        alignItems: "center"
-    },
-    layout: {
-        flex: 1,
-        justifyContent: "space-between"
-    },
     mt: {
         marginTop: 24
+    },
+    error: {
+        textAlign: "center",
+        marginTop: 20
     }
 });

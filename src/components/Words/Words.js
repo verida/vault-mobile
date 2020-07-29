@@ -4,9 +4,9 @@ import {StyleSheet, TouchableOpacity} from "react-native";
 
 import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
 
-export default ({ words, template, onSelect, id }) => words.map(word => (
+export default ({ words, template, onSelect, id, containerStyle }) => words.map(word => (
     <TouchableOpacity key={`${id} - ${word}`}
-        style={[style.word, template.includes(word) && style.selected]} onPress={() => onSelect(word)}>
+        style={[style.word, containerStyle, template.includes(word) && style.selected]} onPress={() => onSelect(word)}>
         <Text style={template.includes(word) && style.selectedText}>{ word }</Text>
     </TouchableOpacity>
 ));
@@ -18,7 +18,7 @@ const style = StyleSheet.create ({
         borderRadius: 4,
         paddingVertical: 3,
         paddingHorizontal: 15,
-        marginRight: 10,
+        marginHorizontal: 5,
         marginBottom: 10,
         flexShrink: 1
     },

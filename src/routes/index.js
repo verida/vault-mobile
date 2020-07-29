@@ -99,7 +99,7 @@ const Routes = () => {
                 <Scene key={CREDENTIAL_DETAILS} component={Credential} title="Credential" clone={true} back={true} />
 
                 <Scene key={CREATE_ACCOUNT} component={CreateAccount} title={CREATE_ACCOUNT_TITLE} back={true} />
-                <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true}/>
+                <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title={CREATE_ACCOUNT_TITLE}
                        back={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} title={CREATE_ACCOUNT_TITLE} />

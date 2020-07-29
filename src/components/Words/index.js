@@ -1,5 +1,5 @@
 import React from "react";
-import { View, StyleSheet } from "react-native";
+import {View, StyleSheet} from "react-native";
 import { connect } from "react-redux";
 
 import { addWord, removeWord } from "../../store/words/actions";
@@ -28,6 +28,7 @@ const WordLayout = ({ words, template, ...props }) => (
                 id="vocabulary"
                 words={words}
                 template={template}
+                containerStyle={style.wordContainer}
                 onSelect={props.addWord}/>
         </View>
     </View>
@@ -49,15 +50,14 @@ export default connect(mapStateToProps, mapDispatchToProps)(WordLayout);
 const style = StyleSheet.create ({
     layout: {
         justifyContent: "flex-start",
-        flex: 1
     },
     container: {
-        justifyContent: 'center',
-        alignItems: 'flex-start',
+        justifyContent: "center",
+        alignItems: "center",
         borderWidth: 1,
         borderColor: LIGHTGREY_COLOR,
         borderRadius: 4,
-        padding: 16,
+        paddingVertical: 16,
         flexDirection:'row',
         flexWrap:'wrap',
         marginTop: 32
@@ -74,5 +74,9 @@ const style = StyleSheet.create ({
         fontSize: 12,
         fontFamily: 'Avenir',
         color: BLACK_COLOR_OPACITY(0.8)
+    },
+    wordContainer: {
+        backgroundColor: BLACK_COLOR_OPACITY(0.05),
+        borderColor: BLACK_COLOR_OPACITY(0)
     }
 });

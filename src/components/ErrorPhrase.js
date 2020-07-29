@@ -3,8 +3,8 @@ import React from "react";
 
 import ModifierStyles from "../styles/modifier";
 
-export default ({ shown }) => ( shown &&
-    <Label style={[ModifierStyles.label, ModifierStyles.errorText]}>
-        Error: Please, enter a valid seed phrase
+export default ({ shown, style }) => (
+    <Label style={[ModifierStyles.label, ModifierStyles.errorText, style]}>
+        { shown && "Error: Please, enter a valid seed phrase" || null }
     </Label>
 )
