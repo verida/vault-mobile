@@ -23,7 +23,7 @@ export default () => {
     const [info, setInfo] = useState({});
     useEffect(() => {
         init();
-    }, []);
+    });
 
     const init = async () => {
         const data = await getWalletInfo();
@@ -37,7 +37,7 @@ export default () => {
         </View>;
 
     return (
-        <ProfileLayout
+        info && <ProfileLayout
             userInfo={UserInfo}
             list={editable(list)}
             description={"This profile is private, but can be requested and shared with your consent"} />

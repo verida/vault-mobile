@@ -14,14 +14,15 @@ const LogoImg = require("../../assets/vault-logo.png");
 
 export default () => {
     const [info, setInfo] = useState({});
+
+    useEffect(() => {
+        init();
+    });
+
     const init = async () => {
         const data = await getWalletInfo();
         setInfo(data);
     };
-
-    useEffect(() => {
-        init();
-    }, []);
 
     return (
         <Layout style={style.container}>
