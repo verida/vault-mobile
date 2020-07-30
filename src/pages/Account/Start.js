@@ -53,6 +53,7 @@ const style = StyleSheet.create ({
         paddingHorizontal: 24,
         paddingVertical: 77,
         height: '100%',
+        width: '100%',
         justifyContent: "space-between"
     },
     texture: {
