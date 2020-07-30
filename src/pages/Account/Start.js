@@ -26,13 +26,15 @@ export default () => {
                 width={425}
                 height={428} />
             <View style={style.positionAbsolute}>
-                <Logo
-                    width={139}
-                    height={51} />
-                <Text style={style.title}>
-                    {title}
-                </Text>
-                <View style={style.footer}>
+                <View>
+                    <Logo
+                        width={139}
+                        height={51} />
+                    <Text style={style.title}>
+                        {title}
+                    </Text>
+                </View>
+                <View>
                     <Button color="secondary" onPress={createAcc}>
                         Create An Account
                     </Button>
@@ -48,10 +50,10 @@ export default () => {
 const style = StyleSheet.create ({
     positionAbsolute: {
         position: 'absolute',
-        flex: 1,
         paddingHorizontal: 24,
         paddingVertical: 77,
-        height: '100%'
+        height: '100%',
+        justifyContent: "space-between"
     },
     texture: {
         position: 'absolute',
@@ -71,13 +73,5 @@ const style = StyleSheet.create ({
     logo: {
         width: 150,
         height: 150,
-    },
-    footer: {
-        position: 'absolute',
-        paddingVertical: 77,
-        flex: 1,
-        left: 24,
-        right: 0,
-        bottom: 0
     }
 });

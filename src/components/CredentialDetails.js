@@ -38,7 +38,7 @@ export default () => {
     );
 
     return (
-        <View>
+        <View style={style.container}>
             <Text style={style.title}>Test Details</Text>
             { details }
         </View>
@@ -46,6 +46,9 @@ export default () => {
 }
 
 const style = StyleSheet.create({
+    container: {
+      marginBottom: 24
+    },
     title: {
         fontSize: 18,
         fontFamily: "AvenirBold"

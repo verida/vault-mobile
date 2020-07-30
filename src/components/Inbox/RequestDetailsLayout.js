@@ -50,7 +50,8 @@ const style = StyleSheet.create({
     },
     btn: {
         flex: 0.5,
-        height: 40
+        height: 40,
+        paddingTop: 4
     },
     scrollable: {
         flexGrow: 0

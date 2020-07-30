@@ -18,7 +18,7 @@ export default ({ action }) => {
     const onContinue = () => Actions[action]();
 
     return (
-        <Layout title="Select Username">
+        <Layout title="Select Username" style={style.layout}>
             <Label>Username</Label>
             <TextInput
                 placeholder={"Enter username"}
@@ -46,6 +46,9 @@ export default ({ action }) => {
 };
 
 const style = StyleSheet.create ({
+    layout: {
+        minHeight: "100%"
+    },
     mt: {
         marginTop: 40
     }

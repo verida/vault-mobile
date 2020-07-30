@@ -7,7 +7,7 @@ import CredentialDetails from "../components/CredentialDetails";
 
 import StyleDivider from "../styles/divider";
 import { QRCode } from "react-native-custom-qr-codes-expo";
-import { WHITE_COLOR } from "../constants/color";
+import {BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../constants/color";
 
 export default ({ credential }) => (
     <Layout>
@@ -38,6 +38,7 @@ const style = StyleSheet.create({
           width: 0,
           height: 0
         },
-        backgroundColor: WHITE_COLOR
+        backgroundColor: WHITE_COLOR,
+        elevation: 3
     }
 });

@@ -3,7 +3,6 @@ import {LIGHTGREY_COLOR, PRIMARY_COLOR, WHITE_COLOR} from "../constants/color";
 
 export default StyleSheet.create({
     button: {
-        alignItems: 'center',
         paddingVertical: 10,
         borderRadius: 4,
         fontSize: 16,
