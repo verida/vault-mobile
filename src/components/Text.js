@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     text: {
         color: '#041133',
         fontFamily: "Avenir",
-        textAlignVertical: "center"
+        textAlignVertical: "center",
+        paddingTop: 4
     }
 });
