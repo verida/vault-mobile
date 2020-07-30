@@ -3,11 +3,12 @@ import {LIGHTGREY_COLOR, PRIMARY_COLOR, WHITE_COLOR} from "../constants/color";
 
 export default StyleSheet.create({
     button: {
-        paddingVertical: 10,
         borderRadius: 4,
         fontSize: 16,
         marginBottom: 16,
-        borderWidth: 1
+        borderWidth: 1,
+        height: 48,
+        justifyContent: "center"
     },
     outlined: {
         backgroundColor: 'transparent',

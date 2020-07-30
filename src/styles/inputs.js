@@ -6,7 +6,8 @@ const input = {
     borderColor: LIGHTGREY_COLOR,
     borderRadius: 4,
     paddingVertical: 9,
-    paddingHorizontal: 16
+    paddingHorizontal: 16,
+    minHeight: 48
 };
 
 export default StyleSheet.create({
