@@ -1,8 +1,10 @@
 import React from "react";
-import Text from "../Text";
-
-import FileSvg from "../../assets/inbox/file.svg";
 import {StyleSheet, View} from "react-native";
+
+import Text from "../Text";
+import FileSvg from "../../assets/inbox/file.svg";
+
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 export default ({ options }) => {
    return (
@@ -26,10 +28,12 @@ const style = StyleSheet.create({
         paddingLeft: 12
     },
     title: {
-        fontFamily: "AvenirBold",
+        fontFamily: NUNITO_SANS_BOLD,
         fontSize: 15
     },
     text: {
-        fontSize: 13
+        fontSize: 13,
+        fontFamily: NUNITO_SANS_SEMIBOLD,
+        lineHeight: 18
     }
 });

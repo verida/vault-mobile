@@ -1,14 +1,16 @@
 import React from "react";
+import { StyleSheet } from "react-native";
 import Text from "../../components/Text";
 import Button from "../../components/Button";
 import Layout from "../../components/Layouts/Layout";
 import List from "../../components/Lists/List";
 
-import TextStyles from "../../styles/text";
 import SafeImg from "../../assets/safe.svg";
 
 import { Actions } from "react-native-router-flux";
 import { SEED_PHRASE_GENERATED } from "../../constants/route";
+
+import { NUNITO_SANS } from "../../constants/text";
 
 const Items = [
   "The seed phrase is composed of 12 words. Please record them carefully and store your phrase in a safe place.",
@@ -19,7 +21,7 @@ const onShow = () => Actions[SEED_PHRASE_GENERATED]();
 
 export default () => (
     <Layout title="Seed Phrase">
-        <Text style={[TextStyles.primary, {marginVertical: 16}]}>
+        <Text style={style.description}>
             Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
             upgraded.
         </Text>
@@ -30,3 +32,9 @@ export default () => (
         </Button>
     </Layout>
 );
+
+const style = StyleSheet.create({
+    description: {
+        marginTop: 16
+    }
+});

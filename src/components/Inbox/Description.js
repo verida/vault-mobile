@@ -1,7 +1,9 @@
 import React from "react";
 import {Image, StyleSheet, View} from "react-native";
 import Text from "../Text";
+
 import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 export default ({ details }) => {
     return (
@@ -33,13 +35,15 @@ const style = StyleSheet.create({
         marginLeft: 16
     },
     organization: {
-        fontFamily: "AvenirBold",
+        fontFamily: NUNITO_SANS_BOLD,
         fontSize: 17,
         lineHeight: 25,
         marginRight: 60
     },
     text: {
         color: BLACK_COLOR_OPACITY(0.6),
-        fontSize: 13
+        fontFamily: NUNITO_SANS_SEMIBOLD,
+        fontSize: 13,
+        lineHeight: 18
     },
 });

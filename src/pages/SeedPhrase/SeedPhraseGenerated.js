@@ -6,12 +6,12 @@ import Button from "../../components/Button";
 import Layout from "../../components/Layouts/Layout";
 import WordCard from "../../components/Words/WordCard";
 
-import TextStyles from "../../styles/text";
 import {Actions} from "react-native-router-flux";
 
 import {generateMnemonic} from "../../api";
 import {VERIFY_PHRASE} from "../../constants/route";
 import _ from "underscore";
+import {BLACK_COLOR_OPACITY} from "../../constants/color";
 
 export default () => {
     const [words, setWords] = useState("Generating seed phrase ...");
@@ -29,7 +29,7 @@ export default () => {
 
     return (
         <Layout title="Seed Phrase">
-            <Text style={[TextStyles.grey, style.title]}>
+            <Text style={style.title}>
                 Please carefully write down each word
             </Text>
             <WordCard words={words} />
@@ -44,6 +44,7 @@ const style = StyleSheet.create ({
     title: {
         marginTop: 32,
         marginBottom: 16,
-        textAlign: 'center'
+        textAlign: 'center',
+        color: BLACK_COLOR_OPACITY(0.8)
     }
 });

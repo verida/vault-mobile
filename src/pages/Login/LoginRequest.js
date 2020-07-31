@@ -9,6 +9,8 @@ import Button from "../../components/Button";
 import {Actions} from "react-native-router-flux";
 import {LOGIN_HISTORY} from "../../constants/route";
 
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+
 const approve = () => {
     Actions[LOGIN_HISTORY]();
 };
@@ -48,13 +50,13 @@ const style = StyleSheet.create({
         marginBottom: 20
     },
     title: {
-        fontWeight: "900",
+        fontFamily: NUNITO_SANS_BOLD,
         fontSize: 22,
         marginVertical: 4,
         textAlign: "center"
     },
     text: {
-        fontWeight: "500",
+        fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 14,
         textAlign: "center",
         marginVertical: 8
@@ -62,10 +64,11 @@ const style = StyleSheet.create({
     actions: {
         position: "absolute",
         bottom: 0,
-        flexDirection: "row"
+        flexDirection: "row",
     },
     btn: {
-        flex: 1
+        flex: 1,
+        height: 40
     },
     mr: {
         marginRight: 20

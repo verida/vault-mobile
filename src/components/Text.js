@@ -1,7 +1,10 @@
 import React from 'react'
 import {StyleSheet, Text} from "react-native";
 
-export default ({ style, children, ...props }) => (
+import {BLACK_COLOR} from "../constants/color";
+import {NUNITO_SANS} from "../constants/text";
+
+export default ({ style, children, bold, ...props }) => (
     <Text style={[styles.text, style]} {...props}>
         {children}
     </Text>
@@ -9,9 +12,9 @@ export default ({ style, children, ...props }) => (
 
 const styles = StyleSheet.create({
     text: {
-        color: '#041133',
-        fontFamily: "Avenir",
+        color: BLACK_COLOR,
+        fontFamily: NUNITO_SANS,
         textAlignVertical: "center",
-        paddingTop: 4
+        fontSize: 14
     }
 });

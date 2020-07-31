@@ -6,6 +6,7 @@ import Icon from "react-native-vector-icons/MaterialIcons";
 import Text from "../Text";
 import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
 import {CREDENTIAL_DETAILS} from "../../constants/route";
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 const onPress = (credential) => {
     Actions[CREDENTIAL_DETAILS]({ credential })
@@ -40,10 +41,12 @@ const style = StyleSheet.create ({
         marginBottom: 8
     },
     title: {
-        fontFamily: "AvenirBold",
-        fontSize: 17
+        fontFamily: NUNITO_SANS_BOLD,
+        fontSize: 17,
+        marginBottom: 3
     },
     text: {
+        fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 13
     },
     img: {

@@ -1,8 +1,11 @@
 import React from "react";
 import {StyleSheet, View} from "react-native";
-import {LIGHTGREY_COLOR, SUCCESS_COLOR} from "../constants/color";
-import Text from "./Text";
 import { CheckBox } from "react-native-elements";
+
+import Text from "./Text";
+
+import {LIGHTGREY_COLOR, SUCCESS_COLOR} from "../constants/color";
+import {NUNITO_SANS_SEMIBOLD} from "../constants/text";
 
 export default ({ network, selected, onSelect }) => {
     return (
@@ -44,7 +47,8 @@ const style = StyleSheet.create({
     },
     title: {
         marginLeft: 12,
-        paddingTop: 4
+        fontFamily: NUNITO_SANS_SEMIBOLD,
+        fontSize: 16
     },
     checkbox: {
         padding: 0

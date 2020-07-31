@@ -1,20 +1,13 @@
 import React from "react";
 import Card from "./Card";
-import {View, StyleSheet} from "react-native";
+import { View } from "react-native";
 
 export default ({ list }) => {
     const cards = list.map(options => (<Card options={options} key={`inbox - ${options.id}`} />))
 
     return (
-        <View style={style.mt}>
+        <View>
             { cards }
         </View>
     )
 }
-
-
-const style = StyleSheet.create({
-    mt: {
-        marginTop: 24
-    }
-});

@@ -25,7 +25,7 @@ export default ({ selected }) => {
 
 const text = {
     color: BLACK_COLOR_OPACITY(0.6),
-    fontFamily: "Avenir",
+    fontFamily: "NunitoSans",
     fontSize: 17
 };
 

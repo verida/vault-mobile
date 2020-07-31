@@ -59,7 +59,7 @@ export default () => {
                 onChangeText={setPhrase}
                 style={[InputStyles.textarea, error && ModifierStyles.error]}
             />
-            <ErrorPhrase visible={error} />
+            <ErrorPhrase shown={error} />
             <Button style={{marginTop: 24}}
                     color="primary"
                     onPress={onContinue}

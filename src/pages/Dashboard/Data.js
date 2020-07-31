@@ -3,7 +3,8 @@ import {StyleSheet, Linking, View} from "react-native";
 import {TouchableOpacity} from "react-native-gesture-handler";
 
 import Text from "../../components/Text";
-import {PRIMARY_COLOR} from "../../constants/color";
+import {BLACK_COLOR_OPACITY, PRIMARY_COLOR} from "../../constants/color";
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 const vaultURL = "http://vault.verida.io/";
 const openVault = () => Linking.openURL(vaultURL);
@@ -26,21 +27,21 @@ const style = StyleSheet.create({
         paddingVertical: 40
     },
     title: {
-        fontWeight: '800',
+        fontFamily: NUNITO_SANS_BOLD,
         fontSize: 22
     },
     text: {
         textAlign: 'center',
-        fontWeight: '800',
+        fontFamily: NUNITO_SANS_BOLD,
+        color: BLACK_COLOR_OPACITY(0.6),
         fontSize: 14,
-        opacity: 0.6,
         lineHeight: 19,
         marginVertical: 7
     },
     link: {
         color: PRIMARY_COLOR,
         textDecorationLine: 'underline',
-        fontWeight: '500',
+        fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 16,
         lineHeight: 22
     }

@@ -1,7 +1,9 @@
 import React from "react";
 import {ScrollView, StyleSheet} from "react-native";
 import Text from "../Text";
+
 import {BLACK_COLOR} from "../../constants/color";
+import {NUNITO_SANS_BOLD} from "../../constants/text";
 
 export default (props) => {
     return (
@@ -18,9 +20,9 @@ const style = StyleSheet.create ({
     },
     title: {
         marginTop: 16,
-        fontFamily: "AvenirBold",
         fontSize: 22,
         lineHeight: 41,
+        fontFamily: NUNITO_SANS_BOLD,
         color: BLACK_COLOR
     }
 });

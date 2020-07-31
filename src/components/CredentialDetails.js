@@ -5,6 +5,7 @@ import Text from "./Text";
 import Label from "./Label";
 
 import { BLACK_COLOR_OPACITY } from "../constants/color";
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../constants/text";
 
 const info = [
     {
@@ -33,7 +34,7 @@ export default () => {
     const details = info.map(item =>
         <View key={item.title}>
             <Label style={style.label}>{item.title}:</Label>
-            <Text>{ item.value }</Text>
+            <Text style={style.text}>{ item.value }</Text>
         </View>
     );
 
@@ -51,10 +52,17 @@ const style = StyleSheet.create({
     },
     title: {
         fontSize: 18,
-        fontFamily: "AvenirBold"
+        fontFamily: NUNITO_SANS_BOLD,
+        lineHeight: 25
     },
     label: {
         color: BLACK_COLOR_OPACITY(0.6),
-        marginLeft: -2
+        fontSize: 14,
+        lineHeight: 19
+    },
+    text: {
+        fontSize: 16,
+        lineHeight: 22,
+        fontFamily: NUNITO_SANS_SEMIBOLD
     }
 });

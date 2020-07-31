@@ -11,6 +11,7 @@ import {LOGIN_HISTORY, SEED_PHRASE_VIEW, START} from "../constants/route";
 import {BLACK_COLOR_OPACITY, ORANGE_COLOR} from "../constants/color";
 
 import {clearWallet} from "../api";
+import {NUNITO_SANS_BOLD} from "../constants/text";
 
 export default () => (
     <View style={LayoutStyle.layout}>
@@ -23,8 +24,8 @@ export default () => (
 
 const style = StyleSheet.create({
     title: {
-        fontWeight: "800",
         fontSize: 12,
+        fontFamily: NUNITO_SANS_BOLD,
         color: BLACK_COLOR_OPACITY(0.6),
         textTransform: "uppercase",
         marginTop: 24,

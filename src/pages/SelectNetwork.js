@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { TouchableOpacity } from "react-native";
+import { TouchableOpacity, View } from "react-native";
 import {Actions} from "react-native-router-flux";
 
 import Layout from "../components/Layouts/Layout";
@@ -16,15 +16,17 @@ export default () => {
 
     return (
         <Layout title="Select Network">
-            { NETWORKS.map(network =>
-                    <TouchableOpacity key={network.id} onPress={() => setSelected(network.id)}>
-                        <NetworkItem
-                            selected={network.id === selected}
-                            onSelect={setSelected}
-                            network={network} />
-                    </TouchableOpacity>
-                )
-            }
+            <View style={{ marginTop: 12 }}>
+                { NETWORKS.map(network =>
+                        <TouchableOpacity key={network.id} onPress={() => setSelected(network.id)}>
+                            <NetworkItem
+                                selected={network.id === selected}
+                                onSelect={setSelected}
+                                network={network} />
+                        </TouchableOpacity>
+                    )
+                }
+            </View>
             <Button style={{marginTop: 24}}
                 color="primary"
                 onPress={onContinue}

@@ -15,12 +15,14 @@ export default () => {
     const [loading, setLoading] = useState(true);
 
     const loadFonts = async () => {
-        const Avenir = require("./assets/fonts/Avenir.otf");
-        const AvenirBold = require("./assets/fonts/Avenir-Bold.ttf");
+        const NunitoSans = require("./assets/fonts/NunitoSans-Regular.ttf");
+        const NunitoSansSemiBold = require("./assets/fonts/NunitoSans-SemiBold.ttf");
+        const NunitoSansBold = require("./assets/fonts/NunitoSans-Bold.ttf");
 
         return Promise.all([
-            Font.loadAsync({ Avenir }),
-            Font.loadAsync({ AvenirBold })
+            Font.loadAsync({ NunitoSans }),
+            Font.loadAsync({ NunitoSansSemiBold }),
+            Font.loadAsync({ NunitoSansBold })
         ]);
     };
 

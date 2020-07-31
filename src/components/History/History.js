@@ -3,7 +3,8 @@ import { StyleSheet, View, Image, Dimensions, TouchableOpacity } from "react-nat
 import Text from "../../components/Text";
 import { Actions } from "react-native-router-flux";
 import {LOGIN_REQUEST} from "../../constants/route";
-import {LIGHTGREY_COLOR, WHITE_COLOR} from "../../constants/color";
+import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR, WHITE_COLOR} from "../../constants/color";
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 const onPress = () => Actions[LOGIN_REQUEST]();
 
@@ -44,14 +45,15 @@ const style = StyleSheet.create({
         paddingHorizontal: 12
     },
     title: {
-        fontWeight: "800",
+        fontFamily: NUNITO_SANS_BOLD,
         fontSize: 17
     },
     text: {
         fontSize: 13,
-        flexWrap: 'wrap'
+        flexWrap: 'wrap',
+        fontFamily: NUNITO_SANS_SEMIBOLD
     },
     time: {
-        opacity: 0.6
+        color: BLACK_COLOR_OPACITY(0.6)
     }
 });

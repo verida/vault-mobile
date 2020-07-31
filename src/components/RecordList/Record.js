@@ -4,6 +4,7 @@ import Text from "../Text";
 import Filters from "./Filters";
 
 import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
+import {NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 export default ({ item }) => (
    <View style={style.card}>
@@ -30,15 +31,18 @@ const style = StyleSheet.create({
     },
     title: {
         fontSize: 17,
-        lineHeight: 22
+        lineHeight: 22,
+        fontFamily: NUNITO_SANS_SEMIBOLD
     },
     amount: {
         fontSize: 13,
-        lineHeight: 22
+        lineHeight: 22,
+        fontFamily: NUNITO_SANS_SEMIBOLD
     },
     text: {
         color: BLACK_COLOR_OPACITY(0.5),
         fontSize: 15,
-        lineHeight: 22
+        lineHeight: 22,
+        fontFamily: NUNITO_SANS_SEMIBOLD
     }
 });

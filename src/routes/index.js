@@ -87,7 +87,7 @@ const Routes = () => {
     return (
         <Router>
             <Scene key="root">
-                <Scene key={START} component={Start} hideNavBar={true} initial={!authorized} type="reset"/>
+                <Scene key={START} component={Start} hideNavBar={true} initial={!authorized} type="reset" />
 
                 <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} initial={authorized} hideNavBar={true}>
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
@@ -115,7 +115,7 @@ const Routes = () => {
                 <Scene key={DATA_SNAPSHOT} component={DataSnapshot} title="Request details" back={true} />
                 <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} title="Request details" back={true} />
 
-                <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone />
+                <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone={true} />
                 <Scene key={LOGIN_REQUEST} component={LoginRequest} title="Login Request" back={true} />
 
                 <Scene key={PUBLIC_PROFILE} component={PublicProfile} title="Public Profile" back={true} clone={true} />

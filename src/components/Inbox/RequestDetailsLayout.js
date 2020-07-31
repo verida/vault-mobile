@@ -6,6 +6,7 @@ import Text from "../Text";
 import Description from "./Description";
 
 import {findTypeById} from "../../helpers/inbox";
+import {NUNITO_SANS_BOLD} from "../../constants/text";
 
 export default ({ company, children }) => {
     const type = findTypeById(company.type);
@@ -39,7 +40,7 @@ const style = StyleSheet.create({
     title: {
         fontSize: 22,
         lineHeight: 41,
-        fontFamily: "AvenirBold",
+        fontFamily: NUNITO_SANS_BOLD,
         marginTop: 24,
         paddingRight: 60
     },
@@ -50,8 +51,7 @@ const style = StyleSheet.create({
     },
     btn: {
         flex: 0.5,
-        height: 40,
-        paddingTop: 4
+        height: 40
     },
     scrollable: {
         flexGrow: 0

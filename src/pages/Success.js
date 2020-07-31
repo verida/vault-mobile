@@ -12,6 +12,7 @@ import {Actions} from "react-native-router-flux";
 
 import {HOME} from "../constants/route";
 import {BLACK_COLOR} from "../constants/color";
+import {NUNITO_SANS_BOLD} from "../constants/text";
 
 export default () => {
     const onDone = () => Actions[HOME]();
@@ -43,13 +44,12 @@ const style = StyleSheet.create ({
     },
     title: {
         margin: 32,
-        fontWeight: "800",
         fontSize: 28,
         color: BLACK_COLOR,
-        fontFamily: "Avenir"
+        fontFamily: NUNITO_SANS_BOLD
     },
     description: {
-        fontFamily: "Avenir",
+        fontFamily: "NunitoSans",
         fontWeight: "500",
         fontSize: 14,
         color: BLACK_COLOR,

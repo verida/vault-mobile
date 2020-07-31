@@ -1,15 +1,17 @@
 import React, {useEffect, useState} from "react";
-import {View, StyleSheet, Image, Platform} from "react-native";
+import { View, StyleSheet, Image, Platform } from "react-native";
 import { QRCode } from 'react-native-custom-qr-codes-expo';
+import Constants from "expo-constants";
 
 import Text from "../../components/Text";
 import HomeTopTabs from "../../components/Navigation/HomeTopTabs";
 
-import { getWalletInfo } from "../../api";
-import {BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../../constants/color";
 import Layout from "../../components/Layouts/Layout";
 
-import Constants from "expo-constants";
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import {BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../../constants/color";
+
+import { getWalletInfo } from "../../api";
 
 const UserImg = require("../../assets/stubs/user.png");
 const LogoImg = require("../../assets/vault-logo.png");
@@ -68,20 +70,20 @@ const style = StyleSheet.create ({
         fontSize: 22,
         lineHeight: 30,
         marginTop: 16,
-        fontFamily: 'AvenirBold'
+        fontFamily: NUNITO_SANS_BOLD
     },
     userImg: {
         marginTop
     },
     text: {
         height: 50,
-        fontWeight: '800',
         fontSize: 14,
-        opacity: 0.6,
         marginTop: 4,
         marginBottom: 16,
-        maxWidth: 260,
-        textAlign: "center"
+        paddingHorizontal: 43,
+        textAlign: "center",
+        color: BLACK_COLOR_OPACITY(0.6),
+        fontFamily: NUNITO_SANS_BOLD
     },
     qr: {
         width: 240,
@@ -102,6 +104,7 @@ const style = StyleSheet.create ({
         marginVertical: 24,
         paddingHorizontal: 43,
         textAlign: 'center',
-        opacity: 0.4
+        fontFamily: NUNITO_SANS_SEMIBOLD,
+        color: BLACK_COLOR_OPACITY(0.4)
     }
 });

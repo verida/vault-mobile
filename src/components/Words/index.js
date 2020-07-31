@@ -8,7 +8,7 @@ import Text from "../Text";
 import Words from "./Words";
 
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from "../../constants/color";
-import TextStyles from "../../styles/text";
+import { NUNITO_SANS_SEMIBOLD } from "../../constants/text";
 
 const WordLayout = ({ words, template, ...props }) => (
     <View style={style.layout}>
@@ -20,7 +20,7 @@ const WordLayout = ({ words, template, ...props }) => (
                 template={[]}
                 onSelect={props.removeWord} />
         </View>
-        <Text style={[TextStyles.darkgrey, style.text]}>
+        <Text style={style.text}>
             Please tap each word in the correct order.
         </Text>
         <View style={[style.vocabulary]}>
@@ -72,7 +72,7 @@ const style = StyleSheet.create ({
         marginVertical: 24,
         textAlign: 'center',
         fontSize: 12,
-        fontFamily: 'Avenir',
+        fontFamily: NUNITO_SANS_SEMIBOLD,
         color: BLACK_COLOR_OPACITY(0.8)
     },
     wordContainer: {

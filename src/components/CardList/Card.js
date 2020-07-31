@@ -10,6 +10,8 @@ import {
     ORANGE_COLOR
 } from "../../constants/color";
 
+import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+
 export default ({ options }) => {
     const type = findTypeById(options.id);
     const title = options.title + (options.from ? " from " : "");
@@ -59,11 +61,12 @@ const style = StyleSheet.create({
     },
     title: {
         fontSize: 17,
+        lineHeight: 28,
         alignItems: "center",
-        fontFamily: "AvenirBold"
+        fontFamily: NUNITO_SANS_BOLD
     },
     text: {
-        fontWeight: "500",
+        fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 13,
         lineHeight: 18
     },
@@ -85,7 +88,7 @@ const style = StyleSheet.create({
     },
     date: {
         color: BLACK_COLOR_OPACITY(0.6),
-        fontWeight: "500",
+        fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 13,
         marginTop: 3
     }
