@@ -87,7 +87,7 @@ const Routes = () => {
     return (
         <Router>
             <Scene key="root">
-                <Scene key={START} component={Start} hideNavBar={true} initial={!authorized}/>
+                <Scene key={START} component={Start} hideNavBar={true} initial={!authorized} type="reset"/>
 
                 <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} initial={authorized} hideNavBar={true}>
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
@@ -103,7 +103,7 @@ const Routes = () => {
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title={CREATE_ACCOUNT_TITLE}
                        back={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
-                <Scene key={SUCCESS} component={Success} hideNavBar={true}/>
+                <Scene key={SUCCESS} component={Success} hideNavBar={true} />
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} back={true} />
 
                 <Scene key={IMPORT_ACCOUNT} component={ImportAccount} title={IMPORT_ACCOUNT_TITLE} back={true} />

@@ -11,14 +11,15 @@ import Layout from "../components/Layouts/Layout";
 import {Actions} from "react-native-router-flux";
 
 import {HOME} from "../constants/route";
+import {BLACK_COLOR} from "../constants/color";
 
 export default () => {
     const onDone = () => Actions[HOME]();
 
     return (
-        <Layout>
+        <Layout style={style.layout}>
             <View style={style.header}>
-                <Success style={style.success}/>
+                <Success/>
                 <Text style={style.title}>Success!</Text>
             </View>
             <Text style={style.description}>
@@ -33,24 +34,25 @@ export default () => {
 };
 
 const style = StyleSheet.create ({
-    header: {
-        alignItems: 'center'
+    layout: {
+        justifyContent: "center",
+        minHeight: "100%"
     },
-    success: {
-        marginTop: 124
+    header: {
+        alignItems: "center"
     },
     title: {
         margin: 32,
-        fontWeight: '800',
+        fontWeight: "800",
         fontSize: 28,
-        color: '#041133',
-        fontFamily: 'Avenir'
+        color: BLACK_COLOR,
+        fontFamily: "Avenir"
     },
     description: {
-        fontFamily: 'Avenir',
-        fontWeight: '500',
+        fontFamily: "Avenir",
+        fontWeight: "500",
         fontSize: 14,
-        color: '#041133',
+        color: BLACK_COLOR,
         opacity: 0.6
     },
     mt: {
