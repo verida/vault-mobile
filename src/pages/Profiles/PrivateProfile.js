@@ -7,6 +7,8 @@ import Text from "../../components/Text";
 import { getWalletInfo } from "../../api";
 import { editable } from "../../helpers/profile";
 import DateOfBirth from "../../components/DateOfBirth";
+import {NUNITO_SANS_BOLD} from "../../constants/text";
+import {BLACK_COLOR_OPACITY} from "../../constants/color";
 
 const list = [
     { label: "Name", value: "Chris Were", action: "arrow", type: "input" },
@@ -46,16 +48,17 @@ export default () => {
 
 const style = StyleSheet.create({
    user: {
-       fontWeight: "800",
+       fontFamily: NUNITO_SANS_BOLD,
        fontSize: 22,
        textAlign: "center"
    },
    did: {
        marginTop: 4,
-       fontWeight: "800",
+       fontFamily: NUNITO_SANS_BOLD,
        fontSize: 14,
-       opacity: 0.6,
        textAlign: "center",
-       marginBottom: 24
+       marginBottom: 24,
+       paddingHorizontal: 25,
+       color: BLACK_COLOR_OPACITY(0.6)
    }
 });

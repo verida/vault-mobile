@@ -7,7 +7,9 @@ import ImageLoader from "../../components/ImageLoader";
 import Layout from "./Layout";
 
 import LayoutStyle from "../../styles/layouts";
-import {BLACK_COLOR} from "../../constants/color";
+
+import {BLACK_COLOR_OPACITY} from "../../constants/color";
+import {NUNITO_SANS_SEMIBOLD} from "../../constants/text";
 
 export default (props) => {
     return (
@@ -28,8 +30,8 @@ const style = StyleSheet.create({
     description: {
         textAlign: "center",
         marginVertical: 17,
-        color: BLACK_COLOR,
-        opacity: 0.4,
-        fontSize: 12
+        color: BLACK_COLOR_OPACITY(0.4),
+        fontSize: 12,
+        fontFamily: NUNITO_SANS_SEMIBOLD
     }
 });
