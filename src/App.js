@@ -9,6 +9,8 @@ import * as Font from "expo-font";
 import Routes from "./routes";
 import store from "./store";
 
+// import { testVeridaConnect } from "./api/verida";
+
 export default () => {
     const [loading, setLoading] = useState(true);
 
@@ -22,6 +24,11 @@ export default () => {
         ]);
     };
 
+    const init = async () => {
+        await loadFonts();
+        // await testVeridaConnect();
+    };
+
     const App =
         <Provider store={store}>
             <Routes />
@@ -29,7 +36,7 @@ export default () => {
 
     return (loading ?
         <AppLoading
-            startAsync={loadFonts}
+            startAsync={init}
             onFinish={() => setLoading(false)}
             onError={console.warn} /> :
         App
