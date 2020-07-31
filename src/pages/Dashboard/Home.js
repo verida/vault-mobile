@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import { View, StyleSheet, Image } from "react-native";
+import {View, StyleSheet, Image, Platform} from "react-native";
 import { QRCode } from 'react-native-custom-qr-codes-expo';
 
 import Text from "../../components/Text";
@@ -8,6 +8,8 @@ import HomeTopTabs from "../../components/Navigation/HomeTopTabs";
 import { getWalletInfo } from "../../api";
 import {BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../../constants/color";
 import Layout from "../../components/Layouts/Layout";
+
+import Constants from "expo-constants";
 
 const UserImg = require("../../assets/stubs/user.png");
 const LogoImg = require("../../assets/vault-logo.png");
@@ -55,6 +57,7 @@ export default () => {
     )
 };
 
+const marginTop = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 24;
 const style = StyleSheet.create ({
     container: {
         justifyContent: "center",
@@ -66,6 +69,9 @@ const style = StyleSheet.create ({
         lineHeight: 30,
         marginTop: 16,
         fontFamily: 'AvenirBold'
+    },
+    userImg: {
+        marginTop
     },
     text: {
         height: 50,
