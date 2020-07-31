@@ -1,11 +1,12 @@
 import React from "react";
-import {View, StyleSheet, TouchableOpacity, Dimensions} from "react-native";
+import {View, StyleSheet, TouchableOpacity, Dimensions, Platform} from "react-native";
 
 import EnvelopeSvg from "../../assets/icons/envelope.svg";
 import SettingsSvg from "../../assets/icons/settings.svg";
 import {Actions} from "react-native-router-flux";
 
 import {INBOX, SETTINGS} from "../../constants/route";
+import Constants from "expo-constants";
 
 export default () => {
     return (
@@ -20,11 +21,13 @@ export default () => {
     );
 };
 
+const top = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 10;
 const style = StyleSheet.create({
     navigation: {
-        position: "absolute",
+        top,
+        position: 'absolute',
         left: 0,
-        top: 36,
+        paddingVertical: 5,
         paddingHorizontal: 18,
         width: Dimensions.get('window').width,
         flexDirection: "row",

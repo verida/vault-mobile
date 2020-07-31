@@ -57,10 +57,9 @@ export default () => {
 
 const style = StyleSheet.create ({
     container: {
-        alignItems: "center"
-    },
-    userImg: {
-        marginTop: 104
+        justifyContent: "center",
+        alignItems: "center",
+        minHeight: "100%"
     },
     title: {
         fontSize: 22,
@@ -76,8 +75,7 @@ const style = StyleSheet.create ({
         marginTop: 4,
         marginBottom: 16,
         maxWidth: 260,
-        textAlign: "center",
-        fontFamily: 'AvenirBold'
+        textAlign: "center"
     },
     qr: {
         width: 240,

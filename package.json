@@ -24,6 +24,7 @@
     "ethers": "4.0",
     "events": "^1.1.1",
     "expo": "^38.0.0",
+    "expo-constants": "^9.1.1",
     "expo-font": "~8.2.1",
     "expo-image-picker": "~8.3.0",
     "expo-linear-gradient": "~8.2.1",
