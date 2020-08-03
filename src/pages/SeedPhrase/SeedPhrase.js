@@ -29,7 +29,7 @@ export default () => (
         <Button style={{marginTop: 56}} color="primary" onPress={onShow}>
             Show Seed Phrase
         </Button>
-        <Button color="transparent-grey" onPress={onRemind}>
+        <Button color="transparent-grey" onPress={() => onRemind()}>
             Remind me later
         </Button>
     </Layout>
