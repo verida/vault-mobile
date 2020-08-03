@@ -7,15 +7,22 @@ import Button from '../../components/Button';
 import Layout from '../../components/Layouts/Layout';
 import Words from '../../components/Words';
 
-import {SUCCESS} from '../../constants/route';
 import {resetPhrase} from "../../store/words/actions";
-import {walletByMnemonic} from "../../api";
 import ErrorPhrase from "../../components/ErrorPhrase";
+import {onRemind} from "../../helpers/account";
 
-const VerifyPhrase = ({ words, shuffled, ...props }) => {
+import {SUCCESS} from '../../constants/route';
+import {MNEMONIC_LENGTH, walletByMnemonic} from "../../api";
+import {throwError} from "ethers/errors";
+
+const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
     const [error, showError] = useState(null);
+    const [verified, setVerified] = useState(null);
 
-    useEffect(() => showError(false), [words]);
+    useEffect(() => {
+        showError(false);
+        setVerified(words.length === MNEMONIC_LENGTH)
+    }, [words]);
     useEffect(() => {
         return () => {
             props.resetPhrase();
@@ -41,12 +48,18 @@ const VerifyPhrase = ({ words, shuffled, ...props }) => {
                 <ErrorPhrase shown={error} style={style.error} />
             </View>
             <View>
-                <Button style={{marginTop: 20}} color="primary" onPress={onConfirm}>
-                    Confirm
-                </Button>
-                <Button style={{marginTop: 10}} color="transparent" onPress={props.resetPhrase}>
-                    Clear
-                </Button>
+                { !verified &&
+                    <Button style={{marginTop: 20}} color="transparent-grey" onPress={() => onRemind(mnemonic)}>
+                        Skip
+                    </Button> }
+                { verified && <>
+                    <Button style={{marginTop: 20}} color="primary" onPress={onConfirm}>
+                        Confirm
+                    </Button>
+                    <Button style={{marginTop: 10}} color="transparent-grey" onPress={props.resetPhrase}>
+                        Clear
+                    </Button>
+                </>}
             </View>
         </Layout>
     )
@@ -54,7 +67,10 @@ const VerifyPhrase = ({ words, shuffled, ...props }) => {
 
 
 const mapStateToProps = state => {
-    return { words: state.template };
+    return {
+        words: state.template,
+        mnemonic: state.mnemonic
+    };
 };
 
 const mapDispatchToProps = dispatch => {

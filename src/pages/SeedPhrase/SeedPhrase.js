@@ -1,5 +1,6 @@
 import React from "react";
 import { StyleSheet } from "react-native";
+import { Actions } from "react-native-router-flux";
 import Text from "../../components/Text";
 import Button from "../../components/Button";
 import Layout from "../../components/Layouts/Layout";
@@ -7,10 +8,8 @@ import List from "../../components/Lists/List";
 
 import SafeImg from "../../assets/safe.svg";
 
-import { Actions } from "react-native-router-flux";
-import { SEED_PHRASE_GENERATED } from "../../constants/route";
-
-import { NUNITO_SANS } from "../../constants/text";
+import {SEED_PHRASE_GENERATED} from "../../constants/route";
+import {onRemind} from "../../helpers/account";
 
 const Items = [
   "The seed phrase is composed of 12 words. Please record them carefully and store your phrase in a safe place.",
@@ -29,6 +28,9 @@ export default () => (
         <List items={Items}/>
         <Button style={{marginTop: 56}} color="primary" onPress={onShow}>
             Show Seed Phrase
+        </Button>
+        <Button color="transparent-grey" onPress={onRemind}>
+            Remind me later
         </Button>
     </Layout>
 );

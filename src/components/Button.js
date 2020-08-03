@@ -13,7 +13,10 @@ export default (props) => {
             case "transparent":
             case "grey":
                 return "primary";
-            default: return "white";
+            case "transparent-grey":
+                return "grey";
+            default:
+                return "white";
         }
     })();
 

@@ -1,4 +1,3 @@
-
 import walletUtils from "@verida/wallet-utils";
 import AsyncStorage from "@react-native-community/async-storage";
 

@@ -2,6 +2,11 @@ import {StyleSheet} from "react-native";
 import {LIGHTGREY_COLOR, PRIMARY_COLOR, WHITE_COLOR} from "../constants/color";
 import {NUNITO_SANS_BOLD} from "../constants/text";
 
+
+const transparent = {
+    backgroundColor: 'transparent',
+    borderColor: 'transparent',
+};
 export default StyleSheet.create({
     button: {
         borderRadius: 4,
@@ -25,8 +30,10 @@ export default StyleSheet.create({
         borderColor: WHITE_COLOR
     },
     transparent: {
-        backgroundColor: 'transparent',
-        borderColor: 'transparent'
+        ...transparent,
+    },
+    'transparent-grey': {
+        ...transparent
     },
     grey: {
         borderColor: LIGHTGREY_COLOR

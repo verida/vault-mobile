@@ -1,7 +1,11 @@
-import {ADD_WORD, REMOVE_WORD, RESET_PHRASE} from "./action-types";
+import {ADD_WORD, REMOVE_WORD, RESET_PHRASE, SET_MNEMONIC} from "./action-types";
 
 export const addWord = (payload) => {
     return { type: ADD_WORD, payload };
+};
+
+export const setMnemonic = (payload) => {
+    return { type: SET_MNEMONIC, payload };
 };
 
 export const removeWord = (payload) => {
