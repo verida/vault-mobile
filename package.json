@@ -33,6 +33,7 @@
     "git": "^0.1.5",
     "https-browserify": "0.0.1",
     "metro-config": "^0.61.0",
+    "native-base": "^2.13.14",
     "node-libs-react-native": "^1.2.0",
     "path-browserify": "0.0.0",
     "process": "^0.11.10",
