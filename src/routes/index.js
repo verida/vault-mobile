@@ -35,6 +35,7 @@ import DataSynchronization from '../pages/Inbox/DataSynchronization';
 
 import Credentials from '../pages/Dashboard/Credentials';
 import Credential from '../pages/Credential';
+import Health from '../pages/Health';
 
 import DashboardTabs from '../components/Navigation/DashboardTabs';
 import { isAuthorized } from '../api';
@@ -45,6 +46,7 @@ import {
     DASHBOARD,
     DATA,
     HOME,
+    HEALTH,
     LOGIN_HISTORY,
     LOGIN_REQUEST,
     PRIVATE_PROFILE,
@@ -122,6 +124,8 @@ const Routes = () => {
                 <Scene key={PRIVATE_PROFILE} component={PrivateProfile} title="Private Identity" back={true} clone={true} />
                 <Scene key={EDIT_PROFILE} component={EditProfile} title="Edit Profile" back={true} />
                 <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} title="Seed Phrase" back={true} clone />
+
+                <Scene key={HEALTH} component={Health} hideNavBar={true} />
             </Scene>
         </Router>
     );
