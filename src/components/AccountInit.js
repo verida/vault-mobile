@@ -1,14 +1,14 @@
 import React, { useState } from 'react';
-import { Actions } from "react-native-router-flux";
-import { TextInput, StyleSheet } from "react-native";
+import { Actions } from 'react-native-router-flux';
+import { TextInput, StyleSheet } from 'react-native';
 
-import DropDownPicker from "./Select";
-import Button from "./Button";
-import Layout from "./Layouts/Layout";
-import Label from "./Label";
+import DropDownPicker from './Select';
+import Button from './Button';
+import Layout from './Layouts/Layout';
+import Label from './Label';
 
-import InputStyles from "../styles/inputs";
-import {COUNTRIES} from "../helpers/country-list";
+import InputStyles from '../styles/inputs';
+import { COUNTRIES } from '../helpers/country-list';
 
 export default ({ action }) => {
     const [username, setUsername] = useState(null);
@@ -21,7 +21,7 @@ export default ({ action }) => {
         <Layout title="Select Username" style={style.layout}>
             <Label>Username</Label>
             <TextInput
-                placeholder={"Enter username"}
+                placeholder={'Enter username'}
                 style={InputStyles.input}
                 value={username}
                 onChangeText={setUsername} />
@@ -36,18 +36,18 @@ export default ({ action }) => {
                 onChangeItem={onCountryChange}
             />
             <Button style={style.mt}
-                    color="primary"
-                    disabled={!country}
-                    onPress={onContinue}>
+                color="primary"
+                disabled={!country}
+                onPress={onContinue}>
                 Continue
             </Button>
         </Layout>
-    )
+    );
 };
 
 const style = StyleSheet.create ({
     layout: {
-        minHeight: "100%"
+        minHeight: '100%'
     },
     mt: {
         marginTop: 40

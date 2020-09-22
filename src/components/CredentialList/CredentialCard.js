@@ -1,21 +1,21 @@
-import React from "react";
-import {View, Image, StyleSheet, TouchableOpacity} from "react-native";
-import {Actions} from "react-native-router-flux";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import React from 'react';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import Text from "../Text";
-import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
-import {CREDENTIAL_DETAILS} from "../../constants/route";
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import Text from '../Text';
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color';
+import { CREDENTIAL_DETAILS } from '../../constants/route';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 const onPress = (credential) => {
-    Actions[CREDENTIAL_DETAILS]({ credential })
+    Actions[CREDENTIAL_DETAILS]({ credential });
 };
 
 export default ({ item, active, ...props }) => (
     <TouchableOpacity style={[style.card, props.style]} onPress={() => active && onPress(item)}>
-        <View style={{ flexDirection: "row", alignItems: "center" }}>
-            <Image source={{uri: item.logo}} style={style.img}/>
+        <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Image source={{ uri: item.logo }} style={style.img}/>
             <View>
                 <Text style={style.title}>{ item.title }</Text>
                 <Text style={style.text}>{ item.description }</Text>
@@ -27,16 +27,16 @@ export default ({ item, active, ...props }) => (
             name="keyboard-arrow-right"
             color={BLACK_COLOR_OPACITY(0.45)} /> }
     </TouchableOpacity>
-)
+);
 
 const style = StyleSheet.create ({
     card: {
         borderRadius: 4,
         borderWidth: 1,
         borderColor: LIGHTGREY_COLOR,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
         padding: 16,
         marginBottom: 8
     },

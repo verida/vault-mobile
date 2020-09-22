@@ -1,9 +1,9 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import Text from "../Text";
-import Success from "../../assets/success.svg";
-import {WHITE_COLOR} from "../../constants/color";
+import Text from '../Text';
+import Success from '../../assets/success.svg';
+import { WHITE_COLOR } from '../../constants/color';
 
 export default ({ type, approved }) => (
     <View style={style.container}>
@@ -15,28 +15,28 @@ export default ({ type, approved }) => (
             </View>
         }
     </View>
-)
+);
 
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center"
+        alignItems: 'center'
     },
     text: {
         fontSize: 14,
-        textAlign: "center",
+        textAlign: 'center',
         marginTop: 16
     },
     card: {
-        position: "absolute",
-        top: "25%",
+        position: 'absolute',
+        top: '25%',
         borderRadius: 8,
         paddingHorizontal: 36,
         paddingBottom: 20,
         backgroundColor: WHITE_COLOR,
-        borderColor: "lightgrey",
+        borderColor: 'lightgrey',
         borderWidth: 1,
-        alignItems: "center"
+        alignItems: 'center'
     },
     title: {
         fontSize: 14,

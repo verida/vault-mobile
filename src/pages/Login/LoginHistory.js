@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { TabView, SceneMap } from 'react-native-tab-view';
 
-import HistoryLayout from "../../components/Layouts/HistoryLayout";
-import LoginTabs from "../../components/Navigation/LoginTabs";
+import HistoryLayout from '../../components/Layouts/HistoryLayout';
+import LoginTabs from '../../components/Navigation/LoginTabs';
 
 export default () => {
     const [index, setIndex] = useState(0);
@@ -26,4 +26,4 @@ export default () => {
             onIndexChange={setIndex}
         />
     );
-}
+};

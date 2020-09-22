@@ -1,20 +1,20 @@
-import React from "react";
-import {View, Image, StyleSheet, TouchableOpacity} from "react-native";
-import {Actions} from "react-native-router-flux";
-import Text from "../Text";
+import React from 'react';
+import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import Text from '../Text';
 
-import {findTypeById} from "../../helpers/inbox";
+import { findTypeById } from '../../helpers/inbox';
 import {
     BLACK_COLOR_OPACITY,
     LIGHTGREY_COLOR,
     ORANGE_COLOR
-} from "../../constants/color";
+} from '../../constants/color';
 
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 export default ({ options }) => {
     const type = findTypeById(options.id);
-    const title = options.title + (options.from ? " from " : "");
+    const title = options.title + (options.from ? ' from ' : '');
 
     const onPress = () => Actions[type.action]({ id: options.id });
 
@@ -24,7 +24,7 @@ export default ({ options }) => {
             <View style={style.details}>
                 <View style={style.tile}>
                     <View>
-                        <View style={{ flexDirection: "row" }}>
+                        <View style={{ flexDirection: 'row' }}>
                             <Text style={style.title}>{title} </Text>
                             { !options.read && <View style={style.new} /> }
                         </View>
@@ -35,7 +35,7 @@ export default ({ options }) => {
                     </Text>
                 </View>
                 <View style={style.tile}>
-                    <Text style={{...style.text, marginTop: 4}}>{type.title}</Text>
+                    <Text style={{ ...style.text, marginTop: 4 }}>{type.title}</Text>
                     { type.svg && type.svg() }
                 </View>
             </View>
@@ -44,15 +44,15 @@ export default ({ options }) => {
 };
 
 const style = StyleSheet.create({
-   card: {
-       borderWidth: 1,
-       borderColor: LIGHTGREY_COLOR,
-       borderRadius: 4,
-       marginBottom: 8,
-       paddingVertical: 20,
-       paddingHorizontal: 16,
-       flexDirection: "row"
-   },
+    card: {
+        borderWidth: 1,
+        borderColor: LIGHTGREY_COLOR,
+        borderRadius: 4,
+        marginBottom: 8,
+        paddingVertical: 20,
+        paddingHorizontal: 16,
+        flexDirection: 'row'
+    },
     logo: {
         width: 40,
         height: 40,
@@ -62,7 +62,7 @@ const style = StyleSheet.create({
     title: {
         fontSize: 17,
         lineHeight: 28,
-        alignItems: "center",
+        alignItems: 'center',
         fontFamily: NUNITO_SANS_BOLD
     },
     text: {
@@ -71,12 +71,12 @@ const style = StyleSheet.create({
         lineHeight: 18
     },
     tile: {
-        flexDirection: "row",
-        justifyContent: "space-between"
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     details: {
         paddingLeft: 15,
-        flexDirection: "column",
+        flexDirection: 'column',
         flex: 1
     },
     new: {

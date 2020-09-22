@@ -1,12 +1,12 @@
-import React, { useState } from "react";
-import {View, TextInput} from "react-native";
-import Label from "../../components/Label";
-import Layout from "../../components/Layouts/Layout";
-import Button from "../../components/Button";
+import React, { useState } from 'react';
+import { View, TextInput } from 'react-native';
+import Label from '../../components/Label';
+import Layout from '../../components/Layouts/Layout';
+import Button from '../../components/Button';
 
-import InputStyles from "../../styles/inputs";
-import {COUNTRIES} from "../../helpers/country-list";
-import DropDownPicker from "../../components/Select";
+import InputStyles from '../../styles/inputs';
+import { COUNTRIES } from '../../helpers/country-list';
+import DropDownPicker from '../../components/Select';
 
 import IntlPhoneInput from 'react-native-intl-phone-input';
 
@@ -17,17 +17,17 @@ export default ({ option }) => {
     const onChangeItem = (e) => setEdited(e);
 
     return (
-        <Layout style={{flex: 1, justifyContent: "space-between"}}>
+        <Layout style={{ flex: 1, justifyContent: 'space-between' }}>
             <View>
                 <Label>{ option.label }</Label>
-                { option.type === "input" &&
+                { option.type === 'input' &&
                     <TextInput
                         placeholder={`Enter the ${option.label}`}
                         style={InputStyles.input}
                         value={edited}
                         autoFocus={true}
                         onChangeText={setEdited} /> }
-                { option.type === "select" &&
+                { option.type === 'select' &&
                     <DropDownPicker
                         autoFocus={true}
                         isVisible={true}
@@ -39,7 +39,7 @@ export default ({ option }) => {
                         containerStyle={InputStyles.select}
                         onChangeItem={onChangeItem}
                     /> }
-                { option.type === "textarea" &&
+                { option.type === 'textarea' &&
                     <TextInput
                         placeholder={`Enter the ${option.label}`}
                         style={InputStyles.textarea}
@@ -50,14 +50,14 @@ export default ({ option }) => {
                         editable
                         autoFocus={true}
                         onChangeText={setEdited} /> }
-                { option.type === "phone" &&
+                { option.type === 'phone' &&
                     <IntlPhoneInput
                         // ref={el => setPhoneInputRef(el)}
-                        containerStyle={{...InputStyles.input, paddingVertical: 4}}
+                        containerStyle={{ ...InputStyles.input, paddingVertical: 4 }}
                         onChangeText={onChangeItem}
                         defaultCountry="SG" /> }
             </View>
-            <Button style={{bottom: 16}}>Save Changes</Button>
+            <Button style={{ bottom: 16 }}>Save Changes</Button>
         </Layout>
-    )
-}
+    );
+};

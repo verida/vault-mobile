@@ -1,6 +1,6 @@
-import React from "react";
-import Record from "./Record";
+import React from 'react';
+import Record from './Record';
 
 export default ({ list }) => {
-    return list.map((item) => <Record item={item} key={`record - ${item.id}`}/>)
-}
+    return list.map((item) => <Record item={item} key={`record - ${item.id}`}/>);
+};

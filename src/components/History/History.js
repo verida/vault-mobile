@@ -1,10 +1,10 @@
-import React from "react";
-import { StyleSheet, View, Image, Dimensions, TouchableOpacity } from "react-native";
-import Text from "../../components/Text";
-import { Actions } from "react-native-router-flux";
-import {LOGIN_REQUEST} from "../../constants/route";
-import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR, WHITE_COLOR} from "../../constants/color";
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import React from 'react';
+import { StyleSheet, View, Image, Dimensions, TouchableOpacity } from 'react-native';
+import Text from '../../components/Text';
+import { Actions } from 'react-native-router-flux';
+import { LOGIN_REQUEST } from '../../constants/route';
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR, WHITE_COLOR } from '../../constants/color';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 const onPress = () => Actions[LOGIN_REQUEST]();
 
@@ -25,7 +25,7 @@ export default ({ data }) => {
             </View>
         </TouchableOpacity>
     );
-}
+};
 
 const style = StyleSheet.create({
     card: {
@@ -37,11 +37,11 @@ const style = StyleSheet.create({
         width: Dimensions.get('window').width - 40,
     },
     details: {
-        flexDirection: "row",
+        flexDirection: 'row',
     },
     description: {
         flexShrink: 1,
-        justifyContent: "space-between",
+        justifyContent: 'space-between',
         paddingHorizontal: 12
     },
     title: {

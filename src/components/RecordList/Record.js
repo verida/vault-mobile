@@ -1,20 +1,20 @@
-import React from "react";
-import {StyleSheet, View} from "react-native";
-import Text from "../Text";
-import Filters from "./Filters";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import Text from '../Text';
+import Filters from './Filters';
 
-import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
-import {NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color';
+import { NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 export default ({ item }) => (
-   <View style={style.card}>
+    <View style={style.card}>
         <View style={style.header}>
             <Text style={style.title}>{ item.title }</Text>
             <Text style={style.amount}>{ item.amount } records</Text>
         </View>
-       <Text style={style.text}>Inserted > { item.insertedAt }</Text>
+        <Text style={style.text}>Inserted {'>'} { item.insertedAt }</Text>
         { item.filters && <Filters filters={item.filters} key={`filter-${item.id}`} /> }
-   </View>
+    </View>
 );
 
 const style = StyleSheet.create({
@@ -26,8 +26,8 @@ const style = StyleSheet.create({
         marginBottom: 8
     },
     header: {
-        flexDirection: "row",
-        justifyContent: "space-between"
+        flexDirection: 'row',
+        justifyContent: 'space-between'
     },
     title: {
         fontSize: 17,

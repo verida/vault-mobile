@@ -1,11 +1,11 @@
-import React from "react";
-import {StyleSheet, View} from "react-native";
-import { CheckBox } from "react-native-elements";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
+import { CheckBox } from 'react-native-elements';
 
-import Text from "./Text";
+import Text from './Text';
 
-import {LIGHTGREY_COLOR, SUCCESS_COLOR} from "../constants/color";
-import {NUNITO_SANS_SEMIBOLD} from "../constants/text";
+import { LIGHTGREY_COLOR, SUCCESS_COLOR } from '../constants/color';
+import { NUNITO_SANS_SEMIBOLD } from '../constants/text';
 
 export default ({ network, selected, onSelect }) => {
     return (
@@ -26,8 +26,8 @@ export default ({ network, selected, onSelect }) => {
                 onPress={() => onSelect(network.id)}
             />
         </View>
-    )
-}
+    );
+};
 
 const style = StyleSheet.create({
     container: {
@@ -36,14 +36,14 @@ const style = StyleSheet.create({
         borderColor: LIGHTGREY_COLOR,
         paddingHorizontal: 15,
         paddingVertical: 9,
-        justifyContent: "space-between",
-        alignItems: "center",
-        flexDirection: "row",
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        flexDirection: 'row',
         marginBottom: 16
     },
     description: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     title: {
         marginLeft: 12,

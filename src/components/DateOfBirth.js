@@ -1,7 +1,7 @@
-import React, { useState } from "react";
-import DatePicker from "react-native-datepicker";
-import {StyleSheet} from "react-native";
-import {BLACK_COLOR_OPACITY, PRIMARY_COLOR, WHITE_COLOR} from "../constants/color";
+import React, { useState } from 'react';
+import DatePicker from 'react-native-datepicker';
+import { StyleSheet } from 'react-native';
+import { BLACK_COLOR_OPACITY, PRIMARY_COLOR, WHITE_COLOR } from '../constants/color';
 
 export default ({ selected }) => {
     const [value, setValue] = useState(selected);
@@ -18,20 +18,20 @@ export default ({ selected }) => {
             cancelBtnText="Cancel"
             useNativeDriver={true}
             customStyles={style}
-            onDateChange={(date) => {setValue(date)}}
+            onDateChange={(date) => {setValue(date);}}
         />
-    )
-}
+    );
+};
 
 const text = {
     color: BLACK_COLOR_OPACITY(0.6),
-    fontFamily: "NunitoSans",
+    fontFamily: 'NunitoSans',
     fontSize: 17
 };
 
 const style = StyleSheet.create({
     dateInput: {
-        alignItems: "flex-end",
+        alignItems: 'flex-end',
         borderWidth: 0,
         marginRight: 26,
         marginTop: -14

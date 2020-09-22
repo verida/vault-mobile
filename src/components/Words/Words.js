@@ -1,8 +1,8 @@
-import React from "react";
-import Text from "../Text";
-import {StyleSheet, TouchableOpacity} from "react-native";
+import React from 'react';
+import Text from '../Text';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 
-import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color';
 
 export default ({ words, template, onSelect, id, containerStyle }) => words.map(word => (
     <TouchableOpacity key={`${id} - ${word}`}

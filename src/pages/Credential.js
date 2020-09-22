@@ -1,42 +1,42 @@
-import React from "react";
-import {View, StyleSheet} from "react-native";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import Layout from "../components/Layouts/Layout";
-import CredentialCard from "../components/CredentialList/CredentialCard";
-import CredentialDetails from "../components/CredentialDetails";
+import Layout from '../components/Layouts/Layout';
+import CredentialCard from '../components/CredentialList/CredentialCard';
+import CredentialDetails from '../components/CredentialDetails';
 
-import StyleDivider from "../styles/divider";
-import { QRCode } from "react-native-custom-qr-codes-expo";
-import {BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../constants/color";
+import StyleDivider from '../styles/divider';
+import { QRCode } from 'react-native-custom-qr-codes-expo';
+import { WHITE_COLOR } from '../constants/color';
 
 export default ({ credential }) => (
     <Layout>
         <View style={style.qr}>
             <QRCode
                 size={160}
-                content={"react-native-custom"} />
+                content={'react-native-custom'} />
         </View>
         <CredentialCard
             item={credential}
-            style={{marginTop: 24, marginBottom: 24}}
+            style={{ marginTop: 24, marginBottom: 24 }}
             active={false}
-            />
+        />
         <View style={StyleDivider.divider} />
         <CredentialDetails />
     </Layout>
-)
+);
 
 const style = StyleSheet.create({
     qr: {
         padding: 20,
         borderRadius: 17,
-        alignItems: "center",
+        alignItems: 'center',
         marginTop: 24,
-        alignSelf: "center",
+        alignSelf: 'center',
         shadowOpacity: 0.1,
         shadowOffset: {
-          width: 0,
-          height: 0
+            width: 0,
+            height: 0
         },
         backgroundColor: WHITE_COLOR,
         elevation: 3

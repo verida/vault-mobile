@@ -1,11 +1,11 @@
-import React, {useState} from "react";
-import {Image, StyleSheet, TouchableOpacity, View} from "react-native";
+import React, { useState } from 'react';
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
-import * as ImagePicker from "expo-image-picker";
-import PhotoCameraSvg from "../assets/photo-camera.svg";
-import {WHITE_COLOR} from "../constants/color";
+import * as ImagePicker from 'expo-image-picker';
+import PhotoCameraSvg from '../assets/photo-camera.svg';
+import { WHITE_COLOR } from '../constants/color';
 
-const userImg = "https://developers.google.com/web/tools/chrome-user-experience-report/images/logo.png?hl=ru-RU";
+const userImg = 'https://developers.google.com/web/tools/chrome-user-experience-report/images/logo.png?hl=ru-RU';
 
 export default () => {
     const [image, setImage] = useState(userImg);
@@ -40,12 +40,12 @@ export default () => {
                 <PhotoCameraSvg style={style.svg} />
             </TouchableOpacity>
         </View>
-    )
-}
+    );
+};
 
 const style = StyleSheet.create({
     img: {
-        alignItems: "center",
+        alignItems: 'center',
         marginBottom: 24
     },
     imgContainer: {
@@ -56,10 +56,10 @@ const style = StyleSheet.create({
         borderWidth: 4
     },
     svg: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 27,
     },
     loader: {
-        alignItems: "center"
+        alignItems: 'center'
     }
 });

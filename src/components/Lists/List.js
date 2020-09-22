@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet } from "react-native";
-import Text from "../Text";
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import Text from '../Text';
 
-import {BLACK_COLOR_OPACITY} from "../../constants/color";
+import { BLACK_COLOR_OPACITY } from '../../constants/color';
 
 export default ({ items }) => items.map((item, index) => (
     <Text key={`aspects-${index}`} style={[style.text, { marginTop: 16 }]}>
@@ -11,7 +11,7 @@ export default ({ items }) => items.map((item, index) => (
 ));
 
 const style = StyleSheet.create({
-   text: {
-       color: BLACK_COLOR_OPACITY(0.6)
-   }
+    text: {
+        color: BLACK_COLOR_OPACITY(0.6)
+    }
 });

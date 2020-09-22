@@ -1,20 +1,20 @@
-import React, {useEffect, useState} from "react";
-import { View, StyleSheet, Image, Platform } from "react-native";
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Image, Platform } from 'react-native';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
-import Constants from "expo-constants";
+import Constants from 'expo-constants';
 
-import Text from "../../components/Text";
-import HomeTopTabs from "../../components/Navigation/HomeTopTabs";
+import Text from '../../components/Text';
+import HomeTopTabs from '../../components/Navigation/HomeTopTabs';
 
-import Layout from "../../components/Layouts/Layout";
+import Layout from '../../components/Layouts/Layout';
 
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
-import {BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../../constants/color";
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
+import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../constants/color';
 
-import { getWalletInfo } from "../../api";
+import { getWalletInfo } from '../../api';
 
-const UserImg = require("../../assets/stubs/user.png");
-const LogoImg = require("../../assets/vault-logo.png");
+const UserImg = require('../../assets/stubs/user.png');
+const LogoImg = require('../../assets/vault-logo.png');
 
 export default () => {
     const [info, setInfo] = useState({});
@@ -56,15 +56,15 @@ export default () => {
                 This is your QR-Code. Present it to others so they can scan it and connect to you
             </Text>
         </Layout>
-    )
+    );
 };
 
 const marginTop = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 24;
 const style = StyleSheet.create ({
     container: {
-        justifyContent: "center",
-        alignItems: "center",
-        minHeight: "100%"
+        justifyContent: 'center',
+        alignItems: 'center',
+        minHeight: '100%'
     },
     title: {
         fontSize: 22,
@@ -81,7 +81,7 @@ const style = StyleSheet.create ({
         marginTop: 4,
         marginBottom: 16,
         paddingHorizontal: 43,
-        textAlign: "center",
+        textAlign: 'center',
         color: BLACK_COLOR_OPACITY(0.6),
         fontFamily: NUNITO_SANS_BOLD
     },

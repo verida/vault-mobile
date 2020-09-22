@@ -1,9 +1,9 @@
-import React from "react";
-import {Image, StyleSheet, View} from "react-native";
-import Text from "../Text";
+import React from 'react';
+import { Image, StyleSheet, View } from 'react-native';
+import Text from '../Text';
 
-import {BLACK_COLOR_OPACITY, LIGHTGREY_COLOR} from "../../constants/color";
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 export default ({ details }) => {
     return (
@@ -14,15 +14,15 @@ export default ({ details }) => {
                 <Text style={style.text}>{ details.createdAt }</Text>
             </View>
         </View>
-    )
-}
+    );
+};
 
 
 const style = StyleSheet.create({
     card: {
         paddingVertical: 16,
-        flexDirection: "row",
-        alignItems: "flex-start"
+        flexDirection: 'row',
+        alignItems: 'flex-start'
     },
     logo: {
         width: 40,

@@ -1,23 +1,23 @@
 import React from 'react';
-import { View, StyleSheet } from "react-native";
-import { LinearGradient } from "expo-linear-gradient";
-import Logo from "../../assets/logo.svg";
-import Texture from "../../assets/landing-bg.svg";
-import {Actions} from "react-native-router-flux";
+import { View, StyleSheet } from 'react-native';
+import { LinearGradient } from 'expo-linear-gradient';
+import Logo from '../../assets/logo.svg';
+import Texture from '../../assets/landing-bg.svg';
+import { Actions } from 'react-native-router-flux';
 
-import Button from "../../components/Button";
-import Text from "../../components/Text";
+import Button from '../../components/Button';
+import Text from '../../components/Text';
 
 import {
     CREATE_ACCOUNT,
     IMPORT_ACCOUNT
-} from "../../constants/route";
+} from '../../constants/route';
 
-import {WHITE_COLOR} from "../../constants/color";
-import {NUNITO_SANS_BOLD} from "../../constants/text";
+import { WHITE_COLOR } from '../../constants/color';
+import { NUNITO_SANS_BOLD } from '../../constants/text';
 
 export default () => {
-    const title = `Welcome!\nIt's time to own your personal data.`;
+    const title = 'Welcome!\nIt\'s time to own your personal data.';
 
     const createAcc = () => (Actions[CREATE_ACCOUNT]());
     const importAcc = () => (Actions[IMPORT_ACCOUNT]());
@@ -48,7 +48,7 @@ export default () => {
                 </View>
             </View>
         </LinearGradient>
-    )
+    );
 };
 
 const style = StyleSheet.create ({
@@ -58,12 +58,7 @@ const style = StyleSheet.create ({
         paddingVertical: 77,
         height: '100%',
         width: '100%',
-        justifyContent: "space-between"
-    },
-    texture: {
-        position: 'absolute',
-        left: -85,
-        top: -98,
+        justifyContent: 'space-between'
     },
     landing: {
         flex: 1,
@@ -74,8 +69,4 @@ const style = StyleSheet.create ({
         fontSize: 36,
         marginTop: '35%'
     },
-    logo: {
-        width: 150,
-        height: 150,
-    }
 });

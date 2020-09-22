@@ -1,5 +1,5 @@
-import {StyleSheet} from "react-native";
-import {LIGHTGREY_COLOR} from "../constants/color";
+import { StyleSheet } from 'react-native';
+import { LIGHTGREY_COLOR } from '../constants/color';
 
 const input = {
     borderWidth: 1,
@@ -14,7 +14,7 @@ export default StyleSheet.create({
     input,
     select: {
         height: 48,
-        alignItems: "flex-start"
+        alignItems: 'flex-start'
     },
     textarea: {
         ...input,

@@ -1,18 +1,18 @@
-import React from 'react'
-import {View, StyleSheet} from "react-native";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import Success from "../assets/success.svg";
+import Success from '../assets/success.svg';
 
-import Text from "../components/Text";
-import Details from "../components/Details";
-import Button from "../components/Button";
-import Layout from "../components/Layouts/Layout";
+import Text from '../components/Text';
+import Details from '../components/Details';
+import Button from '../components/Button';
+import Layout from '../components/Layouts/Layout';
 
-import {Actions} from "react-native-router-flux";
+import { Actions } from 'react-native-router-flux';
 
-import {HOME} from "../constants/route";
-import {BLACK_COLOR} from "../constants/color";
-import {NUNITO_SANS_BOLD} from "../constants/text";
+import { HOME } from '../constants/route';
+import { BLACK_COLOR } from '../constants/color';
+import { NUNITO_SANS_BOLD } from '../constants/text';
 
 export default () => {
     const onDone = () => Actions[HOME]();
@@ -31,16 +31,16 @@ export default () => {
                 Done
             </Button>
         </Layout>
-    )
+    );
 };
 
 const style = StyleSheet.create ({
     layout: {
-        justifyContent: "center",
-        minHeight: "100%"
+        justifyContent: 'center',
+        minHeight: '100%'
     },
     header: {
-        alignItems: "center"
+        alignItems: 'center'
     },
     title: {
         margin: 32,
@@ -49,8 +49,8 @@ const style = StyleSheet.create ({
         fontFamily: NUNITO_SANS_BOLD
     },
     description: {
-        fontFamily: "NunitoSans",
-        fontWeight: "500",
+        fontFamily: 'NunitoSans',
+        fontWeight: '500',
         fontSize: 14,
         color: BLACK_COLOR,
         opacity: 0.6

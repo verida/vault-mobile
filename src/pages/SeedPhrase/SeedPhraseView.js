@@ -1,12 +1,12 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from 'react';
 
-import Layout from "../../components/Layouts/Layout";
-import WordCard from "../../components/Words/WordCard";
+import Layout from '../../components/Layouts/Layout';
+import WordCard from '../../components/Words/WordCard';
 
-import {getWalletInfo} from "../../api";
+import { getWalletInfo } from '../../api';
 
 export default () => {
-    const [words, setWords] = useState("");
+    const [words, setWords] = useState('');
 
     const init = async () => {
         const { mnemonic } = await getWalletInfo();
@@ -18,8 +18,8 @@ export default () => {
     }, []);
 
     return (
-        <Layout style={{marginTop: 20}}>
+        <Layout style={{ marginTop: 20 }}>
             <WordCard words={words}/>
         </Layout>
-    )
+    );
 };

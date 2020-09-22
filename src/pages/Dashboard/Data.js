@@ -1,12 +1,12 @@
-import React from "react";
-import {StyleSheet, Linking, View} from "react-native";
-import {TouchableOpacity} from "react-native-gesture-handler";
+import React from 'react';
+import { StyleSheet, Linking, View } from 'react-native';
+import { TouchableOpacity } from 'react-native-gesture-handler';
 
-import Text from "../../components/Text";
-import {BLACK_COLOR_OPACITY, PRIMARY_COLOR} from "../../constants/color";
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import Text from '../../components/Text';
+import { BLACK_COLOR_OPACITY, PRIMARY_COLOR } from '../../constants/color';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
-const vaultURL = "http://vault.verida.io/";
+const vaultURL = 'http://vault.verida.io/';
 const openVault = () => Linking.openURL(vaultURL);
 
 export default () => (
@@ -22,7 +22,7 @@ export default () => (
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
+        alignItems: 'center',
         paddingHorizontal: 57,
         paddingVertical: 40
     },

@@ -1,4 +1,4 @@
-import {ADD_WORD, REMOVE_WORD, RESET_PHRASE, SET_MNEMONIC} from "./action-types";
+import { ADD_WORD, REMOVE_WORD, RESET_PHRASE, SET_MNEMONIC } from './action-types';
 
 export const addWord = (payload) => {
     return { type: ADD_WORD, payload };
