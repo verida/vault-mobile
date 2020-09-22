@@ -1,8 +1,8 @@
-import Verida from "@verida/datastore";
-import walletUtils from "@verida/wallet-utils";
+import Verida from '@verida/datastore';
+import walletUtils from '@verida/wallet-utils';
 
-const VERIDA_APP_NAME = "Verida (Mobile)";
-const VERIDA_ENVIRONMENT = "testnet";
+const VERIDA_APP_NAME = 'Verida (Mobile)';
+const VERIDA_ENVIRONMENT = 'testnet';
 
 export const testVeridaConnect = () => {
     const { address, chain, privateKey } = walletUtils.createWallet('ethr');

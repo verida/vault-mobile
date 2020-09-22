@@ -11,7 +11,7 @@ import {
 
 import PropTypes from 'prop-types';
 import Feather from 'react-native-vector-icons/Feather';
-import {BLACK_ORIGIN_COLOR, WHITE_COLOR} from "../constants/color";
+import { WHITE_COLOR } from '../constants/color';
 
 class DropDownPicker extends React.Component {
     constructor(props) {
@@ -29,13 +29,13 @@ class DropDownPicker extends React.Component {
             }
         } else {
             if (props.defaultValue && Array.isArray(props.defaultValue) && props.defaultValue.length > 0) {
-                props.defaultValue.forEach((value, index) => {
+                props.defaultValue.forEach((value) => {
                     items.push(
                         props.items.find(item => item.value === value)
-                    )
+                    );
                 });
             } else if (props.items.filter(item => item.hasOwnProperty('selected') && item.selected === true).length > 0) {
-                items = props.items.filter((item, index) => item.hasOwnProperty('selected') && item.selected === true);
+                items = props.items.filter((item) => item.hasOwnProperty('selected') && item.selected === true);
             }
         }
 
@@ -69,17 +69,17 @@ class DropDownPicker extends React.Component {
                     ...state.props,
                     defaultValue: props.defaultValue
                 }
-            }
+            };
         }
 
         // Change default value (multiple)
         if (state.props.multiple && JSON.stringify(props.defaultValue) !== JSON.stringify(state.props.defaultValue)) {
             let items = [];
             if (props.defaultValue && Array.isArray(props.defaultValue) && props.defaultValue.length > 0) {
-                props.defaultValue.forEach((value, index) => {
+                props.defaultValue.forEach((value) => {
                     items.push(
                         props.items.find(item => item.value === value)
-                    )
+                    );
                 });
             }
 
@@ -89,7 +89,7 @@ class DropDownPicker extends React.Component {
                     ...state.props,
                     defaultValue: props.defaultValue
                 }
-            }
+            };
         }
 
         // Change visibility
@@ -100,7 +100,7 @@ class DropDownPicker extends React.Component {
                     ...state.props,
                     isVisible: props.isVisible
                 }
-            }
+            };
         }
 
         // Change disability
@@ -110,7 +110,7 @@ class DropDownPicker extends React.Component {
                     ...state.props,
                     disabled: props.disabled
                 }
-            }
+            };
         }
 
         return null;
@@ -120,7 +120,7 @@ class DropDownPicker extends React.Component {
         return {
             label: null,
             value: null
-        }
+        };
     }
 
     toggle() {
@@ -229,16 +229,16 @@ class DropDownPicker extends React.Component {
                         }
                     ]}
                 >
-                    <View style={[styles.dropDownDisplay]}>
-                        <Text style={[this.props.labelStyle, placeholderStyle, {opacity}]}>
+                    <View style={styles.dropDownDisplay}>
+                        <Text style={[this.props.labelStyle, placeholderStyle, { opacity }]}>
                             {multiple ? (
                                 this.state.choice.length > 0 ? this.getNumberOfItems() : placeholder
                             ) : label}
                         </Text>
                     </View>
                     {this.props.showArrow && (
-                        <View style={[styles.arrow]}>
-                            <View style={[this.props.arrowStyle, {opacity}]}>
+                        <View style={styles.arrow}>
+                            <View style={[this.props.arrowStyle, { opacity }]}>
                                 {
                                     ! this.state.isVisible ? (
                                         this.props.customArrowDown(this.props.arrowSize, this.props.arrowColor)
@@ -262,7 +262,7 @@ class DropDownPicker extends React.Component {
                 ]}>
                     {
                         this.props.searchable && (
-                            <View style={{width: '100%', flexDirection: 'row'}}>
+                            <View style={{ width: '100%', flexDirection: 'row' }}>
                                 <TextInput
                                     autoFocus={this.props.autoFocus}
                                     style={[styles.input, this.props.searchableStyle]}
@@ -271,14 +271,14 @@ class DropDownPicker extends React.Component {
                                     onChangeText={(text) => {
                                         this.setState({
                                             searchableText: text
-                                        })
+                                        });
                                     }}
                                 />
                             </View>
                         )
                     }
 
-                    <ScrollView style={{width: '100%'}} nestedScrollEnabled={true}>
+                    <ScrollView style={{ width: '100%' }} nestedScrollEnabled={true}>
                         {
                             items.length > 0 ? items.map((item, index) => (
                                 <TouchableOpacity
@@ -334,7 +334,7 @@ DropDownPicker.defaultProps = {
     activeItemStyle: {},
     activeLabelStyle: {},
     arrowStyle: {},
-    arrowColor: "#000",
+    arrowColor: '#000',
     showArrow: true,
     arrowSize: 15,
     customArrowUp: (size, color) => <Feather name="chevron-up" size={size} color={color} />,

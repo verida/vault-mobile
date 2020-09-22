@@ -1,17 +1,17 @@
-import React from "react";
-import {StyleSheet, View} from "react-native";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import Text from "../components/Text";
-import PropertyList from "../components/PropertyList";
+import Text from '../components/Text';
+import PropertyList from '../components/PropertyList';
 
-import LayoutStyle from "../styles/layouts";
-import {Actions} from "react-native-router-flux";
+import LayoutStyle from '../styles/layouts';
+import { Actions } from 'react-native-router-flux';
 
-import {LOGIN_HISTORY, SEED_PHRASE_VIEW, START} from "../constants/route";
-import {BLACK_COLOR_OPACITY, ORANGE_COLOR} from "../constants/color";
+import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START } from '../constants/route';
+import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
 
-import {clearWallet} from "../api";
-import {NUNITO_SANS_BOLD} from "../constants/text";
+import { clearWallet } from '../api';
+import { NUNITO_SANS_BOLD } from '../constants/text';
 
 export default () => (
     <View style={LayoutStyle.layout}>
@@ -20,14 +20,14 @@ export default () => (
             <PropertyList list={list} />
         </View>
     </View>
-)
+);
 
 const style = StyleSheet.create({
     title: {
         fontSize: 12,
         fontFamily: NUNITO_SANS_BOLD,
         color: BLACK_COLOR_OPACITY(0.6),
-        textTransform: "uppercase",
+        textTransform: 'uppercase',
         marginTop: 24,
         marginBottom: 6
     },
@@ -42,10 +42,10 @@ const logout = async () => {
 };
 
 const list = [
-    { label: "PIN", action: "arrow", optional: true, onPress: () => {} },
-    { label: "Face ID", action: "switch", optional: true },
-    { label: "Seed Phrase", action: "arrow", optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
+    { label: 'PIN', action: 'arrow', optional: true, onPress: () => {} },
+    { label: 'Face ID', action: 'switch', optional: true },
+    { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
     // { label: "Notifications", action: "arrow" },
-    { label: "Login History", action: "arrow", optional: true, onPress: () => Actions[LOGIN_HISTORY]() },
-    { label: "Log Out", text: style.logoutText, optional: true, onPress: logout }
+    { label: 'Login History', action: 'arrow', optional: true, onPress: () => Actions[LOGIN_HISTORY]() },
+    { label: 'Log Out', text: style.logoutText, optional: true, onPress: logout }
 ];

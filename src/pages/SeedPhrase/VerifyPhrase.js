@@ -1,19 +1,18 @@
-import React, {useEffect, useState} from 'react';
-import {StyleSheet, View} from 'react-native';
-import {Actions} from 'react-native-router-flux';
-import {connect} from "react-redux";
+import React, { useEffect, useState } from 'react';
+import { StyleSheet, View } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
 
 import Button from '../../components/Button';
 import Layout from '../../components/Layouts/Layout';
 import Words from '../../components/Words';
 
-import {resetPhrase} from "../../store/words/actions";
-import ErrorPhrase from "../../components/ErrorPhrase";
-import {onRemind} from "../../helpers/account";
+import { resetPhrase } from '../../store/words/actions';
+import ErrorPhrase from '../../components/ErrorPhrase';
+import { onRemind } from '../../helpers/account';
 
-import {SUCCESS} from '../../constants/route';
-import {MNEMONIC_LENGTH, walletByMnemonic} from "../../api";
-import {throwError} from "ethers/errors";
+import { SUCCESS } from '../../constants/route';
+import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api';
 
 const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
     const [error, showError] = useState(null);
@@ -21,7 +20,7 @@ const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
 
     useEffect(() => {
         showError(false);
-        setVerified(words.length === MNEMONIC_LENGTH)
+        setVerified(words.length === MNEMONIC_LENGTH);
     }, [words]);
     useEffect(() => {
         return () => {
@@ -31,7 +30,7 @@ const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
 
     const onConfirm = async () => {
         try {
-            const phrase = words.join(" ");
+            const phrase = words.join(' ');
             await walletByMnemonic(phrase);
             props.resetPhrase();
             Actions[SUCCESS]();
@@ -49,20 +48,20 @@ const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
             </View>
             <View>
                 { !verified &&
-                    <Button style={{marginTop: 20}} color="transparent-grey" onPress={() => onRemind(mnemonic)}>
+                    <Button style={{ marginTop: 20 }} color="transparent-grey" onPress={() => onRemind(mnemonic)}>
                         Skip
                     </Button> }
                 { verified && <>
-                    <Button style={{marginTop: 20}} color="primary" onPress={onConfirm}>
+                    <Button style={{ marginTop: 20 }} color="primary" onPress={onConfirm}>
                         Confirm
                     </Button>
-                    <Button style={{marginTop: 10}} color="transparent-grey" onPress={props.resetPhrase}>
+                    <Button style={{ marginTop: 10 }} color="transparent-grey" onPress={props.resetPhrase}>
                         Clear
                     </Button>
                 </>}
             </View>
         </Layout>
-    )
+    );
 };
 
 
@@ -82,11 +81,8 @@ const mapDispatchToProps = dispatch => {
 export default connect(mapStateToProps, mapDispatchToProps)(VerifyPhrase);
 
 const style = StyleSheet.create({
-    mt: {
-        marginTop: 24
-    },
     error: {
-        textAlign: "center",
+        textAlign: 'center',
         marginTop: 20
     }
 });

@@ -1,9 +1,9 @@
-import React, { useState } from "react";
-import Text from "../Text";
-import {StyleSheet, TouchableOpacity, View} from "react-native";
-import {BLACK_COLOR_OPACITY, PRIMARY_COLOR} from "../../constants/color";
+import React, { useState } from 'react';
+import Text from '../Text';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
+import { BLACK_COLOR_OPACITY, PRIMARY_COLOR } from '../../constants/color';
 
-import _ from "underscore";
+import _ from 'underscore';
 
 export default ({ filters }) => {
     const [showAll, setShowAll] = useState(false);
@@ -12,7 +12,7 @@ export default ({ filters }) => {
     const showBtn =
         <TouchableOpacity onPress={() => setShowAll(!showAll)}>
             <Text style={style.hidden}>
-                { !showAll ? secondary.length + " more filters" : "show less" }
+                { !showAll ? secondary.length + ' more filters' : 'show less' }
             </Text>
         </TouchableOpacity>;
     const show = (list, k) => list.map((item, index) =>
@@ -21,12 +21,12 @@ export default ({ filters }) => {
 
     return (
         <View>
-            { show(primary, "primary") }
-            { Boolean(secondary.length) && showAll && show(secondary, "secondary") }
+            { show(primary, 'primary') }
+            { Boolean(secondary.length) && showAll && show(secondary, 'secondary') }
             { Boolean(secondary.length) && showBtn }
         </View>
-    )
-}
+    );
+};
 
 const style = StyleSheet.create({
     text: {

@@ -1,23 +1,23 @@
-import './global'
+import './global';
 
-import React, { useState } from "react";
-import { Provider } from "react-redux";
+import React, { useState } from 'react';
+import { Provider } from 'react-redux';
 
-import { AppLoading } from "expo";
-import * as Font from "expo-font";
+import { AppLoading } from 'expo';
+import * as Font from 'expo-font';
 
-import Routes from "./routes";
-import store from "./store";
+import Routes from './routes';
+import store from './store';
 
-// import { testVeridaConnect } from "./api/verida";
+// import { testVeridaConnect } from './api/verida';
 
 export default () => {
     const [loading, setLoading] = useState(true);
 
     const loadFonts = async () => {
-        const NunitoSans = require("./assets/fonts/NunitoSans-Regular.ttf");
-        const NunitoSansSemiBold = require("./assets/fonts/NunitoSans-SemiBold.ttf");
-        const NunitoSansBold = require("./assets/fonts/NunitoSans-Bold.ttf");
+        const NunitoSans = require('./assets/fonts/NunitoSans-Regular.ttf');
+        const NunitoSansSemiBold = require('./assets/fonts/NunitoSans-SemiBold.ttf');
+        const NunitoSansBold = require('./assets/fonts/NunitoSans-Bold.ttf');
 
         return Promise.all([
             Font.loadAsync({ NunitoSans }),
@@ -42,5 +42,5 @@ export default () => {
             onFinish={() => setLoading(false)}
             onError={console.warn} /> :
         App
-    )
+    );
 };

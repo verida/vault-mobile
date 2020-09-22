@@ -1,12 +1,12 @@
-import {StyleSheet} from "react-native";
-import {BLACK_COLOR, BLACK_COLOR_OPACITY, WHITE_COLOR} from "../constants/color";
+import { StyleSheet } from 'react-native';
+import { BLACK_COLOR, BLACK_COLOR_OPACITY, WHITE_COLOR } from '../constants/color';
 
 const sharedProps = {
     fontFamily: 'NunitoSansBold',
     fontWeight: '500',
     fontSize: 16,
-    alignItems: "center",
-    textAlign: "center",
+    alignItems: 'center',
+    textAlign: 'center',
 };
 
 export default StyleSheet.create ({

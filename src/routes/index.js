@@ -1,43 +1,43 @@
-import React, {useState, useEffect} from 'react'
-import {Router, Scene} from 'react-native-router-flux'
+import React, { useState, useEffect } from 'react';
+import { Router, Scene } from 'react-native-router-flux';
 
-import Start from '../pages/Account/Start'
+import Start from '../pages/Account/Start';
 
-import CreateAccount from '../pages/Account/Create'
-import VerifyPhrase from "../pages/SeedPhrase/VerifyPhrase"
-import Success from "../pages/Success"
-import Settings from "../pages/Settings";
+import CreateAccount from '../pages/Account/Create';
+import VerifyPhrase from '../pages/SeedPhrase/VerifyPhrase';
+import Success from '../pages/Success';
+import Settings from '../pages/Settings';
 
-import ImportAccount from '../pages/Account/Import'
-import SelectNetwork from "../pages/SelectNetwork";
+import ImportAccount from '../pages/Account/Import';
+import SelectNetwork from '../pages/SelectNetwork';
 
-import Inbox from "../pages/Inbox";
+import Inbox from '../pages/Inbox';
 
-import LoginRequest from "../pages/Login/LoginRequest";
-import LoginHistory from "../pages/Login/LoginHistory";
+import LoginRequest from '../pages/Login/LoginRequest';
+import LoginHistory from '../pages/Login/LoginHistory';
 
-import Profiles from "../pages/Dashboard/Profiles";
-import PublicProfile from "../pages/Profiles/PublicProfile";
-import PrivateProfile from "../pages/Profiles/PrivateProfile";
-import EditProfile from "../pages/Profiles/EditProfile";
+import Profiles from '../pages/Dashboard/Profiles';
+import PublicProfile from '../pages/Profiles/PublicProfile';
+import PrivateProfile from '../pages/Profiles/PrivateProfile';
+import EditProfile from '../pages/Profiles/EditProfile';
 
-import SeedPhrase from '../pages/SeedPhrase/SeedPhrase'
-import SeedPhraseGenerated from "../pages/SeedPhrase/SeedPhraseGenerated"
-import SeedPhraseView from "../pages/SeedPhrase/SeedPhraseView";
-import SeedPhraseEntered from "../pages/SeedPhrase/SeedPhraseEntered";
+import SeedPhrase from '../pages/SeedPhrase/SeedPhrase';
+import SeedPhraseGenerated from '../pages/SeedPhrase/SeedPhraseGenerated';
+import SeedPhraseView from '../pages/SeedPhrase/SeedPhraseView';
+import SeedPhraseEntered from '../pages/SeedPhrase/SeedPhraseEntered';
 
-import Home from "../pages/Dashboard/Home";
-import Data from "../pages/Dashboard/Data";
+import Home from '../pages/Dashboard/Home';
+import Data from '../pages/Dashboard/Data';
 
-import EmploymentReference from "../pages/Inbox/EmploymentReference";
-import DataSnapshot from "../pages/Inbox/DataSnapshot";
-import DataSynchronization from "../pages/Inbox/DataSynchronization";
+import EmploymentReference from '../pages/Inbox/EmploymentReference';
+import DataSnapshot from '../pages/Inbox/DataSnapshot';
+import DataSynchronization from '../pages/Inbox/DataSynchronization';
 
-import Credentials from "../pages/Dashboard/Credentials";
-import Credential from "../pages/Credential";
+import Credentials from '../pages/Dashboard/Credentials';
+import Credential from '../pages/Credential';
 
-import DashboardTabs from "../components/Navigation/DashboardTabs";
-import { isAuthorized } from "../api";
+import DashboardTabs from '../components/Navigation/DashboardTabs';
+import { isAuthorized } from '../api';
 
 import {
     CREATE_ACCOUNT,
@@ -64,15 +64,15 @@ import {
     IMPORT_ACCOUNT,
     SELECT_NETWORK,
     SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS
-} from "../constants/route";
+} from '../constants/route';
 
-import HomeSvg from "../assets/navigation/home.svg";
-import CredentialSvg from "../assets/navigation/credential.svg";
-import DataSvg from "../assets/navigation/data.svg";
-import ProfilesSvg from "../assets/navigation/profiles.svg";
+import HomeSvg from '../assets/navigation/home.svg';
+import CredentialSvg from '../assets/navigation/credential.svg';
+import DataSvg from '../assets/navigation/data.svg';
+import ProfilesSvg from '../assets/navigation/profiles.svg';
 
-const CREATE_ACCOUNT_TITLE = "Create An Account";
-const IMPORT_ACCOUNT_TITLE = "Import An Account";
+const CREATE_ACCOUNT_TITLE = 'Create An Account';
+const IMPORT_ACCOUNT_TITLE = 'Import An Account';
 
 const Routes = () => {
     const [authorized, setAuthorized] = useState(null);
@@ -101,7 +101,7 @@ const Routes = () => {
                 <Scene key={CREATE_ACCOUNT} component={CreateAccount} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title={CREATE_ACCOUNT_TITLE}
-                       back={true} />
+                    back={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true} />
                 <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} back={true} />
@@ -124,6 +124,6 @@ const Routes = () => {
                 <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} title="Seed Phrase" back={true} clone />
             </Scene>
         </Router>
-    )
+    );
 };
 export default Routes;

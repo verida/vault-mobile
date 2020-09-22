@@ -1,8 +1,8 @@
-import React from "react";
-import { StyleSheet } from "react-native";
+import React from 'react';
+import { StyleSheet } from 'react-native';
 
-import PropertyListItem from "./PropertyListItem";
-import {LIGHTGREY_COLOR, WHITE_COLOR} from "../../constants/color";
+import PropertyListItem from './PropertyListItem';
+import { LIGHTGREY_COLOR, WHITE_COLOR } from '../../constants/color';
 
 export default ({ list }) => list.map((item, index) => {
     const external = [
@@ -28,8 +28,8 @@ const style = StyleSheet.create({
         paddingLeft: 16,
     },
     property: {
-        flexDirection: "row",
-        justifyContent: "space-between",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
         paddingVertical: 22
     },
     border: {

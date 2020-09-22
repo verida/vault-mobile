@@ -1,32 +1,32 @@
-import React from "react";
-import {StyleSheet, View} from "react-native";
+import React from 'react';
+import { StyleSheet, View } from 'react-native';
 
-import Text from "./Text";
-import Label from "./Label";
+import Text from './Text';
+import Label from './Label';
 
-import { BLACK_COLOR_OPACITY } from "../constants/color";
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../constants/text";
+import { BLACK_COLOR_OPACITY } from '../constants/color';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../constants/text';
 
 const info = [
     {
-        title: "Name",
-        value: "Robert Brown"
+        title: 'Name',
+        value: 'Robert Brown'
     },
     {
-        title: "Date of birth",
-        value: "03/03/86"
+        title: 'Date of birth',
+        value: '03/03/86'
     },
     {
-        title: "Test type",
-        value: "COVID-19 PCR"
+        title: 'Test type',
+        value: 'COVID-19 PCR'
     },
     {
-        title: "Test result",
-        value: "Negative"
+        title: 'Test result',
+        value: 'Negative'
     },
     {
-        title: "Issued by",
-        value: "SA Pathology, Adelaide City"
+        title: 'Issued by',
+        value: 'SA Pathology, Adelaide City'
     }
 ];
 
@@ -44,11 +44,11 @@ export default () => {
             { details }
         </View>
     );
-}
+};
 
 const style = StyleSheet.create({
     container: {
-      marginBottom: 24
+        marginBottom: 24
     },
     title: {
         fontSize: 18,

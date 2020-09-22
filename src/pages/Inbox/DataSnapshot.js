@@ -1,77 +1,77 @@
-import React from "react";
+import React from 'react';
 
-import RequestDetailsLayout from "../../components/Inbox/RequestDetailsLayout";
-import RecordList from "../../components/RecordList"
+import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout';
+import RecordList from '../../components/RecordList';
 
 const company = {
-    uri: "http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png",
-    name: "Steve Smith from Verida Health: ERM",
-    createdAt: "May 25",
+    uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
+    name: 'Steve Smith from Verida Health: ERM',
+    createdAt: 'May 25',
     type: 2
 };
 
 const records = [
     {
         id: 1,
-        title: "Health / Notes",
+        title: 'Health / Notes',
         amount: 32,
-        insertedAt: "2019.07.03"
+        insertedAt: '2019.07.03'
     },
     {
         id: 2,
-        title: "Health / Activities",
+        title: 'Health / Activities',
         amount: 512,
-        insertedAt: "2019.07.03",
+        insertedAt: '2019.07.03',
         filters: [
-            "Type = Heart Rate",
-            "Source = Mt barker medical practice",
-            "Type = Cycling"
+            'Type = Heart Rate',
+            'Source = Mt barker medical practice',
+            'Type = Cycling'
         ]
     },
     {
         id: 3,
-        title: "Health / Activities",
+        title: 'Health / Activities',
         amount: 6,
-        insertedAt: "2019.07.03",
+        insertedAt: '2019.07.03',
         filters: [
-            "Source = Mt barker medical practice",
-            "Type = Heart Rate"
+            'Source = Mt barker medical practice',
+            'Type = Heart Rate'
         ]
     },
     {
         id: 4,
-        title: "Health / Clinical Impressions",
+        title: 'Health / Clinical Impressions',
         amount: 20,
-        insertedAt: "2019.07.03",
+        insertedAt: '2019.07.03',
         filters: [
-            "Source = Mt barker medical practice",
-            "Type = Cycling",
-            "Source = Mt barker medical practice",
-            "Type = Heart Rate"
+            'Source = Mt barker medical practice',
+            'Type = Cycling',
+            'Source = Mt barker medical practice',
+            'Type = Heart Rate'
         ]
     },
     {
         id: 5,
-        title: "Health / Clinical Impressions",
+        title: 'Health / Clinical Impressions',
         amount: 20,
-        insertedAt: "2019.07.03",
+        insertedAt: '2019.07.03',
         filters: [
-            "Source = Mt barker medical practice",
-            "Type = Cycling",
-            "Source = Mt barker medical practice",
-            "Type = Heart Rate"
+            'Source = Mt barker medical practice',
+            'Type = Cycling',
+            'Source = Mt barker medical practice',
+            'Type = Heart Rate'
         ]
     },
     {
         id: 6,
-        title: "Health / Clinical Impressions",
+        title: 'Health / Clinical Impressions',
         amount: 20,
-        insertedAt: "2019.07.03",
+        insertedAt: '2019.07.03',
         filters: [
-            "Source = Mt barker medical practice",
-            "Type = Cycling",
-            "Source = Mt barker medical practice",
-            "Type = Heart Rate"
+            'Source = Mt barker medical practice',
+            'Type = Cycling',
+            'Source = Mt barker medical practice',
+            'Type = Heart Rate'
         ]
     }
 ];
@@ -82,4 +82,4 @@ export default ({ id }) => {
             <RecordList list={records} />
         </RequestDetailsLayout>
     );
-}
+};

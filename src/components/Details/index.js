@@ -1,7 +1,7 @@
-import React, {useState, useEffect} from "react";
-import Details from "./Details";
+import React, { useState, useEffect } from 'react';
+import Details from './Details';
 
-import {getWalletInfo} from "../../api";
+import { getWalletInfo } from '../../api';
 
 export default () => {
     const [info, setInfo] = useState({});

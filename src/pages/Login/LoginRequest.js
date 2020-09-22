@@ -1,15 +1,15 @@
-import React from "react";
-import { View, StyleSheet } from "react-native";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
 
-import VaultLogoInv from "../../assets/vault-logo-inv.svg";
-import MobileSvg from "../../assets/mobile.svg";
+import VaultLogoInv from '../../assets/vault-logo-inv.svg';
+import MobileSvg from '../../assets/mobile.svg';
 
-import Text from "../../components/Text";
-import Button from "../../components/Button";
-import {Actions} from "react-native-router-flux";
-import {LOGIN_HISTORY} from "../../constants/route";
+import Text from '../../components/Text';
+import Button from '../../components/Button';
+import { Actions } from 'react-native-router-flux';
+import { LOGIN_HISTORY } from '../../constants/route';
 
-import {NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 const approve = () => {
     Actions[LOGIN_HISTORY]();
@@ -41,7 +41,7 @@ export default () => (
 const style = StyleSheet.create({
     container: {
         flex: 1,
-        alignItems: "center",
+        alignItems: 'center',
         marginVertical: 55,
         marginHorizontal: 20
     },
@@ -53,18 +53,18 @@ const style = StyleSheet.create({
         fontFamily: NUNITO_SANS_BOLD,
         fontSize: 22,
         marginVertical: 4,
-        textAlign: "center"
+        textAlign: 'center'
     },
     text: {
         fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 14,
-        textAlign: "center",
+        textAlign: 'center',
         marginVertical: 8
     },
     actions: {
-        position: "absolute",
+        position: 'absolute',
         bottom: 0,
-        flexDirection: "row",
+        flexDirection: 'row',
     },
     btn: {
         flex: 1,

@@ -1,31 +1,31 @@
-import React, { useState, useEffect } from "react";
-import {Actions} from "react-native-router-flux";
-import {TextInput} from "react-native";
+import React, { useState, useEffect } from 'react';
+import { Actions } from 'react-native-router-flux';
+import { TextInput } from 'react-native';
 
-import Layout from "../../components/Layouts/Layout";
-import Button from "../../components/Button";
-import Label from "../../components/Label";
+import Layout from '../../components/Layouts/Layout';
+import Button from '../../components/Button';
+import Label from '../../components/Label';
 
-import {walletByMnemonic, MNEMONIC_LENGTH} from "../../api";
-import {SUCCESS} from "../../constants/route";
-import ErrorPhrase from "../../components/ErrorPhrase";
+import { walletByMnemonic, MNEMONIC_LENGTH } from '../../api';
+import { SUCCESS } from '../../constants/route';
+import ErrorPhrase from '../../components/ErrorPhrase';
 
-import ModifierStyles from "../../styles/modifier";
-import InputStyles from "../../styles/inputs";
+import ModifierStyles from '../../styles/modifier';
+import InputStyles from '../../styles/inputs';
 
-import _ from "underscore";
+import _ from 'underscore';
 
 export default () => {
-    const [phrase, setPhrase] = useState("");
+    const [phrase, setPhrase] = useState('');
     const [verified, setVerified] = useState(false);
     const [error, showError] = useState(null);
 
-    useEffect(() => { verify() }, [phrase]);
+    useEffect(() => { verify(); }, [phrase]);
 
     const verify = async () => {
         showError(false);
 
-        const splitted = phrase && phrase.split(" ");
+        const splitted = phrase && phrase.split(' ');
         if (!splitted) {
             setVerified(false);
             return;
@@ -60,12 +60,12 @@ export default () => {
                 style={[InputStyles.textarea, error && ModifierStyles.error]}
             />
             <ErrorPhrase shown={error} />
-            <Button style={{marginTop: 24}}
-                    color="primary"
-                    onPress={onContinue}
-                    disabled={!verified}>
+            <Button style={{ marginTop: 24 }}
+                color="primary"
+                onPress={onContinue}
+                disabled={!verified}>
                 Continue
             </Button>
         </Layout>
     );
-}
+};

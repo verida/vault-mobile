@@ -1,12 +1,12 @@
-import React from "react";
-import {View, StyleSheet, TouchableOpacity, Dimensions, Platform} from "react-native";
+import React from 'react';
+import { View, StyleSheet, TouchableOpacity, Dimensions, Platform } from 'react-native';
 
-import EnvelopeSvg from "../../assets/icons/envelope.svg";
-import SettingsSvg from "../../assets/icons/settings.svg";
-import {Actions} from "react-native-router-flux";
+import EnvelopeSvg from '../../assets/icons/envelope.svg';
+import SettingsSvg from '../../assets/icons/settings.svg';
+import { Actions } from 'react-native-router-flux';
 
-import {INBOX, SETTINGS} from "../../constants/route";
-import Constants from "expo-constants";
+import { INBOX, SETTINGS } from '../../constants/route';
+import Constants from 'expo-constants';
 
 export default () => {
     return (
@@ -30,8 +30,8 @@ const style = StyleSheet.create({
         paddingVertical: 5,
         paddingHorizontal: 18,
         width: Dimensions.get('window').width,
-        flexDirection: "row",
-        justifyContent: "space-between",
-        alignItems: "center",
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
     }
 });

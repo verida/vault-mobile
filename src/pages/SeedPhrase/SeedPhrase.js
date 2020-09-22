@@ -1,19 +1,19 @@
-import React from "react";
-import { StyleSheet } from "react-native";
-import { Actions } from "react-native-router-flux";
-import Text from "../../components/Text";
-import Button from "../../components/Button";
-import Layout from "../../components/Layouts/Layout";
-import List from "../../components/Lists/List";
+import React from 'react';
+import { StyleSheet } from 'react-native';
+import { Actions } from 'react-native-router-flux';
+import Text from '../../components/Text';
+import Button from '../../components/Button';
+import Layout from '../../components/Layouts/Layout';
+import List from '../../components/Lists/List';
 
-import SafeImg from "../../assets/safe.svg";
+import SafeImg from '../../assets/safe.svg';
 
-import {SEED_PHRASE_GENERATED} from "../../constants/route";
-import {onRemind} from "../../helpers/account";
+import { SEED_PHRASE_GENERATED } from '../../constants/route';
+import { onRemind } from '../../helpers/account';
 
 const Items = [
-  "The seed phrase is composed of 12 words. Please record them carefully and store your phrase in a safe place.",
-  "For security reason there is no password reset."
+    'The seed phrase is composed of 12 words. Please record them carefully and store your phrase in a safe place.',
+    'For security reason there is no password reset.'
 ];
 
 const onShow = () => Actions[SEED_PHRASE_GENERATED]();
@@ -24,9 +24,9 @@ export default () => (
             Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
             upgraded.
         </Text>
-        <SafeImg style={{marginVertical: 28, alignSelf: 'center'}}/>
+        <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
         <List items={Items}/>
-        <Button style={{marginTop: 56}} color="primary" onPress={onShow}>
+        <Button style={{ marginTop: 56 }} color="primary" onPress={onShow}>
             Show Seed Phrase
         </Button>
         <Button color="transparent-grey" onPress={() => onRemind()}>

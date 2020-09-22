@@ -1,6 +1,6 @@
-import React from "react";
-import {View, StyleSheet, Dimensions} from "react-native";
-import History from "../History";
+import React from 'react';
+import { View, StyleSheet, Dimensions } from 'react-native';
+import History from '../History';
 
 export default (props) => (
     <View style={style.scene}>
@@ -11,7 +11,7 @@ export default (props) => (
 const style = StyleSheet.create({
     scene: {
         flex: 1,
-        position: "absolute",
+        position: 'absolute',
         width: Dimensions.get('window').width,
         height: Dimensions.get('window').height
     }

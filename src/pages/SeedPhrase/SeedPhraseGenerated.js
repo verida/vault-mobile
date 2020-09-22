@@ -1,24 +1,24 @@
-import React, { useState, useEffect } from "react";
-import {StyleSheet} from "react-native";
-import {connect} from "react-redux";
-import {Actions} from "react-native-router-flux";
+import React, { useState, useEffect } from 'react';
+import { StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
+import { Actions } from 'react-native-router-flux';
 
-import Text from "../../components/Text";
-import Button from "../../components/Button";
-import Layout from "../../components/Layouts/Layout";
-import WordCard from "../../components/Words/WordCard";
+import Text from '../../components/Text';
+import Button from '../../components/Button';
+import Layout from '../../components/Layouts/Layout';
+import WordCard from '../../components/Words/WordCard';
 
-import {generateMnemonic} from "../../api";
-import {VERIFY_PHRASE} from "../../constants/route";
-import {BLACK_COLOR_OPACITY} from "../../constants/color";
+import { generateMnemonic } from '../../api';
+import { VERIFY_PHRASE } from '../../constants/route';
+import { BLACK_COLOR_OPACITY } from '../../constants/color';
 
-import {onRemind} from "../../helpers/account";
-import {setMnemonic} from "../../store/words/actions";
+import { onRemind } from '../../helpers/account';
+import { setMnemonic } from '../../store/words/actions';
 
-import _ from "underscore";
+import _ from 'underscore';
 
 const SeedPhraseGenerated = (props) => {
-    const [words, setWords] = useState("Generating seed phrase ...");
+    const [words, setWords] = useState('Generating seed phrase ...');
 
     useEffect(() => {
         const mnemonic = generateMnemonic();
@@ -27,7 +27,7 @@ const SeedPhraseGenerated = (props) => {
     }, []);
 
     const onSaved = async () => {
-        const mnemonic = words.split(" ");
+        const mnemonic = words.split(' ');
         const shuffled = _.shuffle(mnemonic);
         Actions[VERIFY_PHRASE]({ shuffled });
     };
@@ -38,7 +38,7 @@ const SeedPhraseGenerated = (props) => {
                 Please carefully write down each word
             </Text>
             <WordCard words={words} />
-            <Button style={{marginTop: 40}} color="primary" onPress={onSaved}>
+            <Button style={{ marginTop: 40 }} color="primary" onPress={onSaved}>
                 I have saved my seed words
             </Button>
             <Button color="transparent-grey" onPress={() => onRemind(words)}>

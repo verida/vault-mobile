@@ -1,11 +1,11 @@
-import React, { useState } from "react";
-import {StyleSheet, TouchableOpacity, View, Switch} from "react-native";
+import React, { useState } from 'react';
+import { StyleSheet, TouchableOpacity, View, Switch } from 'react-native';
 
-import Text from "../Text";
-import Icon from "react-native-vector-icons/MaterialIcons";
+import Text from '../Text';
+import Icon from 'react-native-vector-icons/MaterialIcons';
 
-import {BLACK_COLOR_OPACITY, SUCCESS_COLOR} from "../../constants/color";
-import {NUNITO_SANS_SEMIBOLD} from "../../constants/text";
+import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '../../constants/color';
+import { NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 export default ({ styles, item }) => {
     const [option, setOption] = useState(false);
@@ -23,19 +23,19 @@ export default ({ styles, item }) => {
                             numberOfLines={1}
                             ellipsizeMode='tail'
                             style={[style.text, style.value]}>
-                            { item.value || "Not set" }
+                            { item.value || 'Not set' }
                         </Text> }
                     { item.custom }
-                    <View style={{marginRight: 16}}>
-                        {item.action === "arrow" &&
+                    <View style={{ marginRight: 16 }}>
+                        {item.action === 'arrow' &&
                         <Icon
                             size={22}
                             name="keyboard-arrow-right"
                             color={BLACK_COLOR_OPACITY(0.45)} />
                         }
-                        { item.action === "switch" &&
+                        { item.action === 'switch' &&
                         <Switch
-                            trackColor={{ false: "#767577", true: SUCCESS_COLOR }}
+                            trackColor={{ false: '#767577', true: SUCCESS_COLOR }}
                             ios_backgroundColor="#3e3e3e"
                             onValueChange={setOption}
                             value={option} />
@@ -44,8 +44,8 @@ export default ({ styles, item }) => {
                 </View>
             </View>
         </TouchableOpacity>
-    )
-}
+    );
+};
 
 const style = StyleSheet.create({
     text: {
@@ -54,15 +54,15 @@ const style = StyleSheet.create({
         flexShrink: 1,
     },
     section: {
-        flexDirection: "row",
-        alignItems: "center",
+        flexDirection: 'row',
+        alignItems: 'center',
     },
     icon: {
         marginRight: 18
     },
     alignRight: {
         paddingLeft: 32,
-        justifyContent: "flex-end",
+        justifyContent: 'flex-end',
         flexShrink: 1,
     },
     value: {

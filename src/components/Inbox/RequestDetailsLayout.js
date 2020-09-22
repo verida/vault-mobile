@@ -1,12 +1,12 @@
-import React from "react";
-import {View, StyleSheet, ScrollView} from "react-native";
-import Layout from "../../components/Layouts/Layout";
-import Button from "../../components/Button";
-import Text from "../Text";
-import Description from "./Description";
+import React from 'react';
+import { View, StyleSheet, ScrollView } from 'react-native';
+import Layout from '../../components/Layouts/Layout';
+import Button from '../../components/Button';
+import Text from '../Text';
+import Description from './Description';
 
-import {findTypeById} from "../../helpers/inbox";
-import {NUNITO_SANS_BOLD} from "../../constants/text";
+import { findTypeById } from '../../helpers/inbox';
+import { NUNITO_SANS_BOLD } from '../../constants/text';
 
 export default ({ company, children }) => {
     const type = findTypeById(company.type);
@@ -22,20 +22,20 @@ export default ({ company, children }) => {
                 { children }
             </ScrollView>
             <View style={style.action}>
-                <Button style={{...style.btn, marginRight: 20}}>Accept</Button>
+                <Button style={{ ...style.btn, marginRight: 20 }}>Accept</Button>
                 <Button color="grey" style={style.btn}>Decline</Button>
             </View>
         </Layout>
     );
-}
+};
 
 const style = StyleSheet.create({
     layout: {
         flex: 1
     },
     header: {
-        flexDirection: "row",
-        alignItems: "center"
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     title: {
         fontSize: 22,
@@ -45,7 +45,7 @@ const style = StyleSheet.create({
         paddingRight: 60
     },
     action: {
-        flexDirection: "row",
+        flexDirection: 'row',
         marginVertical: 30,
         bottom: 0,
     },
@@ -53,11 +53,8 @@ const style = StyleSheet.create({
         flex: 0.5,
         height: 40
     },
-    scrollable: {
-        flexGrow: 0
-    },
     svg: {
-        position: "absolute",
+        position: 'absolute',
         right: 0,
         top: 25
     }

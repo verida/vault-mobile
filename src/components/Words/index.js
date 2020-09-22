@@ -1,14 +1,14 @@
-import React from "react";
-import {View, StyleSheet} from "react-native";
-import { connect } from "react-redux";
+import React from 'react';
+import { View, StyleSheet } from 'react-native';
+import { connect } from 'react-redux';
 
-import { addWord, removeWord } from "../../store/words/actions";
+import { addWord, removeWord } from '../../store/words/actions';
 
-import Text from "../Text";
-import Words from "./Words";
+import Text from '../Text';
+import Words from './Words';
 
-import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from "../../constants/color";
-import { NUNITO_SANS_SEMIBOLD } from "../../constants/text";
+import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color';
+import { NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 const WordLayout = ({ words, template, ...props }) => (
     <View style={style.layout}>
@@ -23,7 +23,7 @@ const WordLayout = ({ words, template, ...props }) => (
         <Text style={style.text}>
             Please tap each word in the correct order.
         </Text>
-        <View style={[style.vocabulary]}>
+        <View style={style.vocabulary}>
             <Words
                 id="vocabulary"
                 words={words}
@@ -49,11 +49,11 @@ export default connect(mapStateToProps, mapDispatchToProps)(WordLayout);
 
 const style = StyleSheet.create ({
     layout: {
-        justifyContent: "flex-start",
+        justifyContent: 'flex-start',
     },
     container: {
-        justifyContent: "center",
-        alignItems: "center",
+        justifyContent: 'center',
+        alignItems: 'center',
         borderWidth: 1,
         borderColor: LIGHTGREY_COLOR,
         borderRadius: 4,
