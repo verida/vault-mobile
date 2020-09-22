@@ -3,6 +3,7 @@ import { Actions } from 'react-native-router-flux';
 import { Container, Content, List } from 'native-base';
 
 import DataList from '../../components/DataList';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import IdentitySvg from '../../assets/icons/data/identity.svg';
 import HealthSvg from '../../assets/icons/data/health.svg';
@@ -30,6 +31,7 @@ import {
 
 export default () => (
     <Container>
+        <NavigationHeader left = {{ icon: 'skip' }} title="Data" />
         <Content>
             <List>
                 <DataList list={list} />

@@ -1,7 +1,9 @@
 import React from 'react';
+import { Container, Content } from 'native-base';
 import Layout from '../components/Layouts/Layout';
 import Search from '../components/Search';
 import CardList from '../components/CardList';
+import NavigationHeader from '../components/Navigation/NavigationHeader';
 
 const inboxList = [
     {
@@ -35,9 +37,14 @@ const inboxList = [
 
 export default () => {
     return (
-        <Layout>
-            <Search />
-            <CardList list={inboxList} />
-        </Layout>
+        <Container>
+            <NavigationHeader title="Inbox" />
+            <Content>
+                <Layout>
+                    <Search />
+                    <CardList list={inboxList} />
+                </Layout>
+            </Content>
+        </Container>
     );
 };

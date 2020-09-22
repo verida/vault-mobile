@@ -47,7 +47,7 @@ export default ({ action }) => {
 
 const style = StyleSheet.create ({
     layout: {
-        minHeight: '100%'
+        minHeight: '70%'
     },
     mt: {
         marginTop: 40

@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { Actions } from 'react-native-router-flux';
 import { TextInput } from 'react-native';
+import { Container, Content } from 'native-base';
 
 import Layout from '../../components/Layouts/Layout';
 import Button from '../../components/Button';
 import Label from '../../components/Label';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import { walletByMnemonic, MNEMONIC_LENGTH } from '../../api';
 import { SUCCESS } from '../../constants/route';
@@ -45,27 +47,32 @@ export default () => {
     };
 
     return (
-        <Layout title="Seed Phrase">
-            <Label style={[ModifierStyles.label, error && ModifierStyles.errorText]}>
-                Enter your Ethereum seed phrase below
-            </Label>
-            <TextInput
-                value={phrase}
-                autoFocus={true}
-                multiline
-                editable
-                autoCorrect={false}
-                autoCapitalize="none"
-                onChangeText={setPhrase}
-                style={[InputStyles.textarea, error && ModifierStyles.error]}
-            />
-            <ErrorPhrase shown={error} />
-            <Button style={{ marginTop: 24 }}
-                color="primary"
-                onPress={onContinue}
-                disabled={!verified}>
-                Continue
-            </Button>
-        </Layout>
+        <Container>
+            <NavigationHeader title="Import An Account" />
+            <Content>
+                <Layout title="Seed Phrase">
+                    <Label style={[ModifierStyles.label, error && ModifierStyles.errorText]}>
+                        Enter your Ethereum seed phrase below
+                    </Label>
+                    <TextInput
+                        value={phrase}
+                        autoFocus={true}
+                        multiline
+                        editable
+                        autoCorrect={false}
+                        autoCapitalize="none"
+                        onChangeText={setPhrase}
+                        style={[InputStyles.textarea, error && ModifierStyles.error]}
+                    />
+                    <ErrorPhrase shown={error} />
+                    <Button style={{ marginTop: 24 }}
+                        color="primary"
+                        onPress={onContinue}
+                        disabled={!verified}>
+                        Continue
+                    </Button>
+                </Layout>
+            </Content>
+        </Container>
     );
 };

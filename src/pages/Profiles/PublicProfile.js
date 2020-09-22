@@ -1,5 +1,7 @@
 import React from 'react';
+import { View } from 'react-native';
 import ProfileLayout from '../../components/Layouts/ProfileLayout';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import { editable } from '../../helpers/profile';
 
@@ -10,7 +12,10 @@ const list = [
 ];
 
 export default () => (
-    <ProfileLayout
-        list={editable(list)}
-        description={'This profile is public and can be discovered by others'} />
+    <View>
+        <NavigationHeader title="Public Profile" />
+        <ProfileLayout
+            list={editable(list)}
+            description={'This profile is public and can be discovered by others'} />
+    </View>
 );

@@ -1,12 +1,15 @@
 import React, { useState } from 'react';
 import { View, StyleSheet, Linking } from 'react-native';
 import { Icon, Button as NButton } from 'native-base';
+import { Container, Content } from 'native-base';
 
 import StravaLogo from '../../assets/strava-logo.svg';
 import MobileSvg from '../../assets/mobile.svg';
 
 import Text from '../../components/Text';
 import Button from '../../components/Button';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
+
 import { Actions } from 'react-native-router-flux';
 import { LOGIN_HISTORY } from '../../constants/route';
 
@@ -28,57 +31,62 @@ export default (props) => {
     const iconName = props.verified ? 'check' : 'exclamationcircleo';
 
     return (
-        <View style={style.container}>
-            <View style={{ alignItems: 'center' }}>
-                <StravaLogo />
-                <View style={{ flexDirection: 'row' }}>
-                    <Text style={[style.text, { fontSize: 12, color }]}>
-                        <Icon type="AntDesign" name={iconName} style={[style.text, { color }]} />
-                        {props.verified ? null : ' Not'}
-                        {' Verified'}
-                    </Text>
-                </View>
-                <MobileSvg style={style.img} />
-                <Text style={style.title}>New Login Request</Text>
-                <View>
-                    <Text style={style.text}>
-                        There is a new login approval request from
-                    </Text>
-                    <Text style={[style.text, style.link]}
-                        onPress={() => Linking.openURL('http://www.strava.com/')}>
-                    http://www.strava.com/
-                    </Text>
-                </View>
-                <Text style={style.text}>
-                    25 May, 2020 at 2:53 pm
-                </Text>
-                <Text style={[style.text, style.timeout]}>
-                    Expires in 90 seconds
-                </Text>
-            </View>
-
-            {
-                isModalVisible
-                    ? (<View style={style.modal}>
+        <Container>
+            <NavigationHeader title="Login Request" />
+            <Content>
+                <View style={style.container}>
+                    <View style={{ alignItems: 'center' }}>
+                        <StravaLogo />
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={[style.text, { color }]}>
-                                <Icon type='AntDesign' name='exclamationcircleo' style={[style.text, { color }]} />
-                                {' Security Warning'}
+                            <Text style={[style.text, { fontSize: 12, color }]}>
+                                <Icon type="AntDesign" name={iconName} style={[style.text, { color }]} />
+                                {props.verified ? null : '\u00A0Not'}
+                                {'\u00A0Verified'}
                             </Text>
-                            <NButton transparent style={{ position: 'absolute', right: 0 }} onPress={() => setModalVisibility(!isModalVisible)}>
-                                <Icon type='AntDesign' name='close' style={{ color: '#000', fontSize: 17 }} />
-                            </NButton>
                         </View>
-                        <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>Website could not be verified and is untrusted.</Text>
-                    </View>)
-                    : null
-            }
+                        <MobileSvg style={style.img} />
+                        <Text style={style.title}>New Login Request</Text>
+                        <View>
+                            <Text style={style.text}>
+                                There is a new login approval request from
+                            </Text>
+                            <Text style={[style.text, style.link]}
+                                onPress={() => Linking.openURL('http://www.strava.com/')}>
+                            http://www.strava.com/
+                            </Text>
+                        </View>
+                        <Text style={style.text}>
+                            25 May, 2020 at 2:53 pm
+                        </Text>
+                        <Text style={[style.text, style.timeout]}>
+                            Expires in 90 seconds
+                        </Text>
+                    </View>
 
-            <View style={style.actions}>
-                <Button style={[style.btn, style.mr]} onPress={approve}>Login</Button>
-                <Button style={style.btn} color="grey" onPress={deny}>Ignore</Button>
-            </View>
-        </View>
+                    {
+                        isModalVisible
+                            ? (<View style={style.modal}>
+                                <View style={{ flexDirection: 'row' }}>
+                                    <Text style={[style.text, { color }]}>
+                                        <Icon type='AntDesign' name='exclamationcircleo' style={[style.text, { color }]} />
+                                        {' Security Warning'}
+                                    </Text>
+                                    <NButton transparent style={{ position: 'absolute', right: 0 }} onPress={() => setModalVisibility(!isModalVisible)}>
+                                        <Icon type='AntDesign' name='close' style={{ color: '#000', fontSize: 17 }} />
+                                    </NButton>
+                                </View>
+                                <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>Website could not be verified and is untrusted.</Text>
+                            </View>)
+                            : null
+                    }
+
+                    <View style={style.actions}>
+                        <Button style={[style.btn, style.mr]} onPress={approve}>Login</Button>
+                        <Button style={style.btn} color="grey" onPress={deny}>Ignore</Button>
+                    </View>
+                </View>
+            </Content>
+        </Container>
     );
 };
 

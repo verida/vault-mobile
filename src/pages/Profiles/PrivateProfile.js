@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 
 import ProfileLayout from '../../components/Layouts/ProfileLayout';
 import Text from '../../components/Text';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import { getWallet } from '../../api';
 import { editable } from '../../helpers/profile';
@@ -39,10 +40,15 @@ export default () => {
         </View>;
 
     return (
-        info && <ProfileLayout
-            userInfo={UserInfo}
-            list={editable(list)}
-            description={'This profile is private, but can be requested and shared with your consent'} />
+        info && (
+            <View>
+                <NavigationHeader title="Private Identity" />
+                <ProfileLayout
+                    userInfo={UserInfo}
+                    list={editable(list)}
+                    description={'This profile is private, but can be requested and shared with your consent'} />
+            </View>
+        )
     );
 };
 

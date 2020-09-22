@@ -75,9 +75,6 @@ import CredentialSvg from '../assets/navigation/credential.svg';
 import DataSvg from '../assets/navigation/data.svg';
 import ProfilesSvg from '../assets/navigation/profiles.svg';
 
-const CREATE_ACCOUNT_TITLE = 'Create An Account';
-const IMPORT_ACCOUNT_TITLE = 'Import An Account';
-
 const Routes = () => {
     const [authorized, setAuthorized] = useState(null);
     const init = async () => {
@@ -95,37 +92,36 @@ const Routes = () => {
 
                 <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} initial={authorized} hideNavBar={true}>
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
-                    <Scene key={CREDENTIALS} component={Credentials} title="Credentials" icon={CredentialSvg} />
-                    <Scene key={DATA} component={Data} title="Data" icon={DataSvg} />
-                    <Scene key={PROFILES} component={Profiles} title="Profiles" icon={ProfilesSvg} />
+                    <Scene key={CREDENTIALS} component={Credentials} title="Credentials" hideNavBar={true} icon={CredentialSvg} />
+                    <Scene key={DATA} component={Data} title="Data" hideNavBar={true} icon={DataSvg} />
+                    <Scene key={PROFILES} component={Profiles} title="Profiles" hideNavBar={true} icon={ProfilesSvg} />
                 </Scene>
 
-                <Scene key={CREDENTIAL_DETAILS} component={Credential} title="Credential" clone={true} back={true} />
+                <Scene key={CREDENTIAL_DETAILS} component={Credential} hideNavBar={true} clone={true} />
 
-                <Scene key={CREATE_ACCOUNT} component={CreateAccount} title={CREATE_ACCOUNT_TITLE} back={true} />
-                <Scene key={SEED_PHRASE} component={SeedPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
-                <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} title={CREATE_ACCOUNT_TITLE}
-                    back={true} />
-                <Scene key={VERIFY_PHRASE} component={VerifyPhrase} title={CREATE_ACCOUNT_TITLE} back={true} />
+                <Scene key={CREATE_ACCOUNT} component={CreateAccount} hideNavBar={true} />
+                <Scene key={SEED_PHRASE} component={SeedPhrase} hideNavBar={true} />
+                <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} hideNavBar={true} />
+                <Scene key={VERIFY_PHRASE} component={VerifyPhrase} hideNavBar={true} />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true} />
-                <Scene key={SETTINGS} component={Settings} title="Settings" clone={true} back={true} />
+                <Scene key={SETTINGS} component={Settings} hideNavBar={true} clone={true} />
 
-                <Scene key={IMPORT_ACCOUNT} component={ImportAccount} title={IMPORT_ACCOUNT_TITLE} back={true} />
-                <Scene key={SELECT_NETWORK} component={SelectNetwork} title={IMPORT_ACCOUNT_TITLE} back={true} />
-                <Scene key={SEED_PHRASE_ENTERED} component={SeedPhraseEntered} title={IMPORT_ACCOUNT_TITLE} back={true} />
+                <Scene key={IMPORT_ACCOUNT} component={ImportAccount} hideNavBar={true} />
+                <Scene key={SELECT_NETWORK} component={SelectNetwork} hideNavBar={true} />
+                <Scene key={SEED_PHRASE_ENTERED} component={SeedPhraseEntered} hideNavBar={true} />
 
-                <Scene key={INBOX} component={Inbox} title="Inbox" clone={true} back={true} />
-                <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} title="Request details" back={true} />
-                <Scene key={DATA_SNAPSHOT} component={DataSnapshot} title="Request details" back={true} />
-                <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} title="Request details" back={true} />
+                <Scene key={INBOX} component={Inbox} clone={true} hideNavBar={true} />
+                <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} hideNavBar={true} />
+                <Scene key={DATA_SNAPSHOT} component={DataSnapshot} hideNavBar={true} />
+                <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} hideNavBar={true} />
 
-                <Scene key={LOGIN_HISTORY} component={LoginHistory} title="Login History" back={true} clone={true} />
-                <Scene key={LOGIN_REQUEST} component={LoginRequest} title="Login Request" back={true} />
+                <Scene key={LOGIN_HISTORY} component={LoginHistory} hideNavBar={true} clone={true} />
+                <Scene key={LOGIN_REQUEST} component={LoginRequest} hideNavBar={true} />
 
-                <Scene key={PUBLIC_PROFILE} component={PublicProfile} title="Public Profile" back={true} clone={true} />
-                <Scene key={PRIVATE_PROFILE} component={PrivateProfile} title="Private Identity" back={true} clone={true} />
-                <Scene key={EDIT_PROFILE} component={EditProfile} title="Edit Profile" back={true} />
-                <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} title="Seed Phrase" back={true} clone />
+                <Scene key={PUBLIC_PROFILE} component={PublicProfile} hideNavBar={true} clone={true} />
+                <Scene key={PRIVATE_PROFILE} component={PrivateProfile} hideNavBar={true} clone={true} />
+                <Scene key={EDIT_PROFILE} component={EditProfile} hideNavBar={true} />
+                <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} hideNavBar={true} clone />
 
                 <Scene key={HEALTH} component={Health} hideNavBar={true} />
                 <Scene key={ACTIVITIES} component={Activities} hideNavBar={true} />

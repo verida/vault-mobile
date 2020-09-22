@@ -1,15 +1,15 @@
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { Content, Container } from 'native-base';
+import { Icon, Content, Container } from 'native-base';
 
 import ActivitiesList from '../components/ActivitiesList';
-import CustomHeader from '../components/CustomHeader';
+import NavigationHeader from '../components/Navigation/NavigationHeader';
 
 import StravaSvg from '../assets/icons/strava.svg';
 
 export default () => (
     <View>
-        <CustomHeader title="Activities" rightButton={{ icon: 'ios-add-circle' }} />
+        <NavigationHeader title="Activities" right={{ icon: <Icon name='ios-add-circle' style={{ color: '#000' }} /> }} />
         <View style={style.itemsList}>
             <Container>
                 <Content>

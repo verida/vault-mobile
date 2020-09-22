@@ -4,12 +4,16 @@ import { QRCode } from 'react-native-custom-qr-codes-expo';
 import Constants from 'expo-constants';
 
 import Text from '../../components/Text';
-import HomeTopTabs from '../../components/Navigation/HomeTopTabs';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import { Container, Content } from 'native-base';
 
-import Layout from '../../components/Layouts/Layout';
+import EnvelopeSvg from '../../assets/icons/envelope.svg';
+import SettingsSvg from '../../assets/icons/settings.svg';
+import { Actions } from 'react-native-router-flux';
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../constants/color';
+import { INBOX, SETTINGS } from '../../constants/route';
 
 import { getWallet } from '../../api';
 
@@ -29,42 +33,47 @@ export default () => {
     };
 
     return (
-        <Layout style={style.container}>
-            <HomeTopTabs />
-            <Image
-                width={80}
-                height={80}
-                source={UserImg}
-                style={style.userImg} />
-            <Text style={style.title}>
-                chris_were
-            </Text>
-            <Text style={style.text}>
-                { info.address }
-            </Text>
-            <View style={style.qr}>
-                <QRCode
-                    logo={LogoImg}
-                    logoSize={60}
-                    size={207}
-                    codeStyle='dot'
-                    innerEyeStyle='circle'
-                    padding={0.5}
-                    content={info.address} />
-            </View>
-            <Text style={style.notes}>
-                This is your QR-Code. Present it to others so they can scan it and connect to you
-            </Text>
-        </Layout>
+        <Container>
+            <NavigationHeader
+                left={{ action: () => Actions[INBOX](), icon: <EnvelopeSvg /> }}
+                right={{ action: () => Actions[SETTINGS](), icon: <SettingsSvg /> }}
+            />
+            <Content contentContainerStyle={style.content}>
+                <Image
+                    width={80}
+                    height={80}
+                    source={UserImg}
+                    style={style.userImg} />
+                <Text style={style.title}>
+                    chris_were
+                </Text>
+                <Text style={style.text}>
+                    { info.address }
+                </Text>
+                <View style={style.qr}>
+                    <QRCode
+                        logo={LogoImg}
+                        logoSize={60}
+                        size={207}
+                        codeStyle='dot'
+                        innerEyeStyle='circle'
+                        padding={0.5}
+                        content={info.address} />
+                </View>
+                <Text style={style.notes}>
+                    This is your QR-Code. Present it to others so they can scan it and connect to you
+                </Text>
+            </Content>
+        </Container>
     );
 };
 
 const marginTop = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 24;
 const style = StyleSheet.create ({
-    container: {
+    content: {
         justifyContent: 'center',
         alignItems: 'center',
-        minHeight: '100%'
+        flex: 1
     },
     title: {
         fontSize: 22,

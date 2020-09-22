@@ -3,6 +3,7 @@ import { StyleSheet, View } from 'react-native';
 
 import Text from '../components/Text';
 import PropertyList from '../components/PropertyList';
+import NavigationHeader from '../components/Navigation/NavigationHeader';
 
 import LayoutStyle from '../styles/layouts';
 import { Actions } from 'react-native-router-flux';
@@ -14,10 +15,13 @@ import { clearWallet } from '../api';
 import { NUNITO_SANS_BOLD } from '../constants/text';
 
 export default () => (
-    <View style={LayoutStyle.layout}>
-        <Text style={style.title}>Security</Text>
-        <View>
-            <PropertyList list={list} />
+    <View>
+        <NavigationHeader title="Settings" />
+        <View style={LayoutStyle.layout}>
+            <Text style={style.title}>Security</Text>
+            <View>
+                <PropertyList list={list} />
+            </View>
         </View>
     </View>
 );
