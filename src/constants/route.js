@@ -42,3 +42,8 @@ export const SOCIAL = 'social';
 export const SUBSCRIPTIONS = 'subscriptions';
 export const TICKETS = 'tickets';
 export const DOCUMENTS = 'documents';
+
+export const MEASUREMENTS = 'measurements';
+export const ACTIVITIES = 'activities';
+export const RESULTS = 'results';
+export const NOTES = 'notes';
