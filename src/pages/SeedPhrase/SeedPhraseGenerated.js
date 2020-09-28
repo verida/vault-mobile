@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
-import { connect } from 'react-redux';
 import { Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import Clipboard from '@react-native-community/clipboard';
@@ -15,16 +14,14 @@ import { VERIFY_PHRASE } from '../../constants/route';
 import { BLACK_COLOR_OPACITY } from '../../constants/color';
 
 import { onRemind } from '../../helpers/account';
-import { setMnemonic } from '../../store/words/actions';
 
 import _ from 'underscore';
 
-const SeedPhraseGenerated = (props) => {
+const SeedPhraseGenerated = () => {
     const [words, setWords] = useState('Generating seed phrase ...');
 
-    useEffect(() => {
-        const mnemonic = generateMnemonic();
-        props.setMnemonic(mnemonic);
+    useEffect(async () => {
+        const mnemonic = await generateMnemonic();
         setWords(mnemonic);
     }, []);
 
@@ -54,13 +51,7 @@ const SeedPhraseGenerated = (props) => {
     );
 };
 
-const mapDispatchToProps = dispatch => {
-    return {
-        setMnemonic: phrase => dispatch(setMnemonic(phrase))
-    };
-};
-
-export default connect(null, mapDispatchToProps)(SeedPhraseGenerated);
+export default SeedPhraseGenerated;
 
 const style = StyleSheet.create ({
     title: {

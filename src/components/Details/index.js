@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import Details from './Details';
 
-import { getWalletInfo } from '../../api';
+import { getWallet } from '../../api';
 
 export default () => {
     const [info, setInfo] = useState({});
     const init = async () => {
-        const data = await getWalletInfo();
+        const data = await getWallet();
         setInfo(data);
     };
 

@@ -6,13 +6,13 @@ import Layout from '../../components/Layouts/Layout';
 import WordCard from '../../components/Words/WordCard';
 import Button from '../../components/Button';
 
-import { getWalletInfo } from '../../api';
+import { getWallet } from '../../api';
 
 export default () => {
     const [words, setWords] = useState('');
 
     const init = async () => {
-        const { mnemonic } = await getWalletInfo();
+        const { mnemonic } = await getWallet();
         setWords(mnemonic);
     };
 

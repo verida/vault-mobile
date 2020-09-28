@@ -11,7 +11,7 @@ import Layout from '../../components/Layouts/Layout';
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../constants/color';
 
-import { getWalletInfo } from '../../api';
+import { getWallet } from '../../api';
 
 const UserImg = require('../../assets/stubs/user.png');
 const LogoImg = require('../../assets/vault-logo.png');
@@ -24,7 +24,7 @@ export default () => {
     });
 
     const init = async () => {
-        const data = await getWalletInfo();
+        const data = await getWallet();
         setInfo(data);
     };
 
