@@ -7,6 +7,7 @@ export const SEED_PHRASE_GENERATED = 'seed-phrase-generated';
 export const VERIFY_PHRASE = 'verify-phrase';
 
 export const CREATE_PIN = 'create-pin';
+export const CHANGE_PIN = 'change-pin';
 
 export const SUCCESS = 'success';
 export const SETTINGS = 'settings';

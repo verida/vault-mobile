@@ -8,7 +8,7 @@ import NavigationHeader from '../components/Navigation/NavigationHeader';
 import LayoutStyle from '../styles/layouts';
 import { Actions } from 'react-native-router-flux';
 
-import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START } from '../constants/route';
+import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START, CHANGE_PIN } from '../constants/route';
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
 
 import { clearWallet } from '../api';
@@ -46,7 +46,7 @@ const logout = async () => {
 };
 
 const list = [
-    { label: 'PIN', action: 'arrow', optional: true, onPress: () => {} },
+    { label: 'Change PIN', action: 'arrow', optional: true, onPress: () => Actions[CHANGE_PIN]() },
     { label: 'Face ID', action: 'switch', optional: true },
     { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
     // { label: "Notifications", action: "arrow" },

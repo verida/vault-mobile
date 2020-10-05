@@ -7,6 +7,7 @@ import CreateAccount from '../pages/Account/Create';
 import VerifyPhrase from '../pages/SeedPhrase/VerifyPhrase';
 
 import CreatePin from '../pages/Authentication/CreatePin';
+import ChangePin from '../pages/Authentication/ChangePin';
 
 import Success from '../pages/Success';
 import Settings from '../pages/Settings';
@@ -71,7 +72,8 @@ import {
     IMPORT_ACCOUNT,
     SELECT_NETWORK,
     SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS,
-    CREATE_PIN
+    CREATE_PIN,
+    CHANGE_PIN
 } from '../constants/route';
 
 import HomeSvg from '../assets/navigation/home.svg';
@@ -110,6 +112,8 @@ const Routes = () => {
                 <Scene key={CREATE_PIN} component={CreatePin} hideNavBar={true} type="reset" />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true} />
                 <Scene key={SETTINGS} component={Settings} hideNavBar={true} clone={true} />
+
+                <Scene key={CHANGE_PIN} component={ChangePin} hideNavBar={true} />
 
                 <Scene key={IMPORT_ACCOUNT} component={ImportAccount} hideNavBar={true} />
                 <Scene key={SELECT_NETWORK} component={SelectNetwork} hideNavBar={true} />
