@@ -1,5 +1,6 @@
-import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, StyleSheet, ActivityIndicator } from 'react-native';
+import * as LocalAuthentication from 'expo-local-authentication';
 
 import Success from '../assets/success.svg';
 
@@ -14,8 +15,29 @@ import { HOME } from '../constants/route';
 import { BLACK_COLOR } from '../constants/color';
 import { NUNITO_SANS_BOLD } from '../constants/text';
 
-export default () => {
-    const onDone = () => Actions[HOME]();
+import { setAppBioAuthStatus } from '../helpers/app-bio-status';
+
+const SuccessPage = () => {
+    const [loading, setLoading] = useState(true);
+
+    useEffect(async () => {
+        const hasSavedBio = await LocalAuthentication.isEnrolledAsync();
+        await setAppBioAuthStatus(hasSavedBio);
+        setLoading(false);
+    }, []);
+
+    const onDone = () => {
+        return Actions[HOME]();
+    };
+
+    if (loading) {
+        return (
+            <View style={style.loadingContent}>
+                <Text>Loading </Text>
+                <ActivityIndicator size="large" />
+            </View>
+        );
+    }
 
     return (
         <Layout style={style.layout}>
@@ -34,7 +56,14 @@ export default () => {
     );
 };
 
+export default SuccessPage;
+
 const style = StyleSheet.create ({
+    loadingContent: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent:'center'
+    },
     layout: {
         justifyContent: 'center',
         minHeight: '100%'
