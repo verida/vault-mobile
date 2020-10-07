@@ -5,6 +5,9 @@ import Start from '../pages/Account/Start';
 
 import CreateAccount from '../pages/Account/Create';
 import VerifyPhrase from '../pages/SeedPhrase/VerifyPhrase';
+
+import CreatePin from '../pages/Authentication/CreatePin';
+
 import Success from '../pages/Success';
 import Settings from '../pages/Settings';
 
@@ -67,7 +70,8 @@ import {
     DATA_SYNCHRONIZATION,
     IMPORT_ACCOUNT,
     SELECT_NETWORK,
-    SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS
+    SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS,
+    CREATE_PIN
 } from '../constants/route';
 
 import HomeSvg from '../assets/navigation/home.svg';
@@ -103,6 +107,7 @@ const Routes = () => {
                 <Scene key={SEED_PHRASE} component={SeedPhrase} hideNavBar={true} />
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} hideNavBar={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} hideNavBar={true} />
+                <Scene key={CREATE_PIN} component={CreatePin} hideNavBar={true} type="reset" />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true} />
                 <Scene key={SETTINGS} component={Settings} hideNavBar={true} clone={true} />
 

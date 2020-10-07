@@ -5,6 +5,9 @@ export const CREATE_ACCOUNT = 'create-account';
 export const SEED_PHRASE = 'seed-phrase';
 export const SEED_PHRASE_GENERATED = 'seed-phrase-generated';
 export const VERIFY_PHRASE = 'verify-phrase';
+
+export const CREATE_PIN = 'create-pin';
+
 export const SUCCESS = 'success';
 export const SETTINGS = 'settings';
 
