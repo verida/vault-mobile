@@ -4,13 +4,13 @@ import { View, StyleSheet } from 'react-native';
 import History from './History';
 import EmptyList from '../Lists/EmptyList';
 
-import VaultLogo from '../../assets/vault-logo.png';
+import StravaLogo from '../../assets/icons/strava-2.svg';
 
 const list = [
     {
         id: 'test-1',
-        img: VaultLogo,
-        title: 'Login request from Verida Vault',
+        img: <StravaLogo />,
+        title: 'Login request from Strava',
         time: '5sec ago',
         expired: 'Expired in 3m'
     }
