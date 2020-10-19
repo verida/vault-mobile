@@ -47,7 +47,6 @@ const logout = async () => {
 
 const list = [
     { label: 'Change PIN', action: 'arrow', optional: true, onPress: () => Actions[CHANGE_PIN]() },
-    { label: 'Face ID', action: 'switch', optional: true },
     { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
     // { label: "Notifications", action: "arrow" },
     { label: 'Login History', action: 'arrow', optional: true, onPress: () => Actions[LOGIN_HISTORY]() },
