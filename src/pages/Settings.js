@@ -8,7 +8,7 @@ import NavigationHeader from '../components/Navigation/NavigationHeader';
 import LayoutStyle from '../styles/layouts';
 import { Actions } from 'react-native-router-flux';
 
-import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START, CHANGE_PIN } from '../constants/route';
+import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START, CHANGE_PIN, HOME } from '../constants/route';
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
 
 import { clearWallet } from '../api';
@@ -16,7 +16,7 @@ import { NUNITO_SANS_BOLD } from '../constants/text';
 
 export default () => (
     <View>
-        <NavigationHeader title="Settings" />
+        <NavigationHeader title="Settings" left={{ icon: 'arrow-back', action: Actions[HOME] }} />
         <View style={LayoutStyle.layout}>
             <Text style={style.title}>Security</Text>
             <View>
