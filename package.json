@@ -8,6 +8,7 @@
   },
   "dependencies": {
     "@react-native-community/async-storage": "~1.11.0",
+    "@react-native-community/clipboard": "^1.2.3",
     "@reduxjs/toolkit": "^1.4.0",
     "@tradle/react-native-http": "^2.0.1",
     "@verida/datastore": "https://github.com/verida/datastore.git#react-native",

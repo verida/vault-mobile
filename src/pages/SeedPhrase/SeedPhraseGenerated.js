@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet } from 'react-native';
 import { connect } from 'react-redux';
+import { Icon } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import Clipboard from '@react-native-community/clipboard';
 
 import Text from '../../components/Text';
 import Button from '../../components/Button';
@@ -38,7 +40,11 @@ const SeedPhraseGenerated = (props) => {
                 Please carefully write down each word
             </Text>
             <WordCard words={words} />
-            <Button style={{ marginTop: 40 }} color="primary" onPress={onSaved}>
+            <Button color="transparent-grey" onPress={() => Clipboard.setString(words)} style={{ marginTop: 10 }}>
+                {'Copy to clipboard\u00A0'}
+                <Icon name="copy" />
+            </Button>
+            <Button color="primary" onPress={onSaved}>
                 I have saved my seed words
             </Button>
             <Button color="transparent-grey" onPress={() => onRemind(words)}>
