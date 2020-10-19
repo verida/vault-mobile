@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { ScrollView, View, StyleSheet, Linking } from 'react-native';
+import { View, StyleSheet, Linking } from 'react-native';
 import { Icon, Button as NButton } from 'native-base';
 
 import StravaLogo from '../../assets/strava-logo.svg';
@@ -28,7 +28,7 @@ export default (props) => {
     const iconName = props.verified ? 'check' : 'exclamationcircleo';
 
     return (
-        <ScrollView contentContainerStyle={style.container}>
+        <View style={style.container}>
             <View style={{ alignItems: 'center' }}>
                 <StravaLogo />
                 <View style={{ flexDirection: 'row' }}>
@@ -78,7 +78,7 @@ export default (props) => {
                 <Button style={[style.btn, style.mr]} onPress={approve}>Login</Button>
                 <Button style={style.btn} color="grey" onPress={deny}>Ignore</Button>
             </View>
-        </ScrollView>
+        </View>
     );
 };
 
@@ -86,11 +86,11 @@ const style = StyleSheet.create({
     container: {
         flex: 1,
         justifyContent: 'space-between',
-        marginVertical: 55,
+        marginVertical: 20,
         marginHorizontal: 20
     },
     img: {
-        marginTop: 35,
+        marginTop: 20,
         marginBottom: 20
     },
     title: {
@@ -113,7 +113,7 @@ const style = StyleSheet.create({
         color: 'blue'
     },
     actions: {
-        marginTop: 30,
+        marginTop: 20,
         flexDirection: 'row',
     },
     btn: {
