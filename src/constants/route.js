@@ -8,6 +8,9 @@ export const VERIFY_PHRASE = 'verify-phrase';
 
 export const CREATE_PIN = 'create-pin';
 export const CHANGE_PIN = 'change-pin';
+export const CHECK_PIN = 'check-pin';
+
+export const AUTHENTICATE = 'authenticate';
 
 export const SUCCESS = 'success';
 export const SETTINGS = 'settings';

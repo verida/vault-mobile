@@ -8,6 +8,9 @@ import VerifyPhrase from '../pages/SeedPhrase/VerifyPhrase';
 
 import CreatePin from '../pages/Authentication/CreatePin';
 import ChangePin from '../pages/Authentication/ChangePin';
+import CheckPin from '../pages/Authentication/CheckPin';
+
+import Authenticate from '../pages/Authentication/Authenticate';
 
 import Success from '../pages/Success';
 import Settings from '../pages/Settings';
@@ -73,7 +76,9 @@ import {
     SELECT_NETWORK,
     SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS,
     CREATE_PIN,
-    CHANGE_PIN
+    CHANGE_PIN,
+    CHECK_PIN,
+    AUTHENTICATE
 } from '../constants/route';
 
 import HomeSvg from '../assets/navigation/home.svg';
@@ -96,7 +101,9 @@ const Routes = () => {
             <Scene key="root">
                 <Scene key={START} component={Start} hideNavBar={true} initial={!authorized} type="reset" />
 
-                <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} initial={authorized} hideNavBar={true}>
+                <Scene key={AUTHENTICATE} component={Authenticate} hideNavBar={true} initial={authorized} authorized={authorized} type="reset" />
+
+                <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} hideNavBar={true}>
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
                     <Scene key={CREDENTIALS} component={Credentials} title="Credentials" hideNavBar={true} icon={CredentialSvg} />
                     <Scene key={DATA} component={Data} title="Data" hideNavBar={true} icon={DataSvg} />
@@ -110,6 +117,7 @@ const Routes = () => {
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} hideNavBar={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} hideNavBar={true} />
                 <Scene key={CREATE_PIN} component={CreatePin} hideNavBar={true} type="reset" />
+                <Scene key={CHECK_PIN} component={CheckPin} hideNavBar={true} />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true} />
                 <Scene key={SETTINGS} component={Settings} hideNavBar={true} clone={true} />
 

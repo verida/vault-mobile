@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { connect } from 'react-redux';
 import { View, StyleSheet, ActivityIndicator } from 'react-native';
 import * as LocalAuthentication from 'expo-local-authentication';
 
@@ -15,18 +16,19 @@ import { HOME } from '../constants/route';
 import { BLACK_COLOR } from '../constants/color';
 import { NUNITO_SANS_BOLD } from '../constants/text';
 
-import { setAppBioAuthStatus } from '../helpers/app-bio-status';
+import { setAuthStatus, setBioAuthStatus } from '../store/general/actions';
 
-const SuccessPage = () => {
+const SuccessPage = (props) => {
     const [loading, setLoading] = useState(true);
 
     useEffect(async () => {
         const hasSavedBio = await LocalAuthentication.isEnrolledAsync();
-        await setAppBioAuthStatus(hasSavedBio);
+        props.setBioAuthStatus(hasSavedBio);
         setLoading(false);
     }, []);
 
     const onDone = () => {
+        props.setAuthStatus(true);
         return Actions[HOME]();
     };
 
@@ -56,7 +58,14 @@ const SuccessPage = () => {
     );
 };
 
-export default SuccessPage;
+const mapDispatchToProps = dispatch => {
+    return {
+        setBioAuthStatus: status => dispatch(setBioAuthStatus(status)),
+        setAuthStatus: status => dispatch(setAuthStatus(status))
+    };
+};
+
+export default connect(null, mapDispatchToProps)(SuccessPage);
 
 const style = StyleSheet.create ({
     loadingContent: {
