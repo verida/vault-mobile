@@ -4,7 +4,7 @@ import { View, StyleSheet } from 'react-native';
 import ProfileLayout from '../../components/Layouts/ProfileLayout';
 import Text from '../../components/Text';
 
-import { getWalletInfo } from '../../api';
+import { getWallet } from '../../api';
 import { editable } from '../../helpers/profile';
 import DateOfBirth from '../../components/DateOfBirth';
 import { NUNITO_SANS_BOLD } from '../../constants/text';
@@ -28,7 +28,7 @@ export default () => {
     });
 
     const init = async () => {
-        const data = await getWalletInfo();
+        const data = await getWallet();
         setInfo(data);
     };
 

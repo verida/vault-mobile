@@ -14,7 +14,7 @@ import { onRemind } from '../../helpers/account';
 import { SUCCESS } from '../../constants/route';
 import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api';
 
-const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
+const VerifyPhrase = ({ words, shuffled, ...props }) => {
     const [error, showError] = useState(null);
     const [verified, setVerified] = useState(null);
 
@@ -48,7 +48,7 @@ const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
             </View>
             <View>
                 { !verified &&
-                    <Button style={{ marginTop: 20 }} color="transparent-grey" onPress={() => onRemind(mnemonic)}>
+                    <Button style={{ marginTop: 20 }} color="transparent-grey" onPress={() => onRemind()}>
                         Skip
                     </Button> }
                 { verified && <>
@@ -68,7 +68,6 @@ const VerifyPhrase = ({ words, shuffled, mnemonic, ...props }) => {
 const mapStateToProps = state => {
     return {
         words: state.template,
-        mnemonic: state.mnemonic
     };
 };
 

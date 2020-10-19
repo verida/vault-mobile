@@ -1,10 +1,9 @@
 import { createStore } from 'redux';
 
-import { ADD_WORD, REMOVE_WORD, RESET_PHRASE, SET_MNEMONIC } from './words/action-types';
+import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types';
 
 const initialState = {
     template: [],
-    mnemonic: ''
 };
 
 const reducer = (state = initialState, action) => {
@@ -18,8 +17,6 @@ const reducer = (state = initialState, action) => {
         return { ...state, template: filtered };
     case RESET_PHRASE:
         return { ...state, template: [] };
-    case SET_MNEMONIC:
-        return { ...state, mnemonic: action.payload };
     default:
         return state;
     }
