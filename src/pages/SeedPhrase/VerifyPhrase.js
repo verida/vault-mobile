@@ -6,6 +6,7 @@ import { connect } from 'react-redux';
 import Button from '../../components/Button';
 import Layout from '../../components/Layouts/Layout';
 import Words from '../../components/Words';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import { resetPhrase } from '../../store/words/actions';
 import ErrorPhrase from '../../components/ErrorPhrase';
@@ -41,26 +42,29 @@ const VerifyPhrase = ({ words, shuffled, ...props }) => {
     };
 
     return (
-        <Layout title="Verify Your Phrase" style={style.layout}>
-            <View>
-                <Words words={shuffled} />
-                <ErrorPhrase shown={error} style={style.error} />
-            </View>
-            <View>
-                { !verified &&
-                    <Button style={{ marginTop: 20 }} color="transparent-grey" onPress={() => onRemind()}>
-                        Skip
-                    </Button> }
-                { verified && <>
-                    <Button style={{ marginTop: 20 }} color="primary" onPress={onConfirm}>
-                        Confirm
-                    </Button>
-                    <Button style={{ marginTop: 10 }} color="transparent-grey" onPress={props.resetPhrase}>
-                        Clear
-                    </Button>
-                </>}
-            </View>
-        </Layout>
+        <View>
+            <NavigationHeader title="Create An Account" />
+            <Layout title="Verify Your Phrase" style={style.layout}>
+                <View>
+                    <Words words={shuffled} />
+                    <ErrorPhrase shown={error} style={style.error} />
+                </View>
+                <View>
+                    { !verified &&
+                        <Button style={{ marginTop: 20 }} color="transparent-grey" onPress={() => onRemind()}>
+                            Skip
+                        </Button> }
+                    { verified && <>
+                        <Button style={{ marginTop: 20 }} color="primary" onPress={onConfirm}>
+                            Confirm
+                        </Button>
+                        <Button style={{ marginTop: 10 }} color="transparent-grey" onPress={props.resetPhrase}>
+                            Clear
+                        </Button>
+                    </>}
+                </View>
+            </Layout>
+        </View>
     );
 };
 

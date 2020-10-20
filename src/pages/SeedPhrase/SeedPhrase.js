@@ -1,10 +1,12 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { Container, Content } from 'native-base';
 import { Actions } from 'react-native-router-flux';
 import Text from '../../components/Text';
 import Button from '../../components/Button';
 import Layout from '../../components/Layouts/Layout';
 import List from '../../components/Lists/List';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import SafeImg from '../../assets/safe.svg';
 
@@ -19,20 +21,25 @@ const Items = [
 const onShow = () => Actions[SEED_PHRASE_GENERATED]();
 
 export default () => (
-    <Layout title="Seed Phrase">
-        <Text style={style.description}>
-            Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
-            upgraded.
-        </Text>
-        <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
-        <List items={Items}/>
-        <Button style={{ marginTop: 56 }} color="primary" onPress={onShow}>
-            Show Seed Phrase
-        </Button>
-        <Button color="transparent-grey" onPress={() => onRemind()}>
-            Remind me later
-        </Button>
-    </Layout>
+    <Container>
+        <NavigationHeader title="Create An Account" />
+        <Content>
+            <Layout title="Seed Phrase">
+                <Text style={style.description}>
+                    Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
+                    upgraded.
+                </Text>
+                <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
+                <List items={Items}/>
+                <Button style={{ marginTop: 56 }} color="primary" onPress={onShow}>
+                    Show Seed Phrase
+                </Button>
+                <Button color="transparent-grey" onPress={() => onRemind()}>
+                    Remind me later
+                </Button>
+            </Layout>
+        </Content>
+    </Container>
 );
 
 const style = StyleSheet.create({

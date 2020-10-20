@@ -1,7 +1,9 @@
 import React from 'react';
+import { Container, Content } from 'native-base';
 
 import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout';
 import RecordList from '../../components/RecordList';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 const company = {
     uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
@@ -78,8 +80,13 @@ const records = [
 
 export default ({ id }) => {
     return (
-        <RequestDetailsLayout company={company}>
-            <RecordList list={records} />
-        </RequestDetailsLayout>
+        <Container>
+            <NavigationHeader title="Request details" />
+            <Content>
+                <RequestDetailsLayout company={company}>
+                    <RecordList list={records} />
+                </RequestDetailsLayout>
+            </Content>
+        </Container>
     );
 };

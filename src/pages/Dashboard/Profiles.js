@@ -1,7 +1,9 @@
 import React from 'react';
 import { View } from 'react-native';
+import { Container, Content } from 'native-base';
 
 import PropertyList from '../../components/PropertyList';
+import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import EarthSvg from '../../assets/icons/earth.svg';
 import LockSvg from '../../assets/icons/lock.svg';
@@ -15,9 +17,14 @@ import {
 } from '../../constants/route';
 
 export default () => (
-    <View style={LayoutStyle.layout}>
-        <PropertyList list={list} />
-    </View>
+    <Container>
+        <NavigationHeader left = {{ icon: 'skip' }} title="Profiles" />
+        <Content>
+            <View style={LayoutStyle.layout}>
+                <PropertyList list={list} />
+            </View>
+        </Content>
+    </Container>
 );
 
 const list = [

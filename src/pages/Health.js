@@ -1,9 +1,10 @@
 import React from 'react';
 import { Actions } from 'react-native-router-flux';
 import { View, StyleSheet } from 'react-native';
+import { Icon } from 'native-base';
 
 import HealthList from '../components/HealthList';
-import CustomHeader from '../components/CustomHeader';
+import NavigationHeader from '../components/Navigation/NavigationHeader';
 
 import MeasurementsSvg from '../assets/icons/health/measurements.svg';
 import ActivitiesSvg from '../assets/icons/health/activities.svg';
@@ -19,7 +20,7 @@ import {
 
 export default () => (
     <View>
-        <CustomHeader title="Health" rightButton={{ icon: 'ios-add-circle' }} />
+        <NavigationHeader title="Health" right={{ icon: <Icon name='ios-add-circle' style={{ color: '#000' }} /> }} />
         <View style={style.itemsList}>
             <HealthList list={list} />
         </View>
