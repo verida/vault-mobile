@@ -8,7 +8,7 @@ import NavigationHeader from '../components/Navigation/NavigationHeader';
 import LayoutStyle from '../styles/layouts';
 import { Actions } from 'react-native-router-flux';
 
-import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START } from '../constants/route';
+import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START, CHANGE_PIN, HOME } from '../constants/route';
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
 
 import { clearWallet } from '../api';
@@ -16,7 +16,7 @@ import { NUNITO_SANS_BOLD } from '../constants/text';
 
 export default () => (
     <View>
-        <NavigationHeader title="Settings" />
+        <NavigationHeader title="Settings" left={{ icon: 'arrow-back', action: Actions[HOME] }} />
         <View style={LayoutStyle.layout}>
             <Text style={style.title}>Security</Text>
             <View>
@@ -46,8 +46,7 @@ const logout = async () => {
 };
 
 const list = [
-    { label: 'PIN', action: 'arrow', optional: true, onPress: () => {} },
-    { label: 'Face ID', action: 'switch', optional: true },
+    { label: 'Change PIN', action: 'arrow', optional: true, onPress: () => Actions[CHANGE_PIN]() },
     { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
     // { label: "Notifications", action: "arrow" },
     { label: 'Login History', action: 'arrow', optional: true, onPress: () => Actions[LOGIN_HISTORY]() },

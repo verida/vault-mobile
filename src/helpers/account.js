@@ -1,9 +1,9 @@
 import { generateMnemonic, walletByMnemonic } from '../api';
 import { Actions } from 'react-native-router-flux';
-import { SUCCESS } from '../constants/route';
+import { CREATE_PIN } from '../constants/route';
 
 export const onRemind = async (mnemonic) => {
     mnemonic = mnemonic || await generateMnemonic();
     await walletByMnemonic(mnemonic);
-    Actions[SUCCESS]();
+    Actions[CREATE_PIN]();
 };

@@ -12,7 +12,7 @@ import { resetPhrase } from '../../store/words/actions';
 import ErrorPhrase from '../../components/ErrorPhrase';
 import { onRemind } from '../../helpers/account';
 
-import { SUCCESS } from '../../constants/route';
+import { CREATE_PIN } from '../../constants/route';
 import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api';
 
 const VerifyPhrase = ({ words, shuffled, ...props }) => {
@@ -34,7 +34,7 @@ const VerifyPhrase = ({ words, shuffled, ...props }) => {
             const phrase = words.join(' ');
             await walletByMnemonic(phrase);
             props.resetPhrase();
-            Actions[SUCCESS]();
+            Actions[CREATE_PIN]();
         } catch (e) {
             showError(true);
             console.log(e.message);
