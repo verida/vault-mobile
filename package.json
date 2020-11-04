@@ -12,6 +12,7 @@
     "@reduxjs/toolkit": "^1.4.0",
     "@tradle/react-native-http": "^2.0.1",
     "@verida/datastore": "https://github.com/verida/datastore.git#react-native",
+    "@verida/vault-common": "https://rodion-malakhdev:422c776fc6c835be4a970cdab2f1605f95a3028f@github.com/verida/vault-common.git",
     "@verida/wallet-utils": "https://github.com/verida/wallet-utils.git",
     "assert": "^1.5.0",
     "asyncstorage-down": "^4.2.0",
