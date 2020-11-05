@@ -1,21 +1,67 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { connect } from 'react-redux';
+
 import ProfileLayout from '../../components/Layouts/ProfileLayout';
 import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
+import { setPublicProfileData } from '../../store/general/actions';
 import { editable } from '../../helpers/profile';
+import { getVault } from '../../api';
 
-const list = [
-    { label: 'Name', value: 'Chris Were', action: 'arrow', type: 'input' },
-    { label: 'Country', value: 'Australia', action: 'arrow', type: 'select' },
-    { label: 'Description', value: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into electronic typesetting, remaining essentially unchanged.", action: 'arrow', type: 'textarea' }
-];
+const PublicProfile = (props) => {
+    const [list, setList] = useState([
+        { label: 'Name', value: '', action: 'arrow', type: 'input' },
+        { label: 'Country', value: '', action: 'arrow', type: 'select' },
+        { label: 'Description', value: '', action: 'arrow', type: 'textarea' }
+    ]);
 
-export default () => (
-    <View>
-        <NavigationHeader title="Public Profile" />
-        <ProfileLayout
-            list={editable(list)}
-            description={'This profile is public and can be discovered by others'} />
-    </View>
-);
+    const init = async () => {
+        let profileProperties = props.publicProfileData;
+
+        if (Object.values(props.publicProfileData).every(val => val === '')) {
+            const vault = await getVault();
+            const publicData = await vault.profiles.public.getMany();
+
+            profileProperties = publicData.reduce((acc, field) => {
+                acc = { ...acc, [field.key]: field.value };
+                return acc;
+            }, {});
+
+            props.setPublicProfileData(profileProperties);
+        }
+
+        const updatedList = list.map((item) => {
+            const label = item.label.toLowerCase();
+            if (profileProperties[label]) item.value = profileProperties[label];
+            return item;
+        });
+
+        setList(updatedList);
+    };
+
+    useEffect(() => {
+        init();
+    }, [props.publicProfileData]);
+
+    return (
+        <View>
+            <NavigationHeader title="Public Profile" />
+            <ProfileLayout
+                list={editable(list)}
+                description={'This profile is public and can be discovered by others'} />
+        </View>
+    );
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setPublicProfileData: data => dispatch(setPublicProfileData(data)),
+    };
+};
+
+const mapStateToProps = state => {
+    return { publicProfileData: state.publicProfileData };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(PublicProfile);
