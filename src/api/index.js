@@ -8,13 +8,17 @@ export const MNEMONIC_LENGTH = 12;
 const VERIDA_APP_NAME = 'Verida (Mobile)';
 const CHAIN ='ethr';
 
-export const generateMnemonic = async () => {
+export const generateMnemonic = async (userData) => {
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
     if (wallet) {
         const result = JSON.parse(wallet);
         return result.mnemonic;
     }
     const newWallet = walletUtils.createWallet('ethr');
+
+    const vault = await getVault(newWallet);
+    await Promise.all(Object.entries(userData).map(entry => vault.profiles.public.set(...entry)));
+
     await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet));
     return newWallet.mnemonic;
 };
@@ -39,9 +43,12 @@ export const isAuthorized = async () => {
     return Boolean(wallet);
 };
 
-export const getVeridaApp = async () => {
-    const wallet = await SecureStore.getItemAsync(WALLET_KEY);
-    const { address, privateKey } = JSON.parse(wallet);
+export const getVeridaApp = async (wallet) => {
+    if (!wallet) {
+        wallet = await SecureStore.getItemAsync(WALLET_KEY);
+        wallet = JSON.parse(wallet);
+    }
+    const { address, privateKey } = wallet;
 
     Verida.setConfig({
         appName: VERIDA_APP_NAME
@@ -58,7 +65,7 @@ export const getVeridaApp = async () => {
     return verida;
 };
 
-export const getVault = async () => {
-    const verida = await getVeridaApp();
+export const getVault = async (wallet) => {
+    const verida = await getVeridaApp(wallet);
     return new Vault(verida);
 };

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Icon } from 'native-base';
+import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import Clipboard from '@react-native-community/clipboard';
 
@@ -18,7 +19,7 @@ import { onRemind } from '../../helpers/account';
 
 import _ from 'underscore';
 
-const SeedPhraseGenerated = () => {
+const SeedPhraseGenerated = (props) => {
     const [words, setWords] = useState('Generating seed phrase ...');
 
     useEffect(async () => {
@@ -47,7 +48,7 @@ const SeedPhraseGenerated = () => {
                 <Button color="primary" onPress={onSaved}>
                     I have saved my seed words
                 </Button>
-                <Button color="transparent-grey" onPress={() => onRemind(words)}>
+                <Button color="transparent-grey" onPress={() => onRemind(words, props.publicProfileData)}>
                     Remind me later
                 </Button>
             </Layout>
@@ -55,7 +56,11 @@ const SeedPhraseGenerated = () => {
     );
 };
 
-export default SeedPhraseGenerated;
+const mapStateToProps = state => {
+    return { publicProfileData: state.publicProfileData };
+};
+
+export default connect(mapStateToProps, null)(SeedPhraseGenerated);
 
 const style = StyleSheet.create ({
     title: {

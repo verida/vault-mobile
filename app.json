@@ -10,7 +10,10 @@
       "package": "expo.test"
     },
     "ios": {
-      "bundleIdentifier": "expo.test"
+      "bundleIdentifier": "expo.test",
+      "infoPlist": {
+        "NSFaceIDUsageDescription": "This app uses bio authentication to secure user's private info"
+      }
     },
     "entryPoint": "index.js",
     "packagerOpts": {
