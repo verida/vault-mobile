@@ -1,7 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { StyleSheet } from 'react-native';
 import { Container, Content } from 'native-base';
 import { Actions } from 'react-native-router-flux';
+import { connect } from 'react-redux';
+
 import Text from '../../components/Text';
 import Button from '../../components/Button';
 import Layout from '../../components/Layouts/Layout';
@@ -20,27 +22,42 @@ const Items = [
 
 const onShow = () => Actions[SEED_PHRASE_GENERATED]();
 
-export default () => (
-    <Container>
-        <NavigationHeader title="Create An Account" />
-        <Content>
-            <Layout title="Seed Phrase">
-                <Text style={style.description}>
-                    Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
-                    upgraded.
-                </Text>
-                <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
-                <List items={Items}/>
-                <Button style={{ marginTop: 56 }} color="primary" onPress={onShow}>
-                    Show Seed Phrase
-                </Button>
-                <Button color="transparent-grey" onPress={() => onRemind()}>
-                    Remind me later
-                </Button>
-            </Layout>
-        </Content>
-    </Container>
-);
+const SeedPhrase = (props) => {
+    const [disabled, setDisabled] = useState(false);
+
+    const onRemindLatter = () => {
+        setDisabled(true);
+        return onRemind(null, props.publicProfileData);
+    };
+
+    return (
+        <Container>
+            <NavigationHeader title="Create An Account" />
+            <Content>
+                <Layout title="Seed Phrase">
+                    <Text style={style.description}>
+                        Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
+                        upgraded.
+                    </Text>
+                    <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
+                    <List items={Items}/>
+                    <Button style={{ marginTop: 56 }} disabled={disabled} color="primary" onPress={onShow}>
+                        Show Seed Phrase
+                    </Button>
+                    <Button disabled={disabled} color="transparent-grey" onPress={onRemindLatter}>
+                        Remind me later
+                    </Button>
+                </Layout>
+            </Content>
+        </Container>
+    );
+};
+
+const mapStateToProps = state => {
+    return { publicProfileData: state.publicProfileData };
+};
+
+export default connect(mapStateToProps, null)(SeedPhrase);
 
 const style = StyleSheet.create({
     description: {
