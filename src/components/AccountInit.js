@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { connect } from 'react-redux';
 import { Actions } from 'react-native-router-flux';
 import { TextInput, StyleSheet } from 'react-native';
 
@@ -10,12 +11,17 @@ import Label from './Label';
 import InputStyles from '../styles/inputs';
 import { COUNTRIES } from '../helpers/country-list';
 
-export default ({ action }) => {
-    const [username, setUsername] = useState(null);
+import { setPublicProfileData } from '../store/general/actions';
+
+const AccountInit = ({ action, ...props }) => {
+    const [name, setName] = useState('');
     const [country, setCountry] = useState(null);
 
     const onCountryChange = (e) => setCountry(e);
-    const onContinue = () => Actions[action]();
+    const onContinue = () => {
+        props.setPublicProfileData({ name, country: country.value });
+        return Actions[action]();
+    };
 
     return (
         <Layout title="Select Username" style={style.layout}>
@@ -23,8 +29,8 @@ export default ({ action }) => {
             <TextInput
                 placeholder={'Enter username'}
                 style={InputStyles.input}
-                value={username}
-                onChangeText={setUsername} />
+                value={name}
+                onChangeText={(t) => setName(t.trim())} />
 
             <Label>Country</Label>
             <DropDownPicker
@@ -44,6 +50,14 @@ export default ({ action }) => {
         </Layout>
     );
 };
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setPublicProfileData: data => dispatch(setPublicProfileData(data)),
+    };
+};
+
+export default connect(null, mapDispatchToProps)(AccountInit);
 
 const style = StyleSheet.create ({
     layout: {
