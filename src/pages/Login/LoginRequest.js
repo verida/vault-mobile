@@ -32,7 +32,7 @@ export default (props) => {
 
     return (
         <Container>
-            <NavigationHeader title="Login Request" />
+            <NavigationHeader title="Login Request" left={{ icon: 'skip' }} />
             <Content>
                 <View style={style.container}>
                     <View style={{ alignItems: 'center' }}>
