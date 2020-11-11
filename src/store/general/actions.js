@@ -1,4 +1,4 @@
-import { SET_AUTH_STATUS, SET_BIO_AUTH_STATUS, SET_PUBLIC_PROFILE_DATA } from './action-types';
+import { SET_AUTH_STATUS, SET_BIO_AUTH_STATUS, SET_PUBLIC_PROFILE_DATA, SET_NEW_MESSAGES_COUNT } from './action-types';
 
 export const setAuthStatus = (payload) => {
     return { type: SET_AUTH_STATUS, payload };
@@ -10,4 +10,8 @@ export const setBioAuthStatus = (payload) => {
 
 export const setPublicProfileData = (payload) => {
     return { type: SET_PUBLIC_PROFILE_DATA, payload };
+};
+
+export const setNewMessagesCount = (payload) => {
+    return { type: SET_NEW_MESSAGES_COUNT, payload };
 };

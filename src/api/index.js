@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const WALLET_KEY = 'VaultMobileWallet';
 export const MNEMONIC_LENGTH = 12;
-const VERIDA_APP_NAME = 'Verida (Mobile)';
+const VERIDA_APP_NAME = 'Verida: Vault';
 const CHAIN ='ethr';
 
 export const generateMnemonic = async (userData) => {
@@ -69,3 +69,12 @@ export const getVault = async (wallet) => {
     const verida = await getVeridaApp(wallet);
     return new Vault(verida);
 };
+
+export async function fetchInbox (filter = {}) {
+    const veridaApp = await getVeridaApp();
+    const inbox = await veridaApp.inbox.getInbox();
+
+    return inbox.getMany(filter, {
+        sort: [{ sentAt: 'desc' }]
+    });
+}
