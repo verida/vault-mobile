@@ -11,7 +11,7 @@ if (typeof process === 'undefined') {
     }
 }
 
-process.browser = false;
+process.browser = true;
 if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer;
 
 // global.location = global.location || { port: 80 }
@@ -27,3 +27,13 @@ if (typeof localStorage !== 'undefined') {
 
 import {EventEmitter}      from 'events';
 EventEmitter.defaultMaxListeners = 32;
+
+import {decode, encode} from 'base-64'
+
+if (!global.btoa) {
+    global.btoa = encode;
+}
+
+if (!global.atob) {
+    global.atob = decode;
+}

@@ -15,6 +15,8 @@ import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
 import { clearWallet } from '../api';
 import { NUNITO_SANS_BOLD } from '../constants/text';
 
+import { getVault } from '../api';
+
 export default () => (
     <View>
         <NavigationHeader
@@ -52,10 +54,16 @@ const logout = async () => {
     Actions[START]();
 };
 
+const testDb = async () => {
+    console.log("test DB");
+    const vault = getVault();
+}
+
 const list = [
     { label: 'Change PIN', action: 'arrow', optional: true, onPress: () => Actions[CHANGE_PIN]() },
     { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
     // { label: "Notifications", action: "arrow" },
     { label: 'Login History', action: 'arrow', optional: true, onPress: () => Actions[LOGIN_HISTORY]() },
-    { label: 'Log Out', text: style.logoutText, optional: true, onPress: logout }
+    { label: 'Log Out', text: style.logoutText, optional: true, onPress: logout },
+    { label: 'Test DB', text: 'Test DB', optional: true, onPress: testDb }
 ];

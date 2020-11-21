@@ -1,4 +1,4 @@
-import Verida from '@verida/datastore';
+/*import Verida from '@verida/datastore';
 import walletUtils from '@verida/wallet-utils';
 
 const VERIDA_APP_NAME = 'Verida (Mobile)';
@@ -27,3 +27,4 @@ export const testVeridaConnect = () => {
 
     console.log(veridaApp);
 };
+*/

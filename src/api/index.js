@@ -27,10 +27,13 @@ export const walletByMnemonic = async (mnemonic) => {
     await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet));
 };
 export const clearWallet = async () => {
+    global.verida = null;
+    global.vault = null;
     await SecureStore.deleteItemAsync(WALLET_KEY);
 };
 export const getWallet = async () => {
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
+    global.wallet = wallet
     if (wallet) {
         const result = JSON.parse(wallet);
         result.address = 'did:ethr:' + result.address.toLowerCase();
@@ -44,6 +47,13 @@ export const isAuthorized = async () => {
 };
 
 export const getVeridaApp = async (wallet) => {
+    console.log("getVeridaApp");
+    if (global.verida) {
+        console.log("return existing verid app");
+        return global.verida;
+    }
+    console.log("build verida vapp");
+
     if (!wallet) {
         wallet = await SecureStore.getItemAsync(WALLET_KEY);
         wallet = JSON.parse(wallet);
@@ -61,16 +71,30 @@ export const getVeridaApp = async (wallet) => {
     });
 
     await verida.connect(true);
+    global.verida = verida;
 
     return verida;
 };
 
 export const getVault = async (wallet) => {
+    console.log("get vault")
+    if (global.vault) {
+        console.log("returning existing vault")
+        return global.vault;
+    }
+    console.log("creating vault")
+
     const verida = await getVeridaApp(wallet);
-    return new Vault(verida);
+    const vault = new Vault(verida);
+    global.vault = vault;
+
+    return vault;
 };
 
+global.getVault = getVault;
+
 export async function fetchInbox (filter = {}) {
+    console.log("fetch inbox");
     const veridaApp = await getVeridaApp();
     const inbox = await veridaApp.inbox.getInbox();
 
@@ -78,3 +102,5 @@ export async function fetchInbox (filter = {}) {
         sort: [{ sentAt: 'desc' }]
     });
 }
+
+global.fetchInbox = fetchInbox;
