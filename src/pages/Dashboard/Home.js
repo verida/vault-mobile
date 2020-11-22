@@ -34,8 +34,8 @@ const Home = (props) => {
     }, []);
 
     const fetchInboxCount = async () => {
-        const msg = await fetchInbox({ read: false });
-        props.setNewMessagesCount(msg.length);
+        const messages = await fetchInbox({ read: false });
+        props.setNewMessagesCount(messages.length);
     };
 
     const init = async () => {
