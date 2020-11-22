@@ -5,6 +5,10 @@ import android.content.Context;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import dog.craftz.sqlite_2.RNSqlite2Package;
+import dog.craftz.sqlite_2.RNSqlite2Package;
+import dog.craftz.sqlite_2.RNSqlite2Package;
+import dog.craftz.sqlite_2.RNSqlite2Package;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;

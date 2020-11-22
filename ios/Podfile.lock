@@ -351,6 +351,8 @@ PODS:
     - React
   - RNScreens (2.9.0):
     - React
+  - RNSqlite2 (1.0.0):
+    - React-Core
   - RNSVG (12.1.0):
     - React
   - TcpSockets (3.3.2):
@@ -446,6 +448,7 @@ DEPENDENCIES:
   - RNOS (from `../node_modules/react-native-os`)
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
+  - RNSqlite2 (from `../node_modules/react-native-sqlite-2`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
   - UMAppLoader (from `../node_modules/unimodules-app-loader/ios`)
@@ -573,6 +576,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-reanimated"
   RNScreens:
     :path: "../node_modules/react-native-screens"
+  RNSqlite2:
+    :path: "../node_modules/react-native-sqlite-2"
   RNSVG:
     :path: "../node_modules/react-native-svg"
   TcpSockets:
@@ -665,6 +670,7 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNReanimated: b5ccb50650ba06f6e749c7c329a1bc3ae0c88b43
   RNScreens: c526239bbe0e957b988dacc8d75ac94ec9cb19da
+  RNSqlite2: aba98937d707abaf15d97f7bdeaf99335268c283
   RNSVG: ce9d996113475209013317e48b05c21ee988d42e
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
   UMAppLoader: 61049c8d55590b74e9ae1d5429bf68d96b4a2528
@@ -683,6 +689,6 @@ SPEC CHECKSUMS:
   Yoga: 3ebccbdd559724312790e7742142d062476b698e
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: 1e167af4909486d4edf50b8ff69e26fbae006735
+PODFILE CHECKSUM: 8982f805f402914a1005de44f15d6ec26143ff54
 
 COCOAPODS: 1.9.3

@@ -48,16 +48,9 @@ const PublicProfile = (props) => {
             updateData()
         });
 
-        // @todo: Why does the below not work?
         // @todo: Fix index(es).js issue with duplicate replication (handle exception or investigate why it's duplicating)
-        // @todo: display inbox count
-
-        /*vault.profiles.public.store.changes(function() {
-            console.log("data changed")
-            updateData()
-        });
-        console.log("bound changes");
-        console.log(vault.profiles.public.store)*/
+        // done: display inbox count
+        // @todo: merge this branch into develop
     }
 
     // component did mount

@@ -47,12 +47,9 @@ export const isAuthorized = async () => {
 };
 
 export const getVeridaApp = async (wallet) => {
-    console.log("getVeridaApp");
     if (global.verida) {
-        console.log("return existing verid app");
         return global.verida;
     }
-    console.log("build verida vapp");
 
     if (!wallet) {
         wallet = await SecureStore.getItemAsync(WALLET_KEY);
@@ -77,12 +74,9 @@ export const getVeridaApp = async (wallet) => {
 };
 
 export const getVault = async (wallet) => {
-    console.log("get vault")
     if (global.vault) {
-        console.log("returning existing vault")
         return global.vault;
     }
-    console.log("creating vault")
 
     const verida = await getVeridaApp(wallet);
     const vault = new Vault(verida);
@@ -91,16 +85,11 @@ export const getVault = async (wallet) => {
     return vault;
 };
 
-global.getVault = getVault;
-
 export async function fetchInbox (filter = {}) {
-    console.log("fetch inbox");
     const veridaApp = await getVeridaApp();
     const inbox = await veridaApp.inbox.getInbox();
 
-    return inbox.getMany(filter, {
+    return await inbox.getMany(filter, {
         sort: [{ sentAt: 'desc' }]
     });
 }
-
-global.fetchInbox = fetchInbox;
