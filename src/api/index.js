@@ -32,11 +32,16 @@ export const clearWallet = async () => {
     await SecureStore.deleteItemAsync(WALLET_KEY);
 };
 export const getWallet = async () => {
+    if (global.wallet) {
+        return global.wallet;
+    }
+    
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
-    global.wallet = wallet
+
     if (wallet) {
         const result = JSON.parse(wallet);
         result.address = 'did:ethr:' + result.address.toLowerCase();
+        global.wallet = result;
         return result;
     }
     return {};
