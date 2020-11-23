@@ -47,10 +47,6 @@ const PublicProfile = (props) => {
             console.log("data changed")
             updateData()
         });
-
-        // @todo: Fix index(es).js issue with duplicate replication (handle exception or investigate why it's duplicating)
-        // done: display inbox count
-        // @todo: merge this branch into develop
     }
 
     // component did mount
@@ -59,8 +55,8 @@ const PublicProfile = (props) => {
         bindChanges();
     }, [])
 
+    // component redrawn
     useEffect(() => {
-        //init();
     }, [props.publicProfileData]);
 
     return (
