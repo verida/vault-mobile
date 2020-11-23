@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Image, Platform } from 'react-native';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
 import Constants from 'expo-constants';
+import { connect } from 'react-redux';
 
 import Text from '../../components/Text';
 import NavigationHeader from '../../components/Navigation/NavigationHeader';
@@ -14,28 +15,52 @@ import { Actions } from 'react-native-router-flux';
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../constants/color';
 import { INBOX, SETTINGS } from '../../constants/route';
+import { setNewMessagesCount } from '../../store/general/actions';
 
-import { getWallet } from '../../api';
+import { getWallet, fetchInbox } from '../../api';
 
 const UserImg = require('../../assets/stubs/user.png');
 const LogoImg = require('../../assets/vault-logo.png');
 
-export default () => {
+const Home = (props) => {
     const [info, setInfo] = useState({});
 
     useEffect(() => {
         init();
-    });
+    }, []);
+
+    useEffect(() => {
+        fetchInboxCount();
+    }, []);
+
+    const fetchInboxCount = async () => {
+        const messages = await fetchInbox({ read: false });
+        props.setNewMessagesCount(messages.length);
+    };
 
     const init = async () => {
-        const data = await getWallet();
-        setInfo(data);
+        const wallet = await getWallet();
+        setInfo(wallet);
     };
 
     return (
         <Container>
             <NavigationHeader
-                left={{ action: () => Actions[INBOX](), icon: <EnvelopeSvg /> }}
+                left={{
+                    action: () => Actions[INBOX](),
+                    icon:
+                    <View>
+                        <EnvelopeSvg />
+                        {props.newMessagesCount
+                            ? <View style={style.badge}>
+                                <Text style={{ fontSize: 9 }}>
+                                    {props.newMessagesCount}
+                                </Text>
+                            </View>
+                            : null
+                        }
+                    </View>
+                }}
                 right={{ action: () => Actions[SETTINGS](), icon: <SettingsSvg /> }}
             />
             <Content contentContainerStyle={style.content}>
@@ -67,6 +92,18 @@ export default () => {
         </Container>
     );
 };
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setNewMessagesCount: data => dispatch(setNewMessagesCount(data)),
+    };
+};
+
+const mapStateToProps = state => {
+    return { newMessagesCount: state.newMessagesCount };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
 const marginTop = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 24;
 const style = StyleSheet.create ({
@@ -115,5 +152,18 @@ const style = StyleSheet.create ({
         textAlign: 'center',
         fontFamily: NUNITO_SANS_SEMIBOLD,
         color: BLACK_COLOR_OPACITY(0.4)
+    },
+    badge: {
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 2,
+        position: 'absolute',
+        right: -8,
+        top: -7,
+        minHeight: 15,
+        minWidth: 15,
+        backgroundColor: '#FF6E6E',
+        borderRadius: 10,
+        overflow: 'hidden'
     }
 });

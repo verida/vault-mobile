@@ -16,21 +16,16 @@ const PublicProfile = (props) => {
         { label: 'Description', value: '', action: 'arrow', type: 'textarea' }
     ]);
 
-    const init = async () => {
+    const updateData = async () => {
         let profileProperties = props.publicProfileData;
+        const vault = await getVault();
+        const publicData = await vault.profiles.public.getMany();
+        profileProperties = publicData.reduce((acc, field) => {
+            acc = { ...acc, [field.key]: field.value };
+            return acc;
+        }, {});
 
-        if (Object.values(props.publicProfileData).every(val => val === '')) {
-            const vault = await getVault();
-            const publicData = await vault.profiles.public.getMany();
-
-            profileProperties = publicData.reduce((acc, field) => {
-                acc = { ...acc, [field.key]: field.value };
-                return acc;
-            }, {});
-
-            props.setPublicProfileData(profileProperties);
-        }
-
+        props.setPublicProfileData(profileProperties);
         const updatedList = list.map((item) => {
             const label = item.label.toLowerCase();
             if (profileProperties[label]) item.value = profileProperties[label];
@@ -38,10 +33,30 @@ const PublicProfile = (props) => {
         });
 
         setList(updatedList);
-    };
+    }
 
+    const bindChanges = async () => {
+        const vault = await getVault();
+        await vault.profiles.public.init();
+        const db = await vault.profiles.public.store.getDb();
+        const dbInstance = await db.getInstance();
+        dbInstance.changes({
+            since: 'now',
+            live: true
+        }).on('change', async function(info) {
+            console.log("data changed")
+            updateData()
+        });
+    }
+
+    // component did mount
     useEffect(() => {
-        init();
+        updateData();
+        bindChanges();
+    }, [])
+
+    // component redrawn
+    useEffect(() => {
     }, [props.publicProfileData]);
 
     return (

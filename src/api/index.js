@@ -5,7 +5,7 @@ import * as SecureStore from 'expo-secure-store';
 
 const WALLET_KEY = 'VaultMobileWallet';
 export const MNEMONIC_LENGTH = 12;
-const VERIDA_APP_NAME = 'Verida (Mobile)';
+const VERIDA_APP_NAME = 'Verida: Vault';
 const CHAIN ='ethr';
 
 export const generateMnemonic = async (userData) => {
@@ -27,13 +27,21 @@ export const walletByMnemonic = async (mnemonic) => {
     await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet));
 };
 export const clearWallet = async () => {
+    global.verida = null;
+    global.vault = null;
     await SecureStore.deleteItemAsync(WALLET_KEY);
 };
 export const getWallet = async () => {
+    if (global.wallet) {
+        return global.wallet;
+    }
+    
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
+
     if (wallet) {
         const result = JSON.parse(wallet);
         result.address = 'did:ethr:' + result.address.toLowerCase();
+        global.wallet = result;
         return result;
     }
     return {};
@@ -44,6 +52,10 @@ export const isAuthorized = async () => {
 };
 
 export const getVeridaApp = async (wallet) => {
+    if (global.verida) {
+        return global.verida;
+    }
+
     if (!wallet) {
         wallet = await SecureStore.getItemAsync(WALLET_KEY);
         wallet = JSON.parse(wallet);
@@ -61,11 +73,28 @@ export const getVeridaApp = async (wallet) => {
     });
 
     await verida.connect(true);
+    global.verida = verida;
 
     return verida;
 };
 
 export const getVault = async (wallet) => {
+    if (global.vault) {
+        return global.vault;
+    }
+
     const verida = await getVeridaApp(wallet);
-    return new Vault(verida);
+    const vault = new Vault(verida);
+    global.vault = vault;
+
+    return vault;
 };
+
+export async function fetchInbox (filter = {}) {
+    const veridaApp = await getVeridaApp();
+    const inbox = await veridaApp.inbox.getInbox();
+
+    return await inbox.getMany(filter, {
+        sort: [{ sentAt: 'desc' }]
+    });
+}
