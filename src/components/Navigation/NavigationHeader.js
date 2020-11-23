@@ -9,11 +9,11 @@ export default ({ left = { icon: 'back' }, title, right = {} }) => {
                 {(function() {
                     switch (left.icon) {
                     case 'back':
-                        return (
+                        return Actions.prevScene ? (
                             <Button transparent onPress={() => Actions.pop()}>
                                 <Icon name='arrow-back' style={{ color: '#000' }} />
                             </Button>
-                        );
+                        ) : null;
                     case 'skip':
                         return null;
                     default:

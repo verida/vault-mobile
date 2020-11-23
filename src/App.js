@@ -8,11 +8,12 @@ import * as Font from 'expo-font';
 
 import Routes from './routes';
 import store from './store';
-
-// import { testVeridaConnect } from './api/verida';
+import { isAuthorized } from './api';
+import Authenticate from './pages/Authentication/Authenticate';
 
 export default () => {
     const [loading, setLoading] = useState(true);
+    const [authorized, setAuthorized] = useState(null);
 
     const loadFonts = async () => {
         const NunitoSans = require('./assets/fonts/NunitoSans-Regular.ttf');
@@ -28,12 +29,17 @@ export default () => {
 
     const init = async () => {
         await loadFonts();
-        // await testVeridaConnect();
+        const data = await isAuthorized();
+        setAuthorized(data);
     };
+
+    const routes = authorized
+        ? <Authenticate><Routes authorized={authorized} /></Authenticate>
+        : <Routes authorized={authorized} />;
 
     const App =
         <Provider store={store}>
-            <Routes />
+            {routes}
         </Provider>;
 
     return (loading ?

@@ -8,9 +8,6 @@ export const VERIFY_PHRASE = 'verify-phrase';
 
 export const CREATE_PIN = 'create-pin';
 export const CHANGE_PIN = 'change-pin';
-export const CHECK_PIN = 'check-pin';
-
-export const AUTHENTICATE = 'authenticate';
 
 export const SUCCESS = 'success';
 export const SETTINGS = 'settings';
@@ -32,7 +29,7 @@ export const PROFILES = 'profiles';
 export const CREDENTIAL_DETAILS = 'credential-details';
 
 export const LOGIN_HISTORY = 'login-history';
-export const LOGIN_REQUEST = 'login-request';
+export const LOGIN_REQUEST = 'auth/request';
 
 export const PUBLIC_PROFILE = 'public-profile';
 export const PRIVATE_PROFILE = 'private-profile';

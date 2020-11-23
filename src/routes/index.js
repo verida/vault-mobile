@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Router, Scene } from 'react-native-router-flux';
 
 import Start from '../pages/Account/Start';
@@ -8,9 +8,6 @@ import VerifyPhrase from '../pages/SeedPhrase/VerifyPhrase';
 
 import CreatePin from '../pages/Authentication/CreatePin';
 import ChangePin from '../pages/Authentication/ChangePin';
-import CheckPin from '../pages/Authentication/CheckPin';
-
-import Authenticate from '../pages/Authentication/Authenticate';
 
 import Success from '../pages/Success';
 import Settings from '../pages/Settings';
@@ -46,7 +43,6 @@ import Health from '../pages/Health';
 import Activities from '../pages/Activities.js';
 
 import DashboardTabs from '../components/Navigation/DashboardTabs';
-import { isAuthorized } from '../api';
 
 import {
     CREATE_ACCOUNT,
@@ -76,9 +72,7 @@ import {
     SELECT_NETWORK,
     SEED_PHRASE_ENTERED, CREDENTIAL_DETAILS,
     CREATE_PIN,
-    CHANGE_PIN,
-    CHECK_PIN,
-    AUTHENTICATE
+    CHANGE_PIN
 } from '../constants/route';
 
 import HomeSvg from '../assets/navigation/home.svg';
@@ -86,24 +80,13 @@ import CredentialSvg from '../assets/navigation/credential.svg';
 import DataSvg from '../assets/navigation/data.svg';
 import ProfilesSvg from '../assets/navigation/profiles.svg';
 
-const Routes = () => {
-    const [authorized, setAuthorized] = useState(null);
-    const init = async () => {
-        const data = await isAuthorized();
-        setAuthorized(data);
-    };
-
-    useEffect(() => {
-        init();
-    }, []);
+const Routes = (props) => {
     return (
         <Router>
             <Scene key="root">
-                <Scene key={START} component={Start} hideNavBar={true} initial={!authorized} type="reset" />
+                <Scene key={START} component={Start} hideNavBar={true} initial={!props.authorized} type="reset" />
 
-                <Scene key={AUTHENTICATE} component={Authenticate} hideNavBar={true} initial={authorized} authorized={authorized} type="reset" />
-
-                <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" tabBarComponent={DashboardTabs} hideNavBar={true}>
+                <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" initial={props.authorized} tabBarComponent={DashboardTabs} hideNavBar={true} >
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
                     <Scene key={CREDENTIALS} component={Credentials} title="Credentials" hideNavBar={true} icon={CredentialSvg} />
                     <Scene key={DATA} component={Data} title="Data" hideNavBar={true} icon={DataSvg} />
@@ -117,7 +100,6 @@ const Routes = () => {
                 <Scene key={SEED_PHRASE_GENERATED} component={SeedPhraseGenerated} hideNavBar={true} />
                 <Scene key={VERIFY_PHRASE} component={VerifyPhrase} hideNavBar={true} />
                 <Scene key={CREATE_PIN} component={CreatePin} hideNavBar={true} type="reset" />
-                <Scene key={CHECK_PIN} component={CheckPin} hideNavBar={true} />
                 <Scene key={SUCCESS} component={Success} hideNavBar={true} />
                 <Scene key={SETTINGS} component={Settings} hideNavBar={true} clone={true} />
 

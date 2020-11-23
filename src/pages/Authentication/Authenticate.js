@@ -1,44 +1,37 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { ActivityIndicator, View, StyleSheet, Text } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 import * as LocalAuthentication from 'expo-local-authentication';
 
 import Logo from '../../assets/logo.svg';
+import CheckPin from './CheckPin';
 
-import { HOME, CHECK_PIN } from '../../constants/route';
 import { setBioAuthStatus, setAuthStatus } from '../../store/general/actions';
 import { LinearGradient } from 'expo-linear-gradient';
 
 const Authenticate = (props) => {
+    const [pinAuth, setPinAuth] = useState(false);
+
     const init = async () => {
-        if (props.authenticated) return Actions[HOME]();
+        if (props.authenticated) return;
         const hasSavedBio = await LocalAuthentication.isEnrolledAsync();
         props.setBioAuthStatus(hasSavedBio);
 
-        if (!hasSavedBio) {
-            return Actions[CHECK_PIN]({
-                subtitle: 'to enter the app',
-                finishProcess: () => (props.setAuthStatus(true), Actions[HOME]())
-            });
-        }
+        if (!hasSavedBio) return setPinAuth(true);
 
         const { success } = await LocalAuthentication.authenticateAsync();
 
-        if (!success) {
-            return Actions[CHECK_PIN]({
-                subtitle: 'to enter the app',
-                finishProcess: () => (props.setAuthStatus(true), Actions[HOME]())
-            });
-        }
+        if (!success) return setPinAuth(true);
 
-        props.setAuthStatus(true);
-        return Actions[HOME]();
+        return props.setAuthStatus(true);
     };
 
     useEffect(() => {
         init();
     }, []);
+
+    if (props.authenticated) return props.children;
+    if (pinAuth) return <CheckPin finishProcess={() => props.setAuthStatus(true)} />;
 
     return (
         <LinearGradient
