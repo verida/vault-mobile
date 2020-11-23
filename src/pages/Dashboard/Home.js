@@ -53,7 +53,7 @@ const Home = (props) => {
                         <EnvelopeSvg />
                         {props.newMessagesCount
                             ? <View style={style.badge}>
-                                <Text style={{ fontSize: 7 }}>
+                                <Text style={{ fontSize: 9 }}>
                                     {props.newMessagesCount}
                                 </Text>
                             </View>
@@ -156,13 +156,13 @@ const style = StyleSheet.create ({
     badge: {
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 3,
+        padding: 2,
         position: 'absolute',
-        right: -5,
-        top: -3,
-        height: 13,
-        minWidth: 10,
-        backgroundColor: 'red',
+        right: -8,
+        top: -7,
+        minHeight: 15,
+        minWidth: 15,
+        backgroundColor: '#FF6E6E',
         borderRadius: 10,
         overflow: 'hidden'
     }
