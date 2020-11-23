@@ -13,9 +13,7 @@ export const SUCCESS = 'success';
 export const SETTINGS = 'settings';
 
 export const INBOX = 'inbox';
-export const EMPLOYMENT_REFERENCE = 'employment-reference';
-export const DATA_SNAPSHOT = 'data-snapshot';
-export const DATA_SYNCHRONIZATION = 'data-synchronization';
+export const INBOX_ITEM = 'inbox-item';
 
 export const IMPORT_ACCOUNT = 'import-account';
 export const SELECT_NETWORK = 'select-network';

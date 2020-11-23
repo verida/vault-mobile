@@ -1,11 +1,15 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import { connect } from 'react-redux';
 import { Container, Content } from 'native-base';
 import Layout from '../components/Layouts/Layout';
 import Search from '../components/Search';
 import CardList from '../components/CardList';
 import NavigationHeader from '../components/Navigation/NavigationHeader';
+import { fetchInbox, getVeridaApp } from '../api';
+import _ from 'lodash';
+import moment from 'moment';
 
-const inboxList = [
+/*const inboxList = [
     {
         id: 1,
         logo: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
@@ -33,18 +37,84 @@ const inboxList = [
         type: 3,
         read: false
     }
-];
+];*/
 
-export default () => {
+const Inbox = (props) => {
+    const [inbox, setInbox] = useState([]);
+
+    // Initialise component
+    useEffect(() => {
+        loadInbox();
+    }, []);
+
+    const loadInbox = async () => {
+        const inboxItems = await fetchInbox();
+        const results = [];
+        for (let i=0; i<inboxItems.length; i++) {
+            let item = await buildItem(inboxItems[i]);
+            results.push(item);
+        }
+
+        setInbox(results);
+    };
+
+    const buildItem = async (inboxItem) => {
+        const item = {
+            id: inboxItem._id,
+            logo: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
+            title: inboxItem.message,
+            createdAt: moment(inboxItem.sentAt).format('MMM DD'),
+            type: inboxItem.type,
+            read: inboxItem.read
+        };
+
+        const profile = await getProfile(inboxItem.sentBy)
+        const name = profile('name', '')
+        item.from = name ? `Sent by ${name} ` : ''
+        item.from += `via ${inboxItem.sentBy.app}`
+
+        return item;
+    }
+
+    // @todo: Add to vault
+    const getProfile = async (sentBy) => {
+        try {
+            const profile = await global.Verida.openProfile(sentBy.did, sentBy.appName)
+            const profileItems = await profile.getMany()
+
+            return (key, stub) => {
+                const data = _.find(profileItems, data => data.key === key)
+                return (data && data.value) || stub
+            }
+        } catch (err) {
+            console.log("no profile");
+            // User may not have created a profile
+            return (key, stub) => {
+                return ''
+            }
+        }
+    };
+
     return (
         <Container>
             <NavigationHeader title="Inbox" />
             <Content>
                 <Layout>
-                    <Search />
-                    <CardList list={inboxList} />
+                    <CardList list={inbox} />
                 </Layout>
             </Content>
         </Container>
     );
+}
+
+const mapDispatchToProps = dispatch => {
+    return {
+        setInboxItems: data => dispatch(setInboxItems(data)),
+    };
 };
+
+const mapStateToProps = state => {
+    return { setInboxItems: state.setInboxItems };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Inbox);

@@ -8,6 +8,8 @@ export const MNEMONIC_LENGTH = 12;
 const VERIDA_APP_NAME = 'Verida: Vault';
 const CHAIN ='ethr';
 
+global.Verida = Verida;
+
 export const generateMnemonic = async (userData) => {
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
     if (wallet) {

@@ -1,6 +1,7 @@
 import React from 'react';
 import { View, Image, StyleSheet, TouchableOpacity } from 'react-native';
 import { Actions } from 'react-native-router-flux';
+import { INBOX_ITEM } from '../../constants/route';
 import Text from '../Text';
 
 import { findTypeById } from '../../helpers/inbox';
@@ -13,30 +14,30 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 export default ({ options }) => {
-    const type = findTypeById(options.id);
-    const title = options.title + (options.from ? ' from ' : '');
+    const inboxType = findTypeById(options.type);
 
-    const onPress = () => Actions[type.action]({ id: options.id });
+    const onPress = () => Actions[INBOX_ITEM]({ id: options.id });
 
     return (
-        <TouchableOpacity style={style.card} onPress={onPress}>
+        <TouchableOpacity style={[style.card, !options.read ? style.unread : '']} onPress={onPress}>
             <Image source={{ uri: options.logo }} style={style.logo} />
             <View style={style.details}>
                 <View style={style.tile}>
                     <View>
                         <View style={{ flexDirection: 'row' }}>
-                            <Text style={style.title}>{title} </Text>
-                            { !options.read && <View style={style.new} /> }
+                            <Text style={style.title}>{options.title} </Text>
                         </View>
-                        { Boolean(options.from) && <Text style={style.title}>{options.from} </Text> }
                     </View>
                     <Text style={style.date}>
                         {options.createdAt}
                     </Text>
                 </View>
-                <View style={style.tile}>
-                    <Text style={{ ...style.text, marginTop: 4 }}>{type.title}</Text>
-                    { type.svg && type.svg() }
+                <View>
+                    { Boolean(options.from) && <Text style={style.from}>{options.from} </Text> }
+                </View>
+                <View style={{ ...style.tile, ...style.footer}}>
+                    <Text style={{ ...style.text, marginTop: 4 }}>{inboxType.title}</Text>
+                    { inboxType.svg && inboxType.svg() }
                 </View>
             </View>
         </TouchableOpacity>
@@ -63,33 +64,41 @@ const style = StyleSheet.create({
         fontSize: 17,
         lineHeight: 28,
         alignItems: 'center',
-        fontFamily: NUNITO_SANS_BOLD
+        marginRight: 55,
+        fontFamily: NUNITO_SANS_BOLD,
+        marginBottom: 5
     },
     text: {
         fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 13,
         lineHeight: 18
     },
+    from: {
+        fontSize: 12,
+        lineHeight: 14,
+        fontFamily: NUNITO_SANS_BOLD,
+        color: BLACK_COLOR_OPACITY(0.6)
+    },
     tile: {
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+    },
+    footer: {
+        marginTop: 10
     },
     details: {
         paddingLeft: 15,
         flexDirection: 'column',
         flex: 1
     },
-    new: {
-        width: 8,
-        height: 8,
-        backgroundColor: ORANGE_COLOR,
-        borderRadius: 4,
-        marginTop: 4
+    unread: {
+        borderColor: ORANGE_COLOR
     },
     date: {
         color: BLACK_COLOR_OPACITY(0.6),
         fontFamily: NUNITO_SANS_SEMIBOLD,
         fontSize: 13,
-        marginTop: 3
+        marginTop: 3,
+        marginLeft: -45
     }
 });
