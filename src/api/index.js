@@ -92,11 +92,15 @@ export const getVault = async (wallet) => {
     return vault;
 };
 
-export async function fetchInbox (filter = {}) {
-    const veridaApp = await getVeridaApp();
-    const inbox = await veridaApp.inbox.getInbox();
+export async function fetchInboxItems (filter = {}) {
+    const inbox = await fetchInbox()
 
     return await inbox.getMany(filter, {
         sort: [{ sentAt: 'desc' }]
     });
+}
+
+export async function fetchInbox () {
+    const veridaApp = await getVeridaApp();
+    return veridaApp.inbox.getInbox();
 }

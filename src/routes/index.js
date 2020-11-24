@@ -16,6 +16,7 @@ import ImportAccount from '../pages/Account/Import';
 import SelectNetwork from '../pages/SelectNetwork';
 
 import Inbox from '../pages/Inbox';
+import InboxItem from '../pages/InboxItem';
 
 import LoginRequest from '../pages/Login/LoginRequest';
 import LoginHistory from '../pages/Login/LoginHistory';
@@ -32,10 +33,6 @@ import SeedPhraseEntered from '../pages/SeedPhrase/SeedPhraseEntered';
 
 import Home from '../pages/Dashboard/Home';
 import Data from '../pages/Dashboard/Data';
-
-import EmploymentReference from '../pages/Inbox/EmploymentReference';
-import DataSnapshot from '../pages/Inbox/DataSnapshot';
-import DataSynchronization from '../pages/Inbox/DataSynchronization';
 
 import Credentials from '../pages/Dashboard/Credentials';
 import Credential from '../pages/Credential';
@@ -65,6 +62,7 @@ import {
     VERIFY_PHRASE,
     EDIT_PROFILE,
     INBOX,
+    INBOX_ITEM,
     EMPLOYMENT_REFERENCE,
     DATA_SNAPSHOT,
     DATA_SYNCHRONIZATION,
@@ -110,9 +108,7 @@ const Routes = (props) => {
                 <Scene key={SEED_PHRASE_ENTERED} component={SeedPhraseEntered} hideNavBar={true} />
 
                 <Scene key={INBOX} component={Inbox} clone={true} hideNavBar={true} />
-                <Scene key={EMPLOYMENT_REFERENCE} component={EmploymentReference} hideNavBar={true} />
-                <Scene key={DATA_SNAPSHOT} component={DataSnapshot} hideNavBar={true} />
-                <Scene key={DATA_SYNCHRONIZATION} component={DataSynchronization} hideNavBar={true} />
+                <Scene key={INBOX_ITEM} component={InboxItem} clone={true} hideNavBar={true} />
 
                 <Scene key={LOGIN_HISTORY} component={LoginHistory} hideNavBar={true} clone={true} />
                 <Scene key={LOGIN_REQUEST} component={LoginRequest} hideNavBar={true} />

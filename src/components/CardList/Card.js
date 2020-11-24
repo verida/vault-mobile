@@ -16,7 +16,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 export default ({ options }) => {
     const inboxType = findTypeById(options.type);
 
-    const onPress = () => Actions[INBOX_ITEM]({ id: options.id });
+    const onPress = () => Actions[INBOX_ITEM]({ inboxItemId: options.id });
 
     return (
         <TouchableOpacity style={[style.card, !options.read ? style.unread : '']} onPress={onPress}>

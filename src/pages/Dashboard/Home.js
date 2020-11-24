@@ -17,7 +17,7 @@ import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../cons
 import { INBOX, SETTINGS } from '../../constants/route';
 import { setNewMessagesCount } from '../../store/general/actions';
 
-import { getWallet, fetchInbox } from '../../api';
+import { getWallet, fetchInboxItems } from '../../api';
 
 const UserImg = require('../../assets/stubs/user.png');
 const LogoImg = require('../../assets/vault-logo.png');
@@ -34,7 +34,7 @@ const Home = (props) => {
     }, []);
 
     const fetchInboxCount = async () => {
-        const messages = await fetchInbox({ read: false });
+        const messages = await fetchInboxItems({ read: false });
         props.setNewMessagesCount(messages.length);
     };
 

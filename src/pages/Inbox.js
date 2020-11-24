@@ -2,10 +2,10 @@ import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content } from 'native-base';
 import Layout from '../components/Layouts/Layout';
-import Search from '../components/Search';
+//import Search from '../components/Search'; <Search />
 import CardList from '../components/CardList';
 import NavigationHeader from '../components/Navigation/NavigationHeader';
-import { fetchInbox, getVeridaApp } from '../api';
+import { fetchInboxItems } from '../api';
 import _ from 'lodash';
 import moment from 'moment';
 
@@ -48,7 +48,7 @@ const Inbox = (props) => {
     }, []);
 
     const loadInbox = async () => {
-        const inboxItems = await fetchInbox();
+        const inboxItems = await fetchInboxItems();
         const results = [];
         for (let i=0; i<inboxItems.length; i++) {
             let item = await buildItem(inboxItems[i]);
@@ -65,7 +65,8 @@ const Inbox = (props) => {
             title: inboxItem.message,
             createdAt: moment(inboxItem.sentAt).format('MMM DD'),
             type: inboxItem.type,
-            read: inboxItem.read
+            read: inboxItem.read,
+            item: inboxItem
         };
 
         const profile = await getProfile(inboxItem.sentBy)
