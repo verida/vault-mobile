@@ -4,13 +4,6 @@ import { Content } from 'native-base';
 import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout';
 import RecordList from '../../components/RecordList';
 
-const company = {
-    uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
-    name: 'Steve Smith from Verida Health: ERM',
-    createdAt: 'May 25',
-    type: 2
-};
-
 const records = [
     {
         id: 1,
@@ -77,10 +70,10 @@ const records = [
     }
 ];
 
-export default ({ item }) => {
+export default ({ item, type }) => {
     return (
         <Content>
-            <RequestDetailsLayout company={company} id="hi">
+            <RequestDetailsLayout item={item} type={type}>
                 <RecordList list={records} />
             </RequestDetailsLayout>
         </Content>

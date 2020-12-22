@@ -5,11 +5,16 @@ import Button from '../../components/Button';
 import Text from '../Text';
 import Description from './Description';
 
-import { findTypeById } from '../../helpers/inbox';
 import { NUNITO_SANS_BOLD } from '../../constants/text';
 
-export default ({ company, children }) => {
-    const type = findTypeById(company.type);
+export default ({ type, item, children }) => {
+    const description = {
+        uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
+        name: item.item.message,
+        createdAt: item.createdAt
+    };
+
+    console.log(item)
 
     return (
         <Layout style={style.layout}>
@@ -17,7 +22,7 @@ export default ({ company, children }) => {
                 <Text style={style.title}>{ type.title }</Text>
                 { type.svg && type.svg(40,40, style.svg) }
             </View>
-            <Description details={company} />
+            <Description details={description} />
             <ScrollView>
                 { children }
             </ScrollView>
