@@ -40,7 +40,6 @@ export const getWallet = async () => {
     }
     
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
-
     if (wallet) {
         const result = JSON.parse(wallet);
         result.address = 'did:ethr:' + result.address.toLowerCase();

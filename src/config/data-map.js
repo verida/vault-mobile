@@ -122,7 +122,7 @@ export default dataMap = {
             "title": "Clinical Impression",
             "titlePlural": "Clinical Impressions",
             "color": "#ff000a",
-            "icon": "icons/health.svg",
+            "icon": <HealthSvg/>,
             "display": "grid",
             "database": "health_clinical_impression",
             "sort": [

@@ -16,7 +16,7 @@ const style = StyleSheet.create({
     cardItem: {
         margin: 15,
         padding: 16,
-        width: 165,
+        width: 150,
         height: 112,
         borderRadius: 12,
         backgroundColor: '#FD4F64',

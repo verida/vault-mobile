@@ -30,7 +30,7 @@ const Folders = (props) => {
             return {
                 label: titlePlural || title,
                 icon: icon,
-                onPress: () => Actions[DATA_FOLDER]({ folder: folders[folder] })
+                onPress: () => Actions[DATA_FOLDER]({ folderName: folder })
             }
         });
 
@@ -50,13 +50,10 @@ const Folders = (props) => {
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        //setNewMessagesCount: data => dispatch(setNewMessagesCount(data)),
-    };
+    return {};
 };
 
 const mapStateToProps = state => {
-    //return { newMessagesCount: state.newMessagesCount };
     return {};
 };
 

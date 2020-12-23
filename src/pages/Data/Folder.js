@@ -1,41 +1,47 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Container, Content } from 'native-base';
+import { connect } from 'react-redux';
 
 import DataCardView from '../../components/Data/CardView';
 import DataListView from '../../components/Data/ListView';
 
 import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import { getVault } from '../../api'
 
-export default Folder = ({ folder }) => {
-    //const { navigation, folders } = vault.data.map
-    console.log("have folder", folder)
+const Folder = ({ folderName }) => {
+    const [folder, setFolder] = useState();
 
-    // Initialise component
-    /*useEffect(() => {
-        setInboxType(findTypeById('inbox/type/dataSend'));
+    useEffect(() => {
         init();
     }, []);
 
-    const init = async() => {
-        console.log('fetch inbox')
-        const inbox = await fetchInbox();
-        const inboxItem = await inbox.getOne({_id: inboxItemId});
-        const item = await buildItem(inboxItem);
-        const inboxType = findTypeById(inboxItem.type);
-        
-        setInboxItem(item);
-        setInboxType(inboxType);
-    }*/
+    const init = async () => {
+        const vault = await getVault();
+        const folder = await vault.data.selectFolder(folderName)
+        setFolder(folder)
+    };
 
     return (
         <Container>
-            <NavigationHeader title={ folder.titlePlural || folder.title } />
+            <NavigationHeader title={ folder ? folder.config.titlePlural || folder.config.title : "" } />
+            { folder ?
             <Content>
-                {folder.display == 'folders' ?
+                {folder.config.display == 'folders' ?
                     React.createElement(DataCardView, { folder })
                     : React.createElement(DataListView, { folder })
                 }
             </Content>
+            : null }
         </Container>
     );
 };
+
+const mapDispatchToProps = dispatch => {
+    return {};
+};
+
+const mapStateToProps = state => {
+    return {};
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Folder);
