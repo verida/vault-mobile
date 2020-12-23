@@ -5,6 +5,7 @@ import { ListItem, Text, Right, Left } from 'native-base';
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg';
 
 export default ({ item }) => {
+    console.log(item)
     return (
         <ListItem button onPress={item.onPress} style={style.listItem}>
             <Left>

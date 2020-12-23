@@ -18,9 +18,7 @@ const Inbox = (props) => {
     }, []);
 
     const loadInbox = async () => {
-        console.log('fetch inbox items')
         const inboxItems = await fetchInboxItems();
-        console.log('received '+inboxItems.length+' items')
         const results = [];
         for (let i=0; i<inboxItems.length; i++) {
             let item = await buildItem(inboxItems[i]);

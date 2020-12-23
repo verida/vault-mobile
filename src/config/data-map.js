@@ -4,6 +4,11 @@ import IdentitySvg from '../assets/icons/data/identity.svg';
 import HealthSvg from '../assets/icons/data/health.svg';
 import SocialSvg from '../assets/icons/data/social.svg';
 
+import MeasurementsSvg from '../assets/icons/health/measurements.svg';
+import ActivitiesSvg from '../assets/icons/health/activities.svg';
+import ResultsSvg from '../assets/icons/health/results.svg';
+import NotesSvg from '../assets/icons/health/notes.svg';
+
 /*import EmploymentSvg from '../assets/icons/data/employment.svg';
 import FinanceSvg from '../assets/icons/data/finance.svg';
 import QualificationsSvg from '../assets/icons/data/qualifications.svg';
@@ -14,12 +19,11 @@ import DocumentsSvg from '../assets/icons/data/documents.svg';*/
 
 export default dataMap = {
     "navigation": [
-        "credential",
         "health",
         "contact"
     ],
     "folders": {
-        "credential": {
+        /*"credential": {
             "title": "Credential",
             "titlePlural": "Credentials",
             "icon": <IdentitySvg/>,
@@ -39,7 +43,7 @@ export default dataMap = {
                     "testType"
                 ]
             }
-        },
+        },*/
         "health": {
             "title": "Health",
             "icon": <HealthSvg/>,
@@ -55,7 +59,7 @@ export default dataMap = {
             "title": "Patient",
             "titlePlural": "Patients",
             "color": "#9234eb",
-            "icon": "icons/health.svg",
+            "icon": <HealthSvg/>,
             "display": "grid",
             "database": "health_patient",
             "layouts": {
@@ -86,7 +90,7 @@ export default dataMap = {
             "title": "Encounter",
             "titlePlural": "Encounters",
             "color": "#f55e07",
-            "icon": "icons/health.svg",
+            "icon": <HealthSvg/>,
             "display": "grid",
             "database": "health_encounter",
             "sort": [

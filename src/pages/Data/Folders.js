@@ -7,28 +7,8 @@ import DataList from '../../components/DataList';
 import NavigationHeader from '../../components/Navigation/NavigationHeader';
 import { getVault } from '../../api'
 
-import IdentitySvg from '../../assets/icons/data/identity.svg';
-import HealthSvg from '../../assets/icons/data/health.svg';
-import EmploymentSvg from '../../assets/icons/data/employment.svg';
-import FinanceSvg from '../../assets/icons/data/finance.svg';
-import QualificationsSvg from '../../assets/icons/data/qualifications.svg';
-import InsuranceSvg from '../../assets/icons/data/insurance.svg';
-import SocialSvg from '../../assets/icons/data/social.svg';
-import SubscriptionsSvg from '../../assets/icons/data/subscriptions.svg';
-import TicketsSvg from '../../assets/icons/data/tickets.svg';
-import DocumentsSvg from '../../assets/icons/data/documents.svg';
-
 import {
-    IDENTITY,
-    HEALTH,
-    EMPLOYMENT,
-    FINANCE,
-    QUALIFICATIONS,
-    INSURANCE,
-    SOCIAL,
-    SUBSCRIPTIONS,
-    TICKETS,
-    DOCUMENTS,
+    DATA_FOLDER
 } from '../../constants/route';
 
 const Folders = (props) => {
@@ -50,7 +30,7 @@ const Folders = (props) => {
             return {
                 label: titlePlural || title,
                 icon: icon,
-                onPress: () => Actions[IDENTITY]()
+                onPress: () => Actions[DATA_FOLDER]({ folder: folders[folder] })
             }
         });
 
