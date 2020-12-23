@@ -9,41 +9,27 @@ import ActivitiesSvg from '../assets/icons/health/activities.svg';
 import ResultsSvg from '../assets/icons/health/results.svg';
 import NotesSvg from '../assets/icons/health/notes.svg';
 
-/*import EmploymentSvg from '../assets/icons/data/employment.svg';
+import EmploymentSvg from '../assets/icons/data/employment.svg';
 import FinanceSvg from '../assets/icons/data/finance.svg';
 import QualificationsSvg from '../assets/icons/data/qualifications.svg';
 import InsuranceSvg from '../assets/icons/data/insurance.svg';
 import SubscriptionsSvg from '../assets/icons/data/subscriptions.svg';
 import TicketsSvg from '../assets/icons/data/tickets.svg';
-import DocumentsSvg from '../assets/icons/data/documents.svg';*/
+import DocumentsSvg from '../assets/icons/data/documents.svg';
 
 export default dataMap = {
     "navigation": [
+        "finance",
         "health",
+        "employment",
+        "education",
+        "insurance",
+        "subscriptions",
+        "tickets",
+        "documents",
         "contact"
     ],
     "folders": {
-        /*"credential": {
-            "title": "Credential",
-            "titlePlural": "Credentials",
-            "icon": <IdentitySvg/>,
-            "display": "cards",
-            "database": "credential",
-            "color": "#47E6E5",
-            "layouts": {
-                "list": [
-                    "name",
-                    "insertedAt"
-                ],
-                "view": [
-                    "name",
-                    "fullName",
-                    "testResult",
-                    "healthNumber",
-                    "testType"
-                ]
-            }
-        },*/
         "health": {
             "title": "Health",
             "icon": <HealthSvg/>,
@@ -152,6 +138,55 @@ export default dataMap = {
                     "label": "Patient"
                 }
             }
+        },
+        "finance": {
+            "title": "Finance",
+            "titlePlural": "Finance",
+            "icon": <FinanceSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
+        },
+        "employment": {
+            "title": "Employment",
+            "titlePlural": "Employment",
+            "icon": <EmploymentSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
+        },
+        "education": {
+            "title": "Education",
+            "titlePlural": "Education",
+            "icon": <QualificationsSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
+        },
+        "insurance": {
+            "title": "Insurance",
+            "titlePlural": "Insurance",
+            "icon": <InsuranceSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
+        },
+        "subscriptions": {
+            "title": "Subscription",
+            "titlePlural": "Subscriptions",
+            "icon": <SubscriptionsSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
+        },
+        "tickets": {
+            "title": "Ticket",
+            "titlePlural": "Tickets",
+            "icon": <TicketsSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
+        },
+        "documents": {
+            "title": "Document",
+            "titlePlural": "Documents",
+            "icon": <DocumentsSvg/>,
+            "display": "folders",
+            "color": "#47E6E5"
         },
         "contact": {
             "title": "Contacts",

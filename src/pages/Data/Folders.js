@@ -25,6 +25,12 @@ const Folders = (props) => {
         const { navigation, folders } = vault.data.map
 
         const items = navigation.map(folder => {
+            if (!folders[folder]) {
+                // folder doesn't exist
+                console.error(`${folder} is listed in navigation, but not defined in map.json`)
+                return
+            }
+
             const { title, titlePlural, icon } = folders[folder]
 
             return {

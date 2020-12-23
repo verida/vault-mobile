@@ -17,7 +17,7 @@ import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../cons
 import { INBOX, SETTINGS } from '../../constants/route';
 import { setNewMessagesCount } from '../../store/general/actions';
 
-import { getWallet, fetchInboxItems } from '../../api';
+import { getWallet, fetchInboxItems, getVault } from '../../api';
 
 const UserImg = require('../../assets/stubs/user.png');
 const LogoImg = require('../../assets/vault-logo.png');
@@ -40,7 +40,14 @@ const Home = (props) => {
 
     const init = async () => {
         const wallet = await getWallet();
-        setInfo(wallet);
+        const vault = await getVault();
+        const address = wallet.address
+        const name = await vault.profiles.public.get('name')
+
+        setInfo({
+            address,
+            name
+        });
     };
 
     return (
@@ -70,7 +77,7 @@ const Home = (props) => {
                     source={UserImg}
                     style={style.userImg} />
                 <Text style={style.title}>
-                    chris_were
+                    { info.name }
                 </Text>
                 <Text style={style.text}>
                     { info.address }
@@ -105,7 +112,8 @@ const mapStateToProps = state => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home);
 
-const marginTop = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 24;
+//const marginTop = (Platform.OS === 'ios' ? Constants.statusBarHeight : 0) + 24;
+const marginTop = 0;
 const style = StyleSheet.create ({
     content: {
         justifyContent: 'center',
