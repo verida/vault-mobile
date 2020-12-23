@@ -74,7 +74,7 @@ export default ({ item, type }) => {
     return (
         <Content>
             <RequestDetailsLayout item={item} type={type}>
-                {/* <RecordList list={records} /> */}
+                {/* Hide details about incoming data for now. <RecordList list={records} /> */}
             </RequestDetailsLayout>
         </Content>
     );

@@ -34,16 +34,8 @@ export const PRIVATE_PROFILE = 'private-profile';
 export const SEED_PHRASE_VIEW = 'seed-phrase-view';
 export const EDIT_PROFILE = 'edit-profile';
 
-export const IDENTITY = 'identity';
-export const HEALTH = 'health';
-export const EMPLOYMENT = 'employment';
-export const FINANCE = 'finance';
-export const QUALIFICATIONS = 'qualifications';
-export const INSURANCE = 'insurance';
-export const SOCIAL = 'social';
-export const SUBSCRIPTIONS = 'subscriptions';
-export const TICKETS = 'tickets';
-export const DOCUMENTS = 'documents';
+export const DATA_FOLDER = 'data-folder';
+export const DATA_ITEM = 'data-item';
 
 export const MEASUREMENTS = 'measurements';
 export const ACTIVITIES = 'activities';

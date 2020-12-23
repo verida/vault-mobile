@@ -3,6 +3,7 @@ import Vault from '@verida/vault-common';
 import walletUtils from '@verida/wallet-utils';
 import * as SecureStore from 'expo-secure-store';
 
+import dataMap from '../config/data-map'
 const WALLET_KEY = 'VaultMobileWallet';
 export const MNEMONIC_LENGTH = 12;
 const VERIDA_APP_NAME = 'Verida: Vault';
@@ -86,7 +87,7 @@ export const getVault = async (wallet) => {
     }
 
     const verida = await getVeridaApp(wallet);
-    const vault = new Vault(verida);
+    const vault = new Vault(verida, dataMap);
     global.vault = vault;
 
     return vault;

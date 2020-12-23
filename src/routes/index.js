@@ -32,12 +32,13 @@ import SeedPhraseView from '../pages/SeedPhrase/SeedPhraseView';
 import SeedPhraseEntered from '../pages/SeedPhrase/SeedPhraseEntered';
 
 import Home from '../pages/Dashboard/Home';
-import Data from '../pages/Dashboard/Data';
+
+import DataFolders from '../pages/Data/Folders';
+import DataFolder from '../pages/Data/Folder';
+import DataItem from '../pages/Data/Item';
 
 import Credentials from '../pages/Dashboard/Credentials';
 import Credential from '../pages/Credential';
-import Health from '../pages/Health';
-import Activities from '../pages/Activities.js';
 
 import DashboardTabs from '../components/Navigation/DashboardTabs';
 
@@ -46,9 +47,9 @@ import {
     CREDENTIALS,
     DASHBOARD,
     DATA,
+    DATA_FOLDER,
+    DATA_ITEM,
     HOME,
-    HEALTH,
-    ACTIVITIES,
     LOGIN_HISTORY,
     LOGIN_REQUEST,
     PRIVATE_PROFILE,
@@ -87,7 +88,7 @@ const Routes = (props) => {
                 <Scene key={DASHBOARD} tabs={true} tabBarPosition="bottom" initial={props.authorized} tabBarComponent={DashboardTabs} hideNavBar={true} >
                     <Scene key={HOME} component={Home} title="Home" hideNavBar={true} icon={HomeSvg} />
                     <Scene key={CREDENTIALS} component={Credentials} title="Credentials" hideNavBar={true} icon={CredentialSvg} />
-                    <Scene key={DATA} component={Data} title="Data" hideNavBar={true} icon={DataSvg} />
+                    <Scene key={DATA} component={DataFolders} title="Data" hideNavBar={true} icon={DataSvg} />
                     <Scene key={PROFILES} component={Profiles} title="Profiles" hideNavBar={true} icon={ProfilesSvg} />
                 </Scene>
 
@@ -118,8 +119,8 @@ const Routes = (props) => {
                 <Scene key={EDIT_PROFILE} component={EditProfile} hideNavBar={true} />
                 <Scene key={SEED_PHRASE_VIEW} component={SeedPhraseView} hideNavBar={true} clone />
 
-                <Scene key={HEALTH} component={Health} hideNavBar={true} />
-                <Scene key={ACTIVITIES} component={Activities} hideNavBar={true} />
+                <Scene key={DATA_FOLDER} component={DataFolder} hideNavBar={true} />
+                <Scene key={DATA_ITEM} component={DataItem} hideNavBar={true} />
             </Scene>
         </Router>
     );
