@@ -74,7 +74,7 @@ export default ({ item, type }) => {
     return (
         <Content>
             <RequestDetailsLayout item={item} type={type}>
-                <RecordList list={records} />
+                {/* <RecordList list={records} /> */}
             </RequestDetailsLayout>
         </Content>
     );

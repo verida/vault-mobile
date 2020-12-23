@@ -2780,10 +2780,10 @@
 
 "@verida/vault-common@https://github.com/verida/vault-common":
   version "0.2.0"
-  resolved "https://github.com/verida/vault-common#7399434712a0c029edfee9229ff1804475ef7855"
+  resolved "https://github.com/verida/vault-common#05d06071aa460ffc642bdc45b006ecf66a9657a7"
   dependencies:
     axios "^0.19.2"
-    lodash "^4.17.19"
+    lodash "^4.17.20"
     nodemon "^2.0.4"
     pouchdb "^7.2.2"
 
