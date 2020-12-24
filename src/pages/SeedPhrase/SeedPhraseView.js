@@ -12,10 +12,12 @@ import { getWallet } from '../../api';
 
 export default () => {
     const [words, setWords] = useState('');
+    const [key, setKey] = useState('');
 
     const init = async () => {
-        const { mnemonic } = await getWallet();
-        setWords(mnemonic);
+        const wallet = await getWallet();
+        setWords(wallet.mnemonic);
+        setKey(wallet.privateKey)
     };
 
     useEffect(() => {
@@ -28,8 +30,12 @@ export default () => {
             <Layout style={{ marginTop: 20 }}>
                 <WordCard words={words}/>
                 <Button color="transparent-grey" onPress={() => Clipboard.setString(words)} style={{ marginTop: 10 }}>
-                    {'Copy to clipboard\u00A0'}
-                    <Icon name="copy" />
+                    {'Copy seed phrase\u00A0'}
+                </Button>
+
+                <WordCard words={key}/>
+                <Button color="transparent-grey" onPress={() => Clipboard.setString(key)} style={{ marginTop: 10 }}>
+                    {'Copy private key\u00A0'}
                 </Button>
             </Layout>
         </View>
