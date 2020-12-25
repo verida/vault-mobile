@@ -70,7 +70,12 @@ export default dataMap = {
                     "label": "Practioner"
                 }
             },
-            "nameField": "displayName"
+            "card": {
+                "summary": function(row) {
+                    return `${row.birthDate} (${row.gender})`
+                }
+            },
+            "nameField": "displayName",
         },
         "health/encounter": {
             "title": "Encounter",
