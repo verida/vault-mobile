@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react';
-import { Actions } from 'react-native-router-flux';
-import { View, StyleSheet } from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { Actions } from 'react-native-router-flux'
+import { View, StyleSheet } from 'react-native'
 
 import DataCardList from './DataCardList'
 import { getVault } from '../../api'
 
 import {
     DATA_FOLDER
-} from '../../constants/route';
+} from '../../constants/route'
 
 
 export default CardView = ({ folder }) => {

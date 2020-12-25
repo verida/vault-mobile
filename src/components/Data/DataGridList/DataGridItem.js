@@ -1,19 +1,22 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
+import { Actions } from 'react-native-router-flux'
 import { Card, CardItem, Body, Text, Right, Left } from 'native-base';
 import moment from 'moment'
 import StravaSvg from '../../../assets/icons/strava.svg';
 
-export default ({ item, folder }) => {
-    // Indexes aren't being created... broken on web as well?
+import {
+    DATA_ITEM
+} from '../../../constants/route';
 
-    // todo, set name from layout / schema displayName
+export default ({ item, folder }) => {
     const date = moment(item.createdAt).format('DD MMM YYYY')
     const cardDetail = folder.getCardDetail(item)
+    const onPress = () => Actions[DATA_ITEM]({ folder, item })
 
     return (
         <Card style={style.cardItem}>
-            <CardItem button onPress={item.onPress} style={{ borderRadius: 4 }}>
+            <CardItem button style={{ borderRadius: 4 }} onPress={onPress}>
                 <Left style={style.left}>
                     <StravaSvg/>
                     <Body style={{marginLeft: 15}}>
