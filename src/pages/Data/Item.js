@@ -23,7 +23,7 @@ const DataItem = ({item, folder}) => {
 
     return (
         <Container>
-            <NavigationHeader title={data.title} />
+            <NavigationHeader title={folder.config.title} />
             <Content>
                 <List>
                     <DataFieldList data={data} />
