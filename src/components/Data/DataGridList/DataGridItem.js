@@ -3,17 +3,13 @@ import { StyleSheet } from 'react-native';
 import { Card, CardItem, Body, Text, Right, Left } from 'native-base';
 import moment from 'moment'
 import StravaSvg from '../../../assets/icons/strava.svg';
-import { stubFalse } from 'lodash';
-import { preventAutoHide } from 'expo-splash-screen';
 
 export default ({ item, folder }) => {
-
     // Indexes aren't being created... broken on web as well?
 
     // todo, set name from layout / schema displayName
     const date = moment(item.createdAt).format('DD MMM YYYY')
-    const label = item.displayName | item.name
-    const subText = 'hello world'
+    const cardDetail = folder.getCardDetail(item)
 
     return (
         <Card style={style.cardItem}>
@@ -21,8 +17,8 @@ export default ({ item, folder }) => {
                 <Left style={style.left}>
                     <StravaSvg/>
                     <Body style={{marginLeft: 15}}>
-                        <Text>{ label }</Text>
-                        <Text note style={style.subText}>{ subText }</Text>
+                        <Text>{ cardDetail.name }</Text>
+                        <Text note style={style.subText}>{ cardDetail.summary }</Text>
                     </Body>
                 </Left>
                 <Right style={style.right}>

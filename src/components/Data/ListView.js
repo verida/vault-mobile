@@ -20,7 +20,6 @@ export default ListView = ({ folder }) => {
     const init = async () => {
         const vault = await getVault();
         const items = await folder.getMany();
-        console.log(items);
 
         setList(items)
     };

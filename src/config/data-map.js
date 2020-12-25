@@ -102,7 +102,13 @@ export default dataMap = {
                 "period.start": {
                     "label": "Date/time"
                 }
-            }
+            },
+            "card": {
+                "name": function(row) {
+                    return row.serviceType.text
+                }
+            },
+            "summaryField": "class"
         },
         "health/clinical-impression": {
             "title": "Clinical Impression",
@@ -137,7 +143,13 @@ export default dataMap = {
                 "subject": {
                     "label": "Patient"
                 }
-            }
+            },
+            "card": {
+                "name": function(row) {
+                    return "Medical impression"
+                }
+            },
+            "summaryField": "summary"
         },
         "finance": {
             "title": "Finance",
