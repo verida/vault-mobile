@@ -20,8 +20,6 @@ const Folders = (props) => {
 
     const init = async () => {
         const vault = await getVault()
-
-        // @todo: vault-common
         const { navigation, folders } = vault.data.map
 
         const items = navigation.map(folder => {
@@ -64,17 +62,3 @@ const mapStateToProps = state => {
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Folders);
-
-
-/*const list = [
-    { label: 'Identity', icon: <IdentitySvg />, onPress: () => Actions[IDENTITY]() },
-    { label: 'Health', icon: <HealthSvg />, onPress: () => Actions[HEALTH]() },
-    { label: 'Employment', icon: <EmploymentSvg />, onPress: () => Actions[EMPLOYMENT]() },
-    { label: 'Finance', icon: <FinanceSvg />, onPress: () => Actions[FINANCE]() },
-    { label: 'Qualifications', icon: <QualificationsSvg />, onPress: () => Actions[QUALIFICATIONS]() },
-    { label: 'Insurance', icon: <InsuranceSvg />, onPress: () => Actions[INSURANCE]() },
-    { label: 'Social', icon: <SocialSvg />, onPress: () => Actions[SOCIAL]() },
-    { label: 'Subscriptions', icon: <SubscriptionsSvg />, onPress: () => Actions[SUBSCRIPTIONS]() },
-    { label: 'Tickets', icon: <TicketsSvg />, onPress: () => Actions[TICKETS]() },
-    { label: 'Documents', icon: <DocumentsSvg />, onPress: () => Actions[DOCUMENTS]() },
-];*/

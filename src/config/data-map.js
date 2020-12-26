@@ -9,6 +9,7 @@ import ActivitiesSvg from '../assets/icons/health/activities.svg';
 import ResultsSvg from '../assets/icons/health/results.svg';
 import NotesSvg from '../assets/icons/health/notes.svg';
 
+import CredentialSvg from '../assets/navigation/credential.svg';
 import EmploymentSvg from '../assets/icons/data/employment.svg';
 import FinanceSvg from '../assets/icons/data/finance.svg';
 import QualificationsSvg from '../assets/icons/data/qualifications.svg';
@@ -19,8 +20,9 @@ import DocumentsSvg from '../assets/icons/data/documents.svg';
 
 export default dataMap = {
     "navigation": [
-        "finance",
+        "credentials",
         "health",
+        "finance",        
         "employment",
         "education",
         "insurance",
@@ -30,6 +32,14 @@ export default dataMap = {
         "contact"
     ],
     "folders": {
+        "credentials": {
+            "title": "Credential",
+            "titlePlural": "Credentials",
+            "icon": <IdentitySvg/>,
+            "display": "grid",
+            "database": "credential",
+            "color": "#5BE1B0"
+        },
         "health": {
             "title": "Health",
             "icon": <HealthSvg/>,
