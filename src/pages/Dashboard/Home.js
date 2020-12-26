@@ -11,6 +11,7 @@ import { Container, Content } from 'native-base';
 import EnvelopeSvg from '../../assets/icons/envelope.svg';
 import SettingsSvg from '../../assets/icons/settings.svg';
 import { Actions } from 'react-native-router-flux';
+import Clipboard from '@react-native-community/clipboard';
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../constants/color';
@@ -79,7 +80,7 @@ const Home = (props) => {
                 <Text style={style.title}>
                     { info.name }
                 </Text>
-                <Text style={style.text}>
+                <Text style={style.text} onPress={() => Clipboard.setString(info.address)}>
                     { info.address }
                 </Text>
                 <View style={style.qr}>
