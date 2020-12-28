@@ -24,9 +24,10 @@ const InboxItem = ({ inboxItemId }) => {
 
     const init = async() => {
         const vault = await getVault();
-        const inboxItem = await vault.inbox.fetchLatest({_id: inboxItemId});
+        const inboxItems = await vault.inbox.fetchLatest({_id: inboxItemId});
+        const inboxItem = inboxItems[0];
         const item = await buildItem(inboxItem);
-        const inboxType = findTypeById(inboxItem.type);
+        const inboxType = findTypeById(item.type);
         
         setItem(item);
         setInboxItem(inboxItem);

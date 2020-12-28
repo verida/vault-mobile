@@ -1,6 +1,7 @@
 import React from 'react';
 import DataSnapshot from '../assets/inbox/snapshot.svg';
 import DataSynchronization from '../assets/inbox/synchronization.svg';
+import { getVeridaApp } from '../api'
 import moment from 'moment';
 import _ from 'lodash';
 
@@ -46,7 +47,9 @@ export const buildItem = async (inboxItem) => {
     };
 
     const profile = await getProfile(inboxItem.sentBy)
+    console.log(profile)
     const name = profile('name', '')
+    console.log(name)
     item.from = name ? `Sent by ${name} ` : ''
     item.from += `via ${inboxItem.sentBy.app}`
 
@@ -55,8 +58,9 @@ export const buildItem = async (inboxItem) => {
 
 // @todo: Add to vault common
 export const getProfile = async (sentBy) => {
+    const verida = await getVeridaApp();
     try {
-        const profile = await global.Verida.openProfile(sentBy.did, sentBy.appName)
+        const profile = await verida.openProfile(sentBy.did, sentBy.appName)
         const profileItems = await profile.getMany()
 
         return (key, stub) => {
@@ -64,7 +68,7 @@ export const getProfile = async (sentBy) => {
             return (data && data.value) || stub
         }
     } catch (err) {
-        console.log("no profile");
+        console.log("no profile for ", sentBy);
         // User may not have created a profile
         return (key, stub) => {
             return ''
