@@ -61,8 +61,8 @@ const style = StyleSheet.create({
         borderRadius: 20
     },
     title: {
-        fontSize: 17,
-        lineHeight: 28,
+        fontSize: 16,
+        lineHeight: 20,
         alignItems: 'center',
         marginRight: 55,
         fontFamily: NUNITO_SANS_BOLD,
