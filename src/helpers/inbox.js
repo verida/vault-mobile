@@ -47,9 +47,7 @@ export const buildItem = async (inboxItem) => {
     };
 
     const profile = await getProfile(inboxItem.sentBy)
-    console.log(profile)
     const name = profile('name', '')
-    console.log(name)
     item.from = name ? `Sent by ${name} ` : ''
     item.from += `via ${inboxItem.sentBy.app}`
 

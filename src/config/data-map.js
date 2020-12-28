@@ -22,7 +22,8 @@ export default dataMap = {
     "navigation": [
         "credentials",
         "health",
-        "finance",        
+        "shopping",
+        "finance",
         "employment",
         "education",
         "insurance",
@@ -165,6 +166,54 @@ export default dataMap = {
                 }
             },
             "summaryField": "summary"
+        },
+        "shopping": {
+            "title": "Shopping",
+            "titlePlural": "Shopping",
+            "icon": <InsuranceSvg/>,
+            "display": "folders",
+            "folders": [
+                "shopping/receipt",
+                "shopping/coupon"
+            ]
+        },
+        "shopping/receipt": {
+            "title": "Receipt",
+            "titlePlural": "Receipts",
+            "database": "shopping_receipt",
+            "display": "grid",
+            "icon": <InsuranceSvg/>,
+            "color": "#F368E0",
+            "layouts": {
+                "list": [
+                    "store",
+                    "amount",
+                    "transactionTimestamp"
+                ],
+                "view": [
+                    "store",
+                    "amount",
+                    "transactionTimestamp"
+                ]
+            }
+        },
+        "shopping/coupon": {
+            "title": "Coupon",
+            "titlePlural": "Coupons",
+            "database": "shopping_coupon",
+            "display": "grid",
+            "icon": <InsuranceSvg/>,
+            "color": "#F368E0",
+            "layouts": {
+                "list": [
+                    "name",
+                    "description",
+                    "value",
+                    "valueType",
+                    "currency",
+                    "barcode"
+                ]
+            }
         },
         "finance": {
             "title": "Finance",
