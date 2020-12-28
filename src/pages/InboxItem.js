@@ -4,7 +4,7 @@ import { Container, Content } from 'native-base';
 
 import TypeDataSend from '../components/Inbox/TypeDataSend.js';
 import NavigationHeader from '../components/Navigation/NavigationHeader';
-import { fetchInbox } from '../api';
+import { getVault } from '../api';
 import { findTypeById, buildItem } from '../helpers/inbox';
 
 const inboxItemComponents = {
@@ -23,8 +23,8 @@ const InboxItem = ({ inboxItemId }) => {
     }, []);
 
     const init = async() => {
-        const inbox = await fetchInbox();
-        const inboxItem = await inbox.getOne({_id: inboxItemId});
+        const vault = await getVault();
+        const inboxItem = await vault.inbox.fetchLatest({_id: inboxItemId});
         const item = await buildItem(inboxItem);
         const inboxType = findTypeById(inboxItem.type);
         

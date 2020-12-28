@@ -58,26 +58,37 @@ export const getVeridaApp = async (wallet) => {
         return global.verida;
     }
 
-    if (!wallet) {
-        wallet = await SecureStore.getItemAsync(WALLET_KEY);
-        wallet = JSON.parse(wallet);
-    }
-    const { address, privateKey } = wallet;
+    // create a promise to return to avoid `getVeridaApp` being called multiple times
+    global.verida = new Promise(async (resolve) => {
+        if (!wallet) {
+            wallet = await SecureStore.getItemAsync(WALLET_KEY);
+            wallet = JSON.parse(wallet);
+        }
+        const { address, privateKey } = wallet;
 
-    Verida.setConfig({
-        appName: VERIDA_APP_NAME
+        Verida.setConfig({
+            appName: VERIDA_APP_NAME,
+            servers: {
+                testnet: {
+                    schemaPaths: {
+                    'https://schemas.verida.io/': 'http://localhost:5010/',
+                    'https://schemas.testnet.verida.io/': 'http://localhost:5010/'
+                    }
+                }
+            }
+        });
+
+        const verida = new Verida({
+            address,
+            chain: CHAIN,
+            privateKey
+        });
+
+        await verida.connect(true);
+        resolve(verida);
     });
 
-    const verida = new Verida({
-        address,
-        chain: CHAIN,
-        privateKey
-    });
-
-    await verida.connect(true);
-    global.verida = verida;
-
-    return verida;
+    return global.verida;
 };
 
 export const getVault = async (wallet) => {
@@ -85,22 +96,13 @@ export const getVault = async (wallet) => {
         return global.vault;
     }
 
-    const verida = await getVeridaApp(wallet);
-    const vault = new Vault(verida, dataMap);
-    global.vault = vault;
+    global.vault = new Promise(async (resolve) => {
+        const verida = await getVeridaApp(wallet);
+        const vault = new Vault(verida, dataMap);
+        global.vault = vault;
 
-    return vault;
-};
-
-export async function fetchInboxItems (filter = {}) {
-    const inbox = await fetchInbox()
-
-    return await inbox.getMany(filter, {
-        sort: [{ sentAt: 'desc' }]
+        resolve(vault);
     });
-}
 
-export async function fetchInbox () {
-    const veridaApp = await getVeridaApp();
-    return veridaApp.inbox.getInbox();
-}
+    return global.vault;
+};

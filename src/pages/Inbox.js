@@ -5,7 +5,7 @@ import Layout from '../components/Layouts/Layout';
 //import Search from '../components/Search'; <Search />
 import CardList from '../components/CardList';
 import NavigationHeader from '../components/Navigation/NavigationHeader';
-import { fetchInboxItems } from '../api';
+import { getVault } from '../api';
 import { buildItem } from '../helpers/inbox'
 import _ from 'lodash';
 
@@ -18,7 +18,8 @@ const Inbox = (props) => {
     }, []);
 
     const loadInbox = async () => {
-        const inboxItems = await fetchInboxItems();
+        const vault = await getVault();
+        const inboxItems = await vault.inbox.fetchLatest();
         const results = [];
         for (let i=0; i<inboxItems.length; i++) {
             let item = await buildItem(inboxItems[i]);
