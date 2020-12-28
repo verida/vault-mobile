@@ -45,6 +45,10 @@ const Home = (props) => {
         const vault = await getVault();
         const address = wallet.address
         const name = await vault.profiles.public.get('name')
+        
+        vault.veridaApp.inbox.on('inboxChange', function(item) {
+            fetchInboxCount();
+        })
 
         setInfo({
             address,

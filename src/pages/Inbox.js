@@ -14,8 +14,16 @@ const Inbox = (props) => {
 
     // Initialise component
     useEffect(() => {
+        init();
         loadInbox();
     }, []);
+
+    const init = async () => {
+        const vault = await getVault();
+        vault.veridaApp.inbox.on('inboxChange', function(item) {
+            loadInbox();
+        })
+    }
 
     const loadInbox = async () => {
         const vault = await getVault();
