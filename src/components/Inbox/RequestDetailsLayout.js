@@ -31,8 +31,8 @@ export default ({ type, item, inboxItem, onResultClick, children }) => {
                 </View>
             : 
                 <View style={style.action}>
-                    <Button style={{ ...style.btn, marginRight: 20 }} onPress={onResultClick('accept')}>Accept</Button>
-                    <Button color="grey" style={style.btn} onPress={onResultClick('decline')}>Decline</Button>
+                    <Button style={{ ...style.btn, marginRight: 20 }} onPress={() => onResultClick('accept')}>Accept</Button>
+                    <Button color="grey" style={style.btn} onPress={() => onResultClick('decline')}>Decline</Button>
                     </View>
             }            
         </Layout>
