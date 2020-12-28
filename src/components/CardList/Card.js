@@ -17,7 +17,6 @@ export default ({ options }) => {
     const inboxType = findTypeById(options.type);
 
     const onPress = () => Actions[INBOX_ITEM]({ inboxItemId: options.id });
-    console.log(onPress)
 
     return (
         <TouchableOpacity style={[style.card, !options.read ? style.unread : '']} onPress={onPress}>

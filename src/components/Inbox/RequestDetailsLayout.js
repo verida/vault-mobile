@@ -4,17 +4,16 @@ import Layout from '../../components/Layouts/Layout';
 import Button from '../../components/Button';
 import Text from '../Text';
 import Description from './Description';
+import { ACCEPT_COLOR, DECLINE_COLOR } from '../../constants/color';
 
 import { NUNITO_SANS_BOLD } from '../../constants/text';
 
-export default ({ type, item, children }) => {
+export default ({ type, item, inboxItem, onResultClick, children }) => {
     const description = {
         uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
         name: item.item.message,
         createdAt: item.createdAt
     };
-
-    console.log(item)
 
     return (
         <Layout style={style.layout}>
@@ -26,10 +25,16 @@ export default ({ type, item, children }) => {
             <ScrollView>
                 { children }
             </ScrollView>
-            <View style={style.action}>
-                <Button style={{ ...style.btn, marginRight: 20 }}>Accept</Button>
-                <Button color="grey" style={style.btn}>Decline</Button>
-            </View>
+            { inboxItem.data.status ? 
+                <View style={[style.action, {justifyContent: 'center'}]}>
+                    <Text style={[style.result, (inboxItem.data.status == 'accept' ? style.resultAccept : style.resultDecline)]}>{ inboxItem.data.status == 'accept' ? 'Accepted' : 'Declined'}</Text>
+                </View>
+            : 
+                <View style={style.action}>
+                    <Button style={{ ...style.btn, marginRight: 20 }} onPress={onResultClick('accept')}>Accept</Button>
+                    <Button color="grey" style={style.btn} onPress={onResultClick('decline')}>Decline</Button>
+                    </View>
+            }            
         </Layout>
     );
 };
@@ -48,6 +53,20 @@ const style = StyleSheet.create({
         fontFamily: NUNITO_SANS_BOLD,
         marginTop: 24,
         paddingRight: 60
+    },
+    result: {
+        flex: 0.5,
+        fontSize: 14,
+        color: '#ffffff',
+        textAlign: 'center',
+        paddingTop: 10,
+        paddingBottom: 10
+    },
+    resultDecline: {
+        backgroundColor: DECLINE_COLOR
+    },
+    resultAccept: {
+        backgroundColor: ACCEPT_COLOR,
     },
     action: {
         flexDirection: 'row',

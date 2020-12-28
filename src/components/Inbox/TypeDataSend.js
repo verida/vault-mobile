@@ -3,6 +3,7 @@ import { Content } from 'native-base';
 
 import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout';
 import RecordList from '../../components/RecordList';
+import { getVault } from '../../api';
 
 const records = [
     {
@@ -70,10 +71,15 @@ const records = [
     }
 ];
 
-export default ({ item, type }) => {
+export default ({ item, inboxItem, type }) => {
+    const onResultClick = async (result) => {
+        const vault = await getVault();
+        await vault.inbox.handleAction(inboxItem, result, {});
+    }
+
     return (
         <Content>
-            <RequestDetailsLayout item={item} type={type}>
+            <RequestDetailsLayout item={item} type={type} inboxItem={inboxItem} onResultClick={onResultClick}>
                 {/* Hide details about incoming data for now. <RecordList list={records} /> */}
             </RequestDetailsLayout>
         </Content>

@@ -12,6 +12,7 @@ const inboxItemComponents = {
 }
 
 const InboxItem = ({ inboxItemId }) => {
+    const [item, setItem] = useState(null);
     const [inboxItem, setInboxItem] = useState(null);
     const [inboxType, setInboxType] = useState(null);
 
@@ -22,13 +23,13 @@ const InboxItem = ({ inboxItemId }) => {
     }, []);
 
     const init = async() => {
-        console.log('fetch inbox')
         const inbox = await fetchInbox();
         const inboxItem = await inbox.getOne({_id: inboxItemId});
         const item = await buildItem(inboxItem);
         const inboxType = findTypeById(inboxItem.type);
         
-        setInboxItem(item);
+        setItem(item);
+        setInboxItem(inboxItem);
         setInboxType(inboxType);
     }
 
@@ -37,7 +38,7 @@ const InboxItem = ({ inboxItemId }) => {
             <NavigationHeader title="Inbox Message" />
             <Content>
                 {inboxItem ?
-                    React.createElement(inboxItemComponents[inboxItem.type], {item: inboxItem, type: inboxType})
+                    React.createElement(inboxItemComponents[inboxItem.type], {item, type: inboxType, inboxItem })
                     : null
                 }
             </Content>
