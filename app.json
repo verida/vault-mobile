@@ -1,17 +1,20 @@
 {
   "expo": {
-    "name": "myApp",
-    "slug": "myApp",
-    "version": "1.0.0",
+    "name": "Verida Vault",
+    "slug": "verida-vault",
+    "icon": "./assets/vault-logo.png",
+    "version": "0.1.0",
     "scheme": "veridavault",
+    "privacy": "unlisted",
     "assetBundlePatterns": [
       "**/*"
     ],
     "android": {
-      "package": "expo.test"
+      "package": "io.verida.vault"
     },
     "ios": {
-      "bundleIdentifier": "expo.test",
+      "bundleIdentifier": "io.verida.vault",
+      "buildNumber": "0.1.0",
       "infoPlist": {
         "NSFaceIDUsageDescription": "This app uses bio authentication to secure user's private info"
       }
