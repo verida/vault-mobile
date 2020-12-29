@@ -8,7 +8,7 @@ export default (props) => {
     return (
         <PINCode
             status={'enter'}
-            titleEnter={props.title || 'Please, enter your PIN'}
+            titleEnter={props.title || 'Please enter your PIN'}
             subtitleEnter={props.subtitle || 'to confirm the action'}
             onClickButtonLockedPage={() => BackHandler.exitApp()}
             finishProcess={props.finishProcess}
