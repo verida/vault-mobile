@@ -1,16 +1,20 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content } from 'native-base';
-
-import TypeDataSend from '../components/Inbox/types/DataSend';
-import TypeDataRequest from '../components/Inbox/types/DataRequest';
 import NavigationHeader from '../components/Navigation/NavigationHeader';
 import { getVault } from '../api';
 import { findTypeById, buildItem } from '../helpers/inbox';
 
+import TypeDataSend from '../components/Inbox/types/DataSend';
+import TypeDataRequest from '../components/Inbox/types/DataRequest';
+import TypeDatastoreSync from '../components/Inbox/types/DatastoreSync';
+import TypeDatabaseSync from '../components/Inbox/types/DatabaseSync';
+
 const inboxItemComponents = {
     'inbox/type/dataSend': TypeDataSend,
-    'inbox/type/dataRequest': TypeDataRequest
+    'inbox/type/dataRequest': TypeDataRequest,
+    'inbox/type/datastoreSync': TypeDatastoreSync,
+    'inbox/type/databaseSync': TypeDatabaseSync
 }
 
 const InboxItem = ({ inboxItemId }) => {

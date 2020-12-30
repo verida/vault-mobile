@@ -18,12 +18,12 @@ export const TYPES = [
     },
     {
         id: 'inbox/type/databaseSync',
-        title: 'Database Sync Request',
+        title: 'Sync Database Request',
         svg: (width = 20, height = 20, style= {}) => <DataSynchronization width={width} height={height} style={style}/>
     },
     {
         id: 'inbox/type/datastoreSync',
-        title: 'Datastore Sync Request',
+        title: 'Sync Data Request',
         svg: (width = 20, height = 20, style= {}) => <DataSynchronization width={width} height={height} style={style}/>
     },
     {
@@ -66,7 +66,6 @@ export const getProfile = async (sentBy) => {
             return (data && data.value) || stub
         }
     } catch (err) {
-        console.log("no profile for ", sentBy);
         // User may not have created a profile
         return (key, stub) => {
             return ''
