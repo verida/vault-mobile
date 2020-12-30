@@ -68,14 +68,14 @@ export const getVeridaApp = async (wallet) => {
 
         Verida.setConfig({
             appName: VERIDA_APP_NAME,
-            servers: {
+            /*servers: {
                 testnet: {
                     schemaPaths: {
                     'https://schemas.verida.io/': 'http://localhost:5010/',
                     'https://schemas.testnet.verida.io/': 'http://localhost:5010/'
                     }
                 }
-            }
+            }*/
         });
 
         const verida = new Verida({

@@ -14,7 +14,7 @@
     "@tradle/react-native-http": "^2.0.1",
     "@verida/datastore": "https://github.com/verida/datastore#react-native",
     "@verida/vault-common": "https://github.com/verida/vault-common",
-    "@verida/wallet-utils": "https://github.com/verida/wallet-utils",
+    "@verida/wallet-utils": "^1.2.0",
     "assert": "^1.5.0",
     "asyncstorage-down": "^4.2.0",
     "browserify-zlib": "^0.1.4",

@@ -2684,8 +2684,8 @@
     xmlhttprequest "1.8.0"
 
 "@verida/datastore@https://github.com/verida/datastore#react-native":
-  version "0.6.2"
-  resolved "https://github.com/verida/datastore#c1900a10146f470fec6613c49a9ad69d57cf4a7a"
+  version "0.6.3"
+  resolved "https://github.com/verida/datastore#47bdfc2c3a2a471c9b7749217f5586772be1b721"
   dependencies:
     "@craftzdog/pouchdb-core-react-native" "^7.0.0"
     "@tradle/react-native-http" "^2.0.0"
@@ -2780,7 +2780,7 @@
 
 "@verida/vault-common@https://github.com/verida/vault-common":
   version "0.2.0"
-  resolved "https://github.com/verida/vault-common#05d06071aa460ffc642bdc45b006ecf66a9657a7"
+  resolved "https://github.com/verida/vault-common#56bde694c731bd2efc4f07aad1a85a15566ca41d"
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.20"
@@ -2789,15 +2789,8 @@
 
 "@verida/wallet-utils@^1.2.0":
   version "1.2.0"
-  resolved "https://github.com/verida/wallet-utils.git#e0e536fb1b041be20d5e5a31a9bcbf6131428c4c"
-  dependencies:
-    ethers "^5.0.5"
-    thor-devkit "^1.2.5"
-
-"@verida/wallet-utils@https://github.com/verida/wallet-utils":
-  version "1.2.0"
-  uid e0e536fb1b041be20d5e5a31a9bcbf6131428c4c
-  resolved "https://github.com/verida/wallet-utils#e0e536fb1b041be20d5e5a31a9bcbf6131428c4c"
+  resolved "https://registry.yarnpkg.com/@verida/wallet-utils/-/wallet-utils-1.2.0.tgz#ff8b2ac17b91040139dbf34c278ead21c8688e30"
+  integrity sha512-OyqiDk3k836DU3K7PH4HUo8F629NgSVYA6OOQ3R8lbyZyS6Q21a8CQWfX8W7lIMGaHG3VD4HenDvdOahSTKRGQ==
   dependencies:
     ethers "^5.0.5"
     thor-devkit "^1.2.5"
