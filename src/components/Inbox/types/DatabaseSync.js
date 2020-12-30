@@ -6,7 +6,6 @@ import { getVault } from '../../../api';
 
 export default ({ item, inboxItem, type }) => {
     const onResultClick = async (result) => {
-        console.log('databasesync start');
         const vault = await getVault();
         await vault.inbox.handleAction(inboxItem, result, {});
     }
