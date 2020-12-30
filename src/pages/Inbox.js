@@ -23,6 +23,9 @@ const Inbox = (props) => {
         vault.veridaApp.inbox.on('inboxChange', function(item) {
             loadInbox();
         })
+        vault.veridaApp.inbox.on('newMessage', function(item) {
+            loadInbox();
+        })
     }
 
     const loadInbox = async () => {

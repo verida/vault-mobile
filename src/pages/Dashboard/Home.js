@@ -50,6 +50,10 @@ const Home = (props) => {
             fetchInboxCount();
         })
 
+        vault.veridaApp.inbox.on('newMessage', function(item) {
+            fetchInboxCount();
+        })
+
         setInfo({
             address,
             name
