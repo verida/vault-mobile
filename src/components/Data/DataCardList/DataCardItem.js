@@ -4,7 +4,7 @@ import { StyleSheet, View, Text, TouchableWithoutFeedback } from 'react-native';
 export default ({ item }) => {
     return (
         <TouchableWithoutFeedback onPress={item.onPress}>
-            <View style={style.cardItem}>
+            <View style={[style.cardItem, {backgroundColor: item.color}]}>
                 <View>{ item.icon }</View>
                 <Text style={{ paddingTop: 10, color: '#fff' }}>{item.label}</Text>
             </View>
@@ -18,7 +18,6 @@ const style = StyleSheet.create({
         padding: 16,
         width: 150,
         height: 112,
-        borderRadius: 12,
-        backgroundColor: '#FD4F64',
+        borderRadius: 12
     }
 });

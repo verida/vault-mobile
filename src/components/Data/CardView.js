@@ -22,11 +22,12 @@ export default CardView = ({ folder }) => {
         const { navigation, folders } = vault.data.map
 
         const list = folder.config.folders.map(folderName => {
-            const { title, titlePlural, icon } = folders[folderName]
+            const { title, titlePlural, icon, color } = folders[folderName]
 
             return {
                 label: titlePlural || title,
                 icon: icon,
+                color: color,
                 onPress: () => Actions[DATA_FOLDER]({ folderName: folderName })
             }
         });
