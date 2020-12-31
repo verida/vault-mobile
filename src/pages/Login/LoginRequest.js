@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, Linking } from 'react-native';
 import { Icon, Button as NButton } from 'native-base';
 import { Container, Content } from 'native-base';
+import didJWT from 'did-jwt'
 
 import StravaLogo from '../../assets/strava-logo.svg';
 import MobileSvg from '../../assets/mobile.svg';
@@ -11,20 +12,91 @@ import Button from '../../components/Button';
 import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
 import { Actions } from 'react-native-router-flux';
-import { LOGIN_HISTORY } from '../../constants/route';
+import { LOGIN_HISTORY, HOME } from '../../constants/route';
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 import { BLACK_COLOR_OPACITY } from '../../constants/color';
-
-const approve = () => {
-    Actions[LOGIN_HISTORY]();
-};
 
 const deny = () => {
     Actions[LOGIN_HISTORY]();
 };
 
 export default (props) => {
+    const [status, setStatus] = useState('loading');
+    const [info, setInfo] = useState({});
+
+    useEffect(() => {
+        init()
+    }, [])
+    
+    // @todo use key to encrypt response to server
+
+    const init = async () => {
+        const key = props._k
+        const didJwt = props._r
+        const decoded = didJWT.decodeJWT(didJwt)
+        const payload = decoded.payload
+        const request = payload.data
+
+        setInfo({
+            request,
+            payload
+        })
+        setStatus('loaded')
+    }
+
+    let ws
+
+    const approve = () => {
+        //Actions[LOGIN_HISTORY]();
+        setStatus('approving')
+
+        console.log('approving: ', info.request.authUri)
+        const encryptedResponse = 'temporary response'
+
+        // Build encrypted response
+
+        // Send encrypted response to WSS, which will forward
+        // onto the web browser
+        console.log('creating Wss for session', info.request.session)
+        ws = new WebSocket(info.request.authUri)
+        ws.onopen = () => {
+            console.log('ws open')
+            ws.send(JSON.stringify({
+                type: 'responseJwt',
+                sessionId: info.request.session,
+                data: encryptedResponse
+            }))
+        }
+
+        ws.onmessage = (event) => {
+            console.log('received response from server, sending home')
+            const message = JSON.parse(event.data)
+            if (!message.success) {
+                console.log('failed!', message.reason)
+            } else {
+                console.log('sent ok! redirecting home')
+                Actions[HOME]()
+            }
+        }
+
+        ws.onerror = (err) => {
+            console.log('ws error!')
+            console.log(err)
+        }
+
+        setStatus('sent to WSS')
+        console.log('sent to WSS')
+
+
+        // @todo: show message (pending)
+
+        // @todo: generate response (didJWT?)
+        // encrypt response
+        // send to WSS
+        // save to history, redirect to home dashboard (or previous screen?)
+    };
+
     const [isModalVisible, setModalVisibility] = useState(!props.verified);
 
     const color = props.verified ? '#37D5C7' : '#EF7936';
@@ -35,6 +107,7 @@ export default (props) => {
             <NavigationHeader title="Login Request" left={{ icon: 'skip' }} />
             <Content>
                 <View style={style.container}>
+                    {status != 'loading' ?
                     <View style={{ alignItems: 'center' }}>
                         <StravaLogo />
                         <View style={{ flexDirection: 'row' }}>
@@ -45,23 +118,28 @@ export default (props) => {
                             </Text>
                         </View>
                         <MobileSvg style={style.img} />
-                        <Text style={style.title}>New Login Request</Text>
+                        <Text style={style.title}>{info.request.appName}</Text>
                         <View>
                             <Text style={style.text}>
                                 There is a new login approval request from
                             </Text>
                             <Text style={[style.text, style.link]}
-                                onPress={() => Linking.openURL('http://www.strava.com/')}>
-                            http://www.strava.com/
+                                onPress={() => Linking.openURL(info.request.loginDomain)}>
+                            {info.request.loginDomain}
+                            </Text>
+                            <Text style={style.text}>
+                                ({info.payload.iss})
                             </Text>
                         </View>
                         <Text style={style.text}>
-                            25 May, 2020 at 2:53 pm
+                            ({info.payload.insertedAt}) 25 May, 2020 at 2:53 pm
                         </Text>
                         <Text style={[style.text, style.timeout]}>
-                            Expires in 90 seconds
+                            Expires in 90 seconds ({info.payload.exp})
                         </Text>
+                        <Text>Status: {status}</Text>
                     </View>
+                    : null }
 
                     {
                         isModalVisible
@@ -81,7 +159,7 @@ export default (props) => {
                     }
 
                     <View style={style.actions}>
-                        <Button style={[style.btn, style.mr]} onPress={approve}>Login</Button>
+                        <Button style={[style.btn, style.mr]} onPress={() => approve()}>Login</Button>
                         <Button style={style.btn} color="grey" onPress={deny}>Ignore</Button>
                     </View>
                 </View>

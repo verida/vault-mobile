@@ -27,7 +27,7 @@ export const PROFILES = 'profiles';
 export const CREDENTIAL_DETAILS = 'credential-details';
 
 export const LOGIN_HISTORY = 'login-history';
-export const LOGIN_REQUEST = 'auth/request';
+export const LOGIN_REQUEST = 'login-request';
 
 export const PUBLIC_PROFILE = 'public-profile';
 export const PRIVATE_PROFILE = 'private-profile';
