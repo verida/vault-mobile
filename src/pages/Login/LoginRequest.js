@@ -3,6 +3,8 @@ import { View, StyleSheet, Linking } from 'react-native';
 import { Icon, Button as NButton } from 'native-base';
 import { Container, Content } from 'native-base';
 import didJWT from 'did-jwt'
+import { getVeridaApp } from '../../api'
+import EncryptionUtils from '@verida/encryption-utils'
 
 import StravaLogo from '../../assets/strava-logo.svg';
 import MobileSvg from '../../assets/mobile.svg';
@@ -16,6 +18,8 @@ import { LOGIN_HISTORY, HOME } from '../../constants/route';
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 import { BLACK_COLOR_OPACITY } from '../../constants/color';
+
+global.EncryptionUtils = EncryptionUtils
 
 const deny = () => {
     Actions[LOGIN_HISTORY]();
@@ -40,28 +44,39 @@ export default (props) => {
 
         setInfo({
             request,
-            payload
+            payload,
+            key
         })
         setStatus('loaded')
     }
 
     let ws
 
-    const approve = () => {
+    const approve = async () => {
         //Actions[LOGIN_HISTORY]();
         setStatus('approving')
 
-        console.log('approving: ', info.request.authUri)
-        const encryptedResponse = 'temporary response'
+        const veridaApp = await getVeridaApp()
+        const signature = await veridaApp.user.requestSignature(info.request.appName)
+        const did = veridaApp.user.did
+        const appName = info.request.appName
+
+        const response = {
+            signature,
+            did,
+            appName
+        }
+        
+        const keyBytes = Buffer.from(info.key.slice(2), 'hex')
+
+        const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
 
         // Build encrypted response
 
         // Send encrypted response to WSS, which will forward
         // onto the web browser
-        console.log('creating Wss for session', info.request.session)
         ws = new WebSocket(info.request.authUri)
         ws.onopen = () => {
-            console.log('ws open')
             ws.send(JSON.stringify({
                 type: 'responseJwt',
                 sessionId: info.request.session,
@@ -70,7 +85,6 @@ export default (props) => {
         }
 
         ws.onmessage = (event) => {
-            console.log('received response from server, sending home')
             const message = JSON.parse(event.data)
             if (!message.success) {
                 console.log('failed!', message.reason)
@@ -86,7 +100,6 @@ export default (props) => {
         }
 
         setStatus('sent to WSS')
-        console.log('sent to WSS')
 
 
         // @todo: show message (pending)
