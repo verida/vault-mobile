@@ -5,6 +5,7 @@ import android.content.Context;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
+import com.transistorsoft.rnbackgroundgeolocation.RNBackgroundGeolocation;
 import dog.craftz.sqlite_2.RNSqlite2Package;
 import dog.craftz.sqlite_2.RNSqlite2Package;
 import dog.craftz.sqlite_2.RNSqlite2Package;

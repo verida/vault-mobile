@@ -3,6 +3,7 @@ import React from 'react';
 import IdentitySvg from '../assets/icons/data/identity.svg';
 import HealthSvg from '../assets/icons/data/health.svg';
 import SocialSvg from '../assets/icons/data/social.svg';
+import LocationSvg from '../assets/icons/data/location.svg';
 
 import MeasurementsSvg from '../assets/icons/health/measurements.svg';
 import ActivitiesSvg from '../assets/icons/health/activities.svg';
@@ -30,7 +31,8 @@ export default dataMap = {
         "subscriptions",
         "tickets",
         "documents",
-        "contact"
+        "contact",
+        "location"
     ],
     "folders": {
         "credentials": {
@@ -284,6 +286,42 @@ export default dataMap = {
                     "email",
                     "mobile",
                     "insertedAt"
+                ]
+            }
+        },
+        "location": {
+            "title": "Location",
+            "titlePlural": "Locations",
+            "icon": <LocationSvg />,
+            "display": "cards",
+            "database": "location_tracking",
+            "sort": [
+                {
+                    "timestamp": "desc"
+                }
+            ],
+            "nameField": "timestamp",
+            "color": "#FF886E",
+            "layouts": {
+                "list": [
+                    "timestamp",
+                    "latitude",
+                    "longitude",
+                    "activityType"
+                ],
+                "view": [
+                    "timestamp",
+                    "latitude",
+                    "longitude",
+                    "locationAccuracy",
+                    "altitude",
+                    "altitudeAccuracy",
+                    "isMoving",
+                    "speed",
+                    "speedAccuracy",
+                    "heading",
+                    "headingAccuracy",
+                    "activityType"
                 ]
             }
         }

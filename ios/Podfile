@@ -88,6 +88,8 @@ target 'Verida Vault' do
   add_flipper_pods!
   pod 'RNSqlite2', :path => '../node_modules/react-native-sqlite-2'
 
+  pod 'RNBackgroundGeolocation', :path => '../node_modules/react-native-background-geolocation'
+
   post_install do |installer|
     flipper_post_install(installer)
   end

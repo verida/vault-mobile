@@ -10,6 +10,7 @@ import Routes from './routes';
 import store from './store';
 import { isAuthorized } from './api';
 import Authenticate from './pages/Authentication/Authenticate';
+import LocationTracking from './helpers/location-tracking';
 
 export default () => {
     const [loading, setLoading] = useState(true);
@@ -31,6 +32,7 @@ export default () => {
         await loadFonts();
         const data = await isAuthorized();
         setAuthorized(data);
+        LocationTracking.init();
     };
 
     const routes = authorized

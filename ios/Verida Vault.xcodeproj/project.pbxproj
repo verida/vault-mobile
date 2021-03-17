@@ -13,6 +13,7 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		2282353325C17F7F006F7425 /* RNBackgroundFetch+AppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 2282353225C17F7F006F7425 /* RNBackgroundFetch+AppDelegate.m */; };
 		22E8075BC1D14730A54EC291 /* Octicons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = D0B8F74FD68C4CC597F8AB34 /* Octicons.ttf */; };
 		328384A3474648F0B2019E88 /* FontAwesome5_Regular.ttf in Resources */ = {isa = PBXBuildFile; fileRef = ECF783BA4F3549AFA78229A3 /* FontAwesome5_Regular.ttf */; };
 		3B6D95C68732449898C81026 /* MaterialIcons.ttf in Resources */ = {isa = PBXBuildFile; fileRef = C56BFEBBD9A242AD886BD848 /* MaterialIcons.ttf */; };
@@ -23,6 +24,7 @@
 		728C4A89362E443FA6578BF6 /* Roboto_medium.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 85F73A276A9D43D98B1EEB3A /* Roboto_medium.ttf */; };
 		7D99D94FBA81470BA70EBBDC /* FontAwesome5_Solid.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 09C80BBE04F4457C9A9532BB /* FontAwesome5_Solid.ttf */; };
 		833C98DE21CB4D0F9A90CFA9 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = EB5FF63D8E34421DB3D12488 /* FontAwesome.ttf */; };
+		87E2E5B9F5C14FC4975BB2D8 /* TSLocationManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 34DDECBACA184FD4AEB0FC3D /* TSLocationManager.framework */; };
 		94055ED6ED354F33A88C1C34 /* Feather.ttf in Resources */ = {isa = PBXBuildFile; fileRef = CB02A38B970F4008AB96B472 /* Feather.ttf */; };
 		AB79DFA6647A4EAE5CEFA284 /* libPods-Verida Vault.a in Frameworks */ = {isa = PBXBuildFile; fileRef = B3829D8CD38FCEDC3466809E /* libPods-Verida Vault.a */; };
 		B75C8E1AFAF540A7995B70E8 /* rubicon-icon-font.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 5C85E421F41D4B72A10C5D5D /* rubicon-icon-font.ttf */; };
@@ -47,7 +49,9 @@
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = myApp/main.m; sourceTree = "<group>"; };
 		182D002DE22569679EFB3727 /* Pods-Verida Vault.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault.debug.xcconfig"; path = "Target Support Files/Pods-Verida Vault/Pods-Verida Vault.debug.xcconfig"; sourceTree = "<group>"; };
 		1855E6B3EF194A06BB4729F3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
+		2282353225C17F7F006F7425 /* RNBackgroundFetch+AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = "RNBackgroundFetch+AppDelegate.m"; path = "../node_modules/react-native-background-fetch/ios/RNBackgroundFetch/RNBackgroundFetch+AppDelegate.m"; sourceTree = "<group>"; };
 		228FC23CE0D44BE7897CDEF3 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
+		34DDECBACA184FD4AEB0FC3D /* TSLocationManager.framework */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = wrapper.framework; name = TSLocationManager.framework; path = "../node_modules/react-native-background-geolocation/ios/RNBackgroundGeolocation/TSLocationManager.framework"; sourceTree = SDKROOT; };
 		3DBEAF860106428B82D2C175 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		5C85E421F41D4B72A10C5D5D /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F12764B221249EF9A963F52 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -78,6 +82,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				AB79DFA6647A4EAE5CEFA284 /* libPods-Verida Vault.a in Frameworks */,
+				87E2E5B9F5C14FC4975BB2D8 /* TSLocationManager.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -132,6 +137,7 @@
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
 				B3829D8CD38FCEDC3466809E /* libPods-Verida Vault.a */,
+				34DDECBACA184FD4AEB0FC3D /* TSLocationManager.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -146,6 +152,7 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
+				2282353225C17F7F006F7425 /* RNBackgroundFetch+AppDelegate.m */,
 				13B07FAE1A68108700A75B9A /* myApp */,
 				832341AE1AAA6A7D00B99B32 /* Libraries */,
 				83CBBA001A601CBA00E9B192 /* Products */,
@@ -220,6 +227,11 @@
 						DevelopmentTeam = VV5KCZVD2D;
 						LastSwiftMigration = 1120;
 						ProvisioningStyle = Automatic;
+						SystemCapabilities = {
+							com.apple.BackgroundModes = {
+								enabled = true;
+							};
+						};
 					};
 				};
 			};
@@ -336,6 +348,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2282353325C17F7F006F7425 /* RNBackgroundFetch+AppDelegate.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
@@ -365,9 +378,10 @@
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				GCC_PREPROCESSOR_DEFINITIONS = (
 					"$(inherited)",
 					"FB_SONARKIT_ENABLED=1",
@@ -399,9 +413,10 @@
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 3;
+				CURRENT_PROJECT_VERSION = 4;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
+				FRAMEWORK_SEARCH_PATHS = "$(inherited)";
 				INFOPLIST_FILE = myApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 10.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
