@@ -12,25 +12,30 @@ import InputStyles from '../styles/inputs';
 import { COUNTRIES } from '../helpers/country-list';
 
 import { setPublicProfileData } from '../store/general/actions';
+import { generateWallet } from '../api';
 
 const AccountInit = ({ action, ...props }) => {
     const [name, setName] = useState('');
     const [country, setCountry] = useState(null);
+    const [processing, setProcessing] = useState(false);
 
     const onCountryChange = (e) => setCountry(e);
-    const onContinue = () => {
+    const onContinue = async (e) => {
+        setProcessing(true)
+        const wallet = await generateWallet({name, country: country.value});
+
         props.setPublicProfileData({ name, country: country.value });
         return Actions[action]();
     };
 
     return (
         <Layout title="Select Username" style={style.layout}>
-            <Label>Username</Label>
+            <Label>Name</Label>
             <TextInput
-                placeholder={'Enter username'}
+                placeholder={'Enter your name'}
                 style={InputStyles.input}
                 value={name}
-                onChangeText={(t) => setName(t.trim())} />
+                onChangeText={(t) => setName(t)} />
 
             <Label>Country</Label>
             <DropDownPicker
@@ -43,7 +48,7 @@ const AccountInit = ({ action, ...props }) => {
             />
             <Button style={style.mt}
                 color="primary"
-                disabled={!country}
+                disabled={!country || processing}
                 onPress={onContinue}>
                 Continue
             </Button>

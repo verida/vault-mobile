@@ -16,8 +16,8 @@ import { SEED_PHRASE_GENERATED } from '../../constants/route';
 import { onRemind } from '../../helpers/account';
 
 const Items = [
-    'The seed phrase is composed of 12 words. Please record them carefully and store your phrase in a safe place.',
-    'For security reason there is no password reset.'
+    'Your seed phrase is a list of words. Please record them carefully and store in a safe place.',
+    'Warning: There is no password reset!'
 ];
 
 const onShow = () => Actions[SEED_PHRASE_GENERATED]();
@@ -36,7 +36,7 @@ const SeedPhrase = (props) => {
             <Content>
                 <Layout title="Seed Phrase">
                     <Text style={style.description}>
-                        Seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
+                        A seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
                         upgraded.
                     </Text>
                     <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>

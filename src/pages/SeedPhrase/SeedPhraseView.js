@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { Icon } from 'native-base';
 import { View } from 'react-native';
 import Clipboard from '@react-native-community/clipboard';
 

@@ -11,11 +11,11 @@ import Layout from '../../components/Layouts/Layout';
 import WordCard from '../../components/Words/WordCard';
 import NavigationHeader from '../../components/Navigation/NavigationHeader';
 
-import { generateMnemonic } from '../../api';
 import { VERIFY_PHRASE } from '../../constants/route';
 import { BLACK_COLOR_OPACITY } from '../../constants/color';
 
 import { onRemind } from '../../helpers/account';
+import { getWallet } from '../../api';
 
 import _ from 'underscore';
 
@@ -23,8 +23,8 @@ const SeedPhraseGenerated = (props) => {
     const [words, setWords] = useState('Generating seed phrase ...');
 
     useEffect(async () => {
-        const mnemonic = await generateMnemonic();
-        setWords(mnemonic);
+        const wallet = await getWallet();
+        setWords(wallet.mnemonic);
     }, []);
 
     const onSaved = async () => {
@@ -38,7 +38,7 @@ const SeedPhraseGenerated = (props) => {
             <NavigationHeader title="Create An Account" />
             <Layout title="Seed Phrase">
                 <Text style={style.title}>
-                    Please carefully write down each word
+                    Carefully write down each word in order
                 </Text>
                 <WordCard words={words} />
                 <Button color="transparent-grey" onPress={() => Clipboard.setString(words)} style={{ marginTop: 10 }}>
@@ -48,7 +48,7 @@ const SeedPhraseGenerated = (props) => {
                 <Button color="primary" onPress={onSaved}>
                     I have saved my seed words
                 </Button>
-                <Button color="transparent-grey" onPress={() => onRemind(words, props.publicProfileData)}>
+                <Button color="transparent-grey" onPress={onRemind}>
                     Remind me later
                 </Button>
             </Layout>

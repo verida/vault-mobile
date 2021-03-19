@@ -7,26 +7,22 @@ import dataMap from '../config/data-map'
 const WALLET_KEY = 'VaultMobileWallet';
 export const MNEMONIC_LENGTH = 12;
 const VERIDA_APP_NAME = 'Verida: Vault';
-const CHAIN ='ethr';
+const CHAIN ='near';
 
 global.Verida = Verida;
 
-export const generateMnemonic = async (userData) => {
-    const wallet = await SecureStore.getItemAsync(WALLET_KEY);
-    if (wallet) {
-        const result = JSON.parse(wallet);
-        return result.mnemonic;
-    }
-    const newWallet = walletUtils.createWallet('ethr');
+export const generateWallet = async (userData) => {
+    const newWallet = walletUtils.createWallet('near');
+    global.wallet = newWallet;
 
     const vault = await getVault(newWallet);
     await Promise.all(Object.entries(userData).map(entry => vault.profiles.public.set(...entry)));
 
     await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet));
-    return newWallet.mnemonic;
+    return newWallet;
 };
 export const walletByMnemonic = async (mnemonic) => {
-    const wallet = walletUtils.getWallet('ethr', mnemonic);
+    const wallet = walletUtils.getWallet(CHAIN, mnemonic);
     await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet));
 };
 export const clearWallet = async () => {
@@ -42,7 +38,7 @@ export const getWallet = async () => {
     const wallet = await SecureStore.getItemAsync(WALLET_KEY);
     if (wallet) {
         const result = JSON.parse(wallet);
-        result.address = 'did:ethr:' + result.address.toLowerCase();
+        result.address = 'did:'+CHAIN+':' + result.address.toLowerCase();
         global.wallet = result;
         return result;
     }

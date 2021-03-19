@@ -10,7 +10,8 @@ import Text from '../../components/Text';
 
 import {
     CREATE_ACCOUNT,
-    IMPORT_ACCOUNT
+    SEED_PHRASE_ENTERED
+    //IMPORT_ACCOUNT -- use this for original import account flow
 } from '../../constants/route';
 
 import { WHITE_COLOR } from '../../constants/color';
@@ -20,7 +21,7 @@ export default () => {
     const title = 'Welcome!\nIt\'s time to own your personal data.';
 
     const createAcc = () => (Actions[CREATE_ACCOUNT]());
-    const importAcc = () => (Actions[IMPORT_ACCOUNT]());
+    const importAcc = () => (Actions[SEED_PHRASE_ENTERED]());
 
     return (
         <LinearGradient

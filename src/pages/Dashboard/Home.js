@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, Image, Platform } from 'react-native';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
-import Constants from 'expo-constants';
 import { connect } from 'react-redux';
 
 import Text from '../../components/Text';
@@ -43,7 +42,6 @@ const Home = (props) => {
     const init = async () => {
         const wallet = await getWallet();
         const vault = await getVault();
-        const address = wallet.address
         const name = await vault.profiles.public.get('name')
         
         vault.veridaApp.inbox.on('inboxChange', function(item) {
@@ -55,7 +53,7 @@ const Home = (props) => {
         })
 
         setInfo({
-            address,
+            address: wallet.did,
             name
         });
     };

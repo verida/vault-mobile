@@ -48,7 +48,7 @@ const SuccessPage = (props) => {
                 <Text style={style.title}>Success!</Text>
             </View>
             <Text style={style.description}>
-                A new Ethereum Wallet has been created and linked to your username
+                A new wallet has been created and linked to your device.
             </Text>
             <Details/>
             <Button style={style.mt} color="primary" onPress={onDone}>

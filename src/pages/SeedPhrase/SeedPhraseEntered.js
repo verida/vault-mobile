@@ -52,7 +52,7 @@ export default () => {
             <Content>
                 <Layout title="Seed Phrase">
                     <Label style={[ModifierStyles.label, error && ModifierStyles.errorText]}>
-                        Enter your Ethereum seed phrase below
+                        Enter your seed phrase below
                     </Label>
                     <TextInput
                         value={phrase}
