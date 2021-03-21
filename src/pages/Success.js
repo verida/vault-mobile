@@ -21,11 +21,15 @@ import { setAuthStatus, setBioAuthStatus } from '../store/general/actions';
 const SuccessPage = (props) => {
     const [loading, setLoading] = useState(true);
 
-    useEffect(async () => {
+    useEffect(() => {
+        init()
+    }, []);
+
+    const init = async () => {
         const hasSavedBio = await LocalAuthentication.isEnrolledAsync();
         props.setBioAuthStatus(hasSavedBio);
         setLoading(false);
-    }, []);
+    }
 
     const onDone = () => {
         props.setAuthStatus(true);

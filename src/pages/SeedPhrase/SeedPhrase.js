@@ -40,7 +40,12 @@ const SeedPhrase = (props) => {
                         upgraded.
                     </Text>
                     <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
-                    <List items={Items}/>
+                    <Text style={style.description}>
+                        Your seed phrase is a list of words. Please record them carefully and store in a safe place.
+                    </Text>
+                    <Text style={style.highlight}>
+                        Warning: There is no password reset!
+                    </Text>
                     <Button style={{ marginTop: 56 }} disabled={disabled} color="primary" onPress={onShow}>
                         Show Seed Phrase
                     </Button>
@@ -61,6 +66,10 @@ export default connect(mapStateToProps, null)(SeedPhrase);
 
 const style = StyleSheet.create({
     description: {
+        marginTop: 16
+    },
+    highlight: {
+        textDecorationLine: 'underline',
         marginTop: 16
     }
 });

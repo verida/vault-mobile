@@ -22,10 +22,14 @@ import _ from 'underscore';
 const SeedPhraseGenerated = (props) => {
     const [words, setWords] = useState('Generating seed phrase ...');
 
-    useEffect(async () => {
+    useEffect(() => {
+        init();
+    }, []);
+
+    const init = async() => {
         const wallet = await getWallet();
         setWords(wallet.mnemonic);
-    }, []);
+    }
 
     const onSaved = async () => {
         const mnemonic = words.split(' ');

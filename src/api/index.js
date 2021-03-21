@@ -28,6 +28,7 @@ export const walletByMnemonic = async (mnemonic) => {
 export const clearWallet = async () => {
     global.verida = null;
     global.vault = null;
+    global.wallet = null;
     await SecureStore.deleteItemAsync(WALLET_KEY);
 };
 export const getWallet = async () => {
