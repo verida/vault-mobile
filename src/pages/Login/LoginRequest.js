@@ -3,6 +3,7 @@ import { View, StyleSheet, Linking } from 'react-native';
 import { Icon, Button as NButton } from 'native-base';
 import { Container, Content } from 'native-base';
 import didJWT from 'did-jwt'
+import Moment from 'moment';
 import { getVeridaApp } from '../../api'
 import EncryptionUtils from '@verida/encryption-utils'
 
@@ -22,12 +23,15 @@ import { BLACK_COLOR_OPACITY } from '../../constants/color';
 global.EncryptionUtils = EncryptionUtils
 
 const deny = () => {
-    Actions[LOGIN_HISTORY]();
+    Actions[HOME]();
 };
 
 export default (props) => {
     const [status, setStatus] = useState('loading');
     const [info, setInfo] = useState({});
+    const [verified, setVerified] = useState(true);
+    const [expiry, setExpiry] = useState(null);
+    const [errorMessage, setErrorMessage] = useState(null);
 
     useEffect(() => {
         init()
@@ -42,11 +46,17 @@ export default (props) => {
         const payload = decoded.payload
         const request = payload.data
 
+        const expiry = payload.exp
+        const now = Math.floor(Date.now()/1000)
+        setExpiry(expiry-now)
+
         setInfo({
             request,
             payload,
+            expiry,
             key
         })
+
         setStatus('loaded')
     }
 
@@ -87,7 +97,13 @@ export default (props) => {
         ws.onmessage = (event) => {
             const message = JSON.parse(event.data)
             if (!message.success) {
-                console.log('failed!', message.reason)
+                setErrorMessage({
+                    message: message.message,
+                    heading: 'Security Error',
+                    type: 'error',
+                    color: '#EF7936',
+                    iconName: 'exclamationcircleo'
+                })
             } else {
                 console.log('sent ok! redirecting home')
                 Actions[HOME]()
@@ -101,19 +117,15 @@ export default (props) => {
 
         setStatus('sent to WSS')
 
+        // @todo: validate domain name and public key to ensure they match
+        // If they don't, show warning "Website could not be verified and is untrusted."
 
         // @todo: show message (pending)
-
-        // @todo: generate response (didJWT?)
-        // encrypt response
-        // send to WSS
-        // save to history, redirect to home dashboard (or previous screen?)
+        // @todo: save to history, redirect to home dashboard (or previous screen?)
     };
 
-    const [isModalVisible, setModalVisibility] = useState(!props.verified);
-
-    const color = props.verified ? '#37D5C7' : '#EF7936';
-    const iconName = props.verified ? 'check' : 'exclamationcircleo';
+    const color = verified ? '#37D5C7' : '#EF7936';
+    const iconName = verified ? 'check' : 'exclamationcircleo';
 
     return (
         <Container>
@@ -122,58 +134,59 @@ export default (props) => {
                 <View style={style.container}>
                     {status != 'loading' ?
                     <View style={{ alignItems: 'center' }}>
+                        {/* 
                         <StravaLogo />
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={[style.text, { fontSize: 12, color }]}>
                                 <Icon type="AntDesign" name={iconName} style={[style.text, { color }]} />
-                                {props.verified ? null : '\u00A0Not'}
+                                {verified ? null : '\u00A0Not'}
                                 {'\u00A0Verified'}
                             </Text>
                         </View>
+                        */}
                         <MobileSvg style={style.img} />
                         <Text style={style.title}>{info.request.appName}</Text>
                         <View>
                             <Text style={style.text}>
-                                There is a new login approval request from
+                                You have a new login approval request from:
                             </Text>
                             <Text style={[style.text, style.link]}
-                                onPress={() => Linking.openURL(info.request.loginDomain)}>
-                            {info.request.loginDomain}
+                                onPress={() => Linking.openURL(`${info.request.loginDomain}`)}>
+                                https://{info.request.loginDomain}
                             </Text>
+                            {/*
                             <Text style={style.text}>
                                 ({info.payload.iss})
                             </Text>
+                            */}
                         </View>
                         <Text style={style.text}>
-                            ({info.payload.insertedAt}) 25 May, 2020 at 2:53 pm
+                            
                         </Text>
                         <Text style={[style.text, style.timeout]}>
-                            Expires in 90 seconds ({info.payload.exp})
+                            Generated: {Moment(info.payload.insertedAt).format('DD MMM, YYYY [at] h:mm a')}{"\n"}
+                            Expires: {expiry} seconds ({info.payload.exp})
                         </Text>
-                        <Text>Status: {status}</Text>
                     </View>
                     : null }
 
                     {
-                        isModalVisible
+                        errorMessage
                             ? (<View style={style.modal}>
                                 <View style={{ flexDirection: 'row' }}>
-                                    <Text style={[style.text, { color }]}>
-                                        <Icon type='AntDesign' name='exclamationcircleo' style={[style.text, { color }]} />
-                                        {' Security Warning'}
+                                    <Text style={[style.text, { color: errorMessage.color }]}>
+                                        <Icon type='AntDesign' name={errorMessage.iconName} style={[style.text, { color: errorMessage.color }]} />
+                                        &nbsp; {errorMessage.heading}
                                     </Text>
-                                    <NButton transparent style={{ position: 'absolute', right: 0 }} onPress={() => setModalVisibility(!isModalVisible)}>
-                                        <Icon type='AntDesign' name='close' style={{ color: '#000', fontSize: 17 }} />
-                                    </NButton>
                                 </View>
-                                <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>Website could not be verified and is untrusted.</Text>
+                                <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>{errorMessage.message}</Text>
                             </View>)
                             : null
                     }
 
                     <View style={style.actions}>
-                        <Button style={[style.btn, style.mr]} onPress={() => approve()}>Login</Button>
-                        <Button style={style.btn} color="grey" onPress={deny}>Ignore</Button>
+                        <Button style={[style.btn, , style.mr]} color="grey" onPress={deny}>Cancel</Button>
+                        <Button style={style.btn} onPress={() => approve()}>Login</Button>
                     </View>
                 </View>
             </Content>
