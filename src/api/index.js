@@ -102,3 +102,31 @@ export const getVault = async (wallet) => {
 
     return global.vault;
 };
+
+/**
+ * 
+ * @returns <Image/> source property
+ */
+const DefaultAvatar = require('../assets/stubs/avatar.png');
+
+export const loadAvatarSource = async () => {
+    const vault = await getVault()
+    let avatar = await vault.profiles.public.get('avatar')
+    avatar = JSON.parse(avatar)
+
+    if (avatar) {
+        let image
+        switch (avatar.encoding) {
+            case 'base64':
+                image = {
+                    uri: `data:image/${avatar.format};base64,` + avatar.base64
+                }
+
+                break
+        }
+        
+        return image
+    }
+
+    return DefaultAvatar
+}

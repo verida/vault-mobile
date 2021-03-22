@@ -17,13 +17,14 @@ import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../cons
 import { INBOX, SETTINGS } from '../../constants/route';
 import { setNewMessagesCount } from '../../store/general/actions';
 
-import { getWallet, getVault } from '../../api';
+import { getWallet, getVault, loadAvatarSource } from '../../api';
 
-const UserImg = require('../../assets/stubs/user.png');
+const DefaultAvatar = require('../../assets/stubs/avatar.png');
 const LogoImg = require('../../assets/vault-logo.png');
 
 const Home = (props) => {
     const [info, setInfo] = useState({});
+    const [avatarSource, setAvatarSource] = useState(DefaultAvatar);
 
     useEffect(() => {
         init();
@@ -43,6 +44,8 @@ const Home = (props) => {
         const wallet = await getWallet();
         const vault = await getVault();
         const name = await vault.profiles.public.get('name')
+        const source = await loadAvatarSource()
+        setAvatarSource(source)
         
         vault.veridaApp.inbox.on('inboxChange', function(item) {
             fetchInboxCount();
@@ -80,9 +83,7 @@ const Home = (props) => {
             />
             <Content contentContainerStyle={style.content}>
                 <Image
-                    width={80}
-                    height={80}
-                    source={UserImg}
+                    source={avatarSource}
                     style={style.userImg} />
                 <Text style={style.title}>
                     { info.name }
@@ -135,6 +136,11 @@ const style = StyleSheet.create ({
         fontFamily: NUNITO_SANS_BOLD
     },
     userImg: {
+        width: 80,
+        height: 80,
+        borderRadius: 60,
+        borderColor: WHITE_COLOR,
+        borderWidth: 4,
         marginTop
     },
     text: {

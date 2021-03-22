@@ -1,15 +1,28 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
 
 import * as ImagePicker from 'expo-image-picker';
 import PhotoCameraSvg from '../assets/photo-camera.svg';
 import { WHITE_COLOR } from '../constants/color';
 
-const userImg = 'https://developers.google.com/web/tools/chrome-user-experience-report/images/logo.png?hl=ru-RU';
+//const userImg = 'https://developers.google.com/web/tools/chrome-user-experience-report/images/logo.png?hl=ru-RU';
+const userImg = require('../assets/stubs/avatar.png');
+import { getVault, loadAvatarSource } from '../api';
+
+//source={{uri: 'data:image/jpeg;base64,' + image.base64}}
 
 export default () => {
     const [image, setImage] = useState(userImg);
-    const [granted, setGranted] = useState(null);
+    //const [granted, setGranted] = useState(null);
+
+    useEffect(() => {
+        loadAvatar();
+    }, []);
+
+    const loadAvatar = async () => {
+        const avatarSource = await loadAvatarSource()
+        setImage(avatarSource)
+    }
 
     const loadPhoto = async () => {
         // if (!granted) {
@@ -25,18 +38,34 @@ export default () => {
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
-            quality: 1,
+            quality: 0,
+            base64: true
         });
 
         if (!result.cancelled) {
-            setImage(result.uri);
+            const vault = await getVault()
+            let avatar = await vault.profiles.public.get('avatar')
+            avatar = JSON.parse(avatar)
+
+            if (!avatar) {
+                avatar = {
+                    encoding: 'base64',
+                    format: 'jpeg',
+                    base64: ''
+                }
+            }
+
+            avatar.base64 = result.base64
+            await vault.profiles.public.set('avatar', JSON.stringify(avatar))
+
+            loadAvatar()
         }
     };
 
     return (
         <View style={style.img}>
-            <Image source={{ uri: image }} style={style.imgContainer}/>
-            <TouchableOpacity onPress={loadPhoto} style={style.loader}>
+            <TouchableOpacity style={style.loader} onPress={loadPhoto}>
+                <Image source={image} style={style.imgContainer} />
                 <PhotoCameraSvg style={style.svg} />
             </TouchableOpacity>
         </View>
