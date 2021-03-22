@@ -10,11 +10,15 @@ export default class CustomTabBar extends React.Component {
         const { state } = this.props.navigation;
         const activeTabIndex = state.index;
 
+        const tabClick = (key) => {
+            Actions['_' + key]()
+        }
+
         return (
             <View style={style.navigation}>
                 {
                     state.routes.map(({ key, routes: [props] }, index) => (
-                        <TouchableOpacity key={key} onPress={() => Actions[key]()} style={style.tab}>
+                        <TouchableOpacity key={key} onPress={() => tabClick(key)} style={style.tab}>
                             { props.params.icon({ opacity: (index === activeTabIndex ? 1 : 0.45) }) }
                             <Text style={[style.tabText, index === activeTabIndex && style.tabTextActive]}>
                                 {props.params.title}
