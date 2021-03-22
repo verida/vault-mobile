@@ -7,7 +7,7 @@ import { WHITE_COLOR } from '../../constants/color';
 
 export default ({ type, approved }) => (
     <View style={style.container}>
-        <Text style={style.text}>You have no {type} request</Text>
+        <Text style={style.text}>You have no {type} requests</Text>
         {   approved &&
             <View style={style.card}>
                 <Success width={40} />

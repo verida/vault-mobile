@@ -11,13 +11,11 @@ import { SETTINGS } from '../../constants/route';
 export default () => {
     const [index, setIndex] = useState(0);
     const [routes] = useState([
-        { key: 'pending', title: 'Pending' },
         { key: 'approved', title: 'Approved' },
         { key: 'denied', title: 'Denied' }
     ]);
 
     const renderScene = SceneMap({
-        pending: HistoryLayout,
         approved: HistoryLayout,
         denied: HistoryLayout,
     });

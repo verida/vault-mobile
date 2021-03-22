@@ -62,6 +62,9 @@ export default (props) => {
 
     let ws
 
+    /**
+     * @todo: Move this into vault-common
+     */
     const approve = async () => {
         //Actions[LOGIN_HISTORY]();
         setStatus('approving')
@@ -115,13 +118,26 @@ export default (props) => {
             console.log(err)
         }
 
-        setStatus('sent to WSS')
+        setStatus('sentResponse')
 
         // @todo: validate domain name and public key to ensure they match
         // If they don't, show warning "Website could not be verified and is untrusted."
 
         // @todo: show message (pending)
-        // @todo: save to history, redirect to home dashboard (or previous screen?)
+        
+        // save into login database
+        const loginRequest = {
+            context: info.request.appName,
+            loginDomain: info.request.loginDomain,
+            insertedAt: info.payload.insertedAt,
+            sessionId: info.request.session,
+            authUri: info.request.authUri,
+            expiry: info.payload.exp,
+            approved: true
+        }
+
+        const loginRequestDatastore = await veridaApp.openDatastore('https://schemas.verida.io/auth/loginRequest/schema.json')
+        const result = await loginRequestDatastore.save(loginRequest)
     };
 
     const color = verified ? '#37D5C7' : '#EF7936';
@@ -188,6 +204,14 @@ export default (props) => {
                         <Button style={[style.btn, , style.mr]} color="grey" onPress={deny}>Cancel</Button>
                         <Button style={style.btn} onPress={() => approve()}>Login</Button>
                     </View>
+                    {status == 'approving' ?
+                    <View>
+                        <Text style={style.text}>
+                            Sending response...    
+                        </Text>
+                    </View>
+                    : null
+                    }
                 </View>
             </Content>
         </Container>

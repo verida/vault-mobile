@@ -1,31 +1,42 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, StyleSheet } from 'react-native';
+import Text from '../../components/Text';
 
 import History from './History';
 import EmptyList from '../Lists/EmptyList';
-
-import StravaLogo from '../../assets/icons/strava-2.svg';
-
-const list = [
-    {
-        id: 'test-1',
-        img: <StravaLogo />,
-        title: 'Login request from Strava',
-        time: '5sec ago',
-        expired: 'Expired in 3m'
-    }
-];
+import { getVeridaApp } from '../../api'
 
 export default ({ route }) => {
-    const requests = (route.key !== 'denied' && list) || [];
+    const [history, setHistory] = useState(null);
+    const [loading, setLoading] = useState(true);
 
-    const history = requests.length &&
-        (<View style={style.container}>
-            { requests.map((item) => <History key={item.id} data={item}/>) }
-        </View>);
+    useEffect(() => {
+        init()
+    }, [])
+
+    const init = async () => {
+        const veridaApp = await getVeridaApp()
+        const datastore = await veridaApp.openDatastore('https://schemas.verida.io/auth/loginRequest/schema.json')
+        const filter = {
+            approved: route.key == 'approved'
+        }
+
+        const requests = await datastore.getMany(filter, {sort: [{ insertedAt: 'desc' }]})
+
+        const history = requests.length &&
+            (<View style={style.container}>
+                { requests.map((item) => <History key={item._id} data={item}/>) }
+            </View>);
+
+        setHistory(history)
+        setLoading(false)
+    }
 
 
-    return (history || <EmptyList type={route.key} />);
+    return (
+        loading ? <View style={style.container}><Text>Loading...</Text></View> :
+        (history || <EmptyList type={route.key} />)
+    );
 };
 
 const style = StyleSheet.create({
