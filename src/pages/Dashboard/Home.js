@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, Image, Platform } from 'react-native';
+import { View, StyleSheet, Image, Platform, TouchableOpacity } from 'react-native';
 import { QRCode } from 'react-native-custom-qr-codes-expo';
 import { connect } from 'react-redux';
 
@@ -13,8 +13,8 @@ import { Actions } from 'react-native-router-flux';
 import Clipboard from '@react-native-community/clipboard';
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
-import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR } from '../../constants/color';
-import { INBOX, SETTINGS } from '../../constants/route';
+import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, WHITE_COLOR, ORANGE_COLOR } from '../../constants/color';
+import { INBOX, SETTINGS, PUBLIC_PROFILE } from '../../constants/route';
 import { setNewMessagesCount } from '../../store/general/actions';
 
 import { getWallet, getVault, loadAvatarSource } from '../../api';
@@ -55,6 +55,11 @@ const Home = (props) => {
             fetchInboxCount();
         })
 
+        /*await vault.profiles.public.listen(function(row) {
+            console.log('row changed!', row)
+        })
+        console.log('setup listen ing for public profile changes')*/
+
         setInfo({
             address: wallet.did,
             name
@@ -82,10 +87,12 @@ const Home = (props) => {
                 right={{ action: () => Actions[SETTINGS](), icon: <SettingsSvg /> }}
             />
             <Content contentContainerStyle={style.content}>
-                <Image
-                    source={avatarSource}
-                    style={style.userImg} />
-                <Text style={style.title}>
+                <TouchableOpacity onPress={() => Actions[PUBLIC_PROFILE]()}>
+                    <Image
+                        source={avatarSource}
+                        style={style.userImg} />
+                </TouchableOpacity>
+                <Text style={style.title} onPress={() => Actions[PUBLIC_PROFILE]()}>
                     { info.name }
                 </Text>
                 <Text style={style.text} onPress={() => Clipboard.setString(info.address)}>
@@ -104,6 +111,7 @@ const Home = (props) => {
                 <Text style={style.notes}>
                     This is your QR-Code. Present it to others so they can scan it and connect to you
                 </Text>
+                <Text style={style.network}>Testnet</Text>
             </Content>
         </Container>
     );
@@ -187,5 +195,15 @@ const style = StyleSheet.create ({
         backgroundColor: '#FF6E6E',
         borderRadius: 10,
         overflow: 'hidden'
+    },
+    network: {
+        backgroundColor: ORANGE_COLOR,
+        color: WHITE_COLOR,
+        paddingLeft: 20,
+        paddingRight: 20,
+        paddingTop: 5,
+        paddingBottom: 5,
+        marginTop: 10,
+        borderRadius: 10
     }
 });
