@@ -44,7 +44,6 @@ const PublicProfile = (props) => {
             since: 'now',
             live: true
         }).on('change', async function(info) {
-            console.log("data changed")
             updateData()
         });
     }
