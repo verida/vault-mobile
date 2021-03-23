@@ -114,6 +114,8 @@ export const loadAvatarSource = async () => {
     let avatar = await vault.profiles.public.get('avatar')
     avatar = JSON.parse(avatar)
 
+    console.log('loadAvatarSource', avatar.base64.length)
+
     if (avatar) {
         let image
         switch (avatar.encoding) {

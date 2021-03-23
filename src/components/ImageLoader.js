@@ -33,21 +33,39 @@ export default () => {
         //         return;
         //     }
         // }
-
-        const result = await ImagePicker.launchImageLibraryAsync({
+        console.log({
             mediaTypes: ImagePicker.MediaTypeOptions.Images,
             allowsEditing: true,
             aspect: [4, 3],
             quality: 0,
             base64: true
+        })
+
+        const result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            aspect: [4, 3],
+            quality: 0.1,
+            base64: true
         });
 
-        if (!result.cancelled) {
+        if (!result.base64) {
+            console.log('no base64!')
+            console.log(result)
+        } else {
+            console.log('base64 with length: ',result.base64.length)
+            console.log(result.type, result.width, result.height, result.uri)
+        }
+
+        
+
+        if (!result.cancelled && result.base64) {
             const vault = await getVault()
             let avatar = await vault.profiles.public.get('avatar')
             avatar = JSON.parse(avatar)
 
             if (!avatar) {
+                console.log('no avatar!')
                 avatar = {
                     encoding: 'base64',
                     format: 'jpeg',
@@ -56,7 +74,9 @@ export default () => {
             }
 
             avatar.base64 = result.base64
-            await vault.profiles.public.set('avatar', JSON.stringify(avatar))
+            console.log('saving avatar', avatar.base64.length)
+            let resp = await vault.profiles.public.set('avatar', JSON.stringify(avatar))
+            console.log('response', resp)
 
             loadAvatar()
         }
