@@ -102,8 +102,8 @@
     "preset": "react-native"
   },
   "private": true,
-  "name": "myApp",
-  "version": "1.0.0",
+  "name": "@verida/vault-mobile",
+  "version": "0.1.0",
   "react-native": {
     "zlib": "browserify-zlib",
     "console": "console-browserify",
