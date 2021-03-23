@@ -168,7 +168,7 @@ export default (props) => {
                             </Text>
                             <Text style={[style.text, style.link]}
                                 onPress={() => Linking.openURL(`${info.request.loginDomain}`)}>
-                                https://{info.request.loginDomain}
+                                {info.request.loginDomain}
                             </Text>
                             {/*
                             <Text style={style.text}>
