@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import Logo from '../../assets/logo.svg';
 import Texture from '../../assets/landing-bg.svg';
 import { Actions } from 'react-native-router-flux';
+import { Icon } from 'native-base';
 
 import Button from '../../components/Button';
 import Text from '../../components/Text';
@@ -15,7 +16,7 @@ import {
 } from '../../constants/route';
 
 import { WHITE_COLOR } from '../../constants/color';
-import { NUNITO_SANS_BOLD } from '../../constants/text';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
 
 export default () => {
     const title = 'Welcome!\nIt\'s time to own your personal data.';
@@ -37,6 +38,19 @@ export default () => {
                         height={51} />
                     <Text style={style.title}>
                         {title}
+                    </Text>
+                </View>
+                <View style={style.modal}>
+                    <View style={{ flexDirection: 'row' }}>
+                        <Text style={[style.text, { color: '#EF7936' }]}>
+                            <Icon type='AntDesign' name='exclamationcircleo' style={[style.text, { color: '#EF7936' }]} />
+                            &nbsp; Warning: Alpha Software
+                        </Text>
+                    </View>
+                    <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>
+                        This is alpha software and is for testing purposes only.
+                        All data stored will be deleted every month.
+                        Use this software at your own risk as it is still in active development.
                     </Text>
                 </View>
                 <View>
@@ -70,4 +84,17 @@ const style = StyleSheet.create ({
         fontSize: 36,
         marginTop: '35%'
     },
+    text: {
+        fontFamily: NUNITO_SANS_SEMIBOLD,
+        fontSize: 14,
+        textAlign: 'center',
+        marginVertical: 8
+    },
+    modal: {
+        backgroundColor: '#FDF4EA',
+        paddingLeft: 15,
+        marginTop: 10,
+        width: '100%',
+        borderRadius: 5
+    }
 });
