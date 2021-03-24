@@ -32,6 +32,7 @@ export default (props) => {
     const [verified, setVerified] = useState(true);
     const [expiry, setExpiry] = useState(null);
     const [errorMessage, setErrorMessage] = useState(null);
+    const [ws, setWebsocket] = useState(null);
 
     useEffect(() => {
         init()
@@ -44,29 +45,69 @@ export default (props) => {
         const didJwt = props._r
         const decoded = didJWT.decodeJWT(didJwt)
         const payload = decoded.payload
-        const request = payload.data
 
         const expiry = payload.exp
         const now = Math.floor(Date.now()/1000)
         setExpiry(expiry-now)
 
-        setInfo({
-            request,
-            payload,
-            expiry,
-            key
-        })
+        const socketUri = payload.data.authUri
+        const sessionId = payload.data.session
+        const websocket = new WebSocket(socketUri)
+        setWebsocket(websocket)
+        websocket.onopen = () => {
+            websocket.send(JSON.stringify({
+                type: 'getSession',
+                data: {
+                    sessionId: sessionId
+                }
+            }))
+        }
 
-        setStatus('loaded')
+        websocket.onmessage = (event) => {
+            const message = JSON.parse(event.data)
+
+            if (message.type == 'error') {
+                setErrorMessage({
+                    message: message.message,
+                    heading: 'Security Error',
+                    type: 'error',
+                    color: '#EF7936',
+                    iconName: 'exclamationcircleo'
+                })
+
+                return
+            }
+
+
+            switch (message.type) {
+                case 'auth-session':
+                    const request = message.message
+                    setInfo({
+                        request,
+                        payload,
+                        expiry,
+                        key
+                    })
+
+                    setStatus('loaded')
+
+                    break
+                case 'auth-vault-response':
+                    Actions[HOME]()
+                    break
+            }
+        }
+
+        websocket.onerror = (err) => {
+            console.log('ws error!')
+            console.log(err)
+        }
     }
-
-    let ws
 
     /**
      * @todo: Move this into vault-common
      */
     const approve = async () => {
-        //Actions[LOGIN_HISTORY]();
         setStatus('approving')
 
         const veridaApp = await getVeridaApp()
@@ -88,35 +129,11 @@ export default (props) => {
 
         // Send encrypted response to WSS, which will forward
         // onto the web browser
-        ws = new WebSocket(info.request.authUri)
-        ws.onopen = () => {
-            ws.send(JSON.stringify({
-                type: 'responseJwt',
-                sessionId: info.request.session,
-                data: encryptedResponse
-            }))
-        }
-
-        ws.onmessage = (event) => {
-            const message = JSON.parse(event.data)
-            if (!message.success) {
-                setErrorMessage({
-                    message: message.message,
-                    heading: 'Security Error',
-                    type: 'error',
-                    color: '#EF7936',
-                    iconName: 'exclamationcircleo'
-                })
-            } else {
-                console.log('sent ok! redirecting home')
-                Actions[HOME]()
-            }
-        }
-
-        ws.onerror = (err) => {
-            console.log('ws error!')
-            console.log(err)
-        }
+        ws.send(JSON.stringify({
+            type: 'responseJwt',
+            sessionId: info.payload.data.session,
+            data: encryptedResponse
+        }))
 
         setStatus('sentResponse')
 
@@ -202,7 +219,10 @@ export default (props) => {
 
                     <View style={style.actions}>
                         <Button style={[style.btn, , style.mr]} color="grey" onPress={deny}>Cancel</Button>
+                        {
+                        !errorMessage ?
                         <Button style={style.btn} onPress={() => approve()}>Login</Button>
+                        : null }
                     </View>
                     {status == 'approving' ?
                     <View>
