@@ -50,10 +50,10 @@ export default () => {
         });
 
         if (!result.base64) {
-            console.log('no base64!')
+            //console.log('no base64!')
             console.log(result)
         } else {
-            console.log('base64 with length: ',result.base64.length)
+            //console.log('base64 with length: ',result.base64.length)
             console.log(result.type, result.width, result.height, result.uri)
         }
 
@@ -74,9 +74,7 @@ export default () => {
             }
 
             avatar.base64 = result.base64
-            console.log('saving avatar', avatar.base64.length)
             let resp = await vault.profiles.public.set('avatar', JSON.stringify(avatar))
-            console.log('response', resp)
 
             loadAvatar()
         }
