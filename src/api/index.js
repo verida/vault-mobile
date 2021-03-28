@@ -112,9 +112,11 @@ const DefaultAvatar = require('../assets/stubs/avatar.png');
 export const loadAvatarSource = async () => {
     const vault = await getVault()
     let avatar = await vault.profiles.public.get('avatar')
-    avatar = JSON.parse(avatar)
+    if (!avatar) {
+        return DefaultAvatar
+    }
 
-    console.log('loadAvatarSource', avatar.base64.length)
+    avatar = JSON.parse(avatar)
 
     if (avatar) {
         let image
@@ -125,6 +127,8 @@ export const loadAvatarSource = async () => {
                 }
 
                 break
+            default:
+                return DefaultAvatar
         }
         
         return image
