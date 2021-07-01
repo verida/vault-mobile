@@ -20,6 +20,7 @@ export const SELECT_NETWORK = 'select-network';
 export const SEED_PHRASE_ENTERED = 'enter-seed-phrase';
 
 export const HOME = 'home';
+export const TOKENS = 'tokens';
 export const CREDENTIALS = 'credentials';
 export const DATA = 'data';
 export const PROFILES = 'profiles';

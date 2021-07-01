@@ -16,13 +16,15 @@ export default () => {
     //const [granted, setGranted] = useState(null);
 
     useEffect(() => {
+        const loadAvatar = async () => {
+            const avatarSource = await loadAvatarSource()
+            setImage(avatarSource)
+        }
+        
         loadAvatar();
     }, []);
 
-    const loadAvatar = async () => {
-        const avatarSource = await loadAvatarSource()
-        setImage(avatarSource)
-    }
+   
 
     const loadPhoto = async () => {
         // if (!granted) {
