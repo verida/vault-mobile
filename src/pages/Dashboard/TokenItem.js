@@ -27,7 +27,7 @@ function TokenItem(props) {
                 <View style={styles.tokenInfo}>
                     <Text style={styles.name}>{name}</Text>
                     <View style={styles.priceContainer}>
-                        <Text style={styles.priceText}>{price}</Text>
+                        <Text style={styles.priceText}>${price}</Text>
                         <Text style={[styles.priceOffset, { color: offsetColor }]}>{offsetText}</Text>
                     </View>
                 </View>
