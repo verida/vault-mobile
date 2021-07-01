@@ -38,11 +38,8 @@ const tokensData = [
     }
 ];
 
-function Tokens(props) {
-    const {} = props;
-	
+function Tokens() {
     const renderItem = useCallback(({ item }) => {
-        console.log('item:', item);
         return (
             <TokenItem item={item}/>
         );
