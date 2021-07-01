@@ -5,7 +5,7 @@ import { NUNITO_SANS_BOLD } from '../../constants/text';
 
 const getOffsetFromNumber = (number) => {
     const result = {
-        text: number,
+        text: `${number}%`,
         color: '#FD4F64'
     };
     if(number > 0) {
