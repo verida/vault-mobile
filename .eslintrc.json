@@ -1,38 +1,67 @@
 {
   "env": {
-      "browser": true,
-      "react-native/react-native": true,
-      "es2021": true,
-      "node": true
+    "browser": true,
+    "react-native/react-native": true,
+    "es2021": true,
+    "node": true
   },
   "extends": [
-      "eslint:recommended",
-      "plugin:react/recommended"
+    "eslint:recommended",
+    "plugin:react/recommended",
+    "plugin:@typescript-eslint/recommended"
   ],
+  "parser": "@typescript-eslint/parser",
   "parserOptions": {
-      "ecmaFeatures": {
-          "jsx": true
-      },
-      "ecmaVersion": 12,
-      "sourceType": "module"
+    "ecmaFeatures": {
+      "jsx": true
+    },
+    "ecmaVersion": 12,
+    "sourceType": "module"
   },
   "plugins": [
-      "react",
-      "react-native"
+    "react",
+    "react-native",
+    "@typescript-eslint"
   ],
   "rules": {
-      "no-multiple-empty-lines": ["error", { "max": 2, "maxEOF": 0 }],
-      "quotes": ["error", "single", { "avoidEscape": true }],
-      "semi": ["error", "always"],
-      "indent": ["error", 4],
-      "object-curly-spacing": ["error", "always"],
-      "eol-last": ["error", "always"],
-      "react/prop-types": 0, // TODO: add prop types check
-      "react/display-name": 0,
-      "no-case-declarations": 0,
-      "no-prototype-builtins": 0,
-      "react-native/no-unused-styles": 2,
-      "react-native/split-platform-components": 2,
-      "react-native/no-single-element-style-arrays": 2
+    "no-multiple-empty-lines": [
+      "error",
+      {
+        "max": 2,
+        "maxEOF": 0
+      }
+    ],
+    "quotes": [
+      "error",
+      "single",
+      {
+        "avoidEscape": true
+      }
+    ],
+    "semi": [
+      "error",
+      "always"
+    ],
+    "indent": [
+      "error",
+      2
+    ],
+    "object-curly-spacing": [
+      "error",
+      "always"
+    ],
+    "eol-last": [
+      "error",
+      "always"
+    ],
+    "react/prop-types": 0,
+    // TODO: add prop types check
+    "react/display-name": 0,
+    "no-case-declarations": 0,
+    "no-prototype-builtins": 0,
+    "react-native/no-unused-styles": 2,
+    "react-native/split-platform-components": 2,
+    "react-native/no-single-element-style-arrays": 2,
+    "@typescript-eslint/no-var-requires": 0
   }
 }
