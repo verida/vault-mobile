@@ -4,7 +4,8 @@
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "rn-nodeify --install --hack --yarn"
   },
   "dependencies": {
     "@haskkor/react-native-pincode": "^1.22.5",
@@ -29,6 +30,7 @@
     "ethers": "4.0",
     "events": "^1.1.1",
     "expo": "^40.0.0",
+    "expo-app-loading": "^1.1.2",
     "expo-constants": "~9.3.3",
     "expo-font": "~8.4.0",
     "expo-image-picker": "~9.2.0",
