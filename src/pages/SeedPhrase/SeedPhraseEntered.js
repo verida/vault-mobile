@@ -6,7 +6,7 @@ import { Container, Content } from 'native-base';
 import Layout from '../../components/Layouts/Layout';
 import Button from '../../components/Button';
 import Label from '../../components/Label';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import { walletByMnemonic, MNEMONIC_LENGTH } from '../../api';
 import { SUCCESS } from '../../constants/route';
@@ -40,7 +40,6 @@ export default () => {
     const onContinue = async () => {
         try {
             await walletByMnemonic(phrase);
-            Actions[SUCCESS]();
         } catch (e) {
             showError(true);
         }

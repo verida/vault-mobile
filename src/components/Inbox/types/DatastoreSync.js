@@ -9,7 +9,7 @@ export default ({ item, inboxItem, type }) => {
     const onResultClick = async (result) => {
         const vault = await getVault();
         await vault.inbox.handleAction(inboxItem, result, {});
-        Actions.pop()
+        // Actions.pop()
     }
 
     return (

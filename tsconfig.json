@@ -2,7 +2,9 @@
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
-    "lib": ["esnext"],
+    "lib": [
+      "esnext"
+    ],
     "moduleResolution": "node",
     "noEmit": true,
     "skipLibCheck": true,
@@ -11,17 +13,39 @@
     "allowJs": true,
     "baseUrl": ".",
     "paths": {
-      "*": ["src/*"],
-      "api/*": ["src/api/*"],
-      "assets/*": ["src/assets/*"],
-      "components/*": ["src/components/*"],
-      "config/*": ["src/config/*"],
-      "constants/*": ["src/constants/*"],
-      "helpers/*": ["src/helpers/*"],
-      "pages/*": ["src/pages/*"],
-      "routes/*": ["src/routes/*"],
-      "store/*": ["src/store/*"],
-      "styles/*": ["src/styles/*"]
+      "*": [
+        "src/*"
+      ],
+      "api/*": [
+        "src/api/*"
+      ],
+      "assets/*": [
+        "src/assets/*"
+      ],
+      "components/*": [
+        "src/components/*"
+      ],
+      "config/*": [
+        "src/config/*"
+      ],
+      "constants/*": [
+        "src/constants/*"
+      ],
+      "helpers/*": [
+        "src/helpers/*"
+      ],
+      "pages/*": [
+        "src/pages/*"
+      ],
+      "routes/*": [
+        "src/routes/*"
+      ],
+      "store/*": [
+        "src/store/*"
+      ],
+      "styles/*": [
+        "src/styles/*"
+      ]
     }
   },
   "exclude": [
@@ -29,5 +53,5 @@
     "babel.config.js",
     "metro.config.js",
     "jest.config.js"
-  ]
+  ],
 }

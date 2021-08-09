@@ -3,7 +3,7 @@ import { Container, Content } from 'native-base';
 
 import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout';
 import RecordList from '../../components/RecordList';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 const company = {
     uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',

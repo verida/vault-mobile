@@ -12,7 +12,7 @@ import MobileSvg from '../../assets/mobile.svg';
 
 import Text from '../../components/Text';
 import Button from '../../components/Button';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import { Actions } from 'react-native-router-flux';
 import { LOGIN_HISTORY, HOME } from '../../constants/route';
@@ -93,7 +93,7 @@ export default (props) => {
 
                     break
                 case 'auth-vault-response':
-                    Actions[HOME]()
+                    
                     break
             }
         }
@@ -167,7 +167,7 @@ export default (props) => {
                 <View style={style.container}>
                     {status != 'loading' ?
                     <View style={{ alignItems: 'center' }}>
-                        {/* 
+                        {/*
                         <StravaLogo />
                         <View style={{ flexDirection: 'row' }}>
                             <Text style={[style.text, { fontSize: 12, color }]}>
@@ -194,7 +194,7 @@ export default (props) => {
                             */}
                         </View>
                         <Text style={style.text}>
-                            
+                        
                         </Text>
                         <Text style={[style.text, style.timeout]}>
                             Generated: {Moment(info.payload.insertedAt).format('DD MMM, YYYY [at] h:mm a')}{"\n"}
@@ -227,7 +227,7 @@ export default (props) => {
                     {status == 'approving' ?
                     <View>
                         <Text style={style.text}>
-                            Sending response...    
+                            Sending response...
                         </Text>
                     </View>
                     : null

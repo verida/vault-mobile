@@ -1,6 +1,5 @@
 import React from 'react';
 import { View, TouchableOpacity, StyleSheet } from 'react-native';
-import { Actions } from 'react-native-router-flux';
 
 import Text from '../Text';
 import { BLACK_COLOR, BLACK_COLOR_OPACITY } from '../../constants/color';
@@ -11,7 +10,7 @@ export default class CustomTabBar extends React.Component {
         const activeTabIndex = state.index;
 
         const tabClick = (key) => {
-            Actions['_' + key]()
+            // Actions['_' + key]()
         }
 
         return (

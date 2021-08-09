@@ -8,8 +8,8 @@ import * as Font from 'expo-font';
 
 import store from 'store';
 import { isAuthorized } from 'api';
-import Authenticate from 'pages/Authentication/Authenticate';
-import Routes from 'routes';
+import { NavigationContainer } from '@react-navigation/native';
+import RootNavigator from 'navigation/RootNavigator';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -33,13 +33,12 @@ function App() {
     setAuthorized(data);
   };
 
-  const routes = authorized
-    ? <Authenticate><Routes authorized={authorized} /></Authenticate>
-    : <Routes authorized={authorized} />;
 
   const AppContent =
         <Provider store={store}>
-          {routes}
+          <NavigationContainer>
+            <RootNavigator authorized={authorized}/>
+          </NavigationContainer>
         </Provider>;
 
   return (loading ?

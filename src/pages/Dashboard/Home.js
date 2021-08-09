@@ -4,12 +4,11 @@ import { QRCode } from 'react-native-custom-qr-codes-expo';
 import { connect } from 'react-redux';
 
 import Text from '../../components/Text';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { Container, Content } from 'native-base';
 
 import EnvelopeSvg from '../../assets/icons/envelope.svg';
 import SettingsSvg from '../../assets/icons/settings.svg';
-import { Actions } from 'react-native-router-flux';
 import Clipboard from '@react-native-community/clipboard';
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
@@ -70,7 +69,7 @@ const Home = (props) => {
         <Container>
             <NavigationHeader
                 left={{
-                    action: () => Actions[INBOX](),
+                    action: () => {},
                     icon:
                     <View>
                         <EnvelopeSvg />
@@ -84,15 +83,15 @@ const Home = (props) => {
                         }
                     </View>
                 }}
-                right={{ action: () => Actions[SETTINGS](), icon: <SettingsSvg /> }}
+                right={{ action: () => {}, icon: <SettingsSvg /> }}
             />
             <Content contentContainerStyle={style.content}>
-                <TouchableOpacity onPress={() => Actions[PUBLIC_PROFILE]()}>
+                <TouchableOpacity onPress={() => {}}>
                     <Image
                         source={avatarSource}
                         style={style.userImg} />
                 </TouchableOpacity>
-                <Text style={style.title} onPress={() => Actions[PUBLIC_PROFILE]()}>
+                <Text style={style.title} onPress={() => {}}>
                     { info.name }
                 </Text>
                 <Text style={style.text} onPress={() => Clipboard.setString(info.address)}>

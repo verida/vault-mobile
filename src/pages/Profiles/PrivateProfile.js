@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 
 import ProfileLayout from '../../components/Layouts/ProfileLayout';
 import Text from '../../components/Text';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import { getWallet } from '../../api';
 import { editable } from '../../helpers/profile';

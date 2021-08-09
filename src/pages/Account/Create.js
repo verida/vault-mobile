@@ -1,13 +1,16 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import AccountInit from '../../components/AccountInit';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
-import { SEED_PHRASE } from '../../constants/route';
+import AccountInit, { AccountInitMode } from 'components/AccountInit';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
-export default () => (
+function Create() {
+  return (
     <View>
-        <NavigationHeader title="Create An Account" />
-        <AccountInit action={SEED_PHRASE} />
+      <NavigationHeader title="Create An Account" />
+      <AccountInit mode={AccountInitMode.SEED_PHRASE}/>
     </View>
-);
+  );
+}
+
+export default Create;

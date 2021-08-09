@@ -5,7 +5,7 @@ import { connect } from 'react-redux';
 import DataCardView from '../../components/Data/CardView';
 import DataListView from '../../components/Data/ListView';
 
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { getVault } from '../../api'
 
 const Folder = ({ folderName }) => {

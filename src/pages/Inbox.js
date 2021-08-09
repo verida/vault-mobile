@@ -4,7 +4,7 @@ import { Container, Content } from 'native-base';
 import Layout from '../components/Layouts/Layout';
 //import Search from '../components/Search'; <Search />
 import CardList from '../components/CardList';
-import NavigationHeader from '../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { getVault } from '../api';
 import { buildItem } from '../helpers/inbox'
 import _ from 'lodash';

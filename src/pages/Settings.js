@@ -4,10 +4,9 @@ import { Icon } from 'native-base';
 
 import Text from '../components/Text';
 import PropertyList from '../components/PropertyList';
-import NavigationHeader from '../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import LayoutStyle from '../styles/layouts';
-import { Actions } from 'react-native-router-flux';
 
 import { LOGIN_HISTORY, SEED_PHRASE_VIEW, START, CHANGE_PIN, DASHBOARD } from '../constants/route';
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
@@ -21,7 +20,7 @@ export default () => (
             title="Settings"
             left={{
                 icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-                action: () => Actions[DASHBOARD]()
+                action: () => {}
             }}
         />
         <View style={LayoutStyle.layout}>
@@ -49,13 +48,13 @@ const style = StyleSheet.create({
 
 const logout = async () => {
     await clearWallet();
-    Actions[START]();
+    // Actions[START]();
 };
 
 const list = [
-    { label: 'Change PIN', action: 'arrow', optional: true, onPress: () => Actions[CHANGE_PIN]() },
-    { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => Actions[SEED_PHRASE_VIEW]() },
+    { label: 'Change PIN', action: 'arrow', optional: true, onPress: () => {} },
+    { label: 'Seed Phrase', action: 'arrow', optional: true, onPress: () => {} },
     // { label: "Notifications", action: "arrow" },
-    { label: 'Login History', action: 'arrow', optional: true, onPress: () => Actions[LOGIN_HISTORY]() },
+    { label: 'Login History', action: 'arrow', optional: true, onPress: () => {} },
     { label: 'Log Out', text: style.logoutText, optional: true, onPress: logout }
 ];

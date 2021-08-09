@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { ActivityIndicator, View, StyleSheet, Text, BackHandler } from 'react-native';
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode';
-import { Actions } from 'react-native-router-flux';
 
 import { SETTINGS } from '../../constants/route';
 import { BLACK_ORIGIN_COLOR } from '../../constants/color';
@@ -52,7 +51,7 @@ export default () => {
             status={'choose'}
             titleChoose={'Enter a New PIN Code'}
             titleConfirm={'Confirm your New PIN Code'}
-            finishProcess={() => Actions[SETTINGS]()}
+            finishProcess={() => {}}
             colorCircleButtons="#dfe1e8"
             stylePinCodeColorTitle={BLACK_ORIGIN_COLOR}
             stylePinCodeColorSubtitle={BLACK_ORIGIN_COLOR}

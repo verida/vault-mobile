@@ -3,7 +3,7 @@ import { View } from 'react-native';
 import { connect } from 'react-redux';
 
 import ProfileLayout from '../../components/Layouts/ProfileLayout';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import { setPublicProfileData } from '../../store/general/actions';
 import { editable } from '../../helpers/profile';

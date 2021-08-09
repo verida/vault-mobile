@@ -5,7 +5,7 @@ import Clipboard from '@react-native-community/clipboard';
 import Layout from '../../components/Layouts/Layout';
 import WordCard from '../../components/Words/WordCard';
 import Button from '../../components/Button';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import { getWallet } from '../../api';
 

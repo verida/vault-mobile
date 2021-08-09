@@ -5,7 +5,7 @@ import { TabView, SceneMap } from 'react-native-tab-view';
 
 import HistoryLayout from '../../components/Layouts/HistoryLayout';
 import LoginTabs from '../../components/Navigation/LoginTabs';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { SETTINGS } from '../../constants/route';
 
 export default () => {
@@ -26,7 +26,7 @@ export default () => {
                 title="Login History"
                 left={{
                     icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-                    action: () => Actions[SETTINGS]()
+                    action: () => {}
                 }}
             />
             <TabView
