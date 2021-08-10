@@ -12,13 +12,13 @@ import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color';
 import { clearWallet } from '../api';
 import { NUNITO_SANS_BOLD } from '../constants/text';
 
-export default () => (
+export default (props) => (
   <View>
     <NavigationHeader
       title="Settings"
       left={{
         icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-        action: () => {}
+        action: () => props.navigation.goBack()
       }}
     />
     <View style={LayoutStyle.layout}>

@@ -103,6 +103,7 @@
     "babel-jest": "~25.2.6",
     "eslint": "^7.9.0",
     "eslint-plugin-react": "^7.20.6",
+    "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-react-native": "^3.9.1",
     "jest": "~25.2.6",
     "react-native-svg-transformer": "^0.14.3",

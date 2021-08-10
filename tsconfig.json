@@ -45,6 +45,9 @@
       ],
       "styles/*": [
         "src/styles/*"
+      ],
+      "hooks/*": [
+        "src/hooks/*"
       ]
     }
   },
