@@ -25,4 +25,16 @@ export type DashboardTabParams = {
 
 export type MainStackParams = {
   Dashboard: DashboardTabParams
+  Inbox: undefined,
+  InboxItem: undefined
+  LoginHistory: undefined
+  LoginRequest: undefined
+  PublicProfile: undefined
+  PrivateProfile: undefined
+  EditProfile: undefined
+  SeedPhraseView: undefined
+  DataFolder: {folderName: string}
+  DataItem: undefined
+  Settings: undefined
+  ChangePin: undefined
 }

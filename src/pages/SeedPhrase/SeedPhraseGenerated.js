@@ -11,7 +11,6 @@ import WordCard from '../../components/Words/WordCard';
 import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { BLACK_COLOR_OPACITY } from '../../constants/color';
 
-import { onRemind } from '../../helpers/account';
 import { getWallet } from '../../api';
 
 import _ from 'underscore';
@@ -32,6 +31,10 @@ const SeedPhraseGenerated = (props) => {
     const mnemonic = words.split(' ');
     const shuffled = _.shuffle(mnemonic);
     props.navigation.navigate('VerifyPhrase', { shuffled });
+  };
+  
+  const onRemind = () => {
+    props.navigation.navigate('CreatePin');
   };
 
   return (

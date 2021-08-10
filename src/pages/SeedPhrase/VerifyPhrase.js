@@ -12,7 +12,7 @@ import ErrorPhrase from '../../components/ErrorPhrase';
 import { onRemind } from '../../helpers/account';
 import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api';
 
-const VerifyPhrase = ({ words, shuffled, ...props }) => {
+const VerifyPhrase = ({ words, ...props }) => {
   const [error, showError] = useState(null);
   const [verified, setVerified] = useState(null);
 
@@ -43,7 +43,7 @@ const VerifyPhrase = ({ words, shuffled, ...props }) => {
       <NavigationHeader title="Create An Account" />
       <Layout title="Verify Your Phrase" style={style.layout}>
         <View>
-          <Words words={shuffled} />
+          <Words words={props.route.params.shuffled} />
           <ErrorPhrase shown={error} style={style.error} />
         </View>
         <View>

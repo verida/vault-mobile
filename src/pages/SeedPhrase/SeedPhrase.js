@@ -9,7 +9,6 @@ import Layout from '../../components/Layouts/Layout';
 import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import SafeImg from '../../assets/safe.svg';
-import { onRemind } from '../../helpers/account';
 
 const Items = [
   'Your seed phrase is a list of words. Please record them carefully and store in a safe place.',
@@ -22,7 +21,7 @@ const SeedPhrase = (props) => {
   
   const onRemindLatter = () => {
     setDisabled(true);
-    return onRemind(null, props.publicProfileData);
+    props.navigation.navigate('CreatePin');
   };
   
   function onShow() {

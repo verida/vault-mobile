@@ -12,6 +12,7 @@ import { COUNTRIES } from '../helpers/country-list';
 
 import { setPublicProfileData } from '../store/general/actions';
 import { generateWallet } from '../api';
+import { useNavigation } from '@react-navigation/native';
 
 export enum AccountInitMode {
   SELECT_NETWORK,
@@ -26,17 +27,17 @@ const AccountInit = (props: Props ) => {
   const [name, setName] = useState('');
   const [country, setCountry] = useState(null);
   const [processing, setProcessing] = useState(false);
+  const navigation = useNavigation();
 
   const onCountryChange = (e) => setCountry(e);
   const onContinue = async (e) => {
     setProcessing(true);
     const wallet = await generateWallet({ name, country: country.value });
-
     props.setPublicProfileData({ name, country: country.value });
     if(props.mode === AccountInitMode.SEED_PHRASE) {
-      props.navigation.navigate('SeedPhrase');
+      navigation.navigate('SeedPhrase');
     } else {
-      props.navigation.navigate('SelectNetwork');
+      navigation.navigate('SelectNetwork');
     }
   };
 

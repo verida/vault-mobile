@@ -69,7 +69,7 @@ const Home = (props) => {
         <Container>
             <NavigationHeader
                 left={{
-                    action: () => {},
+                    action: () => props.navigation.navigate('Inbox'),
                     icon:
                     <View>
                         <EnvelopeSvg />
@@ -83,7 +83,7 @@ const Home = (props) => {
                         }
                     </View>
                 }}
-                right={{ action: () => {}, icon: <SettingsSvg /> }}
+                right={{ action: () => props.navigation.navigate('Settings'), icon: <SettingsSvg /> }}
             />
             <Content contentContainerStyle={style.content}>
                 <TouchableOpacity onPress={() => {}}>

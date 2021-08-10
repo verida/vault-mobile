@@ -8,7 +8,7 @@ function Create() {
   return (
     <View>
       <NavigationHeader title="Create An Account" />
-      <AccountInit mode={AccountInitMode.SEED_PHRASE}/>
+      <AccountInit mode={AccountInitMode.SEED_PHRASE} />
     </View>
   );
 }

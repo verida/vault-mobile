@@ -33,7 +33,7 @@ const Folders = (props) => {
             return {
                 label: titlePlural || title,
                 icon: icon,
-                onPress: () => {}
+                onPress: () => props.navigation.navigate('DataFolder', { folderName: folder })
             }
         });
 

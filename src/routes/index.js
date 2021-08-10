@@ -73,7 +73,6 @@ import HomeSvg from '../assets/navigation/home.svg';
 //import CredentialSvg from '../assets/navigation/credential.svg';
 import DataSvg from '../assets/navigation/data.svg';
 import ProfilesSvg from '../assets/navigation/profiles.svg';
-
 const Routes = (props) => {
   return (
     <Router>

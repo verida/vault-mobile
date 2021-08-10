@@ -10,6 +10,7 @@ import store from 'store';
 import { isAuthorized } from 'api';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from 'navigation/RootNavigator';
+import Authenticate from 'pages/Authentication/Authenticate';
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -37,7 +38,9 @@ function App() {
   const AppContent =
         <Provider store={store}>
           <NavigationContainer>
-            <RootNavigator authorized={authorized}/>
+            <Authenticate>
+              <RootNavigator authorized={authorized}/>
+            </Authenticate>
           </NavigationContainer>
         </Provider>;
 
