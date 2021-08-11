@@ -10,72 +10,69 @@ import { editable } from '../../helpers/profile';
 import { getVault } from '../../api';
 
 const PublicProfile = (props) => {
-    const [list, setList] = useState([
-        { label: 'Name', value: '', action: 'arrow', type: 'input' },
-        { label: 'Country', value: '', action: 'arrow', type: 'select' },
-        { label: 'Description', value: '', action: 'arrow', type: 'textarea' }
-    ]);
-
+  const { publicProfileData, setPublicProfileData } = props;
+  const [list, setList] = useState([
+    { label: 'Name', value: '', action: 'arrow', type: 'input' },
+    { label: 'Country', value: '', action: 'arrow', type: 'select' },
+    { label: 'Description', value: '', action: 'arrow', type: 'textarea' }
+  ]);
+  
+  // component did mount
+  useEffect(() => {
     const updateData = async () => {
-        let profileProperties = props.publicProfileData;
-        const vault = await getVault();
-        const publicData = await vault.profiles.public.getMany();
-        profileProperties = publicData.reduce((acc, field) => {
-            acc = { ...acc, [field.key]: field.value };
-            return acc;
-        }, {});
-
-        props.setPublicProfileData(profileProperties);
-        const updatedList = list.map((item) => {
-            const label = item.label.toLowerCase();
-            if (profileProperties[label]) item.value = profileProperties[label];
-            return item;
-        });
-
-        setList(updatedList);
-    }
-
+      let profileProperties = publicProfileData;
+      const vault = await getVault();
+      const publicData = await vault.profiles.public.getMany();
+      profileProperties = publicData.reduce((acc, field) => {
+        acc = { ...acc, [field.key]: field.value };
+        return acc;
+      }, {});
+      
+      setPublicProfileData(profileProperties);
+      const updatedList = list.map((item) => {
+        const label = item.label.toLowerCase();
+        if (profileProperties[label]) item.value = profileProperties[label];
+        return item;
+      });
+      
+      setList(updatedList);
+    };
+    
     const bindChanges = async () => {
-        const vault = await getVault();
-        await vault.profiles.public.init();
-        const db = await vault.profiles.public.store.getDb();
-        const dbInstance = await db.getInstance();
-        dbInstance.changes({
-            since: 'now',
-            live: true
-        }).on('change', async function(info) {
-            updateData()
-        });
-    }
-
-    // component did mount
-    useEffect(() => {
+      const vault = await getVault();
+      await vault.profiles.public.init();
+      const db = await vault.profiles.public.store.getDb();
+      const dbInstance = await db.getInstance();
+      dbInstance.changes({
+        since: 'now',
+        live: true
+      }).on('change', async function(info) {
         updateData();
-        bindChanges();
-    }, [])
-
-    // component redrawn
-    useEffect(() => {
-    }, [props.publicProfileData]);
-
-    return (
-        <View>
-            <NavigationHeader title="Public Profile" />
-            <ProfileLayout
-                list={editable(list)}
-                description={'This profile is public and can be discovered by others'} />
-        </View>
-    );
+      });
+    };
+    
+    updateData();
+    bindChanges();
+  }, [list, publicProfileData, setPublicProfileData]);
+  
+  return (
+    <View>
+      <NavigationHeader title="Public Profile" />
+      <ProfileLayout
+        list={editable(list)}
+        description={'This profile is public and can be discovered by others'} />
+    </View>
+  );
 };
 
 const mapDispatchToProps = dispatch => {
-    return {
-        setPublicProfileData: data => dispatch(setPublicProfileData(data)),
-    };
+  return {
+    setPublicProfileData: data => dispatch(setPublicProfileData(data)),
+  };
 };
 
 const mapStateToProps = state => {
-    return { publicProfileData: state.publicProfileData };
+  return { publicProfileData: state.publicProfileData };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(PublicProfile);

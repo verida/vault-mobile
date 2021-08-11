@@ -7,14 +7,15 @@ export default (props) => {
   const [loading, setLoading] = useState(true);
   const [pinCodeStatus, setPinCodeStatus] = useState(true);
   const [isPinCorrect, setPinCorrectStatus] = useState(false);
-
-  const init = async () => {
-    const status = await hasUserSetPinCode();
-    setPinCodeStatus(status);
-    setLoading(false);
-  };
+ 
 
   useEffect(() => {
+    const init = async () => {
+      const status = await hasUserSetPinCode();
+      setPinCodeStatus(status);
+      setLoading(false);
+    };
+    
     init();
   }, []);
 

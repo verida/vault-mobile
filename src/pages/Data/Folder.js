@@ -9,18 +9,19 @@ import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { getVault } from '../../api';
 
 const Folder = (props) => {
+  const { route } = props;
   const [folder, setFolder] = useState();
 
   useEffect(() => {
+    const init = async () => {
+      const { folderName } = route.params.folderName;
+      const vault = await getVault();
+      const folder = await vault.data.selectFolder(folderName);
+      setFolder(folder);
+    };
+    
     init();
-  }, []);
-
-  const init = async () => {
-    const { folderName } = props.route.params.folderName;
-    const vault = await getVault();
-    const folder = await vault.data.selectFolder(folderName);
-    setFolder(folder);
-  };
+  }, [route.params.folderName]);
 
   return (
     <Container>

@@ -19,13 +19,13 @@ const SeedPhraseGenerated = (props) => {
   const [words, setWords] = useState('Generating seed phrase ...');
 
   useEffect(() => {
+    const init = async() => {
+      const wallet = await getWallet();
+      setWords(wallet.mnemonic);
+    };
+    
     init();
   }, []);
-
-  const init = async() => {
-    const wallet = await getWallet();
-    setWords(wallet.mnemonic);
-  };
 
   const onSaved = async () => {
     const mnemonic = words.split(' ');
