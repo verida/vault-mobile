@@ -5,7 +5,7 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "rn-nodeify --install --hack --yarn",
+    "postinstall": "scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx"
   },
   "dependencies": {
