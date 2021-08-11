@@ -5,7 +5,8 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "rn-nodeify --install --hack --yarn"
+    "postinstall": "rn-nodeify --install --hack --yarn",
+    "lint": "eslint src --ext=.js,.jsx,.ts,.tsx"
   },
   "dependencies": {
     "@haskkor/react-native-pincode": "^1.22.5",
@@ -95,6 +96,7 @@
   },
   "devDependencies": {
     "@babel/core": "~7.9.0",
+    "@react-native-community/eslint-config": "^3.0.0",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
     "@types/react-redux": "^7.1.18",
@@ -102,10 +104,13 @@
     "@typescript-eslint/parser": "^4.29.0",
     "babel-jest": "~25.2.6",
     "eslint": "^7.9.0",
+    "eslint-config-prettier": "^8.3.0",
+    "eslint-plugin-prettier": "^3.4.0",
     "eslint-plugin-react": "^7.20.6",
     "eslint-plugin-react-hooks": "^4.2.0",
     "eslint-plugin-react-native": "^3.9.1",
     "jest": "~25.2.6",
+    "prettier": "2.3.2",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "~16.13.1",
     "typescript": "~4.0.0"

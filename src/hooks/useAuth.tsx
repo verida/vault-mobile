@@ -1,42 +1,48 @@
-import React, { createContext, FC, useCallback, useContext, useMemo, useState } from 'react';
-import { isAuthorized } from 'api';
+import React, {
+  createContext,
+  FC,
+  useCallback,
+  useContext,
+  useMemo,
+  useState,
+} from 'react'
+import { isAuthorized } from 'api'
 
 type AuthContextState = {
-  initialize: () => Promise<boolean>,
-  authenticated: boolean,
+  initialize: () => Promise<boolean>
+  authenticated: boolean
   loaded: boolean
 }
 
 const AuthContext = createContext<AuthContextState>({
   initialize: async () => false,
   authenticated: false,
-  loaded: false
-});
+  loaded: false,
+})
 
 export const AuthProvider: FC = ({ children }) => {
-  const [authenticated, setAuthenticated] = useState(false);
-  const [loaded, setLoaded] = useState(false);
+  const [authenticated, setAuthenticated] = useState(false)
+  const [loaded, setLoaded] = useState(false)
 
   const initialize = useCallback(async () => {
-    const authorized = await isAuthorized();
-    setLoaded(true);
-    setAuthenticated(authorized);
-    return authorized;
-  }, []);
+    const authorized = await isAuthorized()
+    setLoaded(true)
+    setAuthenticated(authorized)
+    return authorized
+  }, [])
 
-  const context = useMemo(() => ({
-    initialize,
-    authenticated,
-    loaded
-  }), [initialize, authenticated, loaded]);
+  const context = useMemo(
+    () => ({
+      initialize,
+      authenticated,
+      loaded,
+    }),
+    [initialize, authenticated, loaded]
+  )
 
-  return (
-    <AuthContext.Provider value={context}>
-      {children}
-    </AuthContext.Provider>
-  );
-};
+  return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
+}
 
 export function useAuth() {
-  return useContext(AuthContext);
+  return useContext(AuthContext)
 }

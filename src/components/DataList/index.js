@@ -1,7 +1,8 @@
-import React from 'react';
+import React from 'react'
 
-import DataListItem from './DataListItem';
+import DataListItem from './DataListItem'
 
-export default ({ list }) => list.map((item, index) => {
-  return <DataListItem key={`data-list-${index}`} item={item} />;
-});
+export default ({ list }) =>
+  list.map((item, index) => {
+    return <DataListItem key={`data-list-${index}`} item={item} />
+  })

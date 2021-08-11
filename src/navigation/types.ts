@@ -10,7 +10,7 @@ export type AuthStackParams = {
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   SeedPhraseEntered: undefined
-  VerifyPhrase: {shuffled: string[]}
+  VerifyPhrase: { shuffled: string[] }
   CreatePin: undefined
   Success: undefined
   SelectNetwork: undefined
@@ -25,15 +25,15 @@ export type DashboardTabParams = {
 
 export type MainStackParams = {
   Dashboard: DashboardTabParams
-  Inbox: undefined,
-  InboxItem: undefined
+  Inbox: undefined
+  InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
   PublicProfile: undefined
   PrivateProfile: undefined
   EditProfile: undefined
   SeedPhraseView: undefined
-  DataFolder: {folderName: string}
+  DataFolder: { folderName: string }
   DataItem: undefined
   Settings: undefined
   ChangePin: undefined

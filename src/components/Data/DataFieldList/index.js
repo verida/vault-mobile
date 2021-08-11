@@ -1,7 +1,8 @@
-import React from 'react';
+import React from 'react'
 
-import DataFieldItem from './DataFieldItem';
+import DataFieldItem from './DataFieldItem'
 
-export default ({ data }) => data.data.map((item, index) => {
-    return <DataFieldItem key={`data-field-${index}`} item={item} data={data} />;
-});
+export default ({ data }) =>
+  data.data.map((item, index) => {
+    return <DataFieldItem key={`data-field-${index}`} item={item} data={data} />
+  })

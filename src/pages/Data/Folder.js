@@ -1,49 +1,50 @@
-import React, { useEffect, useState } from 'react';
-import { Container, Content } from 'native-base';
-import { connect } from 'react-redux';
+import React, { useEffect, useState } from 'react'
+import { Container, Content } from 'native-base'
+import { connect } from 'react-redux'
 
-import DataCardView from '../../components/Data/CardView';
-import DataListView from '../../components/Data/ListView';
+import DataCardView from '../../components/Data/CardView'
+import DataListView from '../../components/Data/ListView'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader';
-import { getVault } from '../../api';
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { getVault } from '../../api'
 
 const Folder = (props) => {
-  const { route } = props;
-  const [folder, setFolder] = useState();
+  const { route } = props
+  const [folder, setFolder] = useState()
 
   useEffect(() => {
     const init = async () => {
-      const { folderName } = route.params.folderName;
-      const vault = await getVault();
-      const folder = await vault.data.selectFolder(folderName);
-      setFolder(folder);
-    };
-    
-    init();
-  }, [route.params.folderName]);
+      const { folderName } = route.params.folderName
+      const vault = await getVault()
+      const _folder = await vault.data.selectFolder(folderName)
+      setFolder(_folder)
+    }
+
+    init()
+  }, [route.params.folderName])
 
   return (
     <Container>
-      <NavigationHeader title={ folder ? folder.config.titlePlural || folder.config.title : '' } />
-      { folder ?
+      <NavigationHeader
+        title={folder ? folder.config.titlePlural || folder.config.title : ''}
+      />
+      {folder ? (
         <Content>
-          {folder.config.display == 'folders' ?
-            React.createElement(DataCardView, { folder })
-            : React.createElement(DataListView, { folder })
-          }
+          {folder.config.display === 'folders'
+            ? React.createElement(DataCardView, { folder })
+            : React.createElement(DataListView, { folder })}
         </Content>
-        : null }
+      ) : null}
     </Container>
-  );
-};
+  )
+}
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
+const mapDispatchToProps = () => {
+  return {}
+}
 
-const mapStateToProps = state => {
-  return {};
-};
+const mapStateToProps = () => {
+  return {}
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(Folder);
+export default connect(mapStateToProps, mapDispatchToProps)(Folder)

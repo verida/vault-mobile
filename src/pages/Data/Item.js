@@ -1,25 +1,25 @@
-import React, { useEffect, useState } from 'react';
-import { connect } from 'react-redux';
-import { Container, Content, List } from 'native-base';
+import React, { useEffect, useState } from 'react'
+import { connect } from 'react-redux'
+import { Container, Content, List } from 'native-base'
 
-import DataFieldList from '../../components/Data/DataFieldList';
-import NavigationHeader from 'components/Navigation/NavigationHeader';
+import DataFieldList from '../../components/Data/DataFieldList'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-
-const DataItem = ({ item, folder }) => {
+const DataItem = (props) => {
+  const { item, folder } = props.route.params
   const [data, setData] = useState({
     data: [],
-    title: ''
-  });
+    title: '',
+  })
 
   useEffect(() => {
     const init = async () => {
-      const data = await folder.getDetail(item);
-      setData(data);
-    };
-    
-    init();
-  }, [folder, item]);
+      const _data = await folder.getDetail(item)
+      setData(_data)
+    }
+
+    init()
+  }, [folder, item])
 
   return (
     <Container>
@@ -30,15 +30,15 @@ const DataItem = ({ item, folder }) => {
         </List>
       </Content>
     </Container>
-  );
-};
+  )
+}
 
-const mapDispatchToProps = dispatch => {
-  return {};
-};
+const mapDispatchToProps = () => {
+  return {}
+}
 
-const mapStateToProps = state => {
-  return {};
-};
+const mapStateToProps = () => {
+  return {}
+}
 
-export default connect(mapStateToProps, mapDispatchToProps)(DataItem);
+export default connect(mapStateToProps, mapDispatchToProps)(DataItem)

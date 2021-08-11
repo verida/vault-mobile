@@ -1,1 +1,1 @@
-global.process.version = '1';
+global.process.version = '1'

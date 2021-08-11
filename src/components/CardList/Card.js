@@ -1,19 +1,28 @@
-import React from 'react';
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native';
-import Text from '../Text';
+import React from 'react'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import Text from '../Text'
 
-import { findTypeById } from '../../helpers/inbox';
-import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR, ORANGE_COLOR } from '../../constants/color';
+import { findTypeById } from '../../helpers/inbox'
+import {
+  BLACK_COLOR_OPACITY,
+  LIGHTGREY_COLOR,
+  ORANGE_COLOR,
+} from '../../constants/color'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text';
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import { useNavigation } from '@react-navigation/native'
 
 export default ({ options }) => {
-  const inboxType = findTypeById(options.type);
+  const navigation = useNavigation()
+  const inboxType = findTypeById(options.type)
 
-  // const onPress = () => Actions[INBOX_ITEM]({ inboxItemId: options.id });
+  const onPress = () =>
+    navigation.navigate('InboxItem', { inboxItemId: options.id })
 
   return (
-    <TouchableOpacity style={[style.card, !options.read ? style.unread : '']} onPress={() => {}}>
+    <TouchableOpacity
+      style={[style.card, !options.read ? style.unread : '']}
+      onPress={onPress}>
       <Image source={{ uri: options.logo }} style={style.logo} />
       <View style={style.details}>
         <View style={style.tile}>
@@ -22,21 +31,21 @@ export default ({ options }) => {
               <Text style={style.title}>{options.title} </Text>
             </View>
           </View>
-          <Text style={style.date}>
-            {options.createdAt}
-          </Text>
+          <Text style={style.date}>{options.createdAt}</Text>
         </View>
         <View>
-          { Boolean(options.from) && <Text style={style.from}>{options.from} </Text> }
+          {Boolean(options.from) && (
+            <Text style={style.from}>{options.from} </Text>
+          )}
         </View>
         <View style={{ ...style.tile, ...style.footer }}>
           <Text style={{ ...style.text, marginTop: 4 }}>{inboxType.title}</Text>
-          { inboxType.svg && inboxType.svg() }
+          {inboxType.svg && inboxType.svg()}
         </View>
       </View>
     </TouchableOpacity>
-  );
-};
+  )
+}
 
 const style = StyleSheet.create({
   card: {
@@ -46,13 +55,13 @@ const style = StyleSheet.create({
     marginBottom: 8,
     paddingVertical: 20,
     paddingHorizontal: 16,
-    flexDirection: 'row'
+    flexDirection: 'row',
   },
   logo: {
     width: 40,
     height: 40,
     borderColor: LIGHTGREY_COLOR,
-    borderRadius: 20
+    borderRadius: 20,
   },
   title: {
     fontSize: 16,
@@ -60,39 +69,39 @@ const style = StyleSheet.create({
     alignItems: 'center',
     marginRight: 55,
     fontFamily: NUNITO_SANS_BOLD,
-    marginBottom: 5
+    marginBottom: 5,
   },
   text: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
     fontSize: 13,
-    lineHeight: 18
+    lineHeight: 18,
   },
   from: {
     fontSize: 12,
     lineHeight: 14,
     fontFamily: NUNITO_SANS_BOLD,
-    color: BLACK_COLOR_OPACITY(0.6)
+    color: BLACK_COLOR_OPACITY(0.6),
   },
   tile: {
     flexDirection: 'row',
     justifyContent: 'space-between',
   },
   footer: {
-    marginTop: 10
+    marginTop: 10,
   },
   details: {
     paddingLeft: 15,
     flexDirection: 'column',
-    flex: 1
+    flex: 1,
   },
   unread: {
-    borderColor: ORANGE_COLOR
+    borderColor: ORANGE_COLOR,
   },
   date: {
     color: BLACK_COLOR_OPACITY(0.6),
     fontFamily: NUNITO_SANS_SEMIBOLD,
     fontSize: 13,
     marginTop: 3,
-    marginLeft: -45
-  }
-});
+    marginLeft: -45,
+  },
+})

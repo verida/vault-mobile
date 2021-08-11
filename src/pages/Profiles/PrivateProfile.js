@@ -1,63 +1,80 @@
-import React, { useEffect, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import React, { useEffect, useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import ProfileLayout from '../../components/Layouts/ProfileLayout';
-import Text from '../../components/Text';
-import NavigationHeader from 'components/Navigation/NavigationHeader';
+import ProfileLayout from '../../components/Layouts/ProfileLayout'
+import Text from '../../components/Text'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { getWallet } from '../../api';
-import { editable } from '../../helpers/profile';
-import DateOfBirth from '../../components/DateOfBirth';
-import { NUNITO_SANS_BOLD } from '../../constants/text';
-import { BLACK_COLOR_OPACITY } from '../../constants/color';
+import { getWallet } from '../../api'
+import { editable } from '../../helpers/profile'
+import DateOfBirth from '../../components/DateOfBirth'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
+import { BLACK_COLOR_OPACITY } from '../../constants/color'
 
 const list = [
   { label: 'Name', value: 'Chris Were', action: 'arrow', type: 'input' },
-  { label: 'Email', value: 'chris.were@gmail.com', action: 'arrow', type: 'input' },
-  { label: 'Phone', value: '+61 (214) 428-346', action: 'arrow', type: 'phone' },
-  { label: 'Date of Birth', action: 'arrow',
-    onPress: () => {},
+  {
+    label: 'Email',
+    value: 'chris.were@gmail.com',
+    action: 'arrow',
+    type: 'input',
+  },
+  {
+    label: 'Phone',
+    value: '+61 (214) 428-346',
+    action: 'arrow',
+    type: 'phone',
+  },
+  {
+    label: 'Date of Birth',
+    action: 'arrow',
+    onPress: () => ({}),
     optional: true,
-    custom: <DateOfBirth selected={null} /> },
-  { label: 'Address', value: null, action: 'arrow', type: 'input' }
-];
+    custom: <DateOfBirth selected={null} />,
+  },
+  { label: 'Address', value: null, action: 'arrow', type: 'input' },
+]
 
 export default () => {
-  const [info, setInfo] = useState({});
-  
+  const [info, setInfo] = useState({})
+
   useEffect(() => {
     const init = async () => {
-      const data = await getWallet();
-      setInfo(data);
-    };
-    
-    init();
-  }, []);
+      const data = await getWallet()
+      setInfo(data)
+    }
 
-  const UserInfo =
-        <View>
-          <Text style={style.user}>{ info.username || '[Name Surname]' }</Text>
-          <Text style={style.did}>{ info.address }</Text>
-        </View>;
+    init()
+  }, [])
+
+  const UserInfo = (
+    <View>
+      <Text style={style.user}>{info.username || '[Name Surname]'}</Text>
+      <Text style={style.did}>{info.address}</Text>
+    </View>
+  )
 
   return (
     info && (
       <View>
-        <NavigationHeader title="Private Identity" />
+        <NavigationHeader title='Private Identity' />
         <ProfileLayout
           userInfo={UserInfo}
           list={editable(list)}
-          description={'This profile is private, but can be requested and shared with your consent'} />
+          description={
+            'This profile is private, but can be requested and shared with your consent'
+          }
+        />
       </View>
     )
-  );
-};
+  )
+}
 
 const style = StyleSheet.create({
   user: {
     fontFamily: NUNITO_SANS_BOLD,
     fontSize: 22,
-    textAlign: 'center'
+    textAlign: 'center',
   },
   did: {
     marginTop: 4,
@@ -66,6 +83,6 @@ const style = StyleSheet.create({
     textAlign: 'center',
     marginBottom: 24,
     paddingHorizontal: 25,
-    color: BLACK_COLOR_OPACITY(0.6)
-  }
-});
+    color: BLACK_COLOR_OPACITY(0.6),
+  },
+})
