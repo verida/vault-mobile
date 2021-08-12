@@ -6,6 +6,9 @@ jobs:
       - image: cimg/node:15.1
     steps:
       - checkout
+      - run:
+          name: install global dependencies
+          command: yarn global add node-pre-gyp node-gyp
       - restore_cache:
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
