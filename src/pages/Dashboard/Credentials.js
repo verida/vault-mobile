@@ -3,7 +3,7 @@ import { Container, Content } from 'native-base';
 
 import Search from '../../components/Search';
 import CredentialList from '../../components/CredentialList';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 export default () => (
     <Container>

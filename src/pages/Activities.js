@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Icon, Content, Container } from 'native-base';
 
 import ActivitiesList from '../components/ActivitiesList';
-import NavigationHeader from '../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import StravaSvg from '../assets/icons/strava.svg';
 

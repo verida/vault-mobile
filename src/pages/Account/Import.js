@@ -1,13 +1,12 @@
 import React from 'react';
 import { View } from 'react-native';
 
-import AccountInit from '../../components/AccountInit';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
-import { SELECT_NETWORK } from '../../constants/route';
+import AccountInit, { AccountInitMode } from 'components/AccountInit';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 export default () => (
-    <View>
-        <NavigationHeader title="Import An Account" />
-        <AccountInit action={SELECT_NETWORK} />
-    </View>
+  <View>
+    <NavigationHeader title="Import An Account" />
+    <AccountInit mode={AccountInitMode.SELECT_NETWORK}/>
+  </View>
 );

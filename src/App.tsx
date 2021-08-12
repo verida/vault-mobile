@@ -3,17 +3,18 @@ import './global';
 import React, { useState } from 'react';
 import { Provider } from 'react-redux';
 
-import { AppLoading } from 'expo';
+import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 
 import store from 'store';
 import { isAuthorized } from 'api';
+import { NavigationContainer } from '@react-navigation/native';
+import RootNavigator from 'navigation/RootNavigator';
 import Authenticate from 'pages/Authentication/Authenticate';
-import Routes from 'routes';
 
-export default () => {
+function App() {
   const [loading, setLoading] = useState(true);
-  const [authorized, setAuthorized] = useState(null);
+  const [authorized, setAuthorized] = useState(false);
 
   const loadFonts = async () => {
     const NunitoSans = require('./assets/fonts/NunitoSans-Regular.ttf');
@@ -33,13 +34,14 @@ export default () => {
     setAuthorized(data);
   };
 
-  const routes = authorized
-    ? <Authenticate><Routes authorized={authorized} /></Authenticate>
-    : <Routes authorized={authorized} />;
 
-  const App =
+  const AppContent =
         <Provider store={store}>
-          {routes}
+          <NavigationContainer>
+            <Authenticate>
+              <RootNavigator authorized={authorized}/>
+            </Authenticate>
+          </NavigationContainer>
         </Provider>;
 
   return (loading ?
@@ -47,6 +49,8 @@ export default () => {
       startAsync={init}
       onFinish={() => setLoading(false)}
       onError={console.warn} /> :
-    App
+    AppContent
   );
-};
+}
+
+export default App;

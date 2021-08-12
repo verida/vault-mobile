@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content } from 'native-base';
-import NavigationHeader from '../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { getVault } from '../api';
 import { findTypeById, buildItem } from '../helpers/inbox';
 

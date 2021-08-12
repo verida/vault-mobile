@@ -1,10 +1,9 @@
-import { Actions } from 'react-native-router-flux';
 import React, { useEffect, useState } from 'react';
 import { connect } from 'react-redux';
 import { Container, Content, List } from 'native-base';
 
 import DataList from '../../components/DataList';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 import { getVault } from '../../api'
 
 import {
@@ -34,7 +33,7 @@ const Folders = (props) => {
             return {
                 label: titlePlural || title,
                 icon: icon,
-                onPress: () => Actions[DATA_FOLDER]({ folderName: folder })
+                onPress: () => props.navigation.navigate('DataFolder', { folderName: folder })
             }
         });
 

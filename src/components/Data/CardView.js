@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react'
-import { Actions } from 'react-native-router-flux'
 import { View, StyleSheet } from 'react-native'
 
 import DataCardList from './DataCardList'
@@ -17,7 +16,7 @@ export default CardView = ({ folder }) => {
         init();
     }, []);
 
-    const init = async () => {        
+    const init = async () => {
         const vault = await getVault()
         const { navigation, folders } = vault.data.map
 
@@ -28,7 +27,7 @@ export default CardView = ({ folder }) => {
                 label: titlePlural || title,
                 icon: icon,
                 color: color,
-                onPress: () => Actions[DATA_FOLDER]({ folderName: folderName })
+                // onPress: () => Actions[DATA_FOLDER]({ folderName: folderName })
             }
         });
 

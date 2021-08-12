@@ -6,12 +6,14 @@ import Icon from 'react-native-vector-icons/MaterialIcons';
 
 import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '../../constants/color';
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text';
+import { useNavigation } from '@react-navigation/native';
 
 export default ({ styles, item }) => {
     const [option, setOption] = useState(false);
+    const navigation = useNavigation()
 
     return (
-        <TouchableOpacity style={styles.external} onPress={item.onPress}>
+        <TouchableOpacity style={styles.external} onPress={() => item.onPress(navigation)}>
             <View style={styles.internal}>
                 <View style={style.section}>
                     { item.icon && <View style={style.icon}>{ item.icon }</View> }

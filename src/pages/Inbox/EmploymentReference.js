@@ -3,7 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Container, Content } from 'native-base';
 import EmploymentData from '../../components/Inbox/EmploymentData';
 import Attachment from '../../components/Inbox/Attachment';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout';
 import { LIGHTGREY_COLOR } from '../../constants/color';

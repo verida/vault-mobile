@@ -4,7 +4,7 @@ import { Container, Content } from 'native-base';
 
 import CredentialCard from '../components/CredentialList/CredentialCard';
 import CredentialDetails from '../components/CredentialDetails';
-import NavigationHeader from '../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import StyleDivider from '../styles/divider';
 import { QRCode } from 'react-native-custom-qr-codes-expo';

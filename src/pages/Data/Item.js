@@ -3,7 +3,7 @@ import { connect } from 'react-redux';
 import { Container, Content, List } from 'native-base';
 
 import DataFieldList from '../../components/Data/DataFieldList';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 
 const DataItem = ({item, folder}) => {

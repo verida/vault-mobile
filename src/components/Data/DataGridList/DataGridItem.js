@@ -1,6 +1,5 @@
 import React from 'react';
 import { StyleSheet } from 'react-native';
-import { Actions } from 'react-native-router-flux'
 import { Card, CardItem, Body, Text, Right, Left } from 'native-base';
 import moment from 'moment'
 import StravaSvg from '../../../assets/icons/strava.svg';
@@ -12,11 +11,11 @@ import {
 export default ({ item, folder }) => {
     const date = moment(item.createdAt).format('DD MMM YYYY')
     const cardDetail = folder.getCardDetail(item)
-    const onPress = () => Actions[DATA_ITEM]({ folder, item })
+    // const onPress = () => Actions[DATA_ITEM]({ folder, item })
 
     return (
         <Card style={style.cardItem}>
-            <CardItem button style={{ borderRadius: 4 }} onPress={onPress}>
+            <CardItem button style={{ borderRadius: 4 }} onPress={() => {}}>
                 <Left style={style.left}>
                     <StravaSvg/>
                     <Body style={{marginLeft: 15}}>

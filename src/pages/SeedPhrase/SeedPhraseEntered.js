@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { Actions } from 'react-native-router-flux';
 import { TextInput } from 'react-native';
 import { Container, Content } from 'native-base';
 
 import Layout from '../../components/Layouts/Layout';
 import Button from '../../components/Button';
 import Label from '../../components/Label';
-import NavigationHeader from '../../components/Navigation/NavigationHeader';
+import NavigationHeader from 'components/Navigation/NavigationHeader';
 
 import { walletByMnemonic, MNEMONIC_LENGTH } from '../../api';
 import { SUCCESS } from '../../constants/route';
@@ -17,7 +16,7 @@ import InputStyles from '../../styles/inputs';
 
 import _ from 'underscore';
 
-export default () => {
+export default (props) => {
     const [phrase, setPhrase] = useState('');
     const [verified, setVerified] = useState(false);
     const [error, showError] = useState(null);
@@ -40,7 +39,7 @@ export default () => {
     const onContinue = async () => {
         try {
             await walletByMnemonic(phrase);
-            Actions[SUCCESS]();
+            props.navigation.navigate('Success')
         } catch (e) {
             showError(true);
         }
