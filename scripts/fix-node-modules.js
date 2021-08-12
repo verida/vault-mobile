@@ -1,18 +1,11 @@
 #! /usr/bin/env node
 var fs = require('fs')
+const childProcess = require('child_process')
 
 function fixVaultCommon() {
-  const path = 'node_modules/@verida/vault-common/package.json'
-  fs.readFile(path, 'utf8', function (err, data) {
-    if (err) {
-      return console.log(err)
-    }
-    var result = data.replace(/dist\/vault.js/g, 'src/vault.ts')
-
-    fs.writeFile(path, result, 'utf8', function (err) {
-      if (err) return console.log(err)
-      console.log('Fixed: vault-common')
-    })
+  childProcess.spawn('tsc', [], {
+    stdio: 'inherit',
+    cwd: 'node_modules/@verida/vault-common',
   })
 }
 
