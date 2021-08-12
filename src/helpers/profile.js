@@ -1,11 +1,8 @@
-// import { Actions } from 'react-native-router-flux';
-import { EDIT_PROFILE } from '../constants/route';
-
-// const edit = (option) => {Actions[EDIT_PROFILE]({ title: option.label, option });};
-const edit = () => {}
-export const editable = (list) => (
-    list.map(option => ({
-        ...option,
-        onPress: () => option.onPress ? option.onPress(option) : edit(option)
-    }))
-);
+const edit = (navigation, option) =>
+  navigation.navigate('EditProfile', { title: option.label, option })
+export const editable = (list) =>
+  list.map((option) => ({
+    ...option,
+    onPress: (navigation) =>
+      option.onPress ? option.onPress(option) : edit(navigation, option),
+  }))

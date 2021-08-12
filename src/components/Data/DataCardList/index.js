@@ -1,7 +1,8 @@
-import React from 'react';
+import React from 'react'
 
-import DataCardItem from './DataCardItem';
+import DataCardItem from './DataCardItem'
 
-export default ({ list }) => list.map((item, index) => {
-    return <DataCardItem key={`data-card-${index}`} item={item} />;
-});
+export default ({ list }) =>
+  list.map((item, index) => {
+    return <DataCardItem key={`data-card-${index}`} item={item} />
+  })

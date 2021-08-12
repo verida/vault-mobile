@@ -8,7 +8,9 @@
   "extends": [
     "eslint:recommended",
     "plugin:react/recommended",
-    "plugin:@typescript-eslint/recommended"
+    "plugin:@typescript-eslint/recommended",
+    "@react-native-community",
+    "plugin:prettier/recommended"
   ],
   "parser": "@typescript-eslint/parser",
   "parserOptions": {
@@ -25,46 +27,11 @@
     "react-hooks"
   ],
   "rules": {
-    "no-multiple-empty-lines": [
-      "error",
-      {
-        "max": 2,
-        "maxEOF": 0
-      }
-    ],
-    "quotes": [
-      "error",
-      "single",
-      {
-        "avoidEscape": true
-      }
-    ],
-    "semi": [
-      "error",
-      "always"
-    ],
-    "indent": [
-      "error",
-      2
-    ],
-    "object-curly-spacing": [
-      "error",
-      "always"
-    ],
-    "eol-last": [
-      "error",
-      "always"
-    ],
-    "react/prop-types": 0,
-    // TODO: add prop types check
-    "react/display-name": 0,
-    "no-case-declarations": 0,
-    "no-prototype-builtins": 0,
-    "react-native/no-unused-styles": 2,
-    "react-native/split-platform-components": 2,
-    "react-native/no-single-element-style-arrays": 2,
     "@typescript-eslint/no-var-requires": 0,
     "react-hooks/rules-of-hooks": "error",
-    "react-hooks/exhaustive-deps": "warn"
+    "react-hooks/exhaustive-deps": "warn",
+    "@typescript-eslint/explicit-module-boundary-types": 0,
+    "react-native/no-inline-styles": 0,
+    "no-case-declarations": 0
   }
 }

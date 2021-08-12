@@ -1,73 +1,75 @@
-import React, { useState } from 'react';
-import { StyleSheet } from 'react-native';
-import { Container, Content } from 'native-base';
-import { connect } from 'react-redux';
+import React, { useState } from 'react'
+import { StyleSheet } from 'react-native'
+import { Container, Content } from 'native-base'
+import { connect } from 'react-redux'
 
-import Text from '../../components/Text';
-import Button from '../../components/Button';
-import Layout from '../../components/Layouts/Layout';
-import NavigationHeader from 'components/Navigation/NavigationHeader';
+import Text from '../../components/Text'
+import Button from '../../components/Button'
+import Layout from '../../components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import SafeImg from '../../assets/safe.svg';
-
-const Items = [
-  'Your seed phrase is a list of words. Please record them carefully and store in a safe place.',
-  'Warning: There is no password reset!'
-];
-
+import SafeImg from '../../assets/safe.svg'
 
 const SeedPhrase = (props) => {
-  const [disabled, setDisabled] = useState(false);
-  
+  const [disabled, setDisabled] = useState(false)
+
   const onRemindLatter = () => {
-    setDisabled(true);
-    props.navigation.navigate('CreatePin');
-  };
-  
-  function onShow() {
-    props.navigation.navigate('SeedPhraseGenerated');
+    setDisabled(true)
+    props.navigation.navigate('CreatePin')
   }
-  
+
+  function onShow() {
+    props.navigation.navigate('SeedPhraseGenerated')
+  }
+
   return (
     <Container>
-      <NavigationHeader title="Create An Account" />
+      <NavigationHeader title='Create An Account' />
       <Content>
-        <Layout title="Seed Phrase">
+        <Layout title='Seed Phrase'>
           <Text style={style.description}>
-            A seed phrase is the only way to recover access to your account if your phone is lost, stolen broken or
-            upgraded.
+            A seed phrase is the only way to recover access to your account if
+            your phone is lost, stolen broken or upgraded.
           </Text>
-          <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }}/>
+          <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }} />
           <Text style={style.description}>
-            Your seed phrase is a list of words. Please record them carefully and store in a safe place.
+            Your seed phrase is a list of words. Please record them carefully
+            and store in a safe place.
           </Text>
           <Text style={style.highlight}>
             Warning: There is no password reset!
           </Text>
-          <Button style={{ marginTop: 56 }} disabled={disabled} color="primary" onPress={onShow}>
+          <Button
+            style={{ marginTop: 56 }}
+            disabled={disabled}
+            color='primary'
+            onPress={onShow}>
             Show Seed Phrase
           </Button>
-          <Button disabled={disabled} color="transparent-grey" onPress={onRemindLatter}>
+          <Button
+            disabled={disabled}
+            color='transparent-grey'
+            onPress={onRemindLatter}>
             Remind me later
           </Button>
         </Layout>
       </Content>
     </Container>
-  );
-};
+  )
+}
 
-const mapStateToProps = state => {
-  return { publicProfileData: state.publicProfileData };
-};
+const mapStateToProps = (state) => {
+  return { publicProfileData: state.publicProfileData }
+}
 
-export default connect(mapStateToProps, null)(SeedPhrase);
+export default connect(mapStateToProps, null)(SeedPhrase)
 
 const style = StyleSheet.create({
   description: {
-    marginTop: 16
+    marginTop: 16,
   },
   highlight: {
     textDecorationLine: 'underline',
-    marginTop: 16
-  }
-});
+    marginTop: 16,
+  },
+})
