@@ -16,7 +16,7 @@ jobs:
             - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: install packages
-          command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
+          command: npm_config_build_from_source=true yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
       - save_cache:
           key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
