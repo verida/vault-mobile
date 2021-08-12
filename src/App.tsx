@@ -17,7 +17,7 @@ function App() {
 
   const loadFonts = async () => {
     const NunitoSans = require("./assets/fonts/NunitoSans-Regular.ttf")
-    const NunitoSansSemiBold = require('./assets/fonts/NunitoSans-SemiBold.ttf')
+    const NunitoSansSemiBold = require("./assets/fonts/NunitoSans-SemiBold.ttf")
     const NunitoSansBold = require('./assets/fonts/NunitoSans-Bold.ttf')
 
     return Promise.all([
