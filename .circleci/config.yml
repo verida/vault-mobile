@@ -10,15 +10,14 @@ jobs:
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache
           keys:
-            - node-deps-v1-{{ .Branch }}-{{checksum "yarn.lock"}}
+            - yarn-packages-{{ checksum "yarn.lock" }}
       - run:
           name: install packages
-          command: yarn install --immutable
+          command: yarn install --frozen-lockfile --cache-folder ~/.cache/yarn
       - save_cache:
-          key: node-deps-v1-{{ .Branch }}-{{checksum "yarn.lock"}}
+          key: yarn-packages-{{ checksum "yarn.lock" }}
           paths:
-            - .yarn/cache
-            - .yarn/unplugged
+            - ~/.cache/yarn
       - run:
           name: Lint
           command: yarn lint
