@@ -7,14 +7,13 @@ import AppLoading from 'expo-app-loading';
 import * as Font from 'expo-font';
 
 import store from 'store';
-import { isAuthorized } from 'api';
 import { NavigationContainer } from '@react-navigation/native';
 import RootNavigator from 'navigation/RootNavigator';
 import Authenticate from 'pages/Authentication/Authenticate';
+import { AuthProvider, useAuth } from 'hooks/useAuth';
 
 function App() {
   const [loading, setLoading] = useState(true);
-  const [authorized, setAuthorized] = useState(false);
 
   const loadFonts = async () => {
     const NunitoSans = require('./assets/fonts/NunitoSans-Regular.ttf');
@@ -30,18 +29,18 @@ function App() {
 
   const init = async () => {
     await loadFonts();
-    const data = await isAuthorized();
-    setAuthorized(data);
   };
 
 
   const AppContent =
         <Provider store={store}>
-          <NavigationContainer>
-            <Authenticate>
-              <RootNavigator authorized={authorized}/>
-            </Authenticate>
-          </NavigationContainer>
+          <AuthProvider>
+            <NavigationContainer>
+              <Authenticate>
+                <RootNavigator/>
+              </Authenticate>
+            </NavigationContainer>
+          </AuthProvider>
         </Provider>;
 
   return (loading ?

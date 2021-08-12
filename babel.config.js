@@ -18,7 +18,8 @@ module.exports = function (api) {
             'pages': ['./src/pages'],
             'routes': ['./src/routes'],
             'store': ['./src/store'],
-            'styles': ['./src/styles']
+            'styles': ['./src/styles'],
+            'hooks': ['./src/hooks']
           }
         }
       ]

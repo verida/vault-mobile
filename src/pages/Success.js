@@ -13,9 +13,11 @@ import { BLACK_COLOR } from '../constants/color';
 import { NUNITO_SANS_BOLD } from '../constants/text';
 
 import { setAuthStatus, setBioAuthStatus } from '../store/general/actions';
+import { useAuth } from 'hooks/useAuth';
 
 const SuccessPage = (props) => {
   const [loading, setLoading] = useState(true);
+  const { initialize } = useAuth();
 
   useEffect(() => {
     init();
@@ -29,6 +31,7 @@ const SuccessPage = (props) => {
 
   const onDone = () => {
     props.setAuthStatus(true);
+    initialize();
   };
 
   if (loading) {
