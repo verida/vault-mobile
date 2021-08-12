@@ -10,23 +10,18 @@ import LockSvg from '../../assets/icons/lock.svg';
 
 import LayoutStyle from '../../styles/layouts';
 
-import {
-    PRIVATE_PROFILE,
-    PUBLIC_PROFILE
-} from '../../constants/route';
-
 export default () => (
-    <Container>
-        <NavigationHeader left = {{ icon: 'skip' }} title="Profiles" />
-        <Content>
-            <View style={LayoutStyle.layout}>
-                <PropertyList list={list} />
-            </View>
-        </Content>
-    </Container>
+  <Container>
+    <NavigationHeader left = {{ icon: 'skip' }} title="Profiles" />
+    <Content>
+      <View style={LayoutStyle.layout}>
+        <PropertyList list={list} />
+      </View>
+    </Content>
+  </Container>
 );
 
 const list = [
-    { label: 'Public Profile', icon: <EarthSvg />, action: 'arrow', onPress: () => {}, optional: true },
-    { label: 'Private Identity', icon: <LockSvg />, action: 'arrow', onPress: () => {}, optional: true }
+  { label: 'Public Profile', icon: <EarthSvg />, action: 'arrow', onPress: (navigation) => navigation.navigate('PublicProfile'), optional: true },
+  { label: 'Private Identity', icon: <LockSvg />, action: 'arrow', onPress: (navigation) => navigation.navigate('PrivateProfile'), optional: true }
 ];

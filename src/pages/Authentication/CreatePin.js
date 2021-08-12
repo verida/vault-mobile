@@ -4,20 +4,21 @@ import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode';
 import { BLACK_ORIGIN_COLOR } from '../../constants/color';
 
 function CreatePin (props) {
+  const { navigation } = props;
   const [loading, setLoading] = useState(true);
 
-  const init = async () => {
-    const status = await hasUserSetPinCode();
-    if (status) {
-      props.navigation.navigate('Success');
-      return;
-    }
-    setLoading(false);
-  };
-
   useEffect(() => {
+    const init = async () => {
+      const status = await hasUserSetPinCode();
+      if (status) {
+        navigation.navigate('Success');
+        return;
+      }
+      setLoading(false);
+    };
+    
     init();
-  }, []);
+  }, [navigation]);
 
   if (loading) {
     return (

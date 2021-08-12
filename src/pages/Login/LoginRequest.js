@@ -25,79 +25,79 @@ export default (props) => {
   const [ws, setWebsocket] = useState(null);
 
   useEffect(() => {
+    const init = async () => {
+      const key = props._k;
+      const didJwt = props._r;
+      const decoded = didJWT.decodeJWT(didJwt);
+      const payload = decoded.payload;
+    
+      const expiry = payload.exp;
+      const now = Math.floor(Date.now()/1000);
+      setExpiry(expiry-now);
+    
+      const socketUri = payload.data.authUri;
+      const sessionId = payload.data.session;
+      const websocket = new WebSocket(socketUri);
+      setWebsocket(websocket);
+      websocket.onopen = () => {
+        websocket.send(JSON.stringify({
+          type: 'getSession',
+          data: {
+            sessionId: sessionId
+          }
+        }));
+      };
+    
+      websocket.onmessage = (event) => {
+        const message = JSON.parse(event.data);
+      
+        if (message.type == 'error') {
+          setErrorMessage({
+            message: message.message,
+            heading: 'Security Error',
+            type: 'error',
+            color: '#EF7936',
+            iconName: 'exclamationcircleo'
+          });
+        
+          return;
+        }
+      
+      
+        switch (message.type) {
+        case 'auth-session':
+          const request = message.message;
+          setInfo({
+            request,
+            payload,
+            expiry,
+            key
+          });
+        
+          setStatus('loaded');
+        
+          break;
+        case 'auth-vault-response':
+        
+          break;
+        }
+      };
+    
+      websocket.onerror = (err) => {
+        console.log('ws error!');
+        console.log(err);
+      };
+    };
+  
     init();
-  }, []);
+  }, [props._k, props._r]);
   
   // @todo use key to encrypt response to server
   
   const deny = () => {
     props.navigation.navigate('Home');
   };
-
-  const init = async () => {
-    const key = props._k;
-    const didJwt = props._r;
-    const decoded = didJWT.decodeJWT(didJwt);
-    const payload = decoded.payload;
-
-    const expiry = payload.exp;
-    const now = Math.floor(Date.now()/1000);
-    setExpiry(expiry-now);
-
-    const socketUri = payload.data.authUri;
-    const sessionId = payload.data.session;
-    const websocket = new WebSocket(socketUri);
-    setWebsocket(websocket);
-    websocket.onopen = () => {
-      websocket.send(JSON.stringify({
-        type: 'getSession',
-        data: {
-          sessionId: sessionId
-        }
-      }));
-    };
-
-    websocket.onmessage = (event) => {
-      const message = JSON.parse(event.data);
-
-      if (message.type == 'error') {
-        setErrorMessage({
-          message: message.message,
-          heading: 'Security Error',
-          type: 'error',
-          color: '#EF7936',
-          iconName: 'exclamationcircleo'
-        });
-
-        return;
-      }
-
-
-      switch (message.type) {
-      case 'auth-session':
-        const request = message.message;
-        setInfo({
-          request,
-          payload,
-          expiry,
-          key
-        });
-
-        setStatus('loaded');
-
-        break;
-      case 'auth-vault-response':
-        
-        break;
-      }
-    };
-
-    websocket.onerror = (err) => {
-      console.log('ws error!');
-      console.log(err);
-    };
-  };
-
+  
   /**
      * @todo: Move this into vault-common
      */

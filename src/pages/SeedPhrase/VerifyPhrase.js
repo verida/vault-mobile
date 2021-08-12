@@ -7,12 +7,13 @@ import Layout from '../../components/Layouts/Layout';
 import Words from '../../components/Words';
 import NavigationHeader from 'components/Navigation/NavigationHeader';
 
-import { resetPhrase } from '../../store/words/actions';
+import { resetPhrase } from 'store/words/actions';
 import ErrorPhrase from '../../components/ErrorPhrase';
-import { onRemind } from '../../helpers/account';
+import { onRemind } from 'helpers/account';
 import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api';
 
-const VerifyPhrase = ({ words, ...props }) => {
+const VerifyPhrase = (props) => {
+  const { words, resetPhrase, navigation, route } = props;
   const [error, showError] = useState(null);
   const [verified, setVerified] = useState(null);
 
@@ -20,21 +21,21 @@ const VerifyPhrase = ({ words, ...props }) => {
     showError(false);
     setVerified(words.length === MNEMONIC_LENGTH);
   }, [words]);
+  
   useEffect(() => {
     return () => {
-      props.resetPhrase();
+      resetPhrase();
     };
-  }, []);
+  }, [resetPhrase]);
 
   const onConfirm = async () => {
     try {
       const phrase = words.join(' ');
       await walletByMnemonic(phrase);
-      props.resetPhrase();
-      props.navigation.navigate('CreatePin');
+      resetPhrase();
+      navigation.navigate('CreatePin');
     } catch (e) {
       showError(true);
-      console.log(e.message);
     }
   };
 
@@ -43,7 +44,7 @@ const VerifyPhrase = ({ words, ...props }) => {
       <NavigationHeader title="Create An Account" />
       <Layout title="Verify Your Phrase" style={style.layout}>
         <View>
-          <Words words={props.route.params.shuffled} />
+          <Words words={route.params.shuffled} />
           <ErrorPhrase shown={error} style={style.error} />
         </View>
         <View>
@@ -55,7 +56,7 @@ const VerifyPhrase = ({ words, ...props }) => {
             <Button style={{ marginTop: 20 }} color="primary" onPress={onConfirm}>
                             Confirm
             </Button>
-            <Button style={{ marginTop: 10 }} color="transparent-grey" onPress={props.resetPhrase}>
+            <Button style={{ marginTop: 10 }} color="transparent-grey" onPress={resetPhrase}>
                             Clear
             </Button>
           </>}
