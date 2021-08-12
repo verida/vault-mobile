@@ -3,10 +3,16 @@ var fs = require('fs')
 const childProcess = require('child_process')
 
 function fixVaultCommon() {
-  childProcess.spawn('tsc', [], {
+  const path = 'node_modules/@verida/vault-common'
+  childProcess.spawnSync('tsc', [], {
     stdio: 'inherit',
-    cwd: 'node_modules/@verida/vault-common',
+    cwd: path,
   })
+  const tsFilePath = `${path}/src/interfaces/VeridaApp.ts`
+  if (fs.existsSync(tsFilePath)) {
+    fs.unlinkSync(tsFilePath)
+    console.log(`Removed duplicated file from ${tsFilePath}`)
+  }
 }
 
 function fixDuplicatedSocket() {
