@@ -3,6 +3,7 @@ import { TouchableOpacity } from 'react-native'
 import ButtonStyles from '../styles/button'
 import TextStyles from '../styles/text'
 import Text from './Text'
+import LottieView from 'lottie-react-native'
 
 export default (props) => {
   const styles = props.style || {}
@@ -31,7 +32,15 @@ export default (props) => {
       ]}
       onPress={props.onPress}
       disabled={props.disabled}>
-      <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+      {!props.loading ? (
+        <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+      ) : (
+        <LottieView
+          source={require('assets/animations/loading-small-light.json')}
+          loop={true}
+          autoPlay={true}
+        />
+      )}
     </TouchableOpacity>
   )
 }
