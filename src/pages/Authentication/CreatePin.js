@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
+import LottieView from 'lottie-react-native'
 
 function CreatePin(props) {
   const { navigation } = props
@@ -23,8 +24,13 @@ function CreatePin(props) {
   if (loading) {
     return (
       <View style={styles.container}>
-        <Text>Loading </Text>
-        <ActivityIndicator size='large' />
+        <Text>Loading</Text>
+        <LottieView
+          source={require('assets/animations/loading.json')}
+          autoPlay
+          loop
+          style={styles.loadingView}
+        />
       </View>
     )
   }
@@ -53,6 +59,11 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'center',
+  },
+  loadingView: {
+    width: 150,
+    height: 150,
+    marginTop: 20,
   },
 })
 

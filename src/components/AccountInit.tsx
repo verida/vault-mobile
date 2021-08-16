@@ -75,6 +75,7 @@ const AccountInit = (props: Props) => {
         style={style.mt}
         color='primary'
         disabled={!country || processing}
+        loading={processing}
         onPress={onContinue}>
         Continue
       </Button>
