@@ -7,7 +7,7 @@ import { getVeridaApp } from '../../api'
 import EncryptionUtils from '@verida/encryption-utils'
 import MobileSvg from '../../assets/mobile.svg'
 
-import Text from '../../components/Text'
+import Text from 'components/Text'
 import Button from '../../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 

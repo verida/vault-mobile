@@ -3,7 +3,7 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
-import Text from '../../components/Text'
+import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Container, Content } from 'native-base'
 

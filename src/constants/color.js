@@ -9,5 +9,7 @@ export const ORANGE_COLOR = '#FF6E6E'
 
 export const ACCEPT_COLOR = SUCCESS_COLOR
 export const DECLINE_COLOR = '#FD4F64'
+export const VERY_LIGHTGREY_COLOR = '#FAFAFA'
+export const SEPARATOR = 'rgba(60, 60, 67, 0.36)'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`

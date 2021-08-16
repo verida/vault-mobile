@@ -11,10 +11,17 @@ import {
   setBioAuthStatus as setBioAuthStatusAction,
 } from '../../store/general/actions'
 import { LinearGradient } from 'expo-linear-gradient'
+import { useAuth } from 'hooks/useAuth'
 
 const Authenticate = (props) => {
-  const { setBioAuthStatus, setAuthStatus, authenticated, children } = props
+  const {
+    setBioAuthStatus,
+    setAuthStatus,
+    authenticated: localAuthenticated,
+    children,
+  } = props
   const [pinAuth, setPinAuth] = useState(false)
+  const { authenticated } = useAuth()
 
   useEffect(() => {
     const init = async () => {
@@ -34,7 +41,7 @@ const Authenticate = (props) => {
     init()
   }, [authenticated, setAuthStatus, setBioAuthStatus])
 
-  if (authenticated) return children
+  if (!authenticated || localAuthenticated) return children
   if (pinAuth) return <CheckPin finishProcess={() => setAuthStatus(true)} />
 
   return (

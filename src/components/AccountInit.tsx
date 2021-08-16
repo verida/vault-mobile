@@ -1,38 +1,27 @@
 import React, { useState } from 'react'
 import { connect } from 'react-redux'
-import { StyleSheet, TextInput, ViewProps } from 'react-native'
+import { StyleSheet, TextInput, View, ViewProps } from 'react-native'
 
 import DropDownPicker from './Select'
 import Button from './Button'
-import Layout from './Layouts/Layout'
 import Label from './Label'
 
 import InputStyles from '../styles/inputs'
-import { COUNTRIES } from '../helpers/country-list'
+import { COUNTRIES } from 'helpers/country-list'
 
-import { setPublicProfileData } from '../store/general/actions'
+import { setPublicProfileData } from 'store/general/actions'
 import { generateWallet } from '../api'
 import { useNavigation } from '@react-navigation/native'
 import { Dispatch } from 'redux'
 import { AuthStackParams } from 'navigation/types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
-// eslint-disable-next-line no-shadow
-export enum AccountInitMode {
-  SELECT_NETWORK,
-  SEED_PHRASE,
-}
-
-type Props = Omit<ViewProps, 'children'> & {
-  mode: AccountInitMode
-}
-
 type Option = {
   label: string
   value: string
 }
 
-const AccountInit = (props: Props) => {
+const AccountInit = (props: Omit<ViewProps, 'children'>) => {
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)
   const [processing, setProcessing] = useState(false)
@@ -45,41 +34,39 @@ const AccountInit = (props: Props) => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     props.setPublicProfileData({ name, country: country?.value })
-    if (props.mode === AccountInitMode.SEED_PHRASE) {
-      navigation.navigate('SeedPhrase')
-    } else {
-      navigation.navigate('SelectNetwork')
-    }
+    navigation.navigate('SeedPhrase')
   }
 
   return (
-    <Layout title='Select Username' style={style.layout}>
-      <Label>Name</Label>
-      <TextInput
-        placeholder={'Enter your name'}
-        style={InputStyles.input}
-        value={name}
-        onChangeText={(t) => setName(t)}
-      />
+    <View style={styles.layout}>
+      <View style={styles.content}>
+        <Label>Name</Label>
+        <TextInput
+          placeholder={'e.g John'}
+          style={InputStyles.input}
+          value={name}
+          onChangeText={(t) => setName(t)}
+        />
 
-      <Label>Country</Label>
-      <DropDownPicker
-        searchable={true}
-        searchablePlaceholder='Search...'
-        placeholder=''
-        items={COUNTRIES}
-        containerStyle={InputStyles.select}
-        onChangeItem={onCountryChange}
-      />
+        <Label>Country</Label>
+        <DropDownPicker
+          searchable={true}
+          searchablePlaceholder='Search...'
+          placeholder=''
+          items={COUNTRIES}
+          containerStyle={InputStyles.select}
+          onChangeItem={onCountryChange}
+        />
+      </View>
       <Button
-        style={style.mt}
+        style={styles.mt}
         color='primary'
         disabled={!country || processing}
         loading={processing}
         onPress={onContinue}>
         Continue
       </Button>
-    </Layout>
+    </View>
   )
 }
 
@@ -92,11 +79,17 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 export default connect(null, mapDispatchToProps)(AccountInit)
 
-const style = StyleSheet.create({
+const styles = StyleSheet.create({
   layout: {
-    minHeight: '70%',
+    flex: 1,
+    justifyContent: 'flex-start',
+    alignItems: 'stretch',
+    backgroundColor: 'red',
   },
   mt: {
     marginTop: 40,
+  },
+  content: {
+    flex: 1,
   },
 })

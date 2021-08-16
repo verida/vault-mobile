@@ -2,7 +2,7 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 
 import PropertyList from '../../components/PropertyList'
-import Text from '../../components/Text'
+import Text from '../Text'
 import ImageLoader from '../../components/ImageLoader'
 import Layout from './Layout'
 
