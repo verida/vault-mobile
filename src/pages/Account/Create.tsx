@@ -37,6 +37,7 @@ function Create(
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     props.setPublicProfileData({ name, country: country?.value })
+    setProcessing(false)
     navigation.navigate('SeedPhrase')
   }
 
