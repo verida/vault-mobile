@@ -28,7 +28,6 @@
     "console-browserify": "^1.2.0",
     "constants-browserify": "^1.0.0",
     "countries-list": "^2.6.1",
-    "country-list": "^2.2.0",
     "did-jwt": "^4.8.1",
     "dns.js": "^1.0.1",
     "domain-browser": "^1.2.0",
