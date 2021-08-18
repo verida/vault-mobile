@@ -1,5 +1,4 @@
 # Installation
-Remove `yarn.lock` and `https://github.com/verida/wallet-utils` from `package.json`
 ### Run the following commands:
 1. `yarn`
 2. `npx pod-install`
