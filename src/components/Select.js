@@ -11,7 +11,7 @@ import {
 
 import PropTypes from 'prop-types'
 import Feather from 'react-native-vector-icons/Feather'
-import { WHITE_COLOR } from '../constants/color'
+import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
 
 class DropDownPicker extends React.Component {
   constructor(props) {
@@ -246,6 +246,11 @@ class DropDownPicker extends React.Component {
     const placeholderStyle = isPlaceholderActive && this.props.placeholderStyle
     const opacity = disabled ? 0.5 : 1
     const items = this.getItems()
+    const selectedValue = multiple
+      ? this.state.choice.length > 0
+        ? this.getNumberOfItems()
+        : placeholder
+      : label
 
     return (
       <View
@@ -272,14 +277,31 @@ class DropDownPicker extends React.Component {
             },
           ]}>
           <View style={styles.dropDownDisplay}>
-            <Text
-              style={[this.props.labelStyle, placeholderStyle, { opacity }]}>
-              {multiple
-                ? this.state.choice.length > 0
-                  ? this.getNumberOfItems()
-                  : placeholder
-                : label}
-            </Text>
+            {this.props.searchable ? (
+              <TextInput
+                autoFocus={this.props.autoFocus}
+                style={[styles.input, this.props.searchableStyle]}
+                defaultValue={this.state.searchableText}
+                placeholder={this.props.searchablePlaceholder}
+                placeholderTextColor={LIGHTGREY_COLOR}
+                onChangeText={(text) => {
+                  this.setState({
+                    searchableText: text,
+                  })
+                }}
+                value={
+                  isPlaceholderActive
+                    ? this.state.searchableText
+                    : selectedValue
+                }
+                onFocus={() => this.toggle()}
+              />
+            ) : (
+              <Text
+                style={[this.props.labelStyle, placeholderStyle, { opacity }]}>
+                {selectedValue}
+              </Text>
+            )}
           </View>
           {this.props.showArrow && (
             <View style={styles.arrow}>
@@ -309,22 +331,6 @@ class DropDownPicker extends React.Component {
               zIndex: this.props.zIndex,
             },
           ]}>
-          {this.props.searchable && (
-            <View style={{ width: '100%', flexDirection: 'row' }}>
-              <TextInput
-                autoFocus={this.props.autoFocus}
-                style={[styles.input, this.props.searchableStyle]}
-                defaultValue={this.state.searchableText}
-                placeholder={this.props.searchablePlaceholder}
-                onChangeText={(text) => {
-                  this.setState({
-                    searchableText: text,
-                  })
-                }}
-              />
-            </View>
-          )}
-
           <ScrollView style={{ width: '100%' }} nestedScrollEnabled={true}>
             {items.length > 0 ? (
               items.map((item, index) => (
@@ -499,11 +505,6 @@ const styles = StyleSheet.create({
   },
   input: {
     flex: 1,
-    borderColor: '#dfdfdf',
-    borderBottomWidth: 1,
-    paddingHorizontal: 0,
-    paddingVertical: 8,
-    marginBottom: 10,
   },
   hidden: {
     position: 'relative',

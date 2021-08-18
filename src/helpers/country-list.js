@@ -1,7 +1,5 @@
-import { getNames } from 'country-list'
+import { countries } from 'countries-list'
 
-const list = getNames()
-
-export const COUNTRIES = list
-  .sort((a, b) => a > b)
-  .map((item) => ({ label: item, value: item }))
+export const COUNTRIES = Object.values(countries)
+  .sort((a, b) => a.name > b.name)
+  .map((item) => ({ label: `${item.emoji} ${item.name}`, value: item.name }))

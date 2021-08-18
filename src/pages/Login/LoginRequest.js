@@ -90,7 +90,7 @@ export default (props) => {
     }
 
     init()
-  }, [props.route.params])
+  }, [props.route.params, props.navigation])
 
   // @todo use key to encrypt response to server
 

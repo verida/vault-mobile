@@ -61,7 +61,8 @@ function Create(
           <Label>Country</Label>
           <DropDownPicker
             searchable={true}
-            searchablePlaceholder='Search...'
+            searchablePlaceholder='Search for country'
+            showArrow={true}
             placeholder=''
             items={COUNTRIES}
             containerStyle={InputStyles.select}
