@@ -38,7 +38,7 @@ function Create(
     // @ts-ignore
     props.setPublicProfileData({ name, country: country?.value })
     setProcessing(false)
-    navigation.navigate('SeedPhrase')
+    navigation.navigate('ScanQrCode')
   }
 
   const onImportAccount = () => {

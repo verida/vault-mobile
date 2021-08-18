@@ -11,6 +11,7 @@ import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import Success from 'pages/Success'
 import SelectNetwork from 'pages/SelectNetwork'
+import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 
 const Stack = createNativeStackNavigator<AuthStackParams>()
 
@@ -30,6 +31,11 @@ function AuthNavigator() {
       <Stack.Screen name={'CreatePin'} component={CreatePin} />
       <Stack.Screen name={'Success'} component={Success} />
       <Stack.Screen name={'SelectNetwork'} component={SelectNetwork} />
+      <Stack.Screen
+        name={'ScanQrCode'}
+        component={ScanQrCode}
+        options={{ presentation: 'fullScreenModal' }}
+      />
     </Stack.Navigator>
   )
 }

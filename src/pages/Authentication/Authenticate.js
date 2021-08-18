@@ -25,7 +25,7 @@ const Authenticate = (props) => {
 
   useEffect(() => {
     const init = async () => {
-      if (authenticated) return
+      if (localAuthenticated) return
       const hasSavedBio = await LocalAuthentication.isEnrolledAsync()
       setBioAuthStatus(hasSavedBio)
 
@@ -39,7 +39,7 @@ const Authenticate = (props) => {
     }
 
     init()
-  }, [authenticated, setAuthStatus, setBioAuthStatus])
+  }, [authenticated, setAuthStatus, setBioAuthStatus, localAuthenticated])
 
   if (!authenticated || localAuthenticated) return children
   if (pinAuth) return <CheckPin finishProcess={() => setAuthStatus(true)} />

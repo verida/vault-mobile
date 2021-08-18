@@ -14,6 +14,7 @@ export type AuthStackParams = {
   CreatePin: undefined
   Success: undefined
   SelectNetwork: undefined
+  ScanQrCode: undefined
 }
 
 export type DashboardTabParams = {
