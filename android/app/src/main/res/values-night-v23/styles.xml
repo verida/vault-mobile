@@ -4,9 +4,6 @@
   standalone="yes"
 ?>
 <resources>
-  <style name="Theme.App.SplashScreen" parent="Theme.AppCompat.Light.NoActionBar">
-    <item name="android:windowBackground">@drawable/splashscreen</item>
-  </style>
   <style name="Theme.App.SplashScreen" parent="AppTheme">
     <!-- Below line is handled by '@expo/configure-splash-screen' command and it's discouraged to modify it manually -->
     <item name="android:windowBackground">@drawable/splashscreen</item>
