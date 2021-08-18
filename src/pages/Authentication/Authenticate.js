@@ -25,7 +25,7 @@ const Authenticate = (props) => {
 
   useEffect(() => {
     const init = async () => {
-      if (localAuthenticated) return
+      if (localAuthenticated || !authenticated) return
       const hasSavedBio = await LocalAuthentication.isEnrolledAsync()
       setBioAuthStatus(hasSavedBio)
 
