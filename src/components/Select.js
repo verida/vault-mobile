@@ -358,6 +358,7 @@ class DropDownPicker extends React.Component {
                       this.state.choice.value === item.value &&
                         this.props.activeLabelStyle,
                     ]}>
+                    {item.flag ? `${item.flag} ` : ''}
                     {item.label}
                   </Text>
                   {multiple &&
