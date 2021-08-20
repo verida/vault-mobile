@@ -6,7 +6,7 @@ import {
   StyleSheet,
 } from 'react-native'
 
-const CORRECT_SIZE = 80
+const CORRECT_SIZE = 120
 
 export type AppLogoProps = Omit<ImageProps, 'source'> & {
   url: string | null
