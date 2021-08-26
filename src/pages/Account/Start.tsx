@@ -1,21 +1,21 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import Logo from '../../assets/logo.svg'
-import Texture from '../../assets/landing-bg.svg'
-import { Icon } from 'native-base'
+import Logo from 'assets/logo.svg'
+import Texture from 'assets/landing-bg.svg'
 
 import Button from '../../components/Button'
-import Text from '../../components/Text'
+import Text from 'components/Text'
 
-import { WHITE_COLOR } from '../../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import { WHITE_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { AuthStackParams } from 'navigation/types'
 
-function Start(props) {
+function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   const title = "Welcome!\nIt's time to own your personal data."
 
   const createAcc = () => props.navigation.navigate('CreateAccount')
-  const importAcc = () => props.navigation.navigate('ImportAccount')
 
   return (
     <LinearGradient
@@ -27,29 +27,9 @@ function Start(props) {
           <Logo width={139} height={51} />
           <Text style={style.title}>{title}</Text>
         </View>
-        <View style={style.modal}>
-          <View style={{ flexDirection: 'row' }}>
-            <Text style={[style.text, { color: '#EF7936' }]}>
-              <Icon
-                type='AntDesign'
-                name='exclamationcircleo'
-                style={[style.text, { color: '#EF7936' }]}
-              />
-              &nbsp; Warning: Alpha Software
-            </Text>
-          </View>
-          <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>
-            This is alpha software and is for testing purposes only. All data
-            stored will be deleted every month. Use this software at your own
-            risk as it is still in active development.
-          </Text>
-        </View>
         <View>
           <Button color='secondary' onPress={createAcc}>
-            Create An Account
-          </Button>
-          <Button color='outlined' onPress={importAcc}>
-            Import An Account
+            Get Started
           </Button>
         </View>
       </View>

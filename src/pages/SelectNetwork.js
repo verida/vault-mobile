@@ -7,11 +7,13 @@ import NetworkItem from '../components/NetworkItem'
 import Button from '../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NETWORKS } from '../helpers/networks'
+import CustomFooter from 'components/Layouts/CustomFooter'
 
 export default (props) => {
-  const [selected, setSelected] = useState(null)
+  const [selected, setSelected] = useState(0)
 
-  const onContinue = () => props.navigation.navigate('SeedPhraseEntered')
+  const onContinue = () =>
+    props.navigation.navigate('SeedPhraseEntered', { usePrivateKey: true })
 
   return (
     <Container>
@@ -31,15 +33,13 @@ export default (props) => {
               </TouchableOpacity>
             ))}
           </View>
-          <Button
-            style={{ marginTop: 24 }}
-            color='primary'
-            onPress={onContinue}
-            disabled={!selected}>
-            Continue
-          </Button>
         </Layout>
       </Content>
+      <CustomFooter>
+        <Button style={{ marginTop: 24 }} color='primary' onPress={onContinue}>
+          Continue
+        </Button>
+      </CustomFooter>
     </Container>
   )
 }

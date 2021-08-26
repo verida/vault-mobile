@@ -1,14 +1,17 @@
 import React from 'react'
-import { StyleSheet, Text } from 'react-native'
+import { StyleSheet, Text as RNText, TextProps } from 'react-native'
 
 import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS } from '../constants/text'
 
-export default ({ style, children, ...props }) => (
-  <Text style={[styles.text, style]} {...props}>
-    {children}
-  </Text>
-)
+const Text: React.FC<TextProps> = (props) => {
+  const { style, children, ...rest } = props
+  return (
+    <RNText style={[styles.text, style]} {...rest}>
+      {children}
+    </RNText>
+  )
+}
 
 const styles = StyleSheet.create({
   text: {
@@ -18,3 +21,5 @@ const styles = StyleSheet.create({
     fontSize: 14,
   },
 })
+
+export default Text

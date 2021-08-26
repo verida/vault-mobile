@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import Text from '../../components/Text'
+import Text from '../Text'
 
 import History from './History'
 import EmptyList from '../Lists/EmptyList'

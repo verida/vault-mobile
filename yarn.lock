@@ -5602,10 +5602,10 @@ cosmiconfig@^5.0.5, cosmiconfig@^5.1.0, cosmiconfig@^5.2.1:
     js-yaml "^3.13.1"
     parse-json "^4.0.0"
 
-country-list@^2.2.0:
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/country-list/-/country-list-2.2.0.tgz#e248338cafb97b2d86cf0784a25dceb4d52054d1"
-  integrity sha512-AS21pllCp72LmUztqXPVKXK3TRyap1XlohGLqN04cXH2rFB9vo7SnH5sMnqltZPnu9ie/x1se3UuCZJbGXErfw==
+countries-list@^2.6.1:
+  version "2.6.1"
+  resolved "https://registry.yarnpkg.com/countries-list/-/countries-list-2.6.1.tgz#d479757ac873b1e596ccea0a925962d20396c0cb"
+  integrity sha512-jXM1Nv3U56dPQ1DsUSsEaGmLHburo4fnB7m+1yhWDUVvx5gXCd1ok/y3gXCjXzhqyawG+igcPYcAl4qjkvopaQ==
 
 create-ecdh@^4.0.0:
   version "4.0.4"
@@ -12078,6 +12078,13 @@ react-move@^2.7.0:
     prop-types "^15.6.2"
     react-lifecycles-compat "^3.0.4"
 
+react-native-camera@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/react-native-camera/-/react-native-camera-4.0.2.tgz#3c84f7304e0ce7ea436e1f9d681e1b52a6d520a4"
+  integrity sha512-na/vI6H+4Qz2IUpfkCa1cRbiLqtPNOQlZGH0W0ly9h+JUCWgCNLpII5r6Fd/UXS1dulbv9otQAY0ueI7QHD79Q==
+  dependencies:
+    prop-types "^15.6.2"
+
 react-native-check-box@^2.1.7:
   version "2.1.7"
   resolved "https://registry.yarnpkg.com/react-native-check-box/-/react-native-check-box-2.1.7.tgz#f349d3505a13c15d19949ec4cec40c7adc4f3626"
@@ -12290,7 +12297,7 @@ react-native-svg-transformer@^0.14.3:
     path-dirname "^1.0.2"
     semver "^5.6.0"
 
-react-native-svg@12.1.1:
+react-native-svg@^12.1.1:
   version "12.1.1"
   resolved "https://registry.yarnpkg.com/react-native-svg/-/react-native-svg-12.1.1.tgz#5f292410b8bcc07bbc52b2da7ceb22caf5bcaaee"
   integrity sha512-NIAJ8jCnXGCqGWXkkJ1GTzO4a3Md5at5sagYV8Vh4MXYnL4z5Rh428Wahjhh+LIjx40EE5xM5YtwyJBqOIba2Q==

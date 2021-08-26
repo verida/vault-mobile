@@ -3,7 +3,7 @@ import { StyleSheet } from 'react-native'
 import { Container, Content } from 'native-base'
 import { connect } from 'react-redux'
 
-import Text from '../../components/Text'
+import Text from 'components/Text'
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'

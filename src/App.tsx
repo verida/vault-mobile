@@ -11,6 +11,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import RootNavigator from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
+import linking from 'navigation/linkingConfiguration'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -34,7 +35,7 @@ function App() {
   const AppContent = (
     <Provider store={store}>
       <AuthProvider>
-        <NavigationContainer>
+        <NavigationContainer linking={linking}>
           <Authenticate>
             <RootNavigator />
           </Authenticate>

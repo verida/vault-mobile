@@ -4,7 +4,7 @@ import { Icon } from 'native-base'
 import { connect } from 'react-redux'
 import Clipboard from '@react-native-community/clipboard'
 
-import Text from '../../components/Text'
+import Text from 'components/Text'
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import WordCard from '../../components/Words/WordCard'

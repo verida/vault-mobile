@@ -51,10 +51,14 @@
       ]
     }
   },
+  "include": [
+    "**/*.ts", "**/*.tsx",
+    "src/declarations.d.ts"
+  ],
   "exclude": [
     "node_modules",
     "babel.config.js",
     "metro.config.js",
-    "jest.config.js",
-  ],
+    "jest.config.js"
+  ]
 }

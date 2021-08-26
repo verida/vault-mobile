@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { Icon } from 'native-base'
 
-import Text from '../components/Text'
+import Text from 'components/Text'
 import PropertyList from '../components/PropertyList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 

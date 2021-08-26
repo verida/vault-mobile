@@ -33,5 +33,6 @@
     "@typescript-eslint/explicit-module-boundary-types": 0,
     "react-native/no-inline-styles": 0,
     "no-case-declarations": 0
-  }
+  },
+  "ignorePatterns": ["declarations.d.ts"]
 }

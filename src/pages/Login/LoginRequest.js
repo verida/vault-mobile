@@ -7,7 +7,7 @@ import { getVeridaApp } from '../../api'
 import EncryptionUtils from '@verida/encryption-utils'
 import MobileSvg from '../../assets/mobile.svg'
 
-import Text from '../../components/Text'
+import Text from 'components/Text'
 import Button from '../../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
@@ -25,8 +25,9 @@ export default (props) => {
 
   useEffect(() => {
     const init = async () => {
-      const key = props._k
-      const didJwt = props._r
+      const { _k, _r } = props.route.params
+      const key = _k
+      const didJwt = _r
       const decoded = didJWT.decodeJWT(didJwt)
       const payload = decoded.payload
 
@@ -77,6 +78,7 @@ export default (props) => {
             break
 
           case 'auth-vault-response':
+            props.navigation.navigate('Home')
             break
         }
       }
@@ -88,7 +90,7 @@ export default (props) => {
     }
 
     init()
-  }, [props._k, props._r])
+  }, [props.route.params, props.navigation])
 
   // @todo use key to encrypt response to server
 

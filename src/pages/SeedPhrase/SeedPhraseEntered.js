@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TextInput } from 'react-native'
+import { StyleSheet, TextInput, View } from 'react-native'
 import { Container, Content } from 'native-base'
 
 import Layout from '../../components/Layouts/Layout'
@@ -14,11 +14,16 @@ import ModifierStyles from '../../styles/modifier'
 import InputStyles from '../../styles/inputs'
 
 import _ from 'underscore'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import BottomActionsModal from 'components/BottomActionsModal'
 
 export default (props) => {
+  const { navigation, route } = props
+  const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
-  const [error, showError] = useState(null)
+  const [error, showError] = useState(false)
+  const [showConfirmModal, setShowConfirmModal] = useState(false)
 
   useEffect(() => {
     const verify = async () => {
@@ -41,20 +46,34 @@ export default (props) => {
   const onContinue = async () => {
     try {
       await walletByMnemonic(phrase)
-      props.navigation.navigate('Success')
+      navigation.navigate('Success')
     } catch (e) {
       showError(true)
     }
   }
 
+  function toggleConfirmModal() {
+    setShowConfirmModal((prevState) => !prevState)
+  }
+
+  function onConfirm() {
+    toggleConfirmModal()
+    onContinue()
+  }
+
+  const title = usePrivateKey ? 'Seed Phrase or Private Key' : 'Seed Phrase'
+  const label = usePrivateKey
+    ? 'Enter seed phrase or private key'
+    : 'Enter seed phrase'
+
   return (
     <Container>
       <NavigationHeader title='Import An Account' />
       <Content>
-        <Layout title='Seed Phrase'>
+        <Layout title={title}>
           <Label
             style={[ModifierStyles.label, error && ModifierStyles.errorText]}>
-            Enter your seed phrase below
+            {label}
           </Label>
           <TextInput
             value={phrase}
@@ -65,17 +84,64 @@ export default (props) => {
             autoCapitalize='none'
             onChangeText={setPhrase}
             style={[InputStyles.textarea, error && ModifierStyles.error]}
+            placeholder={'eg. Open despair creek road again ice least'}
           />
           <ErrorPhrase shown={error} />
-          <Button
-            style={{ marginTop: 24 }}
-            color='primary'
-            onPress={onContinue}
-            disabled={!verified}>
-            Continue
-          </Button>
         </Layout>
       </Content>
+      <CustomFooter>
+        <Button
+          style={{ marginTop: 24 }}
+          color='primary'
+          onPress={usePrivateKey ? toggleConfirmModal : onContinue}
+          disabled={!verified}>
+          Continue
+        </Button>
+      </CustomFooter>
+      <BottomActionsModal
+        visible={showConfirmModal}
+        animated={true}
+        animationType={'slide'}
+        title={
+          'That appears to be a valid account, however it isn’t linked to a Verida account (3ID)'
+        }
+        message={
+          'Would you like to create a new Verida account and authorize this blockchain wallet to control your account?'
+        }
+        footer={
+          <View style={styles.modalFooter}>
+            <Button
+              color={'grey'}
+              style={styles.noButton}
+              onPress={() => toggleConfirmModal()}>
+              No
+            </Button>
+            <Button
+              color={'primary'}
+              style={styles.yesButton}
+              onPress={onConfirm}>
+              Yes
+            </Button>
+          </View>
+        }
+        onClose={() => toggleConfirmModal()}
+      />
     </Container>
   )
 }
+
+const styles = StyleSheet.create({
+  modalFooter: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  noButton: {
+    flex: 1,
+    marginRight: 20,
+    marginBottom: 0,
+  },
+  yesButton: {
+    flex: 1,
+    marginBottom: 0,
+  },
+})

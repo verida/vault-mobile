@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import ProfileLayout from '../../components/Layouts/ProfileLayout'
-import Text from '../../components/Text'
+import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { getWallet } from '../../api'

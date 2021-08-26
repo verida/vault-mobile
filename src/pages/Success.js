@@ -5,7 +5,7 @@ import * as LocalAuthentication from 'expo-local-authentication'
 
 import Success from '../assets/success.svg'
 
-import Text from '../components/Text'
+import Text from 'components/Text'
 import Details from '../components/Details'
 import Button from '../components/Button'
 import Layout from '../components/Layouts/Layout'
