@@ -6,8 +6,7 @@ import DataList from '../../components/DataList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { getVault } from '../../api'
 import { useNavigation } from '@react-navigation/native'
-import { StyleSheet, View } from 'react-native'
-import LottieView from 'lottie-react-native'
+import LoadingView from 'components/LoadingView'
 
 const Folders = () => {
   const navigationProp = useNavigation()
@@ -51,14 +50,7 @@ const Folders = () => {
     <Container>
       <NavigationHeader left={{ icon: 'skip' }} title='Data' />
       {loading ? (
-        <View style={styles.loadingContainer}>
-          <LottieView
-            source={require('assets/animations/loading.json')}
-            autoPlay
-            loop
-            style={styles.loadingView}
-          />
-        </View>
+        <LoadingView />
       ) : (
         <Content>
           <List>
@@ -69,19 +61,6 @@ const Folders = () => {
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    paddingHorizontal: 20,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  loadingView: {
-    width: 200,
-    height: 200,
-  },
-})
 
 const mapDispatchToProps = () => {
   return {}

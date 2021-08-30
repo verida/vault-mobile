@@ -29,11 +29,11 @@ const list = [
     onPress: (navigation) => navigation.navigate('PublicProfile'),
     optional: true,
   },
-  {
-    label: 'Private Identity',
-    icon: <LockSvg />,
-    action: 'arrow',
-    onPress: (navigation) => navigation.navigate('PrivateProfile'),
-    optional: true,
-  },
+  // {
+  //   label: 'Private Identity',
+  //   icon: <LockSvg />,
+  //   action: 'arrow',
+  //   onPress: (navigation) => navigation.navigate('PrivateProfile'),
+  //   optional: true,
+  // },
 ]

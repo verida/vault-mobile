@@ -12,7 +12,15 @@ import Button from '../../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import { BLACK_COLOR_OPACITY } from '../../constants/color'
+import {
+  BLACK_COLOR_OPACITY,
+  PRIMARY_COLOR,
+  SUCCESS_COLOR,
+  WARNING_COLOR,
+} from '../../constants/color'
+import AppLogo from 'components/AppLogo'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import LoadingView from 'components/LoadingView'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -30,7 +38,6 @@ export default (props) => {
       const didJwt = _r
       const decoded = didJWT.decodeJWT(didJwt)
       const payload = decoded.payload
-
       const _expiry = payload.exp
       const now = Math.floor(Date.now() / 1000)
       setExpiry(_expiry - now)
@@ -68,6 +75,7 @@ export default (props) => {
         switch (message.type) {
           case 'auth-session':
             const request = message.message
+            console.log('message:', message)
             setInfo({
               request,
               payload,
@@ -102,7 +110,7 @@ export default (props) => {
    * @todo: Move this into vault-common
    */
   const approve = async () => {
-    setStatus('approving')
+    // setStatus('approving')
 
     const veridaApp = await getVeridaApp()
     const signature = await veridaApp.user.requestSignature(
@@ -160,81 +168,109 @@ export default (props) => {
   return (
     <Container>
       <NavigationHeader title='Login Request' left={{ icon: 'skip' }} />
-      <Content>
-        <View style={style.container}>
-          {status !== 'loading' ? (
-            <View style={{ alignItems: 'center' }}>
-              <MobileSvg style={style.img} />
-              <Text style={style.title}>{info.request.appName}</Text>
-              <View>
-                <Text style={style.text}>
-                  You have a new login approval request from:
-                </Text>
-                <Text
-                  style={[style.text, style.link]}
-                  onPress={() =>
-                    Linking.openURL(`${info.request.loginDomain}`)
-                  }>
-                  {info.request.loginDomain}
-                </Text>
-              </View>
-              <Text style={style.text} />
-              <Text style={[style.text, style.timeout]}>
-                Generated:{' '}
-                {Moment(info.payload.insertedAt).format(
-                  'DD MMM, YYYY [at] h:mm a'
-                )}
-                {'\n'}
-                Expires: {expiry} seconds ({info.payload.exp})
-              </Text>
+      <Content contentContainerStyle={style.contentContainer}>
+        {status === 'loading' && <LoadingView />}
+        {status !== 'loading' ? (
+          <View style={style.content}>
+            <AppLogo url={info.request.logoUrl} style={style.img} />
+            <Text style={style.appName}>{info.request.appName}</Text>
+            <View style={style.verified}>
+              {/* TODO: render verified status */}
+              {/*{!errorMessage ? (*/}
+              {/*  <>*/}
+              {/*    <AntDesign name='check' size={15} color={SUCCESS_COLOR} />*/}
+              {/*    <Text style={style.verifiedText}> Verified</Text>*/}
+              {/*  </>*/}
+              {/*) : (*/}
+              {/*  <>*/}
+              {/*    <AntDesign*/}
+              {/*      name='exclamationcircleo'*/}
+              {/*      size={15}*/}
+              {/*      color={WARNING_COLOR}*/}
+              {/*    />*/}
+              {/*    <Text style={[style.verifiedText, style.warningText]}>*/}
+              {/*      {' '}*/}
+              {/*      Not Verified*/}
+              {/*    </Text>*/}
+              {/*  </>*/}
+              {/*)}*/}
             </View>
-          ) : null}
-
-          {errorMessage ? (
-            <View style={style.modal}>
-              <View style={{ flexDirection: 'row' }}>
-                <Text style={[style.text, { color: errorMessage.color }]}>
-                  <Icon
-                    type='AntDesign'
-                    name={errorMessage.iconName}
-                    style={[style.text, { color: errorMessage.color }]}
-                  />
-                  &nbsp; {errorMessage.heading}
-                </Text>
-              </View>
-              <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>
-                {errorMessage.message}
-              </Text>
-            </View>
-          ) : null}
-
-          <View style={style.actions}>
-            <Button style={[style.btn, style.mr]} color='grey' onPress={deny}>
-              Cancel
-            </Button>
-            {!errorMessage ? (
-              <Button style={style.btn} onPress={() => approve()}>
-                Login
-              </Button>
-            ) : null}
-          </View>
-          {status === 'approving' ? (
+            <MobileSvg style={style.img} />
+            <Text style={style.title}>New Login Request</Text>
             <View>
-              <Text style={style.text}>Sending response...</Text>
+              <Text style={style.text}>
+                There is a new login approval request from
+              </Text>
+              <Text
+                style={[style.text, style.link]}
+                onPress={() => Linking.openURL(`${info.request.loginDomain}`)}>
+                {info.request.loginDomain}
+              </Text>
             </View>
+            <Text style={style.generatedTime}>
+              {Moment(info.payload.insertedAt).format(
+                'DD MMM, YYYY [at] h:mm a'
+              )}
+            </Text>
+            <Text style={[style.text, style.timeout]}>
+              Expires in {expiry} seconds
+            </Text>
+          </View>
+        ) : null}
+
+        {errorMessage && (
+          <View style={style.modal}>
+            <View style={{ flexDirection: 'row' }}>
+              <Text style={[style.text, { color: errorMessage.color }]}>
+                <Icon
+                  type='AntDesign'
+                  name={errorMessage.iconName}
+                  style={[style.text, { color: errorMessage.color }]}
+                />
+                &nbsp; {errorMessage.heading}
+              </Text>
+            </View>
+            <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>
+              {errorMessage.message}
+            </Text>
+          </View>
+        )}
+      </Content>
+      <CustomFooter>
+        <View style={style.actions}>
+          <Button
+            style={[style.btn, style.mr]}
+            color='grey'
+            onPress={deny}
+            disabled={status === 'loading'}>
+            Ignore
+          </Button>
+          {!errorMessage ? (
+            <Button
+              style={style.btn}
+              onPress={() => approve()}
+              disabled={status === 'loading'}>
+              Login
+            </Button>
           ) : null}
         </View>
-      </Content>
+        {status === 'approving' ? (
+          <View>
+            <Text style={style.text}>Sending response...</Text>
+          </View>
+        ) : null}
+      </CustomFooter>
     </Container>
   )
 }
 
 const style = StyleSheet.create({
-  container: {
+  contentContainer: {
     flex: 1,
-    justifyContent: 'space-between',
-    marginVertical: 20,
-    marginHorizontal: 20,
+  },
+  content: {
+    flex: 1,
+    alignItems: 'center',
   },
   img: {
     marginTop: 20,
@@ -243,21 +279,22 @@ const style = StyleSheet.create({
   title: {
     fontFamily: NUNITO_SANS_BOLD,
     fontSize: 22,
-    marginVertical: 4,
     textAlign: 'center',
+    marginBottom: 12,
   },
   text: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
     fontSize: 14,
     textAlign: 'center',
-    marginVertical: 8,
   },
   timeout: {
     fontSize: 12,
     color: BLACK_COLOR_OPACITY(0.6),
   },
   link: {
-    color: 'blue',
+    color: PRIMARY_COLOR,
+    marginBottom: 8,
+    marginTop: 2,
   },
   actions: {
     marginTop: 20,
@@ -277,4 +314,30 @@ const style = StyleSheet.create({
     width: '100%',
     borderRadius: 5,
   },
+  appLogo: {
+    marginTop: 35,
+    marginBottom: 12,
+  },
+  appName: {
+    fontFamily: NUNITO_SANS_BOLD,
+    fontSize: 17,
+  },
+  generatedTime: {
+    marginBottom: 16,
+    fontFamily: NUNITO_SANS_SEMIBOLD,
+    fontSize: 14,
+  },
+  verified: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginTop: 6,
+  },
+  verifiedText: {
+    color: SUCCESS_COLOR,
+    fontSize: 12,
+  },
+  warningText: {
+    color: WARNING_COLOR,
+  },
+  loadingContainer: {},
 })
