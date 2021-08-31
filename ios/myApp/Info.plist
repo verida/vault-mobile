@@ -21,16 +21,7 @@
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
-	<array>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Viewer</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>veridavault</string>
-			</array>
-		</dict>
-	</array>
+	<array/>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
 	<key>LSRequiresIPhoneOS</key>
@@ -51,7 +42,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Scan QR Code</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>This app uses bio authentication to secure user's private info</string>
+	<string>This app uses bio authentication to secure user&apos;s private info</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow user to track their location</string>
 	<key>NSPhotoLibraryUsageDescription</key>

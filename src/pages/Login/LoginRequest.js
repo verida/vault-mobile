@@ -75,7 +75,6 @@ export default (props) => {
         switch (message.type) {
           case 'auth-session':
             const request = message.message
-            console.log('message:', message)
             setInfo({
               request,
               payload,
@@ -92,7 +91,6 @@ export default (props) => {
       }
 
       websocket.onerror = (err) => {
-        console.log('ws error!')
         console.log(err)
       }
     }
@@ -110,7 +108,7 @@ export default (props) => {
    * @todo: Move this into vault-common
    */
   const approve = async () => {
-    // setStatus('approving')
+    setStatus('approving')
 
     const veridaApp = await getVeridaApp()
     const signature = await veridaApp.user.requestSignature(

@@ -45,7 +45,7 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="http" android:host="vault.verida.io" android:pathPrefix="/sso"/>
+        <data android:scheme="http" android:host="vault.verida.io" android:pathPrefix="/request"/>
         <data android:scheme="https" />
       </intent-filter>
     </activity>
