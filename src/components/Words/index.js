@@ -2,7 +2,7 @@ import React from 'react'
 import { View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
-import { addWord, removeWord } from '../../store/words/actions'
+import { addWord, removeWord } from '../../reduxStore/words/actions'
 
 import Text from '../Text'
 import Words from './Words'

@@ -18,7 +18,7 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from '../../constants/color'
-import { setNewMessagesCount as setNewMessagesCountAction } from '../../store/general/actions'
+import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
 

@@ -7,7 +7,7 @@ import Layout from '../../components/Layouts/Layout'
 import Words from '../../components/Words'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { resetPhrase as resetPhraseAction } from 'store/words/actions'
+import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
 import ErrorPhrase from '../../components/ErrorPhrase'
 import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api'
 

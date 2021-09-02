@@ -10,7 +10,7 @@ import InputStyles from '../../styles/inputs'
 import { COUNTRIES } from '../../helpers/country-list'
 import DropDownPicker from '../../components/Select'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData } from '../../store/general/actions'
+import { setPublicProfileData } from '../../reduxStore/general/actions'
 
 import IntlPhoneInput from 'react-native-intl-phone-input'
 import { getVault } from '../../api'

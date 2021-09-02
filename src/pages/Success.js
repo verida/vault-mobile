@@ -15,7 +15,7 @@ import { NUNITO_SANS_BOLD } from '../constants/text'
 import {
   setAuthStatus as setAuthStatusAction,
   setBioAuthStatus as setBioAuthStatusAction,
-} from '../store/general/actions'
+} from '../reduxStore/general/actions'
 import { useAuth } from 'hooks/useAuth'
 
 const SuccessPage = (props) => {

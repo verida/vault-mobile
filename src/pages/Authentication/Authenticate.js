@@ -9,7 +9,7 @@ import CheckPin from './CheckPin'
 import {
   setAuthStatus as setAuthStatusAction,
   setBioAuthStatus as setBioAuthStatusAction,
-} from '../../store/general/actions'
+} from '../../reduxStore/general/actions'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from 'hooks/useAuth'
 

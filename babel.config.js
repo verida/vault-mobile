@@ -17,7 +17,7 @@ module.exports = function (api) {
             helpers: ['./src/helpers'],
             pages: ['./src/pages'],
             routes: ['./src/routes'],
-            store: ['./src/store'],
+            reduxStore: ['./src/reduxStore'],
             styles: ['./src/styles'],
             hooks: ['./src/hooks'],
           },

@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import ProfileLayout from '../../components/Layouts/ProfileLayout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { setPublicProfileData as setPublicProfileDataAction } from '../../store/general/actions'
+import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
 import { editable } from '../../helpers/profile'
 import { getVault } from '../../api'
 
