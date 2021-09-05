@@ -48,7 +48,7 @@ pod install
     - react-native-udp
     - TcpSockets
 
-![fix duplicated sources](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/1aefbba6-9cfe-436e-b23f-1206188a8bff/fix_duplicated_sources.png)
+![fix duplicated sources](./images/fix_duplicated_sources.png)
 
 - Build the application in Xcode. It often fails the first time, so just try again. Sometimes if you have changed dependencies you need to close metro and Xcode and reload the app before building again.
 
