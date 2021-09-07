@@ -37,3 +37,7 @@ if (!global.btoa) {
 if (!global.atob) {
   global.atob = decode
 }
+
+global.navigator = {
+  userAgent: 'mobile',
+}
