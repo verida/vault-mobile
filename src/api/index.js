@@ -1,10 +1,9 @@
-import Vault from '@verida/vault-common'  // @feature/26/refactor-client-ts
+import Vault from '@verida/vault-common'
 import walletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
 
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
-import { Vault } from "@verida/vault-common"
 
 import dataMap from '../config/data-map'
 
@@ -15,16 +14,26 @@ const CHAIN = 'ethr'
 const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 
 export const generateWallet = async (userData) => {
-  const newWallet = walletUtils.createWallet('near')
-  global.wallet = newWallet
+  try {
+    console.log('userData:', userData)
+    const newWallet = walletUtils.createWallet(CHAIN)
+    global.wallet = newWallet
+    console.log('newWallet:', newWallet)
 
-  const vault = await getVault(newWallet)
-  await Promise.all(
-    Object.entries(userData).map((entry) => vault.profiles.public.set(...entry))
-  )
+    const vault = await getVault(newWallet)
+    console.log('vault:', vault)
+    // await Promise.all(
+    //   Object.entries(userData).map((entry) => {
+    //     console.log('public:', vault.profiles.public)
+    //     return vault.profiles.public.set(...entry)
+    //   })
+    // )
 
-  await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
-  return newWallet
+    await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
+    return newWallet
+  } catch (error) {
+    console.log(error)
+  }
 }
 export const walletByMnemonic = async (mnemonic) => {
   const wallet = walletUtils.getWallet(CHAIN, mnemonic)
@@ -58,44 +67,55 @@ export const isAuthorized = async () => {
 
 /**
  * Return a Verida Context instance for the `Verida: Vault` context.
- * 
- * @param {*} wallet 
- * @returns 
+ *
+ * @param {*} wallet
+ * @returns
  */
 export const getVeridaApp = async (wallet) => {
+  console.log('global.verida:', global.verida)
+
   if (global.verida) {
     return global.verida
   }
 
   // create a promise to return to avoid `getVeridaApp` being called multiple times
   // eslint-disable-next-line no-async-promise-executor
-  global.verida = new Promise(async (resolve) => {
-    if (!wallet) {
-      wallet = await SecureStore.getItemAsync(WALLET_KEY)
-      wallet = JSON.parse(wallet)
+  global.verida = new Promise(async (resolve, reject) => {
+    try {
+      if (!wallet) {
+        wallet = await SecureStore.getItemAsync(WALLET_KEY)
+        wallet = JSON.parse(wallet)
+      }
+      const { privateKey } = wallet
+      console.log('privateKey:', privateKey)
+      const client = new Client({
+        defaultDatabaseServer: {
+          type: 'VeridaDatabase',
+          endpointUri: 'http://192.168.1.4:5000/', // @todo: Change these to testnet
+        },
+        defaultMessageServer: {
+          type: 'VeridaMessage',
+          endpointUri: 'http://192.168.1.4:5000/', // @todo: Change these to testnet
+        },
+        ceramicUrl: CERAMIC_URL,
+      })
+      console.log('client:', client)
+
+      const account = new AutoAccount(CHAIN, privateKey)
+      console.log('account:', account)
+      await client.connect(account)
+      console.log('connected')
+      const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
+      console.log('context:', context)
+
+      global.account = account
+      global.client = client
+
+      resolve(context)
+    } catch (error) {
+      console.log(error)
+      reject(error)
     }
-    const { privateKey } = wallet
-
-    const client = new Client({
-      defaultDatabaseServer: {
-        type: 'VeridaDatabase',
-        endpointUri: 'http://localhost:5000/' // @todo: Change these to testnet
-      },
-      defaultMessageServer: {
-        type: 'VeridaMessage',
-        endpointUri: 'http://localhost:5000/' // @todo: Change these to testnet
-      },
-      ceramicUrl: CERAMIC_URL
-    })
-
-    const account = new AutoAccount(CHAIN, privateKey)
-    await client.connect(account)
-    const context = client.openContext(VERIDA_CONTEXT_NAME, true)
-
-    global.account = account
-    global.client = client
-
-    resolve(context)
   })
 
   return global.verida
@@ -107,12 +127,17 @@ export const getVault = async (wallet) => {
   }
 
   // eslint-disable-next-line no-async-promise-executor
-  global.vault = new Promise(async (resolve) => {
-    const verida = await getVeridaApp(wallet)
-    const vault = new Vault(this.client, verida, dataMap)
-    global.vault = vault
+  global.vault = new Promise(async (resolve, reject) => {
+    try {
+      const verida = await getVeridaApp(wallet)
+      const vault = new Vault(global.client, verida, dataMap)
+      await vault.init()
+      global.vault = vault
 
-    resolve(vault)
+      resolve(vault)
+    } catch (error) {
+      reject(error)
+    }
   })
 
   return global.vault
@@ -125,29 +150,34 @@ export const getVault = async (wallet) => {
 const DefaultAvatar = require('../assets/stubs/avatar.png')
 
 export const loadAvatarSource = async () => {
-  const vault = await getVault()
-  let avatar = await vault.profiles.public.get('avatar')
-  if (!avatar) {
-    return DefaultAvatar
-  }
-
-  avatar = JSON.parse(avatar)
-
-  if (avatar) {
-    let image
-    switch (avatar.encoding) {
-      case 'base64':
-        image = {
-          uri: `data:image/${avatar.format};base64,` + avatar.base64,
-        }
-
-        break
-      default:
-        return DefaultAvatar
+  try {
+    const vault = await getVault()
+    let avatar = await vault.profiles.public.get('avatar')
+    if (!avatar) {
+      return DefaultAvatar
     }
 
-    return image
-  }
+    avatar = JSON.parse(avatar)
 
-  return DefaultAvatar
+    if (avatar) {
+      let image
+      switch (avatar.encoding) {
+        case 'base64':
+          image = {
+            uri: `data:image/${avatar.format};base64,` + avatar.base64,
+          }
+
+          break
+        default:
+          return DefaultAvatar
+      }
+
+      return image
+    }
+
+    return DefaultAvatar
+  } catch (error) {
+    console.log(error)
+    return DefaultAvatar
+  }
 }

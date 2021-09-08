@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
+import {
+  Alert,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AuthStackParams } from 'navigation/types'
@@ -32,13 +38,20 @@ function Create(
 
   const onCountryChange = (option: Option) => setCountry(option)
   const onCreateAccount = async () => {
-    setProcessing(true)
-    await generateWallet({ name, country: country?.value })
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    props.setPublicProfileData({ name, country: country?.value })
-    setProcessing(false)
-    navigation.navigate('ScanQrCode')
+    try {
+      setProcessing(true)
+      await generateWallet({ name, country: country?.value })
+      console.log('wallet generated')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      props.setPublicProfileData({ name, country: country?.value })
+      setProcessing(false)
+      navigation.navigate('ScanQrCode')
+    } catch (error) {
+      setProcessing(false)
+      Alert.alert('Error', 'Failed to create account, please try again later')
+      console.log('Failed to create account:', error)
+    }
   }
 
   const onImportAccount = () => {
