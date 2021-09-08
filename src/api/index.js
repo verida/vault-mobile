@@ -1,16 +1,18 @@
-import Verida from '@verida/datastore'
-import Vault from '@verida/vault-common'
+import Vault from '@verida/vault-common'  // @feature/26/refactor-client-ts
 import walletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
+
+import { Client } from '@verida/client-rn'
+import { AutoAccount } from '@verida/account-node'
+import { Vault } from "@verida/vault-common"
 
 import dataMap from '../config/data-map'
 
 const WALLET_KEY = 'VaultMobileWallet'
 export const MNEMONIC_LENGTH = 12
-const VERIDA_APP_NAME = 'Verida: Vault'
-const CHAIN = 'near'
-
-global.Verida = Verida
+const VERIDA_CONTEXT_NAME = 'Verida: Vault'
+const CHAIN = 'ethr'
+const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 
 export const generateWallet = async (userData) => {
   const newWallet = walletUtils.createWallet('near')
@@ -29,6 +31,8 @@ export const walletByMnemonic = async (mnemonic) => {
   await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
 }
 export const clearWallet = async () => {
+  global.client = null
+  global.account = null
   global.verida = null
   global.vault = null
   global.wallet = null
@@ -52,6 +56,12 @@ export const isAuthorized = async () => {
   return Boolean(wallet)
 }
 
+/**
+ * Return a Verida Context instance for the `Verida: Vault` context.
+ * 
+ * @param {*} wallet 
+ * @returns 
+ */
 export const getVeridaApp = async (wallet) => {
   if (global.verida) {
     return global.verida
@@ -64,28 +74,28 @@ export const getVeridaApp = async (wallet) => {
       wallet = await SecureStore.getItemAsync(WALLET_KEY)
       wallet = JSON.parse(wallet)
     }
-    const { address, privateKey } = wallet
+    const { privateKey } = wallet
 
-    Verida.setConfig({
-      appName: VERIDA_APP_NAME,
-      /*servers: {
-                testnet: {
-                    schemaPaths: {
-                    'https://schemas.verida.io/': 'http://localhost:5010/',
-                    'https://schemas.testnet.verida.io/': 'http://localhost:5010/'
-                    }
-                }
-            }*/
+    const client = new Client({
+      defaultDatabaseServer: {
+        type: 'VeridaDatabase',
+        endpointUri: 'http://localhost:5000/' // @todo: Change these to testnet
+      },
+      defaultMessageServer: {
+        type: 'VeridaMessage',
+        endpointUri: 'http://localhost:5000/' // @todo: Change these to testnet
+      },
+      ceramicUrl: CERAMIC_URL
     })
 
-    const verida = new Verida({
-      address,
-      chain: CHAIN,
-      privateKey,
-    })
+    const account = new AutoAccount(CHAIN, privateKey)
+    await client.connect(account)
+    const context = client.openContext(VERIDA_CONTEXT_NAME, true)
 
-    await verida.connect(true)
-    resolve(verida)
+    global.account = account
+    global.client = client
+
+    resolve(context)
   })
 
   return global.verida
@@ -99,7 +109,7 @@ export const getVault = async (wallet) => {
   // eslint-disable-next-line no-async-promise-executor
   global.vault = new Promise(async (resolve) => {
     const verida = await getVeridaApp(wallet)
-    const vault = new Vault(verida, dataMap)
+    const vault = new Vault(this.client, verida, dataMap)
     global.vault = vault
 
     resolve(vault)
