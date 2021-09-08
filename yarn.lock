@@ -27,43 +27,43 @@
     store "^2.0.12"
     uint8arrays "^2.1.5"
 
-"@3id/common@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@3id/common/-/common-0.1.3.tgz#c3a29a477dd50814faec8af0d3166ba310d26b3b"
-  integrity sha512-JBzRQKoneKyHKg/Ez9HHOsJ1DipZOS4whglnBqb2gfUotLq9HHG+qRgW1nhKTiU+8cadwYBy3b4XwR9wzaPmpA==
+"@3id/common@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3id/common/-/common-0.2.0.tgz#563c2d92f27869cc10b56b2edf39cbac98e17997"
+  integrity sha512-V7eReTnZSmunx52laGjTLeer+j+bpo6DVVWdDrtKE/FGb6wi+s2MseiMm4lXKDRUEVZDoEhbtntaH3CQ76PhMQ==
   dependencies:
     errors-utils "^0.1.0"
     uint8arrays "^2.1.5"
 
-"@3id/connect-display@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@3id/connect-display/-/connect-display-0.1.5.tgz#8a03203254ec4d4713e8fc623adda7bb26147740"
-  integrity sha512-Yz1+eM0WYQXloUkxsnnQL9tf34kddPR08EmwklIMtnVhQsoc8tZdlKDIfAw89VmZVzcCxjE9w55q1AyKd0hepA==
+"@3id/connect-display@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3id/connect-display/-/connect-display-0.2.0.tgz#52b56065eeef7fea8fa0f6e16303d83211c963eb"
+  integrity sha512-vvY5rXvI4cLuduooASECoyrshe54MQ4Uww+eBEHL+EdUglFRVHwOTGvL7JG0M96nNQXJlahVocMt7qPhOCVBEA==
   dependencies:
     "@ceramicnetwork/rpc-window" "^0.1.0"
     "@ceramicnetwork/transport-postmessage" "^0.3.0"
     rxjs "^6.6.6"
 
-"@3id/connect@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@3id/connect/-/connect-0.1.6.tgz#0bc21919827edc944b9fae9d3184edbcc3f43fd4"
-  integrity sha512-gBa51aayQOVNXBOJQ4netE0pHLFLeyv54UjnuB31GQT6Z5xNs7Nf3edoGD40RTFHILZo2VzR8wL/c0CAB4qF2Q==
+"@3id/connect@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3id/connect/-/connect-0.2.0.tgz#b1407a0bec0a287e37ef487d82f87388135be966"
+  integrity sha512-gT4ugkUEe0My6twa+xKB8ufgzd+PnU3PQzNQrZcNJ05gbJR30RS7Cr2pp0GL7Qj0TNlVZShwIJGr5Iu6KHtR5w==
   dependencies:
-    "@3id/common" "^0.1.3"
-    "@3id/connect-display" "^0.1.5"
-    "@3id/window-auth-provider" "^0.1.3"
+    "@3id/common" "^0.2.0"
+    "@3id/connect-display" "^0.2.0"
+    "@3id/window-auth-provider" "^0.2.0"
     "@ceramicnetwork/blockchain-utils-linking" "^1.0.0"
     postmsg-rpc "^2.4.0"
     rpc-utils "^0.3.4"
     rxjs "^6.6.6"
 
-"@3id/manager@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@3id/manager/-/manager-0.1.6.tgz#0088f2ac2a1d9345a7a5ec4cd79ba739f0412003"
-  integrity sha512-EGBK4k3dhsZWk139S1hRaC74jsSo4cDD2OcO0b/tb+S2+WJYfXVog/jDrIbZwVmQwc0ffWaPyre5t+sUT3esXA==
+"@3id/manager@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3id/manager/-/manager-0.2.0.tgz#38606b9b570ef0b7d35e98552cb0ddb347a78e32"
+  integrity sha512-ZwFxvDirfOScGzwEdVaZrWHvuBmm7Thk1DIB1gNS0UN6SJkiNGCB4NvRgpwS9gAswjIDEo0lts7vL2eyhfAzCg==
   dependencies:
     "3id-did-provider" "^1.0.2"
-    "@3id/common" "^0.1.3"
+    "@3id/common" "^0.2.0"
     "@ceramicnetwork/blockchain-utils-linking" "^1.0.0"
     "@ceramicnetwork/http-client" "^1.0.0"
     "@ceramicstudio/idx" "^0.12.0"
@@ -77,10 +77,10 @@
     store "^2.0.12"
     uint8arrays "^2.1.4"
 
-"@3id/window-auth-provider@^0.1.3":
-  version "0.1.3"
-  resolved "https://registry.yarnpkg.com/@3id/window-auth-provider/-/window-auth-provider-0.1.3.tgz#0f83c2bfbebb9eff755c8b4e28c9ea9009d625df"
-  integrity sha512-BSpsGzsnZkFrAlP8QHbcJ4qWVbYojWmYWG9hEPRHloyzp3LxMcqzDe9U/ity9pT49J1BgbMTa+lja3x3ELDQWA==
+"@3id/window-auth-provider@^0.2.0":
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/@3id/window-auth-provider/-/window-auth-provider-0.2.0.tgz#0ec967aea1753fca579359b313ed78cbfdfe23ee"
+  integrity sha512-YDHa8HErjqq4G0adi84oz8Fu9syhvYjMZHdX7mlJivFpJK7R4Cuutxd46XG4L4AMHa5TkPJxLevuWzgR6dM8bQ==
   dependencies:
     "@ceramicnetwork/rpc-window" "^0.1.0"
     caip "^0.9.2"
@@ -4267,9 +4267,9 @@
 "@verida/3id-utils-node@^0.1.6", "@verida/3id-utils-node@file:../../nodejs/verida-js/packages/3id-utils-node":
   version "0.1.6"
   dependencies:
-    "@3id/connect" "^0.1.6"
-    "@3id/manager" "^0.1.6"
-    "@ceramicnetwork/http-client" "^1.0.7"
+    "@3id/connect" "^0.2.0"
+    "@3id/manager" "^0.2.0"
+    "@ceramicnetwork/http-client" "^1.2.0"
     ethers "^5.4.1"
 
 "@verida/account-node@file:../../nodejs/verida-js/packages/account-node":
@@ -4279,7 +4279,7 @@
     "@verida/client-ts" "*"
     "@verida/keyring" "*"
 
-"@verida/account@^0.1.7":
+"@verida/account@^0.1.6", "@verida/account@^0.1.7":
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/@verida/account/-/account-0.1.7.tgz#5516a7fe04063c722d841af2f64f07d43161d09f"
   integrity sha512-2ovtt/eAdtLXrZrxBx95T1big61yTekwFKaYHzbMYIlJSCDoL3rTE0jRuHaYYRW+Sa+QGRT76mOQ3vukRLS8Sw==
@@ -4290,17 +4290,17 @@
 "@verida/client-rn@file:../../nodejs/client-rn/client-rn":
   version "0.1.0"
   dependencies:
-    "@ceramicnetwork/http-client" "^1.2.0"
+    "@ceramicnetwork/http-client" "^1.0.7"
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
-    "@verida/encryption-utils" "^0.2.4"
-    "@verida/keyring" "^0.1.7"
+    "@verida/account" "^0.1.6"
+    "@verida/encryption-utils" "^0.2.3"
+    "@verida/keyring" "^0.1.6"
     "@verida/pouchdb-replication-react-native" "^7.0.0-prerelease"
-    "@verida/storage-link" "^0.1.8"
+    "@verida/storage-link" "^0.1.7"
     ajv "^8.6.2"
     axios "^0.21.1"
-    bs58 "^4.0.1"
     buffer "^6.0.3"
-    crypto-pouch "https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf"
+    crypto-pouch "git+https://github.com/tahpot/crypto-pouch.git"
     did-jwt "^5.6.3"
     json-schema-ref-parser "^9.0.9"
     json-schema-resolve-allof "^1.5.0"
@@ -4423,7 +4423,7 @@
     tweetnacl "^1.0.3"
     tweetnacl-util "^0.15.1"
 
-"@verida/encryption-utils@^0.2.4":
+"@verida/encryption-utils@^0.2.3", "@verida/encryption-utils@^0.2.4":
   version "0.2.4"
   resolved "https://registry.yarnpkg.com/@verida/encryption-utils/-/encryption-utils-0.2.4.tgz#ff1f48c2a42b81a285ebee5404c8eacb29e03565"
   integrity sha512-nBUdz/zuRkL6YQ8FQpgZhO1JwavCi3uTcZCGUjCpZBbQgjCn7eLXYNo2t3+hkCMJxDbSjnMKPpMm5MIwSeT9tw==
@@ -4431,7 +4431,7 @@
     tweetnacl "^1.0.3"
     tweetnacl-util "^0.15.1"
 
-"@verida/keyring@*", "@verida/keyring@^0.1.7":
+"@verida/keyring@*", "@verida/keyring@^0.1.6", "@verida/keyring@^0.1.7":
   version "0.1.7"
   resolved "https://registry.yarnpkg.com/@verida/keyring/-/keyring-0.1.7.tgz#c740d753132d056651b24b52ab8dd39dd0b15746"
   integrity sha512-QOd7pJ2zgtU7NFDaUqdwG22z17NK9d6l5RXncxfOT9mJ089KR/MYixL5z1O7jh9EZAVSS475dXd2tYVXBl76KQ==
@@ -4447,7 +4447,7 @@
   resolved "https://registry.yarnpkg.com/@verida/pouchdb-replication-react-native/-/pouchdb-replication-react-native-7.0.0-prerelease.tgz#a33292678e1a4dcf5243c3dc0bf350035e16832a"
   integrity sha512-hIUujAz5gYxk2tKSimB9b3tClsuMX61hGkVIU8t0qur8JQyhO8Yl87Ip91c/GChHu0eOUrVYCw9swXj9K+3aag==
 
-"@verida/storage-link@^0.1.8":
+"@verida/storage-link@^0.1.7", "@verida/storage-link@^0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-0.1.8.tgz#b105bcc5018b349d49fe2bf916a183a256ef383b"
   integrity sha512-0z7Q17lx3zSfTAVh3WchvxdEmoGx5u+3tLQkXl58EoZCewHhhxEhPyPbRK7ylaKHE/Npm550ahCIp3Ktfq9AIA==
@@ -6347,19 +6347,7 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
 
 "crypto-pouch@git+https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf":
   version "3.1.3"
-  uid "910feb51dd006d9a05639d984501eeda77e213bf"
   resolved "git+https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf"
-  dependencies:
-    chacha "^2.1.0"
-    native-crypto "^1.5.2"
-    pouchdb-promise "^6.1.0"
-    randombytes "^2.0.3"
-    transform-pouch "^1.1.0"
-    uuid "^3.0.1"
-
-"crypto-pouch@https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf":
-  version "3.1.3"
-  resolved "https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf"
   dependencies:
     chacha "^2.1.0"
     native-crypto "^1.5.2"

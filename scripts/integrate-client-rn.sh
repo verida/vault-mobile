@@ -10,7 +10,19 @@ cd $veridaJsPath
 git checkout main && git pull
 npx lerna bootstrap
 
-cd packages/3id-utils-node
+cd packages/encryption-utils
+yarn link && yarn install && yarn run build && cd ..
+
+cd keyring
+yarn link && yarn install && yarn run build && cd ..
+
+cd storage-link
+yarn link && yarn install && yarn run build && cd ..
+
+cd 3id-utils-node
+yarn link && yarn install && yarn run build && cd ..
+
+cd client-ts
 yarn link && yarn install && yarn run build && cd ..
 
 cd account-3id-connect
@@ -20,15 +32,6 @@ cd account-node
 yarn link && yarn install && yarn run build && cd ..
 
 cd account-web-vault
-yarn link && yarn install && yarn run build && cd ..
-
-cd encryption-utils
-yarn link && yarn install && yarn run build && cd ..
-
-cd keyring
-yarn link && yarn install && yarn run build && cd ..
-
-cd storage-link
 yarn link && yarn install && yarn run build && cd ..
 
 cd client-ts
@@ -41,7 +44,7 @@ echo "Merging client-ts to client-rn..."
 cd $veridaJsPath
 git subtree split -P packages/client-ts -b subtree/client-rn-merge
 cd $clientRnPath
-git subtree pull -P client-rn $veridaJsPath subtree/client-rn-merge --squash
+git subtree pull -P client-rn $veridaJsPath subtree/client-rn-merge --squash -m "Merge client-ts"
 cd $veridaJsPath
 git branch -D subtree/client-rn-merge
 echo "Done"
