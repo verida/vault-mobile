@@ -15,19 +15,15 @@ const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 
 export const generateWallet = async (userData) => {
   try {
-    console.log('userData:', userData)
     const newWallet = walletUtils.createWallet(CHAIN)
     global.wallet = newWallet
-    console.log('newWallet:', newWallet)
 
     const vault = await getVault(newWallet)
-    console.log('vault:', vault)
-    // await Promise.all(
-    //   Object.entries(userData).map((entry) => {
-    //     console.log('public:', vault.profiles.public)
-    //     return vault.profiles.public.set(...entry)
-    //   })
-    // )
+    await Promise.all(
+      Object.entries(userData).map((entry) => {
+        return vault.profiles.public.set(...entry)
+      })
+    )
 
     await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
     return newWallet
@@ -72,8 +68,6 @@ export const isAuthorized = async () => {
  * @returns
  */
 export const getVeridaApp = async (wallet) => {
-  console.log('global.verida:', global.verida)
-
   if (global.verida) {
     return global.verida
   }
@@ -87,33 +81,27 @@ export const getVeridaApp = async (wallet) => {
         wallet = JSON.parse(wallet)
       }
       const { privateKey } = wallet
-      console.log('privateKey:', privateKey)
       const client = new Client({
         defaultDatabaseServer: {
           type: 'VeridaDatabase',
-          endpointUri: 'http://192.168.1.4:5000/', // @todo: Change these to testnet
+          endpointUri: 'https://db.testnet.verida.io:5002/', // @todo: Change these to testnet
         },
         defaultMessageServer: {
           type: 'VeridaMessage',
-          endpointUri: 'http://192.168.1.4:5000/', // @todo: Change these to testnet
+          endpointUri: 'https://db.testnet.verida.io:5002/', // @todo: Change these to testnet
         },
         ceramicUrl: CERAMIC_URL,
       })
-      console.log('client:', client)
 
       const account = new AutoAccount(CHAIN, privateKey)
-      console.log('account:', account)
       await client.connect(account)
-      console.log('connected')
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
-      console.log('context:', context)
 
       global.account = account
       global.client = client
 
       resolve(context)
     } catch (error) {
-      console.log(error)
       reject(error)
     }
   })
@@ -133,6 +121,8 @@ export const getVault = async (wallet) => {
       const vault = new Vault(global.client, verida, dataMap)
       await vault.init()
       global.vault = vault
+
+      const profileData = await vault.profiles.public.getMany()
 
       resolve(vault)
     } catch (error) {
