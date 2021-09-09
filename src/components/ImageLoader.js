@@ -22,31 +22,37 @@ function ImageLoader() {
   }, [loadAvatar])
 
   const loadPhoto = async () => {
-    const result = await ImagePicker.launchImageLibraryAsync({
-      mediaTypes: ImagePicker.MediaTypeOptions.Images,
-      allowsEditing: true,
-      aspect: [4, 3],
-      quality: 0.1,
-      base64: true,
-    })
+    try {
+      const result = await ImagePicker.launchImageLibraryAsync({
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
+        allowsEditing: true,
+        aspect: [4, 3],
+        quality: 0.1,
+        base64: true,
+      })
 
-    if (!result.cancelled && result.base64) {
-      const vault = await getVault()
-      let avatar = await vault.profiles.public.get('avatar')
-      avatar = JSON.parse(avatar)
+      if (!result.cancelled && result.base64) {
+        const vault = await getVault()
+        let avatar = await vault.profiles.public.get('avatar')
+        console.log('avatar:', avatar)
 
-      if (!avatar) {
-        avatar = {
-          encoding: 'base64',
-          format: 'jpeg',
-          base64: '',
+        if (!avatar) {
+          avatar = {
+            encoding: 'base64',
+            format: 'jpeg',
+            base64: '',
+          }
+        } else {
+          avatar = JSON.parse(avatar)
         }
+
+        avatar.base64 = result.base64
+        await vault.profiles.public.set('avatar', JSON.stringify(avatar))
+
+        loadAvatar()
       }
-
-      avatar.base64 = result.base64
-      await vault.profiles.public.set('avatar', JSON.stringify(avatar))
-
-      loadAvatar()
+    } catch (error) {
+      console.log(error)
     }
   }
 

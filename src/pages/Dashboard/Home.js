@@ -21,6 +21,7 @@ import {
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
+import { useIsFocused } from '@react-navigation/native'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -29,6 +30,7 @@ const Home = (props) => {
   const { setNewMessagesCount } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
+  const isFocused = useIsFocused()
 
   useEffect(() => {
     const fetchInboxCount = async () => {
@@ -43,21 +45,21 @@ const Home = (props) => {
       const name = await vault.profiles.public.get('name')
       const source = await loadAvatarSource()
       setAvatarSource(source)
-      const messaging = await vault.inbox.getMessaging()
-
-      messaging.onMessage(function () {
-        fetchInboxCount()
-      })
 
       setInfo({
         address: wallet.did,
         name,
       })
+
+      const messaging = await vault.inbox.getMessaging()
+      messaging.onMessage(function () {
+        fetchInboxCount()
+      })
     }
 
     init()
     fetchInboxCount()
-  }, [setNewMessagesCount])
+  }, [setNewMessagesCount, isFocused])
 
   return (
     <Container>

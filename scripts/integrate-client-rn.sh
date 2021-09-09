@@ -57,6 +57,7 @@ yarn run build
 echo "Done"
 
 echo "Copying client-rn..."
+rm -rf $currentDir/node_modules/@verida/client-rn
 cp -LR $clientRnPath/client-rn $currentDir/node_modules/@verida
 rn-nodeify --install --hack --yarn
 echo "Done"

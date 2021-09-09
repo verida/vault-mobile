@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { View, TextInput } from 'react-native'
+import { TextInput, View } from 'react-native'
 import { Container, Content } from 'native-base'
 import { connect } from 'react-redux'
 
@@ -10,13 +10,14 @@ import InputStyles from '../../styles/inputs'
 import { COUNTRIES } from '../../helpers/country-list'
 import DropDownPicker from '../../components/Select'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData } from '../../reduxStore/general/actions'
+import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
 
 import IntlPhoneInput from 'react-native-intl-phone-input'
 import { getVault } from '../../api'
 
-const EditProfile = ({ title, option, ...props }) => {
-  // const [phoneInputRef, setPhoneInputRef] = useState(null);
+const EditProfile = (props) => {
+  const { navigation, route, publicProfileData, setPublicProfileData } = props
+  const { title, option } = route.params
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState(option.value)
@@ -26,12 +27,13 @@ const EditProfile = ({ title, option, ...props }) => {
     const key = title.toLowerCase()
     const val = (edited.value || edited).trim()
 
-    if (props.publicProfileData[key] === val) return
+    if (publicProfileData[key] === val) return
     setDisabled(true)
     const vault = await getVault()
 
     await vault.profiles.public.set(key, val)
-    props.setPublicProfileData({ ...props.publicProfileData, [key]: val })
+    setPublicProfileData({ publicProfileData, [key]: val })
+    navigation.goBack()
   }
 
   return (
@@ -56,13 +58,11 @@ const EditProfile = ({ title, option, ...props }) => {
           )}
           {option.type === 'select' && (
             <DropDownPicker
-              autoFocus={true}
-              isVisible={true}
               searchable={true}
               searchablePlaceholder='Search...'
               placeholder=''
-              items={COUNTRIES}
               defaultValue={option.value}
+              items={COUNTRIES}
               containerStyle={InputStyles.select}
               onChangeItem={onChangeItem}
             />
@@ -99,7 +99,7 @@ const EditProfile = ({ title, option, ...props }) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setPublicProfileData: (data) => dispatch(setPublicProfileData(data)),
+    setPublicProfileData: (data) => dispatch(setPublicProfileDataAction(data)),
   }
 }
 
