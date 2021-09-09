@@ -96,6 +96,7 @@ export const getVeridaApp = async (wallet) => {
       const account = new AutoAccount(CHAIN, privateKey)
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
+      wallet.did = await account.did()
 
       global.account = account
       global.client = client
