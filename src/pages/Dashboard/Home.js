@@ -43,12 +43,9 @@ const Home = (props) => {
       const name = await vault.profiles.public.get('name')
       const source = await loadAvatarSource()
       setAvatarSource(source)
+      const messaging = await vault.inbox.getMessaging()
 
-      vault.veridaApp.inbox.on('inboxChange', function () {
-        fetchInboxCount()
-      })
-
-      vault.veridaApp.inbox.on('newMessage', function () {
+      messaging.onMessage(function () {
         fetchInboxCount()
       })
 
