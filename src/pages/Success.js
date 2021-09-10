@@ -1,7 +1,5 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
-import * as LocalAuthentication from 'expo-local-authentication'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
 
 import Success from '../assets/success.svg'
 
@@ -11,40 +9,13 @@ import Button from '../components/Button'
 import Layout from '../components/Layouts/Layout'
 import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
-
-import {
-  setAuthStatus as setAuthStatusAction,
-  setBioAuthStatus as setBioAuthStatusAction,
-} from '../reduxStore/general/actions'
 import { useAuth } from 'hooks/useAuth'
 
-const SuccessPage = (props) => {
-  const { setBioAuthStatus } = props
-  const [loading, setLoading] = useState(true)
+const SuccessPage = () => {
   const { initialize } = useAuth()
 
-  useEffect(() => {
-    const init = async () => {
-      const hasSavedBio = await LocalAuthentication.isEnrolledAsync()
-      setBioAuthStatus(hasSavedBio)
-      setLoading(false)
-    }
-
-    init()
-  }, [setBioAuthStatus])
-
   const onDone = () => {
-    props.setAuthStatus(true)
     initialize()
-  }
-
-  if (loading) {
-    return (
-      <View style={style.loadingContent}>
-        <Text>Loading </Text>
-        <ActivityIndicator size='large' />
-      </View>
-    )
   }
 
   return (
@@ -64,14 +35,7 @@ const SuccessPage = (props) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setBioAuthStatus: (status) => dispatch(setBioAuthStatusAction(status)),
-    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
-  }
-}
-
-export default connect(null, mapDispatchToProps)(SuccessPage)
+export default SuccessPage
 
 const style = StyleSheet.create({
   loadingContent: {
