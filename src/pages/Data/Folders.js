@@ -15,10 +15,8 @@ const Folders = () => {
 
   useEffect(() => {
     const init = async () => {
-      console.log('folders init')
       setLoading(true)
       const vault = await getVault()
-      console.log('vault:', vault)
       const { navigation, folders } = vault.data.map
 
       const items = navigation.map((folder) => {

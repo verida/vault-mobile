@@ -22,6 +22,7 @@ import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxSto
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
 import { useIsFocused } from '@react-navigation/native'
+import LoadingView from 'components/LoadingView'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -30,6 +31,7 @@ const Home = (props) => {
   const { setNewMessagesCount } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
+  const [loading, setLoading] = useState(true)
   const isFocused = useIsFocused()
 
   useEffect(() => {
@@ -55,11 +57,16 @@ const Home = (props) => {
       messaging.onMessage(function () {
         fetchInboxCount()
       })
+      setLoading(false)
     }
 
     init()
     fetchInboxCount()
   }, [setNewMessagesCount, isFocused])
+
+  if (loading) {
+    return <LoadingView />
+  }
 
   return (
     <Container>

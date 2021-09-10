@@ -2,9 +2,11 @@ import React, { useEffect, useState } from 'react'
 import Details from './Details'
 
 import { getVault, getWallet } from '../../api'
+import LoadingView from '../LoadingView'
 
 export default () => {
   const [info, setInfo] = useState({})
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const init = async () => {
@@ -16,10 +18,15 @@ export default () => {
         did: wallet.did,
         name: name,
       })
+      setLoading(false)
     }
 
     init()
   }, [])
+
+  if (loading) {
+    return <LoadingView />
+  }
 
   return (
     <>

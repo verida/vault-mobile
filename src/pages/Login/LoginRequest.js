@@ -110,12 +110,13 @@ export default (props) => {
    * @todo: Move this into vault-common
    */
   const approve = async () => {
-    // setStatus('approving')
-    const vault = await getVeridaApp()
-    const account = await vault.getAccount()
-    const keyring = await account.keyring(info.request.appName)
-    const signature = keyring.getSeed()
-    const did = await account.did()
+    setStatus('approving')
+
+    const veridaApp = await getVeridaApp()
+    const signature = await veridaApp.user.requestSignature(
+      info.request.appName
+    )
+    const did = veridaApp.user.did
     const appName = info.request.appName
 
     const context = await global.client.openContext(appName, true)
@@ -125,6 +126,7 @@ export default (props) => {
       did,
       appName,
     }
+    console.log('appName:', appName)
 
     const keyBytes = Buffer.from(info.key.slice(2), 'hex')
 
@@ -243,14 +245,14 @@ export default (props) => {
             style={[style.btn, style.mr]}
             color='grey'
             onPress={deny}
-            disabled={status === 'loading'}>
+            disabled={status === 'approving'}>
             Ignore
           </Button>
           {!errorMessage ? (
             <Button
               style={style.btn}
               onPress={() => approve()}
-              disabled={status === 'loading'}>
+              disabled={status === 'approving'}>
               Login
             </Button>
           ) : null}
