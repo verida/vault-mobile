@@ -111,13 +111,14 @@ export default (props) => {
    */
   const approve = async () => {
     // setStatus('approving')
-
-    const veridaApp = await getVeridaApp()
-    const signature = await veridaApp.user.requestSignature(
-      info.request.appName
-    )
-    const did = veridaApp.user.did
+    const vault = await getVeridaApp()
+    const account = await vault.getAccount()
+    const keyring = await account.keyring(info.request.appName)
+    const signature = keyring.getSeed()
+    const did = await account.did()
     const appName = info.request.appName
+
+    const context = await global.client.openContext(appName, true)
 
     const response = {
       signature,
