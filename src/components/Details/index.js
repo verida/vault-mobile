@@ -10,15 +10,19 @@ export default () => {
 
   useEffect(() => {
     const init = async () => {
-      const wallet = await getWallet()
-      const vault = await getVault()
-      const name = await vault.profiles.public.get('name')
+      try {
+        const wallet = await getWallet()
+        const vault = await getVault()
+        const name = await vault.profiles.public.get('name')
 
-      setInfo({
-        did: wallet.did,
-        name: name,
-      })
-      setLoading(false)
+        setInfo({
+          did: wallet.did,
+          name: name,
+        })
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+      }
     }
 
     init()
