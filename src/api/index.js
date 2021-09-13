@@ -10,12 +10,29 @@ import dataMap from '../config/data-map'
 const WALLET_KEY = 'VaultMobileWallet'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_CONTEXT_NAME = 'Verida: Vault'
-const CHAIN = 'ethr'
+const DEFAULT_CHAIN = 'ethr'
 const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
+const CHAIN_KEY = 'chain'
+
+export const storeChain = async (chain) => {
+  global.chain = chain
+  await SecureStore.setItemAsync(CHAIN_KEY, JSON.stringify(chain))
+}
+
+export const loadChain = async () => {
+  if (global.chain) {
+    return global.chain
+  }
+
+  const chain = await SecureStore.getItemAsync(CHAIN_KEY)
+  global.chain = chain || DEFAULT_CHAIN
+  return global.chain
+}
 
 export const generateWallet = async (userData) => {
   try {
-    const newWallet = walletUtils.createWallet(CHAIN)
+    await loadChain()
+    const newWallet = walletUtils.createWallet(global.chain)
     global.wallet = newWallet
 
     const vault = await getVault(newWallet)
@@ -32,7 +49,7 @@ export const generateWallet = async (userData) => {
   }
 }
 export const walletByMnemonic = async (mnemonic) => {
-  const wallet = walletUtils.getWallet(CHAIN, mnemonic)
+  const wallet = walletUtils.getWallet(global.chain, mnemonic)
   await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
 }
 export const clearWallet = async () => {
@@ -41,7 +58,9 @@ export const clearWallet = async () => {
   global.verida = null
   global.vault = null
   global.wallet = null
+  global.chain = null
   await SecureStore.deleteItemAsync(WALLET_KEY)
+  await SecureStore.deleteItemAsync(CHAIN_KEY)
 }
 export const getWallet = async () => {
   if (global.wallet) {
@@ -93,7 +112,7 @@ export const getVeridaApp = async (wallet) => {
         ceramicUrl: CERAMIC_URL,
       })
 
-      const account = new AutoAccount(CHAIN, privateKey)
+      const account = new AutoAccount(global.chain, privateKey)
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
       wallet.did = await account.did()
@@ -118,6 +137,7 @@ export const getVault = async (wallet) => {
   // eslint-disable-next-line no-async-promise-executor
   global.vault = new Promise(async (resolve, reject) => {
     try {
+      await loadChain()
       const verida = await getVeridaApp(wallet)
       const vault = new Vault(global.client, verida, dataMap)
       await vault.init()

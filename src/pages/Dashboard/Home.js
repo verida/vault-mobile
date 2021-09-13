@@ -64,10 +64,6 @@ const Home = (props) => {
     fetchInboxCount()
   }, [setNewMessagesCount, isFocused])
 
-  if (loading) {
-    return <LoadingView />
-  }
-
   return (
     <Container>
       <NavigationHeader
@@ -90,36 +86,42 @@ const Home = (props) => {
         }}
       />
       <Content contentContainerStyle={style.content}>
-        <TouchableOpacity
-          onPress={() => props.navigation.navigate('PublicProfile')}>
-          <Image source={avatarSource} style={style.userImg} />
-        </TouchableOpacity>
-        <Text
-          style={style.title}
-          onPress={() => props.navigation.navigate('PublicProfile')}>
-          {info.name}
-        </Text>
-        <Text
-          style={style.text}
-          onPress={() => Clipboard.setString(info.address)}>
-          {info.address}
-        </Text>
-        <View style={style.qr}>
-          <QRCode
-            logo={LogoImg}
-            logoSize={60}
-            size={207}
-            codeStyle='dot'
-            innerEyeStyle='circle'
-            padding={0.5}
-            content={info.address}
-          />
-        </View>
-        <Text style={style.notes}>
-          This is your QR-Code. Present it to others so they can scan it and
-          connect to you
-        </Text>
-        <Text style={style.network}>Testnet</Text>
+        {loading ? (
+          <LoadingView />
+        ) : (
+          <>
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate('PublicProfile')}>
+              <Image source={avatarSource} style={style.userImg} />
+            </TouchableOpacity>
+            <Text
+              style={style.title}
+              onPress={() => props.navigation.navigate('PublicProfile')}>
+              {info.name}
+            </Text>
+            <Text
+              style={style.text}
+              onPress={() => Clipboard.setString(info.address)}>
+              {info.address}
+            </Text>
+            <View style={style.qr}>
+              <QRCode
+                logo={LogoImg}
+                logoSize={60}
+                size={207}
+                codeStyle='dot'
+                innerEyeStyle='circle'
+                padding={0.5}
+                content={info.address}
+              />
+            </View>
+            <Text style={style.notes}>
+              This is your QR-Code. Present it to others so they can scan it and
+              connect to you
+            </Text>
+            <Text style={style.network}>Testnet</Text>
+          </>
+        )}
       </Content>
     </Container>
   )
@@ -140,6 +142,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 const marginTop = 0
 const style = StyleSheet.create({
   content: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 20,

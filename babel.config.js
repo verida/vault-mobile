@@ -20,6 +20,7 @@ module.exports = function (api) {
             reduxStore: ['./src/reduxStore'],
             styles: ['./src/styles'],
             hooks: ['./src/hooks'],
+            utils: ['./src/utils'],
           },
         },
       ],

@@ -96,7 +96,6 @@ export default (props) => {
       </Content>
       <CustomFooter>
         <Button
-          style={{ marginTop: 24 }}
           color='primary'
           onPress={usePrivateKey ? toggleConfirmModal : onContinue}
           disabled={!verified}>

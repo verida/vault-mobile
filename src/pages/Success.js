@@ -4,12 +4,14 @@ import { StyleSheet, View } from 'react-native'
 import Success from '../assets/success.svg'
 
 import Text from 'components/Text'
-import Details from '../components/Details'
 import Button from '../components/Button'
 import Layout from '../components/Layouts/Layout'
 import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
+import { Container, Content } from 'native-base'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import Details from 'components/Details/Details'
 
 const SuccessPage = () => {
   const { initialize } = useAuth()
@@ -19,33 +21,39 @@ const SuccessPage = () => {
   }
 
   return (
-    <Layout style={style.layout}>
-      <View style={style.header}>
-        <Success />
-        <Text style={style.title}>Success!</Text>
-      </View>
-      <Text style={style.description}>
-        A new wallet has been created and installed on your device.
-      </Text>
-      <Details />
-      <Button style={style.mt} color='primary' onPress={onDone}>
-        Done
-      </Button>
-    </Layout>
+    <Container>
+      <Content style={style.content}>
+        <Layout>
+          <View style={style.header}>
+            <Success />
+            <Text style={style.title}>Success!</Text>
+          </View>
+          <Text style={style.description}>
+            A new wallet has been created and installed on your device.
+          </Text>
+          <Details />
+        </Layout>
+      </Content>
+      <CustomFooter>
+        <Button color='primary' onPress={onDone}>
+          Done
+        </Button>
+      </CustomFooter>
+    </Container>
   )
 }
 
 export default SuccessPage
 
 const style = StyleSheet.create({
+  content: {
+    flex: 1,
+    paddingVertical: 20,
+  },
   loadingContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  layout: {
-    justifyContent: 'center',
-    minHeight: '100%',
   },
   header: {
     alignItems: 'center',
@@ -62,8 +70,5 @@ const style = StyleSheet.create({
     fontSize: 14,
     color: BLACK_COLOR,
     opacity: 0.6,
-  },
-  mt: {
-    marginTop: 56,
   },
 })
