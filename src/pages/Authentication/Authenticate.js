@@ -9,6 +9,7 @@ import CheckPin from './CheckPin'
 import { setAuthStatus as setAuthStatusAction } from '../../reduxStore/general/actions'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from 'hooks/useAuth'
+import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 
 const Authenticate = (props) => {
   const { setAuthStatus, authenticated: localAuthenticated, children } = props
@@ -16,6 +17,13 @@ const Authenticate = (props) => {
   const { authenticated } = useAuth()
 
   useEffect(() => {
+    async function setShouldAuthByPIN() {
+      const hasPIN = await hasUserSetPinCode()
+      if(!hasPIN) {
+        setAuthStatus(true)
+      }
+    }
+
     const init = async () => {
       if (localAuthenticated || !authenticated) return
       const enrolledLevel = await LocalAuthentication.getEnrolledLevelAsync()
@@ -25,15 +33,17 @@ const Authenticate = (props) => {
         if (success) {
           setAuthStatus(true)
         } else {
-          setPinAuth(true)
+          setShouldAuthByPIN()
         }
       } else {
-        setPinAuth(true)
+        setShouldAuthByPIN()
       }
     }
 
     init()
   }, [authenticated, localAuthenticated, setAuthStatus])
+
+  return children
 
   if (!authenticated || localAuthenticated) return children
   if (pinAuth) return <CheckPin finishProcess={() => setAuthStatus(true)} />

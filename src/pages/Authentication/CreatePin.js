@@ -1,42 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 import LottieView from 'lottie-react-native'
+import PINCode from '@haskkor/react-native-pincode'
 
 function CreatePin(props) {
   const { navigation } = props
-  const [loading, setLoading] = useState(true)
-
-  useEffect(() => {
-    const init = async () => {
-      const status = await hasUserSetPinCode()
-      if (status) {
-        navigation.navigate('Success')
-        return
-      }
-      setLoading(false)
-    }
-
-    init()
-  }, [navigation])
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading</Text>
-        <LottieView
-          source={require('assets/animations/loading.json')}
-          autoPlay
-          loop
-          style={styles.loadingView}
-        />
-      </View>
-    )
-  }
 
   function onFinish() {
-    props.navigation.navigate('Success')
+    navigation.navigate('Success')
   }
 
   return (

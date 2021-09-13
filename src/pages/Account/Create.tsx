@@ -46,7 +46,7 @@ function Create(
       // @ts-ignore
       props.setPublicProfileData({ name, country: country?.value })
       setProcessing(false)
-      navigation.navigate('ScanQrCode')
+      navigation.navigate('CreatePin')
     } catch (error) {
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')

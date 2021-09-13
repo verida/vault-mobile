@@ -11,13 +11,11 @@ import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
 import { Container, Content } from 'native-base'
 import CustomFooter from 'components/Layouts/CustomFooter'
-import Details from 'components/Details/Details'
+import Details from '../components/Details'
 
-const SuccessPage = () => {
-  const { initialize } = useAuth()
-
+const SuccessPage = (props) => {
   const onDone = () => {
-    initialize()
+    props.navigation.navigate('ScanQrCode')
   }
 
   return (
