@@ -12,6 +12,9 @@ import RootNavigator from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
+import { configureNotifications } from 'helpers/notifications'
+
+configureNotifications()
 
 function App() {
   const [loading, setLoading] = useState(true)

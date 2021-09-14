@@ -12,6 +12,7 @@
     "@haskkor/react-native-pincode": "^1.22.5",
     "@react-native-community/async-storage": "~1.12.0",
     "@react-native-community/clipboard": "^1.2.3",
+    "@react-native-community/push-notification-ios": "^1.10.1",
     "@react-navigation/bottom-tabs": "^6.0.2",
     "@react-navigation/native": "^6.0.1",
     "@react-navigation/native-stack": "^6.0.2",
@@ -72,6 +73,7 @@
     "react-native-level-fs": "^3.0.1",
     "react-native-os": "^1.2.6",
     "react-native-pager-view": "^5.4.0",
+    "react-native-push-notification": "^8.1.0",
     "react-native-randombytes": "^3.5.3",
     "react-native-reanimated": "~2.2.0",
     "react-native-safe-area-context": "3.2.0",
@@ -102,6 +104,7 @@
     "@react-native-community/eslint-config": "^3.0.0",
     "@types/react": "~16.9.35",
     "@types/react-native": "~0.63.2",
+    "@types/react-native-push-notification": "^7.3.2",
     "@types/react-redux": "^7.1.18",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
@@ -117,9 +120,6 @@
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "~16.13.1",
     "typescript": "~4.0.0"
-  },
-  "engines": {
-    "node": "^15.0.0"
   },
   "jest": {
     "preset": "react-native",
