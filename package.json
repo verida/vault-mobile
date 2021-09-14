@@ -16,6 +16,7 @@
     "@react-navigation/native": "^6.0.1",
     "@react-navigation/native-stack": "^6.0.2",
     "@reduxjs/toolkit": "^1.4.0",
+    "@sentry/react-native": "^3.1.0",
     "@tradle/react-native-http": "^2.0.1",
     "@verida/datastore": "https://github.com/verida/datastore#react-native",
     "@verida/encryption-utils": "^0.2.1",
@@ -117,9 +118,6 @@
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "~16.13.1",
     "typescript": "~4.0.0"
-  },
-  "engines": {
-    "node": "^15.0.0"
   },
   "jest": {
     "preset": "react-native",
