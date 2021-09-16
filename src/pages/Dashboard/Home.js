@@ -93,11 +93,9 @@ const Home = (props) => {
           onPress={() => props.navigation.navigate('PublicProfile')}>
           {info.name}
         </Text>
-        <Text
-          style={style.text}
-          onPress={() => Clipboard.setString(info.address)}>
-          {info.address}
-        </Text>
+        <TouchableOpacity onPress={() => Clipboard.setString(info.address)}>
+          <Text style={style.text}>{info.address}</Text>
+        </TouchableOpacity>
         <View style={style.qr}>
           <QRCode
             logo={LogoImg}
