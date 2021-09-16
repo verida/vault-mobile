@@ -1,56 +1,76 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 import { connect } from 'react-redux'
-import { Container, Content } from 'native-base'
-import Layout from '../components/Layouts/Layout'
+import { Container } from 'native-base'
 //import Search from '../components/Search'; <Search />
-import CardList from '../components/CardList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { getVault } from '../api'
 import { buildItem } from '../helpers/inbox'
 import { setInboxItems } from 'store/general/actions'
+import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
+import Card from 'components/CardList/Card'
+import { StyleSheet } from 'react-native'
 
 const Inbox = () => {
-  const [inbox, setInbox] = useState([])
-
-  // Initialise component
-  useEffect(() => {
-    const init = async () => {
+  const listRef = useRef(null)
+  const loadInbox = useCallback(async (skip) => {
+    try {
       const vault = await getVault()
-      vault.veridaApp.inbox.on('inboxChange', function () {
-        loadInbox()
-      })
-      vault.veridaApp.inbox.on('newMessage', function () {
-        loadInbox()
-      })
-    }
-
-    const loadInbox = async () => {
-      const vault = await getVault()
-      const inboxItems = await vault.inbox.fetchLatest()
+      const inboxItems = await vault.inbox.fetchLatest(
+        {},
+        {
+          limit: ITEM_PER_PAGE,
+          skip,
+        }
+      )
       const results = []
       for (let i = 0; i < inboxItems.length; i++) {
         let item = await buildItem(inboxItems[i])
         results.push(item)
       }
 
-      setInbox(results)
+      return results
+    } catch (error) {
+      console.log(error)
+    }
+  }, [])
+
+  // Initialise component
+  useEffect(() => {
+    const init = async () => {
+      const vault = await getVault()
+      vault.veridaApp.inbox.on('inboxChange', function () {
+        listRef.current?.refresh()
+      })
+      vault.veridaApp.inbox.on('newMessage', function () {
+        listRef.current?.refresh()
+      })
     }
 
     init()
-    loadInbox()
+  }, [loadInbox])
+
+  const renderItem = useCallback(({ item }) => {
+    return <Card options={item} />
   }, [])
 
   return (
     <Container>
       <NavigationHeader title='Inbox' />
-      <Content>
-        <Layout>
-          <CardList list={inbox} />
-        </Layout>
-      </Content>
+      <CustomFlatList
+        ref={listRef}
+        renderItem={renderItem}
+        loadData={loadInbox}
+        contentContainerStyle={styles.list}
+      />
     </Container>
   )
 }
+
+const styles = StyleSheet.create({
+  list: {
+    paddingHorizontal: 20,
+  },
+})
 
 const mapDispatchToProps = (dispatch) => {
   return {
