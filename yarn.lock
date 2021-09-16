@@ -3821,9 +3821,9 @@
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-"@verida/datastore@https://github.com/verida/datastore#react-native":
+"@verida/datastore@https://github.com/verida/datastore#react-native-new":
   version "0.7.0"
-  resolved "https://github.com/verida/datastore#b00fcc7a40606370b3474fd5865403fca7fc8754"
+  resolved "https://github.com/verida/datastore#40fac14b16abeb10f8f635e61d0ff54b83130c17"
   dependencies:
     "@craftzdog/pouchdb-core-react-native" "^7.0.0"
     "@tradle/react-native-http" "^2.0.0"
@@ -3840,7 +3840,7 @@
     buffer "^4.9.1"
     console-browserify "^1.1.0"
     constants-browserify "^1.0.0"
-    crypto-pouch "git+https://github.com/tahpot/crypto-pouch.git"
+    crypto-pouch "git+https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf"
     did-document "github:arablocks/did-document"
     did-jwt "^4.4.0"
     did-jwt-vc "^0.1.6"
@@ -5694,7 +5694,7 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-"crypto-pouch@git+https://github.com/tahpot/crypto-pouch.git":
+"crypto-pouch@git+https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf":
   version "3.1.3"
   resolved "git+https://github.com/tahpot/crypto-pouch.git#910feb51dd006d9a05639d984501eeda77e213bf"
   dependencies:

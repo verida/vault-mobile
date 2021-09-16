@@ -18,7 +18,7 @@
     "@react-navigation/native-stack": "^6.0.2",
     "@reduxjs/toolkit": "^1.4.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@verida/datastore": "https://github.com/verida/datastore#react-native",
+    "@verida/datastore": "https://github.com/verida/datastore#react-native-new",
     "@verida/encryption-utils": "^0.2.1",
     "@verida/vault-common": "https://github.com/verida/vault-common",
     "@verida/wallet-utils": "^1.3.2",
