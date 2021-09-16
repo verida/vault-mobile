@@ -19,6 +19,8 @@ import {
   WHITE_COLOR,
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../store/general/actions'
+import PushNotification from 'react-native-push-notification'
+import { get } from 'lodash'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
 
@@ -34,6 +36,7 @@ const Home = (props) => {
     const fetchInboxCount = async () => {
       const vault = await getVault()
       const messages = await vault.inbox.fetchLatest({ read: false })
+      console.log(messages)
       setNewMessagesCount(messages.length)
     }
 
@@ -48,7 +51,11 @@ const Home = (props) => {
         fetchInboxCount()
       })
 
-      vault.veridaApp.inbox.on('newMessage', function () {
+      vault.veridaApp.inbox.on('newMessage', function (message) {
+        PushNotification.localNotification({
+          title: get(message, 'sendBy.app') || 'New Message',
+          message: message.message,
+        })
         fetchInboxCount()
       })
 

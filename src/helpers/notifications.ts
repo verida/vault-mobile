@@ -1,4 +1,5 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
+import { Platform } from 'react-native'
 import PushNotification from 'react-native-push-notification'
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
@@ -50,6 +51,6 @@ export function configureNotifications() {
      * - if you are not using remote notification or do not have Firebase installed, use this:
      *     requestPermissions: Platform.OS === 'ios'
      */
-    requestPermissions: true,
+    requestPermissions: Platform.OS === 'ios',
   })
 }
