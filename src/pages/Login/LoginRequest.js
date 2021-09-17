@@ -46,6 +46,7 @@ export default (props) => {
       const sessionId = payload.data.session
       const websocket = new WebSocket(socketUri)
       setWebsocket(websocket)
+
       websocket.onopen = () => {
         websocket.send(
           JSON.stringify({
@@ -75,7 +76,6 @@ export default (props) => {
         switch (message.type) {
           case 'auth-session':
             const request = message.message
-            console.log('message:', message)
             setInfo({
               request,
               payload,
@@ -115,19 +115,20 @@ export default (props) => {
 
       const vault = await getVeridaApp()
       const account = await vault.getAccount()
-      const keyring = await account.keyring(info.request.appName)
+      const keyring = await account.keyring(info.request.context)
       const signature = keyring.getSeed()
       const did = await account.did()
-      const appName = info.request.appName
+      const contextName = info.request.context
 
-      const context = await global.client.openContext(appName, true)
+      const context = await global.client.openContext(contextName, true)
+      const contextConfig = await context.getContextConfig()
 
       const response = {
         signature,
         did,
-        appName,
+        contextConfig,
+        context: contextName,
       }
-      console.log('appName:', appName)
 
       const keyBytes = Buffer.from(info.key.slice(2), 'hex')
 
@@ -181,7 +182,7 @@ export default (props) => {
         {status !== 'loading' ? (
           <View style={style.content}>
             <AppLogo url={info.request.logoUrl} style={style.img} />
-            <Text style={style.appName}>{info.request.appName}</Text>
+            <Text style={style.appName}>{info.request.context}</Text>
             <View style={style.verified}>
               {/* TODO: render verified status */}
               {/*{!errorMessage ? (*/}
