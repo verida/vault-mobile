@@ -36,7 +36,6 @@ const Home = (props) => {
     const fetchInboxCount = async () => {
       const vault = await getVault()
       const messages = await vault.inbox.fetchLatest({ read: false })
-      console.log(messages)
       setNewMessagesCount(messages.length)
     }
 
