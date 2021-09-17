@@ -19,6 +19,9 @@ yarn link && yarn install && yarn run build && cd ..
 cd storage-link
 yarn link && yarn install && yarn run build && cd ..
 
+cd account
+yarn link && yarn install && yarn run build && cd ..
+
 cd 3id-utils-node
 yarn link && yarn install && yarn run build && cd ..
 
