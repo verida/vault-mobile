@@ -95,24 +95,32 @@ export const getVeridaApp = async (wallet) => {
   // eslint-disable-next-line no-async-promise-executor
   global.verida = new Promise(async (resolve, reject) => {
     try {
+      await loadChain()
       if (!wallet) {
         wallet = await SecureStore.getItemAsync(WALLET_KEY)
         wallet = JSON.parse(wallet)
       }
       const { privateKey } = wallet
       const client = new Client({
-        defaultDatabaseServer: {
-          type: 'VeridaDatabase',
-          endpointUri: 'https://db.testnet.verida.io:5002/', // @todo: Change these to testnet
-        },
-        defaultMessageServer: {
-          type: 'VeridaMessage',
-          endpointUri: 'https://db.testnet.verida.io:5002/', // @todo: Change these to testnet
-        },
-        ceramicUrl: CERAMIC_URL,
+        ceramicUrl: CERAMIC_URL
       })
 
-      const account = new AutoAccount(global.chain, privateKey)
+      const account = new AutoAccount(
+        {
+          defaultDatabaseServer: {
+            type: 'VeridaDatabase',
+            endpointUri: 'https://db.testnet.verida.io:5002/',
+          },
+          defaultMessageServer: {
+            type: 'VeridaMessage',
+            endpointUri: 'https://db.testnet.verida.io:5002/',
+          },
+        },
+        {
+          chain: global.chain,
+          privateKey,
+        }
+      )
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
       wallet.did = await account.did()
@@ -188,7 +196,6 @@ export const loadAvatarSource = async () => {
 
     return DefaultAvatar
   } catch (error) {
-    console.log(error)
     return DefaultAvatar
   }
 }

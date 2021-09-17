@@ -97,11 +97,6 @@ const Home = (props) => {
             <TouchableOpacity onPress={() => Clipboard.setString(info.address)}>
               <Text style={style.text}>{info.address}</Text>
             </TouchableOpacity>
-            <Text
-              style={style.text}
-              onPress={() => Clipboard.setString(info.address)}>
-              {info.address}
-            </Text>
             <View style={style.qr}>
               <QRCode
                 logo={LogoImg}
