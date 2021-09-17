@@ -94,11 +94,9 @@ const Home = (props) => {
               onPress={() => props.navigation.navigate('PublicProfile')}>
               <Image source={avatarSource} style={style.userImg} />
             </TouchableOpacity>
-            <Text
-              style={style.title}
-              onPress={() => props.navigation.navigate('PublicProfile')}>
-              {info.name}
-            </Text>
+            <TouchableOpacity onPress={() => Clipboard.setString(info.address)}>
+              <Text style={style.text}>{info.address}</Text>
+            </TouchableOpacity>
             <Text
               style={style.text}
               onPress={() => Clipboard.setString(info.address)}>
