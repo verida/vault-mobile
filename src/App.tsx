@@ -12,9 +12,8 @@ import RootNavigator from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
-
-const CONTEXT_NAME = 'Verida: Vault'
-const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
+import 'react-native-crypto'
+import PolyfillCrypto from 'react-native-webview-crypto'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -54,7 +53,10 @@ function App() {
       onError={console.warn}
     />
   ) : (
-    AppContent
+    <>
+      <PolyfillCrypto />
+      {AppContent}
+    </>
   )
 }
 

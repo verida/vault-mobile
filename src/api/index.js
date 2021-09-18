@@ -49,6 +49,7 @@ export const generateWallet = async (userData) => {
   }
 }
 export const walletByMnemonic = async (mnemonic) => {
+  await loadChain()
   const wallet = walletUtils.getWallet(global.chain, mnemonic)
   await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
 }
@@ -102,9 +103,8 @@ export const getVeridaApp = async (wallet) => {
       }
       const { privateKey } = wallet
       const client = new Client({
-        ceramicUrl: CERAMIC_URL
+        ceramicUrl: CERAMIC_URL,
       })
-
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {

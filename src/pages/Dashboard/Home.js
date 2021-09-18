@@ -94,7 +94,9 @@ const Home = (props) => {
               onPress={() => props.navigation.navigate('PublicProfile')}>
               <Image source={avatarSource} style={style.userImg} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Clipboard.setString(info.address)}>
+            <TouchableOpacity
+              onPress={() => Clipboard.setString(info.address)}
+              style={style.didTouchable}>
               <Text style={style.text}>{info.address}</Text>
             </TouchableOpacity>
             <View style={style.qr}>
@@ -155,14 +157,15 @@ const style = StyleSheet.create({
     marginTop,
   },
   text: {
-    height: 50,
     fontSize: 14,
-    marginTop: 4,
-    marginBottom: 16,
-    paddingHorizontal: 43,
     textAlign: 'center',
     color: BLACK_COLOR_OPACITY(0.6),
     fontFamily: NUNITO_SANS_BOLD,
+  },
+  didTouchable: {
+    height: 50,
+    marginVertical: 16,
+    paddingHorizontal: 43,
   },
   qr: {
     width: 240,
