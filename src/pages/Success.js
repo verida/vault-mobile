@@ -12,10 +12,15 @@ import { useAuth } from 'hooks/useAuth'
 import { Container, Content } from 'native-base'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Details from '../components/Details'
+import * as SecureStore from 'expo-secure-store'
+import { FIRST_TIME_LOGIN_KEY } from 'api'
 
-const SuccessPage = (props) => {
-  const onDone = () => {
-    props.navigation.navigate('ScanQrCode')
+const SuccessPage = () => {
+  const { initialize } = useAuth()
+
+  const onDone = async () => {
+    await SecureStore.setItemAsync(FIRST_TIME_LOGIN_KEY, 'true')
+    await initialize()
   }
 
   return (

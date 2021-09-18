@@ -31,11 +31,6 @@ function AuthNavigator() {
       <Stack.Screen name={'CreatePin'} component={CreatePin} />
       <Stack.Screen name={'Success'} component={Success} />
       <Stack.Screen name={'SelectNetwork'} component={SelectNetwork} />
-      <Stack.Screen
-        name={'ScanQrCode'}
-        component={ScanQrCode}
-        options={{ presentation: 'fullScreenModal' }}
-      />
     </Stack.Navigator>
   )
 }
