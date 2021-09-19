@@ -10,6 +10,7 @@ import { Container, Content } from 'native-base'
 import EnvelopeSvg from '../../assets/icons/envelope.svg'
 import SettingsSvg from '../../assets/icons/settings.svg'
 import Clipboard from '@react-native-community/clipboard'
+import QRCodeIcon from 'assets/icons/qr-code.svg'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
@@ -23,12 +24,14 @@ import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxSto
 import { getVault, getWallet, loadAvatarSource } from '../../api'
 import { useIsFocused } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
+import { FIRST_TIME_LOGIN_KEY } from 'api'
+import * as SecureStore from 'expo-secure-store'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
 const Home = (props) => {
-  const { setNewMessagesCount } = props
+  const { setNewMessagesCount, navigation } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
@@ -60,9 +63,28 @@ const Home = (props) => {
       setLoading(false)
     }
 
+    async function checkFirstTimeLogin() {
+      const isFirstTimeLogin = await SecureStore.getItemAsync(
+        FIRST_TIME_LOGIN_KEY
+      )
+      if (isFirstTimeLogin) {
+        await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
+        navigation.navigate('ScanQrCode', {
+          firstTime: true,
+        })
+      }
+    }
+
+    checkFirstTimeLogin()
     init()
     fetchInboxCount()
-  }, [setNewMessagesCount, isFocused])
+  }, [setNewMessagesCount, isFocused, navigation])
+
+  function onScanQRPress() {
+    navigation.navigate('ScanQrCode', {
+      firstTime: false,
+    })
+  }
 
   return (
     <Container>
@@ -94,7 +116,9 @@ const Home = (props) => {
               onPress={() => props.navigation.navigate('PublicProfile')}>
               <Image source={avatarSource} style={style.userImg} />
             </TouchableOpacity>
-            <TouchableOpacity onPress={() => Clipboard.setString(info.address)}>
+            <TouchableOpacity
+              onPress={() => Clipboard.setString(info.address)}
+              style={style.didTouchable}>
               <Text style={style.text}>{info.address}</Text>
             </TouchableOpacity>
             <View style={style.qr}>
@@ -112,7 +136,12 @@ const Home = (props) => {
               This is your QR-Code. Present it to others so they can scan it and
               connect to you
             </Text>
-            <Text style={style.network}>Testnet</Text>
+            <TouchableOpacity
+              style={style.scanQRButton}
+              onPress={onScanQRPress}>
+              <QRCodeIcon />
+              <Text style={style.scanQRButtonText}>Scan QR</Text>
+            </TouchableOpacity>
           </>
         )}
       </Content>
@@ -155,14 +184,15 @@ const style = StyleSheet.create({
     marginTop,
   },
   text: {
-    height: 50,
     fontSize: 14,
-    marginTop: 4,
-    marginBottom: 16,
-    paddingHorizontal: 43,
     textAlign: 'center',
     color: BLACK_COLOR_OPACITY(0.6),
     fontFamily: NUNITO_SANS_BOLD,
+  },
+  didTouchable: {
+    height: 50,
+    marginVertical: 16,
+    paddingHorizontal: 43,
   },
   qr: {
     width: 240,
@@ -208,5 +238,19 @@ const style = StyleSheet.create({
     paddingBottom: 5,
     marginTop: 10,
     borderRadius: 10,
+  },
+  scanQRButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 13,
+    paddingHorizontal: 32,
+    borderWidth: 1,
+    borderColor: '#E0E3EA',
+    borderRadius: 4,
+  },
+  scanQRButtonText: {
+    marginLeft: 10,
+    color: '#041133',
+    fontSize: 16,
   },
 })

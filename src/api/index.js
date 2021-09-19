@@ -13,10 +13,11 @@ const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 const DEFAULT_CHAIN = 'ethr'
 const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
 const CHAIN_KEY = 'chain'
+export const FIRST_TIME_LOGIN_KEY = 'first-time-login'
 
 export const storeChain = async (chain) => {
   global.chain = chain
-  await SecureStore.setItemAsync(CHAIN_KEY, JSON.stringify(chain))
+  await SecureStore.setItemAsync(CHAIN_KEY, chain)
 }
 
 export const loadChain = async () => {
@@ -25,7 +26,7 @@ export const loadChain = async () => {
   }
 
   const chain = await SecureStore.getItemAsync(CHAIN_KEY)
-  global.chain = chain || DEFAULT_CHAIN
+  global.chain = chain ? chain.replaceAll('"', '') : DEFAULT_CHAIN
   return global.chain
 }
 
@@ -49,6 +50,7 @@ export const generateWallet = async (userData) => {
   }
 }
 export const walletByMnemonic = async (mnemonic) => {
+  await loadChain()
   const wallet = walletUtils.getWallet(global.chain, mnemonic)
   await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
 }
@@ -102,9 +104,8 @@ export const getVeridaApp = async (wallet) => {
       }
       const { privateKey } = wallet
       const client = new Client({
-        ceramicUrl: CERAMIC_URL
+        ceramicUrl: CERAMIC_URL,
       })
-
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
@@ -150,9 +151,6 @@ export const getVault = async (wallet) => {
       const vault = new Vault(global.client, verida, dataMap)
       await vault.init()
       global.vault = vault
-
-      const profileData = await vault.profiles.public.getMany()
-
       resolve(vault)
     } catch (error) {
       reject(error)
