@@ -19,9 +19,10 @@ const Authenticate = (props) => {
   useEffect(() => {
     async function setShouldAuthByPIN() {
       const hasPIN = await hasUserSetPinCode()
-      if(!hasPIN) {
+      if (!hasPIN) {
         setAuthStatus(true)
       }
+      setPinAuth(true)
     }
 
     const init = async () => {
@@ -42,8 +43,6 @@ const Authenticate = (props) => {
 
     init()
   }, [authenticated, localAuthenticated, setAuthStatus])
-
-  return children
 
   if (!authenticated || localAuthenticated) return children
   if (pinAuth) return <CheckPin finishProcess={() => setAuthStatus(true)} />

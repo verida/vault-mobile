@@ -11,7 +11,6 @@ import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import Success from 'pages/Success'
 import SelectNetwork from 'pages/SelectNetwork'
-import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 
 const Stack = createNativeStackNavigator<AuthStackParams>()
 

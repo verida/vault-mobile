@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { MainStackParams } from 'navigation/types'
 import DashboardNavigator from 'navigation/DashboardNavigator'
@@ -34,10 +34,7 @@ function MainNavigator() {
       <Stack.Screen name={'DataItem'} component={Item} />
       <Stack.Screen name={'Settings'} component={Settings} />
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
-      <Stack.Screen
-        name={'ScanQrCode'}
-        component={ScanQrCode}
-      />
+      <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
     </Stack.Navigator>
   )
 }

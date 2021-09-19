@@ -1,20 +1,21 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import parse from 'url-parse'
+import { MainStackParams } from 'navigation/types'
 
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
-export function useDeeplink(navigation: NativeStackNavigationProp<unknown, unknown>) {
+export function useDeeplink(
+  navigation: NativeStackNavigationProp<MainStackParams, keyof MainStackParams>
+) {
   return function (url: string) {
     try {
       const parsedUrl = parse(url, true)
       const { pathname, query } = parsedUrl
-      let screenName = ''
+      let screenName: keyof MainStackParams
       switch (pathname) {
         //TODO: Handle more deeplink thre
         default:
           screenName = 'LoginRequest'
       }
-      navigation.navigate(screenName, query)
+      navigation.navigate(screenName, query as never)
     } catch (error) {
       console.log(error)
     }

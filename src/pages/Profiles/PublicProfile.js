@@ -86,7 +86,7 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = () => {
   return {}
 }
 
