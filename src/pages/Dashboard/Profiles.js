@@ -6,7 +6,6 @@ import PropertyList from '../../components/PropertyList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import EarthSvg from '../../assets/icons/earth.svg'
-import LockSvg from '../../assets/icons/lock.svg'
 
 import LayoutStyle from '../../styles/layouts'
 

@@ -9,7 +9,7 @@ import Label from './Label'
 import InputStyles from '../styles/inputs'
 import { COUNTRIES } from 'helpers/country-list'
 
-import { setPublicProfileData } from 'store/general/actions'
+import { setPublicProfileData } from 'reduxStore/general/actions'
 import { generateWallet } from '../api'
 import { useNavigation } from '@react-navigation/native'
 import { Dispatch } from 'redux'

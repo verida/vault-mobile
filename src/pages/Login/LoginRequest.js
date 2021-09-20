@@ -46,6 +46,7 @@ export default (props) => {
       const sessionId = payload.data.session
       const websocket = new WebSocket(socketUri)
       setWebsocket(websocket)
+
       websocket.onopen = () => {
         websocket.send(
           JSON.stringify({
@@ -91,6 +92,7 @@ export default (props) => {
       }
 
       websocket.onerror = (err) => {
+        console.log('ws error!')
         console.log(err)
       }
     }
@@ -108,59 +110,68 @@ export default (props) => {
    * @todo: Move this into vault-common
    */
   const approve = async () => {
-    setStatus('approving')
+    try {
+      setStatus('approving')
 
-    const veridaApp = await getVeridaApp()
-    const signature = await veridaApp.user.requestSignature(
-      info.request.appName
-    )
-    const did = veridaApp.user.did
-    const appName = info.request.appName
+      const vault = await getVeridaApp()
+      const account = await vault.getAccount()
+      const keyring = await account.keyring(info.request.context)
+      const signature = keyring.getSeed()
+      const did = await account.did()
+      const contextName = info.request.context
 
-    const response = {
-      signature,
-      did,
-      appName,
+      const context = await global.client.openContext(contextName, true)
+      const contextConfig = await context.getContextConfig()
+
+      const response = {
+        signature,
+        did,
+        contextConfig,
+        context: contextName,
+      }
+
+      const keyBytes = Buffer.from(info.key.slice(2), 'hex')
+
+      const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
+
+      // Build encrypted response
+
+      // Send encrypted response to WSS, which will forward
+      // onto the web browser
+      ws.send(
+        JSON.stringify({
+          type: 'responseJwt',
+          sessionId: info.payload.data.session,
+          data: encryptedResponse,
+        })
+      )
+
+      setStatus('sentResponse')
+
+      // @todo: validate domain name and public key to ensure they match
+      // If they don't, show warning "Website could not be verified and is untrusted."
+
+      // @todo: show message (pending)
+
+      // save into login database
+      const loginRequest = {
+        context: info.request.appName,
+        loginDomain: info.request.loginDomain,
+        insertedAt: info.payload.insertedAt,
+        sessionId: info.request.session,
+        authUri: info.request.authUri,
+        expiry: info.payload.exp,
+        approved: true,
+      }
+
+      const loginRequestDatastore = await context.openDatastore(
+        'https://schemas.verida.io/auth/loginRequest/schema.json'
+      )
+      await loginRequestDatastore.save(loginRequest)
+    } catch (error) {
+      console.log(error)
+      setStatus('loaded')
     }
-
-    const keyBytes = Buffer.from(info.key.slice(2), 'hex')
-
-    const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
-
-    // Build encrypted response
-
-    // Send encrypted response to WSS, which will forward
-    // onto the web browser
-    ws.send(
-      JSON.stringify({
-        type: 'responseJwt',
-        sessionId: info.payload.data.session,
-        data: encryptedResponse,
-      })
-    )
-
-    setStatus('sentResponse')
-
-    // @todo: validate domain name and public key to ensure they match
-    // If they don't, show warning "Website could not be verified and is untrusted."
-
-    // @todo: show message (pending)
-
-    // save into login database
-    const loginRequest = {
-      context: info.request.appName,
-      loginDomain: info.request.loginDomain,
-      insertedAt: info.payload.insertedAt,
-      sessionId: info.request.session,
-      authUri: info.request.authUri,
-      expiry: info.payload.exp,
-      approved: true,
-    }
-
-    const loginRequestDatastore = await veridaApp.openDatastore(
-      'https://schemas.verida.io/auth/loginRequest/schema.json'
-    )
-    await loginRequestDatastore.save(loginRequest)
   }
 
   return (
@@ -171,7 +182,7 @@ export default (props) => {
         {status !== 'loading' ? (
           <View style={style.content}>
             <AppLogo url={info.request.logoUrl} style={style.img} />
-            <Text style={style.appName}>{info.request.appName}</Text>
+            <Text style={style.appName}>{info.request.context}</Text>
             <View style={style.verified}>
               {/* TODO: render verified status */}
               {/*{!errorMessage ? (*/}
@@ -240,14 +251,14 @@ export default (props) => {
             style={[style.btn, style.mr]}
             color='grey'
             onPress={deny}
-            disabled={status === 'loading'}>
+            disabled={status === 'approving'}>
             Ignore
           </Button>
           {!errorMessage ? (
             <Button
               style={style.btn}
-              onPress={() => approve()}
-              disabled={status === 'loading'}>
+              onPress={approve}
+              disabled={status === 'approving'}>
               Login
             </Button>
           ) : null}

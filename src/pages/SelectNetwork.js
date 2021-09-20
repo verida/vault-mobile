@@ -8,12 +8,15 @@ import Button from '../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NETWORKS } from '../helpers/networks'
 import CustomFooter from 'components/Layouts/CustomFooter'
+import { storeChain } from 'api'
 
 export default (props) => {
   const [selected, setSelected] = useState(0)
 
-  const onContinue = () =>
+  const onContinue = async () => {
+    await storeChain(NETWORKS[selected].id)
     props.navigation.navigate('SeedPhraseEntered', { usePrivateKey: true })
+  }
 
   return (
     <Container>
@@ -21,12 +24,12 @@ export default (props) => {
       <Content>
         <Layout title='Select Network'>
           <View style={{ marginTop: 12 }}>
-            {NETWORKS.map((network) => (
+            {NETWORKS.map((network, index) => (
               <TouchableOpacity
                 key={network.id}
-                onPress={() => setSelected(network.id)}>
+                onPress={() => setSelected(index)}>
                 <NetworkItem
-                  selected={network.id === selected}
+                  selected={index === selected}
                   onSelect={setSelected}
                   network={network}
                 />
@@ -36,7 +39,7 @@ export default (props) => {
         </Layout>
       </Content>
       <CustomFooter>
-        <Button style={{ marginTop: 24 }} color='primary' onPress={onContinue}>
+        <Button color='primary' onPress={onContinue}>
           Continue
         </Button>
       </CustomFooter>

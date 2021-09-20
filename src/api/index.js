@@ -1,38 +1,68 @@
-import Verida from '@verida/datastore'
 import Vault from '@verida/vault-common'
 import walletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
+
+import { Client } from '@verida/client-rn'
+import { AutoAccount } from '@verida/account-node'
 
 import dataMap from '../config/data-map'
 
 const WALLET_KEY = 'VaultMobileWallet'
 export const MNEMONIC_LENGTH = 12
-const VERIDA_APP_NAME = 'Verida: Vault'
-const CHAIN = 'near'
+const VERIDA_CONTEXT_NAME = 'Verida: Vault'
+const DEFAULT_CHAIN = 'ethr'
+const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
+const CHAIN_KEY = 'chain'
+export const FIRST_TIME_LOGIN_KEY = 'first-time-login'
 
-global.Verida = Verida
+export const storeChain = async (chain) => {
+  global.chain = chain
+  await SecureStore.setItemAsync(CHAIN_KEY, chain)
+}
+
+export const loadChain = async () => {
+  if (global.chain) {
+    return global.chain
+  }
+
+  const chain = await SecureStore.getItemAsync(CHAIN_KEY)
+  global.chain = chain ? chain.replaceAll('"', '') : DEFAULT_CHAIN
+  return global.chain
+}
 
 export const generateWallet = async (userData) => {
-  const newWallet = walletUtils.createWallet('near')
-  global.wallet = newWallet
+  try {
+    await loadChain()
+    const newWallet = walletUtils.createWallet(global.chain)
+    global.wallet = newWallet
 
-  const vault = await getVault(newWallet)
-  await Promise.all(
-    Object.entries(userData).map((entry) => vault.profiles.public.set(...entry))
-  )
+    const vault = await getVault(newWallet)
+    await Promise.all(
+      Object.entries(userData).map((entry) => {
+        return vault.profiles.public.set(...entry)
+      })
+    )
 
-  await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
-  return newWallet
+    await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
+    return newWallet
+  } catch (error) {
+    console.log(error)
+  }
 }
 export const walletByMnemonic = async (mnemonic) => {
-  const wallet = walletUtils.getWallet(CHAIN, mnemonic)
+  await loadChain()
+  const wallet = walletUtils.getWallet(global.chain, mnemonic)
   await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
 }
 export const clearWallet = async () => {
+  global.client = null
+  global.account = null
   global.verida = null
   global.vault = null
   global.wallet = null
+  global.chain = null
   await SecureStore.deleteItemAsync(WALLET_KEY)
+  await SecureStore.deleteItemAsync(CHAIN_KEY)
 }
 export const getWallet = async () => {
   if (global.wallet) {
@@ -52,6 +82,12 @@ export const isAuthorized = async () => {
   return Boolean(wallet)
 }
 
+/**
+ * Return a Verida Context instance for the `Verida: Vault` context.
+ *
+ * @param {*} wallet
+ * @returns
+ */
 export const getVeridaApp = async (wallet) => {
   if (global.verida) {
     return global.verida
@@ -59,33 +95,44 @@ export const getVeridaApp = async (wallet) => {
 
   // create a promise to return to avoid `getVeridaApp` being called multiple times
   // eslint-disable-next-line no-async-promise-executor
-  global.verida = new Promise(async (resolve) => {
-    if (!wallet) {
-      wallet = await SecureStore.getItemAsync(WALLET_KEY)
-      wallet = JSON.parse(wallet)
+  global.verida = new Promise(async (resolve, reject) => {
+    try {
+      await loadChain()
+      if (!wallet) {
+        wallet = await SecureStore.getItemAsync(WALLET_KEY)
+        wallet = JSON.parse(wallet)
+      }
+      const { privateKey } = wallet
+      const client = new Client({
+        ceramicUrl: CERAMIC_URL,
+      })
+      const account = new AutoAccount(
+        {
+          defaultDatabaseServer: {
+            type: 'VeridaDatabase',
+            endpointUri: 'https://db.testnet.verida.io:5002/',
+          },
+          defaultMessageServer: {
+            type: 'VeridaMessage',
+            endpointUri: 'https://db.testnet.verida.io:5002/',
+          },
+        },
+        {
+          chain: global.chain,
+          privateKey,
+        }
+      )
+      await client.connect(account)
+      const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
+      wallet.did = await account.did()
+
+      global.account = account
+      global.client = client
+
+      resolve(context)
+    } catch (error) {
+      reject(error)
     }
-    const { address, privateKey } = wallet
-
-    Verida.setConfig({
-      appName: VERIDA_APP_NAME,
-      /*servers: {
-                testnet: {
-                    schemaPaths: {
-                    'https://schemas.verida.io/': 'http://localhost:5010/',
-                    'https://schemas.testnet.verida.io/': 'http://localhost:5010/'
-                    }
-                }
-            }*/
-    })
-
-    const verida = new Verida({
-      address,
-      chain: CHAIN,
-      privateKey,
-    })
-
-    await verida.connect(true)
-    resolve(verida)
   })
 
   return global.verida
@@ -97,12 +144,17 @@ export const getVault = async (wallet) => {
   }
 
   // eslint-disable-next-line no-async-promise-executor
-  global.vault = new Promise(async (resolve) => {
-    const verida = await getVeridaApp(wallet)
-    const vault = new Vault(verida, dataMap)
-    global.vault = vault
-
-    resolve(vault)
+  global.vault = new Promise(async (resolve, reject) => {
+    try {
+      await loadChain()
+      const verida = await getVeridaApp(wallet)
+      const vault = new Vault(global.client, verida, dataMap)
+      await vault.init()
+      global.vault = vault
+      resolve(vault)
+    } catch (error) {
+      reject(error)
+    }
   })
 
   return global.vault
@@ -115,29 +167,33 @@ export const getVault = async (wallet) => {
 const DefaultAvatar = require('../assets/stubs/avatar.png')
 
 export const loadAvatarSource = async () => {
-  const vault = await getVault()
-  let avatar = await vault.profiles.public.get('avatar')
-  if (!avatar) {
-    return DefaultAvatar
-  }
-
-  avatar = JSON.parse(avatar)
-
-  if (avatar) {
-    let image
-    switch (avatar.encoding) {
-      case 'base64':
-        image = {
-          uri: `data:image/${avatar.format};base64,` + avatar.base64,
-        }
-
-        break
-      default:
-        return DefaultAvatar
+  try {
+    const vault = await getVault()
+    let avatar = await vault.profiles.public.get('avatar')
+    if (!avatar) {
+      return DefaultAvatar
     }
 
-    return image
-  }
+    avatar = JSON.parse(avatar)
 
-  return DefaultAvatar
+    if (avatar) {
+      let image
+      switch (avatar.encoding) {
+        case 'base64':
+          image = {
+            uri: `data:image/${avatar.format};base64,` + avatar.base64,
+          }
+
+          break
+        default:
+          return DefaultAvatar
+      }
+
+      return image
+    }
+
+    return DefaultAvatar
+  } catch (error) {
+    return DefaultAvatar
+  }
 }
