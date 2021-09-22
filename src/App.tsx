@@ -14,6 +14,7 @@ import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
 import 'react-native-crypto'
 import PolyfillCrypto from 'react-native-webview-crypto'
+import codePush, { CodePushOptions } from 'react-native-code-push'
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -60,4 +61,9 @@ function App() {
   )
 }
 
-export default App
+const codePushOptions: CodePushOptions = {
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  installMode: codePush.InstallMode.IMMEDIATE,
+}
+
+export default codePush(codePushOptions)(App)

@@ -65,6 +65,8 @@
     "react-native": "0.63.4",
     "react-native-camera": "^4.0.2",
     "react-native-check-box": "^2.1.7",
+    "react-native-code-push": "^7.0.2",
+    "react-native-config": "^1.4.4",
     "react-native-crypto": "^2.2.0",
     "react-native-custom-qr-codes-expo": "^2.2.0",
     "react-native-datepicker": "^1.7.2",

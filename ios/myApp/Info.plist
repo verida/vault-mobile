@@ -42,7 +42,7 @@
 	<key>NSCameraUsageDescription</key>
 	<string>Scan QR Code</string>
 	<key>NSFaceIDUsageDescription</key>
-	<string>This app uses bio authentication to secure user's private info</string>
+	<string>This app uses bio authentication to secure user&apos;s private info</string>
 	<key>NSLocationWhenInUseUsageDescription</key>
 	<string>Allow user to track their location</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -87,5 +87,7 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
+	<key>CodePushDeploymentKey</key>
+	<string>$(CODE_PUSH_DEPLOYMENT_KEY_IOS)</string>
 </dict>
 </plist>
