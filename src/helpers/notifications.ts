@@ -1,9 +1,26 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { Platform } from 'react-native'
-import PushNotification from 'react-native-push-notification'
+import PushNotification, { Importance } from 'react-native-push-notification'
+
+export const CHANNEL_ID = 'verida-vault'
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 export function configureNotifications() {
+  if (Platform.OS === 'android') {
+    PushNotification.createChannel(
+      {
+        channelId: CHANNEL_ID, // (required)
+        channelName: 'verida-vault', // (required)
+        channelDescription: 'Verida Vault notifications channel', // (optional) default: undefined.
+        playSound: true, // (optional) default: true
+        soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+        importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
+        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
+      },
+      (created) => console.log(`createChannel returned '${created}'`) // (optional) callback returns whether the channel was created, false means it already existed.
+    )
+  }
+
   PushNotification.configure({
     // (optional) Called when Token is generated (iOS and Android)
     onRegister: function (token) {

@@ -23,6 +23,7 @@ import PushNotification from 'react-native-push-notification'
 import { get } from 'lodash'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
+import { CHANNEL_ID } from 'helpers/notifications'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -54,6 +55,7 @@ const Home = (props) => {
         PushNotification.localNotification({
           title: get(message, 'sendBy.app') || 'New Message',
           message: message.message,
+          channelId: CHANNEL_ID,
         })
         fetchInboxCount()
       })
