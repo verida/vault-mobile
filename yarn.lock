@@ -3489,6 +3489,11 @@
   resolved "https://registry.yarnpkg.com/@react-native-community/eslint-plugin/-/eslint-plugin-1.1.0.tgz#e42b1bef12d2415411519fd528e64b593b1363dc"
   integrity sha512-W/J0fNYVO01tioHjvYWQ9m6RgndVtbElzYozBq1ZPrHO/iCzlqoySHl4gO/fpCl9QEFjvJfjPgtPMTMlsoq5DQ==
 
+"@react-native-community/netinfo@^6.0.2":
+  version "6.0.2"
+  resolved "https://registry.yarnpkg.com/@react-native-community/netinfo/-/netinfo-6.0.2.tgz#3b61757c46d0f387815d42b651bbee1eb998a385"
+  integrity sha512-HbVIv6p+VAzSqALkfKKNbtSy0TneL7EILIqxiOjt/5weVdTuZ88NRyPNQAZBh6W8QYirXJo3f00ryMk9iLs7gQ==
+
 "@react-navigation/bottom-tabs@^6.0.2":
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/@react-navigation/bottom-tabs/-/bottom-tabs-6.0.2.tgz#d0d6e9a9d770050e6313ad7050a9951056a555c4"
@@ -4290,17 +4295,28 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
+"@verida/account@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@verida/account/-/account-1.0.1.tgz#1ba631867c8109774ef42b26ac0f4b2282ba6915"
+  integrity sha512-z8Kv+mybak+SDEfSXpI4F+XB6ser82XqdXW5K0q4mU6m2lkBHp3pW1fWQtW8TnSUBP/IFX85N8vcNfsAwstA5Q==
+  dependencies:
+    "@verida/keyring" "^1.0.1"
+    "@verida/storage-link" "^1.0.1"
+    did-jwt "^5.7.0"
+    lodash "^4.17.21"
+    tweetnacl-util "^0.15.1"
+
 "@verida/client-rn@file:../../nodejs/client-rn/client-rn":
   version "0.1.0"
   dependencies:
     "@ceramicnetwork/http-client" "^1.2.0"
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
     "@tradle/react-native-http" "^2.0.0"
-    "@verida/account" "^1.0.0"
+    "@verida/account" "^1.0.1"
     "@verida/encryption-utils" "^1.0.0"
-    "@verida/keyring" "^1.0.0"
+    "@verida/keyring" "^1.0.1"
     "@verida/pouchdb-replication-react-native" "^7.0.0-prerelease"
-    "@verida/storage-link" "^1.0.0"
+    "@verida/storage-link" "^1.0.1"
     ajv "^8.6.2"
     assert "^1.1.1"
     axios "^0.21.1"
@@ -4310,7 +4326,7 @@
     buffer "^6.0.3"
     console-browserify "^1.1.0"
     constants-browserify "^1.0.0"
-    crypto-pouch "https://github.com/tahpot/crypto-pouch.git#feature/support-key-import"
+    crypto-pouch "git+https://github.com/tahpot/crypto-pouch.git#feature/support-key-import"
     did-jwt "^5.6.3"
     dns.js "^1.0.1"
     domain-browser "^1.1.1"
@@ -4364,6 +4380,17 @@
     tweetnacl "^1.0.3"
     uuid "^8.3.2"
 
+"@verida/keyring@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@verida/keyring/-/keyring-1.0.1.tgz#38ce08de2400f43a675256ecabbcdd3e58297ae0"
+  integrity sha512-gGyB6BoX2wcUXX+ZRVH2q/3oIRgJsH9B3GwKU4cy7YzaOYh+PXdBDQaQtNear/5BqadB7ubqBGBRivWlzuMf6g==
+  dependencies:
+    "@verida/encryption-utils" "^1.0.0"
+    bs58 "^4.0.1"
+    jssha "^3.2.0"
+    tweetnacl "^1.0.3"
+    uuid "^8.3.2"
+
 "@verida/pouchdb-replication-react-native@^7.0.0-prerelease":
   version "7.0.0-prerelease"
   resolved "https://registry.yarnpkg.com/@verida/pouchdb-replication-react-native/-/pouchdb-replication-react-native-7.0.0-prerelease.tgz#a33292678e1a4dcf5243c3dc0bf350035e16832a"
@@ -4378,6 +4405,17 @@
     "@ceramicstudio/idx" "^0.12.1"
     "@verida/3id-utils-node" "^1.0.0"
     "@verida/keyring" "^1.0.0"
+    jssha "^3.2.0"
+
+"@verida/storage-link@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-1.0.1.tgz#736a6ee9f2af75852254443fd5758f9fa179bb48"
+  integrity sha512-uz5imNqdr5/wc05196Ho8pl9CmJ9p172KxRv65PABJX1qZQYTz4sKQSQNgaHd0Z2RYMZL12k6h/J08Q2a7LJ/w==
+  dependencies:
+    "@ceramicnetwork/http-client" "^1.2.0"
+    "@ceramicstudio/idx" "^0.12.1"
+    "@verida/3id-utils-node" "^1.0.0"
+    "@verida/keyring" "^1.0.1"
     jssha "^3.2.0"
 
 "@verida/vault-common@https://github.com/verida/vault-common#feature/26-refactor-client-ts":
@@ -6181,11 +6219,11 @@ cross-spawn@^7.0.0, cross-spawn@^7.0.2:
     shebang-command "^2.0.0"
     which "^2.0.1"
 
-"crypto-pouch@https://github.com/tahpot/crypto-pouch.git#feature/support-key-import":
+"crypto-pouch@git+https://github.com/tahpot/crypto-pouch.git#feature/support-key-import":
   version "4.0.1"
-  resolved "https://github.com/tahpot/crypto-pouch.git#26b27159a8ea039a2ac9382945fe48ed7bc2ccd9"
+  resolved "git+https://github.com/tahpot/crypto-pouch.git#e1b2cfbc8032ebc1869a13458df1d78a7d3e1449"
   dependencies:
-    garbados-crypt "^3.0.0-beta"
+    garbados-crypt "git+https://github.com/tahpot/crypt.git#feature/pbkdf2"
     transform-pouch "^2.0.0"
 
 crypto-random-string@^1.0.0:
@@ -8031,12 +8069,11 @@ fwd-stream@^1.0.4:
   dependencies:
     readable-stream "~1.0.26-4"
 
-garbados-crypt@^3.0.0-beta:
+"garbados-crypt@git+https://github.com/tahpot/crypt.git#feature/pbkdf2":
   version "3.0.0-beta"
-  resolved "https://registry.yarnpkg.com/garbados-crypt/-/garbados-crypt-3.0.0-beta.tgz#9b70b62c31b9340be5c5a55c19dc3c14300af12c"
-  integrity sha512-Jw9AnRv4WcfuB7djeBc6IFmXz4VPf14srwvPuoIaOYPfuIibDl7prBC2j0+qL/NPZfwrVZer7h2o6TgGYFoOkA==
+  resolved "git+https://github.com/tahpot/crypt.git#80c041d3dd0aead57201eb2c64c07d114f15ff64"
   dependencies:
-    hash-wasm "^4.9.0"
+    pbkdf2 "^3.1.2"
     tweetnacl "^1.0.3"
     tweetnacl-util "^0.15.1"
 
@@ -8330,11 +8367,6 @@ hash-base@^3.0.0:
     inherits "^2.0.4"
     readable-stream "^3.6.0"
     safe-buffer "^5.2.0"
-
-hash-wasm@^4.9.0:
-  version "4.9.0"
-  resolved "https://registry.yarnpkg.com/hash-wasm/-/hash-wasm-4.9.0.tgz#7e9dcc9f7d6bd0cc802f2a58f24edce999744206"
-  integrity sha512-7SW7ejyfnRxuOc7ptQHSf4LDoZaWOivfzqw+5rpcQku0nHfmicPKE51ra9BiRLAmT8+gGLestr1XroUkqdjL6w==
 
 hash.js@1.1.3:
   version "1.1.3"
@@ -12053,6 +12085,17 @@ pbkdf2@^3.0.3, pbkdf2@^3.0.9:
   version "3.1.1"
   resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.1.1.tgz#cb8724b0fada984596856d1a6ebafd3584654b94"
   integrity sha512-4Ejy1OPxi9f2tt1rRV7Go7zmfDQ+ZectEQz3VGUQhgq62HtIRPDyG/JtnwIxs6x3uNMwo2V7q1fMvKjb+Tnpqg==
+  dependencies:
+    create-hash "^1.1.2"
+    create-hmac "^1.1.4"
+    ripemd160 "^2.0.1"
+    safe-buffer "^5.0.1"
+    sha.js "^2.4.8"
+
+pbkdf2@^3.1.2:
+  version "3.1.2"
+  resolved "https://registry.yarnpkg.com/pbkdf2/-/pbkdf2-3.1.2.tgz#dd822aa0887580e52f1a039dc3eda108efae3075"
+  integrity sha512-iuh7L6jA7JEGu2WxDwtQP1ddOpaJNC4KlDEFfdQajSGgGPNi4OyDc2R7QnbY2bR9QjBVGwgvTdNJZoE7RaxUMA==
   dependencies:
     create-hash "^1.1.2"
     create-hmac "^1.1.4"
