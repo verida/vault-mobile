@@ -4,6 +4,8 @@ import * as SecureStore from 'expo-secure-store'
 
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
+import { Utils } from '@verida/3id-utils-node'
+import { Wallet } from 'ethers'
 
 import dataMap from '../config/data-map'
 
@@ -33,20 +35,26 @@ export const loadChain = async () => {
 export const generateWallet = async (userData) => {
   try {
     await loadChain()
-    const newWallet = walletUtils.createWallet(global.chain)
-    global.wallet = newWallet
+    const wallet = Wallet.createRandom()
+    console.log('wallet:', wallet)
+    const mnemonic = wallet.mnemonic
+    console.log('mnemonic:', mnemonic)
+    const utils = new Utils(CERAMIC_URL)
+    const ceramic = await utils.createAccount('3id', mnemonic)
+    wallet.did = ceramic.did.id
+    global.wallet = wallet
 
-    const vault = await getVault(newWallet)
+    const vault = await getVault(wallet)
     await Promise.all(
       Object.entries(userData).map((entry) => {
         return vault.profiles.public.set(...entry)
       })
     )
 
-    await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
-    return newWallet
+    await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
+    return wallet
   } catch (error) {
-    console.log(error)
+    console.log('Generate wallet error:', error)
   }
 }
 export const walletByMnemonic = async (mnemonic) => {
@@ -102,7 +110,7 @@ export const getVeridaApp = async (wallet) => {
         wallet = await SecureStore.getItemAsync(WALLET_KEY)
         wallet = JSON.parse(wallet)
       }
-      const { privateKey } = wallet
+      const { mnemonic, did } = wallet
       const client = new Client({
         ceramicUrl: CERAMIC_URL,
       })
@@ -118,13 +126,14 @@ export const getVeridaApp = async (wallet) => {
           },
         },
         {
-          chain: global.chain,
-          privateKey,
+          chain: '3id',
+          privateKey: mnemonic,
+          options: { did },
         }
       )
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
-      wallet.did = await account.did()
+      console.log('context:', context)
 
       global.account = account
       global.client = client
