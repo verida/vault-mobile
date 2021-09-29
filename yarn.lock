@@ -78,6 +78,27 @@
     store "^2.0.12"
     uint8arrays "^2.1.4"
 
+"@3id/manager@^0.2.6":
+  version "0.2.6"
+  resolved "https://registry.yarnpkg.com/@3id/manager/-/manager-0.2.6.tgz#640b470a6aa3e63c11d63fe743ad32db4fa758ed"
+  integrity sha512-nFLseX2rSL5pyaFHsHX2l8QODhFuglYYWzklabPijgBBmrV7FmcgRtWAKELnxHyUiDfogIHbsF5RBTZKo7yqXA==
+  dependencies:
+    "3id-did-provider" "^1.1.0"
+    "@3id/common" "^0.2.1"
+    "@ceramicnetwork/blockchain-utils-linking" "^1.2.0"
+    "@ceramicnetwork/http-client" "^1.3.0"
+    "@ceramicnetwork/stream-caip10-link" "^1.1.5"
+    "@ceramicstudio/idx" "^0.12.2"
+    "@ethersproject/hdnode" "^5.0.8"
+    "@stablelib/sha256" "^1.0.0"
+    caip "^0.9.2"
+    cross-fetch "^3.0.6"
+    dids "^2.4.0"
+    errors-utils "^0.1.0"
+    rpc-utils "^0.4.0"
+    store "^2.0.12"
+    uint8arrays "^2.1.4"
+
 "@3id/window-auth-provider@^0.2.3":
   version "0.2.3"
   resolved "https://registry.yarnpkg.com/@3id/window-auth-provider/-/window-auth-provider-0.2.3.tgz#6d40b6f2d9c0545399984389b3ee120854ef5e43"
@@ -1859,7 +1880,7 @@
     lru_map "^0.4.1"
     uint8arrays "^2.0.5"
 
-"@ceramicnetwork/blockchain-utils-linking@^1.1.3":
+"@ceramicnetwork/blockchain-utils-linking@^1.1.2", "@ceramicnetwork/blockchain-utils-linking@^1.1.3", "@ceramicnetwork/blockchain-utils-linking@^1.2.0":
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/blockchain-utils-linking/-/blockchain-utils-linking-1.2.0.tgz#542953c323bc85f6087e74fdf95190b2e037639f"
   integrity sha512-hqPH35CzOAxtyrVrZHid8PmAAgsI8gy5sGxT1L00kAHLrGl6aLyihkUw2qMnq9l24moLuzY8JiovrqIIKWuwOQ==
@@ -1898,7 +1919,7 @@
     rxjs "^7.0.0"
     uint8arrays "^2.0.5"
 
-"@ceramicnetwork/http-client@^1.0.0", "@ceramicnetwork/http-client@^1.2.2":
+"@ceramicnetwork/http-client@^1.0.0", "@ceramicnetwork/http-client@^1.2.2", "@ceramicnetwork/http-client@^1.3.0":
   version "1.3.0"
   resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-1.3.0.tgz#55ef0f17cc1ab2c8167abdd30e8fdf35076e7a2c"
   integrity sha512-RwZBpINE+hALhdoWmdmNLlKoj1g7GIru/SBZDZk67yEDwlBgyJWLFPDLgu9RyAtRRti1o2V06LIpsfHp4XFOMA==
@@ -4275,6 +4296,20 @@
     "@ceramicnetwork/http-client" "^1.2.0"
     ethers "^5.4.1"
 
+"@verida/3id-utils-node@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@verida/3id-utils-node/-/3id-utils-node-1.0.1.tgz#5e321e5305fd1000ee150bc56018109cc8333a6c"
+  integrity sha512-S+EbkcWc3WrGbs7zWiSlKbKM46s4/xOtYXrytptX4IVrDko8XxYgRPDEWSGi28xtscIImOyaeIDDr2g9GjMajQ==
+  dependencies:
+    "3id-did-provider" "^1.1.0"
+    "@3id/manager" "^0.2.6"
+    "@ceramicnetwork/blockchain-utils-linking" "^1.1.2"
+    "@ceramicnetwork/http-client" "^1.3.0"
+    bs58 "^4.0.1"
+    ethers "^5.4.1"
+    near-api-js "^0.42.0"
+    near-seed-phrase "^0.2.0"
+
 "@verida/account-node@^1.0.0":
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/@verida/account-node/-/account-node-1.0.0.tgz#fad0a9305e50a2677a3fea0d2caf9bbb27c90cb6"
@@ -4295,13 +4330,13 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/account@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@verida/account/-/account-1.0.1.tgz#1ba631867c8109774ef42b26ac0f4b2282ba6915"
-  integrity sha512-z8Kv+mybak+SDEfSXpI4F+XB6ser82XqdXW5K0q4mU6m2lkBHp3pW1fWQtW8TnSUBP/IFX85N8vcNfsAwstA5Q==
+"@verida/account@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@verida/account/-/account-1.0.2.tgz#9b7a406c690d45a47f1fbc822b21b7e73877cfef"
+  integrity sha512-Q1zSsdCPtzKtxNXznWau8sReHJMVApgUh5mgU3dMjPQhyw4geTFtipi4lM6/7k5spk6ekffWNVPRx830IsBBcA==
   dependencies:
     "@verida/keyring" "^1.0.1"
-    "@verida/storage-link" "^1.0.1"
+    "@verida/storage-link" "^1.0.2"
     did-jwt "^5.7.0"
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
@@ -4309,14 +4344,14 @@
 "@verida/client-rn@file:../../nodejs/client-rn/client-rn":
   version "0.1.0"
   dependencies:
-    "@ceramicnetwork/http-client" "^1.2.0"
+    "@ceramicnetwork/http-client" "^1.3.0"
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
     "@tradle/react-native-http" "^2.0.0"
-    "@verida/account" "^1.0.1"
+    "@verida/account" "^1.0.2"
     "@verida/encryption-utils" "^1.0.0"
     "@verida/keyring" "^1.0.1"
     "@verida/pouchdb-replication-react-native" "^7.0.0-prerelease"
-    "@verida/storage-link" "^1.0.1"
+    "@verida/storage-link" "^1.0.2"
     ajv "^8.6.2"
     assert "^1.1.1"
     axios "^0.21.1"
@@ -4407,14 +4442,14 @@
     "@verida/keyring" "^1.0.0"
     jssha "^3.2.0"
 
-"@verida/storage-link@^1.0.1":
-  version "1.0.1"
-  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-1.0.1.tgz#736a6ee9f2af75852254443fd5758f9fa179bb48"
-  integrity sha512-uz5imNqdr5/wc05196Ho8pl9CmJ9p172KxRv65PABJX1qZQYTz4sKQSQNgaHd0Z2RYMZL12k6h/J08Q2a7LJ/w==
+"@verida/storage-link@^1.0.2":
+  version "1.0.2"
+  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-1.0.2.tgz#68284adad98d38f6babbe9c80a321d6ed5eae50e"
+  integrity sha512-5Z56zBJm/sGnlHhsKOEhGAKspE3hh5lFBG7H5GUJ0APAS85yDyRbUxmD9ooIJFhQJfpKtsuHXWoo/5RoQD7Erw==
   dependencies:
-    "@ceramicnetwork/http-client" "^1.2.0"
-    "@ceramicstudio/idx" "^0.12.1"
-    "@verida/3id-utils-node" "^1.0.0"
+    "@ceramicnetwork/http-client" "^1.3.0"
+    "@ceramicstudio/idx" "^0.12.2"
+    "@verida/3id-utils-node" "^1.0.1"
     "@verida/keyring" "^1.0.1"
     jssha "^3.2.0"
 
@@ -5252,6 +5287,11 @@ blueimp-md5@^2.10.0, blueimp-md5@^2.5.0:
   resolved "https://registry.yarnpkg.com/blueimp-md5/-/blueimp-md5-2.18.0.tgz#1152be1335f0c6b3911ed9e36db54f3e6ac52935"
   integrity sha512-vE52okJvzsVWhcgUHOv+69OG3Mdg151xyn41aVQN/5W5S+S43qZhxECtYLAEHMSFWX6Mv5IZrzj3T5+JqXfj5Q==
 
+bn.js@5.2.0, bn.js@^5.0.0:
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.0.tgz#358860674396c6997771a9d051fcc1b57d4ae002"
+  integrity sha512-D7iWRBvnZE8ecXiLj/9wbxH7Tk79fAh8IHaTNq1RWRixsS02W+5qS+iE9yq6RYl0asXx5tw0bLhmT5pIfbSquw==
+
 bn.js@^4.0.0, bn.js@^4.1.0:
   version "4.11.9"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.11.9.tgz#26d556829458f9d1e81fc48952493d0ba3507828"
@@ -5261,11 +5301,6 @@ bn.js@^4.11.1, bn.js@^4.11.9, bn.js@^4.4.0:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.12.0.tgz#775b3f278efbb9718eec7361f483fb36fbbfea88"
   integrity sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==
-
-bn.js@^5.0.0:
-  version "5.2.0"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.0.tgz#358860674396c6997771a9d051fcc1b57d4ae002"
-  integrity sha512-D7iWRBvnZE8ecXiLj/9wbxH7Tk79fAh8IHaTNq1RWRixsS02W+5qS+iE9yq6RYl0asXx5tw0bLhmT5pIfbSquw==
 
 bn.js@^5.1.1:
   version "5.1.3"
@@ -5294,6 +5329,16 @@ borsh@^0.3.1:
   version "0.3.1"
   resolved "https://registry.yarnpkg.com/borsh/-/borsh-0.3.1.tgz#c31c3a149610e37913deada80e89073fb15cf55b"
   integrity sha512-gJoSTnhwLxN/i2+15Y7uprU8h3CKI+Co4YKZKvrGYUy0FwHWM20x5Sx7eU8Xv4HQqV+7rb4r3P7K1cBIQe3q8A==
+  dependencies:
+    "@types/bn.js" "^4.11.5"
+    bn.js "^5.0.0"
+    bs58 "^4.0.0"
+    text-encoding-utf-8 "^1.0.2"
+
+borsh@^0.4.0:
+  version "0.4.0"
+  resolved "https://registry.yarnpkg.com/borsh/-/borsh-0.4.0.tgz#9dd6defe741627f1315eac2a73df61421f6ddb9f"
+  integrity sha512-aX6qtLya3K0AkT66CmYWCCDr77qsE9arV05OmdFpmat9qu8Pg9J5tBUPDztAW5fNh/d/MyVG/OYziP52Ndzx1g==
   dependencies:
     "@types/bn.js" "^4.11.5"
     bn.js "^5.0.0"
@@ -11279,6 +11324,23 @@ near-api-js@^0.38.0:
     text-encoding-utf-8 "^1.0.2"
     tweetnacl "^1.0.1"
 
+near-api-js@^0.42.0:
+  version "0.42.0"
+  resolved "https://registry.yarnpkg.com/near-api-js/-/near-api-js-0.42.0.tgz#1f773791e930a349be65b866752bbae67df4388d"
+  integrity sha512-YtDR0sXHL2CclXZdscqUIjoc4Vp/o09CSY1lQ6mygSNbWp5ghLAR1kNBQnALGGQhYC6NLBCzJQJZMb2IQr2WzA==
+  dependencies:
+    bn.js "5.2.0"
+    borsh "^0.4.0"
+    bs58 "^4.0.0"
+    depd "^2.0.0"
+    error-polyfill "^0.1.2"
+    http-errors "^1.7.2"
+    js-sha256 "^0.9.0"
+    mustache "^4.0.0"
+    node-fetch "^2.6.1"
+    text-encoding-utf-8 "^1.0.2"
+    tweetnacl "^1.0.1"
+
 near-hd-key@^1.2.1:
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/near-hd-key/-/near-hd-key-1.2.1.tgz#f508ff15436cf8a439b543220f3cc72188a46756"
@@ -11292,6 +11354,16 @@ near-seed-phrase@^0.1.1:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/near-seed-phrase/-/near-seed-phrase-0.1.1.tgz#69efb34956ae6f1f1c54f73a9bf05f0d2c4395ad"
   integrity sha512-SuyazZJNbgZeracALTqwPj8sekduR6LG/V4ifDHGgSjQrLzbldXdv7gK1RUB3xphJ/EX2rsiBhbJMqqWA5DPwg==
+  dependencies:
+    bip39-light "^1.0.7"
+    bs58 "^4.0.1"
+    near-hd-key "^1.2.1"
+    tweetnacl "^1.0.2"
+
+near-seed-phrase@^0.2.0:
+  version "0.2.0"
+  resolved "https://registry.yarnpkg.com/near-seed-phrase/-/near-seed-phrase-0.2.0.tgz#fb7cf89682112b1160ab68abb50dc821f49be18a"
+  integrity sha512-NpmrnejpY1AdlRpDZ0schJQJtfBaoUheRfiYtQpcq9TkwPgqKZCRULV5L3hHmLc0ep7KRtikbPQ9R2ztN/3cyQ==
   dependencies:
     bip39-light "^1.0.7"
     bs58 "^4.0.1"
