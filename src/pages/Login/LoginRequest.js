@@ -251,14 +251,14 @@ export default (props) => {
             style={[style.btn, style.mr]}
             color='grey'
             onPress={deny}
-            disabled={status === 'approving'}>
+            disabled={status !== 'loaded'}>
             Ignore
           </Button>
           {!errorMessage ? (
             <Button
               style={style.btn}
               onPress={approve}
-              disabled={status === 'approving'}>
+              disabled={status !== 'loaded'}>
               Login
             </Button>
           ) : null}
