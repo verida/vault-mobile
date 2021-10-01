@@ -45,9 +45,11 @@ export const generateWallet = async (userData) => {
     global.wallet = wallet
 
     const vault = await getVault(wallet)
+    console.log('vault.profiles:', vault.profiles)
     await Promise.all(
-      Object.entries(userData).map((entry) => {
-        return vault.profiles.public.set(...entry)
+      Object.entries(userData).map(async (entry) => {
+        console.log('Saving entry:', entry)
+        return await vault.profiles.public.set(...entry)
       })
     )
 
@@ -124,16 +126,20 @@ export const getVeridaApp = async (wallet) => {
             type: 'VeridaMessage',
             endpointUri: 'https://db.testnet.verida.io:5002/',
           },
+          options: { did },
         },
         {
           chain: '3id',
           privateKey: mnemonic,
-          options: { did },
         }
       )
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
       console.log('context:', context)
+      const db = await context.openDatabase('test')
+      await db.save({ hello: 'World' })
+      const items = await db.getMany()
+      console.log('dbItems:', items)
 
       global.account = account
       global.client = client

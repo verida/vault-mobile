@@ -45,22 +45,26 @@ const Home = (props) => {
     }
 
     const init = async () => {
-      const wallet = await getWallet()
-      const vault = await getVault()
-      const name = await vault.profiles.public.get('name')
-      const source = await loadAvatarSource()
-      setAvatarSource(source)
-
-      setInfo({
-        address: wallet.did,
-        name,
-      })
-
-      const messaging = await vault.inbox.getMessaging()
-      messaging.onMessage(function () {
-        fetchInboxCount()
-      })
-      setLoading(false)
+      try {
+        const wallet = await getWallet()
+        const vault = await getVault()
+        const name = await vault.profiles.public.get('name')
+        // const source = await loadAvatarSource()
+        // setAvatarSource(source)
+        //
+        // setInfo({
+        //   address: wallet.did,
+        //   name,
+        // })
+        //
+        // const messaging = await vault.inbox.getMessaging()
+        // messaging.onMessage(function () {
+        //   fetchInboxCount()
+        // })
+        setLoading(false)
+      } catch (e) {
+        console.log('home error:', e)
+      }
     }
 
     async function checkFirstTimeLogin() {
