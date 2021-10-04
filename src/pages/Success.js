@@ -14,11 +14,15 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import Details from '../components/Details'
 import * as SecureStore from 'expo-secure-store'
 import { FIRST_TIME_LOGIN_KEY } from 'api'
+import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
+import { connect } from 'react-redux'
 
-const SuccessPage = () => {
+const SuccessPage = (props) => {
+  const { setAuthStatus } = props
   const { initialize } = useAuth()
 
   const onDone = async () => {
+    setAuthStatus(true)
     await SecureStore.setItemAsync(FIRST_TIME_LOGIN_KEY, 'true')
     await initialize()
   }
@@ -45,8 +49,6 @@ const SuccessPage = () => {
     </Container>
   )
 }
-
-export default SuccessPage
 
 const style = StyleSheet.create({
   content: {
@@ -75,3 +77,13 @@ const style = StyleSheet.create({
     opacity: 0.6,
   },
 })
+
+const mapStateToProps = () => ({})
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SuccessPage)
