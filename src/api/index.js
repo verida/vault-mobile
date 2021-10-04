@@ -33,31 +33,25 @@ export const loadChain = async () => {
 }
 
 export const generateWallet = async (userData) => {
-  try {
-    await loadChain()
-    const wallet = Wallet.createRandom()
-    console.log('wallet:', wallet)
-    const mnemonic = wallet.mnemonic
-    console.log('mnemonic:', mnemonic)
-    const utils = new Utils(CERAMIC_URL)
-    const ceramic = await utils.createAccount('3id', mnemonic)
-    wallet.did = ceramic.did.id
-    global.wallet = wallet
-
-    const vault = await getVault(wallet)
-    console.log('vault.profiles:', vault.profiles)
-    await Promise.all(
-      Object.entries(userData).map(async (entry) => {
-        console.log('Saving entry:', entry)
-        return await vault.profiles.public.set(...entry)
-      })
-    )
-
-    await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
-    return wallet
-  } catch (error) {
-    console.log('Generate wallet error:', error)
+  await loadChain()
+  const ethWallet = Wallet.createRandom()
+  const mnemonic = ethWallet.mnemonic
+  const utils = new Utils(CERAMIC_URL)
+  const ceramic = await utils.createAccount('3id', mnemonic)
+  const wallet = {
+    mnemonic: ethWallet.mnemonic,
+    did: ceramic.did.id,
   }
+  global.wallet = wallet
+  const vault = await getVault(wallet)
+  const entries = Object.entries(userData)
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i]
+    await vault.profiles.public.set(...entry)
+  }
+
+  await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
+  return wallet
 }
 export const walletByMnemonic = async (mnemonic) => {
   await loadChain()
@@ -135,11 +129,6 @@ export const getVeridaApp = async (wallet) => {
       )
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
-      console.log('context:', context)
-      const db = await context.openDatabase('test')
-      await db.save({ hello: 'World' })
-      const items = await db.getMany()
-      console.log('dbItems:', items)
 
       global.account = account
       global.client = client

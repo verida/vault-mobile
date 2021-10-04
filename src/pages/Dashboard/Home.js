@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
@@ -49,21 +49,22 @@ const Home = (props) => {
         const wallet = await getWallet()
         const vault = await getVault()
         const name = await vault.profiles.public.get('name')
-        // const source = await loadAvatarSource()
-        // setAvatarSource(source)
-        //
-        // setInfo({
-        //   address: wallet.did,
-        //   name,
-        // })
-        //
-        // const messaging = await vault.inbox.getMessaging()
-        // messaging.onMessage(function () {
-        //   fetchInboxCount()
-        // })
+        const source = await loadAvatarSource()
+        setAvatarSource(source)
+
+        setInfo({
+          address: wallet.did,
+          name,
+        })
+
+        const messaging = await vault.inbox.getMessaging()
+        messaging.onMessage(function () {
+          fetchInboxCount()
+        })
         setLoading(false)
       } catch (e) {
-        console.log('home error:', e)
+        Alert.alert('Error', 'Cannot get account information')
+        setLoading(false)
       }
     }
 
