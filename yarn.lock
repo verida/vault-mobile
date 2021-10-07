@@ -3199,7 +3199,7 @@
 
 "@verida/vault-common@https://github.com/verida/vault-common.git":
   version "0.2.0"
-  resolved "https://github.com/verida/vault-common.git#b6a4fd3cc42a26bc4921b066edc7a3919741fe6b"
+  resolved "https://github.com/verida/vault-common.git#b9c5f535997e39935a28e7ca57cabca41cf6ae46"
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.20"
