@@ -16,7 +16,7 @@ const Folder = (props) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const { folderName } = route.params.folderName
+        const { folderName } = route.params
         const vault = await getVault()
         const _folder = await vault.data.selectFolder(folderName)
         setFolder(_folder)
@@ -26,7 +26,7 @@ const Folder = (props) => {
     }
 
     init()
-  }, [route.params.folderName])
+  }, [route.params])
 
   return (
     <Container>

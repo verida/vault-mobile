@@ -1,5 +1,13 @@
 apply plugin: "com.android.application"
 
+project.ext.envConfigFiles = [
+    stagingDebug: ".env.staging",
+    stagingRelease: ".env.staging",
+    productionDebug: ".env.production",
+    productionRelease: ".env.production",
+]
+apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 import com.android.build.OutputFile
 
 /**
@@ -83,6 +91,7 @@ project.ext.react = [
 
 apply from: '../../node_modules/react-native-unimodules/gradle.groovy'
 apply from: "../../node_modules/react-native/react.gradle"
+apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
 /**
@@ -167,6 +176,16 @@ android {
         }
     }
 
+    flavorDimensions "environment"
+    productFlavors {
+        staging {
+            dimension "environment"
+        }
+        production {
+            dimension "environment"
+        }
+    }
+
     /*
     Removed as per: https://react-native-community.github.io/upgrade-helper/?from=0.62.2&to=0.63.2
     packagingOptions {
@@ -189,6 +208,10 @@ android {
             }
 
         }
+    }
+
+    dexOptions {
+        javaMaxHeapSize "4g"
     }
 }
 
