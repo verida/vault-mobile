@@ -26,6 +26,7 @@ import { useIsFocused } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
 import { FIRST_TIME_LOGIN_KEY } from 'api'
 import * as SecureStore from 'expo-secure-store'
+import * as Sentry from '@sentry/react-native'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -63,6 +64,7 @@ const Home = (props) => {
         })
         setLoading(false)
       } catch (e) {
+        Sentry.captureException(e)
         Alert.alert('Error', 'Cannot get account information')
         setLoading(false)
       }
