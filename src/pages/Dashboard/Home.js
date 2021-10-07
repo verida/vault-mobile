@@ -46,8 +46,6 @@ const Home = (props) => {
   const [loading, setLoading] = useState(true)
   const handleDeeplink = useDeeplink(navigation) // eslint-disable-line react-hooks/exhaustive-deps
 
-  const isFocused = useIsFocused()
-
   useEffect(() => {
     const getUrl = async () => {
       const initialUrl = await Linking.getInitialURL()
