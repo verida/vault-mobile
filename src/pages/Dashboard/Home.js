@@ -30,7 +30,6 @@ import {
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
-import { useIsFocused } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
 import { FIRST_TIME_LOGIN_KEY } from 'api'
 import * as SecureStore from 'expo-secure-store'
