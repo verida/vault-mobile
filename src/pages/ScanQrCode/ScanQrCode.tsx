@@ -1,28 +1,44 @@
-import React, { useCallback, useState } from 'react'
-import { RNCamera } from 'react-native-camera'
+import React, { useCallback, useEffect, useState } from 'react'
+import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { StyleSheet, View } from 'react-native'
-import { AuthStackParams } from 'navigation/types'
+import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
-import { useAuth } from 'hooks/useAuth'
+import { useDeeplink } from 'hooks/useDeeplink'
+
+let enabled = true
+const WAIT_TIME = 3000
 
 function ScanQrCode(
-  _props: NativeStackScreenProps<AuthStackParams, 'ScanQrCode'>
+  props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
 ) {
+  const { navigation, route } = props
   const [isFlashOn, setIsFlashOn] = useState(false)
-  const { initialize } = useAuth()
+  const handleDeeplink = useDeeplink(navigation)
+
+  useEffect(() => {
+    enabled = true
+  }, [navigation])
 
   const toggleFlash = useCallback(() => {
     setIsFlashOn((prevState) => !prevState)
   }, [])
 
-  const onClose = useCallback(() => {
-    initialize()
-  }, [initialize])
+  const onClose = useCallback(async () => {
+    navigation.goBack()
+  }, [navigation])
 
-  const onBarCodeRead = useCallback(() => {
-    initialize()
-  }, [initialize])
+  const onBarCodeRead = async (event: BarCodeReadEvent) => {
+    if (!enabled) {
+      return
+    }
+    enabled = false
+    setTimeout(() => {
+      enabled = true
+    }, WAIT_TIME)
+    const { data } = event
+    handleDeeplink(data)
+  }
 
   return (
     <View style={styles.container}>
@@ -53,6 +69,7 @@ function ScanQrCode(
         isFlashOn={isFlashOn}
         onToggleFlash={toggleFlash}
         onClose={onClose}
+        firstTime={route.params.firstTime}
       />
     </View>
   )

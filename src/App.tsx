@@ -6,12 +6,14 @@ import { Provider } from 'react-redux'
 import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 
-import store from 'store'
+import store from 'reduxStore'
 import { NavigationContainer } from '@react-navigation/native'
 import RootNavigator from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
+import 'react-native-crypto'
+import PolyfillCrypto from 'react-native-webview-crypto'
 import * as Sentry from '@sentry/react-native'
 
 Sentry.init({
@@ -56,7 +58,10 @@ function App() {
       onError={console.warn}
     />
   ) : (
-    AppContent
+    <>
+      <PolyfillCrypto />
+      {AppContent}
+    </>
   )
 }
 

@@ -7,7 +7,7 @@ import CardList from '../components/CardList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { getVault } from '../api'
 import { buildItem } from '../helpers/inbox'
-import { setInboxItems } from 'store/general/actions'
+import { setInboxItems } from 'reduxStore/general/actions'
 
 const Inbox = () => {
   const [inbox, setInbox] = useState([])

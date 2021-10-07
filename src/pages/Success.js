@@ -1,87 +1,64 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { ActivityIndicator, StyleSheet, View } from 'react-native'
-import * as LocalAuthentication from 'expo-local-authentication'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
 
 import Success from '../assets/success.svg'
 
 import Text from 'components/Text'
-import Details from '../components/Details'
 import Button from '../components/Button'
 import Layout from '../components/Layouts/Layout'
 import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
-
-import {
-  setAuthStatus as setAuthStatusAction,
-  setBioAuthStatus as setBioAuthStatusAction,
-} from '../store/general/actions'
 import { useAuth } from 'hooks/useAuth'
+import { Container, Content } from 'native-base'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import Details from '../components/Details'
+import * as SecureStore from 'expo-secure-store'
+import { FIRST_TIME_LOGIN_KEY } from 'api'
+import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
+import { connect } from 'react-redux'
 
 const SuccessPage = (props) => {
-  const { setBioAuthStatus } = props
-  const [loading, setLoading] = useState(true)
+  const { setAuthStatus } = props
   const { initialize } = useAuth()
 
-  useEffect(() => {
-    const init = async () => {
-      const hasSavedBio = await LocalAuthentication.isEnrolledAsync()
-      setBioAuthStatus(hasSavedBio)
-      setLoading(false)
-    }
-
-    init()
-  }, [setBioAuthStatus])
-
-  const onDone = () => {
-    props.setAuthStatus(true)
-    initialize()
-  }
-
-  if (loading) {
-    return (
-      <View style={style.loadingContent}>
-        <Text>Loading </Text>
-        <ActivityIndicator size='large' />
-      </View>
-    )
+  const onDone = async () => {
+    setAuthStatus(true)
+    await SecureStore.setItemAsync(FIRST_TIME_LOGIN_KEY, 'true')
+    await initialize()
   }
 
   return (
-    <Layout style={style.layout}>
-      <View style={style.header}>
-        <Success />
-        <Text style={style.title}>Success!</Text>
-      </View>
-      <Text style={style.description}>
-        A new wallet has been created and installed on your device.
-      </Text>
-      <Details />
-      <Button style={style.mt} color='primary' onPress={onDone}>
-        Done
-      </Button>
-    </Layout>
+    <Container>
+      <Content style={style.content}>
+        <Layout>
+          <View style={style.header}>
+            <Success />
+            <Text style={style.title}>Success!</Text>
+          </View>
+          <Text style={style.description}>
+            A new wallet has been created and installed on your device.
+          </Text>
+          <Details />
+        </Layout>
+      </Content>
+      <CustomFooter>
+        <Button color='primary' onPress={onDone}>
+          Done
+        </Button>
+      </CustomFooter>
+    </Container>
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setBioAuthStatus: (status) => dispatch(setBioAuthStatusAction(status)),
-    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
-  }
-}
-
-export default connect(null, mapDispatchToProps)(SuccessPage)
-
 const style = StyleSheet.create({
+  content: {
+    flex: 1,
+    paddingVertical: 20,
+  },
   loadingContent: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
-  },
-  layout: {
-    justifyContent: 'center',
-    minHeight: '100%',
   },
   header: {
     alignItems: 'center',
@@ -99,7 +76,14 @@ const style = StyleSheet.create({
     color: BLACK_COLOR,
     opacity: 0.6,
   },
-  mt: {
-    marginTop: 56,
-  },
 })
+
+const mapStateToProps = () => ({})
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SuccessPage)
