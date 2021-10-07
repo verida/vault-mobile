@@ -1,11 +1,9 @@
 import React, { useCallback, useEffect, useRef } from 'react'
-import { connect } from 'react-redux'
 import { Container } from 'native-base'
 //import Search from '../components/Search'; <Search />
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { getVault } from '../api'
 import { buildItem } from '../helpers/inbox'
-import { setInboxItems } from 'store/general/actions'
 import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
 import Card from 'components/CardList/Card'
 import { StyleSheet } from 'react-native'
@@ -38,12 +36,12 @@ const Inbox = () => {
   useEffect(() => {
     const init = async () => {
       const vault = await getVault()
-        const messaging = await vault.inbox.getMessaging()
-        const _inbox = await messaging.getInbox()
-        const datastore = await _inbox.getInboxDatastore()
-        datastore.changes(function () {
-          listRef.current?.refresh()
-        })
+      const messaging = await vault.inbox.getMessaging()
+      const _inbox = await messaging.getInbox()
+      const datastore = await _inbox.getInboxDatastore()
+      datastore.changes(function () {
+        listRef.current?.refresh()
+      })
     }
 
     init()
@@ -71,15 +69,4 @@ const styles = StyleSheet.create({
     paddingHorizontal: 20,
   },
 })
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setInboxItems: (data) => dispatch(setInboxItems(data)),
-  }
-}
-
-const mapStateToProps = (state) => {
-  return { setInboxItems: state.setInboxItems }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Inbox)
+export default Inbox
