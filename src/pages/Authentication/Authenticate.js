@@ -6,40 +6,43 @@ import * as LocalAuthentication from 'expo-local-authentication'
 import Logo from '../../assets/logo.svg'
 import CheckPin from './CheckPin'
 
-import {
-  setAuthStatus as setAuthStatusAction,
-  setBioAuthStatus as setBioAuthStatusAction,
-} from '../../store/general/actions'
+import { setAuthStatus as setAuthStatusAction } from '../../reduxStore/general/actions'
 import { LinearGradient } from 'expo-linear-gradient'
 import { useAuth } from 'hooks/useAuth'
+import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 
 const Authenticate = (props) => {
-  const {
-    setBioAuthStatus,
-    setAuthStatus,
-    authenticated: localAuthenticated,
-    children,
-  } = props
+  const { setAuthStatus, authenticated: localAuthenticated, children } = props
   const [pinAuth, setPinAuth] = useState(false)
   const { authenticated } = useAuth()
 
   useEffect(() => {
+    async function setShouldAuthByPIN() {
+      const hasPIN = await hasUserSetPinCode()
+      if (!hasPIN) {
+        setAuthStatus(true)
+      }
+      setPinAuth(true)
+    }
+
     const init = async () => {
       if (localAuthenticated || !authenticated) return
-      const hasSavedBio = await LocalAuthentication.isEnrolledAsync()
-      setBioAuthStatus(hasSavedBio)
+      const enrolledLevel = await LocalAuthentication.getEnrolledLevelAsync()
 
-      if (!hasSavedBio) return setPinAuth(true)
-
-      const { success } = await LocalAuthentication.authenticateAsync()
-
-      if (!success) return setPinAuth(true)
-
-      return setAuthStatus(true)
+      if (enrolledLevel === LocalAuthentication.SecurityLevel.BIOMETRIC) {
+        const { success } = await LocalAuthentication.authenticateAsync()
+        if (success) {
+          setAuthStatus(true)
+        } else {
+          setShouldAuthByPIN()
+        }
+      } else {
+        setShouldAuthByPIN()
+      }
     }
 
     init()
-  }, [authenticated, setAuthStatus, setBioAuthStatus, localAuthenticated])
+  }, [authenticated, localAuthenticated, setAuthStatus])
 
   if (!authenticated || localAuthenticated) return children
   if (pinAuth) return <CheckPin finishProcess={() => setAuthStatus(true)} />
@@ -63,7 +66,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setBioAuthStatus: (status) => dispatch(setBioAuthStatusAction(status)),
     setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
   }
 }

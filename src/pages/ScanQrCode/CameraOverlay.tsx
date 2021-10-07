@@ -18,13 +18,14 @@ export type CameraOverlayProps = Omit<ViewProps, 'children'> & {
   isFlashOn: boolean
   onToggleFlash: () => void
   onClose: () => void
+  firstTime: boolean
 }
 
 const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = Dimensions.get('screen')
 const AIM_VIEW_SIZE = SCREEN_WIDTH * 0.8
 
 function CameraOverlay(props: CameraOverlayProps) {
-  const { isFlashOn, onToggleFlash, onClose } = props
+  const { isFlashOn, onToggleFlash, onClose, firstTime = false } = props
   return (
     <View style={styles.container}>
       <Svg height='100%' width='100%'>
@@ -67,12 +68,14 @@ function CameraOverlay(props: CameraOverlayProps) {
               color={WHITE_COLOR}
             />
           </TouchableOpacity>
-          <View style={styles.footer}>
-            <Text style={styles.footerNote}>No QR code?</Text>
-            <TouchableOpacity style={styles.skipButton} onPress={onClose}>
-              <Text style={styles.skipButtonText}>Skip this step</Text>
-            </TouchableOpacity>
-          </View>
+          {firstTime && (
+            <View style={styles.footer}>
+              <Text style={styles.footerNote}>No QR code?</Text>
+              <TouchableOpacity style={styles.skipButton} onPress={onClose}>
+                <Text style={styles.skipButtonText}>Skip this step</Text>
+              </TouchableOpacity>
+            </View>
+          )}
         </View>
       </SafeAreaView>
     </View>

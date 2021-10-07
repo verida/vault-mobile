@@ -38,12 +38,12 @@ const Inbox = () => {
   useEffect(() => {
     const init = async () => {
       const vault = await getVault()
-      vault.veridaApp.inbox.on('inboxChange', function () {
-        listRef.current?.refresh()
-      })
-      vault.veridaApp.inbox.on('newMessage', function () {
-        listRef.current?.refresh()
-      })
+        const messaging = await vault.inbox.getMessaging()
+        const _inbox = await messaging.getInbox()
+        const datastore = await _inbox.getInboxDatastore()
+        datastore.changes(function () {
+          listRef.current?.refresh()
+        })
     }
 
     init()
