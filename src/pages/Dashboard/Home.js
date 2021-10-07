@@ -1,11 +1,19 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Linking,
+} from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
 import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Container, Content } from 'native-base'
+import { useDeeplink } from 'hooks/useDeeplink'
 
 import EnvelopeSvg from '../../assets/icons/envelope.svg'
 import SettingsSvg from '../../assets/icons/settings.svg'
@@ -36,9 +44,21 @@ const Home = (props) => {
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
+  const handleDeeplink = useDeeplink(navigation) // eslint-disable-line react-hooks/exhaustive-deps
+
   const isFocused = useIsFocused()
 
   useEffect(() => {
+    const getUrl = async () => {
+      const initialUrl = await Linking.getInitialURL()
+
+      if (initialUrl === null) {
+        return
+      }
+
+      handleDeeplink(initialUrl)
+    }
+
     const fetchInboxCount = async () => {
       const vault = await getVault()
       const messages = await vault.inbox.fetchLatest({ read: false })
@@ -57,6 +77,8 @@ const Home = (props) => {
           address: wallet.did,
           name,
         })
+
+        getUrl()
 
         const messaging = await vault.inbox.getMessaging()
         messaging.onMessage(function () {
@@ -85,7 +107,7 @@ const Home = (props) => {
     checkFirstTimeLogin()
     init()
     fetchInboxCount()
-  }, [setNewMessagesCount, isFocused, navigation])
+  }, [setNewMessagesCount, navigation]) // eslint-disable-line react-hooks/exhaustive-deps
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
