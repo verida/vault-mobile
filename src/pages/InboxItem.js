@@ -50,6 +50,7 @@ const InboxItem = (props) => {
               item,
               type: inboxType,
               inboxItem,
+              navigation: props.navigation,
             })
           : null}
       </Content>

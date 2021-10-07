@@ -4,6 +4,9 @@ import * as SecureStore from 'expo-secure-store'
 
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
+import { Utils } from '@verida/3id-utils-node'
+import { Wallet } from 'ethers'
+import * as Sentry from '@sentry/react-native'
 
 import dataMap from '../config/data-map'
 
@@ -31,23 +34,25 @@ export const loadChain = async () => {
 }
 
 export const generateWallet = async (userData) => {
-  try {
-    await loadChain()
-    const newWallet = walletUtils.createWallet(global.chain)
-    global.wallet = newWallet
-
-    const vault = await getVault(newWallet)
-    await Promise.all(
-      Object.entries(userData).map((entry) => {
-        return vault.profiles.public.set(...entry)
-      })
-    )
-
-    await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(newWallet))
-    return newWallet
-  } catch (error) {
-    console.log(error)
+  await loadChain()
+  const ethWallet = Wallet.createRandom()
+  const mnemonic = ethWallet.mnemonic
+  const utils = new Utils(CERAMIC_URL)
+  const ceramic = await utils.createAccount('3id', mnemonic)
+  const wallet = {
+    mnemonic: ethWallet.mnemonic,
+    did: ceramic.did.id,
   }
+  global.wallet = wallet
+  const vault = await getVault(wallet)
+  const entries = Object.entries(userData)
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i]
+    await vault.profiles.public.set(...entry)
+  }
+
+  await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(wallet))
+  return wallet
 }
 export const walletByMnemonic = async (mnemonic) => {
   await loadChain()
@@ -102,7 +107,7 @@ export const getVeridaApp = async (wallet) => {
         wallet = await SecureStore.getItemAsync(WALLET_KEY)
         wallet = JSON.parse(wallet)
       }
-      const { privateKey } = wallet
+      const { mnemonic, did } = wallet
       const client = new Client({
         ceramicUrl: CERAMIC_URL,
       })
@@ -116,21 +121,22 @@ export const getVeridaApp = async (wallet) => {
             type: 'VeridaMessage',
             endpointUri: 'https://db.testnet.verida.io:5002/',
           },
+          options: { did },
         },
         {
-          chain: global.chain,
-          privateKey,
+          chain: '3id',
+          privateKey: mnemonic,
         }
       )
       await client.connect(account)
       const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
-      wallet.did = await account.did()
 
       global.account = account
       global.client = client
 
       resolve(context)
     } catch (error) {
+      Sentry.captureException(error)
       reject(error)
     }
   })
@@ -153,6 +159,7 @@ export const getVault = async (wallet) => {
       global.vault = vault
       resolve(vault)
     } catch (error) {
+      Sentry.captureException(error)
       reject(error)
     }
   })
@@ -194,6 +201,7 @@ export const loadAvatarSource = async () => {
 
     return DefaultAvatar
   } catch (error) {
+    Sentry.captureException(error)
     return DefaultAvatar
   }
 }
