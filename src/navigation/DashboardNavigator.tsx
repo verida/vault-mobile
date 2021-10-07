@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { DashboardTabParams } from 'navigation/types'
 import Home from 'pages/Dashboard/Home'
@@ -7,15 +7,10 @@ import Profiles from 'pages/Dashboard/Profiles'
 import { BLACK_COLOR } from 'constants/color'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import * as Sentry from '@sentry/react-native'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
-  useEffect(() => {
-    Sentry.nativeCrash()
-  }, [])
-
   return (
     <Tab.Navigator
       screenOptions={{

@@ -6,6 +6,7 @@ import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import { Utils } from '@verida/3id-utils-node'
 import { Wallet } from 'ethers'
+import * as Sentry from '@sentry/react-native'
 
 import dataMap from '../config/data-map'
 
@@ -135,6 +136,7 @@ export const getVeridaApp = async (wallet) => {
 
       resolve(context)
     } catch (error) {
+      Sentry.captureException(error)
       reject(error)
     }
   })
@@ -157,6 +159,7 @@ export const getVault = async (wallet) => {
       global.vault = vault
       resolve(vault)
     } catch (error) {
+      Sentry.captureException(error)
       reject(error)
     }
   })
@@ -198,6 +201,7 @@ export const loadAvatarSource = async () => {
 
     return DefaultAvatar
   } catch (error) {
+    Sentry.captureException(error)
     return DefaultAvatar
   }
 }

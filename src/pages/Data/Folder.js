@@ -7,6 +7,7 @@ import DataListView from '../../components/Data/ListView'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { getVault } from '../../api'
+import * as Sentry from '@sentry/react-native'
 
 const Folder = (props) => {
   const { route } = props
@@ -14,10 +15,14 @@ const Folder = (props) => {
 
   useEffect(() => {
     const init = async () => {
-      const { folderName } = route.params.folderName
-      const vault = await getVault()
-      const _folder = await vault.data.selectFolder(folderName)
-      setFolder(_folder)
+      try {
+        const { folderName } = route.params.folderName
+        const vault = await getVault()
+        const _folder = await vault.data.selectFolder(folderName)
+        setFolder(_folder)
+      } catch (e) {
+        Sentry.captureException(e)
+      }
     }
 
     init()
