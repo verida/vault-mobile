@@ -40,6 +40,7 @@ const InboxItem = (props) => {
     setInboxType(findTypeById('inbox/type/dataSend'))
     init()
   }, [inboxItemId])
+  console.log('item:', item)
 
   return (
     <Container>
