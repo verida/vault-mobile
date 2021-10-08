@@ -26,7 +26,7 @@ jobs:
           command: yarn lint
       - run:
           name: Check TS
-          command: tsc --noemit
+          command: npx tsc --noemit
 
 workflows:
   orb-free-workflow:
