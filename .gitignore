@@ -262,3 +262,10 @@ buck-out/
 # Expo
 .expo/*
 web-build/
+
+# Env
+.env
+.env.*
+
+# react-native-config codegen
+ios/tmp.xcconfig

@@ -1,11 +1,20 @@
-import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
+import {
+  Alert,
+  AppState,
+  Image,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
 import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Container, Content } from 'native-base'
+import { useDeeplink } from 'hooks/useDeeplink'
 
 import EnvelopeSvg from '../../assets/icons/envelope.svg'
 import SettingsSvg from '../../assets/icons/settings.svg'
@@ -20,12 +29,13 @@ import {
   WHITE_COLOR,
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
+import NetInfo from '@react-native-community/netinfo'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
-import { useIsFocused } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
 import { FIRST_TIME_LOGIN_KEY } from 'api'
 import * as SecureStore from 'expo-secure-store'
+import * as Sentry from '@sentry/react-native'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -35,32 +45,20 @@ const Home = (props) => {
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
-  const isFocused = useIsFocused()
+  const handleDeeplink = useDeeplink(navigation)
+  const isNetworkConnected = useRef(null)
+  const appState = useRef(AppState.currentState)
 
+  // Run only once on first render
   useEffect(() => {
-    const fetchInboxCount = async () => {
-      const vault = await getVault()
-      const messages = await vault.inbox.fetchLatest({ read: false })
-      setNewMessagesCount(messages.length)
-    }
+    const getUrl = async () => {
+      const initialUrl = await Linking.getInitialURL()
 
-    const init = async () => {
-      const wallet = await getWallet()
-      const vault = await getVault()
-      const name = await vault.profiles.public.get('name')
-      const source = await loadAvatarSource()
-      setAvatarSource(source)
+      if (initialUrl === null) {
+        return
+      }
 
-      setInfo({
-        address: wallet.did,
-        name,
-      })
-
-      const messaging = await vault.inbox.getMessaging()
-      messaging.onMessage(function () {
-        fetchInboxCount()
-      })
-      setLoading(false)
+      handleDeeplink(initialUrl)
     }
 
     async function checkFirstTimeLogin() {
@@ -75,10 +73,101 @@ const Home = (props) => {
       }
     }
 
+    getUrl()
     checkFirstTimeLogin()
-    init()
-    fetchInboxCount()
-  }, [setNewMessagesCount, isFocused, navigation])
+  }, [handleDeeplink, navigation])
+
+  useEffect(() => {
+    const fetchInboxCount = async () => {
+      try {
+        console.log('fetchInboxCount:', initMessaging)
+        const vault = await getVault()
+        const messages = await vault.inbox.fetchLatest({ read: false })
+        setNewMessagesCount(messages.length)
+      } catch (error) {
+        Sentry.captureException(error)
+        console.log(error)
+      }
+    }
+
+    const initProfile = async () => {
+      try {
+        console.log('initProfile:', initMessaging)
+        const wallet = await getWallet()
+        const vault = await getVault()
+        const name = await vault.profiles.public.get('name')
+        const source = await loadAvatarSource()
+        setAvatarSource(source)
+
+        setInfo({
+          address: wallet.did,
+          name,
+        })
+      } catch (e) {
+        Sentry.captureException(e)
+        Alert.alert('Error', 'Cannot get account information')
+        setLoading(false)
+      }
+    }
+
+    const initMessaging = async () => {
+      console.log('initMessaging:', initMessaging)
+      try {
+        const vault = await getVault()
+        const messaging = await vault.inbox.getMessaging()
+        return messaging.onMessage(function () {
+          fetchInboxCount()
+        })
+      } catch (error) {
+        Sentry.captureException(error)
+        console.log(error)
+      }
+    }
+
+    async function init() {
+      await initProfile()
+      await initMessaging()
+      await fetchInboxCount()
+      const unsubscribeNetInfo = NetInfo.addEventListener(async (state) => {
+        // Reconnect from disconnected state
+        if (isNetworkConnected.current === false && state.isConnected) {
+          await initProfile()
+          await initMessaging()
+          await fetchInboxCount()
+        }
+        isNetworkConnected.current = state.isConnected
+      })
+
+      const appStateSubscription = AppState.addEventListener(
+        'change',
+        async (nextAppState) => {
+          if (
+            appState.current.match(/inactive|background/) &&
+            nextAppState === 'active'
+          ) {
+            await initProfile()
+            await initMessaging()
+            await fetchInboxCount()
+          }
+
+          appState.current = nextAppState
+        }
+      )
+
+      return () => {
+        unsubscribeNetInfo && unsubscribeNetInfo()
+        appStateSubscription.remove()
+      }
+    }
+
+    let unsubscribe
+    init().then((_unsubscribe) => {
+      setLoading(false)
+      unsubscribe = _unsubscribe
+    })
+
+    return unsubscribe
+  }, [setNewMessagesCount])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {

@@ -62,7 +62,7 @@ function NavigationHeader({
           ) : null}
         </Right>
       </Header>
-      {!netInfo.isConnected && (
+      {netInfo.isConnected === false && (
         <View style={styles.netInfoBar}>
           <Text style={styles.netInfoText}>No network connection</Text>
         </View>

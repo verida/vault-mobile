@@ -11,6 +11,7 @@
     "resolveJsonModule": true,
     "strict": true,
     "allowJs": true,
+    "types": [],
     "baseUrl": ".",
     "paths": {
       "*": [
@@ -63,5 +64,5 @@
     "babel.config.js",
     "metro.config.js",
     "jest.config.js"
-  ]
+  ],
 }
