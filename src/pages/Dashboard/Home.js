@@ -80,7 +80,6 @@ const Home = (props) => {
   useEffect(() => {
     const fetchInboxCount = async () => {
       try {
-        console.log('fetchInboxCount:', initMessaging)
         const vault = await getVault()
         const messages = await vault.inbox.fetchLatest({ read: false })
         setNewMessagesCount(messages.length)
@@ -92,7 +91,6 @@ const Home = (props) => {
 
     const initProfile = async () => {
       try {
-        console.log('initProfile:', initMessaging)
         const wallet = await getWallet()
         const vault = await getVault()
         const name = await vault.profiles.public.get('name')
@@ -111,7 +109,6 @@ const Home = (props) => {
     }
 
     const initMessaging = async () => {
-      console.log('initMessaging:', initMessaging)
       try {
         const vault = await getVault()
         const messaging = await vault.inbox.getMessaging()
