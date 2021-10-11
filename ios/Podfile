@@ -4,8 +4,7 @@ require_relative '../node_modules/@react-native-community/cli-platform-ios/nativ
 
 platform :ios, '11.0'
 
-target 'Verida Vault' do
-  # Pods for Verida Vault
+def shared_pods
   config = use_native_modules!
   use_react_native!(:path => config["reactNativePath"])
 
@@ -18,8 +17,16 @@ target 'Verida Vault' do
   # you should disable these next few lines.
   use_flipper!({ 'Flipper-Folly' => '2.5.3', 'Flipper' => '0.87.0', 'Flipper-RSocket' => '1.3.1' })
   pod 'RNSqlite2', :path => '../node_modules/react-native-sqlite-2'
+end
 
-  post_install do |installer|
-    flipper_post_install(installer)
-  end
+target 'Verida Vault' do
+  shared_pods
+end
+
+target 'Verida Vault Staging' do
+  shared_pods
+end
+
+post_install do |installer|
+  flipper_post_install(installer)
 end

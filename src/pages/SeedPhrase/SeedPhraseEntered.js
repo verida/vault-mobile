@@ -28,6 +28,11 @@ export default (props) => {
   useEffect(() => {
     const verify = async () => {
       showError(false)
+      if (usePrivateKey) {
+        // We don't verify private key yet.
+        setVerified(true)
+        return
+      }
 
       const splitted = phrase && phrase.split(' ')
       if (!splitted) {
@@ -41,7 +46,7 @@ export default (props) => {
     }
 
     verify()
-  }, [phrase])
+  }, [phrase, usePrivateKey])
 
   const onContinue = async () => {
     try {
@@ -91,7 +96,6 @@ export default (props) => {
       </Content>
       <CustomFooter>
         <Button
-          style={{ marginTop: 24 }}
           color='primary'
           onPress={usePrivateKey ? toggleConfirmModal : onContinue}
           disabled={!verified}>

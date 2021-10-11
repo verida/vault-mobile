@@ -14,6 +14,7 @@ import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
 import Settings from 'pages/Settings'
 import ChangePin from 'pages/Authentication/ChangePin'
+import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -33,6 +34,7 @@ function MainNavigator() {
       <Stack.Screen name={'DataItem'} component={Item} />
       <Stack.Screen name={'Settings'} component={Settings} />
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
+      <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
     </Stack.Navigator>
   )
 }

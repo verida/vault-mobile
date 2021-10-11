@@ -1,15 +1,24 @@
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Alert,
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Linking,
+} from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
 import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Container, Content } from 'native-base'
+import { useDeeplink } from 'hooks/useDeeplink'
 
 import EnvelopeSvg from '../../assets/icons/envelope.svg'
 import SettingsSvg from '../../assets/icons/settings.svg'
 import Clipboard from '@react-native-community/clipboard'
+import QRCodeIcon from 'assets/icons/qr-code.svg'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
@@ -24,16 +33,35 @@ import { get } from 'lodash'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
 import { CHANNEL_ID } from 'helpers/notifications'
+import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
+
+import { getVault, getWallet, loadAvatarSource } from '../../api'
+import LoadingView from 'components/LoadingView'
+import { FIRST_TIME_LOGIN_KEY } from 'api'
+import * as SecureStore from 'expo-secure-store'
+import * as Sentry from '@sentry/react-native'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
 const Home = (props) => {
-  const { setNewMessagesCount } = props
+  const { setNewMessagesCount, navigation } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
+  const [loading, setLoading] = useState(true)
+  const handleDeeplink = useDeeplink(navigation) // eslint-disable-line react-hooks/exhaustive-deps
 
   useEffect(() => {
+    const getUrl = async () => {
+      const initialUrl = await Linking.getInitialURL()
+
+      if (initialUrl === null) {
+        return
+      }
+
+      handleDeeplink(initialUrl)
+    }
+
     const fetchInboxCount = async () => {
       const vault = await getVault()
       const messages = await vault.inbox.fetchLatest({ read: false })
@@ -41,34 +69,59 @@ const Home = (props) => {
     }
 
     const init = async () => {
-      const wallet = await getWallet()
-      const vault = await getVault()
-      const name = await vault.profiles.public.get('name')
-      const source = await loadAvatarSource()
-      setAvatarSource(source)
+      try {
+        const wallet = await getWallet()
+        const vault = await getVault()
+        const name = await vault.profiles.public.get('name')
+        const source = await loadAvatarSource()
+        setAvatarSource(source)
 
-      vault.veridaApp.inbox.on('inboxChange', function () {
-        fetchInboxCount()
-      })
+        setInfo({
+          address: wallet.did,
+          name,
+        })
 
-      vault.veridaApp.inbox.on('newMessage', function (message) {
-        PushNotification.localNotification({
+        getUrl()
+
+        const messaging = await vault.inbox.getMessaging()
+        messaging.onMessage(function (message) {
+          fetchInboxCount()
+          PushNotification.localNotification({
           title: get(message, 'sendBy.app') || 'New Message',
           message: message.message,
           channelId: CHANNEL_ID,
         })
-        fetchInboxCount()
-      })
-
-      setInfo({
-        address: wallet.did,
-        name,
-      })
+        })
+        setLoading(false)
+      } catch (e) {
+        Sentry.captureException(e)
+        Alert.alert('Error', 'Cannot get account information')
+        setLoading(false)
+      }
     }
 
+    async function checkFirstTimeLogin() {
+      const isFirstTimeLogin = await SecureStore.getItemAsync(
+        FIRST_TIME_LOGIN_KEY
+      )
+      if (isFirstTimeLogin) {
+        await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
+        navigation.navigate('ScanQrCode', {
+          firstTime: true,
+        })
+      }
+    }
+
+    checkFirstTimeLogin()
     init()
     fetchInboxCount()
-  }, [setNewMessagesCount])
+  }, [setNewMessagesCount, navigation]) // eslint-disable-line react-hooks/exhaustive-deps
+
+  function onScanQRPress() {
+    navigation.navigate('ScanQrCode', {
+      firstTime: false,
+    })
+  }
 
   return (
     <Container>
@@ -92,34 +145,42 @@ const Home = (props) => {
         }}
       />
       <Content contentContainerStyle={style.content}>
-        <TouchableOpacity
-          onPress={() => props.navigation.navigate('PublicProfile')}>
-          <Image source={avatarSource} style={style.userImg} />
-        </TouchableOpacity>
-        <Text
-          style={style.title}
-          onPress={() => props.navigation.navigate('PublicProfile')}>
-          {info.name}
-        </Text>
-        <TouchableOpacity onPress={() => Clipboard.setString(info.address)}>
-          <Text style={style.text}>{info.address}</Text>
-        </TouchableOpacity>
-        <View style={style.qr}>
-          <QRCode
-            logo={LogoImg}
-            logoSize={60}
-            size={207}
-            codeStyle='dot'
-            innerEyeStyle='circle'
-            padding={0.5}
-            content={info.address}
-          />
-        </View>
-        <Text style={style.notes}>
-          This is your QR-Code. Present it to others so they can scan it and
-          connect to you
-        </Text>
-        <Text style={style.network}>Testnet</Text>
+        {loading ? (
+          <LoadingView />
+        ) : (
+          <>
+            <TouchableOpacity
+              onPress={() => props.navigation.navigate('PublicProfile')}>
+              <Image source={avatarSource} style={style.userImg} />
+            </TouchableOpacity>
+            <TouchableOpacity
+              onPress={() => Clipboard.setString(info.address)}
+              style={style.didTouchable}>
+              <Text style={style.text}>{info.address}</Text>
+            </TouchableOpacity>
+            <View style={style.qr}>
+              <QRCode
+                logo={LogoImg}
+                logoSize={60}
+                size={207}
+                codeStyle='dot'
+                innerEyeStyle='circle'
+                padding={0.5}
+                content={info.address}
+              />
+            </View>
+            <Text style={style.notes}>
+              This is your QR-Code. Present it to others so they can scan it and
+              connect to you
+            </Text>
+            <TouchableOpacity
+              style={style.scanQRButton}
+              onPress={onScanQRPress}>
+              <QRCodeIcon />
+              <Text style={style.scanQRButtonText}>Scan QR</Text>
+            </TouchableOpacity>
+          </>
+        )}
       </Content>
     </Container>
   )
@@ -140,6 +201,7 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 const marginTop = 0
 const style = StyleSheet.create({
   content: {
+    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 20,
@@ -159,14 +221,15 @@ const style = StyleSheet.create({
     marginTop,
   },
   text: {
-    height: 50,
     fontSize: 14,
-    marginTop: 4,
-    marginBottom: 16,
-    paddingHorizontal: 43,
     textAlign: 'center',
     color: BLACK_COLOR_OPACITY(0.6),
     fontFamily: NUNITO_SANS_BOLD,
+  },
+  didTouchable: {
+    height: 50,
+    marginVertical: 16,
+    paddingHorizontal: 43,
   },
   qr: {
     width: 240,
@@ -212,5 +275,19 @@ const style = StyleSheet.create({
     paddingBottom: 5,
     marginTop: 10,
     borderRadius: 10,
+  },
+  scanQRButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 13,
+    paddingHorizontal: 32,
+    borderWidth: 1,
+    borderColor: '#E0E3EA',
+    borderRadius: 4,
+  },
+  scanQRButtonText: {
+    marginLeft: 10,
+    color: '#041133',
+    fontSize: 16,
   },
 })

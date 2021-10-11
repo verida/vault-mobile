@@ -1,7 +1,16 @@
 # Installation
 ### Run the following commands:
-1. `yarn`
-2. `npx pod-install`
+1. Replace `client-rn` path in **package.json** with your local `client-rn` path.
+2. `yarn`
+3. `npx pod-install`
+
+## Integrate with client-rn
+1. Make sure you are on the right branch of client-rn and verida-js
+2. Run this command on your project's root directory:
+
+`./scripts/integrate-client-rn.sh [verida-js path] [client-rn path]`
+3. Terminate metro bundler process (if it's running) and run the app again.
+4. Note: Ceramic may not work correctly if you turn on Network Inspector in your React Native Debugger.
 
 ## Customize android settings
 1. Download and put this file in `vault-mobile/android/app` folder: https://raw.githubusercontent.com/facebook/react-native/master/template/android/app/debug.keystore

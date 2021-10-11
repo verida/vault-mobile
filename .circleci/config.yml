@@ -3,12 +3,12 @@ version: 2.1
 jobs:
   build:
     docker:
-      - image: cimg/node:15.1
+      - image: cimg/node:12.0.0
     steps:
       - checkout
       - run:
-          name: install global dependencies
-          command: yarn global add node-pre-gyp && sudo apt-get update && sudo apt-get install -y python
+          name: Authenticate with registry
+          command: echo "//registry.npmjs.org/:_authToken=$NPM_TOKEN" > ~/.npmrc
       - restore_cache:
           # See the configuration reference documentation for more details on using restore_cache and save_cache steps
           # https://circleci.com/docs/2.0/configuration-reference/?section=reference#save_cache

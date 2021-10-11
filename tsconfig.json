@@ -11,6 +11,7 @@
     "resolveJsonModule": true,
     "strict": true,
     "allowJs": true,
+    "types": [],
     "baseUrl": ".",
     "paths": {
       "*": [
@@ -40,14 +41,17 @@
       "routes/*": [
         "src/routes/*"
       ],
-      "store/*": [
-        "src/store/*"
+      "reduxStore/*": [
+        "src/reduxStore/*"
       ],
       "styles/*": [
         "src/styles/*"
       ],
       "hooks/*": [
         "src/hooks/*"
+      ],
+      "utils/*": [
+        "src/utils/*"
       ]
     }
   },
@@ -60,5 +64,5 @@
     "babel.config.js",
     "metro.config.js",
     "jest.config.js"
-  ]
+  ],
 }

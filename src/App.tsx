@@ -6,15 +6,25 @@ import { Provider } from 'react-redux'
 import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 
-import store from 'store'
+import store from 'reduxStore'
 import { NavigationContainer } from '@react-navigation/native'
 import RootNavigator from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
 import { configureNotifications } from 'helpers/notifications'
+import 'react-native-crypto'
+import PolyfillCrypto from 'react-native-webview-crypto'
+import codePush, { CodePushOptions } from 'react-native-code-push'
+import * as Sentry from '@sentry/react-native'
+import Config from 'react-native-config'
 
 configureNotifications()
+
+Sentry.init({
+  dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
+  environment: Config.SENTRY_ENVIRONMENT,
+})
 
 function App() {
   const [loading, setLoading] = useState(true)
@@ -54,8 +64,17 @@ function App() {
       onError={console.warn}
     />
   ) : (
-    AppContent
+    <>
+      <PolyfillCrypto />
+      {AppContent}
+    </>
   )
 }
 
-export default App
+const codePushOptions: CodePushOptions = {
+  checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,
+  installMode: codePush.InstallMode.IMMEDIATE,
+}
+
+const WrappedWithSentry = Sentry.wrap(App)
+export default codePush(codePushOptions)(WrappedWithSentry)
