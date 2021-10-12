@@ -21,6 +21,12 @@ const list = [
     onPress: (navigation) => navigation.navigate('ChangePin'),
   },
   {
+    label: 'Manage Wallets',
+    action: 'arrow',
+    optional: true,
+    onPress: (navigation) => navigation.navigate('ManageWallets'),
+  },
+  {
     label: 'Seed Phrase',
     action: 'arrow',
     optional: true,
