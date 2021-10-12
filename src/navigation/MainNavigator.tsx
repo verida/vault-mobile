@@ -11,6 +11,7 @@ import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import EditProfile from 'pages/Profiles/EditProfile'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import ManageWallets from 'pages/Wallets/ManageWallets'
+import SuccessFailure from 'pages/Wallets/SuccessFailure'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
 import Settings from 'pages/Settings'
@@ -32,6 +33,7 @@ function MainNavigator() {
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
+      <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
       <Stack.Screen name={'DataFolder'} component={Folder} />
       <Stack.Screen name={'DataItem'} component={Item} />
       <Stack.Screen name={'Settings'} component={Settings} />
