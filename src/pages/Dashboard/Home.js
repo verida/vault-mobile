@@ -1,11 +1,12 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
+  AppState,
   Image,
+  Linking,
   StyleSheet,
   TouchableOpacity,
   View,
-  Linking,
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
@@ -27,20 +28,17 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from '../../constants/color'
-import { setNewMessagesCount as setNewMessagesCountAction } from '../../store/general/actions'
-import PushNotification from 'react-native-push-notification'
-import { get } from 'lodash'
-
-import { getVault, getWallet, loadAvatarSource } from '../../api'
-import { CHANNEL_ID } from 'helpers/notifications'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
+import NetInfo from '@react-native-community/netinfo'
 
 import { getVault, getWallet, loadAvatarSource } from '../../api'
 import LoadingView from 'components/LoadingView'
 import { FIRST_TIME_LOGIN_KEY } from 'api'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
-
+import PushNotification from 'react-native-push-notification'
+import { get } from 'lodash'
+import { CHANNEL_ID } from 'helpers/notifications'
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
@@ -49,8 +47,11 @@ const Home = (props) => {
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
-  const handleDeeplink = useDeeplink(navigation) // eslint-disable-line react-hooks/exhaustive-deps
+  const handleDeeplink = useDeeplink(navigation)
+  const isNetworkConnected = useRef(null)
+  const appState = useRef(AppState.currentState)
 
+  // Run only once on first render
   useEffect(() => {
     const getUrl = async () => {
       const initialUrl = await Linking.getInitialURL()
@@ -60,44 +61,6 @@ const Home = (props) => {
       }
 
       handleDeeplink(initialUrl)
-    }
-
-    const fetchInboxCount = async () => {
-      const vault = await getVault()
-      const messages = await vault.inbox.fetchLatest({ read: false })
-      setNewMessagesCount(messages.length)
-    }
-
-    const init = async () => {
-      try {
-        const wallet = await getWallet()
-        const vault = await getVault()
-        const name = await vault.profiles.public.get('name')
-        const source = await loadAvatarSource()
-        setAvatarSource(source)
-
-        setInfo({
-          address: wallet.did,
-          name,
-        })
-
-        getUrl()
-
-        const messaging = await vault.inbox.getMessaging()
-        messaging.onMessage(function (message) {
-          fetchInboxCount()
-          PushNotification.localNotification({
-          title: get(message, 'sendBy.app') || 'New Message',
-          message: message.message,
-          channelId: CHANNEL_ID,
-        })
-        })
-        setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
-        Alert.alert('Error', 'Cannot get account information')
-        setLoading(false)
-      }
     }
 
     async function checkFirstTimeLogin() {
@@ -112,10 +75,103 @@ const Home = (props) => {
       }
     }
 
+    getUrl()
     checkFirstTimeLogin()
-    init()
-    fetchInboxCount()
-  }, [setNewMessagesCount, navigation]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [handleDeeplink, navigation])
+
+  useEffect(() => {
+    const fetchInboxCount = async () => {
+      try {
+        const vault = await getVault()
+        const messages = await vault.inbox.fetchLatest({ read: false })
+        setNewMessagesCount(messages.length)
+      } catch (error) {
+        Sentry.captureException(error)
+        console.log(error)
+      }
+    }
+
+    const initProfile = async () => {
+      try {
+        const wallet = await getWallet()
+        const vault = await getVault()
+        const name = await vault.profiles.public.get('name')
+        const source = await loadAvatarSource()
+        setAvatarSource(source)
+
+        setInfo({
+          address: wallet.did,
+          name,
+        })
+      } catch (e) {
+        Sentry.captureException(e)
+        Alert.alert('Error', 'Cannot get account information')
+        setLoading(false)
+      }
+    }
+
+    const initMessaging = async () => {
+      try {
+        const vault = await getVault()
+        const messaging = await vault.inbox.getMessaging()
+        return messaging.onMessage(function (message) {
+          fetchInboxCount()
+          PushNotification.localNotification({
+            title: get(message, 'sendBy.app') || 'New Message',
+            message: message.message,
+            channelId: CHANNEL_ID,
+          })
+        })
+      } catch (error) {
+        Sentry.captureException(error)
+        console.log(error)
+      }
+    }
+
+    async function init() {
+      await initProfile()
+      await initMessaging()
+      await fetchInboxCount()
+      const unsubscribeNetInfo = NetInfo.addEventListener(async (state) => {
+        // Reconnect from disconnected state
+        if (isNetworkConnected.current === false && state.isConnected) {
+          await initProfile()
+          await initMessaging()
+          await fetchInboxCount()
+        }
+        isNetworkConnected.current = state.isConnected
+      })
+
+      const appStateSubscription = AppState.addEventListener(
+        'change',
+        async (nextAppState) => {
+          if (
+            appState.current.match(/inactive|background/) &&
+            nextAppState === 'active'
+          ) {
+            await initProfile()
+            await initMessaging()
+            await fetchInboxCount()
+          }
+
+          appState.current = nextAppState
+        }
+      )
+
+      return () => {
+        unsubscribeNetInfo && unsubscribeNetInfo()
+        appStateSubscription.remove()
+      }
+    }
+
+    let unsubscribe
+    init().then((_unsubscribe) => {
+      setLoading(false)
+      unsubscribe = _unsubscribe
+    })
+
+    return unsubscribe
+  }, [setNewMessagesCount])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
