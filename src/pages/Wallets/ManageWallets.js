@@ -64,7 +64,7 @@ const list = [
   },
 ]
 
-export default () => {
+export default ({ navigation }) => {
   useEffect(() => {
     const init = async () => {
       console.log('init')
@@ -85,6 +85,13 @@ export default () => {
   const onAddWallet = async () => {
     try {
       setProcessing(true)
+      setTimeout(() => {
+        setAddModalVisible(false)
+        setProcessing(false)
+        navigation.navigate('SuccessFailure', {
+          failure: name === '' ? true : false,
+        })
+      }, 2000)
     } catch (error) {
       setProcessing(false)
     }
