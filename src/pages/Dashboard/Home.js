@@ -36,6 +36,9 @@ import LoadingView from 'components/LoadingView'
 import { FIRST_TIME_LOGIN_KEY } from 'api'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
+import PushNotification from 'react-native-push-notification'
+import { get } from 'lodash'
+import { CHANNEL_ID } from 'helpers/notifications'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -108,13 +111,24 @@ const Home = (props) => {
       }
     }
 
+    const onNewMessage = (message) => {
+      fetchInboxCount()
+      PushNotification.localNotification({
+        title: get(message, 'sendBy.app') || 'New Message',
+        message: message.message,
+        channelId: CHANNEL_ID,
+        userInfo: {
+          category: 'InboxItem',
+          data: message,
+        },
+      })
+    }
+
     const initMessaging = async () => {
       try {
         const vault = await getVault()
         const messaging = await vault.inbox.getMessaging()
-        return messaging.onMessage(function () {
-          fetchInboxCount()
-        })
+        return messaging.onMessage(onNewMessage)
       } catch (error) {
         Sentry.captureException(error)
         console.log(error)
@@ -123,13 +137,15 @@ const Home = (props) => {
 
     async function init() {
       await initProfile()
-      await initMessaging()
+      let messageSubscription = await initMessaging()
       await fetchInboxCount()
       const unsubscribeNetInfo = NetInfo.addEventListener(async (state) => {
         // Reconnect from disconnected state
         if (isNetworkConnected.current === false && state.isConnected) {
           await initProfile()
-          await initMessaging()
+          messageSubscription &&
+            messageSubscription.removeListener('newMessage', onNewMessage)
+          messageSubscription = await initMessaging()
           await fetchInboxCount()
         }
         isNetworkConnected.current = state.isConnected
@@ -143,7 +159,9 @@ const Home = (props) => {
             nextAppState === 'active'
           ) {
             await initProfile()
-            await initMessaging()
+            messageSubscription &&
+              messageSubscription.removeListener('newMessage', onNewMessage)
+            messageSubscription = await initMessaging()
             await fetchInboxCount()
           }
 
