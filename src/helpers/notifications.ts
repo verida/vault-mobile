@@ -1,6 +1,8 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
+import { navigate } from 'navigation/RootNavigator'
+import * as Sentry from '@sentry/react-native'
 
 export const CHANNEL_ID = 'verida-vault'
 
@@ -29,12 +31,24 @@ export function configureNotifications() {
 
     // (required) Called when a remote is received or opened, or local notification is opened
     onNotification: function (notification) {
-      console.log('NOTIFICATION:', notification)
+      try {
+        console.log('NOTIFICATION:', notification)
+        const { data } = notification
 
-      // process the notification
+        // process the notification
+        switch (data.category) {
+          // TODO: handle other categories
+          default:
+            navigate('InboxItem', {
+              inboxItemId: data.data._id,
+            })
+        }
 
-      // (required) Called when a remote is received or opened, or local notification is opened
-      notification.finish(PushNotificationIOS.FetchResult.NoData)
+        // (required) Called when a remote is received or opened, or local notification is opened
+        notification.finish(PushNotificationIOS.FetchResult.NoData)
+      } catch (e) {
+        Sentry.captureException(e)
+      }
     },
 
     // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)

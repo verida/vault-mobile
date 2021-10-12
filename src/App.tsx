@@ -8,7 +8,7 @@ import * as Font from 'expo-font'
 
 import store from 'reduxStore'
 import { NavigationContainer } from '@react-navigation/native'
-import RootNavigator from 'navigation/RootNavigator'
+import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
@@ -48,7 +48,7 @@ function App() {
   const AppContent = (
     <Provider store={store}>
       <AuthProvider>
-        <NavigationContainer linking={linking}>
+        <NavigationContainer linking={linking} ref={navigationRef}>
           <Authenticate>
             <RootNavigator />
           </Authenticate>
