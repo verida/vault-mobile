@@ -17,6 +17,7 @@ import PolyfillCrypto from 'react-native-webview-crypto'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import * as Sentry from '@sentry/react-native'
 import Config from 'react-native-config'
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 
 Sentry.init({
   dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
@@ -47,7 +48,9 @@ function App() {
       <AuthProvider>
         <NavigationContainer linking={linking}>
           <Authenticate>
-            <RootNavigator />
+            <ActionSheetProvider>
+              <RootNavigator />
+            </ActionSheetProvider>
           </Authenticate>
         </NavigationContainer>
       </AuthProvider>

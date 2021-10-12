@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { Modal, View, StyleSheet, TextInput } from 'react-native'
 import { Container, Content, List, Icon } from 'native-base'
+import { useActionSheet } from '@expo/react-native-action-sheet'
 
 import WalletsList from '../../components/WalletsList'
 import LoadingView from 'components/LoadingView'
@@ -24,31 +25,46 @@ const list = [
     label: 'Ethereum',
     icon: <EthereumSvg />,
     count: 12,
+    onPress: () => {
+      console.log()
+    },
   },
   {
     label: 'Near',
     icon: <NearSvg />,
     count: 10,
+    onPress: () => {
+      console.log()
+    },
   },
   {
     label: 'Algorand',
     icon: <AlgorandSvg />,
     count: 9,
+    onPress: () => {
+      console.log()
+    },
   },
   {
     label: 'Friendly wallet name',
     icon: <IKIGAISvg />,
     count: 5,
+    onPress: () => {
+      console.log()
+    },
   },
   {
     label: 'Other addresses',
     icon: <OtherSvg />,
     count: 20,
+    onPress: () => {
+      console.log()
+    },
     other: true,
   },
 ]
 
-export default (props) => {
+export default () => {
   useEffect(() => {
     const init = async () => {
       console.log('init')
@@ -63,6 +79,7 @@ export default (props) => {
   const [phrase, setPhrase] = useState('')
   const [blockchain, setBlockchain] = useState(null)
   const [processing, setProcessing] = useState(false)
+  const { showActionSheetWithOptions } = useActionSheet()
 
   const onBlockchainChange = (option) => setBlockchain(option)
   const onAddWallet = async () => {
@@ -79,7 +96,26 @@ export default (props) => {
         title='Wallets'
         right={{
           icon: <Icon name='add' style={{ color: '#000' }} />,
-          action: () => setImportModalVisible(true),
+          action: () =>
+            showActionSheetWithOptions(
+              {
+                options: [
+                  'Create new wallet',
+                  'Import existing',
+                  'Watch existing address',
+                  'Cancel',
+                ],
+                cancelButtonIndex: 3,
+              },
+              (buttonIndex) => {
+                if (buttonIndex === 0) {
+                  setAddModalVisible(true)
+                }
+                if (buttonIndex === 1) {
+                  setImportModalVisible(true)
+                }
+              }
+            ),
         }}
       />
       {loading ? (
