@@ -43,6 +43,8 @@ import { CHANNEL_ID } from 'helpers/notifications'
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
+const MAX_MESSAGE_COUNT = 21
+
 const Home = (props) => {
   const { setNewMessagesCount, navigation } = props
   const [info, setInfo] = useState({})
@@ -84,7 +86,10 @@ const Home = (props) => {
     const fetchInboxCount = async () => {
       try {
         const vault = await getVault()
-        const messages = await vault.inbox.fetchLatest({ read: false })
+        const messages = await vault.inbox.fetchLatest(
+          { read: false },
+          { limit: MAX_MESSAGE_COUNT }
+        )
         setNewMessagesCount(messages.length)
       } catch (error) {
         Sentry.captureException(error)
@@ -200,7 +205,11 @@ const Home = (props) => {
               <EnvelopeSvg />
               {props.newMessagesCount ? (
                 <View style={style.badge}>
-                  <Text style={{ fontSize: 9 }}>{props.newMessagesCount}</Text>
+                  <Text style={{ fontSize: 8 }} numberOfLines={1}>
+                    {props.newMessagesCount >= MAX_MESSAGE_COUNT
+                      ? `${MAX_MESSAGE_COUNT - 1}+`
+                      : props.newMessagesCount}
+                  </Text>
                 </View>
               ) : null}
             </View>
@@ -323,14 +332,14 @@ const style = StyleSheet.create({
   badge: {
     alignItems: 'center',
     justifyContent: 'center',
-    padding: 2,
+    padding: 1,
     position: 'absolute',
     right: -8,
     top: -7,
-    minHeight: 15,
-    minWidth: 15,
+    minHeight: 16,
+    minWidth: 16,
     backgroundColor: '#FF6E6E',
-    borderRadius: 10,
+    borderRadius: 8,
     overflow: 'hidden',
   },
   network: {
