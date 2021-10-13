@@ -86,6 +86,7 @@
     "react-native-screens": "^3.5.0",
     "react-native-sqlite-2": "^3.1.1",
     "react-native-svg": "^12.1.1",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "^2.7.0",
