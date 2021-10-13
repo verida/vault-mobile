@@ -11,12 +11,9 @@ export default ({ item }) => {
       style={[
         {
           backgroundColor: '#fff',
-          borderRadius: 4,
+          borderRadius: 0,
           marginLeft: 0,
           paddingLeft: 16,
-        },
-        item.other && {
-          marginTop: 30,
         },
       ]}>
       <Left style={{ flex: 2 }}>
