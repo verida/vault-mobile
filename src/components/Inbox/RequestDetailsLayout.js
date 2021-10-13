@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, ScrollView } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import Layout from '../../components/Layouts/Layout'
 import Button from '../../components/Button'
 import Text from '../Text'
@@ -8,7 +8,14 @@ import { ACCEPT_COLOR, DECLINE_COLOR } from '../../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../../constants/text'
 
-export default ({ type, item, inboxItem, onResultClick, children }) => {
+export default ({
+  type,
+  item,
+  inboxItem,
+  onResultClick,
+  children,
+  currentAction = null,
+}) => {
   const description = {
     uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
     name: item.item.message,
@@ -40,12 +47,14 @@ export default ({ type, item, inboxItem, onResultClick, children }) => {
           <Button
             color='grey'
             style={style.btn}
-            onPress={() => onResultClick('decline')}>
+            onPress={() => onResultClick('decline')}
+            loading={currentAction === 'decline'}>
             Decline
           </Button>
           <Button
             style={{ ...style.btn, marginLeft: 20 }}
-            onPress={() => onResultClick('accept')}>
+            onPress={() => onResultClick('accept')}
+            loading={currentAction === 'accept'}>
             Accept
           </Button>
         </View>

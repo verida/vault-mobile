@@ -1,15 +1,29 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Content } from 'native-base'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
 import { getVault } from '../../../api'
+import * as Sentry from '@sentry/react-native'
+import { Alert } from 'react-native'
 
-export default ({ item, inboxItem, type }) => {
+export default ({ item, inboxItem, type, navigation }) => {
+  const [currentAction, setCurrentAction] = useState(null)
   const onResultClick = async (result) => {
-    console.log('b')
-    const vault = await getVault()
-    await vault.inbox.handleAction(inboxItem, result, {})
-    // Actions.pop();
+    try {
+      if (result === 'accept') {
+        setCurrentAction('accept')
+      } else {
+        setCurrentAction('decline')
+      }
+      const vault = await getVault()
+      await vault.inbox.handleAction(inboxItem, result, {})
+      setCurrentAction(null)
+      navigation.goBack()
+    } catch (e) {
+      Alert.alert('Error', 'Cannot sync data now')
+      Sentry.captureException(e)
+      setCurrentAction(null)
+    }
   }
 
   return (
@@ -18,7 +32,8 @@ export default ({ item, inboxItem, type }) => {
         item={item}
         type={type}
         inboxItem={inboxItem}
-        onResultClick={onResultClick}>
+        onResultClick={onResultClick}
+        currentAction={currentAction}>
         {/* Hide details about incoming data for now. <RecordList list={records} /> */}
       </RequestDetailsLayout>
     </Content>
