@@ -62,41 +62,23 @@ export default ({ navigation }) => {
   }, [])
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-between',
-          marginHorizontal: 15,
-        }}>
+    <SafeAreaView style={styles.container}>
+      <View style={styles.walletHeader}>
         <TouchableOpacity
           onPress={() => {
             navigation.goBack()
           }}>
-          <Icon name='arrow-back' style={{ color: '#000' }} />
+          <Icon name='arrow-back' style={styles.backIcon} />
         </TouchableOpacity>
-        <View style={{ paddingTop: 20 }}>
+        <View style={styles.walletNameLogo}>
           <NearSvg width={64} height={64} />
           <Text style={styles.title}>NEAR</Text>
         </View>
         <TouchableOpacity>
-          <Text
-            style={{
-              color: '#423BCE',
-              fontSize: 17,
-              fontFamily: NUNITO_SANS_BOLD,
-              marginTop: 4,
-            }}>
-            Edit
-          </Text>
+          <Text style={styles.editButton}>Edit</Text>
         </TouchableOpacity>
       </View>
-      <View
-        style={{
-          flexDirection: 'row',
-          justifyContent: 'space-evenly',
-          marginTop: 20,
-        }}>
+      <View style={styles.actionButtons}>
         <TouchableOpacity style={styles.actionButton}>
           <AddAddressSvg />
           <Text style={styles.actionButtonText}>Add address</Text>
@@ -117,6 +99,27 @@ export default ({ navigation }) => {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
+  walletHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    marginHorizontal: 15,
+  },
+  backIcon: { color: '#000' },
+  walletNameLogo: { paddingTop: 20 },
+  editButton: {
+    color: '#423BCE',
+    fontSize: 17,
+    fontFamily: NUNITO_SANS_BOLD,
+    marginTop: 4,
+  },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
+  },
   title: {
     marginTop: 15,
     fontFamily: NUNITO_SANS_SEMIBOLD,
