@@ -1,34 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import {
-  Modal,
-  View,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  SafeAreaView,
-} from 'react-native'
-import { Container, Content, List, Icon, Left, Header } from 'native-base'
+import { View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
+import { Icon } from 'native-base'
 import { useActionSheet } from '@expo/react-native-action-sheet'
 
 import AddressesList from '../../components/AddressesList'
-import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Layout from 'components/Layouts/Layout'
-import Label from 'components/Label'
 import Text from 'components/Text'
 
-import InputStyles from 'styles/inputs'
-import DropDownPicker from 'components/Select'
-import Button from 'components/Button'
-
-import { SNOW_COLOR } from '../../constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
-import EthereumSvg from '../../assets/wallets/Ethereum.svg'
-import AlgorandSvg from '../../assets/wallets/Algorand.svg'
-import IKIGAISvg from '../../assets/wallets/IKIGAI.svg'
 import NearSvg from '../../assets/wallets/Near.svg'
-import OtherSvg from '../../assets/wallets/Other.svg'
 
 import AddAddressSvg from '../../assets/add_address.svg'
 import ExportSeedphraseSvg from '../../assets/export_seedphrase.svg'
@@ -80,30 +60,6 @@ export default ({ navigation }) => {
 
     init()
   }, [])
-  const [loading, setLoading] = useState(false)
-  const [addModalVisible, setAddModalVisible] = useState(false)
-  const [importModalVisible, setImportModalVisible] = useState(false)
-  const [name, setName] = useState('')
-  const [phrase, setPhrase] = useState('')
-  const [blockchain, setBlockchain] = useState(null)
-  const [processing, setProcessing] = useState(false)
-  const { showActionSheetWithOptions } = useActionSheet()
-
-  const onBlockchainChange = (option) => setBlockchain(option)
-  const onAddWallet = async () => {
-    try {
-      setProcessing(true)
-      setTimeout(() => {
-        setAddModalVisible(false)
-        setProcessing(false)
-        navigation.navigate('SuccessFailure', {
-          failure: name === '' ? true : false,
-        })
-      }, 2000)
-    } catch (error) {
-      setProcessing(false)
-    }
-  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>
