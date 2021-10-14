@@ -121,6 +121,9 @@ export default ({ navigation }) => {
                 if (buttonIndex === 1) {
                   setImportModalVisible(true)
                 }
+                if (buttonIndex === 2) {
+                  navigation.navigate('SingleWallet')
+                }
               }
             ),
         }}

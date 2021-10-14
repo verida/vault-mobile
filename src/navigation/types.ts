@@ -34,6 +34,7 @@ export type MainStackParams = {
   EditProfile: undefined
   SeedPhraseView: undefined
   ManageWallets: undefined
+  SingleWallet: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
   DataItem: undefined
