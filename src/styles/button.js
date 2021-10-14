@@ -34,6 +34,10 @@ export default StyleSheet.create({
   'transparent-grey': {
     ...transparent,
   },
+  'transparent-border': {
+    ...transparent,
+    borderColor: LIGHTGREY_COLOR,
+  },
   grey: {
     borderColor: LIGHTGREY_COLOR,
   },
