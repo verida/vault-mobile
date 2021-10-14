@@ -1,9 +1,11 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import { Icon } from 'native-base'
 
 import AddressesList from '../../components/AddressesList'
 import Text from 'components/Text'
+import RenameWalletModal from './RenameWalletModal'
+import WarningModal from './WarningModal'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
@@ -51,13 +53,9 @@ const list = [
 ]
 
 export default ({ navigation }) => {
-  useEffect(() => {
-    const init = async () => {
-      console.log('init')
-    }
-
-    init()
-  }, [])
+  const [renameModalVisible, setRenameModalVisible] = useState(false)
+  const [privateKeyModalVisible, setPrivateKeyModalVisible] = useState(false)
+  const [seedPhraseModalVisible, setSeedPhraseModalVisible] = useState(false)
 
   return (
     <SafeAreaView style={styles.container}>
@@ -72,7 +70,7 @@ export default ({ navigation }) => {
           <NearSvg width={64} height={64} />
           <Text style={styles.title}>NEAR</Text>
         </View>
-        <TouchableOpacity>
+        <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
           <Text style={styles.editButton}>Edit</Text>
         </TouchableOpacity>
       </View>
@@ -81,17 +79,35 @@ export default ({ navigation }) => {
           <AddAddressSvg />
           <Text style={styles.actionButtonText}>Add address</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          onPress={() => setSeedPhraseModalVisible(true)}
+          style={styles.actionButton}>
           <ExportSeedphraseSvg />
           <Text style={styles.actionButtonText}>Seed phrase</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          onPress={() => setPrivateKeyModalVisible(true)}
+          style={styles.actionButton}>
           <RemoveWalletSvg />
           <Text style={styles.actionButtonText}>Remove wallet</Text>
         </TouchableOpacity>
       </View>
       <Text style={styles.listLabel}>Addresses</Text>
       <AddressesList list={list} />
+      <RenameWalletModal
+        hideModal={() => setRenameModalVisible(false)}
+        visible={renameModalVisible}
+      />
+      <WarningModal
+        hideModal={() => setSeedPhraseModalVisible(false)}
+        visible={seedPhraseModalVisible}
+        type='seed_phrase'
+      />
+      <WarningModal
+        hideModal={() => setPrivateKeyModalVisible(false)}
+        visible={privateKeyModalVisible}
+        type='private_key'
+      />
     </SafeAreaView>
   )
 }
