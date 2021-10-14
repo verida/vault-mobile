@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import { Icon } from 'native-base'
-import { useActionSheet } from '@expo/react-native-action-sheet'
 
 import AddressesList from '../../components/AddressesList'
 import Text from 'components/Text'
@@ -9,7 +8,6 @@ import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
 import NearSvg from '../../assets/wallets/Near.svg'
-
 import AddAddressSvg from '../../assets/add_address.svg'
 import ExportSeedphraseSvg from '../../assets/export_seedphrase.svg'
 import RemoveWalletSvg from '../../assets/remove_wallet.svg'
