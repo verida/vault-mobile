@@ -70,7 +70,7 @@ const modalContent = {
   },
 }
 
-export default ({ visible, hideModal, type }) => {
+export default ({ visible, hideModal, type, onPressButton }) => {
   const [checkbox, setCheckboxState] = useState(false)
 
   return (
@@ -110,7 +110,7 @@ export default ({ visible, hideModal, type }) => {
             style={styles.saveButton}
             color='primary'
             disabled={!checkbox}
-            onPress={() => console.log()}>
+            onPress={() => onPressButton()}>
             {modalContent[type].buttonLabel}
           </Button>
         </View>
