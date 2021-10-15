@@ -7,6 +7,7 @@ import Text from 'components/Text'
 import RenameWalletModal from './RenameWalletModal'
 import WarningModal from './WarningModal'
 import SeedPhraseModal from './SeedPhraseModal'
+import PrivateKeyModal from './PrivateKeyModal'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
@@ -59,9 +60,15 @@ export default ({ navigation }) => {
   const [seedPhraseModalVisible, setSeedPhraseModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
+  const [copyPrivateKeyModalVisible, toggleCopyPrivateKeyModal] =
+    useState(false)
   const showSeedPhrase = () => {
     setSeedPhraseModalVisible(false)
     toggleCopySeedPhraseModal(true)
+  }
+  const showPrivateKey = () => {
+    setPrivateKeyModalVisible(false)
+    toggleCopyPrivateKeyModal(true)
   }
 
   return (
@@ -115,11 +122,18 @@ export default ({ navigation }) => {
         hideModal={() => setPrivateKeyModalVisible(false)}
         visible={privateKeyModalVisible}
         type='private_key'
+        onPressButton={() => showPrivateKey()}
       />
       <SeedPhraseModal
         visible={copySeedPhraseModalVisible}
         toggleConfirmModal={() =>
           toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
+        }
+      />
+      <PrivateKeyModal
+        visible={copyPrivateKeyModalVisible}
+        toggleConfirmModal={() =>
+          toggleCopyPrivateKeyModal(!copyPrivateKeyModalVisible)
         }
       />
     </SafeAreaView>
