@@ -14,7 +14,7 @@ const WALLET_KEY = 'VaultMobileWallet'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 const DEFAULT_CHAIN = 'ethr'
-const CERAMIC_URL = 'https://ceramic-clay.3boxlabs.com'
+const CERAMIC_URL = 'https://ceramic.verida.io:7007'
 const CHAIN_KEY = 'chain'
 export const FIRST_TIME_LOGIN_KEY = 'first-time-login'
 
