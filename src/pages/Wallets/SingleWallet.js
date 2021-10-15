@@ -8,6 +8,8 @@ import RenameWalletModal from './RenameWalletModal'
 import WarningModal from './WarningModal'
 import SeedPhraseModal from './SeedPhraseModal'
 import PrivateKeyModal from './PrivateKeyModal'
+import EditAddressModal from './EditAddressModal'
+import AddAddressModal from './AddAddressModal'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
@@ -70,6 +72,8 @@ export default ({ navigation }) => {
     setPrivateKeyModalVisible(false)
     toggleCopyPrivateKeyModal(true)
   }
+  const [editModalVisible, setEditModalVisible] = useState(false)
+  const [addModalVisible, setAddModalVisible] = useState(false)
 
   return (
     <SafeAreaView style={styles.container}>
@@ -89,7 +93,9 @@ export default ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <View style={styles.actionButtons}>
-        <TouchableOpacity style={styles.actionButton}>
+        <TouchableOpacity
+          onPress={() => setEditModalVisible(true)}
+          style={styles.actionButton}>
           <AddAddressSvg />
           <Text style={styles.actionButtonText}>Add address</Text>
         </TouchableOpacity>
@@ -135,6 +141,15 @@ export default ({ navigation }) => {
         toggleConfirmModal={() =>
           toggleCopyPrivateKeyModal(!copyPrivateKeyModalVisible)
         }
+      />
+      <EditAddressModal
+        hideModal={() => setEditModalVisible(false)}
+        visible={editModalVisible}
+      />
+      <AddAddressModal
+        hideModal={() => setAddModalVisible(false)}
+        // visible={addModalVisible}
+        visible={true}
       />
     </SafeAreaView>
   )
