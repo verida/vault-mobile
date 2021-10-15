@@ -13,7 +13,7 @@ export default ({ item, folder }) => {
 
   return (
     <Card style={style.cardItem}>
-      <CardItem button style={{ borderRadius: 4 }} onPress={() => onPress}>
+      <CardItem button style={{ borderRadius: 4 }} onPress={onPress}>
         <Left style={style.left}>
           <StravaSvg />
           <Body style={{ marginLeft: 15 }}>
