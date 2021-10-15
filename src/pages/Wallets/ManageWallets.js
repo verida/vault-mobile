@@ -122,7 +122,8 @@ export default ({ navigation }) => {
                   setImportModalVisible(true)
                 }
                 if (buttonIndex === 2) {
-                  navigation.navigate('SingleWallet')
+                  navigation.navigate('OtherAddresses')
+                  // navigation.navigate('SingleWallet')
                 }
               }
             ),
