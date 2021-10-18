@@ -94,7 +94,7 @@ export default ({ navigation }) => {
       </View>
       <View style={styles.actionButtons}>
         <TouchableOpacity
-          onPress={() => setEditModalVisible(true)}
+          onPress={() => setAddModalVisible(true)}
           style={styles.actionButton}>
           <AddAddressSvg />
           <Text style={styles.actionButtonText}>Add address</Text>
@@ -113,7 +113,10 @@ export default ({ navigation }) => {
         </TouchableOpacity>
       </View>
       <Text style={styles.listLabel}>Addresses</Text>
-      <AddressesList list={list} />
+      <AddressesList
+        list={list}
+        editButtonAction={() => setEditModalVisible(true)}
+      />
       <RenameWalletModal
         hideModal={() => setRenameModalVisible(false)}
         visible={renameModalVisible}
@@ -148,8 +151,7 @@ export default ({ navigation }) => {
       />
       <AddAddressModal
         hideModal={() => setAddModalVisible(false)}
-        // visible={addModalVisible}
-        visible={false}
+        visible={addModalVisible}
       />
     </SafeAreaView>
   )
