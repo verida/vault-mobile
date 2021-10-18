@@ -5,6 +5,7 @@ import {
   TextInput,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
 } from 'react-native'
 import { Icon } from 'native-base'
 
@@ -27,53 +28,57 @@ export default ({ visible, hideModal }) => {
       presentationStyle='pageSheet'
       animationType='slide'
       visible={visible}>
-      <NavigationHeader
-        left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
-          action: () => hideModal(),
-        }}
-        title='Edit address '
-      />
-      <Layout style={styles.container}>
-        <View style={styles.content}>
-          <Label>Address name</Label>
-          <TextInput
-            value={name}
-            autoFocus={true}
-            multiline
-            editable
-            autoCorrect={false}
-            autoCapitalize='none'
-            onChangeText={setName}
-            style={[InputStyles.input]}
-            placeholder={'eg. Friendly address name'}
-          />
-          <Text style={styles.inputSublabel}>3hs73jhdb76eemn1dm32sdmnx7dn</Text>
-          <TouchableOpacity
-            onPress={() => setCheckboxState(!checkbox)}
-            style={styles.checkbox}>
-            {checkbox ? <CheckboxCheckedSvg /> : <CheckboxSvg />}
-            <Text style={styles.checkboxLabel}>
-              Allow this address to unlock my Verida account?
+      <KeyboardAvoidingView behavior={'padding'} style={{ flex: 1 }}>
+        <NavigationHeader
+          left={{
+            icon: <Icon name='close' style={{ color: '#000' }} />,
+            action: () => hideModal(),
+          }}
+          title='Edit address '
+        />
+        <Layout style={styles.container}>
+          <View style={styles.content}>
+            <Label>Address name</Label>
+            <TextInput
+              value={name}
+              autoFocus={true}
+              multiline
+              editable
+              autoCorrect={false}
+              autoCapitalize='none'
+              onChangeText={setName}
+              style={[InputStyles.input]}
+              placeholder={'eg. Friendly address name'}
+            />
+            <Text style={styles.inputSublabel}>
+              3hs73jhdb76eemn1dm32sdmnx7dn
             </Text>
-          </TouchableOpacity>
-        </View>
-        <View style={styles.footer}>
-          <Button
-            style={styles.cancelButton}
-            color='transparent-border'
-            onPress={() => hideModal()}>
-            Cancel
-          </Button>
-          <Button
-            style={styles.saveButton}
-            color='primary'
-            disabled={!name}
-            onPress={() => console.log()}>
-            Save
-          </Button>
-        </View>
-      </Layout>
+            <TouchableOpacity
+              onPress={() => setCheckboxState(!checkbox)}
+              style={styles.checkbox}>
+              {checkbox ? <CheckboxCheckedSvg /> : <CheckboxSvg />}
+              <Text style={styles.checkboxLabel}>
+                Allow this address to unlock my Verida account?
+              </Text>
+            </TouchableOpacity>
+          </View>
+          <View style={styles.footer}>
+            <Button
+              style={styles.cancelButton}
+              color='transparent-border'
+              onPress={() => hideModal()}>
+              Cancel
+            </Button>
+            <Button
+              style={styles.saveButton}
+              color='primary'
+              disabled={!name}
+              onPress={() => console.log()}>
+              Save
+            </Button>
+          </View>
+        </Layout>
+      </KeyboardAvoidingView>
     </Modal>
   )
 }
