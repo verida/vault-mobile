@@ -18,15 +18,8 @@ export default ({ item }) => {
           navigation.navigate('SingleWallet')
         }
       }}
-      style={[
-        {
-          backgroundColor: '#fff',
-          borderRadius: 0,
-          marginLeft: 0,
-          paddingLeft: 16,
-        },
-      ]}>
-      <Left style={{ flex: 2 }}>
+      style={styles.listItem}>
+      <Left style={styles.listItemBody}>
         {item.icon}
         <Body>
           <Text style={{ marginBottom: 3 }}>{item.label}</Text>
@@ -40,4 +33,12 @@ export default ({ item }) => {
   )
 }
 
-const style = StyleSheet.create({})
+const styles = StyleSheet.create({
+  listItem: {
+    backgroundColor: '#fff',
+    borderRadius: 0,
+    marginLeft: 0,
+    paddingLeft: 16,
+  },
+  listItemBody: { flex: 2 },
+})
