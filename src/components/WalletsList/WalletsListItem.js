@@ -1,13 +1,23 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 import { ListItem, Body, Text, Right, Left } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
+
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
 export default ({ item }) => {
+  const navigation = useNavigation()
+
   return (
     <ListItem
       button
-      onPress={item.onPress}
+      onPress={() => {
+        if (item.other) {
+          navigation.navigate('OtherAddresses')
+        } else {
+          navigation.navigate('SingleWallet')
+        }
+      }}
       style={[
         {
           backgroundColor: '#fff',

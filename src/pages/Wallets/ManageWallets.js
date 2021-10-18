@@ -25,41 +25,26 @@ const list = [
     label: 'Ethereum',
     icon: <EthereumSvg />,
     count: 12,
-    onPress: () => {
-      console.log()
-    },
   },
   {
     label: 'Near',
     icon: <NearSvg />,
     count: 10,
-    onPress: () => {
-      console.log()
-    },
   },
   {
     label: 'Algorand',
     icon: <AlgorandSvg />,
     count: 9,
-    onPress: () => {
-      console.log()
-    },
   },
   {
     label: 'Friendly wallet name',
     icon: <IKIGAISvg />,
     count: 5,
-    onPress: () => {
-      console.log()
-    },
   },
   {
     label: 'Other addresses',
     icon: <OtherSvg />,
     count: 20,
-    onPress: () => {
-      console.log()
-    },
     other: true,
   },
 ]
@@ -120,10 +105,6 @@ export default ({ navigation }) => {
                 }
                 if (buttonIndex === 1) {
                   setImportModalVisible(true)
-                }
-                if (buttonIndex === 2) {
-                  navigation.navigate('OtherAddresses')
-                  // navigation.navigate('SingleWallet')
                 }
               }
             ),

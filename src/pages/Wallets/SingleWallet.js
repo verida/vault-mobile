@@ -149,7 +149,7 @@ export default ({ navigation }) => {
       <AddAddressModal
         hideModal={() => setAddModalVisible(false)}
         // visible={addModalVisible}
-        visible={true}
+        visible={false}
       />
     </SafeAreaView>
   )
