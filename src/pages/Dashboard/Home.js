@@ -1,44 +1,28 @@
-import React, { useEffect, useRef, useState } from 'react'
-import {
-  Alert,
-  AppState,
-  Image,
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { QRCode } from 'react-native-custom-qr-codes-expo'
-import { connect } from 'react-redux'
+import React, { useEffect, useState } from "react";
+import { Alert, Image, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { QRCode } from "react-native-custom-qr-codes-expo";
+import { connect } from "react-redux";
 
-import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { Container, Content } from 'native-base'
-import { useDeeplink } from 'hooks/useDeeplink'
+import Text from "components/Text";
+import NavigationHeader from "components/Navigation/NavigationHeader";
+import { Container, Content } from "native-base";
+import { useDeeplink } from "hooks/useDeeplink";
 
-import EnvelopeSvg from '../../assets/icons/envelope.svg'
-import SettingsSvg from '../../assets/icons/settings.svg'
-import Clipboard from '@react-native-community/clipboard'
-import QRCodeIcon from 'assets/icons/qr-code.svg'
+import EnvelopeSvg from "../../assets/icons/envelope.svg";
+import SettingsSvg from "../../assets/icons/settings.svg";
+import Clipboard from "@react-native-community/clipboard";
+import QRCodeIcon from "assets/icons/qr-code.svg";
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import {
-  BLACK_COLOR_OPACITY,
-  BLACK_ORIGIN_COLOR,
-  ORANGE_COLOR,
-  WHITE_COLOR,
-} from '../../constants/color'
-import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
-import NetInfo from '@react-native-community/netinfo'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from "../../constants/text";
+import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, ORANGE_COLOR, WHITE_COLOR } from "../../constants/color";
+import { setNewMessagesCount as setNewMessagesCountAction } from "../../reduxStore/general/actions";
 
-import { getVault, getWallet, loadAvatarSource } from '../../api'
-import LoadingView from 'components/LoadingView'
-import { FIRST_TIME_LOGIN_KEY } from 'api'
-import * as SecureStore from 'expo-secure-store'
-import * as Sentry from '@sentry/react-native'
-import PushNotification from 'react-native-push-notification'
-import { get } from 'lodash'
-import { CHANNEL_ID } from 'helpers/notifications'
+import { loadAvatarSource } from "api/utils";
+import LoadingView from "components/LoadingView";
+import * as SecureStore from "expo-secure-store";
+import * as Sentry from "@sentry/react-native";
+import { FIRST_TIME_LOGIN_KEY } from "constants/storage";
+import AccountManager from "api/AccountManager";
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -46,13 +30,11 @@ const LogoImg = require('../../assets/vault-logo.png')
 const MAX_MESSAGE_COUNT = 21
 
 const Home = (props) => {
-  const { setNewMessagesCount, navigation } = props
+  const { navigation } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
   const handleDeeplink = useDeeplink(navigation)
-  const isNetworkConnected = useRef(null)
-  const appState = useRef(AppState.currentState)
 
   // Run only once on first render
   useEffect(() => {
@@ -78,37 +60,18 @@ const Home = (props) => {
       }
     }
 
-    getUrl()
-    checkFirstTimeLogin()
-  }, [handleDeeplink, navigation])
-
-  useEffect(() => {
-    const fetchInboxCount = async () => {
-      try {
-        const vault = await getVault()
-        const messages = await vault.inbox.fetchLatest(
-          { read: false },
-          { limit: MAX_MESSAGE_COUNT }
-        )
-        setNewMessagesCount(messages.length)
-      } catch (error) {
-        Sentry.captureException(error)
-        console.log(error)
-      }
-    }
-
     const initProfile = async () => {
       try {
-        const wallet = await getWallet()
-        const vault = await getVault()
-        const name = await vault.profiles.public.get('name')
+        const accountManager = AccountManager.getInstance()
+        const name = accountManager.vault.profiles.public.get('name')
         const source = await loadAvatarSource()
         setAvatarSource(source)
 
         setInfo({
-          address: wallet.did,
+          address: accountManager.selectedAccount.did,
           name,
         })
+        setLoading(false)
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Cannot get account information')
@@ -116,78 +79,10 @@ const Home = (props) => {
       }
     }
 
-    const onNewMessage = (message) => {
-      fetchInboxCount()
-      PushNotification.localNotification({
-        title: get(message, 'sendBy.app') || 'New Message',
-        message: message.message,
-        channelId: CHANNEL_ID,
-        userInfo: {
-          category: 'InboxItem',
-          data: message,
-        },
-      })
-    }
-
-    const initMessaging = async () => {
-      try {
-        const vault = await getVault()
-        const messaging = await vault.inbox.getMessaging()
-        return messaging.onMessage(onNewMessage)
-      } catch (error) {
-        Sentry.captureException(error)
-        console.log(error)
-      }
-    }
-
-    async function init() {
-      await initProfile()
-      let messageSubscription = await initMessaging()
-      await fetchInboxCount()
-      const unsubscribeNetInfo = NetInfo.addEventListener(async (state) => {
-        // Reconnect from disconnected state
-        if (isNetworkConnected.current === false && state.isConnected) {
-          await initProfile()
-          messageSubscription &&
-            messageSubscription.removeListener('newMessage', onNewMessage)
-          messageSubscription = await initMessaging()
-          await fetchInboxCount()
-        }
-        isNetworkConnected.current = state.isConnected
-      })
-
-      const appStateSubscription = AppState.addEventListener(
-        'change',
-        async (nextAppState) => {
-          if (
-            appState.current.match(/inactive|background/) &&
-            nextAppState === 'active'
-          ) {
-            await initProfile()
-            messageSubscription &&
-              messageSubscription.removeListener('newMessage', onNewMessage)
-            messageSubscription = await initMessaging()
-            await fetchInboxCount()
-          }
-
-          appState.current = nextAppState
-        }
-      )
-
-      return () => {
-        unsubscribeNetInfo && unsubscribeNetInfo()
-        appStateSubscription.remove()
-      }
-    }
-
-    let unsubscribe
-    init().then((_unsubscribe) => {
-      setLoading(false)
-      unsubscribe = _unsubscribe
-    })
-
-    return unsubscribe
-  }, [setNewMessagesCount])
+    getUrl()
+    checkFirstTimeLogin()
+    initProfile()
+  }, [handleDeeplink, navigation])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {

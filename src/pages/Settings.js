@@ -9,7 +9,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import LayoutStyle from '../styles/layouts'
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
-import { clearWallet } from '../api'
+import { clearWallet } from 'api/utils'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
 

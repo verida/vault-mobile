@@ -13,9 +13,9 @@ import { Container, Content } from 'native-base'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Details from '../components/Details'
 import * as SecureStore from 'expo-secure-store'
-import { FIRST_TIME_LOGIN_KEY } from 'api'
 import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
 import { connect } from 'react-redux'
+import { FIRST_TIME_LOGIN_KEY } from "constants/storage";
 
 const SuccessPage = (props) => {
   const { setAuthStatus } = props

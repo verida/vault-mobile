@@ -4,7 +4,8 @@ import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import * as ImagePicker from 'expo-image-picker'
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 import { WHITE_COLOR } from '../constants/color'
-import { getVault, loadAvatarSource } from '../api'
+import { loadAvatarSource } from 'api/utils'
+import AccountManager from 'api/AccountManager'
 
 const userImg = require('../assets/stubs/avatar.png')
 
@@ -32,7 +33,7 @@ function ImageLoader() {
       })
 
       if (!result.cancelled && result.base64) {
-        const vault = await getVault()
+        const vault = AccountManager.getInstance().vault
         let avatar = await vault.profiles.public.get('avatar')
         console.log('avatar:', avatar)
 

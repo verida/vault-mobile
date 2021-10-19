@@ -5,6 +5,7 @@ import AuthNavigator from 'navigation/AuthNavigator'
 import MainNavigator from 'navigation/MainNavigator'
 import { useAuth } from 'hooks/useAuth'
 import { createNavigationContainerRef } from '@react-navigation/native'
+import LoadingView from 'components/LoadingView'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 
@@ -24,7 +25,7 @@ function RootNavigator() {
   }, [initialize])
 
   if (!loaded) {
-    return null
+    return <LoadingView />
   }
 
   return (

@@ -10,7 +10,7 @@ import InputStyles from '../styles/inputs'
 import { COUNTRIES } from 'helpers/country-list'
 
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { generateWallet } from '../api'
+import { generateWallet } from 'api/utils'
 import { useNavigation } from '@react-navigation/native'
 import { Dispatch } from 'redux'
 import { AuthStackParams } from 'navigation/types'

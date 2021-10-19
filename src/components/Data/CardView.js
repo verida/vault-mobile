@@ -2,8 +2,8 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import DataCardList from './DataCardList'
-import { getVault } from '../../api'
 import { useNavigation } from '@react-navigation/native'
+import AccountManager from 'api/AccountManager'
 
 const CardView = ({ folder }) => {
   const [list, setList] = useState([])
@@ -11,7 +11,7 @@ const CardView = ({ folder }) => {
 
   useEffect(() => {
     const init = async () => {
-      const vault = await getVault()
+      const vault = AccountManager.getInstance().vault
       const { folders } = vault.data.map
 
       const generatedList = folder.config.folders.map((folderName) => {

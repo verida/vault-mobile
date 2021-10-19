@@ -6,7 +6,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { isAuthorized } from 'api'
+import AccountManager from 'api/AccountManager'
 
 type AuthContextState = {
   initialize: () => Promise<boolean>
@@ -25,7 +25,10 @@ export const AuthProvider: FC = ({ children }) => {
   const [loaded, setLoaded] = useState(false)
 
   const initialize = useCallback(async () => {
-    const authorized = await isAuthorized()
+    console.log('initialize')
+    await AccountManager.getInstance().init()
+    console.log('initializeed')
+    const authorized = !!AccountManager.getInstance().selectedAccount
     setLoaded(true)
     setAuthenticated(authorized)
     return authorized

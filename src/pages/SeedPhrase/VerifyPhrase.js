@@ -9,7 +9,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
 import ErrorPhrase from '../../components/ErrorPhrase'
-import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api'
+import { MNEMONIC_LENGTH, walletByMnemonic } from 'api/utils'
 
 const VerifyPhrase = (props) => {
   const { words, resetPhrase, navigation, route } = props

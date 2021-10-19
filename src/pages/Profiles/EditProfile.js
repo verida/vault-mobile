@@ -13,7 +13,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
 
 import IntlPhoneInput from 'react-native-intl-phone-input'
-import { getVault } from '../../api'
+import AccountManager from 'api/AccountManager'
 
 const EditProfile = (props) => {
   const { navigation, route, publicProfileData, setPublicProfileData } = props
@@ -29,7 +29,7 @@ const EditProfile = (props) => {
 
     if (publicProfileData[key] === val) return
     setDisabled(true)
-    const vault = await getVault()
+    const vault = AccountManager.getInstance().vault
 
     await vault.profiles.public.set(key, val)
     setPublicProfileData({ publicProfileData, [key]: val })

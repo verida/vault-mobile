@@ -17,11 +17,11 @@ import Button from 'components/Button'
 import { Dispatch } from 'redux'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import { connect } from 'react-redux'
-import { generateWallet } from 'api'
 import Layout from 'components/Layouts/Layout'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import AccountManager from 'api/AccountManager'
 
 type Option = {
   label: string
@@ -40,17 +40,19 @@ function Create(
   const onCreateAccount = async () => {
     try {
       setProcessing(true)
-      await generateWallet({ name, country: country?.value })
-      console.log('wallet generated')
+      await AccountManager.getInstance().createAccount({
+        name,
+        country: country?.value || '',
+      })
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       props.setPublicProfileData({ name, country: country?.value })
       setProcessing(false)
       navigation.navigate('CreatePin')
     } catch (error) {
+      console.error(error)
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
-      console.log('Failed to create account:', error)
     }
   }
 

@@ -7,8 +7,8 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
 import { editable } from '../../helpers/profile'
-import { getVault } from '../../api'
 import { useIsFocused } from '@react-navigation/native'
+import AccountManager from 'api/AccountManager'
 
 const PublicProfile = (props) => {
   const { setPublicProfileData } = props
@@ -26,7 +26,7 @@ const PublicProfile = (props) => {
       if (initialized) {
         return
       }
-      const vault = await getVault()
+      const vault = AccountManager.getInstance().vault
       const publicData = await vault.profiles.public.getMany()
       let profileProperties = publicData.reduce((acc, field) => {
         acc = { ...acc, [field.key]: field.value }
@@ -47,7 +47,7 @@ const PublicProfile = (props) => {
     }
 
     const bindChanges = async () => {
-      const vault = await getVault()
+      const vault = AccountManager.getInstance().vault
       await vault.profiles.public.init()
       const db = await vault.profiles.public.store.getDb()
       const dbInstance = await db.getInstance()

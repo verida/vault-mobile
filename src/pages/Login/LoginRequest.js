@@ -3,7 +3,6 @@ import { Linking, StyleSheet, View } from 'react-native'
 import { Container, Content, Icon } from 'native-base'
 import didJWT from 'did-jwt'
 import Moment from 'moment'
-import { getVeridaApp } from '../../api'
 import EncryptionUtils from '@verida/encryption-utils'
 import MobileSvg from '../../assets/mobile.svg'
 
@@ -21,6 +20,7 @@ import {
 import AppLogo from 'components/AppLogo'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
+import AccountManager from 'api/AccountManager'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -106,7 +106,7 @@ export default (props) => {
   console.log('info:', info)
 
   const saveLoginRequest = async (approved) => {
-    const vault = await getVeridaApp()
+    const vault = AccountManager.getInstance().vault
     // save into login database
     const loginRequest = {
       context: info.request.context,
@@ -148,14 +148,15 @@ export default (props) => {
     try {
       setStatus('approving')
 
-      const vault = await getVeridaApp()
+      const vault = AccountManager.getInstance().vault
+      const client = AccountManager.getInstance().client
       const account = await vault.getAccount()
       const keyring = await account.keyring(info.request.context)
       const signature = keyring.getSeed()
       const did = await account.did()
       const contextName = info.request.context
 
-      const context = await global.client.openContext(contextName, true)
+      const context = await client.openContext(contextName, true)
       const contextConfig = await context.getContextConfig()
 
       const response = {

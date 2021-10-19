@@ -6,8 +6,7 @@ import Layout from '../../components/Layouts/Layout'
 import WordCard from '../../components/Words/WordCard'
 import Button from '../../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-
-import { getWallet } from '../../api'
+import AccountManager from 'api/AccountManager'
 
 export default () => {
   const [words, setWords] = useState('')
@@ -15,9 +14,10 @@ export default () => {
 
   useEffect(() => {
     const init = async () => {
-      const wallet = await getWallet()
-      setWords(wallet.mnemonic)
-      setKey(wallet.privateKey)
+      const { mnemonic, privateKey } =
+        AccountManager.getInstance().selectedAccount
+      setWords(mnemonic)
+      setKey(privateKey)
     }
 
     init()

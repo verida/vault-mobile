@@ -7,7 +7,7 @@ import Button from '../../components/Button'
 import Label from '../../components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api'
+import { MNEMONIC_LENGTH, walletByMnemonic } from 'api/utils'
 import ErrorPhrase from '../../components/ErrorPhrase'
 
 import ModifierStyles from '../../styles/modifier'

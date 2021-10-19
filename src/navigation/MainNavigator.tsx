@@ -15,10 +15,13 @@ import Item from 'pages/Data/Item'
 import Settings from 'pages/Settings'
 import ChangePin from 'pages/Authentication/ChangePin'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
+import { useEventHandlers } from 'hooks/useEventHandlers'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
+  useEventHandlers()
+
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
