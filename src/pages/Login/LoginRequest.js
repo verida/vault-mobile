@@ -60,6 +60,7 @@ export default (props) => {
 
       websocket.onmessage = (event) => {
         const message = JSON.parse(event.data)
+        console.log('socket message:', message)
 
         if (message.type === 'error') {
           setErrorMessage({
@@ -75,6 +76,7 @@ export default (props) => {
 
         switch (message.type) {
           case 'auth-session':
+            console.log('auth-session')
             const request = message.message
             setInfo({
               request,
@@ -101,9 +103,42 @@ export default (props) => {
   }, [props.route.params, props.navigation])
 
   // @todo use key to encrypt response to server
+  console.log('info:', info)
 
-  const deny = () => {
+  const saveLoginRequest = async (approved) => {
+    const vault = await getVeridaApp()
+    // save into login database
+    const loginRequest = {
+      context: info.request.context,
+      loginDomain: info.request.loginDomain,
+      insertedAt: info.payload.insertedAt,
+      sessionId: info.payload.data.session,
+      authUri: info.payload.data.authUri,
+      expiry: info.payload.exp,
+      approved,
+    }
+    console.log('loginRequest:', loginRequest)
+
+    const loginRequestDatastore = await vault.openDatastore(
+      'https://schemas.verida.io/auth/loginRequest/schema.json'
+    )
+    const saveSuccess = await loginRequestDatastore.save(loginRequest)
+    console.log('saveSuccess:', !!saveSuccess)
+    if (!saveSuccess) {
+      console.log('saveError:', loginRequestDatastore.errors)
+    }
     props.navigation.navigate('Home')
+  }
+
+  const deny = async () => {
+    try {
+      setStatus('denying')
+      await saveLoginRequest(false)
+      props.navigation.navigate('Home')
+    } catch (error) {
+      console.log(error)
+      setStatus('loaded')
+    }
   }
 
   /**
@@ -148,26 +183,7 @@ export default (props) => {
 
       setStatus('sentResponse')
 
-      // @todo: validate domain name and public key to ensure they match
-      // If they don't, show warning "Website could not be verified and is untrusted."
-
-      // @todo: show message (pending)
-
-      // save into login database
-      const loginRequest = {
-        context: info.request.appName,
-        loginDomain: info.request.loginDomain,
-        insertedAt: info.payload.insertedAt,
-        sessionId: info.request.session,
-        authUri: info.request.authUri,
-        expiry: info.payload.exp,
-        approved: true,
-      }
-
-      const loginRequestDatastore = await context.openDatastore(
-        'https://schemas.verida.io/auth/loginRequest/schema.json'
-      )
-      await loginRequestDatastore.save(loginRequest)
+      await saveLoginRequest(true)
     } catch (error) {
       console.log(error)
       setStatus('loaded')
@@ -263,7 +279,7 @@ export default (props) => {
             </Button>
           ) : null}
         </View>
-        {status === 'approving' ? (
+        {status === 'approving' || status === 'denying' ? (
           <View>
             <Text style={style.text}>Sending response...</Text>
           </View>

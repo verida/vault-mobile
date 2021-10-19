@@ -12,28 +12,33 @@ export default ({ route }) => {
 
   useEffect(() => {
     const init = async () => {
-      const veridaApp = await getVeridaApp()
-      const datastore = await veridaApp.openDatastore(
-        'https://schemas.verida.io/auth/loginRequest/schema.json'
-      )
-      const filter = {
-        approved: route.key === 'approved',
+      try {
+        const veridaApp = await getVeridaApp()
+        const datastore = await veridaApp.openDatastore(
+          'https://schemas.verida.io/auth/loginRequest/schema.json'
+        )
+        const filter = {
+          approved: route.key === 'approved',
+        }
+        console.log('filter:', filter)
+        const requests = await datastore.getMany(filter, {
+          sort: [{ insertedAt: 'desc' }],
+        })
+        console.log('requests:', requests)
+
+        const _history = requests.length && (
+          <View style={style.container}>
+            {requests.map((item) => (
+              <History key={item._id} data={item} />
+            ))}
+          </View>
+        )
+
+        setHistory(_history)
+        setLoading(false)
+      } catch (e) {
+        console.log(e)
       }
-
-      const requests = await datastore.getMany(filter, {
-        sort: [{ insertedAt: 'desc' }],
-      })
-
-      const _history = requests.length && (
-        <View style={style.container}>
-          {requests.map((item) => (
-            <History key={item._id} data={item} />
-          ))}
-        </View>
-      )
-
-      setHistory(_history)
-      setLoading(false)
     }
 
     init()

@@ -1,14 +1,30 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Content } from 'native-base'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
 import { getVault } from '../../../api'
+import { Alert } from 'react-native'
+import * as Sentry from '@sentry/react-native'
 
 export default ({ item, inboxItem, type, navigation }) => {
+  const [currentAction, setCurrentAction] = useState(null)
+
   const onResultClick = async (result) => {
-    const vault = await getVault()
-    await vault.inbox.handleAction(inboxItem, result, {})
-    navigation.goBack()
+    try {
+      if (result === 'accept') {
+        setCurrentAction('accept')
+      } else {
+        setCurrentAction('decline')
+      }
+      const vault = await getVault()
+      await vault.inbox.handleAction(inboxItem, result, {})
+      setCurrentAction(null)
+      navigation.goBack()
+    } catch (e) {
+      Alert.alert('Error', 'Cannot accept data now')
+      Sentry.captureException(e)
+      setCurrentAction(null)
+    }
   }
 
   return (
@@ -17,7 +33,8 @@ export default ({ item, inboxItem, type, navigation }) => {
         item={item}
         type={type}
         inboxItem={inboxItem}
-        onResultClick={onResultClick}>
+        onResultClick={onResultClick}
+        currentAction={currentAction}>
         {/* Hide details about incoming data for now. <RecordList list={records} /> */}
       </RequestDetailsLayout>
     </Content>
