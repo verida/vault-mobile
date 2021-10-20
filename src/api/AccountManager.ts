@@ -162,6 +162,19 @@ class AccountManager {
       return undefined
     }
   }
+
+  public async logout() {
+    try {
+      this.selectedAccount = undefined
+      this.context = undefined
+      this.client = undefined
+      this.vault = undefined
+
+      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_STORAGE_KEY)
+    } catch (e) {
+      Sentry.captureException(e)
+    }
+  }
 }
 
 export default AccountManager

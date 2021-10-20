@@ -6,6 +6,7 @@ import MainNavigator from 'navigation/MainNavigator'
 import { useAuth } from 'hooks/useAuth'
 import { createNavigationContainerRef } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
+import AccountManager from 'api/AccountManager'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 
@@ -18,11 +19,15 @@ export function navigate(name: unknown, params: unknown) {
 }
 
 function RootNavigator() {
-  const { initialize, authenticated, loaded } = useAuth()
+  const { refresh, authenticated, loaded } = useAuth()
 
   useEffect(() => {
-    initialize()
-  }, [initialize])
+    async function init() {
+      await AccountManager.getInstance().init()
+      await refresh()
+    }
+    init()
+  }, [refresh])
 
   if (!loaded) {
     return <LoadingView />

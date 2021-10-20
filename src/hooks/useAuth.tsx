@@ -9,13 +9,13 @@ import React, {
 import AccountManager from 'api/AccountManager'
 
 type AuthContextState = {
-  initialize: () => Promise<boolean>
+  refresh: () => Promise<boolean>
   authenticated: boolean
   loaded: boolean
 }
 
 const AuthContext = createContext<AuthContextState>({
-  initialize: async () => false,
+  refresh: async () => false,
   authenticated: false,
   loaded: false,
 })
@@ -24,10 +24,7 @@ export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
-  const initialize = useCallback(async () => {
-    console.log('initialize')
-    await AccountManager.getInstance().init()
-    console.log('initializeed')
+  const refresh = useCallback(async () => {
     const authorized = !!AccountManager.getInstance().selectedAccount
     setLoaded(true)
     setAuthenticated(authorized)
@@ -36,11 +33,11 @@ export const AuthProvider: FC = ({ children }) => {
 
   const context = useMemo(
     () => ({
-      initialize,
+      refresh,
       authenticated,
       loaded,
     }),
-    [initialize, authenticated, loaded]
+    [refresh, authenticated, loaded]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
