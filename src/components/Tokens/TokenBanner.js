@@ -18,7 +18,7 @@ const icons = {
   ethereum: <EthereumSvg />,
 }
 
-export default ({ data }) => {
+export default ({ data, sendButtonAction }) => {
   const { coin, price, change, amount, symbol, quantity } = data
   const positive = change > 0
 
@@ -45,11 +45,13 @@ export default ({ data }) => {
           {coin ? `${quantity} ${symbol}` : `$${amount}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {coin ? `≈$${amount}` : `Total Balance`}
+          {coin ? `≈ $${amount}` : `Total Balance`}
         </Text>
       </View>
       <View style={styles.actionIcons}>
-        <TouchableOpacity style={styles.singleActionIcon}>
+        <TouchableOpacity
+          onPress={sendButtonAction}
+          style={styles.singleActionIcon}>
           <SendIcon />
           <Text style={styles.actionIconText}>Send</Text>
         </TouchableOpacity>
