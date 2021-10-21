@@ -83,6 +83,10 @@ export default ({ navigation }) => {
         visible={sendModalVisible}
         hideModal={() => setSendModalVisible(false)}
         list={list}
+        onPressItem={() => {
+          setSendModalVisible(false)
+          navigation.navigate('SendToken')
+        }}
       />
     </Container>
   )
