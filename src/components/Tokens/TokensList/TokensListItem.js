@@ -1,22 +1,15 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { ListItem, Text } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({ item }) => {
-  const navigation = useNavigation()
+export default ({ item, onPressItem }) => {
   const { change, label, icon, symbol, quantity, price, amount } = item
   const positive = change > 0
 
   return (
-    <ListItem
-      button
-      onPress={() => {
-        navigation.navigate('SingleCurrency')
-      }}
-      style={styles.listItem}>
+    <ListItem button onPress={onPressItem} style={styles.listItem}>
       {icon}
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>

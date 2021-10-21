@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
 import { Container, List } from 'native-base'
 
@@ -58,6 +58,8 @@ const list = [
 ]
 
 export default ({ navigation }) => {
+  const [sendModalVisible, setSendModalVisible] = useState(false)
+
   return (
     <Container>
       <NavigationHeader
@@ -67,11 +69,21 @@ export default ({ navigation }) => {
           icon: <SettingsSvg />,
         }}
       />
-      <TokenBanner data={bannerData} />
+      <TokenBanner
+        data={bannerData}
+        sendButtonAction={() => setSendModalVisible(true)}
+      />
       <List>
-        <TokensList list={list} />
+        <TokensList
+          list={list}
+          onPressItem={() => navigation.navigate('SingleCurrency')}
+        />
       </List>
-      <SendListModal list={list} />
+      <SendListModal
+        visible={sendModalVisible}
+        hideModal={() => setSendModalVisible(false)}
+        list={list}
+      />
     </Container>
   )
 }
