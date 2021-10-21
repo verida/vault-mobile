@@ -14,6 +14,7 @@ import ManageWallets from 'pages/Wallets/ManageWallets'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
+import SingleCurrency from 'pages/Tokens/SingleCurrency'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
 import Settings from 'pages/Settings'
@@ -38,6 +39,7 @@ function MainNavigator() {
       <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
       <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
       <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
+      <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
       <Stack.Screen name={'DataFolder'} component={Folder} />
       <Stack.Screen name={'DataItem'} component={Item} />
       <Stack.Screen name={'Settings'} component={Settings} />

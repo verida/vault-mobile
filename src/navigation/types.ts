@@ -34,6 +34,7 @@ export type MainStackParams = {
   EditProfile: undefined
   SeedPhraseView: undefined
   ManageWallets: undefined
+  SingleCurrency: undefined
   SingleWallet: undefined
   OtherAddresses: undefined
   SuccessFailure: undefined
