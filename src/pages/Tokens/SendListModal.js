@@ -11,7 +11,7 @@ import { Icon, List } from 'native-base'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokensList from 'components/Tokens/TokensList'
 
-export default ({ visible, hideModal, list }) => {
+export default ({ visible, hideModal, list, onPressItem }) => {
   return (
     <Modal
       presentationStyle='pageSheet'
@@ -30,7 +30,7 @@ export default ({ visible, hideModal, list }) => {
       </View>
       <View style={styles.container}>
         <List>
-          <TokensList list={list} />
+          <TokensList list={list} onPressItem={onPressItem} />
         </List>
       </View>
     </Modal>
