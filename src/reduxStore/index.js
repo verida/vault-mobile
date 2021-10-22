@@ -1,11 +1,17 @@
-import { createStore } from 'redux'
+import { applyMiddleware, createStore } from 'redux'
+import { composeWithDevTools } from 'redux-devtools-extension'
 
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 import {
+  ADD_ACCOUNT,
+  SET_ACCOUNTS,
   SET_AUTH_STATUS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
+  SET_SELECTED_ACCOUNT,
+  SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
+import update from 'immutability-helper'
 
 const initialState = {
   template: [],
@@ -16,6 +22,9 @@ const initialState = {
     country: '',
     description: '',
   },
+  accounts: {},
+  selectedAccount: null,
+  switchAccountToast: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -35,9 +44,51 @@ const reducer = (state = initialState, action) => {
       return { ...state, publicProfileData: action.payload }
     case SET_NEW_MESSAGES_COUNT:
       return { ...state, newMessagesCount: action.payload }
+    case SET_ACCOUNTS:
+      return update(state, {
+        accounts: {
+          $set: action.payload,
+        },
+      })
+    case SET_SELECTED_ACCOUNT:
+      return update(state, {
+        selectedAccount: {
+          $set: action.payload,
+        },
+      })
+    case ADD_ACCOUNT:
+      return update(state, {
+        accounts: {
+          $apply: function (value) {
+            return {
+              ...value,
+              [action.payload.did]: action.payload,
+            }
+          },
+        },
+      })
+    case SET_SWITCH_ACCOUNT_TOAST:
+      return update(state, {
+        switchAccountToast: {
+          $set: action.payload,
+        },
+      })
+
     default:
       return state
   }
 }
 
-export default createStore(reducer)
+const composeEnhancers = composeWithDevTools({
+  // Specify here name, actionsBlacklist, actionsCreators and other options
+})
+
+const middleware = []
+
+export default createStore(
+  reducer,
+  composeEnhancers(
+    applyMiddleware(...middleware)
+    // other store enhancers if any
+  )
+)

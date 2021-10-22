@@ -7,7 +7,6 @@ import Button from '../../components/Button'
 import Label from '../../components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { MNEMONIC_LENGTH, walletByMnemonic } from 'api/utils'
 import ErrorPhrase from '../../components/ErrorPhrase'
 
 import ModifierStyles from '../../styles/modifier'
@@ -16,6 +15,7 @@ import InputStyles from '../../styles/inputs'
 import _ from 'underscore'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import BottomActionsModal from 'components/BottomActionsModal'
+import { MNEMONIC_LENGTH } from 'api/AccountManager'
 
 export default (props) => {
   const { navigation, route } = props
@@ -47,6 +47,8 @@ export default (props) => {
 
     verify()
   }, [phrase, usePrivateKey])
+
+  console.log('verify:', verified)
 
   const onContinue = async () => {
     try {

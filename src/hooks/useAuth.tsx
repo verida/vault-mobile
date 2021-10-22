@@ -12,12 +12,15 @@ type AuthContextState = {
   refresh: () => Promise<boolean>
   authenticated: boolean
   loaded: boolean
+  switchToAccount: (did: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextState>({
   refresh: async () => false,
   authenticated: false,
   loaded: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  switchToAccount: async () => {},
 })
 
 export const AuthProvider: FC = ({ children }) => {
@@ -26,9 +29,18 @@ export const AuthProvider: FC = ({ children }) => {
 
   const refresh = useCallback(async () => {
     const authorized = !!AccountManager.getInstance().selectedAccount
+    if (authorized) {
+      await AccountManager.getInstance().connect()
+    }
     setLoaded(true)
     setAuthenticated(authorized)
     return authorized
+  }, [])
+
+  const switchToAccount = useCallback(async (did: string) => {
+    setLoaded(false)
+    await AccountManager.getInstance().switchToAccount(did)
+    setLoaded(true)
   }, [])
 
   const context = useMemo(
@@ -36,8 +48,9 @@ export const AuthProvider: FC = ({ children }) => {
       refresh,
       authenticated,
       loaded,
+      switchToAccount,
     }),
-    [refresh, authenticated, loaded]
+    [refresh, authenticated, loaded, switchToAccount]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>

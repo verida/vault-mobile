@@ -5,7 +5,7 @@ import PushNotification from 'react-native-push-notification'
 import { get } from 'lodash'
 import { CHANNEL_ID } from 'helpers/notifications'
 import * as Sentry from '@sentry/react-native'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 import NetInfo from '@react-native-community/netinfo'
 
@@ -16,6 +16,9 @@ export const useEventHandlers = () => {
   const appState = useRef(AppState.currentState)
   const [ready, setReady] = useState(false)
   const dispatch = useDispatch()
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const selectedAccount = useSelector((state) => state.selectedAccount)
 
   useEffect(() => {
     async function fetchInboxCount() {
@@ -50,7 +53,8 @@ export const useEventHandlers = () => {
       const messaging =
         await AccountManager.getInstance().vault?.inbox.getMessaging()
       console.log('messaging:', messaging)
-      let messagingSubscription = messaging.onMessage(onMessage)
+      let messagingSubscription = await messaging.onMessage(onMessage)
+      console.log('messagingSubscription:', messagingSubscription)
 
       async function onAppStateChanged(nextAppState: AppStateStatus) {
         if (
@@ -58,9 +62,8 @@ export const useEventHandlers = () => {
           nextAppState === 'active'
         ) {
           await fetchInboxCount()
-          // messagingSubscription &&
-          //   messagingSubscription.removeListener('newMessage', onMessage)
-          messagingSubscription = messaging.onMessage(onMessage)
+          messagingSubscription && messagingSubscription.cancel()
+          messagingSubscription = await messaging.onMessage(onMessage)
         }
 
         appState.current = nextAppState
@@ -70,9 +73,9 @@ export const useEventHandlers = () => {
         // Reconnect from disconnected state
         if (isNetworkConnected.current === false && state.isConnected) {
           await fetchInboxCount()
-          // messagingSubscription &&
-          //   messagingSubscription.removeListener('newMessage', onMessage)
-          messagingSubscription = messaging.onMessage(onMessage)
+          messagingSubscription &&
+            messagingSubscription.removeListener('newMessage', onMessage)
+          messagingSubscription = await messaging.onMessage(onMessage)
         }
         isNetworkConnected.current = state.isConnected
       })
@@ -94,7 +97,7 @@ export const useEventHandlers = () => {
     })
 
     return () => unsubscribe && unsubscribe()
-  }, [dispatch])
+  }, [dispatch, selectedAccount])
 
   return {
     ready,

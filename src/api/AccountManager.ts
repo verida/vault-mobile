@@ -4,30 +4,38 @@ import { Client, Context } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import { Wallet } from 'ethers'
 import { Utils } from '@verida/3id-utils-node'
-import { Account, UserData } from 'api/types'
+import { Account, NormalizedAccounts, UserData } from 'api/types'
 import Vault from '@verida/vault-common'
 import dataMap from 'config/data-map'
+import store from 'reduxStore'
+import {
+  addAccount,
+  setAccounts,
+  setSelectedAccount,
+  setSwitchAccountToast,
+} from 'reduxStore/general/actions'
+import { isEmpty } from 'lodash'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
-const SELECTED_ACCOUNT_STORAGE_KEY = 'selected-account'
-const SELECTED_CHAIN_STORAGE_KEY = 'selected-chain'
+const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
 const CERAMIC_URL = 'https://ceramic.verida.io:7007'
 const ENDPOINT_URL = 'https://db.testnet.verida.io:5002/'
-const VERIDA_CONTEXT_NAME = 'Verida: Vault'
-const DEFAULT_CHAIN = 'ethr'
+export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
+export const MNEMONIC_LENGTH = 12
 
 class AccountManager {
-  public accounts: Account[] = []
-  public selectedAccount: Account | undefined
-  public selectedChain: string = DEFAULT_CHAIN
+  // public selectedChain: string = DEFAULT_CHAIN
   public context: Context | undefined
   public client: Client | undefined
   public vault: Vault | undefined
+  public accounts: NormalizedAccounts
+  public selectedAccount: Account | undefined
 
   private static instance: AccountManager
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  private constructor() {}
+  private constructor() {
+    this.accounts = {}
+  }
 
   public async init() {
     try {
@@ -35,36 +43,28 @@ class AccountManager {
         const accountsRaw = await SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY)
         if (accountsRaw) {
           this.accounts = JSON.parse(accountsRaw)
+          store.dispatch(setAccounts(this.accounts))
         }
         const selectedAccountDid = await SecureStore.getItemAsync(
-          SELECTED_ACCOUNT_STORAGE_KEY
+          SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
-        console.log('this.accounts:', this.accounts)
+        console.log('accounts:', this.accounts)
         console.log('selectedAccountDid:', selectedAccountDid)
 
-        if (this.accounts.length > 0 && selectedAccountDid) {
-          this.selectedAccount = this.accounts.find(
-            (account) => account.did === selectedAccountDid
-          )
+        if (!isEmpty(this.accounts) && selectedAccountDid) {
+          this.selectedAccount = this.accounts[selectedAccountDid]
+          store.dispatch(setSelectedAccount(this.selectedAccount))
         }
-      }
-
-      // TODO: Support multiple chains
-      // if (!this.selectedChain) {
-      //   this.selectedChain =
-      //     (await SecureStore.getItemAsync(SELECTED_CHAIN_STORAGE_KEY)) ||
-      //     DEFAULT_CHAIN
-      // }
-      console.log('this.selectedAccount', this.selectedAccount)
-
-      if (this.selectedAccount && !this.context) {
-        this.context = await this.getVeridaContext()
-        this.vault = await this.getVault()
       }
     } catch (e) {
       console.error(e)
       Sentry.captureException(e)
     }
+  }
+
+  public async connect() {
+    this.context = await this.getVeridaContext()
+    this.vault = await this.getVault()
   }
 
   public static getInstance(): AccountManager {
@@ -124,40 +124,48 @@ class AccountManager {
 
   private async setPublicProfile(data: UserData) {
     const entries = Object.entries(data)
-    for (let i = 0; i < entries.length; i++) {
-      const entry = entries[i]
-      await this.vault?.profiles.public.set(...entry)
-    }
+    await Promise.all(
+      entries.map(async (entry) => {
+        await this.vault?.profiles.public.set(...entry)
+      })
+    )
   }
 
   public async createAccount(userData: UserData): Promise<Account | undefined> {
     try {
       const ethWallet = Wallet.createRandom()
+      console.log('ethWallet:', ethWallet)
       const mnemonic = ethWallet.mnemonic
       const utils = new Utils(CERAMIC_URL)
       const ceramic = await utils.createAccount('3id', mnemonic)
+
       this.selectedAccount = {
         mnemonic: ethWallet.mnemonic,
         did: ceramic?.did?.id || '',
         privateKey: ethWallet.privateKey,
       }
+      this.accounts[this.selectedAccount.did] = this.selectedAccount
+      console.log('this.selectedAccount:', this.selectedAccount)
 
-      this.accounts.push(this.selectedAccount)
       await SecureStore.setItemAsync(
         ACCOUNTS_STORAGE_KEY,
         JSON.stringify(this.accounts)
       )
       await SecureStore.setItemAsync(
-        SELECTED_ACCOUNT_STORAGE_KEY,
+        SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
 
-      await this.init()
+      await this.connect()
 
       await this.setPublicProfile(userData)
 
+      store.dispatch(setSelectedAccount(this.selectedAccount))
+      store.dispatch(addAccount(this.selectedAccount))
+
       return this.selectedAccount
     } catch (e) {
+      console.error(e)
       Sentry.captureException(e)
       return undefined
     }
@@ -166,14 +174,50 @@ class AccountManager {
   public async logout() {
     try {
       this.selectedAccount = undefined
+      this.accounts = {}
       this.context = undefined
       this.client = undefined
       this.vault = undefined
-
-      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
+      store.dispatch(setSelectedAccount(null))
+      store.dispatch(setAccounts({}))
     } catch (e) {
       Sentry.captureException(e)
     }
+  }
+
+  public async switchToAccount(did: string) {
+    try {
+      this.selectedAccount = this.accounts[did]
+      await SecureStore.setItemAsync(
+        SELECTED_ACCOUNT_DID_STORAGE_KEY,
+        this.selectedAccount.did
+      )
+      await this.connect()
+      const name = await this.vault?.profiles.public.get('name')
+      const avatar = await this.vault?.profiles.public.get('avatar')
+
+      store.dispatch(setSelectedAccount(this.selectedAccount))
+      setTimeout(() => {
+        store.dispatch(
+          setSwitchAccountToast({
+            name,
+            avatar,
+          })
+        )
+
+        setTimeout(() => {
+          store.dispatch(null)
+        }, 2000)
+      }, 100)
+    } catch (e) {
+      Sentry.captureException(e)
+    }
+  }
+
+  public async importAccount(mnemonic: string) {
+    // TODO
   }
 }
 

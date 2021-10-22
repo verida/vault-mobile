@@ -11,6 +11,8 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import EnvelopeSvg from 'assets/icons/envelope.svg'
+import SettingsSvg from 'assets/icons/settings.svg'
 
 export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   avatar: ImageSourcePropType
@@ -18,9 +20,11 @@ export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   inboxCount: number
   onAvatarPress: () => void
   onNamePress: () => void
-  onEmailPress: () => void
-  onSettingPress: () => void
+  onInboxPress: () => void
+  onSettingsPress: () => void
 }
+
+const MAX_MESSAGE_COUNT = 21
 
 function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   console.log(props)
@@ -30,8 +34,8 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     inboxCount,
     onAvatarPress,
     onNamePress,
-    onEmailPress,
-    onSettingPress,
+    onInboxPress,
+    onSettingsPress,
     ...rest
   } = props
 
@@ -47,12 +51,32 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
             <Image source={avatar} style={styles.avatar} />
           </TouchableOpacity>
           <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
-            <Text style={styles.name}>Hien Phung</Text>
+            <Text style={styles.name}>{name}</Text>
             <AntDesign name={'caretdown'} size={10} color={'#041133'} />
           </TouchableOpacity>
         </View>
       </Left>
-      <Right />
+      <Right>
+        <View style={styles.right}>
+          <TouchableOpacity style={styles.inboxButton} onPress={onInboxPress}>
+            <EnvelopeSvg />
+            {inboxCount ? (
+              <View style={styles.badge}>
+                <Text style={{ fontSize: 8 }} numberOfLines={1}>
+                  {inboxCount >= MAX_MESSAGE_COUNT
+                    ? `${MAX_MESSAGE_COUNT - 1}+`
+                    : inboxCount}
+                </Text>
+              </View>
+            ) : null}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.settingsButton}
+            onPress={onSettingsPress}>
+            <SettingsSvg />
+          </TouchableOpacity>
+        </View>
+      </Right>
     </Header>
   )
 }
@@ -82,6 +106,29 @@ const styles = StyleSheet.create({
   nameButton: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  badge: {
+    alignItems: 'center',
+    justifyContent: 'center',
+    padding: 1,
+    position: 'absolute',
+    right: -8,
+    top: -7,
+    minHeight: 16,
+    minWidth: 16,
+    backgroundColor: '#FF6E6E',
+    borderRadius: 8,
+    overflow: 'hidden',
+  },
+  right: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  inboxButton: {
+    paddingHorizontal: 10,
+  },
+  settingsButton: {
+    paddingHorizontal: 10,
   },
 })
 

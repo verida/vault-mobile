@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { ReactChild } from 'react'
 import {
   Modal,
   ModalProps,
@@ -19,15 +19,15 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export interface BottomActionsModalProps extends ModalProps {
   title: string
-  message: string
-  footer: React.Component
+  message?: string
+  footer: ReactChild
   onClose: () => void
 }
 
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
-  const { title, message, footer, onClose, ...rest } = props
+  const { title, message, footer, onClose, children, ...rest } = props
   return (
-    <Modal {...rest} transparent={true}>
+    <Modal {...rest} transparent={true} animationType={'slide'}>
       <View style={styles.container}>
         <View style={styles.space} />
         <SafeAreaView style={styles.contentContainer}>
@@ -51,7 +51,8 @@ const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
               </TouchableOpacity>
             </View>
             <View style={styles.divider} />
-            <Text style={styles.message}>{message}</Text>
+            {message && <Text style={styles.message}>{message}</Text>}
+            {children}
             {footer}
           </View>
         </SafeAreaView>

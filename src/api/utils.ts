@@ -1,0 +1,70 @@
+import * as Sentry from '@sentry/react-native'
+import AccountManager from 'api/AccountManager'
+
+export const DefaultAvatar = require('../assets/stubs/avatar.png')
+
+export const convertAvatar = (avatar: any) => {
+  if (!avatar) {
+    return DefaultAvatar
+  }
+
+  avatar = JSON.parse(avatar)
+
+  if (avatar) {
+    let image
+    switch (avatar.encoding) {
+      case 'base64':
+        image = {
+          uri: `data:image/${avatar.format};base64,` + avatar.base64,
+        }
+
+        break
+      default:
+        return DefaultAvatar
+    }
+
+    return image
+  }
+}
+
+export const loadAvatarSource = async () => {
+  try {
+    const vault = await AccountManager.getInstance().vault
+    const avatar = await vault.profiles.public.get('avatar')
+    return convertAvatar(avatar)
+  } catch (error) {
+    Sentry.captureException(error)
+    return DefaultAvatar
+  }
+}
+
+export const fetchPublicProfileData = async () => {
+  try {
+    const accounts = { ...AccountManager.getInstance().accounts }
+    await Promise.all(
+      Object.values(accounts).map(async (account) => {
+        const externalProfile =
+          await AccountManager.getInstance().context?.openProfile(
+            'public',
+            account.did
+          )
+
+        const avatar = await externalProfile?.get('avatar')
+        const avatarSource = convertAvatar(avatar)
+        const name = await externalProfile?.get('name')
+        const country = await externalProfile?.get('country')
+
+        accounts[account.did].publicProfile = {
+          avatar: avatarSource,
+          name,
+          country,
+        }
+      })
+    )
+
+    return accounts
+  } catch (e) {
+    Sentry.captureException(e)
+    return AccountManager.getInstance().accounts
+  }
+}

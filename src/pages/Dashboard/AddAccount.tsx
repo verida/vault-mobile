@@ -28,7 +28,7 @@ type Option = {
   value: string
 }
 
-function Create(
+function AddAccount(
   props: NativeStackScreenProps<AuthStackParams, 'CreateAccount'>
 ) {
   const { navigation } = props
@@ -48,16 +48,12 @@ function Create(
       // @ts-ignore
       props.setPublicProfileData({ name, country: country?.value })
       setProcessing(false)
-      navigation.navigate('CreatePin')
+      navigation.goBack()
     } catch (error) {
       console.error(error)
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
     }
-  }
-
-  const onImportAccount = () => {
-    navigation.navigate('SeedPhraseEntered')
   }
 
   return (
@@ -91,17 +87,8 @@ function Create(
             disabled={!country || processing}
             loading={processing}
             onPress={onCreateAccount}>
-            Create Account
+            Create
           </Button>
-          <Text>Already have an account?</Text>
-          <TouchableOpacity
-            style={styles.importAccountButton}
-            hitSlop={{ top: 10, bottom: 10, right: 0, left: 0 }}
-            onPress={onImportAccount}>
-            <Text style={styles.importAccountButtonText}>
-              Click here to import
-            </Text>
-          </TouchableOpacity>
         </View>
       </Layout>
     </>
@@ -139,4 +126,4 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }
 }
 
-export default connect(null, mapDispatchToProps)(Create)
+export default connect(null, mapDispatchToProps)(AddAccount)

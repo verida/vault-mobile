@@ -16,6 +16,8 @@ import Settings from 'pages/Settings'
 import ChangePin from 'pages/Authentication/ChangePin'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import { useEventHandlers } from 'hooks/useEventHandlers'
+import Create from "pages/Account/Create";
+import AddAccount from 'pages/Dashboard/AddAccount'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -38,6 +40,7 @@ function MainNavigator() {
       <Stack.Screen name={'Settings'} component={Settings} />
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
+      <Stack.Screen name={'AddAccount'} component={AddAccount} />
     </Stack.Navigator>
   )
 }

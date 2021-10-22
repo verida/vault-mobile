@@ -1,48 +1,40 @@
-import React, { useEffect, useState } from 'react'
-import {
-  Alert,
-  Linking,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { QRCode } from 'react-native-custom-qr-codes-expo'
-import { connect } from 'react-redux'
+import React, { useEffect, useState } from "react";
+import { Alert, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
+import { QRCode } from "react-native-custom-qr-codes-expo";
+import { connect } from "react-redux";
 
-import Text from 'components/Text'
-import { Container, Content } from 'native-base'
-import { useDeeplink } from 'hooks/useDeeplink'
-import QRCodeIcon from 'assets/icons/qr-code.svg'
+import Text from "components/Text";
+import { Container, Content } from "native-base";
+import { useDeeplink } from "hooks/useDeeplink";
+import QRCodeIcon from "assets/icons/qr-code.svg";
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import {
-  BLACK_COLOR_OPACITY,
-  BLACK_ORIGIN_COLOR,
-  ORANGE_COLOR,
-  WHITE_COLOR,
-} from '../../constants/color'
-import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from "../../constants/text";
+import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, ORANGE_COLOR, WHITE_COLOR } from "../../constants/color";
+import { setNewMessagesCount as setNewMessagesCountAction } from "../../reduxStore/general/actions";
 
-import { loadAvatarSource } from 'api/utils'
-import LoadingView from 'components/LoadingView'
-import * as SecureStore from 'expo-secure-store'
-import * as Sentry from '@sentry/react-native'
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
-import AccountManager from 'api/AccountManager'
-import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
-import DidView from 'pages/Dashboard/DidView'
+import { loadAvatarSource } from "api/utils";
+import LoadingView from "components/LoadingView";
+import * as SecureStore from "expo-secure-store";
+import * as Sentry from "@sentry/react-native";
+import { FIRST_TIME_LOGIN_KEY } from "constants/storage";
+import AccountManager from "api/AccountManager";
+import HomeNavigationHeader from "pages/Dashboard/HomeNavigationHeader";
+import DidView from "pages/Dashboard/DidView";
+import AddAccountsModal from "pages/Dashboard/AddAccountsModal";
+import { useAuth } from "hooks/useAuth";
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
-const MAX_MESSAGE_COUNT = 21
-
 const Home = (props) => {
-  const { navigation } = props
+  const { navigation, selectedAccount, publicProfileData } = props
+  console.log('selectedAccount:', selectedAccount)
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
+  const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
+  const { switchToAccount } = useAuth()
 
   useEffect(() => {
     const getUrl = async () => {
@@ -75,10 +67,13 @@ const Home = (props) => {
   }, [navigation])
 
   useEffect(() => {
+    console.log('initProfile')
     const initProfile = async () => {
       try {
+        setLoading(true)
         const accountManager = AccountManager.getInstance()
-        const name = accountManager.vault.profiles.public.get('name')
+        const name = await accountManager.vault.profiles.public.get('name')
+        console.log('name:', name)
         const source = await loadAvatarSource()
         setAvatarSource(source)
 
@@ -86,6 +81,7 @@ const Home = (props) => {
           address: accountManager.selectedAccount.did,
           name,
         })
+
         setLoading(false)
       } catch (e) {
         console.log(e)
@@ -94,8 +90,11 @@ const Home = (props) => {
         setLoading(false)
       }
     }
-    initProfile()
-  }, [])
+
+    if (selectedAccount && publicProfileData) {
+      initProfile()
+    }
+  }, [selectedAccount, publicProfileData])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
@@ -103,54 +102,40 @@ const Home = (props) => {
     })
   }
 
+  function toggleAddAccountsModal() {
+    setShowAddAccounts((prevState) => !prevState)
+  }
+
+  function onAddAccount() {
+    toggleAddAccountsModal()
+    navigation.navigate('AddAccount')
+  }
+
+  function onImportAccount() {
+    toggleAddAccountsModal()
+  }
+
+  async function onSelectAccount(did) {
+    toggleAddAccountsModal()
+    await switchToAccount(did)
+  }
+
   return (
     <Container>
-      {/*<NavigationHeader*/}
-      {/*  left={{*/}
-      {/*    action: () => props.navigation.navigate('Inbox'),*/}
-      {/*    icon: (*/}
-      {/*      <View>*/}
-      {/*        <EnvelopeSvg />*/}
-      {/*        {props.newMessagesCount ? (*/}
-      {/*          <View style={style.badge}>*/}
-      {/*            <Text style={{ fontSize: 8 }} numberOfLines={1}>*/}
-      {/*              {props.newMessagesCount >= MAX_MESSAGE_COUNT*/}
-      {/*                ? `${MAX_MESSAGE_COUNT - 1}+`*/}
-      {/*                : props.newMessagesCount}*/}
-      {/*            </Text>*/}
-      {/*          </View>*/}
-      {/*        ) : null}*/}
-      {/*      </View>*/}
-      {/*    ),*/}
-      {/*  }}*/}
-      {/*  right={{*/}
-      {/*    action: () => props.navigation.navigate('Settings'),*/}
-      {/*    icon: <SettingsSvg />,*/}
-      {/*  }}*/}
-      {/*/>*/}
       <HomeNavigationHeader
         name={info.name || ''}
         avatar={avatarSource}
         inboxCount={props.newMessagesCount}
-        onNamePress={() => {}}
-        onAvatarPress={() => {}}
-        onEmailPress={() => {}}
-        onSettingPress={() => {}}
+        onNamePress={toggleAddAccountsModal}
+        onAvatarPress={() => props.navigation.navigate('PublicProfile')}
+        onInboxPress={() => props.navigation.navigate('Inbox')}
+        onSettingsPress={() => props.navigation.navigate('Settings')}
       />
       <Content contentContainerStyle={style.content}>
         {loading ? (
           <LoadingView />
         ) : (
           <>
-            {/*<TouchableOpacity*/}
-            {/*  onPress={() => props.navigation.navigate('PublicProfile')}>*/}
-            {/*  <Image source={avatarSource} style={style.userImg} />*/}
-            {/*</TouchableOpacity>*/}
-            {/*<TouchableOpacity*/}
-            {/*  onPress={() => Clipboard.setString(info.address)}*/}
-            {/*  style={style.didTouchable}>*/}
-            {/*  <Text style={style.text}>{info.address}</Text>*/}
-            {/*</TouchableOpacity>*/}
             <View style={style.qr}>
               <QRCode
                 logo={LogoImg}
@@ -175,8 +160,13 @@ const Home = (props) => {
           </>
         )}
       </Content>
-      <DidView
-        did={info.address || ''}
+      <DidView did={info.address || ''} />
+      <AddAccountsModal
+        visible={showAddAccounts}
+        onClose={toggleAddAccountsModal}
+        onAddNew={onAddAccount}
+        onImport={onImportAccount}
+        onSelectAccount={onSelectAccount}
       />
     </Container>
   )
@@ -189,7 +179,11 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const mapStateToProps = (state) => {
-  return { newMessagesCount: state.newMessagesCount }
+  return {
+    publicProfileData: state.publicProfileData,
+    newMessagesCount: state.newMessagesCount,
+    selectedAccount: state.selectedAccount,
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
@@ -248,19 +242,6 @@ const style = StyleSheet.create({
     textAlign: 'center',
     fontFamily: NUNITO_SANS_SEMIBOLD,
     color: BLACK_COLOR_OPACITY(0.4),
-  },
-  badge: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 1,
-    position: 'absolute',
-    right: -8,
-    top: -7,
-    minHeight: 16,
-    minWidth: 16,
-    backgroundColor: '#FF6E6E',
-    borderRadius: 8,
-    overflow: 'hidden',
   },
   network: {
     backgroundColor: ORANGE_COLOR,
