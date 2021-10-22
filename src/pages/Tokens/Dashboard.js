@@ -72,6 +72,7 @@ export default ({ navigation }) => {
       <TokenBanner
         data={bannerData}
         sendButtonAction={() => setSendModalVisible(true)}
+        buyButtonAction={() => navigation.navigate('BuyToken')}
       />
       <List>
         <TokensList
