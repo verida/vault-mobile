@@ -63,8 +63,14 @@ class AccountManager {
   }
 
   public async connect() {
+    this.context = undefined
+    this.client = undefined
+    this.vault = undefined
+    this.context
     this.context = await this.getVeridaContext()
+    console.log('context assigned')
     this.vault = await this.getVault()
+    console.log('vault assigned')
   }
 
   public static getInstance(): AccountManager {
@@ -85,6 +91,7 @@ class AccountManager {
         ceramicUrl: CERAMIC_URL,
       })
       this.client = client
+      console.log('client assigned')
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
@@ -105,7 +112,7 @@ class AccountManager {
       await client.connect(account)
       return await client.openContext(VERIDA_CONTEXT_NAME, true)
     } catch (e) {
-      console.error(e)
+      console.error('getVeridaContext:', e)
       Sentry.captureException(e)
       return undefined
     }
@@ -117,18 +124,22 @@ class AccountManager {
       await vault.init()
       return vault
     } catch (e) {
-      console.error(e)
+      console.error('getVault:', e)
       Sentry.captureException(e)
     }
   }
 
   private async setPublicProfile(data: UserData) {
-    const entries = Object.entries(data)
-    await Promise.all(
-      entries.map(async (entry) => {
-        await this.vault?.profiles.public.set(...entry)
-      })
-    )
+    try {
+      const entries = Object.entries(data)
+      await Promise.all(
+        entries.map(async (entry) => {
+          await this.vault?.profiles.public.set(...entry)
+        })
+      )
+    } catch (e) {
+      console.log('setPublicProfile:', e)
+    }
   }
 
   public async createAccount(userData: UserData): Promise<Account | undefined> {
@@ -208,10 +219,11 @@ class AccountManager {
         )
 
         setTimeout(() => {
-          store.dispatch(null)
-        }, 2000)
+          store.dispatch(setSwitchAccountToast(null))
+        }, 5000)
       }, 100)
     } catch (e) {
+      console.log('switchToAccount:', e)
       Sentry.captureException(e)
     }
   }

@@ -25,6 +25,7 @@ export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
 }
 
 const MAX_MESSAGE_COUNT = 21
+const HITSLOP = { top: 10, right: 10, bottom: 10, left: 10 }
 
 function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   console.log(props)
@@ -58,7 +59,10 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
       </Left>
       <Right>
         <View style={styles.right}>
-          <TouchableOpacity style={styles.inboxButton} onPress={onInboxPress}>
+          <TouchableOpacity
+            style={styles.inboxButton}
+            onPress={onInboxPress}
+            hitSlop={HITSLOP}>
             <EnvelopeSvg />
             {inboxCount ? (
               <View style={styles.badge}>
@@ -72,7 +76,8 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
           </TouchableOpacity>
           <TouchableOpacity
             style={styles.settingsButton}
-            onPress={onSettingsPress}>
+            onPress={onSettingsPress}
+            hitSlop={HITSLOP}>
             <SettingsSvg />
           </TouchableOpacity>
         </View>
@@ -125,10 +130,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   inboxButton: {
-    paddingHorizontal: 10,
+    marginHorizontal: 10,
   },
   settingsButton: {
-    paddingHorizontal: 10,
+    marginHorizontal: 10,
   },
 })
 

@@ -1,27 +1,38 @@
-import React, { useEffect, useState } from "react";
-import { Alert, Linking, StyleSheet, TouchableOpacity, View } from "react-native";
-import { QRCode } from "react-native-custom-qr-codes-expo";
-import { connect } from "react-redux";
+import React, { useEffect, useState } from 'react'
+import {
+  Alert,
+  Linking,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { QRCode } from 'react-native-custom-qr-codes-expo'
+import { connect } from 'react-redux'
 
-import Text from "components/Text";
-import { Container, Content } from "native-base";
-import { useDeeplink } from "hooks/useDeeplink";
-import QRCodeIcon from "assets/icons/qr-code.svg";
+import Text from 'components/Text'
+import { Container, Content } from 'native-base'
+import { useDeeplink } from 'hooks/useDeeplink'
+import QRCodeIcon from 'assets/icons/qr-code.svg'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from "../../constants/text";
-import { BLACK_COLOR_OPACITY, BLACK_ORIGIN_COLOR, ORANGE_COLOR, WHITE_COLOR } from "../../constants/color";
-import { setNewMessagesCount as setNewMessagesCountAction } from "../../reduxStore/general/actions";
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import {
+  BLACK_COLOR_OPACITY,
+  BLACK_ORIGIN_COLOR,
+  ORANGE_COLOR,
+  WHITE_COLOR,
+} from '../../constants/color'
+import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { loadAvatarSource } from "api/utils";
-import LoadingView from "components/LoadingView";
-import * as SecureStore from "expo-secure-store";
-import * as Sentry from "@sentry/react-native";
-import { FIRST_TIME_LOGIN_KEY } from "constants/storage";
-import AccountManager from "api/AccountManager";
-import HomeNavigationHeader from "pages/Dashboard/HomeNavigationHeader";
-import DidView from "pages/Dashboard/DidView";
-import AddAccountsModal from "pages/Dashboard/AddAccountsModal";
-import { useAuth } from "hooks/useAuth";
+import { loadAvatarSource } from 'api/utils'
+import LoadingView from 'components/LoadingView'
+import * as SecureStore from 'expo-secure-store'
+import * as Sentry from '@sentry/react-native'
+import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
+import AccountManager from 'api/AccountManager'
+import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
+import DidView from 'pages/Dashboard/DidView'
+import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
+import { useAuth } from 'hooks/useAuth'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -116,6 +127,10 @@ const Home = (props) => {
   }
 
   async function onSelectAccount(did) {
+    if (did === AccountManager.getInstance().selectedAccount.did) {
+      return
+    }
+
     toggleAddAccountsModal()
     await switchToAccount(did)
   }

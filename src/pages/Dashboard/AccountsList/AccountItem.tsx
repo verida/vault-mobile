@@ -29,7 +29,9 @@ function AccountItem(props: AccountItemProps) {
   }
 
   return (
-    <TouchableOpacity style={styles.container} onPress={onPress}>
+    <TouchableOpacity
+      style={[styles.container, selected && styles.selectedContainer]}
+      onPress={onPress}>
       <Image style={styles.avatar} source={avatar || DefaultAvatar} />
       <View style={styles.info}>
         <Text style={styles.name}>{name}</Text>
@@ -45,7 +47,7 @@ function AccountItem(props: AccountItemProps) {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
-    alignItems: 'center'
+    alignItems: 'center',
   },
   avatar: {
     width: 45,
@@ -66,6 +68,7 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     fontSize: 14,
   },
+  selectedContainer: {},
 })
 
 export default AccountItem

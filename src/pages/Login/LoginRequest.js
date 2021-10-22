@@ -148,7 +148,7 @@ export default (props) => {
     try {
       setStatus('approving')
 
-      const vault = AccountManager.getInstance().vault
+      const vault = AccountManager.getInstance().context
       const client = AccountManager.getInstance().client
       const account = await vault.getAccount()
       const keyring = await account.keyring(info.request.context)

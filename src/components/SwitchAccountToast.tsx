@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Dimensions, Image, StyleSheet, View, ViewProps } from 'react-native'
 import Text from 'components/Text'
 import { useSelector } from 'react-redux'
@@ -11,14 +11,9 @@ const MARGIN_HORIZONTAL = 16
 
 function SwitchAccountToast(props: Omit<ViewProps, 'children'>) {
   const { style, ...rest } = props
-  const [isShowing, setIsShowing] = useState(false)
   const data = useSelector((state) => state.switchAccountToast)
 
-  useEffect(() => {
-    setIsShowing(!!data)
-  }, [data])
-
-  if (!isShowing) {
+  if (!data) {
     return null
   }
 
