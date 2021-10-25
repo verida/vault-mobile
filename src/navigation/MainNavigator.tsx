@@ -17,6 +17,7 @@ import SuccessFailure from 'pages/Wallets/SuccessFailure'
 import SingleCurrency from 'pages/Tokens/SingleCurrency'
 import SendToken from 'pages/Tokens/SendToken'
 import BuyToken from 'pages/Tokens/BuyToken'
+import ReceiveToken from 'pages/Tokens/ReceiveToken'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
 import Settings from 'pages/Settings'
@@ -44,6 +45,7 @@ function MainNavigator() {
       <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
       <Stack.Screen name={'SendToken'} component={SendToken} />
       <Stack.Screen name={'BuyToken'} component={BuyToken} />
+      <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
       <Stack.Screen name={'DataFolder'} component={Folder} />
       <Stack.Screen name={'DataItem'} component={Item} />
       <Stack.Screen name={'Settings'} component={Settings} />
