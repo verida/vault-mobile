@@ -36,6 +36,7 @@ export type MainStackParams = {
   ManageWallets: undefined
   SingleCurrency: undefined
   SendToken: undefined
+  TokenRecipient: undefined
   BuyToken: undefined
   ReceiveToken: undefined
   SingleWallet: undefined
