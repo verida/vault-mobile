@@ -29,8 +29,8 @@ const VerifyPhrase = (props) => {
 
   const onConfirm = async () => {
     try {
-      const phrase = words.join(' ')
-      await walletByMnemonic(phrase)
+      // const phrase = words.join(' ')
+      // await walletByMnemonic(phrase)
       resetPhrase()
       navigation.navigate('CreatePin')
     } catch (e) {

@@ -1,6 +1,6 @@
-import React from "react";
-import { StyleSheet, View, ViewProps } from "react-native";
-import LottieView from "lottie-react-native";
+import React from 'react'
+import { StyleSheet, View, ViewProps } from 'react-native'
+import LottieView from 'lottie-react-native'
 
 export type LoadingViewProps = Omit<ViewProps, 'children'> & {
   type?: 'big' | 'small'
@@ -13,7 +13,8 @@ function LoadingView(props: LoadingViewProps) {
     type === 'big'
       ? require('assets/animations/loading.json')
       : require('assets/animations/loading-small-dark.json')
-  const lottieViewStyle = type === 'big' ? styles.loadingView : styles.loadingViewSmall
+  const lottieViewStyle =
+    type === 'big' ? styles.loadingView : styles.loadingViewSmall
   return (
     <View style={[styles.container, style]}>
       <LottieView source={source} autoPlay loop style={lottieViewStyle} />

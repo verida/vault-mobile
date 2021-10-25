@@ -11,7 +11,7 @@ import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
-import AccountManager from "api/AccountManager";
+import AccountManager from 'api/AccountManager'
 
 const list = [
   {

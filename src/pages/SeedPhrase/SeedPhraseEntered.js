@@ -18,7 +18,7 @@ import BottomActionsModal from 'components/BottomActionsModal'
 import { MNEMONIC_LENGTH } from 'api/AccountManager'
 
 export default (props) => {
-  const { navigation, route } = props
+  const { route } = props
   const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
@@ -48,12 +48,10 @@ export default (props) => {
     verify()
   }, [phrase, usePrivateKey])
 
-  console.log('verify:', verified)
-
   const onContinue = async () => {
     try {
-      await walletByMnemonic(phrase)
-      navigation.navigate('Success')
+      // await walletByMnemonic(phrase)
+      // navigation.navigate('Success')
     } catch (e) {
       showError(true)
     }

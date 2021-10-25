@@ -1,11 +1,5 @@
 import React, { useState } from 'react'
-import {
-  Alert,
-  StyleSheet,
-  TextInput,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Alert, StyleSheet, TextInput, View } from 'react-native'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AuthStackParams } from 'navigation/types'
@@ -18,7 +12,6 @@ import { Dispatch } from 'redux'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import { connect } from 'react-redux'
 import Layout from 'components/Layouts/Layout'
-import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AccountManager from 'api/AccountManager'

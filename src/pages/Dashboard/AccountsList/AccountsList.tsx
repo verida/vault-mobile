@@ -6,7 +6,7 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import { Account } from 'api/types'
+import { Account, UserData } from 'api/types'
 import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
 import AccountManager from 'api/AccountManager'
 import { fetchPublicProfileData } from 'api/utils'
@@ -37,16 +37,18 @@ function AccountsList(props: AccountsListProps) {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Account>) => {
-      const { did, publicProfile = {} } = info.item
+      const { did, publicProfile } = info.item
+
+      const { name = '', avatar = undefined } = publicProfile as UserData
 
       const selected = AccountManager.getInstance().selectedAccount?.did === did
 
       return (
         <AccountItem
           onSelect={onSelectAccount}
-          name={publicProfile.name}
+          name={name}
           did={did}
-          avatar={publicProfile.avatar}
+          avatar={avatar}
           selected={selected}
         />
       )

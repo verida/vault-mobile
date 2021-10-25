@@ -30,7 +30,9 @@ export const convertAvatar = (avatar: any) => {
 export const loadAvatarSource = async () => {
   try {
     const vault = await AccountManager.getInstance().vault
-    const avatar = await vault.profiles.public.get('avatar')
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const avatar = await vault?.profiles.public.get('avatar')
     return convertAvatar(avatar)
   } catch (error) {
     Sentry.captureException(error)

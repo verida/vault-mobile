@@ -5,8 +5,9 @@ import {
   SET_INBOX_ITEMS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
-  SET_SELECTED_ACCOUNT, SET_SWITCH_ACCOUNT_TOAST
-} from "./action-types";
+  SET_SELECTED_ACCOUNT,
+  SET_SWITCH_ACCOUNT_TOAST,
+} from './action-types'
 
 export const setAuthStatus = (payload) => {
   return { type: SET_AUTH_STATUS, payload }

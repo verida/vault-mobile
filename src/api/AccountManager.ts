@@ -48,8 +48,6 @@ class AccountManager {
         const selectedAccountDid = await SecureStore.getItemAsync(
           SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
-        console.log('accounts:', this.accounts)
-        console.log('selectedAccountDid:', selectedAccountDid)
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
@@ -66,11 +64,8 @@ class AccountManager {
     this.context = undefined
     this.client = undefined
     this.vault = undefined
-    this.context
     this.context = await this.getVeridaContext()
-    console.log('context assigned')
     this.vault = await this.getVault()
-    console.log('vault assigned')
   }
 
   public static getInstance(): AccountManager {
@@ -91,7 +86,6 @@ class AccountManager {
         ceramicUrl: CERAMIC_URL,
       })
       this.client = client
-      console.log('client assigned')
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
@@ -112,7 +106,6 @@ class AccountManager {
       await client.connect(account)
       return await client.openContext(VERIDA_CONTEXT_NAME, true)
     } catch (e) {
-      console.error('getVeridaContext:', e)
       Sentry.captureException(e)
       return undefined
     }
@@ -124,31 +117,26 @@ class AccountManager {
       await vault.init()
       return vault
     } catch (e) {
-      console.error('getVault:', e)
       Sentry.captureException(e)
     }
   }
 
   private async setPublicProfile(data: UserData) {
-    try {
-      const entries = Object.entries(data)
-      await Promise.all(
-        entries.map(async (entry) => {
-          await this.vault?.profiles.public.set(...entry)
-        })
-      )
-    } catch (e) {
-      console.log('setPublicProfile:', e)
-    }
+    const entries = Object.entries(data)
+    await Promise.all(
+      entries.map(async (entry) => {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        await this.vault?.profiles.public.set(...entry)
+      })
+    )
   }
 
   public async createAccount(userData: UserData): Promise<Account | undefined> {
     try {
       const ethWallet = Wallet.createRandom()
-      console.log('ethWallet:', ethWallet)
-      const mnemonic = ethWallet.mnemonic
       const utils = new Utils(CERAMIC_URL)
-      const ceramic = await utils.createAccount('3id', mnemonic)
+      const ceramic = await utils.createAccount('3id', ethWallet.mnemonic)
 
       this.selectedAccount = {
         mnemonic: ethWallet.mnemonic,
@@ -156,7 +144,6 @@ class AccountManager {
         privateKey: ethWallet.privateKey,
       }
       this.accounts[this.selectedAccount.did] = this.selectedAccount
-      console.log('this.selectedAccount:', this.selectedAccount)
 
       await SecureStore.setItemAsync(
         ACCOUNTS_STORAGE_KEY,
@@ -176,7 +163,7 @@ class AccountManager {
 
       return this.selectedAccount
     } catch (e) {
-      console.error(e)
+      console.error('Create account error:', e)
       Sentry.captureException(e)
       return undefined
     }
@@ -206,7 +193,11 @@ class AccountManager {
         this.selectedAccount.did
       )
       await this.connect()
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
       const avatar = await this.vault?.profiles.public.get('avatar')
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
@@ -223,13 +214,8 @@ class AccountManager {
         }, 5000)
       }, 100)
     } catch (e) {
-      console.log('switchToAccount:', e)
       Sentry.captureException(e)
     }
-  }
-
-  public async importAccount(mnemonic: string) {
-    // TODO
   }
 }
 

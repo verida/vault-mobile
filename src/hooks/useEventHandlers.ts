@@ -35,8 +35,7 @@ export const useEventHandlers = () => {
       }
     }
 
-    function onMessage(message) {
-      console.log('message:', message)
+    function onMessage(message: any) {
       fetchInboxCount()
       PushNotification.localNotification({
         title: get(message, 'sendBy.app') || 'New Message',
