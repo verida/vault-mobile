@@ -97,7 +97,7 @@ export default ({ navigation }) => {
           <Button
             style={styles.nextButton}
             color='primary'
-            // disabled={!blockchain || processing}
+            disabled={!selectedAddress || !selectedToken}
             // loading={processing}
             // onPress={onAddWallet}
           >
