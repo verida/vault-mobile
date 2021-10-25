@@ -24,6 +24,11 @@ export default ({ navigation }) => {
     const text = await Clipboard.getString()
     setAddress(text)
   }
+  function onScanQRPress() {
+    navigation.navigate('ScanQrCode', {
+      firstTime: false,
+    })
+  }
 
   return (
     <Container>
@@ -49,7 +54,9 @@ export default ({ navigation }) => {
             placeholder={'eg. 1DkyBEKt5S2GDtv7aQw6r...'}
           />
           <View style={styles.actionButtons}>
-            <TouchableOpacity style={styles.actionButton}>
+            <TouchableOpacity
+              onPress={onScanQRPress}
+              style={styles.actionButton}>
               <Icon name='qr-code' style={styles.actionButtonIcon} />
               <Text style={styles.actionButtonText}>Scan QR</Text>
             </TouchableOpacity>
