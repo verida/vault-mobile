@@ -7,24 +7,35 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import SwapIcon from 'assets/swap_icon.svg'
 
+const convert = (number, mode) => {
+  let numberFloat = parseFloat(number)
+  let price = 2000
+  if (numberFloat > 0) {
+    return mode === 'fiat' ? numberFloat / price : numberFloat * price
+  } else {
+    return 0
+  }
+}
+
 export default ({ onUpdateAmount }) => {
   const [number, onChangeNumber] = React.useState('0')
-  const numberFloat = parseFloat(number)
-  const converted = numberFloat > 0 ? numberFloat / 2000 : 0
+  const [mode, onSwitchMode] = React.useState('fiat')
+  const converted = convert(number, mode)
 
   return (
     <View style={styles.bannerWrapper}>
       <TouchableOpacity
         onPress={() => {
-          onChangeNumber('20700')
-          onUpdateAmount('20700')
+          let maxNumber = mode === 'fiat' ? '20700' : '10.35'
+          onChangeNumber(maxNumber)
+          onUpdateAmount(maxNumber)
         }}
         style={styles.button}>
         <Text style={styles.maxButtonText}>Max</Text>
       </TouchableOpacity>
       <View style={styles.amountsWrapper}>
         <View style={styles.mainAmount}>
-          <Text style={styles.amountText}>$</Text>
+          {mode === 'fiat' && <Text style={styles.amountText}>$</Text>}
           <TextInput
             style={styles.amountInput}
             onChangeText={(text) => {
@@ -33,10 +44,15 @@ export default ({ onUpdateAmount }) => {
             }}
             value={number}
           />
+          {mode === 'crypto' && <Text style={styles.amountText}> ETH</Text>}
         </View>
-        <Text style={styles.convertedAmount}>≈ {converted} ETH</Text>
+        <Text style={styles.convertedAmount}>
+          ≈ {mode === 'crypto' ? `$${converted}` : `${converted} ETH`}
+        </Text>
       </View>
-      <TouchableOpacity style={styles.button}>
+      <TouchableOpacity
+        onPress={() => onSwitchMode(mode === 'fiat' ? 'crypto' : 'fiat')}
+        style={styles.button}>
         <SwapIcon />
       </TouchableOpacity>
     </View>
