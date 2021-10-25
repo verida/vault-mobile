@@ -14,7 +14,10 @@ export default ({ onUpdateAmount }) => {
   return (
     <View style={styles.bannerWrapper}>
       <TouchableOpacity
-        onPress={() => onChangeNumber('20700')}
+        onPress={() => {
+          onChangeNumber('20700')
+          onUpdateAmount('20700')
+        }}
         style={styles.button}>
         <Text style={styles.maxButtonText}>Max</Text>
       </TouchableOpacity>

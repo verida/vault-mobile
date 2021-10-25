@@ -100,8 +100,7 @@ export default ({ navigation }) => {
             color='primary'
             disabled={!selectedAddress || !selectedToken || !(amount > 0)}
             // loading={processing}
-            // onPress={onAddWallet}
-          >
+            onPress={() => navigation.navigate('TokenRecipient')}>
             Next
           </Button>
         </View>
