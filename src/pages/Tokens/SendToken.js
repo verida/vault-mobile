@@ -16,6 +16,7 @@ import EthereumToken from 'assets/tokens/ethereum.svg'
 const addressList = [
   { id: 1, address: '0vc029...fch8', amount: 8652, type: 'ETH' },
   { id: 2, address: '74ojk7...yz67', amount: 902, type: 'NEAR' },
+  { id: 3, address: '1vc302...sks8', amount: 1023, type: 'ETH' },
 ]
 
 const tokenList = [
@@ -32,6 +33,13 @@ const tokenList = [
     symbol: 'ETH',
     quantity: 2.028,
     icon: <EthereumToken />,
+  },
+  {
+    id: 3,
+    name: 'ChainLink',
+    symbol: 'LINK',
+    quantity: 108,
+    icon: <ChainlinkToken />,
   },
 ]
 
@@ -54,44 +62,51 @@ export default ({ navigation }) => {
           <TokenCalculator onUpdateAmount={onUpdateAmount} />
           <Text style={styles.label}>Select address</Text>
           <View style={styles.addressScroller}>
-            {addressList.map((item) => (
-              <TouchableOpacity
-                onPress={() => onSelectAddress(item.id)}
-                key={item.id}
-                style={[
-                  styles.singleAddress,
-                  selectedAddress === item.id && styles.itemSelected,
-                ]}>
-                <View style={styles.addressAmount}>
-                  <Text style={styles.addressText}>{item.address}</Text>
-                  <Text style={styles.amountText}>${item.amount}</Text>
-                </View>
-                <View style={styles.walletNameWrapper}>
-                  <WalletIcon />
-                  <Text style={styles.walletName}>{item.type} Wallet</Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {addressList.map((item, index) => (
+                <TouchableOpacity
+                  onPress={() => onSelectAddress(item.id)}
+                  key={item.id}
+                  style={[
+                    styles.singleAddress,
+                    selectedAddress === item.id && styles.itemSelected,
+                    addressList.length === index + 1 && styles.itemLast,
+                  ]}>
+                  <View style={styles.addressAmount}>
+                    <Text style={styles.addressText}>{item.address}</Text>
+                    <Text style={styles.amountText}>${item.amount}</Text>
+                  </View>
+                  <View style={styles.walletNameWrapper}>
+                    <WalletIcon />
+                    <Text style={styles.walletName}>{item.type} Wallet</Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
+
           <Text style={styles.label}>Select token</Text>
           <View style={styles.tokenScroller}>
-            {tokenList.map((item) => (
-              <TouchableOpacity
-                onPress={() => onSelectToken(item.id)}
-                key={item.id}
-                style={[
-                  styles.singleToken,
-                  selectedToken === item.id && styles.itemSelected,
-                ]}>
-                {item.icon}
-                <View style={styles.nameQuantity}>
-                  <Text style={styles.tokenName}>{item.name}</Text>
-                  <Text style={styles.tokenQuantity}>
-                    {item.quantity} {item.symbol}
-                  </Text>
-                </View>
-              </TouchableOpacity>
-            ))}
+            <ScrollView horizontal showsHorizontalScrollIndicator={false}>
+              {tokenList.map((item, index) => (
+                <TouchableOpacity
+                  onPress={() => onSelectToken(item.id)}
+                  key={item.id}
+                  style={[
+                    styles.singleToken,
+                    selectedToken === item.id && styles.itemSelected,
+                    tokenList.length === index + 1 && styles.itemLast,
+                  ]}>
+                  {item.icon}
+                  <View style={styles.nameQuantity}>
+                    <Text style={styles.tokenName}>{item.name}</Text>
+                    <Text style={styles.tokenQuantity}>
+                      {item.quantity} {item.symbol}
+                    </Text>
+                  </View>
+                </TouchableOpacity>
+              ))}
+            </ScrollView>
           </View>
         </View>
         <View style={styles.footer}>
@@ -130,17 +145,24 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_SEMIBOLD,
     marginBottom: 8,
   },
-  addressScroller: { flexDirection: 'row', marginBottom: 16 },
+  addressScroller: {
+    flexDirection: 'row',
+    marginBottom: 16,
+    marginHorizontal: -15,
+  },
   singleAddress: {
     borderWidth: 1,
     borderColor: 'rgba(224, 227, 234, 1)',
     borderRadius: 4,
     width: 180,
-    marginRight: 8,
+    marginLeft: 15,
   },
   itemSelected: {
     backgroundColor: 'rgba(245, 244, 255, 1)',
     borderColor: 'rgba(66, 59, 206, 1)',
+  },
+  itemLast: {
+    marginRight: 15,
   },
   addressAmount: {
     paddingVertical: 12,
@@ -167,6 +189,7 @@ const styles = StyleSheet.create({
   },
   tokenScroller: {
     flexDirection: 'row',
+    marginHorizontal: -15,
   },
   singleToken: {
     flexDirection: 'row',
@@ -174,7 +197,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: 'rgba(224, 227, 234, 1)',
     padding: 8,
-    marginRight: 8,
+    marginLeft: 15,
     alignItems: 'center',
     borderRadius: 4,
   },
