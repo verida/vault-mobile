@@ -9,7 +9,8 @@ import SwapIcon from 'assets/swap_icon.svg'
 
 export default ({ onUpdateAmount }) => {
   const [number, onChangeNumber] = React.useState('0')
-  const converted = parseFloat(number) / 2000
+  const numberFloat = parseFloat(number)
+  const converted = numberFloat > 0 ? numberFloat / 2000 : 0
 
   return (
     <View style={styles.bannerWrapper}>
