@@ -1,14 +1,13 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
 
 import Text from 'components/Text'
 
-import { WHITE_COLOR, PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import SwapIcon from 'assets/swap_icon.svg'
 
-export default () => {
+export default ({ onUpdateAmount }) => {
   const [number, onChangeNumber] = React.useState('0')
   const converted = parseFloat(number) / 2000
 
@@ -24,7 +23,10 @@ export default () => {
           <Text style={styles.amountText}>$</Text>
           <TextInput
             style={styles.amountInput}
-            onChangeText={onChangeNumber}
+            onChangeText={(text) => {
+              onUpdateAmount(text)
+              onChangeNumber(text)
+            }}
             value={number}
           />
         </View>

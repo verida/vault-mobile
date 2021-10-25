@@ -38,6 +38,7 @@ const tokenList = [
 export default ({ navigation }) => {
   const [selectedAddress, onSelectAddress] = React.useState(null)
   const [selectedToken, onSelectToken] = React.useState(null)
+  const [amount, onUpdateAmount] = React.useState(null)
 
   return (
     <Container>
@@ -50,7 +51,7 @@ export default ({ navigation }) => {
       />
       <View style={styles.container}>
         <View style={styles.content}>
-          <TokenCalculator />
+          <TokenCalculator onUpdateAmount={onUpdateAmount} />
           <Text style={styles.label}>Select address</Text>
           <View style={styles.addressScroller}>
             {addressList.map((item) => (
@@ -97,7 +98,7 @@ export default ({ navigation }) => {
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={!selectedAddress || !selectedToken}
+            disabled={!selectedAddress || !selectedToken || !(amount > 0)}
             // loading={processing}
             // onPress={onAddWallet}
           >
