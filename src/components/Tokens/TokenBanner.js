@@ -18,7 +18,12 @@ const icons = {
   ethereum: <EthereumSvg />,
 }
 
-export default ({ data, sendButtonAction, buyButtonAction }) => {
+export default ({
+  data,
+  sendButtonAction,
+  buyButtonAction,
+  receiveButtonAction,
+}) => {
   const { coin, price, change, amount, symbol, quantity } = data
   const positive = change > 0
 
@@ -55,7 +60,9 @@ export default ({ data, sendButtonAction, buyButtonAction }) => {
           <SendIcon />
           <Text style={styles.actionIconText}>Send</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.singleActionIcon}>
+        <TouchableOpacity
+          onPress={receiveButtonAction}
+          style={styles.singleActionIcon}>
           <ReceiveIcon />
           <Text style={styles.actionIconText}>Receive</Text>
         </TouchableOpacity>
