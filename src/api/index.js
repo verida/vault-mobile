@@ -2,21 +2,20 @@ import Vault from '@verida/vault-common'
 import walletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
 
-import { Client } from '@verida/client-rn'
-import { AutoAccount } from '@verida/account-node'
-import { Utils } from '@verida/3id-utils-node'
-import { Wallet } from 'ethers'
+import { Client, EnvironmentType } from '@verida/client-rn'
+import { utils } from 'ethers'
 import * as Sentry from '@sentry/react-native'
-
+import { AutoAccount } from '@verida/account-node'
 import dataMap from '../config/data-map'
 
 const WALLET_KEY = 'VaultMobileWallet'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 const DEFAULT_CHAIN = 'ethr'
-const CERAMIC_URL = 'https://ceramic.verida.io:7007'
 const CHAIN_KEY = 'chain'
 export const FIRST_TIME_LOGIN_KEY = 'first-time-login'
+const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
+const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/'
 
 export const storeChain = async (chain) => {
   global.chain = chain
@@ -35,13 +34,9 @@ export const loadChain = async () => {
 
 export const generateWallet = async (userData) => {
   await loadChain()
-  const ethWallet = Wallet.createRandom()
-  const mnemonic = ethWallet.mnemonic
-  const utils = new Utils(CERAMIC_URL)
-  const ceramic = await utils.createAccount('3id', mnemonic)
+  const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
   const wallet = {
-    mnemonic: ethWallet.mnemonic,
-    did: ceramic.did.id,
+    mnemonic: node,
   }
   global.wallet = wallet
   const vault = await getVault(wallet)
@@ -107,32 +102,41 @@ export const getVeridaApp = async (wallet) => {
         wallet = await SecureStore.getItemAsync(WALLET_KEY)
         wallet = JSON.parse(wallet)
       }
-      const { mnemonic, did } = wallet
-      const client = new Client({
-        ceramicUrl: CERAMIC_URL,
+      const { mnemonic } = wallet
+
+      global.client = new Client({
+        environment: VERIDA_ENVIRONMENT,
       })
+      // The `AutoAccount` instance will automatically sign any consent messages
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: 'https://db.testnet.verida.io:5002/',
+            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: 'https://db.testnet.verida.io:5002/',
+            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
           },
-          options: { did },
         },
         {
-          chain: '3id',
           privateKey: mnemonic,
+          environment: VERIDA_ENVIRONMENT,
         }
       )
-      await client.connect(account)
-      const context = await client.openContext(VERIDA_CONTEXT_NAME, true)
+      const did = await account.did()
+      const walletWithDid = {
+        ...wallet,
+        did,
+      }
+      await SecureStore.setItemAsync(WALLET_KEY, JSON.stringify(walletWithDid))
+      global.wallet = walletWithDid
 
-      global.account = account
-      global.client = client
+      // Connect the Verida account to the Verida client
+      await global.client.connect(account)
+
+      // Open an application context (forcing creation of a new context if it doesn't already exist)
+      const context = await global.client.openContext(VERIDA_CONTEXT_NAME, true)
 
       resolve(context)
     } catch (error) {
