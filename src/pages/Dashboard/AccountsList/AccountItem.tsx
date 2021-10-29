@@ -9,9 +9,10 @@ import {
   ViewProps,
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { SUCCESS_COLOR } from 'constants/color'
+import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { DefaultAvatar } from 'api/utils'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import AccountManager from 'api/AccountManager'
 
 export type AccountItemProps = Omit<ViewProps, 'children'> & {
   name: string
@@ -28,9 +29,15 @@ function AccountItem(props: AccountItemProps) {
     onSelect(did)
   }
 
+  const isCurrentAccount =
+    AccountManager.getInstance().selectedAccount?.did === did
+
   return (
     <TouchableOpacity
-      style={[styles.container, selected && styles.selectedContainer]}
+      style={[
+        styles.container,
+        isCurrentAccount && styles.currentAccountContainer,
+      ]}
       onPress={onPress}>
       <Image style={styles.avatar} source={avatar || DefaultAvatar} />
       <View style={styles.info}>
@@ -48,6 +55,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 16,
   },
   avatar: {
     width: 45,
@@ -68,7 +77,9 @@ const styles = StyleSheet.create({
     opacity: 0.6,
     fontSize: 14,
   },
-  selectedContainer: {},
+  currentAccountContainer: {
+    backgroundColor: SNOW_COLOR,
+  },
 })
 
 export default AccountItem

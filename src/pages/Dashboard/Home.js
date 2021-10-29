@@ -39,13 +39,12 @@ const LogoImg = require('../../assets/vault-logo.png')
 
 const Home = (props) => {
   const { navigation, selectedAccount, publicProfileData } = props
-  console.log('selectedAccount:', selectedAccount)
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
-  const { switchToAccount } = useAuth()
+  const { switchToAccount, refresh } = useAuth()
 
   useEffect(() => {
     const getUrl = async () => {
@@ -135,6 +134,11 @@ const Home = (props) => {
     await switchToAccount(did)
   }
 
+  async function onLogoutAccounts(dids) {
+    await AccountManager.getInstance().logout(dids)
+    await refresh()
+  }
+
   return (
     <Container>
       <HomeNavigationHeader
@@ -182,6 +186,7 @@ const Home = (props) => {
         onAddNew={onAddAccount}
         onImport={onImportAccount}
         onSelectAccount={onSelectAccount}
+        onLogoutAccounts={onLogoutAccounts}
       />
     </Container>
   )

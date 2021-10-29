@@ -8,17 +8,17 @@ import {
 } from 'react-native'
 import { Account, UserData } from 'api/types'
 import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
-import AccountManager from 'api/AccountManager'
 import { fetchPublicProfileData } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 
 export type AccountsListProps = {
   containerStyle: ViewStyle
   onSelectAccount: (did: string) => void
+  selectedDids: string[]
 }
 
 function AccountsList(props: AccountsListProps) {
-  const { onSelectAccount, containerStyle } = props
+  const { onSelectAccount, containerStyle, selectedDids = [] } = props
   const [data, setData] = useState<Account[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -41,7 +41,7 @@ function AccountsList(props: AccountsListProps) {
 
       const { name = '', avatar = undefined } = publicProfile as UserData
 
-      const selected = AccountManager.getInstance().selectedAccount?.did === did
+      const selected = selectedDids.indexOf(did) !== -1
 
       return (
         <AccountItem
@@ -53,7 +53,7 @@ function AccountsList(props: AccountsListProps) {
         />
       )
     },
-    [onSelectAccount]
+    [onSelectAccount, selectedDids]
   )
 
   if (loading) {
@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
   divider: {
     height: StyleSheet.hairlineWidth,
     backgroundColor: '#3C3C43',
-    marginVertical: 10,
     opacity: 0.4,
   },
   loadingContainer: {

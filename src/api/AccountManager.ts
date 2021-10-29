@@ -1,9 +1,8 @@
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
-import { Client, Context } from '@verida/client-rn'
+import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
-import { Wallet } from 'ethers'
-import { Utils } from '@verida/3id-utils-node'
+import { utils } from 'ethers'
 import { Account, NormalizedAccounts, UserData } from 'api/types'
 import Vault from '@verida/vault-common'
 import dataMap from 'config/data-map'
@@ -18,10 +17,10 @@ import { isEmpty } from 'lodash'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
-const CERAMIC_URL = 'https://ceramic.verida.io:7007'
-const ENDPOINT_URL = 'https://db.testnet.verida.io:5002/'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
+const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
+const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/'
 
 class AccountManager {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -29,7 +28,7 @@ class AccountManager {
   public client: Client | undefined
   public vault: Vault | undefined
   public accounts: NormalizedAccounts
-  public selectedAccount: Account | undefined
+  private selectedAccount: Account | undefined
 
   private static instance: AccountManager
 
@@ -60,10 +59,11 @@ class AccountManager {
     }
   }
 
-  public async connect() {
-    this.context = undefined
-    this.client = undefined
-    this.vault = undefined
+  public async connect(forced = false) {
+    console.log('CONNECT!!!')
+    if (!forced && this.context) {
+      return
+    }
     this.context = await this.getVeridaContext()
     this.vault = await this.getVault()
   }
@@ -81,31 +81,38 @@ class AccountManager {
       if (!this.selectedAccount) {
         return undefined
       }
-      const { mnemonic, did } = this.selectedAccount
-      const client = new Client({
-        ceramicUrl: CERAMIC_URL,
+      const { mnemonic } = this.selectedAccount
+      this.client = new Client({
+        environment: VERIDA_ENVIRONMENT,
       })
-      this.client = client
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: ENDPOINT_URL,
+            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: ENDPOINT_URL,
+            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
           },
-          options: { did },
         },
         {
-          chain: '3id',
           privateKey: mnemonic,
+          environment: VERIDA_ENVIRONMENT,
         }
       )
-      await client.connect(account)
-      return await client.openContext(VERIDA_CONTEXT_NAME, true)
+
+      // Fill the connected account with Verida DID
+      const did = await account.did()
+      await this.updateCurrentAccount({ did })
+
+      // Connect the Verida account to the Verida client
+      await this.client.connect(account)
+
+      // Open an application context (forcing creation of a new context if it doesn't already exist)
+      return await this.client.openContext(VERIDA_CONTEXT_NAME, true)
     } catch (e) {
+      console.error(e)
       Sentry.captureException(e)
       return undefined
     }
@@ -122,40 +129,27 @@ class AccountManager {
   }
 
   private async setPublicProfile(data: UserData) {
-    const entries = Object.entries(data)
-    await Promise.all(
-      entries.map(async (entry) => {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
+    try {
+      const entries = Object.entries(data)
+      for (let i = 0; i < entries.length; i++) {
+        const entry = entries[i]
         await this.vault?.profiles.public.set(...entry)
-      })
-    )
+      }
+    } catch (e) {
+      console.error('setPublicProfile:', e)
+    }
   }
 
   public async createAccount(userData: UserData): Promise<Account | undefined> {
     try {
-      const ethWallet = Wallet.createRandom()
-      const utils = new Utils(CERAMIC_URL)
-      const ceramic = await utils.createAccount('3id', ethWallet.mnemonic)
+      const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
 
       this.selectedAccount = {
-        mnemonic: ethWallet.mnemonic,
-        did: ceramic?.did?.id || '',
-        privateKey: ethWallet.privateKey,
+        mnemonic: node,
+        did: '', // DID will be filled after connecting to Verida
       }
-      this.accounts[this.selectedAccount.did] = this.selectedAccount
 
-      await SecureStore.setItemAsync(
-        ACCOUNTS_STORAGE_KEY,
-        JSON.stringify(this.accounts)
-      )
-      await SecureStore.setItemAsync(
-        SELECTED_ACCOUNT_DID_STORAGE_KEY,
-        this.selectedAccount.did
-      )
-
-      await this.connect()
-
+      await this.connect(true)
       await this.setPublicProfile(userData)
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
@@ -169,17 +163,38 @@ class AccountManager {
     }
   }
 
-  public async logout() {
+  public async logout(dids: string[] = []) {
+    if (!this.selectedAccount) {
+      return
+    }
+
+    let selectedDids = dids
+    if (dids.length === 0) {
+      selectedDids = [this.selectedAccount.did]
+    }
     try {
-      this.selectedAccount = undefined
-      this.accounts = {}
-      this.context = undefined
-      this.client = undefined
-      this.vault = undefined
-      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
-      store.dispatch(setSelectedAccount(null))
-      store.dispatch(setAccounts({}))
+      selectedDids.forEach((did) => {
+        delete this.accounts[did]
+      })
+
+      if (isEmpty(this.selectedAccount)) {
+        await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
+      } else {
+        await SecureStore.setItemAsync(
+          ACCOUNTS_STORAGE_KEY,
+          JSON.stringify(this.accounts)
+        )
+      }
+
+      if (selectedDids.includes(this.selectedAccount.did)) {
+        this.selectedAccount = undefined
+        this.context = undefined
+        this.client = undefined
+        this.vault = undefined
+        await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
+        store.dispatch(setSelectedAccount(null))
+      }
+      store.dispatch(setAccounts(this.accounts))
     } catch (e) {
       Sentry.captureException(e)
     }
@@ -216,6 +231,28 @@ class AccountManager {
     } catch (e) {
       Sentry.captureException(e)
     }
+  }
+
+  private async updateCurrentAccount(data: Partial<Account>) {
+    if (!this.selectedAccount) {
+      this.selectedAccount = {
+        mnemonic: '',
+        did: '',
+      }
+    }
+    this.selectedAccount = {
+      ...(this.selectedAccount || {}),
+      ...data,
+    }
+    this.accounts[this.selectedAccount.did] = this.selectedAccount
+    await SecureStore.setItemAsync(
+      ACCOUNTS_STORAGE_KEY,
+      JSON.stringify(this.accounts)
+    )
+    await SecureStore.setItemAsync(
+      SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      this.selectedAccount.did
+    )
   }
 }
 

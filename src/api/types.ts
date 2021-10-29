@@ -3,7 +3,6 @@ import { ImageSourcePropType } from 'react-native'
 export type Account = {
   did: string
   mnemonic: string
-  privateKey: string
   publicProfile?: UserData
 }
 
