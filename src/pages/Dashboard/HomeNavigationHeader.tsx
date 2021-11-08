@@ -28,7 +28,6 @@ const MAX_MESSAGE_COUNT = 21
 const HITSLOP = { top: 10, right: 10, bottom: 10, left: 10 }
 
 function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
-  console.log(props)
   const {
     avatar,
     name,

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, TextInput, View } from 'react-native'
+import { Alert, TextInput } from 'react-native'
 import { Container, Content } from 'native-base'
 
 import Layout from '../../components/Layouts/Layout'
@@ -11,19 +11,18 @@ import ErrorPhrase from '../../components/ErrorPhrase'
 
 import ModifierStyles from '../../styles/modifier'
 import InputStyles from '../../styles/inputs'
+import { utils } from 'ethers'
 
 import _ from 'underscore'
 import CustomFooter from 'components/Layouts/CustomFooter'
-import BottomActionsModal from 'components/BottomActionsModal'
-import { MNEMONIC_LENGTH } from 'api/AccountManager'
+import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
 
 export default (props) => {
-  const { route } = props
+  const { route, navigation } = props
   const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
-  const [showConfirmModal, setShowConfirmModal] = useState(false)
 
   useEffect(() => {
     const verify = async () => {
@@ -50,20 +49,19 @@ export default (props) => {
 
   const onContinue = async () => {
     try {
-      // await walletByMnemonic(phrase)
-      // navigation.navigate('Success')
+      const isValid = utils.HDNode.isValidMnemonic(phrase)
+      if (!isValid) {
+        showError(true)
+      }
+      const result = await AccountManager.getInstance().importAccount(phrase)
+      if (!result) {
+        Alert.alert('Failed', 'Account already exist')
+        return
+      }
+      navigation.navigate('Success')
     } catch (e) {
       showError(true)
     }
-  }
-
-  function toggleConfirmModal() {
-    setShowConfirmModal((prevState) => !prevState)
-  }
-
-  function onConfirm() {
-    toggleConfirmModal()
-    onContinue()
   }
 
   const title = usePrivateKey ? 'Seed Phrase or Private Key' : 'Seed Phrase'
@@ -95,57 +93,10 @@ export default (props) => {
         </Layout>
       </Content>
       <CustomFooter>
-        <Button
-          color='primary'
-          onPress={usePrivateKey ? toggleConfirmModal : onContinue}
-          disabled={!verified}>
+        <Button color='primary' onPress={onContinue} disabled={!verified}>
           Continue
         </Button>
       </CustomFooter>
-      <BottomActionsModal
-        visible={showConfirmModal}
-        animated={true}
-        animationType={'slide'}
-        title={
-          'That appears to be a valid account, however it isn’t linked to a Verida account (3ID)'
-        }
-        message={
-          'Would you like to create a new Verida account and authorize this blockchain wallet to control your account?'
-        }
-        footer={
-          <View style={styles.modalFooter}>
-            <Button
-              color={'grey'}
-              style={styles.noButton}
-              onPress={() => toggleConfirmModal()}>
-              No
-            </Button>
-            <Button
-              color={'primary'}
-              style={styles.yesButton}
-              onPress={onConfirm}>
-              Yes
-            </Button>
-          </View>
-        }
-        onClose={() => toggleConfirmModal()}
-      />
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  modalFooter: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  noButton: {
-    flex: 1,
-    marginRight: 20,
-    marginBottom: 0,
-  },
-  yesButton: {
-    flex: 1,
-    marginBottom: 0,
-  },
-})

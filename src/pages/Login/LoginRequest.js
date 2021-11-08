@@ -60,9 +60,7 @@ export default (props) => {
       }
 
       websocket.onmessage = (event) => {
-        console.log('event:', event)
         const message = JSON.parse(event.data)
-        console.log('socket message:', message)
 
         if (message.type === 'error') {
           setErrorMessage({
@@ -108,7 +106,7 @@ export default (props) => {
   console.log('info:', info)
 
   const saveLoginRequest = async (approved) => {
-    const vault = AccountManager.getInstance().vault
+    const vault = AccountManager.getInstance().context
     // save into login database
     const loginRequest = {
       context: info.request.context,

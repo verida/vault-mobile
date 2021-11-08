@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  InteractionManager,
   Linking,
   StyleSheet,
   TouchableOpacity,
@@ -23,7 +24,7 @@ import {
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { loadAvatarSource } from 'api/utils'
+import { fetchInboxCount, loadAvatarSource } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -33,6 +34,7 @@ import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import DidView from 'pages/Dashboard/DidView'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
+import { useFocusEffect } from '@react-navigation/native'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -77,13 +79,11 @@ const Home = (props) => {
   }, [navigation])
 
   useEffect(() => {
-    console.log('initProfile')
     const initProfile = async () => {
       try {
         setLoading(true)
         const accountManager = AccountManager.getInstance()
         const name = await accountManager.vault.profiles.public.get('name')
-        console.log('name:', name)
         const source = await loadAvatarSource()
         setAvatarSource(source)
 
@@ -94,7 +94,6 @@ const Home = (props) => {
 
         setLoading(false)
       } catch (e) {
-        console.log(e)
         Sentry.captureException(e)
         Alert.alert('Error', 'Cannot get account information')
         setLoading(false)
@@ -105,6 +104,10 @@ const Home = (props) => {
       initProfile()
     }
   }, [selectedAccount, publicProfileData])
+
+  useFocusEffect(() => {
+    fetchInboxCount()
+  })
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
@@ -118,11 +121,14 @@ const Home = (props) => {
 
   function onAddAccount() {
     toggleAddAccountsModal()
-    navigation.navigate('AddAccount')
+    InteractionManager.runAfterInteractions(() => {
+      navigation.navigate('AddAccount')
+    })
   }
 
   function onImportAccount() {
     toggleAddAccountsModal()
+    navigation.navigate('ImportAccount')
   }
 
   async function onSelectAccount(did) {

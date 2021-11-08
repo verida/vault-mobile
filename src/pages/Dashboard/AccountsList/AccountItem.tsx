@@ -12,7 +12,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { DefaultAvatar } from 'api/utils'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import AccountManager from 'api/AccountManager'
+import { useSelector } from 'react-redux'
 
 export type AccountItemProps = Omit<ViewProps, 'children'> & {
   name: string
@@ -24,13 +24,15 @@ export type AccountItemProps = Omit<ViewProps, 'children'> & {
 
 function AccountItem(props: AccountItemProps) {
   const { name, did, selected, avatar, onSelect } = props
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const selectedAccount = useSelector((state) => state.selectedAccount)
 
   function onPress() {
     onSelect(did)
   }
 
-  const isCurrentAccount =
-    AccountManager.getInstance().selectedAccount?.did === did
+  const isCurrentAccount = selectedAccount?.did === did
 
   return (
     <TouchableOpacity

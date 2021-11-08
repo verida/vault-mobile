@@ -1,4 +1,4 @@
-import React, { ReactChild } from 'react'
+import React from 'react'
 import {
   Modal,
   ModalProps,
@@ -20,21 +20,14 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 export interface BottomActionsModalProps extends ModalProps {
   title: string
   message?: string
-  footer: ReactChild
+  footer?: React.ReactElement
   onClose: () => void
-  titleIcon?: React.Component
+  titleIcon?: React.ReactElement
 }
 
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
-  const {
-    title,
-    message,
-    footer,
-    onClose,
-    children,
-    titleIcon,
-    ...rest
-  } = props
+  const { title, message, footer, onClose, children, titleIcon, ...rest } =
+    props
   return (
     <Modal {...rest} transparent={true} animationType={'slide'}>
       <View style={styles.container}>

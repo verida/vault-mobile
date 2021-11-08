@@ -28,6 +28,7 @@ export type AddAccountsModalProps = Omit<
   onLogoutAccounts: (dids: string[]) => void
 }
 
+// eslint-disable-next-line no-shadow
 enum Step {
   INITIAL,
   MANAGE_ACCOUNT,
@@ -156,8 +157,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.importButton}
-              onPress={onImportPress}
-              disabled={true}>
+              onPress={onImportPress}>
               <Text style={styles.importButtonText}>Import</Text>
             </TouchableOpacity>
           </View>

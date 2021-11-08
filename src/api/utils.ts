@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/react-native'
 import AccountManager from 'api/AccountManager'
+import { setNewMessagesCount } from 'reduxStore/general/actions'
+import store from 'reduxStore'
 
+const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
 
 export const convertAvatar = (avatar: any) => {
@@ -68,5 +71,19 @@ export const fetchPublicProfileData = async () => {
   } catch (e) {
     Sentry.captureException(e)
     return AccountManager.getInstance().accounts
+  }
+}
+
+export async function fetchInboxCount() {
+  try {
+    const messages =
+      await AccountManager.getInstance().vault?.inbox.fetchLatest(
+        { read: false },
+        { limit: MAX_MESSAGE_COUNT }
+      )
+    store.dispatch(setNewMessagesCount(messages.length))
+  } catch (error) {
+    Sentry.captureException(error)
+    console.log(error)
   }
 }

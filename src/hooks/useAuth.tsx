@@ -7,6 +7,7 @@ import React, {
   useState,
 } from 'react'
 import AccountManager from 'api/AccountManager'
+import { useSelector } from 'react-redux'
 
 type AuthContextState = {
   refresh: () => Promise<boolean>
@@ -26,16 +27,18 @@ const AuthContext = createContext<AuthContextState>({
 export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const selectedAccount = useSelector((state) => state.selectedAccount)
 
   const refresh = useCallback(async () => {
-    const authorized = !!AccountManager.getInstance().selectedAccount
-    if (authorized) {
+    if (selectedAccount) {
       await AccountManager.getInstance().connect()
     }
     setLoaded(true)
-    setAuthenticated(authorized)
-    return authorized
-  }, [])
+    setAuthenticated(!!selectedAccount)
+    return !!selectedAccount
+  }, [selectedAccount])
 
   const switchToAccount = useCallback(async (did: string) => {
     setLoaded(false)

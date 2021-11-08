@@ -36,12 +36,28 @@ class AccountManager {
     this.accounts = {}
   }
 
+  private async filterDids() {
+    let hasInvalidData = false
+    Object.keys(this.accounts).map((did) => {
+      if (did.includes('did:3')) {
+        hasInvalidData = true
+      }
+    })
+
+    if (hasInvalidData) {
+      this.accounts = {}
+      await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
+    }
+  }
+
   public async init() {
     try {
       if (!this.selectedAccount) {
         const accountsRaw = await SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY)
         if (accountsRaw) {
           this.accounts = JSON.parse(accountsRaw)
+          await this.filterDids()
           store.dispatch(setAccounts(this.accounts))
         }
         const selectedAccountDid = await SecureStore.getItemAsync(
@@ -60,7 +76,6 @@ class AccountManager {
   }
 
   public async connect(forced = false) {
-    console.log('CONNECT!!!')
     if (!forced && this.context) {
       return
     }
@@ -103,8 +118,10 @@ class AccountManager {
       )
 
       // Fill the connected account with Verida DID
-      const did = await account.did()
-      await this.updateCurrentAccount({ did })
+      if (isEmpty(this.selectedAccount.did)) {
+        const did = await account.did()
+        await this.updateCurrentAccount({ did })
+      }
 
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
@@ -114,7 +131,7 @@ class AccountManager {
     } catch (e) {
       console.error(e)
       Sentry.captureException(e)
-      return undefined
+      throw e
     }
   }
 
@@ -125,18 +142,17 @@ class AccountManager {
       return vault
     } catch (e) {
       Sentry.captureException(e)
+      throw e
     }
   }
 
   private async setPublicProfile(data: UserData) {
-    try {
-      const entries = Object.entries(data)
-      for (let i = 0; i < entries.length; i++) {
-        const entry = entries[i]
-        await this.vault?.profiles.public.set(...entry)
-      }
-    } catch (e) {
-      console.error('setPublicProfile:', e)
+    const entries = Object.entries(data)
+    for (let i = 0; i < entries.length; i++) {
+      const entry = entries[i]
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      await this.vault?.profiles.public.set(...entry)
     }
   }
 
@@ -159,7 +175,7 @@ class AccountManager {
     } catch (e) {
       console.error('Create account error:', e)
       Sentry.captureException(e)
-      return undefined
+      throw e
     }
   }
 
@@ -197,6 +213,7 @@ class AccountManager {
       store.dispatch(setAccounts(this.accounts))
     } catch (e) {
       Sentry.captureException(e)
+      throw e
     }
   }
 
@@ -207,7 +224,7 @@ class AccountManager {
         SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
-      await this.connect()
+      await this.connect(true)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
@@ -230,6 +247,7 @@ class AccountManager {
       }, 100)
     } catch (e) {
       Sentry.captureException(e)
+      throw e
     }
   }
 
@@ -253,6 +271,35 @@ class AccountManager {
       SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
+  }
+
+  private findIfMnemonicExists(mnemonic: string) {
+    return Object.values(this.accounts).some(
+      (account) => account.mnemonic === mnemonic
+    )
+  }
+
+  public async importAccount(mnemonic: string) {
+    try {
+      if (this.findIfMnemonicExists(mnemonic)) {
+        return null
+      }
+      this.selectedAccount = {
+        mnemonic,
+        did: '',
+      }
+
+      await this.connect(true)
+      // await this.setPublicProfile(userData)
+
+      store.dispatch(setSelectedAccount(this.selectedAccount))
+      store.dispatch(addAccount(this.selectedAccount))
+
+      return this.selectedAccount
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
   }
 }
 

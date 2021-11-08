@@ -4,12 +4,9 @@ import AccountManager from 'api/AccountManager'
 import PushNotification from 'react-native-push-notification'
 import { get } from 'lodash'
 import { CHANNEL_ID } from 'helpers/notifications'
-import * as Sentry from '@sentry/react-native'
 import { useDispatch, useSelector } from 'react-redux'
-import { setNewMessagesCount } from 'reduxStore/general/actions'
 import NetInfo from '@react-native-community/netinfo'
-
-const MAX_MESSAGE_COUNT = 21
+import { fetchInboxCount } from 'api/utils'
 
 export const useEventHandlers = () => {
   const isNetworkConnected = useRef<boolean | null>(null)
@@ -21,22 +18,8 @@ export const useEventHandlers = () => {
   const selectedAccount = useSelector((state) => state.selectedAccount)
 
   useEffect(() => {
-    async function fetchInboxCount() {
-      try {
-        const messages =
-          await AccountManager.getInstance().vault?.inbox.fetchLatest(
-            { read: false },
-            { limit: MAX_MESSAGE_COUNT }
-          )
-        dispatch(setNewMessagesCount(messages.length))
-      } catch (error) {
-        Sentry.captureException(error)
-        console.log(error)
-      }
-    }
-
-    function onMessage(message: any) {
-      fetchInboxCount()
+    async function onMessage(message: any) {
+      await fetchInboxCount()
       PushNotification.localNotification({
         title: get(message, 'sendBy.app') || 'New Message',
         message: message.message,
@@ -48,21 +31,26 @@ export const useEventHandlers = () => {
       })
     }
 
-    async function init() {
-      const messaging =
-        await AccountManager.getInstance().vault?.inbox.getMessaging()
-      console.log('messaging:', messaging)
-      let messagingSubscription = await messaging.onMessage(onMessage)
-      console.log('messagingSubscription:', messagingSubscription)
+    async function reInitMessaging() {
+      try {
+        const messaging =
+          await AccountManager.getInstance().vault?.inbox.getMessaging()
+        await messaging.offMessage(onMessage)
+        await messaging.onMessage(onMessage)
+        await fetchInboxCount()
+      } catch (e) {
+        console.error(e)
+      }
+    }
 
+    async function init() {
       async function onAppStateChanged(nextAppState: AppStateStatus) {
+        console.log('onAppStateChanged')
         if (
           appState.current.match(/inactive|background/) &&
           nextAppState === 'active'
         ) {
-          await fetchInboxCount()
-          messagingSubscription && messagingSubscription.cancel()
-          messagingSubscription = await messaging.onMessage(onMessage)
+          await reInitMessaging()
         }
 
         appState.current = nextAppState
@@ -71,19 +59,21 @@ export const useEventHandlers = () => {
       const unsubscribeNetInfo = NetInfo.addEventListener(async (state) => {
         // Reconnect from disconnected state
         if (isNetworkConnected.current === false && state.isConnected) {
-          await fetchInboxCount()
-          messagingSubscription &&
-            messagingSubscription.removeListener('newMessage', onMessage)
-          messagingSubscription = await messaging.onMessage(onMessage)
+          await reInitMessaging()
         }
         isNetworkConnected.current = state.isConnected
       })
 
+      const messaging =
+        await AccountManager.getInstance().vault?.inbox.getMessaging()
+      await messaging.offMessage(onMessage)
+      await messaging.onMessage(onMessage)
       AppState.addEventListener('change', onAppStateChanged)
 
-      return () => {
-        // messagingSubscription &&
-        //   messagingSubscription.removeListener('newMessage', onMessage)
+      return async () => {
+        const _messaging =
+          await AccountManager.getInstance().vault?.inbox.getMessaging()
+        await _messaging.offMessage(onMessage)
         unsubscribeNetInfo && unsubscribeNetInfo()
         AppState.removeEventListener('change', onAppStateChanged)
       }
@@ -95,7 +85,10 @@ export const useEventHandlers = () => {
       setReady(true)
     })
 
-    return () => unsubscribe && unsubscribe()
+    return () => {
+      console.log('unsubscribe')
+      unsubscribe && unsubscribe()
+    }
   }, [dispatch, selectedAccount])
 
   return {

@@ -10,14 +10,11 @@ import AccountManager from 'api/AccountManager'
 
 export default () => {
   const [words, setWords] = useState('')
-  const [key, setKey] = useState('')
 
   useEffect(() => {
     const init = async () => {
-      const { mnemonic, privateKey } =
-        AccountManager.getInstance().selectedAccount
+      const { mnemonic } = AccountManager.getInstance().selectedAccount
       setWords(mnemonic)
-      setKey(privateKey)
     }
 
     init()
@@ -33,14 +30,6 @@ export default () => {
           onPress={() => Clipboard.setString(words)}
           style={{ marginTop: 10 }}>
           {'Copy seed phrase\u00A0'}
-        </Button>
-
-        <WordCard words={key} />
-        <Button
-          color='transparent-grey'
-          onPress={() => Clipboard.setString(key)}
-          style={{ marginTop: 10 }}>
-          {'Copy private key\u00A0'}
         </Button>
       </Layout>
     </View>

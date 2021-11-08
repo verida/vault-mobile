@@ -39,4 +39,5 @@ export type MainStackParams = {
   ChangePin: undefined
   ScanQrCode: { firstTime: boolean }
   AddAccount: undefined
+  ImportAccount: undefined
 }
