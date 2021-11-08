@@ -19,6 +19,7 @@ export const useEventHandlers = () => {
 
   useEffect(() => {
     async function onMessage(message: any) {
+      console.log('onMessage')
       await fetchInboxCount()
       PushNotification.localNotification({
         title: get(message, 'sendBy.app') || 'New Message',
@@ -66,7 +67,6 @@ export const useEventHandlers = () => {
 
       const messaging =
         await AccountManager.getInstance().vault?.inbox.getMessaging()
-      await messaging.offMessage(onMessage)
       await messaging.onMessage(onMessage)
       AppState.addEventListener('change', onAppStateChanged)
 

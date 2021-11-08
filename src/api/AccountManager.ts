@@ -75,6 +75,10 @@ class AccountManager {
     }
   }
 
+  public getSelectedAccount() {
+    return this.selectedAccount
+  }
+
   public async connect(forced = false) {
     if (!forced && this.context) {
       return
