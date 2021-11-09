@@ -120,7 +120,7 @@ export default (props) => {
     console.log('loginRequest:', loginRequest)
 
     const loginRequestDatastore = await vault.openDatastore(
-      'https://schemas.verida.io/auth/loginRequest/schema.json'
+      'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
     )
     const saveSuccess = await loginRequestDatastore.save(loginRequest)
     console.log('saveSuccess:', !!saveSuccess)
@@ -146,6 +146,7 @@ export default (props) => {
    */
   const approve = async () => {
     try {
+      console.log('approve press')
       setStatus('approving')
 
       const vault = AccountManager.getInstance().context
@@ -183,7 +184,7 @@ export default (props) => {
       )
 
       setStatus('sentResponse')
-
+      console.log('saving')
       await saveLoginRequest(true)
     } catch (error) {
       console.log(error)
