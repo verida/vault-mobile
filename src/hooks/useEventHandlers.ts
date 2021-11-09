@@ -19,7 +19,6 @@ export const useEventHandlers = () => {
 
   useEffect(() => {
     async function onMessage(message: any) {
-      console.log('onMessage')
       await fetchInboxCount()
       PushNotification.localNotification({
         title: get(message, 'sendBy.app') || 'New Message',
@@ -46,7 +45,6 @@ export const useEventHandlers = () => {
 
     async function init() {
       async function onAppStateChanged(nextAppState: AppStateStatus) {
-        console.log('onAppStateChanged')
         if (
           appState.current.match(/inactive|background/) &&
           nextAppState === 'active'
@@ -86,7 +84,6 @@ export const useEventHandlers = () => {
     })
 
     return () => {
-      console.log('unsubscribe')
       unsubscribe && unsubscribe()
     }
   }, [dispatch, selectedAccount])
