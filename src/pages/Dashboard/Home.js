@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  Dimensions,
   InteractionManager,
   Linking,
   StyleSheet,
@@ -19,6 +20,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   BLACK_COLOR_OPACITY,
   BLACK_ORIGIN_COLOR,
+  LIGHT_ORANGE_COLOR,
   ORANGE_COLOR,
   WHITE_COLOR,
 } from '../../constants/color'
@@ -35,9 +37,12 @@ import DidView from 'pages/Dashboard/DidView'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
+import useSeedPhraseReminder from 'hooks/useSeedPhraseReminder'
+import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
+const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 const Home = (props) => {
   const { navigation, selectedAccount, publicProfileData } = props
@@ -47,6 +52,7 @@ const Home = (props) => {
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
+  const { shouldShowReminder, hideReminder } = useSeedPhraseReminder()
 
   useEffect(() => {
     const getUrl = async () => {
@@ -194,6 +200,13 @@ const Home = (props) => {
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />
+      {shouldShowReminder && (
+        <SeedPhraseRemindView
+          onRecordPress={() => {}}
+          onClosePress={hideReminder}
+          style={style.seedPhraseRemindView}
+        />
+      )}
     </Container>
   )
 }
@@ -292,5 +305,13 @@ const style = StyleSheet.create({
     marginLeft: 10,
     color: '#041133',
     fontSize: 16,
+  },
+  seedPhraseRemindView: {
+    position: 'absolute',
+    bottom: 16,
+    left: 15,
+    width: SCREEN_WIDTH - 30,
+    backgroundColor: LIGHT_ORANGE_COLOR,
+    borderRadius: 3,
   },
 })

@@ -4,6 +4,10 @@ export type Account = {
   did: string
   mnemonic: string
   publicProfile?: UserData
+  seedPhraseReminder: {
+    lastTime?: number
+    backedup: boolean
+  }
 }
 
 export type UserData = {
