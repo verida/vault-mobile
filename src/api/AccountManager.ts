@@ -190,7 +190,7 @@ class AccountManager {
 
     let selectedDids = dids
     if (dids.length === 0) {
-      selectedDids = [this.selectedAccount.did]
+      selectedDids = Object.keys(this.accounts)
     }
     try {
       selectedDids.forEach((did) => {
@@ -215,6 +215,12 @@ class AccountManager {
         store.dispatch(setSelectedAccount(null))
       }
       store.dispatch(setAccounts(this.accounts))
+
+      // Switch to next account if the current account logged out
+      if (!this.selectedAccount && Object.values(this.accounts).length > 0) {
+        const nextAccount = Object.values(this.accounts)[0]
+        await this.switchToAccount(nextAccount.did)
+      }
     } catch (e) {
       Sentry.captureException(e)
       throw e

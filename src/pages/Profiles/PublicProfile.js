@@ -28,6 +28,7 @@ const PublicProfile = (props) => {
       }
       const vault = AccountManager.getInstance().vault
       const publicData = await vault.profiles.public.getMany()
+
       let profileProperties = publicData.reduce((acc, field) => {
         acc = { ...acc, [field.key]: field.value }
         return acc

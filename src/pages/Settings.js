@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { Icon } from 'native-base'
 
 import Text from 'components/Text'
@@ -39,8 +39,22 @@ export default (props) => {
   const { refresh } = useAuth()
 
   const logout = async () => {
-    await AccountManager.getInstance().logout()
-    await refresh()
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to logout of all your accounts?',
+      [
+        {
+          text: 'Cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            await AccountManager.getInstance().logout()
+            await refresh()
+          },
+        },
+      ]
+    )
   }
 
   const mergedList = [
