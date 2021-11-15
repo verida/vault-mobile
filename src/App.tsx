@@ -18,6 +18,7 @@ import PolyfillCrypto from 'react-native-webview-crypto'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import * as Sentry from '@sentry/react-native'
 import Config from 'react-native-config'
+import SwitchAccountToast from 'components/SwitchAccountToast'
 
 configureNotifications()
 
@@ -54,6 +55,7 @@ function App() {
           </Authenticate>
         </NavigationContainer>
       </AuthProvider>
+      <SwitchAccountToast />
     </Provider>
   )
 

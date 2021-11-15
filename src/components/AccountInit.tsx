@@ -10,11 +10,11 @@ import InputStyles from '../styles/inputs'
 import { COUNTRIES } from 'helpers/country-list'
 
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { generateWallet } from '../api'
 import { useNavigation } from '@react-navigation/native'
 import { Dispatch } from 'redux'
 import { AuthStackParams } from 'navigation/types'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import AccountManager from 'api/AccountManager'
 
 type Option = {
   label: string
@@ -30,7 +30,10 @@ const AccountInit = (props: Omit<ViewProps, 'children'>) => {
   const onCountryChange = (option: Option) => setCountry(option)
   const onContinue = async () => {
     setProcessing(true)
-    await generateWallet({ name, country: country?.value })
+    await AccountManager.getInstance().createAccount({
+      name,
+      country: country?.value || '',
+    })
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     props.setPublicProfileData({ name, country: country?.value })

@@ -6,38 +6,51 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { isAuthorized } from 'api'
+import AccountManager from 'api/AccountManager'
 
 type AuthContextState = {
-  initialize: () => Promise<boolean>
+  refresh: () => Promise<boolean>
   authenticated: boolean
   loaded: boolean
+  switchToAccount: (did: string) => Promise<void>
 }
 
 const AuthContext = createContext<AuthContextState>({
-  initialize: async () => false,
+  refresh: async () => false,
   authenticated: false,
   loaded: false,
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  switchToAccount: async () => {},
 })
 
 export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
 
-  const initialize = useCallback(async () => {
-    const authorized = await isAuthorized()
+  const refresh = useCallback(async () => {
+    const selectedAccount = AccountManager.getInstance().getSelectedAccount()
+    if (selectedAccount) {
+      await AccountManager.getInstance().connect()
+    }
     setLoaded(true)
-    setAuthenticated(authorized)
-    return authorized
+    setAuthenticated(!!selectedAccount)
+    return !!selectedAccount
+  }, [])
+
+  const switchToAccount = useCallback(async (did: string) => {
+    setLoaded(false)
+    await AccountManager.getInstance().switchToAccount(did)
+    setLoaded(true)
   }, [])
 
   const context = useMemo(
     () => ({
-      initialize,
+      refresh,
       authenticated,
       loaded,
+      switchToAccount,
     }),
-    [initialize, authenticated, loaded]
+    [refresh, authenticated, loaded, switchToAccount]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>

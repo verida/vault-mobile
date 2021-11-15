@@ -4,9 +4,9 @@ import { Container, Content, List } from 'native-base'
 
 import DataList from '../../components/DataList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { getVault } from '../../api'
 import { useNavigation } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
+import AccountManager from 'api/AccountManager'
 
 const Folders = () => {
   const navigationProp = useNavigation()
@@ -16,7 +16,7 @@ const Folders = () => {
   useEffect(() => {
     const init = async () => {
       setLoading(true)
-      const vault = await getVault()
+      const vault = AccountManager.getInstance().vault
       const { navigation, folders } = vault.data.map
 
       const items = navigation.map((folder) => {

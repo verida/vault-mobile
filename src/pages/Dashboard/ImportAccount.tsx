@@ -12,17 +12,20 @@ import ErrorPhrase from '../../components/ErrorPhrase'
 import ModifierStyles from '../../styles/modifier'
 import InputStyles from '../../styles/inputs'
 import { utils } from 'ethers'
-
-import _ from 'underscore'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
+import { MainStackParams } from 'navigation/types'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-export default (props) => {
-  const { route, navigation } = props
-  const usePrivateKey = route.params?.usePrivateKey || false
+function ImportAccount(
+  props: NativeStackScreenProps<MainStackParams, 'ImportAccount'>
+) {
+  const { navigation } = props
+  const usePrivateKey = false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
+  const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
     const verify = async () => {
@@ -33,14 +36,13 @@ export default (props) => {
         return
       }
 
-      const splitted = phrase && phrase.split(' ')
+      const splitted = phrase && phrase.trim().split(' ')
       if (!splitted) {
         setVerified(false)
         return
       }
 
-      const correct =
-        splitted.length === MNEMONIC_LENGTH && _.last(splitted).length
+      const correct = splitted.length === MNEMONIC_LENGTH
       setVerified(correct)
     }
 
@@ -49,18 +51,22 @@ export default (props) => {
 
   const onContinue = async () => {
     try {
+      setProcessing(true)
       const isValid = utils.HDNode.isValidMnemonic(phrase)
       if (!isValid) {
         showError(true)
       }
       const result = await AccountManager.getInstance().importAccount(phrase)
       if (!result) {
+        setProcessing(false)
         Alert.alert('Failed', 'Account already exist')
         return
       }
-      navigation.navigate('Success')
+      setProcessing(false)
+      navigation.goBack()
     } catch (e) {
       showError(true)
+      setProcessing(false)
     }
   }
 
@@ -93,10 +99,16 @@ export default (props) => {
         </Layout>
       </Content>
       <CustomFooter>
-        <Button color='primary' onPress={onContinue} disabled={!verified}>
+        <Button
+          color='primary'
+          onPress={onContinue}
+          disabled={!verified}
+          loading={processing}>
           Continue
         </Button>
       </CustomFooter>
     </Container>
   )
 }
+
+export default ImportAccount

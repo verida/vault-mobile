@@ -20,9 +20,9 @@
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
-		2FB7518BC942E794586EC03B /* libPods-Verida Vault.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 063D226B75AFAF62020C6AA5 /* libPods-Verida Vault.a */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
-		ABD587CFA5E1BE2B7777579F /* libPods-Verida Vault Staging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = E7CF7803A6FF8C14520F282F /* libPods-Verida Vault Staging.a */; };
+		4496B345EB039266071037DE /* libPods-Verida Vault.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB651D7E92702950EC1C4600 /* libPods-Verida Vault.a */; };
+		64CF2DAD430C070B72F16FE9 /* libPods-Verida Vault Staging.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 9C945DAD456B5CB347E90D1D /* libPods-Verida Vault Staging.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -32,10 +32,8 @@
 		050D32F726FA3D480076780F /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
 		0545146526F9DB5700654C18 /* Verida Vault Staging.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verida Vault Staging.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0545146726F9E61200654C18 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
-		063D226B75AFAF62020C6AA5 /* libPods-Verida Vault.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Verida Vault.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		068CD0C7B99A4210A525AA43 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		09C80BBE04F4457C9A9532BB /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
-		119E04A74365ACF21110CF8F /* Pods-Verida Vault.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault.debug.xcconfig"; path = "Target Support Files/Pods-Verida Vault/Pods-Verida Vault.debug.xcconfig"; sourceTree = "<group>"; };
 		13B07F961A680F5B00A75B9A /* Verida Vault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verida Vault.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = myApp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = AppDelegate.m; path = myApp/AppDelegate.m; sourceTree = "<group>"; };
@@ -44,29 +42,31 @@
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = myApp/Info.plist; sourceTree = "<group>"; };
 		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = myApp/main.m; sourceTree = "<group>"; };
 		1855E6B3EF194A06BB4729F3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
-		1F9FE11B63151C9D825A2DCE /* Pods-Verida Vault Staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault Staging.release.xcconfig"; path = "Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging.release.xcconfig"; sourceTree = "<group>"; };
+		1B628E87F69A46B99DCFE81A /* Pods-Verida Vault.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault.debug.xcconfig"; path = "Target Support Files/Pods-Verida Vault/Pods-Verida Vault.debug.xcconfig"; sourceTree = "<group>"; };
 		228FC23CE0D44BE7897CDEF3 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		3DBEAF860106428B82D2C175 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
 		5C85E421F41D4B72A10C5D5D /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F12764B221249EF9A963F52 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		63554FA27E484F17B339423B /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
+		6784414D6E38418C194A17B6 /* Pods-Verida Vault Staging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault Staging.debug.xcconfig"; path = "Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging.debug.xcconfig"; sourceTree = "<group>"; };
 		6838C682771C42D989979A02 /* Zocial.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Zocial.ttf; path = "../node_modules/native-base/Fonts/Zocial.ttf"; sourceTree = "<group>"; };
 		73FE5135F04B4956A32C401A /* Ionicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Ionicons.ttf; path = "../node_modules/native-base/Fonts/Ionicons.ttf"; sourceTree = "<group>"; };
+		7B137F9181EAB2C0F4F9ED25 /* Pods-Verida Vault.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault.release.xcconfig"; path = "Target Support Files/Pods-Verida Vault/Pods-Verida Vault.release.xcconfig"; sourceTree = "<group>"; };
 		85F73A276A9D43D98B1EEB3A /* Roboto_medium.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto_medium.ttf; path = "../node_modules/native-base/Fonts/Roboto_medium.ttf"; sourceTree = "<group>"; };
 		867FFC1CC6ED407EA3E4A5EA /* SimpleLineIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = SimpleLineIcons.ttf; path = "../node_modules/native-base/Fonts/SimpleLineIcons.ttf"; sourceTree = "<group>"; };
 		8E8A9A3FDAEE48BC8D7CFFF0 /* EvilIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = EvilIcons.ttf; path = "../node_modules/native-base/Fonts/EvilIcons.ttf"; sourceTree = "<group>"; };
+		9C945DAD456B5CB347E90D1D /* libPods-Verida Vault Staging.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Verida Vault Staging.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = SplashScreen.storyboard; path = myApp/SplashScreen.storyboard; sourceTree = "<group>"; };
-		B39EEF4B90F28B6D1916EC29 /* Pods-Verida Vault Staging.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault Staging.debug.xcconfig"; path = "Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging.debug.xcconfig"; sourceTree = "<group>"; };
 		C1281D2B7A73418AABAB64FD /* Fontisto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Fontisto.ttf; path = "../node_modules/native-base/Fonts/Fontisto.ttf"; sourceTree = "<group>"; };
 		C56BFEBBD9A242AD886BD848 /* MaterialIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialIcons.ttf"; sourceTree = "<group>"; };
 		CB02A38B970F4008AB96B472 /* Feather.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Feather.ttf; path = "../node_modules/native-base/Fonts/Feather.ttf"; sourceTree = "<group>"; };
+		CBAA62325700A7D362D463D7 /* Pods-Verida Vault Staging.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault Staging.release.xcconfig"; path = "Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging.release.xcconfig"; sourceTree = "<group>"; };
 		D0B8F74FD68C4CC597F8AB34 /* Octicons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Octicons.ttf; path = "../node_modules/native-base/Fonts/Octicons.ttf"; sourceTree = "<group>"; };
-		D69C6CF2252F287A3A9750FB /* Pods-Verida Vault.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault.release.xcconfig"; path = "Target Support Files/Pods-Verida Vault/Pods-Verida Vault.release.xcconfig"; sourceTree = "<group>"; };
-		E7CF7803A6FF8C14520F282F /* libPods-Verida Vault Staging.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Verida Vault Staging.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		EB5FF63D8E34421DB3D12488 /* FontAwesome.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome.ttf; path = "../node_modules/native-base/Fonts/FontAwesome.ttf"; sourceTree = "<group>"; };
 		ECF783BA4F3549AFA78229A3 /* FontAwesome5_Regular.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Regular.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Regular.ttf"; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 		ED2971642150620600B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = Platforms/AppleTVOS.platform/Developer/SDKs/AppleTVOS12.0.sdk/System/Library/Frameworks/JavaScriptCore.framework; sourceTree = DEVELOPER_DIR; };
+		FB651D7E92702950EC1C4600 /* libPods-Verida Vault.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-Verida Vault.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -74,7 +74,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				ABD587CFA5E1BE2B7777579F /* libPods-Verida Vault Staging.a in Frameworks */,
+				64CF2DAD430C070B72F16FE9 /* libPods-Verida Vault Staging.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -82,7 +82,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				2FB7518BC942E794586EC03B /* libPods-Verida Vault.a in Frameworks */,
+				4496B345EB039266071037DE /* libPods-Verida Vault.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -139,8 +139,8 @@
 			children = (
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
 				ED2971642150620600B7C4FE /* JavaScriptCore.framework */,
-				063D226B75AFAF62020C6AA5 /* libPods-Verida Vault.a */,
-				E7CF7803A6FF8C14520F282F /* libPods-Verida Vault Staging.a */,
+				FB651D7E92702950EC1C4600 /* libPods-Verida Vault.a */,
+				9C945DAD456B5CB347E90D1D /* libPods-Verida Vault Staging.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -188,10 +188,10 @@
 		D65327D7A22EEC0BE12398D9 /* Pods */ = {
 			isa = PBXGroup;
 			children = (
-				119E04A74365ACF21110CF8F /* Pods-Verida Vault.debug.xcconfig */,
-				D69C6CF2252F287A3A9750FB /* Pods-Verida Vault.release.xcconfig */,
-				B39EEF4B90F28B6D1916EC29 /* Pods-Verida Vault Staging.debug.xcconfig */,
-				1F9FE11B63151C9D825A2DCE /* Pods-Verida Vault Staging.release.xcconfig */,
+				1B628E87F69A46B99DCFE81A /* Pods-Verida Vault.debug.xcconfig */,
+				7B137F9181EAB2C0F4F9ED25 /* Pods-Verida Vault.release.xcconfig */,
+				6784414D6E38418C194A17B6 /* Pods-Verida Vault Staging.debug.xcconfig */,
+				CBAA62325700A7D362D463D7 /* Pods-Verida Vault Staging.release.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -203,14 +203,14 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 0545146226F9DB5700654C18 /* Build configuration list for PBXNativeTarget "Verida Vault Staging" */;
 			buildPhases = (
-				87AC81B414BCEC718972FA57 /* [CP] Check Pods Manifest.lock */,
+				C36190E960B578387DCC404A /* [CP] Check Pods Manifest.lock */,
 				0545145526F9DB5700654C18 /* Start Packager */,
 				0545145626F9DB5700654C18 /* Sources */,
 				0545145926F9DB5700654C18 /* Frameworks */,
 				0545145B26F9DB5700654C18 /* Resources */,
 				0545145F26F9DB5700654C18 /* Bundle React Native code and images */,
-				4AE6467BE3A85BDCEA9CDA64 /* [CP] Embed Pods Frameworks */,
-				116DCE874FD033DB37D1636A /* [CP] Copy Pods Resources */,
+				DFDA8C3436A914D022702E8A /* [CP] Embed Pods Frameworks */,
+				3590D5205A2B643E1A7C1DBD /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -225,15 +225,15 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 13B07F931A680F5B00A75B9A /* Build configuration list for PBXNativeTarget "Verida Vault" */;
 			buildPhases = (
-				B508629FA63EFA5AEAD7F526 /* [CP] Check Pods Manifest.lock */,
+				504AA8FE88A22C56EBD46588 /* [CP] Check Pods Manifest.lock */,
 				FB720C6BCBB0BCDD65AB82E3 /* Upload Debug Symbols to Sentry */,
 				FD10A7F022414F080027D42C /* Start Packager */,
 				13B07F871A680F5B00A75B9A /* Sources */,
 				13B07F8C1A680F5B00A75B9A /* Frameworks */,
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
-				294AF63C34303497D65BA405 /* [CP] Embed Pods Frameworks */,
-				2AAE900A614345569FC1477B /* [CP] Copy Pods Resources */,
+				F90CDC609997D6B943C3A865 /* [CP] Embed Pods Frameworks */,
+				61E8FDB7BD959C17319E7DEA /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -356,7 +356,7 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh\n";
 		};
-		116DCE874FD033DB37D1636A /* [CP] Copy Pods Resources */ = {
+		3590D5205A2B643E1A7C1DBD /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -406,25 +406,29 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		294AF63C34303497D65BA405 /* [CP] Embed Pods Frameworks */ = {
+		504AA8FE88A22C56EBD46588 /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Verida Vault/Pods-Verida Vault-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
+			inputFileListPaths = (
 			);
-			name = "[CP] Embed Pods Frameworks";
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
 			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
+				"$(DERIVED_FILE_DIR)/Pods-Verida Vault-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Verida Vault/Pods-Verida Vault-frameworks.sh\"\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		2AAE900A614345569FC1477B /* [CP] Copy Pods Resources */ = {
+		61E8FDB7BD959C17319E7DEA /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -474,25 +478,7 @@
 			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Verida Vault/Pods-Verida Vault-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		4AE6467BE3A85BDCEA9CDA64 /* [CP] Embed Pods Frameworks */ = {
-			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			inputPaths = (
-				"${PODS_ROOT}/Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging-frameworks.sh",
-				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
-			);
-			name = "[CP] Embed Pods Frameworks";
-			outputPaths = (
-				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-			shellPath = /bin/sh;
-			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging-frameworks.sh\"\n";
-			showEnvVarsInLog = 0;
-		};
-		87AC81B414BCEC718972FA57 /* [CP] Check Pods Manifest.lock */ = {
+		C36190E960B578387DCC404A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
@@ -514,26 +500,40 @@
 			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
 			showEnvVarsInLog = 0;
 		};
-		B508629FA63EFA5AEAD7F526 /* [CP] Check Pods Manifest.lock */ = {
+		DFDA8C3436A914D022702E8A /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
-			inputFileListPaths = (
-			);
 			inputPaths = (
-				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
-				"${PODS_ROOT}/Manifest.lock",
+				"${PODS_ROOT}/Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
 			);
-			name = "[CP] Check Pods Manifest.lock";
-			outputFileListPaths = (
-			);
+			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
-				"$(DERIVED_FILE_DIR)/Pods-Verida Vault-checkManifestLockResult.txt",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Verida Vault Staging/Pods-Verida Vault Staging-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		F90CDC609997D6B943C3A865 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Verida Vault/Pods-Verida Vault-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL/OpenSSL.framework/OpenSSL",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Verida Vault/Pods-Verida Vault-frameworks.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
 		FB720C6BCBB0BCDD65AB82E3 /* Upload Debug Symbols to Sentry */ = {
@@ -609,14 +609,14 @@
 /* Begin XCBuildConfiguration section */
 		0545146326F9DB5700654C18 /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = B39EEF4B90F28B6D1916EC29 /* Pods-Verida Vault Staging.debug.xcconfig */;
+			baseConfigurationReference = 6784414D6E38418C194A17B6 /* Pods-Verida Vault Staging.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -624,9 +624,9 @@
 					"FB_SONARKIT_ENABLED=1",
 				);
 				INFOPLIST_FILE = myApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.1.9;
+				MARKETING_VERSION = 0.2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -645,18 +645,18 @@
 		};
 		0545146426F9DB5700654C18 /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 1F9FE11B63151C9D825A2DCE /* Pods-Verida Vault Staging.release.xcconfig */;
+			baseConfigurationReference = CBAA62325700A7D362D463D7 /* Pods-Verida Vault Staging.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 3;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = myApp/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 11.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				LIBRARY_SEARCH_PATHS = (
 					"$(inherited)",
@@ -723,7 +723,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-webview\"",
 					"\"$(TOOLCHAIN_DIR)/usr/lib/swift-5.0/$(PLATFORM_NAME)\"",
 				);
-				MARKETING_VERSION = 0.1.9;
+				MARKETING_VERSION = 0.2.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -741,7 +741,7 @@
 		};
 		13B07F941A680F5B00A75B9A /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 119E04A74365ACF21110CF8F /* Pods-Verida Vault.debug.xcconfig */;
+			baseConfigurationReference = 1B628E87F69A46B99DCFE81A /* Pods-Verida Vault.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
@@ -777,7 +777,7 @@
 		};
 		13B07F951A680F5B00A75B9A /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D69C6CF2252F287A3A9750FB /* Pods-Verida Vault.release.xcconfig */;
+			baseConfigurationReference = 7B137F9181EAB2C0F4F9ED25 /* Pods-Verida Vault.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;

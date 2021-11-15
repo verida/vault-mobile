@@ -6,8 +6,8 @@ import DataCardView from '../../components/Data/CardView'
 import DataListView from '../../components/Data/ListView'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { getVault } from '../../api'
 import * as Sentry from '@sentry/react-native'
+import AccountManager from 'api/AccountManager'
 
 const Folder = (props) => {
   const { route } = props
@@ -17,7 +17,7 @@ const Folder = (props) => {
     const init = async () => {
       try {
         const { folderName } = route.params
-        const vault = await getVault()
+        const vault = AccountManager.getInstance().vault
         const _folder = await vault.data.selectFolder(folderName)
         setFolder(_folder)
       } catch (e) {

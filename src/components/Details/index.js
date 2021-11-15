@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import Details from './Details'
-
-import { getVault, getWallet } from '../../api'
 import LoadingView from '../LoadingView'
+import AccountManager from '../../api/AccountManager'
 
 export default () => {
   const [info, setInfo] = useState({})
@@ -11,16 +10,16 @@ export default () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const wallet = await getWallet()
-        const vault = await getVault()
-        const name = await vault.profiles.public.get('name')
+        const accountManager = AccountManager.getInstance()
+        const name = await accountManager.vault.profiles.public.get('name')
 
         setInfo({
-          did: wallet.did,
+          did: accountManager.selectedAccount.did,
           name: name,
         })
         setLoading(false)
       } catch (error) {
+        console.error(error)
         setLoading(false)
       }
     }

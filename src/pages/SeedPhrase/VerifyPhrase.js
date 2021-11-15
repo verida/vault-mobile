@@ -9,7 +9,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
 import ErrorPhrase from '../../components/ErrorPhrase'
-import { MNEMONIC_LENGTH, walletByMnemonic } from '../../api'
+import { MNEMONIC_LENGTH } from 'api/AccountManager'
 
 const VerifyPhrase = (props) => {
   const { words, resetPhrase, navigation, route } = props
@@ -29,8 +29,8 @@ const VerifyPhrase = (props) => {
 
   const onConfirm = async () => {
     try {
-      const phrase = words.join(' ')
-      await walletByMnemonic(phrase)
+      // const phrase = words.join(' ')
+      // await walletByMnemonic(phrase)
       resetPhrase()
       navigation.navigate('CreatePin')
     } catch (e) {

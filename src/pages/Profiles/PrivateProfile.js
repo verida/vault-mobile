@@ -4,12 +4,11 @@ import { StyleSheet, View } from 'react-native'
 import ProfileLayout from '../../components/Layouts/ProfileLayout'
 import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-
-import { getWallet } from '../../api'
 import { editable } from '../../helpers/profile'
 import DateOfBirth from '../../components/DateOfBirth'
 import { NUNITO_SANS_BOLD } from '../../constants/text'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
+import AccountManager from 'api/AccountManager'
 
 const list = [
   { label: 'Name', value: 'Chris Were', action: 'arrow', type: 'input' },
@@ -40,8 +39,7 @@ export default () => {
 
   useEffect(() => {
     const init = async () => {
-      const data = await getWallet()
-      setInfo(data)
+      setInfo(AccountManager.getInstance().selectedAccount)
     }
 
     init()

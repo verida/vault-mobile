@@ -1,9 +1,9 @@
 import React from 'react'
 import DataSnapshot from '../assets/inbox/snapshot.svg'
 import DataSynchronization from '../assets/inbox/synchronization.svg'
-import { getVeridaApp } from '../api'
 import moment from 'moment'
 import _ from 'lodash'
+import AccountManager from 'api/AccountManager'
 
 export const TYPES = [
   {
@@ -76,7 +76,7 @@ export const buildItem = async (inboxItem) => {
 
 // @todo: Add to vault common
 export const getProfile = async (sentBy) => {
-  const verida = await getVeridaApp()
+  const verida = AccountManager.getInstance().context
   try {
     const profile = await verida.openProfile(sentBy.did, sentBy.appName)
     const profileItems = await profile.getMany()
