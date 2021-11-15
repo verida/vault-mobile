@@ -50,7 +50,7 @@ export const fetchPublicProfileData = async () => {
       Object.values(accounts).map(async (account) => {
         const externalProfile =
           await AccountManager.getInstance().context?.openProfile(
-            'public',
+            'basicProfile',
             account.did
           )
 

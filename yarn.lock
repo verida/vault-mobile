@@ -3476,10 +3476,10 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/client-rn@^1.1.3":
-  version "1.1.3"
-  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.3.tgz#4de50cf53756e5fcffce3e1c8ac7a2a532de5adc"
-  integrity sha512-m5SLp9HdrXmo5eVS896Uuh6CLUI6Y1sxAxpWw9zq1nYJSdbZMZGtixRiZijZ1g2E9h1oRk7ajxjEKbdCiWDVkA==
+"@verida/client-rn@^1.1.5":
+  version "1.1.5"
+  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.5.tgz#4c53023fe53091ba0a79d49fce24b8be8391c846"
+  integrity sha512-DX2NDEIcm3FwruF9gPVYkDlIoK1z+r6zTAz39niwyTJQCmNBTS37QaF00eERQyXlluj58rG1nG8DVnmaK0TcMw==
   dependencies:
     "@ceramicnetwork/http-client" "^1.3.0"
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
@@ -3491,7 +3491,8 @@
     "@verida/keyring" "^1.1.1"
     "@verida/pouchdb-replication-react-native" "^7.0.0-prerelease"
     "@verida/storage-link" "^1.1.3"
-    ajv "^8.6.2"
+    ajv "^8.6.3"
+    ajv-formats "^2.1.1"
     assert "^1.1.1"
     axios "^0.21.2"
     base-64 "^1.0.0"
@@ -3731,6 +3732,13 @@ agent-base@6, agent-base@^6.0.0, agent-base@^6.0.2:
   dependencies:
     debug "4"
 
+ajv-formats@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/ajv-formats/-/ajv-formats-2.1.1.tgz#6e669400659eb74973bbf2e33327180a0996b520"
+  integrity sha512-Wx0Kx52hxE7C18hkMEggYlEifqWZtYaRgouJor+WMdPnQyEK13vgEWyVNup7SoeeoLMsr4kf5h6dOW11I15MUA==
+  dependencies:
+    ajv "^8.0.0"
+
 ajv@^6.10.0, ajv@^6.12.3, ajv@^6.12.4:
   version "6.12.6"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-6.12.6.tgz#baf5a62e802b07d977034586f8c3baf5adf26df4"
@@ -3741,7 +3749,17 @@ ajv@^6.10.0, ajv@^6.12.3, ajv@^6.12.4:
     json-schema-traverse "^0.4.1"
     uri-js "^4.2.2"
 
-ajv@^8.0.1, ajv@^8.6.2:
+ajv@^8.0.0, ajv@^8.6.3:
+  version "8.7.1"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.7.1.tgz#52be6f1736b076074798124293618f132ad07a7e"
+  integrity sha512-gPpOObTO1QjbnN1sVMjJcp1TF9nggMfO4MBR5uQl6ZVTOaEPq5i4oq/6R9q2alMMPB3eg53wFv1RuJBLuxf3Hw==
+  dependencies:
+    fast-deep-equal "^3.1.1"
+    json-schema-traverse "^1.0.0"
+    require-from-string "^2.0.2"
+    uri-js "^4.2.2"
+
+ajv@^8.0.1:
   version "8.6.3"
   resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.6.3.tgz#11a66527761dc3e9a3845ea775d2d3c0414e8764"
   integrity sha512-SMJOdDP6LqTkD0Uq8qLi+gMwSt0imXLSV080qFVwJCpH9U6Mb+SUGHAXM0KNbcBPguytWyvFxcHgMLe2D2XSpw==

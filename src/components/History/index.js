@@ -15,7 +15,7 @@ export default ({ route }) => {
       try {
         const veridaApp = AccountManager.getInstance().context
         const datastore = await veridaApp.openDatastore(
-          'https://schemas.verida.io/auth/loginRequest/schema.json'
+          'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
         )
         const filter = {
           approved: route.key === 'approved',

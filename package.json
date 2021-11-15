@@ -23,7 +23,7 @@
     "@verida/account": "^1.1.3",
     "@verida/account-node": "^1.1.3",
     "@verida/encryption-utils": "^1.1.1",
-    "@verida/client-rn": "^1.1.3",
+    "@verida/client-rn": "^1.1.5",
     "@verida/vault-common": "https://github.com/verida/vault-common.git#test/sync-tests",
     "@verida/wallet-utils": "^1.4.0",
     "assert": "^1.5.0",
