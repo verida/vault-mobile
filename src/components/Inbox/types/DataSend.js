@@ -16,10 +16,15 @@ export default ({ item, inboxItem, type, navigation }) => {
         setCurrentAction('decline')
       }
       const vault = AccountManager.getInstance().vault
-      await vault.inbox.handleAction(inboxItem, result, {})
+      const handleResult = await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
-      navigation.goBack()
+      if (!handleResult.success) {
+        Alert.alert('Error', 'Invalid schema, part of data maybe missing')
+      } else {
+        navigation.goBack()
+      }
     } catch (e) {
+      console.error(e)
       Alert.alert('Error', 'Cannot accept data now')
       Sentry.captureException(e)
       setCurrentAction(null)
