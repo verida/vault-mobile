@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Content } from 'native-base'
 import RequestDetailsLayout from '../RequestDetailsLayout'
-import { getVault } from '../../../api'
 import * as Sentry from '@sentry/react-native'
 import { Alert } from 'react-native'
+import AccountManager from 'api/AccountManager'
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
@@ -15,7 +15,7 @@ export default ({ item, inboxItem, type, navigation }) => {
       } else {
         setCurrentAction('decline')
       }
-      const vault = await getVault()
+      const vault = AccountManager.getInstance().vault
       await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
       navigation.goBack()

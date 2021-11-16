@@ -4,7 +4,7 @@ import Text from '../Text'
 
 import History from './History'
 import EmptyList from '../Lists/EmptyList'
-import { getVeridaApp } from '../../api'
+import AccountManager from '../../api/AccountManager'
 
 export default ({ route }) => {
   const [history, setHistory] = useState(null)
@@ -13,18 +13,16 @@ export default ({ route }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const veridaApp = await getVeridaApp()
+        const veridaApp = AccountManager.getInstance().context
         const datastore = await veridaApp.openDatastore(
-          'https://schemas.verida.io/auth/loginRequest/schema.json'
+          'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
         )
         const filter = {
           approved: route.key === 'approved',
         }
-        console.log('filter:', filter)
         const requests = await datastore.getMany(filter, {
           sort: [{ insertedAt: 'desc' }],
         })
-        console.log('requests:', requests)
 
         const _history = requests.length && (
           <View style={style.container}>
@@ -37,6 +35,7 @@ export default ({ route }) => {
         setHistory(_history)
         setLoading(false)
       } catch (e) {
+        console.log('ERROR:', e)
         console.log(e)
       }
     }

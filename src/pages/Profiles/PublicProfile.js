@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { Alert, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import ProfileLayout from '../../components/Layouts/ProfileLayout'
@@ -7,8 +7,8 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
 import { editable } from '../../helpers/profile'
-import { getVault } from '../../api'
 import { useIsFocused } from '@react-navigation/native'
+import AccountManager from 'api/AccountManager'
 
 const PublicProfile = (props) => {
   const { setPublicProfileData } = props
@@ -23,31 +23,31 @@ const PublicProfile = (props) => {
   // component did mount
   useEffect(() => {
     const updateData = async () => {
-      if (initialized) {
-        return
-      }
-      const vault = await getVault()
-      const publicData = await vault.profiles.public.getMany()
-      let profileProperties = publicData.reduce((acc, field) => {
-        acc = { ...acc, [field.key]: field.value }
-        return acc
-      }, {})
-
-      setPublicProfileData(profileProperties)
-      const updatedList = list.map((item) => {
-        const label = item.label.toLowerCase()
-        if (profileProperties[label]) {
-          item.value = profileProperties[label]
+      try {
+        if (initialized) {
+          return
         }
-        return item
-      })
+        const vault = AccountManager.getInstance().vault
+        const publicData = await vault.profiles.public.getMany()
 
-      setList(updatedList)
-      setInitialized(true)
+        setPublicProfileData(publicData)
+        const updatedList = list.map((item) => {
+          const label = item.label.toLowerCase()
+          if (publicData[label]) {
+            item.value = publicData[label]
+          }
+          return item
+        })
+
+        setList(updatedList)
+        setInitialized(true)
+      } catch (e) {
+        Alert.alert('Error', 'Cannot load public profile data')
+      }
     }
 
     const bindChanges = async () => {
-      const vault = await getVault()
+      const vault = AccountManager.getInstance().vault
       await vault.profiles.public.init()
       const db = await vault.profiles.public.store.getDb()
       const dbInstance = await db.getInstance()
@@ -65,6 +65,7 @@ const PublicProfile = (props) => {
     bindChanges()
   }, [initialized, list, setPublicProfileData])
 
+  console.log('list:', list)
   useEffect(() => {
     setInitialized(false)
   }, [isFocused])

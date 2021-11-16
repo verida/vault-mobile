@@ -19,25 +19,24 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export interface BottomActionsModalProps extends ModalProps {
   title: string
-  message: string
-  subtitle: string
-  footer: React.Component
+  message?: string
+  footer?: React.ReactElement
   onClose: () => void
+  titleIcon?: React.ReactElement
 }
 
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
-  const { title, message, footer, subtitle, onClose, ...rest } = props
+  const { title, message, footer, onClose, children, titleIcon, ...rest } =
+    props
   return (
-    <Modal {...rest} transparent={true}>
+    <Modal {...rest} transparent={true} animationType={'slide'}>
       <View style={styles.container}>
         <View style={styles.space} />
         <SafeAreaView style={styles.contentContainer}>
           <View style={styles.content}>
             <View style={styles.header}>
-              <View style={styles.titleWrapper}>
-                <Text style={styles.title}>{title}</Text>
-                {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
-              </View>
+              {titleIcon}
+              <Text style={styles.title}>{title}</Text>
               <TouchableOpacity
                 style={styles.closeButton}
                 hitSlop={{
@@ -55,7 +54,8 @@ const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
               </TouchableOpacity>
             </View>
             <View style={styles.divider} />
-            <Text style={styles.message}>{message}</Text>
+            {message && <Text style={styles.message}>{message}</Text>}
+            {children}
             {footer}
           </View>
         </SafeAreaView>
@@ -78,12 +78,11 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 13,
     borderTopRightRadius: 13,
   },
-  content: {
-    paddingVertical: 16,
-    paddingHorizontal: 20,
-  },
+  content: {},
   header: {
     flexDirection: 'row',
+    paddingHorizontal: 16,
+    paddingVertical: 14,
   },
   titleWrapper: {
     marginRight: 32,
@@ -91,10 +90,9 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: NUNITO_SANS_BOLD,
-    fontSize: 22,
-  },
-  subtitle: {
-    color: 'rgba(4, 17, 51, 0.5)',
+    fontSize: 17,
+    marginRight: 32,
+    flex: 1,
   },
   closeButton: {
     width: 30,
@@ -105,10 +103,8 @@ const styles = StyleSheet.create({
     backgroundColor: LIGHTGREY_COLOR,
   },
   divider: {
-    marginHorizontal: -20,
     height: StyleSheet.hairlineWidth,
     backgroundColor: SEPARATOR,
-    marginVertical: 16,
   },
   message: {
     marginBottom: 24,

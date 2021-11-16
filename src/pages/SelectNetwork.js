@@ -8,7 +8,7 @@ import Button from '../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NETWORKS } from '../helpers/networks'
 import CustomFooter from 'components/Layouts/CustomFooter'
-import { storeChain } from 'api'
+import { storeChain } from 'api/utils'
 
 export default (props) => {
   const [selected, setSelected] = useState(0)

@@ -11,17 +11,15 @@ import WordCard from '../../components/Words/WordCard'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
 
-import { getWallet } from '../../api'
-
 import _ from 'underscore'
+import AccountManager from 'api/AccountManager'
 
 const SeedPhraseGenerated = (props) => {
   const [words, setWords] = useState('Generating seed phrase ...')
 
   useEffect(() => {
     const init = async () => {
-      const wallet = await getWallet()
-      setWords(wallet.mnemonic)
+      setWords(AccountManager.getInstance().selectedAccount.mnemonic)
     }
 
     init()

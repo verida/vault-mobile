@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import DataGridList from './DataGridList'
-import { getVault } from '../../api'
 
 const ListView = ({ folder }) => {
   const [list, setList] = useState([])
@@ -10,7 +9,6 @@ const ListView = ({ folder }) => {
 
   useEffect(() => {
     const init = async () => {
-      await getVault()
       const items = await folder.getMany()
 
       setList(items)

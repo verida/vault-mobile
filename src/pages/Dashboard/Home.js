@@ -1,8 +1,7 @@
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Alert,
-  AppState,
-  Image,
+  InteractionManager,
   Linking,
   StyleSheet,
   TouchableOpacity,
@@ -12,13 +11,8 @@ import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
 import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Container, Content } from 'native-base'
 import { useDeeplink } from 'hooks/useDeeplink'
-
-import EnvelopeSvg from '../../assets/icons/envelope.svg'
-import SettingsSvg from '../../assets/icons/settings.svg'
-import Clipboard from '@react-native-community/clipboard'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
@@ -29,32 +23,31 @@ import {
   WHITE_COLOR,
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
-import NetInfo from '@react-native-community/netinfo'
 
-import { getVault, getWallet, loadAvatarSource } from '../../api'
+import { fetchInboxCount, loadAvatarSource } from 'api/utils'
 import LoadingView from 'components/LoadingView'
-import { FIRST_TIME_LOGIN_KEY } from 'api'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
-import PushNotification from 'react-native-push-notification'
-import { get } from 'lodash'
-import { CHANNEL_ID } from 'helpers/notifications'
+import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
+import AccountManager from 'api/AccountManager'
+import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
+import DidView from 'pages/Dashboard/DidView'
+import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
+import { useAuth } from 'hooks/useAuth'
+import { useFocusEffect } from '@react-navigation/native'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
-const MAX_MESSAGE_COUNT = 21
-
 const Home = (props) => {
-  const { setNewMessagesCount, navigation } = props
+  const { navigation, selectedAccount, publicProfileData } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
+  const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
-  const isNetworkConnected = useRef(null)
-  const appState = useRef(AppState.currentState)
+  const { switchToAccount, refresh } = useAuth()
 
-  // Run only once on first render
   useEffect(() => {
     const getUrl = async () => {
       const initialUrl = await Linking.getInitialURL()
@@ -66,6 +59,10 @@ const Home = (props) => {
       handleDeeplink(initialUrl)
     }
 
+    getUrl()
+  }, [handleDeeplink])
+
+  useEffect(() => {
     async function checkFirstTimeLogin() {
       const isFirstTimeLogin = await SecureStore.getItemAsync(
         FIRST_TIME_LOGIN_KEY
@@ -78,37 +75,24 @@ const Home = (props) => {
       }
     }
 
-    getUrl()
     checkFirstTimeLogin()
-  }, [handleDeeplink, navigation])
+  }, [navigation])
 
   useEffect(() => {
-    const fetchInboxCount = async () => {
-      try {
-        const vault = await getVault()
-        const messages = await vault.inbox.fetchLatest(
-          { read: false },
-          { limit: MAX_MESSAGE_COUNT }
-        )
-        setNewMessagesCount(messages.length)
-      } catch (error) {
-        Sentry.captureException(error)
-        console.log(error)
-      }
-    }
-
     const initProfile = async () => {
       try {
-        const wallet = await getWallet()
-        const vault = await getVault()
-        const name = await vault.profiles.public.get('name')
+        setLoading(true)
+        const accountManager = AccountManager.getInstance()
+        const name = await accountManager.vault.profiles.public.get('name')
         const source = await loadAvatarSource()
         setAvatarSource(source)
 
         setInfo({
-          address: wallet.did,
+          address: accountManager.selectedAccount.did,
           name,
         })
+
+        setLoading(false)
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Cannot get account information')
@@ -116,78 +100,14 @@ const Home = (props) => {
       }
     }
 
-    const onNewMessage = (message) => {
-      fetchInboxCount()
-      PushNotification.localNotification({
-        title: get(message, 'sendBy.app') || 'New Message',
-        message: message.message,
-        channelId: CHANNEL_ID,
-        userInfo: {
-          category: 'InboxItem',
-          data: message,
-        },
-      })
+    if (selectedAccount && publicProfileData) {
+      initProfile()
     }
+  }, [selectedAccount, publicProfileData])
 
-    const initMessaging = async () => {
-      try {
-        const vault = await getVault()
-        const messaging = await vault.inbox.getMessaging()
-        return messaging.onMessage(onNewMessage)
-      } catch (error) {
-        Sentry.captureException(error)
-        console.log(error)
-      }
-    }
-
-    async function init() {
-      await initProfile()
-      let messageSubscription = await initMessaging()
-      await fetchInboxCount()
-      const unsubscribeNetInfo = NetInfo.addEventListener(async (state) => {
-        // Reconnect from disconnected state
-        if (isNetworkConnected.current === false && state.isConnected) {
-          await initProfile()
-          messageSubscription &&
-            messageSubscription.removeListener('newMessage', onNewMessage)
-          messageSubscription = await initMessaging()
-          await fetchInboxCount()
-        }
-        isNetworkConnected.current = state.isConnected
-      })
-
-      const appStateSubscription = AppState.addEventListener(
-        'change',
-        async (nextAppState) => {
-          if (
-            appState.current.match(/inactive|background/) &&
-            nextAppState === 'active'
-          ) {
-            await initProfile()
-            messageSubscription &&
-              messageSubscription.removeListener('newMessage', onNewMessage)
-            messageSubscription = await initMessaging()
-            await fetchInboxCount()
-          }
-
-          appState.current = nextAppState
-        }
-      )
-
-      return () => {
-        unsubscribeNetInfo && unsubscribeNetInfo()
-        appStateSubscription.remove()
-      }
-    }
-
-    let unsubscribe
-    init().then((_unsubscribe) => {
-      setLoading(false)
-      unsubscribe = _unsubscribe
-    })
-
-    return unsubscribe
-  }, [setNewMessagesCount])
+  useFocusEffect(() => {
+    fetchInboxCount()
+  })
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
@@ -195,45 +115,52 @@ const Home = (props) => {
     })
   }
 
+  function toggleAddAccountsModal() {
+    setShowAddAccounts((prevState) => !prevState)
+  }
+
+  function onAddAccount() {
+    toggleAddAccountsModal()
+    InteractionManager.runAfterInteractions(() => {
+      navigation.navigate('AddAccount')
+    })
+  }
+
+  function onImportAccount() {
+    toggleAddAccountsModal()
+    navigation.navigate('ImportAccount')
+  }
+
+  async function onSelectAccount(did) {
+    if (did === AccountManager.getInstance().selectedAccount.did) {
+      return
+    }
+
+    toggleAddAccountsModal()
+    await switchToAccount(did)
+  }
+
+  async function onLogoutAccounts(dids) {
+    await AccountManager.getInstance().logout(dids)
+    await refresh()
+  }
+
   return (
     <Container>
-      <NavigationHeader
-        left={{
-          action: () => props.navigation.navigate('Inbox'),
-          icon: (
-            <View>
-              <EnvelopeSvg />
-              {props.newMessagesCount ? (
-                <View style={style.badge}>
-                  <Text style={{ fontSize: 8 }} numberOfLines={1}>
-                    {props.newMessagesCount >= MAX_MESSAGE_COUNT
-                      ? `${MAX_MESSAGE_COUNT - 1}+`
-                      : props.newMessagesCount}
-                  </Text>
-                </View>
-              ) : null}
-            </View>
-          ),
-        }}
-        right={{
-          action: () => props.navigation.navigate('Settings'),
-          icon: <SettingsSvg />,
-        }}
+      <HomeNavigationHeader
+        name={info.name || ''}
+        avatar={avatarSource}
+        inboxCount={props.newMessagesCount}
+        onNamePress={toggleAddAccountsModal}
+        onAvatarPress={() => props.navigation.navigate('PublicProfile')}
+        onInboxPress={() => props.navigation.navigate('Inbox')}
+        onSettingsPress={() => props.navigation.navigate('Settings')}
       />
       <Content contentContainerStyle={style.content}>
         {loading ? (
           <LoadingView />
         ) : (
           <>
-            <TouchableOpacity
-              onPress={() => props.navigation.navigate('PublicProfile')}>
-              <Image source={avatarSource} style={style.userImg} />
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() => Clipboard.setString(info.address)}
-              style={style.didTouchable}>
-              <Text style={style.text}>{info.address}</Text>
-            </TouchableOpacity>
             <View style={style.qr}>
               <QRCode
                 logo={LogoImg}
@@ -258,6 +185,15 @@ const Home = (props) => {
           </>
         )}
       </Content>
+      <DidView did={info.address || ''} />
+      <AddAccountsModal
+        visible={showAddAccounts}
+        onClose={toggleAddAccountsModal}
+        onAddNew={onAddAccount}
+        onImport={onImportAccount}
+        onSelectAccount={onSelectAccount}
+        onLogoutAccounts={onLogoutAccounts}
+      />
     </Container>
   )
 }
@@ -269,7 +205,11 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 const mapStateToProps = (state) => {
-  return { newMessagesCount: state.newMessagesCount }
+  return {
+    publicProfileData: state.publicProfileData,
+    newMessagesCount: state.newMessagesCount,
+    selectedAccount: state.selectedAccount,
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
@@ -328,19 +268,6 @@ const style = StyleSheet.create({
     textAlign: 'center',
     fontFamily: NUNITO_SANS_SEMIBOLD,
     color: BLACK_COLOR_OPACITY(0.4),
-  },
-  badge: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: 1,
-    position: 'absolute',
-    right: -8,
-    top: -7,
-    minHeight: 16,
-    minWidth: 16,
-    backgroundColor: '#FF6E6E',
-    borderRadius: 8,
-    overflow: 'hidden',
   },
   network: {
     backgroundColor: ORANGE_COLOR,

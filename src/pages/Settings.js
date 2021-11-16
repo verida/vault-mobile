@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { Icon } from 'native-base'
 
 import Text from 'components/Text'
@@ -9,9 +9,9 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import LayoutStyle from '../styles/layouts'
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
-import { clearWallet } from '../api'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
+import AccountManager from 'api/AccountManager'
 
 const list = [
   {
@@ -42,11 +42,25 @@ const list = [
 ]
 
 export default (props) => {
-  const { initialize } = useAuth()
+  const { refresh } = useAuth()
 
   const logout = async () => {
-    await clearWallet()
-    await initialize()
+    Alert.alert(
+      'Confirmation',
+      'Are you sure you want to logout of all your accounts?',
+      [
+        {
+          text: 'Cancel',
+        },
+        {
+          text: 'Logout',
+          onPress: async () => {
+            await AccountManager.getInstance().logout()
+            await refresh()
+          },
+        },
+      ]
+    )
   }
 
   const mergedList = [

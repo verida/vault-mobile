@@ -20,6 +20,7 @@ import * as Sentry from '@sentry/react-native'
 import Config from 'react-native-config'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { RootSiblingParent } from 'react-native-root-siblings'
+import SwitchAccountToast from 'components/SwitchAccountToast'
 
 configureNotifications()
 
@@ -60,6 +61,7 @@ function App() {
           </Authenticate>
         </NavigationContainer>
       </AuthProvider>
+      <SwitchAccountToast />
     </Provider>
   )
 

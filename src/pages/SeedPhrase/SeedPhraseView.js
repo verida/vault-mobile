@@ -6,18 +6,15 @@ import Layout from '../../components/Layouts/Layout'
 import WordCard from '../../components/Words/WordCard'
 import Button from '../../components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-
-import { getWallet } from '../../api'
+import AccountManager from 'api/AccountManager'
 
 export default () => {
   const [words, setWords] = useState('')
-  const [key, setKey] = useState('')
 
   useEffect(() => {
     const init = async () => {
-      const wallet = await getWallet()
-      setWords(wallet.mnemonic)
-      setKey(wallet.privateKey)
+      const { mnemonic } = AccountManager.getInstance().selectedAccount
+      setWords(mnemonic)
     }
 
     init()
@@ -33,14 +30,6 @@ export default () => {
           onPress={() => Clipboard.setString(words)}
           style={{ marginTop: 10 }}>
           {'Copy seed phrase\u00A0'}
-        </Button>
-
-        <WordCard words={key} />
-        <Button
-          color='transparent-grey'
-          onPress={() => Clipboard.setString(key)}
-          style={{ marginTop: 10 }}>
-          {'Copy private key\u00A0'}
         </Button>
       </Layout>
     </View>
