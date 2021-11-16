@@ -5,6 +5,7 @@ import React, {
   useContext,
   useMemo,
   useState,
+  useEffect,
 } from 'react'
 import AccountManager from 'api/AccountManager'
 
@@ -13,6 +14,7 @@ type AuthContextState = {
   authenticated: boolean
   loaded: boolean
   switchToAccount: (did: string) => Promise<void>
+  isVeridaTeamMember: boolean
 }
 
 const AuthContext = createContext<AuthContextState>({
@@ -21,11 +23,23 @@ const AuthContext = createContext<AuthContextState>({
   loaded: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   switchToAccount: async () => {},
+  isVeridaTeamMember: false,
 })
 
 export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
+  const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
+
+  useEffect(() => {
+    const checkTeamMember = async () => {
+      const isTeamMember =
+        await AccountManager.getInstance().checkIfVeridaTeamMember()
+      setVeridaTeamMember(isTeamMember)
+    }
+
+    checkTeamMember()
+  })
 
   const refresh = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
@@ -49,8 +63,9 @@ export const AuthProvider: FC = ({ children }) => {
       authenticated,
       loaded,
       switchToAccount,
+      isVeridaTeamMember,
     }),
-    [refresh, authenticated, loaded, switchToAccount]
+    [refresh, authenticated, loaded, switchToAccount, isVeridaTeamMember]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
