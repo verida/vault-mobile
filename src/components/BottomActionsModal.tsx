@@ -19,6 +19,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 
 export interface BottomActionsModalProps extends ModalProps {
   title: string
+  subtitle: string
   message?: string
   footer?: React.ReactElement
   onClose: () => void
@@ -26,7 +27,7 @@ export interface BottomActionsModalProps extends ModalProps {
 }
 
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
-  const { title, message, footer, onClose, children, titleIcon, ...rest } =
+  const { title, message, footer, onClose, subtitle, children, titleIcon, ...rest } =
     props
   return (
     <Modal {...rest} transparent={true} animationType={'slide'}>
@@ -36,7 +37,10 @@ const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
           <View style={styles.content}>
             <View style={styles.header}>
               {titleIcon}
-              <Text style={styles.title}>{title}</Text>
+              <View style={styles.titleWrapper}>
+                <Text style={styles.title}>{title}</Text>
+                {subtitle && <Text style={styles.subtitle}>{subtitle}</Text>}
+              </View>
               <TouchableOpacity
                 style={styles.closeButton}
                 hitSlop={{
@@ -90,6 +94,10 @@ const styles = StyleSheet.create({
   },
   title: {
     fontFamily: NUNITO_SANS_BOLD,
+    fontSize: 22,
+  },
+  subtitle: {
+    color: 'rgba(4, 17, 51, 0.5)',
     fontSize: 17,
     marginRight: 32,
     flex: 1,
