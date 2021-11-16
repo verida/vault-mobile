@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { DashboardTabParams } from 'navigation/types'
 import Home from 'pages/Dashboard/Home'
@@ -8,10 +8,23 @@ import Tokens from 'pages/Tokens/Dashboard'
 import { PRIMARY_COLOR } from 'constants/color'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import AccountManager from 'api/AccountManager'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
+  const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
+
+  useEffect(() => {
+    const checkTeamMember = async () => {
+      const IS_VERIDA_TEAM_MEMBER =
+        await AccountManager.getInstance().checkIfVeridaTeamMember()
+      setVeridaTeamMember(IS_VERIDA_TEAM_MEMBER)
+    }
+
+    checkTeamMember()
+  })
+
   return (
     <Tab.Navigator
       screenOptions={{
@@ -45,15 +58,17 @@ function DashboardNavigator() {
           ),
         }}
       />
-      <Tab.Screen
-        name={'Tokens'}
-        component={Tokens}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name='wallet' size={24} color={color} />
-          ),
-        }}
-      />
+      {isVeridaTeamMember && (
+        <Tab.Screen
+          name={'Tokens'}
+          component={Tokens}
+          options={{
+            tabBarIcon: ({ color }) => (
+              <Ionicons name='wallet' size={24} color={color} />
+            ),
+          }}
+        />
+      )}
     </Tab.Navigator>
   )
 }
