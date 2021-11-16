@@ -11,7 +11,6 @@ import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
-import AccountManager from 'api/AccountManager'
 
 const publicList = [
   {
@@ -45,19 +44,7 @@ const manageWalletOption = {
 const teamList = [manageWalletOption, ...publicList]
 
 export default (props) => {
-  const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
-
-  useEffect(() => {
-    const checkTeamMember = async () => {
-      const IS_VERIDA_TEAM_MEMBER =
-        await AccountManager.getInstance().checkIfVeridaTeamMember()
-      setVeridaTeamMember(IS_VERIDA_TEAM_MEMBER)
-    }
-
-    checkTeamMember()
-  })
-
-  const { refresh } = useAuth()
+  const { refresh, isVeridaTeamMember } = useAuth()
 
   const logout = async () => {
     Alert.alert(

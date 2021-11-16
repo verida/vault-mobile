@@ -8,22 +8,12 @@ import Tokens from 'pages/Tokens/Dashboard'
 import { PRIMARY_COLOR } from 'constants/color'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import AccountManager from 'api/AccountManager'
+import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
-  const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
-
-  useEffect(() => {
-    const checkTeamMember = async () => {
-      const IS_VERIDA_TEAM_MEMBER =
-        await AccountManager.getInstance().checkIfVeridaTeamMember()
-      setVeridaTeamMember(IS_VERIDA_TEAM_MEMBER)
-    }
-
-    checkTeamMember()
-  })
+  const { isVeridaTeamMember } = useAuth()
 
   return (
     <Tab.Navigator
