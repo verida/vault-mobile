@@ -18,6 +18,8 @@ import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import AddAccount from 'pages/Dashboard/AddAccount'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
+import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
+import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -42,6 +44,8 @@ function MainNavigator() {
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
       <Stack.Screen name={'AddAccount'} component={AddAccount} />
       <Stack.Screen name={'ImportAccount'} component={ImportAccount} />
+      <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
+      <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
     </Stack.Navigator>
   )
 }

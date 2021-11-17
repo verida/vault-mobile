@@ -151,6 +151,10 @@ const Home = (props) => {
     await refresh()
   }
 
+  function onRecordSeedPhrase() {
+    navigation.navigate('SeedPhrase')
+  }
+
   return (
     <Container>
       <HomeNavigationHeader
@@ -202,7 +206,7 @@ const Home = (props) => {
       />
       {shouldShowReminder && (
         <SeedPhraseRemindView
-          onRecordPress={() => {}}
+          onRecordPress={onRecordSeedPhrase}
           onClosePress={hideReminder}
           style={style.seedPhraseRemindView}
         />
