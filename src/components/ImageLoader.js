@@ -6,10 +6,13 @@ import PhotoCameraSvg from '../assets/photo-camera.svg'
 import { WHITE_COLOR } from '../constants/color'
 import { loadAvatarSource } from 'api/utils'
 import AccountManager from 'api/AccountManager'
+import { connect } from 'react-redux'
+import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
 
 const userImg = require('../assets/stubs/avatar.png')
 
-function ImageLoader() {
+function ImageLoader(props) {
+  const { publicProfileData, setPublicProfileData } = props
   const [image, setImage] = useState(userImg)
   //const [granted, setGranted] = useState(null);
 
@@ -34,21 +37,14 @@ function ImageLoader() {
 
       if (!result.cancelled && result.base64) {
         const vault = AccountManager.getInstance().vault
-        let avatar = await vault.profiles.public.get('avatar')
-        console.log('avatar:', avatar)
 
-        if (!avatar) {
-          avatar = {
-            encoding: 'base64',
-            format: 'jpeg',
-            base64: '',
-          }
-        } else {
-          avatar = JSON.parse(avatar)
+        const avatar = {
+          uri: `data:image/${result.format};base64,` + result.base64,
         }
 
-        avatar.base64 = result.base64
-        await vault.profiles.public.set('avatar', JSON.stringify(avatar))
+        await vault.profiles.public.set('avatar', avatar)
+
+        setPublicProfileData({ ...publicProfileData, avatar })
 
         loadAvatar()
       }
@@ -88,4 +84,14 @@ const style = StyleSheet.create({
   },
 })
 
-export default ImageLoader
+const mapStateToProps = (state) => {
+  return { publicProfileData: state.publicProfileData }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    setPublicProfileData: (data) => dispatch(setPublicProfileDataAction(data)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ImageLoader)
