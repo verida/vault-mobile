@@ -11,8 +11,6 @@ export const convertAvatar = (avatar: any) => {
     return DefaultAvatar
   }
 
-  avatar = JSON.parse(avatar)
-
   if (avatar) {
     let image
     switch (avatar.encoding) {
@@ -36,10 +34,14 @@ export const loadAvatarSource = async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const avatar = await vault?.profiles.public.get('avatar')
-    return convertAvatar(avatar)
+    console.log('avatar:', avatar)
+    if (avatar) {
+      return avatar
+    }
+
+    return DefaultAvatar
   } catch (error) {
     Sentry.captureException(error)
-    return DefaultAvatar
   }
 }
 
@@ -50,17 +52,16 @@ export const fetchPublicProfileData = async () => {
       Object.values(accounts).map(async (account) => {
         const externalProfile =
           await AccountManager.getInstance().context?.openProfile(
-            'public',
+            'basicProfile',
             account.did
           )
 
         const avatar = await externalProfile?.get('avatar')
-        const avatarSource = convertAvatar(avatar)
         const name = await externalProfile?.get('name')
         const country = await externalProfile?.get('country')
 
         accounts[account.did].publicProfile = {
-          avatar: avatarSource,
+          avatar: avatar,
           name,
           country,
         }

@@ -37,7 +37,7 @@ function AccountsList(props: AccountsListProps) {
 
   const renderItem = useCallback(
     (info: ListRenderItemInfo<Account>) => {
-      const { did, publicProfile } = info.item
+      const { did, publicProfile = {} } = info.item
 
       const { name = '', avatar = undefined } = publicProfile as UserData
 
