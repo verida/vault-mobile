@@ -18,8 +18,6 @@ const Folders = () => {
       setLoading(true)
       const vault = AccountManager.getInstance().vault
       const { navigation, folders } = vault.data.map
-      console.log('navigation:', navigation)
-      console.log('folders:', folders)
 
       const allowedFolderNames = ['credentials', 'contact']
       const filteredNavigation = navigation.filter((navigation) =>
