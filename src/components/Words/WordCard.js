@@ -18,6 +18,6 @@ const style = StyleSheet.create({
     paddingTop: 16,
     padding: 16,
     textAlign: 'center',
-    fontSize: 16
+    fontSize: 16,
   },
 })

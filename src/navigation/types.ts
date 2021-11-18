@@ -41,6 +41,6 @@ export type MainStackParams = {
   AddAccount: undefined
   ImportAccount: undefined
   SeedPhrase: undefined
-  SeedPhraseGenerated: undefined,
+  SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
 }
