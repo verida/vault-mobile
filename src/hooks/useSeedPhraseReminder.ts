@@ -5,7 +5,7 @@ import AccountManager from 'api/AccountManager'
 const REMIND_EXPIRATION_TIME = 24 * 60 * 60 * 1000 // 24 hours
 
 function useSeedPhraseReminder() {
-  const [shouldShowReminder, setShouldShowReminder] = useState(false)
+  const [shouldShowReminder, setShouldShowReminder] = useState(true)
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const selectedAccount = useSelector((state) => state.selectedAccount)

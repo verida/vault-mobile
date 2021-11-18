@@ -15,7 +15,7 @@ const SeedPhrase = (props) => {
 
   const onRemindLatter = () => {
     setDisabled(true)
-    props.navigation.navigate('CreatePin')
+    props.navigation.goBack()
   }
 
   function onShow() {
@@ -24,7 +24,7 @@ const SeedPhrase = (props) => {
 
   return (
     <Container>
-      <NavigationHeader title='Create An Account' />
+      <NavigationHeader title='Record Your Seed Phrase' />
       <Content>
         <Layout title='Seed Phrase'>
           <Text style={style.description}>

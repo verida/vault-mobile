@@ -31,13 +31,13 @@ const SeedPhraseGenerated = (props) => {
     props.navigation.navigate('VerifyPhrase', { shuffled })
   }
 
-  const onRemind = () => {
-    props.navigation.navigate('CreatePin')
+  const onRemindLater = () => {
+    props.navigation.navigate('Home')
   }
 
   return (
     <View>
-      <NavigationHeader title='Create An Account' />
+      <NavigationHeader title='Record Your Seed Phrase' />
       <Layout title='Seed Phrase'>
         <Text style={style.title}>Carefully write down each word in order</Text>
         <WordCard words={words} />
@@ -51,7 +51,7 @@ const SeedPhraseGenerated = (props) => {
         <Button color='primary' onPress={onSaved}>
           I have saved my seed words
         </Button>
-        <Button color='transparent-grey' onPress={onRemind}>
+        <Button color='transparent-grey' onPress={onRemindLater}>
           Remind me later
         </Button>
       </Layout>

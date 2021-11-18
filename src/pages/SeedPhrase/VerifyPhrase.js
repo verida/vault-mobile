@@ -9,16 +9,19 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
 import ErrorPhrase from '../../components/ErrorPhrase'
-import { MNEMONIC_LENGTH } from 'api/AccountManager'
+import AccountManager from 'api/AccountManager'
 
 const VerifyPhrase = (props) => {
-  const { words, resetPhrase, navigation, route } = props
+  const { words = [], resetPhrase, navigation, route } = props
   const [error, showError] = useState(null)
   const [verified, setVerified] = useState(null)
 
   useEffect(() => {
     showError(false)
-    setVerified(words.length === MNEMONIC_LENGTH)
+    setVerified(
+      words.join(' ') ===
+        AccountManager.getInstance().getSelectedAccount().mnemonic
+    )
   }, [words])
 
   useEffect(() => {
@@ -29,10 +32,9 @@ const VerifyPhrase = (props) => {
 
   const onConfirm = async () => {
     try {
-      // const phrase = words.join(' ')
-      // await walletByMnemonic(phrase)
+      await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
       resetPhrase()
-      navigation.navigate('CreatePin')
+      navigation.navigate('Home')
     } catch (e) {
       showError(true)
     }
@@ -40,7 +42,7 @@ const VerifyPhrase = (props) => {
 
   return (
     <View>
-      <NavigationHeader title='Create An Account' />
+      <NavigationHeader title='Record Your Seed Phrase' />
       <Layout title='Verify Your Phrase' style={style.layout}>
         <View>
           <Words words={route.params.shuffled} />
@@ -51,7 +53,7 @@ const VerifyPhrase = (props) => {
             <Button
               style={{ marginTop: 20 }}
               color='transparent-grey'
-              onPress={() => navigation.navigate('CreatePin')}>
+              onPress={() => navigation.navigate('Home')}>
               Skip
             </Button>
           )}
