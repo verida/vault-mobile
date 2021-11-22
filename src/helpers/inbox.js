@@ -67,7 +67,7 @@ export const buildItem = async (inboxItem) => {
   const name = profile('name', '')
   const avatar = profile('avatar')
   item.from = name ? `Sent by ${name} ` : ''
-  item.from += `via ${inboxItem.sentBy.app}`
+  item.from += `via ${inboxItem.sentBy.context}`
   if (avatar) {
     item.logo = getAvatarFromSource(avatar)
   }
