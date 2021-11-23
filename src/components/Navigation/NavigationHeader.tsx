@@ -15,12 +15,14 @@ export type HeaderProps = {
   left?: HeaderSideButton
   right?: HeaderSideButton
   title: string
+  rightComponent?: React.ReactNode
 }
 
 function NavigationHeader({
   left = { icon: 'back' },
   title,
   right,
+  rightComponent,
 }: HeaderProps) {
   const navigation = useNavigation()
   const netInfo = useNetInfo()
@@ -55,7 +57,9 @@ function NavigationHeader({
           {title ? <Title style={{ color: '#000' }}>{title}</Title> : null}
         </Body>
         <Right style={{ flex: 0.2 }}>
-          {right ? (
+          {rightComponent ? (
+            rightComponent
+          ) : right ? (
             <Button transparent onPress={right.action}>
               {right.icon}
             </Button>

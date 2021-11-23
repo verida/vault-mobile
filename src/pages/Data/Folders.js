@@ -20,8 +20,8 @@ const Folders = () => {
       const { navigation, folders } = vault.data.map
 
       const allowedFolderNames = ['credentials', 'contact']
-      const filteredNavigation = navigation.filter((navigation) =>
-        allowedFolderNames.includes(navigation)
+      const filteredNavigation = navigation.filter((_navigation) =>
+        allowedFolderNames.includes(_navigation)
       )
 
       const items = filteredNavigation.map((folder) => {
