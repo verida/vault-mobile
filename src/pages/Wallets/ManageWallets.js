@@ -50,13 +50,6 @@ const list = [
 ]
 
 export default ({ navigation }) => {
-  useEffect(() => {
-    const init = async () => {
-      console.log('init')
-    }
-
-    init()
-  }, [])
   const [loading, setLoading] = useState(false)
   const [addModalVisible, setAddModalVisible] = useState(false)
   const [importModalVisible, setImportModalVisible] = useState(false)

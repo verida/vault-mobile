@@ -1,6 +1,7 @@
 import React from 'react'
 import { SwipeListView } from 'react-native-swipe-list-view'
 import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
+import { WHITE_COLOR, SEPARATOR_LIGHT } from 'constants/color'
 
 import WalletsListItem from './WalletsListItem'
 
@@ -50,10 +51,10 @@ export default ({ list }) => {
 const styles = StyleSheet.create({
   listView: {
     borderTopWidth: 0.5,
-    borderTopColor: 'rgba(60, 60, 67, 0.1)',
+    borderTopColor: SEPARATOR_LIGHT,
   },
   listItemWrapper: {
-    borderTopColor: 'rgba(60, 60, 67, 0.1)',
+    borderTopColor: SEPARATOR_LIGHT,
   },
   otherListItem: {
     marginTop: 30,
@@ -70,5 +71,5 @@ const styles = StyleSheet.create({
   removeButtonOther: {
     marginTop: 30.5,
   },
-  removeButtonText: { color: '#fff', textAlign: 'center' },
+  removeButtonText: { color: WHITE_COLOR, textAlign: 'center' },
 })
