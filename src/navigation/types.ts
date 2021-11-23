@@ -33,6 +33,15 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   SeedPhraseView: undefined
+  ManageWallets: undefined
+  SingleCurrency: undefined
+  SendToken: undefined
+  TokenRecipient: undefined
+  BuyToken: undefined
+  ReceiveToken: undefined
+  SingleWallet: undefined
+  OtherAddresses: undefined
+  SuccessFailure: undefined
   DataFolder: { folderName: string }
   DataItem: undefined
   Settings: undefined

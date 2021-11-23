@@ -19,7 +19,12 @@ const Folders = () => {
       const vault = AccountManager.getInstance().vault
       const { navigation, folders } = vault.data.map
 
-      const items = navigation.map((folder) => {
+      const allowedFolderNames = ['credentials', 'contact']
+      const filteredNavigation = navigation.filter((_navigation) =>
+        allowedFolderNames.includes(_navigation)
+      )
+
+      const items = filteredNavigation.map((folder) => {
         if (!folders[folder]) {
           // folder doesn't exist
           console.error(

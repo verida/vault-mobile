@@ -343,7 +343,6 @@ class AccountManager {
       }
 
       await this.connect(true)
-      // await this.setPublicProfile(userData)
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
@@ -362,6 +361,18 @@ class AccountManager {
         lastTime: Date.now(),
       },
     })
+  }
+
+  public async checkIfVeridaTeamMember() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const name = await this.vault?.profiles.public.get('name')
+      return name.includes('_*vda1337@_')
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
   }
 }
 
