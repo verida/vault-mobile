@@ -21,6 +21,8 @@ export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
 const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/'
+const CONFIG_DB = 'vault-config'
+const SEED_PHRASE_BACKED_UP_CONFIG = 'seedPhraseBackedUp'
 
 class AccountManager {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -160,6 +162,29 @@ class AccountManager {
     }
   }
 
+  public async setBackedupSeedPhraseConfig(backedup: boolean) {
+    try {
+      const configDb = await this.context?.openDatabase(CONFIG_DB)
+      await configDb?.save(
+        { _id: SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
+        {}
+      )
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
+  }
+
+  public async getBackedupSeedPhraseConfig() {
+    try {
+      const configDb = await this.context?.openDatabase(CONFIG_DB)
+      return await configDb?.get(SEED_PHRASE_BACKED_UP_CONFIG, {})
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
+  }
+
   public async createAccount(userData: UserData): Promise<Account | undefined> {
     try {
       const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
@@ -167,10 +192,15 @@ class AccountManager {
       this.selectedAccount = {
         mnemonic: node,
         did: '', // DID will be filled after connecting to Verida
+        seedPhraseReminder: {
+          lastTime: undefined,
+          backedup: false,
+        },
       }
 
       await this.connect(true)
       await this.setPublicProfile(userData)
+      await this.setBackedupSeedPhraseConfig(false)
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
@@ -230,6 +260,10 @@ class AccountManager {
   public async switchToAccount(did: string) {
     try {
       this.selectedAccount = this.accounts[did]
+      const { backedup } = this.selectedAccount.seedPhraseReminder
+      if (!backedup) {
+        this.selectedAccount.seedPhraseReminder.lastTime = Date.now()
+      }
       await SecureStore.setItemAsync(
         SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
@@ -265,9 +299,14 @@ class AccountManager {
     if (!this.selectedAccount) {
       this.selectedAccount = {
         mnemonic: '',
-        did: '',
+        did: '', // DID will be filled after connecting to Verida
+        seedPhraseReminder: {
+          lastTime: undefined,
+          backedup: false,
+        },
       }
     }
+
     this.selectedAccount = {
       ...(this.selectedAccount || {}),
       ...data,
@@ -296,11 +335,14 @@ class AccountManager {
       }
       this.selectedAccount = {
         mnemonic,
-        did: '',
+        did: '', // DID will be filled after connecting to Verida
+        seedPhraseReminder: {
+          lastTime: undefined,
+          backedup: false,
+        },
       }
 
       await this.connect(true)
-      // await this.setPublicProfile(userData)
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
@@ -310,6 +352,15 @@ class AccountManager {
       Sentry.captureException(e)
       throw e
     }
+  }
+
+  public async updateLastTimeSeedPhraseReminder(backedup: boolean) {
+    await this.updateCurrentAccount({
+      seedPhraseReminder: {
+        backedup,
+        lastTime: Date.now(),
+      },
+    })
   }
 
   public async checkIfVeridaTeamMember() {

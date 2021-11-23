@@ -9,6 +9,7 @@ import {
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
+  SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
 import update from 'immutability-helper'
@@ -25,6 +26,7 @@ const initialState = {
   accounts: {},
   selectedAccount: null,
   switchAccountToast: null,
+  showSeedPhraseReminder: false,
 }
 
 const reducer = (state = initialState, action) => {
@@ -70,6 +72,13 @@ const reducer = (state = initialState, action) => {
     case SET_SWITCH_ACCOUNT_TOAST:
       return update(state, {
         switchAccountToast: {
+          $set: action.payload,
+        },
+      })
+
+    case SET_SHOW_SEED_PHRASE_REMINDER:
+      return update(state, {
+        showSeedPhraseReminder: {
           $set: action.payload,
         },
       })

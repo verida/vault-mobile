@@ -50,7 +50,7 @@ const list = [
 ]
 
 export default ({ navigation }) => {
-  const [loading, setLoading] = useState(false)
+  const [loading] = useState(false)
   const [addModalVisible, setAddModalVisible] = useState(false)
   const [importModalVisible, setImportModalVisible] = useState(false)
   const [name, setName] = useState('')

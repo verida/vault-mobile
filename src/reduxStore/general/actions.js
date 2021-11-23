@@ -6,6 +6,7 @@ import {
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
+  SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './action-types'
 
@@ -39,4 +40,9 @@ export const addAccount = (payload) => {
 
 export const setSwitchAccountToast = (payload) => {
   return { type: SET_SWITCH_ACCOUNT_TOAST, payload }
+}
+
+export const setShowSeedPhraseReminder = (payload) => {
+  console.log('setShowSeedPhraseReminder:', payload)
+  return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
 }

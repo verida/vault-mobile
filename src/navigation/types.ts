@@ -49,4 +49,7 @@ export type MainStackParams = {
   ScanQrCode: { firstTime: boolean }
   AddAccount: undefined
   ImportAccount: undefined
+  SeedPhrase: undefined
+  SeedPhraseGenerated: undefined
+  VerifyPhrase: undefined
 }
