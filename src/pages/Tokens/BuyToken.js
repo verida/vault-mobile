@@ -138,10 +138,6 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
   },
-  footer: {
-    // justifyContent: 'space-between',
-    // flexDirection: 'row',
-  },
   input: { lineHeight: 26 },
   twinFields: {
     flexDirection: 'row',
