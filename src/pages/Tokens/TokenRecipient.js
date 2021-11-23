@@ -13,10 +13,8 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 import InputStyles from 'styles/inputs'
 import Label from 'components/Label'
-import DropDownPicker from 'components/Select'
 
 import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
-import WalletIcon from 'assets/wallet_icon_small.svg'
 
 export default ({ navigation }) => {
   const [address, setAddress] = useState(null)

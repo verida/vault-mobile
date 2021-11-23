@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import { Icon } from 'native-base'
 
 import AddressesList from '../../components/AddressesList'
 import Text from 'components/Text'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
 import OtherSvg from '../../assets/other_addresses.svg'
 
@@ -61,7 +61,7 @@ export default ({ navigation }) => {
           <OtherSvg width={64} height={64} />
           <Text style={styles.title}>Other addresses</Text>
         </View>
-        <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
+        <TouchableOpacity>
           <Icon name='add' style={styles.addIcon} />
         </TouchableOpacity>
       </View>

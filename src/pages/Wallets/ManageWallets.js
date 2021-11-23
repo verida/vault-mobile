@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Modal, View, StyleSheet, TextInput } from 'react-native'
 import { Container, Content, List, Icon } from 'native-base'
 import { useActionSheet } from '@expo/react-native-action-sheet'

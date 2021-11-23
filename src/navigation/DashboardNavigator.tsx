@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { DashboardTabParams } from 'navigation/types'
 import Home from 'pages/Dashboard/Home'

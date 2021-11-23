@@ -1,16 +1,17 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { Icon } from 'native-base'
 
 import Text from 'components/Text'
 import PropertyList from '../components/PropertyList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import AccountManager from 'api/AccountManager'
+import { useAuth } from 'hooks/useAuth'
 
 import LayoutStyle from '../styles/layouts'
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../constants/text'
-import { useAuth } from 'hooks/useAuth'
 
 const publicList = [
   {

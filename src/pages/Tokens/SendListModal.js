@@ -1,11 +1,5 @@
-import React, { useState } from 'react'
-import {
-  View,
-  Modal,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
-} from 'react-native'
+import React from 'react'
+import { View, Modal, TextInput, StyleSheet } from 'react-native'
 import { Icon, List } from 'native-base'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'

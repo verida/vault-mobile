@@ -6,21 +6,11 @@ import AddressSvg from '../../assets/icons/address.svg'
 
 export default ({ item }) => {
   return (
-    <ListItem
-      button
-      onPress={item.onPress}
-      style={[
-        {
-          backgroundColor: '#fff',
-          borderRadius: 0,
-          marginLeft: 0,
-          paddingLeft: 16,
-        },
-      ]}>
-      <Left style={{ flex: 2 }}>
+    <ListItem button onPress={item.onPress} style={styles.item}>
+      <Left style={styles.itemWrapper}>
         <AddressSvg />
         <Body>
-          <Text style={{ marginBottom: 3, marginTop: 3 }}>{item.name}</Text>
+          <Text style={styles.label}>{item.name}</Text>
           <Text note>{`${item.address}`}</Text>
         </Body>
       </Left>
@@ -31,4 +21,13 @@ export default ({ item }) => {
   )
 }
 
-const style = StyleSheet.create({})
+const styles = StyleSheet.create({
+  item: {
+    backgroundColor: '#fff',
+    borderRadius: 0,
+    marginLeft: 0,
+    paddingLeft: 16,
+  },
+  label: { marginBottom: 3, marginTop: 3 },
+  itemWrapper: { flex: 2 },
+})

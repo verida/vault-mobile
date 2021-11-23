@@ -94,7 +94,7 @@ export default ({ visible, hideModal }) => {
           <Button
             style={styles.addWalletButton}
             color='primary'
-            // disabled={!blockchain || processing}
+            disabled={!blockchain}
             // loading={processing}
             // onPress={onAddWallet}
           >

@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import { StyleSheet } from 'react-native'
 import { Container, List } from 'native-base'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -93,5 +92,3 @@ export default ({ navigation }) => {
     </Container>
   )
 }
-
-const styles = StyleSheet.create({})

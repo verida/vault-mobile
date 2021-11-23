@@ -14,7 +14,7 @@ export default ({ list, editButtonAction }) => {
           <AddressesListItem item={data.item} />
         </View>
       )}
-      renderHiddenItem={(data) => (
+      renderHiddenItem={() => (
         <View style={styles.actionButtonsContainer}>
           <TouchableOpacity
             onPress={editButtonAction}
