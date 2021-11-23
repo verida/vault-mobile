@@ -356,7 +356,7 @@ class AccountManager {
   }
 
   public async updateLastTimeSeedPhraseReminder(backedup: boolean) {
-    this.updateCurrentAccount({
+    await this.updateCurrentAccount({
       seedPhraseReminder: {
         backedup,
         lastTime: Date.now(),

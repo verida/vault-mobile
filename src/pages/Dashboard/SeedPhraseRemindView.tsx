@@ -1,17 +1,56 @@
 import Text from 'components/Text'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { ORANGE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
+import AccountManager from 'api/AccountManager'
+import { useDispatch, useSelector } from 'react-redux'
 
 export type SeedPhraseRemindViewProps = Omit<ViewProps, 'children'> & {
   onRecordPress: () => void
-  onClosePress: () => void
 }
+const REMIND_EXPIRATION_TIME = 24 * 60 * 60 * 1000 // 24 hours
 
 function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
-  const { onRecordPress, onClosePress, style, ...rest } = props
+  const { onRecordPress, style, ...rest } = props
+
+  const dispatch = useDispatch()
+  const selectedAccount = useSelector((state: any) => state.selectedAccount)
+  const showSeedPhraseReminder = useSelector(
+    (state: any) => state.showSeedPhraseReminder
+  )
+
+  useEffect(() => {
+    async function checkReminder() {
+      if (selectedAccount?.seedPhraseReminder?.backedup) {
+        dispatch(setShowSeedPhraseReminder(false))
+        return
+      }
+
+      const expired =
+        Date.now() - (selectedAccount?.seedPhraseReminder?.lastTime || 0) >
+        REMIND_EXPIRATION_TIME
+      console.log('expired:', expired)
+      if (!selectedAccount?.seedPhraseReminder || expired) {
+        dispatch(setShowSeedPhraseReminder(true))
+        await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(
+          false
+        )
+      }
+    }
+
+    checkReminder()
+  }, [selectedAccount, dispatch])
+
+  if (!showSeedPhraseReminder) {
+    return null
+  }
+
+  function onClosePress() {
+    dispatch(setShowSeedPhraseReminder(false))
+  }
 
   return (
     <View style={[styles.container, style]} {...rest}>

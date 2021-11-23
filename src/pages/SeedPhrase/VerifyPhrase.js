@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
+import { connect, useDispatch } from 'react-redux'
 
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
@@ -10,11 +10,13 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
 import ErrorPhrase from '../../components/ErrorPhrase'
 import AccountManager from 'api/AccountManager'
+import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
 
 const VerifyPhrase = (props) => {
   const { words = [], resetPhrase, navigation, route } = props
   const [error, showError] = useState(null)
   const [verified, setVerified] = useState(null)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     showError(false)
@@ -32,8 +34,9 @@ const VerifyPhrase = (props) => {
 
   const onConfirm = async () => {
     try {
-      await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
       resetPhrase()
+      dispatch(setShowSeedPhraseReminder(false))
+      await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
       navigation.navigate('Home')
     } catch (e) {
       showError(true)

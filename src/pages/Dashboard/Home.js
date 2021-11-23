@@ -37,7 +37,6 @@ import DidView from 'pages/Dashboard/DidView'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
-import useSeedPhraseReminder from 'hooks/useSeedPhraseReminder'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
@@ -52,7 +51,6 @@ const Home = (props) => {
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
-  const { shouldShowReminder, hideReminder } = useSeedPhraseReminder()
 
   useEffect(() => {
     const getUrl = async () => {
@@ -204,13 +202,10 @@ const Home = (props) => {
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />
-      {shouldShowReminder && (
-        <SeedPhraseRemindView
-          onRecordPress={onRecordSeedPhrase}
-          onClosePress={hideReminder}
-          style={style.seedPhraseRemindView}
-        />
-      )}
+      <SeedPhraseRemindView
+        onRecordPress={onRecordSeedPhrase}
+        style={style.seedPhraseRemindView}
+      />
     </Container>
   )
 }
