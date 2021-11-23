@@ -311,6 +311,18 @@ class AccountManager {
       throw e
     }
   }
+
+  public async checkIfVeridaTeamMember() {
+    try {
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const name = await this.vault?.profiles.public.get('name')
+      return name.includes('_*vda1337@_')
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
+  }
 }
 
 export default AccountManager

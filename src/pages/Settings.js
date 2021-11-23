@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { Icon } from 'native-base'
 
@@ -11,15 +11,8 @@ import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useAuth } from 'hooks/useAuth'
-import AccountManager from 'api/AccountManager'
 
-const list = [
-  // {
-  //   label: 'Manage Wallets',
-  //   action: 'arrow',
-  //   optional: true,
-  //   onPress: (navigation) => navigation.navigate('ManageWallets'),
-  // },
+const publicList = [
   {
     label: 'Change PIN',
     action: 'arrow',
@@ -41,8 +34,17 @@ const list = [
   },
 ]
 
+const manageWalletOption = {
+  label: 'Manage Wallets',
+  action: 'arrow',
+  optional: true,
+  onPress: (navigation) => navigation.navigate('ManageWallets'),
+}
+
+const teamList = [manageWalletOption, ...publicList]
+
 export default (props) => {
-  const { refresh } = useAuth()
+  const { refresh, isVeridaTeamMember } = useAuth()
 
   const logout = async () => {
     Alert.alert(
@@ -62,6 +64,8 @@ export default (props) => {
       ]
     )
   }
+
+  const list = isVeridaTeamMember ? teamList : publicList
 
   const mergedList = [
     ...list,
