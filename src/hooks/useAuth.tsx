@@ -39,7 +39,7 @@ export const AuthProvider: FC = ({ children }) => {
     }
 
     checkTeamMember()
-  })
+  }, [loaded])
 
   const refresh = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
