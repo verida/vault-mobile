@@ -18,6 +18,8 @@ import PolyfillCrypto from 'react-native-webview-crypto'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import * as Sentry from '@sentry/react-native'
 import Config from 'react-native-config'
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import { RootSiblingParent } from 'react-native-root-siblings'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 
 configureNotifications()
@@ -51,7 +53,11 @@ function App() {
       <AuthProvider>
         <NavigationContainer linking={linking} ref={navigationRef}>
           <Authenticate>
-            <RootNavigator />
+            <RootSiblingParent>
+              <ActionSheetProvider>
+                <RootNavigator />
+              </ActionSheetProvider>
+            </RootSiblingParent>
           </Authenticate>
         </NavigationContainer>
       </AuthProvider>

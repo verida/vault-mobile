@@ -14,6 +14,12 @@ import { useAuth } from 'hooks/useAuth'
 import AccountManager from 'api/AccountManager'
 
 const list = [
+  // {
+  //   label: 'Manage Wallets',
+  //   action: 'arrow',
+  //   optional: true,
+  //   onPress: (navigation) => navigation.navigate('ManageWallets'),
+  // },
   {
     label: 'Change PIN',
     action: 'arrow',

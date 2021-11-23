@@ -9,6 +9,7 @@
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx"
   },
   "dependencies": {
+    "@expo/react-native-action-sheet": "^3.11.0",
     "@haskkor/react-native-pincode": "^1.22.5",
     "@react-native-community/async-storage": "~1.12.0",
     "@react-native-community/clipboard": "^1.2.3",
@@ -84,10 +85,12 @@
     "react-native-push-notification": "^8.1.0",
     "react-native-randombytes": "^3.5.3",
     "react-native-reanimated": "~2.2.0",
+    "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "3.2.0",
     "react-native-screens": "^3.5.0",
     "react-native-sqlite-2": "^3.1.1",
     "react-native-svg": "^12.1.1",
+    "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
     "react-native-tcp": "^3.3.2",
     "react-native-udp": "^2.7.0",
