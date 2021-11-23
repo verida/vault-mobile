@@ -45,7 +45,7 @@ function DashboardNavigator() {
           ),
         }}
       />
-      <Tab.Screen
+      {/* <Tab.Screen
         name={'Tokens'}
         component={Tokens}
         options={{
@@ -53,7 +53,7 @@ function DashboardNavigator() {
             <Ionicons name='wallet' size={24} color={color} />
           ),
         }}
-      />
+      /> */}
     </Tab.Navigator>
   )
 }
