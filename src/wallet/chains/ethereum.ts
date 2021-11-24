@@ -1,5 +1,8 @@
+import walletUtils from '@verida/wallet-utils'
+
 const createWallet = () => {
-  // use sdk to create wallet
+  const wallet = walletUtils.createWallet('ethr')
+  return wallet
 }
 
 const getWalletBalances = (walletAddress) => {}
