@@ -50,10 +50,16 @@ const InboxItem = (props) => {
     init()
   }, [inboxItemId])
   console.log('item:', inboxItem)
+  console.log('inboxType:', inboxType)
+  
+  if(!item) {
+    return null
+  }
+  
 
   return (
     <Container>
-      <NavigationHeader title={getHeaderTitle(inboxType.id)} />
+      <NavigationHeader title={getHeaderTitle(inboxType?.id)} />
       <Content>
         {inboxItem
           ? React.createElement(inboxItemComponents[inboxItem.type], {
