@@ -1,11 +1,12 @@
 import utils from '../utils'
 import algorandUtil from '../chains/algorand'
 import ethereumUtil from '../chains/ethereum'
+import walletUtils from '@verida/wallet-utils'
 import { Token } from '../types'
 
 const createWallets = () => {
-  const algoWallet = algorandUtil.createWallet()
-  const ethWallet = ethereumUtil.createWallet()
+  const algoWallet = walletUtils.createWallet('algo')
+  const ethWallet = walletUtils.createWallet('ethr')
 
   return { algoWallet, ethWallet }
 }
