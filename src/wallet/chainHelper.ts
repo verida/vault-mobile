@@ -10,10 +10,15 @@ const createWallets = () => {
   return { algoWallet, ethWallet }
 }
 
-const getOwnedCoinsForAllChains = (walletAddress: string) => {
-  const algoList = algorandUtil.getWalletBalances(walletAddress)
-  const ethList = ethereumUtil.getWalletBalances(walletAddress)
-  // so on
+const getOwnedCoinsForAllChains = () => {
+  // get wallet address for user for each chain from local state.
+  const wallet_addresses = {
+    ethereum: '...',
+    algorand: '...',
+  }
+  const algoList = algorandUtil.getWalletBalances(wallet_addresses.ethereum)
+  const ethList = ethereumUtil.getWalletBalances(wallet_addresses.algorand)
+  // so on and so forth
 
   const list = utils.consolidateTokenBalancesAndMap([algoList, ethList])
 
