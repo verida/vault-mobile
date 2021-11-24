@@ -3,4 +3,5 @@ export type Token = {
   symbol: string
   logo: string
   address: string
+  chain: string
 }
