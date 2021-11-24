@@ -1,6 +1,6 @@
 import utils from './utils'
-import pricingHelper from './pricingHelper'
-import chainHelper from './chainHelper'
+import pricingHelper from './helpers/pricing'
+import chainHelper from './helpers/chain'
 import { Token } from './types'
 
 class Wallet {
