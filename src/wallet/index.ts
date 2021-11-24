@@ -11,14 +11,14 @@ class Wallet {
   }
 
   public async getTokensList(walletAddress: string) {
-    // uses recognized coins list from constants
-    const tokensOwned = chainHelper.getOwnedCoinsForAllChains(walletAddress)
+    // uses recognized tokens list from constants
+    const tokensOwned = chainHelper.getOwnedTokensForAllChains(walletAddress)
 
-    const pricesList = pricingHelper.getPricesForCoins()
+    const pricesList = pricingHelper.getPricesForTokens()
 
     const list = utils.mapBalancesToPrices(pricesList, tokensOwned)
 
-    const total = utils.calculateTotalForAllCoins(pricesList, tokensOwned)
+    const total = utils.calculateTotalForAllTokens(pricesList, tokensOwned)
 
     return { list, total }
   }

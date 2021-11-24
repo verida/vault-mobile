@@ -2,13 +2,13 @@ const mapBalancesToPrices = (pricesList, tokensOwned) => {
   // map by token address and chain?
 }
 
-const calculateTotalForAllCoins = (pricesList, tokensOwned) => {
+const calculateTotalForAllTokens = (pricesList, tokensOwned) => {
   // calculate and return total
 }
 
 const consolidateTokenBalancesAndMap = (lists) => {
   // consolidate
-  // map to recognized coins list and return in standardized format
+  // map to recognized tokens list and return in standardized format
 }
 
 const filterTransactionsByToken = (transactions, token) => {
@@ -17,7 +17,7 @@ const filterTransactionsByToken = (transactions, token) => {
 
 export default {
   mapBalancesToPrices,
-  calculateTotalForAllCoins,
+  calculateTotalForAllTokens,
   consolidateTokenBalancesAndMap,
   filterTransactionsByToken,
 }

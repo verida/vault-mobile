@@ -1,7 +1,7 @@
-import utils from './utils'
-import algorandUtil from './chains/algorand'
-import ethereumUtil from './chains/ethereum'
-import { Token } from './types'
+import utils from '../utils'
+import algorandUtil from '../chains/algorand'
+import ethereumUtil from '../chains/ethereum'
+import { Token } from '../types'
 
 const createWallets = () => {
   const algoWallet = algorandUtil.createWallet()
@@ -10,7 +10,7 @@ const createWallets = () => {
   return { algoWallet, ethWallet }
 }
 
-const getOwnedCoinsForAllChains = () => {
+const getOwnedTokensForAllChains = () => {
   // get wallet address for user for each chain from local state.
   const wallet_addresses = {
     ethereum: '...',
@@ -48,7 +48,7 @@ const getTransactionListForToken = (walletAddress, token) => {
 
 export default {
   createWallets,
-  getOwnedCoinsForAllChains,
+  getOwnedTokensForAllChains,
   getOwnedQuantityForSingleToken,
   getTransactionListForToken,
 }
