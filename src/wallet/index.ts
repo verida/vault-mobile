@@ -1,7 +1,7 @@
 import utils from './utils'
 import pricingHelper from './helpers/pricing'
 import chainHelper from './helpers/chain'
-import { Token } from './types'
+import { Token, Transaction } from './types'
 
 class Wallet {
   public async createWallets() {
@@ -23,7 +23,7 @@ class Wallet {
     return { list, total }
   }
 
-  public async getTokenTransactions(walletAddress: string, token: Token) {
+  public getTokenTransactions(walletAddress: string, token: Token) {
     const tokenOwned = chainHelper.getOwnedQuantityForSingleToken(
       walletAddress,
       token

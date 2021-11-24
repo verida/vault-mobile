@@ -1,4 +1,5 @@
 import walletUtils from '@verida/wallet-utils'
+import { Transaction } from '/wallet/types'
 
 const createWallet = () => {
   const wallet = walletUtils.createWallet('ethr')
@@ -9,7 +10,9 @@ const getWalletBalances = (walletAddress) => {}
 
 const getWalletBalanceForSingleToken = (walletAddress, token) => {}
 
-const getWalletTransactions = (walletAddress) => {}
+const getWalletTransactions = (walletAddress): Transaction[] => {
+  return []
+}
 
 export default {
   createWallet,

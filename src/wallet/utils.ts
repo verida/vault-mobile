@@ -1,3 +1,5 @@
+import { Transaction, Token } from './types'
+
 const mapBalancesToPrices = (pricesList, tokensOwned) => {
   // map by token address and chain?
 }
@@ -11,8 +13,14 @@ const consolidateTokenBalancesAndMap = (lists) => {
   // map to recognized tokens list and return in standardized format
 }
 
-const filterTransactionsByToken = (transactions, token) => {
+const filterTransactionsByToken = (
+  transactions,
+  token: Token
+): Transaction[] => {
   // filter by token address
+  const transactions = []
+
+  return transactions
 }
 
 export default {

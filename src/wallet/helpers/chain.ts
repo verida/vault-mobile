@@ -1,7 +1,7 @@
 import utils from '../utils'
 import algorandUtil from '../chains/algorand'
 import ethereumUtil from '../chains/ethereum'
-import { Token } from '../types'
+import { Token, Transaction } from '../types'
 
 const createWallets = () => {
   const algoWallet = algorandUtil.createWallet()
@@ -38,7 +38,7 @@ const getOwnedQuantityForSingleToken = (
   return balance
 }
 
-const getTransactionListForToken = (walletAddress, token) => {
+const getTransactionListForToken = (walletAddress, token): Transaction[] => {
   const { chain } = token
   // based on chain
   const transactions = algorandUtil.getWalletTransactions(walletAddress)
