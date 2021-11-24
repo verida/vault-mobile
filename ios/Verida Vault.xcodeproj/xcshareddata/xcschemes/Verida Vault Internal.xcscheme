@@ -16,7 +16,7 @@
                      BuildableIdentifier = "primary"
                      BlueprintIdentifier = "0545145326F9DB5700654C18"
                      BuildableName = "Verida Vault Staging.app"
-                     BlueprintName = "Verida Vault Staging"
+                     BlueprintName = "Verida Vault Internal"
                      ReferencedContainer = "container:Verida Vault.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
@@ -34,7 +34,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0545145326F9DB5700654C18"
                BuildableName = "Verida Vault Staging.app"
-               BlueprintName = "Verida Vault Staging"
+               BlueprintName = "Verida Vault Internal"
                ReferencedContainer = "container:Verida Vault.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -64,7 +64,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0545145326F9DB5700654C18"
             BuildableName = "Verida Vault Staging.app"
-            BlueprintName = "Verida Vault Staging"
+            BlueprintName = "Verida Vault Internal"
             ReferencedContainer = "container:Verida Vault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -81,7 +81,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0545145326F9DB5700654C18"
             BuildableName = "Verida Vault Staging.app"
-            BlueprintName = "Verida Vault Staging"
+            BlueprintName = "Verida Vault Internal"
             ReferencedContainer = "container:Verida Vault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
