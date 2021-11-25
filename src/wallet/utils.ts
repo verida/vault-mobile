@@ -20,9 +20,10 @@ const calculateTotalForAllTokens = (
   // calculate and return total
 }
 
-const consolidateTokenBalancesAndMap = (rawLists) => {
+const consolidateTokenBalancesAndMap = (rawLists): TokenBalance[] => {
   // consolidate
   // map to recognized tokens list and return in standardized format
+  return []
 }
 
 const standardizeTransactionsData = (rawTransactions): Transaction[] => {

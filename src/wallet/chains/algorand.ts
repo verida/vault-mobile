@@ -14,7 +14,7 @@ const getWalletBalances = (walletAddress: AccountId.AccountIdParams) => {}
 const getWalletBalanceForSingleToken = (
   walletAddress: AccountId.AccountIdParams,
   token: AssetType.AssetTypeParams
-) => {}
+): number => {}
 
 const getWalletTransactions = (
   walletAddress: AccountId.AccountIdParams
