@@ -43,7 +43,7 @@ class Wallet {
     walletAddress: AccountId.AccountIdParams,
     token: AssetType.AssetTypeParams,
     quantity: number,
-    toAddress: string
+    toAddress: AccountId.AccountIdParams
   ) {
     return chainHelper.signAndSendSignedTransaction(
       walletAddress,
