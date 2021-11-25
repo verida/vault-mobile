@@ -5,7 +5,8 @@ import { utils } from 'ethers'
 
 const createWallet = () => {
   const wallet = walletUtils.createWallet('algo')
-  return wallet
+  // convert address to CIAP
+  return { ciapAddress, mnemonic: wallet.mnemonic }
 }
 
 const getWalletBalances = (walletAddress: AccountId.AccountIdParams) => {}

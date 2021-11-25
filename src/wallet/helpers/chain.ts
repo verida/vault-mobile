@@ -29,7 +29,7 @@ const getOwnedTokensForAllChains = () => {
 const getOwnedQuantityForSingleToken = (
   walletAddress: AccountId.AccountIdParams,
   token: AssetType.AssetTypeParams
-) => {
+): number => {
   // get chain using CAIP js lib
   // get balance based on chain
   const balance = algorandUtil.getWalletBalanceForSingleToken(

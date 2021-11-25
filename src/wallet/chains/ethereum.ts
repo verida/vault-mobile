@@ -4,7 +4,8 @@ import { AccountId, AssetType } from 'caip'
 
 const createWallet = () => {
   const wallet = walletUtils.createWallet('ethr')
-  return wallet
+  // convert address to CIAP
+  return { ciapAddress, mnemonic: wallet.mnemonic }
 }
 
 const getWalletBalances = (walletAddress: AccountId.AccountIdParams) => {}
