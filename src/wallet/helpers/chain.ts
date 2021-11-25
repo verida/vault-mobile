@@ -1,7 +1,7 @@
 import utils from '../utils'
 import algorandUtil from '../chains/algorand'
 import ethereumUtil from '../chains/ethereum'
-import { Transaction } from '../types'
+import { Transaction, TokenBalance } from '../types'
 import { AccountId, AssetType } from 'caip'
 
 const createWallets = () => {
@@ -11,7 +11,7 @@ const createWallets = () => {
   return { algoWallet, ethWallet }
 }
 
-const getOwnedTokensForAllChains = () => {
+const getOwnedTokensForAllChains = (): TokenBalance[] => {
   // get wallet address for user for each chain from local state.
   const wallet_addresses = {
     ethereum: '...',

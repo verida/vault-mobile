@@ -1,15 +1,26 @@
-import { Transaction } from './types'
+import {
+  Transaction,
+  TokenBalance,
+  TokenPrice,
+  TokenWithBalanceAndPrice,
+} from './types'
 import { AssetType } from 'caip'
 
-const mapBalancesToPrices = (pricesList, tokensOwned) => {
+const mapBalancesToPrices = (
+  pricesList: TokenPrice[],
+  tokensOwned: TokenBalance[]
+): TokenWithBalanceAndPrice => {
   // map by token address and chain?
 }
 
-const calculateTotalForAllTokens = (pricesList, tokensOwned) => {
+const calculateTotalForAllTokens = (
+  pricesList: TokenPrice[],
+  tokensOwned: TokenBalance[]
+): number => {
   // calculate and return total
 }
 
-const consolidateTokenBalancesAndMap = (lists) => {
+const consolidateTokenBalancesAndMap = (rawLists) => {
   // consolidate
   // map to recognized tokens list and return in standardized format
 }

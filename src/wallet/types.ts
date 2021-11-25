@@ -10,3 +10,19 @@ export type Transaction = {
   fees: number
   token: AssetType.AssetTypeParams
 }
+
+export type TokenPrice = {
+  price: number
+  token: AssetType.AssetTypeParams
+}
+
+export type TokenBalance = {
+  quantity: number
+  token: AssetType.AssetTypeParams
+}
+
+export type TokenWithBalanceAndPrice = {
+  token: AssetType.AssetTypeParams
+  quantity: number
+  price: number
+}
