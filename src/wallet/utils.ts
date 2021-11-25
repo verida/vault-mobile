@@ -33,4 +33,5 @@ export default {
   calculateTotalForAllTokens,
   consolidateTokenBalancesAndMap,
   filterTransactionsByToken,
+  standardizeTransactionsData,
 }

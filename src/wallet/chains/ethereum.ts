@@ -17,7 +17,10 @@ const getWalletBalanceForSingleToken = (
 const getWalletTransactions = (
   walletAddress: AccountId.AccountIdParams
 ): Transaction[] => {
-  return []
+  // get transactions from sdk
+  const transactions = utils.standardizeTransactionsData(rawTransactions)
+
+  return transactions
 }
 
 export default {
