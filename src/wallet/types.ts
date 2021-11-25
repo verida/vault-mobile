@@ -1,18 +1,19 @@
+import { AccountId, AssetType } from 'caip'
+
 export type Address = string
 
-export type Token = {
-  name: string
-  symbol: string
-  logo: string
-  address: Address
-  chain: string
-}
+// export type Token = {
+//   name: string
+//   symbol: string
+//   logo: string
+//   address: Address
+// }
 
 export type Transaction = {
   id: string
-  from: Address
-  to: Address
+  from: AccountId.AccountIdParams
+  to: AccountId.AccountIdParams
   amount: number
   fees: number
-  token: Token
+  token: AssetType.AssetTypeParams
 }

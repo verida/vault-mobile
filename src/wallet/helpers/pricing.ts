@@ -1,11 +1,11 @@
 // import { SUPPORTED_TOKENS } from './constants'
-import { Token } from '../types'
+import { AssetType } from 'caip'
 
 const getPricesForTokens = () => {
   // get prices from CMC API, pass array of addresses from SUPPORTED_TOKENS
 }
 
-const getPriceForSingleToken = (token: Token) => {
+const getPriceForSingleToken = (token: AssetType.AssetTypeParams) => {
   // get qoute from CMC API, pass token address
 }
 

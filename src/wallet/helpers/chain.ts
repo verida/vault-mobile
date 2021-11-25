@@ -1,7 +1,8 @@
 import utils from '../utils'
 import algorandUtil from '../chains/algorand'
 import ethereumUtil from '../chains/ethereum'
-import { Token, Transaction } from '../types'
+import { Transaction } from '../types'
+import { AccountId, AssetType } from 'caip'
 
 const createWallets = () => {
   const algoWallet = algorandUtil.createWallet()
@@ -26,10 +27,10 @@ const getOwnedTokensForAllChains = () => {
 }
 
 const getOwnedQuantityForSingleToken = (
-  walletAddress: string,
-  token: Token
+  walletAddress: AccountId.AccountIdParams,
+  token: AssetType.AssetTypeParams
 ) => {
-  const { chain } = token
+  // get chain using CAIP js lib
   // get balance based on chain
   const balance = algorandUtil.getWalletBalanceForSingleToken(
     walletAddress,
@@ -38,8 +39,11 @@ const getOwnedQuantityForSingleToken = (
   return balance
 }
 
-const getTransactionListForToken = (walletAddress, token): Transaction[] => {
-  const { chain } = token
+const getTransactionListForToken = (
+  walletAddress: AccountId.AccountIdParams,
+  token: AssetType.AssetTypeParams
+): Transaction[] => {
+  // get chain using CAIP js lib
   // based on chain
   const transactions = algorandUtil.getWalletTransactions(walletAddress)
   const tokenTransactions = utils.filterTransactionsByToken(transactions, token)

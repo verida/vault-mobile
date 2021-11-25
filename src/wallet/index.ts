@@ -1,7 +1,7 @@
 import utils from './utils'
 import pricingHelper from './helpers/pricing'
 import chainHelper from './helpers/chain'
-import { Token, Transaction } from './types'
+import { AccountId, AssetType } from 'caip'
 
 class Wallet {
   public async createWallets() {
@@ -10,7 +10,7 @@ class Wallet {
     return wallets
   }
 
-  public async getTokensList(walletAddress: string) {
+  public async getTokensList(walletAddress: AccountId.AccountIdParams) {
     // uses recognized tokens list from constants
     const tokensOwned = chainHelper.getOwnedTokensForAllChains(walletAddress)
 
@@ -23,7 +23,10 @@ class Wallet {
     return { list, total }
   }
 
-  public getTokenTransactions(walletAddress: string, token: Token) {
+  public getTokenTransactions(
+    walletAddress: AccountId.AccountIdParams,
+    token: AssetType.AssetTypeParams
+  ) {
     const tokenOwned = chainHelper.getOwnedQuantityForSingleToken(
       walletAddress,
       token
@@ -37,17 +40,15 @@ class Wallet {
   }
 
   public async signAndSendSignedTransaction(
-    walletAddress: string,
-    token: Token,
+    walletAddress: AccountId.AccountIdParams,
+    token: AssetType.AssetTypeParams,
     quantity: number,
-    chain,
     toAddress: string
   ) {
     return chainHelper.signAndSendSignedTransaction(
       walletAddress,
       token,
       quantity,
-      chain,
       toAddress
     )
   }

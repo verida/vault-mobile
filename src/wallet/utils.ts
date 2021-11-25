@@ -1,4 +1,5 @@
-import { Transaction, Token } from './types'
+import { Transaction } from './types'
+import { AssetType } from 'caip'
 
 const mapBalancesToPrices = (pricesList, tokensOwned) => {
   // map by token address and chain?
@@ -15,7 +16,7 @@ const consolidateTokenBalancesAndMap = (lists) => {
 
 const filterTransactionsByToken = (
   transactions,
-  token: Token
+  token: AssetType.AssetTypeParams
 ): Transaction[] => {
   // filter by token address
   const transactions = []
