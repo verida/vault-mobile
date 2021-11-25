@@ -1,6 +1,7 @@
 import walletUtils from '@verida/wallet-utils'
 import { Transaction } from '/wallet/types'
 import { AccountId, AssetType } from 'caip'
+import { utils } from 'ethers'
 
 const createWallet = () => {
   const wallet = walletUtils.createWallet('algo')
@@ -17,7 +18,10 @@ const getWalletBalanceForSingleToken = (
 const getWalletTransactions = (
   walletAddress: AccountId.AccountIdParams
 ): Transaction[] => {
-  return []
+  // get transactions from sdk
+  const transactions = utils.standardizeTransactionsData(rawTransactions)
+
+  return transactions
 }
 
 export default {

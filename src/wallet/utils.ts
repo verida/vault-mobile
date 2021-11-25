@@ -14,6 +14,10 @@ const consolidateTokenBalancesAndMap = (lists) => {
   // map to recognized tokens list and return in standardized format
 }
 
+const standardizeTransactionsData = (rawTransactions): Transaction[] => {
+  // standardize based on TransactionType
+}
+
 const filterTransactionsByToken = (
   transactions,
   token: AssetType.AssetTypeParams
