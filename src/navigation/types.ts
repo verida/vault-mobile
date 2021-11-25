@@ -52,4 +52,5 @@ export type MainStackParams = {
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
+  ShareableData: undefined
 }

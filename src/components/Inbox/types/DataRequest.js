@@ -8,6 +8,7 @@ import Text from 'components/Text'
 import moment from 'moment'
 import SchemasList from 'components/Inbox/SchemasList'
 import { GREY_COLOR } from 'constants/color'
+import Button from 'components/Button'
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
@@ -31,6 +32,10 @@ export default ({ item, inboxItem, type, navigation }) => {
 
   console.log('item:', item)
   const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
+  
+  function onItemPress() {
+    navigation.navigate('ShareableData')
+  }
 
   return (
     <Content>
@@ -43,7 +48,22 @@ export default ({ item, inboxItem, type, navigation }) => {
           </View>
         </View>
         <View style={styles.divider} />
-        <SchemasList schemas={[item.item.data.requestSchema]} />
+        <SchemasList schemas={[item.item.data.requestSchema]} onItemPress={onItemPress}/>
+      </View>
+      <View style={styles.footer}>
+        <Button
+          color='grey'
+          style={styles.button}
+          onPress={() => {}}
+          loading={false}>
+          Ignore
+        </Button>
+        <Button
+          style={[styles.button, styles.shareButton]}
+          onPress={() => {}}
+          loading={false}>
+          Share
+        </Button>
       </View>
     </Content>
   )
@@ -75,5 +95,15 @@ const styles = StyleSheet.create({
     height: StyleSheet.hairlineWidth,
     backgroundColor: GREY_COLOR,
     marginTop: 20,
+  },
+  footer: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+  },
+  button: {
+    flex: 1,
+  },
+  shareButton: {
+    marginLeft: 10,
   },
 })
