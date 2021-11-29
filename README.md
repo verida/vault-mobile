@@ -53,6 +53,8 @@ Now install the pods using the following command:
 
 `arch -x86_64 pod install`
 
+source: https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
+
 Now if you try to run the project in xcode you will get about ~100 errors. to fix that you need to run xcode in rosetta mode, to do that go to your Mac's applications folder, find Xcode, right click, click "Get Info" and check the checkbox labeled 'Open using Rosetta'.
 
 Now go into xcode, clean the build folder and run the app.
