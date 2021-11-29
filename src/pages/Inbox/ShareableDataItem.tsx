@@ -1,28 +1,54 @@
 import React from 'react'
-import LogoSvg from 'assets/icons/house.svg'
-import { StyleSheet, TouchableOpacity, TouchableOpacityProps, View, ViewProps } from "react-native";
+import StravaSvg from 'assets/icons/strava.svg'
+import { StyleSheet, View, ViewProps } from 'react-native'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import { GREY_COLOR } from "constants/color";
+import { GREY_COLOR, LIGHTGREY_COLOR, SUCCESS_COLOR } from 'constants/color'
+import moment from 'moment'
+import { CheckBox } from 'react-native-elements'
 
-export type ShareableDataItemType = {}
+export type ShareableDataItemType = {
+  id: string
+  name: string
+  summary: string
+  time: string
+}
 
-export type ShareableDataItemProps = Omit<TouchableOpacityProps, 'children'> & {
+export type ShareableDataItemProps = Omit<ViewProps, 'children'> & {
   item: ShareableDataItemType
+  selected: boolean
+  onSelect: (item: ShareableDataItemType) => void
 }
 
 function ShareableDataItem(props: ShareableDataItemProps) {
+  const {
+    item: { name, summary, time },
+    selected,
+    onSelect,
+  } = props
+
   return (
-    <TouchableOpacity style={styles.item}>
-      <LogoSvg />
+    <View style={styles.item}>
+      <StravaSvg />
       <View style={styles.itemContent}>
         <Text style={{ fontFamily: NUNITO_SANS_BOLD, fontSize: 16 }}>
-          Identity
+          {name}
         </Text>
-        <Text>Government of Western...</Text>
-        <Text>May 6, 2020 11:00 am</Text>
+        <Text>{summary}</Text>
+        <Text>{moment(time).format('DD MMM YYYY, HH:mm')}</Text>
       </View>
-    </TouchableOpacity>
+      <CheckBox
+        containerStyle={styles.checkbox}
+        iconType='material'
+        checkedIcon='check-circle'
+        uncheckedIcon='radio-button-unchecked'
+        checkedColor={SUCCESS_COLOR}
+        uncheckedColor={LIGHTGREY_COLOR}
+        size={20}
+        checked={selected}
+        onPress={() => onSelect(props.item)}
+      />
+    </View>
   )
 }
 
@@ -36,10 +62,13 @@ const styles = StyleSheet.create({
     borderColor: GREY_COLOR,
     marginHorizontal: 15,
     marginBottom: 15,
+    paddingLeft: 15,
   },
   itemContent: {
-    marginLeft: 10,
+    marginLeft: 15,
+    flex: 1,
   },
+  checkbox: {},
 })
 
 export default ShareableDataItem

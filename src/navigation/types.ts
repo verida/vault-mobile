@@ -52,5 +52,5 @@ export type MainStackParams = {
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
-  ShareableData: undefined
+  ShareableData: { schemaUrl: string }
 }

@@ -32,9 +32,9 @@ export default ({ item, inboxItem, type, navigation }) => {
 
   console.log('item:', item)
   const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
-  
-  function onItemPress() {
-    navigation.navigate('ShareableData')
+
+  function onItemPress(url) {
+    navigation.navigate('ShareableData', { schemaUrl: url })
   }
 
   return (
@@ -48,7 +48,10 @@ export default ({ item, inboxItem, type, navigation }) => {
           </View>
         </View>
         <View style={styles.divider} />
-        <SchemasList schemas={[item.item.data.requestSchema]} onItemPress={onItemPress}/>
+        <SchemasList
+          schemas={[item.item.data.requestSchema]}
+          onItemPress={onItemPress}
+        />
       </View>
       <View style={styles.footer}>
         <Button

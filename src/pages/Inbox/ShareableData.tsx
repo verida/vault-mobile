@@ -1,24 +1,108 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { Container, Content } from 'native-base'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Button from 'components/Button'
-import { FlatList, ListRenderItemInfo, StyleSheet, TextInput, View } from "react-native";
+import {
+  FlatList,
+  ListRenderItemInfo,
+  StyleSheet,
+  TextInput,
+  View,
+} from 'react-native'
 import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import LogoSvg from 'assets/icons/house.svg'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import ShareableDataItem, { ShareableDataItemType } from "pages/Inbox/ShareableDataItem";
+import ShareableDataItem, {
+  ShareableDataItemType,
+} from 'pages/Inbox/ShareableDataItem'
+import { MainStackParams } from 'navigation/types'
+import * as Sentry from '@sentry/react-native'
+import AccountManager from 'api/AccountManager'
+import update from 'immutability-helper'
+import LoadingView from 'components/LoadingView'
+import { debounce } from 'lodash'
 
-function ShareableData(props: NativeStackScreenProps<any>) {
-  const { navigation } = props
-  const [data, setData] = useState([])
+function ShareableData(
+  props: NativeStackScreenProps<MainStackParams, 'ShareableData'>
+) {
+  const { navigation, route } = props
+  const [data, setData] = useState<ShareableDataItemType[]>([])
+  const [loading, setLoading] = useState(false)
+  const [searchText, setSearchText] = useState('')
+  const [selectedItems, setSelectedItems] = useState<ShareableDataItemType[]>(
+    []
+  )
+  const fetchData = async (text: string) => {
+    try {
+      setLoading(true)
+      const { schemaUrl } = route.params
+      const datastore =
+        await AccountManager.getInstance().context?.openDatastore(schemaUrl)
+      const result = await datastore?.getMany({
+        $or: [
+          {
+            name: {
+              $regex: `(?i)${text}`,
+            },
+            summary: {
+              $regex: `(?i)${text}`,
+            },
+          },
+        ],
+      })
+      console.log('result:', result)
+      if (result) {
+        setData(result as ShareableDataItemType[])
+      }
+      setLoading(false)
+    } catch (e) {
+      console.error(e)
+      Sentry.captureException(e)
+      setLoading(false)
+    }
+  }
+  const fetchDataRef = useRef(debounce(fetchData, 1000, { trailing: true }))
+
+  useEffect(() => {
+    fetchDataRef.current('')
+  }, [])
+
+  const onSearchTextChanged = useCallback((text: string) => {
+    setSearchText(text)
+    fetchDataRef.current(text)
+  }, [])
+
+  const onSelectItem = useCallback(
+    (item: ShareableDataItemType) => {
+      const index = selectedItems.findIndex((_item) => _item.id === item.id)
+      if (index !== -1) {
+        setSelectedItems((prevState) =>
+          update(prevState, {
+            $splice: [[index, 1]],
+          })
+        )
+      } else {
+        setSelectedItems((prevState) =>
+          update(prevState, {
+            $push: [item],
+          })
+        )
+      }
+    },
+    [selectedItems]
+  )
 
   function renderItem(info: ListRenderItemInfo<ShareableDataItemType>) {
-    const {item} = info
-    return <ShareableDataItem />
+    const { item } = info
+    const selected = selectedItems.some((_item) => _item.id === item.id)
+    return (
+      <ShareableDataItem
+        item={item}
+        onSelect={onSelectItem}
+        selected={selected}
+      />
+    )
   }
 
   return (
@@ -26,10 +110,22 @@ function ShareableData(props: NativeStackScreenProps<any>) {
       <NavigationHeader title='Select an item' />
       <View style={styles.searchInputContainer}>
         <AntDesign name='search1' size={15} color={GREY_COLOR} />
-        <TextInput style={styles.searchInput} placeholder={'Search'} />
+        <TextInput
+          style={styles.searchInput}
+          placeholder={'Search'}
+          value={searchText}
+          onChangeText={onSearchTextChanged}
+        />
       </View>
       <Content>
-        <FlatList<ShareableDataItemType> data={data} renderItem={renderItem}/>
+        {loading ? (
+          <LoadingView type={'small'} />
+        ) : (
+          <FlatList<ShareableDataItemType>
+            data={data}
+            renderItem={renderItem}
+          />
+        )}
       </Content>
       <CustomFooter>
         <Button color='primary' onPress={() => {}}>

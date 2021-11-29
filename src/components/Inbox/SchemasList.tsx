@@ -9,13 +9,14 @@ import { SvgCssUri } from 'react-native-svg'
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
-  onItemPress: () => void
+  onItemPress: (url: string) => void
 }
 
 type RequestedData = {
   name: string
   icon: string
   description: string
+  url: string
 }
 
 class SvgUri extends React.Component<{
@@ -53,6 +54,7 @@ function SchemasList(props: SchemasListProps) {
               name: schemaJson.titlePlural,
               icon: appearance.style.icon,
               description: schemaJson.description,
+              url: schemaJson.$id
             })
           })
         )
@@ -79,7 +81,7 @@ function SchemasList(props: SchemasListProps) {
         <TouchableOpacity
           style={styles.dataFolder}
           key={`folder-${index}`}
-          onPress={onItemPress}>
+          onPress={() => onItemPress(data.url)}>
           <View style={styles.content}>
             <View style={styles.header}>
               <View style={styles.icon}>
