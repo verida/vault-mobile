@@ -23,7 +23,7 @@ target 'Verida Vault' do
   shared_pods
 end
 
-target 'Verida Vault Staging' do
+target 'Verida Vault Internal' do
   shared_pods
 end
 
