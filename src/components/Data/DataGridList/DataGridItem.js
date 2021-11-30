@@ -7,7 +7,7 @@ import { useNavigation } from '@react-navigation/native'
 
 export default ({ item, folder }) => {
   const navigation = useNavigation()
-  const date = moment(item.createdAt).format('DD MMM YYYY')
+  const date = moment(item.insertedAt).format('DD MMM YYYY')
   const cardDetail = folder.getCardDetail(item)
   const onPress = () => navigation.navigate('DataItem', { folder, item })
 
