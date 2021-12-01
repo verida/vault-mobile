@@ -8,7 +8,7 @@ import moment from 'moment'
 import { CheckBox } from 'react-native-elements'
 
 export type ShareableDataItemType = {
-  id: string
+  _id: string
   name: string
   summary: string
   time: string

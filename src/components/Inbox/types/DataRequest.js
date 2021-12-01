@@ -12,6 +12,8 @@ import Button from 'components/Button'
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
+  const [selectedItems, setSelectedItem] = useState([])
+
   const onResultClick = async (result) => {
     try {
       if (result === 'accept') {
@@ -33,8 +35,15 @@ export default ({ item, inboxItem, type, navigation }) => {
   console.log('item:', item)
   const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
 
+  async function onConfirmShareableItems(items) {
+    setSelectedItem(items)
+  }
+
   function onItemPress(url) {
-    navigation.navigate('ShareableData', { schemaUrl: url })
+    navigation.navigate('ShareableData', {
+      schemaUrl: url,
+      onConfirm: onConfirmShareableItems,
+    })
   }
 
   return (

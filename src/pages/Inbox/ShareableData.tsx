@@ -39,18 +39,19 @@ function ShareableData(
       const { schemaUrl } = route.params
       const datastore =
         await AccountManager.getInstance().context?.openDatastore(schemaUrl)
-      const result = await datastore?.getMany({
-        $or: [
-          {
-            name: {
-              $regex: `(?i)${text}`,
-            },
-            summary: {
-              $regex: `(?i)${text}`,
-            },
-          },
-        ],
-      })
+      // const result = await datastore?.getMany({
+      //   $or: [
+      //     {
+      //       name: {
+      //         $regex: `(?i)${text}`,
+      //       },
+      //       summary: {
+      //         $regex: `(?i)${text}`,
+      //       },
+      //     },
+      //   ],
+      // })
+      const result = await datastore?.getMany()
       console.log('result:', result)
       if (result) {
         setData(result as ShareableDataItemType[])
@@ -75,7 +76,7 @@ function ShareableData(
 
   const onSelectItem = useCallback(
     (item: ShareableDataItemType) => {
-      const index = selectedItems.findIndex((_item) => _item.id === item.id)
+      const index = selectedItems.findIndex((_item) => _item._id === item._id)
       if (index !== -1) {
         setSelectedItems((prevState) =>
           update(prevState, {
@@ -95,7 +96,9 @@ function ShareableData(
 
   function renderItem(info: ListRenderItemInfo<ShareableDataItemType>) {
     const { item } = info
-    const selected = selectedItems.some((_item) => _item.id === item.id)
+    console.log('item:', item)
+    console.log('selectedItems:', selectedItems)
+    const selected = selectedItems.some((_item) => _item._id === item._id)
     return (
       <ShareableDataItem
         item={item}
