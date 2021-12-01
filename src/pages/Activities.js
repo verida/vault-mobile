@@ -1,11 +1,11 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import { Icon, Content, Container } from 'native-base'
+import { StyleSheet, View } from 'react-native'
+import { Container, Content, Icon } from 'native-base'
 
 import ActivitiesList from '../components/ActivitiesList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import StravaSvg from '../assets/icons/strava.svg'
+import VeridaSvg from 'assets/icons/verida.svg'
 
 export default () => (
   <View>
@@ -26,14 +26,14 @@ export default () => (
 const list = [
   {
     label: 'Afternoon Run',
-    icon: <StravaSvg />,
+    icon: <VeridaSvg />,
     date: '11/10/2018',
     distance: { value: 6.42, unitOfMeasure: 'ml' },
     calories: 737,
   },
   {
     label: 'Cycling',
-    icon: <StravaSvg />,
+    icon: <VeridaSvg />,
     date: '09/10/2018',
     distance: { value: 281.4, unitOfMeasure: 'km' },
     calories: 1203,

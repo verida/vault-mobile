@@ -2,7 +2,7 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import moment from 'moment'
-import StravaSvg from '../../../assets/icons/strava.svg'
+import VeridaSvg from '../../../assets/icons/verida.svg'
 import { useNavigation } from '@react-navigation/native'
 
 export default ({ item, folder }) => {
@@ -15,7 +15,7 @@ export default ({ item, folder }) => {
     <Card style={style.cardItem}>
       <CardItem button style={{ borderRadius: 4 }} onPress={onPress}>
         <Left style={style.left}>
-          <StravaSvg />
+          <VeridaSvg />
           <Body style={{ marginLeft: 15 }}>
             <Text>{cardDetail.name}</Text>
             <Text note style={style.subText}>
