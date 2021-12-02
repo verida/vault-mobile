@@ -48,7 +48,7 @@ export const findTypeById = (id) =>
 export const buildItem = async (inboxItem) => {
   const item = {
     id: inboxItem._id,
-    logo: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
+    logo: null,
     title: inboxItem.message,
     createdAt: moment(inboxItem.sentAt).format('MMM DD'),
     type: inboxItem.type,
