@@ -34,7 +34,7 @@ export const loadAvatarSource = async () => {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const avatar = await vault?.profiles.public.get('avatar')
-    console.log('avatar:', avatar)
+
     if (avatar) {
       return avatar
     }

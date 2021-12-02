@@ -44,13 +44,6 @@ export const findTypeById = (id) =>
   TYPES.find((type) => type.id === id) ||
   TYPES.find((type) => type.id === 'unknown')
 
-export const getAvatarFromSource = (source) => {
-  const parsedSource = JSON.parse(source)
-  const { format, base64 } = parsedSource
-
-  return `data:image/${format};base64,${base64}`
-}
-
 // @todo: Add to vault common
 export const buildItem = async (inboxItem) => {
   const item = {
@@ -69,7 +62,7 @@ export const buildItem = async (inboxItem) => {
   item.from = name ? `Sent by ${name}\n` : ''
   item.from += `via ${inboxItem.sentBy.context}`
   if (avatar) {
-    item.logo = getAvatarFromSource(avatar)
+    item.logo = avatar
   }
   return item
 }
