@@ -19,7 +19,7 @@ import {
 import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import AccountManager from 'api/AccountManager'
-import Moment from "moment";
+import Moment from 'moment'
 
 global.EncryptionUtils = EncryptionUtils
 
