@@ -9,12 +9,13 @@ import moment from 'moment'
 import SchemasList from 'components/Inbox/SchemasList'
 import { GREY_COLOR } from 'constants/color'
 import Button from 'components/Button'
+import { isEmpty } from 'lodash'
 
-export default ({ item, inboxItem, type, navigation }) => {
+export default ({ item, inboxItem, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
   const [selectedItems, setSelectedItem] = useState([])
 
-  const onResultClick = async (result) => {
+  const handleAction = async (result) => {
     try {
       if (result === 'accept') {
         setCurrentAction('accept')
@@ -22,7 +23,7 @@ export default ({ item, inboxItem, type, navigation }) => {
         setCurrentAction('decline')
       }
       const vault = AccountManager.getInstance().vault
-      await vault.inbox.handleAction(inboxItem, result, {})
+      await vault.inbox.handleAction(inboxItem, result, selectedItems)
       setCurrentAction(null)
       navigation.goBack()
     } catch (e) {
@@ -32,12 +33,15 @@ export default ({ item, inboxItem, type, navigation }) => {
     }
   }
 
-  console.log('item:', item)
-  const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
-
   async function onConfirmShareableItems(items) {
     setSelectedItem(items)
   }
+
+  const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
+
+  const { userSelect, requestSchema } = item.item.data
+
+  const shareEnabled = (userSelect && !isEmpty(selectedItems)) || !userSelect
 
   function onItemPress(url) {
     navigation.navigate('ShareableData', {
@@ -57,23 +61,21 @@ export default ({ item, inboxItem, type, navigation }) => {
           </View>
         </View>
         <View style={styles.divider} />
-        <SchemasList
-          schemas={[item.item.data.requestSchema]}
-          onItemPress={onItemPress}
-        />
+        <SchemasList schemas={[requestSchema]} onItemPress={onItemPress} />
       </View>
       <View style={styles.footer}>
         <Button
           color='grey'
           style={styles.button}
-          onPress={() => {}}
-          loading={false}>
+          onPress={() => handleAction('decline')}
+          loading={currentAction === 'decline'}>
           Ignore
         </Button>
         <Button
           style={[styles.button, styles.shareButton]}
-          onPress={() => {}}
-          loading={false}>
+          onPress={() => handleAction('accept')}
+          loading={false}
+          disabled={!shareEnabled}>
           Share
         </Button>
       </View>

@@ -51,11 +51,10 @@ const InboxItem = (props) => {
   }, [inboxItemId])
   console.log('item:', inboxItem)
   console.log('inboxType:', inboxType)
-  
-  if(!item) {
+
+  if (!item) {
     return null
   }
-  
 
   return (
     <Container>

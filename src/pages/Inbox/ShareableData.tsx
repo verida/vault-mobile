@@ -33,6 +33,7 @@ function ShareableData(
   const [selectedItems, setSelectedItems] = useState<ShareableDataItemType[]>(
     []
   )
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const fetchData = async (text: string) => {
     try {
       setLoading(true)
@@ -52,7 +53,6 @@ function ShareableData(
       //   ],
       // })
       const result = await datastore?.getMany()
-      console.log('result:', result)
       if (result) {
         setData(result as ShareableDataItemType[])
       }
@@ -96,9 +96,8 @@ function ShareableData(
 
   function renderItem(info: ListRenderItemInfo<ShareableDataItemType>) {
     const { item } = info
-    console.log('item:', item)
-    console.log('selectedItems:', selectedItems)
     const selected = selectedItems.some((_item) => _item._id === item._id)
+
     return (
       <ShareableDataItem
         item={item}
@@ -106,6 +105,11 @@ function ShareableData(
         selected={selected}
       />
     )
+  }
+
+  function onConfirmPress() {
+    navigation.goBack()
+    route.params.onConfirm(selectedItems)
   }
 
   return (
@@ -131,7 +135,7 @@ function ShareableData(
         )}
       </Content>
       <CustomFooter>
-        <Button color='primary' onPress={() => {}}>
+        <Button color='primary' onPress={onConfirmPress}>
           Confirm selection
         </Button>
       </CustomFooter>

@@ -41,7 +41,6 @@ export default (props) => {
       const _expiry = payload.exp
       const now = Math.floor(Date.now() / 1000)
       setExpiry(_expiry - now)
-      console.log('payload:', payload)
 
       const socketUri = payload.data.authUri
       const sessionId = payload.data.session

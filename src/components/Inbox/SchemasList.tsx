@@ -19,16 +19,6 @@ type RequestedData = {
   url: string
 }
 
-class SvgUri extends React.Component<{
-  height: string
-  width: string
-  uri: string
-}> {
-  render() {
-    return null
-  }
-}
-
 function SchemasList(props: SchemasListProps) {
   const { schemas, onItemPress } = props
   const [loading, setLoading] = useState(false)
@@ -44,17 +34,16 @@ function SchemasList(props: SchemasListProps) {
             const schema = await AccountManager.getInstance().client?.getSchema(
               schemaUrl
             )
-            const schemaJson = await schema?.getSchemaJson()
+            const schemaJson = (await schema?.getSchemaJson()) as any
             if (!schemaJson) {
               return
             }
-            console.log(schemaJson)
             const appearance = await schema?.getAppearance()
             _dataList.push({
               name: schemaJson.titlePlural,
               icon: appearance.style.icon,
               description: schemaJson.description,
-              url: schemaJson.$id
+              url: schemaJson.$id,
             })
           })
         )
@@ -72,8 +61,6 @@ function SchemasList(props: SchemasListProps) {
   if (loading) {
     return <LoadingView type={'small'} />
   }
-
-  console.log('data.icon', dataList)
 
   return (
     <View style={styles.container}>
