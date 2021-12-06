@@ -33,3 +33,28 @@
 5. Run `echo 'SUBSYSTEM=="usb", ATTR{idVendor}=="2717", MODE="0666", GROUP="plugdev"' | sudo tee /etc/udev/rules.d/51-android-usb.rules`
 6. `yarn start`
 7. `yarn run android`
+
+## Instruction to get app running on Apple M1 macs
+
+Prerequisites: you need to have node, watchman, etc installed, best to follow the setting up development environment instructions here for Mac and iOS and get a bare react native app working:
+https://reactnative.dev/docs/environment-setup
+
+To get started you will git clone the `vault-mobile` repo on your hard drive.
+
+Next run `yarn` in the vault-mobile directory to install dependencies.
+
+Next step is to navigate to `ios` directory and run `pod install`, this is where you will run into your first issue, this will fail.
+
+To fix this you need to install `ffi`, run the following command:
+
+`sudo arch -x86_64 gem install ffi`
+
+Now install the pods using the following command:
+
+`arch -x86_64 pod install`
+
+source: https://stackoverflow.com/questions/64901180/running-cocoapods-on-apple-silicon-m1
+
+Now if you try to run the project in xcode you will get about ~100 errors. to fix that you need to run xcode in rosetta mode, to do that go to your Mac's applications folder, find Xcode, right click, click "Get Info" and check the checkbox labeled 'Open using Rosetta'.
+
+Now go into xcode, clean the build folder and run the app.
