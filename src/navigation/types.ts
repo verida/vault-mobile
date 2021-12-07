@@ -57,5 +57,6 @@ export type MainStackParams = {
   ShareableData: {
     schemaUrl: string
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
+    filter: any
   }
 }

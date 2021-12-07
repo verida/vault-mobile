@@ -39,7 +39,7 @@ export default ({ item, inboxItem, navigation }) => {
 
   const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
 
-  const { userSelect, requestSchema } = item.item.data
+  const { userSelect, requestSchema, filter } = item.item.data
 
   const shareEnabled = (userSelect && !isEmpty(selectedItems)) || !userSelect
 
@@ -47,6 +47,7 @@ export default ({ item, inboxItem, navigation }) => {
     navigation.navigate('ShareableData', {
       schemaUrl: url,
       onConfirm: onConfirmShareableItems,
+      filter,
     })
   }
 
@@ -61,7 +62,11 @@ export default ({ item, inboxItem, navigation }) => {
           </View>
         </View>
         <View style={styles.divider} />
-        <SchemasList schemas={[requestSchema]} onItemPress={onItemPress} />
+        <SchemasList
+          schemas={[requestSchema]}
+          onItemPress={onItemPress}
+          userSelect={userSelect}
+        />
       </View>
       <View style={styles.footer}>
         <Button
@@ -74,7 +79,7 @@ export default ({ item, inboxItem, navigation }) => {
         <Button
           style={[styles.button, styles.shareButton]}
           onPress={() => handleAction('accept')}
-          loading={false}
+          loading={currentAction === 'accept'}
           disabled={!shareEnabled}>
           Share
         </Button>

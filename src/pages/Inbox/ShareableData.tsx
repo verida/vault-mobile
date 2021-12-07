@@ -26,7 +26,7 @@ import { debounce } from 'lodash'
 function ShareableData(
   props: NativeStackScreenProps<MainStackParams, 'ShareableData'>
 ) {
-  const { navigation, route } = props
+  const { navigation, route = {} } = props
   const [data, setData] = useState<ShareableDataItemType[]>([])
   const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
@@ -37,22 +37,28 @@ function ShareableData(
   const fetchData = async (text: string) => {
     try {
       setLoading(true)
-      const { schemaUrl } = route.params
+      const { schemaUrl, filter } = route.params
       const datastore =
         await AccountManager.getInstance().context?.openDatastore(schemaUrl)
-      // const result = await datastore?.getMany({
-      //   $or: [
-      //     {
-      //       name: {
-      //         $regex: `(?i)${text}`,
-      //       },
-      //       summary: {
-      //         $regex: `(?i)${text}`,
-      //       },
-      //     },
-      //   ],
-      // })
-      const result = await datastore?.getMany()
+      const result = await datastore?.getMany({
+        $and: [
+          {
+            $or: [
+              {
+                name: {
+                  $regex: text,
+                },
+              },
+              {
+                summary: {
+                  $regex: text,
+                },
+              },
+            ],
+          },
+          filter,
+        ],
+      })
       if (result) {
         setData(result as ShareableDataItemType[])
       }

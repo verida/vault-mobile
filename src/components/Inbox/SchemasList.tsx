@@ -10,6 +10,7 @@ import { SvgCssUri } from 'react-native-svg'
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
   onItemPress: (url: string) => void
+  userSelect: boolean
 }
 
 type RequestedData = {
@@ -20,7 +21,7 @@ type RequestedData = {
 }
 
 function SchemasList(props: SchemasListProps) {
-  const { schemas, onItemPress } = props
+  const { schemas, onItemPress, userSelect } = props
   const [loading, setLoading] = useState(false)
   const [dataList, setDataList] = useState<RequestedData[]>([])
 
@@ -68,7 +69,8 @@ function SchemasList(props: SchemasListProps) {
         <TouchableOpacity
           style={styles.dataFolder}
           key={`folder-${index}`}
-          onPress={() => onItemPress(data.url)}>
+          onPress={() => onItemPress(data.url)}
+          disabled={!userSelect}>
           <View style={styles.content}>
             <View style={styles.header}>
               <View style={styles.icon}>
@@ -80,11 +82,13 @@ function SchemasList(props: SchemasListProps) {
               {data.description}
             </Text>
           </View>
-          <Entypo
-            name='chevron-right'
-            size={20}
-            color={'rgba(4, 17, 51, 0.5)'}
-          />
+          {userSelect && (
+            <Entypo
+              name='chevron-right'
+              size={20}
+              color={'rgba(4, 17, 51, 0.5)'}
+            />
+          )}
         </TouchableOpacity>
       ))}
     </View>
