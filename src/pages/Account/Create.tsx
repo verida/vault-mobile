@@ -22,6 +22,8 @@ import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AccountManager from 'api/AccountManager'
+import TCCheckbox from 'components/TCCheckbox'
+import { isEmpty } from 'lodash'
 
 type Option = {
   label: string
@@ -35,6 +37,7 @@ function Create(
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)
   const [processing, setProcessing] = useState(false)
+  const [agreedTC, setAgreedTC] = useState(false)
 
   const onCountryChange = (option: Option) => setCountry(option)
   const onCreateAccount = async () => {
@@ -60,6 +63,12 @@ function Create(
     navigation.navigate('SeedPhraseEntered')
   }
 
+  function toggleAgreedTC() {
+    setAgreedTC((prevState) => !prevState)
+  }
+
+  const isFormValid = !isEmpty(name) && !isEmpty(country) && agreedTC
+
   return (
     <>
       <NavigationHeader title='Create An Account' />
@@ -83,12 +92,17 @@ function Create(
             containerStyle={InputStyles.select}
             onChangeItem={onCountryChange}
           />
+          <TCCheckbox
+            checked={agreedTC}
+            style={styles.termAndCondition}
+            onToggle={toggleAgreedTC}
+          />
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.createAccountButton}
             color='primary'
-            disabled={!country || processing}
+            disabled={!isFormValid || processing}
             loading={processing}
             onPress={onCreateAccount}>
             Create Account
@@ -129,6 +143,9 @@ const styles = StyleSheet.create({
   importAccountButtonText: {
     color: PRIMARY_COLOR,
     fontFamily: NUNITO_SANS_SEMIBOLD,
+  },
+  termAndCondition: {
+    marginTop: 15,
   },
 })
 

@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
 import { Container, Content, Icon } from 'native-base'
 import didJWT from 'did-jwt'
-import Moment from 'moment'
 import EncryptionUtils from '@verida/encryption-utils'
 import MobileSvg from '../../assets/mobile.svg'
 
@@ -13,14 +12,17 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   BLACK_COLOR_OPACITY,
+  ORANGE_COLOR,
   PRIMARY_COLOR,
   SUCCESS_COLOR,
   WARNING_COLOR,
 } from '../../constants/color'
-import AppLogo from 'components/AppLogo'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import AccountManager from 'api/AccountManager'
+import Moment from 'moment'
+import moment from 'moment'
+import AppLogo from 'components/AppLogo'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -39,8 +41,7 @@ export default (props) => {
       const decoded = didJWT.decodeJWT(didJwt)
       const payload = decoded.payload
       const _expiry = payload.exp
-      const now = Math.floor(Date.now() / 1000)
-      setExpiry(_expiry - now)
+      setExpiry(_expiry * 1000)
 
       const socketUri = payload.data.authUri
       const sessionId = payload.data.session
@@ -66,16 +67,19 @@ export default (props) => {
             message: message.message,
             heading: 'Security Error',
             type: 'error',
-            color: '#EF7936',
+            color: '#FF3B30',
             iconName: 'exclamationcircleo',
           })
+          setInfo({
+            payload,
+          })
+          setStatus('error')
 
           return
         }
 
         switch (message.type) {
           case 'auth-session':
-            console.log('auth-session')
             const request = message.message
             setInfo({
               request,
@@ -93,8 +97,19 @@ export default (props) => {
       }
 
       websocket.onerror = (err) => {
-        console.log('ws error!')
         console.log(err)
+
+        setErrorMessage({
+          message: 'Cannot connect to authentication server',
+          heading: 'Network Error',
+          type: 'error',
+          color: '#FF3B30',
+          iconName: 'exclamationcircleo',
+        })
+        setInfo({
+          payload,
+        })
+        setStatus('error')
       }
     }
 
@@ -102,7 +117,6 @@ export default (props) => {
   }, [props.route.params, props.navigation])
 
   // @todo use key to encrypt response to server
-  console.log('info:', info)
 
   const saveLoginRequest = async (approved) => {
     const vault = AccountManager.getInstance().context
@@ -116,13 +130,11 @@ export default (props) => {
       expiry: info.payload.exp,
       approved,
     }
-    console.log('loginRequest:', loginRequest)
 
     const loginRequestDatastore = await vault.openDatastore(
       'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
     )
     const saveSuccess = await loginRequestDatastore.save(loginRequest)
-    console.log('saveSuccess:', !!saveSuccess)
     if (!saveSuccess) {
       console.log('saveError:', loginRequestDatastore.errors)
     }
@@ -131,8 +143,10 @@ export default (props) => {
 
   const deny = async () => {
     try {
-      setStatus('denying')
-      await saveLoginRequest(false)
+      if (status !== 'error' && !expired) {
+        setStatus('denying')
+        await saveLoginRequest(false)
+      }
       props.navigation.navigate('Home')
     } catch (error) {
       console.log(error)
@@ -145,7 +159,6 @@ export default (props) => {
    */
   const approve = async () => {
     try {
-      console.log('approve press')
       setStatus('approving')
 
       const vault = AccountManager.getInstance().context
@@ -183,11 +196,27 @@ export default (props) => {
       )
 
       setStatus('sentResponse')
-      console.log('saving')
       await saveLoginRequest(true)
     } catch (error) {
       console.log(error)
       setStatus('loaded')
+    }
+  }
+
+  const fromText =
+    info?.request?.loginDomain || info?.payload?.context || 'Unidentified'
+  const logoUrl = info.request?.logoUrl
+  const appName = info.request?.context
+  const expired = expiry <= Date.now()
+  const timeToExpire = moment(expiry).format('YYYY MMM DD [at] HH:mm')
+  const expiryText = expired
+    ? `Expired: ${timeToExpire}`
+    : `Expire: ${timeToExpire}`
+
+  async function onPressLoginDomain() {
+    const canOpen = await Linking.canOpenURL(fromText)
+    if (canOpen) {
+      await Linking.openURL(`${info.request.loginDomain}`)
     }
   }
 
@@ -198,8 +227,12 @@ export default (props) => {
         {status === 'loading' && <LoadingView />}
         {status !== 'loading' ? (
           <View style={style.content}>
-            <AppLogo url={info.request.logoUrl} style={style.img} />
-            <Text style={style.appName}>{info.request.context}</Text>
+            {!errorMessage && (
+              <>
+                <AppLogo url={logoUrl} style={style.img} />
+                <Text style={style.appName}>{appName}</Text>
+              </>
+            )}
             <View style={style.verified}>
               {/* TODO: render verified status */}
               {/*{!errorMessage ? (*/}
@@ -229,8 +262,8 @@ export default (props) => {
               </Text>
               <Text
                 style={[style.text, style.link]}
-                onPress={() => Linking.openURL(`${info.request.loginDomain}`)}>
-                {info.request.loginDomain}
+                onPress={onPressLoginDomain}>
+                {fromText}
               </Text>
             </View>
             <Text style={style.generatedTime}>
@@ -238,29 +271,56 @@ export default (props) => {
                 'DD MMM, YYYY [at] h:mm a'
               )}
             </Text>
-            <Text style={[style.text, style.timeout]}>
-              Expires in {expiry} seconds
-            </Text>
+            {expired && errorMessage && (
+              <Text
+                style={[
+                  style.text,
+                  style.timeout,
+                  expired && style.expiredText,
+                ]}>
+                {expiryText}
+              </Text>
+            )}
+            {expired && !errorMessage && (
+              <View style={style.modal}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text
+                    style={[style.text, { color: '#FF3B30', marginBottom: 2 }]}>
+                    {expiryText}
+                  </Text>
+                </View>
+                <Text style={[style.text, { fontSize: 12, color: '#FF3B30' }]}>
+                  Please try again
+                </Text>
+              </View>
+            )}
+            {errorMessage && (
+              <View style={style.modal}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text
+                    style={[
+                      style.text,
+                      { color: errorMessage.color, marginBottom: 2 },
+                    ]}>
+                    <Icon
+                      type='AntDesign'
+                      name={errorMessage.iconName}
+                      style={[style.text, { color: errorMessage.color }]}
+                    />
+                    &nbsp; {errorMessage.heading}
+                  </Text>
+                </View>
+                <Text
+                  style={[
+                    style.text,
+                    { fontSize: 12, color: errorMessage.color },
+                  ]}>
+                  {errorMessage.message}
+                </Text>
+              </View>
+            )}
           </View>
         ) : null}
-
-        {errorMessage && (
-          <View style={style.modal}>
-            <View style={{ flexDirection: 'row' }}>
-              <Text style={[style.text, { color: errorMessage.color }]}>
-                <Icon
-                  type='AntDesign'
-                  name={errorMessage.iconName}
-                  style={[style.text, { color: errorMessage.color }]}
-                />
-                &nbsp; {errorMessage.heading}
-              </Text>
-            </View>
-            <Text style={[style.text, { textAlign: 'left', fontSize: 12 }]}>
-              {errorMessage.message}
-            </Text>
-          </View>
-        )}
       </Content>
       <CustomFooter>
         <View style={style.actions}>
@@ -268,10 +328,10 @@ export default (props) => {
             style={[style.btn, style.mr]}
             color='grey'
             onPress={deny}
-            disabled={status !== 'loaded'}>
+            disabled={status !== 'loaded' && status !== 'error'}>
             Ignore
           </Button>
-          {!errorMessage ? (
+          {!errorMessage && !expired ? (
             <Button
               style={style.btn}
               onPress={approve}
@@ -317,6 +377,9 @@ const style = StyleSheet.create({
     fontSize: 12,
     color: BLACK_COLOR_OPACITY(0.6),
   },
+  expiredText: {
+    color: ORANGE_COLOR,
+  },
   link: {
     color: PRIMARY_COLOR,
     marginBottom: 8,
@@ -334,11 +397,13 @@ const style = StyleSheet.create({
     marginRight: 20,
   },
   modal: {
-    backgroundColor: '#FDF4EA',
-    paddingLeft: 15,
-    marginTop: 10,
-    width: '100%',
+    backgroundColor: 'rgba(255, 110, 110, 0.1)',
+    marginTop: 35,
     borderRadius: 5,
+    marginHorizontal: 28,
+    alignSelf: 'stretch',
+    alignItems: 'center',
+    paddingVertical: 12,
   },
   appLogo: {
     marginTop: 35,
