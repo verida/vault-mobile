@@ -26,14 +26,14 @@ import { debounce } from 'lodash'
 function ShareableData(
   props: NativeStackScreenProps<MainStackParams, 'ShareableData'>
 ) {
-  const { navigation, route = {} } = props
+  const { navigation, route } = props
   const [data, setData] = useState<ShareableDataItemType[]>([])
   const [loading, setLoading] = useState(false)
   const [searchText, setSearchText] = useState('')
   const [selectedItems, setSelectedItems] = useState<ShareableDataItemType[]>(
     []
   )
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+
   const fetchData = async (text: string) => {
     try {
       setLoading(true)
