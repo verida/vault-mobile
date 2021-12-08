@@ -12,6 +12,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   BLACK_COLOR_OPACITY,
+  ORANGE_COLOR,
   PRIMARY_COLOR,
   SUCCESS_COLOR,
   WARNING_COLOR,
@@ -20,6 +21,8 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import AccountManager from 'api/AccountManager'
 import Moment from 'moment'
+import moment from 'moment'
+import AppLogo from 'components/AppLogo'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -38,9 +41,7 @@ export default (props) => {
       const decoded = didJWT.decodeJWT(didJwt)
       const payload = decoded.payload
       const _expiry = payload.exp
-      const now = Math.floor(Date.now() / 1000)
-      setExpiry(_expiry - now)
-      console.log('payload:', payload)
+      setExpiry(_expiry * 1000)
 
       const socketUri = payload.data.authUri
       const sessionId = payload.data.session
@@ -60,7 +61,6 @@ export default (props) => {
 
       websocket.onmessage = (event) => {
         const message = JSON.parse(event.data)
-        console.log('message:', message)
 
         if (message.type === 'error') {
           setErrorMessage({
@@ -80,7 +80,6 @@ export default (props) => {
 
         switch (message.type) {
           case 'auth-session':
-            console.log('auth-session')
             const request = message.message
             setInfo({
               request,
@@ -98,7 +97,6 @@ export default (props) => {
       }
 
       websocket.onerror = (err) => {
-        console.log('ws error!')
         console.log(err)
 
         setErrorMessage({
@@ -119,7 +117,6 @@ export default (props) => {
   }, [props.route.params, props.navigation])
 
   // @todo use key to encrypt response to server
-  console.log('info:', info)
 
   const saveLoginRequest = async (approved) => {
     const vault = AccountManager.getInstance().context
@@ -133,13 +130,11 @@ export default (props) => {
       expiry: info.payload.exp,
       approved,
     }
-    console.log('loginRequest:', loginRequest)
 
     const loginRequestDatastore = await vault.openDatastore(
       'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
     )
     const saveSuccess = await loginRequestDatastore.save(loginRequest)
-    console.log('saveSuccess:', !!saveSuccess)
     if (!saveSuccess) {
       console.log('saveError:', loginRequestDatastore.errors)
     }
@@ -148,7 +143,7 @@ export default (props) => {
 
   const deny = async () => {
     try {
-      if (status !== 'error') {
+      if (status !== 'error' && !expired) {
         setStatus('denying')
         await saveLoginRequest(false)
       }
@@ -164,7 +159,6 @@ export default (props) => {
    */
   const approve = async () => {
     try {
-      console.log('approve press')
       setStatus('approving')
 
       const vault = AccountManager.getInstance().context
@@ -202,7 +196,6 @@ export default (props) => {
       )
 
       setStatus('sentResponse')
-      console.log('saving')
       await saveLoginRequest(true)
     } catch (error) {
       console.log(error)
@@ -212,6 +205,14 @@ export default (props) => {
 
   const fromText =
     info?.request?.loginDomain || info?.payload?.context || 'Unidentified'
+  const logoUrl = info.request?.logoUrl
+  const appName = info.request?.context
+  console.log('expiry - Date.now()', expiry - Date.now())
+  const expired = expiry <= Date.now()
+  const timeToExpire = moment(expiry).format('YYYY MMM DD [at] HH:mm')
+  const expiryText = expired
+    ? `Expired: ${timeToExpire}`
+    : `Expire: ${timeToExpire}`
 
   async function onPressLoginDomain() {
     const canOpen = await Linking.canOpenURL(fromText)
@@ -227,8 +228,12 @@ export default (props) => {
         {status === 'loading' && <LoadingView />}
         {status !== 'loading' ? (
           <View style={style.content}>
-            {/*<AppLogo url={info.request.logoUrl} style={style.img} />*/}
-            {/*<Text style={style.appName}>{info.request.context}</Text>*/}
+            {!errorMessage && (
+              <>
+                <AppLogo url={logoUrl} style={style.img} />
+                <Text style={style.appName}>{appName}</Text>
+              </>
+            )}
             <View style={style.verified}>
               {/* TODO: render verified status */}
               {/*{!errorMessage ? (*/}
@@ -267,9 +272,29 @@ export default (props) => {
                 'DD MMM, YYYY [at] h:mm a'
               )}
             </Text>
-            <Text style={[style.text, style.timeout]}>
-              Expires in {expiry} seconds
-            </Text>
+            {expired && errorMessage && (
+              <Text
+                style={[
+                  style.text,
+                  style.timeout,
+                  expired && style.expiredText,
+                ]}>
+                {expiryText}
+              </Text>
+            )}
+            {expired && !errorMessage && (
+              <View style={style.modal}>
+                <View style={{ flexDirection: 'row' }}>
+                  <Text
+                    style={[style.text, { color: '#FF3B30', marginBottom: 2 }]}>
+                    {expiryText}
+                  </Text>
+                </View>
+                <Text style={[style.text, { fontSize: 12, color: '#FF3B30' }]}>
+                  Please try again
+                </Text>
+              </View>
+            )}
             {errorMessage && (
               <View style={style.modal}>
                 <View style={{ flexDirection: 'row' }}>
@@ -307,7 +332,7 @@ export default (props) => {
             disabled={status !== 'loaded' && status !== 'error'}>
             Ignore
           </Button>
-          {!errorMessage ? (
+          {!errorMessage && !expired ? (
             <Button
               style={style.btn}
               onPress={approve}
@@ -352,6 +377,9 @@ const style = StyleSheet.create({
   timeout: {
     fontSize: 12,
     color: BLACK_COLOR_OPACITY(0.6),
+  },
+  expiredText: {
+    color: ORANGE_COLOR,
   },
   link: {
     color: PRIMARY_COLOR,
