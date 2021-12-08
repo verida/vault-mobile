@@ -4,12 +4,10 @@ import { Container, Content, List } from 'native-base'
 
 import DataFieldList from '../../components/Data/DataFieldList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { Image, StyleSheet, View } from 'react-native'
-import Text from 'components/Text'
-import { QRCode } from 'react-native-custom-qr-codes-expo'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { SUCCESS_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import { StyleSheet } from 'react-native'
+import CredentialDataItem from 'pages/Data/CredentialDataItem'
+import didJWT from 'did-jwt'
+import AccountManager from 'api/AccountManager'
 
 const DataItem = (props) => {
   const { item, folder } = props.route.params
@@ -24,6 +22,15 @@ const DataItem = (props) => {
       const _data = await folder.getDetail(item)
       console.log('_data:', _data)
       setData(_data)
+      const decoded = didJWT.decodeJWT(item.didJwtVc)
+      console.log('decoded:', decoded)
+      const ds = await AccountManager.getInstance().context.openDatastore(
+        item.schema
+      )
+      const found = await ds.getMany({
+        _id: item._id,
+      })
+      console.log('found:', found)
     }
 
     init()
@@ -35,40 +42,9 @@ const DataItem = (props) => {
   return (
     <Container>
       <NavigationHeader title={folder.config.title} />
-      <Content contentContainerStyle={[isCredential && styles.content]}>
+      <Content>
         {isCredential ? (
-          <>
-            <View style={styles.sender}>
-              <Text>Signed by</Text>
-              <Image
-                source={{
-                  uri: 'https://i1.wp.com/www.mapaycorp.com/wp-content/uploads/elementor/thumbs/MAPay-Logo-smaller-pg5ee3dukmnrkppmdc9wnueeowra310sf9vuaf3k74.png?w=800&ssl=1',
-                }}
-                style={styles.logo}
-              />
-            </View>
-            <QRCode
-              logo={{
-                uri: 'https://i1.wp.com/www.mapaycorp.com/wp-content/uploads/2021/10/MAPay-Icon-1.png?resize=768%2C815&ssl=1',
-              }}
-              logoSize={60}
-              size={207}
-              codeStyle='dot'
-              innerEyeStyle='circle'
-              padding={0.5}
-              content={'did:vda:0xafFdd56da6903b5c750f9f4bdE5f6242EbD3f8fA'}
-            />
-            <View style={styles.verifiedContainer}>
-              <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />
-              <Text style={styles.verifiedText}>Credential is valid</Text>
-            </View>
-            <Text style={styles.title}>
-              {data?.row?.firstName} {data?.row?.lastName}
-            </Text>
-            <List style={{ alignSelf: 'stretch' }}>
-              <DataFieldList data={data} />
-            </List>
-          </>
+          <CredentialDataItem data={data} style={styles.credentialContainer} />
         ) : (
           <List>
             <DataFieldList data={data} />
@@ -80,37 +56,7 @@ const DataItem = (props) => {
 }
 
 const styles = StyleSheet.create({
-  content: {
-    paddingVertical: 20,
-    paddingHorizontal: 15,
-    alignItems: 'center',
-  },
-  sender: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-  },
-  logo: {
-    width: 100,
-    height: 50,
-    resizeMode: 'contain',
-    marginLeft: 10,
-  },
-  verifiedContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 15,
-  },
-  verifiedText: {
-    marginLeft: 5,
-  },
-  title: {
-    fontSize: 18,
-    fontFamily: NUNITO_SANS_BOLD,
-    alignSelf: 'flex-start',
-    marginTop: 20,
-    marginLeft: 15,
-  },
+  credentialContainer: {},
 })
 
 const mapDispatchToProps = () => {
