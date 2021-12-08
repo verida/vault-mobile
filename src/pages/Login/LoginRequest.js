@@ -207,7 +207,6 @@ export default (props) => {
     info?.request?.loginDomain || info?.payload?.context || 'Unidentified'
   const logoUrl = info.request?.logoUrl
   const appName = info.request?.context
-  console.log('expiry - Date.now()', expiry - Date.now())
   const expired = expiry <= Date.now()
   const timeToExpire = moment(expiry).format('YYYY MMM DD [at] HH:mm')
   const expiryText = expired
