@@ -23,6 +23,7 @@ import AccountManager from 'api/AccountManager'
 import Moment from 'moment'
 import moment from 'moment'
 import AppLogo from 'components/AppLogo'
+import * as Sentry from '@sentry/react-native'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -80,14 +81,25 @@ export default (props) => {
 
         switch (message.type) {
           case 'auth-session':
-            const request = message.message
-            setInfo({
-              request,
-              payload,
-              _expiry,
-              key,
-            })
-            setStatus('loaded')
+            try {
+              const request = message.message
+              const keyBytes = Buffer.from(key.slice(2), 'hex')
+              const decrypted = EncryptionUtils.symDecrypt(
+                request.request,
+                keyBytes
+              )
+              const parsed = JSON.parse(decrypted)
+              setInfo({
+                request,
+                payload,
+                _expiry,
+                key,
+                logoUrl: parsed.logoUrl,
+              })
+              setStatus('loaded')
+            } catch (e) {
+              Sentry.captureException(e)
+            }
             break
 
           case 'auth-vault-response':
@@ -205,7 +217,7 @@ export default (props) => {
 
   const fromText =
     info?.request?.loginDomain || info?.payload?.context || 'Unidentified'
-  const logoUrl = info.request?.logoUrl
+  const logoUrl = info.logoUrl
   const appName = info.request?.context
   const expired = expiry <= Date.now()
   const timeToExpire = moment(expiry).format('YYYY MMM DD [at] HH:mm')
