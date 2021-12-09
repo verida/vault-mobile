@@ -17,6 +17,15 @@ const inboxItemComponents = {
   'inbox/type/databaseSync': TypeDatabaseSync,
 }
 
+const getHeaderTitle = (type) => {
+  switch (type) {
+    case 'inbox/type/dataRequest':
+      return 'Data Request'
+    default:
+      return 'Inbox Message'
+  }
+}
+
 const InboxItem = (props) => {
   const { inboxItemId } = props.route.params
   const [item, setItem] = useState(null)
@@ -41,9 +50,13 @@ const InboxItem = (props) => {
     init()
   }, [inboxItemId])
 
+  if (!item) {
+    return null
+  }
+
   return (
     <Container>
-      <NavigationHeader title='Inbox Message' />
+      <NavigationHeader title={getHeaderTitle(inboxType?.id)} />
       <Content>
         {inboxItem
           ? React.createElement(inboxItemComponents[inboxItem.type], {

@@ -30,6 +30,7 @@ import ImportAccount from 'pages/Dashboard/ImportAccount'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
+import ShareableData from 'pages/Inbox/ShareableData'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -69,6 +70,7 @@ function MainNavigator() {
         component={SeedPhraseGenerated}
       />
       <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
+      <Stack.Screen name={'ShareableData'} component={ShareableData} />
     </Stack.Navigator>
   )
 }

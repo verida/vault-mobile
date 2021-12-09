@@ -1,3 +1,5 @@
+import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+
 export type RootStackParams = {
   Auth: undefined
   Main: undefined
@@ -52,4 +54,9 @@ export type MainStackParams = {
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
+  ShareableData: {
+    schemaUrl: string
+    onConfirm: (selectedItems: ShareableDataItemType[]) => void
+    filter: any
+  }
 }
