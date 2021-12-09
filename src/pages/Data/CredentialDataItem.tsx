@@ -9,49 +9,45 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { QRCode } from 'react-native-custom-qr-codes-expo'
+import { DefaultAvatar } from 'api/utils'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
-  senderInfo: {
-    did: string
-    avatar: string
-  }
 }
 
 function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, ...rest } = props
-
+  const {
+    issuer: { name: issuerName, avatar: issuerAvatar, did: issuerDID } = {
+      name: '',
+      avatar: null,
+      did: '',
+    },
+  } = data
+  const avatarSource = issuerAvatar || DefaultAvatar
   return (
-    <View style={styles.container}>
+    <View style={styles.container} {...rest}>
       <View style={styles.sender}>
         <Text>Signed by</Text>
-        <Image
-          source={{
-            uri: 'https://i1.wp.com/www.mapaycorp.com/wp-content/uploads/elementor/thumbs/MAPay-Logo-smaller-pg5ee3dukmnrkppmdc9wnueeowra310sf9vuaf3k74.png?w=800&ssl=1',
-          }}
-          style={styles.logo}
-        />
+        <Image source={avatarSource} style={styles.logo} />
+        <Text style={styles.issuerName}>{issuerName}</Text>
       </View>
       <View style={styles.qrContainer}>
         <QRCode
-          logo={{
-            uri: 'https://i1.wp.com/www.mapaycorp.com/wp-content/uploads/2021/10/MAPay-Icon-1.png?resize=768%2C815&ssl=1',
-          }}
+          logo={require('assets/vault-logo.png')}
           logoSize={60}
           size={207}
           codeStyle='dot'
           innerEyeStyle='circle'
           padding={0.5}
-          content={'did:vda:0xafFdd56da6903b5c750f9f4bdE5f6242EbD3f8fA'}
+          content={issuerDID}
         />
       </View>
       <View style={styles.verifiedContainer}>
         <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />
         <Text style={styles.verifiedText}>Credential is valid</Text>
       </View>
-      <Text style={styles.title}>
-        {data?.row?.firstName} {data?.row?.lastName}
-      </Text>
+      <Text style={styles.title}>{data?.row?.name}</Text>
       <List style={{ alignSelf: 'stretch' }}>
         <DataFieldList data={data} />
       </List>
@@ -70,10 +66,12 @@ const styles = StyleSheet.create({
     alignSelf: 'center',
   },
   logo: {
-    width: 100,
-    height: 50,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
     resizeMode: 'contain',
     marginLeft: 10,
+    marginRight: 5,
   },
   verifiedContainer: {
     flexDirection: 'row',
@@ -93,6 +91,9 @@ const styles = StyleSheet.create({
   },
   qrContainer: {
     alignSelf: 'center',
+  },
+  issuerName: {
+    fontFamily: NUNITO_SANS_BOLD,
   },
 })
 
