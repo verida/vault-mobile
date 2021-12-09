@@ -20,7 +20,6 @@ const Inbox = () => {
           skip,
         }
       )
-      console.log(inboxItems)
       const results = []
       for (let i = 0; i < inboxItems.length; i++) {
         let item = await buildItem(inboxItems[i])

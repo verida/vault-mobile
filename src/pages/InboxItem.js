@@ -49,8 +49,6 @@ const InboxItem = (props) => {
     setInboxType(findTypeById('inbox/type/dataSend'))
     init()
   }, [inboxItemId])
-  console.log('item:', inboxItem)
-  console.log('inboxType:', inboxType)
 
   if (!item) {
     return null
