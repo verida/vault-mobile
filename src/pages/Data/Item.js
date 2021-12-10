@@ -25,10 +25,8 @@ const DataItem = (props) => {
     const init = async () => {
       try {
         const _data = await folder.getDetail(item)
-        console.log('_data:', _data)
         if (isCredential) {
           const decoded = didJWT.decodeJWT(item.didJwtVc)
-          console.log('decoded:', decoded)
           const iss = decoded.payload.iss
           const issProfile =
             await AccountManager.getInstance().context.openProfile(
