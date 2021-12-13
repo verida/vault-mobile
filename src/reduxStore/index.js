@@ -1,5 +1,6 @@
 import { applyMiddleware, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import thunk from 'redux-thunk'
 
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 import {
@@ -12,6 +13,11 @@ import {
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
+import {
+  FETCHED_CURRENCIES,
+  CURRENCIES_FETCH_FAILED,
+  CURRENCIES_FETCH_START,
+} from './wallet/types'
 import update from 'immutability-helper'
 
 const initialState = {
@@ -27,6 +33,11 @@ const initialState = {
   selectedAccount: null,
   switchAccountToast: null,
   showSeedPhraseReminder: false,
+  pricing: {
+    data: [],
+    fetching: true,
+    error: undefined,
+  },
 }
 
 const reducer = (state = initialState, action) => {
@@ -83,6 +94,22 @@ const reducer = (state = initialState, action) => {
         },
       })
 
+    case CURRENCIES_FETCH_START:
+      return {
+        ...state,
+        pricing: { fetching: true, error: undefined, data: [] },
+      }
+    case FETCHED_CURRENCIES:
+      return {
+        ...state,
+        pricing: { fetching: false, error: undefined, data: action.data },
+      }
+    case CURRENCIES_FETCH_FAILED:
+      return {
+        ...state,
+        pricing: { fetching: false, error: action.error, data: [] },
+      }
+
     default:
       return state
   }
@@ -92,7 +119,7 @@ const composeEnhancers = composeWithDevTools({
   // Specify here name, actionsBlacklist, actionsCreators and other options
 })
 
-const middleware = []
+const middleware = [thunk]
 
 export default createStore(
   reducer,
