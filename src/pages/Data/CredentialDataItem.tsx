@@ -10,6 +10,7 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 // @ts-ignore
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { DefaultAvatar } from 'api/utils'
+import { isEmpty } from 'lodash'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
@@ -17,6 +18,7 @@ export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
 
 function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, ...rest } = props
+
   const {
     issuer: { name: issuerName, avatar: issuerAvatar, did: issuerDID } = {
       name: '',
@@ -24,6 +26,11 @@ function CredentialDataItem(props: CredentialDataItemProps) {
       did: '',
     },
   } = data
+
+  if (isEmpty(data.data)) {
+    return null
+  }
+
   const avatarSource = issuerAvatar || DefaultAvatar
   return (
     <View style={styles.container} {...rest}>
@@ -40,7 +47,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
           codeStyle='dot'
           innerEyeStyle='circle'
           padding={0.5}
-          content={issuerDID}
+          content={issuerDID || ''}
         />
       </View>
       <View style={styles.verifiedContainer}>
