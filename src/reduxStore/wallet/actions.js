@@ -19,7 +19,6 @@ export const getPrices = () => {
         symbol: SUPPORTED_TOKENS_SYMBOLS,
       })
       .then((response) => {
-        console.log(response, 'getCurrencies response')
         if (response.ok) {
           if (response.data) {
             dispatch({ type: FETCHED_CURRENCIES, data: response.data.data })
@@ -39,14 +38,12 @@ export const getPrices = () => {
 
 export const getBalances = () => {
   return (dispatch) => {
-    console.log('getBalances, dispatch')
     dispatch({ type: BALANCES_FETCH_START })
     chainsApi
       .get(
         'algorand/mainnet/indexer/v2/accounts/CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
       )
       .then((response) => {
-        console.log(response, 'getBalances response')
         if (response.ok) {
           if (response.data) {
             dispatch({ type: FETCHED_BALANCES, data: response.data.account })
