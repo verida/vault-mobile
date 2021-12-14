@@ -3,7 +3,7 @@ export const SUPPORTED_TOKENS = [
     name: 'Algorand',
     symbol: 'ALGO',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4030.png',
-    address: 'algo/slip44:60',
+    address: '1',
   },
   {
     name: 'PlanetWatch',

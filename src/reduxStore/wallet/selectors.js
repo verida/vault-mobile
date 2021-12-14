@@ -3,7 +3,7 @@ import { SUPPORTED_TOKENS } from 'wallet/constants'
 export const getPricingData = (state) => state.pricing.data || {}
 
 export const getBalancesData = (state) => {
-  // map balances to recognized token symbols
+  // standardize and map balances to recognized token symbols
   if (state.balances.data) {
     const balanceData = state.balances.data
     let list = {}
@@ -30,6 +30,7 @@ export const getBalancesData = (state) => {
 }
 
 export const getListAndTotal = (state) => {
+  // map prices and balances to recognized coins list and standardize
   const pricing = getPricingData(state)
   const balances = getBalancesData(state)
   let total = 0
@@ -48,6 +49,7 @@ export const getListAndTotal = (state) => {
         label: token.name,
         symbol: token.symbol,
         icon: token.icon,
+        address: token.address,
         price: tokenPrice ? tokenPrice.quote.USD.price : 0,
         change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
         quantity: tokenBalance ? tokenBalance : 0,
@@ -57,5 +59,30 @@ export const getListAndTotal = (state) => {
     return { list, total }
   } else {
     return { list, total }
+  }
+}
+
+export const getTransactionsData = (state) => {
+  //   const userAddr = 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE'
+  const userAddr = 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
+  const rawTransactions = state.transactions.data || []
+  console.log(rawTransactions, 'rawTransactions')
+  let transactions = []
+  if (rawTransactions) {
+    transactions = rawTransactions.map((tx) => {
+      let isUserSender = tx.sender === userAddr
+      let transferInfo = tx['asset-transfer-transaction']
+        ? tx['asset-transfer-transaction']
+        : tx['payment-transaction']
+      return {
+        id: tx.id,
+        type: isUserSender ? 'sent' : 'received',
+        address: isUserSender ? transferInfo.receiver : tx.sender,
+        quantity: transferInfo.amount,
+      }
+    })
+    return transactions
+  } else {
+    return []
   }
 }

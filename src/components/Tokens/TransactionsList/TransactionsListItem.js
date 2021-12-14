@@ -13,9 +13,9 @@ const icons = {
   received: <ReceivedIcon />,
 }
 
-export default ({ item }) => {
+export default ({ symbol, item }) => {
   const navigation = useNavigation()
-  const { type, symbol, quantity, address } = item
+  const { type, quantity, address } = item
 
   return (
     <ListItem
@@ -33,11 +33,11 @@ export default ({ item }) => {
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {quantity} {symbol}
+            {(quantity / 1000000).toFixed(2)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>
-          <Text style={styles.amount}>
+          <Text numberOfLines={1} ellipsizeMode='middle' style={styles.amount}>
             {type === 'sent' ? 'To: ' : 'From : '}
             {address}
           </Text>

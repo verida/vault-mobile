@@ -1,49 +1,30 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { Container, List, Icon } from 'native-base'
+import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 
-const bannerData = {
-  coin: 'ethereum',
-  symbol: 'ETH',
-  price: 1414.12,
-  change: 16.44,
-  quantity: 1.0993,
-  amount: 1509.09,
-}
+import { getTransactionsForToken } from 'reduxStore/wallet/actions'
+import { getTransactionsData } from 'reduxStore/wallet/selectors'
 
-const list = [
-  {
-    type: 'sent',
-    symbol: 'ETH',
-    address: '0x9991d3c...cF2930BCf8c',
-    quantity: 2.04,
-  },
-  {
-    type: 'received',
-    symbol: 'ETH',
-    address: '0x9991d3c...cF2930BCf8c',
-    quantity: 24.04,
-  },
-  {
-    type: 'sent',
-    symbol: 'ETH',
-    address: '0x9991d3c...cF2930BCf8c',
-    quantity: 2.04,
-  },
-  {
-    type: 'received',
-    symbol: 'ETH',
-    address: '0x9991d3c...cF2930BCf8c',
-    quantity: 0.12,
-  },
-]
-
-export default ({ navigation, route }) => {
+const SingleCurrency = ({
+  navigation,
+  route,
+  getTransactionsForToken,
+  transactions,
+}) => {
   const { item } = route.params
-  console.log(item, 'itemitem')
+  useEffect(() => {
+    async function loadData() {
+      await getTransactionsForToken(item.address)
+    }
+
+    loadData()
+  }, [])
+
+  console.log(transactions, 'transactions')
 
   return (
     <Container>
@@ -52,12 +33,27 @@ export default ({ navigation, route }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title='Ethereum'
+        title={item.label}
       />
       <TokenBanner data={item} />
       <List>
-        <TransactionsList list={list} />
+        <TransactionsList symbol={item.symbol} list={transactions} />
       </List>
     </Container>
   )
 }
+
+const mapStateToProps = (state) => {
+  return {
+    transactions: getTransactionsData(state),
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getTransactionsForToken: (assetID) =>
+      dispatch(getTransactionsForToken(assetID)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(SingleCurrency)

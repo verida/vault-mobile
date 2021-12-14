@@ -7,6 +7,9 @@ import {
   FETCHED_BALANCES,
   BALANCES_FETCH_START,
   BALANCES_FETCH_FAILED,
+  FETCHED_TRANSACTIONS,
+  TRANSACTIONS_FETCH_START,
+  TRANSACTIONS_FETCH_FAILED,
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
@@ -56,6 +59,38 @@ export const getBalances = () => {
         } else {
           const err = response.status === 404 ? 'API error.' : response.problem
           dispatch({ type: BALANCES_FETCH_FAILED, error: err })
+        }
+      })
+  }
+}
+
+export const getTransactionsForToken = (assetID) => {
+  return (dispatch) => {
+    dispatch({ type: TRANSACTIONS_FETCH_START })
+    chainsApi
+      .get('algorand/mainnet/indexer/v2/transactions', {
+        // address: 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE',
+        address: 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE',
+        'asset-id': assetID !== '1' ? assetID : null,
+        'tx-type': assetID === '1' ? 'pay' : null,
+      })
+      .then((response) => {
+        console.log(response, 'getTransactionsForToken')
+        if (response.ok) {
+          if (response.data) {
+            dispatch({
+              type: FETCHED_TRANSACTIONS,
+              data: response.data.transactions,
+            })
+          } else {
+            dispatch({
+              type: TRANSACTIONS_FETCH_FAILED,
+              error: "Couldn'nt load currencies",
+            })
+          }
+        } else {
+          const err = response.status === 404 ? 'API error.' : response.problem
+          dispatch({ type: TRANSACTIONS_FETCH_FAILED, error: err })
         }
       })
   }
