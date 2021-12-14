@@ -1,5 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
 import Toast from 'react-native-root-toast'
 
 import Text from 'components/Text'
@@ -12,45 +12,45 @@ import ReceiveIcon from 'assets/receive_icon.svg'
 import BuyIcon from 'assets/buy_icon.svg'
 import CopyIcon from 'assets/copy_icon.svg'
 
-import EthereumSvg from 'assets/wallets/Ethereum.svg'
-
-const icons = {
-  ethereum: <EthereumSvg />,
-}
-
 export default ({
   data,
   sendButtonAction,
   buyButtonAction,
   receiveButtonAction,
 }) => {
-  const { coin, price, change, amount, symbol, quantity } = data
+  const { label, price, change, amount, symbol, quantity, icon } = data
   const positive = change > 0
 
   return (
     <View style={styles.bannerWrapper}>
-      {coin && (
+      {label && (
         <View style={styles.coinInfo}>
           <Text style={styles.coinText}>Coin</Text>
           <View style={styles.coinPriceInfo}>
-            <Text style={styles.coinPrice}>${price}</Text>
+            <Text style={styles.coinPrice}>${price.toFixed(2)}</Text>
             <Text
               style={[
                 styles.coinPriceChange,
                 positive ? styles.positive : styles.negative,
               ]}>
-              {positive ? `+ ${change}%` : `${change}%`}
+              {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
             </Text>
           </View>
         </View>
       )}
       <View style={styles.totals}>
-        {coin && <View style={styles.coinIcon}>{icons[coin]}</View>}
+        {icon && (
+          <View style={styles.coinIcon}>
+            <Image source={{ uri: icon }} style={styles.icon} />
+          </View>
+        )}
         <Text style={styles.amount}>
-          {coin ? `${quantity} ${symbol}` : `$${amount.toFixed(2)}`}
+          {label
+            ? `${(quantity / 1000000).toFixed(2)} ${symbol}`
+            : `$${amount.toFixed(2)}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {coin ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
+          {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
         </Text>
       </View>
       <View style={styles.actionIcons}>
@@ -72,7 +72,7 @@ export default ({
           <BuyIcon />
           <Text style={styles.actionIconText}>Buy</Text>
         </TouchableOpacity>
-        {coin && (
+        {label && (
           <TouchableOpacity
             onPress={() =>
               Toast.show('Address copied', {
@@ -151,4 +151,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
   },
+  icon: { width: 45, height: 45 },
 })

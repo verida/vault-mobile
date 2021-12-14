@@ -50,7 +50,9 @@ const TokenDashboard = ({
       <List>
         <TokensList
           list={list}
-          onPressItem={() => navigation.navigate('SingleCurrency')}
+          onPressItem={(item) =>
+            navigation.navigate('SingleCurrency', { item })
+          }
         />
       </List>
       <SendListModal

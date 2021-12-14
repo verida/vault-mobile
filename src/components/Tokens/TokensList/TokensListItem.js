@@ -9,7 +9,7 @@ export default ({ item, onPressItem }) => {
   const positive = change >= 0
 
   return (
-    <ListItem button onPress={onPressItem} style={styles.listItem}>
+    <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
       <Image source={{ uri: icon }} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>

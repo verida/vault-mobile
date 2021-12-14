@@ -41,7 +41,10 @@ const list = [
   },
 ]
 
-export default ({ navigation }) => {
+export default ({ navigation, route }) => {
+  const { item } = route.params
+  console.log(item, 'itemitem')
+
   return (
     <Container>
       <NavigationHeader
@@ -51,7 +54,7 @@ export default ({ navigation }) => {
         }}
         title='Ethereum'
       />
-      <TokenBanner data={bannerData} />
+      <TokenBanner data={item} />
       <List>
         <TransactionsList list={list} />
       </List>
