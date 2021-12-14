@@ -15,7 +15,7 @@ export default ({ item, onPressItem }) => {
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
           <Text>
-            {quantity} {symbol}
+            {(quantity / 1000000).toFixed(2)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>

@@ -9,29 +9,26 @@ import SendListModal from './SendListModal'
 
 import SettingsSvg from 'assets/icons/settings.svg'
 
-import EthereumSvg from 'assets/wallets/Ethereum.svg'
-import AlgorandSvg from 'assets/wallets/Algorand.svg'
-import IKIGAISvg from 'assets/wallets/IKIGAI.svg'
-import NearSvg from 'assets/wallets/Near.svg'
+import { getPrices, getBalances } from 'reduxStore/wallet/actions'
+import { getListAndTotal } from 'reduxStore/wallet/selectors'
 
-import { SUPPORTED_TOKENS } from 'wallet/constants'
-
-import { getCurrencies } from 'reduxStore/wallet/actions'
-import { getPricing, getList } from 'reduxStore/wallet/selectors'
-
-const bannerData = {
-  amount: 1509.09,
-}
-
-const TokenDashboard = ({ navigation, getCurrencies, pricing, list }) => {
+const TokenDashboard = ({
+  navigation,
+  getPrices,
+  getBalances,
+  listAndTotal,
+}) => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
   useEffect(() => {
     async function loadData() {
-      await getCurrencies()
+      await getBalances()
+      await getPrices()
     }
 
     loadData()
   }, [])
+
+  const { list, total } = listAndTotal
 
   return (
     <Container>
@@ -43,7 +40,9 @@ const TokenDashboard = ({ navigation, getCurrencies, pricing, list }) => {
         }}
       />
       <TokenBanner
-        data={bannerData}
+        data={{
+          amount: total,
+        }}
         sendButtonAction={() => setSendModalVisible(true)}
         buyButtonAction={() => navigation.navigate('BuyToken')}
         receiveButtonAction={() => navigation.navigate('ReceiveToken')}
@@ -68,12 +67,15 @@ const TokenDashboard = ({ navigation, getCurrencies, pricing, list }) => {
 }
 
 const mapStateToProps = (state) => {
-  return { pricing: getPricing(state), list: getList(state) }
+  return {
+    listAndTotal: getListAndTotal(state),
+  }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getCurrencies: () => dispatch(getCurrencies()),
+    getPrices: () => dispatch(getPrices()),
+    getBalances: () => dispatch(getBalances()),
   }
 }
 

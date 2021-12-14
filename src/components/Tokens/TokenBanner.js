@@ -47,10 +47,10 @@ export default ({
       <View style={styles.totals}>
         {coin && <View style={styles.coinIcon}>{icons[coin]}</View>}
         <Text style={styles.amount}>
-          {coin ? `${quantity} ${symbol}` : `$${amount}`}
+          {coin ? `${quantity} ${symbol}` : `$${amount.toFixed(2)}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {coin ? `≈ $${amount}` : `Total Balance`}
+          {coin ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
         </Text>
       </View>
       <View style={styles.actionIcons}>
