@@ -1,6 +1,5 @@
 import React from 'react'
 import { View, Dimensions, StyleSheet, TouchableOpacity } from 'react-native'
-import Animated from 'react-native-reanimated'
 
 import { BLACK_COLOR, WHITE_COLOR } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
