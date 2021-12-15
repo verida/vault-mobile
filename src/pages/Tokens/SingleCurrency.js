@@ -24,8 +24,6 @@ const SingleCurrency = ({
     loadData()
   }, [])
 
-  console.log(transactions, 'transactions')
-
   return (
     <Container>
       <NavigationHeader
