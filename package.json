@@ -1,12 +1,13 @@
 {
   "scripts": {
-    "android": "react-native run-android",
+    "android": "react-native run-android --variant=stagingDebug",
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
     "postinstall": "scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn",
-    "lint": "eslint src --ext=.js,.jsx,.ts,.tsx"
+    "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
+    "build-android": "cd android && ./gradlew assembleStagingRelease"
   },
   "dependencies": {
     "@expo/react-native-action-sheet": "^3.11.0",
