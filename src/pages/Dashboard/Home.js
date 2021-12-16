@@ -54,13 +54,18 @@ const Home = (props) => {
 
   useEffect(() => {
     const getUrl = async () => {
-      const initialUrl = await Linking.getInitialURL()
+      try {
+        const initialUrl = await Linking.getInitialURL()
 
-      if (initialUrl === null) {
-        return
+        if (initialUrl === null) {
+          return
+        }
+
+        handleDeeplink(initialUrl)
+      } catch (e) {
+        Sentry.captureException(e)
+        console.error(e)
       }
-
-      handleDeeplink(initialUrl)
     }
 
     getUrl()
@@ -68,14 +73,19 @@ const Home = (props) => {
 
   useEffect(() => {
     async function checkFirstTimeLogin() {
-      const isFirstTimeLogin = await SecureStore.getItemAsync(
-        FIRST_TIME_LOGIN_KEY
-      )
-      if (isFirstTimeLogin) {
-        await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
-        navigation.navigate('ScanQrCode', {
-          firstTime: true,
-        })
+      try {
+        const isFirstTimeLogin = await SecureStore.getItemAsync(
+          FIRST_TIME_LOGIN_KEY
+        )
+        if (isFirstTimeLogin) {
+          await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
+          navigation.navigate('ScanQrCode', {
+            firstTime: true,
+          })
+        }
+      } catch (e) {
+        Sentry.captureException(e)
+        console.error(e)
       }
     }
 
