@@ -88,3 +88,30 @@ export async function fetchInboxCount() {
     console.log(error)
   }
 }
+
+export async function getProfile(did: string) {
+  try {
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    // @ts-ignore
+    const publicProfile =
+      await AccountManager.getInstance().context?.openProfile(
+        'basicProfile',
+        did
+      )
+    const name = await publicProfile?.get('name')
+    const avatar = await publicProfile?.get('avatar')
+
+    return {
+      name: name || 'Unknown',
+      avatar: avatar || DefaultAvatar,
+    }
+  } catch (error) {
+    Sentry.captureException(error)
+    console.error(error)
+
+    return {
+      name: 'Unknown',
+      avatar: DefaultAvatar,
+    }
+  }
+}

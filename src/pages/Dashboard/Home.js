@@ -26,7 +26,7 @@ import {
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { fetchInboxCount, loadAvatarSource } from 'api/utils'
+import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -96,13 +96,13 @@ const Home = (props) => {
     const initProfile = async () => {
       try {
         setLoading(true)
-        const accountManager = AccountManager.getInstance()
-        const name = await accountManager.vault.profiles.public.get('name')
-        const source = await loadAvatarSource()
-        setAvatarSource(source)
+        const _selectedAccount =
+          AccountManager.getInstance().getSelectedAccount()
+        const { name, avatar } = await getProfile(_selectedAccount.did)
+        setAvatarSource(avatar)
 
         setInfo({
-          address: accountManager.selectedAccount.did,
+          address: _selectedAccount.did,
           name,
         })
 
