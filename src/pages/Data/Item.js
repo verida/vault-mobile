@@ -7,8 +7,8 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Alert, StyleSheet } from 'react-native'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
 import didJWT from 'did-jwt'
-import AccountManager from 'api/AccountManager'
 import * as Sentry from '@sentry/react-native'
+import { getProfile } from 'api/utils'
 
 const DataItem = (props) => {
   const { item, folder } = props.route.params
@@ -17,9 +17,7 @@ const DataItem = (props) => {
     title: '',
   })
 
-  const isCredential =
-    item.schema ===
-    'https://verida.github.io/demo-credential-issuer/mapay/v0.1.0/schema.json'
+  const isCredential = folder.config.database === 'credential'
 
   useEffect(() => {
     const init = async () => {
@@ -28,16 +26,10 @@ const DataItem = (props) => {
         if (isCredential) {
           const decoded = didJWT.decodeJWT(item.didJwtVc)
           const iss = decoded.payload.iss
-          const issProfile =
-            await AccountManager.getInstance().context.openProfile(
-              'basicProfile',
-              iss
-            )
-          const issAvatar = await issProfile.get('avatar')
-          const issName = await issProfile.get('name')
+          const { name, avatar } = await getProfile(iss)
           _data.issuer = {
-            name: issName,
-            avatar: issAvatar,
+            name,
+            avatar,
             did: iss,
           }
         }
