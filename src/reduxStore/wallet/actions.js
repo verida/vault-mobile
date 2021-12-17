@@ -2,6 +2,7 @@ import { pricingApi, chainsApi } from 'helpers/api'
 import WalletUtils from '@verida/wallet-utils'
 import AccountManager from 'api/AccountManager'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
+import algosdk from 'algosdk'
 
 import {
   FETCHED_CURRENCIES,
@@ -17,6 +18,15 @@ import {
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
+
+const baseServer = 'https://testnet-algorand.api.purestake.io/idx2'
+const port = ''
+
+const token = {
+  'X-API-key': 'pMDXUFVkGJ7TFkkdORaV84pJEvUOBAvD1w9LTkq6',
+}
+
+const indexerClient = new algosdk.Indexer(token, baseServer, port)
 
 export const getPrices = () => {
   return (dispatch) => {
@@ -44,62 +54,48 @@ export const getPrices = () => {
 }
 
 export const getBalances = () => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
 
     const wallets = getWalletsData(getState())
-    chainsApi
-      .get('algorand/mainnet/indexer/v2/accounts/' + wallets.algo.address)
-      .then((response) => {
-        console.log(response, 'getBalances')
-        if (response.ok) {
-          if (response.data) {
-            dispatch({ type: FETCHED_BALANCES, data: response.data.account })
-          } else {
-            dispatch({
-              type: BALANCES_FETCH_FAILED,
-              error: "Couldn'nt load currencies",
-            })
-          }
-        } else {
-          const err = response.status === 404 ? 'API error.' : response.problem
-          dispatch({ type: BALANCES_FETCH_FAILED, error: err })
-        }
+
+    let accountInfo = await indexerClient
+      .lookupAccountByID(wallets.algo.address)
+      .do()
+    if (accountInfo && !accountInfo.message) {
+      dispatch({ type: FETCHED_BALANCES, data: accountInfo.account })
+    } else {
+      dispatch({
+        type: BALANCES_FETCH_FAILED,
+        error: accountInfo.message,
       })
+    }
   }
 }
 
 export const getTransactionsForToken = (assetID) => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState())
-    chainsApi
-      .get('algorand/mainnet/indexer/v2/transactions', {
-        // address: 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE',
-        // address: 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE',
-        address: wallets.algo.address,
-        'asset-id': assetID !== '1' ? assetID : null,
-        'tx-type': assetID === '1' ? 'pay' : null,
+
+    let transactionsData = await indexerClient
+      .searchForTransactions()
+      .address(wallets.algo.address)
+      .assetID(assetID !== '1' ? assetID : null)
+      .txType(assetID === '1' ? 'pay' : null)
+      .do()
+
+    if (transactionsData) {
+      dispatch({
+        type: FETCHED_TRANSACTIONS,
+        data: transactionsData.transactions,
       })
-      .then((response) => {
-        console.log(response, 'getTransactionsForToken')
-        if (response.ok) {
-          if (response.data) {
-            dispatch({
-              type: FETCHED_TRANSACTIONS,
-              data: response.data.transactions,
-            })
-          } else {
-            dispatch({
-              type: TRANSACTIONS_FETCH_FAILED,
-              error: "Couldn'nt load currencies",
-            })
-          }
-        } else {
-          const err = response.status === 404 ? 'API error.' : response.problem
-          dispatch({ type: TRANSACTIONS_FETCH_FAILED, error: err })
-        }
+    } else {
+      dispatch({
+        type: TRANSACTIONS_FETCH_FAILED,
+        error: "Couldn'nt load transactions",
       })
+    }
   }
 }
 
