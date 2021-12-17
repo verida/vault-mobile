@@ -1,6 +1,7 @@
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
 import { Client, Context, EnvironmentType } from '@verida/client-rn'
+import WalletUtils from '@verida/wallet-utils'
 import { AutoAccount } from '@verida/account-node'
 import { utils } from 'ethers'
 import { Account, NormalizedAccounts, UserData } from 'api/types'
@@ -185,6 +186,24 @@ class AccountManager {
     }
   }
 
+  public async setUserWallet() {
+    try {
+      const userHDWalletMnemonic = WalletUtils.generateMnemonic()
+      const walletDb = await this.context?.openDatastore(
+        'https://saadibrah.im/schema/wallet.json'
+      )
+      const wallet = {
+        mnemonic: userHDWalletMnemonic,
+        walletType: 'multi',
+        label: 'Multi Coin Wallet',
+      }
+      await walletDb?.save(wallet)
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
+  }
+
   public async createAccount(userData: UserData): Promise<Account | undefined> {
     try {
       const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
@@ -201,9 +220,11 @@ class AccountManager {
       await this.connect(true)
       await this.setPublicProfile(userData)
       await this.setBackedupSeedPhraseConfig(false)
+      await this.setUserWallet()
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      // store.dispatch(setUserWallets(userGeneratedWallets.wallets))
 
       return this.selectedAccount
     } catch (e) {
