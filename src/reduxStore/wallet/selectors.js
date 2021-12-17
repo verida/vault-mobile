@@ -62,9 +62,15 @@ export const getListAndTotal = (state) => {
   }
 }
 
+export const getWalletsData = (state) => {
+  return state.wallets.data || {}
+}
+
 export const getTransactionsData = (state) => {
   //   const userAddr = 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE'
-  const userAddr = 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
+  //   const userAddr = 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
+  const wallets = getWalletsData(state)
+  const userAddr = wallets.algo.address
   const rawTransactions = state.transactions.data || []
   console.log(rawTransactions, 'rawTransactions')
   let transactions = []
