@@ -1,4 +1,7 @@
 import { pricingApi, chainsApi } from 'helpers/api'
+import WalletUtils from '@verida/wallet-utils'
+import AccountManager from 'api/AccountManager'
+import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 import {
   FETCHED_CURRENCIES,
@@ -10,6 +13,7 @@ import {
   FETCHED_TRANSACTIONS,
   TRANSACTIONS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
+  SET_USER_WALLETS,
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
@@ -40,13 +44,14 @@ export const getPrices = () => {
 }
 
 export const getBalances = () => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
+
+    const wallets = getWalletsData(getState())
     chainsApi
-      .get(
-        'algorand/mainnet/indexer/v2/accounts/CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
-      )
+      .get('algorand/mainnet/indexer/v2/accounts/' + wallets.algo.address)
       .then((response) => {
+        console.log(response, 'getBalances')
         if (response.ok) {
           if (response.data) {
             dispatch({ type: FETCHED_BALANCES, data: response.data.account })
@@ -65,12 +70,14 @@ export const getBalances = () => {
 }
 
 export const getTransactionsForToken = (assetID) => {
-  return (dispatch) => {
+  return (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
+    const wallets = getWalletsData(getState())
     chainsApi
       .get('algorand/mainnet/indexer/v2/transactions', {
         // address: 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE',
-        address: 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE',
+        // address: 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE',
+        address: wallets.algo.address,
         'asset-id': assetID !== '1' ? assetID : null,
         'tx-type': assetID === '1' ? 'pay' : null,
       })
@@ -93,5 +100,21 @@ export const getTransactionsForToken = (assetID) => {
           dispatch({ type: TRANSACTIONS_FETCH_FAILED, error: err })
         }
       })
+  }
+}
+
+export const getWallets = () => {
+  return async (dispatch) => {
+    const veridaApp = AccountManager.getInstance().context
+    const datastore = await veridaApp.openDatastore(
+      'https://saadibrah.im/schema/wallet.json'
+    )
+
+    const HDwallets = await datastore.getMany()
+    const wallets = WalletUtils.generateHDWallets(HDwallets[0].mnemonic)
+    dispatch({
+      type: SET_USER_WALLETS,
+      data: wallets,
+    })
   }
 }
