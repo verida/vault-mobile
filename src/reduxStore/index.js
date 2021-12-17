@@ -23,6 +23,7 @@ import {
   FETCHED_TRANSACTIONS,
   TRANSACTIONS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
+  SET_USER_WALLETS,
 } from './wallet/types'
 import update from 'immutability-helper'
 
@@ -54,6 +55,7 @@ const initialState = {
     fetching: true,
     error: undefined,
   },
+  wallets: { data: {} },
 }
 
 const reducer = (state = initialState, action) => {
@@ -156,6 +158,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         transactions: { fetching: false, error: action.error, data: [] },
+      }
+
+    case SET_USER_WALLETS:
+      return {
+        ...state,
+        wallets: { data: action.data },
       }
 
     default:
