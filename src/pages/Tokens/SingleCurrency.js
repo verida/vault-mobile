@@ -33,7 +33,12 @@ const SingleCurrency = ({
         }}
         title={item.label}
       />
-      <TokenBanner data={item} />
+      <TokenBanner
+        data={item}
+        receiveButtonAction={() =>
+          navigation.navigate('ReceiveToken', { token: item })
+        }
+      />
       <List>
         <TransactionsList symbol={item.symbol} list={transactions} />
       </List>
