@@ -9,11 +9,14 @@ import SendListModal from './SendListModal'
 
 import SettingsSvg from 'assets/icons/settings.svg'
 
-import { getPrices, getBalances } from 'reduxStore/wallet/actions'
+import { getPrices, getBalances, getWallets } from 'reduxStore/wallet/actions'
 import { getListAndTotal } from 'reduxStore/wallet/selectors'
+
+import AccountManager from 'api/AccountManager'
 
 const TokenDashboard = ({
   navigation,
+  getWallets,
   getPrices,
   getBalances,
   listAndTotal,
@@ -21,6 +24,7 @@ const TokenDashboard = ({
   const [sendModalVisible, setSendModalVisible] = useState(false)
   useEffect(() => {
     async function loadData() {
+      await getWallets()
       await getBalances()
       await getPrices()
     }
@@ -76,6 +80,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
+    getWallets: () => dispatch(getWallets()),
     getPrices: () => dispatch(getPrices()),
     getBalances: () => dispatch(getBalances()),
   }
