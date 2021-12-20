@@ -25,8 +25,8 @@ const TokenDashboard = ({
   useEffect(() => {
     async function loadData() {
       await getWallets()
-      await getBalances()
-      await getPrices()
+      getBalances()
+      getPrices()
     }
 
     loadData()
