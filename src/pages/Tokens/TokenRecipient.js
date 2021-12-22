@@ -1,12 +1,8 @@
-import React, { useState } from 'react'
-import {
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  Clipboard,
-  TextInput,
-} from 'react-native'
+import React, { useState, useEffect } from 'react'
+import { StyleSheet, TouchableOpacity, View, TextInput } from 'react-native'
 import { Container, Icon } from 'native-base'
+import Clipboard from '@react-native-community/clipboard'
+import { connect } from 'react-redux'
 
 import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -16,11 +12,16 @@ import Label from 'components/Label'
 
 import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
 
-export default ({ navigation }) => {
-  const [address, setAddress] = useState(null)
+import { getTransactionParams } from 'reduxStore/wallet/actions'
+
+const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
+  const { token, amount } = route.params
+  const [address, setAddress] = useState('')
+  const [processing, setProcessing] = useState(false)
   const fetchCopiedText = async () => {
-    const text = await Clipboard.getString()
-    setAddress(text)
+    const clipboardTest = await Clipboard.getString()
+    console.log(clipboardTest, 'clipboardTest')
+    setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
   }
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
@@ -35,7 +36,7 @@ export default ({ navigation }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title='Send ETH'
+        title={'Send ' + token.symbol}
       />
       <View style={styles.container}>
         <View style={styles.content}>
@@ -70,10 +71,16 @@ export default ({ navigation }) => {
           <Button
             style={styles.nextButton}
             color='primary'
-            // disabled={!selectedAddress || !selectedToken || !(amount > 0)}
-            // loading={processing}
-            // onPress={onAddWallet}
-          >
+            disabled={!address}
+            loading={processing}
+            onPress={() => {
+              setProcessing(true)
+              getTransactionParams({
+                token,
+                amount,
+                address,
+              })
+            }}>
             Next
           </Button>
         </View>
@@ -182,3 +189,15 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
   },
 })
+
+const mapStateToProps = (state) => {
+  return {}
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    getTransactionParams: (params) => dispatch(getTransactionParams(params)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TokenRecipient)
