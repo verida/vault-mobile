@@ -7,9 +7,8 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import SwapIcon from 'assets/swap_icon.svg'
 
-const convert = (number, mode) => {
+const convert = (number, mode, price) => {
   let numberFloat = parseFloat(number)
-  let price = 2000
   if (numberFloat > 0) {
     return mode === 'fiat' ? numberFloat / price : numberFloat * price
   } else {
@@ -17,16 +16,21 @@ const convert = (number, mode) => {
   }
 }
 
-export default ({ onUpdateAmount }) => {
+export default ({ onUpdateAmount, token }) => {
   const [number, onChangeNumber] = React.useState('0')
-  const [mode, onSwitchMode] = React.useState('fiat')
-  const converted = convert(number, mode)
+  const [mode, onSwitchMode] = React.useState('crypto')
+  const { symbol, price, quantity } = token
+  const converted = convert(number, mode, price)
+  const maxFiat = (quantity * price) / 1000000
 
   return (
     <View style={styles.bannerWrapper}>
       <TouchableOpacity
         onPress={() => {
-          let maxNumber = mode === 'fiat' ? '20700' : '10.35'
+          let maxNumber =
+            mode === 'fiat'
+              ? maxFiat.toFixed(2).toString()
+              : (quantity / 1000000).toString()
           onChangeNumber(maxNumber)
           onUpdateAmount(maxNumber)
         }}
@@ -44,10 +48,12 @@ export default ({ onUpdateAmount }) => {
             }}
             value={number}
           />
-          {mode === 'crypto' && <Text style={styles.amountText}> ETH</Text>}
+          {mode === 'crypto' && (
+            <Text style={styles.amountText}> {symbol}</Text>
+          )}
         </View>
         <Text style={styles.convertedAmount}>
-          ≈ {mode === 'crypto' ? `$${converted}` : `${converted} ETH`}
+          ≈ {mode === 'crypto' ? `$${converted}` : `${converted} ${symbol}`}
         </Text>
       </View>
       <TouchableOpacity
