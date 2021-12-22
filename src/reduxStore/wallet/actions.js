@@ -122,7 +122,7 @@ export const getWallets = () => {
   }
 }
 
-export const getTransactionParams = (navParams) => {
+export const getTransactionParams = (transactionData) => {
   return async (dispatch) => {
     dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
 
@@ -133,7 +133,7 @@ export const getTransactionParams = (navParams) => {
         type: FETCHED_TRANSACTION_PARAMS,
         data: params,
       })
-      navigate('ConfirmTransaction', navParams)
+      navigate('ConfirmTransaction', transactionData)
     } else {
       dispatch({
         type: TRANSACTION_PARAMS_FETCH_FAILED,
