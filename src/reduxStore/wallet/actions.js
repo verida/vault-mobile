@@ -3,7 +3,10 @@ import algosdk from 'algosdk'
 import { pricingApi, chainsApi } from 'helpers/api'
 import WalletUtils from '@verida/wallet-utils'
 import AccountManager from 'api/AccountManager'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
+import {
+  getWalletsData,
+  getTransactionParamsData,
+} from 'reduxStore/wallet/selectors'
 import { navigate } from 'navigation/RootNavigator'
 
 import {
@@ -20,6 +23,9 @@ import {
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTION_PARAMS_FETCH_FAILED,
   FETCHED_TRANSACTION_PARAMS,
+  SEND_TRANSACTION_START,
+  SEND_TRANSACTION_SUCCESS,
+  SEND_TRANSACTION_FAILED,
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
@@ -137,6 +143,60 @@ export const getTransactionParams = (transactionData) => {
     } else {
       dispatch({
         type: TRANSACTION_PARAMS_FETCH_FAILED,
+        error: "Couldn't load params",
+      })
+    }
+  }
+}
+
+export const sendTransaction = (transactionData) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: SEND_TRANSACTION_START })
+
+    const wallets = getWalletsData(getState())
+    const transactionParams = getTransactionParamsData(getState())
+
+    let transaction = algosdk.makePaymentTxnWithSuggestedParams(
+      wallets.algo.address,
+      transactionData.address,
+      transactionData.amount * 1000000,
+      undefined,
+      undefined,
+      transactionParams
+    )
+
+    const privateKey = wallets.algo.privateKey
+
+    const secretKey = Buffer.from(
+      privateKey.substring(2, privateKey.length),
+      'hex'
+    ).toJSON().data
+
+    const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
+    const wallet = algosdk.mnemonicToSecretKey(mnemonic)
+
+    const signedTransaction = transaction.signTxn(wallet.sk)
+
+    const sent = await algodClient.sendRawTransaction(signedTransaction).do()
+
+    const txData = {
+      id: sent.txId,
+      amount: transaction.amount,
+      fee: transaction.fee,
+      to: transactionData.address,
+      from: wallets.algo.address,
+      token: transactionData.token,
+    }
+
+    if (sent) {
+      dispatch({
+        type: SEND_TRANSACTION_SUCCESS,
+        data: txData,
+      })
+      // navigate('ConfirmTransaction', transactionData)
+    } else {
+      dispatch({
+        type: SEND_TRANSACTION_FAILED,
         error: "Couldn't load params",
       })
     }
