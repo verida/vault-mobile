@@ -92,3 +92,7 @@ export const getTransactionsData = (state) => {
     return []
   }
 }
+
+export const getTransactionParamsData = (state) => {
+  return state.transactionParams.data || {}
+}
