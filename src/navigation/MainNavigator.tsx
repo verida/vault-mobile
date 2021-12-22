@@ -17,6 +17,7 @@ import SuccessFailure from 'pages/Wallets/SuccessFailure'
 import SingleCurrency from 'pages/Tokens/SingleCurrency'
 import SendToken from 'pages/Tokens/SendToken'
 import TokenRecipient from 'pages/Tokens/TokenRecipient'
+import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
 import BuyToken from 'pages/Tokens/BuyToken'
 import ReceiveToken from 'pages/Tokens/ReceiveToken'
 import Folder from 'pages/Data/Folder'
@@ -54,6 +55,10 @@ function MainNavigator() {
       <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
       <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
       <Stack.Screen name={'SendToken'} component={SendToken} />
+      <Stack.Screen
+        name={'ConfirmTransaction'}
+        component={ConfirmTransaction}
+      />
       <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
       <Stack.Screen name={'BuyToken'} component={BuyToken} />
       <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
