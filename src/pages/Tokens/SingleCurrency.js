@@ -38,6 +38,9 @@ const SingleCurrency = ({
         receiveButtonAction={() =>
           navigation.navigate('ReceiveToken', { token: item })
         }
+        sendButtonAction={() =>
+          navigation.navigate('SendToken', { token: item })
+        }
       />
       <List>
         <TransactionsList symbol={item.symbol} list={transactions} />
