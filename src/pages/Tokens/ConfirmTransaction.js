@@ -7,9 +7,12 @@ import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 
+import { sendTransaction } from 'reduxStore/wallet/actions'
+
 import {
   getWalletsData,
   getTransactionParamsData,
+  selectSentTransaction,
 } from 'reduxStore/wallet/selectors'
 
 import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
@@ -19,6 +22,8 @@ const ConfirmTransaction = ({
   route,
   wallets,
   transactionParams,
+  sendTransaction,
+  sentTransaction,
 }) => {
   const { token, amount, address } = route.params
   const accountAddress = wallets.algo.address
@@ -83,10 +88,8 @@ const ConfirmTransaction = ({
           <Button
             style={styles.nextButton}
             color='primary'
-            // disabled={!selectedAddress || !selectedToken || !(amount > 0)}
-            // loading={processing}
-            // onPress={onAddWallet}
-          >
+            loading={sentTransaction.fetching}
+            onPress={() => sendTransaction({ token, amount, address })}>
             Send {token.symbol}
           </Button>
         </View>
@@ -136,11 +139,14 @@ const mapStateToProps = (state) => {
   return {
     wallets: getWalletsData(state),
     transactionParams: getTransactionParamsData(state),
+    sentTransaction: selectSentTransaction(state),
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
-  return {}
+  return {
+    sendTransaction: (params) => dispatch(sendTransaction(params)),
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(ConfirmTransaction)
