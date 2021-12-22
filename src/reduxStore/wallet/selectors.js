@@ -96,3 +96,7 @@ export const getTransactionsData = (state) => {
 export const getTransactionParamsData = (state) => {
   return state.transactionParams.data || {}
 }
+
+export const selectSentTransaction = (state) => {
+  return state.sentTransaction
+}
