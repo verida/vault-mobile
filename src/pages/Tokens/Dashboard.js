@@ -47,9 +47,9 @@ const TokenDashboard = ({
         data={{
           amount: total,
         }}
-        sendButtonAction={() => setSendModalVisible(true)}
-        buyButtonAction={() => navigation.navigate('BuyToken')}
-        receiveButtonAction={() => navigation.navigate('ReceiveToken')}
+        // sendButtonAction={() => setSendModalVisible(true)}
+        // buyButtonAction={() => navigation.navigate('BuyToken')}
+        // receiveButtonAction={() => navigation.navigate('ReceiveToken')}
       />
       <List>
         <TokensList
