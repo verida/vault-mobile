@@ -43,10 +43,11 @@ const tokenList = [
   },
 ]
 
-export default ({ navigation }) => {
+export default ({ navigation, route }) => {
   const [selectedAddress, onSelectAddress] = React.useState(null)
   const [selectedToken, onSelectToken] = React.useState(null)
   const [amount, onUpdateAmount] = React.useState(null)
+  const token = route.params.token
 
   return (
     <Container>
@@ -55,12 +56,13 @@ export default ({ navigation }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title='Send ETH'
+        title={'Send ' + token.symbol}
       />
       <View style={styles.container}>
         <View style={styles.content}>
-          <TokenCalculator onUpdateAmount={onUpdateAmount} />
-          <Text style={styles.label}>Select address</Text>
+          <TokenCalculator token={token} onUpdateAmount={onUpdateAmount} />
+
+          {/* <Text style={styles.label}>Select address</Text>
           <View style={styles.addressScroller}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {addressList.map((item, index) => (
@@ -83,9 +85,9 @@ export default ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
+          </View> */}
 
-          <Text style={styles.label}>Select token</Text>
+          {/* <Text style={styles.label}>Select token</Text>
           <View style={styles.tokenScroller}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {tokenList.map((item, index) => (
@@ -107,15 +109,17 @@ export default ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
+                </View>*/}
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={!selectedAddress || !selectedToken || !(amount > 0)}
+            disabled={!(amount > 0)}
             // loading={processing}
-            onPress={() => navigation.navigate('TokenRecipient')}>
+            onPress={() =>
+              navigation.navigate('TokenRecipient', { token, amount })
+            }>
             Next
           </Button>
         </View>
