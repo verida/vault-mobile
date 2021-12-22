@@ -1,8 +1,10 @@
+import algosdk from 'algosdk'
+
 import { pricingApi, chainsApi } from 'helpers/api'
 import WalletUtils from '@verida/wallet-utils'
 import AccountManager from 'api/AccountManager'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
-import algosdk from 'algosdk'
+import { navigate } from 'navigation/RootNavigator'
 
 import {
   FETCHED_CURRENCIES,
@@ -15,18 +17,23 @@ import {
   TRANSACTIONS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   SET_USER_WALLETS,
+  TRANSACTION_PARAMS_FETCH_START,
+  TRANSACTION_PARAMS_FETCH_FAILED,
+  FETCHED_TRANSACTION_PARAMS,
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
 
-const baseServer = 'https://testnet-algorand.api.purestake.io/idx2'
-const port = ''
-
 const token = {
   'X-API-key': 'pMDXUFVkGJ7TFkkdORaV84pJEvUOBAvD1w9LTkq6',
 }
+const baseServer = 'https://testnet-algorand.api.purestake.io/idx2'
+const port = ''
+const algodServer = 'https://testnet-algorand.api.purestake.io/ps2'
+const algodPort = ''
 
 const indexerClient = new algosdk.Indexer(token, baseServer, port)
+const algodClient = new algosdk.Algodv2(token, algodServer, algodPort)
 
 export const getPrices = () => {
   return (dispatch) => {
@@ -112,5 +119,26 @@ export const getWallets = () => {
       type: SET_USER_WALLETS,
       data: wallets,
     })
+  }
+}
+
+export const getTransactionParams = (navParams) => {
+  return async (dispatch) => {
+    dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
+
+    const params = await algodClient.getTransactionParams().do()
+
+    if (params) {
+      dispatch({
+        type: FETCHED_TRANSACTION_PARAMS,
+        data: params,
+      })
+      navigate('ConfirmTransaction', navParams)
+    } else {
+      dispatch({
+        type: TRANSACTION_PARAMS_FETCH_FAILED,
+        error: "Couldn't load params",
+      })
+    }
   }
 }
