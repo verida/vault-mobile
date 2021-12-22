@@ -53,26 +53,27 @@ export default ({
           {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
         </Text>
       </View>
-      <View style={styles.actionIcons}>
-        <TouchableOpacity
-          onPress={sendButtonAction}
-          style={styles.singleActionIcon}>
-          <SendIcon />
-          <Text style={styles.actionIconText}>Send</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={receiveButtonAction}
-          style={styles.singleActionIcon}>
-          <ReceiveIcon />
-          <Text style={styles.actionIconText}>Receive</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={buyButtonAction}
-          style={styles.singleActionIcon}>
-          <BuyIcon />
-          <Text style={styles.actionIconText}>Buy</Text>
-        </TouchableOpacity>
-        {label && (
+      {label && (
+        <View style={styles.actionIcons}>
+          <TouchableOpacity
+            onPress={sendButtonAction}
+            style={styles.singleActionIcon}>
+            <SendIcon />
+            <Text style={styles.actionIconText}>Send</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={receiveButtonAction}
+            style={styles.singleActionIcon}>
+            <ReceiveIcon />
+            <Text style={styles.actionIconText}>Receive</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={buyButtonAction}
+            style={styles.singleActionIcon}>
+            <BuyIcon />
+            <Text style={styles.actionIconText}>Buy</Text>
+          </TouchableOpacity>
+
           <TouchableOpacity
             onPress={() =>
               Toast.show('Address copied', {
@@ -89,8 +90,8 @@ export default ({
             <CopyIcon />
             <Text style={styles.actionIconText}>Copy</Text>
           </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   )
 }
