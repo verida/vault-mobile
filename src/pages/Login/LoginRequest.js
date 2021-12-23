@@ -220,16 +220,22 @@ export default (props) => {
   const logoUrl = info.logoUrl
   const appName = info.request?.context
   const expired = expiry <= Date.now()
-  const timeToExpire = moment(expiry).format('YYYY MMM DD [at] HH:mm')
+  const timeToExpire = moment(expiry).format('DD MMM, YYYY [at] h:mm a')
   const expiryText = expired
     ? `Expired: ${timeToExpire}`
-    : `Expire: ${timeToExpire}`
+    : `Expires: ${timeToExpire}`
 
   async function onPressLoginDomain() {
     const canOpen = await Linking.canOpenURL(fromText)
     if (canOpen) {
       await Linking.openURL(`${info.request.loginDomain}`)
     }
+  }
+
+  function tryAgainOnPress() {
+    props.navigation.navigate('ScanQrCode', {
+      firstTime: false,
+    })
   }
 
   return (
@@ -278,71 +284,77 @@ export default (props) => {
                 {fromText}
               </Text>
             </View>
-            <Text style={style.generatedTime}>
-              {Moment(info.payload.insertedAt).format(
-                'DD MMM, YYYY [at] h:mm a'
-              )}
-            </Text>
-            {expired && errorMessage && (
-              <Text
-                style={[
-                  style.text,
-                  style.timeout,
-                  expired && style.expiredText,
-                ]}>
-                {expiryText}
+            <View style={style.timeContainer}>
+              <Text style={style.generatedTime}>
+                Generated:{' '}
+                {Moment(info.payload.insertedAt).format(
+                  'DD MMM, YYYY [at] h:mm a'
+                )}
               </Text>
-            )}
-            {expired && !errorMessage && (
-              <View style={style.modal}>
-                <View style={{ flexDirection: 'row' }}>
-                  <Text
-                    style={[style.text, { color: '#FF3B30', marginBottom: 2 }]}>
-                    {expiryText}
-                  </Text>
-                </View>
-                <Text style={[style.text, { fontSize: 12, color: '#FF3B30' }]}>
-                  Please try again
-                </Text>
-              </View>
-            )}
-            {errorMessage && (
-              <View style={style.modal}>
-                <View style={{ flexDirection: 'row' }}>
+              {!expired && <Text style={style.expiresTime}>{expiryText}</Text>}
+            </View>
+            <View style={style.modal}>
+              {errorMessage && (
+                <>
+                  <View style={{ flexDirection: 'row' }}>
+                    <Text
+                      style={[
+                        style.text,
+                        { color: errorMessage.color, marginBottom: 2 },
+                      ]}>
+                      <Icon
+                        type='AntDesign'
+                        name={errorMessage.iconName}
+                        style={[style.text, { color: errorMessage.color }]}
+                      />
+                      &nbsp; {errorMessage.heading}
+                    </Text>
+                  </View>
                   <Text
                     style={[
                       style.text,
-                      { color: errorMessage.color, marginBottom: 2 },
+                      { fontSize: 12, color: errorMessage.color },
+                      expired && { marginBottom: 5 },
                     ]}>
-                    <Icon
-                      type='AntDesign'
-                      name={errorMessage.iconName}
-                      style={[style.text, { color: errorMessage.color }]}
-                    />
-                    &nbsp; {errorMessage.heading}
+                    {errorMessage.message}
                   </Text>
-                </View>
+                </>
+              )}
+              {expired && (
                 <Text
                   style={[
                     style.text,
-                    { fontSize: 12, color: errorMessage.color },
+                    { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
                   ]}>
-                  {errorMessage.message}
+                  {expiryText}
                 </Text>
-              </View>
-            )}
+              )}
+              <Text
+                style={[
+                  style.text,
+                  { fontSize: 12, color: '#FF3B30', marginTop: 5 },
+                ]}>
+                Please refresh the login screen
+              </Text>
+            </View>
           </View>
         ) : null}
       </Content>
       <CustomFooter>
         <View style={style.actions}>
-          <Button
-            style={[style.btn, style.mr]}
-            color='grey'
-            onPress={deny}
-            disabled={status !== 'loaded' && status !== 'error'}>
-            Ignore
-          </Button>
+          {expired || errorMessage ? (
+            <Button style={style.btn} onPress={tryAgainOnPress}>
+              Try Again
+            </Button>
+          ) : (
+            <Button
+              style={[style.btn, style.mr]}
+              color='grey'
+              onPress={deny}
+              disabled={status !== 'loaded' && status !== 'error'}>
+              Ignore
+            </Button>
+          )}
           {!errorMessage && !expired ? (
             <Button
               style={style.btn}
@@ -426,9 +438,9 @@ const style = StyleSheet.create({
     fontSize: 17,
   },
   generatedTime: {
-    marginBottom: 16,
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontSize: 14,
+    fontSize: 12,
+    color: '#041133',
+    marginBottom: 5,
   },
   verified: {
     flexDirection: 'row',
@@ -443,4 +455,13 @@ const style = StyleSheet.create({
     color: WARNING_COLOR,
   },
   loadingContainer: {},
+  timeContainer: {
+    marginBottom: 16,
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  expiresTime: {
+    fontSize: 12,
+    color: '#041133',
+  },
 })
