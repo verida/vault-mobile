@@ -143,7 +143,6 @@ const styles = StyleSheet.create({
   actionIcons: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
-    paddingVertical: 20,
   },
   actionIconText: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
