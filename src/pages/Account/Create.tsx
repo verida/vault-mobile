@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Alert,
   StyleSheet,
@@ -23,7 +23,6 @@ import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AccountManager from 'api/AccountManager'
 import TCCheckbox from 'components/TCCheckbox'
-import { isEmpty } from 'lodash'
 
 type Option = {
   label: string
@@ -38,6 +37,14 @@ function Create(
   const [country, setCountry] = useState<Option | null>(null)
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
+  const [isFormValid, setIsFormValid] = useState(false)
+
+  useEffect(() => {
+    const isNameValid = name.length >= 2 && name.length <= 140
+    const isCountryValid =
+      !!country && country.value.length >= 2 && country.value.length <= 140
+    setIsFormValid(isNameValid && isCountryValid)
+  }, [country, name.length])
 
   const onCountryChange = (option: Option) => setCountry(option)
   const onCreateAccount = async () => {
@@ -66,8 +73,6 @@ function Create(
   function toggleAgreedTC() {
     setAgreedTC((prevState) => !prevState)
   }
-
-  const isFormValid = !isEmpty(name) && !isEmpty(country) && agreedTC
 
   return (
     <>
