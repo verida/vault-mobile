@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react'
-import { Container, List, Icon } from 'native-base'
+import { Container, Icon } from 'native-base'
 import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -42,9 +42,7 @@ const SingleCurrency = ({
           navigation.navigate('SendToken', { token: item })
         }
       />
-      <List>
-        <TransactionsList symbol={item.symbol} list={transactions} />
-      </List>
+      <TransactionsList symbol={item.symbol} list={transactions} />
     </Container>
   )
 }

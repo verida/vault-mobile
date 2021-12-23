@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Container, List } from 'native-base'
+import { Container } from 'native-base'
 import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -11,8 +11,6 @@ import SettingsSvg from 'assets/icons/settings.svg'
 
 import { getPrices, getBalances, getWallets } from 'reduxStore/wallet/actions'
 import { getListAndTotal } from 'reduxStore/wallet/selectors'
-
-import AccountManager from 'api/AccountManager'
 
 const TokenDashboard = ({
   navigation,
@@ -51,14 +49,10 @@ const TokenDashboard = ({
         // buyButtonAction={() => navigation.navigate('BuyToken')}
         // receiveButtonAction={() => navigation.navigate('ReceiveToken')}
       />
-      <List>
-        <TokensList
-          list={list}
-          onPressItem={(item) =>
-            navigation.navigate('SingleCurrency', { item })
-          }
-        />
-      </List>
+      <TokensList
+        list={list}
+        onPressItem={(item) => navigation.navigate('SingleCurrency', { item })}
+      />
       <SendListModal
         visible={sendModalVisible}
         hideModal={() => setSendModalVisible(false)}

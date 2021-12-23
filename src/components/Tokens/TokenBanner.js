@@ -53,7 +53,7 @@ export default ({
           {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
         </Text>
       </View>
-      {label && (
+      {true && (
         <View style={styles.actionIcons}>
           <TouchableOpacity
             onPress={sendButtonAction}
@@ -73,7 +73,6 @@ export default ({
             <BuyIcon />
             <Text style={styles.actionIconText}>Buy</Text>
           </TouchableOpacity>
-
           <TouchableOpacity
             onPress={() =>
               Toast.show('Address copied', {
@@ -144,6 +143,7 @@ const styles = StyleSheet.create({
   actionIcons: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    paddingVertical: 20,
   },
   actionIconText: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
