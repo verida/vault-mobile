@@ -156,14 +156,29 @@ export const sendTransaction = (transactionData) => {
     const wallets = getWalletsData(getState())
     const transactionParams = getTransactionParamsData(getState())
 
-    let transaction = algosdk.makePaymentTxnWithSuggestedParams(
-      wallets.algo.address,
-      transactionData.address,
-      transactionData.amount * 1000000,
-      undefined,
-      undefined,
-      transactionParams
-    )
+    let transaction
+
+    if (transactionData.token.address === '1') {
+      transaction = algosdk.makePaymentTxnWithSuggestedParams(
+        wallets.algo.address,
+        transactionData.address,
+        transactionData.amount * 1000000,
+        undefined,
+        undefined,
+        transactionParams
+      )
+    } else {
+      transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
+        wallets.algo.address,
+        transactionData.address,
+        undefined,
+        undefined,
+        transactionData.amount * 1000000,
+        undefined,
+        parseInt(transactionData.token.address),
+        transactionParams
+      )
+    }
 
     const privateKey = wallets.algo.privateKey
 
@@ -177,28 +192,29 @@ export const sendTransaction = (transactionData) => {
 
     const signedTransaction = transaction.signTxn(wallet.sk)
 
-    const sent = await algodClient.sendRawTransaction(signedTransaction).do()
+    try {
+      const sent = await algodClient.sendRawTransaction(signedTransaction).do()
 
-    const txData = {
-      id: sent.txId,
-      amount: transaction.amount,
-      fee: transaction.fee,
-      to: transactionData.address,
-      from: wallets.algo.address,
-      token: transactionData.token,
-    }
+      const txData = {
+        id: sent.txId,
+        amount: transaction.amount,
+        fee: transaction.fee,
+        to: transactionData.address,
+        from: wallets.algo.address,
+        token: transactionData.token,
+      }
 
-    if (sent) {
       dispatch({
         type: SEND_TRANSACTION_SUCCESS,
         data: txData,
       })
-      // navigate('ConfirmTransaction', transactionData)
-    } else {
+      navigate('TransactionSuccess')
+    } catch (error) {
       dispatch({
         type: SEND_TRANSACTION_FAILED,
         error: "Couldn't load params",
       })
+      navigate('TransactionFailure')
     }
   }
 }
