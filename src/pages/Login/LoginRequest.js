@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
 import { Container, Content, Icon } from 'native-base'
 import didJWT from 'did-jwt'
@@ -24,6 +24,7 @@ import Moment from 'moment'
 import moment from 'moment'
 import AppLogo from 'components/AppLogo'
 import * as Sentry from '@sentry/react-native'
+import CountDownText from 'components/CountDownText'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -33,6 +34,7 @@ export default (props) => {
   const [expiry, setExpiry] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [ws, setWebsocket] = useState(null)
+  const [expired, setExpired] = useState(false)
 
   useEffect(() => {
     const init = async () => {
@@ -130,6 +132,15 @@ export default (props) => {
 
   // @todo use key to encrypt response to server
 
+  const reloadExpired = useCallback(() => {
+    const _expired = expiry <= Date.now()
+    setExpired(_expired)
+  }, [expiry])
+
+  useEffect(() => {
+    reloadExpired()
+  }, [reloadExpired])
+
   const saveLoginRequest = async (approved) => {
     const vault = AccountManager.getInstance().context
     // save into login database
@@ -219,15 +230,11 @@ export default (props) => {
     info?.request?.loginDomain || info?.payload?.context || 'Unidentified'
   const logoUrl = info.logoUrl
   const appName = info.request?.context
-  const expired = expiry <= Date.now()
   const timeToExpire = moment(expiry).format('DD MMM, YYYY [at] h:mm a')
   const secondsUntilExpire = Math.max(
     0,
     Math.floor((expiry - Date.now()) / 1000)
   )
-  const expiryText = expired
-    ? `Expired: ${timeToExpire}`
-    : `Expires: ${secondsUntilExpire} seconds (${expiry / 1000})`
 
   async function onPressLoginDomain() {
     const canOpen = await Linking.canOpenURL(fromText)
@@ -240,6 +247,10 @@ export default (props) => {
     props.navigation.navigate('ScanQrCode', {
       firstTime: false,
     })
+  }
+
+  function onCountdownFinished() {
+    reloadExpired()
   }
 
   return (
@@ -295,7 +306,17 @@ export default (props) => {
                   'DD MMM, YYYY [at] h:mm a'
                 )}
               </Text>
-              {!expired && <Text style={style.expiresTime}>{expiryText}</Text>}
+              {!expired && (
+                <Text style={style.expiresTime}>
+                  Expires:{' '}
+                  <CountDownText
+                    seconds={secondsUntilExpire}
+                    style={style.countDownText}
+                    onFinish={onCountdownFinished}
+                  />{' '}
+                  seconds ({expiry / 1000})
+                </Text>
+              )}
             </View>
             {(expired || errorMessage) && (
               <View style={style.modal}>
@@ -331,7 +352,7 @@ export default (props) => {
                       style.text,
                       { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
                     ]}>
-                    {expiryText}
+                    Expired: {timeToExpire}
                   </Text>
                 )}
                 <Text
@@ -447,6 +468,10 @@ const style = StyleSheet.create({
     fontSize: 12,
     color: '#041133',
     marginBottom: 5,
+  },
+  countDownText: {
+    fontSize: 12,
+    color: '#041133',
   },
   verified: {
     flexDirection: 'row',
