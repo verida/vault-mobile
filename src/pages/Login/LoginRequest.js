@@ -221,9 +221,13 @@ export default (props) => {
   const appName = info.request?.context
   const expired = expiry <= Date.now()
   const timeToExpire = moment(expiry).format('DD MMM, YYYY [at] h:mm a')
+  const secondsUntilExpire = Math.max(
+    0,
+    Math.floor((expiry - Date.now()) / 1000)
+  )
   const expiryText = expired
     ? `Expired: ${timeToExpire}`
-    : `Expires: ${timeToExpire}`
+    : `Expires: ${secondsUntilExpire} seconds (${expiry / 1000})`
 
   async function onPressLoginDomain() {
     const canOpen = await Linking.canOpenURL(fromText)
@@ -293,50 +297,52 @@ export default (props) => {
               </Text>
               {!expired && <Text style={style.expiresTime}>{expiryText}</Text>}
             </View>
-            <View style={style.modal}>
-              {errorMessage && (
-                <>
-                  <View style={{ flexDirection: 'row' }}>
+            {(expired || errorMessage) && (
+              <View style={style.modal}>
+                {errorMessage && (
+                  <>
+                    <View style={{ flexDirection: 'row' }}>
+                      <Text
+                        style={[
+                          style.text,
+                          { color: errorMessage.color, marginBottom: 2 },
+                        ]}>
+                        <Icon
+                          type='AntDesign'
+                          name={errorMessage.iconName}
+                          style={[style.text, { color: errorMessage.color }]}
+                        />
+                        &nbsp; {errorMessage.heading}
+                      </Text>
+                    </View>
                     <Text
                       style={[
                         style.text,
-                        { color: errorMessage.color, marginBottom: 2 },
+                        { fontSize: 12, color: errorMessage.color },
+                        expired && { marginBottom: 5 },
                       ]}>
-                      <Icon
-                        type='AntDesign'
-                        name={errorMessage.iconName}
-                        style={[style.text, { color: errorMessage.color }]}
-                      />
-                      &nbsp; {errorMessage.heading}
+                      {errorMessage.message}
                     </Text>
-                  </View>
+                  </>
+                )}
+                {expired && (
                   <Text
                     style={[
                       style.text,
-                      { fontSize: 12, color: errorMessage.color },
-                      expired && { marginBottom: 5 },
+                      { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
                     ]}>
-                    {errorMessage.message}
+                    {expiryText}
                   </Text>
-                </>
-              )}
-              {expired && (
+                )}
                 <Text
                   style={[
                     style.text,
-                    { fontSize: 12, color: '#FF3B30', marginBottom: 2 },
+                    { fontSize: 12, color: '#FF3B30', marginTop: 5 },
                   ]}>
-                  {expiryText}
+                  Please refresh the login screen
                 </Text>
-              )}
-              <Text
-                style={[
-                  style.text,
-                  { fontSize: 12, color: '#FF3B30', marginTop: 5 },
-                ]}>
-                Please refresh the login screen
-              </Text>
-            </View>
+              </View>
+            )}
           </View>
         ) : null}
       </Content>
