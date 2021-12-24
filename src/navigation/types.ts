@@ -39,7 +39,9 @@ export type MainStackParams = {
   SingleCurrency: undefined
   SendToken: undefined
   TokenRecipient: undefined
-  ConfirmTransaction: ConfirmTransaction
+  ConfirmTransaction: undefined
+  TransactionSuccess: undefined
+  TransactionFailure: undefined
   BuyToken: undefined
   ReceiveToken: undefined
   SingleWallet: undefined
