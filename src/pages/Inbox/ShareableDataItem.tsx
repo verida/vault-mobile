@@ -1,11 +1,11 @@
 import React from 'react'
-import StravaSvg from 'assets/icons/strava.svg'
 import { StyleSheet, View, ViewProps } from 'react-native'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { GREY_COLOR, LIGHTGREY_COLOR, SUCCESS_COLOR } from 'constants/color'
 import moment from 'moment'
 import { CheckBox } from 'react-native-elements'
+import VeridaSvg from 'assets/icons/verida.svg'
 
 export type ShareableDataItemType = {
   _id: string
@@ -29,7 +29,7 @@ function ShareableDataItem(props: ShareableDataItemProps) {
 
   return (
     <View style={styles.item}>
-      <StravaSvg />
+      <VeridaSvg />
       <View style={styles.itemContent}>
         <Text style={{ fontFamily: NUNITO_SANS_BOLD, fontSize: 16 }}>
           {name}
