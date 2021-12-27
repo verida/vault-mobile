@@ -11,7 +11,6 @@ import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import Entypo from 'react-native-vector-icons/Entypo'
-import VeridaSvg from 'assets/icons/verida.svg'
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
@@ -79,11 +78,12 @@ function SchemasList(props: SchemasListProps) {
           disabled={!userSelect}>
           <View style={styles.content}>
             <View style={styles.header}>
-              {data.icon ? (
-                <Image style={styles.schemaLogo} source={{ uri: data.icon }} />
-              ) : (
-                <VeridaSvg />
-              )}
+              <Image
+                style={styles.schemaLogo}
+                source={
+                  data.icon ? { uri: data.icon } : require('assets/picture.png')
+                }
+              />
               <Text style={styles.folderName}>{data.name}</Text>
             </View>
             <Text style={styles.note} numberOfLines={2}>
