@@ -19,7 +19,7 @@ export const useEventHandlers = () => {
 
   useEffect(() => {
     async function onMessage(message: any) {
-      await fetchInboxCount()
+      // await fetchInboxCount()
       PushNotification.localNotification({
         title: get(message, 'sendBy.app') || 'New Message',
         message: message.message,
@@ -37,7 +37,7 @@ export const useEventHandlers = () => {
           await AccountManager.getInstance().vault?.inbox.getMessaging()
         await messaging.offMessage(onMessage)
         await messaging.onMessage(onMessage)
-        await fetchInboxCount()
+        // await fetchInboxCount()
       } catch (e) {
         console.error(e)
       }

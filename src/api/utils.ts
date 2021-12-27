@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import AccountManager from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 import store from 'reduxStore'
+import { get } from "lodash";
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -56,9 +57,9 @@ export const fetchPublicProfileData = async () => {
             account.did
           )
 
-        const avatar = await externalProfile?.get('avatar')
-        const name = await externalProfile?.get('name')
-        const country = await externalProfile?.get('country')
+        const name = get(externalProfile, 'name', '')
+        const avatar = get(externalProfile, 'avatar')
+        const country = get(externalProfile, 'avatar')
 
         accounts[account.did].publicProfile = {
           avatar: avatar,

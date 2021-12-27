@@ -13,6 +13,7 @@ const Inbox = () => {
   const loadInbox = useCallback(async (skip) => {
     try {
       const vault = AccountManager.getInstance().vault
+      console.log('vault:', vault)
       const inboxItems = await vault.inbox.fetchLatest(
         {},
         {
@@ -20,11 +21,15 @@ const Inbox = () => {
           skip,
         }
       )
+      console.log('inboxItems:', inboxItems)
+  
       const results = []
       for (let i = 0; i < inboxItems.length; i++) {
         let item = await buildItem(inboxItems[i])
         results.push(item)
       }
+      
+      console.log('result:', results)
 
       return results
     } catch (error) {

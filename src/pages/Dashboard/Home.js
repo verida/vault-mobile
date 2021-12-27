@@ -96,6 +96,7 @@ const Home = (props) => {
     const initProfile = async () => {
       try {
         setLoading(true)
+        // await fetchInboxCount()
         const _selectedAccount =
           AccountManager.getInstance().getSelectedAccount()
         const { name, avatar } = await getProfile(_selectedAccount.did)
@@ -119,9 +120,9 @@ const Home = (props) => {
     }
   }, [selectedAccount, publicProfileData])
 
-  useFocusEffect(() => {
-    fetchInboxCount()
-  })
+  useEffect(() => {
+    // fetchInboxCount()
+  }, [])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {

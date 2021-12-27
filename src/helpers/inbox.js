@@ -56,7 +56,15 @@ export const buildItem = async (inboxItem) => {
     item: inboxItem,
   }
 
-  const profile = await getProfile(inboxItem.sentBy)
+  const profile = {}
+  try {
+    console.log('getProfile:')
+    const profile = await getProfile(inboxItem.sentBy)
+    console.log('profile:', profile)
+  } catch (error) {
+    console.error(error)
+  }
+  console.log('')
   const name = get(profile, 'name', '')
   const avatar = get(profile, 'avatar')
   item.from = name ? `Sent by ${name}\n` : ''
@@ -72,8 +80,10 @@ export const getProfile = async (sentBy) => {
   const verida = AccountManager.getInstance().context
   try {
     const profile = await verida.openProfile('basicProfile', sentBy.did)
+    console.log('openProfile:', profile)
     return await profile.getMany()
   } catch (err) {
+    console.error(err)
     // User may not have created a profile
     return {}
   }
