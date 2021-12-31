@@ -26,7 +26,11 @@ import {
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { fetchInboxCount, getProfile } from 'api/utils'
+import {
+  fetchInboxCount,
+  getProfile,
+  registerRemoteNotification,
+} from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -122,6 +126,11 @@ const Home = (props) => {
   useFocusEffect(() => {
     fetchInboxCount()
   })
+
+  // Register device token to notification server
+  useEffect(() => {
+    registerRemoteNotification()
+  }, [])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {

@@ -6,6 +6,7 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
+  SET_DEVICE_TOKEN,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -27,6 +28,7 @@ const initialState = {
   selectedAccount: null,
   switchAccountToast: null,
   showSeedPhraseReminder: false,
+  deviceToken: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -79,6 +81,13 @@ const reducer = (state = initialState, action) => {
     case SET_SHOW_SEED_PHRASE_REMINDER:
       return update(state, {
         showSeedPhraseReminder: {
+          $set: action.payload,
+        },
+      })
+
+    case SET_DEVICE_TOKEN:
+      return update(state, {
+        deviceToken: {
           $set: action.payload,
         },
       })
