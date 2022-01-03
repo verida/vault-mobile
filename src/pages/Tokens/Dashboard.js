@@ -14,7 +14,6 @@ import { getListAndTotal } from 'reduxStore/wallet/selectors'
 
 const TokenDashboard = ({
   navigation,
-  getWallets,
   getPrices,
   getBalances,
   listAndTotal,
@@ -22,7 +21,6 @@ const TokenDashboard = ({
   const [sendModalVisible, setSendModalVisible] = useState(false)
   useEffect(() => {
     async function loadData() {
-      await getWallets()
       getBalances()
       getPrices()
     }
@@ -74,7 +72,6 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getWallets: () => dispatch(getWallets()),
     getPrices: () => dispatch(getPrices()),
     getBalances: () => dispatch(getBalances()),
   }
