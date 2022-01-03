@@ -42,6 +42,7 @@ export type MainStackParams = {
   ConfirmTransaction: undefined
   TransactionSuccess: undefined
   TransactionFailure: undefined
+  TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
   SingleWallet: undefined
