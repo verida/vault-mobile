@@ -14,10 +14,12 @@ import {
   setSelectedAccount,
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
+import { saveUserWallets } from 'reduxStore/wallet/actions'
 import { isEmpty } from 'lodash'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
+export const WALLETS_STORAGE_KEY = 'wallets'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
@@ -66,6 +68,12 @@ class AccountManager {
         const selectedAccountDid = await SecureStore.getItemAsync(
           SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
+
+        const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
+        if (walletsRaw) {
+          const wallets = JSON.parse(walletsRaw)
+          store.dispatch(saveUserWallets(wallets))
+        }
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
@@ -189,6 +197,8 @@ class AccountManager {
   public async setUserWallet() {
     try {
       const userHDWalletMnemonic = WalletUtils.generateMnemonic()
+
+      // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
         'https://saadibrah.im/schema/wallet.json'
       )
@@ -198,6 +208,41 @@ class AccountManager {
         label: 'Multi Coin Wallet',
       }
       await walletDb?.save(wallet)
+
+      // generate wallets and save em to redux state
+      const userGeneratedWallets =
+        WalletUtils.generateHDWallets(userHDWalletMnemonic)
+      await store.dispatch(saveUserWallets(userGeneratedWallets))
+
+      // save to storage..
+      await SecureStore.setItemAsync(
+        WALLETS_STORAGE_KEY,
+        JSON.stringify(userGeneratedWallets)
+      )
+    } catch (e) {
+      Sentry.captureException(e)
+      throw e
+    }
+  }
+
+  public async restoreUserWallet() {
+    try {
+      const datastore = await this.context?.openDatastore(
+        'https://saadibrah.im/schema/wallet.json'
+      )
+
+      const HDwallets = await datastore?.getMany()
+      if (HDwallets) {
+        const wallets = WalletUtils.generateHDWallets(HDwallets[0].mnemonic)
+
+        await store.dispatch(saveUserWallets(wallets))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+      }
     } catch (e) {
       Sentry.captureException(e)
       throw e
@@ -224,7 +269,6 @@ class AccountManager {
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
-      // store.dispatch(setUserWallets(userGeneratedWallets.wallets))
 
       return this.selectedAccount
     } catch (e) {
@@ -244,6 +288,8 @@ class AccountManager {
       selectedDids = Object.keys(this.accounts)
     }
     try {
+      await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
+
       selectedDids.forEach((did) => {
         delete this.accounts[did]
       })
@@ -364,7 +410,7 @@ class AccountManager {
       }
 
       await this.connect(true)
-
+      await this.restoreUserWallet()
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
