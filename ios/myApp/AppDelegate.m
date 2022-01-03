@@ -14,6 +14,7 @@
 #import <RNCPushNotificationIOS.h>
 
 #import <CodePush/CodePush.h>
+#import <Firebase.h>
 
 #ifdef FB_SONARKIT_ENABLED
 #import <FlipperKit/FlipperClient.h>
@@ -54,6 +55,8 @@ static void InitializeFlipper(UIApplication *application) {
 #if DEBUG
   InitializeFlipper(application);
 #endif
+  
+  [FIRApp configure];
   
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];

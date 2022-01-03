@@ -42,6 +42,7 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
+import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -55,6 +56,7 @@ const Home = (props) => {
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
+  useRemoteNotifications()
 
   useEffect(() => {
     const getUrl = async () => {
