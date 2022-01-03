@@ -30,6 +30,9 @@ import {
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
   SEND_TRANSACTION_FAILED,
+  TRANSACTION_DETAIL_FETCH_START,
+  TRANSACTION_DETAIL_FETCH_FAILED,
+  FETCHED_TRANSACTION_DETAIL,
 } from './wallet/types'
 import update from 'immutability-helper'
 
@@ -68,6 +71,11 @@ const initialState = {
   },
   sentTransaction: {
     data: {},
+    fetching: false,
+    error: undefined,
+  },
+  transactionDetails: {
+    data: null,
     fetching: false,
     error: undefined,
   },
@@ -214,6 +222,30 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         sentTransaction: { fetching: false, error: action.error, data: {} },
+      }
+
+    case TRANSACTION_DETAIL_FETCH_START:
+      return {
+        ...state,
+        transactionDetails: { fetching: true, error: undefined, data: null },
+      }
+    case FETCHED_TRANSACTION_DETAIL:
+      return {
+        ...state,
+        transactionDetails: {
+          fetching: false,
+          error: undefined,
+          data: action.data,
+        },
+      }
+    case TRANSACTION_DETAIL_FETCH_FAILED:
+      return {
+        ...state,
+        transactionDetails: {
+          fetching: false,
+          error: action.error,
+          data: null,
+        },
       }
 
     case SET_USER_WALLETS:
