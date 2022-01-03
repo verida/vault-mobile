@@ -20,6 +20,7 @@ import TokenRecipient from 'pages/Tokens/TokenRecipient'
 import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
 import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
 import TransactionFailure from 'pages/Tokens/TransactionFailure'
+import TransactionDetails from 'pages/Tokens/TransactionDetails'
 import BuyToken from 'pages/Tokens/BuyToken'
 import ReceiveToken from 'pages/Tokens/ReceiveToken'
 import Folder from 'pages/Data/Folder'
@@ -68,6 +69,10 @@ function MainNavigator() {
       <Stack.Screen
         name={'TransactionFailure'}
         component={TransactionFailure}
+      />
+      <Stack.Screen
+        name={'TransactionDetails'}
+        component={TransactionDetails}
       />
       <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
       <Stack.Screen name={'BuyToken'} component={BuyToken} />
