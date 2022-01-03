@@ -1,8 +1,6 @@
 import algosdk from 'algosdk'
 
 import { pricingApi, chainsApi } from 'helpers/api'
-import WalletUtils from '@verida/wallet-utils'
-import AccountManager from 'api/AccountManager'
 import {
   getWalletsData,
   getTransactionParamsData,
@@ -26,6 +24,9 @@ import {
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
   SEND_TRANSACTION_FAILED,
+  TRANSACTION_DETAIL_FETCH_START,
+  TRANSACTION_DETAIL_FETCH_FAILED,
+  FETCHED_TRANSACTION_DETAIL,
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
@@ -70,17 +71,25 @@ export const getBalances = () => {
   return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
 
-    const wallets = getWalletsData(getState())
+    try {
+      const wallets = getWalletsData(getState())
 
-    let accountInfo = await indexerClient
-      .lookupAccountByID(wallets.algo.address)
-      .do()
-    if (accountInfo && !accountInfo.message) {
-      dispatch({ type: FETCHED_BALANCES, data: accountInfo.account })
-    } else {
+      let accountInfo = await indexerClient
+        .lookupAccountByID(wallets.algo.address)
+        .do()
+
+      if (accountInfo && !accountInfo.message) {
+        dispatch({ type: FETCHED_BALANCES, data: accountInfo.account })
+      } else {
+        dispatch({
+          type: BALANCES_FETCH_FAILED,
+          error: accountInfo.message,
+        })
+      }
+    } catch (error) {
       dispatch({
         type: BALANCES_FETCH_FAILED,
-        error: accountInfo.message,
+        error: 'error',
       })
     }
   }
@@ -112,15 +121,30 @@ export const getTransactionsForToken = (assetID) => {
   }
 }
 
-export const getWallets = () => {
+export const getTransactionDetails = (transactionID) => {
   return async (dispatch) => {
-    const veridaApp = AccountManager.getInstance().context
-    const datastore = await veridaApp.openDatastore(
-      'https://saadibrah.im/schema/wallet.json'
-    )
+    dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
 
-    const HDwallets = await datastore.getMany()
-    const wallets = WalletUtils.generateHDWallets(HDwallets[0].mnemonic)
+    let transactionData = await indexerClient
+      .lookupTransactionByID(transactionID)
+      .do()
+
+    if (transactionData) {
+      dispatch({
+        type: FETCHED_TRANSACTION_DETAIL,
+        data: transactionData.transaction,
+      })
+    } else {
+      dispatch({
+        type: TRANSACTION_DETAIL_FETCH_FAILED,
+        error: "Couldn'nt load transactions",
+      })
+    }
+  }
+}
+
+export const saveUserWallets = (wallets) => {
+  return async (dispatch) => {
     dispatch({
       type: SET_USER_WALLETS,
       data: wallets,
