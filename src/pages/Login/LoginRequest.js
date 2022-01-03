@@ -250,7 +250,7 @@ export default (props) => {
   }
 
   function onCountdownFinished() {
-    reloadExpired()
+    setExpired(true)
   }
 
   return (
