@@ -15,13 +15,13 @@ const icons = {
 
 export default ({ symbol, item }) => {
   const navigation = useNavigation()
-  const { type, quantity, address } = item
+  const { type, quantity, address, id } = item
 
   return (
     <ListItem
       button
       onPress={() => {
-        navigation.navigate('SingleCurrency')
+        navigation.navigate('TransactionDetails', { id })
       }}
       style={styles.listItem}>
       {icons[type]}
