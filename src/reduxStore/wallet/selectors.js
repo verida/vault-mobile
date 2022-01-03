@@ -100,3 +100,38 @@ export const getTransactionParamsData = (state) => {
 export const selectSentTransaction = (state) => {
   return state.sentTransaction
 }
+
+export const selectTransactionData = (state) => {
+  const wallets = getWalletsData(state)
+  const userAddr = wallets.algo.address
+  const rawTransaction = state.transactionDetails.data
+  if (rawTransaction) {
+    let isUserSender = rawTransaction.sender === userAddr
+    let transferInfo = rawTransaction['asset-transfer-transaction']
+      ? rawTransaction['asset-transfer-transaction']
+      : rawTransaction['payment-transaction']
+    let symbol
+    if (rawTransaction['asset-transfer-transaction']) {
+      let tok = SUPPORTED_TOKENS.find(
+        (ele) =>
+          ele.address ===
+          rawTransaction['asset-transfer-transaction']['asset-id'].toString()
+      )
+      symbol = tok.symbol
+    } else {
+      symbol = SUPPORTED_TOKENS[0].symbol
+    }
+    return {
+      id: rawTransaction.id,
+      type: isUserSender ? 'sent' : 'received',
+      address: isUserSender ? transferInfo.receiver : rawTransaction.sender,
+      quantity: transferInfo.amount,
+      fee: rawTransaction.fee,
+      round: rawTransaction['confirmed-round'],
+      time: rawTransaction['round-time'],
+      symbol,
+    }
+  } else {
+    return {}
+  }
+}
