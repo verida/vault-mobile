@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { Content } from 'native-base'
 import * as Sentry from '@sentry/react-native'
-import { Alert, StyleSheet, View } from 'react-native'
+import { Alert, Image, StyleSheet, View } from 'react-native'
 import AccountManager from 'api/AccountManager'
-import LogoSvg from 'assets/icons/house.svg'
 import Text from 'components/Text'
 import moment from 'moment'
 import SchemasList from 'components/Inbox/SchemasList'
 import { GREY_COLOR } from 'constants/color'
 import Button from 'components/Button'
 import { isEmpty } from 'lodash'
+import { DefaultAvatar } from 'api/utils'
 
 export default ({ item, inboxItem, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
@@ -55,7 +55,10 @@ export default ({ item, inboxItem, navigation }) => {
     <Content>
       <View style={styles.container}>
         <View style={styles.sender}>
-          <LogoSvg />
+          <Image
+            source={item.logo || DefaultAvatar}
+            style={styles.senderAvatar}
+          />
           <View style={styles.senderInfo}>
             <Text style={styles.senderName}>{item.item.sentBy.context}</Text>
             <Text style={styles.sendAt}>{formattedSentAt}</Text>
@@ -124,5 +127,11 @@ const styles = StyleSheet.create({
   },
   shareButton: {
     marginLeft: 10,
+  },
+  senderAvatar: {
+    width: 60,
+    height: 60,
+    borderRadius: 30,
+    resizeMode: 'contain',
   },
 })
