@@ -435,7 +435,7 @@ class AccountManager {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
-      return name.includes('_*vda1337@_')
+      return name.includes('_vda')
     } catch (e) {
       Sentry.captureException(e)
       throw e
