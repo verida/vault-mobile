@@ -9,7 +9,12 @@ const ListView = ({ folder }) => {
 
   useEffect(() => {
     const init = async () => {
-      const items = await folder.getMany()
+      const items = await folder.getMany(
+        {},
+        {
+          sort: [{ insertedAt: 'desc' }],
+        }
+      )
 
       setList(items)
       setLoading(false)

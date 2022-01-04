@@ -1,3 +1,5 @@
+import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+
 export type RootStackParams = {
   Auth: undefined
   Main: undefined
@@ -33,6 +35,15 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   SeedPhraseView: undefined
+  ManageWallets: undefined
+  SingleCurrency: undefined
+  SendToken: undefined
+  TokenRecipient: undefined
+  BuyToken: undefined
+  ReceiveToken: undefined
+  SingleWallet: undefined
+  OtherAddresses: undefined
+  SuccessFailure: undefined
   DataFolder: { folderName: string }
   DataItem: undefined
   Settings: undefined
@@ -40,4 +51,12 @@ export type MainStackParams = {
   ScanQrCode: { firstTime: boolean }
   AddAccount: undefined
   ImportAccount: undefined
+  SeedPhrase: undefined
+  SeedPhraseGenerated: undefined
+  VerifyPhrase: undefined
+  ShareableData: {
+    schemaUrl: string
+    onConfirm: (selectedItems: ShareableDataItemType[]) => void
+    filter: any
+  }
 }

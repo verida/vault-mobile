@@ -13,6 +13,7 @@ export default (props) => {
     switch (props.color) {
       case 'secondary':
       case 'transparent':
+      case 'transparent-border':
       case 'grey':
         return 'primary'
       case 'transparent-grey':

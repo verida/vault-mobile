@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  Dimensions,
   InteractionManager,
   Linking,
   StyleSheet,
@@ -19,12 +20,13 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   BLACK_COLOR_OPACITY,
   BLACK_ORIGIN_COLOR,
+  LIGHT_ORANGE_COLOR,
   ORANGE_COLOR,
   WHITE_COLOR,
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { fetchInboxCount, loadAvatarSource } from 'api/utils'
+import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -35,9 +37,11 @@ import DidView from 'pages/Dashboard/DidView'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
+import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
+const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 const Home = (props) => {
   const { navigation, selectedAccount, publicProfileData } = props
@@ -50,13 +54,18 @@ const Home = (props) => {
 
   useEffect(() => {
     const getUrl = async () => {
-      const initialUrl = await Linking.getInitialURL()
+      try {
+        const initialUrl = await Linking.getInitialURL()
 
-      if (initialUrl === null) {
-        return
+        if (initialUrl === null) {
+          return
+        }
+
+        handleDeeplink(initialUrl)
+      } catch (e) {
+        Sentry.captureException(e)
+        console.error(e)
       }
-
-      handleDeeplink(initialUrl)
     }
 
     getUrl()
@@ -64,14 +73,19 @@ const Home = (props) => {
 
   useEffect(() => {
     async function checkFirstTimeLogin() {
-      const isFirstTimeLogin = await SecureStore.getItemAsync(
-        FIRST_TIME_LOGIN_KEY
-      )
-      if (isFirstTimeLogin) {
-        await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
-        navigation.navigate('ScanQrCode', {
-          firstTime: true,
-        })
+      try {
+        const isFirstTimeLogin = await SecureStore.getItemAsync(
+          FIRST_TIME_LOGIN_KEY
+        )
+        if (isFirstTimeLogin) {
+          await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
+          navigation.navigate('ScanQrCode', {
+            firstTime: true,
+          })
+        }
+      } catch (e) {
+        Sentry.captureException(e)
+        console.error(e)
       }
     }
 
@@ -82,13 +96,13 @@ const Home = (props) => {
     const initProfile = async () => {
       try {
         setLoading(true)
-        const accountManager = AccountManager.getInstance()
-        const name = await accountManager.vault.profiles.public.get('name')
-        const source = await loadAvatarSource()
-        setAvatarSource(source)
+        const _selectedAccount =
+          AccountManager.getInstance().getSelectedAccount()
+        const { name, avatar } = await getProfile(_selectedAccount.did)
+        setAvatarSource(avatar)
 
         setInfo({
-          address: accountManager.selectedAccount.did,
+          address: _selectedAccount.did,
           name,
         })
 
@@ -145,6 +159,10 @@ const Home = (props) => {
     await refresh()
   }
 
+  function onRecordSeedPhrase() {
+    navigation.navigate('SeedPhrase')
+  }
+
   return (
     <Container>
       <HomeNavigationHeader
@@ -193,6 +211,10 @@ const Home = (props) => {
         onImport={onImportAccount}
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
+      />
+      <SeedPhraseRemindView
+        onRecordPress={onRecordSeedPhrase}
+        style={style.seedPhraseRemindView}
       />
     </Container>
   )
@@ -292,5 +314,13 @@ const style = StyleSheet.create({
     marginLeft: 10,
     color: '#041133',
     fontSize: 16,
+  },
+  seedPhraseRemindView: {
+    position: 'absolute',
+    bottom: 16,
+    left: 15,
+    width: SCREEN_WIDTH - 30,
+    backgroundColor: LIGHT_ORANGE_COLOR,
+    borderRadius: 3,
   },
 })

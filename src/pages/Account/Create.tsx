@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import {
   Alert,
   StyleSheet,
@@ -22,6 +22,7 @@ import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AccountManager from 'api/AccountManager'
+import TCCheckbox from 'components/TCCheckbox'
 
 type Option = {
   label: string
@@ -35,6 +36,15 @@ function Create(
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)
   const [processing, setProcessing] = useState(false)
+  const [agreedTC, setAgreedTC] = useState(false)
+  const [isFormValid, setIsFormValid] = useState(false)
+
+  useEffect(() => {
+    const isNameValid = name.length >= 2 && name.length <= 140
+    const isCountryValid =
+      !!country && country.value.length >= 2 && country.value.length <= 140
+    setIsFormValid(isNameValid && isCountryValid)
+  }, [country, name.length])
 
   const onCountryChange = (option: Option) => setCountry(option)
   const onCreateAccount = async () => {
@@ -60,6 +70,10 @@ function Create(
     navigation.navigate('SeedPhraseEntered')
   }
 
+  function toggleAgreedTC() {
+    setAgreedTC((prevState) => !prevState)
+  }
+
   return (
     <>
       <NavigationHeader title='Create An Account' />
@@ -83,12 +97,17 @@ function Create(
             containerStyle={InputStyles.select}
             onChangeItem={onCountryChange}
           />
+          <TCCheckbox
+            checked={agreedTC}
+            style={styles.termAndCondition}
+            onToggle={toggleAgreedTC}
+          />
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.createAccountButton}
             color='primary'
-            disabled={!country || processing}
+            disabled={!isFormValid || processing}
             loading={processing}
             onPress={onCreateAccount}>
             Create Account
@@ -129,6 +148,9 @@ const styles = StyleSheet.create({
   importAccountButtonText: {
     color: PRIMARY_COLOR,
     fontFamily: NUNITO_SANS_SEMIBOLD,
+  },
+  termAndCondition: {
+    marginTop: 15,
   },
 })
 

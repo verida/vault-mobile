@@ -11,6 +11,7 @@ import {
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import { useNavigation } from '@react-navigation/native'
+import VeridaSvg from 'assets/icons/verida.svg'
 
 export default ({ options }) => {
   const navigation = useNavigation()
@@ -23,7 +24,11 @@ export default ({ options }) => {
     <TouchableOpacity
       style={[style.card, !options.read ? style.unread : '']}
       onPress={onPress}>
-      <Image source={{ uri: options.logo }} style={style.logo} />
+      {options.logo ? (
+        <Image source={options.logo} style={style.logo} />
+      ) : (
+        <VeridaSvg />
+      )}
       <View style={style.details}>
         <View style={style.tile}>
           <View>
