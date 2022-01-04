@@ -1,11 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewProps,
+} from 'react-native'
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import Entypo from 'react-native-vector-icons/Entypo'
-import { SvgCssUri } from 'react-native-svg'
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
@@ -73,9 +78,12 @@ function SchemasList(props: SchemasListProps) {
           disabled={!userSelect}>
           <View style={styles.content}>
             <View style={styles.header}>
-              <View style={styles.icon}>
-                <SvgCssUri width='100%' height='100%' uri={data.icon} />
-              </View>
+              <Image
+                style={styles.schemaLogo}
+                source={
+                  data.icon ? { uri: data.icon } : require('assets/picture.png')
+                }
+              />
               <Text style={styles.folderName}>{data.name}</Text>
             </View>
             <Text style={styles.note} numberOfLines={2}>
@@ -121,9 +129,11 @@ const styles = StyleSheet.create({
     flex: 1,
     marginRight: 10,
   },
-  icon: {
+  schemaLogo: {
     width: 40,
     height: 40,
+    resizeMode: 'cover',
+    borderRadius: 20,
   },
 })
 

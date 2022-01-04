@@ -26,7 +26,7 @@ import {
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { fetchInboxCount, loadAvatarSource } from 'api/utils'
+import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -54,13 +54,18 @@ const Home = (props) => {
 
   useEffect(() => {
     const getUrl = async () => {
-      const initialUrl = await Linking.getInitialURL()
+      try {
+        const initialUrl = await Linking.getInitialURL()
 
-      if (initialUrl === null) {
-        return
+        if (initialUrl === null) {
+          return
+        }
+
+        handleDeeplink(initialUrl)
+      } catch (e) {
+        Sentry.captureException(e)
+        console.error(e)
       }
-
-      handleDeeplink(initialUrl)
     }
 
     getUrl()
@@ -68,14 +73,19 @@ const Home = (props) => {
 
   useEffect(() => {
     async function checkFirstTimeLogin() {
-      const isFirstTimeLogin = await SecureStore.getItemAsync(
-        FIRST_TIME_LOGIN_KEY
-      )
-      if (isFirstTimeLogin) {
-        await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
-        navigation.navigate('ScanQrCode', {
-          firstTime: true,
-        })
+      try {
+        const isFirstTimeLogin = await SecureStore.getItemAsync(
+          FIRST_TIME_LOGIN_KEY
+        )
+        if (isFirstTimeLogin) {
+          await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
+          navigation.navigate('ScanQrCode', {
+            firstTime: true,
+          })
+        }
+      } catch (e) {
+        Sentry.captureException(e)
+        console.error(e)
       }
     }
 
@@ -86,13 +96,13 @@ const Home = (props) => {
     const initProfile = async () => {
       try {
         setLoading(true)
-        const accountManager = AccountManager.getInstance()
-        const name = await accountManager.vault.profiles.public.get('name')
-        const source = await loadAvatarSource()
-        setAvatarSource(source)
+        const _selectedAccount =
+          AccountManager.getInstance().getSelectedAccount()
+        const { name, avatar } = await getProfile(_selectedAccount.did)
+        setAvatarSource(avatar)
 
         setInfo({
-          address: accountManager.selectedAccount.did,
+          address: _selectedAccount.did,
           name,
         })
 

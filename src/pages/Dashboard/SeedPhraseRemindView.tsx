@@ -24,6 +24,10 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
 
   useEffect(() => {
     async function checkReminder() {
+      if (!selectedAccount) {
+        return
+      }
+
       if (selectedAccount?.seedPhraseReminder?.backedup) {
         dispatch(setShowSeedPhraseReminder(false))
         return
