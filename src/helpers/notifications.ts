@@ -3,6 +3,8 @@ import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 import { navigate } from 'navigation/RootNavigator'
 import * as Sentry from '@sentry/react-native'
+import store from 'reduxStore'
+import { setDeviceToken } from 'reduxStore/general/actions'
 
 export const CHANNEL_ID = 'verida-vault'
 
@@ -27,6 +29,7 @@ export function configureNotifications() {
     // (optional) Called when Token is generated (iOS and Android)
     onRegister: function (token) {
       console.log('TOKEN:', token)
+      store.dispatch(setDeviceToken(token.token))
     },
 
     // (required) Called when a remote is received or opened, or local notification is opened
@@ -34,6 +37,7 @@ export function configureNotifications() {
       try {
         console.log('NOTIFICATION:', notification)
         const { data } = notification
+        // TODO: handle remote notification
 
         // process the notification
         switch (data.category) {

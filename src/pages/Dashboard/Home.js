@@ -26,7 +26,11 @@ import {
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import { fetchInboxCount, getProfile } from 'api/utils'
+import {
+  fetchInboxCount,
+  getProfile,
+  registerRemoteNotification,
+} from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -38,6 +42,7 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
 import { useFocusEffect } from '@react-navigation/native'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
+import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
@@ -51,6 +56,7 @@ const Home = (props) => {
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
+  useRemoteNotifications()
 
   useEffect(() => {
     const getUrl = async () => {
@@ -122,6 +128,11 @@ const Home = (props) => {
   useFocusEffect(() => {
     fetchInboxCount()
   })
+
+  // Register device token to notification server
+  useEffect(() => {
+    registerRemoteNotification()
+  }, [])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {

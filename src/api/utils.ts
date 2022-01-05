@@ -1,5 +1,8 @@
 import * as Sentry from '@sentry/react-native'
-import AccountManager from 'api/AccountManager'
+import AccountManager, {
+  VERIDA_CONTEXT_NAME,
+  VERIDA_TESTNET_NOTIFICATION_SERVER,
+} from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 import store from 'reduxStore'
 
@@ -113,5 +116,24 @@ export async function getProfile(did: string) {
       name: 'Unknown',
       avatar: DefaultAvatar,
     }
+  }
+}
+
+export async function registerRemoteNotification(token: string) {
+  try {
+    const body = JSON.stringify({
+      data: {
+        did: AccountManager.getInstance().getSelectedAccount()?.did,
+        context: VERIDA_CONTEXT_NAME,
+        deviceId: token,
+      },
+    })
+    await fetch(`${VERIDA_TESTNET_NOTIFICATION_SERVER}/register`, {
+      method: 'POST',
+      body,
+    })
+  } catch (e) {
+    console.error(e)
+    Sentry.captureException(e)
   }
 }
