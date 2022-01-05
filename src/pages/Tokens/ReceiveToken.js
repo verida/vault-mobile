@@ -88,8 +88,7 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
           <Button
             style={styles.saveButton}
             color='primary'
-            // disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => navigation.goBack()}>
             Done
           </Button>
         </View>
