@@ -32,8 +32,8 @@ const ConfirmTransaction = ({
     <Container>
       <NavigationHeader
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => navigation.goBack(),
+          icon: <Icon name='close' style={{ color: '#000' }} />,
+          action: () => navigation.navigate('Tokens'),
         }}
         title={'Send ' + token.symbol}
       />
