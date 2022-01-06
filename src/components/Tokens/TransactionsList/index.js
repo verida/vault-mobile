@@ -3,7 +3,7 @@ import { FlatList, Text, View } from 'react-native'
 
 import TransactionsListItem from './TransactionsListItem'
 
-export default ({ symbol, list }) => {
+export default ({ symbol, list, onPullToRefresh, refreshing }) => {
   const renderItem = ({ item }) => (
     <TransactionsListItem symbol={symbol} item={item} />
   )
@@ -20,6 +20,8 @@ export default ({ symbol, list }) => {
       renderItem={renderItem}
       keyExtractor={(item) => item.id}
       ListEmptyComponent={emptyList}
+      onRefresh={onPullToRefresh}
+      refreshing={refreshing}
     />
   )
 }
