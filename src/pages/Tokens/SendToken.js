@@ -1,5 +1,11 @@
 import React from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  Alert,
+} from 'react-native'
 import { Container, Icon } from 'native-base'
 
 import Text from 'components/Text'
@@ -43,10 +49,15 @@ const tokenList = [
   },
 ]
 
+const showAlert = () =>
+  Alert.alert('Invalid quantity', 'Quantity is higher than wallet balance')
+
 export default ({ navigation, route }) => {
   const [selectedAddress, onSelectAddress] = React.useState(null)
   const [selectedToken, onSelectToken] = React.useState(null)
   const [amount, onUpdateAmount] = React.useState(null)
+  const [amountValid, onUpdateValidation] = React.useState(false)
+  console.log(amountValid, 'amountValid state')
   const token = route.params.token
 
   return (
@@ -60,7 +71,11 @@ export default ({ navigation, route }) => {
       />
       <View style={styles.container}>
         <View style={styles.content}>
-          <TokenCalculator token={token} onUpdateAmount={onUpdateAmount} />
+          <TokenCalculator
+            token={token}
+            onUpdateAmount={onUpdateAmount}
+            onUpdateValidation={onUpdateValidation}
+          />
 
           {/* <Text style={styles.label}>Select address</Text>
           <View style={styles.addressScroller}>
@@ -117,9 +132,13 @@ export default ({ navigation, route }) => {
             color='primary'
             disabled={!(amount > 0)}
             // loading={processing}
-            onPress={() =>
-              navigation.navigate('TokenRecipient', { token, amount })
-            }>
+            onPress={() => {
+              if (amountValid) {
+                navigation.navigate('TokenRecipient', { token, amount })
+              } else {
+                showAlert()
+              }
+            }}>
             Next
           </Button>
         </View>
