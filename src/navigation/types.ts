@@ -52,7 +52,7 @@ export type MainStackParams = {
   DataItem: undefined
   Settings: undefined
   ChangePin: undefined
-  ScanQrCode: { firstTime: boolean }
+  ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: undefined
   ImportAccount: undefined
   SeedPhrase: undefined
