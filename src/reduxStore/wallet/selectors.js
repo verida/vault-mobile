@@ -62,17 +62,25 @@ export const getListAndTotal = (state) => {
   }
 }
 
+export const getTokensData = (state) => {
+  const loading = state.pricing.fetching && state.balances.fetching
+
+  return {
+    listAndTotal: getListAndTotal(state),
+    loading: loading,
+  }
+}
+
 export const getWalletsData = (state) => {
   return state.wallets.data || {}
 }
 
-export const getTransactionsData = (state) => {
+export const selectTransactions = (state) => {
   //   const userAddr = 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE'
   //   const userAddr = 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
   const wallets = getWalletsData(state)
   const userAddr = wallets.algo.address
   const rawTransactions = state.transactions.data || []
-  console.log(rawTransactions, 'rawTransactions')
   let transactions = []
   if (rawTransactions) {
     transactions = rawTransactions.map((tx) => {
@@ -93,6 +101,16 @@ export const getTransactionsData = (state) => {
   }
 }
 
+export const selectTransactionsData = (state) => {
+  const { fetching, error } = state.transactions
+
+  return {
+    list: selectTransactions(state),
+    loading: fetching,
+    error: error,
+  }
+}
+
 export const getTransactionParamsData = (state) => {
   return state.transactionParams.data || {}
 }
@@ -101,7 +119,7 @@ export const selectSentTransaction = (state) => {
   return state.sentTransaction
 }
 
-export const selectTransactionData = (state) => {
+export const selectTransaction = (state) => {
   const wallets = getWalletsData(state)
   const userAddr = wallets.algo.address
   const rawTransaction = state.transactionDetails.data
@@ -133,5 +151,15 @@ export const selectTransactionData = (state) => {
     }
   } else {
     return {}
+  }
+}
+
+export const selectTransactionData = (state) => {
+  const { fetching, error } = state.transactionDetails
+
+  return {
+    transaction: selectTransaction(state),
+    loading: fetching,
+    error: error,
   }
 }
