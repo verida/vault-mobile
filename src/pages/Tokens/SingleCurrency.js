@@ -1,13 +1,14 @@
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Container, Icon } from 'native-base'
 import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenBanner from 'components/Tokens/TokenBanner'
+import LoadingIndicator from 'components/LoadingIndicator'
 import TransactionsList from 'components/Tokens/TransactionsList'
 
 import { getTransactionsForToken } from 'reduxStore/wallet/actions'
-import { getTransactionsData } from 'reduxStore/wallet/selectors'
+import { selectTransactionsData } from 'reduxStore/wallet/selectors'
 
 const SingleCurrency = ({
   navigation,
@@ -16,9 +17,15 @@ const SingleCurrency = ({
   transactions,
 }) => {
   const { item } = route.params
+  const { list, loading } = transactions
+
+  function pullToRefresh() {
+    getTransactionsForToken(item.address)
+  }
+
   useEffect(() => {
     async function loadData() {
-      await getTransactionsForToken(item.address)
+      getTransactionsForToken(item.address)
     }
 
     loadData()
@@ -42,14 +49,23 @@ const SingleCurrency = ({
           navigation.navigate('SendToken', { token: item })
         }
       />
-      <TransactionsList symbol={item.symbol} list={transactions} />
+      {loading ? (
+        <LoadingIndicator />
+      ) : (
+        <TransactionsList
+          symbol={item.symbol}
+          onPullToRefresh={() => pullToRefresh()}
+          refreshing={loading}
+          list={list}
+        />
+      )}
     </Container>
   )
 }
 
 const mapStateToProps = (state) => {
   return {
-    transactions: getTransactionsData(state),
+    transactions: selectTransactionsData(state),
   }
 }
 
