@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { StyleSheet, TouchableOpacity, View, TextInput } from 'react-native'
 import { Container, Icon } from 'native-base'
 import Clipboard from '@react-native-community/clipboard'
@@ -24,9 +24,13 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
     setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
     // setAddress(clipboardTest)
   }
+  function onReadQRCode(data) {
+    setAddress(data)
+  }
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
       firstTime: false,
+      onReadQRCode: (data) => onReadQRCode(data),
     })
   }
 
@@ -45,7 +49,7 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
           <TextInput
             value={address}
             autoFocus={true}
-            multiline
+            // multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
