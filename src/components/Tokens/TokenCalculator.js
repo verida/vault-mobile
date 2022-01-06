@@ -16,23 +16,26 @@ const convert = (number, mode, price) => {
   }
 }
 
-export default ({ onUpdateAmount, token }) => {
+export default ({ onUpdateAmount, onUpdateValidation, token }) => {
   const [number, onChangeNumber] = React.useState('0')
   const [mode, onSwitchMode] = React.useState('crypto')
   const { symbol, price, quantity } = token
   const converted = convert(number, mode, price)
   const maxFiat = (quantity * price) / 1000000
+  let maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity / 1000000
+
+  function updateAmount(num) {
+    onChangeNumber(num)
+    onUpdateAmount(num)
+    let isValidAmount = parseFloat(num) <= parseFloat(maxNumber)
+    onUpdateValidation(isValidAmount)
+  }
 
   return (
     <View style={styles.bannerWrapper}>
       <TouchableOpacity
         onPress={() => {
-          let maxNumber =
-            mode === 'fiat'
-              ? maxFiat.toFixed(2).toString()
-              : (quantity / 1000000).toString()
-          onChangeNumber(maxNumber)
-          onUpdateAmount(maxNumber)
+          updateAmount(maxNumber.toString())
         }}
         style={styles.button}>
         <Text style={styles.maxButtonText}>Max</Text>
@@ -43,8 +46,7 @@ export default ({ onUpdateAmount, token }) => {
           <TextInput
             style={styles.amountInput}
             onChangeText={(text) => {
-              onUpdateAmount(text)
-              onChangeNumber(text)
+              updateAmount(text)
             }}
             value={number}
           />
@@ -57,7 +59,9 @@ export default ({ onUpdateAmount, token }) => {
         </Text>
       </View>
       <TouchableOpacity
-        onPress={() => onSwitchMode(mode === 'fiat' ? 'crypto' : 'fiat')}
+        onPress={() => {
+          onSwitchMode(mode === 'fiat' ? 'crypto' : 'fiat')
+        }}
         style={styles.button}>
         <SwapIcon />
       </TouchableOpacity>
