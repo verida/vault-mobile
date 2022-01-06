@@ -37,7 +37,12 @@ function ScanQrCode(
       enabled = true
     }, WAIT_TIME)
     const { data } = event
-    handleDeeplink(data)
+    if (route.params.onReadQRCode) {
+      route.params.onReadQRCode(data)
+      navigation.goBack()
+    } else {
+      handleDeeplink(data)
+    }
   }
 
   return (
