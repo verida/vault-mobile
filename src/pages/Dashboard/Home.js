@@ -129,11 +129,6 @@ const Home = (props) => {
     fetchInboxCount()
   })
 
-  // Register device token to notification server
-  useEffect(() => {
-    registerRemoteNotification()
-  }, [])
-
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
       firstTime: false,
