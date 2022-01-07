@@ -23,7 +23,7 @@ const NETWORKS = [
   },
 ]
 
-function Networks(props: NativeStackScreenProps<MainStackParams, 'Networks'>) {
+function Networks(_props: NativeStackScreenProps<MainStackParams, 'Networks'>) {
   const [selectedNetwork, setSelectedNetwork] = useState(NETWORKS[0].id)
 
   return (

@@ -8,7 +8,7 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 export type NetworkType = {
   id: string
   title: string
-  logo: React.Component
+  logo: React.ReactElement
   disabled: boolean
 }
 

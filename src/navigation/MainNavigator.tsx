@@ -72,7 +72,7 @@ function MainNavigator() {
       />
       <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
-        <Stack.Screen name={'Networks'} component={Networks} />
+      <Stack.Screen name={'Networks'} component={Networks} />
     </Stack.Navigator>
   )
 }
