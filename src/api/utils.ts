@@ -129,7 +129,9 @@ export async function getAxios() {
     },
   }
 
-  const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+  const currentDid = AccountManager.getInstance()
+    .getSelectedAccount()
+    ?.did.toLowerCase()
 
   if (!axiosAuthPassword) {
     const keyring = await AccountManager.getInstance()

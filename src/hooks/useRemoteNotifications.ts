@@ -8,6 +8,7 @@ export function useRemoteNotifications() {
 
   useEffect(() => {
     const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      console.log('remoteMessage:', remoteMessage)
       Alert.alert('Remote notification', JSON.stringify(remoteMessage))
     })
 
