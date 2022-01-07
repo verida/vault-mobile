@@ -5,9 +5,12 @@ import AccountManager, {
 } from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 import store from 'reduxStore'
+import axios from 'axios'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
+
+let axiosAuthPassword: string | undefined
 
 export const convertAvatar = (avatar: any) => {
   if (!avatar) {
@@ -119,19 +122,51 @@ export async function getProfile(did: string) {
   }
 }
 
+export async function getAxios() {
+  const config: any = {
+    headers: {
+      'context-name': VERIDA_CONTEXT_NAME,
+    },
+  }
+
+  const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+
+  if (!axiosAuthPassword) {
+    const keyring = await AccountManager.getInstance()
+      .context?.getAccount()
+      .keyring(VERIDA_CONTEXT_NAME)
+    axiosAuthPassword = await keyring?.sign(
+      `Access the notification service using context: "${VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+    )
+  }
+  config.auth = {
+    username: currentDid?.replace(/:/g, '_'),
+    password: axiosAuthPassword,
+  }
+
+  return axios.create(config)
+}
+
 export async function registerRemoteNotification(token: string) {
+  if (!token) {
+    return
+  }
+
   try {
-    const body = JSON.stringify({
+    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const body = {
       data: {
-        did: AccountManager.getInstance().getSelectedAccount()?.did,
+        did: currentDid,
         context: VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
-    })
-    await fetch(`${VERIDA_TESTNET_NOTIFICATION_SERVER}/register`, {
-      method: 'POST',
-      body,
-    })
+    }
+
+    const axiosInstance = await getAxios()
+    await axiosInstance.post(
+      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/register`,
+      body
+    )
   } catch (e) {
     console.error(e)
     Sentry.captureException(e)
