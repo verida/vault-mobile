@@ -1,6 +1,5 @@
 import { useSelector } from 'react-redux'
 import { useEffect } from 'react'
-import { registerRemoteNotification } from 'api/utils'
 import { isEmpty } from 'lodash'
 
 export function useRegisterRemoteNotification() {
@@ -11,7 +10,6 @@ export function useRegisterRemoteNotification() {
   useEffect(() => {
     if (!isEmpty(deviceToken)) {
       console.log('deviceToken:', deviceToken)
-      registerRemoteNotification(deviceToken)
     }
   }, [deviceToken])
 }
