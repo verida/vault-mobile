@@ -15,19 +15,23 @@ const icons = {
 
 export default ({ symbol, item }) => {
   const navigation = useNavigation()
-  const { type, quantity, address, id } = item
+  const { type, quantity, address, id, pending } = item
 
   return (
     <ListItem
       button
       onPress={() => {
-        navigation.navigate('TransactionDetails', { id })
+        if (!pending) {
+          navigation.navigate('TransactionDetails', { id })
+        }
       }}
       style={styles.listItem}>
       {icons[type]}
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
-          <Text style={styles.currencyName}>{type}</Text>
+          <Text style={styles.currencyName}>
+            {type} {pending && '(pending)'}
+          </Text>
           <Text
             style={[
               styles.quantity,
