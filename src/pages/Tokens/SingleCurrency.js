@@ -7,20 +7,32 @@ import TokenBanner from 'components/Tokens/TokenBanner'
 import LoadingIndicator from 'components/LoadingIndicator'
 import TransactionsList from 'components/Tokens/TransactionsList'
 
-import { getTransactionsForToken } from 'reduxStore/wallet/actions'
-import { selectTransactionsData } from 'reduxStore/wallet/selectors'
+import {
+  getTransactionsForToken,
+  getPrices,
+  getBalances,
+} from 'reduxStore/wallet/actions'
+import {
+  selectTransactionsData,
+  selectSingleTokenData,
+} from 'reduxStore/wallet/selectors'
 
 const SingleCurrency = ({
   navigation,
   route,
   getTransactionsForToken,
   transactions,
+  tokenData,
+  getBalances,
+  getPrices,
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
 
   function pullToRefresh() {
     getTransactionsForToken(item.address)
+    getBalances()
+    getPrices()
   }
 
   useEffect(() => {
@@ -41,12 +53,12 @@ const SingleCurrency = ({
         title={item.label}
       />
       <TokenBanner
-        data={item}
+        data={tokenData}
         receiveButtonAction={() =>
-          navigation.navigate('ReceiveToken', { token: item })
+          navigation.navigate('ReceiveToken', { token: tokenData })
         }
         sendButtonAction={() =>
-          navigation.navigate('SendToken', { token: item })
+          navigation.navigate('SendToken', { token: tokenData })
         }
       />
       {loading ? (
@@ -63,9 +75,10 @@ const SingleCurrency = ({
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
     transactions: selectTransactionsData(state),
+    tokenData: selectSingleTokenData(state, props.route.params.item.address),
   }
 }
 
@@ -73,6 +86,8 @@ const mapDispatchToProps = (dispatch) => {
   return {
     getTransactionsForToken: (assetID) =>
       dispatch(getTransactionsForToken(assetID)),
+    getPrices: () => dispatch(getPrices()),
+    getBalances: () => dispatch(getBalances()),
   }
 }
 

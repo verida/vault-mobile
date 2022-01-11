@@ -62,6 +62,33 @@ export const getListAndTotal = (state) => {
   }
 }
 
+export const selectSingleTokenData = (state, assetID) => {
+  const pricing = getPricingData(state)
+  const balances = getBalancesData(state)
+
+  const token = SUPPORTED_TOKENS.find((ele) => {
+    return ele.address === assetID
+  })
+
+  let tokenPrice = pricing[token.symbol]
+  let tokenBalance = balances[token.symbol]
+  let amount =
+    tokenPrice && tokenBalance
+      ? (tokenPrice.quote.USD.price * tokenBalance) / 1000000
+      : 0
+
+  return {
+    label: token.name,
+    symbol: token.symbol,
+    icon: token.icon,
+    address: token.address,
+    price: tokenPrice ? tokenPrice.quote.USD.price : 0,
+    change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
+    quantity: tokenBalance ? tokenBalance : 0,
+    amount,
+  }
+}
+
 export const getTokensData = (state) => {
   const loading = state.pricing.fetching && state.balances.fetching
 
