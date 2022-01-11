@@ -102,7 +102,19 @@ export const getWalletsData = (state) => {
   return state.wallets.data || {}
 }
 
-export const selectTransactions = (state) => {
+export const selectPendingTransactions = (state, assetID) => {
+  const pendingTransactions = state.pendingTransactions.data
+  const transactionsForAsset = pendingTransactions.filter((ele) => {
+    return ele.token.address === assetID
+  })
+  if (transactionsForAsset) {
+    return transactionsForAsset
+  } else {
+    return null
+  }
+}
+
+export const selectTransactions = (state, assetID) => {
   //   const userAddr = 'DI2MLO726S33IHHTKM5XMTQCE3MDV23QN3KFCZZYFIUWCURLALMTETKIBE'
   //   const userAddr = 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
   const wallets = getWalletsData(state)
@@ -120,19 +132,36 @@ export const selectTransactions = (state) => {
         type: isUserSender ? 'sent' : 'received',
         address: isUserSender ? transferInfo.receiver : tx.sender,
         quantity: transferInfo.amount,
+        pending: false,
       }
     })
-    return transactions
-  } else {
-    return []
   }
+  const pendingTransactions = selectPendingTransactions(state, assetID)
+  if (pendingTransactions.length > 0) {
+    pendingTransactions.map((tx) => {
+      let transactionCompleted = transactions.find((trans) => {
+        return trans.id === tx.id
+      })
+      if (!transactionCompleted) {
+        let isUserSender = tx.from === userAddr
+        transactions.unshift({
+          id: tx.id,
+          type: isUserSender ? 'sent' : 'received',
+          address: tx.to,
+          quantity: tx.amount,
+          pending: true,
+        })
+      }
+    })
+  }
+  return transactions
 }
 
-export const selectTransactionsData = (state) => {
+export const selectTransactionsData = (state, assetID) => {
   const { fetching, error } = state.transactions
 
   return {
-    list: selectTransactions(state),
+    list: selectTransactions(state, assetID),
     loading: fetching,
     error: error,
   }
