@@ -17,7 +17,9 @@ const TransactionSuccess = ({ navigation, sentTransaction }) => {
       titleText={titleText}
       descriptionText={descriptionText}
       buttonLabel={buttonLabel}
-      actionButtonOnPress={() => navigation.navigate('Tokens')}
+      actionButtonOnPress={() =>
+        navigation.navigate('SingleCurrency', { item: token })
+      }
     />
   )
 }
