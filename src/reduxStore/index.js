@@ -33,6 +33,7 @@ import {
   TRANSACTION_DETAIL_FETCH_START,
   TRANSACTION_DETAIL_FETCH_FAILED,
   FETCHED_TRANSACTION_DETAIL,
+  ADD_PENDING_TRANSACTION,
 } from './wallet/types'
 import update from 'immutability-helper'
 
@@ -78,6 +79,9 @@ const initialState = {
     data: null,
     fetching: false,
     error: undefined,
+  },
+  pendingTransactions: {
+    data: [],
   },
   wallets: { data: {} },
 }
@@ -245,6 +249,14 @@ const reducer = (state = initialState, action) => {
           fetching: false,
           error: action.error,
           data: null,
+        },
+      }
+
+    case ADD_PENDING_TRANSACTION:
+      return {
+        ...state,
+        pendingTransactions: {
+          data: [action.data, ...state.pendingTransactions.data],
         },
       }
 
