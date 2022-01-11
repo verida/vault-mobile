@@ -4,6 +4,7 @@ import { pricingApi, chainsApi } from 'helpers/api'
 import {
   getWalletsData,
   getTransactionParamsData,
+  selectPendingTransactions,
 } from 'reduxStore/wallet/selectors'
 import { navigate } from 'navigation/RootNavigator'
 
@@ -27,6 +28,7 @@ import {
   TRANSACTION_DETAIL_FETCH_START,
   TRANSACTION_DETAIL_FETCH_FAILED,
   FETCHED_TRANSACTION_DETAIL,
+  ADD_PENDING_TRANSACTION,
 } from './types'
 
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
@@ -230,6 +232,10 @@ export const sendTransaction = (transactionData) => {
 
       dispatch({
         type: SEND_TRANSACTION_SUCCESS,
+        data: txData,
+      })
+      dispatch({
+        type: ADD_PENDING_TRANSACTION,
         data: txData,
       })
       navigate('TransactionSuccess')
