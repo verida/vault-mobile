@@ -77,7 +77,10 @@ const SingleCurrency = ({
 
 const mapStateToProps = (state, props) => {
   return {
-    transactions: selectTransactionsData(state),
+    transactions: selectTransactionsData(
+      state,
+      props.route.params.item.address
+    ),
     tokenData: selectSingleTokenData(state, props.route.params.item.address),
   }
 }
