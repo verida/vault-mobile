@@ -20,7 +20,6 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
   const [processing, setProcessing] = useState(false)
   const fetchCopiedText = async () => {
     const clipboardTest = await Clipboard.getString()
-    console.log(clipboardTest, 'clipboardTest')
     setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
     // setAddress(clipboardTest)
   }

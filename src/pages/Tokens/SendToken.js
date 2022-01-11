@@ -57,7 +57,6 @@ export default ({ navigation, route }) => {
   const [selectedToken, onSelectToken] = React.useState(null)
   const [amount, onUpdateAmount] = React.useState(null)
   const [amountValid, onUpdateValidation] = React.useState(false)
-  console.log(amountValid, 'amountValid state')
   const token = route.params.token
 
   return (
