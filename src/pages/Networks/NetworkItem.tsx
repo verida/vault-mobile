@@ -20,7 +20,6 @@ type NetworkItemProps = Omit<ViewProps, 'children'> & {
 
 function NetworkItem(props: NetworkItemProps) {
   const { network, selected, style, onSelect } = props
-  console.log(network)
 
   return (
     <TouchableOpacity
