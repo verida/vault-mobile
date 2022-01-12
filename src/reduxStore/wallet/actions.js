@@ -1,11 +1,11 @@
 import algosdk from 'algosdk'
 
-import { pricingApi, chainsApi } from 'helpers/api'
+import { pricingApi } from 'helpers/api'
 import {
   getWalletsData,
   getTransactionParamsData,
-  selectPendingTransactions,
 } from 'reduxStore/wallet/selectors'
+import { isNativeToken, getTokenAddress } from 'helpers/tokens'
 import { navigate } from 'navigation/RootNavigator'
 
 import {
@@ -101,12 +101,14 @@ export const getTransactionsForToken = (assetID) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState())
+    const tokenAddress = getTokenAddress(assetID)
+    const isNative = isNativeToken(assetID)
 
     let transactionsData = await indexerClient
       .searchForTransactions()
       .address(wallets.algo.address)
-      .assetID(assetID !== '1' ? assetID : null)
-      .txType(assetID === '1' ? 'pay' : null)
+      .assetID(isNative ? null : tokenAddress)
+      .txType(isNative ? 'pay' : null)
       .do()
 
     if (transactionsData) {
@@ -181,10 +183,12 @@ export const sendTransaction = (transactionData) => {
 
     const wallets = getWalletsData(getState())
     const transactionParams = getTransactionParamsData(getState())
+    let isNative = isNativeToken(transactionData.token.address)
+    let tokenAddress = getTokenAddress(transactionData.token.address)
 
     let transaction
 
-    if (transactionData.token.address === '1') {
+    if (isNative) {
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
         wallets.algo.address,
         transactionData.address,
@@ -201,7 +205,7 @@ export const sendTransaction = (transactionData) => {
         undefined,
         transactionData.amount * 1000000,
         undefined,
-        parseInt(transactionData.token.address),
+        parseInt(tokenAddress),
         transactionParams
       )
     }
