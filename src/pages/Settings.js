@@ -44,6 +44,16 @@ const manageWalletOption = {
 
 const teamList = [manageWalletOption, ...publicList]
 
+const generalList = [
+  {
+    label: 'Network',
+    action: 'arrow',
+    optional: false,
+    onPress: (navigation) => navigation.navigate('Networks'),
+    value: 'Testnet',
+  },
+]
+
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
 
@@ -77,6 +87,7 @@ export default (props) => {
       onPress: logout,
     },
   ]
+
   return (
     <View>
       <NavigationHeader
@@ -90,6 +101,10 @@ export default (props) => {
         <Text style={style.title}>Security</Text>
         <View>
           <PropertyList list={mergedList} />
+        </View>
+        <Text style={style.title}>General</Text>
+        <View>
+          <PropertyList list={generalList} />
         </View>
       </View>
     </View>
