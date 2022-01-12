@@ -1,4 +1,5 @@
 apply plugin: "com.android.application"
+apply plugin: 'com.google.gms.google-services'
 
 project.ext.envConfigFiles = [
     stagingDebug: ".env.staging",
@@ -140,7 +141,7 @@ android {
     }
 
     defaultConfig {
-        applicationId 'expo.test'
+        applicationId 'io.verida.vault'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 2
@@ -180,9 +181,12 @@ android {
     productFlavors {
         staging {
             dimension "environment"
+            resValue "string", "app_name", "Verida Vault Internal"
+            applicationId "io.verida.vault.internal"
         }
         production {
             dimension "environment"
+            resValue "string", "app_name", "Verida Vault"
         }
     }
 
