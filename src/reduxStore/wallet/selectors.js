@@ -1,4 +1,5 @@
 import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { getTokenAddress } from 'helpers/tokens'
 
 export const getPricingData = (state) => state.pricing.data || {}
 
@@ -12,8 +13,9 @@ export const getBalancesData = (state) => {
       balanceData.assets.map((balance) => {
         let tok
         tok = SUPPORTED_TOKENS.find((ele) => {
+          let tokenAddress = getTokenAddress(ele.address)
           if (balance['asset-id']) {
-            return ele.address === balance['asset-id'].toString()
+            return tokenAddress === balance['asset-id'].toString()
           } else {
             return false
           }
@@ -188,7 +190,7 @@ export const selectTransaction = (state) => {
     if (rawTransaction['asset-transfer-transaction']) {
       let tok = SUPPORTED_TOKENS.find(
         (ele) =>
-          ele.address ===
+          getTokenAddress(ele.address) ===
           rawTransaction['asset-transfer-transaction']['asset-id'].toString()
       )
       symbol = tok.symbol
