@@ -34,6 +34,7 @@
     "asyncstorage-down": "^4.2.0",
     "browserify-zlib": "^0.1.4",
     "buffer": "^4.9.2",
+    "caip": "./libs/caip",
     "console-browserify": "^1.2.0",
     "constants-browserify": "^1.0.0",
     "countries-list": "^2.6.1",
