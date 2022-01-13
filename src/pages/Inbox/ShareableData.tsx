@@ -40,9 +40,30 @@ function ShareableData(
       const { schemaUrl, filter } = route.params
       const datastore =
         await AccountManager.getInstance().context?.openDatastore(schemaUrl)
-      const result = await datastore?.getMany({
-        $and: [
-          {
+      let query = {}
+      if (text && text.length > 0) {
+        if (Object.keys(filter).length > 0) {
+          query = {
+            $and: [
+              {
+                $or: [
+                  {
+                    name: {
+                      $regex: text,
+                    },
+                  },
+                  {
+                    summary: {
+                      $regex: text,
+                    },
+                  },
+                ],
+              },
+              filter,
+            ],
+          }
+        } else {
+          query = {
             $or: [
               {
                 name: {
@@ -55,10 +76,10 @@ function ShareableData(
                 },
               },
             ],
-          },
-          filter,
-        ],
-      })
+          }
+        }
+      }
+      const result = await datastore?.getMany(query)
       if (result) {
         setData(result as ShareableDataItemType[])
       }
