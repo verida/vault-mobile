@@ -42,7 +42,8 @@ const manageWalletOption = {
   onPress: (navigation) => navigation.navigate('ManageWallets'),
 }
 
-const teamList = [manageWalletOption, ...publicList]
+// const teamList = [manageWalletOption, ...publicList]
+const teamList = publicList
 
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
