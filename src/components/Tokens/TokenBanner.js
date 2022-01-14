@@ -1,6 +1,5 @@
 import React from 'react'
 import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
-import Toast from 'react-native-root-toast'
 
 import Text from 'components/Text'
 
@@ -15,15 +14,16 @@ import CopyIcon from 'assets/copy_icon.svg'
 export default ({
   data,
   sendButtonAction,
-  buyButtonAction,
+  // buyButtonAction,
   receiveButtonAction,
+  copyButtonAction,
 }) => {
   const { label, price, change, amount, symbol, quantity, icon } = data
   const positive = change > 0
 
   return (
     <View style={styles.bannerWrapper}>
-      {label && (
+      {symbol && (
         <View style={styles.coinInfo}>
           <Text style={styles.coinText}>Coin</Text>
           <View style={styles.coinPriceInfo}>
@@ -53,7 +53,7 @@ export default ({
           {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
         </Text>
       </View>
-      {true && (
+      {symbol && (
         <View style={styles.actionIcons}>
           <TouchableOpacity
             onPress={sendButtonAction}
@@ -67,24 +67,14 @@ export default ({
             <ReceiveIcon />
             <Text style={styles.actionIconText}>Receive</Text>
           </TouchableOpacity>
-          <TouchableOpacity
+          {/* <TouchableOpacity
             onPress={buyButtonAction}
             style={styles.singleActionIcon}>
             <BuyIcon />
             <Text style={styles.actionIconText}>Buy</Text>
-          </TouchableOpacity>
+          </TouchableOpacity> */}
           <TouchableOpacity
-            onPress={() =>
-              Toast.show('Address copied', {
-                duration: Toast.durations.LONG,
-                position: -40,
-                shadow: false,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-                backgroundColor: 'rgba(4, 17, 51, 1)',
-              })
-            }
+            onPress={copyButtonAction}
             style={styles.singleActionIcon}>
             <CopyIcon />
             <Text style={styles.actionIconText}>Copy</Text>
@@ -124,7 +114,6 @@ const styles = StyleSheet.create({
   },
   totals: {
     alignItems: 'center',
-    marginBottom: 24,
   },
   coinIcon: {
     marginTop: 12,
@@ -143,6 +132,7 @@ const styles = StyleSheet.create({
   actionIcons: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    marginTop: 24,
   },
   actionIconText: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
