@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react'
 import { Container, Icon } from 'native-base'
 import { connect } from 'react-redux'
+import Clipboard from '@react-native-community/clipboard'
+import Toast from 'react-native-root-toast'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenBanner from 'components/Tokens/TokenBanner'
@@ -15,6 +17,7 @@ import {
 import {
   selectTransactionsData,
   selectSingleTokenData,
+  getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
 const SingleCurrency = ({
@@ -25,9 +28,11 @@ const SingleCurrency = ({
   tokenData,
   getBalances,
   getPrices,
+  wallets,
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
+  const address = wallets.algo.address
 
   function pullToRefresh() {
     getTransactionsForToken(item.address)
@@ -60,6 +65,18 @@ const SingleCurrency = ({
         sendButtonAction={() =>
           navigation.navigate('SendToken', { token: tokenData })
         }
+        copyButtonAction={() => {
+          Clipboard.setString(address)
+          Toast.show('Address copied', {
+            duration: Toast.durations.LONG,
+            position: -130,
+            shadow: false,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+            backgroundColor: 'rgba(4, 17, 51, 1)',
+          })
+        }}
       />
       {loading ? (
         <LoadingIndicator />
@@ -82,6 +99,7 @@ const mapStateToProps = (state, props) => {
       props.route.params.item.address
     ),
     tokenData: selectSingleTokenData(state, props.route.params.item.address),
+    wallets: getWalletsData(state),
   }
 }
 
