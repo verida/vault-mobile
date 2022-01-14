@@ -9,33 +9,33 @@ import TokensList from 'components/Tokens/TokensList'
 import LoadingIndicator from 'components/LoadingIndicator'
 import SendListModal from './SendListModal'
 
-import SettingsSvg from 'assets/icons/settings.svg'
+// import SettingsSvg from 'assets/icons/settings.svg'
 
 import { getPrices, getBalances } from 'reduxStore/wallet/actions'
-import { getTokensData } from 'reduxStore/wallet/selectors'
+import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
 const TokenDashboard = ({
   navigation,
-  getPrices,
-  getBalances,
+  onGetPrices,
+  onGetBalances,
   data,
-  userWallets,
+  wallets,
 }) => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
   function pullToRefresh() {
-    getBalances()
-    getPrices()
+    onGetBalances()
+    onGetPrices()
   }
 
   useEffect(() => {
     async function loadData() {
-      getBalances()
-      getPrices()
+      onGetBalances()
+      onGetPrices()
     }
 
     loadData()
-  }, [])
+  }, [onGetBalances, onGetPrices, wallets])
 
   const { loading, listAndTotal } = data
 
@@ -87,14 +87,15 @@ const TokenDashboard = ({
 
 const mapStateToProps = (state) => {
   return {
+    wallets: getWalletsData(state),
     data: getTokensData(state),
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getPrices: () => dispatch(getPrices()),
-    getBalances: () => dispatch(getBalances()),
+    onGetPrices: () => dispatch(getPrices()),
+    onGetBalances: () => dispatch(getBalances()),
   }
 }
 
