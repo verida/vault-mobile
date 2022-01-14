@@ -17,7 +17,6 @@ export default ({
   currentAction = null,
 }) => {
   const description = {
-    uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
     name: item.item.message,
     createdAt: item.createdAt,
   }
