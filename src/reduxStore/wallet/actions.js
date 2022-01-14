@@ -19,6 +19,7 @@ import {
   TRANSACTIONS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   SET_USER_WALLETS,
+  REMOVE_USER_WALLETS,
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTION_PARAMS_FETCH_FAILED,
   FETCHED_TRANSACTION_PARAMS,
@@ -152,6 +153,14 @@ export const saveUserWallets = (wallets) => {
     dispatch({
       type: SET_USER_WALLETS,
       data: wallets,
+    })
+  }
+}
+
+export const removeUserWallets = (wallets) => {
+  return async (dispatch) => {
+    dispatch({
+      type: REMOVE_USER_WALLETS,
     })
   }
 }
