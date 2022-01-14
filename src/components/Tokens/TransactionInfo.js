@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, View, TouchableOpacity, Linking } from 'react-native'
 import { Icon } from 'native-base'
 import Clipboard from '@react-native-community/clipboard'
 
@@ -95,6 +95,25 @@ export default ({ transaction }) => {
             </TouchableOpacity>
           </View>
         </View>
+
+        <TouchableOpacity style={styles.viewOnExplorerWrapper}>
+          <Text
+            onPress={() =>
+              Linking.openURL(
+                'https://testnet.algoexplorer.io/tx/' + transaction.id
+              )
+            }>
+            View on explorer
+          </Text>
+          <Icon
+            name='enter-outline'
+            style={{
+              color: 'rgba(66, 59, 206, 1)',
+              fontSize: 21,
+              marginLeft: 2,
+            }}
+          />
+        </TouchableOpacity>
       </View>
     </View>
   )
@@ -158,4 +177,9 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   copyText: { color: 'rgba(66, 59, 206, 1)', fontSize: 14, marginLeft: 3 },
+  viewOnExplorerWrapper: {
+    flexDirection: 'row',
+    marginTop: 10,
+    alignItems: 'center',
+  },
 })
