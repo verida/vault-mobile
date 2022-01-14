@@ -1,5 +1,11 @@
 import React, { useState } from 'react'
-import { StyleSheet, TouchableOpacity, View, TextInput } from 'react-native'
+import {
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  TextInput,
+  Alert,
+} from 'react-native'
 import { Container, Icon } from 'native-base'
 import Clipboard from '@react-native-community/clipboard'
 import { connect } from 'react-redux'
@@ -9,6 +15,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 import InputStyles from 'styles/inputs'
 import Label from 'components/Label'
+import { isValidWalletAddress } from 'helpers/wallet'
 
 import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
 
@@ -32,6 +39,8 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
       onReadQRCode: (data) => onReadQRCode(data),
     })
   }
+  const showAlert = () =>
+    Alert.alert('Invalid address', `That's not a valid address`)
 
   return (
     <Container>
@@ -78,12 +87,16 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
             disabled={!address}
             loading={processing}
             onPress={() => {
-              setProcessing(true)
-              getTransactionParams({
-                token,
-                amount,
-                address,
-              })
+              if (isValidWalletAddress(address)) {
+                setProcessing(true)
+                getTransactionParams({
+                  token,
+                  amount,
+                  address,
+                })
+              } else {
+                showAlert()
+              }
             }}>
             Next
           </Button>
