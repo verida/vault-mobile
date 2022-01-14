@@ -14,7 +14,13 @@ import SettingsSvg from 'assets/icons/settings.svg'
 import { getPrices, getBalances } from 'reduxStore/wallet/actions'
 import { getTokensData } from 'reduxStore/wallet/selectors'
 
-const TokenDashboard = ({ navigation, getPrices, getBalances, data }) => {
+const TokenDashboard = ({
+  navigation,
+  getPrices,
+  getBalances,
+  data,
+  userWallets,
+}) => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
   function pullToRefresh() {
@@ -40,9 +46,9 @@ const TokenDashboard = ({ navigation, getPrices, getBalances, data }) => {
       <NavigationHeader
         left={{ icon: 'skip' }}
         title='Tokens'
-        right={{
-          icon: <SettingsSvg />,
-        }}
+        // right={{
+        //   icon: <SettingsSvg />,
+        // }}
       />
       {loading ? (
         <LoadingIndicator />
