@@ -24,6 +24,7 @@ import {
   TRANSACTIONS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   SET_USER_WALLETS,
+  REMOVE_USER_WALLETS,
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTION_PARAMS_FETCH_FAILED,
   FETCHED_TRANSACTION_PARAMS,
@@ -37,19 +38,7 @@ import {
 } from './wallet/types'
 import update from 'immutability-helper'
 
-const initialState = {
-  template: [],
-  authenticated: false,
-  newMessagesCount: 0,
-  publicProfileData: {
-    name: '',
-    country: '',
-    description: '',
-  },
-  accounts: {},
-  selectedAccount: null,
-  switchAccountToast: null,
-  showSeedPhraseReminder: false,
+const walletInitialState = {
   pricing: {
     data: [],
     fetching: false,
@@ -84,6 +73,22 @@ const initialState = {
     data: [],
   },
   wallets: { data: {} },
+}
+
+const initialState = {
+  template: [],
+  authenticated: false,
+  newMessagesCount: 0,
+  publicProfileData: {
+    name: '',
+    country: '',
+    description: '',
+  },
+  accounts: {},
+  selectedAccount: null,
+  switchAccountToast: null,
+  showSeedPhraseReminder: false,
+  ...walletInitialState,
 }
 
 const reducer = (state = initialState, action) => {
@@ -264,6 +269,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         wallets: { data: action.data },
+      }
+
+    case REMOVE_USER_WALLETS:
+      return {
+        ...state,
+        ...walletInitialState,
       }
 
     default:
