@@ -201,7 +201,7 @@ class AccountManager {
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://saadibrah.im/schema/wallet.json'
+        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -230,7 +230,7 @@ class AccountManager {
     try {
       await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
-        'https://saadibrah.im/schema/wallet.json'
+        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
 
       const HDwallets = await datastore?.getMany()
