@@ -14,7 +14,7 @@ import {
   setSelectedAccount,
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
-import { saveUserWallets } from 'reduxStore/wallet/actions'
+import { saveUserWallets, removeUserWallets } from 'reduxStore/wallet/actions'
 import { isEmpty } from 'lodash'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
@@ -196,6 +196,7 @@ class AccountManager {
 
   public async setUserWallet() {
     try {
+      await store.dispatch(removeUserWallets())
       const userHDWalletMnemonic = WalletUtils.generateMnemonic()
 
       // save mnemonic to verida store
@@ -227,6 +228,7 @@ class AccountManager {
 
   public async restoreUserWallet() {
     try {
+      await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
         'https://saadibrah.im/schema/wallet.json'
       )
@@ -289,6 +291,7 @@ class AccountManager {
     }
     try {
       await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
+      await store.dispatch(removeUserWallets())
 
       selectedDids.forEach((did) => {
         delete this.accounts[did]
@@ -336,6 +339,8 @@ class AccountManager {
         this.selectedAccount.did
       )
       await this.connect(true)
+      await this.restoreUserWallet()
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
