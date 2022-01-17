@@ -35,7 +35,7 @@ function DashboardNavigator() {
         component={Folders}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name='share-social' size={24} color={color} />
+            <Ionicons name='server' size={24} color={color} />
           ),
         }}
       />

@@ -64,4 +64,5 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
+  Networks: undefined
 }
