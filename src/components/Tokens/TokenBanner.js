@@ -8,7 +8,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import SendIcon from 'assets/send_icon.svg'
 import ReceiveIcon from 'assets/receive_icon.svg'
-import BuyIcon from 'assets/buy_icon.svg'
+// import BuyIcon from 'assets/buy_icon.svg'
 import CopyIcon from 'assets/copy_icon.svg'
 
 export default ({

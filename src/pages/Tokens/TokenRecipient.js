@@ -21,14 +21,14 @@ import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
 
 import { getTransactionParams } from 'reduxStore/wallet/actions'
 
-const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
+const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
   const { token, amount } = route.params
   const [address, setAddress] = useState('')
   const [processing, setProcessing] = useState(false)
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
-    setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
-    // setAddress(clipboardData)
+    setAddress(clipboardData)
+    // setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
   }
   function onReadQRCode(data) {
     setAddress(data)
@@ -41,6 +41,19 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
   }
   const showAlert = () =>
     Alert.alert('Invalid address', `That's not a valid address`)
+
+  const onPressSend = () => {
+    if (isValidWalletAddress(address)) {
+      setProcessing(true)
+      onGetTransactionParams({
+        token,
+        amount,
+        address,
+      })
+    } else {
+      showAlert()
+    }
+  }
 
   return (
     <Container>
@@ -86,18 +99,7 @@ const TokenRecipient = ({ navigation, route, getTransactionParams }) => {
             color='primary'
             disabled={!address}
             loading={processing}
-            onPress={() => {
-              if (isValidWalletAddress(address)) {
-                setProcessing(true)
-                getTransactionParams({
-                  token,
-                  amount,
-                  address,
-                })
-              } else {
-                showAlert()
-              }
-            }}>
+            onPress={onPressSend}>
             Next
           </Button>
         </View>
@@ -207,13 +209,13 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => {
+const mapStateToProps = () => {
   return {}
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getTransactionParams: (params) => dispatch(getTransactionParams(params)),
+    onGetTransactionParams: (params) => dispatch(getTransactionParams(params)),
   }
 }
 

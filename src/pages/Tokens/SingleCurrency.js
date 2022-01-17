@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { Container, Icon } from 'native-base'
 import { connect } from 'react-redux'
 import Clipboard from '@react-native-community/clipboard'
@@ -23,11 +23,11 @@ import {
 const SingleCurrency = ({
   navigation,
   route,
-  getTransactionsForToken,
+  onGetTransactionsForToken,
   transactions,
   tokenData,
-  getBalances,
-  getPrices,
+  onGetBalances,
+  onGetPrices,
   wallets,
 }) => {
   const { item } = route.params
@@ -35,18 +35,18 @@ const SingleCurrency = ({
   const address = wallets.algo.address
 
   function pullToRefresh() {
-    getTransactionsForToken(item.address)
-    getBalances()
-    getPrices()
+    onGetTransactionsForToken(item.address)
+    onGetBalances()
+    onGetPrices()
   }
 
   useEffect(() => {
     async function loadData() {
-      getTransactionsForToken(item.address)
+      onGetTransactionsForToken(item.address)
     }
 
     loadData()
-  }, [])
+  }, [onGetTransactionsForToken, item])
 
   return (
     <Container>
@@ -105,10 +105,10 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getTransactionsForToken: (assetID) =>
+    onGetTransactionsForToken: (assetID) =>
       dispatch(getTransactionsForToken(assetID)),
-    getPrices: () => dispatch(getPrices()),
-    getBalances: () => dispatch(getBalances()),
+    onGetPrices: () => dispatch(getPrices()),
+    onGetBalances: () => dispatch(getBalances()),
   }
 }
 

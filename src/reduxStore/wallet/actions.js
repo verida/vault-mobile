@@ -157,7 +157,7 @@ export const saveUserWallets = (wallets) => {
   }
 }
 
-export const removeUserWallets = (wallets) => {
+export const removeUserWallets = () => {
   return async (dispatch) => {
     dispatch({
       type: REMOVE_USER_WALLETS,
@@ -214,7 +214,7 @@ export const sendTransaction = (transactionData) => {
         undefined,
         transactionData.amount * 1000000,
         undefined,
-        parseInt(tokenAddress),
+        parseInt(tokenAddress, 10),
         transactionParams
       )
     }

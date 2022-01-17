@@ -13,16 +13,16 @@ const TransactionDetails = ({
   navigation,
   route,
   data,
-  getTransactionDetails,
+  onGetTransactionDetails,
 }) => {
   const { id } = route.params
   useEffect(() => {
     async function init() {
-      getTransactionDetails(id)
+      onGetTransactionDetails(id)
     }
 
     init()
-  }, [id])
+  }, [id, onGetTransactionDetails])
 
   const { transaction, loading } = data
 
@@ -52,7 +52,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    getTransactionDetails: (id) => dispatch(getTransactionDetails(id)),
+    onGetTransactionDetails: (id) => dispatch(getTransactionDetails(id)),
   }
 }
 

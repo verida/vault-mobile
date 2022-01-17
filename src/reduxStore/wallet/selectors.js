@@ -8,7 +8,8 @@ export const getBalancesData = (state) => {
   if (state.balances.data) {
     const balanceData = state.balances.data
     let list = {}
-    list['ALGO'] = balanceData.amount
+    // TODO: dont hardcode
+    list.ALGO = balanceData.amount
     if (balanceData.assets) {
       balanceData.assets.map((balance) => {
         let tok

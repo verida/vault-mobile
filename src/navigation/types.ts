@@ -52,6 +52,7 @@ export type MainStackParams = {
   DataItem: undefined
   Settings: undefined
   ChangePin: undefined
+  // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: undefined
   ImportAccount: undefined

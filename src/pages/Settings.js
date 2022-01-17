@@ -35,12 +35,12 @@ const publicList = [
   },
 ]
 
-const manageWalletOption = {
-  label: 'Manage Wallets',
-  action: 'arrow',
-  optional: true,
-  onPress: (navigation) => navigation.navigate('ManageWallets'),
-}
+// const manageWalletOption = {
+//   label: 'Manage Wallets',
+//   action: 'arrow',
+//   optional: true,
+//   onPress: (navigation) => navigation.navigate('ManageWallets'),
+// }
 
 // const teamList = [manageWalletOption, ...publicList]
 const teamList = publicList

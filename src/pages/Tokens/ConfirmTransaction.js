@@ -15,14 +15,14 @@ import {
   selectSentTransaction,
 } from 'reduxStore/wallet/selectors'
 
-import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const ConfirmTransaction = ({
   navigation,
   route,
   wallets,
   transactionParams,
-  sendTransaction,
+  onSendTransaction,
   sentTransaction,
 }) => {
   const { token, amount, address } = route.params
@@ -89,7 +89,7 @@ const ConfirmTransaction = ({
             style={styles.nextButton}
             color='primary'
             loading={sentTransaction.fetching}
-            onPress={() => sendTransaction({ token, amount, address })}>
+            onPress={() => onSendTransaction({ token, amount, address })}>
             Send {token.symbol}
           </Button>
         </View>
@@ -145,7 +145,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    sendTransaction: (params) => dispatch(sendTransaction(params)),
+    onSendTransaction: (params) => dispatch(sendTransaction(params)),
   }
 }
 
