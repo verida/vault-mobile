@@ -48,7 +48,6 @@ function GenericMessage(props: GenericMessageProps) {
           avatar,
         })
       } catch (error) {
-        console.error(error)
         Sentry.captureException(error)
       }
     }
@@ -75,7 +74,6 @@ function GenericMessage(props: GenericMessageProps) {
       setSubmitting(false)
     } catch (e) {
       setSubmitting(false)
-      console.error(e)
       Alert.alert('Error', 'Can not set message as read')
       Sentry.captureException(e)
     }
@@ -118,8 +116,7 @@ function GenericMessage(props: GenericMessageProps) {
         color='grey'
         style={styles.okayButton}
         onPress={onSubmit}
-        loading={submitting}
-      >
+        loading={submitting}>
         Ignore
       </Button>
     </Content>
