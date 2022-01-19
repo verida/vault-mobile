@@ -8,6 +8,7 @@ import TypeDataSend from '../components/Inbox/types/DataSend'
 import TypeDataRequest from '../components/Inbox/types/DataRequest'
 import TypeDatastoreSync from '../components/Inbox/types/DatastoreSync'
 import TypeDatabaseSync from '../components/Inbox/types/DatabaseSync'
+import TypeGenericMessage from 'components/Inbox/types/GenericMessage'
 import AccountManager from 'api/AccountManager'
 
 const inboxItemComponents = {
@@ -15,6 +16,7 @@ const inboxItemComponents = {
   'inbox/type/dataRequest': TypeDataRequest,
   'inbox/type/datastoreSync': TypeDatastoreSync,
   'inbox/type/databaseSync': TypeDatabaseSync,
+  'inbox/type/message': TypeGenericMessage,
 }
 
 const getHeaderTitle = (type) => {
