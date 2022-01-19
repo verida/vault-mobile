@@ -57,6 +57,10 @@ function GenericMessage(props: GenericMessageProps) {
 
   const onSubmit = async () => {
     try {
+      if (inboxItem.read) {
+        navigation.goBack()
+        return
+      }
       setSubmitting(true)
 
       const vault = AccountManager.getInstance().vault
@@ -110,14 +114,14 @@ function GenericMessage(props: GenericMessageProps) {
         </View>
       </View>
       <View style={styles.messageContent}>
-        <Text style={styles.message}>{inboxItem.message}</Text>
+        <Text style={styles.message}>{itemData.message}</Text>
       </View>
       <Button
         color='grey'
         style={styles.okayButton}
         onPress={onSubmit}
         loading={submitting}>
-        Ignore
+        Okay
       </Button>
     </Content>
   )
