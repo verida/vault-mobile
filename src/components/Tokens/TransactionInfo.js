@@ -29,7 +29,7 @@ export default ({ transaction }) => {
                 transaction.type === 'sent' ? styles.negative : styles.positive,
               ]}>
               {transaction.type === 'sent' ? '-' : ''}
-              {parseFloat(transaction.quantity / 1000000).toFixed(2)}{' '}
+              {parseFloat(transaction.quantity / 1000000).toFixed(3)}{' '}
               {transaction.symbol}
             </Text>
           </View>
@@ -60,7 +60,7 @@ export default ({ transaction }) => {
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
               {parseFloat(transaction.fee / 1000000).toFixed(3)}{' '}
-              {transaction.symbol}
+              {transaction.feeSymbol}
             </Text>
           </View>
         </View>
