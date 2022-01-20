@@ -37,7 +37,7 @@ export default ({ symbol, item }) => {
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {(quantity / 1000000).toFixed(2)} {symbol}
+            {(quantity / 1000000).toFixed(3)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>
