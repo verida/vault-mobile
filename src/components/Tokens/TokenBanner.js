@@ -46,7 +46,7 @@ export default ({
         )}
         <Text style={styles.amount}>
           {label
-            ? `${(quantity / 1000000).toFixed(2)} ${symbol}`
+            ? `${(quantity / 1000000).toFixed(3)} ${symbol}`
             : `$${amount.toFixed(2)}`}
         </Text>
         <Text style={styles.amountLabel}>
