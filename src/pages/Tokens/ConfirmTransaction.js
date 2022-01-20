@@ -8,6 +8,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 
 import { sendTransaction } from 'reduxStore/wallet/actions'
+import { SUPPORTED_TOKENS } from 'wallet/constants'
 
 import {
   getWalletsData,
@@ -79,7 +80,8 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(transactionParams.fee).toFixed(3)} {token.symbol}
+                {parseFloat(transactionParams.fee).toFixed(3)}{' '}
+                {SUPPORTED_TOKENS[0].symbol}
               </Text>
             </View>
           </View>
