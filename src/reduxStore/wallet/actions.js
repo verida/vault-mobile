@@ -32,7 +32,7 @@ import {
   ADD_PENDING_TRANSACTION,
 } from './types'
 
-import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
+import { SUPPORTED_TOKENS, SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
 
 const token = {
   'X-API-key': 'pMDXUFVkGJ7TFkkdORaV84pJEvUOBAvD1w9LTkq6',
@@ -186,12 +186,20 @@ export const getTransactionParams = (transactionData) => {
   }
 }
 
-export const sendTransaction = (transactionData) => {
+export const sendTransaction = (
+  transactionData,
+  isAssetEnablingTransaction
+) => {
   return async (dispatch, getState) => {
     dispatch({ type: SEND_TRANSACTION_START })
 
     const wallets = getWalletsData(getState())
-    const transactionParams = getTransactionParamsData(getState())
+    let transactionParams
+    if (isAssetEnablingTransaction) {
+      transactionParams = await algodClient.getTransactionParams().do()
+    } else {
+      transactionParams = getTransactionParamsData(getState())
+    }
     let isNative = isNativeToken(transactionData.token.address)
     let tokenAddress = getTokenAddress(transactionData.token.address)
 
@@ -209,10 +217,12 @@ export const sendTransaction = (transactionData) => {
     } else {
       transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
         wallets.algo.address,
-        transactionData.address,
+        isAssetEnablingTransaction
+          ? wallets.algo.address
+          : transactionData.address,
         undefined,
         undefined,
-        transactionData.amount * 1000000,
+        isAssetEnablingTransaction ? 0 : transactionData.amount * 1000000,
         undefined,
         parseInt(tokenAddress, 10),
         transactionParams
@@ -241,6 +251,7 @@ export const sendTransaction = (transactionData) => {
         to: transactionData.address,
         from: wallets.algo.address,
         token: transactionData.token,
+        feeSymbol: SUPPORTED_TOKENS[0].symbol,
       }
 
       dispatch({
@@ -251,13 +262,17 @@ export const sendTransaction = (transactionData) => {
         type: ADD_PENDING_TRANSACTION,
         data: txData,
       })
-      navigate('TransactionSuccess')
+      if (!isAssetEnablingTransaction) {
+        navigate('TransactionSuccess')
+      }
     } catch (error) {
       dispatch({
         type: SEND_TRANSACTION_FAILED,
-        error: "Couldn't load params",
+        error: error,
       })
-      navigate('TransactionFailure')
+      if (!isAssetEnablingTransaction) {
+        navigate('TransactionFailure')
+      }
     }
   }
 }
