@@ -65,6 +65,15 @@ export const getListAndTotal = (state) => {
   }
 }
 
+export const selectNativeTokenBalance = (state) => {
+  const balances = getBalancesData(state)
+  if (balances) {
+    return balances.ALGO / 1000000
+  } else {
+    0
+  }
+}
+
 export const selectSingleTokenData = (state, assetID) => {
   const pricing = getPricingData(state)
   const balances = getBalancesData(state)
@@ -188,6 +197,7 @@ export const selectTransaction = (state) => {
       ? rawTransaction['asset-transfer-transaction']
       : rawTransaction['payment-transaction']
     let symbol
+    let feeSymbol = SUPPORTED_TOKENS[0].symbol
     if (rawTransaction['asset-transfer-transaction']) {
       let tok = SUPPORTED_TOKENS.find(
         (ele) =>
@@ -207,6 +217,7 @@ export const selectTransaction = (state) => {
       round: rawTransaction['confirmed-round'],
       time: rawTransaction['round-time'],
       symbol,
+      feeSymbol,
     }
   } else {
     return {}
