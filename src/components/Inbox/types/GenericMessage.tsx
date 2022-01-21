@@ -90,6 +90,7 @@ function GenericMessage(props: GenericMessageProps) {
   }
 
   const formattedSendAt = moment(inboxItem.sendAt).format('MMM D, HH:mm')
+  console.log('sender:', sender)
 
   return (
     <Content>
@@ -102,9 +103,7 @@ function GenericMessage(props: GenericMessageProps) {
       <View style={styles.senderContainer}>
         <Image
           source={
-            typeof sender.avatar === 'string'
-              ? { uri: sender.avatar }
-              : DefaultAvatar
+            typeof sender.avatar === 'object' ? sender.avatar : DefaultAvatar
           }
           style={styles.senderAvatar}
         />
