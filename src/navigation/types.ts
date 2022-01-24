@@ -60,4 +60,5 @@ export type MainStackParams = {
     filter: any
   }
   Networks: undefined
+  StorageNodes: undefined
 }
