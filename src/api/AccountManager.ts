@@ -209,7 +209,7 @@ class AccountManager {
       const walletDb = await this.context?.openDatastore(
         'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
-      const wallet: UserHDWallet = {
+      const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
         label: 'Multi Coin Wallet',
