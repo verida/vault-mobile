@@ -46,6 +46,13 @@ const teamList = [manageWalletOption, ...publicList]
 
 const generalList = [
   {
+    label: 'Storage',
+    action: 'arrow',
+    optional: false,
+    onPress: (navigation) => navigation.navigate('StorageNodes'),
+    value: 'Verida',
+  },
+  {
     label: 'Network',
     action: 'arrow',
     optional: false,
