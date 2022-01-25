@@ -13,15 +13,7 @@ import { countries } from 'countries-list'
 import { get } from 'lodash'
 import VeridaSvg from 'assets/icons/verida.svg'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-
-export type NetworkNode = {
-  node_code: string
-  name: string
-  description: string
-  ISO2_CC: string
-  address: string
-  icon?: string
-}
+import { NetworkNode } from 'api/types'
 
 type NodeItemProps = Omit<TouchableOpacityProps, 'children'> & {
   data: NetworkNode

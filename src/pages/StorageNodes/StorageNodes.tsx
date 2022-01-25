@@ -3,70 +3,62 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { MainStackParams } from 'navigation/types'
 import {
   FlatList,
+  Image,
+  Linking,
   ListRenderItemInfo,
   StyleSheet,
   TouchableOpacity,
   View,
 } from 'react-native'
 import { Container, Content } from 'native-base'
-import NodeItem, { NetworkNode } from 'pages/StorageNodes/NodeItem'
+import NodeItem from 'pages/StorageNodes/NodeItem'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import Text from 'components/Text'
-
-const data = {
-  networks: [
-    {
-      name: 'testnet',
-      default_node_code: 'TN_V_USE1',
-      nodes: [
-        {
-          node_code: 'TN_V_SG1',
-          name: 'Testnet Verida Singapore',
-          description: 'Verida Singapore Node',
-          ISO2_CC: 'SG',
-          address: 'url_here',
-        },
-        {
-          node_code: 'TN_V_USE1',
-          name: 'Testnet Verida US',
-          description: 'Testnet Verida US Node',
-          ISO2_CC: 'US',
-          address: 'url_here',
-        },
-        {
-          node_code: 'TN_V_ZA1',
-          name: 'Testnet Verida South Africa',
-          description: 'Testnet Verida South Africa',
-          ISO2_CC: 'ZA',
-          address: 'url_here',
-        },
-      ],
-    },
-    {
-      name: 'mainnet',
-      nodes: [],
-    },
-  ],
-}
+import { useSelector } from 'react-redux'
+import { isEmpty } from 'lodash'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { NetworkNode } from 'api/types'
 
 function StorageNodes(
-  props: NativeStackScreenProps<MainStackParams, 'StorageNodes'>
+  _props: NativeStackScreenProps<MainStackParams, 'StorageNodes'>
 ) {
-  function renderItem(info: ListRenderItemInfo<NetworkNode>) {
-    const { item, index } = info
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const networks = useSelector((state) => state.networks)
 
-    return <NodeItem data={item} selected={index === 0} />
+  function renderItem(info: ListRenderItemInfo<NetworkNode>) {
+    const { item } = info
+
+    return (
+      <NodeItem
+        data={item}
+        selected={item.node_code === networks[0].default_node_code}
+      />
+    )
   }
 
   function renderSeparator() {
     return <View style={styles.separator} />
   }
 
+  async function onHostButtonPress() {
+    const url = 'https://developers.verida.io/docs/storage-node'
+    const canOpen = await Linking.canOpenURL(url)
+    if (canOpen) {
+      Linking.openURL(url)
+    }
+  }
+
+  if (isEmpty(networks)) {
+    return null
+  }
+
   return (
     <Container style={styles.container}>
+      <NavigationHeader title={'Storage'} />
       <Content>
         <FlatList
-          data={data.networks[0].nodes}
+          data={networks[0].nodes}
           renderItem={renderItem}
           contentContainerStyle={styles.list}
           ItemSeparatorComponent={renderSeparator}
@@ -74,8 +66,12 @@ function StorageNodes(
         <TouchableOpacity style={styles.otherButton} disabled={true}>
           <Text style={styles.otherButtonText}>Other...</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.hostButton} disabled={true}>
-          <Text style={styles.otherButtonText}>Other...</Text>
+        <TouchableOpacity style={styles.hostButton} onPress={onHostButtonPress}>
+          <Text style={styles.hostButtonText}>Host my own node</Text>
+          <Image
+            style={styles.hostButtonIcon}
+            source={require('assets/icons/share_icon.png')}
+          />
         </TouchableOpacity>
       </Content>
     </Container>
@@ -108,6 +104,25 @@ const styles = StyleSheet.create({
     fontSize: 17,
     fontFamily: NUNITO_SANS_BOLD,
     opacity: 0.5,
+  },
+  hostButton: {
+    flexDirection: 'row',
+    backgroundColor: 'white',
+    alignItems: 'center',
+    paddingVertical: 16,
+    paddingHorizontal: 20,
+    marginTop: 33,
+  },
+  hostButtonIcon: {
+    width: 19,
+    height: 19,
+    resizeMode: 'cover',
+  },
+  hostButtonText: {
+    fontSize: 16,
+    color: '#423BCE',
+    fontFamily: NUNITO_SANS_BOLD,
+    flex: 1,
   },
 })
 

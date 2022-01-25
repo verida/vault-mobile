@@ -12,6 +12,8 @@ import LayoutStyle from '../styles/layouts'
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../constants/text'
+import { useSelector } from 'react-redux'
+import { isEmpty } from 'lodash'
 
 const publicList = [
   {
@@ -46,13 +48,6 @@ const teamList = [manageWalletOption, ...publicList]
 
 const generalList = [
   {
-    label: 'Storage',
-    action: 'arrow',
-    optional: false,
-    onPress: (navigation) => navigation.navigate('StorageNodes'),
-    value: 'Verida',
-  },
-  {
     label: 'Network',
     action: 'arrow',
     optional: false,
@@ -63,6 +58,21 @@ const generalList = [
 
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
+  const networks = useSelector((state) => state.networks)
+  const modifiedGeneralList = [...generalList]
+
+  if (!isEmpty(networks)) {
+    const selectedNode = networks[0].nodes.find(
+      (node) => node.node_code === networks[0].default_node_code
+    )
+    modifiedGeneralList.unshift({
+      label: 'Storage',
+      action: 'arrow',
+      optional: false,
+      onPress: (navigation) => navigation.navigate('StorageNodes'),
+      value: selectedNode.name,
+    })
+  }
 
   const logout = async () => {
     Alert.alert(
@@ -111,7 +121,7 @@ export default (props) => {
         </View>
         <Text style={style.title}>General</Text>
         <View>
-          <PropertyList list={generalList} />
+          <PropertyList list={modifiedGeneralList} />
         </View>
       </View>
     </View>

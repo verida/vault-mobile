@@ -1,4 +1,5 @@
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { Network } from 'api/types'
 
 export type RootStackParams = {
   Auth: undefined
@@ -60,5 +61,5 @@ export type MainStackParams = {
     filter: any
   }
   Networks: undefined
-  StorageNodes: undefined
+  StorageNodes: { data: Network[] }
 }

@@ -4,6 +4,7 @@ import {
   SET_AUTH_STATUS,
   SET_DEVICE_TOKEN,
   SET_INBOX_ITEMS,
+  SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -49,4 +50,8 @@ export const setShowSeedPhraseReminder = (payload) => {
 
 export const setDeviceToken = (payload) => {
   return { type: SET_DEVICE_TOKEN, payload }
+}
+
+export const setNetworks = (payload) => {
+  return { type: SET_NETWORKS, payload }
 }

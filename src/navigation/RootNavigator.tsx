@@ -7,6 +7,9 @@ import { useAuth } from 'hooks/useAuth'
 import { createNavigationContainerRef } from '@react-navigation/native'
 import LoadingView from 'components/LoadingView'
 import AccountManager from 'api/AccountManager'
+import { fetchNetworks } from 'api/utils'
+import { useDispatch } from 'react-redux'
+import { setNetworks } from 'reduxStore/general/actions'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 
@@ -21,6 +24,7 @@ export function navigate(name: unknown, params: unknown) {
 function RootNavigator() {
   const { refresh, authenticated, loaded } = useAuth()
   const mounted = useRef(false)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     if (mounted.current) {
@@ -32,9 +36,11 @@ function RootNavigator() {
       console.log('ROOT NAVIGATOR init')
       await AccountManager.getInstance().init()
       await refresh()
+      const networks = await fetchNetworks()
+      dispatch(setNetworks(networks))
     }
     init()
-  }, [refresh])
+  }, [refresh, dispatch])
 
   if (!loaded) {
     return <LoadingView />
