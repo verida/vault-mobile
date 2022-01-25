@@ -241,7 +241,8 @@ class AccountManager {
 
       const HDwallets = await datastore?.getMany()
       if (HDwallets) {
-        // @ts-ignore: object doesn't mnemonic error
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
         const wallets = WalletUtils.generateHDWallets(HDwallets[0].mnemonic)
 
         await store.dispatch(saveUserWallets(wallets))
