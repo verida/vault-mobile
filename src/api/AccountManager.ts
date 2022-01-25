@@ -4,7 +4,7 @@ import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import WalletUtils from '@verida/wallet-utils'
 import { AutoAccount } from '@verida/account-node'
 import { utils } from 'ethers'
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import { Account, NormalizedAccounts, UserData, UserHDWallet } from 'api/types'
 import Vault from '@verida/vault-common'
 import dataMap from 'config/data-map'
 import store from 'reduxStore'
@@ -209,7 +209,7 @@ class AccountManager {
       const walletDb = await this.context?.openDatastore(
         'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
-      const wallet = {
+      const wallet: UserHDWallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
         label: 'Multi Coin Wallet',
@@ -241,6 +241,7 @@ class AccountManager {
 
       const HDwallets = await datastore?.getMany()
       if (HDwallets) {
+        // @ts-ignore: object doesn't mnemonic error
         const wallets = WalletUtils.generateHDWallets(HDwallets[0].mnemonic)
 
         await store.dispatch(saveUserWallets(wallets))
