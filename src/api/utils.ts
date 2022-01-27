@@ -5,6 +5,7 @@ import AccountManager, {
 } from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 import store from 'reduxStore'
+import { Network } from 'api/types'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -135,5 +136,17 @@ export async function registerRemoteNotification(token: string) {
   } catch (e) {
     console.error(e)
     Sentry.captureException(e)
+  }
+}
+
+export async function fetchNetworks(): Promise<Network[]> {
+  try {
+    const url = 'https://assets.verida.io/config/verida_storage_nodes.json'
+    const res = await fetch(url)
+    const json = await res.json()
+    return json.networks
+  } catch (e) {
+    Sentry.captureException(e)
+    return []
   }
 }
