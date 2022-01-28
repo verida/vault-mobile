@@ -21,6 +21,8 @@ import Config from 'react-native-config'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import SwitchAccountToast from 'components/SwitchAccountToast'
+import messaging from "@react-native-firebase/messaging";
+import PushNotification from "react-native-push-notification";
 
 configureNotifications()
 
@@ -28,6 +30,14 @@ Sentry.init({
   dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
   environment: Config.SENTRY_ENVIRONMENT,
 })
+
+// messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+//   console.log('background message:', remoteMessage)
+//   PushNotification.localNotification({
+//     title: 'Test',
+//     message: 'Test',
+//   })
+// })
 
 function App() {
   const [loading, setLoading] = useState(true)
