@@ -17,6 +17,7 @@ export function useRemoteNotifications() {
         await messaging().registerDeviceForRemoteMessages()
       }
       const token = await messaging().getToken()
+      console.log('FCM token:', token)
       await registerRemoteNotification(token)
     }
 
