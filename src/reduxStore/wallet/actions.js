@@ -1,11 +1,13 @@
 import algosdk from 'algosdk'
 
-import { pricingApi } from 'helpers/api'
+import { pricingApi } from 'wallet/helpers/api'
+import { algodClient, indexerClient } from 'wallet/chains/algorand'
+import dataHelper from 'wallet/data'
 import {
   getWalletsData,
   getTransactionParamsData,
 } from 'reduxStore/wallet/selectors'
-import { isNativeToken, getTokenAddress } from 'helpers/tokens'
+import { isNativeToken, getTokenAddress } from 'wallet/helpers/tokens'
 import { navigate } from 'navigation/RootNavigator'
 
 import {
@@ -33,17 +35,6 @@ import {
 } from './types'
 
 import { SUPPORTED_TOKENS, SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
-
-const token = {
-  'X-API-key': 'pMDXUFVkGJ7TFkkdORaV84pJEvUOBAvD1w9LTkq6',
-}
-const baseServer = 'https://testnet-algorand.api.purestake.io/idx2'
-const port = ''
-const algodServer = 'https://testnet-algorand.api.purestake.io/ps2'
-const algodPort = ''
-
-const indexerClient = new algosdk.Indexer(token, baseServer, port)
-const algodClient = new algosdk.Algodv2(token, algodServer, algodPort)
 
 export const getPrices = () => {
   return (dispatch) => {
@@ -77,16 +68,14 @@ export const getBalances = () => {
     try {
       const wallets = getWalletsData(getState())
 
-      let accountInfo = await indexerClient
-        .lookupAccountByID(wallets.algo.address)
-        .do()
+      let balanceData = await dataHelper.getAllBalances(wallets)
 
-      if (accountInfo && !accountInfo.message) {
-        dispatch({ type: FETCHED_BALANCES, data: accountInfo.account })
+      if (balanceData) {
+        dispatch({ type: FETCHED_BALANCES, data: balanceData })
       } else {
         dispatch({
           type: BALANCES_FETCH_FAILED,
-          error: accountInfo.message,
+          error: 'error',
         })
       }
     } catch (error) {
