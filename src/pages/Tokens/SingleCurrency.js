@@ -9,7 +9,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import LoadingIndicator from 'components/LoadingIndicator'
 import TransactionsList from 'components/Tokens/TransactionsList'
-import { getTokenChain, isNativeToken } from 'helpers/tokens'
+import { getTokenChain, isNativeToken } from 'wallet/helpers/tokens'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 
 import {

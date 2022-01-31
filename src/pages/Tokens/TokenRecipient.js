@@ -15,7 +15,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 import InputStyles from 'styles/inputs'
 import Label from 'components/Label'
-import { isValidWalletAddress } from 'helpers/wallet'
+import { isValidWalletAddress } from 'wallet/helpers/validation'
 
 import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
 
