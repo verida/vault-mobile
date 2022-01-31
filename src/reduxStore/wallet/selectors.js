@@ -1,36 +1,9 @@
 import { SUPPORTED_TOKENS } from 'wallet/constants'
-import { getTokenAddress } from 'helpers/tokens'
+import { getTokenAddress } from 'wallet/helpers/tokens'
 
 export const getPricingData = (state) => state.pricing.data || {}
 
-export const getBalancesData = (state) => {
-  // standardize and map balances to recognized token symbols
-  if (state.balances.data) {
-    const balanceData = state.balances.data
-    let list = {}
-    // TODO: dont hardcode
-    list.ALGO = balanceData.amount
-    if (balanceData.assets) {
-      balanceData.assets.map((balance) => {
-        let tok
-        tok = SUPPORTED_TOKENS.find((ele) => {
-          let tokenAddress = getTokenAddress(ele.address)
-          if (balance['asset-id']) {
-            return tokenAddress === balance['asset-id'].toString()
-          } else {
-            return false
-          }
-        })
-        if (tok) {
-          list[tok.symbol] = balance.amount
-        }
-      })
-    }
-    return list
-  } else {
-    return {}
-  }
-}
+export const getBalancesData = (state) => state.balances.data || {}
 
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
