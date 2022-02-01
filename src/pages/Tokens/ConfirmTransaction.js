@@ -58,10 +58,10 @@ const ConfirmTransaction = ({
             </View>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Amount</Text>
+            <Text style={styles.infoLabel}>Quantity</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(amount).toFixed(2)} {token.symbol}
+                {parseFloat(amount).toFixed(3)} {token.symbol}
               </Text>
             </View>
           </View>
