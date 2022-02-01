@@ -3,9 +3,9 @@ import { FlatList, Text, View } from 'react-native'
 
 import TransactionsListItem from './TransactionsListItem'
 
-export default ({ symbol, list, onPullToRefresh, refreshing }) => {
+export default ({ symbol, decimal, list, onPullToRefresh, refreshing }) => {
   const renderItem = ({ item }) => (
-    <TransactionsListItem symbol={symbol} item={item} />
+    <TransactionsListItem symbol={symbol} decimal={decimal} item={item} />
   )
 
   const emptyList = () => (
