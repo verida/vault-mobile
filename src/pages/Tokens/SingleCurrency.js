@@ -125,6 +125,7 @@ const SingleCurrency = ({
       ) : (
         <TransactionsList
           symbol={item.symbol}
+          decimal={item.decimal}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
           list={list}
