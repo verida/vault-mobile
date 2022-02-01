@@ -198,7 +198,7 @@ export const sendTransaction = (
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
         wallets.algo.address,
         transactionData.address,
-        transactionData.amount * 1000000,
+        transactionData.amount * Math.pow(10, transactionData.token.decimal),
         undefined,
         undefined,
         transactionParams
@@ -211,7 +211,10 @@ export const sendTransaction = (
           : transactionData.address,
         undefined,
         undefined,
-        isAssetEnablingTransaction ? 0 : transactionData.amount * 1000000,
+        isAssetEnablingTransaction
+          ? 0
+          : transactionData.amount *
+              Math.pow(10, transactionData.token.decimal),
         undefined,
         parseInt(tokenAddress, 10),
         transactionParams
