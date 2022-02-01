@@ -35,7 +35,7 @@ export const SUPPORTED_TOKENS = [
     symbol: 'USDT',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
     address: 'eip155:4/erc20:0xdac17f958d2ee523a2206206994597c13d831ec7/1',
-    decimal: 18,
+    decimal: 6,
   },
 ]
 
