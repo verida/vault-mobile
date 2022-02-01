@@ -4,6 +4,7 @@ import { Icon } from 'native-base'
 import Clipboard from '@react-native-community/clipboard'
 
 import Text from 'components/Text'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import CompleteSVG from 'assets/complete.svg'
@@ -29,7 +30,10 @@ export default ({ transaction }) => {
                 transaction.type === 'sent' ? styles.negative : styles.positive,
               ]}>
               {transaction.type === 'sent' ? '-' : ''}
-              {parseFloat(transaction.quantity / 1000000).toFixed(3)}{' '}
+              {formatTokenQuantity(
+                transaction.quantity,
+                transaction.decimal
+              )}{' '}
               {transaction.symbol}
             </Text>
           </View>
@@ -59,7 +63,7 @@ export default ({ transaction }) => {
           <Text style={styles.infoLabel}>Fee</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
-              {parseFloat(transaction.fee / 1000000).toFixed(3)}{' '}
+              {formatTokenQuantity(transaction.fee, transaction.decimal)}{' '}
               {transaction.feeSymbol}
             </Text>
           </View>
