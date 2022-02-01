@@ -4,6 +4,7 @@ import { ListItem, Text } from 'native-base'
 import { useNavigation } from '@react-navigation/native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import SentIcon from 'assets/sent_icon.svg'
 import ReceivedIcon from 'assets/received_icon.svg'
@@ -13,7 +14,7 @@ const icons = {
   received: <ReceivedIcon />,
 }
 
-export default ({ symbol, item }) => {
+export default ({ symbol, decimal, item }) => {
   const navigation = useNavigation()
   const { type, quantity, address, id, pending } = item
 
@@ -37,7 +38,7 @@ export default ({ symbol, item }) => {
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {(quantity / 1000000).toFixed(3)} {symbol}
+            {formatTokenQuantity(quantity, decimal)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>
