@@ -3,12 +3,15 @@ import { connect } from 'react-redux'
 
 import SuccessFailure from 'components/SuccessFailure'
 import { selectSentTransaction } from 'reduxStore/wallet/selectors'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 const TransactionSuccess = ({ navigation, sentTransaction }) => {
   const { data } = sentTransaction
   const { amount, token, to } = data
   const titleText = 'Success!'
-  const descriptionText = `${amount / 1000000} ${token.symbol} sent to ${to}`
+  const descriptionText = `${formatTokenQuantity(amount, token.decimal)} ${
+    token.symbol
+  } sent to ${to}`
   const buttonLabel = 'Done'
 
   return (
