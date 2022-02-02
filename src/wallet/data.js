@@ -8,8 +8,6 @@ const getAllBalances = async (wallets) => {
     .lookupAccountByID(wallets.algo.address)
     .do()
 
-  console.log(algorandBalances, 'algorandBalances')
-
   let assets = []
   SUPPORTED_TOKENS.forEach((token) => {
     if (token.address.includes('eip155')) {
@@ -23,8 +21,6 @@ const getAllBalances = async (wallets) => {
     }
   })
 
-  console.log(assets, 'assets')
-
   const ethereumBalances = await chainsApi.get(
     'v2/ethereum/mainnet/account/' +
       '0x00000000219ab540356cBB839Cbe05303d7705Fa',
@@ -32,7 +28,6 @@ const getAllBalances = async (wallets) => {
       assets: assets.join(','),
     }
   )
-  console.log(ethereumBalances, 'ethereumBalances')
 
   let list = {}
 
@@ -60,7 +55,6 @@ const getAllBalances = async (wallets) => {
 
   if (ethereumBalances.data) {
     Object.values(ethereumBalances.data).map((obj) => {
-      console.log(obj, 'obj')
       let tok
       tok = SUPPORTED_TOKENS.find((ele) => {
         // let tokenAddress = getTokenAddress(ele.address)
@@ -71,8 +65,6 @@ const getAllBalances = async (wallets) => {
       }
     })
   }
-
-  console.log(list, 'list')
 
   return list
 }
