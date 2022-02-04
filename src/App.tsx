@@ -12,7 +12,7 @@ import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
-import { configureNotifications } from 'helpers/notifications'
+import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import 'react-native-crypto'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import codePush, { CodePushOptions } from 'react-native-code-push'
@@ -21,10 +21,22 @@ import Config from 'react-native-config'
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import SwitchAccountToast from 'components/SwitchAccountToast'
-import messaging from "@react-native-firebase/messaging";
-import PushNotification from "react-native-push-notification";
+import messaging from '@react-native-firebase/messaging'
+import PushNotification from 'react-native-push-notification'
 
 configureNotifications()
+
+messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+  console.log('background message:', remoteMessage)
+  PushNotification.localNotification({
+    title: 'New inbox message',
+    message: 'Please refresh your inbox',
+    channelId: CHANNEL_ID,
+    userInfo: {
+      category: 'Inbox',
+    },
+  })
+})
 
 Sentry.init({
   dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',

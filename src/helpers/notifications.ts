@@ -42,10 +42,15 @@ export function configureNotifications() {
         // process the notification
         switch (data.category) {
           // TODO: handle other categories
-          default:
+          case 'InboxItem':
             navigate('InboxItem', {
               inboxItemId: data.data._id,
             })
+            break
+
+          case 'Inbox':
+            navigate('Inbox', undefined)
+            break
         }
 
         // (required) Called when a remote is received or opened, or local notification is opened

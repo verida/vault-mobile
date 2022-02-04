@@ -26,11 +26,7 @@ import {
 } from '../../constants/color'
 import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
 
-import {
-  fetchInboxCount,
-  getProfile,
-  registerRemoteNotification,
-} from 'api/utils'
+import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -62,6 +58,7 @@ const Home = (props) => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
+        console.log('initialUrl:', initialUrl)
 
         if (initialUrl === null) {
           return
