@@ -58,7 +58,6 @@ const Home = (props) => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
-        console.log('initialUrl:', initialUrl)
 
         if (initialUrl === null) {
           return

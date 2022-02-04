@@ -27,7 +27,6 @@ import PushNotification from 'react-native-push-notification'
 configureNotifications()
 
 messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-  console.log('background message:', remoteMessage)
   PushNotification.localNotification({
     title: 'New inbox message',
     message: 'Please refresh your inbox',
@@ -42,14 +41,6 @@ Sentry.init({
   dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
   environment: Config.SENTRY_ENVIRONMENT,
 })
-
-// messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-//   console.log('background message:', remoteMessage)
-//   PushNotification.localNotification({
-//     title: 'Test',
-//     message: 'Test',
-//   })
-// })
 
 function App() {
   const [loading, setLoading] = useState(true)

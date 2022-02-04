@@ -19,7 +19,6 @@ export const useEventHandlers = () => {
 
   useEffect(() => {
     async function onMessage(message: any) {
-      console.log('onMessage:', message)
       await fetchInboxCount()
       PushNotification.localNotification({
         title: get(message, 'sendBy.app') || 'New Message',
