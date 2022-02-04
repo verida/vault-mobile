@@ -6,6 +6,7 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
+  SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -27,6 +28,7 @@ const initialState = {
   selectedAccount: null,
   switchAccountToast: null,
   showSeedPhraseReminder: false,
+  networks: [],
 }
 
 const reducer = (state = initialState, action) => {
@@ -83,6 +85,12 @@ const reducer = (state = initialState, action) => {
         },
       })
 
+    case SET_NETWORKS:
+      return update(state, {
+        networks: {
+          $set: action.payload,
+        },
+      })
     default:
       return state
   }
