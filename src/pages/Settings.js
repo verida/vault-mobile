@@ -87,7 +87,7 @@ export default (props) => {
         {
           text: 'Logout',
           onPress: async () => {
-            const fcmToken = await messaging().getAPNSToken()
+            const fcmToken = await messaging().getToken()
             if (fcmToken) {
               await unRegisterRemoteNotification(fcmToken)
             }

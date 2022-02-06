@@ -10,6 +10,10 @@ export function useRemoteNotifications() {
 
   useEffect(() => {
     async function init() {
+      if (!selectedAccount) {
+        return
+      }
+
       const registered = messaging().isDeviceRegisteredForRemoteMessages
       if (!registered) {
         await messaging().registerDeviceForRemoteMessages()
