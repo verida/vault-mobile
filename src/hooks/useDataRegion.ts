@@ -55,8 +55,7 @@ export function useDataRegion() {
 
         dispatch(setNetworks(transformedNetworks))
       } catch (error) {
-        console.error(error)
-        Sentry.captureException(e)
+        Sentry.captureException(error)
       }
     }
 
