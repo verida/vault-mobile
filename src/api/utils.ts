@@ -187,3 +187,25 @@ export async function fetchNetworks(): Promise<Network[]> {
     return []
   }
 }
+
+export async function unRegisterRemoteNotification(token: string) {
+  try {
+    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const body = {
+      data: {
+        did: currentDid,
+        context: VERIDA_CONTEXT_NAME,
+        deviceId: token,
+      },
+    }
+
+    const axiosInstance = await getAxios()
+    await axiosInstance.post(
+      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/unregister`,
+      body
+    )
+  } catch (e) {
+    console.error(e)
+    Sentry.captureException(e)
+  }
+}

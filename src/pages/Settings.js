@@ -14,6 +14,8 @@ import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import { useSelector } from 'react-redux'
 import { isEmpty } from 'lodash'
+import { unRegisterRemoteNotification } from 'api/utils'
+import messaging from '@react-native-firebase/messaging'
 
 const publicList = [
   {
@@ -85,6 +87,10 @@ export default (props) => {
         {
           text: 'Logout',
           onPress: async () => {
+            const fcmToken = await messaging().getAPNSToken()
+            if (fcmToken) {
+              await unRegisterRemoteNotification(fcmToken)
+            }
             await AccountManager.getInstance().logout()
             await refresh()
           },

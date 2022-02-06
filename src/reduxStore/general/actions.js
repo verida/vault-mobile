@@ -46,3 +46,7 @@ export const setSwitchAccountToast = (payload) => {
 export const setShowSeedPhraseReminder = (payload) => {
   return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
 }
+
+export const setNetworks = (payload) => {
+  return { type: SET_NETWORKS, payload }
+}

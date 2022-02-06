@@ -26,7 +26,7 @@ import PushNotification from 'react-native-push-notification'
 
 configureNotifications()
 
-messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
   PushNotification.localNotification({
     title: 'New inbox message',
     message: 'Please refresh your inbox',
