@@ -91,7 +91,6 @@ const initialState = {
   switchAccountToast: null,
   showSeedPhraseReminder: false,
   ...walletInitialState,
-  deviceToken: null,
   networks: [],
   navigationLink: null,
 }
@@ -281,7 +280,6 @@ const reducer = (state = initialState, action) => {
         ...state,
         ...walletInitialState,
       }
-    case SET_DEVICE_TOKEN:
     case SET_NETWORKS:
       return update(state, {
         networks: {

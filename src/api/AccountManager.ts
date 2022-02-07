@@ -203,7 +203,8 @@ class AccountManager {
   public async setUserWallet() {
     try {
       await store.dispatch(removeUserWallets())
-      const userHDWalletMnemonic = WalletUtils.MultiChainWallet.generateMnemonic()
+      const userHDWalletMnemonic =
+        WalletUtils.MultiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
@@ -243,7 +244,9 @@ class AccountManager {
       if (HDwallets) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(HDwallets[0].mnemonic)
+        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(
+          HDwallets[0].mnemonic
+        )
 
         await store.dispatch(saveUserWallets(wallets))
 
