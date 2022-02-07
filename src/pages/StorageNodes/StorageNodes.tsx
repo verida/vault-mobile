@@ -25,7 +25,9 @@ function StorageNodes(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const networks = useSelector((state) => state.networks)
-  const selectedNode = networks[0].nodes[networks[0].selected_node]
+  const selectedNode = !isEmpty(networks)
+    ? networks[0].nodes[networks[0].selected_node]
+    : null
 
   function renderItem(info: ListRenderItemInfo<NetworkNode>) {
     const { item } = info
