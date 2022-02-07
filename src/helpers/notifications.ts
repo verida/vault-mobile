@@ -3,6 +3,8 @@ import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 import { navigate } from 'navigation/RootNavigator'
 import * as Sentry from '@sentry/react-native'
+import store from 'reduxStore'
+import { setNavigationLink } from 'reduxStore/general/actions'
 
 export const CHANNEL_ID = 'verida-vault'
 
@@ -31,6 +33,7 @@ export function configureNotifications() {
 
     // (required) Called when a remote is received or opened, or local notification is opened
     onNotification: function (notification) {
+      console.log('onNotification:', notification)
       try {
         console.log('NOTIFICATION:', notification)
         const { data } = notification
@@ -46,7 +49,7 @@ export function configureNotifications() {
             break
 
           case 'Inbox':
-            navigate('Inbox', undefined)
+            store.dispatch(setNavigationLink('/inbox'))
             break
         }
 

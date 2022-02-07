@@ -3,6 +3,7 @@ import {
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
   SET_INBOX_ITEMS,
+  SET_NAVIGATION_LINK,
   SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
@@ -49,4 +50,8 @@ export const setShowSeedPhraseReminder = (payload) => {
 
 export const setNetworks = (payload) => {
   return { type: SET_NETWORKS, payload }
+}
+
+export const setNavigationLink = (payload) => {
+  return { type: SET_NAVIGATION_LINK, payload }
 }
