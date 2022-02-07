@@ -242,9 +242,9 @@ class AccountManager {
 
       const HDwallets = await datastore?.getMany()
       if (HDwallets) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
         const wallets = WalletUtils.MultiChainWallet.generateHDWallets(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
           HDwallets[0].mnemonic
         )
 
