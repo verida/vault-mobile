@@ -25,6 +25,9 @@ function StorageNodes(
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const networks = useSelector((state) => state.networks)
+  const selectedNode = !isEmpty(networks)
+    ? networks[0].nodes[networks[0].selected_node]
+    : null
 
   function renderItem(info: ListRenderItemInfo<NetworkNode>) {
     const { item } = info
@@ -32,7 +35,7 @@ function StorageNodes(
     return (
       <NodeItem
         data={item}
-        selected={item.node_code === networks[0].default_node_code}
+        selected={item.node_code === selectedNode.node_code}
       />
     )
   }

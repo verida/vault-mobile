@@ -6,7 +6,7 @@ import AccountManager, {
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 import store from 'reduxStore'
 import axios from 'axios'
-import { Network } from 'api/types'
+import { Network, NetworkCountries } from 'api/types'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -207,5 +207,17 @@ export async function unRegisterRemoteNotification(token: string) {
   } catch (e) {
     console.error(e)
     Sentry.captureException(e)
+  }
+}
+
+xport async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
+  try {
+    const url = 'https://assets.verida.io/config/country_storage_nodes.json'
+    const res = await fetch(url)
+    const json = await res.json()
+    return json.networks
+  } catch (e) {
+    Sentry.captureException(e)
+    return []
   }
 }

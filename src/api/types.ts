@@ -33,4 +33,13 @@ export type Network = {
   name: string
   default_node_code: string
   nodes: NetworkNode[]
+  selected_node?: number
+}
+
+export type NetworkCountry = {
+  [key: string]: string
+}
+
+export type NetworkCountries = {
+  [name: string]: NetworkCountry[]
 }

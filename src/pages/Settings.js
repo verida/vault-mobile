@@ -64,9 +64,7 @@ export default (props) => {
   const modifiedGeneralList = [...generalList]
 
   if (!isEmpty(networks)) {
-    const selectedNode = networks[0].nodes.find(
-      (node) => node.node_code === networks[0].default_node_code
-    )
+    const selectedNode = networks[0].nodes[networks[0].selected_node]
     modifiedGeneralList.unshift({
       label: 'Storage',
       action: 'arrow',
