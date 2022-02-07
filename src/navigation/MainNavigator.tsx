@@ -36,11 +36,14 @@ import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import ShareableData from 'pages/Inbox/ShareableData'
 import Networks from 'pages/Networks/Networks'
+import StorageNodes from 'pages/StorageNodes/StorageNodes'
+import { useDataRegion } from 'hooks/useDataRegion'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
   useEventHandlers()
+  useDataRegion()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -93,6 +96,7 @@ function MainNavigator() {
       <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
       <Stack.Screen name={'Networks'} component={Networks} />
+      <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
     </Stack.Navigator>
   )
 }

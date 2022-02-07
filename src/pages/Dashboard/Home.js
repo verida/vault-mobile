@@ -24,13 +24,12 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from '../../constants/color'
-import { setNewMessagesCount as setNewMessagesCountAction } from '../../reduxStore/general/actions'
-
 import {
-  fetchInboxCount,
-  getProfile,
-  registerRemoteNotification,
-} from 'api/utils'
+  setNavigationLink as setNavigationLinkAction,
+  setNewMessagesCount as setNewMessagesCountAction,
+} from '../../reduxStore/general/actions'
+
+import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
@@ -40,7 +39,7 @@ import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import DidView from 'pages/Dashboard/DidView'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { useAuth } from 'hooks/useAuth'
-import { useFocusEffect } from '@react-navigation/native'
+import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 
@@ -49,7 +48,13 @@ const LogoImg = require('../../assets/vault-logo.png')
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 const Home = (props) => {
-  const { navigation, selectedAccount, publicProfileData } = props
+  const {
+    navigation,
+    selectedAccount,
+    publicProfileData,
+    navigationLink,
+    setNavigationLink,
+  } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
   const [loading, setLoading] = useState(true)
@@ -57,6 +62,7 @@ const Home = (props) => {
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
+  const linkTo = useLinkTo()
 
   useEffect(() => {
     const getUrl = async () => {
@@ -76,6 +82,15 @@ const Home = (props) => {
 
     getUrl()
   }, [handleDeeplink])
+
+  useEffect(() => {
+    if (navigationLink) {
+      InteractionManager.runAfterInteractions(() => {
+        linkTo(navigationLink)
+        setNavigationLink(null)
+      })
+    }
+  }, [navigationLink, linkTo, setNavigationLink])
 
   useEffect(() => {
     async function checkFirstTimeLogin() {
@@ -128,11 +143,6 @@ const Home = (props) => {
   useFocusEffect(() => {
     fetchInboxCount()
   })
-
-  // Register device token to notification server
-  useEffect(() => {
-    registerRemoteNotification()
-  }, [])
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
@@ -234,6 +244,7 @@ const Home = (props) => {
 const mapDispatchToProps = (dispatch) => {
   return {
     setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
+    setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
   }
 }
 
@@ -242,6 +253,7 @@ const mapStateToProps = (state) => {
     publicProfileData: state.publicProfileData,
     newMessagesCount: state.newMessagesCount,
     selectedAccount: state.selectedAccount,
+    navigationLink: state.navigationLink,
   }
 }
 

@@ -27,9 +27,7 @@ function RootNavigator() {
       return
     }
     mounted.current = true
-    console.log('ROOT NAVIGATOR rerender')
     async function init() {
-      console.log('ROOT NAVIGATOR init')
       await AccountManager.getInstance().init()
       await refresh()
     }

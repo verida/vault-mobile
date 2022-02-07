@@ -1,13 +1,27 @@
 import messaging from '@react-native-firebase/messaging'
 import { useEffect } from 'react'
-import { Alert } from 'react-native'
+import { registerRemoteNotification } from 'api/utils'
+import { useSelector } from 'react-redux'
 
 export function useRemoteNotifications() {
-  useEffect(() => {
-    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
-      Alert.alert('Remote notification', JSON.stringify(remoteMessage))
-    })
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  // @ts-ignore
+  const selectedAccount = useSelector((state) => state.selectedAccount)
 
-    return unsubscribe
-  }, [])
+  useEffect(() => {
+    async function init() {
+      if (!selectedAccount) {
+        return
+      }
+
+      const registered = messaging().isDeviceRegisteredForRemoteMessages
+      if (!registered) {
+        await messaging().registerDeviceForRemoteMessages()
+      }
+      const token = await messaging().getToken()
+      await registerRemoteNotification(token)
+    }
+
+    init()
+  }, [selectedAccount])
 }

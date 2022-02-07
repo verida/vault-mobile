@@ -12,6 +12,10 @@ import LayoutStyle from '../styles/layouts'
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
 
 import { NUNITO_SANS_BOLD } from '../constants/text'
+import { useSelector } from 'react-redux'
+import { isEmpty } from 'lodash'
+import { unRegisterRemoteNotification } from 'api/utils'
+import messaging from '@react-native-firebase/messaging'
 
 const publicList = [
   {
@@ -57,6 +61,19 @@ const generalList = [
 
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
+  const networks = useSelector((state) => state.networks)
+  const modifiedGeneralList = [...generalList]
+
+  if (!isEmpty(networks)) {
+    const selectedNode = networks[0].nodes[networks[0].selected_node]
+    modifiedGeneralList.unshift({
+      label: 'Storage',
+      action: 'arrow',
+      optional: false,
+      onPress: (navigation) => navigation.navigate('StorageNodes'),
+      value: selectedNode.name,
+    })
+  }
 
   const logout = async () => {
     Alert.alert(
@@ -69,6 +86,10 @@ export default (props) => {
         {
           text: 'Logout',
           onPress: async () => {
+            const fcmToken = await messaging().getToken()
+            if (fcmToken) {
+              await unRegisterRemoteNotification(fcmToken)
+            }
             await AccountManager.getInstance().logout()
             await refresh()
           },
@@ -105,7 +126,7 @@ export default (props) => {
         </View>
         <Text style={style.title}>General</Text>
         <View>
-          <PropertyList list={generalList} />
+          <PropertyList list={modifiedGeneralList} />
         </View>
       </View>
     </View>
