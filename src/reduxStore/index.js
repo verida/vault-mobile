@@ -6,7 +6,7 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
-  SET_DEVICE_TOKEN,
+  SET_NAVIGATION_LINK,
   SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
@@ -29,8 +29,8 @@ const initialState = {
   selectedAccount: null,
   switchAccountToast: null,
   showSeedPhraseReminder: false,
-  deviceToken: null,
   networks: [],
+  navigationLink: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -87,19 +87,20 @@ const reducer = (state = initialState, action) => {
         },
       })
 
-    case SET_DEVICE_TOKEN:
-      return update(state, {
-        deviceToken: {
-          $set: action.payload,
-        },
-      })
-
     case SET_NETWORKS:
       return update(state, {
         networks: {
           $set: action.payload,
         },
       })
+
+    case SET_NAVIGATION_LINK:
+      return update(state, {
+        navigationLink: {
+          $set: action.payload,
+        },
+      })
+
     default:
       return state
   }

@@ -1,0 +1,98 @@
+{
+  "project_info": {
+    "project_number": "795597262002",
+    "project_id": "verida-vault",
+    "storage_bucket": "verida-vault.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795597262002:android:66dfab91a750f0df070dab",
+        "android_client_info": {
+          "package_name": "io.verida.vault"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795597262002-tjn66100c41bopiiu2sf48ioj9pr413v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.verida.vault",
+            "certificate_hash": "71351dd13ce6a9f1b5686237881ab492892ac016"
+          }
+        },
+        {
+          "client_id": "795597262002-eg00r9imkqhjfa86t4prs0oat5nu7ld5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpnPjLvbu_ZVLzCFjzJXUnur0JDUKteHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795597262002-eg00r9imkqhjfa86t4prs0oat5nu7ld5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "795597262002-fv2qqjkfbp1go4i67rqmucj8r2f2bblm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.verida.vault"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:795597262002:android:a7fa2220a4f2d707070dab",
+        "android_client_info": {
+          "package_name": "io.verida.vault.internal"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "795597262002-enk1rai8i4k599fl4mugvb3k2bg4jbov.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "io.verida.vault.internal",
+            "certificate_hash": "71351dd13ce6a9f1b5686237881ab492892ac016"
+          }
+        },
+        {
+          "client_id": "795597262002-eg00r9imkqhjfa86t4prs0oat5nu7ld5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBpnPjLvbu_ZVLzCFjzJXUnur0JDUKteHw"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "795597262002-eg00r9imkqhjfa86t4prs0oat5nu7ld5.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "795597262002-fv2qqjkfbp1go4i67rqmucj8r2f2bblm.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.verida.vault"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -2,8 +2,8 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
-  SET_DEVICE_TOKEN,
   SET_INBOX_ITEMS,
+  SET_NAVIGATION_LINK,
   SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
@@ -48,10 +48,10 @@ export const setShowSeedPhraseReminder = (payload) => {
   return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
 }
 
-export const setDeviceToken = (payload) => {
-  return { type: SET_DEVICE_TOKEN, payload }
-}
-
 export const setNetworks = (payload) => {
   return { type: SET_NETWORKS, payload }
+}
+
+export const setNavigationLink = (payload) => {
+  return { type: SET_NAVIGATION_LINK, payload }
 }

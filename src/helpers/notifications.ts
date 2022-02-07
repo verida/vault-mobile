@@ -4,7 +4,7 @@ import PushNotification, { Importance } from 'react-native-push-notification'
 import { navigate } from 'navigation/RootNavigator'
 import * as Sentry from '@sentry/react-native'
 import store from 'reduxStore'
-import { setDeviceToken } from 'reduxStore/general/actions'
+import { setNavigationLink } from 'reduxStore/general/actions'
 
 export const CHANNEL_ID = 'verida-vault'
 
@@ -29,11 +29,11 @@ export function configureNotifications() {
     // (optional) Called when Token is generated (iOS and Android)
     onRegister: function (token) {
       console.log('TOKEN:', token)
-      store.dispatch(setDeviceToken(token.token))
     },
 
     // (required) Called when a remote is received or opened, or local notification is opened
     onNotification: function (notification) {
+      console.log('onNotification:', notification)
       try {
         console.log('NOTIFICATION:', notification)
         const { data } = notification
@@ -42,10 +42,15 @@ export function configureNotifications() {
         // process the notification
         switch (data.category) {
           // TODO: handle other categories
-          default:
+          case 'InboxItem':
             navigate('InboxItem', {
               inboxItemId: data.data._id,
             })
+            break
+
+          case 'Inbox':
+            store.dispatch(setNavigationLink('/inbox'))
+            break
         }
 
         // (required) Called when a remote is received or opened, or local notification is opened
