@@ -210,7 +210,7 @@ export async function unRegisterRemoteNotification(token: string) {
   }
 }
 
-xport async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
+export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
   try {
     const url = 'https://assets.verida.io/config/country_storage_nodes.json'
     const res = await fetch(url)
