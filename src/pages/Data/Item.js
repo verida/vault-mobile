@@ -9,6 +9,7 @@ import CredentialDataItem from 'pages/Data/CredentialDataItem'
 import didJWT from 'did-jwt'
 import * as Sentry from '@sentry/react-native'
 import { getProfile } from 'api/utils'
+import { get } from 'lodash'
 
 const DataItem = (props) => {
   const { item, folder } = props.route.params
@@ -25,6 +26,7 @@ const DataItem = (props) => {
         const _data = await folder.getDetail(item)
         if (isCredential) {
           const decoded = didJWT.decodeJWT(item.didJwtVc)
+          _data.payload = get(decoded, 'payload.data', {})
           const iss = decoded.payload.iss
           const { name, avatar } = await getProfile(iss)
           _data.issuer = {

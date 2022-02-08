@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View, ViewProps } from 'react-native'
 import Text from 'components/Text'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -11,6 +11,8 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { DefaultAvatar } from 'api/utils'
 import { isEmpty } from 'lodash'
+import { Credentials } from '@verida/verifiable-credentials'
+import AccountManager from 'api/AccountManager'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
@@ -18,6 +20,9 @@ export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
 
 function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, ...rest } = props
+  const [credUri, setCredUri] = useState('')
+
+  console.log('data:', data)
 
   const {
     issuer: { name: issuerName, avatar: issuerAvatar, did: issuerDID } = {
@@ -26,6 +31,22 @@ function CredentialDataItem(props: CredentialDataItemProps) {
       did: '',
     },
   } = data
+
+  useEffect(() => {
+    async function init() {
+      if (isEmpty(data.payload)) {
+        return
+      }
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore
+      const credential = new Credentials(AccountManager.getInstance().context)
+
+      const item = await credential.createCredentialJWT(data)
+      console.log('item:', item)
+    }
+
+    init()
+  }, [])
 
   if (isEmpty(data.data)) {
     return null
