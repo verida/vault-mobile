@@ -117,23 +117,7 @@ export const selectTransactions = (state, assetID) => {
   //   const userAddr = 'CG7CUMAJWSTIP4KPQHWIII7QEASDQTGSOYRPRJ4WX7QZ7OQDCNZPJSNLHE'
   const wallets = getWalletsData(state)
   const userAddr = wallets.algo.address
-  const rawTransactions = state.transactions.data || []
-  let transactions = []
-  if (rawTransactions) {
-    transactions = rawTransactions.map((tx) => {
-      let isUserSender = tx.sender === userAddr
-      let transferInfo = tx['asset-transfer-transaction']
-        ? tx['asset-transfer-transaction']
-        : tx['payment-transaction']
-      return {
-        id: tx.id,
-        type: isUserSender ? 'sent' : 'received',
-        address: isUserSender ? transferInfo.receiver : tx.sender,
-        quantity: transferInfo.amount,
-        pending: false,
-      }
-    })
-  }
+  const transactions = state.transactions.data || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx) => {
