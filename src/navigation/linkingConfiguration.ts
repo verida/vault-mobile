@@ -8,6 +8,7 @@ const linking: LinkingOptions<RootStackParams> = {
       Main: {
         screens: {
           LoginRequest: 'request',
+          Inbox: 'inbox',
         },
       },
     },

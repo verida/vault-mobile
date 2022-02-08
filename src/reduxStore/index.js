@@ -7,7 +7,8 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
-  SET_DEVICE_TOKEN,
+  SET_NAVIGATION_LINK,
+  SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -90,7 +91,8 @@ const initialState = {
   switchAccountToast: null,
   showSeedPhraseReminder: false,
   ...walletInitialState,
-  deviceToken: null,
+  networks: [],
+  navigationLink: null,
 }
 
 const reducer = (state = initialState, action) => {
@@ -278,9 +280,16 @@ const reducer = (state = initialState, action) => {
         ...state,
         ...walletInitialState,
       }
-    case SET_DEVICE_TOKEN:
+    case SET_NETWORKS:
       return update(state, {
-        deviceToken: {
+        networks: {
+          $set: action.payload,
+        },
+      })
+
+    case SET_NAVIGATION_LINK:
+      return update(state, {
+        navigationLink: {
           $set: action.payload,
         },
       })
