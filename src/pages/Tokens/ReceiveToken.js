@@ -10,6 +10,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
+import { getTokenChain } from 'wallet/helpers/tokens'
 
 import { PRIMARY_COLOR, BLACK_ORIGIN_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -23,7 +24,9 @@ const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
-  const address = wallets.algo.address
+  const tokenChain = getTokenChain(token.address)
+  const address =
+    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
   return (
     <Container>
       <NavigationHeader
