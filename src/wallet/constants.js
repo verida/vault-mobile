@@ -27,7 +27,7 @@ export const SUPPORTED_TOKENS = [
     name: 'Ethereum',
     symbol: 'ETH',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-    address: 'eip155:1/slip44:60',
+    address: 'eip155:1/erc20:0x0000001/1',
     decimal: 18,
   },
   {

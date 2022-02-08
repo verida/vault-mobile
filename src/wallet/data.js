@@ -11,7 +11,7 @@ const getAllBalances = async (wallets) => {
   let assets = []
   SUPPORTED_TOKENS.forEach((token) => {
     if (token.address.includes('eip155')) {
-      if (token.address.includes('slip44')) {
+      if (token.address.includes('0x0000001')) {
         assets.push('ethereum/native/eth')
       } else {
         assets.push(
@@ -73,7 +73,7 @@ const getTransactions = async (wallets, tokenAddress) => {
   let transactions = []
   let assets = []
   if (tokenAddress.includes('eip155')) {
-    if (tokenAddress.includes('slip44')) {
+    if (tokenAddress.includes('0x0000001')) {
       assets.push('ethereum/native/eth')
     } else {
       assets.push(`ethereum/contract/${getTokenAddress(tokenAddress)}/erc-20`)

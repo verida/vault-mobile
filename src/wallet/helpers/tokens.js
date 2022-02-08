@@ -6,7 +6,10 @@ export const getTokenAddress = (address) => {
 }
 
 export const isNativeToken = (address) => {
-  return getTokenAddress(address) === 'slip44'
+  return (
+    getTokenAddress(address) === 'slip44' ||
+    getTokenAddress(address) === '0x0000001'
+  )
 }
 
 export const getTokenChain = (address) => {
