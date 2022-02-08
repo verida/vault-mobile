@@ -91,20 +91,12 @@ export const getTransactionsForToken = (assetID) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState())
-    const tokenAddress = getTokenAddress(assetID)
-    const isNative = isNativeToken(assetID)
-
-    let transactionsData = await indexerClient
-      .searchForTransactions()
-      .address(wallets.algo.address)
-      .assetID(isNative ? null : tokenAddress)
-      .txType(isNative ? 'pay' : null)
-      .do()
+    const transactionsData = await dataHelper.getTransactions(wallets, assetID)
 
     if (transactionsData) {
       dispatch({
         type: FETCHED_TRANSACTIONS,
-        data: transactionsData.transactions,
+        data: transactionsData,
       })
     } else {
       dispatch({
