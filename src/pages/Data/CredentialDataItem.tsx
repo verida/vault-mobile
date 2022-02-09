@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View, ViewProps } from 'react-native'
 import Text from 'components/Text'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { SUCCESS_COLOR } from 'constants/color'
+import { ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { List } from 'native-base'
 import DataFieldList from 'components/Data/DataFieldList'
 import { NUNITO_SANS_BOLD } from 'constants/text'
@@ -11,42 +11,66 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { DefaultAvatar } from 'api/utils'
 import { isEmpty } from 'lodash'
-import { Credentials } from '@verida/verifiable-credentials'
+import { Credentials, SharingCredential } from '@verida/verifiable-credentials'
 import AccountManager from 'api/AccountManager'
+import { Context } from '@verida/client-ts'
+import * as Sentry from '@sentry/react-native'
+import LoadingView from 'components/LoadingView'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
 }
 
+type CredentialJwt = {
+  didJwtVc: string
+}
+
 function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, ...rest } = props
   const [credUri, setCredUri] = useState('')
-
-  console.log('data:', data)
+  const [loading, setLoading] = useState(false)
+  const [verified, setVerified] = useState(false)
 
   const {
-    issuer: { name: issuerName, avatar: issuerAvatar, did: issuerDID } = {
+    issuer: { name: issuerName, avatar: issuerAvatar } = {
       name: '',
       avatar: null,
-      did: '',
     },
   } = data
 
   useEffect(() => {
     async function init() {
-      if (isEmpty(data.payload)) {
-        return
-      }
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const credential = new Credentials(AccountManager.getInstance().context)
+      try {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const context = AccountManager.getInstance().context as Context
+        if (isEmpty(data.payload) || isEmpty(data.didJwtVc) || !context) {
+          return
+        }
+        setLoading(true)
+        const credential = new Credentials(context)
 
-      const item = await credential.createCredentialJWT(data)
-      console.log('item:', item)
+        const credentialJWT = (await credential.createCredentialJWT(
+          data
+        )) as CredentialJwt
+        const shareCredential = new SharingCredential(context)
+        const issuedCredential = await shareCredential.issueEncryptedCredential(
+          credentialJWT
+        )
+        setCredUri(issuedCredential.uri)
+        await credential.verifyCredential(credentialJWT.didJwtVc)
+        setVerified(true)
+        setLoading(false)
+      } catch (error) {
+        setLoading(false)
+        setVerified(false)
+        console.error(error)
+        Sentry.captureException(error)
+      }
     }
 
     init()
-  }, [])
+  }, [data])
 
   if (isEmpty(data.data)) {
     return null
@@ -61,20 +85,33 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         <Text style={styles.issuerName}>{issuerName}</Text>
       </View>
       <View style={styles.qrContainer}>
-        <QRCode
-          logo={require('assets/vault-logo.png')}
-          logoSize={60}
-          size={207}
-          codeStyle='dot'
-          innerEyeStyle='circle'
-          padding={0.5}
-          content={issuerDID || ''}
-        />
+        {!isEmpty(credUri) ? (
+          <QRCode
+            logo={require('assets/vault-logo.png')}
+            logoSize={60}
+            size={207}
+            codeStyle='dot'
+            innerEyeStyle='circle'
+            padding={0.5}
+            content={credUri}
+          />
+        ) : (
+          <LoadingView type={'small'} style={styles.loadingView} />
+        )}
       </View>
-      <View style={styles.verifiedContainer}>
-        <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />
-        <Text style={styles.verifiedText}>Credential is valid</Text>
-      </View>
+      {!loading && verified && (
+        <View style={styles.verifiedContainer}>
+          <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />
+          <Text style={styles.verifiedText}>Credential is valid</Text>
+        </View>
+      )}
+      {!loading && !verified && (
+        <View style={styles.verifiedContainer}>
+          <AntDesign name='exclamationcircle' size={20} color={ORANGE_COLOR} />
+          <Text style={styles.verifiedText}>Credential is invalid</Text>
+        </View>
+      )}
+
       <Text style={styles.title}>{data?.row?.name}</Text>
       <List style={{ alignSelf: 'stretch' }}>
         <DataFieldList data={data} />
@@ -122,6 +159,9 @@ const styles = StyleSheet.create({
   },
   issuerName: {
     fontFamily: NUNITO_SANS_BOLD,
+  },
+  loadingView: {
+    maxHeight: 50,
   },
 })
 
