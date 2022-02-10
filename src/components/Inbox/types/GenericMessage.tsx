@@ -92,7 +92,6 @@ function GenericMessage(props: GenericMessageProps) {
   }
 
   const formattedSendAt = moment(inboxItem.sendAt).format('MMM D, HH:mm')
-  console.log('sender:', sender)
 
   return (
     <Content>

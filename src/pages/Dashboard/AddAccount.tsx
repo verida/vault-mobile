@@ -44,7 +44,6 @@ function AddAccount(
       setProcessing(false)
       navigation.goBack()
     } catch (error) {
-      console.error(error)
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
     }

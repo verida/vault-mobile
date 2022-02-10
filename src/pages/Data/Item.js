@@ -36,7 +36,6 @@ const DataItem = (props) => {
         }
         setData(_data)
       } catch (e) {
-        console.error(e)
         Alert.alert('Failed to fetch data')
         Sentry.captureException(e)
       }

@@ -26,7 +26,6 @@ export default ({ item, inboxItem, type, navigation }) => {
         navigation.goBack()
       }
     } catch (e) {
-      console.error(e)
       Alert.alert('Error', 'Cannot accept data now')
       Sentry.captureException(e)
       setCurrentAction(null)

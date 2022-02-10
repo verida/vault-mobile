@@ -65,7 +65,6 @@ const PublicProfile = (props) => {
     bindChanges()
   }, [initialized, list, setPublicProfileData])
 
-  console.log('list:', list)
   useEffect(() => {
     setInitialized(false)
   }, [isFocused])

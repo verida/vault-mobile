@@ -93,7 +93,6 @@ export async function fetchInboxCount() {
     store.dispatch(setNewMessagesCount(messages.length))
   } catch (error) {
     Sentry.captureException(error)
-    console.log(error)
   }
 }
 
@@ -115,7 +114,6 @@ export async function getProfile(did: string) {
     }
   } catch (error) {
     Sentry.captureException(error)
-    console.error(error)
 
     return {
       name: 'Unknown',
@@ -172,7 +170,6 @@ export async function registerRemoteNotification(token: string) {
       body
     )
   } catch (e) {
-    console.error(e)
     Sentry.captureException(e)
   }
 }
@@ -206,7 +203,6 @@ export async function unRegisterRemoteNotification(token: string) {
       body
     )
   } catch (e) {
-    console.error(e)
     Sentry.captureException(e)
   }
 }

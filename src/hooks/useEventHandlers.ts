@@ -1,4 +1,5 @@
 import NetInfo from '@react-native-community/netinfo'
+import * as Sentry from '@sentry/react-native'
 import { CHANNEL_ID } from 'helpers/notifications'
 import { get } from 'lodash'
 import { useEffect, useRef, useState } from 'react'
@@ -40,7 +41,7 @@ export const useEventHandlers = () => {
         await messaging.onMessage(onMessage)
         await fetchInboxCount()
       } catch (e) {
-        console.error(e)
+        Sentry.captureException(e)
       }
     }
 

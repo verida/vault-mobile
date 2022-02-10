@@ -28,9 +28,6 @@ const Folders = () => {
       const items = filteredNavigation.map((folder) => {
         if (!folders[folder]) {
           // folder doesn't exist
-          console.error(
-            `${folder} is listed in navigation, but not defined in map.json`
-          )
           return
         }
 

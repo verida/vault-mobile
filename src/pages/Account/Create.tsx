@@ -61,7 +61,6 @@ function Create(
       setProcessing(false)
       navigation.navigate('CreatePin')
     } catch (error) {
-      console.error(error)
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
     }

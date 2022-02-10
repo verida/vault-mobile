@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import * as ImagePicker from 'expo-image-picker'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -50,7 +51,7 @@ function ImageLoader(props) {
         loadAvatar()
       }
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error)
     }
   }
 

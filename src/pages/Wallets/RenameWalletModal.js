@@ -49,7 +49,7 @@ export default ({ visible, hideModal }) => {
             style={styles.saveButton}
             color='primary'
             disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => ({})}>
             Save
           </Button>
         </View>

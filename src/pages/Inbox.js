@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { StyleSheet } from 'react-native'
@@ -30,7 +31,7 @@ const Inbox = () => {
 
       return results
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error)
     }
   }, [])
 

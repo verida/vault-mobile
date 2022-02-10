@@ -37,7 +37,6 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
       const expired =
         Date.now() - (selectedAccount?.seedPhraseReminder?.lastTime || 0) >
         REMIND_EXPIRATION_TIME
-      console.log('expired:', expired)
       if (!selectedAccount?.seedPhraseReminder || expired) {
         dispatch(setShowSeedPhraseReminder(true))
         await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(

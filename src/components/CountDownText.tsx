@@ -22,7 +22,6 @@ function CountDownText(props: CountDownTextProps) {
 
   useEffect(() => {
     if (remainingTime === 0) {
-      console.log('finish')
       onFinish()
     }
   }, [onFinish, remainingTime])

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
 import {
   Image,
@@ -57,7 +58,7 @@ function SchemasList(props: SchemasListProps) {
         setDataList(_dataList)
         setLoading(false)
       } catch (e) {
-        console.error(e)
+        Sentry.captureException(e)
         setLoading(false)
       }
     }

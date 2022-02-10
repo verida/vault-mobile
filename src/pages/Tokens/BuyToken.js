@@ -105,7 +105,7 @@ export default ({ navigation }) => {
             style={styles.saveButton}
             color='primary'
             // disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => ({})}>
             Buy
           </Button>
           <TouchableOpacity>

@@ -12,37 +12,27 @@ const list = [
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
 ]
 

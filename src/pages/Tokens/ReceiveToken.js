@@ -82,7 +82,7 @@ export default ({ navigation }) => {
             style={styles.saveButton}
             color='primary'
             // disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => ({})}>
             Done
           </Button>
         </View>

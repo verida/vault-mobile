@@ -11,12 +11,12 @@ export default ({ list }) => {
     Alert.alert('Are you sure you want to delete wallet / address?', null, [
       {
         text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
+        onPress: () => ({}),
         style: 'cancel',
       },
       {
         text: 'Delete',
-        onPress: () => console.log('OK Pressed'),
+        onPress: () => ({}),
         style: 'destructive',
       },
     ])

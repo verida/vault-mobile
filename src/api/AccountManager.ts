@@ -75,7 +75,6 @@ class AccountManager {
         }
       }
     } catch (e) {
-      console.error(e)
       Sentry.captureException(e)
     }
   }
@@ -142,7 +141,6 @@ class AccountManager {
       // Open an application context (forcing creation of a new context if it doesn't already exist)
       return await this.client.openContext(VERIDA_CONTEXT_NAME, true)
     } catch (e) {
-      console.error(e)
       Sentry.captureException(e)
       throw e
     }
@@ -214,7 +212,6 @@ class AccountManager {
 
       return this.selectedAccount
     } catch (e) {
-      console.error('Create account error:', e)
       Sentry.captureException(e)
       throw e
     }

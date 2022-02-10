@@ -76,7 +76,6 @@ const Home = (props) => {
         handleDeeplink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
-        console.error(e)
       }
     }
 
@@ -106,7 +105,6 @@ const Home = (props) => {
         }
       } catch (e) {
         Sentry.captureException(e)
-        console.error(e)
       }
     }
 

@@ -4,7 +4,7 @@ import didJWT from 'did-jwt'
 import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Linking, StyleSheet, View } from 'react-native'
+import { Alert, Linking, StyleSheet, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import AppLogo from 'components/AppLogo'
@@ -109,9 +109,7 @@ export default (props) => {
         }
       }
 
-      websocket.onerror = (err) => {
-        console.log(err)
-
+      websocket.onerror = () => {
         setErrorMessage({
           message: 'Cannot connect to authentication server',
           heading: 'Network Error',
@@ -158,7 +156,7 @@ export default (props) => {
     )
     const saveSuccess = await loginRequestDatastore.save(loginRequest)
     if (!saveSuccess) {
-      console.log('saveError:', loginRequestDatastore.errors)
+      Alert.alert('Warning', 'Failed to save request to history')
     }
     props.navigation.navigate('Home')
   }
@@ -171,7 +169,7 @@ export default (props) => {
       }
       props.navigation.navigate('Home')
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error)
       setStatus('loaded')
     }
   }
@@ -220,7 +218,7 @@ export default (props) => {
       setStatus('sentResponse')
       await saveLoginRequest(true)
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error)
       setStatus('loaded')
     }
   }

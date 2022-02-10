@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -35,8 +36,7 @@ export default ({ route }) => {
         setHistory(_history)
         setLoading(false)
       } catch (e) {
-        console.log('ERROR:', e)
-        console.log(e)
+        Sentry.captureException(e)
       }
     }
 

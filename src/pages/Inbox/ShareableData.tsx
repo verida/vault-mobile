@@ -86,7 +86,6 @@ function ShareableData(
       }
       setLoading(false)
     } catch (e) {
-      console.error(e)
       Sentry.captureException(e)
       setLoading(false)
     }

@@ -9,6 +9,7 @@ import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useState } from 'react'
+import { Alert } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import PushNotification from 'react-native-push-notification'
@@ -81,7 +82,7 @@ function App() {
     <AppLoading
       startAsync={init}
       onFinish={() => setLoading(false)}
-      onError={console.warn}
+      onError={() => Alert.alert('Error', 'Failed to initialize')}
     />
   ) : (
     <>
