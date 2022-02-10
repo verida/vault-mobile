@@ -6,6 +6,7 @@ import { View } from 'react-native'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import LoadingIndicator from 'components/LoadingIndicator'
 import SendListModal from './SendListModal'
 
@@ -54,6 +55,7 @@ const TokenDashboard = ({
         <LoadingIndicator />
       ) : (
         <View>
+          <TestnetWarning />
           <TokenBanner
             data={{
               amount: total,
