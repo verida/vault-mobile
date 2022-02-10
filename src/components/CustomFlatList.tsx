@@ -105,8 +105,8 @@ const CustomFlatList = <ItemT,>(
       </View>
     )
   }
-  
-  if(loaded && data && data.length === 0){
+
+  if (loaded && data && data.length === 0) {
     return (
       <View style={styles.loadingContainer}>
         <Text style={styles.noMessages}>There are no messages</Text>
@@ -137,8 +137,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   noMessages: {
-    fontSize: 18
-  }
+    fontSize: 18,
+  },
 })
 
 export default forwardRef(CustomFlatList)

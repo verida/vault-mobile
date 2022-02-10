@@ -2,7 +2,9 @@ import React from 'react'
 import { StyleSheet, View, TouchableOpacity, Share } from 'react-native'
 import { Container, Icon } from 'native-base'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
+import { connect } from 'react-redux'
 import Toast from 'react-native-root-toast'
+import Clipboard from '@react-native-community/clipboard'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
@@ -15,9 +17,13 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon.svg'
 
+import { getWalletsData } from 'reduxStore/wallet/selectors'
+
 const LogoImg = require('assets/vault-logo.png')
 
-export default ({ navigation }) => {
+const ReceiveToken = ({ navigation, route, wallets }) => {
+  const token = route.params.token
+  const address = wallets.algo.address
   return (
     <Container>
       <NavigationHeader
@@ -25,13 +31,11 @@ export default ({ navigation }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title='Receive ETH'
+        title={'Receive ' + token.symbol}
       />
       <Layout style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.address}>
-            did:ethr:0xef7ef8c9a6d4ae6fc02b6fc1
-          </Text>
+          <Text style={styles.address}>{address}</Text>
           <View style={styles.qr}>
             <QRCode
               logo={LogoImg}
@@ -40,19 +44,20 @@ export default ({ navigation }) => {
               codeStyle='dot'
               innerEyeStyle='circle'
               padding={0.5}
-              content={'did:ethr:0xef7ef8c9a6d4ae6fc02b6fc1'}
+              content={address}
             />
           </View>
-          <Text style={styles.amount}>
+          {/* <Text style={styles.amount}>
             <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
-          </Text>
+          </Text> */}
           <Text style={styles.notice}>
-            Send only Ethereum (ETH) to this address. Sending any other coins
-            may result in permanent loss.
+            Send only {token.label} ({token.symbol}) to this address. Sending
+            any other coins may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity
-              onPress={() =>
+              onPress={() => {
+                Clipboard.setString(address)
                 Toast.show('Address copied', {
                   duration: Toast.durations.LONG,
                   position: -130,
@@ -62,7 +67,7 @@ export default ({ navigation }) => {
                   delay: 0,
                   backgroundColor: 'rgba(4, 17, 51, 1)',
                 })
-              }
+              }}
               style={styles.actionButton}>
               <CopyIconDark />
               <Text style={styles.actionText}>Copy</Text>
@@ -70,7 +75,7 @@ export default ({ navigation }) => {
             <TouchableOpacity
               onPress={() =>
                 Share.share({
-                  message: `My address to receive 5 ETH \rdid:ethr:0xef7ef8c9a6d4ae6fc02b6fc1`,
+                  message: `My address to receive ${token.symbol} \r${address}`,
                 })
               }
               style={styles.actionButton}>
@@ -83,8 +88,7 @@ export default ({ navigation }) => {
           <Button
             style={styles.saveButton}
             color='primary'
-            // disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => navigation.goBack()}>
             Done
           </Button>
         </View>
@@ -115,6 +119,7 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
     color: 'rgba(4, 17, 51, 0.6)',
     marginBottom: 24,
+    textAlign: 'center',
   },
   qr: {
     width: 240,
@@ -160,3 +165,15 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_SEMIBOLD,
   },
 })
+
+const mapStateToProps = (state) => {
+  return {
+    wallets: getWalletsData(state),
+  }
+}
+
+const mapDispatchToProps = () => {
+  return {}
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ReceiveToken)

@@ -8,12 +8,12 @@ import Tokens from 'pages/Tokens/Dashboard'
 import { PRIMARY_COLOR } from 'constants/color'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useAuth } from 'hooks/useAuth'
+// import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
-  const { isVeridaTeamMember } = useAuth()
+  // const { isVeridaTeamMember } = useAuth()
 
   return (
     <Tab.Navigator
@@ -48,17 +48,17 @@ function DashboardNavigator() {
           ),
         }}
       />
-      {isVeridaTeamMember && (
-        <Tab.Screen
-          name={'Tokens'}
-          component={Tokens}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Ionicons name='wallet' size={24} color={color} />
-            ),
-          }}
-        />
-      )}
+      {/* {isVeridaTeamMember && ( */}
+      <Tab.Screen
+        name={'Tokens'}
+        component={Tokens}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='wallet' size={24} color={color} />
+          ),
+        }}
+      />
+      {/* )} */}
     </Tab.Navigator>
   )
 }

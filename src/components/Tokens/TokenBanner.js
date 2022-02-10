@@ -1,6 +1,5 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
-import Toast from 'react-native-root-toast'
+import { View, StyleSheet, TouchableOpacity, Image } from 'react-native'
 
 import Text from 'components/Text'
 
@@ -9,88 +8,79 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import SendIcon from 'assets/send_icon.svg'
 import ReceiveIcon from 'assets/receive_icon.svg'
-import BuyIcon from 'assets/buy_icon.svg'
+// import BuyIcon from 'assets/buy_icon.svg'
 import CopyIcon from 'assets/copy_icon.svg'
-
-import EthereumSvg from 'assets/wallets/Ethereum.svg'
-
-const icons = {
-  ethereum: <EthereumSvg />,
-}
 
 export default ({
   data,
   sendButtonAction,
-  buyButtonAction,
+  // buyButtonAction,
   receiveButtonAction,
+  copyButtonAction,
 }) => {
-  const { coin, price, change, amount, symbol, quantity } = data
+  const { label, price, change, amount, symbol, quantity, icon } = data
   const positive = change > 0
 
   return (
     <View style={styles.bannerWrapper}>
-      {coin && (
+      {symbol && (
         <View style={styles.coinInfo}>
           <Text style={styles.coinText}>Coin</Text>
           <View style={styles.coinPriceInfo}>
-            <Text style={styles.coinPrice}>${price}</Text>
+            <Text style={styles.coinPrice}>${price.toFixed(2)}</Text>
             <Text
               style={[
                 styles.coinPriceChange,
                 positive ? styles.positive : styles.negative,
               ]}>
-              {positive ? `+ ${change}%` : `${change}%`}
+              {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
             </Text>
           </View>
         </View>
       )}
       <View style={styles.totals}>
-        {coin && <View style={styles.coinIcon}>{icons[coin]}</View>}
+        {icon && (
+          <View style={styles.coinIcon}>
+            <Image source={{ uri: icon }} style={styles.icon} />
+          </View>
+        )}
         <Text style={styles.amount}>
-          {coin ? `${quantity} ${symbol}` : `$${amount}`}
+          {label
+            ? `${(quantity / 1000000).toFixed(3)} ${symbol}`
+            : `$${amount.toFixed(2)}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {coin ? `≈ $${amount}` : `Total Balance`}
+          {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
         </Text>
       </View>
-      <View style={styles.actionIcons}>
-        <TouchableOpacity
-          onPress={sendButtonAction}
-          style={styles.singleActionIcon}>
-          <SendIcon />
-          <Text style={styles.actionIconText}>Send</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={receiveButtonAction}
-          style={styles.singleActionIcon}>
-          <ReceiveIcon />
-          <Text style={styles.actionIconText}>Receive</Text>
-        </TouchableOpacity>
-        <TouchableOpacity
-          onPress={buyButtonAction}
-          style={styles.singleActionIcon}>
-          <BuyIcon />
-          <Text style={styles.actionIconText}>Buy</Text>
-        </TouchableOpacity>
-        {coin && (
+      {symbol && (
+        <View style={styles.actionIcons}>
           <TouchableOpacity
-            onPress={() =>
-              Toast.show('Address copied', {
-                duration: Toast.durations.LONG,
-                position: -40,
-                shadow: false,
-                animation: true,
-                hideOnPress: true,
-                delay: 0,
-                backgroundColor: 'rgba(4, 17, 51, 1)',
-              })
-            }
+            onPress={sendButtonAction}
+            style={styles.singleActionIcon}>
+            <SendIcon />
+            <Text style={styles.actionIconText}>Send</Text>
+          </TouchableOpacity>
+          <TouchableOpacity
+            onPress={receiveButtonAction}
+            style={styles.singleActionIcon}>
+            <ReceiveIcon />
+            <Text style={styles.actionIconText}>Receive</Text>
+          </TouchableOpacity>
+          {/* <TouchableOpacity
+            onPress={buyButtonAction}
+            style={styles.singleActionIcon}>
+            <BuyIcon />
+            <Text style={styles.actionIconText}>Buy</Text>
+          </TouchableOpacity> */}
+          <TouchableOpacity
+            onPress={copyButtonAction}
             style={styles.singleActionIcon}>
             <CopyIcon />
             <Text style={styles.actionIconText}>Copy</Text>
           </TouchableOpacity>
-        )}
-      </View>
+        </View>
+      )}
     </View>
   )
 }
@@ -124,7 +114,6 @@ const styles = StyleSheet.create({
   },
   totals: {
     alignItems: 'center',
-    marginBottom: 24,
   },
   coinIcon: {
     marginTop: 12,
@@ -143,6 +132,7 @@ const styles = StyleSheet.create({
   actionIcons: {
     flexDirection: 'row',
     justifyContent: 'space-evenly',
+    marginTop: 24,
   },
   actionIconText: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
@@ -151,4 +141,5 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     marginTop: 4,
   },
+  icon: { width: 45, height: 45 },
 })

@@ -3,29 +3,56 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  Clipboard,
   TextInput,
+  Alert,
 } from 'react-native'
 import { Container, Icon } from 'native-base'
+import Clipboard from '@react-native-community/clipboard'
+import { connect } from 'react-redux'
 
 import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 import InputStyles from 'styles/inputs'
 import Label from 'components/Label'
+import { isValidWalletAddress } from 'helpers/wallet'
 
 import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
 
-export default ({ navigation }) => {
-  const [address, setAddress] = useState(null)
+import { getTransactionParams } from 'reduxStore/wallet/actions'
+
+const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
+  const { token, amount } = route.params
+  const [address, setAddress] = useState('')
+  const [processing, setProcessing] = useState(false)
   const fetchCopiedText = async () => {
-    const text = await Clipboard.getString()
-    setAddress(text)
+    const clipboardData = await Clipboard.getString()
+    setAddress(clipboardData)
+    // setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
+  }
+  function onReadQRCode(data) {
+    setAddress(data)
   }
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
       firstTime: false,
+      onReadQRCode: (data) => onReadQRCode(data),
     })
+  }
+  const showAlert = () =>
+    Alert.alert('Invalid address', `That's not a valid address`)
+
+  const onPressSend = () => {
+    if (isValidWalletAddress(address)) {
+      setProcessing(true)
+      onGetTransactionParams({
+        token,
+        amount,
+        address,
+      })
+    } else {
+      showAlert()
+    }
   }
 
   return (
@@ -35,7 +62,7 @@ export default ({ navigation }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title='Send ETH'
+        title={'Send ' + token.symbol}
       />
       <View style={styles.container}>
         <View style={styles.content}>
@@ -43,7 +70,7 @@ export default ({ navigation }) => {
           <TextInput
             value={address}
             autoFocus={true}
-            multiline
+            // multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
@@ -70,10 +97,9 @@ export default ({ navigation }) => {
           <Button
             style={styles.nextButton}
             color='primary'
-            // disabled={!selectedAddress || !selectedToken || !(amount > 0)}
-            // loading={processing}
-            // onPress={onAddWallet}
-          >
+            disabled={!address}
+            loading={processing}
+            onPress={onPressSend}>
             Next
           </Button>
         </View>
@@ -182,3 +208,15 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
   },
 })
+
+const mapStateToProps = () => {
+  return {}
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onGetTransactionParams: (params) => dispatch(getTransactionParams(params)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(TokenRecipient)
