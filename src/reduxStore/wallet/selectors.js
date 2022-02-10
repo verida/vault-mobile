@@ -158,44 +158,7 @@ export const selectSentTransaction = (state) => {
 }
 
 export const selectTransaction = (state) => {
-  const wallets = getWalletsData(state)
-  const userAddr = wallets.algo.address
-  const rawTransaction = state.transactionDetails.data
-  if (rawTransaction) {
-    let isUserSender = rawTransaction.sender === userAddr
-    let transferInfo = rawTransaction['asset-transfer-transaction']
-      ? rawTransaction['asset-transfer-transaction']
-      : rawTransaction['payment-transaction']
-    let symbol
-    let decimal
-    let feeSymbol = SUPPORTED_TOKENS[0].symbol
-    if (rawTransaction['asset-transfer-transaction']) {
-      let tok = SUPPORTED_TOKENS.find(
-        (ele) =>
-          getTokenAddress(ele.address) ===
-          rawTransaction['asset-transfer-transaction']['asset-id'].toString()
-      )
-      symbol = tok.symbol
-      decimal = tok.decimal
-    } else {
-      symbol = SUPPORTED_TOKENS[0].symbol
-      decimal = SUPPORTED_TOKENS[0].decimal
-    }
-    return {
-      id: rawTransaction.id,
-      type: isUserSender ? 'sent' : 'received',
-      address: isUserSender ? transferInfo.receiver : rawTransaction.sender,
-      quantity: transferInfo.amount,
-      fee: rawTransaction.fee,
-      round: rawTransaction['confirmed-round'],
-      time: rawTransaction['round-time'],
-      symbol,
-      feeSymbol,
-      decimal,
-    }
-  } else {
-    return {}
-  }
+  return state.transactionDetails.data || {}
 }
 
 export const selectTransactionData = (state) => {
