@@ -1,11 +1,11 @@
+import { Container, Content, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Container, Content, Icon } from 'native-base'
-
-import ActivitiesList from '../components/ActivitiesList'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import VeridaSvg from 'assets/icons/verida.svg'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+
+import ActivitiesList from '../components/ActivitiesList'
 
 export default () => (
   <View>

@@ -1,7 +1,7 @@
 import React from 'react'
-import { SwipeListView } from 'react-native-swipe-list-view'
-import { Text, View, TouchableOpacity, StyleSheet } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-root-toast'
+import { SwipeListView } from 'react-native-swipe-list-view'
 
 import AddressesListItem from './AddressesListItem'
 

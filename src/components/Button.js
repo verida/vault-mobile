@@ -1,9 +1,10 @@
+import LottieView from 'lottie-react-native'
 import React from 'react'
 import { TouchableOpacity } from 'react-native'
+
 import ButtonStyles from '../styles/button'
 import TextStyles from '../styles/text'
 import Text from './Text'
-import LottieView from 'lottie-react-native'
 
 export default (props) => {
   const styles = props.style || {}

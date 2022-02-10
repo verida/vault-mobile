@@ -1,18 +1,15 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import Toast from 'react-native-root-toast'
 
-import Text from 'components/Text'
-
-import { WHITE_COLOR, PRIMARY_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-import SendIcon from 'assets/send_icon.svg'
-import ReceiveIcon from 'assets/receive_icon.svg'
 import BuyIcon from 'assets/buy_icon.svg'
 import CopyIcon from 'assets/copy_icon.svg'
-
+import ReceiveIcon from 'assets/receive_icon.svg'
+import SendIcon from 'assets/send_icon.svg'
 import EthereumSvg from 'assets/wallets/Ethereum.svg'
+import Text from 'components/Text'
+import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const icons = {
   ethereum: <EthereumSvg />,

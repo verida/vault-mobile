@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import {
   Platform,
@@ -8,9 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-
-import PropTypes from 'prop-types'
 import Feather from 'react-native-vector-icons/Feather'
+
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
 
 class DropDownPicker extends React.Component {

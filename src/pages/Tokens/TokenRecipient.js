@@ -1,20 +1,19 @@
+import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Clipboard,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
-  Clipboard,
-  TextInput,
 } from 'react-native'
-import { Container, Icon } from 'native-base'
 
-import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
-import InputStyles from 'styles/inputs'
 import Label from 'components/Label'
-
-import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import InputStyles from 'styles/inputs'
 
 export default ({ navigation }) => {
   const [address, setAddress] = useState(null)

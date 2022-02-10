@@ -1,21 +1,20 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { utils } from 'ethers'
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, TextInput } from 'react-native'
-import { Container, Content } from 'native-base'
 
-import Layout from '../../components/Layouts/Layout'
-import Button from '../../components/Button'
-import Label from '../../components/Label'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-
-import ErrorPhrase from '../../components/ErrorPhrase'
-
-import ModifierStyles from '../../styles/modifier'
-import InputStyles from '../../styles/inputs'
-import { utils } from 'ethers'
-import CustomFooter from 'components/Layouts/CustomFooter'
 import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
+
+import Button from '../../components/Button'
+import ErrorPhrase from '../../components/ErrorPhrase'
+import Label from '../../components/Label'
+import Layout from '../../components/Layouts/Layout'
+import InputStyles from '../../styles/inputs'
+import ModifierStyles from '../../styles/modifier'
 
 function ImportAccount(
   props: NativeStackScreenProps<MainStackParams, 'ImportAccount'>

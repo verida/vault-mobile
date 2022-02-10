@@ -1,11 +1,12 @@
+import NetInfo from '@react-native-community/netinfo'
+import { CHANNEL_ID } from 'helpers/notifications'
+import { get } from 'lodash'
 import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
-import AccountManager from 'api/AccountManager'
 import PushNotification from 'react-native-push-notification'
-import { get } from 'lodash'
-import { CHANNEL_ID } from 'helpers/notifications'
 import { useDispatch, useSelector } from 'react-redux'
-import NetInfo from '@react-native-community/netinfo'
+
+import AccountManager from 'api/AccountManager'
 import { fetchInboxCount } from 'api/utils'
 
 export const useEventHandlers = () => {

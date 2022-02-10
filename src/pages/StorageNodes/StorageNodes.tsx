@@ -1,6 +1,7 @@
-import React from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { MainStackParams } from 'navigation/types'
+import { isEmpty } from 'lodash'
+import { Container, Content } from 'native-base'
+import React from 'react'
 import {
   FlatList,
   Image,
@@ -10,14 +11,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { Container, Content } from 'native-base'
-import NodeItem from 'pages/StorageNodes/NodeItem'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import Text from 'components/Text'
 import { useSelector } from 'react-redux'
-import { isEmpty } from 'lodash'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
+
 import { NetworkNode } from 'api/types'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { NUNITO_SANS_BOLD } from 'constants/text'
+import { MainStackParams } from 'navigation/types'
+import NodeItem from 'pages/StorageNodes/NodeItem'
 
 function StorageNodes(
   _props: NativeStackScreenProps<MainStackParams, 'StorageNodes'>

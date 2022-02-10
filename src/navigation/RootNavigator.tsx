@@ -1,12 +1,13 @@
-import React, { useEffect, useRef } from 'react'
+import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { RootStackParams } from 'navigation/types'
+import React, { useEffect, useRef } from 'react'
+
+import AccountManager from 'api/AccountManager'
+import LoadingView from 'components/LoadingView'
+import { useAuth } from 'hooks/useAuth'
 import AuthNavigator from 'navigation/AuthNavigator'
 import MainNavigator from 'navigation/MainNavigator'
-import { useAuth } from 'hooks/useAuth'
-import { createNavigationContainerRef } from '@react-navigation/native'
-import LoadingView from 'components/LoadingView'
-import AccountManager from 'api/AccountManager'
+import { RootStackParams } from 'navigation/types'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 

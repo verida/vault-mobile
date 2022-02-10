@@ -1,12 +1,14 @@
-import React, { useCallback, useEffect, useRef } from 'react'
 import { Container } from 'native-base'
+import React, { useCallback, useEffect, useRef } from 'react'
+import { StyleSheet } from 'react-native'
+
+import AccountManager from 'api/AccountManager'
+import Card from 'components/CardList/Card'
+import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
 //import Search from '../components/Search'; <Search />
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+
 import { buildItem } from '../helpers/inbox'
-import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
-import Card from 'components/CardList/Card'
-import { StyleSheet } from 'react-native'
-import AccountManager from 'api/AccountManager'
 
 const Inbox = () => {
   const listRef = useRef(null)

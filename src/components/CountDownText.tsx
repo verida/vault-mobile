@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { TextProps } from 'react-native'
+
 import Text from './Text'
 
 export interface CountDownTextProps extends TextProps {

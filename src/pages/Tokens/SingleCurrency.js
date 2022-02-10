@@ -1,5 +1,5 @@
+import { Container, Icon, List } from 'native-base'
 import React from 'react'
-import { Container, List, Icon } from 'native-base'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenBanner from 'components/Tokens/TokenBanner'

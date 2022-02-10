@@ -1,11 +1,12 @@
+import moment from 'moment'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
-import Text from 'components/Text'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-import { GREY_COLOR, LIGHTGREY_COLOR, SUCCESS_COLOR } from 'constants/color'
-import moment from 'moment'
 import { CheckBox } from 'react-native-elements'
+
 import VeridaSvg from 'assets/icons/verida.svg'
+import Text from 'components/Text'
+import { GREY_COLOR, LIGHTGREY_COLOR, SUCCESS_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type ShareableDataItemType = {
   _id: string

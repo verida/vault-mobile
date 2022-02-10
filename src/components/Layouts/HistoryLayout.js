@@ -1,5 +1,6 @@
 import React from 'react'
-import { View, StyleSheet, Dimensions } from 'react-native'
+import { Dimensions, StyleSheet, View } from 'react-native'
+
 import History from '../History'
 
 export default (props) => (

@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react'
-import Details from './Details'
-import LoadingView from '../LoadingView'
+
 import AccountManager from '../../api/AccountManager'
+import LoadingView from '../LoadingView'
+import Details from './Details'
 
 export default () => {
   const [info, setInfo] = useState({})

@@ -1,9 +1,10 @@
+import { useNavigation } from '@react-navigation/native'
+import moment from 'moment'
+import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
-import moment from 'moment'
+
 import VeridaSvg from 'assets/icons/verida.svg'
-import { useNavigation } from '@react-navigation/native'
 
 export default ({ item, folder }) => {
   const navigation = useNavigation()

@@ -1,7 +1,7 @@
+import { useNavigation } from '@react-navigation/native'
+import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import { ListItem, Body, Text, Right, Left } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 

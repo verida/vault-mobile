@@ -1,14 +1,15 @@
+import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { TouchableOpacity, View } from 'react-native'
-import { Container, Content } from 'native-base'
 
+import { storeChain } from 'api/utils'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+
+import Button from '../components/Button'
 import Layout from '../components/Layouts/Layout'
 import NetworkItem from '../components/NetworkItem'
-import Button from '../components/Button'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NETWORKS } from '../helpers/networks'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import { storeChain } from 'api/utils'
 
 export default (props) => {
   const [selected, setSelected] = useState(0)

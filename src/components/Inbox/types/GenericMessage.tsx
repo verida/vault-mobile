@@ -1,17 +1,19 @@
-import React, { useEffect, useState } from 'react'
-import { Content } from 'native-base'
-import * as Sentry from '@sentry/react-native'
-import { Alert, Image, StyleSheet, View } from 'react-native'
-import AccountManager from 'api/AccountManager'
-import Text from '../../Text'
-import MailSvg from 'assets/icons/mail.svg'
-import { get, isEmpty } from 'lodash'
-import { NUNITO_SANS_BOLD } from 'constants/text'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { MainStackParams } from 'navigation/types'
-import { DefaultAvatar, getProfile } from 'api/utils'
+import * as Sentry from '@sentry/react-native'
+import { get, isEmpty } from 'lodash'
 import moment from 'moment'
+import { Content } from 'native-base'
+import React, { useEffect, useState } from 'react'
+import { Alert, Image, StyleSheet, View } from 'react-native'
+
+import AccountManager from 'api/AccountManager'
+import { DefaultAvatar, getProfile } from 'api/utils'
+import MailSvg from 'assets/icons/mail.svg'
 import Button from 'components/Button'
+import { NUNITO_SANS_BOLD } from 'constants/text'
+import { MainStackParams } from 'navigation/types'
+
+import Text from '../../Text'
 
 type GenericMessageProps = {
   inboxItem: any

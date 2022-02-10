@@ -1,8 +1,9 @@
-import React from 'react'
-import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
 import { useNetInfo } from '@react-native-community/netinfo'
+import { useNavigation } from '@react-navigation/native'
+import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
+import React from 'react'
 import { StyleSheet, View } from 'react-native'
+
 import Text from 'components/Text'
 import { DECLINE_COLOR } from 'constants/color'
 

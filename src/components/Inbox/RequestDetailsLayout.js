@@ -1,12 +1,12 @@
 import React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import Layout from '../../components/Layouts/Layout'
+
 import Button from '../../components/Button'
+import Layout from '../../components/Layouts/Layout'
+import { ACCEPT_COLOR, DECLINE_COLOR } from '../../constants/color'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
 import Text from '../Text'
 import Description from './Description'
-import { ACCEPT_COLOR, DECLINE_COLOR } from '../../constants/color'
-
-import { NUNITO_SANS_BOLD } from '../../constants/text'
 
 export default ({
   type,

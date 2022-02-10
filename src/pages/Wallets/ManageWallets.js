@@ -1,24 +1,23 @@
-import React, { useState } from 'react'
-import { Modal, View, StyleSheet, TextInput } from 'react-native'
-import { Container, Content, List, Icon } from 'native-base'
 import { useActionSheet } from '@expo/react-native-action-sheet'
+import { Container, Content, Icon, List } from 'native-base'
+import React, { useState } from 'react'
+import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
-import WalletsList from '../../components/WalletsList'
+import Button from 'components/Button'
+import Label from 'components/Label'
+import Layout from 'components/Layouts/Layout'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Layout from 'components/Layouts/Layout'
-import Label from 'components/Label'
-import InputStyles from 'styles/inputs'
 import DropDownPicker from 'components/Select'
-import Button from 'components/Button'
+import InputStyles from 'styles/inputs'
 
-import { SNOW_COLOR } from '../../constants/color'
-
-import EthereumSvg from '../../assets/wallets/Ethereum.svg'
 import AlgorandSvg from '../../assets/wallets/Algorand.svg'
+import EthereumSvg from '../../assets/wallets/Ethereum.svg'
 import IKIGAISvg from '../../assets/wallets/IKIGAI.svg'
 import NearSvg from '../../assets/wallets/Near.svg'
 import OtherSvg from '../../assets/wallets/Other.svg'
+import WalletsList from '../../components/WalletsList'
+import { SNOW_COLOR } from '../../constants/color'
 
 const list = [
   {

@@ -1,18 +1,18 @@
+import Clipboard from '@react-native-community/clipboard'
+import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Icon } from 'native-base'
 import { connect } from 'react-redux'
-import Clipboard from '@react-native-community/clipboard'
+import _ from 'underscore'
 
+import AccountManager from 'api/AccountManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import WordCard from '../../components/Words/WordCard'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
-
-import _ from 'underscore'
-import AccountManager from 'api/AccountManager'
 
 const SeedPhraseGenerated = (props) => {
   const [words, setWords] = useState('Generating seed phrase ...')

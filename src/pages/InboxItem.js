@@ -1,15 +1,16 @@
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Container, Content } from 'native-base'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { buildItem, findTypeById } from '../helpers/inbox'
 
-import TypeDataSend from '../components/Inbox/types/DataSend'
-import TypeDataRequest from '../components/Inbox/types/DataRequest'
-import TypeDatastoreSync from '../components/Inbox/types/DatastoreSync'
-import TypeDatabaseSync from '../components/Inbox/types/DatabaseSync'
-import TypeGenericMessage from 'components/Inbox/types/GenericMessage'
 import AccountManager from 'api/AccountManager'
+import TypeGenericMessage from 'components/Inbox/types/GenericMessage'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+
+import TypeDatabaseSync from '../components/Inbox/types/DatabaseSync'
+import TypeDataRequest from '../components/Inbox/types/DataRequest'
+import TypeDataSend from '../components/Inbox/types/DataSend'
+import TypeDatastoreSync from '../components/Inbox/types/DatastoreSync'
+import { buildItem, findTypeById } from '../helpers/inbox'
 
 const inboxItemComponents = {
   'inbox/type/dataSend': TypeDataSend,

@@ -14,6 +14,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+
 import LoadingView from 'components/LoadingView'
 
 export interface CustomFlatListProps<ItemT> extends FlatListProps<ItemT> {

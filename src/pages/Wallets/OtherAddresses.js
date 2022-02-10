@@ -1,13 +1,12 @@
-import React from 'react'
-import { View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import { Icon } from 'native-base'
+import React from 'react'
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import AddressesList from '../../components/AddressesList'
 import Text from 'components/Text'
 
-import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-
 import OtherSvg from '../../assets/other_addresses.svg'
+import AddressesList from '../../components/AddressesList'
+import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
 const list = [
   {

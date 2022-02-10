@@ -1,6 +1,6 @@
+import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ListItem, Text } from 'native-base'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 

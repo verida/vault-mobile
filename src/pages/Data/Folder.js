@@ -1,13 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import * as Sentry from '@sentry/react-native'
 import { Container, Content } from 'native-base'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
+
+import AccountManager from 'api/AccountManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import DataCardView from '../../components/Data/CardView'
 import DataListView from '../../components/Data/ListView'
-
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import * as Sentry from '@sentry/react-native'
-import AccountManager from 'api/AccountManager'
 
 const Folder = (props) => {
   const { route } = props

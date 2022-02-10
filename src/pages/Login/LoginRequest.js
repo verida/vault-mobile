@@ -1,15 +1,21 @@
+import * as Sentry from '@sentry/react-native'
+import EncryptionUtils from '@verida/encryption-utils'
+import didJWT from 'did-jwt'
+import moment from 'moment'
+import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
-import { Container, Content, Icon } from 'native-base'
-import didJWT from 'did-jwt'
-import EncryptionUtils from '@verida/encryption-utils'
-import MobileSvg from '../../assets/mobile.svg'
 
-import Text from 'components/Text'
-import Button from '../../components/Button'
+import AccountManager from 'api/AccountManager'
+import AppLogo from 'components/AppLogo'
+import CountDownText from 'components/CountDownText'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import MobileSvg from '../../assets/mobile.svg'
+import Button from '../../components/Button'
 import {
   BLACK_COLOR_OPACITY,
   ORANGE_COLOR,
@@ -17,14 +23,7 @@ import {
   SUCCESS_COLOR,
   WARNING_COLOR,
 } from '../../constants/color'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import LoadingView from 'components/LoadingView'
-import AccountManager from 'api/AccountManager'
-import Moment from 'moment'
-import moment from 'moment'
-import AppLogo from 'components/AppLogo'
-import * as Sentry from '@sentry/react-native'
-import CountDownText from 'components/CountDownText'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -302,7 +301,7 @@ export default (props) => {
             <View style={style.timeContainer}>
               <Text style={style.generatedTime}>
                 Generated:{' '}
-                {Moment(info.payload.insertedAt).format(
+                {moment(info.payload.insertedAt).format(
                   'DD MMM, YYYY [at] h:mm a'
                 )}
               </Text>

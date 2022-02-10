@@ -1,16 +1,16 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { LinearGradient } from 'expo-linear-gradient'
-import Logo from 'assets/logo.svg'
+
 import Texture from 'assets/landing-bg.svg'
-
-import Button from '../../components/Button'
+import Logo from 'assets/logo.svg'
 import Text from 'components/Text'
-
 import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { AuthStackParams } from 'navigation/types'
+
+import Button from '../../components/Button'
 
 function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   const title = "Welcome!\nIt's time to own your personal data."

@@ -1,14 +1,15 @@
-import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import React from 'react'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+
+import { PRIMARY_COLOR } from 'constants/color'
+import { useAuth } from 'hooks/useAuth'
 import { DashboardTabParams } from 'navigation/types'
 import Home from 'pages/Dashboard/Home'
-import Folders from 'pages/Data/Folders'
 import Profiles from 'pages/Dashboard/Profiles'
+import Folders from 'pages/Data/Folders'
 import Tokens from 'pages/Tokens/Dashboard'
-import { PRIMARY_COLOR } from 'constants/color'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 

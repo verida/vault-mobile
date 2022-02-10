@@ -1,7 +1,7 @@
+import update from 'immutability-helper'
 import { applyMiddleware, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
 
-import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
@@ -14,7 +14,7 @@ import {
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
-import update from 'immutability-helper'
+import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
 const initialState = {
   template: [],

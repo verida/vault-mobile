@@ -1,5 +1,5 @@
-import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { Network } from 'api/types'
+import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
   Auth: undefined

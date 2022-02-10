@@ -1,19 +1,18 @@
+import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { TextInput, View } from 'react-native'
-import { Container, Content } from 'native-base'
+import IntlPhoneInput from 'react-native-intl-phone-input'
 import { connect } from 'react-redux'
 
-import Label from '../../components/Label'
-import Button from '../../components/Button'
-
-import InputStyles from '../../styles/inputs'
-import { COUNTRIES } from '../../helpers/country-list'
-import DropDownPicker from '../../components/Select'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
-
-import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+
+import Button from '../../components/Button'
+import Label from '../../components/Label'
+import DropDownPicker from '../../components/Select'
+import { COUNTRIES } from '../../helpers/country-list'
+import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
+import InputStyles from '../../styles/inputs'
 
 const EditProfile = (props) => {
   const { navigation, route, publicProfileData, setPublicProfileData } = props

@@ -1,17 +1,15 @@
+import { Container, Icon } from 'native-base'
 import React from 'react'
 import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { Container, Icon } from 'native-base'
-
-import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TokenCalculator from 'components/Tokens/TokenCalculator'
-import Button from 'components/Button'
-
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import WalletIcon from 'assets/wallet_icon_small.svg'
 
 import ChainlinkToken from 'assets/tokens/chainlink.svg'
 import EthereumToken from 'assets/tokens/ethereum.svg'
+import WalletIcon from 'assets/wallet_icon_small.svg'
+import Button from 'components/Button'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import TokenCalculator from 'components/Tokens/TokenCalculator'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const addressList = [
   { id: 1, address: '0vc029...fch8', amount: 8652, type: 'ETH' },

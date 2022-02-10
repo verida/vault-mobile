@@ -1,15 +1,16 @@
-import React, { useState } from 'react'
-import { Content } from 'native-base'
 import * as Sentry from '@sentry/react-native'
-import { Alert, Image, StyleSheet, View } from 'react-native'
-import AccountManager from 'api/AccountManager'
-import Text from 'components/Text'
-import moment from 'moment'
-import SchemasList from 'components/Inbox/SchemasList'
-import { GREY_COLOR } from 'constants/color'
-import Button from 'components/Button'
 import { isEmpty } from 'lodash'
+import moment from 'moment'
+import { Content } from 'native-base'
+import React, { useState } from 'react'
+import { Alert, Image, StyleSheet, View } from 'react-native'
+
+import AccountManager from 'api/AccountManager'
 import { DefaultAvatar } from 'api/utils'
+import Button from 'components/Button'
+import SchemasList from 'components/Inbox/SchemasList'
+import Text from 'components/Text'
+import { GREY_COLOR } from 'constants/color'
 
 export default ({ item, inboxItem, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)

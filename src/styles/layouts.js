@@ -1,4 +1,5 @@
-import { StyleSheet, Dimensions } from 'react-native'
+import { Dimensions, StyleSheet } from 'react-native'
+
 import { SNOW_COLOR } from '../constants/color'
 
 export default StyleSheet.create({

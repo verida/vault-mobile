@@ -1,3 +1,7 @@
+import { useFocusEffect, useLinkTo } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
+import * as SecureStore from 'expo-secure-store'
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -11,12 +15,20 @@ import {
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 
-import Text from 'components/Text'
-import { Container, Content } from 'native-base'
-import { useDeeplink } from 'hooks/useDeeplink'
+import AccountManager from 'api/AccountManager'
+import { fetchInboxCount, getProfile } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
+import LoadingView from 'components/LoadingView'
+import Text from 'components/Text'
+import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
+import { useAuth } from 'hooks/useAuth'
+import { useDeeplink } from 'hooks/useDeeplink'
+import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
+import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
+import DidView from 'pages/Dashboard/DidView'
+import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
+import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   BLACK_COLOR_OPACITY,
   BLACK_ORIGIN_COLOR,
@@ -24,27 +36,15 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from '../../constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   setNavigationLink as setNavigationLinkAction,
   setNewMessagesCount as setNewMessagesCountAction,
 } from '../../reduxStore/general/actions'
 
-import { fetchInboxCount, getProfile } from 'api/utils'
-import LoadingView from 'components/LoadingView'
-import * as SecureStore from 'expo-secure-store'
-import * as Sentry from '@sentry/react-native'
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
-import AccountManager from 'api/AccountManager'
-import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
-import DidView from 'pages/Dashboard/DidView'
-import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
-import { useAuth } from 'hooks/useAuth'
-import { useFocusEffect, useLinkTo } from '@react-navigation/native'
-import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
-
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
+
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 const Home = (props) => {

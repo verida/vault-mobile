@@ -1,3 +1,4 @@
+import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
@@ -6,7 +7,7 @@ import {
   Text,
   View,
 } from 'react-native'
-import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
+
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 
 export default (props) => {

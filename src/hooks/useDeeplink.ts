@@ -1,5 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import parse from 'url-parse'
+
 import { MainStackParams } from 'navigation/types'
 
 export function useDeeplink(

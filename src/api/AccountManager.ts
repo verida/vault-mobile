@@ -1,19 +1,20 @@
-import * as SecureStore from 'expo-secure-store'
 import * as Sentry from '@sentry/react-native'
-import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
-import { utils } from 'ethers'
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import Vault from '@verida/vault-common'
-import dataMap from 'config/data-map'
+import { utils } from 'ethers'
+import * as SecureStore from 'expo-secure-store'
+import { isEmpty } from 'lodash'
 import store from 'reduxStore'
+
+import { Account, NormalizedAccounts, UserData } from 'api/types'
+import dataMap from 'config/data-map'
 import {
   addAccount,
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
-import { isEmpty } from 'lodash'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'

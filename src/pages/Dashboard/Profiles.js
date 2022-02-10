@@ -1,12 +1,11 @@
+import { Container, Content } from 'native-base'
 import React from 'react'
 import { View } from 'react-native'
-import { Container, Content } from 'native-base'
 
-import PropertyList from '../../components/PropertyList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import EarthSvg from '../../assets/icons/earth.svg'
-
+import PropertyList from '../../components/PropertyList'
 import LayoutStyle from '../../styles/layouts'
 
 export default () => (

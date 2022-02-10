@@ -1,6 +1,6 @@
+import PINCode from '@haskkor/react-native-pincode'
 import React from 'react'
 import { BackHandler } from 'react-native'
-import PINCode from '@haskkor/react-native-pincode'
 
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 

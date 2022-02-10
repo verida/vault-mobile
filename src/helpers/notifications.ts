@@ -1,9 +1,10 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
+import * as Sentry from '@sentry/react-native'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
-import { navigate } from 'navigation/RootNavigator'
-import * as Sentry from '@sentry/react-native'
 import store from 'reduxStore'
+
+import { navigate } from 'navigation/RootNavigator'
 import { setNavigationLink } from 'reduxStore/general/actions'
 
 export const CHANNEL_ID = 'verida-vault'

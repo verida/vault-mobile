@@ -1,9 +1,9 @@
-import React from 'react'
-import { View, StyleSheet } from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import Button from 'components/Button'
 import BottomActionsModal from 'components/BottomActionsModal'
+import Button from 'components/Button'
 
 export default ({ visible, toggleConfirmModal }) => {
   const key =

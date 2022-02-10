@@ -1,3 +1,5 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { COUNTRIES } from 'helpers/country-list'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -6,23 +8,22 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { AuthStackParams } from 'navigation/types'
-import Label from 'components/Label'
-import InputStyles from 'styles/inputs'
-import DropDownPicker from 'components/Select'
-import { COUNTRIES } from 'helpers/country-list'
-import Button from 'components/Button'
-import { Dispatch } from 'redux'
-import { setPublicProfileData } from 'reduxStore/general/actions'
 import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
+
+import AccountManager from 'api/AccountManager'
+import Button from 'components/Button'
+import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import DropDownPicker from 'components/Select'
+import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import AccountManager from 'api/AccountManager'
-import TCCheckbox from 'components/TCCheckbox'
+import { AuthStackParams } from 'navigation/types'
+import { setPublicProfileData } from 'reduxStore/general/actions'
+import InputStyles from 'styles/inputs'
 
 type Option = {
   label: string
