@@ -107,18 +107,21 @@ export const getTransactionsForToken = (assetID) => {
   }
 }
 
-export const getTransactionDetails = (transactionID) => {
-  return async (dispatch) => {
+export const getTransactionDetails = (transactionID, tokenAddress) => {
+  return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
+    const wallets = getWalletsData(getState())
 
-    let transactionData = await indexerClient
-      .lookupTransactionByID(transactionID)
-      .do()
+    let transactionData = await dataHelper.getTransactionDetails(
+      transactionID,
+      tokenAddress,
+      wallets
+    )
 
     if (transactionData) {
       dispatch({
         type: FETCHED_TRANSACTION_DETAIL,
-        data: transactionData.transaction,
+        data: transactionData,
       })
     } else {
       dispatch({
