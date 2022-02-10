@@ -1,17 +1,16 @@
 import React, { useEffect, useState } from 'react'
-import { Alert, View } from 'react-native'
+import { Alert, View, ViewProps } from 'react-native'
 import { connect } from 'react-redux'
-
+import { Dispatch } from 'redux'
 import ProfileLayout from '../../components/Layouts/ProfileLayout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
+import { setPublicProfileData } from '../../reduxStore/general/actions'
 import { editable } from '../../helpers/profile'
 import { useIsFocused } from '@react-navigation/native'
 import AccountManager from 'api/AccountManager'
 
-const PublicProfile = (props) => {
-  const { setPublicProfileData } = props
+const PublicProfile = (props: any) => {
   const [list, setList] = useState([
     { label: 'Name', value: '', action: 'arrow', type: 'input' },
     { label: 'Country', value: '', action: 'arrow', type: 'select' },
@@ -22,15 +21,22 @@ const PublicProfile = (props) => {
 
   // component did mount
   useEffect(() => {
-    const updateData = async () => {
+    const updateData = async (shouldUpdate: boolean) => {
       try {
         if (initialized) {
           return
         }
-        const vault = AccountManager.getInstance().vault
-        const publicData = await vault.profiles.public.getMany()
+        let publicData: any = {}
+        if(shouldUpdate || props.publicProfileData?.name === ''){
+          const vault = AccountManager.getInstance().vault as any
+          publicData = await vault.profiles.public.getMany()
+        }
+        else{
+          publicData = props.publicProfileData
+        }
+        
 
-        setPublicProfileData(publicData)
+        props.setPublicProfileData(publicData)
         const updatedList = list.map((item) => {
           const label = item.label.toLowerCase()
           if (publicData[label]) {
@@ -47,7 +53,7 @@ const PublicProfile = (props) => {
     }
 
     const bindChanges = async () => {
-      const vault = AccountManager.getInstance().vault
+      const vault = AccountManager.getInstance().vault as any
       await vault.profiles.public.init()
       const db = await vault.profiles.public.store.getDb()
       const dbInstance = await db.getInstance()
@@ -57,11 +63,11 @@ const PublicProfile = (props) => {
           live: true,
         })
         .on('change', async function () {
-          updateData()
+          updateData(true)
         })
     }
 
-    updateData()
+    updateData(false)
     bindChanges()
   }, [initialized, list, setPublicProfileData])
 
@@ -81,14 +87,17 @@ const PublicProfile = (props) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setPublicProfileData: (data) => dispatch(setPublicProfileDataAction(data)),
+    setPublicProfileData: (data: unknown) =>
+      dispatch(setPublicProfileData(data)),
   }
 }
 
-const mapStateToProps = () => {
-  return {}
+const mapStateToProps = (state: any) => {
+  return {
+    publicProfileData: state.publicProfileData
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PublicProfile)

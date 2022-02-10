@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { TextInput, View } from 'react-native'
 import { Container, Content } from 'native-base'
+import { Dispatch } from 'redux'
 import { connect } from 'react-redux'
 
 import Label from '../../components/Label'
@@ -10,18 +11,18 @@ import InputStyles from '../../styles/inputs'
 import { COUNTRIES } from '../../helpers/country-list'
 import DropDownPicker from '../../components/Select'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
+import { setPublicProfileData } from '../../reduxStore/general/actions'
 
-import IntlPhoneInput from 'react-native-intl-phone-input'
+// import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
 
-const EditProfile = (props) => {
+const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData, setPublicProfileData } = props
   const { title, option } = route.params
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState(option.value)
-  const onChangeItem = (e) => setEdited(e)
+  const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
     const key = title.toLowerCase()
@@ -29,7 +30,7 @@ const EditProfile = (props) => {
 
     if (publicProfileData[key] === val) return
     setDisabled(true)
-    const vault = AccountManager.getInstance().vault
+    const vault = AccountManager.getInstance().vault as any
 
     await vault.profiles.public.set(key, val)
     setPublicProfileData({ publicProfileData, [key]: val })
@@ -80,14 +81,14 @@ const EditProfile = (props) => {
               onChangeText={setEdited}
             />
           )}
-          {option.type === 'phone' && (
+          {/* {option.type === 'phone' && (
             <IntlPhoneInput
               // ref={el => setPhoneInputRef(el)}
               containerStyle={{ ...InputStyles.input, paddingVertical: 4 }}
               onChangeText={onChangeItem}
               defaultCountry='SG'
             />
-          )}
+          )} */}
         </View>
         <Button disabled={disabled} onPress={saveValue}>
           Save Changes
@@ -97,13 +98,14 @@ const EditProfile = (props) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setPublicProfileData: (data) => dispatch(setPublicProfileDataAction(data)),
+    setPublicProfileData: (data: unknown) =>
+      dispatch(setPublicProfileData(data)),
   }
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state: any) => {
   return { publicProfileData: state.publicProfileData }
 }
 
