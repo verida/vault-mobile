@@ -72,7 +72,7 @@ export const getProfile = async (sentBy) => {
   const verida = AccountManager.getInstance().context
   try {
     const profile = await verida.openProfile('basicProfile', sentBy.did)
-    return await profile.getMany()
+    return await profile.public.getMany()
   } catch (err) {
     // User may not have created a profile
     return {}
