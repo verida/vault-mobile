@@ -139,4 +139,81 @@ const getTransactions = async (wallets, tokenAddress) => {
   return transactions
 }
 
-export default { getAllBalances, getTransactions }
+const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
+  if (tokenAddress.includes('eip155')) {
+    const ethTransaction = await chainsApi.get(
+      'v2/ethereum/mainnet/tx/' + transactionID
+    )
+    console.log(ethTransaction, 'ethTransaction')
+    let rawTransaction = ethTransaction.data
+    // let userAddr = wallets.ethr.address
+    let userAddr = '0x28C6c06298d514Db089934071355E5743bf21d60'
+
+    if (rawTransaction) {
+      let transferInfo = rawTransaction.operations.native.detail
+      let isUserSender = transferInfo.from === userAddr
+      let symbol = transferInfo.currency.symbol
+      let decimal = transferInfo.currency.decimals
+      let feeSymbol = rawTransaction.operations.fee.detail.currency.symbol
+      return {
+        id: rawTransaction.id,
+        type: isUserSender ? 'sent' : 'received',
+        address: isUserSender ? transferInfo.to : rawTransaction.from,
+        quantity: transferInfo.value,
+        fee: rawTransaction.operations.fee.detail.value,
+        round: rawTransaction['block_id'],
+        time: rawTransaction['date'],
+        symbol,
+        feeSymbol,
+        decimal,
+      }
+    } else {
+      return {}
+    }
+  } else {
+    let transactionData = await indexerClient
+      .lookupTransactionByID(transactionID)
+      .do()
+
+    let rawTransaction = transactionData.transaction
+    let userAddr = wallets.algo.address
+
+    if (rawTransaction) {
+      let isUserSender = rawTransaction.sender === userAddr
+      let transferInfo = rawTransaction['asset-transfer-transaction']
+        ? rawTransaction['asset-transfer-transaction']
+        : rawTransaction['payment-transaction']
+      let symbol
+      let decimal
+      let feeSymbol = SUPPORTED_TOKENS[0].symbol
+      if (rawTransaction['asset-transfer-transaction']) {
+        let tok = SUPPORTED_TOKENS.find(
+          (ele) =>
+            getTokenAddress(ele.address) ===
+            rawTransaction['asset-transfer-transaction']['asset-id'].toString()
+        )
+        symbol = tok.symbol
+        decimal = tok.decimal
+      } else {
+        symbol = SUPPORTED_TOKENS[0].symbol
+        decimal = SUPPORTED_TOKENS[0].decimal
+      }
+      return {
+        id: rawTransaction.id,
+        type: isUserSender ? 'sent' : 'received',
+        address: isUserSender ? transferInfo.receiver : rawTransaction.sender,
+        quantity: transferInfo.amount,
+        fee: rawTransaction.fee,
+        round: rawTransaction['confirmed-round'],
+        time: rawTransaction['round-time'],
+        symbol,
+        feeSymbol,
+        decimal,
+      }
+    } else {
+      return {}
+    }
+  }
+}
+
+export default { getAllBalances, getTransactions, getTransactionDetails }
