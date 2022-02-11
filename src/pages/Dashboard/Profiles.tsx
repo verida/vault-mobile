@@ -29,7 +29,7 @@ const list = [
 
 const Profiles = (props: any) => {
   const { publicProfileData } = props
-  console.log(publicProfileData)
+  
   return (
     <Container>
       <NavigationHeader left={{ icon: 'skip' }} title='Profiles' />
