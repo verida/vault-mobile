@@ -1,4 +1,4 @@
-package expo.test;
+package io.verida.vault;
 
 import android.os.Bundle;
 
