@@ -27,10 +27,14 @@ import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import Settings from 'pages/Settings'
 import StorageNodes from 'pages/StorageNodes/StorageNodes'
 import BuyToken from 'pages/Tokens/BuyToken'
+import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
 import ReceiveToken from 'pages/Tokens/ReceiveToken'
 import SendToken from 'pages/Tokens/SendToken'
 import SingleCurrency from 'pages/Tokens/SingleCurrency'
 import TokenRecipient from 'pages/Tokens/TokenRecipient'
+import TransactionDetails from 'pages/Tokens/TransactionDetails'
+import TransactionFailure from 'pages/Tokens/TransactionFailure'
+import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
 import ManageWallets from 'pages/Wallets/ManageWallets'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
@@ -59,6 +63,22 @@ function MainNavigator() {
       <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
       <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
       <Stack.Screen name={'SendToken'} component={SendToken} />
+      <Stack.Screen
+        name={'ConfirmTransaction'}
+        component={ConfirmTransaction}
+      />
+      <Stack.Screen
+        name={'TransactionSuccess'}
+        component={TransactionSuccess}
+      />
+      <Stack.Screen
+        name={'TransactionFailure'}
+        component={TransactionFailure}
+      />
+      <Stack.Screen
+        name={'TransactionDetails'}
+        component={TransactionDetails}
+      />
       <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
       <Stack.Screen name={'BuyToken'} component={BuyToken} />
       <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
