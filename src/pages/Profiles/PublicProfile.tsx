@@ -1,14 +1,15 @@
+import { useIsFocused } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
-import { Alert, View, ViewProps } from 'react-native'
+import { Alert, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import ProfileLayout from '../../components/Layouts/ProfileLayout'
+
+import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { setPublicProfileData } from '../../reduxStore/general/actions'
+import ProfileLayout from '../../components/Layouts/ProfileLayout'
 import { editable } from '../../helpers/profile'
-import { useIsFocused } from '@react-navigation/native'
-import AccountManager from 'api/AccountManager'
+import { setPublicProfileData as setPublicProfileDataAction } from '../../reduxStore/general/actions'
 
 const PublicProfile = (props: any) => {
   const [list, setList] = useState([
@@ -18,6 +19,7 @@ const PublicProfile = (props: any) => {
   ])
   const [initialized, setInitialized] = useState(false)
   const isFocused = useIsFocused()
+  const { publicProfileData, setPublicProfileData } = props
 
   // component did mount
   useEffect(() => {
@@ -27,16 +29,14 @@ const PublicProfile = (props: any) => {
           return
         }
         let publicData: any = {}
-        if(shouldUpdate || props.publicProfileData?.name === ''){
+        if (shouldUpdate || publicProfileData?.name === '') {
           const vault = AccountManager.getInstance().vault as any
           publicData = await vault.profiles.public.getMany()
+        } else {
+          publicData = publicProfileData
         }
-        else{
-          publicData = props.publicProfileData
-        }
-        
 
-        props.setPublicProfileData(publicData)
+        setPublicProfileData(publicData)
         const updatedList = list.map((item) => {
           const label = item.label.toLowerCase()
           if (publicData[label]) {
@@ -69,7 +69,7 @@ const PublicProfile = (props: any) => {
 
     updateData(false)
     bindChanges()
-  }, [initialized, list, setPublicProfileData])
+  }, [initialized, list, setPublicProfileData, publicProfileData])
 
   useEffect(() => {
     setInitialized(false)
@@ -89,13 +89,13 @@ const PublicProfile = (props: any) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     setPublicProfileData: (data: unknown) =>
-      dispatch(setPublicProfileData(data)),
+      dispatch(setPublicProfileDataAction(data)),
   }
 }
 
 const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData
+    publicProfileData: state.publicProfileData,
   }
 }
 

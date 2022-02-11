@@ -1,12 +1,12 @@
+import { Container, Content } from 'native-base'
 import React from 'react'
 import { View } from 'react-native'
-import { Container, Content } from 'native-base'
 import { connect } from 'react-redux'
 
-import PropertyList from '../../components/PropertyList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import EarthSvg from '../../assets/icons/earth.svg'
+import PropertyList from '../../components/PropertyList'
 import LayoutStyle from '../../styles/layouts'
 
 const list = [
@@ -26,10 +26,7 @@ const list = [
   // },
 ]
 
-
-const Profiles = (props: any) => {
-  const { publicProfileData } = props
-  
+const Profiles = (_props: any) => {
   return (
     <Container>
       <NavigationHeader left={{ icon: 'skip' }} title='Profiles' />
@@ -44,14 +41,12 @@ const Profiles = (props: any) => {
 
 const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData
+    publicProfileData: state.publicProfileData,
   }
 }
 
 const mapDispatchToProps = () => {
-  return {
-    
-  }
+  return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profiles)
