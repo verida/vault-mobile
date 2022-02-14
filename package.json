@@ -1,6 +1,6 @@
 {
   "scripts": {
-    "android": "react-native run-android --variant=stagingDebug",
+    "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
     "ios": "react-native run-ios",
     "web": "expo start --web",
     "start": "react-native start",
