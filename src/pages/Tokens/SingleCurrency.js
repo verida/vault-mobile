@@ -8,9 +8,9 @@ import { connect } from 'react-redux'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { WARNING_COLOR } from 'constants/color'
 import {
   getBalances,
