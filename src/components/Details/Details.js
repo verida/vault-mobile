@@ -1,9 +1,9 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import Text from '../Text'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import Text from '../Text'
 
 export default (props) => (
   <View style={style.container}>

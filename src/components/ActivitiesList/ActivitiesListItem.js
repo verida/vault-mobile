@@ -1,6 +1,6 @@
+import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import { Card, CardItem, Body, Text, Right, Left } from 'native-base'
 
 export default ({ item }) => {
   return (

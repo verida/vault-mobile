@@ -1,16 +1,17 @@
-import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import React from 'react'
+
 import { AuthStackParams } from 'navigation/types'
-import Start from 'pages/Account/Start'
 import Create from 'pages/Account/Create'
 import Import from 'pages/Account/Import'
-import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
-import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
+import Start from 'pages/Account/Start'
 import CreatePin from 'pages/Authentication/CreatePin'
-import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
+import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
-import Success from 'pages/Success'
+import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
+import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import SelectNetwork from 'pages/SelectNetwork'
+import Success from 'pages/Success'
 
 const Stack = createNativeStackNavigator<AuthStackParams>()
 

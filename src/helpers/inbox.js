@@ -1,9 +1,11 @@
+import { get } from 'lodash'
+import moment from 'moment'
 import React from 'react'
+
+import AccountManager from 'api/AccountManager'
+
 import DataSnapshot from '../assets/inbox/snapshot.svg'
 import DataSynchronization from '../assets/inbox/synchronization.svg'
-import moment from 'moment'
-import { get } from 'lodash'
-import AccountManager from 'api/AccountManager'
 
 export const TYPES = [
   {

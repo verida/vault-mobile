@@ -6,10 +6,11 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
+
 import { Account, UserData } from 'api/types'
-import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
 import { fetchPublicProfileData } from 'api/utils'
 import LoadingView from 'components/LoadingView'
+import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
 
 export type AccountsListProps = {
   containerStyle: ViewStyle

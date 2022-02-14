@@ -1,12 +1,11 @@
+import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { StyleSheet, TouchableOpacity, View, Switch } from 'react-native'
-
-import Text from '../Text'
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import { useNavigation } from '@react-navigation/native'
+import Text from '../Text'
 
 export default ({ styles, item }) => {
   const [option, setOption] = useState(false)

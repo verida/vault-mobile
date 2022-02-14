@@ -1,4 +1,5 @@
-import Text from 'components/Text'
+import { countries } from 'countries-list'
+import { get } from 'lodash'
 import React from 'react'
 import {
   Image,
@@ -7,13 +8,13 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native'
-import { SUCCESS_COLOR } from 'constants/color'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { countries } from 'countries-list'
-import { get } from 'lodash'
-import VeridaSvg from 'assets/icons/verida.svg'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+
 import { NetworkNode } from 'api/types'
+import VeridaSvg from 'assets/icons/verida.svg'
+import Text from 'components/Text'
+import { SUCCESS_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 type NodeItemProps = Omit<TouchableOpacityProps, 'children'> & {
   data: NetworkNode

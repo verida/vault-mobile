@@ -1,21 +1,21 @@
+import * as SecureStore from 'expo-secure-store'
+import { Container, Content } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { connect } from 'react-redux'
+
+import CustomFooter from 'components/Layouts/CustomFooter'
+import Text from 'components/Text'
+import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
+import { useAuth } from 'hooks/useAuth'
+import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
 
 import Success from '../assets/success.svg'
-
-import Text from 'components/Text'
 import Button from '../components/Button'
+import Details from '../components/Details'
 import Layout from '../components/Layouts/Layout'
 import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
-import { useAuth } from 'hooks/useAuth'
-import { Container, Content } from 'native-base'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import Details from '../components/Details'
-import * as SecureStore from 'expo-secure-store'
-import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
-import { connect } from 'react-redux'
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 
 const SuccessPage = (props) => {
   const { setAuthStatus } = props

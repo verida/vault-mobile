@@ -1,14 +1,15 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import ProfileLayout from '../../components/Layouts/ProfileLayout'
-import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { editable } from '../../helpers/profile'
-import DateOfBirth from '../../components/DateOfBirth'
-import { NUNITO_SANS_BOLD } from '../../constants/text'
-import { BLACK_COLOR_OPACITY } from '../../constants/color'
 import AccountManager from 'api/AccountManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+
+import DateOfBirth from '../../components/DateOfBirth'
+import ProfileLayout from '../../components/Layouts/ProfileLayout'
+import { BLACK_COLOR_OPACITY } from '../../constants/color'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
+import { editable } from '../../helpers/profile'
 
 const list = [
   { label: 'Name', value: 'Chris Were', action: 'arrow', type: 'input' },

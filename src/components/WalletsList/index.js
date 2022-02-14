@@ -1,7 +1,8 @@
 import React from 'react'
+import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
-import { Text, View, StyleSheet, TouchableOpacity, Alert } from 'react-native'
-import { WHITE_COLOR, SEPARATOR_LIGHT } from 'constants/color'
+
+import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
 import WalletsListItem from './WalletsListItem'
 
@@ -10,12 +11,12 @@ export default ({ list }) => {
     Alert.alert('Are you sure you want to delete wallet / address?', null, [
       {
         text: 'Cancel',
-        onPress: () => console.log('Cancel Pressed'),
+        onPress: () => ({}),
         style: 'cancel',
       },
       {
         text: 'Delete',
-        onPress: () => console.log('OK Pressed'),
+        onPress: () => ({}),
         style: 'destructive',
       },
     ])

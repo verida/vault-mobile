@@ -1,22 +1,19 @@
-import React from 'react'
-import { StyleSheet, View, TouchableOpacity, Share } from 'react-native'
-import { Container, Icon } from 'native-base'
-import { QRCode } from 'react-native-custom-qr-codes-expo'
-import { connect } from 'react-redux'
-import Toast from 'react-native-root-toast'
 import Clipboard from '@react-native-community/clipboard'
-
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import Button from 'components/Button'
-import Layout from 'components/Layouts/Layout'
-
-import { PRIMARY_COLOR, BLACK_ORIGIN_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { Container, Icon } from 'native-base'
+import React from 'react'
+import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { QRCode } from 'react-native-custom-qr-codes-expo'
+import Toast from 'react-native-root-toast'
+import { connect } from 'react-redux'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon.svg'
-
+import Button from 'components/Button'
+import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const LogoImg = require('assets/vault-logo.png')

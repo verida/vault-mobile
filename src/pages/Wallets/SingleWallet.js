@@ -1,58 +1,47 @@
-import React, { useState } from 'react'
-import { View, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native'
 import { Icon } from 'native-base'
+import React, { useState } from 'react'
+import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import AddressesList from '../../components/AddressesList'
 import Text from 'components/Text'
-import RenameWalletModal from './RenameWalletModal'
-import WarningModal from './WarningModal'
-import SeedPhraseModal from './SeedPhraseModal'
-import PrivateKeyModal from './PrivateKeyModal'
-import EditAddressModal from './EditAddressModal'
-import AddAddressModal from './AddAddressModal'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-
-import NearSvg from '../../assets/wallets/Near.svg'
 import AddAddressSvg from '../../assets/add_address.svg'
 import ExportSeedphraseSvg from '../../assets/export_seedphrase.svg'
 import RemoveWalletSvg from '../../assets/remove_wallet.svg'
+import NearSvg from '../../assets/wallets/Near.svg'
+import AddressesList from '../../components/AddressesList'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import AddAddressModal from './AddAddressModal'
+import EditAddressModal from './EditAddressModal'
+import PrivateKeyModal from './PrivateKeyModal'
+import RenameWalletModal from './RenameWalletModal'
+import SeedPhraseModal from './SeedPhraseModal'
+import WarningModal from './WarningModal'
 
 const list = [
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
   {
     name: 'Friendly address name',
     address: '3hs73j...x7dn',
-    onPress: () => {
-      console.log()
-    },
+    onPress: () => ({}),
   },
 ]
 

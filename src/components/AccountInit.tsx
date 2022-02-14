@@ -1,20 +1,19 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { COUNTRIES } from 'helpers/country-list'
 import React, { useState } from 'react'
-import { connect } from 'react-redux'
 import { StyleSheet, TextInput, View, ViewProps } from 'react-native'
+import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
 
-import DropDownPicker from './Select'
-import Button from './Button'
-import Label from './Label'
+import AccountManager from 'api/AccountManager'
+import { AuthStackParams } from 'navigation/types'
+import { setPublicProfileData } from 'reduxStore/general/actions'
 
 import InputStyles from '../styles/inputs'
-import { COUNTRIES } from 'helpers/country-list'
-
-import { setPublicProfileData } from 'reduxStore/general/actions'
-import { useNavigation } from '@react-navigation/native'
-import { Dispatch } from 'redux'
-import { AuthStackParams } from 'navigation/types'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import AccountManager from 'api/AccountManager'
+import Button from './Button'
+import Label from './Label'
+import DropDownPicker from './Select'
 
 type Option = {
   label: string

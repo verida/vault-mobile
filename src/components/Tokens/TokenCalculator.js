@@ -1,11 +1,9 @@
 import React from 'react'
-import { View, StyleSheet, TouchableOpacity, TextInput } from 'react-native'
-
-import Text from 'components/Text'
-
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 import SwapIcon from 'assets/swap_icon.svg'
+import Text from 'components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const convert = (number, mode, price) => {
   let numberFloat = parseFloat(number)

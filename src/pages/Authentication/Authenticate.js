@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
-import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
+import { LinearGradient } from 'expo-linear-gradient'
 import * as LocalAuthentication from 'expo-local-authentication'
+import React, { useEffect, useState } from 'react'
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
+import { connect } from 'react-redux'
+
+import { useAuth } from 'hooks/useAuth'
 
 import Logo from '../../assets/logo.svg'
-import CheckPin from './CheckPin'
-
 import { setAuthStatus as setAuthStatusAction } from '../../reduxStore/general/actions'
-import { LinearGradient } from 'expo-linear-gradient'
-import { useAuth } from 'hooks/useAuth'
-import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
+import CheckPin from './CheckPin'
 
 const Authenticate = (props) => {
   const { setAuthStatus, authenticated: localAuthenticated, children } = props

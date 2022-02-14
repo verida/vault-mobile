@@ -9,10 +9,11 @@ import {
   ViewProps,
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
-import { DefaultAvatar } from 'api/utils'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useSelector } from 'react-redux'
+
+import { DefaultAvatar } from 'api/utils'
+import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export type AccountItemProps = Omit<ViewProps, 'children'> & {
   name: string

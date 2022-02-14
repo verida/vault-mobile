@@ -1,10 +1,11 @@
+import * as Sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import Text from '../Text'
 
-import History from './History'
-import EmptyList from '../Lists/EmptyList'
 import AccountManager from '../../api/AccountManager'
+import EmptyList from '../Lists/EmptyList'
+import Text from '../Text'
+import History from './History'
 
 export default ({ route }) => {
   const [history, setHistory] = useState(null)
@@ -35,8 +36,7 @@ export default ({ route }) => {
         setHistory(_history)
         setLoading(false)
       } catch (e) {
-        console.log('ERROR:', e)
-        console.log(e)
+        Sentry.captureException(e)
       }
     }
 

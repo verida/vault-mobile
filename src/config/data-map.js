@@ -1,15 +1,15 @@
 import React from 'react'
 
-import IdentitySvg from '../assets/icons/data/identity.svg'
-import HealthSvg from '../assets/icons/data/health.svg'
-import SocialSvg from '../assets/icons/data/social.svg'
+import DocumentsSvg from '../assets/icons/data/documents.svg'
 import EmploymentSvg from '../assets/icons/data/employment.svg'
 import FinanceSvg from '../assets/icons/data/finance.svg'
-import QualificationsSvg from '../assets/icons/data/qualifications.svg'
+import HealthSvg from '../assets/icons/data/health.svg'
+import IdentitySvg from '../assets/icons/data/identity.svg'
 import InsuranceSvg from '../assets/icons/data/insurance.svg'
+import QualificationsSvg from '../assets/icons/data/qualifications.svg'
+import SocialSvg from '../assets/icons/data/social.svg'
 import SubscriptionsSvg from '../assets/icons/data/subscriptions.svg'
 import TicketsSvg from '../assets/icons/data/tickets.svg'
-import DocumentsSvg from '../assets/icons/data/documents.svg'
 
 const dataMap = {
   navigation: [

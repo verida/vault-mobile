@@ -1,6 +1,6 @@
+import LottieView from 'lottie-react-native'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
-import LottieView from 'lottie-react-native'
 
 export type LoadingViewProps = Omit<ViewProps, 'children'> & {
   type?: 'big' | 'small'

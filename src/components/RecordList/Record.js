@@ -1,10 +1,10 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import Text from '../Text'
-import Filters from './Filters'
 
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import Text from '../Text'
+import Filters from './Filters'
 
 export default ({ item }) => (
   <View style={style.card}>

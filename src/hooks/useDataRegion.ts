@@ -1,11 +1,12 @@
-import { useEffect } from 'react'
-import { fetchNetworkCountries, fetchNetworks } from 'api/utils'
-import { getUserCountryCode } from 'utils/profile'
-import { NetworkCountry } from 'api/types'
-import { useDispatch, useSelector } from 'react-redux'
-import { get } from 'lodash'
 import * as Sentry from '@sentry/react-native'
+import { get } from 'lodash'
+import { useEffect } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+
+import { NetworkCountry } from 'api/types'
+import { fetchNetworkCountries, fetchNetworks } from 'api/utils'
 import { setNetworks } from 'reduxStore/general/actions'
+import { getUserCountryCode } from 'utils/profile'
 
 export function useDataRegion() {
   const dispatch = useDispatch()

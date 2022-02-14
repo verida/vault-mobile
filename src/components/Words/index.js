@@ -1,14 +1,12 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-
-import { addWord, removeWord } from '../../reduxStore/words/actions'
-
-import Text from '../Text'
-import Words from './Words'
 
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import { addWord, removeWord } from '../../reduxStore/words/actions'
+import Text from '../Text'
+import Words from './Words'
 
 const WordLayout = ({ words, template, ...props }) => (
   <View style={style.layout}>

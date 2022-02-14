@@ -1,21 +1,19 @@
+import { utils } from 'ethers'
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, TextInput } from 'react-native'
-import { Container, Content } from 'native-base'
+import _ from 'underscore'
 
-import Layout from '../../components/Layouts/Layout'
-import Button from '../../components/Button'
-import Label from '../../components/Label'
+import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
+import CustomFooter from 'components/Layouts/CustomFooter'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
+import Button from '../../components/Button'
 import ErrorPhrase from '../../components/ErrorPhrase'
-
-import ModifierStyles from '../../styles/modifier'
+import Label from '../../components/Label'
+import Layout from '../../components/Layouts/Layout'
 import InputStyles from '../../styles/inputs'
-import { utils } from 'ethers'
-
-import _ from 'underscore'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
+import ModifierStyles from '../../styles/modifier'
 
 export default (props) => {
   const { route, navigation } = props

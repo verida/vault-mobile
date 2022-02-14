@@ -1,12 +1,11 @@
-import React from 'react'
-import { StyleSheet, View, TouchableOpacity, Linking } from 'react-native'
-import { Icon } from 'native-base'
 import Clipboard from '@react-native-community/clipboard'
+import { Icon } from 'native-base'
+import React from 'react'
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import Text from 'components/Text'
-
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import CompleteSVG from 'assets/complete.svg'
+import Text from 'components/Text'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({ transaction }) => {
   var formattedTime = new Date(transaction.time * 1000).toLocaleString('en-US')

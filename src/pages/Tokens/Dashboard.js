@@ -1,19 +1,18 @@
-import React, { useState, useEffect } from 'react'
 import { Container } from 'native-base'
-import { connect } from 'react-redux'
+import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
+import { connect } from 'react-redux'
 
+import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
-import LoadingIndicator from 'components/LoadingIndicator'
-import SendListModal from './SendListModal'
-
 // import SettingsSvg from 'assets/icons/settings.svg'
-
-import { getPrices, getBalances } from 'reduxStore/wallet/actions'
+import { getBalances, getPrices } from 'reduxStore/wallet/actions'
 import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
+
+import SendListModal from './SendListModal'
 
 const TokenDashboard = ({
   navigation,

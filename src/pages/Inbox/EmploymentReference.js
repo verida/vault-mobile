@@ -1,13 +1,13 @@
+import { Container, Content } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Container, Content } from 'native-base'
-import EmploymentData from '../../components/Inbox/EmploymentData'
-import Attachment from '../../components/Inbox/Attachment'
+
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
+import Attachment from '../../components/Inbox/Attachment'
+import EmploymentData from '../../components/Inbox/EmploymentData'
 import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout'
 import { LIGHTGREY_COLOR } from '../../constants/color'
-
 import StyleDivider from '../../styles/divider'
 
 const file = {

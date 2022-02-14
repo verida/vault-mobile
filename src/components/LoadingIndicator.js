@@ -1,5 +1,5 @@
 import React from 'react'
-import { ActivityIndicator, View, StyleSheet } from 'react-native'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 
 import { PRIMARY_COLOR } from 'constants/color'
 

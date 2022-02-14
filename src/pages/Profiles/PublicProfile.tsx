@@ -1,14 +1,14 @@
+import { useIsFocused } from '@react-navigation/native'
+import { editable } from 'helpers/profile'
 import React, { useEffect, useState } from 'react'
 import { Alert, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+
+import AccountManager from 'api/AccountManager'
 import ProfileLayout from 'components/Layouts/ProfileLayout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { editable } from 'helpers/profile'
-import { useIsFocused } from '@react-navigation/native'
-import AccountManager from 'api/AccountManager'
 
 const PublicProfile = (props: any) => {
   const [list, setList] = useState([
