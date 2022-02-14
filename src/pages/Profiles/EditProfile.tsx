@@ -16,7 +16,7 @@ import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 const EditProfile = (props: any) => {
-  const { navigation, route, publicProfileData, setPublicProfileData } = props
+  const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
 
   const [disabled, setDisabled] = useState(false)
