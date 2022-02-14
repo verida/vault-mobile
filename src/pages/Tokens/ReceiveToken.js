@@ -12,6 +12,7 @@ import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
@@ -30,6 +31,7 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
         }}
         title={'Receive ' + token.symbol}
       />
+      <TestnetWarning />
       <Layout style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.address}>{address}</Text>

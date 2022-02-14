@@ -5,6 +5,7 @@ import { connect } from 'react-redux'
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
 
@@ -34,6 +35,7 @@ const TransactionDetails = ({
         }}
         title={'Transaction Details'}
       />
+      <TestnetWarning />
       {loading ? (
         <LoadingIndicator />
       ) : (
