@@ -7,7 +7,7 @@ import { Dispatch } from 'redux'
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
+import { setPublicProfileData } from 'reduxStore/general/actions'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
@@ -100,7 +100,7 @@ const EditProfile = (props: any) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     setPublicProfileData: (data: unknown) =>
-      dispatch(setPublicProfileDataAction(data)),
+      dispatch(setPublicProfileData(data)),
   }
 }
 
