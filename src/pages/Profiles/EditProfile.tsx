@@ -17,7 +17,7 @@ import { setPublicProfileData } from 'reduxStore/general/actions'
 import AccountManager from 'api/AccountManager'
 
 const EditProfile = (props: any) => {
-  const { navigation, route, publicProfileData, setPublicProfileData } = props
+  const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
 
   const [disabled, setDisabled] = useState(false)
