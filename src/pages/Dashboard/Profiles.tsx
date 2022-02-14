@@ -26,10 +26,7 @@ const list = [
   // },
 ]
 
-
-const Profiles = (props: any) => {
-  const { publicProfileData } = props
-  
+const Profiles = () => {
   return (
     <Container>
       <NavigationHeader left={{ icon: 'skip' }} title='Profiles' />
@@ -44,14 +41,12 @@ const Profiles = (props: any) => {
 
 const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData
+    publicProfileData: state.publicProfileData,
   }
 }
 
 const mapDispatchToProps = () => {
-  return {
-    
-  }
+  return {}
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profiles)
