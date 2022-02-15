@@ -7,6 +7,7 @@ import { SUPPORTED_TOKENS } from 'wallet/constants'
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import {
@@ -35,6 +36,7 @@ const ConfirmTransaction = ({
         }}
         title={'Send ' + token.symbol}
       />
+      <TestnetWarning />
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoRow}>

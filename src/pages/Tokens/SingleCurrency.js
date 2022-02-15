@@ -8,6 +8,7 @@ import { connect } from 'react-redux'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import { WARNING_COLOR } from 'constants/color'
@@ -69,6 +70,7 @@ const SingleCurrency = ({
         }}
         title={item.label}
       />
+      <TestnetWarning />
       {warningRequired && loading === false && list.length === 0 && (
         <TouchableOpacity
           style={{
@@ -78,6 +80,7 @@ const SingleCurrency = ({
             borderRadius: 5,
             flexDirection: 'row',
             alignItems: 'center',
+            marginTop: 10,
           }}
           onPress={() => {
             if (nativeTokenBalance >= 0.001) {
