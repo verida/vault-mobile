@@ -1,6 +1,7 @@
+// eslint-disable-next-line simple-import-sort/imports
 import * as Sentry from '@sentry/react-native'
-import { AutoAccount } from '@verida/account-node'
 import { Client, Context, EnvironmentType } from '@verida/client-rn'
+import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
 import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
