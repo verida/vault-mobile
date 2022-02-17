@@ -1,6 +1,7 @@
 import React from 'react'
-import Card from './Card'
 import { View } from 'react-native'
+
+import Card from './Card'
 
 export default ({ list }) => {
   const cards = list.map((options) => (

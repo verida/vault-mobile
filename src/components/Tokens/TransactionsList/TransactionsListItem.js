@@ -1,43 +1,46 @@
+import { useNavigation } from '@react-navigation/native'
+import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ListItem, Text } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
 
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-import SentIcon from 'assets/sent_icon.svg'
 import ReceivedIcon from 'assets/received_icon.svg'
+import SentIcon from 'assets/sent_icon.svg'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const icons = {
   sent: <SentIcon />,
   received: <ReceivedIcon />,
 }
 
-export default ({ item }) => {
+export default ({ symbol, item }) => {
   const navigation = useNavigation()
-  const { type, symbol, quantity, address } = item
+  const { type, quantity, address, id, pending } = item
 
   return (
     <ListItem
       button
       onPress={() => {
-        navigation.navigate('SingleCurrency')
+        if (!pending) {
+          navigation.navigate('TransactionDetails', { id })
+        }
       }}
       style={styles.listItem}>
       {icons[type]}
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
-          <Text style={styles.currencyName}>{type}</Text>
+          <Text style={styles.currencyName}>
+            {type} {pending && '(pending)'}
+          </Text>
           <Text
             style={[
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {quantity} {symbol}
+            {(quantity / 1000000).toFixed(3)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>
-          <Text style={styles.amount}>
+          <Text numberOfLines={1} ellipsizeMode='middle' style={styles.amount}>
             {type === 'sent' ? 'To: ' : 'From : '}
             {address}
           </Text>

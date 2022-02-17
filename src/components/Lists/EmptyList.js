@@ -1,9 +1,9 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
-import Text from '../Text'
 import Success from '../../assets/success.svg'
 import { WHITE_COLOR } from '../../constants/color'
+import Text from '../Text'
 
 export default ({ type, approved }) => (
   <View style={style.container}>

@@ -3,6 +3,8 @@ import {
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
   SET_INBOX_ITEMS,
+  SET_NAVIGATION_LINK,
+  SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -43,6 +45,13 @@ export const setSwitchAccountToast = (payload) => {
 }
 
 export const setShowSeedPhraseReminder = (payload) => {
-  console.log('setShowSeedPhraseReminder:', payload)
   return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
+}
+
+export const setNetworks = (payload) => {
+  return { type: SET_NETWORKS, payload }
+}
+
+export const setNavigationLink = (payload) => {
+  return { type: SET_NAVIGATION_LINK, payload }
 }

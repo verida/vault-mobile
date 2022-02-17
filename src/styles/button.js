@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+
 import { LIGHTGREY_COLOR, PRIMARY_COLOR, WHITE_COLOR } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 

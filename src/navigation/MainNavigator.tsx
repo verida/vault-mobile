@@ -1,41 +1,50 @@
-import React from 'react'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { MainStackParams } from 'navigation/types'
+import React from 'react'
+
+import { useDataRegion } from 'hooks/useDataRegion'
+import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
+import { MainStackParams } from 'navigation/types'
+import ChangePin from 'pages/Authentication/ChangePin'
+import AddAccount from 'pages/Dashboard/AddAccount'
+import ImportAccount from 'pages/Dashboard/ImportAccount'
+import Folder from 'pages/Data/Folder'
+import Item from 'pages/Data/Item'
 import Inbox from 'pages/Inbox'
+import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
-import PublicProfile from 'pages/Profiles/PublicProfile'
-import PrivateProfile from 'pages/Profiles/PrivateProfile'
+import Networks from 'pages/Networks/Networks'
 import EditProfile from 'pages/Profiles/EditProfile'
-import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
-import ManageWallets from 'pages/Wallets/ManageWallets'
-import SingleWallet from 'pages/Wallets/SingleWallet'
-import OtherAddresses from 'pages/Wallets/OtherAddresses'
-import SuccessFailure from 'pages/Wallets/SuccessFailure'
-import SingleCurrency from 'pages/Tokens/SingleCurrency'
-import SendToken from 'pages/Tokens/SendToken'
-import TokenRecipient from 'pages/Tokens/TokenRecipient'
-import BuyToken from 'pages/Tokens/BuyToken'
-import ReceiveToken from 'pages/Tokens/ReceiveToken'
-import Folder from 'pages/Data/Folder'
-import Item from 'pages/Data/Item'
-import Settings from 'pages/Settings'
-import ChangePin from 'pages/Authentication/ChangePin'
+import PrivateProfile from 'pages/Profiles/PrivateProfile'
+import PublicProfile from 'pages/Profiles/PublicProfile'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
-import { useEventHandlers } from 'hooks/useEventHandlers'
-import AddAccount from 'pages/Dashboard/AddAccount'
-import ImportAccount from 'pages/Dashboard/ImportAccount'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
-import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
-import ShareableData from 'pages/Inbox/ShareableData'
+import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
+import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
+import Settings from 'pages/Settings'
+import StorageNodes from 'pages/StorageNodes/StorageNodes'
+import BuyToken from 'pages/Tokens/BuyToken'
+import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
+import ReceiveToken from 'pages/Tokens/ReceiveToken'
+import SendToken from 'pages/Tokens/SendToken'
+import SingleCurrency from 'pages/Tokens/SingleCurrency'
+import TokenRecipient from 'pages/Tokens/TokenRecipient'
+import TransactionDetails from 'pages/Tokens/TransactionDetails'
+import TransactionFailure from 'pages/Tokens/TransactionFailure'
+import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
+import ManageWallets from 'pages/Wallets/ManageWallets'
+import OtherAddresses from 'pages/Wallets/OtherAddresses'
+import SingleWallet from 'pages/Wallets/SingleWallet'
+import SuccessFailure from 'pages/Wallets/SuccessFailure'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
   useEventHandlers()
+  useDataRegion()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -54,6 +63,22 @@ function MainNavigator() {
       <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
       <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
       <Stack.Screen name={'SendToken'} component={SendToken} />
+      <Stack.Screen
+        name={'ConfirmTransaction'}
+        component={ConfirmTransaction}
+      />
+      <Stack.Screen
+        name={'TransactionSuccess'}
+        component={TransactionSuccess}
+      />
+      <Stack.Screen
+        name={'TransactionFailure'}
+        component={TransactionFailure}
+      />
+      <Stack.Screen
+        name={'TransactionDetails'}
+        component={TransactionDetails}
+      />
       <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
       <Stack.Screen name={'BuyToken'} component={BuyToken} />
       <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
@@ -71,6 +96,8 @@ function MainNavigator() {
       />
       <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
+      <Stack.Screen name={'Networks'} component={Networks} />
+      <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
     </Stack.Navigator>
   )
 }

@@ -1,9 +1,9 @@
 import React from 'react'
 import { ScrollView, StyleSheet } from 'react-native'
-import Text from '../Text'
 
 import { BLACK_COLOR } from '../../constants/color'
 import { NUNITO_SANS_BOLD } from '../../constants/text'
+import Text from '../Text'
 
 export default (props) => {
   return (

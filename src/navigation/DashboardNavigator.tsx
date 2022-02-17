@@ -1,19 +1,20 @@
-import React from 'react'
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
+import React from 'react'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+
+import { PRIMARY_COLOR } from 'constants/color'
 import { DashboardTabParams } from 'navigation/types'
 import Home from 'pages/Dashboard/Home'
-import Folders from 'pages/Data/Folders'
 import Profiles from 'pages/Dashboard/Profiles'
+import Folders from 'pages/Data/Folders'
 import Tokens from 'pages/Tokens/Dashboard'
-import { PRIMARY_COLOR } from 'constants/color'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
-import { useAuth } from 'hooks/useAuth'
+// import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
-  const { isVeridaTeamMember } = useAuth()
+  // const { isVeridaTeamMember } = useAuth()
 
   return (
     <Tab.Navigator
@@ -35,7 +36,7 @@ function DashboardNavigator() {
         component={Folders}
         options={{
           tabBarIcon: ({ color }) => (
-            <Ionicons name='share-social' size={24} color={color} />
+            <Ionicons name='server' size={24} color={color} />
           ),
         }}
       />
@@ -48,17 +49,17 @@ function DashboardNavigator() {
           ),
         }}
       />
-      {isVeridaTeamMember && (
-        <Tab.Screen
-          name={'Tokens'}
-          component={Tokens}
-          options={{
-            tabBarIcon: ({ color }) => (
-              <Ionicons name='wallet' size={24} color={color} />
-            ),
-          }}
-        />
-      )}
+      {/* {isVeridaTeamMember && ( */}
+      <Tab.Screen
+        name={'Tokens'}
+        component={Tokens}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='wallet' size={24} color={color} />
+          ),
+        }}
+      />
+      {/* )} */}
     </Tab.Navigator>
   )
 }

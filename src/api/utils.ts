@@ -1,10 +1,18 @@
 import * as Sentry from '@sentry/react-native'
-import AccountManager from 'api/AccountManager'
-import { setNewMessagesCount } from 'reduxStore/general/actions'
+import axios from 'axios'
 import store from 'reduxStore'
+
+import AccountManager, {
+  VERIDA_CONTEXT_NAME,
+  VERIDA_TESTNET_NOTIFICATION_SERVER,
+} from 'api/AccountManager'
+import { Network, NetworkCountries } from 'api/types'
+import { setNewMessagesCount } from 'reduxStore/general/actions'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
+
+let axiosAuthPassword: string | undefined
 
 export const convertAvatar = (avatar: any) => {
   if (!avatar) {
@@ -85,7 +93,6 @@ export async function fetchInboxCount() {
     store.dispatch(setNewMessagesCount(messages.length))
   } catch (error) {
     Sentry.captureException(error)
-    console.log(error)
   }
 }
 
@@ -107,11 +114,107 @@ export async function getProfile(did: string) {
     }
   } catch (error) {
     Sentry.captureException(error)
-    console.error(error)
 
     return {
       name: 'Unknown',
       avatar: DefaultAvatar,
     }
+  }
+}
+
+export async function getAxios() {
+  const config: any = {
+    headers: {
+      'context-name': VERIDA_CONTEXT_NAME,
+    },
+  }
+
+  const currentDid = AccountManager.getInstance()
+    .getSelectedAccount()
+    ?.did.toLowerCase()
+
+  if (!axiosAuthPassword) {
+    const keyring = await AccountManager.getInstance()
+      .context?.getAccount()
+      .keyring(VERIDA_CONTEXT_NAME)
+    axiosAuthPassword = await keyring?.sign(
+      `Access the notification service using context: "${VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+    )
+  }
+  config.auth = {
+    username: currentDid?.replace(/:/g, '_'),
+    password: axiosAuthPassword,
+  }
+
+  return axios.create(config)
+}
+
+export async function registerRemoteNotification(token: string) {
+  if (!token) {
+    return
+  }
+
+  try {
+    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const body = {
+      data: {
+        did: currentDid,
+        context: VERIDA_CONTEXT_NAME,
+        deviceId: token,
+      },
+    }
+
+    const axiosInstance = await getAxios()
+    await axiosInstance.post(
+      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/register`,
+      body
+    )
+  } catch (e) {
+    Sentry.captureException(e)
+  }
+}
+
+export async function fetchNetworks(): Promise<Network[]> {
+  try {
+    const url = 'https://assets.verida.io/config/verida_storage_nodes.json'
+    const res = await fetch(url)
+    const json = await res.json()
+    return json.networks
+  } catch (e) {
+    Sentry.captureException(e)
+    return []
+  }
+}
+
+export async function unRegisterRemoteNotification(token: string) {
+  try {
+    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const body = {
+      data: {
+        did: currentDid,
+        context: VERIDA_CONTEXT_NAME,
+        deviceId: token,
+      },
+    }
+
+    const axiosInstance = await getAxios()
+    await axiosInstance.post(
+      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/unregister`,
+      body
+    )
+  } catch (e) {
+    Sentry.captureException(e)
+  }
+}
+
+export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
+  try {
+    const url = 'https://assets.verida.io/config/country_storage_nodes.json'
+    const res = await fetch(url)
+    const json = await res.json()
+    return json.networks
+  } catch (e) {
+    Sentry.captureException(e)
+    return []
   }
 }

@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
-import DatePicker from 'react-native-datepicker'
 import { StyleSheet } from 'react-native'
+import DatePicker from 'react-native-datepicker'
+
 import {
   BLACK_COLOR_OPACITY,
   PRIMARY_COLOR,

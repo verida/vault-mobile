@@ -1,3 +1,4 @@
+import { Network } from 'api/types'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
@@ -39,6 +40,10 @@ export type MainStackParams = {
   SingleCurrency: undefined
   SendToken: undefined
   TokenRecipient: undefined
+  ConfirmTransaction: undefined
+  TransactionSuccess: undefined
+  TransactionFailure: undefined
+  TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
   SingleWallet: undefined
@@ -48,7 +53,8 @@ export type MainStackParams = {
   DataItem: undefined
   Settings: undefined
   ChangePin: undefined
-  ScanQrCode: { firstTime: boolean }
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: undefined
   ImportAccount: undefined
   SeedPhrase: undefined
@@ -59,4 +65,6 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
+  Networks: undefined
+  StorageNodes: { data: Network[] }
 }

@@ -1,4 +1,3 @@
-import Text from 'components/Text'
 import { Header, Left, Right } from 'native-base'
 import React from 'react'
 import {
@@ -10,9 +9,11 @@ import {
   ViewProps,
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+
 import EnvelopeSvg from 'assets/icons/envelope.svg'
 import SettingsSvg from 'assets/icons/settings.svg'
+import Text from 'components/Text'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   avatar: ImageSourcePropType
@@ -50,10 +51,19 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
           <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
             <Image source={avatar} style={styles.avatar} />
           </TouchableOpacity>
-          <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
-            <Text style={styles.name}>{name}</Text>
-            <AntDesign name={'caretdown'} size={10} color={'#041133'} />
-          </TouchableOpacity>
+          <View>
+            <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
+              <Text style={styles.name}>{name}</Text>
+              <AntDesign name={'caretdown'} size={10} color={'#041133'} />
+            </TouchableOpacity>
+            <View style={styles.network}>
+              <Image
+                source={require('assets/icons/wifi.png')}
+                style={styles.networkIcon}
+              />
+              <Text style={styles.networkText}>Testnet</Text>
+            </View>
+          </View>
         </View>
       </Left>
       <Right>
@@ -133,6 +143,20 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     marginHorizontal: 10,
+  },
+  network: {
+    flexDirection: 'row',
+    alignItems: 'center',
+  },
+  networkText: {
+    fontSize: 12,
+    color: '#687085',
+  },
+  networkIcon: {
+    width: 12,
+    height: 12,
+    resizeMode: 'contain',
+    marginRight: 5,
   },
 })
 

@@ -1,4 +1,5 @@
 import { LinkingOptions } from '@react-navigation/native'
+
 import { RootStackParams } from 'navigation/types'
 
 const linking: LinkingOptions<RootStackParams> = {
@@ -8,6 +9,7 @@ const linking: LinkingOptions<RootStackParams> = {
       Main: {
         screens: {
           LoginRequest: 'request',
+          Inbox: 'inbox',
         },
       },
     },

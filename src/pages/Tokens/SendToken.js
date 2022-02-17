@@ -1,52 +1,62 @@
-import React from 'react'
-import { ScrollView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Container, Icon } from 'native-base'
+import React from 'react'
+import {
+  Alert,
+  // ScrollView,
+  // TouchableOpacity,
+  StyleSheet,
+  View,
+} from 'react-native'
 
-import Text from 'components/Text'
+import Button from 'components/Button'
+// import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenCalculator from 'components/Tokens/TokenCalculator'
-import Button from 'components/Button'
-
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import WalletIcon from 'assets/wallet_icon_small.svg'
+// import WalletIcon from 'assets/wallet_icon_small.svg'
 
-import ChainlinkToken from 'assets/tokens/chainlink.svg'
-import EthereumToken from 'assets/tokens/ethereum.svg'
+// import ChainlinkToken from 'assets/tokens/chainlink.svg'
+// import EthereumToken from 'assets/tokens/ethereum.svg'
 
-const addressList = [
-  { id: 1, address: '0vc029...fch8', amount: 8652, type: 'ETH' },
-  { id: 2, address: '74ojk7...yz67', amount: 902, type: 'NEAR' },
-  { id: 3, address: '1vc302...sks8', amount: 1023, type: 'ETH' },
-]
+// const addressList = [
+//   { id: 1, address: '0vc029...fch8', amount: 8652, type: 'ETH' },
+//   { id: 2, address: '74ojk7...yz67', amount: 902, type: 'NEAR' },
+//   { id: 3, address: '1vc302...sks8', amount: 1023, type: 'ETH' },
+// ]
 
-const tokenList = [
-  {
-    id: 1,
-    name: 'ChainLink',
-    symbol: 'LINK',
-    quantity: 820,
-    icon: <ChainlinkToken />,
-  },
-  {
-    id: 2,
-    name: 'Ethereum',
-    symbol: 'ETH',
-    quantity: 2.028,
-    icon: <EthereumToken />,
-  },
-  {
-    id: 3,
-    name: 'ChainLink',
-    symbol: 'LINK',
-    quantity: 108,
-    icon: <ChainlinkToken />,
-  },
-]
+// const tokenList = [
+//   {
+//     id: 1,
+//     name: 'ChainLink',
+//     symbol: 'LINK',
+//     quantity: 820,
+//     icon: <ChainlinkToken />,
+//   },
+//   {
+//     id: 2,
+//     name: 'Ethereum',
+//     symbol: 'ETH',
+//     quantity: 2.028,
+//     icon: <EthereumToken />,
+//   },
+//   {
+//     id: 3,
+//     name: 'ChainLink',
+//     symbol: 'LINK',
+//     quantity: 108,
+//     icon: <ChainlinkToken />,
+//   },
+// ]
 
-export default ({ navigation }) => {
-  const [selectedAddress, onSelectAddress] = React.useState(null)
-  const [selectedToken, onSelectToken] = React.useState(null)
+const showAlert = () =>
+  Alert.alert('Invalid quantity', 'Quantity is higher than wallet balance')
+
+export default ({ navigation, route }) => {
+  // const [selectedAddress, onSelectAddress] = React.useState(null)
+  // const [selectedToken, onSelectToken] = React.useState(null)
   const [amount, onUpdateAmount] = React.useState(null)
+  const [amountValid, onUpdateValidation] = React.useState(false)
+  const token = route.params.token
 
   return (
     <Container>
@@ -55,12 +65,17 @@ export default ({ navigation }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title='Send ETH'
+        title={'Send ' + token.symbol}
       />
       <View style={styles.container}>
         <View style={styles.content}>
-          <TokenCalculator onUpdateAmount={onUpdateAmount} />
-          <Text style={styles.label}>Select address</Text>
+          <TokenCalculator
+            token={token}
+            onUpdateAmount={onUpdateAmount}
+            onUpdateValidation={onUpdateValidation}
+          />
+
+          {/* <Text style={styles.label}>Select address</Text>
           <View style={styles.addressScroller}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {addressList.map((item, index) => (
@@ -83,9 +98,9 @@ export default ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
+          </View> */}
 
-          <Text style={styles.label}>Select token</Text>
+          {/* <Text style={styles.label}>Select token</Text>
           <View style={styles.tokenScroller}>
             <ScrollView horizontal showsHorizontalScrollIndicator={false}>
               {tokenList.map((item, index) => (
@@ -107,15 +122,21 @@ export default ({ navigation }) => {
                 </TouchableOpacity>
               ))}
             </ScrollView>
-          </View>
+                </View>*/}
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={!selectedAddress || !selectedToken || !(amount > 0)}
+            disabled={!(amount > 0)}
             // loading={processing}
-            onPress={() => navigation.navigate('TokenRecipient')}>
+            onPress={() => {
+              if (amountValid) {
+                navigation.navigate('TokenRecipient', { token, amount })
+              } else {
+                showAlert()
+              }
+            }}>
             Next
           </Button>
         </View>

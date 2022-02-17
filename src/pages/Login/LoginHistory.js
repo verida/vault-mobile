@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
 import { Container, Icon } from 'native-base'
+import React, { useState } from 'react'
 import { SceneMap, TabView } from 'react-native-tab-view'
+
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import HistoryLayout from '../../components/Layouts/HistoryLayout'
 import LoginTabs from '../../components/Navigation/LoginTabs'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 export default (props) => {
   const [index, setIndex] = useState(0)

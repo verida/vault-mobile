@@ -1,13 +1,15 @@
+import * as Sentry from '@sentry/react-native'
+import * as ImagePicker from 'expo-image-picker'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { connect } from 'react-redux'
 
-import * as ImagePicker from 'expo-image-picker'
+import AccountManager from 'api/AccountManager'
+import { loadAvatarSource } from 'api/utils'
+import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
+
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 import { WHITE_COLOR } from '../constants/color'
-import { loadAvatarSource } from 'api/utils'
-import AccountManager from 'api/AccountManager'
-import { connect } from 'react-redux'
-import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
 
 const userImg = require('../assets/stubs/avatar.png')
 
@@ -49,7 +51,7 @@ function ImageLoader(props) {
         loadAvatar()
       }
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error)
     }
   }
 

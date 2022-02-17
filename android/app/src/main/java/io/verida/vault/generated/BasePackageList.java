@@ -1,4 +1,4 @@
-package expo.test.generated;
+package io.verida.vault.generated;
 
 import java.util.Arrays;
 import java.util.List;

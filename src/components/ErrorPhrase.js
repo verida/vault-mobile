@@ -1,7 +1,7 @@
-import Label from './Label'
 import React from 'react'
 
 import ModifierStyles from '../styles/modifier'
+import Label from './Label'
 
 export default ({ shown, style = {} }) => (
   <Label style={[ModifierStyles.label, ModifierStyles.errorText, style]}>

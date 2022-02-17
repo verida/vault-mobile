@@ -1,12 +1,12 @@
 import React from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import Layout from '../../components/Layouts/Layout'
+
 import Button from '../../components/Button'
+import Layout from '../../components/Layouts/Layout'
+import { ACCEPT_COLOR, DECLINE_COLOR } from '../../constants/color'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
 import Text from '../Text'
 import Description from './Description'
-import { ACCEPT_COLOR, DECLINE_COLOR } from '../../constants/color'
-
-import { NUNITO_SANS_BOLD } from '../../constants/text'
 
 export default ({
   type,
@@ -17,7 +17,6 @@ export default ({
   currentAction = null,
 }) => {
   const description = {
-    uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
     name: item.item.message,
     createdAt: item.createdAt,
   }

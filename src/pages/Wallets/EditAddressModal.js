@@ -1,23 +1,23 @@
+import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
-  View,
-  Modal,
-  TextInput,
-  StyleSheet,
-  TouchableOpacity,
   KeyboardAvoidingView,
+  Modal,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+  View,
 } from 'react-native'
-import { Icon } from 'native-base'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Layout from 'components/Layouts/Layout'
-import Label from 'components/Label'
 import Button from 'components/Button'
-import InputStyles from 'styles/inputs'
+import Label from 'components/Label'
+import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import InputStyles from 'styles/inputs'
 
-import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
 import CheckboxCheckedSvg from '../../assets/checkbox_checked.svg'
+import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
 
 export default ({ visible, hideModal }) => {
   const [name, setName] = useState('')
@@ -73,7 +73,7 @@ export default ({ visible, hideModal }) => {
               style={styles.saveButton}
               color='primary'
               disabled={!name}
-              onPress={() => console.log()}>
+              onPress={() => ({})}>
               Save
             </Button>
           </View>

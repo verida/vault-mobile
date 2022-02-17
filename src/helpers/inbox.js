@@ -1,9 +1,11 @@
+import { get } from 'lodash'
+import moment from 'moment'
 import React from 'react'
+
+import AccountManager from 'api/AccountManager'
+
 import DataSnapshot from '../assets/inbox/snapshot.svg'
 import DataSynchronization from '../assets/inbox/synchronization.svg'
-import moment from 'moment'
-import { get } from 'lodash'
-import AccountManager from 'api/AccountManager'
 
 export const TYPES = [
   {
@@ -72,7 +74,7 @@ export const getProfile = async (sentBy) => {
   const verida = AccountManager.getInstance().context
   try {
     const profile = await verida.openProfile('basicProfile', sentBy.did)
-    return await profile.getMany()
+    return await profile.public.getMany()
   } catch (err) {
     // User may not have created a profile
     return {}

@@ -1,28 +1,41 @@
 import './global'
+import 'react-native-crypto'
 
-import React, { useState } from 'react'
-import { Provider } from 'react-redux'
-
+import { ActionSheetProvider } from '@expo/react-native-action-sheet'
+import messaging from '@react-native-firebase/messaging'
+import { NavigationContainer } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
 import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
-
+import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
+import React, { useState } from 'react'
+import { Alert } from 'react-native'
+import codePush, { CodePushOptions } from 'react-native-code-push'
+import Config from 'react-native-config'
+import PushNotification from 'react-native-push-notification'
+import { RootSiblingParent } from 'react-native-root-siblings'
+import PolyfillCrypto from 'react-native-webview-crypto'
+import { Provider } from 'react-redux'
 import store from 'reduxStore'
-import { NavigationContainer } from '@react-navigation/native'
-import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
-import Authenticate from 'pages/Authentication/Authenticate'
+
+import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
-import { configureNotifications } from 'helpers/notifications'
-import 'react-native-crypto'
-import PolyfillCrypto from 'react-native-webview-crypto'
-import codePush, { CodePushOptions } from 'react-native-code-push'
-import * as Sentry from '@sentry/react-native'
-import Config from 'react-native-config'
-import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import { RootSiblingParent } from 'react-native-root-siblings'
-import SwitchAccountToast from 'components/SwitchAccountToast'
+import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
+import Authenticate from 'pages/Authentication/Authenticate'
 
 configureNotifications()
+
+messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
+  PushNotification.localNotification({
+    title: 'New inbox message',
+    message: 'Please refresh your inbox',
+    channelId: CHANNEL_ID,
+    userInfo: {
+      category: 'Inbox',
+    },
+  })
+})
 
 Sentry.init({
   dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
@@ -69,7 +82,7 @@ function App() {
     <AppLoading
       startAsync={init}
       onFinish={() => setLoading(false)}
-      onError={console.warn}
+      onError={() => Alert.alert('Error', 'Failed to initialize')}
     />
   ) : (
     <>

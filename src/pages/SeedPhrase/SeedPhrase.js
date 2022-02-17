@@ -1,14 +1,14 @@
+import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
-import { Container, Content } from 'native-base'
 import { connect } from 'react-redux'
 
-import Text from 'components/Text'
-import Button from '../../components/Button'
-import Layout from '../../components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
 
 import SafeImg from '../../assets/safe.svg'
+import Button from '../../components/Button'
+import Layout from '../../components/Layouts/Layout'
 
 const SeedPhrase = (props) => {
   const [disabled, setDisabled] = useState(false)

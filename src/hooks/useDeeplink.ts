@@ -1,5 +1,7 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import * as Sentry from '@sentry/react-native'
 import parse from 'url-parse'
+
 import { MainStackParams } from 'navigation/types'
 
 export function useDeeplink(
@@ -17,7 +19,7 @@ export function useDeeplink(
       }
       navigation.navigate(screenName, query as never)
     } catch (error) {
-      console.log(error)
+      Sentry.captureException(error)
     }
   }
 }

@@ -1,17 +1,20 @@
+import messaging from '@react-native-firebase/messaging'
+import { isEmpty } from 'lodash'
+import { Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
-import { Icon } from 'native-base'
+import { useSelector } from 'react-redux'
 
-import Text from 'components/Text'
-import PropertyList from '../components/PropertyList'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import AccountManager from 'api/AccountManager'
+import { unRegisterRemoteNotification } from 'api/utils'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
 
-import LayoutStyle from '../styles/layouts'
+import PropertyList from '../components/PropertyList'
 import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
-
 import { NUNITO_SANS_BOLD } from '../constants/text'
+import LayoutStyle from '../styles/layouts'
 
 const publicList = [
   {
@@ -35,17 +38,41 @@ const publicList = [
   },
 ]
 
-const manageWalletOption = {
-  label: 'Manage Wallets',
-  action: 'arrow',
-  optional: true,
-  onPress: (navigation) => navigation.navigate('ManageWallets'),
-}
+// const manageWalletOption = {
+//   label: 'Manage Wallets',
+//   action: 'arrow',
+//   optional: true,
+//   onPress: (navigation) => navigation.navigate('ManageWallets'),
+// }
 
-const teamList = [manageWalletOption, ...publicList]
+// const teamList = [manageWalletOption, ...publicList]
+const teamList = publicList
+
+const generalList = [
+  {
+    label: 'Network',
+    action: 'arrow',
+    optional: false,
+    onPress: (navigation) => navigation.navigate('Networks'),
+    value: 'Testnet',
+  },
+]
 
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
+  const networks = useSelector((state) => state.networks)
+  const modifiedGeneralList = [...generalList]
+
+  if (!isEmpty(networks)) {
+    const selectedNode = networks[0].nodes[networks[0].selected_node]
+    modifiedGeneralList.unshift({
+      label: 'Storage',
+      action: 'arrow',
+      optional: false,
+      onPress: (navigation) => navigation.navigate('StorageNodes'),
+      value: selectedNode.name,
+    })
+  }
 
   const logout = async () => {
     Alert.alert(
@@ -58,6 +85,10 @@ export default (props) => {
         {
           text: 'Logout',
           onPress: async () => {
+            const fcmToken = await messaging().getToken()
+            if (fcmToken) {
+              await unRegisterRemoteNotification(fcmToken)
+            }
             await AccountManager.getInstance().logout()
             await refresh()
           },
@@ -77,6 +108,7 @@ export default (props) => {
       onPress: logout,
     },
   ]
+
   return (
     <View>
       <NavigationHeader
@@ -90,6 +122,10 @@ export default (props) => {
         <Text style={style.title}>Security</Text>
         <View>
           <PropertyList list={mergedList} />
+        </View>
+        <Text style={style.title}>General</Text>
+        <View>
+          <PropertyList list={modifiedGeneralList} />
         </View>
       </View>
     </View>
