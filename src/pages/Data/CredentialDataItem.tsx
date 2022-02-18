@@ -19,6 +19,7 @@ import LoadingView from 'components/LoadingView'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
+  item: any
 }
 
 type CredentialJwt = {
@@ -26,7 +27,7 @@ type CredentialJwt = {
 }
 
 function CredentialDataItem(props: CredentialDataItemProps) {
-  const { data, ...rest } = props
+  const { data, item, ...rest } = props
   const [credUri, setCredUri] = useState('')
   const [loading, setLoading] = useState(false)
   const [verified, setVerified] = useState(false)
@@ -44,21 +45,26 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const context = AccountManager.getInstance().context as Context
-        if (isEmpty(data.payload) || isEmpty(data.didJwtVc) || !context) {
+        const currentDid =
+          AccountManager.getInstance().getSelectedAccount()?.did
+        if (isEmpty(data.payload) || !context || !currentDid) {
           return
         }
         setLoading(true)
         const credential = new Credentials(context)
-
-        const credentialJWT = (await credential.createCredentialJWT(
-          data
-        )) as CredentialJwt
+        const credentialItem = await credential.createCredentialJWT(
+          currentDid,
+          item
+        )
         const shareCredential = new SharingCredential(context)
         const issuedCredential = await shareCredential.issueEncryptedCredential(
-          credentialJWT
+          credentialItem
         )
-        setCredUri(issuedCredential.uri)
-        await credential.verifyCredential(credentialJWT.didJwtVc)
+        setCredUri(
+          `https://scan.verida.io/credential?uri=${encodeURI(
+            issuedCredential.uri
+          )}`
+        )
         setVerified(true)
         setLoading(false)
       } catch (error) {
@@ -70,7 +76,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     }
 
     init()
-  }, [data])
+  }, [data, item])
 
   if (isEmpty(data.data)) {
     return null
