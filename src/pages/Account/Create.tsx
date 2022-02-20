@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
+import { find, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -8,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
@@ -24,6 +25,7 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
+import { NetworkNode } from "api/types";
 
 type Option = {
   label: string
@@ -39,6 +41,17 @@ function Create(
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
+  const networks = useSelector((state: any) => state.networks)
+
+  useEffect(() => {
+    if (!isEmpty(networks) && !isEmpty(networks[0].nodes)) {
+      const defaultNode = find(
+        networks[0].nodes,
+        (node: NetworkNode) => node.node_code === networks[0].default_node_code
+      )
+      console.log('defaultNode:', defaultNode)
+    }
+  }, [networks])
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140
@@ -47,7 +60,9 @@ function Create(
     setIsFormValid(isNameValid && isCountryValid)
   }, [country, name.length])
 
-  const onCountryChange = (option: Option) => setCountry(option)
+  const onCountryChange = (option: Option) => {
+    setCountry(option)
+  }
   const onCreateAccount = async () => {
     try {
       setProcessing(true)

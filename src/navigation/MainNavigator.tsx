@@ -44,7 +44,6 @@ const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
   useEventHandlers()
-  useDataRegion()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>

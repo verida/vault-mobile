@@ -6,7 +6,7 @@ import AccountManager, {
   VERIDA_CONTEXT_NAME,
   VERIDA_TESTNET_NOTIFICATION_SERVER,
 } from 'api/AccountManager'
-import { Network, NetworkCountries } from 'api/types'
+import { Network, NetworkCountries, VeridaNode } from "api/types";
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 
 const MAX_MESSAGE_COUNT = 21
@@ -176,7 +176,7 @@ export async function registerRemoteNotification(token: string) {
 
 export async function fetchNetworks(): Promise<Network[]> {
   try {
-    const url = 'https://assets.verida.io/config/verida_storage_nodes.json'
+    const url = 'https://assets.verida.io/config/verida_nodes.json'
     const res = await fetch(url)
     const json = await res.json()
     return json.networks
@@ -209,7 +209,7 @@ export async function unRegisterRemoteNotification(token: string) {
 
 export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
   try {
-    const url = 'https://assets.verida.io/config/country_storage_nodes.json'
+    const url = 'https://assets.verida.io/config/country_nodes.json'
     const res = await fetch(url)
     const json = await res.json()
     return json.networks

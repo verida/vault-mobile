@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
 import store from 'reduxStore'
 
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -18,6 +18,7 @@ import {
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
 import { removeUserWallets, saveUserWallets } from 'reduxStore/wallet/actions'
+import Config from 'react-native-config'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
@@ -38,11 +39,29 @@ class AccountManager {
   public vault: Vault | undefined
   public accounts: NormalizedAccounts
   private selectedAccount: Account | undefined
+  private dbServerUrl: string
+  private messageServerUrl: string
+  private notificationServerUrl: string
 
   private static instance: AccountManager
 
   private constructor() {
     this.accounts = {}
+    this.dbServerUrl = Config.VERIDA_TESTNET_DEFAULT_SERVER
+    this.messageServerUrl = Config.VERIDA_TESTNET_DEFAULT_SERVER
+    this.notificationServerUrl = Config.VERIDA_TESTNET_NOTIFICATION_SERVER
+  }
+
+  public getDbServerUrl() {
+    return this.dbServerUrl
+  }
+
+  public getNotificationUrl() {
+    
+  }
+
+  public getNotificationServerUrl() {
+    return this.notificationServerUrl
   }
 
   private async filterDids() {
@@ -262,8 +281,15 @@ class AccountManager {
     }
   }
 
-  public async createAccount(userData: UserData): Promise<Account | undefined> {
+  public async createAccount(
+    userData: UserData,
+    networkNode: NetworkNode
+  ): Promise<Account | undefined> {
     try {
+      this.dbServerUrl = networkNode.db_address
+      this.messageServerUrl = networkNode.messaging_address
+      this.notificationServerUrl = networkNode.notification_address
+
       const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
 
       this.selectedAccount = {
