@@ -26,9 +26,6 @@ export const WALLETS_STORAGE_KEY = 'wallets'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
-const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/'
-export const VERIDA_TESTNET_NOTIFICATION_SERVER =
-  'https://vpns.testnet.verida.io:5011'
 const CONFIG_DB = 'vault-config'
 const SEED_PHRASE_BACKED_UP_CONFIG = 'seedPhraseBackedUp'
 
@@ -56,8 +53,8 @@ class AccountManager {
     return this.dbServerUrl
   }
 
-  public getNotificationUrl() {
-    
+  public getMessageServerUrl() {
+    return this.messageServerUrl
   }
 
   public getNotificationServerUrl() {
@@ -141,15 +138,15 @@ class AccountManager {
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
+            endpointUri: this.dbServerUrl,
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
+            endpointUri: this.messageServerUrl,
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: VERIDA_TESTNET_NOTIFICATION_SERVER,
+            endpointUri: this.notificationServerUrl,
           },
         },
         {

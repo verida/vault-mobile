@@ -2,6 +2,7 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
+  SET_COUNTRIES,
   SET_INBOX_ITEMS,
   SET_NAVIGATION_LINK,
   SET_NETWORKS,
@@ -54,4 +55,8 @@ export const setNetworks = (payload) => {
 
 export const setNavigationLink = (payload) => {
   return { type: SET_NAVIGATION_LINK, payload }
+}
+
+export const setCountries = (payload) => {
+  return { type: SET_COUNTRIES, payload }
 }

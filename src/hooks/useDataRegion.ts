@@ -3,11 +3,11 @@ import { get, isEmpty } from 'lodash'
 import { useEffect } from 'react'
 import { useDispatch, useSelector } from 'react-redux'
 
+import AccountManager from 'api/AccountManager'
 import { NetworkCountry } from 'api/types'
 import { fetchNetworkCountries, fetchNetworks } from 'api/utils'
-import { setNetworks } from 'reduxStore/general/actions'
+import { setCountries, setNetworks } from 'reduxStore/general/actions'
 import { getUserCountryCode } from 'utils/profile'
-import AccountManager from "api/AccountManager";
 
 export function useDataRegion() {
   const dispatch = useDispatch()
@@ -19,6 +19,9 @@ export function useDataRegion() {
         const networks = await fetchNetworks()
         console.log('networks:', networks)
         const countries = await fetchNetworkCountries()
+        if (!isEmpty(countries)) {
+          dispatch(setCountries(get(countries, 'testnet', [])))
+        }
         console.log('countries:', countries)
 
         const userCountryCode = await getUserCountryCode()
@@ -63,7 +66,7 @@ export function useDataRegion() {
             ? networks[0].nodes[networks[0].selected_node]
             : null
 
-        if(selectedNode) {
+        if (selectedNode) {
           AccountManager.getInstance()
         }
 

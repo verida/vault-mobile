@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
 import { find, isEmpty } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
   StyleSheet,
@@ -13,6 +13,7 @@ import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
+import { NetworkNode } from 'api/types'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -25,7 +26,7 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
-import { NetworkNode } from "api/types";
+import { getCountryCode, getNodeCodeFromCountry } from 'utils/profile'
 
 type Option = {
   label: string
@@ -42,6 +43,8 @@ function Create(
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
   const networks = useSelector((state: any) => state.networks)
+  const countries = useSelector((state: any) => state.countries)
+  const selectedNode = useRef<NetworkNode | null>(null)
 
   useEffect(() => {
     if (!isEmpty(networks) && !isEmpty(networks[0].nodes)) {
@@ -49,7 +52,10 @@ function Create(
         networks[0].nodes,
         (node: NetworkNode) => node.node_code === networks[0].default_node_code
       )
-      console.log('defaultNode:', defaultNode)
+
+      if (defaultNode) {
+        selectedNode.current = defaultNode
+      }
     }
   }, [networks])
 
@@ -61,15 +67,44 @@ function Create(
   }, [country, name.length])
 
   const onCountryChange = (option: Option) => {
+    console.log('onCountryChange:', option)
     setCountry(option)
+
+    // Find suitable node based on selected country
+    const countryCode = getCountryCode(option.value)
+    console.log('countryCode:', countryCode)
+    if (!countryCode || isEmpty(networks)) {
+      return
+    }
+    console.log('countryNode:', countries)
+    const matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
+    console.log('matchedNodeCode:', matchedNodeCode)
+    if (!matchedNodeCode) {
+      return
+    }
+    selectedNode.current = networks[0].nodes.find(
+      (node: NetworkNode) => node.node_code === matchedNodeCode
+    )
+    console.log('selectedNode.current:', selectedNode.current)
   }
   const onCreateAccount = async () => {
+    if (!selectedNode.current) {
+      Alert.alert(
+        'Failed',
+        'Verida is currently unavailable. Please try again shortly.'
+      )
+      return
+    }
+
     try {
       setProcessing(true)
-      await AccountManager.getInstance().createAccount({
-        name,
-        country: country?.value || '',
-      })
+      await AccountManager.getInstance().createAccount(
+        {
+          name,
+          country: country?.value || '',
+        },
+        selectedNode.current
+      )
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       props.setPublicProfileData({ name, country: country?.value })
