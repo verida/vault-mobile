@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
-import { find, isEmpty } from 'lodash'
+import { find, get, isEmpty } from 'lodash'
 import React, { useEffect, useRef, useState } from 'react'
 import {
   Alert,
@@ -28,6 +28,12 @@ import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
 import { getCountryCode, getNodeCodeFromCountry } from 'utils/profile'
 
+// eslint-disable-next-line no-shadow
+export enum CreateAccountMode {
+  CREATE,
+  ADD,
+}
+
 type Option = {
   label: string
   value: string
@@ -36,7 +42,7 @@ type Option = {
 function Create(
   props: NativeStackScreenProps<AuthStackParams, 'CreateAccount'>
 ) {
-  const { navigation } = props
+  const { navigation, route } = props
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)
   const [processing, setProcessing] = useState(false)
@@ -54,6 +60,7 @@ function Create(
       )
 
       if (defaultNode) {
+        // Use default node in config file if the selected country doesn't match any node
         selectedNode.current = defaultNode
       }
     }
@@ -63,32 +70,28 @@ function Create(
     const isNameValid = name.length >= 2 && name.length <= 140
     const isCountryValid =
       !!country && country.value.length >= 2 && country.value.length <= 140
-    setIsFormValid(isNameValid && isCountryValid)
-  }, [country, name.length])
+    setIsFormValid(isNameValid && isCountryValid && agreedTC)
+  }, [country, name.length, agreedTC])
 
   const onCountryChange = (option: Option) => {
-    console.log('onCountryChange:', option)
     setCountry(option)
 
     // Find suitable node based on selected country
     const countryCode = getCountryCode(option.value)
-    console.log('countryCode:', countryCode)
     if (!countryCode || isEmpty(networks)) {
       return
     }
-    console.log('countryNode:', countries)
     const matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
-    console.log('matchedNodeCode:', matchedNodeCode)
     if (!matchedNodeCode) {
       return
     }
     selectedNode.current = networks[0].nodes.find(
       (node: NetworkNode) => node.node_code === matchedNodeCode
     )
-    console.log('selectedNode.current:', selectedNode.current)
   }
   const onCreateAccount = async () => {
     if (!selectedNode.current) {
+      // If no node config is available, prevent user from creating account
       Alert.alert(
         'Failed',
         'Verida is currently unavailable. Please try again shortly.'
@@ -109,7 +112,15 @@ function Create(
       // @ts-ignore
       props.setPublicProfileData({ name, country: country?.value })
       setProcessing(false)
-      navigation.navigate('CreatePin')
+
+      if (
+        get(route.params, 'mode', CreateAccountMode.CREATE) ===
+        CreateAccountMode.CREATE
+      ) {
+        navigation.navigate('CreatePin')
+      } else {
+        navigation.goBack()
+      }
     } catch (error) {
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')

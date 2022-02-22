@@ -2,11 +2,8 @@ import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import store from 'reduxStore'
 
-import AccountManager, {
-  VERIDA_CONTEXT_NAME,
-  VERIDA_TESTNET_NOTIFICATION_SERVER,
-} from 'api/AccountManager'
-import { Network, NetworkCountries, VeridaNode } from "api/types";
+import AccountManager, { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
+import { Network, NetworkCountries } from 'api/types'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 
 const MAX_MESSAGE_COUNT = 21
@@ -149,6 +146,17 @@ export async function getAxios() {
   return axios.create(config)
 }
 
+export async function getNotificationServerUrl() {
+  // Notification server url is saved in account's config
+  const accountConfig =
+    await AccountManager.getInstance().context?.getContextConfig()
+  // Notification server url is saved in account's config
+  const notificationServerUrl =
+    accountConfig?.services.notificationServer?.endpointUri
+
+  return notificationServerUrl?.replace('/', '')
+}
+
 export async function registerRemoteNotification(token: string) {
   if (!token) {
     return
@@ -156,6 +164,11 @@ export async function registerRemoteNotification(token: string) {
 
   try {
     const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const notificationServerUrl = await getNotificationServerUrl()
+    if (!notificationServerUrl) {
+      return
+    }
+
     const body = {
       data: {
         did: currentDid,
@@ -165,10 +178,30 @@ export async function registerRemoteNotification(token: string) {
     }
 
     const axiosInstance = await getAxios()
-    await axiosInstance.post(
-      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/register`,
-      body
-    )
+    await axiosInstance.post(`${notificationServerUrl}/register`, body)
+  } catch (e) {
+    Sentry.captureException(e)
+  }
+}
+
+export async function unRegisterRemoteNotification(token: string) {
+  try {
+    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const notificationServerUrl = await getNotificationServerUrl()
+    if (!notificationServerUrl) {
+      return
+    }
+
+    const body = {
+      data: {
+        did: currentDid,
+        context: VERIDA_CONTEXT_NAME,
+        deviceId: token,
+      },
+    }
+
+    const axiosInstance = await getAxios()
+    await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
   } catch (e) {
     Sentry.captureException(e)
   }
@@ -183,27 +216,6 @@ export async function fetchNetworks(): Promise<Network[]> {
   } catch (e) {
     Sentry.captureException(e)
     return []
-  }
-}
-
-export async function unRegisterRemoteNotification(token: string) {
-  try {
-    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
-    const body = {
-      data: {
-        did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
-        deviceId: token,
-      },
-    }
-
-    const axiosInstance = await getAxios()
-    await axiosInstance.post(
-      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/unregister`,
-      body
-    )
-  } catch (e) {
-    Sentry.captureException(e)
   }
 }
 

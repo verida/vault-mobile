@@ -17,15 +17,12 @@ export function useDataRegion() {
     async function init() {
       try {
         const networks = await fetchNetworks()
-        console.log('networks:', networks)
         const countries = await fetchNetworkCountries()
         if (!isEmpty(countries)) {
           dispatch(setCountries(get(countries, 'testnet', [])))
         }
-        console.log('countries:', countries)
 
         const userCountryCode = await getUserCountryCode()
-        console.log('userCountryCode:', userCountryCode)
         const transformedNetworks = networks.map((network) => {
           let selectedNodeFromUserChoice = null
           let selectedNodeFromDefault = 0
