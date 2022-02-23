@@ -31,11 +31,18 @@ export const SUPPORTED_TOKENS = [
     decimal: 18,
   },
   {
-    name: 'Tether USD',
-    symbol: 'USDT',
+    name: 'DAI Coin',
+    symbol: 'DAI',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/4943.png',
+    address: 'eip155:4/erc20:0xc7AD46e0b8a400Bb3C915120d284AafbA8fc4735/1',
+    decimal: 18,
+  },
+  {
+    name: 'USD Coin',
+    symbol: 'USDC',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-    address: 'eip155:4/erc20:0xdac17f958d2ee523a2206206994597c13d831ec7/1',
-    decimal: 6,
+    address: 'eip155:4/erc20:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48/1',
+    decimal: 18,
   },
 ]
 
