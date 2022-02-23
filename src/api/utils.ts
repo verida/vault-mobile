@@ -207,9 +207,8 @@ export async function unRegisterRemoteNotification(token: string) {
   }
 }
 
-export async function fetchNetworks(): Promise<Network[]> {
+export async function fetchNetworkConfigJson<T>(url: string): Promise<T[]> {
   try {
-    const url = 'https://assets.verida.io/config/verida_nodes.json'
     const res = await fetch(url)
     const json = await res.json()
     return json.networks
@@ -219,14 +218,12 @@ export async function fetchNetworks(): Promise<Network[]> {
   }
 }
 
+export async function fetchNetworks(): Promise<Network[]> {
+  const url = 'https://assets.verida.io/config/verida_nodes.json'
+  return fetchNetworkConfigJson<Network>(url)
+}
+
 export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
-  try {
-    const url = 'https://assets.verida.io/config/country_nodes.json'
-    const res = await fetch(url)
-    const json = await res.json()
-    return json.networks
-  } catch (e) {
-    Sentry.captureException(e)
-    return []
-  }
+  const url = 'https://assets.verida.io/config/country_nodes.json'
+  return fetchNetworkConfigJson<NetworkCountries>(url)
 }

@@ -134,6 +134,9 @@ class AccountManager {
       this.client = new Client({
         environment: VERIDA_ENVIRONMENT,
       })
+
+      // Endpoint uris only get passed when creating account.
+      // When an account is reconnected, endpoint uris are selected based on DID documents of that account.
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
@@ -283,9 +286,12 @@ class AccountManager {
     networkNode: NetworkNode
   ): Promise<Account | undefined> {
     try {
-      this.dbServerUrl = networkNode.db_address
-      this.messageServerUrl = networkNode.messaging_address
-      this.notificationServerUrl = networkNode.notification_address
+      // If networkNode is provided correctly, replace the default endpoint urls
+      if (!isEmpty(networkNode)) {
+        this.dbServerUrl = networkNode.db_address
+        this.messageServerUrl = networkNode.messaging_address
+        this.notificationServerUrl = networkNode.notification_address
+      }
 
       const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
 

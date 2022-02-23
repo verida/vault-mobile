@@ -85,6 +85,7 @@ function Create(
     if (!matchedNodeCode) {
       return
     }
+
     selectedNode.current = networks[0].nodes.find(
       (node: NetworkNode) => node.node_code === matchedNodeCode
     )

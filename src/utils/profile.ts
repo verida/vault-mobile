@@ -4,6 +4,9 @@ import { get } from 'lodash'
 import AccountManager from 'api/AccountManager'
 import { NetworkCountry } from 'api/types'
 
+/**
+ * Get country code from user's country name. Ex: Australia => AU
+ */
 export async function getUserCountryCode() {
   if (!AccountManager.getInstance().getSelectedAccount()) {
     return null
@@ -15,6 +18,10 @@ export async function getUserCountryCode() {
   return getCountryCode(userCountry)
 }
 
+/**
+ * Get country code from country name
+ * @param countryName Country full name. Ex: "Australia"
+ */
 export function getCountryCode(countryName: string): string | null {
   let countryCode = null
   Object.keys(countries).map((key) => {
@@ -27,6 +34,11 @@ export function getCountryCode(countryName: string): string | null {
   return countryCode
 }
 
+/**
+ * Get node code based on country code
+ * @param countryCode ISO2 code. Ex: AU
+ * @param countryNodes List of country codes mapped with each node code
+ */
 export function getNodeCodeFromCountry(
   countryCode: string,
   countryNodes: NetworkCountry[]
