@@ -80,8 +80,7 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(transactionParams.fee).toFixed(3)}{' '}
-                {SUPPORTED_TOKENS[0].symbol}
+                {parseFloat(transactionParams.fee)} {SUPPORTED_TOKENS[0].symbol}
               </Text>
             </View>
           </View>
