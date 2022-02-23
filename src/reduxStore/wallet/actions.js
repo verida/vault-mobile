@@ -1,13 +1,9 @@
-import algosdk from 'algosdk'
-
 import { pricingApi } from 'wallet/helpers/api'
-import { algodClient, indexerClient } from 'wallet/chains/algorand'
 import dataHelper from 'wallet/data'
 import {
   getWalletsData,
   getTransactionParamsData,
 } from 'reduxStore/wallet/selectors'
-import { isNativeToken, getTokenAddress } from 'wallet/helpers/tokens'
 import { navigate } from 'navigation/RootNavigator'
 
 import {
@@ -150,10 +146,14 @@ export const removeUserWallets = () => {
 }
 
 export const getTransactionParams = (transactionData) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
+    const wallets = getWalletsData(getState())
 
-    const params = await algodClient.getTransactionParams().do()
+    const params = await dataHelper.getTransactionParams(
+      transactionData,
+      wallets
+    )
 
     if (params) {
       dispatch({
@@ -176,70 +176,14 @@ export const sendTransaction = (
 ) => {
   return async (dispatch, getState) => {
     dispatch({ type: SEND_TRANSACTION_START })
-
-    const wallets = getWalletsData(getState())
-    let transactionParams
-    if (isAssetEnablingTransaction) {
-      transactionParams = await algodClient.getTransactionParams().do()
-    } else {
-      transactionParams = getTransactionParamsData(getState())
-    }
-    let isNative = isNativeToken(transactionData.token.address)
-    let tokenAddress = getTokenAddress(transactionData.token.address)
-
-    let transaction
-
-    if (isNative) {
-      transaction = algosdk.makePaymentTxnWithSuggestedParams(
-        wallets.algo.address,
-        transactionData.address,
-        transactionData.amount * Math.pow(10, transactionData.token.decimal),
-        undefined,
-        undefined,
-        transactionParams
-      )
-    } else {
-      transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
-        wallets.algo.address,
-        isAssetEnablingTransaction
-          ? wallets.algo.address
-          : transactionData.address,
-        undefined,
-        undefined,
-        isAssetEnablingTransaction
-          ? 0
-          : transactionData.amount *
-              Math.pow(10, transactionData.token.decimal),
-        undefined,
-        parseInt(tokenAddress, 10),
-        transactionParams
-      )
-    }
-
-    const privateKey = wallets.algo.privateKey
-
-    const secretKey = Buffer.from(
-      privateKey.substring(2, privateKey.length),
-      'hex'
-    ).toJSON().data
-
-    const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
-    const wallet = algosdk.mnemonicToSecretKey(mnemonic)
-
-    const signedTransaction = transaction.signTxn(wallet.sk)
+    const state = getState()
 
     try {
-      const sent = await algodClient.sendRawTransaction(signedTransaction).do()
-
-      const txData = {
-        id: sent.txId,
-        amount: transaction.amount,
-        fee: transaction.fee,
-        to: transactionData.address,
-        from: wallets.algo.address,
-        token: transactionData.token,
-        feeSymbol: SUPPORTED_TOKENS[0].symbol,
-      }
+      const txData = await dataHelper.sendTransaction(
+        transactionData,
+        isAssetEnablingTransaction,
+        state
+      )
 
       dispatch({
         type: SEND_TRANSACTION_SUCCESS,
