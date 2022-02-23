@@ -10,7 +10,10 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import CompleteSVG from 'assets/complete.svg'
 
 export default ({ transaction }) => {
-  var formattedTime = new Date(transaction.time * 1000).toLocaleString('en-US')
+  var formattedTime =
+    transaction.chain === 'algorand'
+      ? new Date(transaction.time * 1000).toLocaleString('en-US')
+      : new Date(transaction.time).toLocaleString('en-US')
 
   return (
     <View style={styles.container}>
