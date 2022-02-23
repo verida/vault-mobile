@@ -48,18 +48,21 @@ function Create(
   }, [country, name.length])
 
   const onCountryChange = (option: Option) => setCountry(option)
-  const onCreateAccount = async () => {
+  const onCreateAccount = () => {
     try {
       setProcessing(true)
-      await AccountManager.getInstance().createAccount({
-        name,
-        country: country?.value || '',
-      })
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      props.setPublicProfileData({ name, country: country?.value })
-      setProcessing(false)
-      navigation.navigate('CreatePin')
+      // FIXME: this block of code is super heavy need to hold its execution until running the animation (setProcessing takes effect first)
+      setTimeout(async () => {
+        await AccountManager.getInstance().createAccount({
+          name,
+          country: country?.value || '',
+        })
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        props.setPublicProfileData({ name, country: country?.value })
+        setProcessing(false)
+        navigation.navigate('CreatePin')
+      }, 0)
     } catch (error) {
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
