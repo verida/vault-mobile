@@ -154,7 +154,8 @@ export async function getNotificationServerUrl() {
   const notificationServerUrl =
     accountConfig?.services.notificationServer?.endpointUri
 
-  return notificationServerUrl?.replace('/', '')
+  // Remove redundant "/" character at the end if it exists
+  return notificationServerUrl?.replace(/\/$/, '')
 }
 
 export async function registerRemoteNotification(token: string) {
