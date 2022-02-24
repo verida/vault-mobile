@@ -9,6 +9,7 @@ import Button from 'components/Button'
 
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { getTokenChain } from 'wallet/helpers/tokens'
 
 import {
   getWalletsData,
@@ -27,7 +28,9 @@ const ConfirmTransaction = ({
   sentTransaction,
 }) => {
   const { token, amount, address } = route.params
-  const accountAddress = wallets.algo.address
+  const tokenChain = getTokenChain(token.address)
+  const accountAddress =
+    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
 
   return (
     <Container>
@@ -54,7 +57,7 @@ const ConfirmTransaction = ({
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Token</Text>
             <View style={styles.infoValue}>
-              <Text style={styles.valueText}>{token.symbol}</Text>
+              <Text style={styles.valueText}>{token.label}</Text>
             </View>
           </View>
           <View style={styles.infoRow}>
