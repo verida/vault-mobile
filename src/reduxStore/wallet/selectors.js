@@ -114,7 +114,6 @@ export const selectPendingTransactions = (state, assetID) => {
 
 export const selectTransactions = (state, assetID) => {
   const wallets = getWalletsData(state)
-  const userAddr = wallets.algo.address
   const transactions = state.transactions.data || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
@@ -123,10 +122,9 @@ export const selectTransactions = (state, assetID) => {
         return trans.id === tx.id
       })
       if (!transactionCompleted) {
-        let isUserSender = tx.from === userAddr
         transactions.unshift({
           id: tx.id,
-          type: isUserSender ? 'sent' : 'received',
+          type: 'sent',
           address: tx.to,
           quantity: tx.amount,
           pending: true,
