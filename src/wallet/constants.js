@@ -8,14 +8,6 @@ export const SUPPORTED_TOKENS = [
     decimal: 6,
   },
   {
-    name: 'USD Coin',
-    symbol: 'USDC',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png',
-    address:
-      'algorand:wGHE2Pwdvd7S12BL5FaOP20EGYesN73ktiC1qzkkit8=/erc20:10458941/1',
-    decimal: 6,
-  },
-  {
     name: 'PlanetWatch',
     symbol: 'PLANETS',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/11861.png',
@@ -38,10 +30,10 @@ export const SUPPORTED_TOKENS = [
     decimal: 18,
   },
   {
-    name: 'USD Coin',
-    symbol: 'USDC',
-    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/825.png',
-    address: 'eip155:4/erc20:0xa0b86991c6218b36c1d19d4a2e9eb0ce3606eb48/1',
+    name: 'ChainLink',
+    symbol: 'LINK',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1975.png',
+    address: 'eip155:4/erc20:0x01BE23585060835E02B77ef475b0Cc51aA1e0709/1',
     decimal: 18,
   },
 ]
