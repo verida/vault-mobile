@@ -320,7 +320,7 @@ class DropDownPicker extends React.Component {
             </View>
           )}
         </TouchableOpacity>
-        {disabled ? null : (
+        {!disabled && (
           <View
             style={[
               styles.dropDown,
