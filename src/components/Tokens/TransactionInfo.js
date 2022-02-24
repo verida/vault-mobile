@@ -14,6 +14,7 @@ export default ({ transaction }) => {
     transaction.chain === 'algorand'
       ? new Date(transaction.time * 1000).toLocaleString('en-US')
       : new Date(transaction.time).toLocaleString('en-US')
+  const fixed = transaction.chain === 'algorand' ? 3 : 18
 
   return (
     <View style={styles.container}>
@@ -66,7 +67,7 @@ export default ({ transaction }) => {
           <Text style={styles.infoLabel}>Fee</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
-              {formatTokenQuantity(transaction.fee, transaction.decimal)}{' '}
+              {formatTokenQuantity(transaction.fee, transaction.decimal, fixed)}{' '}
               {transaction.feeSymbol}
             </Text>
           </View>
