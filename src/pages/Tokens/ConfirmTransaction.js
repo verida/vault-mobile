@@ -9,7 +9,7 @@ import Button from 'components/Button'
 
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
-import { getTokenChain } from 'wallet/helpers/tokens'
+import { getTokenChain, formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import {
   getWalletsData,
@@ -31,6 +31,15 @@ const ConfirmTransaction = ({
   const tokenChain = getTokenChain(token.address)
   const accountAddress =
     tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
+  const feeSymbol =
+    tokenChain === 'algorand'
+      ? SUPPORTED_TOKENS[0].symbol
+      : SUPPORTED_TOKENS[2].symbol
+  const feeDecimal =
+    tokenChain === 'algorand'
+      ? SUPPORTED_TOKENS[0].decimal
+      : SUPPORTED_TOKENS[2].decimal
+  const fixed = tokenChain === 'algorand' ? 3 : 18
 
   return (
     <Container>
@@ -83,7 +92,8 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(transactionParams.fee)} {SUPPORTED_TOKENS[0].symbol}
+                {formatTokenQuantity(transactionParams.fee, feeDecimal, fixed)}{' '}
+                {feeSymbol}
               </Text>
             </View>
           </View>
