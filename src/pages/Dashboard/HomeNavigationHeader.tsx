@@ -46,14 +46,16 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
       style={styles.header}
       androidStatusBarColor='light-gray'
       {...rest}>
-      <Left>
+      <Left style={styles.leftContainer}>
         <View style={styles.left}>
           <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
             <Image source={avatar} style={styles.avatar} />
           </TouchableOpacity>
-          <View>
+          <View style={styles.titleContainer}>
             <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
-              <Text style={styles.name}>{name}</Text>
+              <Text style={styles.name} lineBreakMode='tail' numberOfLines={1}>
+                {name}
+              </Text>
               <AntDesign name={'caretdown'} size={10} color={'#041133'} />
             </TouchableOpacity>
             <View style={styles.network}>
@@ -100,9 +102,16 @@ const styles = StyleSheet.create({
     elevation: 1,
     paddingLeft: 16,
   },
+  leftContainer: {
+    flex: 2,
+    marginRight: 16,
+  },
   left: {
     flexDirection: 'row',
     alignItems: 'center',
+  },
+  titleContainer: {
+    flex: 1,
   },
   avatarButton: {
     marginRight: 12,
