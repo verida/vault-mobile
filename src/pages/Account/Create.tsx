@@ -102,26 +102,28 @@ function Create(
 
     try {
       setProcessing(true)
-      await AccountManager.getInstance().createAccount(
-        {
-          name,
-          country: country?.value || '',
-        },
-        selectedNode.current
-      )
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      props.setPublicProfileData({ name, country: country?.value })
-      setProcessing(false)
+      setTimeout(async () => {
+        await AccountManager.getInstance().createAccount(
+          {
+            name,
+            country: country?.value || '',
+          },
+          selectedNode.current as NetworkNode
+        )
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        props.setPublicProfileData({ name, country: country?.value })
+        setProcessing(false)
 
-      if (
-        get(route.params, 'mode', CreateAccountMode.CREATE) ===
-        CreateAccountMode.CREATE
-      ) {
-        navigation.navigate('CreatePin')
-      } else {
-        navigation.goBack()
-      }
+        if (
+          get(route.params, 'mode', CreateAccountMode.CREATE) ===
+          CreateAccountMode.CREATE
+        ) {
+          navigation.navigate('CreatePin')
+        } else {
+          navigation.goBack()
+        }
+      }, 0)
     } catch (error) {
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
@@ -146,14 +148,16 @@ function Create(
             placeholder={'e.g John'}
             style={InputStyles.input}
             value={name}
+            editable={!processing}
             onChangeText={(t) => setName(t)}
           />
 
           <Label>Country</Label>
           <DropDownPicker
-            searchable={true}
+            searchable
+            disabled={processing}
             searchablePlaceholder='Search for country'
-            showArrow={true}
+            showArrow
             placeholder=''
             items={COUNTRIES}
             containerStyle={InputStyles.select}

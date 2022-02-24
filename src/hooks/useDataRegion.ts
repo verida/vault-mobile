@@ -5,6 +5,7 @@ import { useDispatch, useSelector } from 'react-redux'
 
 import { NetworkCountry } from 'api/types'
 import { fetchNetworkCountries, fetchNetworks } from 'api/utils'
+import { useAuth } from 'hooks/useAuth'
 import { setCountries, setNetworks } from 'reduxStore/general/actions'
 import { getUserCountryCode } from 'utils/profile'
 
@@ -19,6 +20,7 @@ const DEFAULT_NETWORK = 'testnet'
 export function useDataRegion() {
   const dispatch = useDispatch()
   const selectedAccount = useSelector((state: any) => state.selectedAccount)
+  const { loaded } = useAuth()
 
   useEffect(() => {
     async function init() {
@@ -78,6 +80,8 @@ export function useDataRegion() {
       }
     }
 
-    init()
-  }, [dispatch, selectedAccount])
+    if (loaded) {
+      init()
+    }
+  }, [dispatch, selectedAccount, loaded])
 }
