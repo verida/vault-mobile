@@ -230,7 +230,7 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
           ? rawTransaction.to_address
           : rawTransaction.from_address,
         quantity,
-        fee: rawTransaction.gas,
+        fee: rawTransaction.gas_price * rawTransaction.gas,
         round: rawTransaction['block_number'],
         time: rawTransaction['block_timestamp'],
         symbol,
@@ -292,6 +292,12 @@ const getTransactionParams = async (transactionData, wallets) => {
   if (transactionData.token.address.includes('eip155')) {
     let fromAddress = wallets.ethr.address
     let toAddress = transactionData.address
+    const gasPrice = await web3.eth.getGasPrice()
+    console.log(
+      gasPrice,
+      parseInt(gasPrice, 16),
+      'gasPrice getTransactionParams'
+    )
 
     let input
     if (isNativeToken(transactionData.token.address)) {
@@ -329,7 +335,7 @@ const getTransactionParams = async (transactionData, wallets) => {
     try {
       const estimateGas = await web3.eth.estimateGas(input)
       console.log(estimateGas, 'estimateGas getTransactionParams')
-      const params = { fee: estimateGas }
+      const params = { gas: estimateGas, fee: gasPrice * estimateGas }
       console.log(params, 'params getTransactionParams')
 
       return params
@@ -372,7 +378,7 @@ const sendTransaction = async (
       transaction = {
         to: transactionData.address, // faucet address to return eth
         value: amount,
-        gas: transactionParams.fee,
+        gas: transactionParams.gas,
         // maxFeePerGas: estimateGas,
         // maxPriorityFeePerGas: estimateGas,
         nonce: nonce,
@@ -389,7 +395,7 @@ const sendTransaction = async (
       // call transfer function
       transaction = {
         from: fromAddress,
-        gas: transactionParams.fee,
+        gas: transactionParams.gas,
         // gasPrice: web3.utils.toHex(20 * 1e9),
         // gasLimit: web3.utils.toHex(210000),
         to: tokenAddress,
