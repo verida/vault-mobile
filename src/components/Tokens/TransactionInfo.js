@@ -78,7 +78,9 @@ export default ({ transaction }) => {
           </View>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Round</Text>
+          <Text style={styles.infoLabel}>
+            {transaction.chain === 'algorand' ? 'Round' : 'Block'}
+          </Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>{transaction.round}</Text>
           </View>
@@ -105,11 +107,13 @@ export default ({ transaction }) => {
 
         <TouchableOpacity style={styles.viewOnExplorerWrapper}>
           <Text
-            onPress={() =>
-              Linking.openURL(
-                'https://testnet.algoexplorer.io/tx/' + transaction.id
-              )
-            }>
+            onPress={() => {
+              const explorerUrl =
+                transaction.chain === 'algorand'
+                  ? 'https://testnet.algoexplorer.io/tx/'
+                  : 'https://rinkeby.etherscan.io/tx/'
+              Linking.openURL(explorerUrl + transaction.id)
+            }}>
             View on explorer
           </Text>
           <Icon
