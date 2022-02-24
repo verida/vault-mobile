@@ -1,6 +1,7 @@
-import React from 'react'
 import { Footer } from 'native-base'
+import React from 'react'
 import { ViewProps } from 'react-native'
+
 import { WHITE_COLOR } from 'constants/color'
 
 const CustomFooter: React.FC<ViewProps> = (props) => {

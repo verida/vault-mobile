@@ -1,16 +1,17 @@
+import { isEmpty } from 'lodash'
+import { List } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet, View, ViewProps } from 'react-native'
-import Text from 'components/Text'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { SUCCESS_COLOR } from 'constants/color'
-import { List } from 'native-base'
-import DataFieldList from 'components/Data/DataFieldList'
-import { NUNITO_SANS_BOLD } from 'constants/text'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { QRCode } from 'react-native-custom-qr-codes-expo'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+
 import { DefaultAvatar } from 'api/utils'
-import { isEmpty } from 'lodash'
+import DataFieldList from 'components/Data/DataFieldList'
+import Text from 'components/Text'
+import { SUCCESS_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any

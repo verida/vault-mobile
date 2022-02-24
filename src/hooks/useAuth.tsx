@@ -3,10 +3,11 @@ import React, {
   FC,
   useCallback,
   useContext,
+  useEffect,
   useMemo,
   useState,
-  useEffect,
 } from 'react'
+
 import AccountManager from 'api/AccountManager'
 
 type AuthContextState = {

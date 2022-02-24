@@ -1,8 +1,9 @@
 import React from 'react'
 import { Dimensions, Image, StyleSheet, View, ViewProps } from 'react-native'
-import Text from 'components/Text'
 import { useSelector } from 'react-redux'
+
 import { convertAvatar } from 'api/utils'
+import Text from 'components/Text'
 import { GREY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 

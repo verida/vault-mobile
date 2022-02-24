@@ -1,14 +1,14 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
-import Layout from 'components/Layouts/Layout'
+import { StyleSheet, View } from 'react-native'
+
 import Button from 'components/Button'
+import Layout from 'components/Layouts/Layout'
 import Text from 'components/Text'
 
+import FailureCross from '../../assets/failure_cross.svg'
+import SuccessTick from '../../assets/success_tick.svg'
 import { BLACK_COLOR } from '../../constants/color'
 import { NUNITO_SANS_BOLD } from '../../constants/text'
-
-import SuccessTick from '../../assets/success_tick.svg'
-import FailureCross from '../../assets/failure_cross.svg'
 
 export default ({ navigation, route }) => {
   const { failure } = route.params

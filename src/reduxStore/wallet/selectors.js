@@ -4,6 +4,8 @@ import {
   handleTokenDecimals,
   formatTokenQuantity,
 } from 'wallet/helpers/tokens'
+import { getTokenAddress } from 'helpers/tokens'
+import { SUPPORTED_TOKENS } from 'wallet/constants'
 
 export const getPricingData = (state) => state.pricing.data || {}
 

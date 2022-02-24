@@ -9,8 +9,9 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import Text from './Text'
 import { GREY_COLOR, SUCCESS_COLOR } from 'constants/color'
+
+import Text from './Text'
 
 export type TCCheckboxProps = Omit<ViewProps, 'children'> & {
   checked: boolean

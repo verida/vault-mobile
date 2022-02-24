@@ -1,12 +1,13 @@
+import React, { useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
-import Text from 'components/Text'
+
 import BottomActionsModal, {
   BottomActionsModalProps,
 } from 'components/BottomActionsModal'
-import React, { useState } from 'react'
+import Text from 'components/Text'
 import {
   BLACK_COLOR,
   GREY_COLOR,

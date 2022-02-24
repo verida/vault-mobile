@@ -1,11 +1,11 @@
-import React, { useState } from 'react'
-import { View, Modal, TextInput, StyleSheet } from 'react-native'
 import { Icon } from 'native-base'
+import React, { useState } from 'react'
+import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Layout from 'components/Layouts/Layout'
-import Label from 'components/Label'
 import Button from 'components/Button'
+import Label from 'components/Label'
+import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 import InputStyles from 'styles/inputs'
 
 export default ({ visible, hideModal }) => {
@@ -49,7 +49,7 @@ export default ({ visible, hideModal }) => {
             style={styles.saveButton}
             color='primary'
             disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => ({})}>
             Save
           </Button>
         </View>

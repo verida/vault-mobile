@@ -1,11 +1,11 @@
-import React, { useEffect } from 'react'
 import { Container, Icon } from 'native-base'
+import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import LoadingIndicator from 'components/LoadingIndicator'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
-
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
 
@@ -35,6 +35,7 @@ const TransactionDetails = ({
         }}
         title={'Transaction Details'}
       />
+      <TestnetWarning />
       {loading ? (
         <LoadingIndicator />
       ) : (

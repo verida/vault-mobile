@@ -1,6 +1,7 @@
-import React from 'react'
-import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 import PINCode from '@haskkor/react-native-pincode'
+import React from 'react'
+
+import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 
 function CreatePin(props) {
   const { navigation } = props

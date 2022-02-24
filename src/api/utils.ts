@@ -1,12 +1,13 @@
 import * as Sentry from '@sentry/react-native'
+import axios from 'axios'
+import store from 'reduxStore'
+
 import AccountManager, {
   VERIDA_CONTEXT_NAME,
   VERIDA_TESTNET_NOTIFICATION_SERVER,
 } from 'api/AccountManager'
-import { setNewMessagesCount } from 'reduxStore/general/actions'
-import store from 'reduxStore'
-import axios from 'axios'
 import { Network, NetworkCountries } from 'api/types'
+import { setNewMessagesCount } from 'reduxStore/general/actions'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -92,7 +93,6 @@ export async function fetchInboxCount() {
     store.dispatch(setNewMessagesCount(messages.length))
   } catch (error) {
     Sentry.captureException(error)
-    console.log(error)
   }
 }
 
@@ -114,7 +114,6 @@ export async function getProfile(did: string) {
     }
   } catch (error) {
     Sentry.captureException(error)
-    console.error(error)
 
     return {
       name: 'Unknown',
@@ -171,7 +170,6 @@ export async function registerRemoteNotification(token: string) {
       body
     )
   } catch (e) {
-    console.error(e)
     Sentry.captureException(e)
   }
 }
@@ -205,7 +203,6 @@ export async function unRegisterRemoteNotification(token: string) {
       body
     )
   } catch (e) {
-    console.error(e)
     Sentry.captureException(e)
   }
 }

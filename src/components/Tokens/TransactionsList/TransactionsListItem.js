@@ -1,13 +1,15 @@
+import { useNavigation } from '@react-navigation/native'
+import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { ListItem, Text } from 'native-base'
-import { useNavigation } from '@react-navigation/native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import SentIcon from 'assets/sent_icon.svg'
 import ReceivedIcon from 'assets/received_icon.svg'
+import SentIcon from 'assets/sent_icon.svg'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const icons = {
   sent: <SentIcon />,

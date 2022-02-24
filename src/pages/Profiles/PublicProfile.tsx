@@ -1,14 +1,14 @@
+import { useIsFocused } from '@react-navigation/native'
+import { editable } from 'helpers/profile'
 import React, { useEffect, useState } from 'react'
-import { Alert, View, ViewProps } from 'react-native'
+import { Alert, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import ProfileLayout from '../../components/Layouts/ProfileLayout'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import { setPublicProfileData } from '../../reduxStore/general/actions'
-import { editable } from '../../helpers/profile'
-import { useIsFocused } from '@react-navigation/native'
 import AccountManager from 'api/AccountManager'
+import ProfileLayout from 'components/Layouts/ProfileLayout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { setPublicProfileData } from 'reduxStore/general/actions'
 
 const PublicProfile = (props: any) => {
   const [list, setList] = useState([
@@ -27,14 +27,12 @@ const PublicProfile = (props: any) => {
           return
         }
         let publicData: any = {}
-        if(shouldUpdate || props.publicProfileData?.name === ''){
+        if (shouldUpdate || props.publicProfileData?.name === '') {
           const vault = AccountManager.getInstance().vault as any
           publicData = await vault.profiles.public.getMany()
-        }
-        else{
+        } else {
           publicData = props.publicProfileData
         }
-        
 
         props.setPublicProfileData(publicData)
         const updatedList = list.map((item) => {
@@ -69,7 +67,7 @@ const PublicProfile = (props: any) => {
 
     updateData(false)
     bindChanges()
-  }, [initialized, list, setPublicProfileData])
+  }, [initialized, list, props])
 
   useEffect(() => {
     setInitialized(false)
@@ -95,7 +93,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData
+    publicProfileData: state.publicProfileData,
   }
 }
 

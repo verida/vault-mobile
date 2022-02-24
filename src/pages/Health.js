@@ -1,14 +1,14 @@
+import { Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Icon } from 'native-base'
 
-import HealthList from '../components/HealthList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
-import MeasurementsSvg from '../assets/icons/health/measurements.svg'
 import ActivitiesSvg from '../assets/icons/health/activities.svg'
-import ResultsSvg from '../assets/icons/health/results.svg'
+import MeasurementsSvg from '../assets/icons/health/measurements.svg'
 import NotesSvg from '../assets/icons/health/notes.svg'
+import ResultsSvg from '../assets/icons/health/results.svg'
+import HealthList from '../components/HealthList'
 
 export default () => (
   <View>

@@ -1,7 +1,8 @@
 import messaging from '@react-native-firebase/messaging'
 import { useEffect } from 'react'
-import { registerRemoteNotification } from 'api/utils'
 import { useSelector } from 'react-redux'
+
+import { registerRemoteNotification } from 'api/utils'
 
 export function useRemoteNotifications() {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment

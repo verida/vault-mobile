@@ -1,15 +1,13 @@
 import React from 'react'
-import { View, StyleSheet } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 
-import PropertyList from '../../components/PropertyList'
-import Text from '../Text'
 import ImageLoader from '../../components/ImageLoader'
-import Layout from './Layout'
-
-import LayoutStyle from '../../styles/layouts'
-
+import PropertyList from '../../components/PropertyList'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+import LayoutStyle from '../../styles/layouts'
+import Text from '../Text'
+import Layout from './Layout'
 
 export default (props) => {
   return (

@@ -1,30 +1,32 @@
-import React, { useEffect } from 'react'
-import { Container, Icon } from 'native-base'
-import { connect } from 'react-redux'
-import { Alert } from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
+import { getTokenChain, isNativeToken } from 'helpers/tokens'
+import { Container, Icon } from 'native-base'
+import React, { useEffect } from 'react'
+import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
+import { connect } from 'react-redux'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TokenBanner from 'components/Tokens/TokenBanner'
 import LoadingIndicator from 'components/LoadingIndicator'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
+import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import { getTokenChain, isNativeToken } from 'wallet/helpers/tokens'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 
+import { WARNING_COLOR } from 'constants/color'
 import {
-  getTransactionsForToken,
-  getPrices,
   getBalances,
+  getPrices,
+  getTransactionsForToken,
+  sendTransaction,
 } from 'reduxStore/wallet/actions'
 import {
-  selectTransactionsData,
-  selectSingleTokenData,
   getWalletsData,
   selectNativeTokenBalance,
+  selectSingleTokenData,
+  selectTransactionsData,
 } from 'reduxStore/wallet/selectors'
-import { TouchableOpacity, Text } from 'react-native'
-import { WARNING_COLOR } from 'constants/color'
 
 const SingleCurrency = ({
   navigation,
@@ -73,6 +75,7 @@ const SingleCurrency = ({
         }}
         title={item.label}
       />
+      <TestnetWarning />
       {warningRequired && loading === false && list.length === 0 && (
         <TouchableOpacity
           style={{
@@ -82,6 +85,7 @@ const SingleCurrency = ({
             borderRadius: 5,
             flexDirection: 'row',
             alignItems: 'center',
+            marginTop: 10,
           }}
           onPress={() => {
             if (nativeTokenBalance >= 0.001) {

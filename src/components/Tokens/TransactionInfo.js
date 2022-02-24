@@ -1,13 +1,13 @@
-import React from 'react'
-import { StyleSheet, View, TouchableOpacity, Linking } from 'react-native'
-import { Icon } from 'native-base'
 import Clipboard from '@react-native-community/clipboard'
+import { Icon } from 'native-base'
+import React from 'react'
+import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import CompleteSVG from 'assets/complete.svg'
 
 export default ({ transaction }) => {
   var formattedTime =

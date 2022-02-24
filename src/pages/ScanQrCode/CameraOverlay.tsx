@@ -1,4 +1,3 @@
-import { BLACK_COLOR_OPACITY, GREY_COLOR, WHITE_COLOR } from 'constants/color'
 import React from 'react'
 import {
   Dimensions,
@@ -8,10 +7,12 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
-import Ionicons from 'react-native-vector-icons/Ionicons'
 import { Defs, Mask, Rect, Svg } from 'react-native-svg'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
+
 import Text from 'components/Text'
+import { BLACK_COLOR_OPACITY, GREY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export type CameraOverlayProps = Omit<ViewProps, 'children'> & {

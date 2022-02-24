@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
-import Text from '../Text'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import { BLACK_COLOR_OPACITY, PRIMARY_COLOR } from '../../constants/color'
-
 import _ from 'underscore'
+
+import { BLACK_COLOR_OPACITY, PRIMARY_COLOR } from '../../constants/color'
+import Text from '../Text'
 
 export default ({ filters }) => {
   const [showAll, setShowAll] = useState(false)

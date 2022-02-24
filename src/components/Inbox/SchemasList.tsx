@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
 import {
   Image,
@@ -6,11 +7,12 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import Entypo from 'react-native-vector-icons/Entypo'
+
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import Entypo from 'react-native-vector-icons/Entypo'
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
@@ -56,7 +58,7 @@ function SchemasList(props: SchemasListProps) {
         setDataList(_dataList)
         setLoading(false)
       } catch (e) {
-        console.error(e)
+        Sentry.captureException(e)
         setLoading(false)
       }
     }

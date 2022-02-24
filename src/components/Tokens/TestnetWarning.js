@@ -2,9 +2,8 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import Text from 'components/Text'
-
+import { WARNING_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { WHITE_COLOR, WARNING_COLOR } from 'constants/color'
 
 export default () => {
   return (

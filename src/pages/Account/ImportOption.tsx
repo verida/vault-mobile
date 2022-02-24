@@ -5,8 +5,9 @@ import {
   TouchableOpacityProps,
   View,
 } from 'react-native'
-import Text from 'components/Text'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+
+import Text from 'components/Text'
 import {
   LIGHTGREY_COLOR,
   SUCCESS_COLOR,

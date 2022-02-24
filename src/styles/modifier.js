@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+
 import { ORANGE_COLOR } from '../constants/color'
 
 export default StyleSheet.create({

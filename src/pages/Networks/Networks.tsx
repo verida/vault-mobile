@@ -1,12 +1,14 @@
-import React, { useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { MainStackParams } from 'navigation/types'
-import TestnetSvg from 'assets/icons/testnet.svg'
-import MainnetSvg from 'assets/icons/mainnet.svg'
 import { Container, Content } from 'native-base'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import NetworkItem from './NetworkItem'
+import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
+
+import MainnetSvg from 'assets/icons/mainnet.svg'
+import TestnetSvg from 'assets/icons/testnet.svg'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { MainStackParams } from 'navigation/types'
+
+import NetworkItem from './NetworkItem'
 
 const NETWORKS = [
   {

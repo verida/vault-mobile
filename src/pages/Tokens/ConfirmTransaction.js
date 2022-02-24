@@ -1,23 +1,23 @@
+import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { Container, Icon } from 'native-base'
 import { connect } from 'react-redux'
+import { SUPPORTED_TOKENS } from 'wallet/constants'
 
-import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
-
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
 import { getTokenChain, formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import {
-  getWalletsData,
   getTransactionParamsData,
+  getWalletsData,
   selectSentTransaction,
 } from 'reduxStore/wallet/selectors'
-
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 const ConfirmTransaction = ({
   navigation,
@@ -50,6 +50,7 @@ const ConfirmTransaction = ({
         }}
         title={'Send ' + token.symbol}
       />
+      <TestnetWarning />
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoRow}>

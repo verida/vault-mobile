@@ -1,21 +1,23 @@
-import * as SecureStore from 'expo-secure-store'
+// eslint-disable-next-line simple-import-sort/imports
 import * as Sentry from '@sentry/react-native'
 import { Client, Context, EnvironmentType } from '@verida/client-rn'
-import WalletUtils from '@verida/wallet-utils'
 import { AutoAccount } from '@verida/account-node'
-import { utils } from 'ethers'
-import { Account, NormalizedAccounts, UserData } from 'api/types'
 import Vault from '@verida/vault-common'
-import dataMap from 'config/data-map'
+import WalletUtils from '@verida/wallet-utils'
+import { utils } from 'ethers'
+import * as SecureStore from 'expo-secure-store'
+import { isEmpty } from 'lodash'
 import store from 'reduxStore'
+
+import { Account, NormalizedAccounts, UserData } from 'api/types'
+import dataMap from 'config/data-map'
 import {
   addAccount,
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
-import { saveUserWallets, removeUserWallets } from 'reduxStore/wallet/actions'
-import { isEmpty } from 'lodash'
+import { removeUserWallets, saveUserWallets } from 'reduxStore/wallet/actions'
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
@@ -83,7 +85,6 @@ class AccountManager {
         }
       }
     } catch (e) {
-      console.error(e)
       Sentry.captureException(e)
     }
   }
@@ -150,7 +151,6 @@ class AccountManager {
       // Open an application context (forcing creation of a new context if it doesn't already exist)
       return await this.client.openContext(VERIDA_CONTEXT_NAME, true)
     } catch (e) {
-      console.error(e)
       Sentry.captureException(e)
       throw e
     }
@@ -285,7 +285,6 @@ class AccountManager {
 
       return this.selectedAccount
     } catch (e) {
-      console.error('Create account error:', e)
       Sentry.captureException(e)
       throw e
     }

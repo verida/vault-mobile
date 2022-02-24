@@ -1,3 +1,4 @@
+import PropTypes from 'prop-types'
 import React from 'react'
 import {
   Platform,
@@ -8,9 +9,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-
-import PropTypes from 'prop-types'
 import Feather from 'react-native-vector-icons/Feather'
+
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
 
 class DropDownPicker extends React.Component {
@@ -279,6 +279,7 @@ class DropDownPicker extends React.Component {
           <View style={styles.dropDownDisplay}>
             {this.props.searchable ? (
               <TextInput
+                editable={!disabled}
                 autoFocus={this.props.autoFocus}
                 style={[styles.input, this.props.searchableStyle]}
                 defaultValue={this.state.searchableText}
@@ -319,68 +320,70 @@ class DropDownPicker extends React.Component {
             </View>
           )}
         </TouchableOpacity>
-        <View
-          style={[
-            styles.dropDown,
-            styles.dropDownBox,
-            this.props.dropDownStyle,
-            !this.state.isVisible && styles.hidden,
-            {
-              top: this.state.top,
-              maxHeight: this.props.dropDownMaxHeight,
-              zIndex: this.props.zIndex,
-            },
-          ]}>
-          <ScrollView style={{ width: '100%' }} nestedScrollEnabled={true}>
-            {items.length > 0 ? (
-              items.map((item, index) => (
-                <TouchableOpacity
-                  key={index}
-                  onPress={() => this.select(item, index)}
-                  style={[
-                    styles.dropDownItem,
-                    this.props.itemStyle,
-                    this.state.choice.value === item.value &&
-                      this.props.activeItemStyle,
-                    {
-                      opacity: item?.disabled || false === true ? 0.3 : 1,
-                      ...(multiple && {
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }),
-                    },
-                  ]}
-                  disabled={item?.disabled || false === true}>
-                  <Text
+        {!disabled && (
+          <View
+            style={[
+              styles.dropDown,
+              styles.dropDownBox,
+              this.props.dropDownStyle,
+              !this.state.isVisible && styles.hidden,
+              {
+                top: this.state.top,
+                maxHeight: this.props.dropDownMaxHeight,
+                zIndex: this.props.zIndex,
+              },
+            ]}>
+            <ScrollView style={{ width: '100%' }} nestedScrollEnabled={true}>
+              {items.length > 0 ? (
+                items.map((item, index) => (
+                  <TouchableOpacity
+                    key={index}
+                    onPress={() => this.select(item, index)}
                     style={[
-                      this.props.labelStyle,
+                      styles.dropDownItem,
+                      this.props.itemStyle,
                       this.state.choice.value === item.value &&
-                        this.props.activeLabelStyle,
-                    ]}>
-                    {item.flag ? `${item.flag} ` : ''}
-                    {item.label}
-                  </Text>
-                  {multiple &&
-                    this.state.choice.findIndex(
-                      (i) => i.label === item.label && i.value === item.value
-                    ) > -1 &&
-                    this.props.customTickIcon()}
-                </TouchableOpacity>
-              ))
-            ) : (
-              <Text
-                style={[
-                  styles.notFound,
-                  {
-                    fontFamily: this.props.labelStyle?.fontFamily,
-                  },
-                ]}>
-                {this.props.searchableError}
-              </Text>
-            )}
-          </ScrollView>
-        </View>
+                        this.props.activeItemStyle,
+                      {
+                        opacity: item?.disabled || false === true ? 0.3 : 1,
+                        ...(multiple && {
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }),
+                      },
+                    ]}
+                    disabled={item?.disabled || false === true}>
+                    <Text
+                      style={[
+                        this.props.labelStyle,
+                        this.state.choice.value === item.value &&
+                          this.props.activeLabelStyle,
+                      ]}>
+                      {item.flag ? `${item.flag} ` : ''}
+                      {item.label}
+                    </Text>
+                    {multiple &&
+                      this.state.choice.findIndex(
+                        (i) => i.label === item.label && i.value === item.value
+                      ) > -1 &&
+                      this.props.customTickIcon()}
+                  </TouchableOpacity>
+                ))
+              ) : (
+                <Text
+                  style={[
+                    styles.notFound,
+                    {
+                      fontFamily: this.props.labelStyle?.fontFamily,
+                    },
+                  ]}>
+                  {this.props.searchableError}
+                </Text>
+              )}
+            </ScrollView>
+          </View>
+        )}
       </View>
     )
   }

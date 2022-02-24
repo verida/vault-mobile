@@ -1,14 +1,15 @@
-import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
+import * as Sentry from '@sentry/react-native'
+import didJWT from 'did-jwt'
 import { Container, Content, List } from 'native-base'
+import React, { useEffect, useState } from 'react'
+import { Alert, StyleSheet } from 'react-native'
+import { connect } from 'react-redux'
+
+import { getProfile } from 'api/utils'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import CredentialDataItem from 'pages/Data/CredentialDataItem'
 
 import DataFieldList from '../../components/Data/DataFieldList'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { Alert, StyleSheet } from 'react-native'
-import CredentialDataItem from 'pages/Data/CredentialDataItem'
-import didJWT from 'did-jwt'
-import * as Sentry from '@sentry/react-native'
-import { getProfile } from 'api/utils'
 
 const DataItem = (props) => {
   const { item, folder } = props.route.params
@@ -35,7 +36,6 @@ const DataItem = (props) => {
         }
         setData(_data)
       } catch (e) {
-        console.error(e)
         Alert.alert('Failed to fetch data')
         Sentry.captureException(e)
       }

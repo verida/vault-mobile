@@ -1,4 +1,5 @@
 import React from 'react'
+
 import EthereumSvg from '../assets/networks/ethereum.svg'
 import NearSvg from '../assets/networks/near.svg'
 

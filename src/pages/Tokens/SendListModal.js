@@ -1,6 +1,6 @@
-import React from 'react'
-import { View, Modal, TextInput, StyleSheet } from 'react-native'
 import { Icon, List } from 'native-base'
+import React from 'react'
+import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokensList from 'components/Tokens/TokensList'

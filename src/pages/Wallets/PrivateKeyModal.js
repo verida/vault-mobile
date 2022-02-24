@@ -1,9 +1,9 @@
-import React from 'react'
-import { View, StyleSheet } from 'react-native'
 import Clipboard from '@react-native-community/clipboard'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
 
-import Button from 'components/Button'
 import BottomActionsModal from 'components/BottomActionsModal'
+import Button from 'components/Button'
 
 export default ({ visible, toggleConfirmModal }) => {
   const key = `MIICXAIBAAKBgQCqGKukO1De7zhZj6+H0qtjTkVxwTCpvKe4eCZ0FPqri0cb2JZfXJ/DgYSF6vUpwmJG8wVQZKjeGcjDOL5UlsuusFncCzWBQ7RKNUSesmQRMSGkVb1/3j+skZ6UtW+5u09lHNsj6tQ5`

@@ -1,12 +1,13 @@
+import { useNavigation } from '@react-navigation/native'
+import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { Container, Content, List } from 'native-base'
+
+import AccountManager from 'api/AccountManager'
+import LoadingView from 'components/LoadingView'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import DataList from '../../components/DataList'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { useNavigation } from '@react-navigation/native'
-import LoadingView from 'components/LoadingView'
-import AccountManager from 'api/AccountManager'
 
 const Folders = () => {
   const navigationProp = useNavigation()
@@ -27,9 +28,6 @@ const Folders = () => {
       const items = filteredNavigation.map((folder) => {
         if (!folders[folder]) {
           // folder doesn't exist
-          console.error(
-            `${folder} is listed in navigation, but not defined in map.json`
-          )
           return
         }
 

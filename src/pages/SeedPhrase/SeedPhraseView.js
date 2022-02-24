@@ -1,12 +1,13 @@
+import Clipboard from '@react-native-community/clipboard'
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
-import Clipboard from '@react-native-community/clipboard'
 
+import AccountManager from 'api/AccountManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+
+import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import WordCard from '../../components/Words/WordCard'
-import Button from '../../components/Button'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import AccountManager from 'api/AccountManager'
 
 export default () => {
   const [words, setWords] = useState('')

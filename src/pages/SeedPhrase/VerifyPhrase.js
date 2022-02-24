@@ -2,15 +2,15 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect, useDispatch } from 'react-redux'
 
+import AccountManager from 'api/AccountManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
+import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
+
 import Button from '../../components/Button'
+import ErrorPhrase from '../../components/ErrorPhrase'
 import Layout from '../../components/Layouts/Layout'
 import Words from '../../components/Words'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-
-import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
-import ErrorPhrase from '../../components/ErrorPhrase'
-import AccountManager from 'api/AccountManager'
-import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
 
 const VerifyPhrase = (props) => {
   const { words = [], resetPhrase, navigation, route } = props

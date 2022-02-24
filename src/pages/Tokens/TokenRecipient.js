@@ -1,25 +1,24 @@
+import Clipboard from '@react-native-community/clipboard'
+import { isValidWalletAddress } from 'helpers/wallet'
+import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Alert,
   StyleSheet,
+  TextInput,
   TouchableOpacity,
   View,
-  TextInput,
-  Alert,
 } from 'react-native'
-import { Container, Icon } from 'native-base'
-import Clipboard from '@react-native-community/clipboard'
 import { connect } from 'react-redux'
 
-import Text from 'components/Text'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
-import InputStyles from 'styles/inputs'
 import Label from 'components/Label'
-import { isValidWalletAddress } from 'wallet/helpers/validation'
-
-import { NUNITO_SANS_SEMIBOLD, NUNITO_SANS_BOLD } from 'constants/text'
-
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { getTransactionParams } from 'reduxStore/wallet/actions'
+import { isValidWalletAddress } from 'wallet/helpers/validation'
+import InputStyles from 'styles/inputs'
 
 const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
   const { token, amount } = route.params

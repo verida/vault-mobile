@@ -1,10 +1,11 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
+
+import { useDeeplink } from 'hooks/useDeeplink'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
-import { useDeeplink } from 'hooks/useDeeplink'
 
 let enabled = true
 const WAIT_TIME = 3000

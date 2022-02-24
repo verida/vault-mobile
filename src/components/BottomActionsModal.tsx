@@ -7,15 +7,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import Ionicons from 'react-native-vector-icons/Ionicons'
+
 import {
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
   SEPARATOR,
   WHITE_COLOR,
 } from 'constants/color'
-import Text from './Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import Ionicons from 'react-native-vector-icons/Ionicons'
+
+import Text from './Text'
 
 export interface BottomActionsModalProps extends ModalProps {
   title: string

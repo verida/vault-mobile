@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+
 import { LIGHTGREY_COLOR } from '../constants/color'
 
 export default StyleSheet.create({
