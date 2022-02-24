@@ -40,7 +40,9 @@ const SingleCurrency = ({
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
-  const address = wallets.algo.address
+  const tokenChain = getTokenChain(item.address)
+  const address =
+    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
 
   function pullToRefresh() {
     onGetTransactionsForToken(item.address)
