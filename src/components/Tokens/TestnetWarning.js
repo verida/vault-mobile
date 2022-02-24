@@ -9,7 +9,7 @@ import { WHITE_COLOR, WARNING_COLOR } from 'constants/color'
 export default () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Using Algorand Testnet</Text>
+      <Text style={styles.text}>Using Testnet</Text>
     </View>
   )
 }
