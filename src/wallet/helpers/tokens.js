@@ -22,8 +22,8 @@ export const handleTokenDecimals = (quantity, decimalPlaces) => {
   return quantity / Math.pow(10, decimalPlaces)
 }
 
-export const formatTokenQuantity = (quantity, decimalPlaces) => {
-  return handleTokenDecimals(quantity, decimalPlaces).toFixed(3)
+export const formatTokenQuantity = (quantity, decimalPlaces, fixed = 3) => {
+  return handleTokenDecimals(quantity, decimalPlaces).toFixed(fixed)
 }
 
 export const parseUnitsForSending = (quantity, decimalPlaces) => {
