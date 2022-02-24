@@ -4,7 +4,11 @@ import { indexerClient, algodClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
 import { moralisApi } from 'wallet/helpers/api'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
-import { getTokenAddress, isNativeToken } from 'wallet/helpers/tokens'
+import {
+  getTokenAddress,
+  isNativeToken,
+  parseUnitsForSending,
+} from 'wallet/helpers/tokens'
 import {
   getWalletsData,
   getTransactionParamsData,
@@ -201,16 +205,31 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
 
     if (rawTransaction) {
       let isUserSender = rawTransaction.from_address === userAddr.toLowerCase()
-      let symbol = SUPPORTED_TOKENS[3].symbol
-      let decimal = SUPPORTED_TOKENS[3].decimal
-      let feeSymbol = SUPPORTED_TOKENS[3].symbol
+      let symbol
+      let decimal
+      let quantity
+      if (rawTransaction.logs[0]) {
+        let nonNativeTx = rawTransaction.logs[0]
+        let tok = SUPPORTED_TOKENS.find(
+          (ele) =>
+            getTokenAddress(ele.address).toLowerCase() === nonNativeTx.address
+        )
+        symbol = tok.symbol
+        decimal = tok.decimal
+        quantity = parseInt(nonNativeTx.data, 16)
+      } else {
+        symbol = SUPPORTED_TOKENS[2].symbol
+        decimal = SUPPORTED_TOKENS[2].decimal
+        quantity = rawTransaction.value
+      }
+      let feeSymbol = SUPPORTED_TOKENS[2].symbol
       return {
         id: rawTransaction.hash,
         type: isUserSender ? 'sent' : 'received',
         address: isUserSender
           ? rawTransaction.to_address
           : rawTransaction.from_address,
-        quantity: rawTransaction.value,
+        quantity,
         fee: rawTransaction.gas,
         round: rawTransaction['block_number'],
         time: rawTransaction['block_timestamp'],
@@ -279,8 +298,10 @@ const getTransactionParams = async (transactionData, wallets) => {
       input = {
         from: fromAddress,
         to: toAddress,
-        value:
-          transactionData.amount * Math.pow(10, transactionData.token.decimal),
+        value: parseUnitsForSending(
+          transactionData.amount,
+          transactionData.token.decimal
+        ),
       }
     } else {
       let tokenAddress = getTokenAddress(transactionData.token.address)
@@ -296,7 +317,10 @@ const getTransactionParams = async (transactionData, wallets) => {
         data: contract.methods
           .transfer(
             toAddress,
-            web3.utils.toWei(web3.utils.toBN(transactionData.amount))
+            parseUnitsForSending(
+              transactionData.amount,
+              transactionData.token.decimal
+            )
           )
           .encodeABI(),
       }
@@ -332,7 +356,10 @@ const sendTransaction = async (
 
   if (transactionData.token.address.includes('eip155')) {
     let transactionParams = getTransactionParamsData(state)
-    let amount
+    let amount = (amount = parseUnitsForSending(
+      transactionData.amount,
+      transactionData.token.decimal
+    ))
 
     const nonce = await web3.eth.getTransactionCount(
       wallets.ethr.address,
@@ -342,8 +369,6 @@ const sendTransaction = async (
     let transaction
 
     if (isNativeToken(transactionData.token.address)) {
-      amount =
-        transactionData.amount * Math.pow(10, transactionData.token.decimal)
       transaction = {
         to: transactionData.address, // faucet address to return eth
         value: amount,
@@ -356,25 +381,15 @@ const sendTransaction = async (
       let tokenAddress = getTokenAddress(transactionData.token.address)
       let toAddress = transactionData.address
       let fromAddress = wallets.ethr.address
-      amount = web3.utils.toWei(web3.utils.toBN(transactionData.amount))
 
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
         from: fromAddress,
       })
 
-      let input = {
-        from: fromAddress,
-        to: tokenAddress,
-        value: 0x0,
-        data: contract.methods.transfer(toAddress, amount).encodeABI(),
-      }
-      const newgasss = await web3.eth.estimateGas(input)
-      console.log(newgasss, 'newgasss')
-
       // call transfer function
       transaction = {
         from: fromAddress,
-        gas: newgasss,
+        gas: transactionParams.fee,
         // gasPrice: web3.utils.toHex(20 * 1e9),
         // gasLimit: web3.utils.toHex(210000),
         to: tokenAddress,
@@ -404,7 +419,8 @@ const sendTransaction = async (
           to: transactionData.address,
           from: wallets.ethr.address,
           token: transactionData.token,
-          feeSymbol: SUPPORTED_TOKENS[3].symbol,
+          feeSymbol: SUPPORTED_TOKENS[2].symbol,
+          chain: 'ethereum',
         }
 
         return txData
@@ -428,7 +444,13 @@ const sendTransaction = async (
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
         wallets.algo.address,
         transactionData.address,
-        transactionData.amount * Math.pow(10, transactionData.token.decimal),
+        parseInt(
+          parseUnitsForSending(
+            transactionData.amount,
+            transactionData.token.decimal
+          ).toHexString(),
+          16
+        ),
         undefined,
         undefined,
         transactionParams
@@ -443,8 +465,13 @@ const sendTransaction = async (
         undefined,
         isAssetEnablingTransaction
           ? 0
-          : transactionData.amount *
-              Math.pow(10, transactionData.token.decimal),
+          : parseInt(
+              parseUnitsForSending(
+                transactionData.amount,
+                transactionData.token.decimal
+              ).toHexString(),
+              16
+            ),
         undefined,
         parseInt(tokenAddress, 10),
         transactionParams
@@ -473,6 +500,7 @@ const sendTransaction = async (
       from: wallets.algo.address,
       token: transactionData.token,
       feeSymbol: SUPPORTED_TOKENS[0].symbol,
+      chain: 'algorand',
     }
 
     return txData
