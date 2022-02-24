@@ -87,14 +87,16 @@ function Create(
             placeholder={'e.g John'}
             style={InputStyles.input}
             value={name}
+            editable={!processing}
             onChangeText={(t) => setName(t)}
           />
 
           <Label>Country</Label>
           <DropDownPicker
-            searchable={true}
+            searchable
+            disabled={processing}
             searchablePlaceholder='Search for country'
-            showArrow={true}
+            showArrow
             placeholder=''
             items={COUNTRIES}
             containerStyle={InputStyles.select}
