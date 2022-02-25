@@ -1,9 +1,9 @@
 import React from 'react'
 import { connect } from 'react-redux'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import SuccessFailure from 'components/SuccessFailure'
 import { selectSentTransaction } from 'reduxStore/wallet/selectors'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 const TransactionSuccess = ({ navigation, sentTransaction }) => {
   const { data } = sentTransaction

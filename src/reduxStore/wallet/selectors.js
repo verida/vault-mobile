@@ -1,11 +1,5 @@
 import { SUPPORTED_TOKENS } from 'wallet/constants'
-import {
-  getTokenAddress,
-  handleTokenDecimals,
-  formatTokenQuantity,
-} from 'wallet/helpers/tokens'
-import { getTokenAddress } from 'helpers/tokens'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { formatTokenQuantity, handleTokenDecimals } from 'wallet/helpers/tokens'
 
 export const getPricingData = (state) => state.pricing.data || {}
 
@@ -115,7 +109,6 @@ export const selectPendingTransactions = (state, assetID) => {
 }
 
 export const selectTransactions = (state, assetID) => {
-  const wallets = getWalletsData(state)
   const transactions = state.transactions.data || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {

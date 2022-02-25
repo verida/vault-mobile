@@ -1,17 +1,17 @@
 import algosdk from 'algosdk'
-
-import { indexerClient, algodClient } from 'wallet/chains/algorand'
+import { algodClient, indexerClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
-import { moralisApi } from 'wallet/helpers/api'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { moralisApi } from 'wallet/helpers/api'
 import {
   getTokenAddress,
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
+
 import {
-  getWalletsData,
   getTransactionParamsData,
+  getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
 const minABI = [
@@ -199,7 +199,6 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
       }
     )
     let rawTransaction = ethTransaction.data
-    console.log(rawTransaction, 'rawTransaction')
     let userAddr = wallets.ethr.address
     // let userAddr = '0x28C6c06298d514Db089934071355E5743bf21d60'
 
@@ -231,8 +230,8 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
           : rawTransaction.from_address,
         quantity,
         fee: rawTransaction.gas_price * rawTransaction.gas,
-        round: rawTransaction['block_number'],
-        time: rawTransaction['block_timestamp'],
+        round: rawTransaction.block_number,
+        time: rawTransaction.block_timestamp,
         symbol,
         feeSymbol,
         decimal,
@@ -293,11 +292,6 @@ const getTransactionParams = async (transactionData, wallets) => {
     let fromAddress = wallets.ethr.address
     let toAddress = transactionData.address
     const gasPrice = await web3.eth.getGasPrice()
-    console.log(
-      gasPrice,
-      parseInt(gasPrice, 16),
-      'gasPrice getTransactionParams'
-    )
 
     let input
     if (isNativeToken(transactionData.token.address)) {
@@ -334,13 +328,12 @@ const getTransactionParams = async (transactionData, wallets) => {
 
     try {
       const estimateGas = await web3.eth.estimateGas(input)
-      console.log(estimateGas, 'estimateGas getTransactionParams')
       const params = { gas: estimateGas, fee: gasPrice * estimateGas }
-      console.log(params, 'params getTransactionParams')
 
       return params
     } catch (error) {
-      console.log(error, 'error')
+      // eslint-disable-next-line no-console
+      console.error(error, 'error')
     }
   } else {
     const params = await algodClient.getTransactionParams().do()
@@ -404,18 +397,14 @@ const sendTransaction = async (
         nonce: nonce,
       }
     }
-    console.log(transaction, 'transaction')
 
     try {
       const signedTx = await web3.eth.accounts.signTransaction(
         transaction,
         wallets.ethr.privateKey.substring(2, wallets.ethr.privateKey.length)
       )
-      console.log(signedTx, 'signedTx')
 
       let TxHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
-
-      console.log(TxHash, 'TxHash')
 
       if (TxHash) {
         const txData = {
@@ -432,7 +421,8 @@ const sendTransaction = async (
         return txData
       }
     } catch (error) {
-      console.log(error, 'tx error')
+      // eslint-disable-next-line no-console
+      console.error(error, 'tx error')
     }
   } else {
     let transactionParams

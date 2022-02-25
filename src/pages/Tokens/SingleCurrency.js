@@ -1,19 +1,16 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getTokenChain, isNativeToken } from 'helpers/tokens'
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
+import { getTokenChain, isNativeToken } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
-import { getTokenChain, isNativeToken } from 'wallet/helpers/tokens'
-import { sendTransaction } from 'reduxStore/wallet/actions'
-
 import { WARNING_COLOR } from 'constants/color'
 import {
   getBalances,

@@ -2,11 +2,10 @@ import Clipboard from '@react-native-community/clipboard'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
-
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({ transaction }) => {

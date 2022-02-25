@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import { isValidWalletAddress } from 'helpers/wallet'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -10,6 +9,7 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
+import { isValidWalletAddress } from 'wallet/helpers/validation'
 
 import Button from 'components/Button'
 import Label from 'components/Label'
@@ -17,7 +17,6 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { getTransactionParams } from 'reduxStore/wallet/actions'
-import { isValidWalletAddress } from 'wallet/helpers/validation'
 import InputStyles from 'styles/inputs'
 
 const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
@@ -28,7 +27,7 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
     const clipboardData = await Clipboard.getString()
     setAddress(clipboardData)
     // setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
-    // setAddress('0xB6332FC817129Fe0a177DE0fccf782C468c07df5')
+    setAddress('0xB6332FC817129Fe0a177DE0fccf782C468c07df5')
   }
   function onReadQRCode(data) {
     setAddress(data)

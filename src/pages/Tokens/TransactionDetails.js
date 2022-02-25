@@ -22,7 +22,7 @@ const TransactionDetails = ({
     }
 
     init()
-  }, [id, onGetTransactionDetails])
+  }, [id, onGetTransactionDetails, tokenAddress])
 
   const { transaction, loading } = data
 

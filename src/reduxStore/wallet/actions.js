@@ -1,15 +1,9 @@
-import { pricingApi } from 'wallet/helpers/api'
+import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
 import dataHelper from 'wallet/data'
-import algosdk from 'algosdk'
-import { pricingApi } from 'helpers/api'
-import { getTokenAddress, isNativeToken } from 'helpers/tokens'
-import { SUPPORTED_TOKENS, SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
+import { pricingApi } from 'wallet/helpers/api'
 
 import { navigate } from 'navigation/RootNavigator'
-import {
-  getTransactionParamsData,
-  getWalletsData,
-} from 'reduxStore/wallet/selectors'
+import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 import {
   ADD_PENDING_TRANSACTION,
@@ -34,8 +28,6 @@ import {
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
 } from './types'
-
-import { SUPPORTED_TOKENS, SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
 
 export const getPrices = () => {
   return (dispatch) => {
