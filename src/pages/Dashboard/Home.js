@@ -139,7 +139,7 @@ const Home = (props) => {
     if (selectedAccount && publicProfileData) {
       initProfile()
     }
-  }, [selectedAccount, publicProfileData])
+  }, [selectedAccount, publicProfileData, setPublicProfileData])
 
   useFocusEffect(() => {
     fetchInboxCount()
