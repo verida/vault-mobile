@@ -26,8 +26,6 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
     setAddress(clipboardData)
-    // setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
-    setAddress('0xB6332FC817129Fe0a177DE0fccf782C468c07df5')
   }
   function onReadQRCode(data) {
     setAddress(data)
