@@ -404,11 +404,13 @@ const sendTransaction = async (
         wallets.ethr.privateKey.substring(2, wallets.ethr.privateKey.length)
       )
 
-      let TxHash = await web3.eth.sendSignedTransaction(signedTx.rawTransaction)
+      let transactionHash = await web3.eth.sendSignedTransaction(
+        signedTx.rawTransaction
+      )
 
-      if (TxHash) {
+      if (transactionHash) {
         const txData = {
-          id: TxHash.transactionHash,
+          id: transactionHash.transactionHash,
           amount: parseFloat(amount.toString()),
           fee: transaction.gas,
           to: transactionData.address,
