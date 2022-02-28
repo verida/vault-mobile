@@ -7,6 +7,7 @@ export const getTokenAddress = (address) => {
 }
 
 export const isNativeToken = (address) => {
+  // having to put a hack for Ethereum due to CAIP library having issues, waiting for update.
   return (
     getTokenAddress(address) === 'slip44' ||
     getTokenAddress(address) === '0x0000001'
@@ -28,4 +29,10 @@ export const formatTokenQuantity = (quantity, decimalPlaces, fixed = 3) => {
 
 export const parseUnitsForSending = (quantity, decimalPlaces) => {
   return utils.parseUnits(quantity, decimalPlaces)
+}
+
+export const getExplorerUrl = (chain) => {
+  return chain === 'algorand'
+    ? 'https://testnet.algoexplorer.io/tx/'
+    : 'https://rinkeby.etherscan.io/tx/'
 }
