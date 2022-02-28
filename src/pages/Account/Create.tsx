@@ -56,10 +56,15 @@ function Create(
         await AccountManager.getInstance().createAccount({
           name,
           country: country?.value || '',
+          description: '',
         })
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        props.setPublicProfileData({ name, country: country?.value })
+        props.setPublicProfileData({
+          name,
+          country: country?.value,
+          description: '',
+        })
         setProcessing(false)
         navigation.navigate('CreatePin')
       }, 0)
