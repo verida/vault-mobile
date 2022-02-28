@@ -1,13 +1,14 @@
 import { useIsFocused } from '@react-navigation/native'
 import { editable } from 'helpers/profile'
 import React, { useEffect, useState } from 'react'
-import { Alert, View } from 'react-native'
+import { Alert, View, StyleSheet, Dimensions } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
 import ProfileLayout from 'components/Layouts/ProfileLayout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import LoadingView from 'components/LoadingView'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
 const PublicProfile = (props: any) => {
@@ -18,6 +19,7 @@ const PublicProfile = (props: any) => {
   ])
   const [initialized, setInitialized] = useState(false)
   const isFocused = useIsFocused()
+  const [loading, setLoading] = useState(false)
 
   // component did mount
   useEffect(() => {
@@ -28,14 +30,16 @@ const PublicProfile = (props: any) => {
         }
         let publicData: any = {}
         if (shouldUpdate || props.publicProfileData?.name === '') {
+          setLoading(true)
           const vault = AccountManager.getInstance().vault as any
           publicData = await vault.profiles.public.getMany()
+          setLoading(false)
         } else {
           publicData = props.publicProfileData
         }
 
         props.setPublicProfileData(publicData)
-        const updatedList = list.map((item) => {
+        const updatedList = list.map((item: any) => {
           const label = item.label.toLowerCase()
           if (publicData[label]) {
             item.value = publicData[label]
@@ -76,10 +80,16 @@ const PublicProfile = (props: any) => {
   return (
     <View>
       <NavigationHeader title='Public Profile' />
-      <ProfileLayout
-        list={editable(list)}
-        description={'This profile is public and can be discovered by others'}
-      />
+      {loading ? (
+        <View style={styles.loadingContainer}>
+          <LoadingView />
+        </View>
+      ) : (
+        <ProfileLayout
+          list={editable(list)}
+          description={'This profile is public and can be discovered by others'}
+        />
+      )}
     </View>
   )
 }
@@ -98,3 +108,12 @@ const mapStateToProps = (state: any) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(PublicProfile)
+
+const styles = StyleSheet.create({
+  loadingContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    minHeight: Dimensions.get('window').height * 0.8,
+  },
+})

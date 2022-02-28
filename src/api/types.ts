@@ -13,7 +13,8 @@ export type Account = {
 export type UserData = {
   name: string
   country: string
-  avatar?: ImageSourcePropType
+  avatar?: ImageSourcePropType,
+  description?: string
 }
 
 export type NormalizedAccounts = {
