@@ -2,7 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
+import { formatTokenQuantity, getExplorerUrl } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
@@ -32,12 +32,10 @@ export default ({ transaction }) => {
                 styles.valueText,
                 transaction.type === 'sent' ? styles.negative : styles.positive,
               ]}>
-              {transaction.type === 'sent' ? '-' : ''}
-              {formatTokenQuantity(
+              {`${transaction.type === 'sent' ? '-' : ''}${formatTokenQuantity(
                 transaction.quantity,
                 transaction.decimal
-              )}{' '}
-              {transaction.symbol}
+              )} ${transaction.symbol}`}
             </Text>
           </View>
         </View>
@@ -108,10 +106,7 @@ export default ({ transaction }) => {
         <TouchableOpacity style={styles.viewOnExplorerWrapper}>
           <Text
             onPress={() => {
-              const explorerUrl =
-                transaction.chain === 'algorand'
-                  ? 'https://testnet.algoexplorer.io/tx/'
-                  : 'https://rinkeby.etherscan.io/tx/'
+              const explorerUrl = getExplorerUrl(transaction.chain)
               Linking.openURL(explorerUrl + transaction.id)
             }}>
             View on explorer
