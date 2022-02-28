@@ -13,3 +13,11 @@ export const chainsApi = create({
     Authorization: 'Bearer bd1b7W47JQiwxh2gxxcrpz8e4I97dpJVrmirQNq1dWPB9KM',
   },
 })
+
+export const moralisApi = create({
+  baseURL: 'https://deep-index.moralis.io/api/v2/',
+  headers: {
+    'X-API-Key':
+      '4M9sy1EVrR2iS5vvsbm3MaCdigJwP7Q9HCkKRphYqGzT0hR6vw1LbBcb0z7hQ9Fs',
+  },
+})

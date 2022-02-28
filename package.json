@@ -10,6 +10,7 @@
     "build-android": "cd android && ./gradlew assembleStagingRelease"
   },
   "dependencies": {
+    "@alch/alchemy-web3": "^1.2.3",
     "@babel/helper-environment-visitor": "^7.16.7",
     "@expo/react-native-action-sheet": "^3.11.0",
     "@haskkor/react-native-pincode": "^1.22.5",

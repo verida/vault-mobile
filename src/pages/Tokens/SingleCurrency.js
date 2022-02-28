@@ -1,10 +1,10 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getTokenChain, isNativeToken } from 'helpers/tokens'
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
+import { getTokenChain, isNativeToken } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -39,7 +39,9 @@ const SingleCurrency = ({
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
-  const address = wallets.algo.address
+  const tokenChain = getTokenChain(item.address)
+  const address =
+    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
 
   function pullToRefresh() {
     onGetTransactionsForToken(item.address)
@@ -126,6 +128,8 @@ const SingleCurrency = ({
       ) : (
         <TransactionsList
           symbol={item.symbol}
+          decimal={item.decimal}
+          tokenAddress={item.address}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
           list={list}

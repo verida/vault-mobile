@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import ReceivedIcon from 'assets/received_icon.svg'
 import SentIcon from 'assets/sent_icon.svg'
@@ -12,7 +13,7 @@ const icons = {
   received: <ReceivedIcon />,
 }
 
-export default ({ symbol, item }) => {
+export default ({ symbol, decimal, tokenAddress, item }) => {
   const navigation = useNavigation()
   const { type, quantity, address, id, pending } = item
 
@@ -21,7 +22,7 @@ export default ({ symbol, item }) => {
       button
       onPress={() => {
         if (!pending) {
-          navigation.navigate('TransactionDetails', { id })
+          navigation.navigate('TransactionDetails', { id, tokenAddress })
         }
       }}
       style={styles.listItem}>
@@ -36,7 +37,7 @@ export default ({ symbol, item }) => {
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {(quantity / 1000000).toFixed(3)} {symbol}
+            {formatTokenQuantity(quantity, decimal)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>
