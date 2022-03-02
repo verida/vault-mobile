@@ -1,8 +1,8 @@
-diff --git a/node_modules/expo-file-system/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt b/node_modules/expo-file-system/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt
-index 53bf40f..edadd27 100644
---- a/node_modules/expo-file-system/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt
-+++ b/node_modules/expo-file-system/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt
-@@ -56,18 +56,14 @@ import okhttp3.Callback
+diff --git a/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt b/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt
+index 53bf40ff83639413de15de19ee4319c3d71fca99..02039b230d42a8153e607b290d0930815610f8cf 100644
+--- a/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt
++++ b/android/src/main/java/expo/modules/filesystem/FileSystemModule.kt
+@@ -55,18 +55,14 @@ import okhttp3.Callback
  import okhttp3.Headers
  import okhttp3.JavaNetCookieJar
  import okhttp3.MediaType
