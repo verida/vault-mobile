@@ -5,7 +5,7 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx patch-package",
+    "postinstall": "scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease"
   },
@@ -212,5 +212,12 @@
     "tty": "tty-browserify",
     "vm": "vm-browserify",
     "tls": false
+  },
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "expo-file-system"
+      ]
+    }
   }
 }
