@@ -5,7 +5,7 @@
     "web": "expo start --web",
     "start": "react-native start",
     "test": "jest",
-    "postinstall": "scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn",
+    "postinstall": "scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx patch-package",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease"
   },
