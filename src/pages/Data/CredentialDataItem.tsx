@@ -1,45 +1,26 @@
-<<<<<<< HEAD
-import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, View, ViewProps } from 'react-native'
-import Text from 'components/Text'
-import AntDesign from 'react-native-vector-icons/AntDesign'
-import { ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
-import { List } from 'native-base'
-import DataFieldList from 'components/Data/DataFieldList'
-import { NUNITO_SANS_BOLD } from 'constants/text'
-=======
+import * as Sentry from '@sentry/react-native'
+import { Context } from '@verida/client-ts'
+import { SharingCredential } from '@verida/verifiable-credentials'
 import { isEmpty } from 'lodash'
 import { List } from 'native-base'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View, ViewProps } from 'react-native'
->>>>>>> develop
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { DefaultAvatar } from 'api/utils'
-<<<<<<< HEAD
-import { isEmpty } from 'lodash'
-import { Credentials, SharingCredential } from '@verida/verifiable-credentials'
 import AccountManager from 'api/AccountManager'
-import { Context } from '@verida/client-ts'
-import * as Sentry from '@sentry/react-native'
-import LoadingView from 'components/LoadingView'
-=======
+import { DefaultAvatar } from 'api/utils'
 import DataFieldList from 'components/Data/DataFieldList'
+import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
-import { SUCCESS_COLOR } from 'constants/color'
+import { ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
->>>>>>> develop
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
   item: any
-}
-
-type CredentialJwt = {
-  didJwtVc: string
 }
 
 function CredentialDataItem(props: CredentialDataItemProps) {
@@ -63,30 +44,19 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         const context = AccountManager.getInstance().context as Context
         const currentDid =
           AccountManager.getInstance().getSelectedAccount()?.did
-        if (isEmpty(data.payload) || !context || !currentDid) {
+        if (isEmpty(item) || !context || !currentDid) {
           return
         }
         setLoading(true)
-        const credential = new Credentials(context)
-        const credentialItem = await credential.createCredentialJWT(
-          currentDid,
-          item
-        )
         const shareCredential = new SharingCredential(context)
-        const issuedCredential = await shareCredential.issueEncryptedCredential(
-          credentialItem
-        )
-        setCredUri(
-          `https://scan.verida.io/credential?uri=${encodeURI(
-            issuedCredential.uri
-          )}`
-        )
+        const issuedCredential =
+          await shareCredential.issueEncryptedPresentation(item)
+        setCredUri(issuedCredential.publicUri)
         setVerified(true)
         setLoading(false)
       } catch (error) {
         setLoading(false)
         setVerified(false)
-        console.error(error)
         Sentry.captureException(error)
       }
     }

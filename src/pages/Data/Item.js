@@ -1,23 +1,17 @@
 import * as Sentry from '@sentry/react-native'
 import didJWT from 'did-jwt'
+import { get } from 'lodash'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
 import { getProfile } from 'api/utils'
+import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
-<<<<<<< HEAD
-import didJWT from 'did-jwt'
-import * as Sentry from '@sentry/react-native'
-import { getProfile } from 'api/utils'
-import { get } from 'lodash'
-import LoadingView from 'components/LoadingView'
-=======
 
 import DataFieldList from '../../components/Data/DataFieldList'
->>>>>>> develop
 
 const DataItem = (props) => {
   const { item, folder } = props.route.params
@@ -48,11 +42,7 @@ const DataItem = (props) => {
         setData(_data)
         setLoading(false)
       } catch (e) {
-<<<<<<< HEAD
         setLoading(false)
-        console.error(e)
-=======
->>>>>>> develop
         Alert.alert('Failed to fetch data')
         Sentry.captureException(e)
       }
