@@ -1,6 +1,6 @@
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
-import { TextInput, View } from 'react-native'
+import { Platform, TextInput, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
@@ -19,7 +19,9 @@ const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
 
-  const [disabled, setDisabled] = useState(false)
+  const [disabled, setDisabled] = useState(
+    Platform.OS === 'android' ? true : false
+  )
   const [edited, setEdited] = useState(option.value)
   const onChangeItem = (e: any) => setEdited(e)
 
@@ -54,6 +56,7 @@ const EditProfile = (props: any) => {
               value={edited}
               autoFocus={true}
               onChangeText={setEdited}
+              editable={!disabled}
             />
           )}
           {option.type === 'select' && (
@@ -65,6 +68,7 @@ const EditProfile = (props: any) => {
               items={COUNTRIES}
               containerStyle={InputStyles.select}
               onChangeItem={onChangeItem}
+              disabled={disabled}
             />
           )}
           {option.type === 'textarea' && (
@@ -75,7 +79,7 @@ const EditProfile = (props: any) => {
               multiline
               numberOfLines={4}
               maxLength={255}
-              editable
+              editable={!disabled}
               autoFocus={true}
               onChangeText={setEdited}
             />

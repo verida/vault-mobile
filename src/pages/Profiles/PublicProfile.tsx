@@ -32,7 +32,9 @@ const PublicProfile = (props: any) => {
         if (shouldUpdate || props.publicProfileData?.name === '') {
           setLoading(true)
           const vault = AccountManager.getInstance().vault as any
-          publicData = await vault.profiles.public.getMany()
+          if (vault.profiles.public.data)
+            publicData = vault.profiles.public.data
+          else publicData = await vault.profiles.public.getMany()
           setLoading(false)
         } else {
           publicData = props.publicProfileData
