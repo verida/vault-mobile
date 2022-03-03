@@ -8,7 +8,7 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 export default () => {
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Using Algorand Testnet</Text>
+      <Text style={styles.text}>Using Testnet</Text>
     </View>
   )
 }

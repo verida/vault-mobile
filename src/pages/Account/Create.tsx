@@ -107,12 +107,17 @@ function Create(
           {
             name,
             country: country?.value || '',
+            description: '',
           },
           selectedNode.current as NetworkNode
         )
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        props.setPublicProfileData({ name, country: country?.value })
+        props.setPublicProfileData({
+          name,
+          country: country?.value,
+          description: '',
+        })
         setProcessing(false)
 
         if (

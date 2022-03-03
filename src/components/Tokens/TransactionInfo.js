@@ -2,13 +2,18 @@ import Clipboard from '@react-native-community/clipboard'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { formatTokenQuantity, getExplorerUrl } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({ transaction }) => {
-  var formattedTime = new Date(transaction.time * 1000).toLocaleString('en-US')
+  var formattedTime =
+    transaction.chain === 'algorand'
+      ? new Date(transaction.time * 1000).toLocaleString('en-US')
+      : new Date(transaction.time).toLocaleString('en-US')
+  const fixed = transaction.chain === 'algorand' ? 3 : 18
 
   return (
     <View style={styles.container}>
@@ -27,9 +32,10 @@ export default ({ transaction }) => {
                 styles.valueText,
                 transaction.type === 'sent' ? styles.negative : styles.positive,
               ]}>
-              {transaction.type === 'sent' ? '-' : ''}
-              {parseFloat(transaction.quantity / 1000000).toFixed(3)}{' '}
-              {transaction.symbol}
+              {`${transaction.type === 'sent' ? '-' : ''}${formatTokenQuantity(
+                transaction.quantity,
+                transaction.decimal
+              )} ${transaction.symbol}`}
             </Text>
           </View>
         </View>
@@ -58,7 +64,7 @@ export default ({ transaction }) => {
           <Text style={styles.infoLabel}>Fee</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
-              {parseFloat(transaction.fee / 1000000).toFixed(3)}{' '}
+              {formatTokenQuantity(transaction.fee, transaction.decimal, fixed)}{' '}
               {transaction.feeSymbol}
             </Text>
           </View>
@@ -70,7 +76,9 @@ export default ({ transaction }) => {
           </View>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>Round</Text>
+          <Text style={styles.infoLabel}>
+            {transaction.chain === 'algorand' ? 'Round' : 'Block'}
+          </Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>{transaction.round}</Text>
           </View>
@@ -97,11 +105,10 @@ export default ({ transaction }) => {
 
         <TouchableOpacity style={styles.viewOnExplorerWrapper}>
           <Text
-            onPress={() =>
-              Linking.openURL(
-                'https://testnet.algoexplorer.io/tx/' + transaction.id
-              )
-            }>
+            onPress={() => {
+              const explorerUrl = getExplorerUrl(transaction.chain)
+              Linking.openURL(explorerUrl + transaction.id)
+            }}>
             View on explorer
           </Text>
           <Icon

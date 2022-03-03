@@ -3,6 +3,7 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { formatTokenQuantity, getTokenChain } from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -25,7 +26,18 @@ const ConfirmTransaction = ({
   sentTransaction,
 }) => {
   const { token, amount, address } = route.params
-  const accountAddress = wallets.algo.address
+  const tokenChain = getTokenChain(token.address)
+  const accountAddress =
+    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
+  const feeSymbol =
+    tokenChain === 'algorand'
+      ? SUPPORTED_TOKENS[0].symbol
+      : SUPPORTED_TOKENS[2].symbol
+  const feeDecimal =
+    tokenChain === 'algorand'
+      ? SUPPORTED_TOKENS[0].decimal
+      : SUPPORTED_TOKENS[2].decimal
+  const fixed = tokenChain === 'algorand' ? 3 : 18
 
   return (
     <Container>
@@ -53,14 +65,14 @@ const ConfirmTransaction = ({
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Token</Text>
             <View style={styles.infoValue}>
-              <Text style={styles.valueText}>{token.symbol}</Text>
+              <Text style={styles.valueText}>{token.label}</Text>
             </View>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Amount</Text>
+            <Text style={styles.infoLabel}>Quantity</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(amount).toFixed(2)} {token.symbol}
+                {parseFloat(amount).toFixed(3)} {token.symbol}
               </Text>
             </View>
           </View>
@@ -79,8 +91,8 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(transactionParams.fee).toFixed(3)}{' '}
-                {SUPPORTED_TOKENS[0].symbol}
+                {formatTokenQuantity(transactionParams.fee, feeDecimal, fixed)}{' '}
+                {feeSymbol}
               </Text>
             </View>
           </View>

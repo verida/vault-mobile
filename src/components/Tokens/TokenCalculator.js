@@ -19,8 +19,8 @@ export default ({ onUpdateAmount, onUpdateValidation, token }) => {
   const [mode, onSwitchMode] = React.useState('crypto')
   const { symbol, price, quantity } = token
   const converted = convert(number, mode, price)
-  const maxFiat = (quantity * price) / 1000000
-  let maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity / 1000000
+  const maxFiat = quantity * price
+  let maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity
 
   function updateAmount(num) {
     onChangeNumber(num)

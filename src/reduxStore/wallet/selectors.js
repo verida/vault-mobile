@@ -1,36 +1,9 @@
-import { getTokenAddress } from 'helpers/tokens'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { formatTokenQuantity, handleTokenDecimals } from 'wallet/helpers/tokens'
 
 export const getPricingData = (state) => state.pricing.data || {}
 
-export const getBalancesData = (state) => {
-  // standardize and map balances to recognized token symbols
-  if (state.balances.data) {
-    const balanceData = state.balances.data
-    let list = {}
-    // TODO: dont hardcode
-    list.ALGO = balanceData.amount
-    if (balanceData.assets) {
-      balanceData.assets.map((balance) => {
-        let tok
-        tok = SUPPORTED_TOKENS.find((ele) => {
-          let tokenAddress = getTokenAddress(ele.address)
-          if (balance['asset-id']) {
-            return tokenAddress === balance['asset-id'].toString()
-          } else {
-            return false
-          }
-        })
-        if (tok) {
-          list[tok.symbol] = balance.amount
-        }
-      })
-    }
-    return list
-  } else {
-    return {}
-  }
-}
+export const getBalancesData = (state) => state.balances.data || {}
 
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
@@ -44,7 +17,8 @@ export const getListAndTotal = (state) => {
       let tokenBalance = balances[token.symbol]
       let amount =
         tokenPrice && tokenBalance
-          ? (tokenPrice.quote.USD.price * tokenBalance) / 1000000
+          ? tokenPrice.quote.USD.price *
+            handleTokenDecimals(tokenBalance, token.decimal)
           : 0
       total = total + amount
 
@@ -55,8 +29,11 @@ export const getListAndTotal = (state) => {
         address: token.address,
         price: tokenPrice ? tokenPrice.quote.USD.price : 0,
         change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
-        quantity: tokenBalance ? tokenBalance : 0,
+        quantity: tokenBalance
+          ? formatTokenQuantity(tokenBalance, token.decimal)
+          : 0,
         amount,
+        decimal: token.decimal,
       }
     })
     return { list, total }
@@ -68,7 +45,8 @@ export const getListAndTotal = (state) => {
 export const selectNativeTokenBalance = (state) => {
   const balances = getBalancesData(state)
   if (balances) {
-    return balances.ALGO / 1000000
+    // TODO: dont hardcode decimals
+    return formatTokenQuantity(balances.ALGO, SUPPORTED_TOKENS[0].decimal)
   } else {
     0
   }
@@ -86,7 +64,8 @@ export const selectSingleTokenData = (state, assetID) => {
   let tokenBalance = balances[token.symbol]
   let amount =
     tokenPrice && tokenBalance
-      ? (tokenPrice.quote.USD.price * tokenBalance) / 1000000
+      ? tokenPrice.quote.USD.price *
+        handleTokenDecimals(tokenBalance, token.decimal)
       : 0
 
   return {
@@ -96,8 +75,11 @@ export const selectSingleTokenData = (state, assetID) => {
     address: token.address,
     price: tokenPrice ? tokenPrice.quote.USD.price : 0,
     change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
-    quantity: tokenBalance ? tokenBalance : 0,
+    quantity: tokenBalance
+      ? formatTokenQuantity(tokenBalance, token.decimal)
+      : 0,
     amount,
+    decimal: token.decimal,
   }
 }
 
@@ -127,25 +109,7 @@ export const selectPendingTransactions = (state, assetID) => {
 }
 
 export const selectTransactions = (state, assetID) => {
-  const wallets = getWalletsData(state)
-  const userAddr = wallets.algo.address
-  const rawTransactions = state.transactions.data || []
-  let transactions = []
-  if (rawTransactions) {
-    transactions = rawTransactions.map((tx) => {
-      let isUserSender = tx.sender === userAddr
-      let transferInfo = tx['asset-transfer-transaction']
-        ? tx['asset-transfer-transaction']
-        : tx['payment-transaction']
-      return {
-        id: tx.id,
-        type: isUserSender ? 'sent' : 'received',
-        address: isUserSender ? transferInfo.receiver : tx.sender,
-        quantity: transferInfo.amount,
-        pending: false,
-      }
-    })
-  }
+  const transactions = state.transactions.data || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx) => {
@@ -153,10 +117,9 @@ export const selectTransactions = (state, assetID) => {
         return trans.id === tx.id
       })
       if (!transactionCompleted) {
-        let isUserSender = tx.from === userAddr
         transactions.unshift({
           id: tx.id,
-          type: isUserSender ? 'sent' : 'received',
+          type: 'sent',
           address: tx.to,
           quantity: tx.amount,
           pending: true,
@@ -186,40 +149,7 @@ export const selectSentTransaction = (state) => {
 }
 
 export const selectTransaction = (state) => {
-  const wallets = getWalletsData(state)
-  const userAddr = wallets.algo.address
-  const rawTransaction = state.transactionDetails.data
-  if (rawTransaction) {
-    let isUserSender = rawTransaction.sender === userAddr
-    let transferInfo = rawTransaction['asset-transfer-transaction']
-      ? rawTransaction['asset-transfer-transaction']
-      : rawTransaction['payment-transaction']
-    let symbol
-    let feeSymbol = SUPPORTED_TOKENS[0].symbol
-    if (rawTransaction['asset-transfer-transaction']) {
-      let tok = SUPPORTED_TOKENS.find(
-        (ele) =>
-          getTokenAddress(ele.address) ===
-          rawTransaction['asset-transfer-transaction']['asset-id'].toString()
-      )
-      symbol = tok.symbol
-    } else {
-      symbol = SUPPORTED_TOKENS[0].symbol
-    }
-    return {
-      id: rawTransaction.id,
-      type: isUserSender ? 'sent' : 'received',
-      address: isUserSender ? transferInfo.receiver : rawTransaction.sender,
-      quantity: transferInfo.amount,
-      fee: rawTransaction.fee,
-      round: rawTransaction['confirmed-round'],
-      time: rawTransaction['round-time'],
-      symbol,
-      feeSymbol,
-    }
-  } else {
-    return {}
-  }
+  return state.transactionDetails.data || {}
 }
 
 export const selectTransactionData = (state) => {
