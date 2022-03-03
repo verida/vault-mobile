@@ -1,6 +1,6 @@
+import { Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
-import { ListItem, Text, Right, Left } from 'native-base'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 

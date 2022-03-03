@@ -1,4 +1,5 @@
 import { StyleSheet } from 'react-native'
+
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,

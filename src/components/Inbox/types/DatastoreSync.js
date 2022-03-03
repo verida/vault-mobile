@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import * as Sentry from '@sentry/react-native'
 import { Content } from 'native-base'
+import React, { useState } from 'react'
+import { Alert } from 'react-native'
+
+import AccountManager from 'api/AccountManager'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
-import { Alert } from 'react-native'
-import * as Sentry from '@sentry/react-native'
-import AccountManager from 'api/AccountManager'
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)

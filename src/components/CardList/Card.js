@@ -1,17 +1,17 @@
+import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
-import Text from '../Text'
 
-import { findTypeById } from '../../helpers/inbox'
+import VeridaSvg from 'assets/icons/verida.svg'
+
 import {
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
 } from '../../constants/color'
-
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import { useNavigation } from '@react-navigation/native'
-import VeridaSvg from 'assets/icons/verida.svg'
+import { findTypeById } from '../../helpers/inbox'
+import Text from '../Text'
 
 export default ({ options }) => {
   const navigation = useNavigation()

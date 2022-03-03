@@ -1,7 +1,8 @@
+import update from 'immutability-helper'
 import { applyMiddleware, createStore } from 'redux'
 import { composeWithDevTools } from 'redux-devtools-extension'
+import thunk from 'redux-thunk'
 
-import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
@@ -14,7 +15,67 @@ import {
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
-import update from 'immutability-helper'
+import {
+  ADD_PENDING_TRANSACTION,
+  BALANCES_FETCH_FAILED,
+  BALANCES_FETCH_START,
+  CURRENCIES_FETCH_FAILED,
+  CURRENCIES_FETCH_START,
+  FETCHED_BALANCES,
+  FETCHED_CURRENCIES,
+  FETCHED_TRANSACTION_DETAIL,
+  FETCHED_TRANSACTION_PARAMS,
+  FETCHED_TRANSACTIONS,
+  REMOVE_USER_WALLETS,
+  SEND_TRANSACTION_FAILED,
+  SEND_TRANSACTION_START,
+  SEND_TRANSACTION_SUCCESS,
+  SET_USER_WALLETS,
+  TRANSACTION_DETAIL_FETCH_FAILED,
+  TRANSACTION_DETAIL_FETCH_START,
+  TRANSACTION_PARAMS_FETCH_FAILED,
+  TRANSACTION_PARAMS_FETCH_START,
+  TRANSACTIONS_FETCH_FAILED,
+  TRANSACTIONS_FETCH_START,
+} from './wallet/types'
+import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
+
+const walletInitialState = {
+  pricing: {
+    data: [],
+    fetching: false,
+    error: undefined,
+  },
+  balances: {
+    data: {},
+    fetching: false,
+    error: undefined,
+  },
+  transactions: {
+    data: [],
+    fetching: false,
+    error: undefined,
+  },
+  transactionParams: {
+    data: {},
+    fetching: false,
+    error: undefined,
+  },
+  sentTransaction: {
+    data: {},
+    fetching: false,
+    error: undefined,
+  },
+  transactionDetails: {
+    data: null,
+    fetching: false,
+    error: undefined,
+  },
+  pendingTransactions: {
+    data: [],
+  },
+  wallets: { data: {} },
+}
 
 const initialState = {
   template: [],
@@ -29,6 +90,7 @@ const initialState = {
   selectedAccount: null,
   switchAccountToast: null,
   showSeedPhraseReminder: false,
+  ...walletInitialState,
   networks: [],
   navigationLink: null,
 }
@@ -87,6 +149,137 @@ const reducer = (state = initialState, action) => {
         },
       })
 
+    case CURRENCIES_FETCH_START:
+      return {
+        ...state,
+        pricing: { fetching: true, error: undefined, data: [] },
+      }
+    case FETCHED_CURRENCIES:
+      return {
+        ...state,
+        pricing: { fetching: false, error: undefined, data: action.data },
+      }
+    case CURRENCIES_FETCH_FAILED:
+      return {
+        ...state,
+        pricing: { fetching: false, error: action.error, data: [] },
+      }
+
+    case BALANCES_FETCH_START:
+      return {
+        ...state,
+        balances: { fetching: true, error: undefined, data: {} },
+      }
+    case FETCHED_BALANCES:
+      return {
+        ...state,
+        balances: { fetching: false, error: undefined, data: action.data },
+      }
+    case BALANCES_FETCH_FAILED:
+      return {
+        ...state,
+        balances: { fetching: false, error: action.error, data: {} },
+      }
+
+    case TRANSACTIONS_FETCH_START:
+      return {
+        ...state,
+        transactions: { fetching: true, error: undefined, data: [] },
+      }
+    case FETCHED_TRANSACTIONS:
+      return {
+        ...state,
+        transactions: { fetching: false, error: undefined, data: action.data },
+      }
+    case TRANSACTIONS_FETCH_FAILED:
+      return {
+        ...state,
+        transactions: { fetching: false, error: action.error, data: [] },
+      }
+
+    case TRANSACTION_PARAMS_FETCH_START:
+      return {
+        ...state,
+        transactionParams: { fetching: true, error: undefined, data: {} },
+      }
+    case FETCHED_TRANSACTION_PARAMS:
+      return {
+        ...state,
+        transactionParams: {
+          fetching: false,
+          error: undefined,
+          data: action.data,
+        },
+      }
+    case TRANSACTION_PARAMS_FETCH_FAILED:
+      return {
+        ...state,
+        transactions: { fetching: false, error: action.error, data: {} },
+      }
+
+    case SEND_TRANSACTION_START:
+      return {
+        ...state,
+        sentTransaction: { fetching: true, error: undefined, data: {} },
+      }
+    case SEND_TRANSACTION_SUCCESS:
+      return {
+        ...state,
+        sentTransaction: {
+          fetching: false,
+          error: undefined,
+          data: action.data,
+        },
+      }
+    case SEND_TRANSACTION_FAILED:
+      return {
+        ...state,
+        sentTransaction: { fetching: false, error: action.error, data: {} },
+      }
+
+    case TRANSACTION_DETAIL_FETCH_START:
+      return {
+        ...state,
+        transactionDetails: { fetching: true, error: undefined, data: null },
+      }
+    case FETCHED_TRANSACTION_DETAIL:
+      return {
+        ...state,
+        transactionDetails: {
+          fetching: false,
+          error: undefined,
+          data: action.data,
+        },
+      }
+    case TRANSACTION_DETAIL_FETCH_FAILED:
+      return {
+        ...state,
+        transactionDetails: {
+          fetching: false,
+          error: action.error,
+          data: null,
+        },
+      }
+
+    case ADD_PENDING_TRANSACTION:
+      return {
+        ...state,
+        pendingTransactions: {
+          data: [action.data, ...state.pendingTransactions.data],
+        },
+      }
+
+    case SET_USER_WALLETS:
+      return {
+        ...state,
+        wallets: { data: action.data },
+      }
+
+    case REMOVE_USER_WALLETS:
+      return {
+        ...state,
+        ...walletInitialState,
+      }
     case SET_NETWORKS:
       return update(state, {
         networks: {
@@ -110,7 +303,7 @@ const composeEnhancers = composeWithDevTools({
   // Specify here name, actionsBlacklist, actionsCreators and other options
 })
 
-const middleware = []
+const middleware = [thunk]
 
 export default createStore(
   reducer,

@@ -14,7 +14,10 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
+
 import LoadingView from 'components/LoadingView'
+
+import Text from './Text'
 
 export interface CustomFlatListProps<ItemT> extends FlatListProps<ItemT> {
   loadData?: (skip: number) => Promise<ItemT[]>
@@ -105,6 +108,14 @@ const CustomFlatList = <ItemT,>(
     )
   }
 
+  if (loaded && data && data.length === 0) {
+    return (
+      <View style={styles.loadingContainer}>
+        <Text style={styles.noMessages}>There are no messages</Text>
+      </View>
+    )
+  }
+
   return (
     <FlatList<ItemT>
       {...rest}
@@ -126,6 +137,9 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  noMessages: {
+    fontSize: 18,
   },
 })
 

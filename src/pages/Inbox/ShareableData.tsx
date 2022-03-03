@@ -1,9 +1,9 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import * as Sentry from '@sentry/react-native'
+import update from 'immutability-helper'
+import { debounce } from 'lodash'
 import { Container, Content } from 'native-base'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import CustomFooter from 'components/Layouts/CustomFooter'
-import Button from 'components/Button'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   FlatList,
   ListRenderItemInfo,
@@ -11,17 +11,18 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
 import AntDesign from 'react-native-vector-icons/AntDesign'
+
+import AccountManager from 'api/AccountManager'
+import Button from 'components/Button'
+import CustomFooter from 'components/Layouts/CustomFooter'
+import LoadingView from 'components/LoadingView'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
+import { MainStackParams } from 'navigation/types'
 import ShareableDataItem, {
   ShareableDataItemType,
 } from 'pages/Inbox/ShareableDataItem'
-import { MainStackParams } from 'navigation/types'
-import * as Sentry from '@sentry/react-native'
-import AccountManager from 'api/AccountManager'
-import update from 'immutability-helper'
-import LoadingView from 'components/LoadingView'
-import { debounce } from 'lodash'
 
 function ShareableData(
   props: NativeStackScreenProps<MainStackParams, 'ShareableData'>
@@ -85,7 +86,6 @@ function ShareableData(
       }
       setLoading(false)
     } catch (e) {
-      console.error(e)
       Sentry.captureException(e)
       setLoading(false)
     }

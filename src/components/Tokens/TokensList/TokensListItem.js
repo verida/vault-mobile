@@ -1,16 +1,16 @@
-import React from 'react'
-import { StyleSheet, View } from 'react-native'
 import { ListItem, Text } from 'native-base'
+import React from 'react'
+import { Image, StyleSheet, View } from 'react-native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({ item, onPressItem }) => {
   const { change, label, icon, symbol, quantity, price, amount } = item
-  const positive = change > 0
+  const positive = change >= 0
 
   return (
-    <ListItem button onPress={onPressItem} style={styles.listItem}>
-      {icon}
+    <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
+      <Image source={{ uri: icon }} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
@@ -20,13 +20,13 @@ export default ({ item, onPressItem }) => {
         </View>
         <View style={styles.priceAmount}>
           <View style={styles.priceChange}>
-            <Text style={styles.amount}>${price}</Text>
+            <Text style={styles.amount}>${price.toFixed(2)}</Text>
             <Text
               style={[
                 styles.coinPriceChange,
                 positive ? styles.positive : styles.negative,
               ]}>
-              {positive ? `+ ${change}%` : `${change}%`}
+              {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
             </Text>
           </View>
           <Text style={styles.amount}>${amount.toFixed(2)}</Text>
@@ -72,5 +72,9 @@ const styles = StyleSheet.create({
   },
   negative: {
     color: '#FD4F64',
+  },
+  icon: {
+    width: 45,
+    height: 45,
   },
 })

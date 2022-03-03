@@ -1,19 +1,18 @@
-import React, { useState } from 'react'
-import { View, Modal, StyleSheet, TouchableOpacity } from 'react-native'
 import { Icon } from 'native-base'
+import React, { useState } from 'react'
+import { Modal, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Layout from 'components/Layouts/Layout'
-import Text from 'components/Text'
 import Button from 'components/Button'
+import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
 
-import { NUNITO_SANS_BOLD } from '../../constants/text'
-
-import SeedPhraseSvg from '../../assets/seed_phrase_illustration.svg'
-import PrivateKeySvg from '../../assets/private_key_illustration.svg'
 import AlertIconSvg from '../../assets/alert_icon.svg'
-import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
 import CheckboxCheckedSvg from '../../assets/checkbox_checked.svg'
+import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
+import PrivateKeySvg from '../../assets/private_key_illustration.svg'
+import SeedPhraseSvg from '../../assets/seed_phrase_illustration.svg'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
 
 const modalContent = {
   seed_phrase: {

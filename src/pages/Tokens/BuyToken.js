@@ -1,26 +1,24 @@
+import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Image,
   StyleSheet,
-  View,
   TextInput,
   TouchableOpacity,
-  Image,
+  View,
 } from 'react-native'
-import { Container, Icon } from 'native-base'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
-import Label from 'components/Label'
-import Button from 'components/Button'
-import InputStyles from 'styles/inputs'
-import Layout from 'components/Layouts/Layout'
-
-import { PRIMARY_COLOR } from 'constants/color'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-import VisaIcon from 'assets/visa_logo.svg'
 import MCIcon from 'assets/mastercard_logo.svg'
 import MCIconColored from 'assets/mastercard_logo_colored.svg'
+import VisaIcon from 'assets/visa_logo.svg'
+import Button from 'components/Button'
+import Label from 'components/Label'
+import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { PRIMARY_COLOR } from 'constants/color'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import InputStyles from 'styles/inputs'
 
 export default ({ navigation }) => {
   const [cardNumber, setCardNumber] = useState('')
@@ -107,7 +105,7 @@ export default ({ navigation }) => {
             style={styles.saveButton}
             color='primary'
             // disabled={!name}
-            onPress={() => console.log()}>
+            onPress={() => ({})}>
             Buy
           </Button>
           <TouchableOpacity>

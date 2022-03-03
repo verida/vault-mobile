@@ -1,4 +1,3 @@
-import Text from 'components/Text'
 import React, { useState } from 'react'
 import {
   Clipboard,
@@ -7,8 +6,10 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+
+import Text from 'components/Text'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export type DidViewProps = Omit<ViewProps, 'children'> & {
   did: string

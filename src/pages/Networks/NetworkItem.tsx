@@ -1,8 +1,9 @@
-import Text from 'components/Text'
 import React from 'react'
 import { StyleSheet, TouchableOpacity, ViewProps } from 'react-native'
-import { LIGHTGREY_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { CheckBox } from 'react-native-elements'
+
+import Text from 'components/Text'
+import { LIGHTGREY_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type NetworkType = {

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View, ViewProps } from 'react-native'
 import Text from 'components/Text'
@@ -6,16 +7,31 @@ import { ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { List } from 'native-base'
 import DataFieldList from 'components/Data/DataFieldList'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+=======
+import { isEmpty } from 'lodash'
+import { List } from 'native-base'
+import React from 'react'
+import { Image, StyleSheet, View, ViewProps } from 'react-native'
+>>>>>>> develop
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { QRCode } from 'react-native-custom-qr-codes-expo'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+
 import { DefaultAvatar } from 'api/utils'
+<<<<<<< HEAD
 import { isEmpty } from 'lodash'
 import { Credentials, SharingCredential } from '@verida/verifiable-credentials'
 import AccountManager from 'api/AccountManager'
 import { Context } from '@verida/client-ts'
 import * as Sentry from '@sentry/react-native'
 import LoadingView from 'components/LoadingView'
+=======
+import DataFieldList from 'components/Data/DataFieldList'
+import Text from 'components/Text'
+import { SUCCESS_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
+>>>>>>> develop
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any

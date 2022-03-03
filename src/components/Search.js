@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
-import { TextInput, StyleSheet } from 'react-native'
+import { StyleSheet, TextInput } from 'react-native'
+
 import { BLACK_COLOR_OPACITY } from '../constants/color'
 
 export default () => {

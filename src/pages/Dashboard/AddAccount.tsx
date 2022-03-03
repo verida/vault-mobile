@@ -1,20 +1,21 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { COUNTRIES } from 'helpers/country-list'
 import React, { useState } from 'react'
 import { Alert, StyleSheet, TextInput, View } from 'react-native'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { AuthStackParams } from 'navigation/types'
-import Label from 'components/Label'
-import InputStyles from 'styles/inputs'
-import DropDownPicker from 'components/Select'
-import { COUNTRIES } from 'helpers/country-list'
-import Button from 'components/Button'
-import { Dispatch } from 'redux'
-import { setPublicProfileData } from 'reduxStore/general/actions'
 import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
+
+import AccountManager from 'api/AccountManager'
+import Button from 'components/Button'
+import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import DropDownPicker from 'components/Select'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import AccountManager from 'api/AccountManager'
+import { AuthStackParams } from 'navigation/types'
+import { setPublicProfileData } from 'reduxStore/general/actions'
+import InputStyles from 'styles/inputs'
 
 type Option = {
   label: string
@@ -30,20 +31,23 @@ function AddAccount(
   const [processing, setProcessing] = useState(false)
 
   const onCountryChange = (option: Option) => setCountry(option)
-  const onCreateAccount = async () => {
+  const onCreateAccount = () => {
     try {
       setProcessing(true)
-      await AccountManager.getInstance().createAccount({
-        name,
-        country: country?.value || '',
-      })
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      props.setPublicProfileData({ name, country: country?.value })
-      setProcessing(false)
-      navigation.goBack()
+      // FIXME: this block of code is super heavy need to hold its execution until running the animation (setProcessing takes effect first)
+      setTimeout(async () => {
+        await AccountManager.getInstance().createAccount({
+          name,
+          country: country?.value || '',
+        })
+
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        props.setPublicProfileData({ name, country: country?.value })
+        setProcessing(false)
+        navigation.goBack()
+      }, 0)
     } catch (error) {
-      console.error(error)
       setProcessing(false)
       Alert.alert('Error', 'Failed to create account, please try again later')
     }
@@ -59,14 +63,16 @@ function AddAccount(
             placeholder={'e.g John'}
             style={InputStyles.input}
             value={name}
+            editable={!processing}
             onChangeText={(t) => setName(t)}
           />
 
           <Label>Country</Label>
           <DropDownPicker
-            searchable={true}
+            searchable
+            disabled={processing}
             searchablePlaceholder='Search for country'
-            showArrow={true}
+            showArrow
             placeholder=''
             items={COUNTRIES}
             containerStyle={InputStyles.select}

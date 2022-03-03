@@ -1,7 +1,8 @@
-import React from 'react'
 import { Content } from 'native-base'
-import { WHITE_COLOR } from 'constants/color'
+import React from 'react'
 import { ViewProps } from 'react-native'
+
+import { WHITE_COLOR } from 'constants/color'
 
 const CustomContent: React.FC<ViewProps> = (props) => {
   const { style, ...rest } = props

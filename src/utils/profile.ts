@@ -1,6 +1,7 @@
-import AccountManager from 'api/AccountManager'
-import { get } from 'lodash'
 import { countries } from 'countries-list'
+import { get } from 'lodash'
+
+import AccountManager from 'api/AccountManager'
 
 export async function getUserCountryCode() {
   const vault = AccountManager.getInstance().vault as any

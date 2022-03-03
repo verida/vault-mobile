@@ -1,8 +1,8 @@
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
-import PropertyListItem from './PropertyListItem'
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '../../constants/color'
+import PropertyListItem from './PropertyListItem'
 
 export default ({ list }) =>
   list.map((item, index) => {
