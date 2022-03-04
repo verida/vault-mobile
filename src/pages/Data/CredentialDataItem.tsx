@@ -4,7 +4,16 @@ import { SharingCredential } from '@verida/verifiable-credentials'
 import { isEmpty } from 'lodash'
 import { List } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Image, StyleSheet, View, ViewProps } from 'react-native'
+import {
+  Dimensions,
+  Image,
+  Modal,
+  SafeAreaView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewProps,
+} from 'react-native'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import { QRCode } from 'react-native-custom-qr-codes-expo'
@@ -23,11 +32,15 @@ export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   item: any
 }
 
+const { width: SCREEN_WIDTH } = Dimensions.get('screen')
+const MODAL_HORIZONTAL_MARGIN = 20
+
 function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, item, ...rest } = props
   const [credUri, setCredUri] = useState('')
   const [loading, setLoading] = useState(false)
   const [verified, setVerified] = useState(false)
+  const [showFullscreenQr, setShowFullscreenQr] = useState(false)
 
   const {
     issuer: { name: issuerName, avatar: issuerAvatar } = {
@@ -68,6 +81,27 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     return null
   }
 
+  function renderQRCode(fullScreen = false) {
+    if (isEmpty(credUri)) {
+      return null
+    }
+    return (
+      <QRCode
+        logo={require('assets/vault-logo.png')}
+        logoSize={60}
+        size={fullScreen ? SCREEN_WIDTH - MODAL_HORIZONTAL_MARGIN * 2 : 207}
+        codeStyle='dot'
+        innerEyeStyle='circle'
+        padding={0.5}
+        content={credUri}
+      />
+    )
+  }
+
+  function toggleFullscreenQr() {
+    setShowFullscreenQr((prevState) => !prevState)
+  }
+
   const avatarSource = issuerAvatar || DefaultAvatar
   return (
     <View style={styles.container} {...rest}>
@@ -78,15 +112,9 @@ function CredentialDataItem(props: CredentialDataItemProps) {
       </View>
       <View style={styles.qrContainer}>
         {!isEmpty(credUri) ? (
-          <QRCode
-            logo={require('assets/vault-logo.png')}
-            logoSize={60}
-            size={207}
-            codeStyle='dot'
-            innerEyeStyle='circle'
-            padding={0.5}
-            content={credUri}
-          />
+          <TouchableOpacity onPress={toggleFullscreenQr}>
+            {renderQRCode()}
+          </TouchableOpacity>
         ) : (
           <LoadingView type={'small'} style={styles.loadingView} />
         )}
@@ -108,6 +136,23 @@ function CredentialDataItem(props: CredentialDataItemProps) {
       <List style={{ alignSelf: 'stretch' }}>
         <DataFieldList data={data} />
       </List>
+      <Modal visible={showFullscreenQr}>
+        <View style={styles.qrCodeModalOuterContainer}>
+          <SafeAreaView style={styles.safeArea}>
+            <View style={styles.qrCodeModalContainer}>
+              <View style={styles.qrCodeModalContent}>
+                {renderQRCode(true)}
+              </View>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+                onPress={toggleFullscreenQr}>
+                <AntDesign name='close' size={24} color='white' />
+              </TouchableOpacity>
+            </View>
+          </SafeAreaView>
+        </View>
+      </Modal>
     </View>
   )
 }
@@ -154,6 +199,27 @@ const styles = StyleSheet.create({
   },
   loadingView: {
     maxHeight: 50,
+  },
+  qrCodeModalOuterContainer: {
+    flex: 1,
+    backgroundColor: 'black',
+  },
+  safeArea: {
+    flex: 1,
+  },
+  qrCodeModalContainer: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'stretch',
+  },
+  qrCodeModalContent: {
+    backgroundColor: 'white',
+    marginHorizontal: MODAL_HORIZONTAL_MARGIN,
+  },
+  modalCloseButton: {
+    position: 'absolute',
+    top: 20,
+    right: 20,
   },
 })
 
