@@ -5,6 +5,7 @@ import React, { useEffect, useRef } from 'react'
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import { useAuth } from 'hooks/useAuth'
+import { useDataRegion } from 'hooks/useDataRegion'
 import AuthNavigator from 'navigation/AuthNavigator'
 import MainNavigator from 'navigation/MainNavigator'
 import { RootStackParams } from 'navigation/types'
@@ -22,6 +23,7 @@ export function navigate(name: unknown, params: unknown) {
 function RootNavigator() {
   const { refresh, authenticated, loaded } = useAuth()
   const mounted = useRef(false)
+  useDataRegion()
 
   useEffect(() => {
     if (mounted.current) {

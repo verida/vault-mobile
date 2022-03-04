@@ -1,4 +1,5 @@
 import { Network } from 'api/types'
+import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
@@ -8,7 +9,7 @@ export type RootStackParams = {
 
 export type AuthStackParams = {
   Start: undefined
-  CreateAccount: undefined
+  CreateAccount: { mode: CreateAccountMode }
   ImportAccount: undefined
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
@@ -55,7 +56,7 @@ export type MainStackParams = {
   ChangePin: undefined
   // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
-  AddAccount: undefined
+  AddAccount: { mode: CreateAccountMode }
   ImportAccount: undefined
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
