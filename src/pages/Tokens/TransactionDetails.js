@@ -15,14 +15,14 @@ const TransactionDetails = ({
   data,
   onGetTransactionDetails,
 }) => {
-  const { id } = route.params
+  const { id, tokenAddress } = route.params
   useEffect(() => {
     async function init() {
-      onGetTransactionDetails(id)
+      onGetTransactionDetails(id, tokenAddress)
     }
 
     init()
-  }, [id, onGetTransactionDetails])
+  }, [id, onGetTransactionDetails, tokenAddress])
 
   const { transaction, loading } = data
 
@@ -53,7 +53,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionDetails: (id) => dispatch(getTransactionDetails(id)),
+    onGetTransactionDetails: (id, tokenAddress) =>
+      dispatch(getTransactionDetails(id, tokenAddress)),
   }
 }
 

@@ -1,12 +1,11 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
-import { useDataRegion } from 'hooks/useDataRegion'
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
+import Create from 'pages/Account/Create'
 import ChangePin from 'pages/Authentication/ChangePin'
-import AddAccount from 'pages/Dashboard/AddAccount'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
@@ -44,7 +43,6 @@ const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
   useEventHandlers()
-  useDataRegion()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -87,7 +85,7 @@ function MainNavigator() {
       <Stack.Screen name={'Settings'} component={Settings} />
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
-      <Stack.Screen name={'AddAccount'} component={AddAccount} />
+      <Stack.Screen name={'AddAccount'} component={Create} />
       <Stack.Screen name={'ImportAccount'} component={ImportAccount} />
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen

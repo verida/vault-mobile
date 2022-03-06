@@ -24,6 +24,7 @@ import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
+import { CreateAccountMode } from 'pages/Account/Create'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
@@ -155,7 +156,7 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('AddAccount')
+      navigation.navigate('AddAccount', { mode: CreateAccountMode.ADD })
     })
   }
 

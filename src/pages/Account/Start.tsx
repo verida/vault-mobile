@@ -11,11 +11,15 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
 
 import Button from '../../components/Button'
+import { CreateAccountMode } from './Create'
 
 function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   const title = "Welcome!\nIt's time to own your personal data."
 
-  const createAcc = () => props.navigation.navigate('CreateAccount')
+  const createAcc = () =>
+    props.navigation.navigate('CreateAccount', {
+      mode: CreateAccountMode.CREATE,
+    })
 
   return (
     <LinearGradient
