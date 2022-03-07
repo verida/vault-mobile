@@ -9,7 +9,7 @@ import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
 import store from 'reduxStore'
 
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -25,9 +25,6 @@ export const WALLETS_STORAGE_KEY = 'wallets'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
-const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/'
-export const VERIDA_TESTNET_NOTIFICATION_SERVER =
-  'https://vpns.testnet.verida.io:5011'
 const CONFIG_DB = 'vault-config'
 const SEED_PHRASE_BACKED_UP_CONFIG = 'seedPhraseBackedUp'
 
@@ -38,11 +35,26 @@ class AccountManager {
   public vault: Vault | undefined
   public accounts: NormalizedAccounts
   private selectedAccount: Account | undefined
+  private dbServerUrl = ''
+  private messageServerUrl = ''
+  private notificationServerUrl = ''
 
   private static instance: AccountManager
 
   private constructor() {
     this.accounts = {}
+  }
+
+  public getDbServerUrl() {
+    return this.dbServerUrl
+  }
+
+  public getMessageServerUrl() {
+    return this.messageServerUrl
+  }
+
+  public getNotificationServerUrl() {
+    return this.notificationServerUrl
   }
 
   private async filterDids() {
@@ -118,19 +130,22 @@ class AccountManager {
       this.client = new Client({
         environment: VERIDA_ENVIRONMENT,
       })
+
+      // Endpoint uris only get passed when creating account.
+      // When an account is reconnected, endpoint uris are selected based on DID documents of that account.
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
+            endpointUri: this.dbServerUrl,
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
+            endpointUri: this.messageServerUrl,
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: VERIDA_TESTNET_NOTIFICATION_SERVER,
+            endpointUri: this.notificationServerUrl,
           },
         },
         {
@@ -262,8 +277,18 @@ class AccountManager {
     }
   }
 
-  public async createAccount(userData: UserData): Promise<Account | undefined> {
+  public async createAccount(
+    userData: UserData,
+    networkNode: NetworkNode
+  ): Promise<Account | undefined> {
     try {
+      // If networkNode is provided correctly, replace the default endpoint urls
+      if (!isEmpty(networkNode)) {
+        this.dbServerUrl = networkNode.db_address
+        this.messageServerUrl = networkNode.messaging_address
+        this.notificationServerUrl = networkNode.notification_address
+      }
+
       const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
 
       this.selectedAccount = {

@@ -7,6 +7,7 @@ import {
   ADD_ACCOUNT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
+  SET_COUNTRIES,
   SET_NAVIGATION_LINK,
   SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
@@ -92,6 +93,7 @@ const initialState = {
   showSeedPhraseReminder: false,
   ...walletInitialState,
   networks: [],
+  countries: [],
   navigationLink: null,
 }
 
@@ -290,6 +292,13 @@ const reducer = (state = initialState, action) => {
     case SET_NAVIGATION_LINK:
       return update(state, {
         navigationLink: {
+          $set: action.payload,
+        },
+      })
+
+    case SET_COUNTRIES:
+      return update(state, {
+        countries: {
           $set: action.payload,
         },
       })
