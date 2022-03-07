@@ -213,12 +213,5 @@
     "tty": "tty-browserify",
     "vm": "vm-browserify",
     "tls": false
-  },
-  "expo": {
-    "autolinking": {
-      "exclude": [
-        "expo-file-system"
-      ]
-    }
   }
 }
