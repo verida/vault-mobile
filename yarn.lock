@@ -3810,9 +3810,8 @@
     "@verida/keyring" "^1.1.3"
     url-parse "^1.5.3"
 
-"@verida/vault-common@https://github.com/verida/vault-common.git":
+"@verida/vault-common@file:/Users/hienphung/repo/react/vault-common":
   version "0.2.2"
-  resolved "https://github.com/verida/vault-common.git#25fc567eb360c30e0496aa62abaa305721a70776"
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.20"

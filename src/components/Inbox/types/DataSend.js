@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react-native'
+import { isEmpty } from 'lodash'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
 import { Alert } from 'react-native'
@@ -6,6 +7,20 @@ import { Alert } from 'react-native'
 import AccountManager from 'api/AccountManager'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
+
+function buildErrorMessage(errors) {
+  if (isEmpty(errors)) {
+    return 'Failed to save data.'
+  }
+
+  const errorsByDataEntries = Object.entries(errors).map(([key, value]) => {
+    let message = `${key}:`
+    const errorsList = value.map((error) => `• ${error}`)
+    return (message += errorsList.join('\n'))
+  })
+
+  return errorsByDataEntries.join(`\n`)
+}
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
@@ -21,7 +36,7 @@ export default ({ item, inboxItem, type, navigation }) => {
       const handleResult = await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
       if (!handleResult.success) {
-        Alert.alert('Error', 'Invalid schema, part of data maybe missing')
+        Alert.alert('Error', buildErrorMessage(handleResult.errors))
       } else {
         navigation.goBack()
       }
