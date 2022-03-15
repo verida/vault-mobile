@@ -13,13 +13,15 @@ function buildErrorMessage(errors) {
     return 'Failed to save data.'
   }
 
-  const errorsByDataEntries = Object.entries(errors).map(([key, value]) => {
-    let message = `${key}:`
-    const errorsList = value.map((error) => `• ${error}`)
-    return (message += errorsList.join('\n'))
+  const errorsList = errors.map((errorsByDataEntry) => {
+    return errorsByDataEntry.errors
+      .map((error) => {
+        return `• ${typeof error === 'string' ? error : error.message}`
+      })
+      .join('\n')
   })
 
-  return errorsByDataEntries.join(`\n`)
+  return `Cannot save data due to these errors:\n${errorsList.join('\n')}`
 }
 
 export default ({ item, inboxItem, type, navigation }) => {
