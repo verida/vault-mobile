@@ -1224,16 +1224,17 @@
   resolved "https://registry.yarnpkg.com/@bcoe/v8-coverage/-/v8-coverage-0.2.3.tgz#75a2e8b51cb758a7553d6804a5932d7aace75c39"
   integrity sha512-0hYQ8SB4Db5zvZB4axdMHGwEaQjkZzFjQiN9LVYvIFB2nSUHW9tYpxWriPrWDASIxiaXax83REcLxuSdnGPZtw==
 
-"@ceramicnetwork/common@^1.10.1":
-  version "1.10.1"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/common/-/common-1.10.1.tgz#48e3ec7047a8f57fd4590cd2160985a23627741c"
-  integrity sha512-8qcuXwJzpy3H6b98mng7egSvJXczkt0/pePPOVb4Se4PlxbnLf978NNx3Dg5tzXnJBBDNifuBxY8cBXFwpLS3w==
+"@ceramicnetwork/common@^1.11.0":
+  version "1.11.0"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/common/-/common-1.11.0.tgz#f195ef61de73366a64d775496c9328660e9a30a2"
+  integrity sha512-UU7/POxSl+Wf5f/Wi/ISxhPqaHKqJ4crvVL9/I4FrnDPEqsUPasBwuo5alN6T2zz+AMDksc+bk1FXKLKKY9VRg==
   dependencies:
-    "@ceramicnetwork/streamid" "^1.3.5"
-    "@overnightjs/logger" "^1.2.0"
+    "@ceramicnetwork/streamid" "^1.3.9"
+    "@overnightjs/logger" "1.2.1"
     abort-controller "^3.0.0"
     caip "~1.0.0"
     cids "~1.1.6"
+    colors "1.3.3"
     cross-fetch "^3.1.4"
     flat "^5.0.2"
     lodash.clonedeep "^4.5.0"
@@ -1242,42 +1243,42 @@
     uint8arrays "^2.0.5"
 
 "@ceramicnetwork/http-client@^1.3.0":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-1.5.3.tgz#f9917c0a6ac99e2cfe2e0a026111ac31df2f17bf"
-  integrity sha512-M/9Y624AwZGfwNcMHVzvih5DKNyN6nmJzdZJy+iCPIfgUV/++grhLkb5svlZ36yJCmwI6bvzFz7yrGtPkKa1ww==
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/http-client/-/http-client-1.5.7.tgz#de2046a990e497dfd7dcba6cbc24eaedfd0e8749"
+  integrity sha512-gdoQ88SWM5JaEA4DfsfcO1hJdbHtRLgNIh00lFU6LgslPktM01SajRK0VckIqcDJBcTXIAcRYIV1A5mU4YV61w==
   dependencies:
-    "@ceramicnetwork/common" "^1.10.1"
-    "@ceramicnetwork/stream-caip10-link" "^1.2.5"
-    "@ceramicnetwork/stream-tile" "^1.5.3"
-    "@ceramicnetwork/streamid" "^1.3.5"
+    "@ceramicnetwork/common" "^1.11.0"
+    "@ceramicnetwork/stream-caip10-link" "^1.2.9"
+    "@ceramicnetwork/stream-tile" "^1.5.7"
+    "@ceramicnetwork/streamid" "^1.3.9"
     query-string "7.0.1"
     rxjs "^7.0.0"
 
-"@ceramicnetwork/stream-caip10-link@^1.2.5":
-  version "1.2.5"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-caip10-link/-/stream-caip10-link-1.2.5.tgz#ebfd1324152f8c0a1712871c27029ec9adad953a"
-  integrity sha512-QcEuyKzwSJrb38CAbxll2NCVSHZwCyjFWRQIpc9j2lKCNr5WPYEZhxWql7LvtBuTnr/4il6wbuOF2RVJFK/kxg==
+"@ceramicnetwork/stream-caip10-link@^1.2.9":
+  version "1.2.9"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-caip10-link/-/stream-caip10-link-1.2.9.tgz#5c50a185e230184a8e0aa905770ab2d5a7bf15ec"
+  integrity sha512-DPkJJZ4iYQBMeAFkqIRRKQxq5lb4+4jYWWF2JKAc/XaNtsYw2GRiMEASFL74iMkgkPHxWZnVZg7YXFeDzfR/jw==
   dependencies:
-    "@ceramicnetwork/common" "^1.10.1"
-    "@ceramicnetwork/streamid" "^1.3.5"
+    "@ceramicnetwork/common" "^1.11.0"
+    "@ceramicnetwork/streamid" "^1.3.9"
     caip "~0.9.2"
     did-resolver "^3.1.3"
 
-"@ceramicnetwork/stream-tile@^1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-tile/-/stream-tile-1.5.3.tgz#09af53e7686eb8645410ff05e62b061b56cabf73"
-  integrity sha512-enqbQHyOQgLANoqRNs8Rni4f2tkxUZvcSKtOJ6AB3plozwjfw4PTIyPO86UQ1DFOscrdW5Qw7qCyD0hC0eKl4w==
+"@ceramicnetwork/stream-tile@^1.5.7":
+  version "1.5.7"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/stream-tile/-/stream-tile-1.5.7.tgz#66d481b33f756f27372d9fe3b12f78d72d6538c7"
+  integrity sha512-2419vN6lh9e4CsGzOzpJTYRWhRQPKhVZP/i34RYUTgdUmdOXgb62RipZG0IvTY5DtXNfnoRcTwOe+BZqvkCDFQ==
   dependencies:
-    "@ceramicnetwork/common" "^1.10.1"
-    "@ceramicnetwork/streamid" "^1.3.5"
+    "@ceramicnetwork/common" "^1.11.0"
+    "@ceramicnetwork/streamid" "^1.3.9"
     "@stablelib/random" "^1.0.0"
     fast-json-patch "^2.2.1"
     uint8arrays "^2.0.5"
 
-"@ceramicnetwork/streamid@^1.3.5":
-  version "1.3.5"
-  resolved "https://registry.yarnpkg.com/@ceramicnetwork/streamid/-/streamid-1.3.5.tgz#6052318763f24446b32017614c533a6dd22f6d0f"
-  integrity sha512-/hz2PdG0zaC8t131G5LTNz/nYtwDJOw7hMWWb6rh8gAdba60QSx+5FajtwJy4tLrbLsXrC3PgbqjdSO9ow0e2w==
+"@ceramicnetwork/streamid@^1.3.9":
+  version "1.3.9"
+  resolved "https://registry.yarnpkg.com/@ceramicnetwork/streamid/-/streamid-1.3.9.tgz#5b83a8f0118e4bc0986d19dc565ab38d8c3ebdbd"
+  integrity sha512-XmW9QrSLv5pMbjV5GgbF6BFatdH7pZP53U2m8SINtdL9NDKj4B701ZyVVpx+NtE4djx34fOgK/ldbVOjyt8tPQ==
   dependencies:
     cids "~1.1.6"
     ipld-dag-cbor "^0.17.0"
@@ -2645,7 +2646,7 @@
     "@nodelib/fs.scandir" "2.1.5"
     fastq "^1.6.0"
 
-"@overnightjs/logger@^1.2.0":
+"@overnightjs/logger@1.2.1":
   version "1.2.1"
   resolved "https://registry.yarnpkg.com/@overnightjs/logger/-/logger-1.2.1.tgz#dde726683f39abf726fde57cff578fca96bc183a"
   integrity sha512-ssLUjjj/DXl6m4oydyA6vgVHyJcis4Ui0hS7+EyOxZVMXbiVZeGOficfJfgELTNqTbHLmTb3TBVyJspNDkqbLw==
@@ -3639,44 +3640,44 @@
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-"@verida/account-node@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@verida/account-node/-/account-node-1.1.6.tgz#8eef58ad7f9a0702c639b39a36f48d1809f32b16"
-  integrity sha512-XOL221R1c7Hl+cp/TOVdHZI5mXWc6ECLAiU4gSmLCa6K59HIHpNzpmQ3bxnlHLUlyGVTQ+AOHeYXh+Q980Pzrw==
+"@verida/account-node@^1.1.9":
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/@verida/account-node/-/account-node-1.1.9.tgz#52247eccb5341165c0ed0139be75adb71cb75ef3"
+  integrity sha512-8HpymV9rkyYfOagYmCbGm53Ra4sypRMDx2MIe+Muv4MfBtNFCm5mqF8B9wPtuWjUm5fYXc0euk2pPDigseCYbw==
   dependencies:
-    "@verida/account" "^1.1.6"
-    "@verida/did-client" "^0.1.5"
-    "@verida/did-document" "^1.0.3"
-    "@verida/encryption-utils" "^1.1.2"
-    "@verida/keyring" "^1.1.2"
+    "@verida/account" "^1.1.9"
+    "@verida/did-client" "^0.1.8"
+    "@verida/did-document" "^1.0.5"
+    "@verida/encryption-utils" "^1.1.3"
+    "@verida/keyring" "^1.1.3"
 
-"@verida/account@^1.1.6":
-  version "1.1.6"
-  resolved "https://registry.yarnpkg.com/@verida/account/-/account-1.1.6.tgz#8f37bd6e0f164608590fc8313f4e20485926183c"
-  integrity sha512-gOpwGtZRy1qJKsuvuDrlmv+EIWluM8QYTEMms1Pdox0966Xab8zcUFD1ng/G6n0C0WLY6fxkOaqV4VaUf6+9rQ==
+"@verida/account@^1.1.9":
+  version "1.1.9"
+  resolved "https://registry.yarnpkg.com/@verida/account/-/account-1.1.9.tgz#7c21fb7711ff9d5f554544e22fdfef1782229dd7"
+  integrity sha512-AfXhd2C4VT0D5uoUGYnLv2rBHv7Uds98P5wx/7cWehoFAVXitBrAmhoEDrO1DN8HZEO+m2vpgMCaswCUQ5xzsA==
   dependencies:
-    "@verida/keyring" "^1.1.2"
-    "@verida/storage-link" "^1.1.5"
+    "@verida/keyring" "^1.1.3"
+    "@verida/storage-link" "^1.1.8"
     did-jwt "5.7.0"
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/client-rn@^1.1.10":
-  version "1.1.10"
-  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.10.tgz#aa949c7a91b72ed415d3e0c8f904e5215fd2afea"
-  integrity sha512-RFizTAo6897nV7MIapsgKPmJdLo6lLjaUE6G6rJozL9jRuV6BQK9SM+BkCudZRSzLBzkNymdX1CjIRdLFLIpfg==
+"@verida/client-rn@^1.1.13":
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.13.tgz#8b54201d3d0edf0402561f226a874fe270151223"
+  integrity sha512-CPT9q4f1/WGyQlymSSUgUWsV3KkXzh6IhqRHE5NCWnf+yx+aPp212Pt6nbZlEVaSmBUJ4tybyM/KlomwOYv3TQ==
   dependencies:
     "@ceramicnetwork/http-client" "^1.3.0"
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
     "@tradle/react-native-http" "^2.0.0"
-    "@verida/account" "^1.1.6"
-    "@verida/account-node" "^1.1.6"
-    "@verida/did-client" "^0.1.5"
-    "@verida/did-document" "^1.0.3"
-    "@verida/encryption-utils" "^1.1.2"
-    "@verida/keyring" "^1.1.2"
+    "@verida/account" "^1.1.9"
+    "@verida/account-node" "^1.1.9"
+    "@verida/did-client" "^0.1.8"
+    "@verida/did-document" "^1.0.5"
+    "@verida/encryption-utils" "^1.1.3"
+    "@verida/keyring" "^1.1.3"
     "@verida/pouchdb-replication-react-native" "^7.0.0-prerelease"
-    "@verida/storage-link" "^1.1.5"
+    "@verida/storage-link" "^1.1.8"
     ajv "^8.6.3"
     ajv-formats "^2.1.1"
     assert "^1.1.1"
@@ -3723,39 +3724,72 @@
     uuid "^8.3.2"
     vm-browserify "0.0.4"
 
-"@verida/did-client@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@verida/did-client/-/did-client-0.1.5.tgz#065f516c3330f9091f62af8d7f4f2e64c5c36a63"
-  integrity sha512-p9C83veY7lzeQ34VBgMd+0u0EV+5EyzjnMyNOpNRMNQqJL6+LNwBQEge1j7PvbaDlpQ2D/+zK+Lg1LvlRqwcVw==
+"@verida/client-ts@^1.1.13":
+  version "1.1.13"
+  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-1.1.13.tgz#b467b1c5ee6f7ab0a8843ce75dbf22610b3708ca"
+  integrity sha512-RZnUQIelHmrGxzwWZctWh+k6dv1BNJXYIj0GgsCIbrqCJYjBF37ITpUherfvIKiEkBSgZsfu1TkHAuZMF42ZJw==
   dependencies:
-    "@verida/did-document" "^1.0.3"
+    "@verida/account" "^1.1.9"
+    "@verida/account-node" "^1.1.9"
+    "@verida/did-client" "^0.1.8"
+    "@verida/did-document" "^1.0.5"
+    "@verida/encryption-utils" "^1.1.3"
+    "@verida/keyring" "^1.1.3"
+    "@verida/storage-link" "^1.1.8"
+    ajv "^8.6.3"
+    ajv-formats "^2.1.1"
+    axios "^0.21.2"
+    bs58 "^4.0.1"
+    crypto-pouch "git+https://github.com/tahpot/crypto-pouch.git#feature/support-key-import"
+    did-jwt "5.7.0"
+    json-schema-ref-parser "^9.0.9"
+    json-schema-resolve-allof "^1.5.0"
+    lodash "^4.17.21"
+    pouchdb "^7.2.2"
+    pouchdb-find "^7.2.2"
+    uuid "^8.3.2"
+
+"@verida/did-client@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@verida/did-client/-/did-client-0.1.8.tgz#fd53fdea98e6eea1331de6bdfab34fb0ec09b391"
+  integrity sha512-QO2RtjH5JhjkNkUnxTclW3YyNRAm8f/MdWQ2gnSPwq+iZ0tcmGueyK9+4ZkrGbg6OmZxEmujdoez/FMHYZvIOQ==
+  dependencies:
+    "@verida/did-document" "^1.0.5"
     axios "^0.23.0"
     ethers "^5.5.1"
 
-"@verida/did-document@^1.0.3":
-  version "1.0.3"
-  resolved "https://registry.yarnpkg.com/@verida/did-document/-/did-document-1.0.3.tgz#bdf64df9274715820eba171e4e13b5a13da484ab"
-  integrity sha512-iwGL7dMgI4Qbfv6EHKEAAeU7iLQN49IdTJaQgj7wW4N8JoYOzXqAlLLLoB3O0D9HAPy7915PfcT1vNTxbR1S4A==
+"@verida/did-document@^1.0.5":
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/@verida/did-document/-/did-document-1.0.5.tgz#18ff73560b183f9601ef8f6f744e0bc0ebb0f7a8"
+  integrity sha512-ELDRXHDXiPO8maoWCAjhCDvj8HB9vJCSyEJTDaGBgW5mPUY00w3pELJOVX17Ln+CIEquZzQgZGbogrbbnItYUg==
   dependencies:
-    "@verida/encryption-utils" "^1.1.2"
-    "@verida/keyring" "^1.1.2"
+    "@verida/encryption-utils" "^1.1.3"
+    "@verida/keyring" "^1.1.3"
     did-resolver "^3.1.2"
 
-"@verida/encryption-utils@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@verida/encryption-utils/-/encryption-utils-1.1.2.tgz#4d7daddc8bbcfa5888a62be4e63c8f48ca58ce70"
-  integrity sha512-BrNNmddUbWL2hLQFiwj1joWFzbvLIjIUfvG+m8hOc2sjz1owQINPSd7UTG6c21NoFYX+0XKCFCjiJROQXqpSgw==
+"@verida/did-resolver@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@verida/did-resolver/-/did-resolver-0.1.8.tgz#0a30a33eedb3f564b3bd5b943ed9b1111c9859b3"
+  integrity sha512-yUrURVnNmsElSxOnyxs/wINUpAKccrXzzd84Ryq/iHETUxsmOlsSP1Bxxgbnwj4Ci1YQ+KyAY9il/Ycp/lwn/w==
+  dependencies:
+    "@verida/did-client" "^0.1.8"
+    did-resolver "^3.1.2"
+
+"@verida/encryption-utils@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@verida/encryption-utils/-/encryption-utils-1.1.3.tgz#e2c2f4918027f3e53d938fb3bc3966ebf1571249"
+  integrity sha512-qxLH0Tt4ufgE0I3aJFZfwjS2jACROy+X9oocUtvMInTTZNshHCt0uoyr7BVsnY6Ihifk6lkf9jjs18y9wN2xyA==
   dependencies:
     ethers "^5.5.1"
     tweetnacl "^1.0.3"
     tweetnacl-util "^0.15.1"
 
-"@verida/keyring@^1.1.2":
-  version "1.1.2"
-  resolved "https://registry.yarnpkg.com/@verida/keyring/-/keyring-1.1.2.tgz#553a273eeac40ed32d3dbce2b483268e00664b56"
-  integrity sha512-0RpH/++7Z0Tpd1AM16W2nlvMMMnFkVEbCX1tzz0rYKvMDESjqhogRy7v3IETK9l9FnL9SazUzzP2JQj5ABuiGg==
+"@verida/keyring@^1.1.3":
+  version "1.1.3"
+  resolved "https://registry.yarnpkg.com/@verida/keyring/-/keyring-1.1.3.tgz#26e827f2877c3be0ba0dfdedc761a1c6a1ad905d"
+  integrity sha512-qeXBMRMxU3BW7UtGsJD5rd2ZOc9j8C68iWnGOqfFsHt8aSg8uR9d24E6scDb/KX7mK6Jcp0xSKd0meRzLBmy4g==
   dependencies:
-    "@verida/encryption-utils" "^1.1.2"
+    "@verida/encryption-utils" "^1.1.3"
     ethers "^5.5.1"
     tweetnacl "^1.0.3"
     uuid "^8.3.2"
@@ -3765,24 +3799,39 @@
   resolved "https://registry.yarnpkg.com/@verida/pouchdb-replication-react-native/-/pouchdb-replication-react-native-7.0.0-prerelease.tgz#a33292678e1a4dcf5243c3dc0bf350035e16832a"
   integrity sha512-hIUujAz5gYxk2tKSimB9b3tClsuMX61hGkVIU8t0qur8JQyhO8Yl87Ip91c/GChHu0eOUrVYCw9swXj9K+3aag==
 
-"@verida/storage-link@^1.1.5":
-  version "1.1.5"
-  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-1.1.5.tgz#232a725b5518d159b367f9825f01cf8415d13c97"
-  integrity sha512-8d90x4Bb0/+QZ7WhEcQTSkqvRGtRO5zN0nURLeEME3wFY0fuypOvU+YMRST4jE7ZyfxinsLiFRoFgOkqVU3jQg==
+"@verida/storage-link@^1.1.8":
+  version "1.1.8"
+  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-1.1.8.tgz#58b9b127bb6b846bd556ef7567c6931b10d64516"
+  integrity sha512-H80JrldN8WaYm8P6dq76EYQztG4AHI2P1dhwuhgrEKjOR5N3onJ6W01ubVo2YnWG5/peQQh+2pnK0RQayXRvfg==
   dependencies:
-    "@verida/did-client" "^0.1.5"
-    "@verida/did-document" "^1.0.3"
-    "@verida/encryption-utils" "^1.1.2"
-    "@verida/keyring" "^1.1.2"
+    "@verida/did-client" "^0.1.8"
+    "@verida/did-document" "^1.0.5"
+    "@verida/encryption-utils" "^1.1.3"
+    "@verida/keyring" "^1.1.3"
     url-parse "^1.5.3"
 
 "@verida/vault-common@https://github.com/verida/vault-common.git":
-  version "0.2.1"
+  version "0.2.2"
   resolved "https://github.com/verida/vault-common.git#25fc567eb360c30e0496aa62abaa305721a70776"
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.20"
     nodemon "^2.0.4"
+
+"@verida/verifiable-credentials@^0.1.4":
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-0.1.4.tgz#adbdd4d6212e18a9f50adc8abbe21c33e6b8581f"
+  integrity sha512-uPylyR864X1kxLcmc98JO88bqsZkMV3ATWEqKFreA17+/SefxJ4wWS1WbxDc8L0Mx/IiedOjhB6HTcuySQYE4Q==
+  dependencies:
+    "@verida/client-ts" "^1.1.13"
+    "@verida/did-resolver" "^0.1.8"
+    "@verida/encryption-utils" "^1.1.3"
+    dayjs "^1.10.7"
+    did-jwt "^5.12.1"
+    did-jwt-vc "^2.1.8"
+    lodash "^4.17.21"
+    tweetnacl-util "^0.15.1"
+    url "^0.11.0"
 
 "@verida/wallet-utils@^1.5.0":
   version "1.5.0"
@@ -3946,9 +3995,9 @@ ajv@^6.10.0, ajv@^6.12.3, ajv@^6.12.4:
     uri-js "^4.2.2"
 
 ajv@^8.0.0, ajv@^8.6.3:
-  version "8.8.2"
-  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.8.2.tgz#01b4fef2007a28bf75f0b7fc009f62679de4abbb"
-  integrity sha512-x9VuX+R/jcFj1DHo/fCp99esgGDWiHENrKxaCENuCxpoMCmAt/COCGVDwA7kleEpEzJjDnvh3yGoOuLu0Dtllw==
+  version "8.10.0"
+  resolved "https://registry.yarnpkg.com/ajv/-/ajv-8.10.0.tgz#e573f719bd3af069017e3b66538ab968d040e54d"
+  integrity sha512-bzqAEZOjkrUMl2afH8dknrq5KEk2SrwdBROR+vH1EKVQTqaUbJVPdc/gEdggTMM0Se+s+Ja4ju4TlNcStKl2Hw==
   dependencies:
     fast-deep-equal "^3.1.1"
     json-schema-traverse "^1.0.0"
@@ -5532,6 +5581,11 @@ colorette@^1.0.7:
   resolved "https://registry.yarnpkg.com/colorette/-/colorette-1.4.0.tgz#5190fbb87276259a86ad700bff2c6d6faa3fca40"
   integrity sha512-Y2oEozpomLn7Q3HFP7dpww7AtMJplbM9lGZP6RDfHqmbeRjiwRg4n6VM6j4KLmRke85uWEI7JqF17f3pqdRA0g==
 
+colors@1.3.3:
+  version "1.3.3"
+  resolved "https://registry.yarnpkg.com/colors/-/colors-1.3.3.tgz#39e005d546afe01e01f9c4ca8fa50f686a01205d"
+  integrity sha512-mmGt/1pZqYRjMxB1axhTo16/snVZ5krrKkcmMeVKxzECMMXoCgnvTPp10QgHfcbQZw8Dq2jMNG6je4JlWU0gWg==
+
 colors@^1.3.3:
   version "1.4.0"
   resolved "https://registry.yarnpkg.com/colors/-/colors-1.4.0.tgz#c50491479d4c1bdaed2c9ced32cf7c7dc2360f78"
@@ -5807,12 +5861,19 @@ create-react-class@^15.6.2, create-react-class@^15.6.3:
     loose-envify "^1.3.1"
     object-assign "^4.1.1"
 
-cross-fetch@^3.0.4, cross-fetch@^3.1.4:
+cross-fetch@^3.0.4:
   version "3.1.4"
   resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.4.tgz#9723f3a3a247bf8b89039f3a380a9244e8fa2f39"
   integrity sha512-1eAtFWdIubi6T4XPy6ei9iUFoKpUkIF971QLN8lIvvvwueI65+Nw5haMNKUwfJxabqlIIDODJKGrQ66gxC0PbQ==
   dependencies:
     node-fetch "2.6.1"
+
+cross-fetch@^3.1.4:
+  version "3.1.5"
+  resolved "https://registry.yarnpkg.com/cross-fetch/-/cross-fetch-3.1.5.tgz#e1389f44d9e7ba767907f7af8454787952ab534f"
+  integrity sha512-lvb1SBsI0Z7GDwmuid+mU3kWVBwTVUbe7S0H52yaaAdQOXq2YktTCZdlAcNKFzE6QtRz0snpw9bNiPeOIkkQvw==
+  dependencies:
+    node-fetch "2.6.7"
 
 cross-spawn@^5.1.0:
   version "5.1.0"
@@ -6005,6 +6066,11 @@ data-urls@^1.1.0:
     abab "^2.0.0"
     whatwg-mimetype "^2.2.0"
     whatwg-url "^7.0.0"
+
+dayjs@^1.10.7:
+  version "1.10.8"
+  resolved "https://registry.yarnpkg.com/dayjs/-/dayjs-1.10.8.tgz#267df4bc6276fcb33c04a6735287e3f429abec41"
+  integrity sha512-wbNwDfBHHur9UOzNUjeKUOJ0fCb0a52Wx0xInmQ7Y8FstyajiV1NmK1e00cxsr9YrE9r7yAChE0VvpuY5Rnlow==
 
 dayjs@^1.8.15:
   version "1.10.7"
@@ -6224,6 +6290,14 @@ detect-node@^2.0.4:
   resolved "https://registry.yarnpkg.com/detect-node/-/detect-node-2.1.0.tgz#c9c70775a49c3d03bc2c06d9a73be550f978f8b1"
   integrity sha512-T0NIuQpnTvFDATNuHN5roPwSBG83rFsuO+MXXH9/3N1eFbn4wcPjttvjMLEPWJ0RGUYgQE7cGgS3tNxbqCGM7g==
 
+did-jwt-vc@^2.1.8:
+  version "2.1.9"
+  resolved "https://registry.yarnpkg.com/did-jwt-vc/-/did-jwt-vc-2.1.9.tgz#894c68d86083f620ee2bdb36e0097f35b28f079a"
+  integrity sha512-FBgJBZkdJAGtF0fp8NPgtJmpglRc/ZQ2C1KNevHKmOLgjPrVIeJw5xL8pw0wFwoA2E+uCaXkrZrNtcLQXHG6IQ==
+  dependencies:
+    did-jwt "^5.12.3"
+    did-resolver "^3.1.5"
+
 did-jwt@5.7.0:
   version "5.7.0"
   resolved "https://registry.yarnpkg.com/did-jwt/-/did-jwt-5.7.0.tgz#7c5284daece5c86388db90e1274d0df63bb20f52"
@@ -6258,7 +6332,25 @@ did-jwt@^5.12.1:
     multiformats "^9.4.10"
     uint8arrays "^3.0.0"
 
-did-resolver@^3.1.0:
+did-jwt@^5.12.3:
+  version "5.12.4"
+  resolved "https://registry.yarnpkg.com/did-jwt/-/did-jwt-5.12.4.tgz#6357a550173b7155f2e5cf3b8ea3f8e8be180617"
+  integrity sha512-rFY7yIlE/79zB648Drn9vLiM+F4+3IzRkFvBcHelZqQmnPy037U9VWeeP/f2PlnQKgW5qbYXVJR5KftLfo58TA==
+  dependencies:
+    "@stablelib/ed25519" "^1.0.2"
+    "@stablelib/random" "^1.0.1"
+    "@stablelib/sha256" "^1.0.1"
+    "@stablelib/x25519" "^1.0.1"
+    "@stablelib/xchacha20poly1305" "^1.0.1"
+    bech32 "^2.0.0"
+    canonicalize "^1.0.5"
+    did-resolver "^3.1.5"
+    elliptic "^6.5.4"
+    js-sha3 "^0.8.0"
+    multiformats "^9.4.10"
+    uint8arrays "^3.0.0"
+
+did-resolver@^3.1.0, did-resolver@^3.1.5:
   version "3.1.5"
   resolved "https://registry.yarnpkg.com/did-resolver/-/did-resolver-3.1.5.tgz#1a82a00fa96d64085676183bff40ebc13c88cd6a"
   integrity sha512-/4lM1vK5osnWVZ2oN9QhlWV5xOwssuLSL1MvueBc8LQWotbD5kM9XQMe7h4GydYpbh3JaWMFkOWwc9jvSZ+qgg==
@@ -11494,6 +11586,13 @@ node-fetch@2.6.1:
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.1.tgz#045bd323631f76ed2e2b55573394416b639a0052"
   integrity sha512-V4aYg89jEoVRxRb2fJdAg8FHvI7cEyYdVAh94HH0UIK8oJxUfkjlDQN9RbMx+bEjP7+ggMiFRprSti032Oipxw==
 
+node-fetch@2.6.7, node-fetch@~2.6.0:
+  version "2.6.7"
+  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
+  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
+  dependencies:
+    whatwg-url "^5.0.0"
+
 node-fetch@^1.0.1:
   version "1.7.3"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-1.7.3.tgz#980f6f72d85211a5347c6b2bc18c5b84c3eb47ef"
@@ -11506,13 +11605,6 @@ node-fetch@^2.2.0, node-fetch@^2.6.0, node-fetch@^2.6.1:
   version "2.6.5"
   resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.5.tgz#42735537d7f080a7e5f78b6c549b7146be1742fd"
   integrity sha512-mmlIVHJEu5rnIxgEgez6b9GgWXbkZj5YZ7fx+2r94a2E+Uirsp6HsPTPlomfdHtpt/B0cdKviwkoaM6pyvUOpQ==
-  dependencies:
-    whatwg-url "^5.0.0"
-
-node-fetch@~2.6.0:
-  version "2.6.7"
-  resolved "https://registry.yarnpkg.com/node-fetch/-/node-fetch-2.6.7.tgz#24de9fba827e3b4ae44dc8b20256a379160052ad"
-  integrity sha512-ZjMPFEfVx5j+y2yF35Kzx5sF7kDzxuDj6ziH4FFbOp87zKDZNx8yExJIb05OGF4Nlt9IHFIMBkRl41VdvcNdbQ==
   dependencies:
     whatwg-url "^5.0.0"
 
@@ -13282,9 +13374,9 @@ react-native-sqlite-2@^3.1.1:
     websql "^2.0.3"
 
 react-native-sqlite-2@^3.4.0:
-  version "3.5.0"
-  resolved "https://registry.yarnpkg.com/react-native-sqlite-2/-/react-native-sqlite-2-3.5.0.tgz#b5ca4f4587a44e38050e27e2918d9552cfab80c4"
-  integrity sha512-ztQ1NjHP6L4hYLmDgfUbNBB/LccWJa8VfkUCQ/LKtKbbRolQxs7qCX6B/xTynpGLE1dApXhBvMmn4ozr0fOb1A==
+  version "3.5.2"
+  resolved "https://registry.yarnpkg.com/react-native-sqlite-2/-/react-native-sqlite-2-3.5.2.tgz#1cf8347366fb88a0db8b086dc26116ecc1cafba2"
+  integrity sha512-zyAYkILsiEdIkBT0y4J/g06GgVBZ2nqkjK9FQL+tso7o0Dong3Dqt3iGm9Jt6w/BSD2fg49lkCnRJjKEOg3x4A==
   dependencies:
     lodash.map "^4.6.0"
     lodash.zipobject "^4.1.3"
@@ -13959,9 +14051,9 @@ rx-lite@*, rx-lite@^4.0.8:
   integrity sha1-Cx4Rr4vESDbwSmQH6S2kJGe3lEQ=
 
 rxjs@^7.0.0:
-  version "7.5.1"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.1.tgz#af73df343cbcab37628197f43ea0c8256f54b157"
-  integrity sha512-KExVEeZWxMZnZhUZtsJcFwz8IvPvgu4G2Z2QyqjZQzUGr32KDYuSxrEYO4w3tFFNbfLozcrKUTvTPi+E9ywJkQ==
+  version "7.5.4"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.5.4.tgz#3d6bd407e6b7ce9a123e76b1e770dc5761aa368d"
+  integrity sha512-h5M3Hk78r6wAheJF0a5YahB1yRQKCsZ4MsGdZ5O9ETbVtjPcScGfrMmoOq7EBsCRzd4BDkvDJ7ogP8Sz5tTFiQ==
   dependencies:
     tslib "^2.1.0"
 

@@ -24,6 +24,7 @@ import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
+import { CreateAccountMode } from 'pages/Account/Create'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
@@ -40,7 +41,6 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import {
   setNavigationLink as setNavigationLinkAction,
   setNewMessagesCount as setNewMessagesCountAction,
-  setPublicProfileData as setPublicProfileDataAction,
 } from '../../reduxStore/general/actions'
 
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
@@ -55,7 +55,6 @@ const Home = (props) => {
     publicProfileData,
     navigationLink,
     setNavigationLink,
-    setPublicProfileData,
   } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
@@ -119,10 +118,9 @@ const Home = (props) => {
         setLoading(true)
         const _selectedAccount =
           AccountManager.getInstance().getSelectedAccount()
-        const profileData = await getProfile(_selectedAccount.did)
-        const { name, avatar } = publicProfileData
-        setPublicProfileData(profileData)
+        const { name, avatar } = await getProfile(_selectedAccount.did)
         setAvatarSource(avatar)
+
         setInfo({
           address: _selectedAccount.did,
           name,
@@ -139,7 +137,7 @@ const Home = (props) => {
     if (selectedAccount && publicProfileData) {
       initProfile()
     }
-  }, [selectedAccount, publicProfileData, setPublicProfileData])
+  }, [selectedAccount, publicProfileData])
 
   useFocusEffect(() => {
     fetchInboxCount()
@@ -158,7 +156,7 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('AddAccount')
+      navigation.navigate('AddAccount', { mode: CreateAccountMode.ADD })
     })
   }
 
@@ -246,7 +244,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
     setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
-    setPublicProfileData: (data) => dispatch(setPublicProfileDataAction(data)),
   }
 }
 
