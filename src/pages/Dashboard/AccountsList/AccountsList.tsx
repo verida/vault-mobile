@@ -71,6 +71,7 @@ function AccountsList(props: AccountsListProps) {
       renderItem={renderItem}
       contentContainerStyle={containerStyle}
       ItemSeparatorComponent={renderDivider}
+      showsVerticalScrollIndicator={true}
     />
   )
 }
