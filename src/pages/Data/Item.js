@@ -1,11 +1,13 @@
 import * as Sentry from '@sentry/react-native'
 import didJWT from 'did-jwt'
+import { get } from 'lodash'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
 import { getProfile } from 'api/utils'
+import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
 
@@ -17,15 +19,18 @@ const DataItem = (props) => {
     data: [],
     title: '',
   })
+  const [loading, setLoading] = useState(false)
 
   const isCredential = folder.config.database === 'credential'
 
   useEffect(() => {
     const init = async () => {
       try {
+        setLoading(true)
         const _data = await folder.getDetail(item)
         if (isCredential) {
           const decoded = didJWT.decodeJWT(item.didJwtVc)
+          _data.payload = get(decoded, 'payload.data', {})
           const iss = decoded.payload.iss
           const { name, avatar } = await getProfile(iss)
           _data.issuer = {
@@ -35,7 +40,9 @@ const DataItem = (props) => {
           }
         }
         setData(_data)
+        setLoading(false)
       } catch (e) {
+        setLoading(false)
         Alert.alert('Failed to fetch data')
         Sentry.captureException(e)
       }
@@ -47,13 +54,23 @@ const DataItem = (props) => {
   return (
     <Container>
       <NavigationHeader title={folder.config.title} />
-      <Content>
-        {isCredential ? (
-          <CredentialDataItem data={data} style={styles.credentialContainer} />
+      <Content contentContainerStyle={styles.content}>
+        {loading ? (
+          <LoadingView />
         ) : (
-          <List>
-            <DataFieldList data={data} />
-          </List>
+          <>
+            {isCredential ? (
+              <CredentialDataItem
+                data={data}
+                item={item}
+                style={styles.credentialContainer}
+              />
+            ) : (
+              <List>
+                <DataFieldList data={data} />
+              </List>
+            )}
+          </>
         )}
       </Content>
     </Container>
@@ -61,6 +78,9 @@ const DataItem = (props) => {
 }
 
 const styles = StyleSheet.create({
+  content: {
+    flexGrow: 1,
+  },
   credentialContainer: {},
 })
 

@@ -210,7 +210,7 @@ export async function unRegisterRemoteNotification(token: string) {
 
 export async function fetchNetworkConfigJson<T>(url: string): Promise<T[]> {
   try {
-    const res = await fetch(url)
+    const res = await fetch(url + `?t=${Date.now()}`)
     const json = await res.json()
     return json.networks
   } catch (e) {
