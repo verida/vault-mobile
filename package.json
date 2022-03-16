@@ -31,7 +31,7 @@
     "@verida/client-rn": "^1.1.10",
     "@verida/encryption-utils": "^1.1.2",
     "@verida/vault-common": "https://github.com/verida/vault-common.git",
-    "@verida/wallet-utils": "^1.5.0",
+    "@verida/wallet-utils": "^1.6.0",
     "algosdk": "^1.12.0",
     "apisauce": "^2.1.2",
     "assert": "^1.5.0",
