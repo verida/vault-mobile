@@ -24,7 +24,7 @@ export const useEventHandlers = () => {
   const selectedAccount = useSelector((state) => state.selectedAccount)
 
   const onMessage = useCallback(async function onMessage(_message: any) {
-    // TODO: enable this when we make inbox.onMessage works reliably. Now using firebase.messaging.onMessage to handle it
+    // TODO: enable this when we make inbox.onMessage works faster and reliably. Now using firebase.messaging.onMessage to handle it
     // await fetchInboxCount()
     // PushNotification.localNotification({
     //   title: get(message, 'sendBy.app') || 'New Message',
@@ -85,7 +85,7 @@ export const useEventHandlers = () => {
 
           latestNotificationRef.current = latestMessage
           PushNotification.localNotification({
-            title: get(latestMessage, 'sendBy.context') || 'New Message',
+            title: get(latestMessage, 'sendBy.app') || 'New Message',
             message: latestMessage.message,
             channelId: CHANNEL_ID,
             userInfo: {
