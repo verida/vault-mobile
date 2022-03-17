@@ -5,27 +5,41 @@ import React, { useState } from 'react'
 import { Alert } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
+import ErrorModal from 'components/ErrorModal/ErrorModal'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
 
 function buildErrorMessage(errors) {
+  const message = {
+    content: 'Failed to save data',
+    errors: [],
+  }
   if (isEmpty(errors)) {
-    return 'Failed to save data.'
+    return message
   }
 
-  const errorsList = errors.map((errorsByDataEntry) => {
-    return errorsByDataEntry.errors
-      .map((error) => {
-        return `• ${typeof error === 'string' ? error : error.message}`
-      })
-      .join('\n')
-  })
+  try {
+    const errorsList = errors.map((errorsByDataEntry) => {
+      return errorsByDataEntry.errors
+        .map((error) => {
+          return `• ${typeof error === 'string' ? error : error.message}`
+        })
+        .join('\n')
+    })
+    message.errors = errorsList
 
-  return `Cannot save data due to these errors:\n${errorsList.join('\n')}`
+    return message
+  } catch (error) {
+    Sentry.captureException(error)
+    return message
+  }
 }
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
+  const [errorMessage, setErrorMessage] = useState({
+    content: ''
+  })
 
   const onResultClick = async (result) => {
     try {
@@ -38,12 +52,12 @@ export default ({ item, inboxItem, type, navigation }) => {
       const handleResult = await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
       if (!handleResult.success) {
-        Alert.alert('Error', buildErrorMessage(handleResult.errors))
+        setErrorMessage(buildErrorMessage(handleResult.errors))
       } else {
         navigation.goBack()
       }
     } catch (e) {
-      Alert.alert('Error', 'Cannot accept data now')
+      setErrorMessage(e)
       Sentry.captureException(e)
       setCurrentAction(null)
     }
@@ -59,6 +73,13 @@ export default ({ item, inboxItem, type, navigation }) => {
         currentAction={currentAction}>
         {/* Hide details about incoming data for now. <RecordList list={records} /> */}
       </RequestDetailsLayout>
+      <ErrorModal
+        visible={!!errorMessage}
+        title={'Failed'}
+        message={errorMessage?.content}
+        details={errorMessage?.errors}
+        onDismiss={() => setErrorMessage(null)}
+      />
     </Content>
   )
 }
