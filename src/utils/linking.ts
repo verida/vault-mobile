@@ -13,7 +13,6 @@ export const isSupportedDomain = (host: string) => {
   return !!supportedDomains.find((domain) => host.includes(domain))
 }
 
-
 export const canBeHandledByDeeplink = (path: string) => {
   const supportedPaths = ['request', 'inbox']
   return supportedPaths.includes(path.replaceAll('/', ''))
