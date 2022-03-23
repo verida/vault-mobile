@@ -1,8 +1,10 @@
 import messaging from '@react-native-firebase/messaging'
-import { isEmpty } from 'lodash'
+import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
+import Config from 'react-native-config'
+import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
@@ -12,7 +14,11 @@ import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'
-import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
+import {
+  BLACK_COLOR,
+  BLACK_COLOR_OPACITY,
+  ORANGE_COLOR,
+} from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import LayoutStyle from '../styles/layouts'
 
@@ -62,6 +68,9 @@ export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
   const networks = useSelector((state) => state.networks)
   const modifiedGeneralList = [...generalList]
+  const versionText = `Verida Vault ${capitalize(
+    Config.DEPLOY_ENVIRONMENT === 'internal' ? Config.DEPLOY_ENVIRONMENT : ''
+  )} v${getVersion()}(${getBuildNumber()})`
 
   if (!isEmpty(networks)) {
     const selectedNode = networks[0].nodes[networks[0].selected_node]
@@ -127,6 +136,7 @@ export default (props) => {
         <View>
           <PropertyList list={modifiedGeneralList} />
         </View>
+        <Text style={style.versionText}>{versionText}</Text>
       </View>
     </View>
   )
@@ -143,5 +153,9 @@ const style = StyleSheet.create({
   },
   logoutText: {
     color: ORANGE_COLOR,
+  },
+  versionText: {
+    color: BLACK_COLOR,
+    marginTop: 15,
   },
 })
