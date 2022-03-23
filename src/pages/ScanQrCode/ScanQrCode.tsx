@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 
 import { useDeeplink } from 'hooks/useDeeplink'
@@ -29,21 +29,25 @@ function ScanQrCode(
     navigation.goBack()
   }, [navigation])
 
-  const onBarCodeRead = async (event: BarCodeReadEvent) => {
-    if (!enabled) {
+  const handleQrCode = async (data: string) => {
+    if (!enabled || Platform.OS === 'android') {
       return
     }
     enabled = false
     setTimeout(() => {
       enabled = true
     }, WAIT_TIME)
-    const { data } = event
     if (route.params.onReadQRCode) {
       route.params.onReadQRCode(data)
       navigation.goBack()
     } else {
       handleDeeplink(data)
     }
+  }
+
+  const onBarCodeRead = async (event: BarCodeReadEvent) => {
+    const { data } = event
+    await handleQrCode(data)
   }
 
   return (
@@ -70,6 +74,12 @@ function ScanQrCode(
         }}
         style={styles.camera}
         onBarCodeRead={onBarCodeRead}
+        onGoogleVisionBarcodesDetected={({ barcodes }) =>
+          handleQrCode(barcodes[0].data)
+        }
+        googleVisionBarcodeType={
+          RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
+        }
       />
       <CameraOverlay
         isFlashOn={isFlashOn}
