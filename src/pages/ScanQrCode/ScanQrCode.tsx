@@ -76,7 +76,7 @@ function ScanQrCode(
         style={styles.camera}
         onBarCodeRead={Platform.OS === 'ios' ? onBarCodeRead : undefined}
         onGoogleVisionBarcodesDetected={({ barcodes }) => {
-          if (isEmpty(barcodes)) {
+          if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
             return
           }
           handleQrCode(barcodes[0].data)
