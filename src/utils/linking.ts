@@ -10,7 +10,7 @@ export const openUrl = async (url: string) => {
 export const isSupportedDomain = (host: string) => {
   const supportedDomains = ['verida.network', 'verida.io']
 
-  return !!supportedDomains.find((domain) => host.includes(domain))
+  return supportedDomains.some((domain) => host.includes(domain))
 }
 
 export const canBeHandledByDeeplink = (path: string) => {
