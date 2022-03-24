@@ -30,7 +30,7 @@ function ScanQrCode(
   }, [navigation])
 
   const handleQrCode = async (data: string) => {
-    if (!enabled || Platform.OS === 'android') {
+    if (!enabled) {
       return
     }
     enabled = false
@@ -73,7 +73,7 @@ function ScanQrCode(
           buttonNegative: 'Cancel',
         }}
         style={styles.camera}
-        onBarCodeRead={onBarCodeRead}
+        onBarCodeRead={Platform.OS === 'ios' ? onBarCodeRead : undefined}
         onGoogleVisionBarcodesDetected={({ barcodes }) =>
           handleQrCode(barcodes[0].data)
         }
