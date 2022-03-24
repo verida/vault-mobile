@@ -1,4 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
@@ -74,9 +75,12 @@ function ScanQrCode(
         }}
         style={styles.camera}
         onBarCodeRead={Platform.OS === 'ios' ? onBarCodeRead : undefined}
-        onGoogleVisionBarcodesDetected={({ barcodes }) =>
+        onGoogleVisionBarcodesDetected={({ barcodes }) => {
+          if (isEmpty(barcodes)) {
+            return
+          }
           handleQrCode(barcodes[0].data)
-        }
+        }}
         googleVisionBarcodeType={
           RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
         }
