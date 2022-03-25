@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native'
 import { editable } from 'helpers/profile'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { Alert, Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
@@ -21,49 +21,62 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const isFocused = useIsFocused()
   const [loading, setLoading] = useState(false)
 
+  const updateData = async (shouldUpdate: boolean) => {
+    try {
+      if (initialized) {
+        return
+      }
+      let publicData: any = {}
+      if (shouldUpdate || publicProfileData?.name === '') {
+        setLoading(true)
+        const vault = AccountManager.getInstance().vault as any
+        publicData = await vault.profiles.public.getMany()
+        setLoading(false)
+      } else {
+        publicData = publicProfileData
+      }
+
+      updatePublicProfileData(publicData)
+      const updatedList = list.map((item: any) => {
+        const label = item.label.toLowerCase()
+        if (publicData[label]) {
+          item.value = publicData[label]
+        }
+        return item
+      })
+
+      setList(updatedList)
+      setInitialized(true)
+    } catch (e) {
+      Alert.alert('Error', 'Cannot load public profile data')
+    }
+  }
+
   // component did mount
   useEffect(() => {
-    const updateData = async (shouldUpdate: boolean) => {
-      try {
-        if (initialized) {
-          return
-        }
-        let publicData: any = {}
-        if (shouldUpdate || publicProfileData?.name === '') {
-          setLoading(true)
-          const vault = AccountManager.getInstance().vault as any
-          publicData = await vault.profiles.public.getMany()
-          setLoading(false)
-        } else {
-          publicData = publicProfileData
-        }
-
-        updatePublicProfileData(publicData)
-        const updatedList = list.map((item: any) => {
-          const label = item.label.toLowerCase()
-          if (publicData[label]) {
-            item.value = publicData[label]
-          }
-          return item
-        })
-
-        setList(updatedList)
-        setInitialized(true)
-      } catch (e) {
-        Alert.alert('Error', 'Cannot load public profile data')
-      }
-    }
-
+    let listener: any
     const watchChanges = async () => {
       const vault = AccountManager.getInstance().vault as any
-      vault.profiles.public?.listen(() => {
-        updateData(true)
-      })
+      await vault.profiles.public.init()
+      const db = await vault.profiles.public.store.getDb()
+      const dbInstance = db.db
+      listener = dbInstance
+        .changes({
+          since: 'now',
+          live: true,
+        })
+        .on('change', () => {
+          updateData(true)
+        })
     }
-
     updateData(false)
     watchChanges()
-  }, [initialized, list, publicProfileData, updatePublicProfileData])
+    return () => {
+      listener?.cancel()
+    }
+    // Register profile change listener one time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setInitialized(false)
