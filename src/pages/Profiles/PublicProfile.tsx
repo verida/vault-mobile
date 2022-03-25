@@ -11,7 +11,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
-const PublicProfile = (props: any) => {
+const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [list, setList] = useState([
     { label: 'Name', value: '', action: 'arrow', type: 'input' },
     { label: 'Country', value: '', action: 'arrow', type: 'select' },
@@ -29,16 +29,16 @@ const PublicProfile = (props: any) => {
           return
         }
         let publicData: any = {}
-        if (shouldUpdate || props.publicProfileData?.name === '') {
+        if (shouldUpdate || publicProfileData?.name === '') {
           setLoading(true)
           const vault = AccountManager.getInstance().vault as any
           publicData = await vault.profiles.public.getMany()
           setLoading(false)
         } else {
-          publicData = props.publicProfileData
+          publicData = publicProfileData
         }
 
-        props.setPublicProfileData(publicData)
+        updatePublicProfileData(publicData)
         const updatedList = list.map((item: any) => {
           const label = item.label.toLowerCase()
           if (publicData[label]) {
@@ -63,7 +63,7 @@ const PublicProfile = (props: any) => {
 
     updateData(false)
     watchChanges()
-  }, [initialized, list, props])
+  }, [initialized, list, publicProfileData, updatePublicProfileData])
 
   useEffect(() => {
     setInitialized(false)
@@ -88,7 +88,7 @@ const PublicProfile = (props: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setPublicProfileData: (data: unknown) =>
+    updatePublicProfileData: (data: unknown) =>
       dispatch(setPublicProfileData(data)),
   }
 }
