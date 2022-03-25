@@ -54,23 +54,15 @@ const PublicProfile = (props: any) => {
       }
     }
 
-    const bindChanges = async () => {
+    const watchChanges = async () => {
       const vault = AccountManager.getInstance().vault as any
-      await vault.profiles.public.init()
-      const db = await vault.profiles.public.store.getDb()
-      const dbInstance = await db.getInstance()
-      dbInstance
-        .changes({
-          since: 'now',
-          live: true,
-        })
-        .on('change', async function () {
-          updateData(true)
-        })
+      vault.profiles.public?.listen(() => {
+        updateData(true)
+      })
     }
 
     updateData(false)
-    bindChanges()
+    watchChanges()
   }, [initialized, list, props])
 
   useEffect(() => {
