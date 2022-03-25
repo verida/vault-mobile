@@ -1,6 +1,6 @@
 import { useIsFocused } from '@react-navigation/native'
 import { editable } from 'helpers/profile'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
