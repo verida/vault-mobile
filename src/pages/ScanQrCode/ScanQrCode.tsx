@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, Linking, StyleSheet, View } from 'react-native'
+import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
@@ -33,7 +33,7 @@ function ScanQrCode(
     navigation.goBack()
   }, [navigation])
 
-  const onBarCodeRead = async (event: BarCodeReadEvent) => {
+  const handleQrCode = async (data: string) => {
     if (!enabled) {
       return
     }
@@ -41,7 +41,6 @@ function ScanQrCode(
     setTimeout(() => {
       enabled = true
     }, WAIT_TIME)
-    const { data } = event
     if (route.params.onReadQRCode) {
       route.params.onReadQRCode(data)
       navigation.goBack()
@@ -68,6 +67,11 @@ function ScanQrCode(
     }
   }
 
+  const onBarCodeRead = async (event: BarCodeReadEvent) => {
+    const { data } = event
+    await handleQrCode(data)
+  }
+
   return (
     <View style={styles.container}>
       <RNCamera
@@ -91,7 +95,16 @@ function ScanQrCode(
           buttonNegative: 'Cancel',
         }}
         style={styles.camera}
-        onBarCodeRead={onBarCodeRead}
+        onBarCodeRead={Platform.OS === 'ios' ? onBarCodeRead : undefined}
+        onGoogleVisionBarcodesDetected={({ barcodes }) => {
+          if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
+            return
+          }
+          handleQrCode(barcodes[0].data)
+        }}
+        googleVisionBarcodeType={
+          RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
+        }
       />
       <CameraOverlay
         isFlashOn={isFlashOn}
