@@ -1,12 +1,15 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import * as Sentry from '@sentry/react-native'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Platform, StyleSheet, View } from 'react-native'
+import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
+import parse from 'url-parse'
 
 import { useDeeplink } from 'hooks/useDeeplink'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
+import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 let enabled = true
 const WAIT_TIME = 3000
@@ -42,6 +45,24 @@ function ScanQrCode(
       route.params.onReadQRCode(data)
       navigation.goBack()
     } else {
+      // Check if content is a valid URL
+      const { hostname, pathname } = parse(data, true)
+      if (isEmpty(hostname) || !isSupportedDomain(hostname)) {
+        Alert.alert('Error', 'This domain is not supported')
+        return
+      }
+      // Try to open the URL in browser if it is not a deeplink
+      if (!canBeHandledByDeeplink(pathname)) {
+        try {
+          const canOpen = await Linking.canOpenURL(data)
+          if (canOpen) {
+            await Linking.openURL(data)
+          }
+        } catch (error) {
+          Sentry.captureException(error)
+        }
+        return
+      }
       handleDeeplink(data)
     }
   }
