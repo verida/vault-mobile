@@ -6,7 +6,7 @@ import Vault from '@verida/vault-common'
 import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
-import { isEmpty } from 'lodash'
+import { find, isEmpty } from 'lodash'
 import store from 'reduxStore'
 
 import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
@@ -18,6 +18,13 @@ import {
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
 import { removeUserWallets, saveUserWallets } from 'reduxStore/wallet/actions'
+import { getCountryCode, getNodeCodeFromCountry } from 'utils/profile'
+
+type EndpointUrls = {
+  dbServerUrl: string
+  messageServerUrl: string
+  notificationServerUrl: string
+}
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
@@ -35,26 +42,11 @@ class AccountManager {
   public vault: Vault | undefined
   public accounts: NormalizedAccounts
   private selectedAccount: Account | undefined
-  private dbServerUrl = ''
-  private messageServerUrl = ''
-  private notificationServerUrl = ''
 
   private static instance: AccountManager
 
   private constructor() {
     this.accounts = {}
-  }
-
-  public getDbServerUrl() {
-    return this.dbServerUrl
-  }
-
-  public getMessageServerUrl() {
-    return this.messageServerUrl
-  }
-
-  public getNotificationServerUrl() {
-    return this.notificationServerUrl
   }
 
   private async filterDids() {
@@ -105,11 +97,11 @@ class AccountManager {
     return this.selectedAccount
   }
 
-  public async connect(forced = false) {
+  public async connect(forced = false, endpointUrls?: EndpointUrls) {
     if (!forced && this.context) {
       return
     }
-    this.context = await this.getVeridaContext()
+    this.context = await this.getVeridaContext(endpointUrls)
     this.vault = await this.getVault()
   }
 
@@ -121,7 +113,9 @@ class AccountManager {
     return AccountManager.instance
   }
 
-  public async getVeridaContext(): Promise<Context | undefined> {
+  public async getVeridaContext(
+    endpointUrls?: EndpointUrls
+  ): Promise<Context | undefined> {
     try {
       if (!this.selectedAccount) {
         return undefined
@@ -137,15 +131,15 @@ class AccountManager {
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: this.dbServerUrl,
+            endpointUri: endpointUrls?.dbServerUrl || '',
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: this.messageServerUrl,
+            endpointUri: endpointUrls?.messageServerUrl || '',
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: this.notificationServerUrl,
+            endpointUri: endpointUrls?.notificationServerUrl || '',
           },
         },
         {
@@ -279,16 +273,42 @@ class AccountManager {
 
   public async createAccount(
     userData: UserData,
-    networkNode: NetworkNode
+    country: string
   ): Promise<Account | undefined> {
     try {
-      // If networkNode is provided correctly, replace the default endpoint urls
-      if (!isEmpty(networkNode)) {
-        this.dbServerUrl = networkNode.db_address
-        this.messageServerUrl = networkNode.messaging_address
-        this.notificationServerUrl = networkNode.notification_address
+      // Find suitable node based on selected country
+      const countryCode = getCountryCode(country)
+      const networks = store.getState().networks
+      const countries = store.getState().countries
+      if (!countryCode || isEmpty(networks)) {
+        throw new Error('Invalid network or country configuration')
+      }
+      let matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
+      if (!matchedNodeCode) {
+        // If there is no matched node for the selected country, use the default one in configuration file.
+        const defaultNode = find(
+          networks[0].nodes,
+          (node: NetworkNode) =>
+            node.node_code === networks[0].default_node_code
+        )
+        if (!defaultNode) {
+          throw new Error('No default node available')
+        }
+        matchedNodeCode = defaultNode.node_code
+      }
+      const selectedNode = networks[0].nodes.find(
+        (node: NetworkNode) => node.node_code === matchedNodeCode
+      )
+      if (!selectedNode) {
+        throw new Error('Cannot find selected network node configuration')
       }
 
+      // Endpoints to be used in account config
+      const endpointUris = {
+        dbServerUrl: selectedNode.db_address,
+        messageServerUrl: selectedNode.messaging_address,
+        notificationServerUrl: selectedNode.notification_address,
+      }
       const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
 
       this.selectedAccount = {
@@ -300,7 +320,7 @@ class AccountManager {
         },
       }
 
-      await this.connect(true)
+      await this.connect(true, endpointUris)
       await this.setPublicProfile(userData)
       await this.setBackedupSeedPhraseConfig(false)
       await this.setUserWallet()

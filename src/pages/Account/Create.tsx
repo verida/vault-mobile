@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
-import { find, get, isEmpty } from 'lodash'
-import React, { useEffect, useRef, useState } from 'react'
+import { get, isEmpty } from 'lodash'
+import React, { useEffect, useState } from 'react'
 import {
   Alert,
   StyleSheet,
@@ -13,7 +13,6 @@ import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
-import { NetworkNode } from 'api/types'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -26,7 +25,6 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
-import { getCountryCode, getNodeCodeFromCountry } from 'utils/profile'
 
 // eslint-disable-next-line no-shadow
 export enum CreateAccountMode {
@@ -50,21 +48,6 @@ function Create(
   const [isFormValid, setIsFormValid] = useState(false)
   const networks = useSelector((state: any) => state.networks)
   const countries = useSelector((state: any) => state.countries)
-  const selectedNode = useRef<NetworkNode | null>(null)
-
-  useEffect(() => {
-    if (!isEmpty(networks) && !isEmpty(networks[0].nodes)) {
-      const defaultNode = find(
-        networks[0].nodes,
-        (node: NetworkNode) => node.node_code === networks[0].default_node_code
-      )
-
-      if (defaultNode) {
-        // Use default node in config file if the selected country doesn't match any node
-        selectedNode.current = defaultNode
-      }
-    }
-  }, [networks])
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140
@@ -75,23 +58,13 @@ function Create(
 
   const onCountryChange = (option: Option) => {
     setCountry(option)
-
-    // Find suitable node based on selected country
-    const countryCode = getCountryCode(option.value)
-    if (!countryCode || isEmpty(networks)) {
-      return
-    }
-    const matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
-    if (!matchedNodeCode) {
-      return
-    }
-
-    selectedNode.current = networks[0].nodes.find(
-      (node: NetworkNode) => node.node_code === matchedNodeCode
-    )
   }
   const onCreateAccount = async () => {
-    if (!selectedNode.current) {
+    if (!country) {
+      return
+    }
+
+    if (isEmpty(networks) || isEmpty(countries)) {
       // If no node config is available, prevent user from creating account
       Alert.alert(
         'Failed',
@@ -109,7 +82,7 @@ function Create(
             country: country?.value || '',
             description: '',
           },
-          selectedNode.current as NetworkNode
+          country?.value
         )
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore

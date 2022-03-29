@@ -42,7 +42,7 @@ export function getCountryCode(countryName: string): string | null {
 export function getNodeCodeFromCountry(
   countryCode: string,
   countryNodes: NetworkCountry[]
-) {
+): string | null {
   let result = null
   countryNodes.every((countryNode) => {
     const matchedKey = Object.keys(countryNode).find(
