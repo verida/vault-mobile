@@ -203,6 +203,7 @@ export async function unRegisterRemoteNotification(token: string) {
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
+    axiosAuthPassword = undefined
   } catch (e) {
     Sentry.captureException(e)
   }
