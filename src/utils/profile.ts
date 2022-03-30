@@ -1,8 +1,8 @@
 import { countries } from 'countries-list'
-import { get } from 'lodash'
+import { find, get } from 'lodash'
 
 import AccountManager from 'api/AccountManager'
-import { NetworkCountry } from 'api/types'
+import { Network, NetworkCountry, NetworkNode } from 'api/types'
 
 /**
  * Get country code from user's country name. Ex: Australia => AU
@@ -56,4 +56,16 @@ export function getNodeCodeFromCountry(
   })
 
   return result
+}
+
+/**
+ * Get node code based on country code
+ * @param networks A list of networks fetched from remote configuration json
+ * @return NetworkNode
+ */
+export function getDefaultNode(networks: Network[]): NetworkNode | undefined {
+  return find(
+    networks[0].nodes,
+    (node: NetworkNode) => node.node_code === networks[0].default_node_code
+  )
 }

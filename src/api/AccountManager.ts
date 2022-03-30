@@ -6,7 +6,7 @@ import Vault from '@verida/vault-common'
 import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
-import { find, isEmpty } from 'lodash'
+import { isEmpty } from 'lodash'
 import store from 'reduxStore'
 
 import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
@@ -18,7 +18,12 @@ import {
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
 import { removeUserWallets, saveUserWallets } from 'reduxStore/wallet/actions'
-import { getCountryCode, getNodeCodeFromCountry } from 'utils/profile'
+import {
+  getCountryCode,
+  getDefaultNode,
+  getNodeCodeFromCountry,
+} from 'utils/profile'
+import { fetchNetworks } from 'api/utils'
 
 type EndpointUrls = {
   dbServerUrl: string
@@ -120,6 +125,26 @@ class AccountManager {
       if (!this.selectedAccount) {
         return undefined
       }
+
+      let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
+      if (!selectedEndpointUrls) {
+        const networks = await fetchNetworks()
+        if (isEmpty(networks)) {
+          throw 'Networks configuration not available'
+        }
+
+        const defaultNode = getDefaultNode(networks)
+        if (!defaultNode) {
+          throw 'No default node available'
+        }
+
+        selectedEndpointUrls = {
+          dbServerUrl: defaultNode.db_address,
+          messageServerUrl: defaultNode.messaging_address,
+          notificationServerUrl: defaultNode.notification_address,
+        }
+      }
+
       const { mnemonic } = this.selectedAccount
       this.client = new Client({
         environment: VERIDA_ENVIRONMENT,
@@ -131,15 +156,15 @@ class AccountManager {
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: endpointUrls?.dbServerUrl || '',
+            endpointUri: selectedEndpointUrls.dbServerUrl,
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: endpointUrls?.messageServerUrl || '',
+            endpointUri: selectedEndpointUrls.messageServerUrl,
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: endpointUrls?.notificationServerUrl || '',
+            endpointUri: selectedEndpointUrls.notificationServerUrl,
           },
         },
         {
@@ -283,24 +308,21 @@ class AccountManager {
       if (!countryCode || isEmpty(networks)) {
         throw new Error('Invalid network or country configuration')
       }
-      let matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
+      const matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
+      let selectedNode
       if (!matchedNodeCode) {
         // If there is no matched node for the selected country, use the default one in configuration file.
-        const defaultNode = find(
-          networks[0].nodes,
-          (node: NetworkNode) =>
-            node.node_code === networks[0].default_node_code
-        )
-        if (!defaultNode) {
+        selectedNode = getDefaultNode(networks)
+        if (!selectedNode) {
           throw new Error('No default node available')
         }
-        matchedNodeCode = defaultNode.node_code
-      }
-      const selectedNode = networks[0].nodes.find(
-        (node: NetworkNode) => node.node_code === matchedNodeCode
-      )
-      if (!selectedNode) {
-        throw new Error('Cannot find selected network node configuration')
+      } else {
+        selectedNode = networks[0].nodes.find(
+          (node: NetworkNode) => node.node_code === matchedNodeCode
+        )
+        if (!selectedNode) {
+          throw new Error('Cannot find selected network node configuration')
+        }
       }
 
       // Endpoints to be used in account config
