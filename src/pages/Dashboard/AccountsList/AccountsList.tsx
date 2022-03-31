@@ -61,7 +61,7 @@ function AccountsList(props: AccountsListProps) {
         />
       )
     },
-    [onSelectAccount, selectedDids]
+    [onSelectAccount, selectedDids, multipleSelect]
   )
 
   if (loading) {

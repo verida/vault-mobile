@@ -18,7 +18,6 @@ import {
 } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AccountsList from 'pages/Dashboard/AccountsList/AccountsList'
-import {func} from "prop-types";
 
 export type AddAccountsModalProps = Omit<
   BottomActionsModalProps,
@@ -128,7 +127,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onClose()
     onLogoutAccounts(selectedDids)
   }
-  
+
   function onCancelLogout() {
     setStep(Step.INITIAL)
     setSelectedDids([])
