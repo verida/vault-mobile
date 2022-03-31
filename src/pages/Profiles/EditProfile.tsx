@@ -32,7 +32,7 @@ const EditProfile = (props: any) => {
     const vault = AccountManager.getInstance().vault as any
 
     await vault.profiles.public.set(key, val)
-    setPublicProfileData({ publicProfileData, [key]: val })
+    setPublicProfileData({ ...publicProfileData, [key]: val })
     navigation.goBack()
   }
 
