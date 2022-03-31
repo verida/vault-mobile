@@ -18,6 +18,7 @@ import {
 } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AccountsList from 'pages/Dashboard/AccountsList/AccountsList'
+import {func} from "prop-types";
 
 export type AddAccountsModalProps = Omit<
   BottomActionsModalProps,
@@ -44,7 +45,7 @@ function getTileFromStep(step: Step) {
     case Step.ADD_IMPORT:
       return 'Accounts'
     default:
-      return 'Are you sure you want to log out?'
+      return 'Log out of selected accounts'
   }
 }
 
@@ -127,6 +128,11 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onClose()
     onLogoutAccounts(selectedDids)
   }
+  
+  function onCancelLogout() {
+    setStep(Step.INITIAL)
+    setSelectedDids([])
+  }
 
   function renderFooter() {
     const logoutDisabled = selectedDids.length === 0
@@ -184,7 +190,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
-              onPress={() => setStep(Step.INITIAL)}>
+              onPress={onCancelLogout}>
               <MaterialCommunityIcons name='logout' size={17} color='white' />
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -211,6 +217,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
           onSelectAccount={onSelectAccountPress}
           containerStyle={styles.accountsList}
           selectedDids={selectedDids}
+          multipleSelect={step === Step.MANAGE_ACCOUNT}
         />
       ) : (
         <View style={styles.space} />
