@@ -9,6 +9,7 @@ import {
   ViewProps,
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
+import Entypo from 'react-native-vector-icons/Entypo'
 import { useSelector } from 'react-redux'
 
 import { DefaultAvatar } from 'api/utils'
@@ -21,10 +22,11 @@ export type AccountItemProps = Omit<ViewProps, 'children'> & {
   avatar?: ImageSourcePropType
   selected: boolean
   onSelect: (did: string) => void
+  multipleSelect?: boolean
 }
 
 function AccountItem(props: AccountItemProps) {
-  const { name, did, selected, avatar, onSelect } = props
+  const { name, did, selected, avatar, onSelect, multipleSelect } = props
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   const selectedAccount = useSelector((state) => state.selectedAccount)
@@ -34,6 +36,18 @@ function AccountItem(props: AccountItemProps) {
   }
 
   const isCurrentAccount = selectedAccount?.did === did
+
+  function renderCheckbox() {
+    if (!multipleSelect) {
+      return null
+    }
+
+    return selected ? (
+      <AntDesign name='checkcircle' size={20} color={SUCCESS_COLOR} />
+    ) : (
+      <Entypo name='circle' size={20} color={SUCCESS_COLOR} />
+    )
+  }
 
   return (
     <TouchableOpacity
@@ -47,9 +61,7 @@ function AccountItem(props: AccountItemProps) {
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.did}>{did}</Text>
       </View>
-      {selected && (
-        <AntDesign name='checkcircle' size={20} color={SUCCESS_COLOR} />
-      )}
+      {renderCheckbox()}
     </TouchableOpacity>
   )
 }
