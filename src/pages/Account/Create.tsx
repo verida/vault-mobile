@@ -25,6 +25,7 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
+import {useDataRegion} from "hooks/useDataRegion";
 
 // eslint-disable-next-line no-shadow
 export enum CreateAccountMode {
@@ -46,6 +47,7 @@ function Create(
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
+  useDataRegion()
   const networks = useSelector((state: any) => state.networks)
   const countries = useSelector((state: any) => state.countries)
 
