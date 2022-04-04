@@ -22,6 +22,7 @@ import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { useDataRegion } from 'hooks/useDataRegion'
 import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
@@ -46,6 +47,7 @@ function Create(
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
+  useDataRegion()
   const networks = useSelector((state: any) => state.networks)
   const countries = useSelector((state: any) => state.countries)
 
