@@ -29,6 +29,7 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
+import { logout as logoutAction } from 'reduxStore/general/actions'
 
 import {
   BLACK_COLOR_OPACITY,
@@ -55,6 +56,7 @@ const Home = (props) => {
     publicProfileData,
     navigationLink,
     setNavigationLink,
+    logout,
   } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
@@ -175,6 +177,10 @@ const Home = (props) => {
   }
 
   async function onLogoutAccounts(dids) {
+    // Only flush Redux store if the current account is logged out
+    if (dids.includes(AccountManager.getInstance().getSelectedAccount().did)) {
+      logout()
+    }
     await AccountManager.getInstance().logout(dids)
     await refresh()
   }
@@ -244,6 +250,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
     setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
+    logout: () => dispatch(logoutAction()),
   }
 }
 

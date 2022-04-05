@@ -5,6 +5,7 @@ import thunk from 'redux-thunk'
 
 import {
   ADD_ACCOUNT,
+  LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
   SET_COUNTRIES,
@@ -300,6 +301,20 @@ const reducer = (state = initialState, action) => {
       return update(state, {
         countries: {
           $set: action.payload,
+        },
+      })
+
+    case LOG_OUT:
+      return update(state, {
+        newMessagesCount: {
+          $set: 0,
+        },
+        publicProfileData: {
+          $set: {
+            name: '',
+            country: '',
+            description: '',
+          },
         },
       })
 
