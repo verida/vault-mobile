@@ -5,6 +5,7 @@ import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
+  Button,
   Dimensions,
   InteractionManager,
   Linking,
@@ -199,6 +200,13 @@ const Home = (props) => {
           <LoadingView />
         ) : (
           <>
+            <View>
+              <Button
+                title='Wallet connect'
+                onPress={() => props.navigation.navigate('WalletConnect', {})}
+              />
+            </View>
+
             <View style={style.qr}>
               <QRCode
                 logo={LogoImg}

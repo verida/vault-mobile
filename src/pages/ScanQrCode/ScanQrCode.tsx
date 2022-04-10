@@ -45,6 +45,13 @@ function ScanQrCode(
       route.params.onReadQRCode(data)
       navigation.goBack()
     } else {
+      // Wallet Connect
+      if (data.startsWith('wc:')) {
+        navigation.goBack()
+        navigation.navigate('WalletConnect', { url: data })
+        return
+      }
+
       // Check if content is a valid URL
       const { hostname, pathname } = parse(data, true)
       if (isEmpty(hostname) || !isSupportedDomain(hostname)) {

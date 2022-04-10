@@ -68,4 +68,5 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  WalletConnect: any
 }

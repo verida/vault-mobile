@@ -39,6 +39,8 @@ import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
 
+import WalletConnect from '../pages/WalletConnect/WalletConnect'
+
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
@@ -96,6 +98,8 @@ function MainNavigator() {
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
       <Stack.Screen name={'Networks'} component={Networks} />
       <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
+
+      <Stack.Screen name={'WalletConnect'} component={WalletConnect} />
     </Stack.Navigator>
   )
 }
