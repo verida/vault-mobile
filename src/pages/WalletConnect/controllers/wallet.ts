@@ -141,7 +141,6 @@ export class WalletController {
 
   public async populateTransaction(transaction: any) {
     let tx = { ...transaction }
-    const gasPrice = transaction.gasPrice
     if (this.wallet) {
       if (tx.gas) {
         tx.gasLimit = tx.gas

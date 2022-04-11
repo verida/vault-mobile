@@ -1,16 +1,10 @@
+/* eslint-disable no-shadow */
 /* eslint-disable no-console */
-import AsyncStorage from '@react-native-community/async-storage'
 import WalletConnect from '@walletconnect/client'
 import { ISessionStorage } from '@walletconnect/types'
 import { Container } from 'native-base'
-import React, {
-  useCallback,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react'
-import { Button, ScrollView, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import { Alert, Button, ScrollView, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
@@ -43,7 +37,7 @@ class SessionStorage implements ISessionStorage {
     console.log('getSession', session)
     return session
   }
-  setSession(session) {
+  setSession(session: any) {
     console.log('setSession', session)
     setLocal(this.storageId, session)
     return session
@@ -83,22 +77,11 @@ const RequestDisplay = (props: any) => {
 }
 
 const WalletConnectScreen = (props: any) => {
-  const {
-    navigation,
-    route,
-    selectedAccount,
-    // publicProfileData,
-    // navigationLink,
-    // setNavigationLink,
-  } = props
+  const { route, selectedAccount } = props
 
-  const { url, otherParam } = route.params
-  const [text, onChangeText] = React.useState('')
+  const { url } = route.params
   const [loading, setLoading] = React.useState(false)
   const [payload, setPayload] = useState<any>(null)
-  const [selectAccount, setSelectAccount] = useState(
-    AccountManager.getInstance().getSelectedAccount()
-  )
 
   useEffect(() => {
     const initProfile = async () => {
@@ -138,13 +121,12 @@ const WalletConnectScreen = (props: any) => {
       ?.did.replace('did:vda:', '') as string
   )
   const [chainId, setChainId] = useState<number>(4)
-  const [accounts, setAccounts] = useState<any[]>([])
 
-  const subscribeToEvents = (connector) => {
+  const subscribeToEvents = (conn: WalletConnect) => {
     console.log('ACTION', 'subscribeToEvents', connector)
 
-    if (connector) {
-      connector.on('session_request', (error, payload) => {
+    if (conn) {
+      conn.on('session_request', (error, payload) => {
         console.log('EVENT', 'session_request')
 
         if (error) {
@@ -155,7 +137,7 @@ const WalletConnectScreen = (props: any) => {
         setPeerMeta(peerMeta)
       })
 
-      connector.on('session_update', (error) => {
+      conn.on('session_update', (error) => {
         console.log('EVENT', 'session_update')
 
         if (error) {
@@ -163,7 +145,7 @@ const WalletConnectScreen = (props: any) => {
         }
       })
 
-      connector.on('call_request', async (error, payload) => {
+      conn.on('call_request', async (error, payload) => {
         // tslint:disable-next-line
         console.log('EVENT', 'call_request', 'method', payload.method)
         console.log('EVENT', 'call_request', 'params', payload.params)
@@ -173,20 +155,20 @@ const WalletConnectScreen = (props: any) => {
         }
         console.log('EVENT', 'call_request ====== ', getAppConfig().rpcEngine, {
           chainId,
-          connector,
+          conn,
           setRequests,
           requests,
         })
 
         await getAppConfig().rpcEngine.router(payload, {
           chainId,
-          connector,
+          conn,
           setRequests,
           requests,
         })
       })
 
-      connector.on('connect', (error, payload) => {
+      conn.on('connect', (error) => {
         console.log('EVENT', 'connect')
 
         if (error) {
@@ -196,7 +178,7 @@ const WalletConnectScreen = (props: any) => {
         setConnected(true)
       })
 
-      connector.on('disconnect', (error, payload) => {
+      conn.on('disconnect', (error) => {
         console.log('EVENT', 'disconnect')
 
         if (error) {
@@ -206,19 +188,19 @@ const WalletConnectScreen = (props: any) => {
         resetApp()
       })
 
-      if (connector.connected) {
-        const { chainId, accounts } = connector
+      if (conn.connected) {
+        const { chainId, accounts } = conn
         const index = 0
         const address = accounts[index]
         console.log('CONNECTED', chainId, address)
-        console.log('connector 2', connector.connected, connector)
-        getAppControllers(selectAccount).wallet.update(index, chainId)
+        console.log('connector 2', conn.connected, conn)
+        getAppControllers().wallet.update(index, chainId)
         setConnected(true)
         setAddress(address)
         setChainId(chainId)
       }
 
-      setConnector(connector)
+      setConnector(conn)
     }
   }
 
@@ -236,7 +218,7 @@ const WalletConnectScreen = (props: any) => {
     const session = getCachedSession()
 
     if (!session) {
-      await getAppControllers(selectAccount).wallet.init(activeIndex, chainId)
+      await getAppControllers().wallet.init(activeIndex, chainId)
     } else {
       const connector = new WalletConnect({
         session,
@@ -250,7 +232,7 @@ const WalletConnectScreen = (props: any) => {
       const activeIndex = accounts.indexOf(address)
       const chainId = connector.chainId
 
-      await getAppControllers(selectAccount).wallet.init(activeIndex, chainId)
+      await getAppControllers().wallet.init(activeIndex, chainId)
 
       setConnected(connected)
       setConnector(connector)
@@ -258,14 +240,13 @@ const WalletConnectScreen = (props: any) => {
       setActiveIndex(activeIndex)
       setChainId(chainId)
       setPeerMeta(peerMeta)
-      setAccounts(accounts)
 
       subscribeToEvents(connector)
     }
     // await getAppConfig().events.init()
   }
 
-  const initWalletConnect = async (uri) => {
+  const initWalletConnect = async (uri: string) => {
     const _connector = new WalletConnect({
       uri,
       storage: new SessionStorage(),
@@ -290,9 +271,9 @@ const WalletConnectScreen = (props: any) => {
 
     const params = payload.params[0]
     if (request.method === 'eth_sendTransaction') {
-      payload.params[0] = await getAppControllers(
-        selectAccount
-      ).wallet.populateTransaction(params)
+      payload.params[0] = await getAppControllers().wallet.populateTransaction(
+        params
+      )
     }
 
     console.log('ACTION', 'openRequest', request, payload)
@@ -369,6 +350,7 @@ const WalletConnectScreen = (props: any) => {
     return () => {
       killSession()
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

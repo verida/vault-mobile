@@ -24,8 +24,8 @@ const appConfig: IAppConfig = {
   },
   rpcEngine: getRpcEngine(),
   events: {
-    init: (state) => Promise.resolve(),
-    update: (state) => Promise.resolve(),
+    init: () => Promise.resolve(),
+    update: () => Promise.resolve(),
   },
 }
 

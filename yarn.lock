@@ -4171,9 +4171,9 @@
     "@verida/keyring" "^1.1.3"
     url-parse "^1.5.3"
 
-"@verida/vault-common@git+ssh:git@github.com:verida/vault-common.git":
+"@verida/vault-common@https://github.com/verida/vault-common.git":
   version "0.2.2"
-  resolved "git+ssh:git@github.com:verida/vault-common.git#25fc567eb360c30e0496aa62abaa305721a70776"
+  resolved "https://github.com/verida/vault-common.git#b92db9efdf320ef414cc7437ab9bda2436093b2d"
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.20"

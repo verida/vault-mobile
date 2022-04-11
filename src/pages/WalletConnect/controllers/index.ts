@@ -1,3 +1,4 @@
+import AccountManager from '../../../api/AccountManager'
 import { getStoreController, StoreController } from './store'
 import { getWalletController, WalletController } from './wallet'
 
@@ -8,17 +9,19 @@ interface IAppControllers {
 
 let controllers: IAppControllers | undefined
 
-export function setupAppControllers(veridaAccount: any): IAppControllers {
-  const wallet = getWalletController(veridaAccount)
+export function setupAppControllers(): IAppControllers {
+  const wallet = getWalletController(
+    AccountManager.getInstance().getSelectedAccount()
+  )
   const store = getStoreController()
   controllers = { store, wallet }
   return controllers
 }
 
-export function getAppControllers(veridaAccount: any): IAppControllers {
+export function getAppControllers(): IAppControllers {
   let _controllers = controllers
   if (!_controllers) {
-    _controllers = setupAppControllers(veridaAccount)
+    _controllers = setupAppControllers()
   }
   return _controllers
 }

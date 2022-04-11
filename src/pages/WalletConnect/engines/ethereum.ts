@@ -16,13 +16,11 @@ export function filterEthereumRequests(payload: any) {
 }
 
 export async function routeEthereumRequests(payload: any, state: any) {
-  console.log('routeEthereumRequests', payload, state)
   if (!state.connector) {
     return
   }
   const { chainId, connector, setRequests, requests: currentRequests } = state
   if (!signingMethods.includes(payload.method)) {
-    console.log('1 routeEthereumRequests', signingMethods, payload.method)
     try {
       const result = await apiGetCustomRequest(chainId, payload)
       connector.approveRequest({
@@ -36,7 +34,6 @@ export async function routeEthereumRequests(payload: any, state: any) {
       })
     }
   } else {
-    console.log('2 routeEthereumRequests', currentRequests, payload)
     const requests = [...currentRequests]
     requests.push(payload)
     setRequests(requests)

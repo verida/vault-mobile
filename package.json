@@ -31,7 +31,7 @@
     "@verida/account-node": "^1.1.9",
     "@verida/client-rn": "^1.1.13",
     "@verida/encryption-utils": "^1.1.3",
-    "@verida/vault-common": "git+ssh:git@github.com:verida/vault-common.git",
+    "@verida/vault-common": "https://github.com/verida/vault-common.git",
     "@verida/verifiable-credentials": "^0.1.4",
     "@verida/wallet-utils": "^1.5.0",
     "@walletconnect/client": "^1.7.7",
