@@ -1,8 +1,10 @@
 import messaging from '@react-native-firebase/messaging'
-import { isEmpty } from 'lodash'
+import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
+import Config from 'react-native-config'
+import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
@@ -12,7 +14,11 @@ import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'
-import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
+import {
+  BLACK_COLOR,
+  BLACK_COLOR_OPACITY,
+  ORANGE_COLOR,
+} from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import LayoutStyle from '../styles/layouts'
 
@@ -62,6 +68,9 @@ export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
   const networks = useSelector((state) => state.networks)
   const modifiedGeneralList = [...generalList]
+  const versionText = `Verida Vault ${capitalize(
+    Config.DEPLOY_ENVIRONMENT === 'internal' ? Config.DEPLOY_ENVIRONMENT : ''
+  )} v${getVersion()}(${getBuildNumber()})`
 
   if (!isEmpty(networks)) {
     const selectedNode = networks[0].nodes[networks[0].selected_node]
@@ -74,10 +83,10 @@ export default (props) => {
     })
   }
 
-  const logout = async () => {
+  const logout = async (navigation) => {
     Alert.alert(
       'Confirmation',
-      'Are you sure you want to logout of all your accounts?',
+      'Are you sure you want to logout of your current account?',
       [
         {
           text: 'Cancel',
@@ -89,8 +98,14 @@ export default (props) => {
             if (fcmToken) {
               await unRegisterRemoteNotification(fcmToken)
             }
-            await AccountManager.getInstance().logout()
+            const accManagerIns = AccountManager.getInstance()
+            await accManagerIns.logout([accManagerIns.getSelectedAccount().did])
             await refresh()
+
+            // If this is not the only existing account, back to Home screen after switching to the next account.
+            if (accManagerIns.getSelectedAccount()) {
+              navigation.navigate('Home')
+            }
           },
         },
       ]
@@ -105,7 +120,7 @@ export default (props) => {
       label: 'Log Out',
       text: style.logoutText,
       optional: true,
-      onPress: logout,
+      onPress: (navigation) => logout(navigation),
     },
   ]
 
@@ -127,6 +142,7 @@ export default (props) => {
         <View>
           <PropertyList list={modifiedGeneralList} />
         </View>
+        <Text style={style.versionText}>{versionText}</Text>
       </View>
     </View>
   )
@@ -143,5 +159,9 @@ const style = StyleSheet.create({
   },
   logoutText: {
     color: ORANGE_COLOR,
+  },
+  versionText: {
+    color: BLACK_COLOR,
+    marginTop: 15,
   },
 })

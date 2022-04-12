@@ -21,6 +21,7 @@ export default (props) => {
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
+  const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
     const verify = async () => {
@@ -47,17 +48,20 @@ export default (props) => {
 
   const onContinue = async () => {
     try {
+      setProcessing(true)
       const isValid = utils.HDNode.isValidMnemonic(phrase)
       if (!isValid) {
         showError(true)
       }
       const result = await AccountManager.getInstance().importAccount(phrase)
+      setProcessing(false)
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
         return
       }
       navigation.navigate('Success')
     } catch (e) {
+      setProcessing(false)
       showError(true)
     }
   }
@@ -91,7 +95,11 @@ export default (props) => {
         </Layout>
       </Content>
       <CustomFooter>
-        <Button color='primary' onPress={onContinue} disabled={!verified}>
+        <Button
+          color='primary'
+          onPress={onContinue}
+          disabled={!verified || processing}
+          loading={processing}>
           Continue
         </Button>
       </CustomFooter>

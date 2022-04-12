@@ -11,7 +11,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
-const PublicProfile = (props: any) => {
+const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [list, setList] = useState([
     { label: 'Name', value: '', action: 'arrow', type: 'input' },
     { label: 'Country', value: '', action: 'arrow', type: 'select' },
@@ -21,57 +21,62 @@ const PublicProfile = (props: any) => {
   const isFocused = useIsFocused()
   const [loading, setLoading] = useState(false)
 
+  const updateData = async (shouldUpdate: boolean) => {
+    try {
+      if (initialized) {
+        return
+      }
+      let publicData: any = {}
+      if (shouldUpdate || publicProfileData?.name === '') {
+        setLoading(true)
+        const vault = AccountManager.getInstance().vault as any
+        publicData = await vault.profiles.public.getMany()
+        setLoading(false)
+      } else {
+        publicData = publicProfileData
+      }
+
+      updatePublicProfileData(publicData)
+      const updatedList = list.map((item: any) => {
+        const label = item.label.toLowerCase()
+        if (publicData[label]) {
+          item.value = publicData[label]
+        }
+        return item
+      })
+
+      setList(updatedList)
+      setInitialized(true)
+    } catch (e) {
+      Alert.alert('Error', 'Cannot load public profile data')
+    }
+  }
+
   // component did mount
   useEffect(() => {
-    const updateData = async (shouldUpdate: boolean) => {
-      try {
-        if (initialized) {
-          return
-        }
-        let publicData: any = {}
-        if (shouldUpdate || props.publicProfileData?.name === '') {
-          setLoading(true)
-          const vault = AccountManager.getInstance().vault as any
-          publicData = await vault.profiles.public.getMany()
-          setLoading(false)
-        } else {
-          publicData = props.publicProfileData
-        }
-
-        props.setPublicProfileData(publicData)
-        const updatedList = list.map((item: any) => {
-          const label = item.label.toLowerCase()
-          if (publicData[label]) {
-            item.value = publicData[label]
-          }
-          return item
-        })
-
-        setList(updatedList)
-        setInitialized(true)
-      } catch (e) {
-        Alert.alert('Error', 'Cannot load public profile data')
-      }
-    }
-
-    const bindChanges = async () => {
+    let listener: any
+    const watchChanges = async () => {
       const vault = AccountManager.getInstance().vault as any
       await vault.profiles.public.init()
       const db = await vault.profiles.public.store.getDb()
-      const dbInstance = await db.getInstance()
-      dbInstance
+      const dbInstance = db.db
+      listener = dbInstance
         .changes({
           since: 'now',
           live: true,
         })
-        .on('change', async function () {
+        .on('change', () => {
           updateData(true)
         })
     }
-
     updateData(false)
-    bindChanges()
-  }, [initialized, list, props])
+    watchChanges()
+    return () => {
+      listener?.cancel()
+    }
+    // Register profile change listener one time
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     setInitialized(false)
@@ -96,7 +101,7 @@ const PublicProfile = (props: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setPublicProfileData: (data: unknown) =>
+    updatePublicProfileData: (data: unknown) =>
       dispatch(setPublicProfileData(data)),
   }
 }

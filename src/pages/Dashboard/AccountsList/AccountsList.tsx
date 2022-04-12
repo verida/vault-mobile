@@ -16,10 +16,16 @@ export type AccountsListProps = {
   containerStyle: ViewStyle
   onSelectAccount: (did: string) => void
   selectedDids: string[]
+  multipleSelect?: boolean
 }
 
 function AccountsList(props: AccountsListProps) {
-  const { onSelectAccount, containerStyle, selectedDids = [] } = props
+  const {
+    onSelectAccount,
+    containerStyle,
+    selectedDids = [],
+    multipleSelect,
+  } = props
   const [data, setData] = useState<Account[]>([])
   const [loading, setLoading] = useState(false)
 
@@ -51,10 +57,11 @@ function AccountsList(props: AccountsListProps) {
           did={did}
           avatar={avatar}
           selected={selected}
+          multipleSelect={multipleSelect}
         />
       )
     },
-    [onSelectAccount, selectedDids]
+    [onSelectAccount, selectedDids, multipleSelect]
   )
 
   if (loading) {

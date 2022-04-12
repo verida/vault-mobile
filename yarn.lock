@@ -3812,7 +3812,7 @@
 
 "@verida/vault-common@https://github.com/verida/vault-common.git":
   version "0.2.2"
-  resolved "https://github.com/verida/vault-common.git#25fc567eb360c30e0496aa62abaa305721a70776"
+  resolved "https://github.com/verida/vault-common.git#b92db9efdf320ef414cc7437ab9bda2436093b2d"
   dependencies:
     axios "^0.19.2"
     lodash "^4.17.20"
@@ -13236,6 +13236,11 @@ react-native-datepicker@^1.7.2:
   integrity sha1-WNCCJZGgrJsyq6CCZQIioO4pZp0=
   dependencies:
     moment "^2.22.0"
+
+react-native-device-info@^8.5.1:
+  version "8.5.1"
+  resolved "https://registry.yarnpkg.com/react-native-device-info/-/react-native-device-info-8.5.1.tgz#40b38506d7cc1e2266da49fe7b9672166c765fc9"
+  integrity sha512-VMEP1c/X0KSOqBZDzs9/GHbacgdsoQqaBqI/fK98S5oMmKAfuIFjAjb4kvcNjC2mklD6JrlgXPnqKQQaX+kklg==
 
 react-native-drawer@2.5.1:
   version "2.5.1"

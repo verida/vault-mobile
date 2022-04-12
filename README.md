@@ -34,6 +34,27 @@
 6. `yarn start`
 7. `yarn run android`
 
+## To generate a release Android build
+1. Contact project manager to get the keystore file. The file name should be `verida-vault.keystore`
+2. Paste the keystore file into `./android/app` folder
+3. Set keystore password to global `gradle.properties` file:
+```
+cd ~/Users/[your_user_name]/.gradle
+nano gradle.properties
+```
+Paste these 2 variables in
+```
+MYAPP_UPLOAD_STORE_PASSWORD=[your_password]
+MYAPP_UPLOAD_KEY_PASSWORD=[your_password]
+```
+(Contact project manager to get`[your_password]`)
+4. Run these commands:
+```
+cd android
+./gradlew assembleStagingRelease
+```
+4. Get the APK generated in `./android/app/build`
+
 ## Instruction to get app running on Apple M1 macs
 
 Prerequisites: you need to have node, watchman, etc installed, best to follow the setting up development environment instructions here for Mac and iOS and get a bare react native app working:
