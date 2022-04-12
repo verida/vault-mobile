@@ -295,8 +295,8 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
         ? rawTransaction.args.deposit
         : rawTransaction.args.args_json.amount,
       fee:
-        parseInt(rawTransaction.receipt_conversion_tokens_burnt, 16) +
-        parseInt(rawTransaction.tokens_burnt, 16),
+        parseInt(rawTransaction.receipt_conversion_tokens_burnt, 10) +
+        parseInt(rawTransaction.tokens_burnt, 10),
       round: rawTransaction.included_in_block_hash,
       time: rawTransaction.block_timestamp,
       symbol,
@@ -414,7 +414,7 @@ const getTransactionParams = async (transactionData, wallets) => {
     const near = await initNearClient()
     const response = await near.connection.provider.gasPrice()
 
-    const params = { fee: parseInt(response.gas_price, 16) * units }
+    const params = { fee: parseInt(response.gas_price, 10) * units }
 
     return params
   } else if (transactionData.token.address.includes('eip155')) {
