@@ -22,7 +22,7 @@ export default ({ transaction }) => {
       break
     case 'near':
       formattedTime = new Date(
-        parseInt(transaction.time) / 1000000
+        parseInt(transaction.time, 16) / 1000000
       ).toLocaleString('en-US')
       fixed = 8
       break

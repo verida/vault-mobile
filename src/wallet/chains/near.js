@@ -1,5 +1,6 @@
 import * as nearAPI from 'near-api-js'
 import store from 'reduxStore'
+
 const { connect } = nearAPI
 const { keyStores, KeyPair } = nearAPI
 const keyStore = new keyStores.InMemoryKeyStore()

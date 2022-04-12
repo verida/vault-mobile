@@ -3,9 +3,9 @@ import { algodClient, indexerClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
 import initNearClient from 'wallet/chains/near'
 import {
-  SUPPORTED_TOKENS,
-  NEAR_GAS_AMOUNT_TRANSFER,
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
+  NEAR_GAS_AMOUNT_TRANSFER,
+  SUPPORTED_TOKENS,
 } from 'wallet/constants'
 import { moralisApi, nearIndexerApi } from 'wallet/helpers/api'
 import {
@@ -263,7 +263,7 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
     let rawTransaction = nearTransaction.data
     let userAddr = wallets.near.address
 
-    let isNative = rawTransaction.action_kind == 'TRANSFER'
+    let isNative = rawTransaction.action_kind === 'TRANSFER'
     let isUserSender = rawTransaction.signer_account_id === userAddr
     let feeSymbol = SUPPORTED_TOKENS[5].symbol
     let feeDecimal = SUPPORTED_TOKENS[5].decimal
@@ -295,8 +295,8 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
         ? rawTransaction.args.deposit
         : rawTransaction.args.args_json.amount,
       fee:
-        parseInt(rawTransaction.receipt_conversion_tokens_burnt) +
-        parseInt(rawTransaction.tokens_burnt),
+        parseInt(rawTransaction.receipt_conversion_tokens_burnt, 16) +
+        parseInt(rawTransaction.tokens_burnt, 16),
       round: rawTransaction.included_in_block_hash,
       time: rawTransaction.block_timestamp,
       symbol,
@@ -414,7 +414,7 @@ const getTransactionParams = async (transactionData, wallets) => {
     const near = await initNearClient()
     const response = await near.connection.provider.gasPrice()
 
-    const params = { fee: parseInt(response.gas_price) * units }
+    const params = { fee: parseInt(response.gas_price, 16) * units }
 
     return params
   } else if (transactionData.token.address.includes('eip155')) {
