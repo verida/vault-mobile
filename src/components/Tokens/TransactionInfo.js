@@ -9,11 +9,24 @@ import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({ transaction }) => {
-  var formattedTime =
-    transaction.chain === 'algorand'
-      ? new Date(transaction.time * 1000).toLocaleString('en-US')
-      : new Date(transaction.time).toLocaleString('en-US')
-  const fixed = transaction.chain === 'algorand' ? 3 : 18
+  let formattedTime
+  let fixed
+  switch (transaction.chain) {
+    case 'algorand':
+      formattedTime = new Date(transaction.time * 1000).toLocaleString('en-US')
+      fixed = 3
+      break
+    case 'ethereum':
+      formattedTime = new Date(transaction.time).toLocaleString('en-US')
+      fixed = 18
+      break
+    case 'near':
+      formattedTime = new Date(
+        parseInt(transaction.time) / 1000000
+      ).toLocaleString('en-US')
+      fixed = 8
+      break
+  }
 
   return (
     <View style={styles.container}>
@@ -64,7 +77,11 @@ export default ({ transaction }) => {
           <Text style={styles.infoLabel}>Fee</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
-              {formatTokenQuantity(transaction.fee, transaction.decimal, fixed)}{' '}
+              {formatTokenQuantity(
+                transaction.fee,
+                transaction.feeDecimal,
+                fixed
+              )}{' '}
               {transaction.feeSymbol}
             </Text>
           </View>
