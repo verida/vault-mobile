@@ -49,7 +49,7 @@ export default (props) => {
   const onContinue = async () => {
     try {
       setProcessing(true)
-      const isValid = utils.HDNode.isValidMnemonic(phrase)
+      const isValid = utils.isValidMnemonic(phrase)
       if (!isValid) {
         showError(true)
       }

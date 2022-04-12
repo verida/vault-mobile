@@ -331,7 +331,7 @@ class AccountManager {
         messageServerUrl: selectedNode.messaging_address,
         notificationServerUrl: selectedNode.notification_address,
       }
-      const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
+      const node = utils.entropyToMnemonic(utils.randomBytes(16))
 
       this.selectedAccount = {
         mnemonic: node,
