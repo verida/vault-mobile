@@ -11,21 +11,27 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 export default ({ transaction }) => {
   let formattedTime
   let fixed
-  switch (transaction.chain) {
-    case 'algorand':
-      formattedTime = new Date(transaction.time * 1000).toLocaleString('en-US')
-      fixed = 3
-      break
-    case 'ethereum':
-      formattedTime = new Date(transaction.time).toLocaleString('en-US')
-      fixed = 18
-      break
-    case 'near':
-      formattedTime = new Date(
-        parseInt(transaction.time, 10) / 1000000
-      ).toLocaleString('en-US')
-      fixed = 8
-      break
+  try {
+    switch (transaction.chain) {
+      case 'algorand':
+        formattedTime = new Date(transaction.time * 1000).toLocaleString(
+          'en-US'
+        )
+        fixed = 3
+        break
+      case 'ethereum':
+        formattedTime = new Date(transaction.time).toLocaleString('en-US')
+        fixed = 18
+        break
+      case 'near':
+        formattedTime = new Date(
+          parseInt(transaction.time, 10) / 1000000
+        ).toLocaleString('en-US')
+        fixed = 8
+        break
+    }
+  } catch (error) {
+    throw error
   }
 
   return (

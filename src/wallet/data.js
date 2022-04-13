@@ -45,94 +45,98 @@ const minABI = [
 ]
 
 const getAllBalances = async (wallets) => {
-  let list = {}
+  try {
+    let list = {}
 
-  const near = await initNearClient()
-  const nearAccount = await near.account(wallets.near.address)
+    const near = await initNearClient()
+    const nearAccount = await near.account(wallets.near.address)
 
-  const nearTokens = SUPPORTED_TOKENS.filter(
-    (tk) => tk.address.includes('near:') && tk.address.includes('nep141')
-  )
+    const nearTokens = SUPPORTED_TOKENS.filter(
+      (tk) => tk.address.includes('near:') && tk.address.includes('nep141')
+    )
 
-  await nearTokens.forEach(async (nearToken) => {
-    const tokBalance = await nearAccount.viewFunction(
-      getTokenAddress(nearToken.address),
-      'ft_balance_of',
+    await nearTokens.forEach(async (nearToken) => {
+      const tokBalance = await nearAccount.viewFunction(
+        getTokenAddress(nearToken.address),
+        'ft_balance_of',
+        {
+          account_id: wallets.near.address,
+        }
+      )
+
+      if (tokBalance) {
+        list[nearToken.symbol] = tokBalance
+      }
+    })
+
+    const nearBalance = await nearAccount.getAccountBalance()
+
+    let algorandBalances = await indexerClient
+      .lookupAccountByID(wallets.algo.address)
+      .do()
+
+    const ethNativeBalance = await moralisApi.get(
+      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
+      wallets.ethr.address + '/balance',
       {
-        account_id: wallets.near.address,
+        chain: 'rinkeby',
       }
     )
 
-    if (tokBalance) {
-      list[nearToken.symbol] = tokBalance
-    }
-  })
+    const ethereumBalances = await moralisApi.get(
+      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/erc20',
+      wallets.ethr.address + '/erc20',
+      {
+        chain: 'rinkeby',
+      }
+    )
 
-  const nearBalance = await nearAccount.getAccountBalance()
-
-  let algorandBalances = await indexerClient
-    .lookupAccountByID(wallets.algo.address)
-    .do()
-
-  const ethNativeBalance = await moralisApi.get(
-    // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
-    wallets.ethr.address + '/balance',
-    {
-      chain: 'rinkeby',
-    }
-  )
-
-  const ethereumBalances = await moralisApi.get(
-    // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/erc20',
-    wallets.ethr.address + '/erc20',
-    {
-      chain: 'rinkeby',
-    }
-  )
-
-  if (algorandBalances.account) {
-    const algoBalanceData = algorandBalances.account
-    // TODO: dont hardcode
-    list.ALGO = algoBalanceData.amount
-    if (algoBalanceData.assets) {
-      algoBalanceData.assets.map((balance) => {
-        let tok
-        tok = SUPPORTED_TOKENS.find((ele) => {
-          let tokenAddress = getTokenAddress(ele.address)
-          if (balance['asset-id']) {
-            return tokenAddress === balance['asset-id'].toString()
-          } else {
-            return false
+    if (algorandBalances.account) {
+      const algoBalanceData = algorandBalances.account
+      // TODO: dont hardcode
+      list.ALGO = algoBalanceData.amount
+      if (algoBalanceData.assets) {
+        algoBalanceData.assets.map((balance) => {
+          let tok
+          tok = SUPPORTED_TOKENS.find((ele) => {
+            let tokenAddress = getTokenAddress(ele.address)
+            if (balance['asset-id']) {
+              return tokenAddress === balance['asset-id'].toString()
+            } else {
+              return false
+            }
+          })
+          if (tok) {
+            list[tok.symbol] = balance.amount
           }
         })
+      }
+    }
+
+    if (ethNativeBalance.data) {
+      list.ETH = parseFloat(ethNativeBalance.data.balance)
+    }
+
+    if (ethereumBalances.data) {
+      Object.values(ethereumBalances.data).map((obj) => {
+        let tok = SUPPORTED_TOKENS.find((ele) => {
+          // let tokenAddress = getTokenAddress(ele.address)
+          return ele.symbol === obj.symbol
+        })
         if (tok) {
-          list[tok.symbol] = balance.amount
+          list[tok.symbol] = parseFloat(obj.balance)
         }
       })
     }
-  }
 
-  if (ethNativeBalance.data) {
-    list.ETH = parseFloat(ethNativeBalance.data.balance)
-  }
+    if (nearBalance.total) {
+      list.NEAR = parseFloat(nearBalance.total)
+    }
 
-  if (ethereumBalances.data) {
-    Object.values(ethereumBalances.data).map((obj) => {
-      let tok = SUPPORTED_TOKENS.find((ele) => {
-        // let tokenAddress = getTokenAddress(ele.address)
-        return ele.symbol === obj.symbol
-      })
-      if (tok) {
-        list[tok.symbol] = parseFloat(obj.balance)
-      }
-    })
+    return list
+  } catch (e) {
+    throw e
   }
-
-  if (nearBalance.total) {
-    list.NEAR = parseFloat(nearBalance.total)
-  }
-
-  return list
 }
 
 const getTransactions = async (wallets, tokenAddress) => {
