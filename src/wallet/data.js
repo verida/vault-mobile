@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import algosdk from 'algosdk'
 import { algodClient, indexerClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
@@ -135,6 +136,7 @@ const getAllBalances = async (wallets) => {
 
     return list
   } catch (e) {
+    Sentry.captureException(e)
     throw e
   }
 }

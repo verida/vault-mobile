@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
+import * as Sentry from '@sentry/react-native'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -30,8 +31,9 @@ export default ({ transaction }) => {
         fixed = 8
         break
     }
-  } catch (error) {
-    throw error
+  } catch (e) {
+    Sentry.captureException(e)
+    throw e
   }
 
   return (
