@@ -23,5 +23,5 @@ export const moralisApi = create({
 })
 
 export const nearIndexerApi = create({
-  baseURL: 'http://localhost:3000/',
+  baseURL: 'http://3.15.157.193:3000/',
 })
