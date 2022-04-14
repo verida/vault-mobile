@@ -3,7 +3,11 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
-import { formatTokenQuantity, getTokenChain } from 'wallet/helpers/tokens'
+import {
+  formatTokenQuantity,
+  getTokenChain,
+  getWalletAddressForToken,
+} from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -27,17 +31,28 @@ const ConfirmTransaction = ({
 }) => {
   const { token, amount, address } = route.params
   const tokenChain = getTokenChain(token.address)
-  const accountAddress =
-    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
-  const feeSymbol =
-    tokenChain === 'algorand'
-      ? SUPPORTED_TOKENS[0].symbol
-      : SUPPORTED_TOKENS[2].symbol
-  const feeDecimal =
-    tokenChain === 'algorand'
-      ? SUPPORTED_TOKENS[0].decimal
-      : SUPPORTED_TOKENS[2].decimal
-  const fixed = tokenChain === 'algorand' ? 3 : 18
+  const accountAddress = getWalletAddressForToken(token.address, wallets)
+
+  let feeSymbol
+  let feeDecimal
+  let fixed
+  switch (tokenChain) {
+    case 'algorand':
+      feeSymbol = SUPPORTED_TOKENS[0].symbol
+      feeDecimal = SUPPORTED_TOKENS[0].decimal
+      fixed = 3
+      break
+    case 'ethereum':
+      feeSymbol = SUPPORTED_TOKENS[2].symbol
+      feeDecimal = SUPPORTED_TOKENS[2].decimal
+      fixed = 18
+      break
+    case 'near':
+      feeSymbol = SUPPORTED_TOKENS[5].symbol
+      feeDecimal = SUPPORTED_TOKENS[5].decimal
+      fixed = 8
+      break
+  }
 
   return (
     <Container>
