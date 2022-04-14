@@ -1,5 +1,6 @@
 import { AssetId } from 'caip'
 import { utils } from 'ethers'
+import { SUPPORTED_TOKENS } from 'wallet/constants'
 
 export const getTokenAddress = (address) => {
   if (address.includes('slip44')) {
@@ -23,9 +24,20 @@ export const isNativeToken = (address) => {
 export const getTokenChain = (address) => {
   if (address.includes('near:')) {
     return 'near'
+  } else if (address.includes('eip155:')) {
+    return 'eip155'
+  } else {
+    const parsed = AssetId.parse(address)
+    return parsed.chainId.namespace
   }
-  const parsed = AssetId.parse(address)
-  return parsed.chainId.namespace
+}
+
+export const getNativeForChain = (chain) => {
+  let tok = SUPPORTED_TOKENS.find(
+    (ele) => ele.address.includes(chain) && ele.address.includes('slip44')
+  )
+
+  return tok
 }
 
 export const getWalletAddressForToken = (tokenAddress, wallets) => {
