@@ -13,6 +13,8 @@ import {
   getTokenAddress,
   isNativeToken,
   parseUnitsForSending,
+  getTokenChain,
+  getNativeForChain,
 } from 'wallet/helpers/tokens'
 
 import {
@@ -271,8 +273,10 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
 
     let isNative = rawTransaction.action_kind === 'TRANSFER'
     let isUserSender = rawTransaction.signer_account_id === userAddr
-    let feeSymbol = SUPPORTED_TOKENS[5].symbol
-    let feeDecimal = SUPPORTED_TOKENS[5].decimal
+    let chain = getTokenChain(tokenAddress)
+    let nativeToken = getNativeForChain(chain)
+    let feeSymbol = nativeToken.symbol
+    let feeDecimal = nativeToken.decimal
 
     let symbol
     let decimal
@@ -285,8 +289,8 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
       symbol = tok.symbol
       decimal = tok.decimal
     } else {
-      symbol = SUPPORTED_TOKENS[5].symbol
-      decimal = SUPPORTED_TOKENS[5].decimal
+      symbol = nativeToken.symbol
+      decimal = nativeToken.decimal
     }
 
     return {
@@ -324,7 +328,10 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
 
     if (rawTransaction) {
       let isUserSender = rawTransaction.from_address === userAddr.toLowerCase()
-      let feeDecimal = SUPPORTED_TOKENS[2].decimal
+      let chain = getTokenChain(tokenAddress)
+      let nativeToken = getNativeForChain(chain)
+      let feeDecimal = nativeToken.decimal
+      let feeSymbol = nativeToken.symbol
       let symbol
       let decimal
       let quantity
@@ -338,11 +345,10 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
         decimal = tok.decimal
         quantity = parseInt(nonNativeTx.data, 16)
       } else {
-        symbol = SUPPORTED_TOKENS[2].symbol
-        decimal = SUPPORTED_TOKENS[2].decimal
+        symbol = nativeToken.symbol
+        decimal = nativeToken.decimal
         quantity = rawTransaction.value
       }
-      let feeSymbol = SUPPORTED_TOKENS[2].symbol
       return {
         id: rawTransaction.hash,
         type: isUserSender ? 'sent' : 'received',
@@ -375,10 +381,12 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
       let transferInfo = rawTransaction['asset-transfer-transaction']
         ? rawTransaction['asset-transfer-transaction']
         : rawTransaction['payment-transaction']
-      let feeDecimal = SUPPORTED_TOKENS[0].decimal
       let symbol
       let decimal
-      let feeSymbol = SUPPORTED_TOKENS[0].symbol
+      let chain = getTokenChain(tokenAddress)
+      let nativeToken = getNativeForChain(chain)
+      let feeDecimal = nativeToken.decimal
+      let feeSymbol = nativeToken.symbol
       if (rawTransaction['asset-transfer-transaction']) {
         let tok = SUPPORTED_TOKENS.find(
           (ele) =>
@@ -388,8 +396,8 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
         symbol = tok.symbol
         decimal = tok.decimal
       } else {
-        symbol = SUPPORTED_TOKENS[0].symbol
-        decimal = SUPPORTED_TOKENS[0].decimal
+        symbol = nativeToken.symbol
+        decimal = nativeToken.decimal
       }
       return {
         id: rawTransaction.id,
@@ -518,6 +526,9 @@ const sendTransaction = async (
       )
     }
 
+    let chain = getTokenChain(transactionData.token.address)
+    let nativeToken = getNativeForChain(chain)
+
     const txData = {
       id: tx.transaction.hash,
       amount: amount,
@@ -525,7 +536,7 @@ const sendTransaction = async (
       to: transactionData.address,
       from: wallets.near.address,
       token: transactionData.token,
-      feeSymbol: transactionData.token.symbol,
+      feeSymbol: nativeToken.symbol,
       chain: 'near',
     }
 
@@ -585,6 +596,9 @@ const sendTransaction = async (
         signedTx.rawTransaction
       )
 
+      let chain = getTokenChain(transactionData.token.address)
+      let nativeToken = getNativeForChain(chain)
+
       if (transactionHash) {
         const txData = {
           id: transactionHash.transactionHash,
@@ -593,7 +607,7 @@ const sendTransaction = async (
           to: transactionData.address,
           from: wallets.ethr.address,
           token: transactionData.token,
-          feeSymbol: SUPPORTED_TOKENS[2].symbol,
+          feeSymbol: nativeToken.symbol,
           chain: 'ethereum',
         }
 
@@ -667,6 +681,9 @@ const sendTransaction = async (
 
     const sent = await algodClient.sendRawTransaction(signedTransaction).do()
 
+    let chain = getTokenChain(transactionData.token.address)
+    let nativeToken = getNativeForChain(chain)
+
     const txData = {
       id: sent.txId,
       amount: transaction.amount,
@@ -674,7 +691,7 @@ const sendTransaction = async (
       to: transactionData.address,
       from: wallets.algo.address,
       token: transactionData.token,
-      feeSymbol: SUPPORTED_TOKENS[0].symbol,
+      feeSymbol: nativeToken.symbol,
       chain: 'algorand',
     }
 
