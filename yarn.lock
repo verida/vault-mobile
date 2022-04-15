@@ -2829,6 +2829,11 @@
   dependencies:
     invariant "^2.2.4"
 
+"@react-native-firebase/analytics@^14.2.1":
+  version "14.7.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-14.7.0.tgz#0fbe5554a67bce2cf9239ce5b1ce7dfca651cd39"
+  integrity sha512-HsNIIUaiEYDu2pwn5/NxH1TCq30y9Gig6iPxEEhgWj/MX583BxGlLCyFD7+BgeHQLn8KWWouaB3lqa/72JWb1g==
+
 "@react-native-firebase/app@^14.2.1":
   version "14.2.1"
   resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-14.2.1.tgz#81c549952f4f7dc7d00ad29c78b425abd2ea5e67"
@@ -2837,6 +2842,11 @@
     "@expo/config-plugins" "^4.0.12"
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
+
+"@react-native-firebase/dynamic-links@^14.2.1":
+  version "14.7.0"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/dynamic-links/-/dynamic-links-14.7.0.tgz#2fb7cdae0b0663dade1f4ada8acde9857e10a5ac"
+  integrity sha512-H6P+eRJUXvviMUSGwQeGZTjb/v1jhGsZPEYczqWqq6IWGoEXEXNFEwYiwQcwDzpGBDFjUq1BFC9CEvIBj7OJcA==
 
 "@react-native-firebase/messaging@^14.2.1":
   version "14.2.1"
