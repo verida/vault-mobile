@@ -14,6 +14,7 @@ import {
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
+import dynamicLinks from '@react-native-firebase/dynamic-links'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
@@ -74,6 +75,11 @@ const Home = (props) => {
           return
         }
 
+        // ignore for firebase links, let firebase handle them.
+        if (initialUrl.includes('connect')) {
+          return
+        }
+
         handleDeeplink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
@@ -82,6 +88,16 @@ const Home = (props) => {
 
     getUrl()
   }, [handleDeeplink])
+
+  useEffect(() => {
+    dynamicLinks()
+      .getInitialLink()
+      .then(async (link) => {
+        if (link.url.includes) {
+          await Linking.openURL('https://www.noblefive.com/')
+        }
+      })
+  }, [])
 
   useEffect(() => {
     if (navigationLink) {
