@@ -48,6 +48,8 @@ const LogoImg = require('../../assets/vault-logo.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
+import DataConnectorsManager from 'api/DataConnectorsManager'
+
 const Home = (props) => {
   const {
     navigation,
@@ -149,6 +151,14 @@ const Home = (props) => {
     })
   }
 
+  function onConnectPress(connector) {
+    DataConnectorsManager.initiateAuth(connector)
+  }
+
+  async function onSyncPress(connector) {
+    DataConnectorsManager.sync(connector)
+  }
+
   function toggleAddAccountsModal() {
     setShowAddAccounts((prevState) => !prevState)
   }
@@ -219,6 +229,26 @@ const Home = (props) => {
               onPress={onScanQRPress}>
               <QRCodeIcon />
               <Text style={style.scanQRButtonText}>Scan QR</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.tempButton}
+              onPress={() => onConnectPress('facebook')}>
+              <Text style={style.tempButtonText}>+ FB</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.tempButton}
+              onPress={() => onConnectPress('twitter')}>
+              <Text style={style.tempButtonText}>+ Twitter</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.tempButton}
+              onPress={() => onSyncPress('facebook')}>
+              <Text style={style.tempButtonText}>Sync FB</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={style.tempButton}
+              onPress={() => onSyncPress('twitter')}>
+              <Text style={style.tempButtonText}>Sync Twitter</Text>
             </TouchableOpacity>
           </>
         )}
@@ -344,5 +374,19 @@ const style = StyleSheet.create({
     width: SCREEN_WIDTH - 30,
     backgroundColor: LIGHT_ORANGE_COLOR,
     borderRadius: 3,
+  },
+  tempButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#E0E3EA',
+    borderRadius: 4,
+  },
+  tempButtonText: {
+    marginLeft: 5,
+    color: '#041133',
+    fontSize: 8,
   },
 })

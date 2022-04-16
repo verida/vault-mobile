@@ -20,7 +20,7 @@ const Folders = () => {
       const vault = AccountManager.getInstance().vault
       const { navigation, folders } = vault.data.map
 
-      const allowedFolderNames = ['credentials', 'contact']
+      const allowedFolderNames = ['credentials', 'contact', 'following']
       const filteredNavigation = navigation.filter((_navigation) =>
         allowedFolderNames.includes(_navigation)
       )
