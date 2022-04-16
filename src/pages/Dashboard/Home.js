@@ -1,3 +1,4 @@
+import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
@@ -14,7 +15,6 @@ import {
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
-import dynamicLinks from '@react-native-firebase/dynamic-links'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
