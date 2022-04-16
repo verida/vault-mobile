@@ -26,8 +26,9 @@ export default class DataConnectorsManager {
         console.log(`Syncing ${connectorName}`)
         const connectorInfo = DataConnectorsManager.connectorInfo(connectorName)
 
-        const accessToken = connectorInfo.accessToken
-        const nonce = connectorInfo.nonce
+        const accessToken = connectorInfo!.accessToken
+        const refreshToken = connectorInfo!.refreshToken
+        const nonce = connectorInfo!.nonce
     
         try {
             // Request the server to sync the third party connector data into a collection of encrypted datastores
@@ -38,7 +39,7 @@ export default class DataConnectorsManager {
             const axiosInstance = axios.create()
 
             // @todo: handle errors
-            const syncRequestResult = await axiosInstance.get(`${CONFIG.dataConnectorUrl}/sync/${connectorName}?accessToken=${accessToken}&did=${did}&nonce=${nonce}`)
+            const syncRequestResult = await axiosInstance.get(`${CONFIG.dataConnectorUrl}/sync/${connectorName}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&nonce=${nonce}`)
             const { response, signerDid, contextName } = syncRequestResult.data
     
             // Datastores are now available for syncing into the vault, let's sync them!
@@ -49,6 +50,7 @@ export default class DataConnectorsManager {
                 console.log(`Processing ${schemaUri}`)
                 // Open the external datastore
                 const { databaseName, encryptionKey } = response[schemaUri]
+                console.log(databaseName)
                 const key = Buffer.from(encryptionKey, 'hex')
         
                 const externalDatastore = await context!.openExternalDatastore(schemaUri, signerDid, {
@@ -72,6 +74,9 @@ export default class DataConnectorsManager {
                 const vaultDatastore = await context!.openDatastore(schemaUri)
                 const vaultDb = await vaultDatastore.getDb()
                 const vaultCouch = await vaultDb.getDb()
+
+                //const items = await externalDb.getMany()
+                //console.log(items)
         
                 // Replicate (pull) data from the connector's datastore to this user's Vault datastore
                 try {
@@ -92,7 +97,7 @@ export default class DataConnectorsManager {
             }
     
             // cleanup by calling sync done to the server so the temporary data can be deleted
-            await axiosInstance.get(`${CONFIG.dataConnectorUrl}/syncDone/facebook?did=${did}&nonce=${nonce}`)
+            await axiosInstance.get(`${CONFIG.dataConnectorUrl}/syncDone/${connectorName}?did=${did}&nonce=${nonce}`)
         } catch (err) {
             // @todo: How to handle?
             console.log('error!')
@@ -102,10 +107,19 @@ export default class DataConnectorsManager {
 
     static connectorInfo(connectorName: string) {
         // @todo: load connector info from vault datastore
-        return {
-            accessToken: ``,
-            requestToken: undefined,
-            nonce: '1'
+        switch (connectorName) {
+            case 'twitter':
+                return {
+                    accessToken: '',
+                    refreshToken: '',
+                    nonce: '1'
+                }
+            case 'facebook':
+                return {
+                    accessToken: ``,
+                    requestToken: undefined,
+                    nonce: '1'
+                }
         }
     }
 
