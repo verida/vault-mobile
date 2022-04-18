@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import algosdk from 'algosdk'
 import { algodClient, indexerClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
@@ -77,12 +76,7 @@ const getAllBalances = async (wallets) => {
     if (nearBalance.total) {
       list.NEAR = parseFloat(nearBalance.total)
     }
-  } catch (e) {
-    Sentry.captureException(e)
-    throw e
-  }
 
-  try {
     let algorandBalances = await indexerClient
       .lookupAccountByID(wallets.algo.address)
       .do()
@@ -108,12 +102,7 @@ const getAllBalances = async (wallets) => {
         })
       }
     }
-  } catch (e) {
-    Sentry.captureException(e)
-    throw e
-  }
 
-  try {
     const ethNativeBalance = await moralisApi.get(
       // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
       wallets.ethr.address + '/balance',
@@ -145,9 +134,9 @@ const getAllBalances = async (wallets) => {
         }
       })
     }
-  } catch (e) {
-    Sentry.captureException(e)
-    throw e
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error, 'error')
   }
 
   return list
