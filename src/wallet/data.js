@@ -77,8 +77,9 @@ const getAllBalances = async (wallets) => {
     if (nearBalance.total) {
       list.NEAR = parseFloat(nearBalance.total)
     }
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    Sentry.captureException(e)
+    throw e
   }
 
   try {
@@ -107,8 +108,9 @@ const getAllBalances = async (wallets) => {
         })
       }
     }
-  } catch (error) {
-    console.log(error, 'error')
+  } catch (e) {
+    Sentry.captureException(e)
+    throw e
   }
 
   try {
@@ -143,8 +145,9 @@ const getAllBalances = async (wallets) => {
         }
       })
     }
-  } catch (error) {
-    console.log(error)
+  } catch (e) {
+    Sentry.captureException(e)
+    throw e
   }
 
   return list
