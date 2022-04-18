@@ -48,9 +48,9 @@ const minABI = [
 ]
 
 const getAllBalances = async (wallets) => {
-  try {
-    let list = {}
+  let list = {}
 
+  try {
     const near = await initNearClient()
     const nearAccount = await near.account(wallets.near.address)
 
@@ -74,25 +74,17 @@ const getAllBalances = async (wallets) => {
 
     const nearBalance = await nearAccount.getAccountBalance()
 
+    if (nearBalance.total) {
+      list.NEAR = parseFloat(nearBalance.total)
+    }
+  } catch (error) {
+    console.log(error)
+  }
+
+  try {
     let algorandBalances = await indexerClient
       .lookupAccountByID(wallets.algo.address)
       .do()
-
-    const ethNativeBalance = await moralisApi.get(
-      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
-      wallets.ethr.address + '/balance',
-      {
-        chain: 'rinkeby',
-      }
-    )
-
-    const ethereumBalances = await moralisApi.get(
-      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/erc20',
-      wallets.ethr.address + '/erc20',
-      {
-        chain: 'rinkeby',
-      }
-    )
 
     if (algorandBalances.account) {
       const algoBalanceData = algorandBalances.account
@@ -115,6 +107,26 @@ const getAllBalances = async (wallets) => {
         })
       }
     }
+  } catch (error) {
+    console.log(error, 'error')
+  }
+
+  try {
+    const ethNativeBalance = await moralisApi.get(
+      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
+      wallets.ethr.address + '/balance',
+      {
+        chain: 'rinkeby',
+      }
+    )
+
+    const ethereumBalances = await moralisApi.get(
+      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/erc20',
+      wallets.ethr.address + '/erc20',
+      {
+        chain: 'rinkeby',
+      }
+    )
 
     if (ethNativeBalance.data) {
       list.ETH = parseFloat(ethNativeBalance.data.balance)
@@ -131,16 +143,11 @@ const getAllBalances = async (wallets) => {
         }
       })
     }
-
-    if (nearBalance.total) {
-      list.NEAR = parseFloat(nearBalance.total)
-    }
-
-    return list
-  } catch (e) {
-    Sentry.captureException(e)
-    throw e
+  } catch (error) {
+    console.log(error)
   }
+
+  return list
 }
 
 const getTransactions = async (wallets, tokenAddress) => {
