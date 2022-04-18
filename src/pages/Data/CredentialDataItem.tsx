@@ -75,7 +75,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     }
 
     init()
-  }, [data, item])
+  }, [item])
 
   if (isEmpty(data.data)) {
     return null
