@@ -363,7 +363,7 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
         feeSymbol,
         decimal,
         feeDecimal,
-        chain: 'ethereum',
+        chain: 'eip155',
       }
     } else {
       return {}
@@ -608,7 +608,7 @@ const sendTransaction = async (
           from: wallets.ethr.address,
           token: transactionData.token,
           feeSymbol: nativeToken.symbol,
-          chain: 'ethereum',
+          chain: 'eip155',
         }
 
         return txData
