@@ -11,10 +11,10 @@ import { moralisApi, nearIndexerApi } from 'wallet/helpers/api'
 import {
   getNativeForChain,
   getTokenAddress,
+  getTokenByAddress,
   getTokenChain,
   isNativeToken,
   parseUnitsForSending,
-  getTokenByAddress,
 } from 'wallet/helpers/tokens'
 
 import {
