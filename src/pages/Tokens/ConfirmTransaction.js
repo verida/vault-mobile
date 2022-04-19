@@ -42,7 +42,7 @@ const ConfirmTransaction = ({
       feeDecimal = SUPPORTED_TOKENS[0].decimal
       fixed = 3
       break
-    case 'ethereum':
+    case 'eip155':
       feeSymbol = SUPPORTED_TOKENS[2].symbol
       feeDecimal = SUPPORTED_TOKENS[2].decimal
       fixed = 18

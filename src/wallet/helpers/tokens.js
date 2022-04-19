@@ -40,6 +40,14 @@ export const getNativeForChain = (chain) => {
   return tok
 }
 
+export const getTokenByAddress = (address) => {
+  let tok = SUPPORTED_TOKENS.find(
+    (ele) => getTokenAddress(ele.address).toLowerCase() === address
+  )
+
+  return tok
+}
+
 export const getWalletAddressForToken = (tokenAddress, wallets) => {
   const chainMapping = {
     algorand: 'algo',
@@ -69,7 +77,7 @@ export const getExplorerUrl = (chain) => {
     case 'algorand':
       url = 'https://testnet.algoexplorer.io/tx/'
       break
-    case 'ethereum':
+    case 'eip155':
       url = 'https://rinkeby.etherscan.io/tx/'
       break
     case 'near':

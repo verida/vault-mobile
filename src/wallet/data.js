@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import algosdk from 'algosdk'
 import { algodClient, indexerClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
@@ -12,6 +11,7 @@ import { moralisApi, nearIndexerApi } from 'wallet/helpers/api'
 import {
   getNativeForChain,
   getTokenAddress,
+  getTokenByAddress,
   getTokenChain,
   isNativeToken,
   parseUnitsForSending,
@@ -48,9 +48,9 @@ const minABI = [
 ]
 
 const getAllBalances = async (wallets) => {
-  try {
-    let list = {}
+  let list = {}
 
+  try {
     const near = await initNearClient()
     const nearAccount = await near.account(wallets.near.address)
 
@@ -74,10 +74,40 @@ const getAllBalances = async (wallets) => {
 
     const nearBalance = await nearAccount.getAccountBalance()
 
+    if (nearBalance.total) {
+      list.NEAR = parseFloat(nearBalance.total)
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error, 'error')
+  }
+
+  try {
     let algorandBalances = await indexerClient
       .lookupAccountByID(wallets.algo.address)
       .do()
 
+    if (algorandBalances.account) {
+      const algoBalanceData = algorandBalances.account
+      // TODO: dont hardcode
+      list.ALGO = algoBalanceData.amount
+      if (algoBalanceData.assets) {
+        algoBalanceData.assets.map((balance) => {
+          if (balance['asset-id']) {
+            let tok = getTokenByAddress(balance['asset-id'].toString())
+            if (tok) {
+              list[tok.symbol] = balance.amount
+            }
+          }
+        })
+      }
+    }
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error, 'error')
+  }
+
+  try {
     const ethNativeBalance = await moralisApi.get(
       // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
       wallets.ethr.address + '/balance',
@@ -94,53 +124,24 @@ const getAllBalances = async (wallets) => {
       }
     )
 
-    if (algorandBalances.account) {
-      const algoBalanceData = algorandBalances.account
-      // TODO: dont hardcode
-      list.ALGO = algoBalanceData.amount
-      if (algoBalanceData.assets) {
-        algoBalanceData.assets.map((balance) => {
-          let tok
-          tok = SUPPORTED_TOKENS.find((ele) => {
-            let tokenAddress = getTokenAddress(ele.address)
-            if (balance['asset-id']) {
-              return tokenAddress === balance['asset-id'].toString()
-            } else {
-              return false
-            }
-          })
-          if (tok) {
-            list[tok.symbol] = balance.amount
-          }
-        })
-      }
-    }
-
     if (ethNativeBalance.data) {
       list.ETH = parseFloat(ethNativeBalance.data.balance)
     }
 
     if (ethereumBalances.data) {
       Object.values(ethereumBalances.data).map((obj) => {
-        let tok = SUPPORTED_TOKENS.find((ele) => {
-          // let tokenAddress = getTokenAddress(ele.address)
-          return ele.symbol === obj.symbol
-        })
+        let tok = getTokenByAddress(obj.token_address)
         if (tok) {
           list[tok.symbol] = parseFloat(obj.balance)
         }
       })
     }
-
-    if (nearBalance.total) {
-      list.NEAR = parseFloat(nearBalance.total)
-    }
-
-    return list
-  } catch (e) {
-    Sentry.captureException(e)
-    throw e
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error(error, 'error')
   }
+
+  return list
 }
 
 const getTransactions = async (wallets, tokenAddress) => {
@@ -281,11 +282,7 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
     let symbol
     let decimal
     if (!isNative) {
-      let tok = SUPPORTED_TOKENS.find(
-        (ele) =>
-          getTokenAddress(ele.address).toLowerCase() ===
-          rawTransaction.receiver_account_id
-      )
+      let tok = getTokenByAddress(rawTransaction.receiver_account_id)
       symbol = tok.symbol
       decimal = tok.decimal
     } else {
@@ -337,10 +334,7 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
       let quantity
       if (rawTransaction.logs[0]) {
         let nonNativeTx = rawTransaction.logs[0]
-        let tok = SUPPORTED_TOKENS.find(
-          (ele) =>
-            getTokenAddress(ele.address).toLowerCase() === nonNativeTx.address
-        )
+        let tok = getTokenByAddress(nonNativeTx.address)
         symbol = tok.symbol
         decimal = tok.decimal
         quantity = parseInt(nonNativeTx.data, 16)
@@ -363,7 +357,7 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
         feeSymbol,
         decimal,
         feeDecimal,
-        chain: 'ethereum',
+        chain: 'eip155',
       }
     } else {
       return {}
@@ -388,10 +382,8 @@ const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
       let feeDecimal = nativeToken.decimal
       let feeSymbol = nativeToken.symbol
       if (rawTransaction['asset-transfer-transaction']) {
-        let tok = SUPPORTED_TOKENS.find(
-          (ele) =>
-            getTokenAddress(ele.address) ===
-            rawTransaction['asset-transfer-transaction']['asset-id'].toString()
+        let tok = getTokenByAddress(
+          rawTransaction['asset-transfer-transaction']['asset-id'].toString()
         )
         symbol = tok.symbol
         decimal = tok.decimal
@@ -608,7 +600,7 @@ const sendTransaction = async (
           from: wallets.ethr.address,
           token: transactionData.token,
           feeSymbol: nativeToken.symbol,
-          chain: 'ethereum',
+          chain: 'eip155',
         }
 
         return txData
