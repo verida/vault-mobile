@@ -82,15 +82,28 @@ class AccountManager {
           SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
 
-        const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
-        if (walletsRaw) {
-          const wallets = JSON.parse(walletsRaw)
-          store.dispatch(saveUserWallets(wallets))
-        }
-
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
+        }
+
+        const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
+        // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
+        if (walletsRaw) {
+          const wallets = JSON.parse(walletsRaw)
+          if (!wallets.seedPhrase) {
+            const selectedAccount = this.getSelectedAccount()
+            if (selectedAccount) {
+              await this.connect()
+            }
+
+            await this.restoreUserWallet()
+          } else {
+            store.dispatch(saveUserWallets(wallets))
+          }
+        } else {
+          // else basically old account.. create a seedphrase and set wallet.
+          await this.setUserWallet()
         }
       }
     } catch (e) {
@@ -254,7 +267,12 @@ class AccountManager {
       // generate wallets and save em to redux state
       const userGeneratedWallets =
         WalletUtils.MultiChainWallet.generateHDWallets(userHDWalletMnemonic)
-      await store.dispatch(saveUserWallets(userGeneratedWallets))
+      await store.dispatch(
+        saveUserWallets({
+          seedPhrase: userHDWalletMnemonic,
+          accounts: userGeneratedWallets,
+        })
+      )
 
       // save to storage..
       await SecureStore.setItemAsync(
@@ -276,13 +294,14 @@ class AccountManager {
 
       const HDwallets = await datastore?.getMany()
       if (HDwallets) {
-        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          HDwallets[0].mnemonic
-        )
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        const mnemonic = HDwallets[0].mnemonic
+        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
 
-        await store.dispatch(saveUserWallets(wallets))
+        await store.dispatch(
+          saveUserWallets({ seedPhrase: mnemonic, accounts: wallets })
+        )
 
         // save to storage..
         await SecureStore.setItemAsync(

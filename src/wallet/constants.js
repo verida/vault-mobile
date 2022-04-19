@@ -19,7 +19,7 @@ export const SUPPORTED_TOKENS = [
     name: 'Ethereum',
     symbol: 'ETH',
     icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
-    address: 'eip155:1/erc20:0x0000001/1',
+    address: 'eip155:1/erc20:slip44/1',
     decimal: 18,
   },
   {
@@ -36,8 +36,31 @@ export const SUPPORTED_TOKENS = [
     address: 'eip155:4/erc20:0x01BE23585060835E02B77ef475b0Cc51aA1e0709/1',
     decimal: 18,
   },
+  {
+    name: 'NEAR Protocol',
+    symbol: 'NEAR',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
+    address: 'near:testnet/erc20:slip44/1',
+    decimal: 24,
+  },
+  {
+    name: 'Pulse Token',
+    symbol: 'PULSE',
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/12728.png',
+    address: 'near:testnet/nep141:pulse.fakes.testnet/1',
+    decimal: 18,
+  },
 ]
 
 export const SUPPORTED_TOKENS_SYMBOLS = SUPPORTED_TOKENS.map(
   (value) => value.symbol
 ).join(',')
+
+// NEAR GAS units remain the same, these are gas units
+// to convert transaction into a receipt and processing transaction
+// this gets multiplied by the current gas price to estimate fees
+// more here: https://docs.near.org/docs/concepts/gas
+export const NEAR_GAS_AMOUNT_TRANSFER = 223182562500 * 2
+
+// Same as above but this is for a fungible token transfer
+export const NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER = 2428102110654 + 5430000000000
