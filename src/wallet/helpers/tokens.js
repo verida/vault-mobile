@@ -40,6 +40,14 @@ export const getNativeForChain = (chain) => {
   return tok
 }
 
+export const getTokenByAddress = (address) => {
+  let tok = SUPPORTED_TOKENS.find(
+    (ele) => getTokenAddress(ele.address).toLowerCase() === address
+  )
+
+  return tok
+}
+
 export const getWalletAddressForToken = (tokenAddress, wallets) => {
   const chainMapping = {
     algorand: 'algo',
