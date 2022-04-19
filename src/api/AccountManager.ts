@@ -203,6 +203,10 @@ class AccountManager {
     }
   }
 
+  public getClient() {
+    return this.client
+  }
+
   private async getVault() {
     try {
       const vault = new Vault(this.client, this.context, dataMap)
