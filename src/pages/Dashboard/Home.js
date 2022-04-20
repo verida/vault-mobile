@@ -15,6 +15,7 @@ import {
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
+import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
@@ -76,7 +77,7 @@ const Home = (props) => {
         }
 
         // ignore for firebase links, let firebase handle them.
-        if (initialUrl.includes('connect')) {
+        if (initialUrl.includes('redirect')) {
           return
         }
 
@@ -93,8 +94,12 @@ const Home = (props) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
-        if (link.url.includes) {
-          await Linking.openURL('https://www.noblefive.com/')
+        if (link.url.includes('redirect')) {
+          const parsedUrl = parse(link.url, true)
+          const { query } = parsedUrl
+          await Linking.openURL(
+            'https://www.google.com/search?q=' + query.keyword
+          )
         }
       })
   }, [])
