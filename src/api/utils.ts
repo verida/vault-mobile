@@ -119,6 +119,31 @@ export async function getProfile(did: string) {
   }
 }
 
+export async function getPublicProfile(
+  did: string,
+  contextName = VERIDA_CONTEXT_NAME
+) {
+  try {
+    const publicProfile = await AccountManager.getInstance()
+      .getClient()
+      ?.openPublicProfile(did, contextName, 'basicProfile')
+    const name = await publicProfile?.get('name')
+    const avatar = await publicProfile?.get('avatar')
+
+    return {
+      name: name || 'Unknown',
+      avatar: avatar || DefaultAvatar,
+    }
+  } catch (error) {
+    Sentry.captureException(error)
+
+    return {
+      name: 'Unknown',
+      avatar: DefaultAvatar,
+    }
+  }
+}
+
 export async function getAxios() {
   const config: any = {
     headers: {
