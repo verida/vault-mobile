@@ -537,13 +537,10 @@ class AccountManager {
 
   public async checkIfVeridaTeamMember() {
     try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
-      return name.includes('_vda')
+      return name?.includes('_vda') ?? false
     } catch (e) {
-      Sentry.captureException(e)
-      throw e
+      return false
     }
   }
 }
