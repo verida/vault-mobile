@@ -1,15 +1,16 @@
 diff --git a/node_modules/garbados-crypt/index.js b/node_modules/garbados-crypt/index.js
-index c86db92..797db0e 100644
+index c86db92..7a9787f 100644
 --- a/node_modules/garbados-crypt/index.js
 +++ b/node_modules/garbados-crypt/index.js
-@@ -1,5 +1,6 @@
+@@ -1,6 +1,7 @@
  const { secretbox, hash, randomBytes } = require('tweetnacl')
 -const { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } = require('tweetnacl-util')
 +const { decodeUTF8, encodeUTF8} = require('tweetnacl-util')
-+import { atob, btoa, toByteArray, fromByteArray } from 'react-native-quick-base64';
  const pbkdf2 = require('pbkdf2')
++import { atob, btoa, toByteArray, fromByteArray } from 'react-native-quick-base64';
  
  const NO_PASSWORD = 'A password is required for encryption or decryption.'
+ const COULD_NOT_DECRYPT = 'Could not decrypt!'
 @@ -10,6 +11,24 @@ const ALGORITHM = 'sha512'
  const KEY_LENGTH = 32
  const SALT_LENGTH = 32
