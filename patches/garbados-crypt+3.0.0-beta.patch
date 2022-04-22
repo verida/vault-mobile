@@ -1,0 +1,45 @@
+diff --git a/node_modules/garbados-crypt/index.js b/node_modules/garbados-crypt/index.js
+index c86db92..797db0e 100644
+--- a/node_modules/garbados-crypt/index.js
++++ b/node_modules/garbados-crypt/index.js
+@@ -1,5 +1,6 @@
+ const { secretbox, hash, randomBytes } = require('tweetnacl')
+-const { decodeUTF8, encodeUTF8, encodeBase64, decodeBase64 } = require('tweetnacl-util')
++const { decodeUTF8, encodeUTF8} = require('tweetnacl-util')
++import { atob, btoa, toByteArray, fromByteArray } from 'react-native-quick-base64';
+ const pbkdf2 = require('pbkdf2')
+ 
+ const NO_PASSWORD = 'A password is required for encryption or decryption.'
+@@ -10,6 +11,24 @@ const ALGORITHM = 'sha512'
+ const KEY_LENGTH = 32
+ const SALT_LENGTH = 32
+ 
++function encodeBase64(arr) {
++  return btoa(fromByteArray(arr))
++}
++
++function base64ToArrayBuffer(base64) {
++  var binary_string = base64;
++  var len = binary_string.length;
++  var bytes = new Uint8Array(len);
++  for (var i = 0; i < len; i++) {
++      bytes[i] = binary_string.charCodeAt(i);
++  }
++  return bytes;
++}
++
++function decodeBase64(strr) {
++  return base64ToArrayBuffer(atob(strr))
++}
++
+ // convenience method for combining given opts with defaults
+ // istanbul ignore next // for some reason
+ function getOpts (opts = {}) {
+@@ -47,6 +66,7 @@ module.exports = class Crypt {
+     const exportBytes = decodeBase64(exportString)
+     const exportJson = encodeUTF8(exportBytes)
+     const [saltString, opts] = JSON.parse(exportJson)
++    console.log(saltString, opts)
+     const salt = decodeBase64(saltString)
+     // return a new crypt with the imported settings
+     return Crypt.new(password, salt, opts)

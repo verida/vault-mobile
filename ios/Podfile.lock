@@ -364,9 +364,15 @@ PODS:
     - react-native-config/App (= 1.4.4)
   - react-native-config/App (1.4.4):
     - React-Core
+  - react-native-fast-crypto (2.2.0):
+    - React
+  - react-native-fast-pbkdf2 (0.3.1):
+    - React-Core
   - react-native-netinfo (6.0.2):
     - React-Core
   - react-native-pager-view (5.4.7):
+    - React-Core
+  - react-native-quick-base64 (2.0.2):
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
@@ -542,8 +548,11 @@ DEPENDENCIES:
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-config (from `../node_modules/react-native-config`)
+  - react-native-fast-crypto (from `../node_modules/react-native-fast-crypto`)
+  - react-native-fast-pbkdf2 (from `../node_modules/react-native-fast-pbkdf2`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
+  - react-native-quick-base64 (from `../node_modules/react-native-quick-base64`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - react-native-udp (from `../node_modules/react-native-udp`)
@@ -674,10 +683,16 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-camera"
   react-native-config:
     :path: "../node_modules/react-native-config"
+  react-native-fast-crypto:
+    :path: "../node_modules/react-native-fast-crypto"
+  react-native-fast-pbkdf2:
+    :path: "../node_modules/react-native-fast-pbkdf2"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
     :path: "../node_modules/react-native-pager-view"
+  react-native-quick-base64:
+    :path: "../node_modules/react-native-quick-base64"
   react-native-randombytes:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
@@ -803,8 +818,11 @@ SPEC CHECKSUMS:
   React-jsinspector: 58aef7155bc9a9683f5b60b35eccea8722a4f53a
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-config: 72d948053a442779b3178fddd571e37f118ef606
+  react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
+  react-native-fast-pbkdf2: 44d6ffa0346863e14100294004a1595ec76b2e9f
   react-native-netinfo: 92e6e4476eb8bf6fc2d7c0a6ca0a1406f663d73a
   react-native-pager-view: 741e7606ee2f6e399fc7da777f5519454a4b38c5
+  react-native-quick-base64: 5b0692872a9456fb4723f7b2a0083d51485baa95
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: f0906bf8bc9835ac9a9d3f97e8bde2a997d8da79
   react-native-udp: ff9d13e523f2b58e6bc5d4d32321ac60671b5dc9

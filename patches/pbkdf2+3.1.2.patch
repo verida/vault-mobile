@@ -1,0 +1,98 @@
+diff --git a/node_modules/pbkdf2/lib/async.js b/node_modules/pbkdf2/lib/async.js
+index 3af2c49..d0cef4d 100644
+--- a/node_modules/pbkdf2/lib/async.js
++++ b/node_modules/pbkdf2/lib/async.js
+@@ -1,4 +1,6 @@
+ var Buffer = require('safe-buffer').Buffer
++var fastCrypto = require('react-native-fast-crypto')
++var pbkdf2 = fastCrypto.pbkdf2
+ 
+ var checkParameters = require('./precondition')
+ var defaultEncoding = require('./default-encoding')
+@@ -84,35 +86,46 @@ function resolvePromise (promise, callback) {
+   })
+ }
+ module.exports = function (password, salt, iterations, keylen, digest, callback) {
+-  if (typeof digest === 'function') {
+-    callback = digest
+-    digest = undefined
+-  }
++  // if (typeof digest === 'function') {
++  //   callback = digest
++  //   digest = undefined
++  // }
+ 
+-  digest = digest || 'sha1'
+-  var algo = toBrowser[digest.toLowerCase()]
++  // digest = digest || 'sha1'
++  // var algo = toBrowser[digest.toLowerCase()]
+ 
+-  if (!algo || typeof global.Promise !== 'function') {
+-    getNextTick()(function () {
+-      var out
+-      try {
+-        out = sync(password, salt, iterations, keylen, digest)
+-      } catch (e) {
+-        return callback(e)
+-      }
+-      callback(null, out)
+-    })
+-    return
+-  }
++  // if (!algo || typeof global.Promise !== 'function') {
++  //   getNextTick()(function () {
++  //     var out
++  //     try {
++  //       out = sync(password, salt, iterations, keylen, digest)
++  //     } catch (e) {
++  //       return callback(e)
++  //     }
++  //     callback(null, out)
++  //   })
++  //   return
++  // }
++
++  // checkParameters(iterations, keylen)
++  // password = toBuffer(password, defaultEncoding, 'Password')
++  // salt = toBuffer(salt, defaultEncoding, 'Salt')
++  // if (typeof callback !== 'function') throw new Error('No callback provided to pbkdf2')
++
++  // resolvePromise(checkNative(algo).then(function (resp) {
++  //   if (resp) return browserPbkdf2(password, salt, iterations, keylen, algo)
+ 
+-  checkParameters(iterations, keylen)
+-  password = toBuffer(password, defaultEncoding, 'Password')
+-  salt = toBuffer(salt, defaultEncoding, 'Salt')
+-  if (typeof callback !== 'function') throw new Error('No callback provided to pbkdf2')
++  //   return sync(password, salt, iterations, keylen, digest)
++  // }), callback)
+ 
+-  resolvePromise(checkNative(algo).then(function (resp) {
+-    if (resp) return browserPbkdf2(password, salt, iterations, keylen, algo)
+ 
+-    return sync(password, salt, iterations, keylen, digest)
++  resolvePromise(new Promise((resolve, reject) => {
++    pbkdf2.deriveAsync(password, salt, iterations, keylen, digest).then(res => {
++      console.log('deriveAsync res', res)
++      resolve(res)
++    }).catch(err => {
++      reject(err)
++    })
+   }), callback)
++
+ }
+diff --git a/node_modules/pbkdf2/lib/default-encoding.js b/node_modules/pbkdf2/lib/default-encoding.js
+index 3042099..fa8adac 100644
+--- a/node_modules/pbkdf2/lib/default-encoding.js
++++ b/node_modules/pbkdf2/lib/default-encoding.js
+@@ -2,8 +2,8 @@ var defaultEncoding
+ /* istanbul ignore next */
+ if (global.process && global.process.browser) {
+   defaultEncoding = 'utf-8'
+-} else if (global.process && global.process.version) {
+-  var pVersionMajor = parseInt(process.version.split('.')[0].slice(1), 10)
++} else if (global.process && "v14.17.1") {
++  var pVersionMajor = parseInt("v14.17.1".split('.')[0].slice(1), 10)
+ 
+   defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary'
+ } else {
