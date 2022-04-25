@@ -1,5 +1,11 @@
 import React from 'react'
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {
+  // Alert,
+  // Text,
+  // TouchableOpacity,
+  View,
+  StyleSheet,
+} from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
@@ -7,19 +13,19 @@ import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 import WalletsListItem from './WalletsListItem'
 
 export default ({ list }) => {
-  const createTwoButtonAlert = () =>
-    Alert.alert('Are you sure you want to delete wallet / address?', null, [
-      {
-        text: 'Cancel',
-        onPress: () => ({}),
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        onPress: () => ({}),
-        style: 'destructive',
-      },
-    ])
+  // const createTwoButtonAlert = () =>
+  //   Alert.alert('Are you sure you want to delete wallet / address?', null, [
+  //     {
+  //       text: 'Cancel',
+  //       onPress: () => ({}),
+  //       style: 'cancel',
+  //     },
+  //     {
+  //       text: 'Delete',
+  //       onPress: () => ({}),
+  //       style: 'destructive',
+  //     },
+  //   ])
 
   return (
     <SwipeListView
@@ -34,17 +40,17 @@ export default ({ list }) => {
           <WalletsListItem item={data.item} />
         </View>
       )}
-      renderHiddenItem={(data) => (
-        <TouchableOpacity
-          style={[
-            styles.removeButton,
-            data.item.other && styles.removeButtonOther,
-          ]}
-          onPress={createTwoButtonAlert}>
-          <Text style={styles.removeButtonText}>Remove</Text>
-        </TouchableOpacity>
-      )}
-      rightOpenValue={-80}
+      // renderHiddenItem={(data) => (
+      //   <TouchableOpacity
+      //     style={[
+      //       styles.removeButton,
+      //       data.item.other && styles.removeButtonOther,
+      //     ]}
+      //     onPress={createTwoButtonAlert}>
+      //     <Text style={styles.removeButtonText}>Remove</Text>
+      //   </TouchableOpacity>
+      // )}
+      // rightOpenValue={-80}
     />
   )
 }
