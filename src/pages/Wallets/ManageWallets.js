@@ -1,107 +1,27 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useState } from 'react'
-import { Modal, StyleSheet, TextInput, View } from 'react-native'
-
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
+import { StyleSheet } from 'react-native'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
-import InputStyles from 'styles/inputs'
 
-import AlgorandSvg from '../../assets/wallets/Algorand.svg'
-import EthereumSvg from '../../assets/wallets/Ethereum.svg'
-import IKIGAISvg from '../../assets/wallets/IKIGAI.svg'
-import NearSvg from '../../assets/wallets/Near.svg'
 import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
 import { SNOW_COLOR } from '../../constants/color'
 
 const list = [
   {
-    label: 'Ethereum',
-    icon: <EthereumSvg />,
-    count: 12,
-  },
-  {
-    label: 'Near',
-    icon: <NearSvg />,
-    count: 10,
-  },
-  {
-    label: 'Algorand',
-    icon: <AlgorandSvg />,
-    count: 9,
-  },
-  {
-    label: 'Friendly wallet name',
-    icon: <IKIGAISvg />,
-    count: 5,
-  },
-  {
-    label: 'Other addresses',
+    label: 'Multichain Wallet',
     icon: <OtherSvg />,
-    count: 20,
-    other: true,
+    count: 3,
   },
 ]
 
-export default ({ navigation }) => {
+export default () => {
   const [loading] = useState(false)
-  const [addModalVisible, setAddModalVisible] = useState(false)
-  const [importModalVisible, setImportModalVisible] = useState(false)
-  const [name, setName] = useState('')
-  const [phrase, setPhrase] = useState('')
-  const [blockchain, setBlockchain] = useState(null)
-  const [processing, setProcessing] = useState(false)
-  const { showActionSheetWithOptions } = useActionSheet()
-
-  const onBlockchainChange = (option) => setBlockchain(option)
-  const onAddWallet = async () => {
-    try {
-      setProcessing(true)
-      setTimeout(() => {
-        setAddModalVisible(false)
-        setProcessing(false)
-        navigation.navigate('SuccessFailure', {
-          failure: name === '' ? true : false,
-        })
-      }, 2000)
-    } catch (error) {
-      setProcessing(false)
-    }
-  }
 
   return (
     <Container>
-      <NavigationHeader
-        title='Wallets'
-        right={{
-          icon: <Icon name='add' style={{ color: '#000' }} />,
-          action: () =>
-            showActionSheetWithOptions(
-              {
-                options: [
-                  'Create new wallet',
-                  'Import existing',
-                  'Watch existing address',
-                  'Cancel',
-                ],
-                cancelButtonIndex: 3,
-              },
-              (buttonIndex) => {
-                if (buttonIndex === 0) {
-                  setAddModalVisible(true)
-                }
-                if (buttonIndex === 1) {
-                  setImportModalVisible(true)
-                }
-              }
-            ),
-        }}
-      />
+      <NavigationHeader title='Wallets' />
       {loading ? (
         <LoadingView />
       ) : (
@@ -111,107 +31,6 @@ export default ({ navigation }) => {
           </List>
         </Content>
       )}
-      <Modal
-        presentationStyle='pageSheet'
-        animationType='slide'
-        visible={addModalVisible}>
-        <NavigationHeader
-          left={{
-            icon: <Icon name='close' style={{ color: '#000' }} />,
-            action: () => setAddModalVisible(false),
-          }}
-          title='Add wallet'
-        />
-        <Layout style={styles.container}>
-          <View style={styles.content}>
-            <Label>Wallet name</Label>
-            <TextInput
-              placeholder={'e.g Personal'}
-              style={InputStyles.input}
-              value={name}
-              onChangeText={(t) => setName(t)}
-            />
-
-            <Label>Blockchain</Label>
-            <DropDownPicker
-              searchable={true}
-              searchablePlaceholder='Search for blockchain'
-              showArrow={true}
-              placeholder=''
-              items={[
-                { label: 'Ethereum', value: 'Ethereum' },
-                { label: 'Near', value: 'Near' },
-                { label: 'Algorand', value: 'Algorand' },
-              ]}
-              containerStyle={InputStyles.select}
-              onChangeItem={onBlockchainChange}
-            />
-          </View>
-          <View style={styles.footer}>
-            <Button
-              style={styles.addWalletButton}
-              color='primary'
-              disabled={!blockchain || processing}
-              loading={processing}
-              onPress={onAddWallet}>
-              Add Wallet
-            </Button>
-          </View>
-        </Layout>
-      </Modal>
-      <Modal
-        presentationStyle='pageSheet'
-        animationType='slide'
-        visible={importModalVisible}>
-        <NavigationHeader
-          left={{
-            icon: <Icon name='close' style={{ color: '#000' }} />,
-            action: () => setImportModalVisible(false),
-          }}
-          title='Import wallet'
-        />
-        <Layout style={styles.container}>
-          <View style={styles.content}>
-            <Label>Blockchain</Label>
-            <DropDownPicker
-              searchable={true}
-              searchablePlaceholder='Search for blockchain'
-              showArrow={true}
-              placeholder=''
-              items={[
-                { label: 'Ethereum', value: 'Ethereum' },
-                { label: 'Near', value: 'Near' },
-                { label: 'Algorand', value: 'Algorand' },
-              ]}
-              containerStyle={InputStyles.select}
-              onChangeItem={onBlockchainChange}
-            />
-
-            <Label>Enter seed phrase</Label>
-            <TextInput
-              value={phrase}
-              autoFocus={true}
-              multiline
-              editable
-              autoCorrect={false}
-              autoCapitalize='none'
-              onChangeText={setPhrase}
-              style={[InputStyles.textarea]}
-              placeholder={'eg. Open despair creek road again ice least'}
-            />
-          </View>
-          <View style={styles.footer}>
-            <Button
-              style={styles.addWalletButton}
-              color='primary'
-              disabled={!blockchain || processing}
-              loading={processing}
-              onPress={onAddWallet}>
-              Add Wallet
-            </Button>
-          </View>
-        </Layout>
-      </Modal>
     </Container>
   )
 }
@@ -226,11 +45,5 @@ const styles = StyleSheet.create({
   },
   content: {
     flex: 1,
-  },
-  footer: {
-    alignItems: 'center',
-  },
-  addWalletButton: {
-    alignSelf: 'stretch',
   },
 })
