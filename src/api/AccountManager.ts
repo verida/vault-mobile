@@ -281,7 +281,10 @@ class AccountManager {
       // save to storage..
       await SecureStore.setItemAsync(
         WALLETS_STORAGE_KEY,
-        JSON.stringify(userGeneratedWallets)
+        JSON.stringify({
+          seedPhrase: userHDWalletMnemonic,
+          accounts: userGeneratedWallets,
+        })
       )
     } catch (e) {
       Sentry.captureException(e)
@@ -297,6 +300,7 @@ class AccountManager {
       )
 
       const HDwallets = await datastore?.getMany()
+
       if (HDwallets) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
@@ -310,7 +314,7 @@ class AccountManager {
         // save to storage..
         await SecureStore.setItemAsync(
           WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
+          JSON.stringify({ seedPhrase: mnemonic, accounts: wallets })
         )
       }
     } catch (e) {
