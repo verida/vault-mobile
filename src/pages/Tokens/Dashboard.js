@@ -8,7 +8,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
-// import SettingsSvg from 'assets/icons/settings.svg'
+import SettingsSvg from 'assets/icons/settings.svg'
 import { getBalances, getPrices } from 'reduxStore/wallet/actions'
 import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
@@ -46,9 +46,10 @@ const TokenDashboard = ({
       <NavigationHeader
         left={{ icon: 'skip' }}
         title='Tokens'
-        // right={{
-        //   icon: <SettingsSvg />,
-        // }}
+        right={{
+          icon: <SettingsSvg />,
+          action: () => navigation.navigate('ManageWallets'),
+        }}
       />
       {loading ? (
         <LoadingIndicator />
