@@ -1,0 +1,119 @@
+diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/.DS_Store b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/.DS_Store
+new file mode 100644
+index 0000000..10f4d43
+Binary files /dev/null and b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/.DS_Store differ
+diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js
+index 3042099..fa8adac 100644
+--- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js
++++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js
+@@ -2,8 +2,8 @@ var defaultEncoding
+ /* istanbul ignore next */
+ if (global.process && global.process.browser) {
+   defaultEncoding = 'utf-8'
+-} else if (global.process && global.process.version) {
+-  var pVersionMajor = parseInt(process.version.split('.')[0].slice(1), 10)
++} else if (global.process && "v14.17.1") {
++  var pVersionMajor = parseInt("v14.17.1".split('.')[0].slice(1), 10)
+ 
+   defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary'
+ } else {
+diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
+index 20a64b4..a06e3aa 100644
+--- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
++++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
+@@ -2,6 +2,10 @@ var md5 = require('create-hash/md5')
+ var RIPEMD160 = require('ripemd160')
+ var sha = require('sha.js')
+ var Buffer = require('safe-buffer').Buffer
++var bytes_1 = require("@ethersproject/bytes");
++var base64 = require("@ethersproject/base64");
++import { NativeModules } from 'react-native'
++const { RNFastCrypto } = NativeModules
+ 
+ var checkParameters = require('./precondition')
+ var defaultEncoding = require('./default-encoding')
+@@ -68,38 +72,54 @@ function getDigest (alg) {
+ }
+ 
+ function pbkdf2 (password, salt, iterations, keylen, digest) {
+-  checkParameters(iterations, keylen)
+-  password = toBuffer(password, defaultEncoding, 'Password')
+-  salt = toBuffer(salt, defaultEncoding, 'Salt')
+-
+-  digest = digest || 'sha1'
+-
+-  var hmac = new Hmac(digest, password, salt.length)
+-
+-  var DK = Buffer.allocUnsafe(keylen)
+-  var block1 = Buffer.allocUnsafe(salt.length + 4)
+-  salt.copy(block1, 0, 0, salt.length)
+-
+-  var destPos = 0
+-  var hLen = sizes[digest]
+-  var l = Math.ceil(keylen / hLen)
+-
+-  for (var i = 1; i <= l; i++) {
+-    block1.writeUInt32BE(i, salt.length)
+-
+-    var T = hmac.run(block1, hmac.ipad1)
+-    var U = T
+-
+-    for (var j = 1; j < iterations; j++) {
+-      U = hmac.run(U, hmac.ipad2)
+-      for (var k = 0; k < hLen; k++) T[k] ^= U[k]
+-    }
+-
+-    T.copy(DK, destPos)
+-    destPos += hLen
++  const time = Date.now()
++  // checkParameters(iterations, keylen)
++  // password = toBuffer(password, defaultEncoding, 'Password')
++  // salt = toBuffer(salt, defaultEncoding, 'Salt')
++
++  // digest = digest || 'sha1'
++
++  // var hmac = new Hmac(digest, password, salt.length)
++
++  // var DK = Buffer.allocUnsafe(keylen)
++  // var block1 = Buffer.allocUnsafe(salt.length + 4)
++  // salt.copy(block1, 0, 0, salt.length)
++
++  // var destPos = 0
++  // var hLen = sizes[digest]
++  // var l = Math.ceil(keylen / hLen)
++
++  // for (var i = 1; i <= l; i++) {
++  //   block1.writeUInt32BE(i, salt.length)
++
++  //   var T = hmac.run(block1, hmac.ipad1)
++  //   var U = T
++
++  //   for (var j = 1; j < iterations; j++) {
++  //     U = hmac.run(U, hmac.ipad2)
++  //     for (var k = 0; k < hLen; k++) T[k] ^= U[k]
++  //   }
++
++  //   T.copy(DK, destPos)
++  //   destPos += hLen
++  // }
++  // console.log('BIp39 Wallet 0-000 Ether pbkdf2 sync time', DK, Date.now() - time);
++  // return DK
++
++  try {
++    const out = RNFastCrypto.pbkdf2Sha512Sync(
++      base64.encode(password),
++      base64.encode(salt),
++      iterations,
++      keylen
++    )
++    console.log('BIp39 Wallet 0-000 Ether pbkdf2 sync time', out, Date.now() - time);
++    return (0, bytes_1.hexlify)(base64.decode(out))
++  } catch (error) {
++      console.error('Error ', error);
+   }
+ 
+-  return DK
++  return null;
+ }
+ 
+ module.exports = pbkdf2
