@@ -1,6 +1,7 @@
-import { Container, Content, Icon, List } from 'native-base'
+import { Container, Content, List } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
+
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
@@ -25,7 +26,7 @@ export default () => {
       {loading ? (
         <LoadingView />
       ) : (
-        <Content style={{ backgroundColor: SNOW_COLOR, paddingVertical: 25 }}>
+        <Content style={styles.content}>
           <List>
             <WalletsList list={list} />
           </List>
@@ -36,14 +37,5 @@ export default () => {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    paddingBottom: 30,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.2)',
-  },
-  content: {
-    flex: 1,
-  },
+  content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })

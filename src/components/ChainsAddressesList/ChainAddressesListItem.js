@@ -1,7 +1,7 @@
+import { useActionSheet } from '@expo/react-native-action-sheet'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
-import { StyleSheet, Image } from 'react-native'
-import { useActionSheet } from '@expo/react-native-action-sheet'
+import { Image, StyleSheet } from 'react-native'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 

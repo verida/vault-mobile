@@ -1,10 +1,10 @@
 import React from 'react'
 import {
+  StyleSheet,
   // Alert,
   // Text,
   // TouchableOpacity,
   View,
-  StyleSheet,
 } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
