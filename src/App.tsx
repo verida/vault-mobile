@@ -42,9 +42,10 @@ Sentry.init({
   environment: Config.SENTRY_ENVIRONMENT,
   beforeSend: (event, hint) => {
     if (__DEV__) {
-      const err = hint.originalException || hint.syntheticException || event
+      const error = hint?.originalException || hint?.syntheticException || event
+      // Log error on dev mode
       // eslint-disable-next-line no-console
-      console.error(err, err.stack)
+      console.error(error, (error as Error).stack)
       return null // this drops the event and nothing will be send to sentry
     }
     return event
