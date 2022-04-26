@@ -93,11 +93,11 @@ export const getTokensData = (state) => {
 }
 
 export const getWalletsData = (state) => {
-  return state.wallets.data.accounts || {}
+  return state.wallets.data[Object.keys(state.wallets.data)[0]].accounts || {}
 }
 
 export const getWallets = (state) => {
-  return state.wallets.data || {}
+  return state.wallets.data[Object.keys(state.wallets.data)[0]] || {}
 }
 
 export const selectPendingTransactions = (state, assetID) => {
