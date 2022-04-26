@@ -91,7 +91,7 @@ class AccountManager {
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
         if (walletsRaw) {
           const wallets = JSON.parse(walletsRaw)
-          if (!wallets.seedPhrase) {
+          if (wallets.seedPhrase || wallets.near) {
             const selectedAccount = this.getSelectedAccount()
             if (selectedAccount) {
               await this.connect()
@@ -266,25 +266,28 @@ class AccountManager {
         walletType: 'multi',
         label: 'Multi Coin Wallet',
       }
-      await walletDb?.save(wallet)
+      const saved = await walletDb?.save(wallet)
 
       // generate wallets and save em to redux state
       const userGeneratedWallets =
         WalletUtils.MultiChainWallet.generateHDWallets(userHDWalletMnemonic)
-      await store.dispatch(
-        saveUserWallets({
-          seedPhrase: userHDWalletMnemonic,
+
+      const walletData = {
+        [saved?.id]: {
+          seedPhrase: wallet.mnemonic,
+          type: wallet.walletType,
+          label: wallet.label,
+          id: saved?.id,
           accounts: userGeneratedWallets,
-        })
-      )
+        },
+      }
+
+      await store.dispatch(saveUserWallets(walletData))
 
       // save to storage..
       await SecureStore.setItemAsync(
         WALLETS_STORAGE_KEY,
-        JSON.stringify({
-          seedPhrase: userHDWalletMnemonic,
-          accounts: userGeneratedWallets,
-        })
+        JSON.stringify(walletData)
       )
     } catch (e) {
       Sentry.captureException(e)
@@ -301,20 +304,27 @@ class AccountManager {
 
       const HDwallets = await datastore?.getMany()
 
+      let wallets = {}
       if (HDwallets) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const mnemonic = HDwallets[0].mnemonic
-        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+        HDwallets.forEach((walt) => {
+          let mnemonic = walt.mnemonic
+          let accounts =
+            WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+          wallets[walt._id] = {
+            seedPhrase: mnemonic,
+            type: walt.walletType,
+            label: walt.label,
+            id: walt._id,
+            accounts,
+          }
+        })
 
-        await store.dispatch(
-          saveUserWallets({ seedPhrase: mnemonic, accounts: wallets })
-        )
+        await store.dispatch(saveUserWallets(wallets))
 
         // save to storage..
         await SecureStore.setItemAsync(
           WALLETS_STORAGE_KEY,
-          JSON.stringify({ seedPhrase: mnemonic, accounts: wallets })
+          JSON.stringify(wallets)
         )
       }
     } catch (e) {
