@@ -13722,11 +13722,6 @@ react-native-fast-crypto@^2.2.0:
     buffer "^5.0.8"
     rfc4648 "^1.0.0"
 
-react-native-fast-pbkdf2@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/react-native-fast-pbkdf2/-/react-native-fast-pbkdf2-0.3.1.tgz#aa5a6750ba3aa8fe31c2bdd1e7fe7c19d3bf8be4"
-  integrity sha512-G+1EdQs+w7RhgZKXbodbGPy6zKxX3qdSe1YSh9B7x6qZLTd3dDI15R33faWoiQjrESepbfvX3M64UevBT6SDDA==
-
 react-native-gesture-handler@~1.10.2:
   version "1.10.3"
   resolved "https://registry.yarnpkg.com/react-native-gesture-handler/-/react-native-gesture-handler-1.10.3.tgz#942bbf2963bbf49fa79593600ee9d7b5dab3cfc0"
@@ -13782,13 +13777,6 @@ react-native-push-notification@^8.1.0:
   version "8.1.1"
   resolved "https://registry.yarnpkg.com/react-native-push-notification/-/react-native-push-notification-8.1.1.tgz#a41d20c70ea5a7709417e96261b225461f8dc73a"
   integrity sha512-XpBtG/w+a6WXTxu6l1dNYyTiHnbgnvjoc3KxPTxYkaIABRmvuJZkFxqruyGvfCw7ELAlZEAJO+dthdTabCe1XA==
-
-react-native-quick-base64@^2.0.2:
-  version "2.0.2"
-  resolved "https://registry.yarnpkg.com/react-native-quick-base64/-/react-native-quick-base64-2.0.2.tgz#1d2af8ddab8f548d89e66208201fe6ce377b1fc5"
-  integrity sha512-bLIAOUhQ0JaVQ9RSQoQdt/lV5/XHpq982J1UwN+Gj42A2GfNtqT8kJzaLjJLO6rWhMZ7iVJeFJIVcTf90pWoJQ==
-  dependencies:
-    base64-js "^1.5.1"
 
 react-native-randombytes@^3.0.0, react-native-randombytes@^3.5.1, react-native-randombytes@^3.5.3:
   version "3.6.1"
