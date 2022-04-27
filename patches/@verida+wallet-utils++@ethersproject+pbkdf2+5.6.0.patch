@@ -1,13 +1,16 @@
 diff --git a/node_modules/@verida/wallet-utils/node_modules/@ethersproject/pbkdf2/lib/browser-pbkdf2.js b/node_modules/@verida/wallet-utils/node_modules/@ethersproject/pbkdf2/lib/browser-pbkdf2.js
-index 45c6f03..8b6b912 100644
+index 45c6f03..e3dcf82 100644
 --- a/node_modules/@verida/wallet-utils/node_modules/@ethersproject/pbkdf2/lib/browser-pbkdf2.js
 +++ b/node_modules/@verida/wallet-utils/node_modules/@ethersproject/pbkdf2/lib/browser-pbkdf2.js
-@@ -3,45 +3,16 @@ Object.defineProperty(exports, "__esModule", { value: true });
+@@ -3,45 +3,19 @@ Object.defineProperty(exports, "__esModule", { value: true });
  exports.pbkdf2 = void 0;
  var bytes_1 = require("@ethersproject/bytes");
  var sha2_1 = require("@ethersproject/sha2");
++var base64 = require('@ethersproject/base64')
++
 +import { NativeModules } from 'react-native'
 +const { RNFastCrypto } = NativeModules
++
  function pbkdf2(password, salt, iterations, keylen, hashAlgorithm) {
 -    password = (0, bytes_1.arrayify)(password);
 -    salt = (0, bytes_1.arrayify)(salt);

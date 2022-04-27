@@ -69,7 +69,7 @@ index 3042099..fa8adac 100644
    defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary'
  } else {
 diff --git a/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/pbkdf2/lib/sync-browser.js
-index 20a64b4..ecdeec0 100644
+index 20a64b4..c35a4f9 100644
 --- a/node_modules/pbkdf2/lib/sync-browser.js
 +++ b/node_modules/pbkdf2/lib/sync-browser.js
 @@ -2,6 +2,8 @@ var md5 = require('create-hash/md5')
@@ -81,7 +81,7 @@ index 20a64b4..ecdeec0 100644
  
  var checkParameters = require('./precondition')
  var defaultEncoding = require('./default-encoding')
-@@ -67,39 +69,14 @@ function getDigest (alg) {
+@@ -67,39 +69,13 @@ function getDigest (alg) {
    return shaFunc
  }
  
@@ -119,13 +119,12 @@ index 20a64b4..ecdeec0 100644
 -
 -  return DK
 +function jspbkdf2 (password, salt, iterations, keylen, digest) {
-+  const out = pbkdf2.deriveSync(
++  return pbkdf2.deriveSync(
 +    password,
 +    salt,
 +    iterations,
 +    keylen
 +  )
-+  return out
  }
  
 -module.exports = pbkdf2

@@ -1,5 +1,5 @@
 diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js
-index 3af2c49..78df1ae 100644
+index 3af2c49..b362bd0 100644
 --- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js
 +++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js
 @@ -4,6 +4,8 @@ var checkParameters = require('./precondition')
@@ -11,7 +11,7 @@ index 3af2c49..78df1ae 100644
  
  var ZERO_BUF
  var subtle = global.crypto && global.crypto.subtle
-@@ -84,35 +86,13 @@ function resolvePromise (promise, callback) {
+@@ -84,35 +86,12 @@ function resolvePromise (promise, callback) {
    })
  }
  module.exports = function (password, salt, iterations, keylen, digest, callback) {
@@ -45,7 +45,6 @@ index 3af2c49..78df1ae 100644
 -    if (resp) return browserPbkdf2(password, salt, iterations, keylen, algo)
 -
 -    return sync(password, salt, iterations, keylen, digest)
-+  const time2= Date.now();
 +  resolvePromise(new Promise((resolve, reject) => {
 +    try {
 +      const res = pbkdf2.deriveSync(password, salt, iterations, keylen, digest)
@@ -72,7 +71,7 @@ index 3042099..3dadb33 100644
  } else {
    defaultEncoding = 'utf-8'
 diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
-index 20a64b4..102f45a 100644
+index 20a64b4..7c9d679 100644
 --- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
 +++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
 @@ -2,6 +2,10 @@ var md5 = require('create-hash/md5')
@@ -86,7 +85,7 @@ index 20a64b4..102f45a 100644
  
  var checkParameters = require('./precondition')
  var defaultEncoding = require('./default-encoding')
-@@ -68,38 +72,14 @@ function getDigest (alg) {
+@@ -68,38 +72,13 @@ function getDigest (alg) {
  }
  
  function pbkdf2 (password, salt, iterations, keylen, digest) {
@@ -122,7 +121,6 @@ index 20a64b4..102f45a 100644
 -  }
 -
 -  return DK
-+  const time2 = Date.now();
 +  const out = RNFastCrypto.pbkdf2Sha512Sync(
 +    base64.encode(password),
 +    base64.encode(salt),
