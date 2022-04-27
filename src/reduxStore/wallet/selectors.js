@@ -92,12 +92,18 @@ export const getTokensData = (state) => {
   }
 }
 
+export const getSelectedWallet = (state) => {
+  return state.selectedWallet
+}
+
 export const getWalletsData = (state) => {
-  return state.wallets.data[Object.keys(state.wallets.data)[0]].accounts || {}
+  const selectedWallet = getSelectedWallet(state)
+  return state.wallets.data[selectedWallet].accounts || {}
 }
 
 export const getWallets = (state) => {
-  return state.wallets.data[Object.keys(state.wallets.data)[0]] || {}
+  const selectedWallet = getSelectedWallet(state)
+  return state.wallets.data[selectedWallet] || {}
 }
 
 export const selectPendingTransactions = (state, assetID) => {
