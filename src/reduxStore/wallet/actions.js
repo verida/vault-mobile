@@ -27,6 +27,7 @@ import {
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
+  SET_SELECTED_WALLET,
 } from './types'
 
 export const getPrices = () => {
@@ -138,6 +139,15 @@ export const removeUserWallets = () => {
   return async (dispatch) => {
     dispatch({
       type: REMOVE_USER_WALLETS,
+    })
+  }
+}
+
+export const setSelectedWallet = (walletId) => {
+  return async (dispatch) => {
+    dispatch({
+      type: SET_SELECTED_WALLET,
+      data: walletId,
     })
   }
 }
