@@ -1,9 +1,15 @@
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
 import dataHelper from 'wallet/data'
 import { pricingApi } from 'wallet/helpers/api'
+import WalletUtils from '@verida/wallet-utils'
+import * as SecureStore from 'expo-secure-store'
+import AccountManager, {
+  WALLETS_STORAGE_KEY,
+  SELECTED_WALLET_STORAGE_KEY,
+} from 'api/AccountManager'
 
 import { navigate } from 'navigation/RootNavigator'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
+import { getWalletsData, getAllWallets } from 'reduxStore/wallet/selectors'
 
 import {
   ADD_PENDING_TRANSACTION,
@@ -211,6 +217,57 @@ export const sendTransaction = (
       if (!isAssetEnablingTransaction) {
         navigate('TransactionFailure')
       }
+    }
+  }
+}
+
+export const createNewWallet = () => {
+  return async (dispatch, getState) => {
+    const userHDWalletMnemonic = WalletUtils.MultiChainWallet.generateMnemonic()
+
+    // save mnemonic to verida store
+    const walletDb = await AccountManager.getInstance().context?.openDatastore(
+      'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+    )
+
+    const currentWalletsData = getAllWallets(getState())
+
+    const wallet = {
+      mnemonic: userHDWalletMnemonic,
+      walletType: 'multi',
+      label:
+        'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
+    }
+    const saved = await walletDb?.save(wallet)
+    const walletID = saved?.id
+
+    const HDwallets = await walletDb?.getMany()
+
+    let wallets = {}
+    if (HDwallets) {
+      HDwallets.forEach((walt) => {
+        let mnemonic = walt.mnemonic
+        let waltId = walt._id
+        let accounts = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+        wallets[waltId] = {
+          seedPhrase: mnemonic,
+          type: walt.walletType,
+          label: walt.label,
+          id: waltId,
+          accounts,
+        }
+      })
+
+      await dispatch(saveUserWallets(wallets))
+
+      await dispatch(setSelectedWallet(walletID))
+
+      // save to storage..
+      await SecureStore.setItemAsync(
+        WALLETS_STORAGE_KEY,
+        JSON.stringify(wallets)
+      )
+      await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
     }
   }
 }
