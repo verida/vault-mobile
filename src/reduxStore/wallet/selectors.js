@@ -106,6 +106,10 @@ export const getWallets = (state) => {
   return state.wallets.data[selectedWallet] || {}
 }
 
+export const getAllWallets = (state) => {
+  return state.wallets.data || []
+}
+
 export const selectPendingTransactions = (state, assetID) => {
   const pendingTransactions = state.pendingTransactions.data
   const transactionsForAsset = pendingTransactions.filter((ele) => {
