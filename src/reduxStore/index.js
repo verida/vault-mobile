@@ -38,6 +38,7 @@ import {
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
+  SET_SELECTED_WALLET,
 } from './wallet/types'
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
@@ -76,6 +77,7 @@ const walletInitialState = {
     data: [],
   },
   wallets: { data: {} },
+  selectedWallet: null,
 }
 
 const initialState = {
@@ -275,6 +277,12 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         wallets: { data: action.data },
+      }
+
+    case SET_SELECTED_WALLET:
+      return {
+        ...state,
+        selectedWallet: action.data,
       }
 
     case REMOVE_USER_WALLETS:
