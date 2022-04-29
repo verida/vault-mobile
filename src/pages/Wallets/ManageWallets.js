@@ -1,11 +1,11 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import * as SecureStore from 'expo-secure-store'
-import { Container, Content, List, Icon } from 'native-base'
-import React, { useState } from 'react'
+import { Container, Content, Icon, List } from 'native-base'
+import React from 'react'
 import { StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 
+import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { createNewWallet, setSelectedWallet } from 'reduxStore/wallet/actions'
@@ -21,8 +21,8 @@ import { SNOW_COLOR } from '../../constants/color'
 
 const ManageWallets = ({
   wallets,
-  createNewWallet,
-  setSelectedWallet,
+  onCreateNewWallet,
+  onSetSelectedWallet,
   navigation,
   selectedWalletId,
   loading,
@@ -53,7 +53,7 @@ const ManageWallets = ({
               },
               (buttonIndex) => {
                 if (buttonIndex === 0) {
-                  createNewWallet()
+                  onCreateNewWallet()
                 }
               }
             ),
@@ -81,7 +81,7 @@ const ManageWallets = ({
                     }
                     if (buttonIndex === 1) {
                       let selectedWalletID = item.id
-                      setSelectedWallet(selectedWalletID)
+                      onSetSelectedWallet(selectedWalletID)
                       SecureStore.setItemAsync(
                         SELECTED_WALLET_STORAGE_KEY,
                         selectedWalletID
@@ -114,8 +114,8 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    createNewWallet: () => dispatch(createNewWallet()),
-    setSelectedWallet: (walletID) => dispatch(setSelectedWallet(walletID)),
+    onCreateNewWallet: () => dispatch(createNewWallet()),
+    onSetSelectedWallet: (walletID) => dispatch(setSelectedWallet(walletID)),
   }
 }
 

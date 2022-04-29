@@ -1,15 +1,15 @@
+import WalletUtils from '@verida/wallet-utils'
+import * as SecureStore from 'expo-secure-store'
 import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
 import dataHelper from 'wallet/data'
 import { pricingApi } from 'wallet/helpers/api'
-import WalletUtils from '@verida/wallet-utils'
-import * as SecureStore from 'expo-secure-store'
-import AccountManager, {
-  WALLETS_STORAGE_KEY,
-  SELECTED_WALLET_STORAGE_KEY,
-} from 'api/AccountManager'
 
+import AccountManager, {
+  SELECTED_WALLET_STORAGE_KEY,
+  WALLETS_STORAGE_KEY,
+} from 'api/AccountManager'
 import { navigate } from 'navigation/RootNavigator'
-import { getWalletsData, getAllWallets } from 'reduxStore/wallet/selectors'
+import { getAllWallets, getWalletsData } from 'reduxStore/wallet/selectors'
 
 import {
   ADD_PENDING_TRANSACTION,
@@ -26,6 +26,7 @@ import {
   SEND_TRANSACTION_FAILED,
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
+  SET_SELECTED_WALLET,
   SET_USER_WALLETS,
   TRANSACTION_DETAIL_FETCH_FAILED,
   TRANSACTION_DETAIL_FETCH_START,
@@ -33,7 +34,6 @@ import {
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
-  SET_SELECTED_WALLET,
   WALLET_PROCESSING_FAILED,
   WALLET_PROCESSING_FINISHED,
   WALLET_PROCESSING_START,

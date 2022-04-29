@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'

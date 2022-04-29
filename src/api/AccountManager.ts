@@ -317,12 +317,12 @@ class AccountManager {
 
       const HDwallets = await datastore?.getMany()
 
-      let wallets = {}
+      const wallets = {}
       if (HDwallets) {
         HDwallets.forEach((walt) => {
-          let mnemonic = walt.mnemonic
-          let walletID = walt._id
-          let accounts =
+          const mnemonic = walt.mnemonic
+          const walletID = walt._id
+          const accounts =
             WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
           wallets[walletID] = {
             seedPhrase: mnemonic,
