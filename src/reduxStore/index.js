@@ -39,6 +39,9 @@ import {
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
   SET_SELECTED_WALLET,
+  WALLET_PROCESSING_START,
+  WALLET_PROCESSING_FINISHED,
+  WALLET_PROCESSING_FAILED,
 } from './wallet/types'
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
@@ -78,6 +81,10 @@ const walletInitialState = {
   },
   wallets: { data: {} },
   selectedWallet: null,
+  walletProcessing: {
+    loading: false,
+    error: undefined,
+  },
 }
 
 const initialState = {
@@ -290,6 +297,34 @@ const reducer = (state = initialState, action) => {
         ...state,
         ...walletInitialState,
       }
+
+    case WALLET_PROCESSING_START:
+      return {
+        ...state,
+        walletProcessing: {
+          loading: true,
+          error: undefined,
+        },
+      }
+
+    case WALLET_PROCESSING_FAILED:
+      return {
+        ...state,
+        walletProcessing: {
+          loading: false,
+          error: action.error,
+        },
+      }
+
+    case WALLET_PROCESSING_FINISHED:
+      return {
+        ...state,
+        walletProcessing: {
+          loading: false,
+          error: undefined,
+        },
+      }
+
     case SET_NETWORKS:
       return update(state, {
         networks: {
