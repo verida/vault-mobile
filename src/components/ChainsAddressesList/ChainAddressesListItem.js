@@ -1,4 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
+import Clipboard from '@react-native-community/clipboard'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet } from 'react-native'
@@ -14,14 +15,22 @@ export default ({ item, onPressSeedPhrase, onPressPrivateKey }) => {
       onPress={() => {
         showActionSheetWithOptions(
           {
-            options: ['Show Seed Phrase', 'Show Private Key', 'Cancel'],
-            cancelButtonIndex: 2,
+            options: [
+              'Copy address',
+              'Show Seed Phrase',
+              'Show Private Key',
+              'Cancel',
+            ],
+            cancelButtonIndex: 3,
           },
           (buttonIndex) => {
             if (buttonIndex === 0) {
-              onPressSeedPhrase(item.seedPhrase)
+              Clipboard.setString(item.address)
             }
             if (buttonIndex === 1) {
+              onPressSeedPhrase(item.seedPhrase)
+            }
+            if (buttonIndex === 2) {
               onPressPrivateKey(item.privateKey)
             }
           }
