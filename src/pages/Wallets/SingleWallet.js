@@ -5,7 +5,7 @@ import { connect } from 'react-redux'
 import { getNativeForChain } from 'wallet/helpers/tokens'
 
 import Text from 'components/Text'
-import { getWallets } from 'reduxStore/wallet/selectors'
+import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
 import OtherSvg from '../../assets/wallets/Other.svg'
 import ChainsAddressesList from '../../components/ChainsAddressesList'
@@ -129,9 +129,9 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (state, props) => {
   return {
-    wallets: getWallets(state),
+    wallets: getAddressesForWallet(state, props.route.params.item.id),
   }
 }
 
