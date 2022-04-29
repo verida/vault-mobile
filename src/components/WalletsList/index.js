@@ -12,7 +12,7 @@ import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
 import WalletsListItem from './WalletsListItem'
 
-export default ({ list }) => {
+export default ({ list, onPressItem, selectedWalletId }) => {
   // const createTwoButtonAlert = () =>
   //   Alert.alert('Are you sure you want to delete wallet / address?', null, [
   //     {
@@ -37,7 +37,11 @@ export default ({ list }) => {
             styles.listItemWrapper,
             data.item.other && styles.otherListItem,
           ]}>
-          <WalletsListItem item={data.item} />
+          <WalletsListItem
+            onPressItem={onPressItem}
+            item={data.item}
+            selectedWalletId={selectedWalletId}
+          />
         </View>
       )}
       // renderHiddenItem={(data) => (
