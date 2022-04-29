@@ -275,7 +275,7 @@ class AccountManager {
         walletType: 'multi',
         label: 'Multi Coin Wallet',
       }
-      const saved = await walletDb?.save(wallet)
+      const saved: any = await walletDb?.save(wallet)
       const walletID = saved?.id
 
       // generate wallets and save em to redux state
@@ -315,15 +315,16 @@ class AccountManager {
         'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
 
-      const HDwallets = await datastore?.getMany()
+      const HDwallets: any = await datastore?.getMany()
 
-      const wallets = {}
+      const wallets: any = {}
       if (HDwallets) {
-        HDwallets.forEach((walt) => {
+        HDwallets.forEach((walt: any) => {
           const mnemonic = walt.mnemonic
           const walletID = walt._id
           const accounts =
             WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+
           wallets[walletID] = {
             seedPhrase: mnemonic,
             type: walt.walletType,
