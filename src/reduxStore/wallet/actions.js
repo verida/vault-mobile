@@ -34,6 +34,9 @@ import {
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
   SET_SELECTED_WALLET,
+  WALLET_PROCESSING_FAILED,
+  WALLET_PROCESSING_FINISHED,
+  WALLET_PROCESSING_START,
 } from './types'
 
 export const getPrices = () => {
@@ -151,7 +154,7 @@ export const removeUserWallets = () => {
 
 export const setSelectedWallet = (walletId) => {
   return async (dispatch) => {
-    dispatch({
+    await dispatch({
       type: SET_SELECTED_WALLET,
       data: walletId,
     })
@@ -223,51 +226,66 @@ export const sendTransaction = (
 
 export const createNewWallet = () => {
   return async (dispatch, getState) => {
-    const userHDWalletMnemonic = WalletUtils.MultiChainWallet.generateMnemonic()
+    dispatch({ type: WALLET_PROCESSING_START })
 
-    // save mnemonic to verida store
-    const walletDb = await AccountManager.getInstance().context?.openDatastore(
-      'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
-    )
+    try {
+      const userHDWalletMnemonic =
+        WalletUtils.MultiChainWallet.generateMnemonic()
 
-    const currentWalletsData = getAllWallets(getState())
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        )
 
-    const wallet = {
-      mnemonic: userHDWalletMnemonic,
-      walletType: 'multi',
-      label:
-        'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
-    }
-    const saved = await walletDb?.save(wallet)
-    const walletID = saved?.id
+      const currentWalletsData = getAllWallets(getState())
 
-    const HDwallets = await walletDb?.getMany()
+      const wallet = {
+        mnemonic: userHDWalletMnemonic,
+        walletType: 'multi',
+        label:
+          'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
+      }
+      const saved = await walletDb?.save(wallet)
+      const walletID = saved?.id
 
-    let wallets = {}
-    if (HDwallets) {
-      HDwallets.forEach((walt) => {
-        let mnemonic = walt.mnemonic
-        let waltId = walt._id
-        let accounts = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
-        wallets[waltId] = {
-          seedPhrase: mnemonic,
-          type: walt.walletType,
-          label: walt.label,
-          id: waltId,
-          accounts,
-        }
+      const HDwallets = await walletDb?.getMany()
+
+      let wallets = {}
+      if (HDwallets) {
+        HDwallets.forEach((walt) => {
+          let mnemonic = walt.mnemonic
+          let waltId = walt._id
+          let accounts =
+            WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+
+          wallets[waltId] = {
+            seedPhrase: mnemonic,
+            type: walt.walletType,
+            label: walt.label,
+            id: waltId,
+            accounts,
+          }
+        })
+
+        await dispatch(saveUserWallets(wallets))
+
+        await dispatch(setSelectedWallet(walletID))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+        await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
       })
-
-      await dispatch(saveUserWallets(wallets))
-
-      await dispatch(setSelectedWallet(walletID))
-
-      // save to storage..
-      await SecureStore.setItemAsync(
-        WALLETS_STORAGE_KEY,
-        JSON.stringify(wallets)
-      )
-      await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
     }
   }
 }
