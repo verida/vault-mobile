@@ -1,3 +1,4 @@
+import { createSelector } from 'reselect'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
 import { formatTokenQuantity, handleTokenDecimals } from 'wallet/helpers/tokens'
 
@@ -96,18 +97,28 @@ export const getSelectedWallet = (state) => {
   return state.selectedWallet
 }
 
-export const getWalletsData = (state) => {
-  const selectedWallet = getSelectedWallet(state)
-  return state.wallets.data[selectedWallet].accounts || {}
-}
-
-export const getWallets = (state) => {
-  const selectedWallet = getSelectedWallet(state)
-  return state.wallets.data[selectedWallet] || {}
+export const getWalletProcessingState = (state) => {
+  return state.walletProcessing.loading
 }
 
 export const getAllWallets = (state) => {
   return state.wallets.data || []
+}
+
+export const getWalletsData = createSelector(
+  getSelectedWallet,
+  getAllWallets,
+  (selectedWallet, wallets) => wallets[selectedWallet].accounts || {}
+)
+
+export const getWallets = createSelector(
+  getSelectedWallet,
+  getAllWallets,
+  (selectedWallet, wallets) => wallets[selectedWallet] || {}
+)
+
+export const getAddressesForWallet = (state, ID) => {
+  return state.wallets.data[ID] || {}
 }
 
 export const selectPendingTransactions = (state, assetID) => {
