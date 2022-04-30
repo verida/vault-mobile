@@ -39,10 +39,11 @@
               "client_type": 3
             },
             {
-              "client_id": "795597262002-fv2qqjkfbp1go4i67rqmucj8r2f2bblm.apps.googleusercontent.com",
+              "client_id": "795597262002-136pdsr5nssl135vk3d0c56jo875gume.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.verida.vault"
+                "bundle_id": "io.verida.vault.internal",
+                "app_store_id": "284815942"
               }
             }
           ]
@@ -83,10 +84,11 @@
               "client_type": 3
             },
             {
-              "client_id": "795597262002-fv2qqjkfbp1go4i67rqmucj8r2f2bblm.apps.googleusercontent.com",
+              "client_id": "795597262002-136pdsr5nssl135vk3d0c56jo875gume.apps.googleusercontent.com",
               "client_type": 2,
               "ios_info": {
-                "bundle_id": "com.verida.vault"
+                "bundle_id": "io.verida.vault.internal",
+                "app_store_id": "284815942"
               }
             }
           ]

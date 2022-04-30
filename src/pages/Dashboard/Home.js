@@ -1,3 +1,4 @@
+import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
@@ -14,6 +15,7 @@ import {
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
+import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
@@ -74,6 +76,14 @@ const Home = (props) => {
           return
         }
 
+        // ignore for firebase links, let firebase handle them.
+        if (
+          initialUrl.includes('redirect') ||
+          initialUrl.includes('verida.page.link')
+        ) {
+          return
+        }
+
         handleDeeplink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
@@ -82,6 +92,24 @@ const Home = (props) => {
 
     getUrl()
   }, [handleDeeplink])
+
+  useEffect(() => {
+    dynamicLinks()
+      .getInitialLink()
+      .then(async (link) => {
+        if (link.url.includes('redirect')) {
+          try {
+            const parsedUrl = parse(link.url, true)
+            const { query } = parsedUrl
+            await Linking.openURL(
+              'https://www.google.com/search?q=' + query.keyword
+            )
+          } catch (error) {
+            Sentry.captureException(error)
+          }
+        }
+      })
+  }, [])
 
   useEffect(() => {
     if (navigationLink) {
