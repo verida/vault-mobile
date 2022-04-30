@@ -77,7 +77,10 @@ const Home = (props) => {
         }
 
         // ignore for firebase links, let firebase handle them.
-        if (initialUrl.includes('redirect')) {
+        if (
+          initialUrl.includes('redirect') ||
+          initialUrl.includes('verida.page.link')
+        ) {
           return
         }
 
@@ -95,11 +98,15 @@ const Home = (props) => {
       .getInitialLink()
       .then(async (link) => {
         if (link.url.includes('redirect')) {
-          const parsedUrl = parse(link.url, true)
-          const { query } = parsedUrl
-          await Linking.openURL(
-            'https://www.google.com/search?q=' + query.keyword
-          )
+          try {
+            const parsedUrl = parse(link.url, true)
+            const { query } = parsedUrl
+            await Linking.openURL(
+              'https://www.google.com/search?q=' + query.keyword
+            )
+          } catch (error) {
+            Sentry.captureException(error)
+          }
         }
       })
   }, [])
