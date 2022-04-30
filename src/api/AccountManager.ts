@@ -315,11 +315,11 @@ class AccountManager {
         'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
 
-      const HDwallets: any = await datastore?.getMany()
+      const hdWallets: any = await datastore?.getMany()
 
       const wallets: any = {}
-      if (HDwallets) {
-        HDwallets.forEach((walt: any) => {
+      if (hdWallets) {
+        hdWallets.forEach((walt: any) => {
           const mnemonic = walt.mnemonic
           const walletID = walt._id
           const accounts =
@@ -336,19 +336,22 @@ class AccountManager {
 
         await store.dispatch(saveUserWallets(wallets))
 
-        const selectedWalletID = HDwallets[0]._id
-
-        await store.dispatch(setSelectedWallet(selectedWalletID))
-
         // save to storage..
         await SecureStore.setItemAsync(
           WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
-        await SecureStore.setItemAsync(
-          SELECTED_WALLET_STORAGE_KEY,
-          selectedWalletID
-        )
+
+        if (hdWallets[0]) {
+          const selectedWalletID = hdWallets[0]._id
+
+          await store.dispatch(setSelectedWallet(selectedWalletID))
+
+          await SecureStore.setItemAsync(
+            SELECTED_WALLET_STORAGE_KEY,
+            selectedWalletID
+          )
+        }
       }
     } catch (e) {
       Sentry.captureException(e)

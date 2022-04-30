@@ -249,11 +249,11 @@ export const createNewWallet = () => {
       const saved = await walletDb?.save(wallet)
       const walletID = saved?.id
 
-      const HDwallets = await walletDb?.getMany()
+      const hdWallets = await walletDb?.getMany()
 
       let wallets = {}
-      if (HDwallets) {
-        HDwallets.forEach((walt) => {
+      if (hdWallets) {
+        hdWallets.forEach((walt) => {
           let mnemonic = walt.mnemonic
           let waltId = walt._id
           let accounts =
