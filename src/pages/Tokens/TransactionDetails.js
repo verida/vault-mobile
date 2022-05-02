@@ -8,6 +8,7 @@ import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
+import { getTokenChain } from 'wallet/helpers/tokens'
 
 const TransactionDetails = ({
   navigation,
@@ -25,6 +26,8 @@ const TransactionDetails = ({
   }, [id, onGetTransactionDetails, tokenAddress])
 
   const { transaction, loading } = data
+  const tokenChain = getTokenChain(tokenAddress)
+  let networkReference = tokenChain === "eip155" ? "Rinkeby" : ""
 
   return (
     <Container>
@@ -35,7 +38,7 @@ const TransactionDetails = ({
         }}
         title={'Transaction Details'}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       {loading ? (
         <LoadingIndicator />
       ) : (

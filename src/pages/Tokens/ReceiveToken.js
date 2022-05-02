@@ -5,7 +5,7 @@ import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
-import { getWalletAddressForToken } from 'wallet/helpers/tokens'
+import { getWalletAddressForToken, getTokenChain } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon.svg'
@@ -22,8 +22,9 @@ const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
+  const tokenChain = getTokenChain(token.address)
   const address = getWalletAddressForToken(token.address, wallets)
-
+  let networkReference = tokenChain === "eip155" ? "Rinkeby" : ""
   return (
     <Container>
       <NavigationHeader
@@ -33,7 +34,7 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
         }}
         title={'Receive ' + token.symbol}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       <Layout style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.address}>{address}</Text>

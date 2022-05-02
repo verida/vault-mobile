@@ -63,6 +63,8 @@ const SingleCurrency = ({
   const warningRequired =
     tokenChain === 'algorand' && !isNativeToken(item.address)
 
+  let networkReference = tokenChain === "eip155" ? "Rinkeby" : ""
+
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
 
@@ -75,7 +77,7 @@ const SingleCurrency = ({
         }}
         title={item.label}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       {warningRequired && loading === false && list.length === 0 && (
         <TouchableOpacity
           style={{
