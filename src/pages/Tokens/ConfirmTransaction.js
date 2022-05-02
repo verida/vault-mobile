@@ -36,7 +36,7 @@ const ConfirmTransaction = ({
   let feeSymbol
   let feeDecimal
   let fixed
-  let networkReference = ""
+  let networkReference = ''
   switch (tokenChain) {
     case 'algorand':
       feeSymbol = SUPPORTED_TOKENS[0].symbol
@@ -47,7 +47,7 @@ const ConfirmTransaction = ({
       feeSymbol = SUPPORTED_TOKENS[2].symbol
       feeDecimal = SUPPORTED_TOKENS[2].decimal
       fixed = 18
-      networkReference = "Rinkeby"
+      networkReference = 'Rinkeby'
       break
     case 'near':
       feeSymbol = SUPPORTED_TOKENS[5].symbol

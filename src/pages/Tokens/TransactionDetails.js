@@ -1,6 +1,7 @@
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { getTokenChain } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -8,7 +9,6 @@ import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
-import { getTokenChain } from 'wallet/helpers/tokens'
 
 const TransactionDetails = ({
   navigation,
@@ -27,7 +27,7 @@ const TransactionDetails = ({
 
   const { transaction, loading } = data
   const tokenChain = getTokenChain(tokenAddress)
-  let networkReference = tokenChain === "eip155" ? "Rinkeby" : ""
+  let networkReference = tokenChain === 'eip155' ? 'Rinkeby' : ''
 
   return (
     <Container>
