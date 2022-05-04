@@ -1,8 +1,8 @@
 import { utils } from 'ethers'
+import isEmpty from 'lodash/isEmpty'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, TextInput } from 'react-native'
-import _ from 'underscore'
 
 import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
 import CustomFooter from 'components/Layouts/CustomFooter'
@@ -24,7 +24,7 @@ export default (props) => {
   const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
-    const verify = async () => {
+    const verify = () => {
       showError(false)
       if (usePrivateKey) {
         // We don't verify private key yet.
@@ -32,15 +32,17 @@ export default (props) => {
         return
       }
 
-      const splitted = phrase && phrase.split(' ')
-      if (!splitted) {
-        setVerified(false)
-        return
-      }
+      const cleanedPhrase = phrase.trim().replace(/\s\s+/g, ' ')
+      const splitted = !isEmpty(cleanedPhrase)
+        ? cleanedPhrase.trim().split(' ')
+        : []
 
-      const correct =
-        splitted.length === MNEMONIC_LENGTH && _.last(splitted).length
-      setVerified(correct)
+      setVerified(
+        !isEmpty(splitted)
+          ? splitted.length === MNEMONIC_LENGTH &&
+              splitted[splitted.length - 1].length > 0
+          : false
+      )
     }
 
     verify()
@@ -49,11 +51,14 @@ export default (props) => {
   const onContinue = async () => {
     try {
       setProcessing(true)
-      const isValid = utils.HDNode.isValidMnemonic(phrase)
+      const cleanedPhrase = phrase.trim().replace(/\s\s+/g, ' ')
+      const isValid = utils.HDNode.isValidMnemonic(cleanedPhrase)
       if (!isValid) {
         showError(true)
       }
-      const result = await AccountManager.getInstance().importAccount(phrase)
+      const result = await AccountManager.getInstance().importAccount(
+        cleanedPhrase
+      )
       setProcessing(false)
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
@@ -84,7 +89,7 @@ export default (props) => {
             value={phrase}
             autoFocus={true}
             multiline
-            editable
+            editable={!processing}
             autoCorrect={false}
             autoCapitalize='none'
             onChangeText={setPhrase}
