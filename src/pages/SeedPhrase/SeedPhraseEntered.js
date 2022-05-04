@@ -15,6 +15,10 @@ import Layout from '../../components/Layouts/Layout'
 import InputStyles from '../../styles/inputs'
 import ModifierStyles from '../../styles/modifier'
 
+const cleanSeedPhrase = (phrase) => {
+  return phrase.trim().replace(/\s\s+/g, ' ')
+}
+
 export default (props) => {
   const { route, navigation } = props
   const usePrivateKey = route.params?.usePrivateKey || false
@@ -32,7 +36,7 @@ export default (props) => {
         return
       }
 
-      const cleanedPhrase = phrase.trim().replace(/\s\s+/g, ' ')
+      const cleanedPhrase = cleanSeedPhrase(phrase)
       const splitted = !isEmpty(cleanedPhrase)
         ? cleanedPhrase.trim().split(' ')
         : []
@@ -51,7 +55,7 @@ export default (props) => {
   const onContinue = async () => {
     try {
       setProcessing(true)
-      const cleanedPhrase = phrase.trim().replace(/\s\s+/g, ' ')
+      const cleanedPhrase = cleanSeedPhrase(phrase)
       const isValid = utils.HDNode.isValidMnemonic(cleanedPhrase)
       if (!isValid) {
         showError(true)
