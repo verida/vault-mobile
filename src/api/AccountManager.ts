@@ -303,7 +303,7 @@ class AccountManager {
       if (!isEmpty(HDwallets)) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const mnemonic = HDwallets[0]?.mnemonic
+        const mnemonic = HDwallets[0].mnemonic
         const wallets = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
 
         await store.dispatch(
