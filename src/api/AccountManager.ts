@@ -300,8 +300,7 @@ class AccountManager {
       )
 
       const HDwallets = await datastore?.getMany()
-
-      if (HDwallets) {
+      if (!isEmpty(HDwallets)) {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
         const mnemonic = HDwallets[0].mnemonic
@@ -316,6 +315,9 @@ class AccountManager {
           WALLETS_STORAGE_KEY,
           JSON.stringify({ seedPhrase: mnemonic, accounts: wallets })
         )
+      } else {
+        // no wallet found in datastore, create a new one
+        await this.setUserWallet()
       }
     } catch (e) {
       Sentry.captureException(e)
