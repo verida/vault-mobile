@@ -5,13 +5,14 @@ import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import Config from 'react-native-config'
 import { getBuildNumber, getVersion } from 'react-native-device-info'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import { unRegisterRemoteNotification } from 'api/utils'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
+import { logout as logoutAction } from 'reduxStore/general/actions'
 
 import PropertyList from '../components/PropertyList'
 import {
@@ -67,6 +68,7 @@ const generalList = [
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
   const networks = useSelector((state) => state.networks)
+  const dispatch = useDispatch()
   const modifiedGeneralList = [...generalList]
   const versionText = `Verida Vault ${capitalize(
     Config.DEPLOY_ENVIRONMENT === 'internal' ? Config.DEPLOY_ENVIRONMENT : ''
@@ -98,6 +100,7 @@ export default (props) => {
             if (fcmToken) {
               await unRegisterRemoteNotification(fcmToken)
             }
+            dispatch(logoutAction())
             const accManagerIns = AccountManager.getInstance()
             await accManagerIns.logout([accManagerIns.getSelectedAccount().did])
             await refresh()
