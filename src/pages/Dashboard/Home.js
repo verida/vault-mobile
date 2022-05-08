@@ -205,12 +205,14 @@ const Home = (props) => {
   }
 
   async function onLogoutAccounts(dids) {
+    setLoading(true)
     // Only flush Redux store if the current account is logged out
     if (dids.includes(AccountManager.getInstance().getSelectedAccount().did)) {
       logout()
     }
     await AccountManager.getInstance().logout(dids)
     await refresh()
+    setLoading(false)
   }
 
   function onRecordSeedPhrase() {
@@ -226,7 +228,12 @@ const Home = (props) => {
         onNamePress={toggleAddAccountsModal}
         onAvatarPress={() => props.navigation.navigate('PublicProfile')}
         onInboxPress={() => props.navigation.navigate('Inbox')}
-        onSettingsPress={() => props.navigation.navigate('Settings')}
+        onSettingsPress={() =>
+          props.navigation.navigate('Settings', {
+            onSelectAccount,
+            onLogoutAccounts,
+          })
+        }
       />
       <Content contentContainerStyle={style.content}>
         {loading ? (
