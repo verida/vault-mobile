@@ -1,7 +1,4 @@
 import update from 'immutability-helper'
-import { applyMiddleware, createStore } from 'redux'
-import { composeWithDevTools } from 'redux-devtools-extension'
-import thunk from 'redux-thunk'
 
 import {
   ADD_ACCOUNT,
@@ -97,7 +94,7 @@ const initialState = {
   navigationLink: null,
 }
 
-const reducer = (state = initialState, action) => {
+export const mainReducer = (state = initialState, action) => {
   switch (action.type) {
     case ADD_WORD:
       if (state.template.includes(action.payload)) return state
@@ -307,17 +304,3 @@ const reducer = (state = initialState, action) => {
       return state
   }
 }
-
-const composeEnhancers = composeWithDevTools({
-  // Specify here name, actionsBlacklist, actionsCreators and other options
-})
-
-const middleware = [thunk]
-
-export default createStore(
-  reducer,
-  composeEnhancers(
-    applyMiddleware(...middleware)
-    // other store enhancers if any
-  )
-)

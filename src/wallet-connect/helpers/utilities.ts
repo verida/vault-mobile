@@ -1,8 +1,7 @@
 import { convertHexToUtf8 } from '@walletconnect/utils'
 
 import { SUPPORTED_CHAINS } from '../constants'
-import { getLocal } from './local'
-import { IChainData } from './types'
+import { IChainData } from '../types'
 
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3)
@@ -20,7 +19,7 @@ export function getChainData(chainId: number): IChainData {
     throw new Error('ChainId missing or not supported')
   }
 
-  // TODO: remove this when we have a better way to handle this
+  // TODO: move to .env variables
   const API_KEY = '6e4bf0201647493e93c9eea13b70bd4d'
 
   if (!API_KEY) {
@@ -51,9 +50,4 @@ export function convertHexToUtf8IfPossible(hex: string) {
   } catch (e) {
     return hex
   }
-}
-
-export function getCachedSession(): any {
-  const session = getLocal('walletconnect')
-  return session
 }

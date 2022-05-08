@@ -7,7 +7,7 @@ import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
-import store from 'reduxStore'
+import { store } from 'reduxStore'
 
 import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
 import dataMap from 'config/data-map'
@@ -326,8 +326,8 @@ class AccountManager {
     try {
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
-      const networks = store.getState().networks
-      const countries = store.getState().countries
+      const networks = store.getState().main.networks
+      const countries = store.getState().main.countries
       if (!countryCode || isEmpty(networks)) {
         throw new Error('Invalid network or country configuration')
       }

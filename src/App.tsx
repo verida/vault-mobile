@@ -8,7 +8,7 @@ import * as Sentry from '@sentry/react-native'
 import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
-import React, { useState } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Alert } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
@@ -16,13 +16,17 @@ import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
-import store from 'reduxStore'
+import { PersistGate } from 'redux-persist/es/integration/react'
+import { persistor, store } from 'reduxStore'
 
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
 import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import Authenticate from 'pages/Authentication/Authenticate'
+
+import { ModalProvider } from './contexts/ModalContext'
+import { WalletConnectProvider } from './contexts/WalletConnectContext'
 
 configureNotifications()
 
@@ -38,8 +42,18 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
 })
 
 Sentry.init({
-  dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
+  dsn: 'https://982fadf2fca74043b9395c50458aeffa@o1233403.ingest.sentry.io/6382201',
   environment: Config.SENTRY_ENVIRONMENT,
+  beforeSend: (event, hint) => {
+    if (__DEV__) {
+      const error = hint?.originalException || hint?.syntheticException || event
+      // Log error on dev mode
+      // eslint-disable-next-line no-console
+      console.error(error, (error as Error).stack)
+      return null // this drops the event and nothing will be send to sentry
+    }
+    return event
+  },
 })
 
 function App() {
@@ -61,21 +75,30 @@ function App() {
     await loadFonts()
   }
 
-  const AppContent = (
-    <Provider store={store}>
-      <AuthProvider>
-        <NavigationContainer linking={linking} ref={navigationRef}>
-          <Authenticate>
-            <RootSiblingParent>
-              <ActionSheetProvider>
-                <RootNavigator />
-              </ActionSheetProvider>
-            </RootSiblingParent>
-          </Authenticate>
-        </NavigationContainer>
-      </AuthProvider>
-      <SwitchAccountToast />
-    </Provider>
+  const AppContent = useMemo(
+    () => (
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <AuthProvider>
+            <NavigationContainer linking={linking} ref={navigationRef}>
+              <Authenticate>
+                <RootSiblingParent>
+                  <ActionSheetProvider>
+                    <ModalProvider>
+                      <WalletConnectProvider>
+                        <RootNavigator />
+                      </WalletConnectProvider>
+                    </ModalProvider>
+                  </ActionSheetProvider>
+                </RootSiblingParent>
+              </Authenticate>
+            </NavigationContainer>
+          </AuthProvider>
+          <SwitchAccountToast />
+        </PersistGate>
+      </Provider>
+    ),
+    []
   )
 
   return loading ? (

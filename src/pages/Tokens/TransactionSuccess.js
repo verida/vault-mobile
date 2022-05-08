@@ -27,7 +27,8 @@ const TransactionSuccess = ({ navigation, sentTransaction }) => {
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     sentTransaction: selectSentTransaction(state),
   }

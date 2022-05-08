@@ -4,11 +4,11 @@ import {
   SUPPORTED_CHAINS,
 } from '../constants'
 import { getRpcEngine } from '../engines'
-import { IAppConfig } from '../helpers/types'
+import { WalletConnectConfig } from '../types'
 
-const appConfig: IAppConfig = {
+const appConfig: WalletConnectConfig = {
   name: 'WalletConnect',
-  logo: require('walletconnect-logo.png'),
+  logo: require('assets/walletconnect-logo.png'),
   chainId: MAINNET_CHAIN_ID,
   derivationPath: ETH_STANDARD_PATH,
   numberOfAccounts: 3,
@@ -28,6 +28,6 @@ const appConfig: IAppConfig = {
   },
 }
 
-export function getAppConfig(): IAppConfig {
+export function getAppConfig(): WalletConnectConfig {
   return appConfig
 }

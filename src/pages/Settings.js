@@ -66,7 +66,7 @@ const generalList = [
 
 export default (props) => {
   const { refresh, isVeridaTeamMember } = useAuth()
-  const networks = useSelector((state) => state.networks)
+  const networks = useSelector((state) => state.main.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `Verida Vault ${capitalize(
     Config.DEPLOY_ENVIRONMENT === 'internal' ? Config.DEPLOY_ENVIRONMENT : ''

@@ -1,4 +1,16 @@
-import { IJsonRpcRequest } from '@walletconnect/types'
+import {
+  IClientMeta,
+  IJsonRpcRequest,
+  IWalletConnectSession,
+} from '@walletconnect/types'
+
+export interface DApp {
+  session: IWalletConnectSession
+}
+
+export type WalletConnectClientMeta = IClientMeta
+
+export type WalletConnectRequest = IJsonRpcRequest
 
 export interface IAssetData {
   symbol: string
@@ -144,12 +156,12 @@ export interface IRpcEngine {
   signer: (payload: IJsonRpcRequest, state: any) => Promise<void>
 }
 
-export interface IAppEvents {
+export interface WalletConnectEvents {
   init: (state: any, setState: any) => Promise<void>
   update: (state: any, setState: any) => Promise<void>
 }
 
-export interface IAppConfig {
+export interface WalletConnectConfig {
   name: string
   logo: string
   chainId: number
@@ -165,5 +177,5 @@ export interface IAppConfig {
     showVersion: boolean
   }
   rpcEngine: IRpcEngine
-  events: IAppEvents
+  events: WalletConnectEvents
 }

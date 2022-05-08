@@ -48,8 +48,8 @@ function Create(
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
   useDataRegion()
-  const networks = useSelector((state: any) => state.networks)
-  const countries = useSelector((state: any) => state.countries)
+  const networks = useSelector((state: any) => state.main.networks)
+  const countries = useSelector((state: any) => state.main.countries)
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140

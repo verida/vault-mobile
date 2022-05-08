@@ -17,7 +17,7 @@ const config = {
 }
 
 export default async function main() {
-  const reduxState = store.getState()
+  const reduxState = store.getState().main
   const wallet = reduxState.wallets.data.accounts.near
   const prvtKey = wallet.privateKey.replace('ed25519:', '')
 

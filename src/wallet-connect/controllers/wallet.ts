@@ -1,36 +1,26 @@
-/* eslint-disable no-console */
 import '@ethersproject/shims'
 
 import { signTypedData_v4 } from 'eth-sig-util'
 import * as ethers from 'ethers'
 
-import AccountManager from '../../../api/AccountManager'
+import AccountManager from '../../api/AccountManager'
+import { Account } from '../../api/types'
 import { getAppConfig } from '../config'
-import {
-  DEFAULT_ACTIVE_INDEX,
-  DEFAULT_CHAIN_ID,
-  ENTROPY_KEY,
-  MNEMONIC_KEY,
-} from '../constants/default'
-import { getLocal, setLocal } from '../helpers/local'
+import { DEFAULT_ACTIVE_INDEX, DEFAULT_CHAIN_ID } from '../constants/default'
 import { getChainData } from '../helpers/utilities'
 
 export class WalletController {
   public path: string
-  public entropy: string
-  public mnemonic: string
   public wallet: ethers.Wallet
 
   public activeIndex: number = DEFAULT_ACTIVE_INDEX
   public activeChainId: number = DEFAULT_CHAIN_ID
-  public veridaAccount: any
+  public veridaAccount: Account | undefined
 
-  constructor(veridaAccount: any) {
+  constructor() {
     this.veridaAccount = AccountManager.getInstance().getSelectedAccount()
     this.path = this.getPath()
-    this.entropy = this.getEntropy()
-    this.mnemonic = this.getMnemonic()
-    this.wallet = this.init(veridaAccount)
+    this.wallet = this.init()
   }
 
   getProvider(): ethers.providers.Provider {
@@ -69,53 +59,20 @@ export class WalletController {
     return accounts
   }
 
-  public getData(key: string): string {
-    let value = getLocal(key)
-    if (!value) {
-      switch (key) {
-        case ENTROPY_KEY:
-          value = this.generateEntropy()
-          break
-        case MNEMONIC_KEY:
-          value = this.generateMnemonic()
-          break
-        default:
-          throw new Error(`Unknown data key: ${key}`)
-      }
-      setLocal(key, value)
-    }
-    return value
-  }
-
   public getPath(index: number = this.activeIndex) {
     this.path = `${getAppConfig().derivationPath}/${index}`
     return this.path
   }
 
-  public generateEntropy(): string {
-    this.entropy = ethers.utils.hexlify(ethers.utils.randomBytes(16))
-    return this.entropy
-  }
-
-  public generateMnemonic() {
-    this.mnemonic = ethers.utils.entropyToMnemonic(this.getEntropy())
-    return this.mnemonic
-  }
-
   public generateWallet(index: number) {
+    if (!this.veridaAccount) {
+      throw new Error('No active account')
+    }
     this.wallet = ethers.Wallet.fromMnemonic(
       this.veridaAccount.mnemonic,
       this.getPath(index)
     )
     return this.wallet
-  }
-
-  public getEntropy(): string {
-    return this.getData(ENTROPY_KEY)
-  }
-
-  public getMnemonic(): string {
-    return this.getData(MNEMONIC_KEY)
   }
 
   public init(
@@ -152,17 +109,16 @@ export class WalletController {
 
       try {
         tx = await this.wallet.populateTransaction(tx)
-        console.log('populated transaction', tx)
         tx.gasLimit = ethers.BigNumber.from(tx.gasLimit).toHexString()
+        // TODO: check again
         //eip-1559 transaction do not support gasPrice
         // tx.gasPrice = ethers.BigNumber.from(
         //   tx.gasPrice || gasPrice
         // ).toHexString()
 
         tx.nonce = ethers.BigNumber.from(tx.nonce).toHexString()
-        console.log('nonce', tx.nonce)
       } catch (err) {
-        console.error('Error populating transaction', tx, err)
+        throw new Error('Unable to populate transaction')
       }
     }
 
@@ -175,7 +131,7 @@ export class WalletController {
         transaction.from &&
         transaction.from.toLowerCase() !== this.wallet.address.toLowerCase()
       ) {
-        console.error("Transaction request From doesn't match active account")
+        throw new Error("Transaction request From doesn't match active account")
       }
 
       if (transaction.from) {
@@ -191,9 +147,8 @@ export class WalletController {
       const result = await this.wallet.sendTransaction(transaction)
       return result.hash
     } else {
-      console.error('No Active Account')
+      throw new Error('No Active Account')
     }
-    return null
   }
 
   public async signTransaction(data: any) {
@@ -206,9 +161,8 @@ export class WalletController {
       const result = await this.wallet.signTransaction(data)
       return result
     } else {
-      console.error('No Active Account')
+      throw new Error('No Active Account')
     }
-    return null
   }
 
   public async signMessage(data: any) {
@@ -218,9 +172,8 @@ export class WalletController {
       const result = await ethers.utils.joinSignature(sigParams)
       return result
     } else {
-      console.error('No Active Account')
+      throw new Error('No Active Account')
     }
-    return null
   }
 
   public async signPersonalMessage(message: any) {
@@ -232,9 +185,8 @@ export class WalletController {
       )
       return result
     } else {
-      console.error('No Active Account')
+      throw new Error('No Active Account')
     }
-    return null
   }
 
   public async signTypedData(data: any) {
@@ -247,12 +199,11 @@ export class WalletController {
       )
       return result
     } else {
-      console.error('No Active Account')
+      throw new Error('No Active Account')
     }
-    return null
   }
 }
 
-export function getWalletController(veridaAccount: any) {
-  return new WalletController(veridaAccount)
+export function getWalletController() {
+  return new WalletController()
 }

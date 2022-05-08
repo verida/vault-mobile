@@ -1,7 +1,7 @@
 import { IJsonRpcRequest } from '@walletconnect/types'
 import axios, { AxiosInstance } from 'axios'
 
-import { IAssetData, IGasPrices, IParsedTx } from './types'
+import { IAssetData, IGasPrices, IParsedTx } from '../types'
 import { getChainData, payloadId } from './utilities'
 
 const api: AxiosInstance = axios.create({

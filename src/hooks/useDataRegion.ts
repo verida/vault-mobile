@@ -19,7 +19,9 @@ const DEFAULT_NETWORK = 'testnet'
  */
 export function useDataRegion() {
   const dispatch = useDispatch()
-  const selectedAccount = useSelector((state: any) => state.selectedAccount)
+  const selectedAccount = useSelector(
+    (state: any) => state.main.selectedAccount
+  )
   const { loaded } = useAuth()
 
   useEffect(() => {
