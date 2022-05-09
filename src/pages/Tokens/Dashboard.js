@@ -55,7 +55,7 @@ const TokenDashboard = ({
         <LoadingIndicator />
       ) : (
         <View>
-          <TestnetWarning />
+          <TestnetWarning networkReference='' />
           <TokenBanner
             data={{
               amount: total,

@@ -318,7 +318,7 @@ class AccountManager {
       const hdWallets: any = await datastore?.getMany()
 
       const wallets: any = {}
-      if (hdWallets) {
+      if (!isEmpty(hdWallets)) {
         hdWallets.forEach((walt: any) => {
           const mnemonic = walt.mnemonic
           const walletID = walt._id
