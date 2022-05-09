@@ -1,3 +1,4 @@
+import { ThunkAction } from '@reduxjs/toolkit'
 import sentry from '@sentry/react-native'
 import WalletConnect from '@walletconnect/client'
 import {
@@ -6,7 +7,7 @@ import {
   WalletConnectRequest,
 } from 'wallet-connect/types'
 
-import { getAppConfig } from '../../wallet-connect/config'
+import { getWalletConnectConfig } from '../../wallet-connect/config'
 import { createAction } from '../helpers'
 
 export function removeWalletConnectDapp(payload: { key: string }) {
@@ -80,11 +81,16 @@ export function approveWalletConnectRequest(payload: {
   address: string
   activeIndex: number
   chainId: number
-}) {
+}): ThunkAction<
+  Promise<void>,
+  Record<string, unknown>,
+  Record<string, unknown>,
+  ReturnType<typeof hideWalletConnectRequest>
+> {
   return async (dispatch, getState) => {
     const { connector, address, activeIndex, chainId, requestPayload } = payload
     try {
-      await getAppConfig().rpcEngine.signer(requestPayload, {
+      await getWalletConnectConfig().rpcEngine.signer(requestPayload, {
         connector,
         address,
         activeIndex,
@@ -99,18 +105,36 @@ export function approveWalletConnectRequest(payload: {
       }
       sentry.captureException(error)
     }
+
+    // dispatch(
+    //   hideWalletConnectRequest({
+    //     dapp: { session: payload.connector.session },
+    //     request: requestPayload,
+    //   })
+    // )
   }
 }
 
 export function rejectWalletConnectRequest(payload: {
   connector: WalletConnect
   requestPayload: WalletConnectRequest
-}) {
+}): ThunkAction<
+  Promise<void>,
+  Record<string, unknown>,
+  Record<string, unknown>,
+  ReturnType<typeof hideWalletConnectRequest>
+> {
   return async (dispatch, getState) => {
     const { connector, requestPayload } = payload
     connector.rejectRequest({
       id: requestPayload.id,
       error: { message: 'Failed or Rejected Request' },
     })
+    // dispatch(
+    //   hideWalletConnectRequest({
+    //     dapp: { session: payload.connector.session },
+    //     request: requestPayload,
+    //   })
+    // )
   }
 }

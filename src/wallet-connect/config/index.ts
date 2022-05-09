@@ -28,6 +28,6 @@ const appConfig: WalletConnectConfig = {
   },
 }
 
-export function getAppConfig(): WalletConnectConfig {
+export function getWalletConnectConfig(): WalletConnectConfig {
   return appConfig
 }

@@ -1,7 +1,10 @@
 import { convertHexToUtf8 } from '@walletconnect/utils'
+import Config from 'react-native-config'
 
 import { SUPPORTED_CHAINS } from '../constants'
 import { IChainData } from '../types'
+
+const INFURA_API_KEY = Config.INFURA_API_KEY
 
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3)
@@ -19,10 +22,7 @@ export function getChainData(chainId: number): IChainData {
     throw new Error('ChainId missing or not supported')
   }
 
-  // TODO: move to .env variables
-  const API_KEY = '6e4bf0201647493e93c9eea13b70bd4d'
-
-  if (!API_KEY) {
+  if (!INFURA_API_KEY) {
     throw new Error(
       'Environment variable REACT_APP_INFURA_PROJECT_ID is not set'
     )
@@ -31,9 +31,9 @@ export function getChainData(chainId: number): IChainData {
   if (
     chainData.rpc_url.includes('infura.io') &&
     chainData.rpc_url.includes('%API_KEY%') &&
-    API_KEY
+    INFURA_API_KEY
   ) {
-    const rpcUrl = chainData.rpc_url.replace('%API_KEY%', API_KEY)
+    const rpcUrl = chainData.rpc_url.replace('%API_KEY%', INFURA_API_KEY)
 
     return {
       ...chainData,

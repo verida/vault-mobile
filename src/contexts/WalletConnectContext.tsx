@@ -31,7 +31,7 @@ import {
 import AccountManager from '../api/AccountManager'
 import BottomActionsModal from '../components/BottomActionsModal'
 import { useModal } from '../hooks/useModal'
-import { getAppConfig } from '../wallet-connect/config'
+import { getWalletConnectConfig } from '../wallet-connect/config'
 import { getWalletController } from '../wallet-connect/controllers'
 import type {
   DApp,
@@ -92,7 +92,7 @@ function useWalletConnectContext() {
       const connector = connectorsRef.current[connectorKey]
       const payload = { ...request }
 
-      await getAppConfig().rpcEngine.router(payload, {
+      await getWalletConnectConfig().rpcEngine.router(payload, {
         chainId,
         connector,
         setRequests: (wcRequests: WalletConnectRequest[]) => {
@@ -116,7 +116,7 @@ function useWalletConnectContext() {
             payload={payload}
             peerMeta={connector.peerMeta}
             renderPayload={(payload: any) =>
-              getAppConfig().rpcEngine.render(payload)
+              getWalletConnectConfig().rpcEngine.render(payload)
             }
             approveRequest={() => {
               dispatch(

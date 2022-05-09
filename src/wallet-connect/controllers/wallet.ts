@@ -5,7 +5,7 @@ import * as ethers from 'ethers'
 
 import AccountManager from '../../api/AccountManager'
 import { Account } from '../../api/types'
-import { getAppConfig } from '../config'
+import { getWalletConnectConfig } from '../config'
 import { DEFAULT_ACTIVE_INDEX, DEFAULT_CHAIN_ID } from '../constants/default'
 import { getChainData } from '../helpers/utilities'
 
@@ -49,7 +49,7 @@ export class WalletController {
     return this.wallet
   }
 
-  public getAccounts(count = getAppConfig().numberOfAccounts) {
+  public getAccounts(count = getWalletConnectConfig().numberOfAccounts) {
     const accounts = []
     let wallet = null
     for (let i = 0; i < count; i++) {
@@ -60,7 +60,7 @@ export class WalletController {
   }
 
   public getPath(index: number = this.activeIndex) {
-    this.path = `${getAppConfig().derivationPath}/${index}`
+    this.path = `${getWalletConnectConfig().derivationPath}/${index}`
     return this.path
   }
 
