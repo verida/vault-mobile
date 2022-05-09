@@ -85,32 +85,6 @@ export default (props) => {
 
   const logout = async () => {
     setShowLogout(true)
-    // Alert.alert(
-    //   'Confirmation',
-    //   'Are you sure you want to logout of your current account?',
-    //   [
-    //     {
-    //       text: 'Cancel',
-    //     },
-    //     {
-    //       text: 'Logout',
-    //       onPress: async () => {
-    //         const fcmToken = await messaging().getToken()
-    //         if (fcmToken) {
-    //           await unRegisterRemoteNotification(fcmToken)
-    //         }
-    //         const accManagerIns = AccountManager.getInstance()
-    //         await accManagerIns.logout([accManagerIns.getSelectedAccount().did])
-    //         await refresh()
-
-    //         // If this is not the only existing account, back to Home screen after switching to the next account.
-    //         if (accManagerIns.getSelectedAccount()) {
-    //           navigation.navigate('Home')
-    //         }
-    //       },
-    //     },
-    //   ]
-    // )
   }
 
   const list = isVeridaTeamMember ? teamList : publicList
