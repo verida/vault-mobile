@@ -69,7 +69,7 @@ const ManageWallets = ({
                 showActionSheetWithOptions(
                   {
                     options: [
-                      'Show chain addresses',
+                      'Manage Wallet',
                       'Switch to this wallet',
                       'Cancel',
                     ],
