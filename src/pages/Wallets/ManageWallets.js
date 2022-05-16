@@ -2,16 +2,21 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { createNewWallet, setSelectedWallet } from 'reduxStore/wallet/actions'
+import {
+  createNewWallet,
+  deleteWallet,
+  setSelectedWallet,
+} from 'reduxStore/wallet/actions'
 import {
   getAllWallets,
   getSelectedWallet,
+  getWalletCount,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
 
@@ -22,15 +27,40 @@ import ImportWalletModal from './ImportWalletModal'
 
 const ManageWallets = ({
   wallets,
+  walletCount,
   onCreateNewWallet,
   onSetSelectedWallet,
   navigation,
   selectedWalletId,
   loading,
   onImportWallet,
+  onDeleteWallet,
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
   const [importModalVisible, setImportModalVisible] = useState(false)
+
+  const showDeleteAlert = () =>
+    Alert.alert('Default wallet', `Error, can't delete the last wallet`)
+
+  const showConfirmationAlert = (item) =>
+    Alert.alert(
+      'Are you sure?',
+      `This is irreversible, please backup your seed phrase before deleting the wallet.`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: () => {
+            let selectedWalletID = item.id
+            onDeleteWallet(selectedWalletID)
+          },
+        },
+      ]
+    )
 
   const onPressImportWallet = () => {
     setImportModalVisible(true)
@@ -80,11 +110,13 @@ const ManageWallets = ({
                   showActionSheetWithOptions(
                     {
                       options: [
-                        'Manage Wallet',
+                        'View seed phrases',
                         'Switch to this wallet',
+                        'Delete Wallet',
                         'Cancel',
                       ],
-                      cancelButtonIndex: 2,
+                      cancelButtonIndex: 3,
+                      destructiveButtonIndex: 2,
                     },
                     (buttonIndex) => {
                       if (buttonIndex === 0) {
@@ -97,6 +129,13 @@ const ManageWallets = ({
                           SELECTED_WALLET_STORAGE_KEY,
                           selectedWalletID
                         )
+                      }
+                      if (buttonIndex === 2) {
+                        if (walletCount <= 1) {
+                          showDeleteAlert()
+                        } else {
+                          showConfirmationAlert(item)
+                        }
                       }
                     }
                   )
@@ -124,6 +163,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state) => {
   return {
     wallets: getAllWallets(state),
+    walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWallet(state),
     loading: getWalletProcessingState(state),
   }
@@ -134,6 +174,7 @@ const mapDispatchToProps = (dispatch) => {
     onCreateNewWallet: () => dispatch(createNewWallet()),
     onSetSelectedWallet: (walletID) => dispatch(setSelectedWallet(walletID)),
     onImportWallet: (args) => dispatch(createNewWallet(args)),
+    onDeleteWallet: (walletId) => dispatch(deleteWallet(walletId)),
   }
 }
 
