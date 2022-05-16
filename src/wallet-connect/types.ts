@@ -8,6 +8,8 @@ export interface DApp {
   session: IWalletConnectSession
 }
 
+export type WalletConnectSession = IWalletConnectSession
+
 export type WalletConnectClientMeta = IClientMeta
 
 export type WalletConnectRequest = IJsonRpcRequest
@@ -127,6 +129,10 @@ export interface IGasPrice {
   price: number
 }
 
+export interface IEtherPrice {
+  USD: number
+}
+
 export interface IGasPrices {
   timestamp: number
   slow: IGasPrice
@@ -166,11 +172,6 @@ export interface WalletConnectConfig {
   logo: string
   chainId: number
   derivationPath: string
-  numberOfAccounts: number
-  colors: {
-    defaultColor: string
-    backgroundColor: string
-  }
   chains: IChainData[]
   styleOpts: {
     showPasteUri: boolean

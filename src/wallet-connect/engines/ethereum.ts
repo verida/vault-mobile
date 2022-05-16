@@ -2,7 +2,11 @@ import { convertHexToNumber, signingMethods } from '@walletconnect/utils'
 
 import { getWalletController } from '../controllers'
 import { apiGetCustomRequest } from '../helpers/api'
-import { convertHexToUtf8IfPossible } from '../helpers/utilities'
+import {
+  convertHexToUtf8IfPossible,
+  ethNetworkFee,
+  weiToGwei,
+} from '../helpers/utilities'
 import { IRequestRenderParams, IRpcEngine } from '../types'
 
 export function filterEthereumRequests(payload: any) {
@@ -45,30 +49,22 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
   switch (payload.method) {
     case 'eth_sendTransaction':
     case 'eth_signTransaction':
+      const networkFee = ethNetworkFee(
+        convertHexToNumber(payload.params[0].gas || payload.params[0].gasLimit),
+        weiToGwei(
+          convertHexToNumber(
+            payload.params[0].gasPrice || payload.params[0].maxFeePerGas
+          )
+        )
+      )
       params = [
         ...params,
         { label: 'From', value: payload.params[0].from },
         { label: 'To', value: payload.params[0].to },
         {
-          label: 'Gas Limit',
-          value: payload.params[0].gas
-            ? convertHexToNumber(payload.params[0].gas)
-            : payload.params[0].gasLimit
-            ? convertHexToNumber(payload.params[0].gasLimit)
-            : '',
+          label: 'Network Fee',
+          value: networkFee,
         },
-        // {
-        //   label: 'Gas Price',
-        //   value: convertHexToNumber(payload.params[0].gasPrice),
-        // },
-        // {
-        //   label: 'Max fee per Gas',
-        //   value: convertHexToNumber(payload.params[0].maxFeePerGas),
-        // },
-        // {
-        //   label: 'Max priority fee per Gas',
-        //   value: convertHexToNumber(payload.params[0].maxPriorityFeePerGas),
-        // },
         {
           label: 'Nonce',
           value: convertHexToNumber(payload.params[0].nonce),

@@ -51,3 +51,15 @@ export function convertHexToUtf8IfPossible(hex: string) {
     return hex
   }
 }
+
+export function ethNetworkFee(limitGwei: number, gasLimitGwei: number) {
+  return (limitGwei * gasLimitGwei) / 1000000000
+}
+
+export function weiToGwei(wei: number): number {
+  return wei / 1000000000
+}
+
+export function gweiToEther(gwei: number): number {
+  return gwei / 1000000000
+}

@@ -2,7 +2,7 @@ import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
   Button,
@@ -140,9 +140,11 @@ const Home = (props) => {
     }
   }, [selectedAccount, publicProfileData])
 
-  useFocusEffect(() => {
-    fetchInboxCount()
-  })
+  useFocusEffect(
+    useCallback(() => {
+      fetchInboxCount()
+    }, [])
+  )
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {

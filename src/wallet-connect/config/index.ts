@@ -6,16 +6,11 @@ import {
 import { getRpcEngine } from '../engines'
 import { WalletConnectConfig } from '../types'
 
-const appConfig: WalletConnectConfig = {
+const walletConnectConfig: WalletConnectConfig = {
   name: 'WalletConnect',
   logo: require('assets/walletconnect-logo.png'),
   chainId: MAINNET_CHAIN_ID,
   derivationPath: ETH_STANDARD_PATH,
-  numberOfAccounts: 3,
-  colors: {
-    defaultColor: '12, 12, 13',
-    backgroundColor: '40, 44, 52',
-  },
   chains: SUPPORTED_CHAINS,
   styleOpts: {
     showPasteUri: true,
@@ -29,5 +24,5 @@ const appConfig: WalletConnectConfig = {
 }
 
 export function getWalletConnectConfig(): WalletConnectConfig {
-  return appConfig
+  return walletConnectConfig
 }

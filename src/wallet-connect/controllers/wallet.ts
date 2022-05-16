@@ -49,16 +49,6 @@ export class WalletController {
     return this.wallet
   }
 
-  public getAccounts(count = getWalletConnectConfig().numberOfAccounts) {
-    const accounts = []
-    let wallet = null
-    for (let i = 0; i < count; i++) {
-      wallet = this.generateWallet(i)
-      accounts.push(wallet.address)
-    }
-    return accounts
-  }
-
   public getPath(index: number = this.activeIndex) {
     this.path = `${getWalletConnectConfig().derivationPath}/${index}`
     return this.path

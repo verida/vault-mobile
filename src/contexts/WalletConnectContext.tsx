@@ -1,7 +1,5 @@
-/* eslint-disable no-console */
-import Clipboard from '@react-native-community/clipboard'
 import WalletConnect from '@walletconnect/client'
-import { isEmpty } from 'lodash'
+import isEqual from 'lodash/isEqual'
 import React, {
   createContext,
   useCallback,
@@ -9,64 +7,47 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Button, Text, View } from 'react-native'
 import { useDispatch } from 'react-redux'
 
 import { useReduxState } from 'hooks/useReduxState'
 import {
-  approveWalletConnectRequest,
   approveWalletConnectSession,
-  rejectWalletConnectRequest,
   rejectWalletConnectSession,
   removeWalletConnectDapp,
+  setWalletConnectDapp,
   setWalletConnectPeerMeta,
   setWalletConnectRequests,
 } from 'reduxStore/actions'
 import {
   authenticatedSelector,
   dappsSelector,
+  walletConnectNetworkSelector,
   walletConnectRequestSelector,
 } from 'reduxStore/selectors'
 
 import AccountManager from '../api/AccountManager'
-import BottomActionsModal from '../components/BottomActionsModal'
 import { useModal } from '../hooks/useModal'
+import ConnectDappModal from '../pages/WalletConnect/ConnectDappModal'
+import TransactionRequestModal from '../pages/WalletConnect/TransactionRequestModal'
+import {
+  approveWalletConnectRequest,
+  rejectWalletConnectRequest,
+} from '../reduxStore/wallet-connect/thunks'
 import { getWalletConnectConfig } from '../wallet-connect/config'
 import { getWalletController } from '../wallet-connect/controllers'
-import type {
-  DApp,
-  IRequestRenderParams,
-  WalletConnectRequest,
-} from '../wallet-connect/types'
+import type { DApp, WalletConnectRequest } from '../wallet-connect/types'
 
-export const WalletConnectContext = createContext<ReturnType<
-  typeof useWalletConnectContext
-> | null>(null)
+const events = [
+  'session_request',
+  'session_update',
+  'call_request',
+  'disconnect',
+  'connect',
+]
 
-const RequestDisplay = (props: any) => {
-  const { payload, peerMeta, approveRequest, rejectRequest, renderPayload } =
-    props
-
-  const params: IRequestRenderParams[] = renderPayload(payload)
-
-  return (
-    <View>
-      <Text>Request From</Text>
-      <Text>{peerMeta.name}</Text>
-      {params.map((param) => (
-        <React.Fragment key={param.label}>
-          <Text>{param.label}</Text>
-          <Text>{param.value}</Text>
-        </React.Fragment>
-      ))}
-
-      <View>
-        <Button title='Approve' onPress={() => approveRequest()} />
-        <Button title='Reject' onPress={() => rejectRequest()} />
-      </View>
-    </View>
-  )
-}
+export const WalletConnectContext = createContext<
+  ReturnType<typeof useWalletConnectContext>
+>(null as any)
 
 function useWalletConnectContext() {
   const dispatch = useDispatch()
@@ -74,14 +55,14 @@ function useWalletConnectContext() {
   const authenticated = useReduxState(authenticatedSelector)
   const requests = useReduxState(walletConnectRequestSelector)
 
-  const { isOpen: isModalOpen, showModal, onDismiss: dismissModal } = useModal()
+  const { showModal, onDismiss: dismissModal } = useModal()
 
-  const clipboardUriRef = useRef(false)
+  const { chain_id: chainId } = useReduxState(walletConnectNetworkSelector)
+  const initializedRef = useRef(false)
   const connectorsRef = useRef<Record<string, WalletConnect>>({})
 
-  const [chainId, setChainId] = useState<number>(4) // TODO: get from redux
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [address, setAddress] = useState(
+  const [activeIndex] = useState(0) // Only support 1 wallet
+  const [address] = useState(
     AccountManager.getInstance()
       .getSelectedAccount()
       ?.did.replace('did:vda:', '') as string
@@ -109,38 +90,43 @@ function useWalletConnectContext() {
       }
 
       showModal(
-        <BottomActionsModal
-          title='Wallet connect request'
-          onClose={dismissModal}>
-          <RequestDisplay
-            payload={payload}
-            peerMeta={connector.peerMeta}
-            renderPayload={(payload: any) =>
-              getWalletConnectConfig().rpcEngine.render(payload)
-            }
-            approveRequest={() => {
-              dispatch(
-                approveWalletConnectRequest({
-                  connector,
-                  requestPayload: payload,
-                  address,
-                  activeIndex,
-                  chainId,
-                })
-              )
-              dismissModal()
-            }}
-            rejectRequest={() => {
-              dispatch(
-                rejectWalletConnectRequest({
-                  connector,
-                  requestPayload: payload,
-                })
-              )
-              dismissModal()
-            }}
-          />
-        </BottomActionsModal>
+        <TransactionRequestModal
+          client={connector.session.peerMeta as any}
+          payload={payload}
+          dismissModal={() => {
+            dispatch(
+              rejectWalletConnectRequest({
+                connector,
+                requestPayload: payload,
+              })
+            )
+            dismissModal()
+          }}
+          renderPayload={(requestPayload) =>
+            getWalletConnectConfig().rpcEngine.render(requestPayload)
+          }
+          approveRequest={() => {
+            dispatch(
+              approveWalletConnectRequest({
+                connector,
+                requestPayload: payload,
+                address,
+                activeIndex,
+                chainId,
+              })
+            )
+            dismissModal()
+          }}
+          rejectRequest={() => {
+            dispatch(
+              rejectWalletConnectRequest({
+                connector,
+                requestPayload: payload,
+              })
+            )
+            dismissModal()
+          }}
+        />
       )
     },
     [activeIndex, address, chainId, dismissModal, dispatch, requests, showModal]
@@ -149,8 +135,12 @@ function useWalletConnectContext() {
   const subscribeToEvents = useCallback(
     (connectorKey: string) => {
       const connector = connectorsRef.current[connectorKey]
-      console.log('subscribeToEvents', connector.key)
       if (connector) {
+        // unsubscribe from previous events
+        events.forEach((event) => {
+          connector.off(event)
+        })
+
         connector.on('session_request', (error, payload) => {
           if (error) {
             throw error
@@ -160,43 +150,29 @@ function useWalletConnectContext() {
 
           peerMeta?.name &&
             showModal(
-              <>
-                <BottomActionsModal
-                  title='Wallet connect'
-                  onClose={dismissModal}>
-                  <View>
-                    <Text>{JSON.stringify(peerMeta)}</Text>
-                    <View>
-                      <Button
-                        title='Approve'
-                        onPress={() => {
-                          dispatch(
-                            approveWalletConnectSession({
-                              connector,
-                              chainId,
-                              accounts: [address],
-                            })
-                          )
-                          dismissModal()
-                        }}
-                      />
-                      <Button
-                        title='Reject'
-                        onPress={() => {
-                          dispatch(
-                            rejectWalletConnectSession({
-                              connector,
-                              chainId,
-                              accounts: [address],
-                            })
-                          )
-                          dismissModal()
-                        }}
-                      />
-                    </View>
-                  </View>
-                </BottomActionsModal>
-              </>
+              <ConnectDappModal
+                client={peerMeta}
+                connect={() => {
+                  dispatch(
+                    approveWalletConnectSession({
+                      connector,
+                      chainId,
+                      accounts: [address],
+                    })
+                  )
+                  dismissModal()
+                }}
+                dismissModal={() => {
+                  dispatch(
+                    rejectWalletConnectSession({
+                      connector,
+                      chainId,
+                      accounts: [address],
+                    })
+                  )
+                  dismissModal()
+                }}
+              />
             )
         })
 
@@ -210,17 +186,6 @@ function useWalletConnectContext() {
           if (error) {
             throw error
           }
-
-          // TODO: handle request route here
-          // await getAppConfig().rpcEngine.router(payload, {
-          //   chainId,
-          //   connector,
-          //   setRequests: (wcRequests: WalletConnectRequest[]) => {
-          //     setWalletConnectRequests({ requests: wcRequests })
-          //   },
-          //   requests,
-          // })
-
           openRequest(connectorKey, payload)
         })
 
@@ -238,47 +203,10 @@ function useWalletConnectContext() {
           delete connectorsRef.current[connector.key]
           dispatch(removeWalletConnectDapp({ key: connector.key }))
         })
-
-        if (connector.connected) {
-          const { chainId, accounts } = connector
-          const index = 0 // TODO: Deal with multiple accounts
-          const address = accounts[index]
-
-          getWalletController().update(index, chainId)
-
-          setAddress(address)
-          setChainId(chainId)
-        }
       }
     },
     [address, chainId, dismissModal, dispatch, openRequest, showModal]
   )
-
-  useEffect(() => {
-    if (!isModalOpen && !isEmpty(requests)) {
-      // TODO: extract modal component
-      showModal(
-        <>
-          <BottomActionsModal title='Wallet connect' onClose={dismissModal}>
-            <View>
-              <Text>Pending Call Requests</Text>
-              {requests.length ? (
-                requests.map((request) => (
-                  <Button
-                    title={request.method}
-                    key={request.id}
-                    onPress={() => openRequest(null, request)}
-                  />
-                ))
-              ) : (
-                <Text>{'No pending requests'}</Text>
-              )}
-            </View>
-          </BottomActionsModal>
-        </>
-      )
-    }
-  }, [dismissModal, isModalOpen, openRequest, requests, showModal])
 
   // SHOW DAPP to connect
   const requestConnect = useCallback(
@@ -298,26 +226,67 @@ function useWalletConnectContext() {
     [subscribeToEvents]
   )
 
-  // TODO: remove test code
   useEffect(() => {
-    const tid = setInterval(async () => {
-      if (clipboardUriRef.current) return
-      const uri = await Clipboard.getString()
-      if (uri?.startsWith('wc:') && uri?.indexOf('bridge') >= 0) {
-        requestConnect(uri)
-        Clipboard.setString('')
-        clipboardUriRef.current = true
-      } else {
-        Clipboard.setString('')
-      }
-    }, 3000)
+    if (!authenticated) return
+    const tid = setTimeout(() => {
+      dapps.forEach(async (dapp: DApp) => {
+        const wcConnector = connectorsRef.current[dapp.session.key]
+        if (
+          wcConnector.session.chainId === chainId &&
+          isEqual(wcConnector.session.accounts, [address])
+        )
+          return
 
+        if (wcConnector) {
+          wcConnector.updateSession({
+            chainId: chainId,
+            accounts: [address],
+          })
+          subscribeToEvents(dapp.session.key)
+          dispatch(
+            setWalletConnectDapp({
+              key: dapp.session.key,
+              session: wcConnector.session,
+            })
+          )
+        }
+      })
+
+      getWalletController().update(activeIndex, chainId)
+    }, 2000)
     return () => {
       clearTimeout(tid)
     }
-  }, [requestConnect])
+  }, [
+    activeIndex,
+    address,
+    authenticated,
+    chainId,
+    dapps,
+    dispatch,
+    subscribeToEvents,
+  ])
 
-  const initializedRef = useRef(false)
+  const disconnect = useCallback(
+    async (apps: DApp[]) => {
+      apps.forEach(async (dapp: DApp) => {
+        const connector = connectorsRef.current[dapp.session.key]
+        if (connector) {
+          dispatch(
+            setWalletConnectDapp({
+              key: dapp.session.key,
+              session: connector.session,
+            })
+          )
+          events.forEach((event) => {
+            connector.off(event)
+          })
+        }
+      })
+    },
+    [dispatch]
+  )
+
   useEffect(() => {
     if (!authenticated || initializedRef.current) return
 
@@ -340,31 +309,21 @@ function useWalletConnectContext() {
       getWalletController().init(activeIndex, chainId)
     }
 
-    const disconnect = async () => {
-      const events = [
-        'session_request',
-        'session_update',
-        'call_request',
-        'disconnect',
-        'connect',
-      ]
-      dapps.forEach(async (dapp: DApp) => {
-        const connector = connectorsRef.current[dapp.session.key]
-        if (connector) {
-          events.forEach((event) => {
-            connector.off(event)
-          })
-        }
-      })
-    }
-
     initializedRef.current = true
     connectDApps()
 
     return () => {
-      disconnect()
+      disconnect(dapps)
     }
-  }, [activeIndex, chainId, dapps, dispatch, subscribeToEvents, authenticated])
+  }, [
+    activeIndex,
+    chainId,
+    dapps,
+    dispatch,
+    subscribeToEvents,
+    authenticated,
+    disconnect,
+  ])
 
   return {
     dapps,
