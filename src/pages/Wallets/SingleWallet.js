@@ -4,24 +4,28 @@ import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { getNativeForChain } from 'wallet/helpers/tokens'
 
+import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
+import OtherSvg from 'assets/wallets/Other.svg'
+import ChainsAddressesList from 'components/ChainsAddressesList'
 import Text from 'components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
-import OtherSvg from '../../assets/wallets/Other.svg'
-import ChainsAddressesList from '../../components/ChainsAddressesList'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import PrivateKeyModal from './PrivateKeyModal'
 import SeedPhraseModal from './SeedPhraseModal'
+import WarningModal from './WarningModal'
 
 const SingleWallet = ({ navigation, wallets }) => {
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
   const [copyPrivateKeyModalVisible, toggleCopyPrivateKeyModal] =
     useState(false)
+  const [seedPhraseModalVisible, setSeedPhraseModalVisible] = useState(false)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [privateKeyData, setPrivateKeyData] = useState('')
 
   const showSeedPhrase = (data) => {
+    setSeedPhraseModalVisible(false)
     setSeedPhraseData(data)
     toggleCopySeedPhraseModal(true)
   }
@@ -67,6 +71,14 @@ const SingleWallet = ({ navigation, wallets }) => {
         </TouchableOpacity> */}
         </View>
       </View>
+      <View style={styles.actionButtons}>
+        <TouchableOpacity
+          onPress={() => setSeedPhraseModalVisible(true)}
+          style={styles.actionButton}>
+          <ExportSeedphraseSvg />
+          <Text style={styles.actionButtonText}>Seed phrase</Text>
+        </TouchableOpacity>
+      </View>
       <Text style={styles.listLabel}>Addresses</Text>
       <ChainsAddressesList
         list={addressList}
@@ -76,6 +88,12 @@ const SingleWallet = ({ navigation, wallets }) => {
         onPressPrivateKey={(privateKey) => {
           showPrivateKey(privateKey)
         }}
+      />
+      <WarningModal
+        hideModal={() => setSeedPhraseModalVisible(false)}
+        visible={seedPhraseModalVisible}
+        type='seed_phrase'
+        onPressButton={() => showSeedPhrase(wallets.seedPhrase)}
       />
       <SeedPhraseModal
         visible={copySeedPhraseModalVisible}
@@ -127,6 +145,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
     marginTop: 30,
   },
+  actionButtons: {
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    marginTop: 20,
+  },
+  actionButton: {
+    alignItems: 'center',
+  },
+  actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
 const mapStateToProps = (state, props) => {
