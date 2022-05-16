@@ -119,7 +119,6 @@ const TransactionRequestModal = (props: Props) => {
       <View style={{ minHeight: '90%' }}>
         <View style={{ flex: 1, justifyContent: 'space-around' }}>
           <ScrollView
-            style={{ marginBottom: 16 }}
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollViewContainer}>
             {contractInfo.type === 'CONTRACT_CALL' && ethValue ? (

@@ -1,9 +1,10 @@
-import sentry from '@sentry/react-native'
-import WalletConnect from '@walletconnect/client'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container } from 'native-base'
 import React, { useMemo, useState } from 'react'
-import { Button, Image, View } from 'react-native'
-import { ScrollView } from 'react-native-gesture-handler'
+import { Image, StyleSheet, View } from 'react-native'
+import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect, useDispatch } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -14,21 +15,26 @@ import AccountManager from '../../api/AccountManager'
 import DropDownPicker from '../../components/Select'
 import { Spacer } from '../../components/Spacer'
 import Text from '../../components/Text'
+import { BLACK_COLOR_OPACITY } from '../../constants/color'
 import { useReduxState } from '../../hooks/useReduxState'
-import { removeWalletConnectDapp } from '../../reduxStore/actions'
+import { MainStackParams } from '../../navigation/types'
 import {
   dappsSelector,
   walletConnectNetworkSelector,
 } from '../../reduxStore/selectors'
+import iconStyle from '../../styles/icon'
 import LayoutStyle from '../../styles/layouts'
+import text from '../../styles/text'
 import { SUPPORTED_CHAINS } from '../../wallet-connect/constants/chains'
 import { IChainData } from '../../wallet-connect/types'
 
-export function isWalletConnectSession(object: any) {
-  return typeof object.bridge !== 'undefined'
-}
+type WalletConnectScreenNavigationProp = NativeStackNavigationProp<
+  MainStackParams,
+  'WalletConnect'
+>
 
 const WalletConnectScreen = () => {
+  const navigation = useNavigation<WalletConnectScreenNavigationProp>()
   const dapps = useReduxState(dappsSelector)
   const [address] = useState(
     AccountManager.getInstance()
@@ -53,77 +59,75 @@ const WalletConnectScreen = () => {
     <Container>
       <NavigationHeader left={{ icon: 'back' }} title='Wallet Connect' />
 
-      <View style={[LayoutStyle.layout, { flexDirection: 'column' }]}>
+      <View style={[LayoutStyle.layout]}>
         <ScrollView
-          contentContainerStyle={{ paddingBottom: 300 }}
+          contentContainerStyle={{}}
           showsVerticalScrollIndicator={false}>
           <View>
-            <Text style={{ fontSize: 16, fontWeight: 'bold' }}>DApps</Text>
-            <Spacer height={16} />
-            <Text>Wallet:</Text>
-            <Spacer height={4} />
-            <Text>{address}</Text>
-            <Spacer height={4} />
-            <Text>Network:</Text>
-            <Spacer height={4} />
-            <DropDownPicker
-              showArrow
-              placeholder='Select network'
-              items={options}
-              containerStyle={InputStyles.select}
-              defaultValue={chainId}
-              onChangeItem={(item: IChainData) => {
-                dispatch(actions.setWalletConnectNetwork({ network: item }))
-              }}
-            />
-
-            <Spacer height={32} />
+            <View style={{ alignItems: 'flex-start', zIndex: 1 }}>
+              <Text style={styles.title}>DApps</Text>
+              <Spacer height={16} />
+              <View
+                style={{
+                  flexDirection: 'row',
+                  justifyContent: 'space-between',
+                }}>
+                <Text style={styles.label}>Wallet:</Text>
+                <Spacer height={16} />
+                <Text style={[styles.value, { flex: 1 }]}>{address}</Text>
+              </View>
+              <Text style={styles.label}>Network:</Text>
+              <Spacer height={4} />
+              <DropDownPicker
+                showArrow
+                placeholder='Select network'
+                items={options}
+                containerStyle={InputStyles.select}
+                defaultValue={chainId}
+                onChangeItem={(item: IChainData) => {
+                  dispatch(actions.setWalletConnectNetwork({ network: item }))
+                }}
+              />
+            </View>
+            <Spacer height={60} />
             {dapps.length > 0 &&
               dapps.map((dapp) => (
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    padding: 20,
-                    alignItems: 'center',
-                  }}
-                  key={dapp.session.key}>
-                  <Image
-                    style={{ width: 60, height: 60 }}
-                    source={{
-                      uri: dapp.session?.peerMeta?.icons?.[0],
-                    }}
-                  />
-                  <View style={{ padding: 8, alignItems: 'flex-start' }}>
-                    <Text style={{ fontSize: 18 }}>
-                      {dapp.session?.peerMeta?.name ??
-                        dapp.session?.peerMeta?.url ??
-                        dapp.session?.peerId}
-                    </Text>
-                    <Text>
-                      {'PeerId: ' +
-                        dapp.session.peerId +
-                        '\nKey:' +
-                        dapp.session.key.substring(0, 10)}
-                    </Text>
-
-                    <Button
-                      title='Disconnect'
-                      onPress={async () => {
-                        try {
-                          dispatch(
-                            removeWalletConnectDapp({ key: dapp.session.key })
-                          )
-                          const wcConnector = new WalletConnect({
-                            session: dapp.session,
-                          })
-                          wcConnector.killSession()
-                        } catch (error) {
-                          sentry.captureException(error)
-                        }
+                <TouchableOpacity
+                  key={dapp.session.key}
+                  onPress={() => {
+                    navigation.navigate('WalletConnectDapp', { dapp })
+                  }}>
+                  <View
+                    style={{
+                      flexDirection: 'row',
+                      padding: 16,
+                      alignItems: 'center',
+                      backgroundColor: 'white',
+                      borderRadius: 8,
+                    }}>
+                    <Image
+                      style={iconStyle.normal}
+                      source={{
+                        uri: dapp.session?.peerMeta?.icons?.[0],
                       }}
                     />
+                    <View style={styles.appItemContainer}>
+                      <Text style={text.primary}>
+                        {dapp.session?.peerMeta?.name}
+                      </Text>
+                      <Text style={text.darkgrey}>
+                        {dapp.session?.peerMeta?.url}
+                      </Text>
+                      <Text>{'PeerId: ' + dapp.session.peerId}</Text>
+                    </View>
+                    <Icon
+                      size={22}
+                      style={{ marginLeft: 16 }}
+                      name='keyboard-arrow-right'
+                      color={BLACK_COLOR_OPACITY(0.45)}
+                    />
                   </View>
-                </View>
+                </TouchableOpacity>
               ))}
           </View>
         </ScrollView>
@@ -131,6 +135,25 @@ const WalletConnectScreen = () => {
     </Container>
   )
 }
+
+const styles = StyleSheet.create({
+  appItemContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
+  title: {
+    ...text.primary,
+    fontSize: 22,
+    textAlign: 'left',
+  },
+  label: {
+    ...text.grey,
+    fontSize: 16,
+    textAlign: 'left',
+  },
+  value: {
+    ...text.primary,
+    textAlign: 'right',
+    fontSize: 16,
+  },
+})
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main

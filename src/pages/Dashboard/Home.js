@@ -202,13 +202,6 @@ const Home = (props) => {
           <LoadingView />
         ) : (
           <>
-            <View>
-              <Button
-                title='Wallet connect'
-                onPress={() => props.navigation.navigate('WalletConnect', {})}
-              />
-            </View>
-
             <View style={style.qr}>
               <QRCode
                 logo={LogoImg}

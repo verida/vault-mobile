@@ -66,10 +66,6 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
           value: networkFee,
         },
         {
-          label: 'Nonce',
-          value: convertHexToNumber(payload.params[0].nonce),
-        },
-        {
           label: 'Value',
           value: payload.params[0].value
             ? convertHexToNumber(payload.params[0].value)
