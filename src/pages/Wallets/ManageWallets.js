@@ -24,6 +24,7 @@ import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
 import { SNOW_COLOR } from '../../constants/color'
 import ImportWalletModal from './ImportWalletModal'
+import AddWalletModal from './AddWalletModal'
 
 const ManageWallets = ({
   wallets,
@@ -38,6 +39,7 @@ const ManageWallets = ({
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
   const [importModalVisible, setImportModalVisible] = useState(false)
+  const [addModalVisible, setAddModalVisible] = useState(false)
 
   const showDeleteAlert = () =>
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
@@ -66,6 +68,10 @@ const ManageWallets = ({
     setImportModalVisible(true)
   }
 
+  const onPressAddWallet = () => {
+    setAddModalVisible(true)
+  }
+
   const list = Object.values(wallets).map((singleWallet) => {
     const { label, id, accounts } = singleWallet
     return {
@@ -90,7 +96,7 @@ const ManageWallets = ({
               },
               (buttonIndex) => {
                 if (buttonIndex === 0) {
-                  onCreateNewWallet()
+                  onPressAddWallet()
                 }
                 if (buttonIndex === 1) {
                   onPressImportWallet()
@@ -150,6 +156,11 @@ const ManageWallets = ({
             visible={importModalVisible}
             onImportWallet={onImportWallet}
           />
+          <AddWalletModal
+            hideModal={() => setAddModalVisible(false)}
+            visible={addModalVisible}
+            onCreateNewWallet={onCreateNewWallet}
+          />
         </View>
       )}
     </Container>
@@ -171,7 +182,7 @@ const mapStateToProps = (state) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onCreateNewWallet: () => dispatch(createNewWallet()),
+    onCreateNewWallet: (args) => dispatch(createNewWallet(args)),
     onSetSelectedWallet: (walletID) => dispatch(setSelectedWallet(walletID)),
     onImportWallet: (args) => dispatch(createNewWallet(args)),
     onDeleteWallet: (walletId) => dispatch(deleteWallet(walletId)),
