@@ -19,14 +19,16 @@ const SHOW_BANNER_KEY = 'show_banner'
 function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   useEffect(() => {
     const init = async () => {
-      const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
-      if (!showBanner || showBanner !== 'set') {
-        Alert.alert(
-          'Important Notice',
-          'Testnet 1 data has been reset, if your unable to access your accounts, this is normal. You can now create new accounts in such cases.'
-        )
-        await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
-      }
+      await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
+      // const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
+      // if (!showBanner || showBanner !== 'set') {
+      //   Alert.alert(
+      //     'Important Notice',
+      //     'Testnet 1 data has been reset, if your unable to access your accounts, this is normal. You can now create new accounts in such cases.'
+      //   )
+      //   await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
+      await SecureStore.deleteItemAsync(SHOW_BANNER_KEY)
+      // }
     }
     init()
   })

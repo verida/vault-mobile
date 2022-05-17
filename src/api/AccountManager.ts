@@ -562,7 +562,7 @@ class AccountManager {
       await this.restoreUserWallet()
       return this.selectedAccount
     } catch (e) {
-      if (this.selectedAccount) this.logout([this.selectedAccount.did])
+      if (this.selectedAccount) await this.logout([this.selectedAccount.did])
       Sentry.captureException(e)
       throw e
     }

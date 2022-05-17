@@ -217,8 +217,10 @@ const Home = (props) => {
         'Error',
         'Cannot get account information, removing this account'
       )
+      setLoading(true)
       await AccountManager.getInstance().logout([did])
       await refresh()
+      setLoading(false)
     }
   }
 
