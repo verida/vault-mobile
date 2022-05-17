@@ -161,7 +161,7 @@ const Home = (props) => {
         if (!showBanner || showBanner !== 'set') {
           Alert.alert(
             'Important Notice',
-            'Testnet 1 data has been reset, if your unable to access your accounts, this is normal. You can now create new accounts in such cases.'
+            'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
           )
           await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
         }
