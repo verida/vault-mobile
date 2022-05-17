@@ -6,7 +6,7 @@ import Vault from '@verida/vault-common'
 import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
-import { isEmpty } from 'lodash'
+import { isEmpty, times } from 'lodash'
 import store from 'reduxStore'
 
 import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
@@ -463,6 +463,7 @@ class AccountManager {
         await this.switchToAccount(nextAccount.did)
       }
     } catch (e) {
+      console.log('Entered inside error', e)
       Sentry.captureException(e)
       throw e
     }
@@ -554,14 +555,16 @@ class AccountManager {
           backedup: false,
         },
       }
-
+      
       await this.connect(true)
-      await this.restoreUserWallet()
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
-
+      
+      await this.restoreUserWallet()
       return this.selectedAccount
     } catch (e) {
+      if(this.selectedAccount)
+        this.logout([this.selectedAccount.did])
       Sentry.captureException(e)
       throw e
     }
