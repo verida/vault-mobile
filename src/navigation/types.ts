@@ -4,7 +4,7 @@ import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 import { DApp } from '../wallet-connect/types'
 
-interface RootStackParams {
+export type RootStackParams = {
   Auth: undefined
   Main: undefined
 }

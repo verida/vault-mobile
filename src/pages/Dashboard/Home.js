@@ -5,7 +5,6 @@ import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
-  Button,
   Dimensions,
   InteractionManager,
   Linking,

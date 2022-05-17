@@ -10,7 +10,6 @@ import { DApp } from 'wallet-connect/types'
 import Button from 'components/Button'
 
 import NavigationHeader from '../../components/Navigation/NavigationHeader'
-import { Spacer } from '../../components/Spacer'
 import useParams from '../../hooks/useParams'
 import { removeWalletConnectDapp } from '../../reduxStore/actions'
 import iconStyle from '../../styles/icon'
