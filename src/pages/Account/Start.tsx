@@ -1,8 +1,9 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { LinearGradient } from 'expo-linear-gradient'
+import * as SecureStore from 'expo-secure-store'
 import React, { useEffect } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
-import * as SecureStore from 'expo-secure-store'
+
 import Texture from 'assets/landing-bg.svg'
 import Logo from 'assets/logo.svg'
 import Text from 'components/Text'
@@ -12,7 +13,6 @@ import { AuthStackParams } from 'navigation/types'
 
 import Button from '../../components/Button'
 import { CreateAccountMode } from './Create'
-import { init } from '@sentry/browser'
 
 const SHOW_BANNER_KEY = 'show_banner'
 
@@ -20,8 +20,11 @@ function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   useEffect(() => {
     const init = async () => {
       const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
-      if(!showBanner || showBanner !== 'set'){
-        Alert.alert('Important Notice', 'Testnet 1 data has been reset, if your unable to access your accounts, this is normal. You can now create new accounts in such cases.')
+      if (!showBanner || showBanner !== 'set') {
+        Alert.alert(
+          'Important Notice',
+          'Testnet 1 data has been reset, if your unable to access your accounts, this is normal. You can now create new accounts in such cases.'
+        )
         await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
       }
     }
