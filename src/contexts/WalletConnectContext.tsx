@@ -267,25 +267,16 @@ function useWalletConnectContext() {
     subscribeToEvents,
   ])
 
-  const disconnect = useCallback(
-    async (apps: DApp[]) => {
-      apps.forEach(async (dapp: DApp) => {
-        const connector = connectorsRef.current[dapp.session.key]
-        if (connector) {
-          dispatch(
-            setWalletConnectDapp({
-              key: dapp.session.key,
-              session: connector.session,
-            })
-          )
-          events.forEach((event) => {
-            connector.off(event)
-          })
-        }
-      })
-    },
-    [dispatch]
-  )
+  const disconnect = useCallback(async (apps: DApp[]) => {
+    apps.forEach(async (dapp: DApp) => {
+      const connector = connectorsRef.current[dapp.session.key]
+      if (connector) {
+        events.forEach((event) => {
+          connector.off(event)
+        })
+      }
+    })
+  }, [])
 
   useEffect(() => {
     if (!authenticated || initializedRef.current) return
