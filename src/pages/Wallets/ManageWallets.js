@@ -23,8 +23,8 @@ import {
 import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
 import { SNOW_COLOR } from '../../constants/color'
-import ImportWalletModal from './ImportWalletModal'
 import AddWalletModal from './AddWalletModal'
+import ImportWalletModal from './ImportWalletModal'
 
 const ManageWallets = ({
   wallets,

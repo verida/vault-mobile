@@ -1,7 +1,6 @@
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
-import { Alert, Modal, StyleSheet, TextInput, View } from 'react-native'
-import { isValidSeedPhrase } from 'wallet/helpers/validation'
+import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
 import Button from 'components/Button'
 import Label from 'components/Label'

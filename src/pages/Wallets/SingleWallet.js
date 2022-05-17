@@ -9,13 +9,13 @@ import OtherSvg from 'assets/wallets/Other.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
+import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
 import PrivateKeyModal from './PrivateKeyModal'
+import RenameWalletModal from './RenameWalletModal'
 import SeedPhraseModal from './SeedPhraseModal'
 import WarningModal from './WarningModal'
-import RenameWalletModal from './RenameWalletModal'
 
 const SingleWallet = ({ navigation, wallets, onRenameWallet }) => {
   const [renameModalVisible, setRenameModalVisible] = useState(false)
