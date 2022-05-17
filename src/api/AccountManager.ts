@@ -556,12 +556,13 @@ class AccountManager {
       }
 
       await this.connect(true)
-      await this.restoreUserWallet()
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
+      await this.restoreUserWallet()
       return this.selectedAccount
     } catch (e) {
+      if (this.selectedAccount) await this.logout([this.selectedAccount.did])
       Sentry.captureException(e)
       throw e
     }
