@@ -17,7 +17,11 @@ import {
   setSelectedAccount,
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
-import { removeUserWallets, saveUserWallets } from 'reduxStore/wallet/actions'
+import {
+  removeUserWallets,
+  saveUserWallets,
+  setSelectedWallet,
+} from 'reduxStore/wallet/actions'
 import {
   getCountryCode,
   getDefaultNode,
@@ -34,6 +38,7 @@ type EndpointUrls = {
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
 export const WALLETS_STORAGE_KEY = 'wallets'
+export const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
@@ -91,7 +96,7 @@ class AccountManager {
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
         if (walletsRaw) {
           const wallets = JSON.parse(walletsRaw)
-          if (!wallets.seedPhrase) {
+          if (wallets.seedPhrase || wallets.near) {
             const selectedAccount = this.getSelectedAccount()
             if (selectedAccount) {
               await this.connect()
@@ -100,6 +105,10 @@ class AccountManager {
             await this.restoreUserWallet()
           } else {
             store.dispatch(saveUserWallets(wallets))
+            const selectedWalletID = await SecureStore.getItemAsync(
+              SELECTED_WALLET_STORAGE_KEY
+            )
+            await store.dispatch(setSelectedWallet(selectedWalletID))
           }
         } else {
           // else basically old account.. create a seedphrase and set wallet.
@@ -266,23 +275,33 @@ class AccountManager {
         walletType: 'multi',
         label: 'Multi Coin Wallet',
       }
-      await walletDb?.save(wallet)
+      const saved: any = await walletDb?.save(wallet)
+      const walletID = saved?.id
 
       // generate wallets and save em to redux state
       const userGeneratedWallets =
         WalletUtils.MultiChainWallet.generateHDWallets(userHDWalletMnemonic)
-      await store.dispatch(
-        saveUserWallets({
-          seedPhrase: userHDWalletMnemonic,
+
+      const walletData = {
+        [walletID]: {
+          seedPhrase: wallet.mnemonic,
+          type: wallet.walletType,
+          label: wallet.label,
+          id: walletID,
           accounts: userGeneratedWallets,
-        })
-      )
+        },
+      }
+
+      await store.dispatch(saveUserWallets(walletData))
+
+      await store.dispatch(setSelectedWallet(walletID))
 
       // save to storage..
       await SecureStore.setItemAsync(
         WALLETS_STORAGE_KEY,
-        JSON.stringify(userGeneratedWallets)
+        JSON.stringify(walletData)
       )
+      await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
     } catch (e) {
       Sentry.captureException(e)
       throw e
@@ -296,22 +315,43 @@ class AccountManager {
         'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
       )
 
-      const HDwallets = await datastore?.getMany()
-      if (HDwallets) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        const mnemonic = HDwallets[0].mnemonic
-        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+      const hdWallets: any = await datastore?.getMany()
 
-        await store.dispatch(
-          saveUserWallets({ seedPhrase: mnemonic, accounts: wallets })
-        )
+      const wallets: any = {}
+      if (!isEmpty(hdWallets)) {
+        hdWallets.forEach((walt: any) => {
+          const mnemonic = walt.mnemonic
+          const walletID = walt._id
+          const accounts =
+            WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+
+          wallets[walletID] = {
+            seedPhrase: mnemonic,
+            type: walt.walletType,
+            label: walt.label,
+            id: walletID,
+            accounts,
+          }
+        })
+
+        await store.dispatch(saveUserWallets(wallets))
 
         // save to storage..
         await SecureStore.setItemAsync(
           WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
+
+        if (hdWallets[0]) {
+          const selectedWalletID = hdWallets[0]._id
+
+          await store.dispatch(setSelectedWallet(selectedWalletID))
+
+          await SecureStore.setItemAsync(
+            SELECTED_WALLET_STORAGE_KEY,
+            selectedWalletID
+          )
+        }
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -391,6 +431,7 @@ class AccountManager {
     }
     try {
       await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(SELECTED_WALLET_STORAGE_KEY)
       await store.dispatch(removeUserWallets())
 
       selectedDids.forEach((did) => {

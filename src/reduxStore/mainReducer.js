@@ -2,6 +2,7 @@ import update from 'immutability-helper'
 
 import {
   ADD_ACCOUNT,
+  LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
   SET_COUNTRIES,
@@ -28,6 +29,7 @@ import {
   SEND_TRANSACTION_FAILED,
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
+  SET_SELECTED_WALLET,
   SET_USER_WALLETS,
   TRANSACTION_DETAIL_FETCH_FAILED,
   TRANSACTION_DETAIL_FETCH_START,
@@ -35,6 +37,9 @@ import {
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
+  WALLET_PROCESSING_FAILED,
+  WALLET_PROCESSING_FINISHED,
+  WALLET_PROCESSING_START,
 } from './wallet/types'
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
@@ -73,6 +78,11 @@ const walletInitialState = {
     data: [],
   },
   wallets: { data: {} },
+  selectedWallet: null,
+  walletProcessing: {
+    loading: false,
+    error: undefined,
+  },
 }
 
 const initialState = {
@@ -274,11 +284,45 @@ export const mainReducer = (state = initialState, action) => {
         wallets: { data: action.data },
       }
 
+    case SET_SELECTED_WALLET:
+      return {
+        ...state,
+        selectedWallet: action.data,
+      }
+
     case REMOVE_USER_WALLETS:
       return {
         ...state,
         ...walletInitialState,
       }
+
+    case WALLET_PROCESSING_START:
+      return {
+        ...state,
+        walletProcessing: {
+          loading: true,
+          error: undefined,
+        },
+      }
+
+    case WALLET_PROCESSING_FAILED:
+      return {
+        ...state,
+        walletProcessing: {
+          loading: false,
+          error: action.error,
+        },
+      }
+
+    case WALLET_PROCESSING_FINISHED:
+      return {
+        ...state,
+        walletProcessing: {
+          loading: false,
+          error: undefined,
+        },
+      }
+
     case SET_NETWORKS:
       return update(state, {
         networks: {
@@ -297,6 +341,20 @@ export const mainReducer = (state = initialState, action) => {
       return update(state, {
         countries: {
           $set: action.payload,
+        },
+      })
+
+    case LOG_OUT:
+      return update(state, {
+        newMessagesCount: {
+          $set: 0,
+        },
+        publicProfileData: {
+          $set: {
+            name: '',
+            country: '',
+            description: '',
+          },
         },
       })
 
