@@ -281,30 +281,33 @@ function useWalletConnectContext() {
   useEffect(() => {
     if (!authenticated || initializedRef.current) return
 
-    const connectDApps = async () => {
-      dapps.forEach(async (dapp: DApp) => {
-        if (connectorsRef.current[dapp.session.key]) {
-          return
-        }
-        const wcConnector = new WalletConnect({
-          session: dapp.session,
+    const tid = setTimeout(() => {
+      const connectDApps = async () => {
+        dapps.forEach(async (dapp: DApp) => {
+          if (connectorsRef.current[dapp.session.key]) {
+            return
+          }
+          const wcConnector = new WalletConnect({
+            session: dapp.session,
+          })
+          connectorsRef.current = {
+            ...connectorsRef.current,
+            [dapp.session.key]: wcConnector,
+          }
+
+          subscribeToEvents(wcConnector.key)
         })
-        connectorsRef.current = {
-          ...connectorsRef.current,
-          [dapp.session.key]: wcConnector,
-        }
 
-        subscribeToEvents(wcConnector.key)
-      })
+        getWalletController().init(activeIndex, chainId)
+      }
 
-      getWalletController().init(activeIndex, chainId)
-    }
-
-    initializedRef.current = true
-    connectDApps()
+      initializedRef.current = true
+      connectDApps()
+    }, 2000)
 
     return () => {
-      disconnect(dapps)
+      clearTimeout(tid)
+      if (initializedRef.current) disconnect(dapps)
     }
   }, [
     activeIndex,

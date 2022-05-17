@@ -72,8 +72,7 @@ const WalletConnectScreen = () => {
                   flexDirection: 'row',
                   justifyContent: 'space-between',
                 }}>
-                <Text style={styles.label}>Wallet:</Text>
-                <Spacer height={16} />
+                <Text style={styles.label}>Wallet: </Text>
                 <Text style={[styles.value, { flex: 1 }]}>{address}</Text>
               </View>
               <Text style={styles.label}>Network:</Text>
@@ -105,13 +104,15 @@ const WalletConnectScreen = () => {
                       }}
                     />
                     <View style={styles.appTextContainer}>
-                      <Text style={text.primary}>
+                      <Text style={[text.primary, { textAlign: 'left' }]}>
                         {dapp.session?.peerMeta?.name}
                       </Text>
-                      <Text style={text.darkgrey}>
+                      <Text style={[text.grey, { textAlign: 'left' }]}>
                         {dapp.session?.peerMeta?.url}
                       </Text>
-                      <Text>{'PeerId: ' + dapp.session.peerId}</Text>
+                      <Text style={[text.grey, { textAlign: 'left' }]}>
+                        {'PeerId: ' + dapp.session.peerId}
+                      </Text>
                     </View>
                     <Icon
                       size={22}

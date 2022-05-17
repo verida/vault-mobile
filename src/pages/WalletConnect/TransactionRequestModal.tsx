@@ -84,7 +84,6 @@ const TransactionRequestModal = (props: Props) => {
     renderPayload,
   } = props
 
-  const [loading, setLoading] = useState(true)
   const allParams = renderPayload(payload)
   const params: IRequestRenderParams[] = allParams.filter(
     (param) =>
@@ -108,11 +107,8 @@ const TransactionRequestModal = (props: Props) => {
       } catch (error) {
         sentry.captureException(error)
       }
-      setLoading(false)
     })()
   }, [ethValue, etherPriceUsd])
-
-  if (loading) return null
 
   return (
     <BottomActionsModal title={contractInfo?.title} onClose={dismissModal}>
