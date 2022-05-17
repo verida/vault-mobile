@@ -60,7 +60,8 @@ const Authenticate = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return { authenticated: state.authenticated }
 }
 

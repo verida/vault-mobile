@@ -165,7 +165,8 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     wallets: getWalletsData(state),
     transactionParams: getTransactionParamsData(state),

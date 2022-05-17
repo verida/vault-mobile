@@ -16,7 +16,8 @@ import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
-import store from 'reduxStore'
+import { PersistGate } from 'redux-persist/es/integration/react'
+import { persistor, store } from 'reduxStore'
 
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
@@ -63,18 +64,20 @@ function App() {
 
   const AppContent = (
     <Provider store={store}>
-      <AuthProvider>
-        <NavigationContainer linking={linking} ref={navigationRef}>
-          <Authenticate>
-            <RootSiblingParent>
-              <ActionSheetProvider>
-                <RootNavigator />
-              </ActionSheetProvider>
-            </RootSiblingParent>
-          </Authenticate>
-        </NavigationContainer>
-      </AuthProvider>
-      <SwitchAccountToast />
+      <PersistGate loading={null} persistor={persistor}>
+        <AuthProvider>
+          <NavigationContainer linking={linking} ref={navigationRef}>
+            <Authenticate>
+              <RootSiblingParent>
+                <ActionSheetProvider>
+                  <RootNavigator />
+                </ActionSheetProvider>
+              </RootSiblingParent>
+            </Authenticate>
+          </NavigationContainer>
+        </AuthProvider>
+        <SwitchAccountToast />
+      </PersistGate>
     </Provider>
   )
 

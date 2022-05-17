@@ -156,7 +156,8 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (rootState, props) => {
+  const state = rootState.main
   return {
     wallets: getAddressesForWallet(state, props.route.params.item.id),
   }
