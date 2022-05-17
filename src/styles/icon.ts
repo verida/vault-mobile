@@ -5,6 +5,10 @@ const iconStyle = StyleSheet.create({
     width: 48,
     height: 48,
   },
+  large: {
+    width: 80,
+    height: 80,
+  },
 })
 
 export default iconStyle

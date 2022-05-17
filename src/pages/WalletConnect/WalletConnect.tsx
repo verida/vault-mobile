@@ -97,21 +97,14 @@ const WalletConnectScreen = () => {
                   onPress={() => {
                     navigation.navigate('WalletConnectDapp', { dapp })
                   }}>
-                  <View
-                    style={{
-                      flexDirection: 'row',
-                      padding: 16,
-                      alignItems: 'center',
-                      backgroundColor: 'white',
-                      borderRadius: 8,
-                    }}>
+                  <View style={styles.appContainer}>
                     <Image
                       style={iconStyle.normal}
                       source={{
                         uri: dapp.session?.peerMeta?.icons?.[0],
                       }}
                     />
-                    <View style={styles.appItemContainer}>
+                    <View style={styles.appTextContainer}>
                       <Text style={text.primary}>
                         {dapp.session?.peerMeta?.name}
                       </Text>
@@ -137,7 +130,6 @@ const WalletConnectScreen = () => {
 }
 
 const styles = StyleSheet.create({
-  appItemContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
   title: {
     ...text.primary,
     fontSize: 22,
@@ -153,6 +145,15 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 16,
   },
+  appContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 8,
+    marginBottom: 16,
+  },
+  appTextContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
 })
 
 const mapStateToProps = (rootState: any) => {

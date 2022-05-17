@@ -14,6 +14,8 @@ import * as actions from 'reduxStore/actions'
 import { walletConnectNetworkSelector } from 'reduxStore/selectors'
 import InputStyles from 'styles/inputs'
 
+import iconStyle from '../../styles/icon'
+
 type Props = {
   client: WalletConnectClientMeta
   dismissModal: () => void
@@ -43,23 +45,18 @@ const ConnectDappModal = (props: Props) => {
 
   return (
     <BottomActionsModal title='Wallet connect' onClose={dismissModal}>
-      <View
-        style={{
-          flexDirection: 'column',
-          padding: 32,
-          alignItems: 'center',
-        }}>
+      <View style={styles.container}>
         <Image
-          style={{ width: 80, height: 80 }}
+          style={iconStyle.large}
           source={{
             uri: icons?.[0],
           }}
         />
-        <Spacer height={32} />
+        <Spacer height={24} />
         <Text style={styles.title}>{name} wants to connect to your wallet</Text>
         <Spacer height={16} />
         <Text style={styles.url}>{url}</Text>
-        <Spacer height={32} />
+        <Spacer height={24} />
 
         <DropDownPicker
           showArrow
@@ -72,6 +69,7 @@ const ConnectDappModal = (props: Props) => {
           }}
         />
 
+        <Spacer height={24} />
         <View style={{ alignItems: 'flex-start' }}>
           <Text style={styles.permission}>
             - View your wallet balance and activity
@@ -98,9 +96,9 @@ export default ConnectDappModal
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
-    alignItems: 'stretch',
-    paddingBottom: 30,
+    flexDirection: 'column',
+    padding: 32,
+    alignItems: 'center',
   },
   content: {
     flex: 1,

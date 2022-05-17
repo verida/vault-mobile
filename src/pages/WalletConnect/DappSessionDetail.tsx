@@ -10,20 +10,24 @@ import { DApp } from 'wallet-connect/types'
 import Button from 'components/Button'
 
 import NavigationHeader from '../../components/Navigation/NavigationHeader'
+import { Spacer } from '../../components/Spacer'
 import useParams from '../../hooks/useParams'
+import { useReduxState } from '../../hooks/useReduxState'
 import { removeWalletConnectDapp } from '../../reduxStore/actions'
+import { walletConnectNetworkSelector } from '../../reduxStore/selectors'
 import iconStyle from '../../styles/icon'
 import LayoutStyle from '../../styles/layouts'
+import text from '../../styles/text'
 
 const DappSessionDetail = () => {
   const params = useParams<{ dapp: DApp }>()
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const { name: networkName } = useReduxState(walletConnectNetworkSelector)
 
   const {
-    session: { peerMeta, key },
+    session: { peerMeta, key, connected, peerId, accounts },
   } = params.dapp
-
   const { name, icons, url } = peerMeta || {}
 
   return (
@@ -36,18 +40,36 @@ const DappSessionDetail = () => {
         }}
       />
       <View style={LayoutStyle.layout}>
-        <View style={styles.row}>
+        <View style={styles.appContainer}>
           <Image
             style={iconStyle.normal}
             source={{
               uri: icons?.[0],
             }}
           />
-          <View style={{ padding: 16, alignItems: 'flex-start' }}>
-            <Text style={{ fontSize: 18 }}>{name}</Text>
-            <Text>{url}</Text>
+          <View style={styles.appTextContainer}>
+            <Text style={text.primary}>{name}</Text>
+            <Text style={text.darkgrey}>{url}</Text>
           </View>
         </View>
+        <Spacer height={48} />
+        <View style={styles.row}>
+          <Text style={styles.label}>Connected</Text>
+          <Text style={styles.value}>{connected ? 'Yes' : 'No'}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Address</Text>
+          <Text style={styles.value}>{accounts?.[0]}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>Network</Text>
+          <Text style={styles.value}>{networkName}</Text>
+        </View>
+        <View style={styles.row}>
+          <Text style={styles.label}>PeerId</Text>
+          <Text style={styles.value}>{peerId}</Text>
+        </View>
+        <Spacer height={48} />
         <Button
           style={styles.disconnectButton}
           color='transparent-warning'
@@ -83,7 +105,28 @@ const styles = StyleSheet.create({
   },
   row: {
     flexDirection: 'row',
-    padding: 20,
     alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 8,
   },
+  label: {
+    minWidth: '40%',
+    ...text.grey,
+    fontSize: 16,
+    textAlign: 'left',
+  },
+  value: {
+    flex: 1,
+    ...text.primary,
+    textAlign: 'right',
+    fontSize: 16,
+  },
+  appContainer: {
+    flexDirection: 'row',
+    padding: 16,
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 8,
+  },
+  appTextContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
 })
