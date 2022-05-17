@@ -1,14 +1,11 @@
-import messaging from '@react-native-firebase/messaging'
 import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
-import React from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
+import { StyleSheet, View } from 'react-native'
 import Config from 'react-native-config'
 import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
-import AccountManager from 'api/AccountManager'
-import { unRegisterRemoteNotification } from 'api/utils'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
@@ -21,6 +18,7 @@ import {
 } from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import LayoutStyle from '../styles/layouts'
+import AddAccountsModal from './Dashboard/AddAccountsModal'
 
 const publicList = [
   {
@@ -74,8 +72,10 @@ const WalletConnectList = [
 ]
 
 export default (props) => {
-  const { refresh, isVeridaTeamMember } = useAuth()
-  const networks = useSelector((state) => state.main.networks)
+  const { isVeridaTeamMember } = useAuth()
+  const [showLogout, setShowLogout] = useState(false)
+
+  const networks = useSelector((state) => state.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `Verida Vault ${capitalize(
     Config.DEPLOY_ENVIRONMENT === 'internal' ? Config.DEPLOY_ENVIRONMENT : ''
@@ -92,33 +92,8 @@ export default (props) => {
     })
   }
 
-  const logout = async (navigation) => {
-    Alert.alert(
-      'Confirmation',
-      'Are you sure you want to logout of your current account?',
-      [
-        {
-          text: 'Cancel',
-        },
-        {
-          text: 'Logout',
-          onPress: async () => {
-            const fcmToken = await messaging().getToken()
-            if (fcmToken) {
-              await unRegisterRemoteNotification(fcmToken)
-            }
-            const accManagerIns = AccountManager.getInstance()
-            await accManagerIns.logout([accManagerIns.getSelectedAccount().did])
-            await refresh()
-
-            // If this is not the only existing account, back to Home screen after switching to the next account.
-            if (accManagerIns.getSelectedAccount()) {
-              navigation.navigate('Home')
-            }
-          },
-        },
-      ]
-    )
+  const logout = async () => {
+    setShowLogout(true)
   }
 
   const list = isVeridaTeamMember ? teamList : publicList
@@ -158,6 +133,15 @@ export default (props) => {
 
         <Text style={style.versionText}>{versionText}</Text>
       </View>
+      <AddAccountsModal
+        visible={showLogout}
+        onClose={() => {
+          setShowLogout(false)
+        }}
+        showLogout
+        onSelectAccount={props.route.params.onSelectAccount}
+        onLogoutAccounts={props.route.params.onLogoutAccounts}
+      />
     </View>
   )
 }

@@ -1,6 +1,8 @@
 import * as nearAPI from 'near-api-js'
 import store from 'reduxStore'
 
+import { getWalletsData } from 'reduxStore/wallet/selectors'
+
 const { connect } = nearAPI
 const { keyStores, KeyPair } = nearAPI
 const keyStore = new keyStores.InMemoryKeyStore()
@@ -18,7 +20,8 @@ const config = {
 
 export default async function main() {
   const reduxState = store.getState().main
-  const wallet = reduxState.wallets.data.accounts.near
+  const accounts = getWalletsData(reduxState)
+  const wallet = accounts.near
   const prvtKey = wallet.privateKey.replace('ed25519:', '')
 
   // creates a public / private key pair using the provided private key

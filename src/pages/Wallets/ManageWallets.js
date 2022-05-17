@@ -1,78 +1,43 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
+import * as SecureStore from 'expo-secure-store'
 import { Container, Content, Icon, List } from 'native-base'
-import React, { useState } from 'react'
-import { Modal, StyleSheet, TextInput, View } from 'react-native'
+import React from 'react'
+import { StyleSheet } from 'react-native'
+import { connect } from 'react-redux'
 
-import Button from 'components/Button'
-import Label from 'components/Label'
-import Layout from 'components/Layouts/Layout'
+import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
-import InputStyles from 'styles/inputs'
+import { createNewWallet, setSelectedWallet } from 'reduxStore/wallet/actions'
+import {
+  getAllWallets,
+  getSelectedWallet,
+  getWalletProcessingState,
+} from 'reduxStore/wallet/selectors'
 
-import AlgorandSvg from '../../assets/wallets/Algorand.svg'
-import EthereumSvg from '../../assets/wallets/Ethereum.svg'
-import IKIGAISvg from '../../assets/wallets/IKIGAI.svg'
-import NearSvg from '../../assets/wallets/Near.svg'
 import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
 import { SNOW_COLOR } from '../../constants/color'
 
-const list = [
-  {
-    label: 'Ethereum',
-    icon: <EthereumSvg />,
-    count: 12,
-  },
-  {
-    label: 'Near',
-    icon: <NearSvg />,
-    count: 10,
-  },
-  {
-    label: 'Algorand',
-    icon: <AlgorandSvg />,
-    count: 9,
-  },
-  {
-    label: 'Friendly wallet name',
-    icon: <IKIGAISvg />,
-    count: 5,
-  },
-  {
-    label: 'Other addresses',
-    icon: <OtherSvg />,
-    count: 20,
-    other: true,
-  },
-]
-
-export default ({ navigation }) => {
-  const [loading] = useState(false)
-  const [addModalVisible, setAddModalVisible] = useState(false)
-  const [importModalVisible, setImportModalVisible] = useState(false)
-  const [name, setName] = useState('')
-  const [phrase, setPhrase] = useState('')
-  const [blockchain, setBlockchain] = useState(null)
-  const [processing, setProcessing] = useState(false)
+const ManageWallets = ({
+  wallets,
+  onCreateNewWallet,
+  onSetSelectedWallet,
+  navigation,
+  selectedWalletId,
+  loading,
+}) => {
   const { showActionSheetWithOptions } = useActionSheet()
 
-  const onBlockchainChange = (option) => setBlockchain(option)
-  const onAddWallet = async () => {
-    try {
-      setProcessing(true)
-      setTimeout(() => {
-        setAddModalVisible(false)
-        setProcessing(false)
-        navigation.navigate('SuccessFailure', {
-          failure: name === '' ? true : false,
-        })
-      }, 2000)
-    } catch (error) {
-      setProcessing(false)
+  const list = Object.values(wallets).map((singleWallet) => {
+    const { label, id, accounts } = singleWallet
+    return {
+      label,
+      id,
+      icon: <OtherSvg />,
+      count: Object.keys(accounts).length,
     }
-  }
+  })
 
   return (
     <Container>
@@ -83,20 +48,12 @@ export default ({ navigation }) => {
           action: () =>
             showActionSheetWithOptions(
               {
-                options: [
-                  'Create new wallet',
-                  'Import existing',
-                  'Watch existing address',
-                  'Cancel',
-                ],
-                cancelButtonIndex: 3,
+                options: ['Create new wallet', 'Cancel'],
+                cancelButtonIndex: 1,
               },
               (buttonIndex) => {
                 if (buttonIndex === 0) {
-                  setAddModalVisible(true)
-                }
-                if (buttonIndex === 1) {
-                  setImportModalVisible(true)
+                  onCreateNewWallet()
                 }
               }
             ),
@@ -105,132 +62,61 @@ export default ({ navigation }) => {
       {loading ? (
         <LoadingView />
       ) : (
-        <Content style={{ backgroundColor: SNOW_COLOR, paddingVertical: 25 }}>
+        <Content style={styles.content}>
           <List>
-            <WalletsList list={list} />
+            <WalletsList
+              onPressItem={(item) => {
+                showActionSheetWithOptions(
+                  {
+                    options: [
+                      'Manage Wallet',
+                      'Switch to this wallet',
+                      'Cancel',
+                    ],
+                    cancelButtonIndex: 2,
+                  },
+                  (buttonIndex) => {
+                    if (buttonIndex === 0) {
+                      navigation.navigate('SingleWallet', { item })
+                    }
+                    if (buttonIndex === 1) {
+                      let selectedWalletID = item.id
+                      onSetSelectedWallet(selectedWalletID)
+                      SecureStore.setItemAsync(
+                        SELECTED_WALLET_STORAGE_KEY,
+                        selectedWalletID
+                      )
+                    }
+                  }
+                )
+              }}
+              list={list}
+              selectedWalletId={selectedWalletId}
+            />
           </List>
         </Content>
       )}
-      <Modal
-        presentationStyle='pageSheet'
-        animationType='slide'
-        visible={addModalVisible}>
-        <NavigationHeader
-          left={{
-            icon: <Icon name='close' style={{ color: '#000' }} />,
-            action: () => setAddModalVisible(false),
-          }}
-          title='Add wallet'
-        />
-        <Layout style={styles.container}>
-          <View style={styles.content}>
-            <Label>Wallet name</Label>
-            <TextInput
-              placeholder={'e.g Personal'}
-              style={InputStyles.input}
-              value={name}
-              onChangeText={(t) => setName(t)}
-            />
-
-            <Label>Blockchain</Label>
-            <DropDownPicker
-              searchable={true}
-              searchablePlaceholder='Search for blockchain'
-              showArrow={true}
-              placeholder=''
-              items={[
-                { label: 'Ethereum', value: 'Ethereum' },
-                { label: 'Near', value: 'Near' },
-                { label: 'Algorand', value: 'Algorand' },
-              ]}
-              containerStyle={InputStyles.select}
-              onChangeItem={onBlockchainChange}
-            />
-          </View>
-          <View style={styles.footer}>
-            <Button
-              style={styles.addWalletButton}
-              color='primary'
-              disabled={!blockchain || processing}
-              loading={processing}
-              onPress={onAddWallet}>
-              Add Wallet
-            </Button>
-          </View>
-        </Layout>
-      </Modal>
-      <Modal
-        presentationStyle='pageSheet'
-        animationType='slide'
-        visible={importModalVisible}>
-        <NavigationHeader
-          left={{
-            icon: <Icon name='close' style={{ color: '#000' }} />,
-            action: () => setImportModalVisible(false),
-          }}
-          title='Import wallet'
-        />
-        <Layout style={styles.container}>
-          <View style={styles.content}>
-            <Label>Blockchain</Label>
-            <DropDownPicker
-              searchable={true}
-              searchablePlaceholder='Search for blockchain'
-              showArrow={true}
-              placeholder=''
-              items={[
-                { label: 'Ethereum', value: 'Ethereum' },
-                { label: 'Near', value: 'Near' },
-                { label: 'Algorand', value: 'Algorand' },
-              ]}
-              containerStyle={InputStyles.select}
-              onChangeItem={onBlockchainChange}
-            />
-
-            <Label>Enter seed phrase</Label>
-            <TextInput
-              value={phrase}
-              autoFocus={true}
-              multiline
-              editable
-              autoCorrect={false}
-              autoCapitalize='none'
-              onChangeText={setPhrase}
-              style={[InputStyles.textarea]}
-              placeholder={'eg. Open despair creek road again ice least'}
-            />
-          </View>
-          <View style={styles.footer}>
-            <Button
-              style={styles.addWalletButton}
-              color='primary'
-              disabled={!blockchain || processing}
-              loading={processing}
-              onPress={onAddWallet}>
-              Add Wallet
-            </Button>
-          </View>
-        </Layout>
-      </Modal>
     </Container>
   )
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'stretch',
-    paddingBottom: 30,
-    borderTopWidth: 1,
-    borderTopColor: 'rgba(4, 17, 51, 0.2)',
-  },
-  content: {
-    flex: 1,
-  },
-  footer: {
-    alignItems: 'center',
-  },
-  addWalletButton: {
-    alignSelf: 'stretch',
-  },
+  content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })
+
+const mapStateToProps = (state) => {
+  return {
+    wallets: getAllWallets(state),
+    selectedWalletId: getSelectedWallet(state),
+    loading: getWalletProcessingState(state),
+  }
+}
+
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onCreateNewWallet: () => dispatch(createNewWallet()),
+    onSetSelectedWallet: (walletID) => dispatch(setSelectedWallet(walletID)),
+  }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageWallets)

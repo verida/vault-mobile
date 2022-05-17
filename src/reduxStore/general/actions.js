@@ -1,5 +1,6 @@
 import {
   ADD_ACCOUNT,
+  LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
   SET_COUNTRIES,
@@ -59,4 +60,10 @@ export const setNavigationLink = (payload) => {
 
 export const setCountries = (payload) => {
   return { type: SET_COUNTRIES, payload }
+}
+
+export const logout = () => {
+  return {
+    type: LOG_OUT,
+  }
 }
