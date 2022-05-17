@@ -328,3 +328,42 @@ export const deleteWallet = (walletId) => {
     }
   }
 }
+
+export const renameWallet = (walletId, data) => {
+  return async (dispatch) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        )
+
+      const row = await walletDb?.get(walletId)
+
+      row.label = data.name
+
+      await walletDb.save(row)
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const wallets = rawDataToReduxState(hdWallets)
+
+        await dispatch(saveUserWallets(wallets))
+        await SecureStore.setItemAsync(
+          WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
