@@ -224,13 +224,14 @@ export const sendTransaction = (
   }
 }
 
-export const createNewWallet = () => {
+export const createNewWallet = (importData) => {
   return async (dispatch, getState) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const userHDWalletMnemonic =
-        WalletUtils.MultiChainWallet.generateMnemonic()
+      const userHDWalletMnemonic = importData
+        ? importData.phrase
+        : WalletUtils.MultiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb =
@@ -243,8 +244,9 @@ export const createNewWallet = () => {
       const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
-        label:
-          'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
+        label: importData
+          ? importData.name
+          : 'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
       }
       const saved = await walletDb?.save(wallet)
       const walletID = saved?.id
