@@ -260,7 +260,13 @@ export default (props) => {
 
   return (
     <Container>
-      <NavigationHeader title='Login Request' left={{ icon: 'skip' }} />
+      <NavigationHeader
+        title='Login Request'
+        left={{
+          icon: <Icon name='close' style={{ color: '#000' }} />,
+          action: () => props.navigation.goBack(),
+        }}
+      />
       <Content contentContainerStyle={style.contentContainer}>
         {status === 'loading' && <LoadingView />}
         {status !== 'loading' ? (
