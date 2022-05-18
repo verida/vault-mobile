@@ -96,6 +96,7 @@ export default (props) => {
                 _expiry,
                 key,
                 logoUrl: parsed.logoUrl,
+                openUrl: parsed.openUrl ? parsed.openUrl : null,
               })
               setStatus('loaded')
             } catch (e) {
@@ -216,6 +217,13 @@ export default (props) => {
       )
 
       setStatus('sentResponse')
+
+      if (info.openUrl && response) {
+        const jsonEncoded = JSON.stringify(response)
+        const encoded = Buffer.from(jsonEncoded).toString('base64')
+        await Linking.openURL(info.openUrl + '?token=' + encoded)
+      }
+
       await saveLoginRequest(true)
     } catch (error) {
       Sentry.captureException(error)
