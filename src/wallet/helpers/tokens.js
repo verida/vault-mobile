@@ -1,3 +1,4 @@
+import WalletUtils from '@verida/wallet-utils'
 import { AssetId } from 'caip'
 import { utils } from 'ethers'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
@@ -85,4 +86,22 @@ export const getExplorerUrl = (chain) => {
       break
   }
   return url
+}
+
+export const rawDataToReduxState = (walletData) => {
+  let wallets = {}
+  walletData.forEach((walt) => {
+    let mnemonic = walt.mnemonic
+    let waltId = walt._id
+    let accounts = WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+
+    wallets[waltId] = {
+      seedPhrase: mnemonic,
+      type: walt.walletType,
+      label: walt.label,
+      id: waltId,
+      accounts,
+    }
+  })
+  return wallets
 }
