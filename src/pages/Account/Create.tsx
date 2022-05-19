@@ -27,7 +27,6 @@ import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
 
-// eslint-disable-next-line no-shadow
 export enum CreateAccountMode {
   CREATE,
   ADD,

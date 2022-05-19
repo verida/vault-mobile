@@ -30,7 +30,6 @@ export type AddAccountsModalProps = Omit<
   showLogout: boolean
 }
 
-// eslint-disable-next-line no-shadow
 enum Step {
   INITIAL,
   MANAGE_ACCOUNT,
