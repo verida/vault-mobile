@@ -4572,6 +4572,11 @@ babel-plugin-react-native-web@~0.13.6:
   resolved "https://registry.yarnpkg.com/babel-plugin-react-native-web/-/babel-plugin-react-native-web-0.13.18.tgz#f0b640412b81acd02d8036b7a935ffb3ab446e4e"
   integrity sha512-f8pAxyKqXBNRIh8l4Sqju055BNec+DQlItdtutByYxULU0iJ1F7evIYE3skPKAkTB/xJH17l+n3Z8dVabGIIGg==
 
+babel-plugin-rewrite-require@^1.14.5:
+  version "1.14.5"
+  resolved "https://registry.yarnpkg.com/babel-plugin-rewrite-require/-/babel-plugin-rewrite-require-1.14.5.tgz#36ca19002b145bbe17fa698b68a883e38d78b6d9"
+  integrity sha512-TsDvs3JesFMn/cLO0A9/pLSWBtUWi8fGTT8yE7NsrbZ477zzu5nVVQ09+xhbvIjPaQEQ+JXrwRR+qxjt8n/NnA==
+
 babel-plugin-syntax-trailing-function-commas@^7.0.0-beta.0:
   version "7.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/babel-plugin-syntax-trailing-function-commas/-/babel-plugin-syntax-trailing-function-commas-7.0.0-beta.0.tgz#aa213c1435e2bffeb6fca842287ef534ad05d5cf"
@@ -7318,15 +7323,6 @@ expo-image-loader@~2.2.0:
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/expo-image-loader/-/expo-image-loader-2.2.0.tgz#b5d49ec65e576c033823050b223ef462c5ec5711"
   integrity sha512-kTs/lW8LUXYFQ5t8wkdJs0A41zd7dIB8uRRC0a9L0EurSGUvQWiVTbHQoLo/GYWL7nM85OaPAe2qkHfcz5KeyA==
-
-expo-image-picker@~10.2.2:
-  version "10.2.3"
-  resolved "https://registry.yarnpkg.com/expo-image-picker/-/expo-image-picker-10.2.3.tgz#204c83ba0731f2ccdbc42e13f9bf6e37be21c354"
-  integrity sha512-8VXLYjclXoQJHbdNLI21rdbnxFisBpZ6TgIifHf9kZ/momFBegUNqEKCjosvxVGVM8f7qaQxJV/znNtW0rDM/w==
-  dependencies:
-    "@expo/config-plugins" "^3.0.0"
-    expo-modules-core "~0.2.0"
-    uuid "7.0.2"
 
 expo-keep-awake@~9.2.0:
   version "9.2.0"
@@ -13662,7 +13658,7 @@ readable-stream@1.0.33:
     isarray "0.0.1"
     string_decoder "~0.10.x"
 
-readable-stream@1.1.14, readable-stream@1.1.x, readable-stream@^1.0.26-4, readable-stream@^1.0.27-1, readable-stream@^1.0.33:
+readable-stream@1.1.14, readable-stream@1.1.x, readable-stream@^1.0.26-4, readable-stream@^1.0.27-1:
   version "1.1.14"
   resolved "https://registry.yarnpkg.com/readable-stream/-/readable-stream-1.1.14.tgz#7cf4c54ef648e3813084c636dd2079e166c081d9"
   integrity sha1-fPTFTvZI44EwhMY23SB54WbAgdk=
@@ -15855,11 +15851,6 @@ uuid@3.3.2:
   version "3.3.2"
   resolved "https://registry.yarnpkg.com/uuid/-/uuid-3.3.2.tgz#1b4af4955eb3077c501c23872fc6513811587131"
   integrity sha512-yXJmeNaw3DnnKAOKJE51sL/ZaYfWJRl1pK9dr19YFCu0ObS231AB1/LbqTKRAQ5kw8A90rA6fr4riOUpTZvQZA==
-
-uuid@7.0.2:
-  version "7.0.2"
-  resolved "https://registry.yarnpkg.com/uuid/-/uuid-7.0.2.tgz#7ff5c203467e91f5e0d85cfcbaaf7d2ebbca9be6"
-  integrity sha512-vy9V/+pKG+5ZTYKf+VcphF5Oc6EFiu3W8Nv3P3zIh0EqVI80ZxOzuPfe9EHjkFNvf8+xuTHVeei4Drydlx4zjw==
 
 uuid@8.1.0:
   version "8.1.0"

@@ -2,6 +2,7 @@ import {
   ADD_ACCOUNT,
   LOG_OUT,
   SET_ACCOUNTS,
+  SET_ACCOUNT_MANAGER,
   SET_AUTH_STATUS,
   SET_COUNTRIES,
   SET_INBOX_ITEMS,
@@ -12,6 +13,7 @@ import {
   SET_SELECTED_ACCOUNT,
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
+  SET_VERIDA_CONTEXT
 } from './action-types'
 
 export const setAuthStatus = (payload) => {
@@ -20,6 +22,14 @@ export const setAuthStatus = (payload) => {
 
 export const setPublicProfileData = (payload) => {
   return { type: SET_PUBLIC_PROFILE_DATA, payload }
+}
+
+export const setVeridaContext = (payload) => {
+  return { type: SET_VERIDA_CONTEXT, payload }
+}
+
+export const setAccountManager = (payload) => {
+  return { type: SET_ACCOUNT_MANAGER, payload }
 }
 
 export const setNewMessagesCount = (payload) => {

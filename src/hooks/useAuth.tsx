@@ -45,7 +45,8 @@ export const AuthProvider: FC = ({ children }) => {
   const refresh = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
     if (selectedAccount) {
-      await AccountManager.getInstance().connect()
+      console.log("Entered inside refresh")
+      await AccountManager.getInstance().connect(true)
     }
     setLoaded(true)
     setAuthenticated(!!selectedAccount)

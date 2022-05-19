@@ -4,6 +4,7 @@ import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
 import WalletUtils from '@verida/wallet-utils'
+import { useSelector, connect } from 'react-redux'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
@@ -16,6 +17,8 @@ import {
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
+  setAccountManager,
+  setVeridaContext,
 } from 'reduxStore/general/actions'
 import {
   removeUserWallets,
@@ -55,7 +58,7 @@ class AccountManager {
 
   private static instance: AccountManager
 
-  private constructor() {
+  constructor() {
     this.accounts = {}
   }
 
@@ -86,12 +89,12 @@ class AccountManager {
         const selectedAccountDid = await SecureStore.getItemAsync(
           SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
-
+        
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
         }
-
+        console.log('Init finished')
         const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
         if (walletsRaw) {
@@ -116,6 +119,7 @@ class AccountManager {
         }
       }
     } catch (e) {
+      console.log('Expereinced error while init',  e)
       Sentry.captureException(e)
     }
   }
@@ -128,16 +132,18 @@ class AccountManager {
     if (!forced && this.context) {
       return
     }
-    this.context = await this.getVeridaContext(endpointUrls)
+    console.log('Getting verida context')
+    let context = await this.getVeridaContext(endpointUrls)
+    this.context = context
     this.vault = await this.getVault()
   }
 
-  public static getInstance(): AccountManager {
-    if (!AccountManager.instance) {
-      AccountManager.instance = new AccountManager()
+  public static getInstance() {
+    if (!store.getState().accountManager) {
+      let accountManager = new AccountManager()
+      store.dispatch(setAccountManager(accountManager))
     }
-
-    return AccountManager.instance
+    return store.getState().accountManager
   }
 
   public async getVeridaContext(
@@ -205,7 +211,9 @@ class AccountManager {
       await this.client.connect(account)
 
       // Open an application context (forcing creation of a new context if it doesn't already exist)
-      return await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+      let context = await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+      store.dispatch(setVeridaContext(context))
+      return context
     } catch (e) {
       Sentry.captureException(e)
       throw e
@@ -218,7 +226,8 @@ class AccountManager {
 
   private async getVault() {
     try {
-      const vault = new Vault(this.client, this.context, dataMap)
+      const context = store.getState().veridaContext
+      const vault = new Vault(this.client, context, dataMap)
       await vault.init()
       return vault
     } catch (e) {
@@ -229,12 +238,13 @@ class AccountManager {
 
   private async setPublicProfile(data: UserData) {
     const entries = Object.entries(data)
+    let context = store.getState().veridaContext
+    let publicProfile = await context.openProfile('basicProfile');
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i]
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      await this.vault?.profiles.public.set(...entry)
+      await publicProfile.set(...entry)
     }
+    console.log('Done setting the profile')
   }
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
@@ -587,6 +597,23 @@ class AccountManager {
       Sentry.captureException(e)
       throw e
     }
+  }
+}
+
+const mapDispatchToProps = (dispatch: any) => {
+  return {
+    setVer: (data) => dispatch(setNewMessagesCountAction(data)),
+    setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
+    logout: () => dispatch(logoutAction()),
+  }
+}
+
+const mapStateToProps = (state: any) => {
+  return {
+    publicProfileData: state.publicProfileData,
+    newMessagesCount: state.newMessagesCount,
+    selectedAccount: state.selectedAccount,
+    navigationLink: state.navigationLink,
   }
 }
 

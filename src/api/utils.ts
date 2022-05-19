@@ -35,10 +35,12 @@ export const convertAvatar = (avatar: any) => {
 
 export const loadAvatarSource = async () => {
   try {
-    const vault = await AccountManager.getInstance().vault
+    const context = store.getState().veridaContext
+    const profile = context.openProfile('basicProfile')
+    const pubProfile = profile.getMany()
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
-    const avatar = await vault?.profiles.public.get('avatar')
+    const avatar = pubProfile.avatar
 
     if (avatar) {
       return avatar
@@ -54,19 +56,18 @@ export const fetchPublicProfileData = async () => {
   try {
     const accounts = { ...AccountManager.getInstance().accounts }
     await Promise.all(
-      Object.values(accounts).map(async (account) => {
+      Object.values(accounts).map(async (account: any) => {
+        console.log('Before  open profile', account.did)
         const externalProfile =
-          await AccountManager.getInstance().context?.openProfile(
-            'basicProfile',
-            account.did
-          )
-
-        const avatar = await externalProfile?.get('avatar')
-        const name = await externalProfile?.get('name')
-        const country = await externalProfile?.get('country')
+          await store.getState().veridaContext.openProfile('basicProfile')
+        const pubProfile = await externalProfile.getMany()
+        console.log('This is pubProfile ', pubProfile)
+        const name = pubProfile.name
+        const country = pubProfile.country
+        
 
         accounts[account.did].publicProfile = {
-          avatar: avatar,
+          avatar: null,
           name,
           country,
         }

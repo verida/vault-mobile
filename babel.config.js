@@ -4,6 +4,12 @@ module.exports = function (api) {
     presets: ['babel-preset-expo'],
     plugins: [
       [
+        'babel-plugin-rewrite-require',
+        {
+          aliases: {
+            stream: 'readable-stream',
+          },
+        },
         'module-resolver',
         {
           root: ['./src'],

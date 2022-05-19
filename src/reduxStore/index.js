@@ -7,6 +7,7 @@ import {
   ADD_ACCOUNT,
   LOG_OUT,
   SET_ACCOUNTS,
+  SET_ACCOUNT_MANAGER,
   SET_AUTH_STATUS,
   SET_COUNTRIES,
   SET_NAVIGATION_LINK,
@@ -16,6 +17,7 @@ import {
   SET_SELECTED_ACCOUNT,
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
+  SET_VERIDA_CONTEXT
 } from './general/action-types'
 import {
   ADD_PENDING_TRANSACTION,
@@ -104,6 +106,8 @@ const initialState = {
   ...walletInitialState,
   networks: [],
   countries: [],
+  veridaContext: null,
+  accountManager: null,
   navigationLink: null,
 }
 
@@ -122,6 +126,10 @@ const reducer = (state = initialState, action) => {
       return { ...state, authenticated: action.payload }
     case SET_PUBLIC_PROFILE_DATA:
       return { ...state, publicProfileData: action.payload }
+    case SET_VERIDA_CONTEXT:
+      return { ...state, veridaContext: action.payload }
+    case SET_ACCOUNT_MANAGER:
+      return { ...state, accountManager: action.payload }
     case SET_NEW_MESSAGES_COUNT:
       return { ...state, newMessagesCount: action.payload }
     case SET_ACCOUNTS:

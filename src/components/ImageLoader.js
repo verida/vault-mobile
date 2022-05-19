@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import * as ImagePicker from 'expo-image-picker'
+// import * as ImagePicker from 'expo-image-picker'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -29,27 +29,27 @@ function ImageLoader(props) {
 
   const loadPhoto = async () => {
     try {
-      const result = await ImagePicker.launchImageLibraryAsync({
-        mediaTypes: ImagePicker.MediaTypeOptions.Images,
-        allowsEditing: true,
-        aspect: [4, 3],
-        quality: 0.1,
-        base64: true,
-      })
+      // const result = await ImagePicker.launchImageLibraryAsync({
+      //   mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      //   allowsEditing: true,
+      //   aspect: [4, 3],
+      //   quality: 0.1,
+      //   base64: true,
+      // })
 
-      if (!result.cancelled && result.base64) {
-        const vault = AccountManager.getInstance().vault
+      // if (!result.cancelled && result.base64) {
+      //   const vault = await AccountManager.getInstance().context.openProfile()
 
-        const avatar = {
-          uri: `data:image/${result.format};base64,` + result.base64,
-        }
+      //   const avatar = {
+      //     uri: `data:image/${result.format};base64,` + result.base64,
+      //   }
 
-        await vault.profiles.public.set('avatar', avatar)
+      //   await vault.set('avatar', avatar)
 
-        setPublicProfileData({ ...publicProfileData, avatar })
+      //   setPublicProfileData({ ...publicProfileData, avatar })
 
-        loadAvatar()
-      }
+      //   loadAvatar()
+      // }
     } catch (error) {
       Sentry.captureException(error)
     }
