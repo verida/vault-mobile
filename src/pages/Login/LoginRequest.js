@@ -221,7 +221,7 @@ export default (props) => {
       if (info.openUrl && response) {
         const jsonEncoded = JSON.stringify(response)
         const encoded = Buffer.from(jsonEncoded).toString('base64')
-        await Linking.openURL(info.openUrl + '?token=' + encoded)
+        await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
       }
 
       await saveLoginRequest(true)
