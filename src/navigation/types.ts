@@ -33,6 +33,7 @@ export type MainStackParams = {
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
+  DataConnector: undefined
   PublicProfile: undefined
   PrivateProfile: undefined
   EditProfile: undefined
