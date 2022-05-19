@@ -36,16 +36,18 @@ const ConfirmTransaction = ({
   let feeSymbol
   let feeDecimal
   let fixed
+  let networkReference = ''
   switch (tokenChain) {
     case 'algorand':
       feeSymbol = SUPPORTED_TOKENS[0].symbol
       feeDecimal = SUPPORTED_TOKENS[0].decimal
       fixed = 3
       break
-    case 'ethereum':
+    case 'eip155':
       feeSymbol = SUPPORTED_TOKENS[2].symbol
       feeDecimal = SUPPORTED_TOKENS[2].decimal
       fixed = 18
+      networkReference = 'Rinkeby'
       break
     case 'near':
       feeSymbol = SUPPORTED_TOKENS[5].symbol
@@ -63,7 +65,7 @@ const ConfirmTransaction = ({
         }}
         title={'Send ' + token.symbol}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoRow}>

@@ -1,3 +1,4 @@
+import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
@@ -14,6 +15,7 @@ import {
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
+import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
@@ -29,6 +31,7 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
+import { logout as logoutAction } from 'reduxStore/general/actions'
 
 import {
   BLACK_COLOR_OPACITY,
@@ -46,6 +49,8 @@ import {
 const DefaultAvatar = require('../../assets/stubs/avatar.png')
 const LogoImg = require('../../assets/vault-logo.png')
 
+const SHOW_BANNER_KEY = 'show_banner'
+
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 import DataConnectorsManager from 'api/DataConnectorsManager'
@@ -57,6 +62,7 @@ const Home = (props) => {
     publicProfileData,
     navigationLink,
     setNavigationLink,
+    logout,
   } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
@@ -76,6 +82,14 @@ const Home = (props) => {
           return
         }
 
+        // ignore for firebase links, let firebase handle them.
+        if (
+          initialUrl.includes('redirect') ||
+          initialUrl.includes('verida.page.link')
+        ) {
+          return
+        }
+
         handleDeeplink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
@@ -84,6 +98,24 @@ const Home = (props) => {
 
     getUrl()
   }, [handleDeeplink])
+
+  useEffect(() => {
+    dynamicLinks()
+      .getInitialLink()
+      .then(async (link) => {
+        if (link.url.includes('redirect')) {
+          try {
+            const parsedUrl = parse(link.url, true)
+            const { query } = parsedUrl
+            await Linking.openURL(
+              'https://www.google.com/search?q=' + query.keyword
+            )
+          } catch (error) {
+            Sentry.captureException(error)
+          }
+        }
+      })
+  }, [])
 
   useEffect(() => {
     if (navigationLink) {
@@ -127,7 +159,14 @@ const Home = (props) => {
           address: _selectedAccount.did,
           name,
         })
-
+        const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
+        if (!showBanner || showBanner !== 'set') {
+          Alert.alert(
+            'Important Notice',
+            'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
+          )
+          await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
+        }
         setLoading(false)
       } catch (e) {
         Sentry.captureException(e)
@@ -181,12 +220,29 @@ const Home = (props) => {
     }
 
     toggleAddAccountsModal()
-    await switchToAccount(did)
+    try {
+      await switchToAccount(did)
+    } catch (e) {
+      Alert.alert(
+        'Error',
+        'Cannot get account information, removing this account'
+      )
+      setLoading(true)
+      await AccountManager.getInstance().logout([did])
+      await refresh()
+      setLoading(false)
+    }
   }
 
   async function onLogoutAccounts(dids) {
+    setLoading(true)
+    // Only flush Redux store if the current account is logged out
+    if (dids.includes(AccountManager.getInstance().getSelectedAccount().did)) {
+      logout()
+    }
     await AccountManager.getInstance().logout(dids)
     await refresh()
+    setLoading(false)
   }
 
   function onRecordSeedPhrase() {
@@ -202,7 +258,12 @@ const Home = (props) => {
         onNamePress={toggleAddAccountsModal}
         onAvatarPress={() => props.navigation.navigate('PublicProfile')}
         onInboxPress={() => props.navigation.navigate('Inbox')}
-        onSettingsPress={() => props.navigation.navigate('Settings')}
+        onSettingsPress={() =>
+          props.navigation.navigate('Settings', {
+            onSelectAccount,
+            onLogoutAccounts,
+          })
+        }
       />
       <Content contentContainerStyle={style.content}>
         {loading ? (
@@ -274,6 +335,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
     setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
+    logout: () => dispatch(logoutAction()),
   }
 }
 

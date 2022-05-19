@@ -6,7 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
-import { getProfile } from 'api/utils'
+import { getPublicProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
@@ -19,7 +19,7 @@ const DataItem = (props) => {
     data: [],
     title: '',
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
 
   const isCredential = folder.config.database === 'credential'
 
@@ -32,7 +32,8 @@ const DataItem = (props) => {
           const decoded = didJWT.decodeJWT(item.didJwtVc)
           _data.payload = get(decoded, 'payload.data', {})
           const iss = decoded.payload.iss
-          const { name, avatar } = await getProfile(iss)
+
+          const { name, avatar } = await getPublicProfile(iss)
           _data.issuer = {
             name,
             avatar,

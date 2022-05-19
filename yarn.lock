@@ -2099,20 +2099,19 @@
     xcode "^3.0.1"
     xml2js "^0.4.23"
 
-"@expo/config-plugins@^4.0.12":
-  version "4.0.15"
-  resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.0.15.tgz#cc170a0cf890973b6491cf357540e9955296019c"
-  integrity sha512-QqxVEt2bFu3ZuI1soULRJv7i0Zrg/FMZ0IxNV7Y3AjH7fhtUJH3pPo9f6MURvqNr+PLxhBlkofkWfunrVejSkw==
+"@expo/config-plugins@^4.1.1":
+  version "4.1.4"
+  resolved "https://registry.yarnpkg.com/@expo/config-plugins/-/config-plugins-4.1.4.tgz#08e1a6314dc0f96cd165a748b5997b5ec75a84d0"
+  integrity sha512-fkOjXnSieQfVSWVLKhst0DnCAyeHksvWky1CldFCQllhDB1HHBiP09Z8pamVB783n3qr/1HNZiSp6k2iUcaSoA==
   dependencies:
-    "@expo/config-types" "^43.0.1"
-    "@expo/json-file" "8.2.34"
-    "@expo/plist" "0.0.16"
+    "@expo/config-types" "^45.0.0"
+    "@expo/json-file" "8.2.36"
+    "@expo/plist" "0.0.18"
     "@expo/sdk-runtime-versions" "^1.0.0"
     "@react-native/normalize-color" "^2.0.0"
     chalk "^4.1.2"
     debug "^4.3.1"
     find-up "~5.0.0"
-    fs-extra "9.0.0"
     getenv "^1.0.0"
     glob "7.1.6"
     resolve-from "^5.0.0"
@@ -2131,10 +2130,10 @@
   resolved "https://registry.yarnpkg.com/@expo/config-types/-/config-types-42.0.0.tgz#3e3e125ec092c0c34dbfaf19be5480402de3d677"
   integrity sha512-Rj02OMZke2MrGa/1Y/EScmR7VuWbDEHPJyvfFyyLbadUt+Yv6isCdeFzDt71I7gJlPR9T4fzixeYLrtXXOTq0w==
 
-"@expo/config-types@^43.0.1":
-  version "43.0.1"
-  resolved "https://registry.yarnpkg.com/@expo/config-types/-/config-types-43.0.1.tgz#3e047dccb371741a540980eaff26fb0c95039c30"
-  integrity sha512-EtllpCGDdB/UdwAIs5YXJwBLpbFQNdlLLrxIvoILA9cXrpQMWkeDCT9lQPJzFRMFcLUaMuGvkzX2tR4tx5EQFQ==
+"@expo/config-types@^45.0.0":
+  version "45.0.0"
+  resolved "https://registry.yarnpkg.com/@expo/config-types/-/config-types-45.0.0.tgz#963c2fdce8fbcbd003758b92ed8a25375f437ef6"
+  integrity sha512-/QGhhLWyaGautgEyU50UJr5YqKJix5t77ePTwreOVAhmZH+ff3nrrtYTTnccx+qF08ZNQmfAyYMCD3rQfzpiJA==
 
 "@expo/config@5.0.9":
   version "5.0.9"
@@ -2223,10 +2222,10 @@
     json5 "^1.0.1"
     write-file-atomic "^2.3.0"
 
-"@expo/json-file@8.2.34":
-  version "8.2.34"
-  resolved "https://registry.yarnpkg.com/@expo/json-file/-/json-file-8.2.34.tgz#2f24e90a677195f7a81e167115460eb2902c3130"
-  integrity sha512-ZxtBodAZGxdLtgKzmsC+8ViUxt1mhFW642Clu2OuG3f6PAyAFsU/SqEGag9wKFaD3x3Wt8VhL+3y5fMJmUFgPw==
+"@expo/json-file@8.2.36":
+  version "8.2.36"
+  resolved "https://registry.yarnpkg.com/@expo/json-file/-/json-file-8.2.36.tgz#62a505cb7f30a34d097386476794680a3f7385ff"
+  integrity sha512-tOZfTiIFA5KmMpdW9KF7bc6CFiGjb0xnbieJhTGlHrLL+ps2G0OkqmuZ3pFEXBOMnJYUVpnSy++52LFxvpa5ZQ==
   dependencies:
     "@babel/code-frame" "~7.10.4"
     json5 "^1.0.1"
@@ -2260,10 +2259,10 @@
     base64-js "^1.2.3"
     xmlbuilder "^14.0.0"
 
-"@expo/plist@0.0.16":
-  version "0.0.16"
-  resolved "https://registry.yarnpkg.com/@expo/plist/-/plist-0.0.16.tgz#c7d294a774196cfa1d8caf89a75ba923f5d1d53c"
-  integrity sha512-yQMt2CTm2VNLiHv2/EqHYrHvfflI2mFJd+DZIQQy569hvpZle0CxMPGH1p2KatbrO8htxJNvwrlR/4TIwhQJ5w==
+"@expo/plist@0.0.18":
+  version "0.0.18"
+  resolved "https://registry.yarnpkg.com/@expo/plist/-/plist-0.0.18.tgz#9abcde78df703a88f6d9fa1a557ee2f045d178b0"
+  integrity sha512-+48gRqUiz65R21CZ/IXa7RNBXgAI/uPSdvJqoN9x1hfL44DNbUoWHgHiEXTx7XelcATpDwNTz6sHLfy0iNqf+w==
   dependencies:
     "@xmldom/xmldom" "~0.7.0"
     base64-js "^1.2.3"
@@ -2829,19 +2828,29 @@
   dependencies:
     invariant "^2.2.4"
 
-"@react-native-firebase/app@^14.2.1":
-  version "14.2.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-14.2.1.tgz#81c549952f4f7dc7d00ad29c78b425abd2ea5e67"
-  integrity sha512-zfQ7VxeuwSgxFNXE2RFRnIlI+rc+/kNMLl0ChsQTzPJLOOm6GvliTBocph6qENDAwzQBXxJTss9s3rU4rsNjYg==
+"@react-native-firebase/analytics@^14.7.0":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/analytics/-/analytics-14.9.1.tgz#0f756da8a90f4c1a296b9e73803cf8dc9aa00be8"
+  integrity sha512-FlvzqSoDNcrtH2ZYIMi3Wq70dXJtJrf4WcUpHFyNVijIdEWRnI2zuCzXCnnXstPogwdUBqoQs4qboi9K4toSUQ==
+
+"@react-native-firebase/app@^14.7.0":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/app/-/app-14.9.1.tgz#8a40af4dcea88a1c41d8c1a9b179e8260999bdb0"
+  integrity sha512-EmBFJnlpG8uhJhAwh624Q/1Ta+bvoKZjFckpt7uuJZ51wH3CzYudt+DmLbV6E/Frc1z2ogmcZnET7ELSxr6BOg==
   dependencies:
-    "@expo/config-plugins" "^4.0.12"
+    "@expo/config-plugins" "^4.1.1"
     opencollective-postinstall "^2.0.1"
     superstruct "^0.6.2"
 
-"@react-native-firebase/messaging@^14.2.1":
-  version "14.2.1"
-  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-14.2.1.tgz#9575d50f6eb99cd7f531bf0d71a7c46902759ad7"
-  integrity sha512-vSiAtOydyeFvxOS8Hwyk1E5Lzzqe7I9RiwdP6jzGC6481bge2iUAcS1TjbLx3uedmpduJO5FJipTHIKqdvKEPQ==
+"@react-native-firebase/dynamic-links@^14.7.0":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/dynamic-links/-/dynamic-links-14.9.1.tgz#e46a9741db1856769198216ceb62f6e9ac326637"
+  integrity sha512-9JJ/iIVcwplligBBJG7zOc+vi7RM8O8dvumzFjSHEHcvTqutGzEqobEtJ71R/9uVW3eL3yJ4l+6J1X4wWAutOg==
+
+"@react-native-firebase/messaging@^14.7.0":
+  version "14.9.1"
+  resolved "https://registry.yarnpkg.com/@react-native-firebase/messaging/-/messaging-14.9.1.tgz#cb0c14f38d6ac1804b24f72b7c1a281997ebe523"
+  integrity sha512-hmRkCUa2crwfL0mGQ1zOPRkpRunEkjvkLNn0Lo0SN1QSkI1dSTOtkwtt1Pl2XJlY+5KNsvggKiBuq/kPEyADOg==
 
 "@react-native-picker/picker@^1.9.7":
   version "1.16.8"
@@ -3724,10 +3733,10 @@
     uuid "^8.3.2"
     vm-browserify "0.0.4"
 
-"@verida/client-ts@^1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-1.1.13.tgz#b467b1c5ee6f7ab0a8843ce75dbf22610b3708ca"
-  integrity sha512-RZnUQIelHmrGxzwWZctWh+k6dv1BNJXYIj0GgsCIbrqCJYjBF37ITpUherfvIKiEkBSgZsfu1TkHAuZMF42ZJw==
+"@verida/client-ts@^1.1.14":
+  version "1.1.14"
+  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-1.1.14.tgz#fcda895d285e0c79fd5938e6e34a386509906815"
+  integrity sha512-oYM02XdYatJrRTcKpA9IS0emXP63nO7I3OxVQKGUoDteOiYjfJ5Q99yj7JVDhMpFm4XzDxetn8ZfPNXdBB9Ieg==
   dependencies:
     "@verida/account" "^1.1.9"
     "@verida/account-node" "^1.1.9"
@@ -3767,10 +3776,10 @@
     "@verida/keyring" "^1.1.3"
     did-resolver "^3.1.2"
 
-"@verida/did-resolver@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@verida/did-resolver/-/did-resolver-0.1.8.tgz#0a30a33eedb3f564b3bd5b943ed9b1111c9859b3"
-  integrity sha512-yUrURVnNmsElSxOnyxs/wINUpAKccrXzzd84Ryq/iHETUxsmOlsSP1Bxxgbnwj4Ci1YQ+KyAY9il/Ycp/lwn/w==
+"@verida/did-resolver@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@verida/did-resolver/-/did-resolver-0.1.9.tgz#7f97cfdeddab52751f9e393f67cba319da79e160"
+  integrity sha512-zuGmfmLizOnaFkg9Sa22Zgc6nH+gP7G2/GPq8PxXPT+JxALMRsjRVKBlLrcL24kieHhGoEkYuqkVdBY1H1xwTQ==
   dependencies:
     "@verida/did-client" "^0.1.8"
     did-resolver "^3.1.2"
@@ -3818,13 +3827,13 @@
     lodash "^4.17.20"
     nodemon "^2.0.4"
 
-"@verida/verifiable-credentials@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-0.1.4.tgz#adbdd4d6212e18a9f50adc8abbe21c33e6b8581f"
-  integrity sha512-uPylyR864X1kxLcmc98JO88bqsZkMV3ATWEqKFreA17+/SefxJ4wWS1WbxDc8L0Mx/IiedOjhB6HTcuySQYE4Q==
+"@verida/verifiable-credentials@^0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-0.1.5.tgz#7ecdd29b73e65c7fa076591ca1e7a0c629927d58"
+  integrity sha512-9C9yJYm0Ikxbt+KpkowWrRBhdIqonVoCubHXn7fH8uZGVcE3cKZHZSggm7v6mRyleFRVT6I7LK+W3/Vyt9+7og==
   dependencies:
-    "@verida/client-ts" "^1.1.13"
-    "@verida/did-resolver" "^0.1.8"
+    "@verida/client-ts" "^1.1.14"
+    "@verida/did-resolver" "^0.1.9"
     "@verida/encryption-utils" "^1.1.3"
     dayjs "^1.10.7"
     did-jwt "^5.12.1"
@@ -4382,9 +4391,9 @@ async-limiter@~1.0.0:
   integrity sha512-csOlWGAcRFJaI6m+F2WKdnMKr4HhdhFVBk0H/QbJFMCr+uO2kwohwXQPxw/9OCxp05r5ghVBFSyioixx3gfkNQ==
 
 async@^2.4.0:
-  version "2.6.3"
-  resolved "https://registry.yarnpkg.com/async/-/async-2.6.3.tgz#d72625e2344a3656e3a3ad4fa749fa83299d82ff"
-  integrity sha512-zflvls11DCy+dQWzTW2dzuilv8Z5X/pjfmZOWba6TNIVDm+2UDaJmXSOXlasHKfNBs8oo3M0aT50fDEWfKZjXg==
+  version "2.6.4"
+  resolved "https://registry.yarnpkg.com/async/-/async-2.6.4.tgz#706b7ff6084664cd7eae713f6f965433b5504221"
+  integrity sha512-mzo5dfJYwAn29PeiJ0zvwTo04zj8HDJj0Mn8TD7sno7q12prdbnasKJHhkm2c1LgrhlJ0teaea8860oxi51mGA==
   dependencies:
     lodash "^4.17.14"
 
@@ -11282,10 +11291,10 @@ mock-fs@^4.1.0:
   resolved "https://registry.yarnpkg.com/mock-fs/-/mock-fs-4.14.0.tgz#ce5124d2c601421255985e6e94da80a7357b1b18"
   integrity sha512-qYvlv/exQ4+svI3UOvPUpLDF0OMX5euvUH0Ny4N5QyRyhNdgAgUrVH3iUINSzEPLvx0kbo/Bp28GJKIqvE7URw==
 
-moment@^2.22.0, moment@^2.29.1:
-  version "2.29.1"
-  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.1.tgz#b2be769fa31940be9eeea6469c075e35006fa3d3"
-  integrity sha512-kHmoybcPV8Sqy59DwNDY3Jefr64lK/by/da0ViFcuA4DH0vQg5Q6Ze5VimxkfQNSC+Mls/Kx53s7TjP1RhFEDQ==
+moment@^2.22.0, moment@^2.29.2:
+  version "2.29.2"
+  resolved "https://registry.yarnpkg.com/moment/-/moment-2.29.2.tgz#00910c60b20843bcba52d37d58c628b47b1f20e4"
+  integrity sha512-UgzG4rvxYpN15jgCmVJwac49h9ly9NurikMWGPdVxm8GZD6XjkKPxDTjQQ43gtGgnV3X0cAyWDdP2Wexoquifg==
 
 ms@2.0.0:
   version "2.0.0"
@@ -13395,16 +13404,7 @@ react-native-screens@^3.5.0:
   dependencies:
     warn-once "^0.1.0"
 
-react-native-sqlite-2@^3.1.1:
-  version "3.4.1"
-  resolved "https://registry.yarnpkg.com/react-native-sqlite-2/-/react-native-sqlite-2-3.4.1.tgz#8078ee61a2f71253b7e0500184b6abda5e52ad03"
-  integrity sha512-V9OA8bpRsU2e9NF8aURKtKFYE297DrAH8abSCXtft6kLmgTr677Ku3AhUcDKsFzjuBJf7nB8dWQJ364bBLxv3w==
-  dependencies:
-    lodash.map "^4.6.0"
-    lodash.zipobject "^4.1.3"
-    websql "^2.0.3"
-
-react-native-sqlite-2@^3.4.0:
+react-native-sqlite-2@^3.4.0, react-native-sqlite-2@^3.5.2:
   version "3.5.2"
   resolved "https://registry.yarnpkg.com/react-native-sqlite-2/-/react-native-sqlite-2-3.5.2.tgz#1cf8347366fb88a0db8b086dc26116ecc1cafba2"
   integrity sha512-zyAYkILsiEdIkBT0y4J/g06GgVBZ2nqkjK9FQL+tso7o0Dong3Dqt3iGm9Jt6w/BSD2fg49lkCnRJjKEOg3x4A==

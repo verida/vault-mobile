@@ -20,7 +20,7 @@ export default ({ transaction }) => {
         )
         fixed = 3
         break
-      case 'ethereum':
+      case 'eip155':
         formattedTime = new Date(transaction.time).toLocaleString('en-US')
         fixed = 18
         break
