@@ -522,7 +522,7 @@ PODS:
   - RNSentry (3.1.1):
     - React-Core
     - Sentry (= 7.3.0)
-  - RNSqlite2 (3.3.0):
+  - RNSqlite2 (3.5.2):
     - React-Core
   - RNSVG (12.1.1):
     - React
@@ -903,7 +903,7 @@ SPEC CHECKSUMS:
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
   RNScreens: 6e1ea5787989f92b0671049b808aef64fa1ef98c
   RNSentry: 49abc89b0190b4c8afe0fa5d065f98e36cb53233
-  RNSqlite2: df25f1fefd82da39a3f956504149fb32d23831fb
+  RNSqlite2: 8cf96c4a5cc62f95922de1d01c5f68d7fc52333c
   RNSVG: 551acb6562324b1d52a4e0758f7ca0ec234e278f
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   Sentry: 9a4e621430e2dae4477d791f2f7e905720b6efbf
