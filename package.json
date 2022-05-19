@@ -1,13 +1,17 @@
 {
   "scripts": {
+    "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
+    "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
+    "pod:install": "cd ios && pod install && cd ..",
+    "pod:install:clean": "cd ios && rm -rf Podfile.lock && pod install --repo-update --verbose && cd ..",
+    "start": "react-native start",
     "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
     "ios": "react-native run-ios",
     "web": "expo start --web",
-    "start": "react-native start",
     "test": "jest",
-    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
-    "build-android": "cd android && ./gradlew assembleStagingRelease"
+    "build-android": "cd android && ./gradlew assembleStagingRelease",
+    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn"
   },
   "dependencies": {
     "@alch/alchemy-web3": "^1.2.3",
@@ -18,8 +22,10 @@
     "@react-native-community/clipboard": "^1.2.3",
     "@react-native-community/netinfo": "^6.0.2",
     "@react-native-community/push-notification-ios": "^1.10.1",
-    "@react-native-firebase/app": "^14.2.1",
-    "@react-native-firebase/messaging": "^14.2.1",
+    "@react-native-firebase/analytics": "^14.7.0",
+    "@react-native-firebase/app": "^14.7.0",
+    "@react-native-firebase/dynamic-links": "^14.7.0",
+    "@react-native-firebase/messaging": "^14.7.0",
     "@react-navigation/bottom-tabs": "^6.0.2",
     "@react-navigation/native": "^6.0.1",
     "@react-navigation/native-stack": "^6.0.2",
@@ -158,7 +164,8 @@
   },
   "resolutions": {
     "expo-splash-screen": "^0.11.2",
-    "@types/react": "17.0.30"
+    "@types/react": "17.0.30",
+    "ethers": "^5.6.0"
   },
   "jest": {
     "preset": "react-native",
