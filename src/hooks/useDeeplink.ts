@@ -14,7 +14,7 @@ export function useDeeplink(
       let screenName: keyof MainStackParams
       switch (pathname) {
         //TODO: Handle more deeplink thre
-        case 'connection-success':
+        case '/connection-success':
           screenName = 'DataConnector'
           break
         default:
