@@ -14,6 +14,7 @@ import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
+import DataConnector from 'pages/DataConnector'
 import Networks from 'pages/Networks/Networks'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
@@ -51,6 +52,7 @@ function MainNavigator() {
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
       <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
       <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
+      <Stack.Screen name={'DataConnector'} component={DataConnector} />
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
