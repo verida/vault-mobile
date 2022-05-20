@@ -1,19 +1,11 @@
 import { Container, Icon } from 'native-base'
-import React, { useEffect } from 'react'
-import { Alert } from 'react-native'
+import React, { useState } from 'react'
+import Text from 'components/Text'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 export default (props) => {
-  useEffect(() => {
-    const init = async () => {
-      // eslint-disable-next-line no-console
-      console.log(props.route.params, 'params')
-      Alert.alert(JSON.stringify(props.route.params))
-    }
-
-    init()
-  }, [props.route.params, props.navigation])
+  const [linkParams] = useState(JSON.stringify(props.route.params))
 
   return (
     <Container>
@@ -24,6 +16,7 @@ export default (props) => {
           action: () => props.navigation.goBack(),
         }}
       />
+      <Text>{linkParams}</Text>
     </Container>
   )
 }
