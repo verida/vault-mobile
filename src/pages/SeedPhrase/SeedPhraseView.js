@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
@@ -14,7 +14,7 @@ export default () => {
 
   useEffect(() => {
     const init = async () => {
-      const { mnemonic } = AccountManager.getInstance().selectedAccount
+      const { mnemonic } = store.getState().selectedAccount
       setWords(mnemonic)
     }
 

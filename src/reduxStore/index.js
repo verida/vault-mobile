@@ -17,7 +17,9 @@ import {
   SET_SELECTED_ACCOUNT,
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
-  SET_VERIDA_CONTEXT
+  SET_VAULT,
+  SET_VERIDA_CONTEXT,
+  SET_VERIDA_CLIENT
 } from './general/action-types'
 import {
   ADD_PENDING_TRANSACTION,
@@ -107,6 +109,8 @@ const initialState = {
   networks: [],
   countries: [],
   veridaContext: null,
+  vault: null,
+  veridaClient: null,
   accountManager: null,
   navigationLink: null,
 }
@@ -128,8 +132,10 @@ const reducer = (state = initialState, action) => {
       return { ...state, publicProfileData: action.payload }
     case SET_VERIDA_CONTEXT:
       return { ...state, veridaContext: action.payload }
-    case SET_ACCOUNT_MANAGER:
-      return { ...state, accountManager: action.payload }
+    case SET_VAULT:
+      return { ...state, vault: action.payload }
+    case SET_VERIDA_CLIENT:
+      return { ...state, veridaClient: action.payload }
     case SET_NEW_MESSAGES_COUNT:
       return { ...state, newMessagesCount: action.payload }
     case SET_ACCOUNTS:

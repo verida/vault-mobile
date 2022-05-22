@@ -240,7 +240,7 @@ export const createNewWallet = (importData) => {
 
       // save mnemonic to verida store
       const walletDb =
-        await AccountManager.getInstance().context?.openDatastore(
+        await store.getState().veridaContext?.openDatastore(
           'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
         )
 
@@ -292,7 +292,7 @@ export const deleteWallet = (walletId) => {
 
       // save mnemonic to verida store
       const walletDb =
-        await AccountManager.getInstance().context?.openDatastore(
+        await store.getState().veridaContext?.openDatastore(
           'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
         )
 

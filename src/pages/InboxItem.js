@@ -1,7 +1,7 @@
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import TypeGenericMessage from 'components/Inbox/types/GenericMessage'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -38,7 +38,7 @@ const InboxItem = (props) => {
   // Initialise component
   useEffect(() => {
     const init = async () => {
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       const inboxItems = await vault.inbox.fetchLatest({ _id: inboxItemId })
       const _inboxItem = inboxItems[0]
       const _item = await buildItem(_inboxItem)

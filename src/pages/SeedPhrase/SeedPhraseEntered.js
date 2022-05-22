@@ -60,7 +60,7 @@ export default (props) => {
       if (!isValid) {
         showError(true)
       }
-      const result = await AccountManager.getInstance().importAccount(
+      const result = await AccountManager.importAccount(
         cleanedPhrase
       )
       setProcessing(false)

@@ -3,7 +3,7 @@ import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import DataCardView from 'components/Data/CardView'
 import DataListView from 'components/Data/ListView'
@@ -20,7 +20,7 @@ const Folder = (props) => {
       try {
         setLoaded(false)
         const { folderName } = route.params
-        const vault = AccountManager.getInstance().vault
+        const vault = store.getState().vault
         const _folder = await vault.data.selectFolder(folderName)
         setLoaded(true)
         setFolder(_folder)

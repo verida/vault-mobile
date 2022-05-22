@@ -39,7 +39,7 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
         REMIND_EXPIRATION_TIME
       if (!selectedAccount?.seedPhraseReminder || expired) {
         dispatch(setShowSeedPhraseReminder(true))
-        await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(
+        await AccountManager.updateLastTimeSeedPhraseReminder(
           false
         )
       }

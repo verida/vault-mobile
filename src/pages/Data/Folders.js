@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -17,7 +17,7 @@ const Folders = () => {
   useEffect(() => {
     const init = async () => {
       setLoading(true)
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       const { navigation, folders } = vault.data.map
 
       const allowedFolderNames = ['credentials', 'contact']

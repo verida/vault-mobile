@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import { isEmpty } from 'lodash'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
-
+import store from "reduxStore"
 import AccountManager from 'api/AccountManager'
 import ErrorModal from 'components/ErrorModal/ErrorModal'
 
@@ -48,7 +48,7 @@ export default ({ item, inboxItem, type, navigation }) => {
       } else {
         setCurrentAction('decline')
       }
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       const handleResult = await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
       if (!handleResult.success) {

@@ -5,7 +5,7 @@ import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, StyleSheet, View } from 'react-native'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import AppLogo from 'components/AppLogo'
 import CountDownText from 'components/CountDownText'
@@ -139,7 +139,7 @@ export default (props) => {
   }, [reloadExpired])
 
   const saveLoginRequest = async (approved) => {
-    const vault = AccountManager.getInstance().context
+    const vault = store.getState().veridaContext
     // save into login database
     const loginRequest = {
       context: info.request.context,
@@ -181,8 +181,8 @@ export default (props) => {
     try {
       setStatus('approving')
 
-      const vault = AccountManager.getInstance().context
-      const client = AccountManager.getInstance().client
+      const vault = store.getState().veridaContext
+      const client = store.getState().veridaClient
       const account = await vault.getAccount()
       const keyring = await account.keyring(info.request.context)
       const signature = keyring.getSeed()

@@ -38,7 +38,7 @@ function ImageLoader(props) {
       // })
 
       // if (!result.cancelled && result.base64) {
-      //   const vault = await AccountManager.getInstance().context.openProfile()
+      //   const vault = await store.getState().veridaContext.openProfile()
 
       //   const avatar = {
       //     uri: `data:image/${result.format};base64,` + result.base64,

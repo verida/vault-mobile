@@ -6,7 +6,7 @@ import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
 import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
-
+import store from 'reduxStore'
 import Button from '../../components/Button'
 import ErrorPhrase from '../../components/ErrorPhrase'
 import Layout from '../../components/Layouts/Layout'
@@ -22,7 +22,7 @@ const VerifyPhrase = (props) => {
     showError(false)
     setVerified(
       words.join(' ') ===
-        AccountManager.getInstance().getSelectedAccount().mnemonic
+        store.getState().selectedAccount.mnemonic
     )
   }, [words])
 
@@ -36,7 +36,7 @@ const VerifyPhrase = (props) => {
     try {
       resetPhrase()
       dispatch(setShowSeedPhraseReminder(false))
-      await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
+      await AccountManager.updateLastTimeSeedPhraseReminder(true)
       navigation.navigate('Home')
     } catch (e) {
       showError(true)

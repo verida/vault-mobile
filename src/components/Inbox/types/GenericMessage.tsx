@@ -5,7 +5,7 @@ import moment from 'moment'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, Image, StyleSheet, View } from 'react-native'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import { DefaultAvatar, getProfile } from 'api/utils'
 import MailSvg from 'assets/icons/mail.svg'
@@ -65,7 +65,7 @@ function GenericMessage(props: GenericMessageProps) {
       }
       setSubmitting(true)
 
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       const handleResult = await vault?.inbox.handleAction(
         inboxItem,
         'accept',

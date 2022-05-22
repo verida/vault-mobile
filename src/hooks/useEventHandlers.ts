@@ -7,7 +7,7 @@ import { useCallback, useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import PushNotification from 'react-native-push-notification'
 import { useDispatch, useSelector } from 'react-redux'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount } from 'api/utils'
 
@@ -40,7 +40,7 @@ export const useEventHandlers = () => {
   useEffect(() => {
     async function disconnect() {
       const messaging =
-        await AccountManager.getInstance().vault?.inbox.getMessaging()
+        await store.getState().vault?.inbox.getMessaging()
       await messaging.offMessage(onMessage)
       isConnectingRef.current = false
     }
@@ -53,7 +53,7 @@ export const useEventHandlers = () => {
         isConnectingRef.current = true
 
         const messaging =
-          await AccountManager.getInstance().vault?.inbox.getMessaging()
+          await store.getState().vault?.inbox.getMessaging()
         await messaging.offMessage(onMessage)
         await messaging.onMessage(onMessage)
 
@@ -70,7 +70,7 @@ export const useEventHandlers = () => {
         try {
           await fetchInboxCount()
           const msgs =
-            await AccountManager.getInstance().vault?.inbox.fetchLatest(
+            await store.getState().vault?.inbox.fetchLatest(
               { read: false },
               { limit: 1 }
             )
@@ -118,7 +118,7 @@ export const useEventHandlers = () => {
       })
 
       const messaging =
-        await AccountManager.getInstance().vault?.inbox.getMessaging()
+        await store.getState().vault?.inbox.getMessaging()
       await messaging.onMessage(onMessage)
       AppState.addEventListener('change', onAppStateChanged)
 

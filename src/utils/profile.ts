@@ -1,6 +1,6 @@
 import { countries } from 'countries-list'
 import { find, get } from 'lodash'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import { Network, NetworkCountry, NetworkNode } from 'api/types'
 
@@ -8,10 +8,10 @@ import { Network, NetworkCountry, NetworkNode } from 'api/types'
  * Get country code from user's country name. Ex: Australia => AU
  */
 export async function getUserCountryCode() {
-  if (!AccountManager.getInstance().getSelectedAccount()) {
+  if (!store.getState().selectedAccount) {
     return null
   }
-  const vault = AccountManager.getInstance().vault as any
+  const vault = store.getState().vault as any
   const publicData = await vault.profiles.public.getMany()
   const userCountry = get<string>(publicData, 'country')
 

@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { StyleSheet } from 'react-native'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import Card from 'components/CardList/Card'
 import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
@@ -15,7 +15,7 @@ const Inbox = () => {
   const listRef = useRef(null)
   const loadInbox = useCallback(async (skip) => {
     try {
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       const inboxItems = await vault.inbox.fetchLatest(
         {},
         {
@@ -38,7 +38,7 @@ const Inbox = () => {
   // Initialise component
   useEffect(() => {
     const init = async () => {
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       const messaging = await vault.inbox.getMessaging()
       const _inbox = await messaging.getInbox()
       const datastore = await _inbox.getInboxDatastore()

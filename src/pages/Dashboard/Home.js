@@ -3,6 +3,7 @@ import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content } from 'native-base'
+import store from 'reduxStore'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -149,7 +150,7 @@ const Home = (props) => {
       try {
         setLoading(true)
         const _selectedAccount =
-          AccountManager.getInstance().getSelectedAccount()
+          store.getState().selectedAccount
         const { name, avatar } = await getProfile(_selectedAccount.did)
         setAvatarSource(avatar)
 
@@ -205,7 +206,7 @@ const Home = (props) => {
   }
 
   async function onSelectAccount(did) {
-    if (did === AccountManager.getInstance().selectedAccount.did) {
+    if (did === store.getState().selectedAccount.did) {
       return
     }
 
@@ -218,7 +219,7 @@ const Home = (props) => {
         'Cannot get account information, removing this account'
       )
       setLoading(true)
-      await AccountManager.getInstance().logout([did])
+      await AccountManager.logout([did])
       await refresh()
       setLoading(false)
     }
@@ -227,10 +228,10 @@ const Home = (props) => {
   async function onLogoutAccounts(dids) {
     setLoading(true)
     // Only flush Redux store if the current account is logged out
-    if (dids.includes(AccountManager.getInstance().getSelectedAccount().did)) {
+    if (dids.includes(store.getState().selectedAccount.did)) {
       logout()
     }
-    await AccountManager.getInstance().logout(dids)
+    await AccountManager.logout(dids)
     await refresh()
     setLoading(false)
   }

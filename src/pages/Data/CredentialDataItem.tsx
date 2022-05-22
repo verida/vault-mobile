@@ -4,6 +4,7 @@ import { SharingCredential } from '@verida/verifiable-credentials'
 import { isEmpty } from 'lodash'
 import { List } from 'native-base'
 import React, { useEffect, useState } from 'react'
+import store from 'reduxStore'
 import {
   Dimensions,
   Image,
@@ -54,9 +55,9 @@ function CredentialDataItem(props: CredentialDataItemProps) {
       try {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore
-        const context = AccountManager.getInstance().context as Context
+        const context = store.getState().veridaContext as Context
         const currentDid =
-          AccountManager.getInstance().getSelectedAccount()?.did
+          store.getState().selectedAccount.did
         if (isEmpty(item) || !context || !currentDid) {
           return
         }

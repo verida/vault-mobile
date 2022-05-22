@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import store from 'reduxStore'
 
-import AccountManager, { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
+import { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
 import { Network, NetworkCountries } from 'api/types'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
 
@@ -54,7 +54,7 @@ export const loadAvatarSource = async () => {
 
 export const fetchPublicProfileData = async () => {
   try {
-    const accounts = { ...AccountManager.getInstance().accounts }
+    const accounts = { ...store.getState().accounts }
     await Promise.all(
       Object.values(accounts).map(async (account: any) => {
         console.log('Before  open profile', account.did)
@@ -77,14 +77,14 @@ export const fetchPublicProfileData = async () => {
     return accounts
   } catch (e) {
     Sentry.captureException(e)
-    return AccountManager.getInstance().accounts
+    return store.getState().accounts
   }
 }
 
 export async function fetchInboxCount() {
   try {
     const messages =
-      await AccountManager.getInstance().vault?.inbox.fetchLatest(
+      await store.getState().vault?.inbox.fetchLatest(
         { read: false },
         { limit: MAX_MESSAGE_COUNT }
       )
@@ -99,7 +99,7 @@ export async function getProfile(did: string) {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     const publicProfile =
-      await AccountManager.getInstance().context?.openProfile(
+      await store.getState().context?.openProfile(
         'basicProfile',
         did
       )
@@ -125,9 +125,8 @@ export async function getPublicProfile(
   contextName = VERIDA_CONTEXT_NAME
 ) {
   try {
-    const publicProfile = await AccountManager.getInstance()
-      .getClient()
-      ?.openPublicProfile(did, contextName, 'basicProfile')
+    const publicProfile = await store.getState()
+    .veridaClient?.openPublicProfile(did, contextName, 'basicProfile')
     const name = await publicProfile?.get('name')
     const avatar = await publicProfile?.get('avatar')
 
@@ -152,13 +151,12 @@ export async function getAxios() {
     },
   }
 
-  const currentDid = AccountManager.getInstance()
-    .getSelectedAccount()
+  const currentDid = store.getState().selectedAccount
     ?.did.toLowerCase()
 
   if (!axiosAuthPassword) {
-    const keyring = await AccountManager.getInstance()
-      .context?.getAccount()
+    const keyring = await store.getState()
+      .veridaContext?.getAccount()
       .keyring(VERIDA_CONTEXT_NAME)
     axiosAuthPassword = await keyring?.sign(
       `Access the notification service using context: "${VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
@@ -175,7 +173,7 @@ export async function getAxios() {
 export async function getNotificationServerUrl() {
   // Notification server url is saved in account's config
   const accountConfig =
-    await AccountManager.getInstance().context?.getContextConfig()
+    await store.getState().veridaContext?.getContextConfig()
   // Notification server url is saved in account's config
   const notificationServerUrl =
     accountConfig?.services.notificationServer?.endpointUri
@@ -190,7 +188,7 @@ export async function registerRemoteNotification(token: string) {
   }
 
   try {
-    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const currentDid = store.getState().selectedAccount?.did
     const notificationServerUrl = await getNotificationServerUrl()
     if (!notificationServerUrl) {
       return
@@ -213,7 +211,7 @@ export async function registerRemoteNotification(token: string) {
 
 export async function unRegisterRemoteNotification(token: string) {
   try {
-    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const currentDid = store.getState().selectedAccount?.did
     const notificationServerUrl = await getNotificationServerUrl()
     if (!notificationServerUrl) {
       return

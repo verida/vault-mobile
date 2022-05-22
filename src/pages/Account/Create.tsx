@@ -78,7 +78,7 @@ function Create(
     try {
       setProcessing(true)
       setTimeout(async () => {
-        await AccountManager.getInstance().createAccount(
+        await AccountManager.createAccount(
           {
             name,
             country: country?.value || '',

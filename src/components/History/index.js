@@ -6,6 +6,7 @@ import AccountManager from '../../api/AccountManager'
 import EmptyList from '../Lists/EmptyList'
 import Text from '../Text'
 import History from './History'
+import store from 'reduxStore'
 
 export default ({ route }) => {
   const [history, setHistory] = useState(null)
@@ -14,7 +15,7 @@ export default ({ route }) => {
   useEffect(() => {
     const init = async () => {
       try {
-        const veridaApp = AccountManager.getInstance().context
+        const veridaApp = store.getState().veridaContext
         const datastore = await veridaApp.openDatastore(
           'https://vault.schemas.verida.io/auth/loginRequest/v0.1.0/schema.json'
         )

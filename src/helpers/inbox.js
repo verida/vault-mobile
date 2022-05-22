@@ -1,7 +1,7 @@
 import { get } from 'lodash'
 import moment from 'moment'
 import React from 'react'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 
 import DataSnapshot from '../assets/inbox/snapshot.svg'
@@ -71,7 +71,7 @@ export const buildItem = async (inboxItem) => {
 
 // @todo: Add to vault common
 export const getProfile = async (sentBy) => {
-  const verida = AccountManager.getInstance().context
+  const verida = store.getState().veridaContext
   try {
     const profile = await verida.openProfile('basicProfile', sentBy.did)
     return await profile.public.getMany()

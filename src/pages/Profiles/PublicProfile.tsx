@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, Dimensions, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import ProfileLayout from 'components/Layouts/ProfileLayout'
 import LoadingView from 'components/LoadingView'
@@ -29,7 +29,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       let publicData: any = {}
       if (shouldUpdate || publicProfileData?.name === '') {
         setLoading(true)
-        const vault = AccountManager.getInstance().vault as any
+        const vault = store.getState().vault as any
         publicData = await vault.profiles.public.getMany()
         setLoading(false)
       } else {
@@ -56,7 +56,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   useEffect(() => {
     let listener: any
     const watchChanges = async () => {
-      const vault = AccountManager.getInstance().vault as any
+      const vault = store.getState().vault as any
       await vault.profiles.public.init()
       const db = await vault.profiles.public.store.getDb()
       const dbInstance = db.db

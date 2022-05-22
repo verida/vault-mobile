@@ -2,7 +2,7 @@ import * as Sentry from '@sentry/react-native'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
 import { Alert } from 'react-native'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
@@ -17,7 +17,7 @@ export default ({ item, inboxItem, type, navigation }) => {
       } else {
         setCurrentAction('decline')
       }
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
       navigation.goBack()

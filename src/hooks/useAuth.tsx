@@ -7,7 +7,7 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 
 type AuthContextState = {
@@ -35,7 +35,7 @@ export const AuthProvider: FC = ({ children }) => {
   useEffect(() => {
     const checkTeamMember = async () => {
       const isTeamMember =
-        await AccountManager.getInstance().checkIfVeridaTeamMember()
+        await AccountManager.checkIfVeridaTeamMember()
       setVeridaTeamMember(isTeamMember)
     }
 
@@ -43,10 +43,11 @@ export const AuthProvider: FC = ({ children }) => {
   }, [loaded])
 
   const refresh = useCallback(async () => {
-    const selectedAccount = AccountManager.getInstance().getSelectedAccount()
+    // await AccountManager.logout()
+    const selectedAccount = store.getState().selectedAccount
     if (selectedAccount) {
       console.log("Entered inside refresh")
-      await AccountManager.getInstance().connect(true)
+      await AccountManager.connect(true)
     }
     setLoaded(true)
     setAuthenticated(!!selectedAccount)
@@ -55,7 +56,7 @@ export const AuthProvider: FC = ({ children }) => {
 
   const switchToAccount = useCallback(async (did: string) => {
     setLoaded(false)
-    await AccountManager.getInstance().switchToAccount(did)
+    await AccountManager.switchToAccount(did)
     setLoaded(true)
   }, [])
 

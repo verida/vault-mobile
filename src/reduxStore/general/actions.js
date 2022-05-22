@@ -13,7 +13,9 @@ import {
   SET_SELECTED_ACCOUNT,
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
-  SET_VERIDA_CONTEXT
+  SET_VAULT,
+  SET_VERIDA_CONTEXT,
+  SET_VERIDA_CLIENT
 } from './action-types'
 
 export const setAuthStatus = (payload) => {
@@ -28,8 +30,12 @@ export const setVeridaContext = (payload) => {
   return { type: SET_VERIDA_CONTEXT, payload }
 }
 
-export const setAccountManager = (payload) => {
-  return { type: SET_ACCOUNT_MANAGER, payload }
+export const setVault = (payload) => {
+  return { type: SET_VAULT, payload }
+}
+
+export const setVeridaClient = (payload) => {
+  return { type: SET_VERIDA_CLIENT, payload }
 }
 
 export const setNewMessagesCount = (payload) => {

@@ -4,7 +4,7 @@ import { StyleSheet, View } from 'react-native'
 import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
-
+import store from 'reduxStore'
 import DateOfBirth from '../../components/DateOfBirth'
 import ProfileLayout from '../../components/Layouts/ProfileLayout'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
@@ -40,7 +40,7 @@ export default () => {
 
   useEffect(() => {
     const init = async () => {
-      setInfo(AccountManager.getInstance().selectedAccount)
+      setInfo(store.getState().selectedAccount)
     }
 
     init()

@@ -32,8 +32,7 @@ function RootNavigator() {
     mounted.current = true
     async function init() {
       console.log('Inside init', authenticated)
-      let accountManager = AccountManager.getInstance()
-      await accountManager.init()
+      await AccountManager.init()
       await refresh()
     }
     init()

@@ -8,11 +8,12 @@ import {
   ViewProps,
 } from 'react-native'
 import Entypo from 'react-native-vector-icons/Entypo'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import StorageNodes from 'pages/StorageNodes/StorageNodes'
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
@@ -39,7 +40,7 @@ function SchemasList(props: SchemasListProps) {
         const _dataList: RequestedData[] = []
         await Promise.all(
           schemas.map(async (schemaUrl) => {
-            const schema = await AccountManager.getInstance().client?.getSchema(
+            const schema = await store.getState().veridaClient?.getSchema(
               schemaUrl
             )
             const schemaJson = (await schema?.getSchemaJson()) as any

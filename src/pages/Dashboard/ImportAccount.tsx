@@ -55,7 +55,7 @@ function ImportAccount(
       if (!isValid) {
         showError(true)
       }
-      const result = await AccountManager.getInstance().importAccount(phrase)
+      const result = await AccountManager.importAccount(phrase)
       if (!result) {
         setProcessing(false)
         Alert.alert('Failed', 'Account already exist')

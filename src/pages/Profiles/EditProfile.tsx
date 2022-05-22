@@ -3,7 +3,7 @@ import React, { useState } from 'react'
 import { TextInput, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-
+import store from 'reduxStore'
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -29,7 +29,7 @@ const EditProfile = (props: any) => {
 
     if (publicProfileData[key] === val) return
     setDisabled(true)
-    const vault = AccountManager.getInstance().vault as any
+    const vault = store.getState().vault as any
 
     await vault.profiles.public.set(key, val)
     setPublicProfileData({ ...publicProfileData, [key]: val })

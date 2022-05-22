@@ -4,7 +4,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import _ from 'underscore'
-
+import store from 'reduxStore'
 import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
@@ -19,7 +19,7 @@ const SeedPhraseGenerated = (props) => {
 
   useEffect(() => {
     const init = async () => {
-      setWords(AccountManager.getInstance().selectedAccount.mnemonic)
+      setWords(store.getState().selectedAccount.mnemonic)
     }
 
     init()

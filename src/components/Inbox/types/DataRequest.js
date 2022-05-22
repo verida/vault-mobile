@@ -3,6 +3,7 @@ import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
+import store from "reduxStore"
 import { Alert, Image, StyleSheet, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
@@ -23,7 +24,7 @@ export default ({ item, inboxItem, navigation }) => {
       } else {
         setCurrentAction('decline')
       }
-      const vault = AccountManager.getInstance().vault
+      const vault = store.getState().vault
       await vault.inbox.handleAction(inboxItem, result, selectedItems)
       setCurrentAction(null)
       navigation.goBack()

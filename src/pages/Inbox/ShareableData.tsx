@@ -4,6 +4,7 @@ import update from 'immutability-helper'
 import { debounce } from 'lodash'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
+import store from 'reduxStore'
 import {
   FlatList,
   ListRenderItemInfo,
@@ -40,7 +41,7 @@ function ShareableData(
       setLoading(true)
       const { schemaUrl, filter } = route.params
       const datastore =
-        await AccountManager.getInstance().context?.openDatastore(schemaUrl)
+        await store.getState().veridaContext?.openDatastore(schemaUrl)
       let query = {}
       if (text && text.length > 0) {
         if (Object.keys(filter).length > 0) {

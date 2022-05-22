@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-
+import store from 'reduxStore'
 import AccountManager from '../../api/AccountManager'
 import LoadingView from '../LoadingView'
 import Details from './Details'
@@ -11,11 +11,11 @@ export default () => {
   useEffect(() => {
     const init = async () => {
       try {
-        const accountManager = AccountManager.getInstance()
-        const name = await accountManager.vault.profiles.public.get('name')
-
+        const name = await store.getState().vault.profiles.public.get('name')
+        const did = store.getState().selectedAccount
+        console.log("This is did", did)
         setInfo({
-          did: accountManager.selectedAccount.did,
+          did: did.did,
           name: name,
         })
         setLoading(false)
