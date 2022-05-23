@@ -101,7 +101,7 @@ const Home = (props) => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
-        if (link.url.includes('redirect')) {
+        if (link?.url?.includes('redirect')) {
           try {
             const parsedUrl = parse(link.url, true)
             const { query } = parsedUrl

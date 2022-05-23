@@ -74,7 +74,7 @@ export const getBalances = () => {
     dispatch({ type: BALANCES_FETCH_START })
 
     try {
-      const wallets = getWalletsData(getState())
+      const wallets = getWalletsData(getState().main)
 
       let balanceData = await dataHelper.getAllBalances(wallets)
 
@@ -98,7 +98,7 @@ export const getBalances = () => {
 export const getTransactionsForToken = (assetID) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
-    const wallets = getWalletsData(getState())
+    const wallets = getWalletsData(getState().main)
     const transactionsData = await dataHelper.getTransactions(wallets, assetID)
 
     if (transactionsData) {
@@ -118,7 +118,7 @@ export const getTransactionsForToken = (assetID) => {
 export const getTransactionDetails = (transactionID, tokenAddress) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
-    const wallets = getWalletsData(getState())
+    const wallets = getWalletsData(getState().main)
 
     let transactionData = await dataHelper.getTransactionDetails(
       transactionID,
@@ -169,7 +169,7 @@ export const setSelectedWallet = (walletId) => {
 export const getTransactionParams = (transactionData) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
-    const wallets = getWalletsData(getState())
+    const wallets = getWalletsData(getState().main)
 
     const params = await dataHelper.getTransactionParams(
       transactionData,
@@ -197,7 +197,7 @@ export const sendTransaction = (
 ) => {
   return async (dispatch, getState) => {
     dispatch({ type: SEND_TRANSACTION_START })
-    const state = getState()
+    const state = getState().main
 
     try {
       const txData = await dataHelper.sendTransaction(
@@ -244,7 +244,7 @@ export const createNewWallet = (data) => {
           'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
         )
 
-      const currentWalletsData = getAllWallets(getState())
+      const currentWalletsData = getAllWallets(getState().main)
 
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -288,7 +288,7 @@ export const deleteWallet = (walletId) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const currentlySelectedWallet = getSelectedWallet(getState())
+      const currentlySelectedWallet = getSelectedWallet(getState().main)
 
       // save mnemonic to verida store
       const walletDb =
