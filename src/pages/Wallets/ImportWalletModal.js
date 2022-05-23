@@ -70,7 +70,6 @@ export default ({ visible, hideModal, onImportWallet }) => {
           <Label>Enter seed phrase</Label>
           <TextInput
             value={phrase}
-            autoFocus={true}
             multiline
             editable
             autoCorrect={false}
@@ -117,16 +116,6 @@ const styles = StyleSheet.create({
   },
   addWalletButton: {
     alignSelf: 'stretch',
-  },
-  inputSublabel: { fontSize: 12, color: 'rgba(4, 17, 51, 0.5)', marginTop: 3 },
-  checkbox: {
-    marginBottom: 20,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 20,
-  },
-  checkboxLabel: {
-    marginLeft: 15,
   },
   actionButton: {
     marginRight: 25,

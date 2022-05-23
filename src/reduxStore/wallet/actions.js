@@ -229,13 +229,13 @@ export const sendTransaction = (
   }
 }
 
-export const createNewWallet = (importData) => {
+export const createNewWallet = (data) => {
   return async (dispatch, getState) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const userHDWalletMnemonic = importData
-        ? importData.phrase
+      const userHDWalletMnemonic = data.phrase
+        ? data.phrase
         : WalletUtils.MultiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
@@ -249,8 +249,8 @@ export const createNewWallet = (importData) => {
       const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
-        label: importData
-          ? importData.name
+        label: data
+          ? data.name
           : 'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
       }
       const saved = await walletDb?.save(wallet)
@@ -311,6 +311,45 @@ export const deleteWallet = (walletId) => {
             firstWalletId
           )
         }
+
+        await dispatch(saveUserWallets(wallets))
+        await SecureStore.setItemAsync(
+          WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
+export const renameWallet = (walletId, data) => {
+  return async (dispatch) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        )
+
+      const row = await walletDb?.get(walletId)
+
+      row.label = data.name
+
+      await walletDb.save(row)
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const wallets = rawDataToReduxState(hdWallets)
 
         await dispatch(saveUserWallets(wallets))
         await SecureStore.setItemAsync(
