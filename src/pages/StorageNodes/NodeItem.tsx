@@ -23,7 +23,7 @@ type NodeItemProps = Omit<TouchableOpacityProps, 'children'> & {
 
 function NodeItem(props: NodeItemProps) {
   const { data, selected, ...rest } = props
-  const countryName = get<string>(countries, `${data.ISO2_CC}.name`)
+  const countryName = get(countries, `${data.ISO2_CC}.name`)
 
   return (
     <TouchableOpacity style={styles.container} {...rest}>

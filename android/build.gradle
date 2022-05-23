@@ -9,7 +9,14 @@ buildscript {
     }
     repositories {
         google()
-        jcenter()
+        mavenLocal()
+        mavenCentral{
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
     }
     dependencies {
         classpath("com.android.tools.build:gradle:4.0.1")
@@ -21,7 +28,6 @@ buildscript {
 
 allprojects {
     repositories {
-        mavenLocal()
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url("$rootDir/../node_modules/react-native/android")
@@ -29,10 +35,23 @@ allprojects {
         maven {
             // Android JSC is installed from npm
             url("$rootDir/../node_modules/jsc-android/dist")
+        } 
+        mavenCentral{
+            // We don't want to fetch react-native from Maven Central as there are
+            // older versions over there.
+            content {
+                excludeGroup "com.facebook.react"
+            }
+        }
+        google()
+        maven { url 'https://www.jitpack.io' }
+
+        // TODO: remove JCenter for this specific package and update on expo-image-picker package
+        jcenter() {
+            content {
+                includeModule("com.theartofdev.edmodo", "android-image-cropper")
+            }
         }
 
-        google()
-        jcenter()
-        maven { url 'https://www.jitpack.io' }
     }
 }

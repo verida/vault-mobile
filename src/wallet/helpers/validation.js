@@ -2,6 +2,8 @@ import algosdk from 'algosdk'
 import { web3 } from 'wallet/chains/ethereum'
 import { getTokenChain } from 'wallet/helpers/tokens'
 
+const bip39 = require('bip39')
+
 const validateNearAddress = (address) => {
   if (address.includes('.') && address.length >= 2 && address.length <= 64) {
     return true
@@ -20,4 +22,8 @@ export const isValidWalletAddress = (address, tokenAddress) => {
     case 'near':
       return validateNearAddress(address)
   }
+}
+
+export const isValidSeedPhrase = (phrase) => {
+  return bip39.validateMnemonic(phrase)
 }
