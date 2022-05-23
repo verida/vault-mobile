@@ -394,7 +394,7 @@ class AccountManager {
         messageServerUrl: selectedNode.messaging_address,
         notificationServerUrl: selectedNode.notification_address,
       }
-      const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
+      const node = utils.entropyToMnemonic(utils.randomBytes(16))
 
       this.selectedAccount = {
         mnemonic: node,
@@ -582,10 +582,9 @@ class AccountManager {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
-      return name.includes('_vda')
+      return name?.includes('_vda') ?? false
     } catch (e) {
-      Sentry.captureException(e)
-      throw e
+      return false
     }
   }
 }
