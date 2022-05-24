@@ -25,6 +25,7 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Profiles: undefined
+  Connections: undefined
 }
 
 export type MainStackParams = {
@@ -33,7 +34,6 @@ export type MainStackParams = {
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
-  DataConnector: undefined
   PublicProfile: undefined
   PrivateProfile: undefined
   EditProfile: undefined
@@ -69,4 +69,5 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  SingleConnection: undefined
 }
