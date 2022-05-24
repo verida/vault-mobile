@@ -2,6 +2,7 @@ import { Linking } from 'react-native'
 import axios from 'axios'
 import AccountManager from './AccountManager'
 import { ContextInterfaces } from '@verida/client-rn'
+import { Alert } from 'react-native'
 
 // @todo move to global app config somewhere?
 const CONFIG = {
@@ -20,6 +21,7 @@ export default class DataConnectorsManager {
 
     static async authComplete(connectorName: string, accessToken?: string, requestToken?: string) {
         // @todo: save connector info to vault datastore
+        Alert.alert(JSON.stringify({ connectorName, accessToken, requestToken }))
     }
 
     static async sync(connectorName: string): Promise<void> {
