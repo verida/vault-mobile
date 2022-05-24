@@ -14,7 +14,6 @@ import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
-import DataConnector from 'pages/DataConnector'
 import Networks from 'pages/Networks/Networks'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
@@ -39,6 +38,7 @@ import ManageWallets from 'pages/Wallets/ManageWallets'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
+import SingleConnection from 'pages/Connections/SingleConnection'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -52,7 +52,6 @@ function MainNavigator() {
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
       <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
       <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
-      <Stack.Screen name={'DataConnector'} component={DataConnector} />
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
@@ -98,6 +97,7 @@ function MainNavigator() {
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
       <Stack.Screen name={'Networks'} component={Networks} />
       <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
+      <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
     </Stack.Navigator>
   )
 }
