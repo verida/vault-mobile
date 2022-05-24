@@ -9,6 +9,7 @@ import Home from 'pages/Dashboard/Home'
 import Profiles from 'pages/Dashboard/Profiles'
 import Folders from 'pages/Data/Folders'
 import Tokens from 'pages/Tokens/Dashboard'
+import DataConnector from 'pages/Connections/DataConnector'
 // import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
@@ -46,6 +47,15 @@ function DashboardNavigator() {
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name='md-person-sharp' size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={'Connections'}
+        component={DataConnector}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='file-tray-full' size={24} color={color} />
           ),
         }}
       />
