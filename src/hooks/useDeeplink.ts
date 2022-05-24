@@ -12,15 +12,22 @@ export function useDeeplink(
       const parsedUrl = parse(url, true)
       const { pathname, query } = parsedUrl
       let screenName: keyof MainStackParams
+      let type
       switch (pathname) {
         //TODO: Handle more deeplink thre
         case '/connection-success':
-          screenName = 'DataConnector'
+          screenName = 'Connections'
+          type = 'tab'
           break
         default:
+          type = 'screen'
           screenName = 'LoginRequest'
       }
-      navigation.navigate(screenName, query as never)
+      if (type === 'tab') {
+        navigation.jumpTo(screenName, query as never)
+      } else {
+        navigation.navigate(screenName, query as never)
+      }
     } catch (error) {
       Sentry.captureException(error)
     }
