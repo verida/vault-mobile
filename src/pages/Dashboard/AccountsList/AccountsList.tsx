@@ -50,6 +50,7 @@ function AccountsList(props: AccountsListProps) {
     }
 
     fetchData()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSelectedOnly])
 
   const renderDivider = () => <View style={styles.divider} />
