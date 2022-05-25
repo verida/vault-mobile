@@ -30,6 +30,7 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: any
   item: any
+  setCopyUrl: any
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
@@ -65,6 +66,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         const issuedCredential =
           await shareCredential.issueEncryptedPresentation(item)
         setCredUri(issuedCredential.publicUri)
+        props.setCopyUrl(issuedCredential.publicUri)
         setVerified(true)
         setLoading(false)
       } catch (error) {
