@@ -1,4 +1,4 @@
-// import { utils } from 'ethers'
+import { utils } from 'ethers'
 import isEmpty from 'lodash/isEmpty'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -56,14 +56,10 @@ export default (props) => {
     try {
       setProcessing(true)
       const cleanedPhrase = cleanSeedPhrase(phrase)
-      /**
-       * @todo Need to check why isValidMnemonic function is not available in ethers
-       * This could be deprecated in latest version or caused by a regression due to recent patch
-       */
-      // const isValid = utils.HDNode.isValidMnemonic(cleanedPhrase)
-      // if (!isValid) {
-      //   showError(true)
-      // }
+      const isValid = utils.isValidMnemonic(cleanedPhrase)
+      if (!isValid) {
+        showError(true)
+      }
       const result = await AccountManager.getInstance().importAccount(
         cleanedPhrase
       )
