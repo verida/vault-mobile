@@ -228,12 +228,12 @@ const Home = (props) => {
 
   async function onLogoutAccounts(dids) {
     setLoading(true)
-    props.navigation.navigate('Home')
     // Only flush Redux store if the current account is logged out
     if (dids.includes(AccountManager.getInstance().getSelectedAccount().did)) {
       logout()
     }
     await AccountManager.getInstance().logout(dids)
+    props.navigation.navigate('Home')
     await refresh()
     setLoading(false)
   }

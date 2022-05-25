@@ -50,7 +50,7 @@ function AccountsList(props: AccountsListProps) {
     }
 
     fetchData()
-  }, [selectedDids, showSelectedOnly])
+  }, [showSelectedOnly])
 
   const renderDivider = () => <View style={styles.divider} />
 
