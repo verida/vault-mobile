@@ -41,6 +41,16 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
 Sentry.init({
   dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
   environment: Config.SENTRY_ENVIRONMENT,
+  beforeSend: (event, hint) => {
+    if (__DEV__) {
+      const error = hint?.originalException || hint?.syntheticException || event
+      // Log error on dev mode
+      // eslint-disable-next-line no-console
+      console.error(error, (error as Error).stack)
+      return null // this drops the event and nothing will be send to sentry
+    }
+    return event
+  },
 })
 
 function App() {

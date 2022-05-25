@@ -1,4 +1,9 @@
 import update from 'immutability-helper'
+import debounce from 'lodash.debounce'
+import { applyMiddleware, createStore } from 'redux'
+import { batchedSubscribe } from 'redux-batched-subscribe'
+import { composeWithDevTools } from 'redux-devtools-extension'
+import thunk from 'redux-thunk'
 
 import {
   ADD_ACCOUNT,
@@ -362,3 +367,20 @@ export const mainReducer = (state = initialState, action) => {
       return state
   }
 }
+
+const debounceNotify = debounce((notify) => notify(), 30)
+
+const composeEnhancers = composeWithDevTools({
+  // Specify here name, actionsBlacklist, actionsCreators and other options
+})
+
+const middleware = [thunk]
+
+export default createStore(
+  reducer,
+  composeEnhancers(
+    applyMiddleware(...middleware),
+    batchedSubscribe(debounceNotify)
+    // other store enhancers if any
+  )
+)

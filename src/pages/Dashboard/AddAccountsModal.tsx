@@ -30,7 +30,6 @@ export type AddAccountsModalProps = Omit<
   showLogout: boolean
 }
 
-// eslint-disable-next-line no-shadow
 enum Step {
   INITIAL,
   MANAGE_ACCOUNT,
@@ -219,12 +218,15 @@ function AddAccountsModal(props: AddAccountsModalProps) {
       onClose={onPressClose}
       titleIcon={titleIcon}
       {...rest}>
-      {step === Step.INITIAL || step === Step.MANAGE_ACCOUNT ? (
+      {step === Step.INITIAL ||
+      step === Step.MANAGE_ACCOUNT ||
+      step === Step.CONFIRM_LOGOUT ? (
         <AccountsList
           onSelectAccount={onSelectAccountPress}
           containerStyle={styles.accountsList}
           selectedDids={selectedDids}
           multipleSelect={step === Step.MANAGE_ACCOUNT}
+          showSelectedOnly={step === Step.CONFIRM_LOGOUT}
         />
       ) : (
         <View style={styles.space} />

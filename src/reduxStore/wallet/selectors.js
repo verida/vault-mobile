@@ -105,6 +105,11 @@ export const getAllWallets = (state) => {
   return state.wallets.data || []
 }
 
+export const getWalletCount = (state) => {
+  const allWallets = getAllWallets(state)
+  return Object.keys(allWallets).length || 0
+}
+
 export const getWalletsData = createSelector(
   getSelectedWallet,
   getAllWallets,

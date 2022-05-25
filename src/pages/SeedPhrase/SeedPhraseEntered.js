@@ -56,7 +56,7 @@ export default (props) => {
     try {
       setProcessing(true)
       const cleanedPhrase = cleanSeedPhrase(phrase)
-      const isValid = utils.HDNode.isValidMnemonic(cleanedPhrase)
+      const isValid = utils.isValidMnemonic(cleanedPhrase)
       if (!isValid) {
         showError(true)
       }
