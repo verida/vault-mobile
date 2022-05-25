@@ -8,11 +8,11 @@ import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import InputStyles from 'styles/inputs'
 
-export default ({ visible, hideModal, data, onPressRename }) => {
-  const [name, setName] = useState(data.label)
+export default ({ visible, hideModal, onCreateNewWallet }) => {
+  const [name, setName] = useState('')
 
-  const onPressSave = () => {
-    onPressRename(data.id, { name })
+  const onPressSend = () => {
+    onCreateNewWallet({ name })
     hideModal()
   }
 
@@ -26,7 +26,7 @@ export default ({ visible, hideModal, data, onPressRename }) => {
           icon: <Icon name='close' style={{ color: '#000' }} />,
           action: () => hideModal(),
         }}
-        title='Rename wallet'
+        title='Create wallet'
       />
       <Layout style={styles.container}>
         <View style={styles.content}>
@@ -45,17 +45,11 @@ export default ({ visible, hideModal, data, onPressRename }) => {
         </View>
         <View style={styles.footer}>
           <Button
-            style={styles.cancelButton}
-            color='transparent-border'
-            onPress={() => hideModal()}>
-            Cancel
-          </Button>
-          <Button
-            style={styles.saveButton}
+            style={styles.addWalletButton}
             color='primary'
             disabled={!name}
-            onPress={onPressSave}>
-            Save
+            onPress={onPressSend}>
+            Create Wallet
           </Button>
         </View>
       </Layout>
@@ -75,14 +69,9 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   footer: {
-    justifyContent: 'space-between',
-    flexDirection: 'row',
+    alignItems: 'center',
   },
-  cancelButton: {
-    flex: 1,
-    marginRight: 20,
-  },
-  saveButton: {
-    flex: 1,
+  addWalletButton: {
+    alignSelf: 'stretch',
   },
 })

@@ -27,9 +27,9 @@ export type AddAccountsModalProps = Omit<
   onImport: () => void
   onSelectAccount: (did: string) => void
   onLogoutAccounts: (dids: string[]) => void
+  showLogout: boolean
 }
 
-// eslint-disable-next-line no-shadow
 enum Step {
   INITIAL,
   MANAGE_ACCOUNT,
@@ -82,15 +82,20 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onSelectAccount,
     onClose,
     onLogoutAccounts,
+    showLogout,
     ...rest
   } = props
-  const [step, setStep] = useState<Step>(Step.INITIAL)
+
+  const [step, setStep] = useState<Step>(
+    showLogout ? Step.MANAGE_ACCOUNT : Step.INITIAL
+  )
   const [selectedDids, setSelectedDids] = useState<string[]>([])
   const title = getTileFromStep(step)
   const titleIcon = getTitleIconFromStep(step)
 
   function onPressClose() {
-    setStep(0)
+    if (showLogout) setStep(Step.MANAGE_ACCOUNT)
+    else setStep(0)
     setSelectedDids([])
     onClose()
   }
@@ -129,7 +134,9 @@ function AddAccountsModal(props: AddAccountsModalProps) {
   }
 
   function onCancelLogout() {
-    setStep(Step.INITIAL)
+    if (showLogout) {
+      setStep(Step.MANAGE_ACCOUNT)
+    } else setStep(Step.INITIAL)
     setSelectedDids([])
   }
 

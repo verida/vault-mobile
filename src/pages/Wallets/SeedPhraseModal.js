@@ -5,17 +5,14 @@ import { StyleSheet, View } from 'react-native'
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
 
-export default ({ visible, toggleConfirmModal }) => {
-  const key =
-    'Open despair creek road again ice least peach ball open transformer'
-
+export default ({ visible, toggleConfirmModal, phrase }) => {
   return (
     <BottomActionsModal
       visible={visible}
       animated={true}
       animationType={'slide'}
       title={'Seed Phrase'}
-      message={key}
+      message={phrase}
       footer={
         <View style={styles.modalFooter}>
           <Button
@@ -27,7 +24,7 @@ export default ({ visible, toggleConfirmModal }) => {
           <Button
             color={'primary'}
             style={styles.copyButton}
-            onPress={() => Clipboard.setString(key)}>
+            onPress={() => Clipboard.setString(phrase)}>
             Copy
           </Button>
         </View>

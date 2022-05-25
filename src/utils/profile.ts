@@ -13,7 +13,7 @@ export async function getUserCountryCode() {
   }
   const vault = AccountManager.getInstance().vault as any
   const publicData = await vault.profiles.public.getMany()
-  const userCountry = get<string>(publicData, 'country')
+  const userCountry = get(publicData, 'country') as string
 
   return getCountryCode(userCountry)
 }
