@@ -39,15 +39,18 @@ import {
   LIGHT_ORANGE_COLOR,
   ORANGE_COLOR,
   WHITE_COLOR,
-} from '../../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+} from 'constants/color'
+import {
+  PROFILE_URL
+} from 'constants/url'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import {
   setNavigationLink as setNavigationLinkAction,
   setNewMessagesCount as setNewMessagesCountAction,
-} from '../../reduxStore/general/actions'
+} from 'reduxStore/general/actions'
 
-const DefaultAvatar = require('../../assets/stubs/avatar.png')
-const LogoImg = require('../../assets/vault-logo.png')
+const DefaultAvatar = require('assets/stubs/avatar.png')
+const LogoImg = require('assets/vault-logo.png')
 
 const SHOW_BANNER_KEY = 'show_banner'
 
@@ -154,7 +157,7 @@ const Home = (props) => {
         setAvatarSource(avatar)
 
         setInfo({
-          address: _selectedAccount.did,
+          address: PROFILE_URL + _selectedAccount.did,
           name,
         })
         const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
