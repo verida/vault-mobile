@@ -37,7 +37,7 @@ const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 const MODAL_HORIZONTAL_MARGIN = 20
 
 function CredentialDataItem(props: CredentialDataItemProps) {
-  const { data, item, ...rest } = props
+  const { data, item, setCopyUrl, ...rest } = props
   const [credUri, setCredUri] = useState('')
   const [loading, setLoading] = useState(false)
   const [verified, setVerified] = useState(false)
@@ -66,7 +66,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         const issuedCredential =
           await shareCredential.issueEncryptedPresentation(item)
         setCredUri(issuedCredential.publicUri)
-        props.setCopyUrl(issuedCredential.publicUri)
+        setCopyUrl(issuedCredential.publicUri)
         setVerified(true)
         setLoading(false)
       } catch (error) {
@@ -77,7 +77,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     }
 
     init()
-  }, [item])
+  }, [item, setCopyUrl])
 
   if (isEmpty(data.data)) {
     return null

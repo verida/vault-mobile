@@ -1,12 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
-import Toast from 'react-native-root-toast'
-import { Icon } from 'native-base'
 import didJWT from 'did-jwt'
 import { get } from 'lodash'
-import { Container, Content, List } from 'native-base'
+import { Container, Content, Icon, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
+import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 
 import { getPublicProfile } from 'api/utils'
@@ -69,15 +68,20 @@ const DataItem = (props) => {
         backgroundColor: 'rgba(4, 17, 51, 1)',
       })
     },
-    icon: <Icon
-      name='copy-outline'
-      style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
-    />
+    icon: (
+      <Icon
+        name='copy-outline'
+        style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
+      />
+    ),
   }
 
   return (
     <Container>
-      <NavigationHeader title={folder.config.title} right={isCredential && copyUrl ? right : null} />
+      <NavigationHeader
+        title={folder.config.title}
+        right={isCredential && copyUrl ? right : null}
+      />
       <Content contentContainerStyle={styles.content}>
         {loading ? (
           <LoadingView />
