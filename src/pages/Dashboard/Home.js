@@ -22,7 +22,16 @@ import { fetchInboxCount, getProfile } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
+import {
+  BLACK_COLOR_OPACITY,
+  BLACK_ORIGIN_COLOR,
+  LIGHT_ORANGE_COLOR,
+  ORANGE_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
@@ -31,20 +40,8 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import { logout as logoutAction } from 'reduxStore/general/actions'
-
 import {
-  BLACK_COLOR_OPACITY,
-  BLACK_ORIGIN_COLOR,
-  LIGHT_ORANGE_COLOR,
-  ORANGE_COLOR,
-  WHITE_COLOR,
-} from 'constants/color'
-import {
-  PROFILE_URL
-} from 'constants/url'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import {
+  logout as logoutAction,
   setNavigationLink as setNavigationLinkAction,
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
