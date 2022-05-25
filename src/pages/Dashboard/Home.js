@@ -233,6 +233,7 @@ const Home = (props) => {
       logout()
     }
     await AccountManager.getInstance().logout(dids)
+    props.navigation.navigate('Home')
     await refresh()
     setLoading(false)
   }
