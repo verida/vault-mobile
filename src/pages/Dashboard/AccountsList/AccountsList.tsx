@@ -16,7 +16,7 @@ export type AccountsListProps = {
   containerStyle: ViewStyle
   onSelectAccount: (did: string) => void
   selectedDids: string[]
-  multipleSelect?: boolean,
+  multipleSelect?: boolean
   showSelectedOnly?: boolean
 }
 
@@ -35,24 +35,22 @@ function AccountsList(props: AccountsListProps) {
     async function fetchData() {
       setLoading(true)
       let normalizedData = await fetchPublicProfileData()
-      if(showSelectedOnly){
-        console.log('Ented here')
+      if (showSelectedOnly) {
         const selectedData: any = {}
         Object.keys(normalizedData).map((key) => {
-          if(selectedDids.includes(key)){
-            console.log('here')
+          if (selectedDids.includes(key)) {
             selectedData[key] = normalizedData[key]
           }
         })
         normalizedData = selectedData
       }
-      
+
       setData(Object.values(normalizedData))
       setLoading(false)
     }
 
     fetchData()
-  }, [showSelectedOnly])
+  }, [selectedDids, showSelectedOnly])
 
   const renderDivider = () => <View style={styles.divider} />
 
@@ -75,7 +73,7 @@ function AccountsList(props: AccountsListProps) {
         />
       )
     },
-    [onSelectAccount, selectedDids, multipleSelect, showSelectedOnly]
+    [onSelectAccount, selectedDids, multipleSelect]
   )
 
   if (loading) {

@@ -218,7 +218,9 @@ function AddAccountsModal(props: AddAccountsModalProps) {
       onClose={onPressClose}
       titleIcon={titleIcon}
       {...rest}>
-      {step === Step.INITIAL || step === Step.MANAGE_ACCOUNT || step === Step.CONFIRM_LOGOUT ? (
+      {step === Step.INITIAL ||
+      step === Step.MANAGE_ACCOUNT ||
+      step === Step.CONFIRM_LOGOUT ? (
         <AccountsList
           onSelectAccount={onSelectAccountPress}
           containerStyle={styles.accountsList}
