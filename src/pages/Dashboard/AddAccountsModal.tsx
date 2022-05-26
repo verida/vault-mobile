@@ -130,15 +130,11 @@ function AddAccountsModal(props: AddAccountsModalProps) {
   }
 
   async function onLogoutPress() {
-    if (setLoading) {
-      setLoading(true)
-    }
+    setLoading?.(true)
     setStep(0)
     onClose()
     await onLogoutAccounts(selectedDids)
-    if (setLoading) {
-      setLoading(false)
-    }
+    setLoading?.(false)
   }
 
   function onCancelLogout() {
