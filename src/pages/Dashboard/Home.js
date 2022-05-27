@@ -72,31 +72,46 @@ const Home = (props) => {
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
   const linkTo = useLinkTo()
+  const processDeepLink = (initialUrl) => {
+    if (initialUrl === null) {
+      return
+    }
+
+    // ignore for firebase links, let firebase handle them.
+    if (
+      initialUrl.includes('redirect') ||
+      initialUrl.includes('verida.page.link')
+    ) {
+      return
+    }
+
+    handleDeeplink(initialUrl)
+  }
 
   useEffect(() => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
-
-        if (initialUrl === null) {
-          return
-        }
-
-        // ignore for firebase links, let firebase handle them.
-        if (
-          initialUrl.includes('redirect') ||
-          initialUrl.includes('verida.page.link')
-        ) {
-          return
-        }
-
-        handleDeeplink(initialUrl)
+        processDeepLink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
       }
     }
 
     getUrl()
+  }, [handleDeeplink])
+
+  useEffect(() => {
+    const handleBackgroundDeepLink = async (event) => {
+      try {
+        const initialUrl = event.url
+        processDeepLink(initialUrl)
+      } catch (e) {
+        Sentry.captureException(e)
+      }
+    }
+
+    Linking.addEventListener('url', handleBackgroundDeepLink)
   }, [handleDeeplink])
 
   useEffect(() => {
