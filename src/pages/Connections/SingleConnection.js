@@ -4,11 +4,24 @@ import Text from 'components/Text'
 import { View, StyleSheet, Image } from 'react-native'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 
+import { SUCCESS_COLOR } from 'constants/color'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 
+import { connectionsList } from './DataConnector'
+
 export default ({ route, navigation }) => {
-  const { item } = route.params
+  const showSuccess =
+    route.params && route.params.provider && route.params.accessToken
+
+  useEffect(() => {
+    if (showSuccess) {
+      const { provider, ...others } = route.params
+      DataConnectorsManager.authComplete(provider, others)
+    }
+  }, [route.params.accessToken])
+
+  const item = connectionsList[route.params.provider]
   const { name } = item
   const [lastSync, setLastSync] = useState('9 hours ago')
   useEffect(() => {
@@ -38,6 +51,14 @@ export default ({ route, navigation }) => {
         }}
       />
       <Content contentContainerStyle={styles.contentContainer}>
+        {showSuccess && (
+          <View style={styles.successMessage}>
+            <Icon name='checkmark-circle' style={styles.successMessageIcon} />
+            <Text style={styles.successMessageText}>
+              Connection successfully established.
+            </Text>
+          </View>
+        )}
         <View style={styles.connectHeader}>
           <Image style={styles.itemIcon} source={item.icon} />
           <View style={styles.actionButtons}>
@@ -87,6 +108,17 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
   },
+  successMessage: {
+    backgroundColor: SUCCESS_COLOR,
+    padding: 15,
+    marginHorizontal: 15,
+    borderRadius: 5,
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginVertical: 10,
+  },
+  successMessageIcon: { color: '#fff', marginRight: 10 },
+  successMessageText: { color: '#FFF', flex: 1 },
   itemIcon: {
     width: 96,
     height: 96,
