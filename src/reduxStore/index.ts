@@ -5,6 +5,7 @@ import { persistReducer, persistStore } from 'redux-persist'
 import thunk from 'redux-thunk'
 
 import { mainReducer } from './mainReducer'
+import { walletReducer } from './wallet/reducer'
 import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
@@ -15,6 +16,7 @@ const persistConfig = {
 
 export const rootReducer = combineReducers({
   main: mainReducer,
+  wallet: walletReducer,
   walletConnect: walletConnectReducer,
 })
 
@@ -25,6 +27,11 @@ const composeEnhancers = composeWithDevTools({
 })
 
 const middleware = [thunk]
+
+if (__DEV__) {
+  const createDebugger = require('redux-flipper').default
+  middleware.push(createDebugger())
+}
 
 const store = createStore(
   persistedReducer,
