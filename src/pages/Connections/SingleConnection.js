@@ -8,30 +8,39 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 
 export default ({ route, navigation }) => {
-  const { item } = route.params
-  const { name } = item
-  const [lastSync, setLastSync] = useState('9 hours ago')
+  const connectionItem = route.params.item
+  const [syncStatus, setsyncStatus] = useState(connectionItem.syncStatus)
+  const [connection, setConnection] = useState(connectionItem)
   useEffect(() => {
-    // const syncInfo = DataConnectorsManager.syncInfo(name)
-    // if (syncInfo) {
-    //   setLastSync(syncInfo.syncLast)
-    // }
-  }, [item])
+    const load = async () => {
+      // upgrade our connection object to be a real connection instance from
+      // the DataConnectorsManager so we can call sync() etc.
+      const connectionInstance = await DataConnectorsManager.getConnection(connectionItem.name)
+      setConnection(connectionInstance)
+      setsyncStatus(connectionInstance.syncStatus)
+    }
+    load()
+
+    DataConnectorsManager.on("connectionUpdated", (conn: any) => {
+      setConnection(conn)
+      setsyncStatus(conn.syncStatus)
+    })
+  })
 
   const onPressConnect = () => {
-    DataConnectorsManager.initiateAuth(name)
+    connection.initiateAuth()
   }
   const onPressSync = () => {
-    DataConnectorsManager.sync(name)
+    connection.sync()
   }
   const onPressDisconnect = () => {
-    DataConnectorsManager.disconnect(name)
+    connection.disconnect()
   }
 
   return (
     <Container>
       <NavigationHeader
-        title={'Connect ' + item.label}
+        title={'Connect ' + connection.label }
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
@@ -39,9 +48,9 @@ export default ({ route, navigation }) => {
       />
       <Content contentContainerStyle={styles.contentContainer}>
         <View style={styles.connectHeader}>
-          <Image style={styles.itemIcon} source={item.icon} />
+          <Image style={styles.itemIcon} source={connection.icon} />
           <View style={styles.actionButtons}>
-            {item.status === 'disabled' ? (
+            {syncStatus === 'disabled' ? (
               <Button
                 color='transparent-border'
                 style={styles.actionButton}
@@ -60,18 +69,19 @@ export default ({ route, navigation }) => {
                   color='transparent-border'
                   style={styles.actionButton}
                   onPress={onPressSync}
-                  disabled={item.status === 'syncing'}>
+                  disabled={connection.syncStatus === 'syncing'}>
                   Sync
                 </Button>
               </>
             )}
           </View>
         </View>
-        {item.status !== 'disabled' && (
+        {connection.syncStatus !== 'disabled' && (
           <View style={styles.infoText}>
-            <Text>
-              Status: {item.status} (Last sync: {lastSync})
-            </Text>
+            <Text>Status: {connection.syncStatus}</Text>
+            {connection.syncLast ? (
+              <Text>Last sync: {connection.syncLast}</Text>
+            ) : undefined}
             <Text style={styles.disclaimer}>
               * During the developer preview, only the most recent 100 records
               are synchronized

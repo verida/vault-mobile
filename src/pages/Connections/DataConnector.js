@@ -14,36 +14,40 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
+function buildConnections(allConnectors: any) {
+  const finalConnectors = []
+  for (let connectorName in allConnectors) {
+    finalConnectors.push(allConnectors[connectorName].render())
+  }
 
-// possible states for status: syncing, disabled, active
-
-const list = [
-  {
-    label: 'Facebook',
-    name: 'facebook',
-    status: 'disabled',
-    icon: FacebookIcon,
-  },
-  {
-    label: 'Twitter',
-    name: 'twitter',
-    status: 'active',
-    icon: TwitterIcon,
-  },
-]
+  return finalConnectors
+}
 
 export default (props) => {
   const [linkParams] = useState(props.route.params)
-  const showSuccess =
-    linkParams && linkParams.provider && linkParams.accessToken
+  const showSuccess = linkParams && linkParams.provider && linkParams.accessToken
+
+  const [connectors, setConnectors] = useState([])
+  let allConnectors = []
 
   useEffect(() => {
-    if (showSuccess) {
-      const { provider, ...others } = linkParams
-      DataConnectorsManager.authComplete(provider, others)
+    const load = async () => {
+      if (showSuccess) {
+        const { provider, ...others } = linkParams
+        await DataConnectorsManager.authComplete(provider, others)
+      }
+
+      allConnectors = await DataConnectorsManager.getConnectors()
+      setConnectors(buildConnections(allConnectors))
+
+      DataConnectorsManager.on("connectionUpdated", (conn: any) => {
+        // Connection has been updated, so update UI
+        allConnectors[conn.name] = conn
+        setConnectors(buildConnections(allConnectors))
+      })
     }
+
+    load()
   }, [showSuccess])
 
   return (
@@ -65,7 +69,7 @@ export default (props) => {
           </View>
         )}
         <FlatList
-          data={list}
+          data={connectors}
           style={styles.connectionList}
           renderItem={({ item }) => {
             return (
@@ -78,12 +82,11 @@ export default (props) => {
                   <Image style={styles.itemIcon} source={item.icon} />
                   <Text style={styles.itemText}>{item.label}</Text>
                 </View>
-                <Text style={styles.itemStatusText}>{item.status}</Text>
+                <Text style={styles.itemStatusText}>{item.syncStatus}</Text>
               </TouchableOpacity>
             )
           }}
         />
-        {/* <Text>{JSON.stringify(linkParams)}</Text> */}
       </Content>
     </Container>
   )
