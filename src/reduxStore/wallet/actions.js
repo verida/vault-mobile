@@ -74,7 +74,7 @@ export const getBalances = () => {
     dispatch({ type: BALANCES_FETCH_START })
 
     try {
-      const wallets = getWalletsData(getState().main)
+      const wallets = getWalletsData(getState())
 
       let balanceData = await dataHelper.getAllBalances(wallets)
 
@@ -98,7 +98,7 @@ export const getBalances = () => {
 export const getTransactionsForToken = (assetID) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
-    const wallets = getWalletsData(getState().main)
+    const wallets = getWalletsData(getState())
     const transactionsData = await dataHelper.getTransactions(wallets, assetID)
 
     if (transactionsData) {
@@ -118,7 +118,7 @@ export const getTransactionsForToken = (assetID) => {
 export const getTransactionDetails = (transactionID, tokenAddress) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
-    const wallets = getWalletsData(getState().main)
+    const wallets = getWalletsData(getState())
 
     let transactionData = await dataHelper.getTransactionDetails(
       transactionID,
@@ -159,6 +159,7 @@ export const removeUserWallets = () => {
 
 export const setSelectedWallet = (walletId) => {
   return async (dispatch) => {
+    console.log(walletId, 'walletId setSelectedWallet')
     await dispatch({
       type: SET_SELECTED_WALLET,
       data: walletId,
@@ -169,7 +170,7 @@ export const setSelectedWallet = (walletId) => {
 export const getTransactionParams = (transactionData) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
-    const wallets = getWalletsData(getState().main)
+    const wallets = getWalletsData(getState())
 
     const params = await dataHelper.getTransactionParams(
       transactionData,
@@ -197,7 +198,7 @@ export const sendTransaction = (
 ) => {
   return async (dispatch, getState) => {
     dispatch({ type: SEND_TRANSACTION_START })
-    const state = getState().main
+    const state = getState()
 
     try {
       const txData = await dataHelper.sendTransaction(
@@ -244,7 +245,7 @@ export const createNewWallet = (data) => {
           'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
         )
 
-      const currentWalletsData = getAllWallets(getState().main)
+      const currentWalletsData = getAllWallets(getState())
 
       const wallet = {
         mnemonic: userHDWalletMnemonic,

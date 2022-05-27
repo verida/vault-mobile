@@ -2,9 +2,9 @@ import { createSelector } from 'reselect'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
 import { formatTokenQuantity, handleTokenDecimals } from 'wallet/helpers/tokens'
 
-export const getPricingData = (state) => state.pricing.data || {}
+export const getPricingData = (state) => state.wallet.pricing.data || {}
 
-export const getBalancesData = (state) => state.balances.data || {}
+export const getBalancesData = (state) => state.wallet.balances.data || {}
 
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
@@ -85,7 +85,8 @@ export const selectSingleTokenData = (state, assetID) => {
 }
 
 export const getTokensData = (state) => {
-  const loading = state.pricing.fetching && state.balances.fetching
+  const loading =
+    state.wallet.pricing.fetching && state.wallet.balances.fetching
 
   return {
     listAndTotal: getListAndTotal(state),
@@ -94,15 +95,15 @@ export const getTokensData = (state) => {
 }
 
 export const getSelectedWallet = (state) => {
-  return state.selectedWallet
+  return state.wallet.selectedWallet
 }
 
 export const getWalletProcessingState = (state) => {
-  return state.walletProcessing.loading
+  return state.wallet.walletProcessing.loading
 }
 
 export const getAllWallets = (state) => {
-  return state.wallets.data || []
+  return state.wallet.wallets.data || []
 }
 
 export const getWalletCount = (state) => {
@@ -123,11 +124,11 @@ export const getWallets = createSelector(
 )
 
 export const getAddressesForWallet = (state, ID) => {
-  return state.wallets.data[ID] || {}
+  return state.wallet.wallets.data[ID] || {}
 }
 
 export const selectPendingTransactions = (state, assetID) => {
-  const pendingTransactions = state.pendingTransactions.data
+  const pendingTransactions = state.wallet.pendingTransactions.data
   const transactionsForAsset = pendingTransactions.filter((ele) => {
     return ele.token.address === assetID
   })
@@ -139,7 +140,7 @@ export const selectPendingTransactions = (state, assetID) => {
 }
 
 export const selectTransactions = (state, assetID) => {
-  const transactions = state.transactions.data || []
+  const transactions = state.wallet.transactions.data || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx) => {
@@ -161,7 +162,7 @@ export const selectTransactions = (state, assetID) => {
 }
 
 export const selectTransactionsData = (state, assetID) => {
-  const { fetching, error } = state.transactions
+  const { fetching, error } = state.wallet.transactions
 
   return {
     list: selectTransactions(state, assetID),
@@ -171,19 +172,19 @@ export const selectTransactionsData = (state, assetID) => {
 }
 
 export const getTransactionParamsData = (state) => {
-  return state.transactionParams.data || {}
+  return state.wallet.transactionParams.data || {}
 }
 
 export const selectSentTransaction = (state) => {
-  return state.sentTransaction
+  return state.wallet.sentTransaction
 }
 
 export const selectTransaction = (state) => {
-  return state.transactionDetails.data || {}
+  return state.wallet.transactionDetails.data || {}
 }
 
 export const selectTransactionData = (state) => {
-  const { fetching, error } = state.transactionDetails
+  const { fetching, error } = state.wallet.transactionDetails
 
   return {
     transaction: selectTransaction(state),
