@@ -1,5 +1,5 @@
 import { Container, Icon, Content } from 'native-base'
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import Text from 'components/Text'
 import {
   View,
@@ -8,10 +8,8 @@ import {
   Image,
   TouchableOpacity,
 } from 'react-native'
-import DataConnectorsManager from 'api/DataConnectorsManager'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 const FacebookIcon = require('assets/social_icons/facebook.png')
@@ -19,33 +17,22 @@ const TwitterIcon = require('assets/social_icons/twitter.png')
 
 // possible states for status: syncing, disabled, active
 
-const list = [
-  {
+export const connectionsList = {
+  facebook: {
     label: 'Facebook',
     name: 'facebook',
     status: 'disabled',
     icon: FacebookIcon,
   },
-  {
+  twitter: {
     label: 'Twitter',
     name: 'twitter',
     status: 'active',
     icon: TwitterIcon,
   },
-]
+}
 
 export default (props) => {
-  const [linkParams] = useState(props.route.params)
-  const showSuccess =
-    linkParams && linkParams.provider && linkParams.accessToken
-
-  useEffect(() => {
-    if (showSuccess) {
-      const { provider, ...others } = linkParams
-      DataConnectorsManager.authComplete(provider, others)
-    }
-  }, [showSuccess])
-
   return (
     <Container>
       <NavigationHeader
@@ -56,22 +43,16 @@ export default (props) => {
         }}
       />
       <Content contentContainerStyle={styles.contentContainer}>
-        {showSuccess && (
-          <View style={styles.successMessage}>
-            <Icon name='checkmark-circle' style={styles.successMessageIcon} />
-            <Text style={styles.successMessageText}>
-              Connection successfully established.
-            </Text>
-          </View>
-        )}
         <FlatList
-          data={list}
+          data={Object.values(connectionsList)}
           style={styles.connectionList}
           renderItem={({ item }) => {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.navigate('SingleConnection', { item })
+                  props.navigation.navigate('SingleConnection', {
+                    provider: item.name,
+                  })
                 }}
                 style={styles.connectionItem}>
                 <View style={styles.connectionItemIconLabel}>
@@ -93,17 +74,6 @@ const styles = StyleSheet.create({
   contentContainer: {
     flex: 1,
   },
-  successMessage: {
-    backgroundColor: SUCCESS_COLOR,
-    padding: 15,
-    marginHorizontal: 15,
-    borderRadius: 5,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 10,
-  },
-  successMessageIcon: { color: '#fff', marginRight: 10 },
-  successMessageText: { color: '#FFF', flex: 1 },
   connectionList: { marginTop: 20 },
   connectionItem: {
     flexDirection: 'row',
