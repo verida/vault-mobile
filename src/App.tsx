@@ -19,9 +19,11 @@ import { Provider } from 'react-redux'
 import store from 'reduxStore'
 
 import SwitchAccountToast from 'components/SwitchAccountToast'
+import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
 import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
+import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
 
 configureNotifications()
@@ -70,6 +72,8 @@ function App() {
   const init = async () => {
     await loadFonts()
   }
+
+  if (SHUTDOWN_APP) return <OutOfService />
 
   const AppContent = (
     <Provider store={store}>
