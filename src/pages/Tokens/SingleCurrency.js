@@ -144,8 +144,7 @@ const SingleCurrency = ({
   )
 }
 
-const mapStateToProps = (rootState, props) => {
-  const state = rootState.main
+const mapStateToProps = (state, props) => {
   return {
     transactions: selectTransactionsData(
       state,

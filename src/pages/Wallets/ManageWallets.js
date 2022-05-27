@@ -171,8 +171,7 @@ const styles = StyleSheet.create({
   content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     wallets: getAllWallets(state),
     walletCount: getWalletCount(state),

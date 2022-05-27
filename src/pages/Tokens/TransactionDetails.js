@@ -48,8 +48,7 @@ const TransactionDetails = ({
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     data: selectTransactionData(state),
   }
