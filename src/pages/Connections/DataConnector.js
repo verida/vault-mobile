@@ -32,6 +32,8 @@ export default (props) => {
 
   useEffect(() => {
     const load = async () => {
+      DataConnectorsManager.triggerSync()
+
       if (showSuccess) {
         const { provider, ...others } = linkParams
         await DataConnectorsManager.authComplete(provider, others)

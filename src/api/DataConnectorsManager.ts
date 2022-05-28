@@ -4,6 +4,7 @@ import axios from 'axios'
 import EventEmitter from 'events'
 import { StringIterator, times } from 'lodash'
 import { Alert, Linking } from 'react-native'
+import moment from 'moment'
 
 import AccountManager from './AccountManager'
 
@@ -89,25 +90,9 @@ export default class DataConnectorsManager {
 
     DataConnectorsManager._connections[connectorName] = connector
     return connector
-
-    // @todo: load connector info from vault datastore
-    /*switch (connectorName) {
-      case 'twitter':
-        return {
-          accessToken: '',
-          refreshToken: '',
-          nonce: '1',
-        }
-      case 'facebook':
-        return {
-          accessToken: ``,
-          requestToken: undefined,
-          nonce: '1',
-        }
-    }*/
   }
 
-  static async getConnectors() {
+  static async getConnectors(): Promise<any> {
     const connections: any = Object.values(CONNECTIONS)
     const connectors = {}
     for (let i = 0; i < connections.length; i++) {
@@ -116,6 +101,23 @@ export default class DataConnectorsManager {
     }
 
     return connectors
+  }
+
+  static async triggerSync() {
+    const connections = await DataConnectorsManager.getConnectors()
+    const now = moment().unix()
+
+    for (const connectorName in connections) {
+      const connection = connections[connectorName]
+      if (!connection.syncNext) {
+        continue
+      }
+
+      const next = moment(connection.syncNext).unix()
+      if (next < now) {
+        connection.sync()
+      }
+    }
   }
 }
 
@@ -149,6 +151,7 @@ class DataConnection extends EventEmitter {
     this.syncStatus = 'disabled'
     this.icon = CONNECTIONS[this.name].icon
     this.label = CONNECTIONS[this.name].label
+    this.syncFrequency = 'hour'
   }
 
   public async save(): Promise<any> {
@@ -239,14 +242,19 @@ class DataConnection extends EventEmitter {
   }
 
   public async sync(): Promise<void> {
-    console.log(`Syncing ${this.name}`)
+    if (this.syncStatus === 'processing') {
+      // @todo: check if the sync has been processing for more than 10 minutes, then reset
+      return
+    }
+
+    console.log(`Syncing ${this.name}!`)
 
     const accessToken = this.accessToken
     const refreshToken = this.refreshToken
     const nonce = 1 //connectorInfo!.nonce
 
     this.syncLastError = undefined
-    this.syncStatus = "processing"
+    this.syncStatus = 'processing'
     DataConnectorsManager.emit('connectionUpdated', this)
 
     try {
@@ -326,7 +334,8 @@ class DataConnection extends EventEmitter {
 
       this.syncLast = (new Date()).toISOString()
       this.syncLastError = undefined
-      this.syncStatus = "active"
+      this.syncStatus = 'active'
+      this.syncNext = moment().add(1, this.syncFrequency).toISOString()
 
       await this.save()
       console.log(`Sync done and sync status updated`)
@@ -339,8 +348,8 @@ class DataConnection extends EventEmitter {
   // @todo: Disconnect a connector so it stops syncing
   public async disconnect() {
     console.log(`Disconnect ${this.name}`)
-    this.syncStatus = "disabled"
-    const res = await this.save()
+    this.syncStatus = 'disabled'
+    await this.save()
   }
 
   public render() {
@@ -350,6 +359,12 @@ class DataConnection extends EventEmitter {
       syncStatus: this.syncStatus,
       name: this.name
     }
+  }
+
+  public timeSince(val) {
+    const now = moment(new Date())
+    const duration = moment.duration(now.diff(moment(val)))
+    return duration.humanize()
   }
 
 }

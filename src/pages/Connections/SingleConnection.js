@@ -6,6 +6,7 @@ import DataConnectorsManager from 'api/DataConnectorsManager'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
+import moment from 'moment'
 
 export default ({ route, navigation }) => {
   const connectionItem = route.params.item
@@ -21,7 +22,7 @@ export default ({ route, navigation }) => {
     }
     load()
 
-    DataConnectorsManager.on("connectionUpdated", (conn: any) => {
+    DataConnectorsManager.on('connectionUpdated', (conn: any) => {
       setConnection(conn)
       setsyncStatus(conn.syncStatus)
     })
@@ -80,7 +81,10 @@ export default ({ route, navigation }) => {
           <View style={styles.infoText}>
             <Text>Status: {connection.syncStatus}</Text>
             {connection.syncLast ? (
-              <Text>Last sync: {connection.syncLast}</Text>
+              <Text>Last sync: {connection.timeSince(connection.syncLast)} ago</Text>
+            ) : undefined}
+            {connection.syncNext ? (
+              <Text>Next sync: {connection.timeSince(connection.syncNext)}</Text>
             ) : undefined}
             <Text style={styles.disclaimer}>
               * During the developer preview, only the most recent 100 records
