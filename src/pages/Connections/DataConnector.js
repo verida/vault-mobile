@@ -1,5 +1,5 @@
 import { Container, Icon, Content } from 'native-base'
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Text from 'components/Text'
 import {
   View,
@@ -11,28 +11,39 @@ import {
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import DataConnectorsManager from 'api/DataConnectorsManager'
 
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
+function buildConnections(allConnectors: any) {
+  const finalConnectors = []
+  for (let connectorName in allConnectors) {
+    finalConnectors.push(allConnectors[connectorName].render())
+  }
 
-// possible states for status: syncing, disabled, active
-
-export const connectionsList = {
-  facebook: {
-    label: 'Facebook',
-    name: 'facebook',
-    status: 'disabled',
-    icon: FacebookIcon,
-  },
-  twitter: {
-    label: 'Twitter',
-    name: 'twitter',
-    status: 'active',
-    icon: TwitterIcon,
-  },
+  console.log(finalConnectors)
+  return finalConnectors
 }
 
 export default (props) => {
+  const [connectors, setConnectors] = useState([])
+
+  useEffect(() => {
+    const load = async () => {
+      DataConnectorsManager.triggerSync()
+
+      const currentConnectors = await DataConnectorsManager.getConnectors()
+      setConnectors(buildConnections(currentConnectors))
+
+      DataConnectorsManager.on('connectionUpdated', async () => {
+        console.log('connectionupdated in DCM!')
+        // Connection has been updated, so update UI
+        const conns = await DataConnectorsManager.getConnectors()
+        setConnectors(buildConnections(conns))
+      })
+    }
+
+    load()
+  }, [])
+
   return (
     <Container>
       <NavigationHeader
@@ -44,7 +55,7 @@ export default (props) => {
       />
       <Content contentContainerStyle={styles.contentContainer}>
         <FlatList
-          data={Object.values(connectionsList)}
+          data={connectors}
           style={styles.connectionList}
           renderItem={({ item }) => {
             return (
@@ -59,12 +70,11 @@ export default (props) => {
                   <Image style={styles.itemIcon} source={item.icon} />
                   <Text style={styles.itemText}>{item.label}</Text>
                 </View>
-                <Text style={styles.itemStatusText}>{item.status}</Text>
+                <Text style={styles.itemStatusText}>{item.syncStatus}</Text>
               </TouchableOpacity>
             )
           }}
         />
-        {/* <Text>{JSON.stringify(linkParams)}</Text> */}
       </Content>
     </Container>
   )

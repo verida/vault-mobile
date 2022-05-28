@@ -205,14 +205,6 @@ const Home = (props) => {
     })
   }
 
-  function onConnectPress(connector) {
-    DataConnectorsManager.initiateAuth(connector)
-  }
-
-  async function onSyncPress(connector) {
-    DataConnectorsManager.sync(connector)
-  }
-
   function toggleAddAccountsModal() {
     setShowAddAccounts((prevState) => !prevState)
   }
@@ -305,26 +297,6 @@ const Home = (props) => {
               onPress={onScanQRPress}>
               <QRCodeIcon />
               <Text style={style.scanQRButtonText}>Scan QR</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={style.tempButton}
-              onPress={() => onConnectPress('facebook')}>
-              <Text style={style.tempButtonText}>+ FB</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={style.tempButton}
-              onPress={() => onConnectPress('twitter')}>
-              <Text style={style.tempButtonText}>+ Twitter</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={style.tempButton}
-              onPress={() => onSyncPress('facebook')}>
-              <Text style={style.tempButtonText}>Sync FB</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={style.tempButton}
-              onPress={() => onSyncPress('twitter')}>
-              <Text style={style.tempButtonText}>Sync Twitter</Text>
             </TouchableOpacity>
           </>
         )}

@@ -7,44 +7,79 @@ import DataConnectorsManager from 'api/DataConnectorsManager'
 import { SUCCESS_COLOR } from 'constants/color'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
+import moment from 'moment'
 
-import { connectionsList } from './DataConnector'
+const calculateNextSync = function(conn: any) {
+  if (!conn.syncNext) {
+    return
+  }
+
+  const duration = conn.duration(conn.syncNext)
+  if (duration > 0) {
+    return 'now'
+  }
+
+  return duration.humanize()
+}
 
 export default ({ route, navigation }) => {
-  const showSuccess =
-    route.params && route.params.provider && route.params.accessToken
+  const provider = route.params.provider
+  const connectionInfo = DataConnectorsManager.getConnectionInfo(provider)
+
+  const [syncStatus, setSyncStatus] = useState('')
+  const [nextSync, setNextSync] = useState('')
+  const [lastSync, setLastSync] = useState('')
+  const [showSuccess, setShowSuccess] = useState(route.params && route.params.provider && route.params.accessToken)
 
   useEffect(() => {
-    if (showSuccess) {
-      const { provider, ...others } = route.params
-      DataConnectorsManager.authComplete(provider, others)
+    const setState = (connection: any) => {
+      setSyncStatus(connection.syncStatus)
+      setNextSync(calculateNextSync(connection))
+      setLastSync(connection.duration(connection.syncLast).humanize())
     }
+
+    const load = async () => {
+      console.log('load')
+      console.log(route.params)
+      setShowSuccess(route.params && route.params.provider && route.params.accessToken)
+
+      if (route.params && route.params.accessToken) {
+        console.log('success')
+        // @todo: hide this after a while
+        DataConnectorsManager.authComplete(provider, route.params)
+      }
+
+      // upgrade our connection object to be a real connection instance from
+      // the DataConnectorsManager so we can call sync() etc.
+      const connectionInstance = await DataConnectorsManager.getConnection(provider)
+      setState(connectionInstance)
+    }
+    load()
+
+    DataConnectorsManager.on('connectionUpdated', (conn: any) => {
+      setState(conn)
+      setShowSuccess(false)
+    })
   }, [route.params.accessToken])
 
-  const item = connectionsList[route.params.provider]
-  const { name } = item
-  const [lastSync, setLastSync] = useState('9 hours ago')
-  useEffect(() => {
-    // const syncInfo = DataConnectorsManager.syncInfo(name)
-    // if (syncInfo) {
-    //   setLastSync(syncInfo.syncLast)
-    // }
-  }, [item])
-
-  const onPressConnect = () => {
-    DataConnectorsManager.initiateAuth(name)
+  // @todo: can we store connectionInstance somewhere and reuse it?
+  const onPressConnect = async () => {
+    const connectionInstance = await DataConnectorsManager.getConnection(provider)
+    connectionInstance.initiateAuth()
   }
-  const onPressSync = () => {
-    DataConnectorsManager.sync(name)
+  const onPressSync = async () => {
+    const connectionInstance = await DataConnectorsManager.getConnection(provider)
+    connectionInstance.sync()
   }
-  const onPressDisconnect = () => {
-    DataConnectorsManager.disconnect(name)
+  const onPressDisconnect = async () => {
+    const connectionInstance = await DataConnectorsManager.getConnection(provider)
+    connectionInstance.disconnect()
   }
 
   return (
     <Container>
       <NavigationHeader
-        title={'Connect ' + item.label}
+        title={'Connect ' + connectionInfo.label }
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
@@ -60,9 +95,9 @@ export default ({ route, navigation }) => {
           </View>
         )}
         <View style={styles.connectHeader}>
-          <Image style={styles.itemIcon} source={item.icon} />
+          <Image style={styles.itemIcon} source={connectionInfo.icon} />
           <View style={styles.actionButtons}>
-            {item.status === 'disabled' ? (
+            {syncStatus === 'disabled' ? (
               <Button
                 color='transparent-border'
                 style={styles.actionButton}
@@ -81,18 +116,22 @@ export default ({ route, navigation }) => {
                   color='transparent-border'
                   style={styles.actionButton}
                   onPress={onPressSync}
-                  disabled={item.status === 'syncing'}>
+                  disabled={syncStatus === 'syncing'}>
                   Sync
                 </Button>
               </>
             )}
           </View>
         </View>
-        {item.status !== 'disabled' && (
+        {syncStatus !== 'disabled' && (
           <View style={styles.infoText}>
-            <Text>
-              Status: {item.status} (Last sync: {lastSync})
-            </Text>
+            <Text>Status: {syncStatus}</Text>
+            {lastSync ? (
+              <Text>Last sync: {lastSync} ago</Text>
+            ) : undefined}
+            {nextSync ? (
+              <Text>Next sync: {nextSync}</Text>
+            ) : undefined}
             <Text style={styles.disclaimer}>
               * During the developer preview, only the most recent 100 records
               are synchronized

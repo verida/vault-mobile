@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native'
 import moment from 'moment'
-import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
+import { Body, Card, CardItem, Item, Left, Right, Text } from 'native-base'
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { StyleSheet, Image } from 'react-native'
 
 import VeridaSvg from 'assets/icons/verida.svg'
 
@@ -10,13 +10,21 @@ export default ({ item, folder }) => {
   const navigation = useNavigation()
   const date = moment(item.insertedAt).format('DD MMM YYYY')
   const cardDetail = folder.getCardDetail(item)
+  console.log(item)
   const onPress = () => navigation.navigate('DataItem', { folder, item })
 
   return (
     <Card style={style.cardItem}>
       <CardItem button style={{ borderRadius: 4 }} onPress={onPress}>
         <Left style={style.left}>
-          <VeridaSvg />
+          {item.icon ? (
+            <Image
+              source={{ uri: item.icon }}
+              style={{ width: 40, height: 40 }}
+            />
+          ) : (
+            <VeridaSvg />
+          )}
           <Body style={{ marginLeft: 15 }}>
             <Text>{cardDetail.name}</Text>
             <Text note style={style.subText}>
