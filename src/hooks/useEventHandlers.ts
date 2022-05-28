@@ -67,6 +67,8 @@ export const useEventHandlers = () => {
     }
 
     async function init() {
+      DataConnectorsManager.triggerSync()
+
       const fbUnsubscribe = fbMessaging().onMessage(async () => {
         try {
           await fetchInboxCount()

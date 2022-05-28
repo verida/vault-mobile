@@ -8,10 +8,25 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 import moment from 'moment'
 
+const calculateNextSync = function(conn: any) {
+  if (!conn.syncNext) {
+    return
+  }
+
+  const duration = conn.duration(conn.syncNext)
+  if (duration > 0) {
+    return 'now'
+  }
+
+  return duration.humanize()
+}
+
 export default ({ route, navigation }) => {
   const connectionItem = route.params.item
   const [syncStatus, setsyncStatus] = useState(connectionItem.syncStatus)
   const [connection, setConnection] = useState(connectionItem)
+  const [nextSync, setNextSync] = useState(calculateNextSync(connectionItem))
+
   useEffect(() => {
     const load = async () => {
       // upgrade our connection object to be a real connection instance from
@@ -19,12 +34,14 @@ export default ({ route, navigation }) => {
       const connectionInstance = await DataConnectorsManager.getConnection(connectionItem.name)
       setConnection(connectionInstance)
       setsyncStatus(connectionInstance.syncStatus)
+      setNextSync(calculateNextSync(connectionInstance))
     }
     load()
 
     DataConnectorsManager.on('connectionUpdated', (conn: any) => {
       setConnection(conn)
       setsyncStatus(conn.syncStatus)
+      setNextSync(calculateNextSync(conn))
     })
   })
 
@@ -81,10 +98,10 @@ export default ({ route, navigation }) => {
           <View style={styles.infoText}>
             <Text>Status: {connection.syncStatus}</Text>
             {connection.syncLast ? (
-              <Text>Last sync: {connection.timeSince(connection.syncLast)} ago</Text>
+              <Text>Last sync: {connection.duration(connection.syncLast).humanize()} ago</Text>
             ) : undefined}
-            {connection.syncNext ? (
-              <Text>Next sync: {connection.timeSince(connection.syncNext)}</Text>
+            {nextSync ? (
+              <Text>Next sync: {nextSync}</Text>
             ) : undefined}
             <Text style={styles.disclaimer}>
               * During the developer preview, only the most recent 100 records

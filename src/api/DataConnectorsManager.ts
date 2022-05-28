@@ -110,7 +110,7 @@ export default class DataConnectorsManager {
     for (const connectorName in connections) {
       const connection = connections[connectorName]
       if (!connection.syncNext) {
-        continue
+        connection.sync()
       }
 
       const next = moment(connection.syncNext).unix()
@@ -361,10 +361,9 @@ class DataConnection extends EventEmitter {
     }
   }
 
-  public timeSince(val) {
+  public duration(val: any) {
     const now = moment(new Date())
-    const duration = moment.duration(now.diff(moment(val)))
-    return duration.humanize()
+    return moment.duration(now.diff(moment(val)))
   }
 
 }
