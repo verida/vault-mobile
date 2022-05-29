@@ -25,6 +25,7 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Profiles: undefined
+  Connections: undefined
 }
 
 export type MainStackParams = {
@@ -68,4 +69,5 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  SingleConnection: undefined
 }
