@@ -10,7 +10,6 @@ export default ({ item, folder }) => {
   const navigation = useNavigation()
   const date = moment(item.insertedAt).format('DD MMM YYYY')
   const cardDetail = folder.getCardDetail(item)
-  console.log(item)
   const onPress = () => navigation.navigate('DataItem', { folder, item })
 
   return (
