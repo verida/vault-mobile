@@ -29,6 +29,7 @@ export default ({ route, navigation }) => {
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
   const [lastSync, setLastSync] = useState('')
+  const [syncError, setSyncError] = useState('')
   const [showSuccess, setShowSuccess] = useState(route.params && route.params.provider && route.params.accessToken)
 
   useEffect(() => {
@@ -36,15 +37,13 @@ export default ({ route, navigation }) => {
       setSyncStatus(connection.syncStatus)
       setNextSync(calculateNextSync(connection))
       setLastSync(connection.duration(connection.syncLast).humanize())
+      setSyncError(connection.syncLastError)
     }
 
     const load = async () => {
-      console.log('load')
-      console.log(route.params)
       setShowSuccess(route.params && route.params.provider && route.params.accessToken)
 
       if (route.params && route.params.accessToken) {
-        console.log('success')
         // @todo: hide this after a while
         DataConnectorsManager.authComplete(provider, route.params)
       }
@@ -131,6 +130,9 @@ export default ({ route, navigation }) => {
             ) : undefined}
             {nextSync ? (
               <Text>Next sync: {nextSync}</Text>
+            ) : undefined}
+            {syncError ? (
+              <Text>Error message: {syncError}</Text>
             ) : undefined}
             <Text style={styles.disclaimer}>
               * During the developer preview, only the most recent 100 records

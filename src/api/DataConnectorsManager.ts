@@ -187,11 +187,10 @@ class DataConnection extends EventEmitter {
     this._record.encryptionKey = this.encryptionKey
 
     try {
-      console.log('saving...', this._record)
       const result = await this._datastore.save(this._record)
       this._rev = this._record._rev = result.rev
       if (!result) {
-        console.log(this._datastore.errors)
+        console.error(this._datastore.errors)
         return result
       }
 
@@ -199,11 +198,7 @@ class DataConnection extends EventEmitter {
 
       return result
     } catch (err) {
-      if (err.name === 'conflict') {
-        console.log('conflict!', this._record)
-      }
-
-      console.log("Save error", err)
+      console.error("Save connection error: ", err.message)
     }
   }
 
@@ -218,7 +213,6 @@ class DataConnection extends EventEmitter {
   }
 
   public async setAuth(auth: any) {
-    console.log('setAuth', auth)
     await this.init()
     this.accessToken = auth.accessToken
     if (auth.refreshToken) {
@@ -329,7 +323,6 @@ class DataConnection extends EventEmitter {
     const did = await account?.did()
 
     const encryptionKey = Buffer.from(this.encryptionKey, 'hex')
-    console.log('checking sync status with key', encryptionKey)
 
     try {
       const externalDatastore = await context!.openExternalDatastore(
@@ -344,18 +337,14 @@ class DataConnection extends EventEmitter {
           },
           // @ts-ignore (incorrect type fixed in next release)
           encryptionKey,
-          syncRequestDatabaseName,
+          databaseName: syncRequestDatabaseName,
           contextName,
         }
       )
 
-      console.log('opened sync status datastore')
-      console.log(syncRequestId, syncRequestDatabaseName, serverDid, contextName)
-
       const syncRequest = await externalDatastore.get(syncRequestId)
-      console.log('sync request', syncRequest)
 
-      if (syncRequest.status === 'completed') {
+      if (syncRequest.status === 'complete') {
         // Sync has completed on the server, so complete the sync
         // by replicating data from the server
         this.syncReplication(serverDid, contextName, syncRequest)
@@ -368,14 +357,14 @@ class DataConnection extends EventEmitter {
 
         if (syncRequest.status === 'error') {
           // Error syncing from API
-          this.setSyncError(`Server error: ${syncRequest.syncInfo.error}`)
+          this.setSyncError(`${syncRequest.syncInfo.error}`)
           return
         }
 
         // Delay for five seconds, then try again
         await delay(5000)
         retryCount--
-        console.log('sync not compelte, checking again')
+
         this.checkSync(
           serverDid,
           contextName,
@@ -413,7 +402,6 @@ class DataConnection extends EventEmitter {
 
       // Loop through all the schemaUri's (that correspond to a given datastore)
       for (const schemaUri in schemas) {
-        console.log(`Processing ${schemaUri}`)
         // Open the external datastore
         const { databaseName, encryptionKey } = schemas[schemaUri]
         const key = Buffer.from(encryptionKey, 'hex')
@@ -440,20 +428,14 @@ class DataConnection extends EventEmitter {
         const externalDb = await externalDatastore.getDb()
         const externalCouch = await externalDb.getDb()
 
-        const externalInfo = await externalCouch.info()
-        console.log('external couch', externalInfo)
-
         const vaultDatastore = await context!.openDatastore(schemaUri)
         const vaultDb = await vaultDatastore.getDb()
         const vaultCouch = await vaultDb.getDb()
 
-        //const items = await externalDb.getMany()
-        //console.log(items)
-
         // Replicate (pull) data from the connector's datastore to this user's Vault datastore
         try {
           console.log(`Starting replication ${schemaUri}`)
-          const replicateResult = await externalCouch.replicate.to(vaultCouch, {
+          await externalCouch.replicate.to(vaultCouch, {
             // Don't replicate design documents (such as permissions)
             filter: (doc: any) => {
               return doc._id.indexOf('_design') !== 0
@@ -461,24 +443,14 @@ class DataConnection extends EventEmitter {
             // This ensures that if there is a conflict between the documents, the "latest" wins
             style: 'main_only',
           })
-
-          const vaultCouchInfo = await vaultCouch.info()
-          console.log('vault couch', vaultCouchInfo)
         } catch (err: any) {
-          // @todo: How to handle? Have a log somewhere? Show a message to the user?
-          console.log('sync error')
-          console.error(err)
-
-          this.syncLastError = err.message
-          this.syncLast = (new Date()).toISOString()
-          this.syncStatus = 'error'
-          this.syncNext = moment().add(1, this.syncFrequency).toISOString()
-          await this.save()
+          this.setSyncError(err.message)
           return
         }
       }
 
       // cleanup by calling sync done to the server so the temporary data can be deleted
+      const axiosInstance = axios.create()
       await axiosInstance.get(
         `${CONFIG.dataConnectorUrl}/syncDone/${this.name}?did=${did}`
       )
@@ -504,7 +476,6 @@ class DataConnection extends EventEmitter {
     const success = await this.save()
 
     if (!success) {
-      console.log('unable to disconnect')
       this.syncStatus = syncStatus
       // @todo: display something
       DataConnectorsManager.emit('connectionDisconnectError', this)
@@ -516,7 +487,7 @@ class DataConnection extends EventEmitter {
       icon: this.icon,
       label: this.label,
       syncStatus: this.syncStatus,
-      name: this.name
+      name: this.name,
     }
   }
 

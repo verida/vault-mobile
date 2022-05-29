@@ -19,7 +19,6 @@ function buildConnections(allConnectors: any) {
     finalConnectors.push(allConnectors[connectorName].render())
   }
 
-  console.log(finalConnectors)
   return finalConnectors
 }
 
@@ -34,7 +33,6 @@ export default (props) => {
       setConnectors(buildConnections(currentConnectors))
 
       DataConnectorsManager.on('connectionUpdated', async () => {
-        console.log('connectionupdated in DCM!')
         // Connection has been updated, so update UI
         const conns = await DataConnectorsManager.getConnectors()
         setConnectors(buildConnections(conns))
