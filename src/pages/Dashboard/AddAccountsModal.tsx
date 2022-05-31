@@ -27,7 +27,8 @@ export type AddAccountsModalProps = Omit<
   onImport: () => void
   onSelectAccount: (did: string) => void
   onLogoutAccounts: (dids: string[]) => void
-  showLogout: boolean
+  showLogout?: boolean
+  setLoading?: any
 }
 
 enum Step {
@@ -83,6 +84,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onClose,
     onLogoutAccounts,
     showLogout,
+    setLoading,
     ...rest
   } = props
 
@@ -127,10 +129,12 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onAddNew()
   }
 
-  function onLogoutPress() {
+  async function onLogoutPress() {
+    setLoading?.(true)
     setStep(0)
     onClose()
-    onLogoutAccounts(selectedDids)
+    await onLogoutAccounts(selectedDids)
+    setLoading?.(false)
   }
 
   function onCancelLogout() {

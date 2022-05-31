@@ -53,6 +53,8 @@ const SHOW_BANNER_KEY = 'show_banner'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
+import DataConnectorsManager from 'api/DataConnectorsManager'
+
 const Home = (props) => {
   const {
     navigation,
@@ -70,31 +72,46 @@ const Home = (props) => {
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
   const linkTo = useLinkTo()
+  const processDeepLink = (initialUrl) => {
+    if (initialUrl === null) {
+      return
+    }
+
+    // ignore for firebase links, let firebase handle them.
+    if (
+      initialUrl.includes('redirect') ||
+      initialUrl.includes('verida.page.link')
+    ) {
+      return
+    }
+
+    handleDeeplink(initialUrl)
+  }
 
   useEffect(() => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
-
-        if (initialUrl === null) {
-          return
-        }
-
-        // ignore for firebase links, let firebase handle them.
-        if (
-          initialUrl.includes('redirect') ||
-          initialUrl.includes('verida.page.link')
-        ) {
-          return
-        }
-
-        handleDeeplink(initialUrl)
+        processDeepLink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
       }
     }
 
     getUrl()
+  }, [handleDeeplink])
+
+  useEffect(() => {
+    const handleBackgroundDeepLink = async (event) => {
+      try {
+        const initialUrl = event.url
+        processDeepLink(initialUrl)
+      } catch (e) {
+        Sentry.captureException(e)
+      }
+    }
+
+    Linking.addEventListener('url', handleBackgroundDeepLink)
   }, [handleDeeplink])
 
   useEffect(() => {
@@ -233,8 +250,8 @@ const Home = (props) => {
       logout()
     }
     await AccountManager.getInstance().logout(dids)
-    props.navigation.navigate('Home')
     await refresh()
+    props.navigation.navigate('Home')
     setLoading(false)
   }
 
@@ -410,5 +427,19 @@ const style = StyleSheet.create({
     width: SCREEN_WIDTH - 30,
     backgroundColor: LIGHT_ORANGE_COLOR,
     borderRadius: 3,
+  },
+  tempButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#E0E3EA',
+    borderRadius: 4,
+  },
+  tempButtonText: {
+    marginLeft: 5,
+    color: '#041133',
+    fontSize: 8,
   },
 })

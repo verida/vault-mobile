@@ -14,8 +14,15 @@ export function useDeeplink(
       let screenName: keyof MainStackParams
       switch (pathname) {
         //TODO: Handle more deeplink thre
+        case '/connection-success':
+          screenName = 'SingleConnection'
+          break
         default:
           screenName = 'LoginRequest'
+      }
+
+      if (screenName === 'SingleConnection') {
+        navigation.jumpTo('Connections')
       }
       navigation.navigate(screenName, query as never)
     } catch (error) {

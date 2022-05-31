@@ -6,6 +6,7 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import ChangePin from 'pages/Authentication/ChangePin'
+import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
@@ -102,6 +103,8 @@ function MainNavigator() {
 
       <Stack.Screen name={'WalletConnect'} component={WalletConnect} />
       <Stack.Screen name={'WalletConnectDapp'} component={DappSessionDetail} />
+
+      <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
     </Stack.Navigator>
   )
 }

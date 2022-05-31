@@ -6,6 +6,7 @@ import Config from 'react-native-config'
 import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
+import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
@@ -73,6 +74,7 @@ const WalletConnectList = [
 
 export default (props) => {
   const { isVeridaTeamMember } = useAuth()
+  const [loading, setLoading] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
 
   const networks = useSelector((state) => state.networks)
@@ -108,6 +110,8 @@ export default (props) => {
     },
   ]
 
+  if (loading) return <LoadingView />
+
   return (
     <View>
       <NavigationHeader
@@ -141,6 +145,7 @@ export default (props) => {
         showLogout
         onSelectAccount={props.route.params.onSelectAccount}
         onLogoutAccounts={props.route.params.onLogoutAccounts}
+        setLoading={setLoading}
       />
     </View>
   )

@@ -20,9 +20,11 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import { persistor, store } from 'reduxStore'
 
 import SwitchAccountToast from 'components/SwitchAccountToast'
+import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
 import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
+import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
 
 import { ModalProvider } from './contexts/ModalContext'
@@ -75,30 +77,29 @@ function App() {
     await loadFonts()
   }
 
-  const AppContent = useMemo(
-    () => (
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
-          <AuthProvider>
-            <NavigationContainer linking={linking} ref={navigationRef}>
-              <Authenticate>
-                <RootSiblingParent>
-                  <ActionSheetProvider>
-                    <ModalProvider>
-                      <WalletConnectProvider>
-                        <RootNavigator />
-                      </WalletConnectProvider>
-                    </ModalProvider>
-                  </ActionSheetProvider>
-                </RootSiblingParent>
-              </Authenticate>
-            </NavigationContainer>
-          </AuthProvider>
-          <SwitchAccountToast />
-        </PersistGate>
-      </Provider>
-    ),
-    []
+  if (SHUTDOWN_APP) return <OutOfService />
+
+  const AppContent = (
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <AuthProvider>
+          <NavigationContainer linking={linking} ref={navigationRef}>
+            <Authenticate>
+              <RootSiblingParent>
+                <ActionSheetProvider>
+                  <ModalProvider>
+                    <WalletConnectProvider>
+                      <RootNavigator />
+                    </WalletConnectProvider>
+                  </ModalProvider>
+                </ActionSheetProvider>
+              </RootSiblingParent>
+            </Authenticate>
+          </NavigationContainer>
+        </AuthProvider>
+        <SwitchAccountToast />
+      </PersistGate>
+    </Provider>
   )
 
   return loading ? (

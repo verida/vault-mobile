@@ -27,6 +27,7 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Profiles: undefined
+  Connections: undefined
 }
 
 export type MainStackParams = {
@@ -72,4 +73,5 @@ export type MainStackParams = {
   StorageNodes: { data: Network[] }
   WalletConnect: undefined
   WalletConnectDapp: { dapp: DApp }
+  SingleConnection: undefined
 }
