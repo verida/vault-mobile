@@ -7,15 +7,16 @@ import {
   ethNetworkFee,
   weiToGwei,
 } from '../helpers/utilities'
-import { IRequestRenderParams, IRpcEngine } from '../types'
+import { DApp, IRequestRenderParams, IRpcEngine } from '../types'
 
 export function filterEthereumRequests(payload: any) {
   return (
-    payload.method.startsWith('eth_') ||
-    payload.method.startsWith('net_') ||
-    payload.method.startsWith('shh_') ||
-    payload.method.startsWith('personal_') ||
-    payload.method.startsWith('wallet_')
+    payload.method &&
+    (payload.method.startsWith('eth_') ||
+      payload.method.startsWith('net_') ||
+      payload.method.startsWith('shh_') ||
+      payload.method.startsWith('personal_') ||
+      payload.method.startsWith('wallet_'))
   )
 }
 
@@ -105,15 +106,18 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
   return params
 }
 
-export async function signEthereumRequests(payload: any, state: any) {
+export async function signEthereumRequests(
+  payload: any,
+  state: any,
+  dapp?: DApp
+) {
   const { connector, address, activeIndex, chainId } = state
-
   let errorMsg = ''
   let result = null
 
   if (connector) {
-    if (!getWalletController().isActive()) {
-      await getWalletController().init(activeIndex, chainId)
+    if (!getWalletController(dapp).isActive()) {
+      await getWalletController(dapp).init(activeIndex, chainId)
     }
 
     let transaction = null
@@ -125,7 +129,7 @@ export async function signEthereumRequests(payload: any, state: any) {
         transaction = payload.params[0]
         addressRequested = transaction.from
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController().sendTransaction(transaction)
+          result = await getWalletController(dapp).sendTransaction(transaction)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -134,7 +138,7 @@ export async function signEthereumRequests(payload: any, state: any) {
         transaction = payload.params[0]
         addressRequested = transaction.from
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController().signTransaction(transaction)
+          result = await getWalletController(dapp).signTransaction(transaction)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -143,7 +147,7 @@ export async function signEthereumRequests(payload: any, state: any) {
         dataToSign = payload.params[1]
         addressRequested = payload.params[0]
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController().signMessage(dataToSign)
+          result = await getWalletController(dapp).signMessage(dataToSign)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -152,7 +156,9 @@ export async function signEthereumRequests(payload: any, state: any) {
         dataToSign = payload.params[0]
         addressRequested = payload.params[1]
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController().signPersonalMessage(dataToSign)
+          result = await getWalletController(dapp).signPersonalMessage(
+            dataToSign
+          )
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -161,7 +167,7 @@ export async function signEthereumRequests(payload: any, state: any) {
         dataToSign = payload.params[1]
         addressRequested = payload.params[0]
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController().signTypedData(dataToSign)
+          result = await getWalletController(dapp).signTypedData(dataToSign)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -180,7 +186,7 @@ export async function signEthereumRequests(payload: any, state: any) {
       if (errorMsg) {
         message = errorMsg
       }
-      if (!getWalletController().isActive()) {
+      if (!getWalletController(dapp).isActive()) {
         message = 'No Active Account'
       }
       connector.rejectRequest({

@@ -85,15 +85,21 @@ export const walletConnectReducer: Reducer<State> = (
     }
 
     case 'APPROVE_WC_PEER_META': {
-      const { connector } = action.payload
+      const { connector, accounts, chainId, chain } = action.payload
       const dapps = [...state.dapps]
       const session = connector.session
       const dapp = dapps.find((app) => app.session.key === connector.key)
       if (dapp) {
-        dapp.session = { ...session }
+        dapp.session = session
+        dapp.accounts = accounts
+        dapp.chain = chain
+        dapp.chainId = chainId
       } else {
         dapps.push({
           session: { ...session },
+          accounts,
+          chainId,
+          chain,
         })
       }
       return {

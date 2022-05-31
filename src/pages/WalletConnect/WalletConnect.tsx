@@ -1,32 +1,23 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container } from 'native-base'
-import React, { useMemo, useState } from 'react'
+import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
-import { connect, useDispatch } from 'react-redux'
+import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import * as actions from 'reduxStore/actions'
-import InputStyles from 'styles/inputs'
 
-import AccountManager from '../../api/AccountManager'
-import DropDownPicker from '../../components/Select'
 import { Spacer } from '../../components/Spacer'
 import Text from '../../components/Text'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
 import { useReduxState } from '../../hooks/useReduxState'
 import { MainStackParams } from '../../navigation/types'
-import {
-  dappsSelector,
-  walletConnectNetworkSelector,
-} from '../../reduxStore/selectors'
+import { dappsSelector } from '../../reduxStore/selectors'
 import iconStyle from '../../styles/icon'
 import LayoutStyle from '../../styles/layouts'
 import text from '../../styles/text'
-import { SUPPORTED_CHAINS } from '../../wallet-connect/constants/chains'
-import { IChainData } from '../../wallet-connect/types'
 
 type WalletConnectScreenNavigationProp = NativeStackNavigationProp<
   MainStackParams,
@@ -36,24 +27,6 @@ type WalletConnectScreenNavigationProp = NativeStackNavigationProp<
 const WalletConnectScreen = () => {
   const navigation = useNavigation<WalletConnectScreenNavigationProp>()
   const dapps = useReduxState(dappsSelector)
-  const [address] = useState(
-    AccountManager.getInstance()
-      .getSelectedAccount()
-      ?.did.replace('did:vda:', '') as string
-  )
-  const { chain_id: chainId } = useReduxState(walletConnectNetworkSelector)
-
-  const dispatch = useDispatch()
-
-  const options = useMemo(
-    () =>
-      SUPPORTED_CHAINS.map((item) => ({
-        ...item,
-        label: item.name,
-        value: item.chain_id,
-      })),
-    []
-  )
 
   return (
     <Container>
@@ -61,34 +34,11 @@ const WalletConnectScreen = () => {
 
       <View style={[LayoutStyle.layout]}>
         <ScrollView
-          contentContainerStyle={{}}
+          contentContainerStyle={{ paddingBottom: 40 }}
           showsVerticalScrollIndicator={false}>
           <View>
-            <View style={{ alignItems: 'flex-start', zIndex: 1 }}>
-              <Text style={styles.title}>DApps</Text>
-              <Spacer height={16} />
-              <View
-                style={{
-                  flexDirection: 'row',
-                  justifyContent: 'space-between',
-                }}>
-                <Text style={styles.label}>Wallet: </Text>
-                <Text style={[styles.value, { flex: 1 }]}>{address}</Text>
-              </View>
-              <Text style={styles.label}>Network:</Text>
-              <Spacer height={4} />
-              <DropDownPicker
-                showArrow
-                placeholder='Select network'
-                items={options}
-                containerStyle={InputStyles.select}
-                defaultValue={chainId}
-                onChangeItem={(item: IChainData) => {
-                  dispatch(actions.setWalletConnectNetwork({ network: item }))
-                }}
-              />
-            </View>
-            <Spacer height={60} />
+            <Text style={styles.title}>DApps</Text>
+            <Spacer height={32} />
             {dapps.length > 0 &&
               dapps.map((dapp) => (
                 <TouchableOpacity

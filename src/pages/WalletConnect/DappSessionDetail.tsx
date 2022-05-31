@@ -1,5 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
-import sentry from '@sentry/react-native'
+import * as sentry from '@sentry/react-native'
 import WalletConnect from '@walletconnect/client'
 import { Icon } from 'native-base'
 import React from 'react'
@@ -12,9 +12,7 @@ import Button from 'components/Button'
 import NavigationHeader from '../../components/Navigation/NavigationHeader'
 import { Spacer } from '../../components/Spacer'
 import useParams from '../../hooks/useParams'
-import { useReduxState } from '../../hooks/useReduxState'
 import { removeWalletConnectDapp } from '../../reduxStore/actions'
-import { walletConnectNetworkSelector } from '../../reduxStore/selectors'
 import iconStyle from '../../styles/icon'
 import LayoutStyle from '../../styles/layouts'
 import text from '../../styles/text'
@@ -23,10 +21,10 @@ const DappSessionDetail = () => {
   const params = useParams<{ dapp: DApp }>()
   const navigation = useNavigation()
   const dispatch = useDispatch()
-  const { name: networkName } = useReduxState(walletConnectNetworkSelector)
 
   const {
     session: { peerMeta, key, connected, peerId, accounts },
+    chain,
   } = params.dapp
   const { name, icons, url } = peerMeta || {}
 
@@ -63,7 +61,9 @@ const DappSessionDetail = () => {
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>Network</Text>
-          <Text style={styles.value}>{networkName}</Text>
+          <Text style={styles.value}>
+            {chain === 'ethr' ? 'Ethereum Rinkeby' : 'Algorand testnet'}
+          </Text>
         </View>
         <View style={styles.row}>
           <Text style={styles.label}>PeerId</Text>

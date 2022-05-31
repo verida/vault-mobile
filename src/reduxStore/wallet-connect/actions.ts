@@ -50,6 +50,7 @@ export function setWalletConnectPeerMeta(payload: {
 export function approveWalletConnectSession(payload: {
   connector: WalletConnect
   chainId: number
+  chain: DApp['chain']
   accounts: string[]
 }) {
   payload.connector.approveSession({
@@ -61,8 +62,6 @@ export function approveWalletConnectSession(payload: {
 
 export function rejectWalletConnectSession(payload: {
   connector: WalletConnect
-  chainId: number
-  accounts: string[]
 }) {
   return createAction('REJECT_WC_PEER_META', payload)
 }

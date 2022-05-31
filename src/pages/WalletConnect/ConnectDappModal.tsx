@@ -1,8 +1,7 @@
-import React, { useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
-import { useDispatch } from 'react-redux'
-import { SUPPORTED_CHAINS } from 'wallet-connect/constants'
-import { IChainData, WalletConnectClientMeta } from 'wallet-connect/types'
+import { RINKEBY_CHAIN_ID } from 'wallet-connect/constants'
+import { DApp, WalletConnectClientMeta } from 'wallet-connect/types'
 
 import { Spacer } from 'components//Spacer'
 import BottomActionsModal from 'components/BottomActionsModal'
@@ -10,16 +9,24 @@ import Button from 'components/Button'
 import DropDownPicker from 'components/Select'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useReduxState } from 'hooks/useReduxState'
-import * as actions from 'reduxStore/actions'
-import { walletConnectNetworkSelector } from 'reduxStore/selectors'
-import InputStyles from 'styles/inputs'
 
 import iconStyle from '../../styles/icon'
 
 type Props = {
   client: WalletConnectClientMeta
   dismissModal: () => void
-  connect: () => void
+  connect: (address: string, chainId: number, chain?: DApp['chain']) => void
+}
+
+const fullNetworkName = (code: DApp['chain']) => {
+  switch (code) {
+    case 'ethr':
+      return 'Ethereum Rinkeby'
+    case 'algo':
+      return 'Algorand Testnet'
+    default:
+      return 'Unknown network'
+  }
 }
 
 const ConnectDappModal = (props: Props) => {
@@ -29,18 +36,25 @@ const ConnectDappModal = (props: Props) => {
     dismissModal,
   } = props
 
-  const { chain_id: chainId } = useReduxState(walletConnectNetworkSelector)
+  const walletData = useReduxState((state) => state.main.wallets.data)
+  const selectedWallets = useReduxState((state) => state.main.selectedWallet)
+  const multiWallets = walletData[selectedWallets]
+  const accounts = multiWallets.accounts
 
-  const dispatch = useDispatch()
+  const [selectedWallet, setSelectedWallet] = useState<any>()
 
-  const options = useMemo(
+  const wallets = useMemo(
     () =>
-      SUPPORTED_CHAINS.map((item) => ({
-        ...item,
-        label: item.name,
-        value: item.chain_id,
-      })),
-    []
+      Object.keys(accounts)
+        .filter((key) => ['ethr', 'algo'].includes(key))
+        .map((key) => ({
+          ...accounts[key],
+          label: `${accounts[key].address}`,
+          flag: fullNetworkName(key as any),
+          value: accounts[key].address,
+          chainId: accounts[key].chain === 'ethr' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+        })),
+    [accounts]
   )
 
   return (
@@ -60,12 +74,12 @@ const ConnectDappModal = (props: Props) => {
 
         <DropDownPicker
           showArrow
-          placeholder='Select network'
-          items={options}
-          containerStyle={InputStyles.select}
-          defaultValue={chainId}
-          onChangeItem={(item: IChainData) => {
-            dispatch(actions.setWalletConnectNetwork({ network: item }))
+          placeholder='Select wallet'
+          items={wallets}
+          containerStyle={styles.select}
+          defaultValue={accounts?.eth?.address}
+          onChangeItem={(item: any) => {
+            setSelectedWallet(item)
           }}
         />
 
@@ -83,7 +97,14 @@ const ConnectDappModal = (props: Props) => {
           <Button
             style={styles.connectButton}
             color='primary'
-            onPress={connect}>
+            onPress={() =>
+              selectedWallet &&
+              connect(
+                selectedWallet.value,
+                selectedWallet.chainId,
+                selectedWallet.chain
+              )
+            }>
             Connect
           </Button>
         </View>
@@ -124,5 +145,10 @@ const styles = StyleSheet.create({
   connectButton: {
     alignSelf: 'stretch',
     paddingHorizontal: 24,
+  },
+
+  select: {
+    height: 60,
+    alignItems: 'flex-start',
   },
 })

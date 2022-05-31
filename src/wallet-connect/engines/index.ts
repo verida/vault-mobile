@@ -1,4 +1,5 @@
-import { IRpcEngine } from '../types'
+import { DApp, IRpcEngine } from '../types'
+import algorand from './algorand'
 import ethereum from './ethereum'
 
 class RpcEngine implements IRpcEngine {
@@ -22,9 +23,9 @@ class RpcEngine implements IRpcEngine {
     return engine.render(payload)
   }
 
-  public signer(payload: any, state: any) {
+  public signer(payload: any, state: any, dapp?: DApp) {
     const engine = this.getEngine(payload)
-    return engine.signer(payload, state)
+    return engine.signer(payload, state, dapp)
   }
 
   private getEngine(payload: any) {
@@ -39,5 +40,5 @@ class RpcEngine implements IRpcEngine {
 }
 
 export function getRpcEngine() {
-  return new RpcEngine([ethereum])
+  return new RpcEngine([ethereum, algorand])
 }

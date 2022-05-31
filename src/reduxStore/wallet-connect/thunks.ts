@@ -1,10 +1,11 @@
 import { ThunkAction } from '@reduxjs/toolkit'
-import sentry from '@sentry/react-native'
+import * as sentry from '@sentry/react-native'
 import WalletConnect from '@walletconnect/client'
 
 import { getWalletConnectConfig } from '../../wallet-connect/config'
 import { WalletConnectRequest } from '../../wallet-connect/types'
 import { hideWalletConnectRequest } from './actions'
+import { dappsSelector } from './selectors'
 
 export function approveWalletConnectRequest(payload: {
   connector: WalletConnect
@@ -13,15 +14,21 @@ export function approveWalletConnectRequest(payload: {
   activeIndex: number
   chainId: number
 }) {
-  return async () => {
+  return async (_: any, getState: any) => {
     const { connector, address, activeIndex, chainId, requestPayload } = payload
+    const dapps = dappsSelector(getState())
+    const dapp = dapps.find((app) => app.session.key === connector.key)
     try {
-      await getWalletConnectConfig().rpcEngine.signer(requestPayload, {
-        connector,
-        address,
-        activeIndex,
-        chainId,
-      })
+      await getWalletConnectConfig().rpcEngine.signer(
+        requestPayload,
+        {
+          connector,
+          address,
+          activeIndex,
+          chainId,
+        },
+        dapp
+      )
     } catch (error) {
       if (connector) {
         connector.rejectRequest({

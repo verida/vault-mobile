@@ -1,4 +1,4 @@
-import sentry from '@sentry/react-native'
+import * as sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -42,7 +42,7 @@ type Props = {
   client: WalletConnectClientMeta
   payload: WalletConnectRequest
   dismissModal: () => void
-  approveRequest: () => void
+  approveRequest: (address: string) => void
   rejectRequest: () => void
   renderPayload: (payload: any) => IRequestRenderParams[]
 }
