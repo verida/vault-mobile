@@ -16,7 +16,7 @@ const DATA_SYNC_REQUEST_SCHEMA = 'https://vault.schemas.verida.io/data-connectio
 
 // @todo move to global app config somewhere?
 const CONFIG = {
-  dataConnectorUrl: 'http://localhost:5021',
+  dataConnectorUrl: 'https://dataconnector.tn.verida.tech',
 }
 
 const delay = async (ms: number) => {
@@ -105,7 +105,7 @@ export default class DataConnectorsManager {
 
   static async getConnectors(): Promise<any> {
     const connections: any = Object.values(CONNECTIONS)
-    const connectors = {}
+    const connectors: any = {}
     for (let i = 0; i < connections.length; i++) {
       const connection = await DataConnectorsManager.getConnection(connections[i].name)
       connectors[connection.name] = connection
