@@ -5,9 +5,18 @@ import EmploymentSvg from '../assets/icons/data/employment.svg'
 import FinanceSvg from '../assets/icons/data/finance.svg'
 import HealthSvg from '../assets/icons/data/health.svg'
 import IdentitySvg from '../assets/icons/data/identity.svg'
-import InsuranceSvg from '../assets/icons/data/insurance.svg'
 import QualificationsSvg from '../assets/icons/data/qualifications.svg'
+
+import ContactSvg from '../assets/icons/data/contact.svg'
+
+import ShoppingSvg from '../assets/icons/data/shopping.svg'
+import ShoppingCouponSvg from '../assets/icons/data/shopping/coupon.svg'
+import ShoppingReceiptSvg from '../assets/icons/data/shopping/receipt.svg'
+
 import SocialSvg from '../assets/icons/data/social.svg'
+import SocialPostSvg from '../assets/icons/data/social/post.svg'
+import SocialFollowingSvg from '../assets/icons/data/social/following.svg'
+
 import SubscriptionsSvg from '../assets/icons/data/subscriptions.svg'
 import TicketsSvg from '../assets/icons/data/tickets.svg'
 
@@ -143,7 +152,7 @@ const dataMap = {
     shopping: {
       title: 'Shopping',
       titlePlural: 'Shopping',
-      icon: <InsuranceSvg />,
+      icon: <ShoppingSvg />,
       display: 'folders',
       folders: ['shopping/receipt', 'shopping/coupon'],
     },
@@ -152,8 +161,8 @@ const dataMap = {
       titlePlural: 'Receipts',
       database: 'shopping_receipt',
       display: 'grid',
-      icon: <InsuranceSvg />,
-      color: '#F368E0',
+      icon: <ShoppingReceiptSvg />,
+      color: '#69BB02',
       layouts: {
         list: ['store', 'amount', 'transactionTimestamp'],
         view: ['store', 'amount', 'transactionTimestamp'],
@@ -164,8 +173,8 @@ const dataMap = {
       titlePlural: 'Coupons',
       database: 'shopping_coupon',
       display: 'grid',
-      icon: <InsuranceSvg />,
-      color: '#F368E0',
+      icon: <ShoppingCouponSvg />,
+      color: '#2DB6F0',
       layouts: {
         list: [
           'name',
@@ -198,13 +207,13 @@ const dataMap = {
       display: 'folders',
       color: '#47E6E5',
     },
-    insurance: {
+    /*insurance: {
       title: 'Insurance',
       titlePlural: 'Insurance',
       icon: <InsuranceSvg />,
       display: 'folders',
       color: '#47E6E5',
-    },
+    },*/
     subscriptions: {
       title: 'Subscription',
       titlePlural: 'Subscriptions',
@@ -229,7 +238,7 @@ const dataMap = {
     contact: {
       title: 'Contacts',
       titlePlural: 'Contacts',
-      icon: <SocialSvg />,
+      icon: <ContactSvg />,
       display: 'cards',
       database: 'social_contact',
       color: '#47E6E5',
@@ -249,9 +258,9 @@ const dataMap = {
       title: 'Following',
       titlePlural: 'Following',
       display: 'cards',
-      icon: <SocialSvg />,
+      icon: <SocialFollowingSvg />,
       database: 'social_following',
-      color: '#66E6E5',
+      color: '#7A78E5',
       layouts: {
         list: ['name', 'sourceApplication'],
         view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
@@ -261,12 +270,19 @@ const dataMap = {
       title: 'Posts',
       titlePlural: 'Posts',
       display: 'cards',
-      icon: <SocialSvg />,
-      database: 'social_posts',
-      color: '#66E6E5',
+      icon: <SocialPostSvg />,
+      database: 'social_post',
+      color: '#EE7D91',
       layouts: {
         list: ['name', 'sourceApplication'],
-        view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
+        view: [
+          'name',
+          'content',
+          'uri',
+          'sourceApplication',
+          'sourceId',
+          'insertedAt',
+        ]
       },
     },
   },
