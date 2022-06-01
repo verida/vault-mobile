@@ -135,7 +135,7 @@ export default ({ route, navigation }) => {
               <Text>Error message: {syncError}</Text>
             ) : undefined}
             <Text style={styles.disclaimer}>
-              * During the developer preview, only the most recent 100 records
+              * During the developer preview, only the most recent 20 records
               are synchronized
             </Text>
           </View>
