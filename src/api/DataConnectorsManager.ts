@@ -121,7 +121,7 @@ export default class DataConnectorsManager {
     for (const connectorName in connections) {
       const connection = connections[connectorName]
       if (
-        connection.syncStatus !== 'active' ||
+        connection.syncStatus !== 'active' &&
         connection.syncStatus !== 'error'
       ) {
         continue
