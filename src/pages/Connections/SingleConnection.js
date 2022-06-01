@@ -8,7 +8,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { SUCCESS_COLOR } from 'constants/color'
 
-const calculateNextSync = function (conn: any) {
+const calculateNextSync = function (conn) {
   if (!conn.syncNext) {
     return
   }
