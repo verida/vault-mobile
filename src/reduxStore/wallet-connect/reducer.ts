@@ -35,9 +35,9 @@ export const walletConnectReducer: Reducer<State> = (
       let dapps = [...state.dapps]
       const index = dapps.findIndex((app) => app.session.key === key)
       if (index >= 0) {
-        dapps.splice(index, 1, { session: action.payload.session })
+        dapps.splice(index, 1, { session: { ...action.payload.session } })
       } else {
-        dapps = [...dapps, { session: action.payload.session }]
+        dapps = [...dapps, { session: { ...action.payload.session } }]
       }
       return {
         ...state,
@@ -90,7 +90,7 @@ export const walletConnectReducer: Reducer<State> = (
       const session = connector.session
       const dapp = dapps.find((app) => app.session.key === connector.key)
       if (dapp) {
-        dapp.session = session
+        dapp.session = { ...session }
         dapp.accounts = accounts
         dapp.chain = chain
         dapp.chainId = chainId

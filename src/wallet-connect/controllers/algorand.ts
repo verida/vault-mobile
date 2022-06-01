@@ -3,12 +3,18 @@ import algosdk, { Account } from 'algosdk'
 
 import { store } from '../../reduxStore'
 import { getWalletsData } from '../../reduxStore/wallet/selectors'
+import { DApp } from '../types'
+import { IAlgoWalletController } from './type'
 
-export class AlgorandWalletController {
+export class AlgorandWalletController implements IAlgoWalletController {
   public account: Account
 
   constructor() {
     this.account = this.init()
+  }
+
+  getControllerType(): DApp['chain'] {
+    return 'algo'
   }
 
   public isActive() {

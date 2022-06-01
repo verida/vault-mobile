@@ -1,6 +1,8 @@
 import algosdk from 'algosdk'
+import { Alert } from 'react-native'
 
 import { getWalletController } from '../controllers'
+import { AlgorandWalletController } from '../controllers/algorand'
 import {
   DApp,
   IRequestRenderParams,
@@ -107,6 +109,20 @@ export async function signAlgorandRequests(
 ) {
   const { connector } = state
 
+  if (
+    !getWalletController(dapp) ||
+    getWalletController(dapp).getControllerType() !== 'algo'
+  ) {
+    connector.rejectRequest({
+      id: payload.id,
+      error: { message: 'No Active Account' },
+    })
+    Alert.alert('Error', 'Invalid wallet type')
+    return
+  }
+
+  const controller = getWalletController(dapp) as AlgorandWalletController
+
   if (connector) {
     const signingRequest: SignTxnParams = payload.params
 
@@ -136,7 +152,7 @@ export async function signAlgorandRequests(
 
     let signingResponse: Array<Uint8Array | null>
     try {
-      signingResponse = await getWalletController(dapp).signTransaction(
+      signingResponse = await controller.signTransaction(
         signingTxns,
         signingMessage
       )

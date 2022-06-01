@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import { RINKEBY_CHAIN_ID } from 'wallet-connect/constants'
 import { DApp, WalletConnectClientMeta } from 'wallet-connect/types'
 
@@ -43,9 +43,11 @@ const ConnectDappModal = (props: Props) => {
 
   const [selectedWallet, setSelectedWallet] = useState<any>()
 
+  // TODO: remove hardcode for wallets
   const wallets = useMemo(
     () =>
       Object.keys(accounts)
+        .reverse() // show ethereum first
         .filter((key) => ['ethr', 'algo'].includes(key))
         .map((key) => ({
           ...accounts[key],
@@ -77,7 +79,6 @@ const ConnectDappModal = (props: Props) => {
           placeholder='Select wallet'
           items={wallets}
           containerStyle={styles.select}
-          defaultValue={accounts?.eth?.address}
           onChangeItem={(item: any) => {
             setSelectedWallet(item)
           }}
@@ -97,14 +98,17 @@ const ConnectDappModal = (props: Props) => {
           <Button
             style={styles.connectButton}
             color='primary'
-            onPress={() =>
-              selectedWallet &&
-              connect(
-                selectedWallet.value,
-                selectedWallet.chainId,
-                selectedWallet.chain
-              )
-            }>
+            onPress={() => {
+              if (selectedWallet) {
+                connect(
+                  selectedWallet.value,
+                  selectedWallet.chainId,
+                  selectedWallet.chain
+                )
+              } else {
+                Alert.alert('Waring', 'Please select a wallet')
+              }
+            }}>
             Connect
           </Button>
         </View>

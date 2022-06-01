@@ -9,8 +9,10 @@ import { web3 } from '../../wallet/chains/ethereum'
 import { getWalletConnectConfig } from '../config'
 import { DEFAULT_ACTIVE_INDEX, DEFAULT_CHAIN_ID } from '../constants/default'
 import { getChainData } from '../helpers/utilities'
+import { DApp } from '../types'
+import { IEtherWalletController } from './type'
 
-export class EthereumWalletController {
+export class EthereumWalletController implements IEtherWalletController {
   public path: string
   public wallet: ethers.Wallet
 
@@ -24,6 +26,10 @@ export class EthereumWalletController {
 
   getProvider(): ethers.providers.Provider {
     return this.wallet.provider
+  }
+
+  public getControllerType(): DApp['chain'] {
+    return 'ethr'
   }
 
   public isActive() {

@@ -1,6 +1,8 @@
 import { convertHexToNumber, signingMethods } from '@walletconnect/utils'
+import { Alert } from 'react-native'
 
 import { getWalletController } from '../controllers'
+import { EthereumWalletController } from '../controllers/ethereum'
 import { apiGetCustomRequest } from '../helpers/api'
 import {
   convertHexToUtf8IfPossible,
@@ -115,9 +117,23 @@ export async function signEthereumRequests(
   let errorMsg = ''
   let result = null
 
+  if (
+    !getWalletController(dapp) ||
+    getWalletController(dapp).getControllerType() !== 'ethr'
+  ) {
+    connector.rejectRequest({
+      id: payload.id,
+      error: { message: 'No Active Account' },
+    })
+    Alert.alert('Error', 'Invalid wallet type')
+    return
+  }
+
+  const controller = getWalletController(dapp) as EthereumWalletController
+
   if (connector) {
-    if (!getWalletController(dapp).isActive()) {
-      await getWalletController(dapp).init(activeIndex, chainId)
+    if (!controller.isActive()) {
+      await controller.init(activeIndex, chainId)
     }
 
     let transaction = null
@@ -129,7 +145,7 @@ export async function signEthereumRequests(
         transaction = payload.params[0]
         addressRequested = transaction.from
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController(dapp).sendTransaction(transaction)
+          result = await controller.sendTransaction(transaction)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -138,7 +154,7 @@ export async function signEthereumRequests(
         transaction = payload.params[0]
         addressRequested = transaction.from
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController(dapp).signTransaction(transaction)
+          result = await controller.signTransaction(transaction)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -147,7 +163,7 @@ export async function signEthereumRequests(
         dataToSign = payload.params[1]
         addressRequested = payload.params[0]
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController(dapp).signMessage(dataToSign)
+          result = await controller.signMessage(dataToSign)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -156,9 +172,7 @@ export async function signEthereumRequests(
         dataToSign = payload.params[0]
         addressRequested = payload.params[1]
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController(dapp).signPersonalMessage(
-            dataToSign
-          )
+          result = await controller.signPersonalMessage(dataToSign)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
@@ -167,7 +181,7 @@ export async function signEthereumRequests(
         dataToSign = payload.params[1]
         addressRequested = payload.params[0]
         if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await getWalletController(dapp).signTypedData(dataToSign)
+          result = await controller.signTypedData(dataToSign)
         } else {
           errorMsg = 'Address requested does not match active account'
         }
