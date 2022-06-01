@@ -13,7 +13,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 
-function buildConnections(allConnectors: any) {
+function buildConnections(allConnectors) {
   const finalConnectors = []
   for (let connectorName in allConnectors) {
     finalConnectors.push(allConnectors[connectorName].render())

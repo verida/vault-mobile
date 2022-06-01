@@ -9,7 +9,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
 import moment from 'moment'
 
-const calculateNextSync = function(conn: any) {
+const calculateNextSync = function(conn) {
   if (!conn.syncNext) {
     return
   }
@@ -33,7 +33,7 @@ export default ({ route, navigation }) => {
   const [showSuccess, setShowSuccess] = useState(route.params && route.params.provider && route.params.accessToken)
 
   useEffect(() => {
-    const setState = (connection: any) => {
+    const setState = (connection) => {
       setSyncStatus(connection.syncStatus)
       setNextSync(calculateNextSync(connection))
       setLastSync(connection.duration(connection.syncLast).humanize())
@@ -55,7 +55,7 @@ export default ({ route, navigation }) => {
     }
     load()
 
-    DataConnectorsManager.on('connectionUpdated', (conn: any) => {
+    DataConnectorsManager.on('connectionUpdated', (conn) => {
       setState(conn)
       setShowSuccess(false)
     })
