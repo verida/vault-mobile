@@ -238,7 +238,7 @@ class DataConnection extends EventEmitter {
     try {
       this._record = await this._datastore.get(this.name)
 
-      this.profile = new DataProfile(this._record.profile)
+      this.profile = this._record.profile
 
       const obj: any = this
       const record = this._record
