@@ -6,6 +6,7 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import ChangePin from 'pages/Authentication/ChangePin'
+import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
@@ -39,6 +40,7 @@ import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
 
+import DappSessionDetail from '../pages/WalletConnect/DappSessionDetail'
 import WalletConnect from '../pages/WalletConnect/WalletConnect'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
@@ -100,6 +102,9 @@ function MainNavigator() {
       <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
 
       <Stack.Screen name={'WalletConnect'} component={WalletConnect} />
+      <Stack.Screen name={'WalletConnectDapp'} component={DappSessionDetail} />
+
+      <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
     </Stack.Navigator>
   )
 }

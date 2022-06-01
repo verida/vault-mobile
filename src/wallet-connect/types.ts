@@ -6,7 +6,12 @@ import {
 
 export interface DApp {
   session: IWalletConnectSession
+  accounts?: string[]
+  chainId?: number
+  chain?: 'algo' | 'ethr' | undefined // TODO: add other networks
 }
+
+export type WalletConnectSession = IWalletConnectSession
 
 export type WalletConnectClientMeta = IClientMeta
 
@@ -127,6 +132,10 @@ export interface IGasPrice {
   price: number
 }
 
+export interface IEtherPrice {
+  USD: number
+}
+
 export interface IGasPrices {
   timestamp: number
   slow: IGasPrice
@@ -153,7 +162,7 @@ export interface IRpcEngine {
   filter: (payload: IJsonRpcRequest) => boolean
   router: (payload: IJsonRpcRequest, state: any) => Promise<void>
   render: (payload: IJsonRpcRequest) => IRequestRenderParams[]
-  signer: (payload: IJsonRpcRequest, state: any) => Promise<void>
+  signer: (payload: IJsonRpcRequest, state: any, dapp?: DApp) => Promise<void>
 }
 
 export interface WalletConnectEvents {
@@ -161,16 +170,62 @@ export interface WalletConnectEvents {
   update: (state: any, setState: any) => Promise<void>
 }
 
+/**
+ * Options for creating and using a multisignature account.
+ */
+export interface MultisigMetadata {
+  /**
+   * Multisig version.
+   */
+  version: number
+
+  /**
+   * Multisig threshold value. Authorization requires a subset of
+   * signatures, equal to or greater than the threshold value.
+   */
+  threshold: number
+
+  /**
+   * List of Algorand addresses of possible signers for this
+   * multisig. Order is important.
+   */
+  addrs: string[]
+}
+
+export interface WalletTransaction {
+  /**
+   * Base64 encoding of the canonical msgpack encoding of a
+   * Transaction.
+   */
+  txn: string
+
+  /**
+   * Optional authorized address used to sign the transaction when
+   * the account is rekeyed. Also called the signor/sgnr.
+   */
+  authAddr?: string
+
+  /**
+   * Optional multisig metadata used to sign the transaction
+   */
+  msig?: MultisigMetadata
+
+  /**
+   * Optional list of addresses that must sign the transactions
+   */
+  signers?: string[]
+
+  /**
+   * Optional message explaining the reason of the transaction
+   */
+  message?: string
+}
+
 export interface WalletConnectConfig {
   name: string
   logo: string
   chainId: number
   derivationPath: string
-  numberOfAccounts: number
-  colors: {
-    defaultColor: string
-    backgroundColor: string
-  }
   chains: IChainData[]
   styleOpts: {
     showPasteUri: boolean
@@ -179,3 +234,15 @@ export interface WalletConnectConfig {
   rpcEngine: IRpcEngine
   events: WalletConnectEvents
 }
+
+export interface SignTxnOpts {
+  /**
+   * Optional message explaining the reason of the group of
+   * transactions.
+   */
+  message?: string
+
+  // other options may be present, but are not standard
+}
+
+export type SignTxnParams = [WalletTransaction[], SignTxnOpts?]

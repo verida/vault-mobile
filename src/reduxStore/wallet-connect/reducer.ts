@@ -1,17 +1,20 @@
-import { DApp, WalletConnectRequest } from 'wallet-connect/types'
+import { DApp, IChainData, WalletConnectRequest } from 'wallet-connect/types'
 
+import { SUPPORTED_CHAINS } from '../../wallet-connect/constants'
 import { Reducer } from '../types'
 
 export interface State {
   dapps: DApp[]
   requests: WalletConnectRequest[]
   openRequest?: WalletConnectRequest
+  network: IChainData
 }
 
 const initialState: State = {
   dapps: [],
   requests: [],
   openRequest: undefined,
+  network: SUPPORTED_CHAINS[0],
 }
 
 export const walletConnectReducer: Reducer<State> = (
@@ -25,6 +28,20 @@ export const walletConnectReducer: Reducer<State> = (
         dapps: state.dapps.filter(
           (app) => app.session.key !== action.payload.key
         ),
+      }
+    }
+    case 'SET_WC_APP': {
+      const { key } = action.payload
+      let dapps = [...state.dapps]
+      const index = dapps.findIndex((app) => app.session.key === key)
+      if (index >= 0) {
+        dapps.splice(index, 1, { session: { ...action.payload.session } })
+      } else {
+        dapps = [...dapps, { session: { ...action.payload.session } }]
+      }
+      return {
+        ...state,
+        dapps,
       }
     }
     case 'SET_WC_REQUESTS':
@@ -68,15 +85,21 @@ export const walletConnectReducer: Reducer<State> = (
     }
 
     case 'APPROVE_WC_PEER_META': {
-      const { connector } = action.payload
+      const { connector, accounts, chainId, chain } = action.payload
       const dapps = [...state.dapps]
       const session = connector.session
       const dapp = dapps.find((app) => app.session.key === connector.key)
       if (dapp) {
         dapp.session = { ...session }
+        dapp.accounts = accounts
+        dapp.chain = chain
+        dapp.chainId = chainId
       } else {
         dapps.push({
           session: { ...session },
+          accounts,
+          chainId,
+          chain,
         })
       }
       return {
@@ -109,6 +132,13 @@ export const walletConnectReducer: Reducer<State> = (
       return {
         ...state,
         openRequest: undefined,
+      }
+    }
+
+    case 'SET_WC_NETWORK': {
+      return {
+        ...state,
+        network: action.payload.network,
       }
     }
 

@@ -14,7 +14,7 @@ import TicketsSvg from '../assets/icons/data/tickets.svg'
 const dataMap = {
   navigation: [
     'credentials',
-    'health',
+    /*'health',
     'shopping',
     'finance',
     'employment',
@@ -23,7 +23,11 @@ const dataMap = {
     'subscriptions',
     'tickets',
     'documents',
+    */
     'contact',
+    'shopping',
+    'documents',
+    'social',
   ],
   folders: {
     credentials: {
@@ -232,6 +236,37 @@ const dataMap = {
       layouts: {
         list: ['firstName', 'lastName', 'email', 'mobile'],
         view: ['firstName', 'lastName', 'email', 'mobile', 'insertedAt'],
+      },
+    },
+    social: {
+      title: 'Social',
+      titlePlural: 'Social',
+      icon: <SocialSvg />,
+      display: 'folders',
+      folders: ['social/following', 'social/posts'],
+    },
+    'social/following': {
+      title: 'Following',
+      titlePlural: 'Following',
+      display: 'cards',
+      icon: <SocialSvg />,
+      database: 'social_following',
+      color: '#66E6E5',
+      layouts: {
+        list: ['name', 'sourceApplication'],
+        view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
+      },
+    },
+    'social/posts': {
+      title: 'Posts',
+      titlePlural: 'Posts',
+      display: 'cards',
+      icon: <SocialSvg />,
+      database: 'social_posts',
+      color: '#66E6E5',
+      layouts: {
+        list: ['name', 'sourceApplication'],
+        view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
       },
     },
   },

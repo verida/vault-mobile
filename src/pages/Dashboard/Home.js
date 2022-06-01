@@ -3,10 +3,9 @@ import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
-  Button,
   Dimensions,
   InteractionManager,
   Linking,
@@ -23,7 +22,16 @@ import { fetchInboxCount, getProfile } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
+import {
+  BLACK_COLOR_OPACITY,
+  BLACK_ORIGIN_COLOR,
+  LIGHT_ORANGE_COLOR,
+  ORANGE_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
@@ -32,25 +40,20 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import { logout as logoutAction } from 'reduxStore/general/actions'
-
 import {
-  BLACK_COLOR_OPACITY,
-  BLACK_ORIGIN_COLOR,
-  LIGHT_ORANGE_COLOR,
-  ORANGE_COLOR,
-  WHITE_COLOR,
-} from '../../constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import {
+  logout as logoutAction,
   setNavigationLink as setNavigationLinkAction,
   setNewMessagesCount as setNewMessagesCountAction,
-} from '../../reduxStore/general/actions'
+} from 'reduxStore/general/actions'
 
-const DefaultAvatar = require('../../assets/stubs/avatar.png')
-const LogoImg = require('../../assets/vault-logo.png')
+const DefaultAvatar = require('assets/stubs/avatar.png')
+const LogoImg = require('assets/vault-logo.png')
+
+const SHOW_BANNER_KEY = 'show_banner'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
+
+import DataConnectorsManager from 'api/DataConnectorsManager'
 
 const Home = (props) => {
   const {
@@ -69,25 +72,27 @@ const Home = (props) => {
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
   const linkTo = useLinkTo()
+  const processDeepLink = (initialUrl) => {
+    if (initialUrl === null) {
+      return
+    }
+
+    // ignore for firebase links, let firebase handle them.
+    if (
+      initialUrl.includes('redirect') ||
+      initialUrl.includes('verida.page.link')
+    ) {
+      return
+    }
+
+    handleDeeplink(initialUrl)
+  }
 
   useEffect(() => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
-
-        if (initialUrl === null) {
-          return
-        }
-
-        // ignore for firebase links, let firebase handle them.
-        if (
-          initialUrl.includes('redirect') ||
-          initialUrl.includes('verida.page.link')
-        ) {
-          return
-        }
-
-        handleDeeplink(initialUrl)
+        processDeepLink(initialUrl)
       } catch (e) {
         Sentry.captureException(e)
       }
@@ -97,10 +102,23 @@ const Home = (props) => {
   }, [handleDeeplink])
 
   useEffect(() => {
+    const handleBackgroundDeepLink = async (event) => {
+      try {
+        const initialUrl = event.url
+        processDeepLink(initialUrl)
+      } catch (e) {
+        Sentry.captureException(e)
+      }
+    }
+
+    Linking.addEventListener('url', handleBackgroundDeepLink)
+  }, [handleDeeplink])
+
+  useEffect(() => {
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
-        if (link.url.includes('redirect')) {
+        if (link?.url?.includes('redirect')) {
           try {
             const parsedUrl = parse(link.url, true)
             const { query } = parsedUrl
@@ -153,10 +171,17 @@ const Home = (props) => {
         setAvatarSource(avatar)
 
         setInfo({
-          address: _selectedAccount.did,
+          address: PROFILE_URL + _selectedAccount.did,
           name,
         })
-
+        const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
+        if (!showBanner || showBanner !== 'set') {
+          Alert.alert(
+            'Important Notice',
+            'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
+          )
+          await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
+        }
         setLoading(false)
       } catch (e) {
         Sentry.captureException(e)
@@ -170,9 +195,11 @@ const Home = (props) => {
     }
   }, [selectedAccount, publicProfileData])
 
-  useFocusEffect(() => {
-    fetchInboxCount()
-  })
+  useFocusEffect(
+    useCallback(() => {
+      fetchInboxCount()
+    }, [])
+  )
 
   function onScanQRPress() {
     navigation.navigate('ScanQrCode', {
@@ -202,7 +229,18 @@ const Home = (props) => {
     }
 
     toggleAddAccountsModal()
-    await switchToAccount(did)
+    try {
+      await switchToAccount(did)
+    } catch (e) {
+      Alert.alert(
+        'Error',
+        'Cannot get account information, removing this account'
+      )
+      setLoading(true)
+      await AccountManager.getInstance().logout([did])
+      await refresh()
+      setLoading(false)
+    }
   }
 
   async function onLogoutAccounts(dids) {
@@ -213,6 +251,7 @@ const Home = (props) => {
     }
     await AccountManager.getInstance().logout(dids)
     await refresh()
+    props.navigation.navigate('Home')
     setLoading(false)
   }
 
@@ -241,13 +280,6 @@ const Home = (props) => {
           <LoadingView />
         ) : (
           <>
-            <View>
-              <Button
-                title='Wallet connect'
-                onPress={() => props.navigation.navigate('WalletConnect', {})}
-              />
-            </View>
-
             <View style={style.qr}>
               <QRCode
                 logo={LogoImg}
@@ -395,5 +427,19 @@ const style = StyleSheet.create({
     width: SCREEN_WIDTH - 30,
     backgroundColor: LIGHT_ORANGE_COLOR,
     borderRadius: 3,
+  },
+  tempButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 5,
+    paddingHorizontal: 10,
+    borderWidth: 1,
+    borderColor: '#E0E3EA',
+    borderRadius: 4,
+  },
+  tempButtonText: {
+    marginLeft: 5,
+    color: '#041133',
+    fontSize: 8,
   },
 })

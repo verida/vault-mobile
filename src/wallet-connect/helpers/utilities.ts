@@ -1,10 +1,11 @@
 import { convertHexToUtf8 } from '@walletconnect/utils'
-import Config from 'react-native-config'
 
+// import Config from 'react-native-config'
 import { SUPPORTED_CHAINS } from '../constants'
 import { IChainData } from '../types'
 
-const INFURA_API_KEY = Config.INFURA_API_KEY
+// TODO: hardcode just to have a running build first, fix Bitrise .env config
+const INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' //Config.INFURA_API_KEY
 
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3)
@@ -50,4 +51,16 @@ export function convertHexToUtf8IfPossible(hex: string) {
   } catch (e) {
     return hex
   }
+}
+
+export function ethNetworkFee(limitGwei: number, gasLimitGwei: number) {
+  return (limitGwei * gasLimitGwei) / 1000000000
+}
+
+export function weiToGwei(wei: number): number {
+  return wei / 1000000000
+}
+
+export function gweiToEther(gwei: number): number {
+  return gwei / 1000000000
 }

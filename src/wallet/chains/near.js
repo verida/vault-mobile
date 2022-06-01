@@ -1,5 +1,5 @@
 import * as nearAPI from 'near-api-js'
-import store from 'reduxStore'
+import { store } from 'reduxStore'
 
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 

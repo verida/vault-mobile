@@ -3,28 +3,33 @@ import '@ethersproject/shims'
 import { signTypedData_v4 } from 'eth-sig-util'
 import * as ethers from 'ethers'
 
-import AccountManager from '../../api/AccountManager'
-import { Account } from '../../api/types'
+import { store } from '../../reduxStore'
+import { getWalletsData } from '../../reduxStore/wallet/selectors'
+import { web3 } from '../../wallet/chains/ethereum'
 import { getWalletConnectConfig } from '../config'
 import { DEFAULT_ACTIVE_INDEX, DEFAULT_CHAIN_ID } from '../constants/default'
 import { getChainData } from '../helpers/utilities'
+import { DApp } from '../types'
+import { IEtherWalletController } from './type'
 
-export class WalletController {
+export class EthereumWalletController implements IEtherWalletController {
   public path: string
   public wallet: ethers.Wallet
 
   public activeIndex: number = DEFAULT_ACTIVE_INDEX
   public activeChainId: number = DEFAULT_CHAIN_ID
-  public veridaAccount: Account | undefined
 
   constructor() {
-    this.veridaAccount = AccountManager.getInstance().getSelectedAccount()
     this.path = this.getPath()
     this.wallet = this.init()
   }
 
   getProvider(): ethers.providers.Provider {
     return this.wallet.provider
+  }
+
+  public getControllerType(): DApp['chain'] {
+    return 'ethr'
   }
 
   public isActive() {
@@ -49,29 +54,20 @@ export class WalletController {
     return this.wallet
   }
 
-  public getAccounts(count = getWalletConnectConfig().numberOfAccounts) {
-    const accounts = []
-    let wallet = null
-    for (let i = 0; i < count; i++) {
-      wallet = this.generateWallet(i)
-      accounts.push(wallet.address)
-    }
-    return accounts
-  }
-
   public getPath(index: number = this.activeIndex) {
     this.path = `${getWalletConnectConfig().derivationPath}/${index}`
     return this.path
   }
 
   public generateWallet(index: number) {
-    if (!this.veridaAccount) {
+    const wallets = getWalletsData(store.getState().main)
+
+    if (!wallets?.ethr) {
       throw new Error('No active account')
     }
-    this.wallet = ethers.Wallet.fromMnemonic(
-      this.veridaAccount.mnemonic,
-      this.getPath(index)
-    )
+
+    const mnemonic = wallets.ethr.mnemonic
+    this.wallet = ethers.Wallet.fromMnemonic(mnemonic, this.getPath(index))
     return this.wallet
   }
 
@@ -116,7 +112,7 @@ export class WalletController {
         //   tx.gasPrice || gasPrice
         // ).toHexString()
 
-        tx.nonce = ethers.BigNumber.from(tx.nonce).toHexString()
+        tx.nonce = await web3.eth.getTransactionCount(transaction.from) //  ethers.BigNumber.from(tx.nonce).toHexString()
       } catch (err) {
         throw new Error('Unable to populate transaction')
       }
@@ -204,6 +200,6 @@ export class WalletController {
   }
 }
 
-export function getWalletController() {
-  return new WalletController()
+export function getEthereumWalletController() {
+  return new EthereumWalletController()
 }

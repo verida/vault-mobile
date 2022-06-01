@@ -1,7 +1,7 @@
 import { IJsonRpcRequest } from '@walletconnect/types'
 import axios, { AxiosInstance } from 'axios'
 
-import { IAssetData, IGasPrices, IParsedTx } from '../types'
+import { IAssetData, IEtherPrice, IGasPrices, IParsedTx } from '../types'
 import { getChainData, payloadId } from './utilities'
 
 const api: AxiosInstance = axios.create({
@@ -89,6 +89,12 @@ export const apiGetCustomRequest = async (
     `config-request?chainId=${chainId}`,
     customRpc
   )
+  const { result } = response.data
+  return result
+}
+
+export const apiEtherPrices = async (): Promise<IEtherPrice> => {
+  const response = await api.get(`/eth-prices?fiat=USD`)
   const { result } = response.data
   return result
 }

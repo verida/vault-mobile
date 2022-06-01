@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-community/async-storage'
+import debounce from 'lodash/debounce'
 import { applyMiddleware, combineReducers, createStore } from 'redux'
+import { batchedSubscribe } from 'redux-batched-subscribe'
 import { composeWithDevTools } from 'redux-devtools-extension'
 import { persistReducer, persistStore } from 'redux-persist'
 import thunk from 'redux-thunk'
@@ -18,6 +20,8 @@ export const rootReducer = combineReducers({
   walletConnect: walletConnectReducer,
 })
 
+const debounceNotify = debounce((notify) => notify(), 30)
+
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const composeEnhancers = composeWithDevTools({
@@ -29,7 +33,8 @@ const middleware = [thunk]
 const store = createStore(
   persistedReducer,
   composeEnhancers(
-    applyMiddleware(...middleware)
+    applyMiddleware(...middleware),
+    batchedSubscribe(debounceNotify)
     // other store enhancers if any
   )
 )

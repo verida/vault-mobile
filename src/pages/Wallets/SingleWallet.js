@@ -9,13 +9,16 @@ import OtherSvg from 'assets/wallets/Other.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { renameWallet } from 'reduxStore/wallet/actions'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
 import PrivateKeyModal from './PrivateKeyModal'
+import RenameWalletModal from './RenameWalletModal'
 import SeedPhraseModal from './SeedPhraseModal'
 import WarningModal from './WarningModal'
 
-const SingleWallet = ({ navigation, wallets }) => {
+const SingleWallet = ({ navigation, wallets, onRenameWallet }) => {
+  const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
   const [copyPrivateKeyModalVisible, toggleCopyPrivateKeyModal] =
@@ -63,12 +66,12 @@ const SingleWallet = ({ navigation, wallets }) => {
         </TouchableOpacity>
         <View style={styles.walletNameLogo}>
           <OtherSvg width={64} height={64} />
-          <Text style={styles.title}>Multichain Wallet</Text>
+          <Text style={styles.title}>{wallets.label}</Text>
         </View>
         <View style={styles.editButtonWrapper}>
-          {/* <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
-          <Text style={styles.editButton}>Edit</Text>
-        </TouchableOpacity> */}
+          <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
+            <Text style={styles.editButton}>Edit</Text>
+          </TouchableOpacity>
         </View>
       </View>
       <View style={styles.actionButtons}>
@@ -88,6 +91,12 @@ const SingleWallet = ({ navigation, wallets }) => {
         onPressPrivateKey={(privateKey) => {
           showPrivateKey(privateKey)
         }}
+      />
+      <RenameWalletModal
+        hideModal={() => setRenameModalVisible(false)}
+        visible={renameModalVisible}
+        onPressRename={onRenameWallet}
+        data={{ id: wallets.id, label: wallets.label }}
       />
       <WarningModal
         hideModal={() => setSeedPhraseModalVisible(false)}
@@ -156,14 +165,17 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (rootState, props) => {
+  const state = rootState.main
   return {
     wallets: getAddressesForWallet(state, props.route.params.item.id),
   }
 }
 
-const mapDispatchToProps = () => {
-  return {}
+const mapDispatchToProps = (dispatch) => {
+  return {
+    onRenameWallet: (walletId, args) => dispatch(renameWallet(walletId, args)),
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(SingleWallet)
