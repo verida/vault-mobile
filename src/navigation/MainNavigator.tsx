@@ -6,6 +6,7 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import ChangePin from 'pages/Authentication/ChangePin'
+import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
@@ -38,7 +39,6 @@ import ManageWallets from 'pages/Wallets/ManageWallets'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
-import SingleConnection from 'pages/Connections/SingleConnection'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 

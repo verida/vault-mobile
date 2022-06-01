@@ -1,17 +1,17 @@
-import { Container, Icon, Content } from 'native-base'
-import React, { useState, useEffect } from 'react'
-import Text from 'components/Text'
+import { Container, Content, Icon } from 'native-base'
+import React, { useEffect, useState } from 'react'
 import {
-  View,
-  StyleSheet,
   FlatList,
   Image,
+  StyleSheet,
   TouchableOpacity,
+  View,
 } from 'react-native'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { NUNITO_SANS_BOLD } from 'constants/text'
 import DataConnectorsManager from 'api/DataConnectorsManager'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 function buildConnections(allConnectors) {
   const finalConnectors = []

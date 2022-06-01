@@ -18,6 +18,7 @@ import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
+import DataConnectorsManager from 'api/DataConnectorsManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
 import LoadingView from 'components/LoadingView'
@@ -52,8 +53,6 @@ const LogoImg = require('assets/vault-logo.png')
 const SHOW_BANNER_KEY = 'show_banner'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
-
-import DataConnectorsManager from 'api/DataConnectorsManager'
 
 const Home = (props) => {
   const {

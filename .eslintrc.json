@@ -36,6 +36,7 @@
     "react-native/no-inline-styles": 0,
     "no-case-declarations": 0,
     "@typescript-eslint/no-explicit-any": 0,
+    "@typescript-eslint/ban-ts-comment": "off",
     "simple-import-sort/imports": [
       "error",
       {
@@ -56,6 +57,13 @@
           // Anything that starts with a dot.
           ["^\\."]
         ]
+      }
+    ],
+    "@typescript-eslint/no-this-alias": [
+      "error",
+      {
+        "allowDestructuring": true, // Allow `const { props, state } = this`; false by default
+        "allowedNames": ["obj"] // Allow `const vm= this`; `[]` by default
       }
     ],
     "import/first": "error",

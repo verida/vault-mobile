@@ -5,11 +5,11 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { PRIMARY_COLOR } from 'constants/color'
 import { DashboardTabParams } from 'navigation/types'
+import DataConnector from 'pages/Connections/DataConnector'
 import Home from 'pages/Dashboard/Home'
 import Profiles from 'pages/Dashboard/Profiles'
 import Folders from 'pages/Data/Folders'
 import Tokens from 'pages/Tokens/Dashboard'
-import DataConnector from 'pages/Connections/DataConnector'
 // import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()

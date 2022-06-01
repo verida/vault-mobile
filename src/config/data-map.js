@@ -254,7 +254,13 @@ const dataMap = {
       color: '#66E6E5',
       layouts: {
         list: ['name', 'sourceApplication'],
-        view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
+        view: [
+          'name',
+          'sourceApplication',
+          'followedTimestamp',
+          'sourceId',
+          'uri',
+        ],
       },
     },
     'social/posts': {
@@ -266,7 +272,13 @@ const dataMap = {
       color: '#66E6E5',
       layouts: {
         list: ['name', 'sourceApplication'],
-        view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
+        view: [
+          'name',
+          'sourceApplication',
+          'followedTimestamp',
+          'sourceId',
+          'uri',
+        ],
       },
     },
   },
