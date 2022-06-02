@@ -173,6 +173,7 @@ const Home = (props) => {
         setInfo({
           address: PROFILE_URL + _selectedAccount.did,
           name,
+          did: _selectedAccount.did,
         })
         const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
         if (!showBanner || showBanner !== 'set') {
@@ -304,7 +305,7 @@ const Home = (props) => {
           </>
         )}
       </Content>
-      <DidView did={info.address || ''} />
+      <DidView did={info.did || ''} />
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
