@@ -106,7 +106,7 @@ const ConnectDappModal = (props: Props) => {
                   selectedWallet.chain
                 )
               } else {
-                Alert.alert('Waring', 'Please select a wallet')
+                Alert.alert('Warning', 'Please select a wallet')
               }
             }}>
             Connect
