@@ -77,7 +77,7 @@ export default (props) => {
   const [loading, setLoading] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
 
-  const networks = useSelector((state) => state.networks)
+  const networks = useSelector((state) => state.main.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `Verida Vault ${capitalize(
     Config.DEPLOY_ENVIRONMENT === 'internal' ? Config.DEPLOY_ENVIRONMENT : ''
