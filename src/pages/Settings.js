@@ -63,6 +63,15 @@ const generalList = [
   },
 ]
 
+const WalletConnectList = [
+  {
+    label: 'Dapps',
+    action: 'arrow',
+    optional: true,
+    onPress: (navigation) => navigation.navigate('WalletConnect'),
+  },
+]
+
 export default (props) => {
   const { isVeridaTeamMember } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -121,6 +130,11 @@ export default (props) => {
         <View>
           <PropertyList list={modifiedGeneralList} />
         </View>
+        <Text style={style.title}>Wallet Connect</Text>
+        <View>
+          <PropertyList list={WalletConnectList} />
+        </View>
+
         <Text style={style.versionText}>{versionText}</Text>
       </View>
       <AddAccountsModal

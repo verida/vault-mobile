@@ -22,7 +22,7 @@ export const useEventHandlers = () => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const selectedAccount = useSelector((state) => state.selectedAccount)
+  const selectedAccount = useSelector((state) => state.main.selectedAccount)
 
   const onMessage = useCallback(async function onMessage(_message: any) {
     // TODO: enable this when we make inbox.onMessage works faster and reliably. Now using firebase.messaging.onMessage to handle it

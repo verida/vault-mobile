@@ -87,7 +87,8 @@ const TokenDashboard = ({
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     wallets: getWalletsData(state),
     data: getTokensData(state),

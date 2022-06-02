@@ -16,7 +16,8 @@ import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
-import store from 'reduxStore'
+import { PersistGate } from 'redux-persist/es/integration/react'
+import { persistor, store } from 'reduxStore'
 
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { SHUTDOWN_APP } from 'constants/config'
@@ -25,6 +26,9 @@ import linking from 'navigation/linkingConfiguration'
 import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
+
+import { ModalProvider } from './contexts/ModalContext'
+import { WalletConnectProvider } from './contexts/WalletConnectContext'
 
 configureNotifications()
 
@@ -40,7 +44,7 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
 })
 
 Sentry.init({
-  dsn: 'https://e71ecbfe763e42189ac8841ae27753cc@o999692.ingest.sentry.io/5958805',
+  dsn: 'https://982fadf2fca74043b9395c50458aeffa@o1233403.ingest.sentry.io/6382201',
   environment: Config.SENTRY_ENVIRONMENT,
   beforeSend: (event, hint) => {
     if (__DEV__) {
@@ -77,18 +81,24 @@ function App() {
 
   const AppContent = (
     <Provider store={store}>
-      <AuthProvider>
-        <NavigationContainer linking={linking} ref={navigationRef}>
-          <Authenticate>
-            <RootSiblingParent>
-              <ActionSheetProvider>
-                <RootNavigator />
-              </ActionSheetProvider>
-            </RootSiblingParent>
-          </Authenticate>
-        </NavigationContainer>
-      </AuthProvider>
-      <SwitchAccountToast />
+      <PersistGate loading={null} persistor={persistor}>
+        <AuthProvider>
+          <NavigationContainer linking={linking} ref={navigationRef}>
+            <Authenticate>
+              <RootSiblingParent>
+                <ActionSheetProvider>
+                  <ModalProvider>
+                    <WalletConnectProvider>
+                      <RootNavigator />
+                    </WalletConnectProvider>
+                  </ModalProvider>
+                </ActionSheetProvider>
+              </RootSiblingParent>
+            </Authenticate>
+          </NavigationContainer>
+        </AuthProvider>
+        <SwitchAccountToast />
+      </PersistGate>
     </Provider>
   )
 
