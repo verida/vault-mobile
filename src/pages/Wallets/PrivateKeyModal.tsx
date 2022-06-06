@@ -5,7 +5,14 @@ import { StyleSheet, View } from 'react-native'
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
 
-export default ({ visible, toggleConfirmModal, phrase }) => {
+type Props = {
+  visible: boolean
+  toggleConfirmModal: () => void
+  phrase: string
+}
+
+export default (props: Props) => {
+  const { visible, toggleConfirmModal, phrase } = props
   return (
     <BottomActionsModal
       visible={visible}
