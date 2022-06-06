@@ -1,3 +1,4 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -17,7 +18,18 @@ import RenameWalletModal from './RenameWalletModal'
 import SeedPhraseModal from './SeedPhraseModal'
 import WarningModal from './WarningModal'
 
-const SingleWallet = ({ navigation, wallets, onRenameWallet }) => {
+import { WalletType } from './ManageWallets'
+import { MainStackParams } from 'navigation/types'
+import { Dispatch } from 'redux'
+
+type Props = {
+  wallets: WalletType
+  navigation: NativeStackNavigationProp<MainStackParams>
+  onRenameWallet: (selectedWalletID: string) => void
+}
+
+const SingleWallet = (props: Props) => {
+  const { navigation, wallets, onRenameWallet } = props
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
@@ -27,12 +39,12 @@ const SingleWallet = ({ navigation, wallets, onRenameWallet }) => {
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [privateKeyData, setPrivateKeyData] = useState('')
 
-  const showSeedPhrase = (data) => {
+  const showSeedPhrase = (data: any) => {
     setSeedPhraseModalVisible(false)
     setSeedPhraseData(data)
     toggleCopySeedPhraseModal(true)
   }
-  const showPrivateKey = (data) => {
+  const showPrivateKey = (data: any) => {
     setPrivateKeyData(data)
     toggleCopyPrivateKeyModal(true)
   }
@@ -47,9 +59,9 @@ const SingleWallet = ({ navigation, wallets, onRenameWallet }) => {
     const token = getNativeForChain(chainMapping[item])
 
     return {
-      name: token.name,
+      name: token?.name,
       address: itemData.address,
-      icon: token.icon,
+      icon: token?.icon,
       seedPhrase: itemData.mnemonic,
       privateKey: itemData.privateKey,
     }
@@ -85,10 +97,10 @@ const SingleWallet = ({ navigation, wallets, onRenameWallet }) => {
       <Text style={styles.listLabel}>Addresses</Text>
       <ChainsAddressesList
         list={addressList}
-        onPressSeedPhrase={(seedPhrase) => {
+        onPressSeedPhrase={(seedPhrase: string) => {
           showSeedPhrase(seedPhrase)
         }}
-        onPressPrivateKey={(privateKey) => {
+        onPressPrivateKey={(privateKey: string) => {
           showPrivateKey(privateKey)
         }}
       />
@@ -165,16 +177,17 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-const mapStateToProps = (rootState, props) => {
+const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
   return {
     wallets: getAddressesForWallet(state, props.route.params.item.id),
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onRenameWallet: (walletId, args) => dispatch(renameWallet(walletId, args)),
+    onRenameWallet: (walletId: string, args: any) =>
+      dispatch(renameWallet(walletId, args)),
   }
 }
 
