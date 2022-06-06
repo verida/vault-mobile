@@ -8,7 +8,15 @@ import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import InputStyles from 'styles/inputs'
 
-export default ({ visible, hideModal, data, onPressRename }) => {
+type Props = {
+  visible: boolean
+  onPressRename: (id: number, data: object) => void
+  hideModal: () => void
+  data: any
+}
+
+export default (props: Props) => {
+  const { visible, hideModal, data, onPressRename } = props
   const [name, setName] = useState(data.label)
 
   const onPressSave = () => {
