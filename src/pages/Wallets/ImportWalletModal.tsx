@@ -19,7 +19,13 @@ import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import InputStyles from 'styles/inputs'
 
-export default ({ visible, hideModal, onImportWallet }) => {
+type Props = {
+  visible: boolean
+  onImportWallet: (data: object) => void
+  hideModal: () => void
+}
+
+export default ({ visible, hideModal, onImportWallet }: Props) => {
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
 
