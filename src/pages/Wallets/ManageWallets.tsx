@@ -1,9 +1,11 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
@@ -25,18 +27,55 @@ import WalletsList from '../../components/WalletsList'
 import { SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
+import { MainStackParams } from 'navigation/types'
 
-const ManageWallets = ({
-  wallets,
-  walletCount,
-  onCreateNewWallet,
-  onSetSelectedWallet,
-  navigation,
-  selectedWalletId,
-  loading,
-  onImportWallet,
-  onDeleteWallet,
-}) => {
+export type SingleAccountType = {
+  mnemonic: string
+  privateKey: string
+  publicKey: string
+  address: string
+}
+
+export type AccountsType = {
+  near: SingleAccountType
+  algo: SingleAccountType
+  ethr: SingleAccountType
+}
+
+export type WalletType = {
+  id: string
+  type: string
+  seedPhrase: string
+  label: string
+  accounts: AccountsType
+}
+
+export type walletIdType = string
+
+type Props = {
+  wallets: [WalletType]
+  walletCount: number
+  onCreateNewWallet: () => Promise<void>
+  onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
+  navigation: NativeStackNavigationProp<MainStackParams, any>
+  selectedWalletId: number
+  loading: boolean
+  onImportWallet: () => Promise<void>
+  onDeleteWallet: (selectedWalletID: string) => Promise<void>
+}
+
+const ManageWallets = (props: Props) => {
+  const {
+    wallets,
+    walletCount,
+    onCreateNewWallet,
+    onSetSelectedWallet,
+    navigation,
+    selectedWalletId,
+    loading,
+    onImportWallet,
+    onDeleteWallet,
+  } = props
   const { showActionSheetWithOptions } = useActionSheet()
   const [importModalVisible, setImportModalVisible] = useState(false)
   const [addModalVisible, setAddModalVisible] = useState(false)
@@ -44,7 +83,7 @@ const ManageWallets = ({
   const showDeleteAlert = () =>
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
 
-  const showConfirmationAlert = (item) =>
+  const showConfirmationAlert = (item: WalletType) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -112,7 +151,7 @@ const ManageWallets = ({
           <Content style={styles.content}>
             <List>
               <WalletsList
-                onPressItem={(item) => {
+                onPressItem={(item: WalletType) => {
                   showActionSheetWithOptions(
                     {
                       options: [
@@ -171,7 +210,7 @@ const styles = StyleSheet.create({
   content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })
 
-const mapStateToProps = (rootState) => {
+const mapStateToProps = (rootState: any) => {
   const state = rootState.main
   return {
     wallets: getAllWallets(state),
@@ -181,12 +220,13 @@ const mapStateToProps = (rootState) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onCreateNewWallet: (args) => dispatch(createNewWallet(args)),
-    onSetSelectedWallet: (walletID) => dispatch(setSelectedWallet(walletID)),
-    onImportWallet: (args) => dispatch(createNewWallet(args)),
-    onDeleteWallet: (walletId) => dispatch(deleteWallet(walletId)),
+    onCreateNewWallet: (args: object) => dispatch(createNewWallet(args)),
+    onSetSelectedWallet: (walletID: string) =>
+      dispatch(setSelectedWallet(walletID)),
+    onImportWallet: (args: object) => dispatch(createNewWallet(args)),
+    onDeleteWallet: (walletId: string) => dispatch(deleteWallet(walletId)),
   }
 }
 
