@@ -8,7 +8,13 @@ import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import InputStyles from 'styles/inputs'
 
-export default ({ visible, hideModal, onCreateNewWallet }) => {
+type Props = {
+  visible: boolean
+  onCreateNewWallet: (data: object) => void
+  hideModal: () => void
+}
+
+export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
   const [name, setName] = useState('')
 
   const onPressSend = () => {
