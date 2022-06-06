@@ -19,12 +19,17 @@ import InputStyles from 'styles/inputs'
 import CheckboxCheckedSvg from '../../assets/checkbox_checked.svg'
 import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
 
-export default ({ visible, hideModal }) => {
+type Props = {
+  visible: boolean
+  hideModal: () => void
+}
+
+export default ({ visible, hideModal }: Props) => {
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
   const [checkbox, setCheckboxState] = useState(false)
   const [blockchain, setBlockchain] = useState(null)
-  const onBlockchainChange = (option) => setBlockchain(option)
+  const onBlockchainChange = (option: any) => setBlockchain(option)
 
   return (
     <Modal
