@@ -25,6 +25,7 @@ const DataItem = (props) => {
   const [copyUrl, setCopyUrl] = useState(null)
 
   const isCredential = folder.config.database === 'credential'
+  const isContact = folder.config.database === 'social_contact'
 
   useEffect(() => {
     const init = async () => {
@@ -80,7 +81,7 @@ const DataItem = (props) => {
     <Container>
       <NavigationHeader
         title={folder.config.title}
-        right={isCredential && copyUrl ? right : null}
+        right={(isCredential || isContact) && copyUrl ? right : null}
       />
       <Content contentContainerStyle={styles.content}>
         {loading ? (
@@ -96,7 +97,7 @@ const DataItem = (props) => {
               />
             ) : (
               <List>
-                <DataFieldList data={data} />
+                <DataFieldList data={data} setCopyUrl={setCopyUrl} />
               </List>
             )}
           </>
