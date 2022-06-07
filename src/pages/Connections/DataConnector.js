@@ -37,6 +37,10 @@ export default (props) => {
         const conns = await DataConnectorsManager.getConnectors()
         setConnectors(buildConnections(conns))
       })
+
+      DataConnectorsManager.on('logout', async () => {
+        await DataConnectorsManager.resetConnector()
+      })
     }
 
     load()
