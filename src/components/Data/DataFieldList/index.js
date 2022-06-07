@@ -6,5 +6,5 @@ export default ({ data, setCopyUrl }) =>
   data.data.map((item, index) => {
     if(item.field === 'DID')
       setCopyUrl(item.value)
-    return <DataFieldItem key={`data-field-${index}`} item={item} data={data} setCopyUrl={setCopyUrl} />
+    return <DataFieldItem key={`data-field-${index}`} item={item} data={data} />
   })
