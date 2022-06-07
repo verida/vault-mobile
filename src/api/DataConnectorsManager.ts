@@ -71,7 +71,7 @@ export default class DataConnectorsManager {
   }
 
   static async authComplete(connectorName: string, requestParams: any) {
-    const connection = new DataConnection(connectorName)
+    const connection = await this.getConnection(connectorName)
     await connection.setAuth(requestParams)
     await connection.sync()
   }
@@ -112,6 +112,15 @@ export default class DataConnectorsManager {
     }
 
     return connectors
+  }
+
+  static async resetConnector() {
+    const connections: any = Object.values(CONNECTIONS)
+    for (let i = 0; i < connections.length; i++) {
+      if(DataConnectorsManager._connections[connections[i].name].syncStatus !== 'disabled'){
+        DataConnectorsManager._connections[connections[i].name].disconnect()
+      }
+    }
   }
 
   static async triggerSync() {
@@ -474,11 +483,14 @@ class DataConnection extends EventEmitter {
     const syncStatus = this.syncStatus
     this.syncStatus = 'disabled'
     const success = await this.save()
-
+    
     if (!success) {
       this.syncStatus = syncStatus
       // @todo: display something
       DataConnectorsManager.emit('connectionDisconnectError', this)
+    }
+    else{
+      DataConnectorsManager.emit('connectionUpdated', this)
     }
   }
 

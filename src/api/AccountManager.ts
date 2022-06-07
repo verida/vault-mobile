@@ -28,6 +28,7 @@ import {
   getNodeCodeFromCountry,
 } from 'utils/profile'
 import { fetchNetworks } from 'api/utils'
+import DataConnectorsManager from './DataConnectorsManager'
 
 type EndpointUrls = {
   dbServerUrl: string
@@ -433,7 +434,7 @@ class AccountManager {
       await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
       await SecureStore.deleteItemAsync(SELECTED_WALLET_STORAGE_KEY)
       await store.dispatch(removeUserWallets())
-
+      DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
         delete this.accounts[did]
       })
@@ -481,6 +482,7 @@ class AccountManager {
       )
       await this.connect(true)
       await this.restoreUserWallet()
+      DataConnectorsManager.emit('logout', null)
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -554,7 +556,7 @@ class AccountManager {
           backedup: false,
         },
       }
-
+      DataConnectorsManager.emit('logout', null)
       await this.connect(true)
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
