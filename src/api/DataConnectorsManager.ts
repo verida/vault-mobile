@@ -22,7 +22,7 @@ const CONFIG = {
 }
 
 const delay = async (ms: number) => {
-  await new Promise((resolve) => setTimeout(() => resolve(), ms))
+  await new Promise((resolve: any) => setTimeout(() => resolve(), ms))
 }
 
 // possible states for status: syncing, disabled, active
