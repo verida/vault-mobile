@@ -1,4 +1,4 @@
-import { CompositeScreenProps } from '@react-navigation/native'
+import { CompositeNavigationProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import * as Sentry from '@sentry/react-native'
@@ -6,7 +6,7 @@ import parse from 'url-parse'
 
 import { MainStackParams, DashboardTabParams } from 'navigation/types'
 
-type NavProp = CompositeScreenProps<
+type NavProp = CompositeNavigationProp<
   BottomTabNavigationProp<DashboardTabParams, keyof DashboardTabParams>,
   NativeStackNavigationProp<MainStackParams, keyof MainStackParams>
 >
