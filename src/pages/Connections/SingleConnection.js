@@ -1,15 +1,14 @@
-import { Container, Icon, Content } from 'native-base'
+import { Container, Content, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import Text from 'components/Text'
-import { View, StyleSheet, Image } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
+
 import DataConnectorsManager from 'api/DataConnectorsManager'
-
-import { SUCCESS_COLOR } from 'constants/color'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Button from 'components/Button'
-import moment from 'moment'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Text from 'components/Text'
+import { SUCCESS_COLOR } from 'constants/color'
 
-const calculateNextSync = function(conn) {
+const calculateNextSync = function (conn) {
   if (!conn.syncNext) {
     return
   }
@@ -30,7 +29,9 @@ export default ({ route, navigation }) => {
   const [nextSync, setNextSync] = useState('')
   const [lastSync, setLastSync] = useState('')
   const [syncError, setSyncError] = useState('')
-  const [showSuccess, setShowSuccess] = useState(route.params && route.params.provider && route.params.accessToken)
+  const [showSuccess, setShowSuccess] = useState(
+    route.params && route.params.provider && route.params.accessToken
+  )
 
   useEffect(() => {
     const setState = (connection) => {
@@ -41,7 +42,9 @@ export default ({ route, navigation }) => {
     }
 
     const load = async () => {
-      setShowSuccess(route.params && route.params.provider && route.params.accessToken)
+      setShowSuccess(
+        route.params && route.params.provider && route.params.accessToken
+      )
 
       if (route.params && route.params.accessToken) {
         // @todo: hide this after a while
@@ -50,7 +53,9 @@ export default ({ route, navigation }) => {
 
       // upgrade our connection object to be a real connection instance from
       // the DataConnectorsManager so we can call sync() etc.
-      const connectionInstance = await DataConnectorsManager.getConnection(provider)
+      const connectionInstance = await DataConnectorsManager.getConnection(
+        provider
+      )
       setState(connectionInstance)
     }
     load()
@@ -63,22 +68,28 @@ export default ({ route, navigation }) => {
 
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
-    const connectionInstance = await DataConnectorsManager.getConnection(provider)
+    const connectionInstance = await DataConnectorsManager.getConnection(
+      provider
+    )
     connectionInstance.initiateAuth()
   }
   const onPressSync = async () => {
-    const connectionInstance = await DataConnectorsManager.getConnection(provider)
+    const connectionInstance = await DataConnectorsManager.getConnection(
+      provider
+    )
     connectionInstance.sync()
   }
   const onPressDisconnect = async () => {
-    const connectionInstance = await DataConnectorsManager.getConnection(provider)
+    const connectionInstance = await DataConnectorsManager.getConnection(
+      provider
+    )
     connectionInstance.disconnect()
   }
 
   return (
     <Container>
       <NavigationHeader
-        title={'Connect ' + connectionInfo.label }
+        title={'Connect ' + connectionInfo.label}
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
@@ -125,15 +136,9 @@ export default ({ route, navigation }) => {
         {syncStatus !== 'disabled' && (
           <View style={styles.infoText}>
             <Text>Status: {syncStatus}</Text>
-            {lastSync ? (
-              <Text>Last sync: {lastSync} ago</Text>
-            ) : undefined}
-            {nextSync ? (
-              <Text>Next sync: {nextSync}</Text>
-            ) : undefined}
-            {syncError ? (
-              <Text>Error message: {syncError}</Text>
-            ) : undefined}
+            {lastSync ? <Text>Last sync: {lastSync} ago</Text> : undefined}
+            {nextSync ? <Text>Next sync: {nextSync}</Text> : undefined}
+            {syncError ? <Text>Error message: {syncError}</Text> : undefined}
             <Text style={styles.disclaimer}>
               * During the developer preview, only the most recent 20 records
               are synchronized

@@ -22,6 +22,8 @@ export function useDeeplink(
       }
 
       if (screenName === 'SingleConnection') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore need to better typing here
         navigation.jumpTo('Connections')
       }
       navigation.navigate(screenName, query as never)

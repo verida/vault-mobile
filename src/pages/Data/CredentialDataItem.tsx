@@ -136,7 +136,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
 
       <Text style={styles.title}>{data?.row?.name}</Text>
       <List style={{ alignSelf: 'stretch' }}>
-        <DataFieldList data={data} />
+        <DataFieldList data={data} setCopyUrl={setCopyUrl} />
       </List>
       <Modal visible={showFullscreenQr}>
         <View style={styles.qrCodeModalOuterContainer}>

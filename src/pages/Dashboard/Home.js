@@ -53,8 +53,6 @@ const SHOW_BANNER_KEY = 'show_banner'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
-import DataConnectorsManager from 'api/DataConnectorsManager'
-
 const Home = (props) => {
   const {
     navigation,
