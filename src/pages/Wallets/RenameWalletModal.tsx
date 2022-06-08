@@ -10,7 +10,7 @@ import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  onPressRename: (id: number, data: object) => void
+  onPressRename: (id: number, data: any) => void
   hideModal: () => void
   data: any
 }

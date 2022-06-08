@@ -10,7 +10,7 @@ import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  onCreateNewWallet: (data: object) => void
+  onCreateNewWallet: (data: any) => void
   hideModal: () => void
 }
 

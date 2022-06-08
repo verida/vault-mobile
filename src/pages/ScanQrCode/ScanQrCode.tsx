@@ -21,7 +21,7 @@ function ScanQrCode(
 ) {
   const { navigation, route } = props
   const [isFlashOn, setIsFlashOn] = useState(false)
-  const handleDeeplink = useDeeplink(navigation)
+  const handleDeeplink = useDeeplink(navigation as any)
   const { requestConnect } = useWalletConnect()
 
   useEffect(() => {
