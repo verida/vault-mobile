@@ -15,7 +15,7 @@ import { MainStackParams } from 'navigation/types'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
-import { WalletType } from './ManageWallets'
+import { AccountsType, SingleAccountType, WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 import SeedPhraseModal from './SeedPhraseModal'
@@ -48,9 +48,9 @@ const SingleWallet = (props: Props) => {
     toggleCopyPrivateKeyModal(true)
   }
 
-  const addressList = Object.keys(wallets.accounts).map((item) => {
-    const itemData = wallets.accounts[item]
-    const chainMapping = {
+  const addressList = Object.keys(wallets.accounts).map((item: any) => {
+    const itemData: AccountsType = wallets.accounts[item]
+    const chainMapping: any = {
       algo: 'algorand',
       ethr: 'eip155',
       near: 'near',
@@ -106,7 +106,7 @@ const SingleWallet = (props: Props) => {
       <RenameWalletModal
         hideModal={() => setRenameModalVisible(false)}
         visible={renameModalVisible}
-        onPressRename={onRenameWallet}
+        onPressRename={onRenameWallet as any}
         data={{ id: wallets.id, label: wallets.label }}
       />
       <WarningModal
@@ -186,8 +186,8 @@ const mapStateToProps = (rootState: any, props: any) => {
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onRenameWallet: (walletId: string, args: any) =>
-      dispatch(renameWallet(walletId, args)),
+      dispatch(renameWallet(walletId, args) as any),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleWallet)
+export default connect(mapStateToProps, mapDispatchToProps)(SingleWallet as any)

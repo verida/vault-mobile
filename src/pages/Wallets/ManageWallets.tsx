@@ -37,9 +37,7 @@ export type SingleAccountType = {
 }
 
 export type AccountsType = {
-  near: SingleAccountType
-  algo: SingleAccountType
-  ethr: SingleAccountType
+  [key: string]: SingleAccountType
 }
 
 export type WalletType = {
@@ -47,7 +45,7 @@ export type WalletType = {
   type: string
   seedPhrase: string
   label: string
-  accounts: AccountsType
+  accounts: [AccountsType]
 }
 
 export type walletIdType = string
