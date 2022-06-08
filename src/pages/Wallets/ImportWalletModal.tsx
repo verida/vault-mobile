@@ -21,7 +21,7 @@ import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  onImportWallet: (data: object) => void
+  onImportWallet: (data: any) => void
   hideModal: () => void
 }
 

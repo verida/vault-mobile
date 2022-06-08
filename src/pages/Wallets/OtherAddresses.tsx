@@ -1,14 +1,14 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Icon } from 'native-base'
 import React from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import Text from 'components/Text'
+import { MainStackParams } from 'navigation/types'
 
 import OtherSvg from '../../assets/other_addresses.svg'
 import AddressesList from '../../components/AddressesList'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import { MainStackParams } from 'navigation/types'
 
 const list = [
   {
@@ -62,6 +62,7 @@ export default (props: Props) => {
           <Icon name='add' style={styles.addIcon} />
         </TouchableOpacity>
       </View>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
       {/*// @ts-ignore */}
       <AddressesList list={list} />
     </SafeAreaView>

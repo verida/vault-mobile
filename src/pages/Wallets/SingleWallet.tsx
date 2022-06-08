@@ -3,6 +3,7 @@ import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
 import { getNativeForChain } from 'wallet/helpers/tokens'
 
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
@@ -10,17 +11,15 @@ import OtherSvg from 'assets/wallets/Other.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { MainStackParams } from 'navigation/types'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
+import { WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 import SeedPhraseModal from './SeedPhraseModal'
 import WarningModal from './WarningModal'
-
-import { WalletType } from './ManageWallets'
-import { MainStackParams } from 'navigation/types'
-import { Dispatch } from 'redux'
 
 type Props = {
   wallets: WalletType

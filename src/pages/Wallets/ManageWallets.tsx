@@ -10,6 +10,7 @@ import { Dispatch } from 'redux'
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { MainStackParams } from 'navigation/types'
 import {
   createNewWallet,
   deleteWallet,
@@ -27,7 +28,6 @@ import WalletsList from '../../components/WalletsList'
 import { SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
-import { MainStackParams } from 'navigation/types'
 
 export type SingleAccountType = {
   mnemonic: string
@@ -96,7 +96,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            let selectedWalletID = item.id
+            const selectedWalletID = item.id
             onDeleteWallet(selectedWalletID)
           },
         },
@@ -168,7 +168,7 @@ const ManageWallets = (props: Props) => {
                         navigation.navigate('SingleWallet', { item })
                       }
                       if (buttonIndex === 1) {
-                        let selectedWalletID = item.id
+                        const selectedWalletID = item.id
                         onSetSelectedWallet(selectedWalletID)
                         SecureStore.setItemAsync(
                           SELECTED_WALLET_STORAGE_KEY,
@@ -222,12 +222,17 @@ const mapStateToProps = (rootState: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onCreateNewWallet: (args: object) => dispatch(createNewWallet(args)),
+    onCreateNewWallet: (args: unknown) =>
+      dispatch(createNewWallet(args) as any),
     onSetSelectedWallet: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID)),
-    onImportWallet: (args: object) => dispatch(createNewWallet(args)),
-    onDeleteWallet: (walletId: string) => dispatch(deleteWallet(walletId)),
+      dispatch(setSelectedWallet(walletID) as any),
+    onImportWallet: (args: any) => dispatch(createNewWallet(args) as any),
+    onDeleteWallet: (walletId: string) =>
+      dispatch(deleteWallet(walletId) as any),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageWallets)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(ManageWallets as any)

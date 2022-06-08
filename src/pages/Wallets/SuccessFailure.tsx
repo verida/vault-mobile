@@ -1,16 +1,16 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 
 import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
 import Text from 'components/Text'
+import { MainStackParams } from 'navigation/types'
 
 import FailureCross from '../../assets/failure_cross.svg'
 import SuccessTick from '../../assets/success_tick.svg'
 import { BLACK_COLOR } from '../../constants/color'
 import { NUNITO_SANS_BOLD } from '../../constants/text'
-import { MainStackParams } from 'navigation/types'
 
 type Props = {
   navigation: NativeStackNavigationProp<MainStackParams>

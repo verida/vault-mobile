@@ -50,7 +50,7 @@ export type MainStackParams = {
   TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
-  SingleWallet: undefined
+  SingleWallet: { item: any }
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
