@@ -19,7 +19,12 @@ import InputStyles from 'styles/inputs'
 import CheckboxCheckedSvg from '../../assets/checkbox_checked.svg'
 import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
 
-export default ({ visible, hideModal }) => {
+type Props = {
+  visible: boolean
+  hideModal: () => void
+}
+
+export default ({ visible, hideModal }: Props) => {
   const [name, setName] = useState('')
   const [checkbox, setCheckboxState] = useState(false)
 
