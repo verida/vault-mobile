@@ -9,8 +9,8 @@ import PushNotification from 'react-native-push-notification'
 import { useDispatch, useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
-import { fetchInboxCount } from 'api/utils'
 import DataConnectorsManager from 'api/DataConnectorsManager'
+import { fetchInboxCount } from 'api/utils'
 
 export const useEventHandlers = () => {
   const isNetworkConnected = useRef<boolean | null>(null)

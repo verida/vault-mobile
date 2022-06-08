@@ -1,22 +1,18 @@
 import React from 'react'
 
+import ContactSvg from '../assets/icons/data/contact.svg'
 import DocumentsSvg from '../assets/icons/data/documents.svg'
 import EmploymentSvg from '../assets/icons/data/employment.svg'
 import FinanceSvg from '../assets/icons/data/finance.svg'
 import HealthSvg from '../assets/icons/data/health.svg'
 import IdentitySvg from '../assets/icons/data/identity.svg'
 import QualificationsSvg from '../assets/icons/data/qualifications.svg'
-
-import ContactSvg from '../assets/icons/data/contact.svg'
-
 import ShoppingSvg from '../assets/icons/data/shopping.svg'
 import ShoppingCouponSvg from '../assets/icons/data/shopping/coupon.svg'
 import ShoppingReceiptSvg from '../assets/icons/data/shopping/receipt.svg'
-
 import SocialSvg from '../assets/icons/data/social.svg'
-import SocialPostSvg from '../assets/icons/data/social/post.svg'
 import SocialFollowingSvg from '../assets/icons/data/social/following.svg'
-
+import SocialPostSvg from '../assets/icons/data/social/post.svg'
 import SubscriptionsSvg from '../assets/icons/data/subscriptions.svg'
 import TicketsSvg from '../assets/icons/data/tickets.svg'
 
@@ -263,7 +259,13 @@ const dataMap = {
       color: '#7A78E5',
       layouts: {
         list: ['name', 'sourceApplication'],
-        view: ['name', 'sourceApplication', 'followedTimestamp', 'sourceId', 'uri'],
+        view: [
+          'name',
+          'sourceApplication',
+          'followedTimestamp',
+          'sourceId',
+          'uri',
+        ],
       },
     },
     'social/posts': {
@@ -282,7 +284,7 @@ const dataMap = {
           'sourceApplication',
           'sourceId',
           'insertedAt',
-        ]
+        ],
       },
     },
   },
