@@ -15,7 +15,7 @@ import { MainStackParams } from 'navigation/types'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
-import { AccountsType, SingleAccountType, WalletType } from './ManageWallets'
+import { AccountsType, WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 import SeedPhraseModal from './SeedPhraseModal'
