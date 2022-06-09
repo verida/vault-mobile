@@ -3712,10 +3712,10 @@
     tweetnacl-util "^0.15.1"
     url "^0.11.0"
 
-"@verida/wallet-utils@^1.6.0":
-  version "1.6.0"
-  resolved "https://registry.yarnpkg.com/@verida/wallet-utils/-/wallet-utils-1.6.0.tgz#34d537ca5b96e8bd506d58baed803fb359f3f164"
-  integrity sha512-I4APAi4QweqBcsvJCF/R1Z2jmfHrStldZGXmIIs8QE4eckOscNidYv8Ef3faHZA8qKVCKoaVo0fKRU9FKG44fQ==
+"@verida/wallet-utils@^1.6.1":
+  version "1.6.1"
+  resolved "https://registry.yarnpkg.com/@verida/wallet-utils/-/wallet-utils-1.6.1.tgz#30379ff585caf3932ce10872923d49741c7af5dc"
+  integrity sha512-q4E2QT4e1NQ2EUFfTmCruMLVNKUTbITzOjsW02fZcehIrLiJHihV/W5CqhS/nQI3sd3Bq4FzjpjsUkxef3T99w==
   dependencies:
     algosdk "^1.12.0"
     bs58 "^4.0.1"
