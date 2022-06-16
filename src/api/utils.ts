@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
-import store from 'reduxStore'
+import { store } from 'reduxStore'
 
 import AccountManager, { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
 import { Network, NetworkCountries } from 'api/types'

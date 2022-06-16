@@ -9,6 +9,7 @@ import PushNotification from 'react-native-push-notification'
 import { useDispatch, useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
+import DataConnectorsManager from 'api/DataConnectorsManager'
 import { fetchInboxCount } from 'api/utils'
 
 export const useEventHandlers = () => {
@@ -21,7 +22,7 @@ export const useEventHandlers = () => {
 
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const selectedAccount = useSelector((state) => state.selectedAccount)
+  const selectedAccount = useSelector((state) => state.main.selectedAccount)
 
   const onMessage = useCallback(async function onMessage(_message: any) {
     // TODO: enable this when we make inbox.onMessage works faster and reliably. Now using firebase.messaging.onMessage to handle it
@@ -66,6 +67,8 @@ export const useEventHandlers = () => {
     }
 
     async function init() {
+      DataConnectorsManager.triggerSync()
+
       const fbUnsubscribe = fbMessaging().onMessage(async () => {
         try {
           await fetchInboxCount()
@@ -105,6 +108,8 @@ export const useEventHandlers = () => {
         ) {
           await reInitMessaging()
         }
+
+        DataConnectorsManager.triggerSync()
 
         appState.current = nextAppState
       }

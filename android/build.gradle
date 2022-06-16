@@ -49,5 +49,13 @@ allprojects {
         }
         google()
         maven { url 'https://www.jitpack.io' }
+
+        // TODO: remove JCenter for this specific package and update on expo-image-picker package
+        jcenter() {
+            content {
+                includeModule("com.theartofdev.edmodo", "android-image-cropper")
+            }
+        }
+
     }
 }

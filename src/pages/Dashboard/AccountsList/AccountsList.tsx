@@ -17,6 +17,7 @@ export type AccountsListProps = {
   onSelectAccount: (did: string) => void
   selectedDids: string[]
   multipleSelect?: boolean
+  showSelectedOnly?: boolean
 }
 
 function AccountsList(props: AccountsListProps) {
@@ -25,6 +26,7 @@ function AccountsList(props: AccountsListProps) {
     containerStyle,
     selectedDids = [],
     multipleSelect,
+    showSelectedOnly,
   } = props
   const [data, setData] = useState<Account[]>([])
   const [loading, setLoading] = useState(false)
@@ -32,13 +34,24 @@ function AccountsList(props: AccountsListProps) {
   useEffect(() => {
     async function fetchData() {
       setLoading(true)
-      const normalizedData = await fetchPublicProfileData()
+      let normalizedData = await fetchPublicProfileData()
+      if (showSelectedOnly) {
+        const selectedData: any = {}
+        Object.keys(normalizedData).map((key) => {
+          if (selectedDids.includes(key)) {
+            selectedData[key] = normalizedData[key]
+          }
+        })
+        normalizedData = selectedData
+      }
+
       setData(Object.values(normalizedData))
       setLoading(false)
     }
 
     fetchData()
-  }, [])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [showSelectedOnly])
 
   const renderDivider = () => <View style={styles.divider} />
 

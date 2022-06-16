@@ -2,6 +2,8 @@ import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
+import { DApp } from '../wallet-connect/types'
+
 export type RootStackParams = {
   Auth: undefined
   Main: undefined
@@ -25,6 +27,7 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Profiles: undefined
+  Connections: undefined
 }
 
 export type MainStackParams = {
@@ -68,4 +71,7 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  WalletConnect: undefined
+  WalletConnectDapp: { dapp: DApp }
+  SingleConnection: undefined
 }

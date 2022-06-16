@@ -5,6 +5,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { PRIMARY_COLOR } from 'constants/color'
 import { DashboardTabParams } from 'navigation/types'
+import DataConnector from 'pages/Connections/DataConnector'
 import Home from 'pages/Dashboard/Home'
 import Profiles from 'pages/Dashboard/Profiles'
 import Folders from 'pages/Data/Folders'
@@ -46,6 +47,15 @@ function DashboardNavigator() {
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name='md-person-sharp' size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={'Connections'}
+        component={DataConnector}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='file-tray-full' size={24} color={color} />
           ),
         }}
       />

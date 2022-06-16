@@ -8,8 +8,13 @@ import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import InputStyles from 'styles/inputs'
 
-export default ({ visible, hideModal }) => {
-  const [name, setName] = useState('')
+export default ({ visible, hideModal, data, onPressRename }) => {
+  const [name, setName] = useState(data.label)
+
+  const onPressSave = () => {
+    onPressRename(data.id, { name })
+    hideModal()
+  }
 
   return (
     <Modal
@@ -49,7 +54,7 @@ export default ({ visible, hideModal }) => {
             style={styles.saveButton}
             color='primary'
             disabled={!name}
-            onPress={() => ({})}>
+            onPress={onPressSave}>
             Save
           </Button>
         </View>

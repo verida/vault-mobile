@@ -14,8 +14,17 @@ export function useDeeplink(
       let screenName: keyof MainStackParams
       switch (pathname) {
         //TODO: Handle more deeplink thre
+        case '/connection-success':
+          screenName = 'SingleConnection'
+          break
         default:
           screenName = 'LoginRequest'
+      }
+
+      if (screenName === 'SingleConnection') {
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore need to better typing here
+        navigation.jumpTo('Connections')
       }
       navigation.navigate(screenName, query as never)
     } catch (error) {

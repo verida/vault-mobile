@@ -29,7 +29,7 @@ function AccountItem(props: AccountItemProps) {
   const { name, did, selected, avatar, onSelect, multipleSelect } = props
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const selectedAccount = useSelector((state) => state.selectedAccount)
+  const selectedAccount = useSelector((state) => state.main.selectedAccount)
 
   function onPress() {
     onSelect(did)
