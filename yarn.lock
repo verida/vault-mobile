@@ -3686,8 +3686,8 @@
     tweetnacl-util "^0.15.1"
     url "^0.11.0"
 
-"@verida/wallet-utils@./libs/caip":
-  version "1.0.0"
+"@verida/wallet-utils@./libs/wallet-utils":
+  version "0.0.0"
 
 "@walletconnect/browser-utils@^1.7.8":
   version "1.7.8"

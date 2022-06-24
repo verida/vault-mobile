@@ -39,7 +39,7 @@
     "@verida/encryption-utils": "^1.1.3",
     "@verida/vault-common": "https://github.com/verida/vault-common.git",
     "@verida/verifiable-credentials": "^0.1.5",
-    "@verida/wallet-utils": "./libs/caip",
+    "@verida/wallet-utils": "./libs/wallet-utils",
     "@walletconnect/client": "^1.7.7",
     "algosdk": "^1.12.0",
     "apisauce": "^2.1.2",
