@@ -22,8 +22,9 @@ const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
-  const tokenChain = getTokenChain(token.address)
-  const address = getWalletAddressForToken(token.address, wallets)
+
+  const tokenChain = getTokenChain(token.asset)
+  const address = getWalletAddressForToken(tokenChain, wallets)
   let networkReference = tokenChain === 'eip155' ? 'Rinkeby' : ''
   return (
     <Container>
