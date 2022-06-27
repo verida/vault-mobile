@@ -3,60 +3,49 @@ import { AssetId } from 'caip'
 import { utils } from 'ethers'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
 
+export const isNativeToken = (address) => {
+  return address.assetName.namespace === 'slip44'
+}
+
 export const getTokenAddress = (address) => {
-  if (address.includes('slip44')) {
+  ////
+  if (isNativeToken(address)) {
     return 'slip44'
   }
 
-  if (address.includes('nep141:')) {
-    const splt = address.split('/')
-    return splt[1].replace('nep141:', '')
-  }
-
-  const parsed = AssetId.parse(address)
-  return parsed.assetName.reference
-}
-
-export const isNativeToken = (address) => {
-  // having to put a hack for Ethereum due to CAIP library having issues, waiting for update.
-  return address.includes('slip44')
+  return address.assetName.reference
 }
 
 export const getTokenChain = (address) => {
-  if (address.includes('near:')) {
-    return 'near'
-  } else if (address.includes('eip155:')) {
-    return 'eip155'
-  } else {
-    const parsed = AssetId.parse(address)
-    return parsed.chainId.namespace
-  }
+  return address.chainId.namespace
 }
 
-export const getNativeForChain = (chain) => {
-  let tok = SUPPORTED_TOKENS.find(
-    (ele) => ele.address.includes(chain) && ele.address.includes('slip44')
+export const getNativeForChain = (tokens, chain) => {
+  let tok = tokens.find(
+    (ele) =>
+      ele.asset.chainId.namespace === chain &&
+      ele.asset.assetName.namespace === 'slip44'
   )
 
   return tok
 }
 
 export const getTokenByAddress = (address) => {
+  // retire this
   let tok = SUPPORTED_TOKENS.find(
-    (ele) => getTokenAddress(ele.address).toLowerCase() === address
+    (ele) => getTokenAddress(ele.asset).toLowerCase() === address
   )
 
   return tok
 }
 
-export const getWalletAddressForToken = (tokenAddress, wallets) => {
+export const getWalletAddressForToken = (chain, wallets) => {
   const chainMapping = {
     algorand: 'algo',
     eip155: 'ethr',
     near: 'near',
   }
 
-  const chain = getTokenChain(tokenAddress)
   return wallets[chainMapping[chain]].address
 }
 
@@ -104,4 +93,21 @@ export const rawDataToReduxState = (walletData) => {
     }
   })
   return wallets
+}
+
+export const getWalletAddressForAsset = (asset, wallets) => {
+  const chainMapping = {
+    algorand: 'algo',
+    eip155: 'ethr',
+    near: 'near',
+  }
+
+  const chain = asset.chainId.namespace
+  return wallets[chainMapping[chain]].address
+}
+
+export const tokenCaipObjectToString = (asset) => {
+  const assetId = new AssetId(asset)
+
+  return assetId.toString()
 }
