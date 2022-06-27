@@ -18,10 +18,7 @@ import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,
   BALANCES_FETCH_START,
-  CURRENCIES_FETCH_FAILED,
-  CURRENCIES_FETCH_START,
   FETCHED_BALANCES,
-  FETCHED_CURRENCIES,
   FETCHED_TRANSACTION_DETAIL,
   FETCHED_TRANSACTION_PARAMS,
   FETCHED_TRANSACTIONS,
@@ -44,11 +41,6 @@ import {
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
 const walletInitialState = {
-  pricing: {
-    data: [],
-    fetching: false,
-    error: undefined,
-  },
   balances: {
     data: {},
     fetching: false,
@@ -157,22 +149,6 @@ export const mainReducer = (state = initialState, action) => {
           $set: action.payload,
         },
       })
-
-    case CURRENCIES_FETCH_START:
-      return {
-        ...state,
-        pricing: { fetching: true, error: undefined, data: [] },
-      }
-    case FETCHED_CURRENCIES:
-      return {
-        ...state,
-        pricing: { fetching: false, error: undefined, data: action.data },
-      }
-    case CURRENCIES_FETCH_FAILED:
-      return {
-        ...state,
-        pricing: { fetching: false, error: action.error, data: [] },
-      }
 
     case BALANCES_FETCH_START:
       return {
