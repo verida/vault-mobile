@@ -1,9 +1,10 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
-import { SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
+import { SUPPORTED_BLOCKCHAINS } from 'wallet/constants'
 import dataHelper from 'wallet/data'
-import { pricingApi } from 'wallet/helpers/api'
+import { pricingApi, walletProviderApi } from 'wallet/helpers/api'
 import { rawDataToReduxState } from 'wallet/helpers/tokens'
+import { getWalletAddressForAsset } from 'wallet/helpers/tokens'
 
 import AccountManager, {
   SELECTED_WALLET_STORAGE_KEY,
@@ -20,10 +21,7 @@ import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,
   BALANCES_FETCH_START,
-  CURRENCIES_FETCH_FAILED,
-  CURRENCIES_FETCH_START,
   FETCHED_BALANCES,
-  FETCHED_CURRENCIES,
   FETCHED_TRANSACTION_DETAIL,
   FETCHED_TRANSACTION_PARAMS,
   FETCHED_TRANSACTIONS,
@@ -44,31 +42,6 @@ import {
   WALLET_PROCESSING_START,
 } from './types'
 
-export const getPrices = () => {
-  return (dispatch) => {
-    dispatch({ type: CURRENCIES_FETCH_START })
-    pricingApi
-      .get('cryptocurrency/quotes/latest', {
-        symbol: SUPPORTED_TOKENS_SYMBOLS,
-      })
-      .then((response) => {
-        if (response.ok) {
-          if (response.data) {
-            dispatch({ type: FETCHED_CURRENCIES, data: response.data.data })
-          } else {
-            dispatch({
-              type: CURRENCIES_FETCH_FAILED,
-              error: "Couldn'nt load currencies",
-            })
-          }
-        } else {
-          const err = response.status === 404 ? 'API error.' : response.problem
-          dispatch({ type: CURRENCIES_FETCH_FAILED, error: err })
-        }
-      })
-  }
-}
-
 export const getBalances = () => {
   return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
@@ -76,10 +49,37 @@ export const getBalances = () => {
     try {
       const wallets = getWalletsData(getState().main)
 
-      let balanceData = await dataHelper.getAllBalances(wallets)
+      // console.log(wallets, 'wallets')
 
-      if (balanceData) {
-        dispatch({ type: FETCHED_BALANCES, data: balanceData })
+      // let balanceData = await dataHelper.getAllBalances(wallets)
+
+      // console.log(balanceData, 'balanceData')
+
+      const requestBody = Object.keys(wallets).map((walletKey) => {
+        return {
+          address: wallets[walletKey].address,
+          chainId: SUPPORTED_BLOCKCHAINS[walletKey],
+        }
+      })
+
+      // console.log(
+      //   JSON.stringify({
+      //     accounts: requestBody,
+      //   }),
+      //   'assets'
+      // )
+
+      const newData = await walletProviderApi.post(
+        'balance/getBalanceByChains',
+        {
+          accounts: requestBody,
+        }
+      )
+
+      // console.log(JSON.stringify(newData.data), 'newData')
+
+      if (newData.data) {
+        dispatch({ type: FETCHED_BALANCES, data: newData.data.data })
       } else {
         dispatch({
           type: BALANCES_FETCH_FAILED,
@@ -99,12 +99,22 @@ export const getTransactionsForToken = (assetID) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const transactionsData = await dataHelper.getTransactions(wallets, assetID)
+    // const transactionsData = await dataHelper.getTransactions(wallets, assetID)
+    const userAddress = getWalletAddressForAsset(assetID, wallets)
+
+    // console.log(wallets, assetID, 'transactionsData')
+
+    const transactionsData = await walletProviderApi.post('transaction/list', {
+      userAddress,
+      asset: assetID,
+    })
+
+    // console.log(JSON.stringify(transactionsData.data), 'newData')
 
     if (transactionsData) {
       dispatch({
         type: FETCHED_TRANSACTIONS,
-        data: transactionsData,
+        data: transactionsData.data.data,
       })
     } else {
       dispatch({
@@ -119,17 +129,26 @@ export const getTransactionDetails = (transactionID, tokenAddress) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)
+    const userAddress = getWalletAddressForAsset(tokenAddress, wallets)
 
-    let transactionData = await dataHelper.getTransactionDetails(
-      transactionID,
-      tokenAddress,
-      wallets
-    )
+    // let transactionData = await dataHelper.getTransactionDetails(
+    //   transactionID,
+    //   tokenAddress,
+    //   wallets
+    // )
 
-    if (transactionData) {
+    const transactionsData = await walletProviderApi.post('transaction/get', {
+      transactionId: transactionID,
+      userAddress,
+      asset: tokenAddress,
+    })
+
+    console.log(transactionsData, 'transactionsDatatransactionsData')
+
+    if (transactionsData) {
       dispatch({
         type: FETCHED_TRANSACTION_DETAIL,
-        data: transactionData,
+        data: transactionsData.data.data,
       })
     } else {
       dispatch({
