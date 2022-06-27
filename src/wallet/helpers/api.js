@@ -25,3 +25,7 @@ export const moralisApi = create({
 export const nearIndexerApi = create({
   baseURL: 'http://3.15.157.193:3000/',
 })
+
+export const walletProviderApi = create({
+  baseURL: 'https://walletprovider.tn.verida.tech/',
+})
