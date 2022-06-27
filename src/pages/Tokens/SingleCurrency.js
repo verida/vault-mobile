@@ -36,32 +36,30 @@ const SingleCurrency = ({
   transactions,
   tokenData,
   onGetBalances,
-  onGetPrices,
   wallets,
   onSendTransaction,
   nativeTokenBalance,
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
-  const tokenChain = getTokenChain(item.address)
-  const address = getWalletAddressForToken(item.address, wallets)
+  const tokenChain = getTokenChain(item.asset)
+  const address = getWalletAddressForToken(tokenChain, wallets)
 
   function pullToRefresh() {
-    onGetTransactionsForToken(item.address)
+    onGetTransactionsForToken(item.asset)
     onGetBalances()
-    onGetPrices()
   }
 
   useEffect(() => {
     async function loadData() {
-      onGetTransactionsForToken(item.address)
+      onGetTransactionsForToken(item.asset)
     }
 
     loadData()
   }, [onGetTransactionsForToken, item])
 
   const warningRequired =
-    tokenChain === 'algorand' && !isNativeToken(item.address)
+    tokenChain === 'algorand' && !isNativeToken(item.asset)
 
   let networkReference = tokenChain === 'eip155' ? 'Rinkeby' : ''
 
@@ -134,7 +132,7 @@ const SingleCurrency = ({
         <TransactionsList
           symbol={item.symbol}
           decimal={item.decimal}
-          tokenAddress={item.address}
+          tokenAddress={item.asset}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
           list={list}
@@ -147,11 +145,8 @@ const SingleCurrency = ({
 const mapStateToProps = (rootState, props) => {
   const state = rootState.main
   return {
-    transactions: selectTransactionsData(
-      state,
-      props.route.params.item.address
-    ),
-    tokenData: selectSingleTokenData(state, props.route.params.item.address),
+    transactions: selectTransactionsData(state, props.route.params.item.asset),
+    tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
     wallets: getWalletsData(state),
     nativeTokenBalance: selectNativeTokenBalance(state),
   }
