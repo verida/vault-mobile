@@ -9,12 +9,14 @@ import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 
 const TransactionDetails = ({
   navigation,
   route,
   data,
   onGetTransactionDetails,
+  tokens,
 }) => {
   const { id, tokenAddress } = route.params
   useEffect(() => {
@@ -42,7 +44,11 @@ const TransactionDetails = ({
       {loading ? (
         <LoadingIndicator />
       ) : (
-        <TransactionInfo transaction={transaction} />
+        <TransactionInfo
+          transaction={transaction}
+          tokenAddress={tokenAddress}
+          tokens={tokens}
+        />
       )}
     </Container>
   )
@@ -52,6 +58,7 @@ const mapStateToProps = (rootState) => {
   const state = rootState.main
   return {
     data: selectTransactionData(state),
+    tokens: selectTokens(rootState),
   }
 }
 
