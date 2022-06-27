@@ -1,39 +1,39 @@
 import { createSelector } from 'reselect'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
-import { formatTokenQuantity, handleTokenDecimals } from 'wallet/helpers/tokens'
+import {
+  formatTokenQuantity,
+  handleTokenDecimals,
+  tokenCaipObjectToString,
+} from 'wallet/helpers/tokens'
+import { isEmpty } from 'lodash'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 
 export const getPricingData = (state) => state.pricing.data || {}
 
-export const getBalancesData = (state) => state.balances.data || {}
+export const getBalancesData = (state) => state.balances.data.results || {}
+
+export const getTotalBalance = (state) => state.balances.data.totalBalance || 0
 
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
-  const pricing = getPricingData(state)
-  const balances = getBalancesData(state)
-  let total = 0
+  const balances = getBalancesData(state.main)
+  const total = getTotalBalance(state.main)
+  const tokens = selectTokens(state)
   let list = []
-  if (pricing || balances) {
-    list = SUPPORTED_TOKENS.map((token) => {
-      let tokenPrice = pricing[token.symbol]
+  if (!isEmpty(balances)) {
+    list = tokens.map((token) => {
       let tokenBalance = balances[token.symbol]
-      let amount =
-        tokenPrice && tokenBalance
-          ? tokenPrice.quote.USD.price *
-            handleTokenDecimals(tokenBalance, token.decimal)
-          : 0
-      total = total + amount
+      // total = total + amount
 
       return {
         label: token.name,
         symbol: token.symbol,
         icon: token.icon,
-        address: token.address,
-        price: tokenPrice ? tokenPrice.quote.USD.price : 0,
-        change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
-        quantity: tokenBalance
-          ? formatTokenQuantity(tokenBalance, token.decimal)
-          : 0,
-        amount,
+        asset: token.asset,
+        price: tokenBalance ? tokenBalance.quote.USD.price : 0,
+        change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
+        quantity: tokenBalance ? tokenBalance.balance : 0,
+        amount: tokenBalance ? tokenBalance.amount : 0,
         decimal: token.decimal,
       }
     })
@@ -54,38 +54,34 @@ export const selectNativeTokenBalance = (state) => {
 }
 
 export const selectSingleTokenData = (state, assetID) => {
-  const pricing = getPricingData(state)
-  const balances = getBalancesData(state)
+  const balances = getBalancesData(state.main)
+  const tokens = selectTokens(state)
 
-  const token = SUPPORTED_TOKENS.find((ele) => {
-    return ele.address === assetID
+  // write the function.. find.. chain id.. reference.. compare whole onject.. convert to string?
+
+  const token = tokens.find((ele) => {
+    return (
+      tokenCaipObjectToString(ele.asset) === tokenCaipObjectToString(assetID)
+    )
   })
 
-  let tokenPrice = pricing[token.symbol]
   let tokenBalance = balances[token.symbol]
-  let amount =
-    tokenPrice && tokenBalance
-      ? tokenPrice.quote.USD.price *
-        handleTokenDecimals(tokenBalance, token.decimal)
-      : 0
 
   return {
     label: token.name,
     symbol: token.symbol,
     icon: token.icon,
-    address: token.address,
-    price: tokenPrice ? tokenPrice.quote.USD.price : 0,
-    change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
-    quantity: tokenBalance
-      ? formatTokenQuantity(tokenBalance, token.decimal)
-      : 0,
-    amount,
+    asset: token.asset,
+    price: tokenBalance ? tokenBalance.quote.USD.price : 0,
+    change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
+    quantity: tokenBalance ? tokenBalance.balance : 0,
+    amount: tokenBalance ? tokenBalance.amount : 0,
     decimal: token.decimal,
   }
 }
 
 export const getTokensData = (state) => {
-  const loading = state.pricing.fetching && state.balances.fetching
+  const loading = state.main.balances.fetching
 
   return {
     listAndTotal: getListAndTotal(state),
@@ -129,7 +125,10 @@ export const getAddressesForWallet = (state, ID) => {
 export const selectPendingTransactions = (state, assetID) => {
   const pendingTransactions = state.pendingTransactions.data
   const transactionsForAsset = pendingTransactions.filter((ele) => {
-    return ele.token.address === assetID
+    return (
+      tokenCaipObjectToString(ele.token.asset) ===
+      tokenCaipObjectToString(assetID)
+    )
   })
   if (transactionsForAsset) {
     return transactionsForAsset
