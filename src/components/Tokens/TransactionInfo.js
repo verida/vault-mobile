@@ -3,31 +3,35 @@ import * as Sentry from '@sentry/react-native'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { formatTokenQuantity, getExplorerUrl } from 'wallet/helpers/tokens'
+import {
+  formatTokenQuantity,
+  getExplorerUrl,
+  getTokenChain,
+  tokenCaipObjectToString,
+} from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({ transaction }) => {
-  let formattedTime
+export default ({ transaction, tokenAddress, tokens }) => {
+  const token = tokens.find((ele) => {
+    return (
+      tokenCaipObjectToString(ele.asset) ===
+      tokenCaipObjectToString(tokenAddress)
+    )
+  })
+  const chain = getTokenChain(tokenAddress)
   let fixed
   try {
-    switch (transaction.chain) {
+    switch (chain) {
       case 'algorand':
-        formattedTime = new Date(transaction.time * 1000).toLocaleString(
-          'en-US'
-        )
         fixed = 3
         break
       case 'eip155':
-        formattedTime = new Date(transaction.time).toLocaleString('en-US')
         fixed = 18
         break
       case 'near':
-        formattedTime = new Date(
-          parseInt(transaction.time, 10) / 1000000
-        ).toLocaleString('en-US')
         fixed = 8
         break
     }
@@ -55,8 +59,8 @@ export default ({ transaction }) => {
               ]}>
               {`${transaction.type === 'sent' ? '-' : ''}${formatTokenQuantity(
                 transaction.quantity,
-                transaction.decimal
-              )} ${transaction.symbol}`}
+                token.decimal
+              )} ${token.symbol}`}
             </Text>
           </View>
         </View>
@@ -97,15 +101,17 @@ export default ({ transaction }) => {
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Time</Text>
           <View style={styles.infoValue}>
-            <Text style={styles.valueText}>{formattedTime}</Text>
+            <Text style={styles.valueText}>
+              {new Date(transaction.time).toLocaleString('en-US')}
+            </Text>
           </View>
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>
-            {transaction.chain === 'algorand' ? 'Round' : 'Block'}
+            {chain === 'algorand' ? 'Round' : 'Block'}
           </Text>
           <View style={styles.infoValue}>
-            <Text style={styles.valueText}>{transaction.round}</Text>
+            <Text style={styles.valueText}>{transaction.blockNumber}</Text>
           </View>
         </View>
         <View style={styles.infoColumn}>
@@ -131,7 +137,7 @@ export default ({ transaction }) => {
         <TouchableOpacity style={styles.viewOnExplorerWrapper}>
           <Text
             onPress={() => {
-              const explorerUrl = getExplorerUrl(transaction.chain)
+              const explorerUrl = getExplorerUrl(chain)
               Linking.openURL(explorerUrl + transaction.id)
             }}>
             View on explorer
