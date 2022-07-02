@@ -1,18 +1,28 @@
 import { createSelector } from 'reselect'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
 import {
   formatTokenQuantity,
-  handleTokenDecimals,
   tokenCaipObjectToString,
+  getTokenChain,
+  getNativeForChain,
 } from 'wallet/helpers/tokens'
 import { isEmpty } from 'lodash'
 import { selectTokens } from 'reduxStore/tokens/selectors'
 
-export const getPricingData = (state) => state.pricing.data || {}
+export const getBalancesData = (state) => {
+  if (state.balances.data && state.balances.data.results) {
+    return state.balances.data.results
+  } else {
+    return {}
+  }
+}
 
-export const getBalancesData = (state) => state.balances.data.results || {}
-
-export const getTotalBalance = (state) => state.balances.data.totalBalance || 0
+export const getTotalBalance = (state) => {
+  if (state.balances.data && state.balances.data.totalBalance) {
+    return state.balances.data.totalBalance
+  } else {
+    return 0
+  }
+}
 
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
@@ -43,11 +53,14 @@ export const getListAndTotal = (state) => {
   }
 }
 
-export const selectNativeTokenBalance = (state) => {
-  const balances = getBalancesData(state)
-  if (balances) {
-    // TODO: dont hardcode decimals
-    return formatTokenQuantity(balances.ALGO, SUPPORTED_TOKENS[0].decimal)
+export const selectNativeTokenBalance = (state, asset) => {
+  const tokens = selectTokens(state)
+  const chain = getTokenChain(asset)
+  const native = getNativeForChain(tokens, chain)
+  const balances = getBalancesData(state.main)
+
+  if (balances && native && balances[native.symbol]) {
+    return balances[native.symbol].balance
   } else {
     0
   }
