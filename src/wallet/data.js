@@ -1,21 +1,20 @@
 import algosdk from 'algosdk'
-import { algodClient, indexerClient } from 'wallet/chains/algorand'
+import { algodClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
 import initNearClient from 'wallet/chains/near'
 import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
   NEAR_GAS_AMOUNT_TRANSFER,
-  SUPPORTED_TOKENS,
 } from 'wallet/constants'
-import { moralisApi, nearIndexerApi } from 'wallet/helpers/api'
 import {
-  getNativeForChain,
   getTokenAddress,
-  getTokenByAddress,
   getTokenChain,
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
+import { walletProviderApi } from 'wallet/helpers/api'
+
+import * as nearAPI from 'near-api-js'
 
 import {
   getTransactionParamsData,
@@ -47,373 +46,9 @@ const minABI = [
   },
 ]
 
-const getAllBalances = async (wallets) => {
-  let list = {}
-
-  try {
-    const near = await initNearClient()
-    const nearAccount = await near.account(wallets.near.address)
-
-    const nearTokens = SUPPORTED_TOKENS.filter(
-      (tk) => tk.address.includes('near:') && tk.address.includes('nep141')
-    )
-
-    await nearTokens.forEach(async (nearToken) => {
-      const tokBalance = await nearAccount.viewFunction(
-        getTokenAddress(nearToken.address),
-        'ft_balance_of',
-        {
-          account_id: wallets.near.address,
-        }
-      )
-
-      if (tokBalance) {
-        list[nearToken.symbol] = tokBalance
-      }
-    })
-
-    const nearBalance = await nearAccount.getAccountBalance()
-
-    if (nearBalance.total) {
-      list.NEAR = parseFloat(nearBalance.total)
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error, 'error')
-  }
-
-  try {
-    let algorandBalances = await indexerClient
-      .lookupAccountByID(wallets.algo.address)
-      .do()
-
-    if (algorandBalances.account) {
-      const algoBalanceData = algorandBalances.account
-      // TODO: dont hardcode
-      list.ALGO = algoBalanceData.amount
-      if (algoBalanceData.assets) {
-        algoBalanceData.assets.map((balance) => {
-          if (balance['asset-id']) {
-            let tok = getTokenByAddress(balance['asset-id'].toString())
-            if (tok) {
-              list[tok.symbol] = balance.amount
-            }
-          }
-        })
-      }
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error, 'error')
-  }
-
-  try {
-    const ethNativeBalance = await moralisApi.get(
-      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/balance',
-      wallets.ethr.address + '/balance',
-      {
-        chain: 'rinkeby',
-      }
-    )
-
-    const ethereumBalances = await moralisApi.get(
-      // '0x28C6c06298d514Db089934071355E5743bf21d60' + '/erc20',
-      wallets.ethr.address + '/erc20',
-      {
-        chain: 'rinkeby',
-      }
-    )
-
-    if (ethNativeBalance.data) {
-      list.ETH = parseFloat(ethNativeBalance.data.balance)
-    }
-
-    if (ethereumBalances.data) {
-      Object.values(ethereumBalances.data).map((obj) => {
-        let tok = getTokenByAddress(obj.token_address)
-        if (tok) {
-          list[tok.symbol] = parseFloat(obj.balance)
-        }
-      })
-    }
-  } catch (error) {
-    // eslint-disable-next-line no-console
-    console.error(error, 'error')
-  }
-
-  return list
-}
-
-const getTransactions = async (wallets, tokenAddress) => {
-  let transactions = []
-  if (tokenAddress.includes('near')) {
-    const userAddr = wallets.near.address
-
-    let nearTransactions
-    let isNative = isNativeToken(tokenAddress)
-
-    if (isNative) {
-      nearTransactions = await nearIndexerApi.get('transactions/' + userAddr)
-    } else {
-      nearTransactions = await nearIndexerApi.get(
-        'token_transactions/' + userAddr,
-        {
-          token: getTokenAddress(tokenAddress),
-        }
-      )
-    }
-    const rawTransactions = nearTransactions.data
-    if (rawTransactions) {
-      transactions = rawTransactions.map((tx) => {
-        let isUserSender = tx.signer_account_id === userAddr
-        return {
-          id: tx.transaction_hash,
-          type: isUserSender ? 'sent' : 'received',
-          address: isUserSender
-            ? isNative
-              ? tx.receiver_account_id
-              : tx.args.args_json.receiver_id
-            : tx.signer_account_id,
-          quantity: isNative ? tx.args.deposit : tx.args.args_json.amount,
-          pending: false,
-        }
-      })
-    }
-  } else if (tokenAddress.includes('eip155')) {
-    const userAddr = wallets.ethr.address
-
-    let moralisTransactions
-    if (isNativeToken(tokenAddress)) {
-      moralisTransactions = await moralisApi.get(userAddr, {
-        chain: 'rinkeby',
-      })
-
-      const ethTransactions = moralisTransactions.data.result
-      if (ethTransactions) {
-        transactions = ethTransactions.map((tx) => {
-          let isUserSender = tx.from_address === userAddr.toLowerCase()
-          return {
-            id: tx.hash,
-            type: isUserSender ? 'sent' : 'received',
-            address: isUserSender ? tx.to_address : tx.from_address,
-            quantity: tx.value,
-            pending: false,
-          }
-        })
-      }
-    } else {
-      moralisTransactions = await moralisApi.get(
-        userAddr + '/erc20/transfers',
-        {
-          chain: 'rinkeby',
-        }
-      )
-
-      const ethTransactions = moralisTransactions.data.result
-      if (ethTransactions) {
-        let contractAddress = getTokenAddress(tokenAddress)
-
-        transactions = ethTransactions
-          .filter((tx) => {
-            return tx.address === contractAddress.toLowerCase()
-          })
-          .map((tx) => {
-            let isUserSender = tx.from_address === userAddr.toLowerCase()
-            return {
-              id: tx.transaction_hash,
-              type: isUserSender ? 'sent' : 'received',
-              address: isUserSender ? tx.to_address : tx.from_address,
-              quantity: tx.value,
-              pending: false,
-            }
-          })
-      }
-    }
-  } else {
-    const assetID = getTokenAddress(tokenAddress)
-    const isNative = isNativeToken(tokenAddress)
-
-    let transactionsData = await indexerClient
-      .searchForTransactions()
-      .address(wallets.algo.address)
-      .assetID(isNative ? null : assetID)
-      .txType(isNative ? 'pay' : null)
-      .do()
-
-    const userAddr = wallets.algo.address
-
-    const rawTransactions = transactionsData.transactions
-    if (rawTransactions) {
-      transactions = rawTransactions.map((tx) => {
-        let isUserSender = tx.sender === userAddr
-        let transferInfo = tx['asset-transfer-transaction']
-          ? tx['asset-transfer-transaction']
-          : tx['payment-transaction']
-        return {
-          id: tx.id,
-          type: isUserSender ? 'sent' : 'received',
-          address: isUserSender ? transferInfo.receiver : tx.sender,
-          quantity: transferInfo.amount,
-          pending: false,
-        }
-      })
-    }
-  }
-
-  return transactions
-}
-
-const getTransactionDetails = async (transactionID, tokenAddress, wallets) => {
-  if (tokenAddress.includes('near')) {
-    const nearTransaction = await nearIndexerApi.get(
-      'transaction/' + transactionID
-    )
-
-    let rawTransaction = nearTransaction.data
-    let userAddr = wallets.near.address
-
-    let isNative = rawTransaction.action_kind === 'TRANSFER'
-    let isUserSender = rawTransaction.signer_account_id === userAddr
-    let chain = getTokenChain(tokenAddress)
-    let nativeToken = getNativeForChain(chain)
-    let feeSymbol = nativeToken.symbol
-    let feeDecimal = nativeToken.decimal
-
-    let symbol
-    let decimal
-    if (!isNative) {
-      let tok = getTokenByAddress(rawTransaction.receiver_account_id)
-      symbol = tok.symbol
-      decimal = tok.decimal
-    } else {
-      symbol = nativeToken.symbol
-      decimal = nativeToken.decimal
-    }
-
-    return {
-      id: rawTransaction.transaction_hash,
-      type: isUserSender ? 'sent' : 'received',
-      address: isUserSender
-        ? isNative
-          ? rawTransaction.receiver_account_id
-          : rawTransaction.args.args_json.receiver_id
-        : rawTransaction.signer_account_id,
-      quantity: isNative
-        ? rawTransaction.args.deposit
-        : rawTransaction.args.args_json.amount,
-      fee:
-        parseInt(rawTransaction.receipt_conversion_tokens_burnt, 10) +
-        parseInt(rawTransaction.tokens_burnt, 10),
-      round: rawTransaction.included_in_block_hash,
-      time: rawTransaction.block_timestamp,
-      symbol,
-      feeSymbol,
-      decimal,
-      feeDecimal,
-      chain: 'near',
-    }
-  } else if (tokenAddress.includes('eip155')) {
-    const ethTransaction = await moralisApi.get(
-      'transaction/' + transactionID,
-      {
-        chain: 'rinkeby',
-      }
-    )
-    let rawTransaction = ethTransaction.data
-    let userAddr = wallets.ethr.address
-    // let userAddr = '0x28C6c06298d514Db089934071355E5743bf21d60'
-
-    if (rawTransaction) {
-      let isUserSender = rawTransaction.from_address === userAddr.toLowerCase()
-      let chain = getTokenChain(tokenAddress)
-      let nativeToken = getNativeForChain(chain)
-      let feeDecimal = nativeToken.decimal
-      let feeSymbol = nativeToken.symbol
-      let symbol
-      let decimal
-      let quantity
-      if (rawTransaction.logs[0]) {
-        let nonNativeTx = rawTransaction.logs[0]
-        let tok = getTokenByAddress(nonNativeTx.address)
-        symbol = tok.symbol
-        decimal = tok.decimal
-        quantity = parseInt(nonNativeTx.data, 16)
-      } else {
-        symbol = nativeToken.symbol
-        decimal = nativeToken.decimal
-        quantity = rawTransaction.value
-      }
-      return {
-        id: rawTransaction.hash,
-        type: isUserSender ? 'sent' : 'received',
-        address: isUserSender
-          ? rawTransaction.to_address
-          : rawTransaction.from_address,
-        quantity,
-        fee: rawTransaction.gas_price * rawTransaction.gas,
-        round: rawTransaction.block_number,
-        time: rawTransaction.block_timestamp,
-        symbol,
-        feeSymbol,
-        decimal,
-        feeDecimal,
-        chain: 'eip155',
-      }
-    } else {
-      return {}
-    }
-  } else {
-    let transactionData = await indexerClient
-      .lookupTransactionByID(transactionID)
-      .do()
-
-    let rawTransaction = transactionData.transaction
-    let userAddr = wallets.algo.address
-
-    if (rawTransaction) {
-      let isUserSender = rawTransaction.sender === userAddr
-      let transferInfo = rawTransaction['asset-transfer-transaction']
-        ? rawTransaction['asset-transfer-transaction']
-        : rawTransaction['payment-transaction']
-      let symbol
-      let decimal
-      let chain = getTokenChain(tokenAddress)
-      let nativeToken = getNativeForChain(chain)
-      let feeDecimal = nativeToken.decimal
-      let feeSymbol = nativeToken.symbol
-      if (rawTransaction['asset-transfer-transaction']) {
-        let tok = getTokenByAddress(
-          rawTransaction['asset-transfer-transaction']['asset-id'].toString()
-        )
-        symbol = tok.symbol
-        decimal = tok.decimal
-      } else {
-        symbol = nativeToken.symbol
-        decimal = nativeToken.decimal
-      }
-      return {
-        id: rawTransaction.id,
-        type: isUserSender ? 'sent' : 'received',
-        address: isUserSender ? transferInfo.receiver : rawTransaction.sender,
-        quantity: transferInfo.amount,
-        fee: rawTransaction.fee,
-        round: rawTransaction['confirmed-round'],
-        time: rawTransaction['round-time'],
-        symbol,
-        feeSymbol,
-        decimal,
-        feeDecimal,
-        chain: 'algorand',
-      }
-    } else {
-      return {}
-    }
-  }
-}
-
 const getTransactionParams = async (transactionData, wallets) => {
-  if (transactionData.token.address.includes('near')) {
-    const units = isNativeToken(transactionData.token.address)
+  if (getTokenChain(transactionData.token.asset) === 'near') {
+    const units = isNativeToken(transactionData.token.asset)
       ? NEAR_GAS_AMOUNT_TRANSFER
       : NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER
 
@@ -423,13 +58,22 @@ const getTransactionParams = async (transactionData, wallets) => {
     const params = { fee: parseInt(response.gas_price, 10) * units }
 
     return params
-  } else if (transactionData.token.address.includes('eip155')) {
+  } else if (getTokenChain(transactionData.token.asset) === 'eip155') {
     let fromAddress = wallets.ethr.address
     let toAddress = transactionData.address
     const gasPrice = await web3.eth.getGasPrice()
 
+    console.log(
+      fromAddress,
+      toAddress,
+      transactionData.token,
+      gasPrice,
+      'eip155'
+    )
+
     let input
-    if (isNativeToken(transactionData.token.address)) {
+    if (isNativeToken(transactionData.token.asset)) {
+      console.log('isNativeToken')
       input = {
         from: fromAddress,
         to: toAddress,
@@ -439,7 +83,9 @@ const getTransactionParams = async (transactionData, wallets) => {
         ),
       }
     } else {
-      let tokenAddress = getTokenAddress(transactionData.token.address)
+      console.log('NOT isNativeToken')
+
+      let tokenAddress = getTokenAddress(transactionData.token.asset)
 
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
         from: fromAddress,
@@ -462,13 +108,15 @@ const getTransactionParams = async (transactionData, wallets) => {
     }
 
     try {
+      console.log('estimateGas ....')
+
       const estimateGas = await web3.eth.estimateGas(input)
       const params = { gas: estimateGas, fee: gasPrice * estimateGas }
 
       return params
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(error, 'error')
+      console.error(error, 'errornnnnnnn')
     }
   } else {
     const params = await algodClient.getTransactionParams().do()
@@ -487,69 +135,75 @@ const sendTransaction = async (
   state
 ) => {
   const wallets = getWalletsData(state)
+  const amount = parseUnitsForSending(
+    transactionData.amount,
+    transactionData.token.decimal
+  )
+  const tokenAddress = getTokenAddress(transactionData.token.asset)
+  const isTokenNative = isNativeToken(transactionData.token.asset)
+  const tokenChain = getTokenChain(transactionData.token.asset)
+  const receiverAddress = transactionData.address
 
-  if (transactionData.token.address.includes('near:')) {
-    let amount = (amount = parseUnitsForSending(
-      transactionData.amount,
-      transactionData.token.decimal
-    ))
-    let tokenAddress = getTokenAddress(transactionData.token.address)
+  let txString
+  let txData
+  let txIdAlgo
 
+  if (tokenChain === 'near') {
     const near = await initNearClient()
     const nearAccount = await near.account(wallets.near.address)
-
-    let tx
-
-    if (isNativeToken(transactionData.token.address)) {
-      tx = await nearAccount.sendMoney(
-        transactionData.address, // receiver account
-        amount.toString() // amount in yoctoNEAR
-      )
+    let actions
+    let txAddress
+    if (isTokenNative) {
+      actions = [nearAPI.transactions.transfer(amount.toString())]
+      txAddress = receiverAddress
     } else {
-      tx = await nearAccount.functionCall(
-        tokenAddress,
-        'ft_transfer',
-        {
-          receiver_id: transactionData.address,
-          amount: amount.toString(),
-        },
-        null,
-        1
-      )
+      actions = [
+        nearAPI.transactions.functionCall(
+          'ft_transfer',
+          {
+            receiver_id: receiverAddress,
+            amount: amount.toString(),
+          },
+          5430000000000,
+          1
+        ),
+      ]
+      txAddress = tokenAddress
     }
 
-    let chain = getTokenChain(transactionData.token.address)
-    let nativeToken = getNativeForChain(chain)
+    const signedTx = await nearAccount.signTransaction(txAddress, actions)
 
-    const txData = {
-      id: tx.transaction.hash,
+    const signedTransaction = new nearAPI.transactions.SignedTransaction({
+      transaction: signedTx[1].transaction,
+      signature: signedTx[1].signature,
+    })
+    const signedSerializedTx = signedTransaction.encode()
+
+    txString = Buffer.from(signedSerializedTx).toString('base64')
+    console.log(txString, 'txString')
+
+    txData = {
       amount: amount,
-      fee: tx.transaction_outcome.outcome.tokens_burnt,
-      to: transactionData.address,
+      to: receiverAddress,
       from: wallets.near.address,
       token: transactionData.token,
-      feeSymbol: nativeToken.symbol,
-      chain: 'near',
+      chain: tokenChain,
     }
-
-    return txData
-  } else if (transactionData.token.address.includes('eip155')) {
+    console.log(txData, 'txData near')
+  } else if (tokenChain === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
-    let amount = (amount = parseUnitsForSending(
-      transactionData.amount,
-      transactionData.token.decimal
-    ))
+    console.log('transactionParams')
 
     const nonce = await web3.eth.getTransactionCount(
       wallets.ethr.address,
       'latest'
     )
+    console.log('nonce')
 
     let transaction
-
-    if (isNativeToken(transactionData.token.address)) {
+    if (isTokenNative) {
       transaction = {
-        to: transactionData.address, // faucet address to return eth
+        to: receiverAddress, // faucet address to return eth
         value: amount,
         gas: transactionParams.gas,
         // maxFeePerGas: estimateGas,
@@ -557,10 +211,7 @@ const sendTransaction = async (
         nonce: nonce,
       }
     } else {
-      let tokenAddress = getTokenAddress(transactionData.token.address)
-      let toAddress = transactionData.address
       let fromAddress = wallets.ethr.address
-
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
         from: fromAddress,
       })
@@ -573,65 +224,40 @@ const sendTransaction = async (
         // gasLimit: web3.utils.toHex(210000),
         to: tokenAddress,
         value: 0x0,
-        data: contract.methods.transfer(toAddress, amount).encodeABI(),
+        data: contract.methods.transfer(receiverAddress, amount).encodeABI(),
         nonce: nonce,
       }
     }
 
-    try {
-      const signedTx = await web3.eth.accounts.signTransaction(
-        transaction,
-        wallets.ethr.privateKey.substring(2, wallets.ethr.privateKey.length)
-      )
+    const signedTransaction = await web3.eth.accounts.signTransaction(
+      transaction,
+      wallets.ethr.privateKey.substring(2, wallets.ethr.privateKey.length)
+    )
 
-      let transactionHash = await web3.eth.sendSignedTransaction(
-        signedTx.rawTransaction
-      )
+    txString = signedTransaction.rawTransaction
 
-      let chain = getTokenChain(transactionData.token.address)
-      let nativeToken = getNativeForChain(chain)
-
-      if (transactionHash) {
-        const txData = {
-          id: transactionHash.transactionHash,
-          amount: parseFloat(amount.toString()),
-          fee: transaction.gas,
-          to: transactionData.address,
-          from: wallets.ethr.address,
-          token: transactionData.token,
-          feeSymbol: nativeToken.symbol,
-          chain: 'eip155',
-        }
-
-        return txData
-      }
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error, 'tx error')
+    txData = {
+      amount: amount,
+      to: receiverAddress,
+      from: wallets.ethr.address,
+      token: transactionData.token,
+      chain: tokenChain,
     }
-  } else {
+  } else if (tokenChain === 'algorand') {
     let transactionParams
     if (isAssetEnablingTransaction) {
       transactionParams = await algodClient.getTransactionParams().do()
     } else {
       transactionParams = getTransactionParamsData(state)
     }
-    let isNative = isNativeToken(transactionData.token.address)
-    let tokenAddress = getTokenAddress(transactionData.token.address)
 
     let transaction
 
-    if (isNative) {
+    if (isTokenNative) {
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
         wallets.algo.address,
-        transactionData.address,
-        parseInt(
-          parseUnitsForSending(
-            transactionData.amount,
-            transactionData.token.decimal
-          ).toHexString(),
-          16
-        ),
+        receiverAddress,
+        parseInt(amount.toHexString(), 16),
         undefined,
         undefined,
         transactionParams
@@ -639,20 +265,10 @@ const sendTransaction = async (
     } else {
       transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
         wallets.algo.address,
-        isAssetEnablingTransaction
-          ? wallets.algo.address
-          : transactionData.address,
+        isAssetEnablingTransaction ? wallets.algo.address : receiverAddress,
         undefined,
         undefined,
-        isAssetEnablingTransaction
-          ? 0
-          : parseInt(
-              parseUnitsForSending(
-                transactionData.amount,
-                transactionData.token.decimal
-              ).toHexString(),
-              16
-            ),
+        isAssetEnablingTransaction ? 0 : parseInt(amount.toHexString(), 16),
         undefined,
         parseInt(tokenAddress, 10),
         transactionParams
@@ -669,32 +285,42 @@ const sendTransaction = async (
     const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
     const wallet = algosdk.mnemonicToSecretKey(mnemonic)
 
-    const signedTransaction = transaction.signTxn(wallet.sk)
+    txIdAlgo = transaction.txID().toString()
 
-    const sent = await algodClient.sendRawTransaction(signedTransaction).do()
+    txString = transaction.signTxn(wallet.sk).toString()
 
-    let chain = getTokenChain(transactionData.token.address)
-    let nativeToken = getNativeForChain(chain)
-
-    const txData = {
-      id: sent.txId,
-      amount: transaction.amount,
-      fee: transaction.fee,
-      to: transactionData.address,
+    txData = {
+      amount: amount,
+      to: receiverAddress,
       from: wallets.algo.address,
       token: transactionData.token,
-      feeSymbol: nativeToken.symbol,
-      chain: 'algorand',
+      chain: tokenChain,
     }
+  }
 
+  if (txString) {
+    const requestBody = {
+      signedTransaction: txString,
+      asset: transactionData.token.asset,
+    }
+    if (txIdAlgo) {
+      requestBody.transactionId = txIdAlgo
+    }
+    const sentTx = await walletProviderApi.post(
+      'transaction/broadcast',
+      requestBody
+    )
+    console.log(sentTx, 'sentTx')
+    console.log(sentTx.data.data, 'sentTx.data.data')
+    if (sentTx && sentTx.data.data.transactionId) {
+      txData.id = sentTx.data.data.transactionId
+    }
+    console.log(txData, 'txData')
     return txData
   }
 }
 
 export default {
-  getAllBalances,
-  getTransactions,
-  getTransactionDetails,
   getTransactionParams,
   sendTransaction,
 }
