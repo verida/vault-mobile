@@ -1,10 +1,11 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
-import { SUPPORTED_BLOCKCHAINS } from 'wallet/constants'
 import dataHelper from 'wallet/data'
-import { pricingApi, walletProviderApi } from 'wallet/helpers/api'
-import { rawDataToReduxState } from 'wallet/helpers/tokens'
-import { getWalletAddressForAsset } from 'wallet/helpers/tokens'
+import { walletProviderApi } from 'wallet/helpers/api'
+import {
+  rawDataToReduxState,
+  getWalletAddressForAsset,
+} from 'wallet/helpers/tokens'
 
 import AccountManager, {
   SELECTED_WALLET_STORAGE_KEY,
@@ -16,6 +17,7 @@ import {
   getSelectedWallet,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
+import { selectChains } from 'reduxStore/tokens/selectors'
 
 import {
   ADD_PENDING_TRANSACTION,
@@ -48,38 +50,29 @@ export const getBalances = () => {
 
     try {
       const wallets = getWalletsData(getState().main)
-
-      // console.log(wallets, 'wallets')
-
-      // let balanceData = await dataHelper.getAllBalances(wallets)
-
-      // console.log(balanceData, 'balanceData')
+      const chains = selectChains(getState())
+      const chainMapping = {
+        algo: 'algorand',
+        ethr: 'eip155',
+        near: 'near',
+      }
 
       const requestBody = Object.keys(wallets).map((walletKey) => {
         return {
           address: wallets[walletKey].address,
-          chainId: SUPPORTED_BLOCKCHAINS[walletKey],
+          chainId: chains[chainMapping[walletKey]],
         }
       })
 
-      // console.log(
-      //   JSON.stringify({
-      //     accounts: requestBody,
-      //   }),
-      //   'assets'
-      // )
-
-      const newData = await walletProviderApi.post(
+      const balanceData = await walletProviderApi.post(
         'balance/getBalanceByChains',
         {
           accounts: requestBody,
         }
       )
 
-      // console.log(JSON.stringify(newData.data), 'newData')
-
-      if (newData.data) {
-        dispatch({ type: FETCHED_BALANCES, data: newData.data.data })
+      if (balanceData.data) {
+        dispatch({ type: FETCHED_BALANCES, data: balanceData.data.data })
       } else {
         dispatch({
           type: BALANCES_FETCH_FAILED,
@@ -99,17 +92,12 @@ export const getTransactionsForToken = (assetID) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    // const transactionsData = await dataHelper.getTransactions(wallets, assetID)
     const userAddress = getWalletAddressForAsset(assetID, wallets)
-
-    // console.log(wallets, assetID, 'transactionsData')
 
     const transactionsData = await walletProviderApi.post('transaction/list', {
       userAddress,
       asset: assetID,
     })
-
-    // console.log(JSON.stringify(transactionsData.data), 'newData')
 
     if (transactionsData) {
       dispatch({
@@ -131,19 +119,11 @@ export const getTransactionDetails = (transactionID, tokenAddress) => {
     const wallets = getWalletsData(getState().main)
     const userAddress = getWalletAddressForAsset(tokenAddress, wallets)
 
-    // let transactionData = await dataHelper.getTransactionDetails(
-    //   transactionID,
-    //   tokenAddress,
-    //   wallets
-    // )
-
     const transactionsData = await walletProviderApi.post('transaction/get', {
       transactionId: transactionID,
       userAddress,
       asset: tokenAddress,
     })
-
-    console.log(transactionsData, 'transactionsDatatransactionsData')
 
     if (transactionsData) {
       dispatch({
