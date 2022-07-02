@@ -1,7 +1,6 @@
 import WalletUtils from '@verida/wallet-utils'
 import { AssetId } from 'caip'
 import { utils } from 'ethers'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
 
 export const isNativeToken = (address) => {
   return address.assetName.namespace === 'slip44'
@@ -30,23 +29,18 @@ export const getNativeForChain = (tokens, chain) => {
   return tok
 }
 
-export const getTokenByAddress = (address) => {
-  // retire this
-  let tok = SUPPORTED_TOKENS.find(
-    (ele) => getTokenAddress(ele.asset).toLowerCase() === address
-  )
-
-  return tok
-}
-
-export const getWalletAddressForToken = (chain, wallets) => {
+export const getChainMapping = (chain) => {
   const chainMapping = {
     algorand: 'algo',
     eip155: 'ethr',
     near: 'near',
   }
 
-  return wallets[chainMapping[chain]].address
+  return chainMapping[chain]
+}
+
+export const getWalletAddressForToken = (chain, wallets) => {
+  return wallets[getChainMapping(chain)].address
 }
 
 export const handleTokenDecimals = (quantity, decimalPlaces) => {
@@ -96,14 +90,8 @@ export const rawDataToReduxState = (walletData) => {
 }
 
 export const getWalletAddressForAsset = (asset, wallets) => {
-  const chainMapping = {
-    algorand: 'algo',
-    eip155: 'ethr',
-    near: 'near',
-  }
-
-  const chain = asset.chainId.namespace
-  return wallets[chainMapping[chain]].address
+  const chain = getTokenChain(asset)
+  return wallets[getChainMapping(chain)].address
 }
 
 export const tokenCaipObjectToString = (asset) => {
