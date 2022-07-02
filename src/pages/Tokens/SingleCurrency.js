@@ -18,7 +18,6 @@ import TransactionsList from 'components/Tokens/TransactionsList'
 import { WARNING_COLOR } from 'constants/color'
 import {
   getBalances,
-  getPrices,
   getTransactionsForToken,
   sendTransaction,
 } from 'reduxStore/wallet/actions'
@@ -148,7 +147,10 @@ const mapStateToProps = (rootState, props) => {
     transactions: selectTransactionsData(state, props.route.params.item.asset),
     tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
     wallets: getWalletsData(state),
-    nativeTokenBalance: selectNativeTokenBalance(state),
+    nativeTokenBalance: selectNativeTokenBalance(
+      rootState,
+      props.route.params.item.asset
+    ),
   }
 }
 
@@ -156,7 +158,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onGetTransactionsForToken: (assetID) =>
       dispatch(getTransactionsForToken(assetID)),
-    onGetPrices: () => dispatch(getPrices()),
     onGetBalances: () => dispatch(getBalances()),
     onSendTransaction: (params, isAssetEnablingTransaction) =>
       dispatch(sendTransaction(params, isAssetEnablingTransaction)),
