@@ -19,6 +19,8 @@ export default (props) => {
         return 'primary'
       case 'transparent-grey':
         return 'grey'
+      case 'transparent-warning':
+        return 'warning'
       default:
         return 'white'
     }

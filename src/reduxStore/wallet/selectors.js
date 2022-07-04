@@ -113,13 +113,13 @@ export const getWalletCount = (state) => {
 export const getWalletsData = createSelector(
   getSelectedWallet,
   getAllWallets,
-  (selectedWallet, wallets) => wallets[selectedWallet].accounts || {}
+  (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
 )
 
 export const getWallets = createSelector(
   getSelectedWallet,
   getAllWallets,
-  (selectedWallet, wallets) => wallets[selectedWallet] || {}
+  (selectedWallet, wallets) => wallets?.[selectedWallet] || {}
 )
 
 export const getAddressesForWallet = (state, ID) => {

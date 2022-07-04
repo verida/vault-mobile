@@ -7,7 +7,7 @@ import { registerRemoteNotification } from 'api/utils'
 export function useRemoteNotifications() {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const selectedAccount = useSelector((state) => state.selectedAccount)
+  const selectedAccount = useSelector((state) => state.main.selectedAccount)
 
   useEffect(() => {
     async function init() {

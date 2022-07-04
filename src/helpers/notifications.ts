@@ -2,7 +2,7 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import * as Sentry from '@sentry/react-native'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
-import store from 'reduxStore'
+import { store } from 'reduxStore'
 
 import { navigate } from 'navigation/RootNavigator'
 import { setNavigationLink } from 'reduxStore/general/actions'

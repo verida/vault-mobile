@@ -11,6 +11,8 @@ import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
+import { useWalletConnect } from '../../hooks/useWalletConnect'
+
 let enabled = true
 const WAIT_TIME = 3000
 
@@ -19,7 +21,8 @@ function ScanQrCode(
 ) {
   const { navigation, route } = props
   const [isFlashOn, setIsFlashOn] = useState(false)
-  const handleDeeplink = useDeeplink(navigation)
+  const handleDeeplink = useDeeplink(navigation as any)
+  const { requestConnect } = useWalletConnect()
 
   useEffect(() => {
     enabled = true
@@ -45,6 +48,13 @@ function ScanQrCode(
       route.params.onReadQRCode(data)
       navigation.goBack()
     } else {
+      // Wallet Connect
+      if (data.startsWith('wc:') && data.indexOf('bridge') >= 0) {
+        navigation.goBack()
+        requestConnect(data)
+        return
+      }
+
       // Check if content is a valid URL
       const { hostname, pathname } = parse(data, true)
       if (isEmpty(hostname) || !isSupportedDomain(hostname)) {

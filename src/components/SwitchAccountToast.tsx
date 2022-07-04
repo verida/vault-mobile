@@ -12,7 +12,7 @@ const MARGIN_HORIZONTAL = 16
 
 function SwitchAccountToast(props: Omit<ViewProps, 'children'>) {
   const { style, ...rest } = props
-  const data = useSelector((state: any) => state.switchAccountToast)
+  const data = useSelector((state: any) => state.main.switchAccountToast)
 
   if (!data) {
     return null
