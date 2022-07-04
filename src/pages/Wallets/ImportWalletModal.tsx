@@ -1,30 +1,50 @@
+import Clipboard from '@react-native-community/clipboard'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Alert,
   Modal,
   StyleSheet,
   TextInput,
   TouchableOpacity,
   View,
 } from 'react-native'
+import { isValidSeedPhrase } from 'wallet/helpers/validation'
 
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 import InputStyles from 'styles/inputs'
 
-import CheckboxCheckedSvg from '../../assets/checkbox_checked.svg'
-import CheckboxSvg from '../../assets/checkbox_unchecked.svg'
+type Props = {
+  visible: boolean
+  onImportWallet: (data: any) => void
+  hideModal: () => void
+}
 
-export default ({ visible, hideModal }) => {
+export default ({ visible, hideModal, onImportWallet }: Props) => {
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
-  const [checkbox, setCheckboxState] = useState(false)
-  const [blockchain, setBlockchain] = useState(null)
-  const onBlockchainChange = (option) => setBlockchain(option)
+
+  const fetchCopiedText = async () => {
+    const clipboardData = await Clipboard.getString()
+    setPhrase(clipboardData)
+  }
+
+  const showAlert = () =>
+    Alert.alert('Invalid seed phrase', `That's not a valid seed phrase`)
+
+  const onPressSend = () => {
+    if (isValidSeedPhrase(phrase)) {
+      onImportWallet({ phrase, name })
+      hideModal()
+    } else {
+      showAlert()
+    }
+  }
 
   return (
     <Modal
@@ -36,11 +56,11 @@ export default ({ visible, hideModal }) => {
           icon: <Icon name='close' style={{ color: '#000' }} />,
           action: () => hideModal(),
         }}
-        title='Add address'
+        title='Import wallet'
       />
       <Layout style={styles.container}>
         <View style={styles.content}>
-          <Label>Address name</Label>
+          <Label>Wallet name</Label>
           <TextInput
             value={name}
             autoFocus={true}
@@ -50,28 +70,12 @@ export default ({ visible, hideModal }) => {
             autoCapitalize='none'
             onChangeText={setName}
             style={[InputStyles.input]}
-            placeholder={'eg. Friendly address name'}
+            placeholder={'eg. Friendly wallet name'}
           />
 
-          <Label>Blockchain</Label>
-          <DropDownPicker
-            searchable={true}
-            searchablePlaceholder='Search for blockchain'
-            showArrow={true}
-            placeholder=''
-            items={[
-              { label: 'Ethereum', value: 'Ethereum' },
-              { label: 'Near', value: 'Near' },
-              { label: 'Algorand', value: 'Algorand' },
-            ]}
-            containerStyle={InputStyles.select}
-            onChangeItem={onBlockchainChange}
-          />
-
-          <Label>Enter private key</Label>
+          <Label>Enter seed phrase</Label>
           <TextInput
             value={phrase}
-            autoFocus={true}
             multiline
             editable
             autoCorrect={false}
@@ -82,23 +86,19 @@ export default ({ visible, hideModal }) => {
           />
 
           <TouchableOpacity
-            onPress={() => setCheckboxState(!checkbox)}
-            style={styles.checkbox}>
-            {checkbox ? <CheckboxCheckedSvg /> : <CheckboxSvg />}
-            <Text style={styles.checkboxLabel}>
-              Allow this address to unlock my Verida account?
-            </Text>
+            onPress={fetchCopiedText}
+            style={styles.actionButton}>
+            <Icon name='clipboard' style={styles.actionButtonIcon} />
+            <Text style={styles.actionButtonText}>Paste</Text>
           </TouchableOpacity>
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.addWalletButton}
             color='primary'
-            disabled={!blockchain}
-            // loading={processing}
-            // onPress={onAddWallet}
-          >
-            Add Wallet
+            disabled={!name || !phrase}
+            onPress={onPressSend}>
+            Import Wallet
           </Button>
         </View>
       </Layout>
@@ -123,14 +123,19 @@ const styles = StyleSheet.create({
   addWalletButton: {
     alignSelf: 'stretch',
   },
-  inputSublabel: { fontSize: 12, color: 'rgba(4, 17, 51, 0.5)', marginTop: 3 },
-  checkbox: {
-    marginBottom: 20,
+  actionButton: {
+    marginRight: 25,
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 20,
+    marginTop: 15,
   },
-  checkboxLabel: {
-    marginLeft: 15,
+  actionButtonIcon: {
+    color: 'rgba(66, 59, 206, 1)',
+    fontSize: 24,
+    marginRight: 10,
+  },
+  actionButtonText: {
+    color: 'rgba(66, 59, 206, 1)',
+    fontFamily: NUNITO_SANS_BOLD,
   },
 })

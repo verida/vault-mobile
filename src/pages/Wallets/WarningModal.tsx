@@ -69,7 +69,15 @@ const modalContent = {
   },
 }
 
-export default ({ visible, hideModal, type, onPressButton }) => {
+type Props = {
+  hideModal: () => void
+  visible: boolean
+  onPressButton: () => void
+  type: keyof typeof modalContent
+}
+
+export default (props: Props) => {
+  const { visible, hideModal, type, onPressButton } = props
   const [checkbox, setCheckboxState] = useState(false)
 
   return (
@@ -87,7 +95,7 @@ export default ({ visible, hideModal, type, onPressButton }) => {
       <Layout style={styles.container}>
         <View style={styles.content}>
           <View style={styles.imageContainer}>{modalContent[type].image}</View>
-          <View style={styles.bulletList}>
+          <View>
             {modalContent[type].content.map((item, index) => (
               <View
                 style={styles.bulletListItem}
@@ -98,7 +106,7 @@ export default ({ visible, hideModal, type, onPressButton }) => {
             ))}
           </View>
         </View>
-        <View style={styles.footer}>
+        <View>
           <TouchableOpacity
             onPress={() => setCheckboxState(!checkbox)}
             style={styles.checkbox}>
@@ -106,7 +114,6 @@ export default ({ visible, hideModal, type, onPressButton }) => {
             <Text style={styles.checkboxLabel}>I understand the risks</Text>
           </TouchableOpacity>
           <Button
-            style={styles.saveButton}
             color='primary'
             disabled={!checkbox}
             onPress={() => onPressButton()}>

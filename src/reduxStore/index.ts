@@ -30,6 +30,11 @@ const composeEnhancers = composeWithDevTools({
 
 const middleware = [thunk]
 
+if (__DEV__) {
+  const createDebugger = require('redux-flipper').default
+  middleware.push(createDebugger())
+}
+
 const store = createStore(
   persistedReducer,
   composeEnhancers(

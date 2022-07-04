@@ -5,11 +5,6 @@ import android.content.Context;
 import android.content.res.Configuration;
 
 import com.facebook.react.PackageList;
-import com.facebook.flipper.android.AndroidFlipperClient;
-import com.facebook.flipper.android.utils.FlipperUtils;
-import com.facebook.flipper.core.FlipperClient;
-import com.facebook.flipper.plugins.inspector.DescriptorMapping;
-import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
@@ -24,37 +19,10 @@ import java.util.List;
 
 import expo.modules.ApplicationLifecycleDispatcher;
 import expo.modules.ReactNativeHostWrapper;
-import expo.modules.adapters.react.ReactModuleRegistryProvider;
 import io.verida.vault.newarchitecture.MainApplicationReactNativeHost;
 
 public class MainApplication extends Application implements ReactApplication {
-//   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
-//     new BasePackageList().getPackageList()
-//   );
 
-  // private final ReactNativeHost mReactNativeHost = new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
-  //   @Override
-  //   public boolean getUseDeveloperSupport() {
-  //     return BuildConfig.DEBUG;
-  //   }
-
-  //   @Override
-  //   protected List<ReactPackage> getPackages() {
-  //     List<ReactPackage> packages = new PackageList(this).getPackages();
-  //     packages.add(new ModuleRegistryAdapter(mModuleRegistryProvider));
-  //     return packages;
-  //   }
-
-  //   @Override
-  //   protected String getJSMainModuleName() {
-  //     return "index";
-  //   }
-
-  //   @Override
-  //   protected String getJSBundleFile() {
-  //     return CodePush.getJSBundleFile();
-  //   }
-  // });
   private final ReactNativeHost mReactNativeHost =
       new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
         @Override

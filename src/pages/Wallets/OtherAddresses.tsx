@@ -1,8 +1,10 @@
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Icon } from 'native-base'
 import React from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import Text from 'components/Text'
+import { MainStackParams } from 'navigation/types'
 
 import OtherSvg from '../../assets/other_addresses.svg'
 import AddressesList from '../../components/AddressesList'
@@ -36,7 +38,13 @@ const list = [
   },
 ]
 
-export default ({ navigation }) => {
+type Props = {
+  navigation: NativeStackNavigationProp<MainStackParams>
+}
+
+export default (props: Props) => {
+  const { navigation } = props
+
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.walletHeader}>
@@ -54,6 +62,8 @@ export default ({ navigation }) => {
           <Icon name='add' style={styles.addIcon} />
         </TouchableOpacity>
       </View>
+      {/* eslint-disable-next-line @typescript-eslint/ban-ts-comment */}
+      {/*// @ts-ignore */}
       <AddressesList list={list} />
     </SafeAreaView>
   )

@@ -5,14 +5,20 @@ import { StyleSheet, View } from 'react-native'
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
 
-export default ({ visible, toggleConfirmModal, phrase }) => {
+type Props = {
+  visible: boolean
+  toggleConfirmModal: () => void
+  phrase: string
+}
+
+export default (props: Props) => {
+  const { visible, toggleConfirmModal, phrase } = props
   return (
     <BottomActionsModal
       visible={visible}
       animated={true}
       animationType={'slide'}
-      title={'Private Key'}
-      // subtitle={'Friendly address name (3hs73j...x7dn)'}
+      title={'Seed Phrase'}
       message={phrase}
       footer={
         <View style={styles.modalFooter}>
