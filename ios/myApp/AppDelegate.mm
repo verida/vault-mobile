@@ -99,39 +99,6 @@
   [super application:application didFinishLaunchingWithOptions:launchOptions];
   
   return YES;
-  
-//#if DEBUG
-//  InitializeFlipper(application);
-//#endif
-  
-  
-  
-//  // Define UNUserNotificationCenter
-//  UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
-//  center.delegate = self;
-//
-//  self.moduleRegistryAdapter = [[UMModuleRegistryAdapter alloc] initWithModuleRegistryProvider:[[UMModuleRegistryProvider alloc] init]];
-//
-//#if RCT_NEW_ARCH_ENABLED
-//  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
-//  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
-//  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
-//  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
-//  bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
-//#endif
-//
-//  RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
-//  RCTRootView *rootView = [self.reactDelegate createRootViewWithBridge:bridge moduleName:@"main" initialProperties:nil];
-//  rootView.backgroundColor = [[UIColor alloc] initWithRed:1.0f green:1.0f blue:1.0f alpha:1];
-//
-//  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//  UIViewController *rootViewController = [self.reactDelegate createRootViewController];
-//  rootViewController.view = rootView;
-//  self.window.rootViewController = rootViewController;
-//  [self.window makeKeyAndVisible];
-//
-//  [super application:application didFinishLaunchingWithOptions:launchOptions];
-//  return YES;
  }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
@@ -140,13 +107,6 @@
   return @[];
 }
 
-//- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge {
-// #ifdef DEBUG
-//  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
-// #else
-//  return [CodePush bundleURL];
-// #endif
-//}
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
