@@ -3529,10 +3529,10 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/client-rn@^1.1.13":
-  version "1.1.13"
-  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.13.tgz#8b54201d3d0edf0402561f226a874fe270151223"
-  integrity sha512-CPT9q4f1/WGyQlymSSUgUWsV3KkXzh6IhqRHE5NCWnf+yx+aPp212Pt6nbZlEVaSmBUJ4tybyM/KlomwOYv3TQ==
+"@verida/client-rn@^1.1.15":
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.15.tgz#e66a135b2de6eeed365344baf59fe3858cf9c8d3"
+  integrity sha512-MRUVbYSSoUxxHf2kPmeGHXNZZUysWBy28grOfjmR+HBepUmwt3aOGHLK6IImiS0wEkl2+VAfTcqFdld9rH6Mhw==
   dependencies:
     "@ceramicnetwork/http-client" "^1.3.0"
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
@@ -3591,10 +3591,10 @@
     uuid "^8.3.2"
     vm-browserify "0.0.4"
 
-"@verida/client-ts@^1.1.14":
-  version "1.1.14"
-  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-1.1.14.tgz#fcda895d285e0c79fd5938e6e34a386509906815"
-  integrity sha512-oYM02XdYatJrRTcKpA9IS0emXP63nO7I3OxVQKGUoDteOiYjfJ5Q99yj7JVDhMpFm4XzDxetn8ZfPNXdBB9Ieg==
+"@verida/client-ts@^1.1.15":
+  version "1.1.15"
+  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-1.1.15.tgz#5428c3a3df7cf995d75f9179b8441bb2a22b7e7b"
+  integrity sha512-we3VCMrm6F9aWBZpTNpkB3f6fYKk5Wzdj90vWIKwutbKVoyAQRZFBDgymXsbiKDojC/w1faZ7qLuTNcwaFbVLA==
   dependencies:
     "@verida/account" "^1.1.9"
     "@verida/account-node" "^1.1.9"
@@ -3685,12 +3685,12 @@
     lodash "^4.17.20"
     nodemon "^2.0.4"
 
-"@verida/verifiable-credentials@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-0.1.5.tgz#7ecdd29b73e65c7fa076591ca1e7a0c629927d58"
-  integrity sha512-9C9yJYm0Ikxbt+KpkowWrRBhdIqonVoCubHXn7fH8uZGVcE3cKZHZSggm7v6mRyleFRVT6I7LK+W3/Vyt9+7og==
+"@verida/verifiable-credentials@^0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-0.1.6.tgz#24f1e440dc0109cfe91917e9c6af6f70b1e37f1c"
+  integrity sha512-4dbyi8Offip7KAETihfAOhQ/AOzimnXf03BNYA2gv0kkOhGce/c0j5U4durYBH4wX7SRJlzMl0qxTR+efPjPVw==
   dependencies:
-    "@verida/client-ts" "^1.1.14"
+    "@verida/client-ts" "^1.1.15"
     "@verida/did-resolver" "^0.1.9"
     "@verida/encryption-utils" "^1.1.3"
     dayjs "^1.10.7"
