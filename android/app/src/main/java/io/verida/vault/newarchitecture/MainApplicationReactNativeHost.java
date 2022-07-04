@@ -1,4 +1,4 @@
-package com.authentication.newarchitecture;
+package io.verida.vault.newarchitecture;
 
 import android.app.Application;
 import androidx.annotation.NonNull;
@@ -19,9 +19,10 @@ import com.facebook.react.fabric.CoreComponentsRegistry;
 import com.facebook.react.fabric.EmptyReactNativeConfig;
 import com.facebook.react.fabric.FabricJSIModuleProvider;
 import com.facebook.react.uimanager.ViewManagerRegistry;
-import com.authentication.BuildConfig;
-import com.authentication.newarchitecture.components.MainComponentsRegistry;
-import com.authentication.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
+
+import io.verida.vault.BuildConfig;
+import io.verida.vault.newarchitecture.components.MainComponentsRegistry;
+import io.verida.vault.newarchitecture.modules.MainApplicationTurboModuleManagerDelegate;
 import java.util.ArrayList;
 import java.util.List;
 

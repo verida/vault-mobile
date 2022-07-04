@@ -1,4 +1,4 @@
-package com.authentication.newarchitecture.components;
+package io.verida.vault.newarchitecture.components;
 
 import com.facebook.jni.HybridData;
 import com.facebook.proguard.annotations.DoNotStrip;

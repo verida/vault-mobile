@@ -2,73 +2,107 @@ package io.verida.vault;
 
 import android.app.Application;
 import android.content.Context;
+import android.content.res.Configuration;
 
 import com.facebook.react.PackageList;
+import com.facebook.flipper.android.AndroidFlipperClient;
+import com.facebook.flipper.android.utils.FlipperUtils;
+import com.facebook.flipper.core.FlipperClient;
+import com.facebook.flipper.plugins.inspector.DescriptorMapping;
+import com.facebook.flipper.plugins.inspector.InspectorFlipperPlugin;
 import com.facebook.react.ReactApplication;
-import dog.craftz.sqlite_2.RNSqlite2Package;
-import dog.craftz.sqlite_2.RNSqlite2Package;
-import dog.craftz.sqlite_2.RNSqlite2Package;
-import dog.craftz.sqlite_2.RNSqlite2Package;
-import dog.craftz.sqlite_2.RNSqlite2Package;
 import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
-import com.facebook.react.shell.MainReactPackage;
+import com.facebook.react.config.ReactFeatureFlags;
+import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.soloader.SoLoader;
-import io.verida.vault.generated.BasePackageList;
-
-import org.unimodules.adapters.react.ReactAdapterPackage;
-import org.unimodules.adapters.react.ModuleRegistryAdapter;
-import org.unimodules.adapters.react.ReactModuleRegistryProvider;
-import org.unimodules.core.interfaces.Package;
-import org.unimodules.core.interfaces.SingletonModule;
-
-import java.lang.reflect.InvocationTargetException;
-import java.util.Arrays;
-import java.util.List;
-
 import com.microsoft.codepush.react.CodePush;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.List;
+
+import expo.modules.ApplicationLifecycleDispatcher;
+import expo.modules.ReactNativeHostWrapper;
+import expo.modules.adapters.react.ReactModuleRegistryProvider;
+import io.verida.vault.newarchitecture.MainApplicationReactNativeHost;
+
 public class MainApplication extends Application implements ReactApplication {
-  private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
-    new BasePackageList().getPackageList()
-  );
+//   private final ReactModuleRegistryProvider mModuleRegistryProvider = new ReactModuleRegistryProvider(
+//     new BasePackageList().getPackageList()
+//   );
 
-  private final ReactNativeHost mReactNativeHost = new ReactNativeHost(this) {
-    @Override
-    public boolean getUseDeveloperSupport() {
-      return BuildConfig.DEBUG;
-    }
+  // private final ReactNativeHost mReactNativeHost = new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
+  //   @Override
+  //   public boolean getUseDeveloperSupport() {
+  //     return BuildConfig.DEBUG;
+  //   }
 
-    @Override
-    protected List<ReactPackage> getPackages() {
-      List<ReactPackage> packages = new PackageList(this).getPackages();
-      packages.add(new ModuleRegistryAdapter(mModuleRegistryProvider));
-      return packages;
-    }
+  //   @Override
+  //   protected List<ReactPackage> getPackages() {
+  //     List<ReactPackage> packages = new PackageList(this).getPackages();
+  //     packages.add(new ModuleRegistryAdapter(mModuleRegistryProvider));
+  //     return packages;
+  //   }
 
-    @Override
-    protected String getJSMainModuleName() {
-      return "index";
-    }
+  //   @Override
+  //   protected String getJSMainModuleName() {
+  //     return "index";
+  //   }
 
-    @Override
-    protected String getJSBundleFile() {
-      return CodePush.getJSBundleFile();
-    }
-  };
+  //   @Override
+  //   protected String getJSBundleFile() {
+  //     return CodePush.getJSBundleFile();
+  //   }
+  // });
+  private final ReactNativeHost mReactNativeHost =
+      new ReactNativeHostWrapper(this, new ReactNativeHost(this) {
+        @Override
+        public boolean getUseDeveloperSupport() {
+          return BuildConfig.DEBUG;
+        }
+
+        @Override
+        protected List<ReactPackage> getPackages() {
+          @SuppressWarnings("UnnecessaryLocalVariable")
+          List<ReactPackage> packages = new PackageList(this).getPackages();
+          // Packages that cannot be autolinked yet can be added manually here, for example:
+          // packages.add(new MyReactNativePackage());
+          return packages;
+        }
+
+        @Override
+        protected String getJSMainModuleName() {
+          return "index";
+        }
+
+        @Override
+        protected String getJSBundleFile() {
+          return CodePush.getJSBundleFile();
+        }
+      });
+
+  private final ReactNativeHost mNewArchitectureNativeHost =
+      new ReactNativeHostWrapper(this, new MainApplicationReactNativeHost(this));
 
   @Override
   public ReactNativeHost getReactNativeHost() {
-    return mReactNativeHost;
+    if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {
+      return mNewArchitectureNativeHost;
+    } else {
+      return mReactNativeHost;
+    }
   }
 
   @Override
   public void onCreate() {
     super.onCreate();
+    OkHttpClientProvider.setOkHttpClientFactory(new CustomNetworkModule());
+    ReactFeatureFlags.useTurboModules = BuildConfig.IS_NEW_ARCHITECTURE_ENABLED;
     SoLoader.init(this, /* native exopackage */ false);
 
     initializeFlipper(this, getReactNativeHost().getReactInstanceManager());
+    ApplicationLifecycleDispatcher.onApplicationCreate(this);
   }
 
   /**
@@ -86,7 +120,7 @@ public class MainApplication extends Application implements ReactApplication {
          We use reflection here to pick up the class that initializes Flipper,
         since Flipper library is not available in release mode
         */
-        Class<?> aClass = Class.forName("com.myapp.ReactNativeFlipper");
+        Class<?> aClass = Class.forName("io.verida.vault.ReactNativeFlipper");
         aClass
             .getMethod("initializeFlipper", Context.class, ReactInstanceManager.class)
             .invoke(null, context, reactInstanceManager);
@@ -100,5 +134,11 @@ public class MainApplication extends Application implements ReactApplication {
         e.printStackTrace();
       }
     }
+  }
+
+  @Override
+  public void onConfigurationChanged(Configuration newConfig) {
+    super.onConfigurationChanged(newConfig);
+    ApplicationLifecycleDispatcher.onConfigurationChanged(this, newConfig);
   }
 }

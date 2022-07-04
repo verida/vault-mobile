@@ -5,10 +5,10 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import AppLoading from 'expo-app-loading'
 import * as Font from 'expo-font'
+import * as SplashScreen from 'expo-splash-screen'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
@@ -61,21 +61,39 @@ Sentry.init({
 function App() {
   const [loading, setLoading] = useState(true)
 
-  const loadFonts = async () => {
-    const NunitoSans = require('./assets/fonts/NunitoSans-Regular.ttf')
-    const NunitoSansSemiBold = require('./assets/fonts/NunitoSans-SemiBold.ttf')
-    const NunitoSansBold = require('./assets/fonts/NunitoSans-Bold.ttf')
+  useEffect(() => {
+    const loadFonts = async () => {
+      const NunitoSans = require('./assets/fonts/NunitoSans-Regular.ttf')
+      const NunitoSansSemiBold = require('./assets/fonts/NunitoSans-SemiBold.ttf')
+      const NunitoSansBold = require('./assets/fonts/NunitoSans-Bold.ttf')
 
-    return Promise.all([
-      Font.loadAsync({ NunitoSans }),
-      Font.loadAsync({ NunitoSansSemiBold }),
-      Font.loadAsync({ NunitoSansBold }),
-    ])
-  }
+      try {
+        await Promise.all([
+          Font.loadAsync({ NunitoSans }),
+          Font.loadAsync({ NunitoSansSemiBold }),
+          Font.loadAsync({ NunitoSansBold }),
+        ])
+      } catch (error) {
+        Sentry.captureException(error)
+        Alert.alert('Error', 'Failed to initialize')
+      } finally {
+        setLoading(false)
+        await SplashScreen.hideAsync()
+      }
+    }
 
-  const init = async () => {
-    await loadFonts()
-  }
+    const init = async () => {
+      try {
+        // Prevent native splash screen from autohiding
+        await SplashScreen.preventAutoHideAsync()
+      } catch (e) {
+        Sentry.captureException(e)
+      }
+      loadFonts()
+    }
+
+    init()
+  }, [])
 
   if (SHUTDOWN_APP) return <OutOfService />
 
@@ -102,13 +120,7 @@ function App() {
     </Provider>
   )
 
-  return loading ? (
-    <AppLoading
-      startAsync={init}
-      onFinish={() => setLoading(false)}
-      onError={() => Alert.alert('Error', 'Failed to initialize')}
-    />
-  ) : (
+  return loading ? null : (
     <>
       <PolyfillCrypto />
       {AppContent}
