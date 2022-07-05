@@ -11,6 +11,8 @@ import okhttp3.Dispatcher;
 import okhttp3.OkHttpClient;
 
 class CustomNetworkModule implements OkHttpClientFactory {
+    static final int MAX_REQUEST_NUMBER_PER_HOST = 64;
+
     public OkHttpClient createNewNetworkModuleClient() {
         return new OkHttpClient.Builder()
                 .cookieJar(new ReactCookieJarContainer())
@@ -19,15 +21,14 @@ class CustomNetworkModule implements OkHttpClientFactory {
                 .build();
     }
 
-
     private static Dispatcher createDispatcher() {
         final Dispatcher dispatcher = new Dispatcher(Executors.newCachedThreadPool());
-        dispatcher.setMaxRequests(64);
-        dispatcher.setMaxRequestsPerHost(64);
+        dispatcher.setMaxRequests(MAX_REQUEST_NUMBER_PER_HOST);
+        dispatcher.setMaxRequestsPerHost(MAX_REQUEST_NUMBER_PER_HOST);
         return dispatcher;
     }
 
     private static ConnectionPool createConnectionPool() {
-        return new ConnectionPool(64, 10000, TimeUnit.MILLISECONDS);
+        return new ConnectionPool(MAX_REQUEST_NUMBER_PER_HOST, 10000, TimeUnit.MILLISECONDS);
     }
 }
