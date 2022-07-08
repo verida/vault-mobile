@@ -23,21 +23,10 @@ class DropDownPicker extends Component<SelectProps, any> {
     let choice
     let items = []
     if (!props.multiple) {
-      if (props.defaultValue) {
-        choice = props.items.find((item) => item.value === props.defaultValue)
-      } else if (
-        props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        ).length > 0
-      ) {
-        choice = props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        )[0]
-      } else {
-        choice = this.null()
-      }
+      choice = props.defaultValue
+        ? props.items.find((item) => item.value === props.defaultValue)
+        : props.items.filter((item) => item?.selected === true)?.[0] ??
+          this.null()
     } else {
       if (
         props.defaultValue &&
@@ -48,15 +37,9 @@ class DropDownPicker extends Component<SelectProps, any> {
           items.push(props.items.find((item) => item.value === value))
         })
       } else if (
-        props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        ).length > 0
+        props.items.filter((item) => item?.selected === true).length > 0
       ) {
-        items = props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        )
+        items = props.items.filter((item) => item?.selected === true)
       }
     }
 
@@ -135,16 +118,6 @@ class DropDownPicker extends Component<SelectProps, any> {
         props: {
           ...state.props,
           isVisible: props.isVisible,
-        },
-      }
-    }
-
-    // Change disability
-    if (props.disabled !== state.props.disabled) {
-      return {
-        props: {
-          ...state.props,
-          disabled: props.disabled,
         },
       }
     }
@@ -242,8 +215,8 @@ class DropDownPicker extends Component<SelectProps, any> {
   }
 
   render() {
-    const { multiple, disabled } = this.state.props
-    const { placeholder } = this.props
+    const { multiple } = this.state.props
+    const { placeholder, disabled } = this.props
     const isPlaceholderActive = this.state.choice.label === null
     const label = isPlaceholderActive ? placeholder : this.state.choice.label
     const placeholderStyle = isPlaceholderActive && this.props.placeholderStyle
@@ -348,7 +321,7 @@ class DropDownPicker extends Component<SelectProps, any> {
                       this.state.choice.value === item.value &&
                         this.props.activeItemStyle,
                       {
-                        opacity: item?.disabled || false === true ? 0.3 : 1,
+                        opacity: item?.disabled ? 0.3 : 1,
                         ...(multiple && {
                           flexDirection: 'row',
                           alignItems: 'center',
@@ -356,7 +329,7 @@ class DropDownPicker extends Component<SelectProps, any> {
                         }),
                       },
                     ]}
-                    disabled={item?.disabled || false === true}>
+                    disabled={item?.disabled}>
                     <Text
                       style={[
                         this.props.labelStyle,
