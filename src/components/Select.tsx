@@ -1,20 +1,23 @@
-import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import {
+  LayoutRectangle,
   Platform,
   ScrollView,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
+  TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
-import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
+import { LIGHTGREY_COLOR, WHITE_COLOR } from 'constants/color'
 
-class DropDownPicker extends React.Component {
-  constructor(props) {
+class DropDownPicker extends Component<SelectProps, any> {
+  constructor(props: SelectProps) {
     super(props)
 
     let choice
@@ -74,7 +77,7 @@ class DropDownPicker extends React.Component {
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: SelectProps, state: any) {
     // Change default value (! multiple)
     if (
       !state.props.multiple &&
@@ -105,7 +108,7 @@ class DropDownPicker extends React.Component {
       JSON.stringify(props.defaultValue) !==
         JSON.stringify(state.props.defaultValue)
     ) {
-      let items = []
+      const items: any[] = []
       if (
         props.defaultValue &&
         Array.isArray(props.defaultValue) &&
@@ -173,7 +176,7 @@ class DropDownPicker extends React.Component {
     )
   }
 
-  select(item, index) {
+  select(item: any, index: number) {
     const { multiple } = this.state.props
     if (!multiple) {
       this.setState({
@@ -216,7 +219,7 @@ class DropDownPicker extends React.Component {
     if (!multiple) this.props.onClose()
   }
 
-  getLayout(layout) {
+  getLayout(layout: LayoutRectangle) {
     this.setState({
       top: layout.height - 1,
     })
@@ -387,79 +390,81 @@ class DropDownPicker extends React.Component {
       </View>
     )
   }
+
+  static defaultProps = {
+    placeholder: 'Select an item',
+    dropDownMaxHeight: 150,
+    style: {},
+    dropDownStyle: {},
+    containerStyle: {},
+    itemStyle: {},
+    labelStyle: {},
+    placeholderStyle: {},
+    activeItemStyle: {},
+    activeLabelStyle: {},
+    arrowStyle: {},
+    arrowColor: '#000',
+    showArrow: true,
+    arrowSize: 15,
+    customArrowUp: (size, color) => (
+      <Feather name='chevron-up' size={size} color={color} />
+    ),
+    customArrowDown: (size, color) => (
+      <Feather name='chevron-down' size={size} color={color} />
+    ),
+    customTickIcon: () => <Feather name='check' size={15} />,
+    zIndex: 5000,
+    disabled: false,
+    searchable: false,
+    searchablePlaceholder: 'Search for an item',
+    searchableError: 'Not Found',
+    searchableStyle: {},
+    isVisible: false,
+    multiple: false,
+    multipleText: '%d items have been selected',
+    min: 0,
+    max: 10000000,
+    onOpen: () => ({}),
+    onClose: () => ({}),
+    onChangeItem: () => ({}),
+  }
 }
 
-DropDownPicker.defaultProps = {
-  placeholder: 'Select an item',
-  dropDownMaxHeight: 150,
-  style: {},
-  dropDownStyle: {},
-  containerStyle: {},
-  itemStyle: {},
-  labelStyle: {},
-  placeholderStyle: {},
-  activeItemStyle: {},
-  activeLabelStyle: {},
-  arrowStyle: {},
-  arrowColor: '#000',
-  showArrow: true,
-  arrowSize: 15,
-  customArrowUp: (size, color) => (
-    <Feather name='chevron-up' size={size} color={color} />
-  ),
-  customArrowDown: (size, color) => (
-    <Feather name='chevron-down' size={size} color={color} />
-  ),
-  customTickIcon: () => <Feather name='check' size={15} />,
-  zIndex: 5000,
-  disabled: false,
-  searchable: false,
-  searchablePlaceholder: 'Search for an item',
-  searchableError: 'Not Found',
-  searchableStyle: {},
-  isVisible: false,
-  multiple: false,
-  multipleText: '%d items have been selected',
-  min: 0,
-  max: 10000000,
-  onOpen: () => ({}),
-  onClose: () => ({}),
-  onChangeItem: () => ({}),
-}
-
-DropDownPicker.propTypes = {
-  items: PropTypes.array.isRequired,
-  defaultValue: PropTypes.any,
-  placeholder: PropTypes.string,
-  dropDownMaxHeight: PropTypes.number,
-  style: PropTypes.object,
-  dropDownStyle: PropTypes.object,
-  containerStyle: PropTypes.object,
-  itemStyle: PropTypes.object,
-  labelStyle: PropTypes.object,
-  activeItemStyle: PropTypes.object,
-  activeLabelStyle: PropTypes.object,
-  showArrow: PropTypes.bool,
-  arrowStyle: PropTypes.object,
-  arrowColor: PropTypes.string,
-  arrowSize: PropTypes.number,
-  customArrowUp: PropTypes.func,
-  customArrowDown: PropTypes.func,
-  customTickIcon: PropTypes.func,
-  zIndex: PropTypes.number,
-  disabled: PropTypes.bool,
-  searchable: PropTypes.bool,
-  searchablePlaceholder: PropTypes.string,
-  searchableError: PropTypes.string,
-  searchableStyle: PropTypes.object,
-  isVisible: PropTypes.bool,
-  multiple: PropTypes.bool,
-  multipleText: PropTypes.string,
-  min: PropTypes.number,
-  max: PropTypes.number,
-  onOpen: PropTypes.func,
-  onClose: PropTypes.func,
-  onChangeItem: PropTypes.func,
+interface SelectProps {
+  autoFocus?: boolean | undefined
+  items: Array<any>
+  defaultValue: any
+  placeholder: string
+  placeholderStyle: StyleProp<TextStyle>
+  dropDownMaxHeight: number
+  style: StyleProp<ViewStyle>
+  dropDownStyle: StyleProp<ViewStyle>
+  containerStyle: StyleProp<ViewStyle>
+  itemStyle: StyleProp<ViewStyle>
+  labelStyle: StyleProp<TextStyle>
+  activeItemStyle: StyleProp<ViewStyle>
+  activeLabelStyle: StyleProp<TextStyle>
+  showArrow: boolean
+  arrowStyle: StyleProp<ViewStyle>
+  arrowColor: string
+  arrowSize: number
+  customArrowUp: (size: number, color: string) => Component
+  customArrowDown: (size: number, color: string) => Component
+  customTickIcon: () => Component
+  zIndex: number
+  disabled: boolean
+  searchable: boolean
+  searchablePlaceholder: string
+  searchableError: string
+  searchableStyle: StyleProp<any>
+  isVisible: boolean
+  multiple: boolean
+  multipleText: string
+  min: number
+  max: number
+  onOpen: () => void
+  onClose: () => void
+  onChangeItem: (item: any, idx?: number) => void
 }
 
 const styles = StyleSheet.create({
