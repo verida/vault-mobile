@@ -7,25 +7,24 @@ import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
 import { useDeeplink } from 'hooks/useDeeplink'
+import { useWalletConnect } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
-import { useWalletConnect } from '../../hooks/useWalletConnect'
-
-let enabled = true
 const WAIT_TIME = 3000
 
 function ScanQrCode(
   props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
 ) {
   const { navigation, route } = props
+  const [enabled, setEnabled] = useState(true)
   const [isFlashOn, setIsFlashOn] = useState(false)
   const handleDeeplink = useDeeplink(navigation as any)
   const { requestConnect } = useWalletConnect()
 
   useEffect(() => {
-    enabled = true
+    setEnabled(true)
   }, [navigation])
 
   const toggleFlash = useCallback(() => {
@@ -40,9 +39,9 @@ function ScanQrCode(
     if (!enabled) {
       return
     }
-    enabled = false
+    setEnabled(false)
     setTimeout(() => {
-      enabled = true
+      setEnabled(true)
     }, WAIT_TIME)
     if (route.params.onReadQRCode) {
       route.params.onReadQRCode(data)
