@@ -7,9 +7,9 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
-import { selectTokens } from 'reduxStore/tokens/selectors'
 
 const TransactionDetails = ({
   navigation,

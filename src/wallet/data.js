@@ -1,4 +1,5 @@
 import algosdk from 'algosdk'
+import * as nearAPI from 'near-api-js'
 import { algodClient } from 'wallet/chains/algorand'
 import { web3 } from 'wallet/chains/ethereum'
 import initNearClient from 'wallet/chains/near'
@@ -6,15 +7,13 @@ import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
   NEAR_GAS_AMOUNT_TRANSFER,
 } from 'wallet/constants'
+import { walletProviderApi } from 'wallet/helpers/api'
 import {
   getTokenAddress,
   getTokenChain,
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
-import { walletProviderApi } from 'wallet/helpers/api'
-
-import * as nearAPI from 'near-api-js'
 
 import {
   getTransactionParamsData,
@@ -63,17 +62,8 @@ const getTransactionParams = async (transactionData, wallets) => {
     let toAddress = transactionData.address
     const gasPrice = await web3.eth.getGasPrice()
 
-    console.log(
-      fromAddress,
-      toAddress,
-      transactionData.token,
-      gasPrice,
-      'eip155'
-    )
-
     let input
     if (isNativeToken(transactionData.token.asset)) {
-      console.log('isNativeToken')
       input = {
         from: fromAddress,
         to: toAddress,
@@ -83,8 +73,6 @@ const getTransactionParams = async (transactionData, wallets) => {
         ),
       }
     } else {
-      console.log('NOT isNativeToken')
-
       let tokenAddress = getTokenAddress(transactionData.token.asset)
 
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
@@ -108,15 +96,13 @@ const getTransactionParams = async (transactionData, wallets) => {
     }
 
     try {
-      console.log('estimateGas ....')
-
       const estimateGas = await web3.eth.estimateGas(input)
       const params = { gas: estimateGas, fee: gasPrice * estimateGas }
 
       return params
     } catch (error) {
       // eslint-disable-next-line no-console
-      console.error(error, 'errornnnnnnn')
+      console.error(error, 'error')
     }
   } else {
     const params = await algodClient.getTransactionParams().do()
@@ -180,7 +166,6 @@ const sendTransaction = async (
     const signedSerializedTx = signedTransaction.encode()
 
     txString = Buffer.from(signedSerializedTx).toString('base64')
-    console.log(txString, 'txString')
 
     txData = {
       amount: amount,
@@ -189,16 +174,13 @@ const sendTransaction = async (
       token: transactionData.token,
       chain: tokenChain,
     }
-    console.log(txData, 'txData near')
   } else if (tokenChain === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
-    console.log('transactionParams')
 
     const nonce = await web3.eth.getTransactionCount(
       wallets.ethr.address,
       'latest'
     )
-    console.log('nonce')
 
     let transaction
     if (isTokenNative) {
@@ -310,12 +292,9 @@ const sendTransaction = async (
       'transaction/broadcast',
       requestBody
     )
-    console.log(sentTx, 'sentTx')
-    console.log(sentTx.data.data, 'sentTx.data.data')
     if (sentTx && sentTx.data.data.transactionId) {
       txData.id = sentTx.data.data.transactionId
     }
-    console.log(txData, 'txData')
     return txData
   }
 }

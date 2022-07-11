@@ -3,8 +3,8 @@ import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
 import {
-  rawDataToReduxState,
   getWalletAddressForAsset,
+  rawDataToReduxState,
 } from 'wallet/helpers/tokens'
 
 import AccountManager, {
@@ -12,12 +12,12 @@ import AccountManager, {
   WALLETS_STORAGE_KEY,
 } from 'api/AccountManager'
 import { navigate } from 'navigation/RootNavigator'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   getAllWallets,
   getSelectedWallet,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
-import { selectChains } from 'reduxStore/tokens/selectors'
 
 import {
   ADD_PENDING_TRANSACTION,

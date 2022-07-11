@@ -1,5 +1,3 @@
-import { createSelector } from 'reselect'
-
 export const selectTokensData = (state) => state.tokens || {}
 
 export const selectTokensTimestamp = (state) => {

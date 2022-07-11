@@ -1,7 +1,7 @@
 import {
+  FETCHED_TOKENS,
   TOKENS_FETCH_FAILED,
   TOKENS_FETCH_START,
-  FETCHED_TOKENS,
 } from './types'
 
 const initialState = {

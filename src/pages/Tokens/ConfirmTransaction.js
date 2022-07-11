@@ -4,9 +4,9 @@ import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import {
   formatTokenQuantity,
+  getNativeForChain,
   getTokenChain,
   getWalletAddressForToken,
-  getNativeForChain,
 } from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
@@ -14,13 +14,13 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import {
   getTransactionParamsData,
   getWalletsData,
   selectSentTransaction,
 } from 'reduxStore/wallet/selectors'
-import { selectTokens } from 'reduxStore/tokens/selectors'
 
 const ConfirmTransaction = ({
   navigation,

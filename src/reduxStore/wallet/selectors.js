@@ -1,11 +1,11 @@
+import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 import {
-  formatTokenQuantity,
-  tokenCaipObjectToString,
-  getTokenChain,
   getNativeForChain,
+  getTokenChain,
+  tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
-import { isEmpty } from 'lodash'
+
 import { selectTokens } from 'reduxStore/tokens/selectors'
 
 export const getBalancesData = (state) => {

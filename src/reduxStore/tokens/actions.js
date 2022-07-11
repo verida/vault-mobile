@@ -1,12 +1,11 @@
 import { walletProviderApi } from 'wallet/helpers/api'
 
+import { selectTokensTimestamp } from './selectors'
 import {
+  FETCHED_TOKENS,
   TOKENS_FETCH_FAILED,
   TOKENS_FETCH_START,
-  FETCHED_TOKENS,
 } from './types'
-
-import { selectTokensTimestamp } from './selectors'
 
 export const getTokens = () => {
   return (dispatch, getState) => {
