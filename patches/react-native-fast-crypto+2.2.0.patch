@@ -1,15 +1,15 @@
 diff --git a/node_modules/react-native-fast-crypto/android/build.gradle b/node_modules/react-native-fast-crypto/android/build.gradle
-index 452a5a2..9ba7012 100644
+index 452a5a2..e399e96 100644
 --- a/node_modules/react-native-fast-crypto/android/build.gradle
 +++ b/node_modules/react-native-fast-crypto/android/build.gradle
 @@ -55,4 +55,8 @@ repositories {
  
  dependencies {
    implementation 'com.facebook.react:react-native:+'
-+  compile 'com.madgag.spongycastle:core:1.58.0.0'
-+  compile 'com.madgag.spongycastle:prov:1.54.0.0'
-+  compile 'com.madgag.spongycastle:pkix:1.54.0.0'
-+  compile 'com.madgag.spongycastle:pg:1.54.0.0'
++  implementation 'com.madgag.spongycastle:core:1.58.0.0'
++  implementation 'com.madgag.spongycastle:prov:1.54.0.0'
++  implementation 'com.madgag.spongycastle:pkix:1.54.0.0'
++  implementation 'com.madgag.spongycastle:pg:1.54.0.0'
  }
 diff --git a/node_modules/react-native-fast-crypto/android/src/main/java/co/airbitz/fastcrypto/RNFastCryptoModule.java b/node_modules/react-native-fast-crypto/android/src/main/java/co/airbitz/fastcrypto/RNFastCryptoModule.java
 index 89aeddf..fb60e69 100644
@@ -110,6 +110,21 @@ index 3dbf764..9e9f6df 100644
 +  deriveAsync: pbkdf2DeriveAsync,
 +  deriveSync: pbkdf2DeriveSync
  }
+diff --git a/node_modules/react-native-fast-crypto/ios/RNFastCrypto.h b/node_modules/react-native-fast-crypto/ios/RNFastCrypto.h
+index 0a8f93d..aad9c99 100644
+--- a/node_modules/react-native-fast-crypto/ios/RNFastCrypto.h
++++ b/node_modules/react-native-fast-crypto/ios/RNFastCrypto.h
+@@ -1,9 +1,4 @@
+-
+-#if __has_include("RCTBridgeModule.h")
+-#import "RCTBridgeModule.h"
+-#else
+-#import <RCTBridgeModule.h>
+-#endif
++#import <React/RCTBridgeModule.h>
+ 
+ @interface RNFastCrypto : NSObject <RCTBridgeModule>
+ 
 diff --git a/node_modules/react-native-fast-crypto/ios/RNFastCrypto.m b/node_modules/react-native-fast-crypto/ios/RNFastCrypto.m
 index 953bc1d..64f2da7 100644
 --- a/node_modules/react-native-fast-crypto/ios/RNFastCrypto.m
