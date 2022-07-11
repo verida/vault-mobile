@@ -46,7 +46,7 @@ function StorageNodes(
   }
 
   async function onHostButtonPress() {
-    const url = 'https://developers.verida.io/docs/storage-node'
+    const url = 'https://developers.verida.io/docs/network/storage-node'
     const canOpen = await Linking.canOpenURL(url)
     if (canOpen) {
       Linking.openURL(url)
