@@ -37,7 +37,10 @@ const DataItem = (props) => {
           _data.payload = get(decoded, 'payload.data', {})
           const iss = decoded.payload.iss
 
-          const { name, avatar } = await getPublicProfile(iss)
+          const { name, avatar } = await getPublicProfile(
+            iss,
+            decoded.payload.vc.veridaContextName
+          )
           _data.issuer = {
             name,
             avatar,

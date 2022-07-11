@@ -3651,7 +3651,7 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/client-rn@^1.1.13":
+"@verida/client-rn@^1.1.15":
   version "1.1.15"
   resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-1.1.15.tgz#e66a135b2de6eeed365344baf59fe3858cf9c8d3"
   integrity sha512-MRUVbYSSoUxxHf2kPmeGHXNZZUysWBy28grOfjmR+HBepUmwt3aOGHLK6IImiS0wEkl2+VAfTcqFdld9rH6Mhw==
@@ -3807,7 +3807,7 @@
     lodash "^4.17.20"
     nodemon "^2.0.4"
 
-"@verida/verifiable-credentials@^0.1.5":
+"@verida/verifiable-credentials@^0.1.6":
   version "0.1.6"
   resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-0.1.6.tgz#24f1e440dc0109cfe91917e9c6af6f70b1e37f1c"
   integrity sha512-4dbyi8Offip7KAETihfAOhQ/AOzimnXf03BNYA2gv0kkOhGce/c0j5U4durYBH4wX7SRJlzMl0qxTR+efPjPVw==
