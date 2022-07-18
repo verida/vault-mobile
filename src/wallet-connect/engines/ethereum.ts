@@ -95,6 +95,24 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
         },
       ]
       break
+    case 'eth_signTypedData':
+      const [address, strData] = payload.params
+      const data = JSON.parse(strData)
+      // eslint-disable-next-line no-console
+      console.log('payload.params', data)
+      params = [
+        ...params,
+        {
+          label: 'Address',
+          value: address,
+        },
+        { label: 'Domain', value: data.domain },
+        {
+          label: 'Message',
+          value: data.message,
+        },
+      ]
+      break
     default:
       params = [
         ...params,
