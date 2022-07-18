@@ -22,7 +22,7 @@ export const walletConnectReducer: Reducer<State> = (
   action
 ) => {
   switch (action.type) {
-    case 'Remove_WC_APP': {
+    case 'REMOVE_WC_APP': {
       return {
         ...state,
         dapps: state.dapps.filter(
@@ -31,13 +31,16 @@ export const walletConnectReducer: Reducer<State> = (
       }
     }
     case 'SET_WC_APP': {
-      const { key } = action.payload
+      const { walletId, key } = action.payload
       let dapps = [...state.dapps]
       const index = dapps.findIndex((app) => app.session.key === key)
       if (index >= 0) {
-        dapps.splice(index, 1, { session: { ...action.payload.session } })
+        dapps.splice(index, 1, {
+          walletId,
+          session: { ...action.payload.session },
+        })
       } else {
-        dapps = [...dapps, { session: { ...action.payload.session } }]
+        dapps = [...dapps, { walletId, session: { ...action.payload.session } }]
       }
       return {
         ...state,
@@ -64,13 +67,14 @@ export const walletConnectReducer: Reducer<State> = (
       }
 
     case 'SET_WC_PEER_META': {
-      const { connector, peerMeta } = action.payload
+      const { walletId, connector, peerMeta } = action.payload
       const dapps = [...state.dapps]
       const dapp = dapps.find((app) => app.session.key === connector.key)
       if (dapp) {
         dapp.session.peerMeta = { ...peerMeta }
       } else {
         dapps.push({
+          walletId,
           session: {
             connected: false,
             key: connector.key,
@@ -85,7 +89,7 @@ export const walletConnectReducer: Reducer<State> = (
     }
 
     case 'APPROVE_WC_PEER_META': {
-      const { connector, accounts, chainId, chain } = action.payload
+      const { walletId, connector, accounts, chainId, chain } = action.payload
       const dapps = [...state.dapps]
       const session = connector.session
       const dapp = dapps.find((app) => app.session.key === connector.key)
@@ -96,6 +100,7 @@ export const walletConnectReducer: Reducer<State> = (
         dapp.chainId = chainId
       } else {
         dapps.push({
+          walletId,
           session: { ...session },
           accounts,
           chainId,

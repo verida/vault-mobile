@@ -36,8 +36,10 @@ const ConnectDappModal = (props: Props) => {
     dismissModal,
   } = props
 
+  // TODO: cleanup convert main-reducer to typescript
   const walletData = useReduxState((state) => state.main.wallets.data)
   const selectedWallets = useReduxState((state) => state.main.selectedWallet)
+
   const multiWallets = walletData[selectedWallets]
   const accounts = multiWallets.accounts
 

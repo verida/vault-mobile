@@ -119,7 +119,7 @@ export async function signEthereumRequests(
 
   if (
     !getWalletController(dapp) ||
-    getWalletController(dapp).getControllerType() !== 'ethr'
+    getWalletController(dapp)?.getControllerType() !== 'ethr'
   ) {
     connector.rejectRequest({
       id: payload.id,
@@ -200,7 +200,7 @@ export async function signEthereumRequests(
       if (errorMsg) {
         message = errorMsg
       }
-      if (!getWalletController(dapp).isActive()) {
+      if (!getWalletController(dapp)?.isActive()) {
         message = 'No Active Account'
       }
       connector.rejectRequest({

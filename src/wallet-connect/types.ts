@@ -5,6 +5,7 @@ import {
 } from '@walletconnect/types'
 
 export interface DApp {
+  walletId: string
   session: IWalletConnectSession
   accounts?: string[]
   chainId?: number

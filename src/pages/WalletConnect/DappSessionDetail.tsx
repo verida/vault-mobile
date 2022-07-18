@@ -8,6 +8,7 @@ import { useDispatch } from 'react-redux'
 import { DApp } from 'wallet-connect/types'
 
 import Button from 'components/Button'
+import { useWalletConnect } from 'hooks/useWalletConnect'
 
 import NavigationHeader from '../../components/Navigation/NavigationHeader'
 import { Spacer } from '../../components/Spacer'
@@ -21,6 +22,7 @@ const DappSessionDetail = () => {
   const params = useParams<{ dapp: DApp }>()
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const { selectedWalletId } = useWalletConnect()
 
   const {
     session: { peerMeta, key, connected, peerId, accounts },
@@ -75,7 +77,9 @@ const DappSessionDetail = () => {
           color='transparent-warning'
           onPress={() => {
             try {
-              dispatch(removeWalletConnectDapp({ key }))
+              dispatch(
+                removeWalletConnectDapp({ walletId: selectedWalletId, key })
+              )
               navigation.goBack()
               const wcConnector = new WalletConnect({
                 session: params.dapp.session,

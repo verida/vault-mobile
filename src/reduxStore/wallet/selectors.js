@@ -2,6 +2,12 @@ import { createSelector } from 'reselect'
 import { SUPPORTED_TOKENS } from 'wallet/constants'
 import { formatTokenQuantity, handleTokenDecimals } from 'wallet/helpers/tokens'
 
+// New selectors
+const s = (state) => state.main // Current wallet state sits in main reducer
+export const selectedWalletSelector = (state) => s(state).selectedWallet
+
+// End new selectors
+
 export const getPricingData = (state) => state.pricing.data || {}
 
 export const getBalancesData = (state) => state.balances.data || {}
