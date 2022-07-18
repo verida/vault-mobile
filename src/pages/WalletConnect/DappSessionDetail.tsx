@@ -8,6 +8,8 @@ import { useDispatch } from 'react-redux'
 import { DApp } from 'wallet-connect/types'
 
 import Button from 'components/Button'
+import { useReduxState } from 'hooks/useReduxState'
+import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
 
 import NavigationHeader from '../../components/Navigation/NavigationHeader'
 import { Spacer } from '../../components/Spacer'
@@ -21,6 +23,7 @@ const DappSessionDetail = () => {
   const params = useParams<{ dapp: DApp }>()
   const navigation = useNavigation()
   const dispatch = useDispatch()
+  const selectedWalletId = useReduxState(selectedWalletSelector)
 
   const {
     session: { peerMeta, key, connected, peerId, accounts },
