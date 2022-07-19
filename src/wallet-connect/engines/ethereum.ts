@@ -98,8 +98,6 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
     case 'eth_signTypedData':
       const [address, strData] = payload.params
       const data = JSON.parse(strData)
-      // eslint-disable-next-line no-console
-      console.log('payload.params', data)
       params = [
         ...params,
         {
