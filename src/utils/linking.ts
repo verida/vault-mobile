@@ -15,5 +15,5 @@ export const isSupportedDomain = (host: string) => {
 
 export const canBeHandledByDeeplink = (path: string) => {
   const supportedPaths = ['request', 'inbox']
-  return supportedPaths.includes(path.replaceAll('/', ''))
+  return supportedPaths.includes(path.replace(/\//g, ''))
 }
