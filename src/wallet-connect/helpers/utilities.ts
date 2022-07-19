@@ -4,7 +4,8 @@ import Config from 'react-native-config'
 import { SUPPORTED_CHAINS } from '../constants'
 import { IChainData } from '../types'
 
-const { INFURA_API_KEY } = Config
+// TODO: hardcode just to have a running build first, fix Bitrise .env config
+const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
 
 export function payloadId(): number {
   const datePart: number = new Date().getTime() * Math.pow(10, 3)

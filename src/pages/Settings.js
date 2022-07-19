@@ -80,7 +80,7 @@ export default (props) => {
   const networks = useSelector((state) => state.main.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `Verida Vault ${capitalize(
-    Config.BITRISE_TRIGGERED_WORKFLOW_TITLE
+    Config.BITRISE_TRIGGERED_WORKFLOW_TITLE || Config.DEPLOY_ENVIRONMENT
   )} v${getVersion()}(${getBuildNumber()})`
 
   if (!isEmpty(networks)) {
