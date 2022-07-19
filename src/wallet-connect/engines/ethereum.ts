@@ -95,6 +95,22 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
         },
       ]
       break
+    case 'eth_signTypedData':
+      const [address, strData] = payload.params
+      const data = JSON.parse(strData)
+      params = [
+        ...params,
+        {
+          label: 'Address',
+          value: address,
+        },
+        { label: 'Domain', value: data.domain },
+        {
+          label: 'Message',
+          value: data.message,
+        },
+      ]
+      break
     default:
       params = [
         ...params,
@@ -119,7 +135,7 @@ export async function signEthereumRequests(
 
   if (
     !getWalletController(dapp) ||
-    getWalletController(dapp).getControllerType() !== 'ethr'
+    getWalletController(dapp)?.getControllerType() !== 'ethr'
   ) {
     connector.rejectRequest({
       id: payload.id,
@@ -200,7 +216,7 @@ export async function signEthereumRequests(
       if (errorMsg) {
         message = errorMsg
       }
-      if (!getWalletController(dapp).isActive()) {
+      if (!getWalletController(dapp)?.isActive()) {
         message = 'No Active Account'
       }
       connector.rejectRequest({
