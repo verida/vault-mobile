@@ -16,21 +16,18 @@ import Feather from 'react-native-vector-icons/Feather'
 
 import { LIGHTGREY_COLOR, WHITE_COLOR } from 'constants/color'
 
-class DropDownPicker extends Component<
-  SelectProps<IsMultiple>,
-  SelectState<IsMultiple>
-> {
-  constructor(props: SelectProps<IsMultiple>) {
+class DropDownPicker extends Component<SelectProps, SelectState> {
+  constructor(props: SelectProps) {
     super(props)
 
-    let choice
-    let items: Option[] = []
+    const choice: Option[] = []
     if (!props.multiple) {
-      choice =
+      choice.push(
         (props.defaultValue
           ? props.items.find((item) => item.value === props.defaultValue)
           : props.items.filter((item) => item?.selected === true)?.[0]) ??
-        this.null()
+          this.null()
+      )
     } else {
       if (
         props.defaultValue &&
@@ -39,22 +36,17 @@ class DropDownPicker extends Component<
       ) {
         props.defaultValue.forEach((value) => {
           const item = props.items.find((i) => i.value === value)
-          if (item) items.push(item)
+          if (item) choice.push(item)
         })
       } else if (
         props.items.filter((item) => item?.selected === true).length > 0
       ) {
-        items = props.items.filter((item) => item?.selected === true)
+        choice.push(...props.items.filter((item) => item?.selected === true))
       }
     }
 
     this.state = {
-      choice: props.multiple
-        ? items
-        : {
-            label: choice?.label ?? null,
-            value: choice?.value ?? null,
-          },
+      choice,
       isVisible: props.isVisible,
       props: {
         defaultValue: props.defaultValue,
@@ -63,7 +55,7 @@ class DropDownPicker extends Component<
     }
   }
 
-  static getDerivedStateFromProps(props: SelectProps<IsMultiple>, state: any) {
+  static getDerivedStateFromProps(props: SelectProps, state: any) {
     const { defaultValue, multiple } = props
     // Change default value (! multiple)
     if (!multiple && defaultValue !== state.props.defaultValue) {
@@ -74,10 +66,12 @@ class DropDownPicker extends Component<
       }
 
       return {
-        choice: {
-          label,
-          value,
-        },
+        choice: [
+          {
+            label,
+            value,
+          },
+        ],
         props: {
           ...state.props,
           defaultValue,
@@ -151,23 +145,7 @@ class DropDownPicker extends Component<
   }
 
   select(item: Option, index: number) {
-    const { multiple } = this.props
-    if (!multiple) {
-      this.setState({
-        choice: {
-          label: item.label,
-          value: item.value,
-        },
-        isVisible: false,
-        props: {
-          ...this.state.props,
-          isVisible: false,
-        },
-      })
-
-      // onChangeItem callback
-      this.props.onChangeItem(item, index)
-    } else {
+    if (this.props.multiple) {
       let choice = [...this.state.choice]
       const exists = choice.findIndex(
         (i) => i.label === item.label && i.value === item.value
@@ -186,11 +164,29 @@ class DropDownPicker extends Component<
       })
 
       // onChangeItem callback
-      this.props.onChangeItem(choice.map((i) => i.value))
+      this.props.onChangeItem(choice.map((i) => i.value ?? ''))
+    } else {
+      this.setState({
+        choice: [
+          {
+            label: item.label,
+            value: item.value,
+          },
+        ],
+        isVisible: false,
+        props: {
+          ...this.state.props,
+          isVisible: false,
+        },
+      })
+
+      // onChangeItem callback
+      this.props.onChangeItem(item, index)
+
+      // onClose callback (! multiple)
+      this.props.onClose()
     }
 
-    // onClose callback (! multiple)
-    if (!multiple) this.props.onClose()
     this.setState({
       searchableText: '',
     })
@@ -215,14 +211,18 @@ class DropDownPicker extends Component<
   }
 
   getNumberOfItems() {
-    return this.props.multipleText.replace('%d', this.state.choice.length)
+    return this.props.multiple
+      ? this.props.multipleText.replace('%d', () =>
+          this.state.choice.length.toString()
+        )
+      : ''
   }
 
   render() {
-    const { multiple, placeholder, disabled } = this.props
-    const isPlaceholderActive = this.state.choice.label === null
-    const label = isPlaceholderActive ? placeholder : this.state.choice.label
-    const placeholderStyle = isPlaceholderActive && this.props.placeholderStyle
+    const { multiple, placeholder, disabled, placeholderStyle } = this.props
+    const { choice } = this.state
+    const isPlaceholderActive = choice[0].label === null
+    const label = isPlaceholderActive ? placeholder : choice[0].label ?? ''
     const opacity = disabled ? 0.5 : 1
     const items = this.getItems()
     const selectedValue = multiple
@@ -268,14 +268,18 @@ class DropDownPicker extends Component<
                   this.setState({
                     searchableText: text,
                   })
-                  if (text === '') this.setState({ choice: this.null() })
+                  if (text === '') this.setState({ choice: [this.null()] })
                 }}
                 value={this.state.searchableText || selectedValue}
                 onFocus={() => this.toggle()}
               />
             ) : (
               <Text
-                style={[this.props.labelStyle, placeholderStyle, { opacity }]}>
+                style={[
+                  this.props.labelStyle,
+                  isPlaceholderActive && placeholderStyle,
+                  { opacity },
+                ]}>
                 {selectedValue}
               </Text>
             )}
@@ -318,7 +322,7 @@ class DropDownPicker extends Component<
                     style={[
                       styles.dropDownItem,
                       this.props.itemStyle,
-                      this.state.choice.value === item.value &&
+                      choice[0].value === item.value &&
                         this.props.activeItemStyle,
                       {
                         opacity: item?.disabled ? 0.3 : 1,
@@ -333,7 +337,7 @@ class DropDownPicker extends Component<
                     <Text
                       style={[
                         this.props.labelStyle,
-                        this.state.choice.value === item.value &&
+                        choice[0].value === item.value &&
                           this.props.activeLabelStyle,
                       ]}>
                       {item.flag ? `${item.flag} ` : ''}
@@ -403,10 +407,9 @@ class DropDownPicker extends Component<
     onChangeItem: () => ({}),
   }
 }
-type IsMultiple = boolean
 
-type SelectState<T> = {
-  choice: T extends true ? Option[] : Option
+type SelectState = {
+  choice: Option[]
   searchableText?: string
   isVisible: boolean
   top?: number
@@ -424,7 +427,7 @@ export type Option = {
   selected?: boolean
 }
 
-type SelectProps<T> = {
+type SelectProps = {
   autoFocus?: boolean
   items: Array<Option>
   placeholder: string
@@ -451,18 +454,19 @@ type SelectProps<T> = {
   searchableError: string
   searchableStyle: StyleProp<TextStyle>
   isVisible: boolean
-  multipleText: string
-  min: number
-  max: number
   onOpen: () => void
   onClose: () => void
   onChangeItem: (item: Option | string[], idx?: number) => void
-} & (T extends true
-  ? {
+} & (
+  | {
       multiple: true
       defaultValue?: string[]
+      multipleText: string
+      min: number
+      max: number
     }
-  : { multiple?: false; defaultValue?: string })
+  | { multiple?: false; defaultValue?: string }
+)
 
 const styles = StyleSheet.create({
   arrow: {
