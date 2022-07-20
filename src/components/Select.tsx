@@ -190,6 +190,9 @@ class DropDownPicker extends Component<SelectProps, any> {
 
     // onClose callback (! multiple)
     if (!multiple) this.props.onClose()
+    this.setState({
+      searchableText: '',
+    })
   }
 
   getLayout(layout: LayoutRectangle) {
@@ -265,12 +268,9 @@ class DropDownPicker extends Component<SelectProps, any> {
                   this.setState({
                     searchableText: text,
                   })
+                  if (text === '') this.setState({ choice: this.null() })
                 }}
-                value={
-                  isPlaceholderActive
-                    ? this.state.searchableText
-                    : selectedValue
-                }
+                value={this.state.searchableText || selectedValue}
                 onFocus={() => this.toggle()}
               />
             ) : (
