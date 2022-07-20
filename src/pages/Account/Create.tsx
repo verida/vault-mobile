@@ -17,7 +17,7 @@ import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
+import DropDownPicker, { Option } from 'components/Select'
 import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
@@ -30,11 +30,6 @@ import InputStyles from 'styles/inputs'
 export enum CreateAccountMode {
   CREATE,
   ADD,
-}
-
-type Option = {
-  label: string
-  value: string
 }
 
 function Create(
