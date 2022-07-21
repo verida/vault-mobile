@@ -1,40 +1,38 @@
-import PropTypes from 'prop-types'
-import React from 'react'
+import React, { Component } from 'react'
 import {
+  LayoutRectangle,
   Platform,
   ScrollView,
+  StyleProp,
   StyleSheet,
   Text,
   TextInput,
+  TextStyle,
   TouchableOpacity,
   View,
+  ViewStyle,
 } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
-import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
+import { LIGHTGREY_COLOR, WHITE_COLOR } from 'constants/color'
 
-class DropDownPicker extends React.Component {
-  constructor(props) {
+const empty = (): Pick<Option, 'label' | 'value'> => ({
+  label: '',
+  value: '',
+})
+
+class DropDownPicker extends Component<SelectProps, SelectState> {
+  constructor(props: SelectProps) {
     super(props)
 
-    let choice
-    let items = []
+    const choice: Option[] = []
     if (!props.multiple) {
-      if (props.defaultValue) {
-        choice = props.items.find((item) => item.value === props.defaultValue)
-      } else if (
-        props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        ).length > 0
-      ) {
-        choice = props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        )[0]
-      } else {
-        choice = this.null()
-      }
+      choice.push(
+        (props.defaultValue
+          ? props.items.find((item) => item.value === props.defaultValue)
+          : props.items.filter((item) => item?.selected === true)?.[0]) ??
+          empty()
+      )
     } else {
       if (
         props.defaultValue &&
@@ -42,77 +40,64 @@ class DropDownPicker extends React.Component {
         props.defaultValue.length > 0
       ) {
         props.defaultValue.forEach((value) => {
-          items.push(props.items.find((item) => item.value === value))
+          const item = props.items.find((i) => i.value === value)
+          if (item) choice.push(item)
         })
       } else if (
-        props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        ).length > 0
+        props.items.filter((item) => item?.selected === true).length > 0
       ) {
-        items = props.items.filter(
-          // eslint-disable-next-line no-prototype-builtins
-          (item) => item.hasOwnProperty('selected') && item.selected === true
-        )
+        choice.push(...props.items.filter((item) => item?.selected === true))
       }
     }
 
     this.state = {
-      choice: props.multiple
-        ? items
-        : {
-            label: choice.label,
-            value: choice.value,
-          },
-      searchableText: null,
+      choice,
       isVisible: props.isVisible,
       props: {
-        multiple: props.multiple,
         defaultValue: props.defaultValue,
         isVisible: props.isVisible,
       },
     }
   }
 
-  static getDerivedStateFromProps(props, state) {
+  static getDerivedStateFromProps(props: SelectProps, state: SelectState) {
+    const { defaultValue, multiple } = props
     // Change default value (! multiple)
-    if (
-      !state.props.multiple &&
-      props.defaultValue !== state.props.defaultValue
-    ) {
+    if (!multiple && defaultValue !== state.props.defaultValue) {
       const { label, value } =
-        props.defaultValue === null
-          ? {
-              label: null,
-              value: null,
-            }
-          : props.items.find((item) => item.value === props.defaultValue)
+        (!!defaultValue &&
+          props.items.find((item) => item.value === defaultValue)) ||
+        empty()
+
       return {
-        choice: {
-          label,
-          value,
-        },
+        choice: [
+          {
+            label,
+            value,
+          },
+        ],
         props: {
           ...state.props,
-          defaultValue: props.defaultValue,
+          defaultValue,
         },
       }
     }
 
     // Change default value (multiple)
     if (
-      state.props.multiple &&
-      JSON.stringify(props.defaultValue) !==
-        JSON.stringify(state.props.defaultValue)
+      multiple &&
+      JSON.stringify(defaultValue) !== JSON.stringify(state.props.defaultValue)
     ) {
-      let items = []
+      const items: Option[] = []
+
       if (
-        props.defaultValue &&
-        Array.isArray(props.defaultValue) &&
-        props.defaultValue.length > 0
+        defaultValue &&
+        Array.isArray(defaultValue) &&
+        defaultValue.length > 0
       ) {
-        props.defaultValue.forEach((value) => {
-          items.push(props.items.find((item) => item.value === value))
+        defaultValue.forEach((value) => {
+          const item = props.items.find((i) => i.value === value)
+          if (item) items.push(item)
         })
       }
 
@@ -120,7 +105,7 @@ class DropDownPicker extends React.Component {
         choice: items,
         props: {
           ...state.props,
-          defaultValue: props.defaultValue,
+          defaultValue,
         },
       }
     }
@@ -136,24 +121,7 @@ class DropDownPicker extends React.Component {
       }
     }
 
-    // Change disability
-    if (props.disabled !== state.props.disabled) {
-      return {
-        props: {
-          ...state.props,
-          disabled: props.disabled,
-        },
-      }
-    }
-
     return null
-  }
-
-  null() {
-    return {
-      label: null,
-      value: null,
-    }
   }
 
   toggle() {
@@ -173,24 +141,8 @@ class DropDownPicker extends React.Component {
     )
   }
 
-  select(item, index) {
-    const { multiple } = this.state.props
-    if (!multiple) {
-      this.setState({
-        choice: {
-          label: item.label,
-          value: item.value,
-        },
-        isVisible: false,
-        props: {
-          ...this.state.props,
-          isVisible: false,
-        },
-      })
-
-      // onChangeItem callback
-      this.props.onChangeItem(item, index)
-    } else {
+  select(item: Option, index: number) {
+    if (this.props.multiple) {
       let choice = [...this.state.choice]
       const exists = choice.findIndex(
         (i) => i.label === item.label && i.value === item.value
@@ -209,14 +161,35 @@ class DropDownPicker extends React.Component {
       })
 
       // onChangeItem callback
-      this.props.onChangeItem(choice.map((i) => i.value))
+      this.props.onChangeItems(choice.map((i) => i.value ?? ''))
+    } else {
+      this.setState({
+        choice: [
+          {
+            label: item.label,
+            value: item.value,
+          },
+        ],
+        isVisible: false,
+        props: {
+          ...this.state.props,
+          isVisible: false,
+        },
+      })
+
+      // onChangeItem callback
+      this.props.onChangeItem(item, index)
+
+      // onClose callback (! multiple)
+      this.props.onClose()
     }
 
-    // onClose callback (! multiple)
-    if (!multiple) this.props.onClose()
+    this.setState({
+      searchableText: '',
+    })
   }
 
-  getLayout(layout) {
+  getLayout(layout: LayoutRectangle) {
     this.setState({
       top: layout.height - 1,
     })
@@ -227,7 +200,7 @@ class DropDownPicker extends React.Component {
       const text = this.state.searchableText.toLowerCase()
 
       return this.props.items.filter((item) => {
-        return item.label && item.label.toLowerCase().indexOf(text) > -1
+        return item.label?.toLowerCase().includes(text)
       })
     }
 
@@ -235,15 +208,18 @@ class DropDownPicker extends React.Component {
   }
 
   getNumberOfItems() {
-    return this.props.multipleText.replace('%d', this.state.choice.length)
+    return this.props.multiple
+      ? this.props.multipleText.replace('%d', () =>
+          this.state.choice.length.toString()
+        )
+      : ''
   }
 
   render() {
-    const { multiple, disabled } = this.state.props
-    const { placeholder } = this.props
-    const isPlaceholderActive = this.state.choice.label === null
-    const label = isPlaceholderActive ? placeholder : this.state.choice.label
-    const placeholderStyle = isPlaceholderActive && this.props.placeholderStyle
+    const { multiple, placeholder, disabled, placeholderStyle } = this.props
+    const { choice } = this.state
+    const isPlaceholderActive = !choice[0].label
+    const label = isPlaceholderActive ? placeholder : choice[0].label ?? ''
     const opacity = disabled ? 0.5 : 1
     const items = this.getItems()
     const selectedValue = multiple
@@ -289,17 +265,18 @@ class DropDownPicker extends React.Component {
                   this.setState({
                     searchableText: text,
                   })
+                  if (text === '') this.setState({ choice: [empty()] })
                 }}
-                value={
-                  isPlaceholderActive
-                    ? this.state.searchableText
-                    : selectedValue
-                }
+                value={this.state.searchableText || selectedValue}
                 onFocus={() => this.toggle()}
               />
             ) : (
               <Text
-                style={[this.props.labelStyle, placeholderStyle, { opacity }]}>
+                style={[
+                  this.props.labelStyle,
+                  isPlaceholderActive && placeholderStyle,
+                  { opacity },
+                ]}>
                 {selectedValue}
               </Text>
             )}
@@ -342,10 +319,10 @@ class DropDownPicker extends React.Component {
                     style={[
                       styles.dropDownItem,
                       this.props.itemStyle,
-                      this.state.choice.value === item.value &&
+                      choice[0].value === item.value &&
                         this.props.activeItemStyle,
                       {
-                        opacity: item?.disabled || false === true ? 0.3 : 1,
+                        opacity: item?.disabled ? 0.3 : 1,
                         ...(multiple && {
                           flexDirection: 'row',
                           alignItems: 'center',
@@ -353,11 +330,11 @@ class DropDownPicker extends React.Component {
                         }),
                       },
                     ]}
-                    disabled={item?.disabled || false === true}>
+                    disabled={item?.disabled}>
                     <Text
                       style={[
                         this.props.labelStyle,
-                        this.state.choice.value === item.value &&
+                        choice[0].value === item.value &&
                           this.props.activeLabelStyle,
                       ]}>
                       {item.flag ? `${item.flag} ` : ''}
@@ -365,7 +342,8 @@ class DropDownPicker extends React.Component {
                     </Text>
                     {multiple &&
                       this.state.choice.findIndex(
-                        (i) => i.label === item.label && i.value === item.value
+                        (i: Option) =>
+                          i.label === item.label && i.value === item.value
                       ) > -1 &&
                       this.props.customTickIcon()}
                   </TouchableOpacity>
@@ -387,80 +365,109 @@ class DropDownPicker extends React.Component {
       </View>
     )
   }
+
+  static defaultProps = {
+    placeholder: 'Select an item',
+    dropDownMaxHeight: 150,
+    style: {},
+    dropDownStyle: {},
+    containerStyle: {},
+    itemStyle: {},
+    labelStyle: {},
+    placeholderStyle: {},
+    activeItemStyle: {},
+    activeLabelStyle: {},
+    arrowStyle: {},
+    arrowColor: '#000',
+    showArrow: true,
+    arrowSize: 15,
+    customArrowUp: (size?: number, color?: string) => (
+      <Feather name='chevron-up' size={size} color={color} />
+    ),
+    customArrowDown: (size?: number, color?: string) => (
+      <Feather name='chevron-down' size={size} color={color} />
+    ),
+    customTickIcon: () => <Feather name='check' size={15} />,
+    zIndex: 5000,
+    disabled: false,
+    searchable: false,
+    searchablePlaceholder: 'Search for an item',
+    searchableError: 'Not Found',
+    searchableStyle: {},
+    isVisible: false,
+    multiple: false,
+    multipleText: '%d items have been selected',
+    min: 0,
+    max: 10000000,
+    onOpen: () => ({}),
+    onClose: () => ({}),
+    onChangeItem: () => ({}),
+  }
 }
 
-DropDownPicker.defaultProps = {
-  placeholder: 'Select an item',
-  dropDownMaxHeight: 150,
-  style: {},
-  dropDownStyle: {},
-  containerStyle: {},
-  itemStyle: {},
-  labelStyle: {},
-  placeholderStyle: {},
-  activeItemStyle: {},
-  activeLabelStyle: {},
-  arrowStyle: {},
-  arrowColor: '#000',
-  showArrow: true,
-  arrowSize: 15,
-  customArrowUp: (size, color) => (
-    <Feather name='chevron-up' size={size} color={color} />
-  ),
-  customArrowDown: (size, color) => (
-    <Feather name='chevron-down' size={size} color={color} />
-  ),
-  customTickIcon: () => <Feather name='check' size={15} />,
-  zIndex: 5000,
-  disabled: false,
-  searchable: false,
-  searchablePlaceholder: 'Search for an item',
-  searchableError: 'Not Found',
-  searchableStyle: {},
-  isVisible: false,
-  multiple: false,
-  multipleText: '%d items have been selected',
-  min: 0,
-  max: 10000000,
-  onOpen: () => ({}),
-  onClose: () => ({}),
-  onChangeItem: () => ({}),
+type SelectState = {
+  choice: Option[]
+  searchableText?: string
+  isVisible: boolean
+  top?: number
+  props: {
+    defaultValue?: string | string[]
+    isVisible?: boolean
+  }
 }
 
-DropDownPicker.propTypes = {
-  items: PropTypes.array.isRequired,
-  defaultValue: PropTypes.any,
-  placeholder: PropTypes.string,
-  dropDownMaxHeight: PropTypes.number,
-  style: PropTypes.object,
-  dropDownStyle: PropTypes.object,
-  containerStyle: PropTypes.object,
-  itemStyle: PropTypes.object,
-  labelStyle: PropTypes.object,
-  activeItemStyle: PropTypes.object,
-  activeLabelStyle: PropTypes.object,
-  showArrow: PropTypes.bool,
-  arrowStyle: PropTypes.object,
-  arrowColor: PropTypes.string,
-  arrowSize: PropTypes.number,
-  customArrowUp: PropTypes.func,
-  customArrowDown: PropTypes.func,
-  customTickIcon: PropTypes.func,
-  zIndex: PropTypes.number,
-  disabled: PropTypes.bool,
-  searchable: PropTypes.bool,
-  searchablePlaceholder: PropTypes.string,
-  searchableError: PropTypes.string,
-  searchableStyle: PropTypes.object,
-  isVisible: PropTypes.bool,
-  multiple: PropTypes.bool,
-  multipleText: PropTypes.string,
-  min: PropTypes.number,
-  max: PropTypes.number,
-  onOpen: PropTypes.func,
-  onClose: PropTypes.func,
-  onChangeItem: PropTypes.func,
+export type Option = {
+  label: string
+  value: string
+  disabled?: boolean
+  flag?: string
+  selected?: boolean
 }
+
+type SelectProps = {
+  autoFocus?: boolean
+  items: Array<Option>
+  placeholder: string
+  placeholderStyle: StyleProp<TextStyle>
+  dropDownMaxHeight: number
+  style: StyleProp<ViewStyle>
+  dropDownStyle: StyleProp<ViewStyle>
+  containerStyle: StyleProp<ViewStyle>
+  itemStyle: StyleProp<ViewStyle>
+  labelStyle: TextStyle
+  activeItemStyle: StyleProp<ViewStyle>
+  activeLabelStyle: StyleProp<TextStyle>
+  showArrow: boolean
+  arrowStyle: StyleProp<ViewStyle>
+  arrowColor: string
+  arrowSize: number
+  customArrowUp: (size: number, color: string) => Component
+  customArrowDown: (size: number, color: string) => Component
+  customTickIcon: () => Component
+  zIndex: number
+  disabled: boolean
+  searchable: boolean
+  searchablePlaceholder: string
+  searchableError: string
+  searchableStyle: StyleProp<TextStyle>
+  isVisible: boolean
+  onOpen: () => void
+  onClose: () => void
+} & (
+  | {
+      multiple: true
+      defaultValue?: string[]
+      multipleText: string
+      min: number
+      max: number
+      onChangeItems: (items: string[]) => void
+    }
+  | {
+      multiple?: false
+      defaultValue?: string
+      onChangeItem: (item: Option, idx?: number) => void
+    }
+)
 
 const styles = StyleSheet.create({
   arrow: {
