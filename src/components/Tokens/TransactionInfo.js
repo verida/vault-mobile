@@ -7,6 +7,7 @@ import {
   formatTokenQuantity,
   getExplorerUrl,
   getTokenChain,
+  getTokenChainId,
   tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 
@@ -22,6 +23,7 @@ export default ({ transaction, tokenAddress, tokens }) => {
     )
   })
   const chain = getTokenChain(tokenAddress)
+  const chainId = getTokenChainId(tokenAddress)
   let fixed
   try {
     switch (chain) {
@@ -137,7 +139,7 @@ export default ({ transaction, tokenAddress, tokens }) => {
         <TouchableOpacity style={styles.viewOnExplorerWrapper}>
           <Text
             onPress={() => {
-              const explorerUrl = getExplorerUrl(chain)
+              const explorerUrl = getExplorerUrl(chainId)
               Linking.openURL(explorerUrl + transaction.id)
             }}>
             View on explorer
