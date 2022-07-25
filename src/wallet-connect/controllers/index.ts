@@ -4,20 +4,23 @@ import { AlgorandWalletController } from './algorand'
 import { EthereumWalletController } from './ethereum'
 import { IWalletController } from './type'
 
-const walletControllers: Record<string, any> = {}
+const walletControllers: Record<string, IWalletController> = {}
 
-export function getWalletController(dapp?: DApp): IWalletController {
-  if (dapp?.chain && !walletControllers[dapp.chain]) {
+const getKey = (dapp: DApp) => `${dapp.walletId}/${dapp.chain}`
+
+export function getWalletController(dapp?: DApp): IWalletController | null {
+  if (!dapp) return null
+
+  const ckey = getKey(dapp)
+  if (dapp?.chain && !walletControllers[ckey]) {
     if (dapp.chain === 'ethr' && dapp.chainId === RINKEBY_CHAIN_ID) {
-      const walletController = new EthereumWalletController()
-      walletControllers[dapp.chain] = walletController
+      walletControllers[ckey] = new EthereumWalletController()
     } else if (dapp.chain === 'algo' || dapp.chainId === 0) {
-      const walletController = new AlgorandWalletController()
-      walletControllers[dapp.chain] = walletController
+      walletControllers[ckey] = new AlgorandWalletController()
     } else {
       throw new Error(`Unsupported network: ${dapp.chain} / ${dapp.chainId}`)
     }
   }
 
-  return walletControllers[dapp?.chain ?? '']
+  return walletControllers[ckey ?? '']
 }

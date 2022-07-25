@@ -9,11 +9,15 @@ import {
 
 import { createAction } from '../helpers'
 
-export function removeWalletConnectDapp(payload: { key: string }) {
-  return createAction('Remove_WC_APP', payload)
+export function removeWalletConnectDapp(payload: {
+  walletId: string
+  key: string
+}) {
+  return createAction('REMOVE_WC_APP', payload)
 }
 
 export function setWalletConnectDapp(payload: {
+  walletId: string
   key: string
   session: WalletConnectSession
 }) {
@@ -21,12 +25,14 @@ export function setWalletConnectDapp(payload: {
 }
 
 export function setWalletConnectRequests(payload: {
+  walletId: string
   requests: WalletConnectRequest[]
 }) {
   return createAction('SET_WC_REQUESTS', payload)
 }
 
 export function addWalletConnectRequest(payload: {
+  walletId: string
   dapp: DApp
   request: WalletConnectRequest
 }) {
@@ -34,6 +40,7 @@ export function addWalletConnectRequest(payload: {
 }
 
 export function removeWalletConnectRequest(payload: {
+  walletId: string
   dapp: DApp
   request: WalletConnectRequest
 }) {
@@ -41,6 +48,7 @@ export function removeWalletConnectRequest(payload: {
 }
 
 export function setWalletConnectPeerMeta(payload: {
+  walletId: string
   connector: WalletConnect
   peerMeta: WalletConnectClientMeta
 }) {
@@ -48,6 +56,7 @@ export function setWalletConnectPeerMeta(payload: {
 }
 
 export function approveWalletConnectSession(payload: {
+  walletId: string
   connector: WalletConnect
   chainId: number
   chain: DApp['chain']
@@ -61,12 +70,14 @@ export function approveWalletConnectSession(payload: {
 }
 
 export function rejectWalletConnectSession(payload: {
+  walletId: string
   connector: WalletConnect
 }) {
   return createAction('REJECT_WC_PEER_META', payload)
 }
 
 export function showWalletConnectRequest(payload: {
+  walletId: string
   dapp: DApp
   request: WalletConnectRequest
 }) {
@@ -74,12 +85,16 @@ export function showWalletConnectRequest(payload: {
 }
 
 export function hideWalletConnectRequest(payload: {
+  walletId: string
   dapp: DApp
   request: WalletConnectRequest
 }) {
   return createAction('HIDE_WC_REQUEST', payload)
 }
 
-export function setWalletConnectNetwork(payload: { network: IChainData }) {
+export function setWalletConnectNetwork(payload: {
+  walletId: string
+  network: IChainData
+}) {
   return createAction('SET_WC_NETWORK', payload)
 }

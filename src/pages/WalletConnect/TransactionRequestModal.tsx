@@ -2,6 +2,7 @@ import * as sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
+import JSONTree from 'react-native-json-tree'
 import {
   IRequestRenderParams,
   WalletConnectClientMeta,
@@ -16,24 +17,88 @@ import { BLACK_COLOR } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import { apiEtherPrices } from '../../wallet-connect/helpers/api'
 
+// TODO: Refactor. Testing JSON tree view styling
+const themeFlat = {
+  scheme: 'default',
+  base00: '#181818',
+  base01: '#282828',
+  base02: '#383838',
+  base03: '#585858',
+  base04: '#b8b8b8',
+  base05: '#d8d8d8',
+  base06: '#e8e8e8',
+  base07: '#f8f8f8',
+  base08: '#ab4642',
+  base09: '#dc9656',
+  base0A: '#f7ca88',
+  base0B: '#a1b56c',
+  base0C: '#86c1b9',
+  base0D: '#7cafc2',
+  base0E: '#ba8baf',
+  base0F: '#a16946',
+  tree: {
+    flexDirection: 'column',
+    padding: 0,
+  },
+  nestedNode: {},
+  rootNode: {},
+  rootNodeChildren: {
+    backgroundColor: 'blue',
+  },
+  valueLabel: {},
+  value: {
+    flexWrap: 'wrap',
+    justifyContent: 'space-between',
+    marginBottom: 2,
+  },
+  valueText: {
+    marginBottom: 6,
+    textAlign: 'right',
+    flexWrap: 'wrap',
+  },
+}
+
 const Row = ({
   leftText,
   rightText,
   ...rest
 }: {
   leftText: string
-  rightText: string
+  rightText: string | Record<string, unknown>
 }) => {
   return (
     <View
       style={{
         flexDirection: 'row',
-        width: '100%',
+        flex: 1,
         justifyContent: 'space-between',
       }}
       {...rest}>
       <Text style={styles.leftText}>{leftText}</Text>
-      <Text style={styles.rightText}>{rightText}</Text>
+      {typeof rightText === 'string' ? (
+        <Text style={styles.rightText}>{rightText}</Text>
+      ) : (
+        <View style={styles.rightJsonView}>
+          <JSONTree
+            theme={{ extend: themeFlat as any }}
+            invertTheme
+            hideRoot={false}
+            keyPath={['Object']}
+            shouldExpandNode={() => true}
+            data={rightText}
+            labelRenderer={(raw) => (
+              <Text style={{ maxWidth: '20%' }}>{raw}</Text>
+            )}
+            valueRenderer={(raw) => (
+              <Text
+                style={{ flex: 1, textAlign: 'justify' }}
+                ellipsizeMode='middle'>
+                {raw}
+              </Text>
+            )}
+          />
+        </View>
+      )}
     </View>
   )
 }
@@ -51,6 +116,7 @@ const getContractInfo = (param: any) => {
   switch (param.value) {
     case 'personal_sign':
     case 'personal_signTypedData':
+    case 'eth_signTypedData':
       return {
         title: 'Signature Request',
         type: 'SIGNATURE_REQUEST',
@@ -113,7 +179,8 @@ const TransactionRequestModal = (props: Props) => {
   return (
     <BottomActionsModal title={contractInfo?.title} onClose={dismissModal}>
       <View style={{ minHeight: '90%' }}>
-        <View style={{ flex: 1, justifyContent: 'space-around' }}>
+        <View
+          style={{ flex: 1, justifyContent: 'space-around', width: '100%' }}>
           <ScrollView
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollViewContainer}>
@@ -223,14 +290,14 @@ const styles = StyleSheet.create({
     minWidth: 157,
   },
   leftText: {
-    minWidth: '40%',
+    minWidth: '20%',
     fontSize: 14,
     fontFamily: NUNITO_SANS_SEMIBOLD,
     color: BLACK_COLOR,
     opacity: 0.5,
   },
   rightText: {
-    flex: 1,
+    flex: 9,
     marginLeft: 16,
     fontSize: 14,
     fontWeight: '600',
@@ -238,5 +305,13 @@ const styles = StyleSheet.create({
     color: BLACK_COLOR,
     textAlign: 'right',
     flexWrap: 'wrap',
+  },
+  rightJsonView: {
+    flex: 9,
+    marginLeft: 16,
+    fontSize: 14,
+    fontWeight: '600',
+    fontFamily: NUNITO_SANS_SEMIBOLD,
+    color: BLACK_COLOR,
   },
 })

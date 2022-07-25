@@ -1,4 +1,4 @@
-import { useIsFocused } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
 import { editable } from 'helpers/profile'
 import React, { useEffect, useState } from 'react'
 import { Alert, Dimensions, StyleSheet, View } from 'react-native'
@@ -17,26 +17,15 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     { label: 'Country', value: '', action: 'arrow', type: 'select' },
     { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
   ])
-  const [initialized, setInitialized] = useState(false)
-  const isFocused = useIsFocused()
   const [loading, setLoading] = useState(false)
 
-  const updateData = async (shouldUpdate: boolean) => {
+  const fetchData = async () => {
     try {
-      if (initialized) {
-        return
-      }
-      let publicData: any = {}
-      if (shouldUpdate || publicProfileData?.name === '') {
-        setLoading(true)
-        const vault = AccountManager.getInstance().vault as any
-        publicData = await vault.profiles.public.getMany()
-        setLoading(false)
-      } else {
-        publicData = publicProfileData
-      }
+      setLoading(true)
+      const vault = AccountManager.getInstance().vault as any
+      const publicData = await vault.profiles.public.getMany()
 
-      updatePublicProfileData(publicData)
+      updatePublicProfileData(publicData || publicProfileData)
       const updatedList = list.map((item: any) => {
         const label = item.label.toLowerCase()
         if (publicData[label]) {
@@ -46,14 +35,17 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setList(updatedList)
-      setInitialized(true)
+      setLoading(false)
     } catch (e) {
+      Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
     }
   }
 
   // component did mount
   useEffect(() => {
+    fetchData()
+
     let listener: any
     const watchChanges = async () => {
       const vault = AccountManager.getInstance().vault as any
@@ -66,10 +58,9 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           live: true,
         })
         .on('change', () => {
-          updateData(true)
+          fetchData()
         })
     }
-    updateData(false)
     watchChanges()
     return () => {
       listener?.cancel()
@@ -77,10 +68,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     // Register profile change listener one time
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  useEffect(() => {
-    setInitialized(false)
-  }, [isFocused])
 
   return (
     <View>
