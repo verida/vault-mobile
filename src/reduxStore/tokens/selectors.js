@@ -34,7 +34,11 @@ export const selectChains = (state) => {
   const list = {}
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
-      list[singleToken.asset.chainId.namespace] = singleToken.asset.chainId
+      list[
+        singleToken.asset.chainId.namespace +
+          ':' +
+          singleToken.asset.chainId.reference
+      ] = singleToken.asset.chainId
     })
   }
 
