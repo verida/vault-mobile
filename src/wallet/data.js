@@ -13,6 +13,7 @@ import {
   getTokenChain,
   isNativeToken,
   parseUnitsForSending,
+  getTokenChainReference,
 } from 'wallet/helpers/tokens'
 
 import {
@@ -57,61 +58,13 @@ const getTransactionParams = async (transactionData, wallets) => {
     const params = { fee: parseInt(response.gas_price, 10) * units }
 
     return params
-  } else if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    let fromAddress = wallets.ethr.address
-    let toAddress = transactionData.address
-    const gasPrice = await web3.eth.getGasPrice()
-
-    let input
-    if (isNativeToken(transactionData.token.asset)) {
-      input = {
-        from: fromAddress,
-        to: toAddress,
-        value: parseUnitsForSending(
-          transactionData.amount,
-          transactionData.token.decimal
-        ),
-      }
-    } else {
-      let tokenAddress = getTokenAddress(transactionData.token.asset)
-
-      let contract = new web3.eth.Contract(minABI, tokenAddress, {
-        from: fromAddress,
-      })
-
-      input = {
-        from: fromAddress,
-        to: tokenAddress,
-        value: 0x0,
-        data: contract.methods
-          .transfer(
-            toAddress,
-            parseUnitsForSending(
-              transactionData.amount,
-              transactionData.token.decimal
-            )
-          )
-          .encodeABI(),
-      }
-    }
-
-    try {
-      const estimateGas = await web3.eth.estimateGas(input)
-      const params = { gas: estimateGas, fee: gasPrice * estimateGas }
-
-      return params
-    } catch (error) {
-      // eslint-disable-next-line no-console
-      console.error(error, 'error')
-    }
   } else {
-    const params = await algodClient.getTransactionParams().do()
-    if (params.fee === 0) {
-      params.fee = 1000
-      params.flatFee = true
-    }
+    const request = await walletProviderApi.post(
+      'transaction/fees',
+      transactionData.token.asset
+    )
 
-    return params
+    return request.data.data
   }
 }
 
@@ -121,6 +74,12 @@ const sendTransaction = async (
   state
 ) => {
   const wallets = getWalletsData(state)
+  const chainMapping = {
+    'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=': 'algo',
+    'eip155:4': 'ethr',
+    'near:testnet': 'near',
+    'eip155:80001': 'poly',
+  }
   const amount = parseUnitsForSending(
     transactionData.amount,
     transactionData.token.decimal
@@ -128,6 +87,12 @@ const sendTransaction = async (
   const tokenAddress = getTokenAddress(transactionData.token.asset)
   const isTokenNative = isNativeToken(transactionData.token.asset)
   const tokenChain = getTokenChain(transactionData.token.asset)
+  const tokenChainReference = getTokenChainReference(
+    transactionData.token.asset
+  )
+
+  const chainWallet =
+    wallets[chainMapping[tokenChain + ':' + tokenChainReference]]
   const receiverAddress = transactionData.address
 
   let txString
@@ -136,7 +101,7 @@ const sendTransaction = async (
 
   if (tokenChain === 'near') {
     const near = await initNearClient()
-    const nearAccount = await near.account(wallets.near.address)
+    const nearAccount = await near.account(chainWallet.address)
     let actions
     let txAddress
     if (isTokenNative) {
@@ -170,30 +135,30 @@ const sendTransaction = async (
     txData = {
       amount: amount,
       to: receiverAddress,
-      from: wallets.near.address,
+      from: chainWallet.address,
       token: transactionData.token,
       chain: tokenChain,
     }
   } else if (tokenChain === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
 
-    const nonce = await web3.eth.getTransactionCount(
-      wallets.ethr.address,
-      'latest'
-    )
+    const request = await walletProviderApi.post('transaction/nonce', {
+      userAddress: chainWallet.address,
+      asset: transactionData.token.asset,
+    })
 
     let transaction
     if (isTokenNative) {
       transaction = {
         to: receiverAddress, // faucet address to return eth
         value: amount,
-        gas: transactionParams.gas,
+        gas: transactionParams.fee,
         // maxFeePerGas: estimateGas,
         // maxPriorityFeePerGas: estimateGas,
-        nonce: nonce,
+        nonce: request.data.data,
       }
     } else {
-      let fromAddress = wallets.ethr.address
+      let fromAddress = chainWallet.address
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
         from: fromAddress,
       })
@@ -201,19 +166,19 @@ const sendTransaction = async (
       // call transfer function
       transaction = {
         from: fromAddress,
-        gas: transactionParams.gas,
+        gas: transactionParams.fee,
         // gasPrice: web3.utils.toHex(20 * 1e9),
         // gasLimit: web3.utils.toHex(210000),
         to: tokenAddress,
         value: 0x0,
         data: contract.methods.transfer(receiverAddress, amount).encodeABI(),
-        nonce: nonce,
+        nonce: request.data.data,
       }
     }
 
     const signedTransaction = await web3.eth.accounts.signTransaction(
       transaction,
-      wallets.ethr.privateKey.substring(2, wallets.ethr.privateKey.length)
+      chainWallet.privateKey.substring(2, chainWallet.privateKey.length)
     )
 
     txString = signedTransaction.rawTransaction
@@ -221,7 +186,7 @@ const sendTransaction = async (
     txData = {
       amount: amount,
       to: receiverAddress,
-      from: wallets.ethr.address,
+      from: chainWallet.address,
       token: transactionData.token,
       chain: tokenChain,
     }
@@ -237,7 +202,7 @@ const sendTransaction = async (
 
     if (isTokenNative) {
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
-        wallets.algo.address,
+        chainWallet.address,
         receiverAddress,
         parseInt(amount.toHexString(), 16),
         undefined,
@@ -246,8 +211,8 @@ const sendTransaction = async (
       )
     } else {
       transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
-        wallets.algo.address,
-        isAssetEnablingTransaction ? wallets.algo.address : receiverAddress,
+        chainWallet.address,
+        isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
         undefined,
         undefined,
         isAssetEnablingTransaction ? 0 : parseInt(amount.toHexString(), 16),
@@ -257,7 +222,7 @@ const sendTransaction = async (
       )
     }
 
-    const privateKey = wallets.algo.privateKey
+    const privateKey = chainWallet.privateKey
 
     const secretKey = Buffer.from(
       privateKey.substring(2, privateKey.length),
@@ -274,7 +239,7 @@ const sendTransaction = async (
     txData = {
       amount: amount,
       to: receiverAddress,
-      from: wallets.algo.address,
+      from: chainWallet.address,
       token: transactionData.token,
       chain: tokenChain,
     }
@@ -285,6 +250,7 @@ const sendTransaction = async (
       signedTransaction: txString,
       asset: transactionData.token.asset,
     }
+
     if (txIdAlgo) {
       requestBody.transactionId = txIdAlgo
     }
@@ -292,6 +258,7 @@ const sendTransaction = async (
       'transaction/broadcast',
       requestBody
     )
+
     if (sentTx && sentTx.data.data.transactionId) {
       txData.id = sentTx.data.data.transactionId
     }
