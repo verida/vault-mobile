@@ -268,7 +268,7 @@ android {
             resValue "string", "build_config_package", "io.verida.vault"
         }
         production {
-            resValue "string", "app_name", "Verida Vault Internal"
+            resValue "string", "app_name", "Verida Vault"
             dimension "environment"
         }
     }
