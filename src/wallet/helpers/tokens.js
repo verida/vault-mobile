@@ -7,7 +7,6 @@ export const isNativeToken = (address) => {
 }
 
 export const getTokenAddress = (address) => {
-  ////
   if (isNativeToken(address)) {
     return 'slip44'
   }
@@ -19,11 +18,19 @@ export const getTokenChain = (address) => {
   return address.chainId.namespace
 }
 
+export const getTokenChainId = (address) => {
+  return address.chainId
+}
+
+export const getTokenChainReference = (address) => {
+  return address.chainId.reference
+}
+
 export const getNativeForChain = (tokens, chain) => {
   let tok = tokens.find(
     (ele) =>
-      ele.asset.chainId.namespace === chain &&
-      ele.asset.assetName.namespace === 'slip44'
+      ele.asset.chainId.namespace + ':' + ele.asset.chainId.reference ===
+        chain && ele.asset.assetName.namespace === 'slip44'
   )
 
   return tok
@@ -31,9 +38,10 @@ export const getNativeForChain = (tokens, chain) => {
 
 export const getChainMapping = (chain) => {
   const chainMapping = {
-    algorand: 'algo',
-    eip155: 'ethr',
-    near: 'near',
+    'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=': 'algo',
+    'eip155:4': 'ethr',
+    'near:testnet': 'near',
+    'eip155:80001': 'poly',
   }
 
   return chainMapping[chain]
@@ -55,14 +63,17 @@ export const parseUnitsForSending = (quantity, decimalPlaces) => {
   return utils.parseUnits(quantity, decimalPlaces)
 }
 
-export const getExplorerUrl = (chain) => {
+export const getExplorerUrl = (chainId) => {
   let url
-  switch (chain) {
+  switch (chainId.namespace) {
     case 'algorand':
       url = 'https://testnet.algoexplorer.io/tx/'
       break
     case 'eip155':
-      url = 'https://rinkeby.etherscan.io/tx/'
+      url =
+        chainId.reference === '4'
+          ? 'https://rinkeby.etherscan.io/tx/'
+          : 'https://mumbai.polygonscan.com/tx/'
       break
     case 'near':
       url = 'https://explorer.testnet.near.org/transactions/'
@@ -91,7 +102,8 @@ export const rawDataToReduxState = (walletData) => {
 
 export const getWalletAddressForAsset = (asset, wallets) => {
   const chain = getTokenChain(asset)
-  return wallets[getChainMapping(chain)].address
+  const chainRef = getTokenChainReference(asset)
+  return wallets[getChainMapping(chain + ':' + chainRef)].address
 }
 
 export const tokenCaipObjectToString = (asset) => {
