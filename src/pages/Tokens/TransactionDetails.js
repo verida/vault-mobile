@@ -1,7 +1,7 @@
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { getTokenChain } from 'wallet/helpers/tokens'
+import { getTokenChain, getTokenChainReference } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -29,7 +29,9 @@ const TransactionDetails = ({
 
   const { transaction, loading } = data
   const tokenChain = getTokenChain(tokenAddress)
-  let networkReference = tokenChain === 'eip155' ? 'Rinkeby' : ''
+  const tokenChainRef = getTokenChainReference(tokenAddress)
+  let networkReference =
+    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
 
   return (
     <Container>
