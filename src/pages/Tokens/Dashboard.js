@@ -1,6 +1,6 @@
 import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { View, StyleSheet } from 'react-native'
 import { connect } from 'react-redux'
 
 import SettingsSvg from 'assets/icons/settings.svg'
@@ -46,7 +46,7 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
       {loading ? (
         <LoadingIndicator />
       ) : (
-        <View>
+        <View style={styles.contentContainer}>
           <TestnetWarning networkReference='' />
           <TokenBanner
             data={{
@@ -78,6 +78,10 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
     </Container>
   )
 }
+
+const styles = StyleSheet.create({
+  contentContainer: { flex: 1 },
+})
 
 const mapStateToProps = (rootState) => {
   const state = rootState.main
