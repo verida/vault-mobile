@@ -8,6 +8,7 @@ import {
   getTokenChain,
   getWalletAddressForToken,
   isNativeToken,
+  getTokenChainReference,
 } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -42,7 +43,11 @@ const SingleCurrency = ({
   const { item } = route.params
   const { list, loading } = transactions
   const tokenChain = getTokenChain(item.asset)
-  const address = getWalletAddressForToken(tokenChain, wallets)
+  const tokenChainRef = getTokenChainReference(item.asset)
+  const address = getWalletAddressForToken(
+    tokenChain + ':' + tokenChainRef,
+    wallets
+  )
 
   function pullToRefresh() {
     onGetTransactionsForToken(item.asset)
@@ -60,7 +65,8 @@ const SingleCurrency = ({
   const warningRequired =
     tokenChain === 'algorand' && !isNativeToken(item.asset)
 
-  let networkReference = tokenChain === 'eip155' ? 'Rinkeby' : ''
+  let networkReference =
+    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
 
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
