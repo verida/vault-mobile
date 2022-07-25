@@ -6,9 +6,9 @@ import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import {
   getTokenChain,
+  getTokenChainReference,
   getWalletAddressForToken,
   isNativeToken,
-  getTokenChainReference,
 } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'

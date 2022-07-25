@@ -11,9 +11,9 @@ import { walletProviderApi } from 'wallet/helpers/api'
 import {
   getTokenAddress,
   getTokenChain,
+  getTokenChainReference,
   isNativeToken,
   parseUnitsForSending,
-  getTokenChainReference,
 } from 'wallet/helpers/tokens'
 
 import {
@@ -46,7 +46,7 @@ const minABI = [
   },
 ]
 
-const getTransactionParams = async (transactionData, wallets) => {
+const getTransactionParams = async (transactionData) => {
   if (getTokenChain(transactionData.token.asset) === 'near') {
     const units = isNativeToken(transactionData.token.asset)
       ? NEAR_GAS_AMOUNT_TRANSFER

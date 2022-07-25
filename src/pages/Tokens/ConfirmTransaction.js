@@ -6,8 +6,8 @@ import {
   formatTokenQuantity,
   getNativeForChain,
   getTokenChain,
-  getWalletAddressForToken,
   getTokenChainReference,
+  getWalletAddressForToken,
 } from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'

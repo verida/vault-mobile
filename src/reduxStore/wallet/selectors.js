@@ -2,7 +2,6 @@ import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 import {
   getNativeForChain,
-  getTokenChain,
   tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 

@@ -7,8 +7,8 @@ import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import {
   getTokenChain,
-  getWalletAddressForToken,
   getTokenChainReference,
+  getWalletAddressForToken,
 } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
