@@ -38,7 +38,7 @@ type EndpointUrls = {
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
-export const WALLETS_STORAGE_KEY = 'wallets'
+export const WALLETS_STORAGE_KEY = 'new_wallets'
 export const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
@@ -97,23 +97,18 @@ class AccountManager {
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
         if (walletsRaw) {
           const wallets = JSON.parse(walletsRaw)
-          if (wallets.seedPhrase || wallets.near) {
-            const selectedAccount = this.getSelectedAccount()
-            if (selectedAccount) {
-              await this.connect()
-            }
-
-            await this.restoreUserWallet()
-          } else {
-            store.dispatch(saveUserWallets(wallets))
-            const selectedWalletID = await SecureStore.getItemAsync(
-              SELECTED_WALLET_STORAGE_KEY
-            )
-            await store.dispatch(setSelectedWallet(selectedWalletID))
-          }
+          store.dispatch(saveUserWallets(wallets))
+          const selectedWalletID = await SecureStore.getItemAsync(
+            SELECTED_WALLET_STORAGE_KEY
+          )
+          await store.dispatch(setSelectedWallet(selectedWalletID))
         } else {
-          // else basically old account.. create a seedphrase and set wallet.
-          await this.setUserWallet()
+          const selectedAccount = this.getSelectedAccount()
+          if (selectedAccount) {
+            await this.connect()
+          }
+
+          await this.restoreUserWallet()
         }
       }
     } catch (e) {
