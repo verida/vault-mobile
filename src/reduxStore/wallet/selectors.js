@@ -55,8 +55,10 @@ export const getListAndTotal = (state) => {
 
 export const selectNativeTokenBalance = (state, asset) => {
   const tokens = selectTokens(state)
-  const chain = getTokenChain(asset)
-  const native = getNativeForChain(tokens, chain)
+  const native = getNativeForChain(
+    tokens,
+    asset.chainId.namespace + ':' + asset.chainId.reference
+  )
   const balances = getBalancesData(state.main)
 
   if (balances && native && balances[native.symbol]) {
