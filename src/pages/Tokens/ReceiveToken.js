@@ -108,12 +108,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
+    justifyContent: 'space-between',
     paddingBottom: 30,
     borderTopWidth: 1,
     borderTopColor: 'rgba(4, 17, 51, 0.2)',
   },
   content: {
-    flex: 1,
     alignItems: 'center',
     padding: 24,
   },
