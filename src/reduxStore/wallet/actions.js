@@ -66,38 +66,6 @@ export const getBalances = () => {
         }
       })
 
-      // const body = [
-      //   {
-      //     address: '7WPZHARPZYARFZNGOKO5EDTK2ZLPQDQVCWK7SN2P7KAGTVRMHJCIM2DM2U',
-      //     chainId: {
-      //       namespace: 'algorand',
-      //       reference: 'SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
-      //     },
-      //   },
-      //   {
-      //     address: '0x961fdAC00F232f15bb2D9f68317B38d73845D2c8',
-      //     chainId: {
-      //       namespace: 'eip155',
-      //       reference: '4',
-      //     },
-      //   },
-      //   {
-      //     address: '0x961fdAC00F232f15bb2D9f68317B38d73845D2c8',
-      //     chainId: {
-      //       namespace: 'eip155',
-      //       reference: '80001',
-      //     },
-      //   },
-      //   {
-      //     address:
-      //       '266b0c1183550214e2d1f7e14f015aa36e4ad62ee333989740af9ace27c400ae',
-      //     chainId: {
-      //       namespace: 'near',
-      //       reference: 'testnet',
-      //     },
-      //   },
-      // ]
-
       const balanceData = await walletProviderApi.post(
         'balance/getBalanceByChains',
         {
