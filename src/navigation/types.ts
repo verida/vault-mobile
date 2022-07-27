@@ -1,8 +1,8 @@
+import { DApp } from 'wallet-connect/types'
+
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
-
-import { DApp } from '../wallet-connect/types'
 
 export type RootStackParams = {
   Auth: undefined
@@ -40,6 +40,7 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   SeedPhraseView: undefined
+  SeedPhraseEntered: undefined
   ManageWallets: undefined
   SingleCurrency: undefined
   SendToken: undefined
