@@ -1,7 +1,6 @@
 import algosdk from 'algosdk'
 import * as nearAPI from 'near-api-js'
-import { algodClient } from 'wallet/chains/algorand'
-import { web3 } from 'wallet/chains/ethereum'
+import { ethereumWeb3, polygonWeb3 } from 'wallet/chains/eip155'
 import initNearClient from 'wallet/chains/near'
 import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
@@ -46,7 +45,7 @@ const minABI = [
   },
 ]
 
-const getTransactionParams = async (transactionData) => {
+const getTransactionParams = async (transactionData, wallets) => {
   if (getTokenChain(transactionData.token.asset) === 'near') {
     const units = isNativeToken(transactionData.token.asset)
       ? NEAR_GAS_AMOUNT_TRANSFER
@@ -59,10 +58,65 @@ const getTransactionParams = async (transactionData) => {
 
     return params
   } else {
+    const requestBody = {
+      asset: transactionData.token.asset,
+    }
+
+    if (getTokenChain(transactionData.token.asset) === 'eip155') {
+      const tokenChainRef = getTokenChainReference(transactionData.token.asset)
+      const web3 = tokenChainRef === '80001' ? polygonWeb3 : ethereumWeb3
+      const fromAddress =
+        tokenChainRef === '80001' ? wallets.poly.address : wallets.ethr.address
+      const toAddress = transactionData.address
+
+      let input
+      if (isNativeToken(transactionData.token.asset)) {
+        input = {
+          from: fromAddress,
+          to: toAddress,
+          value: parseUnitsForSending(
+            transactionData.amount,
+            transactionData.token.decimal
+          ),
+        }
+      } else {
+        let tokenAddress = getTokenAddress(transactionData.token.asset)
+
+        let contract = new web3.eth.Contract(minABI, tokenAddress, {
+          from: fromAddress,
+        })
+
+        input = {
+          from: fromAddress,
+          to: tokenAddress,
+          value: '0x0',
+          data: contract.methods
+            .transfer(
+              toAddress,
+              parseUnitsForSending(
+                transactionData.amount,
+                transactionData.token.decimal
+              )
+            )
+            .encodeABI(),
+        }
+      }
+
+      requestBody.transactionParameters = input
+    }
+
     const request = await walletProviderApi.post(
-      'transaction/fees',
-      transactionData.token.asset
+      'transaction/params',
+      requestBody
     )
+
+    if (getTokenChain(transactionData.token.asset) === 'eip155') {
+      return {
+        gasPrice: request.data.data.gasPrice,
+        gas: request.data.data.gasEstimate,
+        fee: request.data.data.gasEstimate * request.data.data.gasPrice,
+      }
+    }
 
     return request.data.data
   }
@@ -141,6 +195,7 @@ const sendTransaction = async (
     }
   } else if (tokenChain === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
+    const web3 = tokenChainReference === '80001' ? polygonWeb3 : ethereumWeb3
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
@@ -150,12 +205,13 @@ const sendTransaction = async (
     let transaction
     if (isTokenNative) {
       transaction = {
-        to: receiverAddress, // faucet address to return eth
+        to: receiverAddress,
         value: amount,
-        gas: transactionParams.fee,
+        gas: transactionParams.gas,
         // maxFeePerGas: estimateGas,
         // maxPriorityFeePerGas: estimateGas,
         nonce: request.data.data,
+        chainID: tokenChainReference,
       }
     } else {
       let fromAddress = chainWallet.address
@@ -166,13 +222,14 @@ const sendTransaction = async (
       // call transfer function
       transaction = {
         from: fromAddress,
-        gas: transactionParams.fee,
+        gas: transactionParams.gas,
         // gasPrice: web3.utils.toHex(20 * 1e9),
         // gasLimit: web3.utils.toHex(210000),
         to: tokenAddress,
-        value: 0x0,
+        value: '0x0',
         data: contract.methods.transfer(receiverAddress, amount).encodeABI(),
         nonce: request.data.data,
+        chainID: tokenChainReference,
       }
     }
 
@@ -193,7 +250,14 @@ const sendTransaction = async (
   } else if (tokenChain === 'algorand') {
     let transactionParams
     if (isAssetEnablingTransaction) {
-      transactionParams = await algodClient.getTransactionParams().do()
+      const requestBody = {
+        asset: transactionData.token.asset,
+      }
+      const request = await walletProviderApi.post(
+        'transaction/params',
+        requestBody
+      )
+      transactionParams = request.data.data
     } else {
       transactionParams = getTransactionParamsData(state)
     }
