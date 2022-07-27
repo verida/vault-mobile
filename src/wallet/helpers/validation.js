@@ -1,5 +1,5 @@
 import algosdk from 'algosdk'
-import { web3 } from 'wallet/chains/ethereum'
+import Web3 from 'web3'
 import { getTokenChain } from 'wallet/helpers/tokens'
 
 const bip39 = require('bip39')
@@ -18,7 +18,7 @@ export const isValidWalletAddress = (address, tokenAddress) => {
     case 'algorand':
       return algosdk.isValidAddress(address)
     case 'eip155':
-      return web3.utils.isAddress(address)
+      return Web3.utils.isAddress(address)
     case 'near':
       return validateNearAddress(address)
   }
