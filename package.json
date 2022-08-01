@@ -14,8 +14,8 @@
     "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify"
   },
   "dependencies": {
-    "@alch/alchemy-web3": "^1.2.3",
     "@babel/helper-environment-visitor": "^7.16.7",
+    "@ethereumjs/tx": "^3.5.2",
     "@ethersproject/shims": "^5.6.0",
     "@expo/react-native-action-sheet": "^3.11.0",
     "@haskkor/react-native-pincode": "^1.22.5",
@@ -138,7 +138,8 @@
     "url-parse": "^1.5.3",
     "use-deep-compare-effect": "^1.8.1",
     "util": "^0.10.4",
-    "vm-browserify": "0.0.4"
+    "vm-browserify": "0.0.4",
+    "web3": "^1.7.4"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
