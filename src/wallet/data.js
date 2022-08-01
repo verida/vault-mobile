@@ -1,6 +1,6 @@
 import algosdk from 'algosdk'
 import * as nearAPI from 'near-api-js'
-import { ethereumWeb3, polygonWeb3 } from 'wallet/chains/eip155'
+import Web3 from 'web3'
 import initNearClient from 'wallet/chains/near'
 import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
@@ -19,6 +19,11 @@ import {
   getTransactionParamsData,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
+
+import Common, { Chain } from '@ethereumjs/common'
+import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
+
+const web3 = new Web3('http://localhost')
 
 const minABI = [
   // transfer
@@ -64,7 +69,6 @@ const getTransactionParams = async (transactionData, wallets) => {
 
     if (getTokenChain(transactionData.token.asset) === 'eip155') {
       const tokenChainRef = getTokenChainReference(transactionData.token.asset)
-      const web3 = tokenChainRef === '80001' ? polygonWeb3 : ethereumWeb3
       const fromAddress =
         tokenChainRef === '80001' ? wallets.poly.address : wallets.ethr.address
       const toAddress = transactionData.address
@@ -81,7 +85,6 @@ const getTransactionParams = async (transactionData, wallets) => {
         }
       } else {
         let tokenAddress = getTokenAddress(transactionData.token.asset)
-
         let contract = new web3.eth.Contract(minABI, tokenAddress, {
           from: fromAddress,
         })
@@ -138,6 +141,7 @@ const sendTransaction = async (
     transactionData.amount,
     transactionData.token.decimal
   )
+
   const tokenAddress = getTokenAddress(transactionData.token.asset)
   const isTokenNative = isNativeToken(transactionData.token.asset)
   const tokenChain = getTokenChain(transactionData.token.asset)
@@ -195,7 +199,6 @@ const sendTransaction = async (
     }
   } else if (tokenChain === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
-    const web3 = tokenChainReference === '80001' ? polygonWeb3 : ethereumWeb3
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
@@ -206,10 +209,9 @@ const sendTransaction = async (
     if (isTokenNative) {
       transaction = {
         to: receiverAddress,
-        value: amount,
-        gas: transactionParams.gas,
-        // maxFeePerGas: estimateGas,
-        // maxPriorityFeePerGas: estimateGas,
+        value: amount.toHexString().toString(),
+        gasPrice: transactionParams.gasPrice,
+        gasLimit: '0x13881',
         nonce: request.data.data,
         chainID: tokenChainReference,
       }
@@ -219,26 +221,40 @@ const sendTransaction = async (
         from: fromAddress,
       })
 
-      // call transfer function
       transaction = {
         from: fromAddress,
-        gas: transactionParams.gas,
-        // gasPrice: web3.utils.toHex(20 * 1e9),
-        // gasLimit: web3.utils.toHex(210000),
+        gasPrice: transactionParams.gasPrice,
+        gasLimit: '0x13881',
         to: tokenAddress,
         value: '0x0',
-        data: contract.methods.transfer(receiverAddress, amount).encodeABI(),
+        data: contract.methods
+          .transfer(receiverAddress, amount.toHexString().toString())
+          .encodeABI(),
         nonce: request.data.data,
         chainID: tokenChainReference,
       }
     }
 
-    const signedTransaction = await web3.eth.accounts.signTransaction(
-      transaction,
-      chainWallet.privateKey.substring(2, chainWallet.privateKey.length)
+    let common
+
+    if (tokenChainReference === '4') {
+      common = new Common({ chain: Chain.Rinkeby })
+    } else {
+      common = Common.custom({ chainId: 80001 })
+    }
+
+    const tx = Transaction.fromTxData(transaction, { common })
+
+    const privateKey = Buffer.from(
+      chainWallet.privateKey.substring(2, chainWallet.privateKey.length),
+      'hex'
     )
 
-    txString = signedTransaction.rawTransaction
+    const signedTx = tx.sign(privateKey)
+
+    const serializedTx = signedTx.serialize()
+
+    txString = '0x' + serializedTx.toString('hex')
 
     txData = {
       amount: amount,
