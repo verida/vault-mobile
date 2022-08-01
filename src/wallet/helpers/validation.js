@@ -1,6 +1,6 @@
 import algosdk from 'algosdk'
-import Web3 from 'web3'
 import { getTokenChain } from 'wallet/helpers/tokens'
+import Web3 from 'web3'
 
 const bip39 = require('bip39')
 
