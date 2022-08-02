@@ -1,8 +1,8 @@
 import Common, { Chain } from '@ethereumjs/common'
 import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
-import * as nearAPI from 'near-api-js'
 import sha256 from 'js-sha256'
+import * as nearAPI from 'near-api-js'
 import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
   NEAR_GAS_AMOUNT_TRANSFER,
