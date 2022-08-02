@@ -1,6 +1,7 @@
+import Common, { Chain } from '@ethereumjs/common'
+import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import * as nearAPI from 'near-api-js'
-import Web3 from 'web3'
 import initNearClient from 'wallet/chains/near'
 import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
@@ -14,14 +15,12 @@ import {
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
+import Web3 from 'web3'
 
 import {
   getTransactionParamsData,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
-
-import Common, { Chain } from '@ethereumjs/common'
-import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 
 const web3 = new Web3('http://localhost')
 
