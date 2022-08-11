@@ -244,6 +244,7 @@ const sendTransaction = async (
         to: receiverAddress,
         value: amount.toHexString().toString(),
         gasPrice: transactionParams.gasPrice,
+        // Hardcoded based on few stackoverflow links and instructions of pranav, doesnt work without.
         gasLimit: '0x13881',
         nonce: request.data.data,
         chainID: tokenChainReference,
@@ -257,6 +258,7 @@ const sendTransaction = async (
       transaction = {
         from: fromAddress,
         gasPrice: transactionParams.gasPrice,
+        // Hardcoded based on few stackoverflow links and instructions of pranav, doesnt work without.
         gasLimit: '0x13881',
         to: tokenAddress,
         value: '0x0',
