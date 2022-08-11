@@ -27,7 +27,7 @@ const modalContent = {
           }}>
           {` the only way to recover access to your account `}
         </Text>
-        if your phone is lost, stolen broken or upgraded.
+        if your phone is lost, stolen, broken or upgraded.
       </Text>,
       <Text key='bullet_point_2'>
         <Text
@@ -53,7 +53,7 @@ const modalContent = {
           }}>
           {` the only way to recover access to your account `}
         </Text>
-        if your phone is lost, stolen broken or upgraded.
+        if your phone is lost, stolen, broken or upgraded.
       </Text>,
       <Text key='bullet_point_2'>
         <Text
