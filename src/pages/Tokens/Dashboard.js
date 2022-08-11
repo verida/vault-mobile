@@ -1,6 +1,6 @@
 import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import SettingsSvg from 'assets/icons/settings.svg'
@@ -9,33 +9,25 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
-import { getBalances, getPrices } from 'reduxStore/wallet/actions'
+import { getBalances } from 'reduxStore/wallet/actions'
 import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
 import SendListModal from './SendListModal'
 
-const TokenDashboard = ({
-  navigation,
-  onGetPrices,
-  onGetBalances,
-  data,
-  wallets,
-}) => {
+const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
-  function pullToRefresh() {
+  async function pullToRefresh() {
     onGetBalances()
-    onGetPrices()
   }
 
   useEffect(() => {
     async function loadData() {
       onGetBalances()
-      onGetPrices()
     }
 
     loadData()
-  }, [onGetBalances, onGetPrices, wallets])
+  }, [onGetBalances, wallets])
 
   const { loading, listAndTotal } = data
 
@@ -54,7 +46,7 @@ const TokenDashboard = ({
       {loading ? (
         <LoadingIndicator />
       ) : (
-        <View>
+        <View style={styles.contentContainer}>
           <TestnetWarning networkReference='' />
           <TokenBanner
             data={{
@@ -87,17 +79,20 @@ const TokenDashboard = ({
   )
 }
 
+const styles = StyleSheet.create({
+  contentContainer: { flex: 1 },
+})
+
 const mapStateToProps = (rootState) => {
   const state = rootState.main
   return {
     wallets: getWalletsData(state),
-    data: getTokensData(state),
+    data: getTokensData(rootState),
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetPrices: () => dispatch(getPrices()),
     onGetBalances: () => dispatch(getBalances()),
   }
 }

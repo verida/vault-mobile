@@ -40,7 +40,7 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
     Alert.alert('Invalid address', `That's not a valid address`)
 
   const onPressSend = () => {
-    if (isValidWalletAddress(address, token.address)) {
+    if (isValidWalletAddress(address, token.asset)) {
       setProcessing(true)
       onGetTransactionParams({
         token,

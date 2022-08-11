@@ -5,7 +5,7 @@ import * as ethers from 'ethers'
 
 import { store } from '../../reduxStore'
 import { getWalletsData } from '../../reduxStore/wallet/selectors'
-import { web3 } from '../../wallet/chains/ethereum'
+import { ethereumWeb3 as web3 } from '../../wallet/chains/eip155'
 import { getWalletConnectConfig } from '../config'
 import { DEFAULT_ACTIVE_INDEX, DEFAULT_CHAIN_ID } from '../constants/default'
 import { getChainData } from '../helpers/utilities'

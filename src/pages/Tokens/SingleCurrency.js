@@ -6,6 +6,7 @@ import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import {
   getTokenChain,
+  getTokenChainReference,
   getWalletAddressForToken,
   isNativeToken,
 } from 'wallet/helpers/tokens'
@@ -18,7 +19,6 @@ import TransactionsList from 'components/Tokens/TransactionsList'
 import { WARNING_COLOR } from 'constants/color'
 import {
   getBalances,
-  getPrices,
   getTransactionsForToken,
   sendTransaction,
 } from 'reduxStore/wallet/actions'
@@ -36,34 +36,37 @@ const SingleCurrency = ({
   transactions,
   tokenData,
   onGetBalances,
-  onGetPrices,
   wallets,
   onSendTransaction,
   nativeTokenBalance,
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
-  const tokenChain = getTokenChain(item.address)
-  const address = getWalletAddressForToken(item.address, wallets)
+  const tokenChain = getTokenChain(item.asset)
+  const tokenChainRef = getTokenChainReference(item.asset)
+  const address = getWalletAddressForToken(
+    tokenChain + ':' + tokenChainRef,
+    wallets
+  )
 
   function pullToRefresh() {
-    onGetTransactionsForToken(item.address)
+    onGetTransactionsForToken(item.asset)
     onGetBalances()
-    onGetPrices()
   }
 
   useEffect(() => {
     async function loadData() {
-      onGetTransactionsForToken(item.address)
+      onGetTransactionsForToken(item.asset)
     }
 
     loadData()
   }, [onGetTransactionsForToken, item])
 
   const warningRequired =
-    tokenChain === 'algorand' && !isNativeToken(item.address)
+    tokenChain === 'algorand' && !isNativeToken(item.asset)
 
-  let networkReference = tokenChain === 'eip155' ? 'Rinkeby' : ''
+  let networkReference =
+    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
 
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
@@ -134,7 +137,7 @@ const SingleCurrency = ({
         <TransactionsList
           symbol={item.symbol}
           decimal={item.decimal}
-          tokenAddress={item.address}
+          tokenAddress={item.asset}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
           list={list}
@@ -147,13 +150,13 @@ const SingleCurrency = ({
 const mapStateToProps = (rootState, props) => {
   const state = rootState.main
   return {
-    transactions: selectTransactionsData(
-      state,
-      props.route.params.item.address
-    ),
-    tokenData: selectSingleTokenData(state, props.route.params.item.address),
+    transactions: selectTransactionsData(state, props.route.params.item.asset),
+    tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
     wallets: getWalletsData(state),
-    nativeTokenBalance: selectNativeTokenBalance(state),
+    nativeTokenBalance: selectNativeTokenBalance(
+      rootState,
+      props.route.params.item.asset
+    ),
   }
 }
 
@@ -161,7 +164,6 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onGetTransactionsForToken: (assetID) =>
       dispatch(getTransactionsForToken(assetID)),
-    onGetPrices: () => dispatch(getPrices()),
     onGetBalances: () => dispatch(getBalances()),
     onSendTransaction: (params, isAssetEnablingTransaction) =>
       dispatch(sendTransaction(params, isAssetEnablingTransaction)),

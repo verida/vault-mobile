@@ -2,10 +2,11 @@ import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
 import {
   formatTokenQuantity,
+  getNativeForChain,
   getTokenChain,
+  getTokenChainReference,
   getWalletAddressForToken,
 } from 'wallet/helpers/tokens'
 
@@ -14,6 +15,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import {
   getTransactionParamsData,
@@ -28,30 +30,33 @@ const ConfirmTransaction = ({
   transactionParams,
   onSendTransaction,
   sentTransaction,
+  tokens,
 }) => {
   const { token, amount, address } = route.params
-  const tokenChain = getTokenChain(token.address)
-  const accountAddress = getWalletAddressForToken(token.address, wallets)
+  const tokenChain = getTokenChain(token.asset)
+  const tokenChainRef = getTokenChainReference(token.asset)
+  const accountAddress = getWalletAddressForToken(
+    tokenChain + ':' + tokenChainRef,
+    wallets
+  )
+  const nativeToken = getNativeForChain(
+    tokens,
+    tokenChain + ':' + tokenChainRef
+  )
 
-  let feeSymbol
-  let feeDecimal
+  let feeSymbol = nativeToken.symbol
+  let feeDecimal = nativeToken.decimal
   let fixed
   let networkReference = ''
   switch (tokenChain) {
     case 'algorand':
-      feeSymbol = SUPPORTED_TOKENS[0].symbol
-      feeDecimal = SUPPORTED_TOKENS[0].decimal
       fixed = 3
       break
     case 'eip155':
-      feeSymbol = SUPPORTED_TOKENS[2].symbol
-      feeDecimal = SUPPORTED_TOKENS[2].decimal
       fixed = 18
-      networkReference = 'Rinkeby'
+      networkReference = tokenChainRef === '4' ? 'Rinkeby' : ''
       break
     case 'near':
-      feeSymbol = SUPPORTED_TOKENS[5].symbol
-      feeDecimal = SUPPORTED_TOKENS[5].decimal
       fixed = 8
       break
   }
@@ -171,6 +176,7 @@ const mapStateToProps = (rootState) => {
     wallets: getWalletsData(state),
     transactionParams: getTransactionParamsData(state),
     sentTransaction: selectSentTransaction(state),
+    tokens: selectTokens(rootState),
   }
 }
 

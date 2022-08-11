@@ -7,17 +7,19 @@ import { persistReducer, persistStore } from 'redux-persist'
 import thunk from 'redux-thunk'
 
 import { mainReducer } from './mainReducer'
+import { tokensReducer } from './tokens/reducer'
 import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['walletConnect'],
+  whitelist: ['walletConnect', 'tokens'],
 }
 
 export const rootReducer = combineReducers({
   main: mainReducer,
   walletConnect: walletConnectReducer,
+  tokens: tokensReducer,
 })
 
 const debounceNotify = debounce((notify) => notify(), 30)

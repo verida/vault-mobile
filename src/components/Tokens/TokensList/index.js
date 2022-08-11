@@ -1,5 +1,6 @@
 import React from 'react'
 import { FlatList } from 'react-native'
+import { tokenCaipObjectToString } from 'wallet/helpers/tokens'
 
 import TokensListItem from './TokensListItem'
 
@@ -12,7 +13,7 @@ export default ({ list, onPressItem, onPullToRefresh, refreshing }) => {
     <FlatList
       data={list}
       renderItem={renderItem}
-      keyExtractor={(item) => item.address}
+      keyExtractor={(item) => tokenCaipObjectToString(item.asset)}
       onRefresh={onPullToRefresh}
       refreshing={refreshing}
     />

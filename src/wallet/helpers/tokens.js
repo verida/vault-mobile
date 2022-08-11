@@ -1,63 +1,54 @@
 import WalletUtils from '@verida/wallet-utils'
 import { AssetId } from 'caip'
 import { utils } from 'ethers'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
+
+export const isNativeToken = (address) => {
+  return address.assetName.namespace === 'slip44'
+}
 
 export const getTokenAddress = (address) => {
-  if (address.includes('slip44')) {
+  if (isNativeToken(address)) {
     return 'slip44'
   }
 
-  if (address.includes('nep141:')) {
-    const splt = address.split('/')
-    return splt[1].replace('nep141:', '')
-  }
-
-  const parsed = AssetId.parse(address)
-  return parsed.assetName.reference
-}
-
-export const isNativeToken = (address) => {
-  // having to put a hack for Ethereum due to CAIP library having issues, waiting for update.
-  return address.includes('slip44')
+  return address.assetName.reference
 }
 
 export const getTokenChain = (address) => {
-  if (address.includes('near:')) {
-    return 'near'
-  } else if (address.includes('eip155:')) {
-    return 'eip155'
-  } else {
-    const parsed = AssetId.parse(address)
-    return parsed.chainId.namespace
-  }
+  return address.chainId.namespace
 }
 
-export const getNativeForChain = (chain) => {
-  let tok = SUPPORTED_TOKENS.find(
-    (ele) => ele.address.includes(chain) && ele.address.includes('slip44')
+export const getTokenChainId = (address) => {
+  return address.chainId
+}
+
+export const getTokenChainReference = (address) => {
+  return address.chainId.reference
+}
+
+export const getNativeForChain = (tokens, chain) => {
+  let tok = tokens.find(
+    (ele) =>
+      ele.asset.chainId.namespace + ':' + ele.asset.chainId.reference ===
+        chain && ele.asset.assetName.namespace === 'slip44'
   )
 
   return tok
 }
 
-export const getTokenByAddress = (address) => {
-  let tok = SUPPORTED_TOKENS.find(
-    (ele) => getTokenAddress(ele.address).toLowerCase() === address
-  )
-
-  return tok
-}
-
-export const getWalletAddressForToken = (tokenAddress, wallets) => {
+export const getChainMapping = (chain) => {
   const chainMapping = {
-    algorand: 'algo',
-    eip155: 'ethr',
-    near: 'near',
+    'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=': 'algo',
+    'eip155:4': 'ethr',
+    'near:testnet': 'near',
+    'eip155:80001': 'poly',
   }
 
-  const chain = getTokenChain(tokenAddress)
-  return wallets[chainMapping[chain]].address
+  return chainMapping[chain]
+}
+
+export const getWalletAddressForToken = (chain, wallets) => {
+  return wallets[getChainMapping(chain)].address
 }
 
 export const handleTokenDecimals = (quantity, decimalPlaces) => {
@@ -72,14 +63,17 @@ export const parseUnitsForSending = (quantity, decimalPlaces) => {
   return utils.parseUnits(quantity, decimalPlaces)
 }
 
-export const getExplorerUrl = (chain) => {
+export const getExplorerUrl = (chainId) => {
   let url
-  switch (chain) {
+  switch (chainId.namespace) {
     case 'algorand':
       url = 'https://testnet.algoexplorer.io/tx/'
       break
     case 'eip155':
-      url = 'https://rinkeby.etherscan.io/tx/'
+      url =
+        chainId.reference === '4'
+          ? 'https://rinkeby.etherscan.io/tx/'
+          : 'https://mumbai.polygonscan.com/tx/'
       break
     case 'near':
       url = 'https://explorer.testnet.near.org/transactions/'
@@ -104,4 +98,16 @@ export const rawDataToReduxState = (walletData) => {
     }
   })
   return wallets
+}
+
+export const getWalletAddressForAsset = (asset, wallets) => {
+  const chain = getTokenChain(asset)
+  const chainRef = getTokenChainReference(asset)
+  return wallets[getChainMapping(chain + ':' + chainRef)].address
+}
+
+export const tokenCaipObjectToString = (asset) => {
+  const assetId = new AssetId(asset)
+
+  return assetId.toString()
 }

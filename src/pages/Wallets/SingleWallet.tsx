@@ -12,6 +12,7 @@ import ChainsAddressesList from 'components/ChainsAddressesList'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
@@ -25,10 +26,11 @@ type Props = {
   wallets: WalletType
   navigation: NativeStackNavigationProp<MainStackParams>
   onRenameWallet: (selectedWalletID: string) => void
+  tokens: any
 }
 
 const SingleWallet = (props: Props) => {
-  const { navigation, wallets, onRenameWallet } = props
+  const { navigation, wallets, onRenameWallet, tokens } = props
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
@@ -50,12 +52,14 @@ const SingleWallet = (props: Props) => {
 
   const addressList = Object.keys(wallets.accounts).map((item: any) => {
     const itemData: AccountsType = wallets.accounts[item]
+
     const chainMapping: any = {
-      algo: 'algorand',
-      ethr: 'eip155',
-      near: 'near',
+      algo: 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
+      ethr: 'eip155:4',
+      near: 'near:testnet',
+      poly: 'eip155:80001',
     }
-    const token = getNativeForChain(chainMapping[item])
+    const token = getNativeForChain(tokens, chainMapping[item])
 
     return {
       name: token?.name,
@@ -180,6 +184,7 @@ const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
   return {
     wallets: getAddressesForWallet(state, props.route.params.item.id),
+    tokens: selectTokens(rootState),
   }
 }
 
