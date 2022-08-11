@@ -1,8 +1,8 @@
 import Common, { Chain } from '@ethereumjs/common'
 import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
+import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
-import initNearClient from 'wallet/chains/near'
 import {
   NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
   NEAR_GAS_AMOUNT_TRANSFER,
@@ -50,78 +50,77 @@ const minABI = [
 ]
 
 const getTransactionParams = async (transactionData, wallets) => {
+  const requestBody = {
+    asset: transactionData.token.asset,
+  }
+
+  if (getTokenChain(transactionData.token.asset) === 'eip155') {
+    const tokenChainRef = getTokenChainReference(transactionData.token.asset)
+    const fromAddress =
+      tokenChainRef === '80001' ? wallets.poly.address : wallets.ethr.address
+    const toAddress = transactionData.address
+
+    let input
+    if (isNativeToken(transactionData.token.asset)) {
+      input = {
+        from: fromAddress,
+        to: toAddress,
+        value: parseUnitsForSending(
+          transactionData.amount,
+          transactionData.token.decimal
+        ),
+      }
+    } else {
+      let tokenAddress = getTokenAddress(transactionData.token.asset)
+      let contract = new web3.eth.Contract(minABI, tokenAddress, {
+        from: fromAddress,
+      })
+
+      input = {
+        from: fromAddress,
+        to: tokenAddress,
+        value: '0x0',
+        data: contract.methods
+          .transfer(
+            toAddress,
+            parseUnitsForSending(
+              transactionData.amount,
+              transactionData.token.decimal
+            )
+          )
+          .encodeABI(),
+      }
+    }
+
+    requestBody.transactionParameters = input
+  }
+
+  const request = await walletProviderApi.post(
+    'transaction/params',
+    requestBody
+  )
+
+  if (getTokenChain(transactionData.token.asset) === 'eip155') {
+    const { gasPrice, gasEstimate } = request.data.data
+
+    return {
+      gasPrice: gasPrice,
+      gas: gasEstimate,
+      fee: gasEstimate * gasPrice,
+    }
+  }
+
   if (getTokenChain(transactionData.token.asset) === 'near') {
+    const { gas_price, block_hash } = request.data.data
+
     const units = isNativeToken(transactionData.token.asset)
       ? NEAR_GAS_AMOUNT_TRANSFER
       : NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER
 
-    const near = await initNearClient()
-    const response = await near.connection.provider.gasPrice()
-
-    const params = { fee: parseInt(response.gas_price, 10) * units }
-
-    return params
-  } else {
-    const requestBody = {
-      asset: transactionData.token.asset,
-    }
-
-    if (getTokenChain(transactionData.token.asset) === 'eip155') {
-      const tokenChainRef = getTokenChainReference(transactionData.token.asset)
-      const fromAddress =
-        tokenChainRef === '80001' ? wallets.poly.address : wallets.ethr.address
-      const toAddress = transactionData.address
-
-      let input
-      if (isNativeToken(transactionData.token.asset)) {
-        input = {
-          from: fromAddress,
-          to: toAddress,
-          value: parseUnitsForSending(
-            transactionData.amount,
-            transactionData.token.decimal
-          ),
-        }
-      } else {
-        let tokenAddress = getTokenAddress(transactionData.token.asset)
-        let contract = new web3.eth.Contract(minABI, tokenAddress, {
-          from: fromAddress,
-        })
-
-        input = {
-          from: fromAddress,
-          to: tokenAddress,
-          value: '0x0',
-          data: contract.methods
-            .transfer(
-              toAddress,
-              parseUnitsForSending(
-                transactionData.amount,
-                transactionData.token.decimal
-              )
-            )
-            .encodeABI(),
-        }
-      }
-
-      requestBody.transactionParameters = input
-    }
-
-    const request = await walletProviderApi.post(
-      'transaction/params',
-      requestBody
-    )
-
-    if (getTokenChain(transactionData.token.asset) === 'eip155') {
-      return {
-        gasPrice: request.data.data.gasPrice,
-        gas: request.data.data.gasEstimate,
-        fee: request.data.data.gasEstimate * request.data.data.gasPrice,
-      }
-    }
-
-    return request.data.data
+    return { fee: parseInt(gas_price, 10) * units, gas_price, block_hash }
   }
+
+  return request.data.data
 }
 
 const sendTransaction = async (
@@ -157,8 +156,13 @@ const sendTransaction = async (
   let txIdAlgo
 
   if (tokenChain === 'near') {
-    const near = await initNearClient()
-    const nearAccount = await near.account(chainWallet.address)
+    let transactionParams = getTransactionParamsData(state)
+
+    const request = await walletProviderApi.post('transaction/nonce', {
+      userAddress: chainWallet.address,
+      asset: transactionData.token.asset,
+    })
+
     let actions
     let txAddress
     if (isTokenNative) {
@@ -179,12 +183,42 @@ const sendTransaction = async (
       txAddress = tokenAddress
     }
 
-    const signedTx = await nearAccount.signTransaction(txAddress, actions)
+    const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
+    const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
+    const publicKey = keyPair.getPublicKey()
+
+    const recentBlockHash = nearAPI.utils.serialize.base_decode(
+      transactionParams.block_hash
+    )
+
+    const nonce = request.data.data
+
+    const transaction = nearAPI.transactions.createTransaction(
+      chainWallet.address,
+      publicKey,
+      txAddress,
+      nonce,
+      actions,
+      recentBlockHash
+    )
+
+    const serializedTx = nearAPI.utils.serialize.serialize(
+      nearAPI.transactions.SCHEMA,
+      transaction
+    )
+
+    const serializedTxHash = new Uint8Array(sha256.sha256.array(serializedTx))
+
+    const signature = keyPair.sign(serializedTxHash)
 
     const signedTransaction = new nearAPI.transactions.SignedTransaction({
-      transaction: signedTx[1].transaction,
-      signature: signedTx[1].signature,
+      transaction,
+      signature: new nearAPI.transactions.Signature({
+        keyType: transaction.publicKey.keyType,
+        data: signature.signature,
+      }),
     })
+
     const signedSerializedTx = signedTransaction.encode()
 
     txString = Buffer.from(signedSerializedTx).toString('base64')
