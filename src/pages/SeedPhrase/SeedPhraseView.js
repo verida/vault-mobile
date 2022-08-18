@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
+import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 
@@ -41,6 +42,7 @@ export default () => {
           onPress={copyToClipBoard}
           style={{ marginTop: 10 }}>
           {'Copy seed phrase\u00A0'}
+          <Icon name='copy' />
         </Button>
         <AlertNotification
           onClosePress={onClosePress}
