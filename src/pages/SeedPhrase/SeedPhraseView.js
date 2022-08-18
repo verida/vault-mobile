@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react'
 import { View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
+import AlertNotification from 'components/AlertNotification'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import Button from '../../components/Button'
@@ -11,15 +12,24 @@ import WordCard from '../../components/Words/WordCard'
 
 export default () => {
   const [words, setWords] = useState('')
+  const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
 
   useEffect(() => {
     const init = async () => {
       const { mnemonic } = AccountManager.getInstance().selectedAccount
       setWords(mnemonic)
     }
-
     init()
   }, [])
+
+  const onClosePress = () => {
+    setIsSeedPhraseCopied(false)
+  }
+
+  const copyToClipBoard = () => {
+    Clipboard.setString(words)
+    setIsSeedPhraseCopied(true)
+  }
 
   return (
     <View>
@@ -28,10 +38,18 @@ export default () => {
         <WordCard words={words} />
         <Button
           color='transparent-grey'
-          onPress={() => Clipboard.setString(words)}
+          onPress={copyToClipBoard}
           style={{ marginTop: 10 }}>
           {'Copy seed phrase\u00A0'}
         </Button>
+        <AlertNotification
+          onClosePress={onClosePress}
+          isOpened={isSeedPhraseCopied}
+          type='success'
+          bodyText='Seed Phrase copied to clipboard'
+          title='Seed Phrase Copied'
+          timeOutInSeconds={5}
+        />
       </Layout>
     </View>
   )
