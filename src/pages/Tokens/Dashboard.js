@@ -47,7 +47,7 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
         <LoadingIndicator />
       ) : (
         <View style={styles.contentContainer}>
-          <TestnetWarning networkReference='' />
+          <TestnetWarning networkReference={null} />
           <TokenBanner
             data={{
               amount: total,
