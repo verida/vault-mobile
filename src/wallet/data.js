@@ -55,9 +55,7 @@ const getTransactionParams = async (transactionData, wallets) => {
   }
 
   if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const tokenChainRef = getTokenChainReference(transactionData.token.asset)
-    const fromAddress =
-      tokenChainRef === '80001' ? wallets.poly.address : wallets.ethr.address
+    const fromAddress = wallets[transactionData.token.slug].address
     const toAddress = transactionData.address
 
     let input
@@ -129,12 +127,6 @@ const sendTransaction = async (
   state
 ) => {
   const wallets = getWalletsData(state)
-  const chainMapping = {
-    'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=': 'algo',
-    'eip155:4': 'ethr',
-    'near:testnet': 'near',
-    'eip155:80001': 'poly',
-  }
   const amount = parseUnitsForSending(
     transactionData.amount,
     transactionData.token.decimal
@@ -147,8 +139,7 @@ const sendTransaction = async (
     transactionData.token.asset
   )
 
-  const chainWallet =
-    wallets[chainMapping[tokenChain + ':' + tokenChainReference]]
+  const chainWallet = wallets[transactionData.token.slug]
   const receiverAddress = transactionData.address
 
   let txString
@@ -275,7 +266,7 @@ const sendTransaction = async (
     if (tokenChainReference === '4') {
       common = new Common({ chain: Chain.Rinkeby })
     } else {
-      common = Common.custom({ chainId: 80001 })
+      common = Common.custom({ chainId: tokenChainReference })
     }
 
     const tx = Transaction.fromTxData(transaction, { common })
