@@ -44,19 +44,16 @@ const SingleCurrency = ({
   const { list, loading } = transactions
   const tokenChain = getTokenChain(item.asset)
   const tokenChainRef = getTokenChainReference(item.asset)
-  const address = getWalletAddressForToken(
-    tokenChain + ':' + tokenChainRef,
-    wallets
-  )
+  const address = getWalletAddressForToken(item.slug, wallets)
 
   function pullToRefresh() {
-    onGetTransactionsForToken(item.asset)
+    onGetTransactionsForToken(item)
     onGetBalances()
   }
 
   useEffect(() => {
     async function loadData() {
-      onGetTransactionsForToken(item.asset)
+      onGetTransactionsForToken(item)
     }
 
     loadData()
@@ -65,8 +62,7 @@ const SingleCurrency = ({
   const warningRequired =
     tokenChain === 'algorand' && !isNativeToken(item.asset)
 
-  let networkReference =
-    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
+  let networkReference = item.networkLabel
 
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
@@ -137,7 +133,7 @@ const SingleCurrency = ({
         <TransactionsList
           symbol={item.symbol}
           decimal={item.decimal}
-          tokenAddress={item.asset}
+          token={item}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
           list={list}
@@ -155,15 +151,15 @@ const mapStateToProps = (rootState, props) => {
     wallets: getWalletsData(state),
     nativeTokenBalance: selectNativeTokenBalance(
       rootState,
-      props.route.params.item.asset
+      props.route.params.item
     ),
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionsForToken: (assetID) =>
-      dispatch(getTransactionsForToken(assetID)),
+    onGetTransactionsForToken: (token) =>
+      dispatch(getTransactionsForToken(token)),
     onGetBalances: () => dispatch(getBalances()),
     onSendTransaction: (params, isAssetEnablingTransaction) =>
       dispatch(sendTransaction(params, isAssetEnablingTransaction)),
