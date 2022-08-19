@@ -21,7 +21,6 @@ export default ({ transaction, token }) => {
     chainId.namespace === 'near' ? 'transactions/' : 'tx/'
   }${transaction.id}`
 
-  console.log(explorerURL, 'explorerURLexplorerURLexplorerURL')
   let fixed
   try {
     switch (chain) {

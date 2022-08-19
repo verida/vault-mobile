@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/react-native'
 import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
-import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
@@ -285,12 +284,8 @@ class AccountManager {
 
       const chains = selectChains(store.getState())
 
-      console.log(chains, 'chains')
-
-      let userGeneratedWallets: any = multiChainWallet.generateWalletsForChains(
-        userHDWalletMnemonic,
-        chains
-      )
+      const userGeneratedWallets: any =
+        multiChainWallet.generateWalletsForChains(userHDWalletMnemonic, chains)
 
       const walletData = {
         [walletID]: {
@@ -334,7 +329,7 @@ class AccountManager {
         hdWallets.forEach((walt: any) => {
           const mnemonic = walt.mnemonic
           const walletID = walt._id
-          let accounts: any = multiChainWallet.generateWalletsForChains(
+          const accounts: any = multiChainWallet.generateWalletsForChains(
             mnemonic,
             chains
           )
