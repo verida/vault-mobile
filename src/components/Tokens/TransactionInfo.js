@@ -5,25 +5,23 @@ import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 import {
   formatTokenQuantity,
-  getExplorerUrl,
   getTokenChain,
   getTokenChainId,
-  tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({ transaction, tokenAddress, tokens }) => {
-  const token = tokens.find((ele) => {
-    return (
-      tokenCaipObjectToString(ele.asset) ===
-      tokenCaipObjectToString(tokenAddress)
-    )
-  })
+export default ({ transaction, token }) => {
+  const tokenAddress = token.asset
   const chain = getTokenChain(tokenAddress)
   const chainId = getTokenChainId(tokenAddress)
+  const explorerURL = `${token.explorerURL}${
+    chainId.namespace === 'near' ? 'transactions/' : 'tx/'
+  }${transaction.id}`
+
+  console.log(explorerURL, 'explorerURLexplorerURLexplorerURL')
   let fixed
   try {
     switch (chain) {
@@ -139,8 +137,7 @@ export default ({ transaction, tokenAddress, tokens }) => {
         <TouchableOpacity style={styles.viewOnExplorerWrapper}>
           <Text
             onPress={() => {
-              const explorerUrl = getExplorerUrl(chainId)
-              Linking.openURL(explorerUrl + transaction.id)
+              Linking.openURL(explorerURL)
             }}>
             View on explorer
           </Text>
