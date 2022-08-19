@@ -1,4 +1,3 @@
-import WalletUtils from '@verida/wallet-utils'
 import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
@@ -51,18 +50,10 @@ export const getBalances = () => {
     try {
       const wallets = getWalletsData(getState().main)
       const chains = selectChains(getState())
-      // TODO: dynamic values, not hardcoded
-      const chainMapping = {
-        algo: 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
-        ethr: 'eip155:4',
-        near: 'near:testnet',
-        poly: 'eip155:80001',
-      }
-
       const requestBody = Object.keys(wallets).map((walletKey) => {
         return {
           address: wallets[walletKey].address,
-          chainId: chains[chainMapping[walletKey]],
+          chainId: chains[walletKey].data,
         }
       })
 
@@ -90,15 +81,15 @@ export const getBalances = () => {
   }
 }
 
-export const getTransactionsForToken = (assetID) => {
+export const getTransactionsForToken = (token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(assetID, wallets)
+    const userAddress = getWalletAddressForAsset(token.slug, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/list', {
       userAddress,
-      asset: assetID,
+      asset: token.asset,
     })
 
     if (transactionsData) {
@@ -115,16 +106,16 @@ export const getTransactionsForToken = (assetID) => {
   }
 }
 
-export const getTransactionDetails = (transactionID, tokenAddress) => {
+export const getTransactionDetails = (transactionID, token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(tokenAddress, wallets)
+    const userAddress = getWalletAddressForAsset(token.slug, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/get', {
       transactionId: transactionID,
       userAddress,
-      asset: tokenAddress,
+      asset: token.asset,
     })
 
     if (transactionsData) {
@@ -237,7 +228,7 @@ export const createNewWallet = (data) => {
     try {
       const userHDWalletMnemonic = data.phrase
         ? data.phrase
-        : WalletUtils.MultiChainWallet.generateMnemonic()
+        : multiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb =
@@ -260,7 +251,8 @@ export const createNewWallet = (data) => {
       const hdWallets = await walletDb?.getMany()
 
       if (hdWallets) {
-        const wallets = rawDataToReduxState(hdWallets)
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
 
         await dispatch(saveUserWallets(wallets))
 
@@ -302,7 +294,8 @@ export const deleteWallet = (walletId) => {
       const hdWallets = await walletDb?.getMany()
 
       if (hdWallets) {
-        const wallets = rawDataToReduxState(hdWallets)
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
 
         if (currentlySelectedWallet === walletId) {
           let firstWalletId = hdWallets[0]._id
@@ -331,7 +324,7 @@ export const deleteWallet = (walletId) => {
 }
 
 export const renameWallet = (walletId, data) => {
-  return async (dispatch) => {
+  return async (dispatch, getState) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
@@ -350,6 +343,7 @@ export const renameWallet = (walletId, data) => {
       const hdWallets = await walletDb?.getMany()
 
       if (hdWallets) {
+        const chains = selectChains(getState())
         const wallets = rawDataToReduxState(hdWallets)
 
         await dispatch(saveUserWallets(wallets))
