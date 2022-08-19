@@ -36,10 +36,10 @@ const generateSingleWallet = (
 }
 
 const generateWalletsForChains = (mnemonic: string, chains: any) => {
-  let wallets: any = {}
+  const wallets: any = {}
 
   Object.values(chains).forEach((chain: any) => {
-    let singleWallet = generateSingleWallet(
+    const singleWallet = generateSingleWallet(
       mnemonic,
       chain.path,
       chain.data.namespace

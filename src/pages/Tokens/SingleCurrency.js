@@ -6,7 +6,6 @@ import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import {
   getTokenChain,
-  getTokenChainReference,
   getWalletAddressForToken,
   isNativeToken,
 } from 'wallet/helpers/tokens'
@@ -43,7 +42,6 @@ const SingleCurrency = ({
   const { item } = route.params
   const { list, loading } = transactions
   const tokenChain = getTokenChain(item.asset)
-  const tokenChainRef = getTokenChainReference(item.asset)
   const address = getWalletAddressForToken(item.slug, wallets)
 
   function pullToRefresh() {

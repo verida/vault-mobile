@@ -45,7 +45,6 @@ import {
   setNavigationLink as setNavigationLinkAction,
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
-import { getTokens as getTokensAction } from 'reduxStore/tokens/actions'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 const LogoImg = require('assets/vault-logo.png')

@@ -1,6 +1,7 @@
 import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
+import multiChainWallet from 'wallet/helpers/multiChainWallet'
 import {
   getWalletAddressForAsset,
   rawDataToReduxState,
@@ -344,7 +345,7 @@ export const renameWallet = (walletId, data) => {
 
       if (hdWallets) {
         const chains = selectChains(getState())
-        const wallets = rawDataToReduxState(hdWallets)
+        const wallets = rawDataToReduxState(hdWallets, chains)
 
         await dispatch(saveUserWallets(wallets))
         await SecureStore.setItemAsync(

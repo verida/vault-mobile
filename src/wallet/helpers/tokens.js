@@ -1,6 +1,6 @@
-import multiChainWallet from 'wallet/helpers/multiChainWallet'
 import { AssetId } from 'caip'
 import { utils } from 'ethers'
+import multiChainWallet from 'wallet/helpers/multiChainWallet'
 
 export const isNativeToken = (address) => {
   return address.assetName.namespace === 'slip44'
