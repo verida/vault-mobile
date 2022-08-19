@@ -22,13 +22,16 @@ import {
   saveUserWallets,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
+import { getTokens } from 'reduxStore/tokens/actions'
 import {
   getCountryCode,
   getDefaultNode,
   getNodeCodeFromCountry,
 } from 'utils/profile'
 import { fetchNetworks } from 'api/utils'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import DataConnectorsManager from './DataConnectorsManager'
+import multiChainWallet from 'wallet/helpers/multiChainWallet'
 
 type EndpointUrls = {
   dbServerUrl: string
@@ -38,7 +41,7 @@ type EndpointUrls = {
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
-export const WALLETS_STORAGE_KEY = 'wallets-v2'
+export const WALLETS_STORAGE_KEY = 'wallets-v3'
 export const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
@@ -77,6 +80,11 @@ class AccountManager {
 
   public async init() {
     try {
+      const chains = selectChains(store.getState())
+      await store.dispatch(getTokens())
+      const newChains = selectChains(store.getState())
+      const updateWallets =
+        JSON.stringify(chains) !== JSON.stringify(newChains) ? true : false
       if (!this.selectedAccount) {
         const accountsRaw = await SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY)
         if (accountsRaw) {
@@ -95,20 +103,20 @@ class AccountManager {
 
         const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
-        if (walletsRaw) {
-          const wallets = JSON.parse(walletsRaw)
-          store.dispatch(saveUserWallets(wallets))
-          const selectedWalletID = await SecureStore.getItemAsync(
-            SELECTED_WALLET_STORAGE_KEY
-          )
-          await store.dispatch(setSelectedWallet(selectedWalletID))
-        } else {
+        if (!walletsRaw || updateWallets) {
           const selectedAccount = this.getSelectedAccount()
           if (selectedAccount) {
             await this.connect()
           }
 
           await this.restoreUserWallet()
+        } else {
+          const wallets = JSON.parse(walletsRaw)
+          store.dispatch(saveUserWallets(wallets))
+          const selectedWalletID = await SecureStore.getItemAsync(
+            SELECTED_WALLET_STORAGE_KEY
+          )
+          await store.dispatch(setSelectedWallet(selectedWalletID))
         }
       }
     } catch (e) {
@@ -259,8 +267,7 @@ class AccountManager {
   public async setUserWallet() {
     try {
       await store.dispatch(removeUserWallets())
-      const userHDWalletMnemonic =
-        WalletUtils.MultiChainWallet.generateMnemonic()
+      const userHDWalletMnemonic = multiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
@@ -275,8 +282,15 @@ class AccountManager {
       const walletID = saved?.id
 
       // generate wallets and save em to redux state
-      const userGeneratedWallets =
-        WalletUtils.MultiChainWallet.generateHDWallets(userHDWalletMnemonic)
+
+      const chains = selectChains(store.getState())
+
+      console.log(chains, 'chains')
+
+      let userGeneratedWallets: any = multiChainWallet.generateWalletsForChains(
+        userHDWalletMnemonic,
+        chains
+      )
 
       const walletData = {
         [walletID]: {
@@ -313,13 +327,17 @@ class AccountManager {
 
       const hdWallets: any = await datastore?.getMany()
 
+      const chains = selectChains(store.getState())
+
       const wallets: any = {}
       if (!isEmpty(hdWallets)) {
         hdWallets.forEach((walt: any) => {
           const mnemonic = walt.mnemonic
           const walletID = walt._id
-          const accounts =
-            WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
+          let accounts: any = multiChainWallet.generateWalletsForChains(
+            mnemonic,
+            chains
+          )
 
           wallets[walletID] = {
             seedPhrase: mnemonic,
