@@ -18,20 +18,25 @@ const TransactionDetails = ({
   onGetTransactionDetails,
   tokens,
 }) => {
-  const { id, tokenAddress } = route.params
+  const { id, token } = route.params
+  console.log(token, 'token')
   useEffect(() => {
     async function init() {
-      onGetTransactionDetails(id, tokenAddress)
+      onGetTransactionDetails(id, token)
     }
 
     init()
-  }, [id, onGetTransactionDetails, tokenAddress])
+  }, [id, onGetTransactionDetails, token])
 
   const { transaction, loading } = data
-  const tokenChain = getTokenChain(tokenAddress)
-  const tokenChainRef = getTokenChainReference(tokenAddress)
-  let networkReference =
-    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
+
+  const tokenChain = getTokenChain(token.asset)
+  console.log(tokenChain, 'tokenChain')
+
+  const tokenChainRef = getTokenChainReference(token.asset)
+  console.log(tokenChainRef, 'tokenChainRef')
+
+  let networkReference = token.networkLabel
 
   return (
     <Container>
@@ -48,7 +53,7 @@ const TransactionDetails = ({
       ) : (
         <TransactionInfo
           transaction={transaction}
-          tokenAddress={tokenAddress}
+          token={token}
           tokens={tokens}
         />
       )}
@@ -66,8 +71,8 @@ const mapStateToProps = (rootState) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionDetails: (id, tokenAddress) =>
-      dispatch(getTransactionDetails(id, tokenAddress)),
+    onGetTransactionDetails: (id, token) =>
+      dispatch(getTransactionDetails(id, token)),
   }
 }
 
