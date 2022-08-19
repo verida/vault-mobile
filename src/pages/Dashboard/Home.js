@@ -62,7 +62,6 @@ const Home = (props) => {
     navigationLink,
     setNavigationLink,
     logout,
-    onGetTokens,
   } = props
   const [info, setInfo] = useState({})
   const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
@@ -140,14 +139,6 @@ const Home = (props) => {
       })
     }
   }, [navigationLink, linkTo, setNavigationLink])
-
-  useEffect(() => {
-    async function loadData() {
-      onGetTokens()
-    }
-
-    loadData()
-  }, [onGetTokens])
 
   useEffect(() => {
     async function checkFirstTimeLogin() {
@@ -335,7 +326,6 @@ const mapDispatchToProps = (dispatch) => {
     setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
     setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
     logout: () => dispatch(logoutAction()),
-    onGetTokens: () => dispatch(getTokensAction()),
   }
 }
 
