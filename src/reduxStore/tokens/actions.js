@@ -8,7 +8,7 @@ import {
 } from './types'
 
 export const getTokens = () => {
-  return (dispatch, getState) => {
+  return async (dispatch, getState) => {
     const timestamp = selectTokensTimestamp(getState())
 
     if (timestamp && timestamp > Date.now() - 60 * 60 * 24 * 1000) {
@@ -16,20 +16,19 @@ export const getTokens = () => {
     }
 
     dispatch({ type: TOKENS_FETCH_START })
-    walletProviderApi.get('tokens/get').then((response) => {
-      if (response.ok) {
-        if (response.data) {
-          dispatch({ type: FETCHED_TOKENS, data: response.data.data })
-        } else {
-          dispatch({
-            type: TOKENS_FETCH_FAILED,
-            error: "Couldn'nt load currencies",
-          })
-        }
+    const response = await walletProviderApi.get('tokens/get')
+    if (response.ok) {
+      if (response.data) {
+        dispatch({ type: FETCHED_TOKENS, data: response.data.data })
       } else {
-        const err = response.status === 404 ? 'API error.' : response.problem
-        dispatch({ type: TOKENS_FETCH_FAILED, error: err })
+        dispatch({
+          type: TOKENS_FETCH_FAILED,
+          error: "Couldn'nt load currencies",
+        })
       }
-    })
+    } else {
+      const err = response.status === 404 ? 'API error.' : response.problem
+      dispatch({ type: TOKENS_FETCH_FAILED, error: err })
+    }
   }
 }
