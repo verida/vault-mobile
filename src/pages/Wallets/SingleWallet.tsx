@@ -52,14 +52,7 @@ const SingleWallet = (props: Props) => {
 
   const addressList = Object.keys(wallets.accounts).map((item: any) => {
     const itemData: AccountsType = wallets.accounts[item]
-
-    const chainMapping: any = {
-      algo: 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
-      ethr: 'eip155:4',
-      near: 'near:testnet',
-      poly: 'eip155:80001',
-    }
-    const token = getNativeForChain(tokens, chainMapping[item])
+    const token = getNativeForChain(tokens, item)
 
     return {
       name: token?.name,
