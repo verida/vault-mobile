@@ -21,7 +21,13 @@ export const selectTokens = (state) => {
       list.push(chainToken)
 
       Object.values(tokens).forEach((singleSubToken) => {
-        list.push(singleSubToken)
+        let addedSlug = {
+          slug: chainToken.slug,
+          networkLabel: chainToken.networkLabel,
+          explorerURL: chainToken.explorerURL,
+          ...singleSubToken,
+        }
+        list.push(addedSlug)
       })
     })
   }
@@ -34,11 +40,11 @@ export const selectChains = (state) => {
   const list = {}
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
-      list[
-        singleToken.asset.chainId.namespace +
-          ':' +
-          singleToken.asset.chainId.reference
-      ] = singleToken.asset.chainId
+      list[singleToken.slug] = {
+        data: singleToken.asset.chainId,
+        slug: singleToken.slug,
+        path: singleToken.path,
+      }
     })
   }
 
