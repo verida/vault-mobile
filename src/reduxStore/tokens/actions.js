@@ -11,7 +11,7 @@ export const getTokens = () => {
   return async (dispatch, getState) => {
     const timestamp = selectTokensTimestamp(getState())
 
-    if (timestamp && timestamp > Date.now() - (60 * 60 * 24 * 1000)) {
+    if (timestamp && timestamp > Date.now() - 60 * 60 * 24 * 1000) {
       return
     }
 
