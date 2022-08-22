@@ -12,7 +12,6 @@ export const selectRawTokens = (state) => {
 
 export const selectTokens = (state) => {
   const rawTokens = selectRawTokens(state)
-  // console.log(rawTokens, 'rawTokens')
   const list = []
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
@@ -36,7 +35,6 @@ export const selectTokens = (state) => {
 
 export const selectChains = (state) => {
   const rawTokens = selectRawTokens(state)
-  // console.log(rawTokens, 'rawTokens')
   const list = {}
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
