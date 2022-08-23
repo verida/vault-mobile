@@ -27,7 +27,7 @@ const TransactionDetails = ({
   }, [id, onGetTransactionDetails, token])
 
   const { transaction, loading } = data
-  let networkReference = token.networkLabel
+  let networkReference = token.referenceLabel
 
   return (
     <Container>
