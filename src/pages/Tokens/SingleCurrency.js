@@ -42,7 +42,7 @@ const SingleCurrency = ({
   const { item } = route.params
   const { list, loading } = transactions
   const tokenChain = getTokenChain(item.asset)
-  const address = getWalletAddressForToken(item.slug, wallets)
+  const address = getWalletAddressForToken(item.addressMap, wallets)
 
   function pullToRefresh() {
     onGetTransactionsForToken(item)
@@ -60,7 +60,7 @@ const SingleCurrency = ({
   const warningRequired =
     tokenChain === 'algorand' && !isNativeToken(item.asset)
 
-  let networkReference = item.networkLabel
+  let networkReference = item.referenceLabel
 
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
