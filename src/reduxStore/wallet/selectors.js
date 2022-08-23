@@ -39,14 +39,10 @@ export const getListAndTotal = (state) => {
 
       return {
         label: token.name,
-        symbol: token.symbol,
-        icon: token.icon,
-        asset: token.asset,
         price: tokenBalance ? tokenBalance.quote.USD.price : 0,
         change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
         quantity: tokenBalance ? tokenBalance.balance : 0,
         amount: tokenBalance ? tokenBalance.amount : 0,
-        decimal: token.decimal,
         ...token,
       }
     })
@@ -58,7 +54,7 @@ export const getListAndTotal = (state) => {
 
 export const selectNativeTokenBalance = (state, token) => {
   const tokens = selectTokens(state)
-  const native = getNativeForChain(tokens, token.slug)
+  const native = getNativeForChain(tokens, token.identifier)
   const balances = getBalancesData(state.main)
 
   if (balances && native && balances[native.symbol]) {
@@ -84,14 +80,10 @@ export const selectSingleTokenData = (state, assetID) => {
 
   return {
     label: token.name,
-    symbol: token.symbol,
-    icon: token.icon,
-    asset: token.asset,
     price: tokenBalance ? tokenBalance.quote.USD.price : 0,
     change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
     quantity: tokenBalance ? tokenBalance.balance : 0,
     amount: tokenBalance ? tokenBalance.amount : 0,
-    decimal: token.decimal,
     ...token,
   }
 }
