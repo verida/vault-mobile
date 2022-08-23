@@ -44,7 +44,7 @@ const generateWalletsForChains = (mnemonic: string, chains: any) => {
       chain.path,
       chain.data.namespace
     )
-    if (singleWallet) wallets[chain.slug] = singleWallet
+    if (singleWallet) wallets[chain.addressMap] = singleWallet
   })
 
   return wallets
