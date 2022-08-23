@@ -4,7 +4,6 @@ import React, { useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { getNativeForChain } from 'wallet/helpers/tokens'
 
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import OtherSvg from 'assets/wallets/Other.svg'
@@ -12,7 +11,7 @@ import ChainsAddressesList from 'components/ChainsAddressesList'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-import { selectTokens } from 'reduxStore/tokens/selectors'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
 
@@ -26,11 +25,11 @@ type Props = {
   wallets: WalletType
   navigation: NativeStackNavigationProp<MainStackParams>
   onRenameWallet: (selectedWalletID: string) => void
-  tokens: any
+  chains: any
 }
 
 const SingleWallet = (props: Props) => {
-  const { navigation, wallets, onRenameWallet, tokens } = props
+  const { navigation, wallets, onRenameWallet, chains } = props
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
@@ -50,16 +49,15 @@ const SingleWallet = (props: Props) => {
     toggleCopyPrivateKeyModal(true)
   }
 
-  const addressList = Object.keys(wallets.accounts).map((item: any) => {
-    const itemData: AccountsType = wallets.accounts[item]
-    const token = getNativeForChain(tokens, item)
+  const addressList = Object.values(chains).map((chain: any) => {
+    const wallet: AccountsType = wallets.accounts[chain.addressMap]
 
     return {
-      name: token?.name,
-      address: itemData.address,
-      icon: token?.icon,
-      seedPhrase: itemData.mnemonic,
-      privateKey: itemData.privateKey,
+      name: chain?.name,
+      address: wallet.address,
+      icon: chain?.icon,
+      seedPhrase: wallet.mnemonic,
+      privateKey: wallet.privateKey,
     }
   })
 
@@ -177,7 +175,7 @@ const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
   return {
     wallets: getAddressesForWallet(state, props.route.params.item.id),
-    tokens: selectTokens(rootState),
+    chains: selectChains(rootState),
   }
 }
 
