@@ -33,13 +33,13 @@ const ConfirmTransaction = ({
 }) => {
   const { token, amount, address } = route.params
   const tokenChain = getTokenChain(token.asset)
-  const accountAddress = getWalletAddressForToken(token.slug, wallets)
-  const nativeToken = getNativeForChain(tokens, token.slug)
+  const accountAddress = getWalletAddressForToken(token.addressMap, wallets)
+  const nativeToken = getNativeForChain(tokens, token.identifier)
 
   let feeSymbol = nativeToken.symbol
   let feeDecimal = nativeToken.decimal
   let fixed
-  let networkReference = token.networkLabel
+  let networkReference = token.referenceLabel
   switch (tokenChain) {
     case 'algorand':
       fixed = 3
