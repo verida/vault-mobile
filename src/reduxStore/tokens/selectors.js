@@ -10,6 +10,10 @@ export const selectRawTokens = (state) => {
   return tokensData.data
 }
 
+createIdentifier = (chainId) => {
+  return `${chainId.namespace}:${chainId.reference}`
+}
+
 export const selectTokens = (state) => {
   const rawTokens = selectRawTokens(state)
   const list = []
@@ -17,19 +21,24 @@ export const selectTokens = (state) => {
     rawTokens.forEach((singleToken) => {
       const { tokens, ...chainToken } = singleToken
 
-      list.push(chainToken)
+      const identifier = createIdentifier(chainToken.asset.chainId)
+
+      list.push({ identifier: identifier, ...chainToken })
 
       Object.values(tokens).forEach((singleSubToken) => {
-        let addedSlug = {
-          slug: chainToken.slug,
-          networkLabel: chainToken.networkLabel,
+        const identifier = createIdentifier(singleSubToken.asset.chainId)
+        let addedInfo = {
+          identifier: identifier,
+          addressMap: chainToken.addressMap,
+          referenceLabel: chainToken.referenceLabel,
           explorerURL: chainToken.explorerURL,
           ...singleSubToken,
         }
-        list.push(addedSlug)
+        list.push(addedInfo)
       })
     })
   }
+
   return list
 }
 
@@ -38,10 +47,14 @@ export const selectChains = (state) => {
   const list = {}
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
-      list[singleToken.slug] = {
+      const identifier = createIdentifier(singleToken.asset.chainId)
+      list[identifier] = {
+        identifier: identifier,
         data: singleToken.asset.chainId,
-        slug: singleToken.slug,
-        path: singleToken.path,
+        addressMap: singleToken.addressMap,
+        path: singleToken.derivationPath,
+        name: singleToken.name,
+        icon: singleToken.icon,
       }
     })
   }
