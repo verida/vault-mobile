@@ -10,7 +10,7 @@ export const selectRawTokens = (state) => {
   return tokensData.data
 }
 
-createIdentifier = (chainId) => {
+const createIdentifier = (chainId) => {
   return `${chainId.namespace}:${chainId.reference}`
 }
 
@@ -26,7 +26,6 @@ export const selectTokens = (state) => {
       list.push({ identifier: identifier, ...chainToken })
 
       Object.values(tokens).forEach((singleSubToken) => {
-        const identifier = createIdentifier(singleSubToken.asset.chainId)
         let addedInfo = {
           identifier: identifier,
           addressMap: chainToken.addressMap,

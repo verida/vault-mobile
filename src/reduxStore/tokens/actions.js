@@ -1,6 +1,6 @@
 import { walletProviderApi } from 'wallet/helpers/api'
 
-import { selectTokensTimestamp } from './selectors'
+// import { selectTokensTimestamp } from './selectors'
 import {
   FETCHED_TOKENS,
   TOKENS_FETCH_FAILED,
@@ -8,7 +8,7 @@ import {
 } from './types'
 
 export const getTokens = () => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     // commenting this out till we have a decision.
     // const timestamp = selectTokensTimestamp(getState())
 
