@@ -51,10 +51,10 @@ export const getBalances = () => {
     try {
       const wallets = getWalletsData(getState().main)
       const chains = selectChains(getState())
-      const requestBody = Object.keys(wallets).map((walletKey) => {
+      const requestBody = Object.values(chains).map((chain) => {
         return {
-          address: wallets[walletKey].address,
-          chainId: chains[walletKey].data,
+          address: wallets[chain.addressMap].address,
+          chainId: chain.data,
         }
       })
 
@@ -86,7 +86,7 @@ export const getTransactionsForToken = (token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(token.slug, wallets)
+    const userAddress = getWalletAddressForAsset(token.addressMap, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/list', {
       userAddress,
@@ -111,7 +111,7 @@ export const getTransactionDetails = (transactionID, token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(token.slug, wallets)
+    const userAddress = getWalletAddressForAsset(token.addressMap, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/get', {
       transactionId: transactionID,
