@@ -3,10 +3,6 @@ import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
-import {
-  NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
-  NEAR_GAS_AMOUNT_TRANSFER,
-} from 'wallet/constants'
 import { walletProviderApi } from 'wallet/helpers/api'
 import {
   getTokenAddress,
@@ -98,26 +94,6 @@ const getTransactionParams = async (transactionData, wallets) => {
     requestBody
   )
 
-  if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const { gasPrice, gasEstimate } = request.data.data
-
-    return {
-      gasPrice: gasPrice,
-      gas: gasEstimate,
-      fee: gasEstimate * gasPrice,
-    }
-  }
-
-  if (getTokenChain(transactionData.token.asset) === 'near') {
-    const { gas_price, block_hash } = request.data.data
-
-    const units = isNativeToken(transactionData.token.asset)
-      ? NEAR_GAS_AMOUNT_TRANSFER
-      : NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER
-
-    return { fee: parseInt(gas_price, 10) * units, gas_price, block_hash }
-  }
-
   return request.data.data
 }
 
@@ -147,11 +123,16 @@ const sendTransaction = async (
   let txIdAlgo
 
   if (tokenChain === 'near') {
+    const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
+    const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
+    const publicKey = keyPair.getPublicKey()
+
     let transactionParams = getTransactionParamsData(state)
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
       asset: transactionData.token.asset,
+      publicKey: publicKey.toString(),
     })
 
     let actions
@@ -173,10 +154,6 @@ const sendTransaction = async (
       ]
       txAddress = tokenAddress
     }
-
-    const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
-    const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
-    const publicKey = keyPair.getPublicKey()
 
     const recentBlockHash = nearAPI.utils.serialize.base_decode(
       transactionParams.block_hash
