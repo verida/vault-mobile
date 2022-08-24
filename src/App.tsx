@@ -1,10 +1,12 @@
 import './global'
 import 'react-native-crypto'
+import 'text-encoding-polyfill'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { WalletConnectProviderv2 } from 'contexts/WalletConnectProviderv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
@@ -107,7 +109,9 @@ function App() {
                 <ActionSheetProvider>
                   <ModalProvider>
                     <WalletConnectProvider>
-                      <RootNavigator />
+                      <WalletConnectProviderv2>
+                        <RootNavigator />
+                      </WalletConnectProviderv2>
                     </WalletConnectProvider>
                   </ModalProvider>
                 </ActionSheetProvider>

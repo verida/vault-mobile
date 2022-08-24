@@ -9,7 +9,7 @@ export interface DApp {
   session: IWalletConnectSession
   accounts?: string[]
   chainId?: number
-  chain?: 'algo' | 'ethr' | undefined // TODO: add other networks
+  chain?: 'algo' | 'ethr' | 'near' | undefined // TODO: add other networks
 }
 
 export type WalletConnectSession = IWalletConnectSession

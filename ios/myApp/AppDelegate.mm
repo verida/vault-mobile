@@ -91,7 +91,7 @@
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
  return [RCTLinkingManager application:application
-                  continueUserActivity:userActivity
+                  continueUserActivity:userActivity 
                     restorationHandler:restorationHandler];
 }
 

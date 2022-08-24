@@ -3,10 +3,10 @@ import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import { RINKEBY_CHAIN_ID } from 'wallet-connect/constants'
 import { DApp, WalletConnectClientMeta } from 'wallet-connect/types'
 
-import { Spacer } from 'components//Spacer'
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
 import DropDownPicker from 'components/Select'
+import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useReduxState } from 'hooks/useReduxState'
 

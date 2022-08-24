@@ -48,7 +48,10 @@ function ScanQrCode(
       navigation.goBack()
     } else {
       // Wallet Connect
-      if (data.startsWith('wc:') && data.indexOf('bridge') >= 0) {
+      if (
+        data.startsWith('wc:')
+        // && data.indexOf('bridge') >= 0
+      ) {
         navigation.goBack()
         requestConnect(data)
         return
