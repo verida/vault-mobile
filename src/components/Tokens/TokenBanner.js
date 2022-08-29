@@ -43,10 +43,10 @@ export default ({
           </View>
         )}
         <Text style={styles.amount}>
-          {label ? `${quantity} ${symbol}` : `$${amount.toFixed(2)}`}
+          {label ? `${quantity.toFixed(3)} ${symbol}` : `$${amount.toFixed(2)}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
+          {label ? `≈ $${amount.toFixed(2)}` : `Total  Balance`}
         </Text>
       </View>
       {symbol && (
