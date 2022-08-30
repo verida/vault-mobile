@@ -192,11 +192,16 @@ export default (props) => {
 
       const context = await client.openContext(contextName, true)
       const contextConfig = await context.getContextConfig()
+      // Get a context auth object and force create so we get a new refresh token
+      const contextAuth = await context.getAuthContext({
+        force: true
+      })
 
       const response = {
         signature,
         did,
         contextConfig,
+        contextAuth,
         context: contextName,
       }
 
