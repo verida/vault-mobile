@@ -10,7 +10,7 @@ import { AccessKeyView } from 'near-api-js/lib/providers/provider'
 import { store } from 'reduxStore'
 import { NEAR_CHAINS, TNearChain } from 'wallet-connect/data/NEARData'
 import { AsyncStorageKeyStore } from 'wallet-connect/helpers/NearKeystore'
-import { getWC2SignClient } from 'wallet-connect/helpers/wallet2'
+import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 
@@ -86,7 +86,7 @@ export class NearWalletController {
       )
     ).filter(Boolean)
 
-    console.log('accounts:', accounts)
+    console.log('accounts:', accounts, allAccounts)
     for (let i = 0; i < Math.max(MAX_ACCOUNTS - accounts.length, 0); i += 1) {
       const { accountId, keyPair } =
         await NearWalletController.createDevAccount()

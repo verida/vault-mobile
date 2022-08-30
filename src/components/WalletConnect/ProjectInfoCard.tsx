@@ -1,4 +1,4 @@
-import { SignClientTypes } from '@walletconnect/types'
+import { SignClientTypes } from '@walletconnect/typesv2'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 

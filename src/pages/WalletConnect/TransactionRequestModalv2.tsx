@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import { SessionTypes, SignClientTypes } from '@walletconnect/types'
+import { SessionTypes, SignClientTypes } from '@walletconnect/typesv2'
 import { transactions } from 'near-api-js'
 import React, { useState } from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
@@ -14,7 +14,7 @@ import {
   approveNearRequest,
   rejectNearRequest,
 } from 'wallet-connect/helpers/NearRequestHandler'
-import { getWC2SignClient } from 'wallet-connect/helpers/wallet2'
+import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
@@ -257,9 +257,9 @@ const TransactionRequestModalv2 = (props: Props) => {
           response,
         })
         dismissModal()
-      } catch (error) {
+      } catch (error: any) {
         Sentry.captureException(error)
-        Alert.alert('Error', 'Unable to process request')
+        Alert.alert('Error', 'Unable to process request: ' + error.message)
       } finally {
         setLoading(false)
       }
@@ -287,7 +287,9 @@ const TransactionRequestModalv2 = (props: Props) => {
   }
 
   return (
-    <BottomActionsModal title={'Smart Contract Call'} onClose={onReject}>
+    <BottomActionsModal
+      title={'Smart Contract Call'}
+      onClose={loading ? dismissModal : onReject}>
       <View style={{ minHeight: '90%' }}>
         <View
           style={{ flex: 1, justifyContent: 'space-around', width: '100%' }}>

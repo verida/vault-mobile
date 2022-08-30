@@ -11,6 +11,9 @@ const dappsBySelectedWallet = (state: RootState) => {
 
 export const dappsSelector = (state: RootState) => dappsBySelectedWallet(state)
 
+export const dappsWC2Selector = (state: RootState) =>
+  dappsBySelectedWallet(state)
+
 export const walletConnectRequestSelector = (state: RootState) =>
   s(state).requests
 

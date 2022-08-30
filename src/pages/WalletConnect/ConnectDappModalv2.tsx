@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import { SessionTypes, SignClientTypes } from '@walletconnect/types'
+import { SessionTypes, SignClientTypes } from '@walletconnect/typesv2'
 import React, { useMemo, useState } from 'react'
 import {
   ActivityIndicator,
@@ -10,7 +10,7 @@ import {
   View,
 } from 'react-native'
 import { nearAddresses } from 'wallet-connect/helpers/NearWalletUtil'
-import { getWC2SignClient } from 'wallet-connect/helpers/wallet2'
+import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 import { DApp } from 'wallet-connect/types'
 
 import BottomActionsModal from 'components/BottomActionsModal'
@@ -95,9 +95,9 @@ const ConnectDappModalv2 = (props: Props) => {
           namespaces,
         })
         await acknowledged()
-      } catch (error) {
+      } catch (error: any) {
         Sentry.captureException(error)
-        Alert.alert('Error', 'Unable to connect')
+        Alert.alert('Error', 'Unable to connect: ' + error.message)
       } finally {
         setLoading(false)
         dismissModal()
@@ -128,7 +128,9 @@ const ConnectDappModalv2 = (props: Props) => {
   }
 
   return (
-    <BottomActionsModal title='WalletConnect' onClose={onReject}>
+    <BottomActionsModal
+      title='WalletConnect'
+      onClose={loading ? dismissModal : onReject}>
       <View style={styles.container}>
         <Image
           style={iconStyle.large}

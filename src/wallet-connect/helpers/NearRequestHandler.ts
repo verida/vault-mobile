@@ -1,7 +1,7 @@
 /* eslint-disable no-console */
 import { formatJsonRpcError, formatJsonRpcResult } from '@json-rpc-tools/utils'
 import { createAction } from '@near-wallet-selector/wallet-utils'
-import { SignClientTypes } from '@walletconnect/types'
+import { SignClientTypes } from '@walletconnect/typesv2'
 import { transactions } from 'near-api-js'
 import { NEAR_SIGNING_METHODS } from 'wallet-connect/data/NEARData'
 
@@ -159,4 +159,12 @@ export function rejectNearRequest(
   const { id } = request
 
   return formatJsonRpcError(id, 'User rejected the request.')
+}
+
+export function wrongNearAccountRequest(
+  request: SignClientTypes.EventArguments['session_request']
+) {
+  const { id } = request
+
+  return formatJsonRpcError(id, 'No active account')
 }

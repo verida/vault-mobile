@@ -1,5 +1,5 @@
 import * as Sentry from '@sentry/react-native'
-import { SignClientTypes } from '@walletconnect/types'
+import { SignClientTypes } from '@walletconnect/typesv2'
 import isEmpty from 'lodash/isEmpty'
 import React, {
   createContext,
@@ -11,13 +11,19 @@ import React, {
 import { Alert, AppState } from 'react-native'
 import { useDispatch } from 'react-redux'
 import { NEAR_SIGNING_METHODS } from 'wallet-connect/constants/near'
-import { approveNearRequest } from 'wallet-connect/helpers/NearRequestHandler'
-import { createOrRestoreNearWallet } from 'wallet-connect/helpers/NearWalletUtil'
-import { getWC2SignClient } from 'wallet-connect/helpers/wallet2'
+import {
+  approveNearRequest,
+  wrongNearAccountRequest,
+} from 'wallet-connect/helpers/NearRequestHandler'
+import {
+  createOrRestoreNearWallet,
+  nearWallet,
+} from 'wallet-connect/helpers/NearWalletUtil'
+import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 
 import usePrevious from 'hooks/usePrevious'
 import { useReduxState } from 'hooks/useReduxState'
-import Connectv2DappModal from 'pages/WalletConnect/ConnectDappModalv2'
+import ConnectDappModalv2 from 'pages/WalletConnect/ConnectDappModalv2'
 import TransactionRequestModalv2 from 'pages/WalletConnect/TransactionRequestModalv2'
 import {
   authenticatedSelector,
@@ -48,7 +54,7 @@ function useWalletConnectContextv2() {
     (proposal: SignClientTypes.EventArguments['session_proposal']) => {
       console.log('onSessionProposal', JSON.stringify(proposal, null, 2))
       showModal(
-        <Connectv2DappModal proposal={proposal} dismissModal={dismissModal} />
+        <ConnectDappModalv2 proposal={proposal} dismissModal={dismissModal} />
       )
     },
     [dismissModal, showModal]
@@ -61,6 +67,7 @@ function useWalletConnectContextv2() {
       const { id, topic, params } = requestEvent
       const { chainId, request } = params
       const requestSession = signClient.session.get(topic)
+      const matchedNearAccounts = await nearWallet.getAccounts({ topic })
 
       switch (request.method) {
         case NEAR_SIGNING_METHODS.NEAR_SIGN_IN:
@@ -69,19 +76,34 @@ function useWalletConnectContextv2() {
         case NEAR_SIGNING_METHODS.NEAR_SIGN_AND_SEND_TRANSACTION:
         case NEAR_SIGNING_METHODS.NEAR_SIGN_TRANSACTIONS:
         case NEAR_SIGNING_METHODS.NEAR_SIGN_AND_SEND_TRANSACTIONS:
-          showModal(
-            <TransactionRequestModalv2
-              requestEvent={requestEvent}
-              requestSession={requestSession}
-              dismissModal={dismissModal}
-            />
-          )
+          if (!isEmpty(matchedNearAccounts)) {
+            showModal(
+              <TransactionRequestModalv2
+                requestEvent={requestEvent}
+                requestSession={requestSession}
+                dismissModal={dismissModal}
+              />
+            )
+          } else {
+            await signClient.respond({
+              topic,
+              response: wrongNearAccountRequest(requestEvent),
+            })
+          }
           break
         case NEAR_SIGNING_METHODS.NEAR_GET_ACCOUNTS:
-          return signClient.respond({
-            topic,
-            response: await approveNearRequest(requestEvent),
-          })
+          if (!isEmpty(matchedNearAccounts)) {
+            return signClient.respond({
+              topic,
+              response: await approveNearRequest(requestEvent),
+            })
+          } else {
+            await signClient.respond({
+              topic,
+              response: wrongNearAccountRequest(requestEvent),
+            })
+          }
+          break
         default:
           Alert.alert('Error', 'Unsupported method')
       }
@@ -91,26 +113,25 @@ function useWalletConnectContextv2() {
 
   const requestConnect = useCallback(async (uri: string) => {
     try {
-      console.log('onConnect', uri)
       const signClient = await getWC2SignClient()
-      signClient.pair({ uri })
-    } catch (err: Error) {
+      await signClient.pair({ uri })
+    } catch (err: any) {
       Sentry.captureException(err)
-      console.log('Error connect', err)
-      Alert.alert('Error', 'Unable to pair with the dapp')
+      Alert.alert('Error', 'Unable to pair: ', err.message)
     }
   }, [])
 
+  const currentWalletIdRef = useRef(null)
   useEffect(() => {
-    if (!authenticated || initialized) return
-    ;(async () => {
-      if (!initialized) {
+    if (!authenticated || !selectedWalletId) return
+    if (currentWalletIdRef.current !== selectedWalletId) {
+      ;(async () => {
         await createOrRestoreNearWallet()
-        // TODO: support more chains
+        currentWalletIdRef.current = selectedWalletId
         setInitialized(true)
-      }
-    })()
-  }, [authenticated, initialized])
+      })()
+    }
+  }, [authenticated, initialized, selectedWalletId])
 
   useEffect(() => {
     if (!authenticated || !initialized) return
@@ -128,28 +149,25 @@ function useWalletConnectContextv2() {
     initialize()
   }, [authenticated, initialized, onSessionProposal, onSessionRequest])
 
-  // const [uri, setUri] = useState(
-  //   'wc:c034ac9bf61c23d3e551663ed8bf973c260130c12f89f22a35a5d1032e3c47af@2?relay-protocol=iridium&symKey=05f034367d195bca2532385b620bd2b2a6c5c62101050bdfe9253e283fe50e12'
-  // )
-  // useEffect(() => {
-  //   async function onConnectV2() {
-  //     try {
-  //       console.log('onConnect', uri)
-  //       const signClient = await getWC2SignClient()
-  //       signClient.pair({ uri })
-  //       console.log('Pairing complete')
-  //     } catch (err: Error) {
-  //       console.log('Error connect', err)
-  //       console.log(err.stacktrace)
-  //     } finally {
-  //       setUri('')
-  //     }
-  //   }
-  //   if (!isEmpty(uri)) {
-  //     onConnectV2()
-  //     console.log('WC: connecting to uri', uri)
-  //   }
-  // }, [uri])
+  const [uri, setUri] = useState('')
+  useEffect(() => {
+    async function onConnectV2() {
+      try {
+        console.log('onConnect', uri)
+        const signClient = await getWC2SignClient()
+        signClient.pair({ uri })
+      } catch (err: Error) {
+        console.log('Error connect', err)
+        console.log(err.stacktrace)
+      } finally {
+        setUri('')
+      }
+    }
+    if (!isEmpty(uri)) {
+      onConnectV2()
+      console.log('WC: connecting to uri', uri)
+    }
+  }, [uri])
 
   return {
     dapps,

@@ -5,7 +5,7 @@ export let signClient: SignClient
 export async function getWC2SignClient() {
   if (signClient) return signClient
   signClient = await SignClient.init({
-    projectId: '58c4c4df28f92213e81f7d83312d3fa9',
+    projectId: '1890472fb88366dd4046858b11e705cd',
     relayUrl: 'wss://relay.walletconnect.com',
     metadata: {
       name: 'Verida Vault',

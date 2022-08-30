@@ -1,6 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { KeyPair } from 'near-api-js'
-// import { KeyStore } from 'near-api-js/lib/key_stores'
 
 const LOCAL_STORAGE_KEY_PREFIX = 'near-api-js:keystore:'
 /**
