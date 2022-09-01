@@ -1,10 +1,16 @@
-import { DApp, IChainData, WalletConnectRequest } from 'wallet-connect/types'
+import {
+  DApp,
+  DAppv2,
+  IChainData,
+  WalletConnectRequest,
+} from 'wallet-connect/types'
 
 import { SUPPORTED_CHAINS } from '../../wallet-connect/constants'
 import { Reducer } from '../types'
 
 export interface State {
   dapps: DApp[]
+  dappsv2: DAppv2[]
   requests: WalletConnectRequest[]
   openRequest?: WalletConnectRequest
   network: IChainData
@@ -12,6 +18,7 @@ export interface State {
 
 const initialState: State = {
   dapps: [],
+  dappsv2: [],
   requests: [],
   openRequest: undefined,
   network: SUPPORTED_CHAINS[0],
@@ -144,6 +151,30 @@ export const walletConnectReducer: Reducer<State> = (
       return {
         ...state,
         network: action.payload.network,
+      }
+    }
+
+    // WC v2
+    case 'APPROVE_WC_SESSSION_V2': {
+      const dappsv2 = !state.dappsv2 ? [] : [...state.dappsv2]
+      const { id, topic, walletId, metadata, namespaces, relayProtocol } =
+        action.payload
+      dappsv2.push({ id, topic, walletId, metadata, namespaces, relayProtocol })
+      return {
+        ...state,
+        dappsv2,
+      }
+    }
+
+    case 'REMOVE_WC_SESSSION_V2': {
+      console.log('REMOVE_WC_SESSSION_V2', action.payload)
+      const dappsv2 = (!state.dappsv2 ? [] : [...state.dappsv2]).filter(
+        (app) => app.topic !== action.payload.topic
+      )
+      console.log('REMOVE_WC_SESSSION_V2 after', dappsv2)
+      return {
+        ...state,
+        dappsv2,
       }
     }
 

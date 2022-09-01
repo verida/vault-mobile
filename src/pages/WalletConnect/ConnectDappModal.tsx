@@ -62,7 +62,7 @@ const ConnectDappModal = (props: Props) => {
   )
 
   return (
-    <BottomActionsModal title='Wallet connect' onClose={dismissModal}>
+    <BottomActionsModal title='WalletConnect' onClose={dismissModal}>
       <View style={styles.container}>
         <Image
           style={iconStyle.large}

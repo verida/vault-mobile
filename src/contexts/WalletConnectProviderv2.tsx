@@ -8,9 +8,9 @@ import React, {
   useRef,
   useState,
 } from 'react'
-import { Alert, AppState } from 'react-native'
+import { Alert } from 'react-native'
 import { useDispatch } from 'react-redux'
-import { NEAR_SIGNING_METHODS } from 'wallet-connect/constants/near'
+import { NEAR_SIGNING_METHODS } from 'wallet-connect/data/NEARData'
 import {
   approveNearRequest,
   wrongNearAccountRequest,
@@ -21,15 +21,11 @@ import {
 } from 'wallet-connect/helpers/NearWalletUtil'
 import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 
-import usePrevious from 'hooks/usePrevious'
 import { useReduxState } from 'hooks/useReduxState'
 import ConnectDappModalv2 from 'pages/WalletConnect/ConnectDappModalv2'
 import TransactionRequestModalv2 from 'pages/WalletConnect/TransactionRequestModalv2'
-import {
-  authenticatedSelector,
-  dappsSelector,
-  walletConnectRequestSelector,
-} from 'reduxStore/selectors'
+import { removeWalletConnectSessionv2 } from 'reduxStore/actions'
+import { authenticatedSelector, dappsSelectorv2 } from 'reduxStore/selectors'
 import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
 
 import { useModal } from '../hooks/useModal'
@@ -41,18 +37,14 @@ export const WalletConnectContextv2 = createContext<
 function useWalletConnectContextv2() {
   const [initialized, setInitialized] = useState(false)
   const dispatch = useDispatch()
-  const dapps = useReduxState(dappsSelector)
+  const dapps = useReduxState(dappsSelectorv2)
   const authenticated = useReduxState(authenticatedSelector)
-  const requests = useReduxState(walletConnectRequestSelector)
-  const appState = useRef(AppState.currentState)
   const selectedWalletId = useReduxState(selectedWalletSelector)
-  const previousDapps = usePrevious(dapps)
 
   const { showModal, dismissModal } = useModal()
 
   const onSessionProposal = useCallback(
     (proposal: SignClientTypes.EventArguments['session_proposal']) => {
-      console.log('onSessionProposal', JSON.stringify(proposal, null, 2))
       showModal(
         <ConnectDappModalv2 proposal={proposal} dismissModal={dismissModal} />
       )
@@ -62,10 +54,9 @@ function useWalletConnectContextv2() {
 
   const onSessionRequest = useCallback(
     async (requestEvent: SignClientTypes.EventArguments['session_request']) => {
-      console.log('session_request', requestEvent)
       const signClient = await getWC2SignClient()
-      const { id, topic, params } = requestEvent
-      const { chainId, request } = params
+      const { topic, params } = requestEvent
+      const { request } = params
       const requestSession = signClient.session.get(topic)
       const matchedNearAccounts = await nearWallet.getAccounts({ topic })
 
@@ -140,14 +131,22 @@ function useWalletConnectContextv2() {
       signClient.on('session_proposal', onSessionProposal)
       signClient.on('session_request', onSessionRequest)
       // TODOs
-      signClient.on('session_ping', (data) => console.log('ping', data))
-      signClient.on('session_event', (data) => console.log('event', data))
-      signClient.on('session_update', (data) => console.log('update', data))
-      signClient.on('session_delete', (data) => console.log('delete', data))
+      // signClient.on('session_ping', (data) => console.log('ping', data))
+      // signClient.on('session_event', (data) => console.log('event', data))
+      // signClient.on('session_update', (data) => console.log('update', data))
+      signClient.on('session_delete', async (data) => {
+        dispatch(removeWalletConnectSessionv2({ topic: data.topic }))
+      })
     }
 
     initialize()
-  }, [authenticated, initialized, onSessionProposal, onSessionRequest])
+  }, [
+    authenticated,
+    dispatch,
+    initialized,
+    onSessionProposal,
+    onSessionRequest,
+  ])
 
   const [uri, setUri] = useState('')
   useEffect(() => {

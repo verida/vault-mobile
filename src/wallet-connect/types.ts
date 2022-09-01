@@ -3,6 +3,7 @@ import {
   IJsonRpcRequest,
   IWalletConnectSession,
 } from '@walletconnect/types'
+import { SessionTypes, SignClientTypes } from '@walletconnect/typesv2'
 
 export interface DApp {
   walletId: string
@@ -10,6 +11,15 @@ export interface DApp {
   accounts?: string[]
   chainId?: number
   chain?: 'algo' | 'ethr' | 'near' | undefined // TODO: add other networks
+}
+
+export interface DAppv2 {
+  walletId: string
+  id: number
+  topic: string
+  metadata: SignClientTypes.Metadata
+  namespaces: SessionTypes.Namespaces
+  relayProtocol: string
 }
 
 export type WalletConnectSession = IWalletConnectSession

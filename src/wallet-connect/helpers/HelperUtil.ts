@@ -1,4 +1,5 @@
 import { utils } from 'ethers'
+import { NEAR_CHAINS, TNearChain } from 'wallet-connect/data/NEARData'
 
 /**
  * Truncates string (in the middle) via given lenght value
@@ -100,4 +101,8 @@ export function isSolanaChain(chain: string) {
  */
 export function isNearChain(chain: string) {
   return chain.includes('near')
+}
+
+export function formatChainName(chainId: string) {
+  return NEAR_CHAINS[chainId as TNearChain]?.name ?? chainId
 }

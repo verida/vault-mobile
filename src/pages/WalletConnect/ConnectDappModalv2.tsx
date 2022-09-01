@@ -9,6 +9,7 @@ import {
   Text,
   View,
 } from 'react-native'
+import { useDispatch } from 'react-redux'
 import { nearAddresses } from 'wallet-connect/helpers/NearWalletUtil'
 import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 import { DApp } from 'wallet-connect/types'
@@ -19,6 +20,8 @@ import DropDownPicker from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useReduxState } from 'hooks/useReduxState'
+import { approveWalletConnectSessionv2 } from 'reduxStore/actions'
+import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
 import iconStyle from 'styles/icon'
 
 type Props = {
@@ -50,8 +53,11 @@ const ConnectDappModalv2 = (props: Props) => {
   const selectedWallets = useReduxState((state) => state.main.selectedWallet)
   const multiWallets = walletData[selectedWallets]
   const walletAccounts = multiWallets.accounts
+
+  const selectedWalletId = useReduxState(selectedWalletSelector)
   const [, setSelectedWallet] = useState<any>()
   const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
 
   const wallets = useMemo(
     () =>
@@ -89,12 +95,24 @@ const ConnectDappModalv2 = (props: Props) => {
             events: requiredNamespaces[key].events,
           }
         })
-        const { acknowledged } = await signClient.approve({
+        const { acknowledged, topic } = await signClient.approve({
           id,
           relayProtocol: relays[0].protocol,
           namespaces,
         })
         await acknowledged()
+
+        // Save new dApp to redux store
+        dispatch(
+          approveWalletConnectSessionv2({
+            walletId: selectedWalletId,
+            id, // session id
+            topic,
+            metadata,
+            namespaces,
+            relayProtocol: relays[0].protocol,
+          })
+        )
       } catch (error: any) {
         Sentry.captureException(error)
         Alert.alert('Error', 'Unable to connect: ' + error.message)
