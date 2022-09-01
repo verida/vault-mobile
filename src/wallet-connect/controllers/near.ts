@@ -203,7 +203,9 @@ export class NearWalletController {
 
     for (let i = 0; i < transactions.length; i += 1) {
       const transaction = transactions[i]
-      const account = accounts.find((x) => x.accountId === transaction.signerId)
+      const account = accounts.find(
+        (x) => x?.accountId === transaction.signerId
+      )
 
       if (!account) {
         throw new Error('Invalid signer id')

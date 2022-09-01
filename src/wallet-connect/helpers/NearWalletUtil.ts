@@ -11,7 +11,7 @@ export async function createOrRestoreNearWallet() {
   const wallet = await NearWalletController.init('testnet')
   const accounts = await wallet.getAllAccounts()
 
-  nearAddresses = accounts.map((x) => x.accountId)
+  nearAddresses = accounts.map((x) => x!.accountId)
   nearWallet = wallet
 
   return {
