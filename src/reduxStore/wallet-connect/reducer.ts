@@ -167,11 +167,9 @@ export const walletConnectReducer: Reducer<State> = (
     }
 
     case 'REMOVE_WC_SESSSION_V2': {
-      console.log('REMOVE_WC_SESSSION_V2', action.payload)
       const dappsv2 = (!state.dappsv2 ? [] : [...state.dappsv2]).filter(
         (app) => app.topic !== action.payload.topic
       )
-      console.log('REMOVE_WC_SESSSION_V2 after', dappsv2)
       return {
         ...state,
         dappsv2,

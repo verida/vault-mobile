@@ -148,26 +148,6 @@ function useWalletConnectContextv2() {
     onSessionRequest,
   ])
 
-  const [uri, setUri] = useState('')
-  useEffect(() => {
-    async function onConnectV2() {
-      try {
-        console.log('onConnect', uri)
-        const signClient = await getWC2SignClient()
-        signClient.pair({ uri })
-      } catch (err: Error) {
-        console.log('Error connect', err)
-        console.log(err.stacktrace)
-      } finally {
-        setUri('')
-      }
-    }
-    if (!isEmpty(uri)) {
-      onConnectV2()
-      console.log('WC: connecting to uri', uri)
-    }
-  }, [uri])
-
   return {
     dapps,
     requestConnect,
