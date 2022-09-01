@@ -1,5 +1,5 @@
 import { WalletConnectContext } from 'contexts/WalletConnectContext'
-import { WalletConnectContextv2 } from 'contexts/WalletConnectProviderv2'
+import { WalletConnectContextv2 } from 'contexts/WalletConnectContextv2'
 import { useContext } from 'react'
 
 export function useWalletConnect() {
