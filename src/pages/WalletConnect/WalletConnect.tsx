@@ -2,8 +2,8 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container } from 'native-base'
 import React from 'react'
-import { Image, StyleSheet, View } from 'react-native'
-import { ScrollView, TouchableOpacity } from 'react-native-gesture-handler'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 import { connect } from 'react-redux'
 
@@ -120,6 +120,20 @@ const WalletConnectScreen = () => {
                     </View>
                   </TouchableOpacity>
                 ))}
+              </>
+            )}
+
+            {dapps.length === 0 && dappsv2.length === 0 && (
+              <>
+                <Spacer height={32} />
+                <Text
+                  style={[
+                    text.grey,
+                    styles.label,
+                    { flex: 1, alignSelf: 'center' },
+                  ]}>
+                  {'No dApps'}
+                </Text>
               </>
             )}
           </View>

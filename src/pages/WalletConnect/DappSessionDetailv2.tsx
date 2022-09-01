@@ -5,6 +5,7 @@ import { Icon } from 'native-base'
 import React, { Fragment, useEffect, useState } from 'react'
 import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useDispatch } from 'react-redux'
+import { nearAddresses } from 'wallet-connect/helpers/NearWalletUtil'
 import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 import { DAppv2 } from 'wallet-connect/types'
 
@@ -58,6 +59,7 @@ const DappSessionDetail = () => {
 
   const expiryDate = new Date(session!.expiry * 1000)
   const { namespaces } = session
+  console.log('session', session)
 
   // Handle deletion of a session
   async function onDeleteSession() {
@@ -98,6 +100,12 @@ const DappSessionDetail = () => {
             )
           })}
 
+          {nearAddresses?.[0] && (
+            <View style={styles.row}>
+              <Text style={styles.label}>Account ID</Text>
+              <Text style={styles.value}>{nearAddresses[0]}</Text>
+            </View>
+          )}
           <View style={styles.row}>
             <Text style={styles.label}>Expiry</Text>
             <Text style={styles.value}>{expiryDate.toDateString()}</Text>
