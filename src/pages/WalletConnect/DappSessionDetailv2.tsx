@@ -59,7 +59,6 @@ const DappSessionDetail = () => {
 
   const expiryDate = new Date(session!.expiry * 1000)
   const { namespaces } = session
-  console.log('session', session)
 
   // Handle deletion of a session
   async function onDeleteSession() {
