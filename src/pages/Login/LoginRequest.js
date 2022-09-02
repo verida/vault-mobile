@@ -191,8 +191,8 @@ export default (props) => {
       const signature = keyring.getSeed()
       const did = await account.did()
       const contextName = info.request.context
-      const deviceId = info.params.deviceId
-        ? info.params.deviceId
+      const deviceId = info.params.userAgent
+        ? info.params.userAgent
         : `${contextName} (${info.request.loginDomain})`
 
       const context = await client.openContext(contextName, true)
