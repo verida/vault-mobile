@@ -1,6 +1,6 @@
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
-import { TextInput, View } from 'react-native'
+import { KeyboardAvoidingView, Platform, TextInput, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
@@ -39,48 +39,51 @@ const EditProfile = (props: any) => {
   return (
     <Container>
       <NavigationHeader title={title} />
-      <Content
-        contentContainerStyle={{
-          flex: 1,
-          margin: 20,
-          justifyContent: 'space-between',
-        }}>
-        <View>
-          <Label>{option.label}</Label>
-          {option.type === 'input' && (
-            <TextInput
-              placeholder={`Enter the ${option.label}`}
-              style={InputStyles.input}
-              value={edited}
-              autoFocus={true}
-              onChangeText={setEdited}
-            />
-          )}
-          {option.type === 'select' && (
-            <DropDownPicker
-              searchable={true}
-              searchablePlaceholder='Search...'
-              placeholder=''
-              defaultValue={option.value}
-              items={COUNTRIES}
-              containerStyle={InputStyles.select}
-              onChangeItem={onChangeItem}
-            />
-          )}
-          {option.type === 'textarea' && (
-            <TextInput
-              placeholder={`Enter the ${option.label}`}
-              style={InputStyles.textarea}
-              value={edited}
-              multiline
-              numberOfLines={4}
-              maxLength={255}
-              editable
-              autoFocus={true}
-              onChangeText={setEdited}
-            />
-          )}
-          {/* {option.type === 'phone' && (
+      <KeyboardAvoidingView
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        style={{ flex: 1 }}>
+        <Content
+          contentContainerStyle={{
+            flex: 1,
+            margin: 20,
+            justifyContent: 'space-between',
+          }}>
+          <View style={{ flex: 1 }}>
+            <Label>{option.label}</Label>
+            {option.type === 'input' && (
+              <TextInput
+                placeholder={`Enter the ${option.label}`}
+                style={InputStyles.input}
+                value={edited}
+                autoFocus={true}
+                onChangeText={setEdited}
+              />
+            )}
+            {option.type === 'select' && (
+              <DropDownPicker
+                searchable={true}
+                searchablePlaceholder='Search...'
+                placeholder=''
+                defaultValue={option.value}
+                items={COUNTRIES}
+                containerStyle={InputStyles.select}
+                onChangeItem={onChangeItem}
+              />
+            )}
+            {option.type === 'textarea' && (
+              <TextInput
+                placeholder={`Enter the ${option.label}`}
+                style={InputStyles.textarea}
+                value={edited}
+                multiline
+                numberOfLines={4}
+                maxLength={255}
+                editable
+                autoFocus={true}
+                onChangeText={setEdited}
+              />
+            )}
+            {/* {option.type === 'phone' && (
             <IntlPhoneInput
               // ref={el => setPhoneInputRef(el)}
               containerStyle={{ ...InputStyles.input, paddingVertical: 4 }}
@@ -88,11 +91,12 @@ const EditProfile = (props: any) => {
               defaultCountry='SG'
             />
           )} */}
-        </View>
-        <Button disabled={disabled} onPress={saveValue}>
-          Save Changes
-        </Button>
-      </Content>
+          </View>
+          <Button disabled={disabled} onPress={saveValue}>
+            Save Changes
+          </Button>
+        </Content>
+      </KeyboardAvoidingView>
     </Container>
   )
 }
