@@ -29,6 +29,7 @@ export const selectTokens = (state) => {
         let addedInfo = {
           identifier: identifier,
           addressMap: chainToken.addressMap,
+          chainName: chainToken.chainName,
           referenceLabel: chainToken.referenceLabel,
           explorerURL: chainToken.explorerURL,
           ...singleSubToken,
@@ -54,6 +55,7 @@ export const selectChains = (state) => {
         path: singleToken.derivationPath,
         name: singleToken.name,
         icon: singleToken.icon,
+        chainName: singleToken.chainName,
       }
     })
   }
