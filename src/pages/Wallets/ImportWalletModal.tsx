@@ -15,10 +15,10 @@ import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import InputStyles from 'styles/inputs'
-import DropDownPicker from 'components/Select'
 
 type Props = {
   visible: boolean

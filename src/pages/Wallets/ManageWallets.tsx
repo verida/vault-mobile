@@ -13,8 +13,8 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
 import {
   createNewWallet,
-  importWallet,
   deleteWallet,
+  importWallet,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
 import {

@@ -12,7 +12,6 @@ export default ({
   onPressSeedPhrase,
   onPressPrivateKey,
 }) => {
-  console.log(item, 'ChainAddressesListItem.js item')
   const { showActionSheetWithOptions } = useActionSheet()
   let options = ['Copy address', 'Show Seed Phrase']
   if (item.addressMap === 'evm') {

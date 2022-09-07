@@ -2,7 +2,6 @@ import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
-import * as ethers from 'ethers'
 import {
   getWalletAddressForAsset,
   rawDataToReduxState,

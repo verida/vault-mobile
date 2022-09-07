@@ -1,7 +1,7 @@
+import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
-import Clipboard from '@react-native-community/clipboard'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'

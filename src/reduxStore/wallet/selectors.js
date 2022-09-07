@@ -28,7 +28,6 @@ export const getTotalBalance = (state) => {
 
 export const getSingleWalletChain = (state) => {
   const wallet = getWallets(state)
-  console.log(wallet, 'wallet')
   if (wallet.type === 'single' && wallet.chain) {
     return wallet.chain
   } else {

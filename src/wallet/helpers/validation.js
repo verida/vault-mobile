@@ -1,7 +1,7 @@
 import algosdk from 'algosdk'
+import * as ethers from 'ethers'
 import { getTokenChain } from 'wallet/helpers/tokens'
 import Web3 from 'web3'
-import * as ethers from 'ethers'
 
 const bip39 = require('bip39')
 
@@ -28,7 +28,6 @@ export const isValidWalletAddress = (address, tokenAddress) => {
 export const isValidSeedPhrase = (data) => {
   const { phrase, privateKey, blockchain, inputSwitch } = data
 
-  console.log(data)
   if (blockchain === 'multi' || blockchain === 'near') {
     // valid bip39 12 word seedphrase
     return bip39.validateMnemonic(phrase)

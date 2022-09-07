@@ -285,7 +285,7 @@ class AccountManager {
 
       const chains = selectChains(store.getState())
 
-      let userGeneratedWallets = multiChainWallet.generateWalletsForChains({
+      const userGeneratedWallets = multiChainWallet.generateWalletsForChains({
         privateKey: null,
         mnemonic: userHDWalletMnemonic,
         chains,
