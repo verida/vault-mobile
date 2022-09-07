@@ -1,6 +1,7 @@
 import algosdk from 'algosdk'
 import { getTokenChain } from 'wallet/helpers/tokens'
 import Web3 from 'web3'
+import * as ethers from 'ethers'
 
 const bip39 = require('bip39')
 
@@ -24,6 +25,43 @@ export const isValidWalletAddress = (address, tokenAddress) => {
   }
 }
 
-export const isValidSeedPhrase = (phrase) => {
-  return bip39.validateMnemonic(phrase)
+export const isValidSeedPhrase = (data) => {
+  const { phrase, privateKey, blockchain, inputSwitch } = data
+
+  console.log(data)
+  if (blockchain === 'multi' || blockchain === 'near') {
+    // valid bip39 12 word seedphrase
+    return bip39.validateMnemonic(phrase)
+  } else if (blockchain === 'algorand') {
+    // is valid algorand 25 word seedphrase
+    try {
+      const algoWallet = algosdk.mnemonicToSecretKey(phrase)
+      if (algoWallet && algoWallet.addr) {
+        return true
+      } else {
+        return false
+      }
+    } catch (err) {
+      return false
+    }
+  } else if (blockchain === 'ethereum' || blockchain === 'polygon') {
+    if (inputSwitch === 'privateKey') {
+      // is valid evm compatible privateKey
+      try {
+        const wallet = new ethers.Wallet(privateKey)
+        if (wallet && wallet.address) {
+          return true
+        } else {
+          return false
+        }
+      } catch (err) {
+        return false
+      }
+    } else {
+      // valid bip39 12 word seedphrase
+      return bip39.validateMnemonic(phrase)
+    }
+  } else {
+    return bip39.validateMnemonic(phrase)
+  }
 }
