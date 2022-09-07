@@ -2,6 +2,7 @@ import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
+import * as ethers from 'ethers'
 import {
   getWalletAddressForAsset,
   rawDataToReduxState,
@@ -15,7 +16,7 @@ import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   getAllWallets,
-  getSelectedWallet,
+  getSelectedWalletId,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
@@ -51,12 +52,16 @@ export const getBalances = () => {
     try {
       const wallets = getWalletsData(getState().main)
       const chains = selectChains(getState())
-      const requestBody = Object.values(chains).map((chain) => {
-        return {
-          address: wallets[chain.addressMap].address,
-          chainId: chain.data,
-        }
-      })
+      const requestBody = Object.values(chains)
+        .filter((chain) => wallets[chain.addressMap])
+        .map((chain) => {
+          return {
+            address: wallets[chain.addressMap].address,
+            chainId: chain.data,
+          }
+        })
+
+      console.log(requestBody, 'dispatch requestBody')
 
       const balanceData = await walletProviderApi.post(
         'balance/getBalanceByChains',
@@ -234,7 +239,7 @@ export const createNewWallet = (data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
         )
 
       const currentWalletsData = getAllWallets(getState().main)
@@ -277,17 +282,79 @@ export const createNewWallet = (data) => {
   }
 }
 
+export const importWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      console.log(data, 'importWallet')
+
+      const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
+      const privateKey =
+        data.inputSwitch === 'privateKey' ? data.privateKey : null
+      const walletType = data.blockchain === 'multi' ? 'multi' : 'single'
+      const chain = data.blockchain === 'multi' ? null : data.blockchain
+
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      const wallet = {
+        walletType,
+        label: data.name,
+      }
+      if (mnemonic) wallet.mnemonic = mnemonic
+      if (privateKey) wallet.privateKey = privateKey
+      if (chain) wallet.chain = chain
+      console.log(wallet, 'new wallet')
+      const saved = await walletDb?.save(wallet)
+      console.log(saved, 'saved')
+      const walletID = saved?.id
+      console.log(walletID, 'saved walletID')
+
+      const hdWallets = await walletDb?.getMany()
+      console.log(hdWallets, 'raw wallets data')
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+        console.log(JSON.stringify(wallets), 'new generated wallets')
+
+        await dispatch(saveUserWallets(wallets))
+
+        await dispatch(setSelectedWallet(walletID))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+        await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
+      }
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      console.log(error, 'db error')
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
 export const deleteWallet = (walletId) => {
   return async (dispatch, getState) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const currentlySelectedWallet = getSelectedWallet(getState().main)
+      const currentlySelectedWallet = getSelectedWalletId(getState().main)
 
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
         )
 
       await walletDb?.delete(walletId)
@@ -332,7 +399,7 @@ export const renameWallet = (walletId, data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
         )
 
       const row = await walletDb?.get(walletId)
