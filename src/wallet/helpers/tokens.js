@@ -54,18 +54,25 @@ export const parseUnitsForSending = (quantity, decimalPlaces) => {
 export const rawDataToReduxState = (walletData, chains) => {
   let wallets = {}
   walletData.forEach((walt) => {
-    let mnemonic = walt.mnemonic
     let waltId = walt._id
-    let accounts = multiChainWallet.generateWalletsForChains(mnemonic, chains)
+    let accounts = multiChainWallet.generateWalletsForChains({
+      privateKey: walt.privateKey ? walt.privateKey : null,
+      mnemonic: walt.mnemonic ? walt.mnemonic : null,
+      chains,
+      chain: walt.chain ? walt.chain : null,
+    })
 
     wallets[waltId] = {
-      seedPhrase: mnemonic,
+      seedPhrase: walt.mnemonic ? walt.mnemonic : null,
+      privateKey: walt.privateKey ? walt.privateKey : null,
       type: walt.walletType,
       label: walt.label,
       id: waltId,
       accounts,
+      chain: walt.chain ? walt.chain : null,
     }
   })
+
   return wallets
 }
 
