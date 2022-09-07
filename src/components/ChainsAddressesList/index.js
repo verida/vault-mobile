@@ -3,12 +3,18 @@ import { FlatList } from 'react-native'
 
 import ChainAddressesListItem from './ChainAddressesListItem'
 
-export default ({ list, onPressSeedPhrase, onPressPrivateKey }) => {
+export default ({
+  list,
+  singleWallet,
+  onPressSeedPhrase,
+  onPressPrivateKey,
+}) => {
   const renderItem = ({ item }) => (
     <ChainAddressesListItem
       item={item}
       onPressPrivateKey={onPressPrivateKey}
       onPressSeedPhrase={onPressSeedPhrase}
+      singleWallet={singleWallet}
     />
   )
 
