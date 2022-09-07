@@ -18,6 +18,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import InputStyles from 'styles/inputs'
+import DropDownPicker from 'components/Select'
 
 type Props = {
   visible: boolean
@@ -26,20 +27,35 @@ type Props = {
 }
 
 export default ({ visible, hideModal, onImportWallet }: Props) => {
+  const privateKeyEnabledChains = ['ethereum', 'polygon']
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
+  const [privateKey, setPrivateKey] = useState('')
+  const [blockchain, setBlockchain] = useState('multi')
+  const [inputSwitch, setInputSwitch] = useState('seedPhrase')
+  const onBlockchainChange = (option: any) => {
+    if (!privateKeyEnabledChains.includes(option.value)) {
+      setInputSwitch('seedPhrase')
+    }
+    setBlockchain(option.value)
+  }
+  const onSwitchChange = (option: any) => setInputSwitch(option.value)
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
-    setPhrase(clipboardData)
+    if (inputSwitch === 'seedPhrase') {
+      setPhrase(clipboardData)
+    } else {
+      setPrivateKey(clipboardData)
+    }
   }
 
   const showAlert = () =>
     Alert.alert('Invalid seed phrase', `That's not a valid seed phrase`)
 
   const onPressSend = () => {
-    if (isValidSeedPhrase(phrase)) {
-      onImportWallet({ phrase, name })
+    if (isValidSeedPhrase({ phrase, privateKey, blockchain, inputSwitch })) {
+      onImportWallet({ phrase, name, blockchain, privateKey, inputSwitch })
       hideModal()
     } else {
       showAlert()
@@ -73,17 +89,73 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
             placeholder={'eg. Friendly wallet name'}
           />
 
-          <Label>Enter seed phrase</Label>
-          <TextInput
-            value={phrase}
-            multiline
-            editable
-            autoCorrect={false}
-            autoCapitalize='none'
-            onChangeText={setPhrase}
-            style={[InputStyles.textarea]}
-            placeholder={'eg. Open despair creek road again ice least'}
+          <Label>Blockchain</Label>
+          <DropDownPicker
+            showArrow={true}
+            placeholder=''
+            defaultValue='multi'
+            items={[
+              { label: 'Multichain Wallet', value: 'multi' },
+              { label: 'Ethereum', value: 'ethereum' },
+              { label: 'Near', value: 'near' },
+              { label: 'Algorand', value: 'algorand' },
+              { label: 'Polygon', value: 'polygon' },
+            ]}
+            containerStyle={InputStyles.select}
+            onChangeItem={onBlockchainChange}
+            zIndex={6000}
           />
+
+          {privateKeyEnabledChains.includes(blockchain) ? (
+            <>
+              <Label>Import using</Label>
+              <DropDownPicker
+                showArrow={true}
+                placeholder=''
+                defaultValue='seedPhrase'
+                items={[
+                  { label: 'Seed Phrase', value: 'seedPhrase' },
+                  { label: 'Private Key', value: 'privateKey' },
+                ]}
+                containerStyle={InputStyles.select}
+                onChangeItem={onSwitchChange}
+              />
+            </>
+          ) : (
+            <></>
+          )}
+
+          {inputSwitch === 'seedPhrase' && (
+            <>
+              <Label>Enter seed phrase</Label>
+              <TextInput
+                value={phrase}
+                multiline
+                editable
+                autoCorrect={false}
+                autoCapitalize='none'
+                onChangeText={setPhrase}
+                style={[InputStyles.textarea]}
+                placeholder={'eg. Open despair creek road again ice least'}
+              />
+            </>
+          )}
+
+          {inputSwitch === 'privateKey' && (
+            <>
+              <Label>Enter private key</Label>
+              <TextInput
+                value={privateKey}
+                multiline
+                editable
+                autoCorrect={false}
+                autoCapitalize='none'
+                onChangeText={setPrivateKey}
+                style={[InputStyles.textarea]}
+                placeholder={'eg. 0x...'}
+              />
+            </>
+          )}
 
           <TouchableOpacity
             onPress={fetchCopiedText}
