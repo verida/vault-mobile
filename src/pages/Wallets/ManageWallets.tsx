@@ -13,12 +13,13 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
 import {
   createNewWallet,
+  importWallet,
   deleteWallet,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
 import {
   getAllWallets,
-  getSelectedWallet,
+  getSelectedWalletId,
   getWalletCount,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
@@ -46,6 +47,7 @@ export type WalletType = {
   seedPhrase: string
   label: string
   accounts: [AccountsType]
+  chain?: string
 }
 
 export type walletIdType = string
@@ -213,7 +215,7 @@ const mapStateToProps = (rootState: any) => {
   return {
     wallets: getAllWallets(state),
     walletCount: getWalletCount(state),
-    selectedWalletId: getSelectedWallet(state),
+    selectedWalletId: getSelectedWalletId(state),
     loading: getWalletProcessingState(state),
   }
 }
@@ -224,7 +226,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       dispatch(createNewWallet(args) as any),
     onSetSelectedWallet: (walletID: string) =>
       dispatch(setSelectedWallet(walletID) as any),
-    onImportWallet: (args: any) => dispatch(createNewWallet(args) as any),
+    onImportWallet: (args: any) => dispatch(importWallet(args) as any),
     onDeleteWallet: (walletId: string) =>
       dispatch(deleteWallet(walletId) as any),
   }
