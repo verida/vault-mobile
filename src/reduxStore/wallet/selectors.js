@@ -26,11 +26,28 @@ export const getTotalBalance = (state) => {
   }
 }
 
+export const getSingleWalletChain = (state) => {
+  const wallet = getWallets(state)
+  console.log(wallet, 'wallet')
+  if (wallet.type === 'single' && wallet.chain) {
+    return wallet.chain
+  } else {
+    return null
+  }
+}
+
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
   const balances = getBalancesData(state.main)
   const total = getTotalBalance(state.main)
-  const tokens = selectTokens(state)
+  const singleChain = getSingleWalletChain(state.main)
+  const allTokens = selectTokens(state)
+  let tokens
+  if (singleChain) {
+    tokens = allTokens.filter((token) => token.chainName === singleChain)
+  } else {
+    tokens = allTokens
+  }
   let list = []
   if (!isEmpty(balances)) {
     list = tokens.map((token) => {
@@ -97,7 +114,7 @@ export const getTokensData = (state) => {
   }
 }
 
-export const getSelectedWallet = (state) => {
+export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
@@ -115,18 +132,18 @@ export const getWalletCount = (state) => {
 }
 
 export const getWalletsData = createSelector(
-  getSelectedWallet,
+  getSelectedWalletId,
   getAllWallets,
   (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
 )
 
 export const getWallets = createSelector(
-  getSelectedWallet,
+  getSelectedWalletId,
   getAllWallets,
   (selectedWallet, wallets) => wallets?.[selectedWallet] || {}
 )
 
-export const getAddressesForWallet = (state, ID) => {
+export const getWalletObjectById = (state, ID) => {
   return state.wallets.data[ID] || {}
 }
 
