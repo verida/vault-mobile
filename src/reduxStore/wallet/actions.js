@@ -61,8 +61,6 @@ export const getBalances = () => {
           }
         })
 
-      console.log(requestBody, 'dispatch requestBody')
-
       const balanceData = await walletProviderApi.post(
         'balance/getBalanceByChains',
         {
@@ -287,8 +285,6 @@ export const importWallet = (data) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      console.log(data, 'importWallet')
-
       const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
       const privateKey =
         data.inputSwitch === 'privateKey' ? data.privateKey : null
@@ -308,19 +304,14 @@ export const importWallet = (data) => {
       if (mnemonic) wallet.mnemonic = mnemonic
       if (privateKey) wallet.privateKey = privateKey
       if (chain) wallet.chain = chain
-      console.log(wallet, 'new wallet')
       const saved = await walletDb?.save(wallet)
-      console.log(saved, 'saved')
       const walletID = saved?.id
-      console.log(walletID, 'saved walletID')
 
       const hdWallets = await walletDb?.getMany()
-      console.log(hdWallets, 'raw wallets data')
 
       if (hdWallets) {
         const chains = selectChains(getState())
         const wallets = rawDataToReduxState(hdWallets, chains)
-        console.log(JSON.stringify(wallets), 'new generated wallets')
 
         await dispatch(saveUserWallets(wallets))
 
@@ -335,7 +326,6 @@ export const importWallet = (data) => {
       }
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      console.log(error, 'db error')
       dispatch({
         type: WALLET_PROCESSING_FAILED,
         error: error,
