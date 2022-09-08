@@ -18,7 +18,6 @@ export const tokensReducer = (state = initialState, action) => {
         ...state,
         fetching: true,
         error: undefined,
-        data: [],
         timeFetched: undefined,
       }
     case FETCHED_TOKENS:

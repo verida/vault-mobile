@@ -3,10 +3,6 @@ import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
-import {
-  NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER,
-  NEAR_GAS_AMOUNT_TRANSFER,
-} from 'wallet/constants'
 import { walletProviderApi } from 'wallet/helpers/api'
 import {
   getTokenAddress,
@@ -55,9 +51,7 @@ const getTransactionParams = async (transactionData, wallets) => {
   }
 
   if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const tokenChainRef = getTokenChainReference(transactionData.token.asset)
-    const fromAddress =
-      tokenChainRef === '80001' ? wallets.poly.address : wallets.ethr.address
+    const fromAddress = wallets[transactionData.token.addressMap].address
     const toAddress = transactionData.address
 
     let input
@@ -100,26 +94,6 @@ const getTransactionParams = async (transactionData, wallets) => {
     requestBody
   )
 
-  if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const { gasPrice, gasEstimate } = request.data.data
-
-    return {
-      gasPrice: gasPrice,
-      gas: gasEstimate,
-      fee: gasEstimate * gasPrice,
-    }
-  }
-
-  if (getTokenChain(transactionData.token.asset) === 'near') {
-    const { gas_price, block_hash } = request.data.data
-
-    const units = isNativeToken(transactionData.token.asset)
-      ? NEAR_GAS_AMOUNT_TRANSFER
-      : NEAR_GAS_AMOUNT_FUNGIBLE_TRANSFER
-
-    return { fee: parseInt(gas_price, 10) * units, gas_price, block_hash }
-  }
-
   return request.data.data
 }
 
@@ -129,42 +103,42 @@ const sendTransaction = async (
   state
 ) => {
   const wallets = getWalletsData(state)
-  const chainMapping = {
-    'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=': 'algo',
-    'eip155:4': 'ethr',
-    'near:testnet': 'near',
-    'eip155:80001': 'poly',
-  }
-  const { amount, token, address } = transactionData
-  const { asset, decimal } = token
-  const parsedAmount =
-    amount && decimal ? parseUnitsForSending(amount, token.decimal) : 0
+  const amount = parseUnitsForSending(
+    transactionData.amount,
+    transactionData.token.decimal
+  )
 
-  const tokenAddress = getTokenAddress(asset)
-  const isTokenNative = isNativeToken(asset)
-  const tokenChain = getTokenChain(asset)
-  const tokenChainReference = getTokenChainReference(asset)
+  const tokenAddress = getTokenAddress(transactionData.token.asset)
+  const isTokenNative = isNativeToken(transactionData.token.asset)
+  const tokenChain = getTokenChain(transactionData.token.asset)
+  const tokenChainReference = getTokenChainReference(
+    transactionData.token.asset
+  )
 
-  const chainWallet =
-    wallets[chainMapping[tokenChain + ':' + tokenChainReference]]
-  const receiverAddress = address
+  const chainWallet = wallets[transactionData.token.addressMap]
+  const receiverAddress = transactionData.address
 
   let txString
   let txData
   let txIdAlgo
 
   if (tokenChain === 'near') {
+    const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
+    const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
+    const publicKey = keyPair.getPublicKey()
+
     let transactionParams = getTransactionParamsData(state)
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
-      asset: asset,
+      asset: transactionData.token.asset,
+      publicKey: publicKey.toString(),
     })
 
     let actions
     let txAddress
     if (isTokenNative) {
-      actions = [nearAPI.transactions.transfer(parsedAmount.toString())]
+      actions = [nearAPI.transactions.transfer(amount.toString())]
       txAddress = receiverAddress
     } else {
       actions = [
@@ -172,7 +146,7 @@ const sendTransaction = async (
           'ft_transfer',
           {
             receiver_id: receiverAddress,
-            amount: parsedAmount.toString(),
+            amount: amount.toString(),
           },
           5430000000000,
           1
@@ -180,10 +154,6 @@ const sendTransaction = async (
       ]
       txAddress = tokenAddress
     }
-
-    const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
-    const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
-    const publicKey = keyPair.getPublicKey()
 
     const recentBlockHash = nearAPI.utils.serialize.base_decode(
       transactionParams.block_hash
@@ -222,10 +192,10 @@ const sendTransaction = async (
     txString = Buffer.from(signedSerializedTx).toString('base64')
 
     txData = {
-      amount: parsedAmount,
+      amount: amount,
       to: receiverAddress,
       from: chainWallet.address,
-      token: token,
+      token: transactionData.token,
       chain: tokenChain,
     }
   } else if (tokenChain === 'eip155') {
@@ -233,14 +203,14 @@ const sendTransaction = async (
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
-      asset: asset,
+      asset: transactionData.token.asset,
     })
 
     let transaction
     if (isTokenNative) {
       transaction = {
         to: receiverAddress,
-        value: parsedAmount.toHexString().toString(),
+        value: amount.toHexString().toString(),
         gasPrice: transactionParams.gasPrice,
         // Hardcoded based on few stackoverflow links and instructions of pranav, doesnt work without.
         gasLimit: '0x13881',
@@ -261,7 +231,7 @@ const sendTransaction = async (
         to: tokenAddress,
         value: '0x0',
         data: contract.methods
-          .transfer(receiverAddress, parsedAmount.toHexString().toString())
+          .transfer(receiverAddress, amount.toHexString().toString())
           .encodeABI(),
         nonce: request.data.data,
         chainID: tokenChainReference,
@@ -273,7 +243,7 @@ const sendTransaction = async (
     if (tokenChainReference === '4') {
       common = new Common({ chain: Chain.Rinkeby })
     } else {
-      common = Common.custom({ chainId: 80001 })
+      common = Common.custom({ chainId: tokenChainReference })
     }
 
     const tx = Transaction.fromTxData(transaction, { common })
@@ -290,17 +260,17 @@ const sendTransaction = async (
     txString = '0x' + serializedTx.toString('hex')
 
     txData = {
-      amount: parsedAmount,
+      amount: amount,
       to: receiverAddress,
       from: chainWallet.address,
-      token: token,
+      token: transactionData.token,
       chain: tokenChain,
     }
   } else if (tokenChain === 'algorand') {
     let transactionParams
     if (isAssetEnablingTransaction) {
       const requestBody = {
-        asset: asset,
+        asset: transactionData.token.asset,
       }
       const request = await walletProviderApi.post(
         'transaction/params',
@@ -317,7 +287,7 @@ const sendTransaction = async (
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
         chainWallet.address,
         receiverAddress,
-        parseInt(parsedAmount.toHexString(), 16),
+        parseInt(amount.toHexString(), 16),
         undefined,
         undefined,
         transactionParams
@@ -350,10 +320,10 @@ const sendTransaction = async (
     txString = transaction.signTxn(wallet.sk).toString()
 
     txData = {
-      amount: parsedAmount,
+      amount: amount,
       to: receiverAddress,
       from: chainWallet.address,
-      token: token,
+      token: transactionData.token,
       chain: tokenChain,
     }
   }
@@ -361,7 +331,7 @@ const sendTransaction = async (
   if (txString) {
     const requestBody = {
       signedTransaction: txString,
-      asset: asset,
+      asset: transactionData.token.asset,
     }
 
     if (txIdAlgo) {
