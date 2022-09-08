@@ -6,6 +6,7 @@ import { connect } from 'react-redux'
 import _ from 'underscore'
 
 import AccountManager from 'api/AccountManager'
+import AlertNotification from 'components/AlertNotification'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 
@@ -16,6 +17,7 @@ import { BLACK_COLOR_OPACITY } from '../../constants/color'
 
 const SeedPhraseGenerated = (props) => {
   const [words, setWords] = useState('Generating seed phrase ...')
+  const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
 
   useEffect(() => {
     const init = async () => {
@@ -35,6 +37,15 @@ const SeedPhraseGenerated = (props) => {
     props.navigation.navigate('Home')
   }
 
+  const onClosePress = () => {
+    setIsSeedPhraseCopied(false)
+  }
+
+  const copyToClipBoard = () => {
+    Clipboard.setString(words)
+    setIsSeedPhraseCopied(true)
+  }
+
   return (
     <View>
       <NavigationHeader title='Record Your Seed Phrase' />
@@ -43,7 +54,7 @@ const SeedPhraseGenerated = (props) => {
         <WordCard words={words} />
         <Button
           color='transparent-grey'
-          onPress={() => Clipboard.setString(words)}
+          onPress={copyToClipBoard}
           style={{ marginTop: 10 }}>
           {'Copy to clipboard\u00A0'}
           <Icon name='copy' />
@@ -54,6 +65,14 @@ const SeedPhraseGenerated = (props) => {
         <Button color='transparent-grey' onPress={onRemindLater}>
           Remind me later
         </Button>
+        <AlertNotification
+          onClosePress={onClosePress}
+          isOpened={isSeedPhraseCopied}
+          type='success'
+          bodyText='Seed Phrase copied to clipboard'
+          title='Seed Phrase Copied'
+          timeOutInSeconds={5}
+        />
       </Layout>
     </View>
   )
