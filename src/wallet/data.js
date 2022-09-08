@@ -108,12 +108,10 @@ const sendTransaction = async (
     transactionData.token.decimal
   )
 
-  const tokenAddress = getTokenAddress(transactionData.token.asset)
-  const isTokenNative = isNativeToken(transactionData.token.asset)
-  const tokenChain = getTokenChain(transactionData.token.asset)
-  const tokenChainReference = getTokenChainReference(
-    transactionData.token.asset
-  )
+  const tokenAddress = getTokenAddress(asset)
+  const isTokenNative = isNativeToken(asset)
+  const tokenChain = getTokenChain(asset)
+  const tokenChainReference = getTokenChainReference(asset)
 
   const chainWallet = wallets[transactionData.token.addressMap]
   const receiverAddress = transactionData.address
@@ -138,7 +136,7 @@ const sendTransaction = async (
     let actions
     let txAddress
     if (isTokenNative) {
-      actions = [nearAPI.transactions.transfer(amount.toString())]
+      actions = [nearAPI.transactions.transfer(parsedAmount.toString())]
       txAddress = receiverAddress
     } else {
       actions = [
@@ -146,7 +144,7 @@ const sendTransaction = async (
           'ft_transfer',
           {
             receiver_id: receiverAddress,
-            amount: amount.toString(),
+            amount: parsedAmount.toString(),
           },
           5430000000000,
           1
@@ -192,10 +190,10 @@ const sendTransaction = async (
     txString = Buffer.from(signedSerializedTx).toString('base64')
 
     txData = {
-      amount: amount,
+      amount: parsedAmount,
       to: receiverAddress,
       from: chainWallet.address,
-      token: transactionData.token,
+      token: token,
       chain: tokenChain,
     }
   } else if (tokenChain === 'eip155') {
@@ -203,14 +201,14 @@ const sendTransaction = async (
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
-      asset: transactionData.token.asset,
+      asset: asset,
     })
 
     let transaction
     if (isTokenNative) {
       transaction = {
         to: receiverAddress,
-        value: amount.toHexString().toString(),
+        value: parsedAmount.toHexString().toString(),
         gasPrice: transactionParams.gasPrice,
         // Hardcoded based on few stackoverflow links and instructions of pranav, doesnt work without.
         gasLimit: '0x13881',
@@ -231,7 +229,7 @@ const sendTransaction = async (
         to: tokenAddress,
         value: '0x0',
         data: contract.methods
-          .transfer(receiverAddress, amount.toHexString().toString())
+          .transfer(receiverAddress, parsedAmount.toHexString().toString())
           .encodeABI(),
         nonce: request.data.data,
         chainID: tokenChainReference,
@@ -260,17 +258,17 @@ const sendTransaction = async (
     txString = '0x' + serializedTx.toString('hex')
 
     txData = {
-      amount: amount,
+      amount: parsedAmount,
       to: receiverAddress,
       from: chainWallet.address,
-      token: transactionData.token,
+      token: token,
       chain: tokenChain,
     }
   } else if (tokenChain === 'algorand') {
     let transactionParams
     if (isAssetEnablingTransaction) {
       const requestBody = {
-        asset: transactionData.token.asset,
+        asset: asset,
       }
       const request = await walletProviderApi.post(
         'transaction/params',
@@ -287,7 +285,7 @@ const sendTransaction = async (
       transaction = algosdk.makePaymentTxnWithSuggestedParams(
         chainWallet.address,
         receiverAddress,
-        parseInt(amount.toHexString(), 16),
+        parseInt(parsedAmount.toHexString(), 16),
         undefined,
         undefined,
         transactionParams
@@ -320,10 +318,10 @@ const sendTransaction = async (
     txString = transaction.signTxn(wallet.sk).toString()
 
     txData = {
-      amount: amount,
+      amount: parsedAmount,
       to: receiverAddress,
       from: chainWallet.address,
-      token: transactionData.token,
+      token: token,
       chain: tokenChain,
     }
   }
@@ -331,7 +329,7 @@ const sendTransaction = async (
   if (txString) {
     const requestBody = {
       signedTransaction: txString,
-      asset: transactionData.token.asset,
+      asset: asset,
     }
 
     if (txIdAlgo) {
