@@ -41,9 +41,9 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
   }
   const onSwitchChange = (option: any) => setInputSwitch(option.value)
   const isDisabled = () => {
-    if(!name) return true
-    if(inputSwitch === 'seedPhrase' && !phrase) return true
-    if(inputSwitch === 'privateKey' && !privateKey) return true
+    if (!name) return true
+    if (inputSwitch === 'seedPhrase' && !phrase) return true
+    if (inputSwitch === 'privateKey' && !privateKey) return true
     return false
   }
   const disabled = isDisabled()
