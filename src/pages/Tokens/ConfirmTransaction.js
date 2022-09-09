@@ -33,8 +33,8 @@ const ConfirmTransaction = ({
 }) => {
   const { token, amount, address } = route.params
   const tokenChain = getTokenChain(token.asset)
-  const accountAddress = getWalletAddressForToken(token.addressMap, wallets)
-  const nativeToken = getNativeForChain(tokens, token.identifier)
+  const accountAddress = getWalletAddressForToken(token.addressMapping, wallets)
+  const nativeToken = getNativeForChain(tokens, token.chainName)
 
   let feeSymbol = nativeToken.symbol
   let feeDecimal = nativeToken.decimal

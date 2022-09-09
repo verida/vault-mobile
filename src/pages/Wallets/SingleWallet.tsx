@@ -54,7 +54,7 @@ const SingleWallet = (props: Props) => {
   const singleWallet: any =
     wallets.type === 'single' ? Object.values(wallets.accounts)[0] : null
   const isChainTypeEvm = singleWallet
-    ? Object.keys(wallets.accounts)[0] === 'evm'
+    ? Object.keys(wallets.accounts)[0] === 'eip155'
     : null
 
   const addressList = Object.values(chains)
@@ -62,7 +62,7 @@ const SingleWallet = (props: Props) => {
       wallets.type === 'single' ? wallets.chain === chain.chainName : true
     )
     .map((chain: any) => {
-      const wallet: AccountsType = wallets.accounts[chain.addressMap]
+      const wallet: AccountsType = wallets.accounts[chain.addressMapping]
 
       return {
         name: chain?.name,
@@ -70,7 +70,7 @@ const SingleWallet = (props: Props) => {
         icon: chain?.icon,
         seedPhrase: wallet.mnemonic,
         privateKey: wallet.privateKey,
-        addressMap: chain.addressMap,
+        addressMapping: chain.addressMapping,
       }
     })
 

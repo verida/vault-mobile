@@ -57,7 +57,7 @@ const generateWalletsForChains = (data: any) => {
       privateKey,
       isHdWallet: chain ? false : true,
     })
-    if (singleWallet) wallets[singleChain.addressMap] = singleWallet
+    if (singleWallet) wallets[singleChain.addressMapping] = singleWallet
   })
 
   return wallets
