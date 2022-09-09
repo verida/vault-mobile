@@ -14,7 +14,7 @@ export default ({
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
   let options = ['Copy address', 'Show Seed Phrase']
-  if (item.addressMap === 'evm') {
+  if (item.addressMapping === 'eip155') {
     options.push('Show Private Key')
   }
   options.push('Cancel')
@@ -36,7 +36,7 @@ export default ({
             if (item.seedPhrase && buttonIndex === 1) {
               onPressSeedPhrase(item.seedPhrase)
             }
-            if (item.addressMap === 'evm' && buttonIndex === 2) {
+            if (item.addressMapping === 'eip155' && buttonIndex === 2) {
               onPressPrivateKey(item.privateKey)
             }
           }
