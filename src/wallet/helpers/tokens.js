@@ -29,7 +29,7 @@ export const getTokenChainReference = (address) => {
 export const getNativeForChain = (tokens, chain) => {
   let tok = tokens.find(
     (ele) =>
-      ele.identifier === chain && ele.asset.assetName.namespace === 'slip44'
+      ele.chainName === chain && ele.asset.assetName.namespace === 'slip44'
   )
 
   return tok
@@ -76,8 +76,8 @@ export const rawDataToReduxState = (walletData, chains) => {
   return wallets
 }
 
-export const getWalletAddressForAsset = (addressMap, wallets) => {
-  return wallets[addressMap].address
+export const getWalletAddressForAsset = (addressMapping, wallets) => {
+  return wallets[addressMapping].address
 }
 
 export const tokenCaipObjectToString = (asset) => {
