@@ -17,7 +17,10 @@ export const selectTokens = (state) => {
     rawTokens.forEach((singleToken) => {
       const { tokens, ...chainToken } = singleToken
 
-      list.push(chainToken)
+      list.push({
+        addressMapping: singleToken.asset.chainId.namespace,
+        ...chainToken,
+      })
 
       Object.values(tokens).forEach((singleSubToken) => {
         let addedInfo = {
