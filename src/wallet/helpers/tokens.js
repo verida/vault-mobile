@@ -59,17 +59,17 @@ export const rawDataToReduxState = (walletData, chains) => {
       privateKey: walt.privateKey ? walt.privateKey : null,
       mnemonic: walt.mnemonic ? walt.mnemonic : null,
       chains,
-      chain: walt.chain ? walt.chain : null,
+      chain: walt.walletType === 'multi' ? null : walt.walletType,
     })
 
     wallets[waltId] = {
       seedPhrase: walt.mnemonic ? walt.mnemonic : null,
       privateKey: walt.privateKey ? walt.privateKey : null,
-      type: walt.walletType,
+      type: walt.walletType === 'multi' ? 'multi' : 'single',
       label: walt.label,
       id: waltId,
       accounts,
-      chain: walt.chain ? walt.chain : null,
+      chain: walt.walletType === 'multi' ? null : walt.walletType,
     }
   })
 
