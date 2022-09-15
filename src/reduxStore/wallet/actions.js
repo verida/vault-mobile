@@ -287,8 +287,7 @@ export const importWallet = (data) => {
       const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
       const privateKey =
         data.inputSwitch === 'privateKey' ? data.privateKey : null
-      const walletType = data.blockchain === 'multi' ? 'multi' : 'single'
-      const chain = data.blockchain === 'multi' ? null : data.blockchain
+      const walletType = data.blockchain
 
       // save mnemonic to verida store
       const walletDb =
@@ -302,7 +301,6 @@ export const importWallet = (data) => {
       }
       if (mnemonic) wallet.mnemonic = mnemonic
       if (privateKey) wallet.privateKey = privateKey
-      if (chain) wallet.chain = chain
       const saved = await walletDb?.save(wallet)
       const walletID = saved?.id
 
