@@ -14,7 +14,7 @@ export class AlgorandWalletController implements IAlgoWalletController {
   }
 
   getControllerType(): DApp['chain'] {
-    return 'algo'
+    return 'algorand'
   }
 
   public isActive() {
@@ -26,7 +26,7 @@ export class AlgorandWalletController implements IAlgoWalletController {
 
   public init(): Account {
     const wallets = getWalletsData(store.getState().main)
-    const mnemonic = wallets.algo.mnemonic
+    const mnemonic = wallets[this.getControllerType()!].mnemonic
     const wallet = algosdk.mnemonicToSecretKey(mnemonic)
 
     return wallet

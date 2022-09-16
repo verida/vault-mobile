@@ -20,9 +20,9 @@ type Props = {
 
 const fullNetworkName = (code: DApp['chain']) => {
   switch (code) {
-    case 'ethr':
+    case 'evm':
       return 'Ethereum Rinkeby'
-    case 'algo':
+    case 'algorand':
       return 'Algorand Testnet'
     default:
       return 'Unknown network'
@@ -50,13 +50,14 @@ const ConnectDappModal = (props: Props) => {
     () =>
       Object.keys(accounts)
         .reverse() // show ethereum first
-        .filter((key) => ['ethr', 'algo'].includes(key))
+        .filter((key) => ['algorand', 'evm'].includes(key))
         .map((key) => ({
           ...accounts[key],
           label: `${accounts[key].address}`,
           flag: fullNetworkName(key as any),
           value: accounts[key].address,
-          chainId: accounts[key].chain === 'ethr' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+          chainId: key === 'evm' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+          chain: key,
         })),
     [accounts]
   )

@@ -13,9 +13,9 @@ export function getWalletController(dapp?: DApp): IWalletController | null {
 
   const ckey = getKey(dapp)
   if (dapp?.chain && !walletControllers[ckey]) {
-    if (dapp.chain === 'ethr' && dapp.chainId === RINKEBY_CHAIN_ID) {
+    if (dapp.chain === 'evm' && dapp.chainId === RINKEBY_CHAIN_ID) {
       walletControllers[ckey] = new EthereumWalletController()
-    } else if (dapp.chain === 'algo' || dapp.chainId === 0) {
+    } else if (dapp.chain === 'algorand' || dapp.chainId === 0) {
       walletControllers[ckey] = new AlgorandWalletController()
     } else {
       throw new Error(`Unsupported network: ${dapp.chain} / ${dapp.chainId}`)

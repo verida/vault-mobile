@@ -6,7 +6,7 @@ import TransactionsListItem from './TransactionsListItem'
 export default ({
   symbol,
   decimal,
-  tokenAddress,
+  token,
   list,
   onPullToRefresh,
   refreshing,
@@ -14,7 +14,7 @@ export default ({
   const renderItem = ({ item }) => (
     <TransactionsListItem
       symbol={symbol}
-      tokenAddress={tokenAddress}
+      token={token}
       decimal={decimal}
       item={item}
     />
