@@ -29,7 +29,7 @@ export class EthereumWalletController implements IEtherWalletController {
   }
 
   public getControllerType(): DApp['chain'] {
-    return 'ethr'
+    return 'evm'
   }
 
   public isActive() {
@@ -62,11 +62,11 @@ export class EthereumWalletController implements IEtherWalletController {
   public generateWallet(index: number) {
     const wallets = getWalletsData(store.getState().main)
 
-    if (!wallets?.ethr) {
+    if (!wallets[this.getControllerType()!]) {
       throw new Error('No active account')
     }
 
-    const mnemonic = wallets.ethr.mnemonic
+    const mnemonic = wallets[this.getControllerType()!].mnemonic
     this.wallet = ethers.Wallet.fromMnemonic(mnemonic, this.getPath(index))
     return this.wallet
   }
