@@ -11,6 +11,7 @@ import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   createNewWallet,
   deleteWallet,
@@ -23,7 +24,6 @@ import {
   getWalletCount,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
-import { selectChains } from 'reduxStore/tokens/selectors'
 
 import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
