@@ -23,6 +23,7 @@ import {
   getWalletCount,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
+import { selectChains } from 'reduxStore/tokens/selectors'
 
 import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
@@ -62,6 +63,7 @@ type Props = {
   loading: boolean
   onImportWallet: () => Promise<void>
   onDeleteWallet: (selectedWalletID: string) => Promise<void>
+  chains: any
 }
 
 const ManageWallets = (props: Props) => {
@@ -75,6 +77,7 @@ const ManageWallets = (props: Props) => {
     loading,
     onImportWallet,
     onDeleteWallet,
+    chains,
   } = props
   const { showActionSheetWithOptions } = useActionSheet()
   const [importModalVisible, setImportModalVisible] = useState(false)
@@ -112,12 +115,12 @@ const ManageWallets = (props: Props) => {
   }
 
   const list = Object.values(wallets).map((singleWallet) => {
-    const { label, id, accounts } = singleWallet
+    const { label, id, type } = singleWallet
     return {
       label,
       id,
       icon: <OtherSvg />,
-      count: Object.keys(accounts).length,
+      count: type === 'multi' ? Object.keys(chains).length : 1,
     }
   })
 
@@ -217,6 +220,7 @@ const mapStateToProps = (rootState: any) => {
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
     loading: getWalletProcessingState(state),
+    chains: selectChains(rootState),
   }
 }
 
