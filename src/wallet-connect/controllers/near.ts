@@ -1,4 +1,4 @@
-/* eslint-disable no-console */
+import * as Sentry from '@sentry/react-native'
 import {
   InMemorySigner,
   keyStores as nearKeyStores,
@@ -86,7 +86,6 @@ export class NearWalletController {
       )
     ).filter(Boolean)
 
-    console.log('accounts:', accounts, allAccounts)
     for (let i = 0; i < Math.max(MAX_ACCOUNTS - accounts.length, 0); i += 1) {
       const { accountId, keyPair } =
         await NearWalletController.createDevAccount()
@@ -124,7 +123,7 @@ export class NearWalletController {
         }
       }
     } catch (error) {
-      console.error(error)
+      Sentry.captureException(error)
     }
 
     throw new Error('Failed to create NEAR dev account')
@@ -298,10 +297,11 @@ export class NearWalletController {
 
         result.push(account)
       } catch (err) {
+        Sentry.captureException(err)
+        // eslint-disable-next-line no-console
         console.log(
           `Failed to create FunctionCall access key for ${account.accountId}`
         )
-        console.error(err)
       }
     }
 
@@ -340,10 +340,11 @@ export class NearWalletController {
 
         await this.signAndSendTransaction({ chainId, topic, transaction })
       } catch (err) {
+        Sentry.captureException(err)
+        // eslint-disable-next-line no-console
         console.log(
           `Failed to remove FunctionCall access key for ${account.accountId}`
         )
-        console.error(err)
 
         result.push(account)
       }

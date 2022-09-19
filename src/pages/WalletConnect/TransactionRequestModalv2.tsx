@@ -64,6 +64,10 @@ const themeFlat = {
   },
 }
 
+const normalizeJson = (data: Record<string, unknown>) => {
+  return JSON.parse(JSON.stringify(data))
+}
+
 const Row = ({
   leftText,
   rightText,
@@ -91,17 +95,19 @@ const Row = ({
             hideRoot={false}
             keyPath={['Object']}
             shouldExpandNode={() => true}
-            data={rightText}
+            data={normalizeJson(rightText)}
             labelRenderer={(raw) => {
               return <Text style={{ maxWidth: '20%' }}>{raw[0]}</Text>
             }}
-            valueRenderer={(raw) => (
-              <Text
-                style={{ flex: 1, textAlign: 'left' }}
-                ellipsizeMode='middle'>
-                {raw}
-              </Text>
-            )}
+            valueRenderer={(raw) => {
+              return (
+                <Text
+                  style={{ flex: 1, textAlign: 'left' }}
+                  ellipsizeMode='middle'>
+                  {raw}
+                </Text>
+              )
+            }}
           />
         </View>
       )}
