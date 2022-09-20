@@ -42,6 +42,7 @@ import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
 
 import DappSessionDetail from '../pages/WalletConnect/DappSessionDetail'
+import DappSessionDetailv2 from '../pages/WalletConnect/DappSessionDetailv2'
 import WalletConnect from '../pages/WalletConnect/WalletConnect'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
@@ -105,6 +106,10 @@ function MainNavigator() {
 
       <Stack.Screen name={'WalletConnect'} component={WalletConnect} />
       <Stack.Screen name={'WalletConnectDapp'} component={DappSessionDetail} />
+      <Stack.Screen
+        name={'WalletConnectDappv2'}
+        component={DappSessionDetailv2}
+      />
 
       <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
     </Stack.Navigator>

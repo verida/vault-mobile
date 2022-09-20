@@ -130,7 +130,7 @@ export default (props) => {
         <View>
           <PropertyList list={modifiedGeneralList} />
         </View>
-        <Text style={style.title}>Wallet Connect</Text>
+        <Text style={style.title}>WalletConnect</Text>
         <View>
           <PropertyList list={WalletConnectList} />
         </View>

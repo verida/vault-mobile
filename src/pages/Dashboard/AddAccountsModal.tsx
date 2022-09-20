@@ -99,7 +99,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     if (showLogout) setStep(Step.MANAGE_ACCOUNT)
     else setStep(0)
     setSelectedDids([])
-    onClose()
+    onClose!()
   }
 
   function onImportPress() {
@@ -132,7 +132,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
   async function onLogoutPress() {
     setLoading?.(true)
     setStep(0)
-    onClose()
+    onClose!()
     await onLogoutAccounts(selectedDids)
     setLoading?.(false)
   }
