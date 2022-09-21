@@ -37,7 +37,7 @@ export default (props) => {
 
   useEffect(() => {
     const init = async () => {
-      const { _k, _r } = props.route.params
+      const { _k, _r, mobile } = props.route.params
       const key = _k
       const didJwt = _r
       const decoded = didJWT.decodeJWT(didJwt)
@@ -97,6 +97,7 @@ export default (props) => {
                 key,
                 logoUrl: parsed.logoUrl,
                 openUrl: parsed.openUrl ? parsed.openUrl : null,
+                mobile: mobile && mobile === true ? true : false,
               })
               setStatus('loaded')
             } catch (e) {
@@ -218,7 +219,7 @@ export default (props) => {
 
       setStatus('sentResponse')
 
-      if (info.openUrl && response) {
+      if (info.openUrl && info.mobile && response) {
         const jsonEncoded = JSON.stringify(response)
         const encoded = Buffer.from(jsonEncoded).toString('base64')
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
