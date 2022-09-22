@@ -1,7 +1,7 @@
 import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, ScrollView } from 'react-native'
 import Config from 'react-native-config'
 import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
@@ -113,7 +113,7 @@ export default (props) => {
   if (loading) return <LoadingView />
 
   return (
-    <View>
+    <View style={style.container}>
       <NavigationHeader
         title='Settings'
         left={{
@@ -121,37 +121,42 @@ export default (props) => {
           action: () => props.navigation.goBack(),
         }}
       />
-      <View style={LayoutStyle.layout}>
-        <Text style={style.title}>Security</Text>
-        <View>
-          <PropertyList list={mergedList} />
-        </View>
-        <Text style={style.title}>General</Text>
-        <View>
-          <PropertyList list={modifiedGeneralList} />
-        </View>
-        <Text style={style.title}>WalletConnect</Text>
-        <View>
-          <PropertyList list={WalletConnectList} />
-        </View>
+      <ScrollView>
+        <View style={LayoutStyle.layout}>
+          <Text style={style.title}>Security</Text>
+          <View>
+            <PropertyList list={mergedList} />
+          </View>
+          <Text style={style.title}>General</Text>
+          <View>
+            <PropertyList list={modifiedGeneralList} />
+          </View>
+          <Text style={style.title}>Wallet Connect</Text>
+          <View>
+            <PropertyList list={WalletConnectList} />
+          </View>
 
-        <Text style={style.versionText}>{versionText}</Text>
-      </View>
-      <AddAccountsModal
-        visible={showLogout}
-        onClose={() => {
-          setShowLogout(false)
-        }}
-        showLogout
-        onSelectAccount={props.route.params.onSelectAccount}
-        onLogoutAccounts={props.route.params.onLogoutAccounts}
-        setLoading={setLoading}
-      />
+          <Text style={style.versionText}>{versionText}</Text>
+        </View>
+        <AddAccountsModal
+          visible={showLogout}
+          onClose={() => {
+            setShowLogout(false)
+          }}
+          showLogout
+          onSelectAccount={props.route.params.onSelectAccount}
+          onLogoutAccounts={props.route.params.onLogoutAccounts}
+          setLoading={setLoading}
+        />
+      </ScrollView>
     </View>
   )
 }
 
 const style = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   title: {
     fontSize: 12,
     fontFamily: NUNITO_SANS_BOLD,
