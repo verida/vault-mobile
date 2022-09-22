@@ -1,7 +1,7 @@
 import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
-import { StyleSheet, View, ScrollView } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import Config from 'react-native-config'
 import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
