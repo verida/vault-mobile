@@ -27,7 +27,7 @@ import {
   getDefaultNode,
   getNodeCodeFromCountry,
 } from 'utils/profile'
-import { fetchNetworks } from 'api/utils'
+import { execWithTimeout, fetchNetworks } from 'api/utils'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import DataConnectorsManager from './DataConnectorsManager'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
@@ -238,6 +238,7 @@ class AccountManager {
       // @ts-ignore
       await this.vault?.profiles.public.set(...entry)
     }
+    return true
   }
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
@@ -372,6 +373,7 @@ class AccountManager {
     userData: UserData,
     country: string
   ): Promise<Account | undefined> {
+    let connected = false
     try {
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
@@ -413,9 +415,15 @@ class AccountManager {
           backedup: false,
         },
       }
-
       await this.connect(true, endpointUris)
-      await this.setPublicProfile(userData)
+      connected = true
+      const setPublicProfileSuccess = await execWithTimeout(
+        this.setPublicProfile(userData),
+        30000
+      )
+      if (!setPublicProfileSuccess) {
+        throw new Error('Failed to set public profile')
+      }
       await this.setBackedupSeedPhraseConfig(false)
       await this.setUserWallet()
 
@@ -424,6 +432,10 @@ class AccountManager {
 
       return this.selectedAccount
     } catch (e) {
+      // If the corrupted account is already connected, we need to remove it
+      if (connected && this.selectedAccount) {
+        await this.logout([this.selectedAccount?.did])
+      }
       Sentry.captureException(e)
       throw e
     }
