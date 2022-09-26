@@ -23,3 +23,10 @@ export interface IAlgoWalletController extends IWalletController {
     signingMessage: string | undefined
   ): (Uint8Array | null)[] | PromiseLike<(Uint8Array | null)[]>
 }
+
+export interface INearWalletController extends IWalletController {
+  signTransaction(
+    signingTxns: SigningTransaction[],
+    signingMessage: string | undefined
+  ): (Uint8Array | null)[] | PromiseLike<(Uint8Array | null)[]>
+}

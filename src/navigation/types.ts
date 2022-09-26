@@ -1,4 +1,4 @@
-import { DApp } from 'wallet-connect/types'
+import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
@@ -74,5 +74,6 @@ export type MainStackParams = {
   StorageNodes: { data: Network[] }
   WalletConnect: undefined
   WalletConnectDapp: { dapp: DApp }
+  WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: undefined
 }

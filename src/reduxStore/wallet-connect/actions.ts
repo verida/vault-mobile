@@ -1,6 +1,7 @@
 import WalletConnect from '@walletconnect/client'
 import {
   DApp,
+  DAppv2,
   IChainData,
   WalletConnectClientMeta,
   WalletConnectRequest,
@@ -67,6 +68,14 @@ export function approveWalletConnectSession(payload: {
     accounts: payload.accounts,
   })
   return createAction('APPROVE_WC_PEER_META', payload)
+}
+
+export function approveWalletConnectSessionv2(payload: DAppv2) {
+  return createAction('APPROVE_WC_SESSSION_V2', payload)
+}
+
+export function removeWalletConnectSessionv2(payload: { topic: string }) {
+  return createAction('REMOVE_WC_SESSSION_V2', payload)
 }
 
 export function rejectWalletConnectSession(payload: {

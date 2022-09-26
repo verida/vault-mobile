@@ -6,7 +6,6 @@ import {
   formatTokenQuantity,
   getNativeForChain,
   getTokenChain,
-  getTokenChainReference,
   getWalletAddressForToken,
 } from 'wallet/helpers/tokens'
 
@@ -34,27 +33,19 @@ const ConfirmTransaction = ({
 }) => {
   const { token, amount, address } = route.params
   const tokenChain = getTokenChain(token.asset)
-  const tokenChainRef = getTokenChainReference(token.asset)
-  const accountAddress = getWalletAddressForToken(
-    tokenChain + ':' + tokenChainRef,
-    wallets
-  )
-  const nativeToken = getNativeForChain(
-    tokens,
-    tokenChain + ':' + tokenChainRef
-  )
+  const accountAddress = getWalletAddressForToken(token.addressMap, wallets)
+  const nativeToken = getNativeForChain(tokens, token.identifier)
 
   let feeSymbol = nativeToken.symbol
   let feeDecimal = nativeToken.decimal
   let fixed
-  let networkReference = ''
+  let networkReference = token.referenceLabel
   switch (tokenChain) {
     case 'algorand':
       fixed = 3
       break
     case 'eip155':
       fixed = 18
-      networkReference = tokenChainRef === '4' ? 'Rinkeby' : ''
       break
     case 'near':
       fixed = 8

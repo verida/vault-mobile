@@ -135,7 +135,7 @@ export async function signEthereumRequests(
 
   if (
     !getWalletController(dapp) ||
-    getWalletController(dapp)?.getControllerType() !== 'ethr'
+    getWalletController(dapp)?.getControllerType() !== 'evm'
   ) {
     connector.rejectRequest({
       id: payload.id,

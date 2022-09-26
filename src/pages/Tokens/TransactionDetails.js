@@ -1,7 +1,6 @@
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { getTokenChain, getTokenChainReference } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -18,20 +17,17 @@ const TransactionDetails = ({
   onGetTransactionDetails,
   tokens,
 }) => {
-  const { id, tokenAddress } = route.params
+  const { id, token } = route.params
   useEffect(() => {
     async function init() {
-      onGetTransactionDetails(id, tokenAddress)
+      onGetTransactionDetails(id, token)
     }
 
     init()
-  }, [id, onGetTransactionDetails, tokenAddress])
+  }, [id, onGetTransactionDetails, token])
 
   const { transaction, loading } = data
-  const tokenChain = getTokenChain(tokenAddress)
-  const tokenChainRef = getTokenChainReference(tokenAddress)
-  let networkReference =
-    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
+  let networkReference = token.referenceLabel
 
   return (
     <Container>
@@ -48,7 +44,7 @@ const TransactionDetails = ({
       ) : (
         <TransactionInfo
           transaction={transaction}
-          tokenAddress={tokenAddress}
+          token={token}
           tokens={tokens}
         />
       )}
@@ -66,8 +62,8 @@ const mapStateToProps = (rootState) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionDetails: (id, tokenAddress) =>
-      dispatch(getTransactionDetails(id, tokenAddress)),
+    onGetTransactionDetails: (id, token) =>
+      dispatch(getTransactionDetails(id, token)),
   }
 }
 
