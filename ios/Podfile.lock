@@ -558,7 +558,7 @@ PODS:
     - React
   - RNOS (1.2.6):
     - React
-  - RNScreens (3.11.1):
+  - RNScreens (3.17.0):
     - React-Core
     - React-RCTImage
   - RNSentry (3.4.3):
@@ -964,7 +964,7 @@ SPEC CHECKSUMS:
   RNGestureHandler: 1dc1ea9d4b64f999042afafbaccf5b143f0b2fa2
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNScreens: 4d83613b50b74ed277026375dc0810893b0c347f
+  RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSentry: 85f6525b5fe8d2ada065858026b338605b3c09da
   RNSqlite2: 8cf96c4a5cc62f95922de1d01c5f68d7fc52333c
   RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8

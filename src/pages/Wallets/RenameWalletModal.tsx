@@ -36,7 +36,7 @@ export default (props: Props) => {
         }}
         title='Rename wallet'
       />
-      <Layout style={styles.container}>
+      <Layout withKeyboardAvoidingView style={styles.container}>
         <View style={styles.content}>
           <Label>Wallet name</Label>
           <TextInput
@@ -76,6 +76,7 @@ const styles = StyleSheet.create({
     flex: 1,
     alignItems: 'stretch',
     paddingBottom: 30,
+    paddingHorizontal: 20,
     borderTopWidth: 1,
     borderTopColor: 'rgba(4, 17, 51, 0.2)',
   },
