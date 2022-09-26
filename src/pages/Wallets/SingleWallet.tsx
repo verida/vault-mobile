@@ -1,18 +1,11 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
-import {
-  SafeAreaView,
-  StatusBar,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import OtherSvg from 'assets/wallets/Other.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
