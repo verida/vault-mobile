@@ -2,14 +2,19 @@ import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
-import { formatTokenQuantity, getTokenChain } from 'wallet/helpers/tokens'
+import {
+  formatTokenQuantity,
+  getNativeForChain,
+  getTokenChain,
+  getWalletAddressForToken,
+} from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import {
   getTransactionParamsData,
@@ -24,20 +29,28 @@ const ConfirmTransaction = ({
   transactionParams,
   onSendTransaction,
   sentTransaction,
+  tokens,
 }) => {
   const { token, amount, address } = route.params
-  const tokenChain = getTokenChain(token.address)
-  const accountAddress =
-    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
-  const feeSymbol =
-    tokenChain === 'algorand'
-      ? SUPPORTED_TOKENS[0].symbol
-      : SUPPORTED_TOKENS[2].symbol
-  const feeDecimal =
-    tokenChain === 'algorand'
-      ? SUPPORTED_TOKENS[0].decimal
-      : SUPPORTED_TOKENS[2].decimal
-  const fixed = tokenChain === 'algorand' ? 3 : 18
+  const tokenChain = getTokenChain(token.asset)
+  const accountAddress = getWalletAddressForToken(token.addressMap, wallets)
+  const nativeToken = getNativeForChain(tokens, token.identifier)
+
+  let feeSymbol = nativeToken.symbol
+  let feeDecimal = nativeToken.decimal
+  let fixed
+  let networkReference = token.referenceLabel
+  switch (tokenChain) {
+    case 'algorand':
+      fixed = 3
+      break
+    case 'eip155':
+      fixed = 18
+      break
+    case 'near':
+      fixed = 8
+      break
+  }
 
   return (
     <Container>
@@ -48,7 +61,7 @@ const ConfirmTransaction = ({
         }}
         title={'Send ' + token.symbol}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoRow}>
@@ -148,11 +161,13 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     wallets: getWalletsData(state),
     transactionParams: getTransactionParamsData(state),
     sentTransaction: selectSentTransaction(state),
+    tokens: selectTokens(rootState),
   }
 }
 

@@ -6,6 +6,7 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import ChangePin from 'pages/Authentication/ChangePin'
+import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
@@ -20,6 +21,7 @@ import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
+import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
@@ -39,6 +41,10 @@ import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
 
+import DappSessionDetail from '../pages/WalletConnect/DappSessionDetail'
+import DappSessionDetailv2 from '../pages/WalletConnect/DappSessionDetailv2'
+import WalletConnect from '../pages/WalletConnect/WalletConnect'
+
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
@@ -55,6 +61,7 @@ function MainNavigator() {
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
+      <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
       <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
       <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
@@ -96,6 +103,15 @@ function MainNavigator() {
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
       <Stack.Screen name={'Networks'} component={Networks} />
       <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
+
+      <Stack.Screen name={'WalletConnect'} component={WalletConnect} />
+      <Stack.Screen name={'WalletConnectDapp'} component={DappSessionDetail} />
+      <Stack.Screen
+        name={'WalletConnectDappv2'}
+        component={DappSessionDetailv2}
+      />
+
+      <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
     </Stack.Navigator>
   )
 }

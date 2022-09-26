@@ -82,7 +82,8 @@ const VerifyPhrase = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     words: state.template,
   }

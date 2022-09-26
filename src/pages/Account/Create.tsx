@@ -17,7 +17,7 @@ import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
+import DropDownPicker, { Option } from 'components/Select'
 import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
@@ -27,15 +27,9 @@ import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
 
-// eslint-disable-next-line no-shadow
 export enum CreateAccountMode {
   CREATE,
   ADD,
-}
-
-type Option = {
-  label: string
-  value: string
 }
 
 function Create(
@@ -48,8 +42,8 @@ function Create(
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
   useDataRegion()
-  const networks = useSelector((state: any) => state.networks)
-  const countries = useSelector((state: any) => state.countries)
+  const networks = useSelector((state: any) => state.main.networks)
+  const countries = useSelector((state: any) => state.main.countries)
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140

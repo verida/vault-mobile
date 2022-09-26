@@ -8,7 +8,7 @@ import Text from 'components/Text'
 import { DECLINE_COLOR } from 'constants/color'
 
 export type HeaderSideButton = {
-  icon: string
+  icon: string | React.ReactElement
   action?: () => void
 }
 

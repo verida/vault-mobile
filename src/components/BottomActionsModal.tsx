@@ -25,7 +25,7 @@ export interface BottomActionsModalProps extends ModalProps {
   subtitle?: string
   message?: string
   footer?: React.ReactElement
-  onClose: () => void
+  onClose?: () => void
   titleIcon?: React.ReactElement
 }
 
@@ -113,6 +113,7 @@ const styles = StyleSheet.create({
   titleWrapper: {
     marginRight: 32,
     flex: 1,
+    justifyContent: 'center',
   },
   title: {
     fontFamily: NUNITO_SANS_BOLD,
@@ -147,7 +148,7 @@ const styles = StyleSheet.create({
     marginBottom: 24,
   },
   childrenContainer: {
-    maxHeight: SCREEN_HEIGHT / 2,
+    maxHeight: (SCREEN_HEIGHT * 3) / 5,
   },
 })
 

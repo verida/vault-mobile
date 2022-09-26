@@ -1,12 +1,14 @@
+import Clipboard from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
 import didJWT from 'did-jwt'
 import { get } from 'lodash'
-import { Container, Content, List } from 'native-base'
+import { Container, Content, Icon, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
+import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 
-import { getProfile } from 'api/utils'
+import { getPublicProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
@@ -19,9 +21,11 @@ const DataItem = (props) => {
     data: [],
     title: '',
   })
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
+  const [copyUrl, setCopyUrl] = useState(null)
 
   const isCredential = folder.config.database === 'credential'
+  const isContact = folder.config.database === 'social_contact'
 
   useEffect(() => {
     const init = async () => {
@@ -32,7 +36,11 @@ const DataItem = (props) => {
           const decoded = didJWT.decodeJWT(item.didJwtVc)
           _data.payload = get(decoded, 'payload.data', {})
           const iss = decoded.payload.iss
-          const { name, avatar } = await getProfile(iss)
+
+          const { name, avatar } = await getPublicProfile(
+            iss,
+            decoded.payload.vc.veridaContextName
+          )
           _data.issuer = {
             name,
             avatar,
@@ -51,9 +59,33 @@ const DataItem = (props) => {
     init()
   }, [folder, item, isCredential])
 
+  const right = {
+    action: () => {
+      Clipboard.setString(copyUrl)
+      Toast.show('Address copied', {
+        duration: Toast.durations.LONG,
+        position: -130,
+        shadow: false,
+        animation: true,
+        hideOnPress: true,
+        delay: 0,
+        backgroundColor: 'rgba(4, 17, 51, 1)',
+      })
+    },
+    icon: (
+      <Icon
+        name='copy-outline'
+        style={{ color: 'rgba(66, 59, 206, 1)', fontSize: 22 }}
+      />
+    ),
+  }
+
   return (
     <Container>
-      <NavigationHeader title={folder.config.title} />
+      <NavigationHeader
+        title={folder.config.title}
+        right={(isCredential || isContact) && copyUrl ? right : null}
+      />
       <Content contentContainerStyle={styles.content}>
         {loading ? (
           <LoadingView />
@@ -64,10 +96,11 @@ const DataItem = (props) => {
                 data={data}
                 item={item}
                 style={styles.credentialContainer}
+                setCopyUrl={setCopyUrl}
               />
             ) : (
               <List>
-                <DataFieldList data={data} />
+                <DataFieldList data={data} setCopyUrl={setCopyUrl} />
               </List>
             )}
           </>

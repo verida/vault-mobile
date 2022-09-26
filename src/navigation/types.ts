@@ -1,3 +1,5 @@
+import { DApp, DAppv2 } from 'wallet-connect/types'
+
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -25,6 +27,7 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Profiles: undefined
+  Connections: undefined
 }
 
 export type MainStackParams = {
@@ -37,6 +40,7 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   SeedPhraseView: undefined
+  SeedPhraseEntered: undefined
   ManageWallets: undefined
   SingleCurrency: undefined
   SendToken: undefined
@@ -47,7 +51,7 @@ export type MainStackParams = {
   TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
-  SingleWallet: undefined
+  SingleWallet: { item: any }
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
@@ -68,4 +72,8 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  WalletConnect: undefined
+  WalletConnectDapp: { dapp: DApp }
+  WalletConnectDappv2: { dapp: DAppv2 }
+  SingleConnection: undefined
 }

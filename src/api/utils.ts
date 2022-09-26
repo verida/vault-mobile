@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
-import store from 'reduxStore'
+import { store } from 'reduxStore'
 
 import AccountManager, { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
 import { Network, NetworkCountries } from 'api/types'
@@ -102,6 +102,31 @@ export async function getProfile(did: string) {
         'basicProfile',
         did
       )
+    const name = await publicProfile?.get('name')
+    const avatar = await publicProfile?.get('avatar')
+
+    return {
+      name: name || 'Unknown',
+      avatar: avatar || DefaultAvatar,
+    }
+  } catch (error) {
+    Sentry.captureException(error)
+
+    return {
+      name: 'Unknown',
+      avatar: DefaultAvatar,
+    }
+  }
+}
+
+export async function getPublicProfile(
+  did: string,
+  contextName = VERIDA_CONTEXT_NAME
+) {
+  try {
+    const publicProfile = await AccountManager.getInstance()
+      .getClient()
+      ?.openPublicProfile(did, contextName, 'basicProfile')
     const name = await publicProfile?.get('name')
     const avatar = await publicProfile?.get('avatar')
 

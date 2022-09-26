@@ -1,10 +1,9 @@
 import './shim'
 
-import { registerRootComponent } from 'expo'
-import App from './src/App'
+import { AppRegistry, YellowBox } from 'react-native'
 
-import { YellowBox } from 'react-native'
+import App from './src/App'
 
 YellowBox.ignoreWarnings([''])
 
-registerRootComponent(App)
+AppRegistry.registerComponent('main', () => App)

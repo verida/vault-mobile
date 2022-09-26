@@ -18,9 +18,11 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
   const { onRecordPress, style, ...rest } = props
 
   const dispatch = useDispatch()
-  const selectedAccount = useSelector((state: any) => state.selectedAccount)
+  const selectedAccount = useSelector(
+    (state: any) => state.main.selectedAccount
+  )
   const showSeedPhraseReminder = useSelector(
-    (state: any) => state.showSeedPhraseReminder
+    (state: any) => state.main.showSeedPhraseReminder
   )
 
   useEffect(() => {

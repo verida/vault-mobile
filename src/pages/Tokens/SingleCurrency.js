@@ -4,7 +4,11 @@ import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
-import { getTokenChain, isNativeToken } from 'wallet/helpers/tokens'
+import {
+  getTokenChain,
+  getWalletAddressForToken,
+  isNativeToken,
+} from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -14,7 +18,6 @@ import TransactionsList from 'components/Tokens/TransactionsList'
 import { WARNING_COLOR } from 'constants/color'
 import {
   getBalances,
-  getPrices,
   getTransactionsForToken,
   sendTransaction,
 } from 'reduxStore/wallet/actions'
@@ -32,33 +35,32 @@ const SingleCurrency = ({
   transactions,
   tokenData,
   onGetBalances,
-  onGetPrices,
   wallets,
   onSendTransaction,
   nativeTokenBalance,
 }) => {
   const { item } = route.params
   const { list, loading } = transactions
-  const tokenChain = getTokenChain(item.address)
-  const address =
-    tokenChain === 'algorand' ? wallets.algo.address : wallets.ethr.address
+  const tokenChain = getTokenChain(item.asset)
+  const address = getWalletAddressForToken(item.addressMap, wallets)
 
   function pullToRefresh() {
-    onGetTransactionsForToken(item.address)
+    onGetTransactionsForToken(item)
     onGetBalances()
-    onGetPrices()
   }
 
   useEffect(() => {
     async function loadData() {
-      onGetTransactionsForToken(item.address)
+      onGetTransactionsForToken(item)
     }
 
     loadData()
   }, [onGetTransactionsForToken, item])
 
   const warningRequired =
-    getTokenChain(item.address) === 'algorand' && !isNativeToken(item.address)
+    tokenChain === 'algorand' && !isNativeToken(item.asset)
+
+  let networkReference = item.referenceLabel
 
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
@@ -72,7 +74,7 @@ const SingleCurrency = ({
         }}
         title={item.label}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       {warningRequired && loading === false && list.length === 0 && (
         <TouchableOpacity
           style={{
@@ -129,7 +131,7 @@ const SingleCurrency = ({
         <TransactionsList
           symbol={item.symbol}
           decimal={item.decimal}
-          tokenAddress={item.address}
+          token={item}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
           list={list}
@@ -139,23 +141,23 @@ const SingleCurrency = ({
   )
 }
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (rootState, props) => {
+  const state = rootState.main
   return {
-    transactions: selectTransactionsData(
-      state,
-      props.route.params.item.address
-    ),
-    tokenData: selectSingleTokenData(state, props.route.params.item.address),
+    transactions: selectTransactionsData(state, props.route.params.item.asset),
+    tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
     wallets: getWalletsData(state),
-    nativeTokenBalance: selectNativeTokenBalance(state),
+    nativeTokenBalance: selectNativeTokenBalance(
+      rootState,
+      props.route.params.item
+    ),
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionsForToken: (assetID) =>
-      dispatch(getTransactionsForToken(assetID)),
-    onGetPrices: () => dispatch(getPrices()),
+    onGetTransactionsForToken: (token) =>
+      dispatch(getTransactionsForToken(token)),
     onGetBalances: () => dispatch(getBalances()),
     onSendTransaction: (params, isAssetEnablingTransaction) =>
       dispatch(sendTransaction(params, isAssetEnablingTransaction)),

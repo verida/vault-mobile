@@ -29,7 +29,7 @@ const SeedPhrase = (props) => {
         <Layout title='Seed Phrase'>
           <Text style={style.description}>
             A seed phrase is the only way to recover access to your account if
-            your phone is lost, stolen broken or upgraded.
+            your phone is lost, stolen, broken or upgraded.
           </Text>
           <SafeImg style={{ marginVertical: 28, alignSelf: 'center' }} />
           <Text style={style.description}>
@@ -58,7 +58,8 @@ const SeedPhrase = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return { publicProfileData: state.publicProfileData }
 }
 

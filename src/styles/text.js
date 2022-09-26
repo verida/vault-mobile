@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native'
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
+  ORANGE_COLOR,
   WHITE_COLOR,
 } from '../constants/color'
 
@@ -30,6 +31,10 @@ export default StyleSheet.create({
   },
   darkgrey: {
     color: BLACK_COLOR_OPACITY(0.8),
+    ...sharedProps,
+  },
+  warning: {
+    color: ORANGE_COLOR,
     ...sharedProps,
   },
 })

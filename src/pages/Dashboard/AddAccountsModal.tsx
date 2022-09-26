@@ -27,9 +27,10 @@ export type AddAccountsModalProps = Omit<
   onImport: () => void
   onSelectAccount: (did: string) => void
   onLogoutAccounts: (dids: string[]) => void
+  showLogout?: boolean
+  setLoading?: any
 }
 
-// eslint-disable-next-line no-shadow
 enum Step {
   INITIAL,
   MANAGE_ACCOUNT,
@@ -82,17 +83,23 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onSelectAccount,
     onClose,
     onLogoutAccounts,
+    showLogout,
+    setLoading,
     ...rest
   } = props
-  const [step, setStep] = useState<Step>(Step.INITIAL)
+
+  const [step, setStep] = useState<Step>(
+    showLogout ? Step.MANAGE_ACCOUNT : Step.INITIAL
+  )
   const [selectedDids, setSelectedDids] = useState<string[]>([])
   const title = getTileFromStep(step)
   const titleIcon = getTitleIconFromStep(step)
 
   function onPressClose() {
-    setStep(0)
+    if (showLogout) setStep(Step.MANAGE_ACCOUNT)
+    else setStep(0)
     setSelectedDids([])
-    onClose()
+    onClose!()
   }
 
   function onImportPress() {
@@ -122,14 +129,18 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onAddNew()
   }
 
-  function onLogoutPress() {
+  async function onLogoutPress() {
+    setLoading?.(true)
     setStep(0)
-    onClose()
-    onLogoutAccounts(selectedDids)
+    onClose!()
+    await onLogoutAccounts(selectedDids)
+    setLoading?.(false)
   }
 
   function onCancelLogout() {
-    setStep(Step.INITIAL)
+    if (showLogout) {
+      setStep(Step.MANAGE_ACCOUNT)
+    } else setStep(Step.INITIAL)
     setSelectedDids([])
   }
 
@@ -211,12 +222,15 @@ function AddAccountsModal(props: AddAccountsModalProps) {
       onClose={onPressClose}
       titleIcon={titleIcon}
       {...rest}>
-      {step === Step.INITIAL || step === Step.MANAGE_ACCOUNT ? (
+      {step === Step.INITIAL ||
+      step === Step.MANAGE_ACCOUNT ||
+      step === Step.CONFIRM_LOGOUT ? (
         <AccountsList
           onSelectAccount={onSelectAccountPress}
           containerStyle={styles.accountsList}
           selectedDids={selectedDids}
           multipleSelect={step === Step.MANAGE_ACCOUNT}
+          showSelectedOnly={step === Step.CONFIRM_LOGOUT}
         />
       ) : (
         <View style={styles.space} />

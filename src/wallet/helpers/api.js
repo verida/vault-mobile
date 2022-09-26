@@ -21,3 +21,11 @@ export const moralisApi = create({
       '4M9sy1EVrR2iS5vvsbm3MaCdigJwP7Q9HCkKRphYqGzT0hR6vw1LbBcb0z7hQ9Fs',
   },
 })
+
+export const nearIndexerApi = create({
+  baseURL: 'http://3.15.157.193:3000/',
+})
+
+export const walletProviderApi = create({
+  baseURL: 'https://walletprovider-dev.tn.verida.tech',
+})
