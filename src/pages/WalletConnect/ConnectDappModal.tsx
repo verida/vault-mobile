@@ -50,13 +50,13 @@ const ConnectDappModal = (props: Props) => {
     () =>
       Object.keys(accounts)
         .reverse() // show ethereum first
-        .filter((key) => ['algorand', 'evm'].includes(key))
+        .filter((key) => ['algorand', 'eip155'].includes(key))
         .map((key) => ({
           ...accounts[key],
           label: `${accounts[key].address}`,
           flag: fullNetworkName(key as any),
           value: accounts[key].address,
-          chainId: key === 'evm' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+          chainId: key === 'eip155' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
           chain: key,
         })),
     [accounts]
