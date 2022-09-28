@@ -65,7 +65,7 @@ const DappSessionDetailv2 = () => {
         <View style={styles.row}>
           <Text style={styles.label}>Network</Text>
           <Text style={styles.value}>
-            {chain === 'evm' ? 'Ethereum Rinkeby' : 'Algorand testnet'}
+            {chain === 'eip155' ? 'Ethereum Rinkeby' : 'Algorand testnet'}
           </Text>
         </View>
         <View style={styles.row}>

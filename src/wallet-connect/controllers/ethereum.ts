@@ -29,7 +29,7 @@ export class EthereumWalletController implements IEtherWalletController {
   }
 
   public getControllerType(): DApp['chain'] {
-    return 'evm'
+    return 'eip155'
   }
 
   public isActive() {

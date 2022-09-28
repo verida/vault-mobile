@@ -10,7 +10,7 @@ export interface DApp {
   session: IWalletConnectSession
   accounts?: string[]
   chainId?: number
-  chain?: 'algorand' | 'evm' | 'near' | undefined // TODO: add other networks
+  chain?: 'algorand' | 'eip155' | 'near' | undefined // TODO: add other networks
 }
 
 export interface DAppv2 {
@@ -20,7 +20,7 @@ export interface DAppv2 {
   metadata: SignClientTypes.Metadata
   namespaces: SessionTypes.Namespaces
   relayProtocol: string
-  chain?: 'algorand' | 'evm' | 'near' | undefined // TODO: add other networks
+  chain?: 'algorand' | 'eip155' | 'near' | undefined // TODO: add other networks
 }
 
 export type WalletConnectSession = IWalletConnectSession
