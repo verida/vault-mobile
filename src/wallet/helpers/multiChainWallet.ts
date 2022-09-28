@@ -10,41 +10,54 @@ const generateMnemonic = () => {
   return mnemonic
 }
 
-const generateSingleWallet = (
-  mnemonic: string,
-  path: string,
-  chain: string
-) => {
-  const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
-  const childNode = node.derivePath(path)
+const generateSingleWallet = (data: any) => {
+  const { mnemonic, path, chain, privateKey, isHdWallet } = data
   let wallet
 
-  // if chain unrecognized, return error or something
-
   if (chain === 'near') {
+    const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
+    const childNode = node.derivePath(path)
     wallet = WalletUtils.utils.getWallet('near', childNode.mnemonic.phrase)
   } else if (chain === 'algorand') {
-    const algoMnemonic = algosdk.mnemonicFromSeed(
-      Buffer.from(childNode.privateKey.slice(2), 'hex')
-    )
+    let algoMnemonic
+    if (isHdWallet) {
+      const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
+      const childNode = node.derivePath(path)
+      algoMnemonic = algosdk.mnemonicFromSeed(
+        Buffer.from(childNode.privateKey.slice(2), 'hex')
+      )
+    } else {
+      algoMnemonic = mnemonic
+    }
     wallet = WalletUtils.utils.getWallet('algo', algoMnemonic)
   } else if (chain === 'eip155') {
-    wallet = WalletUtils.utils.getWallet('ethr', childNode.mnemonic.phrase)
+    if (privateKey) {
+      wallet = WalletUtils.utils.getWalletByPrivateKey('ethr', privateKey)
+    } else {
+      const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
+      const childNode = node.derivePath(path)
+      wallet = WalletUtils.utils.getWallet('ethr', childNode.mnemonic.phrase)
+    }
   }
 
   return wallet
 }
 
-const generateWalletsForChains = (mnemonic: string, chains: any) => {
+const generateWalletsForChains = (data: any) => {
+  const { chains, chain, mnemonic, privateKey } = data
+
   const wallets: any = {}
 
-  Object.values(chains).forEach((chain: any) => {
-    const singleWallet = generateSingleWallet(
+  Object.values(chains).forEach((singleChain: any) => {
+    if (chain && singleChain.chainName !== chain) return
+    const singleWallet = generateSingleWallet({
       mnemonic,
-      chain.path,
-      chain.data.namespace
-    )
-    if (singleWallet) wallets[chain.addressMap] = singleWallet
+      path: singleChain.path,
+      chain: singleChain.data.namespace,
+      privateKey,
+      isHdWallet: chain ? false : true,
+    })
+    if (singleWallet) wallets[singleChain.addressMapping] = singleWallet
   })
 
   return wallets

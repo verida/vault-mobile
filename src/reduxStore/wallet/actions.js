@@ -15,7 +15,7 @@ import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   getAllWallets,
-  getSelectedWallet,
+  getSelectedWalletId,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
@@ -51,12 +51,14 @@ export const getBalances = () => {
     try {
       const wallets = getWalletsData(getState().main)
       const chains = selectChains(getState())
-      const requestBody = Object.values(chains).map((chain) => {
-        return {
-          address: wallets[chain.addressMap].address,
-          chainId: chain.data,
-        }
-      })
+      const requestBody = Object.values(chains)
+        .filter((chain) => wallets[chain.addressMapping])
+        .map((chain) => {
+          return {
+            address: wallets[chain.addressMapping].address,
+            chainId: chain.data,
+          }
+        })
 
       const balanceData = await walletProviderApi.post(
         'balance/getBalanceByChains',
@@ -86,7 +88,7 @@ export const getTransactionsForToken = (token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(token.addressMap, wallets)
+    const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/list', {
       userAddress,
@@ -111,7 +113,7 @@ export const getTransactionDetails = (transactionID, token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(token.addressMap, wallets)
+    const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/get', {
       transactionId: transactionID,
@@ -234,7 +236,7 @@ export const createNewWallet = (data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
         )
 
       const currentWalletsData = getAllWallets(getState().main)
@@ -277,17 +279,69 @@ export const createNewWallet = (data) => {
   }
 }
 
+export const importWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
+      const privateKey =
+        data.inputSwitch === 'privateKey' ? data.privateKey : null
+      const walletType = data.blockchain
+
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      const wallet = {
+        walletType,
+        label: data.name,
+      }
+      if (mnemonic) wallet.mnemonic = mnemonic
+      if (privateKey) wallet.privateKey = privateKey
+      const saved = await walletDb?.save(wallet)
+      const walletID = saved?.id
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+
+        await dispatch(saveUserWallets(wallets))
+
+        await dispatch(setSelectedWallet(walletID))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+        await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
+      }
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
 export const deleteWallet = (walletId) => {
   return async (dispatch, getState) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const currentlySelectedWallet = getSelectedWallet(getState().main)
+      const currentlySelectedWallet = getSelectedWalletId(getState().main)
 
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
         )
 
       await walletDb?.delete(walletId)
@@ -332,7 +386,7 @@ export const renameWallet = (walletId, data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
         )
 
       const row = await walletDb?.get(walletId)

@@ -31,6 +31,7 @@ import { execWithTimeout, fetchNetworks } from 'api/utils'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import DataConnectorsManager from './DataConnectorsManager'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
+import { rawDataToReduxState } from 'wallet/helpers/tokens'
 
 type EndpointUrls = {
   dbServerUrl: string
@@ -40,7 +41,7 @@ type EndpointUrls = {
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
-export const WALLETS_STORAGE_KEY = 'wallets-v3'
+export const WALLETS_STORAGE_KEY = 'wallets-v4'
 export const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
@@ -271,7 +272,7 @@ class AccountManager {
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -285,16 +286,22 @@ class AccountManager {
 
       const chains = selectChains(store.getState())
 
-      const userGeneratedWallets: any =
-        multiChainWallet.generateWalletsForChains(userHDWalletMnemonic, chains)
+      const userGeneratedWallets = multiChainWallet.generateWalletsForChains({
+        privateKey: null,
+        mnemonic: userHDWalletMnemonic,
+        chains,
+        chain: null,
+      })
 
       const walletData = {
         [walletID]: {
           seedPhrase: wallet.mnemonic,
+          privateKey: null,
           type: wallet.walletType,
           label: wallet.label,
           id: walletID,
           accounts: userGeneratedWallets,
+          chain: null,
         },
       }
 
@@ -318,31 +325,14 @@ class AccountManager {
     try {
       await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
       )
 
       const hdWallets: any = await datastore?.getMany()
-
       const chains = selectChains(store.getState())
 
-      const wallets: any = {}
       if (!isEmpty(hdWallets)) {
-        hdWallets.forEach((walt: any) => {
-          const mnemonic = walt.mnemonic
-          const walletID = walt._id
-          const accounts: any = multiChainWallet.generateWalletsForChains(
-            mnemonic,
-            chains
-          )
-
-          wallets[walletID] = {
-            seedPhrase: mnemonic,
-            type: walt.walletType,
-            label: walt.label,
-            id: walletID,
-            accounts,
-          }
-        })
+        const wallets: any = rawDataToReduxState(hdWallets, chains)
 
         await store.dispatch(saveUserWallets(wallets))
 

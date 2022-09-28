@@ -51,7 +51,7 @@ const getTransactionParams = async (transactionData, wallets) => {
   }
 
   if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const fromAddress = wallets[transactionData.token.addressMap].address
+    const fromAddress = wallets[transactionData.token.addressMapping].address
     const toAddress = transactionData.address
 
     let input
@@ -115,7 +115,7 @@ const sendTransaction = async (
     transactionData.token.asset
   )
 
-  const chainWallet = wallets[transactionData.token.addressMap]
+  const chainWallet = wallets[transactionData.token.addressMapping]
   const receiverAddress = transactionData.address
 
   let txString

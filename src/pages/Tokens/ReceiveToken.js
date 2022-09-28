@@ -22,7 +22,7 @@ const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
-  const address = getWalletAddressForToken(token.addressMap, wallets)
+  const address = getWalletAddressForToken(token.addressMapping, wallets)
   let networkReference = token.referenceLabel
 
   return (

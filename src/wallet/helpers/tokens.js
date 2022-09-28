@@ -29,7 +29,7 @@ export const getTokenChainReference = (address) => {
 export const getNativeForChain = (tokens, chain) => {
   let tok = tokens.find(
     (ele) =>
-      ele.identifier === chain && ele.asset.assetName.namespace === 'slip44'
+      ele.chainName === chain && ele.asset.assetName.namespace === 'slip44'
   )
 
   return tok
@@ -54,23 +54,30 @@ export const parseUnitsForSending = (quantity, decimalPlaces) => {
 export const rawDataToReduxState = (walletData, chains) => {
   let wallets = {}
   walletData.forEach((walt) => {
-    let mnemonic = walt.mnemonic
     let waltId = walt._id
-    let accounts = multiChainWallet.generateWalletsForChains(mnemonic, chains)
+    let accounts = multiChainWallet.generateWalletsForChains({
+      privateKey: walt.privateKey ? walt.privateKey : null,
+      mnemonic: walt.mnemonic ? walt.mnemonic : null,
+      chains,
+      chain: walt.walletType === 'multi' ? null : walt.walletType,
+    })
 
     wallets[waltId] = {
-      seedPhrase: mnemonic,
-      type: walt.walletType,
+      seedPhrase: walt.mnemonic ? walt.mnemonic : null,
+      privateKey: walt.privateKey ? walt.privateKey : null,
+      type: walt.walletType === 'multi' ? 'multi' : 'single',
       label: walt.label,
       id: waltId,
       accounts,
+      chain: walt.walletType === 'multi' ? null : walt.walletType,
     }
   })
+
   return wallets
 }
 
-export const getWalletAddressForAsset = (addressMap, wallets) => {
-  return wallets[addressMap].address
+export const getWalletAddressForAsset = (addressMapping, wallets) => {
+  return wallets[addressMapping].address
 }
 
 export const tokenCaipObjectToString = (asset) => {

@@ -3897,10 +3897,10 @@
     tweetnacl-util "^0.15.1"
     url "^0.11.0"
 
-"@verida/wallet-utils@1.7.3":
-  version "1.7.3"
-  resolved "https://registry.yarnpkg.com/@verida/wallet-utils/-/wallet-utils-1.7.3.tgz#2952c2c239a788488b0c7bb90a1091e0a191b1c5"
-  integrity sha512-/1qEsvO+HxhxHpuLU0wem54gMXV4Oay+qqNohfoG+xVnW+lJ4b5PojVOBiEkBWwrJ7ldlncTNmS9ywnZQ3EfMg==
+"@verida/wallet-utils@1.7.4":
+  version "1.7.4"
+  resolved "https://registry.yarnpkg.com/@verida/wallet-utils/-/wallet-utils-1.7.4.tgz#f8d411ecd4951b175f0d079970a54728c02f113f"
+  integrity sha512-jWscVvcmhTNVxt0xycBWbsg5LO2Z/Wo1tID1Rg4BMZ5HQqQY+jQUwiKfCRA7ga69Zt3Pe/srxNvr9ccSGBbHyw==
   dependencies:
     algosdk "^1.12.0"
     bs58 "^4.0.1"

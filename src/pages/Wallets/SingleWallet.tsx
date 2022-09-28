@@ -1,3 +1,4 @@
+import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
@@ -5,6 +6,7 @@ import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
+import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -13,7 +15,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
-import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
+import { getWalletObjectById } from 'reduxStore/wallet/selectors'
 
 import { AccountsType, WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
@@ -49,17 +51,28 @@ const SingleWallet = (props: Props) => {
     toggleCopyPrivateKeyModal(true)
   }
 
-  const addressList = Object.values(chains).map((chain: any) => {
-    const wallet: AccountsType = wallets.accounts[chain.addressMap]
+  const singleWallet: any =
+    wallets.type === 'single' ? Object.values(wallets.accounts)[0] : null
+  const isChainTypeEvm = singleWallet
+    ? Object.keys(wallets.accounts)[0] === 'eip155'
+    : null
 
-    return {
-      name: chain?.name,
-      address: wallet.address,
-      icon: chain?.icon,
-      seedPhrase: wallet.mnemonic,
-      privateKey: wallet.privateKey,
-    }
-  })
+  const addressList = Object.values(chains)
+    .filter((chain: any) =>
+      wallets.type === 'single' ? wallets.chain === chain.chainName : true
+    )
+    .map((chain: any) => {
+      const wallet: AccountsType = wallets.accounts[chain.addressMapping]
+
+      return {
+        name: chain?.name,
+        address: wallet.address,
+        icon: chain?.icon,
+        seedPhrase: wallet.mnemonic,
+        privateKey: wallet.privateKey,
+        addressMapping: chain.addressMapping,
+      }
+    })
 
   return (
     <Container>
@@ -78,16 +91,46 @@ const SingleWallet = (props: Props) => {
         }
       />
       <View style={styles.actionButtons}>
-        <TouchableOpacity
-          onPress={() => setSeedPhraseModalVisible(true)}
-          style={styles.actionButton}>
-          <ExportSeedphraseSvg />
-          <Text style={styles.actionButtonText}>Seed phrase</Text>
-        </TouchableOpacity>
+        {singleWallet ? (
+          <>
+            {singleWallet.address && (
+              <TouchableOpacity
+                onPress={() => Clipboard.setString(singleWallet.address)}
+                style={styles.actionButton}>
+                <CopyIcon />
+                <Text style={styles.actionButtonText}>Copy address</Text>
+              </TouchableOpacity>
+            )}
+            {singleWallet.mnemonic && (
+              <TouchableOpacity
+                onPress={() => showSeedPhrase(singleWallet.mnemonic)}
+                style={styles.actionButton}>
+                <ExportSeedphraseSvg />
+                <Text style={styles.actionButtonText}>Seed phrase</Text>
+              </TouchableOpacity>
+            )}
+            {isChainTypeEvm && singleWallet.privateKey && (
+              <TouchableOpacity
+                onPress={() => showPrivateKey(singleWallet.privateKey)}
+                style={styles.actionButton}>
+                <ExportSeedphraseSvg />
+                <Text style={styles.actionButtonText}>Private key</Text>
+              </TouchableOpacity>
+            )}
+          </>
+        ) : (
+          <TouchableOpacity
+            onPress={() => setSeedPhraseModalVisible(true)}
+            style={styles.actionButton}>
+            <ExportSeedphraseSvg />
+            <Text style={styles.actionButtonText}>Seed phrase</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.listLabel}>Addresses</Text>
       <ChainsAddressesList
         list={addressList}
+        singleWallet={singleWallet}
         onPressSeedPhrase={(seedPhrase: string) => {
           showSeedPhrase(seedPhrase)
         }}
@@ -171,7 +214,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
   return {
-    wallets: getAddressesForWallet(state, props.route.params.item.id),
+    wallets: getWalletObjectById(state, props.route.params.item.id),
     chains: selectChains(rootState),
   }
 }
