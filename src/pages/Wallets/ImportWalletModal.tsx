@@ -40,6 +40,13 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
     setBlockchain(option.value)
   }
   const onSwitchChange = (option: any) => setInputSwitch(option.value)
+  const isDisabled = () => {
+    if (!name) return true
+    if (inputSwitch === 'seedPhrase' && !phrase) return true
+    if (inputSwitch === 'privateKey' && !privateKey) return true
+    return false
+  }
+  const disabled = isDisabled()
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
@@ -168,7 +175,7 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
           <Button
             style={styles.addWalletButton}
             color='primary'
-            disabled={!name || !phrase}
+            disabled={disabled}
             onPress={onPressSend}>
             Import Wallet
           </Button>

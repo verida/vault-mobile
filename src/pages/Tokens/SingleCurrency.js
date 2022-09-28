@@ -42,7 +42,7 @@ const SingleCurrency = ({
   const { item } = route.params
   const { list, loading } = transactions
   const tokenChain = getTokenChain(item.asset)
-  const address = getWalletAddressForToken(item.addressMap, wallets)
+  const address = getWalletAddressForToken(item.addressMapping, wallets)
 
   function pullToRefresh() {
     onGetTransactionsForToken(item)

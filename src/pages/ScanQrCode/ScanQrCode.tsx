@@ -56,12 +56,12 @@ function ScanQrCode(
 
       // Check if content is a valid URL
       const { hostname, pathname } = parse(data, true)
-      if (isEmpty(hostname) || !isSupportedDomain(hostname)) {
+      if (isEmpty(hostname)) {
         Alert.alert('Error', 'This domain is not supported')
         return
       }
       // Try to open the URL in browser if it is not a deeplink
-      if (!canBeHandledByDeeplink(pathname)) {
+      if (!canBeHandledByDeeplink(pathname) || !isSupportedDomain(hostname)) {
         try {
           const canOpen = await Linking.canOpenURL(data)
           if (canOpen) {
