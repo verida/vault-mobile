@@ -1,15 +1,15 @@
 import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Icon } from 'native-base'
+import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
-import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import OtherSvg from 'assets/wallets/Other.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
@@ -75,24 +75,21 @@ const SingleWallet = (props: Props) => {
     })
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.walletHeader}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack()
-          }}>
-          <Icon name='arrow-back' style={styles.backIcon} />
-        </TouchableOpacity>
-        <View style={styles.walletNameLogo}>
-          <OtherSvg width={64} height={64} />
-          <Text style={styles.title}>{wallets.label}</Text>
-        </View>
-        <View style={styles.editButtonWrapper}>
-          <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
-            <Text style={styles.editButton}>Edit</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+    <Container>
+      <NavigationHeader
+        title={wallets.label}
+        left={{
+          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          action: () => navigation.goBack(),
+        }}
+        rightComponent={
+          <View style={styles.editButtonWrapper}>
+            <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
+              <Text style={styles.editButton}>Edit</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
       <View style={styles.actionButtons}>
         {singleWallet ? (
           <>
@@ -167,7 +164,7 @@ const SingleWallet = (props: Props) => {
           toggleCopyPrivateKeyModal(!copyPrivateKeyModalVisible)
         }
       />
-    </SafeAreaView>
+    </Container>
   )
 }
 

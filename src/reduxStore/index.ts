@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import debounce from 'lodash/debounce'
 import { applyMiddleware, combineReducers, createStore } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'

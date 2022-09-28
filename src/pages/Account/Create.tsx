@@ -69,9 +69,9 @@ function Create(
       return
     }
 
-    try {
-      setProcessing(true)
-      setTimeout(async () => {
+    setProcessing(true)
+    setTimeout(async () => {
+      try {
         await AccountManager.getInstance().createAccount(
           {
             name,
@@ -97,11 +97,11 @@ function Create(
         } else {
           navigation.goBack()
         }
-      }, 0)
-    } catch (error) {
-      setProcessing(false)
-      Alert.alert('Error', 'Failed to create account, please try again later')
-    }
+      } catch (error) {
+        setProcessing(false)
+        Alert.alert('Error', 'Failed to create account, please try again later')
+      }
+    }, 0)
   }
 
   const onImportAccount = () => {

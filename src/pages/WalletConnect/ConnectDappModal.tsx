@@ -3,10 +3,10 @@ import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import { RINKEBY_CHAIN_ID } from 'wallet-connect/constants'
 import { DApp, WalletConnectClientMeta } from 'wallet-connect/types'
 
-import { Spacer } from 'components//Spacer'
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
 import DropDownPicker from 'components/Select'
+import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useReduxState } from 'hooks/useReduxState'
 
@@ -20,9 +20,9 @@ type Props = {
 
 const fullNetworkName = (code: DApp['chain']) => {
   switch (code) {
-    case 'ethr':
+    case 'evm':
       return 'Ethereum Rinkeby'
-    case 'algo':
+    case 'algorand':
       return 'Algorand Testnet'
     default:
       return 'Unknown network'
@@ -50,19 +50,20 @@ const ConnectDappModal = (props: Props) => {
     () =>
       Object.keys(accounts)
         .reverse() // show ethereum first
-        .filter((key) => ['ethr', 'algo'].includes(key))
+        .filter((key) => ['algorand', 'evm'].includes(key))
         .map((key) => ({
           ...accounts[key],
           label: `${accounts[key].address}`,
           flag: fullNetworkName(key as any),
           value: accounts[key].address,
-          chainId: accounts[key].chain === 'ethr' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+          chainId: key === 'evm' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+          chain: key,
         })),
     [accounts]
   )
 
   return (
-    <BottomActionsModal title='Wallet connect' onClose={dismissModal}>
+    <BottomActionsModal title='WalletConnect' onClose={dismissModal}>
       <View style={styles.container}>
         <Image
           style={iconStyle.large}

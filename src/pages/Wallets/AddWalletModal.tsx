@@ -34,7 +34,7 @@ export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
         }}
         title='Create wallet'
       />
-      <Layout style={styles.container}>
+      <Layout withKeyboardAvoidingView style={styles.container}>
         <View style={styles.content}>
           <Label>Wallet name</Label>
           <TextInput
