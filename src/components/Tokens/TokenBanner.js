@@ -16,14 +16,14 @@ export default ({
   receiveButtonAction,
   copyButtonAction,
 }) => {
-  const { label, price, change, amount, symbol, quantity, icon } = data
+  const { label, price, change, amount, symbol, quantity, icon, tokenType } = data
   const positive = change > 0
 
   return (
     <View style={styles.bannerWrapper}>
       {symbol && (
         <View style={styles.coinInfo}>
-          <Text style={styles.coinText}>Coin</Text>
+          <Text style={styles.coinText}>{tokenType ? tokenType : 'Coin'}</Text>
           <View style={styles.coinPriceInfo}>
             <Text style={styles.coinPrice}>${price.toFixed(2)}</Text>
             <Text
