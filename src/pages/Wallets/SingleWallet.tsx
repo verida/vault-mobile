@@ -23,7 +23,6 @@ import { AccountsType, WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 
-
 type Props = {
   wallets: WalletType
   navigation: NativeStackNavigationProp<MainStackParams>

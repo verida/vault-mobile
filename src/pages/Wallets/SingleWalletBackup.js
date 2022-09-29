@@ -6,19 +6,16 @@ import AddAddressSvg from 'assets/add_address.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import RemoveWalletSvg from 'assets/remove_wallet.svg'
 import NearSvg from 'assets/wallets/Near.svg'
-
-import Text from 'components/Text'
 import AddressesList from 'components/AddressesList'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
-
-
+import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+
 import AddAddressModal from './AddAddressModal'
 import EditAddressModal from './EditAddressModal'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
-
 
 const list = [
   {

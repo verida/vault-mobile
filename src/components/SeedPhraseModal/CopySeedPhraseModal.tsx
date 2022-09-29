@@ -28,11 +28,7 @@ export default (props: Props) => {
             onPress={() => toggleConfirmModal()}>
             Close
           </Button>
-          <Button
-            color={'primary'}
-            style={styles.copyButton}
-            onPress={onPress}
-          >
+          <Button color={'primary'} style={styles.copyButton} onPress={onPress}>
             Copy
           </Button>
         </View>
