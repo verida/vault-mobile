@@ -53,8 +53,9 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
             <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
           </Text> */}
           <Text style={styles.notice}>
-            Send only {token.label} ({token.tokenType ? token.tokenType : token.symbol}) to this address. Sending
-            any other coins may result in permanent loss.
+            Send only {token.label} (
+            {token.tokenType ? token.tokenType : token.symbol}) to this address.
+            Sending any other coins may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity
