@@ -1,4 +1,3 @@
-import Clipboard from '@react-native-community/clipboard'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -9,10 +8,11 @@ type Props = {
   visible: boolean
   toggleConfirmModal: () => void
   phrase: string
+  onPress: (phrase: string) => void
 }
 
 export default (props: Props) => {
-  const { visible, toggleConfirmModal, phrase } = props
+  const { visible, toggleConfirmModal, phrase, onPress } = props
   return (
     <BottomActionsModal
       visible={visible}
@@ -31,7 +31,8 @@ export default (props: Props) => {
           <Button
             color={'primary'}
             style={styles.copyButton}
-            onPress={() => Clipboard.setString(phrase)}>
+            onPress={onPress}
+          >
             Copy
           </Button>
         </View>

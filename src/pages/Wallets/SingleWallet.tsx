@@ -10,6 +10,8 @@ import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
+import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
@@ -20,8 +22,7 @@ import { getWalletObjectById } from 'reduxStore/wallet/selectors'
 import { AccountsType, WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
-import SeedPhraseModal from './SeedPhraseModal'
-import WarningModal from './WarningModal'
+
 
 type Props = {
   wallets: WalletType
@@ -106,7 +107,7 @@ const SingleWallet = (props: Props) => {
                 onPress={() => showSeedPhrase(singleWallet.mnemonic)}
                 style={styles.actionButton}>
                 <ExportSeedphraseSvg />
-                <Text style={styles.actionButtonText}>Seed phrase</Text>
+                <Text style={styles.actionButtonText}>Seed phrase 12</Text>
               </TouchableOpacity>
             )}
             {isChainTypeEvm && singleWallet.privateKey && (
@@ -123,7 +124,7 @@ const SingleWallet = (props: Props) => {
             onPress={() => setSeedPhraseModalVisible(true)}
             style={styles.actionButton}>
             <ExportSeedphraseSvg />
-            <Text style={styles.actionButtonText}>Seed phrase</Text>
+            <Text style={styles.actionButtonText}>Seed phrase 13</Text>
           </TouchableOpacity>
         )}
       </View>
@@ -144,15 +145,18 @@ const SingleWallet = (props: Props) => {
         onPressRename={onRenameWallet as any}
         data={{ id: wallets.id, label: wallets.label }}
       />
-      <WarningModal
+      <SeedPhraseWarningModal
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
         onPressButton={() => showSeedPhrase(wallets.seedPhrase)}
       />
-      <SeedPhraseModal
+      <CopySeedPhraseModal
         visible={copySeedPhraseModalVisible}
         phrase={seedPhraseData}
+        onPress={() => {
+          Clipboard.setString(seedPhraseData)
+        }}
         toggleConfirmModal={() =>
           toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
         }
