@@ -11,7 +11,7 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, LogBox } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import PushNotification from 'react-native-push-notification'
@@ -32,6 +32,22 @@ import Authenticate from 'pages/Authentication/Authenticate'
 import { ModalProvider } from './contexts/ModalContext'
 import { WalletConnectProvider } from './contexts/WalletConnectContext'
 
+if (__DEV__) {
+  // Disable some known warnings on the device LogBox view, still showing them on the console to be fixed later
+  const ignoreWarns = [
+    'TouchID error',
+    'EventEmitter.removeListener',
+    'Unrecognized WebSocket connection option',
+    'Setting a timer for a long period of time',
+    'ViewPropTypes will be removed from React Native',
+    'AsyncStorage has been extracted from react-native',
+    "exported from 'deprecated-react-native-prop-types'.",
+    'VirtualizedLists should never be nested inside plain ScrollViews',
+  ]
+
+  LogBox.ignoreLogs(ignoreWarns)
+}
+
 configureNotifications()
 
 messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
@@ -50,11 +66,17 @@ Sentry.init({
   environment: Config.SENTRY_ENVIRONMENT,
   beforeSend: (event, hint) => {
     if (__DEV__) {
-      const error = hint?.originalException || hint?.syntheticException || event
-      // Log error on dev mode
+      const error =
+        hint?.originalException ||
+        JSON.stringify(
+          event?.exception ?? { message: 'Unknown error' },
+          null,
+          2
+        )
       // eslint-disable-next-line no-console
-      console.error(error, (error as Error).stack)
-      return null // this drops the event and nothing will be send to sentry
+      console.error(error) // error will be shown on LogBox and Console
+
+      return null // this drops the event and nothing will be send to Sentry
     }
     return event
   },
