@@ -1,49 +1,71 @@
 import Clipboard from '@react-native-community/clipboard'
-import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
+import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import AlertNotification from 'components/AlertNotification'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
+import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 
-import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
-import WordCard from '../../components/Words/WordCard'
 
 export default () => {
-  const [words, setWords] = useState('')
+  const [seedPhraseData, setSeedPhraseData] = useState('')
   const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
+  const [seedPhraseModalVisible, setSeedPhraseModalVisible] = useState(false)
+  const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
+    useState(false)
 
   useEffect(() => {
     const init = async () => {
       const { mnemonic } = AccountManager.getInstance().selectedAccount
-      setWords(mnemonic)
+      setSeedPhraseData(mnemonic)
     }
     init()
   }, [])
+
+  const showSeedPhrase = () => {
+    setSeedPhraseModalVisible(false)
+    toggleCopySeedPhraseModal(true)
+  }
 
   const onClosePress = () => {
     setIsSeedPhraseCopied(false)
   }
 
-  const copyToClipBoard = () => {
-    Clipboard.setString(words)
-    setIsSeedPhraseCopied(true)
-  }
-
   return (
     <View>
       <NavigationHeader title='Seed Phrase' />
-      <Layout style={{ marginTop: 20 }}>
-        <WordCard words={words} />
-        <Button
-          color='transparent-grey'
-          onPress={copyToClipBoard}
-          style={{ marginTop: 10 }}>
-          {'Copy seed phrase\u00A0'}
-          <Icon name='copy' />
-        </Button>
+      <Layout title='View Seed Phrase'>
+        <TouchableOpacity
+          onPress={() => setSeedPhraseModalVisible(true)}
+          style={styles.actionButton}>
+          <ExportSeedphraseSvg />
+          <Text style={styles.actionButtonText}>Seed phrase</Text>
+        </TouchableOpacity>
+        <Text style={styles.description}>
+          Your seed phrase is a list of words. Please record them carefully and
+          store in a safe place.
+        </Text>
+        <SeedPhraseWarningModal
+          hideModal={() => setSeedPhraseModalVisible(false)}
+          visible={seedPhraseModalVisible}
+          type='seed_phrase'
+          onPressButton={showSeedPhrase}
+        />
+        <CopySeedPhraseModal
+          visible={copySeedPhraseModalVisible}
+          phrase={seedPhraseData}
+          onPress={() => {
+            Clipboard.setString(seedPhraseData)
+            setIsSeedPhraseCopied(true)
+          }}
+          toggleConfirmModal={() =>
+            toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
+          }
+        />
         <AlertNotification
           onClosePress={onClosePress}
           isOpened={isSeedPhraseCopied}
@@ -56,3 +78,14 @@ export default () => {
     </View>
   )
 }
+
+const styles = StyleSheet.create({
+  actionButton: {
+    alignItems: 'center',
+    marginTop: 20,
+  },
+  description: {
+    marginTop: 16,
+  },
+  actionButtonText: { marginTop: 5, fontSize: 14 },
+})

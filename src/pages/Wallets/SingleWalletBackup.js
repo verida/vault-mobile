@@ -2,20 +2,20 @@ import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import AddAddressSvg from 'assets/add_address.svg'
+import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
+import RemoveWalletSvg from 'assets/remove_wallet.svg'
+import NearSvg from 'assets/wallets/Near.svg'
+import AddressesList from 'components/AddressesList'
+import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
+import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-import AddAddressSvg from '../../assets/add_address.svg'
-import ExportSeedphraseSvg from '../../assets/export_seedphrase.svg'
-import RemoveWalletSvg from '../../assets/remove_wallet.svg'
-import NearSvg from '../../assets/wallets/Near.svg'
-import AddressesList from '../../components/AddressesList'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import AddAddressModal from './AddAddressModal'
 import EditAddressModal from './EditAddressModal'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
-import SeedPhraseModal from './SeedPhraseModal'
-import WarningModal from './WarningModal'
 
 const list = [
   {
@@ -110,19 +110,19 @@ export default ({ navigation }) => {
         hideModal={() => setRenameModalVisible(false)}
         visible={renameModalVisible}
       />
-      <WarningModal
+      <SeedPhraseWarningModal
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
         onPressButton={() => showSeedPhrase()}
       />
-      <WarningModal
+      <SeedPhraseWarningModal
         hideModal={() => setPrivateKeyModalVisible(false)}
         visible={privateKeyModalVisible}
         type='private_key'
         onPressButton={() => showPrivateKey()}
       />
-      <SeedPhraseModal
+      <CopySeedPhraseModal
         visible={copySeedPhraseModalVisible}
         toggleConfirmModal={() =>
           toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
