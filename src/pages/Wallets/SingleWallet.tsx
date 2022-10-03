@@ -106,7 +106,7 @@ const SingleWallet = (props: Props) => {
                 onPress={() => showSeedPhrase(singleWallet.mnemonic)}
                 style={styles.actionButton}>
                 <ExportSeedphraseSvg />
-                <Text style={styles.actionButtonText}>Seed phrase 12</Text>
+                <Text style={styles.actionButtonText}>Seed phrase</Text>
               </TouchableOpacity>
             )}
             {isChainTypeEvm && singleWallet.privateKey && (
@@ -123,7 +123,7 @@ const SingleWallet = (props: Props) => {
             onPress={() => setSeedPhraseModalVisible(true)}
             style={styles.actionButton}>
             <ExportSeedphraseSvg />
-            <Text style={styles.actionButtonText}>Seed phrase 13</Text>
+            <Text style={styles.actionButtonText}>Seed phrase</Text>
           </TouchableOpacity>
         )}
       </View>
