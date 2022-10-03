@@ -36,7 +36,9 @@ const Layout = (props: LayoutProps) => {
       <ConditionalWrap
         condition={withScrollView}
         wrap={(children) => (
-          <ScrollView contentContainerStyle={[styles.container, props.style]}>
+          <ScrollView
+            contentContainerStyle={[styles.container, props.style]}
+            keyboardShouldPersistTaps='handled'>
             {children}
           </ScrollView>
         )}>
