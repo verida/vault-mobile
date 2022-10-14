@@ -93,6 +93,7 @@ export default (props) => {
               setInfo({
                 request,
                 payload,
+                params: parsed,
                 _expiry,
                 key,
                 logoUrl: parsed.logoUrl,
@@ -139,7 +140,7 @@ export default (props) => {
     reloadExpired()
   }, [reloadExpired])
 
-  const saveLoginRequest = async (approved) => {
+  const saveLoginRequest = async (approved, deviceId) => {
     const vault = AccountManager.getInstance().context
     // save into login database
     const loginRequest = {
@@ -149,6 +150,7 @@ export default (props) => {
       sessionId: info.payload.data.session,
       authUri: info.payload.data.authUri,
       expiry: info.payload.exp,
+      deviceId,
       approved,
     }
 
@@ -189,14 +191,27 @@ export default (props) => {
       const signature = keyring.getSeed()
       const did = await account.did()
       const contextName = info.request.context
+      const deviceId = info.params.userAgent
+        ? info.params.userAgent
+        : `${contextName} (${info.request.loginDomain})`
 
       const context = await client.openContext(contextName, true)
       const contextConfig = await context.getContextConfig()
+
+      // Get a context auth object and force create so we get a new refresh token
+      const contextAuth = await context.getAuthContext({
+        force: true,
+        deviceId,
+      })
+
+      // NOTE: To disconnect a device (effectively log out an external application)
+      // await context.disconnectDevice(deviceId)
 
       const response = {
         signature,
         did,
         contextConfig,
+        contextAuth,
         context: contextName,
       }
 
@@ -224,7 +239,7 @@ export default (props) => {
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
       }
 
-      await saveLoginRequest(true)
+      await saveLoginRequest(true, deviceId)
     } catch (error) {
       Sentry.captureException(error)
       setStatus('loaded')
