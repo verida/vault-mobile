@@ -11,14 +11,16 @@ import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   createNewWallet,
   deleteWallet,
+  importWallet,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
 import {
   getAllWallets,
-  getSelectedWallet,
+  getSelectedWalletId,
   getWalletCount,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
@@ -46,6 +48,7 @@ export type WalletType = {
   seedPhrase: string
   label: string
   accounts: [AccountsType]
+  chain?: string
 }
 
 export type walletIdType = string
@@ -60,6 +63,7 @@ type Props = {
   loading: boolean
   onImportWallet: () => Promise<void>
   onDeleteWallet: (selectedWalletID: string) => Promise<void>
+  chains: any
 }
 
 const ManageWallets = (props: Props) => {
@@ -73,6 +77,7 @@ const ManageWallets = (props: Props) => {
     loading,
     onImportWallet,
     onDeleteWallet,
+    chains,
   } = props
   const { showActionSheetWithOptions } = useActionSheet()
   const [importModalVisible, setImportModalVisible] = useState(false)
@@ -110,12 +115,12 @@ const ManageWallets = (props: Props) => {
   }
 
   const list = Object.values(wallets).map((singleWallet) => {
-    const { label, id, accounts } = singleWallet
+    const { label, id, type } = singleWallet
     return {
       label,
       id,
       icon: <OtherSvg />,
-      count: Object.keys(accounts).length,
+      count: type === 'multi' ? Object.keys(chains).length : 1,
     }
   })
 
@@ -213,8 +218,9 @@ const mapStateToProps = (rootState: any) => {
   return {
     wallets: getAllWallets(state),
     walletCount: getWalletCount(state),
-    selectedWalletId: getSelectedWallet(state),
+    selectedWalletId: getSelectedWalletId(state),
     loading: getWalletProcessingState(state),
+    chains: selectChains(rootState),
   }
 }
 
@@ -224,7 +230,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
       dispatch(createNewWallet(args) as any),
     onSetSelectedWallet: (walletID: string) =>
       dispatch(setSelectedWallet(walletID) as any),
-    onImportWallet: (args: any) => dispatch(createNewWallet(args) as any),
+    onImportWallet: (args: any) => dispatch(importWallet(args) as any),
     onDeleteWallet: (walletId: string) =>
       dispatch(deleteWallet(walletId) as any),
   }

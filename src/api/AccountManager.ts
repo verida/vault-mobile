@@ -3,7 +3,6 @@ import * as Sentry from '@sentry/react-native'
 import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
-import WalletUtils from '@verida/wallet-utils'
 import { utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
@@ -22,13 +21,17 @@ import {
   saveUserWallets,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
+import { getTokens } from 'reduxStore/tokens/actions'
 import {
   getCountryCode,
   getDefaultNode,
   getNodeCodeFromCountry,
 } from 'utils/profile'
-import { fetchNetworks } from 'api/utils'
+import { execWithTimeout, fetchNetworks } from 'api/utils'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import DataConnectorsManager from './DataConnectorsManager'
+import multiChainWallet from 'wallet/helpers/multiChainWallet'
+import { rawDataToReduxState } from 'wallet/helpers/tokens'
 
 type EndpointUrls = {
   dbServerUrl: string
@@ -38,7 +41,7 @@ type EndpointUrls = {
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
 const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
-export const WALLETS_STORAGE_KEY = 'wallets-v2'
+export const WALLETS_STORAGE_KEY = 'wallets-v4'
 export const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
@@ -77,6 +80,11 @@ class AccountManager {
 
   public async init() {
     try {
+      const chains = selectChains(store.getState())
+      await store.dispatch(getTokens())
+      const newChains = selectChains(store.getState())
+      const updateWallets =
+        JSON.stringify(chains) !== JSON.stringify(newChains) ? true : false
       if (!this.selectedAccount) {
         const accountsRaw = await SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY)
         if (accountsRaw) {
@@ -95,20 +103,20 @@ class AccountManager {
 
         const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
-        if (walletsRaw) {
-          const wallets = JSON.parse(walletsRaw)
-          store.dispatch(saveUserWallets(wallets))
-          const selectedWalletID = await SecureStore.getItemAsync(
-            SELECTED_WALLET_STORAGE_KEY
-          )
-          await store.dispatch(setSelectedWallet(selectedWalletID))
-        } else {
+        if (!walletsRaw || updateWallets) {
           const selectedAccount = this.getSelectedAccount()
           if (selectedAccount) {
             await this.connect()
           }
 
           await this.restoreUserWallet()
+        } else {
+          const wallets = JSON.parse(walletsRaw)
+          store.dispatch(saveUserWallets(wallets))
+          const selectedWalletID = await SecureStore.getItemAsync(
+            SELECTED_WALLET_STORAGE_KEY
+          )
+          await store.dispatch(setSelectedWallet(selectedWalletID))
         }
       }
     } catch (e) {
@@ -231,6 +239,7 @@ class AccountManager {
       // @ts-ignore
       await this.vault?.profiles.public.set(...entry)
     }
+    return true
   }
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
@@ -259,12 +268,11 @@ class AccountManager {
   public async setUserWallet() {
     try {
       await store.dispatch(removeUserWallets())
-      const userHDWalletMnemonic =
-        WalletUtils.MultiChainWallet.generateMnemonic()
+      const userHDWalletMnemonic = multiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -275,16 +283,25 @@ class AccountManager {
       const walletID = saved?.id
 
       // generate wallets and save em to redux state
-      const userGeneratedWallets =
-        WalletUtils.MultiChainWallet.generateHDWallets(userHDWalletMnemonic)
+
+      const chains = selectChains(store.getState())
+
+      const userGeneratedWallets = multiChainWallet.generateWalletsForChains({
+        privateKey: null,
+        mnemonic: userHDWalletMnemonic,
+        chains,
+        chain: null,
+      })
 
       const walletData = {
         [walletID]: {
           seedPhrase: wallet.mnemonic,
+          privateKey: null,
           type: wallet.walletType,
           label: wallet.label,
           id: walletID,
           accounts: userGeneratedWallets,
+          chain: null,
         },
       }
 
@@ -308,27 +325,14 @@ class AccountManager {
     try {
       await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
       )
 
       const hdWallets: any = await datastore?.getMany()
+      const chains = selectChains(store.getState())
 
-      const wallets: any = {}
       if (!isEmpty(hdWallets)) {
-        hdWallets.forEach((walt: any) => {
-          const mnemonic = walt.mnemonic
-          const walletID = walt._id
-          const accounts =
-            WalletUtils.MultiChainWallet.generateHDWallets(mnemonic)
-
-          wallets[walletID] = {
-            seedPhrase: mnemonic,
-            type: walt.walletType,
-            label: walt.label,
-            id: walletID,
-            accounts,
-          }
-        })
+        const wallets: any = rawDataToReduxState(hdWallets, chains)
 
         await store.dispatch(saveUserWallets(wallets))
 
@@ -359,6 +363,7 @@ class AccountManager {
     userData: UserData,
     country: string
   ): Promise<Account | undefined> {
+    let connected = false
     try {
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
@@ -400,9 +405,15 @@ class AccountManager {
           backedup: false,
         },
       }
-
       await this.connect(true, endpointUris)
-      await this.setPublicProfile(userData)
+      connected = true
+      const setPublicProfileSuccess = await execWithTimeout(
+        this.setPublicProfile(userData),
+        30000
+      )
+      if (!setPublicProfileSuccess) {
+        throw new Error('Failed to set public profile')
+      }
       await this.setBackedupSeedPhraseConfig(false)
       await this.setUserWallet()
 
@@ -411,6 +422,10 @@ class AccountManager {
 
       return this.selectedAccount
     } catch (e) {
+      // If the corrupted account is already connected, we need to remove it
+      if (connected && this.selectedAccount) {
+        await this.logout([this.selectedAccount?.did])
+      }
       Sentry.captureException(e)
       throw e
     }

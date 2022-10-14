@@ -12,33 +12,45 @@ export const selectRawTokens = (state) => {
 
 export const selectTokens = (state) => {
   const rawTokens = selectRawTokens(state)
-  // console.log(rawTokens, 'rawTokens')
   const list = []
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
       const { tokens, ...chainToken } = singleToken
 
-      list.push(chainToken)
+      list.push({
+        addressMapping: singleToken.asset.chainId.namespace,
+        ...chainToken,
+      })
 
       Object.values(tokens).forEach((singleSubToken) => {
-        list.push(singleSubToken)
+        let addedInfo = {
+          addressMapping: chainToken.asset.chainId.namespace,
+          chainName: chainToken.chainName,
+          referenceLabel: chainToken.referenceLabel,
+          explorerURL: chainToken.explorerURL,
+          ...singleSubToken,
+        }
+        list.push(addedInfo)
       })
     })
   }
+
   return list
 }
 
 export const selectChains = (state) => {
   const rawTokens = selectRawTokens(state)
-  // console.log(rawTokens, 'rawTokens')
   const list = {}
   if (rawTokens) {
     rawTokens.forEach((singleToken) => {
-      list[
-        singleToken.asset.chainId.namespace +
-          ':' +
-          singleToken.asset.chainId.reference
-      ] = singleToken.asset.chainId
+      list[singleToken.chainName] = {
+        data: singleToken.asset.chainId,
+        addressMapping: singleToken.asset.chainId.namespace,
+        path: singleToken.derivationPath,
+        name: singleToken.name,
+        icon: singleToken.icon,
+        chainName: singleToken.chainName,
+      }
     })
   }
 

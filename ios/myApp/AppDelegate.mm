@@ -54,6 +54,14 @@
   // Define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
+  
+  // set RCTSetCustomNSURLSessionConfigurationProvider
+  RCTSetCustomNSURLSessionConfigurationProvider(^NSURLSessionConfiguration *{
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    // Increasing max number of same host HTTP connection to 64
+    [configuration setHTTPMaximumConnectionsPerHost:64];
+    return configuration;
+  });
 
   // set RCTSetCustomNSURLSessionConfigurationProvider
   RCTSetCustomNSURLSessionConfigurationProvider(^NSURLSessionConfiguration *{
@@ -100,7 +108,7 @@
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
 {
  return [RCTLinkingManager application:application
-                  continueUserActivity:userActivity
+                  continueUserActivity:userActivity 
                     restorationHandler:restorationHandler];
 }
 

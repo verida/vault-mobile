@@ -6,7 +6,7 @@ export const ModalContext = createContext<ReturnType<typeof useModal>>(
 
 function useModal() {
   const [modal, setModal] = React.useState<ReactNode>(null)
-  const onDismiss = useCallback(() => {
+  const dismissModal = useCallback(() => {
     setModal(null)
   }, [])
   const showModal = useCallback((openModal: ReactNode) => {
@@ -14,7 +14,7 @@ function useModal() {
   }, [])
 
   return {
-    onDismiss,
+    dismissModal,
     modal,
     showModal,
     isOpen: !!modal,

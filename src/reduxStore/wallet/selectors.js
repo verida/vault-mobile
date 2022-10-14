@@ -26,11 +26,27 @@ export const getTotalBalance = (state) => {
   }
 }
 
+export const getSingleWalletChain = (state) => {
+  const wallet = getWallets(state)
+  if (wallet.type === 'single' && wallet.chain) {
+    return wallet.chain
+  } else {
+    return null
+  }
+}
+
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
   const balances = getBalancesData(state.main)
   const total = getTotalBalance(state.main)
-  const tokens = selectTokens(state)
+  const singleChain = getSingleWalletChain(state.main)
+  const allTokens = selectTokens(state)
+  let tokens
+  if (singleChain) {
+    tokens = allTokens.filter((token) => token.chainName === singleChain)
+  } else {
+    tokens = allTokens
+  }
   let list = []
   if (!isEmpty(balances)) {
     list = tokens.map((token) => {
@@ -39,14 +55,11 @@ export const getListAndTotal = (state) => {
 
       return {
         label: token.name,
-        symbol: token.symbol,
-        icon: token.icon,
-        asset: token.asset,
         price: tokenBalance ? tokenBalance.quote.USD.price : 0,
         change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
         quantity: tokenBalance ? tokenBalance.balance : 0,
         amount: tokenBalance ? tokenBalance.amount : 0,
-        decimal: token.decimal,
+        ...token,
       }
     })
     return { list, total }
@@ -55,12 +68,9 @@ export const getListAndTotal = (state) => {
   }
 }
 
-export const selectNativeTokenBalance = (state, asset) => {
+export const selectNativeTokenBalance = (state, token) => {
   const tokens = selectTokens(state)
-  const native = getNativeForChain(
-    tokens,
-    asset.chainId.namespace + ':' + asset.chainId.reference
-  )
+  const native = getNativeForChain(tokens, token.chainName)
   const balances = getBalancesData(state.main)
 
   if (balances && native && balances[native.symbol]) {
@@ -86,14 +96,11 @@ export const selectSingleTokenData = (state, assetID) => {
 
   return {
     label: token.name,
-    symbol: token.symbol,
-    icon: token.icon,
-    asset: token.asset,
     price: tokenBalance ? tokenBalance.quote.USD.price : 0,
     change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
     quantity: tokenBalance ? tokenBalance.balance : 0,
     amount: tokenBalance ? tokenBalance.amount : 0,
-    decimal: token.decimal,
+    ...token,
   }
 }
 
@@ -106,7 +113,7 @@ export const getTokensData = (state) => {
   }
 }
 
-export const getSelectedWallet = (state) => {
+export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
@@ -124,18 +131,18 @@ export const getWalletCount = (state) => {
 }
 
 export const getWalletsData = createSelector(
-  getSelectedWallet,
+  getSelectedWalletId,
   getAllWallets,
   (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
 )
 
 export const getWallets = createSelector(
-  getSelectedWallet,
+  getSelectedWalletId,
   getAllWallets,
   (selectedWallet, wallets) => wallets?.[selectedWallet] || {}
 )
 
-export const getAddressesForWallet = (state, ID) => {
+export const getWalletObjectById = (state, ID) => {
   return state.wallets.data[ID] || {}
 }
 

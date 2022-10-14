@@ -6,31 +6,37 @@ import { Image, StyleSheet } from 'react-native'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
-export default ({ item, onPressSeedPhrase, onPressPrivateKey }) => {
+export default ({
+  item,
+  singleWallet,
+  onPressSeedPhrase,
+  onPressPrivateKey,
+}) => {
   const { showActionSheetWithOptions } = useActionSheet()
+  let options = ['Copy address', 'Show Seed Phrase']
+  if (item.addressMapping === 'eip155') {
+    options.push('Show Private Key')
+  }
+  options.push('Cancel')
 
   return (
     <ListItem
       button
       onPress={() => {
+        if (singleWallet) return
         showActionSheetWithOptions(
           {
-            options: [
-              'Copy address',
-              'Show Seed Phrase',
-              'Show Private Key',
-              'Cancel',
-            ],
-            cancelButtonIndex: 3,
+            options: options,
+            cancelButtonIndex: options.length,
           },
           (buttonIndex) => {
             if (buttonIndex === 0) {
               Clipboard.setString(item.address)
             }
-            if (buttonIndex === 1) {
+            if (item.seedPhrase && buttonIndex === 1) {
               onPressSeedPhrase(item.seedPhrase)
             }
-            if (buttonIndex === 2) {
+            if (item.addressMapping === 'eip155' && buttonIndex === 2) {
               onPressPrivateKey(item.privateKey)
             }
           }
@@ -44,9 +50,7 @@ export default ({ item, onPressSeedPhrase, onPressPrivateKey }) => {
           <Text note>{`${item.address}`}</Text>
         </Body>
       </Left>
-      <Right>
-        <RightArrowSvg />
-      </Right>
+      <Right>{!singleWallet && <RightArrowSvg />}</Right>
     </ListItem>
   )
 }

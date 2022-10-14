@@ -25,7 +25,7 @@ export interface BottomActionsModalProps extends ModalProps {
   subtitle?: string
   message?: string
   footer?: React.ReactElement
-  onClose: () => void
+  onClose?: () => void
   titleIcon?: React.ReactElement
 }
 

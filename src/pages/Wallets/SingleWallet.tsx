@@ -1,36 +1,37 @@
+import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Icon } from 'native-base'
+import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
-import { SafeAreaView, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
-import { getNativeForChain } from 'wallet/helpers/tokens'
 
+import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
-import OtherSvg from 'assets/wallets/Other.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
+import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-import { selectTokens } from 'reduxStore/tokens/selectors'
+import { selectChains } from 'reduxStore/tokens/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
-import { getAddressesForWallet } from 'reduxStore/wallet/selectors'
+import { getWalletObjectById } from 'reduxStore/wallet/selectors'
 
 import { AccountsType, WalletType } from './ManageWallets'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
-import SeedPhraseModal from './SeedPhraseModal'
-import WarningModal from './WarningModal'
 
 type Props = {
   wallets: WalletType
   navigation: NativeStackNavigationProp<MainStackParams>
   onRenameWallet: (selectedWalletID: string) => void
-  tokens: any
+  chains: any
 }
 
 const SingleWallet = (props: Props) => {
-  const { navigation, wallets, onRenameWallet, tokens } = props
+  const { navigation, wallets, onRenameWallet, chains } = props
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
@@ -50,56 +51,86 @@ const SingleWallet = (props: Props) => {
     toggleCopyPrivateKeyModal(true)
   }
 
-  const addressList = Object.keys(wallets.accounts).map((item: any) => {
-    const itemData: AccountsType = wallets.accounts[item]
+  const singleWallet: any =
+    wallets.type === 'single' ? Object.values(wallets.accounts)[0] : null
+  const isChainTypeEvm = singleWallet
+    ? Object.keys(wallets.accounts)[0] === 'eip155'
+    : null
 
-    const chainMapping: any = {
-      algo: 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDexi9/cOUJOiI=',
-      ethr: 'eip155:4',
-      near: 'near:testnet',
-      poly: 'eip155:80001',
-    }
-    const token = getNativeForChain(tokens, chainMapping[item])
+  const addressList = Object.values(chains)
+    .filter((chain: any) =>
+      wallets.type === 'single' ? wallets.chain === chain.chainName : true
+    )
+    .map((chain: any) => {
+      const wallet: AccountsType = wallets.accounts[chain.addressMapping]
 
-    return {
-      name: token?.name,
-      address: itemData.address,
-      icon: token?.icon,
-      seedPhrase: itemData.mnemonic,
-      privateKey: itemData.privateKey,
-    }
-  })
+      return {
+        name: chain?.name,
+        address: wallet.address,
+        icon: chain?.icon,
+        seedPhrase: wallet.mnemonic,
+        privateKey: wallet.privateKey,
+        addressMapping: chain.addressMapping,
+      }
+    })
 
   return (
-    <SafeAreaView style={styles.container}>
-      <View style={styles.walletHeader}>
-        <TouchableOpacity
-          onPress={() => {
-            navigation.goBack()
-          }}>
-          <Icon name='arrow-back' style={styles.backIcon} />
-        </TouchableOpacity>
-        <View style={styles.walletNameLogo}>
-          <OtherSvg width={64} height={64} />
-          <Text style={styles.title}>{wallets.label}</Text>
-        </View>
-        <View style={styles.editButtonWrapper}>
-          <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
-            <Text style={styles.editButton}>Edit</Text>
-          </TouchableOpacity>
-        </View>
-      </View>
+    <Container>
+      <NavigationHeader
+        title={wallets.label}
+        left={{
+          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          action: () => navigation.goBack(),
+        }}
+        rightComponent={
+          <View style={styles.editButtonWrapper}>
+            <TouchableOpacity onPress={() => setRenameModalVisible(true)}>
+              <Text style={styles.editButton}>Edit</Text>
+            </TouchableOpacity>
+          </View>
+        }
+      />
       <View style={styles.actionButtons}>
-        <TouchableOpacity
-          onPress={() => setSeedPhraseModalVisible(true)}
-          style={styles.actionButton}>
-          <ExportSeedphraseSvg />
-          <Text style={styles.actionButtonText}>Seed phrase</Text>
-        </TouchableOpacity>
+        {singleWallet ? (
+          <>
+            {singleWallet.address && (
+              <TouchableOpacity
+                onPress={() => Clipboard.setString(singleWallet.address)}
+                style={styles.actionButton}>
+                <CopyIcon />
+                <Text style={styles.actionButtonText}>Copy address</Text>
+              </TouchableOpacity>
+            )}
+            {singleWallet.mnemonic && (
+              <TouchableOpacity
+                onPress={() => showSeedPhrase(singleWallet.mnemonic)}
+                style={styles.actionButton}>
+                <ExportSeedphraseSvg />
+                <Text style={styles.actionButtonText}>Seed phrase</Text>
+              </TouchableOpacity>
+            )}
+            {isChainTypeEvm && singleWallet.privateKey && (
+              <TouchableOpacity
+                onPress={() => showPrivateKey(singleWallet.privateKey)}
+                style={styles.actionButton}>
+                <ExportSeedphraseSvg />
+                <Text style={styles.actionButtonText}>Private key</Text>
+              </TouchableOpacity>
+            )}
+          </>
+        ) : (
+          <TouchableOpacity
+            onPress={() => setSeedPhraseModalVisible(true)}
+            style={styles.actionButton}>
+            <ExportSeedphraseSvg />
+            <Text style={styles.actionButtonText}>Seed phrase</Text>
+          </TouchableOpacity>
+        )}
       </View>
       <Text style={styles.listLabel}>Addresses</Text>
       <ChainsAddressesList
         list={addressList}
+        singleWallet={singleWallet}
         onPressSeedPhrase={(seedPhrase: string) => {
           showSeedPhrase(seedPhrase)
         }}
@@ -113,15 +144,18 @@ const SingleWallet = (props: Props) => {
         onPressRename={onRenameWallet as any}
         data={{ id: wallets.id, label: wallets.label }}
       />
-      <WarningModal
+      <SeedPhraseWarningModal
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
         onPressButton={() => showSeedPhrase(wallets.seedPhrase)}
       />
-      <SeedPhraseModal
+      <CopySeedPhraseModal
         visible={copySeedPhraseModalVisible}
         phrase={seedPhraseData}
+        onPress={() => {
+          Clipboard.setString(seedPhraseData)
+        }}
         toggleConfirmModal={() =>
           toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
         }
@@ -133,7 +167,7 @@ const SingleWallet = (props: Props) => {
           toggleCopyPrivateKeyModal(!copyPrivateKeyModalVisible)
         }
       />
-    </SafeAreaView>
+    </Container>
   )
 }
 
@@ -183,8 +217,8 @@ const styles = StyleSheet.create({
 const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
   return {
-    wallets: getAddressesForWallet(state, props.route.params.item.id),
-    tokens: selectTokens(rootState),
+    wallets: getWalletObjectById(state, props.route.params.item.id),
+    chains: selectChains(rootState),
   }
 }
 

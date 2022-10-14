@@ -111,7 +111,7 @@ export async function signAlgorandRequests(
 
   if (
     !getWalletController(dapp) ||
-    getWalletController(dapp)?.getControllerType() !== 'algo'
+    getWalletController(dapp)?.getControllerType() !== 'algorand'
   ) {
     connector.rejectRequest({
       id: payload.id,

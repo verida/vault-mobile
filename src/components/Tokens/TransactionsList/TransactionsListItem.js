@@ -13,7 +13,7 @@ const icons = {
   received: <ReceivedIcon />,
 }
 
-export default ({ symbol, decimal, tokenAddress, item }) => {
+export default ({ symbol, decimal, token, item }) => {
   const navigation = useNavigation()
   const { type, quantity, address, id, pending } = item
 
@@ -22,7 +22,7 @@ export default ({ symbol, decimal, tokenAddress, item }) => {
       button
       onPress={() => {
         if (!pending) {
-          navigation.navigate('TransactionDetails', { id, tokenAddress })
+          navigation.navigate('TransactionDetails', { id, token })
         }
       }}
       style={styles.listItem}>

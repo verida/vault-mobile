@@ -63,7 +63,7 @@ function useWalletConnectContext() {
   const selectedWalletId = useReduxState(selectedWalletSelector)
   const previousDapps = usePrevious(dapps)
 
-  const { showModal, onDismiss: dismissModal } = useModal()
+  const { showModal, dismissModal } = useModal()
 
   const initializedRef = useRef(false)
   const connectorsRef = useRef<Record<string, WalletConnect>>({})

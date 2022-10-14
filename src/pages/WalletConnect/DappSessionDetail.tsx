@@ -19,7 +19,7 @@ import iconStyle from '../../styles/icon'
 import LayoutStyle from '../../styles/layouts'
 import text from '../../styles/text'
 
-const DappSessionDetail = () => {
+const DappSessionDetailv2 = () => {
   const params = useParams<{ dapp: DApp }>()
   const navigation = useNavigation()
   const dispatch = useDispatch()
@@ -34,7 +34,7 @@ const DappSessionDetail = () => {
   return (
     <View>
       <NavigationHeader
-        title='Wallet Connect'
+        title='WalletConnect'
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
@@ -65,7 +65,7 @@ const DappSessionDetail = () => {
         <View style={styles.row}>
           <Text style={styles.label}>Network</Text>
           <Text style={styles.value}>
-            {chain === 'ethr' ? 'Ethereum Rinkeby' : 'Algorand testnet'}
+            {chain === 'eip155' ? 'Ethereum Rinkeby' : 'Algorand testnet'}
           </Text>
         </View>
         <View style={styles.row}>
@@ -97,7 +97,7 @@ const DappSessionDetail = () => {
   )
 }
 
-export default DappSessionDetail
+export default DappSessionDetailv2
 
 const styles = StyleSheet.create({
   container: {

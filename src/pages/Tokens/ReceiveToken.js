@@ -5,11 +5,7 @@ import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
-import {
-  getTokenChain,
-  getTokenChainReference,
-  getWalletAddressForToken,
-} from 'wallet/helpers/tokens'
+import { getWalletAddressForToken } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon.svg'
@@ -26,15 +22,9 @@ const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
+  const address = getWalletAddressForToken(token.addressMapping, wallets)
+  let networkReference = token.referenceLabel
 
-  const tokenChain = getTokenChain(token.asset)
-  const tokenChainRef = getTokenChainReference(token.asset)
-  const address = getWalletAddressForToken(
-    tokenChain + ':' + tokenChainRef,
-    wallets
-  )
-  let networkReference =
-    tokenChain === 'eip155' && tokenChainRef === '4' ? 'Rinkeby' : ''
   return (
     <Container>
       <NavigationHeader
@@ -63,8 +53,9 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
             <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
           </Text> */}
           <Text style={styles.notice}>
-            Send only {token.label} ({token.symbol}) to this address. Sending
-            any other coins may result in permanent loss.
+            Send only {token.label} (
+            {token.tokenType ? token.tokenType : token.symbol}) to this address.
+            Sending any other coins may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity
