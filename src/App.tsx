@@ -62,7 +62,7 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
 })
 
 Sentry.init({
-  dsn: 'https://982fadf2fca74043b9395c50458aeffa@o1233403.ingest.sentry.io/6382201',
+  dsn: 'https://b850525444734a138f9fddcc918d5ac1@o4503997119725568.ingest.sentry.io/4503997121495040',
   environment: Config.SENTRY_ENVIRONMENT,
   beforeSend: (event, hint) => {
     if (__DEV__) {
