@@ -8,7 +8,7 @@ import Logo from 'assets/logo.svg'
 import { Spacer } from 'components/Spacer'
 import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 
