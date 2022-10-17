@@ -23,10 +23,10 @@ export type AddAccountsModalProps = Omit<
   BottomActionsModalProps,
   'children' | 'title' | 'message' | 'footer'
 > & {
-  onAddNew: () => void
-  onImport: () => void
-  onSelectAccount: (did: string) => void
-  onLogoutAccounts: (dids: string[]) => void
+  onAddNew?: () => void
+  onImport?: () => void
+  onSelectAccount?: (did: string) => void
+  onLogoutAccounts?: (dids: string[]) => void
   showLogout?: boolean
   setLoading?: any
 }
@@ -104,13 +104,13 @@ function AddAccountsModal(props: AddAccountsModalProps) {
 
   function onImportPress() {
     setStep(0)
-    onImport()
+    onImport?.()
   }
 
   function onSelectAccountPress(did: string) {
     if (step === Step.INITIAL) {
       setStep(0)
-      onSelectAccount(did)
+      onSelectAccount?.(did)
       return
     }
     const findIndex = selectedDids.indexOf(did)
@@ -126,14 +126,14 @@ function AddAccountsModal(props: AddAccountsModalProps) {
 
   function onAddNewPress() {
     setStep(0)
-    onAddNew()
+    onAddNew?.()
   }
 
   async function onLogoutPress() {
     setLoading?.(true)
     setStep(0)
     onClose!()
-    await onLogoutAccounts(selectedDids)
+    await onLogoutAccounts?.(selectedDids)
     setLoading?.(false)
   }
 
