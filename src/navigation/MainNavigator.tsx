@@ -5,6 +5,7 @@ import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
+import DeleteAccount from 'pages/Account/DeleteAccount'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
@@ -94,6 +95,8 @@ function MainNavigator() {
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
       <Stack.Screen name={'AddAccount'} component={Create} />
       <Stack.Screen name={'ImportAccount'} component={ImportAccount} />
+      <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
+
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen
         name={'SeedPhraseGenerated'}

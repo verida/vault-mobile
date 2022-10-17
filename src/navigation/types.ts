@@ -61,6 +61,7 @@ export type MainStackParams = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: { mode: CreateAccountMode }
+  DeleteAccount: undefined
   ImportAccount: undefined
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
