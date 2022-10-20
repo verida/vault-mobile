@@ -1,6 +1,6 @@
 import React, { useMemo, useState } from 'react'
 import { Alert, Image, StyleSheet, Text, View } from 'react-native'
-import { RINKEBY_CHAIN_ID } from 'wallet-connect/constants'
+import { GOERLI_CHAIN_ID } from 'wallet-connect/constants'
 import { DApp, WalletConnectClientMeta } from 'wallet-connect/types'
 
 import BottomActionsModal from 'components/BottomActionsModal'
@@ -21,7 +21,7 @@ type Props = {
 const fullNetworkName = (code: DApp['chain']) => {
   switch (code) {
     case 'eip155':
-      return 'Ethereum Rinkeby'
+      return 'Ethereum Goerli'
     case 'algorand':
       return 'Algorand Testnet'
     default:
@@ -56,7 +56,7 @@ const ConnectDappModal = (props: Props) => {
           label: `${accounts[key].address}`,
           flag: fullNetworkName(key as any),
           value: accounts[key].address,
-          chainId: key === 'eip155' ? RINKEBY_CHAIN_ID : 0, // only support Rinkeby for now
+          chainId: key === 'eip155' ? GOERLI_CHAIN_ID : 0, // only support Goerli for now
           chain: key,
         })),
     [accounts]

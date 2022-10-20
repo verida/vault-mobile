@@ -1,4 +1,4 @@
-import { RINKEBY_CHAIN_ID } from '../constants'
+import { GOERLI_CHAIN_ID } from '../constants'
 import { DApp } from '../types'
 import { AlgorandWalletController } from './algorand'
 import { EthereumWalletController } from './ethereum'
@@ -13,7 +13,7 @@ export function getWalletController(dapp?: DApp): IWalletController | null {
 
   const ckey = getKey(dapp)
   if (dapp?.chain && !walletControllers[ckey]) {
-    if (dapp.chain === 'eip155' && dapp.chainId === RINKEBY_CHAIN_ID) {
+    if (dapp.chain === 'eip155' && dapp.chainId === GOERLI_CHAIN_ID) {
       walletControllers[ckey] = new EthereumWalletController()
     } else if (dapp.chain === 'algorand' || dapp.chainId === 0) {
       walletControllers[ckey] = new AlgorandWalletController()
