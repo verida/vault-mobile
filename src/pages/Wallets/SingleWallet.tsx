@@ -1,8 +1,15 @@
+import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container, Icon } from 'native-base'
-import React, { useState } from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import React, { useEffect, useState } from 'react'
+import {
+  ActivityIndicator,
+  BackHandler,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
@@ -13,6 +20,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
+import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
@@ -32,6 +40,7 @@ type Props = {
 
 const SingleWallet = (props: Props) => {
   const { navigation, wallets, onRenameWallet, chains } = props
+  const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
     useState(false)
@@ -40,6 +49,18 @@ const SingleWallet = (props: Props) => {
   const [seedPhraseModalVisible, setSeedPhraseModalVisible] = useState(false)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [privateKeyData, setPrivateKeyData] = useState('')
+  const [pinCodeStatus, setPinCodeStatus] = useState(true)
+  const [isPinCorrect, setPinCorrectStatus] = useState(false)
+
+  useEffect(() => {
+    const initUSerPin = async () => {
+      const status = await hasUserSetPinCode()
+      setPinCodeStatus(status)
+      setLoading(false)
+    }
+
+    initUSerPin()
+  }, [])
 
   const showSeedPhrase = (data: any) => {
     setSeedPhraseModalVisible(false)
@@ -73,6 +94,32 @@ const SingleWallet = (props: Props) => {
         addressMapping: chain.addressMapping,
       }
     })
+
+  if (loading) {
+    return (
+      <View style={styles.container}>
+        <Text>Loading </Text>
+        <ActivityIndicator size='large' />
+      </View>
+    )
+  }
+
+  if (pinCodeStatus && !isPinCorrect) {
+    return (
+      <PINCode
+        status={'enter'}
+        titleEnter={'Enter your  PIN'}
+        onClickButtonLockedPage={() => BackHandler.exitApp()}
+        finishProcess={() => setPinCorrectStatus(true)}
+        colorCircleButtons='#dfe1e8'
+        stylePinCodeColorTitle={BLACK_ORIGIN_COLOR}
+        stylePinCodeColorSubtitle={BLACK_ORIGIN_COLOR}
+        stylePinCodeButtonNumber={BLACK_ORIGIN_COLOR}
+        stylePinCodeDeleteButtonSize={45}
+        stylePinCodeCircle={{ height: 10, width: 10, borderRadius: 5 }}
+      />
+    )
+  }
 
   return (
     <Container>
@@ -153,9 +200,6 @@ const SingleWallet = (props: Props) => {
       <CopySeedPhraseModal
         visible={copySeedPhraseModalVisible}
         phrase={seedPhraseData}
-        onPress={() => {
-          Clipboard.setString(seedPhraseData)
-        }}
         toggleConfirmModal={() =>
           toggleCopySeedPhraseModal(!copySeedPhraseModalVisible)
         }
