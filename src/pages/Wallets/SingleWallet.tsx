@@ -53,13 +53,13 @@ const SingleWallet = (props: Props) => {
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
 
   useEffect(() => {
-    const initUSerPin = async () => {
+    const initUserPin = async () => {
       const status = await hasUserSetPinCode()
       setPinCodeStatus(status)
       setLoading(false)
     }
 
-    initUSerPin()
+    initUserPin()
   }, [])
 
   const showSeedPhrase = (data: any) => {
