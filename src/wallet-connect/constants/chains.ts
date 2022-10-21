@@ -2,13 +2,13 @@ import { IChainData } from '../types'
 
 export const SUPPORTED_CHAINS: IChainData[] = [
   {
-    name: 'Ethereum Rinkeby',
+    name: 'Ethereum Goerli',
     short_name: 'rin',
     chain: 'ETH',
-    network: 'rinkeby',
-    chain_id: 4,
-    network_id: 4,
-    rpc_url: 'https://rinkeby.infura.io/v3/%API_KEY%',
+    network: 'goerli',
+    chain_id: 5,
+    network_id: 5,
+    rpc_url: 'https://goerli.infura.io/v3/%API_KEY%',
     native_currency: {
       symbol: 'ETH',
       name: 'Ether',
