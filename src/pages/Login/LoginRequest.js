@@ -13,6 +13,7 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import { useWalletConnect } from 'hooks/useWalletConnect'
 
 import MobileSvg from '../../assets/mobile.svg'
 import Button from '../../components/Button'
@@ -34,6 +35,7 @@ export default (props) => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [ws, setWebsocket] = useState(null)
   const [expired, setExpired] = useState(false)
+  const { requestConnect } = useWalletConnect()
 
   useEffect(() => {
     const init = async () => {
@@ -97,6 +99,7 @@ export default (props) => {
                 key,
                 logoUrl: parsed.logoUrl,
                 openUrl: parsed.openUrl ? parsed.openUrl : null,
+                walletConnect: parsed.walletConnect,
               })
               setStatus('loaded')
             } catch (e) {
@@ -222,6 +225,10 @@ export default (props) => {
         const jsonEncoded = JSON.stringify(response)
         const encoded = Buffer.from(jsonEncoded).toString('base64')
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
+      }
+
+      if (info.walletConnect?.uri) {
+        await requestConnect(info.walletConnect.uri)
       }
 
       await saveLoginRequest(true)
