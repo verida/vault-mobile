@@ -876,7 +876,7 @@
 				INFOPLIST_FILE = myApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.3.30;
+				MARKETING_VERSION = 0.3.32;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -970,7 +970,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-udp\"",
 				);
-				MARKETING_VERSION = 0.3.30;
+				MARKETING_VERSION = 0.3.32;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
