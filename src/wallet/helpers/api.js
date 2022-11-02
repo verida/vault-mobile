@@ -27,5 +27,5 @@ export const nearIndexerApi = create({
 })
 
 export const walletProviderApi = create({
-  baseURL: 'https://walletprovider-dev.tn.verida.tech',
+  baseURL: 'https://walletprovider.tn.verida.tech',
 })
