@@ -24,6 +24,9 @@ import { NUNITO_SANS } from '../../constants/text'
 import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
+const MAX_TEXTAREA_LENGTH = 255
+const MAX_INPUT_LENGTH = 20
+
 const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
@@ -81,9 +84,9 @@ const EditProfile = (props: any) => {
                 ]}
                 value={edited}
                 autoFocus={true}
-                maxLength={20}
+                maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
-                  handleInput(text, 15)
+                  handleInput(text, MAX_INPUT_LENGTH)
                 }}
               />
             )}
@@ -108,11 +111,11 @@ const EditProfile = (props: any) => {
                 value={edited}
                 multiline
                 numberOfLines={4}
-                maxLength={255}
+                maxLength={MAX_TEXTAREA_LENGTH}
                 editable
                 autoFocus={true}
                 onChangeText={(text) => {
-                  handleInput(text, 255)
+                  handleInput(text, MAX_TEXTAREA_LENGTH)
                 }}
               />
             )}
