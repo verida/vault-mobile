@@ -59,7 +59,7 @@ function ImportAccount(
       if (!result) {
         setProcessing(false)
         Alert.alert('Failed', 'Account already exist')
-        return
+        navigation.goBack()
       }
       setProcessing(false)
       navigation.goBack()
