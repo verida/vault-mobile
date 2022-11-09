@@ -6,8 +6,8 @@ import Create from 'pages/Account/Create'
 import Import from 'pages/Account/Import'
 import Start from 'pages/Account/Start'
 import CreatePin from 'pages/Authentication/CreatePin'
+import ImportAccount from 'pages/Dashboard/ImportAccount'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
-import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import SelectNetwork from 'pages/SelectNetwork'
@@ -26,7 +26,7 @@ function AuthNavigator() {
         name={'SeedPhraseGenerated'}
         component={SeedPhraseGenerated}
       />
-      <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
+      <Stack.Screen name={'SeedPhraseEntered'} component={ImportAccount} />
       <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
       <Stack.Screen name={'CreatePin'} component={CreatePin} />
       <Stack.Screen name={'Success'} component={Success} />

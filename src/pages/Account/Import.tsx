@@ -21,7 +21,7 @@ function Import(
   function onContinue() {
     switch (selectedOption) {
       case 0:
-        navigation.navigate('SeedPhraseEntered')
+        navigation.navigate('ImportAccount')
         break
       default:
         navigation.navigate('SelectNetwork')

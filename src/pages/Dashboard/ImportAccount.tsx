@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, TextInput } from 'react-native'
+import { TextInput } from 'react-native'
 
 import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
 import CustomFooter from 'components/Layouts/CustomFooter'
@@ -19,8 +19,8 @@ import ModifierStyles from '../../styles/modifier'
 function ImportAccount(
   props: NativeStackScreenProps<MainStackParams, 'ImportAccount'>
 ) {
-  const { navigation } = props
-  const usePrivateKey = false
+  const { navigation, route } = props
+  const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
@@ -34,13 +34,11 @@ function ImportAccount(
         setVerified(true)
         return
       }
-
       const splitted = phrase && phrase.trim().split(' ')
       if (!splitted) {
         setVerified(false)
         return
       }
-
       const correct = splitted.length === MNEMONIC_LENGTH
       setVerified(correct)
     }
@@ -58,11 +56,14 @@ function ImportAccount(
       const result = await AccountManager.getInstance().importAccount(phrase)
       if (!result) {
         setProcessing(false)
-        Alert.alert('Failed', 'Account already exist')
-        navigation.goBack()
       }
       setProcessing(false)
-      navigation.goBack()
+
+      if (route.params.previousScreen === 'Dashboard') {
+        navigation.navigate('Dashboard')
+      } else {
+        navigation.navigate('Success')
+      }
     } catch (e) {
       showError(true)
       setProcessing(false)

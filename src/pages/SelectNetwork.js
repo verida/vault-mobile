@@ -16,7 +16,7 @@ export default (props) => {
 
   const onContinue = async () => {
     await storeChain(NETWORKS[selected].id)
-    props.navigation.navigate('SeedPhraseEntered', { usePrivateKey: true })
+    props.navigation.navigate('ImportAccount', { usePrivateKey: true })
   }
 
   return (

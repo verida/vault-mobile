@@ -105,7 +105,7 @@ function Create(
   }
 
   const onImportAccount = () => {
-    navigation.navigate('SeedPhraseEntered')
+    navigation.navigate('SeedPhraseEntered', {})
   }
 
   function toggleAgreedTC() {
