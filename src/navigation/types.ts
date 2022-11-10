@@ -26,6 +26,7 @@ export type DashboardTabParams = {
   Home: undefined
   Data: undefined
   Tokens: undefined
+  Assets: undefined
   Profiles: undefined
   Connections: undefined
 }

@@ -16,5 +16,6 @@ export const SEPARATOR_LIGHT = 'rgba(60, 60, 67, 0.1)'
 export const GREY_COLOR = '#AFAFAF'
 export const WARNING_COLOR = '#EF7936'
 export const LIGHT_ORANGE_COLOR = '#FDF4EA'
+export const TEXT_COLOR = '#041133'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`

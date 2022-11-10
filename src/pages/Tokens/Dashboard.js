@@ -3,9 +3,9 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 
-import SettingsSvg from 'assets/icons/settings.svg'
+// import SettingsSvg from 'assets/icons/settings.svg'
 import LoadingIndicator from 'components/LoadingIndicator'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
+// import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
@@ -35,14 +35,14 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
 
   return (
     <Container>
-      <NavigationHeader
+      {/* <NavigationHeader
         left={{ icon: 'skip' }}
         title='Tokens'
         right={{
           icon: <SettingsSvg />,
           action: () => navigation.navigate('ManageWallets'),
         }}
-      />
+      /> */}
       {loading ? (
         <LoadingIndicator />
       ) : (
@@ -80,7 +80,7 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
 }
 
 const styles = StyleSheet.create({
-  contentContainer: { flex: 1 },
+  contentContainer: { flex: 1, marginTop: 10 },
 })
 
 const mapStateToProps = (rootState) => {

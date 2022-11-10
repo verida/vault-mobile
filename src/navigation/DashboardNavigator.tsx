@@ -5,18 +5,17 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { PRIMARY_COLOR } from 'constants/color'
 import { DashboardTabParams } from 'navigation/types'
+import Assets from 'pages/AssetsCollections'
 import DataConnector from 'pages/Connections/DataConnector'
 import Home from 'pages/Dashboard/Home'
 import Profiles from 'pages/Dashboard/Profiles'
 import Folders from 'pages/Data/Folders'
-import Tokens from 'pages/Tokens/Dashboard'
 // import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
   // const { isVeridaTeamMember } = useAuth()
-
   return (
     <Tab.Navigator
       screenOptions={{
@@ -61,8 +60,8 @@ function DashboardNavigator() {
       />
       {/* {isVeridaTeamMember && ( */}
       <Tab.Screen
-        name={'Tokens'}
-        component={Tokens}
+        name={'Assets'}
+        component={Assets}
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name='wallet' size={24} color={color} />
