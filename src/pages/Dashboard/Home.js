@@ -10,23 +10,19 @@ import {
   InteractionManager,
   Linking,
   StyleSheet,
-  TouchableOpacity,
-  View,
 } from 'react-native'
-import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
-import QRCodeIcon from 'assets/icons/qr-code.svg'
 import LoadingView from 'components/LoadingView'
-import Text from 'components/Text'
 import {
   BLACK_COLOR_OPACITY,
   BLACK_ORIGIN_COLOR,
   LIGHT_ORANGE_COLOR,
   ORANGE_COLOR,
+  VERY_LIGHTGREY_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
@@ -37,8 +33,6 @@ import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { CreateAccountMode } from 'pages/Account/Create'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
-import DidView from 'pages/Dashboard/DidView'
-import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import {
   logout as logoutAction,
@@ -46,8 +40,13 @@ import {
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
 
+import CarouselBanner from './Banners/CarouselBanner'
+import WalletBanner from './Banners/WalletBanner'
+import DashboardNavigationHeader from './DashboardNavigationHeader'
+import GettingStartedSection from './GettingStarted/GettingStartedSection'
+import QRCodeScannerSection from './QrcodeScanner'
+
 const DefaultAvatar = require('assets/stubs/avatar.png')
-const LogoImg = require('assets/vault-logo.png')
 
 const SHOW_BANNER_KEY = 'show_banner'
 
@@ -74,7 +73,6 @@ const Home = (props) => {
     if (initialUrl === null) {
       return
     }
-
     // ignore for firebase links, let firebase handle them.
     if (
       initialUrl.includes('redirect') ||
@@ -259,8 +257,9 @@ const Home = (props) => {
   }
 
   return (
-    <Container>
-      <HomeNavigationHeader
+    <Container style={style.container}>
+      <DashboardNavigationHeader
+        did={info.did || ''}
         name={info.name || ''}
         avatar={avatarSource}
         inboxCount={props.newMessagesCount}
@@ -276,34 +275,20 @@ const Home = (props) => {
       />
       <Content contentContainerStyle={style.content}>
         {loading ? (
-          <LoadingView />
+          <LoadingView
+            style={{
+              height: 300,
+            }}
+          />
         ) : (
           <>
-            <View style={style.qr}>
-              <QRCode
-                logo={LogoImg}
-                logoSize={60}
-                size={207}
-                codeStyle='dot'
-                innerEyeStyle='circle'
-                padding={0.5}
-                content={info.address}
-              />
-            </View>
-            <Text style={style.notes}>
-              This is your QR-Code. Present it to others so they can scan it and
-              connect to you
-            </Text>
-            <TouchableOpacity
-              style={style.scanQRButton}
-              onPress={onScanQRPress}>
-              <QRCodeIcon />
-              <Text style={style.scanQRButtonText}>Scan QR</Text>
-            </TouchableOpacity>
+            <WalletBanner />
+            <CarouselBanner />
+            <GettingStartedSection />
+            <QRCodeScannerSection onScanQRPress={onScanQRPress} />
           </>
         )}
       </Content>
-      <DidView did={info.did || ''} />
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
@@ -312,10 +297,10 @@ const Home = (props) => {
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />
-      <SeedPhraseRemindView
+      {/* <SeedPhraseRemindView
         onRecordPress={onRecordSeedPhrase}
         style={style.seedPhraseRemindView}
-      />
+      /> */}
     </Container>
   )
 }
@@ -342,17 +327,14 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const marginTop = 0
 const style = StyleSheet.create({
+  container: {
+    backgroundColor: VERY_LIGHTGREY_COLOR,
+  },
   content: {
-    flexGrow: 1,
     justifyContent: 'center',
     alignItems: 'center',
     paddingBottom: 20,
-  },
-  title: {
-    fontSize: 22,
-    lineHeight: 30,
-    marginTop: 16,
-    fontFamily: NUNITO_SANS_BOLD,
+    backgroundColor: VERY_LIGHTGREY_COLOR,
   },
   userImg: {
     width: 80,
