@@ -13,12 +13,12 @@ const dataList = [
   {
     title: 'Update Profile',
     icon: <UpdateProfileIcon />,
-    screen: 'EditProfile',
+    screen: 'Profiles',
   },
   {
     title: 'Connect Accounts',
     icon: <ConnectIcon />,
-    screen: 'SingleConnection',
+    screen: 'Connections',
   },
   {
     title: 'Import Address',

@@ -18,4 +18,10 @@ export const WARNING_COLOR = '#EF7936'
 export const LIGHT_ORANGE_COLOR = '#FDF4EA'
 export const TEXT_COLOR = '#041133'
 
+export const PRIMARY_COLOR_200 = '#E7E5FF'
+export const PRIMARY_COLOR_300 = '#7986F7'
+export const PRIMARY_COLOR_500 = '#423BCE'
+
+export const BACKGROUND_GREY_COLOR = '#F6F7F9'
+
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`

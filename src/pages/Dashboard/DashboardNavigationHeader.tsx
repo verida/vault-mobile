@@ -13,7 +13,6 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import EnvelopeSvg from 'assets/icons/envelope.svg'
 import Text from 'components/Text'
-import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 export type DashboardNavigationHeaderProps = Omit<ViewProps, 'children'> & {
@@ -65,7 +64,7 @@ function DashboardNavigationHeader(props: DashboardNavigationHeaderProps) {
               <View style={styles.textChipBox}>
                 <Text style={styles.textChip}>Personal</Text>
               </View>
-              <Text style={styles.networkText} numberOfLines={1}>
+              <Text style={styles.didText} numberOfLines={1}>
                 DID: {did.slice(0, 10)}...{did.slice(-4)}
               </Text>
             </View>
@@ -98,9 +97,8 @@ function DashboardNavigationHeader(props: DashboardNavigationHeaderProps) {
 const styles = StyleSheet.create({
   header: {
     elevation: 1,
-    paddingLeft: 16,
-    marginVertical: 10,
-    backgroundColor: WHITE_COLOR,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   leftContainer: {
     flex: 2,
@@ -181,18 +179,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  networkText: {
+  didText: {
     fontSize: 12,
     color: '#687085',
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  networkIcon: {
-    width: 12,
-    height: 12,
-    resizeMode: 'contain',
-    marginRight: 5,
   },
 })
 

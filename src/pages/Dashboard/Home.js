@@ -18,11 +18,11 @@ import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import {
+  BACKGROUND_GREY_COLOR,
   BLACK_COLOR_OPACITY,
   BLACK_ORIGIN_COLOR,
   LIGHT_ORANGE_COLOR,
   ORANGE_COLOR,
-  VERY_LIGHTGREY_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
@@ -43,6 +43,7 @@ import {
 import CarouselBanner from './Banners/CarouselBanner'
 import WalletBanner from './Banners/WalletBanner'
 import DashboardNavigationHeader from './DashboardNavigationHeader'
+import DidView from './DidView'
 import GettingStartedSection from './GettingStarted/GettingStartedSection'
 import QRCodeScannerSection from './QrcodeScanner'
 
@@ -277,7 +278,7 @@ const Home = (props) => {
         {loading ? (
           <LoadingView
             style={{
-              height: 300,
+              height: 700,
             }}
           />
         ) : (
@@ -297,10 +298,11 @@ const Home = (props) => {
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />
-      {/* <SeedPhraseRemindView
+      <DidView did={info.did || ''} />
+      <SeedPhraseRemindView
         onRecordPress={onRecordSeedPhrase}
         style={style.seedPhraseRemindView}
-      /> */}
+      />
     </Container>
   )
 }
@@ -328,13 +330,12 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 const marginTop = 0
 const style = StyleSheet.create({
   container: {
-    backgroundColor: VERY_LIGHTGREY_COLOR,
+    flex: 1,
   },
   content: {
     justifyContent: 'center',
     alignItems: 'center',
-    paddingBottom: 20,
-    backgroundColor: VERY_LIGHTGREY_COLOR,
+    backgroundColor: BACKGROUND_GREY_COLOR,
   },
   userImg: {
     width: 80,

@@ -9,6 +9,12 @@ import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { getBalances } from 'reduxStore/wallet/actions'
 import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
+import {
+  PRIMARY_COLOR_200,
+  PRIMARY_COLOR_300,
+  PRIMARY_COLOR_500,
+} from '../../../constants/color'
+
 interface WalletSectionProps {
   onGetBalances: () => void
   data: {
@@ -75,12 +81,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: '#E7E5FF',
+    backgroundColor: PRIMARY_COLOR_200,
     borderRadius: 4,
     marginVertical: 16,
     marginHorizontal: 16,
     height: 72,
-    width: 355,
+    width: 343,
     padding: 16,
   },
   mainWalletIconWrapper: {
@@ -89,12 +95,12 @@ const styles = StyleSheet.create({
   mainWalletText: {
     fontFamily: NUNITO_SANS,
     fontSize: 12,
-    color: '#7986F7',
+    color: PRIMARY_COLOR_300,
   },
   mainWalletAmount: {
     fontFamily: NUNITO_SANS_BOLD,
     fontSize: 17,
-    color: '#423BCE',
+    color: PRIMARY_COLOR_500,
   },
   walletInfo: {
     flexDirection: 'row',
