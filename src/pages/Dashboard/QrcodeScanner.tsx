@@ -2,7 +2,7 @@ import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import QrScannerIcon from 'assets/icons/qr_scanner.svg'
-import { WHITE_COLOR } from 'constants/color'
+import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 interface QRCodeScannerSectionProps {
@@ -27,10 +27,8 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     height: 56,
-    width: 343,
+    width: '100%',
     backgroundColor: WHITE_COLOR,
-    marginTop: 40,
-    marginBottom: 21,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: '#E0E3EA',
@@ -45,6 +43,6 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontFamily: NUNITO_SANS_BOLD,
     marginLeft: 8,
-    color: '#041133',
+    color: TEXT_COLOR,
   },
 })

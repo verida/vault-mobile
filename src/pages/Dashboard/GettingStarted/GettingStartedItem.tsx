@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, PressableProps, StyleSheet, Text, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { GREY_COLOR, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
@@ -10,7 +10,7 @@ type GettingStartedItemProps = {
   title: string
   screen: any
   icon: React.ReactElement
-}
+} & PressableProps
 
 const GettingStartedItem = ({
   icon,
@@ -43,8 +43,9 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
     height: 56,
-    width: 343,
-    marginTop: 8,
+    width: '100%',
+    paddingVertical: 8,
+    paddingHorizontal: 16,
     borderWidth: 1,
     borderRadius: 4,
     borderColor: '#E0E3EA',
@@ -54,7 +55,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginLeft: 15,
   },
   sideText: {},
   cardTitle: {
@@ -64,6 +64,6 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
   },
   cardIcon: {
-    marginRight: 22,
+    marginRight: 8,
   },
 })

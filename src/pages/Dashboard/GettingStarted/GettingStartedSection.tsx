@@ -29,21 +29,24 @@ const dataList = [
 
 const GettingStartedSection = () => {
   return (
-    <View style={styles.container}>
+    <>
       <Text style={styles.listTitle}>What you could do next</Text>
       {dataList.map((item) => (
-        <GettingStartedItem key={item.title} {...item} />
+        <View
+          key={item.title}
+          style={{
+            marginTop: 8,
+          }}>
+          <GettingStartedItem {...item} />
+        </View>
       ))}
-    </View>
+    </>
   )
 }
 
 export default GettingStartedSection
 
 const styles = StyleSheet.create({
-  container: {
-    marginTop: 8,
-  },
   listTitle: {
     fontSize: 14,
     fontWeight: '600',

@@ -63,7 +63,7 @@ export default function PaginationDotsExample() {
   )
 
   return (
-    <View style={styles.flex}>
+    <>
       <AnimatedPagerView
         initialPage={0}
         ref={ref}
@@ -87,26 +87,18 @@ export default function PaginationDotsExample() {
           />
         </View>
       </View>
-    </View>
+    </>
   )
 }
 
 const styles = StyleSheet.create({
-  flex: {
-    flex: 1,
-    marginBottom: 30,
-    marginHorizontal: 16,
-  },
   PagerView: {
-    flex: 1,
     height: 152,
-    width: 343,
   },
   center: {
     justifyContent: 'center',
     alignItems: 'center',
     alignContent: 'center',
-    width: '100%',
   },
   dotsContainer: {
     flex: 1,

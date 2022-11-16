@@ -2,7 +2,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
-import { Container, Content } from 'native-base'
+import { Container, Content, View } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -23,6 +23,7 @@ import {
   BLACK_ORIGIN_COLOR,
   LIGHT_ORANGE_COLOR,
   ORANGE_COLOR,
+  TEXT_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
@@ -276,17 +277,21 @@ const Home = (props) => {
       />
       <Content contentContainerStyle={style.content}>
         {loading ? (
-          <LoadingView
-            style={{
-              height: 700,
-            }}
-          />
+          <LoadingView style={style.loading} />
         ) : (
           <>
-            <WalletBanner />
-            <CarouselBanner />
-            <GettingStartedSection />
-            <QRCodeScannerSection onScanQRPress={onScanQRPress} />
+            <View style={style.walletBannerSection}>
+              <WalletBanner />
+            </View>
+            <View style={style.carouselSection}>
+              <CarouselBanner />
+            </View>
+            <View style={style.gettingStartedSection}>
+              <GettingStartedSection />
+            </View>
+            <View style={style.qrSection}>
+              <QRCodeScannerSection onScanQRPress={onScanQRPress} />
+            </View>
           </>
         )}
       </Content>
@@ -328,6 +333,7 @@ const mapStateToProps = (rootState) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const marginTop = 0
+const WIDTH = '95%'
 const style = StyleSheet.create({
   container: {
     flex: 1,
@@ -336,6 +342,28 @@ const style = StyleSheet.create({
     justifyContent: 'center',
     alignItems: 'center',
     backgroundColor: BACKGROUND_GREY_COLOR,
+  },
+  walletBannerSection: {
+    width: WIDTH,
+    marginVertical: 16,
+    marginHorizontal: 50,
+  },
+  carouselSection: {
+    width: WIDTH,
+    marginBottom: 30,
+    marginHorizontal: 16,
+  },
+  gettingStartedSection: {
+    width: WIDTH,
+    marginTop: 8,
+  },
+  qrSection: {
+    width: WIDTH,
+    marginTop: 40,
+    marginBottom: 21,
+  },
+  loading: {
+    height: 700,
   },
   userImg: {
     width: 80,
@@ -399,7 +427,7 @@ const style = StyleSheet.create({
   },
   scanQRButtonText: {
     marginLeft: 10,
-    color: '#041133',
+    color: TEXT_COLOR,
     fontSize: 16,
   },
   seedPhraseRemindView: {
@@ -421,7 +449,7 @@ const style = StyleSheet.create({
   },
   tempButtonText: {
     marginLeft: 5,
-    color: '#041133',
+    color: TEXT_COLOR,
     fontSize: 8,
   },
 })
