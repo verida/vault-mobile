@@ -6,6 +6,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
@@ -16,6 +17,7 @@ import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/es/integration/react'
@@ -28,6 +30,7 @@ import linking from 'navigation/linkingConfiguration'
 import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
+import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
 import { WalletConnectProvider } from './contexts/WalletConnectContext'
@@ -122,28 +125,32 @@ function App() {
   if (SHUTDOWN_APP) return <OutOfService />
 
   const AppContent = (
-    <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <AuthProvider>
-          <NavigationContainer linking={linking} ref={navigationRef}>
-            <Authenticate>
-              <RootSiblingParent>
-                <ActionSheetProvider>
-                  <ModalProvider>
-                    <WalletConnectProvider>
-                      <WalletConnectProviderv2>
-                        <RootNavigator />
-                      </WalletConnectProviderv2>
-                    </WalletConnectProvider>
-                  </ModalProvider>
-                </ActionSheetProvider>
-              </RootSiblingParent>
-            </Authenticate>
-          </NavigationContainer>
-        </AuthProvider>
-        <SwitchAccountToast />
-      </PersistGate>
-    </Provider>
+    <SafeAreaProvider>
+      <Provider store={store}>
+        <PersistGate loading={null} persistor={persistor}>
+          <ThemeProvider initial={defaultTheme}>
+            <AuthProvider>
+              <NavigationContainer linking={linking} ref={navigationRef}>
+                <Authenticate>
+                  <RootSiblingParent>
+                    <ActionSheetProvider>
+                      <ModalProvider>
+                        <WalletConnectProvider>
+                          <WalletConnectProviderv2>
+                            <RootNavigator />
+                          </WalletConnectProviderv2>
+                        </WalletConnectProvider>
+                      </ModalProvider>
+                    </ActionSheetProvider>
+                  </RootSiblingParent>
+                </Authenticate>
+              </NavigationContainer>
+            </AuthProvider>
+            <SwitchAccountToast />
+          </ThemeProvider>
+        </PersistGate>
+      </Provider>
+    </SafeAreaProvider>
   )
 
   return loading ? null : (
