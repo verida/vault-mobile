@@ -102,7 +102,7 @@ const CreateIdentity = () => {
   useEffect(() => {
     const tid = setInterval(() => {
       setAvailableUsername((value) => !value)
-    }, 5000)
+    }, 2000)
 
     return () => {
       clearInterval(tid)
@@ -215,7 +215,7 @@ const CreateIdentity = () => {
                   <Spacer vertical='xxxxl' />
                   <Paragraph>
                     Your country is private, we only use it to determine the
-                    best geographycal locatiion of your data. \nIf you leave it
+                    best geographycal location of your data. \nIf you leave it
                     empty we will choose a default locationn
                   </Paragraph>
                 </ScrollView>
@@ -236,8 +236,8 @@ const CreateIdentity = () => {
                     showLoading={false}
                     label='Create Identifier'
                     highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.primary}
-                    boxOutlineColor={theme.color.success}
+                    checkmarkColor={theme.color.onSuccess}
+                    boxOutlineColor={theme.color.gray400}
                   />
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
@@ -245,8 +245,8 @@ const CreateIdentity = () => {
                     showLoading={true}
                     label='Claim Username'
                     highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.primary}
-                    boxOutlineColor={theme.color.success}
+                    checkmarkColor={theme.color.onSuccess}
+                    boxOutlineColor={theme.color.gray400}
                   />
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
@@ -254,8 +254,8 @@ const CreateIdentity = () => {
                     showLoading={false}
                     label='Select Storage Locations'
                     highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.primary}
-                    boxOutlineColor={theme.color.success}
+                    checkmarkColor={theme.color.onSuccess}
+                    boxOutlineColor={theme.color.gray400}
                   />
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
@@ -263,8 +263,8 @@ const CreateIdentity = () => {
                     showLoading={false}
                     label='Create Profille'
                     highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.primary}
-                    boxOutlineColor={theme.color.success}
+                    checkmarkColor={theme.color.onSuccess}
+                    boxOutlineColor={theme.color.gray400}
                   />
                 </ScrollView>
                 <Spacer vertical='xxl' />

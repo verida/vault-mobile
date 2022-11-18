@@ -1,7 +1,7 @@
-import React, { useEffect } from 'react'
+import { useTheme } from 'contexts/ThemeContext'
+import React, { useEffect, useMemo } from 'react'
 import { StyleSheet, View } from 'react-native'
 import Animated, {
-  interpolate,
   useAnimatedStyle,
   useSharedValue,
   withDelay,
@@ -11,14 +11,24 @@ import Animated, {
 
 import { SUCCESS_COLOR } from 'constants/color'
 
-const Dot = ({ delay }: { delay: number }) => {
+const Dot = ({ delay, dotSize }: { delay: number; dotSize: number }) => {
   const progress = useSharedValue(0)
-
+  const { theme } = useTheme()
+  const ballStyle = useMemo(
+    () => ({
+      width: dotSize,
+      height: dotSize,
+      borderRadius: dotSize / 2,
+      backgroundColor: theme.color.success,
+      margin: 1,
+    }),
+    [dotSize, theme.color.success]
+  )
   const dotStyle = useAnimatedStyle(() => {
     return {
       transform: [
         {
-          scale: interpolate(progress.value, [0, 1], [0, 1]),
+          scale: progress.value,
         },
       ],
     }
@@ -35,17 +45,25 @@ const Dot = ({ delay }: { delay: number }) => {
       )
     )
   }, [])
-  return <Animated.View style={[styles.ballStyle, dotStyle]} />
+  return <Animated.View style={[ballStyle, dotStyle]} />
 }
 
-const AnimatedDots = () => {
+type Props = {
+  dotSize: number
+}
+
+const AnimatedDots = ({ dotSize }: Props) => {
   return (
     <View style={styles.loadingContainer}>
-      <Dot delay={0} />
-      <Dot delay={250} />
-      <Dot delay={500} />
+      <Dot delay={0} dotSize={dotSize} />
+      <Dot delay={250} dotSize={dotSize} />
+      <Dot delay={500} dotSize={dotSize} />
     </View>
   )
+}
+
+AnimatedDots.defaultProps = {
+  dotSize: 8,
 }
 
 const styles = StyleSheet.create({
@@ -54,14 +72,6 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-  },
-
-  ballStyle: {
-    width: 10,
-    height: 10,
-    backgroundColor: SUCCESS_COLOR,
-    borderRadius: 5,
-    margin: 1,
   },
 })
 

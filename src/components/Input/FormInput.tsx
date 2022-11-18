@@ -141,8 +141,8 @@ export const FormInput = React.forwardRef(
                 checked={checked}
                 showLoading={!checked}
                 highlightColor={theme.color.success}
-                checkmarkColor={theme.color.primary}
-                boxOutlineColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.gray200}
               />
             </View>
           )}

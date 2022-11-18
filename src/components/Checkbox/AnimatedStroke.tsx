@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
 import React, { useRef, useState } from 'react'
 import Animated, { Easing, useAnimatedProps } from 'react-native-reanimated'
 import { Path, PathProps } from 'react-native-svg'

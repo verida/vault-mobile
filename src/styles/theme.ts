@@ -17,7 +17,9 @@ export const defaultTheme = {
     onDarkBackground: WHITE_COLOR,
 
     error: ORANGE_COLOR,
+    onError: WHITE_COLOR,
     success: SUCCESS_COLOR,
+    onSuccess: WHITE_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
 
     transparent: 'transparent',
