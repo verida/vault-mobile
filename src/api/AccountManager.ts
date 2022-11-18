@@ -361,10 +361,19 @@ class AccountManager {
 
   public async createAccount(
     userData: UserData,
-    country: string
+    country: string,
+    updateProgress?: (
+      step:
+        | 'CreateIdentifier'
+        | 'ClaimUsername'
+        | 'StorageLocation'
+        | 'CreateProfile',
+      status: 'None' | 'Loading' | 'Success' | 'Failure'
+    ) => void
   ): Promise<Account | undefined> {
     let connected = false
     try {
+      updateProgress?.('CreateIdentifier', 'Loading')
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
       const networks = (store.getState().main as any).networks
@@ -406,12 +415,19 @@ class AccountManager {
         },
       }
       await this.connect(true, endpointUris)
+
+      updateProgress?.('CreateIdentifier', 'Success')
+      updateProgress?.('StorageLocation', 'Success')
+      updateProgress?.('CreateProfile', 'Loading')
+
       connected = true
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
         30000
       )
+
       if (!setPublicProfileSuccess) {
+        updateProgress?.('CreateProfile', 'Failure')
         throw new Error('Failed to set public profile')
       }
       await this.setBackedupSeedPhraseConfig(false)
@@ -419,6 +435,8 @@ class AccountManager {
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+
+      updateProgress?.('CreateProfile', 'Success')
 
       return this.selectedAccount
     } catch (e) {

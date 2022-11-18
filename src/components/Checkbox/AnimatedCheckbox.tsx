@@ -208,7 +208,7 @@ const AnimatedCheckbox = (props: Props) => {
           <AnimatedDots />
         ) : failed ? (
           <CheckFail
-            checked={checked}
+            checked
             highlightColor={highlightColor}
             checkmarkColor={checkmarkColor}
             boxOutlineColor={boxOutlineColor}

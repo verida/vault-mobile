@@ -10,6 +10,7 @@ import {
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import AnimatedDots from 'components/Checkbox/AnimatedDots'
 import { Caption } from 'components/Typography/Caption'
+import text from 'styles/text'
 
 export enum FormInputType {
   Text,
@@ -30,20 +31,7 @@ export type FormInputProps = React.ComponentPropsWithRef<
   inputStyle?: TextStyle
   withAnimatedChecbox?: boolean
   checked?: boolean
-
-  // placeholder?: string
-  // inputHeight?: number
-  // testID?: string
-  // mode?: 'flat' | 'outlined'
-  // disabled?: boolean
-  // value?: string
-  // onInputFocus?: () => void
-  // onInputBlur?: () => void
-  // selectionColor?: string
-  // underlineColor?: string
-  // padding?: 'none' | 'normal'
-  // multiline?: boolean
-  // numberOfLines?: number
+  loading?: boolean
 }
 
 export const FormInput = React.forwardRef(
@@ -59,6 +47,7 @@ export const FormInput = React.forwardRef(
       onInputFocus,
       onInputBlur,
       withAnimatedChecbox,
+      loading,
       checked,
       ...rest
     } = props
@@ -128,7 +117,7 @@ export const FormInput = React.forwardRef(
             onBlur={onBlur}
             placeholderTextColor={theme.color.gray900}
           />
-          {withAnimatedChecbox && (
+          {withAnimatedChecbox && !focused && (
             <View
               style={{
                 position: 'absolute',
@@ -138,11 +127,12 @@ export const FormInput = React.forwardRef(
                 alignItems: 'center',
               }}>
               <AnimatedCheckbox
-                checked={checked}
-                showLoading={!checked}
+                checked={!loading && checked}
+                failed={!loading && !checked}
+                showLoading={loading}
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.gray200}
+                boxOutlineColor={theme.color.gray500}
               />
             </View>
           )}
@@ -167,6 +157,7 @@ export const FormInput = React.forwardRef(
 FormInput.defaultProps = {
   type: FormInputType.Text,
   withAnimatedChecbox: false,
+  checked: false,
 }
 
 const styles = StyleSheet.create({
@@ -177,6 +168,8 @@ const styles = StyleSheet.create({
     minHeight: 48,
   },
   textInput: {
+    ...text.primary,
+    textAlign: 'left',
     height: 48,
     minHeight: 48,
     paddingHorizontal: 12,
