@@ -26,10 +26,11 @@ import {
 } from 'reduxStore/wallet/selectors'
 
 import OtherSvg from '../../assets/wallets/Other.svg'
-import WalletsList from '../../components/WalletsList'
+import PlusIcon from '../../assets/plus_icon.svg'
 import { SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
+import WalletSelectorList from 'components/WalletSelectorList/WalletSelectorList'
 
 export type SingleAccountType = {
   mnemonic: string
@@ -59,7 +60,7 @@ type Props = {
   onCreateNewWallet: () => Promise<void>
   onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
   navigation: NativeStackNavigationProp<MainStackParams, any>
-  selectedWalletId: number
+  selectedWalletId: number | string
   loading: boolean
   onImportWallet: () => Promise<void>
   onDeleteWallet: (selectedWalletID: string) => Promise<void>
@@ -127,9 +128,9 @@ const ManageWallets = (props: Props) => {
   return (
     <Container>
       <NavigationHeader
-        title='Wallets'
+        title='Manage Wallets'
         right={{
-          icon: <Icon name='add' style={{ color: '#000' }} />,
+          icon: <PlusIcon />,
           action: () =>
             showActionSheetWithOptions(
               {
@@ -153,7 +154,7 @@ const ManageWallets = (props: Props) => {
         <View style={{ flex: 1 }}>
           <Content style={styles.content}>
             <List>
-              <WalletsList
+              <WalletSelectorList
                 onPressItem={(item: WalletType) => {
                   showActionSheetWithOptions(
                     {

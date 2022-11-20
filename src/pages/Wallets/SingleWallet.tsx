@@ -260,6 +260,7 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
+
   return {
     wallets: getWalletObjectById(state, props.route.params.item.id),
     chains: selectChains(rootState),

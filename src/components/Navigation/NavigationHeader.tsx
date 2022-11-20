@@ -6,6 +6,10 @@ import { StyleSheet, View } from 'react-native'
 
 import Text from 'components/Text'
 import { DECLINE_COLOR } from 'constants/color'
+import { NUNITO_SANS } from 'constants/text';
+import { NUNITO_SANS_BOLD } from '../../constants/text';
+
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 
 export type HeaderSideButton = {
   icon: string | React.ReactElement
@@ -15,7 +19,9 @@ export type HeaderSideButton = {
 export type HeaderProps = {
   left?: HeaderSideButton
   right?: HeaderSideButton
-  title: string
+  title?: string | React.ReactNode
+  titleIcon?: React.ReactElement
+  avatarIcon?: React.ReactNode
   rightComponent?: React.ReactNode
 }
 
@@ -23,6 +29,8 @@ function NavigationHeader({
   left = { icon: 'back' },
   title,
   right,
+  titleIcon,
+  avatarIcon,
   rightComponent,
 }: HeaderProps) {
   const navigation = useNavigation()
@@ -32,7 +40,7 @@ function NavigationHeader({
     <>
       <Header
         transparent
-        style={{ elevation: 1 }}
+        style={{ elevation: 1, paddingTop: 40 }}
         androidStatusBarColor='light-gray'>
         <Left style={{ flex: 0.2, marginLeft: 6 }}>
           {(function () {
@@ -40,11 +48,13 @@ function NavigationHeader({
               case 'back':
                 return navigation.canGoBack() ? (
                   <Button transparent onPress={navigation.goBack}>
-                    <Icon name='arrow-back' style={{ color: '#000' }} />
+                    <LeftArrowIcon />
                   </Button>
                 ) : null
               case 'skip':
                 return null
+              case 'avatar':
+                return <View>{avatarIcon}</View>
               default:
                 return (
                   <Button transparent onPress={left.action}>
@@ -55,7 +65,8 @@ function NavigationHeader({
           })()}
         </Left>
         <Body style={{ flex: 1, alignItems: 'center' }}>
-          {title ? <Title style={{ color: '#000' }}>{title}</Title> : null}
+          {title ? <Title style={styles.textTitle}>{title}</Title> : null}
+          {titleIcon && titleIcon}
         </Body>
         <Right style={{ flex: 0.2 }}>
           {rightComponent ? (
@@ -87,6 +98,12 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 15,
   },
+  textTitle: {
+    color: '#000',
+    fontFamily: NUNITO_SANS_BOLD,
+    fontWeight: '600',
+    fontSize: 17
+  }
 })
 
 export default NavigationHeader
