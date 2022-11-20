@@ -1,7 +1,7 @@
 import React from 'react'
 import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
 
-import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
+import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 
 import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
@@ -54,13 +54,8 @@ const WalletSelectorListItem = ({ item, leftIconType, onPressItem, selectedWalle
           </View>}
           <MultichainWalletIcon />
         </View>
-        {/* <View>
-          {item.icon ? <Image style={styles.avatarIcon} source={{ uri: item.icon }} /> : <MultichainWalletIcon />}
-        </View> */}
         <View
-          style={{
-            marginHorizontal: 15,
-          }}>
+          style={styles.textContent}>
           <Text style={styles.textTitle}>
             {item.label}
           </Text>
@@ -88,7 +83,7 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 15,
     backgroundColor: WHITE_COLOR,
-    borderColor: 'rgba(60, 60, 67, 0.16)',
+    borderColor: BLACK_COLOR_OPACITY(0.1),
     borderWidth: 0.2,
   },
   selectedItem: {
@@ -107,6 +102,9 @@ const styles = StyleSheet.create({
   avatarIcon: {
     width: 45,
     height: 45,
+  },
+  textContent: {
+    marginHorizontal: 15,
   },
   textTitle: {
     fontSize: 17,

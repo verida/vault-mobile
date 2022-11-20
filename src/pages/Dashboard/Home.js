@@ -86,6 +86,9 @@ const Home = (props) => {
     handleDeeplink(initialUrl)
   }
 
+
+  console.log(publicProfileData);
+
   useEffect(() => {
     const getUrl = async () => {
       try {

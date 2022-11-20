@@ -42,7 +42,6 @@ const AssetsCollections = () => {
     setCollection(index)
   }
 
-
   const renderAssets = () => {
     switch (collection) {
       case Assets.COINS:
@@ -57,7 +56,7 @@ const AssetsCollections = () => {
   return (
     <Container>
       <NavigationHeader
-        left={{ icon: 'avatar', }}
+        left={{ icon: 'avatar' }}
         avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
         titleIcon={<WalletSelectorHeader />}
       />
@@ -71,7 +70,6 @@ const AssetsCollections = () => {
     </Container>
   )
 }
-
 
 const styles = StyleSheet.create({
   container: {

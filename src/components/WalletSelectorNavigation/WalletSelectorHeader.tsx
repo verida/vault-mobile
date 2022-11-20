@@ -40,13 +40,11 @@ const WalletSelectorHeader = (props: WalletSelectorHeaderProps) => {
     })
     setWalletList(list)
 
-    const getSelectedWallet = walletList.find((item) => item.id === selectedWalletId)
+    const getSelectedWallet = list.find((item) => item.id === selectedWalletId)
 
-    if (getSelectedWallet) {
-      setSelectedWallet(getSelectedWallet)
-    }
+    setSelectedWallet(getSelectedWallet)
+
   }, [selectedWalletId])
-
 
   const onCloseModal = () => {
     setModalVisible(!modalVisible)
@@ -116,7 +114,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: NUNITO_SANS_BOLD,
     fontWeight: '600',
-    textAlign: 'center',
     textTransform: 'capitalize',
     color: BLACK_COLOR,
   },
