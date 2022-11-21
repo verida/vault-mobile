@@ -125,32 +125,32 @@ function App() {
   if (SHUTDOWN_APP) return <OutOfService />
 
   const AppContent = (
-    <SafeAreaProvider>
-      <Provider store={store}>
-        <PersistGate loading={null} persistor={persistor}>
+    <Provider store={store}>
+      <PersistGate loading={null} persistor={persistor}>
+        <SafeAreaProvider>
           <ThemeProvider initial={defaultTheme}>
-            <AuthProvider>
-              <NavigationContainer linking={linking} ref={navigationRef}>
-                <Authenticate>
-                  <RootSiblingParent>
-                    <ActionSheetProvider>
-                      <ModalProvider>
+            <ModalProvider>
+              <AuthProvider>
+                <NavigationContainer linking={linking} ref={navigationRef}>
+                  <Authenticate>
+                    <RootSiblingParent>
+                      <ActionSheetProvider>
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
                             <RootNavigator />
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>
-                      </ModalProvider>
-                    </ActionSheetProvider>
-                  </RootSiblingParent>
-                </Authenticate>
-              </NavigationContainer>
-            </AuthProvider>
-            <SwitchAccountToast />
+                      </ActionSheetProvider>
+                    </RootSiblingParent>
+                  </Authenticate>
+                </NavigationContainer>
+              </AuthProvider>
+              <SwitchAccountToast />
+            </ModalProvider>
           </ThemeProvider>
-        </PersistGate>
-      </Provider>
-    </SafeAreaProvider>
+        </SafeAreaProvider>
+      </PersistGate>
+    </Provider>
   )
 
   return loading ? null : (

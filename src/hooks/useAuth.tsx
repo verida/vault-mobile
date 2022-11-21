@@ -1,3 +1,4 @@
+import { compareVersions } from 'compare-versions'
 import React, {
   createContext,
   FC,
@@ -7,8 +8,13 @@ import React, {
   useMemo,
   useState,
 } from 'react'
+import { getVersion } from 'react-native-device-info'
 
 import AccountManager from 'api/AccountManager'
+import ForcedUpgradeModal from 'components/ForcedUpgrade/ForcedUpgradeModal'
+
+import { useForcedUpgrade } from './useForcedUpgrade'
+import { useModal } from './useModal'
 
 type AuthContextState = {
   refresh: () => Promise<boolean>
@@ -31,6 +37,23 @@ export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
+
+  const { showModal, dismissModal } = useModal()
+  const { showUpgrade, setShowUpgrade, forcedUpgrade } = useForcedUpgrade()
+
+  useEffect(() => {
+    const checkForcedUpgrade = () => {
+      if (
+        forcedUpgrade?.required &&
+        compareVersions(getVersion(), forcedUpgrade.minVersion!)
+      ) {
+        showModal(<ForcedUpgradeModal dismissModal={dismissModal} />)
+        setShowUpgrade(true)
+      }
+    }
+
+    !showUpgrade && checkForcedUpgrade()
+  }, [dismissModal, forcedUpgrade, showModal, setShowUpgrade, showUpgrade])
 
   useEffect(() => {
     const checkTeamMember = async () => {
@@ -69,7 +92,11 @@ export const AuthProvider: FC = ({ children }) => {
     [refresh, authenticated, loaded, switchToAccount, isVeridaTeamMember]
   )
 
-  return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
+  return (
+    <AuthContext.Provider value={context}>
+      {forcedUpgrade.required ? null : children}
+    </AuthContext.Provider>
+  )
 }
 
 export function useAuth() {

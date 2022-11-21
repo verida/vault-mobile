@@ -2,6 +2,7 @@ import {
   BLACK_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
+  SEPARATOR,
   SUCCESS_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
@@ -21,6 +22,7 @@ export const defaultTheme = {
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
+    separator: SEPARATOR,
 
     transparent: 'transparent',
 
