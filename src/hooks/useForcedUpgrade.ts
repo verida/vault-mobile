@@ -36,7 +36,7 @@ export function useForcedUpgrade() {
             setForcedUpgrade({
               ...forcedUpgradeInfo,
               required:
-                compareVersions(getVersion(), forcedUpgradeInfo.minVersion) > 0, // Current version < required version
+                compareVersions(getVersion(), forcedUpgradeInfo.minVersion) < 0, // Current version < required version
             })
             setShowUpgrade(false)
           } catch (error) {
