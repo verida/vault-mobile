@@ -1,14 +1,15 @@
 import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
 import { compareVersions } from 'compare-versions'
-import { useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
+import { AppState, AppStateStatus } from 'react-native'
 import { getVersion } from 'react-native-device-info'
 
 remoteConfig().setConfigSettings({
   minimumFetchIntervalMillis: 30000,
 })
 
-type ForcedUpgradeType = {
+export type ForcedUpgradeType = {
   minVersion?: string
   required?: boolean
   message?: string
@@ -19,8 +20,9 @@ type ForcedUpgradeType = {
 export function useForcedUpgrade() {
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
   const [showUpgrade, setShowUpgrade] = useState(false)
+  const appState = useRef(AppState.currentState)
 
-  useEffect(() => {
+  const fetchConfig = useCallback(() => {
     remoteConfig()
       .setDefaults({
         forced_upgrade: '{}',
@@ -34,7 +36,7 @@ export function useForcedUpgrade() {
             setForcedUpgrade({
               ...forcedUpgradeInfo,
               required:
-                compareVersions(getVersion(), forcedUpgradeInfo.minVersion) < 0,
+                compareVersions(getVersion(), forcedUpgradeInfo.minVersion) > 0, // Current version < required version
             })
             setShowUpgrade(false)
           } catch (error) {
@@ -43,6 +45,27 @@ export function useForcedUpgrade() {
         }
       })
   }, [])
+
+  useEffect(() => {
+    fetchConfig()
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        fetchConfig()
+      }
+
+      appState.current = nextAppState
+    }
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange
+    )
+    return () => {
+      subscription.remove()
+    }
+  }, [fetchConfig])
 
   return { showUpgrade, setShowUpgrade, forcedUpgrade }
 }

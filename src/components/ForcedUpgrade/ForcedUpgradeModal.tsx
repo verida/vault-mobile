@@ -10,16 +10,16 @@ import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
-import { useForcedUpgrade } from 'hooks/useForcedUpgrade'
+import { ForcedUpgradeType } from 'hooks/useForcedUpgrade'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 type Props = {
   dismissModal: () => void
+  forcedUpgrade: ForcedUpgradeType
 }
 
-const ForcedUpgradeModal = (_: Props) => {
-  const { forcedUpgrade } = useForcedUpgrade()
+const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
 
   const onDownloadPress = () => {
@@ -46,10 +46,7 @@ const ForcedUpgradeModal = (_: Props) => {
           style={styles.landing}>
           <Texture width={425} height={428} />
           <View style={styles.backgroundContainer}>
-            <View>
-              <Logo width={139} height={51} />
-              {/* <Text style={style.title}>{title}</Text> */}
-            </View>
+            <Logo width={139} height={51} />
           </View>
         </LinearGradient>
         <View style={styles.container}>

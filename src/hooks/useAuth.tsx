@@ -47,7 +47,12 @@ export const AuthProvider: FC = ({ children }) => {
         forcedUpgrade?.required &&
         compareVersions(getVersion(), forcedUpgrade.minVersion!)
       ) {
-        showModal(<ForcedUpgradeModal dismissModal={dismissModal} />)
+        showModal(
+          <ForcedUpgradeModal
+            forcedUpgrade={forcedUpgrade}
+            dismissModal={dismissModal}
+          />
+        )
         setShowUpgrade(true)
       }
     }
