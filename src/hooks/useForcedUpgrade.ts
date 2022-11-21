@@ -5,7 +5,7 @@ import { useEffect, useState } from 'react'
 import { getVersion } from 'react-native-device-info'
 
 remoteConfig().setConfigSettings({
-  minimumFetchIntervalMillis: 0,
+  minimumFetchIntervalMillis: 30000,
 })
 
 type ForcedUpgradeType = {
@@ -31,12 +31,6 @@ export function useForcedUpgrade() {
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
           try {
             const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
-            console.log(
-              'forcedUpgradeJSON',
-              forcedUpgradeInfo.minVersion,
-              getVersion(),
-              compareVersions(getVersion(), forcedUpgradeInfo.minVersion)
-            )
             setForcedUpgrade({
               ...forcedUpgradeInfo,
               required:
