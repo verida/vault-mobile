@@ -1,18 +1,17 @@
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-
-import AppModal from 'components/modal/AppModal'
-
-import WalletSelectorListItem, { WalletItemProps } from 'components/WalletSelectorList/WalletSelectorListItem'
-import { MainStackParams } from 'navigation/types'
 
 import SettingsIcon from 'assets/settings_icon.svg'
-import { PRIMARY_COLOR, WHITE_COLOR } from '../../constants/color';
-import { NUNITO_SANS } from 'constants/text';
+import AppModal from 'components/modal/AppModal'
+import WalletListItem, {
+  WalletItemProps,
+} from 'components/WalletList/WalletListItem'
+import { NUNITO_SANS } from 'constants/text'
+import { MainStackParams } from 'navigation/types'
 
-
+import { PRIMARY_COLOR, WHITE_COLOR } from '../../constants/color'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void
@@ -23,8 +22,13 @@ interface WalletSelectorModalProps {
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const WalletSelectorModal = ({ modalVisible, walletList, selectedWalletId, onCloseModal }: WalletSelectorModalProps) => {
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>();
+const WalletSelectorModal = ({
+  modalVisible,
+  walletList,
+  selectedWalletId,
+  onCloseModal,
+}: WalletSelectorModalProps) => {
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const onPressHandler = () => {
     navigation.navigate('ManageWallets')
@@ -34,23 +38,20 @@ const WalletSelectorModal = ({ modalVisible, walletList, selectedWalletId, onClo
     <Pressable
       style={styles.footerButton}
       onPress={onPressHandler}
-      hitSlop={HIT_SLOP}
-    >
+      hitSlop={HIT_SLOP}>
       <View
         style={{
           marginRight: 10,
-
-        }}
-      >
+        }}>
         <SettingsIcon />
       </View>
-      <Text style={{
-        color: WHITE_COLOR,
-        fontFamily: NUNITO_SANS,
-        fontWeight: '700',
-        fontSize: 17
-
-      }}>
+      <Text
+        style={{
+          color: WHITE_COLOR,
+          fontFamily: NUNITO_SANS,
+          fontWeight: '700',
+          fontSize: 17,
+        }}>
         Manage Wallets
       </Text>
     </Pressable>
@@ -64,10 +65,10 @@ const WalletSelectorModal = ({ modalVisible, walletList, selectedWalletId, onClo
       footer={ModalFooter}>
       <View style={styles.walletList}>
         {walletList.map((item) => (
-          <WalletSelectorListItem
+          <WalletListItem
             key={item.id}
             item={item}
-            leftIconType="checked"
+            leftIconType='checked'
             selectedWalletId={selectedWalletId}
           />
         ))}
@@ -85,7 +86,7 @@ const styles = StyleSheet.create({
   footerButton: {
     flexDirection: 'row',
     backgroundColor: PRIMARY_COLOR,
-    width: '95%',
+    width: '100%',
     color: WHITE_COLOR,
     borderRadius: 4,
     paddingVertical: 10,
@@ -95,5 +96,5 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     justifyContent: 'center',
     alignItems: 'center',
-  }
+  },
 })

@@ -1,7 +1,7 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as SecureStore from 'expo-secure-store'
-import { Container, Content, Icon, List } from 'native-base'
+import { Container, Content, List } from 'native-base'
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -10,6 +10,7 @@ import { Dispatch } from 'redux'
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import WalletList from 'components/WalletList/WalletList'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -25,12 +26,11 @@ import {
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
 
-import OtherSvg from '../../assets/wallets/Other.svg'
 import PlusIcon from '../../assets/plus_icon.svg'
+import OtherSvg from '../../assets/wallets/Other.svg'
 import { SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
-import WalletSelectorList from 'components/WalletSelectorList/WalletSelectorList'
 
 export type SingleAccountType = {
   mnemonic: string
@@ -154,7 +154,7 @@ const ManageWallets = (props: Props) => {
         <View style={{ flex: 1 }}>
           <Content style={styles.content}>
             <List>
-              <WalletSelectorList
+              <WalletList
                 onPressItem={(item: WalletType) => {
                   showActionSheetWithOptions(
                     {

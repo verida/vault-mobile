@@ -1,15 +1,14 @@
 import { useNetInfo } from '@react-native-community/netinfo'
 import { useNavigation } from '@react-navigation/native'
-import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
+import { Body, Button, Header, Left, Right, Title } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import Text from 'components/Text'
 import { DECLINE_COLOR } from 'constants/color'
-import { NUNITO_SANS } from 'constants/text';
-import { NUNITO_SANS_BOLD } from '../../constants/text';
 
 import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
 
 export type HeaderSideButton = {
   icon: string | React.ReactElement
@@ -102,8 +101,8 @@ const styles = StyleSheet.create({
     color: '#000',
     fontFamily: NUNITO_SANS_BOLD,
     fontWeight: '600',
-    fontSize: 17
-  }
+    fontSize: 17,
+  },
 })
 
 export default NavigationHeader

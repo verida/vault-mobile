@@ -1,17 +1,14 @@
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
-
-import Tokens from 'pages/Tokens/Dashboard'
-
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import WalletSelectorHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import { MainStackParams } from 'navigation/types'
-
-import WalletSelectorHeader from 'components/WalletSelectorNavigation/WalletSelectorHeader'
+import Tokens from 'pages/Tokens/Dashboard'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -34,7 +31,7 @@ enum Assets {
 }
 
 const AssetsCollections = () => {
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>();
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [segments] = useState(segmentLists)
   const [collection, setCollection] = useState<Assets>(Assets.COINS)
 
@@ -86,4 +83,6 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
 })
+
 export default AssetsCollections
+

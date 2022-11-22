@@ -2,7 +2,14 @@ import React from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { BLACK_COLOR, BLACK_COLOR_OPACITY, SEPARATOR, WHITE_COLOR, SNOW_COLOR, LIGHTGREY_COLOR } from 'constants/color'
+import {
+  BLACK_COLOR,
+  BLACK_COLOR_OPACITY,
+  LIGHTGREY_COLOR,
+  SEPARATOR,
+  SNOW_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 
 import { NUNITO_SANS_BOLD } from '../../constants/text'
 
@@ -94,6 +101,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: WHITE_COLOR,
     borderTopColor: LIGHTGREY_COLOR,
+    paddingHorizontal: 16,
     elevation: 4,
     shadowColor: LIGHTGREY_COLOR,
     shadowOffset: {

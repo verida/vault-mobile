@@ -1,27 +1,25 @@
 import React from 'react'
-import {
-  StyleSheet,
-  // Alert,
-  // Text,
-  // TouchableOpacity,
-  View,
-} from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
-import WalletSelectorListItem, { WalletItemProps } from './WalletSelectorListItem'
-import { AccountsType } from 'pages/Wallets/ManageWallets'
+import WalletListItem, {
+  WalletItemProps,
+} from './WalletListItem'
 
-interface WalletSelectorListProps {
+interface WalletListProps {
   list: WalletItemProps[]
   selectedWalletId: string
   onPressItem: any
   leftIconType: 'checked' | 'dots'
 }
 
-const WalletSelectorList = ({ list, onPressItem, selectedWalletId }: WalletSelectorListProps) => {
-
+const WalletList = ({
+  list,
+  onPressItem,
+  selectedWalletId,
+}: WalletListProps) => {
   return (
     <SwipeListView
       data={list}
@@ -32,10 +30,10 @@ const WalletSelectorList = ({ list, onPressItem, selectedWalletId }: WalletSelec
             styles.listItemWrapper,
             data.item.other && styles.otherListItem,
           ]}>
-          <WalletSelectorListItem
+          <WalletListItem
             onPressItem={onPressItem}
             item={data.item}
-            leftIconType="dots"
+            leftIconType='dots'
             selectedWalletId={selectedWalletId}
           />
         </View>
@@ -44,7 +42,7 @@ const WalletSelectorList = ({ list, onPressItem, selectedWalletId }: WalletSelec
   )
 }
 
-export default WalletSelectorList
+export default WalletList
 
 const styles = StyleSheet.create({
   listView: {
@@ -71,4 +69,3 @@ const styles = StyleSheet.create({
   },
   removeButtonText: { color: WHITE_COLOR, textAlign: 'center' },
 })
-

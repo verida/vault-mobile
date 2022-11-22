@@ -1,19 +1,25 @@
 import React, { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-
+import { connect } from 'react-redux'
 
 import ChevronDownIcon from 'assets/chevron_down_icon.svg'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-import { BLACK_COLOR } from 'constants/color'
-
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
-import { getAllWallets, getSelectedWalletId, getWalletCount } from 'reduxStore/wallet/selectors'
+import {
+  WalletItemProps,
+  WalletType,
+} from 'components/WalletList/WalletListItem'
+import { BLACK_COLOR } from 'constants/color'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { selectChains } from 'reduxStore/tokens/selectors'
-import { WalletItemProps, WalletType } from 'components/WalletSelectorList/WalletSelectorListItem'
-import WalletSelectorModal from './WalletSelectorModal'
-import { connect } from 'react-redux';
+import {
+  getAllWallets,
+  getSelectedWalletId,
+  getWalletCount,
+} from 'reduxStore/wallet/selectors'
 
-interface WalletSelectorHeaderProps {
+import WalletSelectorModal from './WalletSelectorModal'
+
+interface WalletNavigationHeaderProps {
   wallets: WalletType
   chains: any
   selectedWalletId: string
@@ -21,12 +27,13 @@ interface WalletSelectorHeaderProps {
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const WalletSelectorHeader = (props: WalletSelectorHeaderProps) => {
+const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
   const { wallets, selectedWalletId, chains } = props
   const [modalVisible, setModalVisible] = useState(false)
-  const [selectedWallet, setSelectedWallet] = useState<WalletItemProps | undefined>()
+  const [selectedWallet, setSelectedWallet] = useState<
+    WalletItemProps | undefined
+  >()
   const [walletList, setWalletList] = useState<WalletItemProps[]>([])
-
 
   useEffect(() => {
     const list = Object.values(wallets).map((singleWallet: any) => {
@@ -43,7 +50,6 @@ const WalletSelectorHeader = (props: WalletSelectorHeaderProps) => {
     const getSelectedWallet = list.find((item) => item.id === selectedWalletId)
 
     setSelectedWallet(getSelectedWallet)
-
   }, [selectedWalletId])
 
   const onCloseModal = () => {
@@ -60,19 +66,16 @@ const WalletSelectorHeader = (props: WalletSelectorHeaderProps) => {
         hitSlop={HIT_SLOP}
         style={styles.container}
         onPress={openWalletModal}>
-        <View >
+        <View>
           <MultichainWalletIcon />
         </View>
-        <View
-          style={styles.navigationContent}>
-          <View
-            style={styles.textWrapper}>
+        <View style={styles.navigationContent}>
+          <View style={styles.textWrapper}>
             <Text style={styles.textTitle}>{selectedWallet?.label}</Text>
             <View
               style={{
-                marginTop: 3
-              }}
-            >
+                marginTop: 3,
+              }}>
               <ChevronDownIcon />
             </View>
           </View>
@@ -83,11 +86,11 @@ const WalletSelectorHeader = (props: WalletSelectorHeaderProps) => {
         walletList={walletList}
         modalVisible={modalVisible}
         onCloseModal={onCloseModal}
-        selectedWalletId={selectedWalletId} />
+        selectedWalletId={selectedWalletId}
+      />
     </React.Fragment>
   )
 }
-
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
@@ -95,21 +98,19 @@ const mapStateToProps = (rootState: any) => {
     wallets: getAllWallets(state),
     walletCount: getWalletCount(state),
     chains: selectChains(rootState),
-    selectedWalletId: getSelectedWalletId(state)
-
+    selectedWalletId: getSelectedWalletId(state),
   }
 }
 
-export default connect(mapStateToProps)(WalletSelectorHeader)
-
+export default connect(mapStateToProps)(WalletNavigationHeader)
 
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  textWrapper: { flexDirection: 'row', },
-  navigationContent: { marginHorizontal: 10, },
+  textWrapper: { flexDirection: 'row' },
+  navigationContent: { marginHorizontal: 10 },
   textTitle: {
     fontSize: 14,
     fontFamily: NUNITO_SANS_BOLD,

@@ -1,18 +1,17 @@
 import React from 'react'
-import { StyleSheet, Text, View, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS } from 'constants/text'
-
-import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
 import MoreIcon from 'assets/more_icon.svg'
+import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
+import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
+import { NUNITO_SANS } from 'constants/text'
 import { AccountsType } from 'pages/Wallets/ManageWallets'
 
 export type WalletItemProps = {
-  count: number,
-  icon: Element,
-  id: string,
+  count: number
+  icon: Element
+  id: string
   label: string
   other?: any
 }
@@ -33,7 +32,12 @@ interface WalletSelectorListItemProps {
   leftIconType: 'checked' | 'dots'
 }
 
-const WalletSelectorListItem = ({ item, leftIconType, onPressItem, selectedWalletId }: WalletSelectorListItemProps) => {
+const WalletSelectorListItem = ({
+  item,
+  leftIconType,
+  onPressItem,
+  selectedWalletId,
+}: WalletSelectorListItemProps) => {
   const isItemSelected = selectedWalletId === item.id
 
   const handleOnPressAction = () => {
@@ -43,25 +47,21 @@ const WalletSelectorListItem = ({ item, leftIconType, onPressItem, selectedWalle
   }
 
   return (
-    <TouchableOpacity onPress={handleOnPressAction} style={[
-      styles.container,
-      isItemSelected
-      && styles.selectedItem]}>
+    <TouchableOpacity
+      onPress={handleOnPressAction}
+      style={[styles.container, isItemSelected && styles.selectedItem]}>
       <View style={styles.content}>
         <View>
-          {isItemSelected && leftIconType === 'dots' && <View style={styles.checkedIcon}>
-            <CheckBoxIcon />
-          </View>}
+          {isItemSelected && leftIconType === 'dots' && (
+            <View style={styles.checkedIcon}>
+              <CheckBoxIcon />
+            </View>
+          )}
           <MultichainWalletIcon />
         </View>
-        <View
-          style={styles.textContent}>
-          <Text style={styles.textTitle}>
-            {item.label}
-          </Text>
-          <Text style={styles.subText}>
-            {`${item.count} addresses`}
-          </Text>
+        <View style={styles.textContent}>
+          <Text style={styles.textTitle}>{item.label}</Text>
+          <Text style={styles.subText}>{`${item.count} addresses`}</Text>
         </View>
       </View>
       <View>
@@ -87,13 +87,13 @@ const styles = StyleSheet.create({
     borderWidth: 0.2,
   },
   selectedItem: {
-    backgroundColor: '#F5F4FF'
+    backgroundColor: '#F5F4FF',
   },
   checkedIcon: {
     position: 'absolute',
     top: -6,
     right: -3,
-    zIndex: 3
+    zIndex: 3,
   },
   content: {
     flexDirection: 'row',
@@ -118,5 +118,5 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS,
     fontWeight: '400',
     color: TEXT_COLOR,
-  }
+  },
 })
