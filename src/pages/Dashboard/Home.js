@@ -43,9 +43,9 @@ import {
 
 import CarouselBanner from './Banners/CarouselBanner'
 import WalletBanner from './Banners/WalletBanner'
-import DashboardNavigationHeader from './DashboardNavigationHeader'
 import DidView from './DidView'
 import GettingStartedSection from './GettingStarted/GettingStartedSection'
+import HomeNavigationHeader from './HomeNavigationHeader'
 import QRCodeScannerSection from './QrcodeScanner'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
@@ -260,7 +260,7 @@ const Home = (props) => {
 
   return (
     <Container style={style.container}>
-      <DashboardNavigationHeader
+      <HomeNavigationHeader
         did={info.did || ''}
         name={info.name || ''}
         avatar={avatarSource}
@@ -333,7 +333,7 @@ const mapStateToProps = (rootState) => {
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const marginTop = 0
-const WIDTH = '95%'
+const WIDTH = '100%'
 const style = StyleSheet.create({
   container: {
     flex: 1,
@@ -341,21 +341,19 @@ const style = StyleSheet.create({
   content: {
     justifyContent: 'center',
     alignItems: 'center',
+    paddingHorizontal: 16,
     backgroundColor: BACKGROUND_GREY_COLOR,
   },
   walletBannerSection: {
     width: WIDTH,
     marginVertical: 16,
-    marginHorizontal: 50,
   },
   carouselSection: {
     width: WIDTH,
     marginBottom: 30,
-    marginHorizontal: 16,
   },
   gettingStartedSection: {
     width: WIDTH,
-    marginTop: 8,
   },
   qrSection: {
     width: WIDTH,

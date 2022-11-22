@@ -44,13 +44,13 @@ const WalletSection = ({
 
   return (
     <Container style={styles.container}>
-      <View style={styles.walletInfo}>
-        <View style={styles.mainWalletIconWrapper}>
+      <View style={styles.wallet}>
+        <View style={styles.walletContent}>
           <MainWallet />
         </View>
         <View>
-          <Text style={styles.mainWalletText}>Main Wallet</Text>
-          <Text style={styles.mainWalletAmount}>$ {total.toFixed(2)}</Text>
+          <Text style={styles.walletText}>All Wallet</Text>
+          <Text style={styles.walletAmount}>$ {total.toFixed(2)}</Text>
         </View>
       </View>
       <View>
@@ -89,20 +89,20 @@ const styles = StyleSheet.create({
     paddingRight: 30,
     paddingLeft: 16,
   },
-  mainWalletIconWrapper: {
+  walletContent: {
     marginRight: 12,
   },
-  mainWalletText: {
+  walletText: {
     fontFamily: NUNITO_SANS,
     fontSize: 12,
     color: PRIMARY_COLOR_300,
   },
-  mainWalletAmount: {
+  walletAmount: {
     fontFamily: NUNITO_SANS_BOLD,
     fontSize: 17,
     color: PRIMARY_COLOR_500,
   },
-  walletInfo: {
+  wallet: {
     flexDirection: 'row',
   },
 })
