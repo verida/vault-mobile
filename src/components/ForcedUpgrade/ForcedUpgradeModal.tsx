@@ -123,7 +123,8 @@ const createStyles = (theme: Theme) => {
     footer: {
       backgroundColor: theme.color.surface,
       width: '100%',
-
+      borderBottomRightRadius: 20,
+      borderBottomLeftRadius: 20,
       padding: theme.spacing.m,
       shadowColor: '#000',
       shadowOffset: {
