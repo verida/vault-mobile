@@ -3,27 +3,24 @@ import { walletProviderApi } from 'wallet/helpers/api'
 
 import { walletBadges } from './mocks/WalletBadges'
 import { walletNFTs } from './mocks/WalletNfts'
-import { BadgeData, WalletNFTsResponse } from './types'
+import { Badge, ClaimBadgeResponse, WalletNFTsResponse } from './types'
 
 class AssetManager {
+  /**
+   * Get wallet NFT collections
+   *
+   * Ex: walletNFTs?wallet=0x34e77AD857217D8D93dcC0bAE752E2290A2EFb66&limit=10
+   */
   public async getWalletNFTs(params: {
-    wallets: string[]
-    chain: string
+    wallet: string
     limit: number
     cursor?: string
-  }): Promise<Record<string, WalletNFTsResponse>> {
-    const wallets = [
-      '0x12345678901234567890123456789012345622312',
-      '0x45645678901234567890123456789012345629889',
-    ]
-    const chain = 'eip155:1'
-    const limit = 10 // # items per page
+  }): Promise<WalletNFTsResponse> {
+    // const wallet = 'eip155:1:0x12345678901234567890123456789012345622312'
+    // const limit = 10 // # items per page
 
-    // ex: walletNFTs?wallet=0x34e77AD857217D8D93dcC0bAE752E2290A2EFb66&chain=eip155:1&limit=30
     // const response = await walletProviderApi.get(
-    //   `nfts?${params.wallets.map((wallet) => `wallet=${wallet}`).join('&')}` +
-    //     `&chain=${chain}` +
-    //     `limit=${limit}`
+    //   `nfts?${`wallet=${params.wallet}limit=${params.limit}`}`
     // )
     // return response.data.data
 
@@ -31,7 +28,12 @@ class AssetManager {
     return walletNFTs
   }
 
-  public async getWalletBadges(wallet: string): Promise<BadgeData[]> {
+  /**
+   * Get wallet badges
+   *
+   * Ex: walletBadges?wallet=0x34e77AD857217D8D93dcC0bAE752E2290A2EFb66
+   */
+  public async getWalletBadges(wallet: string): Promise<Badge[]> {
     // ex: walletBadges?wallet=0x34e77AD857217D8D93dcC0bAE752E2290A2EFb66
     // const response = await walletProviderApi.get(
     //   `walletBadges?wallet=${wallet}`
@@ -42,12 +44,18 @@ class AssetManager {
     return walletBadges
   }
 
-  public async claimBadge(wallet: string, assetId: string): Promise<BadgeData> {
-    // ex: claimBadge?wallet=0x34e77AD857217D8D93dcC0bAE752E2290A2EFb66
-    // const request = await walletProviderApi.get(
-    //   `claimBadge?` + `wallet=${wallet}&assetId=${assetId}`
-    // )
+  /**
+   * Claim badge for a wallet
+   */
+  public async claimBadge(
+    wallet: string,
+    assetId: string
+  ): Promise<ClaimBadgeResponse> {
+    // const request = await walletProviderApi.post(`claimBadge`, {
+    //   wallet,
+    //   assetId,
+    // })
 
-    return walletBadges[0]
+    return { badge: walletBadges[0], success: true }
   }
 }

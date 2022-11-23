@@ -47,36 +47,49 @@ export type NetworkCountries = {
   [name: string]: NetworkCountry[]
 }
 
-// Have to set some number fields to be strings to keep compatible with Morallis response
-export interface NFTData {
-  token_address: string
-  token_id: string
-  amount: string
-  owner_of: string
-  token_hash: string
-  block_number_minted: string
-  block_number: string
-  contract_type: string
-  name: string
-  symbol: string
-  token_uri: string | null
-  metadata: string | null
-  last_token_uri_sync: string | null
-  last_metadata_sync: string | null
-  minter_address: string | null
-}
-
-export interface WalletNFTsResponse {
+export interface PagingInfo {
   total: number
   page: number
   page_size: number
-  cursor: string
-  result: NFTData[]
-  status: string
+  cursor?: string | null
+}
+
+// Have to set some number fields as strings to keep compatible with Morallis response
+export interface NFT {
+  token_address: string
+  token_id: string
+  amount: string
+  owner_of: string
+  token_hash: string
+  block_number_minted: string
+  block_number: string
+  contract_type: string
+  name: string
+  symbol: string
+  token_uri: string | null
+  metadata: string | null // JSON string
+  last_token_uri_sync: string | null
+  last_metadata_sync: string | null
+  minter_address: string | null
+}
+
+export interface NFTCollection {
+  token_address: string
+  contract_type: string
+  name: string
+  symbol: string
+  nfts: {
+    data: NFT[]
+  } & PagingInfo
+}
+
+export interface WalletNFTsResponse extends PagingInfo {
+  collections: NFTCollection[]
+  status?: string
 }
 
 // FIXME: Need to update, not the real type of badge
-export interface BadgeData {
+export interface Badge {
   token_address: string
   token_id: string
   amount: string
@@ -92,4 +105,9 @@ export interface BadgeData {
   last_token_uri_sync: string | null
   last_metadata_sync: string | null
   minter_address: string | null
+}
+
+export interface ClaimBadgeResponse {
+  badge?: Badge | null
+  success?: boolean
 }
