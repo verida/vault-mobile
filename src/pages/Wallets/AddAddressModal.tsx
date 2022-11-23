@@ -99,10 +99,7 @@ export default ({ visible, hideModal }: Props) => {
           <Button
             style={styles.addWalletButton}
             color='primary'
-            disabled={!blockchain}
-          // loading={processing}
-          // onPress={onAddWallet}
-          >
+            disabled={!blockchain}>
             Add Wallet
           </Button>
         </View>
