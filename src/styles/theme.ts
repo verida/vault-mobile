@@ -1,8 +1,14 @@
 import {
   BLACK_COLOR,
-  ORANGE_COLOR,
+  BLACK_COLOR_OPACITY,
+  DECLINE_COLOR,
+  LIGHTGREY_COLOR,
   PRIMARY_COLOR,
   SUCCESS_COLOR,
+  TEXT_GREY_100,
+  TEXT_GREY_500,
+  VERIDA_COLOR,
+  VERY_LIGHTGREY_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 
@@ -16,13 +22,20 @@ export const defaultTheme = {
     onSurface: BLACK_COLOR,
     onDarkBackground: WHITE_COLOR,
 
-    error: ORANGE_COLOR,
+    error: DECLINE_COLOR,
     onError: WHITE_COLOR,
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
 
+    veridaGreen: VERIDA_COLOR,
+
     transparent: 'transparent',
+    black800: BLACK_COLOR_OPACITY(0.8),
+    lightGrey: LIGHTGREY_COLOR,
+    veryLightGrey: VERY_LIGHTGREY_COLOR,
+    textGrey100: TEXT_GREY_100,
+    textGrey500: TEXT_GREY_500,
 
     gray100: '#EDF0F3',
     gray200: '#DDE3E9',

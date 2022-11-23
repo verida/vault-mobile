@@ -8,9 +8,12 @@ import {
 } from 'react-native'
 
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
-import AnimatedDots from 'components/Checkbox/AnimatedDots'
 import { Caption } from 'components/Typography/Caption'
-import text from 'styles/text'
+import { Label } from 'components/Typography/Label'
+import { LIGHTGREY_COLOR, WHITE_COLOR } from 'constants/color'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import inputs from 'styles/inputs'
+import { Theme } from 'styles/types'
 
 export enum FormInputType {
   Text,
@@ -25,8 +28,6 @@ export type FormInputProps = React.ComponentPropsWithRef<
   label?: string
   errorMessage?: string
   type?: FormInputType
-  onInputFocus?: () => void
-  onInputBlur?: () => void
   disabled?: boolean
   inputStyle?: TextStyle
   withAnimatedChecbox?: boolean
@@ -44,62 +45,56 @@ export const FormInput = React.forwardRef(
       inputStyle,
       testID,
       disabled,
-      onInputFocus,
-      onInputBlur,
+      onFocus: onInputFocus,
+      onBlur: onInputBlur,
       withAnimatedChecbox,
       loading,
       checked,
       ...rest
     } = props
     const { theme } = useTheme()
+    const styles = useThemeAwareStyle(createStyles)
     const [focused, setFocused] = useState(false)
     const fallbackRef = useRef(null)
     const ref = receivedRef || fallbackRef
-    const onFocus = useCallback(() => {
-      setFocused(true)
-      onInputFocus && onInputFocus()
-    }, [onInputFocus])
-    const onBlur = useCallback(() => {
-      setFocused(false)
-      onInputBlur && onInputBlur()
-    }, [onInputBlur])
+    const onFocus = useCallback(
+      (e) => {
+        setFocused(true)
+        onInputFocus && onInputFocus(e)
+      },
+      [onInputFocus]
+    )
+    const onBlur = useCallback(
+      (e) => {
+        setFocused(false)
+        onInputBlur && onInputBlur(e)
+      },
+      [onInputBlur]
+    )
 
     return (
-      <View
-        style={[
-          styles.container,
-          focused ? styles.containerFocused : {},
-          style,
-        ]}>
+      <View style={style}>
         {label && (
-          <Caption
+          <Label
             testID={`${testID}.label`}
             style={[
               styles.label,
-              focused
-                ? { color: theme.color.primary }
-                : {
-                    ...styles.errorMessage,
+              errorMessage
+                ? {
                     color: theme.color.error,
                   }
-                ? { color: theme.color.onBackground }
+                : {},
+              disabled
+                ? {
+                    color: theme.color.textGrey500,
+                  }
                 : {},
             ]}>
             {label}
-          </Caption>
+          </Label>
         )}
         <View
           testID={`${testID}.inputContainer`}
-          style={[
-            styles.textInputOutline,
-            {
-              borderColor: theme.color.gray900,
-              backgroundColor: theme.color.gray100,
-              shadowColor: theme.color.onSurface,
-            },
-            focused ? { borderColor: theme.color.primary } : {},
-            errorMessage ? { borderColor: theme.color.error } : {},
-          ]}
           pointerEvents={disabled ? 'none' : 'auto'}>
           <OriginalTextInput
             {...rest}
@@ -110,8 +105,20 @@ export const FormInput = React.forwardRef(
             underlineColorAndroid={theme.color.transparent}
             style={[
               styles.textInput,
-              { color: theme.color.onSurface },
               inputStyle,
+              focused
+                ? { borderColor: theme.color.veridaGreen }
+                : errorMessage
+                ? {
+                    borderColor: theme.color.error,
+                  }
+                : {},
+              disabled
+                ? {
+                    color: theme.color.textGrey100,
+                    backgroundColor: theme.color.veryLightGrey,
+                  }
+                : {},
             ]}
             onFocus={onFocus}
             onBlur={onBlur}
@@ -137,7 +144,7 @@ export const FormInput = React.forwardRef(
             </View>
           )}
         </View>
-        <Caption
+        <Label
           testID={`${testID}.errorMessage`}
           style={[
             errorMessage
@@ -148,7 +155,7 @@ export const FormInput = React.forwardRef(
               : styles.errorMessageEmpty,
           ]}>
           {errorMessage}
-        </Caption>
+        </Label>
       </View>
     )
   }
@@ -160,47 +167,22 @@ FormInput.defaultProps = {
   checked: false,
 }
 
-const styles = StyleSheet.create({
-  container: {
-    minHeight: 48,
-  },
-  containerFocused: {
-    minHeight: 48,
-  },
-  textInput: {
-    ...text.primary,
-    textAlign: 'left',
-    height: 48,
-    minHeight: 48,
-    paddingHorizontal: 12,
-    fontSize: 16,
-    fontWeight: 'normal',
-  },
-  textInputOutline: {
-    borderWidth: 1,
-    borderRadius: 4,
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    textInput: {
+      ...inputs.input,
+      textAlign: 'left',
     },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
-
-    elevation: 5,
-  },
-  errorMessageEmpty: {
-    height: 0,
-  },
-  errorMessage: {
-    fontSize: 12,
-    lineHeight: 16,
-    height: 16,
-  },
-  label: {
-    marginBottom: 8,
-    padding: 0,
-    margin: 0,
-    fontSize: 16,
-    lineHeight: 16,
-  },
-})
+    errorMessageEmpty: {
+      height: 0,
+    },
+    errorMessage: {
+      marginTop: theme.spacing.xs,
+    },
+    label: {
+      marginBottom: 2,
+      padding: 0,
+      margin: 0,
+      lineHeight: 18,
+    },
+  })

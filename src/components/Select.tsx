@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import {
+  Keyboard,
   LayoutRectangle,
   Platform,
   ScrollView,
@@ -187,6 +188,8 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
     this.setState({
       searchableText: '',
     })
+
+    Keyboard.dismiss()
   }
 
   getLayout(layout: LayoutRectangle) {
@@ -310,7 +313,10 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
                 zIndex: this.props.zIndex,
               },
             ]}>
-            <ScrollView style={{ width: '100%' }} nestedScrollEnabled={true}>
+            <ScrollView
+              style={{ width: '100%' }}
+              nestedScrollEnabled={true}
+              keyboardShouldPersistTaps='handled'>
               {items.length > 0 ? (
                 items.map((item, index) => (
                   <TouchableOpacity

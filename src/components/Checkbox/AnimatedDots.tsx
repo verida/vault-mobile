@@ -9,8 +9,6 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated'
 
-import { SUCCESS_COLOR } from 'constants/color'
-
 const Dot = ({ delay, dotSize }: { delay: number; dotSize: number }) => {
   const progress = useSharedValue(0)
   const { theme } = useTheme()

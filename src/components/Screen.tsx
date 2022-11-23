@@ -85,7 +85,9 @@ const Screen = (props: ScreenProps) => {
       wrap={(children) =>
         Platform.select({
           ios: (
-            <KeyboardAvoidingView behavior='padding' style={styles.wrapper}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={styles.wrapper}>
               {children}
             </KeyboardAvoidingView>
           ),

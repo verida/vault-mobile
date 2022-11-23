@@ -2,11 +2,10 @@ import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Alert, ScrollView, StyleSheet, View } from 'react-native'
-import { Blurhash } from 'react-native-blurhash'
 import PagerView from 'react-native-pager-view'
-import Animated, { useEvent, useHandler } from 'react-native-reanimated'
+import Animated from 'react-native-reanimated'
 
 import AccountManager from 'api/AccountManager'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
@@ -15,6 +14,7 @@ import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import TCCheckbox from 'components/TCCheckbox'
+import { Caption } from 'components/Typography/Caption'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
@@ -36,7 +36,7 @@ const pageData = [
   {
     key: 'name',
     hasNext: true,
-    hasBack: false,
+    hasBack: true,
   },
   {
     key: 'location',
@@ -45,27 +45,10 @@ const pageData = [
   },
   {
     key: 'confirmation',
-    hasNext: true,
+    hasNext: false,
     hasBack: false,
   },
 ]
-
-export function usePagerScrollHandler(handlers: any, dependencies?: any) {
-  const { context, doDependenciesDiffer } = useHandler(handlers, dependencies)
-  const subscribeForEvents = ['onPageScroll']
-
-  return useEvent<any>(
-    (event) => {
-      'worklet'
-      const { onPageScroll } = handlers
-      if (onPageScroll && event.eventName.endsWith('onPageScroll')) {
-        onPageScroll(event, context)
-      }
-    },
-    subscribeForEvents,
-    doDependenciesDiffer
-  )
-}
 
 const blurHashs = [
   'LGFFaXYk^6#M@-5c,1J5@[or[Q9.',
@@ -93,12 +76,23 @@ const CreateIdentity = () => {
   const [agreedTC, setAgreedTC] = useState(false)
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [availableUsername, setAvailableUsername] = useState(false)
+  const [usernameError, setUsernameError] = useState<string | undefined>(
+    undefined
+  )
+  const [showRetry, setShowRetry] = useState(false)
 
   const checkUsername = useCallback(async () => {
     // FIXME: Remove fake check-username availability request
     setCheckingUsername(true)
     setTimeout(() => {
-      setAvailableUsername(Math.random() >= 0.3)
+      if (Math.random() >= 0.5) {
+        setAvailableUsername(true)
+        setUsernameError(undefined)
+      } else {
+        setAvailableUsername(false)
+        setUsernameError('Username is taken')
+      }
+
       setCheckingUsername(false)
     }, 3000)
   }, [])
@@ -115,7 +109,7 @@ const CreateIdentity = () => {
       setConfromationState((cstate) => ({
         state: {
           ...cstate?.state,
-          ['ClaimUsername']: Math.random() >= 0.3 ? 'Success' : 'Failure',
+          ['ClaimUsername']: Math.random() >= 0.5 ? 'Success' : 'Failure',
         },
       }))
     }, 3000)
@@ -138,7 +132,7 @@ const CreateIdentity = () => {
   }>({
     name: '',
     username: '',
-    country: '',
+    country: 'Australia', // FIXME: Use default Australia for now
   })
 
   const creatIdentifier = useCallback(() => {
@@ -151,7 +145,7 @@ const CreateIdentity = () => {
         await AccountManager.getInstance().createAccount(
           {
             name: profile.name,
-            country: profile?.country || '',
+            country: profile?.country,
             description: '',
           },
           profile?.country,
@@ -169,12 +163,12 @@ const CreateIdentity = () => {
         navigation.navigate('CreatePin')
       } catch (error) {
         setProcessing(false)
-        Alert.alert('Error', 'Failed to create account, please try again later')
+        setShowRetry(true)
       }
     }, 0)
   }, [claimUsername, navigation, profile])
 
-  const { formValidated, nextButtonText, nextButtonColor } = useMemo(() => {
+  const { formValidated } = useMemo(() => {
     switch (currentPage) {
       case 1: // Name
         return {
@@ -184,7 +178,7 @@ const CreateIdentity = () => {
               (!isEmpty(profile.username) && availableUsername)),
         }
       case 2: // location
-        return { formValidated: !isEmpty(profile.country) }
+        return { formValidated: true } //!isEmpty(profile.country) }
       case 3: // Confirmation
         return {
           formValidated: confromationState?.state?.CreateProfile === 'Success',
@@ -199,14 +193,8 @@ const CreateIdentity = () => {
     profile,
   ])
 
-  const handler = usePagerScrollHandler({
-    onPageScroll: (e: any) => {
-      'worklet'
-      console.log(e.offset, e.position)
-    },
-  })
-
   const onCountryChange = (option: Option) => {
+    console.log(option, option.value)
     setProfile((p) => ({ ...p, country: option.value }))
   }
 
@@ -216,10 +204,6 @@ const CreateIdentity = () => {
 
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
-      <Blurhash
-        blurhash={blurHashs[Math.floor(Math.random() * blurHashs.length)]}
-        style={{ ...StyleSheet.absoluteFillObject, opacity: 0.3 }}
-      />
       <View style={styles.main}>
         <AnimatedPager
           style={styles.pagerView}
@@ -229,45 +213,48 @@ const CreateIdentity = () => {
             setCurrentPage(event.nativeEvent.position)
           }}
           ref={pagerRef}
-          overScrollMode='never'
-          onPageScroll={handler}>
+          overScrollMode='never'>
           <View key='start'>
             <View style={styles.landing}>
-              {/* <Texture width={425} height={428} /> */}
               <View style={styles.positionAbsolute}>
                 <View>
                   <Headline style={styles.title}>Identity</Headline>
                   <Title style={styles.subTitle}>
-                    Create your Verida identity...
+                    Create your Verida identity
                   </Title>
-                  <TCCheckbox
-                    checked={agreedTC}
-                    style={styles.termAndCondition}
-                    onToggle={toggleAgreedTC}
-                  />
-                  <Spacer vertical='xxxl' />
-                  <Button
-                    disabled={!agreedTC}
-                    style={styles.actionButton}
-                    onPress={() => {
-                      pagerRef.current?.setPage(currentPage + 1)
-                      setCurrentPage(currentPage + 1)
-                    }}>
-                    Create Identity
-                  </Button>
                   <Spacer vertical='xxxxl' />
-                  <Title style={styles.subTitle}>
-                    Already have an existring Verida Identity? Import it.
-                  </Title>
-                  <Spacer vertical='sm' />
-                  <Button
-                    disabled={!agreedTC}
-                    style={styles.actionButton}
-                    onPress={() => {
-                      navigation.navigate('SeedPhraseEntered')
-                    }}>
-                    Import Identity
-                  </Button>
+                  <View style={styles.center}>
+                    <TCCheckbox
+                      checked={agreedTC}
+                      style={styles.termAndCondition}
+                      onToggle={toggleAgreedTC}
+                    />
+                    <Spacer vertical='xxxl' />
+                    <Button
+                      disabled={!agreedTC}
+                      style={styles.actionButton}
+                      onPress={() => {
+                        pagerRef.current?.setPage(currentPage + 1)
+                        setCurrentPage(currentPage + 1)
+                      }}>
+                      Create Identity
+                    </Button>
+                    <Spacer vertical='xxxxl' />
+
+                    <Caption style={styles.subTitle}>
+                      Already have a Verida Identity?
+                    </Caption>
+                    <Spacer vertical='xs' />
+                    <Button
+                      disabled={!agreedTC}
+                      color='transparent'
+                      style={styles.actionButton}
+                      onPress={() => {
+                        navigation.navigate('SeedPhraseEntered')
+                      }}>
+                      Click here to import
+                    </Button>
+                  </View>
                 </View>
                 <Spacer vertical='xxxl' />
               </View>
@@ -278,7 +265,8 @@ const CreateIdentity = () => {
               <View style={styles.positionAbsolute}>
                 <ScrollView
                   contentContainerStyle={styles.scrollViewContainer}
-                  showsVerticalScrollIndicator={false}>
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps='handled'>
                   <Headline style={styles.title}>Name and Username</Headline>
                   <Spacer vertical='xxxl' />
                   <FormInput
@@ -296,24 +284,28 @@ const CreateIdentity = () => {
                   <Spacer vertical='xxxl' />
                   <Paragraph>
                     Optionally, you can claim a Verida Username. It is linked to
-                    your identity and allows you to...
+                    your identity. (Comming soon)
                   </Paragraph>
                   <Spacer vertical='xxl' />
                   <FormInput
                     label='Check your username is available'
                     withAnimatedChecbox={profile.username.length > 0}
-                    disabled={checkingUsername}
+                    disabled
                     autoCapitalize='none'
                     autoCorrect={false}
                     loading={checkingUsername}
                     onChangeText={(text) =>
                       setProfile((p) => ({ ...p, username: text }))
                     }
-                    onInputBlur={() => {
+                    onBlur={() => {
                       if (profile.username.length > 0) checkUsername()
+                    }}
+                    onFocus={() => {
+                      setUsernameError(undefined)
                     }}
                     value={profile.username}
                     checked={availableUsername}
+                    errorMessage={usernameError}
                   />
                 </ScrollView>
               </View>
@@ -322,20 +314,19 @@ const CreateIdentity = () => {
           <View key='location'>
             <View style={styles.landing}>
               <View style={styles.positionAbsolute}>
-                <ScrollView showsVerticalScrollIndicator={false}>
+                <ScrollView
+                  showsVerticalScrollIndicator={false}
+                  keyboardShouldPersistTaps='handled'>
                   <Headline style={styles.title}>
                     Location of your data
                   </Headline>
                   <Spacer vertical='xxxl' />
                   <Paragraph>You are the owner of your data</Paragraph>
                   <Spacer vertical='m' />
-                  <Paragraph>
-                    It is stored on multiple storage nides with your...
-                  </Paragraph>
-                  <Spacer height={100} />
+                  <Paragraph>It is stored on multiple storage nodes.</Paragraph>
+                  <Spacer vertical='xxxxl' />
                   <DropDownPicker
                     searchable
-                    disabled={processing}
                     searchablePlaceholder='Search for country'
                     showArrow
                     placeholder=''
@@ -365,10 +356,13 @@ const CreateIdentity = () => {
                     checked={
                       confromationState?.state?.CreateIdentifier === 'Success'
                     }
+                    failed={
+                      confromationState?.state?.CreateIdentifier === 'Failure'
+                    }
                     showLoading={
                       confromationState?.state?.CreateIdentifier === 'Loading'
                     }
-                    label='Create Identifier'
+                    label='Create identifier'
                     highlightColor={theme.color.success}
                     checkmarkColor={theme.color.onSuccess}
                     boxOutlineColor={theme.color.gray400}
@@ -378,10 +372,13 @@ const CreateIdentity = () => {
                     checked={
                       confromationState?.state?.ClaimUsername === 'Success'
                     }
+                    failed={
+                      confromationState?.state?.ClaimUsername === 'Failure'
+                    }
                     showLoading={
                       confromationState?.state?.ClaimUsername === 'Loading'
                     }
-                    label='Claim Username'
+                    label='Claim username'
                     highlightColor={theme.color.success}
                     checkmarkColor={theme.color.onSuccess}
                     boxOutlineColor={theme.color.gray400}
@@ -394,7 +391,7 @@ const CreateIdentity = () => {
                     showLoading={
                       confromationState?.state?.StorageLocation === 'Loading'
                     }
-                    label='Select Storage Locations'
+                    label='Connect storage nodes'
                     highlightColor={theme.color.success}
                     checkmarkColor={theme.color.onSuccess}
                     boxOutlineColor={theme.color.gray400}
@@ -407,7 +404,7 @@ const CreateIdentity = () => {
                     showLoading={
                       confromationState?.state?.CreateProfile === 'Loading'
                     }
-                    label='Create Profille'
+                    label='Create public profile'
                     highlightColor={theme.color.success}
                     checkmarkColor={theme.color.onSuccess}
                     boxOutlineColor={theme.color.gray400}
@@ -418,7 +415,7 @@ const CreateIdentity = () => {
           </View>
         </AnimatedPager>
         <View style={styles.bottomNavContainer}>
-          {pageData[currentPage].hasBack && (
+          {(pageData[currentPage].hasBack || showRetry) && (
             <Button
               color='transparent'
               style={styles.backButton}
@@ -426,6 +423,7 @@ const CreateIdentity = () => {
                 if (currentPage > 0) {
                   pagerRef.current?.setPage(currentPage - 1)
                   setCurrentPage(currentPage - 1)
+                  showRetry && setShowRetry(false)
                 } else {
                   navigation.goBack()
                 }
@@ -433,9 +431,10 @@ const CreateIdentity = () => {
               Back
             </Button>
           )}
-          {pageData[currentPage].hasNext && formValidated && (
+          {!showRetry && pageData[currentPage].hasNext && (
             <Button
               style={styles.nextButton}
+              disabled={!formValidated}
               onPress={() => {
                 if (currentPage < numberOfPage - 1) {
                   pagerRef.current?.setPage(currentPage + 1)
@@ -446,6 +445,16 @@ const CreateIdentity = () => {
                 }
               }}>
               Next
+            </Button>
+          )}
+          {showRetry && (
+            <Button
+              style={styles.retryButton}
+              onPress={() => {
+                setShowRetry(false)
+                creatIdentifier()
+              }}>
+              Retry
             </Button>
           )}
         </View>
@@ -481,6 +490,15 @@ const creatStyles = (theme: Theme) => {
       right: 0,
       paddingHorizontal: theme.spacing.l,
     },
+    retryButton: {
+      position: 'absolute',
+      right: 0,
+      paddingHorizontal: theme.spacing.l,
+      backgroundColor: theme.color.error,
+      borderColor: theme.color.error,
+      textcolor: theme.color.onError,
+    },
+
     positionAbsolute: {
       ...StyleSheet.absoluteFillObject,
       position: 'absolute',
@@ -505,6 +523,10 @@ const creatStyles = (theme: Theme) => {
     },
     scrollViewContainer: {
       paddingBottom: theme.spacing.xxl,
+    },
+    center: {
+      alignItems: 'center',
+      justifyContent: 'center',
     },
   })
 }

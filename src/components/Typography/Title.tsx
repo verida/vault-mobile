@@ -21,7 +21,7 @@ const createStyles = (theme: Theme) => {
     text: {
       ...text.primary,
       color: theme.color.onPrimary,
-      fontSize: theme.fontSize.xl,
+      fontSize: theme.fontSize.l,
       textAlign: 'left',
     },
   })
