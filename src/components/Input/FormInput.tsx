@@ -8,9 +8,7 @@ import {
 } from 'react-native'
 
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
-import { Caption } from 'components/Typography/Caption'
 import { Label } from 'components/Typography/Label'
-import { LIGHTGREY_COLOR, WHITE_COLOR } from 'constants/color'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import inputs from 'styles/inputs'
 import { Theme } from 'styles/types'

@@ -1,6 +1,3 @@
-import {RootStackParams, AuthStackParams, DashboardTabParams, MainStackParams} from 'navigation/types'
-
-
 declare module '*.svg' {
   const content: any
   export default content
@@ -16,10 +13,4 @@ declare module "react-native-config" {
   }
   const BuildConfig: Env
   export default BuildConfig
-}
-
-declare global {
-  namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList, AuthStackParams, DashboardTabParams, MainStackParams  {}
-  }
 }

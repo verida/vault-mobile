@@ -3,7 +3,7 @@ import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Alert, ScrollView, StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import Animated from 'react-native-reanimated'
 
@@ -18,7 +18,6 @@ import { Caption } from 'components/Typography/Caption'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
-import { BLACK_COLOR } from 'constants/color'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
@@ -50,11 +49,6 @@ const pageData = [
   },
 ]
 
-const blurHashs = [
-  'LGFFaXYk^6#M@-5c,1J5@[or[Q9.',
-  'LGFFaXYk^6#M@-5c,1J5@[or[Q6.',
-]
-
 type CreateAccountStepType =
   | 'CreateIdentifier'
   | 'ClaimUsername'
@@ -72,7 +66,6 @@ const CreateIdentity = () => {
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(0)
 
-  const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [availableUsername, setAvailableUsername] = useState(false)
@@ -136,7 +129,6 @@ const CreateIdentity = () => {
   })
 
   const creatIdentifier = useCallback(() => {
-    setProcessing(true)
     setTimeout(async () => {
       try {
         // TODO: remove fake request
@@ -162,7 +154,6 @@ const CreateIdentity = () => {
 
         navigation.navigate('CreatePin')
       } catch (error) {
-        setProcessing(false)
         setShowRetry(true)
       }
     }, 0)
@@ -194,7 +185,6 @@ const CreateIdentity = () => {
   ])
 
   const onCountryChange = (option: Option) => {
-    console.log(option, option.value)
     setProfile((p) => ({ ...p, country: option.value }))
   }
 
@@ -516,7 +506,7 @@ const creatStyles = (theme: Theme) => {
     },
     termAndCondition: {
       marginTop: theme.spacing.m,
-      color: BLACK_COLOR,
+      color: theme.color.onBackground,
     },
     pagerView: {
       flex: 1,
