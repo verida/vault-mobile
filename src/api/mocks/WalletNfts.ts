@@ -7,9 +7,9 @@ export const walletNFTs = {
   collections: [
     {
       token_address: '0xc874dadccbab2d63fb48488f572243cbe96e6dbd',
-      contract_type: 'ERC1155',
-      name: 'All Dark Country',
-      symbol: 'All Dark Country',
+      name: 'Bored Ape Yacht Club',
+      symbol: 'Bored Ape Yacht Club',
+      contract_type: 'ERC721',
       nfts: {
         total: 10,
         page: 1,
