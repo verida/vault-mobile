@@ -2,6 +2,8 @@ import React from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
+import CloseIcon from 'assets/icons/close_icon.svg'
+
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
@@ -41,14 +43,11 @@ const AppModal = ({
       }}
       onRequestClose={onClose}>
       <View style={styles.container}>
+        <View style={styles.headerCurved} />
         <View style={styles.centeredView}>
           <View style={styles.header}>
-            <Pressable
-              onPress={onClose}
-              style={{
-                marginLeft: 13,
-              }}>
-              <AntDesign name='close' size={20} color='black' />
+            <Pressable onPress={onClose}>
+              <CloseIcon />
             </Pressable>
             <Text style={styles.headerTitle}>{title}</Text>
             <View />
@@ -69,8 +68,8 @@ const styles = StyleSheet.create({
     backgroundColor: BLACK_COLOR_OPACITY(0.5),
   },
   header: {
-    height: 58,
-    paddingTop: 16,
+    paddingHorizontal: 14,
+    paddingVertical: 10,
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
@@ -84,10 +83,15 @@ const styles = StyleSheet.create({
   },
   centeredView: {
     flex: 1,
+    height: 42,
+    backgroundColor: WHITE_COLOR,
+  },
+  headerCurved: {
+    height: 16,
     backgroundColor: WHITE_COLOR,
     borderTopLeftRadius: 10,
     borderTopRightRadius: 10,
-    marginTop: 45,
+    marginTop: 35,
   },
   divider: {
     height: 0.4,

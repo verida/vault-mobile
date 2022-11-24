@@ -1,34 +1,61 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import SettingsIcon from 'assets/settings_icon.svg'
+import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import AppModal from 'components/modal/AppModal'
-import WalletListItem, {
-  WalletItemProps,
-} from 'components/WalletList/WalletListItem'
+import WalletListItem from 'components/WalletList/WalletListItem'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 
 import { PRIMARY_COLOR, WHITE_COLOR } from '../../constants/color'
-
+import { getAllWallets, getSelectedWalletId } from 'reduxStore/wallet/selectors'
+import { selectChains } from 'reduxStore/tokens/selectors'
+import { connect } from 'react-redux';
+import { WalletItemProps, WalletType } from 'components/WalletList/types'
 interface WalletSelectorModalProps {
   onCloseModal: () => void
   modalVisible: boolean
-  walletList: WalletItemProps[]
-  selectedWalletId: string
+  selectedWalletId?: any
+  wallets?: WalletType
+  chains?: any
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
 const WalletSelectorModal = ({
   modalVisible,
-  walletList,
+  chains,
+  wallets,
   selectedWalletId,
   onCloseModal,
 }: WalletSelectorModalProps) => {
+  const [walletList, setWalletList] = useState<WalletItemProps[]>([])
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
+
+
+  const getWallets = (wallets: WalletType, chains: any): WalletItemProps[] => {
+    return Object.values(wallets || {}).map((singleWallet: any) => {
+      const { label, id, type } = singleWallet
+      return {
+        label,
+        id,
+        icon: <MultichainWalletIcon />,
+        count: type === 'multi' ? Object.keys(chains).length : 1
+      }
+    })
+  }
+
+
+  useEffect(() => {
+    if (wallets) {
+      const list = getWallets(wallets, chains)
+      setWalletList(list)
+    }
+
+  }, [])
 
   const onPressHandler = () => {
     navigation.navigate('ManageWallets')
@@ -77,7 +104,16 @@ const WalletSelectorModal = ({
   )
 }
 
-export default WalletSelectorModal
+const mapStateToProps = (rootState: any) => {
+  const state = rootState.main
+  return {
+    wallets: getAllWallets(state),
+    chains: selectChains(rootState),
+    selectedWalletId: getSelectedWalletId(state),
+  }
+}
+
+export default connect(mapStateToProps)(WalletSelectorModal)
 
 const styles = StyleSheet.create({
   walletList: {

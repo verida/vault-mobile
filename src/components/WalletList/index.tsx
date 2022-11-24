@@ -3,19 +3,20 @@ import { StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
-
-import WalletListItem, { WalletItemProps } from './WalletListItem'
+import { WalletItemProps } from './types'
+import WalletListItem from 'components/WalletList/WalletListItem';
 
 interface WalletListProps {
   list: WalletItemProps[]
-  selectedWalletId: string
+  selectedWalletId: string | number
   onPressItem: any
-  leftIconType: 'checked' | 'dots'
+  leftIconType?: 'checked' | 'dots'
 }
 
 const WalletList = ({
   list,
   onPressItem,
+  leftIconType = "dots",
   selectedWalletId,
 }: WalletListProps) => {
   return (
@@ -31,7 +32,7 @@ const WalletList = ({
           <WalletListItem
             onPressItem={onPressItem}
             item={data.item}
-            leftIconType='dots'
+            leftIconType={leftIconType}
             selectedWalletId={selectedWalletId}
           />
         </View>

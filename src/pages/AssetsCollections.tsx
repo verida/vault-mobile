@@ -6,9 +6,13 @@ import { Image, StyleSheet, Text, View } from 'react-native'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
-import WalletSelectorHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
+import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import { MainStackParams } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
+import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
+import { connect } from 'react-redux'
+import { selectChains } from 'reduxStore/tokens/selectors'
+import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -30,13 +34,23 @@ enum Assets {
   BADGES,
 }
 
-const AssetsCollections = () => {
+const AssetsCollections = (props: any) => {
+  const { selectedWallet } = props
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [segments] = useState(segmentLists)
+  const [modalVisible, setModalVisible] = useState(false)
   const [collection, setCollection] = useState<Assets>(Assets.COINS)
 
   const onChangedSegmentIndex = (index: number) => {
     setCollection(index)
+  }
+
+  const onCloseModal = () => {
+    setModalVisible(!modalVisible)
+  }
+
+  const openWalletModal = () => {
+    setModalVisible(!modalVisible)
   }
 
   const renderAssets = () => {
@@ -50,12 +64,19 @@ const AssetsCollections = () => {
     }
   }
 
+  const walletSelect = (
+    <WalletNavigationHeader
+      selectedWallet={selectedWallet}
+      openWalletModal={openWalletModal}
+    />
+  )
+
   return (
     <Container>
       <NavigationHeader
         left={{ icon: 'avatar' }}
         avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
-        titleIcon={<WalletSelectorHeader />}
+        titleIcon={walletSelect}
       />
       <View>
         <SegmentControl
@@ -64,9 +85,23 @@ const AssetsCollections = () => {
         />
       </View>
       <Content>{renderAssets()}</Content>
+      <WalletSelectorModal
+        modalVisible={modalVisible}
+        onCloseModal={onCloseModal}
+      />
     </Container>
   )
 }
+
+const mapStateToProps = (rootState: any) => {
+  const state = rootState.main
+  const chains = selectChains(rootState)
+  return {
+    selectedWallet: getSelectedWalletById(state, chains),
+  }
+}
+
+export default connect(mapStateToProps)(AssetsCollections)
 
 const styles = StyleSheet.create({
   container: {
@@ -84,4 +119,3 @@ const styles = StyleSheet.create({
   },
 })
 
-export default AssetsCollections

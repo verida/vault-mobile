@@ -117,6 +117,22 @@ export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
+export const getSelectedWalletById = (state, chains) => {
+  const wallets = state.wallets.data || []
+  const walletList = Object.values(wallets).map((singleWallet) => {
+    const { label, id, type } = singleWallet
+    return {
+      label,
+      id,
+      icon: "",
+      count: type === 'multi' ? Object.keys(chains).length : 1,
+    }
+  })
+  const selectedWalletId = state.selectedWallet
+  const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
+  return selectedWallet
+}
+
 export const getWalletProcessingState = (state) => {
   return state.walletProcessing.loading
 }

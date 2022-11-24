@@ -6,38 +6,21 @@ import MoreIcon from 'assets/more_icon.svg'
 import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
 import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
-import { AccountsType } from 'pages/Wallets/ManageWallets'
+import { WalletItemProps } from './types'
 
-export type WalletItemProps = {
-  count: number
-  icon: Element
-  id: string
-  label: string
-  other?: any
-}
-
-export type WalletType = {
-  id: string
-  type: string
-  seedPhrase: string
-  label: string
-  accounts: [AccountsType]
-  chain?: string
-}
-
-interface WalletSelectorListItemProps {
+interface WalletListItemProps {
   item: WalletItemProps
   selectedWalletId: string | number
   onPressItem?: any
   leftIconType: 'checked' | 'dots'
 }
 
-const WalletSelectorListItem = ({
+const WalletListItem = ({
   item,
-  leftIconType,
+  leftIconType = 'dots',
   onPressItem,
   selectedWalletId,
-}: WalletSelectorListItemProps) => {
+}: WalletListItemProps) => {
   const isItemSelected = selectedWalletId === item.id
 
   const handleOnPressAction = () => {
@@ -72,7 +55,7 @@ const WalletSelectorListItem = ({
   )
 }
 
-export default WalletSelectorListItem
+export default WalletListItem
 
 const styles = StyleSheet.create({
   container: {
