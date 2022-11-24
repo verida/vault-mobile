@@ -1,9 +1,7 @@
 import React from 'react'
 import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
-import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import CloseIcon from 'assets/icons/close_icon.svg'
-
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
@@ -12,8 +10,7 @@ import {
   SNOW_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
-
-import { NUNITO_SANS_BOLD } from '../../constants/text'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 interface AppModalProps {
   title: string

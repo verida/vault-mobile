@@ -3,16 +3,16 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
+import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
+import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { MainStackParams } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
-import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
-import { connect } from 'react-redux'
 import { selectChains } from 'reduxStore/tokens/selectors'
-import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
+import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -118,4 +118,3 @@ const styles = StyleSheet.create({
     marginBottom: 3,
   },
 })
-

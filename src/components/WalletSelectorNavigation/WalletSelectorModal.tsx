@@ -2,19 +2,20 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { connect } from 'react-redux'
 
 import SettingsIcon from 'assets/settings_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import AppModal from 'components/modal/AppModal'
+import { WalletItemProps, WalletType } from 'components/WalletList/types'
 import WalletListItem from 'components/WalletList/WalletListItem'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
+import { selectChains } from 'reduxStore/tokens/selectors'
+import { getAllWallets, getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 import { PRIMARY_COLOR, WHITE_COLOR } from '../../constants/color'
-import { getAllWallets, getSelectedWalletId } from 'reduxStore/wallet/selectors'
-import { selectChains } from 'reduxStore/tokens/selectors'
-import { connect } from 'react-redux';
-import { WalletItemProps, WalletType } from 'components/WalletList/types'
+
 interface WalletSelectorModalProps {
   onCloseModal: () => void
   modalVisible: boolean
@@ -35,27 +36,27 @@ const WalletSelectorModal = ({
   const [walletList, setWalletList] = useState<WalletItemProps[]>([])
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
-
-  const getWallets = (wallets: WalletType, chains: any): WalletItemProps[] => {
-    return Object.values(wallets || {}).map((singleWallet: any) => {
+  const getWallets = (
+    allWallets: WalletType,
+    allChains: any
+  ): WalletItemProps[] => {
+    return Object.values(allWallets || {}).map((singleWallet: any) => {
       const { label, id, type } = singleWallet
       return {
         label,
         id,
         icon: <MultichainWalletIcon />,
-        count: type === 'multi' ? Object.keys(chains).length : 1
+        count: type === 'multi' ? Object.keys(allChains).length : 1,
       }
     })
   }
-
 
   useEffect(() => {
     if (wallets) {
       const list = getWallets(wallets, chains)
       setWalletList(list)
     }
-
-  }, [])
+  }, [chains, wallets])
 
   const onPressHandler = () => {
     navigation.navigate('ManageWallets')

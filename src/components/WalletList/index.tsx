@@ -2,9 +2,10 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
+import WalletListItem from 'components/WalletList/WalletListItem'
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
+
 import { WalletItemProps } from './types'
-import WalletListItem from 'components/WalletList/WalletListItem';
 
 interface WalletListProps {
   list: WalletItemProps[]
@@ -16,7 +17,7 @@ interface WalletListProps {
 const WalletList = ({
   list,
   onPressItem,
-  leftIconType = "dots",
+  leftIconType = 'dots',
   selectedWalletId,
 }: WalletListProps) => {
   return (

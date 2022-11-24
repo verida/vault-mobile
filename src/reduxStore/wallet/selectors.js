@@ -124,7 +124,7 @@ export const getSelectedWalletById = (state, chains) => {
     return {
       label,
       id,
-      icon: "",
+      icon: '',
       count: type === 'multi' ? Object.keys(chains).length : 1,
     }
   })

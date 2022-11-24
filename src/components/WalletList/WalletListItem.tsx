@@ -6,6 +6,7 @@ import MoreIcon from 'assets/more_icon.svg'
 import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
 import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
+
 import { WalletItemProps } from './types'
 
 interface WalletListItemProps {

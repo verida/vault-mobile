@@ -11,6 +11,7 @@ import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
+import { WalletType } from 'components/WalletList/types'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -31,7 +32,6 @@ import OtherSvg from '../../assets/wallets/Other.svg'
 import { SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
-import { WalletType } from 'components/WalletList/types'
 
 export type walletIdType = string
 
