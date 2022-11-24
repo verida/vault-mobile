@@ -1,15 +1,16 @@
 import { Container } from 'native-base'
 import React, { useEffect } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
-import AntDesign from 'react-native-vector-icons/AntDesign'
 import { connect } from 'react-redux'
 
+import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { getBalances } from 'reduxStore/wallet/actions'
 import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
 import {
+  PRIMARY_COLOR_100,
   PRIMARY_COLOR_200,
   PRIMARY_COLOR_300,
   PRIMARY_COLOR_500,
@@ -46,7 +47,9 @@ const WalletSection = ({
     <Container style={styles.container}>
       <View style={styles.wallet}>
         <View style={styles.walletContent}>
-          <MainWallet />
+          <View style={styles.walletIcon}>
+            <MainWallet />
+          </View>
         </View>
         <View>
           <Text style={styles.walletText}>All Wallet</Text>
@@ -54,7 +57,7 @@ const WalletSection = ({
         </View>
       </View>
       <View>
-        <AntDesign name={'right'} size={15} color={'#423BCE'} />
+        <ChevronRightPrimaryIcon />
       </View>
     </Container>
   )
@@ -88,6 +91,11 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingRight: 30,
     paddingLeft: 16,
+  },
+  walletIcon: {
+    backgroundColor: PRIMARY_COLOR_100,
+    borderRadius: 12,
+    padding: 10,
   },
   walletContent: {
     marginRight: 12,

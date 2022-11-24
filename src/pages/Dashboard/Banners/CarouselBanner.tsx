@@ -21,19 +21,12 @@ import ChevronRightIcon from 'assets/icons/chevron_right.svg'
 import { WHITE_COLOR } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 
-import { BLACK_COLOR_OPACITY, PRIMARY_COLOR } from '../../../constants/color'
+import { BLACK_COLOR_OPACITY } from '../../../constants/color'
 import { NUNITO_SANS } from '../../../constants/text'
 
 const bgImage = require('assets/home_banner.png')
 
 const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
-
-const BANNER_LIST = [
-  {
-    label: 'Claim Your Badges',
-    screen: 'PublicProfile',
-  },
-]
 
 type TBannerList = {
   label: string
@@ -48,13 +41,13 @@ export default function PaginationDotsExample() {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current
-  const inputRange = [0, BANNER_LIST.length]
+  const inputRange = [0, bannerList.length]
   const scrollX = Animated.add(
     scrollOffsetAnimatedValue,
     positionAnimatedValue
   ).interpolate({
     inputRange,
-    outputRange: [0, BANNER_LIST.length * WIDTH],
+    outputRange: [0, bannerList.length * WIDTH],
   })
 
   const onPageScrollHandler = React.useMemo(
@@ -80,7 +73,7 @@ export default function PaginationDotsExample() {
   }
 
   const Banner = (
-    <View key={Math.random()}>
+    <View>
       <ImageBackground
         source={bgImage}
         resizeMode='cover'
@@ -102,7 +95,7 @@ export default function PaginationDotsExample() {
   }
 
   return (
-    <>
+    <View>
       <AnimatedPagerView
         initialPage={0}
         ref={ref}
@@ -138,7 +131,7 @@ export default function PaginationDotsExample() {
           />
         </View>
       </View>
-    </>
+    </View>
   )
 }
 
@@ -146,10 +139,10 @@ const styles = StyleSheet.create({
   bannerBgImage: {
     position: 'relative',
     height: 152,
-    backgroundColor: PRIMARY_COLOR,
+    marginHorizontal: -23,
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 16,
+    paddingHorizontal: 36,
   },
   buttonText: {
     fontFamily: NUNITO_SANS,
@@ -163,7 +156,7 @@ const styles = StyleSheet.create({
     bottom: 0,
     width: '100%',
     flexDirection: 'row',
-    backgroundColor: BLACK_COLOR_OPACITY(0.2),
+    backgroundColor: 'rgba(255, 255, 255, 0.3)',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingVertical: 8,
@@ -185,6 +178,7 @@ const styles = StyleSheet.create({
   },
   PagerView: {
     height: 152,
+    width: '100%',
     justifyContent: 'center',
     alignItems: 'center',
   },

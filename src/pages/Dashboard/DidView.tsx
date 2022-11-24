@@ -9,6 +9,7 @@ import {
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import Text from 'components/Text'
+import { PRIMARY_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export type DidViewProps = Omit<ViewProps, 'children'> & {
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     paddingVertical: 10,
     paddingHorizontal: 16,
-    backgroundColor: '#423BCE',
+    backgroundColor: PRIMARY_COLOR,
   },
   label: {
     color: 'white',
@@ -65,7 +66,7 @@ const styles = StyleSheet.create({
     marginRight: 10,
   },
   copied: {
-    color: '#5ECEA5',
+    color: SUCCESS_COLOR,
   },
 })
 

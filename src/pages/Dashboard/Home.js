@@ -2,7 +2,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
-import { Container, Content, View } from 'native-base'
+import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -10,6 +10,7 @@ import {
   InteractionManager,
   Linking,
   StyleSheet,
+  View,
 } from 'react-native'
 import { connect } from 'react-redux'
 import parse from 'url-parse'
@@ -295,6 +296,7 @@ const Home = (props) => {
           </>
         )}
       </Content>
+      <DidView did={info.did || ''} />
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
@@ -303,7 +305,6 @@ const Home = (props) => {
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />
-      <DidView did={info.did || ''} />
       <SeedPhraseRemindView
         onRecordPress={onRecordSeedPhrase}
         style={style.seedPhraseRemindView}
@@ -337,12 +338,12 @@ const WIDTH = '100%'
 const style = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: BACKGROUND_GREY_COLOR,
   },
   content: {
     justifyContent: 'center',
     alignItems: 'center',
     paddingHorizontal: 16,
-    backgroundColor: BACKGROUND_GREY_COLOR,
   },
   walletBannerSection: {
     width: WIDTH,

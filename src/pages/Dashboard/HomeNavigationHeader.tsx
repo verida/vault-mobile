@@ -9,11 +9,14 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import AntDesign from 'react-native-vector-icons/AntDesign'
 
+import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
 import EnvelopeSvg from 'assets/icons/envelope.svg'
 import Text from 'components/Text'
+import { PRIMARY_COLOR_200, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
+
+import { ORANGE_COLOR } from '../../constants/color'
 
 export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   avatar: ImageSourcePropType
@@ -38,7 +41,6 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     onAvatarPress,
     onNamePress,
     onInboxPress,
-    // onSettingsPress,
     ...rest
   } = props
 
@@ -58,7 +60,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
               <Text style={styles.name} lineBreakMode='tail' numberOfLines={1}>
                 {name}
               </Text>
-              <AntDesign name={'right'} size={15} color={'#808695'} />
+              <ChevronRightIcon />
             </TouchableOpacity>
             <View style={styles.network}>
               <View style={styles.textChipBox}>
@@ -99,6 +101,7 @@ const styles = StyleSheet.create({
     elevation: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
+    backgroundColor: WHITE_COLOR,
   },
   leftContainer: {
     flex: 2,
@@ -117,13 +120,13 @@ const styles = StyleSheet.create({
   avatar: {
     width: 48,
     height: 48,
-    borderRadius: 20,
+    borderRadius: 1000,
   },
   name: {
     fontSize: 20,
     marginRight: 4,
     fontFamily: NUNITO_SANS_BOLD,
-    color: '#041133',
+    color: TEXT_COLOR,
     fontWeight: '800',
     textAlign: 'center',
     lineHeight: 27,
@@ -135,7 +138,7 @@ const styles = StyleSheet.create({
     borderRadius: 53,
     paddingVertical: 2,
     paddingLeft: 7,
-    backgroundColor: '#E7E5FF',
+    backgroundColor: PRIMARY_COLOR_200,
   },
   textChip: {
     fontFamily: NUNITO_SANS,
@@ -144,7 +147,7 @@ const styles = StyleSheet.create({
     borderRadius: 20,
     marginRight: 8,
     textAlign: 'center',
-    color: '#041133',
+    color: TEXT_COLOR,
     opacity: 0.8,
   },
 
@@ -161,7 +164,7 @@ const styles = StyleSheet.create({
     top: -7,
     minHeight: 16,
     minWidth: 16,
-    backgroundColor: '#FF6E6E',
+    backgroundColor: ORANGE_COLOR,
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -181,7 +184,7 @@ const styles = StyleSheet.create({
   },
   didText: {
     fontSize: 12,
-    color: '#687085',
+    color: TEXT_COLOR,
     flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
