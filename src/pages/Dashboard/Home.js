@@ -2,13 +2,14 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
-import { Container, Content } from 'native-base'
+import { Container } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
   Dimensions,
   InteractionManager,
   Linking,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -276,7 +277,7 @@ const Home = (props) => {
           })
         }
       />
-      <Content contentContainerStyle={style.content}>
+      <ScrollView contentContainerStyle={style.content}>
         {loading ? (
           <LoadingView style={style.loading} />
         ) : (
@@ -293,10 +294,11 @@ const Home = (props) => {
             <View style={style.qrSection}>
               <QRCodeScannerSection onScanQRPress={onScanQRPress} />
             </View>
+            <DidView did={info.did || ''} />
           </>
         )}
-      </Content>
-      <DidView did={info.did || ''} />
+      </ScrollView>
+
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
