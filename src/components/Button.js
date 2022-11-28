@@ -38,7 +38,7 @@ export default (props) => {
         type,
         props.disabled && ButtonStyles.disabled,
       ]}
-      onPress={props.onPress}
+      onPress={props.loading ? null : props.onPress}
       disabled={props.disabled}>
       {!props.loading ? (
         <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>

@@ -1,41 +1,62 @@
+import { useNavigation } from '@react-navigation/native'
+import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import React from 'react'
+import React, { useState } from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
-import { getVersion } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
+import { useDispatch } from 'react-redux'
 
+import AccountManager from 'api/AccountManager'
 import Texture from 'assets/landing-bg.svg'
 import Logo from 'assets/logo.svg'
 import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
-import { ForcedUpgradeType } from 'hooks/useForcedUpgrade'
+import { ForcedCreateAccount } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { logout } from 'reduxStore/general/actions'
 import { Theme } from 'styles/types'
 
 type Props = {
   dismissModal: () => void
-  forcedUpgrade: ForcedUpgradeType
+  forcedCreateAccount: ForcedCreateAccount
+  did?: string
+  forcedSignOut: () => void
 }
 
-const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
+const ForcedCreateNewAccountModal = ({
+  forcedCreateAccount,
+  dismissModal,
+  did,
+  forcedSignOut,
+}: Props) => {
   const styles = useThemeAwareStyle(createStyles)
+  const navigation = useNavigation()
+  const dispatch = useDispatch()
+  const [loading, setLoading] = useState(false)
 
-  const onDownloadPress = () => {
-    Linking.canOpenURL(forcedUpgrade.storeUrl!)
-      .then(() => {
-        Linking.openURL(forcedUpgrade.storeUrl!)
-      })
-      .catch()
+  const onForcedCreateAccountPress = async () => {
+    // Log out and create did
+    setLoading(true)
+    dispatch(logout())
+
+    await AccountManager.getInstance().logout([did!])
+    await forcedSignOut()
+
+    navigation.navigate('Home', {})
+    setLoading(false)
+    dismissModal()
   }
 
   const onFurtherInfoPress = () => {
-    Linking.canOpenURL(forcedUpgrade.furtherInfo!)
+    Linking.canOpenURL(forcedCreateAccount.furtherInfo!)
       .then(() => {
-        Linking.openURL(forcedUpgrade.furtherInfo!)
+        Linking.openURL(forcedCreateAccount.furtherInfo!)
       })
-      .catch()
+      .catch((error) => {
+        sentry.captureException(error)
+      })
   }
 
   return (
@@ -51,23 +72,21 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
         </LinearGradient>
         <View style={styles.container}>
           <View style={styles.card}>
-            <Title style={styles.title}>Update Required</Title>
+            <Title style={styles.title}>New Account Required</Title>
             <Spacer vertical='m' />
             <View style={styles.hline} />
             <Spacer vertical='m' />
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContainer}>
-              <Paragraph>{forcedUpgrade?.message ?? ''}</Paragraph>
-              <Spacer vertical='l' />
-              <Paragraph>Current version: {getVersion()}</Paragraph>
-              <Paragraph>
-                Minimum required version: {forcedUpgrade?.minVersion}
-              </Paragraph>
+              <Paragraph>{forcedCreateAccount?.message ?? ''}</Paragraph>
             </ScrollView>
             <View style={styles.footer}>
-              <Button color='primary' onPress={onDownloadPress}>
-                Download
+              <Button
+                color='primary'
+                loading={loading}
+                onPress={() => onForcedCreateAccountPress()}>
+                Create New Account
               </Button>
               <Button color='grey' onPress={onFurtherInfoPress}>
                 Further Info
@@ -80,7 +99,7 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
   )
 }
 
-export default ForcedUpgradeModal
+export default ForcedCreateNewAccountModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
