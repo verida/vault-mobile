@@ -60,6 +60,7 @@ const WalletSelectorModal = ({
 
   const onPressHandler = () => {
     navigation.navigate('ManageWallets')
+    onCloseModal()
   }
 
   const ModalFooter = (
@@ -67,21 +68,10 @@ const WalletSelectorModal = ({
       style={styles.footerButton}
       onPress={onPressHandler}
       hitSlop={HIT_SLOP}>
-      <View
-        style={{
-          marginRight: 10,
-        }}>
+      <View style={styles.buttonIcon}>
         <SettingsIcon />
       </View>
-      <Text
-        style={{
-          color: WHITE_COLOR,
-          fontFamily: NUNITO_SANS,
-          fontWeight: '700',
-          fontSize: 17,
-        }}>
-        Manage Wallets
-      </Text>
+      <Text style={styles.buttonText}>Manage Wallets</Text>
     </Pressable>
   )
 
@@ -133,5 +123,14 @@ const styles = StyleSheet.create({
     marginBottom: 50,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  buttonIcon: {
+    marginRight: 10,
+  },
+  buttonText: {
+    color: WHITE_COLOR,
+    fontFamily: NUNITO_SANS,
+    fontWeight: '700',
+    fontSize: 17,
   },
 })

@@ -28,8 +28,9 @@ import {
 } from 'reduxStore/wallet/selectors'
 
 import PlusIcon from '../../assets/plus_icon.svg'
+import UnionIcon from '../../assets/union_icon.svg'
 import OtherSvg from '../../assets/wallets/Other.svg'
-import { SNOW_COLOR } from '../../constants/color'
+import { BLACK_COLOR, SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
 
@@ -116,7 +117,13 @@ const ManageWallets = (props: Props) => {
             showActionSheetWithOptions(
               {
                 options: ['Create new wallet', 'Import a wallet', 'Cancel'],
+                icons: [
+                  <PlusIcon key={'Create new wallet'} />,
+                  <UnionIcon key={'Import a wallet'} />,
+                ],
+                tintIcons: false,
                 cancelButtonIndex: 2,
+                tintColor: BLACK_COLOR,
               },
               (buttonIndex) => {
                 if (buttonIndex === 0) {
@@ -147,6 +154,7 @@ const ManageWallets = (props: Props) => {
                       ],
                       cancelButtonIndex: 3,
                       destructiveButtonIndex: 2,
+                      tintColor: BLACK_COLOR,
                     },
                     (buttonIndex) => {
                       if (buttonIndex === 0) {

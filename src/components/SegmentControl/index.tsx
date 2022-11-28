@@ -4,7 +4,7 @@ import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
-import { NUNITO_SANS } from '../../constants/text'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
 
 export interface SegmentData {
   title?: string
@@ -59,6 +59,9 @@ const SegmentControl = React.memo((props: SegmentProps) => {
                 ]}>
                 {data.title}
               </Text>
+              {index > 0 &&
+                index !== selectedIndex &&
+                index !== selectedIndex + 1 && <View style={styles.line} />}
             </View>
           </TouchableWithoutFeedback>
         ))}
@@ -78,8 +81,14 @@ const styles = StyleSheet.create({
     padding: 2,
     color: TEXT_COLOR,
   },
+  containerContent: {
+    flexDirection: 'row',
+    alignSelf: 'stretch',
+    flexGrow: 1,
+    height: 28,
+  },
   textFocused: {
-    fontFamily: NUNITO_SANS,
+    fontFamily: NUNITO_SANS_BOLD,
     fontWeight: '700',
     fontSize: 14,
     lineHeight: 20,
@@ -92,12 +101,6 @@ const styles = StyleSheet.create({
     fontSize: 13,
     lineHeight: 20,
     color: TEXT_COLOR,
-  },
-  containerContent: {
-    flexDirection: 'row',
-    alignSelf: 'stretch',
-    flexGrow: 1,
-    height: 28,
   },
   segmentButtonNormal: {
     flexDirection: 'row',
@@ -120,6 +123,15 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     shadowOffset: { width: 0, height: 3 },
     elevation: 1,
+  },
+  line: {
+    position: 'absolute',
+    left: 0,
+    marginTop: 6,
+    marginBottom: 6,
+    width: 1,
+    height: 17,
+    backgroundColor: BLACK_COLOR_OPACITY(0.36),
   },
 })
 

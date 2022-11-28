@@ -39,7 +39,7 @@ function NavigationHeader({
     <>
       <Header
         transparent
-        style={{ elevation: 1, paddingTop: 40 }}
+        style={{ elevation: 1 }}
         androidStatusBarColor='light-gray'>
         <Left style={{ flex: 0.2, marginLeft: 6 }}>
           {(function () {

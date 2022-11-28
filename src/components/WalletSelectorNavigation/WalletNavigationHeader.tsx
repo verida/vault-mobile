@@ -28,10 +28,7 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       <View style={styles.navigationContent}>
         <View style={styles.textWrapper}>
           <Text style={styles.textTitle}>{selectedWallet?.label}</Text>
-          <View
-            style={{
-              marginTop: 3,
-            }}>
+          <View>
             <ChevronDownIcon />
           </View>
         </View>
