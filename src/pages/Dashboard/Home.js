@@ -219,7 +219,7 @@ const Home = (props) => {
 
   function onImportAccount() {
     toggleAddAccountsModal()
-    navigation.navigate('ImportAccount', { previousScreen: 'Dashboard' })
+    navigation.navigate('SeedPhraseEntered', { previousScreen: 'Dashboard' })
   }
 
   async function onSelectAccount(did) {

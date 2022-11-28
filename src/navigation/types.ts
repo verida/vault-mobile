@@ -12,10 +12,9 @@ export type RootStackParams = {
 export type AuthStackParams = {
   Start: undefined
   CreateAccount: { mode: CreateAccountMode }
-  ImportAccount: undefined
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
-  SeedPhraseEntered: { usePrivateKey?: boolean }
+  SeedPhraseEntered: undefined
   VerifyPhrase: { shuffled: string[] }
   CreatePin: undefined
   Success: undefined
@@ -61,7 +60,7 @@ export type MainStackParams = {
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: { mode: CreateAccountMode }
   DeleteAccount: undefined
-  ImportAccount: { usePrivateKey: boolean; previousScreen?: string }
+  SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined

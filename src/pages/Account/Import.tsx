@@ -13,7 +13,7 @@ import { AuthStackParams } from 'navigation/types'
 import ImportOption from 'pages/Account/ImportOption'
 
 function Import(
-  props: NativeStackScreenProps<AuthStackParams, 'ImportAccount'>
+  props: NativeStackScreenProps<AuthStackParams, 'SeedPhraseEntered'>
 ) {
   const { navigation } = props
   const [selectedOption, setSelectedOption] = useState(0)
@@ -21,7 +21,7 @@ function Import(
   function onContinue() {
     switch (selectedOption) {
       case 0:
-        navigation.navigate('ImportAccount')
+        navigation.navigate('SeedPhraseEntered')
         break
       default:
         navigation.navigate('SelectNetwork')
