@@ -95,7 +95,7 @@ const MetaServerChecks = ({ navigationRef }: Props) => {
         // If request returns a bad request(400) then forced user sign out.
         // FIXME: This is not optimal, should have a clear sign from the server of old DIDs
         fetch(
-          `${forcedCreateAccount.check.host}/load?did=${selectedAccount.did}1`
+          `${forcedCreateAccount.check.host}/load?did=${selectedAccount.did}`
         )
           .then((response) => {
             const statusCode = response.status
