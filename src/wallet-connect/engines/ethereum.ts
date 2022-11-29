@@ -26,7 +26,7 @@ export async function routeEthereumRequests(payload: any, state: any) {
   if (!state.connector) {
     return
   }
-  const { chainId, connector, setRequests, requests: currentRequests } = state
+  const { chainId, connector } = state
   if (!signingMethods.includes(payload.method)) {
     try {
       const result = await apiGetCustomRequest(chainId, payload)
@@ -40,9 +40,6 @@ export async function routeEthereumRequests(payload: any, state: any) {
         error: { message: 'JSON RPC method not supported' },
       })
     }
-  } else {
-    const requests = [payload, ...currentRequests]
-    setRequests(requests)
   }
 }
 

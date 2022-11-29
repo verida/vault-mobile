@@ -27,9 +27,8 @@ export async function routeAlgorandRequests(payload: any, state: any) {
   if (!state.connector) {
     return
   }
-  const { setRequests, requests: currentRequests } = state
-  const requests = [payload, ...currentRequests]
-  setRequests(requests)
+
+  // TODO: check Algorand custom request?
 }
 
 export function renderAlgorandRequests(payload: any): IRequestRenderParams[] {
