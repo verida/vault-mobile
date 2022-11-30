@@ -29,7 +29,6 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
@@ -138,26 +137,6 @@ const Home = (props) => {
       })
     }
   }, [navigationLink, linkTo, setNavigationLink])
-
-  useEffect(() => {
-    async function checkFirstTimeLogin() {
-      try {
-        const isFirstTimeLogin = await SecureStore.getItemAsync(
-          FIRST_TIME_LOGIN_KEY
-        )
-        if (isFirstTimeLogin) {
-          await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
-          navigation.navigate('ScanQrCode', {
-            firstTime: true,
-          })
-        }
-      } catch (e) {
-        Sentry.captureException(e)
-      }
-    }
-
-    checkFirstTimeLogin()
-  }, [navigation])
 
   useEffect(() => {
     const initProfile = async () => {

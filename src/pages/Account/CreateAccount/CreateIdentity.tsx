@@ -319,7 +319,7 @@ const CreateIdentity = () => {
                   <Spacer vertical='xxxxl' />
                   <Paragraph>
                     {
-                      'Your country is private, we only use it to determine the best geographycal location of your data.'
+                      'Your country is private, we only use it to determine the best geographical location of your data.'
                     }
                   </Paragraph>
                 </ScrollView>

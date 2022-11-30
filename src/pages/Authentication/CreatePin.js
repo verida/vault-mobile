@@ -1,9 +1,7 @@
 import PINCode from '@haskkor/react-native-pincode'
-import * as SecureStore from 'expo-secure-store'
 import React from 'react'
 import { connect } from 'react-redux'
 
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { useAuth } from 'hooks/useAuth'
 import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
 
@@ -15,7 +13,6 @@ function CreatePin(props) {
 
   async function onFinish() {
     setAuthStatus(true)
-    await SecureStore.setItemAsync(FIRST_TIME_LOGIN_KEY, 'true')
     await refresh()
   }
 
