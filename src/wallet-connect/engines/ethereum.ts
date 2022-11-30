@@ -1,4 +1,5 @@
 import { convertHexToNumber, signingMethods } from '@walletconnect/utils'
+import { ethers } from 'ethers'
 import { Alert } from 'react-native'
 
 import { getWalletController } from '../controllers'
@@ -49,11 +50,12 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
   switch (payload.method) {
     case 'eth_sendTransaction':
     case 'eth_signTransaction':
+      const transaction = payload.params[0]
       const networkFee = ethNetworkFee(
-        convertHexToNumber(payload.params[0].gas || payload.params[0].gasLimit),
+        convertHexToNumber(transaction.gasLimit),
         weiToGwei(
           convertHexToNumber(
-            payload.params[0].gasPrice || payload.params[0].maxFeePerGas
+            ethers.BigNumber.from(payload.params[0].maxFeePerGas).toHexString()
           )
         )
       )

@@ -4,3 +4,4 @@ export const DEFAULT_ACTIVE_INDEX = 0
 export const MAINNET_CHAIN_ID = 1
 export const GOERLI_CHAIN_ID = 5
 export const DEFAULT_CHAIN_ID = GOERLI_CHAIN_ID
+export const DEDAULT_GAS_PRICE = 21000
