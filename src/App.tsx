@@ -46,6 +46,7 @@ if (__DEV__) {
     'AsyncStorage has been extracted from react-native',
     "exported from 'deprecated-react-native-prop-types'.",
     'VirtualizedLists should never be nested inside plain ScrollViews',
+    'Usage of "messaging().registerDeviceForRemoteMessages()" is not required.',
   ]
 
   LogBox.ignoreLogs(ignoreWarns)

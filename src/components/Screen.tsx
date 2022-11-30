@@ -23,9 +23,7 @@ interface ScreenProps {
   statusBarColor?: string
   withLoadingView?: boolean
   showLoading?: boolean
-  title?: string
   navBar?: ReactNode
-  safeAreaViewInset?: any
 }
 
 const Screen = (props: ScreenProps) => {

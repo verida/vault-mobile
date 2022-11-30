@@ -5,7 +5,6 @@ import isEmpty from 'lodash/isEmpty'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
-import Animated from 'react-native-reanimated'
 
 import AccountManager from 'api/AccountManager'
 import { CreateIdentityStepStatus, CreateIdentityStepType } from 'api/types'
@@ -22,8 +21,6 @@ import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
-
-const AnimatedPager = Animated.createAnimatedComponent(PagerView)
 
 const pageData = [
   {
@@ -56,7 +53,7 @@ const CreateIdentity = () => {
   const styles = useThemeAwareStyle(creatStyles)
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(0)
-  const [enableClaimUsername] = useState(false) // FIXME: disable input username
+  const [enabledClaimUsername] = useState(false) // FIXME: disable input username
 
   const [agreedTC, setAgreedTC] = useState(false)
   const [checkingUsername, setCheckingUsername] = useState(false)
@@ -184,10 +181,17 @@ const CreateIdentity = () => {
     setAgreedTC((prevState) => !prevState)
   }
 
+  function nextPage() {
+    if (currentPage < numberOfPage - 1) {
+      pagerRef.current?.setPage(currentPage + 1)
+      setCurrentPage(currentPage + 1)
+    }
+  }
+
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
       <View style={styles.main}>
-        <AnimatedPager
+        <PagerView
           style={styles.pagerView}
           initialPage={currentPage}
           scrollEnabled={false}
@@ -196,213 +200,194 @@ const CreateIdentity = () => {
           }}
           ref={pagerRef}
           overScrollMode='never'>
-          <View key='start'>
-            <View style={styles.landing}>
-              <View style={styles.positionAbsolute}>
-                <View>
-                  <Headline style={styles.title}>Identity</Headline>
-                  <Spacer vertical='xxl' />
-                  <TCCheckbox
-                    checked={agreedTC}
-                    style={styles.termAndCondition}
-                    onToggle={toggleAgreedTC}
-                  />
-                  <Title style={styles.subTitle}>
-                    Create your Verida identity
-                  </Title>
-                  <Spacer vertical='xxl' />
-                  <Button
-                    disabled={!agreedTC}
-                    style={styles.actionButton}
-                    onPress={() => {
-                      pagerRef.current?.setPage(currentPage + 1)
-                      setCurrentPage(currentPage + 1)
-                    }}>
-                    Create Identity
-                  </Button>
-                  <Spacer vertical='xxl' />
-                  <Title style={styles.subTitle}>
-                    Already have a Verida Identity?
-                  </Title>
-                  <Spacer vertical='xxl' />
-                  <Button
-                    disabled={!agreedTC}
-                    color='transparent'
-                    style={styles.actionButton}
-                    onPress={() => {
-                      navigation.navigate('SeedPhraseEntered')
-                    }}>
-                    Import Identity
-                  </Button>
-                </View>
-              </View>
+          <View key='start' style={styles.landing}>
+            <View>
+              <Headline style={styles.title}>Identity</Headline>
+              <Spacer vertical='xxl' />
+              <TCCheckbox
+                checked={agreedTC}
+                style={styles.termAndCondition}
+                onToggle={toggleAgreedTC}
+              />
+              <Title style={styles.subTitle}>Create your Verida identity</Title>
+              <Spacer vertical='xxl' />
+              <Button
+                disabled={!agreedTC}
+                style={styles.actionButton}
+                onPress={() => {
+                  requestAnimationFrame(() => {
+                    nextPage()
+                  })
+                }}>
+                Create Identity
+              </Button>
+              <Spacer vertical='xxl' />
+              <Title style={styles.subTitle}>
+                Already have a Verida Identity?
+              </Title>
+              <Spacer vertical='xxl' />
+              <Button
+                disabled={!agreedTC}
+                color='transparent'
+                style={styles.actionButton}
+                onPress={() => {
+                  navigation.navigate('SeedPhraseEntered')
+                }}>
+                Import Identity
+              </Button>
             </View>
           </View>
-          <View key='name'>
-            <View style={styles.landing}>
-              <View style={styles.positionAbsolute}>
-                <ScrollView
-                  contentContainerStyle={styles.scrollViewContainer}
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps='handled'>
-                  <Headline style={styles.title}>Name and Username</Headline>
+          <View key='name' style={styles.landing}>
+            <ScrollView
+              contentContainerStyle={styles.scrollViewContainer}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps='handled'>
+              <Headline style={styles.title}>Name and Username</Headline>
+              <Spacer vertical='xxxl' />
+              <FormInput
+                label='Public Name *'
+                onChangeText={(text) =>
+                  setProfile((p) => ({ ...p, name: text }))
+                }
+                value={profile.name}
+              />
+              <Spacer vertical='m' />
+              <Paragraph>
+                This name is public, use whatever you like. It is required as
+                used across the UI and dApps
+              </Paragraph>
+              {enabledClaimUsername && (
+                <>
                   <Spacer vertical='xxxl' />
+                  <Paragraph>
+                    Optionally, you can claim a Verida Username. It is linked to
+                    your identity. (Coming soon)
+                  </Paragraph>
+                  <Spacer vertical='xxl' />
                   <FormInput
-                    label='Public Name *'
+                    label='Check your username is available'
+                    withAnimatedChecbox={profile.username.length > 0}
+                    disabled
+                    autoCapitalize='none'
+                    autoCorrect={false}
+                    loading={checkingUsername}
                     onChangeText={(text) =>
-                      setProfile((p) => ({ ...p, name: text }))
+                      setProfile((p) => ({ ...p, username: text }))
                     }
-                    value={profile.name}
+                    onBlur={() => {
+                      if (profile.username.length > 0) checkUsername()
+                    }}
+                    onFocus={() => {
+                      setUsernameError(undefined)
+                    }}
+                    value={profile.username}
+                    checked={availableUsername}
+                    errorMessage={usernameError}
                   />
-                  <Spacer vertical='m' />
-                  <Paragraph>
-                    This name is public, use whatever you like. It is required
-                    as used across the UI and dApps
-                  </Paragraph>
-                  {enableClaimUsername && (
-                    <>
-                      <Spacer vertical='xxxl' />
-                      <Paragraph>
-                        Optionally, you can claim a Verida Username. It is
-                        linked to your identity. (Coming soon)
-                      </Paragraph>
-                      <Spacer vertical='xxl' />
-                      <FormInput
-                        label='Check your username is available'
-                        withAnimatedChecbox={profile.username.length > 0}
-                        disabled
-                        autoCapitalize='none'
-                        autoCorrect={false}
-                        loading={checkingUsername}
-                        onChangeText={(text) =>
-                          setProfile((p) => ({ ...p, username: text }))
-                        }
-                        onBlur={() => {
-                          if (profile.username.length > 0) checkUsername()
-                        }}
-                        onFocus={() => {
-                          setUsernameError(undefined)
-                        }}
-                        value={profile.username}
-                        checked={availableUsername}
-                        errorMessage={usernameError}
-                      />
-                    </>
-                  )}
-                </ScrollView>
-              </View>
-            </View>
+                </>
+              )}
+            </ScrollView>
           </View>
-          <View key='location'>
-            <View style={styles.landing}>
-              <View style={styles.positionAbsolute}>
-                <ScrollView
-                  showsVerticalScrollIndicator={false}
-                  keyboardShouldPersistTaps='handled'>
-                  <Headline style={styles.title}>
-                    Location of your data
-                  </Headline>
-                  <Spacer vertical='xxxl' />
-                  <Paragraph>You are the owner of your data</Paragraph>
-                  <Spacer vertical='m' />
-                  <Paragraph>It is stored on multiple storage nodes.</Paragraph>
-                  <Spacer vertical='xxxxl' />
-                  <DropDownPicker
-                    searchable
-                    searchablePlaceholder='Search for country'
-                    showArrow
-                    placeholder=''
-                    items={COUNTRIES}
-                    containerStyle={InputStyles.select}
-                    onChangeItem={onCountryChange}
-                  />
-                  <Spacer vertical='xxxxl' />
-                  <Paragraph>
-                    {
-                      'Your country is private, we only use it to determine the best geographical location of your data.'
-                    }
-                  </Paragraph>
-                </ScrollView>
-              </View>
-            </View>
+          <View key='location' style={styles.landing}>
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps='handled'
+              contentContainerStyle={{ height: '100%' }}>
+              <Headline style={styles.title}>Location of your data</Headline>
+              <Spacer vertical='xxxl' />
+              <Paragraph>You are the owner of your data</Paragraph>
+              <Spacer vertical='m' />
+              <Paragraph>It is stored on multiple storage nodes.</Paragraph>
+              <Spacer vertical='xxxxl' />
+              <DropDownPicker
+                searchable
+                searchablePlaceholder='Search for country'
+                showArrow
+                dropDownMaxHeight={200}
+                placeholder=''
+                items={COUNTRIES}
+                containerStyle={InputStyles.select}
+                onChangeItem={onCountryChange}
+              />
+              <Spacer vertical='xxxxl' />
+              <Paragraph>
+                {
+                  'Your country is private, we only use it to determine the best geographical location of your data.'
+                }
+              </Paragraph>
+            </ScrollView>
           </View>
-          <View key='confirmation'>
-            <View style={styles.landing}>
-              <View style={styles.positionAbsolute}>
-                <ScrollView showsVerticalScrollIndicator={false}>
-                  <Headline style={styles.title}>
-                    We are building your Identity
-                  </Headline>
-                  <Spacer vertical='xxxl' />
+          <View key='confirmation' style={styles.landing}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+              <Headline style={styles.title}>
+                We are building your Identity
+              </Headline>
+              <Spacer vertical='xxxl' />
+              <AnimatedCheckbox
+                checked={
+                  confromationState?.state?.CreateIdentifier === 'Success'
+                }
+                failed={
+                  confromationState?.state?.CreateIdentifier === 'Failure'
+                }
+                showLoading={
+                  confromationState?.state?.CreateIdentifier === 'Loading'
+                }
+                label='Create identifier'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.gray400}
+              />
+              {enabledClaimUsername && (
+                <>
+                  <Spacer vertical='m' />
                   <AnimatedCheckbox
                     checked={
-                      confromationState?.state?.CreateIdentifier === 'Success'
+                      confromationState?.state?.DefineNameAndUsername ===
+                      'Success'
                     }
                     failed={
-                      confromationState?.state?.CreateIdentifier === 'Failure'
+                      confromationState?.state?.DefineNameAndUsername ===
+                      'Failure'
                     }
                     showLoading={
-                      confromationState?.state?.CreateIdentifier === 'Loading'
+                      confromationState?.state?.DefineNameAndUsername ===
+                      'Loading'
                     }
-                    label='Create identifier'
+                    label='Claim username'
                     highlightColor={theme.color.success}
                     checkmarkColor={theme.color.onSuccess}
                     boxOutlineColor={theme.color.gray400}
                   />
-                  {enableClaimUsername && (
-                    <>
-                      <Spacer vertical='m' />
-                      <AnimatedCheckbox
-                        checked={
-                          confromationState?.state?.DefineNameAndUsername ===
-                          'Success'
-                        }
-                        failed={
-                          confromationState?.state?.DefineNameAndUsername ===
-                          'Failure'
-                        }
-                        showLoading={
-                          confromationState?.state?.DefineNameAndUsername ===
-                          'Loading'
-                        }
-                        label='Claim username'
-                        highlightColor={theme.color.success}
-                        checkmarkColor={theme.color.onSuccess}
-                        boxOutlineColor={theme.color.gray400}
-                      />
-                    </>
-                  )}
-                  <Spacer vertical='m' />
-                  <AnimatedCheckbox
-                    checked={
-                      confromationState?.state?.StorageLocation === 'Success'
-                    }
-                    showLoading={
-                      confromationState?.state?.StorageLocation === 'Loading'
-                    }
-                    label='Connect storage nodes'
-                    highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.onSuccess}
-                    boxOutlineColor={theme.color.gray400}
-                  />
-                  <Spacer vertical='m' />
-                  <AnimatedCheckbox
-                    checked={
-                      confromationState?.state?.CreateProfile === 'Success'
-                    }
-                    showLoading={
-                      confromationState?.state?.CreateProfile === 'Loading'
-                    }
-                    label='Create public profile'
-                    highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.onSuccess}
-                    boxOutlineColor={theme.color.gray400}
-                  />
-                </ScrollView>
-              </View>
-            </View>
+                </>
+              )}
+              <Spacer vertical='m' />
+              <AnimatedCheckbox
+                checked={
+                  confromationState?.state?.StorageLocation === 'Success'
+                }
+                showLoading={
+                  confromationState?.state?.StorageLocation === 'Loading'
+                }
+                label='Connect storage nodes'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.gray400}
+              />
+              <Spacer vertical='m' />
+              <AnimatedCheckbox
+                checked={confromationState?.state?.CreateProfile === 'Success'}
+                showLoading={
+                  confromationState?.state?.CreateProfile === 'Loading'
+                }
+                label='Create public profile'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.gray400}
+              />
+            </ScrollView>
           </View>
-        </AnimatedPager>
+        </PagerView>
         <View style={styles.bottomNavContainer}>
           {(pageData[currentPage].hasBack || showRetry) && (
             <Button
@@ -457,6 +442,8 @@ const creatStyles = (theme: Theme) => {
     main: {
       flex: 1,
       paddingHorizontal: theme.spacing.l,
+      paddingVertical: theme.spacing.m,
+      backgroundColor: theme.color.surface,
     },
     bottomNavContainer: {
       marginTop: theme.spacing.sm,
@@ -487,15 +474,9 @@ const creatStyles = (theme: Theme) => {
       borderColor: theme.color.error,
       textcolor: theme.color.onError,
     },
-
-    positionAbsolute: {
-      ...StyleSheet.absoluteFillObject,
-      position: 'absolute',
-      paddingTop: theme.spacing.xxxl,
-      justifyContent: 'space-between',
-    },
     landing: {
       flex: 1,
+      paddingTop: theme.spacing.l,
     },
     title: {
       color: theme.color.onBackground,
