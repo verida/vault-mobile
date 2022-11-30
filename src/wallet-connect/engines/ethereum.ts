@@ -55,32 +55,30 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
         convertHexToNumber(transaction.gasLimit),
         weiToGwei(
           convertHexToNumber(
-            ethers.BigNumber.from(payload.params[0].maxFeePerGas).toHexString()
+            ethers.BigNumber.from(transaction.maxFeePerGas).toHexString()
           )
         )
       )
       params = [
         ...params,
-        { label: 'From', value: payload.params[0].from },
-        { label: 'To', value: payload.params[0].to },
+        { label: 'From', value: transaction.from },
+        { label: 'To', value: transaction.to },
         {
           label: 'Network Fee',
           value: networkFee,
         },
         {
           label: 'Value',
-          value: payload.params[0].value
-            ? convertHexToNumber(payload.params[0].value)
-            : '',
+          value: transaction.value ? convertHexToNumber(transaction.value) : '',
         },
-        { label: 'Data', value: payload.params[0].data },
+        { label: 'Data', value: transaction.data },
       ]
       break
 
     case 'eth_sign':
       params = [
         ...params,
-        { label: 'Address', value: payload.params[0] },
+        { label: 'Address', value: transaction },
         { label: 'Message', value: payload.params[1] },
       ]
       break
@@ -90,7 +88,7 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
         { label: 'Address', value: payload.params[1] },
         {
           label: 'Message',
-          value: convertHexToUtf8IfPossible(payload.params[0]),
+          value: convertHexToUtf8IfPossible(transaction),
         },
       ]
       break

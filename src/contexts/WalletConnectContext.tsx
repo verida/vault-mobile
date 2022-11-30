@@ -69,7 +69,11 @@ function useWalletConnectContext() {
       const payload = { ...request }
 
       const params = payload.params[0]
-      if (dapp && request.method === 'eth_sendTransaction') {
+      if (
+        dapp &&
+        (request.method === 'eth_sendTransaction' ||
+          request.method === 'eth_signTransaction')
+      ) {
         payload.params[0] = await (
           getWalletController(dapp) as IEtherWalletController
         ).populateTransaction(params)
