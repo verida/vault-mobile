@@ -49,7 +49,7 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
 
   switch (payload.method) {
     case 'eth_sendTransaction':
-    case 'eth_signTransaction':
+    case 'eth_signTransaction': {
       const transaction = payload.params[0]
       const networkFee = ethNetworkFee(
         convertHexToNumber(transaction.gasLimit),
@@ -74,11 +74,11 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
         { label: 'Data', value: transaction.data },
       ]
       break
-
+    }
     case 'eth_sign':
       params = [
         ...params,
-        { label: 'Address', value: transaction },
+        { label: 'Address', value: payload.params[0] },
         { label: 'Message', value: payload.params[1] },
       ]
       break
@@ -88,7 +88,7 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
         { label: 'Address', value: payload.params[1] },
         {
           label: 'Message',
-          value: convertHexToUtf8IfPossible(transaction),
+          value: convertHexToUtf8IfPossible(payload.params[0]),
         },
       ]
       break

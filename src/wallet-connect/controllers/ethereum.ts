@@ -175,10 +175,10 @@ export class EthereumWalletController implements IEtherWalletController {
 
   public async signMessage(data: any) {
     if (this.wallet) {
-      const signingKey = new ethers.utils.SigningKey(this.wallet.privateKey)
-      const sigParams = await signingKey.signDigest(ethers.utils.arrayify(data))
-      const result = await ethers.utils.joinSignature(sigParams)
-      return result
+      const signedMessage = await this.wallet.signMessage(
+        ethers.utils.arrayify(data)
+      )
+      return signedMessage
     } else {
       throw new Error('No Active Account')
     }
