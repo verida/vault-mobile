@@ -12,6 +12,7 @@ import {
 
 import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
 import EnvelopeSvg from 'assets/icons/envelope.svg'
+import SettingsSvg from 'assets/icons/settings.svg'
 import Text from 'components/Text'
 import { PRIMARY_COLOR_200, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
@@ -30,7 +31,7 @@ export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
 }
 
 const MAX_MESSAGE_COUNT = 21
-const HITSLOP = { top: 10, right: 10, bottom: 10, left: 10 }
+const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
 
 function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   const {
@@ -41,6 +42,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     onAvatarPress,
     onNamePress,
     onInboxPress,
+    onSettingsPress,
     ...rest
   } = props
 
@@ -78,7 +80,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
           <TouchableOpacity
             style={styles.inboxButton}
             onPress={onInboxPress}
-            hitSlop={HITSLOP}>
+            hitSlop={HIT_SLOP}>
             <EnvelopeSvg />
             {inboxCount ? (
               <View style={styles.badge}>
@@ -89,6 +91,12 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
                 </Text>
               </View>
             ) : null}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={styles.settingsButton}
+            onPress={onSettingsPress}
+            hitSlop={HIT_SLOP}>
+            <SettingsSvg />
           </TouchableOpacity>
         </View>
       </Right>
