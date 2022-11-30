@@ -18,7 +18,7 @@ import PagerView, {
 } from 'react-native-pager-view'
 
 import ChevronRightIcon from 'assets/icons/chevron_right.svg'
-import { WHITE_COLOR } from 'constants/color'
+import { WHITE_COLOR, WHITE_COLOR_OPACITY } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 
 import { BLACK_COLOR_OPACITY } from '../../../constants/color'
@@ -163,7 +163,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    backgroundColor: 'rgba(255, 255, 255, 0.3)',
+    backgroundColor: WHITE_COLOR_OPACITY(0.3),
     paddingVertical: 8,
     paddingLeft: 16,
     paddingRight: 8,

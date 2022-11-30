@@ -26,3 +26,6 @@ export const PRIMARY_COLOR_500 = '#423BCE'
 export const BACKGROUND_GREY_COLOR = '#F6F7F9'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
+
+export const WHITE_COLOR_OPACITY = (opacity) =>
+  `rgba(255, 255, 255, ${opacity})`
