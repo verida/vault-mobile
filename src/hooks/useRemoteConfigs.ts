@@ -1,8 +1,7 @@
 import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
 import { compareVersions } from 'compare-versions'
-import { useCallback, useEffect, useRef, useState } from 'react'
-import { AppState, AppStateStatus } from 'react-native'
+import { useCallback, useState } from 'react'
 import { getVersion } from 'react-native-device-info'
 
 remoteConfig().setConfigSettings({
@@ -17,12 +16,10 @@ export type ForcedUpgradeType = {
   furtherInfo?: string
 }
 
-export function useForcedUpgrade() {
+export function useRemoteConfigs() {
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
-  const [showUpgrade, setShowUpgrade] = useState(false)
-  const appState = useRef(AppState.currentState)
 
-  const fetchConfig = useCallback(() => {
+  const fetchConfigs = useCallback(() => {
     remoteConfig()
       .setDefaults({
         forced_upgrade: '{}',
@@ -38,7 +35,6 @@ export function useForcedUpgrade() {
               required:
                 compareVersions(getVersion(), forcedUpgradeInfo.minVersion) < 0, // Current version < required version
             })
-            setShowUpgrade(false)
           } catch (error) {
             Sentry.captureException(error)
           }
@@ -46,26 +42,5 @@ export function useForcedUpgrade() {
       })
   }, [])
 
-  useEffect(() => {
-    fetchConfig()
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        fetchConfig()
-      }
-
-      appState.current = nextAppState
-    }
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange
-    )
-    return () => {
-      subscription.remove()
-    }
-  }, [fetchConfig])
-
-  return { showUpgrade, setShowUpgrade, forcedUpgrade }
+  return { fetchConfigs, forcedUpgrade }
 }

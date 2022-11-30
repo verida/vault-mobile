@@ -1,3 +1,4 @@
+import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
@@ -27,7 +28,7 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
       .then(() => {
         Linking.openURL(forcedUpgrade.storeUrl!)
       })
-      .catch()
+      .catch((e) => sentry.captureException(e))
   }
 
   const onFurtherInfoPress = () => {
@@ -35,7 +36,7 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
       .then(() => {
         Linking.openURL(forcedUpgrade.furtherInfo!)
       })
-      .catch()
+      .catch((e) => sentry.captureException(e))
   }
 
   return (

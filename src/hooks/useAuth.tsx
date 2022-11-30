@@ -1,4 +1,3 @@
-import { compareVersions } from 'compare-versions'
 import React, {
   createContext,
   FC,
@@ -8,13 +7,8 @@ import React, {
   useMemo,
   useState,
 } from 'react'
-import { getVersion } from 'react-native-device-info'
 
 import AccountManager from 'api/AccountManager'
-import ForcedUpgradeModal from 'components/ForcedUpgrade/ForcedUpgradeModal'
-
-import { useForcedUpgrade } from './useForcedUpgrade'
-import { useModal } from './useModal'
 
 type AuthContextState = {
   refresh: () => Promise<boolean>
@@ -22,6 +16,7 @@ type AuthContextState = {
   loaded: boolean
   switchToAccount: (did: string) => Promise<void>
   isVeridaTeamMember: boolean
+  forcedSignOut: () => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthContextState>({
@@ -31,34 +26,13 @@ const AuthContext = createContext<AuthContextState>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   switchToAccount: async () => {},
   isVeridaTeamMember: false,
+  forcedSignOut: async () => false,
 })
 
 export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
   const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
-
-  const { showModal, dismissModal } = useModal()
-  const { showUpgrade, setShowUpgrade, forcedUpgrade } = useForcedUpgrade()
-
-  useEffect(() => {
-    const checkForcedUpgrade = () => {
-      if (
-        forcedUpgrade?.required &&
-        compareVersions(getVersion(), forcedUpgrade.minVersion!) < 0 // Current version < required version
-      ) {
-        showModal(
-          <ForcedUpgradeModal
-            forcedUpgrade={forcedUpgrade}
-            dismissModal={dismissModal}
-          />
-        )
-        setShowUpgrade(true)
-      }
-    }
-
-    !showUpgrade && checkForcedUpgrade()
-  }, [dismissModal, forcedUpgrade, showModal, setShowUpgrade, showUpgrade])
 
   useEffect(() => {
     const checkTeamMember = async () => {
@@ -86,6 +60,11 @@ export const AuthProvider: FC = ({ children }) => {
     setLoaded(true)
   }, [])
 
+  const forcedSignOut = useCallback(async () => {
+    setAuthenticated(false)
+    return true
+  }, [])
+
   const context = useMemo(
     () => ({
       refresh,
@@ -93,15 +72,19 @@ export const AuthProvider: FC = ({ children }) => {
       loaded,
       switchToAccount,
       isVeridaTeamMember,
+      forcedSignOut,
     }),
-    [refresh, authenticated, loaded, switchToAccount, isVeridaTeamMember]
+    [
+      refresh,
+      authenticated,
+      loaded,
+      switchToAccount,
+      isVeridaTeamMember,
+      forcedSignOut,
+    ]
   )
 
-  return (
-    <AuthContext.Provider value={context}>
-      {forcedUpgrade.required ? null : children}
-    </AuthContext.Provider>
-  )
+  return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>
 }
 
 export function useAuth() {

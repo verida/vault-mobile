@@ -23,6 +23,7 @@ import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import { persistor, store } from 'reduxStore'
 
+import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
@@ -46,6 +47,7 @@ if (__DEV__) {
     'AsyncStorage has been extracted from react-native',
     "exported from 'deprecated-react-native-prop-types'.",
     'VirtualizedLists should never be nested inside plain ScrollViews',
+    'Usage of "messaging().registerDeviceForRemoteMessages()" is not required',
   ]
 
   LogBox.ignoreLogs(ignoreWarns)
@@ -129,24 +131,25 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
           <ThemeProvider initial={defaultTheme}>
-            <ModalProvider>
-              <AuthProvider>
-                <NavigationContainer linking={linking} ref={navigationRef}>
+            <NavigationContainer linking={linking} ref={navigationRef}>
+              <ModalProvider>
+                <AuthProvider>
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
                             <RootNavigator />
+                            <MetaServerChecks />
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>
                   </Authenticate>
-                </NavigationContainer>
-              </AuthProvider>
-              <SwitchAccountToast />
-            </ModalProvider>
+                </AuthProvider>
+                <SwitchAccountToast />
+              </ModalProvider>
+            </NavigationContainer>
           </ThemeProvider>
         </SafeAreaProvider>
       </PersistGate>
