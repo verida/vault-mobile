@@ -219,14 +219,13 @@ const Home = (props) => {
 
   function onImportAccount() {
     toggleAddAccountsModal()
-    navigation.navigate('ImportAccount')
+    navigation.navigate('SeedPhraseEntered', { previousScreen: 'Dashboard' })
   }
 
   async function onSelectAccount(did) {
     if (did === AccountManager.getInstance().selectedAccount.did) {
       return
     }
-
     toggleAddAccountsModal()
     try {
       await switchToAccount(did)

@@ -20,7 +20,7 @@ function AuthNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Start'} component={Start} />
       <Stack.Screen name={'CreateAccount'} component={Create} />
-      <Stack.Screen name={'ImportAccount'} component={Import} />
+      <Stack.Screen name={'SeedPhraseEntered'} component={Import} />
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen
         name={'SeedPhraseGenerated'}

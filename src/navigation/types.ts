@@ -12,7 +12,6 @@ export type RootStackParams = {
 export type AuthStackParams = {
   Start: undefined
   CreateAccount: { mode: CreateAccountMode }
-  ImportAccount: undefined
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   SeedPhraseEntered: undefined
@@ -31,8 +30,8 @@ export type DashboardTabParams = {
 }
 
 export type MainStackParams = {
-  Dashboard: DashboardTabParams
   Inbox: undefined
+  Dashboard: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
@@ -40,7 +39,6 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   SeedPhraseView: undefined
-  SeedPhraseEntered: undefined
   ManageWallets: undefined
   SingleCurrency: undefined
   SendToken: undefined
@@ -62,7 +60,7 @@ export type MainStackParams = {
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: { mode: CreateAccountMode }
   DeleteAccount: undefined
-  ImportAccount: undefined
+  SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
@@ -77,4 +75,5 @@ export type MainStackParams = {
   WalletConnectDapp: { dapp: DApp }
   WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: undefined
+  Success: undefined
 }
