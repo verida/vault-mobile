@@ -16,7 +16,7 @@ const file = {
 }
 
 const company = {
-  uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
+  uri: 'https://assets.verida.io/avatar.svg',
   name: 'IBM HR',
   createdAt: 'May 25',
   type: 1,
