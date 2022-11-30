@@ -16,7 +16,6 @@ import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import TCCheckbox from 'components/TCCheckbox'
-import { Caption } from 'components/Typography/Caption'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
@@ -57,6 +56,7 @@ const CreateIdentity = () => {
   const styles = useThemeAwareStyle(creatStyles)
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(0)
+  const [enableClaimUsername] = useState(false) // FIXME: disable input username
 
   const [agreedTC, setAgreedTC] = useState(false)
   const [checkingUsername, setCheckingUsername] = useState(false)
@@ -82,6 +82,7 @@ const CreateIdentity = () => {
     }, 3000)
   }, [])
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const claimUsername = useCallback(async () => {
     // FIXME: Remove fake claim-username request
     setConfromationState((cstate) => ({
@@ -119,11 +120,11 @@ const CreateIdentity = () => {
     country: 'Australia', // FIXME: Use default Australia for now
   })
 
-  const creatIdentifier = useCallback(() => {
+  const createIdentifier = useCallback(() => {
     setTimeout(async () => {
       try {
         // TODO: remove fake request
-        claimUsername()
+        // claimUsername()
 
         await AccountManager.getInstance().createAccount(
           {
@@ -148,7 +149,7 @@ const CreateIdentity = () => {
         setShowRetry(true)
       }
     }, 0)
-  }, [claimUsername, navigation, profile])
+  }, [navigation, profile])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -258,32 +259,36 @@ const CreateIdentity = () => {
                     This name is public, use whatever you like. It is required
                     as used across the UI and dApps
                   </Paragraph>
-                  <Spacer vertical='xxxl' />
-                  <Paragraph>
-                    Optionally, you can claim a Verida Username. It is linked to
-                    your identity. (Coming soon)
-                  </Paragraph>
-                  <Spacer vertical='xxl' />
-                  <FormInput
-                    label='Check your username is available'
-                    withAnimatedChecbox={profile.username.length > 0}
-                    disabled
-                    autoCapitalize='none'
-                    autoCorrect={false}
-                    loading={checkingUsername}
-                    onChangeText={(text) =>
-                      setProfile((p) => ({ ...p, username: text }))
-                    }
-                    onBlur={() => {
-                      if (profile.username.length > 0) checkUsername()
-                    }}
-                    onFocus={() => {
-                      setUsernameError(undefined)
-                    }}
-                    value={profile.username}
-                    checked={availableUsername}
-                    errorMessage={usernameError}
-                  />
+                  {enableClaimUsername && (
+                    <>
+                      <Spacer vertical='xxxl' />
+                      <Paragraph>
+                        Optionally, you can claim a Verida Username. It is
+                        linked to your identity. (Coming soon)
+                      </Paragraph>
+                      <Spacer vertical='xxl' />
+                      <FormInput
+                        label='Check your username is available'
+                        withAnimatedChecbox={profile.username.length > 0}
+                        disabled
+                        autoCapitalize='none'
+                        autoCorrect={false}
+                        loading={checkingUsername}
+                        onChangeText={(text) =>
+                          setProfile((p) => ({ ...p, username: text }))
+                        }
+                        onBlur={() => {
+                          if (profile.username.length > 0) checkUsername()
+                        }}
+                        onFocus={() => {
+                          setUsernameError(undefined)
+                        }}
+                        value={profile.username}
+                        checked={availableUsername}
+                        errorMessage={usernameError}
+                      />
+                    </>
+                  )}
                 </ScrollView>
               </View>
             </View>
@@ -344,25 +349,29 @@ const CreateIdentity = () => {
                     checkmarkColor={theme.color.onSuccess}
                     boxOutlineColor={theme.color.gray400}
                   />
-                  <Spacer vertical='m' />
-                  <AnimatedCheckbox
-                    checked={
-                      confromationState?.state?.DefineNameAndUsername ===
-                      'Success'
-                    }
-                    failed={
-                      confromationState?.state?.DefineNameAndUsername ===
-                      'Failure'
-                    }
-                    showLoading={
-                      confromationState?.state?.DefineNameAndUsername ===
-                      'Loading'
-                    }
-                    label='Claim username'
-                    highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.onSuccess}
-                    boxOutlineColor={theme.color.gray400}
-                  />
+                  {enableClaimUsername && (
+                    <>
+                      <Spacer vertical='m' />
+                      <AnimatedCheckbox
+                        checked={
+                          confromationState?.state?.DefineNameAndUsername ===
+                          'Success'
+                        }
+                        failed={
+                          confromationState?.state?.DefineNameAndUsername ===
+                          'Failure'
+                        }
+                        showLoading={
+                          confromationState?.state?.DefineNameAndUsername ===
+                          'Loading'
+                        }
+                        label='Claim username'
+                        highlightColor={theme.color.success}
+                        checkmarkColor={theme.color.onSuccess}
+                        boxOutlineColor={theme.color.gray400}
+                      />
+                    </>
+                  )}
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
                     checked={
@@ -420,7 +429,7 @@ const CreateIdentity = () => {
                   pagerRef.current?.setPage(currentPage + 1)
                   setCurrentPage(currentPage + 1)
                   if (currentPage === 2) {
-                    creatIdentifier()
+                    createIdentifier()
                   }
                 }
               }}>
@@ -432,7 +441,7 @@ const CreateIdentity = () => {
               style={styles.retryButton}
               onPress={() => {
                 setShowRetry(false)
-                creatIdentifier()
+                createIdentifier()
               }}>
               Retry
             </Button>
