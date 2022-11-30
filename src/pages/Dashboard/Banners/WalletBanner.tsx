@@ -1,6 +1,6 @@
-import { Container } from 'native-base'
+import { useNavigation } from '@react-navigation/native'
 import React, { useEffect } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
@@ -16,7 +16,7 @@ import {
   PRIMARY_COLOR_500,
 } from '../../../constants/color'
 
-interface WalletSectionProps {
+interface WalletSummaryProps {
   onGetBalances: () => void
   data: {
     listAndTotal: {
@@ -26,11 +26,18 @@ interface WalletSectionProps {
   wallets: unknown
 }
 
-const WalletSection = ({
-  onGetBalances,
-  data,
-  wallets,
-}: WalletSectionProps) => {
+const WalletSummary = (props: WalletSummaryProps) => {
+  const { onGetBalances, data, wallets } = props
+
+  const { listAndTotal } = data
+  const { total } = listAndTotal
+
+  const navigation = useNavigation()
+
+  const handlePress = () => {
+    navigation.navigate('Assets' as never)
+  }
+
   useEffect(() => {
     async function loadData() {
       onGetBalances()
@@ -39,27 +46,21 @@ const WalletSection = ({
     loadData()
   }, [onGetBalances, wallets])
 
-  const { listAndTotal } = data
-
-  const { total } = listAndTotal
-
   return (
-    <Container style={styles.container}>
-      <View style={styles.wallet}>
-        <View style={styles.walletContent}>
-          <View style={styles.walletIcon}>
-            <MainWallet />
-          </View>
+    <Pressable style={styles.container} onPress={handlePress}>
+      <View style={styles.walletDetails}>
+        <View style={styles.walletIcon}>
+          <MainWallet />
         </View>
         <View>
-          <Text style={styles.walletText}>All Wallet</Text>
+          <Text style={styles.walletLabel}>All wallets</Text>
           <Text style={styles.walletAmount}>$ {total.toFixed(2)}</Text>
         </View>
       </View>
       <View>
         <ChevronRightPrimaryIcon />
       </View>
-    </Container>
+    </Pressable>
   )
 }
 
@@ -77,7 +78,7 @@ const mapDispatchToProps = (dispatch: any) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(WalletSection)
+export default connect(mapStateToProps, mapDispatchToProps)(WalletSummary)
 
 const styles = StyleSheet.create({
   container: {
@@ -86,31 +87,27 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     backgroundColor: PRIMARY_COLOR_200,
     borderRadius: 4,
-    height: 72,
-    width: '100%',
-    paddingVertical: 16,
-    paddingRight: 30,
-    paddingLeft: 16,
+    padding: 16,
   },
   walletIcon: {
     backgroundColor: PRIMARY_COLOR_100,
     borderRadius: 12,
-    padding: 10,
-  },
-  walletContent: {
     marginRight: 12,
+    padding: 8,
   },
-  walletText: {
+  walletLabel: {
     fontFamily: NUNITO_SANS,
-    fontSize: 12,
     color: PRIMARY_COLOR_300,
+    fontSize: 12,
+    lineHeight: 18,
   },
   walletAmount: {
     fontFamily: NUNITO_SANS_BOLD,
-    fontSize: 17,
     color: PRIMARY_COLOR_500,
+    fontSize: 17,
+    lineHeight: 22.1,
   },
-  wallet: {
+  walletDetails: {
     flexDirection: 'row',
   },
 })

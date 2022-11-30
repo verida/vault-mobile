@@ -24,19 +24,34 @@ import { MainStackParams } from 'navigation/types'
 import { BLACK_COLOR_OPACITY } from '../../../constants/color'
 import { NUNITO_SANS } from '../../../constants/text'
 
-const bgImage = require('assets/home_banner.png')
+const claimBadgesBannerImage = require('assets/home_promo_banners/claim_badges.png')
+const veridaOneBannerImage = require('assets/home_promo_banners/verida_one.png')
 
-const AnimatedPagerView = Animated.createAnimatedComponent(PagerView)
+const AnimatedBannersView = Animated.createAnimatedComponent(PagerView)
 
-type TBannerList = {
+type TBanner = {
   label: string
-  screen: any
+  image: any
+  screen: string
 }
+
+const bannerDefinitions: TBanner[] = [
+  {
+    label: 'Claim Your Verida Badges',
+    image: claimBadgesBannerImage,
+    screen: 'PublicProfile',
+  },
+  {
+    label: 'Join The Waitlist',
+    image: veridaOneBannerImage,
+    screen: 'PublicProfile',
+  },
+]
 
 const WIDTH = Dimensions.get('window').width
 
-export default function PaginationDotsExample() {
-  const [bannerList] = useState<TBannerList[] | []>([])
+export default function PromotionalBannersCarousel() {
+  const [bannerList] = useState<TBanner[]>(bannerDefinitions)
   const ref = React.useRef<PagerView>(null)
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current
@@ -50,7 +65,7 @@ export default function PaginationDotsExample() {
     outputRange: [0, bannerList.length * WIDTH],
   })
 
-  const onPageScrollHandler = React.useMemo(
+  const handleBannerScroll = React.useMemo(
     () =>
       Animated.event<PagerViewOnPageScrollEventData>(
         [
@@ -68,83 +83,73 @@ export default function PaginationDotsExample() {
     []
   )
 
-  const handleBannerAction = (screen: any) => {
+  const handleBannerPress = (screen: any) => {
     navigation.navigate(screen)
   }
 
-  const Banner = (
-    <View>
+  const banners = bannerList.map((banner) => (
+    <View key={banner.label} style={styles.bannerContainer}>
       <ImageBackground
-        source={bgImage}
+        source={banner.image}
         resizeMode='cover'
+        borderRadius={4}
         style={styles.bannerBgImage}>
         <Pressable
           style={styles.bannerButton}
-          onPress={() => handleBannerAction('PublicProfile')}>
-          <Text style={styles.buttonText}>Claim Your Badges</Text>
+          onPress={() => handleBannerPress(banner.screen)}>
+          <Text style={styles.bannerButtonLabel}>{banner.label}</Text>
           <View>
             <ChevronRightIcon />
           </View>
         </Pressable>
       </ImageBackground>
     </View>
-  )
+  ))
 
-  if (!bannerList.length) {
-    return Banner
+  // When no banner returns an empty View (will be stylised in Home)
+  // When one banner returns a simple version without the animation and dots
+  if (bannerList.length <= 1) {
+    return <View>{banners}</View>
   }
 
   return (
     <View>
-      <AnimatedPagerView
+      <AnimatedBannersView
         initialPage={0}
         ref={ref}
-        style={styles.PagerView}
-        onPageScroll={onPageScrollHandler}>
-        {bannerList.map((item) => (
-          <View key={item.label}>
-            <ImageBackground
-              source={bgImage}
-              resizeMode='cover'
-              style={styles.bannerBgImage}>
-              <Pressable
-                style={styles.bannerButton}
-                onPress={() => handleBannerAction(item.screen)}>
-                <Text style={styles.buttonText}>{item.label}</Text>
-                <View>
-                  <ChevronRightIcon />
-                </View>
-              </Pressable>
-            </ImageBackground>
-          </View>
-        ))}
-      </AnimatedPagerView>
-      <View style={styles.dotsContainer}>
-        <View style={styles.dotContainer}>
+        style={styles.bannersView}
+        onPageScroll={handleBannerScroll}>
+        {banners}
+      </AnimatedBannersView>
+      {bannerList.length > 1 && (
+        <View style={styles.dotsContainer}>
           <SlidingDot
             marginHorizontal={3}
-            containerStyle={{ top: 10 }}
+            containerStyle={{ position: 'relative', top: 0 }}
             data={bannerList}
             //@ts-ignore
             scrollX={scrollX}
             dotSize={8}
           />
         </View>
-      </View>
+      )}
     </View>
   )
 }
 
 const styles = StyleSheet.create({
+  bannerContainer: {
+    paddingHorizontal: 16,
+  },
   bannerBgImage: {
     position: 'relative',
-    height: 152,
-    marginHorizontal: -23,
+    height: 152, // Have to set the height of the image
     justifyContent: 'center',
     alignItems: 'center',
-    paddingHorizontal: 36,
+    paddingHorizontal: 16,
+    borderRadius: 4,
   },
-  buttonText: {
+  bannerButtonLabel: {
     fontFamily: NUNITO_SANS,
     fontWeight: '700',
     fontSize: 17,
@@ -152,13 +157,13 @@ const styles = StyleSheet.create({
     color: WHITE_COLOR,
   },
   bannerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
     position: 'absolute',
     bottom: 0,
     width: '100%',
-    flexDirection: 'row',
     backgroundColor: 'rgba(255, 255, 255, 0.3)',
-    justifyContent: 'space-between',
-    alignItems: 'center',
     paddingVertical: 8,
     paddingLeft: 16,
     paddingRight: 8,
@@ -176,18 +181,12 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 8,
   },
-  PagerView: {
-    height: 152,
-    width: '100%',
+  bannersView: {
+    height: 152, // Give the same height as the background image
     justifyContent: 'center',
     alignItems: 'center',
   },
   dotsContainer: {
-    flex: 1,
-    justifyContent: 'space-evenly',
-  },
-  dotContainer: {
-    justifyContent: 'center',
-    alignSelf: 'center',
+    paddingTop: 9,
   },
 })

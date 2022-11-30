@@ -2,7 +2,6 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
-import { Container } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -19,17 +18,8 @@ import parse from 'url-parse'
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
-import {
-  BACKGROUND_GREY_COLOR,
-  BLACK_COLOR_OPACITY,
-  BLACK_ORIGIN_COLOR,
-  LIGHT_ORANGE_COLOR,
-  ORANGE_COLOR,
-  TEXT_COLOR,
-  WHITE_COLOR,
-} from 'constants/color'
+import { BACKGROUND_GREY_COLOR, LIGHT_ORANGE_COLOR } from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
@@ -43,12 +33,12 @@ import {
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
 
-import CarouselBanner from './Banners/CarouselBanner'
-import WalletBanner from './Banners/WalletBanner'
+import PromoBannersCarousel from './Banners/CarouselBanner'
+import WalletSummary from './Banners/WalletBanner'
 import DidView from './DidView'
-import GettingStartedSection from './GettingStarted/GettingStartedSection'
+import GettingStarted from './GettingStarted/GettingStartedSection'
 import HomeNavigationHeader from './HomeNavigationHeader'
-import QRCodeScannerSection from './QrcodeScanner'
+import QRCodeScannerButton from './QrcodeScanner'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -261,7 +251,7 @@ const Home = (props) => {
   }
 
   return (
-    <Container style={style.container}>
+    <View style={style.container}>
       <HomeNavigationHeader
         did={info.did || ''}
         name={info.name || ''}
@@ -277,27 +267,33 @@ const Home = (props) => {
           })
         }
       />
-      <ScrollView contentContainerStyle={style.content}>
-        {loading ? (
-          <LoadingView style={style.loading} />
-        ) : (
-          <>
-            <View style={style.walletBannerSection}>
-              <WalletBanner />
+      {loading ? (
+        <LoadingView />
+      ) : (
+        <ScrollView
+          style={style.scrollContainer}
+          contentContainerStyle={style.content}>
+          <View>
+            <View style={style.section}>
+              <WalletSummary />
             </View>
-            <View style={style.carouselSection}>
-              <CarouselBanner />
+            <View style={[style.section, style.promoBannersCarouselSection]}>
+              <PromoBannersCarousel />
             </View>
-            <View style={style.gettingStartedSection}>
-              <GettingStartedSection />
+            <View style={style.section}>
+              <GettingStarted />
             </View>
-            <View style={style.qrSection}>
-              <QRCodeScannerSection onScanQRPress={onScanQRPress} />
+          </View>
+          <View>
+            <View style={style.section}>
+              <QRCodeScannerButton onPress={onScanQRPress} />
             </View>
-            <DidView did={info.did || ''} />
-          </>
-        )}
-      </ScrollView>
+            <View>
+              <DidView did={info.did || ''} />
+            </View>
+          </View>
+        </ScrollView>
+      )}
 
       <AddAccountsModal
         visible={showAddAccounts}
@@ -311,7 +307,7 @@ const Home = (props) => {
         onRecordPress={onRecordSeedPhrase}
         style={style.seedPhraseRemindView}
       />
-    </Container>
+    </View>
   )
 }
 
@@ -335,101 +331,25 @@ const mapStateToProps = (rootState) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
-const marginTop = 0
-const WIDTH = '100%'
 const style = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: BACKGROUND_GREY_COLOR,
   },
+  scrollContainer: {
+    flex: 1,
+  },
   content: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
+    flexGrow: 1,
+    justifyContent: 'space-between',
+    padding: 16,
   },
-  walletBannerSection: {
-    width: WIDTH,
-    marginVertical: 16,
+  section: {
+    marginBottom: 16,
   },
-  carouselSection: {
-    width: WIDTH,
-    marginBottom: 30,
-  },
-  gettingStartedSection: {
-    width: WIDTH,
-  },
-  qrSection: {
-    width: WIDTH,
-    marginTop: 40,
-    marginBottom: 21,
-  },
-  loading: {
-    height: 700,
-  },
-  userImg: {
-    width: 80,
-    height: 80,
-    borderRadius: 60,
-    borderColor: WHITE_COLOR,
-    borderWidth: 4,
-    marginTop,
-  },
-  text: {
-    fontSize: 14,
-    textAlign: 'center',
-    color: BLACK_COLOR_OPACITY(0.6),
-    fontFamily: NUNITO_SANS_BOLD,
-  },
-  didTouchable: {
-    height: 50,
-    marginVertical: 16,
-    paddingHorizontal: 43,
-  },
-  qr: {
-    width: 240,
-    height: 240,
-    borderRadius: 12,
-    padding: 17,
-    backgroundColor: WHITE_COLOR,
-
-    shadowColor: BLACK_ORIGIN_COLOR,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    elevation: 3,
-  },
-  notes: {
-    marginVertical: 24,
-    paddingHorizontal: 43,
-    textAlign: 'center',
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    color: BLACK_COLOR_OPACITY(0.4),
-  },
-  network: {
-    backgroundColor: ORANGE_COLOR,
-    color: WHITE_COLOR,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 5,
-    paddingBottom: 5,
-    marginTop: 10,
-    borderRadius: 10,
-  },
-  scanQRButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 13,
-    paddingHorizontal: 32,
-    borderWidth: 1,
-    borderColor: '#E0E3EA',
-    borderRadius: 4,
-  },
-  scanQRButtonText: {
-    marginLeft: 10,
-    color: TEXT_COLOR,
-    fontSize: 16,
+  promoBannersCarouselSection: {
+    marginLeft: -16,
+    marginRight: -16,
   },
   seedPhraseRemindView: {
     position: 'absolute',
@@ -438,19 +358,5 @@ const style = StyleSheet.create({
     width: SCREEN_WIDTH - 30,
     backgroundColor: LIGHT_ORANGE_COLOR,
     borderRadius: 3,
-  },
-  tempButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#E0E3EA',
-    borderRadius: 4,
-  },
-  tempButtonText: {
-    marginLeft: 5,
-    color: TEXT_COLOR,
-    fontSize: 8,
   },
 })

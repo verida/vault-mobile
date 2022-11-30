@@ -1,48 +1,41 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text } from 'react-native'
 
 import QrScannerIcon from 'assets/icons/qr_scanner.svg'
 import { LIGHTGREY_COLOR, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-interface QRCodeScannerSectionProps {
-  onScanQRPress: () => void
+interface QRCodeScannerButtonProps {
+  onPress: () => void
 }
 
-const QRCodeScannerSection = ({ onScanQRPress }: QRCodeScannerSectionProps) => {
+const QRCodeScannerButton = ({ onPress }: QRCodeScannerButtonProps) => {
   return (
-    <Pressable style={styles.container} onPress={onScanQRPress}>
-      <View style={styles.cardDetails}>
-        <QrScannerIcon />
-        <Text style={styles.cardTitle}>Scan QR</Text>
-      </View>
+    <Pressable style={styles.container} onPress={onPress}>
+      <QrScannerIcon />
+      <Text style={styles.label}>Scan QR Code</Text>
     </Pressable>
   )
 }
 
-export default QRCodeScannerSection
+export default QRCodeScannerButton
 
 const styles = StyleSheet.create({
   container: {
+    flexDirection: 'row',
     justifyContent: 'center',
     alignItems: 'center',
-    height: 56,
-    width: '100%',
+    padding: 13,
     backgroundColor: WHITE_COLOR,
     borderRadius: 4,
     borderWidth: 1,
     borderColor: LIGHTGREY_COLOR,
   },
-  cardDetails: {
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginLeft: 15,
-  },
-  cardTitle: {
+  label: {
     fontSize: 16,
+    lineHeight: 21.82,
     fontFamily: NUNITO_SANS_BOLD,
-    marginLeft: 8,
+    marginLeft: 10,
     color: TEXT_COLOR,
   },
 })

@@ -7,48 +7,50 @@ import MainWalletIcon from 'assets/icons/wallet_icon_2.svg'
 import { TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 
-import GettingStartedItem from './GettingStartedItem'
+import GettingStartedItem, {
+  GettingStartedItemProps,
+} from './GettingStartedItem'
 
-const dataList = [
+const items: GettingStartedItemProps[] = [
   {
-    title: 'Update Profile',
+    label: 'Update Profile',
     icon: <UpdateProfileIcon />,
     screen: 'Profiles',
   },
   {
-    title: 'Connect Accounts',
+    label: 'Connect Accounts',
     icon: <ConnectIcon />,
     screen: 'Connections',
   },
   {
-    title: 'Import Address',
+    label: 'Import Address',
     icon: <MainWalletIcon />,
     screen: 'ImportAccount',
   },
 ]
 
-const GettingStartedSection = () => {
+const GettingStarted = () => {
   return (
-    <>
-      <Text style={styles.listTitle}>What you could do next</Text>
-      {dataList.map((item) => (
-        <View
-          key={item.title}
-          style={{
-            marginTop: 8,
-          }}>
-          <GettingStartedItem {...item} />
+    <View>
+      <Text style={styles.label}>What you could do next</Text>
+      {items.map((item) => (
+        <View key={item.label} style={styles.itemContainer}>
+          <GettingStartedItem key={item.label} {...item} />
         </View>
       ))}
-    </>
+    </View>
   )
 }
 
-export default GettingStartedSection
+export default GettingStarted
 
 const styles = StyleSheet.create({
-  listTitle: {
+  itemContainer: {
+    marginTop: 8,
+  },
+  label: {
     fontSize: 14,
+    lineHeight: 21,
     fontWeight: '600',
     fontFamily: NUNITO_SANS,
     color: TEXT_COLOR,

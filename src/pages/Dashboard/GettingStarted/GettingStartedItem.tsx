@@ -1,34 +1,32 @@
 import { useNavigation } from '@react-navigation/native'
 import React from 'react'
-import { Pressable, PressableProps, StyleSheet, Text, View } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { GREY_COLOR, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-type GettingStartedItemProps = {
-  title: string
+export interface GettingStartedItemProps {
+  label: string
   screen: any
   icon: React.ReactElement
-} & PressableProps
+}
 
-const GettingStartedItem = ({
-  icon,
-  screen,
-  title,
-}: GettingStartedItemProps) => {
+const GettingStartedItem = (props: GettingStartedItemProps) => {
+  const { icon, screen, label } = props
   const navigation = useNavigation()
 
-  const handleOnPress = () => {
+  const handlePress = () => {
     navigation.navigate(screen)
   }
+
   return (
-    <Pressable style={styles.container} onPress={handleOnPress}>
-      <View style={styles.cardDetails}>
+    <Pressable style={styles.container} onPress={handlePress}>
+      <View style={styles.details}>
         {icon}
-        <Text style={styles.cardTitle}>{title}</Text>
+        <Text style={styles.label}>{label}</Text>
       </View>
-      <View style={styles.cardIcon}>
+      <View>
         <AntDesign name={'right'} size={15} color={GREY_COLOR} />
       </View>
     </Pressable>
@@ -39,31 +37,27 @@ export default GettingStartedItem
 
 const styles = StyleSheet.create({
   container: {
+    boxSizing: 'border-box',
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    height: 56,
-    width: '100%',
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderWidth: 1,
     borderRadius: 4,
-    borderColor: '#E0E3EA',
+    borderColor: '#E0E3EA', // Hardcoded color
     backgroundColor: WHITE_COLOR,
   },
-  cardDetails: {
+  details: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  sideText: {},
-  cardTitle: {
+  label: {
     fontSize: 16,
+    lineHeight: 21.82,
     fontFamily: NUNITO_SANS_BOLD,
     marginLeft: 8,
     color: TEXT_COLOR,
-  },
-  cardIcon: {
-    marginRight: 8,
   },
 })
