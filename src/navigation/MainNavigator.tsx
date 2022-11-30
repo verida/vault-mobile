@@ -2,11 +2,12 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
 import { useEventHandlers } from 'hooks/useEventHandlers'
-import DashboardNavigator from 'navigation/DashboardNavigator'
+// import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import ChangePin from 'pages/Authentication/ChangePin'
+import ClaimBadges from 'pages/ClaimBadges/ClaimBadges'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
@@ -53,7 +54,8 @@ function MainNavigator() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
+      {/* <Stack.Screen name={'Dashboard'} component={DashboardNavigator} /> */}
+      <Stack.Screen name={'ClaimBadges'} component={ClaimBadges} />
       <Stack.Screen name={'Inbox'} component={Inbox} />
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
       <Stack.Screen name={'LoginHistory'} component={LoginHistory} />

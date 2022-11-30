@@ -34,6 +34,7 @@ export type DashboardTabParams = {
 export type MainStackParams = {
   Dashboard: DashboardTabParams
   Inbox: undefined
+  ClaimBadges: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined

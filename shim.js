@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events'
 import { decode, encode } from 'base-64'
+import { EventEmitter } from 'events'
 
 if (typeof __dirname === 'undefined') global.__dirname = '/'
 if (typeof __filename === 'undefined') global.__filename = ''
@@ -46,3 +46,5 @@ if (!global.atob) {
 global.navigator = {
   userAgent: 'mobile',
 }
+
+global.fetch
