@@ -46,3 +46,15 @@ export type NetworkCountry = {
 export type NetworkCountries = {
   [name: string]: NetworkCountry[]
 }
+
+export type CreateIdentityStepType =
+  | 'CreateIdentifier'
+  | 'DefineNameAndUsername'
+  | 'StorageLocation'
+  | 'CreateProfile'
+
+export type CreateIdentityStepStatus =
+  | 'None'
+  | 'Loading'
+  | 'Success'
+  | 'Failure'

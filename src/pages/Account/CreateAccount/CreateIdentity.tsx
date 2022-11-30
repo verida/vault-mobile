@@ -8,6 +8,8 @@ import PagerView from 'react-native-pager-view'
 import Animated from 'react-native-reanimated'
 
 import AccountManager from 'api/AccountManager'
+import { CreateIdentityStepStatus, CreateIdentityStepType } from 'api/types'
+import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { FormInput } from 'components/Input/FormInput'
 import Screen from 'components/Screen'
@@ -21,8 +23,6 @@ import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
-
-import Button from '../../../components/Button'
 
 const AnimatedPager = Animated.createAnimatedComponent(PagerView)
 
@@ -48,14 +48,6 @@ const pageData = [
     hasBack: false,
   },
 ]
-
-type CreateAccountStepType =
-  | 'CreateIdentifier'
-  | 'ClaimUsername'
-  | 'StorageLocation'
-  | 'CreateProfile'
-
-type CreateAccountStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'
 
 const numberOfPage = 4
 
@@ -95,26 +87,25 @@ const CreateIdentity = () => {
     setConfromationState((cstate) => ({
       state: {
         ...cstate?.state,
-        ['ClaimUsername']: 'Loading',
+        ['DefineNameAndUsername']: 'Loading',
       },
     }))
     setTimeout(() => {
       setConfromationState((cstate) => ({
         state: {
           ...cstate?.state,
-          ['ClaimUsername']: Math.random() >= 0.5 ? 'Success' : 'Failure',
+          ['DefineNameAndUsername']:
+            Math.random() >= 0.5 ? 'Success' : 'Failure',
         },
       }))
     }, 3000)
   }, [])
 
   const [confromationState, setConfromationState] = useState<{
-    state?: {
-      currentStep?: CreateAccountStepType
-      CreateIdentifier?: CreateAccountStepStatus
-      ClaimUsername?: CreateAccountStepStatus
-      StorageLocation?: CreateAccountStepStatus
-      CreateProfile?: CreateAccountStepStatus
+    state?: Partial<
+      Record<CreateIdentityStepType, CreateIdentityStepStatus>
+    > & {
+      currentStep?: CreateIdentityStepType
     }
   }>()
 
@@ -209,44 +200,40 @@ const CreateIdentity = () => {
               <View style={styles.positionAbsolute}>
                 <View>
                   <Headline style={styles.title}>Identity</Headline>
+                  <Spacer vertical='xxl' />
+                  <TCCheckbox
+                    checked={agreedTC}
+                    style={styles.termAndCondition}
+                    onToggle={toggleAgreedTC}
+                  />
                   <Title style={styles.subTitle}>
                     Create your Verida identity
                   </Title>
-                  <Spacer vertical='xxxxl' />
-                  <View style={styles.center}>
-                    <TCCheckbox
-                      checked={agreedTC}
-                      style={styles.termAndCondition}
-                      onToggle={toggleAgreedTC}
-                    />
-                    <Spacer vertical='xxxl' />
-                    <Button
-                      disabled={!agreedTC}
-                      style={styles.actionButton}
-                      onPress={() => {
-                        pagerRef.current?.setPage(currentPage + 1)
-                        setCurrentPage(currentPage + 1)
-                      }}>
-                      Create Identity
-                    </Button>
-                    <Spacer vertical='xxxxl' />
-
-                    <Caption style={styles.subTitle}>
-                      Already have a Verida Identity?
-                    </Caption>
-                    <Spacer vertical='xs' />
-                    <Button
-                      disabled={!agreedTC}
-                      color='transparent'
-                      style={styles.actionButton}
-                      onPress={() => {
-                        navigation.navigate('SeedPhraseEntered')
-                      }}>
-                      Click here to import
-                    </Button>
-                  </View>
+                  <Spacer vertical='xxl' />
+                  <Button
+                    disabled={!agreedTC}
+                    style={styles.actionButton}
+                    onPress={() => {
+                      pagerRef.current?.setPage(currentPage + 1)
+                      setCurrentPage(currentPage + 1)
+                    }}>
+                    Create Identity
+                  </Button>
+                  <Spacer vertical='xxl' />
+                  <Title style={styles.subTitle}>
+                    Already have a Verida Identity?
+                  </Title>
+                  <Spacer vertical='xxl' />
+                  <Button
+                    disabled={!agreedTC}
+                    color='transparent'
+                    style={styles.actionButton}
+                    onPress={() => {
+                      navigation.navigate('SeedPhraseEntered')
+                    }}>
+                    Import Identity
+                  </Button>
                 </View>
-                <Spacer vertical='xxxl' />
               </View>
             </View>
           </View>
@@ -274,7 +261,7 @@ const CreateIdentity = () => {
                   <Spacer vertical='xxxl' />
                   <Paragraph>
                     Optionally, you can claim a Verida Username. It is linked to
-                    your identity. (Comming soon)
+                    your identity. (Coming soon)
                   </Paragraph>
                   <Spacer vertical='xxl' />
                   <FormInput
@@ -360,13 +347,16 @@ const CreateIdentity = () => {
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
                     checked={
-                      confromationState?.state?.ClaimUsername === 'Success'
+                      confromationState?.state?.DefineNameAndUsername ===
+                      'Success'
                     }
                     failed={
-                      confromationState?.state?.ClaimUsername === 'Failure'
+                      confromationState?.state?.DefineNameAndUsername ===
+                      'Failure'
                     }
                     showLoading={
-                      confromationState?.state?.ClaimUsername === 'Loading'
+                      confromationState?.state?.DefineNameAndUsername ===
+                      'Loading'
                     }
                     label='Claim username'
                     highlightColor={theme.color.success}
