@@ -33,9 +33,6 @@ function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   const title = "Welcome!\nIt's time to own your personal data."
 
   const createAcc = () => props.navigation.navigate('CreateIdentity')
-  // props.navigation.navigate('CreateAccount', {
-  //   mode: CreateAccountMode.CREATE,
-  // })
 
   return (
     <LinearGradient
