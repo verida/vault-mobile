@@ -11,7 +11,7 @@ import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
-import { ForcedUpgradeType } from 'hooks/useForcedUpgrade'
+import { ForcedUpgradeType } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
