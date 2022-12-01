@@ -18,6 +18,7 @@ import TCCheckbox from 'components/TCCheckbox'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
+import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
@@ -47,8 +48,14 @@ const pageData = [
 
 const numberOfPage = 4
 
+export enum CreateIdentityMode {
+  CREATE,
+  ADD,
+}
+
 const CreateIdentity = () => {
   const navigation = useNavigation()
+  const params = useParams<{ mode?: CreateIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const pagerRef = useRef<PagerView>(null)
@@ -118,39 +125,39 @@ const CreateIdentity = () => {
     country: 'Australia', // FIXME: Use default Australia for now
   })
 
-  const createIdentifier = useCallback(() => {
-    setTimeout(async () => {
-      try {
-        setProcessing(true)
+  const createIdentifier = useCallback(async () => {
+    try {
+      setProcessing(true)
 
-        // TODO: remove fake request
-        // claimUsername()
+      // TODO: remove fake request
+      // claimUsername()
 
-        await AccountManager.getInstance().createAccount(
-          {
-            name: profile.name,
-            country: profile?.country,
-            description: '',
-          },
-          profile?.country,
-          (step, status) => {
-            setConfirmationState((cstate) => ({
-              state: {
-                ...cstate?.state,
-                currentStep: step,
-                [step]: status,
-              },
-            }))
-          }
-        )
+      await AccountManager.getInstance().createAccount(
+        {
+          name: profile.name,
+          country: profile?.country,
+          description: '',
+        },
+        profile?.country,
+        (step, status) => {
+          setConfirmationState((cstate) => ({
+            state: {
+              ...cstate?.state,
+              currentStep: step,
+              [step]: status,
+            },
+          }))
+        }
+      )
 
-        navigation.navigate('CreatePin')
-      } catch (error) {
-        setShowRetry(true)
-      }
-      setProcessing(false)
-    }, 0)
-  }, [navigation, profile])
+      params.mode === CreateIdentityMode.ADD
+        ? navigation.goBack()
+        : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+    } catch (error) {
+      setShowRetry(true)
+    }
+    setProcessing(false)
+  }, [navigation, params.mode, profile?.country, profile.name])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -198,7 +205,7 @@ const CreateIdentity = () => {
 
   const onBack = useCallback(() => {
     if (processing) {
-      // Useful for handle hardware back button on Android
+      // Useful for handling hardware back button on Android
       Alert.alert("Hold on, we're building your Identity")
       return
     }

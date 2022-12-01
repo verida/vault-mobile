@@ -2,6 +2,7 @@ import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
+import { CreateIdentityMode } from 'pages/Account/Identity/CreateIdentity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
@@ -64,6 +65,7 @@ export type MainStackParams = {
   AddAccount: { mode: CreateAccountMode }
   DeleteAccount: undefined
   ImportAccount: undefined
+  CreateIdentity: { mode?: CreateIdentityMode }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined

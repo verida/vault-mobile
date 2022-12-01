@@ -3,7 +3,7 @@ import React from 'react'
 
 import { AuthStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
-import CreateIdentity from 'pages/Account/CreateAccount/CreateIdentity'
+import CreateIdentity from 'pages/Account/Identity/CreateIdentity'
 import Import from 'pages/Account/Import'
 import Start from 'pages/Account/Start'
 import CreatePin from 'pages/Authentication/CreatePin'
