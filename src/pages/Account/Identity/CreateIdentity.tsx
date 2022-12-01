@@ -1,4 +1,8 @@
-import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import {
+  StackActions,
+  useFocusEffect,
+  useNavigation,
+} from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
@@ -278,6 +282,10 @@ const CreateIdentity = () => {
                 color='transparent'
                 style={styles.actionButton}
                 onPress={() => {
+                  if (params.mode === CreateIdentityMode.ADD) {
+                    const popAction = StackActions.pop(1)
+                    navigation.dispatch(popAction)
+                  }
                   navigation.navigate('SeedPhraseEntered')
                 }}>
                 Import Identity
