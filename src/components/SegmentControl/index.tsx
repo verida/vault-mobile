@@ -78,6 +78,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 16,
+    marginVertical: 4,
     padding: 2,
     color: TEXT_COLOR,
   },
@@ -104,7 +105,6 @@ const styles = StyleSheet.create({
   },
   segmentButtonNormal: {
     flexDirection: 'row',
-    height: 28,
     borderRadius: 6.93,
     alignItems: 'center',
     justifyContent: 'center',
