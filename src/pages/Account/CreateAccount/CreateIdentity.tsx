@@ -1,9 +1,9 @@
-import { useNavigation } from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
@@ -54,6 +54,7 @@ const CreateIdentity = () => {
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(0)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
+  const [processing, setProcessing] = useState(false)
 
   const [agreedTC, setAgreedTC] = useState(false)
   const [checkingUsername, setCheckingUsername] = useState(false)
@@ -82,14 +83,14 @@ const CreateIdentity = () => {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const claimUsername = useCallback(async () => {
     // FIXME: Remove fake claim-username request
-    setConfromationState((cstate) => ({
+    setConfirmationState((cstate) => ({
       state: {
         ...cstate?.state,
         ['DefineNameAndUsername']: 'Loading',
       },
     }))
     setTimeout(() => {
-      setConfromationState((cstate) => ({
+      setConfirmationState((cstate) => ({
         state: {
           ...cstate?.state,
           ['DefineNameAndUsername']:
@@ -99,7 +100,7 @@ const CreateIdentity = () => {
     }, 3000)
   }, [])
 
-  const [confromationState, setConfromationState] = useState<{
+  const [confirmationState, setConfirmationState] = useState<{
     state?: Partial<
       Record<CreateIdentityStepType, CreateIdentityStepStatus>
     > & {
@@ -120,6 +121,8 @@ const CreateIdentity = () => {
   const createIdentifier = useCallback(() => {
     setTimeout(async () => {
       try {
+        setProcessing(true)
+
         // TODO: remove fake request
         // claimUsername()
 
@@ -131,7 +134,7 @@ const CreateIdentity = () => {
           },
           profile?.country,
           (step, status) => {
-            setConfromationState((cstate) => ({
+            setConfirmationState((cstate) => ({
               state: {
                 ...cstate?.state,
                 currentStep: step,
@@ -145,6 +148,7 @@ const CreateIdentity = () => {
       } catch (error) {
         setShowRetry(true)
       }
+      setProcessing(false)
     }, 0)
   }, [navigation, profile])
 
@@ -158,17 +162,17 @@ const CreateIdentity = () => {
               (!isEmpty(profile.username) && availableUsername)),
         }
       case 2: // location
-        return { formValidated: true } //!isEmpty(profile.country) }
+        return { formValidated: true }
       case 3: // Confirmation
         return {
-          formValidated: confromationState?.state?.CreateProfile === 'Success',
+          formValidated: confirmationState?.state?.CreateProfile === 'Success',
         }
       default:
         return {}
     }
   }, [
     availableUsername,
-    confromationState?.state?.CreateProfile,
+    confirmationState?.state?.CreateProfile,
     currentPage,
     profile,
   ])
@@ -181,12 +185,48 @@ const CreateIdentity = () => {
     setAgreedTC((prevState) => !prevState)
   }
 
-  function nextPage() {
+  const onNext = useCallback(() => {
     if (currentPage < numberOfPage - 1) {
       pagerRef.current?.setPage(currentPage + 1)
       setCurrentPage(currentPage + 1)
+      if (currentPage === numberOfPage - 2) {
+        // navigate to last page and create identifier
+        createIdentifier()
+      }
     }
-  }
+  }, [createIdentifier, currentPage])
+
+  const onBack = useCallback(() => {
+    if (processing) {
+      // Useful for handle hardware back button on Android
+      Alert.alert("Hold on, we're building your Identity")
+      return
+    }
+
+    if (currentPage > 0) {
+      pagerRef.current?.setPage(currentPage - 1)
+      setCurrentPage(currentPage - 1)
+      showRetry && setShowRetry(false)
+    } else {
+      navigation.goBack()
+    }
+  }, [currentPage, navigation, processing, showRetry])
+
+  useFocusEffect(
+    useCallback(() => {
+      const onBackPress = () => {
+        onBack()
+        return true // Manually handle Android Back press event
+      }
+
+      const subscription = BackHandler.addEventListener(
+        'hardwareBackPress',
+        onBackPress
+      )
+
+      return () => subscription.remove()
+    }, [onBack])
+  )
 
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
@@ -216,7 +256,7 @@ const CreateIdentity = () => {
                 style={styles.actionButton}
                 onPress={() => {
                   requestAnimationFrame(() => {
-                    nextPage()
+                    onNext()
                   })
                 }}>
                 Create Identity
@@ -325,13 +365,13 @@ const CreateIdentity = () => {
               <Spacer vertical='xxxl' />
               <AnimatedCheckbox
                 checked={
-                  confromationState?.state?.CreateIdentifier === 'Success'
+                  confirmationState?.state?.CreateIdentifier === 'Success'
                 }
                 failed={
-                  confromationState?.state?.CreateIdentifier === 'Failure'
+                  confirmationState?.state?.CreateIdentifier === 'Failure'
                 }
                 showLoading={
-                  confromationState?.state?.CreateIdentifier === 'Loading'
+                  confirmationState?.state?.CreateIdentifier === 'Loading'
                 }
                 label='Create identifier'
                 highlightColor={theme.color.success}
@@ -343,15 +383,15 @@ const CreateIdentity = () => {
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
                     checked={
-                      confromationState?.state?.DefineNameAndUsername ===
+                      confirmationState?.state?.DefineNameAndUsername ===
                       'Success'
                     }
                     failed={
-                      confromationState?.state?.DefineNameAndUsername ===
+                      confirmationState?.state?.DefineNameAndUsername ===
                       'Failure'
                     }
                     showLoading={
-                      confromationState?.state?.DefineNameAndUsername ===
+                      confirmationState?.state?.DefineNameAndUsername ===
                       'Loading'
                     }
                     label='Claim username'
@@ -364,10 +404,10 @@ const CreateIdentity = () => {
               <Spacer vertical='m' />
               <AnimatedCheckbox
                 checked={
-                  confromationState?.state?.StorageLocation === 'Success'
+                  confirmationState?.state?.StorageLocation === 'Success'
                 }
                 showLoading={
-                  confromationState?.state?.StorageLocation === 'Loading'
+                  confirmationState?.state?.StorageLocation === 'Loading'
                 }
                 label='Connect storage nodes'
                 highlightColor={theme.color.success}
@@ -376,9 +416,9 @@ const CreateIdentity = () => {
               />
               <Spacer vertical='m' />
               <AnimatedCheckbox
-                checked={confromationState?.state?.CreateProfile === 'Success'}
+                checked={confirmationState?.state?.CreateProfile === 'Success'}
                 showLoading={
-                  confromationState?.state?.CreateProfile === 'Loading'
+                  confirmationState?.state?.CreateProfile === 'Loading'
                 }
                 label='Create public profile'
                 highlightColor={theme.color.success}
@@ -393,15 +433,7 @@ const CreateIdentity = () => {
             <Button
               color='transparent'
               style={styles.backButton}
-              onPress={() => {
-                if (currentPage > 0) {
-                  pagerRef.current?.setPage(currentPage - 1)
-                  setCurrentPage(currentPage - 1)
-                  showRetry && setShowRetry(false)
-                } else {
-                  navigation.goBack()
-                }
-              }}>
+              onPress={onBack}>
               Back
             </Button>
           )}
@@ -409,15 +441,7 @@ const CreateIdentity = () => {
             <Button
               style={styles.nextButton}
               disabled={!formValidated}
-              onPress={() => {
-                if (currentPage < numberOfPage - 1) {
-                  pagerRef.current?.setPage(currentPage + 1)
-                  setCurrentPage(currentPage + 1)
-                  if (currentPage === 2) {
-                    createIdentifier()
-                  }
-                }
-              }}>
+              onPress={onNext}>
               Next
             </Button>
           )}
