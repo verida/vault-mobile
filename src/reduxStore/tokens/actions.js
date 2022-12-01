@@ -17,7 +17,7 @@ export const getTokens = () => {
     // }
 
     dispatch({ type: TOKENS_FETCH_START })
-    const response = await walletProviderApi.get('tokens/get')
+    const response = await walletProviderApi.get('tokens/getWithPrice')
     if (response.ok) {
       if (response.data) {
         dispatch({ type: FETCHED_TOKENS, data: response.data.data })

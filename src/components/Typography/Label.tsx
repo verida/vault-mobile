@@ -7,15 +7,15 @@ import {
 } from 'react-native'
 
 import Text from 'components/Text'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import text from 'styles/text'
 import { Theme } from 'styles/types'
 
-type CaptionProps = React.ComponentProps<typeof NativeText> & {
+type LabelProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>
 }
 
-export const Caption = (props: CaptionProps) => {
+export const Label = (props: LabelProps) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />
 }
@@ -23,9 +23,11 @@ export const Caption = (props: CaptionProps) => {
 const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
     text: {
-      ...text.primary,
-      color: theme.color.onPrimary,
-      fontSize: theme.fontSize.l,
+      fontFamily: NUNITO_SANS_SEMIBOLD,
+      fontWeight: '600',
+      color: theme.color.black800,
+      fontSize: theme.fontSize.s,
+      lineHeight: 18,
       textAlign: 'left',
     },
   })

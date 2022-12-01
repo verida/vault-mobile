@@ -14,7 +14,6 @@ export const Text = (props: TextProps) => {
   const styleWithTheme: StyleProp<TextStyle> = {
     color: theme.color.onBackground,
     fontFamily: NUNITO_SANS,
-    textAlignVertical: 'center',
     fontSize: theme.fontSize.m,
     textAlign: 'left',
   }

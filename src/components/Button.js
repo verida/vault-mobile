@@ -34,8 +34,8 @@ export default (props) => {
     <TouchableOpacity
       style={[
         ButtonStyles.button,
-        styles,
         type,
+        styles,
         props.disabled && ButtonStyles.disabled,
       ]}
       onPress={props.loading ? null : props.onPress}

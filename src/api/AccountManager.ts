@@ -8,7 +8,14 @@ import * as SecureStore from 'expo-secure-store'
 import { isEmpty } from 'lodash'
 import { store } from 'reduxStore'
 
-import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
+import {
+  Account,
+  CreateIdentityStepStatus,
+  CreateIdentityStepType,
+  NetworkNode,
+  NormalizedAccounts,
+  UserData,
+} from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -363,12 +370,8 @@ class AccountManager {
     userData: UserData,
     country: string,
     updateProgress?: (
-      step:
-        | 'CreateIdentifier'
-        | 'ClaimUsername'
-        | 'StorageLocation'
-        | 'CreateProfile',
-      status: 'None' | 'Loading' | 'Success' | 'Failure'
+      step: CreateIdentityStepType,
+      status: CreateIdentityStepStatus
     ) => void
   ): Promise<Account | undefined> {
     let connected = false

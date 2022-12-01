@@ -23,9 +23,7 @@ interface ScreenProps {
   statusBarColor?: string
   withLoadingView?: boolean
   showLoading?: boolean
-  title?: string
   navBar?: ReactNode
-  safeAreaViewInset?: any
 }
 
 const Screen = (props: ScreenProps) => {
@@ -85,7 +83,9 @@ const Screen = (props: ScreenProps) => {
       wrap={(children) =>
         Platform.select({
           ios: (
-            <KeyboardAvoidingView behavior='padding' style={styles.wrapper}>
+            <KeyboardAvoidingView
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+              style={styles.wrapper}>
               {children}
             </KeyboardAvoidingView>
           ),
