@@ -1,9 +1,9 @@
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
-import NFTIcon from 'assets/nft.svg'
 import Button from 'components/Button'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import { TEXT_COLOR } from 'constants/color'
+import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import { ConnectionList } from './BadgeList'
 
@@ -21,8 +21,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <NFTIcon />
-        {/* <Image source={item.icon} /> */}
+        <Image style={styles.badgeIcon} source={item.icon} />
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{item?.connection}</Text>
           <Text style={styles.subText}>{item?.status}</Text>
@@ -30,12 +29,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({
       </View>
       <View>
         <Button
-          style={{
-            borderRadius: 70,
-            paddingHorizontal: 15,
-            paddingVertical: 4,
-            width: '100%',
-          }}
+          style={styles.actionButton}
           color='primary'
           disabled={false}
           loading={false}
@@ -55,7 +49,10 @@ const styles = StyleSheet.create({
     justifyContent: 'space-between',
     alignItems: 'center',
   },
-  badgeIcon: {},
+  badgeIcon: {
+    height: 43,
+    width: 43,
+  },
   content: {
     flexDirection: 'row',
     justifyContent: 'space-between',
@@ -66,16 +63,21 @@ const styles = StyleSheet.create({
     marginHorizontal: 16,
   },
   title: {
-    fontFamily: NUNITO_SANS_BOLD,
+    fontFamily: NUNITO_SANS_SEMIBOLD,
     fontWeight: '600',
     fontSize: 16,
-    color: '#041133',
+    color: TEXT_COLOR,
   },
   subText: {
-    fontFamily: NUNITO_SANS_BOLD,
+    fontFamily: NUNITO_SANS,
     fontWeight: '600',
     fontSize: 12,
-    color: '#041133',
+    color: TEXT_COLOR,
   },
-  actionButton: {},
+  actionButton: {
+    fontSize: 12,
+    borderRadius: 70,
+    paddingHorizontal: 12,
+    paddingVertical: 4,
+  },
 })

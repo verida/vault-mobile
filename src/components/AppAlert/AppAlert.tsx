@@ -4,6 +4,8 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 import ErrorAlertIcon from 'assets/alert_error_icon.svg'
 import InfoAlertIcon from 'assets/alert_info_icon.svg'
 import WarningAlertIcon from 'assets/alert_warning_icon.svg'
+import { BACKGROUND_GREY_COLOR } from 'constants/color'
+import { NUNITO_SANS } from 'constants/text'
 
 type AlertType = 'info' | 'warning' | 'error'
 
@@ -26,11 +28,7 @@ const getAlertColor = (type: AlertType): AlertType => {
   }
 }
 
-const AppAlert: React.FC<AppAlertProps> = ({
-  body = 'What are Verida Badges?',
-  type = 'info',
-  action,
-}) => {
+const AppAlert: React.FC<AppAlertProps> = ({ body, type, action }) => {
   const DisplayAlertIcon = (iconType: AlertType): React.ReactElement => {
     switch (iconType) {
       case 'info':
@@ -46,14 +44,11 @@ const AppAlert: React.FC<AppAlertProps> = ({
 
   return (
     <View style={[styles.container, styles[getAlertColor(type)]]}>
-      <View
-        style={{
-          flexDirection: 'row',
-        }}>
+      <View style={styles.alertContent}>
         {DisplayAlertIcon(type)}
         <Text style={styles.alertText}>{body}</Text>
       </View>
-      {!action && (
+      {action && (
         <Pressable onPress={action}>
           <Text>i</Text>
         </Pressable>
@@ -68,7 +63,7 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
-    backgroundColor: '#ddd',
+    backgroundColor: BACKGROUND_GREY_COLOR,
     borderLeftColor: 'yellow',
     borderLeftWidth: 3,
     minHeight: 36,
@@ -76,6 +71,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     borderRadius: 4,
   },
+  alertContent: { flexDirection: 'row' },
   info: {
     borderLeftColor: '#0073FF',
   },
@@ -86,8 +82,10 @@ const styles = StyleSheet.create({
     borderLeftColor: '#FD4F64',
   },
   alertText: {
-    color: 'black',
-    textAlign: 'left',
-    paddingHorizontal: 8,
+    fontFamily: NUNITO_SANS,
+    fontWeight: '600',
+    fontSize: 14,
+    flexShrink: 1,
+    paddingHorizontal: 10,
   },
 })

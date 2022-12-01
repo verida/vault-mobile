@@ -3,7 +3,7 @@ import { FlatList } from 'react-native'
 
 import BadgeItem from './BadgeItem'
 
-const vdaImg = require('assets/verida_identity.png')
+const vdaImg = require('assets/badges_icon/verida_identity.png')
 
 export type ConnectionList = {
   connection: string

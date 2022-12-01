@@ -27,7 +27,8 @@ export default StyleSheet.create({
   },
   secondary: {
     backgroundColor: WHITE_COLOR,
-    borderColor: WHITE_COLOR,
+    borderColor: LIGHTGREY_COLOR,
+    borderWidth: 1,
   },
   warning: {
     backgroundColor: WHITE_COLOR,

@@ -1,34 +1,69 @@
-import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
-import { StyleSheet } from 'react-native'
+import { Pressable, StyleSheet, Text, View } from 'react-native'
+
+import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
+import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import AddressSvg from '../../assets/icons/address.svg'
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
-export default ({ item }) => {
+export default ({ item, customStyles }) => {
   return (
-    <ListItem button onPress={item.onPress} style={styles.item}>
-      <Left style={styles.itemWrapper}>
-        <AddressSvg />
-        <Body>
+    <Pressable
+      onPress={item.onPress}
+      style={[styles.item, customStyles && customStyles]}>
+      <View style={styles.itemWrapper}>
+        <View style={{ height: 64, width: 64 }}>
+          {item.icon ? item.icon : <AddressSvg />}
+        </View>
+        <View style={styles.textWrapper}>
           <Text style={styles.label}>{item.name}</Text>
-          <Text note>{`${item.address}`}</Text>
-        </Body>
-      </Left>
-      <Right>
+          <Text style={styles.address}>{`${item.address}`}</Text>
+          {item.amount && <Text style={styles.amount}>{`${item.amount}`}</Text>}
+        </View>
+      </View>
+      <View>
         <RightArrowSvg />
-      </Right>
-    </ListItem>
+      </View>
+    </Pressable>
   )
 }
 
 const styles = StyleSheet.create({
   item: {
-    backgroundColor: '#fff',
-    borderRadius: 0,
-    marginLeft: 0,
-    paddingLeft: 16,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    backgroundColor: WHITE_COLOR,
+    borderRadius: 4,
+    paddingVertical: 12,
+    paddingHorizontal: 16,
   },
-  label: { marginBottom: 3, marginTop: 3 },
-  itemWrapper: { flex: 2 },
+  textWrapper: {
+    marginHorizontal: 16,
+  },
+  label: {
+    fontFamily: NUNITO_SANS_SEMIBOLD,
+    fontWeight: '700',
+    fontSize: 17,
+    color: TEXT_COLOR,
+    marginBottom: 3,
+    marginTop: 3,
+  },
+  address: {
+    fontFamily: NUNITO_SANS,
+    fontWeight: '400',
+    fontSize: 14,
+    color: TEXT_COLOR,
+  },
+  amount: {
+    fontFamily: NUNITO_SANS,
+    fontWeight: '600',
+    fontSize: 14,
+    color: TEXT_COLOR,
+  },
+  itemWrapper: {
+    flex: 2,
+    flexDirection: 'row',
+  },
 })

@@ -5,6 +5,7 @@ import { StyleSheet, Text } from 'react-native'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
+import ClaimBadges from 'pages/ClaimBadges/ClaimBadges'
 import Tokens from 'pages/Tokens/Dashboard'
 
 const segmentLists = [
@@ -41,7 +42,7 @@ const AssetsCollections = () => {
       case Assets.COLLECTIBLES:
         return <Text style={styles.container}>Collectibles</Text>
       case Assets.BADGES:
-        return <Text style={styles.container}>Badges</Text>
+        return <ClaimBadges />
     }
   }
 

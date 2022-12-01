@@ -1,11 +1,13 @@
 import { useNetInfo } from '@react-native-community/netinfo'
 import { useNavigation } from '@react-navigation/native'
-import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
+import { Body, Button, Header, Left, Right, Title } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
+import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import Text from 'components/Text'
-import { DECLINE_COLOR } from 'constants/color'
+import { DECLINE_COLOR, TEXT_COLOR } from 'constants/color'
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export type HeaderSideButton = {
   icon: string | React.ReactElement
@@ -29,7 +31,7 @@ function NavigationHeader({
   const netInfo = useNetInfo()
 
   return (
-    <>
+    <View>
       <Header
         transparent
         style={{ elevation: 1 }}
@@ -38,9 +40,9 @@ function NavigationHeader({
           {(function () {
             switch (left.icon) {
               case 'back':
-                return navigation.canGoBack() ? (
+                return !navigation.canGoBack() ? (
                   <Button transparent onPress={navigation.goBack}>
-                    <Icon name='arrow-back' style={{ color: '#000' }} />
+                    <LeftArrowIcon />
                   </Button>
                 ) : null
               case 'skip':
@@ -55,7 +57,7 @@ function NavigationHeader({
           })()}
         </Left>
         <Body style={{ flex: 1, alignItems: 'center' }}>
-          {title ? <Title style={{ color: '#000' }}>{title}</Title> : null}
+          {title ? <Title style={styles.title}>{title}</Title> : null}
         </Body>
         <Right style={{ flex: 0.2 }}>
           {rightComponent ? (
@@ -72,7 +74,14 @@ function NavigationHeader({
           <Text style={styles.netInfoText}>No network connection</Text>
         </View>
       )}
-    </>
+      <View
+        style={{
+          height: 1,
+          width: '100%',
+          backgroundColor: '#ddd',
+        }}
+      />
+    </View>
   )
 }
 
@@ -86,6 +95,13 @@ const styles = StyleSheet.create({
   netInfoText: {
     color: 'white',
     fontSize: 15,
+  },
+  title: {
+    fontFamily: NUNITO_SANS_SEMIBOLD,
+    fontWeight: '700',
+    fontSize: 17,
+    textAlign: 'justify',
+    color: TEXT_COLOR,
   },
 })
 
