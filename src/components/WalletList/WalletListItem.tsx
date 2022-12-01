@@ -7,22 +7,21 @@ import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
 import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 
-import { WalletItemProps } from './types'
+import { WalletItem } from './types'
 
 interface WalletListItemProps {
-  item: WalletItemProps
-  selectedWalletId: string | number
-  onPressItem?: any
+  item: WalletItem
+  selected: boolean
+  onPressItem?: (item: WalletItem) => void
   leftIconType: 'checked' | 'dots'
 }
 
 const WalletListItem = ({
   item,
+  selected,
   leftIconType = 'dots',
   onPressItem,
-  selectedWalletId,
 }: WalletListItemProps) => {
-  const isItemSelected = selectedWalletId === item.id
 
   const handleOnPressAction = () => {
     if (onPressItem) {
@@ -33,10 +32,10 @@ const WalletListItem = ({
   return (
     <TouchableOpacity
       onPress={handleOnPressAction}
-      style={[styles.container, isItemSelected && styles.selectedItem]}>
+      style={[styles.container, selected && styles.selectedItem]}>
       <View style={styles.content}>
         <View>
-          {isItemSelected && leftIconType === 'dots' && (
+          {selected && leftIconType === 'dots' && (
             <View style={styles.checkedIcon}>
               <CheckBoxIcon />
             </View>
@@ -50,7 +49,7 @@ const WalletListItem = ({
       </View>
       <View>
         {leftIconType === 'dots' && <MoreIcon />}
-        {leftIconType === 'checked' && isItemSelected && <CheckBoxIcon />}
+        {leftIconType === 'checked' && selected && <CheckBoxIcon />}
       </View>
     </TouchableOpacity>
   )
@@ -60,12 +59,13 @@ export default WalletListItem
 
 const styles = StyleSheet.create({
   container: {
-    height: 80,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    paddingVertical: 16,
-    paddingHorizontal: 15,
+    paddingTop: 17,
+    paddingBottom: 18,
+    paddingRight: 12,
+    paddingLeft: 16,
     backgroundColor: WHITE_COLOR,
     borderColor: BLACK_COLOR_OPACITY(0.1),
     borderWidth: 0.2,
@@ -88,12 +88,11 @@ const styles = StyleSheet.create({
     height: 45,
   },
   textContent: {
-    marginHorizontal: 15,
+    marginLeft: 16
   },
   textTitle: {
     fontSize: 17,
     fontFamily: NUNITO_SANS,
-    textTransform: 'capitalize',
     fontWeight: '700',
     color: TEXT_COLOR,
   },

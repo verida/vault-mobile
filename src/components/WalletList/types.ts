@@ -18,7 +18,7 @@ export type WalletType = {
   chain?: string
 }
 
-export type WalletItemProps = {
+export type WalletItem = {
   count: number
   icon: Element
   id: string

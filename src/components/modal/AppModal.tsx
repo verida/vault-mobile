@@ -1,5 +1,5 @@
 import React from 'react'
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
 
 import CloseIcon from 'assets/icons/close_icon.svg'
 import {
@@ -20,6 +20,13 @@ interface AppModalProps {
   children: React.ReactNode
 }
 
+const HIT_SLOP = {
+  bottom: 20,
+  left: 20,
+  right: undefined,
+  top: 50,
+}
+
 const AppModal = ({
   onClose,
   visible,
@@ -32,12 +39,7 @@ const AppModal = ({
       animationType='slide'
       transparent={true}
       visible={visible}
-      hitSlop={{
-        bottom: 20,
-        left: 20,
-        right: undefined,
-        top: 50,
-      }}
+      hitSlop={HIT_SLOP}
       onRequestClose={onClose}>
       <View style={styles.container}>
         <View style={styles.headerCurved} />
@@ -50,7 +52,7 @@ const AppModal = ({
             <View />
           </View>
           <View style={styles.divider} />
-          <View style={styles.modalView}>{children}</View>
+          <ScrollView style={styles.modalView}>{children}</ScrollView>
           {footer && <View style={styles.bottom}>{footer}</View>}
         </View>
       </View>
@@ -102,7 +104,8 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     backgroundColor: WHITE_COLOR,
     borderTopColor: LIGHTGREY_COLOR,
-    paddingHorizontal: 16,
+    padding: 16,
+    paddingTop: 12,
     elevation: 4,
     shadowColor: LIGHTGREY_COLOR,
     shadowOffset: {

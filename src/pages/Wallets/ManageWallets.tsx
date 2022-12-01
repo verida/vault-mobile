@@ -11,7 +11,7 @@ import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletType } from 'components/WalletList/types'
+import { WalletItem, WalletType } from 'components/WalletList/types'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -69,7 +69,7 @@ const ManageWallets = (props: Props) => {
   const showDeleteAlert = () =>
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
 
-  const showConfirmationAlert = (item: WalletType) =>
+  const showConfirmationAlert = (item: WalletItem) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -97,6 +97,65 @@ const ManageWallets = (props: Props) => {
     setAddModalVisible(true)
   }
 
+  const navigationActionHandler = () => {
+    showActionSheetWithOptions(
+      {
+        options: ['Create new wallet', 'Import a wallet', 'Cancel'],
+        icons: [
+          <PlusIcon key={'Create new wallet'} />,
+          <UnionIcon key={'Import a wallet'} />,
+        ],
+        tintIcons: false,
+        cancelButtonIndex: 2,
+        tintColor: BLACK_COLOR,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          onPressAddWallet()
+        }
+        if (buttonIndex === 1) {
+          onPressImportWallet()
+        }
+      }
+    )
+  }
+
+  const onPressWalletListHandler = (item: WalletItem) => {
+    showActionSheetWithOptions(
+      {
+        options: [
+          'View seed phrases',
+          'Switch to this wallet',
+          'Delete Wallet',
+          'Cancel',
+        ],
+        cancelButtonIndex: 3,
+        destructiveButtonIndex: 2,
+        tintColor: BLACK_COLOR,
+      },
+      (buttonIndex) => {
+        if (buttonIndex === 0) {
+          navigation.navigate('SingleWallet', { item })
+        }
+        if (buttonIndex === 1) {
+          const selectedWalletID = item.id
+          onSetSelectedWallet(selectedWalletID)
+          SecureStore.setItemAsync(
+            SELECTED_WALLET_STORAGE_KEY,
+            selectedWalletID
+          )
+        }
+        if (buttonIndex === 2) {
+          if (walletCount <= 1) {
+            showDeleteAlert()
+          } else {
+            showConfirmationAlert(item)
+          }
+        }
+      }
+    )
+  }
+
   const list = Object.values(wallets).map((singleWallet) => {
     const { label, id, type } = singleWallet
     return {
@@ -107,33 +166,14 @@ const ManageWallets = (props: Props) => {
     }
   })
 
+
   return (
     <Container>
       <NavigationHeader
         title='Manage Wallets'
         right={{
           icon: <PlusIcon />,
-          action: () =>
-            showActionSheetWithOptions(
-              {
-                options: ['Create new wallet', 'Import a wallet', 'Cancel'],
-                icons: [
-                  <PlusIcon key={'Create new wallet'} />,
-                  <UnionIcon key={'Import a wallet'} />,
-                ],
-                tintIcons: false,
-                cancelButtonIndex: 2,
-                tintColor: BLACK_COLOR,
-              },
-              (buttonIndex) => {
-                if (buttonIndex === 0) {
-                  onPressAddWallet()
-                }
-                if (buttonIndex === 1) {
-                  onPressImportWallet()
-                }
-              }
-            ),
+          action: navigationActionHandler
         }}
       />
       {loading ? (
@@ -143,43 +183,9 @@ const ManageWallets = (props: Props) => {
           <Content style={styles.content}>
             <List>
               <WalletList
-                onPressItem={(item: WalletType) => {
-                  showActionSheetWithOptions(
-                    {
-                      options: [
-                        'View seed phrases',
-                        'Switch to this wallet',
-                        'Delete Wallet',
-                        'Cancel',
-                      ],
-                      cancelButtonIndex: 3,
-                      destructiveButtonIndex: 2,
-                      tintColor: BLACK_COLOR,
-                    },
-                    (buttonIndex) => {
-                      if (buttonIndex === 0) {
-                        navigation.navigate('SingleWallet', { item })
-                      }
-                      if (buttonIndex === 1) {
-                        const selectedWalletID = item.id
-                        onSetSelectedWallet(selectedWalletID)
-                        SecureStore.setItemAsync(
-                          SELECTED_WALLET_STORAGE_KEY,
-                          selectedWalletID
-                        )
-                      }
-                      if (buttonIndex === 2) {
-                        if (walletCount <= 1) {
-                          showDeleteAlert()
-                        } else {
-                          showConfirmationAlert(item)
-                        }
-                      }
-                    }
-                  )
-                }}
                 list={list}
                 selectedWalletId={selectedWalletId}
+                onPressItem={onPressWalletListHandler}
               />
             </List>
           </Content>
