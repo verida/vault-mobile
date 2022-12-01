@@ -1,24 +1,24 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import * as SecureStore from 'expo-secure-store'
 import { connect } from 'react-redux'
+import { Dispatch } from 'redux'
 
+import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import SettingsIcon from 'assets/settings_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import AppModal from 'components/modal/AppModal'
+import WalletList from 'components/WalletList'
 import { WalletItem, WalletType } from 'components/WalletList/types'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
+import { setSelectedWallet } from 'reduxStore/wallet/actions'
 import { getAllWallets, getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 import { PRIMARY_COLOR, WHITE_COLOR } from '../../constants/color'
-import { setSelectedWallet } from 'reduxStore/wallet/actions'
-import { Dispatch } from 'redux'
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
-import WalletList from 'components/WalletList'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void
@@ -37,7 +37,7 @@ const WalletSelectorModal = ({
   wallets,
   selectedWalletId,
   onCloseModal,
-  onSetSelectedWallet
+  onSetSelectedWallet,
 }: WalletSelectorModalProps) => {
   const [walletList, setWalletList] = useState<WalletItem[]>([])
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
@@ -49,10 +49,7 @@ const WalletSelectorModal = ({
     }
   }, [chains, wallets])
 
-  const getWallets = (
-    allWallets: WalletType,
-    allChains: any
-  ): WalletItem[] => {
+  const getWallets = (allWallets: WalletType, allChains: any): WalletItem[] => {
     return Object.values(allWallets || {}).map((singleWallet: any) => {
       const { label, id, type } = singleWallet
       return {
@@ -67,10 +64,7 @@ const WalletSelectorModal = ({
   const handleWalletSelection = (item: WalletItem) => {
     const selectedWalletID = item.id
     onSetSelectedWallet(selectedWalletID)
-    SecureStore.setItemAsync(
-      SELECTED_WALLET_STORAGE_KEY,
-      selectedWalletID
-    )
+    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, selectedWalletID)
   }
 
   const onPressHandler = () => {

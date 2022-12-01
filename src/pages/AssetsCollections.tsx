@@ -76,6 +76,7 @@ const AssetsCollections = (props: any) => {
       <NavigationHeader
         left={{ icon: 'avatar' }}
         avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
+        // @TODO: develop a separate component to handle walletSelect navigation
         titleIcon={walletSelect}
       />
       <View>

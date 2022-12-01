@@ -20,7 +20,6 @@ const WalletList = ({
   leftIconType = 'dots',
   selectedWalletId,
 }: WalletListProps) => {
-
   return (
     <SwipeListView
       data={list}

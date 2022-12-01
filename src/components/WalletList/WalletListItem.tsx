@@ -22,7 +22,6 @@ const WalletListItem = ({
   leftIconType = 'dots',
   onPressItem,
 }: WalletListItemProps) => {
-
   const handleOnPressAction = () => {
     if (onPressItem) {
       onPressItem(item)
@@ -88,7 +87,7 @@ const styles = StyleSheet.create({
     height: 45,
   },
   textContent: {
-    marginLeft: 16
+    marginLeft: 16,
   },
   textTitle: {
     fontSize: 17,

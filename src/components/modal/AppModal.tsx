@@ -1,5 +1,12 @@
 import React from 'react'
-import { Modal, Pressable, ScrollView, StyleSheet, Text, View } from 'react-native'
+import {
+  Modal,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
 import CloseIcon from 'assets/icons/close_icon.svg'
 import {

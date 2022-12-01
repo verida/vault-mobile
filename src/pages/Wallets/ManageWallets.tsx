@@ -166,14 +166,13 @@ const ManageWallets = (props: Props) => {
     }
   })
 
-
   return (
     <Container>
       <NavigationHeader
         title='Manage Wallets'
         right={{
           icon: <PlusIcon />,
-          action: navigationActionHandler
+          action: navigationActionHandler,
         }}
       />
       {loading ? (
