@@ -40,7 +40,7 @@ function NavigationHeader({
           {(function () {
             switch (left.icon) {
               case 'back':
-                return !navigation.canGoBack() ? (
+                return navigation.canGoBack() ? (
                   <Button transparent onPress={navigation.goBack}>
                     <LeftArrowIcon />
                   </Button>

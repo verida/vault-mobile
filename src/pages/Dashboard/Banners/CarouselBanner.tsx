@@ -39,12 +39,12 @@ const bannerDefinitions: TBanner[] = [
   {
     label: 'Claim Your Verida Badges',
     image: claimBadgesBannerImage,
-    screen: 'PublicProfile',
+    screen: 'ClaimBadges',
   },
   {
     label: 'Join The Waitlist',
     image: veridaOneBannerImage,
-    screen: 'PublicProfile',
+    screen: 'ClaimBadges',
   },
 ]
 

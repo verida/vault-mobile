@@ -32,7 +32,11 @@ const mockAddressItem = {
 type Status = 'error' | 'success' | undefined
 
 const BadgeClaiming = () => {
-  const [status] = useState<Status>()
+  const [status, setStatus] = useState<Status>()
+
+  const handleClaimAction = () => {
+    setStatus('error')
+  }
 
   const claimBadgeCard = (
     <ScrollView style={styles.content}>
@@ -66,10 +70,11 @@ const BadgeClaiming = () => {
         <Text style={styles.trxnText}>≈ 0.001 ETH (1.55 USD)</Text>
       </View>
       <Button
-        style={styles.actionButton}
         color='primary'
         disabled={false}
-        loading={false}>
+        loading={false}
+        style={styles.actionButton}
+        onPress={handleClaimAction}>
         Claim
       </Button>
     </View>

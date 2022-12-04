@@ -55,9 +55,9 @@ function MainNavigator() {
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name={'BadgeClaiming'} component={BadgeClaiming} />
-      <Stack.Screen name={'ClaimBadges'} component={ClaimBadges} />
       <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
+      <Stack.Screen name={'ClaimBadges'} component={ClaimBadges} />
+      <Stack.Screen name={'BadgeClaiming'} component={BadgeClaiming} />
       <Stack.Screen name={'Inbox'} component={Inbox} />
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
       <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
