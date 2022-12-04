@@ -16,15 +16,15 @@ import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
-import { getAllWallets, getSelectedWalletId } from 'reduxStore/wallet/selectors'
+import { getAllWallets, getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
 
-import { PRIMARY_COLOR, WHITE_COLOR } from '../../constants/color'
+import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void
   modalVisible: boolean
   selectedWalletId?: any
-  wallets?: WalletType
+  wallets?: WalletItem[]
   chains?: any
   onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
 }
@@ -44,22 +44,9 @@ const WalletSelectorModal = ({
 
   useEffect(() => {
     if (wallets) {
-      const list = getWallets(wallets, chains)
-      setWalletList(list)
+      setWalletList(wallets)
     }
   }, [chains, wallets])
-
-  const getWallets = (allWallets: WalletType, allChains: any): WalletItem[] => {
-    return Object.values(allWallets || {}).map((singleWallet: any) => {
-      const { label, id, type } = singleWallet
-      return {
-        label,
-        id,
-        icon: <MultichainWalletIcon />,
-        count: type === 'multi' ? Object.keys(allChains).length : 1,
-      }
-    })
-  }
 
   const handleWalletSelection = (item: WalletItem) => {
     const selectedWalletID = item.id
@@ -104,9 +91,10 @@ const WalletSelectorModal = ({
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
+  const chains = selectChains(rootState)
   return {
-    wallets: getAllWallets(state),
-    chains: selectChains(rootState),
+    chains,
+    wallets: getWalletList(state, chains),
     selectedWalletId: getSelectedWalletId(state),
   }
 }

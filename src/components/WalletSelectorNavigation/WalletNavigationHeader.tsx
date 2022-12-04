@@ -1,5 +1,5 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import ChevronDownIcon from 'assets/chevron_down_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
@@ -8,7 +8,7 @@ import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: WalletItem | undefined
+  selectedWallet: WalletItem
   openWalletModal: () => void
 }
 
@@ -23,7 +23,10 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       style={styles.container}
       onPress={openWalletModal}>
       <View>
-        <MultichainWalletIcon />
+        {selectedWallet.icon
+          ? <Image source={{ uri: selectedWallet.icon }} style={styles.icon} />
+          : <MultichainWalletIcon />
+        }
       </View>
       <View style={styles.navigationContent}>
         <View style={styles.textWrapper}>
@@ -32,7 +35,13 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
             <ChevronDownIcon />
           </View>
         </View>
-        <Text style={styles.subText}>{selectedWallet?.count} addresses</Text>
+        <Text style={styles.subText}>
+          {
+            selectedWallet.address ?
+              `${selectedWallet.address.slice(0, 6)}...${selectedWallet.address.slice(-4)}`
+              : `${selectedWallet.count} addresses`
+          }
+        </Text>
       </View>
     </Pressable>
   )
@@ -59,5 +68,9 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS,
     fontWeight: '600',
     color: BLACK_COLOR,
+  },
+  icon: {
+    width: 32,
+    height: 32,
   },
 })

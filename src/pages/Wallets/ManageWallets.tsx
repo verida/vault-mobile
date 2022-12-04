@@ -2,7 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content, List } from 'native-base'
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
@@ -24,6 +24,7 @@ import {
   getAllWallets,
   getSelectedWalletId,
   getWalletCount,
+  getWalletList,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
 
@@ -37,7 +38,7 @@ import ImportWalletModal from './ImportWalletModal'
 export type walletIdType = string
 
 type Props = {
-  wallets: [WalletType]
+  wallets: WalletItem[]
   walletCount: number
   onCreateNewWallet: () => Promise<void>
   onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
@@ -65,6 +66,13 @@ const ManageWallets = (props: Props) => {
   const { showActionSheetWithOptions } = useActionSheet()
   const [importModalVisible, setImportModalVisible] = useState(false)
   const [addModalVisible, setAddModalVisible] = useState(false)
+  const [walletList, setWalletList] = useState<WalletItem[]>([])
+
+  useEffect(() => {
+    if (wallets) {
+      setWalletList(wallets)
+    }
+  }, [chains, wallets])
 
   const showDeleteAlert = () =>
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
@@ -156,16 +164,6 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const list = Object.values(wallets).map((singleWallet) => {
-    const { label, id, type } = singleWallet
-    return {
-      label,
-      id,
-      icon: <OtherSvg />,
-      count: type === 'multi' ? Object.keys(chains).length : 1,
-    }
-  })
-
   return (
     <Container>
       <NavigationHeader
@@ -182,7 +180,7 @@ const ManageWallets = (props: Props) => {
           <Content style={styles.content}>
             <List>
               <WalletList
-                list={list}
+                list={walletList}
                 selectedWalletId={selectedWalletId}
                 onPressItem={onPressWalletListHandler}
               />
@@ -210,12 +208,13 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
+  const chains = selectChains(rootState)
   return {
-    wallets: getAllWallets(state),
+    chains,
+    wallets: getWalletList(state, chains),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
     loading: getWalletProcessingState(state),
-    chains: selectChains(rootState),
   }
 }
 

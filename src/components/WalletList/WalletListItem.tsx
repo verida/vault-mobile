@@ -1,5 +1,5 @@
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
 import MoreIcon from 'assets/more_icon.svg'
@@ -39,11 +39,12 @@ const WalletListItem = ({
               <CheckBoxIcon />
             </View>
           )}
-          <MultichainWalletIcon />
+          {item.icon ? <Image source={{ uri: item.icon }} style={styles.icon} /> : <MultichainWalletIcon />}
+
         </View>
         <View style={styles.textContent}>
           <Text style={styles.textTitle}>{item.label}</Text>
-          <Text style={styles.subText}>{`${item.count} addresses`}</Text>
+          <Text style={styles.subText}>{item.address ? `${item.address.slice(0, 6)}...${item.address.slice(-4)}` : `${item.count} addresses`}</Text>
         </View>
       </View>
       <View>
@@ -100,5 +101,9 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS,
     fontWeight: '400',
     color: TEXT_COLOR,
+  },
+  icon: {
+    width: 50,
+    height: 50,
   },
 })

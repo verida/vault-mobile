@@ -113,21 +113,32 @@ export const getTokensData = (state) => {
   }
 }
 
+export const getAllWallets = (state) => {
+  return state.wallets.data || []
+}
+
 export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
-export const getSelectedWalletById = (state, chains) => {
-  const wallets = state.wallets.data || []
-  const walletList = Object.values(wallets).map((singleWallet) => {
-    const { label, id, type } = singleWallet
+export const getWalletList = (state, allChains) => {
+  const allWallets = getAllWallets(state)
+  return Object.values(allWallets || {}).map((singleWallet) => {
+    const { label, id, type, chain } = singleWallet
+    let walletChain = ''
+    Object.keys(singleWallet.accounts).map(item => walletChain = item)
     return {
-      label,
+      label: chain ? chain : label,
       id,
-      icon: '',
-      count: type === 'multi' ? Object.keys(chains).length : 1,
+      icon: type === 'single' ? allChains[chain].icon : null,
+      count: type === 'multi' ? Object.keys(allChains).length : 1,
+      address: chain ? singleWallet.accounts[walletChain].address : null
     }
   })
+}
+
+export const getSelectedWalletById = (state, chains) => {
+  const walletList = getWalletList(state, chains)
   const selectedWalletId = state.selectedWallet
   const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
   return selectedWallet
@@ -135,10 +146,6 @@ export const getSelectedWalletById = (state, chains) => {
 
 export const getWalletProcessingState = (state) => {
   return state.walletProcessing.loading
-}
-
-export const getAllWallets = (state) => {
-  return state.wallets.data || []
 }
 
 export const getWalletCount = (state) => {

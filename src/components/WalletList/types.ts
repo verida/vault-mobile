@@ -20,8 +20,9 @@ export type WalletType = {
 
 export type WalletItem = {
   count: number
-  icon: Element
+  icon: string
   id: string
   label: string
   other?: any
+  address?: string
 }
