@@ -1,3 +1,4 @@
+import * as SecureStore from 'expo-secure-store'
 import { Container, Content } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -5,6 +6,7 @@ import { connect } from 'react-redux'
 
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Text from 'components/Text'
+import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { useAuth } from 'hooks/useAuth'
 import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
 
@@ -21,6 +23,7 @@ const SuccessPage = (props) => {
 
   const onDone = async () => {
     setAuthStatus(true)
+    await SecureStore.setItemAsync(FIRST_TIME_LOGIN_KEY, 'true')
     await refresh()
   }
 

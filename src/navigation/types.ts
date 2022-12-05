@@ -2,7 +2,6 @@ import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
-import { CreateIdentityMode } from 'pages/Account/Identity/CreateIdentity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
@@ -20,7 +19,6 @@ export type AuthStackParams = {
   CreatePin: undefined
   Success: undefined
   SelectNetwork: undefined
-  CreateIdentity: undefined
 }
 
 export type DashboardTabParams = {
@@ -62,7 +60,6 @@ export type MainStackParams = {
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   AddAccount: { mode: CreateAccountMode }
   DeleteAccount: undefined
-  CreateIdentity: { mode?: CreateIdentityMode }
   SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
