@@ -6,7 +6,6 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
-import CreateIdentity from 'pages/Account/Identity/CreateIdentity'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
@@ -94,7 +93,6 @@ function MainNavigator() {
       <Stack.Screen name={'AddAccount'} component={Create} />
       <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
       <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
-      <Stack.Screen name={'CreateIdentity'} component={CreateIdentity} />
 
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen
