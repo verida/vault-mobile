@@ -2,23 +2,23 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import SettingsIcon from 'assets/settings_icon.svg'
-import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
-import { WalletItem, WalletType } from 'components/WalletList/types'
+import { WalletItem } from 'components/WalletList/types'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
-import { getAllWallets, getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
+import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
 
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
+import Button from 'components/Button'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void
@@ -49,26 +49,24 @@ const WalletSelectorModal = ({
   }, [chains, wallets])
 
   const handleWalletSelection = (item: WalletItem) => {
-    const selectedWalletID = item.id
-    onSetSelectedWallet(selectedWalletID)
-    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, selectedWalletID)
+    onSetSelectedWallet(item.id)
+    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, item.id)
+    onCloseModal()
   }
 
-  const onPressHandler = () => {
+  const handleManageWalletsPress = () => {
     navigation.navigate('ManageWallets')
     onCloseModal()
   }
 
   const ModalFooter = (
-    <Pressable
+    <Button
+      icon={<SettingsIcon />}
       style={styles.footerButton}
-      onPress={onPressHandler}
+      onPress={handleManageWalletsPress}
       hitSlop={HIT_SLOP}>
-      <View style={styles.buttonIcon}>
-        <SettingsIcon />
-      </View>
-      <Text style={styles.buttonText}>Manage Wallets</Text>
-    </Pressable>
+      Manage Wallets
+    </Button>
   )
 
   return (
@@ -118,11 +116,6 @@ const styles = StyleSheet.create({
     width: '100%',
     color: WHITE_COLOR,
     borderRadius: 4,
-    paddingVertical: 10,
-    paddingHorizontal: 35,
-    marginTop: 12,
-    marginHorizontal: 16,
-    marginBottom: 50,
     justifyContent: 'center',
     alignItems: 'center',
   },

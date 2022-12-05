@@ -6,6 +6,7 @@ import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import { WalletItem } from 'components/WalletList/types'
 import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
+import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 interface WalletNavigationHeaderProps {
   selectedWallet: WalletItem
@@ -36,11 +37,8 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
           </View>
         </View>
         <Text style={styles.subText}>
-          {
-            selectedWallet.address ?
-              `${selectedWallet.address.slice(0, 6)}...${selectedWallet.address.slice(-4)}`
-              : `${selectedWallet.count} addresses`
-          }
+          {selectedWallet.address ? getTruncatedWalletAddress(selectedWallet.address) :
+            `${selectedWallet.count} addresses`}
         </Text>
       </View>
     </Pressable>

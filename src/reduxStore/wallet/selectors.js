@@ -114,7 +114,7 @@ export const getTokensData = (state) => {
 }
 
 export const getAllWallets = (state) => {
-  return state.wallets.data || []
+  return state.wallets.data || {}
 }
 
 export const getSelectedWalletId = (state) => {
@@ -123,16 +123,15 @@ export const getSelectedWalletId = (state) => {
 
 export const getWalletList = (state, allChains) => {
   const allWallets = getAllWallets(state)
-  return Object.values(allWallets || {}).map((singleWallet) => {
-    const { label, id, type, chain } = singleWallet
-    let walletChain = ''
-    Object.keys(singleWallet.accounts).map(item => walletChain = item)
+  return Object.values(allWallets).map((wallet) => {
+    const { label, id, type, chain } = wallet
+
     return {
-      label: chain ? chain : label,
       id,
+      label,
       icon: type === 'single' ? allChains[chain].icon : null,
-      count: type === 'multi' ? Object.keys(allChains).length : 1,
-      address: chain ? singleWallet.accounts[walletChain].address : null
+      count: type === 'multi' ? Object.keys(wallet.accounts).length : 1,
+      address: chain ? Object.values(wallet.accounts).reduce((account) => account).address : null
     }
   })
 }

@@ -2,7 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as SecureStore from 'expo-secure-store'
 import { Container, Content, List } from 'native-base'
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
@@ -11,7 +11,7 @@ import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletItem, WalletType } from 'components/WalletList/types'
+import { WalletItem } from 'components/WalletList/types'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -21,7 +21,6 @@ import {
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
 import {
-  getAllWallets,
   getSelectedWalletId,
   getWalletCount,
   getWalletList,
@@ -30,7 +29,6 @@ import {
 
 import PlusIcon from '../../assets/plus_icon.svg'
 import UnionIcon from '../../assets/union_icon.svg'
-import OtherSvg from '../../assets/wallets/Other.svg'
 import { BLACK_COLOR, SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
@@ -74,8 +72,9 @@ const ManageWallets = (props: Props) => {
     }
   }, [chains, wallets])
 
-  const showDeleteAlert = () =>
+  const showDeleteAlert = () => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
+  }
 
   const showConfirmationAlert = (item: WalletItem) =>
     Alert.alert(

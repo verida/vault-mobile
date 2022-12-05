@@ -6,6 +6,10 @@ export const isNativeToken = (address) => {
   return address.assetName.namespace === 'slip44'
 }
 
+export const getTruncatedWalletAddress = (address, leftIndex = 6, rightIndex = -4) => {
+  return `${address.slice(0, leftIndex)}...${address.slice(rightIndex)}`
+}
+
 export const getTokenAddress = (address) => {
   if (isNativeToken(address)) {
     return 'slip44'
