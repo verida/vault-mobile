@@ -24,18 +24,29 @@ const BadgeItem: React.FC<BadgeItemProps> = ({
         <Image style={styles.badgeIcon} source={item.icon} />
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{item?.connection}</Text>
-          <Text style={styles.subText}>{item?.status}</Text>
+          <Text style={styles.subText}>{item?.status ? item.username : 'not connected'}</Text>
         </View>
       </View>
       <View>
-        <Button
-          style={styles.actionButton}
-          color='primary'
-          disabled={false}
-          loading={false}
-          onPress={onPress}>
-          {buttonLabel}
-        </Button>
+        {
+          item.status ?
+            <Button
+              style={styles.actionButton}
+              color='primary'
+              disabled={false}
+              loading={false}
+              onPress={onPress}>
+              {buttonLabel}
+            </Button> :
+            <Button
+              style={styles.actionButton}
+              color='light-primary'
+              disabled={false}
+              loading={false}
+              onPress={onPress}>
+              {buttonLabel}
+            </Button>
+        }
       </View>
     </View>
   )
@@ -75,7 +86,7 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
   },
   actionButton: {
-    fontSize: 12,
+    // fontSize: 12,
     borderRadius: 70,
     paddingHorizontal: 12,
     paddingVertical: 4,

@@ -3,6 +3,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import ErrorAlertIcon from 'assets/alert_error_icon.svg'
 import InfoAlertIcon from 'assets/alert_info_icon.svg'
+import ChevronRightIcon from 'assets/icons/chevron_right_x24.svg'
 import WarningAlertIcon from 'assets/alert_warning_icon.svg'
 import { BACKGROUND_GREY_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
@@ -28,19 +29,21 @@ const getAlertColor = (type: AlertType): AlertType => {
   }
 }
 
-const AppAlert: React.FC<AppAlertProps> = ({ body, type, action }) => {
-  const DisplayAlertIcon = (iconType: AlertType): React.ReactElement => {
-    switch (iconType) {
-      case 'info':
-        return <InfoAlertIcon />
-      case 'warning':
-        return <WarningAlertIcon />
-      case 'error':
-        return <ErrorAlertIcon />
-      default:
-        return <InfoAlertIcon />
-    }
+const DisplayAlertIcon = (iconType: AlertType): React.ReactElement => {
+  switch (iconType) {
+    case 'info':
+      return <InfoAlertIcon />
+    case 'warning':
+      return <WarningAlertIcon />
+    case 'error':
+      return <ErrorAlertIcon />
+    default:
+      return <InfoAlertIcon />
   }
+}
+
+
+const AppAlert: React.FC<AppAlertProps> = ({ body, type, action }) => {
 
   return (
     <View style={[styles.container, styles[getAlertColor(type)]]}>
@@ -50,7 +53,7 @@ const AppAlert: React.FC<AppAlertProps> = ({ body, type, action }) => {
       </View>
       {action && (
         <Pressable onPress={action}>
-          <Text>i</Text>
+          <ChevronRightIcon />
         </Pressable>
       )}
     </View>
@@ -66,7 +69,6 @@ const styles = StyleSheet.create({
     backgroundColor: BACKGROUND_GREY_COLOR,
     borderLeftColor: 'yellow',
     borderLeftWidth: 3,
-    minHeight: 36,
     paddingVertical: 8,
     paddingHorizontal: 16,
     borderRadius: 4,

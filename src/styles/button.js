@@ -1,7 +1,7 @@
 import { StyleSheet } from 'react-native'
 
-import { LIGHTGREY_COLOR, PRIMARY_COLOR, WHITE_COLOR } from '../constants/color'
-import { NUNITO_SANS_BOLD } from '../constants/text'
+import { LIGHTGREY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR_200, PRIMARY_COLOR_300, WHITE_COLOR } from '/constants/color'
+import { NUNITO_SANS_BOLD } from '/constants/text'
 
 const transparent = {
   backgroundColor: 'transparent',
@@ -20,6 +20,11 @@ export default StyleSheet.create({
   outlined: {
     backgroundColor: 'transparent',
     borderColor: WHITE_COLOR,
+  },
+  'light-primary': {
+    backgroundColor: PRIMARY_COLOR_200,
+    color: PRIMARY_COLOR_300,
+    borderWidth: 0,
   },
   primary: {
     backgroundColor: PRIMARY_COLOR,

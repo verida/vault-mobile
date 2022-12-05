@@ -23,6 +23,8 @@ export default (props) => {
         return 'warning'
       case 'transparent-warning':
         return 'warning'
+      case 'light-primary':
+        return 'light-primary'
       default:
         return 'white'
     }
