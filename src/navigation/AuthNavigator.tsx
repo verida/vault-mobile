@@ -3,7 +3,6 @@ import React from 'react'
 
 import { AuthStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
-import Import from 'pages/Account/Import'
 import Start from 'pages/Account/Start'
 import CreatePin from 'pages/Authentication/CreatePin'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
@@ -20,7 +19,6 @@ function AuthNavigator() {
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Start'} component={Start} />
       <Stack.Screen name={'CreateAccount'} component={Create} />
-      <Stack.Screen name={'SeedPhraseEntered'} component={Import} />
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen
         name={'SeedPhraseGenerated'}

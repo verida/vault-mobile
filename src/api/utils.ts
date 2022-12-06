@@ -87,7 +87,7 @@ export async function fetchInboxCount() {
         { read: false },
         { limit: MAX_MESSAGE_COUNT }
       )
-    store.dispatch(setNewMessagesCount(messages.length))
+    store.dispatch(setNewMessagesCount(messages?.length ?? 0))
   } catch (error) {
     Sentry.captureException(error)
   }

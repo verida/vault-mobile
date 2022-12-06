@@ -16,6 +16,7 @@ type AuthContextState = {
   loaded: boolean
   switchToAccount: (did: string) => Promise<void>
   isVeridaTeamMember: boolean
+  forcedSignOut: () => Promise<boolean>
 }
 
 const AuthContext = createContext<AuthContextState>({
@@ -25,6 +26,7 @@ const AuthContext = createContext<AuthContextState>({
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   switchToAccount: async () => {},
   isVeridaTeamMember: false,
+  forcedSignOut: async () => false,
 })
 
 export const AuthProvider: FC = ({ children }) => {
@@ -58,6 +60,11 @@ export const AuthProvider: FC = ({ children }) => {
     setLoaded(true)
   }, [])
 
+  const forcedSignOut = useCallback(async () => {
+    setAuthenticated(false)
+    return true
+  }, [])
+
   const context = useMemo(
     () => ({
       refresh,
@@ -65,8 +72,16 @@ export const AuthProvider: FC = ({ children }) => {
       loaded,
       switchToAccount,
       isVeridaTeamMember,
+      forcedSignOut,
     }),
-    [refresh, authenticated, loaded, switchToAccount, isVeridaTeamMember]
+    [
+      refresh,
+      authenticated,
+      loaded,
+      switchToAccount,
+      isVeridaTeamMember,
+      forcedSignOut,
+    ]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>

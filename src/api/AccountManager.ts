@@ -409,7 +409,7 @@ class AccountManager {
       connected = true
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
-        30000
+        50000
       )
       if (!setPublicProfileSuccess) {
         throw new Error('Failed to set public profile')

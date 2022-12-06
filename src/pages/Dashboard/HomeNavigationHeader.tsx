@@ -41,11 +41,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   } = props
 
   return (
-    <Header
-      transparent
-      style={styles.header}
-      androidStatusBarColor='light-gray'
-      {...rest}>
+    <Header transparent style={styles.header} {...rest}>
       <Left style={styles.leftContainer}>
         <View style={styles.left}>
           <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
