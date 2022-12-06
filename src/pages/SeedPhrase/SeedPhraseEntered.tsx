@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
+import isEmpty from 'lodash/isEmpty'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, TextInput } from 'react-native'
@@ -16,18 +17,33 @@ import Layout from '../../components/Layouts/Layout'
 import InputStyles from '../../styles/inputs'
 import ModifierStyles from '../../styles/modifier'
 
-function ImportAccount(
-  props: NativeStackScreenProps<MainStackParams, 'ImportAccount'>
-) {
-  const { navigation } = props
-  const usePrivateKey = false
+const cleanSeedPhrase = (phrase: string): string => {
+  return phrase.trim().replace(/\s\s+/g, ' ')
+}
+
+const verifySeedPhrase = (splitted: string[]): boolean => {
+  if (!isEmpty(splitted)) {
+    return (
+      splitted.length === MNEMONIC_LENGTH &&
+      splitted[splitted.length - 1].length > 0
+    )
+  } else {
+    return false
+  }
+}
+
+const SeedPhraseEntered = (
+  props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered'>
+) => {
+  const { route, navigation } = props
+  const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
   const [processing, setProcessing] = useState(false)
 
   useEffect(() => {
-    const verify = async () => {
+    const verify = () => {
       showError(false)
       if (usePrivateKey) {
         // We don't verify private key yet.
@@ -35,14 +51,13 @@ function ImportAccount(
         return
       }
 
-      const splitted = phrase && phrase.trim().split(' ')
-      if (!splitted) {
-        setVerified(false)
-        return
-      }
+      const cleanedPhrase = cleanSeedPhrase(phrase)
+      const splitted = !isEmpty(cleanedPhrase)
+        ? cleanedPhrase.trim().split(' ')
+        : []
 
-      const correct = splitted.length === MNEMONIC_LENGTH
-      setVerified(correct)
+      const isVerified = verifySeedPhrase(splitted)
+      setVerified(isVerified)
     }
 
     verify()
@@ -51,21 +66,26 @@ function ImportAccount(
   const onContinue = async () => {
     try {
       setProcessing(true)
-      const isValid = utils.isValidMnemonic(phrase)
+      const cleanedPhrase = cleanSeedPhrase(phrase)
+      const isValid = utils.isValidMnemonic(cleanedPhrase)
       if (!isValid) {
         showError(true)
       }
-      const result = await AccountManager.getInstance().importAccount(phrase)
+      const result = await AccountManager.getInstance().importAccount(
+        cleanedPhrase
+      )
+      setProcessing(false)
       if (!result) {
-        setProcessing(false)
         Alert.alert('Failed', 'Account already exist')
-        return
       }
-      setProcessing(false)
-      navigation.goBack()
+      if (route.params.previousScreen === 'Dashboard') {
+        navigation.navigate('Dashboard')
+      } else {
+        navigation.navigate('Success')
+      }
     } catch (e) {
-      showError(true)
       setProcessing(false)
+      showError(true)
     }
   }
 
@@ -87,7 +107,7 @@ function ImportAccount(
             value={phrase}
             autoFocus={true}
             multiline
-            editable
+            editable={!processing}
             autoCorrect={false}
             autoCapitalize='none'
             onChangeText={setPhrase}
@@ -101,7 +121,7 @@ function ImportAccount(
         <Button
           color='primary'
           onPress={onContinue}
-          disabled={!verified}
+          disabled={!verified || processing}
           loading={processing}>
           Continue
         </Button>
@@ -110,4 +130,4 @@ function ImportAccount(
   )
 }
 
-export default ImportAccount
+export default SeedPhraseEntered

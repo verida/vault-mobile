@@ -7,7 +7,7 @@ import RequestDetailsLayout from '../../components/Inbox/RequestDetailsLayout'
 import RecordList from '../../components/RecordList'
 
 const company = {
-  uri: 'http://logok.org/wp-content/uploads/2014/05/Total-logo-earth-1024x768.png',
+  uri: 'https://assets.verida.io/avatar.svg',
   name: 'Steve Smith from Verida Health: ERM',
   createdAt: 'May 25',
   type: 3,

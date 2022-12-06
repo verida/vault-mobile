@@ -1,8 +1,16 @@
 import { StyleSheet } from 'react-native'
 
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
 
 const input = {
+  fontFamily: NUNITO_SANS_SEMIBOLD,
+  fontWeight: '600',
+  fontSize: 14,
+  alignItems: 'center',
+  textAlign: 'left',
+
   borderWidth: 1,
   borderColor: LIGHTGREY_COLOR,
   borderRadius: 4,
