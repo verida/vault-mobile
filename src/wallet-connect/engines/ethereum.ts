@@ -1,4 +1,5 @@
 import { convertHexToNumber, signingMethods } from '@walletconnect/utils'
+import { ethers } from 'ethers'
 import { Alert } from 'react-native'
 
 import { getWalletController } from '../controllers'
@@ -26,7 +27,7 @@ export async function routeEthereumRequests(payload: any, state: any) {
   if (!state.connector) {
     return
   }
-  const { chainId, connector, setRequests, requests: currentRequests } = state
+  const { chainId, connector } = state
   if (!signingMethods.includes(payload.method)) {
     try {
       const result = await apiGetCustomRequest(chainId, payload)
@@ -40,9 +41,6 @@ export async function routeEthereumRequests(payload: any, state: any) {
         error: { message: 'JSON RPC method not supported' },
       })
     }
-  } else {
-    const requests = [payload, ...currentRequests]
-    setRequests(requests)
   }
 }
 
@@ -51,33 +49,32 @@ export function renderEthereumRequests(payload: any): IRequestRenderParams[] {
 
   switch (payload.method) {
     case 'eth_sendTransaction':
-    case 'eth_signTransaction':
+    case 'eth_signTransaction': {
+      const transaction = payload.params[0]
       const networkFee = ethNetworkFee(
-        convertHexToNumber(payload.params[0].gas || payload.params[0].gasLimit),
+        convertHexToNumber(transaction.gasLimit),
         weiToGwei(
           convertHexToNumber(
-            payload.params[0].gasPrice || payload.params[0].maxFeePerGas
+            ethers.BigNumber.from(transaction.maxFeePerGas).toHexString()
           )
         )
       )
       params = [
         ...params,
-        { label: 'From', value: payload.params[0].from },
-        { label: 'To', value: payload.params[0].to },
+        { label: 'From', value: transaction.from },
+        { label: 'To', value: transaction.to },
         {
           label: 'Network Fee',
           value: networkFee,
         },
         {
           label: 'Value',
-          value: payload.params[0].value
-            ? convertHexToNumber(payload.params[0].value)
-            : '',
+          value: transaction.value ? convertHexToNumber(transaction.value) : '',
         },
-        { label: 'Data', value: payload.params[0].data },
+        { label: 'Data', value: transaction.data },
       ]
       break
-
+    }
     case 'eth_sign':
       params = [
         ...params,
