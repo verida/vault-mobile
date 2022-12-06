@@ -1,3 +1,4 @@
+import remoteConfig from '@react-native-firebase/remote-config'
 import { compareVersions } from 'compare-versions'
 import React, { useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
@@ -12,6 +13,12 @@ const MetaServerChecks = () => {
   const { showModal, dismissModal } = useModal()
   const appState = useRef(AppState.currentState)
   const { fetchConfigs, forcedUpgrade } = useRemoteConfigs()
+
+  useEffect(() => {
+    remoteConfig().setConfigSettings({
+      minimumFetchIntervalMillis: 30000,
+    })
+  }, [])
 
   useEffect(() => {
     fetchConfigs()

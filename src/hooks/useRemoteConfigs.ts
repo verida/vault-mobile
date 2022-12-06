@@ -4,10 +4,6 @@ import { compareVersions } from 'compare-versions'
 import { useCallback, useState } from 'react'
 import { getVersion } from 'react-native-device-info'
 
-remoteConfig().setConfigSettings({
-  minimumFetchIntervalMillis: 30000,
-})
-
 export type ForcedUpgradeType = {
   minVersion?: string
   required?: boolean
