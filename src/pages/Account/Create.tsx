@@ -32,6 +32,9 @@ export enum CreateAccountMode {
   ADD,
 }
 
+/**
+ * @Deprecated use pages/Account/Identity/CreateIdentity instead
+ */
 function Create(
   props: NativeStackScreenProps<AuthStackParams, 'CreateAccount'>
 ) {
