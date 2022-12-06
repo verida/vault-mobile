@@ -46,5 +46,3 @@ if (!global.atob) {
 global.navigator = {
   userAgent: 'mobile',
 }
-
-global.fetch

@@ -1,6 +1,6 @@
 import LottieView from 'lottie-react-native'
 import React from 'react'
-import { TouchableOpacity } from 'react-native'
+import { TouchableOpacity, View } from 'react-native'
 
 import ButtonStyles from '../styles/button'
 import TextStyles from '../styles/text'
@@ -30,6 +30,24 @@ export default (props) => {
     }
   })()
 
+  const buttonContent = (
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+      {props.icon && (
+        <View
+          style={{
+            marginRight: 5,
+          }}>
+          {props.icon}
+        </View>
+      )}
+      <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+    </View>
+  )
+
   return (
     <TouchableOpacity
       style={[
@@ -41,7 +59,7 @@ export default (props) => {
       onPress={props.onPress}
       disabled={props.disabled}>
       {!props.loading ? (
-        <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+        buttonContent
       ) : (
         <LottieView
           source={require('assets/animations/loading-small-light.json')}
