@@ -8,9 +8,9 @@ import { getWalletsData } from '../../reduxStore/wallet/selectors'
 import { ethereumWeb3 as web3 } from '../../wallet/chains/eip155'
 import { getWalletConnectConfig } from '../config'
 import {
-  DEDAULT_GAS_PRICE,
   DEFAULT_ACTIVE_INDEX,
   DEFAULT_CHAIN_ID,
+  DEFAULT_GAS_LIMIT,
 } from '../constants/default'
 import { getChainData } from '../helpers/utilities'
 import { DApp } from '../types'
@@ -122,7 +122,7 @@ export class EthereumWalletController implements IEtherWalletController {
         tx = await this.wallet.populateTransaction(tx)
         tx.gasLimit = tx.gasLimit
           ? ethers.BigNumber.from(tx.gasLimit).toHexString()
-          : ethers.utils.hexlify(DEDAULT_GAS_PRICE)
+          : ethers.utils.hexlify(DEFAULT_GAS_LIMIT)
 
         tx.nonce = await web3.eth.getTransactionCount(transaction.from)
       } catch (err) {
