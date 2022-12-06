@@ -9,6 +9,7 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
 import EnvelopeSvg from 'assets/icons/envelope.svg'
@@ -69,7 +70,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
                 <Text style={styles.textChip}>Personal</Text>
               </View>
               <Text style={styles.didText} numberOfLines={1}>
-                DID: {did.slice(0, 10)}...{did.slice(-4)}
+                DID: {getTruncatedWalletAddress(did, 10)}
               </Text>
             </View>
           </View>
