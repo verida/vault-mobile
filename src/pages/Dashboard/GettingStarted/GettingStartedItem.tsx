@@ -1,10 +1,11 @@
-import { useNavigation } from '@react-navigation/native'
+import { NavigationProp, useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { GREY_COLOR, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { MainStackParams } from 'navigation/types'
 
 export interface GettingStartedItemProps {
   label: string
@@ -14,7 +15,7 @@ export interface GettingStartedItemProps {
 
 const GettingStartedItem = (props: GettingStartedItemProps) => {
   const { icon, screen, label } = props
-  const navigation = useNavigation()
+  const navigation = useNavigation<NavigationProp<MainStackParams>>()
 
   const handlePress = () => {
     navigation.navigate(screen)

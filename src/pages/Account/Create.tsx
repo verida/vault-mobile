@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
 import { get, isEmpty } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -23,7 +22,6 @@ import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useDataRegion } from 'hooks/useDataRegion'
-import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
 
@@ -32,9 +30,7 @@ export enum CreateAccountMode {
   ADD,
 }
 
-function Create(
-  props: NativeStackScreenProps<AuthStackParams, 'CreateAccount'>
-) {
+function Create(props: any) {
   const { navigation, route } = props
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)
