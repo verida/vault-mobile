@@ -29,21 +29,22 @@ export default (props) => {
   })()
 
   const buttonContent = (
-    <View style={{
-      flexDirection: 'row',
-      alignItems: 'center'
-    }}>
-      {props.icon &&
-        <View style={{
-          marginRight: 5
-        }}>
+    <View
+      style={{
+        flexDirection: 'row',
+        alignItems: 'center',
+      }}>
+      {props.icon && (
+        <View
+          style={{
+            marginRight: 5,
+          }}>
           {props.icon}
         </View>
-      }
+      )}
       <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
     </View>
   )
-
 
   return (
     <TouchableOpacity
@@ -67,5 +68,3 @@ export default (props) => {
     </TouchableOpacity>
   )
 }
-
-

@@ -8,17 +8,16 @@ import { Dispatch } from 'redux'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import SettingsIcon from 'assets/settings_icon.svg'
+import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
 import { WalletItem } from 'components/WalletList/types'
+import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
 import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
-
-import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
-import Button from 'components/Button'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void

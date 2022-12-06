@@ -1,12 +1,12 @@
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import ChevronDownIcon from 'assets/chevron_down_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import { WalletItem } from 'components/WalletList/types'
 import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 interface WalletNavigationHeaderProps {
   selectedWallet: WalletItem
@@ -24,10 +24,11 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       style={styles.container}
       onPress={openWalletModal}>
       <View>
-        {selectedWallet.icon
-          ? <Image source={{ uri: selectedWallet.icon }} style={styles.icon} />
-          : <MultichainWalletIcon />
-        }
+        {selectedWallet.icon ? (
+          <Image source={{ uri: selectedWallet.icon }} style={styles.icon} />
+        ) : (
+          <MultichainWalletIcon />
+        )}
       </View>
       <View style={styles.navigationContent}>
         <View style={styles.textWrapper}>
@@ -37,8 +38,9 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
           </View>
         </View>
         <Text style={styles.subText}>
-          {selectedWallet.address ? getTruncatedWalletAddress(selectedWallet.address) :
-            `${selectedWallet.count} addresses`}
+          {selectedWallet.address
+            ? getTruncatedWalletAddress(selectedWallet.address)
+            : `${selectedWallet.count} addresses`}
         </Text>
       </View>
     </Pressable>

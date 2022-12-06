@@ -1,14 +1,19 @@
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
 import MoreIcon from 'assets/more_icon.svg'
 import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
-import { BLACK_COLOR_OPACITY, PRIMARY_COLOR_200, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
+import {
+  BLACK_COLOR_OPACITY,
+  PRIMARY_COLOR_200,
+  TEXT_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 
 import { WalletItem } from './types'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 interface WalletListItemProps {
   item: WalletItem
@@ -40,12 +45,19 @@ const WalletListItem = ({
               <CheckBoxIcon />
             </View>
           )}
-          {item.icon ? <Image source={{ uri: item.icon }} style={styles.icon} /> : <MultichainWalletIcon />}
-
+          {item.icon ? (
+            <Image source={{ uri: item.icon }} style={styles.icon} />
+          ) : (
+            <MultichainWalletIcon />
+          )}
         </View>
         <View style={styles.textContent}>
           <Text style={styles.textTitle}>{item.label}</Text>
-          <Text style={styles.subText}>{item.address ? getTruncatedWalletAddress(item.address) : `${item.count} addresses`}</Text>
+          <Text style={styles.subText}>
+            {item.address
+              ? getTruncatedWalletAddress(item.address)
+              : `${item.count} addresses`}
+          </Text>
         </View>
       </View>
       <View>

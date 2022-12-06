@@ -78,11 +78,6 @@ const SingleWallet = (props: Props) => {
     ? Object.keys(wallets.accounts)[0] === 'eip155'
     : null
 
-  // console.log(wallets);
-
-  // console.log(chains);
-
-
   const addressList = Object.values(chains)
     .filter((chain: any) =>
       wallets.type === 'single' ? wallets.chain === chain.chainName : true
