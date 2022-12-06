@@ -126,12 +126,14 @@ export const getWalletList = (state, allChains) => {
   return Object.values(allWallets).map((wallet) => {
     const { label, id, type, chain } = wallet
 
+    const addresses = Object.values(wallet.accounts).map(account => account.address)
+
     return {
       id,
       label,
       icon: type === 'single' ? allChains[chain].icon : null,
-      count: type === 'multi' ? Object.keys(wallet.accounts).length : 1,
-      address: chain ? Object.values(wallet.accounts).reduce((account) => account).address : null
+      count: Object.keys(wallet.accounts).length,
+      address: addresses.length === 1 ? addresses[0] : null
     }
   })
 }
