@@ -82,6 +82,7 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE_COLOR,
     borderColor: BLACK_COLOR_OPACITY(0.1),
     borderWidth: 0.2,
+    borderBottomWidth: 0.6,
   },
   selectedItem: {
     backgroundColor: PRIMARY_COLOR_200,

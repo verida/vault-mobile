@@ -7,15 +7,21 @@ import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
+import { WalletItem } from 'components/WalletList/types'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { MainStackParams } from 'navigation/types'
-import ClaimBadges from 'pages/ClaimBadges/ClaimBadges'
 import Tokens from 'pages/Tokens/Dashboard'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
+
+enum Assets {
+  COINS,
+  COLLECTIBLES,
+  BADGES,
+}
 
 const segmentLists = [
   {
@@ -29,14 +35,13 @@ const segmentLists = [
   },
 ]
 
-enum Assets {
-  COINS,
-  COLLECTIBLES,
-  BADGES,
+type AssetsCollectionsProps = {
+  selectedWallet: WalletItem | undefined
 }
 
-const AssetsCollections = (props: any) => {
-  const { selectedWallet } = props
+const AssetsCollections: React.FC<AssetsCollectionsProps> = ({
+  selectedWallet,
+}) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
@@ -61,7 +66,7 @@ const AssetsCollections = (props: any) => {
       case Assets.COLLECTIBLES:
         return <Text style={styles.container}>Collectibles</Text>
       case Assets.BADGES:
-        return <ClaimBadges />
+        return <Text style={styles.container}>Badges</Text>
     }
   }
 

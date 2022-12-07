@@ -79,5 +79,7 @@ export type MainStackParams = {
   WalletConnect: undefined
   WalletConnectDapp: { dapp: DApp }
   WalletConnectDappv2: { dapp: DAppv2 }
-  SingleConnection: undefined
+  SingleConnection: {
+    provider: string
+  }
 }

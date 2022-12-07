@@ -3,12 +3,16 @@ import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import AppAlert from 'components/AppAlert/AppAlert'
 import BadgeList from 'components/Badges/BadgeList'
+import Button from 'components/Button'
+import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
+const DiscordIcon = require('assets/badges_icon/discord_badge_icon.png')
 const veridaIdentityIcon = require('assets/badges_icon/verida_identity.png')
-const facebookIcon = require('assets/badges_icon/facebook.png')
+const facebookIcon = require('assets/badges_icon/facebook_badge_icon.png')
+const TwitterIcon = require('assets/badges_icon/twitter_badge_icon.png')
 
 const CONNECTED_DATA = [
   {
@@ -23,33 +27,42 @@ const CONNECTED_DATA = [
     connection: 'Twitter Account',
     status: true,
     username: '@cmcWebCode',
-    icon: veridaIdentityIcon,
+    icon: TwitterIcon,
   },
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb',
     connection: 'Discord Account',
     status: true,
     username: '@cmcWebCode',
-    icon: veridaIdentityIcon,
+    icon: DiscordIcon,
   },
 ]
 
 const NOT_CONNECTED_DATA = [
   {
     id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28222',
-    connection: 'Facebook',
+    connection: 'facebook',
     status: false,
     username: '',
     icon: facebookIcon,
   },
 ]
 
+const badgesDescription = `
+Verida Badges are soulbound tokens ... they will appear on your Verida One public profile ... lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+`
 
 const ClaimBadges = () => {
   const [infoModalVisible, setInfoModalVisible] = useState(false)
   const onOpenInfoModal = () => {
     setInfoModalVisible(!infoModalVisible)
   }
+
+  const appModalFooter = (
+    <Button color='primary' disabled={false} loading={false}>
+      Read More
+    </Button>
+  )
 
   return (
     <SafeAreaView style={styles.container}>
@@ -61,7 +74,13 @@ const ClaimBadges = () => {
           They will appear on your Verida One profile and enable dApps to verify
           your identity.
         </Text>
-        <AppAlert body={'What are Verida Badges?'} type='info' action={onOpenInfoModal} />
+        <View style={styles.alertContainer}>
+          <AppAlert
+            body={'What are Verida Badges?'}
+            type='info'
+            action={onOpenInfoModal}
+          />
+        </View>
         <View style={styles.listSection}>
           <Text style={styles.listTitle}>Available Badges</Text>
           <BadgeList data={CONNECTED_DATA} />
@@ -71,6 +90,16 @@ const ClaimBadges = () => {
           <BadgeList data={NOT_CONNECTED_DATA} />
         </View>
       </View>
+      <AppModal
+        visible={infoModalVisible}
+        onClose={onOpenInfoModal}
+        title='What are Verida Badges ?'
+        footer={appModalFooter}
+        customStyles={styles.modalContentStyles}>
+        <View style={styles.modalContent}>
+          <Text style={styles.bodyText}>{badgesDescription}</Text>
+        </View>
+      </AppModal>
     </SafeAreaView>
   )
 }
@@ -85,6 +114,9 @@ const styles = StyleSheet.create({
   content: {
     paddingHorizontal: 16,
   },
+  modalContentStyles: {
+    backgroundColor: WHITE_COLOR,
+  },
   title: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
     fontWeight: '600',
@@ -93,11 +125,16 @@ const styles = StyleSheet.create({
     marginTop: 24,
     marginBottom: 8,
   },
+  modalContent: {
+    paddingHorizontal: 16,
+  },
   bodyText: {
     fontFamily: NUNITO_SANS,
     fontWeight: '400',
     fontSize: 14,
-    marginBottom: 16,
+  },
+  alertContainer: {
+    marginTop: 16,
   },
   listSection: {
     marginTop: 40,

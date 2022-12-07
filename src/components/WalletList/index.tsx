@@ -67,5 +67,8 @@ const styles = StyleSheet.create({
   removeButtonOther: {
     marginTop: 30.5,
   },
-  removeButtonText: { color: WHITE_COLOR, textAlign: 'center' },
+  removeButtonText: {
+    color: WHITE_COLOR,
+    textAlign: 'center',
+  },
 })

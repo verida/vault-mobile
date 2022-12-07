@@ -8,10 +8,15 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
+import PlusIcon from 'assets/plus_icon.svg'
+import UnionIcon from 'assets/union_icon.svg'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
 import { WalletItem } from 'components/WalletList/types'
+import AddWalletModal from 'components/WalletModal/AddWalletModal'
+import ImportWalletModal from 'components/WalletModal/ImportWalletModal'
+import { BLACK_COLOR, SNOW_COLOR } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -26,12 +31,6 @@ import {
   getWalletList,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
-
-import PlusIcon from '../../assets/plus_icon.svg'
-import UnionIcon from '../../assets/union_icon.svg'
-import { BLACK_COLOR, SNOW_COLOR } from '../../constants/color'
-import AddWalletModal from './AddWalletModal'
-import ImportWalletModal from './ImportWalletModal'
 
 export type walletIdType = string
 

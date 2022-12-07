@@ -11,6 +11,7 @@ import {
 } from 'react-native'
 import { isValidSeedPhrase } from 'wallet/helpers/validation'
 
+import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -26,7 +27,7 @@ type Props = {
   hideModal: () => void
 }
 
-export default ({ visible, hideModal, onImportWallet }: Props) => {
+const ImportWalletModal = ({ visible, hideModal, onImportWallet }: Props) => {
   const privateKeyEnabledChains = ['ethereum', 'polygon']
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
@@ -76,7 +77,7 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => hideModal(),
         }}
         title='Import wallet'
@@ -184,6 +185,7 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
     </Modal>
   )
 }
+export default ImportWalletModal
 
 const styles = StyleSheet.create({
   container: {

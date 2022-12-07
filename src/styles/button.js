@@ -1,6 +1,12 @@
 import { StyleSheet } from 'react-native'
 
-import { LIGHTGREY_COLOR, PRIMARY_COLOR, PRIMARY_COLOR_200, PRIMARY_COLOR_300, WHITE_COLOR } from '/constants/color'
+import {
+  LIGHTGREY_COLOR,
+  PRIMARY_COLOR,
+  PRIMARY_COLOR_200,
+  PRIMARY_COLOR_300,
+  WHITE_COLOR,
+} from '/constants/color'
 import { NUNITO_SANS_BOLD } from '/constants/text'
 
 const transparent = {

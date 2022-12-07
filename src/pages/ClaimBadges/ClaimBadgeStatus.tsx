@@ -1,10 +1,12 @@
 import React, { useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { Image, StyleSheet, Text, View } from 'react-native'
 
 import ErrorStatusIcon from 'assets/icons/error_status_icon.svg'
 import Button from 'components/Button'
 import { TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+
+const VeridaIdentityImage = require('assets/badges_icon/verida_identity_status.png')
 
 const STATUS = {
   success: {
@@ -45,10 +47,12 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
       Go Back
     </Button>
   )
+  //@Todo : When badge claim is successful  get badges images from an  api instead of static images
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <ErrorStatusIcon />
+        {type === 'error' && <ErrorStatusIcon />}
+        {type === 'success' && <Image source={VeridaIdentityImage} />}
         <View style={styles.statusInfo}>
           <Text style={styles.title}>{status[type].title}</Text>
           <Text style={styles.bodyText}>{status[type].message}</Text>

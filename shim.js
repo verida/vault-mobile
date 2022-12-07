@@ -46,3 +46,7 @@ if (!global.atob) {
 global.navigator = {
   userAgent: 'mobile',
 }
+
+//[TypeError: fetchFun is not a function. (In 'fetchFun(url, options)', 'fetchFun' is false)]
+// The above error could occur when running on an ios simulator which will prevent the native fetch function to work.
+global.fetch

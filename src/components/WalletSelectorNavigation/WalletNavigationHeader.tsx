@@ -9,7 +9,7 @@ import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: WalletItem
+  selectedWallet: WalletItem | undefined
   openWalletModal: () => void
 }
 
@@ -24,8 +24,8 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       style={styles.container}
       onPress={openWalletModal}>
       <View>
-        {selectedWallet.icon ? (
-          <Image source={{ uri: selectedWallet.icon }} style={styles.icon} />
+        {selectedWallet?.icon ? (
+          <Image source={{ uri: selectedWallet?.icon }} style={styles.icon} />
         ) : (
           <MultichainWalletIcon />
         )}
@@ -38,9 +38,9 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
           </View>
         </View>
         <Text style={styles.subText}>
-          {selectedWallet.address
-            ? getTruncatedWalletAddress(selectedWallet.address)
-            : `${selectedWallet.count} addresses`}
+          {selectedWallet?.address
+            ? getTruncatedWalletAddress(selectedWallet?.address)
+            : `${selectedWallet?.count} addresses`}
         </Text>
       </View>
     </Pressable>

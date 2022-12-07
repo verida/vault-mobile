@@ -6,9 +6,10 @@ import {
   StyleSheet,
   Text,
   View,
+  ViewStyle,
 } from 'react-native'
 
-import CloseIcon from 'assets/icons/close_icon.svg'
+import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
@@ -22,9 +23,11 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 interface AppModalProps {
   title: string
   visible: boolean
+  rightIcon?: React.ReactNode
   onClose: () => void
   footer?: React.ReactNode
   children: React.ReactNode
+  customStyles?: ViewStyle
 }
 
 const HIT_SLOP = {
@@ -40,6 +43,8 @@ const AppModal = ({
   children,
   title,
   footer,
+  rightIcon,
+  customStyles,
 }: AppModalProps) => {
   return (
     <Modal
@@ -53,13 +58,15 @@ const AppModal = ({
         <View style={styles.centeredView}>
           <View style={styles.header}>
             <Pressable onPress={onClose}>
-              <CloseIcon />
+              <LeftArrowIcon />
             </Pressable>
             <Text style={styles.headerTitle}>{title}</Text>
-            <View />
+            {rightIcon ? <View>{rightIcon}</View> : <View />}
           </View>
           <View style={styles.divider} />
-          <ScrollView style={styles.modalView}>{children}</ScrollView>
+          <ScrollView style={[styles.modalView, customStyles]}>
+            {children}
+          </ScrollView>
           {footer && <View style={styles.bottom}>{footer}</View>}
         </View>
       </View>
@@ -69,7 +76,6 @@ const AppModal = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'stretch',
     flex: 1,
     backgroundColor: BLACK_COLOR_OPACITY(0.5),
   },
@@ -108,11 +114,11 @@ const styles = StyleSheet.create({
     backgroundColor: SNOW_COLOR,
   },
   bottom: {
-    alignItems: 'center',
     backgroundColor: WHITE_COLOR,
     borderTopColor: LIGHTGREY_COLOR,
-    padding: 16,
+    paddingHorizontal: 16,
     paddingTop: 12,
+    paddingBottom: 16,
     elevation: 4,
     shadowColor: LIGHTGREY_COLOR,
     shadowOffset: {

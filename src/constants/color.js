@@ -2,6 +2,7 @@ export const PRIMARY_COLOR = '#423BCE'
 export const BLACK_COLOR = '#041133'
 export const BLACK_ORIGIN_COLOR = '#000'
 export const LIGHTGREY_COLOR = '#E0E3EA'
+export const DARK_GREY_COLOR = '#808695'
 export const SNOW_COLOR = '#F6F7F9'
 export const SUCCESS_COLOR = '#5ECEA5'
 export const LIGHT_SUCCESS_COLOR = '#cbf2ce'
@@ -24,6 +25,9 @@ export const PRIMARY_COLOR_300 = '#7986F7'
 export const PRIMARY_COLOR_500 = '#423BCE'
 
 export const BACKGROUND_GREY_COLOR = '#F6F7F9'
+
+export const ALERT_INFO_COLOR = '#0073FF'
+export const ALERT_WARNING_COLOR = '#F8A934'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
 

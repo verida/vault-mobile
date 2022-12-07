@@ -6,9 +6,8 @@ import { StyleSheet, View } from 'react-native'
 
 import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import Text from 'components/Text'
-import { DECLINE_COLOR } from 'constants/color'
-
-import { NUNITO_SANS_BOLD } from '../../constants/text'
+import { BLACK_COLOR, DECLINE_COLOR, LIGHTGREY_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type HeaderSideButton = {
   icon: string | React.ReactElement
@@ -86,7 +85,7 @@ function NavigationHeader({
         style={{
           height: 1,
           width: '100%',
-          backgroundColor: '#ddd',
+          backgroundColor: LIGHTGREY_COLOR,
         }}
       />
     </View>
@@ -105,7 +104,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   textTitle: {
-    color: '#000',
+    color: BLACK_COLOR,
     fontFamily: NUNITO_SANS_BOLD,
     fontWeight: '600',
     fontSize: 17,

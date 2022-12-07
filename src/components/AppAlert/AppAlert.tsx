@@ -3,9 +3,14 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import ErrorAlertIcon from 'assets/alert_error_icon.svg'
 import InfoAlertIcon from 'assets/alert_info_icon.svg'
-import ChevronRightIcon from 'assets/icons/chevron_right_x24.svg'
 import WarningAlertIcon from 'assets/alert_warning_icon.svg'
-import { BACKGROUND_GREY_COLOR } from 'constants/color'
+import ChevronRightIcon from 'assets/icons/chevron_right_x24.svg'
+import {
+  ALERT_INFO_COLOR,
+  ALERT_WARNING_COLOR,
+  BACKGROUND_GREY_COLOR,
+  DECLINE_COLOR,
+} from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 
 type AlertType = 'info' | 'warning' | 'error'
@@ -42,9 +47,7 @@ const DisplayAlertIcon = (iconType: AlertType): React.ReactElement => {
   }
 }
 
-
 const AppAlert: React.FC<AppAlertProps> = ({ body, type, action }) => {
-
   return (
     <View style={[styles.container, styles[getAlertColor(type)]]}>
       <View style={styles.alertContent}>
@@ -66,8 +69,8 @@ const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
     justifyContent: 'space-between',
+    alignItems: 'center',
     backgroundColor: BACKGROUND_GREY_COLOR,
-    borderLeftColor: 'yellow',
     borderLeftWidth: 3,
     paddingVertical: 8,
     paddingHorizontal: 16,
@@ -75,13 +78,13 @@ const styles = StyleSheet.create({
   },
   alertContent: { flexDirection: 'row' },
   info: {
-    borderLeftColor: '#0073FF',
+    borderLeftColor: ALERT_INFO_COLOR,
   },
   warning: {
-    borderLeftColor: '#F8A934',
+    borderLeftColor: ALERT_WARNING_COLOR,
   },
   error: {
-    borderLeftColor: '#FD4F64',
+    borderLeftColor: DECLINE_COLOR,
   },
   alertText: {
     fontFamily: NUNITO_SANS,
