@@ -5,13 +5,22 @@ import { walletBadges } from './mocks/WalletBadges'
 import { walletNFTs } from './mocks/WalletNfts'
 import { Badge, ClaimBadgeResponse, WalletNFTsResponse } from './types'
 
-class AssetManager {
+export class AssetManager {
+  private static instance: AssetManager
+
+  public static getInstance(): AssetManager {
+    if (!AssetManager.instance) {
+      AssetManager.instance = new AssetManager()
+    }
+    return AssetManager.instance
+  }
+
   /**
    * Get wallet NFT collections
    *
    * Ex: walletNFTs?wallet=0x34e77AD857217D8D93dcC0bAE752E2290A2EFb66&limit=10
    */
-  public async getWalletNFTs(params: {
+  public async getWalletNFTCollections(params: {
     wallet: string
     limit: number
     cursor?: string
