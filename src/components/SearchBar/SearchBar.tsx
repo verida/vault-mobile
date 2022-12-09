@@ -68,6 +68,7 @@ const createStyles = (theme: Theme) =>
       justifyContent: 'flex-start',
       borderRadius: theme.roundness.m,
       paddingHorizontal: theme.spacing.s,
+      paddingVertical: theme.spacing.s,
       height: 36,
       backgroundColor: theme.color.grey120,
     },
@@ -80,22 +81,10 @@ const createStyles = (theme: Theme) =>
       backgroundColor: 'transparent',
       borderColor: 'transparent',
       paddingHorizontal: 0,
+      paddingVertical: 0,
       margin: 0,
     },
     buttonIccon: {
       marginLeft: theme.spacing.m,
-    },
-    blurView: {
-      ...StyleSheet.absoluteFillObject,
-      borderRadius: theme.roundness.xs,
-    },
-    label: {
-      fontFamily: NUNITO_SANS_BOLD,
-      fontSize: theme.fontSize.xs,
-      fontWeight: '400',
-      lineHeight: 13,
-    },
-    lableBold: {
-      fontWeight: '600',
     },
   })
