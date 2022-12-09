@@ -2,7 +2,7 @@ import { Reducer } from 'redux'
 
 import { ReduxError } from 'reduxStore/types'
 
-export type ApiErrorState = Record<string, string | ReduxError>
+export type ApiErrorState = Record<string, ReduxError>
 
 export const apiErrorReducer: Reducer<ApiErrorState> = (state = {}, action) => {
   const { type } = action
@@ -17,6 +17,6 @@ export const apiErrorReducer: Reducer<ApiErrorState> = (state = {}, action) => {
     // Store errorMessage
     // e.g. stores errorMessage when receiving GET_TODOS_FAILURE
     //      else clear errorMessage when receiving GET_TODOS_REQUEST
-    [requestName]: requestState === 'FAILURE' ? action.error : '',
+    [requestName]: requestState === 'FAILURE' ? action.error : null,
   }
 }

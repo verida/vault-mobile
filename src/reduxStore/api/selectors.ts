@@ -1,3 +1,5 @@
+import { createSelector } from 'reselect'
+
 import { AllActions, RootState } from 'reduxStore/types'
 
 // Helpers for tracking API request states automatically [REQUEST, SUCCESS, FAILURE]
@@ -25,3 +27,16 @@ export const createErrorMessageSelector =
         .filter(Boolean)[0] || ''
     )
   }
+
+/**
+ * @param actions Array of requests want to tracking status eg. ['GET_TODOS_REQUEST']
+ */
+export const createRequestSelector = (actions: AllActions['type'][]) =>
+  createSelector(
+    createLoadingSelector(actions),
+    createErrorMessageSelector(actions),
+    (isLoading, error) => ({
+      isLoading,
+      error,
+    })
+  )

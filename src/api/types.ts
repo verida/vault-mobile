@@ -73,6 +73,16 @@ export interface NFT {
   minter_address: string | null
 }
 
+export interface NFTMetadata {
+  name: string
+  symbol: string
+  description: string
+  animation_url: string
+  image: string
+  external_url: string
+  attributes: any[]
+}
+
 export interface NFTCollection {
   token_address: string
   contract_type: string

@@ -1,3 +1,5 @@
+import * as sentry from '@sentry/react-native'
+
 import { AssetManager } from 'api/AssetManager'
 import { AppThunk } from 'reduxStore/types'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
@@ -9,7 +11,6 @@ export const getWalletNFTCollections = (): AppThunk => {
     const wallets = getWalletsData(getState().main)
     // FIXME: Test with eip155 wallet first
     const etherWallet = wallets.eip155.address
-    console.log('Request etherWallet', etherWallet)
     dispatch(actions.getWalletNFTCollectiblesRequest())
     try {
       const response = await AssetManager.getInstance().getWalletNFTCollections(
@@ -19,24 +20,31 @@ export const getWalletNFTCollections = (): AppThunk => {
         }
       )
 
-      console.log('response', response)
+      // Parse NFT metada, also try to fetch from nft.token_uri incase meta data is missing
+      for await (const collection of response.collections ?? []) {
+        for await (const nft of collection?.nfts?.data ?? []) {
+          try {
+            if (!nft.metadata || !JSON.parse(nft?.metadata ?? '{}')?.image) {
+              const metaFetch = await fetch(nft.token_uri!)
+              const json = await metaFetch.json()
+              nft.metadata = json
+            } else {
+              nft.metadata = JSON.parse(nft.metadata ?? '{}')
+            }
+          } catch (error) {
+            sentry.captureException(error)
+          }
+        }
+      }
 
-      await setTimeout(() => {
-        console.log('DONE')
-        // dispatch(
-        //   actions.getWalletNFTCollectiblesRequestFailure({
-        //     message: 'Unable load data',
-        //   })
-        // )
-        dispatch(
-          actions.getWalletNFTCollectiblesRequestSuccess({
-            wallet: etherWallet,
-            collections: response.collections,
-          })
-        )
-      }, 2000)
+      dispatch(
+        actions.getWalletNFTCollectiblesRequestSuccess({
+          wallet: etherWallet,
+          collections: response.collections,
+        })
+      )
     } catch (error) {
-      console.log('Error:', error)
+      sentry.captureException(error)
       dispatch(
         actions.getWalletNFTCollectiblesRequestFailure({
           message: 'Unable load data',
