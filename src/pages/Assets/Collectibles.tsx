@@ -1,11 +1,18 @@
 import * as sentry from '@sentry/react-native'
 import React, { useCallback, useEffect } from 'react'
-import { FlatList, ListRenderItem, StyleSheet, View } from 'react-native'
+import {
+  Dimensions,
+  FlatList,
+  ListRenderItem,
+  StyleSheet,
+  View,
+} from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { useDispatch } from 'react-redux'
 
 import { NFTCollection, NFTMetadata } from 'api/types'
 import LoadingIndicator from 'components/LoadingIndicator'
+import { SearchBar } from 'components/SearchBar/SearchBar'
 import { Spacer } from 'components/Spacer'
 import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
@@ -65,7 +72,7 @@ const Collectibles = (props: CollectiblesProps) => {
                 {item.name}
               </Tag.Label>
               <Tag.Label bold style={styles.tagLabelNumber}>
-                {item.nfts.data.length}
+                {item.nfts?.total ?? 0}
               </Tag.Label>
             </Tag>
           </View>
@@ -84,9 +91,14 @@ const Collectibles = (props: CollectiblesProps) => {
 
   return (
     <View style={styles.container}>
+      <SearchBar
+        inputProps={{
+          placeholder: 'Search Collectibles',
+        }}
+      />
       <FlatList
         style={styles.grid}
-        numColumns={2}
+        numColumns={NUMBER_OF_COLUMNS}
         columnWrapperStyle={styles.columnWrapperStyle}
         ItemSeparatorComponent={() => <Spacer vertical='m' />}
         data={walletNFTCollections?.[etherWallet]}
@@ -97,22 +109,29 @@ const Collectibles = (props: CollectiblesProps) => {
   )
 }
 
+const NUMBER_OF_COLUMNS = 2
+const SCREEN_WIDTH = Dimensions.get('screen').width
+const PADDING = 16
+const IMAGE_WIDTH = (SCREEN_WIDTH - 3 * PADDING) / NUMBER_OF_COLUMNS
+
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: 16,
+      paddingHorizontal: theme.spacing.m,
+      paddingVertical: theme.spacing.sm,
     },
     grid: {
       flex: 1,
       backgroundColor: theme.color.background,
+      marginTop: theme.spacing.m,
     },
     column: {
       flex: 0.48,
     },
     image: {
-      width: '100%',
-      minHeight: 164,
+      width: IMAGE_WIDTH,
+      minHeight: IMAGE_WIDTH,
       borderRadius: theme.roundness.xs,
     },
     columnWrapperStyle: {
@@ -130,11 +149,11 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.color.primary50,
     },
     tagLabel: {
-      maxWidth: 130,
+      maxWidth: 0.68 * IMAGE_WIDTH,
       color: theme.color.onPrimary,
     },
     tagLabelNumber: {
-      marginLeft: theme.spacing.m,
+      marginLeft: theme.spacing.s,
       color: theme.color.onPrimary,
     },
   })
