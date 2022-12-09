@@ -4,6 +4,7 @@ import {
   DECLINE_COLOR,
   LIGHTGREY_COLOR,
   PRIMARY_COLOR,
+  PRIMARY_COLOR_50,
   SEPARATOR,
   SUCCESS_COLOR,
   TEXT_GREY_100,
@@ -16,7 +17,7 @@ import {
 export const defaultTheme = {
   color: {
     primary: PRIMARY_COLOR,
-    onPrimary: BLACK_COLOR,
+    onPrimary: WHITE_COLOR,
     background: WHITE_COLOR,
     onBackground: BLACK_COLOR,
     surface: WHITE_COLOR,
@@ -31,6 +32,8 @@ export const defaultTheme = {
     separator: SEPARATOR,
 
     veridaGreen: VERIDA_COLOR,
+
+    primary50: PRIMARY_COLOR_50,
 
     transparent: 'transparent',
     black800: BLACK_COLOR_OPACITY(0.8),
@@ -61,11 +64,19 @@ export const defaultTheme = {
     xxxxl: 64,
   },
   fontSize: {
+    xs: 10,
     s: 12,
     m: 14,
     l: 16,
     xl: 18,
     xxl: 24,
     xxxl: 36,
+  },
+  roundness: {
+    xs: 4,
+    s: 8,
+    m: 10,
+    l: 12,
+    xl: 20,
   },
 }

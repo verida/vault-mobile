@@ -20,7 +20,7 @@ export const getWalletNFTCollections = (): AppThunk => {
         }
       )
 
-      // Parse NFT metada, also try to fetch from nft.token_uri incase meta data is missing
+      // Parse NFT metadata, also try to fetch from nft.token_uri in case metadata is missing
       for await (const collection of response.collections ?? []) {
         for await (const nft of collection?.nfts?.data ?? []) {
           try {
@@ -32,7 +32,7 @@ export const getWalletNFTCollections = (): AppThunk => {
               nft.metadata = JSON.parse(nft.metadata ?? '{}')
             }
           } catch (error) {
-            sentry.captureException(error)
+            // sentry.captureException(error)
           }
         }
       }
