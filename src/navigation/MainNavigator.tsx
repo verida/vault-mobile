@@ -6,6 +6,7 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
+import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
@@ -112,6 +113,11 @@ function MainNavigator() {
       />
 
       <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
+
+      <Stack.Screen
+        name={'NFTCollectionDetail'}
+        component={NFTCollectionDetail}
+      />
     </Stack.Navigator>
   )
 }

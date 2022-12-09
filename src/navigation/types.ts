@@ -1,6 +1,6 @@
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { Network } from 'api/types'
+import { Network, NFTCollection } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
@@ -77,4 +77,6 @@ export type MainStackParams = {
   WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: undefined
   Success: undefined
+
+  NFTCollectionDetail: { collection: NFTCollection }
 }

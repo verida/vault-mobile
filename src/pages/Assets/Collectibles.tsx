@@ -1,9 +1,11 @@
+import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import React, { useCallback, useEffect } from 'react'
 import {
   Dimensions,
   FlatList,
   ListRenderItem,
+  Pressable,
   StyleSheet,
   View,
 } from 'react-native'
@@ -28,6 +30,7 @@ type CollectiblesProps = {}
 
 const Collectibles = (props: CollectiblesProps) => {
   const dispatch = useDispatch()
+  const navigation = useNavigation()
   const styles = useThemeAwareStyle(createStyles)
   const walletData = useReduxState((state) => getWalletsData(state.main))
   // FIXME: Test with eip155 wallet first
@@ -58,24 +61,29 @@ const Collectibles = (props: CollectiblesProps) => {
           ? processIpfs(imageMeta.image)
           : imageMeta.image
         return (
-          <View style={styles.column}>
-            <FastImage
-              style={styles.image}
-              source={{
-                uri,
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-            <Tag withBlur style={styles.itemTag}>
-              <Tag.Label numberOfLines={1} style={styles.tagLabel}>
-                {item.name}
-              </Tag.Label>
-              <Tag.Label bold style={styles.tagLabelNumber}>
-                {item.nfts?.total ?? 0}
-              </Tag.Label>
-            </Tag>
-          </View>
+          <Pressable
+            onPress={() => {
+              navigation.navigate('NFTCollectionDetail', { collection: item })
+            }}>
+            <View style={styles.column}>
+              <FastImage
+                style={styles.image}
+                source={{
+                  uri,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <Tag withBlur style={styles.itemTag}>
+                <Tag.Label numberOfLines={1} style={styles.tagLabel}>
+                  {item.name}
+                </Tag.Label>
+                <Tag.Label bold style={styles.tagLabelNumber}>
+                  {item.nfts?.total ?? 0}
+                </Tag.Label>
+              </Tag>
+            </View>
+          </Pressable>
         )
       } catch (e) {
         sentry.captureException(e)
@@ -83,7 +91,7 @@ const Collectibles = (props: CollectiblesProps) => {
 
       return null
     },
-    [styles]
+    [navigation, styles]
   )
 
   if (isLoading) return <LoadingIndicator />
