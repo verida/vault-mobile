@@ -14,6 +14,8 @@ import Tokens from 'pages/Tokens/Dashboard'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 
+import Collectibles from './Assets/Collectibles'
+
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
 const segmentLists = [
@@ -56,9 +58,10 @@ const AssetsCollections = (props: any) => {
   const renderAssets = () => {
     switch (collection) {
       case Assets.COINS:
-        return <Tokens navigation={navigation} />
+        return <Collectibles />
+      // return <Tokens navigation={navigation} />
       case Assets.COLLECTIBLES:
-        return <Text style={styles.container}>Collectibles</Text>
+        return <Collectibles />
       case Assets.BADGES:
         return <Text style={styles.container}>Badges</Text>
     }
@@ -82,6 +85,7 @@ const AssetsCollections = (props: any) => {
       <View>
         <SegmentControl
           segments={segments}
+          initialIndex={1}
           onChangedSegmentIndex={onChangedSegmentIndex}
         />
       </View>

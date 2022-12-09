@@ -26,6 +26,16 @@ function DashboardNavigator() {
         }),
       }}>
       <Tab.Screen
+        name={'Assets'}
+        component={Assets}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='wallet' size={24} color={color} />
+          ),
+        }}
+      />
+
+      <Tab.Screen
         name={'Home'}
         component={Home}
         options={{
@@ -62,7 +72,7 @@ function DashboardNavigator() {
         }}
       />
       {/* {isVeridaTeamMember && ( */}
-      <Tab.Screen
+      {/* <Tab.Screen
         name={'Assets'}
         component={Assets}
         options={{
@@ -70,7 +80,7 @@ function DashboardNavigator() {
             <Ionicons name='wallet' size={24} color={color} />
           ),
         }}
-      />
+      /> */}
       {/* )} */}
     </Tab.Navigator>
   )
