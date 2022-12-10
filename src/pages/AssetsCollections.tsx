@@ -58,8 +58,7 @@ const AssetsCollections = (props: any) => {
   const renderAssets = () => {
     switch (collection) {
       case Assets.COINS:
-        return <Collectibles />
-      // return <Tokens navigation={navigation} />
+        return <Tokens navigation={navigation} />
       case Assets.COLLECTIBLES:
         return <Collectibles />
       case Assets.BADGES:
