@@ -1,3 +1,4 @@
+import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
@@ -16,6 +17,7 @@ import FastImage from 'react-native-fast-image'
 
 import { NFTMetadata } from 'api/types'
 import MoreIcon from 'assets/more_icon.svg'
+import Button from 'components/Button'
 import Icon from 'components/Icon/Icon'
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -123,6 +125,7 @@ const Property = ({
 }
 
 const NFTDetail = (props: NFTDetailProps) => {
+  const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
@@ -141,6 +144,33 @@ const NFTDetail = (props: NFTDetailProps) => {
   const name = nft.name + ` #${nft.token_id}`
   const hasMinterWallet = nft.minter_address?.startsWith('0x')
 
+  const handleMoreActions = () => {
+    const options = ['Send', 'View in Explorer', 'Share', 'Cancel']
+    const destructiveButtonIndex = 0
+    const cancelButtonIndex = 3
+
+    showActionSheetWithOptions(
+      {
+        options,
+        cancelButtonIndex,
+      },
+      (selectedIndex?: number) => {
+        switch (selectedIndex!) {
+          case 1:
+            // Save
+            break
+
+          case destructiveButtonIndex:
+            // Delete
+            break
+
+          case cancelButtonIndex:
+          // Canceled
+        }
+      }
+    )
+  }
+
   if (!nft) return <LoadingIndicator />
 
   return (
@@ -149,11 +179,13 @@ const NFTDetail = (props: NFTDetailProps) => {
         title={name}
         right={{
           icon: <MoreIcon />,
-          action: () => Alert.alert('Share'),
+          action: handleMoreActions,
         }}
         bottomBorder
       />
-      <ScrollView>
+      <ScrollView
+        contentContainerStyle={{ paddingBottom: theme.spacing.xl }}
+        showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <FastImage
             style={styles.image}
@@ -180,13 +212,14 @@ const NFTDetail = (props: NFTDetailProps) => {
               />
             }
           />
+          {/** TODO: logic to detect chain */}
           <Row
             style={styles.rowContainer}
             left={<Text style={styles.rowLabel}>Chain</Text>}
             right={
               <IconWithText
                 icon={<Icon size={theme.iconSize.s} name='ethereum' />}
-                text={wallet.label}
+                text={'Ethereum'}
               />
             }
           />
@@ -222,20 +255,29 @@ const NFTDetail = (props: NFTDetailProps) => {
 
           <SubHeadline style={styles.subTitle}>Properties</SubHeadline>
           <View style={styles.propertiesContainer}>
-            {metadata.attributes.map((attribute: any) => (
-              <Property
-                style={{
-                  marginRight: theme.spacing.s,
-                  marginBottom: theme.spacing.s,
-                }}
-                key={attribute.trait_type}
-                trail={attribute.trait_type as string}
-                value={attribute.value as string}
-              />
-            ))}
+            {metadata.attributes && metadata.attributes?.length > 0 ? (
+              metadata.attributes.map((attribute: any) => (
+                <Property
+                  style={{
+                    marginRight: theme.spacing.s,
+                    marginBottom: theme.spacing.s,
+                  }}
+                  key={attribute.trait_type}
+                  trail={attribute.trait_type as string}
+                  value={attribute.value as string}
+                />
+              ))
+            ) : (
+              <Text style={{ color: theme.color.textLightGrey }}>N/A</Text>
+            )}
           </View>
         </View>
       </ScrollView>
+      <View style={styles.footer}>
+        <Button color='primary' onPress={null}>
+          Add to Verida One
+        </Button>
+      </View>
     </Screen>
   )
 }
@@ -247,6 +289,7 @@ const createStyles = (theme: Theme) =>
     container: {
       flex: 1,
       padding: theme.spacing.m,
+      backgroundColor: theme.color.background,
     },
     image: {
       width: IMAGE_WIDTH,
@@ -274,6 +317,18 @@ const createStyles = (theme: Theme) =>
     propertiesContainer: {
       flexDirection: 'row',
       flexWrap: 'wrap',
+    },
+    footer: {
+      backgroundColor: theme.color.surface,
+      width: '100%',
+      padding: theme.spacing.m,
+      shadowColor: theme.color.shadow,
+      shadowOffset: {
+        width: 0,
+        height: -1,
+      },
+      shadowOpacity: 1,
+      shadowRadius: 1,
     },
   })
 

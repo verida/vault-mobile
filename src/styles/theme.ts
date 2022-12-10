@@ -34,6 +34,7 @@ export const defaultTheme = {
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
+    shadow: LIGHTGREY_COLOR,
     separator: SEPARATOR,
     separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
     icon: TEXT_COLOR,
