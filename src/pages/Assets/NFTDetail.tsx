@@ -230,7 +230,7 @@ const NFTDetail = (props: NFTDetailProps) => {
           />
           <Row
             style={styles.rowContainer}
-            left={<Text style={styles.rowLabel}>Creator Wallet address</Text>}
+            left={<Text style={styles.rowLabel}>Creator wallet address</Text>}
             right={
               <IconWithText
                 onPress={() => {
