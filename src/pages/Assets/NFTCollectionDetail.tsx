@@ -1,7 +1,6 @@
 import { RouteProp, useRoute } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as sentry from '@sentry/react-native'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import {
   Dimensions,
   FlatList,
@@ -10,23 +9,14 @@ import {
   View,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { useDispatch } from 'react-redux'
 
-import { NFT, NFTCollection, NFTMetadata } from 'api/types'
-import LoadingIndicator from 'components/LoadingIndicator'
+import { NFT, NFTMetadata } from 'api/types'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
-import { SearchBar } from 'components/SearchBar/SearchBar'
 import { Spacer } from 'components/Spacer'
 import { Tag } from 'components/Tag'
-import { Title } from 'components/Typography/Title'
-import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
-import { createRequestSelector } from 'reduxStore/api/selectors'
-import { walletNFTCollectionsSelector } from 'reduxStore/collectibles/selectors'
-import * as thunkActions from 'reduxStore/thunkActions'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 type NFTCollectionProps = {}
@@ -93,7 +83,7 @@ const NFTCollectionDetail = (props: NFTCollectionProps) => {
           numColumns={NUMBER_OF_COLUMNS}
           columnWrapperStyle={styles.columnWrapperStyle}
           ItemSeparatorComponent={() => <Spacer vertical='m' />}
-          data={collection.nfts.data}
+          data={collection.nfts?.data ?? []}
           showsVerticalScrollIndicator={false}
           keyExtractor={(item) => `${item.token_id}`}
           renderItem={renderCollection}

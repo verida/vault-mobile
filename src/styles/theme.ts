@@ -74,8 +74,9 @@ export const defaultTheme = {
     l: 16,
     sl: 17,
     xl: 18,
-    xxl: 24,
-    xxxl: 36,
+    xxl: 22,
+    xxxl: 24,
+    xxxxl: 36,
   },
   roundness: {
     xs: 4,

@@ -13,6 +13,7 @@ import FastImage from 'react-native-fast-image'
 import { useDispatch } from 'react-redux'
 
 import { NFTCollection, NFTMetadata } from 'api/types'
+import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import LoadingIndicator from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar/SearchBar'
 import { Spacer } from 'components/Spacer'
@@ -40,6 +41,7 @@ const Collectibles = (props: CollectiblesProps) => {
     createRequestSelector(['GET_WALLET_NFT_COLLECTIBLES_REQUEST'])
   )
   const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
+  const data = walletNFTCollections?.[etherWallet] ?? []
 
   useEffect(() => {
     dispatch(thunkActions.getWalletNFTCollections())
@@ -96,7 +98,8 @@ const Collectibles = (props: CollectiblesProps) => {
 
   if (isLoading) return <LoadingIndicator />
   if (error) return <Title>{error?.message}</Title>
-
+  // walletNFTCollections?.[etherWallet]
+  // { height: '100%', backgroundColor: 'red' }
   return (
     <View style={styles.container}>
       <SearchBar
@@ -107,11 +110,22 @@ const Collectibles = (props: CollectiblesProps) => {
       <FlatList
         style={styles.grid}
         numColumns={NUMBER_OF_COLUMNS}
+        contentContainerStyle={
+          data.length === 0 ? styles.listEmptyContainer : {}
+        }
         columnWrapperStyle={styles.columnWrapperStyle}
         ItemSeparatorComponent={() => <Spacer vertical='m' />}
-        data={walletNFTCollections?.[etherWallet]}
+        data={data}
         keyExtractor={(item) => `${item.token_address}`}
         renderItem={renderCollection}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyListContainer}>
+            <NFTPlaceholder />
+            <Title style={styles.emptyListTitle}>
+              {"You don't have any collectibles yet"}
+            </Title>
+          </View>
+        )}
       />
     </View>
   )
@@ -128,12 +142,13 @@ const createStyles = (theme: Theme) =>
       flex: 1,
       paddingHorizontal: theme.spacing.m,
       paddingVertical: theme.spacing.sm,
+      backgroundColor: theme.color.background,
     },
     grid: {
       flex: 1,
-      backgroundColor: theme.color.background,
       marginTop: theme.spacing.m,
     },
+    listEmptyContainer: { height: '100%' },
     column: {
       flex: 0.48,
     },
@@ -163,6 +178,18 @@ const createStyles = (theme: Theme) =>
     tagLabelNumber: {
       marginLeft: theme.spacing.s,
       color: theme.color.onPrimary,
+    },
+    emptyListContainer: {
+      ...StyleSheet.absoluteFillObject,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: theme.spacing.xxxxl,
+    },
+    emptyListTitle: {
+      fontSize: theme.fontSize.xxl,
+      marginTop: theme.spacing.m,
+      textAlign: 'center',
     },
   })
 

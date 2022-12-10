@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Container, Content } from 'native-base'
+import { Container } from 'native-base'
 import React, { useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -89,7 +89,7 @@ const AssetsCollections = (props: any) => {
           onChangedSegmentIndex={onChangedSegmentIndex}
         />
       </View>
-      <Content>{renderAssets()}</Content>
+      {renderAssets()}
       <WalletSelectorModal
         modalVisible={modalVisible}
         onCloseModal={onCloseModal}
