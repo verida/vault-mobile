@@ -7,6 +7,7 @@ import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
+import NFTDetail from 'pages/Assets/NFTDetail'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
@@ -118,6 +119,7 @@ function MainNavigator() {
         name={'NFTCollectionDetail'}
         component={NFTCollectionDetail}
       />
+      <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
     </Stack.Navigator>
   )
 }

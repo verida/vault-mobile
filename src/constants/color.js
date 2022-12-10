@@ -29,6 +29,7 @@ export const BACKGROUND_GREY_COLOR = '#F6F7F9'
 export const VERIDA_COLOR = '#37D5C7'
 export const TEXT_GREY_100 = 'rgba(51, 51, 51, 0.1)'
 export const TEXT_GREY_500 = 'rgba(51, 51, 51, 0.5)'
+export const TEXT_LIGHT_GREY = 'rgba(128, 134, 149, 1)'
 
 export const LIGHT_GREY_600 = 'rgba(60, 60, 67, 0.6)'
 export const GREY_120 = 'rgba(118, 118, 128, 0.12)'

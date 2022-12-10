@@ -74,6 +74,7 @@ const Collectibles = (props: CollectiblesProps) => {
             <View style={styles.column}>
               <FastImage
                 style={styles.image}
+                defaultSource={require('assets/picture.png')}
                 source={{
                   uri,
                   priority: FastImage.priority.normal,

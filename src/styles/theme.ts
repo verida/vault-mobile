@@ -10,8 +10,10 @@ import {
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SUCCESS_COLOR,
+  TEXT_COLOR,
   TEXT_GREY_100,
   TEXT_GREY_500,
+  TEXT_LIGHT_GREY,
   VERIDA_COLOR,
   VERY_LIGHTGREY_COLOR,
   WHITE_COLOR,
@@ -22,9 +24,9 @@ export const defaultTheme = {
     primary: PRIMARY_COLOR,
     onPrimary: WHITE_COLOR,
     background: WHITE_COLOR,
-    onBackground: BLACK_COLOR,
+    onBackground: TEXT_COLOR,
     surface: WHITE_COLOR,
-    onSurface: BLACK_COLOR,
+    onSurface: TEXT_COLOR,
     onDarkBackground: WHITE_COLOR,
 
     error: DECLINE_COLOR,
@@ -34,6 +36,7 @@ export const defaultTheme = {
     overlay: 'rgba(0, 0, 0, 0.6)',
     separator: SEPARATOR,
     separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
+    icon: TEXT_COLOR,
 
     veridaGreen: VERIDA_COLOR,
 
@@ -46,6 +49,7 @@ export const defaultTheme = {
     textGrey100: TEXT_GREY_100,
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
+    textLightGrey: TEXT_LIGHT_GREY,
     grey120: GREY_120,
 
     grey100: '#EDF0F3',
@@ -86,5 +90,10 @@ export const defaultTheme = {
     m: 10,
     l: 12,
     xl: 20,
+    xxl: 24,
+  },
+  iconSize: {
+    s: 16,
+    m: 24,
   },
 }

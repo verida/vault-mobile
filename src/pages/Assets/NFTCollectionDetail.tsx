@@ -1,10 +1,11 @@
-import { RouteProp, useRoute } from '@react-navigation/native'
+import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import React, { useCallback } from 'react'
 import {
   Dimensions,
   FlatList,
   ListRenderItem,
+  Pressable,
   StyleSheet,
   View,
 } from 'react-native'
@@ -29,6 +30,7 @@ type NFTCollectionDetailRouteProp = RouteProp<
 const NFTCollectionDetail = (props: NFTCollectionProps) => {
   const styles = useThemeAwareStyle(createStyles)
   const route = useRoute<NFTCollectionDetailRouteProp>()
+  const navigation = useNavigation()
   const collection = route.params.collection
 
   const renderCollection = useCallback<ListRenderItem<NFT>>(
@@ -46,24 +48,28 @@ const NFTCollectionDetail = (props: NFTCollectionProps) => {
           ? processIpfs(imageMeta.image)
           : imageMeta.image
         return (
-          <View style={styles.column}>
-            <FastImage
-              style={styles.image}
-              source={{
-                uri,
-                priority: FastImage.priority.normal,
-              }}
-              resizeMode={FastImage.resizeMode.cover}
-            />
-            <Tag withBlur style={styles.itemTag}>
-              <Tag.Label numberOfLines={1} style={styles.tagLabel}>
-                {item.name}
-              </Tag.Label>
-              <Tag.Label style={styles.tagLabelNumber}>
-                #{item.token_id}
-              </Tag.Label>
-            </Tag>
-          </View>
+          <Pressable
+            onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
+            <View style={styles.column}>
+              <FastImage
+                style={styles.image}
+                defaultSource={require('assets/picture.png')}
+                source={{
+                  uri,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <Tag withBlur style={styles.itemTag}>
+                <Tag.Label numberOfLines={1} style={styles.tagLabel}>
+                  {item.name}
+                </Tag.Label>
+                <Tag.Label style={styles.tagLabelNumber}>
+                  #{item.token_id}
+                </Tag.Label>
+              </Tag>
+            </View>
+          </Pressable>
         )
       } catch (e) {
         sentry.captureException(e)
@@ -71,12 +77,12 @@ const NFTCollectionDetail = (props: NFTCollectionProps) => {
 
       return null
     },
-    [styles]
+    [navigation, styles]
   )
 
   return (
     <Screen withSafeAreaView>
-      <NavigationHeader title={collection.name} />
+      <NavigationHeader title={collection.name} bottomBorder />
       <View style={styles.container}>
         <FlatList
           style={styles.grid}
@@ -102,7 +108,7 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: theme.spacing.m,
+      padding: theme.spacing.m,
     },
     grid: {
       flex: 1,

@@ -32,10 +32,12 @@ export default (props) => {
 
   const buttonContent = (
     <View
-      style={{
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
+      style={
+        {
+          // flexDirection: 'row',
+          // alignItems: 'center',
+        }
+      }>
       {props.icon && (
         <View
           style={{
