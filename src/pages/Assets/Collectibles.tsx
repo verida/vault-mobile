@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
+import { useTheme } from 'contexts/ThemeContext'
 import React, { useCallback, useEffect } from 'react'
 import {
   Dimensions,
@@ -14,6 +15,7 @@ import { useDispatch } from 'react-redux'
 
 import { NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
+import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar/SearchBar'
 import { Spacer } from 'components/Spacer'
@@ -33,6 +35,7 @@ const Collectibles = (props: CollectiblesProps) => {
   const dispatch = useDispatch()
   const navigation = useNavigation()
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
   const walletData = useReduxState((state) => getWalletsData(state.main))
   // FIXME: Test with eip155 wallet first
   const etherWallet = walletData.eip155?.address as string
@@ -42,6 +45,7 @@ const Collectibles = (props: CollectiblesProps) => {
   )
   const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
   const data = walletNFTCollections?.[etherWallet] ?? []
+  const isEmptyList = data.length === 0
 
   useEffect(() => {
     dispatch(thunkActions.getWalletNFTCollections())
@@ -98,21 +102,25 @@ const Collectibles = (props: CollectiblesProps) => {
 
   if (isLoading) return <LoadingIndicator />
   if (error) return <Title>{error?.message}</Title>
-  // walletNFTCollections?.[etherWallet]
-  // { height: '100%', backgroundColor: 'red' }
+
   return (
     <View style={styles.container}>
-      <SearchBar
-        inputProps={{
-          placeholder: 'Search Collectibles',
-        }}
-      />
+      {!isEmptyList && (
+        <SearchBar
+          style={{
+            paddingHorizontal: theme.spacing.m,
+            marginTop: theme.spacing.sm,
+          }}
+          inputProps={{
+            placeholder: 'Search Collectibles',
+          }}
+        />
+      )}
+      <Line style={{ marginTop: theme.spacing.s }} />
       <FlatList
         style={styles.grid}
         numColumns={NUMBER_OF_COLUMNS}
-        contentContainerStyle={
-          data.length === 0 ? styles.listEmptyContainer : {}
-        }
+        contentContainerStyle={isEmptyList ? styles.listEmptyContainer : {}}
         columnWrapperStyle={styles.columnWrapperStyle}
         ItemSeparatorComponent={() => <Spacer vertical='m' />}
         data={data}
@@ -140,12 +148,11 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      paddingHorizontal: theme.spacing.m,
-      paddingVertical: theme.spacing.sm,
       backgroundColor: theme.color.background,
     },
     grid: {
       flex: 1,
+      paddingHorizontal: theme.spacing.m,
       marginTop: theme.spacing.m,
     },
     listEmptyContainer: { height: '100%' },

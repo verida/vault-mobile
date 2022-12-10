@@ -78,7 +78,6 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
     marginHorizontal: 16,
-    marginVertical: 4,
     padding: 2,
     color: TEXT_COLOR,
   },

@@ -8,6 +8,7 @@ import {
   PRIMARY_COLOR,
   PRIMARY_COLOR_50,
   SEPARATOR,
+  SEPARATOR_EXTRA_LIGHT,
   SUCCESS_COLOR,
   TEXT_GREY_100,
   TEXT_GREY_500,
@@ -32,6 +33,7 @@ export const defaultTheme = {
     onSuccess: WHITE_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
     separator: SEPARATOR,
+    separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
 
     veridaGreen: VERIDA_COLOR,
 
