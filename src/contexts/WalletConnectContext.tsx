@@ -142,41 +142,42 @@ function useWalletConnectContext() {
     })
   })
 
-  const showDappConnectModal = useCallback(
-    (connectorKey: string, connector: any, peerMeta: any) => {
-      peerMeta?.name &&
-        showModal(
-          <ConnectDappModal
-            client={peerMeta}
-            connect={(walletAddress, chainId: number, chain: DApp['chain']) => {
-              dispatch(
-                approveWalletConnectSession({
-                  walletId: selectedWalletId,
-                  connector,
-                  chainId,
-                  chain,
-                  accounts: [walletAddress],
-                })
-              )
-              resubscribeToEvents()
-              dismissModal()
-            }}
-            dismissModal={() => {
-              dispatch(
-                rejectWalletConnectSession({
-                  walletId: selectedWalletId,
-                  connector,
-                })
-              )
-              dismissModal()
-            }}
-          />
-        )
-    },
-    [dismissModal, dispatch, resubscribeToEvents, selectedWalletId, showModal]
-  )
+  const showDappConnectModal = (
+    connectorKey: string,
+    connector: any,
+    peerMeta: any
+  ) => {
+    peerMeta?.name &&
+      showModal(
+        <ConnectDappModal
+          client={peerMeta}
+          connect={(walletAddress, chainId: number, chain: DApp['chain']) => {
+            dispatch(
+              approveWalletConnectSession({
+                walletId: selectedWalletId,
+                connector,
+                chainId,
+                chain,
+                accounts: [walletAddress],
+              })
+            )
+            resubscribeToEvents()
+            dismissModal()
+          }}
+          dismissModal={() => {
+            dispatch(
+              rejectWalletConnectSession({
+                walletId: selectedWalletId,
+                connector,
+              })
+            )
+            dismissModal()
+          }}
+        />
+      )
+  }
 
-  const { current: subscribeToEvents } = useRef((connectorKey: string) => {
+  const subscribeToEvents = (connectorKey: string) => {
     const connector = connectorsRef.current[connectorKey]
     if (connector) {
       // unsubscribe from previous events if any
@@ -235,24 +236,21 @@ function useWalletConnectContext() {
         )
       })
     }
-  })
+  }
 
-  const requestConnect = useCallback(
-    async (uri: string) => {
-      const connector = new WalletConnect({
-        uri,
-      })
+  const requestConnect = async (uri: string) => {
+    const connector = new WalletConnect({
+      uri,
+    })
 
-      connectorsRef.current[connector.key] = connector
+    connectorsRef.current[connector.key] = connector
 
-      if (!connector.connected) {
-        await connector.createSession()
-      }
+    if (!connector.connected) {
+      await connector.createSession()
+    }
 
-      subscribeToEvents(connector.key)
-    },
-    [subscribeToEvents]
-  )
+    subscribeToEvents(connector.key)
+  }
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
@@ -287,41 +285,38 @@ function useWalletConnectContext() {
     }
   }, [])
 
-  const connectDApps = useCallback(
-    async (apps?: DApp[]) => {
-      for await (const dapp of apps || []) {
-        if (!dapp.session.peerId) {
-          dispatch(
-            removeWalletConnectDapp({
-              walletId: selectedWalletId,
-              key: dapp.session.key,
-            })
-          )
-          return
-        }
-
-        if (connectorsRef.current[dapp.session.key]) {
-          subscribeToEvents(dapp.session.key)
-          return
-        }
-
-        try {
-          const wcConnector = new WalletConnect({
-            session: dapp.session,
+  const connectDApps = useRef(async (apps?: DApp[]) => {
+    for await (const dapp of apps || []) {
+      if (!dapp.session.peerId) {
+        dispatch(
+          removeWalletConnectDapp({
+            walletId: selectedWalletId,
+            key: dapp.session.key,
           })
-          connectorsRef.current = {
-            ...connectorsRef.current,
-            [dapp.session.key]: wcConnector,
-          }
-
-          subscribeToEvents(wcConnector.key)
-        } catch (error) {
-          sentry.captureException(error)
-        }
+        )
+        return
       }
-    },
-    [dispatch, selectedWalletId, subscribeToEvents]
-  )
+
+      if (connectorsRef.current[dapp.session.key]) {
+        subscribeToEvents(dapp.session.key)
+        return
+      }
+
+      try {
+        const wcConnector = new WalletConnect({
+          session: dapp.session,
+        })
+        connectorsRef.current = {
+          ...connectorsRef.current,
+          [dapp.session.key]: wcConnector,
+        }
+
+        subscribeToEvents(wcConnector.key)
+      } catch (error) {
+        sentry.captureException(error)
+      }
+    }
+  }).current
 
   useDeepCompareEffect(() => {
     const reconnectDapps = async () => {
