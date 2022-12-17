@@ -22,7 +22,6 @@ import TCCheckbox from 'components/TCCheckbox'
 import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
-import { Title } from 'components/Typography/Title'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
@@ -127,7 +126,7 @@ const CreateIdentity = () => {
   }>({
     name: '',
     username: '',
-    country: 'Australia', // FIXME: Use default Australia for now
+    country: '',
   })
 
   const createIdentifier = useCallback(async () => {

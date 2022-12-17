@@ -377,14 +377,19 @@ class AccountManager {
     let connected = false
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
-      // Find suitable node based on selected country
-      const countryCode = getCountryCode(country)
+
       const networks = (store.getState().main as any).networks
       const countries = (store.getState().main as any).countries
-      if (!countryCode || isEmpty(networks)) {
-        throw new Error('Invalid network or country configuration')
+      let matchedNodeCode: string | null = null
+      // Find suitable node based on selected country
+      if (country) {
+        const countryCode = getCountryCode(country)
+        if (!countryCode || isEmpty(networks)) {
+          throw new Error('Invalid network or country configuration')
+        }
+        matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
       }
-      const matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
+
       let selectedNode
       if (!matchedNodeCode) {
         // If there is no matched node for the selected country, use the default one in configuration file.
