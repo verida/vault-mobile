@@ -20,6 +20,7 @@ import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import TCCheckbox from 'components/TCCheckbox'
 import { Headline } from 'components/Typography/Headline'
+import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
 import useParams from 'hooks/useParams'
@@ -255,12 +256,21 @@ const CreateIdentity = () => {
             <View>
               <Headline style={styles.title}>Identity</Headline>
               <Spacer vertical='xxl' />
+              <Paragraph>
+                An identity is a digital representation of yourself. You can
+                have multiple, such as a personal, business or anonymous
+                identity.
+              </Paragraph>
+              <Paragraph style={styles.subTitle}>
+                Create a Verida identity
+              </Paragraph>
+
               <TCCheckbox
                 checked={agreedTC}
                 style={styles.termAndCondition}
                 onToggle={toggleAgreedTC}
               />
-              <Title style={styles.subTitle}>Create your Verida identity</Title>
+
               <Spacer vertical='xxl' />
               <Button
                 disabled={!agreedTC}
@@ -273,9 +283,9 @@ const CreateIdentity = () => {
                 Create Identity
               </Button>
               <Spacer vertical='xxl' />
-              <Title style={styles.subTitle}>
+              <Paragraph style={styles.subTitle}>
                 Already have a Verida Identity?
-              </Title>
+              </Paragraph>
               <Spacer vertical='xxl' />
               <Button
                 disabled={!agreedTC}
@@ -297,8 +307,13 @@ const CreateIdentity = () => {
               contentContainerStyle={styles.scrollViewContainer}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'>
-              <Headline style={styles.title}>Name and Username</Headline>
-              <Spacer vertical='xxxl' />
+              <Headline style={styles.title}>Name(1/2)</Headline>
+              <Spacer vertical='xxl' />
+              <Paragraph>
+                Your public name can be used by applications you are connecting
+                with. Use whatever you like and change it when you want.
+              </Paragraph>
+              <Spacer vertical='xxl' />
               <FormInput
                 label='Public Name *'
                 onChangeText={(text) =>
@@ -306,11 +321,8 @@ const CreateIdentity = () => {
                 }
                 value={profile.name}
               />
-              <Spacer vertical='m' />
-              <Paragraph>
-                This name is public, use whatever you like. It is required as
-                used across the UI and dApps
-              </Paragraph>
+              <Spacer vertical='s' />
+              <Paragraph>Your name is required and public</Paragraph>
               {enabledClaimUsername && (
                 <>
                   <Spacer vertical='xxxl' />
@@ -348,12 +360,16 @@ const CreateIdentity = () => {
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'
               contentContainerStyle={{ height: '100%' }}>
-              <Headline style={styles.title}>Location of your data</Headline>
-              <Spacer vertical='xxxl' />
-              <Paragraph>You are the owner of your data</Paragraph>
-              <Spacer vertical='m' />
-              <Paragraph>It is stored on multiple storage nodes.</Paragraph>
-              <Spacer vertical='xxxxl' />
+              <Headline style={styles.title}>Data Region (2/2)</Headline>
+              <Spacer vertical='xxl' />
+              <Paragraph>
+                Your personal data is encrypted and stored on a network of
+                decentralized servers. Select a preferred data region to
+                determine the default servers that store your encrypted personal
+                data. You can change these later.
+              </Paragraph>
+              <Spacer vertical='xxl' />
+              <Label>Country</Label>
               <DropDownPicker
                 searchable
                 searchablePlaceholder='Search for country'
@@ -364,12 +380,8 @@ const CreateIdentity = () => {
                 containerStyle={InputStyles.select}
                 onChangeItem={onCountryChange}
               />
-              <Spacer vertical='xxxxl' />
-              <Paragraph>
-                {
-                  'Your country is private, we only use it to determine the best geographical location of your data.'
-                }
-              </Paragraph>
+              <Spacer vertical='s' />
+              <Paragraph>Your country is optional and private</Paragraph>
             </ScrollView>
           </View>
           <View key='confirmation' style={styles.landing}>
@@ -418,6 +430,17 @@ const CreateIdentity = () => {
               )}
               <Spacer vertical='m' />
               <AnimatedCheckbox
+                checked={confirmationState?.state?.CreateProfile === 'Success'}
+                showLoading={
+                  confirmationState?.state?.CreateProfile === 'Loading'
+                }
+                label='Create public profile'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.gray400}
+              />
+              <Spacer vertical='m' />
+              <AnimatedCheckbox
                 checked={
                   confirmationState?.state?.StorageLocation === 'Success'
                 }
@@ -425,17 +448,6 @@ const CreateIdentity = () => {
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
                 label='Connect storage nodes'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.gray400}
-              />
-              <Spacer vertical='m' />
-              <AnimatedCheckbox
-                checked={confirmationState?.state?.CreateProfile === 'Success'}
-                showLoading={
-                  confirmationState?.state?.CreateProfile === 'Loading'
-                }
-                label='Create public profile'
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.gray400}
