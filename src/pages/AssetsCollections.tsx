@@ -84,7 +84,7 @@ const AssetsCollections = (props: any) => {
       <View>
         <SegmentControl
           segments={segments}
-          initialIndex={1}
+          initialIndex={0}
           onChangedSegmentIndex={onChangedSegmentIndex}
         />
       </View>

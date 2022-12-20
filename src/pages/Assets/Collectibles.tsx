@@ -119,7 +119,11 @@ const Collectibles = () => {
       <FlatList
         style={styles.grid}
         numColumns={NUMBER_OF_COLUMNS}
-        contentContainerStyle={isEmptyList ? styles.listEmptyContainer : {}}
+        contentContainerStyle={
+          isEmptyList
+            ? styles.listEmptyContainer
+            : { paddingBottom: theme.spacing.xxl, paddingTop: theme.spacing.m }
+        }
         columnWrapperStyle={styles.columnWrapperStyle}
         ItemSeparatorComponent={() => <Spacer vertical='m' />}
         data={data}
@@ -152,7 +156,6 @@ const createStyles = (theme: Theme) =>
     grid: {
       flex: 1,
       paddingHorizontal: theme.spacing.m,
-      marginTop: theme.spacing.m,
     },
     listEmptyContainer: { height: '100%' },
     column: {
@@ -172,10 +175,6 @@ const createStyles = (theme: Theme) =>
       position: 'absolute',
       left: theme.spacing.s,
       bottom: theme.spacing.s,
-      // flexDirection: 'row',
-      // alignItems: 'center',
-      // justifyContent: 'space-between',
-      // backgroundColor: theme.color.primary50,
     },
     tagLabel: {
       maxWidth: 0.68 * IMAGE_WIDTH,
