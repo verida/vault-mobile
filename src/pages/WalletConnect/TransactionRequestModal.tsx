@@ -107,7 +107,7 @@ type Props = {
   client: WalletConnectClientMeta
   payload: WalletConnectRequest
   dismissModal: () => void
-  approveRequest: (address: string) => void
+  approveRequest: () => void
   rejectRequest: () => void
   renderPayload: (payload: any) => IRequestRenderParams[]
 }

@@ -51,6 +51,9 @@ export default StyleSheet.create({
   'transparent-grey': {
     ...transparent,
   },
+  'transparent-white': {
+    ...transparent,
+  },
   'transparent-border': {
     ...transparent,
     borderColor: LIGHTGREY_COLOR,

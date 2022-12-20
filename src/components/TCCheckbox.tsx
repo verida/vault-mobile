@@ -9,17 +9,25 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
-import { GREY_COLOR, SUCCESS_COLOR } from 'constants/color'
+import {
+  BLACK_COLOR,
+  GREY_COLOR,
+  SUCCESS_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 
 import Text from './Text'
+
+type Type = 'light' | 'dark'
 
 export type TCCheckboxProps = Omit<ViewProps, 'children'> & {
   checked: boolean
   onToggle: () => void
+  type?: Type
 }
 
 function TCCheckbox(props: TCCheckboxProps) {
-  const { checked, style, onToggle, ...rest } = props
+  const { checked, style, type, onToggle, ...rest } = props
 
   async function onLinkPress() {
     const url = 'https://www.verida.io/vault/terms-and-conditions'
@@ -44,14 +52,27 @@ function TCCheckbox(props: TCCheckboxProps) {
           <AntDesign name='checkcircle' size={20} color={SUCCESS_COLOR} />
         )}
       </TouchableOpacity>
-      <Text style={styles.text}>
+      <Text
+        style={[
+          styles.text,
+          { color: type === 'light' ? WHITE_COLOR : BLACK_COLOR },
+        ]}>
         I agree and accept the{' '}
-        <Text onPress={onLinkPress} style={styles.link}>
+        <Text
+          onPress={onLinkPress}
+          style={[
+            styles.link,
+            { color: type === 'light' ? WHITE_COLOR : BLACK_COLOR },
+          ]}>
           terms and conditions
         </Text>
       </Text>
     </View>
   )
+}
+
+TCCheckbox.defaultProps = {
+  type: 'dark',
 }
 
 const styles = StyleSheet.create({

@@ -10,7 +10,6 @@ import ChangePin from 'pages/Authentication/ChangePin'
 import ClaimableBadges from 'pages/ClaimBadges/ClaimableBadges'
 import ClaimBadge from 'pages/ClaimBadges/ClaimBadge'
 import SingleConnection from 'pages/Connections/SingleConnection'
-import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
 import Inbox from 'pages/Inbox'
@@ -39,14 +38,13 @@ import TokenRecipient from 'pages/Tokens/TokenRecipient'
 import TransactionDetails from 'pages/Tokens/TransactionDetails'
 import TransactionFailure from 'pages/Tokens/TransactionFailure'
 import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
+import DappSessionDetail from 'pages/WalletConnect/DappSessionDetail'
+import DappSessionDetailv2 from 'pages/WalletConnect/DappSessionDetailv2'
+import WalletConnect from 'pages/WalletConnect/WalletConnect'
 import ManageWallets from 'pages/Wallets/ManageWallets'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
 import SuccessFailure from 'pages/Wallets/SuccessFailure'
-
-import DappSessionDetail from '../pages/WalletConnect/DappSessionDetail'
-import DappSessionDetailv2 from '../pages/WalletConnect/DappSessionDetailv2'
-import WalletConnect from '../pages/WalletConnect/WalletConnect'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -66,7 +64,6 @@ function MainNavigator() {
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
-      <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
       <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
       <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
@@ -98,7 +95,7 @@ function MainNavigator() {
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
       <Stack.Screen name={'AddAccount'} component={Create} />
-      <Stack.Screen name={'ImportAccount'} component={ImportAccount} />
+      <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
       <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
 
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />

@@ -7,7 +7,11 @@ import { store } from '../../reduxStore'
 import { getWalletsData } from '../../reduxStore/wallet/selectors'
 import { ethereumWeb3 as web3 } from '../../wallet/chains/eip155'
 import { getWalletConnectConfig } from '../config'
-import { DEFAULT_ACTIVE_INDEX, DEFAULT_CHAIN_ID } from '../constants/default'
+import {
+  DEFAULT_ACTIVE_INDEX,
+  DEFAULT_CHAIN_ID,
+  DEFAULT_GAS_LIMIT,
+} from '../constants/default'
 import { getChainData } from '../helpers/utilities'
 import { DApp } from '../types'
 import { IEtherWalletController } from './type'
@@ -99,20 +103,28 @@ export class EthereumWalletController implements IEtherWalletController {
         tx.gasLimit = tx.gas
         delete tx.gas
       }
+
       if (tx.from) {
         tx.from = ethers.utils.getAddress(tx.from)
       }
 
+      // If empty fill in the default data
+      if (!tx.data) {
+        tx.data = '0x'
+      }
+
+      // eip-1559 transaction do not support gasPrice
+      if (tx.gasPrice) {
+        delete tx.gas
+      }
+
       try {
         tx = await this.wallet.populateTransaction(tx)
-        tx.gasLimit = ethers.BigNumber.from(tx.gasLimit).toHexString()
-        // TODO: check again
-        //eip-1559 transaction do not support gasPrice
-        // tx.gasPrice = ethers.BigNumber.from(
-        //   tx.gasPrice || gasPrice
-        // ).toHexString()
+        tx.gasLimit = tx.gasLimit
+          ? ethers.BigNumber.from(tx.gasLimit).toHexString()
+          : ethers.utils.hexlify(DEFAULT_GAS_LIMIT)
 
-        tx.nonce = await web3.eth.getTransactionCount(transaction.from) //  ethers.BigNumber.from(tx.nonce).toHexString()
+        tx.nonce = await web3.eth.getTransactionCount(transaction.from)
       } catch (err) {
         throw new Error('Unable to populate transaction')
       }
@@ -163,10 +175,10 @@ export class EthereumWalletController implements IEtherWalletController {
 
   public async signMessage(data: any) {
     if (this.wallet) {
-      const signingKey = new ethers.utils.SigningKey(this.wallet.privateKey)
-      const sigParams = await signingKey.signDigest(ethers.utils.arrayify(data))
-      const result = await ethers.utils.joinSignature(sigParams)
-      return result
+      const signedMessage = await this.wallet.signMessage(
+        ethers.utils.arrayify(data)
+      )
+      return signedMessage
     } else {
       throw new Error('No Active Account')
     }
