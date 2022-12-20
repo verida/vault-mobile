@@ -1,5 +1,6 @@
 import React from 'react'
-import { Pressable, StyleSheet, Text, View } from 'react-native'
+import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -13,12 +14,18 @@ export default ({ item, customStyles }) => {
       onPress={item.onPress}
       style={[styles.item, customStyles && customStyles]}>
       <View style={styles.itemWrapper}>
-        <View style={{ height: 64, width: 64 }}>
-          {item.icon ? item.icon : <AddressSvg />}
+        <View>
+          {item.icon ? (
+            <Image source={{ uri: item.icon }} style={styles.icon} />
+          ) : (
+            <AddressSvg />
+          )}
         </View>
         <View style={styles.textWrapper}>
-          <Text style={styles.label}>{item.name}</Text>
-          <Text style={styles.address}>{`${item.address}`}</Text>
+          <Text style={styles.label}>{item.name || item.label}</Text>
+          <Text style={styles.address}>{`${getTruncatedWalletAddress(
+            item.address
+          )}`}</Text>
           {item.amount && <Text style={styles.amount}>{`${item.amount}`}</Text>}
         </View>
       </View>
@@ -49,6 +56,10 @@ const styles = StyleSheet.create({
     color: TEXT_COLOR,
     marginBottom: 3,
     marginTop: 3,
+  },
+  icon: {
+    height: 64,
+    width: 64,
   },
   address: {
     fontFamily: NUNITO_SANS,

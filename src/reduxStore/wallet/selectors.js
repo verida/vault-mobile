@@ -140,8 +140,37 @@ export const getWalletList = (state, allChains) => {
   })
 }
 
+export const getAddressList = (state, allChains, network) => {
+  const allWallets = getAllWallets(state)
+  return Object.values(allWallets).map((wallet) => {
+    const { id, label } = wallet
+    const addresses = Object.keys(wallet.accounts)
+      .map((account) => {
+        return {
+          account,
+          address: wallet.accounts[account].address,
+        }
+      })
+      .filter((item) => item.account === network)
+    return {
+      id,
+      label,
+      icon: allChains[network === 'eip155' ? 'ethereum' : network].icon,
+      count: Object.keys(wallet.accounts).length,
+      address: addresses[0]?.address,
+    }
+  })
+}
+
 export const getSelectedWalletById = (state, chains) => {
   const walletList = getWalletList(state, chains)
+  const selectedWalletId = state.selectedWallet
+  const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
+  return selectedWallet
+}
+
+export const getSelectedAddressById = (state, chains, network) => {
+  const walletList = getAddressList(state, chains, network)
   const selectedWalletId = state.selectedWallet
   const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
   return selectedWallet

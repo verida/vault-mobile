@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
 import AppAlert from 'components/AppAlert/AppAlert'
 import BadgeList from 'components/Badges/BadgeList'
@@ -8,58 +8,80 @@ import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { VERIDA_DOCS_PAGE } from 'constants/url'
+import { BadgeType } from 'utils/types/badges'
 
 const DiscordIcon = require('assets/badges_icon/discord_badge_icon.png')
-const veridaIdentityIcon = require('assets/badges_icon/verida_identity.png')
+const veridaIdentityIcon = require('assets/badges_icon/verida_identity_badge_icon.png')
 const facebookIcon = require('assets/badges_icon/facebook_badge_icon.png')
 const TwitterIcon = require('assets/badges_icon/twitter_badge_icon.png')
 
-const CONNECTED_DATA = [
+export const badgeData: BadgeType[] = [
   {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28ba',
-    connection: 'Verida Identity',
-    status: true,
-    username: '@cmcWebCode',
-    icon: veridaIdentityIcon,
+    id: 'verida-identity',
+    label: 'Verida Identity',
+    name: '@cmcWebCode',
+    description:
+      'Your Badge will include your Verida DID as proof of ownership',
+    image: veridaIdentityIcon,
   },
   {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb2',
-    connection: 'Twitter Account',
-    status: true,
-    username: '@cmcWebCode',
-    icon: TwitterIcon,
+    id: 'twitter-account',
+    label: 'Twitter Account',
+    name: '@cmcWebCode',
+    description:
+      'Your Badge will include your Twitter handle (username) as proof of ownership',
+    image: TwitterIcon,
   },
   {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb',
-    connection: 'Discord Account',
-    status: true,
-    username: '@cmcWebCode',
-    icon: DiscordIcon,
+    id: 'discord-account',
+    label: 'Twitter Account',
+    name: '@cmcWebCode',
+    description:
+      'Your Badge will include your Twitter handle (username) as proof of ownership',
+    image: DiscordIcon,
   },
 ]
 
-const NOT_CONNECTED_DATA = [
+const NOT_CONNECTED_DATA: BadgeType[] = [
   {
-    id: 'bd7acbea-c1b1-46c2-aed5-3ad53abb28222',
-    connection: 'facebook',
-    status: false,
-    username: '',
-    icon: facebookIcon,
+    id: 'facebook-account',
+    label: 'Twitter Account',
+    description:
+      'Your Badge will include your Twitter handle (username) as proof of ownership',
+    image: facebookIcon,
   },
 ]
 
 const badgesDescription = `
-Verida Badges are soulbound tokens ... they will appear on your Verida One public profile ... lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+  We defined the text now:
+
+  Verida One is your web3 native public profile to showcase your web2 and web3 identities. It provides a single source of truth about activities and ownership that can be read by both humans (via a web UI) and programs (via methods including on-chain records and Verida APIs for off-chain data).
+
+  Verida Badges represent a verified proof of ownership of a web2 platform account that you control. Verida badges are on-chain Soulbound Tokens which are a tokenised attestation of your ownership claim.
+
+  You can mint Verida Badges from the Verida Vault and have them displayed on your public Verida One profile. By issuing verified Badges, Verida acts as a trusted authority recognised by users, communities and dapps.
+
+  Soulbound Tokens (SBTs) are a new cryptographic primitive that attests and graphs reputational value in a native blockchain environment. SBTs are a kind of non-transferable asset, often referred to as a Non-Transferable NFT.
+
 `
 
-const ClaimBadges = () => {
+const ClaimableBadges: React.FC = () => {
   const [infoModalVisible, setInfoModalVisible] = useState(false)
   const onOpenInfoModal = () => {
     setInfoModalVisible(!infoModalVisible)
   }
 
+  const handleLink = () => {
+    Linking.openURL(VERIDA_DOCS_PAGE)
+  }
+
   const appModalFooter = (
-    <Button color='primary' disabled={false} loading={false}>
+    <Button
+      color='primary'
+      onPress={handleLink}
+      disabled={false}
+      loading={false}>
       Read More
     </Button>
   )
@@ -76,14 +98,14 @@ const ClaimBadges = () => {
         </Text>
         <View style={styles.alertContainer}>
           <AppAlert
-            body={'What are Verida Badges?'}
+            message={'What are Verida Badges?'}
             type='info'
-            action={onOpenInfoModal}
+            onPress={onOpenInfoModal}
           />
         </View>
         <View style={styles.listSection}>
           <Text style={styles.listTitle}>Available Badges</Text>
-          <BadgeList data={CONNECTED_DATA} />
+          <BadgeList data={badgeData} />
         </View>
         <View style={styles.listSection}>
           <Text style={styles.listTitle}>Connect to get more Badges</Text>
@@ -94,8 +116,7 @@ const ClaimBadges = () => {
         visible={infoModalVisible}
         onClose={onOpenInfoModal}
         title='What are Verida Badges ?'
-        footer={appModalFooter}
-        customStyles={styles.modalContentStyles}>
+        footer={appModalFooter}>
         <View style={styles.modalContent}>
           <Text style={styles.bodyText}>{badgesDescription}</Text>
         </View>
@@ -104,7 +125,7 @@ const ClaimBadges = () => {
   )
 }
 
-export default ClaimBadges
+export default ClaimableBadges
 
 const styles = StyleSheet.create({
   container: {
@@ -113,9 +134,6 @@ const styles = StyleSheet.create({
   },
   content: {
     paddingHorizontal: 16,
-  },
-  modalContentStyles: {
-    backgroundColor: WHITE_COLOR,
   },
   title: {
     fontFamily: NUNITO_SANS_SEMIBOLD,

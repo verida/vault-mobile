@@ -7,8 +7,8 @@ import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import ChangePin from 'pages/Authentication/ChangePin'
-import BadgeClaiming from 'pages/ClaimBadges/BadgeClaiming'
-import ClaimBadges from 'pages/ClaimBadges/ClaimBadges'
+import ClaimableBadges from 'pages/ClaimBadges/ClaimableBadges'
+import ClaimBadge from 'pages/ClaimBadges/ClaimBadge'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import ImportAccount from 'pages/Dashboard/ImportAccount'
 import Folder from 'pages/Data/Folder'
@@ -56,8 +56,8 @@ function MainNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
-      <Stack.Screen name={'ClaimBadges'} component={ClaimBadges} />
-      <Stack.Screen name={'BadgeClaiming'} component={BadgeClaiming} />
+      <Stack.Screen name={'ClaimBadge'} component={ClaimBadge} />
+      <Stack.Screen name={'ClaimableBadges'} component={ClaimableBadges} />
       <Stack.Screen name={'Inbox'} component={Inbox} />
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
       <Stack.Screen name={'LoginHistory'} component={LoginHistory} />

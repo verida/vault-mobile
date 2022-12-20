@@ -1,8 +1,10 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import * as SecureStore from 'expo-secure-store'
 import React, { useEffect, useState } from 'react'
 import {
   Image,
-  Pressable,
+  ImageBackground,
   SafeAreaView,
   ScrollView,
   StyleSheet,
@@ -11,71 +13,73 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
-import EthereumIcon from 'assets/networks/ethereum2.svg'
-import PlusIcon from 'assets/plus_icon.svg'
-import UnionIcon from 'assets/union_icon.svg'
+import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
+import SettingsIcon from 'assets/settings_icon.svg'
 import AddressesListItem from 'components/AddressesList/AddressesListItem'
 import AppAlert from 'components/AppAlert/AppAlert'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
-import AddWalletModal from 'components/WalletModal/AddWalletModal'
-import ImportWalletModal from 'components/WalletModal/ImportWalletModal'
 import {
-  BLACK_COLOR,
   DARK_GREY_COLOR,
   LIGHTGREY_COLOR,
   TEXT_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import useParams from 'hooks/useParams'
+import { MainStackParams } from 'navigation/types'
 import ClaimBadgeStatus from 'pages/ClaimBadges/ClaimBadgeStatus'
 import { selectChains } from 'reduxStore/tokens/selectors'
-import { createNewWallet } from 'reduxStore/wallet/actions'
-import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
+import { setSelectedWallet } from 'reduxStore/wallet/actions'
+import {
+  getAddressList,
+  getSelectedAddressById,
+  getSelectedWalletId,
+} from 'reduxStore/wallet/selectors'
+import { BadgeType } from 'utils/types/badges'
+import { WalletItem } from 'utils/types/wallets'
 
-const VeridaIdentityImage = require('assets/badges_icon/verida_identity.png')
+const badgeBgGradientColor = require('assets/badge_bg_gradient.png')
 
 const alertDesc = `Verida Badge is a public and immutable token sent to your blockchain address. It will appear on your Verida One public profile by default.`
 
 type Status = 'error' | 'success' | undefined
 
-interface BadgeClaimingProps {
-  wallets?: WalletItem[]
+interface ClaimBadgeProps {
+  addressList?: WalletItem[]
   chains?: any
+  selectedWallet: WalletItem | undefined
   selectedWalletId: string
-  onCreateNewWallet: (args: unknown) => Promise<void>
-  onImportWallet: (args: unknown) => Promise<void>
+  onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const BadgeClaiming: React.FC<BadgeClaimingProps> = ({
-  wallets,
+const ClaimBadge: React.FC<ClaimBadgeProps> = ({
+  addressList,
   chains,
-  onCreateNewWallet,
+  selectedWallet,
   selectedWalletId,
-  onImportWallet,
+  onSetSelectedWallet,
 }) => {
-  const { showActionSheetWithOptions } = useActionSheet()
+  const { data: badgeItem } = useParams<{ data: BadgeType }>()
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
   const [modalVisible, setModalVisible] = useState(false)
   const [walletList, setWalletList] = useState<WalletItem[]>([])
-  const [importModalVisible, setImportModalVisible] = useState(false)
-  const [addModalVisible, setAddModalVisible] = useState(false)
   const [estimatedGasFee] = useState('0.001 ETH (1.55 USD)')
 
   useEffect(() => {
-    if (wallets) {
-      // @Todo: get only list of addresses with it account balance
-      setWalletList(wallets)
+    if (addressList) {
+      setWalletList(addressList)
     }
-  }, [chains, wallets])
+  }, [chains, addressList])
 
-  const onCloseModal = () => {
+  const handleCloseModal = () => {
     setModalVisible(!modalVisible)
   }
 
@@ -83,87 +87,68 @@ const BadgeClaiming: React.FC<BadgeClaimingProps> = ({
     setStatus('success')
   }
 
-  const handleWalletSelection = () => {
-    //@ Todo: handle wallet Address selection
+  const handleWalletSelection = (item: WalletItem) => {
+    onSetSelectedWallet(item.id)
+    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, item.id)
   }
 
-  const onPressImportWallet = () => {
-    onCloseModal()
-    setImportModalVisible(true)
+  const selectedAccount = {
+    ...selectedWallet,
+    onPress: handleCloseModal,
   }
 
-  const onPressAddWallet = () => {
-    onCloseModal()
-    setAddModalVisible(true)
+  const handleManageWalletsPress = () => {
+    handleCloseModal()
+    navigation.navigate('ManageWallets')
   }
 
-  // @Todo: get selected addresses details from address list
-  const mockAddressItem = {
-    name: 'Main address 1',
-    address: '0xdbcf...67bd',
-    amount: '0.0022 ETH',
-    icon: <EthereumIcon />,
-    onPress: onCloseModal,
-  }
-
-  const navigationActionHandler = () => {
-    showActionSheetWithOptions(
-      {
-        options: ['Create new wallet', 'Import a wallet', 'Cancel'],
-        icons: [
-          <PlusIcon key={'Create new wallet'} />,
-          <UnionIcon key={'Import a wallet'} />,
-        ],
-        tintIcons: false,
-        cancelButtonIndex: 2,
-        tintColor: BLACK_COLOR,
-      },
-      (buttonIndex) => {
-        if (buttonIndex === 0) {
-          onPressAddWallet()
-        }
-        if (buttonIndex === 1) {
-          onPressImportWallet()
-        }
-      }
-    )
-  }
-
-  const manageAddress = (
-    <Pressable onPress={navigationActionHandler}>
-      <PlusIcon />
-    </Pressable>
+  const ModalFooter = (
+    <Button
+      icon={<SettingsIcon />}
+      onPress={handleManageWalletsPress}
+      hitSlop={HIT_SLOP}>
+      Manage Wallets
+    </Button>
   )
 
   return (
     <SafeAreaView style={styles.container}>
-      <NavigationHeader title='Verida Identity Badge' left={{ icon: 'back' }} />
+      <NavigationHeader
+        title={`${badgeItem.label} Badge`}
+        left={{ icon: 'back' }}
+        showDivider
+      />
       {status && (
         <View style={styles.content}>
-          <ClaimBadgeStatus type={status} />
+          <ClaimBadgeStatus type={status} data={badgeItem} />
         </View>
       )}
       {!status && (
         <ScrollView style={styles.content}>
           <View style={styles.imageContainer}>
-            <Image source={VeridaIdentityImage} />
+            <ImageBackground
+              source={badgeBgGradientColor}
+              resizeMode='cover'
+              style={styles.bgImage}>
+              <Image source={badgeItem.image} style={styles.badgeImage} />
+            </ImageBackground>
           </View>
           <View>
-            <Text style={styles.title}>Verida Identity Badge</Text>
+            <Text style={styles.title}>{badgeItem.label} Badge</Text>
             <Text style={styles.bodyText}>
-              Your Badge will include your Verida DID as proof of ownership: $
-              {mockAddressItem.address}
+              {badgeItem.description}
+              {getTruncatedWalletAddress(selectedAccount.address)}
             </Text>
           </View>
           <View style={styles.addressSection}>
             <Text style={styles.addressTitle}>Select address</Text>
             <AddressesListItem
               customStyles={styles.addressList}
-              item={mockAddressItem}
+              item={selectedAccount}
             />
           </View>
           <View style={styles.alertSection}>
-            <AppAlert body={alertDesc} type='warning' />
+            <AppAlert message={alertDesc} type='warning' />
           </View>
         </ScrollView>
       )}
@@ -185,11 +170,9 @@ const BadgeClaiming: React.FC<BadgeClaimingProps> = ({
       )}
       <AppModal
         title='Select Address'
-        onClose={onCloseModal}
+        onClose={handleCloseModal}
         visible={modalVisible}
-        rightIcon={manageAddress}
-        customStyles={styles.modalContentStyles}
-        footer={<Button hitSlop={HIT_SLOP}>Confirm Selection</Button>}>
+        footer={ModalFooter}>
         <View style={styles.walletList}>
           <WalletList
             list={walletList}
@@ -199,39 +182,31 @@ const BadgeClaiming: React.FC<BadgeClaimingProps> = ({
           />
         </View>
       </AppModal>
-      <ImportWalletModal
-        hideModal={() => setImportModalVisible(false)}
-        visible={importModalVisible}
-        onImportWallet={onImportWallet}
-      />
-      <AddWalletModal
-        hideModal={() => setAddModalVisible(false)}
-        visible={addModalVisible}
-        onCreateNewWallet={onCreateNewWallet}
-      />
     </SafeAreaView>
   )
 }
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
+  const network = 'eip155'
   const chains = selectChains(rootState)
+  const addressList = getAddressList(state, chains, network)
   return {
     chains,
-    wallets: getWalletList(state, chains),
+    addressList,
+    selectedWallet: getSelectedAddressById(state, chains, network),
     selectedWalletId: getSelectedWalletId(state),
   }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onCreateNewWallet: (args: unknown) =>
-      dispatch(createNewWallet(args) as any),
-    onImportWallet: (args: any) => dispatch(ImportWalletModal(args) as any),
+    onSetSelectedWallet: (walletID: string) =>
+      dispatch(setSelectedWallet(walletID) as any),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(BadgeClaiming)
+export default connect(mapStateToProps, mapDispatchToProps)(ClaimBadge)
 
 const styles = StyleSheet.create({
   container: {
@@ -240,11 +215,21 @@ const styles = StyleSheet.create({
   },
   imageContainer: {
     marginTop: 15.5,
-    marginHorizontal: 8,
+  },
+  bgImage: {
+    width: '100%',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderRadius: 24,
   },
   content: {
     flex: 1,
     marginHorizontal: 16,
+  },
+  badgeImage: {
+    height: 308,
+    width: 264,
+    marginVertical: 18,
   },
   addressSection: {
     marginVertical: 24,
@@ -308,9 +293,6 @@ const styles = StyleSheet.create({
     fontSize: 12,
     paddingHorizontal: 12,
     paddingVertical: 4,
-  },
-  modalContentStyles: {
-    backgroundColor: WHITE_COLOR,
   },
   walletList: {
     marginTop: 24,
