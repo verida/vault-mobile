@@ -2,14 +2,13 @@ import React from 'react'
 import {
   Modal,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
   ViewStyle,
 } from 'react-native'
 
-import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
+import CloseIcon from 'assets/icons/close_icon.svg'
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
@@ -44,7 +43,6 @@ const AppModal = ({
   title,
   footer,
   rightIcon,
-  customStyles,
 }: AppModalProps) => {
   return (
     <Modal
@@ -58,15 +56,13 @@ const AppModal = ({
         <View style={styles.centeredView}>
           <View style={styles.header}>
             <Pressable onPress={onClose}>
-              <LeftArrowIcon />
+              <CloseIcon />
             </Pressable>
             <Text style={styles.headerTitle}>{title}</Text>
             {rightIcon ? <View>{rightIcon}</View> : <View />}
           </View>
           <View style={styles.divider} />
-          <ScrollView style={[styles.modalView, customStyles]}>
-            {children}
-          </ScrollView>
+          <View style={styles.modalView}>{children}</View>
           {footer && <View style={styles.bottom}>{footer}</View>}
         </View>
       </View>

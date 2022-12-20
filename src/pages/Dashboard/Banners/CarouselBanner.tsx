@@ -18,11 +18,13 @@ import PagerView, {
 } from 'react-native-pager-view'
 
 import ChevronRightIcon from 'assets/icons/chevron_right.svg'
-import { WHITE_COLOR, WHITE_COLOR_OPACITY } from 'constants/color'
+import {
+  BLACK_COLOR_OPACITY,
+  WHITE_COLOR,
+  WHITE_COLOR_OPACITY,
+} from 'constants/color'
+import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-
-import { BLACK_COLOR_OPACITY } from '../../../constants/color'
-import { NUNITO_SANS } from '../../../constants/text'
 
 const claimBadgesBannerImage = require('assets/home_promo_banners/claim_badges.png')
 const veridaOneBannerImage = require('assets/home_promo_banners/verida_one.png')
@@ -39,12 +41,12 @@ const bannerDefinitions: TBanner[] = [
   {
     label: 'Claim Your Verida Badges',
     image: claimBadgesBannerImage,
-    screen: 'ClaimBadges',
+    screen: 'PublicProfile',
   },
   {
     label: 'Join The Waitlist',
     image: veridaOneBannerImage,
-    screen: 'ClaimBadges',
+    screen: 'PublicProfile',
   },
 ]
 

@@ -17,24 +17,11 @@ type AlertType = 'info' | 'warning' | 'error'
 
 type AppAlertProps = {
   type: AlertType
-  action?: () => void
-  body: string
+  onPress?: () => void
+  message: string
 }
 
-const getAlertColor = (type: AlertType): AlertType => {
-  switch (type) {
-    case 'info':
-      return 'info'
-    case 'warning':
-      return 'warning'
-    case 'error':
-      return 'error'
-    default:
-      return 'info'
-  }
-}
-
-const DisplayAlertIcon = (iconType: AlertType): React.ReactElement => {
+const displayAlertIcon = (iconType: AlertType): React.ReactElement => {
   switch (iconType) {
     case 'info':
       return <InfoAlertIcon />
@@ -47,15 +34,15 @@ const DisplayAlertIcon = (iconType: AlertType): React.ReactElement => {
   }
 }
 
-const AppAlert: React.FC<AppAlertProps> = ({ body, type, action }) => {
+const AppAlert: React.FC<AppAlertProps> = ({ message, type, onPress }) => {
   return (
-    <View style={[styles.container, styles[getAlertColor(type)]]}>
+    <View style={[styles.container, styles[type]]}>
       <View style={styles.alertContent}>
-        {DisplayAlertIcon(type)}
-        <Text style={styles.alertText}>{body}</Text>
+        {displayAlertIcon(type)}
+        <Text style={styles.alertText}>{message}</Text>
       </View>
-      {action && (
-        <Pressable onPress={action}>
+      {onPress && (
+        <Pressable onPress={onPress}>
           <ChevronRightIcon />
         </Pressable>
       )}
