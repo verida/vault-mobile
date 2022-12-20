@@ -3,6 +3,7 @@ import { DApp, DAppv2 } from 'wallet-connect/types'
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { BadgeType } from 'utils/types/badges'
 
 export type RootStackParams = {
   Auth: undefined
@@ -34,8 +35,10 @@ export type DashboardTabParams = {
 export type MainStackParams = {
   Dashboard: DashboardTabParams
   Inbox: undefined
-  ClaimBadges: undefined
-  BadgeClaiming: undefined
+  ClaimableBadges: undefined
+  ClaimBadge: {
+    data: BadgeType
+  }
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined

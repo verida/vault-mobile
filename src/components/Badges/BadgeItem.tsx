@@ -7,12 +7,11 @@ import Button from 'components/Button'
 import { TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-
-import { ConnectionList } from './BadgeList'
+import { BadgeType } from 'utils/types/badges'
 
 type BadgeItemProps = {
-  item: ConnectionList
-  onPress?: () => void
+  item: BadgeType
+  onPress: (arg: BadgeType) => void
 }
 
 const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
@@ -20,22 +19,22 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        <Image style={styles.badgeIcon} source={item.icon} />
+        <Image style={styles.badgeIcon} source={item.image} />
         <View style={styles.textWrapper}>
-          <Text style={styles.title}>{item?.connection}</Text>
-          <Text style={styles.subText}>
-            {item?.status ? item.username : 'not connected'}
-          </Text>
+          <Text style={styles.title}>{item.label}</Text>
+          <Text style={styles.subText}>{item.name || 'not connected'}</Text>
         </View>
       </View>
       <View>
-        {item.status ? (
+        {item.name ? (
           <Button
             style={styles.actionButton}
             color='primary'
             disabled={false}
             loading={false}
-            onPress={onPress}>
+            onPress={() => {
+              onPress(item)
+            }}>
             Claim
           </Button>
         ) : (
@@ -46,7 +45,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
             loading={false}
             onPress={() => {
               navigation.navigate('SingleConnection', {
-                provider: item.connection,
+                provider: item.name as string,
               })
             }}>
             Connect
