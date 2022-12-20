@@ -1,6 +1,6 @@
 import { BlurView, BlurViewProps } from '@react-native-community/blur'
 import React from 'react'
-import { StyleSheet, TextProps, View, ViewProps } from 'react-native'
+import { Platform, StyleSheet, TextProps, View, ViewProps } from 'react-native'
 
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -22,7 +22,10 @@ export function Tag(props: TagProps) {
   const styles = useThemeAwareStyle(createStyles)
   return (
     <View style={[styles.container, style]} {...rest}>
-      {withBlur && <BlurView style={styles.blurView} {...blurProps} />}
+      {withBlur &&
+        Platform.OS === 'ios' && ( // Android blur doesn't work well, so disable it temporarily
+          <BlurView style={styles.blurView} {...blurProps} />
+        )}
       {children}
     </View>
   )
@@ -51,7 +54,7 @@ Tag.defaultProps = {
   blurProps: {
     blurAmount: 2,
     blurType: 'light',
-    reducedTransparencyFallbackColor: 'white',
+    reducedTransparencyFallbackColor: 'black',
   },
 } as TagProps
 
@@ -62,6 +65,10 @@ TagLabel.defaultProps = {
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      backgroundColor: theme.color.primary50,
       borderRadius: theme.roundness.xs,
       paddingVertical: theme.spacing.xs,
       paddingHorizontal: theme.spacing.s,

@@ -31,22 +31,11 @@ export default (props) => {
   })()
 
   const buttonContent = (
-    <View
-      style={
-        {
-          // flexDirection: 'row',
-          // alignItems: 'center',
-        }
-      }>
-      {props.icon && (
-        <View
-          style={{
-            marginRight: 5,
-          }}>
-          {props.icon}
-        </View>
-      )}
-      <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+    <View style={{ alignItems: 'center' }}>
+      <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+        {props.icon && <View style={{ marginRight: 5 }}>{props.icon}</View>}
+        <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+      </View>
     </View>
   )
 

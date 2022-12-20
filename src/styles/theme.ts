@@ -1,5 +1,4 @@
 import {
-  BLACK_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
   GREY_120,
@@ -9,6 +8,7 @@ import {
   PRIMARY_COLOR_50,
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
+  SHADOW_LIGHT_GREY,
   SUCCESS_COLOR,
   TEXT_COLOR,
   TEXT_GREY_100,
@@ -52,6 +52,8 @@ export const defaultTheme = {
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
     grey120: GREY_120,
+
+    shadowLightGrey: SHADOW_LIGHT_GREY,
 
     grey100: '#EDF0F3',
     grey200: '#DDE3E9',

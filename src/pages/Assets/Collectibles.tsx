@@ -29,9 +29,7 @@ import * as thunkActions from 'reduxStore/thunkActions'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
-type CollectiblesProps = {}
-
-const Collectibles = (props: CollectiblesProps) => {
+const Collectibles = () => {
   const dispatch = useDispatch()
   const navigation = useNavigation()
   const styles = useThemeAwareStyle(createStyles)
@@ -77,7 +75,7 @@ const Collectibles = (props: CollectiblesProps) => {
                 defaultSource={require('assets/picture.png')}
                 source={{
                   uri,
-                  priority: FastImage.priority.normal,
+                  priority: FastImage.priority.high,
                 }}
                 resizeMode={FastImage.resizeMode.cover}
               />
@@ -174,10 +172,10 @@ const createStyles = (theme: Theme) =>
       position: 'absolute',
       left: theme.spacing.s,
       bottom: theme.spacing.s,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: theme.color.primary50,
+      // flexDirection: 'row',
+      // alignItems: 'center',
+      // justifyContent: 'space-between',
+      // backgroundColor: theme.color.primary50,
     },
     tagLabel: {
       maxWidth: 0.68 * IMAGE_WIDTH,

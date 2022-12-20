@@ -14,6 +14,8 @@ import {
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Shadow } from 'react-native-shadow-2'
 
 import { NFTMetadata } from 'api/types'
 import MoreIcon from 'assets/more_icon.svg'
@@ -32,8 +34,6 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
 import { getWallets } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
-
-type NFTDetailProps = {}
 
 type NFTDetailRouteProp = RouteProp<MainStackParams, 'NFTDetail'>
 
@@ -124,12 +124,13 @@ const Property = ({
   )
 }
 
-const NFTDetail = (props: NFTDetailProps) => {
+const NFTDetail = () => {
   const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
   const wallet = useReduxState((state) => getWallets(state.main))
+  const { bottom } = useSafeAreaInsets()
 
   const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
@@ -174,7 +175,7 @@ const NFTDetail = (props: NFTDetailProps) => {
   if (!nft) return <LoadingIndicator />
 
   return (
-    <Screen withSafeAreaView>
+    <Screen>
       <NavigationHeader
         title={name}
         right={{
@@ -184,7 +185,11 @@ const NFTDetail = (props: NFTDetailProps) => {
         bottomBorder
       />
       <ScrollView
-        contentContainerStyle={{ paddingBottom: theme.spacing.xl }}
+        contentContainerStyle={{
+          paddingBottom: theme.spacing.xl,
+          paddingHorizontal: theme.spacing.m,
+          paddingTop: theme.spacing.m,
+        }}
         showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
           <FastImage
@@ -197,7 +202,7 @@ const NFTDetail = (props: NFTDetailProps) => {
             resizeMode={FastImage.resizeMode.cover}
           />
           <Headline style={styles.title}>{name}</Headline>
-          <SubHeadline style={styles.subTitle}>Desciption</SubHeadline>
+          <SubHeadline style={styles.subTitle}>Description</SubHeadline>
           <Text style={styles.description}>
             {metadata.description ?? 'N/A'}
           </Text>
@@ -273,14 +278,22 @@ const NFTDetail = (props: NFTDetailProps) => {
           </View>
         </View>
       </ScrollView>
-      <View style={styles.footer}>
-        <Button color='primary' onPress={null}>
-          Add to Verida One
-        </Button>
-      </View>
+      <Shadow
+        offset={[0, -1]}
+        distance={1}
+        startColor={theme.color.shadowLightGrey}
+        endColor={theme.color.shadowLightGrey}
+        style={{ width: '100%', marginBottom: bottom }}>
+        <View style={styles.footer}>
+          <Button color='primary' onPress={null}>
+            Add to Verida One
+          </Button>
+        </View>
+      </Shadow>
     </Screen>
   )
 }
+
 const SCREEN_WIDTH = Dimensions.get('screen').width
 const PADDING = 16
 const IMAGE_WIDTH = SCREEN_WIDTH - 2 * PADDING
@@ -288,7 +301,6 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: theme.spacing.m,
       backgroundColor: theme.color.background,
     },
     image: {
@@ -320,15 +332,8 @@ const createStyles = (theme: Theme) =>
     },
     footer: {
       backgroundColor: theme.color.surface,
-      width: '100%',
-      padding: theme.spacing.m,
-      shadowColor: theme.color.shadow,
-      shadowOffset: {
-        width: 0,
-        height: -1,
-      },
-      shadowOpacity: 1,
-      shadowRadius: 1,
+      paddingHorizontal: theme.spacing.sm,
+      paddingTop: theme.spacing.sm,
     },
   })
 

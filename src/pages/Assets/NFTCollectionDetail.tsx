@@ -1,5 +1,6 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
+import { useTheme } from 'contexts/ThemeContext'
 import React, { useCallback } from 'react'
 import {
   Dimensions,
@@ -20,15 +21,14 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-type NFTCollectionProps = {}
-
 type NFTCollectionDetailRouteProp = RouteProp<
   MainStackParams,
   'NFTCollectionDetail'
 >
 
-const NFTCollectionDetail = (props: NFTCollectionProps) => {
+const NFTCollectionDetail = () => {
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
   const route = useRoute<NFTCollectionDetailRouteProp>()
   const navigation = useNavigation()
   const collection = route.params.collection
@@ -81,12 +81,16 @@ const NFTCollectionDetail = (props: NFTCollectionProps) => {
   )
 
   return (
-    <Screen withSafeAreaView>
+    <Screen>
       <NavigationHeader title={collection.name} bottomBorder />
       <View style={styles.container}>
         <FlatList
           style={styles.grid}
           numColumns={NUMBER_OF_COLUMNS}
+          contentContainerStyle={{
+            padding: theme.spacing.m,
+            paddingBottom: theme.spacing.xl,
+          }}
           columnWrapperStyle={styles.columnWrapperStyle}
           ItemSeparatorComponent={() => <Spacer vertical='m' />}
           data={collection.nfts?.data ?? []}
@@ -108,7 +112,6 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flex: 1,
-      padding: theme.spacing.m,
     },
     grid: {
       flex: 1,
@@ -131,17 +134,18 @@ const createStyles = (theme: Theme) =>
       position: 'absolute',
       left: theme.spacing.s,
       bottom: theme.spacing.s,
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
-      backgroundColor: theme.color.primary50,
+      // paddingHorizontal: theme.spacing.s,
+      // flexDirection: 'row',
+      // alignItems: 'center',
+      // justifyContent: 'space-between',
+      // backgroundColor: theme.color.primary50,
     },
     tagLabel: {
-      maxWidth: 0.68 * IMAGE_WIDTH,
       color: theme.color.onPrimary,
     },
     tagLabelNumber: {
       marginLeft: theme.spacing.xs,
+      marginRight: theme.spacing.xs,
       color: theme.color.onPrimary,
     },
   })
