@@ -15,6 +15,7 @@ export type HeaderSideButton = {
 }
 
 export type HeaderProps = {
+  showDivider?: boolean
   left?: HeaderSideButton
   right?: HeaderSideButton
   title?: string | React.ReactNode
@@ -28,6 +29,7 @@ function NavigationHeader({
   title,
   right,
   titleIcon,
+  showDivider,
   avatarIcon,
   rightComponent,
 }: HeaderProps) {
@@ -81,13 +83,15 @@ function NavigationHeader({
           <Text style={styles.netInfoText}>No network connection</Text>
         </View>
       )}
-      <View
-        style={{
-          height: 1,
-          width: '100%',
-          backgroundColor: LIGHTGREY_COLOR,
-        }}
-      />
+      {showDivider && (
+        <View
+          style={{
+            height: 1,
+            width: '100%',
+            backgroundColor: LIGHTGREY_COLOR,
+          }}
+        />
+      )}
     </View>
   )
 }

@@ -7,13 +7,13 @@ import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
-import { WalletItem } from 'components/WalletList/types'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { MainStackParams } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
+import { WalletItem } from 'utils/types/wallets'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 

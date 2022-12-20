@@ -13,7 +13,6 @@ import UnionIcon from 'assets/union_icon.svg'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
 import AddWalletModal from 'components/WalletModal/AddWalletModal'
 import ImportWalletModal from 'components/WalletModal/ImportWalletModal'
 import { BLACK_COLOR, SNOW_COLOR } from 'constants/color'
@@ -31,6 +30,7 @@ import {
   getWalletList,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
+import { WalletItem } from 'utils/types/wallets'
 
 export type walletIdType = string
 

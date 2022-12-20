@@ -12,8 +12,7 @@ import {
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
-
-import { WalletItem } from './types'
+import { WalletItem } from 'utils/types/wallets'
 
 interface WalletListItemProps {
   item: WalletItem

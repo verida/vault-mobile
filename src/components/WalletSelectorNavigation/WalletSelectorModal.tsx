@@ -11,11 +11,11 @@ import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
 import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
+import { WalletItem } from 'utils/types/wallets'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void

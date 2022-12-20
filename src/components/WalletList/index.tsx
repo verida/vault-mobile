@@ -4,8 +4,7 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 
 import WalletListItem from 'components/WalletList/WalletListItem'
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
-
-import { WalletItem } from './types'
+import { WalletItem } from 'utils/types/wallets'
 
 interface WalletListProps {
   list: WalletItem[]
