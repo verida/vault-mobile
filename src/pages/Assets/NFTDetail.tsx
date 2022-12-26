@@ -21,6 +21,7 @@ import { NFTMetadata } from 'api/types'
 import MoreIcon from 'assets/more_icon.svg'
 import Button from 'components/Button'
 import Icon from 'components/Icon/Icon'
+import Footer from 'components/Layouts/Footer'
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
@@ -278,18 +279,11 @@ const NFTDetail = () => {
           </View>
         </View>
       </ScrollView>
-      <Shadow
-        offset={[0, -1]}
-        distance={1}
-        startColor={theme.color.shadowLightGrey}
-        endColor={theme.color.shadowLightGrey}
-        style={{ width: '100%', marginBottom: bottom }}>
-        <View style={styles.footer}>
-          <Button color='primary' onPress={null}>
-            Add to Verida One
-          </Button>
-        </View>
-      </Shadow>
+      <Footer>
+        <Button color='primary' onPress={null}>
+          Add to Verida One
+        </Button>
+      </Footer>
     </Screen>
   )
 }

@@ -18,7 +18,11 @@ import parse from 'url-parse'
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
-import { BACKGROUND_GREY_COLOR, LIGHT_ORANGE_COLOR } from 'constants/color'
+import {
+  BACKGROUND_GREY_COLOR,
+  LIGHT_ORANGE_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
@@ -333,15 +337,17 @@ export default connect(mapStateToProps, mapDispatchToProps)(Home)
 const style = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: BACKGROUND_GREY_COLOR,
+    backgroundColor: WHITE_COLOR,
   },
   scrollContainer: {
     flex: 1,
+    backgroundColor: BACKGROUND_GREY_COLOR,
   },
   content: {
     flexGrow: 1,
     justifyContent: 'space-between',
     padding: 16,
+    paddingBottom: 40,
   },
   section: {
     marginBottom: 16,
