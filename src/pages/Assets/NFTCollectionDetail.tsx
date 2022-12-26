@@ -105,6 +105,7 @@ const createStyles = (theme: Theme) =>
       bottom: theme.spacing.s,
     },
     tagLabel: {
+      maxWidth: 0.68 * IMAGE_WIDTH,
       color: theme.color.onPrimary,
     },
     tagLabelNumber: {
