@@ -2,7 +2,14 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container } from 'native-base'
 import React, { useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  Text,
+  useWindowDimensions,
+  View,
+} from 'react-native'
+import { SceneMap, TabView } from 'react-native-tab-view'
 import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -30,6 +37,16 @@ const segmentLists = [
   },
 ]
 
+const TokensRoute = (props) => <Tokens navigation={props.navigation} />
+const CollectiblesRoute = () => <Collectibles />
+const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
+
+const renderScene = SceneMap({
+  tokens: TokensRoute,
+  nfts: CollectiblesRoute,
+  badges: BadgesRoute,
+})
+
 enum Assets {
   COINS,
   COLLECTIBLES,
@@ -42,6 +59,13 @@ const AssetsCollections = (props: any) => {
   const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
   const [collection, setCollection] = useState<Assets>(Assets.COINS)
+  const layout = useWindowDimensions()
+
+  const [routes] = React.useState([
+    { key: 'tokens' },
+    { key: 'nfts' },
+    { key: 'badges' },
+  ])
 
   const onChangedSegmentIndex = (index: number) => {
     setCollection(index)
@@ -81,14 +105,21 @@ const AssetsCollections = (props: any) => {
         // @TODO: develop a separate component to handle walletSelect navigation
         titleIcon={walletSelect}
       />
-      <View>
+      <View style={{ marginTop: 8 }}>
         <SegmentControl
           segments={segments}
           initialIndex={0}
           onChangedSegmentIndex={onChangedSegmentIndex}
         />
       </View>
-      {renderAssets()}
+      <TabView
+        navigationState={{ index: collection, routes }}
+        renderScene={renderScene}
+        renderTabBar={() => null}
+        onIndexChange={setCollection}
+        initialLayout={{ width: layout.width }}
+      />
+      {/* {renderAssets()} */}
       <WalletSelectorModal
         modalVisible={modalVisible}
         onCloseModal={onCloseModal}

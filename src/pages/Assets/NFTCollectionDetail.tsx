@@ -1,25 +1,20 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
-import { useTheme } from 'contexts/ThemeContext'
+import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
-import {
-  Dimensions,
-  FlatList,
-  ListRenderItem,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
 import { NFT, NFTMetadata } from 'api/types'
+import GridView from 'components/Grids/GridView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
-import { Spacer } from 'components/Spacer'
 import { Tag } from 'components/Tag'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
 import { Theme } from 'styles/types'
+
+import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
 type NFTCollectionDetailRouteProp = RouteProp<
   MainStackParams,
@@ -28,7 +23,6 @@ type NFTCollectionDetailRouteProp = RouteProp<
 
 const NFTCollectionDetail = () => {
   const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
   const route = useRoute<NFTCollectionDetailRouteProp>()
   const navigation = useNavigation()
   const collection = route.params.collection
@@ -39,14 +33,7 @@ const NFTCollectionDetail = () => {
         const imageMeta = (item?.metadata as unknown as NFTMetadata) ?? {
           image: null,
         }
-
-        const processIpfs = (ipfsLink: string) =>
-          ipfsLink?.replace('ipfs://', 'https://ipfs.io/ipfs/')
-        const isIpfsLink = (uri: string) => uri?.startsWith('ipfs://')
-
-        const uri = isIpfsLink(imageMeta.image)
-          ? processIpfs(imageMeta.image)
-          : imageMeta.image
+        const uri = getNFTImageUri(imageMeta.image)
         return (
           <Pressable
             onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
@@ -84,17 +71,9 @@ const NFTCollectionDetail = () => {
     <Screen>
       <NavigationHeader title={collection.name} bottomBorder />
       <View style={styles.container}>
-        <FlatList
-          style={styles.grid}
+        <GridView
           numColumns={NUMBER_OF_COLUMNS}
-          contentContainerStyle={{
-            padding: theme.spacing.m,
-            paddingBottom: theme.spacing.xl,
-          }}
-          columnWrapperStyle={styles.columnWrapperStyle}
-          ItemSeparatorComponent={() => <Spacer vertical='m' />}
           data={collection.nfts?.data ?? []}
-          showsVerticalScrollIndicator={false}
           keyExtractor={(item) => `${item.token_id}`}
           renderItem={renderCollection}
         />
@@ -102,11 +81,6 @@ const NFTCollectionDetail = () => {
     </Screen>
   )
 }
-
-const NUMBER_OF_COLUMNS = 2
-const SCREEN_WIDTH = Dimensions.get('screen').width
-const PADDING = 16
-const IMAGE_WIDTH = (SCREEN_WIDTH - 3 * PADDING) / NUMBER_OF_COLUMNS
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -125,20 +99,10 @@ const createStyles = (theme: Theme) =>
       minHeight: IMAGE_WIDTH,
       borderRadius: theme.roundness.xs,
     },
-    columnWrapperStyle: {
-      flex: 1,
-      justifyContent: 'space-between',
-      alignItems: 'center',
-    },
     itemTag: {
       position: 'absolute',
       left: theme.spacing.s,
       bottom: theme.spacing.s,
-      // paddingHorizontal: theme.spacing.s,
-      // flexDirection: 'row',
-      // alignItems: 'center',
-      // justifyContent: 'space-between',
-      // backgroundColor: theme.color.primary50,
     },
     tagLabel: {
       color: theme.color.onPrimary,

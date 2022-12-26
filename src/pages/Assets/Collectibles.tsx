@@ -1,24 +1,18 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
-import {
-  Dimensions,
-  FlatList,
-  ListRenderItem,
-  Pressable,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { useDispatch } from 'react-redux'
 
 import { NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
+import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
 import { SearchBar } from 'components/SearchBar/SearchBar'
-import { Spacer } from 'components/Spacer'
 import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useReduxState } from 'hooks/useReduxState'
@@ -28,6 +22,8 @@ import { walletNFTCollectionsSelector } from 'reduxStore/collectibles/selectors'
 import * as thunkActions from 'reduxStore/thunkActions'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
+
+import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
 const Collectibles = () => {
   const dispatch = useDispatch()
@@ -56,14 +52,7 @@ const Collectibles = () => {
           ?.metadata as unknown as NFTMetadata) ?? {
           image: null,
         }
-
-        const processIpfs = (ipfsLink: string) =>
-          ipfsLink?.replace('ipfs://', 'https://ipfs.io/ipfs/')
-        const isIpfsLink = (uri: string) => uri?.startsWith('ipfs://')
-
-        const uri = isIpfsLink(imageMeta.image)
-          ? processIpfs(imageMeta.image)
-          : imageMeta.image
+        const uri = getNFTImageUri(imageMeta.image)
         return (
           <Pressable
             onPress={() => {
@@ -116,7 +105,7 @@ const Collectibles = () => {
         />
       )}
       <Line style={{ marginTop: theme.spacing.s }} />
-      <FlatList
+      <GridView
         style={styles.grid}
         numColumns={NUMBER_OF_COLUMNS}
         contentContainerStyle={
@@ -124,8 +113,6 @@ const Collectibles = () => {
             ? styles.listEmptyContainer
             : { paddingBottom: theme.spacing.xxl, paddingTop: theme.spacing.m }
         }
-        columnWrapperStyle={styles.columnWrapperStyle}
-        ItemSeparatorComponent={() => <Spacer vertical='m' />}
         data={data}
         keyExtractor={(item) => `${item.token_address}`}
         renderItem={renderCollection}
@@ -141,11 +128,6 @@ const Collectibles = () => {
     </View>
   )
 }
-
-const NUMBER_OF_COLUMNS = 2
-const SCREEN_WIDTH = Dimensions.get('screen').width
-const PADDING = 16
-const IMAGE_WIDTH = (SCREEN_WIDTH - 3 * PADDING) / NUMBER_OF_COLUMNS
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -165,11 +147,6 @@ const createStyles = (theme: Theme) =>
       width: IMAGE_WIDTH,
       minHeight: IMAGE_WIDTH,
       borderRadius: theme.roundness.xs,
-    },
-    columnWrapperStyle: {
-      flex: 1,
-      justifyContent: 'space-between',
-      alignItems: 'center',
     },
     itemTag: {
       position: 'absolute',

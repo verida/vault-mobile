@@ -2,6 +2,7 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
+import { getNFTImageUri } from 'helpers/nft'
 import React, { FC, ReactNode } from 'react'
 import {
   Alert,
@@ -14,8 +15,6 @@ import {
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { Shadow } from 'react-native-shadow-2'
 
 import { NFTMetadata } from 'api/types'
 import MoreIcon from 'assets/more_icon.svg'
@@ -131,24 +130,17 @@ const NFTDetail = () => {
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
   const wallet = useReduxState((state) => getWallets(state.main))
-  const { bottom } = useSafeAreaInsets()
 
   const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,
   }
-  const processIpfs = (ipfsLink: string) =>
-    ipfsLink?.replace('ipfs://', 'https://ipfs.io/ipfs/')
-  const isIpfsLink = (uri: string) => uri?.startsWith('ipfs://')
-  const uri = isIpfsLink(metadata.image)
-    ? processIpfs(metadata.image)
-    : metadata.image
+  const uri = getNFTImageUri(metadata.image)
   const name = nft.name + ` #${nft.token_id}`
   const hasMinterWallet = nft.minter_address?.startsWith('0x')
 
   const handleMoreActions = () => {
     const options = ['Send', 'View in Explorer', 'Share', 'Cancel']
-    const destructiveButtonIndex = 0
     const cancelButtonIndex = 3
 
     showActionSheetWithOptions(
@@ -159,15 +151,19 @@ const NFTDetail = () => {
       (selectedIndex?: number) => {
         switch (selectedIndex!) {
           case 1:
-            // Save
+            // Send
             break
 
-          case destructiveButtonIndex:
-            // Delete
+          case 2:
+            // View in Explorer
+            break
+          case 3:
+            // Share
             break
 
           case cancelButtonIndex:
-          // Canceled
+            // Canceled
+            break
         }
       }
     )
