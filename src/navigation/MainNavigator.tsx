@@ -1,6 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
+import { CLAIM_BADGES, CLAIMABLE_BADGES } from 'constants/route'
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
@@ -54,8 +55,8 @@ function MainNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
-      <Stack.Screen name={'ClaimBadge'} component={ClaimBadge} />
-      <Stack.Screen name={'ClaimableBadges'} component={ClaimableBadges} />
+      <Stack.Screen name={CLAIM_BADGES} component={ClaimBadge} />
+      <Stack.Screen name={CLAIMABLE_BADGES} component={ClaimableBadges} />
       <Stack.Screen name={'Inbox'} component={Inbox} />
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
       <Stack.Screen name={'LoginHistory'} component={LoginHistory} />

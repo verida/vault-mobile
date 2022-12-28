@@ -1,9 +1,9 @@
+import { BadgeData, BadgeType } from 'types/badges'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
-import { BadgeType } from 'utils/types/badges'
 
 export type RootStackParams = {
   Auth: undefined
@@ -35,7 +35,7 @@ export type MainStackParams = {
   Inbox: undefined
   ClaimableBadges: undefined
   ClaimBadge: {
-    data: BadgeType
+    data: BadgeType & BadgeData
   }
   Dashboard: undefined
   InboxItem: { inboxItemId: string }
