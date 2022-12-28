@@ -1,4 +1,7 @@
 import {
+  ALERT_INFO_COLOR,
+  ALERT_WARNING_COLOR,
+  BACKGROUND_GREY_COLOR,
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
@@ -6,6 +9,7 @@ import {
   PRIMARY_COLOR,
   SEPARATOR,
   SUCCESS_COLOR,
+  TEXT_COLOR,
   TEXT_GREY_100,
   TEXT_GREY_500,
   VERIDA_COLOR,
@@ -16,14 +20,18 @@ import {
 export const defaultTheme = {
   color: {
     primary: PRIMARY_COLOR,
+    primary100: TEXT_COLOR,
     onPrimary: BLACK_COLOR,
     background: WHITE_COLOR,
+    backgroundGray: BACKGROUND_GREY_COLOR,
     onBackground: BLACK_COLOR,
     surface: WHITE_COLOR,
     onSurface: BLACK_COLOR,
     onDarkBackground: WHITE_COLOR,
 
     error: DECLINE_COLOR,
+    info: ALERT_INFO_COLOR,
+    warning: ALERT_WARNING_COLOR,
     onError: WHITE_COLOR,
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
@@ -67,5 +75,12 @@ export const defaultTheme = {
     xl: 18,
     xxl: 24,
     xxxl: 36,
+  },
+  borderRadius: {
+    xs: 4,
+    s: 8,
+    sm: 12,
+    m: 16,
+    l: 24,
   },
 }
