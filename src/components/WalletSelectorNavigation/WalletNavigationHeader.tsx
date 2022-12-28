@@ -1,12 +1,12 @@
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
+import { WalletItem } from 'types/wallet'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import ChevronDownIcon from 'assets/chevron_down_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
 import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-import { WalletItem } from 'utils/types/wallets'
 
 interface WalletNavigationHeaderProps {
   selectedWallet: WalletItem | undefined

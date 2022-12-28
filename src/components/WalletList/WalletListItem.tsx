@@ -1,5 +1,6 @@
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { WalletItem } from 'types/wallet'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
@@ -12,7 +13,6 @@ import {
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
-import { WalletItem } from 'utils/types/wallets'
 
 interface WalletListItemProps {
   item: WalletItem

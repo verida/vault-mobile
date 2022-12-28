@@ -4,6 +4,7 @@ import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
+import { WalletItem } from 'types/wallet'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl from 'components/SegmentControl'
@@ -13,7 +14,6 @@ import { MainStackParams } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
-import { WalletItem } from 'utils/types/wallets'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 

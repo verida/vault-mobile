@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { WalletItem } from 'types/wallet'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import SettingsIcon from 'assets/settings_icon.svg'
@@ -15,7 +16,6 @@ import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
 import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
-import { WalletItem } from 'utils/types/wallets'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void

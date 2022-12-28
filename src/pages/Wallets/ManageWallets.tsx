@@ -6,6 +6,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { WalletItem } from 'types/wallet'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import PlusIcon from 'assets/plus_icon.svg'
@@ -30,7 +31,6 @@ import {
   getWalletList,
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
-import { WalletItem } from 'utils/types/wallets'
 
 export type walletIdType = string
 

@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { AccountsType, WalletType } from 'types/wallet'
 
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
@@ -26,7 +27,6 @@ import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getWalletObjectById } from 'reduxStore/wallet/selectors'
-import { AccountsType, WalletType } from 'utils/types/wallets'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
