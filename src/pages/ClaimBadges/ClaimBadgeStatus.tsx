@@ -1,11 +1,13 @@
 import React, { useState } from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import { BadgeType } from 'types/badges'
 
 import ErrorStatusIcon from 'assets/icons/error_status_icon.svg'
 import Button from 'components/Button'
-import { TEXT_COLOR } from 'constants/color'
+import { Paragraph } from 'components/Typography/Paragraph'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { BadgeType } from 'utils/types/badges'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { Theme } from 'styles/types'
 
 const badgeBgGradientColor = require('assets/badge_bg_gradient.png')
 
@@ -33,6 +35,7 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
   type = 'error',
   data,
 }) => {
+  const styles = useThemeAwareStyle(createStyles)
   const [status] = useState(STATUS)
 
   const SuccessActionButton = (
@@ -64,7 +67,7 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
         )}
         <View style={styles.statusInfo}>
           <Text style={styles.title}>{status[type].title}</Text>
-          <Text style={styles.bodyText}>{status[type].message}</Text>
+          <Paragraph style={styles.bodyText}>{status[type].message}</Paragraph>
         </View>
       </View>
       <View>
@@ -77,48 +80,49 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
 
 export default ClaimBadgeStatus
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    flexDirection: 'column',
-    justifyContent: 'space-between',
-  },
-  content: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginTop: 74,
-    paddingHorizontal: 40,
-  },
-  badgeImage: {
-    width: 170,
-    height: 198,
-    marginVertical: 18,
-  },
-  bgImage: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  statusInfo: {
-    flexDirection: 'column',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  title: {
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontWeight: '600',
-    fontSize: 28,
-    textAlign: 'center',
-    color: TEXT_COLOR,
-    marginTop: 24,
-    marginBottom: 8,
-  },
-  bodyText: {
-    fontFamily: NUNITO_SANS,
-    fontWeight: '400',
-    fontSize: 16,
-    textAlign: 'center',
-    color: TEXT_COLOR,
-    marginBottom: 16,
-  },
-})
+const createStyles = (theme: Theme) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      flexDirection: 'column',
+      justifyContent: 'space-between',
+    },
+    content: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginTop: 74,
+      paddingHorizontal: theme.spacing.xxl,
+    },
+    badgeImage: {
+      width: 170,
+      height: 198,
+      marginVertical: 18,
+    },
+    bgImage: {
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    statusInfo: {
+      flexDirection: 'column',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
+    title: {
+      fontFamily: NUNITO_SANS_SEMIBOLD,
+      fontWeight: '600',
+      fontSize: 28,
+      textAlign: 'center',
+      color: theme.color.primary100,
+      marginTop: theme.spacing.l,
+      marginBottom: theme.spacing.s,
+    },
+    bodyText: {
+      fontFamily: NUNITO_SANS,
+      fontSize: theme.fontSize.l,
+      textAlign: 'center',
+      color: theme.color.primary100,
+      marginBottom: theme.spacing.m,
+    },
+  })
+}

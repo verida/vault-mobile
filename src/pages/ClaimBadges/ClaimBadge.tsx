@@ -13,6 +13,8 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { ClaimableBadgeParams } from 'types/badges'
+import { WalletItem } from 'types/wallet'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
@@ -23,14 +25,9 @@ import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import {
-  DARK_GREY_COLOR,
-  LIGHTGREY_COLOR,
-  TEXT_COLOR,
-  WHITE_COLOR,
-} from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
 import ClaimBadgeStatus from 'pages/ClaimBadges/ClaimBadgeStatus'
 import { selectChains } from 'reduxStore/tokens/selectors'
@@ -40,8 +37,7 @@ import {
   getSelectedAddressById,
   getSelectedWalletId,
 } from 'reduxStore/wallet/selectors'
-import { BadgeType } from 'utils/types/badges'
-import { WalletItem } from 'utils/types/wallets'
+import { Theme } from 'styles/types'
 
 const badgeBgGradientColor = require('assets/badge_bg_gradient.png')
 
@@ -66,7 +62,8 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   selectedWalletId,
   onSetSelectedWallet,
 }) => {
-  const { data: badgeItem } = useParams<{ data: BadgeType }>()
+  const styles = useThemeAwareStyle(createStyles)
+  const { data: badgeItem } = useParams<{ data: ClaimableBadgeParams }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
   const [modalVisible, setModalVisible] = useState(false)
@@ -114,7 +111,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <NavigationHeader
-        title={`${badgeItem.label} Badge`}
+        title={`${badgeItem.name} Badge`}
         left={{ icon: 'back' }}
         showDivider
       />
@@ -134,7 +131,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
             </ImageBackground>
           </View>
           <View>
-            <Text style={styles.title}>{badgeItem.label} Badge</Text>
+            <Text style={styles.title}>{badgeItem.name} Badge</Text>
             <Text style={styles.bodyText}>
               {badgeItem.description}
               {getTruncatedWalletAddress(selectedAccount.address)}
@@ -208,93 +205,95 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(ClaimBadge)
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: WHITE_COLOR,
-  },
-  imageContainer: {
-    marginTop: 15.5,
-  },
-  bgImage: {
-    width: '100%',
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: 24,
-  },
-  content: {
-    flex: 1,
-    marginHorizontal: 16,
-  },
-  badgeImage: {
-    height: 308,
-    width: 264,
-    marginVertical: 18,
-  },
-  addressSection: {
-    marginVertical: 24,
-  },
-  alertSection: {
-    marginBottom: 24,
-  },
-  transactionContainer: {
-    borderColor: LIGHTGREY_COLOR,
-    borderTopWidth: 1,
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    shadowOffset: { height: 4, width: 0 },
-    shadowColor: `0px 4px 24px rgba(0, 0, 0, 0.04)`,
-    padding: 16,
-  },
-  transactionContent: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginVertical: 12,
-  },
-  trxnText: {
-    fontFamily: NUNITO_SANS,
-    fontWeight: '600',
-    fontSize: 14,
-    color: DARK_GREY_COLOR,
-  },
-  addressTitle: {
-    fontFamily: NUNITO_SANS,
-    fontWeight: '600',
-    fontSize: 14,
-    color: TEXT_COLOR,
-    marginBottom: 8,
-  },
-  title: {
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontWeight: '600',
-    fontSize: 22,
-    textAlign: 'justify',
-    color: TEXT_COLOR,
-    marginTop: 24,
-    marginBottom: 8,
-  },
-  bodyText: {
-    fontFamily: NUNITO_SANS,
-    fontWeight: '600',
-    fontSize: 12,
-    color: DARK_GREY_COLOR,
-    marginBottom: 16,
-  },
-  addressList: {
-    elevation: 4,
-    borderColor: LIGHTGREY_COLOR,
-    borderWidth: 1,
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    shadowOffset: { height: 4, width: 0 },
-    shadowColor: `0px 4px 24px rgba(0, 0, 0, 0.04)`,
-  },
-  actionButton: {
-    fontSize: 12,
-    paddingHorizontal: 12,
-    paddingVertical: 4,
-  },
-  walletList: {
-    marginTop: 24,
-  },
-})
+const createStyles = (theme: Theme) => {
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: theme.color.background,
+    },
+    imageContainer: {
+      marginTop: 15.5,
+    },
+    bgImage: {
+      width: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: theme.borderRadius.l,
+    },
+    content: {
+      flex: 1,
+      marginHorizontal: theme.spacing.m,
+    },
+    badgeImage: {
+      height: 308,
+      width: 264,
+      marginVertical: 18,
+    },
+    addressSection: {
+      marginVertical: theme.spacing.l,
+    },
+    alertSection: {
+      marginBottom: theme.spacing.l,
+    },
+    transactionContainer: {
+      borderColor: theme.color.lightGrey,
+      borderTopWidth: 1,
+      shadowOpacity: 1,
+      shadowRadius: 4,
+      shadowOffset: { height: 4, width: 0 },
+      shadowColor: `0px 4px 24px rgba(0, 0, 0, 0.04)`,
+      padding: 16,
+    },
+    transactionContent: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginVertical: 12,
+    },
+    trxnText: {
+      fontFamily: NUNITO_SANS,
+      fontWeight: '600',
+      fontSize: theme.fontSize.m,
+      color: theme.color.gray400,
+    },
+    addressTitle: {
+      fontFamily: NUNITO_SANS,
+      fontWeight: '600',
+      fontSize: theme.fontSize.m,
+      color: theme.color.primary100,
+      marginBottom: theme.spacing.s,
+    },
+    title: {
+      fontFamily: NUNITO_SANS_SEMIBOLD,
+      fontWeight: '600',
+      fontSize: 22,
+      textAlign: 'justify',
+      color: theme.color.primary100,
+      marginTop: theme.spacing.l,
+      marginBottom: theme.spacing.s,
+    },
+    bodyText: {
+      fontFamily: NUNITO_SANS,
+      fontWeight: '600',
+      fontSize: theme.fontSize.s,
+      color: theme.color.gray400,
+      marginBottom: theme.spacing.m,
+    },
+    addressList: {
+      elevation: 4,
+      borderColor: theme.color.lightGrey,
+      borderWidth: 1,
+      shadowOpacity: 1,
+      shadowRadius: theme.borderRadius.xs,
+      shadowOffset: { height: 4, width: 0 },
+      shadowColor: `0px 4px 24px rgba(0, 0, 0, 0.04)`,
+    },
+    actionButton: {
+      fontSize: theme.fontSize.s,
+      paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+    },
+    walletList: {
+      marginTop: theme.spacing.l,
+    },
+  })
+}
