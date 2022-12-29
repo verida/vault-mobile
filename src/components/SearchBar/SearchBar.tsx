@@ -12,7 +12,6 @@ import FilterIcon from 'assets/icons/filter.svg'
 import InlineSearchIcon from 'assets/icons/inline_search.svg'
 import SortIcon from 'assets/icons/sort.svg'
 import TextInput from 'components/Input/TextInput'
-import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 

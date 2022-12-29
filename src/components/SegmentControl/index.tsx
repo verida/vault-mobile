@@ -1,4 +1,4 @@
-import React, { useCallback, useState } from 'react'
+import React, { useCallback, useImperativeHandle, useState } from 'react'
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 
 import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
@@ -18,57 +18,69 @@ export type SegmentProps = React.ComponentProps<typeof View> & {
   onChangedSegmentIndex: (index: number) => void
 }
 
-const SegmentControl = React.memo((props: SegmentProps) => {
-  const {
-    segments = [],
-    style,
-    initialIndex = 0,
-    onChangedSegmentIndex,
-    enabled = true,
-  } = props
-  const [selectedIndex, setSelectedIndex] = useState(initialIndex)
-  const touchOnSegment = useCallback(
-    (idx: number) => {
-      if (enabled) {
-        onChangedSegmentIndex(idx)
-        setSelectedIndex(idx)
-      }
-    },
-    [enabled, onChangedSegmentIndex]
-  )
+export type SegmentControlRef = {
+  setSelectedIndex: (index: number) => void
+}
 
-  return (
-    <View style={[styles.container, style]}>
-      <View style={styles.containerContent}>
-        {segments.map((data, index) => (
-          <TouchableWithoutFeedback
-            key={`${data.title}-${index}`}
-            onPress={() => touchOnSegment(index)}
-            hitSlop={{ left: 20, right: 20, top: 20, bottom: 20 }}>
-            <View
+const SegmentControl = React.forwardRef<SegmentControlRef, SegmentProps>(
+  (props, receivedRef) => {
+    const {
+      segments = [],
+      style,
+      initialIndex = 0,
+      onChangedSegmentIndex,
+      enabled = true,
+    } = props
+    const [selectedIndex, setSelectedIndex] = useState(initialIndex)
+    const touchOnSegment = useCallback(
+      (idx: number) => {
+        if (enabled) {
+          onChangedSegmentIndex(idx)
+          setSelectedIndex(idx)
+        }
+      },
+      [enabled, onChangedSegmentIndex]
+    )
+
+    useImperativeHandle(receivedRef, () => ({
+      setSelectedIndex: (index) => {
+        setSelectedIndex(index)
+      },
+    }))
+
+    return (
+      <View style={[styles.container, style]}>
+        <View style={styles.containerContent}>
+          {segments.map((data, index) => (
+            <TouchableWithoutFeedback
               key={`${data.title}-${index}`}
-              style={[
-                index === selectedIndex
-                  ? styles.segmentButtonFocused
-                  : styles.segmentButtonNormal,
-                { width: `${100 / segments.length}%` },
-              ]}>
-              <Text
+              onPress={() => touchOnSegment(index)}
+              hitSlop={{ left: 20, right: 20, top: 20, bottom: 20 }}>
+              <View
+                key={`${data.title}-${index}`}
                 style={[
-                  index === selectedIndex ? styles.textFocused : styles.text,
+                  index === selectedIndex
+                    ? styles.segmentButtonFocused
+                    : styles.segmentButtonNormal,
+                  { width: `${100 / segments.length}%` },
                 ]}>
-                {data.title}
-              </Text>
-              {index > 0 &&
-                index !== selectedIndex &&
-                index !== selectedIndex + 1 && <View style={styles.line} />}
-            </View>
-          </TouchableWithoutFeedback>
-        ))}
+                <Text
+                  style={[
+                    index === selectedIndex ? styles.textFocused : styles.text,
+                  ]}>
+                  {data.title}
+                </Text>
+                {index > 0 &&
+                  index !== selectedIndex &&
+                  index !== selectedIndex + 1 && <View style={styles.line} />}
+              </View>
+            </TouchableWithoutFeedback>
+          ))}
+        </View>
       </View>
-    </View>
-  )
-})
+    )
+  }
+)
 
 const styles = StyleSheet.create({
   container: {
