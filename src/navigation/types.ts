@@ -1,4 +1,4 @@
-import { BadgeData, BadgeType } from 'types/badges'
+import { ClaimableBadgeParams } from 'types/badges'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
@@ -35,7 +35,7 @@ export type MainStackParams = {
   Inbox: undefined
   ClaimableBadges: undefined
   ClaimBadge: {
-    data: BadgeType & BadgeData
+    data: ClaimableBadgeParams
   }
   Dashboard: undefined
   InboxItem: { inboxItemId: string }
