@@ -1,6 +1,6 @@
 import * as sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import JSONTree from 'react-native-json-tree'
 import {
@@ -107,7 +107,7 @@ type Props = {
   client: WalletConnectClientMeta
   payload: WalletConnectRequest
   dismissModal: () => void
-  approveRequest: () => void
+  approveRequest: () => Promise<void>
   rejectRequest: () => void
   renderPayload: (payload: any) => IRequestRenderParams[]
 }
@@ -162,6 +162,7 @@ const TransactionRequestModal = (props: Props) => {
   const ethValue = allParams.find((param) => param.label === 'Value')
   const networkFee = allParams.find((param) => param.label === 'Network Fee')
   const [etherPriceUsd, setEtherPriceUsd] = useState(0)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     ;(async () => {
@@ -242,11 +243,20 @@ const TransactionRequestModal = (props: Props) => {
           <Button
             style={styles.confirmButton}
             color='primary'
-            onPress={approveRequest}>
+            onPress={async () => {
+              setLoading(true)
+              await approveRequest()
+              setLoading(false)
+            }}>
             Confirm
           </Button>
         </View>
       </View>
+      {loading && (
+        <View style={styles.loading}>
+          <ActivityIndicator size={'large'} />
+        </View>
+      )}
     </BottomActionsModal>
   )
 }
@@ -313,5 +323,12 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     fontFamily: NUNITO_SANS_SEMIBOLD,
     color: BLACK_COLOR,
+  },
+  loading: {
+    ...StyleSheet.absoluteFillObject,
+    backgroundColor: '#000',
+    opacity: 0.2,
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 })

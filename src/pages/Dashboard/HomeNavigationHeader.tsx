@@ -1,4 +1,3 @@
-import { Header, Left, Right } from 'native-base'
 import React from 'react'
 import {
   Image,
@@ -9,13 +8,19 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
 import EnvelopeSvg from 'assets/icons/envelope.svg'
 import SettingsSvg from 'assets/icons/settings.svg'
 import Text from 'components/Text'
-import { PRIMARY_COLOR_200, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
+import {
+  PRIMARY_COLOR_200,
+  SEPARATOR_EXTRA_LIGHT,
+  TEXT_COLOR,
+  WHITE_COLOR,
+} from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 import { ORANGE_COLOR } from '../../constants/color'
@@ -48,31 +53,34 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   } = props
 
   return (
-    <Header transparent style={styles.header} {...rest}>
-      <Left style={styles.leftContainer}>
-        <View style={styles.left}>
-          <Pressable style={styles.avatarButton} onPress={onAvatarPress}>
-            <Image source={avatar} style={styles.avatar} />
-          </Pressable>
-          <View style={styles.titleContainer}>
-            <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
-              <Text style={styles.name} lineBreakMode='tail' numberOfLines={1}>
-                {name}
-              </Text>
-              <ChevronRightIcon />
-            </TouchableOpacity>
-            <View style={styles.network}>
-              <View style={styles.textChipBox}>
-                <Text style={styles.textChip}>Personal</Text>
+    <SafeAreaView edges={['left', 'top', 'right']}>
+      <View style={[styles.header]} {...rest}>
+        <View style={styles.leftContainer}>
+          <View style={styles.left}>
+            <Pressable style={styles.avatarButton} onPress={onAvatarPress}>
+              <Image source={avatar} style={styles.avatar} />
+            </Pressable>
+            <View style={styles.titleContainer}>
+              <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
+                <Text
+                  style={styles.name}
+                  lineBreakMode='tail'
+                  numberOfLines={1}>
+                  {name}
+                </Text>
+                <ChevronRightIcon />
+              </TouchableOpacity>
+              <View style={styles.network}>
+                <View style={styles.textChipBox}>
+                  <Text style={styles.textChip}>Personal</Text>
+                </View>
+                <Text style={styles.didText} numberOfLines={1}>
+                  DID: {getTruncatedWalletAddress(did, 10)}
+                </Text>
               </View>
-              <Text style={styles.didText} numberOfLines={1}>
-                DID: {getTruncatedWalletAddress(did, 10)}
-              </Text>
             </View>
           </View>
         </View>
-      </Left>
-      <Right>
         <View style={styles.right}>
           <TouchableOpacity
             style={styles.inboxButton}
@@ -96,17 +104,21 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
             <SettingsSvg />
           </TouchableOpacity>
         </View>
-      </Right>
-    </Header>
+      </View>
+    </SafeAreaView>
   )
 }
 
 const styles = StyleSheet.create({
   header: {
-    elevation: 1,
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: WHITE_COLOR,
+    height: 80,
+    alignItems: 'center',
+    flexDirection: 'row',
+    borderBottomWidth: 1,
+    borderBottomColor: SEPARATOR_EXTRA_LIGHT,
   },
   leftContainer: {
     flex: 2,

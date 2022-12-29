@@ -46,3 +46,10 @@ if (!global.atob) {
 global.navigator = {
   userAgent: 'mobile',
 }
+
+/**
+ * Andy TODO: Investigate
+ * Add this line below to fix a weird issue: the network fetch function is not found in some places like pouch-fetch package
+ * This issue just happened on Mac OS Ventura 13.0.1
+ */
+global.fetch

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -12,8 +13,9 @@ import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
 import SendListModal from './SendListModal'
 
-const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
+const TokenDashboard = ({ onGetBalances, data, wallets }) => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
+  const navigation = useNavigation()
 
   async function pullToRefresh() {
     onGetBalances()

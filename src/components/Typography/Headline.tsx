@@ -21,8 +21,8 @@ const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
     text: {
       ...text.primary,
-      color: theme.color.onPrimary,
-      fontSize: theme.fontSize.xxl,
+      color: theme.color.onBackground,
+      fontSize: theme.fontSize.xxxl,
       textAlign: 'left',
     },
   })

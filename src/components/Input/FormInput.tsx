@@ -120,7 +120,7 @@ export const FormInput = React.forwardRef(
             ]}
             onFocus={onFocus}
             onBlur={onBlur}
-            placeholderTextColor={theme.color.gray900}
+            placeholderTextColor={theme.color.grey900}
           />
           {withAnimatedChecbox && !focused && (
             <View
@@ -137,7 +137,7 @@ export const FormInput = React.forwardRef(
                 showLoading={loading}
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.gray500}
+                boxOutlineColor={theme.color.grey500}
               />
             </View>
           )}

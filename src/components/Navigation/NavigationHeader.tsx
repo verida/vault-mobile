@@ -2,10 +2,10 @@ import { useNetInfo } from '@react-native-community/netinfo'
 import { useNavigation } from '@react-navigation/native'
 import { Body, Button, Header, Left, Right, Title } from 'native-base'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Platform, StyleSheet, View } from 'react-native'
 
 import Text from 'components/Text'
-import { DECLINE_COLOR } from 'constants/color'
+import { DECLINE_COLOR, SEPARATOR_EXTRA_LIGHT } from 'constants/color'
 
 import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
 import { NUNITO_SANS_BOLD } from '../../constants/text'
@@ -22,6 +22,7 @@ export type HeaderProps = {
   titleIcon?: React.ReactElement
   avatarIcon?: React.ReactNode
   rightComponent?: React.ReactNode
+  bottomBorder?: boolean
 }
 
 function NavigationHeader({
@@ -31,13 +32,26 @@ function NavigationHeader({
   titleIcon,
   avatarIcon,
   rightComponent,
+  bottomBorder = false,
 }: HeaderProps) {
   const navigation = useNavigation()
   const netInfo = useNetInfo()
 
   return (
     <>
-      <Header transparent style={{ elevation: 1 }}>
+      <Header
+        transparent
+        style={
+          bottomBorder
+            ? Platform.select({
+                ios: {
+                  borderBottomWidth: 1,
+                  borderBottomColor: SEPARATOR_EXTRA_LIGHT,
+                },
+                android: { elevation: 1 },
+              })
+            : {}
+        }>
         <Left style={{ flex: 0.2, marginLeft: 6 }}>
           {(function () {
             switch (left.icon) {

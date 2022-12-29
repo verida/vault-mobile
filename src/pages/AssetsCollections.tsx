@@ -1,18 +1,19 @@
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Container, Content } from 'native-base'
-import React, { useState } from 'react'
-import { Image, StyleSheet, Text, View } from 'react-native'
+import { useTheme } from 'contexts/ThemeContext'
+import { Container } from 'native-base'
+import React, { useRef, useState } from 'react'
+import { Image, StyleSheet, Text, useWindowDimensions } from 'react-native'
+import { SceneMap, TabView } from 'react-native-tab-view'
 import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import SegmentControl from 'components/SegmentControl'
+import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
-import { MainStackParams } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
+
+import Collectibles from './Assets/Collectibles'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -28,6 +29,16 @@ const segmentLists = [
   },
 ]
 
+const TokensRoute = () => <Tokens />
+const CollectiblesRoute = () => <Collectibles />
+const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
+
+const renderScene = SceneMap({
+  tokens: TokensRoute,
+  nfts: CollectiblesRoute,
+  badges: BadgesRoute,
+})
+
 enum Assets {
   COINS,
   COLLECTIBLES,
@@ -36,10 +47,18 @@ enum Assets {
 
 const AssetsCollections = (props: any) => {
   const { selectedWallet } = props
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
   const [collection, setCollection] = useState<Assets>(Assets.COINS)
+  const layout = useWindowDimensions()
+  const segmentedControlRef = useRef<SegmentControlRef>(null)
+  const { theme } = useTheme()
+
+  const [routes] = React.useState([
+    { key: 'tokens' },
+    { key: 'nfts' },
+    { key: 'badges' },
+  ])
 
   const onChangedSegmentIndex = (index: number) => {
     setCollection(index)
@@ -51,17 +70,6 @@ const AssetsCollections = (props: any) => {
 
   const openWalletModal = () => {
     setModalVisible(!modalVisible)
-  }
-
-  const renderAssets = () => {
-    switch (collection) {
-      case Assets.COINS:
-        return <Tokens navigation={navigation} />
-      case Assets.COLLECTIBLES:
-        return <Text style={styles.container}>Collectibles</Text>
-      case Assets.BADGES:
-        return <Text style={styles.container}>Badges</Text>
-    }
   }
 
   const walletSelect = (
@@ -79,13 +87,26 @@ const AssetsCollections = (props: any) => {
         // @TODO: develop a separate component to handle walletSelect navigation
         titleIcon={walletSelect}
       />
-      <View>
-        <SegmentControl
-          segments={segments}
-          onChangedSegmentIndex={onChangedSegmentIndex}
-        />
-      </View>
-      <Content>{renderAssets()}</Content>
+
+      <TabView
+        lazy
+        navigationState={{ index: collection, routes }}
+        renderScene={renderScene}
+        renderTabBar={(_props) => (
+          <SegmentControl
+            style={{ marginTop: theme.spacing.s }}
+            ref={segmentedControlRef}
+            segments={segments}
+            initialIndex={0}
+            onChangedSegmentIndex={onChangedSegmentIndex}
+          />
+        )}
+        onIndexChange={(index) => {
+          setCollection(index)
+          segmentedControlRef.current?.setSelectedIndex(index)
+        }}
+        initialLayout={{ width: layout.width }}
+      />
       <WalletSelectorModal
         modalVisible={modalVisible}
         onCloseModal={onCloseModal}
