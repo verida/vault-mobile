@@ -265,15 +265,16 @@ const AddIdentity = () => {
                 have multiple, such as a personal, business or anonymous
                 identity.
               </Paragraph>
-              <Paragraph style={styles.subTitle}>
-                Create a Verida identity
-              </Paragraph>
 
               <TCCheckbox
                 checked={agreedTC}
                 style={styles.termAndCondition}
                 onToggle={toggleAgreedTC}
               />
+
+              <Paragraph style={styles.subTitle}>
+                Want a new Verida Identity?
+              </Paragraph>
 
               <Spacer vertical='xxl' />
               <Button
@@ -325,8 +326,9 @@ const AddIdentity = () => {
                 }
                 value={profile.name}
               />
-              <Spacer vertical='s' />
-              <Paragraph>Your name is required and public</Paragraph>
+              <Label style={{ marginTop: 2 }}>
+                Your name is required and public
+              </Label>
               {enabledClaimUsername && (
                 <>
                   <Spacer vertical='xxxl' />
@@ -367,10 +369,8 @@ const AddIdentity = () => {
               <Headline style={styles.title}>Data Region (2/2)</Headline>
               <Spacer vertical='xxl' />
               <Paragraph>
-                Your personal data is encrypted and stored on a network of
-                decentralized servers. Select a preferred data region to
-                determine the default servers that store your encrypted personal
-                data. You can change these later.
+                {'Your personal data is encrypted and stored on a network of decentralized servers.\n' +
+                  'Select your country to determine the default servers that store your encrypted personal data. You can change both your country and the data regions later.'}
               </Paragraph>
               <Spacer vertical='xxl' />
               <Label>Country</Label>
@@ -384,8 +384,9 @@ const AddIdentity = () => {
                 containerStyle={InputStyles.select}
                 onChangeItem={onCountryChange}
               />
-              <Spacer vertical='s' />
-              <Paragraph>Your country is optional and private</Paragraph>
+              <Label style={{ marginTop: 2 }}>
+                Your country is optional and public
+              </Label>
             </ScrollView>
           </View>
           <View key='confirmation' style={styles.landing}>
@@ -537,10 +538,10 @@ const creatStyles = (theme: Theme) => {
       color: theme.color.onBackground,
     },
     subTitle: {
-      marginTop: theme.spacing.xxxl,
+      marginTop: theme.spacing.m,
     },
     termAndCondition: {
-      marginTop: theme.spacing.m,
+      marginTop: theme.spacing.xxxl,
       color: theme.color.onBackground,
     },
     pagerView: {
