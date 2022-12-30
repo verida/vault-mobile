@@ -11,7 +11,7 @@ import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
-import { CreateIdentityStepStatus, CreateIdentityStepType } from 'api/types'
+import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { FormInput } from 'components/Input/FormInput'
@@ -50,20 +50,27 @@ const pageData = [
   },
 ]
 
-const numberOfPage = 4
+const numberOfPages = pageData.length
 
-export enum CreateIdentityMode {
-  CREATE,
-  ADD,
+export enum AddIdentityMode {
+  CreateNew,
+  Add,
 }
 
-const CreateIdentity = () => {
+enum PageType {
+  Start,
+  Name,
+  Location,
+  Confirmation,
+}
+
+const AddIdentity = () => {
   const navigation = useNavigation()
-  const params = useParams<{ mode?: CreateIdentityMode }>()
+  const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const pagerRef = useRef<PagerView>(null)
-  const [currentPage, setCurrentPage] = useState(0)
+  const [currentPage, setCurrentPage] = useState(PageType.Start)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
@@ -112,10 +119,8 @@ const CreateIdentity = () => {
   }, [])
 
   const [confirmationState, setConfirmationState] = useState<{
-    state?: Partial<
-      Record<CreateIdentityStepType, CreateIdentityStepStatus>
-    > & {
-      currentStep?: CreateIdentityStepType
+    state?: Partial<Record<AddIdentityStepType, AddIdentityStepStatus>> & {
+      currentStep?: AddIdentityStepType
     }
   }>()
 
@@ -154,7 +159,7 @@ const CreateIdentity = () => {
         }
       )
 
-      params.mode === CreateIdentityMode.ADD
+      params.mode === AddIdentityMode.Add
         ? navigation.goBack()
         : navigation.navigate('CreatePin') // Create a pin for the first time create an account
     } catch (error) {
@@ -165,16 +170,16 @@ const CreateIdentity = () => {
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
-      case 1: // Name
+      case PageType.Name:
         return {
           formValidated:
             !isEmpty(profile.name) &&
             (isEmpty(profile.username) ||
               (!isEmpty(profile.username) && availableUsername)),
         }
-      case 2: // location
+      case PageType.Location:
         return { formValidated: true }
-      case 3: // Confirmation
+      case PageType.Confirmation:
         return {
           formValidated: confirmationState?.state?.CreateProfile === 'Success',
         }
@@ -197,10 +202,10 @@ const CreateIdentity = () => {
   }
 
   const onNext = useCallback(() => {
-    if (currentPage < numberOfPage - 1) {
+    if (currentPage < numberOfPages - 1) {
       pagerRef.current?.setPage(currentPage + 1)
       setCurrentPage(currentPage + 1)
-      if (currentPage === numberOfPage - 2) {
+      if (currentPage === numberOfPages - 2) {
         // navigate to last page and create identifier
         createIdentifier()
       }
@@ -291,7 +296,7 @@ const CreateIdentity = () => {
                 color='transparent'
                 style={styles.actionButton}
                 onPress={() => {
-                  if (params.mode === CreateIdentityMode.ADD) {
+                  if (params.mode === AddIdentityMode.Add) {
                     const popAction = StackActions.pop(1)
                     navigation.dispatch(popAction)
                   }
@@ -551,4 +556,4 @@ const creatStyles = (theme: Theme) => {
   })
 }
 
-export default CreateIdentity
+export default AddIdentity

@@ -47,14 +47,10 @@ export type NetworkCountries = {
   [name: string]: NetworkCountry[]
 }
 
-export type CreateIdentityStepType =
+export type AddIdentityStepType =
   | 'CreateIdentifier'
   | 'DefineNameAndUsername'
   | 'StorageLocation'
   | 'CreateProfile'
 
-export type CreateIdentityStepStatus =
-  | 'None'
-  | 'Loading'
-  | 'Success'
-  | 'Failure'
+export type AddIdentityStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'

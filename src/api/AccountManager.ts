@@ -10,8 +10,8 @@ import { store } from 'reduxStore'
 
 import {
   Account,
-  CreateIdentityStepStatus,
-  CreateIdentityStepType,
+  AddIdentityStepStatus,
+  AddIdentityStepType,
   NetworkNode,
   NormalizedAccounts,
   UserData,
@@ -370,8 +370,8 @@ class AccountManager {
     userData: UserData,
     country: string,
     updateProgress?: (
-      step: CreateIdentityStepType,
-      status: CreateIdentityStepStatus
+      step: AddIdentityStepType,
+      status: AddIdentityStepStatus
     ) => void
   ): Promise<Account | undefined> {
     let connected = false

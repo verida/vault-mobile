@@ -1,8 +1,7 @@
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
-import { CreateAccountMode } from 'pages/Account/Create'
-import { CreateIdentityMode } from 'pages/Account/Identity/CreateIdentity'
+import { AddIdentityMode } from 'pages/Account/Identity/AddIdentity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
@@ -12,7 +11,7 @@ export type RootStackParams = {
 
 export type AuthStackParams = {
   Start: undefined
-  CreateAccount: { mode: CreateAccountMode }
+  AddIdentity: { mode?: AddIdentityMode }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   SeedPhraseEntered: undefined
@@ -20,7 +19,6 @@ export type AuthStackParams = {
   CreatePin: undefined
   Success: undefined
   SelectNetwork: undefined
-  CreateIdentity: undefined
 }
 
 export type DashboardTabParams = {
@@ -60,9 +58,8 @@ export type MainStackParams = {
   ChangePin: undefined
   // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
-  AddAccount: { mode: CreateAccountMode }
   DeleteAccount: undefined
-  CreateIdentity: { mode?: CreateIdentityMode }
+  AddIdentity: { mode?: AddIdentityMode }
   SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
