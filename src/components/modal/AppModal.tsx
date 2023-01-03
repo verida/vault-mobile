@@ -1,12 +1,5 @@
 import React from 'react'
-import {
-  Modal,
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-  ViewStyle,
-} from 'react-native'
+import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
 
 import CloseIcon from 'assets/icons/close_icon.svg'
 import {
@@ -26,7 +19,6 @@ interface AppModalProps {
   onClose: () => void
   footer?: React.ReactNode
   children: React.ReactNode
-  customStyles?: ViewStyle
 }
 
 const HIT_SLOP = {

@@ -1,4 +1,4 @@
-import { ClaimableBadgeParams } from 'types/badges'
+import { AccountConnection, ClaimableBadgeParams } from 'types/badges'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
@@ -81,7 +81,7 @@ export type MainStackParams = {
   WalletConnectDapp: { dapp: DApp }
   WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: {
-    provider: string
+    provider: AccountConnection
   }
   Success: undefined
 }

@@ -34,7 +34,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
           <Image style={styles.badgeIcon} source={badgeDetails.image} />
         </ImageBackground>
         <View style={styles.textWrapper}>
-          <Text style={styles.title}>{badgeDetails?.name}</Text>
+          <Text style={styles.title}>{badgeDetails.name}</Text>
           <Text style={styles.subText}>{item.username || 'not connected'}</Text>
         </View>
       </View>
@@ -61,7 +61,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
             loading={false}
             onPress={() => {
               navigation.navigate('SingleConnection', {
-                provider: badgeDetails?.name as string,
+                provider: badgeDetails.label,
               })
             }}>
             Connect

@@ -113,7 +113,6 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
       <NavigationHeader
         title={`${badgeItem.name} Badge`}
         left={{ icon: 'back' }}
-        showDivider
       />
       {status && (
         <View style={styles.content}>
@@ -134,7 +133,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
             <Text style={styles.title}>{badgeItem.name} Badge</Text>
             <Text style={styles.bodyText}>
               {badgeItem.description}
-              {getTruncatedWalletAddress(selectedAccount.address)}
+              {getTruncatedWalletAddress(badgeItem.proof)}
             </Text>
           </View>
           <View style={styles.addressSection}>
@@ -212,6 +211,7 @@ const createStyles = (theme: Theme) => {
       backgroundColor: theme.color.background,
     },
     imageContainer: {
+      position: 'relative',
       marginTop: 15.5,
     },
     bgImage: {

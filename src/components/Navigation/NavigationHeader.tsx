@@ -6,7 +6,7 @@ import { StyleSheet, View } from 'react-native'
 
 import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import Text from 'components/Text'
-import { BLACK_COLOR, DECLINE_COLOR, LIGHTGREY_COLOR } from 'constants/color'
+import { BLACK_COLOR, DECLINE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type HeaderSideButton = {
@@ -15,7 +15,6 @@ export type HeaderSideButton = {
 }
 
 export type HeaderProps = {
-  showDivider?: boolean
   left?: HeaderSideButton
   right?: HeaderSideButton
   title?: string | React.ReactNode
@@ -29,7 +28,6 @@ function NavigationHeader({
   title,
   right,
   titleIcon,
-  showDivider,
   avatarIcon,
   rightComponent,
 }: HeaderProps) {
@@ -82,15 +80,6 @@ function NavigationHeader({
         <View style={styles.netInfoBar}>
           <Text style={styles.netInfoText}>No network connection</Text>
         </View>
-      )}
-      {showDivider && (
-        <View
-          style={{
-            height: 1,
-            width: '100%',
-            backgroundColor: LIGHTGREY_COLOR,
-          }}
-        />
       )}
     </View>
   )

@@ -7,11 +7,18 @@ export type BadgeData = {
   // ... any other?
 }
 
+export type AccountConnection =
+  | 'Facebook'
+  | 'Twitter'
+  | 'Verida-Identity'
+  | 'Discord'
+
 export type BadgeType = {
   id: BadgeUniqueID
   name: string
   description: string
   image: any
+  label: AccountConnection
   image_data?: string
   external_url?: string
   background_color?: string

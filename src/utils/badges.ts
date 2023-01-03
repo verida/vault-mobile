@@ -12,6 +12,7 @@ export const STATIC_BADGES_DATA: BadgeType[] = [
   {
     id: 'verida-identity',
     name: 'Verida Identity',
+    label: 'Verida-Identity',
     description:
       'Your Badge will include your Verida DID as proof of ownership',
     image: veridaIdentityIcon,
@@ -19,6 +20,7 @@ export const STATIC_BADGES_DATA: BadgeType[] = [
   {
     id: 'twitter-account',
     name: 'Twitter Account',
+    label: 'Twitter',
     description:
       'Your Badge will include your Twitter handle (username) as proof of ownership',
     image: TwitterIcon,
@@ -26,6 +28,7 @@ export const STATIC_BADGES_DATA: BadgeType[] = [
   {
     id: 'discord-account',
     name: 'Discord Account',
+    label: 'Discord',
     description:
       'Your Badge will include your Twitter handle (username) as proof of ownership',
     image: DiscordIcon,
@@ -38,21 +41,21 @@ export const BADGE_DATA: BadgeData[] = [
   {
     id: 'verida-identity',
     username: '@cmcWebCode',
-    proof: '',
+    proof: 'vda:0xD11B3...00cE',
     address: '',
     did: '',
   },
   {
     id: 'twitter-account',
     username: '@cmcWebCode',
-    proof: '',
+    proof: 'vda:0xD11B3...00cE',
     address: '',
     did: '',
   },
   {
     id: 'discord-account',
     username: '@cmcWebCode',
-    proof: '',
+    proof: 'vda:0xD11B3...00cE',
     address: '',
     did: '',
   },
