@@ -11,6 +11,7 @@ import SegmentControl from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { MainStackParams } from 'navigation/types'
+import ClaimableBadges from 'pages/ClaimBadges/ClaimableBadges'
 import Tokens from 'pages/Tokens/Dashboard'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
@@ -66,7 +67,7 @@ const AssetsCollections: React.FC<AssetsCollectionsProps> = ({
       case Assets.COLLECTIBLES:
         return <Text style={styles.container}>Collectibles</Text>
       case Assets.BADGES:
-        return <Text style={styles.container}>Badges</Text>
+        return <ClaimableBadges />
     }
   }
 

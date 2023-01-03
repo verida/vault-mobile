@@ -11,7 +11,7 @@ import { Paragraph } from 'components/Typography/Paragraph'
 import { BADGES_DESCRIPTION } from 'constants/badges'
 import { TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { VERIDA_DOCS_PAGE } from 'constants/url'
+import { VERIDA_ONE_FAQS } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 import { BADGE_DATA } from 'utils/badges'
@@ -24,7 +24,7 @@ const ClaimableBadges: React.FC = () => {
   }
 
   const handleLink = () => {
-    Linking.openURL(VERIDA_DOCS_PAGE)
+    Linking.openURL(VERIDA_ONE_FAQS)
   }
 
   const appModalFooter = (
