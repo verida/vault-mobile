@@ -223,6 +223,15 @@ PODS:
   - JWT (3.0.0-beta.14):
     - Base64 (~> 1.1.2)
   - libevent (2.1.12)
+  - libwebp (1.2.3):
+    - libwebp/demux (= 1.2.3)
+    - libwebp/mux (= 1.2.3)
+    - libwebp/webp (= 1.2.3)
+  - libwebp/demux (1.2.3):
+    - libwebp/webp
+  - libwebp/mux (1.2.3):
+    - libwebp/demux
+  - libwebp/webp (1.2.3)
   - lottie-ios (3.2.3)
   - lottie-react-native (5.0.1):
     - lottie-ios (~> 3.2.3)
@@ -441,6 +450,8 @@ PODS:
   - React-jsinspector (0.68.5)
   - React-logger (0.68.5):
     - glog
+  - react-native-blur (4.3.0):
+    - React-Core
   - react-native-camera (4.2.1):
     - React-Core
     - react-native-camera/RCT (= 4.2.1)
@@ -549,6 +560,10 @@ PODS:
     - React-Core
   - RNDeviceInfo (8.7.1):
     - React-Core
+  - RNFastImage (8.6.3):
+    - React-Core
+    - SDWebImage (~> 5.11.1)
+    - SDWebImageWebPCoder (~> 0.8.4)
   - RNFBAnalytics (14.12.0):
     - Firebase/Analytics (= 8.15.0)
     - React-Core
@@ -612,6 +627,12 @@ PODS:
     - React-Core
   - RNVectorIcons (8.1.0):
     - React-Core
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageWebPCoder (0.8.5):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.10)
   - Sentry (7.11.0):
     - Sentry/Core (= 7.11.0)
   - Sentry/Core (7.11.0)
@@ -683,6 +704,7 @@ DEPENDENCIES:
   - React-jsiexecutor (from `../node_modules/react-native/ReactCommon/jsiexecutor`)
   - React-jsinspector (from `../node_modules/react-native/ReactCommon/jsinspector`)
   - React-logger (from `../node_modules/react-native/ReactCommon/logger`)
+  - "react-native-blur (from `../node_modules/@react-native-community/blur`)"
   - react-native-camera (from `../node_modules/react-native-camera`)
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-fast-crypto (from `../node_modules/react-native-fast-crypto`)
@@ -710,6 +732,7 @@ DEPENDENCIES:
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
@@ -754,9 +777,12 @@ SPEC REPOS:
     - GoogleUtilities
     - JWT
     - libevent
+    - libwebp
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
+    - SDWebImage
+    - SDWebImageWebPCoder
     - Sentry
     - SocketRocket
     - SSZipArchive
@@ -833,6 +859,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native/ReactCommon/jsinspector"
   React-logger:
     :path: "../node_modules/react-native/ReactCommon/logger"
+  react-native-blur:
+    :path: "../node_modules/@react-native-community/blur"
   react-native-camera:
     :path: "../node_modules/react-native-camera"
   react-native-config:
@@ -887,6 +915,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNFastImage:
+    :path: "../node_modules/react-native-fast-image"
   RNFBAnalytics:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
@@ -965,6 +995,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: e0913149f6b0625b553d70dae12b49fc62914fd1
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  libwebp: 60305b2e989864154bd9be3d772730f08fc6a59c
   lottie-ios: c058aeafa76daa4cf64d773554bccc8385d0150e
   lottie-react-native: a029a86e1689c86a07169c520ae770e84348cd20
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
@@ -983,6 +1014,7 @@ SPEC CHECKSUMS:
   React-jsiexecutor: 45c0496ca8cef6b02d9fa0274c25cf458fe91a56
   React-jsinspector: eb202e43b3879aba9a14f3f65788aec85d4e1ea9
   React-logger: 98f663b292a60967ebbc6d803ae96c1381183b6d
+  react-native-blur: 50c9feabacbc5f49b61337ebc32192c6be7ec3c3
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
   react-native-config: bcafda5b4c51491ee1b0e1d0c4e3905bc7b56c1b
   react-native-fast-crypto: 5943c42466b86ad70be60d3a5f64bd22251e5d9e
@@ -1010,6 +1042,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
+  RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBAnalytics: ea1421b49a0bf5e5bb7274df4a330713d0e85d2e
   RNFBApp: e4439717c23252458da2b41b81b4b475c86f90c4
   RNFBDynamicLinks: 538840f6e3f58511f857d15df1bc25ed655dc283
@@ -1023,6 +1056,8 @@ SPEC CHECKSUMS:
   RNSentry: 85f6525b5fe8d2ada065858026b338605b3c09da
   RNSVG: 6adc5c52d2488a476248413064b7f2832e639057
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   Sentry: 0c5cd63d714187b4a39c331c1f0eb04ba7868341
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9

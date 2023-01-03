@@ -19,7 +19,7 @@ const createStyles = (theme: Theme) => {
   const styles = StyleSheet.create({
     text: {
       fontSize: theme.fontSize.l,
-      color: theme.color.onPrimary,
+      color: theme.color.onBackground,
     },
   })
   return styles

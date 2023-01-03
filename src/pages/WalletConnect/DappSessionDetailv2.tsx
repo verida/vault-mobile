@@ -167,6 +167,5 @@ const styles = StyleSheet.create({
   appTextContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
   actionButton: {
     alignSelf: 'stretch',
-    backgroundColor: 'red',
   },
 })

@@ -1,7 +1,7 @@
 import { AccountConnection, ClaimableBadgeParams } from 'types/badges'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { Network } from 'api/types'
+import { Network, NFT, NFTCollection } from 'api/types'
 import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
@@ -84,4 +84,7 @@ export type MainStackParams = {
     provider: AccountConnection
   }
   Success: undefined
+
+  NFTCollectionDetail: { collection: NFTCollection }
+  NFTDetail: { nft: NFT }
 }

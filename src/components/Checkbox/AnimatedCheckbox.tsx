@@ -48,7 +48,7 @@ const AnimatedCheckbox = (props: Props) => {
               height: 20,
               borderRadius: 10,
               borderWidth: 2,
-              borderColor: theme.color.gray300,
+              borderColor: theme.color.grey300,
             }}
           />
         )}

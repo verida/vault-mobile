@@ -7,6 +7,8 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
+import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
+import NFTDetail from 'pages/Assets/NFTDetail'
 import ChangePin from 'pages/Authentication/ChangePin'
 import ClaimableBadges from 'pages/ClaimBadges/ClaimableBadges'
 import ClaimBadge from 'pages/ClaimBadges/ClaimBadge'
@@ -117,6 +119,12 @@ function MainNavigator() {
       />
 
       <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
+
+      <Stack.Screen
+        name={'NFTCollectionDetail'}
+        component={NFTCollectionDetail}
+      />
+      <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
     </Stack.Navigator>
   )
 }

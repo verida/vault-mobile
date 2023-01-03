@@ -47,6 +47,9 @@ global.navigator = {
   userAgent: 'mobile',
 }
 
-//[TypeError: fetchFun is not a function. (In 'fetchFun(url, options)', 'fetchFun' is false)]
-// The above error could occur when running on an ios simulator which will prevent the native fetch function to work.
+/**
+ * Andy TODO: Investigate
+ * Add this line below to fix a weird issue: the network fetch function is not found in some places like pouch-fetch package
+ * This issue just happened on Mac OS Ventura 13.0.1
+ */
 global.fetch
