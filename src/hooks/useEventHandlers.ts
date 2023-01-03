@@ -42,7 +42,7 @@ export const useEventHandlers = () => {
     async function disconnect() {
       const messaging =
         await AccountManager.getInstance().vault?.inbox.getMessaging()
-      await messaging.offMessage(onMessage)
+      await messaging?.offMessage(onMessage)
       isConnectingRef.current = false
     }
 
@@ -55,8 +55,8 @@ export const useEventHandlers = () => {
 
         const messaging =
           await AccountManager.getInstance().vault?.inbox.getMessaging()
-        await messaging.offMessage(onMessage)
-        await messaging.onMessage(onMessage)
+        await messaging?.offMessage(onMessage)
+        await messaging?.onMessage(onMessage)
 
         await fetchInboxCount()
 
@@ -124,11 +124,14 @@ export const useEventHandlers = () => {
 
       const messaging =
         await AccountManager.getInstance().vault?.inbox.getMessaging()
-      await messaging.onMessage(onMessage)
-      AppState.addEventListener('change', onAppStateChanged)
+      await messaging?.onMessage(onMessage)
+      const appStateSubscriber = AppState.addEventListener(
+        'change',
+        onAppStateChanged
+      )
 
       return async () => {
-        AppState.removeEventListener('change', onAppStateChanged)
+        appStateSubscriber?.remove()
         unsubscribeNetInfo?.()
         fbUnsubscribe?.()
 

@@ -1,5 +1,5 @@
-import { EventEmitter } from 'events'
 import { decode, encode } from 'base-64'
+import { EventEmitter } from 'events'
 
 if (typeof __dirname === 'undefined') global.__dirname = '/'
 if (typeof __filename === 'undefined') global.__filename = ''
@@ -46,3 +46,10 @@ if (!global.atob) {
 global.navigator = {
   userAgent: 'mobile',
 }
+
+/**
+ * Andy TODO: Investigate
+ * Add this line below to fix a weird issue: the network fetch function is not found in some places like pouch-fetch package
+ * This issue just happened on Mac OS Ventura 13.0.1
+ */
+global.fetch

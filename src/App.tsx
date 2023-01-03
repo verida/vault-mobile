@@ -6,6 +6,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
@@ -16,11 +17,13 @@ import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import { persistor, store } from 'reduxStore'
 
+import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
@@ -28,6 +31,7 @@ import linking from 'navigation/linkingConfiguration'
 import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
+import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
 import { WalletConnectProvider } from './contexts/WalletConnectContext'
@@ -43,6 +47,7 @@ if (__DEV__) {
     'AsyncStorage has been extracted from react-native',
     "exported from 'deprecated-react-native-prop-types'.",
     'VirtualizedLists should never be nested inside plain ScrollViews',
+    'Usage of "messaging().registerDeviceForRemoteMessages()" is not required.',
   ]
 
   LogBox.ignoreLogs(ignoreWarns)
@@ -62,7 +67,7 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
 })
 
 Sentry.init({
-  dsn: 'https://982fadf2fca74043b9395c50458aeffa@o1233403.ingest.sentry.io/6382201',
+  dsn: 'https://b850525444734a138f9fddcc918d5ac1@o4503997119725568.ingest.sentry.io/4503997121495040',
   environment: Config.SENTRY_ENVIRONMENT,
   beforeSend: (event, hint) => {
     if (__DEV__) {
@@ -124,24 +129,29 @@ function App() {
   const AppContent = (
     <Provider store={store}>
       <PersistGate loading={null} persistor={persistor}>
-        <AuthProvider>
-          <NavigationContainer linking={linking} ref={navigationRef}>
-            <Authenticate>
-              <RootSiblingParent>
-                <ActionSheetProvider>
-                  <ModalProvider>
-                    <WalletConnectProvider>
-                      <WalletConnectProviderv2>
-                        <RootNavigator />
-                      </WalletConnectProviderv2>
-                    </WalletConnectProvider>
-                  </ModalProvider>
-                </ActionSheetProvider>
-              </RootSiblingParent>
-            </Authenticate>
-          </NavigationContainer>
-        </AuthProvider>
-        <SwitchAccountToast />
+        <SafeAreaProvider>
+          <ThemeProvider initial={defaultTheme}>
+            <NavigationContainer linking={linking} ref={navigationRef}>
+              <ModalProvider>
+                <AuthProvider>
+                  <Authenticate>
+                    <RootSiblingParent>
+                      <ActionSheetProvider>
+                        <WalletConnectProvider>
+                          <WalletConnectProviderv2>
+                            <RootNavigator />
+                            <MetaServerChecks />
+                          </WalletConnectProviderv2>
+                        </WalletConnectProvider>
+                      </ActionSheetProvider>
+                    </RootSiblingParent>
+                  </Authenticate>
+                </AuthProvider>
+                <SwitchAccountToast />
+              </ModalProvider>
+            </NavigationContainer>
+          </ThemeProvider>
+        </SafeAreaProvider>
       </PersistGate>
     </Provider>
   )

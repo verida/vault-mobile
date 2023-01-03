@@ -32,7 +32,7 @@ type Props = {
 const fullNetworkName = (code: DApp['chain']) => {
   switch (code) {
     case 'eip155':
-      return 'Ethereum Rinkeby'
+      return 'Ethereum Goerli'
     case 'algorand':
       return 'Algorand Testnet'
     case 'near':

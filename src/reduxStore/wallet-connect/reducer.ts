@@ -1,27 +1,17 @@
-import {
-  DApp,
-  DAppv2,
-  IChainData,
-  WalletConnectRequest,
-} from 'wallet-connect/types'
+import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { SUPPORTED_CHAINS } from '../../wallet-connect/constants'
+import { LOG_OUT } from 'reduxStore/general/action-types'
+
 import { Reducer } from '../types'
 
 export interface State {
   dapps: DApp[]
   dappsv2: DAppv2[]
-  requests: WalletConnectRequest[]
-  openRequest?: WalletConnectRequest
-  network: IChainData
 }
 
 const initialState: State = {
   dapps: [],
   dappsv2: [],
-  requests: [],
-  openRequest: undefined,
-  network: SUPPORTED_CHAINS[0],
 }
 
 export const walletConnectReducer: Reducer<State> = (
@@ -54,24 +44,6 @@ export const walletConnectReducer: Reducer<State> = (
         dapps,
       }
     }
-    case 'SET_WC_REQUESTS':
-      return {
-        ...state,
-        requests: action.payload.requests,
-      }
-    case 'ADD_WC_REQUEST':
-      return {
-        ...state,
-        requests: [...state.requests, action.payload.request],
-      }
-
-    case 'REMOVE_WC_REQUEST':
-      return {
-        ...state,
-        requests: state.requests.filter(
-          (request) => request.id !== action.payload.request.id
-        ),
-      }
 
     case 'SET_WC_PEER_META': {
       const { walletId, connector, peerMeta } = action.payload
@@ -95,7 +67,7 @@ export const walletConnectReducer: Reducer<State> = (
       }
     }
 
-    case 'APPROVE_WC_PEER_META': {
+    case 'APPROVE_WC_SESSION': {
       const { walletId, connector, accounts, chainId, chain } = action.payload
       const dapps = [...state.dapps]
       const session = connector.session
@@ -120,7 +92,7 @@ export const walletConnectReducer: Reducer<State> = (
       }
     }
 
-    case 'REJECT_WC_PEER_META': {
+    case 'REJECT_WC_SESSION': {
       const { connector } = action.payload
       const dapps = state.dapps.filter(
         (app) => app.session.key !== connector.key
@@ -128,29 +100,6 @@ export const walletConnectReducer: Reducer<State> = (
       return {
         ...state,
         dapps,
-      }
-    }
-
-    case 'SHOW_WC_REQUEST': {
-      const { request } = action.payload
-
-      return {
-        ...state,
-        openRequest: request,
-      }
-    }
-
-    case 'HIDE_WC_REQUEST': {
-      return {
-        ...state,
-        openRequest: undefined,
-      }
-    }
-
-    case 'SET_WC_NETWORK': {
-      return {
-        ...state,
-        network: action.payload.network,
       }
     }
 
@@ -176,7 +125,7 @@ export const walletConnectReducer: Reducer<State> = (
       }
     }
 
-    case 'LOGOUT' as any:
+    case LOG_OUT as any:
       return initialState
 
     default:

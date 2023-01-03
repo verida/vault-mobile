@@ -4,6 +4,10 @@ import { StyleSheet, Text as RNText, TextProps } from 'react-native'
 import { BLACK_COLOR } from '../constants/color'
 import { NUNITO_SANS } from '../constants/text'
 
+/**
+ * @Deprecated
+ * Use the one in ./Typography instead
+ */
 const Text: React.FC<TextProps> = (props) => {
   const { style, children, ...rest } = props
   return (

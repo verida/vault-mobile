@@ -108,6 +108,16 @@ export default (props) => {
       optional: true,
       onPress: (navigation) => logout(navigation),
     },
+    {
+      label: 'Delete Account',
+      text: style.logoutText,
+      optional: true,
+      onPress: (navigation) =>
+        navigation.navigate('DeleteAccount', {
+          onSelectAccount: props.route.params.onSelectAccount,
+          onLogoutAccounts: props.route.params.onLogoutAccounts,
+        }),
+    },
   ]
 
   if (loading) return <LoadingView />
