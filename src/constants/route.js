@@ -41,6 +41,3 @@ export const MEASUREMENTS = 'measurements'
 export const ACTIVITIES = 'activities'
 export const RESULTS = 'results'
 export const NOTES = 'notes'
-
-export const CLAIM_BADGES = 'ClaimBadge'
-export const CLAIMABLE_BADGES = 'ClaimableBadges'
