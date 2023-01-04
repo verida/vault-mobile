@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as SecureStore from 'expo-secure-store'
-import React, { useEffect, useState } from 'react'
+import { useTheme } from 'contexts/ThemeContext'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Image,
   ImageBackground,
@@ -17,7 +17,6 @@ import { ClaimableBadgeParams } from 'types/badges'
 import { WalletItem } from 'types/wallet'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import SettingsIcon from 'assets/settings_icon.svg'
 import AddressesListItem from 'components/AddressesList/AddressesListItem'
 import AppAlert from 'components/AppAlert/AppAlert'
@@ -32,14 +31,10 @@ import { MainStackParams } from 'navigation/types'
 import ClaimBadgeStatus from 'pages/ClaimBadges/ClaimBadgeStatus'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
-import {
-  getAddressList,
-  getSelectedAddressById,
-  getSelectedWalletId,
-} from 'reduxStore/wallet/selectors'
+import { getAddressList } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
-const badgeBgGradientColor = require('assets/badge_bg_gradient.png')
+const badgeBgGradientColor = require('assets/badge_gradient_bg.png')
 
 const alertDesc = `Verida Badge is a public and immutable token sent to your blockchain address. It will appear on your Verida One public profile by default.`
 
@@ -55,26 +50,30 @@ interface ClaimBadgeProps {
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const ClaimBadge: React.FC<ClaimBadgeProps> = ({
-  addressList,
-  chains,
-  selectedWallet,
-  selectedWalletId,
-  onSetSelectedWallet,
-}) => {
+const ClaimBadge: React.FC<ClaimBadgeProps> = ({ addressList, chains }) => {
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
   const { data: badgeItem } = useParams<{ data: ClaimableBadgeParams }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
+  const [selectedID, setSelectedID] = useState('')
+  const [sAccount, setSAccount] = useState<WalletItem>()
   const [modalVisible, setModalVisible] = useState(false)
   const [walletList, setWalletList] = useState<WalletItem[]>([])
+  // TODO: get estimated gas fee from an api for blockchain operations.
   const [estimatedGasFee] = useState('0.001 ETH (1.55 USD)')
 
+  const handleSelectedAccountState = useCallback((item: WalletItem) => {
+    setSelectedID(item.id)
+    setSAccount(item)
+  }, [])
+
   useEffect(() => {
-    if (addressList) {
+    if (addressList?.length) {
       setWalletList(addressList)
+      handleSelectedAccountState(addressList[0])
     }
-  }, [chains, addressList])
+  }, [chains, addressList, handleSelectedAccountState])
 
   const handleCloseModal = () => {
     setModalVisible(!modalVisible)
@@ -85,13 +84,11 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   }
 
   const handleWalletSelection = (item: WalletItem) => {
-    onSetSelectedWallet(item.id)
-    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, item.id)
-  }
-
-  const selectedAccount = {
-    ...selectedWallet,
-    onPress: handleCloseModal,
+    const selectedWallet = walletList.find(
+      (wallet) => wallet.id === item.id
+    ) as WalletItem
+    handleCloseModal()
+    handleSelectedAccountState(selectedWallet)
   }
 
   const handleManageWalletsPress = () => {
@@ -125,6 +122,9 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
             <ImageBackground
               source={badgeBgGradientColor}
               resizeMode='cover'
+              imageStyle={{
+                borderRadius: theme.borderRadius.l,
+              }}
               style={styles.bgImage}>
               <Image source={badgeItem.image} style={styles.badgeImage} />
             </ImageBackground>
@@ -138,10 +138,13 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
           </View>
           <View style={styles.addressSection}>
             <Text style={styles.addressTitle}>Select address</Text>
-            <AddressesListItem
-              customStyles={styles.addressList}
-              item={selectedAccount}
-            />
+            {sAccount && (
+              <AddressesListItem
+                onPress={handleCloseModal}
+                customStyles={styles.addressList}
+                item={sAccount}
+              />
+            )}
           </View>
           <View style={styles.alertSection}>
             <AppAlert message={alertDesc} type='warning' />
@@ -173,7 +176,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
           <WalletList
             list={walletList}
             leftIconType='checked'
-            selectedWalletId={selectedWalletId}
+            selectedWalletId={selectedID}
             onPressItem={handleWalletSelection}
           />
         </View>
@@ -190,8 +193,6 @@ const mapStateToProps = (rootState: any) => {
   return {
     chains,
     addressList,
-    selectedWallet: getSelectedAddressById(state, chains, network),
-    selectedWalletId: getSelectedWalletId(state),
   }
 }
 
@@ -202,7 +203,7 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClaimBadge)
+export default connect(mapStateToProps, mapDispatchToProps)(ClaimBadge) as any
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
@@ -218,7 +219,6 @@ const createStyles = (theme: Theme) => {
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: theme.borderRadius.l,
     },
     content: {
       flex: 1,
@@ -253,7 +253,7 @@ const createStyles = (theme: Theme) => {
       fontFamily: NUNITO_SANS,
       fontWeight: '600',
       fontSize: theme.fontSize.m,
-      color: theme.color.gray400,
+      color: theme.color.grey400,
     },
     addressTitle: {
       fontFamily: NUNITO_SANS,
@@ -275,7 +275,7 @@ const createStyles = (theme: Theme) => {
       fontFamily: NUNITO_SANS,
       fontWeight: '600',
       fontSize: theme.fontSize.s,
-      color: theme.color.gray400,
+      color: theme.color.grey400,
       marginBottom: theme.spacing.m,
     },
     addressList: {

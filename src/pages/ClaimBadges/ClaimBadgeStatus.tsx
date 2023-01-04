@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import React, { useState } from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { BadgeType } from 'types/badges'
@@ -9,7 +10,7 @@ import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const badgeBgGradientColor = require('assets/badge_bg_gradient.png')
+const badgeBgGradientColor = require('assets/badge_gradient_bg.png')
 
 const STATUS = {
   success: {
@@ -35,6 +36,7 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
   type = 'error',
   data,
 }) => {
+  const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   const [status] = useState(STATUS)
 
@@ -61,6 +63,9 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
           <ImageBackground
             source={badgeBgGradientColor}
             resizeMode='contain'
+            imageStyle={{
+              borderRadius: theme.borderRadius.l,
+            }}
             style={styles.bgImage}>
             <Image style={styles.badgeImage} source={data.image} />
           </ImageBackground>
@@ -99,7 +104,8 @@ const createStyles = (theme: Theme) => {
       marginVertical: 18,
     },
     bgImage: {
-      width: '100%',
+      width: 221,
+      height: 221,
       alignItems: 'center',
       justifyContent: 'center',
     },

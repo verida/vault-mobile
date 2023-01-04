@@ -4,7 +4,6 @@ import React, { useRef, useState } from 'react'
 import { Image, StyleSheet, Text, useWindowDimensions } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 import { connect } from 'react-redux'
-import { WalletItem } from 'types/wallet'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
@@ -17,12 +16,6 @@ import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 import Collectibles from './Assets/Collectibles'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
-
-enum Assets {
-  COINS,
-  COLLECTIBLES,
-  BADGES,
-}
 
 const segmentLists = [
   {
