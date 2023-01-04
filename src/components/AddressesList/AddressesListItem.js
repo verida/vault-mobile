@@ -8,10 +8,10 @@ import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import AddressSvg from '../../assets/icons/address.svg'
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
-export default ({ item, customStyles }) => {
+export default ({ item, customStyles, onPress }) => {
   return (
     <Pressable
-      onPress={item.onPress}
+      onPress={onPress}
       style={[styles.item, customStyles && customStyles]}>
       <View style={styles.itemWrapper}>
         <View>

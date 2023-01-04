@@ -4,7 +4,6 @@ import React from 'react'
 import { FlatList } from 'react-native'
 import { BadgeData, ClaimableBadgeParams } from 'types/Badges'
 
-import { CLAIM_BADGES } from 'constants/route'
 import { MainStackParams } from 'navigation/types'
 
 import BadgeItem from './BadgeItem'
@@ -16,7 +15,7 @@ type BadgeListProps = {
 const BadgeList: React.FC<BadgeListProps> = ({ data }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const onPress = (item: ClaimableBadgeParams) =>
-    navigation.navigate(CLAIM_BADGES, {
+    navigation.navigate('ClaimBadge', {
       data: item,
     })
 

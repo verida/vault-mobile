@@ -1,5 +1,12 @@
 import React from 'react'
-import { Modal, Pressable, StyleSheet, Text, View } from 'react-native'
+import {
+  Modal,
+  ModalProps,
+  Pressable,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 
 import CloseIcon from 'assets/icons/close_icon.svg'
 import {
@@ -12,14 +19,14 @@ import {
 } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-interface AppModalProps {
+type AppModalProps = {
   title: string
   visible: boolean
   rightIcon?: React.ReactNode
   onClose: () => void
   footer?: React.ReactNode
   children: React.ReactNode
-}
+} & ModalProps
 
 const HIT_SLOP = {
   bottom: 20,
@@ -35,9 +42,11 @@ const AppModal = ({
   title,
   footer,
   rightIcon,
+  ...rest
 }: AppModalProps) => {
   return (
     <Modal
+      {...rest}
       animationType='slide'
       transparent={true}
       visible={visible}

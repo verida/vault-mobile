@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { BadgeData, ClaimableBadgeParams } from 'types/Badges'
@@ -11,7 +12,7 @@ import { MainStackParams } from 'navigation/types'
 import { Theme } from 'styles/types'
 import { getBadgeDetailsByID } from 'utils/badges'
 
-const badgeBgGradientColor = require('assets/badge_bg_gradient.png')
+const badgeBgGradientColor = require('assets/badge_gradient_bg.png')
 
 type BadgeItemProps = {
   item: BadgeData
@@ -20,6 +21,7 @@ type BadgeItemProps = {
 
 const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const badgeDetails = getBadgeDetailsByID(item.id)
@@ -30,6 +32,9 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
         <ImageBackground
           source={badgeBgGradientColor}
           resizeMode='cover'
+          imageStyle={{
+            borderRadius: theme.borderRadius.xs,
+          }}
           style={styles.bgImage}>
           <Image style={styles.badgeIcon} source={badgeDetails.image} />
         </ImageBackground>
@@ -90,7 +95,6 @@ const createStyles = (theme: Theme) => {
       width: 48,
       alignItems: 'center',
       justifyContent: 'center',
-      borderRadius: theme.borderRadius.l,
     },
     content: {
       flexDirection: 'row',

@@ -5,13 +5,13 @@ import { SwipeListView } from 'react-native-swipe-list-view'
 
 import AddressesListItem from './AddressesListItem'
 
-export default ({ list, editButtonAction }) => {
+export default ({ list, editButtonAction, onPress }) => {
   return (
     <SwipeListView
       data={list}
       renderItem={(data) => (
         <View>
-          <AddressesListItem item={data.item} />
+          <AddressesListItem item={data.item} onPress={onPress} />
         </View>
       )}
       renderHiddenItem={() => (

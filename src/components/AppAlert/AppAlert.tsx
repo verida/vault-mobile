@@ -61,7 +61,11 @@ const createStyles = (theme: Theme) => {
       paddingHorizontal: theme.spacing.m,
       borderRadius: theme.borderRadius.xs,
     },
-    alertContent: { flexDirection: 'row' },
+    alertContent: {
+      flexDirection: 'row',
+      justifyContent: 'center',
+      alignItems: 'center',
+    },
     info: {
       borderLeftColor: theme.color.info,
     },

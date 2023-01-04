@@ -4,11 +4,13 @@ import { Body, Button, Header, Left, Right, Title } from 'native-base'
 import React from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 
-import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
-import Text from 'components/Text'
-import { DECLINE_COLOR, SEPARATOR_EXTRA_LIGHT,BLACK_COLOR } from 'constants/color'
-
 import LeftArrowIcon from 'assets/left_arrow_icon.svg'
+import Text from 'components/Text'
+import {
+  BLACK_COLOR,
+  DECLINE_COLOR,
+  SEPARATOR_EXTRA_LIGHT,
+} from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type HeaderSideButton = {
@@ -94,7 +96,7 @@ function NavigationHeader({
           <Text style={styles.netInfoText}>No network connection</Text>
         </View>
       )}
-    </View>
+    </>
   )
 }
 
