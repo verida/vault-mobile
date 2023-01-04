@@ -3,7 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { BadgeData, ClaimableBadgeParams } from 'types/Badges'
+import { BadgeData, ClaimableBadgeParams } from 'types/badges'
 
 import Button from 'components/Button'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'

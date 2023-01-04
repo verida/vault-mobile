@@ -1,4 +1,4 @@
-import { BadgeData, BadgeType, BadgeUniqueID } from 'types/Badges'
+import { BadgeData, BadgeType, BadgeUniqueID } from 'types/badges'
 
 const DiscordIcon = require('../assets/badges_icon/discord_badge_icon.png')
 const veridaIdentityIcon = require('../assets/badges_icon/verida_identity_badge_icon.png')
