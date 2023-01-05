@@ -33,21 +33,21 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badgeType, onPressClaim }) => {
         </ImageBackground>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{badgeType.label}</Text>
-          <Text style={styles.subText}>{data?.account || 'Not connected'}</Text>
+          <Text style={styles.subText} numberOfLines={1} ellipsizeMode='middle'>
+            {data?.account || 'Not connected'}
+          </Text>
         </View>
       </View>
-      <View>
-        <Button
-          style={styles.actionButton}
-          color='primary'
-          disabled={false}
-          loading={false}
-          onPress={() => {
-            onPressClaim(badgeType)
-          }}>
-          Claim
-        </Button>
-      </View>
+      <Button
+        style={styles.actionButton}
+        color='primary'
+        disabled={false}
+        loading={false}
+        onPress={() => {
+          onPressClaim(badgeType)
+        }}>
+        <Text style={styles.buttonLabel}>Claim</Text>
+      </Button>
     </View>
   )
 }
@@ -76,12 +76,14 @@ const createStyles = (theme: Theme) => {
       width: 37,
     },
     content: {
+      flex: 1,
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
       paddingVertical: 15,
     },
     textWrapper: {
+      flex: 1,
       marginHorizontal: theme.spacing.m,
     },
     title: {
@@ -97,9 +99,19 @@ const createStyles = (theme: Theme) => {
       color: theme.color.primary100,
     },
     actionButton: {
-      height: 32,
       borderRadius: 70,
       paddingHorizontal: theme.spacing.sm,
+      paddingVertical: theme.spacing.xs,
+      height: 'auto', // Have to override the default style of the Button component!
+      marginBottom: 0, // Have to override the default style of the Button component!
+      borderWidth: 0, // Have to override the default style of the Button component!
+    },
+    buttonLabel: {
+      // Have to enclose the button label in its own Text to override the default style of the Button that cannot be changed. Consider a different component or improving the Button component
+      fontFamily: 'NunitoSansNormal',
+      fontWeight: '500',
+      fontSize: 12,
+      lineHeight: 24,
     },
   })
 }

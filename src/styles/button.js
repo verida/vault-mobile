@@ -17,9 +17,9 @@ export default StyleSheet.create({
   button: {
     borderRadius: 4,
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 16, // FIXME: There shall not have a margin on a container of an atomic component! The parent of the component should handle the spacing
     borderWidth: 1,
-    height: 48,
+    height: 48, // FIXME: There should not have a fixed height for such component, It should have a fontSize, a lineHeight and paddings!
     justifyContent: 'center',
     fontFamily: NUNITO_SANS_BOLD,
   },

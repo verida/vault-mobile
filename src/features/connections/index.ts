@@ -34,7 +34,7 @@ export const connectionTypes: ConnectionType[] = [
 export const connections: Connection[] = [
   {
     type: 'twitter',
-    account: 'tahpot',
+    account: '@tahpot',
     proof: 'did:vda:0x5467...78-tahpot', // Supposed to be extracted from the network
   },
 ]
