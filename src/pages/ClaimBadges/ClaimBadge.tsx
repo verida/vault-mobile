@@ -113,7 +113,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({ addressList, chains }) => {
       />
       {status && (
         <View style={styles.content}>
-          <ClaimBadgeStatus type={status} data={badgeItem} />
+          <ClaimBadgeStatus status={status} badgeInfo={badgeItem} />
         </View>
       )}
       {!status && (

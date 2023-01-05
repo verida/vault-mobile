@@ -1,5 +1,4 @@
-import { useTheme } from 'contexts/ThemeContext'
-import React, { useState } from 'react'
+import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { BadgeType } from 'types/badges'
 
@@ -10,75 +9,76 @@ import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const badgeBgGradientColor = require('assets/badge_gradient_bg.png')
+const badgeImageBackground = require('assets/badge_gradient_bg.png')
 
-const STATUS = {
+const statusList = {
   success: {
     type: 'success',
     title: `Success!`,
-    message: 'Your Badge has been successfully generated',
+    message: (badgeLabel: string) =>
+      `Your ${badgeLabel} Badge has been successfully generated`,
   },
   error: {
     type: 'error',
     title: `Ooops...`,
-    message: `Something went wrong. Please try again.`,
+    message: `Something went wrong
+Please try again`,
   },
 }
 
-type StatusType = 'success' | 'error' | undefined
-
 type ClaimBadgeStatusProps = {
-  type: StatusType
-  data: BadgeType
+  status: keyof typeof statusList
+  badgeInfo: BadgeType
 }
 
 const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
-  type = 'error',
-  data,
+  status,
+  badgeInfo,
 }) => {
-  const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
-  const [status] = useState(STATUS)
 
-  const SuccessActionButton = (
-    <View>
+  // TODO: Set actions to the buttons
+  const actions =
+    status === 'success' ? (
+      <View>
+        <Button color='primary' disabled={false} loading={false}>
+          Share
+        </Button>
+        <Button color='secondary' disabled={false} loading={false}>
+          View in Verida One
+        </Button>
+      </View>
+    ) : (
       <Button color='primary' disabled={false} loading={false}>
-        Share
+        Go Back
       </Button>
-      <Button color='secondary' disabled={false} loading={false}>
-        View in Verida One
-      </Button>
-    </View>
-  )
-  const ErrorActionButton = (
-    <Button color='primary' disabled={false} loading={false}>
-      Go Back
-    </Button>
-  )
+    )
+
+  const message: string =
+    status === 'success'
+      ? statusList.success.message(badgeInfo.name)
+      : statusList.error.message
+
+  // TODO: Add animations as designed in Figma
   return (
     <View style={styles.container}>
       <View style={styles.content}>
-        {type === 'error' && <ErrorStatusIcon />}
-        {type === 'success' && (
+        {status === 'error' && <ErrorStatusIcon />}
+        {status === 'success' && (
           <ImageBackground
-            source={badgeBgGradientColor}
+            source={badgeImageBackground}
             resizeMode='contain'
-            imageStyle={{
-              borderRadius: theme.borderRadius.l,
-            }}
-            style={styles.bgImage}>
-            <Image style={styles.badgeImage} source={data.image} />
+            imageStyle={styles.badgeImageBackground}
+            style={styles.badgeImageBackgroundContainer}>
+            <Image style={styles.badgeImage} source={badgeInfo.image} />
           </ImageBackground>
         )}
-        <View style={styles.statusInfo}>
-          <Text style={styles.title}>{status[type].title}</Text>
-          <Paragraph style={styles.bodyText}>{status[type].message}</Paragraph>
+        <View style={styles.statusInfoContainer}>
+          <Text style={styles.statusTitle}>{statusList[status].title}</Text>
+          <Paragraph style={styles.statusMessage}>{message}</Paragraph>
         </View>
       </View>
-      <View>
-        {type === 'success' && SuccessActionButton}
-        {type === 'error' && ErrorActionButton}
-      </View>
+      <View>{actions}</View>
     </View>
   )
 }
@@ -95,40 +95,47 @@ const createStyles = (theme: Theme) => {
     content: {
       justifyContent: 'center',
       alignItems: 'center',
-      marginTop: 74,
-      paddingHorizontal: theme.spacing.xxl,
+      marginTop: 64,
+      paddingHorizontal: theme.spacing.m,
+    },
+    badgeImageBackgroundContainer: {
+      width: 221,
+      height: 221,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    badgeImageBackground: {
+      borderRadius: theme.borderRadius.l,
+      borderWidth: 1,
+      borderColor: theme.color.lightGrey,
     },
     badgeImage: {
       width: 170,
       height: 198,
       marginVertical: 18,
     },
-    bgImage: {
-      width: 221,
-      height: 221,
-      alignItems: 'center',
-      justifyContent: 'center',
-    },
-    statusInfo: {
+    statusInfoContainer: {
       flexDirection: 'column',
       justifyContent: 'center',
       alignItems: 'center',
     },
-    title: {
+    statusTitle: {
       fontFamily: NUNITO_SANS_SEMIBOLD,
-      fontWeight: '600',
+      fontWeight: '700',
       fontSize: 28,
+      lineHeight: 36.4,
       textAlign: 'center',
       color: theme.color.primary100,
       marginTop: theme.spacing.l,
-      marginBottom: theme.spacing.s,
+      marginBottom: theme.spacing.m,
     },
-    bodyText: {
+    statusMessage: {
       fontFamily: NUNITO_SANS,
       fontSize: theme.fontSize.l,
+      lineHeight: 24,
       textAlign: 'center',
       color: theme.color.primary100,
-      marginBottom: theme.spacing.m,
+      opacity: 0.6,
     },
   })
 }
