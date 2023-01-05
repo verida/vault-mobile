@@ -22,7 +22,6 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 type AppModalProps = {
   title: string
   visible: boolean
-  rightIcon?: React.ReactNode
   onClose: () => void
   footer?: React.ReactNode
   children: React.ReactNode
@@ -41,7 +40,6 @@ const AppModal = ({
   children,
   title,
   footer,
-  rightIcon,
   ...rest
 }: AppModalProps) => {
   return (
@@ -60,7 +58,7 @@ const AppModal = ({
               <CloseIcon />
             </Pressable>
             <Text style={styles.headerTitle}>{title}</Text>
-            {rightIcon ? <View>{rightIcon}</View> : <View />}
+            <View />
           </View>
           <View style={styles.divider} />
           <View style={styles.modalView}>{children}</View>
