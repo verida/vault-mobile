@@ -12,13 +12,13 @@ import { Theme } from 'styles/types'
 type AlertType = 'info' | 'warning' | 'error'
 
 type AppAlertProps = {
-  type: AlertType
+  type?: AlertType
   onPress?: () => void
   message: string
 }
 
-const displayAlertIcon = (iconType: AlertType): React.ReactElement => {
-  switch (iconType) {
+const displayAlertIcon = (alertType: AlertType): React.ReactElement => {
+  switch (alertType) {
     case 'info':
       return <InfoAlertIcon />
     case 'warning':
@@ -30,18 +30,24 @@ const displayAlertIcon = (iconType: AlertType): React.ReactElement => {
   }
 }
 
-const AppAlert: React.FC<AppAlertProps> = ({ message, type, onPress }) => {
+const AppAlert: React.FC<AppAlertProps> = ({
+  message,
+  type = 'info',
+  onPress,
+}) => {
   const styles = useThemeAwareStyle(createStyles)
   return (
     <View style={[styles.container, styles[type]]}>
       <View style={styles.alertContent}>
-        {displayAlertIcon(type)}
-        <Text style={styles.alertText}>{message}</Text>
+        <View style={styles.alertIcon}>{displayAlertIcon(type)}</View>
+        <Text style={styles.alertMessage}>{message}</Text>
       </View>
       {onPress && (
-        <Pressable onPress={onPress}>
-          <ChevronRightIcon />
-        </Pressable>
+        <View style={styles.button}>
+          <Pressable onPress={onPress}>
+            <ChevronRightIcon />
+          </Pressable>
+        </View>
       )}
     </View>
   )
@@ -61,10 +67,14 @@ const createStyles = (theme: Theme) => {
       paddingHorizontal: theme.spacing.m,
       borderRadius: theme.borderRadius.xs,
     },
+    alertIcon: {
+      marginVertical: 2,
+    },
     alertContent: {
       flexDirection: 'row',
       justifyContent: 'center',
-      alignItems: 'center',
+      alignItems: 'flex-start',
+      flexShrink: 1,
     },
     info: {
       borderLeftColor: theme.color.info,
@@ -75,12 +85,16 @@ const createStyles = (theme: Theme) => {
     error: {
       borderLeftColor: theme.color.error,
     },
-    alertText: {
+    alertMessage: {
       fontFamily: NUNITO_SANS,
       fontWeight: '600',
       fontSize: theme.fontSize.m,
+      lineHeight: 20,
+      paddingLeft: 8,
       flexShrink: 1,
-      paddingHorizontal: 10,
+    },
+    button: {
+      marginLeft: 8,
     },
   })
 }

@@ -1,7 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useTheme } from 'contexts/ThemeContext'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import {
   Image,
   ImageBackground,
@@ -12,10 +11,8 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 import { ClaimableBadgeParams } from 'types/badges'
 import { WalletItem } from 'types/wallet'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import SettingsIcon from 'assets/settings_icon.svg'
 import AddressesListItem from 'components/AddressesList/AddressesListItem'
@@ -30,65 +27,57 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
 import ClaimBadgeStatus from 'pages/ClaimBadges/ClaimBadgeStatus'
 import { selectChains } from 'reduxStore/tokens/selectors'
-import { setSelectedWallet } from 'reduxStore/wallet/actions'
 import { getAddressList } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
-const badgeBgGradientColor = require('assets/badge_gradient_bg.png')
+const badgeBackgroundImage = require('assets/badge_gradient_bg.png')
 
 const alertDesc = `Verida Badge is a public and immutable token sent to your blockchain address. It will appear on your Verida One public profile by default.`
 
 type Status = 'error' | 'success' | undefined
 
 interface ClaimBadgeProps {
-  addressList?: WalletItem[]
-  chains?: any
-  selectedWallet: WalletItem | undefined
-  selectedWalletId: string
-  onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
+  addressList: WalletItem[]
+  defaultSelectedAddress?: WalletItem
 }
 
 const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
-const ClaimBadge: React.FC<ClaimBadgeProps> = ({ addressList, chains }) => {
+const ClaimBadge: React.FC<ClaimBadgeProps> = ({
+  addressList,
+  defaultSelectedAddress,
+}) => {
   const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
   const { data: badgeItem } = useParams<{ data: ClaimableBadgeParams }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
-  const [selectedID, setSelectedID] = useState('')
-  const [sAccount, setSAccount] = useState<WalletItem>()
+  const [selectedAddress, setSelectedAddress] = useState<
+    WalletItem | undefined
+  >(defaultSelectedAddress)
   const [modalVisible, setModalVisible] = useState(false)
-  const [walletList, setWalletList] = useState<WalletItem[]>([])
   // TODO: get estimated gas fee from an api for blockchain operations.
   const [estimatedGasFee] = useState('0.001 ETH (1.55 USD)')
 
-  const handleSelectedAccountState = useCallback((item: WalletItem) => {
-    setSelectedID(item.id)
-    setSAccount(item)
-  }, [])
-
-  useEffect(() => {
-    if (addressList?.length) {
-      setWalletList(addressList)
-      handleSelectedAccountState(addressList[0])
-    }
-  }, [chains, addressList, handleSelectedAccountState])
+  // Have an explicit 'open' and 'close' callback to avoid unsync issue
+  const handleOpenModal = () => {
+    setModalVisible(true)
+  }
 
   const handleCloseModal = () => {
-    setModalVisible(!modalVisible)
+    setModalVisible(false)
   }
 
   const handleClaimAction = () => {
+    // TODO: Implement claim operation
     setStatus('success')
   }
 
-  const handleWalletSelection = (item: WalletItem) => {
-    const selectedWallet = walletList.find(
-      (wallet) => wallet.id === item.id
+  const handleAddressSelection = (selection: WalletItem) => {
+    const address = addressList.find(
+      (item) => item.id === selection.id
     ) as WalletItem
     handleCloseModal()
-    handleSelectedAccountState(selectedWallet)
+    setSelectedAddress(address)
   }
 
   const handleManageWalletsPress = () => {
@@ -120,29 +109,28 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({ addressList, chains }) => {
         <ScrollView style={styles.content}>
           <View style={styles.imageContainer}>
             <ImageBackground
-              source={badgeBgGradientColor}
+              source={badgeBackgroundImage}
               resizeMode='cover'
-              imageStyle={{
-                borderRadius: theme.borderRadius.l,
-              }}
-              style={styles.bgImage}>
+              imageStyle={styles.badgeImageBackground}
+              style={styles.badgeImageBackgroundContainer}>
               <Image source={badgeItem.image} style={styles.badgeImage} />
             </ImageBackground>
           </View>
           <View>
             <Text style={styles.title}>{badgeItem.name} Badge</Text>
             <Text style={styles.bodyText}>
-              {badgeItem.description}
-              {getTruncatedWalletAddress(badgeItem.proof)}
+              {`${badgeItem.description}: ${badgeItem.proof}`}
             </Text>
           </View>
           <View style={styles.addressSection}>
             <Text style={styles.addressTitle}>Select address</Text>
-            {sAccount && (
+            {selectedAddress && (
               <AddressesListItem
-                onPress={handleCloseModal}
-                customStyles={styles.addressList}
-                item={sAccount}
+                // FIXME: Create a dedicated component, not a list item
+                // FIXME: Allow undefined address
+                onPress={handleOpenModal}
+                customStyles={styles.addressListItem}
+                item={selectedAddress}
               />
             )}
           </View>
@@ -172,12 +160,14 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({ addressList, chains }) => {
         onClose={handleCloseModal}
         visible={modalVisible}
         footer={ModalFooter}>
-        <View style={styles.walletList}>
+        <View style={styles.addressList}>
           <WalletList
-            list={walletList}
+            //FIXME: Need a dedicated component for addresses, not wallets
+            // FIXME: Allow empty selection
+            list={addressList}
             leftIconType='checked'
-            selectedWalletId={selectedID}
-            onPressItem={handleWalletSelection}
+            selectedWalletId={selectedAddress?.id || ''}
+            onPressItem={handleAddressSelection}
           />
         </View>
       </AppModal>
@@ -188,46 +178,50 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({ addressList, chains }) => {
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
   const network = 'eip155'
+  // TODO: Define the list of supported network somewhere appropriate
   const chains = selectChains(rootState)
   const addressList = getAddressList(state, chains, network)
+  // TODO: Allow getting addresses from a list of networks, not just one
+  // TODO: Is network the right word?
+  const defaultSelectedAddress =
+    addressList.length > 0 ? addressList[0] : undefined
+  // TODO: Find a better way to get the default address, maybe from the currently selected wallet.
   return {
-    chains,
     addressList,
+    defaultSelectedAddress,
   }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onSetSelectedWallet: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
-  }
-}
+export default connect(mapStateToProps)(ClaimBadge) as any
 
-export default connect(mapStateToProps, mapDispatchToProps)(ClaimBadge) as any
-
+// TODO: Rework the sizing of the image. Maybe create a dedicated component
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     container: {
       flex: 1,
       backgroundColor: theme.color.background,
     },
+    content: {
+      flex: 1,
+      padding: theme.spacing.m,
+    },
     imageContainer: {
       position: 'relative',
-      marginTop: 15.5,
     },
-    bgImage: {
+    badgeImageBackgroundContainer: {
       width: '100%',
       alignItems: 'center',
       justifyContent: 'center',
     },
-    content: {
-      flex: 1,
-      marginHorizontal: theme.spacing.m,
+    badgeImageBackground: {
+      borderRadius: theme.borderRadius.l,
+      borderWidth: 1,
+      borderColor: theme.color.lightGrey,
     },
     badgeImage: {
       height: 308,
       width: 264,
-      marginVertical: 18,
+      margin: 18,
     },
     addressSection: {
       marginVertical: theme.spacing.l,
@@ -242,12 +236,14 @@ const createStyles = (theme: Theme) => {
       shadowRadius: 4,
       shadowOffset: { height: 4, width: 0 },
       shadowColor: `0px 4px 24px rgba(0, 0, 0, 0.04)`,
-      padding: 16,
+      paddingTop: 12,
+      paddingBottom: 16,
+      paddingHorizontal: 16,
     },
     transactionContent: {
       flexDirection: 'row',
       justifyContent: 'space-between',
-      marginVertical: 12,
+      marginBottom: 12,
     },
     trxnText: {
       fontFamily: NUNITO_SANS,
@@ -264,7 +260,7 @@ const createStyles = (theme: Theme) => {
     },
     title: {
       fontFamily: NUNITO_SANS_SEMIBOLD,
-      fontWeight: '600',
+      fontWeight: '700',
       fontSize: 22,
       textAlign: 'justify',
       color: theme.color.primary100,
@@ -278,7 +274,7 @@ const createStyles = (theme: Theme) => {
       color: theme.color.grey400,
       marginBottom: theme.spacing.m,
     },
-    addressList: {
+    addressListItem: {
       elevation: 4,
       borderColor: theme.color.lightGrey,
       borderWidth: 1,
@@ -292,7 +288,7 @@ const createStyles = (theme: Theme) => {
       paddingHorizontal: theme.spacing.sm,
       paddingVertical: theme.spacing.xs,
     },
-    walletList: {
+    addressList: {
       marginTop: theme.spacing.l,
     },
   })

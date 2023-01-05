@@ -85,6 +85,7 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
 
 export default ClaimBadgeStatus
 
+// TODO: Rework the sizing of the image. Maybe create a dedicated component
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     container: {
@@ -112,7 +113,7 @@ const createStyles = (theme: Theme) => {
     badgeImage: {
       width: 170,
       height: 198,
-      marginVertical: 18,
+      margin: 18,
     },
     statusInfoContainer: {
       flexDirection: 'column',

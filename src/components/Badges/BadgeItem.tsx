@@ -1,4 +1,3 @@
-import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { BadgeData, ClaimableBadgeParams } from 'types/badges'
@@ -18,7 +17,6 @@ type BadgeItemProps = {
 
 const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
   const styles = useThemeAwareStyle(createStyles)
-  const { theme } = useTheme()
 
   const badgeDetails = getBadgeDetailsByID(item.id)
 
@@ -28,10 +26,8 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
         <ImageBackground
           source={badgeImageBackground}
           resizeMode='cover'
-          imageStyle={{
-            borderRadius: theme.borderRadius.xs,
-          }}
-          style={styles.badgeBackgroundImage}>
+          imageStyle={styles.badgeImageBackground}
+          style={styles.badgeImageBackgroundContainer}>
           <Image style={styles.badgeImage} source={badgeDetails.image} />
         </ImageBackground>
         <View style={styles.textWrapper}>
@@ -60,6 +56,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
 
 export default BadgeItem
 
+// TODO: Rework the sizing of the image. Maybe create a dedicated component
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
     container: {
@@ -67,15 +64,18 @@ const createStyles = (theme: Theme) => {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    badgeImage: {
-      height: 43,
-      width: 37,
-    },
-    badgeBackgroundImage: {
+    badgeImageBackgroundContainer: {
       height: 48,
       width: 48,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    badgeImageBackground: {
+      borderRadius: theme.borderRadius.xs,
+    },
+    badgeImage: {
+      height: 43,
+      width: 37,
     },
     content: {
       flexDirection: 'row',
