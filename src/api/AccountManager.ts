@@ -3,12 +3,12 @@ import * as Sentry from '@sentry/react-native'
 import { Client, Context, EnvironmentType } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
-import { utils } from 'ethers'
+import { ethers, utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
-import { isEmpty } from 'lodash'
+import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { Account, NetworkNode, NormalizedAccounts, UserData } from 'api/types'
+import { Account, NormalizedAccounts, UserData } from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -22,21 +22,19 @@ import {
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
 import { getTokens } from 'reduxStore/tokens/actions'
-import {
-  getCountryCode,
-  getDefaultNode,
-  getNodeCodeFromCountry,
-} from 'utils/profile'
-import { execWithTimeout, fetchNetworks } from 'api/utils'
+import { getCountryCode } from 'utils/profile'
+import { execWithTimeout } from 'api/utils'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import DataConnectorsManager from './DataConnectorsManager'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
 import { rawDataToReduxState } from 'wallet/helpers/tokens'
 
+import NodeSelector from './NodeSelector'
+
 type EndpointUrls = {
-  dbServerUrl: string
-  messageServerUrl: string
-  notificationServerUrl: string
+  dbServerUrl: string[]
+  messageServerUrl: string[]
+  notificationServerUrl: string[]
 }
 
 const ACCOUNTS_STORAGE_KEY = 'accounts'
@@ -46,6 +44,29 @@ export const SELECTED_WALLET_STORAGE_KEY = 'selected-wallet'
 export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
 export const MNEMONIC_LENGTH = 12
 const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
+
+// @todo: Configure to use meta transaction server
+
+const VERIDA_DID_CLIENT_CONFIG = {
+  callType: 'web3',
+  web3Config: {
+    privateKey: '',
+    callType: 'web3',
+    rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
+    /*serverConfig: {
+      headers: {
+        'context-name': 'Verida: Vault',
+      },
+    },
+    postConfig: {
+      headers: {
+        'user-agent': 'Verida-Vault',
+      },
+    },*/
+  },
+  rpcUrl: 'https://rpc-mumbai.maticvigil.com/'
+}
+
 const CONFIG_DB = 'vault-config'
 const SEED_PHRASE_BACKED_UP_CONFIG = 'seedPhraseBackedUp'
 
@@ -66,7 +87,7 @@ class AccountManager {
   private async filterDids() {
     let hasInvalidData = false
     Object.keys(this.accounts).map((did) => {
-      if (did.includes('did:3')) {
+      if (did.includes('did:3') || did.includes('did:vda:0x')) {
         hasInvalidData = true
       }
     })
@@ -76,6 +97,8 @@ class AccountManager {
       await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
       await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
     }
+
+    // @todo: Display a message saying user needs to create new accounts and redirect to create page
   }
 
   public async init() {
@@ -87,6 +110,8 @@ class AccountManager {
         JSON.stringify(chains) !== JSON.stringify(newChains) ? true : false
       if (!this.selectedAccount) {
         const accountsRaw = await SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY)
+        //accountsRaw = undefined
+        //store.dispatch(setAccounts([]))
         if (accountsRaw) {
           this.accounts = JSON.parse(accountsRaw)
           await this.filterDids()
@@ -148,32 +173,43 @@ class AccountManager {
     endpointUrls?: EndpointUrls
   ): Promise<Context | undefined> {
     try {
+      console.log('getVeridaContext()', this.selectedAccount)
       if (!this.selectedAccount) {
         return undefined
       }
 
       let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
       if (!selectedEndpointUrls) {
-        const networks = await fetchNetworks()
-        if (isEmpty(networks)) {
-          throw 'Networks configuration not available'
-        }
-
-        const defaultNode = getDefaultNode(networks)
-        if (!defaultNode) {
-          throw 'No default node available'
-        }
+        const userCountry = 'AF'
+        const endpointUris = NodeSelector.selectEndpointUris(userCountry)
 
         selectedEndpointUrls = {
-          dbServerUrl: defaultNode.db_address,
-          messageServerUrl: defaultNode.messaging_address,
-          notificationServerUrl: defaultNode.notification_address,
+          dbServerUrl: endpointUris,
+          messageServerUrl: endpointUris,
+          notificationServerUrl: NodeSelector.notificationEndpoints(),
         }
       }
+
+      VERIDA_DID_CLIENT_CONFIG.web3Config.veridaKey =
+        this.selectedAccount.privateKey
+
+      const didEndpointUris: string[] = selectedEndpointUrls.dbServerUrl.reduce(
+        (result: string[], item: string) => {
+          result.push(`${item}did/`)
+          return result
+        },
+        []
+      )
+
+      const didClientConfig = merge({}, VERIDA_DID_CLIENT_CONFIG)
+      didClientConfig.didEndpoints = didEndpointUris
 
       const { mnemonic } = this.selectedAccount
       this.client = new Client({
         environment: VERIDA_ENVIRONMENT,
+        didClientConfig: {
+          rpcUrl: VERIDA_DID_CLIENT_CONFIG.rpcUrl
+        },
       })
 
       // Endpoint uris only get passed when creating account.
@@ -196,6 +232,7 @@ class AccountManager {
         {
           privateKey: mnemonic,
           environment: VERIDA_ENVIRONMENT,
+          didClientConfig: VERIDA_DID_CLIENT_CONFIG,
         }
       )
 
@@ -209,8 +246,11 @@ class AccountManager {
       await this.client.connect(account)
 
       // Open an application context (forcing creation of a new context if it doesn't already exist)
-      return await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+      const context = await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+
+      return context
     } catch (e) {
+      console.log(e)
       Sentry.captureException(e)
       throw e
     }
@@ -366,39 +406,27 @@ class AccountManager {
     let connected = false
     try {
       // Find suitable node based on selected country
+      console.log('createAccount()')
       const countryCode = getCountryCode(country)
-      const networks = (store.getState().main as any).networks
-      const countries = (store.getState().main as any).countries
-      if (!countryCode || isEmpty(networks)) {
-        throw new Error('Invalid network or country configuration')
-      }
-      const matchedNodeCode = getNodeCodeFromCountry(countryCode, countries)
-      let selectedNode
-      if (!matchedNodeCode) {
-        // If there is no matched node for the selected country, use the default one in configuration file.
-        selectedNode = getDefaultNode(networks)
-        if (!selectedNode) {
-          throw new Error('No default node available')
-        }
-      } else {
-        selectedNode = networks[0].nodes.find(
-          (node: NetworkNode) => node.node_code === matchedNodeCode
-        )
-        if (!selectedNode) {
-          throw new Error('Cannot find selected network node configuration')
-        }
-      }
+      const endpoints = NodeSelector.selectEndpointUris(countryCode)
 
       // Endpoints to be used in account config
       const endpointUris = {
-        dbServerUrl: selectedNode.db_address,
-        messageServerUrl: selectedNode.messaging_address,
-        notificationServerUrl: selectedNode.notification_address,
+        dbServerUrl: endpoints,
+        messageServerUrl: endpoints,
+        notificationServerUrl: NodeSelector.notificationEndpoints(),
       }
+
+      console.log('endpoint uris')
+      console.log(endpointUris)
+
       const node = utils.entropyToMnemonic(utils.randomBytes(16))
+      const wallet = ethers.Wallet.fromMnemonic(node)
+      const privateKey = wallet.privateKey
 
       this.selectedAccount = {
         mnemonic: node,
+        privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,
@@ -409,7 +437,7 @@ class AccountManager {
       connected = true
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
-        50000
+        100000
       )
       if (!setPublicProfileSuccess) {
         throw new Error('Failed to set public profile')

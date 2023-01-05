@@ -177,7 +177,7 @@ export async function getNotificationServerUrl() {
     await AccountManager.getInstance().context?.getContextConfig()
   // Notification server url is saved in account's config
   const notificationServerUrl =
-    accountConfig?.services.notificationServer?.endpointUri
+    accountConfig?.services.notificationServer?.endpointUri[0]
 
   // Remove redundant "/" character at the end if it exists
   return notificationServerUrl?.replace(/\/$/, '')
@@ -245,7 +245,7 @@ export async function fetchNetworkConfigJson<T>(url: string): Promise<T[]> {
   }
 }
 
-export async function fetchNetworks(): Promise<Network[]> {
+/*export async function fetchNetworks(): Promise<Network[]> {
   const url = 'https://assets.verida.io/config/verida_nodes.json'
   return fetchNetworkConfigJson<Network>(url)
 }
@@ -253,7 +253,7 @@ export async function fetchNetworks(): Promise<Network[]> {
 export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
   const url = 'https://assets.verida.io/config/country_nodes.json'
   return fetchNetworkConfigJson<NetworkCountries>(url)
-}
+}*/
 
 /**
  * Sleep for an exact amount of milliseconds
