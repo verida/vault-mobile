@@ -1,24 +1,25 @@
+import { getBadgeData } from 'features/badges'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { BadgeData, ClaimableBadgeParams } from 'types/badges'
+import { BadgeType } from 'types/badges'
 
 import Button from 'components/Button'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
-import { getBadgeDetailsByID } from 'utils/badges'
 
 const badgeImageBackground = require('assets/badge_gradient_bg.png')
 
 type BadgeItemProps = {
-  item: BadgeData
-  onPressClaim: (arg: ClaimableBadgeParams) => void
+  badgeType: BadgeType
+  onPressClaim: (badgeType: BadgeType) => void
 }
 
-const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
+const BadgeItem: React.FC<BadgeItemProps> = ({ badgeType, onPressClaim }) => {
   const styles = useThemeAwareStyle(createStyles)
 
-  const badgeDetails = getBadgeDetailsByID(item.id)
+  // FIXME: Uses mock data
+  const data = getBadgeData(badgeType.id)
 
   return (
     <View style={styles.container}>
@@ -28,11 +29,11 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
           resizeMode='cover'
           imageStyle={styles.badgeImageBackground}
           style={styles.badgeImageBackgroundContainer}>
-          <Image style={styles.badgeImage} source={badgeDetails.image} />
+          <Image style={styles.badgeImage} source={badgeType.image} />
         </ImageBackground>
         <View style={styles.textWrapper}>
-          <Text style={styles.title}>{badgeDetails.name}</Text>
-          <Text style={styles.subText}>{item.username}</Text>
+          <Text style={styles.title}>{badgeType.label}</Text>
+          <Text style={styles.subText}>{data?.account || 'Not connected'}</Text>
         </View>
       </View>
       <View>
@@ -42,10 +43,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
           disabled={false}
           loading={false}
           onPress={() => {
-            onPressClaim({
-              ...item,
-              ...badgeDetails,
-            })
+            onPressClaim(badgeType)
           }}>
           Claim
         </Button>

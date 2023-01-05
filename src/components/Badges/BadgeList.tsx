@@ -2,31 +2,29 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
 import { FlatList } from 'react-native'
-import { BadgeData, ClaimableBadgeParams } from 'types/badges'
+import { BadgeType } from 'types/badges'
 
 import { MainStackParams } from 'navigation/types'
 
 import BadgeItem from './BadgeItem'
 
 type BadgeListProps = {
-  data: BadgeData[]
+  badges: BadgeType[]
 }
 
-const BadgeList: React.FC<BadgeListProps> = ({ data }) => {
+const BadgeList: React.FC<BadgeListProps> = ({ badges }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
-  const handleClaimPress = (item: ClaimableBadgeParams) =>
+  const handleClaimPress = (badgeType: BadgeType) =>
     navigation.navigate('ClaimBadge', {
-      data: item,
+      badgeType,
     })
-
-  const renderItem = ({ item }: { item: BadgeData }) => {
-    return <BadgeItem item={item} onPressClaim={handleClaimPress} />
-  }
 
   return (
     <FlatList
-      data={data}
-      renderItem={renderItem}
+      data={badges}
+      renderItem={({ item }) => {
+        return <BadgeItem badgeType={item} onPressClaim={handleClaimPress} />
+      }}
       keyExtractor={(item) => item.id}
     />
   )

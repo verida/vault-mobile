@@ -1,3 +1,4 @@
+import { badgeTypes } from 'features/badges'
 import React, { useState } from 'react'
 import { Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
@@ -14,7 +15,6 @@ import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { VERIDA_ONE_FAQ_URL } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
-import { BADGE_DATA } from 'utils/badges'
 
 const ClaimableBadges: React.FC = () => {
   const styles = useThemeAwareStyle(createStyles)
@@ -65,7 +65,7 @@ const ClaimableBadges: React.FC = () => {
         </View>
         <View style={styles.listSection}>
           <Text style={styles.listTitle}>Available Badges</Text>
-          <BadgeList data={BADGE_DATA} />
+          <BadgeList badges={badgeTypes} />
         </View>
         {/* TODO: Add list of Connections */}
       </View>

@@ -1,4 +1,5 @@
-import { AccountConnection, ClaimableBadgeParams } from 'types/badges'
+import { BadgeType } from 'types/badges'
+import { SupportedConnection } from 'types/connections'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network, NFT, NFTCollection } from 'api/types'
@@ -35,7 +36,7 @@ export type MainStackParams = {
   Inbox: undefined
   ClaimableBadges: undefined
   ClaimBadge: {
-    data: ClaimableBadgeParams
+    badgeType: BadgeType
   }
   Dashboard: undefined
   InboxItem: { inboxItemId: string }
@@ -81,7 +82,7 @@ export type MainStackParams = {
   WalletConnectDapp: { dapp: DApp }
   WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: {
-    provider: AccountConnection
+    provider: SupportedConnection
   }
   Success: undefined
 

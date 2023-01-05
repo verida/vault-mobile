@@ -56,7 +56,7 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
 
   const message: string =
     status === 'success'
-      ? statusList.success.message(badgeInfo.name)
+      ? statusList.success.message(badgeInfo.label)
       : statusList.error.message
 
   // TODO: Add animations as designed in Figma

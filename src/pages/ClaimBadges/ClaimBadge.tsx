@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { getBadgeData } from 'features/badges'
 import React, { useState } from 'react'
 import {
   Image,
@@ -11,7 +12,7 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { ClaimableBadgeParams } from 'types/badges'
+import { BadgeType } from 'types/badges'
 import { WalletItem } from 'types/wallet'
 
 import SettingsIcon from 'assets/settings_icon.svg'
@@ -48,7 +49,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   defaultSelectedAddress,
 }) => {
   const styles = useThemeAwareStyle(createStyles)
-  const { data: badgeItem } = useParams<{ data: ClaimableBadgeParams }>()
+  const { badgeType } = useParams<{ badgeType: BadgeType }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
   const [selectedAddress, setSelectedAddress] = useState<
@@ -57,6 +58,10 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   const [modalVisible, setModalVisible] = useState(false)
   // TODO: get estimated gas fee from an api for blockchain operations.
   const [estimatedGasFee] = useState('0.001 ETH (1.55 USD)')
+
+  // FIXME: Uses mock data
+  const badgeData = getBadgeData(badgeType.id)
+  // TODO: Handle no data returned. ie: not connected or error
 
   // Have an explicit 'open' and 'close' callback to avoid unsync issue
   const handleOpenModal = () => {
@@ -69,6 +74,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
 
   const handleClaimAction = () => {
     // TODO: Implement claim operation
+    // use badgeData.proof
     setStatus('success')
   }
 
@@ -97,12 +103,12 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <NavigationHeader
-        title={`${badgeItem.name} Badge`}
+        title={`${badgeType.label} Badge`}
         left={{ icon: 'back' }}
       />
       {status && (
         <View style={styles.content}>
-          <ClaimBadgeStatus status={status} badgeInfo={badgeItem} />
+          <ClaimBadgeStatus status={status} badgeInfo={badgeType} />
         </View>
       )}
       {!status && (
@@ -113,13 +119,15 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
               resizeMode='cover'
               imageStyle={styles.badgeImageBackground}
               style={styles.badgeImageBackgroundContainer}>
-              <Image source={badgeItem.image} style={styles.badgeImage} />
+              <Image source={badgeType.image} style={styles.badgeImage} />
             </ImageBackground>
           </View>
           <View>
-            <Text style={styles.title}>{badgeItem.name} Badge</Text>
+            <Text style={styles.title}>{badgeType.label} Badge</Text>
             <Text style={styles.bodyText}>
-              {`${badgeItem.description}: ${badgeItem.proof}`}
+              {`${badgeType.description}: ${
+                badgeData?.account || 'Not connected'
+              }`}
             </Text>
           </View>
           <View style={styles.addressSection}>
