@@ -14,13 +14,13 @@ type BadgeListProps = {
 
 const BadgeList: React.FC<BadgeListProps> = ({ data }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
-  const onPress = (item: ClaimableBadgeParams) =>
+  const handleClaimPress = (item: ClaimableBadgeParams) =>
     navigation.navigate('ClaimBadge', {
       data: item,
     })
 
   const renderItem = ({ item }: { item: BadgeData }) => {
-    return <BadgeItem item={item} onPress={onPress} />
+    return <BadgeItem item={item} onPressClaim={handleClaimPress} />
   }
 
   return (

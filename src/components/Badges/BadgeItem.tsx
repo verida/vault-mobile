@@ -1,5 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
@@ -8,21 +6,19 @@ import { BadgeData, ClaimableBadgeParams } from 'types/badges'
 import Button from 'components/Button'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackParams } from 'navigation/types'
 import { Theme } from 'styles/types'
 import { getBadgeDetailsByID } from 'utils/badges'
 
-const badgeBgGradientColor = require('assets/badge_gradient_bg.png')
+const badgeImageBackground = require('assets/badge_gradient_bg.png')
 
 type BadgeItemProps = {
   item: BadgeData
-  onPress: (arg: ClaimableBadgeParams) => void
+  onPressClaim: (arg: ClaimableBadgeParams) => void
 }
 
-const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
+const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPressClaim }) => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const badgeDetails = getBadgeDetailsByID(item.id)
 
@@ -30,48 +26,33 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ item, onPress }) => {
     <View style={styles.container}>
       <View style={styles.content}>
         <ImageBackground
-          source={badgeBgGradientColor}
+          source={badgeImageBackground}
           resizeMode='cover'
           imageStyle={{
             borderRadius: theme.borderRadius.xs,
           }}
-          style={styles.bgImage}>
-          <Image style={styles.badgeIcon} source={badgeDetails.image} />
+          style={styles.badgeBackgroundImage}>
+          <Image style={styles.badgeImage} source={badgeDetails.image} />
         </ImageBackground>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{badgeDetails.name}</Text>
-          <Text style={styles.subText}>{item.username || 'not connected'}</Text>
+          <Text style={styles.subText}>{item.username}</Text>
         </View>
       </View>
       <View>
-        {item.username ? (
-          <Button
-            style={styles.actionButton}
-            color='primary'
-            disabled={false}
-            loading={false}
-            onPress={() => {
-              onPress({
-                ...item,
-                ...badgeDetails,
-              })
-            }}>
-            Claim
-          </Button>
-        ) : (
-          <Button
-            style={styles.actionButton}
-            color='light-primary'
-            disabled={false}
-            loading={false}
-            onPress={() => {
-              navigation.navigate('SingleConnection', {
-                provider: badgeDetails.label,
-              })
-            }}>
-            Connect
-          </Button>
-        )}
+        <Button
+          style={styles.actionButton}
+          color='primary'
+          disabled={false}
+          loading={false}
+          onPress={() => {
+            onPressClaim({
+              ...item,
+              ...badgeDetails,
+            })
+          }}>
+          Claim
+        </Button>
       </View>
     </View>
   )
@@ -86,11 +67,11 @@ const createStyles = (theme: Theme) => {
       justifyContent: 'space-between',
       alignItems: 'center',
     },
-    badgeIcon: {
+    badgeImage: {
       height: 43,
       width: 37,
     },
-    bgImage: {
+    badgeBackgroundImage: {
       height: 48,
       width: 48,
       alignItems: 'center',
