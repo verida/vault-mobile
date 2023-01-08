@@ -1,5 +1,9 @@
+import Axios from 'axios'
+
 const DEFAULT_COUNTRY = 'US'
 const NOTIFICATION_ENDPOINTS = ['https://notifications.testnet.verida.tech/']
+// 5 second default timeout when fetching the status of a node
+const STATUS_TIMEOUT = 5000
 
 interface StorageNode {
   id: string
@@ -116,9 +120,16 @@ const storageNodes: StorageNode[] = [
 ]*/
 
 export default class NodeSelector {
-
-  // @todo: Check the nodes have capacity
-  static selectNodes(countryCode: string, numNodes = 3) {
+  /**
+   * Select random nodes for a given country code
+   * @param countryCode 2-character country code
+   * @param numNodes Number of nodes to randomly select
+   * @returns Array of found storage nodes up to `numNodes` maximum
+   */
+  static async selectNodes(
+    countryCode: string,
+    numNodes = 3
+  ): Promise<StorageNode[]> {
     const countryNodes = NodeSelector.nodesByCountry()
     if (!countryNodes[countryCode]) {
       countryCode = DEFAULT_COUNTRY
@@ -129,15 +140,24 @@ export default class NodeSelector {
 
     while (selectedNodes.length < numNodes && possibleNodes.length > 0) {
       const nodeIndex = getRandomInt(0, possibleNodes.length)
-      selectedNodes.push(possibleNodes[nodeIndex])
+      const possibleNode = possibleNodes[nodeIndex]
+      const nodeAvailable = await NodeSelector.verifyNodeAvailable(possibleNode)
+
+      if (nodeAvailable) {
+        selectedNodes.push(possibleNode)
+      }
+
       possibleNodes.splice(nodeIndex, 1)
     }
 
     return selectedNodes
   }
 
-  static selectEndpointUris(countryCode: string, numNodes = 3) {
-    const nodes = NodeSelector.selectNodes(countryCode, numNodes)
+  static async selectEndpointUris(
+    countryCode: string,
+    numNodes = 3
+  ): Promise<string[]> {
+    const nodes = await NodeSelector.selectNodes(countryCode, numNodes)
     return nodes.reduce((result: any, item: StorageNode) => {
       result.push(item.serviceEndpoint)
       return result
@@ -157,5 +177,33 @@ export default class NodeSelector {
 
   static notificationEndpoints() {
     return NOTIFICATION_ENDPOINTS
+  }
+
+  static async verifyNodeAvailable(storageNode: StorageNode) {
+    try {
+      console.log(`${storageNode.serviceEndpoint}status`)
+      const statusResponse = await Axios.get(
+        `${storageNode.serviceEndpoint}status`,
+        {
+          timeout: STATUS_TIMEOUT,
+        }
+      )
+
+      const results = statusResponse.data.results
+      console.log(
+        `endpointUri: Status fetched ${results.currentUsers} / ${results.maxUsers}`
+      )
+
+      if (parseInt(results.currentUsers) < parseInt(results.maxUsers)) {
+        return true
+      }
+
+      return false
+    } catch (err: any) {
+      console.log(
+        `Storage node ${storageNode.serviceEndpoint} unavailable: ${err.message}`
+      )
+      return false
+    }
   }
 }
