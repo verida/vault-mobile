@@ -3868,26 +3868,26 @@
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-"@verida/account-node@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/account-node/-/account-node-2.0.0-rc5.tgz#668f1db634296206018bf00a55aa6154fedbb945"
-  integrity sha512-b56Vhn45jEf7uaDhNFo/e0aGEpx9c9uY1/Pt8R+CcfD2XmD/7Yy1TIAXEIc7lYzmmw6866c7Z+3sdkiXtmPFlQ==
+"@verida/account-node@^2.0.0-rc5", "@verida/account-node@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/account-node/-/account-node-2.0.0-rc6.tgz#6595a21a2795527978812bc07e88aad5b4b772c1"
+  integrity sha512-V5/2iwoHGegkhS09oVEcOIS7y9fTTJ6VKjcgeqcRjSRJKbaCn7SAAyg332fWWEllT3ZI54ExT9H4S5V+fXvUnQ==
   dependencies:
-    "@verida/account" "^2.0.0-rc5"
-    "@verida/did-client" "^2.0.0-rc5"
+    "@verida/account" "^2.0.0-rc6"
+    "@verida/did-client" "^2.0.0-rc6"
     "@verida/did-document" "^2.0.0-rc5"
     "@verida/encryption-utils" "^2.0.0-rc5"
     "@verida/keyring" "^2.0.0-rc5"
     axios "^0.27.2"
     did-resolver "^4.0.1"
 
-"@verida/account@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/account/-/account-2.0.0-rc5.tgz#eccfe23bab6c99308e119db715b83916e04ae5e2"
-  integrity sha512-kU0u7uZCLI9CcGSOacYNyPMLpqRSYnuuTqgFfqoLh5KCt4MijtkFNPgAqB61gGgaj1VwTMjtBmJIm6PZ+pr7Kw==
+"@verida/account@^2.0.0-rc5", "@verida/account@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/account/-/account-2.0.0-rc6.tgz#e33b14f2abfe106883ba174df602d69703bf5966"
+  integrity sha512-VF41A+shg9SHuiNeF6tJ21UAzuJsdbVS7X6CZW4KU6bXAY9q62kyDAXqQE9Dm4mbq7La1GCVu6hy+SEby3AIWQ==
   dependencies:
     "@verida/keyring" "^2.0.0-rc5"
-    "@verida/storage-link" "^2.0.0-rc5"
+    "@verida/storage-link" "^2.0.0-rc6"
     did-jwt "5.7.0"
     did-resolver "^4.0.1"
     lodash "^4.17.21"
@@ -3955,18 +3955,18 @@
     uuid "^8.3.2"
     vm-browserify "0.0.4"
 
-"@verida/client-ts@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-2.0.0-rc5.tgz#99c53972e0b2e43eb7118c0d2d56b75d1f96fb98"
-  integrity sha512-0ruGLMrzZ2Q/5TEmYbor9/oSSUKzHOb6P6yk+DHHxdzXUP1y73ywAFTa3GZOGEd0UTBw4hwajFh57yF4lvDqkg==
+"@verida/client-ts@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-2.0.0-rc6.tgz#af688ac18320f59e01fabeb305913bb5f518cc8f"
+  integrity sha512-/LJBj1zcO9i1XSGV2Hr1+AkI84b10YKub6lXwseL7P0jSKnOpd6PI/+P6xPIWho9+r/Faz/S+ZGjjFpPYWjyQQ==
   dependencies:
-    "@verida/account" "^2.0.0-rc5"
-    "@verida/account-node" "^2.0.0-rc5"
-    "@verida/did-client" "^2.0.0-rc5"
+    "@verida/account" "^2.0.0-rc6"
+    "@verida/account-node" "^2.0.0-rc6"
+    "@verida/did-client" "^2.0.0-rc6"
     "@verida/did-document" "^2.0.0-rc5"
     "@verida/encryption-utils" "^2.0.0-rc5"
     "@verida/keyring" "^2.0.0-rc5"
-    "@verida/storage-link" "^2.0.0-rc5"
+    "@verida/storage-link" "^2.0.0-rc6"
     ajv "^8.6.3"
     ajv-formats "^2.1.1"
     axios "^0.21.2"
@@ -3981,13 +3981,13 @@
     pouchdb-find "^7.2.2"
     uuid "^8.3.2"
 
-"@verida/did-client@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/did-client/-/did-client-2.0.0-rc5.tgz#3613eb4b36e95c2d120a582b6568de19f851cf39"
-  integrity sha512-z/DBez5vlThvSkiXYHHXyxAPjS+61x/yt8aYEsrwyNELvFHfrlFnhI4YGGwUoaY07UMM8YXKkBl3oboEmFHo4w==
+"@verida/did-client@^2.0.0-rc5", "@verida/did-client@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/did-client/-/did-client-2.0.0-rc6.tgz#8c8210e260b535dd60c9b394890b514a108b7fbd"
+  integrity sha512-/KeBNsVHvCoo4xnYrpXlUAmWPuGuZCjg7npvDlmxF1HYuHtwHr0piQAgi4s5BztW3KGVTHZdcUp66WLbZfgo5Q==
   dependencies:
     "@verida/did-document" "^2.0.0-rc5"
-    "@verida/vda-did-resolver" "^2.0.0-rc5"
+    "@verida/vda-did-resolver" "^2.0.0-rc6"
     "@verida/web3" "^2.0.0-rc5"
     axios "^0.23.0"
     deepcopy "^2.1.0"
@@ -4032,12 +4032,12 @@
   resolved "https://registry.yarnpkg.com/@verida/pouchdb-replication-react-native/-/pouchdb-replication-react-native-7.0.0-prerelease.tgz#a33292678e1a4dcf5243c3dc0bf350035e16832a"
   integrity sha512-hIUujAz5gYxk2tKSimB9b3tClsuMX61hGkVIU8t0qur8JQyhO8Yl87Ip91c/GChHu0eOUrVYCw9swXj9K+3aag==
 
-"@verida/storage-link@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-2.0.0-rc5.tgz#d3001dc8aa30efd8c0731ee55633ad0468b7aaad"
-  integrity sha512-sxxS8iC2QZyIB1PCirIzOLGfUQu9rN96pC5PiW3zORUbvfUoq5pdYnSMe9vrLrJxI7BJggXVSVZ08d++Nd4D9Q==
+"@verida/storage-link@^2.0.0-rc5", "@verida/storage-link@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-2.0.0-rc6.tgz#2cc53fdf0fc7072e00fc49805ff8d21a291a7173"
+  integrity sha512-A39TCJnJPWtFbcgBV/9uyymL+oZsQjTPKZnRDR1ipFSgWCoi6JnjGI0oKgtyZZA8ACu4uwjwa3lbENMWkc0/cw==
   dependencies:
-    "@verida/did-client" "^2.0.0-rc5"
+    "@verida/did-client" "^2.0.0-rc6"
     "@verida/did-document" "^2.0.0-rc5"
     "@verida/encryption-utils" "^2.0.0-rc5"
     "@verida/keyring" "^2.0.0-rc5"
@@ -4052,38 +4052,38 @@
     lodash "^4.17.20"
     nodemon "^2.0.4"
 
-"@verida/vda-did-resolver@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/vda-did-resolver/-/vda-did-resolver-2.0.0-rc5.tgz#acfe23bb0ca818f9e28effe2f19e6d8061d938f9"
-  integrity sha512-oZzLLsQWRHMtZrtOTZYwkzAuzpNUHCUPPy1Xb9x+JDzFEAHZ0iIRpWMkOuf677TspMmW40wUhsV9VnXAOty7Vw==
+"@verida/vda-did-resolver@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/vda-did-resolver/-/vda-did-resolver-2.0.0-rc6.tgz#258f691931c6a696af4610cb2cdd2aacd89fab3d"
+  integrity sha512-xwdwPY3Q3Wu4Ekh0LpSbCZa5TVKUYIhCKO3N725vUfxCVqwuB6wmR+U/diMbcAFDJH+SWJdNIQH3uX6PcFQPCg==
   dependencies:
     "@ethersproject/providers" "^5.7.2"
     "@verida/did-document" "^2.0.0-rc5"
     "@verida/encryption-utils" "^2.0.0-rc5"
-    "@verida/vda-did" "^2.0.0-rc5"
+    "@verida/vda-did" "^2.0.0-rc6"
     axios "1.2.0-alpha.1"
     lodash "^4.17.21"
 
-"@verida/vda-did@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/vda-did/-/vda-did-2.0.0-rc5.tgz#c22e2b0d3c0dc0defd3c8dc987194da17492647b"
-  integrity sha512-4OHQboWnnhS92iomx1nqP5Bl4pY0jpqJBJ5gbY3FnVgX3ekSDwxGkcNl7QIhtx5x4cNdE1EQw/ZtdT3B4QjXUw==
+"@verida/vda-did@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/vda-did/-/vda-did-2.0.0-rc6.tgz#fba014fb5d7adf9abf19e188a1df05daa14b0e25"
+  integrity sha512-0Kjba8eZgbuAFdcd076Jg+vIZsv5+I+LHBdcZjn3ZElR1oC+GcOO7j0+VaA9X1CkrzdPFv23ATdsy5zfWwkoeA==
   dependencies:
     "@verida/did-document" "^2.0.0-rc5"
     "@verida/encryption-utils" "^2.0.0-rc5"
-    "@verida/vda-did-resolver" "^2.0.0-rc5"
+    "@verida/vda-did-resolver" "^2.0.0-rc6"
     "@verida/web3" "^2.0.0-rc5"
     axios "1.2.0-alpha.1"
     lodash "^4.17.21"
 
-"@verida/verifiable-credentials@^2.0.0-rc5":
-  version "2.0.0-rc5"
-  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.0.0-rc5.tgz#d4eac6aabd8822bd764e16d0940806bf1b514ae7"
-  integrity sha512-9ZmKseturF7dR7q/nhgcj5jbAuPWySPqLpsreJyNGBpZi2+1K39pn+JGrNZOYi6li5ISpKnwiQh9Z1JkZdhGGQ==
+"@verida/verifiable-credentials@^2.0.0-rc6":
+  version "2.0.0-rc6"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.0.0-rc6.tgz#8e22c999de7e88f80514f27618a83a22a0639b01"
+  integrity sha512-tQsfwjgodGorw2eGwBHQOLy6FLp9dX7XRtEULZuSIJVAeCna5j1HbT7AfBkW/aXYwfU0HyBe4+Suk4SmpBRfdg==
   dependencies:
-    "@verida/client-ts" "^2.0.0-rc5"
+    "@verida/client-ts" "^2.0.0-rc6"
     "@verida/encryption-utils" "^2.0.0-rc5"
-    "@verida/vda-did-resolver" "^2.0.0-rc5"
+    "@verida/vda-did-resolver" "^2.0.0-rc6"
     dayjs "^1.10.7"
     did-jwt "^5.12.1"
     did-jwt-vc "^2.1.8"
@@ -4091,7 +4091,7 @@
     tweetnacl-util "^0.15.1"
     url "^0.11.0"
 
-"@verida/wallet-utils@1.7.4":
+"@verida/wallet-utils@^1.7.4":
   version "1.7.4"
   resolved "https://registry.yarnpkg.com/@verida/wallet-utils/-/wallet-utils-1.7.4.tgz#f8d411ecd4951b175f0d079970a54728c02f113f"
   integrity sha512-jWscVvcmhTNVxt0xycBWbsg5LO2Z/Wo1tID1Rg4BMZ5HQqQY+jQUwiKfCRA7ga69Zt3Pe/srxNvr9ccSGBbHyw==
