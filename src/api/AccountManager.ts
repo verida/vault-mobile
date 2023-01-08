@@ -48,12 +48,11 @@ const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
 // @todo: Configure to use meta transaction server
 
 const VERIDA_DID_CLIENT_CONFIG = {
-  callType: 'web3',
+  callType: 'gasless',
   web3Config: {
-    privateKey: '',
-    callType: 'web3',
+    callType: 'gasless',
     rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
-    /*serverConfig: {
+    serverConfig: {
       headers: {
         'context-name': 'Verida: Vault',
       },
@@ -62,9 +61,10 @@ const VERIDA_DID_CLIENT_CONFIG = {
       headers: {
         'user-agent': 'Verida-Vault',
       },
-    },*/
+    },
+    endpointUrl: 'https://meta-tx-server1.tn.verida.tech',
   },
-  rpcUrl: 'https://rpc-mumbai.maticvigil.com/'
+  rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
 }
 
 const CONFIG_DB = 'vault-config'
@@ -181,7 +181,8 @@ class AccountManager {
       let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
       if (!selectedEndpointUrls) {
         const userCountry = 'AF'
-        const endpointUris = NodeSelector.selectEndpointUris(userCountry)
+        const endpointUris = await NodeSelector.selectEndpointUris(userCountry)
+        console.log('Found possible endpointUris', endpointUris)
 
         selectedEndpointUrls = {
           dbServerUrl: endpointUris,
@@ -232,7 +233,7 @@ class AccountManager {
         {
           privateKey: mnemonic,
           environment: VERIDA_ENVIRONMENT,
-          didClientConfig: VERIDA_DID_CLIENT_CONFIG,
+          didClientConfig,
         }
       )
 
@@ -247,6 +248,15 @@ class AccountManager {
 
       // Open an application context (forcing creation of a new context if it doesn't already exist)
       const context = await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+
+      // @todo: Do something useful with these messages
+      context!.on('EndpointUnavailable', (endpointUri:string) => {
+        console.info(`Endpoint is currently unavailable: ${endpointUri}`)
+      })
+
+      context!.on('EndpointWarning', (endpointUri:string, message:string) => {
+        console.info(`Warning from endpoint ${endpointUri}: ${message}`)
+      })
 
       return context
     } catch (e) {
@@ -408,7 +418,8 @@ class AccountManager {
       // Find suitable node based on selected country
       console.log('createAccount()')
       const countryCode = getCountryCode(country)
-      const endpoints = NodeSelector.selectEndpointUris(countryCode)
+      const endpoints = await NodeSelector.selectEndpointUris(countryCode)
+      console.log('Found endpointUris', endpoints)
 
       // Endpoints to be used in account config
       const endpointUris = {
@@ -416,9 +427,6 @@ class AccountManager {
         messageServerUrl: endpoints,
         notificationServerUrl: NodeSelector.notificationEndpoints(),
       }
-
-      console.log('endpoint uris')
-      console.log(endpointUris)
 
       const node = utils.entropyToMnemonic(utils.randomBytes(16))
       const wallet = ethers.Wallet.fromMnemonic(node)
