@@ -202,33 +202,33 @@ export default (props) => {
       const contextConfig = await context.getContextConfig()
 
       // Get a context auth object and force create so we get a new refresh token
-      console.log('getting engine')
       const dbEngine = await context.getDatabaseEngine(did, true)
-      console.log('getting active endpoint')
-      const activeEndpointUri = dbEngine.getActiveEndpoint()
-      console.log('got', activeEndpointUri)
-      const contextAuth = await context.getAuthContext({
-        force: true,
-        endpointUri: activeEndpointUri,
-        deviceId
-      })
+      const endpoints = await dbEngine.getEndpoints()
+
+      const contextAuths = {}
+      for (let endpointUri in endpoints) {
+        const contextAuth = await context.getAuthContext({
+          force: true,
+          endpointUri: endpointUri,
+          deviceId
+        })
+
+        contextAuths[endpointUri] = contextAuth
+      }
 
       // NOTE: To disconnect a device (effectively log out an external application)
       // await context.disconnectDevice(deviceId)
-
       const response = {
         signature,
         did,
         contextConfig,
-        contextAuth,
+        contextAuths,
         context: contextName,
       }
 
-      const keyBytes = Buffer.from(info.key.slice(2), 'hex')
-
-      const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
-
       // Build encrypted response
+      const keyBytes = Buffer.from(info.key.slice(2), 'hex')
+      const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
 
       // Send encrypted response to WSS, which will forward
       // onto the web browser

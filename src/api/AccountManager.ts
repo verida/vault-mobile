@@ -234,8 +234,9 @@ class AccountManager {
       )
 
       // Fill the connected account with Verida DID
+      let did
       if (isEmpty(this.selectedAccount.did)) {
-        const did = await account.did()
+        did = await account.did()
         await this.updateCurrentAccount({ did })
       }
 
@@ -244,6 +245,16 @@ class AccountManager {
 
       // Open an application context (forcing creation of a new context if it doesn't already exist)
       const context = await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+
+      // Fetch the context config from the Vault and re-apply it to the account
+      // so that any new login requests will have default config matching the vault.
+      const contextConfig = await context!.getContextConfig(did, false)
+
+      // @todo: use account.setAccountConfig()
+      account.accountConfig = {
+        defaultDatabaseServer: contextConfig.services.databaseServer,
+        defaultMessageServer: contextConfig.services.messageServer
+      }
 
       // @todo: Do something useful with these messages
       context!.on('EndpointUnavailable', (endpointUri:string) => {
@@ -412,10 +423,8 @@ class AccountManager {
     let connected = false
     try {
       // Find suitable node based on selected country
-      console.log('createAccount()')
       const countryCode = getCountryCode(country)
       const endpoints = await NodeSelector.selectEndpointUris(countryCode)
-      console.log('Found endpointUris', endpoints)
 
       // Endpoints to be used in account config
       const endpointUris = {
