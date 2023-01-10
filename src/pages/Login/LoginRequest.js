@@ -202,9 +202,15 @@ export default (props) => {
       const contextConfig = await context.getContextConfig()
 
       // Get a context auth object and force create so we get a new refresh token
+      console.log('getting engine')
+      const dbEngine = await context.getDatabaseEngine(did, true)
+      console.log('getting active endpoint')
+      const activeEndpointUri = dbEngine.getActiveEndpoint()
+      console.log('got', activeEndpointUri)
       const contextAuth = await context.getAuthContext({
         force: true,
-        deviceId,
+        endpointUri: activeEndpointUri,
+        deviceId
       })
 
       // NOTE: To disconnect a device (effectively log out an external application)

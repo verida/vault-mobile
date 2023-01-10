@@ -1,3 +1,8 @@
+// hacks start
+global.Promise = require('promise/lib/es6-extensions')
+import '@ethersproject/shims'
+// hacks end
+
 import './global'
 import 'react-native-crypto'
 import 'text-encoding-polyfill'
@@ -122,6 +127,36 @@ function App() {
     }
 
     init()
+  }, [])
+
+  useEffect(() => {
+    ;(async () => {
+      try {
+        console.log(
+          'Test  Promise.allSettled r',
+          Promise.allSettled,
+          Promise.all,
+          fetch,
+          Promise
+        )
+        const promise1 = Promise.resolve(3)
+        const promise2 = Promise.resolve(300)
+        const promise3 = new Promise((resolve, reject) =>
+          setTimeout(reject, 100, 'foo ')
+        )
+        const promises = [promise1, promise2, promise3]
+        Promise.allSettled(promises)
+          .then((results) => {
+            results.forEach((result) => console.log('hey----', result.status))
+          })
+          .catch((e) => {
+            console.error(e)
+          })
+        console.log('Test  Promise.allSettled end')
+      } catch (error) {
+        console.error('x', error)
+      }
+    })()
   }, [])
 
   if (SHUTDOWN_APP) return <OutOfService />

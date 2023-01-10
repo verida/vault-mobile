@@ -154,10 +154,13 @@ export default class NodeSelector {
   }
 
   static async selectEndpointUris(
-    countryCode: string,
+    countryCode?: string,
     numNodes = 3
   ): Promise<string[]> {
-    const nodes = await NodeSelector.selectNodes(countryCode, numNodes)
+    const nodes = await NodeSelector.selectNodes(
+      countryCode ? countryCode : DEFAULT_COUNTRY,
+      numNodes
+    )
     return nodes.reduce((result: any, item: StorageNode) => {
       result.push(item.serviceEndpoint)
       return result
@@ -181,7 +184,6 @@ export default class NodeSelector {
 
   static async verifyNodeAvailable(storageNode: StorageNode) {
     try {
-      console.log(`${storageNode.serviceEndpoint}status`)
       const statusResponse = await Axios.get(
         `${storageNode.serviceEndpoint}status`,
         {

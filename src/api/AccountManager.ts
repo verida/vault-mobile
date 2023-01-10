@@ -173,17 +173,13 @@ class AccountManager {
     endpointUrls?: EndpointUrls
   ): Promise<Context | undefined> {
     try {
-      console.log('getVeridaContext()', this.selectedAccount)
       if (!this.selectedAccount) {
         return undefined
       }
 
       let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
       if (!selectedEndpointUrls) {
-        const userCountry = 'AF'
-        const endpointUris = await NodeSelector.selectEndpointUris(userCountry)
-        console.log('Found possible endpointUris', endpointUris)
-
+        const endpointUris = await NodeSelector.selectEndpointUris()
         selectedEndpointUrls = {
           dbServerUrl: endpointUris,
           messageServerUrl: endpointUris,
