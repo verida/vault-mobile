@@ -34,7 +34,7 @@
     "@react-navigation/native": "^6.0.1",
     "@react-navigation/native-stack": "^6.0.2",
     "@reduxjs/toolkit": "^1.4.0",
-    "@sentry/react-native": "^3.4.2",
+    "@sentry/react-native": "^4.12.0",
     "@tradle/react-native-http": "^2.0.1",
     "@verida/account": "^2.0.0-rc7",
     "@verida/account-node": "^2.0.0-rc7",
@@ -109,6 +109,7 @@
     "react-native-fast-crypto": "^2.2.0",
     "react-native-flipper": "^0.152.0",
     "react-native-gesture-handler": "~2.2.1",
+    "react-native-get-random-values": "^1.8.0",
     "react-native-intl-phone-input": "^1.2.22",
     "react-native-json-tree": "^1.3.0",
     "react-native-keychain": "^6.2.0",
@@ -150,7 +151,7 @@
     "use-deep-compare-effect": "^1.8.1",
     "util": "^0.10.4",
     "vm-browserify": "0.0.4",
-    "web3": "^1.7.4"
+    "web3": "^1.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
