@@ -2,9 +2,10 @@ import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import { store } from 'reduxStore'
 
-import AccountManager, { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
-import { Network, NetworkCountries } from 'api/types'
+import AccountManager from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
+
+import CONFIG from '../config/environment'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -121,7 +122,7 @@ export async function getProfile(did: string) {
 
 export async function getPublicProfile(
   did: string,
-  contextName = VERIDA_CONTEXT_NAME
+  contextName = CONFIG.VERIDA_CONTEXT_NAME
 ) {
   try {
     const publicProfile = await AccountManager.getInstance()
@@ -147,7 +148,7 @@ export async function getPublicProfile(
 export async function getAxios() {
   const config: any = {
     headers: {
-      'context-name': VERIDA_CONTEXT_NAME,
+      'context-name': CONFIG.VERIDA_CONTEXT_NAME,
     },
   }
 
@@ -158,9 +159,9 @@ export async function getAxios() {
   if (!axiosAuthPassword) {
     const keyring = await AccountManager.getInstance()
       .context?.getAccount()
-      .keyring(VERIDA_CONTEXT_NAME)
+      .keyring(CONFIG.VERIDA_CONTEXT_NAME)
     axiosAuthPassword = await keyring?.sign(
-      `Access the notification service using context: "${VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+      `Access the notification service using context: "${CONFIG.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
     )
   }
   config.auth = {
@@ -198,7 +199,7 @@ export async function registerRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
+        context: CONFIG.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
@@ -221,7 +222,7 @@ export async function unRegisterRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
+        context: CONFIG.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
@@ -234,26 +235,16 @@ export async function unRegisterRemoteNotification(token: string) {
   }
 }
 
-export async function fetchNetworkConfigJson<T>(url: string): Promise<T[]> {
+export async function fetchConfigJson<T>(url: string): Promise<T[]> {
   try {
     const res = await fetch(url + `?t=${Date.now()}`)
     const json = await res.json()
-    return json.networks
+    return json
   } catch (e) {
     Sentry.captureException(e)
     return []
   }
 }
-
-/*export async function fetchNetworks(): Promise<Network[]> {
-  const url = 'https://assets.verida.io/config/verida_nodes.json'
-  return fetchNetworkConfigJson<Network>(url)
-}
-
-export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
-  const url = 'https://assets.verida.io/config/country_nodes.json'
-  return fetchNetworkConfigJson<NetworkCountries>(url)
-}*/
 
 /**
  * Sleep for an exact amount of milliseconds

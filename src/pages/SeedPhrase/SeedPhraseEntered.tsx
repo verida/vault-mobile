@@ -5,7 +5,8 @@ import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, TextInput } from 'react-native'
 
-import AccountManager, { MNEMONIC_LENGTH } from 'api/AccountManager'
+import AccountManager from 'api/AccountManager'
+import CONFIG from '../../config/environment'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
@@ -24,7 +25,7 @@ const cleanSeedPhrase = (phrase: string): string => {
 const verifySeedPhrase = (splitted: string[]): boolean => {
   if (!isEmpty(splitted)) {
     return (
-      splitted.length === MNEMONIC_LENGTH &&
+      splitted.length === CONFIG.MNEMONIC_LENGTH &&
       splitted[splitted.length - 1].length > 0
     )
   } else {

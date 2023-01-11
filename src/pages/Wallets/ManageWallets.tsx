@@ -7,7 +7,7 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
+import CONFIG from '../../config/environment'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
@@ -174,7 +174,7 @@ const ManageWallets = (props: Props) => {
                         const selectedWalletID = item.id
                         onSetSelectedWallet(selectedWalletID)
                         SecureStore.setItemAsync(
-                          SELECTED_WALLET_STORAGE_KEY,
+                          CONFIG.SELECTED_WALLET_STORAGE_KEY,
                           selectedWalletID
                         )
                       }

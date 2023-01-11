@@ -1,9 +1,6 @@
 import Axios from 'axios'
-
-const DEFAULT_COUNTRY = 'US'
-const NOTIFICATION_ENDPOINTS = ['https://notifications.testnet.verida.tech/']
-// 5 second default timeout when fetching the status of a node
-const STATUS_TIMEOUT = 5000
+import { fetchConfigJson } from './utils'
+import CONFIG from '../config/environment'
 
 interface StorageNode {
   id: string
@@ -20,87 +17,6 @@ function getRandomInt(min: number, max: number) {
   max = Math.floor(max)
   return Math.floor(Math.random() * (max - min) + min) // The maximum is exclusive and the minimum is inclusive
 }
-
-// @todo: Move this to a JSON file
-// https://assets.verida.io/registry/storageNodes/testnet.json
-// Afgahnistan = localhost
-// AU = sydney nodes
-// US = ohio nodes
-const storageNodes: StorageNode[] = [
-  {
-    id: 'localhost-001',
-    name: 'Localhost 001',
-    description: 'Node running on localhost',
-    datacenter: 'local',
-    serviceEndpoint: 'http://192.168.68.107:5000/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'AF',
-  },
-  {
-    id: 'localhost-002',
-    name: 'Localhost 002',
-    description: 'Node running on localhost',
-    datacenter: 'local',
-    serviceEndpoint: 'http://192.168.68.124:5000/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'AF',
-  },
-  ////
-  {
-    id: 'verida-testnet-aws-ap-southeast-2-001',
-    name: 'Verida Foundation Testnet: AWS (Sydney) 001',
-    description: 'Node operated by the Verida Foundation on Testnet',
-    datacenter: 'aws-ap-southeast-2',
-    serviceEndpoint: 'https://acacia-au-dev1.tn.verida.tech/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'AU',
-  },
-  {
-    id: 'verida-testnet-aws-ap-southeast-2-002',
-    name: 'Verida Foundation Testnet: AWS (Sydney) 002',
-    description: 'Node operated by the Verida Foundation on Testnet',
-    datacenter: 'aws-ap-southeast-2',
-    serviceEndpoint: 'https://acacia-au-dev2.tn.verida.tech/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'AU',
-  },
-  {
-    id: 'verida-testnet-aws-ap-southeast-2-003',
-    name: 'Verida Foundation Testnet: AWS (Sydney) 003',
-    description: 'Node operated by the Verida Foundation on Testnet',
-    datacenter: 'aws-ap-southeast-2',
-    serviceEndpoint: 'https://acacia-au-dev3.tn.verida.tech/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'AU',
-  },
-  {
-    id: 'verida-testnet-aws-us-east-2-001',
-    name: 'Verida Foundation Testnet: AWS (Ohio) 001',
-    description: 'Node operated by the Verida Foundation on Testnet',
-    datacenter: 'aws-us-east-2',
-    serviceEndpoint: 'https://acacia-dev1.tn.verida.tech/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'US',
-  },
-  {
-    id: 'verida-testnet-aws-us-east-2-002',
-    name: 'Verida Foundation Testnet: AWS (Ohio) 002',
-    description: 'Node operated by the Verida Foundation on Testnet',
-    datacenter: 'aws-us-east-2',
-    serviceEndpoint: 'https://acacia-dev2.tn.verida.tech/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'US',
-  },
-  {
-    id: 'verida-testnet-aws-us-east-2-003',
-    name: 'Verida Foundation Testnet: AWS (Ohio) 003',
-    description: 'Node operated by the Verida Foundation on Testnet',
-    datacenter: 'aws-us-east-2',
-    serviceEndpoint: 'https://acacia-dev3.tn.verida.tech/',
-    establishmentDate: '2023-01-03T08:22:35Z',
-    countryLocation: 'US',
-  },
-]
 
 /*const dataCentres: object[] = [
   {
@@ -130,9 +46,10 @@ export default class NodeSelector {
     countryCode: string,
     numNodes = 3
   ): Promise<StorageNode[]> {
-    const countryNodes = NodeSelector.nodesByCountry()
+    const countryNodes = await NodeSelector.nodesByCountry()
+
     if (!countryNodes[countryCode]) {
-      countryCode = DEFAULT_COUNTRY
+      countryCode = CONFIG.DEFAULT_COUNTRY
     }
 
     const possibleNodes: StorageNode[] = countryNodes[countryCode]
@@ -158,7 +75,7 @@ export default class NodeSelector {
     numNodes = 3
   ): Promise<string[]> {
     const nodes = await NodeSelector.selectNodes(
-      countryCode ? countryCode : DEFAULT_COUNTRY,
+      countryCode ? countryCode : CONFIG.DEFAULT_COUNTRY,
       numNodes
     )
     return nodes.reduce((result: any, item: StorageNode) => {
@@ -167,7 +84,9 @@ export default class NodeSelector {
     }, [])
   }
 
-  static nodesByCountry() {
+  static async nodesByCountry() {
+    const storageNodes = await NodeSelector.loadStorageNodes()
+
     return storageNodes.reduce((result: any, item: StorageNode) => {
       if (!result[item.countryLocation]) {
         result[item.countryLocation] = []
@@ -179,7 +98,7 @@ export default class NodeSelector {
   }
 
   static notificationEndpoints() {
-    return NOTIFICATION_ENDPOINTS
+    return CONFIG.NOTIFICATION_ENDPOINTS
   }
 
   static async verifyNodeAvailable(storageNode: StorageNode) {
@@ -187,7 +106,7 @@ export default class NodeSelector {
       const statusResponse = await Axios.get(
         `${storageNode.serviceEndpoint}status`,
         {
-          timeout: STATUS_TIMEOUT,
+          timeout: CONFIG.DEFAULT_REMOTE_REQUEST_TIMEOUT,
         }
       )
 
@@ -207,5 +126,15 @@ export default class NodeSelector {
       )
       return false
     }
+  }
+
+  static async loadStorageNodes(): Promise<StorageNode[]> {
+    const nodeList = await fetchConfigJson(CONFIG.STORAGE_NODES_URI)
+    const nodes: StorageNode[] = []
+    for (const n in nodeList) {
+      nodes.push(<StorageNode>nodeList[n])
+    }
+
+    return nodes
   }
 }
