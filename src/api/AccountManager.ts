@@ -32,12 +32,31 @@ import { rawDataToReduxState } from 'wallet/helpers/tokens'
 import NodeSelector from './NodeSelector'
 
 import CONFIG from '../config/environment'
+import EventEmitter from 'events'
+
 console.log(CONFIG)
 
 type EndpointUrls = {
   dbServerUrl: string[]
   messageServerUrl: string[]
   notificationServerUrl: string[]
+}
+
+export type AccoutManagerEventType = 'ForcedDeleteAccounts'
+
+class AccoutManagerEvents extends EventEmitter {
+  private static instance: AccoutManagerEvents
+
+  private constructor() {
+    super()
+  }
+
+  static getInstance() {
+    if (!AccoutManagerEvents.instance) {
+      AccoutManagerEvents.instance = new AccoutManagerEvents()
+    }
+    return AccoutManagerEvents.instance
+  }
 }
 
 class AccountManager {
@@ -49,6 +68,18 @@ class AccountManager {
   private selectedAccount: Account | undefined
 
   private static instance: AccountManager
+
+  static async emit(eventName: AccoutManagerEventType, args: any) {
+    AccoutManagerEvents.getInstance().emit(eventName, args)
+  }
+
+  static async on(eventName: AccoutManagerEventType, fn: any) {
+    AccoutManagerEvents.getInstance().on(eventName, fn)
+  }
+
+  static async off(eventName: AccoutManagerEventType, fn?: any) {
+    AccoutManagerEvents.getInstance().off(eventName, fn)
+  }
 
   private constructor() {
     this.accounts = {}
@@ -66,9 +97,9 @@ class AccountManager {
       this.accounts = {}
       await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
       await SecureStore.deleteItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY)
-    }
 
-    // @todo: Display a message saying user needs to create new accounts and redirect to create page
+      AccountManager.emit('ForcedDeleteAccounts', null)
+    }
   }
 
   public async init() {
@@ -98,7 +129,9 @@ class AccountManager {
           store.dispatch(setSelectedAccount(this.selectedAccount))
         }
 
-        const walletsRaw = await SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY)
+        const walletsRaw = await SecureStore.getItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY
+        )
         // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
         if (!walletsRaw || updateWallets) {
           const selectedAccount = this.getSelectedAccount()
@@ -216,7 +249,10 @@ class AccountManager {
       await this.client.connect(account)
 
       // Open an application context (forcing creation of a new context if it doesn't already exist)
-      const context = await this.client.openContext(CONFIG.VERIDA_CONTEXT_NAME, true)
+      const context = await this.client.openContext(
+        CONFIG.VERIDA_CONTEXT_NAME,
+        true
+      )
 
       // Fetch the context config from the Vault and re-apply it to the account
       // so that any new login requests will have default config matching the vault.
@@ -343,7 +379,10 @@ class AccountManager {
         CONFIG.WALLETS_STORAGE_KEY,
         JSON.stringify(walletData)
       )
-      await SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, walletID)
+      await SecureStore.setItemAsync(
+        CONFIG.SELECTED_WALLET_STORAGE_KEY,
+        walletID
+      )
     } catch (e) {
       Sentry.captureException(e)
       throw e

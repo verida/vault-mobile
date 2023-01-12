@@ -12,31 +12,48 @@ export type ForcedUpgradeType = {
   furtherInfo?: string
 }
 
+export type ForcedCreateAccountType = {
+  required?: boolean
+  message?: string
+  furtherInfo?: string
+}
+
 export function useRemoteConfigs() {
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
+  const [forcedCreateAccount, setForcedCreateAccount] =
+    useState<ForcedCreateAccountType>({})
 
   const fetchConfigs = useCallback(() => {
     remoteConfig()
       .setDefaults({
         forced_upgrade: '{}',
+        forced_create_new_account: '{}',
       })
-      .then(() => remoteConfig().fetchAndActivate())
+      .then(() => remoteConfig()?.fetchAndActivate())
       .then((fetchedRemotely) => {
         if (fetchedRemotely) {
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
-          try {
-            const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
-            setForcedUpgrade({
-              ...forcedUpgradeInfo,
-              required:
-                compareVersions(getVersion(), forcedUpgradeInfo.minVersion) < 0, // Current version < required version
-            })
-          } catch (error) {
-            Sentry.captureException(error)
-          }
+          const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
+          setForcedUpgrade({
+            ...forcedUpgradeInfo,
+            required:
+              compareVersions(getVersion(), forcedUpgradeInfo.minVersion) < 0, // Current version < required version
+          })
+
+          // Force create new account
+          const forcedCreateAccountJSON = remoteConfig().getValue(
+            'forced_create_new_account'
+          )
+          const forcedCreateAccountInfo = JSON.parse(
+            forcedCreateAccountJSON.asString()
+          )
+          setForcedCreateAccount(forcedCreateAccountInfo)
         }
+      })
+      .catch((error) => {
+        Sentry.captureException(error)
       })
   }, [])
 
-  return { fetchConfigs, forcedUpgrade }
+  return { fetchConfigs, forcedUpgrade, forcedCreateAccount }
 }
