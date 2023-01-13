@@ -42,24 +42,7 @@ type EndpointUrls = {
   notificationServerUrl: string[]
 }
 
-export type AccoutManagerEventType = 'ForcedDeleteAccounts'
-
-class AccoutManagerEvents extends EventEmitter {
-  private static instance: AccoutManagerEvents
-
-  private constructor() {
-    super()
-  }
-
-  static getInstance() {
-    if (!AccoutManagerEvents.instance) {
-      AccoutManagerEvents.instance = new AccoutManagerEvents()
-    }
-    return AccoutManagerEvents.instance
-  }
-}
-
-class AccountManager {
+class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
   public context: Context | undefined
   public client: Client | undefined
@@ -69,36 +52,22 @@ class AccountManager {
 
   private static instance: AccountManager
 
-  static async emit(eventName: AccoutManagerEventType, args: any) {
-    AccoutManagerEvents.getInstance().emit(eventName, args)
-  }
-
-  static async on(eventName: AccoutManagerEventType, fn: any) {
-    AccoutManagerEvents.getInstance().on(eventName, fn)
-  }
-
-  static async off(eventName: AccoutManagerEventType, fn?: any) {
-    AccoutManagerEvents.getInstance().off(eventName, fn)
-  }
-
   private constructor() {
+    super()
     this.accounts = {}
   }
 
   private async filterDids() {
-    let hasInvalidData = false
-    Object.keys(this.accounts).map((did) => {
-      if (did.includes('did:3') || did.includes('did:vda:0x')) {
-        hasInvalidData = true
-      }
+    const hasInvalidData = Object.keys(this.accounts).some((did) => {
+      return did.includes('did:3') || did.includes('did:vda:0x')
     })
 
-    if (hasInvalidData) {
+    if (hasInvalidData || true) {
       this.accounts = {}
       await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
       await SecureStore.deleteItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY)
 
-      AccountManager.emit('ForcedDeleteAccounts', null)
+      AccountManager.getInstance().emit('ForcedDeleteAccounts', null)
     }
   }
 

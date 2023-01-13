@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useState } from 'react'
@@ -14,6 +13,7 @@ import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
 import { ForcedCreateAccountType } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { navigate } from 'navigation/RootNavigator'
 import { logout } from 'reduxStore/general/actions'
 import { Theme } from 'styles/types'
 
@@ -30,7 +30,6 @@ const ForcedCreateNewAccountModal = ({
   forcedSignOut,
 }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
-  const navigation = useNavigation()
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
 
@@ -40,10 +39,10 @@ const ForcedCreateNewAccountModal = ({
     dispatch(logout())
 
     await forcedSignOut()
-
-    navigation.navigate('Start', undefined)
     setLoading(false)
     dismissModal()
+
+    navigate('Start', undefined)
   }
 
   const onFurtherInfoPress = () => {

@@ -17,7 +17,7 @@ const MetaServerChecks = () => {
   const appState = useRef(AppState.currentState)
   const { fetchConfigs, forcedUpgrade, forcedCreateAccount } =
     useRemoteConfigs()
-  const { authenticated, forcedSignOut } = useAuth()
+  const { forcedSignOut } = useAuth()
 
   useEffect(() => {
     remoteConfig().setConfigSettings({
@@ -56,9 +56,7 @@ const MetaServerChecks = () => {
         showModal(
           <ForcedUpgradeModal
             forcedUpgrade={forcedUpgrade}
-            dismissModal={() => {
-              dismissModal()
-            }}
+            dismissModal={dismissModal}
           />
         )
       }
@@ -85,10 +83,16 @@ const MetaServerChecks = () => {
         />
       )
     }
-    AccountManager.on('ForcedDeleteAccounts', handleForcedDeleteAccounts)
+    AccountManager.getInstance().on(
+      'ForcedDeleteAccounts',
+      handleForcedDeleteAccounts
+    )
 
     return () => {
-      AccountManager.off('ForcedDeleteAccounts', handleForcedDeleteAccounts)
+      AccountManager.getInstance().off(
+        'ForcedDeleteAccounts',
+        handleForcedDeleteAccounts
+      )
     }
   }, [dismissModal, forcedCreateAccount, forcedSignOut, showModal])
 
