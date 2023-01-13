@@ -62,7 +62,7 @@ class AccountManager extends EventEmitter {
       return did.includes('did:3') || did.includes('did:vda:0x')
     })
 
-    if (hasInvalidData || true) {
+    if (hasInvalidData) {
       this.accounts = {}
       await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
       await SecureStore.deleteItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY)
