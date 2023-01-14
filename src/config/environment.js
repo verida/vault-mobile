@@ -1,6 +1,6 @@
 import { EnvironmentType } from '@verida/client-rn'
 
-export const ENVIRONMENT = 'devnet'
+export const ENVIRONMENT = 'testnet'
 
 const ENVIRONMENTS = {
   default: {

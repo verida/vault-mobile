@@ -1,6 +1,7 @@
 import Axios from 'axios'
-import { fetchConfigJson } from './utils'
+
 import CONFIG from '../config/environment'
+import { fetchConfigJson } from './utils'
 
 interface StorageNode {
   id: string
