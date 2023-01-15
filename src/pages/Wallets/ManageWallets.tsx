@@ -7,7 +7,6 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
@@ -27,6 +26,7 @@ import {
 
 import OtherSvg from '../../assets/wallets/Other.svg'
 import WalletsList from '../../components/WalletsList'
+import CONFIG from '../../config/environment'
 import { SNOW_COLOR } from '../../constants/color'
 import AddWalletModal from './AddWalletModal'
 import ImportWalletModal from './ImportWalletModal'
@@ -174,7 +174,7 @@ const ManageWallets = (props: Props) => {
                         const selectedWalletID = item.id
                         onSetSelectedWallet(selectedWalletID)
                         SecureStore.setItemAsync(
-                          SELECTED_WALLET_STORAGE_KEY,
+                          CONFIG.SELECTED_WALLET_STORAGE_KEY,
                           selectedWalletID
                         )
                       }

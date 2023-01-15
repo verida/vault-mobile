@@ -63,6 +63,14 @@
     return configuration;
   });
 
+  // set RCTSetCustomNSURLSessionConfigurationProvider
+  RCTSetCustomNSURLSessionConfigurationProvider(^NSURLSessionConfiguration *{
+    NSURLSessionConfiguration *configuration = [NSURLSessionConfiguration defaultSessionConfiguration];
+    // Increasing max number of same host HTTP connection to 64
+    [configuration setHTTPMaximumConnectionsPerHost:64];
+    return configuration;
+  });
+
   RCTAppSetupPrepareApp(application);
   RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
 #if RCT_NEW_ARCH_ENABLED

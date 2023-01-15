@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
-import { get, isEmpty } from 'lodash'
+import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -9,7 +9,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { connect, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
@@ -22,7 +22,6 @@ import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { useDataRegion } from 'hooks/useDataRegion'
 import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
@@ -41,9 +40,6 @@ function Create(
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
-  useDataRegion()
-  const networks = useSelector((state: any) => state.main.networks)
-  const countries = useSelector((state: any) => state.main.countries)
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140
@@ -57,15 +53,6 @@ function Create(
   }
   const onCreateAccount = async () => {
     if (!country) {
-      return
-    }
-
-    if (isEmpty(networks) || isEmpty(countries)) {
-      // If no node config is available, prevent user from creating account
-      Alert.alert(
-        'Failed',
-        'Verida is currently unavailable. Please try again shortly.'
-      )
       return
     }
 

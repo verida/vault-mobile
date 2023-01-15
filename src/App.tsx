@@ -1,7 +1,3 @@
-import './global'
-import 'react-native-crypto'
-import 'text-encoding-polyfill'
-
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
@@ -12,7 +8,7 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
-import { Alert, LogBox } from 'react-native'
+import { Alert } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import PushNotification from 'react-native-push-notification'
@@ -35,23 +31,6 @@ import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
 import { WalletConnectProvider } from './contexts/WalletConnectContext'
-
-if (__DEV__) {
-  // Disable some known warnings on the device LogBox view, still showing them on the console to be fixed later
-  const ignoreWarns = [
-    'TouchID error',
-    'EventEmitter.removeListener',
-    'Unrecognized WebSocket connection option',
-    'Setting a timer for a long period of time',
-    'ViewPropTypes will be removed from React Native',
-    'AsyncStorage has been extracted from react-native',
-    "exported from 'deprecated-react-native-prop-types'.",
-    'VirtualizedLists should never be nested inside plain ScrollViews',
-    'Usage of "messaging().registerDeviceForRemoteMessages()" is not required.',
-  ]
-
-  LogBox.ignoreLogs(ignoreWarns)
-}
 
 configureNotifications()
 
