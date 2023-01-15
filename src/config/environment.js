@@ -1,6 +1,6 @@
 import { EnvironmentType } from '@verida/client-rn'
 
-export const ENVIRONMENT = 'testnet'
+export const ENVIRONMENT = 'devnet'
 
 const ENVIRONMENTS = {
   default: {
@@ -46,7 +46,7 @@ const ENVIRONMENTS = {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'US',
     NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
-  }
+  },
 }
 
 const CONFIG = Object.assign(
