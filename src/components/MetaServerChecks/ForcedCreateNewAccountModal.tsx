@@ -85,7 +85,7 @@ const ForcedCreateNewAccountModal = ({
                 Create New Account
               </Button>
               <Button color='grey' onPress={onFurtherInfoPress}>
-                Further Info
+                Learn more
               </Button>
             </View>
           </View>
