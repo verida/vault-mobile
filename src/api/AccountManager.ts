@@ -1,6 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import * as Sentry from '@sentry/react-native'
-import { Client, Context, EnvironmentType } from '@verida/client-rn'
+import { Client, Context } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
 import { ethers, utils } from 'ethers'
@@ -33,8 +33,6 @@ import NodeSelector from './NodeSelector'
 
 import CONFIG from '../config/environment'
 import EventEmitter from 'events'
-
-console.log(CONFIG)
 
 type EndpointUrls = {
   dbServerUrl: string[]
@@ -235,16 +233,17 @@ class AccountManager extends EventEmitter {
 
       // @todo: Do something useful with these messages
       context!.on('EndpointUnavailable', (endpointUri: string) => {
+        // eslint-disable-next-line no-console
         console.info(`Endpoint is currently unavailable: ${endpointUri}`)
       })
 
       context!.on('EndpointWarning', (endpointUri: string, message: string) => {
+        // eslint-disable-next-line no-console
         console.info(`Warning from endpoint ${endpointUri}: ${message}`)
       })
 
       return context
     } catch (e) {
-      console.log(e)
       Sentry.captureException(e)
       throw e
     }

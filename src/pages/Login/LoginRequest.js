@@ -210,7 +210,7 @@ export default (props) => {
         const contextAuth = await context.getAuthContext({
           force: true,
           endpointUri: endpointUri,
-          deviceId
+          deviceId,
         })
 
         contextAuths[endpointUri] = contextAuth
