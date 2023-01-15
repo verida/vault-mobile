@@ -1,7 +1,7 @@
 import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
 import { compareVersions } from 'compare-versions'
-import { useCallback, useState } from 'react'
+import { useCallback, useRef, useState } from 'react'
 import { getVersion } from 'react-native-device-info'
 
 export type ForcedUpgradeType = {
@@ -22,8 +22,16 @@ export function useRemoteConfigs() {
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
+  const fetchingRef = useRef(false)
 
   const fetchConfigs = useCallback(() => {
+    if (fetchingRef.current) {
+      // Avoid duplicate requests
+      return
+    }
+
+    fetchingRef.current = true
+
     remoteConfig()
       .setDefaults({
         forced_upgrade: '{}',
@@ -52,6 +60,9 @@ export function useRemoteConfigs() {
       })
       .catch((error) => {
         Sentry.captureException(error)
+      })
+      .finally(() => {
+        fetchingRef.current = false
       })
   }, [])
 
