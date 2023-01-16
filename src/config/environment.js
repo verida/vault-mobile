@@ -1,6 +1,6 @@
 import { EnvironmentType } from '@verida/client-rn'
 
-export const ENVIRONMENT = 'devnet'
+export const ENVIRONMENT = 'testnet'
 
 const ENVIRONMENTS = {
   default: {
@@ -38,14 +38,14 @@ const ENVIRONMENTS = {
       'https://assets.verida.io/registry/storageNodes/devnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'AU',
-    NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
+    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
   },
   testnet: {
     STORAGE_NODES_URI:
       'https://assets.verida.io/registry/storageNodes/testnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'US',
-    NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
+    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
   },
 }
 
