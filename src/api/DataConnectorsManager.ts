@@ -422,7 +422,7 @@ class DataConnection extends EventEmitter {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
     const did = await account?.did()
-    const { schemas } = syncRequest.syncInfo
+    const { schemas, newAuth } = syncRequest.syncInfo
 
     try {
       // Datastores are now available for syncing into the vault, let's sync them!
@@ -487,6 +487,11 @@ class DataConnection extends EventEmitter {
       this.syncLastError = undefined
       this.syncStatus = 'active'
       this.syncNext = moment().add(1, this.syncFrequency).toISOString()
+
+      if (newAuth) {
+        this.accessToken = newAuth.accessToken
+        this.refreshToken = newAuth.refreshToken
+      }
 
       await this.save()
       // console.log(`Sync done and sync status updated`)
