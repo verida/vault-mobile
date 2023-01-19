@@ -10,8 +10,6 @@ import CONFIG from '../config/environment'
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
 
-let axiosAuthPassword: string | undefined
-
 export const convertAvatar = (avatar: any) => {
   if (!avatar) {
     return DefaultAvatar
@@ -156,14 +154,13 @@ export async function getAxios() {
     .getSelectedAccount()
     ?.did.toLowerCase()
 
-  if (!axiosAuthPassword) {
-    const keyring = await AccountManager.getInstance()
-      .context?.getAccount()
-      .keyring(CONFIG.VERIDA_CONTEXT_NAME)
-    axiosAuthPassword = await keyring?.sign(
-      `Access the notification service using context: "${CONFIG.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
-    )
-  }
+  const keyring = await AccountManager.getInstance()
+    .context?.getAccount()
+    .keyring(CONFIG.VERIDA_CONTEXT_NAME)
+  const axiosAuthPassword = await keyring?.sign(
+    `Access the notification service using context: "${CONFIG.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+  )
+
   config.auth = {
     username: currentDid?.replace(/:/g, '_'),
     password: axiosAuthPassword,
@@ -229,7 +226,6 @@ export async function unRegisterRemoteNotification(token: string) {
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
-    axiosAuthPassword = undefined
   } catch (e) {
     Sentry.captureException(e)
   }
