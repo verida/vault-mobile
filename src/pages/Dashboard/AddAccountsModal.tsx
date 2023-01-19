@@ -36,7 +36,7 @@ enum Step {
   MANAGE_ACCOUNT,
   CONFIRM_LOGOUT,
   REMIND_SEED_PHRASE,
-  ADD_IMPORT,
+  ADD_IMPORT, // @Deprecated  instead go directly to the new account creation screen
 }
 
 function getTileFromStep(step: Step) {
@@ -158,7 +158,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
             </TouchableOpacity>
             <TouchableOpacity
               style={[styles.button, styles.addAccountButton]}
-              onPress={() => setStep(Step.ADD_IMPORT)}>
+              onPress={onAddNewPress}>
               <AntDesign name='plus' size={17} color='white' />
               <Text style={styles.addAccountButtonText}>Add</Text>
             </TouchableOpacity>

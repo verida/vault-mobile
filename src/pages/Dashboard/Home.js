@@ -29,13 +29,12 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
-import { CreateAccountMode } from 'pages/Account/Create'
+import { AddIdentityMode } from 'pages/Account/Identity/AddIdentity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
@@ -140,26 +139,6 @@ const Home = (props) => {
   }, [navigationLink, linkTo, setNavigationLink])
 
   useEffect(() => {
-    async function checkFirstTimeLogin() {
-      try {
-        const isFirstTimeLogin = await SecureStore.getItemAsync(
-          FIRST_TIME_LOGIN_KEY
-        )
-        if (isFirstTimeLogin) {
-          await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
-          navigation.navigate('ScanQrCode', {
-            firstTime: true,
-          })
-        }
-      } catch (e) {
-        Sentry.captureException(e)
-      }
-    }
-
-    checkFirstTimeLogin()
-  }, [navigation])
-
-  useEffect(() => {
     const initProfile = async () => {
       try {
         setLoading(true)
@@ -213,7 +192,7 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('AddAccount', { mode: CreateAccountMode.ADD })
+      navigation.navigate('AddIdentity', { mode: AddIdentityMode.Add })
     })
   }
 

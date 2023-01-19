@@ -57,7 +57,7 @@ function TCCheckbox(props: TCCheckboxProps) {
           styles.text,
           { color: type === 'light' ? WHITE_COLOR : BLACK_COLOR },
         ]}>
-        I agree and accept the{' '}
+        I accept the{' '}
         <Text
           onPress={onLinkPress}
           style={[

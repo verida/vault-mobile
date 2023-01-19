@@ -8,7 +8,14 @@ import * as SecureStore from 'expo-secure-store'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import {
+  Account,
+  AddIdentityStepStatus,
+  AddIdentityStepType,
+  NetworkNode,
+  NormalizedAccounts,
+  UserData,
+} from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -397,10 +404,15 @@ class AccountManager extends EventEmitter {
 
   public async createAccount(
     userData: UserData,
-    country: string
+    country: string,
+    updateProgress?: (
+      step: AddIdentityStepType,
+      status: AddIdentityStepStatus
+    ) => void
   ): Promise<Account | undefined> {
     let connected = false
     try {
+      updateProgress?.('CreateIdentifier', 'Loading')
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
       const endpoints = await NodeSelector.selectEndpointUris(countryCode)
@@ -426,12 +438,19 @@ class AccountManager extends EventEmitter {
         },
       }
       await this.connect(true, endpointUris)
+
+      updateProgress?.('CreateIdentifier', 'Success')
+      updateProgress?.('StorageLocation', 'Success')
+      updateProgress?.('CreateProfile', 'Loading')
+
       connected = true
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
         100000
       )
+
       if (!setPublicProfileSuccess) {
+        updateProgress?.('CreateProfile', 'Failure')
         throw new Error('Failed to set public profile')
       }
       await this.setBackedupSeedPhraseConfig(false)
@@ -439,6 +458,8 @@ class AccountManager extends EventEmitter {
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+
+      updateProgress?.('CreateProfile', 'Success')
 
       return this.selectedAccount
     } catch (e) {
