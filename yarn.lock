@@ -3974,10 +3974,10 @@
     uuid "^8.3.2"
     vm-browserify "0.0.4"
 
-"@verida/client-ts@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-2.0.0.tgz#78b4e82671c652af70a4400ae8a7590a96efc60e"
-  integrity sha512-TCiwNIodDrYP+DbzqCOcGr/3acThGMZb6Ogn7blF3iDf9e+KOc3espFi2ZqSVXj/jqKtupEGBNy9CMya+OR/Ew==
+"@verida/client-ts@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-2.0.1.tgz#a64cc733578da849b319c72e726e0710afb44c32"
+  integrity sha512-ZqFDouGUYszKn4a56pCmnMZehwbH1TPPV5yXbtlAVXjnSqbw06RDlue8HlfbYNiECPAGgQ5KQO+ZFTVwz/UtRA==
   dependencies:
     "@verida/account" "^2.0.0"
     "@verida/account-node" "^2.0.0"
@@ -4095,12 +4095,12 @@
     axios "1.2.0-alpha.1"
     lodash "^4.17.21"
 
-"@verida/verifiable-credentials@^2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.0.0.tgz#5d24d2bb562456da82eddecdf24e1e4e9cf186c5"
-  integrity sha512-qcd1ESC9j8Xrs3KZ1dfzDADX/JXmeJ8ajxsqceXsEganMbSPF24Ii803Jf3FTp0gWh6hAFquR55USUG2hWE+1Q==
+"@verida/verifiable-credentials@^2.0.1":
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.0.1.tgz#85030830c932a6b6302337d8052ee2b7d077099d"
+  integrity sha512-wqJbv+MzsSbsCtK7IdSv7eNhlXac0jqfW6/ljKcBt2NceWsKbT3ZfEnwRWyzMAKG/yi/JAXx2YDiOm1aHc57EA==
   dependencies:
-    "@verida/client-ts" "^2.0.0"
+    "@verida/client-ts" "^2.0.1"
     "@verida/encryption-utils" "^2.0.0"
     "@verida/vda-did-resolver" "^2.0.0"
     dayjs "^1.10.7"
