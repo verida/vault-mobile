@@ -1,29 +1,11 @@
 import { countries } from 'countries-list'
-import { find, get } from 'lodash'
-
-import AccountManager from 'api/AccountManager'
-import { Network, NetworkCountry, NetworkNode } from 'api/types'
-
-/**
- * Get country code from user's country name. Ex: Australia => AU
- */
-export async function getUserCountryCode() {
-  if (!AccountManager.getInstance().getSelectedAccount()) {
-    return null
-  }
-  const vault = AccountManager.getInstance().vault as any
-  const publicData = await vault.profiles.public.getMany()
-  const userCountry = get(publicData, 'country') as string
-
-  return getCountryCode(userCountry)
-}
 
 /**
  * Get country code from country name
  * @param countryName Country full name. Ex: "Australia"
  */
-export function getCountryCode(countryName: string): string | null {
-  let countryCode = null
+export function getCountryCode(countryName: string): string {
+  let countryCode = 'US'
   Object.keys(countries).map((key) => {
     const country = countries[key as keyof typeof countries]
     if (country.name === countryName) {
@@ -32,40 +14,4 @@ export function getCountryCode(countryName: string): string | null {
   })
 
   return countryCode
-}
-
-/**
- * Get node code based on country code
- * @param countryCode ISO2 code. Ex: AU
- * @param countryNodes List of country codes mapped with each node code
- */
-export function getNodeCodeFromCountry(
-  countryCode: string,
-  countryNodes: NetworkCountry[]
-): string | null {
-  let result = null
-  countryNodes.every((countryNode) => {
-    const matchedKey = Object.keys(countryNode).find(
-      (key) => key === countryCode
-    )
-    if (matchedKey) {
-      result = countryNode[matchedKey]
-      return false
-    }
-    return true
-  })
-
-  return result
-}
-
-/**
- * Get node code based on country code
- * @param networks A list of networks fetched from remote configuration json
- * @return NetworkNode
- */
-export function getDefaultNode(networks: Network[]): NetworkNode | undefined {
-  return find(
-    networks[0].nodes,
-    (node: NetworkNode) => node.node_code === networks[0].default_node_code
-  )
 }

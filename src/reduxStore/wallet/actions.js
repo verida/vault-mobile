@@ -7,10 +7,7 @@ import {
   rawDataToReduxState,
 } from 'wallet/helpers/tokens'
 
-import AccountManager, {
-  SELECTED_WALLET_STORAGE_KEY,
-  WALLETS_STORAGE_KEY,
-} from 'api/AccountManager'
+import AccountManager from 'api/AccountManager'
 import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -19,6 +16,7 @@ import {
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
+import { CONFIG } from '../../config/environment'
 import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,
@@ -263,10 +261,13 @@ export const createNewWallet = (data) => {
 
         // save to storage..
         await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
+          CONFIG.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
-        await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
+        await SecureStore.setItemAsync(
+          CONFIG.SELECTED_WALLET_STORAGE_KEY,
+          walletID
+        )
       }
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
@@ -316,10 +317,13 @@ export const importWallet = (data) => {
 
         // save to storage..
         await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
+          CONFIG.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
-        await SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID)
+        await SecureStore.setItemAsync(
+          CONFIG.SELECTED_WALLET_STORAGE_KEY,
+          walletID
+        )
       }
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
@@ -356,14 +360,14 @@ export const deleteWallet = (walletId) => {
           let firstWalletId = hdWallets[0]._id
           await dispatch(setSelectedWallet(firstWalletId))
           await SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
             firstWalletId
           )
         }
 
         await dispatch(saveUserWallets(wallets))
         await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
+          CONFIG.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
       }
@@ -403,7 +407,7 @@ export const renameWallet = (walletId, data) => {
 
         await dispatch(saveUserWallets(wallets))
         await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
+          CONFIG.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
       }

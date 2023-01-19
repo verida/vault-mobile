@@ -82,7 +82,7 @@ export default class DataConnectorsManager {
       return DataConnectorsManager.datastore
     }
 
-    const context = await AccountManager.getInstance().getVeridaContext()
+    const context = await AccountManager.getInstance().context
     DataConnectorsManager.datastore = await context!.openDatastore(
       DATA_CONNECTION_SCHEMA
     )
@@ -219,7 +219,7 @@ class DataConnection extends EventEmitter {
   }
 
   public async initiateAuth() {
-    const context = await AccountManager.getInstance().getVeridaContext()
+    const context = await AccountManager.getInstance().context
 
     const account = context?.getAccount()
     const did = await account?.did()
@@ -310,7 +310,7 @@ class DataConnection extends EventEmitter {
 
     try {
       // Request the server to sync the third party connector data into a collection of encrypted datastores
-      const context = await AccountManager.getInstance().getVeridaContext()
+      const context = await AccountManager.getInstance().context
       const account = context?.getAccount()
       const did = await account?.did()
 
@@ -342,7 +342,7 @@ class DataConnection extends EventEmitter {
     syncRequestDatabaseName: string,
     retryCount = 5
   ) {
-    const context = await AccountManager.getInstance().getVeridaContext()
+    const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
     const did = await account?.did()
 
@@ -419,7 +419,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequest: any
   ) {
-    const context = await AccountManager.getInstance().getVeridaContext()
+    const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
     const did = await account?.did()
     const { schemas } = syncRequest.syncInfo

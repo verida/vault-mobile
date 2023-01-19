@@ -95,6 +95,7 @@ export default (props) => {
               setInfo({
                 request,
                 payload,
+                params: parsed,
                 _expiry,
                 key,
                 logoUrl: parsed.logoUrl,
@@ -142,7 +143,7 @@ export default (props) => {
     reloadExpired()
   }, [reloadExpired])
 
-  const saveLoginRequest = async (approved) => {
+  const saveLoginRequest = async (approved, deviceId) => {
     const vault = AccountManager.getInstance().context
     // save into login database
     const loginRequest = {
@@ -152,6 +153,7 @@ export default (props) => {
       sessionId: info.payload.data.session,
       authUri: info.payload.data.authUri,
       expiry: info.payload.exp,
+      deviceId,
       approved,
     }
 
@@ -192,22 +194,41 @@ export default (props) => {
       const signature = keyring.getSeed()
       const did = await account.did()
       const contextName = info.request.context
+      const deviceId = info.params.userAgent
+        ? info.params.userAgent
+        : `${contextName} (${info.request.loginDomain})`
 
       const context = await client.openContext(contextName, true)
       const contextConfig = await context.getContextConfig()
 
+      // Get a context auth object and force create so we get a new refresh token
+      const dbEngine = await context.getDatabaseEngine(did, true)
+      const endpoints = await dbEngine.getEndpoints()
+
+      const contextAuths = {}
+      for (let endpointUri in endpoints) {
+        const contextAuth = await context.getAuthContext({
+          force: true,
+          endpointUri: endpointUri,
+          deviceId,
+        })
+
+        contextAuths[endpointUri] = contextAuth
+      }
+
+      // NOTE: To disconnect a device (effectively log out an external application)
+      // await context.disconnectDevice(deviceId)
       const response = {
         signature,
         did,
         contextConfig,
+        contextAuths,
         context: contextName,
       }
 
-      const keyBytes = Buffer.from(info.key.slice(2), 'hex')
-
-      const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
-
       // Build encrypted response
+      const keyBytes = Buffer.from(info.key.slice(2), 'hex')
+      const encryptedResponse = EncryptionUtils.symEncrypt(response, keyBytes)
 
       // Send encrypted response to WSS, which will forward
       // onto the web browser
@@ -231,7 +252,7 @@ export default (props) => {
         await requestConnect(info.walletConnect.uri)
       }
 
-      await saveLoginRequest(true)
+      await saveLoginRequest(true, deviceId)
     } catch (error) {
       Sentry.captureException(error)
       setStatus('loaded')

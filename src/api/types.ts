@@ -2,6 +2,7 @@ import { ImageSourcePropType } from 'react-native'
 
 export type Account = {
   did: string
+  privateKey: string
   mnemonic: string
   publicProfile?: UserData
   seedPhraseReminder: {

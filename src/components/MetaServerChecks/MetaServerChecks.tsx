@@ -4,15 +4,20 @@ import React, { useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import { getVersion } from 'react-native-device-info'
 
+import AccountManager from 'api/AccountManager'
+import { useAuth } from 'hooks/useAuth'
 import { useModal } from 'hooks/useModal'
 import { useRemoteConfigs } from 'hooks/useRemoteConfigs'
 
+import ForcedCreateNewAccountModal from './ForcedCreateNewAccountModal'
 import ForcedUpgradeModal from './ForcedUpgradeModal'
 
 const MetaServerChecks = () => {
   const { showModal, dismissModal } = useModal()
   const appState = useRef(AppState.currentState)
-  const { fetchConfigs, forcedUpgrade } = useRemoteConfigs()
+  const { fetchConfigs, forcedUpgrade, forcedCreateAccount } =
+    useRemoteConfigs()
+  const { forcedSignOut } = useAuth()
 
   useEffect(() => {
     remoteConfig().setConfigSettings({
@@ -51,9 +56,7 @@ const MetaServerChecks = () => {
         showModal(
           <ForcedUpgradeModal
             forcedUpgrade={forcedUpgrade}
-            dismissModal={() => {
-              dismissModal()
-            }}
+            dismissModal={dismissModal}
           />
         )
       }
@@ -67,6 +70,31 @@ const MetaServerChecks = () => {
       clearTimeout(tid)
     }
   }, [dismissModal, forcedUpgrade, showModal])
+
+  useEffect(() => {
+    const handleForcedDeleteAccounts = () => {
+      showModal(
+        <ForcedCreateNewAccountModal
+          forcedCreateAccount={forcedCreateAccount}
+          forcedSignOut={forcedSignOut}
+          dismissModal={() => {
+            dismissModal()
+          }}
+        />
+      )
+    }
+    AccountManager.getInstance().on(
+      'ForcedDeleteAccounts',
+      handleForcedDeleteAccounts
+    )
+
+    return () => {
+      AccountManager.getInstance().off(
+        'ForcedDeleteAccounts',
+        handleForcedDeleteAccounts
+      )
+    }
+  }, [dismissModal, forcedCreateAccount, forcedSignOut, showModal])
 
   return null
 }
