@@ -4,11 +4,14 @@ import isEmpty from 'lodash/isEmpty'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, TextInput } from 'react-native'
+import { useDispatch } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { useAuth } from 'hooks/useAuth'
 import { MainStackParams } from 'navigation/types'
+import { setAuthStatus } from 'reduxStore/general/actions'
 
 import Button from '../../components/Button'
 import ErrorPhrase from '../../components/ErrorPhrase'
@@ -42,6 +45,8 @@ const SeedPhraseEntered = (
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const { refresh } = useAuth()
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const verify = () => {
@@ -79,10 +84,13 @@ const SeedPhraseEntered = (
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
       }
-      if (route.params.previousScreen === 'Dashboard') {
+
+      if (route?.params?.previousScreen === 'Dashboard') {
         navigation.navigate('Dashboard')
       } else {
-        navigation.navigate('Success')
+        dispatch(setAuthStatus(true))
+        await refresh()
+        navigation.goBack()
       }
     } catch (e) {
       setProcessing(false)
