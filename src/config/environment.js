@@ -13,6 +13,8 @@ const ENVIRONMENTS = {
     CONFIG_DB: 'vault-config',
     SEED_PHRASE_BACKED_UP_CONFIG: 'seedPhraseBackedUp',
     DEFAULT_REMOTE_REQUEST_TIMEOUT: 5000,
+    DATA_CONNECTOR_RETRY_INTERVAL: 5000,
+    DATA_CONNECTOR_RETRY_LIMIT: 10,
     VERIDA_DID_CLIENT_CONFIG: {
       callType: 'gasless',
       web3Config: {
@@ -39,6 +41,7 @@ const ENVIRONMENTS = {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'AU',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
+    DATA_CONNECTOR_URL: 'http://192.168.68.124:5021',
   },
   testnet: {
     STORAGE_NODES_URI:
@@ -46,6 +49,7 @@ const ENVIRONMENTS = {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'US',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
+    DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
 }
 
