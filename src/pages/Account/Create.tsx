@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
+import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import {
   Alert,
@@ -16,7 +17,7 @@ import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import DropDownPicker from 'components/Select'
+import DropDownPicker, { Option } from 'components/Select'
 import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
@@ -25,15 +26,15 @@ import { AuthStackParams } from 'navigation/types'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import InputStyles from 'styles/inputs'
 
-type Option = {
-  label: string
-  value: string
+export enum CreateAccountMode {
+  CREATE,
+  ADD,
 }
 
 function Create(
   props: NativeStackScreenProps<AuthStackParams, 'CreateAccount'>
 ) {
-  const { navigation } = props
+  const { navigation, route } = props
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)
   const [processing, setProcessing] = useState(false)
@@ -44,26 +45,50 @@ function Create(
     const isNameValid = name.length >= 2 && name.length <= 140
     const isCountryValid =
       !!country && country.value.length >= 2 && country.value.length <= 140
-    setIsFormValid(isNameValid && isCountryValid)
-  }, [country, name.length])
+    setIsFormValid(isNameValid && isCountryValid && agreedTC)
+  }, [country, name.length, agreedTC])
 
-  const onCountryChange = (option: Option) => setCountry(option)
+  const onCountryChange = (option: Option) => {
+    setCountry(option)
+  }
   const onCreateAccount = async () => {
-    try {
-      setProcessing(true)
-      await AccountManager.getInstance().createAccount({
-        name,
-        country: country?.value || '',
-      })
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      props.setPublicProfileData({ name, country: country?.value })
-      setProcessing(false)
-      navigation.navigate('CreatePin')
-    } catch (error) {
-      setProcessing(false)
-      Alert.alert('Error', 'Failed to create account, please try again later')
+    if (!country) {
+      return
     }
+
+    setProcessing(true)
+    setTimeout(async () => {
+      try {
+        await AccountManager.getInstance().createAccount(
+          {
+            name,
+            country: country?.value || '',
+            description: '',
+          },
+          country?.value
+        )
+        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+        // @ts-ignore
+        props.setPublicProfileData({
+          name,
+          country: country?.value,
+          description: '',
+        })
+        setProcessing(false)
+
+        if (
+          get(route.params, 'mode', CreateAccountMode.CREATE) ===
+          CreateAccountMode.CREATE
+        ) {
+          navigation.navigate('CreatePin')
+        } else {
+          navigation.goBack()
+        }
+      } catch (error) {
+        setProcessing(false)
+        Alert.alert('Error', 'Failed to create account, please try again later')
+      }
+    }, 0)
   }
 
   const onImportAccount = () => {
@@ -84,14 +109,16 @@ function Create(
             placeholder={'e.g John'}
             style={InputStyles.input}
             value={name}
+            editable={!processing}
             onChangeText={(t) => setName(t)}
           />
 
           <Label>Country</Label>
           <DropDownPicker
-            searchable={true}
+            searchable
+            disabled={processing}
             searchablePlaceholder='Search for country'
-            showArrow={true}
+            showArrow
             placeholder=''
             items={COUNTRIES}
             containerStyle={InputStyles.select}

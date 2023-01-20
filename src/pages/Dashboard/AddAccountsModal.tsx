@@ -23,13 +23,14 @@ export type AddAccountsModalProps = Omit<
   BottomActionsModalProps,
   'children' | 'title' | 'message' | 'footer'
 > & {
-  onAddNew: () => void
-  onImport: () => void
-  onSelectAccount: (did: string) => void
-  onLogoutAccounts: (dids: string[]) => void
+  onAddNew?: () => void
+  onImport?: () => void
+  onSelectAccount?: (did: string) => void
+  onLogoutAccounts?: (dids: string[]) => void
+  showLogout?: boolean
+  setLoading?: any
 }
 
-// eslint-disable-next-line no-shadow
 enum Step {
   INITIAL,
   MANAGE_ACCOUNT,
@@ -44,7 +45,7 @@ function getTileFromStep(step: Step) {
     case Step.ADD_IMPORT:
       return 'Accounts'
     default:
-      return 'Are you sure you want to log out?'
+      return 'Log out of selected accounts'
   }
 }
 
@@ -82,28 +83,34 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     onSelectAccount,
     onClose,
     onLogoutAccounts,
+    showLogout,
+    setLoading,
     ...rest
   } = props
-  const [step, setStep] = useState<Step>(Step.INITIAL)
+
+  const [step, setStep] = useState<Step>(
+    showLogout ? Step.MANAGE_ACCOUNT : Step.INITIAL
+  )
   const [selectedDids, setSelectedDids] = useState<string[]>([])
   const title = getTileFromStep(step)
   const titleIcon = getTitleIconFromStep(step)
 
   function onPressClose() {
-    setStep(0)
+    if (showLogout) setStep(Step.MANAGE_ACCOUNT)
+    else setStep(0)
     setSelectedDids([])
-    onClose()
+    onClose!()
   }
 
   function onImportPress() {
     setStep(0)
-    onImport()
+    onImport?.()
   }
 
   function onSelectAccountPress(did: string) {
     if (step === Step.INITIAL) {
       setStep(0)
-      onSelectAccount(did)
+      onSelectAccount?.(did)
       return
     }
     const findIndex = selectedDids.indexOf(did)
@@ -119,13 +126,22 @@ function AddAccountsModal(props: AddAccountsModalProps) {
 
   function onAddNewPress() {
     setStep(0)
-    onAddNew()
+    onAddNew?.()
   }
 
-  function onLogoutPress() {
+  async function onLogoutPress() {
+    setLoading?.(true)
     setStep(0)
-    onClose()
-    onLogoutAccounts(selectedDids)
+    onClose!()
+    await onLogoutAccounts?.(selectedDids)
+    setLoading?.(false)
+  }
+
+  function onCancelLogout() {
+    if (showLogout) {
+      setStep(Step.MANAGE_ACCOUNT)
+    } else setStep(Step.INITIAL)
+    setSelectedDids([])
   }
 
   function renderFooter() {
@@ -184,7 +200,7 @@ function AddAccountsModal(props: AddAccountsModalProps) {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={[styles.button, styles.cancelButton]}
-              onPress={() => setStep(Step.INITIAL)}>
+              onPress={onCancelLogout}>
               <MaterialCommunityIcons name='logout' size={17} color='white' />
               <Text style={styles.cancelButtonText}>Cancel</Text>
             </TouchableOpacity>
@@ -206,11 +222,15 @@ function AddAccountsModal(props: AddAccountsModalProps) {
       onClose={onPressClose}
       titleIcon={titleIcon}
       {...rest}>
-      {step === Step.INITIAL || step === Step.MANAGE_ACCOUNT ? (
+      {step === Step.INITIAL ||
+      step === Step.MANAGE_ACCOUNT ||
+      step === Step.CONFIRM_LOGOUT ? (
         <AccountsList
           onSelectAccount={onSelectAccountPress}
           containerStyle={styles.accountsList}
           selectedDids={selectedDids}
+          multipleSelect={step === Step.MANAGE_ACCOUNT}
+          showSelectedOnly={step === Step.CONFIRM_LOGOUT}
         />
       ) : (
         <View style={styles.space} />
@@ -268,6 +288,7 @@ const styles = StyleSheet.create({
   buttonsContainer: {
     flexDirection: 'row',
     paddingHorizontal: 16,
+    paddingTop: 12,
   },
   manageButton: {
     flex: 1,

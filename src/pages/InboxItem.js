@@ -78,7 +78,8 @@ const mapDispatchToProps = () => {
   return {}
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return { setInboxItem: state.setInboxItem, setInboxType: state.setInboxType }
 }
 

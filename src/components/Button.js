@@ -17,8 +17,14 @@ export default (props) => {
       case 'transparent-border':
       case 'grey':
         return 'primary'
+      case 'transparent-white':
+        return 'white'
       case 'transparent-grey':
         return 'grey'
+      case 'warning':
+        return 'warning'
+      case 'transparent-warning':
+        return 'warning'
       default:
         return 'white'
     }
@@ -28,11 +34,11 @@ export default (props) => {
     <TouchableOpacity
       style={[
         ButtonStyles.button,
-        styles,
         type,
+        styles,
         props.disabled && ButtonStyles.disabled,
       ]}
-      onPress={props.onPress}
+      onPress={props.loading ? null : props.onPress}
       disabled={props.disabled}>
       {!props.loading ? (
         <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>

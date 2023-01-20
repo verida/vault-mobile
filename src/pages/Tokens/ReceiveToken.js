@@ -5,6 +5,7 @@ import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
+import { getWalletAddressForToken } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon.svg'
@@ -21,7 +22,9 @@ const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
-  const address = wallets.algo.address
+  const address = getWalletAddressForToken(token.addressMapping, wallets)
+  let networkReference = token.referenceLabel
+
   return (
     <Container>
       <NavigationHeader
@@ -31,7 +34,7 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
         }}
         title={'Receive ' + token.symbol}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       <Layout style={styles.container}>
         <View style={styles.content}>
           <Text style={styles.address}>{address}</Text>
@@ -50,8 +53,9 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
             <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
           </Text> */}
           <Text style={styles.notice}>
-            Send only {token.label} ({token.symbol}) to this address. Sending
-            any other coins may result in permanent loss.
+            Send only {token.label} (
+            {token.tokenType ? token.tokenType : token.symbol}) to this address.
+            Sending any other coins may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
             <TouchableOpacity
@@ -105,12 +109,12 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     alignItems: 'stretch',
+    justifyContent: 'space-between',
     paddingBottom: 30,
     borderTopWidth: 1,
     borderTopColor: 'rgba(4, 17, 51, 0.2)',
   },
   content: {
-    flex: 1,
     alignItems: 'center',
     padding: 24,
   },
@@ -165,7 +169,8 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     wallets: getWalletsData(state),
   }

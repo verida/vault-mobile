@@ -1,18 +1,14 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
-import store from 'reduxStore'
+import { store } from 'reduxStore'
 
-import AccountManager, {
-  VERIDA_CONTEXT_NAME,
-  VERIDA_TESTNET_NOTIFICATION_SERVER,
-} from 'api/AccountManager'
-import { Network, NetworkCountries } from 'api/types'
+import AccountManager from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
+
+import CONFIG from '../config/environment'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
-
-let axiosAuthPassword: string | undefined
 
 export const convertAvatar = (avatar: any) => {
   if (!avatar) {
@@ -90,7 +86,7 @@ export async function fetchInboxCount() {
         { read: false },
         { limit: MAX_MESSAGE_COUNT }
       )
-    store.dispatch(setNewMessagesCount(messages.length))
+    store.dispatch(setNewMessagesCount(messages?.length ?? 0))
   } catch (error) {
     Sentry.captureException(error)
   }
@@ -122,10 +118,35 @@ export async function getProfile(did: string) {
   }
 }
 
+export async function getPublicProfile(
+  did: string,
+  contextName = CONFIG.VERIDA_CONTEXT_NAME
+) {
+  try {
+    const publicProfile = await AccountManager.getInstance()
+      .getClient()
+      ?.openPublicProfile(did, contextName, 'basicProfile')
+    const name = await publicProfile?.get('name')
+    const avatar = await publicProfile?.get('avatar')
+
+    return {
+      name: name || 'Unknown',
+      avatar: avatar || DefaultAvatar,
+    }
+  } catch (error) {
+    Sentry.captureException(error)
+
+    return {
+      name: 'Unknown',
+      avatar: DefaultAvatar,
+    }
+  }
+}
+
 export async function getAxios() {
   const config: any = {
     headers: {
-      'context-name': VERIDA_CONTEXT_NAME,
+      'context-name': CONFIG.VERIDA_CONTEXT_NAME,
     },
   }
 
@@ -133,20 +154,31 @@ export async function getAxios() {
     .getSelectedAccount()
     ?.did.toLowerCase()
 
-  if (!axiosAuthPassword) {
-    const keyring = await AccountManager.getInstance()
-      .context?.getAccount()
-      .keyring(VERIDA_CONTEXT_NAME)
-    axiosAuthPassword = await keyring?.sign(
-      `Access the notification service using context: "${VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
-    )
-  }
+  const keyring = await AccountManager.getInstance()
+    .context?.getAccount()
+    .keyring(CONFIG.VERIDA_CONTEXT_NAME)
+  const axiosAuthPassword = await keyring?.sign(
+    `Access the notification service using context: "${CONFIG.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+  )
+
   config.auth = {
     username: currentDid?.replace(/:/g, '_'),
     password: axiosAuthPassword,
   }
 
   return axios.create(config)
+}
+
+export async function getNotificationServerUrl() {
+  // Notification server url is saved in account's config
+  const accountConfig =
+    await AccountManager.getInstance().context?.getContextConfig()
+  // Notification server url is saved in account's config
+  const notificationServerUrl =
+    accountConfig?.services.notificationServer?.endpointUri[0]
+
+  // Remove redundant "/" character at the end if it exists
+  return notificationServerUrl?.replace(/\/$/, '')
 }
 
 export async function registerRemoteNotification(token: string) {
@@ -156,65 +188,78 @@ export async function registerRemoteNotification(token: string) {
 
   try {
     const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const notificationServerUrl = await getNotificationServerUrl()
+    if (!notificationServerUrl) {
+      return
+    }
+
     const body = {
       data: {
         did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
+        context: CONFIG.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
 
     const axiosInstance = await getAxios()
-    await axiosInstance.post(
-      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/register`,
-      body
-    )
+    await axiosInstance.post(`${notificationServerUrl}/register`, body)
   } catch (e) {
     Sentry.captureException(e)
-  }
-}
-
-export async function fetchNetworks(): Promise<Network[]> {
-  try {
-    const url = 'https://assets.verida.io/config/verida_storage_nodes.json'
-    const res = await fetch(url)
-    const json = await res.json()
-    return json.networks
-  } catch (e) {
-    Sentry.captureException(e)
-    return []
   }
 }
 
 export async function unRegisterRemoteNotification(token: string) {
   try {
     const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
+    const notificationServerUrl = await getNotificationServerUrl()
+    if (!notificationServerUrl) {
+      return
+    }
+
     const body = {
       data: {
         did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
+        context: CONFIG.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
 
     const axiosInstance = await getAxios()
-    await axiosInstance.post(
-      `${VERIDA_TESTNET_NOTIFICATION_SERVER}/unregister`,
-      body
-    )
+    await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
   } catch (e) {
     Sentry.captureException(e)
   }
 }
 
-export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
+export async function fetchConfigJson<T>(url: string): Promise<T[]> {
   try {
-    const url = 'https://assets.verida.io/config/country_storage_nodes.json'
-    const res = await fetch(url)
+    const res = await fetch(url + `?t=${Date.now()}`)
     const json = await res.json()
-    return json.networks
+    return json
   } catch (e) {
     Sentry.captureException(e)
     return []
   }
+}
+
+/**
+ * Sleep for an exact amount of milliseconds
+ * @param ms milliseconds
+ * @return Promise
+ */
+export async function sleep(ms: number): Promise<void> {
+  return new Promise((resolve) => setTimeout(resolve, ms))
+}
+
+/**
+ * Execute an async function and abort if it takes too much time
+ * @param promise the async function
+ * @param timeout timeout in milliseconds
+ * @return type of return value from the async function or throw an error if aborted
+ */
+export async function execWithTimeout<T>(
+  promise: Promise<T>,
+  timeout: number
+): Promise<T | void> {
+  return Promise.race([promise, sleep(timeout)])
 }

@@ -1,5 +1,6 @@
 import React from 'react'
 import {
+  Dimensions,
   Modal,
   ModalProps,
   SafeAreaView,
@@ -24,9 +25,11 @@ export interface BottomActionsModalProps extends ModalProps {
   subtitle?: string
   message?: string
   footer?: React.ReactElement
-  onClose: () => void
+  onClose?: () => void
   titleIcon?: React.ReactElement
 }
+
+const { height: SCREEN_HEIGHT } = Dimensions.get('screen')
 
 const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
   const {
@@ -73,7 +76,7 @@ const BottomActionsModal: React.FC<BottomActionsModalProps> = (props) => {
               style={[styles.divider, message ? styles.messageDivider : null]}
             />
             {message && <Text style={styles.message}>{message}</Text>}
-            {children}
+            <View style={styles.childrenContainer}>{children}</View>
             {footer}
           </View>
         </SafeAreaView>
@@ -110,6 +113,7 @@ const styles = StyleSheet.create({
   titleWrapper: {
     marginRight: 32,
     flex: 1,
+    justifyContent: 'center',
   },
   title: {
     fontFamily: NUNITO_SANS_BOLD,
@@ -142,6 +146,9 @@ const styles = StyleSheet.create({
   },
   message: {
     marginBottom: 24,
+  },
+  childrenContainer: {
+    maxHeight: (SCREEN_HEIGHT * 3) / 5,
   },
 })
 

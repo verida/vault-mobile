@@ -1,22 +1,27 @@
-import algosdk from 'algosdk'
-import { pricingApi } from 'helpers/api'
-import { getTokenAddress, isNativeToken } from 'helpers/tokens'
-import { SUPPORTED_TOKENS, SUPPORTED_TOKENS_SYMBOLS } from 'wallet/constants'
-
-import { navigate } from 'navigation/RootNavigator'
+import * as SecureStore from 'expo-secure-store'
+import dataHelper from 'wallet/data'
+import { walletProviderApi } from 'wallet/helpers/api'
+import multiChainWallet from 'wallet/helpers/multiChainWallet'
 import {
-  getTransactionParamsData,
+  getWalletAddressForAsset,
+  rawDataToReduxState,
+} from 'wallet/helpers/tokens'
+
+import AccountManager from 'api/AccountManager'
+import { navigate } from 'navigation/RootNavigator'
+import { selectChains } from 'reduxStore/tokens/selectors'
+import {
+  getAllWallets,
+  getSelectedWalletId,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
+import { CONFIG } from '../../config/environment'
 import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,
   BALANCES_FETCH_START,
-  CURRENCIES_FETCH_FAILED,
-  CURRENCIES_FETCH_START,
   FETCHED_BALANCES,
-  FETCHED_CURRENCIES,
   FETCHED_TRANSACTION_DETAIL,
   FETCHED_TRANSACTION_PARAMS,
   FETCHED_TRANSACTIONS,
@@ -24,6 +29,7 @@ import {
   SEND_TRANSACTION_FAILED,
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
+  SET_SELECTED_WALLET,
   SET_USER_WALLETS,
   TRANSACTION_DETAIL_FETCH_FAILED,
   TRANSACTION_DETAIL_FETCH_START,
@@ -31,61 +37,40 @@ import {
   TRANSACTION_PARAMS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
+  WALLET_PROCESSING_FAILED,
+  WALLET_PROCESSING_FINISHED,
+  WALLET_PROCESSING_START,
 } from './types'
-
-const token = {
-  'X-API-key': 'pMDXUFVkGJ7TFkkdORaV84pJEvUOBAvD1w9LTkq6',
-}
-const baseServer = 'https://testnet-algorand.api.purestake.io/idx2'
-const port = ''
-const algodServer = 'https://testnet-algorand.api.purestake.io/ps2'
-const algodPort = ''
-
-const indexerClient = new algosdk.Indexer(token, baseServer, port)
-const algodClient = new algosdk.Algodv2(token, algodServer, algodPort)
-
-export const getPrices = () => {
-  return (dispatch) => {
-    dispatch({ type: CURRENCIES_FETCH_START })
-    pricingApi
-      .get('cryptocurrency/quotes/latest', {
-        symbol: SUPPORTED_TOKENS_SYMBOLS,
-      })
-      .then((response) => {
-        if (response.ok) {
-          if (response.data) {
-            dispatch({ type: FETCHED_CURRENCIES, data: response.data.data })
-          } else {
-            dispatch({
-              type: CURRENCIES_FETCH_FAILED,
-              error: "Couldn'nt load currencies",
-            })
-          }
-        } else {
-          const err = response.status === 404 ? 'API error.' : response.problem
-          dispatch({ type: CURRENCIES_FETCH_FAILED, error: err })
-        }
-      })
-  }
-}
 
 export const getBalances = () => {
   return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
 
     try {
-      const wallets = getWalletsData(getState())
+      const wallets = getWalletsData(getState().main)
+      const chains = selectChains(getState())
+      const requestBody = Object.values(chains)
+        .filter((chain) => wallets[chain.addressMapping])
+        .map((chain) => {
+          return {
+            address: wallets[chain.addressMapping].address,
+            chainId: chain.data,
+          }
+        })
 
-      let accountInfo = await indexerClient
-        .lookupAccountByID(wallets.algo.address)
-        .do()
+      const balanceData = await walletProviderApi.post(
+        'balance/getBalanceByChains',
+        {
+          accounts: requestBody,
+        }
+      )
 
-      if (accountInfo && !accountInfo.message) {
-        dispatch({ type: FETCHED_BALANCES, data: accountInfo.account })
+      if (balanceData.data) {
+        dispatch({ type: FETCHED_BALANCES, data: balanceData.data.data })
       } else {
         dispatch({
           type: BALANCES_FETCH_FAILED,
-          error: accountInfo.message,
+          error: 'error',
         })
       }
     } catch (error) {
@@ -97,24 +82,21 @@ export const getBalances = () => {
   }
 }
 
-export const getTransactionsForToken = (assetID) => {
+export const getTransactionsForToken = (token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
-    const wallets = getWalletsData(getState())
-    const tokenAddress = getTokenAddress(assetID)
-    const isNative = isNativeToken(assetID)
+    const wallets = getWalletsData(getState().main)
+    const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
 
-    let transactionsData = await indexerClient
-      .searchForTransactions()
-      .address(wallets.algo.address)
-      .assetID(isNative ? null : tokenAddress)
-      .txType(isNative ? 'pay' : null)
-      .do()
+    const transactionsData = await walletProviderApi.post('transaction/list', {
+      userAddress,
+      asset: token.asset,
+    })
 
     if (transactionsData) {
       dispatch({
         type: FETCHED_TRANSACTIONS,
-        data: transactionsData.transactions,
+        data: transactionsData.data.data,
       })
     } else {
       dispatch({
@@ -125,18 +107,22 @@ export const getTransactionsForToken = (assetID) => {
   }
 }
 
-export const getTransactionDetails = (transactionID) => {
-  return async (dispatch) => {
+export const getTransactionDetails = (transactionID, token) => {
+  return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
+    const wallets = getWalletsData(getState().main)
+    const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
 
-    let transactionData = await indexerClient
-      .lookupTransactionByID(transactionID)
-      .do()
+    const transactionsData = await walletProviderApi.post('transaction/get', {
+      transactionId: transactionID,
+      userAddress,
+      asset: token.asset,
+    })
 
-    if (transactionData) {
+    if (transactionsData) {
       dispatch({
         type: FETCHED_TRANSACTION_DETAIL,
-        data: transactionData.transaction,
+        data: transactionsData.data.data,
       })
     } else {
       dispatch({
@@ -164,11 +150,24 @@ export const removeUserWallets = () => {
   }
 }
 
-export const getTransactionParams = (transactionData) => {
+export const setSelectedWallet = (walletId) => {
   return async (dispatch) => {
-    dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
+    await dispatch({
+      type: SET_SELECTED_WALLET,
+      data: walletId,
+    })
+  }
+}
 
-    const params = await algodClient.getTransactionParams().do()
+export const getTransactionParams = (transactionData) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
+    const wallets = getWalletsData(getState().main)
+
+    const params = await dataHelper.getTransactionParams(
+      transactionData,
+      wallets
+    )
 
     if (params) {
       dispatch({
@@ -191,67 +190,14 @@ export const sendTransaction = (
 ) => {
   return async (dispatch, getState) => {
     dispatch({ type: SEND_TRANSACTION_START })
-
-    const wallets = getWalletsData(getState())
-    let transactionParams
-    if (isAssetEnablingTransaction) {
-      transactionParams = await algodClient.getTransactionParams().do()
-    } else {
-      transactionParams = getTransactionParamsData(getState())
-    }
-    let isNative = isNativeToken(transactionData.token.address)
-    let tokenAddress = getTokenAddress(transactionData.token.address)
-
-    let transaction
-
-    if (isNative) {
-      transaction = algosdk.makePaymentTxnWithSuggestedParams(
-        wallets.algo.address,
-        transactionData.address,
-        transactionData.amount * 1000000,
-        undefined,
-        undefined,
-        transactionParams
-      )
-    } else {
-      transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
-        wallets.algo.address,
-        isAssetEnablingTransaction
-          ? wallets.algo.address
-          : transactionData.address,
-        undefined,
-        undefined,
-        isAssetEnablingTransaction ? 0 : transactionData.amount * 1000000,
-        undefined,
-        parseInt(tokenAddress, 10),
-        transactionParams
-      )
-    }
-
-    const privateKey = wallets.algo.privateKey
-
-    const secretKey = Buffer.from(
-      privateKey.substring(2, privateKey.length),
-      'hex'
-    ).toJSON().data
-
-    const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
-    const wallet = algosdk.mnemonicToSecretKey(mnemonic)
-
-    const signedTransaction = transaction.signTxn(wallet.sk)
+    const state = getState().main
 
     try {
-      const sent = await algodClient.sendRawTransaction(signedTransaction).do()
-
-      const txData = {
-        id: sent.txId,
-        amount: transaction.amount,
-        fee: transaction.fee,
-        to: transactionData.address,
-        from: wallets.algo.address,
-        token: transactionData.token,
-        feeSymbol: SUPPORTED_TOKENS[0].symbol,
-      }
+      const txData = await dataHelper.sendTransaction(
+        transactionData,
+        isAssetEnablingTransaction,
+        state
+      )
 
       dispatch({
         type: SEND_TRANSACTION_SUCCESS,
@@ -272,6 +218,206 @@ export const sendTransaction = (
       if (!isAssetEnablingTransaction) {
         navigate('TransactionFailure')
       }
+    }
+  }
+}
+
+export const createNewWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      const userHDWalletMnemonic = data.phrase
+        ? data.phrase
+        : multiChainWallet.generateMnemonic()
+
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      const currentWalletsData = getAllWallets(getState().main)
+
+      const wallet = {
+        mnemonic: userHDWalletMnemonic,
+        walletType: 'multi',
+        label: data
+          ? data.name
+          : 'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
+      }
+      const saved = await walletDb?.save(wallet)
+      const walletID = saved?.id
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+
+        await dispatch(saveUserWallets(wallets))
+
+        await dispatch(setSelectedWallet(walletID))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+        await SecureStore.setItemAsync(
+          CONFIG.SELECTED_WALLET_STORAGE_KEY,
+          walletID
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
+export const importWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
+      const privateKey =
+        data.inputSwitch === 'privateKey' ? data.privateKey : null
+      const walletType = data.blockchain
+
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      const wallet = {
+        walletType,
+        label: data.name,
+      }
+      if (mnemonic) wallet.mnemonic = mnemonic
+      if (privateKey) wallet.privateKey = privateKey
+      const saved = await walletDb?.save(wallet)
+      const walletID = saved?.id
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+
+        await dispatch(saveUserWallets(wallets))
+
+        await dispatch(setSelectedWallet(walletID))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+        await SecureStore.setItemAsync(
+          CONFIG.SELECTED_WALLET_STORAGE_KEY,
+          walletID
+        )
+      }
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
+export const deleteWallet = (walletId) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      const currentlySelectedWallet = getSelectedWalletId(getState().main)
+
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      await walletDb?.delete(walletId)
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+
+        if (currentlySelectedWallet === walletId) {
+          let firstWalletId = hdWallets[0]._id
+          await dispatch(setSelectedWallet(firstWalletId))
+          await SecureStore.setItemAsync(
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            firstWalletId
+          )
+        }
+
+        await dispatch(saveUserWallets(wallets))
+        await SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
+export const renameWallet = (walletId, data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      const row = await walletDb?.get(walletId)
+
+      row.label = data.name
+
+      await walletDb.save(row)
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+
+        await dispatch(saveUserWallets(wallets))
+        await SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
     }
   }
 }

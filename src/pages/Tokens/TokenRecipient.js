@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import { isValidWalletAddress } from 'helpers/wallet'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -10,6 +9,7 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
+import { isValidWalletAddress } from 'wallet/helpers/validation'
 
 import Button from 'components/Button'
 import Label from 'components/Label'
@@ -26,7 +26,6 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
     setAddress(clipboardData)
-    // setAddress('WMZPP2ZIPOY3QMM77RETFMBJKM5TNUCR55QPWTEU4EUW4OVDGZDWDVN4T4')
   }
   function onReadQRCode(data) {
     setAddress(data)
@@ -41,7 +40,7 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
     Alert.alert('Invalid address', `That's not a valid address`)
 
   const onPressSend = () => {
-    if (isValidWalletAddress(address)) {
+    if (isValidWalletAddress(address, token.asset)) {
       setProcessing(true)
       onGetTransactionParams({
         token,

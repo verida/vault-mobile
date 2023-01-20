@@ -1,20 +1,25 @@
-import messaging from '@react-native-firebase/messaging'
-import { isEmpty } from 'lodash'
+import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
-import React from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
+import { ScrollView, StyleSheet, View } from 'react-native'
+import Config from 'react-native-config'
+import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
-import AccountManager from 'api/AccountManager'
-import { unRegisterRemoteNotification } from 'api/utils'
+import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'
-import { BLACK_COLOR_OPACITY, ORANGE_COLOR } from '../constants/color'
+import {
+  BLACK_COLOR,
+  BLACK_COLOR_OPACITY,
+  ORANGE_COLOR,
+} from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 import LayoutStyle from '../styles/layouts'
+import AddAccountsModal from './Dashboard/AddAccountsModal'
 
 const publicList = [
   {
@@ -58,10 +63,25 @@ const generalList = [
   },
 ]
 
+const WalletConnectList = [
+  {
+    label: 'Dapps',
+    action: 'arrow',
+    optional: true,
+    onPress: (navigation) => navigation.navigate('WalletConnect'),
+  },
+]
+
 export default (props) => {
-  const { refresh, isVeridaTeamMember } = useAuth()
-  const networks = useSelector((state) => state.networks)
+  const { isVeridaTeamMember } = useAuth()
+  const [loading, setLoading] = useState(false)
+  const [showLogout, setShowLogout] = useState(false)
+
+  const networks = useSelector((state) => state.main.networks)
   const modifiedGeneralList = [...generalList]
+  const versionText = `Verida Vault ${capitalize(
+    Config.BITRISE_TRIGGERED_WORKFLOW_TITLE || Config.DEPLOY_ENVIRONMENT
+  )} v${getVersion()}(${getBuildNumber()})`
 
   if (!isEmpty(networks)) {
     const selectedNode = networks[0].nodes[networks[0].selected_node]
@@ -75,26 +95,7 @@ export default (props) => {
   }
 
   const logout = async () => {
-    Alert.alert(
-      'Confirmation',
-      'Are you sure you want to logout of all your accounts?',
-      [
-        {
-          text: 'Cancel',
-        },
-        {
-          text: 'Logout',
-          onPress: async () => {
-            const fcmToken = await messaging().getToken()
-            if (fcmToken) {
-              await unRegisterRemoteNotification(fcmToken)
-            }
-            await AccountManager.getInstance().logout()
-            await refresh()
-          },
-        },
-      ]
-    )
+    setShowLogout(true)
   }
 
   const list = isVeridaTeamMember ? teamList : publicList
@@ -105,12 +106,24 @@ export default (props) => {
       label: 'Log Out',
       text: style.logoutText,
       optional: true,
-      onPress: logout,
+      onPress: (navigation) => logout(navigation),
+    },
+    {
+      label: 'Delete Account',
+      text: style.logoutText,
+      optional: true,
+      onPress: (navigation) =>
+        navigation.navigate('DeleteAccount', {
+          onSelectAccount: props.route.params.onSelectAccount,
+          onLogoutAccounts: props.route.params.onLogoutAccounts,
+        }),
     },
   ]
 
+  if (loading) return <LoadingView />
+
   return (
-    <View>
+    <View style={style.container}>
       <NavigationHeader
         title='Settings'
         left={{
@@ -118,21 +131,42 @@ export default (props) => {
           action: () => props.navigation.goBack(),
         }}
       />
-      <View style={LayoutStyle.layout}>
-        <Text style={style.title}>Security</Text>
-        <View>
-          <PropertyList list={mergedList} />
+      <ScrollView>
+        <View style={LayoutStyle.layout}>
+          <Text style={style.title}>Security</Text>
+          <View>
+            <PropertyList list={mergedList} />
+          </View>
+          <Text style={style.title}>General</Text>
+          <View>
+            <PropertyList list={modifiedGeneralList} />
+          </View>
+          <Text style={style.title}>Wallet Connect</Text>
+          <View>
+            <PropertyList list={WalletConnectList} />
+          </View>
+
+          <Text style={style.versionText}>{versionText}</Text>
         </View>
-        <Text style={style.title}>General</Text>
-        <View>
-          <PropertyList list={modifiedGeneralList} />
-        </View>
-      </View>
+        <AddAccountsModal
+          visible={showLogout}
+          onClose={() => {
+            setShowLogout(false)
+          }}
+          showLogout
+          onSelectAccount={props.route.params.onSelectAccount}
+          onLogoutAccounts={props.route.params.onLogoutAccounts}
+          setLoading={setLoading}
+        />
+      </ScrollView>
     </View>
   )
 }
 
 const style = StyleSheet.create({
+  container: {
+    flex: 1,
+  },
   title: {
     fontSize: 12,
     fontFamily: NUNITO_SANS_BOLD,
@@ -143,5 +177,9 @@ const style = StyleSheet.create({
   },
   logoutText: {
     color: ORANGE_COLOR,
+  },
+  versionText: {
+    color: BLACK_COLOR,
+    marginTop: 15,
   },
 })

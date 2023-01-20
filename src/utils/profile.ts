@@ -1,16 +1,14 @@
 import { countries } from 'countries-list'
-import { get } from 'lodash'
 
-import AccountManager from 'api/AccountManager'
-
-export async function getUserCountryCode() {
-  const vault = AccountManager.getInstance().vault as any
-  const publicData = await vault.profiles.public.getMany()
-  const userCountry = get(publicData, 'country')
-  let countryCode = null
+/**
+ * Get country code from country name
+ * @param countryName Country full name. Ex: "Australia"
+ */
+export function getCountryCode(countryName: string): string {
+  let countryCode = 'US'
   Object.keys(countries).map((key) => {
     const country = countries[key as keyof typeof countries]
-    if (country.name === userCountry) {
+    if (country.name === countryName) {
       countryCode = key
     }
   })

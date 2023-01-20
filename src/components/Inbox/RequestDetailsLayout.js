@@ -25,7 +25,6 @@ export default ({
     <Layout style={style.layout}>
       <View style={style.header}>
         <Text style={style.title}>{type.title}</Text>
-        {type.svg && type.svg(40, 40, style.svg)}
       </View>
       <Description details={description} />
       <ScrollView>{children}</ScrollView>

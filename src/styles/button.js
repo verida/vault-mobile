@@ -29,15 +29,25 @@ export default StyleSheet.create({
     backgroundColor: WHITE_COLOR,
     borderColor: WHITE_COLOR,
   },
+  warning: {
+    backgroundColor: WHITE_COLOR,
+    borderColor: WHITE_COLOR,
+  },
   transparent: {
     ...transparent,
   },
   'transparent-grey': {
     ...transparent,
   },
+  'transparent-white': {
+    ...transparent,
+  },
   'transparent-border': {
     ...transparent,
     borderColor: LIGHTGREY_COLOR,
+  },
+  'transparent-warning': {
+    ...transparent,
   },
   grey: {
     borderColor: LIGHTGREY_COLOR,

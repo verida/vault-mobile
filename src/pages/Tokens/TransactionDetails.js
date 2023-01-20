@@ -6,6 +6,7 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
 
@@ -14,17 +15,19 @@ const TransactionDetails = ({
   route,
   data,
   onGetTransactionDetails,
+  tokens,
 }) => {
-  const { id } = route.params
+  const { id, token } = route.params
   useEffect(() => {
     async function init() {
-      onGetTransactionDetails(id)
+      onGetTransactionDetails(id, token)
     }
 
     init()
-  }, [id, onGetTransactionDetails])
+  }, [id, onGetTransactionDetails, token])
 
   const { transaction, loading } = data
+  let networkReference = token.referenceLabel
 
   return (
     <Container>
@@ -35,25 +38,32 @@ const TransactionDetails = ({
         }}
         title={'Transaction Details'}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       {loading ? (
         <LoadingIndicator />
       ) : (
-        <TransactionInfo transaction={transaction} />
+        <TransactionInfo
+          transaction={transaction}
+          token={token}
+          tokens={tokens}
+        />
       )}
     </Container>
   )
 }
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     data: selectTransactionData(state),
+    tokens: selectTokens(rootState),
   }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionDetails: (id) => dispatch(getTransactionDetails(id)),
+    onGetTransactionDetails: (id, token) =>
+      dispatch(getTransactionDetails(id, token)),
   }
 }
 

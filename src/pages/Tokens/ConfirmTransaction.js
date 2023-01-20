@@ -2,13 +2,19 @@ import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
+import {
+  formatTokenQuantity,
+  getNativeForChain,
+  getTokenChain,
+  getWalletAddressForToken,
+} from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import {
   getTransactionParamsData,
@@ -23,9 +29,28 @@ const ConfirmTransaction = ({
   transactionParams,
   onSendTransaction,
   sentTransaction,
+  tokens,
 }) => {
   const { token, amount, address } = route.params
-  const accountAddress = wallets.algo.address
+  const tokenChain = getTokenChain(token.asset)
+  const accountAddress = getWalletAddressForToken(token.addressMapping, wallets)
+  const nativeToken = getNativeForChain(tokens, token.chainName)
+
+  let feeSymbol = nativeToken.symbol
+  let feeDecimal = nativeToken.decimal
+  let fixed
+  let networkReference = token.referenceLabel
+  switch (tokenChain) {
+    case 'algorand':
+      fixed = 3
+      break
+    case 'eip155':
+      fixed = 18
+      break
+    case 'near':
+      fixed = 8
+      break
+  }
 
   return (
     <Container>
@@ -36,7 +61,7 @@ const ConfirmTransaction = ({
         }}
         title={'Send ' + token.symbol}
       />
-      <TestnetWarning />
+      <TestnetWarning networkReference={networkReference} />
       <View style={styles.container}>
         <View style={styles.content}>
           <View style={styles.infoRow}>
@@ -53,14 +78,14 @@ const ConfirmTransaction = ({
           <View style={styles.infoRow}>
             <Text style={styles.infoLabel}>Token</Text>
             <View style={styles.infoValue}>
-              <Text style={styles.valueText}>{token.symbol}</Text>
+              <Text style={styles.valueText}>{token.label}</Text>
             </View>
           </View>
           <View style={styles.infoRow}>
-            <Text style={styles.infoLabel}>Amount</Text>
+            <Text style={styles.infoLabel}>Quantity</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(amount).toFixed(2)} {token.symbol}
+                {parseFloat(amount).toFixed(3)} {token.symbol}
               </Text>
             </View>
           </View>
@@ -79,8 +104,8 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {parseFloat(transactionParams.fee).toFixed(3)}{' '}
-                {SUPPORTED_TOKENS[0].symbol}
+                {formatTokenQuantity(transactionParams.fee, feeDecimal, fixed)}{' '}
+                {feeSymbol}
               </Text>
             </View>
           </View>
@@ -136,11 +161,13 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state) => {
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
   return {
     wallets: getWalletsData(state),
     transactionParams: getTransactionParamsData(state),
     sentTransaction: selectSentTransaction(state),
+    tokens: selectTokens(rootState),
   }
 }
 

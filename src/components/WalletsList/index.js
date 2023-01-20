@@ -1,25 +1,31 @@
 import React from 'react'
-import { Alert, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import {
+  StyleSheet,
+  // Alert,
+  // Text,
+  // TouchableOpacity,
+  View,
+} from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
 import WalletsListItem from './WalletsListItem'
 
-export default ({ list }) => {
-  const createTwoButtonAlert = () =>
-    Alert.alert('Are you sure you want to delete wallet / address?', null, [
-      {
-        text: 'Cancel',
-        onPress: () => ({}),
-        style: 'cancel',
-      },
-      {
-        text: 'Delete',
-        onPress: () => ({}),
-        style: 'destructive',
-      },
-    ])
+export default ({ list, onPressItem, selectedWalletId }) => {
+  // const createTwoButtonAlert = () =>
+  //   Alert.alert('Are you sure you want to delete wallet / address?', null, [
+  //     {
+  //       text: 'Cancel',
+  //       onPress: () => ({}),
+  //       style: 'cancel',
+  //     },
+  //     {
+  //       text: 'Delete',
+  //       onPress: () => ({}),
+  //       style: 'destructive',
+  //     },
+  //   ])
 
   return (
     <SwipeListView
@@ -31,20 +37,24 @@ export default ({ list }) => {
             styles.listItemWrapper,
             data.item.other && styles.otherListItem,
           ]}>
-          <WalletsListItem item={data.item} />
+          <WalletsListItem
+            onPressItem={onPressItem}
+            item={data.item}
+            selectedWalletId={selectedWalletId}
+          />
         </View>
       )}
-      renderHiddenItem={(data) => (
-        <TouchableOpacity
-          style={[
-            styles.removeButton,
-            data.item.other && styles.removeButtonOther,
-          ]}
-          onPress={createTwoButtonAlert}>
-          <Text style={styles.removeButtonText}>Remove</Text>
-        </TouchableOpacity>
-      )}
-      rightOpenValue={-80}
+      // renderHiddenItem={(data) => (
+      //   <TouchableOpacity
+      //     style={[
+      //       styles.removeButton,
+      //       data.item.other && styles.removeButtonOther,
+      //     ]}
+      //     onPress={createTwoButtonAlert}>
+      //     <Text style={styles.removeButtonText}>Remove</Text>
+      //   </TouchableOpacity>
+      // )}
+      // rightOpenValue={-80}
     />
   )
 }

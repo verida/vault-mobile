@@ -1,13 +1,12 @@
 // eslint-disable-next-line simple-import-sort/imports
 import * as Sentry from '@sentry/react-native'
-import { Client, Context, EnvironmentType } from '@verida/client-rn'
+import { Client, Context } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from '@verida/vault-common'
-import WalletUtils from '@verida/wallet-utils'
-import { utils } from 'ethers'
+import { ethers, utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
-import { isEmpty } from 'lodash'
-import store from 'reduxStore'
+import { isEmpty, merge } from 'lodash'
+import { store } from 'reduxStore'
 
 import { Account, NormalizedAccounts, UserData } from 'api/types'
 import dataMap from 'config/data-map'
@@ -17,21 +16,31 @@ import {
   setSelectedAccount,
   setSwitchAccountToast,
 } from 'reduxStore/general/actions'
-import { removeUserWallets, saveUserWallets } from 'reduxStore/wallet/actions'
+import {
+  removeUserWallets,
+  saveUserWallets,
+  setSelectedWallet,
+} from 'reduxStore/wallet/actions'
+import { getTokens } from 'reduxStore/tokens/actions'
+import { getCountryCode } from 'utils/profile'
+import { execWithTimeout } from 'api/utils'
+import { selectChains } from 'reduxStore/tokens/selectors'
+import DataConnectorsManager from './DataConnectorsManager'
+import multiChainWallet from 'wallet/helpers/multiChainWallet'
+import { rawDataToReduxState } from 'wallet/helpers/tokens'
 
-const ACCOUNTS_STORAGE_KEY = 'accounts'
-const SELECTED_ACCOUNT_DID_STORAGE_KEY = 'selected-account-did'
-export const WALLETS_STORAGE_KEY = 'wallets'
-export const VERIDA_CONTEXT_NAME = 'Verida: Vault'
-export const MNEMONIC_LENGTH = 12
-const VERIDA_ENVIRONMENT = EnvironmentType.TESTNET
-const VERIDA_TESTNET_DEFAULT_SERVER = 'https://db.testnet.verida.io:5002/'
-export const VERIDA_TESTNET_NOTIFICATION_SERVER =
-  'https://vpns.testnet.verida.io:5011'
-const CONFIG_DB = 'vault-config'
-const SEED_PHRASE_BACKED_UP_CONFIG = 'seedPhraseBackedUp'
+import NodeSelector from './NodeSelector'
 
-class AccountManager {
+import CONFIG from '../config/environment'
+import EventEmitter from 'events'
+
+type EndpointUrls = {
+  dbServerUrl: string[]
+  messageServerUrl: string[]
+  notificationServerUrl: string[]
+}
+
+class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
   public context: Context | undefined
   public client: Client | undefined
@@ -42,46 +51,69 @@ class AccountManager {
   private static instance: AccountManager
 
   private constructor() {
+    super()
     this.accounts = {}
   }
 
   private async filterDids() {
-    let hasInvalidData = false
-    Object.keys(this.accounts).map((did) => {
-      if (did.includes('did:3')) {
-        hasInvalidData = true
-      }
+    const hasInvalidData = Object.keys(this.accounts).some((did) => {
+      return did.includes('did:3') || did.includes('did:vda:0x')
     })
 
     if (hasInvalidData) {
       this.accounts = {}
-      await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY)
+
+      AccountManager.getInstance().emit('ForcedDeleteAccounts', null)
     }
   }
 
   public async init() {
     try {
+      const chains = selectChains(store.getState())
+      await store.dispatch(getTokens())
+      const newChains = selectChains(store.getState())
+      const updateWallets =
+        JSON.stringify(chains) !== JSON.stringify(newChains) ? true : false
       if (!this.selectedAccount) {
-        const accountsRaw = await SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY)
+        const accountsRaw = await SecureStore.getItemAsync(
+          CONFIG.ACCOUNTS_STORAGE_KEY
+        )
+        //accountsRaw = undefined
+        //store.dispatch(setAccounts([]))
         if (accountsRaw) {
           this.accounts = JSON.parse(accountsRaw)
           await this.filterDids()
           store.dispatch(setAccounts(this.accounts))
         }
         const selectedAccountDid = await SecureStore.getItemAsync(
-          SELECTED_ACCOUNT_DID_STORAGE_KEY
+          CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
-
-        const walletsRaw = await SecureStore.getItemAsync(WALLETS_STORAGE_KEY)
-        if (walletsRaw) {
-          const wallets = JSON.parse(walletsRaw)
-          store.dispatch(saveUserWallets(wallets))
-        }
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
+        }
+
+        const walletsRaw = await SecureStore.getItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY
+        )
+        // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
+        if (!walletsRaw || updateWallets) {
+          const selectedAccount = this.getSelectedAccount()
+          if (selectedAccount) {
+            await this.connect()
+          }
+
+          await this.restoreUserWallet()
+        } else {
+          const wallets = JSON.parse(walletsRaw)
+          store.dispatch(saveUserWallets(wallets))
+          const selectedWalletID = await SecureStore.getItemAsync(
+            CONFIG.SELECTED_WALLET_STORAGE_KEY
+          )
+          await store.dispatch(setSelectedWallet(selectedWalletID))
         }
       }
     } catch (e) {
@@ -93,11 +125,11 @@ class AccountManager {
     return this.selectedAccount
   }
 
-  public async connect(forced = false) {
+  public async connect(forced = false, endpointUrls?: EndpointUrls) {
     if (!forced && this.context) {
       return
     }
-    this.context = await this.getVeridaContext()
+    this.context = await this.getVeridaContext(endpointUrls)
     this.vault = await this.getVault()
   }
 
@@ -109,39 +141,74 @@ class AccountManager {
     return AccountManager.instance
   }
 
-  public async getVeridaContext(): Promise<Context | undefined> {
+  public async getVeridaContext(
+    endpointUrls?: EndpointUrls
+  ): Promise<Context | undefined> {
     try {
       if (!this.selectedAccount) {
         return undefined
       }
+
+      let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
+      if (!selectedEndpointUrls) {
+        const endpointUris = await NodeSelector.selectEndpointUris()
+        selectedEndpointUrls = {
+          dbServerUrl: endpointUris,
+          messageServerUrl: endpointUris,
+          notificationServerUrl: NodeSelector.notificationEndpoints(),
+        }
+      }
+
+      CONFIG.VERIDA_DID_CLIENT_CONFIG.web3Config.veridaKey =
+        this.selectedAccount.privateKey
+
+      const didEndpointUris: string[] = selectedEndpointUrls.dbServerUrl.reduce(
+        (result: string[], item: string) => {
+          result.push(`${item}did/`)
+          return result
+        },
+        []
+      )
+
+      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
+      didClientConfig.didEndpoints = didEndpointUris
+
       const { mnemonic } = this.selectedAccount
       this.client = new Client({
-        environment: VERIDA_ENVIRONMENT,
+        environment: CONFIG.VERIDA_ENVIRONMENT,
+        didClientConfig: {
+          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+        },
       })
+
+      // Endpoint uris only get passed when creating account.
+      // When an account is reconnected, endpoint uris are selected based on DID documents of that account.
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
+            endpointUri: selectedEndpointUrls.dbServerUrl,
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: VERIDA_TESTNET_DEFAULT_SERVER,
+            endpointUri: selectedEndpointUrls.messageServerUrl,
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: VERIDA_TESTNET_NOTIFICATION_SERVER,
+            endpointUri: selectedEndpointUrls.notificationServerUrl,
           },
         },
         {
           privateKey: mnemonic,
-          environment: VERIDA_ENVIRONMENT,
+          environment: CONFIG.VERIDA_ENVIRONMENT,
+          didClientConfig,
         }
       )
 
       // Fill the connected account with Verida DID
+      let did
       if (isEmpty(this.selectedAccount.did)) {
-        const did = await account.did()
+        did = await account.did()
         await this.updateCurrentAccount({ did })
       }
 
@@ -149,11 +216,41 @@ class AccountManager {
       await this.client.connect(account)
 
       // Open an application context (forcing creation of a new context if it doesn't already exist)
-      return await this.client.openContext(VERIDA_CONTEXT_NAME, true)
+      const context = await this.client.openContext(
+        CONFIG.VERIDA_CONTEXT_NAME,
+        true
+      )
+
+      // Fetch the context config from the Vault and re-apply it to the account
+      // so that any new login requests will have default config matching the vault.
+      const contextConfig = await context!.getContextConfig(did, false)
+
+      // @todo: use account.setAccountConfig()
+      account.accountConfig = {
+        defaultDatabaseServer: contextConfig.services.databaseServer,
+        defaultMessageServer: contextConfig.services.messageServer,
+      }
+
+      // @todo: Do something useful with these messages
+      context!.on('EndpointUnavailable', (endpointUri: string) => {
+        // eslint-disable-next-line no-console
+        console.info(`Endpoint is currently unavailable: ${endpointUri}`)
+      })
+
+      context!.on('EndpointWarning', (endpointUri: string, message: string) => {
+        // eslint-disable-next-line no-console
+        console.info(`Warning from endpoint ${endpointUri}: ${message}`)
+      })
+
+      return context
     } catch (e) {
       Sentry.captureException(e)
       throw e
     }
+  }
+
+  public getClient() {
+    return this.client
   }
 
   private async getVault() {
@@ -175,13 +272,14 @@ class AccountManager {
       // @ts-ignore
       await this.vault?.profiles.public.set(...entry)
     }
+    return true
   }
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
     try {
-      const configDb = await this.context?.openDatabase(CONFIG_DB)
+      const configDb = await this.context?.openDatabase(CONFIG.CONFIG_DB)
       await configDb?.save(
-        { _id: SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
+        { _id: CONFIG.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
         {}
       )
     } catch (e) {
@@ -192,8 +290,8 @@ class AccountManager {
 
   public async getBackedupSeedPhraseConfig() {
     try {
-      const configDb = await this.context?.openDatabase(CONFIG_DB)
-      return await configDb?.get(SEED_PHRASE_BACKED_UP_CONFIG, {})
+      const configDb = await this.context?.openDatabase(CONFIG.CONFIG_DB)
+      return await configDb?.get(CONFIG.SEED_PHRASE_BACKED_UP_CONFIG, {})
     } catch (e) {
       Sentry.captureException(e)
       throw e
@@ -203,29 +301,55 @@ class AccountManager {
   public async setUserWallet() {
     try {
       await store.dispatch(removeUserWallets())
-      const userHDWalletMnemonic =
-        WalletUtils.MultiChainWallet.generateMnemonic()
+      const userHDWalletMnemonic = multiChainWallet.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
         label: 'Multi Coin Wallet',
       }
-      await walletDb?.save(wallet)
+      const saved: any = await walletDb?.save(wallet)
+      const walletID = saved?.id
 
       // generate wallets and save em to redux state
-      const userGeneratedWallets =
-        WalletUtils.MultiChainWallet.generateHDWallets(userHDWalletMnemonic)
-      await store.dispatch(saveUserWallets(userGeneratedWallets))
+
+      const chains = selectChains(store.getState())
+
+      const userGeneratedWallets = multiChainWallet.generateWalletsForChains({
+        privateKey: null,
+        mnemonic: userHDWalletMnemonic,
+        chains,
+        chain: null,
+      })
+
+      const walletData = {
+        [walletID]: {
+          seedPhrase: wallet.mnemonic,
+          privateKey: null,
+          type: wallet.walletType,
+          label: wallet.label,
+          id: walletID,
+          accounts: userGeneratedWallets,
+          chain: null,
+        },
+      }
+
+      await store.dispatch(saveUserWallets(walletData))
+
+      await store.dispatch(setSelectedWallet(walletID))
 
       // save to storage..
       await SecureStore.setItemAsync(
-        WALLETS_STORAGE_KEY,
-        JSON.stringify(userGeneratedWallets)
+        CONFIG.WALLETS_STORAGE_KEY,
+        JSON.stringify(walletData)
+      )
+      await SecureStore.setItemAsync(
+        CONFIG.SELECTED_WALLET_STORAGE_KEY,
+        walletID
       )
     } catch (e) {
       Sentry.captureException(e)
@@ -237,24 +361,33 @@ class AccountManager {
     try {
       await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.1.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
       )
 
-      const HDwallets = await datastore?.getMany()
-      if (HDwallets) {
-        const wallets = WalletUtils.MultiChainWallet.generateHDWallets(
-          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-          // @ts-ignore
-          HDwallets[0].mnemonic
-        )
+      const hdWallets: any = await datastore?.getMany()
+      const chains = selectChains(store.getState())
+
+      if (!isEmpty(hdWallets)) {
+        const wallets: any = rawDataToReduxState(hdWallets, chains)
 
         await store.dispatch(saveUserWallets(wallets))
 
         // save to storage..
         await SecureStore.setItemAsync(
-          WALLETS_STORAGE_KEY,
+          CONFIG.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
+
+        if (hdWallets[0]) {
+          const selectedWalletID = hdWallets[0]._id
+
+          await store.dispatch(setSelectedWallet(selectedWalletID))
+
+          await SecureStore.setItemAsync(
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            selectedWalletID
+          )
+        }
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -262,21 +395,45 @@ class AccountManager {
     }
   }
 
-  public async createAccount(userData: UserData): Promise<Account | undefined> {
+  public async createAccount(
+    userData: UserData,
+    country: string
+  ): Promise<Account | undefined> {
+    let connected = false
     try {
-      const node = utils.HDNode.entropyToMnemonic(utils.randomBytes(16))
+      // Find suitable node based on selected country
+      const countryCode = getCountryCode(country)
+      const endpoints = await NodeSelector.selectEndpointUris(countryCode)
+
+      // Endpoints to be used in account config
+      const endpointUris = {
+        dbServerUrl: endpoints,
+        messageServerUrl: endpoints,
+        notificationServerUrl: NodeSelector.notificationEndpoints(),
+      }
+
+      const node = utils.entropyToMnemonic(utils.randomBytes(16))
+      const wallet = ethers.Wallet.fromMnemonic(node)
+      const privateKey = wallet.privateKey
 
       this.selectedAccount = {
         mnemonic: node,
+        privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,
           backedup: false,
         },
       }
-
-      await this.connect(true)
-      await this.setPublicProfile(userData)
+      await this.connect(true, endpointUris)
+      connected = true
+      const setPublicProfileSuccess = await execWithTimeout(
+        this.setPublicProfile(userData),
+        100000
+      )
+      if (!setPublicProfileSuccess) {
+        throw new Error('Failed to set public profile')
+      }
       await this.setBackedupSeedPhraseConfig(false)
       await this.setUserWallet()
 
@@ -285,6 +442,10 @@ class AccountManager {
 
       return this.selectedAccount
     } catch (e) {
+      // If the corrupted account is already connected, we need to remove it
+      if (connected && this.selectedAccount) {
+        await this.logout([this.selectedAccount?.did])
+      }
       Sentry.captureException(e)
       throw e
     }
@@ -300,18 +461,19 @@ class AccountManager {
       selectedDids = Object.keys(this.accounts)
     }
     try {
-      await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(CONFIG.WALLETS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY)
       await store.dispatch(removeUserWallets())
-
+      DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
         delete this.accounts[did]
       })
 
       if (isEmpty(this.selectedAccount)) {
-        await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
+        await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
       } else {
         await SecureStore.setItemAsync(
-          ACCOUNTS_STORAGE_KEY,
+          CONFIG.ACCOUNTS_STORAGE_KEY,
           JSON.stringify(this.accounts)
         )
       }
@@ -321,7 +483,9 @@ class AccountManager {
         this.context = undefined
         this.client = undefined
         this.vault = undefined
-        await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
+        await SecureStore.deleteItemAsync(
+          CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
+        )
         store.dispatch(setSelectedAccount(null))
       }
       store.dispatch(setAccounts(this.accounts))
@@ -345,11 +509,12 @@ class AccountManager {
         this.selectedAccount.seedPhraseReminder.lastTime = Date.now()
       }
       await SecureStore.setItemAsync(
-        SELECTED_ACCOUNT_DID_STORAGE_KEY,
+        CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
       await this.connect(true)
       await this.restoreUserWallet()
+      DataConnectorsManager.emit('logout', null)
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
@@ -395,11 +560,11 @@ class AccountManager {
     }
     this.accounts[this.selectedAccount.did] = this.selectedAccount
     await SecureStore.setItemAsync(
-      ACCOUNTS_STORAGE_KEY,
+      CONFIG.ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
     )
     await SecureStore.setItemAsync(
-      SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
   }
@@ -423,14 +588,15 @@ class AccountManager {
           backedup: false,
         },
       }
-
+      DataConnectorsManager.emit('logout', null)
       await this.connect(true)
-      await this.restoreUserWallet()
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
+      await this.restoreUserWallet()
       return this.selectedAccount
     } catch (e) {
+      if (this.selectedAccount) await this.logout([this.selectedAccount.did])
       Sentry.captureException(e)
       throw e
     }
@@ -450,10 +616,9 @@ class AccountManager {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
-      return name.includes('_vda')
+      return name?.includes('_vda') ?? false
     } catch (e) {
-      Sentry.captureException(e)
-      throw e
+      return false
     }
   }
 }

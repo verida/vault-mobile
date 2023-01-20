@@ -1,4 +1,7 @@
+import { DApp, DAppv2 } from 'wallet-connect/types'
+
 import { Network } from 'api/types'
+import { CreateAccountMode } from 'pages/Account/Create'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 
 export type RootStackParams = {
@@ -8,8 +11,7 @@ export type RootStackParams = {
 
 export type AuthStackParams = {
   Start: undefined
-  CreateAccount: undefined
-  ImportAccount: undefined
+  CreateAccount: { mode: CreateAccountMode }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   SeedPhraseEntered: undefined
@@ -24,11 +26,12 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Profiles: undefined
+  Connections: undefined
 }
 
 export type MainStackParams = {
-  Dashboard: DashboardTabParams
   Inbox: undefined
+  Dashboard: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
@@ -46,7 +49,7 @@ export type MainStackParams = {
   TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
-  SingleWallet: undefined
+  SingleWallet: { item: any }
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
@@ -55,8 +58,9 @@ export type MainStackParams = {
   ChangePin: undefined
   // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
-  AddAccount: undefined
-  ImportAccount: undefined
+  AddAccount: { mode: CreateAccountMode }
+  DeleteAccount: undefined
+  SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
@@ -67,4 +71,9 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  WalletConnect: undefined
+  WalletConnectDapp: { dapp: DApp }
+  WalletConnectDappv2: { dapp: DAppv2 }
+  SingleConnection: undefined
+  Success: undefined
 }

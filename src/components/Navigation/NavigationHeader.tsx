@@ -8,7 +8,7 @@ import Text from 'components/Text'
 import { DECLINE_COLOR } from 'constants/color'
 
 export type HeaderSideButton = {
-  icon: string
+  icon: string | React.ReactElement
   action?: () => void
 }
 
@@ -30,10 +30,7 @@ function NavigationHeader({
 
   return (
     <>
-      <Header
-        transparent
-        style={{ elevation: 1 }}
-        androidStatusBarColor='light-gray'>
+      <Header transparent style={{ elevation: 1 }}>
         <Left style={{ flex: 0.2, marginLeft: 6 }}>
           {(function () {
             switch (left.icon) {

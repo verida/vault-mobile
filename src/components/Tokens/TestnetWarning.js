@@ -5,10 +5,13 @@ import Text from 'components/Text'
 import { WARNING_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default () => {
+export default (props) => {
+  const label = props.networkReference
+    ? `Testnet (${props.networkReference})`
+    : 'Testnet'
   return (
     <View style={styles.container}>
-      <Text style={styles.text}>Using Algorand Testnet</Text>
+      <Text style={styles.text}>{label}</Text>
     </View>
   )
 }

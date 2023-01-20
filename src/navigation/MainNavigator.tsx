@@ -1,13 +1,13 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
-import { useDataRegion } from 'hooks/useDataRegion'
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
+import Create from 'pages/Account/Create'
+import DeleteAccount from 'pages/Account/DeleteAccount'
 import ChangePin from 'pages/Authentication/ChangePin'
-import AddAccount from 'pages/Dashboard/AddAccount'
-import ImportAccount from 'pages/Dashboard/ImportAccount'
+import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
 import Inbox from 'pages/Inbox'
@@ -21,6 +21,7 @@ import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
+import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
@@ -35,6 +36,9 @@ import TokenRecipient from 'pages/Tokens/TokenRecipient'
 import TransactionDetails from 'pages/Tokens/TransactionDetails'
 import TransactionFailure from 'pages/Tokens/TransactionFailure'
 import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
+import DappSessionDetail from 'pages/WalletConnect/DappSessionDetail'
+import DappSessionDetailv2 from 'pages/WalletConnect/DappSessionDetailv2'
+import WalletConnect from 'pages/WalletConnect/WalletConnect'
 import ManageWallets from 'pages/Wallets/ManageWallets'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
@@ -44,7 +48,6 @@ const Stack = createNativeStackNavigator<MainStackParams>()
 
 function MainNavigator() {
   useEventHandlers()
-  useDataRegion()
 
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
@@ -87,8 +90,10 @@ function MainNavigator() {
       <Stack.Screen name={'Settings'} component={Settings} />
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
-      <Stack.Screen name={'AddAccount'} component={AddAccount} />
-      <Stack.Screen name={'ImportAccount'} component={ImportAccount} />
+      <Stack.Screen name={'AddAccount'} component={Create} />
+      <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
+      <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
+
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen
         name={'SeedPhraseGenerated'}
@@ -98,6 +103,15 @@ function MainNavigator() {
       <Stack.Screen name={'ShareableData'} component={ShareableData} />
       <Stack.Screen name={'Networks'} component={Networks} />
       <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
+
+      <Stack.Screen name={'WalletConnect'} component={WalletConnect} />
+      <Stack.Screen name={'WalletConnectDapp'} component={DappSessionDetail} />
+      <Stack.Screen
+        name={'WalletConnectDappv2'}
+        component={DappSessionDetailv2}
+      />
+
+      <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
     </Stack.Navigator>
   )
 }

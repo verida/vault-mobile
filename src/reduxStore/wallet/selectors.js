@@ -1,62 +1,65 @@
-import { getTokenAddress } from 'helpers/tokens'
-import { SUPPORTED_TOKENS } from 'wallet/constants'
+import { isEmpty } from 'lodash'
+import { createSelector } from 'reselect'
+import {
+  getNativeForChain,
+  tokenCaipObjectToString,
+} from 'wallet/helpers/tokens'
 
-export const getPricingData = (state) => state.pricing.data || {}
+import { selectTokens } from 'reduxStore/tokens/selectors'
+
+const s = (state) => state.main // Current wallet state sits in main reducer
+export const selectedWalletSelector = (state) => s(state).selectedWallet
 
 export const getBalancesData = (state) => {
-  // standardize and map balances to recognized token symbols
-  if (state.balances.data) {
-    const balanceData = state.balances.data
-    let list = {}
-    // TODO: dont hardcode
-    list.ALGO = balanceData.amount
-    if (balanceData.assets) {
-      balanceData.assets.map((balance) => {
-        let tok
-        tok = SUPPORTED_TOKENS.find((ele) => {
-          let tokenAddress = getTokenAddress(ele.address)
-          if (balance['asset-id']) {
-            return tokenAddress === balance['asset-id'].toString()
-          } else {
-            return false
-          }
-        })
-        if (tok) {
-          list[tok.symbol] = balance.amount
-        }
-      })
-    }
-    return list
+  if (state.balances.data && state.balances.data.results) {
+    return state.balances.data.results
   } else {
     return {}
   }
 }
 
+export const getTotalBalance = (state) => {
+  if (state.balances.data && state.balances.data.totalBalance) {
+    return state.balances.data.totalBalance
+  } else {
+    return 0
+  }
+}
+
+export const getSingleWalletChain = (state) => {
+  const wallet = getWallets(state)
+  if (wallet.type === 'single' && wallet.chain) {
+    return wallet.chain
+  } else {
+    return null
+  }
+}
+
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
-  const pricing = getPricingData(state)
-  const balances = getBalancesData(state)
-  let total = 0
+  const balances = getBalancesData(state.main)
+  const total = getTotalBalance(state.main)
+  const singleChain = getSingleWalletChain(state.main)
+  const allTokens = selectTokens(state)
+  let tokens
+  if (singleChain) {
+    tokens = allTokens.filter((token) => token.chainName === singleChain)
+  } else {
+    tokens = allTokens
+  }
   let list = []
-  if (pricing || balances) {
-    list = SUPPORTED_TOKENS.map((token) => {
-      let tokenPrice = pricing[token.symbol]
+  if (!isEmpty(balances)) {
+    list = tokens.map((token) => {
       let tokenBalance = balances[token.symbol]
-      let amount =
-        tokenPrice && tokenBalance
-          ? (tokenPrice.quote.USD.price * tokenBalance) / 1000000
-          : 0
-      total = total + amount
+      // total = total + amount
 
       return {
         label: token.name,
-        symbol: token.symbol,
-        icon: token.icon,
-        address: token.address,
-        price: tokenPrice ? tokenPrice.quote.USD.price : 0,
-        change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
-        quantity: tokenBalance ? tokenBalance : 0,
-        amount,
+        price: tokenBalance ? tokenBalance.quote.USD.price : 0,
+        change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
+        quantity: tokenBalance ? tokenBalance.balance : 0,
+        amount: tokenBalance ? tokenBalance.amount : 0,
+        ...token,
       }
     })
     return { list, total }
@@ -65,44 +68,44 @@ export const getListAndTotal = (state) => {
   }
 }
 
-export const selectNativeTokenBalance = (state) => {
-  const balances = getBalancesData(state)
-  if (balances) {
-    return balances.ALGO / 1000000
+export const selectNativeTokenBalance = (state, token) => {
+  const tokens = selectTokens(state)
+  const native = getNativeForChain(tokens, token.chainName)
+  const balances = getBalancesData(state.main)
+
+  if (balances && native && balances[native.symbol]) {
+    return balances[native.symbol].balance
   } else {
     0
   }
 }
 
 export const selectSingleTokenData = (state, assetID) => {
-  const pricing = getPricingData(state)
-  const balances = getBalancesData(state)
+  const balances = getBalancesData(state.main)
+  const tokens = selectTokens(state)
 
-  const token = SUPPORTED_TOKENS.find((ele) => {
-    return ele.address === assetID
+  // write the function.. find.. chain id.. reference.. compare whole onject.. convert to string?
+
+  const token = tokens.find((ele) => {
+    return (
+      tokenCaipObjectToString(ele.asset) === tokenCaipObjectToString(assetID)
+    )
   })
 
-  let tokenPrice = pricing[token.symbol]
   let tokenBalance = balances[token.symbol]
-  let amount =
-    tokenPrice && tokenBalance
-      ? (tokenPrice.quote.USD.price * tokenBalance) / 1000000
-      : 0
 
   return {
     label: token.name,
-    symbol: token.symbol,
-    icon: token.icon,
-    address: token.address,
-    price: tokenPrice ? tokenPrice.quote.USD.price : 0,
-    change: tokenPrice ? tokenPrice.quote.USD.percent_change_24h : 0,
-    quantity: tokenBalance ? tokenBalance : 0,
-    amount,
+    price: tokenBalance ? tokenBalance.quote.USD.price : 0,
+    change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
+    quantity: tokenBalance ? tokenBalance.balance : 0,
+    amount: tokenBalance ? tokenBalance.amount : 0,
+    ...token,
   }
 }
 
 export const getTokensData = (state) => {
-  const loading = state.pricing.fetching && state.balances.fetching
+  const loading = state.main.balances.fetching
 
   return {
     listAndTotal: getListAndTotal(state),
@@ -110,14 +113,46 @@ export const getTokensData = (state) => {
   }
 }
 
-export const getWalletsData = (state) => {
-  return state.wallets.data || {}
+export const getSelectedWalletId = (state) => {
+  return state.selectedWallet
+}
+
+export const getWalletProcessingState = (state) => {
+  return state.walletProcessing.loading
+}
+
+export const getAllWallets = (state) => {
+  return state.wallets.data || []
+}
+
+export const getWalletCount = (state) => {
+  const allWallets = getAllWallets(state)
+  return Object.keys(allWallets).length || 0
+}
+
+export const getWalletsData = createSelector(
+  getSelectedWalletId,
+  getAllWallets,
+  (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
+)
+
+export const getWallets = createSelector(
+  getSelectedWalletId,
+  getAllWallets,
+  (selectedWallet, wallets) => wallets?.[selectedWallet] || {}
+)
+
+export const getWalletObjectById = (state, ID) => {
+  return state.wallets.data[ID] || {}
 }
 
 export const selectPendingTransactions = (state, assetID) => {
   const pendingTransactions = state.pendingTransactions.data
   const transactionsForAsset = pendingTransactions.filter((ele) => {
-    return ele.token.address === assetID
+    return (
+      tokenCaipObjectToString(ele.token.asset) ===
+      tokenCaipObjectToString(assetID)
+    )
   })
   if (transactionsForAsset) {
     return transactionsForAsset
@@ -127,25 +162,7 @@ export const selectPendingTransactions = (state, assetID) => {
 }
 
 export const selectTransactions = (state, assetID) => {
-  const wallets = getWalletsData(state)
-  const userAddr = wallets.algo.address
-  const rawTransactions = state.transactions.data || []
-  let transactions = []
-  if (rawTransactions) {
-    transactions = rawTransactions.map((tx) => {
-      let isUserSender = tx.sender === userAddr
-      let transferInfo = tx['asset-transfer-transaction']
-        ? tx['asset-transfer-transaction']
-        : tx['payment-transaction']
-      return {
-        id: tx.id,
-        type: isUserSender ? 'sent' : 'received',
-        address: isUserSender ? transferInfo.receiver : tx.sender,
-        quantity: transferInfo.amount,
-        pending: false,
-      }
-    })
-  }
+  const transactions = state.transactions.data || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx) => {
@@ -153,10 +170,9 @@ export const selectTransactions = (state, assetID) => {
         return trans.id === tx.id
       })
       if (!transactionCompleted) {
-        let isUserSender = tx.from === userAddr
         transactions.unshift({
           id: tx.id,
-          type: isUserSender ? 'sent' : 'received',
+          type: 'sent',
           address: tx.to,
           quantity: tx.amount,
           pending: true,
@@ -186,40 +202,7 @@ export const selectSentTransaction = (state) => {
 }
 
 export const selectTransaction = (state) => {
-  const wallets = getWalletsData(state)
-  const userAddr = wallets.algo.address
-  const rawTransaction = state.transactionDetails.data
-  if (rawTransaction) {
-    let isUserSender = rawTransaction.sender === userAddr
-    let transferInfo = rawTransaction['asset-transfer-transaction']
-      ? rawTransaction['asset-transfer-transaction']
-      : rawTransaction['payment-transaction']
-    let symbol
-    let feeSymbol = SUPPORTED_TOKENS[0].symbol
-    if (rawTransaction['asset-transfer-transaction']) {
-      let tok = SUPPORTED_TOKENS.find(
-        (ele) =>
-          getTokenAddress(ele.address) ===
-          rawTransaction['asset-transfer-transaction']['asset-id'].toString()
-      )
-      symbol = tok.symbol
-    } else {
-      symbol = SUPPORTED_TOKENS[0].symbol
-    }
-    return {
-      id: rawTransaction.id,
-      type: isUserSender ? 'sent' : 'received',
-      address: isUserSender ? transferInfo.receiver : rawTransaction.sender,
-      quantity: transferInfo.amount,
-      fee: rawTransaction.fee,
-      round: rawTransaction['confirmed-round'],
-      time: rawTransaction['round-time'],
-      symbol,
-      feeSymbol,
-    }
-  } else {
-    return {}
-  }
+  return state.transactionDetails.data || {}
 }
 
 export const selectTransactionData = (state) => {

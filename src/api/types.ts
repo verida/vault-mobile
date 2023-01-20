@@ -2,6 +2,7 @@ import { ImageSourcePropType } from 'react-native'
 
 export type Account = {
   did: string
+  privateKey: string
   mnemonic: string
   publicProfile?: UserData
   seedPhraseReminder: {
@@ -14,6 +15,7 @@ export type UserData = {
   name: string
   country: string
   avatar?: ImageSourcePropType
+  description?: string
 }
 
 export type NormalizedAccounts = {
@@ -25,8 +27,10 @@ export type NetworkNode = {
   name: string
   description: string
   ISO2_CC: string
-  address: string
   icon?: string
+  db_address: string
+  messaging_address: string
+  notification_address: string
 }
 
 export type Network = {

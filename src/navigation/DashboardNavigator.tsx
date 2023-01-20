@@ -1,26 +1,29 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
+import { Platform } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { PRIMARY_COLOR } from 'constants/color'
 import { DashboardTabParams } from 'navigation/types'
+import DataConnector from 'pages/Connections/DataConnector'
 import Home from 'pages/Dashboard/Home'
 import Profiles from 'pages/Dashboard/Profiles'
 import Folders from 'pages/Data/Folders'
 import Tokens from 'pages/Tokens/Dashboard'
-// import { useAuth } from 'hooks/useAuth'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
 function DashboardNavigator() {
-  // const { isVeridaTeamMember } = useAuth()
-
   return (
     <Tab.Navigator
       screenOptions={{
         headerShown: false,
         tabBarActiveTintColor: PRIMARY_COLOR,
+        tabBarStyle: Platform.select({
+          ios: {},
+          android: { height: 64, paddingBottom: 16 },
+        }),
       }}>
       <Tab.Screen
         name={'Home'}
@@ -46,6 +49,15 @@ function DashboardNavigator() {
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name='md-person-sharp' size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
+        name={'Connections'}
+        component={DataConnector}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='file-tray-full' size={24} color={color} />
           ),
         }}
       />
