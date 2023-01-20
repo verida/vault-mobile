@@ -32,12 +32,12 @@
 		050D32F526FA3D470076780F /* Verida Vault-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Verida Vault-Bridging-Header.h"; sourceTree = "<group>"; };
 		050D32F626FA3D470076780F /* Verida Vault Staging-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Verida Vault Staging-Bridging-Header.h"; sourceTree = "<group>"; };
 		050D32F726FA3D480076780F /* File.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = File.swift; sourceTree = "<group>"; };
-		0545146526F9DB5700654C18 /* Verida Vault Internal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verida Vault Internal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		0545146526F9DB5700654C18 /* Verida Internal.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verida Internal.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		0545146726F9E61200654C18 /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		05BB2D5A27830372008D5A0E /* Firebase */ = {isa = PBXFileReference; lastKnownFileType = folder; name = Firebase; path = myApp/Firebase; sourceTree = "<group>"; };
 		068CD0C7B99A4210A525AA43 /* FontAwesome5_Brands.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Brands.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Brands.ttf"; sourceTree = "<group>"; };
 		09C80BBE04F4457C9A9532BB /* FontAwesome5_Solid.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = FontAwesome5_Solid.ttf; path = "../node_modules/native-base/Fonts/FontAwesome5_Solid.ttf"; sourceTree = "<group>"; };
-		13B07F961A680F5B00A75B9A /* Verida Vault.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Verida Vault.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		13B07F961A680F5B00A75B9A /* Verida.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Verida.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = myApp/AppDelegate.h; sourceTree = "<group>"; };
 		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = myApp/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
@@ -188,8 +188,8 @@
 		83CBBA001A601CBA00E9B192 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				13B07F961A680F5B00A75B9A /* Verida Vault.app */,
-				0545146526F9DB5700654C18 /* Verida Vault Internal.app */,
+				13B07F961A680F5B00A75B9A /* Verida.app */,
+				0545146526F9DB5700654C18 /* Verida Internal.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -256,7 +256,7 @@
 			);
 			name = "Verida Vault Internal";
 			productName = myApp;
-			productReference = 0545146526F9DB5700654C18 /* Verida Vault Internal.app */;
+			productReference = 0545146526F9DB5700654C18 /* Verida Internal.app */;
 			productType = "com.apple.product-type.application";
 		};
 		13B07F861A680F5B00A75B9A /* Verida Vault */ = {
@@ -281,7 +281,7 @@
 			);
 			name = "Verida Vault";
 			productName = myApp;
-			productReference = 13B07F961A680F5B00A75B9A /* Verida Vault.app */;
+			productReference = 13B07F961A680F5B00A75B9A /* Verida.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -750,7 +750,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = io.verida.vault.internal;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Verida Internal";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Verida Vault Staging-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -848,7 +848,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = io.verida.vault.internal;
-				PRODUCT_NAME = "$(TARGET_NAME)";
+				PRODUCT_NAME = "Verida Internal";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Verida Vault Staging-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
@@ -884,7 +884,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_DEBUG";
 				PRODUCT_BUNDLE_IDENTIFIER = io.verida.vault;
-				PRODUCT_NAME = "Verida Vault";
+				PRODUCT_NAME = Verida;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Verida Vault-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -978,7 +978,7 @@
 				);
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
 				PRODUCT_BUNDLE_IDENTIFIER = io.verida.vault;
-				PRODUCT_NAME = "Verida Vault";
+				PRODUCT_NAME = Verida;
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_OBJC_BRIDGING_HEADER = "Verida Vault-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;
