@@ -24,7 +24,7 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       style={styles.container}
       onPress={openWalletModal}>
       <View>
-        {selectedWallet.icon ? (
+        {selectedWallet?.icon ? (
           <Image source={{ uri: selectedWallet.icon }} style={styles.icon} />
         ) : (
           <MultichainWalletIcon />

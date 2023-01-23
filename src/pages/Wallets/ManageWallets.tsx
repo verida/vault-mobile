@@ -7,11 +7,11 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
 import { WalletItem } from 'components/WalletList/types'
+import CONFIG from 'config/environment'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -148,7 +148,7 @@ const ManageWallets = (props: Props) => {
           const selectedWalletID = item.id
           onSetSelectedWallet(selectedWalletID)
           SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         }
