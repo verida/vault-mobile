@@ -23,7 +23,8 @@ const createStyles = (theme: Theme) =>
       backgroundColor: theme.color.surface,
       paddingHorizontal: theme.spacing.sm,
       paddingTop: theme.spacing.sm,
-
+      borderTopColor: theme.color.shadowLightGrey,
+      borderTopWidth: 1,
       shadowColor: theme.color.shadowLightGrey,
       shadowOffset: {
         width: 0,
@@ -31,6 +32,5 @@ const createStyles = (theme: Theme) =>
       },
       shadowOpacity: 1,
       shadowRadius: 2,
-      elevation: 5,
     },
   })
