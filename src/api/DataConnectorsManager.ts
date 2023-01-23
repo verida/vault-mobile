@@ -5,6 +5,7 @@ import EventEmitter from 'events'
 import moment from 'moment'
 import { Linking } from 'react-native'
 
+import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
 
 const DATA_CONNECTION_SCHEMA =
@@ -15,11 +16,6 @@ const DATA_CONNECTION_SCHEMA =
 //   'https://vault.schemas.verida.io/data-connections/source/v0.1.0/schema.json'
 const DATA_SYNC_REQUEST_SCHEMA =
   'https://vault.schemas.verida.io/data-connections/sync-request/v0.1.0/schema.json'
-
-// @todo move to global app config somewhere?
-const CONFIG = {
-  dataConnectorUrl: 'https://dataconnector.tn.verida.tech',
-}
 
 const delay = async (ms: number) => {
   await new Promise((resolve: any) => setTimeout(() => resolve(), ms))
@@ -226,7 +222,7 @@ class DataConnection extends EventEmitter {
 
     // console.log(`Initiating auth for ${this.source}`, did)
     Linking.openURL(
-      `${CONFIG.dataConnectorUrl}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
+      `${CONFIG.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
     )
   }
 
@@ -318,7 +314,7 @@ class DataConnection extends EventEmitter {
 
       // @todo: handle errors
       const syncRequestResult = await axiosInstance.get(
-        `${CONFIG.dataConnectorUrl}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
+        `${CONFIG.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
       )
       const { serverDid, contextName, syncRequestId, syncRequestDatabaseName } =
         syncRequestResult.data
@@ -330,6 +326,7 @@ class DataConnection extends EventEmitter {
         syncRequestDatabaseName
       )
     } catch (err: any) {
+      //console.log(err)
       this.setSyncError(err.message)
       // console.error(err)
     }
@@ -340,7 +337,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequestId: string,
     syncRequestDatabaseName: string,
-    retryCount = 5
+    retryCount = CONFIG.DATA_CONNECTOR_RETRY_LIMIT
   ) {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
@@ -390,7 +387,7 @@ class DataConnection extends EventEmitter {
         }
 
         // Delay for five seconds, then try again
-        await delay(5000)
+        await delay(CONFIG.DATA_CONNECTOR_RETRY_INTERVAL)
         retryCount--
 
         this.checkSync(
@@ -422,7 +419,7 @@ class DataConnection extends EventEmitter {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
     const did = await account?.did()
-    const { schemas } = syncRequest.syncInfo
+    const { schemas, newAuth } = syncRequest.syncInfo
 
     try {
       // Datastores are now available for syncing into the vault, let's sync them!
@@ -480,13 +477,18 @@ class DataConnection extends EventEmitter {
       // cleanup by calling sync done to the server so the temporary data can be deleted
       const axiosInstance = axios.create()
       await axiosInstance.get(
-        `${CONFIG.dataConnectorUrl}/syncDone/${this.name}?did=${did}`
+        `${CONFIG.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
       )
 
       this.syncLast = new Date().toISOString()
       this.syncLastError = undefined
       this.syncStatus = 'active'
       this.syncNext = moment().add(1, this.syncFrequency).toISOString()
+
+      if (newAuth) {
+        this.accessToken = newAuth.accessToken
+        this.refreshToken = newAuth.refreshToken
+      }
 
       await this.save()
       // console.log(`Sync done and sync status updated`)
