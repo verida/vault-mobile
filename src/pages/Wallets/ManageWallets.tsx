@@ -8,7 +8,6 @@ import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 import { WalletItem } from 'types/wallet'
 
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import PlusIcon from 'assets/plus_icon.svg'
 import UnionIcon from 'assets/union_icon.svg'
 import LoadingView from 'components/LoadingView'
@@ -16,6 +15,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
 import AddWalletModal from 'components/WalletModal/AddWalletModal'
 import ImportWalletModal from 'components/WalletModal/ImportWalletModal'
+import CONFIG from 'config/environment'
 import { BLACK_COLOR, SNOW_COLOR } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
@@ -147,7 +147,7 @@ const ManageWallets = (props: Props) => {
           const selectedWalletID = item.id
           onSetSelectedWallet(selectedWalletID)
           SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         }

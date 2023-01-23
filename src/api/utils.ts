@@ -2,14 +2,13 @@ import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import { store } from 'reduxStore'
 
-import AccountManager, { VERIDA_CONTEXT_NAME } from 'api/AccountManager'
-import { Network, NetworkCountries } from 'api/types'
+import AccountManager from 'api/AccountManager'
 import { setNewMessagesCount } from 'reduxStore/general/actions'
+
+import CONFIG from '../config/environment'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
-
-let axiosAuthPassword: string | undefined
 
 export const convertAvatar = (avatar: any) => {
   if (!avatar) {
@@ -121,7 +120,7 @@ export async function getProfile(did: string) {
 
 export async function getPublicProfile(
   did: string,
-  contextName = VERIDA_CONTEXT_NAME
+  contextName = CONFIG.VERIDA_CONTEXT_NAME
 ) {
   try {
     const publicProfile = await AccountManager.getInstance()
@@ -147,7 +146,7 @@ export async function getPublicProfile(
 export async function getAxios() {
   const config: any = {
     headers: {
-      'context-name': VERIDA_CONTEXT_NAME,
+      'context-name': CONFIG.VERIDA_CONTEXT_NAME,
     },
   }
 
@@ -155,14 +154,13 @@ export async function getAxios() {
     .getSelectedAccount()
     ?.did.toLowerCase()
 
-  if (!axiosAuthPassword) {
-    const keyring = await AccountManager.getInstance()
-      .context?.getAccount()
-      .keyring(VERIDA_CONTEXT_NAME)
-    axiosAuthPassword = await keyring?.sign(
-      `Access the notification service using context: "${VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
-    )
-  }
+  const keyring = await AccountManager.getInstance()
+    .context?.getAccount()
+    .keyring(CONFIG.VERIDA_CONTEXT_NAME)
+  const axiosAuthPassword = await keyring?.sign(
+    `Access the notification service using context: "${CONFIG.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+  )
+
   config.auth = {
     username: currentDid?.replace(/:/g, '_'),
     password: axiosAuthPassword,
@@ -177,7 +175,7 @@ export async function getNotificationServerUrl() {
     await AccountManager.getInstance().context?.getContextConfig()
   // Notification server url is saved in account's config
   const notificationServerUrl =
-    accountConfig?.services.notificationServer?.endpointUri
+    accountConfig?.services.notificationServer?.endpointUri[0]
 
   // Remove redundant "/" character at the end if it exists
   return notificationServerUrl?.replace(/\/$/, '')
@@ -198,7 +196,7 @@ export async function registerRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
+        context: CONFIG.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
@@ -221,38 +219,27 @@ export async function unRegisterRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: VERIDA_CONTEXT_NAME,
+        context: CONFIG.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
-    axiosAuthPassword = undefined
   } catch (e) {
     Sentry.captureException(e)
   }
 }
 
-export async function fetchNetworkConfigJson<T>(url: string): Promise<T[]> {
+export async function fetchConfigJson<T>(url: string): Promise<T[]> {
   try {
     const res = await fetch(url + `?t=${Date.now()}`)
     const json = await res.json()
-    return json.networks
+    return json
   } catch (e) {
     Sentry.captureException(e)
     return []
   }
-}
-
-export async function fetchNetworks(): Promise<Network[]> {
-  const url = 'https://assets.verida.io/config/verida_nodes.json'
-  return fetchNetworkConfigJson<Network>(url)
-}
-
-export async function fetchNetworkCountries(): Promise<NetworkCountries[]> {
-  const url = 'https://assets.verida.io/config/country_nodes.json'
-  return fetchNetworkConfigJson<NetworkCountries>(url)
 }
 
 /**

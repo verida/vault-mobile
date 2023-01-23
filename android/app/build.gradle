@@ -154,8 +154,8 @@ android {
         applicationId 'io.verida.vault'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 15
-        versionName "0.3.36"
+        versionCode 16
+        versionName "0.3.40"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
 
@@ -264,11 +264,12 @@ android {
         staging {
             dimension "environment"
             applicationId "io.verida.vault.internal"
-            resValue "string", "app_name", "Verida Vault Internal"
+            resValue "string", "app_name", "Verida Internal"
             resValue "string", "build_config_package", "io.verida.vault"
         }
         production {
-            resValue "string", "app_name", "Verida Vault"
+            versionName "0.3.33"
+            resValue "string", "app_name", "Verida"
             dimension "environment"
         }
     }

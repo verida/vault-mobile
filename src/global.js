@@ -1,1 +1,0 @@
-global.process.version = '1'
