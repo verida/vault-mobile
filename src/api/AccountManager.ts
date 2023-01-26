@@ -427,7 +427,7 @@ class AccountManager extends EventEmitter {
       )
 
       const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
-        veridaKey: this.selectedAccount.privateKey
+        veridaKey: this.selectedAccount.privateKey,
       })
       didClientConfig.didEndpoints = didEndpointUris
 
@@ -555,7 +555,7 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async switchToAccount(did: string, connect?: boolean = true) {
+  public async switchToAccount(did: string, connect = true) {
     try {
       this.selectedAccount = this.accounts[did]
       const { backedup } = this.selectedAccount.seedPhraseReminder
@@ -624,6 +624,9 @@ class AccountManager extends EventEmitter {
       CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
+
+    // Update store then the UI
+    store.dispatch(setSelectedAccount(this.selectedAccount))
   }
 
   private findIfMnemonicExists(mnemonic: string) {
