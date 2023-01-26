@@ -108,7 +108,7 @@ const createStyles = (theme: Theme) => {
     },
     buttonLabel: {
       // Have to enclose the button label in its own Text to override the default style of the Button that cannot be changed. Consider a different component or improving the Button component
-      fontFamily: 'NunitoSansNormal',
+      fontFamily: NUNITO_SANS,
       fontWeight: '500',
       fontSize: 12,
       lineHeight: 24,
