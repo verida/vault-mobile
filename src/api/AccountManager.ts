@@ -624,9 +624,6 @@ class AccountManager extends EventEmitter {
       CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
-
-    // Update store then the UI
-    store.dispatch(setSelectedAccount(this.selectedAccount))
   }
 
   private findIfMnemonicExists(mnemonic: string) {
