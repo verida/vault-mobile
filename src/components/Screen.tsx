@@ -8,7 +8,7 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { SafeAreaView } from 'react-native-safe-area-context'
+import { SafeAreaView, SafeAreaViewProps } from 'react-native-safe-area-context'
 
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
@@ -24,6 +24,7 @@ interface ScreenProps {
   withLoadingView?: boolean
   showLoading?: boolean
   navBar?: ReactNode
+  safeAreaViewProps?: SafeAreaViewProps
 }
 
 const Screen = (props: ScreenProps) => {
@@ -33,12 +34,16 @@ const Screen = (props: ScreenProps) => {
     showLoading,
     navBar,
     withKeyboardAvoidingView,
+    safeAreaViewProps,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
 
   let NestedEle = withSafeAreaView ? (
-    <SafeAreaView style={[styles.container]}>
+    <SafeAreaView
+      {...safeAreaViewProps}
+      edges={safeAreaViewProps ? safeAreaViewProps.edges : ['top', 'bottom']}
+      style={[styles.container]}>
       {navBar}
       {props.children}
     </SafeAreaView>

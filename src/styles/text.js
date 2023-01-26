@@ -4,6 +4,7 @@ import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
   ORANGE_COLOR,
+  PRIMARY_COLOR,
   WHITE_COLOR,
 } from '../constants/color'
 
@@ -35,6 +36,10 @@ export default StyleSheet.create({
   },
   warning: {
     color: ORANGE_COLOR,
+    ...sharedProps,
+  },
+  primaryColor: {
+    color: PRIMARY_COLOR,
     ...sharedProps,
   },
 })

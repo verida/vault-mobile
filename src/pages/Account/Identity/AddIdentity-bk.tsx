@@ -430,7 +430,7 @@ const AddIdentity = () => {
                 label='Create identifier'
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
+                boxOutlineColor={theme.color.gray400}
               />
               {enabledClaimUsername && (
                 <>

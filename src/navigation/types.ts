@@ -11,6 +11,7 @@ export type RootStackParams = {
 
 export type AuthStackParams = {
   Start: undefined
+  Identity: undefined
   AddIdentity: { mode?: AddIdentityMode }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
@@ -59,6 +60,7 @@ export type MainStackParams = {
   // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
   DeleteAccount: undefined
+  Identity: undefined
   AddIdentity: { mode?: AddIdentityMode }
   SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined

@@ -3,6 +3,7 @@ import React from 'react'
 
 import { AuthStackParams } from 'navigation/types'
 import AddIdentity from 'pages/Account/Identity/AddIdentity'
+import Identity from 'pages/Account/Identity/Identity'
 import Start from 'pages/Account/Start'
 import CreatePin from 'pages/Authentication/CreatePin'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
@@ -18,6 +19,7 @@ function AuthNavigator() {
   return (
     <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Start'} component={Start} />
+      <Stack.Screen name={'Identity'} component={Identity} />
       <Stack.Screen name={'AddIdentity'} component={AddIdentity} />
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen

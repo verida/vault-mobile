@@ -1,6 +1,11 @@
 import { StyleSheet } from 'react-native'
 
-import { LIGHTGREY_COLOR, PRIMARY_COLOR, WHITE_COLOR } from '../constants/color'
+import {
+  DISABLED_COLOR,
+  LIGHTGREY_COLOR,
+  PRIMARY_COLOR,
+  WHITE_COLOR,
+} from '../constants/color'
 import { NUNITO_SANS_BOLD } from '../constants/text'
 
 const transparent = {
@@ -54,5 +59,10 @@ export default StyleSheet.create({
   },
   disabled: {
     opacity: 0.5,
+    backgroundColor: DISABLED_COLOR,
+    borderColor: DISABLED_COLOR,
+  },
+  'transparent-link': {
+    ...transparent,
   },
 })

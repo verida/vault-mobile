@@ -6,6 +6,7 @@ import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import AddIdentity from 'pages/Account/Identity/AddIdentity'
+import Identity from 'pages/Account/Identity/Identity'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
@@ -92,6 +93,7 @@ function MainNavigator() {
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
       <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
       <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
+      <Stack.Screen name={'Identity'} component={Identity} />
       <Stack.Screen name={'AddIdentity'} component={AddIdentity} />
 
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />

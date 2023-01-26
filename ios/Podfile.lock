@@ -610,7 +610,7 @@ PODS:
     - Sentry/HybridSDK (= 7.31.3)
   - RNSqlite2 (3.5.2):
     - React-Core
-  - RNSVG (12.3.0):
+  - RNSVG (13.7.0):
     - React-Core
   - RNVectorIcons (8.1.0):
     - React-Core
@@ -1025,7 +1025,7 @@ SPEC CHECKSUMS:
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
   RNSqlite2: 8cf96c4a5cc62f95922de1d01c5f68d7fc52333c
-  RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
+  RNSVG: d787d64ca06b9158e763ad2638a8c4edce00782a
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
   Sentry: 08884c523575ec0f6690d94ed3ccb0246a1600bf
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608

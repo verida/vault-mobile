@@ -7,16 +7,17 @@ import {
   ViewProps,
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import MaterialCommunityIcons from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import {
   BLACK_COLOR,
-  GREY_COLOR,
+  LIGHTGREY_COLOR,
+  PRIMARY_COLOR,
   SUCCESS_COLOR,
+  VERY_LIGHTGREY_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 
-import Text from './Text'
+import { Text } from './Typography/Text'
 
 type Type = 'light' | 'dark'
 
@@ -43,10 +44,15 @@ function TCCheckbox(props: TCCheckboxProps) {
         onPress={onToggle}
         hitSlop={{ top: 5, right: 10, bottom: 5, left: 10 }}>
         {!checked ? (
-          <MaterialCommunityIcons
-            name='checkbox-blank-circle-outline'
-            size={20}
-            color={GREY_COLOR}
+          <View
+            style={{
+              width: 20,
+              height: 20,
+              borderRadius: 10,
+              borderWidth: 1,
+              borderColor: LIGHTGREY_COLOR,
+              backgroundColor: VERY_LIGHTGREY_COLOR,
+            }}
           />
         ) : (
           <AntDesign name='checkcircle' size={20} color={SUCCESS_COLOR} />
@@ -62,7 +68,7 @@ function TCCheckbox(props: TCCheckboxProps) {
           onPress={onLinkPress}
           style={[
             styles.link,
-            { color: type === 'light' ? WHITE_COLOR : BLACK_COLOR },
+            { color: type === 'light' ? WHITE_COLOR : PRIMARY_COLOR },
           ]}>
           terms and conditions
         </Text>
@@ -78,12 +84,15 @@ TCCheckbox.defaultProps = {
 const styles = StyleSheet.create({
   container: {
     flexDirection: 'row',
+    alignItems: 'center',
   },
   text: {
     marginLeft: 10,
+    fontSize: 16,
   },
   link: {
     textDecorationLine: 'underline',
+    fontSize: 16,
   },
 })
 
