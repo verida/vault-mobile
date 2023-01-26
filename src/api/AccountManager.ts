@@ -84,12 +84,24 @@ class AccountManager extends EventEmitter {
         //store.dispatch(setAccounts([]))
         if (accountsRaw) {
           this.accounts = JSON.parse(accountsRaw)
+          // Sometimes if the app crashes when creating an account, it creates one that is empty
+          // In that case, remove it so the app doesn't return to the create account screen
+          // causing loss of access to all other accounts
+          if (this.accounts['']) {
+            delete this.accounts['']
+          }
           await this.filterDids()
           store.dispatch(setAccounts(this.accounts))
         }
-        const selectedAccountDid = await SecureStore.getItemAsync(
+
+        let selectedAccountDid = await SecureStore.getItemAsync(
           CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
+
+        // If no selected DID, choose the first
+        if (!selectedAccountDid && Object.keys(this.accounts).length) {
+          selectedAccountDid = this.accounts[Object.keys(this.accounts)[0]].did
+        }
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
@@ -149,31 +161,6 @@ class AccountManager extends EventEmitter {
         return undefined
       }
 
-      let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
-      if (!selectedEndpointUrls) {
-        const endpointUris = await NodeSelector.selectEndpointUris()
-        selectedEndpointUrls = {
-          dbServerUrl: endpointUris,
-          messageServerUrl: endpointUris,
-          notificationServerUrl: NodeSelector.notificationEndpoints(),
-        }
-      }
-
-      CONFIG.VERIDA_DID_CLIENT_CONFIG.web3Config.veridaKey =
-        this.selectedAccount.privateKey
-
-      const didEndpointUris: string[] = selectedEndpointUrls.dbServerUrl.reduce(
-        (result: string[], item: string) => {
-          result.push(`${item}did/`)
-          return result
-        },
-        []
-      )
-
-      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
-      didClientConfig.didEndpoints = didEndpointUris
-
-      const { mnemonic } = this.selectedAccount
       this.client = new Client({
         environment: CONFIG.VERIDA_ENVIRONMENT,
         didClientConfig: {
@@ -181,21 +168,26 @@ class AccountManager extends EventEmitter {
         },
       })
 
-      // Endpoint uris only get passed when creating account.
-      // When an account is reconnected, endpoint uris are selected based on DID documents of that account.
+      const { mnemonic } = this.selectedAccount
+
+      // Use empty endpointUri's as they should already have been specified
+      // when the account was created
+      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
+      didClientConfig.didEndpoints = []
+
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: selectedEndpointUrls.dbServerUrl,
+            endpointUri: [],
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: selectedEndpointUrls.messageServerUrl,
+            endpointUri: [],
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: selectedEndpointUrls.notificationServerUrl,
+            endpointUri: [],
           },
         },
         {
@@ -215,10 +207,10 @@ class AccountManager extends EventEmitter {
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
-      // Open an application context (forcing creation of a new context if it doesn't already exist)
+      // Open an application context
       const context = await this.client.openContext(
         CONFIG.VERIDA_CONTEXT_NAME,
-        true
+        false
       )
 
       // Fetch the context config from the Vault and re-apply it to the account
@@ -226,10 +218,10 @@ class AccountManager extends EventEmitter {
       const contextConfig = await context!.getContextConfig(did, false)
 
       // @todo: use account.setAccountConfig()
-      account.accountConfig = {
+      account.setAccountConfig({
         defaultDatabaseServer: contextConfig.services.databaseServer,
         defaultMessageServer: contextConfig.services.messageServer,
-      }
+      })
 
       // @todo: Do something useful with these messages
       context!.on('EndpointUnavailable', (endpointUri: string) => {
@@ -425,7 +417,69 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
-      await this.connect(true, endpointUris)
+
+      const didEndpointUris: string[] = endpointUris.dbServerUrl.reduce(
+        (result: string[], item: string) => {
+          result.push(`${item}did/`)
+          return result
+        },
+        []
+      )
+
+      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
+        veridaKey: this.selectedAccount.privateKey
+      })
+      didClientConfig.didEndpoints = didEndpointUris
+
+      const { mnemonic } = this.selectedAccount
+
+      this.client = new Client({
+        environment: CONFIG.VERIDA_ENVIRONMENT,
+        didClientConfig: {
+          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+        },
+      })
+
+      const account = new AutoAccount(
+        {
+          defaultDatabaseServer: {
+            type: 'VeridaDatabase',
+            endpointUri: endpointUris.dbServerUrl,
+          },
+          defaultMessageServer: {
+            type: 'VeridaMessage',
+            endpointUri: endpointUris.messageServerUrl,
+          },
+          defaultNotificationServer: {
+            type: 'VeridaNotification',
+            endpointUri: endpointUris.notificationServerUrl,
+          },
+        },
+        {
+          privateKey: mnemonic,
+          environment: CONFIG.VERIDA_ENVIRONMENT,
+          didClientConfig,
+        }
+      )
+
+      // Connect the Verida account to the Verida client
+      await this.client.connect(account)
+
+      // Open the Vault context, forcing its creation
+      this.context = await this.client.openContext(
+        CONFIG.VERIDA_CONTEXT_NAME,
+        true
+      )
+
+      // Set the Vault
+      this.vault = await this.getVault()
+
+      // Fill the connected account with Verida DID
+      if (isEmpty(this.selectedAccount.did)) {
+        const did = await account.did()
+        await this.updateCurrentAccount({ did })
+      }
+
       connected = true
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
@@ -501,7 +555,7 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async switchToAccount(did: string) {
+  public async switchToAccount(did: string, connect?: boolean = true) {
     try {
       this.selectedAccount = this.accounts[did]
       const { backedup } = this.selectedAccount.seedPhraseReminder
@@ -512,7 +566,10 @@ class AccountManager extends EventEmitter {
         CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
-      await this.connect(true)
+
+      if (connect) {
+        await this.connect(true)
+      }
       await this.restoreUserWallet()
       DataConnectorsManager.emit('logout', null)
 
