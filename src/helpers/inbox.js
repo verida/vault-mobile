@@ -37,6 +37,13 @@ export const TYPES = [
     ),
   },
   {
+    id: 'inbox/type/message',
+    title: 'Message',
+    svg: (width = 20, height = 20, style = {}) => (
+      <DataSnapshot width={width} height={height} style={style} />
+    ),
+  },
+  {
     id: 'unknown',
     title: 'Unknown',
   },
