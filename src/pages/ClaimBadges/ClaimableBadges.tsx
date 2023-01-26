@@ -1,7 +1,7 @@
-import { badgeTypes } from 'features/badges'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 
+import { BadgeManager } from 'api/BadgeManager'
 import AppAlert from 'components/AppAlert/AppAlert'
 import BadgeList from 'components/Badges/BadgeList'
 import Button from 'components/Button'
@@ -19,6 +19,7 @@ import { Theme } from 'styles/types'
 const ClaimableBadges: React.FC = () => {
   const styles = useThemeAwareStyle(createStyles)
   const [infoModalVisible, setInfoModalVisible] = useState(false)
+  const [availableBadges, setAvailableBadges] = useState([])
 
   const handleWhatIsVeridaBadgesInfoPress = () => {
     setInfoModalVisible(true)
@@ -41,6 +42,16 @@ const ClaimableBadges: React.FC = () => {
       Read More
     </Button>
   )
+
+  const init = async () => {
+    const availableBadges = await BadgeManager.getAvailableBadges()
+    // @todo: fix this TS error
+    setAvailableBadges(availableBadges)
+  }
+
+  useEffect(() => {
+    init()
+  }, [])
 
   /** TODO: Add list of Connections supported by the Badges but where the user is not yet connected.
    * Create dedicated Connection list and Connection list item components
@@ -65,7 +76,7 @@ const ClaimableBadges: React.FC = () => {
         </View>
         <View style={styles.listSection}>
           <Text style={styles.listTitle}>Available Badges</Text>
-          <BadgeList badges={badgeTypes} />
+          <BadgeList badges={availableBadges} />
         </View>
         {/* TODO: Add list of Connections */}
       </View>

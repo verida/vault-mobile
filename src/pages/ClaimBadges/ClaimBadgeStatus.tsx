@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { BadgeType } from 'types/badges'
+import { AvailableBadge } from 'types/badges'
 
 import ErrorStatusIcon from 'assets/icons/error_status_icon.svg'
 import Button from 'components/Button'
@@ -28,7 +28,7 @@ Please try again`,
 
 type ClaimBadgeStatusProps = {
   status: keyof typeof statusList
-  badgeInfo: BadgeType
+  badgeInfo: AvailableBadge
 }
 
 const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
@@ -70,7 +70,7 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
             resizeMode='contain'
             imageStyle={styles.badgeImageBackground}
             style={styles.badgeImageBackgroundContainer}>
-            <Image style={styles.badgeImage} source={badgeInfo.image} />
+            <Image style={styles.badgeImage} src={badgeInfo.imageUrl} />
           </ImageBackground>
         )}
         <View style={styles.statusInfoContainer}>

@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { getBadgeData } from 'features/badges'
 import React, { useState } from 'react'
 import {
   Image,
@@ -12,9 +11,10 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { BadgeType } from 'types/badges'
+import { AvailableBadge } from 'types/badges'
 import { WalletItem } from 'types/wallet'
 
+import { BadgeManager } from 'api/BadgeManager'
 import SettingsIcon from 'assets/settings_icon.svg'
 import AddressesListItem from 'components/AddressesList/AddressesListItem'
 import AppAlert from 'components/AppAlert/AppAlert'
@@ -49,7 +49,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   defaultSelectedAddress,
 }) => {
   const styles = useThemeAwareStyle(createStyles)
-  const { badgeType } = useParams<{ badgeType: BadgeType }>()
+  const { badge } = useParams<{ badge: AvailableBadge }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
   const [selectedAddress, setSelectedAddress] = useState<
@@ -59,8 +59,6 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   // TODO: get estimated gas fee from an api for blockchain operations.
   const [estimatedGasFee] = useState('0.001 ETH (1.55 USD)')
 
-  // FIXME: Uses mock data
-  const badgeData = getBadgeData(badgeType.id)
   // TODO: Handle no data returned. ie: not connected or error
 
   // Have an explicit 'open' and 'close' callback to avoid unsync issue
@@ -72,10 +70,14 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
     setModalVisible(false)
   }
 
-  const handleClaimAction = () => {
-    // TODO: Implement claim operation
-    // use badgeData.proof
-    setStatus('success')
+  const handleClaimAction = async () => {
+    try {
+      await BadgeManager.claimBadge(badge.origin, badge.type)
+      setStatus('success')
+    } catch (err) {
+      // @todo: catch error and display error message to the user
+      console.log(err.message)
+    }
   }
 
   const handleAddressSelection = (selection: WalletItem) => {
@@ -103,12 +105,12 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   return (
     <SafeAreaView style={styles.container}>
       <NavigationHeader
-        title={`${badgeType.label} Badge`}
+        title={`${badge.label} Badge`}
         left={{ icon: 'back' }}
       />
       {status && (
         <View style={styles.content}>
-          <ClaimBadgeStatus status={status} badgeInfo={badgeType} />
+          <ClaimBadgeStatus status={status} badgeInfo={badge} />
         </View>
       )}
       {!status && (
@@ -119,14 +121,14 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
               resizeMode='cover'
               imageStyle={styles.badgeImageBackground}
               style={styles.badgeImageBackgroundContainer}>
-              <Image source={badgeType.image} style={styles.badgeImage} />
+              <Image src={badge.imageUrl} style={styles.badgeImage} />
             </ImageBackground>
           </View>
           <View>
-            <Text style={styles.title}>{badgeType.label} Badge</Text>
+            <Text style={styles.title}>{badge.label} Badge</Text>
             <Text style={styles.bodyText}>
-              {`${badgeType.description}: ${
-                badgeData?.account || 'Not connected'
+              {`${badge.description}: ${
+                badge?.claimMetadata || 'Not connected'
               }`}
             </Text>
           </View>

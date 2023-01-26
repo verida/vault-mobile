@@ -1,7 +1,6 @@
-import { getBadgeData } from 'features/badges'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { BadgeType } from 'types/badges'
+import { AvailableBadge } from 'types/badges'
 
 import Button from 'components/Button'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -11,15 +10,12 @@ import { Theme } from 'styles/types'
 const badgeImageBackground = require('assets/badge_gradient_bg.png')
 
 type BadgeItemProps = {
-  badgeType: BadgeType
-  onPressClaim: (badgeType: BadgeType) => void
+  badge: AvailableBadge
+  onPressClaim: (badge: AvailableBadge) => void
 }
 
-const BadgeItem: React.FC<BadgeItemProps> = ({ badgeType, onPressClaim }) => {
+const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onPressClaim }) => {
   const styles = useThemeAwareStyle(createStyles)
-
-  // FIXME: Uses mock data
-  const data = getBadgeData(badgeType.id)
 
   return (
     <View style={styles.container}>
@@ -29,12 +25,12 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badgeType, onPressClaim }) => {
           resizeMode='cover'
           imageStyle={styles.badgeImageBackground}
           style={styles.badgeImageBackgroundContainer}>
-          <Image style={styles.badgeImage} source={badgeType.image} />
+          <Image style={styles.badgeImage} src={badge.imageUrl} />
         </ImageBackground>
         <View style={styles.textWrapper}>
-          <Text style={styles.title}>{badgeType.label}</Text>
+          <Text style={styles.title}>{badge.label}</Text>
           <Text style={styles.subText} numberOfLines={1} ellipsizeMode='middle'>
-            {data?.account || 'Not connected'}
+            {badge?.claimMetadata || 'Not connected'}
           </Text>
         </View>
       </View>
@@ -44,7 +40,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badgeType, onPressClaim }) => {
         disabled={false}
         loading={false}
         onPress={() => {
-          onPressClaim(badgeType)
+          onPressClaim(badge)
         }}>
         <Text style={styles.buttonLabel}>Claim</Text>
       </Button>

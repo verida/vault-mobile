@@ -1,19 +1,6 @@
-import { SupportedConnection } from './connections'
-
-/** Supported nadges to strongly type other types. */
-export type SupportedBadge = 'verida-identity' | 'twitter-account'
-// | 'discord-account'
-
-/** Not really a connection, should find a better name. Could also find a better way to support Verida alongside other Connections without considering it a connection itself. */
-export type VeridaConnection = 'verida'
-
-/** Supported Connection, including Verida */
-export type BadgeConnection = VeridaConnection | SupportedConnection
-
-/** Definition of the supported types of badge. */
-export type BadgeType = {
-  /** Technical id of the badge type. */
-  id: SupportedBadge
+export interface AvailableBadge {
+  /* Unique ID for this type of badge */
+  id: string
 
   /** Label of the badge type. */
   label: string
@@ -21,15 +8,30 @@ export type BadgeType = {
   /** Description of the badge. */
   description: string
 
-  /** Static image of the badge. */
-  image: any
+  /* The origin (ie: twitter) of this badge */
+  origin: string
 
-  /** The related connection. For the moment Verida is considered a connection as well, even though not technically one. */
-  connection: BadgeConnection
+  /* The type of badge (ie: account, 10kfollowers) */
+  type: string
+
+  /* URL of a static image representing this badge */
+  imageUrl: string
+
+  /* Indicate if the user can claim this badge (ie: it may be available, but not claimable because the user doesn't meet the requirement) */
+  claimable: boolean
+
+  /* Metadata about the account or connection for this badge (ie: twitter username) if it's claimable */
+  claimMetadata?: string
 
   // image_data?: string
   // external_url?: string
   // background_color?: string
   // animation_url?: string
   // youtube_url?: string
+}
+
+export interface UserBadge extends AvailableBadge {
+  proofSignature: string
+
+  // metadata?: Record<string, string>
 }
