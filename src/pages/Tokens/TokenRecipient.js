@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {

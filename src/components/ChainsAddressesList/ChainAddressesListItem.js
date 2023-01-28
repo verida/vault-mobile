@@ -1,5 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet } from 'react-native'

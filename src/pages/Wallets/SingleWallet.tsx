@@ -1,5 +1,5 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Container, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
