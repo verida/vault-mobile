@@ -23,6 +23,8 @@ export interface AvailableBadge {
   /* Metadata about the account or connection for this badge (ie: twitter username) if it's claimable */
   claimMetadata?: string
 
+  claimableNetworks?: string[]
+
   // image_data?: string
   // external_url?: string
   // background_color?: string
@@ -34,4 +36,10 @@ export interface UserBadge extends AvailableBadge {
   proofSignature: string
 
   // metadata?: Record<string, string>
+}
+
+export interface ClaimBadgeQuery {
+  type?: string
+  origin?: string
+  blockchainNetwork?: string
 }
