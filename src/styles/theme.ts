@@ -1,4 +1,5 @@
 import {
+  BACKGROUND_GREY_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
   GREY_120,
@@ -24,6 +25,7 @@ export const defaultTheme = {
     primary: PRIMARY_COLOR,
     onPrimary: WHITE_COLOR,
     background: WHITE_COLOR,
+    backgroundGrey: BACKGROUND_GREY_COLOR,
     onBackground: TEXT_COLOR,
     surface: WHITE_COLOR,
     onSurface: TEXT_COLOR,

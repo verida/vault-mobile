@@ -9,6 +9,7 @@ import AccountManager from 'api/AccountManager'
 import ProfileLayout from 'components/Layouts/ProfileLayout'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Screen from 'components/Screen'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
 const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
@@ -18,12 +19,16 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
   ])
   const [loading, setLoading] = useState(false)
+  const [publicProfile, setPublicProfile] = useState(publicProfileData)
 
   const fetchData = async () => {
     try {
       setLoading(true)
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
+
+      setPublicProfile(publicData)
+      // Get current wallet addresses in db store
 
       updatePublicProfileData(publicData || publicProfileData)
       const updatedList = list.map((item: any) => {
@@ -35,6 +40,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setList(updatedList)
+
       setLoading(false)
     } catch (e) {
       Sentry.captureException(e)
@@ -70,7 +76,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   }, [])
 
   return (
-    <View>
+    <Screen backgroundGrey>
       <NavigationHeader title='Profile' />
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -79,10 +85,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       ) : (
         <ProfileLayout
           list={editable(list)}
+          publicProfile={publicProfile}
           description={'This profile is public and can be discovered by others'}
         />
       )}
-    </View>
+    </Screen>
   )
 }
 

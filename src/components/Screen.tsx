@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import React, { ReactNode, useEffect, useRef, useState } from 'react'
 import {
   Animated,
@@ -7,6 +8,7 @@ import {
   StatusBar,
   StyleSheet,
   View,
+  ViewStyle,
 } from 'react-native'
 import { SafeAreaView, SafeAreaViewProps } from 'react-native-safe-area-context'
 
@@ -18,13 +20,15 @@ import LoadingView from './LoadingView'
 
 interface ScreenProps {
   children?: ReactNode
-  withSafeAreaView?: boolean
+  withSafeAreaView: boolean
   withKeyboardAvoidingView: boolean
+  withLoadingView: boolean
   statusBarColor?: string
-  withLoadingView?: boolean
   showLoading?: boolean
   navBar?: ReactNode
   safeAreaViewProps?: SafeAreaViewProps
+  containerStyle?: ViewStyle
+  backgroundGrey?: boolean
 }
 
 const Screen = (props: ScreenProps) => {
@@ -35,24 +39,12 @@ const Screen = (props: ScreenProps) => {
     navBar,
     withKeyboardAvoidingView,
     safeAreaViewProps,
+    containerStyle,
+    backgroundGrey,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
-
-  let NestedEle = withSafeAreaView ? (
-    <SafeAreaView
-      {...safeAreaViewProps}
-      edges={safeAreaViewProps ? safeAreaViewProps.edges : ['top', 'bottom']}
-      style={[styles.container]}>
-      {navBar}
-      {props.children}
-    </SafeAreaView>
-  ) : (
-    <View style={[styles.container]}>
-      {navBar}
-      {props.children}
-    </View>
-  )
+  const { theme } = useTheme()
 
   const fadeInAnimRef = useRef(new Animated.Value(1))
   const [completeHideLoadingView, setCompleteHideLoadingView] = useState(true)
@@ -68,19 +60,6 @@ const Screen = (props: ScreenProps) => {
       }).start(() => setCompleteHideLoadingView(true))
     }
   }, [completeHideLoadingView, showLoading])
-  NestedEle = withLoadingView ? (
-    <View style={[styles.container]}>
-      {NestedEle}
-      {withLoadingView && (showLoading || !completeHideLoadingView) && (
-        <Animated.View
-          style={[styles.loadingView, { opacity: fadeInAnimRef.current }]}>
-          <LoadingView />
-        </Animated.View>
-      )}
-    </View>
-  ) : (
-    NestedEle
-  )
 
   return (
     <ConditionalWrap
@@ -97,8 +76,57 @@ const Screen = (props: ScreenProps) => {
           default: <View style={styles.wrapper}>{children}</View>,
         })
       }>
-      <StatusBar barStyle='dark-content' translucent />
-      {NestedEle}
+      <ConditionalWrap
+        condition={withSafeAreaView}
+        wrap={(children) => (
+          <SafeAreaView
+            {...safeAreaViewProps}
+            edges={
+              safeAreaViewProps ? safeAreaViewProps.edges : ['top', 'bottom']
+            }
+            style={[
+              styles.container,
+              {
+                backgroundColor: backgroundGrey
+                  ? theme.color.backgroundGrey
+                  : theme.color.background,
+              },
+            ]}>
+            {children}
+          </SafeAreaView>
+        )}>
+        <ConditionalWrap
+          condition={
+            withLoadingView && (showLoading || !completeHideLoadingView)
+          }
+          wrap={(children) => (
+            <>
+              {children}
+              <Animated.View
+                style={[
+                  styles.loadingView,
+                  { opacity: fadeInAnimRef.current },
+                ]}>
+                <LoadingView />
+              </Animated.View>
+            </>
+          )}>
+          <StatusBar barStyle='dark-content' translucent />
+          <View
+            style={[
+              styles.container,
+              {
+                backgroundColor: backgroundGrey
+                  ? theme.color.backgroundGrey
+                  : theme.color.background,
+              },
+              containerStyle,
+            ]}>
+            {navBar}
+            {props.children}
+          </View>
+        </ConditionalWrap>
+      </ConditionalWrap>
     </ConditionalWrap>
   )
 }
@@ -110,7 +138,6 @@ const createStyles = (theme: Theme) => {
     },
     container: {
       flex: 1,
-      backgroundColor: theme.color.background,
     },
     loadingView: {
       ...StyleSheet.absoluteFillObject,
@@ -128,6 +155,7 @@ Screen.defaultProps = {
   withSafeAreaView: false,
   withLoadingView: false,
   withKeyboardAvoidingView: false,
+  backgroundGrey: false,
 }
 
 export default Screen
