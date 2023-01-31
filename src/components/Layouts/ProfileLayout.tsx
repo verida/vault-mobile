@@ -1,14 +1,15 @@
 import { useTheme } from 'contexts/ThemeContext'
-import React, { useMemo } from 'react'
+import { debounce } from 'lodash'
+import React, { useCallback, useMemo, useState } from 'react'
 import { ScrollView, StyleSheet, Switch, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { useSelector } from 'react-redux'
 
+import AccountManager from 'api/AccountManager'
 import Button from 'components/Button'
 import type { CaipWalletType, VeridaWallet } from 'components/types/wallet'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { selectChains } from 'reduxStore/tokens/selectors'
-import type { RootState } from 'reduxStore/types'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
@@ -16,9 +17,7 @@ import ProfileImageLoader from '../../components/ProfileImageLoader'
 import PropertyList from '../../components/PropertyList'
 import { BLACK_COLOR_OPACITY } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import LayoutStyle from '../../styles/layouts'
 import Text from '../Text'
-import Layout from './Layout'
 
 interface profileLayoutProps {
   list: any
@@ -48,10 +47,16 @@ export default function ProfileLayout({
   >
   const chains = useSelector(selectChains)
   const styles = useThemeAwareStyle(createStyles)
+  const [publicWalletAddresses, setPublicWalletAddresses] = useState<
+    PublicAddress[]
+  >(publicProfile.walletAddresses || [])
 
   function isVisible(address: string) {
-    // TODO: check if visible in public profile data
-    return false
+    return (
+      publicWalletAddresses.findIndex(
+        (walletAddress) => walletAddress.address === address
+      ) >= 0
+    )
   }
 
   function getPublicName(address: string) {
@@ -76,7 +81,7 @@ export default function ProfileLayout({
           chain: accountKey,
           name: getPublicName(account.address),
           visible: isVisible(account.address),
-          veridaWalletNameName: wallet.label,
+          veridaWalletName: wallet.label,
           icon: chain?.icon,
         }
       })
@@ -86,7 +91,39 @@ export default function ProfileLayout({
 
       return acc
     }, [] as PublicAddress[])
-  }, [wallets])
+  }, [wallets, publicWalletAddresses])
+
+  async function setPublicAddress(
+    publicAdress: PublicAddress,
+    visible: boolean
+  ) {
+    let newPublicWalletAddresses = [...publicWalletAddresses]
+
+    // console.log(
+    //   'Current Wallet Addresses',
+    //   JSON.stringify(newPublicWalletAddresses, null, 2)
+    // )
+
+    if (visible) {
+      newPublicWalletAddresses.push(publicAdress)
+    } else {
+      newPublicWalletAddresses = newPublicWalletAddresses.filter(
+        (walletAddress) => walletAddress.address !== publicAdress.address
+      )
+    }
+
+    setPublicWalletAddresses(newPublicWalletAddresses)
+    debounceSaveProfile(newPublicWalletAddresses)
+  }
+
+  const debounceSaveProfile = useCallback(
+    debounce(async (walletAddresses) => {
+      console.log('save profile', JSON.stringify(walletAddresses, null, 2))
+      const vault = AccountManager.getInstance().vault as any
+      await vault.profiles.public.set('walletAddresses', walletAddresses)
+    }, 2000),
+    []
+  )
 
   return (
     <ScrollView
@@ -113,28 +150,28 @@ export default function ProfileLayout({
             ADD NEW
           </Button>
         </View>
-        {walletAddresses.map((walletAddresse) => {
+        {walletAddresses.map((walletAddress) => {
           return (
             <View
-              key={walletAddresse.address}
+              key={walletAddress.address}
               style={styles.walletItemContainer}>
               <View style={{ flex: 1 }}>
                 <View style={{ flex: 1, flexDirection: 'row' }}>
                   <FastImage
-                    source={{ uri: walletAddresse.icon }}
+                    source={{ uri: walletAddress.icon }}
                     style={{ width: 48, height: 48 }}
                     resizeMode='contain'
                   />
                   <View style={{ marginLeft: 16 }}>
-                    <Text>{walletAddresse.name || 'Public title'}</Text>
+                    <Text>{walletAddress.name || 'Public title'}</Text>
                     <View style={{ flexDirection: 'row' }}>
                       <Text
                         ellipsizeMode='middle'
                         numberOfLines={1}
                         style={{ maxWidth: 120, marginRight: 16 }}>
-                        {walletAddresse.address}
+                        {walletAddress.address}
                       </Text>
-                      <Text>{walletAddresse.veridaWalletNameName}</Text>
+                      <Text>{walletAddress.veridaWalletNameName}</Text>
                     </View>
                   </View>
                 </View>
@@ -150,7 +187,14 @@ export default function ProfileLayout({
                     marginTop: 16,
                   }}>
                   <Text>Display on Verida One profile</Text>
-                  <Switch />
+                  <Switch
+                    trackColor={{ false: '#767577', true: theme.color.success }}
+                    ios_backgroundColor='#3e3e3e'
+                    onValueChange={(value) => {
+                      setPublicAddress(walletAddress, value)
+                    }}
+                    value={walletAddress.visible}
+                  />
                 </View>
               </View>
             </View>

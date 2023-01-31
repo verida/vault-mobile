@@ -77,7 +77,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   return (
     <Screen backgroundGrey>
-      <NavigationHeader title='Profile' />
+      <NavigationHeader title='Profile' left={{ icon: null }} />
       {loading ? (
         <View style={styles.loadingContainer}>
           <LoadingView />
