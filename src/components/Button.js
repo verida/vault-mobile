@@ -25,6 +25,8 @@ export default (props) => {
         return 'warning'
       case 'transparent-warning':
         return 'warning'
+      case 'transparent-link':
+        return 'primaryColor'
       default:
         return 'white'
     }
@@ -36,7 +38,9 @@ export default (props) => {
         ButtonStyles.button,
         type,
         styles,
-        props.disabled && ButtonStyles.disabled,
+        props.disabled &&
+          !props.color?.includes('transparent') &&
+          ButtonStyles.disabled,
       ]}
       onPress={props.loading ? null : props.onPress}
       disabled={props.disabled}>

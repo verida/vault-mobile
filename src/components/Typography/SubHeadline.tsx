@@ -1,21 +1,18 @@
 import React from 'react'
-import {
-  StyleProp,
-  StyleSheet,
-  Text as NativeText,
-  TextStyle,
-} from 'react-native'
+import { StyleProp, StyleSheet, TextStyle } from 'react-native'
 
-import Text from 'components/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import text from 'styles/text'
 import { Theme } from 'styles/types'
 
-type CaptionProps = React.ComponentProps<typeof NativeText> & {
+import { Text } from './Text'
+
+type Props = React.ComponentProps<typeof Text> & {
   style?: StyleProp<TextStyle>
+  children: React.ReactNode
 }
 
-export const Caption = (props: CaptionProps) => {
+export const SubHeadline = (props: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />
 }
@@ -25,7 +22,7 @@ const createStyles = (theme: Theme) => {
     text: {
       ...text.primary,
       color: theme.color.onBackground,
-      fontSize: theme.fontSize.l,
+      fontSize: theme.fontSize.sl,
       textAlign: 'left',
     },
   })
