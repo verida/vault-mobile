@@ -71,7 +71,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   return (
     <View>
-      <NavigationHeader title='Public Profile' />
+      <NavigationHeader title='Profile' />
       {loading ? (
         <View style={styles.loadingContainer}>
           <LoadingView />
