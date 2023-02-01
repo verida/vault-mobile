@@ -13,9 +13,11 @@ import { Dispatch } from 'redux'
 
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
+import VeridaOneManager from 'api/VeridaOneManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
+import { VeridaOnePlatformLinkCategory } from '../../api/types'
 import Button from '../../components/Button'
 import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
@@ -49,6 +51,55 @@ const EditProfile = (props: any) => {
 
     await vault.profiles.public.set(key, val)
     setPublicProfileData({ ...publicProfileData, [key]: val })
+
+    console.log('Setting dummy Verida One profile data')
+    await VeridaOneManager.setCustomLinks([
+      {
+        label: 'Chris - Website',
+        url: 'https://www.chriswere.com/',
+        order: 1,
+        featured: true,
+      },
+      {
+        label: 'Verida Network',
+        url: 'https://verida.network/',
+        order: 2,
+      },
+    ])
+
+    await VeridaOneManager.setWalletAddresses([
+      {
+        chainId: 'eip155:1',
+        address: '0xabcdefg',
+        order: 1,
+        label: 'Send me funds here',
+      },
+      {
+        chainId: 'eip155:1',
+        address: '0xabcdefgh',
+        order: 2,
+      },
+    ])
+
+    await VeridaOneManager.setPlatformLinks([
+      {
+        category: VeridaOnePlatformLinkCategory.SOCIAL,
+        platform: 'twitter',
+        accountId: 'tahpot',
+        url: 'https://twitter.com/tahpot',
+        order: 1,
+      },
+      {
+        category: VeridaOnePlatformLinkCategory.SOCIAL,
+        platform: 'twitter',
+        accountId: 'verida_io',
+        url: 'https://twitter.com/verida_io',
+        order: 2,
+      },
+    ])
+
+    console.log('Verida one upated')
+
     navigation.goBack()
   }
 
