@@ -23,7 +23,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const fetchData = async () => {
     try {
-      setLoading(true)
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
@@ -40,8 +39,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setList(updatedList)
-
-      setLoading(false)
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
@@ -50,7 +47,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   // component did mount
   useEffect(() => {
-    fetchData()
+    setLoading(true)
+    fetchData().finally(() => {
+      setLoading(false)
+    })
 
     let listener: any
     const watchChanges = async () => {
