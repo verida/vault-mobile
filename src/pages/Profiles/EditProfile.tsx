@@ -13,6 +13,7 @@ import { Dispatch } from 'redux'
 
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
+import VeridaOneManager from 'api/VeridaOneManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
@@ -49,6 +50,7 @@ const EditProfile = (props: any) => {
 
     await vault.profiles.public.set(key, val)
     setPublicProfileData({ ...publicProfileData, [key]: val })
+
     navigation.goBack()
   }
 
