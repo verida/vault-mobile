@@ -7,7 +7,6 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Dimensions,
-  Image,
   ScrollView,
   StyleSheet,
   Switch,
@@ -56,6 +55,15 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     { label: 'Country', value: '', action: 'arrow', type: 'select' },
     { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
   ])
+
+  const [userInfoReadOnlyItem] = useState([
+    {
+      label: 'DID',
+      value: AccountManager.getInstance().getSelectedAccount()?.did ?? '',
+      action: 'copy',
+    },
+  ])
+
   const { theme } = useTheme()
   const navigation = useNavigation()
   const [loading, setLoading] = useState(true)
@@ -297,7 +305,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             paddingBottom: theme.spacing.xxxl,
           }}>
           <ProfileImageLoader />
-          <View style={styles.oneProfileLinkContainer}>
+          {/** Unavailable - Temporary disabled */}
+          {/* <View style={styles.oneProfileLinkContainer}>
             <Image
               style={{
                 position: 'absolute',
@@ -306,10 +315,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               resizeMode='stretch'
               source={require('assets/profile_banner_bg.png')}
             />
-          </View>
-          <View>
+          </View> */}
+          <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
-            <PropertyList list={editable(list)} />
+            <PropertyList list={[...editable(list), ...userInfoReadOnlyItem]} />
           </View>
           <Text style={styles.description}>
             This information is always visible on your Verida One page
@@ -434,10 +443,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                     <Text>Display on Verida One profile</Text>
                     <Switch
                       trackColor={{
-                        false: '#767577',
+                        false: theme.color.switchFalseState,
                         true: theme.color.success,
                       }}
-                      ios_backgroundColor='#131313'
+                      ios_backgroundColor={theme.color.switchIOSBg}
                       onValueChange={(value) => {
                         setPublicAddress(walletAddress, value)
                       }}

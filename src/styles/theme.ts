@@ -58,6 +58,9 @@ export const defaultTheme = {
 
     shadowLightGrey: SHADOW_LIGHT_GREY,
 
+    switchFalseState: '#767577',
+    switchIOSBg: '#131313',
+
     grey100: '#EDF0F3',
     grey200: '#DDE3E9',
     grey300: '#CED3DA',
