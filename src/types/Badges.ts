@@ -17,13 +17,11 @@ export interface AvailableBadge {
   /* URL of a static image representing this badge */
   imageUrl: string
 
-  /* Indicate if the user can claim this badge (ie: it may be available, but not claimable because the user doesn't meet the requirement) */
-  claimable: boolean
+  /* Unique AccountId that is claimable for this badge (ie: twitter username) */
+  claimAcocuntId?: string
 
-  /* Metadata about the account or connection for this badge (ie: twitter username) if it's claimable */
-  claimMetadata?: string
-
-  claimableNetworks?: string[]
+  /* CAIP addreses that have not yet claimed this badge, but could */
+  claimableAddresses?: string[]
 
   // image_data?: string
   // external_url?: string

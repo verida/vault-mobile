@@ -11,9 +11,8 @@ const availableBadges: AvailableBadge[] = [
       'Your Badge will include your Verida DID as proof of ownership',
     imageUrl:
       'https://uploads-ssl.webflow.com/636b86340271e54460e829bb/636b99c393d67d98c5fa2deb_verida%20one%20logo.svg',
-    claimable: true,
-    claimableNetworks: ['eip155:5'],
-    claimMetadata: 'did:vda:testnet:0xabc',
+    claimableAddresses: ['eip155:5:0xabcd'],
+    claimAccountId: 'did:vda:testnet:0xabc',
   },
   {
     id: 'twitter-account',
@@ -24,9 +23,8 @@ const availableBadges: AvailableBadge[] = [
       'Your Badge will include your Twitter handle (username) as proof of ownership',
     imageUrl:
       'https://logolook.net/wp-content/uploads/2021/06/Symbol-Twitter.png',
-    claimable: true,
-    claimableNetworks: ['eip155:5', 'eip155:1'],
-    claimMetadata: '@tahpot',
+    claimableAddresses: ['eip155:5:0xabcd', 'eip155:1:0xabcd'],
+    claimAccountId: '@tahpot',
   },
   {
     id: 'discord-account',
@@ -37,7 +35,6 @@ const availableBadges: AvailableBadge[] = [
       'Your Badge will include your Discord handle (username) as proof of ownership',
     imageUrl:
       'https://assets-global.website-files.com/6257adef93867e50d84d30e2/636e0a6a49cf127bf92de1e2_icon_clyde_blurple_RGB.png',
-    claimable: false,
   },
 ]
 
