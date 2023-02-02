@@ -7,6 +7,7 @@ import Snackbar from 'react-native-snackbar'
 import { useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
+import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import type { CaipWalletType, VeridaWallet } from 'components/types/wallet'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -69,6 +70,10 @@ export default function ProfileLayout({
     )
   }
 
+  function getChainId(chainData) {
+    return `${chainData.namespace}:${chainData.reference}`
+  }
+
   const walletAddresses = useMemo<PublicAddress[]>(() => {
     return Object.keys(wallets).reduce((acc, key) => {
       const wallet = wallets[key]
@@ -77,15 +82,16 @@ export default function ProfileLayout({
         const chain = findChainFromChainId(accountKey) as any
         return {
           address: account.address,
-          chain: accountKey,
-          name: getPublicName(account.address),
-          visible: isVisible(account.address),
+          chainId: getChainId(chain.data),
+          label: getPublicName(account.address),
+
+          // Infered value for displaying
           veridaWalletName: wallet.label,
+          visible: isVisible(account.address),
           icon: chain?.icon,
         }
       })
 
-      // console.log('Wallet', JSON.stringify(accounts, null, 2))
       acc.push(...accounts)
 
       return acc
@@ -97,6 +103,13 @@ export default function ProfileLayout({
     publicAdress: PublicAddress,
     visible: boolean
   ) {
+    const savePublicAddress = { ...publicAdress }
+
+    // Delete metadata
+    delete savePublicAddress.visible
+    delete savePublicAddress.icon
+    delete savePublicAddress.veridaWalletName
+
     let newPublicWalletAddresses = [...publicWalletAddresses]
 
     if (visible) {
@@ -122,8 +135,10 @@ export default function ProfileLayout({
   const debounceSaveProfile = useCallback(
     debounce(async (walletAddresses) => {
       console.log('save profile', JSON.stringify(walletAddresses, null, 2))
-      const vault = AccountManager.getInstance().vault as any
-      await vault.profiles.public.set('walletAddresses', walletAddresses)
+      console.log('Setting dummy Verida One profile data')
+      await VeridaOneManager.setWalletAddresses([...walletAddresses])
+
+      console.log('Verida one upated')
     }, 1000),
     []
   )
@@ -144,7 +159,6 @@ export default function ProfileLayout({
           resizeMode='stretch'
           source={require('assets/profile_banner_bg.png')}
         />
-        <Text style={{}}>PUBLIC INFORMATION</Text>
       </View>
       <View>
         <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>

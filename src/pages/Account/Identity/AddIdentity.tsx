@@ -39,17 +39,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
 
-const colorList = [
-  { offset: '61.46%', color: 'rgba(64, 45, 255, 0.9)', opacity: '1' },
-  { offset: '100%', color: 'rgba(245, 244, 255, 0)', opacity: '1' },
-]
-
 const pageData = [
-  {
-    key: 'start',
-    hasNext: false,
-    hasBack: true,
-  },
   {
     key: 'name',
     hasNext: true,
@@ -75,7 +65,6 @@ export enum AddIdentityMode {
 }
 
 enum PageType {
-  Start,
   Name,
   Location,
   Confirmation,
@@ -87,11 +76,10 @@ const AddIdentity = () => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const pagerRef = useRef<PagerView>(null)
-  const [currentPage, setCurrentPage] = useState(PageType.Start)
+  const [currentPage, setCurrentPage] = useState(PageType.Name)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
-  const [agreedTC, setAgreedTC] = useState(false)
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [availableUsername, setAvailableUsername] = useState(false)
   const [usernameError, setUsernameError] = useState<string | undefined>(
@@ -188,11 +176,9 @@ const AddIdentity = () => {
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
       case PageType.Name:
+        console.log('profile.name', profile.name)
         return {
-          formValidated:
-            !isEmpty(profile.name) &&
-            (isEmpty(profile.username) ||
-              (!isEmpty(profile.username) && availableUsername)),
+          formValidated: !isEmpty(profile.name),
         }
       case PageType.Location:
         return { formValidated: true }
@@ -203,19 +189,10 @@ const AddIdentity = () => {
       default:
         return {}
     }
-  }, [
-    availableUsername,
-    confirmationState?.state?.CreateProfile,
-    currentPage,
-    profile,
-  ])
+  }, [confirmationState?.state?.CreateProfile, currentPage, profile])
 
   const onCountryChange = (option: Option) => {
     setProfile((p) => ({ ...p, country: option.value }))
-  }
-
-  function toggleAgreedTC() {
-    setAgreedTC((prevState) => !prevState)
   }
 
   const onNext = useCallback(() => {
@@ -274,61 +251,6 @@ const AddIdentity = () => {
           }}
           ref={pagerRef}
           overScrollMode='auto'>
-          <View key='start' style={[styles.landing, { alignItems: 'center' }]}>
-            <View
-              style={{
-                width: '100%',
-                height: 216,
-              }}>
-              <Image
-                style={{
-                  width: '100%',
-                  marginTop: -80,
-                }}
-                source={require('assets/identity-card.png')}
-              />
-            </View>
-            <Spacer height={32} />
-            <Headline>Create your identity</Headline>
-            <Spacer vertical='sm' />
-            <Text style={{ textAlign: 'center' }}>
-              An identity is a digital representation of yourself. You can have
-              multiple, such as a personal, business or anonymous identity.
-            </Text>
-            <Spacer height={115} />
-            <TCCheckbox
-              checked={agreedTC}
-              style={styles.termAndCondition}
-              onToggle={toggleAgreedTC}
-            />
-            <Spacer vertical='m' />
-            <Button
-              disabled={!agreedTC}
-              style={styles.actionButton}
-              onPress={() => {
-                requestAnimationFrame(() => {
-                  onNext()
-                })
-              }}>
-              Create Identity
-            </Button>
-            <Paragraph style={styles.subTitle}>
-              Already have a Verida Identity?
-            </Paragraph>
-            <Button
-              disabled={!agreedTC}
-              color='transparent-link'
-              style={styles.actionButton}
-              onPress={() => {
-                if (params.mode === AddIdentityMode.Add) {
-                  const popAction = StackActions.pop(1)
-                  navigation.dispatch(popAction)
-                }
-                navigation.navigate('SeedPhraseEntered')
-              }}>
-              Import Identity
-            </Button>
-          </View>
           <View key='name' style={styles.landing}>
             <ScrollView
               contentContainerStyle={styles.scrollViewContainer}
@@ -482,15 +404,16 @@ const AddIdentity = () => {
             </ScrollView>
           </View>
         </PagerView>
-        {/* <View style={styles.bottomNavContainer}>
-          {(pageData[currentPage].hasBack || showRetry) && (
+        <View style={styles.bottomNavContainer}>
+          {/* {(pageData[currentPage].hasBack || showRetry) && (
             <Button
               color='transparent'
               style={styles.backButton}
               onPress={onBack}>
               Back
             </Button>
-          )}
+          )} */}
+
           {!showRetry && pageData[currentPage].hasNext && (
             <Button
               style={styles.nextButton}
@@ -499,7 +422,8 @@ const AddIdentity = () => {
               Next
             </Button>
           )}
-          {showRetry && (
+
+          {/* {showRetry && (
             <Button
               style={styles.retryButton}
               onPress={() => {
@@ -508,8 +432,8 @@ const AddIdentity = () => {
               }}>
               Retry
             </Button>
-          )}
-        </View> */}
+          )} */}
+        </View>
       </View>
     </Screen>
   )
