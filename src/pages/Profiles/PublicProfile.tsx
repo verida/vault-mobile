@@ -52,7 +52,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
   ])
   const { theme } = useTheme()
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [publicProfile, setPublicProfile] = useState(publicProfileData)
   const [veridaOneProfile, setVeridaOneProfile] = useState({})
@@ -129,7 +129,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     let newPublicWalletAddresses = [...publicWalletAddresses]
 
     if (visible) {
-      newPublicWalletAddresses.push(publicAdress)
+      newPublicWalletAddresses.push(savePublicAddress)
       Snackbar.show({
         text: 'Added to Verida One profile',
         duration: Snackbar.LENGTH_SHORT,
@@ -149,11 +149,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   }
 
   const debounceSaveProfile = useCallback(
-    debounce(async (walletAddresses) => {
+    debounce(async (_walletAddresses) => {
       setSaving(true)
-      console.log('save profile', JSON.stringify(walletAddresses, null, 2))
-      console.log('Setting dummy Verida One profile data')
-      await VeridaOneManager.setWalletAddresses([...walletAddresses])
+      console.log('save profile', JSON.stringify(_walletAddresses, null, 2))
+      await VeridaOneManager.setWalletAddresses([..._walletAddresses])
       setSaving(false)
       console.log('Verida one upated')
     }, 500),
@@ -177,22 +176,32 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setList(updatedList)
-
-      // Fetch Verida One Profile
-      const oneProfile = await VeridaOneManager.getProfile()
-      console.log('Fetched VeridaOneProfile', oneProfile)
-      setVeridaOneProfile(oneProfile)
-      setPublicWalletAddresses(walletAddresses)
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
     }
   }
 
+  const fetchVeridaOneProfle = async () => {
+    // Fetch Verida One Profile
+    try {
+      const oneProfile = (await VeridaOneManager.getProfile()) as any
+      console.log(
+        'Fetched VeridaOneProfile',
+        JSON.stringify(oneProfile, null, 2)
+      )
+      setVeridaOneProfile(oneProfile)
+      setPublicWalletAddresses(oneProfile.walletAddresses)
+    } catch (e) {
+      Sentry.captureException(e)
+      Alert.alert('Error', 'Cannot load Verida One profile data')
+    }
+  }
+
   // component did mount
   useEffect(() => {
     setLoading(true)
-    fetchData().finally(() => {
+    Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
       setLoading(false)
     })
 
