@@ -3,6 +3,7 @@ import { DApp, DAppv2 } from 'wallet-connect/types'
 import { Network } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/AddIdentity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 
 export type RootStackParams = {
   Auth: undefined
@@ -39,6 +40,7 @@ export type MainStackParams = {
   PublicProfile: undefined
   PrivateProfile: undefined
   EditProfile: undefined
+  EditGenericProperty: GenericEditPropertyScreenProps
   SeedPhraseView: undefined
   ManageWallets: undefined
   SingleCurrency: undefined

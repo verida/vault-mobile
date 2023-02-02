@@ -48,7 +48,9 @@ export default (props) => {
           ButtonStyles.disabled,
       ]}
       hitSlop={
-        hasButtonBackground ? {} : { top: 10, left: 10, right: 10, bottom: 10 }
+        hasButtonBackground && !props.color?.includes('transparent')
+          ? {}
+          : { top: 10, left: 10, right: 10, bottom: 10 }
       }
       onPress={props.loading ? null : props.onPress}
       disabled={props.disabled}>

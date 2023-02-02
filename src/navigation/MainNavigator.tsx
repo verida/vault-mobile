@@ -17,6 +17,7 @@ import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
+import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
@@ -60,6 +61,10 @@ function MainNavigator() {
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
+      <Stack.Screen
+        name={'EditGenericProperty'}
+        component={EditGenericProperty}
+      />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
       <Stack.Screen name={'SingleWallet'} component={SingleWallet} />

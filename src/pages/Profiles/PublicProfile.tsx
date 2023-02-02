@@ -28,9 +28,9 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import Screen from 'components/Screen'
-import { Spacer } from 'components/Spacer'
 import { CaipWalletType, VeridaWallet } from 'components/types/wallet'
 import { SubHeadline } from 'components/Typography/SubHeadline'
+import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import { selectChains } from 'reduxStore/tokens/selectors'
@@ -39,15 +39,16 @@ import { Theme } from 'styles/types'
 
 interface PublicAddress {
   address: string
-  chain: string
-  name: string
+  chainId: string
+  label: string
   order: number
 
-  visible: boolean
-  veridaWalletName: string
-  description: string
-  icon: string
+  visible?: boolean
+  veridaWalletName?: string
+  icon?: string
 }
+
+type EditMode = 'EditWalletName'
 
 const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [list, setList] = useState([
@@ -59,7 +60,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const navigation = useNavigation()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [publicProfile, setPublicProfile] = useState(publicProfileData)
+  const [, setPublicProfile] = useState(publicProfileData)
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
     VeridaWallet
@@ -78,9 +79,15 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     )
   }
 
+  function getPublicWalletAddressObject(address: string) {
+    return publicWalletAddresses.find(
+      (walletAddress) => walletAddress.address === address
+    )
+  }
+
   function getPublicName(address: string) {
-    // TODO: find name in public profile data
-    return address
+    const publicWalletAddress = getPublicWalletAddressObject(address)
+    return publicWalletAddress?.label ?? ''
   }
 
   function findChainFromChainId(chainId: string) {
@@ -89,7 +96,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     )
   }
 
-  function getChainId(chainData) {
+  function getChainId(chainData: any) {
     return `${chainData.namespace}:${chainData.reference}`
   }
 
@@ -131,7 +138,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   ) {
     const savePublicAddress = { ...publicAdress }
 
-    // Delete metadata
+    // Delete item metadata
     delete savePublicAddress.visible
     delete savePublicAddress.icon
     delete savePublicAddress.veridaWalletName
@@ -206,6 +213,41 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       Alert.alert('Error', 'Cannot load Verida profile data')
     }
   }
+
+  useEmitter('SAVE_GENERIC_PROPERTY', (payload) => {
+    if (payload.screenName !== 'PublicProfile') return
+
+    if ((payload.mode as EditMode) === 'EditWalletName') {
+      // Save wallet name
+      const theWallet = payload.originalValue as PublicAddress
+
+      const publicWallet = publicWalletAddresses.find(
+        (walletAddress) => walletAddress.address === theWallet.address
+      )
+      const updatedWallet = {
+        ...publicWallet,
+        label: (payload.value as string) ?? '',
+      }
+
+      const walletIndex = publicWalletAddresses.findIndex(
+        (walletAddress) => walletAddress.address === updatedWallet.address
+      )
+
+      const updatedPublicWalletAddresses = [...publicWalletAddresses]
+
+      if (walletIndex >= 0) {
+        // Replace updated item
+        updatedPublicWalletAddresses.splice(
+          walletIndex,
+          1,
+          updatedWallet as any
+        )
+      }
+
+      setPublicWalletAddresses(updatedPublicWalletAddresses)
+      debounceSaveProfile(updatedPublicWalletAddresses)
+    }
+  })
 
   // component did mount
   useEffect(() => {
@@ -314,12 +356,15 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                       />
                       <View style={{ marginLeft: theme.spacing.m }}>
                         <SubHeadline
+                          ellipsizeMode='tail'
+                          numberOfLines={2}
                           style={{
-                            color: walletAddress.name
+                            maxWidth: 200,
+                            color: walletAddress.label
                               ? theme.color.onBackground
                               : theme.color.textLightGrey,
                           }}>
-                          {walletAddress.name || 'Public title'}
+                          {walletAddress.label || 'Public title'}
                         </SubHeadline>
                         <View
                           style={{
@@ -344,15 +389,31 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
                     <Button
                       color={'transparent'}
+                      disabled={!walletAddress.visible}
                       style={{
                         width: 40,
                         height: 40,
                         alignItems: 'center',
                         justifyContent: 'center',
+                        backgroundColor: 'lightGrey',
                       }}
-                      onPress={() => {
-                        // editWalletName()
-                      }}>
+                      onPress={
+                        !walletAddress.visible
+                          ? null
+                          : () => {
+                              navigation.navigate('EditGenericProperty', {
+                                screenName: 'PublicProfile',
+                                title: 'Wallet Name',
+                                option: {
+                                  label: 'Wallet Name',
+                                  type: 'input',
+                                  value: walletAddress.label,
+                                },
+                                mode: 'EditWalletName',
+                                originalValue: walletAddress,
+                              })
+                            }
+                      }>
                       <EditIcon />
                     </Button>
                   </View>
@@ -360,7 +421,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                     style={{
                       marginVertical: theme.spacing.s,
                       borderWidth: StyleSheet.hairlineWidth,
-                      borderColor: 'rgba(205, 207, 214, 1)',
+                      borderColor: theme.color.separatorExtraLight,
                     }}
                   />
                   <View
@@ -431,7 +492,8 @@ const createStyles = (theme: Theme) =>
       borderColor: theme.color.lightGrey,
       borderWidth: 1,
       borderRadius: theme.roundness.xs,
-      padding: theme.spacing.m,
+      paddingVertical: theme.spacing.s,
+      paddingHorizontal: theme.spacing.m,
       marginBottom: theme.spacing.s,
     },
     oneProfileLinkContainer: {
