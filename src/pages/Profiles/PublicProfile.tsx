@@ -67,7 +67,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const { theme } = useTheme()
   const navigation = useNavigation()
   const [loading, setLoading] = useState(true)
-  const [saving, setSaving] = useState(false)
+  const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [, setPublicProfile] = useState(publicProfileData)
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
@@ -176,13 +176,13 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const debounceSaveProfile = useCallback(
     debounce(async (_walletAddresses) => {
       try {
-        setSaving(true)
+        setQuickFetching(true)
         await VeridaOneManager.setWalletAddresses([..._walletAddresses])
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Failed to save profile')
       } finally {
-        setSaving(false)
+        setQuickFetching(false)
       }
     }, 1000),
     []
@@ -190,6 +190,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const fetchData = async () => {
     try {
+      setQuickFetching(true)
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
@@ -208,6 +209,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
+    } finally {
+      setQuickFetching(false)
     }
   }
 
@@ -292,7 +295,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       backgroundGrey
       loadingOverlayColorLight
       withLoadingView
-      showLoading={saving}>
+      showLoading={quickFetching}>
       <NavigationHeader title='Profile' left={{ icon: null } as any} />
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -457,6 +460,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               </View>
             )
           })}
+          <Text style={[styles.description, { marginVertical: 0 }]}>
+            On your Verida One page we show your wallet addresses with their
+            public titles and the assets related to them (collectibles, badges,
+            etc)
+          </Text>
         </ScrollView>
       )}
     </Screen>
