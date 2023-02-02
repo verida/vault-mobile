@@ -10,9 +10,8 @@ import { loadAvatarSource } from 'api/utils'
 import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
 
 import PhotoCameraSvg from '../assets/photo-camera.svg'
-import { WHITE_COLOR } from '../constants/color'
 
-const userImg = require('../assets/stubs/avatar.png')
+const userImg = require('assets/stubs/avatar.png')
 
 function ProfileImageLoader(props) {
   const { publicProfileData, setPublicProfileData } = props
@@ -61,10 +60,7 @@ function ProfileImageLoader(props) {
       <TouchableOpacity style={style.loader} onPress={loadPhoto}>
         <FastImage
           style={style.imgContainer}
-          source={{
-            uri: image.uri,
-            priority: FastImage.priority.high,
-          }}
+          source={image}
           resizeMode={FastImage.resizeMode.cover}
         />
         <PhotoCameraSvg style={style.svg} />
@@ -82,8 +78,6 @@ const style = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    borderColor: WHITE_COLOR,
-    borderWidth: 4,
   },
   svg: {
     position: 'absolute',

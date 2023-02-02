@@ -22,6 +22,11 @@ export default StyleSheet.create({
     justifyContent: 'center',
     fontFamily: NUNITO_SANS_BOLD,
   },
+  buttonText: {
+    fontSize: 16,
+    justifyContent: 'center',
+    fontFamily: NUNITO_SANS_BOLD,
+  },
   outlined: {
     backgroundColor: 'transparent',
     borderColor: WHITE_COLOR,

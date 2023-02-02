@@ -1,7 +1,7 @@
+import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { editable } from 'helpers/profile'
-// import { editable } from 'helpers/profile'
 import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -21,13 +21,16 @@ import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
 import VeridaOneManager from 'api/VeridaOneManager'
+import EditIcon from 'assets/edit_icon.svg'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import Screen from 'components/Screen'
+import { Spacer } from 'components/Spacer'
 import { CaipWalletType, VeridaWallet } from 'components/types/wallet'
+import { SubHeadline } from 'components/Typography/SubHeadline'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 import { selectChains } from 'reduxStore/tokens/selectors'
@@ -38,8 +41,10 @@ interface PublicAddress {
   address: string
   chain: string
   name: string
+  order: number
+
   visible: boolean
-  veridaWalletNameName: string
+  veridaWalletName: string
   description: string
   icon: string
 }
@@ -51,10 +56,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
   ])
   const { theme } = useTheme()
+  const navigation = useNavigation()
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
   const [publicProfile, setPublicProfile] = useState(publicProfileData)
-  const [veridaOneProfile, setVeridaOneProfile] = useState({})
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
     VeridaWallet
@@ -89,28 +94,34 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   }
 
   const walletAddresses = useMemo<PublicAddress[]>(() => {
-    return Object.keys(wallets).reduce((acc, key) => {
-      const wallet = wallets[key]
-      const accounts = Object.keys(wallet.accounts).map((accountKey, index) => {
-        const account = wallet.accounts[accountKey as CaipWalletType]
-        const chain = findChainFromChainId(accountKey) as any
-        return {
-          address: account.address,
-          chainId: getChainId(chain.data),
-          label: getPublicName(account.address),
+    return Object.keys(wallets)
+      .reduce((acc, key) => {
+        const wallet = wallets[key]
+        const accounts = Object.keys(wallet.accounts).map(
+          (accountKey, index) => {
+            const account = wallet.accounts[accountKey as CaipWalletType]
+            const chain = findChainFromChainId(accountKey) as any
+            return {
+              address: account.address,
+              chainId: getChainId(chain.data),
+              label: getPublicName(account.address),
+              order: index,
 
-          // Infered value for displaying
-          veridaWalletName: wallet.label,
-          visible: isVisible(account.address),
-          icon: chain?.icon,
-          order: index,
-        }
+              // Infered value for displaying
+              veridaWalletName: wallet.label,
+              visible: isVisible(account.address),
+              icon: chain?.icon,
+            }
+          }
+        )
+
+        acc.push(...accounts)
+
+        return acc
+      }, [] as PublicAddress[])
+      .sort((a, b) => {
+        return a.order - b.order
       })
-
-      acc.push(...accounts)
-
-      return acc
-    }, [] as PublicAddress[])
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [wallets, publicWalletAddresses])
 
@@ -149,12 +160,16 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const debounceSaveProfile = useCallback(
     debounce(async (_walletAddresses) => {
-      setSaving(true)
-      console.log('save profile', JSON.stringify(_walletAddresses, null, 2))
-      await VeridaOneManager.setWalletAddresses([..._walletAddresses])
-      setSaving(false)
-      console.log('Verida one upated')
-    }, 500),
+      try {
+        setSaving(true)
+        await VeridaOneManager.setWalletAddresses([..._walletAddresses])
+      } catch (e) {
+        Sentry.captureException(e)
+        Alert.alert('Error', 'Failed to save profile')
+      } finally {
+        setSaving(false)
+      }
+    }, 1000),
     []
   )
 
@@ -185,11 +200,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     // Fetch Verida One Profile
     try {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
-      console.log(
-        'Fetched VeridaOneProfile',
-        JSON.stringify(oneProfile, null, 2)
-      )
-      setVeridaOneProfile(oneProfile)
       setPublicWalletAddresses(oneProfile.walletAddresses)
     } catch (e) {
       Sentry.captureException(e)
@@ -233,7 +243,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       loadingOverlayColorLight
       withLoadingView
       showLoading={saving}>
-      <NavigationHeader title='Profile' left={{ icon: null }} />
+      <NavigationHeader title='Profile' left={{ icon: null } as any} />
       {loading ? (
         <View style={styles.loadingContainer}>
           <LoadingView />
@@ -241,7 +251,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       ) : (
         <ScrollView
           contentContainerStyle={{
-            padding: 16,
+            padding: theme.spacing.m,
+            paddingBottom: theme.spacing.xxxl,
           }}>
           <ProfileImageLoader />
           <View style={styles.oneProfileLinkContainer}>
@@ -266,12 +277,16 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               flexDirection: 'row',
               flex: 1,
               justifyContent: 'space-between',
-              marginTop: theme.spacing.xl,
+              alignItems: 'center',
             }}>
-            <Text>WALLET ADDRESS</Text>
+            <Text style={styles.sectionHeader}>WALLET ADDRESS</Text>
             <Button
-              style={{ padding: 0, margin: 0, height: 20 }}
-              color='transparent'>
+              textStyle={{
+                fontSize: theme.fontSize.m,
+                marginBottom: theme.spacing.s,
+              }}
+              color='transparent-link'
+              onPress={() => navigation.navigate('ManageWallets')}>
               ADD NEW
             </Button>
           </View>
@@ -281,35 +296,79 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                 key={walletAddress.address}
                 style={styles.walletItemContainer}>
                 <View style={{ flex: 1 }}>
-                  <View style={{ flex: 1, flexDirection: 'row' }}>
-                    <FastImage
-                      source={{ uri: walletAddress.icon }}
-                      style={{ width: 48, height: 48 }}
-                      resizeMode='contain'
-                    />
-                    <View style={{ marginLeft: 16 }}>
-                      <Text>{walletAddress.name || 'Public title'}</Text>
-                      <View style={{ flexDirection: 'row' }}>
-                        <Text
-                          ellipsizeMode='middle'
-                          numberOfLines={1}
-                          style={{ maxWidth: 120, marginRight: 16 }}>
-                          {walletAddress.address}
-                        </Text>
-                        <Text>{walletAddress.veridaWalletNameName}</Text>
+                  <View
+                    style={{
+                      flex: 1,
+                      flexDirection: 'row',
+                      justifyContent: 'space-between',
+                    }}>
+                    <View
+                      style={{
+                        flex: 1,
+                        flexDirection: 'row',
+                      }}>
+                      <FastImage
+                        source={{ uri: walletAddress.icon }}
+                        style={{ width: 48, height: 48 }}
+                        resizeMode='contain'
+                      />
+                      <View style={{ marginLeft: theme.spacing.m }}>
+                        <SubHeadline
+                          style={{
+                            color: walletAddress.name
+                              ? theme.color.onBackground
+                              : theme.color.textLightGrey,
+                          }}>
+                          {walletAddress.name || 'Public title'}
+                        </SubHeadline>
+                        <View
+                          style={{
+                            flexDirection: 'row',
+                            alignItems: 'center',
+                          }}>
+                          <Text
+                            ellipsizeMode='middle'
+                            numberOfLines={1}
+                            style={{
+                              maxWidth: 100,
+                              marginRight: theme.spacing.xs,
+                            }}>
+                            {walletAddress.address}
+                          </Text>
+                          <Text style={styles.veridaWalletName}>
+                            {walletAddress.veridaWalletName}
+                          </Text>
+                        </View>
                       </View>
                     </View>
+
+                    <Button
+                      color={'transparent'}
+                      style={{
+                        width: 40,
+                        height: 40,
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                      }}
+                      onPress={() => {
+                        // editWalletName()
+                      }}>
+                      <EditIcon />
+                    </Button>
                   </View>
+                  <View
+                    style={{
+                      marginVertical: theme.spacing.s,
+                      borderWidth: StyleSheet.hairlineWidth,
+                      borderColor: 'rgba(205, 207, 214, 1)',
+                    }}
+                  />
                   <View
                     style={{
                       flex: 1,
                       flexDirection: 'row',
                       alignItems: 'center',
                       justifyContent: 'space-between',
-                      borderTopColor: theme.color.separatorExtraLight,
-                      borderTopWidth: 1,
-                      paddingTop: 16,
-                      marginTop: 16,
                     }}>
                     <Text>Display on Verida One profile</Text>
                     <Switch
@@ -317,7 +376,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                         false: '#767577',
                         true: theme.color.success,
                       }}
-                      ios_backgroundColor='#3e3e3e'
+                      ios_backgroundColor='#131313'
                       onValueChange={(value) => {
                         setPublicAddress(walletAddress, value)
                       }}
@@ -357,6 +416,7 @@ const createStyles = (theme: Theme) =>
       color: theme.color.onBackground,
       opacity: 0.4,
       fontSize: theme.fontSize.s,
+      marginBottom: theme.spacing.xl,
     },
     sectionHeader: {
       color: theme.color.onBackground,
@@ -387,5 +447,9 @@ const createStyles = (theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: Dimensions.get('window').height * 0.8,
+    },
+    veridaWalletName: {
+      fontSize: theme.fontSize.s,
+      color: theme.color.textLightGrey,
     },
   })
