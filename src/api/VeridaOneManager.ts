@@ -68,6 +68,9 @@ export default class VeridaOneManager {
   static async saveProfile(profile: VeridaOneProfile) {
     const datastore = await VeridaOneManager.getDatastore()
     const result = await datastore.save(profile)
+    if (!result) {
+      console.log(datastore.errors)
+    }
     console.log(result)
     const db = await datastore.getDb()
     const info = await db.info()

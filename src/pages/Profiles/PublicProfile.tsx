@@ -76,7 +76,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   function getPublicName(address: string) {
     // TODO: find name in public profile data
-    return null
+    return address
   }
 
   function findChainFromChainId(chainId: string) {
@@ -92,7 +92,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const walletAddresses = useMemo<PublicAddress[]>(() => {
     return Object.keys(wallets).reduce((acc, key) => {
       const wallet = wallets[key]
-      const accounts = Object.keys(wallet.accounts).map((accountKey) => {
+      const accounts = Object.keys(wallet.accounts).map((accountKey, index) => {
         const account = wallet.accounts[accountKey as CaipWalletType]
         const chain = findChainFromChainId(accountKey) as any
         return {
@@ -104,6 +104,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           veridaWalletName: wallet.label,
           visible: isVisible(account.address),
           icon: chain?.icon,
+          order: index,
         }
       })
 
