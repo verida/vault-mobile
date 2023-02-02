@@ -194,7 +194,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       setPublicWalletAddresses(oneProfile.walletAddresses)
     } catch (e) {
       Sentry.captureException(e)
-      Alert.alert('Error', 'Cannot load Verida One profile data')
+      Alert.alert('Error', 'Cannot load Verida profile data')
     }
   }
 
@@ -229,7 +229,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   }, [])
 
   return (
-    <Screen backgroundGrey withLoadingView showLoading={saving}>
+    <Screen
+      backgroundGrey
+      loadingOverlayColorLight
+      withLoadingView
+      showLoading={saving}>
       <NavigationHeader title='Profile' left={{ icon: null }} />
       {loading ? (
         <View style={styles.loadingContainer}>

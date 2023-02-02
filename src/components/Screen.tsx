@@ -28,7 +28,8 @@ interface ScreenProps {
   navBar?: ReactNode
   safeAreaViewProps?: SafeAreaViewProps
   containerStyle?: ViewStyle
-  backgroundGrey?: boolean
+  backgroundGrey: boolean
+  loadingOverlayColorLight: boolean
 }
 
 const Screen = (props: ScreenProps) => {
@@ -41,6 +42,7 @@ const Screen = (props: ScreenProps) => {
     safeAreaViewProps,
     containerStyle,
     backgroundGrey,
+    loadingOverlayColorLight,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
@@ -104,7 +106,12 @@ const Screen = (props: ScreenProps) => {
                 <Animated.View
                   style={[
                     styles.loadingView,
-                    { opacity: fadeInAnimRef.current },
+                    {
+                      opacity: fadeInAnimRef.current,
+                      backgroundColor: loadingOverlayColorLight
+                        ? theme.color.overlayLight
+                        : theme.color.overlay,
+                    },
                   ]}>
                   <LoadingView />
                 </Animated.View>
@@ -143,7 +150,7 @@ const createStyles = (theme: Theme) => {
       ...StyleSheet.absoluteFillObject,
       alignItems: 'center',
       justifyContent: 'center',
-      backgroundColor: theme.color.overlay,
+      backgroundColor: theme.color.overlayLight,
     },
     loadingIndicatorStyle: {
       width: 140,
@@ -156,6 +163,7 @@ Screen.defaultProps = {
   withLoadingView: false,
   withKeyboardAvoidingView: false,
   backgroundGrey: false,
+  loadingOverlayColorLight: false,
 }
 
 export default Screen
