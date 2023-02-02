@@ -190,7 +190,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const fetchData = async () => {
     try {
-      setQuickFetching(true)
+      !loading && setQuickFetching(true)
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
