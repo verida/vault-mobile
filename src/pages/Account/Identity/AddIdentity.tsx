@@ -1,26 +1,13 @@
-import {
-  StackActions,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import {
-  Alert,
-  BackHandler,
-  Image,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
-import { RadialGradient } from 'react-native-gradients'
+import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
-import IdentityCard from 'assets/identity-card.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { FormInput } from 'components/Input/FormInput'
@@ -28,12 +15,9 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
-import TCCheckbox from 'components/TCCheckbox'
-import { Caption } from 'components/Typography/Caption'
 import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
-import { Text } from 'components/Typography/Text'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'

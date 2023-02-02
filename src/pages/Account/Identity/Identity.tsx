@@ -1,21 +1,12 @@
-import {
-  StackActions,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native'
+import { StackActions, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import isEmpty from 'lodash/isEmpty'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Alert, BackHandler, Image, StyleSheet, View } from 'react-native'
+import React, { useState } from 'react'
+import { Image, StyleSheet, View } from 'react-native'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import PagerView from 'react-native-pager-view'
 
-import AccountManager from 'api/AccountManager'
-import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
-import { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import TCCheckbox from 'components/TCCheckbox'
 import { Headline } from 'components/Typography/Headline'
@@ -79,7 +70,7 @@ const Identity = () => {
           disabled={!agreedTC}
           style={styles.actionButton}
           onPress={() => {
-            navigation.navigate('AddIdentity', {})
+            navigation.navigate('AddIdentity', { mode: params.mode })
           }}>
           Create Identity
         </Button>
