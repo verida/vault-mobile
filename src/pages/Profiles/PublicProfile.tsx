@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { editable } from 'helpers/profile'
 // import { editable } from 'helpers/profile'
 import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
@@ -63,7 +64,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     PublicAddress[]
-  >(publicProfile.walletAddresses || [])
+  >([])
 
   function isVisible(address: string) {
     return (
@@ -154,7 +155,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       await VeridaOneManager.setWalletAddresses([...walletAddresses])
       setSaving(false)
       console.log('Verida one upated')
-    }, 1000),
+    }, 500),
     []
   )
 
@@ -176,9 +177,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
       setList(updatedList)
 
+      // Fetch Verida One Profile
       const oneProfile = await VeridaOneManager.getProfile()
-      console.log('VeridaOneProfile', oneProfile)
+      console.log('Fetched VeridaOneProfile', oneProfile)
       setVeridaOneProfile(oneProfile)
+      setPublicWalletAddresses(walletAddresses)
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
@@ -223,18 +226,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <LoadingView />
         </View>
       ) : (
-        // <ProfileLayout
-        //   list={editable(list)}
-        //   publicProfile={publicProfile}
-        //   description={'This profile is public and can be discovered by others'}
-        // />
-
         <ScrollView
           contentContainerStyle={{
             padding: 16,
           }}>
           <ProfileImageLoader />
-
           <View style={styles.oneProfileLinkContainer}>
             <Image
               style={{
@@ -247,7 +243,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           </View>
           <View>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
-            <PropertyList list={list} />
+            <PropertyList list={editable(list)} />
           </View>
           <Text style={styles.description}>
             This information is always visible on your Verida One page
