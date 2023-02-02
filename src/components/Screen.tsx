@@ -96,19 +96,19 @@ const Screen = (props: ScreenProps) => {
           </SafeAreaView>
         )}>
         <ConditionalWrap
-          condition={
-            withLoadingView && (showLoading || !completeHideLoadingView)
-          }
+          condition={withLoadingView}
           wrap={(children) => (
             <>
               {children}
-              <Animated.View
-                style={[
-                  styles.loadingView,
-                  { opacity: fadeInAnimRef.current },
-                ]}>
-                <LoadingView />
-              </Animated.View>
+              {(showLoading || !completeHideLoadingView) && (
+                <Animated.View
+                  style={[
+                    styles.loadingView,
+                    { opacity: fadeInAnimRef.current },
+                  ]}>
+                  <LoadingView />
+                </Animated.View>
+              )}
             </>
           )}>
           <StatusBar barStyle='dark-content' translucent />
