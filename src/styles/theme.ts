@@ -10,6 +10,7 @@ import {
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SHADOW_LIGHT_GREY,
+  SNOW_COLOR,
   SUCCESS_COLOR,
   TEXT_COLOR,
   TEXT_GREY_100,
@@ -41,6 +42,7 @@ export const defaultTheme = {
     separator: SEPARATOR,
     separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
     icon: TEXT_COLOR,
+    snow: SNOW_COLOR,
 
     veridaGreen: VERIDA_COLOR,
 

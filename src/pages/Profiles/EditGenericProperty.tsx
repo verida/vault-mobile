@@ -14,6 +14,8 @@ import {
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import useParams from 'hooks/useParams'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
@@ -24,7 +26,7 @@ import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 const MAX_TEXTAREA_LENGTH = 255
-const MAX_INPUT_LENGTH = 20
+const MAX_INPUT_LENGTH = 140
 
 export interface GenericEditPropertyScreenProps {
   screenName: string
@@ -33,6 +35,8 @@ export interface GenericEditPropertyScreenProps {
     label: string
     value: string | Record<string, any>
     type: 'input' | 'select' | 'textarea'
+    placeholder: string
+    description: string
   }
   originalValue: any
   mode: string
@@ -50,6 +54,7 @@ const EditGenericProperty = () => {
   const navigation = useNavigation()
   const params = useParams<GenericEditPropertyScreenProps>()
   const { screenName, title, option, mode, originalValue } = params
+  const styles = useThemeAwareStyle(createStyles)
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState<string | ValueObject>(
@@ -104,13 +109,14 @@ const EditGenericProperty = () => {
             <Label>{option.label}</Label>
             {option.type === 'input' && (
               <TextInput
-                placeholder={`Enter the ${option.label}`}
+                placeholder={option.placeholder}
                 style={[
                   InputStyles.input,
                   inputError.isExceededMaxLength && styles.inputValidation,
                 ]}
                 value={edited as string}
                 autoFocus={true}
+                placeholderTextColor='rgba(4, 17, 51, 0.3)'
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
                   handleInput(text, MAX_INPUT_LENGTH)
@@ -153,9 +159,12 @@ const EditGenericProperty = () => {
                   characters
                 </Text>
               )}
+            <Text style={[styles.description]}>{option.description}</Text>
           </View>
-          <Button disabled={disabled} onPress={saveValue}>
-            Save Changes
+          <Button
+            disabled={disabled || (edited as string).length === 0}
+            onPress={saveValue}>
+            Save
           </Button>
         </Content>
       </KeyboardAvoidingView>
@@ -165,15 +174,21 @@ const EditGenericProperty = () => {
 
 export default EditGenericProperty
 
-const styles = StyleSheet.create({
-  inputValidation: {
-    borderColor: DECLINE_COLOR,
-  },
-  inputText: {
-    fontFamily: NUNITO_SANS,
-    color: DECLINE_COLOR,
-    fontStyle: 'italic',
-    fontSize: 12,
-    marginVertical: 4,
-  },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    inputValidation: {
+      borderColor: DECLINE_COLOR,
+    },
+    inputText: {
+      fontFamily: NUNITO_SANS,
+      color: DECLINE_COLOR,
+      fontStyle: 'italic',
+      fontSize: 12,
+      marginVertical: 4,
+    },
+    description: {
+      marginVertical: theme.spacing.xs,
+      color: theme.color.textLightGrey,
+      fontSize: theme.fontSize.s,
+    },
+  })

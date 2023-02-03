@@ -10,7 +10,6 @@ import {
   ScrollView,
   StyleSheet,
   Switch,
-  Text,
   View,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
@@ -29,6 +28,7 @@ import PropertyList from 'components/PropertyList'
 import Screen from 'components/Screen'
 import { CaipWalletType, VeridaWallet } from 'components/types/wallet'
 import { SubHeadline } from 'components/Typography/SubHeadline'
+import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
@@ -190,7 +190,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const fetchData = async () => {
     try {
-      !loading && setQuickFetching(true)
+      setQuickFetching(true)
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
@@ -295,7 +295,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       backgroundGrey
       loadingOverlayColorLight
       withLoadingView
-      showLoading={quickFetching}>
+      showLoading={!loading && quickFetching}>
       <NavigationHeader title='Profile' left={{ icon: null } as any} />
       {loading ? (
         <View style={styles.loadingContainer}>
@@ -348,7 +348,14 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             return (
               <View
                 key={walletAddress.address}
-                style={styles.walletItemContainer}>
+                style={[
+                  styles.walletItemContainer,
+                  {
+                    backgroundColor: walletAddress.visible
+                      ? theme.color.background
+                      : theme.color.snow,
+                  },
+                ]}>
                 <View style={{ flex: 1 }}>
                   <View
                     style={{
@@ -376,7 +383,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                               ? theme.color.onBackground
                               : theme.color.textLightGrey,
                           }}>
-                          {walletAddress.label || 'Public title'}
+                          {walletAddress.label || 'Public label'}
                         </SubHeadline>
                         <View
                           style={{
@@ -398,7 +405,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                         </View>
                       </View>
                     </View>
-
                     <Button
                       color={'transparent'}
                       disabled={!walletAddress.visible}
@@ -415,11 +421,14 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                           : () => {
                               navigation.navigate('EditGenericProperty', {
                                 screenName: 'PublicProfile',
-                                title: 'Wallet Name',
+                                title: 'Public label',
                                 option: {
-                                  label: 'Wallet Name',
+                                  label: 'Address public label',
                                   type: 'input',
                                   value: walletAddress.label,
+                                  placeholder: 'Enter the label',
+                                  description:
+                                    'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
                                 },
                                 mode: 'EditWalletName',
                                 originalValue: walletAddress,
@@ -528,7 +537,6 @@ const createStyles = (theme: Theme) =>
       minHeight: Dimensions.get('window').height * 0.8,
     },
     veridaWalletName: {
-      fontSize: theme.fontSize.s,
       color: theme.color.textLightGrey,
     },
   })
