@@ -116,7 +116,12 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   }
 
   function getChainId(chainData: any) {
-    return `${chainData.namespace}:${chainData.reference}`
+    // FIXME: Remove this hack of trimming the Algorand chain ID reference to make it follow the CAIP address rule
+    let chainRef = chainData.reference
+    if (chainData.namespace === 'algorand') {
+      chainRef = chainRef.substring(0, 32)
+    }
+    return `${chainData.namespace}:${chainRef}`
   }
 
   const walletAddresses = useMemo(() => {
