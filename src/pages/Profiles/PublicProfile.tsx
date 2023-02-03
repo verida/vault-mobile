@@ -1,7 +1,14 @@
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
-import { editable } from 'helpers/profile'
+import { LinearGradient } from 'expo-linear-gradient'
+import {
+  checkVeridaOneInviteCode,
+  editable,
+  isEnabledVeridaOneProfile,
+  saveStatusEnabledVeridaOneProfile,
+  VERIDA_ONE_INVITE_CODE,
+} from 'helpers/profile'
 import { debounce } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
@@ -27,6 +34,7 @@ import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import Screen from 'components/Screen'
 import { CaipWalletType, VeridaWallet } from 'components/types/wallet'
+import { Headline } from 'components/Typography/Headline'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
@@ -49,6 +57,7 @@ interface PublicAddress {
 
 enum EditMode {
   EditWalletPublicLabel,
+  EnterInvitationCode,
 }
 
 const ScreenName = 'PublicProfile'
@@ -82,6 +91,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     PublicAddress[]
   >([])
+
+  const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
 
   function isVisible(address: string, chainId: string) {
     return (
@@ -230,8 +241,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     'SAVE_GENERIC_PROPERTY',
     (payload) => {
       if (payload.screenName !== ScreenName) return
-
-      if ((payload.mode as EditMode) === EditMode.EditWalletPublicLabel) {
+      const mode = payload.mode as EditMode
+      if (mode === EditMode.EditWalletPublicLabel) {
         // Save wallet name
         const theWallet = payload.originalValue as PublicAddress
         const publicWallet = getPublicWalletAddressObject(
@@ -263,6 +274,12 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
         setPublicWalletAddresses(updatedPublicWalletAddresses)
         debounceSaveProfile(updatedPublicWalletAddresses)
+      } else if (mode === EditMode.EnterInvitationCode) {
+        const inputCode = payload.value
+        if (checkVeridaOneInviteCode(inputCode)) {
+          setEnabledVeridaOne(true)
+          saveStatusEnabledVeridaOneProfile(true)
+        }
       }
     },
     [publicWalletAddresses]
@@ -271,10 +288,15 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   // component did mount
   useEffect(() => {
     setLoading(true)
+
+    // Check Verida enabbled status
+    ;(async () => {
+      setEnabledVeridaOne(await isEnabledVeridaOneProfile())
+    })()
+
     Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
       setLoading(false)
     })
-
     let listener: any
     const watchChanges = async () => {
       const vault = AccountManager.getInstance().vault as any
@@ -334,156 +356,211 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <Text style={styles.description}>
             This information is always visible on your Verida One page
           </Text>
-          <View
-            style={{
-              flexDirection: 'row',
-              flex: 1,
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}>
-            <Text style={styles.sectionHeader}>WALLET ADDRESS</Text>
-            <Button
-              textStyle={{
-                fontSize: theme.fontSize.m,
-                marginBottom: theme.spacing.s,
-              }}
-              color='transparent-link'
-              onPress={() => navigation.navigate('ManageWallets')}>
-              ADD NEW
-            </Button>
-          </View>
-          {walletAddresses.map(
-            (walletAddress: PublicAddress, index: number) => {
-              return (
-                <View
-                  key={`${index}-${walletAddress.address}`}
-                  style={[
-                    styles.walletItemContainer,
-                    {
-                      backgroundColor: walletAddress.visible
-                        ? theme.color.background
-                        : theme.color.snow,
-                    },
-                  ]}>
-                  <View style={{ flex: 1 }}>
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        justifyContent: 'space-between',
-                      }}>
+          <View>
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.sectionHeader}>WALLET ADDRESS</Text>
+              <Button
+                textStyle={{
+                  fontSize: theme.fontSize.m,
+                  marginBottom: theme.spacing.s,
+                }}
+                color='transparent-link'
+                onPress={() => navigation.navigate('ManageWallets')}>
+                ADD NEW
+              </Button>
+            </View>
+            {walletAddresses.map(
+              (walletAddress: PublicAddress, index: number) => {
+                return (
+                  <View
+                    key={`${index}-${walletAddress.address}`}
+                    style={[
+                      styles.walletItemContainer,
+                      {
+                        backgroundColor: walletAddress.visible
+                          ? theme.color.background
+                          : theme.color.snow,
+                      },
+                    ]}>
+                    <View style={{ flex: 1 }}>
                       <View
                         style={{
                           flex: 1,
                           flexDirection: 'row',
+                          justifyContent: 'space-between',
                         }}>
-                        <FastImage
-                          source={{ uri: walletAddress.icon }}
-                          style={{ width: 48, height: 48 }}
-                          resizeMode='contain'
-                        />
-                        <View style={{ marginLeft: theme.spacing.m }}>
-                          <SubHeadline
-                            ellipsizeMode='tail'
-                            numberOfLines={2}
-                            style={{
-                              maxWidth: 200,
-                              color: walletAddress.label
-                                ? theme.color.onBackground
-                                : theme.color.textLightGrey,
-                            }}>
-                            {walletAddress.label || 'Public label'}
-                          </SubHeadline>
-                          <View
-                            style={{
-                              flexDirection: 'row',
-                              alignItems: 'center',
-                            }}>
-                            <Text
-                              ellipsizeMode='middle'
-                              numberOfLines={1}
+                        <View
+                          style={{
+                            flex: 1,
+                            flexDirection: 'row',
+                          }}>
+                          <FastImage
+                            source={{ uri: walletAddress.icon }}
+                            style={{ width: 48, height: 48 }}
+                            resizeMode='contain'
+                          />
+                          <View style={{ marginLeft: theme.spacing.m }}>
+                            <SubHeadline
+                              ellipsizeMode='tail'
+                              numberOfLines={2}
                               style={{
-                                maxWidth: 100,
-                                marginRight: theme.spacing.xs,
+                                maxWidth: 200,
+                                color: walletAddress.label
+                                  ? theme.color.onBackground
+                                  : theme.color.textLightGrey,
                               }}>
-                              {walletAddress.address}
-                            </Text>
-                            <Text style={styles.veridaWalletName}>
-                              {walletAddress.veridaWalletName}
-                            </Text>
+                              {walletAddress.label || 'Public label'}
+                            </SubHeadline>
+                            <View
+                              style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                              }}>
+                              <Text
+                                ellipsizeMode='middle'
+                                numberOfLines={1}
+                                style={{
+                                  maxWidth: 100,
+                                  marginRight: theme.spacing.xs,
+                                }}>
+                                {walletAddress.address}
+                              </Text>
+                              <Text style={styles.veridaWalletName}>
+                                {walletAddress.veridaWalletName}
+                              </Text>
+                            </View>
                           </View>
                         </View>
+                        <Button
+                          color={'transparent'}
+                          disabled={!walletAddress.visible}
+                          style={{
+                            width: 40,
+                            height: 40,
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            backgroundColor: 'lightGrey',
+                          }}
+                          onPress={
+                            !walletAddress.visible
+                              ? null
+                              : () => {
+                                  navigation.navigate('EditGenericProperty', {
+                                    screenName: ScreenName,
+                                    title: 'Public Label',
+                                    option: {
+                                      label: 'Address public label',
+                                      type: 'input',
+                                      value: walletAddress.label,
+                                      placeholder: 'Enter the label',
+                                      description:
+                                        'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
+                                    },
+                                    mode: EditMode.EditWalletPublicLabel,
+                                    originalValue: walletAddress,
+                                  })
+                                }
+                          }>
+                          {/* Add a wrapped view so on click behavior fixed */}
+                          <View>
+                            <EditIcon />
+                          </View>
+                        </Button>
                       </View>
-                      <Button
-                        color={'transparent'}
-                        disabled={!walletAddress.visible}
+                      <View
                         style={{
-                          width: 40,
-                          height: 40,
-                          alignItems: 'center',
-                          justifyContent: 'center',
-                          backgroundColor: 'lightGrey',
+                          marginVertical: theme.spacing.s,
+                          borderWidth: StyleSheet.hairlineWidth,
+                          borderColor: theme.color.separatorExtraLight,
                         }}
-                        onPress={
-                          !walletAddress.visible
-                            ? null
-                            : () => {
-                                navigation.navigate('EditGenericProperty', {
-                                  screenName: ScreenName,
-                                  title: 'Public label',
-                                  option: {
-                                    label: 'Address public label',
-                                    type: 'input',
-                                    value: walletAddress.label,
-                                    placeholder: 'Enter the label',
-                                    description:
-                                      'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
-                                  },
-                                  mode: EditMode.EditWalletPublicLabel,
-                                  originalValue: walletAddress,
-                                })
-                              }
-                        }>
-                        <EditIcon />
-                      </Button>
-                    </View>
-                    <View
-                      style={{
-                        marginVertical: theme.spacing.s,
-                        borderWidth: StyleSheet.hairlineWidth,
-                        borderColor: theme.color.separatorExtraLight,
-                      }}
-                    />
-                    <View
-                      style={{
-                        flex: 1,
-                        flexDirection: 'row',
-                        alignItems: 'center',
-                        justifyContent: 'space-between',
-                      }}>
-                      <Text>Display on Verida One profile</Text>
-                      <Switch
-                        trackColor={{
-                          false: theme.color.switchFalseState,
-                          true: theme.color.success,
-                        }}
-                        ios_backgroundColor={theme.color.switchIOSBg}
-                        onValueChange={(value) => {
-                          setPublicAddress(walletAddress, value)
-                        }}
-                        value={walletAddress.visible}
                       />
+                      <View
+                        style={{
+                          flex: 1,
+                          flexDirection: 'row',
+                          alignItems: 'center',
+                          justifyContent: 'space-between',
+                        }}>
+                        <Text>Display on Verida One profile</Text>
+                        <Switch
+                          trackColor={{
+                            false: theme.color.switchFalseState,
+                            true: theme.color.success,
+                          }}
+                          ios_backgroundColor={theme.color.switchIOSBg}
+                          onValueChange={(value) => {
+                            setPublicAddress(walletAddress, value)
+                          }}
+                          value={walletAddress.visible}
+                        />
+                      </View>
                     </View>
                   </View>
-                </View>
-              )
-            }
-          )}
-          <Text style={[styles.description, { marginVertical: 0 }]}>
-            On your Verida One page we show your wallet addresses with their
-            public titles and the assets related to them (collectibles, badges,
-            etc)
-          </Text>
+                )
+              }
+            )}
+            <Text style={[styles.description, { marginVertical: 0 }]}>
+              On your Verida One page we show your wallet addresses with their
+              public titles and the assets related to them (collectibles,
+              badges, etc)
+            </Text>
+
+            {!enabledVeridaOne && (
+              <View style={styles.overlayContent}>
+                <LinearGradient
+                  style={{ ...styles.overlayContent }}
+                  colors={['rgba(255, 255, 255, 0.2)', '#FFFFFF', '#FFFFFF']}
+                  start={{ y: 0, x: 0.5 }}
+                  end={{ y: 0.15, x: 0.5 }}
+                />
+                <Headline style={{ marginTop: 80, fontSize: 28 }}>
+                  Get Access to Verida One
+                </Headline>
+                <Text
+                  style={{ textAlign: 'center', marginTop: theme.spacing.sm }}>
+                  Claim your username or enter an invitation code to get access
+                  to your Verida One profile
+                </Text>
+                <Text
+                  style={{
+                    marginTop: theme.spacing.l,
+                    color: theme.color.textLightGrey,
+                  }}>
+                  OR
+                </Text>
+                <Button
+                  style={{ width: '100%', marginTop: theme.spacing.sm }}
+                  onPress={() => {
+                    navigation.navigate('EditGenericProperty', {
+                      screenName: ScreenName,
+                      title: 'Invitation Code',
+                      option: {
+                        label: 'Invitation code',
+                        type: 'input',
+                        value: '',
+                        placeholder: 'Enter your code',
+                        description: '',
+                      },
+                      mode: EditMode.EnterInvitationCode,
+                      originalValue: null,
+                      submitButtonLabel: 'Submit',
+                      verification: {
+                        expectedValue: VERIDA_ONE_INVITE_CODE,
+                        errorMessage: 'Wrong code, please try again later.',
+                      },
+                    })
+                  }}>
+                  Enter Invitation Code
+                </Button>
+              </View>
+            )}
+          </View>
         </ScrollView>
       )}
     </Screen>
@@ -548,5 +625,11 @@ const createStyles = (theme: Theme) =>
     },
     veridaWalletName: {
       color: theme.color.textLightGrey,
+    },
+    overlayContent: {
+      ...StyleSheet.absoluteFillObject,
+      marginHorizontal: -theme.spacing.m,
+      alignItems: 'center',
+      paddingHorizontal: theme.spacing.m,
     },
   })

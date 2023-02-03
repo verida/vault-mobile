@@ -11,6 +11,7 @@ import {
   TextInput,
   View,
 } from 'react-native'
+import Snackbar from 'react-native-snackbar'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import useParams from 'hooks/useParams'
@@ -36,10 +37,15 @@ export interface GenericEditPropertyScreenProps {
     value: string | Record<string, any>
     type: 'input' | 'select' | 'textarea'
     placeholder: string
-    description: string
+    description?: string
   }
   originalValue: any
   mode: string | number
+  submitButtonLabel?: string
+  verification?: {
+    expectedValue: string
+    errorMessage: 'Wrong code, please try again later.'
+  }
 }
 
 type ValueObject = {
@@ -53,7 +59,15 @@ type ValueObject = {
 const EditGenericProperty = () => {
   const navigation = useNavigation()
   const params = useParams<GenericEditPropertyScreenProps>()
-  const { screenName, title, option, mode, originalValue } = params
+  const {
+    screenName,
+    title,
+    option,
+    mode,
+    originalValue,
+    submitButtonLabel = 'Save',
+    verification,
+  } = params
   const styles = useThemeAwareStyle(createStyles)
 
   const [disabled, setDisabled] = useState(false)
@@ -70,6 +84,18 @@ const EditGenericProperty = () => {
     try {
       const val = (((edited as ValueObject)?.value || edited) as string).trim()
       setDisabled(true)
+
+      // Allow to retry
+      if (verification && verification.expectedValue !== val) {
+        Snackbar.show({
+          text: verification.errorMessage,
+          duration: Snackbar.LENGTH_SHORT,
+        })
+        setDisabled(false)
+
+        return
+      }
+
       emitter.emit('SAVE_GENERIC_PROPERTY', {
         screenName,
         title,
@@ -159,12 +185,14 @@ const EditGenericProperty = () => {
                   characters
                 </Text>
               )}
-            <Text style={[styles.description]}>{option.description}</Text>
+            {Boolean(option.description) && (
+              <Text style={[styles.description]}>{option.description}</Text>
+            )}
           </View>
           <Button
             disabled={disabled || (edited as string).length === 0}
             onPress={saveValue}>
-            Save
+            {submitButtonLabel}
           </Button>
         </Content>
       </KeyboardAvoidingView>
