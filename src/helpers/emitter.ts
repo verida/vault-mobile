@@ -6,7 +6,7 @@ export type EmitterTypes = {
     title: string
     value: any
     originalValue: any
-    mode: string
+    mode: string | number
   }
 }
 

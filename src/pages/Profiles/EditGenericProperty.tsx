@@ -39,7 +39,7 @@ export interface GenericEditPropertyScreenProps {
     description: string
   }
   originalValue: any
-  mode: string
+  mode: string | number
 }
 
 type ValueObject = {
