@@ -525,20 +525,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                   end={{ y: 0.15, x: 0.5 }}
                 />
                 <Headline style={{ marginTop: 80, fontSize: 28 }}>
-                  Get Access to Verida One
+                  Unlock Verida One
                 </Headline>
-                <Text
-                  style={{ textAlign: 'center', marginTop: theme.spacing.sm }}>
-                  Claim your username or enter an invitation code to get access
-                  to your Verida One profile
-                </Text>
-                <Text
-                  style={{
-                    marginTop: theme.spacing.l,
-                    color: theme.color.textLightGrey,
-                  }}>
-                  OR
-                </Text>
                 <Button
                   style={{ width: '100%', marginTop: theme.spacing.sm }}
                   onPress={() => {

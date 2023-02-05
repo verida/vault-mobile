@@ -240,11 +240,11 @@ const AddIdentity = () => {
               contentContainerStyle={styles.scrollViewContainer}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'>
-              <Headline style={styles.title}>Name(1/2)</Headline>
+              <Headline style={styles.title}>Public Name (1/2)</Headline>
               <Spacer vertical='xxl' />
               <Paragraph>
-                Your public name can be used by applications you are connecting
-                with. Use whatever you like and change it when you want.
+                A public name visible to other users and applications. You can
+                change this anytime.
               </Paragraph>
               <Spacer vertical='xxl' />
               <FormInput
@@ -255,7 +255,7 @@ const AddIdentity = () => {
                 value={profile.name}
               />
               <Label style={{ marginTop: 2 }}>
-                Your name is required and public
+                Your public name is required and public
               </Label>
               {enabledClaimUsername && (
                 <>
@@ -297,8 +297,8 @@ const AddIdentity = () => {
               <Headline style={styles.title}>Data Region (2/2)</Headline>
               <Spacer vertical='xxl' />
               <Paragraph>
-                {'Your personal data is encrypted and stored on a network of decentralized servers.\n' +
-                  'Select your country to determine the default servers that store your encrypted personal data. You can change both your country and the data regions later.'}
+                {'Select your country to determine the default servers that store your encrypted personal data.\n' +
+                  'You can change both your country and the data regions later.'}
               </Paragraph>
               <Spacer vertical='xxl' />
               <Label>Country</Label>
@@ -312,9 +312,6 @@ const AddIdentity = () => {
                 containerStyle={InputStyles.select}
                 onChangeItem={onCountryChange}
               />
-              <Label style={{ marginTop: 2 }}>
-                Your country is optional and public
-              </Label>
             </ScrollView>
           </View>
           <View key='confirmation' style={styles.landing}>
