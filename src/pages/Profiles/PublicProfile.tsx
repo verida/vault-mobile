@@ -294,7 +294,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   useEffect(() => {
     setLoading(true)
 
-    // Check Verida enabbled status
+    // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
     })()

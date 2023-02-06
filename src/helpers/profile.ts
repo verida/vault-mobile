@@ -15,7 +15,7 @@ export const VERIDA_ONE_INVITE_CODE = 'veridaonealpha'
 const VERIDA_ONE_INVITE_STORAGE_KEY = 'veridaOneInviteStatus'
 const VERIDA_ONE_ENABLED_VALUE = 'veridaOneEnabled'
 export const checkVeridaOneInviteCode = (inputCode: string) =>
-  inputCode === VERIDA_ONE_INVITE_CODE
+  inputCode?.trim().toLowerCase() === VERIDA_ONE_INVITE_CODE.toLowerCase()
 
 export const isEnabledVeridaOneProfile = async () => {
   try {

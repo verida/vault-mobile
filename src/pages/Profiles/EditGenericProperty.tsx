@@ -86,7 +86,10 @@ const EditGenericProperty = () => {
       setDisabled(true)
 
       // Allow to retry
-      if (verification && verification.expectedValue !== val) {
+      if (
+        verification &&
+        verification.expectedValue.toLowerCase() !== val?.trim().toLowerCase()
+      ) {
         Snackbar.show({
           text: verification.errorMessage,
           duration: Snackbar.LENGTH_SHORT,
@@ -142,6 +145,8 @@ const EditGenericProperty = () => {
                 ]}
                 value={edited as string}
                 autoFocus={true}
+                autoCapitalize='none'
+                autoCorrect={false}
                 placeholderTextColor='rgba(4, 17, 51, 0.3)'
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
