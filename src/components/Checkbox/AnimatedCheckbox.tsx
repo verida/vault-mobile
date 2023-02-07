@@ -30,6 +30,7 @@ const AnimatedCheckbox = (props: Props) => {
       }}>
       <TouchableOpacity
         onPress={onToggle}
+        disabled={!onToggle}
         hitSlop={{ top: 5, right: 10, bottom: 5, left: 10 }}>
         <View
           style={{

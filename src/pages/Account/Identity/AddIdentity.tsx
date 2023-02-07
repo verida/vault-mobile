@@ -5,20 +5,15 @@ import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import { Icon } from 'native-base'
-import React, { useCallback, useMemo, useRef, useState } from 'react'
-import {
-  Alert,
-  BackHandler,
-  Dimensions,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
 import BlurCircle from 'assets/blur-circle.svg'
+import FailureCross from 'assets/failure_cross.svg'
+import SuccessTick from 'assets/success_tick.svg'
 import WarningIcon from 'assets/warning-icon.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
@@ -129,6 +124,10 @@ const AddIdentity = () => {
     }
   }>()
 
+  useEffect(() => {
+    console.log('confirmationState', JSON.stringify(confirmationState, null, 2))
+  }, [confirmationState])
+
   const [profile, setProfile] = useState<{
     name: string
     username: string
@@ -186,14 +185,7 @@ const AddIdentity = () => {
       default:
         return {}
     }
-  }, [
-    confirmationState?.state?.CreateIdentifier,
-    confirmationState?.state?.CreateProfile,
-    confirmationState?.state?.StorageLocation,
-    currentPage,
-    profile.country,
-    profile.name,
-  ])
+  }, [confirmationState, currentPage, profile])
 
   const onCountryChange = (option: Option) => {
     setProfile((p) => ({ ...p, country: option.value }))
@@ -227,6 +219,7 @@ const AddIdentity = () => {
   }, [currentPage, navigation, processing, showRetry])
 
   const onRetry = useCallback(() => {
+    setConfirmationState({})
     createIdentifier()
   }, [createIdentifier])
 
@@ -383,13 +376,21 @@ const AddIdentity = () => {
                   justifyContent: 'center',
                   alignSelf: 'center',
                 }}>
-                <BlurCircle />
-                <LottieView
-                  source={require('assets/animations/dots-loader.json')}
-                  autoPlay
-                  loop
-                  style={styles.dotsLoader}
-                />
+                {processing ? (
+                  <>
+                    <BlurCircle />
+                    <LottieView
+                      source={require('assets/animations/dots-loader.json')}
+                      autoPlay
+                      loop
+                      style={styles.dotsLoader}
+                    />
+                  </>
+                ) : isDoneCreateAccount ? (
+                  <SuccessTick />
+                ) : (
+                  <FailureCross />
+                )}
               </View>
 
               <Headline
@@ -448,6 +449,7 @@ const AddIdentity = () => {
               <Spacer vertical='m' />
               <AnimatedCheckbox
                 checked={confirmationState?.state?.CreateProfile === 'Success'}
+                failed={confirmationState?.state?.CreateProfile === 'Failure'}
                 showLoading={
                   confirmationState?.state?.CreateProfile === 'Loading'
                 }
@@ -461,6 +463,7 @@ const AddIdentity = () => {
                 checked={
                   confirmationState?.state?.StorageLocation === 'Success'
                 }
+                failed={confirmationState?.state?.StorageLocation === 'Failure'}
                 showLoading={
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
@@ -491,7 +494,7 @@ const AddIdentity = () => {
                 onPress={onRetry}>
                 Retry
               </Button>
-            ) : !processing && isDoneCreateAccount ? (
+            ) : !processing ? (
               <View>
                 <View style={styles.seedPhraseRemindView}>
                   <WarningIcon />

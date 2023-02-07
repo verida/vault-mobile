@@ -12,7 +12,6 @@ import {
   Account,
   AddIdentityStepStatus,
   AddIdentityStepType,
-  NetworkNode,
   NormalizedAccounts,
   UserData,
 } from 'api/types'
@@ -413,9 +412,22 @@ class AccountManager extends EventEmitter {
     let connected = false
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
+
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
       const endpoints = await NodeSelector.selectEndpointUris(countryCode)
+
+      console.log(
+        'Create account',
+        JSON.stringify({ userData, country, countryCode, endpoints }, null, 2)
+      )
+
+      // updateProgress?.('CreateProfile', 'Failure')
+      updateProgress?.('CreateIdentifier', 'Failure')
+      updateProgress?.('StorageLocation', 'Failure')
+      updateProgress?.('CreateProfile', 'Failure')
+      // return {}
+      throw new Error('Stooped')
 
       // Endpoints to be used in account config
       const endpointUris = {
@@ -437,13 +449,16 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
+
       await this.connect(true, endpointUris)
+      connected = true
 
       updateProgress?.('CreateIdentifier', 'Success')
       updateProgress?.('StorageLocation', 'Success')
       updateProgress?.('CreateProfile', 'Loading')
 
-      connected = true
+      console.log('Step 1')
+
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
         100000
@@ -453,20 +468,24 @@ class AccountManager extends EventEmitter {
         updateProgress?.('CreateProfile', 'Failure')
         throw new Error('Failed to set public profile')
       }
-      await this.setBackedupSeedPhraseConfig(false)
-      await this.setUserWallet()
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
       updateProgress?.('CreateProfile', 'Success')
 
+      await this.setBackedupSeedPhraseConfig(false)
+      await this.setUserWallet()
+
       return this.selectedAccount
     } catch (e) {
+      console.error('Error create account', e)
       // If the corrupted account is already connected, we need to remove it
       if (connected && this.selectedAccount) {
+        console.log('Log out incomplete DID')
         await this.logout([this.selectedAccount?.did])
       }
+      // updateProgress?.('CreateProfile', 'Failure')
       Sentry.captureException(e)
       throw e
     }
