@@ -1,16 +1,25 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import { Icon } from 'native-base'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  Alert,
+  BackHandler,
+  Dimensions,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
 import BlurCircle from 'assets/blur-circle.svg'
+import WarningIcon from 'assets/warning-icon.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { FormInput } from 'components/Input/FormInput'
@@ -18,7 +27,6 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
-import { Caption } from 'components/Typography/Caption'
 import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
@@ -44,7 +52,7 @@ const pageData = [
   {
     key: 'confirmation',
     hasNext: false,
-    hasBack: true,
+    hasBack: false,
   },
 ]
 
@@ -66,7 +74,7 @@ const AddIdentity = () => {
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
-  const [showCountryOnPublicProfile, setShowCountryOnPublicProfile] =
+  const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(false)
   function toggleCountryCheckbox() {
     setShowCountryOnPublicProfile((prevState) => !prevState)
@@ -77,6 +85,7 @@ const AddIdentity = () => {
     undefined
   )
   const [showRetry, setShowRetry] = useState(false)
+  const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
 
   const checkUsername = useCallback(async () => {
     // FIXME: Remove fake check-username availability request
@@ -133,14 +142,12 @@ const AddIdentity = () => {
   const createIdentifier = useCallback(async () => {
     try {
       setProcessing(true)
-
-      // TODO: remove fake request
-      // claimUsername()
+      setShowRetry(false)
 
       await AccountManager.getInstance().createAccount(
         {
-          name: profile.name,
-          country: profile?.country,
+          name: profile.name?.trim() ?? '',
+          country: showCountryInPublicProfile ? profile?.country : '',
           description: '',
         },
         profile?.country,
@@ -154,15 +161,12 @@ const AddIdentity = () => {
           }))
         }
       )
-
-      params.mode === AddIdentityMode.Add
-        ? navigation.goBack()
-        : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+      setDoneCreateAccount(true)
     } catch (error) {
       setShowRetry(true)
     }
     setProcessing(false)
-  }, [navigation, params.mode, profile?.country, profile.name])
+  }, [profile?.country, profile.name, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -171,15 +175,25 @@ const AddIdentity = () => {
           formValidated: !isEmpty(profile.name),
         }
       case PageType.Location:
-        return { formValidated: true }
+        return { formValidated: !isEmpty(profile.country) }
       case PageType.Confirmation:
         return {
-          formValidated: confirmationState?.state?.CreateProfile === 'Success',
+          formValidated:
+            confirmationState?.state?.CreateIdentifier === 'Success' &&
+            confirmationState?.state?.StorageLocation === 'Success' &&
+            confirmationState?.state?.CreateProfile === 'Success',
         }
       default:
         return {}
     }
-  }, [confirmationState?.state?.CreateProfile, currentPage, profile])
+  }, [
+    confirmationState?.state?.CreateIdentifier,
+    confirmationState?.state?.CreateProfile,
+    confirmationState?.state?.StorageLocation,
+    currentPage,
+    profile.country,
+    profile.name,
+  ])
 
   const onCountryChange = (option: Option) => {
     setProfile((p) => ({ ...p, country: option.value }))
@@ -189,10 +203,10 @@ const AddIdentity = () => {
     if (currentPage < numberOfPages - 1) {
       pagerRef.current?.setPage(currentPage + 1)
       setCurrentPage(currentPage + 1)
-      // if (currentPage === numberOfPages - 2) {
-      //   // navigate to last page and create identifier
-      //   createIdentifier()
-      // }
+      if (currentPage === PageType.Confirmation - 1) {
+        // navigate to last page and create identifier
+        createIdentifier()
+      }
     }
   }, [createIdentifier, currentPage])
 
@@ -212,6 +226,10 @@ const AddIdentity = () => {
     }
   }, [currentPage, navigation, processing, showRetry])
 
+  const onRetry = useCallback(() => {
+    createIdentifier()
+  }, [createIdentifier])
+
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -230,23 +248,25 @@ const AddIdentity = () => {
 
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
-      <NavigationHeader
-        title='Identity'
-        left={
-          pageData[currentPage].hasBack || showRetry
-            ? {
-                icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-                action: () => onBack(),
-              }
-            : ({} as any)
-        }
-      />
+      {currentPage !== PageType.Confirmation && (
+        <NavigationHeader
+          title='Identity'
+          left={
+            pageData[currentPage].hasBack || showRetry
+              ? {
+                  icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+                  action: () => onBack(),
+                }
+              : ({} as any)
+          }
+        />
+      )}
 
       <View style={styles.main}>
         <PagerView
           style={styles.pagerView}
           initialPage={currentPage}
-          // scrollEnabled={false}
+          scrollEnabled={false}
           onPageSelected={(event) => {
             setCurrentPage(event.nativeEvent.position)
           }}
@@ -337,7 +357,7 @@ const AddIdentity = () => {
               />
               <Spacer vertical='m' />
               <AnimatedCheckbox
-                checked={showCountryOnPublicProfile}
+                checked={showCountryInPublicProfile}
                 onToggle={toggleCountryCheckbox}
                 label='Show country in my public profile'
                 highlightColor={theme.color.success}
@@ -353,6 +373,7 @@ const AddIdentity = () => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
                 ...styles.contentPadding,
+                paddingTop: 0,
               }}>
               <View
                 style={{
@@ -453,24 +474,7 @@ const AddIdentity = () => {
         </PagerView>
 
         <View style={styles.bottomNavContainer}>
-          <Button
-            style={styles.nextButton}
-            disabled={!formValidated}
-            onPress={onNext}>
-            Next
-          </Button>
-        </View>
-
-        {/* <View style={styles.bottomNavContainer}>
-          {(pageData[currentPage].hasBack || showRetry) && (
-            <Button
-              color='transparent'
-              style={styles.backButton}
-              onPress={onBack}>
-              Back
-            </Button>
-          )}
-          {!showRetry && pageData[currentPage].hasNext && (
+          {currentPage !== PageType.Confirmation && (
             <Button
               style={styles.nextButton}
               disabled={!formValidated}
@@ -478,17 +482,43 @@ const AddIdentity = () => {
               Next
             </Button>
           )}
-          {showRetry && (
-            <Button
-              style={styles.retryButton}
-              onPress={() => {
-                setShowRetry(false)
-                createIdentifier()
-              }}>
-              Retry
-            </Button>
-          )}
-        </View> */}
+
+          {currentPage === PageType.Confirmation ? (
+            showRetry ? (
+              <Button
+                style={styles.retryButton}
+                disabled={formValidated}
+                onPress={onRetry}>
+                Retry
+              </Button>
+            ) : !processing && isDoneCreateAccount ? (
+              <View>
+                <View style={styles.seedPhraseRemindView}>
+                  <WarningIcon />
+                  <Text style={{ marginLeft: theme.spacing.s }}>
+                    Record your seed phrase to create a backup for your
+                    identity. You can do it later.
+                  </Text>
+                </View>
+                <Button
+                  style={styles.retryButton}
+                  color='transparent-border'
+                  onPress={() => navigation.navigate('SeedPhrase')}>
+                  Record Seed Phrase
+                </Button>
+                <Button
+                  style={styles.retryButton}
+                  onPress={() => {
+                    params.mode === AddIdentityMode.Add
+                      ? navigation.goBack()
+                      : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+                  }}>
+                  Done
+                </Button>
+              </View>
+            ) : null
+          ) : null}
+        </View>
       </View>
     </Screen>
   )
@@ -501,32 +531,20 @@ const creatStyles = (theme: Theme) => {
       backgroundColor: theme.color.surface,
     },
     bottomNavContainer: {
-      marginTop: theme.spacing.sm,
-      height: 48,
-      flexDirection: 'row',
       width: '100%',
       alignSelf: 'flex-end',
     },
-    actionButton: {
-      width: '100%',
-      alignSelf: 'center',
-    },
-    backButton: {
-      position: 'absolute',
-      left: theme.spacing.l,
-      paddingHorizontal: theme.spacing.l,
-    },
     nextButton: {
-      flex: 1,
+      height: 48,
       marginHorizontal: theme.spacing.m,
+      marginTop: theme.spacing.s,
+      marginBottom: 0,
     },
     retryButton: {
-      position: 'absolute',
-      right: 0,
-      paddingHorizontal: theme.spacing.l,
-      backgroundColor: theme.color.error,
-      borderColor: theme.color.error,
-      textcolor: theme.color.onError,
+      height: 48,
+      marginHorizontal: theme.spacing.m,
+      marginTop: theme.spacing.s,
+      marginBottom: 0,
     },
     landing: {
       flex: 1,
@@ -561,6 +579,17 @@ const creatStyles = (theme: Theme) => {
       width: 48,
       height: 48,
       position: 'absolute',
+    },
+    seedPhraseRemindView: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderColor: theme.color.warning,
+      backgroundColor: color.rgb(theme.color.warning).alpha(0.1).toString(),
+      borderWidth: 1,
+      borderRadius: 3,
+      paddingVertical: theme.spacing.s,
+      paddingHorizontal: theme.spacing.m,
+      marginHorizontal: theme.spacing.m,
     },
   })
 }
