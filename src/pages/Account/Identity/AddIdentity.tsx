@@ -249,7 +249,12 @@ const AddIdentity = () => {
             left={
               pageData[currentPage].hasBack || showRetry
                 ? {
-                    icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+                    icon: (
+                      <Icon
+                        name='arrow-back'
+                        style={{ color: theme.color.icon }}
+                      />
+                    ),
                     action: () => onBack(),
                   }
                 : ({} as any)
@@ -370,6 +375,7 @@ const AddIdentity = () => {
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey400}
+                textStyle={{ fontSize: theme.fontSize.m }}
               />
               {/* Add more space to alow scroll on showing the dropdown list */}
               <Spacer height={200} />

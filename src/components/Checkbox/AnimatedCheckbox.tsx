@@ -1,6 +1,12 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { ActivityIndicator, TouchableOpacity, View } from 'react-native'
+import {
+  ActivityIndicator,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { Text } from 'components/Typography/Text'
@@ -15,19 +21,32 @@ interface Props {
   loading?: boolean
   failed?: boolean
   label?: string
+  textStyle?: TextStyle
+  containerStyle?: ViewStyle
 }
 
 const AnimatedCheckbox = (props: Props) => {
-  const { showLoading, label, checked, onToggle, failed } = props
+  const {
+    showLoading,
+    label,
+    checked,
+    onToggle,
+    failed,
+    textStyle,
+    containerStyle,
+  } = props
   const { theme } = useTheme()
 
   return (
     <View
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
+      style={[
+        {
+          flex: 1,
+          flexDirection: 'row',
+          alignItems: 'center',
+        },
+        containerStyle,
+      ]}>
       <TouchableOpacity
         onPress={onToggle}
         disabled={!onToggle}
@@ -64,7 +83,9 @@ const AnimatedCheckbox = (props: Props) => {
       </TouchableOpacity>
       {label && (
         <>
-          <Text style={{ fontSize: theme.fontSize.l }}>{label}</Text>
+          <Text style={[{ fontSize: theme.fontSize.l }, textStyle]}>
+            {label}
+          </Text>
         </>
       )}
     </View>
