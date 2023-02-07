@@ -192,7 +192,10 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('Identity', { mode: AddIdentityMode.Add })
+      navigation.navigate('Identity', {
+        mode: AddIdentityMode.Add,
+        previousScreen: 'Dashboard',
+      })
     })
   }
 

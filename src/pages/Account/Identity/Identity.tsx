@@ -71,7 +71,7 @@ const Identity = () => {
           style={styles.actionButton}
           onPress={() => {
             navigation.dispatch(StackActions.pop(1))
-            navigation.navigate('AddIdentity', {})
+            navigation.navigate('AddIdentity', { ...params })
           }}>
           Create Identity
         </Button>
@@ -82,7 +82,7 @@ const Identity = () => {
             if (params.mode === AddIdentityMode.Add) {
               navigation.dispatch(StackActions.pop(1))
             }
-            navigation.navigate('SeedPhraseEntered')
+            navigation.navigate('SeedPhraseEntered', { ...params } as any)
           }}>
           <Paragraph style={styles.subTitle}>
             Already have a Verida Identity?

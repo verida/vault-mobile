@@ -1,11 +1,12 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import { Account } from '@verida/account'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import { Icon } from 'native-base'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
@@ -26,6 +27,7 @@ import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Text } from 'components/Typography/Text'
+import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from 'constants/profile'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
@@ -124,10 +126,6 @@ const AddIdentity = () => {
     }
   }>()
 
-  useEffect(() => {
-    console.log('confirmationState', JSON.stringify(confirmationState, null, 2))
-  }, [confirmationState])
-
   const [profile, setProfile] = useState<{
     name: string
     username: string
@@ -171,7 +169,9 @@ const AddIdentity = () => {
     switch (currentPage) {
       case PageType.Name:
         return {
-          formValidated: !isEmpty(profile.name),
+          formValidated:
+            !isEmpty(profile.name) &&
+            profile.name?.length <= PUBLIC_PROFILE_NAME_MAX_LENGTH,
         }
       case PageType.Location:
         return { formValidated: !isEmpty(profile.country) }
@@ -282,6 +282,11 @@ const AddIdentity = () => {
               <FormInput
                 label='Public Name'
                 placeholder='Enter your public name'
+                errorMessage={
+                  profile.name?.length > PUBLIC_PROFILE_NAME_MAX_LENGTH
+                    ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters'`
+                    : undefined
+                }
                 onChangeText={(text) =>
                   setProfile((p) => ({ ...p, name: text }))
                 }
@@ -395,7 +400,11 @@ const AddIdentity = () => {
 
               <Headline
                 style={[styles.title, { alignSelf: 'center', fontSize: 28 }]}>
-                Building your Identity
+                {isDoneCreateAccount
+                  ? 'Success!'
+                  : showRetry
+                  ? 'Something went wrong'
+                  : 'Building your Identity'}
               </Headline>
               <Text
                 style={[
@@ -405,7 +414,11 @@ const AddIdentity = () => {
                     color: theme.color.textLightGrey,
                   },
                 ]}>
-                Please wait...
+                {isDoneCreateAccount
+                  ? 'Your Identity has been successfully created'
+                  : showRetry
+                  ? 'Please retry'
+                  : 'Please wait...'}
               </Text>
               <Spacer vertical='xxl' />
               <AnimatedCheckbox
