@@ -1,5 +1,4 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
-import { Account } from '@verida/account'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
@@ -18,6 +17,7 @@ import SuccessTick from 'assets/success_tick.svg'
 import WarningIcon from 'assets/warning-icon.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
+import { StepsIndicator } from 'components/Indicators'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
@@ -242,17 +242,26 @@ const AddIdentity = () => {
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
       {currentPage !== PageType.Confirmation && (
-        <NavigationHeader
-          title='Identity'
-          left={
-            pageData[currentPage].hasBack || showRetry
-              ? {
-                  icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-                  action: () => onBack(),
-                }
-              : ({} as any)
-          }
-        />
+        <>
+          <NavigationHeader
+            title={`Step ${currentPage + 1} of ${numberOfPages - 1}`}
+            bottomBorder={false}
+            left={
+              pageData[currentPage].hasBack || showRetry
+                ? {
+                    icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+                    action: () => onBack(),
+                  }
+                : ({} as any)
+            }
+          />
+          <StepsIndicator
+            // style={{pad}}
+            style={{ paddingHorizontal: theme.spacing.m }}
+            currentStep={currentPage}
+            numberOfSteps={numberOfPages - 1}
+          />
+        </>
       )}
 
       <View style={styles.main}>
