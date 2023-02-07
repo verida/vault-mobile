@@ -126,7 +126,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const walletAddresses = useMemo(() => {
     let orderNumber = 0
-    return Object.values(chains).reduce((acc, chain) => {
+    const mappedWallets = Object.values(chains).reduce((acc, chain) => {
       const sameChainAdresses = Object.values(wallets).reduce(
         (accAddresses: PublicAddress[], wallet) => {
           const account =
@@ -154,8 +154,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       acc.push(...sameChainAdresses)
       return acc
     }, [])
+
+    return enabledVeridaOne ? mappedWallets : mappedWallets.slice(0, 1) // Shorten the wallet address to one if not enabled Verida One Profile
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chains, wallets, publicWalletAddresses])
+  }, [chains, wallets, publicWalletAddresses, enabledVeridaOne])
 
   async function setPublicAddress(
     publicAdress: PublicAddress,
@@ -178,7 +181,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
     } else {
       newPublicWalletAddresses = newPublicWalletAddresses.filter(
-        (walletAddress) => walletAddress.address !== publicAdress.address
+        (walletAddress) =>
+          walletAddress.address !== publicAdress.address ||
+          (walletAddress.address === publicAdress.address &&
+            walletAddress.chainId !== publicAdress.chainId)
       )
       Snackbar.show({
         text: 'Hidden from Verida One profile',
@@ -376,6 +382,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                   marginBottom: theme.spacing.s,
                 }}
                 color='transparent-link'
+                disabled={!enabledVeridaOne}
                 onPress={() => navigation.navigate('ManageWallets')}>
                 ADD NEW
               </Button>
@@ -520,9 +527,9 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               <View style={styles.overlayContent}>
                 <LinearGradient
                   style={{ ...styles.overlayContent }}
-                  colors={['rgba(255, 255, 255, 0.2)', '#FFFFFF', '#FFFFFF']}
+                  colors={['rgba(255, 255, 255, 0.3)', '#FFFFFF', '#FFFFFF']}
                   start={{ y: 0, x: 0.5 }}
-                  end={{ y: 0.15, x: 0.5 }}
+                  end={{ y: 0.65, x: 0.5 }}
                 />
                 <Headline style={{ marginTop: 80, fontSize: 28 }}>
                   Unlock Verida One
