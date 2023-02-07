@@ -1,4 +1,5 @@
 import {
+  BACKGROUND_GREY_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
   GREY_120,
@@ -24,6 +25,7 @@ export const defaultTheme = {
     primary: PRIMARY_COLOR,
     onPrimary: WHITE_COLOR,
     background: WHITE_COLOR,
+    backgroundGrey: BACKGROUND_GREY_COLOR,
     onBackground: TEXT_COLOR,
     surface: WHITE_COLOR,
     onSurface: TEXT_COLOR,
@@ -34,6 +36,7 @@ export const defaultTheme = {
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
+    overlayLight: 'rgba(0, 0, 0, 0.1)',
     shadow: LIGHTGREY_COLOR,
     separator: SEPARATOR,
     separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
@@ -54,6 +57,7 @@ export const defaultTheme = {
     grey120: GREY_120,
 
     shadowLightGrey: SHADOW_LIGHT_GREY,
+    placeholderTextColor: BLACK_COLOR_OPACITY(0.3),
 
     grey100: '#EDF0F3',
     grey200: '#DDE3E9',

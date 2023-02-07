@@ -1,26 +1,16 @@
-import {
-  StackActions,
-  useFocusEffect,
-  useNavigation,
-} from '@react-navigation/native'
+import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
+import LottieView from 'lottie-react-native'
+import { Icon } from 'native-base'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import {
-  Alert,
-  BackHandler,
-  Image,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
-import { RadialGradient } from 'react-native-gradients'
+import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
-import IdentityCard from 'assets/identity-card.svg'
+import BlurCircle from 'assets/blur-circle.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { FormInput } from 'components/Input/FormInput'
@@ -28,7 +18,6 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
-import TCCheckbox from 'components/TCCheckbox'
 import { Caption } from 'components/Typography/Caption'
 import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
@@ -39,17 +28,9 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
 
-const colorList = [
-  { offset: '61.46%', color: 'rgba(64, 45, 255, 0.9)', opacity: '1' },
-  { offset: '100%', color: 'rgba(245, 244, 255, 0)', opacity: '1' },
-]
+import { AddIdentityMode } from './Identity'
 
 const pageData = [
-  {
-    key: 'start',
-    hasNext: false,
-    hasBack: true,
-  },
   {
     key: 'name',
     hasNext: true,
@@ -63,19 +44,13 @@ const pageData = [
   {
     key: 'confirmation',
     hasNext: false,
-    hasBack: false,
+    hasBack: true,
   },
 ]
 
 const numberOfPages = pageData.length
 
-export enum AddIdentityMode {
-  CreateNew,
-  Add,
-}
-
 enum PageType {
-  Start,
   Name,
   Location,
   Confirmation,
@@ -87,11 +62,15 @@ const AddIdentity = () => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const pagerRef = useRef<PagerView>(null)
-  const [currentPage, setCurrentPage] = useState(PageType.Start)
+  const [currentPage, setCurrentPage] = useState(PageType.Name)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
-  const [agreedTC, setAgreedTC] = useState(false)
+  const [showCountryOnPublicProfile, setShowCountryOnPublicProfile] =
+    useState(false)
+  function toggleCountryCheckbox() {
+    setShowCountryOnPublicProfile((prevState) => !prevState)
+  }
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [availableUsername, setAvailableUsername] = useState(false)
   const [usernameError, setUsernameError] = useState<string | undefined>(
@@ -189,10 +168,7 @@ const AddIdentity = () => {
     switch (currentPage) {
       case PageType.Name:
         return {
-          formValidated:
-            !isEmpty(profile.name) &&
-            (isEmpty(profile.username) ||
-              (!isEmpty(profile.username) && availableUsername)),
+          formValidated: !isEmpty(profile.name),
         }
       case PageType.Location:
         return { formValidated: true }
@@ -203,29 +179,20 @@ const AddIdentity = () => {
       default:
         return {}
     }
-  }, [
-    availableUsername,
-    confirmationState?.state?.CreateProfile,
-    currentPage,
-    profile,
-  ])
+  }, [confirmationState?.state?.CreateProfile, currentPage, profile])
 
   const onCountryChange = (option: Option) => {
     setProfile((p) => ({ ...p, country: option.value }))
-  }
-
-  function toggleAgreedTC() {
-    setAgreedTC((prevState) => !prevState)
   }
 
   const onNext = useCallback(() => {
     if (currentPage < numberOfPages - 1) {
       pagerRef.current?.setPage(currentPage + 1)
       setCurrentPage(currentPage + 1)
-      if (currentPage === numberOfPages - 2) {
-        // navigate to last page and create identifier
-        createIdentifier()
-      }
+      // if (currentPage === numberOfPages - 2) {
+      //   // navigate to last page and create identifier
+      //   createIdentifier()
+      // }
     }
   }, [createIdentifier, currentPage])
 
@@ -263,7 +230,18 @@ const AddIdentity = () => {
 
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
-      <NavigationHeader title='Identity' />
+      <NavigationHeader
+        title='Identity'
+        left={
+          pageData[currentPage].hasBack || showRetry
+            ? {
+                icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+                action: () => onBack(),
+              }
+            : ({} as any)
+        }
+      />
+
       <View style={styles.main}>
         <PagerView
           style={styles.pagerView}
@@ -274,75 +252,23 @@ const AddIdentity = () => {
           }}
           ref={pagerRef}
           overScrollMode='auto'>
-          <View key='start' style={[styles.landing, { alignItems: 'center' }]}>
-            <View
-              style={{
-                width: '100%',
-                height: 216,
-              }}>
-              <Image
-                style={{
-                  width: '100%',
-                  marginTop: -80,
-                }}
-                source={require('assets/identity-card.png')}
-              />
-            </View>
-            <Spacer height={32} />
-            <Headline>Create your identity</Headline>
-            <Spacer vertical='sm' />
-            <Text style={{ textAlign: 'center' }}>
-              An identity is a digital representation of yourself. You can have
-              multiple, such as a personal, business or anonymous identity.
-            </Text>
-            <Spacer height={115} />
-            <TCCheckbox
-              checked={agreedTC}
-              style={styles.termAndCondition}
-              onToggle={toggleAgreedTC}
-            />
-            <Spacer vertical='m' />
-            <Button
-              disabled={!agreedTC}
-              style={styles.actionButton}
-              onPress={() => {
-                requestAnimationFrame(() => {
-                  onNext()
-                })
-              }}>
-              Create Identity
-            </Button>
-            <Paragraph style={styles.subTitle}>
-              Already have a Verida Identity?
-            </Paragraph>
-            <Button
-              disabled={!agreedTC}
-              color='transparent-link'
-              style={styles.actionButton}
-              onPress={() => {
-                if (params.mode === AddIdentityMode.Add) {
-                  const popAction = StackActions.pop(1)
-                  navigation.dispatch(popAction)
-                }
-                navigation.navigate('SeedPhraseEntered')
-              }}>
-              Import Identity
-            </Button>
-          </View>
           <View key='name' style={styles.landing}>
             <ScrollView
-              contentContainerStyle={styles.scrollViewContainer}
+              contentContainerStyle={[
+                styles.scrollViewContainer,
+                styles.contentPadding,
+              ]}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'>
-              <Headline style={styles.title}>Name(1/2)</Headline>
-              <Spacer vertical='xxl' />
-              <Paragraph>
-                Your public name can be used by applications you are connecting
-                with. Use whatever you like and change it when you want.
-              </Paragraph>
-              <Spacer vertical='xxl' />
+              <Headline style={styles.title}>Public name</Headline>
+              <Text>
+                A public name visible to other users and applications. You can
+                change this anytime.
+              </Text>
+              <Spacer vertical='l' />
               <FormInput
-                label='Public Name *'
+                label='Public Name'
+                placeholder='Enter your public name'
                 onChangeText={(text) =>
                   setProfile((p) => ({ ...p, name: text }))
                 }
@@ -362,9 +288,9 @@ const AddIdentity = () => {
                   <FormInput
                     label='Check your username is available'
                     withAnimatedChecbox={profile.username.length > 0}
-                    disabled
                     autoCapitalize='none'
                     autoCorrect={false}
+                    autoFocus
                     loading={checkingUsername}
                     onChangeText={(text) =>
                       setProfile((p) => ({ ...p, username: text }))
@@ -387,15 +313,18 @@ const AddIdentity = () => {
             <ScrollView
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'
-              contentContainerStyle={{ height: '100%' }}>
-              <Headline style={styles.title}>Data Region (2/2)</Headline>
-              <Spacer vertical='xxl' />
+              contentContainerStyle={{
+                ...styles.contentPadding,
+                paddingBottom: theme.spacing.xxxxl,
+              }}>
+              <Headline style={styles.title}>Data Region</Headline>
               <Paragraph>
-                {'Your personal data is encrypted and stored on a network of decentralized servers.\n' +
-                  'Select your country to determine the default servers that store your encrypted personal data. You can change both your country and the data regions later.'}
+                Select your country to determine the default servers that store
+                your encrypted personal data. You can change both your country
+                and the data regions later.
               </Paragraph>
-              <Spacer vertical='xxl' />
-              <Label>Country</Label>
+              <Spacer vertical='l' />
+              <Label style={{ marginBottom: 2 }}>Country</Label>
               <DropDownPicker
                 searchable
                 searchablePlaceholder='Search for country'
@@ -406,17 +335,57 @@ const AddIdentity = () => {
                 containerStyle={InputStyles.select}
                 onChangeItem={onCountryChange}
               />
-              <Label style={{ marginTop: 2 }}>
-                Your country is optional and public
-              </Label>
+              <Spacer vertical='m' />
+              <AnimatedCheckbox
+                checked={showCountryOnPublicProfile}
+                onToggle={toggleCountryCheckbox}
+                label='Show country in my public profile'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.grey400}
+              />
+              {/* Add more space to alow scroll on showing the dropdown list */}
+              <Spacer height={200} />
             </ScrollView>
           </View>
           <View key='confirmation' style={styles.landing}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Headline style={styles.title}>
-                We are building your Identity
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                ...styles.contentPadding,
+              }}>
+              <View
+                style={{
+                  width: 128,
+                  height: 128,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <BlurCircle />
+                <LottieView
+                  source={require('assets/animations/dots-loader.json')}
+                  autoPlay
+                  loop
+                  style={styles.dotsLoader}
+                />
+              </View>
+
+              <Headline
+                style={[styles.title, { alignSelf: 'center', fontSize: 28 }]}>
+                Building your Identity
               </Headline>
-              <Spacer vertical='xxxl' />
+              <Text
+                style={[
+                  {
+                    alignSelf: 'center',
+                    fontSize: theme.fontSize.l,
+                    color: theme.color.textLightGrey,
+                  },
+                ]}>
+                Please wait...
+              </Text>
+              <Spacer vertical='xxl' />
               <AnimatedCheckbox
                 checked={
                   confirmationState?.state?.CreateIdentifier === 'Success'
@@ -482,6 +451,16 @@ const AddIdentity = () => {
             </ScrollView>
           </View>
         </PagerView>
+
+        <View style={styles.bottomNavContainer}>
+          <Button
+            style={styles.nextButton}
+            disabled={!formValidated}
+            onPress={onNext}>
+            Next
+          </Button>
+        </View>
+
         {/* <View style={styles.bottomNavContainer}>
           {(pageData[currentPage].hasBack || showRetry) && (
             <Button
@@ -523,8 +502,6 @@ const creatStyles = (theme: Theme) => {
     },
     bottomNavContainer: {
       marginTop: theme.spacing.sm,
-      // paddingHorizontal: theme.spacing.l,
-      // paddingVertical: theme.spacing.m,
       height: 48,
       flexDirection: 'row',
       width: '100%',
@@ -540,9 +517,8 @@ const creatStyles = (theme: Theme) => {
       paddingHorizontal: theme.spacing.l,
     },
     nextButton: {
-      position: 'absolute',
-      right: theme.spacing.m,
-      paddingHorizontal: theme.spacing.l,
+      flex: 1,
+      marginHorizontal: theme.spacing.m,
     },
     retryButton: {
       position: 'absolute',
@@ -554,19 +530,16 @@ const creatStyles = (theme: Theme) => {
     },
     landing: {
       flex: 1,
-      paddingTop: theme.spacing.l,
-      paddingHorizontal: theme.spacing.l,
-      paddingVertical: theme.spacing.m,
     },
     title: {
       color: theme.color.onBackground,
+      marginBottom: 10,
     },
     subTitle: {
-      // marginTop: theme.spacing.m,
       color: theme.color.textLightGrey,
     },
     termAndCondition: {
-      marginTop: theme.spacing.xxxl,
+      marginTop: theme.spacing.m,
       color: theme.color.onBackground,
     },
     pagerView: {
@@ -578,6 +551,16 @@ const creatStyles = (theme: Theme) => {
     center: {
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    contentPadding: {
+      paddingTop: theme.spacing.l,
+      paddingHorizontal: theme.spacing.l,
+      paddingVertical: theme.spacing.m,
+    },
+    dotsLoader: {
+      width: 48,
+      height: 48,
+      position: 'absolute',
     },
   })
 }

@@ -22,7 +22,7 @@ const createStyles = (theme: Theme) => {
     text: {
       ...text.primary,
       color: theme.color.onBackground,
-      fontSize: theme.fontSize.xxxl,
+      fontSize: theme.fontSize.xxl,
       textAlign: 'left',
     },
   })
