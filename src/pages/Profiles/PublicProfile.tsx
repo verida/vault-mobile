@@ -519,7 +519,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             )}
             <Text style={[styles.description, { marginVertical: 0 }]}>
               On your Verida One page we show your wallet addresses with their
-              public titles and the assets related to them (collectibles,
+              public lables and the assets related to them (collectibles,
               badges, etc)
             </Text>
 
