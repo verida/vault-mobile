@@ -12,7 +12,7 @@ type Props = React.ComponentProps<typeof Text> & {
   children: React.ReactNode
 }
 
-export const Headline = (props: Props) => {
+export const SubHeadline = (props: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />
 }
@@ -22,7 +22,7 @@ const createStyles = (theme: Theme) => {
     text: {
       ...text.primary,
       color: theme.color.onBackground,
-      fontSize: theme.fontSize.xxl,
+      fontSize: theme.fontSize.sl,
       textAlign: 'left',
     },
   })

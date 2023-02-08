@@ -8,7 +8,13 @@ import * as SecureStore from 'expo-secure-store'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import {
+  Account,
+  AddIdentityStepStatus,
+  AddIdentityStepType,
+  NormalizedAccounts,
+  UserData,
+} from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -397,10 +403,16 @@ class AccountManager extends EventEmitter {
 
   public async createAccount(
     userData: UserData,
-    country: string
+    country: string,
+    updateProgress?: (
+      step: AddIdentityStepType,
+      status: AddIdentityStepStatus
+    ) => void
   ): Promise<Account | undefined> {
     let connected = false
     try {
+      updateProgress?.('CreateIdentifier', 'Loading')
+
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
       const endpoints = await NodeSelector.selectEndpointUris(countryCode)
@@ -425,23 +437,42 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
+
       await this.connect(true, endpointUris)
       connected = true
+
+      updateProgress?.('CreateIdentifier', 'Success')
+      // just a nice UI delay, smooth state tranisition
+      setTimeout(() => {
+        updateProgress?.('StorageLocation', 'Success')
+      }, 1000)
+      updateProgress?.('CreateProfile', 'Loading')
+
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
         100000
       )
+
       if (!setPublicProfileSuccess) {
+        updateProgress?.('CreateProfile', 'Failure')
         throw new Error('Failed to set public profile')
       }
-      await this.setBackedupSeedPhraseConfig(false)
-      await this.setUserWallet()
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
+      updateProgress?.('CreateProfile', 'Success')
+
+      // At this point can consider DID and Profile are created successfully
+      // so we just delay and do these heavy tasks below asynchronously
+      setTimeout(async () => {
+        await this.setBackedupSeedPhraseConfig(false)
+        await this.setUserWallet()
+      }, 2000)
+
       return this.selectedAccount
     } catch (e) {
+      updateProgress?.('CreateProfile', 'Failure')
       // If the corrupted account is already connected, we need to remove it
       if (connected && this.selectedAccount) {
         await this.logout([this.selectedAccount?.did])

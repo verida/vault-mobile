@@ -48,6 +48,14 @@ export type NetworkCountries = {
   [name: string]: NetworkCountry[]
 }
 
+export type AddIdentityStepType =
+  | 'CreateIdentifier'
+  | 'DefineNameAndUsername'
+  | 'StorageLocation'
+  | 'CreateProfile'
+
+export type AddIdentityStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'
+
 /**
  * Verida One interfaces and enums
  */
