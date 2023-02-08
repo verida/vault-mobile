@@ -14,6 +14,7 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Dimensions,
+  RefreshControl,
   ScrollView,
   StyleSheet,
   Switch,
@@ -93,6 +94,16 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   >([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
+
+  // pull to refresh data
+  const [refreshing, setRefreshing] = React.useState(false)
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
+      setRefreshing(false)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   function isVisible(address: string, chainId: string) {
     return (
@@ -204,6 +215,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Failed to save profile')
+        onRefresh()
       } finally {
         setQuickFetching(false)
       }
@@ -347,7 +359,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           contentContainerStyle={{
             padding: theme.spacing.m,
             paddingBottom: theme.spacing.xxxl,
-          }}>
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }>
           <ProfileImageLoader />
           {/** Unavailable - Temporary disabled */}
           {/* <View style={styles.oneProfileLinkContainer}>
