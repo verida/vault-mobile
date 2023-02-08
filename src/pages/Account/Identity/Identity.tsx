@@ -1,8 +1,7 @@
 import { StackActions, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import React, { useState } from 'react'
-import { Image, StyleSheet, View } from 'react-native'
-import { TouchableOpacity } from 'react-native-gesture-handler'
+import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -84,13 +83,18 @@ const Identity = () => {
             }
             navigation.navigate('SeedPhraseEntered', { ...params } as any)
           }}>
-          <Paragraph style={styles.subTitle}>
-            Already have a Verida Identity?
-          </Paragraph>
-          <Text
-            style={{ ...TextStyles.primaryColor, color: theme.color.primary }}>
-            Import Identity
-          </Text>
+          <View style={{ alignItems: 'center' }}>
+            <Paragraph style={styles.subTitle}>
+              Already have a Verida Identity?
+            </Paragraph>
+            <Text
+              style={{
+                ...TextStyles.primaryColor,
+                color: theme.color.primary,
+              }}>
+              Import Identity
+            </Text>
+          </View>
         </TouchableOpacity>
       </View>
     </Screen>
