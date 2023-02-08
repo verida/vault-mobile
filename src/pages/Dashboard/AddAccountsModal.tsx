@@ -169,13 +169,13 @@ function AddAccountsModal(props: AddAccountsModalProps) {
           <View style={styles.buttonsContainer}>
             <TouchableOpacity
               style={[styles.button, styles.addNewButton]}
-              onPress={onAddNewPress}>
-              <Text style={styles.addNewButtonText}>Add New</Text>
+              onPress={onImportPress}>
+              <Text style={styles.addNewButtonText}>Import</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={styles.importButton}
-              onPress={onImportPress}>
-              <Text style={styles.importButtonText}>Import</Text>
+              onPress={onAddNewPress}>
+              <Text style={styles.importButtonText}>New Account</Text>
             </TouchableOpacity>
           </View>
         )
