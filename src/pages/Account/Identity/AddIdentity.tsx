@@ -240,7 +240,7 @@ const AddIdentity = () => {
   )
 
   return (
-    <Screen withSafeAreaView withKeyboardAvoidingView>
+    <Screen withSafeAreaView>
       {currentPage !== PageType.Confirmation && (
         <>
           <NavigationHeader
@@ -361,7 +361,7 @@ const AddIdentity = () => {
                 searchable
                 searchablePlaceholder='Search for country'
                 showArrow
-                dropDownMaxHeight={200}
+                dropDownMaxHeight={160}
                 placeholder=''
                 items={COUNTRIES}
                 containerStyle={InputStyles.select}
@@ -378,7 +378,7 @@ const AddIdentity = () => {
                 textStyle={{ fontSize: theme.fontSize.m }}
               />
               {/* Add more space to alow scroll on showing the dropdown list */}
-              <Spacer height={200} />
+              <Spacer height={320} />
             </ScrollView>
           </View>
           <View key='confirmation' style={styles.landing}>
