@@ -4,8 +4,8 @@ import { StyleSheet } from 'react-native'
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '../../constants/color'
 import PropertyListItem from './PropertyListItem'
 
-export default ({ list }) =>
-  list.map((item, index) => {
+export default function PropertyList({ list }) {
+  return list.map((item, index) => {
     const external = [
       style.item,
       index === 0 && style.borderRadiusTop,
@@ -21,7 +21,7 @@ export default ({ list }) =>
       />
     )
   })
-
+}
 const style = StyleSheet.create({
   item: {
     backgroundColor: WHITE_COLOR,

@@ -15,7 +15,7 @@ import {
 } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
-import { LIGHTGREY_COLOR, WHITE_COLOR } from 'constants/color'
+import { LIGHTGREY_COLOR, VERIDA_COLOR, WHITE_COLOR } from 'constants/color'
 
 const empty = (): Pick<Option, 'label' | 'value'> => ({
   label: '',
@@ -23,6 +23,8 @@ const empty = (): Pick<Option, 'label' | 'value'> => ({
 })
 
 class DropDownPicker extends Component<SelectProps, SelectState> {
+  inputRef = React.createRef<TextInput>()
+
   constructor(props: SelectProps) {
     super(props)
 
@@ -125,18 +127,20 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
     return null
   }
 
-  toggle() {
+  setOpenDropdown(isOpen: boolean) {
     this.setState(
       {
-        isVisible: !this.state.isVisible,
+        isVisible: isOpen,
       },
       () => {
         const isVisible = this.state.isVisible
 
         if (isVisible) {
           this.props.onOpen()
+          this.inputRef.current?.focus()
         } else {
           this.props.onClose()
+          this.inputRef.current?.blur()
         }
       }
     )
@@ -244,12 +248,15 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
         <TouchableOpacity
           onLayout={(event) => this.getLayout(event.nativeEvent.layout)}
           disabled={disabled}
-          onPress={() => this.toggle()}
+          onPress={() => {
+            this.setOpenDropdown(!this.state.isVisible)
+          }}
           activeOpacity={1}
           style={[
             styles.dropDown,
             this.props.style,
-            this.state.isVisible && styles.noBottomRadius,
+            // this.state.isVisible && styles.noBottomRadius,
+            this.state.isVisible && styles.textInputFocus,
             {
               flexDirection: 'row',
               flex: 1,
@@ -258,9 +265,14 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
           <View style={styles.dropDownDisplay}>
             {this.props.searchable ? (
               <TextInput
+                ref={this.inputRef}
                 editable={!disabled}
                 autoFocus={this.props.autoFocus}
-                style={[styles.input, this.props.searchableStyle]}
+                style={[
+                  styles.input,
+                  this.props.searchableStyle,
+                  this.state.isVisible ? styles.textInputFocus : {},
+                ]}
                 defaultValue={this.state.searchableText}
                 placeholder={this.props.searchablePlaceholder}
                 placeholderTextColor={LIGHTGREY_COLOR}
@@ -271,7 +283,8 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
                   if (text === '') this.setState({ choice: [empty()] })
                 }}
                 value={this.state.searchableText || selectedValue}
-                onFocus={() => this.toggle()}
+                onFocus={() => this.setOpenDropdown(true)}
+                onBlur={() => this.setOpenDropdown(false)}
               />
             ) : (
               <Text
@@ -311,6 +324,7 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
                 top: this.state.top,
                 maxHeight: this.props.dropDownMaxHeight,
                 zIndex: this.props.zIndex,
+                marginTop: 8,
               },
             ]}>
             <ScrollView
@@ -507,8 +521,8 @@ const styles = StyleSheet.create({
     flexGrow: 1,
   },
   dropDownBox: {
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
+    // borderTopLeftRadius: 0,
+    // borderTopRightRadius: 0,
     alignItems: 'center',
     justifyContent: 'center',
     textAlign: 'center',
@@ -531,6 +545,9 @@ const styles = StyleSheet.create({
   noBottomRadius: {
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
+  },
+  textInputFocus: {
+    borderColor: VERIDA_COLOR,
   },
   notFound: {
     textAlign: 'center',

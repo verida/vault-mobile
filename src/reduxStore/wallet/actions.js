@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
@@ -8,6 +9,7 @@ import {
 } from 'wallet/helpers/tokens'
 
 import AccountManager from 'api/AccountManager'
+import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -16,7 +18,6 @@ import {
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
-import { CONFIG } from '../../config/environment'
 import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,
@@ -74,6 +75,7 @@ export const getBalances = () => {
         })
       }
     } catch (error) {
+      Sentry.captureException(error)
       dispatch({
         type: BALANCES_FETCH_FAILED,
         error: 'error',
