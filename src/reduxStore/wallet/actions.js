@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import * as SecureStore from 'expo-secure-store'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
@@ -75,7 +74,6 @@ export const getBalances = () => {
         })
       }
     } catch (error) {
-      Sentry.captureException(error)
       dispatch({
         type: BALANCES_FETCH_FAILED,
         error: 'error',
