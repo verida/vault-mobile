@@ -79,7 +79,7 @@ const Screen = (props: ScreenProps) => {
         })
       }>
       <ConditionalWrap
-        condition={withSafeAreaView}
+        condition={Platform.OS === 'ios' && withSafeAreaView}
         wrap={(children) => (
           <SafeAreaView
             {...safeAreaViewProps}

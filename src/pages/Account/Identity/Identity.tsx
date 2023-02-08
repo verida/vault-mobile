@@ -103,13 +103,6 @@ const creatStyles = (theme: Theme) => {
       flex: 1,
       backgroundColor: theme.color.primary50,
     },
-    bottomNavContainer: {
-      marginTop: theme.spacing.sm,
-      height: 48,
-      flexDirection: 'row',
-      width: '100%',
-      alignSelf: 'flex-end',
-    },
     actionButton: {
       width: '100%',
       alignSelf: 'center',

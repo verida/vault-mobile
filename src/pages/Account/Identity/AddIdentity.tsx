@@ -564,6 +564,7 @@ const creatStyles = (theme: Theme) => {
     bottomNavContainer: {
       width: '100%',
       alignSelf: 'flex-end',
+      marginBottom: theme.spacing.m,
     },
     nextButton: {
       height: 48,
