@@ -1,7 +1,8 @@
 import * as Sentry from '@sentry/react-native'
 import * as ImagePicker from 'expo-image-picker'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import FastImage from 'react-native-fast-image'
 import { connect } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
@@ -9,11 +10,10 @@ import { loadAvatarSource } from 'api/utils'
 import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
 
 import PhotoCameraSvg from '../assets/photo-camera.svg'
-import { WHITE_COLOR } from '../constants/color'
 
-const userImg = require('../assets/stubs/avatar.png')
+const userImg = require('assets/stubs/avatar.png')
 
-function ImageLoader(props) {
+function ProfileImageLoader(props) {
   const { publicProfileData, setPublicProfileData } = props
   const [image, setImage] = useState(userImg)
   //const [granted, setGranted] = useState(null);
@@ -58,7 +58,11 @@ function ImageLoader(props) {
   return (
     <View style={style.img}>
       <TouchableOpacity style={style.loader} onPress={loadPhoto}>
-        <Image source={image} style={style.imgContainer} />
+        <FastImage
+          style={style.imgContainer}
+          source={image}
+          resizeMode={FastImage.resizeMode.cover}
+        />
         <PhotoCameraSvg style={style.svg} />
       </TouchableOpacity>
     </View>
@@ -74,8 +78,6 @@ const style = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 60,
-    borderColor: WHITE_COLOR,
-    borderWidth: 4,
   },
   svg: {
     position: 'absolute',
@@ -97,4 +99,4 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ImageLoader)
+export default connect(mapStateToProps, mapDispatchToProps)(ProfileImageLoader)

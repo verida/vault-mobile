@@ -246,7 +246,7 @@ const Home = (props) => {
         avatar={avatarSource}
         inboxCount={props.newMessagesCount}
         onNamePress={toggleAddAccountsModal}
-        onAvatarPress={() => props.navigation.navigate('PublicProfile')}
+        onAvatarPress={() => props.navigation.navigate('Profile')}
         onInboxPress={() => props.navigation.navigate('Inbox')}
         onSettingsPress={() =>
           props.navigation.navigate('Settings', {

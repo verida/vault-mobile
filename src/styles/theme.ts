@@ -11,6 +11,7 @@ import {
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SHADOW_LIGHT_GREY,
+  SNOW_COLOR,
   SUCCESS_COLOR,
   TEXT_COLOR,
   TEXT_GREY_100,
@@ -44,6 +45,7 @@ export const defaultTheme = {
     separator: SEPARATOR,
     separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
     icon: TEXT_COLOR,
+    snow: SNOW_COLOR,
 
     veridaGreen: VERIDA_COLOR,
     orange: ORANGE_COLOR,
@@ -63,6 +65,9 @@ export const defaultTheme = {
     shadowLightGrey: SHADOW_LIGHT_GREY,
     placeholderTextColor: BLACK_COLOR_OPACITY(0.3),
 
+    switchFalseState: '#767577',
+    switchIOSBg: '#131313',
+
     grey100: '#EDF0F3',
     grey200: '#DDE3E9',
     grey300: '#CED3DA',
@@ -79,7 +84,7 @@ export const defaultTheme = {
     sm: 12,
     m: 16,
     l: 24,
-    xl: 36,
+    xl: 32,
     xxl: 40,
     xxxl: 48,
     xxxxl: 64,

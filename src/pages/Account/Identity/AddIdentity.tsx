@@ -307,7 +307,7 @@ const AddIdentity = () => {
                 value={profile.name}
               />
               <Label style={{ marginTop: 2 }}>
-                Your name is required and public
+                Your public name is required and public
               </Label>
               {enabledClaimUsername && (
                 <>
