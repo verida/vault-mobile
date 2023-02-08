@@ -386,7 +386,6 @@ const AddIdentity = () => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
                 ...styles.contentPadding,
-                paddingTop: 0,
               }}>
               <View
                 style={{
