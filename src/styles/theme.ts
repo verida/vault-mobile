@@ -5,6 +5,7 @@ import {
   GREY_120,
   LIGHT_GREY_600,
   LIGHTGREY_COLOR,
+  ORANGE_COLOR,
   PRIMARY_COLOR,
   PRIMARY_COLOR_50,
   SEPARATOR,
@@ -18,6 +19,7 @@ import {
   TEXT_LIGHT_GREY,
   VERIDA_COLOR,
   VERY_LIGHTGREY_COLOR,
+  WARNING_LIGHT_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
 
@@ -36,6 +38,7 @@ export const defaultTheme = {
     onError: WHITE_COLOR,
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
+    warning: WARNING_LIGHT_COLOR,
     overlay: 'rgba(0, 0, 0, 0.6)',
     overlayLight: 'rgba(0, 0, 0, 0.1)',
     shadow: LIGHTGREY_COLOR,
@@ -45,6 +48,7 @@ export const defaultTheme = {
     snow: SNOW_COLOR,
 
     veridaGreen: VERIDA_COLOR,
+    orange: ORANGE_COLOR,
 
     primary50: PRIMARY_COLOR_50,
 
@@ -59,6 +63,7 @@ export const defaultTheme = {
     grey120: GREY_120,
 
     shadowLightGrey: SHADOW_LIGHT_GREY,
+    placeholderTextColor: BLACK_COLOR_OPACITY(0.3),
 
     switchFalseState: '#767577',
     switchIOSBg: '#131313',

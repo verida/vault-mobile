@@ -1,15 +1,23 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
+import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
 import isEmpty from 'lodash/isEmpty'
+import LottieView from 'lottie-react-native'
+import { Icon } from 'native-base'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
 import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
+import BlurCircle from 'assets/blur-circle.svg'
+import FailureCross from 'assets/failure_cross.svg'
+import SuccessTick from 'assets/success_tick.svg'
+import WarningIcon from 'assets/warning-icon.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
+import { StepsIndicator } from 'components/Indicators'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
@@ -18,10 +26,14 @@ import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
+import { Text } from 'components/Typography/Text'
+import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from 'constants/profile'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
+
+import { AddIdentityMode } from './Identity'
 
 const pageData = [
   {
@@ -43,11 +55,6 @@ const pageData = [
 
 const numberOfPages = pageData.length
 
-export enum AddIdentityMode {
-  CreateNew,
-  Add,
-}
-
 enum PageType {
   Name,
   Location,
@@ -64,12 +71,18 @@ const AddIdentity = () => {
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
+  const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
+    useState(false)
+  function toggleCountryCheckbox() {
+    setShowCountryOnPublicProfile((prevState) => !prevState)
+  }
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [availableUsername, setAvailableUsername] = useState(false)
   const [usernameError, setUsernameError] = useState<string | undefined>(
     undefined
   )
   const [showRetry, setShowRetry] = useState(false)
+  const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
 
   const checkUsername = useCallback(async () => {
     // FIXME: Remove fake check-username availability request
@@ -126,14 +139,12 @@ const AddIdentity = () => {
   const createIdentifier = useCallback(async () => {
     try {
       setProcessing(true)
-
-      // TODO: remove fake request
-      // claimUsername()
+      setShowRetry(false)
 
       await AccountManager.getInstance().createAccount(
         {
-          name: profile.name,
-          country: profile?.country,
+          name: profile.name?.trim() ?? '',
+          country: showCountryInPublicProfile ? profile?.country : '',
           description: '',
         },
         profile?.country,
@@ -147,33 +158,34 @@ const AddIdentity = () => {
           }))
         }
       )
-
-      params.mode === AddIdentityMode.Add
-        ? navigation.goBack()
-        : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+      setDoneCreateAccount(true)
     } catch (error) {
       setShowRetry(true)
     }
     setProcessing(false)
-  }, [navigation, params.mode, profile?.country, profile.name])
+  }, [profile?.country, profile.name, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
       case PageType.Name:
-        console.log('profile.name', profile.name)
         return {
-          formValidated: !isEmpty(profile.name),
+          formValidated:
+            !isEmpty(profile.name) &&
+            profile.name?.length <= PUBLIC_PROFILE_NAME_MAX_LENGTH,
         }
       case PageType.Location:
-        return { formValidated: true }
+        return { formValidated: !isEmpty(profile.country) }
       case PageType.Confirmation:
         return {
-          formValidated: confirmationState?.state?.CreateProfile === 'Success',
+          formValidated:
+            confirmationState?.state?.CreateIdentifier === 'Success' &&
+            confirmationState?.state?.StorageLocation === 'Success' &&
+            confirmationState?.state?.CreateProfile === 'Success',
         }
       default:
         return {}
     }
-  }, [confirmationState?.state?.CreateProfile, currentPage, profile])
+  }, [confirmationState, currentPage, profile])
 
   const onCountryChange = (option: Option) => {
     setProfile((p) => ({ ...p, country: option.value }))
@@ -183,7 +195,7 @@ const AddIdentity = () => {
     if (currentPage < numberOfPages - 1) {
       pagerRef.current?.setPage(currentPage + 1)
       setCurrentPage(currentPage + 1)
-      if (currentPage === numberOfPages - 2) {
+      if (currentPage === PageType.Confirmation - 1) {
         // navigate to last page and create identifier
         createIdentifier()
       }
@@ -206,6 +218,11 @@ const AddIdentity = () => {
     }
   }, [currentPage, navigation, processing, showRetry])
 
+  const onRetry = useCallback(() => {
+    setConfirmationState({})
+    createIdentifier()
+  }, [createIdentifier])
+
   useFocusEffect(
     useCallback(() => {
       const onBackPress = () => {
@@ -224,12 +241,39 @@ const AddIdentity = () => {
 
   return (
     <Screen withSafeAreaView withKeyboardAvoidingView>
-      <NavigationHeader title='Identity' />
+      {currentPage !== PageType.Confirmation && (
+        <>
+          <NavigationHeader
+            title={`Step ${currentPage + 1} of ${numberOfPages - 1}`}
+            bottomBorder={false}
+            left={
+              pageData[currentPage].hasBack || showRetry
+                ? {
+                    icon: (
+                      <Icon
+                        name='arrow-back'
+                        style={{ color: theme.color.icon }}
+                      />
+                    ),
+                    action: () => onBack(),
+                  }
+                : ({} as any)
+            }
+          />
+          <StepsIndicator
+            // style={{pad}}
+            style={{ paddingHorizontal: theme.spacing.m }}
+            currentStep={currentPage}
+            numberOfSteps={numberOfPages - 1}
+          />
+        </>
+      )}
+
       <View style={styles.main}>
         <PagerView
           style={styles.pagerView}
           initialPage={currentPage}
-          // scrollEnabled={false}
+          scrollEnabled={false}
           onPageSelected={(event) => {
             setCurrentPage(event.nativeEvent.position)
           }}
@@ -237,18 +281,26 @@ const AddIdentity = () => {
           overScrollMode='auto'>
           <View key='name' style={styles.landing}>
             <ScrollView
-              contentContainerStyle={styles.scrollViewContainer}
+              contentContainerStyle={[
+                styles.scrollViewContainer,
+                styles.contentPadding,
+              ]}
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'>
-              <Headline style={styles.title}>Public Name (1/2)</Headline>
-              <Spacer vertical='xxl' />
-              <Paragraph>
+              <Headline style={styles.title}>Public name</Headline>
+              <Text>
                 A public name visible to other users and applications. You can
                 change this anytime.
-              </Paragraph>
-              <Spacer vertical='xxl' />
+              </Text>
+              <Spacer vertical='l' />
               <FormInput
-                label='Public Name *'
+                label='Public Name'
+                placeholder='Enter your public name'
+                errorMessage={
+                  profile.name?.length > PUBLIC_PROFILE_NAME_MAX_LENGTH
+                    ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters'`
+                    : undefined
+                }
                 onChangeText={(text) =>
                   setProfile((p) => ({ ...p, name: text }))
                 }
@@ -268,9 +320,9 @@ const AddIdentity = () => {
                   <FormInput
                     label='Check your username is available'
                     withAnimatedChecbox={profile.username.length > 0}
-                    disabled
                     autoCapitalize='none'
                     autoCorrect={false}
+                    autoFocus
                     loading={checkingUsername}
                     onChangeText={(text) =>
                       setProfile((p) => ({ ...p, username: text }))
@@ -293,15 +345,18 @@ const AddIdentity = () => {
             <ScrollView
               showsVerticalScrollIndicator={false}
               keyboardShouldPersistTaps='handled'
-              contentContainerStyle={{ height: '100%' }}>
-              <Headline style={styles.title}>Data Region (2/2)</Headline>
-              <Spacer vertical='xxl' />
+              contentContainerStyle={{
+                ...styles.contentPadding,
+                paddingBottom: theme.spacing.xxxxl,
+              }}>
+              <Headline style={styles.title}>Data Region</Headline>
               <Paragraph>
-                {'Select your country to determine the default servers that store your encrypted personal data.\n' +
-                  'You can change both your country and the data regions later.'}
+                Select your country to determine the default servers that store
+                your encrypted personal data. You can change both your country
+                and the data regions later.
               </Paragraph>
-              <Spacer vertical='xxl' />
-              <Label>Country</Label>
+              <Spacer vertical='l' />
+              <Label style={{ marginBottom: 2 }}>Country</Label>
               <DropDownPicker
                 searchable
                 searchablePlaceholder='Search for country'
@@ -312,14 +367,75 @@ const AddIdentity = () => {
                 containerStyle={InputStyles.select}
                 onChangeItem={onCountryChange}
               />
+              <Spacer vertical='m' />
+              <AnimatedCheckbox
+                checked={showCountryInPublicProfile}
+                onToggle={toggleCountryCheckbox}
+                label='Show country in my public profile'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.grey400}
+                textStyle={{ fontSize: theme.fontSize.m }}
+              />
+              {/* Add more space to alow scroll on showing the dropdown list */}
+              <Spacer height={200} />
             </ScrollView>
           </View>
           <View key='confirmation' style={styles.landing}>
-            <ScrollView showsVerticalScrollIndicator={false}>
-              <Headline style={styles.title}>
-                We are building your Identity
+            <ScrollView
+              showsVerticalScrollIndicator={false}
+              contentContainerStyle={{
+                ...styles.contentPadding,
+                paddingTop: 0,
+              }}>
+              <View
+                style={{
+                  width: 128,
+                  height: 128,
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                {processing ? (
+                  <>
+                    <BlurCircle />
+                    <LottieView
+                      source={require('assets/animations/dots-loader.json')}
+                      autoPlay
+                      loop
+                      style={styles.dotsLoader}
+                    />
+                  </>
+                ) : isDoneCreateAccount ? (
+                  <SuccessTick />
+                ) : (
+                  <FailureCross />
+                )}
+              </View>
+
+              <Headline
+                style={[styles.title, { alignSelf: 'center', fontSize: 28 }]}>
+                {isDoneCreateAccount
+                  ? 'Success!'
+                  : showRetry
+                  ? 'Something went wrong'
+                  : 'Building your Identity'}
               </Headline>
-              <Spacer vertical='xxxl' />
+              <Text
+                style={[
+                  {
+                    alignSelf: 'center',
+                    fontSize: theme.fontSize.l,
+                    color: theme.color.textLightGrey,
+                  },
+                ]}>
+                {isDoneCreateAccount
+                  ? 'Your Identity has been successfully created'
+                  : showRetry
+                  ? 'Please retry'
+                  : 'Please wait...'}
+              </Text>
+              <Spacer vertical='xxl' />
               <AnimatedCheckbox
                 checked={
                   confirmationState?.state?.CreateIdentifier === 'Success'
@@ -361,6 +477,7 @@ const AddIdentity = () => {
               <Spacer vertical='m' />
               <AnimatedCheckbox
                 checked={confirmationState?.state?.CreateProfile === 'Success'}
+                failed={confirmationState?.state?.CreateProfile === 'Failure'}
                 showLoading={
                   confirmationState?.state?.CreateProfile === 'Loading'
                 }
@@ -374,6 +491,7 @@ const AddIdentity = () => {
                 checked={
                   confirmationState?.state?.StorageLocation === 'Success'
                 }
+                failed={confirmationState?.state?.StorageLocation === 'Failure'}
                 showLoading={
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
@@ -385,17 +503,9 @@ const AddIdentity = () => {
             </ScrollView>
           </View>
         </PagerView>
-        <View style={styles.bottomNavContainer}>
-          {/* {(pageData[currentPage].hasBack || showRetry) && (
-            <Button
-              color='transparent'
-              style={styles.backButton}
-              onPress={onBack}>
-              Back
-            </Button>
-          )} */}
 
-          {!showRetry && pageData[currentPage].hasNext && (
+        <View style={styles.bottomNavContainer}>
+          {currentPage !== PageType.Confirmation && (
             <Button
               style={styles.nextButton}
               disabled={!formValidated}
@@ -404,16 +514,41 @@ const AddIdentity = () => {
             </Button>
           )}
 
-          {/* {showRetry && (
-            <Button
-              style={styles.retryButton}
-              onPress={() => {
-                setShowRetry(false)
-                createIdentifier()
-              }}>
-              Retry
-            </Button>
-          )} */}
+          {currentPage === PageType.Confirmation ? (
+            showRetry ? (
+              <Button
+                style={styles.retryButton}
+                disabled={formValidated}
+                onPress={onRetry}>
+                Retry
+              </Button>
+            ) : !processing ? (
+              <View>
+                <View style={styles.seedPhraseRemindView}>
+                  <WarningIcon />
+                  <Text style={{ marginLeft: theme.spacing.s }}>
+                    Record your seed phrase to create a backup for your
+                    identity. You can do it later.
+                  </Text>
+                </View>
+                <Button
+                  style={styles.retryButton}
+                  color='transparent-border'
+                  onPress={() => navigation.navigate('SeedPhrase')}>
+                  Record Seed Phrase
+                </Button>
+                <Button
+                  style={styles.retryButton}
+                  onPress={() => {
+                    params.mode === AddIdentityMode.Add
+                      ? navigation.goBack()
+                      : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+                  }}>
+                  Done
+                </Button>
+              </View>
+            ) : null
+          ) : null}
         </View>
       </View>
     </Screen>
@@ -427,51 +562,33 @@ const creatStyles = (theme: Theme) => {
       backgroundColor: theme.color.surface,
     },
     bottomNavContainer: {
-      marginTop: theme.spacing.sm,
-      // paddingHorizontal: theme.spacing.l,
-      // paddingVertical: theme.spacing.m,
-      height: 48,
-      flexDirection: 'row',
       width: '100%',
       alignSelf: 'flex-end',
     },
-    actionButton: {
-      width: '100%',
-      alignSelf: 'center',
-    },
-    backButton: {
-      position: 'absolute',
-      left: theme.spacing.l,
-      paddingHorizontal: theme.spacing.l,
-    },
     nextButton: {
-      position: 'absolute',
-      right: theme.spacing.m,
-      paddingHorizontal: theme.spacing.l,
+      height: 48,
+      marginHorizontal: theme.spacing.m,
+      marginTop: theme.spacing.s,
+      marginBottom: 0,
     },
     retryButton: {
-      position: 'absolute',
-      right: 0,
-      paddingHorizontal: theme.spacing.l,
-      backgroundColor: theme.color.error,
-      borderColor: theme.color.error,
-      textcolor: theme.color.onError,
+      height: 48,
+      marginHorizontal: theme.spacing.m,
+      marginTop: theme.spacing.s,
+      marginBottom: 0,
     },
     landing: {
       flex: 1,
-      paddingTop: theme.spacing.l,
-      paddingHorizontal: theme.spacing.l,
-      paddingVertical: theme.spacing.m,
     },
     title: {
       color: theme.color.onBackground,
+      marginBottom: 10,
     },
     subTitle: {
-      // marginTop: theme.spacing.m,
       color: theme.color.textLightGrey,
     },
     termAndCondition: {
-      marginTop: theme.spacing.xxxl,
+      marginTop: theme.spacing.m,
       color: theme.color.onBackground,
     },
     pagerView: {
@@ -483,6 +600,27 @@ const creatStyles = (theme: Theme) => {
     center: {
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    contentPadding: {
+      paddingTop: theme.spacing.l,
+      paddingHorizontal: theme.spacing.l,
+      paddingVertical: theme.spacing.m,
+    },
+    dotsLoader: {
+      width: 48,
+      height: 48,
+      position: 'absolute',
+    },
+    seedPhraseRemindView: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderColor: theme.color.warning,
+      backgroundColor: color.rgb(theme.color.warning).alpha(0.1).toString(),
+      borderWidth: 1,
+      borderRadius: 3,
+      paddingVertical: theme.spacing.s,
+      paddingHorizontal: theme.spacing.m,
+      marginHorizontal: theme.spacing.m,
     },
   })
 }

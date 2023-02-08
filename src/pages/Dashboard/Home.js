@@ -34,7 +34,7 @@ import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
-import { AddIdentityMode } from 'pages/Account/Identity/AddIdentity'
+import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
@@ -192,7 +192,10 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('Identity', { mode: AddIdentityMode.Add })
+      navigation.navigate('Identity', {
+        mode: AddIdentityMode.Add,
+        previousScreen: 'Dashboard',
+      })
     })
   }
 

@@ -1,13 +1,19 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { ActivityIndicator, View } from 'react-native'
+import {
+  ActivityIndicator,
+  TextStyle,
+  TouchableOpacity,
+  View,
+  ViewStyle,
+} from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { Spacer } from 'components/Spacer'
 import { Text } from 'components/Typography/Text'
 
 interface Props {
   checked?: boolean
+  onToggle?: () => void
   highlightColor: string
   checkmarkColor: string
   boxOutlineColor: string
@@ -15,48 +21,71 @@ interface Props {
   loading?: boolean
   failed?: boolean
   label?: string
+  textStyle?: TextStyle
+  containerStyle?: ViewStyle
 }
 
 const AnimatedCheckbox = (props: Props) => {
-  const { showLoading, label, checked, failed } = props
+  const {
+    showLoading,
+    label,
+    checked,
+    onToggle,
+    failed,
+    textStyle,
+    containerStyle,
+  } = props
   const { theme } = useTheme()
 
   return (
     <View
-      style={{
-        flex: 1,
-        flexDirection: 'row',
-        alignItems: 'center',
-      }}>
-      <View
-        style={{
-          minWidth: 32,
-          minHeight: 32,
+      style={[
+        {
+          flex: 1,
+          flexDirection: 'row',
           alignItems: 'center',
-          justifyContent: 'center',
-        }}>
-        {showLoading ? (
-          <ActivityIndicator size='small' />
-        ) : failed ? (
-          <AntDesign name='closecircle' size={20} color={theme.color.error} />
-        ) : checked ? (
-          <AntDesign name='checkcircle' size={20} color={theme.color.success} />
-        ) : (
-          <View
-            style={{
-              width: 20,
-              height: 20,
-              borderRadius: 10,
-              borderWidth: 2,
-              borderColor: theme.color.grey300,
-            }}
-          />
-        )}
-      </View>
+        },
+        containerStyle,
+      ]}>
+      <TouchableOpacity
+        onPress={onToggle}
+        disabled={!onToggle}
+        hitSlop={{ top: 5, right: 10, bottom: 5, left: 10 }}>
+        <View
+          style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            marginRight: theme.spacing.s,
+          }}>
+          {showLoading ? (
+            <ActivityIndicator size='small' />
+          ) : failed ? (
+            <AntDesign name='closecircle' size={20} color={theme.color.error} />
+          ) : checked ? (
+            <AntDesign
+              name='checkcircle'
+              size={20}
+              color={theme.color.success}
+            />
+          ) : (
+            <View
+              style={{
+                width: 20,
+                height: 20,
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: theme.color.lightGrey,
+                backgroundColor: theme.color.veryLightGrey,
+              }}
+            />
+          )}
+        </View>
+      </TouchableOpacity>
       {label && (
         <>
-          <Spacer width={10} />
-          <Text>{label}</Text>
+          <Text style={[{ fontSize: theme.fontSize.l }, textStyle]}>
+            {label}
+          </Text>
         </>
       )}
     </View>
