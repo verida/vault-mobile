@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SystemSecureStore from 'expo-secure-store'
 import Crypto from 'react-native-quick-crypto'
 
-export const SYSTEM_SECURE_STORAGE_NEEDS_MIGRATE = true
+const SYSTEM_SECURE_STORAGE_NEEDS_MIGRATE = true
 const SYSTEM_SECURE_STORAGE_KEY = 'verida-main-key'
 
 export class Encrypter {
