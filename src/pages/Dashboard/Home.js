@@ -205,21 +205,23 @@ const Home = (props) => {
   }
 
   async function onSelectAccount(did) {
-    if (did === AccountManager.getInstance().selectedAccount.did) {
+    const currentDid = AccountManager.getInstance().selectedAccount.did
+    if (did === currentDid) {
       return
     }
+
     toggleAddAccountsModal()
     try {
       await switchToAccount(did)
     } catch (e) {
       Alert.alert(
         'Error',
-        'Cannot get account information, removing this account'
+        `Unable to switch to that account, please try again later.`
       )
-      setLoading(true)
-      await AccountManager.getInstance().logout([did])
+
+      // Switch back to the current account
+      await switchToAccount(currentDid)
       await refresh()
-      setLoading(false)
     }
   }
 
