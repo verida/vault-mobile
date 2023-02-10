@@ -1,7 +1,7 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {

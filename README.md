@@ -6,6 +6,10 @@
 2. `yarn`
 3. `npx pod-install`
 
+## Notes
+
+1. Due to the iOS keychain value max length being 2048 limitation, all the secure values need to save using our builtin VeridaSecureStore helper
+
 ## Integrate with client-rn
 
 1. Make sure you are on the right branch of client-rn and verida-js
