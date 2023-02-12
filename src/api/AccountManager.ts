@@ -2,7 +2,7 @@
 import * as Sentry from '@sentry/react-native'
 import { Client, Context } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
-import Vault from '@verida/vault-common'
+import Vault from './VaultCommon/vault'
 import { ethers, utils } from 'ethers'
 import * as SecureStore from 'expo-secure-store'
 import { isEmpty, merge } from 'lodash'
