@@ -8,7 +8,13 @@ import * as SecureStore from 'expo-secure-store'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { Account, NormalizedAccounts, UserData } from 'api/types'
+import {
+  Account,
+  AddIdentityStepStatus,
+  AddIdentityStepType,
+  NormalizedAccounts,
+  UserData,
+} from 'api/types'
 import dataMap from 'config/data-map'
 import {
   addAccount,
@@ -84,12 +90,24 @@ class AccountManager extends EventEmitter {
         //store.dispatch(setAccounts([]))
         if (accountsRaw) {
           this.accounts = JSON.parse(accountsRaw)
+          // Sometimes if the app crashes when creating an account, it creates one that is empty
+          // In that case, remove it so the app doesn't return to the create account screen
+          // causing loss of access to all other accounts
+          if (this.accounts['']) {
+            delete this.accounts['']
+          }
           await this.filterDids()
           store.dispatch(setAccounts(this.accounts))
         }
-        const selectedAccountDid = await SecureStore.getItemAsync(
+
+        let selectedAccountDid = await SecureStore.getItemAsync(
           CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
+
+        // If no selected DID, choose the first
+        if (!selectedAccountDid && Object.keys(this.accounts).length) {
+          selectedAccountDid = this.accounts[Object.keys(this.accounts)[0]].did
+        }
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
@@ -149,31 +167,6 @@ class AccountManager extends EventEmitter {
         return undefined
       }
 
-      let selectedEndpointUrls: EndpointUrls | undefined = endpointUrls
-      if (!selectedEndpointUrls) {
-        const endpointUris = await NodeSelector.selectEndpointUris()
-        selectedEndpointUrls = {
-          dbServerUrl: endpointUris,
-          messageServerUrl: endpointUris,
-          notificationServerUrl: NodeSelector.notificationEndpoints(),
-        }
-      }
-
-      CONFIG.VERIDA_DID_CLIENT_CONFIG.web3Config.veridaKey =
-        this.selectedAccount.privateKey
-
-      const didEndpointUris: string[] = selectedEndpointUrls.dbServerUrl.reduce(
-        (result: string[], item: string) => {
-          result.push(`${item}did/`)
-          return result
-        },
-        []
-      )
-
-      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
-      didClientConfig.didEndpoints = didEndpointUris
-
-      const { mnemonic } = this.selectedAccount
       this.client = new Client({
         environment: CONFIG.VERIDA_ENVIRONMENT,
         didClientConfig: {
@@ -181,21 +174,26 @@ class AccountManager extends EventEmitter {
         },
       })
 
-      // Endpoint uris only get passed when creating account.
-      // When an account is reconnected, endpoint uris are selected based on DID documents of that account.
+      const { mnemonic } = this.selectedAccount
+
+      // Use empty endpointUri's as they should already have been specified
+      // when the account was created
+      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
+      didClientConfig.didEndpoints = []
+
       const account = new AutoAccount(
         {
           defaultDatabaseServer: {
             type: 'VeridaDatabase',
-            endpointUri: selectedEndpointUrls.dbServerUrl,
+            endpointUri: [],
           },
           defaultMessageServer: {
             type: 'VeridaMessage',
-            endpointUri: selectedEndpointUrls.messageServerUrl,
+            endpointUri: [],
           },
           defaultNotificationServer: {
             type: 'VeridaNotification',
-            endpointUri: selectedEndpointUrls.notificationServerUrl,
+            endpointUri: [],
           },
         },
         {
@@ -215,10 +213,10 @@ class AccountManager extends EventEmitter {
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
-      // Open an application context (forcing creation of a new context if it doesn't already exist)
+      // Open an application context
       const context = await this.client.openContext(
         CONFIG.VERIDA_CONTEXT_NAME,
-        true
+        false
       )
 
       // Fetch the context config from the Vault and re-apply it to the account
@@ -226,10 +224,10 @@ class AccountManager extends EventEmitter {
       const contextConfig = await context!.getContextConfig(did, false)
 
       // @todo: use account.setAccountConfig()
-      account.accountConfig = {
+      account.setAccountConfig({
         defaultDatabaseServer: contextConfig.services.databaseServer,
         defaultMessageServer: contextConfig.services.messageServer,
-      }
+      })
 
       // @todo: Do something useful with these messages
       context!.on('EndpointUnavailable', (endpointUri: string) => {
@@ -397,10 +395,16 @@ class AccountManager extends EventEmitter {
 
   public async createAccount(
     userData: UserData,
-    country: string
+    country: string,
+    updateProgress?: (
+      step: AddIdentityStepType,
+      status: AddIdentityStepStatus
+    ) => void
   ): Promise<Account | undefined> {
     let connected = false
     try {
+      updateProgress?.('CreateIdentifier', 'Loading')
+
       // Find suitable node based on selected country
       const countryCode = getCountryCode(country)
       const endpoints = await NodeSelector.selectEndpointUris(countryCode)
@@ -425,23 +429,103 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
-      await this.connect(true, endpointUris)
+
+      const didEndpointUris: string[] = endpointUris.dbServerUrl.reduce(
+        (result: string[], item: string) => {
+          result.push(`${item}did/`)
+          return result
+        },
+        []
+      )
+
+      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
+        veridaKey: this.selectedAccount.privateKey,
+      })
+      didClientConfig.didEndpoints = didEndpointUris
+
+      const { mnemonic } = this.selectedAccount
+
+      this.client = new Client({
+        environment: CONFIG.VERIDA_ENVIRONMENT,
+        didClientConfig: {
+          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+        },
+      })
+
+      const account = new AutoAccount(
+        {
+          defaultDatabaseServer: {
+            type: 'VeridaDatabase',
+            endpointUri: endpointUris.dbServerUrl,
+          },
+          defaultMessageServer: {
+            type: 'VeridaMessage',
+            endpointUri: endpointUris.messageServerUrl,
+          },
+          defaultNotificationServer: {
+            type: 'VeridaNotification',
+            endpointUri: endpointUris.notificationServerUrl,
+          },
+        },
+        {
+          privateKey: mnemonic,
+          environment: CONFIG.VERIDA_ENVIRONMENT,
+          didClientConfig,
+        }
+      )
+
+      // Connect the Verida account to the Verida client
+      await this.client.connect(account)
+
+      // Open the Vault context, forcing its creation
+      this.context = await this.client.openContext(
+        CONFIG.VERIDA_CONTEXT_NAME,
+        true
+      )
+
+      // Set the Vault
+      this.vault = await this.getVault()
+
+      // Fill the connected account with Verida DID
+      if (isEmpty(this.selectedAccount.did)) {
+        const did = await account.did()
+        await this.updateCurrentAccount({ did })
+      }
+
       connected = true
+
+      updateProgress?.('CreateIdentifier', 'Success')
+      // just a nice UI delay, smooth state tranisition
+      setTimeout(() => {
+        updateProgress?.('StorageLocation', 'Success')
+      }, 1000)
+      updateProgress?.('CreateProfile', 'Loading')
+
       const setPublicProfileSuccess = await execWithTimeout(
         this.setPublicProfile(userData),
         100000
       )
+
       if (!setPublicProfileSuccess) {
+        updateProgress?.('CreateProfile', 'Failure')
         throw new Error('Failed to set public profile')
       }
-      await this.setBackedupSeedPhraseConfig(false)
-      await this.setUserWallet()
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
+      updateProgress?.('CreateProfile', 'Success')
+
+      // At this point can consider DID and Profile are created successfully
+      // so we just delay and do these heavy tasks below asynchronously
+      setTimeout(async () => {
+        await this.setBackedupSeedPhraseConfig(false)
+        await this.setUserWallet()
+      }, 2000)
+
       return this.selectedAccount
     } catch (e) {
+      updateProgress?.('CreateProfile', 'Failure')
       // If the corrupted account is already connected, we need to remove it
       if (connected && this.selectedAccount) {
         await this.logout([this.selectedAccount?.did])
@@ -501,7 +585,7 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async switchToAccount(did: string) {
+  public async switchToAccount(did: string, connect = true) {
     try {
       this.selectedAccount = this.accounts[did]
       const { backedup } = this.selectedAccount.seedPhraseReminder
@@ -512,7 +596,10 @@ class AccountManager extends EventEmitter {
         CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
-      await this.connect(true)
+
+      if (connect) {
+        await this.connect(true)
+      }
       await this.restoreUserWallet()
       DataConnectorsManager.emit('logout', null)
 

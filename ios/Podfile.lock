@@ -25,8 +25,6 @@ PODS:
     - ExpoModulesCore
   - ExpoImagePicker (13.1.1):
     - ExpoModulesCore
-  - ExpoKeepAwake (10.1.1):
-    - ExpoModulesCore
   - ExpoLinearGradient (11.3.0):
     - ExpoModulesCore
   - ExpoModulesCore (0.9.2):
@@ -221,6 +219,15 @@ PODS:
   - JWT (3.0.0-beta.14):
     - Base64 (~> 1.1.2)
   - libevent (2.1.12)
+  - libwebp (1.2.4):
+    - libwebp/demux (= 1.2.4)
+    - libwebp/mux (= 1.2.4)
+    - libwebp/webp (= 1.2.4)
+  - libwebp/demux (1.2.4):
+    - libwebp/webp
+  - libwebp/mux (1.2.4):
+    - libwebp/demux
+  - libwebp/webp (1.2.4)
   - lottie-ios (3.2.3)
   - lottie-react-native (5.0.1):
     - lottie-ios (~> 3.2.3)
@@ -547,6 +554,10 @@ PODS:
     - React-Core
   - RNDeviceInfo (8.7.1):
     - React-Core
+  - RNFastImage (8.6.3):
+    - React-Core
+    - SDWebImage (~> 5.11.1)
+    - SDWebImageWebPCoder (~> 0.8.4)
   - RNFBAnalytics (14.12.0):
     - Firebase/Analytics (= 8.15.0)
     - React-Core
@@ -606,12 +617,20 @@ PODS:
   - RNSentry (4.12.0):
     - React-Core
     - Sentry/HybridSDK (= 7.31.3)
+  - RNSnackbar (2.4.0):
+    - React-Core
   - RNSqlite2 (3.5.2):
     - React-Core
-  - RNSVG (12.3.0):
+  - RNSVG (13.7.0):
     - React-Core
   - RNVectorIcons (8.1.0):
     - React-Core
+  - SDWebImage (5.11.1):
+    - SDWebImage/Core (= 5.11.1)
+  - SDWebImage/Core (5.11.1)
+  - SDWebImageWebPCoder (0.8.5):
+    - libwebp (~> 1.0)
+    - SDWebImage/Core (~> 5.10)
   - Sentry/HybridSDK (7.31.3)
   - SocketRocket (0.6.0)
   - SSZipArchive (2.2.3)
@@ -633,7 +652,6 @@ DEPENDENCIES:
   - EXLocalAuthentication (from `../node_modules/expo-local-authentication/ios`)
   - Expo (from `../node_modules/expo/ios`)
   - ExpoImagePicker (from `../node_modules/expo-image-picker/ios`)
-  - ExpoKeepAwake (from `../node_modules/expo-keep-awake/ios`)
   - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core/ios`)
   - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
@@ -707,6 +725,7 @@ DEPENDENCIES:
   - "RNCClipboard (from `../node_modules/@react-native-community/clipboard`)"
   - "RNCPushNotificationIOS (from `../node_modules/@react-native-community/push-notification-ios`)"
   - RNDeviceInfo (from `../node_modules/react-native-device-info`)
+  - RNFastImage (from `../node_modules/react-native-fast-image`)
   - "RNFBAnalytics (from `../node_modules/@react-native-firebase/analytics`)"
   - "RNFBApp (from `../node_modules/@react-native-firebase/app`)"
   - "RNFBDynamicLinks (from `../node_modules/@react-native-firebase/dynamic-links`)"
@@ -718,6 +737,7 @@ DEPENDENCIES:
   - RNReanimated (from `../node_modules/react-native-reanimated`)
   - RNScreens (from `../node_modules/react-native-screens`)
   - "RNSentry (from `../node_modules/@sentry/react-native`)"
+  - RNSnackbar (from `../node_modules/react-native-snackbar`)
   - RNSqlite2 (from `../node_modules/react-native-sqlite-2`)
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
@@ -752,9 +772,12 @@ SPEC REPOS:
     - GoogleUtilities
     - JWT
     - libevent
+    - libwebp
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
+    - SDWebImage
+    - SDWebImageWebPCoder
     - Sentry
     - SocketRocket
     - SSZipArchive
@@ -783,8 +806,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo/ios"
   ExpoImagePicker:
     :path: "../node_modules/expo-image-picker/ios"
-  ExpoKeepAwake:
-    :path: "../node_modules/expo-keep-awake/ios"
   ExpoLinearGradient:
     :path: "../node_modules/expo-linear-gradient/ios"
   ExpoModulesCore:
@@ -883,6 +904,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/push-notification-ios"
   RNDeviceInfo:
     :path: "../node_modules/react-native-device-info"
+  RNFastImage:
+    :path: "../node_modules/react-native-fast-image"
   RNFBAnalytics:
     :path: "../node_modules/@react-native-firebase/analytics"
   RNFBApp:
@@ -905,6 +928,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-screens"
   RNSentry:
     :path: "../node_modules/@sentry/react-native"
+  RNSnackbar:
+    :path: "../node_modules/react-native-snackbar"
   RNSqlite2:
     :path: "../node_modules/react-native-sqlite-2"
   RNSVG:
@@ -930,7 +955,6 @@ SPEC CHECKSUMS:
   EXLocalAuthentication: 7f37b242eae73f9acf111d39bdee3f1379e68902
   Expo: 3df4af520db4f37f9821ba732ce9ac0dc67bb7b8
   ExpoImagePicker: d9d6b4f29db437fc7796f13cee5f133f5b4b5f7c
-  ExpoKeepAwake: c0c494b442ecd8122974c13b93ccfb57bd408e88
   ExpoLinearGradient: 0debcf7d6cd7fea3050c218544f0db2de9a64f42
   ExpoModulesCore: e4278a668e8c13c0269ed8b8a4200989deea2973
   EXSecureStore: aaae919d83aec2faf031e99398807edac0313285
@@ -962,6 +986,7 @@ SPEC CHECKSUMS:
   GoogleUtilities: c2bdc4cf2ce786c4d2e6b3bcfd599a25ca78f06f
   JWT: ef71dfb03e1f842081e64dc42eef0e164f35d251
   libevent: 4049cae6c81cdb3654a443be001fb9bdceff7913
+  libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
   lottie-ios: c058aeafa76daa4cf64d773554bccc8385d0150e
   lottie-react-native: a029a86e1689c86a07169c520ae770e84348cd20
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
@@ -1007,6 +1032,7 @@ SPEC CHECKSUMS:
   RNCClipboard: 41d8d918092ae8e676f18adada19104fa3e68495
   RNCPushNotificationIOS: 87b8d16d3ede4532745e05b03c42cff33a36cc45
   RNDeviceInfo: aad3c663b25752a52bf8fce93f2354001dd185aa
+  RNFastImage: 5c9c9fed9c076e521b3f509fe79e790418a544e8
   RNFBAnalytics: ea1421b49a0bf5e5bb7274df4a330713d0e85d2e
   RNFBApp: e4439717c23252458da2b41b81b4b475c86f90c4
   RNFBDynamicLinks: 538840f6e3f58511f857d15df1bc25ed655dc283
@@ -1018,9 +1044,12 @@ SPEC CHECKSUMS:
   RNReanimated: 0ff5e7f619a7524d237848ecb4c47650c4946f71
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
+  RNSnackbar: be3333a21a453ccc272f41a8add5a71f7d44dfcd
   RNSqlite2: 8cf96c4a5cc62f95922de1d01c5f68d7fc52333c
-  RNSVG: 302bfc9905bd8122f08966dc2ce2d07b7b52b9f8
+  RNSVG: d787d64ca06b9158e763ad2638a8c4edce00782a
   RNVectorIcons: 31cebfcf94e8cf8686eb5303ae0357da64d7a5a4
+  SDWebImage: a7f831e1a65eb5e285e3fb046a23fcfbf08e696d
+  SDWebImageWebPCoder: 908b83b6adda48effe7667cd2b7f78c897e5111d
   Sentry: 08884c523575ec0f6690d94ed3ccb0246a1600bf
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9

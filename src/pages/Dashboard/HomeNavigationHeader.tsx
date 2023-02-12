@@ -8,6 +8,7 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import FastImage from 'react-native-fast-image'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import EnvelopeSvg from 'assets/icons/envelope.svg'
@@ -45,7 +46,11 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
       <Left style={styles.leftContainer}>
         <View style={styles.left}>
           <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
-            <Image source={avatar} style={styles.avatar} />
+            <FastImage
+              source={avatar as any}
+              resizeMode={FastImage.resizeMode.cover}
+              style={styles.avatar}
+            />
           </TouchableOpacity>
           <View style={styles.titleContainer}>
             <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>

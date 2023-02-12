@@ -1,3 +1,6 @@
+import { useNavigation } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
+import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -8,13 +11,12 @@ import {
   TextInput,
   View,
 } from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
+import Snackbar from 'react-native-snackbar'
 
-// import IntlPhoneInput from 'react-native-intl-phone-input'
-import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData } from 'reduxStore/general/actions'
+import useParams from 'hooks/useParams'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
@@ -27,12 +29,51 @@ import InputStyles from '../../styles/inputs'
 const MAX_TEXTAREA_LENGTH = 255
 const MAX_INPUT_LENGTH = 140
 
-const EditProfile = (props: any) => {
-  const { navigation, route, publicProfileData } = props
-  const { title, option } = route.params
+export interface GenericEditPropertyScreenProps {
+  screenName: string
+  title: string
+  option: {
+    label: string
+    value: string | Record<string, any>
+    type: 'input' | 'select' | 'textarea'
+    placeholder: string
+    description?: string
+  }
+  originalValue: any
+  mode: string | number
+  submitButtonLabel?: string
+  verification?: {
+    expectedValue: string
+    errorMessage: 'Wrong code, please try again later.'
+  }
+}
+
+type ValueObject = {
+  value: string
+}
+
+/**
+ * This component is just duplicated and modified for generic purpose usage from the EditProfile.tsx component
+ * TODO: Refactor
+ */
+const EditGenericProperty = () => {
+  const navigation = useNavigation()
+  const params = useParams<GenericEditPropertyScreenProps>()
+  const {
+    screenName,
+    title,
+    option,
+    mode,
+    originalValue,
+    submitButtonLabel = 'Save',
+    verification,
+  } = params
+  const styles = useThemeAwareStyle(createStyles)
 
   const [disabled, setDisabled] = useState(false)
-  const [edited, setEdited] = useState(option.value)
+  const [edited, setEdited] = useState<string | ValueObject>(
+    option.value as any
+  )
   const [inputError, setInputError] = useState({
     inputMaxLength: 0,
     isExceededMaxLength: false,
@@ -40,17 +81,36 @@ const EditProfile = (props: any) => {
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
-    const key = title.toLowerCase()
-    const val = (edited.value || edited).trim()
+    try {
+      const val = (((edited as ValueObject)?.value || edited) as string).trim()
+      setDisabled(true)
 
-    if (publicProfileData[key] === val) return
-    setDisabled(true)
-    const vault = AccountManager.getInstance().vault as any
+      // Allow to retry
+      if (
+        verification &&
+        verification.expectedValue.toLowerCase() !== val?.trim().toLowerCase()
+      ) {
+        Snackbar.show({
+          text: verification.errorMessage,
+          duration: Snackbar.LENGTH_SHORT,
+        })
+        setDisabled(false)
 
-    await vault.profiles.public.set(key, val)
-    setPublicProfileData({ ...publicProfileData, [key]: val })
+        return
+      }
 
-    navigation.goBack()
+      emitter.emit('SAVE_GENERIC_PROPERTY', {
+        screenName,
+        title,
+        value: val,
+        mode,
+        originalValue,
+      })
+
+      navigation.goBack()
+    } catch (error) {
+      Sentry.captureException(error)
+    }
   }
 
   const handleInput = (text: string, maxLength: number) => {
@@ -78,13 +138,16 @@ const EditProfile = (props: any) => {
             <Label>{option.label}</Label>
             {option.type === 'input' && (
               <TextInput
-                placeholder={`Enter the ${option.label}`}
+                placeholder={option.placeholder}
                 style={[
                   InputStyles.input,
                   inputError.isExceededMaxLength && styles.inputValidation,
                 ]}
-                value={edited}
+                value={edited as string}
                 autoFocus={true}
+                autoCapitalize='none'
+                autoCorrect={false}
+                placeholderTextColor='rgba(4, 17, 51, 0.3)'
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
                   handleInput(text, MAX_INPUT_LENGTH)
@@ -96,7 +159,7 @@ const EditProfile = (props: any) => {
                 searchable={true}
                 searchablePlaceholder='Search...'
                 placeholder=''
-                defaultValue={option.value}
+                defaultValue={option.value as string}
                 items={COUNTRIES}
                 containerStyle={InputStyles.select}
                 onChangeItem={onChangeItem}
@@ -109,7 +172,7 @@ const EditProfile = (props: any) => {
                   InputStyles.textarea,
                   inputError.isExceededMaxLength && styles.inputValidation,
                 ]}
-                value={edited}
+                value={edited as string}
                 multiline
                 numberOfLines={4}
                 maxLength={MAX_TEXTAREA_LENGTH}
@@ -120,14 +183,6 @@ const EditProfile = (props: any) => {
                 }}
               />
             )}
-            {/* {option.type === 'phone' && (
-            <IntlPhoneInput
-              // ref={el => setPhoneInputRef(el)}
-              containerStyle={{ ...InputStyles.input, paddingVertical: 4 }}
-              onChangeText={onChangeItem}
-              defaultCountry='SG'
-            />
-          )} */}
             {['textarea', 'input'].includes(option.type) &&
               inputError.isExceededMaxLength && (
                 <Text style={styles.inputText}>
@@ -135,9 +190,14 @@ const EditProfile = (props: any) => {
                   characters
                 </Text>
               )}
+            {Boolean(option.description) && (
+              <Text style={[styles.description]}>{option.description}</Text>
+            )}
           </View>
-          <Button disabled={disabled} onPress={saveValue}>
-            Save Changes
+          <Button
+            disabled={disabled || (edited as string).length === 0}
+            onPress={saveValue}>
+            {submitButtonLabel}
           </Button>
         </Content>
       </KeyboardAvoidingView>
@@ -145,29 +205,23 @@ const EditProfile = (props: any) => {
   )
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    setPublicProfileData: (data: unknown) =>
-      dispatch(setPublicProfileData(data)),
-  }
-}
+export default EditGenericProperty
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)
-
-const styles = StyleSheet.create({
-  inputValidation: {
-    borderColor: DECLINE_COLOR,
-  },
-  inputText: {
-    fontFamily: NUNITO_SANS,
-    color: DECLINE_COLOR,
-    fontStyle: 'italic',
-    fontSize: 12,
-    marginVertical: 4,
-  },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    inputValidation: {
+      borderColor: DECLINE_COLOR,
+    },
+    inputText: {
+      fontFamily: NUNITO_SANS,
+      color: DECLINE_COLOR,
+      fontStyle: 'italic',
+      fontSize: 12,
+      marginVertical: 4,
+    },
+    description: {
+      marginVertical: theme.spacing.xs,
+      color: theme.color.textLightGrey,
+      fontSize: theme.fontSize.s,
+    },
+  })

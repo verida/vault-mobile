@@ -1,4 +1,7 @@
 {
+  "private": true,
+  "name": "@verida/vault-mobile",
+  "version": "0.3.33",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -58,6 +61,7 @@
     "browserify-zlib": "^0.1.4",
     "buffer": "^6.0.3",
     "caip": "./libs/caip",
+    "color": "^4.2.3",
     "compare-versions": "^5.0.1",
     "console-browserify": "^1.2.0",
     "constants-browserify": "^1.0.0",
@@ -109,9 +113,11 @@
     "react-native-device-info": "^8.5.1",
     "react-native-elements": "^2.0.4",
     "react-native-fast-crypto": "^2.2.0",
+    "react-native-fast-image": "^8.6.3",
     "react-native-flipper": "^0.152.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-get-random-values": "^1.8.0",
+    "react-native-gradients": "^2.0.1",
     "react-native-intl-phone-input": "^1.2.22",
     "react-native-json-tree": "^1.3.0",
     "react-native-keychain": "^6.2.0",
@@ -124,8 +130,9 @@
     "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "4.2.4",
     "react-native-screens": "^3.17.0",
+    "react-native-snackbar": "^2.4.0",
     "react-native-sqlite-2": "^3.5.2",
-    "react-native-svg": "12.3.0",
+    "react-native-svg": "13.7.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.1.1",
     "react-native-tcp": "^3.3.2",
@@ -159,6 +166,7 @@
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
     "@react-native-community/eslint-config": "^3.0.0",
+    "@types/color": "^3.0.3",
     "@types/lodash": "^4.14.182",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.67.6",
@@ -189,7 +197,7 @@
     "typescript": "~4.3.5"
   },
   "resolutions": {
-    "react-native-svg": "^12.1.1",
+    "react-native-svg": "^13.7.0",
     "expo-splash-screen": "^0.11.2",
     "@types/react": "17.0.30",
     "ethers": "^5.6.0",
@@ -208,9 +216,14 @@
       "node"
     ]
   },
-  "private": true,
-  "name": "@verida/vault-mobile",
-  "version": "0.1.0",
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "expo-keep-awake",
+        "expo-error-recovery"
+      ]
+    }
+  },
   "react-native": {
     "zlib": "browserify-zlib",
     "console": "console-browserify",

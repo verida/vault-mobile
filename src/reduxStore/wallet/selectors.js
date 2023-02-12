@@ -9,6 +9,7 @@ import { selectTokens } from 'reduxStore/tokens/selectors'
 
 const s = (state) => state.main // Current wallet state sits in main reducer
 export const selectedWalletSelector = (state) => s(state).selectedWallet
+export const allWalletsSelector = (state) => getAllWallets(s(state)) || {}
 
 export const getBalancesData = (state) => {
   if (state.balances.data && state.balances.data.results) {
