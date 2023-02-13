@@ -1,7 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
-import didJWT from 'did-jwt'
-import { get } from 'lodash'
+import { Credentials } from '@verida/verifiable-credentials'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
@@ -31,21 +30,31 @@ const DataItem = (props) => {
     const init = async () => {
       try {
         setLoading(true)
-        const _data = await folder.getDetail(item)
+        let _data
         if (isCredential) {
-          const decoded = didJWT.decodeJWT(item.didJwtVc)
-          _data.payload = get(decoded, 'payload.data', {})
-          const iss = decoded.payload.iss
+          const credentialLib = new Credentials()
+          const vcData = await credentialLib.verifyCredential(item.didJwtVc)
+          const credentialData = vcData.payload.vc.credentialSubject
+          const schemaUri = vcData.payload.vc.credentialSchema.id
+          const credentialDetail = await folder.getDetail(
+            credentialData,
+            schemaUri
+          )
+          const iss = vcData.payload.iss
+
+          _data = credentialDetail
 
           const { name, avatar } = await getPublicProfile(
             iss,
-            decoded.payload.vc.veridaContextName
+            vcData.payload.vc.veridaContextName
           )
           _data.issuer = {
             name,
             avatar,
             did: iss,
           }
+        } else {
+          _data = await folder.getDetail(item)
         }
         setData(_data)
         setLoading(false)
