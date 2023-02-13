@@ -315,7 +315,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     [publicWalletAddresses]
   )
 
-  // component did mount
   useEffect(() => {
     setLoading(true)
 
@@ -331,6 +330,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
       setLoading(false)
     })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentAccountDID])
+
+  // component did mount
+  useEffect(() => {
     let listener: any
     const watchChanges = async () => {
       const vault = AccountManager.getInstance().vault as any
@@ -352,7 +356,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     }
     // Register profile change listener one time
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [currentAccountDID])
+  }, [])
 
   return (
     <Screen
