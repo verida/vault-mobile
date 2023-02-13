@@ -312,6 +312,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   useEffect(() => {
     setLoading(true)
 
+    saveStatusEnabledVeridaOneProfile(false)
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
@@ -358,7 +359,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         <ScrollView
           contentContainerStyle={{
             padding: theme.spacing.m,
-            paddingBottom: theme.spacing.xxxl,
+            paddingBottom: enabledVeridaOne ? theme.spacing.xxxl : 0,
           }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -646,5 +647,7 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: -theme.spacing.m,
       alignItems: 'center',
       paddingHorizontal: theme.spacing.m,
+      minHeight: 260,
+      maxHeight: 260,
     },
   })

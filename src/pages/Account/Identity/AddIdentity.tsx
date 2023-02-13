@@ -6,8 +6,16 @@ import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import { Icon } from 'native-base'
 import React, { useCallback, useMemo, useRef, useState } from 'react'
-import { Alert, BackHandler, ScrollView, StyleSheet, View } from 'react-native'
+import {
+  Alert,
+  BackHandler,
+  Platform,
+  ScrollView,
+  StyleSheet,
+  View,
+} from 'react-native'
 import PagerView from 'react-native-pager-view'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
@@ -66,6 +74,7 @@ const AddIdentity = () => {
   const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
+  const { top } = useSafeAreaInsets()
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Name)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
@@ -261,7 +270,6 @@ const AddIdentity = () => {
             }
           />
           <StepsIndicator
-            // style={{pad}}
             style={{ paddingHorizontal: theme.spacing.m }}
             currentStep={currentPage}
             numberOfSteps={numberOfPages - 1}
@@ -381,7 +389,12 @@ const AddIdentity = () => {
               <Spacer height={320} />
             </ScrollView>
           </View>
-          <View key='confirmation' style={styles.landing}>
+          <View
+            key='confirmation'
+            style={[
+              styles.landing,
+              { marginTop: Platform.OS === 'ios' ? 0 : top }, // Some layout trick for Android, TODO: reafactor
+            ]}>
             <ScrollView
               showsVerticalScrollIndicator={false}
               contentContainerStyle={{
@@ -445,7 +458,7 @@ const AddIdentity = () => {
                 showLoading={
                   confirmationState?.state?.CreateIdentifier === 'Loading'
                 }
-                label='Create identifier'
+                label='Creating your decentralized identity'
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey400}
@@ -480,7 +493,7 @@ const AddIdentity = () => {
                 showLoading={
                   confirmationState?.state?.CreateProfile === 'Loading'
                 }
-                label='Create public profile'
+                label='Creating your public profile'
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey400}
@@ -494,7 +507,7 @@ const AddIdentity = () => {
                 showLoading={
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
-                label='Connect storage nodes'
+                label='Connecting to your storage nodes'
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey400}
@@ -524,8 +537,14 @@ const AddIdentity = () => {
             ) : !processing ? (
               <View>
                 <View style={styles.seedPhraseRemindView}>
-                  <WarningIcon />
-                  <Text style={{ marginLeft: theme.spacing.s }}>
+                  <View style={{ alignItems: 'center', marginTop: 3 }}>
+                    <WarningIcon />
+                  </View>
+                  <Text
+                    style={{
+                      flex: 1,
+                      marginLeft: theme.spacing.s,
+                    }}>
                     Record your seed phrase to create a backup for your
                     identity. You can do it later.
                   </Text>
@@ -613,7 +632,6 @@ const creatStyles = (theme: Theme) => {
     },
     seedPhraseRemindView: {
       flexDirection: 'row',
-      alignItems: 'center',
       borderColor: theme.color.warning,
       backgroundColor: color.rgb(theme.color.warning).alpha(0.1).toString(),
       borderWidth: 1,

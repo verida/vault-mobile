@@ -51,12 +51,12 @@ const createStyles = (theme: Theme) =>
     },
     stepLine: {
       flex: 1,
-      borderWidth: 2,
-      borderColor: Color(theme.color.primary).alpha(0.2).toString(),
+      height: 2,
+      backgroundColor: Color(theme.color.primary).alpha(0.2).toString(),
     },
     stepLineActive: {
       flex: 1,
-      borderWidth: 2,
-      borderColor: theme.color.primary,
+      height: 2,
+      backgroundColor: theme.color.primary,
     },
   })
