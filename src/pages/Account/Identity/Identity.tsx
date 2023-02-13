@@ -78,9 +78,6 @@ const Identity = () => {
           disabled={!agreedTC}
           style={[styles.actionButton]}
           onPress={() => {
-            if (params.mode === AddIdentityMode.Add) {
-              navigation.dispatch(StackActions.pop(1))
-            }
             navigation.navigate('SeedPhraseEntered', { ...params } as any)
           }}>
           <View style={{ alignItems: 'center' }}>

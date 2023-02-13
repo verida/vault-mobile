@@ -87,6 +87,13 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     string,
     VeridaWallet
   >
+  const selectedAccount = useSelector(
+    (state: any) => state.main.selectedAccount
+  )
+  const currentAccountDID =
+    selectedAccount?.did ??
+    AccountManager.getInstance().getSelectedAccount()?.did
+
   const chains = useSelector(selectChains)
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
@@ -229,7 +236,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
-      setPublicProfile(publicData)
+      setPublicProfile({})
 
       updatePublicProfileData(publicData || publicProfileData)
       const updatedList = list.map((item: any) => {
@@ -312,7 +319,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   useEffect(() => {
     setLoading(true)
 
-    saveStatusEnabledVeridaOneProfile(false)
+    // Reset
+    setPublicWalletAddresses([])
+    setPublicProfile({})
+
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
@@ -342,7 +352,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     }
     // Register profile change listener one time
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [currentAccountDID])
 
   return (
     <Screen

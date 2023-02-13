@@ -517,11 +517,11 @@ class AccountManager extends EventEmitter {
       updateProgress?.('CreateProfile', 'Success')
 
       // At this point can consider DID and Profile are created successfully
-      // so we just delay and do these heavy tasks below asynchronously
+      // so we just finish this function and do these heavy tasks below asynchronously
       setTimeout(async () => {
         await this.setBackedupSeedPhraseConfig(false)
         await this.setUserWallet()
-      }, 2000)
+      }, 0)
 
       return this.selectedAccount
     } catch (e) {
