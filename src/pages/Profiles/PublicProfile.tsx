@@ -44,6 +44,7 @@ import { setPublicProfileData } from 'reduxStore/general/actions'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
+import { VeridaOneProfile } from 'api/types'
 
 interface PublicAddress {
   address: string
@@ -260,7 +261,9 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     // Fetch Verida One Profile
     try {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
-      setPublicWalletAddresses(oneProfile.walletAddresses)
+      if (oneProfile) {
+        setPublicWalletAddresses(oneProfile.walletAddresses)
+      }
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load Verida profile data')
