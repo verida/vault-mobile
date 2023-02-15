@@ -1,7 +1,7 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import * as SecureStore from 'expo-secure-store'
+// import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -29,13 +29,12 @@ import {
   ORANGE_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
-import { FIRST_TIME_LOGIN_KEY } from 'constants/storage'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
-import { CreateAccountMode } from 'pages/Account/Create'
+import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
@@ -49,7 +48,7 @@ import {
 const DefaultAvatar = require('assets/stubs/avatar.png')
 const LogoImg = require('assets/vault-logo.png')
 
-const SHOW_BANNER_KEY = 'show_banner'
+// const SHOW_BANNER_KEY = 'show_banner'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
@@ -140,26 +139,6 @@ const Home = (props) => {
   }, [navigationLink, linkTo, setNavigationLink])
 
   useEffect(() => {
-    async function checkFirstTimeLogin() {
-      try {
-        const isFirstTimeLogin = await SecureStore.getItemAsync(
-          FIRST_TIME_LOGIN_KEY
-        )
-        if (isFirstTimeLogin) {
-          await SecureStore.deleteItemAsync(FIRST_TIME_LOGIN_KEY)
-          navigation.navigate('ScanQrCode', {
-            firstTime: true,
-          })
-        }
-      } catch (e) {
-        Sentry.captureException(e)
-      }
-    }
-
-    checkFirstTimeLogin()
-  }, [navigation])
-
-  useEffect(() => {
     const initProfile = async () => {
       try {
         setLoading(true)
@@ -173,14 +152,14 @@ const Home = (props) => {
           name,
           did: _selectedAccount.did,
         })
-        const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
-        if (!showBanner || showBanner !== 'set') {
-          Alert.alert(
-            'Important Notice',
-            'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
-          )
-          await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
-        }
+        // const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
+        // if (!showBanner || showBanner !== 'set') {
+        //   Alert.alert(
+        //     'Important Notice',
+        //     'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
+        //   )
+        //   await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
+        // }
         setLoading(false)
       } catch (e) {
         Sentry.captureException(e)
@@ -213,7 +192,10 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('AddAccount', { mode: CreateAccountMode.ADD })
+      navigation.navigate('Identity', {
+        mode: AddIdentityMode.Add,
+        previousScreen: 'Dashboard',
+      })
     })
   }
 
@@ -223,21 +205,23 @@ const Home = (props) => {
   }
 
   async function onSelectAccount(did) {
-    if (did === AccountManager.getInstance().selectedAccount.did) {
+    const currentDid = AccountManager.getInstance().selectedAccount.did
+    if (did === currentDid) {
       return
     }
+
     toggleAddAccountsModal()
     try {
       await switchToAccount(did)
     } catch (e) {
       Alert.alert(
         'Error',
-        'Cannot get account information, removing this account'
+        `Unable to switch to that account, please try again later.`
       )
-      setLoading(true)
-      await AccountManager.getInstance().logout([did])
+
+      // Switch back to the current account
+      await switchToAccount(currentDid)
       await refresh()
-      setLoading(false)
     }
   }
 
@@ -264,7 +248,7 @@ const Home = (props) => {
         avatar={avatarSource}
         inboxCount={props.newMessagesCount}
         onNamePress={toggleAddAccountsModal}
-        onAvatarPress={() => props.navigation.navigate('PublicProfile')}
+        onAvatarPress={() => props.navigation.navigate('Profile')}
         onInboxPress={() => props.navigation.navigate('Inbox')}
         onSettingsPress={() =>
           props.navigation.navigate('Settings', {

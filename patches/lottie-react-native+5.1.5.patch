@@ -1,0 +1,89 @@
+diff --git a/node_modules/lottie-react-native/package.json b/node_modules/lottie-react-native/package.json
+index ab0b032..b65cda3 100644
+--- a/node_modules/lottie-react-native/package.json
++++ b/node_modules/lottie-react-native/package.json
+@@ -2,7 +2,7 @@
+   "name": "lottie-react-native",
+   "version": "5.1.5",
+   "description": "React Native bindings for Lottie",
+-  "main": "lib/index.js",
++  "main": "src/js/index.js",
+   "types": "src/js/index.d.ts",
+   "scripts": {
+     "start": "node node_modules/react-native/local-cli/cli.js start",
+@@ -83,5 +83,57 @@
+     "react": "17.0.2",
+     "react-native": "0.66.1",
+     "react-native-windows": "0.66.6"
++  },
++  "react-native": {
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "net": "react-native-tcp",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
++  },
++  "browser": {
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "net": "react-native-tcp",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
+   }
+ }
+\ No newline at end of file
+diff --git a/node_modules/lottie-react-native/src/js/LottieView.js b/node_modules/lottie-react-native/src/js/LottieView.js
+index edb999c..283d0be 100644
+--- a/node_modules/lottie-react-native/src/js/LottieView.js
++++ b/node_modules/lottie-react-native/src/js/LottieView.js
+@@ -149,8 +149,11 @@ class LottieView extends React.PureComponent {
+     const { style, source, autoSize, autoPlay, ...rest } = this.props;
+ 
+     const sourceName = typeof source === 'string' ? source : undefined;
++    
++    // The Android Lottie animation view has an issue with the JSON.sortify module(it sorts object keys alphabetically.)
++    // So we use an original reference to the JS JSON functions to make the animation on Android work again
+     const sourceJson =
+-      typeof source === 'object' && !source.uri ? JSON.stringify(source) : undefined;
++      typeof source === 'object' && !source.uri ? global.originalJSON.stringify(source) : undefined;
+     const sourceURL = typeof source === 'object' && source.uri ? source.uri : undefined;
+ 
+     const aspectRatioStyle = sourceJson ? { aspectRatio: source.w / source.h } : undefined;

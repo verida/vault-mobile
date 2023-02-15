@@ -274,14 +274,10 @@ android {
         }
     }
 
-    /*
-    Removed as per: https://react-native-community.github.io/upgrade-helper/?from=0.62.2&to=0.63.2
+
     packagingOptions {
-        pickFirst "lib/armeabi-v7a/libc++_shared.so"
-        pickFirst "lib/arm64-v8a/libc++_shared.so"
-        pickFirst "lib/x86/libc++_shared.so"
-        pickFirst "lib/x86_64/libc++_shared.so"
-    }*/
+        pickFirst '**/*.so'
+    }
 
     // applicationVariants are e.g. debug, release
     applicationVariants.all { variant ->

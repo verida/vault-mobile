@@ -117,9 +117,9 @@ function useWalletConnectContextv2() {
     if (!authenticated || !selectedWalletId) return
     if (currentWalletIdRef.current !== selectedWalletId) {
       ;(async () => {
-        await createOrRestoreNearWallet()
+        const data = await createOrRestoreNearWallet()
         currentWalletIdRef.current = selectedWalletId
-        setInitialized(true)
+        setInitialized(!!data)
       })()
     }
   }, [authenticated, initialized, selectedWalletId])

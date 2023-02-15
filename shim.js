@@ -47,9 +47,10 @@ global.navigator = {
   userAgent: 'mobile',
 }
 
-/**
- * Andy TODO: Investigate
- * Add this line below to fix a weird issue: the network fetch function is not found in some places like pouch-fetch package
- * This issue just happened on Mac OS Ventura 13.0.1
- */
-global.fetch
+// TODO: Investigate - the Android Lottie animation view has an issue with the `JSON.sortify` module(it sorts object keys alphabetically.)
+// So we keep an original reference to the JS JSON functions and patch usages in the Lottie-react-native package
+// to make the animation on Android work again
+global.originalJSON = {
+  stringify: JSON.stringify,
+  parse: JSON.parse,
+}

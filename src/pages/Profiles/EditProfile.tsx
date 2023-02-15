@@ -13,7 +13,6 @@ import { Dispatch } from 'redux'
 
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
-import VeridaOneManager from 'api/VeridaOneManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
@@ -26,7 +25,7 @@ import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 const MAX_TEXTAREA_LENGTH = 255
-const MAX_INPUT_LENGTH = 20
+const MAX_INPUT_LENGTH = 140
 
 const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props

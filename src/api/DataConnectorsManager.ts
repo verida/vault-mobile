@@ -1,5 +1,4 @@
-import { ContextInterfaces } from '@verida/client-rn'
-import Datastore from '@verida/client-rn/dist/src/context/datastore'
+import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
 import EventEmitter from 'events'
 import moment from 'moment'
@@ -56,7 +55,7 @@ class DataConnectorsEvents extends EventEmitter {
 }
 
 export default class DataConnectorsManager {
-  static datastore: Datastore
+  static datastore: IDatastore
   private static _connections: any = {}
 
   static async emit(eventName: string, args: any) {
@@ -73,7 +72,7 @@ export default class DataConnectorsManager {
     await connection.sync()
   }
 
-  static async getDatastore(): Promise<Datastore> {
+  static async getDatastore(): Promise<IDatastore> {
     if (DataConnectorsManager.datastore) {
       return DataConnectorsManager.datastore
     }
@@ -354,8 +353,8 @@ class DataConnection extends EventEmitter {
         serverDid,
         {
           permissions: {
-            read: ContextInterfaces.PermissionOptionsEnum.USERS,
-            write: ContextInterfaces.PermissionOptionsEnum.USERS,
+            read: DatabasePermissionOptionsEnum.USERS,
+            write: DatabasePermissionOptionsEnum.USERS,
             readList: did ? [did] : [],
             writeList: did ? [did] : [],
           },
@@ -435,8 +434,8 @@ class DataConnection extends EventEmitter {
           serverDid,
           {
             permissions: {
-              read: ContextInterfaces.PermissionOptionsEnum.USERS,
-              write: ContextInterfaces.PermissionOptionsEnum.USERS,
+              read: DatabasePermissionOptionsEnum.USERS,
+              write: DatabasePermissionOptionsEnum.USERS,
               readList: did ? [did] : [],
               writeList: did ? [did] : [],
             },

@@ -1,6 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
