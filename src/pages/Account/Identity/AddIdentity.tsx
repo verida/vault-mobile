@@ -171,6 +171,7 @@ const AddIdentity = () => {
     } catch (error) {
       setShowRetry(true)
     }
+    pagerRef.current?.setPage(PageType.Confirmation)
     setProcessing(false)
   }, [profile?.country, profile.name, showCountryInPublicProfile])
 
@@ -282,9 +283,6 @@ const AddIdentity = () => {
           style={styles.pagerView}
           initialPage={currentPage}
           scrollEnabled={false}
-          onPageSelected={(event) => {
-            setCurrentPage(event.nativeEvent.position)
-          }}
           ref={pagerRef}
           overScrollMode='auto'>
           <View key='name' style={styles.landing}>
