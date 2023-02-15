@@ -169,11 +169,18 @@ const AddIdentity = () => {
         }
       )
       setDoneCreateAccount(true)
-    } catch (error) {
-      if (error.message == 'Unable to force creation of storage context for this DID') {
-        setCreateAccountErrorMessage('Blockchain is temporarily unavailable, please try again later.')
+    } catch (error: any) {
+      if (
+        error.message ===
+        'Unable to force creation of storage context for this DID'
+      ) {
+        setCreateAccountErrorMessage(
+          'Blockchain is temporarily unavailable, please try again later.'
+        )
       } else {
-        setCreateAccountErrorMessage('Unable to create account at this time, please try again later.')
+        setCreateAccountErrorMessage(
+          'Unable to create account at this time, please try again later.'
+        )
       }
       setShowRetry(true)
     }
