@@ -2,8 +2,7 @@ import { get } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import AccountManager from 'api/AccountManager'
-
+import { getInboxProfile } from '../api/utils'
 import DataSnapshot from '../assets/inbox/snapshot.svg'
 import DataSynchronization from '../assets/inbox/synchronization.svg'
 
@@ -65,7 +64,10 @@ export const buildItem = async (inboxItem) => {
     item: inboxItem,
   }
 
-  const profile = await getProfile(inboxItem.sentBy)
+  const profile = await getInboxProfile(
+    inboxItem.sentBy.did,
+    inboxItem.sentBy.context
+  )
   const name = get(profile, 'name', '')
   const avatar = get(profile, 'avatar')
   item.from = name ? `Sent by ${name}\n` : ''
@@ -73,17 +75,6 @@ export const buildItem = async (inboxItem) => {
   if (avatar) {
     item.logo = avatar
   }
-  return item
-}
 
-// @todo: Add to vault common
-export const getProfile = async (sentBy) => {
-  const verida = AccountManager.getInstance().context
-  try {
-    const profile = await verida.openProfile('basicProfile', sentBy.did)
-    return await profile.public.getMany()
-  } catch (err) {
-    // User may not have created a profile
-    return {}
-  }
+  return item
 }

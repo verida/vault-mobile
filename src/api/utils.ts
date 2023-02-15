@@ -143,6 +143,23 @@ export async function getPublicProfile(
   }
 }
 
+// @todo: Add to vault common
+export const getInboxProfile = async (did: string, context: string) => {
+  const client = AccountManager.getInstance().client
+  try {
+    const profile = await client!.openPublicProfile(
+      did,
+      context,
+      'basicProfile'
+    )
+    const profileData = await profile!.getMany({}, {})
+    return profileData
+  } catch (err) {
+    // User may not have created a profile
+    return {}
+  }
+}
+
 export async function getAxios() {
   const config: any = {
     headers: {
