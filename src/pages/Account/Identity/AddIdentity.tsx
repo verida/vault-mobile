@@ -91,6 +91,7 @@ const AddIdentity = () => {
     undefined
   )
   const [showRetry, setShowRetry] = useState(false)
+  const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('')
   const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
 
   const checkUsername = useCallback(async () => {
@@ -169,6 +170,11 @@ const AddIdentity = () => {
       )
       setDoneCreateAccount(true)
     } catch (error) {
+      if (error.message == 'Unable to force creation of storage context for this DID') {
+        setCreateAccountErrorMessage('Blockchain is temporarily unavailable, please try again later.')
+      } else {
+        setCreateAccountErrorMessage('Unable to create account at this time, please try again later.')
+      }
       setShowRetry(true)
     }
     setProcessing(false)
@@ -444,7 +450,7 @@ const AddIdentity = () => {
                 {isDoneCreateAccount
                   ? 'Your Identity has been successfully created'
                   : showRetry
-                  ? 'Please retry'
+                  ? createAccountErrorMessage
                   : 'Please wait...'}
               </Text>
               <Spacer vertical='xxl' />
