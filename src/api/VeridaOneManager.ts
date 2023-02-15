@@ -1,4 +1,5 @@
-import { Context, ContextInterfaces, Datastore } from '@verida/client-rn'
+import { Context } from '@verida/client-rn'
+import { IDatastore, DatabasePermissionOptionsEnum } from '@verida/types'
 
 import AccountManager from './AccountManager'
 import {
@@ -15,7 +16,7 @@ const PROFILE_SCHEMA_URL =
 
 export default class VeridaOneManager {
   static context: Context
-  static datastore: Promise<Datastore>
+  static datastore: Promise<IDatastore>
 
   static async setCustomLinks(customLinks: VeridaOneCustomLink[]) {
     const profile = await VeridaOneManager.getProfile()
@@ -67,8 +68,9 @@ export default class VeridaOneManager {
 
   static async saveProfile(profile: VeridaOneProfile) {
     const datastore = await VeridaOneManager.getDatastore()
-    const result = await datastore.save(profile)
+    const result = await datastore.save(profile, {})
     if (!result) {
+      // @ts-ignore
       console.log(datastore.errors)
     }
     console.log(result)
@@ -77,7 +79,7 @@ export default class VeridaOneManager {
     console.log(info)
   }
 
-  static async getDatastore(): Promise<Datastore> {
+  static async getDatastore(): Promise<IDatastore> {
     if (VeridaOneManager.datastore) {
       return VeridaOneManager.datastore
     }
@@ -93,8 +95,8 @@ export default class VeridaOneManager {
         PROFILE_SCHEMA_URL,
         {
           permissions: {
-            read: ContextInterfaces.PermissionOptionsEnum.PUBLIC,
-            write: ContextInterfaces.PermissionOptionsEnum.OWNER,
+            read: DatabasePermissionOptionsEnum.PUBLIC,
+            write: DatabasePermissionOptionsEnum.OWNER,
           },
         }
       )
