@@ -4,8 +4,9 @@ import React from 'react'
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
-import Create from 'pages/Account/Create'
 import DeleteAccount from 'pages/Account/DeleteAccount'
+import AddIdentity from 'pages/Account/Identity/AddIdentity'
+import Identity from 'pages/Account/Identity/Identity'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import ChangePin from 'pages/Authentication/ChangePin'
@@ -18,6 +19,7 @@ import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
+import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
@@ -61,6 +63,10 @@ function MainNavigator() {
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
       <Stack.Screen name={'EditProfile'} component={EditProfile} />
+      <Stack.Screen
+        name={'EditGenericProperty'}
+        component={EditGenericProperty}
+      />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
       <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
@@ -92,9 +98,10 @@ function MainNavigator() {
       <Stack.Screen name={'Settings'} component={Settings} />
       <Stack.Screen name={'ChangePin'} component={ChangePin} />
       <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
-      <Stack.Screen name={'AddAccount'} component={Create} />
       <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
       <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
+      <Stack.Screen name={'Identity'} component={Identity} />
+      <Stack.Screen name={'AddIdentity'} component={AddIdentity} />
 
       <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
       <Stack.Screen

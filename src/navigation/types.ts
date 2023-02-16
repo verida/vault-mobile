@@ -1,8 +1,9 @@
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network, NFT, NFTCollection } from 'api/types'
-import { CreateAccountMode } from 'pages/Account/Create'
+import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 
 export type RootStackParams = {
   Auth: undefined
@@ -11,7 +12,8 @@ export type RootStackParams = {
 
 export type AuthStackParams = {
   Start: undefined
-  CreateAccount: { mode: CreateAccountMode }
+  Identity: undefined
+  AddIdentity: { mode?: AddIdentityMode }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   SeedPhraseEntered: undefined
@@ -26,7 +28,7 @@ export type DashboardTabParams = {
   Data: undefined
   Tokens: undefined
   Assets: undefined
-  Profiles: undefined
+  Profile: undefined
   Connections: undefined
 }
 
@@ -39,6 +41,7 @@ export type MainStackParams = {
   PublicProfile: undefined
   PrivateProfile: undefined
   EditProfile: undefined
+  EditGenericProperty: GenericEditPropertyScreenProps
   SeedPhraseView: undefined
   ManageWallets: undefined
   SingleCurrency: undefined
@@ -59,8 +62,9 @@ export type MainStackParams = {
   ChangePin: undefined
   // eslint-disable-next-line @typescript-eslint/ban-types
   ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
-  AddAccount: { mode: CreateAccountMode }
   DeleteAccount: undefined
+  Identity: undefined
+  AddIdentity: { mode?: AddIdentityMode }
   SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined

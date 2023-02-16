@@ -1,7 +1,7 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Image, StyleSheet, View } from 'react-native'
 
-import VeridaSvg from 'assets/icons/verida.svg'
+import { DefaultAvatar } from 'api/utils'
 import { BLACK_COLOR_OPACITY } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
@@ -10,7 +10,7 @@ import Text from '../Text'
 export default ({ details }) => {
   return (
     <View style={style.card}>
-      <VeridaSvg style={style.logo} />
+      <Image source={details.logo || DefaultAvatar} style={style.logo} />
       <View style={style.tile}>
         <Text style={style.organization}>{details.name}</Text>
         <Text style={style.text}>{details.createdAt}</Text>

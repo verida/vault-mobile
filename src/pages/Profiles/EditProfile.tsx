@@ -1,6 +1,7 @@
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -25,7 +26,7 @@ import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 const MAX_TEXTAREA_LENGTH = 255
-const MAX_INPUT_LENGTH = 20
+const MAX_INPUT_LENGTH = 140
 
 const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props
@@ -40,6 +41,7 @@ const EditProfile = (props: any) => {
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
+    Keyboard.dismiss()
     const key = title.toLowerCase()
     const val = (edited.value || edited).trim()
 
@@ -49,6 +51,7 @@ const EditProfile = (props: any) => {
 
     await vault.profiles.public.set(key, val)
     setPublicProfileData({ ...publicProfileData, [key]: val })
+
     navigation.goBack()
   }
 

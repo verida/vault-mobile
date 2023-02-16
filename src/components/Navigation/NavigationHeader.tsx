@@ -32,7 +32,7 @@ function NavigationHeader({
   titleIcon,
   avatarIcon,
   rightComponent,
-  bottomBorder = false,
+  bottomBorder = true,
 }: HeaderProps) {
   const navigation = useNavigation()
   const netInfo = useNetInfo()

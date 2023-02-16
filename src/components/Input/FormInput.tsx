@@ -120,7 +120,7 @@ export const FormInput = React.forwardRef(
             ]}
             onFocus={onFocus}
             onBlur={onBlur}
-            placeholderTextColor={theme.color.grey900}
+            placeholderTextColor={theme.color.placeholderTextColor}
           />
           {withAnimatedChecbox && !focused && (
             <View

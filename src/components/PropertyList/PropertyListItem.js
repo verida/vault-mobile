@@ -1,6 +1,13 @@
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
+import {
+  Clipboard,
+  StyleSheet,
+  Switch,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import Snackbar from 'react-native-snackbar'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { BLACK_COLOR_OPACITY, SUCCESS_COLOR } from '../../constants/color'
@@ -14,7 +21,17 @@ export default ({ styles, item }) => {
   return (
     <TouchableOpacity
       style={styles.external}
-      onPress={() => item.onPress(navigation)}>
+      onPress={() => {
+        if (item.action === 'copy') {
+          Clipboard.setString(item.value)
+          Snackbar.show({
+            text: 'Copied',
+            duration: Snackbar.LENGTH_SHORT,
+          })
+        } else {
+          item.onPress?.(navigation)
+        }
+      }}>
       <View style={styles.internal}>
         <View style={style.section}>
           {item.icon && <View style={style.icon}>{item.icon}</View>}
@@ -44,6 +61,13 @@ export default ({ styles, item }) => {
                 ios_backgroundColor='#3e3e3e'
                 onValueChange={setOption}
                 value={option}
+              />
+            )}
+            {item.action === 'copy' && (
+              <Icon
+                size={22}
+                name='content-copy'
+                color={BLACK_COLOR_OPACITY(0.45)}
               />
             )}
           </View>
