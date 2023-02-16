@@ -44,7 +44,6 @@ import { setPublicProfileData } from 'reduxStore/general/actions'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
-import { VeridaOneProfile } from 'api/types'
 
 interface PublicAddress {
   address: string
