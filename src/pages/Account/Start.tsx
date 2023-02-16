@@ -1,8 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { LinearGradient } from 'expo-linear-gradient'
-import * as SecureStore from 'expo-secure-store'
-import React, { useEffect } from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import React from 'react'
+import { StyleSheet, View } from 'react-native'
 
 import Texture from 'assets/landing-bg.svg'
 import Logo from 'assets/logo.svg'
@@ -12,31 +11,11 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
 
 import Button from '../../components/Button'
-import { CreateAccountMode } from './Create'
-
-const SHOW_BANNER_KEY = 'show_banner'
 
 function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
-  useEffect(() => {
-    const init = async () => {
-      await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
-      const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
-      if (!showBanner || showBanner !== 'set') {
-        Alert.alert(
-          'Important Notice',
-          'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
-        )
-        await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
-      }
-    }
-    init()
-  })
   const title = "Welcome!\nIt's time to own your personal data."
 
-  const createAcc = () =>
-    props.navigation.navigate('CreateAccount', {
-      mode: CreateAccountMode.CREATE,
-    })
+  const createAcc = () => props.navigation.navigate('Identity', undefined)
 
   return (
     <LinearGradient

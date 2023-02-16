@@ -9,8 +9,8 @@ import { DashboardTabParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
 import DataConnector from 'pages/Connections/DataConnector'
 import Home from 'pages/Dashboard/Home'
-import Profiles from 'pages/Dashboard/Profiles'
 import Folders from 'pages/Data/Folders'
+import PublicProfile from 'pages/Profiles/PublicProfile'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
 
@@ -35,20 +35,20 @@ function DashboardNavigator() {
         }}
       />
       <Tab.Screen
+        name={'Profile'}
+        component={PublicProfile}
+        options={{
+          tabBarIcon: ({ color }) => (
+            <Ionicons name='md-person-sharp' size={24} color={color} />
+          ),
+        }}
+      />
+      <Tab.Screen
         name={'Data'}
         component={Folders}
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name='server' size={24} color={color} />
-          ),
-        }}
-      />
-      <Tab.Screen
-        name={'Profiles'}
-        component={Profiles}
-        options={{
-          tabBarIcon: ({ color }) => (
-            <Ionicons name='md-person-sharp' size={24} color={color} />
           ),
         }}
       />

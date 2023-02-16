@@ -4,7 +4,7 @@ import { get, isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, Image, StyleSheet, View } from 'react-native'
+import { Alert, Image, Linking, StyleSheet, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import { DefaultAvatar, getProfile } from 'api/utils'
@@ -57,6 +57,11 @@ function GenericMessage(props: GenericMessageProps) {
     fetchSenderData()
   }, [inboxItem])
 
+  const openLink = async (url) => {
+    onSubmit()
+    Linking.openURL(url)
+  }
+
   const onSubmit = async () => {
     try {
       if (inboxItem.read) {
@@ -87,7 +92,18 @@ function GenericMessage(props: GenericMessageProps) {
 
   const itemData = !isEmpty(inboxItem.data.data) ? inboxItem.data.data[0] : null
 
-  if (!itemData) {
+  if (!itemData || Object.keys(itemData).length === 0) {
+    // @todo: `markRead` should exist somewhere else
+    const markRead = async () => {
+      const vault = AccountManager.getInstance().vault
+      const messaging = await vault?.inbox.getMessaging()
+      const inbox = await messaging.getInbox()
+      const ds = await inbox.getInboxDatastore()
+      inboxItem.read = true
+      await ds.save(inboxItem)
+    }
+
+    markRead()
     return <Text>Invalid data</Text>
   }
 
@@ -116,13 +132,27 @@ function GenericMessage(props: GenericMessageProps) {
       <View style={styles.messageContent}>
         <Text style={styles.message}>{itemData.message}</Text>
       </View>
-      <Button
-        color='grey'
-        style={styles.okayButton}
-        onPress={onSubmit}
-        loading={submitting}>
-        Okay
-      </Button>
+      <View style={styles.footerContent}>
+        {itemData.link ? (
+          <View>
+            <Button
+              color='primary'
+              style={styles.linkButton}
+              onPress={() => {
+                openLink(itemData.link.url)
+              }}>
+              {itemData.link.text}
+            </Button>
+          </View>
+        ) : null}
+        <Button
+          color='grey'
+          style={styles.okayButton}
+          onPress={onSubmit}
+          loading={submitting}>
+          Cancel
+        </Button>
+      </View>
     </Content>
   )
 }
@@ -171,8 +201,13 @@ const styles = StyleSheet.create({
     color: 'rgba(129, 136, 153, 1)',
     fontSize: 14,
   },
+  linkButton: {
+    marginHorizontal: 15,
+  },
   okayButton: {
     marginHorizontal: 15,
+  },
+  footerContent: {
     marginTop: 38,
   },
 })

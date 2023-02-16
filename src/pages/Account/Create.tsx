@@ -1,3 +1,4 @@
+// import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { COUNTRIES } from 'helpers/country-list'
 import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -29,7 +30,13 @@ export enum CreateAccountMode {
   ADD,
 }
 
-function Create(props: any) {
+/**
+ * @Deprecated use [AddIdentity](./Identity/AddIdentity.tsx) instead
+ * To be deleted
+ */
+function Create(
+  props: any //NativeStackScreenProps<AuthStackParams, 'CreateAccount'>
+) {
   const { navigation, route } = props
   const [name, setName] = useState('')
   const [country, setCountry] = useState<Option | null>(null)

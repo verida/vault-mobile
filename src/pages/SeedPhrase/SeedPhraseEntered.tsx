@@ -79,7 +79,7 @@ const SeedPhraseEntered = (
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
       }
-      if (route.params.previousScreen === 'Dashboard') {
+      if (route?.params?.previousScreen === 'Dashboard') {
         navigation.navigate('Dashboard')
       } else {
         navigation.navigate('Success')

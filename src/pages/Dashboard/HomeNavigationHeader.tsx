@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Image,
   ImageSourcePropType,
   Pressable,
   StyleSheet,
@@ -8,6 +7,7 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
@@ -58,7 +58,11 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
         <View style={styles.leftContainer}>
           <View style={styles.left}>
             <Pressable style={styles.avatarButton} onPress={onAvatarPress}>
-              <Image source={avatar} style={styles.avatar} />
+              <FastImage
+                source={avatar as any}
+                resizeMode={FastImage.resizeMode.cover}
+                style={styles.avatar}
+              />
             </Pressable>
             <View style={styles.titleContainer}>
               <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>

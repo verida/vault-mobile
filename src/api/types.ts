@@ -122,3 +122,66 @@ export interface ClaimBadgeResponse {
   badge?: Badge | null
   success?: boolean
 }
+
+export type AddIdentityStepType =
+  | 'CreateIdentifier'
+  | 'DefineNameAndUsername'
+  | 'StorageLocation'
+  | 'CreateProfile'
+
+export type AddIdentityStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'
+
+/**
+ * Verida One interfaces and enums
+ */
+
+export interface VeridaOneVerificationProof {
+  type: string
+  proof: string
+}
+
+export enum VeridaOnePlatformLinkCategory {
+  SOCIAL = 'social',
+}
+
+export interface VeridaOnePlatformLink {
+  category: VeridaOnePlatformLinkCategory
+  platform: string
+  accountId: string
+  url: string
+  order: number
+  verificationProof?: VeridaOneVerificationProof
+  avatarUrl?: string
+}
+
+export interface VeridaOneCustomLink {
+  label: string
+  url: string
+  order: number
+  featured?: boolean
+}
+
+export interface VeridaOneWalletAddress {
+  chainId: string
+  address: string
+  order: number
+  label?: string
+  verificationProof?: string
+}
+
+export interface VeridaOneFeaturedAsset {
+  chainId: string
+  contractAddress: string
+  tokenId: string
+  ownerAddress: string
+  order: number
+}
+
+export interface VeridaOneProfile {
+  _id: string
+  _rev?: string
+  customLinks: VeridaOneCustomLink[]
+  platformLinks: VeridaOnePlatformLink[]
+  walletAddresses: VeridaOneWalletAddress[]
+  featuredAssets: VeridaOneFeaturedAsset[]
+}

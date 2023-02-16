@@ -1,4 +1,7 @@
 {
+  "private": true,
+  "name": "@verida/vault-mobile",
+  "version": "0.3.33",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -39,12 +42,12 @@
     "@reduxjs/toolkit": "^1.4.0",
     "@sentry/react-native": "^4.12.0",
     "@tradle/react-native-http": "^2.0.1",
-    "@verida/account": "^2.0.0",
-    "@verida/account-node": "^2.0.0",
-    "@verida/client-rn": "^2.0.0",
-    "@verida/encryption-utils": "^2.0.0",
-    "@verida/vault-common": "https://github.com/verida/vault-common.git",
-    "@verida/verifiable-credentials": "^2.0.1",
+    "@verida/account": "^2.1.1",
+    "@verida/account-node": "^2.1.1",
+    "@verida/client-rn": "^2.1.2",
+    "@verida/encryption-utils": "^2.1.1",
+    "@verida/types": "^2.1.1",
+    "@verida/verifiable-credentials": "^2.1.1",
     "@verida/wallet-utils": "^1.7.4",
     "@walletconnect/client": "^1.7.7",
     "@walletconnect/sign-client": "2.0.0-rc.3",
@@ -59,6 +62,7 @@
     "browserify-zlib": "^0.1.4",
     "buffer": "^6.0.3",
     "caip": "./libs/caip",
+    "color": "^4.2.3",
     "compare-versions": "^5.0.1",
     "console-browserify": "^1.2.0",
     "constants-browserify": "^1.0.0",
@@ -83,8 +87,7 @@
     "immutability-helper": "^3.1.1",
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.20",
-    "lottie-ios": "3.2.3",
-    "lottie-react-native": "5.0.1",
+    "lottie-react-native": "5.1.5",
     "metro-config": "^0.61.0",
     "moment": "^2.29.4",
     "native-base": "^2.13.14",
@@ -115,6 +118,7 @@
     "react-native-flipper": "^0.152.0",
     "react-native-gesture-handler": "~2.2.1",
     "react-native-get-random-values": "^1.8.0",
+    "react-native-gradients": "^2.0.1",
     "react-native-intl-phone-input": "^1.2.22",
     "react-native-json-tree": "^1.3.0",
     "react-native-keychain": "^6.2.0",
@@ -122,13 +126,16 @@
     "react-native-os": "^1.2.6",
     "react-native-pager-view": "6.0.2",
     "react-native-push-notification": "^8.1.0",
+    "react-native-quick-base64": "^2.0.5",
+    "react-native-quick-crypto": "^0.5.0",
     "react-native-randombytes": "^3.5.3",
     "react-native-reanimated": "2.12.0",
     "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "4.2.4",
     "react-native-screens": "^3.17.0",
+    "react-native-snackbar": "^2.4.0",
     "react-native-sqlite-2": "^3.5.2",
-    "react-native-svg": "^12.3.0",
+    "react-native-svg": "13.7.0",
     "react-native-swipe-list-view": "^3.2.9",
     "react-native-tab-view": "^3.3.4",
     "react-native-tcp": "^3.3.2",
@@ -161,7 +168,8 @@
   "devDependencies": {
     "@babel/core": "^7.12.9",
     "@babel/runtime": "^7.12.5",
-    "@react-native-community/eslint-config": "3.0.0",
+    "@react-native-community/eslint-config": "^3.0.0",
+    "@types/color": "^3.0.3",
     "@types/lodash": "^4.14.182",
     "@types/react": "~17.0.21",
     "@types/react-native": "~0.67.6",
@@ -192,7 +200,7 @@
     "typescript": "~4.3.5"
   },
   "resolutions": {
-    "react-native-svg": "^12.1.1",
+    "react-native-svg": "^13.7.0",
     "expo-splash-screen": "^0.11.2",
     "@types/react": "17.0.30",
     "ethers": "^5.6.0",
@@ -211,9 +219,14 @@
       "node"
     ]
   },
-  "private": true,
-  "name": "@verida/vault-mobile",
-  "version": "0.1.0",
+  "expo": {
+    "autolinking": {
+      "exclude": [
+        "expo-keep-awake",
+        "expo-error-recovery"
+      ]
+    }
+  },
   "react-native": {
     "zlib": "browserify-zlib",
     "console": "console-browserify",

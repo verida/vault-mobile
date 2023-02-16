@@ -1,6 +1,5 @@
 import React from 'react'
 import {
-  Image,
   ImageSourcePropType,
   StyleSheet,
   Text,
@@ -8,6 +7,7 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import FastImage from 'react-native-fast-image'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 import { useSelector } from 'react-redux'
@@ -56,7 +56,11 @@ function AccountItem(props: AccountItemProps) {
         isCurrentAccount && styles.currentAccountContainer,
       ]}
       onPress={onPress}>
-      <Image style={styles.avatar} source={avatar || DefaultAvatar} />
+      <FastImage
+        style={styles.avatar}
+        source={avatar || DefaultAvatar}
+        resizeMode='cover'
+      />
       <View style={styles.info}>
         <Text style={styles.name}>{name}</Text>
         <Text style={styles.did}>{did}</Text>

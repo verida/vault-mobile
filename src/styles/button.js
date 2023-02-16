@@ -1,6 +1,7 @@
 import { StyleSheet } from 'react-native'
 
 import {
+  DISABLED_COLOR,
   LIGHTGREY_COLOR,
   PRIMARY_COLOR,
   PRIMARY_COLOR_200,
@@ -20,6 +21,11 @@ export default StyleSheet.create({
     marginBottom: 16, // FIXME: There shall not have a margin on a container of an atomic component! The parent of the component should handle the spacing
     borderWidth: 1,
     height: 48, // FIXME: There should not have a fixed height for such component, It should have a fontSize, a lineHeight and paddings!
+    justifyContent: 'center',
+    fontFamily: NUNITO_SANS_BOLD,
+  },
+  buttonText: {
+    fontSize: 16,
     justifyContent: 'center',
     fontFamily: NUNITO_SANS_BOLD,
   },
@@ -66,5 +72,10 @@ export default StyleSheet.create({
   },
   disabled: {
     opacity: 0.5,
+    backgroundColor: DISABLED_COLOR,
+    borderColor: DISABLED_COLOR,
+  },
+  'transparent-link': {
+    ...transparent,
   },
 })

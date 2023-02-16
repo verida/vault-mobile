@@ -1,4 +1,4 @@
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from 'helpers/VeridaSecureStore'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
@@ -8,6 +8,7 @@ import {
 } from 'wallet/helpers/tokens'
 
 import AccountManager from 'api/AccountManager'
+import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -16,7 +17,6 @@ import {
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
-import { CONFIG } from '../../config/environment'
 import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,

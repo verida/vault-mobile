@@ -19,6 +19,7 @@ export default ({
   const description = {
     name: item.item.message,
     createdAt: item.createdAt,
+    logo: item.logo,
   }
 
   return (

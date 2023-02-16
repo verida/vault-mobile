@@ -2,7 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import VeridaSvg from 'assets/icons/verida.svg'
+import { DefaultAvatar } from 'api/utils'
 
 import {
   BLACK_COLOR_OPACITY,
@@ -24,11 +24,7 @@ export default ({ options }) => {
     <TouchableOpacity
       style={[style.card, !options.read ? style.unread : '']}
       onPress={onPress}>
-      {options.logo ? (
-        <Image source={options.logo} style={style.logo} />
-      ) : (
-        <VeridaSvg />
-      )}
+      <Image source={options.logo || DefaultAvatar} style={style.logo} />
       <View style={style.details}>
         <View style={style.tile}>
           <View>

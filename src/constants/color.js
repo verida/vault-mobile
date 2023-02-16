@@ -14,11 +14,13 @@ export const DECLINE_COLOR = '#FD4F64'
 export const VERY_LIGHTGREY_COLOR = '#FAFAFA'
 export const SEPARATOR = 'rgba(60, 60, 67, 0.36)'
 export const SEPARATOR_LIGHT = 'rgba(60, 60, 67, 0.1)'
-export const SEPARATOR_EXTRA_LIGHT = 'rgba(234, 234, 235, 1)'
+export const SEPARATOR_EXTRA_LIGHT = 'rgba(205, 207, 214, 1)'
 export const GREY_COLOR = '#AFAFAF'
 export const WARNING_COLOR = '#EF7936'
+export const WARNING_LIGHT_COLOR = 'rgba(248, 169, 52, 1)'
 export const LIGHT_ORANGE_COLOR = '#FDF4EA'
 export const TEXT_COLOR = '#041133'
+export const DISABLED_COLOR = 'rgba(51, 51, 51, 1)'
 
 export const PRIMARY_COLOR_50 = 'rgba(66, 59, 206, 0.5)'
 export const PRIMARY_COLOR_100 = 'rgba(66, 59, 206, 0.1)'
@@ -37,7 +39,6 @@ export const LIGHT_GREY_600 = 'rgba(60, 60, 67, 0.6)'
 export const GREY_120 = 'rgba(118, 118, 128, 0.12)'
 
 export const ALERT_INFO_COLOR = '#0073FF'
-export const ALERT_WARNING_COLOR = '#F8A934'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
 

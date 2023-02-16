@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/client-rn'
+import { EnvironmentType } from '@verida/types'
 
 export const ENVIRONMENT = 'testnet'
 
@@ -40,15 +40,17 @@ const ENVIRONMENTS = {
       'https://assets.verida.io/registry/storageNodes/devnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'AU',
-    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    DATA_CONNECTOR_URL: 'http://192.168.68.124:5021',
+    //NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
+    NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
+    DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
   testnet: {
     STORAGE_NODES_URI:
       'https://assets.verida.io/registry/storageNodes/testnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'US',
-    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
+    //NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
+    NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
 }

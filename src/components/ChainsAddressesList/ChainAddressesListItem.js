@@ -3,6 +3,7 @@ import Clipboard from '@react-native-community/clipboard'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet } from 'react-native'
+import FastImage from 'react-native-fast-image'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
@@ -44,7 +45,7 @@ export default ({
       }}
       style={styles.item}>
       <Left style={styles.itemWrapper}>
-        <Image source={{ uri: item.icon }} style={styles.icon} />
+        <FastImage source={{ uri: item.icon }} style={styles.icon} />
         <Body>
           <Text style={styles.label}>{item.name}</Text>
           <Text note>{`${item.address}`}</Text>

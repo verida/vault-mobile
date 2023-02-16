@@ -7,13 +7,14 @@ import TextStyles from '../styles/text'
 import Text from './Text'
 
 export default (props) => {
-  const styles = props.style || {}
+  const style = props.style || {}
+  let textStyle = props.textStyle || {}
+  let hasButtonBackground = true
   const type =
     (props.color && ButtonStyles[props.color]) || ButtonStyles.primary
   const textColor = (() => {
     switch (props.color) {
       case 'secondary':
-      case 'transparent':
       case 'transparent-border':
       case 'grey':
         return 'primary'
@@ -27,6 +28,12 @@ export default (props) => {
         return 'warning'
       case 'light-primary':
         return 'light-primary'
+      case 'transparent':
+        return 'primary'
+      case 'transparent-link':
+        hasButtonBackground = false
+        textStyle = { ...textStyle }
+        return 'primaryColor'
       default:
         return 'white'
     }
@@ -36,7 +43,9 @@ export default (props) => {
     <View style={{ alignItems: 'center' }}>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {props.icon && <View style={{ marginRight: 5 }}>{props.icon}</View>}
-        <Text style={{ ...TextStyles[textColor] }}>{props.children}</Text>
+        <Text style={{ ...TextStyles[textColor], ...textStyle }}>
+          {props.children}
+        </Text>
       </View>
     </View>
   )
@@ -44,11 +53,18 @@ export default (props) => {
   return (
     <TouchableOpacity
       style={[
-        ButtonStyles.button,
+        hasButtonBackground ? ButtonStyles.button : ButtonStyles.buttonText,
         type,
-        styles,
-        props.disabled && ButtonStyles.disabled,
+        style,
+        props.disabled &&
+          !props.color?.includes('transparent') &&
+          ButtonStyles.disabled,
       ]}
+      hitSlop={
+        hasButtonBackground && !props.color?.includes('transparent')
+          ? {}
+          : { top: 10, left: 10, right: 10, bottom: 10 }
+      }
       onPress={props.loading ? null : props.onPress}
       disabled={props.disabled}>
       {!props.loading ? (

@@ -45,6 +45,8 @@ export const WalletConnectContext = createContext<
   ReturnType<typeof useWalletConnectContext>
 >(null as any)
 
+// TODO: https://github.com/verida/vault-mobile/issues/761
+
 function useWalletConnectContext() {
   const dispatch = useDispatch()
   const dapps = useReduxState(dappsSelector)
