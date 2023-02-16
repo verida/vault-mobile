@@ -21,9 +21,7 @@ function buildErrorMessage(errors) {
     const errorsList = errors.map((errorsByDataEntry) => {
       return errorsByDataEntry.errors
         .map((error) => {
-          return `• ${
-            typeof error === 'string' ? error : error.stack || error.message
-          }`
+          return `• ${typeof error === 'string' ? error : error.message}`
         })
         .join('\n')
     })
