@@ -4,6 +4,7 @@ import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -84,16 +85,20 @@ const EditGenericProperty = () => {
     try {
       const val = (((edited as ValueObject)?.value || edited) as string).trim()
       setDisabled(true)
+      Keyboard.dismiss()
 
       // Allow to retry
       if (
         verification &&
         verification.expectedValue.toLowerCase() !== val?.trim().toLowerCase()
       ) {
-        Snackbar.show({
-          text: verification.errorMessage,
-          duration: Snackbar.LENGTH_SHORT,
-        })
+        setTimeout(() => {
+          Snackbar.show({
+            text: verification.errorMessage,
+            duration: Snackbar.LENGTH_LONG,
+          })
+        }, 100)
+
         setDisabled(false)
 
         return

@@ -1,6 +1,7 @@
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import {
+  Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
@@ -40,6 +41,7 @@ const EditProfile = (props: any) => {
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
+    Keyboard.dismiss()
     const key = title.toLowerCase()
     const val = (edited.value || edited).trim()
 

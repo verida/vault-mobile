@@ -6,7 +6,6 @@ import FastImage from 'react-native-fast-image'
 import Snackbar from 'react-native-snackbar'
 import { useSelector } from 'react-redux'
 
-import AccountManager from 'api/AccountManager'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import type { CaipWalletType, VeridaWallet } from 'components/types/wallet'
@@ -35,9 +34,11 @@ interface PublicAddress {
   icon: string
 }
 
+/**
+ * @deprecated unused, will be removed
+ */
 export default function ProfileLayout({
   list,
-  description,
   publicProfile,
 }: profileLayoutProps) {
   const { theme } = useTheme()
