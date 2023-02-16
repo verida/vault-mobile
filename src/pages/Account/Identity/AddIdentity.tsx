@@ -184,8 +184,10 @@ const AddIdentity = () => {
       }
       setShowRetry(true)
     }
-    pagerRef.current?.setPage(PageType.Confirmation)
     setProcessing(false)
+    setTimeout(() => {
+      pagerRef.current?.setPage(PageType.Confirmation)
+    }, 100)
   }, [profile?.country, profile.name, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
