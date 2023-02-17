@@ -154,7 +154,7 @@ android {
         applicationId 'io.verida.vault'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 17
+        versionCode 18
         versionName "0.3.42"
         missingDimensionStrategy 'react-native-camera', 'mlkit'
         buildConfigField "boolean", "IS_NEW_ARCHITECTURE_ENABLED", isNewArchitectureEnabled().toString()
