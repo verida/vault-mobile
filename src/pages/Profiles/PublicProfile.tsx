@@ -91,6 +91,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     PublicWalletAddress[]
   >([])
 
+  const [publicCustomLinks, setPublicCustomLinks] = useState<any[]>([])
+
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
 
   // pull to refresh data
@@ -103,15 +105,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function isPublic(address: string, chainId: string) {
-    return (
-      publicWalletAddresses.findIndex(
-        (walletAddress) =>
-          walletAddress.address === address && walletAddress.chainId === chainId
-      ) >= 0
-    )
-  }
-
   const getPublicWalletAddressObject = useCallback(
     (address: string, chainId: string) => {
       return publicWalletAddresses.find(
@@ -121,11 +114,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     },
     [publicWalletAddresses]
   )
-
-  function getPublicName(address: string, chainId: string) {
-    const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
-    return publicWalletAddress?.label ?? ''
-  }
 
   const getPublicAdrressOrder = useCallback(
     (address: string, chainId: string) => {
@@ -160,11 +148,27 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setPublicWalletAddresses(newPublicAddresses)
+      debounceSaveProfile(newPublicAddresses)
     },
     [publicWalletAddresses]
   )
 
   const walletAddresses = useMemo(() => {
+    function isPublic(address: string, chainId: string) {
+      return (
+        publicWalletAddresses.findIndex(
+          (walletAddress) =>
+            walletAddress.address === address &&
+            walletAddress.chainId === chainId
+        ) >= 0
+      )
+    }
+
+    function getPublicName(address: string, chainId: string) {
+      const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
+      return publicWalletAddress?.label ?? ''
+    }
+
     let mappedWallets: PublicWalletAddress[] = Object.values(chains).reduce(
       (acc, chain) => {
         const sameChainAdresses = Object.values(wallets).reduce(
@@ -209,10 +213,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   }, [
     chains,
     enabledVeridaOne,
+    publicWalletAddresses,
+    getPublicWalletAddressObject,
     wallets,
-    getPublicName,
     getPublicAdrressOrder,
-    isPublic,
   ])
 
   const debounceSaveProfile = useCallback(
@@ -263,6 +267,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
       if (oneProfile) {
         setPublicWalletAddresses(oneProfile.walletAddresses)
+        setPublicCustomLinks(oneProfile.customLinks)
       }
     } catch (e) {
       Sentry.captureException(e)
