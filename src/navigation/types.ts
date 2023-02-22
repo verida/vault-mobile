@@ -41,6 +41,7 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   EditGenericProperty: GenericEditPropertyScreenProps
+  AddCustomLink: undefined
   SeedPhraseView: undefined
   ManageWallets: undefined
   SingleCurrency: undefined

@@ -54,6 +54,12 @@ function NavigationHeader({
                     <Icon name='arrow-back' style={{ color: '#000' }} />
                   </Button>
                 ) : null
+              case 'close':
+                return navigation.canGoBack() ? (
+                  <Button transparent onPress={navigation.goBack}>
+                    <Icon name='close' style={{ color: '#000' }} />
+                  </Button>
+                ) : null
               case 'skip':
                 return null
               default:

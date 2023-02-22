@@ -132,27 +132,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     return `${chainData.namespace}:${chainRef}`
   }
 
-  const updateWalletAddressesOrder = useCallback(
-    (walletAddressesOrder) => {
-      let orderNumber = 0
-      const newPublicAddresses = [...publicWalletAddresses]
-      walletAddressesOrder.map((walletAddress: PublicWalletAddress) => {
-        const publicAddress = newPublicAddresses.find(
-          (pa) =>
-            pa.address === walletAddress.address &&
-            pa.chainId === walletAddress.chainId
-        )
-        if (publicAddress) {
-          publicAddress.order = orderNumber++
-        }
-      })
-
-      setPublicWalletAddresses(newPublicAddresses)
-      debounceSaveProfile(newPublicAddresses)
-    },
-    [publicWalletAddresses]
-  )
-
   const walletAddresses = useMemo(() => {
     function isPublic(address: string, chainId: string) {
       return (
@@ -233,6 +212,27 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       }
     }, 1000),
     []
+  )
+
+  const updateWalletAddressesOrder = useCallback(
+    (walletAddressesOrder) => {
+      let orderNumber = 0
+      const newPublicAddresses = [...publicWalletAddresses]
+      walletAddressesOrder.map((walletAddress: PublicWalletAddress) => {
+        const publicAddress = newPublicAddresses.find(
+          (pa) =>
+            pa.address === walletAddress.address &&
+            pa.chainId === walletAddress.chainId
+        )
+        if (publicAddress) {
+          publicAddress.order = orderNumber++
+        }
+      })
+
+      setPublicWalletAddresses(newPublicAddresses)
+      debounceSaveProfile(newPublicAddresses)
+    },
+    [publicWalletAddresses, debounceSaveProfile]
   )
 
   const fetchData = async () => {
@@ -440,6 +440,80 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     [debounceSaveProfile, navigation, publicWalletAddresses]
   )
 
+  const renderCustomLinkItem = useCallback(
+    ({
+      item: walletAddress,
+      drag,
+      isActive,
+    }: RenderItemParams<PublicWalletAddress>) => {
+      async function setPublicAddress(
+        publicAdress: PublicWalletAddress,
+        visible: boolean
+      ) {
+        const savePublicAddress = { ...publicAdress }
+
+        // Delete item metadata
+        delete savePublicAddress.isPublic
+        delete savePublicAddress.icon
+        delete savePublicAddress.veridaWalletName
+
+        let newPublicWalletAddresses = [...publicWalletAddresses]
+
+        if (visible) {
+          newPublicWalletAddresses.push(savePublicAddress)
+          Snackbar.show({
+            text: 'Added to Verida One profile',
+            duration: Snackbar.LENGTH_SHORT,
+          })
+        } else {
+          newPublicWalletAddresses = newPublicWalletAddresses.filter(
+            (wAddress) =>
+              wAddress.address !== publicAdress.address ||
+              (wAddress.address === publicAdress.address &&
+                wAddress.chainId !== publicAdress.chainId)
+          )
+          Snackbar.show({
+            text: 'Hidden from Verida One profile',
+            duration: Snackbar.LENGTH_SHORT,
+          })
+        }
+
+        setPublicWalletAddresses(newPublicWalletAddresses)
+        debounceSaveProfile(newPublicWalletAddresses)
+      }
+
+      return (
+        <WalletAddressItem
+          walletAddress={walletAddress}
+          drag={drag}
+          isActive={isActive}
+          onEditName={
+            !walletAddress.isPublic
+              ? undefined
+              : () => {
+                  navigation.navigate('EditGenericProperty', {
+                    screenName: ScreenName,
+                    title: 'Public Label',
+                    option: {
+                      label: 'Address public label',
+                      type: 'input',
+                      value: walletAddress.label,
+                      placeholder: 'Enter the label',
+                      description:
+                        'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
+                    },
+                    mode: EditMode.EditWalletPublicLabel,
+                    originalValue: walletAddress,
+                  })
+                }
+          }
+          setPublicAddress={setPublicAddress}
+        />
+      )
+    },
+    [debounceSaveProfile, navigation, publicWalletAddresses]
+  )
+
   return (
     <Screen
       backgroundGrey
@@ -514,6 +588,42 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               On your Verida One page we show your wallet addresses with their
               public labels and the assets related to them (collectibles,
               badges, etc)
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.sectionHeader}>LINKS</Text>
+              <Button
+                textStyle={{
+                  fontSize: theme.fontSize.m,
+                  marginBottom: theme.spacing.s,
+                }}
+                color='transparent-link'
+                disabled={!enabledVeridaOne}
+                onPress={() => navigation.navigate('AddCustomLink', {})}>
+                ADD NEW
+              </Button>
+            </View>
+
+            <NestableDraggableFlatList
+              data={publicCustomLinks}
+              renderItem={renderCustomLinkItem}
+              activationDistance={60}
+              keyExtractor={(
+                walletAddress: PublicWalletAddress,
+                index: number
+              ) => `${index}-${walletAddress.address}`}
+              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
+            />
+            <Text style={[styles.description, { marginVertical: 0 }]}>
+              Add any links you’d like to show on your page. It could be a link
+              to your website, portfolio etc. Tap on the star to add up to two
+              links to the featured section.
             </Text>
 
             {!enabledVeridaOne && (
@@ -603,9 +713,6 @@ const createStyles = (theme: Theme) =>
       justifyContent: 'center',
       alignItems: 'center',
       minHeight: Dimensions.get('window').height * 0.8,
-    },
-    veridaWalletName: {
-      color: theme.color.textLightGrey,
     },
     overlayContent: {
       ...StyleSheet.absoluteFillObject,

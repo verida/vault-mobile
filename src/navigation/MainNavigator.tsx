@@ -1,5 +1,5 @@
-import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
+import { createNativeStackNavigator } from 'react-native-screens/native-stack'
 
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
@@ -17,6 +17,7 @@ import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
+import AddCustomLink from 'pages/Profiles/AddCustomLink'
 import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
@@ -52,7 +53,8 @@ function MainNavigator() {
   useEventHandlers()
 
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
+    <Stack.Navigator
+      screenOptions={{ headerShown: false, headerHideBackButton: true }}>
       <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
       <Stack.Screen name={'Inbox'} component={Inbox} />
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
@@ -60,10 +62,26 @@ function MainNavigator() {
       <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
-      <Stack.Screen name={'EditProfile'} component={EditProfile} />
+      <Stack.Screen
+        name={'EditProfile'}
+        component={EditProfile}
+        options={{
+          stackPresentation: 'modal',
+        }}
+      />
       <Stack.Screen
         name={'EditGenericProperty'}
         component={EditGenericProperty}
+        options={{
+          stackPresentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name={'AddCustomLink'}
+        component={AddCustomLink}
+        options={{
+          stackPresentation: 'modal',
+        }}
       />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />

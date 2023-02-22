@@ -6,7 +6,7 @@ import ButtonStyles from '../styles/button'
 import TextStyles from '../styles/text'
 import Text from './Text'
 
-export default (props) => {
+export default function Button(props) {
   const style = props.style || {}
   let textStyle = props.textStyle || {}
   let hasButtonBackground = true
@@ -55,9 +55,13 @@ export default (props) => {
       onPress={props.loading ? null : props.onPress}
       disabled={props.disabled}>
       {!props.loading ? (
-        <Text style={{ ...TextStyles[textColor], ...textStyle }}>
-          {props.children}
-        </Text>
+        typeof props.children === 'string' ? (
+          <Text style={{ ...TextStyles[textColor], ...textStyle }}>
+            {props.children}
+          </Text>
+        ) : (
+          props.children
+        )
       ) : (
         <LottieView
           source={require('assets/animations/loading-small-light.json')}

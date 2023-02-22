@@ -45,7 +45,7 @@ export interface GenericEditPropertyScreenProps {
   submitButtonLabel?: string
   verification?: {
     expectedValue: string
-    errorMessage: 'Wrong code, please try again later.'
+    errorMessage: string
   }
 }
 
@@ -129,7 +129,7 @@ const EditGenericProperty = () => {
 
   return (
     <Container>
-      <NavigationHeader title={title} />
+      <NavigationHeader title={title} left={{ icon: 'close' }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}>

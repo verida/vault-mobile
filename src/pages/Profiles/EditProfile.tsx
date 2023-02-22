@@ -66,7 +66,7 @@ const EditProfile = (props: any) => {
 
   return (
     <Container>
-      <NavigationHeader title={title} />
+      <NavigationHeader title={title} left={{ icon: 'close' }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}>
