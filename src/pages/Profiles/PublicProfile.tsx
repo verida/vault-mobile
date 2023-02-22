@@ -399,7 +399,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <Text style={styles.description}>
             This information is always visible on your Verida One page
           </Text>
-          <View>
+          <View style={{}}>
             <View
               style={{
                 flexDirection: 'row',
@@ -556,41 +556,49 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             </Text>
 
             {!enabledVeridaOne && (
-              <View style={styles.overlayContent}>
-                <LinearGradient
-                  style={{ ...styles.overlayContent }}
-                  colors={['rgba(255, 255, 255, 0.3)', '#FFFFFF', '#FFFFFF']}
-                  start={{ y: 0, x: 0.5 }}
-                  end={{ y: 0.65, x: 0.5 }}
-                />
-                <Headline style={{ marginTop: 80, fontSize: 28 }}>
-                  Unlock Verida One
-                </Headline>
-                <Button
-                  style={{ width: '100%', marginTop: theme.spacing.sm }}
-                  onPress={() => {
-                    navigation.navigate('EditGenericProperty', {
-                      screenName: ScreenName,
-                      title: 'Invitation Code',
-                      option: {
-                        label: 'Invitation code',
-                        type: 'input',
-                        value: '',
-                        placeholder: 'Enter your code',
-                        description: '',
-                      },
-                      mode: EditMode.EnterInvitationCode,
-                      originalValue: null,
-                      submitButtonLabel: 'Submit',
-                      verification: {
-                        expectedValue: VERIDA_ONE_INVITE_CODE,
-                        errorMessage: 'Wrong code, please try again later.',
-                      },
-                    })
-                  }}>
-                  Enter Invitation Code
-                </Button>
-              </View>
+              <>
+                {
+                  // In case the wallet address is still creating and not available we add a buffer space
+                  walletAddresses.length === 0 && (
+                    <View style={{ minHeight: 120 }} />
+                  )
+                }
+                <View style={styles.overlayContent}>
+                  <LinearGradient
+                    style={{ ...styles.overlayContent }}
+                    colors={['rgba(255, 255, 255, 0.3)', '#FFFFFF', '#FFFFFF']}
+                    start={{ y: 0, x: 0.5 }}
+                    end={{ y: 0.65, x: 0.5 }}
+                  />
+                  <Headline style={{ marginTop: 80, fontSize: 28 }}>
+                    Unlock Verida One
+                  </Headline>
+                  <Button
+                    style={{ width: '100%', marginTop: theme.spacing.sm }}
+                    onPress={() => {
+                      navigation.navigate('EditGenericProperty', {
+                        screenName: ScreenName,
+                        title: 'Invitation Code',
+                        option: {
+                          label: 'Invitation code',
+                          type: 'input',
+                          value: '',
+                          placeholder: 'Enter your code',
+                          description: '',
+                        },
+                        mode: EditMode.EnterInvitationCode,
+                        originalValue: null,
+                        submitButtonLabel: 'Submit',
+                        verification: {
+                          expectedValue: VERIDA_ONE_INVITE_CODE,
+                          errorMessage: 'Wrong code, please try again later.',
+                        },
+                      })
+                    }}>
+                    Enter Invitation Code
+                  </Button>
+                </View>
+              </>
             )}
           </View>
         </ScrollView>
@@ -663,7 +671,5 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: -theme.spacing.m,
       alignItems: 'center',
       paddingHorizontal: theme.spacing.m,
-      minHeight: 260,
-      maxHeight: 260,
     },
   })
