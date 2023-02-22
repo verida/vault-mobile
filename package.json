@@ -14,6 +14,9 @@
     "ios": "react-native run-ios --scheme 'Verida Vault Internal'",
     "web": "expo start --web",
     "test": "jest",
+    "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/myApp/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
+    "codepush:ios:staging": "yarn codepush:ios -d Staging",
+    "codepush:ios:production": "yarn codepush:ios -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
     "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify"
