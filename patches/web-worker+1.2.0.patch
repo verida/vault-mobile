@@ -1,0 +1,14 @@
+diff --git a/node_modules/web-worker/cjs/browser.js b/node_modules/web-worker/cjs/browser.js
+index e9a5c1e..25e7f29 100644
+--- a/node_modules/web-worker/cjs/browser.js
++++ b/node_modules/web-worker/cjs/browser.js
+@@ -13,4 +13,7 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
+-module.exports = Worker;
+\ No newline at end of file
++
++
++module.exports = {};
++
