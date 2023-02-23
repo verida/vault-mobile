@@ -1,3 +1,5 @@
+import Color from 'color'
+
 import {
   BACKGROUND_GREY_COLOR,
   BLACK_COLOR_OPACITY,
@@ -60,6 +62,7 @@ export const defaultTheme = {
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
+    textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
     grey120: GREY_120,
 
     shadowLightGrey: SHADOW_LIGHT_GREY,

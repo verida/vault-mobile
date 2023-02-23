@@ -5,9 +5,9 @@ import { isEmpty } from 'lodash'
 import React, { useState } from 'react'
 import { Keyboard, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Snackbar from 'react-native-snackbar'
 
 import ClipboardIcon from 'assets/clipboard_icon.svg'
+import TrashBinIcon from 'assets/trash_bin_icon.svg'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
@@ -19,16 +19,15 @@ import { Theme } from 'styles/types'
 import Button from '../../components/Button'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
+import { PublicProfileEditMode } from './PublicProfile'
 
-const MAX_TEXTAREA_LENGTH = 255
-const MAX_INPUT_LENGTH = 140
-
-export interface GenericEditPropertyScreenProps {
+export interface AddCustomLinkScreenProps {
   screenName: string
-  title: string
-  label: string
-  url: string
+  title?: string
+  label?: string
+  url?: string
   mode: string | number
+  originalValue?: any
   submitButtonLabel?: string
   verification?: {
     expectedValue: string
@@ -38,43 +37,47 @@ export interface GenericEditPropertyScreenProps {
 
 const AddCustomLink = () => {
   const navigation = useNavigation()
-  const params = useParams<GenericEditPropertyScreenProps>()
+  const params = useParams<AddCustomLinkScreenProps>()
   const {
     screenName,
     title,
     label,
     url,
     mode,
+    originalValue,
     submitButtonLabel = 'Save',
     verification,
   } = params
   const styles = useThemeAwareStyle(createStyles)
   const { bottom } = useSafeAreaInsets()
+  const [labelInput, setLabelInput] = useState(originalValue?.label ?? '')
+  const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
 
   const [disabled, setDisabled] = useState(false)
 
   const saveValue = async () => {
     try {
-      const val = '' //(((edited as ValueObject)?.value || edited) as string).trim()
       setDisabled(true)
       Keyboard.dismiss()
 
+      const val = { label: labelInput, url: urlInput }
+
       // Allow to retry
-      if (
-        verification &&
-        verification.expectedValue.toLowerCase() !== val?.trim().toLowerCase()
-      ) {
-        setTimeout(() => {
-          Snackbar.show({
-            text: verification.errorMessage,
-            duration: Snackbar.LENGTH_LONG,
-          })
-        }, 100)
+      // if (
+      //   verification &&
+      //   verification.expectedValue.toLowerCase() !== val?.trim().toLowerCase()
+      // ) {
+      //   setTimeout(() => {
+      //     Snackbar.show({
+      //       text: verification.errorMessage,
+      //       duration: Snackbar.LENGTH_LONG,
+      //     })
+      //   }, 100)
 
-        setDisabled(false)
+      //   setDisabled(false)
 
-        return
-      }
+      //   return
+      // }
 
       emitter.emit('SAVE_GENERIC_PROPERTY', {
         screenName,
@@ -90,15 +93,6 @@ const AddCustomLink = () => {
     }
   }
 
-  const handleInput = (text: string, maxLength: number) => {
-    // setEdited(text)
-    // if (text.length >= maxLength) {
-    //   setInputError({ inputMaxLength: maxLength, isExceededMaxLength: true })
-    // } else {
-    //   setInputError({ ...inputError, isExceededMaxLength: false })
-    // }
-  }
-
   const isEditMode = () => !isEmpty(label) && !isEmpty(url)
 
   return (
@@ -108,13 +102,41 @@ const AddCustomLink = () => {
         left={{
           icon: 'close',
         }}
+        right={
+          isEditMode()
+            ? {
+                icon: <TrashBinIcon />,
+                action: () => {
+                  emitter.emit('SAVE_GENERIC_PROPERTY', {
+                    screenName,
+                    title,
+                    value: originalValue,
+                    mode: PublicProfileEditMode.DeleteCustomURL,
+                    originalValue,
+                  })
+                  navigation.goBack()
+                },
+              }
+            : undefined
+        }
       />
       <View style={[styles.constainer, { marginBottom: bottom }]}>
         <View style={{ flexDirection: 'column' }}>
-          <FormInput label='Label' placeholder='Enter label' />
+          <FormInput
+            label='Label'
+            placeholder='Enter label'
+            autoCapitalize='none'
+            autoComplete='off'
+            value={labelInput}
+            onChangeText={(text) => setLabelInput(text)}
+          />
           <FormInput
             style={{ marginTop: 16 }}
             label='URL'
+            autoCapitalize='none'
+            autoComplete='off'
+            value={urlInput}
+            onChangeText={(text) => setUrlInput(text)}
             placeholder='Enter URL'
           />
 

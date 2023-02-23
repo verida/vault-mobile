@@ -106,6 +106,7 @@ export const WalletAddressItem = ({
             style={{
               width: 40,
               height: 40,
+              marginBottom: 0,
               alignItems: 'center',
               justifyContent: 'center',
               backgroundColor: 'lightGrey',
@@ -137,7 +138,6 @@ export const WalletAddressItem = ({
               false: theme.color.switchFalseState,
               true: theme.color.success,
             }}
-            ios_backgroundColor={theme.color.switchIOSBg}
             onValueChange={(value: boolean) =>
               setPublicAddress(walletAddress, value)
             }

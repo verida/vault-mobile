@@ -1,5 +1,5 @@
+import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
-import { createNativeStackNavigator } from 'react-native-screens/native-stack'
 
 import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
@@ -53,8 +53,7 @@ function MainNavigator() {
   useEventHandlers()
 
   return (
-    <Stack.Navigator
-      screenOptions={{ headerShown: false, headerHideBackButton: true }}>
+    <Stack.Navigator screenOptions={{ headerShown: false }}>
       <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
       <Stack.Screen name={'Inbox'} component={Inbox} />
       <Stack.Screen name={'InboxItem'} component={InboxItem} />
@@ -66,21 +65,21 @@ function MainNavigator() {
         name={'EditProfile'}
         component={EditProfile}
         options={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}
       />
       <Stack.Screen
         name={'EditGenericProperty'}
         component={EditGenericProperty}
         options={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}
       />
       <Stack.Screen
         name={'AddCustomLink'}
         component={AddCustomLink}
         options={{
-          stackPresentation: 'modal',
+          presentation: 'modal',
         }}
       />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />

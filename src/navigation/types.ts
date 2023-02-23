@@ -1,8 +1,9 @@
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network } from 'api/types'
-import { AddIdentityMode } from 'pages/Account/Identity/AddIdentity'
+import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 
 export type RootStackParams = {
@@ -41,7 +42,7 @@ export type MainStackParams = {
   PrivateProfile: undefined
   EditProfile: undefined
   EditGenericProperty: GenericEditPropertyScreenProps
-  AddCustomLink: undefined
+  AddCustomLink: AddCustomLinkScreenProps
   SeedPhraseView: undefined
   ManageWallets: undefined
   SingleCurrency: undefined

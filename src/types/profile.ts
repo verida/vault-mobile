@@ -8,3 +8,10 @@ export interface PublicWalletAddress {
   veridaWalletName?: string
   icon?: string
 }
+
+export interface OneProfileCustomLink {
+  label: string
+  url: string
+  order: number
+  featured: boolean
+}

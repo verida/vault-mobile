@@ -9,7 +9,7 @@ import {
   saveStatusEnabledVeridaOneProfile,
   VERIDA_ONE_INVITE_CODE,
 } from 'helpers/profile'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
@@ -26,7 +26,7 @@ import {
 import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
-import { PublicWalletAddress } from 'types/profile'
+import { OneProfileCustomLink, PublicWalletAddress } from 'types/profile'
 import { CaipWalletType, VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
@@ -37,6 +37,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import { WalletAddressItem } from 'components/PublicProfile'
+import { CustomLinkItem } from 'components/PublicProfile/CustomLinkItem'
 import Screen from 'components/Screen'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
@@ -47,9 +48,11 @@ import { selectChains } from 'reduxStore/tokens/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
-enum EditMode {
+export enum PublicProfileEditMode {
   EditWalletPublicLabel,
   EnterInvitationCode,
+  AddCustomURL,
+  DeleteCustomURL,
 }
 
 const ScreenName = 'PublicProfile'
@@ -74,6 +77,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [loading, setLoading] = useState(true)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [, setPublicProfile] = useState(publicProfileData)
+  const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
     VeridaWallet
@@ -199,10 +203,25 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   ])
 
   const debounceSaveProfile = useCallback(
-    debounce(async (_walletAddresses) => {
+    debounce(async (updatedProfile) => {
+      const { walletAddresses, customLinks } = updatedProfile
       try {
         setQuickFetching(true)
-        await VeridaOneManager.setWalletAddresses([..._walletAddresses])
+        if (
+          'walletAddresses' in updatedProfile &&
+          !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
+        ) {
+          console.log('Save walletAddresses ', walletAddresses)
+          await VeridaOneManager.setWalletAddresses(walletAddresses)
+        }
+
+        if (
+          'customLinks' in updatedProfile &&
+          !isEqual(veridaOneProfile.customLinks, customLinks)
+        ) {
+          console.log('Save customLinks ', customLinks)
+          await VeridaOneManager.setCustomLinks(customLinks)
+        }
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Failed to save profile')
@@ -230,9 +249,32 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setPublicWalletAddresses(newPublicAddresses)
-      debounceSaveProfile(newPublicAddresses)
+      debounceSaveProfile({ walletAddress: newPublicAddresses })
     },
     [publicWalletAddresses, debounceSaveProfile]
+  )
+
+  const setFeaturedCustomLink = useCallback(
+    (customLink: OneProfileCustomLink, featured: boolean) => {
+      const updatedCustomLinks = [...publicCustomLinks]
+      const linkIndex = updatedCustomLinks.findIndex(
+        (link) => link.url === customLink.url && link.label === customLink.label
+      )
+
+      if (linkIndex >= 0) {
+        const updateLink = {
+          ...customLink,
+          featured,
+        }
+
+        // Replace updated item
+        updatedCustomLinks.splice(linkIndex, 1, updateLink as any)
+
+        setPublicCustomLinks(updatedCustomLinks)
+        debounceSaveProfile({ customLinks: updatedCustomLinks })
+      }
+    },
+    [debounceSaveProfile, publicCustomLinks]
   )
 
   const fetchData = async () => {
@@ -266,6 +308,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     try {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
       if (oneProfile) {
+        setVeridaOneProfile(oneProfile)
         setPublicWalletAddresses(oneProfile.walletAddresses)
         setPublicCustomLinks(oneProfile.customLinks)
       }
@@ -279,8 +322,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     'SAVE_GENERIC_PROPERTY',
     (payload) => {
       if (payload.screenName !== ScreenName) return
-      const mode = payload.mode as EditMode
-      if (mode === EditMode.EditWalletPublicLabel) {
+      const mode = payload.mode as PublicProfileEditMode
+      if (mode === PublicProfileEditMode.EditWalletPublicLabel) {
         // Save wallet name
         const theWallet = payload.originalValue as PublicWalletAddress
         const publicWallet = getPublicWalletAddressObject(
@@ -311,13 +354,52 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         }
 
         setPublicWalletAddresses(updatedPublicWalletAddresses)
-        debounceSaveProfile(updatedPublicWalletAddresses)
-      } else if (mode === EditMode.EnterInvitationCode) {
+        debounceSaveProfile({ walletAddresses: updatedPublicWalletAddresses })
+      } else if (mode === PublicProfileEditMode.EnterInvitationCode) {
         const inputCode = payload.value
         if (checkVeridaOneInviteCode(inputCode)) {
           setEnabledVeridaOne(true)
           saveStatusEnabledVeridaOneProfile(true)
         }
+      } else if (mode === PublicProfileEditMode.AddCustomURL) {
+        const inputValue = payload.value
+        const originalValue = payload.originalValue
+        const updatedCustomLinks = [...publicCustomLinks]
+
+        const inputLink = {
+          ...originalValue,
+          label: inputValue.label,
+          url: inputValue.url,
+        }
+        if (originalValue) {
+          // edit mode
+          const linkIndex = updatedCustomLinks.findIndex(
+            (link) =>
+              link.url === originalValue.url &&
+              link.label === originalValue.label
+          )
+
+          if (linkIndex >= 0) {
+            // Replace updated item
+            updatedCustomLinks.splice(linkIndex, 1, inputLink as any)
+          }
+        } else {
+          // new mode
+          inputLink.order = publicCustomLinks.length // add a new link and put it bottom
+          updatedCustomLinks.push(inputLink)
+        }
+
+        setPublicCustomLinks(updatedCustomLinks)
+        debounceSaveProfile({ customLinks: updatedCustomLinks })
+      } else if (mode === PublicProfileEditMode.DeleteCustomURL) {
+        const originalValue = payload.originalValue
+        const updatedCustomLinks = publicCustomLinks.filter(
+          (customLink) =>
+            customLink.url !== originalValue.url &&
+            customLink.label !== originalValue.label
+        )
+        setPublicCustomLinks(updatedCustomLinks)
+        debounceSaveProfile({ customLinks: updatedCustomLinks })
       }
     },
     [publicWalletAddresses]
@@ -405,7 +487,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         }
 
         setPublicWalletAddresses(newPublicWalletAddresses)
-        debounceSaveProfile(newPublicWalletAddresses)
+        debounceSaveProfile({ walletAddresses: newPublicWalletAddresses })
       }
 
       return (
@@ -428,7 +510,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                       description:
                         'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
                     },
-                    mode: EditMode.EditWalletPublicLabel,
+                    mode: PublicProfileEditMode.EditWalletPublicLabel,
                     originalValue: walletAddress,
                   })
                 }
@@ -442,76 +524,30 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const renderCustomLinkItem = useCallback(
     ({
-      item: walletAddress,
+      item: link,
       drag,
       isActive,
-    }: RenderItemParams<PublicWalletAddress>) => {
-      async function setPublicAddress(
-        publicAdress: PublicWalletAddress,
-        visible: boolean
-      ) {
-        const savePublicAddress = { ...publicAdress }
-
-        // Delete item metadata
-        delete savePublicAddress.isPublic
-        delete savePublicAddress.icon
-        delete savePublicAddress.veridaWalletName
-
-        let newPublicWalletAddresses = [...publicWalletAddresses]
-
-        if (visible) {
-          newPublicWalletAddresses.push(savePublicAddress)
-          Snackbar.show({
-            text: 'Added to Verida One profile',
-            duration: Snackbar.LENGTH_SHORT,
-          })
-        } else {
-          newPublicWalletAddresses = newPublicWalletAddresses.filter(
-            (wAddress) =>
-              wAddress.address !== publicAdress.address ||
-              (wAddress.address === publicAdress.address &&
-                wAddress.chainId !== publicAdress.chainId)
-          )
-          Snackbar.show({
-            text: 'Hidden from Verida One profile',
-            duration: Snackbar.LENGTH_SHORT,
-          })
-        }
-
-        setPublicWalletAddresses(newPublicWalletAddresses)
-        debounceSaveProfile(newPublicWalletAddresses)
-      }
-
+    }: RenderItemParams<OneProfileCustomLink>) => {
       return (
-        <WalletAddressItem
-          walletAddress={walletAddress}
+        <CustomLinkItem
+          customLink={link}
           drag={drag}
           isActive={isActive}
-          onEditName={
-            !walletAddress.isPublic
-              ? undefined
-              : () => {
-                  navigation.navigate('EditGenericProperty', {
-                    screenName: ScreenName,
-                    title: 'Public Label',
-                    option: {
-                      label: 'Address public label',
-                      type: 'input',
-                      value: walletAddress.label,
-                      placeholder: 'Enter the label',
-                      description:
-                        'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
-                    },
-                    mode: EditMode.EditWalletPublicLabel,
-                    originalValue: walletAddress,
-                  })
-                }
-          }
-          setPublicAddress={setPublicAddress}
+          onEdit={() => {
+            navigation.navigate('AddCustomLink', {
+              screenName: ScreenName,
+              title: 'Public Label',
+              label: link.label,
+              url: link.url,
+              mode: PublicProfileEditMode.AddCustomURL,
+              originalValue: link,
+            })
+          }}
+          setFeatured={setFeaturedCustomLink}
         />
       )
     },
-    [debounceSaveProfile, navigation, publicWalletAddresses]
+    [navigation, setFeaturedCustomLink]
   )
 
   return (
@@ -605,7 +641,13 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                 }}
                 color='transparent-link'
                 disabled={!enabledVeridaOne}
-                onPress={() => navigation.navigate('AddCustomLink', {})}>
+                onPress={() =>
+                  navigation.navigate('AddCustomLink', {
+                    screenName: ScreenName,
+                    mode: PublicProfileEditMode.AddCustomURL,
+                    title: 'Add Custom Link',
+                  })
+                }>
                 ADD NEW
               </Button>
             </View>
@@ -618,7 +660,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                 walletAddress: PublicWalletAddress,
                 index: number
               ) => `${index}-${walletAddress.address}`}
-              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
+              onDragEnd={({ data }) => setPublicCustomLinks(data)} // TODO: save it
             />
             <Text style={[styles.description, { marginVertical: 0 }]}>
               Add any links you’d like to show on your page. It could be a link
@@ -650,7 +692,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                         placeholder: 'Enter your code',
                         description: '',
                       },
-                      mode: EditMode.EnterInvitationCode,
+                      mode: PublicProfileEditMode.EnterInvitationCode,
                       originalValue: null,
                       submitButtonLabel: 'Submit',
                       verification: {
