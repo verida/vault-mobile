@@ -17,6 +17,10 @@ if (typeof process === 'undefined') {
 process.browser = true
 if (typeof Buffer === 'undefined') global.Buffer = require('buffer').Buffer
 
+//global.Worker = require('Worker')
+const { Worker } = require('Worker')
+global.worker = Worker
+
 // global.location = global.location || { port: 80 }
 const isDev = typeof __DEV__ === 'boolean' && __DEV__
 process.env.NODE_ENV = isDev ? 'development' : 'production'

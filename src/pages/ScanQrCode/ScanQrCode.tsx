@@ -1,3 +1,25 @@
+import {
+  BjjProvider,
+  CredentialStorage,
+  CredentialWallet,
+  EthConnectionConfig,
+  EthStateStorage,
+  defaultEthConnectionConfig,
+  IDataStorage,
+  Identity,
+  IdentityStorage,
+  IdentityWallet,
+  InMemoryDataSource,
+  InMemoryMerkleTreeStorage,
+  InMemoryPrivateKeyStore,
+  KMS,
+  KmsKeyType,
+  Profile,
+  W3CCredential,
+  ICredentialWallet,
+  IIdentityWallet,
+} from '@0xpolygonid/js-sdk'
+import { Blockchain, DidMethod, NetworkId } from '@iden3/js-iden3-core'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import { isEmpty } from 'lodash'
@@ -7,6 +29,7 @@ import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
 import { useDeeplink } from 'hooks/useDeeplink'
+import { usePolygonId } from 'hooks/usePolygonId'
 import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
@@ -23,9 +46,81 @@ function ScanQrCode(
   const handleDeeplink = useDeeplink(navigation as any)
   const { requestConnect } = useWalletConnect()
   const { requestConnect: requestConnectv2 } = useWalletConnectv2()
+  //const { requestConnect: requestPolygonId } = usePolygonId()
 
   useEffect(() => {
     setEnabled(true)
+
+    async function identityCreation() {
+      console.log('=============== key creation ===============')
+
+      const dataStorage = initDataStorage()
+      const credentialWallet = await initCredentialWallet(dataStorage)
+      const identityWallet = await initIdentityWallet(
+        dataStorage,
+        credentialWallet
+      )
+
+      const { did, credential } = await identityWallet.createIdentity(
+        'https://mywallet.com', // this is url that will be a part of auth bjj credential identifier
+        {
+          method: DidMethod.Iden3,
+          blockchain: Blockchain.Polygon,
+          networkId: NetworkId.Main,
+          rhsUrl: 'http://rhs.com/node', // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
+        }
+      )
+
+      console.log('=============== did ===============')
+      console.log(did.toString())
+      console.log('=============== Auth BJJ credential ===============')
+      console.log(JSON.stringify(credential))
+    }
+
+    function initDataStorage(): IDataStorage {
+      console.log(defaultEthConnectionConfig)
+      const conf: EthConnectionConfig = defaultEthConnectionConfig
+      conf.contractAddress = '0xf6781AD281d9892Df285cf86dF4F6eBec2042d71'
+      conf.url = 'https://polygon-mumbai.infura.io/v3/'
+
+      const dataStorage = {
+        credential: new CredentialStorage(
+          new InMemoryDataSource<W3CCredential>()
+        ),
+        identity: new IdentityStorage(
+          new InMemoryDataSource<Identity>(),
+          new InMemoryDataSource<Profile>()
+        ),
+        mt: new InMemoryMerkleTreeStorage(40),
+
+        states: new EthStateStorage(conf),
+      }
+      return dataStorage
+    }
+
+    async function initCredentialWallet(
+      dataStorage: IDataStorage
+    ): Promise<CredentialWallet> {
+      return new CredentialWallet(dataStorage)
+    }
+
+    async function initIdentityWallet(
+      dataStorage: IDataStorage,
+      credentialWallet: ICredentialWallet
+    ): Promise<IIdentityWallet> {
+      const memoryKeyStore = new InMemoryPrivateKeyStore()
+      const bjjProvider = new BjjProvider(KmsKeyType.BabyJubJub, memoryKeyStore)
+      const kms = new KMS()
+      kms.registerKeyProvider(KmsKeyType.BabyJubJub, bjjProvider)
+
+      return new IdentityWallet(kms, dataStorage, credentialWallet)
+    }
+
+    identityCreation()
+
+    // fake polygon id scan
+    //const polygonIdData = `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
+    //handleQrCode(polygonIdData)
   }, [navigation])
 
   const toggleFlash = useCallback(() => {
@@ -60,6 +155,15 @@ function ScanQrCode(
       if (data.startsWith('wc:') && data.indexOf('relay-protocol') >= 0) {
         navigation.goBack()
         requestConnectv2(data)
+        return
+      }
+      // PolygonId
+      // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
+      if (data.match('did:polygonid:polygon')) {
+        navigation.goBack()
+        console.log('data------')
+        console.log(data)
+        requestPolygonId(data)
         return
       }
 
