@@ -2,13 +2,15 @@ import {
   BjjProvider,
   CredentialStorage,
   CredentialWallet,
+  defaultEthConnectionConfig,
   EthConnectionConfig,
   EthStateStorage,
-  defaultEthConnectionConfig,
+  ICredentialWallet,
   IDataStorage,
   Identity,
   IdentityStorage,
   IdentityWallet,
+  IIdentityWallet,
   InMemoryDataSource,
   InMemoryMerkleTreeStorage,
   InMemoryPrivateKeyStore,
@@ -16,8 +18,6 @@ import {
   KmsKeyType,
   Profile,
   W3CCredential,
-  ICredentialWallet,
-  IIdentityWallet,
 } from '@0xpolygonid/js-sdk'
 import { Blockchain, DidMethod, NetworkId } from '@iden3/js-iden3-core'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
@@ -56,6 +56,7 @@ function ScanQrCode(
 
       const dataStorage = initDataStorage()
       const credentialWallet = await initCredentialWallet(dataStorage)
+
       const identityWallet = await initIdentityWallet(
         dataStorage,
         credentialWallet

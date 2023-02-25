@@ -163,8 +163,7 @@
     "use-deep-compare-effect": "^1.8.1",
     "util": "^0.10.4",
     "vm-browserify": "0.0.4",
-    "web3": "^1.8.1",
-    "snarkjs": "npm:react-native-snarkjs@0.0.4"
+    "web3": "^1.8.1"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",
@@ -208,7 +207,7 @@
     "native-base/@codler/react-native-keyboard-aware-scroll-view": "2.0.0",
     "near-api-js": "0.44.2",
     "promise": "^8.3.0",
-    "snarkjs": "npm:react-native-snarkjs@0.0.4"
+    "ffjavascript": "0.2.57"
   },
   "jest": {
     "preset": "react-native",
