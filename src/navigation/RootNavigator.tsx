@@ -24,13 +24,17 @@ function RootNavigator() {
   const mounted = useRef(false)
 
   useEffect(() => {
+    console.log('1')
     if (mounted.current) {
       return
     }
     mounted.current = true
     async function init() {
+      console.log('2')
       await AccountManager.getInstance().init()
+      console.log('3')
       await refresh()
+      console.log('4')
     }
     init()
   }, [refresh])

@@ -1,12 +1,20 @@
 import {
+  AuthDataPrepareFunc,
+  AuthHandler,
   BjjProvider,
+  CircuitData,
+  CircuitId,
+  CircuitStorage,
   CredentialStorage,
   CredentialWallet,
+  DataPrepareHandlerFunc,
   defaultEthConnectionConfig,
   EthConnectionConfig,
   EthStateStorage,
+  FSKeyLoader,
   ICredentialWallet,
   IDataStorage,
+  Iden3,
   Identity,
   IdentityStorage,
   IdentityWallet,
@@ -14,17 +22,28 @@ import {
   InMemoryDataSource,
   InMemoryMerkleTreeStorage,
   InMemoryPrivateKeyStore,
+  IPackageManager,
   KMS,
   KmsKeyType,
+  PackageManager,
+  PlainPacker,
   Profile,
+  ProofService,
+  ProvingParams,
+  StateVerificationFunc,
+  VerificationHandlerFunc,
+  VerificationParams,
   W3CCredential,
+  ZKPPacker,
 } from '@0xpolygonid/js-sdk'
 import { Blockchain, DidMethod, NetworkId } from '@iden3/js-iden3-core'
+import { proving } from '@iden3/js-jwz'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
+import ReactNativeBlobUtil from 'react-native-blob-util'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
@@ -34,6 +53,30 @@ import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
+
+const fetchPolygonFile = async (url: string): Promise<Uint8Array> => {
+  url = `https://verida-static-resources.s3.amazonaws.com/polygonid/${url}`
+  console.log(url)
+  const res = await ReactNativeBlobUtil.config({
+    // add this option that makes response data to be stored as a file,
+    // this is much more performant.
+    fileCache: true,
+  }).fetch('GET', url)
+
+  console.log('The file saved to ', res.path())
+  console.log(res.info())
+
+  ReactNativeBlobUtil.fs.readFile()
+
+  const blob = await res.blob()
+  console.log('reading blob')
+  const data = await blob.readBlob('arraybuffer')
+  console.log(data.length)
+  const result = new Uint8Array(data)
+  console.log(result.length)
+  throw new Error('hey')
+  return result
+}
 
 const WAIT_TIME = 3000
 
@@ -51,6 +94,43 @@ function ScanQrCode(
   useEffect(() => {
     setEnabled(true)
 
+    const getPackageMgr = async (
+      circuitData: CircuitData,
+      prepareFn: AuthDataPrepareFunc,
+      stateVerificationFn: StateVerificationFunc
+    ): Promise<IPackageManager> => {
+      const authInputsHandler = new DataPrepareHandlerFunc(prepareFn)
+
+      const verificationFn = new VerificationHandlerFunc(stateVerificationFn)
+      const mapKey =
+        proving.provingMethodGroth16AuthV2Instance.methodAlg.toString()
+      const verificationParamMap: Map<string, VerificationParams> = new Map([
+        [
+          mapKey,
+          {
+            key: circuitData.verificationKey,
+            verificationFn,
+          },
+        ],
+      ])
+
+      const provingParamMap: Map<string, ProvingParams> = new Map()
+      provingParamMap.set(mapKey, {
+        dataPreparer: authInputsHandler,
+        provingKey: circuitData.provingKey,
+        wasm: circuitData.wasm,
+      })
+
+      WebAssembly.compile()
+
+      const mgr: IPackageManager = new PackageManager()
+      const packer = new ZKPPacker(provingParamMap, verificationParamMap)
+      const plainPacker = new PlainPacker()
+      mgr.registerPackers([packer, plainPacker])
+
+      return mgr
+    }
+
     async function identityCreation() {
       console.log('=============== key creation ===============')
 
@@ -65,10 +145,11 @@ function ScanQrCode(
       const { did, credential } = await identityWallet.createIdentity(
         'https://mywallet.com', // this is url that will be a part of auth bjj credential identifier
         {
-          method: DidMethod.Iden3,
+          method: DidMethod.PolygonId,
           blockchain: Blockchain.Polygon,
-          networkId: NetworkId.Main,
-          rhsUrl: 'http://rhs.com/node', // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
+          networkId: NetworkId.Mumbai,
+          seed: new Uint8Array(Buffer.from('daveseedseedseedseedseedseeduser', 'utf-8')),
+          rhsUrl: 'https://rhs-staging.polygonid.me/', // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
         }
       )
 
@@ -76,13 +157,151 @@ function ScanQrCode(
       console.log(did.toString())
       console.log('=============== Auth BJJ credential ===============')
       console.log(JSON.stringify(credential))
+
+      const circuitStorage = new CircuitStorage(
+        new InMemoryDataSource<CircuitData>()
+      )
+
+      /*await circuitStorage.saveCircuitData(CircuitId.AuthV2, {
+        circuitId: CircuitId.AtomicQuerySigV2,
+        wasm: await fetchPolygonFile(
+          `${CircuitId.AuthV2.toString()}/circuit.wasm`
+        ),
+        provingKey: await fetchPolygonFile(
+          `${CircuitId.AuthV2.toString()}/circuit_final.zkey`
+        ),
+        verificationKey: await fetchPolygonFile(
+          `${CircuitId.AuthV2.toString()}/verification_key.json`
+        ),
+      })*/
+
+      /*
+      await circuitStorage.saveCircuitData(CircuitId.AtomicQuerySigV2, {
+        circuitId: CircuitId.AtomicQuerySigV2,
+        wasm: await fetchPolygonFile(
+          `${CircuitId.AtomicQuerySigV2.toString()}/circuit.wasm`
+        ),
+        provingKey: await fetchPolygonFile(
+          `${CircuitId.AtomicQuerySigV2.toString()}/circuit_final.zkey`
+        ),
+        verificationKey: await fetchPolygonFile(
+          `${CircuitId.AtomicQuerySigV2.toString()}/verification_key.json`
+        ),
+      })
+
+      await circuitStorage.saveCircuitData(CircuitId.StateTransition, {
+        circuitId: CircuitId.StateTransition,
+        wasm: await fetchPolygonFile(
+          `${CircuitId.StateTransition.toString()}/circuit.wasm`
+        ),
+        provingKey: await fetchPolygonFile(
+          `${CircuitId.StateTransition.toString()}/circuit_final.zkey`
+        ),
+        verificationKey: await fetchPolygonFile(
+          `${CircuitId.StateTransition.toString()}/verification_key.json`
+        ),
+      })
+
+      await circuitStorage.saveCircuitData(CircuitId.AtomicQueryMTPV2, {
+        circuitId: CircuitId.AtomicQueryMTPV2,
+        wasm: await fetchPolygonFile(
+          `${CircuitId.AtomicQueryMTPV2.toString()}/circuit.wasm`
+        ),
+        provingKey: await fetchPolygonFile(
+          `${CircuitId.AtomicQueryMTPV2.toString()}/circuit_final.zkey`
+        ),
+        verificationKey: await fetchPolygonFile(
+          `${CircuitId.AtomicQueryMTPV2.toString()}/verification_key.json`
+        ),
+      })*/
+
+      const conf = defaultEthConnectionConfig;
+      //conf.url = infuraUrl;
+      conf.url = 'https://rpc-mumbai.maticvigil.com'
+      conf.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4'
+      const ethStorage = new EthStateStorage(conf)
+      console.log(conf)
+
+      const proofService = new ProofService(
+        identityWallet,
+        credentialWallet,
+        circuitStorage,
+        ethStorage
+      )
+
+      console.log('a')
+      //const authV2Data = await circuitStorage.loadCircuitData(CircuitId.AuthV2)
+      const authV2Data = {
+        circuitId: CircuitId.AtomicQuerySigV2,
+        wasm: await fetchPolygonFile(
+          `${CircuitId.AuthV2.toString()}/circuit.wasm`
+        ),
+        provingKey: await fetchPolygonFile(
+          `${CircuitId.AuthV2.toString()}/circuit_final.zkey`
+        ),
+        verificationKey: await fetchPolygonFile(
+          `${CircuitId.AuthV2.toString()}/verification_key.json`
+        ),
+      }
+      console.log('b')
+
+      try {
+        const packageMgr = await getPackageMgr(
+          authV2Data,
+          proofService.generateAuthV2Inputs.bind(proofService),
+          proofService.verifyState.bind(proofService)
+        )
+        console.log('c')
+        const authHandler = new AuthHandler(
+          packageMgr,
+          proofService,
+          credentialWallet
+        )
+        console.log('d')
+
+        const jsonData = {"id":"e2ce9582-82e9-4016-978d-31fe481ee0e9","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"e2ce9582-82e9-4016-978d-31fe481ee0e9","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=274044","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}
+        console.log(jsonData)
+        const msgBytes = Buffer.from(JSON.stringify(jsonData), 'utf-8')
+
+        const authRes =
+          await authHandler.handleAuthorizationRequestForGenesisDID(
+            did,
+            msgBytes
+          )
+
+        console.log(authRes)
+      } catch (err) {
+        console.log(err)
+      }
+
+      /*const circuitStorage = new CircuitStorage(
+        new InMemoryDataSource<CircuitData>()
+      )
+
+      const proofService = new ProofService(
+        identityWallet,
+        credentialWallet,
+        circuitStorage,
+        mockStateStorage
+      )
+      const packageMgr = await getPackageMgr(
+        await circuitStorage.loadCircuitData(CircuitId.AuthV2),
+        proofService.generateAuthV2Inputs.bind(proofService),
+        proofService.verifyState.bind(proofService)
+      )
+      authHandler = new AuthHandler(packageMgr, proofService, credWallet)
+      const msgBytes = byteEncoder.encode(JSON.stringify(authReq))
+      const authRes = await authHandler.handleAuthorizationRequestForGenesisDID(
+        userDID,
+        msgBytes
+      )*/
     }
 
     function initDataStorage(): IDataStorage {
       console.log(defaultEthConnectionConfig)
       const conf: EthConnectionConfig = defaultEthConnectionConfig
-      conf.contractAddress = '0xf6781AD281d9892Df285cf86dF4F6eBec2042d71'
-      conf.url = 'https://polygon-mumbai.infura.io/v3/'
+      conf.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4'
+      conf.url = 'https://rpc-mumbai.maticvigil.com'
 
       const dataStorage = {
         credential: new CredentialStorage(
@@ -93,7 +312,6 @@ function ScanQrCode(
           new InMemoryDataSource<Profile>()
         ),
         mt: new InMemoryMerkleTreeStorage(40),
-
         states: new EthStateStorage(conf),
       }
       return dataStorage
