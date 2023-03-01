@@ -320,10 +320,13 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
       if (itemIndex >= 0) {
         updatedFeaturedAssets.splice(itemIndex, 1)
+        setFeaturedAssets(updatedFeaturedAssets)
+        debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
+        Snackbar.show({
+          text: 'Removed',
+          duration: Snackbar.LENGTH_SHORT,
+        })
       }
-
-      setFeaturedAssets(updatedFeaturedAssets)
-      debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
     },
     [debounceSaveProfile, featuredAssets]
   )
