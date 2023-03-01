@@ -3,10 +3,10 @@ import EventEmitter from 'events'
 export type EmitterTypes = {
   SAVE_GENERIC_PROPERTY: {
     screenName: string
-    mode: string | number
     title?: string
     value: any
     originalValue?: any
+    mode?: string | number
   }
 }
 

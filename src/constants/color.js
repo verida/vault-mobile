@@ -25,6 +25,7 @@ export const PRIMARY_COLOR_50 = 'rgba(66, 59, 206, 0.5)'
 export const PRIMARY_COLOR_100 = 'rgba(66, 59, 206, 0.1)'
 export const PRIMARY_COLOR_200 = '#E7E5FF'
 export const PRIMARY_COLOR_300 = '#7986F7'
+export const PRIMARY_COLOR_500 = '#423BCE'
 
 export const BACKGROUND_GREY_COLOR = '#F6F7F9'
 export const VERIDA_COLOR = '#37D5C7'
@@ -35,6 +36,8 @@ export const SHADOW_LIGHT_GREY = 'rgba(21, 12, 78, 0.06)'
 
 export const LIGHT_GREY_600 = 'rgba(60, 60, 67, 0.6)'
 export const GREY_120 = 'rgba(118, 118, 128, 0.12)'
+
+export const DEFAULT_ICON_COLOR = '#808695'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
 

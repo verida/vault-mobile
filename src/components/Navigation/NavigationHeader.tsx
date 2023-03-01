@@ -7,6 +7,9 @@ import { Platform, StyleSheet, View } from 'react-native'
 import Text from 'components/Text'
 import { DECLINE_COLOR, SEPARATOR_EXTRA_LIGHT } from 'constants/color'
 
+import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
+import { NUNITO_SANS_BOLD } from '../../constants/text'
+
 export type HeaderSideButton = {
   icon: string | React.ReactElement
   action?: () => void
@@ -15,7 +18,9 @@ export type HeaderSideButton = {
 export type HeaderProps = {
   left?: HeaderSideButton
   right?: HeaderSideButton
-  title: string
+  title?: string | React.ReactNode
+  titleIcon?: React.ReactElement
+  avatarIcon?: React.ReactNode
   rightComponent?: React.ReactNode
   bottomBorder?: boolean
 }
@@ -24,6 +29,8 @@ function NavigationHeader({
   left = { icon: 'back' },
   title,
   right,
+  titleIcon,
+  avatarIcon,
   rightComponent,
   bottomBorder = true,
 }: HeaderProps) {
@@ -51,7 +58,13 @@ function NavigationHeader({
               case 'back':
                 return navigation.canGoBack() ? (
                   <Button transparent onPress={navigation.goBack}>
-                    <Icon name='arrow-back' style={{ color: '#000' }} />
+                    <LeftArrowIcon />
+                  </Button>
+                ) : null
+              case 'close':
+                return navigation.canGoBack() ? (
+                  <Button transparent onPress={navigation.goBack}>
+                    <Icon name='close' style={{ color: '#000' }} />
                   </Button>
                 ) : null
               case 'close':
@@ -62,6 +75,8 @@ function NavigationHeader({
                 ) : null
               case 'skip':
                 return null
+              case 'avatar':
+                return <View>{avatarIcon}</View>
               default:
                 return (
                   <Button transparent onPress={left.action}>
@@ -72,7 +87,8 @@ function NavigationHeader({
           })()}
         </Left>
         <Body style={{ flex: 1, alignItems: 'center' }}>
-          {title ? <Title style={{ color: '#000' }}>{title}</Title> : null}
+          {title ? <Title style={styles.textTitle}>{title}</Title> : null}
+          {titleIcon && titleIcon}
         </Body>
         <Right style={{ flex: 0.2 }}>
           {rightComponent ? (
@@ -103,6 +119,12 @@ const styles = StyleSheet.create({
   netInfoText: {
     color: 'white',
     fontSize: 15,
+  },
+  textTitle: {
+    color: '#000',
+    fontFamily: NUNITO_SANS_BOLD,
+    fontWeight: '600',
+    fontSize: 17,
   },
 })
 

@@ -1,7 +1,8 @@
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { Network } from 'api/types'
+import { Network, NFT, NFTCollection } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
+import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
@@ -28,6 +29,7 @@ export type DashboardTabParams = {
   Home: undefined
   Data: undefined
   Tokens: undefined
+  Assets: undefined
   Profile: undefined
   Connections: undefined
 }
@@ -82,4 +84,8 @@ export type MainStackParams = {
   WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: undefined
   Success: undefined
+
+  NFTCollectionDetail: { collection: NFTCollection }
+  NFTDetail: { nft: NFT }
+  SelectAsset: SelectAssetScreenProps
 }

@@ -34,7 +34,7 @@ const verifySeedPhrase = (splitted: string[]): boolean => {
 }
 
 const SeedPhraseEntered = (
-  props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered', 'Success'>
+  props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered'>
 ) => {
   const { route, navigation } = props
   const usePrivateKey = route.params?.usePrivateKey || false

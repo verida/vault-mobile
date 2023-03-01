@@ -7,6 +7,9 @@ import { MainStackParams } from 'navigation/types'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import AddIdentity from 'pages/Account/Identity/AddIdentity'
 import Identity from 'pages/Account/Identity/Identity'
+import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
+import NFTDetail from 'pages/Assets/NFTDetail'
+import SelectAsset from 'pages/Assets/SelectAsset'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
@@ -136,6 +139,19 @@ function MainNavigator() {
       />
 
       <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
+
+      <Stack.Screen
+        name={'NFTCollectionDetail'}
+        component={NFTCollectionDetail}
+      />
+      <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
+      <Stack.Screen
+        name={'SelectAsset'}
+        component={SelectAsset}
+        options={{
+          presentation: 'modal',
+        }}
+      />
     </Stack.Navigator>
   )
 }

@@ -114,16 +114,42 @@ export const getTokensData = (state) => {
   }
 }
 
+export const getAllWallets = (state) => {
+  return state.wallets.data || {}
+}
+
 export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
-export const getWalletProcessingState = (state) => {
-  return state.walletProcessing.loading
+export const getWalletList = (state, allChains) => {
+  const allWallets = getAllWallets(state)
+  return Object.values(allWallets).map((wallet) => {
+    const { label, id, type, chain } = wallet
+
+    const addresses = Object.values(wallet.accounts).map(
+      (account) => account.address
+    )
+
+    return {
+      id,
+      label,
+      icon: type === 'single' ? allChains[chain].icon : null,
+      count: Object.keys(wallet.accounts).length,
+      address: addresses.length === 1 ? addresses[0] : null,
+    }
+  })
 }
 
-export const getAllWallets = (state) => {
-  return state.wallets.data || []
+export const getSelectedWalletById = (state, chains) => {
+  const walletList = getWalletList(state, chains)
+  const selectedWalletId = state.selectedWallet
+  const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
+  return selectedWallet
+}
+
+export const getWalletProcessingState = (state) => {
+  return state.walletProcessing.loading
 }
 
 export const getWalletCount = (state) => {

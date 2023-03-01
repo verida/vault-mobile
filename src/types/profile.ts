@@ -15,3 +15,14 @@ export interface OneProfileCustomLink {
   order: number
   featured: boolean
 }
+
+export interface OneProfileFeaturedAsset {
+  chainId: string
+  contractAddress: string
+  tokenId: string
+  ownerAddress: string
+  order: number
+
+  // Transient fields
+  uri?: string
+}
