@@ -514,7 +514,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     setPublicWalletAddresses([])
     setPublicProfile({})
 
-    saveStatusEnabledVeridaOneProfile(false)
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
