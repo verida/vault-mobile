@@ -652,7 +652,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             <NestableDraggableFlatList
               data={walletAddresses}
               renderItem={renderWalletItem}
-              activationDistance={40}
+              activationDistance={60}
               keyExtractor={(
                 walletAddress: PublicWalletAddress,
                 index: number
@@ -694,7 +694,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             <NestableDraggableFlatList
               data={publicCustomLinks}
               renderItem={renderCustomLinkItem}
-              // activationDistance={60}
+              activationDistance={30}
               keyExtractor={(item: OneProfileCustomLink, index: number) =>
                 `${index}-${item.url}`
               }
