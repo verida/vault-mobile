@@ -112,6 +112,7 @@
     "react-native-custom-qr-codes-expo": "^2.2.0",
     "react-native-datepicker": "^1.7.2",
     "react-native-device-info": "^8.5.1",
+    "react-native-draggable-flatlist": "^4.0.0",
     "react-native-elements": "^2.0.4",
     "react-native-fast-crypto": "^2.2.0",
     "react-native-fast-image": "^8.6.3",

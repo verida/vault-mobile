@@ -40,8 +40,7 @@ const ENVIRONMENTS = {
       'https://assets.verida.io/registry/storageNodes/devnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'AU',
-    //NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
+    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
   testnet: {
@@ -49,8 +48,7 @@ const ENVIRONMENTS = {
       'https://assets.verida.io/registry/storageNodes/testnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     DEFAULT_COUNTRY: 'US',
-    //NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    NOTIFICATION_ENDPOINTS: ['https://notifications.testnet.verida.tech/'],
+    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
 }

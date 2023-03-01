@@ -319,7 +319,7 @@ const AddIdentity = () => {
                 placeholder='Enter your public name'
                 errorMessage={
                   profile.name?.length > PUBLIC_PROFILE_NAME_MAX_LENGTH
-                    ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters'`
+                    ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters`
                     : undefined
                 }
                 onChangeText={(text) =>

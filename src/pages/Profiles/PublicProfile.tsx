@@ -15,28 +15,30 @@ import {
   Alert,
   Dimensions,
   RefreshControl,
-  ScrollView,
   StyleSheet,
-  Switch,
   View,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
+import {
+  NestableDraggableFlatList,
+  NestableScrollContainer,
+  RenderItemParams,
+} from 'react-native-draggable-flatlist'
 import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
+import { PublicWalletAddress } from 'types/profile'
+import { CaipWalletType, VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
 import VeridaOneManager from 'api/VeridaOneManager'
-import EditIcon from 'assets/edit_icon.svg'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
+import { WalletAddressItem } from 'components/PublicProfile'
 import Screen from 'components/Screen'
-import { CaipWalletType, VeridaWallet } from 'components/types/wallet'
 import { Headline } from 'components/Typography/Headline'
-import { SubHeadline } from 'components/Typography/SubHeadline'
 import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -44,17 +46,6 @@ import { setPublicProfileData } from 'reduxStore/general/actions'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
-
-interface PublicAddress {
-  address: string
-  chainId: string
-  label: string
-  order: number
-
-  visible?: boolean
-  veridaWalletName?: string
-  icon?: string
-}
 
 enum EditMode {
   EditWalletPublicLabel,
@@ -97,8 +88,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const chains = useSelector(selectChains)
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
-    PublicAddress[]
+    PublicWalletAddress[]
   >([])
+
+  const [publicCustomLinks, setPublicCustomLinks] = useState<any[]>([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
 
@@ -112,26 +105,23 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  function isVisible(address: string, chainId: string) {
-    return (
-      publicWalletAddresses.findIndex(
+  const getPublicWalletAddressObject = useCallback(
+    (address: string, chainId: string) => {
+      return publicWalletAddresses.find(
         (walletAddress) =>
           walletAddress.address === address && walletAddress.chainId === chainId
-      ) >= 0
-    )
-  }
+      )
+    },
+    [publicWalletAddresses]
+  )
 
-  function getPublicWalletAddressObject(address: string, chainId: string) {
-    return publicWalletAddresses.find(
-      (walletAddress) =>
-        walletAddress.address === address && walletAddress.chainId === chainId
-    )
-  }
-
-  function getPublicName(address: string, chainId: string) {
-    const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
-    return publicWalletAddress?.label ?? ''
-  }
+  const getPublicAdrressOrder = useCallback(
+    (address: string, chainId: string) => {
+      const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
+      return publicWalletAddress?.order ?? 0
+    },
+    [getPublicWalletAddressObject]
+  )
 
   function getChainId(chainData: any) {
     // FIXME: Remove this hack of trimming the Algorand chain ID reference to make it follow the CAIP address rule
@@ -142,77 +132,92 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     return `${chainData.namespace}:${chainRef}`
   }
 
+  const updateWalletAddressesOrder = useCallback(
+    (walletAddressesOrder) => {
+      let orderNumber = 0
+      const newPublicAddresses = [...publicWalletAddresses]
+      walletAddressesOrder.map((walletAddress: PublicWalletAddress) => {
+        const publicAddress = newPublicAddresses.find(
+          (pa) =>
+            pa.address === walletAddress.address &&
+            pa.chainId === walletAddress.chainId
+        )
+        if (publicAddress) {
+          publicAddress.order = orderNumber++
+        }
+      })
+
+      setPublicWalletAddresses(newPublicAddresses)
+      debounceSaveProfile(newPublicAddresses)
+    },
+    [publicWalletAddresses]
+  )
+
   const walletAddresses = useMemo(() => {
-    let orderNumber = 0
-    const mappedWallets = Object.values(chains).reduce((acc, chain) => {
-      const sameChainAdresses = Object.values(wallets).reduce(
-        (accAddresses: PublicAddress[], wallet) => {
-          const account =
-            wallet.accounts[chain.addressMapping as CaipWalletType]
-          if (account) {
-            const chainId = getChainId(chain.data)
-            accAddresses.push({
-              address: account.address,
-              chainId: chainId,
-              label: getPublicName(account.address, chainId),
-              order: orderNumber++,
-
-              // Infered value for displaying
-              veridaWalletName: wallet.label,
-              visible: isVisible(account.address, chainId),
-              icon: chain?.icon,
-            })
-          }
-
-          return accAddresses
-        },
-        []
+    function isPublic(address: string, chainId: string) {
+      return (
+        publicWalletAddresses.findIndex(
+          (walletAddress) =>
+            walletAddress.address === address &&
+            walletAddress.chainId === chainId
+        ) >= 0
       )
-
-      acc.push(...sameChainAdresses)
-      return acc
-    }, [])
-
-    return enabledVeridaOne ? mappedWallets : mappedWallets.slice(0, 1) // Shorten the wallet address to one if not enabled Verida One Profile
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [chains, wallets, publicWalletAddresses, enabledVeridaOne])
-
-  async function setPublicAddress(
-    publicAdress: PublicAddress,
-    visible: boolean
-  ) {
-    const savePublicAddress = { ...publicAdress }
-
-    // Delete item metadata
-    delete savePublicAddress.visible
-    delete savePublicAddress.icon
-    delete savePublicAddress.veridaWalletName
-
-    let newPublicWalletAddresses = [...publicWalletAddresses]
-
-    if (visible) {
-      newPublicWalletAddresses.push(savePublicAddress)
-      Snackbar.show({
-        text: 'Added to Verida One profile',
-        duration: Snackbar.LENGTH_SHORT,
-      })
-    } else {
-      newPublicWalletAddresses = newPublicWalletAddresses.filter(
-        (walletAddress) =>
-          walletAddress.address !== publicAdress.address ||
-          (walletAddress.address === publicAdress.address &&
-            walletAddress.chainId !== publicAdress.chainId)
-      )
-      Snackbar.show({
-        text: 'Hidden from Verida One profile',
-        duration: Snackbar.LENGTH_SHORT,
-      })
     }
 
-    setPublicWalletAddresses(newPublicWalletAddresses)
-    debounceSaveProfile(newPublicWalletAddresses)
-  }
+    function getPublicName(address: string, chainId: string) {
+      const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
+      return publicWalletAddress?.label ?? ''
+    }
+
+    let mappedWallets: PublicWalletAddress[] = Object.values(chains).reduce(
+      (acc, chain) => {
+        const sameChainAdresses = Object.values(wallets).reduce(
+          (accAddresses: PublicWalletAddress[], wallet) => {
+            const account =
+              wallet.accounts[chain.addressMapping as CaipWalletType]
+            if (account) {
+              const chainId = getChainId(chain.data)
+              accAddresses.push({
+                address: account.address,
+                chainId: chainId,
+                label: getPublicName(account.address, chainId),
+                order: getPublicAdrressOrder(account.address, chainId),
+
+                // Infered value for displaying
+                veridaWalletName: wallet.label,
+                isPublic: isPublic(account.address, chainId),
+                icon: chain?.icon,
+              })
+            }
+
+            return accAddresses
+          },
+          []
+        )
+
+        acc.push(...sameChainAdresses)
+        return acc
+      },
+      []
+    )
+
+    // Sort array move public addresses to top of the list
+    mappedWallets = mappedWallets.sort((a, b) => {
+      if (a.isPublic && b.isPublic) {
+        return a.order - b.order
+      }
+      return a.isPublic ? -1 : b.isPublic ? 1 : 0
+    })
+
+    return enabledVeridaOne ? mappedWallets : mappedWallets.slice(0, 1) // Shorten the wallet address to one if not enabled Verida One Profile
+  }, [
+    chains,
+    enabledVeridaOne,
+    publicWalletAddresses,
+    getPublicWalletAddressObject,
+    wallets,
+    getPublicAdrressOrder,
+  ])
 
   const debounceSaveProfile = useCallback(
     debounce(async (_walletAddresses) => {
@@ -262,6 +267,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
       if (oneProfile) {
         setPublicWalletAddresses(oneProfile.walletAddresses)
+        setPublicCustomLinks(oneProfile.customLinks)
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -276,7 +282,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       const mode = payload.mode as EditMode
       if (mode === EditMode.EditWalletPublicLabel) {
         // Save wallet name
-        const theWallet = payload.originalValue as PublicAddress
+        const theWallet = payload.originalValue as PublicWalletAddress
         const publicWallet = getPublicWalletAddressObject(
           theWallet.address,
           theWallet.chainId
@@ -360,6 +366,80 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  const renderWalletItem = useCallback(
+    ({
+      item: walletAddress,
+      drag,
+      isActive,
+    }: RenderItemParams<PublicWalletAddress>) => {
+      async function setPublicAddress(
+        publicAdress: PublicWalletAddress,
+        visible: boolean
+      ) {
+        const savePublicAddress = { ...publicAdress }
+
+        // Delete item metadata
+        delete savePublicAddress.isPublic
+        delete savePublicAddress.icon
+        delete savePublicAddress.veridaWalletName
+
+        let newPublicWalletAddresses = [...publicWalletAddresses]
+
+        if (visible) {
+          newPublicWalletAddresses.push(savePublicAddress)
+          Snackbar.show({
+            text: 'Added to Verida One profile',
+            duration: Snackbar.LENGTH_SHORT,
+          })
+        } else {
+          newPublicWalletAddresses = newPublicWalletAddresses.filter(
+            (wAddress) =>
+              wAddress.address !== publicAdress.address ||
+              (wAddress.address === publicAdress.address &&
+                wAddress.chainId !== publicAdress.chainId)
+          )
+          Snackbar.show({
+            text: 'Hidden from Verida One profile',
+            duration: Snackbar.LENGTH_SHORT,
+          })
+        }
+
+        setPublicWalletAddresses(newPublicWalletAddresses)
+        debounceSaveProfile(newPublicWalletAddresses)
+      }
+
+      return (
+        <WalletAddressItem
+          walletAddress={walletAddress}
+          drag={drag}
+          isActive={isActive}
+          onEditName={
+            !walletAddress.isPublic
+              ? undefined
+              : () => {
+                  navigation.navigate('EditGenericProperty', {
+                    screenName: ScreenName,
+                    title: 'Public Label',
+                    option: {
+                      label: 'Address public label',
+                      type: 'input',
+                      value: walletAddress.label,
+                      placeholder: 'Enter the label',
+                      description:
+                        'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
+                    },
+                    mode: EditMode.EditWalletPublicLabel,
+                    originalValue: walletAddress,
+                  })
+                }
+          }
+          setPublicAddress={setPublicAddress}
+        />
+      )
+    },
+    [debounceSaveProfile, navigation, publicWalletAddresses]
+  )
+
   return (
     <Screen
       backgroundGrey
@@ -372,7 +452,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <LoadingView />
         </View>
       ) : (
-        <ScrollView
+        <NestableScrollContainer
           contentContainerStyle={{
             padding: theme.spacing.m,
             paddingBottom: enabledVeridaOne ? theme.spacing.xxxl : 0,
@@ -419,139 +499,20 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                 ADD NEW
               </Button>
             </View>
-            {walletAddresses.map(
-              (walletAddress: PublicAddress, index: number) => {
-                return (
-                  <View
-                    key={`${index}-${walletAddress.address}`}
-                    style={[
-                      styles.walletItemContainer,
-                      {
-                        backgroundColor: walletAddress.visible
-                          ? theme.color.background
-                          : theme.color.snow,
-                      },
-                    ]}>
-                    <View style={{ flex: 1 }}>
-                      <View
-                        style={{
-                          flex: 1,
-                          flexDirection: 'row',
-                          justifyContent: 'space-between',
-                        }}>
-                        <View
-                          style={{
-                            flex: 1,
-                            flexDirection: 'row',
-                          }}>
-                          <FastImage
-                            source={{ uri: walletAddress.icon }}
-                            style={{ width: 48, height: 48 }}
-                            resizeMode='contain'
-                          />
-                          <View style={{ marginLeft: theme.spacing.m }}>
-                            <SubHeadline
-                              ellipsizeMode='tail'
-                              numberOfLines={2}
-                              style={{
-                                maxWidth: 200,
-                                color: walletAddress.label
-                                  ? theme.color.onBackground
-                                  : theme.color.textLightGrey,
-                              }}>
-                              {walletAddress.label || 'Public label'}
-                            </SubHeadline>
-                            <View
-                              style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                              }}>
-                              <Text
-                                ellipsizeMode='middle'
-                                numberOfLines={1}
-                                style={{
-                                  maxWidth: 100,
-                                  marginRight: theme.spacing.xs,
-                                }}>
-                                {walletAddress.address}
-                              </Text>
-                              <Text style={styles.veridaWalletName}>
-                                {walletAddress.veridaWalletName}
-                              </Text>
-                            </View>
-                          </View>
-                        </View>
-                        <Button
-                          color={'transparent'}
-                          disabled={!walletAddress.visible}
-                          style={{
-                            width: 40,
-                            height: 40,
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            backgroundColor: 'lightGrey',
-                          }}
-                          onPress={
-                            !walletAddress.visible
-                              ? null
-                              : () => {
-                                  navigation.navigate('EditGenericProperty', {
-                                    screenName: ScreenName,
-                                    title: 'Public Label',
-                                    option: {
-                                      label: 'Address public label',
-                                      type: 'input',
-                                      value: walletAddress.label,
-                                      placeholder: 'Enter the label',
-                                      description:
-                                        'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
-                                    },
-                                    mode: EditMode.EditWalletPublicLabel,
-                                    originalValue: walletAddress,
-                                  })
-                                }
-                          }>
-                          {/* Add a wrapped view so on click behavior fixed */}
-                          <View>
-                            <EditIcon />
-                          </View>
-                        </Button>
-                      </View>
-                      <View
-                        style={{
-                          marginVertical: theme.spacing.s,
-                          borderWidth: StyleSheet.hairlineWidth,
-                          borderColor: theme.color.separatorExtraLight,
-                        }}
-                      />
-                      <View
-                        style={{
-                          flex: 1,
-                          flexDirection: 'row',
-                          alignItems: 'center',
-                          justifyContent: 'space-between',
-                        }}>
-                        <Text>Display on Verida One profile</Text>
-                        <Switch
-                          trackColor={{
-                            false: theme.color.switchFalseState,
-                            true: theme.color.success,
-                          }}
-                          ios_backgroundColor={theme.color.switchIOSBg}
-                          onValueChange={(value) => {
-                            setPublicAddress(walletAddress, value)
-                          }}
-                          value={walletAddress.visible}
-                        />
-                      </View>
-                    </View>
-                  </View>
-                )
-              }
-            )}
+
+            <NestableDraggableFlatList
+              data={walletAddresses}
+              renderItem={renderWalletItem}
+              activationDistance={60}
+              keyExtractor={(
+                walletAddress: PublicWalletAddress,
+                index: number
+              ) => `${index}-${walletAddress.address}`}
+              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
+            />
             <Text style={[styles.description, { marginVertical: 0 }]}>
               On your Verida One page we show your wallet addresses with their
-              public lables and the assets related to them (collectibles,
+              public labels and the assets related to them (collectibles,
               badges, etc)
             </Text>
 
@@ -593,7 +554,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               </View>
             )}
           </View>
-        </ScrollView>
+        </NestableScrollContainer>
       )}
     </Screen>
   )
@@ -627,18 +588,6 @@ const createStyles = (theme: Theme) =>
     sectionHeader: {
       color: theme.color.onBackground,
       opacity: 0.6,
-      marginBottom: theme.spacing.s,
-    },
-    walletItemContainer: {
-      flex: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      backgroundColor: theme.color.background,
-      borderColor: theme.color.lightGrey,
-      borderWidth: 1,
-      borderRadius: theme.roundness.xs,
-      paddingVertical: theme.spacing.s,
-      paddingHorizontal: theme.spacing.m,
       marginBottom: theme.spacing.s,
     },
     oneProfileLinkContainer: {

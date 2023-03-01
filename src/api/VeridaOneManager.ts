@@ -1,5 +1,5 @@
 import { Context } from '@verida/client-rn'
-import { IDatastore, DatabasePermissionOptionsEnum } from '@verida/types'
+import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 
 import AccountManager from './AccountManager'
 import {
