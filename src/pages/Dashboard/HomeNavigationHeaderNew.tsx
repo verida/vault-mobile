@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import {
   ImageSourcePropType,
@@ -52,6 +53,8 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     ...rest
   } = props
 
+  const { theme } = useTheme()
+
   return (
     <SafeAreaView edges={['left', 'top', 'right']}>
       <View style={[styles.header]} {...rest}>
@@ -72,7 +75,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
                   numberOfLines={1}>
                   {name}
                 </Text>
-                <ChevronRightIcon />
+                <ChevronRightIcon fill={theme.color.icon} />
               </TouchableOpacity>
               <View style={styles.network}>
                 <View style={styles.textChipBox}>
@@ -90,7 +93,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
             style={styles.inboxButton}
             onPress={onInboxPress}
             hitSlop={HIT_SLOP}>
-            <EnvelopeSvg />
+            <EnvelopeSvg fill={theme.color.icon} />
             {inboxCount ? (
               <View style={styles.badge}>
                 <Text style={{ fontSize: 8 }} numberOfLines={1}>
@@ -105,7 +108,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
             style={styles.settingsButton}
             onPress={onSettingsPress}
             hitSlop={HIT_SLOP}>
-            <SettingsSvg />
+            <SettingsSvg fill={theme.color.icon} />
           </TouchableOpacity>
         </View>
       </View>

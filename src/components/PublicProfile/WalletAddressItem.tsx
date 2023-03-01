@@ -48,7 +48,7 @@ export const WalletAddressItem = ({
         onPressIn={drag}
         disabled={isActive}>
         <View style={{ marginHorizontal: theme.spacing.xs }}>
-          <DragIcon />
+          <DragIcon fill={theme.color.iconDefault} />
         </View>
       </TouchableOpacity>
       <View style={{ flex: 1 }}>
@@ -113,7 +113,7 @@ export const WalletAddressItem = ({
             onPress={onEditName}>
             {/* Add a wrapped view so on click behavior fixed */}
             <View>
-              <EditIcon />
+              <EditIcon fill={theme.color.iconDefault} />
             </View>
           </Button>
         </View>

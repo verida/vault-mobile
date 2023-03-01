@@ -37,6 +37,8 @@ export const SHADOW_LIGHT_GREY = 'rgba(21, 12, 78, 0.06)'
 export const LIGHT_GREY_600 = 'rgba(60, 60, 67, 0.6)'
 export const GREY_120 = 'rgba(118, 118, 128, 0.12)'
 
+export const DEFAULT_ICON_COLOR = '#808695'
+
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
 
 export const WHITE_COLOR_OPACITY = (opacity) =>

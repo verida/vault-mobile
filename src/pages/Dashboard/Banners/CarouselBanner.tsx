@@ -2,6 +2,7 @@
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useTheme } from 'contexts/ThemeContext'
 import React, { useState } from 'react'
 import {
   Animated,
@@ -51,6 +52,7 @@ const bannerDefinitions: TBanner[] = [
 const WIDTH = Dimensions.get('window').width
 
 export default function PromotionalBannersCarousel() {
+  const { theme } = useTheme()
   const [bannerList] = useState<TBanner[]>(bannerDefinitions)
   const ref = React.useRef<PagerView>(null)
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
@@ -99,7 +101,7 @@ export default function PromotionalBannersCarousel() {
           onPress={() => handleBannerPress(banner.screen)}>
           <Text style={styles.bannerButtonLabel}>{banner.label}</Text>
           <View>
-            <ChevronRightIcon />
+            <ChevronRightIcon fill={theme.color.icon} />
           </View>
         </Pressable>
       </ImageBackground>

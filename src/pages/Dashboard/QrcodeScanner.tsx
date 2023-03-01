@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Pressable, StyleSheet, Text } from 'react-native'
 
@@ -10,9 +11,10 @@ interface QRCodeScannerButtonProps {
 }
 
 const QRCodeScannerButton = ({ onPress }: QRCodeScannerButtonProps) => {
+  const { theme } = useTheme()
   return (
     <Pressable style={styles.container} onPress={onPress}>
-      <QrScannerIcon />
+      <QrScannerIcon fill={theme.color.iconDefault} />
       <Text style={styles.label}>Scan QR Code</Text>
     </Pressable>
   )

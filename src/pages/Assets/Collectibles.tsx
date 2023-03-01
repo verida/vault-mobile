@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
@@ -133,7 +134,7 @@ const Collectibles = () => {
   )
 
   if (isLoading) return <LoadingIndicator />
-  if (error) return <Title>{error?.message}</Title>
+  if (error) return <Title>{'Something went wrong...'}</Title>
 
   return (
     <View style={styles.container}>

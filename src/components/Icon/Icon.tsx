@@ -1,11 +1,13 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 
+import EditIcon from 'assets/edit_icon.svg'
 import CopyIcon from 'assets/icons/copy.svg'
 import WalletIcon from 'assets/icons/wallet.svg'
+import PlusIcon from 'assets/plus_icon.svg'
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
 
-export type IconName = 'Wallet' | 'ethereum' | 'copy'
+export type IconName = 'Wallet' | 'ethereum' | 'copy' | 'edit' | 'plus'
 
 /**
  *  NOTE: to apply color correctly, need to modify the SVG by replacing color value with a generic name "currentColor"
@@ -24,13 +26,19 @@ const Icon = (props: { name: IconName; size?: number; color?: string }) => {
   let icon = null
   switch (name) {
     case 'Wallet':
-      icon = <WalletIcon width={size} height={size} style={{ color }} />
+      icon = <WalletIcon width={size} height={size} fill={color} />
       break
     case 'ethereum':
-      icon = <EthereumIcon width={size} height={size} style={{ color }} />
+      icon = <EthereumIcon width={size} height={size} fill={color} />
       break
     case 'copy':
-      icon = <CopyIcon width={size} height={size} style={{ color }} />
+      icon = <CopyIcon width={size} height={size} fill={color} />
+      break
+    case 'edit':
+      icon = <EditIcon width={size} height={size} fill={color} />
+      break
+    case 'plus':
+      icon = <PlusIcon width={size} height={size} fill={color} />
       break
   }
 

@@ -9,6 +9,7 @@ export const assetsApi = createApi({
   }),
   endpoints: (build) => ({
     getWalletNFTCollections: build.query<NFTCollection[], string[]>({
+      keepUnusedDataFor: 180, // 3 mins
       query: (_walletAddresses) =>
         'nfts/list?wallet=eip155:5:0xff71512c84096f55cdf5c5f3d3c6ace99b56fef0',
       transformResponse: (response: any) =>

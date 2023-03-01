@@ -2,6 +2,7 @@ import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network, NFT, NFTCollection } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
+import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 
@@ -84,4 +85,5 @@ export type MainStackParams = {
 
   NFTCollectionDetail: { collection: NFTCollection }
   NFTDetail: { nft: NFT }
+  SelectAsset: SelectAssetScreenProps
 }

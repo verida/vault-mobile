@@ -1,8 +1,14 @@
 declare module '*.svg' {
-  const content: any
-  export default content
+  import React from 'react';
+  import { SvgProps } from 'react-native-svg';
+  const content: React.FC<
+    SvgProps & {
+      fill?: string;
+      fillSecondary?: string;
+    }
+  >;
+  export default content;
 }
-
 
 declare module "react-native-config" {
   interface Env {

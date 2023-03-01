@@ -176,7 +176,7 @@ const NFTDetail = () => {
       <NavigationHeader
         title={name}
         right={{
-          icon: <MoreIcon />,
+          icon: <MoreIcon fill={theme.color.icon} />,
           action: handleMoreActions,
         }}
         bottomBorder

@@ -24,7 +24,6 @@ function GridView<ItemT>({ numberOfColumns, ...rest }: GridProps<ItemT>) {
       }}
       columnWrapperStyle={styles.columnWrapperStyle}
       ItemSeparatorComponent={() => <Spacer vertical='m' />}
-      showsVerticalScrollIndicator={false}
       {...rest}
     />
   )

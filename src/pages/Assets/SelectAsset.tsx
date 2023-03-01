@@ -1,0 +1,152 @@
+import { useNavigation } from '@react-navigation/native'
+import * as sentry from '@sentry/react-native'
+import { useTheme } from 'contexts/ThemeContext'
+import { emitter } from 'helpers/emitter'
+import { getNFTImageUri } from 'helpers/nft'
+import React, { useCallback } from 'react'
+import {
+  ListRenderItem,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
+
+import { NFT, NFTMetadata } from 'api/types'
+import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
+import { NftItem } from 'components/Assets/NftItem'
+import GridView from 'components/Grids/GridView'
+import LoadingIndicator from 'components/LoadingIndicator'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Screen from 'components/Screen'
+import { Title } from 'components/Typography/Title'
+import useParams from 'hooks/useParams'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
+import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
+import { Theme } from 'styles/types'
+
+export interface SelectAssetScreenProps {
+  screenName: string
+  mode: string | number
+  originalValue: any
+}
+
+const SelectAsset = () => {
+  const navigation = useNavigation()
+  const params = useParams<SelectAssetScreenProps>()
+  const { screenName, mode, originalValue } = params
+  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([])
+  const { theme } = useTheme()
+  const isEmptyList = data?.length === 0
+  const styles = useThemeAwareStyle(createStyles)
+  const { bottom } = useSafeAreaInsets()
+
+  // Temp code
+  const renderNft = useCallback<ListRenderItem<NFT>>(
+    ({ item }) => {
+      try {
+        const imageMeta = (item?.metadata as unknown as NFTMetadata) ?? {
+          image: null,
+        }
+        const uri = getNFTImageUri(imageMeta.image)
+        return (
+          <TouchableOpacity
+            onPress={() => {
+              emitter.emit('SAVE_GENERIC_PROPERTY', {
+                screenName,
+                mode,
+                value: {
+                  chainId: item.chain_id,
+                  contractAddress: item.token_address,
+                  tokenId: item.token_id,
+                  ownerAddress: item.owner_address,
+                  order: originalValue?.order ?? 0,
+                  uri: uri,
+                },
+                originalValue,
+              })
+              navigation.goBack()
+            }}>
+            <View style={{}}>
+              <NftItem nft={item} />
+            </View>
+          </TouchableOpacity>
+        )
+      } catch (e) {
+        sentry.captureException(e)
+      }
+
+      return null
+    },
+    [mode, navigation, originalValue, screenName]
+  )
+
+  if (isLoading) return <LoadingIndicator />
+  if (error) return <Title>{'Something went wrong...'}</Title>
+
+  return (
+    <Screen>
+      <NavigationHeader
+        title={'Select Asset'}
+        left={{
+          icon: 'close',
+        }}
+      />
+      <View style={[styles.constainer, { marginBottom: bottom }]}>
+        <GridView
+          numColumns={NUMBER_OF_COLUMNS}
+          data={data ?? []}
+          style={styles.grid}
+          contentContainerStyle={
+            isEmptyList
+              ? styles.listEmptyContainer
+              : {
+                  paddingBottom: theme.spacing.xxl,
+                  paddingTop: theme.spacing.m,
+                }
+          }
+          keyExtractor={(item) => `${item.token_id}`}
+          renderItem={renderNft}
+          ListEmptyComponent={() => (
+            <View style={styles.emptyListContainer}>
+              <NFTPlaceholder />
+              <Title style={styles.emptyListTitle}>
+                {"You don't have any collectibles yet"}
+              </Title>
+            </View>
+          )}
+        />
+      </View>
+    </Screen>
+  )
+}
+
+export default SelectAsset
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    constainer: {
+      flex: 1,
+      // paddingHorizontal: theme.spacing.m,
+      // paddingTop: theme.spacing.m,
+      // justifyContent: 'space-between',
+    },
+    grid: {
+      flex: 1,
+      paddingHorizontal: theme.spacing.m,
+    },
+    listEmptyContainer: { height: '100%' },
+    emptyListContainer: {
+      ...StyleSheet.absoluteFillObject,
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: theme.spacing.xxxxl,
+    },
+    emptyListTitle: {
+      fontSize: theme.fontSize.xxl,
+      marginTop: theme.spacing.m,
+      textAlign: 'center',
+    },
+  })

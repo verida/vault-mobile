@@ -57,10 +57,12 @@ export interface PagingInfo {
 
 // Have to set some number fields as strings to keep compatible with Morallis response
 export interface NFT {
+  chain_id?: string
   token_address: string
   token_id: string
   amount: string
   owner_of: string
+  owner_address?: string
   token_hash: string
   block_number_minted: string
   block_number: string

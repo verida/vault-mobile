@@ -1,3 +1,4 @@
+import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
@@ -9,12 +10,13 @@ import {
   saveStatusEnabledVeridaOneProfile,
   VERIDA_ONE_INVITE_CODE,
 } from 'helpers/profile'
-import { debounce } from 'lodash'
+import { debounce, isEqual } from 'lodash'
 import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   Alert,
   Dimensions,
   RefreshControl,
+  ScrollView,
   StyleSheet,
   View,
 } from 'react-native'
@@ -26,10 +28,11 @@ import {
 import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
-import { PublicWalletAddress } from 'types/profile'
+import { OneProfileFeaturedAsset, PublicWalletAddress } from 'types/profile'
 import { CaipWalletType, VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
+import { VeridaOneFeaturedAsset } from 'api/types'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
@@ -37,7 +40,9 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import { WalletAddressItem } from 'components/PublicProfile'
+import { FeaturedAssetItem } from 'components/PublicProfile/FeaturedAssetItem'
 import Screen from 'components/Screen'
+import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
@@ -50,9 +55,11 @@ import { Theme } from 'styles/types'
 enum EditMode {
   EditWalletPublicLabel,
   EnterInvitationCode,
+  SelectFeaturedAsset,
 }
 
 const ScreenName = 'PublicProfile'
+const NUMBER_FEATURED_ASSETS = 4
 
 const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [list, setList] = useState([
@@ -71,9 +78,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const { theme } = useTheme()
   const navigation = useNavigation()
+  const { showActionSheetWithOptions } = useActionSheet()
   const [loading, setLoading] = useState(true)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [, setPublicProfile] = useState(publicProfileData)
+  const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
     VeridaWallet
@@ -92,6 +101,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   >([])
 
   const [publicCustomLinks, setPublicCustomLinks] = useState<any[]>([])
+  const [featuredAssets, setFeaturedAssets] = useState<any[]>([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
 
@@ -131,27 +141,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     }
     return `${chainData.namespace}:${chainRef}`
   }
-
-  const updateWalletAddressesOrder = useCallback(
-    (walletAddressesOrder) => {
-      let orderNumber = 0
-      const newPublicAddresses = [...publicWalletAddresses]
-      walletAddressesOrder.map((walletAddress: PublicWalletAddress) => {
-        const publicAddress = newPublicAddresses.find(
-          (pa) =>
-            pa.address === walletAddress.address &&
-            pa.chainId === walletAddress.chainId
-        )
-        if (publicAddress) {
-          publicAddress.order = orderNumber++
-        }
-      })
-
-      setPublicWalletAddresses(newPublicAddresses)
-      debounceSaveProfile(newPublicAddresses)
-    },
-    [publicWalletAddresses]
-  )
 
   const walletAddresses = useMemo(() => {
     function isPublic(address: string, chainId: string) {
@@ -220,10 +209,30 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   ])
 
   const debounceSaveProfile = useCallback(
-    debounce(async (_walletAddresses) => {
+    debounce(async (updatedProfile) => {
+      const { walletAddresses, customLinks, featuredAssets } = updatedProfile
       try {
         setQuickFetching(true)
-        await VeridaOneManager.setWalletAddresses([..._walletAddresses])
+        if (
+          'walletAddresses' in updatedProfile &&
+          !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
+        ) {
+          await VeridaOneManager.setWalletAddresses(walletAddresses)
+        }
+
+        if (
+          'customLinks' in updatedProfile &&
+          !isEqual(veridaOneProfile.customLinks, customLinks)
+        ) {
+          await VeridaOneManager.setCustomLinks(customLinks)
+        }
+
+        if (
+          'featuredAssets' in updatedProfile &&
+          !isEqual(veridaOneProfile.featuredAssets, featuredAssets)
+        ) {
+          await VeridaOneManager.setFeaturedAssets(featuredAssets)
+        }
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Failed to save profile')
@@ -266,14 +275,58 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     try {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
       if (oneProfile) {
-        setPublicWalletAddresses(oneProfile.walletAddresses)
-        setPublicCustomLinks(oneProfile.customLinks)
+        setVeridaOneProfile(oneProfile)
+        setPublicWalletAddresses([...oneProfile.walletAddresses])
+        setPublicCustomLinks([...oneProfile.customLinks])
+        setFeaturedAssets([...oneProfile.featuredAssets])
+        console.log('oneProfile.featuredAssets', oneProfile.featuredAssets)
       }
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load Verida profile data')
     }
   }
+
+  const updateWalletAddressesOrder = useCallback(
+    (walletAddressesOrder) => {
+      let orderNumber = 0
+      const newPublicAddresses = [...publicWalletAddresses]
+      walletAddressesOrder.map((walletAddress: PublicWalletAddress) => {
+        const publicAddress = newPublicAddresses.find(
+          (pa) =>
+            pa.address === walletAddress.address &&
+            pa.chainId === walletAddress.chainId
+        )
+        if (publicAddress) {
+          publicAddress.order = orderNumber++
+        }
+      })
+
+      setPublicWalletAddresses(newPublicAddresses)
+      debounceSaveProfile(newPublicAddresses)
+    },
+    [debounceSaveProfile, publicWalletAddresses]
+  )
+
+  const removeFeaturedAsset = useCallback(
+    (index, featuredAsset: VeridaOneFeaturedAsset) => {
+      const updatedFeaturedAssets = [...featuredAssets]
+      const itemIndex = featuredAssets.findIndex(
+        (it) =>
+          featuredAsset.chainId === it.chainId &&
+          featuredAsset.tokenId === it.tokenId &&
+          featuredAsset.order === it.order
+      )
+
+      if (itemIndex >= 0) {
+        updatedFeaturedAssets.splice(itemIndex, 1)
+      }
+
+      setFeaturedAssets(updatedFeaturedAssets)
+      debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
+    },
+    [debounceSaveProfile, featuredAssets]
+  )
 
   useEmitter(
     'SAVE_GENERIC_PROPERTY',
@@ -318,6 +371,26 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           setEnabledVeridaOne(true)
           saveStatusEnabledVeridaOneProfile(true)
         }
+      } else if (mode === EditMode.SelectFeaturedAsset) {
+        const inputValue = payload.value
+        const originalValue = payload.originalValue
+        const updatedFeaturedAssets = [...featuredAssets]
+        const newAsset = inputValue
+
+        // edit mode
+        const assetIndex = updatedFeaturedAssets.findIndex(
+          (asset) => asset.order === originalValue.order
+        )
+
+        if (assetIndex >= 0) {
+          // Replace updated item
+          updatedFeaturedAssets.splice(assetIndex, 1, newAsset)
+        } else {
+          updatedFeaturedAssets.push(newAsset)
+        }
+
+        setFeaturedAssets(updatedFeaturedAssets)
+        debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
       }
     },
     [publicWalletAddresses]
@@ -440,6 +513,69 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     [debounceSaveProfile, navigation, publicWalletAddresses]
   )
 
+  const renderFeatureAsssetItem = useCallback(
+    ({
+      item: featuredAsset,
+      index,
+    }: {
+      item?: OneProfileFeaturedAsset
+      index: number
+    }) => {
+      return (
+        <>
+          <FeaturedAssetItem
+            featuredAsset={featuredAsset}
+            index={index}
+            onEdit={() => {
+              if (featuredAsset) {
+                const options = ['Replace', 'Remove', 'Cancel']
+                const cancelButtonIndex = 2
+
+                showActionSheetWithOptions(
+                  {
+                    options,
+                    cancelButtonIndex,
+                  },
+                  (selectedIndex?: number) => {
+                    switch (selectedIndex!) {
+                      case 0:
+                        navigation.navigate('SelectAsset', {
+                          screenName: ScreenName,
+                          mode: EditMode.SelectFeaturedAsset,
+                          originalValue: {
+                            order: index,
+                          },
+                        })
+                        break
+
+                      case 1:
+                        removeFeaturedAsset(index, featuredAsset)
+                        break
+
+                      case cancelButtonIndex:
+                        // Canceled
+                        break
+                    }
+                  }
+                )
+              } else {
+                navigation.navigate('SelectAsset', {
+                  screenName: ScreenName,
+                  mode: EditMode.SelectFeaturedAsset,
+                  originalValue: {
+                    order: index,
+                  },
+                })
+              }
+            }}
+          />
+          <Spacer horizontal='s' />
+        </>
+      )
+    },
+    [navigation, removeFeaturedAsset, showActionSheetWithOptions]
+  )
+
   return (
     <Screen
       backgroundGrey
@@ -514,6 +650,35 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               On your Verida One page we show your wallet addresses with their
               public labels and the assets related to them (collectibles,
               badges, etc)
+            </Text>
+
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.sectionHeader}>FEATURED ASSETS</Text>
+            </View>
+            <ScrollView
+              style={{ marginHorizontal: -theme.spacing.m }}
+              contentContainerStyle={{ paddingHorizontal: theme.spacing.m }}
+              horizontal>
+              {Array(NUMBER_FEATURED_ASSETS)
+                .fill(1)
+                .map((_, index) => {
+                  const assetItem = featuredAssets.find(
+                    (it) => it.order === index
+                  )
+                  // console.log('Find item', assetItem, featuredAssets)
+
+                  return renderFeatureAsssetItem({ item: assetItem, index })
+                })}
+            </ScrollView>
+            <Text style={[styles.description]}>
+              Select up to 4 assets from your selected wallets you’d like to
+              show in the featured area of your Verida One profile
             </Text>
 
             {!enabledVeridaOne && (
