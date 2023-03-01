@@ -39,7 +39,7 @@
     "@react-navigation/bottom-tabs": "^6.0.2",
     "@react-navigation/native": "^6.0.1",
     "@react-navigation/native-stack": "^6.0.2",
-    "@reduxjs/toolkit": "^1.4.0",
+    "@reduxjs/toolkit": "^1.9.3",
     "@sentry/react-native": "^4.12.0",
     "@tradle/react-native-http": "^2.0.1",
     "@verida/account": "^2.1.1",

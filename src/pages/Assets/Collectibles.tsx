@@ -3,11 +3,17 @@ import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
-import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
+import {
+  ListRenderItem,
+  Pressable,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { useDispatch } from 'react-redux'
 
-import { NFTCollection, NFTMetadata } from 'api/types'
+import { NFT, NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
@@ -17,8 +23,7 @@ import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { createRequestSelector } from 'reduxStore/api/selectors'
-import { walletNFTCollectionsSelector } from 'reduxStore/collectibles/selectors'
+import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import * as thunkActions from 'reduxStore/thunkActions'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
@@ -33,16 +38,14 @@ const Collectibles = () => {
   const walletData = useReduxState((state) => getWalletsData(state.main))
   // FIXME: Test with eip155 wallet first
   const etherWallet = walletData.eip155?.address as string
+  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([])
 
-  const { isLoading, error } = useReduxState(
-    createRequestSelector(['GET_WALLET_NFT_COLLECTIBLES_REQUEST'])
-  )
-  const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
-  const data = walletNFTCollections?.[etherWallet] ?? []
-  const isEmptyList = data.length === 0
+  // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
+  // const data = walletNFTCollections?.[etherWallet] ?? []
+  const isEmptyList = data?.length === 0
 
   useEffect(() => {
-    dispatch(thunkActions.getWalletNFTCollections())
+    // dispatch(thunkActions.getWalletNFTCollections())
   }, [dispatch])
 
   const renderCollection = useCallback<ListRenderItem<NFTCollection>>(
@@ -54,7 +57,7 @@ const Collectibles = () => {
         }
         const uri = getNFTImageUri(imageMeta.image)
         return (
-          <Pressable
+          <TouchableOpacity
             onPress={() => {
               navigation.navigate('NFTCollectionDetail', { collection: item })
             }}>
@@ -77,7 +80,48 @@ const Collectibles = () => {
                 </Tag.Label>
               </Tag>
             </View>
-          </Pressable>
+          </TouchableOpacity>
+        )
+      } catch (e) {
+        sentry.captureException(e)
+      }
+
+      return null
+    },
+    [navigation, styles]
+  )
+
+  // Temp code
+  const renderNft = useCallback<ListRenderItem<NFT>>(
+    ({ item }) => {
+      try {
+        const imageMeta = (item?.metadata as unknown as NFTMetadata) ?? {
+          image: null,
+        }
+        const uri = getNFTImageUri(imageMeta.image)
+        return (
+          <TouchableOpacity
+            onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
+            <View style={styles.column}>
+              <FastImage
+                style={styles.image}
+                defaultSource={require('assets/picture.png')}
+                source={{
+                  uri,
+                  priority: FastImage.priority.normal,
+                }}
+                resizeMode={FastImage.resizeMode.cover}
+              />
+              <Tag withBlur style={styles.itemTag}>
+                <Tag.Label numberOfLines={1} style={styles.tagLabel}>
+                  {item.name}
+                </Tag.Label>
+                <Tag.Label style={styles.tagLabelNumber}>
+                  #{item.token_id}
+                </Tag.Label>
+              </Tag>
+            </View>
+          </TouchableOpacity>
         )
       } catch (e) {
         sentry.captureException(e)
@@ -93,19 +137,21 @@ const Collectibles = () => {
 
   return (
     <View style={styles.container}>
-      {!isEmptyList && (
-        <SearchBar
-          style={{
-            paddingHorizontal: theme.spacing.m,
-            marginTop: theme.spacing.sm,
-          }}
-          inputProps={{
-            placeholder: 'Search Collectibles',
-          }}
-        />
-      )}
+      {
+        // !isEmptyList && (
+        //   <SearchBar
+        //     style={{
+        //       paddingHorizontal: theme.spacing.m,
+        //       marginTop: theme.spacing.sm,
+        //     }}
+        //     inputProps={{
+        //       placeholder: 'Search Collectibles',
+        //     }}
+        //   />
+        // )
+      }
       <Line style={{ marginTop: theme.spacing.s }} />
-      <GridView
+      {/* <GridView
         style={styles.grid}
         numColumns={NUMBER_OF_COLUMNS}
         contentContainerStyle={
@@ -116,6 +162,28 @@ const Collectibles = () => {
         data={data}
         keyExtractor={(item) => `${item.token_address}`}
         renderItem={renderCollection}
+        ListEmptyComponent={() => (
+          <View style={styles.emptyListContainer}>
+            <NFTPlaceholder />
+            <Title style={styles.emptyListTitle}>
+              {"You don't have any collectibles yet"}
+            </Title>
+          </View>
+        )}
+      /> */}
+
+      {/* Temp code  */}
+      <GridView
+        numColumns={NUMBER_OF_COLUMNS}
+        data={data ?? []}
+        style={styles.grid}
+        contentContainerStyle={
+          isEmptyList
+            ? styles.listEmptyContainer
+            : { paddingBottom: theme.spacing.xxl, paddingTop: theme.spacing.m }
+        }
+        keyExtractor={(item) => `${item.token_id}`}
+        renderItem={renderNft}
         ListEmptyComponent={() => (
           <View style={styles.emptyListContainer}>
             <NFTPlaceholder />

@@ -1,1 +1,1 @@
-export * from './collectibles/thunks'
+export * from './assets/thunks'
