@@ -1,9 +1,10 @@
+import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { emitter } from 'helpers/emitter'
 import { isEmpty } from 'lodash'
 import React, { useState } from 'react'
-import { Keyboard, StyleSheet, View } from 'react-native'
+import { Alert, Keyboard, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import ClipboardIcon from 'assets/clipboard_icon.svg'
@@ -46,38 +47,17 @@ const AddCustomLink = () => {
     mode,
     originalValue,
     submitButtonLabel = 'Save',
-    verification,
   } = params
   const styles = useThemeAwareStyle(createStyles)
   const { bottom } = useSafeAreaInsets()
   const [labelInput, setLabelInput] = useState(originalValue?.label ?? '')
   const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
 
-  const [disabled, setDisabled] = useState(false)
-
   const saveValue = async () => {
     try {
-      setDisabled(true)
       Keyboard.dismiss()
 
       const val = { label: labelInput, url: urlInput }
-
-      // Allow to retry
-      // if (
-      //   verification &&
-      //   verification.expectedValue.toLowerCase() !== val?.trim().toLowerCase()
-      // ) {
-      //   setTimeout(() => {
-      //     Snackbar.show({
-      //       text: verification.errorMessage,
-      //       duration: Snackbar.LENGTH_LONG,
-      //     })
-      //   }, 100)
-
-      //   setDisabled(false)
-
-      //   return
-      // }
 
       emitter.emit('SAVE_GENERIC_PROPERTY', {
         screenName,
@@ -107,14 +87,30 @@ const AddCustomLink = () => {
             ? {
                 icon: <TrashBinIcon />,
                 action: () => {
-                  emitter.emit('SAVE_GENERIC_PROPERTY', {
-                    screenName,
-                    title,
-                    value: originalValue,
-                    mode: PublicProfileEditMode.DeleteCustomURL,
-                    originalValue,
-                  })
-                  navigation.goBack()
+                  Alert.alert(
+                    'Are you sure you want to delete this link?',
+                    undefined,
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: () => {
+                          emitter.emit('SAVE_GENERIC_PROPERTY', {
+                            screenName,
+                            title,
+                            value: originalValue,
+                            mode: PublicProfileEditMode.DeleteCustomURL,
+                            originalValue,
+                          })
+                          navigation.goBack()
+                        },
+                      },
+                    ]
+                  )
                 },
               }
             : undefined
@@ -125,7 +121,6 @@ const AddCustomLink = () => {
           <FormInput
             label='Label'
             placeholder='Enter label'
-            autoCapitalize='none'
             autoComplete='off'
             value={labelInput}
             onChangeText={(text) => setLabelInput(text)}
@@ -135,12 +130,18 @@ const AddCustomLink = () => {
             label='URL'
             autoCapitalize='none'
             autoComplete='off'
+            keyboardType='url'
             value={urlInput}
             onChangeText={(text) => setUrlInput(text)}
             placeholder='Enter URL'
           />
 
-          <Button color='transparent-link'>
+          <Button
+            color='transparent-link'
+            onPress={async () => {
+              const text = await Clipboard.getString()
+              setUrlInput(text)
+            }}>
             <View style={styles.clipboardPasteButton}>
               <ClipboardIcon />
               <Text style={styles.clipboardPasteButtonText}>

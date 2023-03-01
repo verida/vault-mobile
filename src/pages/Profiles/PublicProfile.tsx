@@ -30,6 +30,7 @@ import { OneProfileCustomLink, PublicWalletAddress } from 'types/profile'
 import { CaipWalletType, VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
+import { VeridaOneCustomLink } from 'api/types'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
@@ -56,6 +57,7 @@ export enum PublicProfileEditMode {
 }
 
 const ScreenName = 'PublicProfile'
+const MAX_NUMBER_OF_FEATURED_CUSTOM_LINK = 2
 
 const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const [list, setList] = useState([
@@ -211,7 +213,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           'walletAddresses' in updatedProfile &&
           !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
         ) {
-          console.log('Save walletAddresses ', walletAddresses)
           await VeridaOneManager.setWalletAddresses(walletAddresses)
         }
 
@@ -219,7 +220,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           'customLinks' in updatedProfile &&
           !isEqual(veridaOneProfile.customLinks, customLinks)
         ) {
-          console.log('Save customLinks ', customLinks)
           await VeridaOneManager.setCustomLinks(customLinks)
         }
       } catch (e) {
@@ -236,6 +236,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
   const updateWalletAddressesOrder = useCallback(
     (walletAddressesOrder) => {
       let orderNumber = 0
+
       const newPublicAddresses = [...publicWalletAddresses]
       walletAddressesOrder.map((walletAddress: PublicWalletAddress) => {
         const publicAddress = newPublicAddresses.find(
@@ -249,13 +250,47 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       })
 
       setPublicWalletAddresses(newPublicAddresses)
-      debounceSaveProfile({ walletAddress: newPublicAddresses })
+      debounceSaveProfile({ walletAddresses: newPublicAddresses })
     },
     [publicWalletAddresses, debounceSaveProfile]
   )
 
+  const updateCustomLinksOrder = useCallback(
+    (customLinksNewOrder) => {
+      let orderNumber = 0
+
+      const newCustomLinks = customLinksNewOrder.map(
+        (link: VeridaOneCustomLink) => {
+          link.order = orderNumber++
+          return link
+        }
+      )
+
+      setPublicCustomLinks(newCustomLinks)
+      debounceSaveProfile({ customLinks: newCustomLinks })
+    },
+    [debounceSaveProfile]
+  )
+
   const setFeaturedCustomLink = useCallback(
     (customLink: OneProfileCustomLink, featured: boolean) => {
+      const totalNumberFeaturedLink = publicCustomLinks.reduce(
+        (acc, cur: OneProfileCustomLink) => acc + (cur.featured ? 1 : 0),
+        0
+      )
+
+      if (
+        !customLink.featured &&
+        featured &&
+        totalNumberFeaturedLink >= MAX_NUMBER_OF_FEATURED_CUSTOM_LINK
+      ) {
+        Snackbar.show({
+          text: 'You already have two featured links',
+          duration: Snackbar.LENGTH_SHORT,
+        })
+        return
+      }
+
       const updatedCustomLinks = [...publicCustomLinks]
       const linkIndex = updatedCustomLinks.findIndex(
         (link) => link.url === customLink.url && link.label === customLink.label
@@ -309,8 +344,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
       if (oneProfile) {
         setVeridaOneProfile(oneProfile)
-        setPublicWalletAddresses(oneProfile.walletAddresses)
-        setPublicCustomLinks(oneProfile.customLinks)
+        setPublicWalletAddresses([...oneProfile.walletAddresses])
+        setPublicCustomLinks([...oneProfile.customLinks])
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -400,6 +435,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         )
         setPublicCustomLinks(updatedCustomLinks)
         debounceSaveProfile({ customLinks: updatedCustomLinks })
+        Snackbar.show({
+          text: 'Link deleted',
+          duration: Snackbar.LENGTH_SHORT,
+        })
       }
     },
     [publicWalletAddresses]
@@ -613,7 +652,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             <NestableDraggableFlatList
               data={walletAddresses}
               renderItem={renderWalletItem}
-              activationDistance={60}
+              activationDistance={40}
               keyExtractor={(
                 walletAddress: PublicWalletAddress,
                 index: number
@@ -655,12 +694,11 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             <NestableDraggableFlatList
               data={publicCustomLinks}
               renderItem={renderCustomLinkItem}
-              activationDistance={60}
-              keyExtractor={(
-                walletAddress: PublicWalletAddress,
-                index: number
-              ) => `${index}-${walletAddress.address}`}
-              onDragEnd={({ data }) => setPublicCustomLinks(data)} // TODO: save it
+              // activationDistance={60}
+              keyExtractor={(item: OneProfileCustomLink, index: number) =>
+                `${index}-${item.url}`
+              }
+              onDragEnd={({ data }) => updateCustomLinksOrder(data)} // TODO: save it
             />
             <Text style={[styles.description, { marginVertical: 0 }]}>
               Add any links you’d like to show on your page. It could be a link
