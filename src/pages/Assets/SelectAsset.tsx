@@ -11,6 +11,8 @@ import {
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useSelector } from 'react-redux'
+import { VeridaWallet } from 'types/wallet'
 
 import { NFT, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
@@ -24,6 +26,10 @@ import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
 import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
+import {
+  allWalletsSelector,
+  selectedWalletSelector,
+} from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 export interface SelectAssetScreenProps {
@@ -32,11 +38,30 @@ export interface SelectAssetScreenProps {
   originalValue: any
 }
 
+const caipNormalizeAddress = (address: string) => {
+  // FIXME: hardcode just ethereum for now
+  return `eip155:5:${address}`
+}
+
 const SelectAsset = () => {
   const navigation = useNavigation()
   const params = useParams<SelectAssetScreenProps>()
   const { screenName, mode, originalValue } = params
-  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([])
+  const selectedWalletId = useSelector(selectedWalletSelector)
+  const wallets = useSelector(allWalletsSelector) as Record<
+    string,
+    VeridaWallet
+  >
+
+  const selectedWallet = wallets[selectedWalletId]
+  // TODO: remove hardcode, as API only work well with ethereum for now
+  const etherWallet = caipNormalizeAddress(
+    selectedWallet?.accounts.eip155?.address ?? ''
+  )
+
+  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([
+    etherWallet,
+  ])
   const { theme } = useTheme()
   const isEmptyList = data?.length === 0
   const styles = useThemeAwareStyle(createStyles)
@@ -83,7 +108,7 @@ const SelectAsset = () => {
   )
 
   if (isLoading) return <LoadingIndicator />
-  if (error) return <Title>{'Something went wrong...'}</Title>
+  // if (error) return <Title>{'Something went wrong...'}</Title>
 
   return (
     <Screen>
@@ -106,7 +131,9 @@ const SelectAsset = () => {
                   paddingTop: theme.spacing.m,
                 }
           }
-          keyExtractor={(item) => `${item.token_id}`}
+          keyExtractor={(item) =>
+            `${item.chain_id}-${item.token_id}-${item.owner_address}`
+          }
           renderItem={renderNft}
           ListEmptyComponent={() => (
             <View style={styles.emptyListContainer}>

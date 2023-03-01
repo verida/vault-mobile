@@ -12,7 +12,8 @@ import {
   View,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { VeridaWallet } from 'types/wallet'
 
 import { NFT, NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
@@ -26,24 +27,45 @@ import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import * as thunkActions from 'reduxStore/thunkActions'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
+import {
+  allWalletsSelector,
+  getWalletsData,
+  selectedWalletSelector,
+} from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
+
+const caipNormalizeAddress = (address: string) => {
+  // FIXME: hardcode just ethereum for now
+  return `eip155:5:${address}`
+}
 
 const Collectibles = () => {
   const dispatch = useDispatch()
   const navigation = useNavigation()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const walletData = useReduxState((state) => getWalletsData(state.main))
-  // FIXME: Test with eip155 wallet first
-  const etherWallet = walletData.eip155?.address as string
-  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([])
+
+  const selectedWalletId = useSelector(selectedWalletSelector)
+  const wallets = useSelector(allWalletsSelector) as Record<
+    string,
+    VeridaWallet
+  >
+
+  const selectedWallet = wallets[selectedWalletId]
+  // TODO: remove hardcode, as API only work well with ethereum for now
+  const etherWallet = caipNormalizeAddress(
+    selectedWallet?.accounts.eip155?.address ?? ''
+  )
+
+  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([
+    etherWallet,
+  ])
 
   // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
   // const data = walletNFTCollections?.[etherWallet] ?? []
-  const isEmptyList = data?.length === 0
+  const isEmptyList = !data || data.length === 0
 
   useEffect(() => {
     // dispatch(thunkActions.getWalletNFTCollections())
@@ -134,7 +156,7 @@ const Collectibles = () => {
   )
 
   if (isLoading) return <LoadingIndicator />
-  if (error) return <Title>{'Something went wrong...'}</Title>
+  // if (error) return <Title>{'Something went wrong...'}</Title>
 
   return (
     <View style={styles.container}>
@@ -176,7 +198,7 @@ const Collectibles = () => {
       {/* Temp code  */}
       <GridView
         numColumns={NUMBER_OF_COLUMNS}
-        data={data ?? []}
+        data={data || []}
         style={styles.grid}
         contentContainerStyle={
           isEmptyList
