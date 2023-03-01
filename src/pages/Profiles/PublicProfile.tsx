@@ -514,6 +514,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     setPublicWalletAddresses([])
     setPublicProfile({})
 
+    saveStatusEnabledVeridaOneProfile(false)
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
@@ -754,7 +755,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <Text style={styles.description}>
             This information is always visible on your Verida One page
           </Text>
-          <View>
+          <View style={{}}>
             <View
               style={{
                 flexDirection: 'row',
@@ -816,87 +817,98 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                 ADD NEW
               </Button>
             </View>
+            {enabledVeridaOne ? (
+              <>
+                <NestableDraggableFlatList
+                  data={publicCustomLinks}
+                  renderItem={renderCustomLinkItem}
+                  activationDistance={30}
+                  keyExtractor={(item: OneProfileCustomLink, index: number) =>
+                    `${index}-${item.url}`
+                  }
+                  onDragEnd={({ data }) => updateCustomLinksOrder(data)} // TODO: save it
+                />
+                <Text style={[styles.description, { marginVertical: 0 }]}>
+                  Add any links you’d like to show on your page. It could be a
+                  link to your website, portfolio etc. Tap on the star to add up
+                  to two links to the featured section.
+                </Text>
 
-            <NestableDraggableFlatList
-              data={publicCustomLinks}
-              renderItem={renderCustomLinkItem}
-              activationDistance={30}
-              keyExtractor={(item: OneProfileCustomLink, index: number) =>
-                `${index}-${item.url}`
-              }
-              onDragEnd={({ data }) => updateCustomLinksOrder(data)} // TODO: save it
-            />
-            <Text style={[styles.description, { marginVertical: 0 }]}>
-              Add any links you’d like to show on your page. It could be a link
-              to your website, portfolio etc. Tap on the star to add up to two
-              links to the featured section.
-            </Text>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.sectionHeader}>FEATURED ASSETS</Text>
+                </View>
+                <ScrollView
+                  style={{ marginHorizontal: -theme.spacing.m }}
+                  contentContainerStyle={{ paddingHorizontal: theme.spacing.m }}
+                  horizontal>
+                  {Array(NUMBER_FEATURED_ASSETS)
+                    .fill(1)
+                    .map((_, index) => {
+                      const assetItem = featuredAssets.find(
+                        (it) => it.order === index
+                      )
+                      // console.log('Find item', assetItem, featuredAssets)
 
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.sectionHeader}>FEATURED ASSETS</Text>
-            </View>
-            <ScrollView
-              style={{ marginHorizontal: -theme.spacing.m }}
-              contentContainerStyle={{ paddingHorizontal: theme.spacing.m }}
-              horizontal>
-              {Array(NUMBER_FEATURED_ASSETS)
-                .fill(1)
-                .map((_, index) => {
-                  const assetItem = featuredAssets.find(
-                    (it) => it.order === index
-                  )
-                  // console.log('Find item', assetItem, featuredAssets)
-
-                  return renderFeatureAsssetItem({ item: assetItem, index })
-                })}
-            </ScrollView>
-            <Text style={[styles.description]}>
-              Select up to 4 assets from your selected wallets you’d like to
-              show in the featured area of your Verida One profile
-            </Text>
+                      return renderFeatureAsssetItem({ item: assetItem, index })
+                    })}
+                </ScrollView>
+                <Text style={[styles.description]}>
+                  Select up to 4 assets from your selected wallets you’d like to
+                  show in the featured area of your Verida One profile
+                </Text>
+              </>
+            ) : null}
 
             {!enabledVeridaOne && (
-              <View style={styles.overlayContent}>
-                <LinearGradient
-                  style={{ ...styles.overlayContent }}
-                  colors={['rgba(255, 255, 255, 0.3)', '#FFFFFF', '#FFFFFF']}
-                  start={{ y: 0, x: 0.5 }}
-                  end={{ y: 0.65, x: 0.5 }}
-                />
-                <Headline style={{ marginTop: 80, fontSize: 28 }}>
-                  Unlock Verida One
-                </Headline>
-                <Button
-                  style={{ width: '100%', marginTop: theme.spacing.sm }}
-                  onPress={() => {
-                    navigation.navigate('EditGenericProperty', {
-                      screenName: ScreenName,
-                      title: 'Invitation Code',
-                      option: {
-                        label: 'Invitation code',
-                        type: 'input',
-                        value: '',
-                        placeholder: 'Enter your code',
-                        description: '',
-                      },
-                      mode: PublicProfileEditMode.EnterInvitationCode,
-                      originalValue: null,
-                      submitButtonLabel: 'Submit',
-                      verification: {
-                        expectedValue: VERIDA_ONE_INVITE_CODE,
-                        errorMessage: 'Wrong code, please try again later.',
-                      },
-                    })
-                  }}>
-                  Enter Invitation Code
-                </Button>
-              </View>
+              <>
+                {
+                  // In case the wallet address is still creating and not available we add a buffer space
+                  walletAddresses.length === 0 && (
+                    <View style={{ minHeight: 120 }} />
+                  )
+                }
+                <View style={styles.overlayContent}>
+                  <LinearGradient
+                    style={{ ...styles.overlayContent }}
+                    colors={['rgba(255, 255, 255, 0.3)', '#FFFFFF', '#FFFFFF']}
+                    start={{ y: 0, x: 0.5 }}
+                    end={{ y: 0.65, x: 0.5 }}
+                  />
+                  <Headline style={{ marginTop: 80, fontSize: 28 }}>
+                    Unlock Verida One
+                  </Headline>
+                  <Button
+                    style={{ width: '100%', marginTop: theme.spacing.sm }}
+                    onPress={() => {
+                      navigation.navigate('EditGenericProperty', {
+                        screenName: ScreenName,
+                        title: 'Invitation Code',
+                        option: {
+                          label: 'Invitation code',
+                          type: 'input',
+                          value: '',
+                          placeholder: 'Enter your code',
+                          description: '',
+                        },
+                        mode: PublicProfileEditMode.EnterInvitationCode,
+                        originalValue: null,
+                        submitButtonLabel: 'Submit',
+                        verification: {
+                          expectedValue: VERIDA_ONE_INVITE_CODE,
+                          errorMessage: 'Wrong code, please try again later.',
+                        },
+                      })
+                    }}>
+                    Enter Invitation Code
+                  </Button>
+                </View>
+              </>
             )}
           </View>
         </NestableScrollContainer>
@@ -954,7 +966,5 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: -theme.spacing.m,
       alignItems: 'center',
       paddingHorizontal: theme.spacing.m,
-      minHeight: 260,
-      maxHeight: 260,
     },
   })

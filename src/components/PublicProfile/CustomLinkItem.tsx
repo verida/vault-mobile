@@ -38,7 +38,7 @@ export const CustomLinkItem = ({
         onPressIn={drag}
         disabled={isActive}>
         <View style={{ marginHorizontal: theme.spacing.xs }}>
-          <DragIcon />
+          <DragIcon fill={theme.color.iconDefault} />
         </View>
       </TouchableOpacity>
       <View
@@ -82,7 +82,11 @@ export const CustomLinkItem = ({
             onPress={() => setFeatured(customLink, !customLink.featured)}>
             {/* Add a wrapped view so on click behavior fixed */}
             <View>
-              {customLink.featured ? <StarSolidIcon /> : <StarOutlineIcon />}
+              {customLink.featured ? (
+                <StarSolidIcon />
+              ) : (
+                <StarOutlineIcon fill={theme.color.iconDefault} />
+              )}
             </View>
           </Button>
 
@@ -99,7 +103,7 @@ export const CustomLinkItem = ({
             onPress={onEdit}>
             {/* Add a wrapped view so on click behavior fixed */}
             <View>
-              <EditIcon />
+              <EditIcon fill={theme.color.iconDefault} />
             </View>
           </Button>
         </View>

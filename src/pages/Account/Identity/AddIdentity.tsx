@@ -81,7 +81,7 @@ const AddIdentity = () => {
   const [processing, setProcessing] = useState(false)
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
-    useState(false)
+    useState(true)
   function toggleCountryCheckbox() {
     setShowCountryOnPublicProfile((prevState) => !prevState)
   }
