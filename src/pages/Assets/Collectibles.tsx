@@ -54,7 +54,7 @@ const Collectibles = () => {
   >
 
   const selectedWallet = wallets[selectedWalletId]
-  // TODO: remove hardcode, as API only work well with ethereum for now
+  // TODO: remove hardcode, as the API only works with ethereum for now
   const etherWallet = caipNormalizeAddress(
     selectedWallet?.accounts.eip155?.address ?? ''
   )
