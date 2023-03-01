@@ -9,35 +9,27 @@ import {
   Dimensions,
   InteractionManager,
   Linking,
+  ScrollView,
   StyleSheet,
-  TouchableOpacity,
   View,
 } from 'react-native'
-import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount, getProfile } from 'api/utils'
-import QRCodeIcon from 'assets/icons/qr-code.svg'
 import LoadingView from 'components/LoadingView'
-import Text from 'components/Text'
 import {
-  BLACK_COLOR_OPACITY,
-  BLACK_ORIGIN_COLOR,
+  BACKGROUND_GREY_COLOR,
   LIGHT_ORANGE_COLOR,
-  ORANGE_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
-import DidView from 'pages/Dashboard/DidView'
-import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import {
   logout as logoutAction,
@@ -45,8 +37,14 @@ import {
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
 
+import PromoBannersCarousel from './Banners/CarouselBanner'
+import WalletSummary from './Banners/WalletBanner'
+import DidView from './DidView'
+import GettingStarted from './GettingStarted/GettingStartedSection'
+import HomeNavigationHeader from './HomeNavigationHeader'
+import QRCodeScannerButton from './QrcodeScanner'
+
 const DefaultAvatar = require('assets/stubs/avatar.png')
-const LogoImg = require('assets/vault-logo.png')
 
 // const SHOW_BANNER_KEY = 'show_banner'
 
@@ -73,7 +71,6 @@ const Home = (props) => {
     if (initialUrl === null) {
       return
     }
-
     // ignore for firebase links, let firebase handle them.
     if (
       initialUrl.includes('redirect') ||
@@ -242,8 +239,9 @@ const Home = (props) => {
   }
 
   return (
-    <Container>
+    <View style={style.container}>
       <HomeNavigationHeader
+        did={info.did || ''}
         name={info.name || ''}
         avatar={avatarSource}
         inboxCount={props.newMessagesCount}
@@ -257,36 +255,34 @@ const Home = (props) => {
           })
         }
       />
-      <Content contentContainerStyle={style.content}>
-        {loading ? (
-          <LoadingView />
-        ) : (
-          <>
-            <View style={style.qr}>
-              <QRCode
-                logo={LogoImg}
-                logoSize={60}
-                size={207}
-                codeStyle='dot'
-                innerEyeStyle='circle'
-                padding={0.5}
-                content={info.address}
-              />
+      {loading ? (
+        <LoadingView />
+      ) : (
+        <ScrollView
+          style={style.scrollContainer}
+          contentContainerStyle={style.content}>
+          <View>
+            <View style={style.section}>
+              <WalletSummary />
             </View>
-            <Text style={style.notes}>
-              This is your QR-Code. Present it to others so they can scan it and
-              connect to you
-            </Text>
-            <TouchableOpacity
-              style={style.scanQRButton}
-              onPress={onScanQRPress}>
-              <QRCodeIcon />
-              <Text style={style.scanQRButtonText}>Scan QR</Text>
-            </TouchableOpacity>
-          </>
-        )}
-      </Content>
-      <DidView did={info.did || ''} />
+            <View style={[style.section, style.promoBannersCarouselSection]}>
+              <PromoBannersCarousel />
+            </View>
+            <View style={style.section}>
+              <GettingStarted />
+            </View>
+          </View>
+          <View>
+            <View style={style.section}>
+              <QRCodeScannerButton onPress={onScanQRPress} />
+            </View>
+            <View>
+              <DidView did={info.did || ''} />
+            </View>
+          </View>
+        </ScrollView>
+      )}
+
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
@@ -299,7 +295,7 @@ const Home = (props) => {
         onRecordPress={onRecordSeedPhrase}
         style={style.seedPhraseRemindView}
       />
-    </Container>
+    </View>
   )
 }
 
@@ -323,84 +319,27 @@ const mapStateToProps = (rootState) => {
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
-const marginTop = 0
 const style = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: WHITE_COLOR,
+  },
+  scrollContainer: {
+    flex: 1,
+    backgroundColor: BACKGROUND_GREY_COLOR,
+  },
   content: {
     flexGrow: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingBottom: 20,
+    justifyContent: 'space-between',
+    padding: 16,
+    paddingBottom: 40,
   },
-  title: {
-    fontSize: 22,
-    lineHeight: 30,
-    marginTop: 16,
-    fontFamily: NUNITO_SANS_BOLD,
+  section: {
+    marginBottom: 16,
   },
-  userImg: {
-    width: 80,
-    height: 80,
-    borderRadius: 60,
-    borderColor: WHITE_COLOR,
-    borderWidth: 4,
-    marginTop,
-  },
-  text: {
-    fontSize: 14,
-    textAlign: 'center',
-    color: BLACK_COLOR_OPACITY(0.6),
-    fontFamily: NUNITO_SANS_BOLD,
-  },
-  didTouchable: {
-    height: 50,
-    marginVertical: 16,
-    paddingHorizontal: 43,
-  },
-  qr: {
-    width: 240,
-    height: 240,
-    borderRadius: 12,
-    padding: 17,
-    backgroundColor: WHITE_COLOR,
-
-    shadowColor: BLACK_ORIGIN_COLOR,
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.22,
-    elevation: 3,
-  },
-  notes: {
-    marginVertical: 24,
-    paddingHorizontal: 43,
-    textAlign: 'center',
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    color: BLACK_COLOR_OPACITY(0.4),
-  },
-  network: {
-    backgroundColor: ORANGE_COLOR,
-    color: WHITE_COLOR,
-    paddingLeft: 20,
-    paddingRight: 20,
-    paddingTop: 5,
-    paddingBottom: 5,
-    marginTop: 10,
-    borderRadius: 10,
-  },
-  scanQRButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 13,
-    paddingHorizontal: 32,
-    borderWidth: 1,
-    borderColor: '#E0E3EA',
-    borderRadius: 4,
-  },
-  scanQRButtonText: {
-    marginLeft: 10,
-    color: '#041133',
-    fontSize: 16,
+  promoBannersCarouselSection: {
+    marginLeft: -16,
+    marginRight: -16,
   },
   seedPhraseRemindView: {
     position: 'absolute',
@@ -409,19 +348,5 @@ const style = StyleSheet.create({
     width: SCREEN_WIDTH - 30,
     backgroundColor: LIGHT_ORANGE_COLOR,
     borderRadius: 3,
-  },
-  tempButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 5,
-    paddingHorizontal: 10,
-    borderWidth: 1,
-    borderColor: '#E0E3EA',
-    borderRadius: 4,
-  },
-  tempButtonText: {
-    marginLeft: 5,
-    color: '#041133',
-    fontSize: 8,
   },
 })

@@ -1,17 +1,17 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as SecureStore from 'expo-secure-store'
+import * as SecureStore from 'helpers/VeridaSecureStore'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-import { SELECTED_WALLET_STORAGE_KEY } from 'api/AccountManager'
 import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
 import { WalletItem } from 'components/WalletList/types'
+import CONFIG from 'config/environment'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
@@ -49,7 +49,7 @@ const WalletSelectorModal = ({
 
   const handleWalletSelection = (item: WalletItem) => {
     onSetSelectedWallet(item.id)
-    SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, item.id)
+    SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, item.id)
     onCloseModal()
   }
 
