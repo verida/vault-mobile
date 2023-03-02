@@ -1,6 +1,6 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { StyleSheet, TouchableOpacity, View } from 'react-native'
+import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { OneProfileFeaturedAsset } from 'types/profile'
 
 import EditIcon from 'assets/edit_icon.svg'
@@ -60,12 +60,19 @@ export const FeaturedAssetItem = ({ featuredAsset, index, onEdit }: Props) => {
   )
 }
 
-const createStyles = (theme: Theme) =>
-  StyleSheet.create({
+const createStyles = (theme: Theme) => {
+  const numberAssetsInARow = 4
+  const imageW =
+    (Dimensions.get('window').width -
+      2 * theme.spacing.m -
+      3 * theme.spacing.s) /
+    numberAssetsInARow
+
+  return StyleSheet.create({
     itemContainer: {},
     assetPlaceholder: {
-      width: 80,
-      height: 80,
+      width: imageW,
+      height: imageW,
       backgroundColor: theme.color.primary100,
       borderColor: theme.color.primary,
       borderWidth: 1,
@@ -75,7 +82,10 @@ const createStyles = (theme: Theme) =>
       justifyContent: 'center',
     },
     nftContainer: {
-      width: 80,
-      height: 80,
+      width: imageW,
+      height: imageW,
+      borderRadius: theme.roundness.s,
+      backgroundColor: theme.color.background,
     },
   })
+}

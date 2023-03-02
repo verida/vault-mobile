@@ -1,7 +1,8 @@
 import { getNFTImageUri } from 'helpers/nft'
 import React from 'react'
-import { ImageStyle, StyleSheet, View, ViewStyle } from 'react-native'
+import { ImageStyle, Platform, StyleSheet, View, ViewStyle } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import { SvgCss, SvgCssUri } from 'react-native-svg'
 
 import { NFT, NFTMetadata } from 'api/types'
 import { Tag } from 'components/Tag'
@@ -15,6 +16,11 @@ type Props = {
   imageStyle?: ImageStyle
 }
 
+const decodeBase64Svg = (base64Svg: string) => {
+  const data = base64Svg.split('data:image/svg+xml;base64,')?.[1] ?? ''
+  return Buffer.from(data, 'base64').toString()
+}
+
 export const NftItem = ({ nft, containerStyle, imageStyle }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   const imageMeta = (nft?.metadata as unknown as NFTMetadata) ?? {
@@ -25,40 +31,19 @@ export const NftItem = ({ nft, containerStyle, imageStyle }: Props) => {
   const isSVGBase64 = uri?.includes('data:image/svg+xml;base64,')
   return (
     <View style={[styles.itemContainer, containerStyle]}>
-      {isSVG ? (
-        // FIXME: this component caused a crash
-        // <View style={styles.image}>
-        //   <SvgCssUri height='100%' uri={uri} width='100%' />
-        // </View>
-        <FastImage
-          style={[styles.image, imageStyle as any]}
-          defaultSource={require('assets/picture.png')}
-          source={{
-            uri,
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.cover}
-        />
+      {isSVG || (isSVGBase64 && Platform.OS === 'ios') ? (
+        <View style={[styles.image, imageStyle as any]}>
+          <SvgCssUri width='100%' height='100%' uri={uri} />
+        </View>
       ) : isSVGBase64 ? (
-        // <View style={styles.image}>
-        //   <SvgXml
-        //     height='100%'
-        //     xml={Buffer.from(
-        //       uri.replace('data:image/svg+xml;base64,', ''),
-        //       'base64'
-        //     ).toString()}
-        //     width='100%'
-        //   />
-        // </View>
-        <FastImage
-          style={[styles.image, imageStyle as any]}
-          defaultSource={require('assets/picture.png')}
-          source={{
-            uri,
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.cover}
-        />
+        <View style={[styles.image, imageStyle as any]}>
+          <SvgCss
+            width='100%'
+            height='100%'
+            xml={decodeBase64Svg(uri)}
+            color='#ffff'
+          />
+        </View>
       ) : (
         <FastImage
           style={[styles.image, imageStyle as any]}
@@ -91,6 +76,7 @@ const createStyles = (theme: Theme) =>
       width: IMAGE_WIDTH,
       height: IMAGE_WIDTH,
       borderRadius: theme.roundness.xs,
+      overflow: 'hidden',
     },
     itemTag: {
       position: 'absolute',

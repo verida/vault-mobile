@@ -7,6 +7,7 @@ import React, { useCallback, useEffect } from 'react'
 import {
   ListRenderItem,
   Pressable,
+  RefreshControl,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -17,6 +18,7 @@ import { VeridaWallet } from 'types/wallet'
 
 import { NFT, NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
+import { NftItem } from 'components/Assets/NftItem'
 import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -59,7 +61,7 @@ const Collectibles = () => {
     selectedWallet?.accounts.eip155?.address ?? ''
   )
 
-  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([
+  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
     etherWallet,
   ])
 
@@ -67,9 +69,15 @@ const Collectibles = () => {
   // const data = walletNFTCollections?.[etherWallet] ?? []
   const isEmptyList = !data || data.length === 0
 
-  useEffect(() => {
-    // dispatch(thunkActions.getWalletNFTCollections())
-  }, [dispatch])
+  // pull to refresh data
+  const [refreshing, setRefreshing] = React.useState(false)
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    refetch().finally(() => {
+      setRefreshing(false)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const renderCollection = useCallback<ListRenderItem<NFTCollection>>(
     ({ item }) => {
@@ -118,23 +126,11 @@ const Collectibles = () => {
   const renderNft = useCallback<ListRenderItem<NFT>>(
     ({ item }) => {
       try {
-        const imageMeta = (item?.metadata as unknown as NFTMetadata) ?? {
-          image: null,
-        }
-        const uri = getNFTImageUri(imageMeta.image)
         return (
           <TouchableOpacity
             onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
             <View style={styles.column}>
-              <FastImage
-                style={styles.image}
-                defaultSource={require('assets/picture.png')}
-                source={{
-                  uri,
-                  priority: FastImage.priority.normal,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
+              <NftItem containerStyle={styles.image} nft={item} />
               <Tag withBlur style={styles.itemTag}>
                 <Tag.Label numberOfLines={1} style={styles.tagLabel}>
                   {item.name}
@@ -198,15 +194,18 @@ const Collectibles = () => {
       {/* Temp code  */}
       <GridView
         numColumns={NUMBER_OF_COLUMNS}
-        data={data || []}
+        data={data || ([] as any)}
         style={styles.grid}
         contentContainerStyle={
           isEmptyList
             ? styles.listEmptyContainer
             : { paddingBottom: theme.spacing.xxl, paddingTop: theme.spacing.m }
         }
-        keyExtractor={(item) => `${item.token_id}`}
+        keyExtractor={(item, index) => `${index}-${item.token_id}`}
         renderItem={renderNft}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }
         ListEmptyComponent={() => (
           <View style={styles.emptyListContainer}>
             <NFTPlaceholder />

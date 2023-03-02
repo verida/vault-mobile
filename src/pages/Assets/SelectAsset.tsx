@@ -6,6 +6,7 @@ import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
 import {
   ListRenderItem,
+  RefreshControl,
   StyleSheet,
   TouchableOpacity,
   View,
@@ -59,9 +60,19 @@ const SelectAsset = () => {
     selectedWallet?.accounts.eip155?.address ?? ''
   )
 
-  const { data, isLoading, error } = useGetWalletNFTCollectionsQuery([
+  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
     etherWallet,
   ])
+  // pull to refresh data
+  const [refreshing, setRefreshing] = React.useState(false)
+  const onRefresh = React.useCallback(() => {
+    setRefreshing(true)
+    refetch().finally(() => {
+      setRefreshing(false)
+    })
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
+
   const { theme } = useTheme()
   const isEmptyList = data?.length === 0
   const styles = useThemeAwareStyle(createStyles)
@@ -121,7 +132,7 @@ const SelectAsset = () => {
       <View style={[styles.constainer, { marginBottom: bottom }]}>
         <GridView
           numColumns={NUMBER_OF_COLUMNS}
-          data={data ?? []}
+          data={data || ([] as any)}
           style={styles.grid}
           contentContainerStyle={
             isEmptyList
@@ -131,10 +142,13 @@ const SelectAsset = () => {
                   paddingTop: theme.spacing.m,
                 }
           }
-          keyExtractor={(item) =>
-            `${item.chain_id}-${item.token_id}-${item.owner_address}`
+          keyExtractor={(item, index) =>
+            `${index}-${item.chain_id}-${item.token_id}-${item.owner_address}`
           }
           renderItem={renderNft}
+          refreshControl={
+            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+          }
           ListEmptyComponent={() => (
             <View style={styles.emptyListContainer}>
               <NFTPlaceholder />

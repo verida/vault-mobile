@@ -47,7 +47,7 @@ export const CustomLinkItem = ({
           flexDirection: 'row',
           justifyContent: 'space-between',
         }}>
-        <View>
+        <View style={{ flex: 1 }}>
           <SubHeadline
             ellipsizeMode='tail'
             numberOfLines={2}
@@ -60,7 +60,7 @@ export const CustomLinkItem = ({
             ellipsizeMode='middle'
             numberOfLines={1}
             style={{
-              maxWidth: 100,
+              maxWidth: '100%',
               marginRight: theme.spacing.xs,
               color: theme.color.textLightGrey50,
             }}>

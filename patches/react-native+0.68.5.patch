@@ -1,0 +1,13 @@
+diff --git a/node_modules/react-native/React/Views/RCTFont.mm b/node_modules/react-native/React/Views/RCTFont.mm
+index 679f2ce..a88cd63 100644
+--- a/node_modules/react-native/React/Views/RCTFont.mm
++++ b/node_modules/react-native/React/Views/RCTFont.mm
+@@ -344,7 +344,7 @@ + (UIFont *)updateFont:(UIFont *)font
+       isCondensed = isCondensedFont(font);
+     } else {
+       // Not a valid font or family
+-      RCTLogError(@"Unrecognized font family '%@'", familyName);
++      RCTLogInfo(@"Unrecognized font family '%@'", familyName);
+       if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)]) {
+         font = [UIFont systemFontOfSize:fontSize weight:fontWeight];
+       } else if (fontWeight > UIFontWeightRegular) {

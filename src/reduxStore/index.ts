@@ -57,7 +57,7 @@ export function configureAppStore() {
         .concat(middleware)
         .concat(assetsApi.middleware),
     devTools: __DEV__,
-    // enhancers: [batchedSubscribe(debounceNotify)],
+    enhancers: [batchedSubscribe(debounceNotify) as any],
   })
   return store
 }

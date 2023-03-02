@@ -11,7 +11,13 @@ import {
   VERIDA_ONE_INVITE_CODE,
 } from 'helpers/profile'
 import { debounce, isEqual } from 'lodash'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, {
+  Fragment,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react'
 import {
   Alert,
   Dimensions,
@@ -661,7 +667,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       index: number
     }) => {
       return (
-        <>
+        <Fragment key={`featured-asset-${index}`}>
           <FeaturedAssetItem
             featuredAsset={featuredAsset}
             index={index}
@@ -709,7 +715,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
             }}
           />
           <Spacer horizontal='s' />
-        </>
+        </Fragment>
       )
     },
     [navigation, removeFeaturedAsset, showActionSheetWithOptions]
@@ -730,7 +736,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         <NestableScrollContainer
           contentContainerStyle={{
             padding: theme.spacing.m,
-            paddingBottom: enabledVeridaOne ? theme.spacing.xxxl : 0,
+            paddingBottom: 0,
           }}
           refreshControl={
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
@@ -754,7 +760,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <Text style={styles.description}>
             This information is always visible on your Verida One page
           </Text>
-          <View style={{}}>
+          <View>
             <View
               style={{
                 flexDirection: 'row',
@@ -791,33 +797,63 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
               badges, etc)
             </Text>
 
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.sectionHeader}>LINKS</Text>
-              <Button
-                textStyle={{
-                  fontSize: theme.fontSize.m,
-                  marginBottom: theme.spacing.s,
-                }}
-                color='transparent-link'
-                disabled={!enabledVeridaOne}
-                onPress={() =>
-                  navigation.navigate('AddCustomLink', {
-                    screenName: ScreenName,
-                    mode: PublicProfileEditMode.AddCustomURL,
-                    title: 'Add Custom Link',
-                  })
-                }>
-                ADD NEW
-              </Button>
-            </View>
             {enabledVeridaOne ? (
               <>
+                {/* Featured assets */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.sectionHeader}>FEATURED ASSETS</Text>
+                </View>
+                <ScrollView
+                  style={{ marginHorizontal: -theme.spacing.m }}
+                  contentContainerStyle={{ paddingHorizontal: theme.spacing.m }}
+                  showsHorizontalScrollIndicator={false}
+                  horizontal>
+                  {Array(NUMBER_FEATURED_ASSETS)
+                    .fill(1)
+                    .map((_, index) => {
+                      const assetItem = featuredAssets.find(
+                        (it) => it.order === index
+                      )
+                      return renderFeatureAsssetItem({ item: assetItem, index })
+                    })}
+                </ScrollView>
+                <Text style={[styles.description]}>
+                  Select up to 4 assets from your selected wallets you’d like to
+                  show in the featured area of your Verida One profile
+                </Text>
+
+                {/* Custom links */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.sectionHeader}>LINKS</Text>
+                  <Button
+                    textStyle={{
+                      fontSize: theme.fontSize.m,
+                      marginBottom: theme.spacing.s,
+                    }}
+                    color='transparent-link'
+                    disabled={!enabledVeridaOne}
+                    onPress={() =>
+                      navigation.navigate('AddCustomLink', {
+                        screenName: ScreenName,
+                        mode: PublicProfileEditMode.AddCustomURL,
+                        title: 'Add Custom Link',
+                      })
+                    }>
+                    ADD NEW
+                  </Button>
+                </View>
                 <NestableDraggableFlatList
                   data={publicCustomLinks}
                   renderItem={renderCustomLinkItem}
@@ -831,35 +867,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                   Add any links you’d like to show on your page. It could be a
                   link to your website, portfolio etc. Tap on the star to add up
                   to two links to the featured section.
-                </Text>
-
-                <View
-                  style={{
-                    flexDirection: 'row',
-                    flex: 1,
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                  }}>
-                  <Text style={styles.sectionHeader}>FEATURED ASSETS</Text>
-                </View>
-                <ScrollView
-                  style={{ marginHorizontal: -theme.spacing.m }}
-                  contentContainerStyle={{ paddingHorizontal: theme.spacing.m }}
-                  horizontal>
-                  {Array(NUMBER_FEATURED_ASSETS)
-                    .fill(1)
-                    .map((_, index) => {
-                      const assetItem = featuredAssets.find(
-                        (it) => it.order === index
-                      )
-                      // console.log('Find item', assetItem, featuredAssets)
-
-                      return renderFeatureAsssetItem({ item: assetItem, index })
-                    })}
-                </ScrollView>
-                <Text style={[styles.description]}>
-                  Select up to 4 assets from your selected wallets you’d like to
-                  show in the featured area of your Verida One profile
                 </Text>
               </>
             ) : null}

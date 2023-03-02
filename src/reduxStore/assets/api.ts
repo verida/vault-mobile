@@ -13,7 +13,7 @@ export const assetsApi = createApi({
       query: (walletAddresses) =>
         `nfts/list?${walletAddresses
           .map((address) => `wallet=${address}`)
-          .join(',')}`,
+          .join('&')}`,
       transformResponse: (response: any) =>
         response.data.sort((a: any) => (a.metadata?.image ? -1 : 1)),
     }),

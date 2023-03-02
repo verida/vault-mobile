@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
+import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import { SafeAreaProvider } from 'react-native-safe-area-context'
@@ -118,7 +119,9 @@ function App() {
                       <ActionSheetProvider>
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
-                            <RootNavigator />
+                            <GestureHandlerRootView style={{ flex: 1 }}>
+                              <RootNavigator />
+                            </GestureHandlerRootView>
                             <MetaServerChecks />
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>

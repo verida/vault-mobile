@@ -76,7 +76,7 @@ const AddCustomLink = () => {
   const isEditMode = () => !isEmpty(label) && !isEmpty(url)
 
   return (
-    <Screen>
+    <Screen withKeyboardAvoidingView>
       <NavigationHeader
         title={isEditMode() ? 'Edit Link' : 'Add New Link'}
         left={{
@@ -122,6 +122,7 @@ const AddCustomLink = () => {
             label='Label'
             placeholder='Enter label'
             autoComplete='off'
+            autoCorrect={false}
             value={labelInput}
             onChangeText={(text) => setLabelInput(text)}
           />
@@ -130,6 +131,7 @@ const AddCustomLink = () => {
             label='URL'
             autoCapitalize='none'
             autoComplete='off'
+            autoCorrect={false}
             keyboardType='url'
             value={urlInput}
             onChangeText={(text) => setUrlInput(text)}
