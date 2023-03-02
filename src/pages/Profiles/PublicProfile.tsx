@@ -517,8 +517,12 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     setLoading(true)
 
     // Reset
-    setPublicWalletAddresses([])
     setPublicProfile({})
+    setVeridaOneProfile({})
+
+    setPublicWalletAddresses([])
+    setFeaturedAssets([])
+    setPublicCustomLinks([])
 
     // Check Verida One enabbled status
     ;(async () => {
