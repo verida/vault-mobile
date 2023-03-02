@@ -54,28 +54,64 @@ import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
+/*global.BigInt = (v: string | number | bigint | boolean) => {
+  const obj = BigNumber.from(v)
+  obj.proto.toString = (radix: number) => {
+    console.log('radix', radix)
+    return obj.toString()
+  }
+}*/
+
 const fetchPolygonFile = async (url: string): Promise<Uint8Array> => {
-  url = `https://verida-static-resources.s3.amazonaws.com/polygonid/${url}`
-  console.log(url)
-  const res = await ReactNativeBlobUtil.config({
-    // add this option that makes response data to be stored as a file,
-    // this is much more performant.
-    fileCache: true,
-  }).fetch('GET', url)
+  const storageCache = {}
+  storageCache[`${CircuitId.AuthV2.toString()}/verification_key.json`] = '/Users/chriswere/Library/Developer/CoreSimulator/Devices/B4348139-83FB-4A61-8C8F-0F5DCA1BE7D4/data/Containers/Data/Application/13A94A77-034C-4403-9BD4-065B322656B4/Documents/ReactNativeBlobUtil_tmp/ReactNativeBlobUtilTmp_z5kgs1cza55ya5m1xn4jr'
+  storageCache[`${CircuitId.AuthV2.toString()}/circuit_final.zkey`] = '/Users/chriswere/Library/Developer/CoreSimulator/Devices/B4348139-83FB-4A61-8C8F-0F5DCA1BE7D4/data/Containers/Data/Application/13A94A77-034C-4403-9BD4-065B322656B4/Documents/ReactNativeBlobUtil_tmp/ReactNativeBlobUtilTmp_8m2yq4jgpa021mh3cit4d2'
+  storageCache[`${CircuitId.AuthV2.toString()}/circuit.wasm`] = '/Users/chriswere/Library/Developer/CoreSimulator/Devices/B4348139-83FB-4A61-8C8F-0F5DCA1BE7D4/data/Containers/Data/Application/13A94A77-034C-4403-9BD4-065B322656B4/Documents/ReactNativeBlobUtil_tmp/ReactNativeBlobUtilTmp_gtvuqml2pv8yfu1tjflm7c'
 
-  console.log('The file saved to ', res.path())
-  console.log(res.info())
+  let path
+  if (storageCache[url]) {
+    path = storageCache[url]
+    const exists = await ReactNativeBlobUtil.fs.exists(path)
+    if (!exists) {
+      path = undefined
+      console.log('~~~ bad cache')
+    }
+  }
 
-  ReactNativeBlobUtil.fs.readFile()
+  if (!path) {
+    url = `https://verida-static-resources.s3.amazonaws.com/polygonid/${url}`
+    console.log(url)
+    const res = await ReactNativeBlobUtil.config({
+      // add this option that makes response data to be stored as a file,
+      // this is much more performant.
+      fileCache: true,
+    }).fetch('GET', url)
 
-  const blob = await res.blob()
-  console.log('reading blob')
-  const data = await blob.readBlob('arraybuffer')
-  console.log(data.length)
-  const result = new Uint8Array(data)
-  console.log(result.length)
-  throw new Error('hey')
-  return result
+    console.log(res.path())
+    path = res.path()
+  }
+
+  const stat = await ReactNativeBlobUtil.fs.stat(path)
+  console.log(stat)
+
+  const exists = await ReactNativeBlobUtil.fs.exists(path)
+  console.log(exists)
+
+  console.log('starting conversion...')
+  try {
+    const fileData = await ReactNativeBlobUtil.fs.readFile(path, 'base64')
+    console.log('got file data')
+    const buffer = Buffer.from(fileData, 'base64')
+    console.log('got buffer')
+    const result = new Uint8Array(buffer)
+    console.log('result')
+    console.log(result.length)
+    return result
+  } catch (err) {
+    console.log('error!')
+    console.log(err)
+    throw err
+  }
 }
 
 const WAIT_TIME = 3000
@@ -120,8 +156,6 @@ function ScanQrCode(
         provingKey: circuitData.provingKey,
         wasm: circuitData.wasm,
       })
-
-      WebAssembly.compile()
 
       const mgr: IPackageManager = new PackageManager()
       const packer = new ZKPPacker(provingParamMap, verificationParamMap)
@@ -216,7 +250,6 @@ function ScanQrCode(
       })*/
 
       const conf = defaultEthConnectionConfig;
-      //conf.url = infuraUrl;
       conf.url = 'https://rpc-mumbai.maticvigil.com'
       conf.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4'
       const ethStorage = new EthStateStorage(conf)
@@ -229,50 +262,58 @@ function ScanQrCode(
         ethStorage
       )
 
-      console.log('a')
+      const now = (new Date()).getTime()
+      console.log('getting verification key')
+      const verificationKey = await fetchPolygonFile(
+        `${CircuitId.AuthV2.toString()}/verification_key.json`
+      )
+      console.log('getting circuit')
+      const provingKey = await fetchPolygonFile(
+        `${CircuitId.AuthV2.toString()}/circuit_final.zkey`
+      )
+      console.log('getting wasm')
+      const wasm = await fetchPolygonFile(
+        `${CircuitId.AuthV2.toString()}/circuit.wasm`
+      )
+      console.log('fetched!')
+      const later = (new Date()).getTime()
+      console.log(later-now)
+
       //const authV2Data = await circuitStorage.loadCircuitData(CircuitId.AuthV2)
+
       const authV2Data = {
-        circuitId: CircuitId.AtomicQuerySigV2,
-        wasm: await fetchPolygonFile(
-          `${CircuitId.AuthV2.toString()}/circuit.wasm`
-        ),
-        provingKey: await fetchPolygonFile(
-          `${CircuitId.AuthV2.toString()}/circuit_final.zkey`
-        ),
-        verificationKey: await fetchPolygonFile(
-          `${CircuitId.AuthV2.toString()}/verification_key.json`
-        ),
+        circuitId: CircuitId.AuthV2,
+        wasm,
+        provingKey,
+        verificationKey
       }
       console.log('b')
 
-      try {
-        const packageMgr = await getPackageMgr(
-          authV2Data,
-          proofService.generateAuthV2Inputs.bind(proofService),
-          proofService.verifyState.bind(proofService)
+      const packageMgr = await getPackageMgr(
+        authV2Data,
+        proofService.generateAuthV2Inputs.bind(proofService),
+        proofService.verifyState.bind(proofService)
+      )
+      console.log('c')
+      const authHandler = new AuthHandler(
+        packageMgr,
+        proofService,
+        credentialWallet
+      )
+      console.log('d')
+
+      const jsonData = {"id":"e2ce9582-82e9-4016-978d-31fe481ee0e9","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"e2ce9582-82e9-4016-978d-31fe481ee0e9","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=274044","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}
+      console.log(jsonData)
+      const msgBytes = Buffer.from(JSON.stringify(jsonData), 'utf-8')
+      console.log('got msgBytes, trying to fetch authRes')
+
+      const authRes =
+        await authHandler.handleAuthorizationRequestForGenesisDID(
+          did,
+          msgBytes
         )
-        console.log('c')
-        const authHandler = new AuthHandler(
-          packageMgr,
-          proofService,
-          credentialWallet
-        )
-        console.log('d')
 
-        const jsonData = {"id":"e2ce9582-82e9-4016-978d-31fe481ee0e9","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"e2ce9582-82e9-4016-978d-31fe481ee0e9","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=274044","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}
-        console.log(jsonData)
-        const msgBytes = Buffer.from(JSON.stringify(jsonData), 'utf-8')
-
-        const authRes =
-          await authHandler.handleAuthorizationRequestForGenesisDID(
-            did,
-            msgBytes
-          )
-
-        console.log(authRes)
-      } catch (err) {
-        console.log(err)
-      }
+      console.log(authRes)
 
       /*const circuitStorage = new CircuitStorage(
         new InMemoryDataSource<CircuitData>()
