@@ -24,6 +24,7 @@ import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
 import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
+import UsernameManager from 'api/UsernameManager'
 
 const MAX_TEXTAREA_LENGTH = 255
 const MAX_INPUT_LENGTH = 140
@@ -41,6 +42,15 @@ const EditProfile = (props: any) => {
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
+
+    /**
+     * Example code to save a username
+     */
+    // const usernameManager = new UsernameManager()
+    // const username = 'myusername.vda'
+    // await usernameManager.set(username)
+    // const fetchedUsername = await usernameManager.get()
+    // console.log(fetchedUsername)
     Keyboard.dismiss()
     const key = title.toLowerCase()
     const val = (edited.value || edited).trim()

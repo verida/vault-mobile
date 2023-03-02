@@ -46,6 +46,7 @@
     "@verida/client-rn": "^2.1.2",
     "@verida/encryption-utils": "^2.1.1",
     "@verida/types": "^2.1.1",
+    "@verida/vda-name-client": "^2.1.3",
     "@verida/verifiable-credentials": "^2.1.1",
     "@verida/wallet-utils": "^1.7.4",
     "@walletconnect/client": "^1.7.7",
