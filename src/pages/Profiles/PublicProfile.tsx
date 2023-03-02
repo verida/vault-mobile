@@ -577,6 +577,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
         if (visible) {
           newPublicWalletAddresses.push(savePublicAddress)
+          savePublicAddress.order = newPublicWalletAddresses.length - 1
           Snackbar.show({
             text: 'Added to Verida One profile',
             duration: Snackbar.LENGTH_SHORT,

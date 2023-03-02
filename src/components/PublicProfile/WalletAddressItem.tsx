@@ -32,6 +32,7 @@ export const WalletAddressItem = ({
 }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
+  const isPublicAddress = walletAddress.isPublic
 
   return (
     <View
@@ -45,10 +46,16 @@ export const WalletAddressItem = ({
       ]}>
       <TouchableOpacity
         hitSlop={smallButtonHitSlop}
-        onPressIn={drag}
+        onPressIn={isPublicAddress ? drag : undefined}
         disabled={isActive}>
         <View style={{ marginHorizontal: theme.spacing.xs }}>
-          <DragIcon fill={theme.color.iconDefault} />
+          <DragIcon
+            fill={
+              isPublicAddress
+                ? theme.color.iconDefault
+                : theme.color.transparent
+            }
+          />
         </View>
       </TouchableOpacity>
       <View style={{ flex: 1 }}>
