@@ -845,10 +845,6 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                       const assetItem = featuredAssets.find(
                         (it) => it.order === index
                       )
-                      console.log(
-                        'assetItem',
-                        JSON.stringify(featuredAssets, null, 2)
-                      )
                       return renderFeatureAsssetItem({ item: assetItem, index })
                     })}
                 </ScrollView>

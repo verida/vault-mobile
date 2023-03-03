@@ -75,7 +75,7 @@ export const WalletAddressItem = ({
               style={{ width: 48, height: 48 }}
               resizeMode='contain'
             />
-            <View style={{ marginLeft: theme.spacing.m }}>
+            <View style={{ marginLeft: theme.spacing.s }}>
               <SubHeadline
                 ellipsizeMode='tail'
                 numberOfLines={2}
