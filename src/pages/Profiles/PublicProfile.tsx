@@ -371,7 +371,15 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         setVeridaOneProfile(oneProfile)
         setPublicWalletAddresses([...oneProfile.walletAddresses])
         setPublicCustomLinks([...oneProfile.customLinks])
-        setFeaturedAssets([...oneProfile.featuredAssets])
+
+        // Update items order
+        const updatedFeaturedAssets = oneProfile.featuredAssets.map(
+          (asset: VeridaOneFeaturedAsset, idx: number) => ({
+            ...asset,
+            order: idx,
+          })
+        )
+        setFeaturedAssets(updatedFeaturedAssets)
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -381,7 +389,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
   const removeFeaturedAsset = useCallback(
     (index, featuredAsset: VeridaOneFeaturedAsset) => {
-      const updatedFeaturedAssets = [...featuredAssets]
+      let updatedFeaturedAssets = [...featuredAssets]
       const itemIndex = featuredAssets.findIndex(
         (it) =>
           featuredAsset.chainId === it.chainId &&
@@ -391,6 +399,12 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
 
       if (itemIndex >= 0) {
         updatedFeaturedAssets.splice(itemIndex, 1)
+        // Update items order
+        updatedFeaturedAssets = updatedFeaturedAssets.map((asset, idx) => ({
+          ...asset,
+          order: idx,
+        }))
+
         setFeaturedAssets(updatedFeaturedAssets)
         debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
         Snackbar.show({
@@ -676,6 +690,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           <FeaturedAssetItem
             featuredAsset={featuredAsset}
             index={index}
+            lastItemIndex={featuredAssets.length - 1}
             onEdit={() => {
               if (featuredAsset) {
                 const options = ['Replace', 'Remove', 'Cancel']
@@ -723,7 +738,12 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         </Fragment>
       )
     },
-    [navigation, removeFeaturedAsset, showActionSheetWithOptions]
+    [
+      featuredAssets,
+      navigation,
+      removeFeaturedAsset,
+      showActionSheetWithOptions,
+    ]
   )
 
   return (
@@ -824,6 +844,10 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
                     .map((_, index) => {
                       const assetItem = featuredAssets.find(
                         (it) => it.order === index
+                      )
+                      console.log(
+                        'assetItem',
+                        JSON.stringify(featuredAssets, null, 2)
                       )
                       return renderFeatureAsssetItem({ item: assetItem, index })
                     })}

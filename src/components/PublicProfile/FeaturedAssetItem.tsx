@@ -11,11 +11,17 @@ import { Theme } from 'styles/types'
 
 type Props = {
   featuredAsset?: OneProfileFeaturedAsset
+  lastItemIndex: number
   index: number
   onEdit: () => void
 }
 
-export const FeaturedAssetItem = ({ featuredAsset, index, onEdit }: Props) => {
+export const FeaturedAssetItem = ({
+  featuredAsset,
+  index,
+  lastItemIndex,
+  onEdit,
+}: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
 
@@ -49,12 +55,14 @@ export const FeaturedAssetItem = ({ featuredAsset, index, onEdit }: Props) => {
             </View>
           </TouchableOpacity>
         </View>
-      ) : (
+      ) : index === lastItemIndex + 1 ? (
         <TouchableOpacity onPress={onEdit}>
-          <View style={styles.assetPlaceholder}>
+          <View style={styles.assetPlaceholderPlus}>
             <PlusIcon />
           </View>
         </TouchableOpacity>
+      ) : (
+        <View style={styles.assetPlaceholderEmpty} />
       )}
     </View>
   )
@@ -70,7 +78,7 @@ const createStyles = (theme: Theme) => {
 
   return StyleSheet.create({
     itemContainer: {},
-    assetPlaceholder: {
+    assetPlaceholderPlus: {
       width: imageW,
       height: imageW,
       backgroundColor: theme.color.primary100,
@@ -80,6 +88,12 @@ const createStyles = (theme: Theme) => {
       borderRadius: theme.roundness.s,
       alignItems: 'center',
       justifyContent: 'center',
+    },
+    assetPlaceholderEmpty: {
+      width: imageW,
+      height: imageW,
+      backgroundColor: theme.color.lightGrey,
+      borderRadius: theme.roundness.s,
     },
     nftContainer: {
       width: imageW,
