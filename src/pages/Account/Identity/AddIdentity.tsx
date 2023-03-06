@@ -317,6 +317,9 @@ const AddIdentity = () => {
               <FormInput
                 label='Public Name'
                 placeholder='Enter your public name'
+                autoCorrect={false}
+                autoComplete='off'
+                returnKeyType='next'
                 errorMessage={
                   profile.name?.length > PUBLIC_PROFILE_NAME_MAX_LENGTH
                     ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters`
@@ -326,6 +329,7 @@ const AddIdentity = () => {
                   setProfile((p) => ({ ...p, name: text }))
                 }
                 value={profile.name}
+                onSubmitEditing={() => formValidated && onNext()}
               />
               <Label style={{ marginTop: 2 }}>
                 Your public name is required and public

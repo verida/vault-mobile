@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
+import { useTheme } from 'contexts/ThemeContext'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -8,14 +9,16 @@ import _ from 'underscore'
 import AccountManager from 'api/AccountManager'
 import AlertNotification from 'components/AlertNotification'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Text from 'components/Text'
+import { Text } from 'components/Typography/Text'
+import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import WordCard from '../../components/Words/WordCard'
-import { BLACK_COLOR_OPACITY } from '../../constants/color'
 
 const SeedPhraseGenerated = (props) => {
+  const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
   const [words, setWords] = useState('Generating seed phrase ...')
   const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
 
@@ -30,11 +33,12 @@ const SeedPhraseGenerated = (props) => {
   const onSaved = async () => {
     const mnemonic = words.split(' ')
     const shuffled = _.shuffle(mnemonic)
+    props.navigation.pop(1)
     props.navigation.navigate('VerifyPhrase', { shuffled })
   }
 
   const onRemindLater = () => {
-    props.navigation.navigate('Home')
+    props.navigation.goBack()
   }
 
   const onClosePress = () => {
@@ -50,14 +54,20 @@ const SeedPhraseGenerated = (props) => {
     <View>
       <NavigationHeader title='Record Your Seed Phrase' />
       <Layout title='Seed Phrase'>
-        <Text style={style.title}>Carefully write down each word in order</Text>
-        <WordCard words={words} />
+        <Text style={styles.title}>
+          Carefully write down each word in order
+        </Text>
+        {words ? <WordCard words={words} /> : null}
         <Button
           color='transparent-grey'
           onPress={copyToClipBoard}
           style={{ marginTop: 10 }}>
-          {'Copy to clipboard\u00A0'}
-          <Icon name='copy' />
+          <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+            <Text style={styles.copyButtonText}>
+              {'Copy to clipboard\u00A0'}
+            </Text>
+            <Icon name='copy' style={{ color: theme.color.black600 }} />
+          </View>
         </Button>
         <Button color='primary' onPress={onSaved}>
           I have saved my seed words
@@ -85,11 +95,15 @@ const mapStateToProps = (rootState) => {
 
 export default connect(mapStateToProps, null)(SeedPhraseGenerated)
 
-const style = StyleSheet.create({
-  title: {
-    marginTop: 32,
-    marginBottom: 16,
-    textAlign: 'center',
-    color: BLACK_COLOR_OPACITY(0.8),
-  },
-})
+const createStyles = (theme) =>
+  StyleSheet.create({
+    title: {
+      marginTop: 32,
+      marginBottom: 16,
+      textAlign: 'center',
+      color: theme.color.black800,
+    },
+    copyButtonText: {
+      color: theme.color.black600,
+    },
+  })
