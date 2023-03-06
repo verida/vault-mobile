@@ -17,6 +17,7 @@ const PROFILE_SCHEMA_URL =
 export default class VeridaOneManager {
   static context: Context
   static datastore: Promise<IDatastore>
+  static did: string
 
   static async setCustomLinks(customLinks: VeridaOneCustomLink[]) {
     const profile = await VeridaOneManager.getProfile()
@@ -42,9 +43,14 @@ export default class VeridaOneManager {
     await VeridaOneManager.saveProfile(profile)
   }
 
-  static async getProfile(): Promise<VeridaOneProfile> {
-    const datastore = await VeridaOneManager.getDatastore()
+  static async getProfile(did?: string): Promise<VeridaOneProfile> {
+    const selectedDID = await AccountManager.getInstance().getSelectedAccount()
+      ?.did
+    if (!selectedDID) {
+      throw new Error('Account not found')
+    }
 
+    const datastore = await VeridaOneManager.getDatastore(selectedDID)
     let profile
     try {
       profile = await datastore.get('public')
@@ -79,10 +85,11 @@ export default class VeridaOneManager {
     console.log(info)
   }
 
-  static async getDatastore(): Promise<IDatastore> {
-    if (VeridaOneManager.datastore) {
+  static async getDatastore(did: string): Promise<IDatastore> {
+    if (VeridaOneManager.datastore && did === VeridaOneManager.did) {
       return VeridaOneManager.datastore
     }
+    VeridaOneManager.did = did
 
     // eslint-disable-next-line no-async-promise-executor
     VeridaOneManager.datastore = new Promise(async (resolve) => {
