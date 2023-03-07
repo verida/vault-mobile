@@ -82,7 +82,7 @@ const AssetsCollections = (props: any) => {
   return (
     <Container>
       <NavigationHeader
-        left={{ icon: 'avatar' }}
+        left={{ icon: 'skip' }}
         avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
         // @TODO: develop a separate component to handle walletSelect navigation
         titleIcon={walletSelect}
