@@ -136,7 +136,6 @@ const NFTDetail = () => {
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,
   }
-  const uri = getNFTImageUri(metadata.image)
   const name = nft.name + ` #${nft.token_id}`
   const hasMinterWallet = nft.minter_address?.startsWith('0x')
 
@@ -176,10 +175,10 @@ const NFTDetail = () => {
     <Screen>
       <NavigationHeader
         title={name}
-        right={{
-          icon: <MoreIcon fill={theme.color.icon} />,
-          action: handleMoreActions,
-        }}
+        // right={{
+        //   icon: <MoreIcon fill={theme.color.icon} />,
+        //   action: handleMoreActions,
+        // }}
         bottomBorder
       />
       <ScrollView
@@ -272,11 +271,11 @@ const NFTDetail = () => {
           </View>
         </View>
       </ScrollView>
-      <Footer>
+      {/* <Footer>
         <Button color='primary' onPress={null}>
           Add to Verida One
         </Button>
-      </Footer>
+      </Footer> */}
     </Screen>
   )
 }

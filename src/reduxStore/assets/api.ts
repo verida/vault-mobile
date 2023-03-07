@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { NFTCollection } from 'api/types'
+import { NFT } from 'api/types'
 
 export const assetsApi = createApi({
   reducerPath: 'assetsApi',
@@ -8,7 +8,7 @@ export const assetsApi = createApi({
     baseUrl: 'https://devnet-walletprovider.tn.verida.tech/',
   }),
   endpoints: (build) => ({
-    getWalletNFTCollections: build.query<NFTCollection[], string[]>({
+    getWalletNFTCollections: build.query<NFT[], string[]>({
       keepUnusedDataFor: 180, // 3 mins
       query: (walletAddresses) =>
         `nfts/list?${walletAddresses

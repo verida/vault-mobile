@@ -118,47 +118,46 @@ const SelectAsset = () => {
     [mode, navigation, originalValue, screenName]
   )
 
-  if (isLoading) return <LoadingIndicator />
-  // if (error) return <Title>{'Something went wrong...'}</Title>
-
   return (
-    <Screen>
+    <Screen withLoadingView showLoading={isLoading} loadingOverlayColorLight>
       <NavigationHeader
         title={'Select Asset'}
         left={{
           icon: 'close',
         }}
       />
-      <View style={[styles.constainer, { marginBottom: bottom }]}>
-        <GridView
-          numColumns={NUMBER_OF_COLUMNS}
-          data={data || ([] as any)}
-          style={styles.grid}
-          contentContainerStyle={
-            isEmptyList
-              ? styles.listEmptyContainer
-              : {
-                  paddingBottom: theme.spacing.xxl,
-                  paddingTop: theme.spacing.m,
-                }
-          }
-          keyExtractor={(item, index) =>
-            `${index}-${item.chain_id}-${item.token_id}-${item.owner_address}`
-          }
-          renderItem={renderNft}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }
-          ListEmptyComponent={() => (
-            <View style={styles.emptyListContainer}>
-              <NFTPlaceholder />
-              <Title style={styles.emptyListTitle}>
-                {"You don't have any collectibles yet"}
-              </Title>
-            </View>
-          )}
-        />
-      </View>
+      {data ? (
+        <View style={[styles.constainer, { marginBottom: bottom }]}>
+          <GridView
+            numColumns={NUMBER_OF_COLUMNS}
+            data={data}
+            style={styles.grid}
+            contentContainerStyle={
+              isEmptyList
+                ? styles.listEmptyContainer
+                : {
+                    paddingBottom: theme.spacing.xxl,
+                    paddingTop: theme.spacing.m,
+                  }
+            }
+            keyExtractor={(item, index) =>
+              `${index}-${item.chain_id}-${item.token_id}-${item.owner_address}`
+            }
+            renderItem={renderNft}
+            refreshControl={
+              <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+            }
+            ListEmptyComponent={() => (
+              <View style={styles.emptyListContainer}>
+                <NFTPlaceholder />
+                <Title style={styles.emptyListTitle}>
+                  {"You don't have any collectibles yet"}
+                </Title>
+              </View>
+            )}
+          />
+        </View>
+      ) : null}
     </Screen>
   )
 }
