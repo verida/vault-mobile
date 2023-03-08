@@ -75,27 +75,32 @@ const ScreenName = 'PublicProfile'
 const MAX_NUMBER_OF_FEATURED_CUSTOM_LINK = 2
 const NUMBER_FEATURED_ASSETS = 4
 
-const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
-  const [list, setList] = useState([
-    { label: 'Name', value: '', action: 'arrow', type: 'input' },
-    { label: 'Country', value: '', action: 'arrow', type: 'select' },
-    { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
-  ])
+const EMPTY_PROFILE_EDITABLE_PROPS = [
+  { label: 'Name', value: '', action: 'arrow', type: 'input' },
+  { label: 'Country', value: '', action: 'arrow', type: 'select' },
+  { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
+]
+const EMPTY_PROFILE_READONLY_PROPS = [
+  {
+    label: 'DID',
+    value: '',
+    action: 'copy',
+  },
+]
 
-  const [userInfoReadOnlyItem] = useState([
-    {
-      label: 'DID',
-      value: AccountManager.getInstance().getSelectedAccount()?.did ?? '',
-      action: 'copy',
-    },
-  ])
+const PublicProfile = ({ updatePublicProfileData }: any) => {
+  const [profileEditableProps, setProfileEditableProps] = useState(
+    EMPTY_PROFILE_EDITABLE_PROPS
+  )
+  const [profileReadonlyProps, setProfileReadonlyProps] = useState(
+    EMPTY_PROFILE_READONLY_PROPS
+  )
 
   const { theme } = useTheme()
   const navigation = useNavigation()
   const { showActionSheetWithOptions } = useActionSheet()
   const [loading, setLoading] = useState(true)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
-  const [, setPublicProfile] = useState(publicProfileData)
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
@@ -343,10 +348,8 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
-      setPublicProfile({})
-
-      updatePublicProfileData(publicData || publicProfileData)
-      const updatedList = list.map((item: any) => {
+      updatePublicProfileData(publicData)
+      const updatedList = profileEditableProps.map((item: any) => {
         const label = item.label.toLowerCase()
         if (publicData[label]) {
           item.value = publicData[label]
@@ -354,7 +357,7 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
         return item
       })
 
-      setList(updatedList)
+      setProfileEditableProps(updatedList)
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
@@ -531,7 +534,14 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
     setLoading(true)
 
     // Reset
-    setPublicProfile({})
+    setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
+    setProfileReadonlyProps([
+      {
+        label: 'DID',
+        value: currentAccountDID,
+        action: 'copy',
+      },
+    ])
     setVeridaOneProfile({})
 
     setPublicWalletAddresses([])
@@ -780,7 +790,12 @@ const PublicProfile = ({ publicProfileData, updatePublicProfileData }: any) => {
           </View> */}
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
-            <PropertyList list={[...editable(list), ...userInfoReadOnlyItem]} />
+            <PropertyList
+              list={[
+                ...editable(profileEditableProps),
+                ...profileReadonlyProps,
+              ]}
+            />
           </View>
           <Text style={styles.description}>
             This information is always visible on your Verida One page
