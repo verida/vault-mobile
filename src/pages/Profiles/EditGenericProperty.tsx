@@ -195,7 +195,11 @@ const EditGenericProperty = () => {
             )}
           </View>
           <Button
-            disabled={disabled || (edited as string).length === 0}
+            disabled={
+              disabled ||
+              (edited as string).length === 0 ||
+              inputError.isExceededMaxLength
+            }
             onPress={saveValue}>
             {submitButtonLabel}
           </Button>

@@ -1,3 +1,4 @@
+import * as Sentry from '@sentry/react-native'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
@@ -16,42 +17,77 @@ import DropDownPicker from '../../components/Select'
 import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
-const MAX_TEXTAREA_LENGTH = 255
+/**
+ * Take from the schema, better to fetch them dynamic
+ * https://common.schemas.verida.io/profile/basicProfile/v0.1.0/schema.json
+ */
+const MAX_TEXTAREA_LENGTH = 140
 const MAX_INPUT_LENGTH = 140
+const MIN_INPUT_LENGTH = 2
 
+// TODO: Refactor this component
 const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState(option.value)
-  const [inputError, setInputError] = useState({
+  const [inputError, setInputError] = useState<{
+    inputMaxLength?: number
+    inputMinLength?: number
+    isExceededMaxLength?: boolean
+    lessThanMinLength?: boolean
+  }>({
     inputMaxLength: 0,
+    inputMinLength: MIN_INPUT_LENGTH,
     isExceededMaxLength: false,
+    lessThanMinLength: false,
   })
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
     Keyboard.dismiss()
-    const key = title.toLowerCase()
-    const val = (edited.value || edited).trim()
+    try {
+      const key = title.toLowerCase()
+      const val = (edited.value || edited).trim()
 
-    if (publicProfileData[key] === val) return
-    setDisabled(true)
-    const vault = AccountManager.getInstance().vault as any
-
-    await vault.profiles.public.set(key, val)
-    setPublicProfileData({ ...publicProfileData, [key]: val })
+      if (publicProfileData[key] !== val) {
+        setDisabled(true)
+        const vault = AccountManager.getInstance().vault as any
+        await vault.profiles.public.set(key, val)
+        setPublicProfileData({ ...publicProfileData, [key]: val })
+      }
+    } catch (error) {
+      Sentry.captureException(error)
+    }
 
     navigation.goBack()
   }
 
-  const handleInput = (text: string, maxLength: number) => {
+  const handleInput = (text: string, maxLength: number, minLength: number) => {
     setEdited(text)
+    const defaultValue = {
+      inputMaxLength: maxLength,
+      inputMinLength: minLength,
+      isExceededMaxLength: false,
+      lessThanMinLength: false,
+    }
     if (text.length >= maxLength) {
-      setInputError({ inputMaxLength: maxLength, isExceededMaxLength: true })
+      setInputError({
+        ...defaultValue,
+        isExceededMaxLength: true,
+      })
+    } else if (text.length < minLength) {
+      setInputError({
+        ...defaultValue,
+        lessThanMinLength: true,
+      })
     } else {
-      setInputError({ ...inputError, isExceededMaxLength: false })
+      setInputError({
+        ...inputError,
+        isExceededMaxLength: false,
+        lessThanMinLength: false,
+      })
     }
   }
 
@@ -76,12 +112,14 @@ const EditProfile = (props: any) => {
                 autoFocus={true}
                 errorMessage={
                   inputError.isExceededMaxLength
-                    ? `${option.type} must be less than ${inputError.inputMaxLength} characters`
+                    ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
+                    : inputError.lessThanMinLength
+                    ? `${option.label} must be more than ${inputError.inputMinLength} characters`
                     : undefined
                 }
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
-                  handleInput(text, MAX_INPUT_LENGTH)
+                  handleInput(text, MAX_INPUT_LENGTH, MIN_INPUT_LENGTH)
                 }}
               />
             )}
@@ -105,13 +143,20 @@ const EditProfile = (props: any) => {
                 label={option.label}
                 inputStyle={{ minHeight: 68 }}
                 value={edited}
+                errorMessage={
+                  inputError.isExceededMaxLength
+                    ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
+                    : inputError.lessThanMinLength
+                    ? `${option.label} must be more than ${inputError.inputMinLength} characters`
+                    : undefined
+                }
                 multiline
                 numberOfLines={4}
                 maxLength={MAX_TEXTAREA_LENGTH}
                 editable
                 autoFocus={true}
                 onChangeText={(text) => {
-                  handleInput(text, MAX_TEXTAREA_LENGTH)
+                  handleInput(text, MAX_TEXTAREA_LENGTH, MIN_INPUT_LENGTH)
                 }}
               />
             )}
@@ -124,7 +169,9 @@ const EditProfile = (props: any) => {
             />
           )} */}
           </View>
-          <Button disabled={disabled} onPress={saveValue}>
+          <Button
+            disabled={disabled || inputError.isExceededMaxLength}
+            onPress={saveValue}>
             Save Changes
           </Button>
         </Content>
