@@ -23,7 +23,6 @@ import InputStyles from '../../styles/inputs'
  */
 const MAX_TEXTAREA_LENGTH = 140
 const MAX_INPUT_LENGTH = 140
-const MIN_INPUT_LENGTH = 2
 
 // TODO: Refactor this component
 const EditProfile = (props: any) => {
@@ -34,14 +33,10 @@ const EditProfile = (props: any) => {
   const [edited, setEdited] = useState(option.value)
   const [inputError, setInputError] = useState<{
     inputMaxLength?: number
-    inputMinLength?: number
     isExceededMaxLength?: boolean
-    lessThanMinLength?: boolean
   }>({
     inputMaxLength: 0,
-    inputMinLength: MIN_INPUT_LENGTH,
     isExceededMaxLength: false,
-    lessThanMinLength: false,
   })
   const onChangeItem = (e: any) => setEdited(e)
 
@@ -64,29 +59,21 @@ const EditProfile = (props: any) => {
     navigation.goBack()
   }
 
-  const handleInput = (text: string, maxLength: number, minLength: number) => {
+  const handleInput = (text: string, maxLength: number) => {
     setEdited(text)
     const defaultValue = {
       inputMaxLength: maxLength,
-      inputMinLength: minLength,
       isExceededMaxLength: false,
-      lessThanMinLength: false,
     }
     if (text.length >= maxLength) {
       setInputError({
         ...defaultValue,
         isExceededMaxLength: true,
       })
-    } else if (text.length < minLength) {
-      setInputError({
-        ...defaultValue,
-        lessThanMinLength: true,
-      })
     } else {
       setInputError({
         ...inputError,
         isExceededMaxLength: false,
-        lessThanMinLength: false,
       })
     }
   }
@@ -113,13 +100,11 @@ const EditProfile = (props: any) => {
                 errorMessage={
                   inputError.isExceededMaxLength
                     ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
-                    : inputError.lessThanMinLength
-                    ? `${option.label} must be more than ${inputError.inputMinLength} characters`
                     : undefined
                 }
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
-                  handleInput(text, MAX_INPUT_LENGTH, MIN_INPUT_LENGTH)
+                  handleInput(text, MAX_INPUT_LENGTH)
                 }}
               />
             )}
@@ -146,8 +131,6 @@ const EditProfile = (props: any) => {
                 errorMessage={
                   inputError.isExceededMaxLength
                     ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
-                    : inputError.lessThanMinLength
-                    ? `${option.label} must be more than ${inputError.inputMinLength} characters`
                     : undefined
                 }
                 multiline
@@ -156,7 +139,7 @@ const EditProfile = (props: any) => {
                 editable
                 autoFocus={true}
                 onChangeText={(text) => {
-                  handleInput(text, MAX_TEXTAREA_LENGTH, MIN_INPUT_LENGTH)
+                  handleInput(text, MAX_TEXTAREA_LENGTH)
                 }}
               />
             )}
