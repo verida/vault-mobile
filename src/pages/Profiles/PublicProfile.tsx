@@ -347,11 +347,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       updatePublicProfileData(publicData)
       const updatedList = profileEditableProps.map((item: any) => {
         const label = item.label.toLowerCase()
-        if (publicData[label]) {
-          item.value = publicData[label]
-        } else {
-          item.value = undefined
-        }
+        item.value = publicData[label] ?? undefined
         return item
       })
 
