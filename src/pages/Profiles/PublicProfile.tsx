@@ -81,11 +81,7 @@ const EMPTY_PROFILE_EDITABLE_PROPS = [
   { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
 ]
 const EMPTY_PROFILE_READONLY_PROPS = [
-  {
-    label: 'DID',
-    value: '',
-    action: 'copy',
-  },
+  { label: 'DID', value: '', action: 'copy' },
 ]
 
 const PublicProfile = ({ updatePublicProfileData }: any) => {
@@ -533,15 +529,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   useEffect(() => {
     setLoading(true)
 
+    setProfileReadonlyProps([
+      { label: 'DID', value: currentAccountDID, action: 'copy' },
+    ])
+
     // Reset
     setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
-    setProfileReadonlyProps([
-      {
-        label: 'DID',
-        value: currentAccountDID,
-        action: 'copy',
-      },
-    ])
     setVeridaOneProfile({})
 
     setPublicWalletAddresses([])
