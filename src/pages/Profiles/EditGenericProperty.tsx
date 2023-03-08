@@ -9,11 +9,11 @@ import {
   Platform,
   StyleSheet,
   Text,
-  TextInput,
   View,
 } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 
+import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -140,18 +140,19 @@ const EditGenericProperty = () => {
             justifyContent: 'space-between',
           }}>
           <View style={{ flex: 1 }}>
-            <Label>{option.label}</Label>
             {option.type === 'input' && (
-              <TextInput
+              <FormInput
                 placeholder={option.placeholder}
-                style={[
-                  InputStyles.input,
-                  inputError.isExceededMaxLength && styles.inputValidation,
-                ]}
+                label={option.label}
                 value={edited as string}
                 autoFocus={true}
                 autoCapitalize='none'
                 autoCorrect={false}
+                errorMessage={
+                  inputError.isExceededMaxLength
+                    ? `${option.type} must be less than ${inputError.inputMaxLength} characters`
+                    : undefined
+                }
                 placeholderTextColor='rgba(4, 17, 51, 0.3)'
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
@@ -160,23 +161,24 @@ const EditGenericProperty = () => {
               />
             )}
             {option.type === 'select' && (
-              <DropDownPicker
-                searchable={true}
-                searchablePlaceholder='Search...'
-                placeholder=''
-                defaultValue={option.value as string}
-                items={COUNTRIES}
-                containerStyle={InputStyles.select}
-                onChangeItem={onChangeItem}
-              />
+              <>
+                <Label style={{ marginTop: 0 }}>{option.label}</Label>
+                <DropDownPicker
+                  searchable={true}
+                  searchablePlaceholder='Search...'
+                  placeholder=''
+                  defaultValue={option.value as string}
+                  items={COUNTRIES}
+                  containerStyle={InputStyles.select}
+                  onChangeItem={onChangeItem}
+                />
+              </>
             )}
             {option.type === 'textarea' && (
-              <TextInput
+              <FormInput
                 placeholder={`Enter the ${option.label}`}
-                style={[
-                  InputStyles.textarea,
-                  inputError.isExceededMaxLength && styles.inputValidation,
-                ]}
+                label={option.label}
+                inputStyle={{ minHeight: 68 }}
                 value={edited as string}
                 multiline
                 numberOfLines={4}
@@ -188,13 +190,6 @@ const EditGenericProperty = () => {
                 }}
               />
             )}
-            {['textarea', 'input'].includes(option.type) &&
-              inputError.isExceededMaxLength && (
-                <Text style={styles.inputText}>
-                  {option.type} must be less than {inputError.inputMaxLength}{' '}
-                  characters
-                </Text>
-              )}
             {Boolean(option.description) && (
               <Text style={[styles.description]}>{option.description}</Text>
             )}

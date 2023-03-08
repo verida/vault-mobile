@@ -1,27 +1,18 @@
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native'
+import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
+import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
-import { DECLINE_COLOR } from '../../constants/color'
-import { NUNITO_SANS } from '../../constants/text'
 import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
@@ -76,17 +67,18 @@ const EditProfile = (props: any) => {
             margin: 20,
             justifyContent: 'space-between',
           }}>
-          <View style={{ flex: 1 }}>
-            <Label>{option.label}</Label>
+          <View style={{ flex: 1, paddingTop: 16 }}>
             {option.type === 'input' && (
-              <TextInput
+              <FormInput
                 placeholder={`Enter the ${option.label}`}
-                style={[
-                  InputStyles.input,
-                  inputError.isExceededMaxLength && styles.inputValidation,
-                ]}
+                label={option.label}
                 value={edited}
                 autoFocus={true}
+                errorMessage={
+                  inputError.isExceededMaxLength
+                    ? `${option.type} must be less than ${inputError.inputMaxLength} characters`
+                    : undefined
+                }
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
                   handleInput(text, MAX_INPUT_LENGTH)
@@ -94,23 +86,24 @@ const EditProfile = (props: any) => {
               />
             )}
             {option.type === 'select' && (
-              <DropDownPicker
-                searchable={true}
-                searchablePlaceholder='Search...'
-                placeholder=''
-                defaultValue={option.value}
-                items={COUNTRIES}
-                containerStyle={InputStyles.select}
-                onChangeItem={onChangeItem}
-              />
+              <>
+                <Label style={{ marginTop: 0 }}>{option.label}</Label>
+                <DropDownPicker
+                  searchable={true}
+                  searchablePlaceholder='Search...'
+                  placeholder=''
+                  defaultValue={option.value}
+                  items={COUNTRIES}
+                  containerStyle={InputStyles.select}
+                  onChangeItem={onChangeItem}
+                />
+              </>
             )}
             {option.type === 'textarea' && (
-              <TextInput
+              <FormInput
                 placeholder={`Enter the ${option.label}`}
-                style={[
-                  InputStyles.textarea,
-                  inputError.isExceededMaxLength && styles.inputValidation,
-                ]}
+                label={option.label}
+                inputStyle={{ minHeight: 68 }}
                 value={edited}
                 multiline
                 numberOfLines={4}
@@ -130,13 +123,6 @@ const EditProfile = (props: any) => {
               defaultCountry='SG'
             />
           )} */}
-            {['textarea', 'input'].includes(option.type) &&
-              inputError.isExceededMaxLength && (
-                <Text style={styles.inputText}>
-                  {option.type} must be less than {inputError.inputMaxLength}{' '}
-                  characters
-                </Text>
-              )}
           </View>
           <Button disabled={disabled} onPress={saveValue}>
             Save Changes
@@ -160,16 +146,3 @@ const mapStateToProps = (rootState: any) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)
-
-const styles = StyleSheet.create({
-  inputValidation: {
-    borderColor: DECLINE_COLOR,
-  },
-  inputText: {
-    fontFamily: NUNITO_SANS,
-    color: DECLINE_COLOR,
-    fontStyle: 'italic',
-    fontSize: 12,
-    marginVertical: 4,
-  },
-})
