@@ -19,6 +19,7 @@ const SeedPhrase = (props) => {
   }
 
   function onShow() {
+    props.navigation.pop(1)
     props.navigation.navigate('SeedPhraseGenerated')
   }
 

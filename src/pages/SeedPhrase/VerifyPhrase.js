@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect, useDispatch } from 'react-redux'
@@ -13,10 +14,11 @@ import Layout from '../../components/Layouts/Layout'
 import Words from '../../components/Words'
 
 const VerifyPhrase = (props) => {
-  const { words = [], resetPhrase, navigation, route } = props
+  const { words = [], resetPhrase, route } = props
   const [error, showError] = useState(null)
   const [verified, setVerified] = useState(null)
   const dispatch = useDispatch()
+  const navigation = useNavigation()
 
   useEffect(() => {
     showError(false)
@@ -37,7 +39,7 @@ const VerifyPhrase = (props) => {
       resetPhrase()
       dispatch(setShowSeedPhraseReminder(false))
       await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
-      navigation.navigate('Home')
+      navigation.goBack()
     } catch (e) {
       showError(true)
     }
@@ -56,7 +58,9 @@ const VerifyPhrase = (props) => {
             <Button
               style={{ marginTop: 20 }}
               color='transparent-grey'
-              onPress={() => navigation.navigate('Home')}>
+              onPress={() => {
+                navigation.goBack()
+              }}>
               Skip
             </Button>
           )}

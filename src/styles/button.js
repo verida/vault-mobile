@@ -71,3 +71,5 @@ export default StyleSheet.create({
     ...transparent,
   },
 })
+
+export const smallButtonHitSlop = { top: 5, right: 10, bottom: 5, left: 10 }

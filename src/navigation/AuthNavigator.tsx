@@ -26,7 +26,10 @@ function AuthNavigator() {
         name={'SeedPhraseGenerated'}
         component={SeedPhraseGenerated}
       />
-      <Stack.Screen name={'SeedPhraseEntered'} component={SeedPhraseEntered} />
+      <Stack.Screen
+        name={'SeedPhraseEntered'}
+        component={SeedPhraseEntered as any}
+      />
       <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
       <Stack.Screen name={'CreatePin'} component={CreatePin} />
       <Stack.Screen name={'Success'} component={Success} />

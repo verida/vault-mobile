@@ -1,57 +1,9 @@
 {
   "images" : [
     {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-4.png",
-      "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "20x20"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-5.png",
-      "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "20x20"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-6.png",
-      "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "29x29"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-7.png",
-      "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "29x29"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-8.png",
-      "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "40x40"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-3.png",
-      "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "40x40"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-2.png",
-      "idiom" : "iphone",
-      "scale" : "2x",
-      "size" : "60x60"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha-1.png",
-      "idiom" : "iphone",
-      "scale" : "3x",
-      "size" : "60x60"
-    },
-    {
-      "filename" : "VeridaVaultAppStoreIcon-NoAlpha.png",
-      "idiom" : "ios-marketing",
-      "scale" : "1x",
+      "filename" : "app_icon.png",
+      "idiom" : "universal",
+      "platform" : "ios",
       "size" : "1024x1024"
     }
   ],
