@@ -71,7 +71,7 @@ export enum PublicProfileEditMode {
   SelectFeaturedAsset,
 }
 
-const ScreenName = 'PublicProfile'
+const SCREEN_NAME = 'PublicProfile'
 const MAX_NUMBER_OF_FEATURED_CUSTOM_LINK = 2
 const NUMBER_FEATURED_ASSETS = 4
 
@@ -416,7 +416,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   useEmitter(
     'SAVE_GENERIC_PROPERTY',
     (payload) => {
-      if (payload.screenName !== ScreenName) return
+      if (payload.screenName !== SCREEN_NAME) return
       const mode = payload.mode as PublicProfileEditMode
       if (mode === PublicProfileEditMode.EditWalletPublicLabel) {
         // Save wallet name
@@ -628,7 +628,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               ? undefined
               : () => {
                   navigation.navigate('EditGenericProperty', {
-                    screenName: ScreenName,
+                    screenName: SCREEN_NAME,
                     title: 'Public Label',
                     option: {
                       label: 'Address public label',
@@ -663,7 +663,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           isActive={isActive}
           onEdit={() => {
             navigation.navigate('AddCustomLink', {
-              screenName: ScreenName,
+              screenName: SCREEN_NAME,
               title: 'Public Label',
               label: link.label,
               url: link.url,
@@ -706,7 +706,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                     switch (selectedIndex!) {
                       case 0:
                         navigation.navigate('SelectAsset', {
-                          screenName: ScreenName,
+                          screenName: SCREEN_NAME,
                           mode: PublicProfileEditMode.SelectFeaturedAsset,
                           originalValue: {
                             order: index,
@@ -726,7 +726,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                 )
               } else {
                 navigation.navigate('SelectAsset', {
-                  screenName: ScreenName,
+                  screenName: SCREEN_NAME,
                   mode: PublicProfileEditMode.SelectFeaturedAsset,
                   originalValue: {
                     order: index,
@@ -816,6 +816,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               data={walletAddresses}
               renderItem={renderWalletItem}
               activationDistance={60}
+              scrollEnabled={false}
               keyExtractor={(
                 walletAddress: PublicWalletAddress,
                 index: number
@@ -877,7 +878,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                     disabled={!enabledVeridaOne}
                     onPress={() =>
                       navigation.navigate('AddCustomLink', {
-                        screenName: ScreenName,
+                        screenName: SCREEN_NAME,
                         mode: PublicProfileEditMode.AddCustomURL,
                         title: 'Add Custom Link',
                       })
@@ -889,6 +890,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                   data={publicCustomLinks}
                   renderItem={renderCustomLinkItem}
                   activationDistance={30}
+                  scrollEnabled={false}
                   keyExtractor={(item: OneProfileCustomLink, index: number) =>
                     `${index}-${item.url}`
                   }
@@ -924,7 +926,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                     style={{ width: '100%', marginTop: theme.spacing.sm }}
                     onPress={() => {
                       navigation.navigate('EditGenericProperty', {
-                        screenName: ScreenName,
+                        screenName: SCREEN_NAME,
                         title: 'Invitation Code',
                         option: {
                           label: 'Invitation code',
