@@ -1,6 +1,8 @@
 import { decode, encode } from 'base-64'
 import { EventEmitter } from 'events'
 
+const { BigNumber } = require('ethers')
+
 if (typeof __dirname === 'undefined') global.__dirname = '/'
 if (typeof __filename === 'undefined') global.__filename = ''
 if (typeof process === 'undefined') {
@@ -57,3 +59,20 @@ global.originalJSON = {
   stringify: JSON.stringify,
   parse: JSON.parse,
 }
+
+function bigIntPow() {
+  return BigNumber.from(arguments[0])
+    .pow(BigNumber.from(arguments[1]))
+    .toBigInt()
+}
+
+function makePow(pow) {
+  return function () {
+    if (typeof arguments[0] === 'number' && typeof arguments[1] === 'number') {
+      return pow.apply(this, arguments)
+    }
+    return bigIntPow.apply(this, arguments)
+  }
+}
+
+Math.pow = makePow(Math.pow)

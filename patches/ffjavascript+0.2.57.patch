@@ -1,5 +1,5 @@
 diff --git a/node_modules/ffjavascript/build/main.cjs b/node_modules/ffjavascript/build/main.cjs
-index b382514..e499a5e 100644
+index b382514..d52dbb8 100644
 --- a/node_modules/ffjavascript/build/main.cjs
 +++ b/node_modules/ffjavascript/build/main.cjs
 @@ -7,6 +7,10 @@ var wasmcurves = require('wasmcurves');
@@ -18,7 +18,7 @@ index b382514..e499a5e 100644
  
  function pow(a, b) {
 -    return BigInt(a) ** BigInt(b);
-+    return BigNumber.from(a).pow(BigNumber.from(b))
++    return BigNumber.from(a).pow(BigNumber.from(b)).toBigInt()
  }
  
  function exp$1(a, b) {
@@ -58,3 +58,45 @@ index b382514..e499a5e 100644
  }
  
  function getRandomSeed() {
+@@ -4422,7 +4427,8 @@ const workerSource = "data:application/javascript;base64," + threadSource;
+ 
+ 
+ 
+-async function buildThreadManager(wasm, singleThread) {
++async function buildThreadManager(wasm, _singleThread) {
++    const singleThread = true
+     const tm = new ThreadManager();
+ 
+     tm.memory = new WebAssembly.Memory({initial:MEM_SIZE});
+@@ -4460,7 +4466,8 @@ async function buildThreadManager(wasm, singleThread) {
+             code: tm.code.slice()
+         }]);
+         tm.concurrency  = 1;
+-    } else {
++    }
++     else {
+         tm.workers = [];
+         tm.pendingDeferreds = [];
+         tm.working = [];
+@@ -5835,8 +5842,8 @@ async function buildEngine(params) {
+ 
+ globalThis.curve_bn128 = null;
+ 
+-async function buildBn128(singleThread, plugins) {
+-
++async function buildBn128(_singleThread, plugins) {
++    const singleThread = true
+     const moduleBuilder = new wasmbuilder.ModuleBuilder();
+     moduleBuilder.setMemory(25);
+     wasmcurves.buildBn128(moduleBuilder);
+@@ -5891,8 +5898,8 @@ async function buildBn128(singleThread, plugins) {
+ 
+ globalThis.curve_bls12381 = null;
+ 
+-async function buildBls12381(singleThread, plugins) {
+-
++async function buildBls12381(_singleThread, plugins) {
++    const singleThread = true
+     const moduleBuilder = new wasmbuilder.ModuleBuilder();
+     moduleBuilder.setMemory(25);
+     wasmcurves.buildBls12381(moduleBuilder);
