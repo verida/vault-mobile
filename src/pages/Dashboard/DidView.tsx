@@ -54,7 +54,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 16,
     backgroundColor: PRIMARY_COLOR,
-    // borderRadius: 4,
+    borderRadius: 4,
   },
   label: {
     color: 'white',

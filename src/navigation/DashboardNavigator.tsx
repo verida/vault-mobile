@@ -8,7 +8,7 @@ import { PRIMARY_COLOR } from 'constants/color'
 import { DashboardTabParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
 import DataConnector from 'pages/Connections/DataConnector'
-import Home from 'pages/Dashboard/Home'
+import Home from 'pages/Dashboard/HomeNew'
 import Folders from 'pages/Data/Folders'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 
