@@ -9,6 +9,7 @@ import AddIdentity from 'pages/Account/Identity/AddIdentity'
 import Identity from 'pages/Account/Identity/Identity'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
+import SelectAsset from 'pages/Assets/SelectAsset'
 import ChangePin from 'pages/Authentication/ChangePin'
 import ClaimableBadges from 'pages/ClaimBadges/ClaimableBadges'
 import ClaimBadge from 'pages/ClaimBadges/ClaimBadge'
@@ -21,6 +22,7 @@ import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
+import AddCustomLink from 'pages/Profiles/AddCustomLink'
 import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
@@ -66,10 +68,26 @@ function MainNavigator() {
       <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
-      <Stack.Screen name={'EditProfile'} component={EditProfile} />
+      <Stack.Screen
+        name={'EditProfile'}
+        component={EditProfile}
+        options={{
+          presentation: 'modal',
+        }}
+      />
       <Stack.Screen
         name={'EditGenericProperty'}
         component={EditGenericProperty}
+        options={{
+          presentation: 'modal',
+        }}
+      />
+      <Stack.Screen
+        name={'AddCustomLink'}
+        component={AddCustomLink}
+        options={{
+          presentation: 'modal',
+        }}
       />
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
@@ -131,6 +149,13 @@ function MainNavigator() {
         component={NFTCollectionDetail}
       />
       <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
+      <Stack.Screen
+        name={'SelectAsset'}
+        component={SelectAsset}
+        options={{
+          presentation: 'modal',
+        }}
+      />
     </Stack.Navigator>
   )
 }

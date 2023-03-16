@@ -514,14 +514,14 @@ class AccountManager extends EventEmitter {
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
-      updateProgress?.('CreateProfile', 'Success')
-
+      await this.setUserWallet()
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
       setTimeout(async () => {
         await this.setBackedupSeedPhraseConfig(false)
-        await this.setUserWallet()
       }, 0)
+
+      updateProgress?.('CreateProfile', 'Success')
 
       return this.selectedAccount
     } catch (e) {

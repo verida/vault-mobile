@@ -1,7 +1,7 @@
 import { useTheme } from 'contexts/ThemeContext'
 import { Container } from 'native-base'
 import React, { useRef, useState } from 'react'
-import { Image, StyleSheet, Text, useWindowDimensions } from 'react-native'
+import { Image, StyleSheet, useWindowDimensions } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 import { connect } from 'react-redux'
 
@@ -24,18 +24,18 @@ const segmentLists = [
   {
     title: 'Collectibles',
   },
-  {
-    title: 'Badges',
-  },
+  // {
+  //   title: 'Badges',
+  // },
 ]
 const TokensRoute = () => <Tokens />
 const CollectiblesRoute = () => <Collectibles />
-const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
+// const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
 
 const renderScene = SceneMap({
   tokens: TokensRoute,
   nfts: CollectiblesRoute,
-  badges: BadgesRoute,
+  // badges: BadgesRoute,
 })
 
 enum Assets {
@@ -56,7 +56,7 @@ const AssetsCollections = (props: any) => {
   const [routes] = React.useState([
     { key: 'tokens' },
     { key: 'nfts' },
-    { key: 'badges' },
+    // { key: 'badges' },
   ])
 
   const onChangedSegmentIndex = (index: number) => {
@@ -81,10 +81,11 @@ const AssetsCollections = (props: any) => {
   return (
     <Container>
       <NavigationHeader
-        left={{ icon: 'avatar' }}
+        left={{ icon: 'skip' }}
         avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
         // @TODO: develop a separate component to handle walletSelect navigation
         titleIcon={walletSelect}
+        bottomBorder={false}
       />
 
       <TabView

@@ -1,4 +1,5 @@
 import update from 'immutability-helper'
+import { cloneDeep } from 'lodash'
 
 import {
   ADD_ACCOUNT,
@@ -116,13 +117,13 @@ export const mainReducer = (state = initialState, action) => {
     case SET_ACCOUNTS:
       return update(state, {
         accounts: {
-          $set: action.payload,
+          $set: cloneDeep(action.payload),
         },
       })
     case SET_SELECTED_ACCOUNT:
       return update(state, {
         selectedAccount: {
-          $set: action.payload,
+          $set: cloneDeep(action.payload),
         },
       })
     case ADD_ACCOUNT:
@@ -131,7 +132,7 @@ export const mainReducer = (state = initialState, action) => {
           $apply: function (value) {
             return {
               ...value,
-              [action.payload.did]: action.payload,
+              [action.payload.did]: cloneDeep(action.payload),
             }
           },
         },
@@ -139,14 +140,14 @@ export const mainReducer = (state = initialState, action) => {
     case SET_SWITCH_ACCOUNT_TOAST:
       return update(state, {
         switchAccountToast: {
-          $set: action.payload,
+          $set: cloneDeep(action.payload),
         },
       })
 
     case SET_SHOW_SEED_PHRASE_REMINDER:
       return update(state, {
         showSeedPhraseReminder: {
-          $set: action.payload,
+          $set: cloneDeep(action.payload),
         },
       })
 

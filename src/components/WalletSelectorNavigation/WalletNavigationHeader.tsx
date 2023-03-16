@@ -37,11 +37,13 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
             <ChevronDownIcon />
           </View>
         </View>
-        <Text style={styles.subText}>
-          {selectedWallet?.address
-            ? getTruncatedWalletAddress(selectedWallet?.address)
-            : `${selectedWallet?.count} addresses`}
-        </Text>
+        {selectedWallet ? (
+          <Text style={styles.subText}>
+            {selectedWallet.address
+              ? getTruncatedWalletAddress(selectedWallet.address)
+              : `${selectedWallet.count} addresses`}
+          </Text>
+        ) : null}
       </View>
     </Pressable>
   )

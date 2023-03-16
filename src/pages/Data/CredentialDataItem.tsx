@@ -64,7 +64,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         setLoading(true)
         const shareCredential = new SharingCredential(context)
         const issuedCredential =
-          await shareCredential.issueEncryptedPresentation(item)
+          await shareCredential.issueEncryptedPresentation(item.didJwtVc)
         setCredUri(issuedCredential.publicUri)
         setCopyUrl(issuedCredential.publicUri)
         setVerified(true)

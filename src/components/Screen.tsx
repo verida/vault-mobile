@@ -16,7 +16,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 import { ConditionalWrap } from './ConditionalWrap'
-import LoadingView from './LoadingView'
+import LoadingIndicator from './LoadingIndicator'
 
 interface ScreenProps {
   children?: ReactNode
@@ -113,7 +113,7 @@ const Screen = (props: ScreenProps) => {
                         : theme.color.overlay,
                     },
                   ]}>
-                  <LoadingView />
+                  <LoadingIndicator />
                 </Animated.View>
               )}
             </>
@@ -163,7 +163,7 @@ Screen.defaultProps = {
   withLoadingView: false,
   withKeyboardAvoidingView: false,
   backgroundGrey: false,
-  loadingOverlayColorLight: false,
+  loadingOverlayColorLight: true,
 }
 
 export default Screen

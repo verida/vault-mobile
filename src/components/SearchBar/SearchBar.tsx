@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import {
   Alert,
@@ -21,6 +22,7 @@ interface SearchBarProps extends ViewProps {
 
 export function SearchBar(props: SearchBarProps) {
   const { style, inputProps, ...rest } = props
+  const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   return (
     <View style={[styles.container, style]} {...rest}>
@@ -38,12 +40,12 @@ export function SearchBar(props: SearchBarProps) {
       <Pressable
         style={styles.buttonIccon}
         onPress={() => Alert.alert('Manage sorts')}>
-        <SortIcon />
+        <SortIcon fill={theme.color.iconDefault} />
       </Pressable>
       <Pressable
         style={styles.buttonIccon}
         onPress={() => Alert.alert('Manger filters')}>
-        <FilterIcon />
+        <FilterIcon fill={theme.color.iconDefault} />
       </Pressable>
     </View>
   )

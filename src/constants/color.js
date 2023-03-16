@@ -39,6 +39,7 @@ export const LIGHT_GREY_600 = 'rgba(60, 60, 67, 0.6)'
 export const GREY_120 = 'rgba(118, 118, 128, 0.12)'
 
 export const ALERT_INFO_COLOR = '#0073FF'
+export const DEFAULT_ICON_COLOR = '#808695'
 
 export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
 

@@ -45,10 +45,10 @@ const Identity = () => {
           <Image
             style={{
               width: '100%',
-              height: '100%',
-              overflow: 'visible',
+              marginTop: -80,
             }}
             source={require('assets/identity-card.png')}
+            resizeMode='cover'
           />
         </View>
         <Spacer height={32} />

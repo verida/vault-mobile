@@ -1,47 +1,37 @@
+import { useTheme } from 'contexts/ThemeContext'
+import { Header, Left, Right } from 'native-base'
 import React from 'react'
 import {
+  Image,
   ImageSourcePropType,
-  Pressable,
   StyleSheet,
   TouchableOpacity,
   View,
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { SafeAreaView } from 'react-native-safe-area-context'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
+import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
 import EnvelopeSvg from 'assets/icons/envelope.svg'
 import SettingsSvg from 'assets/icons/settings.svg'
 import Text from 'components/Text'
-import {
-  PRIMARY_COLOR_200,
-  SEPARATOR_EXTRA_LIGHT,
-  TEXT_COLOR,
-  WHITE_COLOR,
-} from 'constants/color'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-
-import { ORANGE_COLOR } from '../../constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   avatar: ImageSourcePropType
   name: string
-  did: string
   inboxCount: number
   onAvatarPress: () => void
   onNamePress: () => void
   onInboxPress: () => void
-  onSettingsPress?: () => void
+  onSettingsPress: () => void
 }
 
 const MAX_MESSAGE_COUNT = 21
-const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
+const HITSLOP = { top: 10, right: 10, bottom: 10, left: 10 }
 
 function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   const {
-    did,
     avatar,
     name,
     inboxCount,
@@ -52,45 +42,43 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     ...rest
   } = props
 
+  const { theme } = useTheme()
+
   return (
-    <SafeAreaView edges={['left', 'top', 'right']}>
-      <View style={[styles.header]} {...rest}>
-        <View style={styles.leftContainer}>
-          <View style={styles.left}>
-            <Pressable style={styles.avatarButton} onPress={onAvatarPress}>
-              <FastImage
-                source={avatar as any}
-                resizeMode={FastImage.resizeMode.cover}
-                style={styles.avatar}
+    <Header transparent style={styles.header} {...rest}>
+      <Left style={styles.leftContainer}>
+        <View style={styles.left}>
+          <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
+            <FastImage
+              source={avatar as any}
+              resizeMode={FastImage.resizeMode.cover}
+              style={styles.avatar}
+            />
+          </TouchableOpacity>
+          <View style={styles.titleContainer}>
+            <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
+              <Text style={styles.name} lineBreakMode='tail' numberOfLines={1}>
+                {name}
+              </Text>
+              <AntDesign name={'caretdown'} size={10} color={'#041133'} />
+            </TouchableOpacity>
+            <View style={styles.network}>
+              <Image
+                source={require('assets/icons/wifi.png')}
+                style={styles.networkIcon}
               />
-            </Pressable>
-            <View style={styles.titleContainer}>
-              <TouchableOpacity style={styles.nameButton} onPress={onNamePress}>
-                <Text
-                  style={styles.name}
-                  lineBreakMode='tail'
-                  numberOfLines={1}>
-                  {name}
-                </Text>
-                <ChevronRightIcon />
-              </TouchableOpacity>
-              <View style={styles.network}>
-                <View style={styles.textChipBox}>
-                  <Text style={styles.textChip}>Personal</Text>
-                </View>
-                <Text style={styles.didText} numberOfLines={1}>
-                  DID: {getTruncatedWalletAddress(did, 10)}
-                </Text>
-              </View>
+              <Text style={styles.networkText}>Testnet</Text>
             </View>
           </View>
         </View>
+      </Left>
+      <Right>
         <View style={styles.right}>
           <TouchableOpacity
             style={styles.inboxButton}
             onPress={onInboxPress}
-            hitSlop={HIT_SLOP}>
-            <EnvelopeSvg />
+            hitSlop={HITSLOP}>
+            <EnvelopeSvg fill={theme.color.icon} />
             {inboxCount ? (
               <View style={styles.badge}>
                 <Text style={{ fontSize: 8 }} numberOfLines={1}>
@@ -104,25 +92,19 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
           <TouchableOpacity
             style={styles.settingsButton}
             onPress={onSettingsPress}
-            hitSlop={HIT_SLOP}>
-            <SettingsSvg />
+            hitSlop={HITSLOP}>
+            <SettingsSvg fill={theme.color.icon} />
           </TouchableOpacity>
         </View>
-      </View>
-    </SafeAreaView>
+      </Right>
+    </Header>
   )
 }
 
 const styles = StyleSheet.create({
   header: {
-    paddingHorizontal: 16,
-    paddingVertical: 16,
-    backgroundColor: WHITE_COLOR,
-    height: 80,
-    alignItems: 'center',
-    flexDirection: 'row',
-    borderBottomWidth: 1,
-    borderBottomColor: SEPARATOR_EXTRA_LIGHT,
+    elevation: 1,
+    paddingLeft: 16,
   },
   leftContainer: {
     flex: 2,
@@ -139,39 +121,15 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 1000,
+    width: 40,
+    height: 40,
+    borderRadius: 20,
   },
   name: {
-    fontSize: 20,
-    marginRight: 4,
+    fontSize: 18,
+    marginRight: 8.4,
     fontFamily: NUNITO_SANS_BOLD,
-    color: TEXT_COLOR,
-    fontWeight: '800',
-    textAlign: 'center',
-    lineHeight: 27,
   },
-  textChipBox: {
-    textAlign: 'center',
-    marginRight: 8,
-    fontFamily: NUNITO_SANS_BOLD,
-    borderRadius: 53,
-    paddingVertical: 2,
-    paddingLeft: 7,
-    backgroundColor: PRIMARY_COLOR_200,
-  },
-  textChip: {
-    fontFamily: NUNITO_SANS,
-    fontSize: 11,
-    fontWeight: '600',
-    borderRadius: 20,
-    marginRight: 8,
-    textAlign: 'center',
-    color: TEXT_COLOR,
-    opacity: 0.8,
-  },
-
   nameButton: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -185,7 +143,7 @@ const styles = StyleSheet.create({
     top: -7,
     minHeight: 16,
     minWidth: 16,
-    backgroundColor: ORANGE_COLOR,
+    backgroundColor: '#FF6E6E',
     borderRadius: 8,
     overflow: 'hidden',
   },
@@ -203,12 +161,15 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  didText: {
+  networkText: {
     fontSize: 12,
-    color: TEXT_COLOR,
-    flexDirection: 'row',
-    justifyContent: 'center',
-    alignItems: 'center',
+    color: '#687085',
+  },
+  networkIcon: {
+    width: 12,
+    height: 12,
+    resizeMode: 'contain',
+    marginRight: 5,
   },
 })
 

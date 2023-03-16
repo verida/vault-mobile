@@ -6,7 +6,7 @@ import ButtonStyles from '../styles/button'
 import TextStyles from '../styles/text'
 import Text from './Text'
 
-export default (props) => {
+export default function Button(props) {
   const style = props.style || {}
   let textStyle = props.textStyle || {}
   let hasButtonBackground = true
@@ -40,12 +40,19 @@ export default (props) => {
   })()
 
   const buttonContent = (
-    <View style={{ alignItems: 'center' }}>
+    <View
+      style={
+        props.color !== 'transparent-link' ? { alignItems: 'center' } : {}
+      }>
       <View style={{ flexDirection: 'row', alignItems: 'center' }}>
         {props.icon && <View style={{ marginRight: 5 }}>{props.icon}</View>}
-        <Text style={{ ...TextStyles[textColor], ...textStyle }}>
-          {props.children}
-        </Text>
+        {typeof props.children === 'string' ? (
+          <Text style={{ ...TextStyles[textColor], ...textStyle }}>
+            {props.children}
+          </Text>
+        ) : (
+          props.children
+        )}
       </View>
     </View>
   )

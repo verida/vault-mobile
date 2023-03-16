@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { WalletItem } from 'types/wallet'
@@ -27,6 +28,7 @@ const WalletListItem = ({
   leftIconType = 'dots',
   onPressItem,
 }: WalletListItemProps) => {
+  const { theme } = useTheme()
   const handleOnPressAction = () => {
     if (onPressItem) {
       onPressItem(item)
@@ -60,7 +62,7 @@ const WalletListItem = ({
         </View>
       </View>
       <View>
-        {leftIconType === 'dots' && <MoreIcon />}
+        {leftIconType === 'dots' && <MoreIcon fill={theme.color.icon} />}
         {leftIconType === 'checked' && selected && <CheckBoxIcon />}
       </View>
     </TouchableOpacity>

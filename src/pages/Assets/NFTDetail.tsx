@@ -18,6 +18,7 @@ import FastImage from 'react-native-fast-image'
 
 import { NFTMetadata } from 'api/types'
 import MoreIcon from 'assets/more_icon.svg'
+import { NftItem } from 'components/Assets/NftItem'
 import Button from 'components/Button'
 import Icon from 'components/Icon/Icon'
 import Footer from 'components/Layouts/Footer'
@@ -135,7 +136,6 @@ const NFTDetail = () => {
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,
   }
-  const uri = getNFTImageUri(metadata.image)
   const name = nft.name + ` #${nft.token_id}`
   const hasMinterWallet = nft.minter_address?.startsWith('0x')
 
@@ -175,10 +175,10 @@ const NFTDetail = () => {
     <Screen>
       <NavigationHeader
         title={name}
-        right={{
-          icon: <MoreIcon />,
-          action: handleMoreActions,
-        }}
+        // right={{
+        //   icon: <MoreIcon fill={theme.color.icon} />,
+        //   action: handleMoreActions,
+        // }}
         bottomBorder
       />
       <ScrollView
@@ -189,14 +189,10 @@ const NFTDetail = () => {
         }}
         showsVerticalScrollIndicator={false}>
         <View style={styles.container}>
-          <FastImage
-            style={styles.image}
-            defaultSource={require('assets/picture.png')}
-            source={{
-              uri,
-              priority: FastImage.priority.normal,
-            }}
-            resizeMode={FastImage.resizeMode.cover}
+          <NftItem
+            containerStyle={styles.image}
+            imageStyle={{ width: IMAGE_WIDTH, minHeight: IMAGE_WIDTH }}
+            nft={nft}
           />
           <Headline style={styles.title}>{name}</Headline>
           <SubHeadline style={styles.subTitle}>Description</SubHeadline>
@@ -275,11 +271,11 @@ const NFTDetail = () => {
           </View>
         </View>
       </ScrollView>
-      <Footer>
+      {/* <Footer>
         <Button color='primary' onPress={null}>
           Add to Verida One
         </Button>
-      </Footer>
+      </Footer> */}
     </Screen>
   )
 }

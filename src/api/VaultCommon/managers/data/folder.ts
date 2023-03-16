@@ -86,23 +86,19 @@ export default class Folder {
       row = rowOrId
     }
 
-    console.log('row')
-    console.log(row)
     if (!schemaUri) {
       schemaUri = row.schema
     }
-
-    console.log('schema', schemaUri)
 
     const schema = await this.vaultCommon.client.getSchema(schemaUri)
     const json = await schema.getSchemaJson()
     const layouts = json.layouts
     let properties = json.properties
     if (json.allOf) {
-      // This only gets the lst list of properties!?
+      // This only gets the lst list of properties.. although schemas should
+      // define layouts.view so it doesn't matter
       properties = json.allOf[json.allOf.length - 1].properties
     }
-    console.log(properties)
 
     let viewAttributes = []
     if (layouts && layouts.view) {

@@ -13,7 +13,7 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
-import { useWalletConnect } from 'hooks/useWalletConnect'
+import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 
 import MobileSvg from '../../assets/mobile.svg'
 import Button from '../../components/Button'
@@ -36,6 +36,7 @@ export default (props) => {
   const [ws, setWebsocket] = useState(null)
   const [expired, setExpired] = useState(false)
   const { requestConnect } = useWalletConnect()
+  const { requestConnect: requestConnectv2 } = useWalletConnectv2()
 
   useEffect(() => {
     const init = async () => {
@@ -249,7 +250,11 @@ export default (props) => {
       }
 
       if (info.walletConnect?.uri) {
-        await requestConnect(info.walletConnect.uri)
+        if (info.walletConnect.version === 1) {
+          requestConnect(info.walletConnect.uri)
+        } else if (info.walletConnect.version === 2) {
+          requestConnectv2(info.walletConnect.uri)
+        }
       }
 
       await saveLoginRequest(true, deviceId)
