@@ -1,41 +1,41 @@
+import * as Sentry from '@sentry/react-native'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
-import {
-  Keyboard,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native'
+import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
 // import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
+import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
-import { DECLINE_COLOR } from '../../constants/color'
-import { NUNITO_SANS } from '../../constants/text'
 import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 import UsernameManager from 'api/UsernameManager'
 
-const MAX_TEXTAREA_LENGTH = 255
+/**
+ * Take from the schema, better to fetch them dynamic
+ * https://common.schemas.verida.io/profile/basicProfile/v0.1.0/schema.json
+ */
+const MAX_TEXTAREA_LENGTH = 140
 const MAX_INPUT_LENGTH = 140
 
+// TODO: Refactor this component
 const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState(option.value)
-  const [inputError, setInputError] = useState({
+  const [inputError, setInputError] = useState<{
+    inputMaxLength?: number
+    isExceededMaxLength?: boolean
+  }>({
     inputMaxLength: 0,
     isExceededMaxLength: false,
   })
@@ -52,31 +52,45 @@ const EditProfile = (props: any) => {
     // const fetchedUsername = await usernameManager.get()
     // console.log(fetchedUsername)
     Keyboard.dismiss()
-    const key = title.toLowerCase()
-    const val = (edited.value || edited).trim()
+    try {
+      const key = title.toLowerCase()
+      const val = (edited.value || edited).trim()
 
-    if (publicProfileData[key] === val) return
-    setDisabled(true)
-    const vault = AccountManager.getInstance().vault as any
-
-    await vault.profiles.public.set(key, val)
-    setPublicProfileData({ ...publicProfileData, [key]: val })
+      if (publicProfileData[key] !== val) {
+        setDisabled(true)
+        const vault = AccountManager.getInstance().vault as any
+        await vault.profiles.public.set(key, val)
+        setPublicProfileData({ ...publicProfileData, [key]: val })
+      }
+    } catch (error) {
+      Sentry.captureException(error)
+    }
 
     navigation.goBack()
   }
 
   const handleInput = (text: string, maxLength: number) => {
     setEdited(text)
+    const defaultValue = {
+      inputMaxLength: maxLength,
+      isExceededMaxLength: false,
+    }
     if (text.length >= maxLength) {
-      setInputError({ inputMaxLength: maxLength, isExceededMaxLength: true })
+      setInputError({
+        ...defaultValue,
+        isExceededMaxLength: true,
+      })
     } else {
-      setInputError({ ...inputError, isExceededMaxLength: false })
+      setInputError({
+        ...inputError,
+        isExceededMaxLength: false,
+      })
     }
   }
 
   return (
     <Container>
-      <NavigationHeader title={title} />
+      <NavigationHeader title={title} left={{ icon: 'close' }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}>
@@ -86,17 +100,18 @@ const EditProfile = (props: any) => {
             margin: 20,
             justifyContent: 'space-between',
           }}>
-          <View style={{ flex: 1 }}>
-            <Label>{option.label}</Label>
+          <View style={{ flex: 1, paddingTop: 16 }}>
             {option.type === 'input' && (
-              <TextInput
+              <FormInput
                 placeholder={`Enter the ${option.label}`}
-                style={[
-                  InputStyles.input,
-                  inputError.isExceededMaxLength && styles.inputValidation,
-                ]}
+                label={option.label}
                 value={edited}
                 autoFocus={true}
+                errorMessage={
+                  inputError.isExceededMaxLength
+                    ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
+                    : undefined
+                }
                 maxLength={MAX_INPUT_LENGTH}
                 onChangeText={(text) => {
                   handleInput(text, MAX_INPUT_LENGTH)
@@ -104,24 +119,30 @@ const EditProfile = (props: any) => {
               />
             )}
             {option.type === 'select' && (
-              <DropDownPicker
-                searchable={true}
-                searchablePlaceholder='Search...'
-                placeholder=''
-                defaultValue={option.value}
-                items={COUNTRIES}
-                containerStyle={InputStyles.select}
-                onChangeItem={onChangeItem}
-              />
+              <>
+                <Label style={{ marginTop: 0 }}>{option.label}</Label>
+                <DropDownPicker
+                  searchable={true}
+                  searchablePlaceholder='Search...'
+                  placeholder=''
+                  defaultValue={option.value}
+                  items={COUNTRIES}
+                  containerStyle={InputStyles.select}
+                  onChangeItem={onChangeItem}
+                />
+              </>
             )}
             {option.type === 'textarea' && (
-              <TextInput
+              <FormInput
                 placeholder={`Enter the ${option.label}`}
-                style={[
-                  InputStyles.textarea,
-                  inputError.isExceededMaxLength && styles.inputValidation,
-                ]}
+                label={option.label}
+                inputStyle={{ minHeight: 68 }}
                 value={edited}
+                errorMessage={
+                  inputError.isExceededMaxLength
+                    ? `${option.label} must be less than ${inputError.inputMaxLength} characters`
+                    : undefined
+                }
                 multiline
                 numberOfLines={4}
                 maxLength={MAX_TEXTAREA_LENGTH}
@@ -140,15 +161,10 @@ const EditProfile = (props: any) => {
               defaultCountry='SG'
             />
           )} */}
-            {['textarea', 'input'].includes(option.type) &&
-              inputError.isExceededMaxLength && (
-                <Text style={styles.inputText}>
-                  {option.type} must be less than {inputError.inputMaxLength}{' '}
-                  characters
-                </Text>
-              )}
           </View>
-          <Button disabled={disabled} onPress={saveValue}>
+          <Button
+            disabled={disabled || inputError.isExceededMaxLength}
+            onPress={saveValue}>
             Save Changes
           </Button>
         </Content>
@@ -170,16 +186,3 @@ const mapStateToProps = (rootState: any) => {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)
-
-const styles = StyleSheet.create({
-  inputValidation: {
-    borderColor: DECLINE_COLOR,
-  },
-  inputText: {
-    fontFamily: NUNITO_SANS,
-    color: DECLINE_COLOR,
-    fontStyle: 'italic',
-    fontSize: 12,
-    marginVertical: 4,
-  },
-})

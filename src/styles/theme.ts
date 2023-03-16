@@ -1,13 +1,17 @@
+import Color from 'color'
+
 import {
   BACKGROUND_GREY_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
+  DEFAULT_ICON_COLOR,
   GREY_120,
   LIGHT_GREY_600,
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
   PRIMARY_COLOR_50,
+  PRIMARY_COLOR_100,
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SHADOW_LIGHT_GREY,
@@ -45,21 +49,25 @@ export const defaultTheme = {
     separator: SEPARATOR,
     separatorExtraLight: SEPARATOR_EXTRA_LIGHT,
     icon: TEXT_COLOR,
+    iconDefault: DEFAULT_ICON_COLOR,
     snow: SNOW_COLOR,
 
     veridaGreen: VERIDA_COLOR,
     orange: ORANGE_COLOR,
 
     primary50: PRIMARY_COLOR_50,
+    primary100: PRIMARY_COLOR_100,
 
     transparent: 'transparent',
     black800: BLACK_COLOR_OPACITY(0.8),
+    black600: BLACK_COLOR_OPACITY(0.6),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,
     textGrey100: TEXT_GREY_100,
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
+    textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
     grey120: GREY_120,
 
     shadowLightGrey: SHADOW_LIGHT_GREY,
