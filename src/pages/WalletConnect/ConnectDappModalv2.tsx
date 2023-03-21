@@ -63,6 +63,11 @@ const ConnectDappModalv2 = (props: Props) => {
     () =>
       Object.keys(walletAccounts)
         .filter((key) => Object.keys(requiredNamespaces)?.[0].includes(key))
+        // Filter out watched wallets
+        .filter(
+          (key) =>
+            !!walletAccounts[key].mnemonic || !!walletAccounts[key].privateKey
+        )
         .map((key) => ({
           ...walletAccounts[key],
           label: `${walletAccounts[key].address}`,
