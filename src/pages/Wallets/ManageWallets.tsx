@@ -15,6 +15,7 @@ import CONFIG from 'config/environment'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
+  addWatchedWallet,
   createNewWallet,
   deleteWallet,
   importWallet,
@@ -30,7 +31,8 @@ import {
 import PlusIcon from '../../assets/plus_icon.svg'
 import UnionIcon from '../../assets/union_icon.svg'
 import { BLACK_COLOR, SNOW_COLOR } from '../../constants/color'
-import AddWalletModal from './AddWalletModal'
+import CreateWalletModal from './AddWalletModal'
+import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import ImportWalletModal from './ImportWalletModal'
 
 export type walletIdType = string
@@ -38,33 +40,41 @@ export type walletIdType = string
 type Props = {
   wallets: WalletItem[]
   walletCount: number
-  onCreateNewWallet: () => Promise<void>
-  onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
   navigation: NativeStackNavigationProp<MainStackParams, any>
   selectedWalletId: number | string
   loading: boolean
-  onImportWallet: () => Promise<void>
-  onDeleteWallet: (selectedWalletID: string) => Promise<void>
   chains: any
+  onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
+  onCreateWallet: () => Promise<void>
+  onImportWallet: () => Promise<void>
+  onAddWatchedWallet: () => Promise<void>
+  onDeleteWallet: (selectedWalletID: string) => Promise<void>
 }
 
 const ManageWallets = (props: Props) => {
   const {
     wallets,
     walletCount,
-    onCreateNewWallet,
-    onSetSelectedWallet,
     navigation,
     selectedWalletId,
     loading,
-    onImportWallet,
-    onDeleteWallet,
     chains,
+    onSetSelectedWalletId,
+    onCreateWallet,
+    onImportWallet,
+    onAddWatchedWallet,
+    onDeleteWallet,
   } = props
-  const { showActionSheetWithOptions } = useActionSheet()
-  const [importModalVisible, setImportModalVisible] = useState(false)
-  const [addModalVisible, setAddModalVisible] = useState(false)
+
+  const [createWalletModalVisible, setCreateWalletModalVisible] =
+    useState(false)
+  const [importWalletModalVisible, setImportWalletModalVisible] =
+    useState(false)
+  const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
+    useState(false)
   const [walletList, setWalletList] = useState<WalletItem[]>([])
+
+  const { showActionSheetWithOptions } = useActionSheet()
 
   useEffect(() => {
     if (wallets) {
@@ -96,38 +106,55 @@ const ManageWallets = (props: Props) => {
       ]
     )
 
-  const onPressImportWallet = () => {
-    setImportModalVisible(true)
+  const handlePressImportWallet = () => {
+    setImportWalletModalVisible(true)
   }
 
-  const onPressAddWallet = () => {
-    setAddModalVisible(true)
+  const handlePressCreateWallet = () => {
+    setCreateWalletModalVisible(true)
+  }
+
+  const handlePressAddWatchedWallet = () => {
+    setAddWatchedWalletModalVisible(true)
   }
 
   const navigationActionHandler = () => {
     showActionSheetWithOptions(
       {
-        options: ['Create new wallet', 'Import a wallet', 'Cancel'],
+        options: [
+          'Create new wallet',
+          'Import a wallet',
+          'Add watched wallet', // TODO: Define appropriate label
+          'Cancel',
+        ],
         icons: [
           <PlusIcon key={'Create new wallet'} />,
           <UnionIcon key={'Import a wallet'} />,
+          <PlusIcon key={'Add watched wallet'} />, // TODO: Define appropriate icon
         ],
         tintIcons: false,
-        cancelButtonIndex: 2,
+        cancelButtonIndex: 3,
         tintColor: BLACK_COLOR,
       },
       (buttonIndex) => {
-        if (buttonIndex === 0) {
-          onPressAddWallet()
-        }
-        if (buttonIndex === 1) {
-          onPressImportWallet()
+        switch (buttonIndex) {
+          case 0:
+            handlePressCreateWallet()
+            break
+          case 1:
+            handlePressImportWallet()
+            break
+          case 2:
+            handlePressAddWatchedWallet()
+            break
+          default:
+            break
         }
       }
     )
   }
 
-  const onPressWalletListHandler = (item: WalletItem) => {
+  const handlePressWalletListItem = (item: WalletItem) => {
     showActionSheetWithOptions(
       {
         options: [
@@ -146,7 +173,7 @@ const ManageWallets = (props: Props) => {
         }
         if (buttonIndex === 1) {
           const selectedWalletID = item.id
-          onSetSelectedWallet(selectedWalletID)
+          onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
             CONFIG.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
@@ -181,19 +208,24 @@ const ManageWallets = (props: Props) => {
               <WalletList
                 list={walletList}
                 selectedWalletId={selectedWalletId}
-                onPressItem={onPressWalletListHandler}
+                onPressItem={handlePressWalletListItem}
               />
             </List>
           </Content>
+          <CreateWalletModal
+            hideModal={() => setCreateWalletModalVisible(false)}
+            visible={createWalletModalVisible}
+            onCreateNewWallet={onCreateWallet}
+          />
           <ImportWalletModal
-            hideModal={() => setImportModalVisible(false)}
-            visible={importModalVisible}
+            hideModal={() => setImportWalletModalVisible(false)}
+            visible={importWalletModalVisible}
             onImportWallet={onImportWallet}
           />
-          <AddWalletModal
-            hideModal={() => setAddModalVisible(false)}
-            visible={addModalVisible}
-            onCreateNewWallet={onCreateNewWallet}
+          <AddWatchedWalletModal
+            hideModal={() => setAddWatchedWalletModalVisible(false)}
+            visible={addWatchedWalletModalVisible}
+            onAddWatchedWallet={onAddWatchedWallet}
           />
         </View>
       )}
@@ -219,11 +251,11 @@ const mapStateToProps = (rootState: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onCreateNewWallet: (args: unknown) =>
-      dispatch(createNewWallet(args) as any),
-    onSetSelectedWallet: (walletID: string) =>
+    onSetSelectedWalletId: (walletID: string) =>
       dispatch(setSelectedWallet(walletID) as any),
+    onCreateWallet: (args: unknown) => dispatch(createNewWallet(args) as any),
     onImportWallet: (args: any) => dispatch(importWallet(args) as any),
+    onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
     onDeleteWallet: (walletId: string) =>
       dispatch(deleteWallet(walletId) as any),
   }
