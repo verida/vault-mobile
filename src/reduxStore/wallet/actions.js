@@ -335,6 +335,62 @@ export const importWallet = (data) => {
   }
 }
 
+export const addWatchedWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+    try {
+      const walletsDatastore =
+        await AccountManager.getInstance().context?.openDatastore(
+          'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        )
+
+      if (!walletsDatastore) {
+        throw new Error('Cannot get wallets datastore')
+      }
+
+      const wallet = {
+        label: data.label,
+        walletType: data.blockchain,
+        address: data.publicAddress,
+      }
+
+      const savedWallet = await walletsDatastore.save(wallet)
+      if (!savedWallet) {
+        throw new Error(walletsDatastore.errors)
+      }
+
+      const wallets = await walletsDatastore.getMany()
+
+      if (wallets) {
+        const chains = selectChains(getState())
+        const walletsState = rawDataToReduxState(wallets, chains)
+
+        const savedWalletId = savedWallet.id
+
+        await dispatch(saveUserWallets(walletsState))
+        await dispatch(setSelectedWallet(savedWalletId))
+
+        // save to storage..
+        await SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(walletsState)
+        )
+        await SecureStore.setItemAsync(
+          CONFIG.SELECTED_WALLET_STORAGE_KEY,
+          savedWalletId
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
 export const deleteWallet = (walletId) => {
   return async (dispatch, getState) => {
     dispatch({ type: WALLET_PROCESSING_START })
