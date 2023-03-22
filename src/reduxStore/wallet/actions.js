@@ -1,4 +1,5 @@
 import * as SecureStore from 'helpers/VeridaSecureStore'
+import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
 import { walletProviderApi } from 'wallet/helpers/api'
 import multiChainWallet from 'wallet/helpers/multiChainWallet'
@@ -234,8 +235,7 @@ export const createNewWallet = (data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
-          // TODO: Define a constant for the schema URI
+          WALLET_SCHEMA_0_2_0_URI
         )
 
       const currentWalletsData = getAllWallets(getState().main)
@@ -294,8 +294,7 @@ export const importWallet = (data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
-          // TODO: Define a constant for the schema URI
+          WALLET_SCHEMA_0_2_0_URI
         )
 
       const wallet = {
@@ -343,8 +342,7 @@ export const addWatchedWallet = (data) => {
     try {
       const walletsDatastore =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
-          // TODO: Define a constant for the schema URI
+          WALLET_SCHEMA_0_2_0_URI
         )
 
       if (!walletsDatastore) {
@@ -404,8 +402,7 @@ export const deleteWallet = (walletId) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
-          // TODO: Define a constant for the schema URI
+          WALLET_SCHEMA_0_2_0_URI
         )
 
       await walletDb?.delete(walletId)
@@ -450,8 +447,7 @@ export const renameWallet = (walletId, data) => {
       // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
-          'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
-          // TODO: Define a constant for the schema URI
+          WALLET_SCHEMA_0_2_0_URI
         )
 
       const row = await walletDb?.get(walletId)
