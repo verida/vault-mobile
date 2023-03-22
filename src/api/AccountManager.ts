@@ -303,7 +303,8 @@ class AccountManager extends EventEmitter {
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
+        // TODO: Define a constant for the schema URI
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -359,7 +360,8 @@ class AccountManager extends EventEmitter {
     try {
       await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        'https://vault.schemas.verida.io/wallets/v0.3.0/schema.json'
+        // TODO: Define a constant for the schema URI
       )
 
       const hdWallets: any = await datastore?.getMany()
