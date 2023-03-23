@@ -19,7 +19,9 @@ export default class UsernameManager {
     try {
       const client = await this.getClient()
       const account = await AccountManager.getInstance().getSelectedAccount()
-      const usernames = await client.getUsernames(account!.did.match(/(0x.*)/)[0])
+      const usernames = await client.getUsernames(
+        account!.did.match(/(0x.*)/)[0]
+      )
       return usernames
     } catch (err) {
       console.log(err)

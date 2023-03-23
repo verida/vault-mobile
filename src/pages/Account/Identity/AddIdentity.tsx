@@ -12,6 +12,7 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
+  TextInput,
   View,
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
@@ -25,6 +26,7 @@ import SuccessTick from 'assets/success_tick.svg'
 import WarningIcon from 'assets/warning-icon.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
+import Container from 'components/Container'
 import { StepsIndicator } from 'components/Indicators'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -50,6 +52,11 @@ const pageData = [
     hasBack: true,
   },
   {
+    key: 'username',
+    hasNext: true,
+    hasBack: true,
+  },
+  {
     key: 'location',
     hasNext: true,
     hasBack: true,
@@ -65,6 +72,7 @@ const numberOfPages = pageData.length
 
 enum PageType {
   Name,
+  Username,
   Location,
   Confirmation,
 }
@@ -74,11 +82,15 @@ const AddIdentity = () => {
   const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
-  const { top } = useSafeAreaInsets()
+  const { top, bottom } = useSafeAreaInsets()
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Name)
-  const [enabledClaimUsername] = useState(false) // FIXME: disable input username
+  const [enabledClaimUsername] = useState(true) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
+
+  const publicNameInputRef = useRef<TextInput>(null)
+  const usernameInputRef = useRef<TextInput>(null)
+  const [manualFocusUsenameInput, setManualFocusUsenameInput] = useState(true)
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
@@ -198,6 +210,10 @@ const AddIdentity = () => {
             !isEmpty(profile.name) &&
             profile.name?.length <= PUBLIC_PROFILE_NAME_MAX_LENGTH,
         }
+      case PageType.Username:
+        return {
+          formValidated: true,
+        }
       case PageType.Location:
         return { formValidated: !isEmpty(profile.country) }
       case PageType.Confirmation:
@@ -217,30 +233,36 @@ const AddIdentity = () => {
   }
 
   const onNext = useCallback(() => {
-    if (currentPage < numberOfPages - 1) {
-      pagerRef.current?.setPage(currentPage + 1)
-      setCurrentPage(currentPage + 1)
-      if (currentPage === PageType.Confirmation - 1) {
-        // navigate to last page and create identifier
-        createIdentifier()
+    // Keyboard.dismiss()
+    setTimeout(() => {
+      if (currentPage < numberOfPages - 1) {
+        pagerRef.current?.setPage(currentPage + 1)
+        setCurrentPage(currentPage + 1)
+        if (currentPage === PageType.Confirmation - 1) {
+          // navigate to last page and create identifier
+          createIdentifier()
+        }
       }
-    }
+    }, 0)
   }, [createIdentifier, currentPage])
 
   const onBack = useCallback(() => {
+    // Keyboard.dismiss()
     if (processing) {
       // Useful for handling hardware back button on Android
       Alert.alert("Hold on, we're building your Identity")
       return
     }
 
-    if (currentPage > 0) {
-      pagerRef.current?.setPage(currentPage - 1)
-      setCurrentPage(currentPage - 1)
-      showRetry && setShowRetry(false)
-    } else {
-      navigation.goBack()
-    }
+    setTimeout(() => {
+      if (currentPage > 0) {
+        pagerRef.current?.setPage(currentPage - 1)
+        setCurrentPage(currentPage - 1)
+        showRetry && setShowRetry(false)
+      } else {
+        navigation.goBack()
+      }
+    }, 0)
   }, [currentPage, navigation, processing, showRetry])
 
   const onRetry = useCallback(() => {
@@ -264,150 +286,252 @@ const AddIdentity = () => {
     }, [onBack])
   )
 
-  return (
-    <Screen withSafeAreaView>
-      {currentPage !== PageType.Confirmation && (
-        <>
-          <NavigationHeader
-            title={`Step ${currentPage + 1} of ${numberOfPages - 1}`}
-            bottomBorder={false}
-            left={
-              pageData[currentPage].hasBack || showRetry
-                ? {
-                    icon: (
-                      <Icon
-                        name='arrow-back'
-                        style={{ color: theme.color.icon }}
-                      />
-                    ),
-                    action: () => onBack(),
-                  }
-                : ({} as any)
-            }
-          />
-          <StepsIndicator
-            style={{ paddingHorizontal: theme.spacing.m }}
-            currentStep={currentPage}
-            numberOfSteps={numberOfPages - 1}
-          />
-        </>
-      )}
+  const renderTopNav = useCallback(() => {
+    return currentPage !== PageType.Confirmation ? (
+      <>
+        <NavigationHeader
+          title={`Step ${currentPage + 1} of ${numberOfPages - 1}`}
+          bottomBorder={false}
+          left={
+            pageData[currentPage].hasBack || showRetry
+              ? {
+                  icon: (
+                    <Icon
+                      name='arrow-back'
+                      style={{ color: theme.color.icon }}
+                    />
+                  ),
+                  action: () => onBack(),
+                }
+              : ({} as any)
+          }
+        />
+        <StepsIndicator
+          style={{ paddingHorizontal: theme.spacing.m }}
+          currentStep={currentPage}
+          numberOfSteps={numberOfPages - 1}
+        />
+      </>
+    ) : null
+  }, [currentPage, onBack, showRetry, theme.color.icon, theme.spacing.m])
 
-      <View style={styles.main}>
-        <PagerView
-          style={styles.pagerView}
-          initialPage={currentPage}
-          scrollEnabled={false}
-          ref={pagerRef}
-          overScrollMode='auto'>
-          <View key='name' style={styles.landing}>
-            <ScrollView
-              contentContainerStyle={[
-                styles.scrollViewContainer,
-                styles.contentPadding,
-              ]}
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps='handled'>
-              <Headline style={styles.title}>Public name</Headline>
-              <Text>
-                A public name visible to other users and applications. You can
-                change this anytime.
-              </Text>
-              <Spacer vertical='l' />
-              <FormInput
-                label='Public Name'
-                placeholder='Enter your public name'
-                autoCorrect={false}
-                autoComplete='off'
-                returnKeyType='next'
-                errorMessage={
-                  profile.name?.length > PUBLIC_PROFILE_NAME_MAX_LENGTH
-                    ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters`
-                    : undefined
-                }
-                onChangeText={(text) =>
-                  setProfile((p) => ({ ...p, name: text }))
-                }
-                value={profile.name}
-                onSubmitEditing={() => formValidated && onNext()}
-              />
-              <Label style={{ marginTop: 2 }}>
-                Your public name is required and public
-              </Label>
-              {enabledClaimUsername && (
-                <>
-                  <Spacer vertical='xxxl' />
-                  <Paragraph>
-                    Optionally, you can claim a Verida Username. It is linked to
-                    your identity. (Coming soon)
-                  </Paragraph>
-                  <Spacer vertical='xxl' />
-                  <FormInput
-                    label='Check your username is available'
-                    withAnimatedChecbox={profile.username.length > 0}
-                    autoCapitalize='none'
-                    autoCorrect={false}
-                    autoFocus
-                    loading={checkingUsername}
-                    onChangeText={(text) =>
-                      setProfile((p) => ({ ...p, username: text }))
-                    }
-                    onBlur={() => {
-                      if (profile.username.length > 0) checkUsername()
-                    }}
-                    onFocus={() => {
-                      setUsernameError(undefined)
-                    }}
-                    value={profile.username}
-                    checked={availableUsername}
-                    errorMessage={usernameError}
-                  />
-                </>
-              )}
-            </ScrollView>
-          </View>
-          <View key='location' style={styles.landing}>
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              keyboardShouldPersistTaps='handled'
-              contentContainerStyle={{
-                ...styles.contentPadding,
-                paddingBottom: theme.spacing.xxxxl,
-              }}>
-              <Headline style={styles.title}>Data Region</Headline>
-              <Paragraph>
-                Select your country to determine the default servers that store
-                your encrypted personal data. You can change both your country
-                and the data regions later.
-              </Paragraph>
-              <Spacer vertical='l' />
-              <Label style={{ marginBottom: 2 }}>Country</Label>
-              <DropDownPicker
-                searchable
-                searchablePlaceholder='Search for country'
-                showArrow
-                dropDownMaxHeight={160}
-                placeholder=''
-                items={COUNTRIES}
-                containerStyle={InputStyles.select}
-                onChangeItem={onCountryChange}
-              />
-              <Spacer vertical='m' />
-              <AnimatedCheckbox
-                checked={showCountryInPublicProfile}
-                onToggle={toggleCountryCheckbox}
-                label='Show country in my public profile'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
-                textStyle={{ fontSize: theme.fontSize.m }}
-              />
-              {/* Add more space to alow scroll on showing the dropdown list */}
-              <Spacer height={320} />
-            </ScrollView>
-          </View>
+  const renderBottomButtons = useCallback(() => {
+    return (
+      <View style={styles.bottomNavContainer}>
+        {currentPage !== PageType.Confirmation && (
+          <Button
+            style={styles.nextButton}
+            disabled={!formValidated}
+            onPress={onNext}>
+            Next
+          </Button>
+        )}
+
+        {currentPage === PageType.Confirmation ? (
+          showRetry ? (
+            <Button
+              style={styles.retryButton}
+              disabled={formValidated}
+              onPress={onRetry}>
+              Retry
+            </Button>
+          ) : !processing ? (
+            <View>
+              <View style={styles.seedPhraseRemindView}>
+                <View style={{ alignItems: 'center', marginTop: 3 }}>
+                  <WarningIcon />
+                </View>
+                <Text
+                  style={{
+                    flex: 1,
+                    marginLeft: theme.spacing.s,
+                  }}>
+                  Record your seed phrase to create a backup for your identity.
+                  You can do it later.
+                </Text>
+              </View>
+              <Button
+                style={styles.retryButton}
+                color='transparent-border'
+                onPress={() => navigation.navigate('SeedPhrase')}>
+                Record Seed Phrase
+              </Button>
+              <Button
+                style={styles.retryButton}
+                onPress={() => {
+                  params.mode === AddIdentityMode.Add
+                    ? navigation.goBack()
+                    : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+                }}>
+                Done
+              </Button>
+            </View>
+          ) : null
+        ) : null}
+      </View>
+    )
+  }, [
+    currentPage,
+    formValidated,
+    navigation,
+    onNext,
+    onRetry,
+    params.mode,
+    processing,
+    showRetry,
+    styles.bottomNavContainer,
+    styles.nextButton,
+    styles.retryButton,
+    styles.seedPhraseRemindView,
+    theme.spacing.s,
+  ])
+
+  return (
+    <Screen withSafeAreaView navBar={renderTopNav()}>
+      <PagerView
+        style={styles.pagerView}
+        initialPage={currentPage}
+        keyboardDismissMode='none'
+        onPageSelected={() => {
+          setTimeout(() => {
+            if (manualFocusUsenameInput && currentPage === PageType.Username) {
+              usernameInputRef.current?.focus()
+              setManualFocusUsenameInput(false)
+            }
+          }, 0)
+        }}
+        ref={pagerRef}
+        overScrollMode='auto'>
+        <Container
+          key='name'
+          withKeyboardAvoidingView
+          keyboadAvoidingViewProps={{ keyboardVerticalOffset: top + 60 }}>
+          <ScrollView
+            contentContainerStyle={[
+              styles.scrollViewContainer,
+              styles.contentPadding,
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'>
+            <Headline style={styles.title}>Public name</Headline>
+            <Text>
+              A public name visible to other users and applications. You can
+              change this anytime.
+            </Text>
+            <Spacer vertical='l' />
+            <FormInput
+              label='Public Name'
+              ref={publicNameInputRef}
+              placeholder='Enter your public name'
+              autoCorrect={false}
+              autoFocus={true}
+              inputAccessoryViewID='isv'
+              autoComplete='off'
+              returnKeyType='next'
+              errorMessage={
+                profile.name?.length > PUBLIC_PROFILE_NAME_MAX_LENGTH
+                  ? `Public name must be shorter than ${PUBLIC_PROFILE_NAME_MAX_LENGTH} characters`
+                  : undefined
+              }
+              onChangeText={(text) => setProfile((p) => ({ ...p, name: text }))}
+              value={profile.name}
+              onSubmitEditing={() => formValidated && onNext()}
+            />
+            <Label style={{ marginTop: 2 }}>
+              Your public name is required and public
+            </Label>
+          </ScrollView>
+          {renderBottomButtons()}
+        </Container>
+
+        <Container
+          key='username'
+          withKeyboardAvoidingView
+          keyboadAvoidingViewProps={{ keyboardVerticalOffset: top + 60 }}>
+          <ScrollView
+            contentContainerStyle={[
+              styles.scrollViewContainer,
+              styles.contentPadding,
+            ]}
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'>
+            <Headline style={styles.title}>Username</Headline>
+            <Text>Your username is unique to your identity.</Text>
+            <Spacer vertical='l' />
+            <FormInput
+              label='Username'
+              ref={usernameInputRef}
+              withAnimatedChecbox={profile.username.length > 0}
+              autoCapitalize='none'
+              autoCorrect={false}
+              autoFocus={false}
+              inputAccessoryViewID='isv'
+              autoComplete='off'
+              loading={checkingUsername}
+              onChangeText={(text) =>
+                setProfile((p) => ({ ...p, username: text }))
+              }
+              onBlur={() => {
+                if (profile.username.length > 0) checkUsername()
+              }}
+              onFocus={() => {
+                setUsernameError(undefined)
+              }}
+              value={profile.username}
+              checked={availableUsername}
+              errorMessage={usernameError}
+            />
+            <Label style={{ marginTop: 2 }}>
+              Your username is public and optional
+            </Label>
+          </ScrollView>
+          {renderBottomButtons()}
+        </Container>
+
+        <Container key='location'>
+          <ScrollView
+            showsVerticalScrollIndicator={false}
+            keyboardShouldPersistTaps='handled'
+            contentContainerStyle={{
+              ...styles.contentPadding,
+              paddingBottom: theme.spacing.xxxxl,
+            }}>
+            <Headline style={styles.title}>Data Region</Headline>
+            <Paragraph>
+              Select your country to determine the default servers that store
+              your encrypted personal data. You can change both your country and
+              the data regions later.
+            </Paragraph>
+            <Spacer vertical='l' />
+            <Label style={{ marginBottom: 2 }}>Country</Label>
+            <DropDownPicker
+              searchable
+              searchablePlaceholder='Search for country'
+              showArrow
+              autoFocus={false}
+              dropDownMaxHeight={160}
+              placeholder=''
+              items={COUNTRIES}
+              containerStyle={InputStyles.select}
+              onChangeItem={onCountryChange}
+            />
+            <Spacer vertical='m' />
+            <AnimatedCheckbox
+              checked={showCountryInPublicProfile}
+              onToggle={toggleCountryCheckbox}
+              label='Show country in my public profile'
+              highlightColor={theme.color.success}
+              checkmarkColor={theme.color.onSuccess}
+              boxOutlineColor={theme.color.grey400}
+              textStyle={{ fontSize: theme.fontSize.m }}
+            />
+            {/* Add more space to alow scroll on showing the dropdown list */}
+            <Spacer height={320} />
+          </ScrollView>
+          {renderBottomButtons()}
+        </Container>
+        <Container key='confirmation'>
           <View
-            key='confirmation'
             style={[
               styles.landing,
               { marginTop: Platform.OS === 'ios' ? 0 : top }, // Some layout trick for Android, TODO: reafactor
@@ -531,61 +655,9 @@ const AddIdentity = () => {
               />
             </ScrollView>
           </View>
-        </PagerView>
-
-        <View style={styles.bottomNavContainer}>
-          {currentPage !== PageType.Confirmation && (
-            <Button
-              style={styles.nextButton}
-              disabled={!formValidated}
-              onPress={onNext}>
-              Next
-            </Button>
-          )}
-
-          {currentPage === PageType.Confirmation ? (
-            showRetry ? (
-              <Button
-                style={styles.retryButton}
-                disabled={formValidated}
-                onPress={onRetry}>
-                Retry
-              </Button>
-            ) : !processing ? (
-              <View>
-                <View style={styles.seedPhraseRemindView}>
-                  <View style={{ alignItems: 'center', marginTop: 3 }}>
-                    <WarningIcon />
-                  </View>
-                  <Text
-                    style={{
-                      flex: 1,
-                      marginLeft: theme.spacing.s,
-                    }}>
-                    Record your seed phrase to create a backup for your
-                    identity. You can do it later.
-                  </Text>
-                </View>
-                <Button
-                  style={styles.retryButton}
-                  color='transparent-border'
-                  onPress={() => navigation.navigate('SeedPhrase')}>
-                  Record Seed Phrase
-                </Button>
-                <Button
-                  style={styles.retryButton}
-                  onPress={() => {
-                    params.mode === AddIdentityMode.Add
-                      ? navigation.goBack()
-                      : navigation.navigate('CreatePin') // Create a pin for the first time create an account
-                  }}>
-                  Done
-                </Button>
-              </View>
-            ) : null
-          ) : null}
-        </View>
-      </View>
+          {renderBottomButtons()}
+        </Container>
+      </PagerView>
     </Screen>
   )
 }
@@ -631,6 +703,7 @@ const creatStyles = (theme: Theme) => {
       flex: 1,
     },
     scrollViewContainer: {
+      flexGrow: 1,
       paddingBottom: theme.spacing.xxl,
     },
     center: {
