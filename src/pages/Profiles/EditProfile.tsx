@@ -5,9 +5,7 @@ import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-// import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
-import UsernameManager from 'api/UsernameManager'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { setPublicProfileData } from 'reduxStore/general/actions'
@@ -42,14 +40,6 @@ const EditProfile = (props: any) => {
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
-    /**
-     * Example code to save a username
-     */
-    // const usernameManager = new UsernameManager()
-    // const username = 'myusername.vda'
-    // await usernameManager.set(username)
-    // const fetchedUsername = await usernameManager.get()
-    // console.log(fetchedUsername)
     Keyboard.dismiss()
     try {
       const key = title.toLowerCase()

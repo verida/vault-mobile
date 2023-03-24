@@ -14,6 +14,7 @@ export type Account = {
 export type UserData = {
   name: string
   country: string
+  username?: string
   avatar?: ImageSourcePropType
   description?: string
 }
@@ -127,7 +128,7 @@ export interface ClaimBadgeResponse {
 
 export type AddIdentityStepType =
   | 'CreateIdentifier'
-  | 'DefineNameAndUsername'
+  | 'ClaimUsername'
   | 'StorageLocation'
   | 'CreateProfile'
 

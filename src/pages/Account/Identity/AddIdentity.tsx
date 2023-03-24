@@ -82,7 +82,7 @@ const AddIdentity = () => {
   const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
-  const { top, bottom } = useSafeAreaInsets()
+  const { top } = useSafeAreaInsets()
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Name)
   const [enabledClaimUsername] = useState(true) // FIXME: disable input username
@@ -107,39 +107,12 @@ const AddIdentity = () => {
   const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
 
   const checkUsername = useCallback(async () => {
-    // FIXME: Remove fake check-username availability request
+    // FIXME: Need an API for checking username is available to claim
     setCheckingUsername(true)
     setTimeout(() => {
-      if (Math.random() >= 0.5) {
-        setAvailableUsername(true)
-        setUsernameError(undefined)
-      } else {
-        setAvailableUsername(false)
-        setUsernameError('Username is taken')
-      }
-
       setCheckingUsername(false)
-    }, 3000)
-  }, [])
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const claimUsername = useCallback(async () => {
-    // FIXME: Remove fake claim-username request
-    setConfirmationState((cstate) => ({
-      state: {
-        ...cstate?.state,
-        ['DefineNameAndUsername']: 'Loading',
-      },
-    }))
-    setTimeout(() => {
-      setConfirmationState((cstate) => ({
-        state: {
-          ...cstate?.state,
-          ['DefineNameAndUsername']:
-            Math.random() >= 0.5 ? 'Success' : 'Failure',
-        },
-      }))
-    }, 3000)
+      setAvailableUsername(true)
+    }, 300)
   }, [])
 
   const [confirmationState, setConfirmationState] = useState<{
@@ -166,6 +139,7 @@ const AddIdentity = () => {
       await AccountManager.getInstance().createAccount(
         {
           name: profile.name?.trim() ?? '',
+          username: profile.username ?? '',
           country: showCountryInPublicProfile ? profile?.country : '',
           description: '',
         },
@@ -180,6 +154,7 @@ const AddIdentity = () => {
           }))
         }
       )
+
       setDoneCreateAccount(true)
     } catch (error: any) {
       if (
@@ -319,12 +294,31 @@ const AddIdentity = () => {
     return (
       <View style={styles.bottomNavContainer}>
         {currentPage !== PageType.Confirmation && (
-          <Button
-            style={styles.nextButton}
-            disabled={!formValidated}
-            onPress={onNext}>
-            Next
-          </Button>
+          <>
+            {currentPage === PageType.Username && (
+              <Button
+                color='transparent'
+                style={styles.nextButton}
+                disabled={!formValidated}
+                onPress={() => {
+                  setProfile((p) => ({
+                    ...p,
+                    username: '',
+                  }))
+
+                  onNext()
+                }}>
+                Skip
+              </Button>
+            )}
+
+            <Button
+              style={styles.nextButton}
+              disabled={!formValidated}
+              onPress={onNext}>
+              Next
+            </Button>
+          </>
         )}
 
         {currentPage === PageType.Confirmation ? (
@@ -460,17 +454,19 @@ const AddIdentity = () => {
             <Spacer vertical='l' />
             <FormInput
               label='Username'
+              placeholder='veridaname.vda'
+              suffix={profile.username ? '.vda' : undefined}
               ref={usernameInputRef}
               withAnimatedChecbox={profile.username.length > 0}
+              keyboardType='url'
               autoCapitalize='none'
               autoCorrect={false}
               autoFocus={false}
-              inputAccessoryViewID='isv'
               autoComplete='off'
               loading={checkingUsername}
-              onChangeText={(text) =>
+              onChangeText={(text) => {
                 setProfile((p) => ({ ...p, username: text }))
-              }
+              }}
               onBlur={() => {
                 if (profile.username.length > 0) checkUsername()
               }}
@@ -609,16 +605,13 @@ const AddIdentity = () => {
                   <Spacer vertical='m' />
                   <AnimatedCheckbox
                     checked={
-                      confirmationState?.state?.DefineNameAndUsername ===
-                      'Success'
+                      confirmationState?.state?.ClaimUsername === 'Success'
                     }
                     failed={
-                      confirmationState?.state?.DefineNameAndUsername ===
-                      'Failure'
+                      confirmationState?.state?.ClaimUsername === 'Failure'
                     }
                     showLoading={
-                      confirmationState?.state?.DefineNameAndUsername ===
-                      'Loading'
+                      confirmationState?.state?.ClaimUsername === 'Loading'
                     }
                     label='Claim username'
                     highlightColor={theme.color.success}

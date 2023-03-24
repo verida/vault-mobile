@@ -1,11 +1,20 @@
 import { useTheme } from 'contexts/ThemeContext'
-import React, { Ref, useCallback, useRef, useState } from 'react'
+import React, {
+  ForwardedRef,
+  MutableRefObject,
+  Ref,
+  RefObject,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
 import {
   StyleSheet,
   TextInput as OriginalTextInput,
   TextStyle,
   View,
 } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { Label } from 'components/Typography/Label'
@@ -31,10 +40,12 @@ export type FormInputProps = React.ComponentPropsWithRef<
   withAnimatedChecbox?: boolean
   checked?: boolean
   loading?: boolean
+  suffix?: string
+  suffixStyle?: TextStyle
 }
 
 export const FormInput = React.forwardRef(
-  (props: FormInputProps, receivedRef: Ref<OriginalTextInput>) => {
+  (props: FormInputProps, receivedRef: ForwardedRef<OriginalTextInput>) => {
     const {
       label,
       placeholder,
@@ -48,13 +59,15 @@ export const FormInput = React.forwardRef(
       withAnimatedChecbox,
       loading,
       checked,
+      suffix,
+      suffixStyle,
       ...rest
     } = props
     const { theme } = useTheme()
     const styles = useThemeAwareStyle(createStyles)
     const [focused, setFocused] = useState(false)
-    const fallbackRef = useRef(null)
-    const ref = receivedRef || fallbackRef
+    const fallbackRef = useRef<OriginalTextInput>(null)
+    const ref = (receivedRef || fallbackRef) as RefObject<OriginalTextInput>
     const onFocus = useCallback(
       (e) => {
         setFocused(true)
@@ -94,34 +107,99 @@ export const FormInput = React.forwardRef(
         <View
           testID={`${testID}.inputContainer`}
           pointerEvents={disabled ? 'none' : 'auto'}>
-          <OriginalTextInput
-            {...rest}
-            testID={testID}
-            placeholder={placeholder}
-            ref={ref}
-            editable={!disabled}
-            underlineColorAndroid={theme.color.transparent}
-            style={[
-              styles.textInput,
-              inputStyle,
-              focused
-                ? { borderColor: theme.color.veridaGreen }
-                : errorMessage
-                ? {
-                    borderColor: theme.color.error,
-                  }
-                : {},
-              disabled
-                ? {
-                    color: theme.color.textGrey100,
-                    backgroundColor: theme.color.veryLightGrey,
-                  }
-                : {},
-            ]}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            placeholderTextColor={theme.color.placeholderTextColor}
-          />
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ref.current?.focus()
+            }}>
+            <View
+              style={
+                [
+                  // {
+                  //   flexDirection: 'row',
+                  //   alignItems: 'flex-start',
+                  //   justifyContent: 'flex-start',
+                  // },
+                  // styles.textInput,
+                  // inputStyle,
+                  // focused
+                  //   ? { borderColor: theme.color.veridaGreen }
+                  //   : errorMessage
+                  //   ? {
+                  //       borderColor: theme.color.error,
+                  //     }
+                  //   : {},
+                  // disabled
+                  //   ? {
+                  //       color: theme.color.textGrey100,
+                  //       backgroundColor: theme.color.veryLightGrey,
+                  //     }
+                  //   : {},
+                ]
+              }>
+              <OriginalTextInput
+                {...rest}
+                testID={testID}
+                placeholder={placeholder}
+                ref={ref}
+                editable={!disabled}
+                underlineColorAndroid={theme.color.transparent}
+                style={[
+                  {
+                    textAlign: 'left',
+                    backgroundColor: 'red',
+                    padding: 0,
+                    paddingRight: 2,
+                  },
+                  {
+                    flexDirection: 'row',
+                    alignItems: 'flex-start',
+                    justifyContent: 'flex-start',
+                  },
+                  styles.textInput,
+                  inputStyle,
+                  focused
+                    ? { borderColor: theme.color.veridaGreen }
+                    : errorMessage
+                    ? {
+                        borderColor: theme.color.error,
+                      }
+                    : {},
+                  disabled
+                    ? {
+                        color: theme.color.textGrey100,
+                        backgroundColor: theme.color.veryLightGrey,
+                      }
+                    : {},
+                ]}
+                onFocus={onFocus}
+                onBlur={onBlur}
+                placeholderTextColor={theme.color.placeholderTextColor}
+              />
+              {suffix && (
+                <Label
+                  style={[
+                    {
+                      position: 'absolute',
+                      color: theme.color.textLightGrey30,
+                      fontSize: 14,
+                      top: '50%',
+                      right: 40,
+                      transform: [
+                        {
+                          translateY: -8,
+                        },
+                      ],
+                      textAlign: 'left',
+                      flexGrow: 1,
+                      minWidth: 0,
+                    },
+                    suffixStyle,
+                  ]}>
+                  {suffix}
+                </Label>
+              )}
+            </View>
+          </TouchableWithoutFeedback>
           {withAnimatedChecbox && !focused && (
             <View
               style={{
