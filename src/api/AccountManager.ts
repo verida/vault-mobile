@@ -549,7 +549,6 @@ class AccountManager extends EventEmitter {
       updateProgress?.('CreateProfile', 'Failure')
       // If the corrupted account is already connected, we need to remove it
       if (connected && this.selectedAccount) {
-        console.log('Remove account')
         await this.logout([this.selectedAccount?.did])
       }
       Sentry.captureException(e)

@@ -175,7 +175,7 @@ const AddIdentity = () => {
     setTimeout(() => {
       pagerRef.current?.setPage(PageType.Confirmation)
     }, 100)
-  }, [profile?.country, profile.name, showCountryInPublicProfile])
+  }, [profile, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -373,10 +373,7 @@ const AddIdentity = () => {
     params.mode,
     processing,
     showRetry,
-    styles.bottomNavContainer,
-    styles.nextButton,
-    styles.retryButton,
-    styles.seedPhraseRemindView,
+    styles,
     theme.spacing.s,
   ])
 
@@ -385,7 +382,7 @@ const AddIdentity = () => {
       <PagerView
         style={styles.pagerView}
         initialPage={currentPage}
-        keyboardDismissMode='none'
+        scrollEnabled={false}
         onPageSelected={() => {
           setTimeout(() => {
             if (manualFocusUsenameInput && currentPage === PageType.Username) {
@@ -394,8 +391,7 @@ const AddIdentity = () => {
             }
           }, 0)
         }}
-        ref={pagerRef}
-        overScrollMode='auto'>
+        ref={pagerRef}>
         <Container
           key='name'
           withKeyboardAvoidingView
