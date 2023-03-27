@@ -7,6 +7,24 @@ export default class UsernameManager {
   private client?: VeridaNameClient
 
   /**
+   * Check if a username exists
+   * 
+   * @return boolean true if the username already exists
+   */
+  public async usernameExists(username: string): Promise<boolean> {
+    const client = await this.getClient()
+
+    try {
+      const usernames = await client.getUsernames(username)
+      if (usernames.length) {
+        return true
+      }
+    } catch (err) {
+      return false
+    }
+  }
+
+  /**
    * Get usernames for the current DID
    *
    * Note: The protocol supports multiple usernames, but in
@@ -61,9 +79,9 @@ export default class UsernameManager {
 
     const nameClient = new VeridaNameClient({
       callType: didClientConfig.callType,
-      identifier: account.did,
+      did: account.did,
       signKey: account.privateKey,
-      chainNameOrId: CONFIG.ENVIRONMENT,
+      network: CONFIG.ENVIRONMENT,
       web3Options: didClientConfig.web3Config,
     })
 
