@@ -2,16 +2,16 @@
 # yarn lockfile v1
 
 
-"@0xpolygonid/js-sdk@^1.0.0-beta.2":
-  version "1.0.0-beta.2"
-  resolved "https://registry.yarnpkg.com/@0xpolygonid/js-sdk/-/js-sdk-1.0.0-beta.2.tgz#75b960d5f1f5d180ca6cfa9f3b6a4277044c4646"
-  integrity sha512-mL6GHq3SyIh2y1IT+Z/i/IwnzJKSm0DFgKMjr9P9ivT3DAIpPUyXyoZUvoRvLOHEJIVXMnv3UG37Kw7rmetuzw==
+"@0xpolygonid/js-sdk@^1.0.0-beta.3":
+  version "1.0.0-beta.3"
+  resolved "https://registry.yarnpkg.com/@0xpolygonid/js-sdk/-/js-sdk-1.0.0-beta.3.tgz#b09ebbd38b42308f4593327e68262c6bba933292"
+  integrity sha512-Oe/YL3VDQYrQxr6uP9Le81lsb8kl8c4Z32s/4Ox00c6wW+UAgQ44+MiG3r2FRe8kFHxOx1+HTNhb5ahmvyAfTQ==
   dependencies:
-    "@iden3/js-crypto" "1.0.0-beta.0"
-    "@iden3/js-iden3-core" "1.0.0-beta.0"
-    "@iden3/js-jsonld-merklization" "1.0.0-beta.3"
+    "@iden3/js-crypto" "1.0.0-beta.1"
+    "@iden3/js-iden3-core" "1.0.0-beta.2"
+    "@iden3/js-jsonld-merklization" "1.0.0-beta.6"
     "@iden3/js-jwz" "1.0.0-beta.2"
-    "@iden3/js-merkletree" "1.0.0-beta.0"
+    "@iden3/js-merkletree" "1.0.0-beta.2"
     "@lumeweb/js-sha3-browser" "^0.8.1"
     ajv "^6.12.6"
     axios "^1.2.1"
@@ -21,6 +21,7 @@
     crypto-browserify "^3.12.0"
     ethers "^5.7.2"
     ffjavascript "^0.2.57"
+    idb-keyval "^6.2.0"
     ipfs-http-client "56.0.3"
     rfc4648 "^1.5.2"
     snarkjs "^0.5.0"
@@ -2299,10 +2300,18 @@
     fastfile "0.0.20"
     ffjavascript "^0.2.48"
 
-"@iden3/js-crypto@1.0.0-beta.0", "@iden3/js-crypto@v1.0.0-beta.0":
+"@iden3/js-crypto@1.0.0-beta.0":
   version "1.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/@iden3/js-crypto/-/js-crypto-1.0.0-beta.0.tgz#97722ec63b12d93fa57c98e13c90a9c1ca6808f8"
   integrity sha512-T+aC/MInoAPhutGTSCIUN7dwSS72C4QrXF0Cjd5OlQdlv7HpamFRo4ma+trMGSIwgCvhmjDrslP4uhSMxWLYww==
+  dependencies:
+    blake-hash "^2.0.0"
+    ffjavascript "^0.2.57"
+
+"@iden3/js-crypto@1.0.0-beta.1":
+  version "1.0.0-beta.1"
+  resolved "https://registry.yarnpkg.com/@iden3/js-crypto/-/js-crypto-1.0.0-beta.1.tgz#1fa5159810c27e36996c1e19ba3a10e1d33d2750"
+  integrity sha512-axRGUuHJsLrPksjPZY+5ZFncWPUyo8Inhqh+gNLkxEbMKp0wo7TK4p0KNv9mDKqtNMP3A/MpeqDX/FbFTWfkPw==
   dependencies:
     blake-hash "^2.0.0"
     ffjavascript "^0.2.57"
@@ -2316,13 +2325,22 @@
     base58-js "^1.0.4"
     cross-sha256 "^1.2.0"
 
-"@iden3/js-jsonld-merklization@1.0.0-beta.3":
-  version "1.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@iden3/js-jsonld-merklization/-/js-jsonld-merklization-1.0.0-beta.3.tgz#c46766a0a4a0561ca673dc84c0b529ebe10b13c1"
-  integrity sha512-HGau5bd7L4PbA5zVQp4NROnYVjkg7vs49H5/81WvffMyMHAY8mZj//Y7w5o3s+64Ox7wU6Z/WZRXxP6K0DNeUw==
+"@iden3/js-iden3-core@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@iden3/js-iden3-core/-/js-iden3-core-1.0.0-beta.2.tgz#fe0b7e7ec4b903c956a61510708a05319566e78a"
+  integrity sha512-1nQQa1NavQ2+6REmpVG7kawN+P4PmSFKYwDK/UIcQl94oNMgwfQm0ygVwWePVGqHrQSlidD9mH7C874tJlXzJA==
   dependencies:
-    "@iden3/js-crypto" v1.0.0-beta.0
-    "@iden3/js-merkletree" v1.0.0-beta.0
+    "@iden3/js-crypto" "1.0.0-beta.1"
+    base58-js "^1.0.4"
+    cross-sha256 "^1.2.0"
+
+"@iden3/js-jsonld-merklization@1.0.0-beta.6":
+  version "1.0.0-beta.6"
+  resolved "https://registry.yarnpkg.com/@iden3/js-jsonld-merklization/-/js-jsonld-merklization-1.0.0-beta.6.tgz#86ca2c92b62bfb925eb812438af55a129931c643"
+  integrity sha512-Wtu843yXOoaq2e5O9Dd8g/BQcX1bS036l7jdvcsuvNNPkj2YnCmrx0wHQf6F9aTCCt2QHBJvIX8UhHZACi5cmw==
+  dependencies:
+    "@iden3/js-crypto" "1.0.0-beta.1"
+    "@iden3/js-merkletree" "1.0.0-beta.2"
     jsonld "8.1.0"
     jsonld-context-parser "^2.2.2"
     n3 "^1.16.3"
@@ -2355,12 +2373,20 @@
     rfc4648 "^1.5.2"
     snarkjs "0.5.0"
 
-"@iden3/js-merkletree@1.0.0-beta.0", "@iden3/js-merkletree@v1.0.0-beta.0":
+"@iden3/js-merkletree@1.0.0-beta.0":
   version "1.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/@iden3/js-merkletree/-/js-merkletree-1.0.0-beta.0.tgz#7b211e04b72887e4a3b50a57c596c9435e29c8dc"
   integrity sha512-1CGhecr4TgD8/jbTKO0cONj/poDVd2tToVSnu4XKjWlUTbuxw1CZEL7yi3g0V5nuhFuAGqcIZhCZmVucBdYxsw==
   dependencies:
     "@iden3/js-crypto" "1.0.0-beta.0"
+
+"@iden3/js-merkletree@1.0.0-beta.2":
+  version "1.0.0-beta.2"
+  resolved "https://registry.yarnpkg.com/@iden3/js-merkletree/-/js-merkletree-1.0.0-beta.2.tgz#8f5b98e2789a2907b8246f6b8195400146c5b332"
+  integrity sha512-7Q9QnvHSZOZw9vNa7OWsc7Y+gmnHFAGLFo0l1PlaUlNHz1Yji/CFDPcCR6/LuYvvGfyMkn4BIcbu0tWtiIA+SQ==
+  dependencies:
+    "@iden3/js-crypto" "1.0.0-beta.1"
+    idb-keyval "^6.2.0"
 
 "@ipld/dag-cbor@^6.0.3":
   version "6.0.15"
@@ -9870,6 +9896,13 @@ iconv-lite@^0.6.2:
   dependencies:
     safer-buffer ">= 2.1.2 < 3.0.0"
 
+idb-keyval@^6.2.0:
+  version "6.2.0"
+  resolved "https://registry.yarnpkg.com/idb-keyval/-/idb-keyval-6.2.0.tgz#3af94a3cc0689d6ee0bc9e045d2a3340ea897173"
+  integrity sha512-uw+MIyQn2jl3+hroD7hF8J7PUviBU7BPKWw4f/ISf32D4LoGu98yHjrzWWJDASu9QNrX10tCJqk9YY0ClWm8Ng==
+  dependencies:
+    safari-14-idb-fix "^3.0.0"
+
 idna-uts46-hx@^2.3.1:
   version "2.3.1"
   resolved "https://registry.yarnpkg.com/idna-uts46-hx/-/idna-uts46-hx-2.3.1.tgz#a1dc5c4df37eee522bf66d969cc980e00e8711f9"
@@ -15900,6 +15933,11 @@ rxjs@~7.4.0:
   integrity sha512-7SQDi7xeTMCJpqViXh8gL/lebcwlp3d831F05+9B44A4B0WfsEwUQHR64gsH1kvJ+Ep/J9K2+n1hVl1CsGN23w==
   dependencies:
     tslib "~2.1.0"
+
+safari-14-idb-fix@^3.0.0:
+  version "3.0.0"
+  resolved "https://registry.yarnpkg.com/safari-14-idb-fix/-/safari-14-idb-fix-3.0.0.tgz#450fc049b996ec7f3fd9ca2f89d32e0761583440"
+  integrity sha512-eBNFLob4PMq8JA1dGyFn6G97q3/WzNtFK4RnzT1fnLq+9RyrGknzYiM/9B12MnKAxuj1IXr7UKYtTNtjyKMBog==
 
 safe-buffer@5.1.2, safe-buffer@~5.1.0, safe-buffer@~5.1.1:
   version "5.1.2"
