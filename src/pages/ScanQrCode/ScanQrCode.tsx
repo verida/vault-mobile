@@ -31,8 +31,10 @@ function ScanQrCode(
     setEnabled(true)
 
     // fake PolygonID scan
-    const polygonIdData =
-      '{"id":"4985bca7-a5d4-4ea7-a8fa-e9611f740925","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"4985bca7-a5d4-4ea7-a8fa-e9611f740925","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=939523","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}'
+    // auth request
+    //const polygonIdData = '{"id":"4985bca7-a5d4-4ea7-a8fa-e9611f740925","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"4985bca7-a5d4-4ea7-a8fa-e9611f740925","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=939523","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}'
+    // receive credential
+    const polygonIdData='{"id":"4e0fe5e3-a5bd-4f3a-86bb-32eb3d52833a","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/credentials/1.0/offer","thid":"4e0fe5e3-a5bd-4f3a-86bb-32eb3d52833a","body":{"url":"https://self-hosted-platform.polygonid.me/v1/agent","credentials":[{"id":"a210692f-c897-11ed-8e4f-0242c0a88005","description":"KYCAgeCredential"}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5","to":"did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4"}'
 
     const polygonIdSeed = 'daveseedseedseedseedseedseeduser'
     const pm = new PolygonIDManager(polygonIdSeed)
