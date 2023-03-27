@@ -12,7 +12,9 @@ import {
   EthConnectionConfig,
   EthStateStorage,
   FetchHandler,
+  ICredentialStorage,
   ICredentialWallet,
+  IDataSource,
   IDataStorage,
   Identity,
   IdentityStorage,
@@ -38,8 +40,11 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { Blockchain, DID, DidMethod, NetworkId } from '@iden3/js-iden3-core'
 import { proving } from '@iden3/js-jwz'
+import { IDatabase } from '@verida/types'
 import Axios from 'axios'
 import ReactNativeBlobUtil from 'react-native-blob-util'
+
+import AccountManager from './AccountManager'
 
 const RPC_URL = 'https://rpc-mumbai.maticvigil.com'
 const CONTRACT_ADDRESS = '0x134B1BE34911E39A8397ec6289782989729807a4'
@@ -74,15 +79,27 @@ export default class PolygonIDManager {
       case 'https://iden3-communication.io/authorization/1.0/request':
         result = await this.handleAuthRequest(jsonData)
         break
-      //case
+      case 'https://iden3-communication.io/credentials/1.0/offer':
+        result = await this.handleFetch(jsonData)
+        break
     }
     return result
   }
 
   private async handleFetch(jsonData: any) {
+    console.log('handleFetch')
     await this.init()
-    const fetchHandler = new FetchHandler(this.packageMgr)
-    const res = await fetchHandler.handleCredentialOffer(userDID, msgBytes)
+
+    const fetchHandler = new FetchHandler(this.packageMgr!)
+    const msgBytes = Buffer.from(JSON.stringify(jsonData), 'utf-8')
+    const res = await fetchHandler.handleCredentialOffer(this.did!, msgBytes)
+
+    console.log('handleCredentialOffer() result:')
+    console.log(res)
+    const saveResult = await this.credentialWallet!.saveAll(res)
+    console.log('saved!')
+    console.log(saveResult)
+    return res
   }
 
   private async handleAuthRequest(jsonData: any) {
@@ -111,6 +128,7 @@ export default class PolygonIDManager {
       )
       console.log('response data:')
       console.log(response.data)
+      return response.data
     } catch (err) {
       console.log(err.response)
     }
@@ -121,7 +139,7 @@ export default class PolygonIDManager {
       return
     }
 
-    this.dataStorage = this.initDataStorage()
+    this.dataStorage = await this.initDataStorage()
     this.credentialWallet = await this.initCredentialWallet(this.dataStorage)
 
     this.identityWallet = await this.initIdentityWallet(
@@ -190,18 +208,25 @@ export default class PolygonIDManager {
     )
   }
 
-  private initDataStorage(): IDataStorage {
+  private async initDataStorage(): Promise<IDataStorage> {
     const conf: EthConnectionConfig = defaultEthConnectionConfig
     conf.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4'
     conf.url = 'https://rpc-mumbai.maticvigil.com'
 
+    const context = await AccountManager.getInstance().context
+    const databases: any = {
+      credentials: await context!.openDatabase('polygonid_credentials'),
+      identity: await context!.openDatabase('polygonid_identity'),
+      profile: await context!.openDatabase('polygonid_profile'),
+    }
+
     const dataStorage = {
       credential: new CredentialStorage(
-        new InMemoryDataSource<W3CCredential>()
+        new VeridaDataSource<W3CCredential>(databases.credentials)
       ),
       identity: new IdentityStorage(
-        new InMemoryDataSource<Identity>(),
-        new InMemoryDataSource<Profile>()
+        new VeridaDataSource<Identity>(databases.identity),
+        new VeridaDataSource<Profile>(databases.profile)
       ),
       mt: new InMemoryMerkleTreeStorage(40),
       states: new EthStateStorage(conf),
@@ -304,5 +329,55 @@ export default class PolygonIDManager {
       console.log(err)
       throw err
     }
+  }
+}
+
+/**
+ * Generic data source
+ */
+class VeridaDataSource<Type> implements IDataSource<Type> {
+  private database: IDatabase
+
+  public constructor(database: IDatabase) {
+    this.database = database
+  }
+
+  /** saves in the memory */
+  public async save(key: string, value: Type, keyName = 'id'): Promise<void> {
+    console.log('VeridaDataSource.save: ', key, keyName, value)
+    let record: any
+    try {
+        record = await this.database.get(key)
+    } catch (err: any) {
+        console.log('not found?')
+        console.log(err)
+        record = value
+        record._id = value[keyName]
+    }
+
+    await this.database.save(record)
+  }
+
+  /** updates in the memory */
+  patchData(value: Type[]): void {
+    throw new Error('Not supported')
+  }
+
+  /** gets value from from the memory */
+  public async get(key: string, keyName = 'id'): Promise<Type | undefined> {
+    console.log('VeridaDataSource.get(): ', key, keyName)
+    return <Type>await this.database.get(key)
+  }
+
+  /** loads from value from the memory */
+  public load(): Type[] {
+    throw new Error('Not supported')
+  }
+
+  /** deletes from value from the memory */
+  public async delete(key: string, keyName = 'id'): Promise<void> {
+    console.log('VeridaDataSource.delete(): ', key, keyName)
+    const record: any = await this.database.get(key)
+    await this.database.delete(record)
   }
 }
