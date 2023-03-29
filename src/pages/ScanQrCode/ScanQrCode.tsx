@@ -15,7 +15,7 @@ import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
-let REQUEST_ID = 0
+const REQUEST_ID = 0
 
 function ScanQrCode(
   props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
@@ -31,26 +31,18 @@ function ScanQrCode(
   useEffect(() => {
     setEnabled(true)
 
-    fakePolygon()
+    //fakePolygon()
   }, [navigation])
 
   // Temporary method to fake polygon requests for testing purposes
-  const fakePolygon = async () => {
+  const fakePolygon = async (request?: string) => {
     // fake PolygonID scan
     // auth request
-    const requests = [
-      '{"id":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=198059","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
 
-      // auth request (connect)
-      //'{"id":"d4f9a5c1-ea40-46b4-86ef-4101f8eace15","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"d4f9a5c1-ea40-46b4-86ef-4101f8eace15","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=956037","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
-      // receive credential
-      //'{"id":"d20e7cf4-911a-4163-8374-82003eda7e04","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/credentials/1.0/offer","thid":"d20e7cf4-911a-4163-8374-82003eda7e04","body":{"url":"https://self-hosted-platform.polygonid.me/v1/agent","credentials":[{"id":"a5ee6ae7-cd4b-11ed-8e4f-0242c0a88005","description":"KYCAgeCredential"}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5","to":"did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4"}',
-      // auth request (verify)
-      //'{"id":"807cb8ea-5feb-4c4f-81d0-d756707d5024","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"807cb8ea-5feb-4c4f-81d0-d756707d5024","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=62378","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"skipClaimRevocationCheck":true,"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
-    ]
-
-    const polygonIdData = requests[REQUEST_ID]
-    REQUEST_ID++
+    if (!request) {
+      request =
+        '{"id":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=198059","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}'
+    }
 
     const polygonIdSeed = 'daveseedseedseedseedseedseeduser'
     const pm = new PolygonIDManager(polygonIdSeed)
@@ -64,19 +56,21 @@ function ScanQrCode(
       console.log(`download progress; ${progress.count} / ${progress.total}`)
     })
 
-    const qrData = pm.decodeQRCode(polygonIdData)
+    const qrData = pm.decodeQRCode(request)
 
     // @todo: check data type
     switch (qrData.type) {
       // Request (this may be a request to connect or a request to submit a ZKP)
       case 'https://iden3-communication.io/authorization/1.0/request':
-        if (qrData.body.scope) {
+        if (qrData.body.scope && qrData.body.scope.length) {
           // We have a scope object implying we need to submit a ZKP
           console.log(
             `Do you want to submit a ZKP to ${qrData.hostname} (${qrData.from}) with the following data?`,
             JSON.stringify(qrData.body.scope)
           )
-          console.log('@todo: display screen asking user to click "share" to submit ZK proof')
+          console.log(
+            '@todo: display screen asking user to click "share" to submit ZK proof'
+          )
         } else {
           // We have a generic connection request
           console.log(
@@ -100,7 +94,9 @@ function ScanQrCode(
           `Do you want to accept a ZK credential from ${qrData.hostname} (${qrData.from}) with the following credential data?`,
           JSON.stringify(qrData.body.credentials)
         )
-        console.log('@todo: display screen asking user to click "save" to store ZK credential')
+        console.log(
+          '@todo: display screen asking user to click "save" to store ZK credential'
+        )
         try {
           // returns void if no issues
           await pm.handleFetch(qrData)
@@ -150,9 +146,11 @@ function ScanQrCode(
       // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
       if (data.match('did:polygonid:polygon')) {
         navigation.goBack()
-        console.log('data------')
-        console.log(data)
-        requestPolygonId(data)
+        console.log('POLYGON ID Request')
+        fakePolygon(data)
+        //console.log('data------')
+        //console.log(data)
+        //requestPolygonId(data)
         return
       }
 
