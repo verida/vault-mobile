@@ -1,361 +1,152 @@
-import * as sentry from '@sentry/react-native'
-import WalletConnect from '@walletconnect/client'
-import isEmpty from 'lodash/isEmpty'
-import isEqual from 'lodash/isEqual'
-import React, {
-  createContext,
-  useCallback,
-  useEffect,
-  useRef,
-  useState,
-} from 'react'
-import { AppState, AppStateStatus } from 'react-native'
-import { useDispatch } from 'react-redux'
-import useDeepCompareEffect from 'use-deep-compare-effect'
+import { useNavigation } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
+import React, { createContext, useCallback, useEffect } from 'react'
 
-import usePrevious from 'hooks/usePrevious'
-import { useReduxState } from 'hooks/useReduxState'
-import {
-  approveWalletConnectSession,
-  rejectWalletConnectSession,
-  removeWalletConnectDapp,
-  setWalletConnectPeerMeta,
-} from 'reduxStore/actions'
-import { authenticatedSelector, dappsSelector } from 'reduxStore/selectors'
-import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
+import { DownloadProgressEvent, PolygonIDManager } from 'api/PolygonIDManager'
 
-import { useModal } from '../hooks/useModal'
-import ConnectDappModal from '../pages/WalletConnect/ConnectDappModal'
-import TransactionRequestModal from '../pages/WalletConnect/TransactionRequestModal'
-import { store } from '../reduxStore'
-import { getWalletConnectConfig } from '../wallet-connect/config'
-import { getWalletController } from '../wallet-connect/controllers'
-import { IEtherWalletController } from '../wallet-connect/controllers/type'
-import type { DApp } from '../wallet-connect/types'
+// Temporary data for testing purposes
+const testRequests = {
+  // '{"id":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=198059","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
+  connect:
+    // auth request (connect)
+    '{"id":"d4f9a5c1-ea40-46b4-86ef-4101f8eace15","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"d4f9a5c1-ea40-46b4-86ef-4101f8eace15","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=956037","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
+  offer:
+    // receive credential
+    '{"id":"d20e7cf4-911a-4163-8374-82003eda7e04","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/credentials/1.0/offer","thid":"d20e7cf4-911a-4163-8374-82003eda7e04","body":{"url":"https://self-hosted-platform.polygonid.me/v1/agent","credentials":[{"id":"a5ee6ae7-cd4b-11ed-8e4f-0242c0a88005","description":"KYCAgeCredential"}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5","to":"did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4"}',
+  verify:
+    // auth request (verify)
+    '{"id":"807cb8ea-5feb-4c4f-81d0-d756707d5024","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"807cb8ea-5feb-4c4f-81d0-d756707d5024","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=62378","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"skipClaimRevocationCheck":true,"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
+}
 
-const events = [
-  'session_request',
-  'session_update',
-  'call_request',
-  'disconnect',
-  'connect',
-]
+// Temporary initialisation of PolygonIDManager for testing purposes
+const polygonIdSeed = 'daveseedseedseedseedseedseeduser'
+const polygonIdManager = new PolygonIDManager(polygonIdSeed)
 
-export const PolygonIdContext = createContext<
-  ReturnType<typeof usePolygonIdContext>
->(null as any)
+type PolygonIdContextType = {
+  handleQRCodeData: (data: string) => void
+}
 
-// TODO: https://github.com/verida/vault-mobile/issues/761
+const polygonIdContextDefaultValue: PolygonIdContextType = {
+  handleQRCodeData: () => {
+    // empty default function
+  },
+}
 
-function usePolygonIdContext() {
-  const dispatch = useDispatch()
-  const dapps = useReduxState(dappsSelector)
-  const authenticated = useReduxState(authenticatedSelector)
-  const appState = useRef(AppState.currentState)
-  const selectedWalletId = useReduxState(selectedWalletSelector)
-  const previousDapps = usePrevious(dapps)
+export const PolygonIdContext = createContext(polygonIdContextDefaultValue)
 
-  const { showModal, dismissModal } = useModal()
+function usePolygonIdContext(): PolygonIdContextType {
+  const navigation = useNavigation()
 
-  const initializedRef = useRef(false)
-  const connectorsRef = useRef<Record<string, WalletConnect>>({})
-
-  const [activeIndex] = useState(0) // Only support 1 wallet
-
-  const { current: openRequest } = useRef(
-    async (connectorKey: string, request: any) => {
-      // FIXME: dapps closure stale state issue
-      const apps = store.getState().walletConnect.dapps
-      const connector = connectorsRef.current[connectorKey]
-      const dapp = apps.find((app) => app.session.key === connectorKey)
-      const payload = { ...request }
-
-      const params = payload.params[0]
-      if (
-        dapp &&
-        (request.method === 'eth_sendTransaction' ||
-          request.method === 'eth_signTransaction')
-      ) {
-        payload.params[0] = await (
-          getWalletController(dapp) as IEtherWalletController
-        ).populateTransaction(params)
-      }
-
-      const approveRequest = async () => {
-        try {
-          await getWalletConnectConfig().rpcEngine.signer(
-            payload,
-            {
-              connector,
-              address: dapp?.accounts?.[0],
-              activeIndex,
-              chainId: dapp?.chainId ?? 0,
-            },
-            dapp
-          )
-        } catch (error) {
-          if (connector) {
-            connector.rejectRequest({
-              id: payload.id,
-              error: { message: 'Failed or Rejected Request' },
-            })
-          }
-          sentry.captureException(error)
-        }
-      }
-
-      const rejectRequest = () => {
-        connector.rejectRequest({
-          id: payload.id,
-          error: { message: 'Failed or Rejected Request' },
-        })
-      }
-
-      showModal(
-        <TransactionRequestModal
-          client={connector.session.peerMeta as any}
-          payload={payload}
-          dismissModal={() => {
-            rejectRequest()
-            dismissModal()
-          }}
-          renderPayload={(requestPayload) =>
-            getWalletConnectConfig().rpcEngine.render(requestPayload)
-          }
-          approveRequest={async () => {
-            await approveRequest()
-            dismissModal()
-          }}
-          rejectRequest={() => {
-            rejectRequest()
-            dismissModal()
-          }}
-        />
-      )
-    }
-  )
-
-  const { current: resubscribeToEvents } = useRef(() => {
-    if (!authenticated) return
-    dapps.forEach(async (dapp: DApp) => {
-      subscribeToEvents(dapp.session.key)
-    })
-  })
-
-  const showDappConnectModal = (
-    connectorKey: string,
-    connector: any,
-    peerMeta: any
-  ) => {
-    peerMeta?.name &&
-      showModal(
-        <ConnectDappModal
-          client={peerMeta}
-          connect={(walletAddress, chainId: number, chain: DApp['chain']) => {
-            dispatch(
-              approveWalletConnectSession({
-                walletId: selectedWalletId,
-                connector,
-                chainId,
-                chain,
-                accounts: [walletAddress],
-              })
-            )
-            resubscribeToEvents()
-            dismissModal()
-          }}
-          dismissModal={() => {
-            dispatch(
-              rejectWalletConnectSession({
-                walletId: selectedWalletId,
-                connector,
-              })
-            )
-            dismissModal()
-          }}
-        />
-      )
-  }
-
-  const subscribeToEvents = (connectorKey: string) => {
-    const connector = connectorsRef.current[connectorKey]
-    if (connector) {
-      // unsubscribe from previous events if any
-      events.forEach((event) => {
-        connector.off(event)
-      })
-
-      connector.on('session_request', (error, payload) => {
-        if (error) {
-          throw error
-        }
-        const { peerMeta } = payload.params[0]
-        dispatch(
-          setWalletConnectPeerMeta({
-            walletId: selectedWalletId,
-            connector,
-            peerMeta,
-          })
-        )
-        showDappConnectModal(connectorKey, connector, peerMeta)
-      })
-
-      connector.on('session_update', (error) => {
-        if (error) {
-          throw error
-        }
-      })
-
-      connector.on('call_request', async (error, payload) => {
-        if (error) {
-          throw error
-        }
-        openRequest(connectorKey, payload)
-      })
-
-      connector.on('connect', (error) => {
-        if (error) {
-          throw error
-        }
-      })
-
-      connector.on('disconnect', (error) => {
-        if (error) {
-          throw error
-        }
-
-        events.forEach((event) => {
-          connector.off(event)
-        })
-        delete connectorsRef.current[connector.key]
-        dispatch(
-          removeWalletConnectDapp({
-            walletId: selectedWalletId,
-            key: connector.key,
-          })
-        )
-      })
-    }
-  }
-
-  const requestConnect = async (uri: string) => {
-    const connector = new WalletConnect({
-      uri,
-    })
-
-    connectorsRef.current[connector.key] = connector
-
-    if (!connector.connected) {
-      await connector.createSession()
-    }
-
-    subscribeToEvents(connector.key)
-  }
-
-  useEffect(() => {
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        resubscribeToEvents()
-      }
-
-      appState.current = nextAppState
-    }
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange
-    )
-
-    return () => {
-      subscription?.remove()
-    }
-  }, [resubscribeToEvents])
-
-  const disconnect = useCallback(async (apps?: DApp[]) => {
-    for await (const app of apps || []) {
-      const connector = connectorsRef.current[app.session.key]
-      if (connector) {
-        events.forEach((event) => {
-          connector.off(event)
-        })
-        delete connectorsRef.current[app.session.key]
-      }
-    }
+  // Define event listeners
+  const initialisingEventHandler = useCallback((starting: boolean) => {
+    console.log(starting ? 'initializing' : 'initialization complete')
   }, [])
 
-  const connectDApps = useRef(async (apps?: DApp[]) => {
-    for await (const dapp of apps || []) {
-      if (!dapp.session.peerId) {
-        dispatch(
-          removeWalletConnectDapp({
-            walletId: selectedWalletId,
-            key: dapp.session.key,
-          })
-        )
-        return
-      }
+  const downloadingEventHandler = useCallback(
+    (progress: DownloadProgressEvent) => {
+      console.log(`download progress; ${progress.count} / ${progress.total}`)
+    },
+    []
+  )
 
-      if (connectorsRef.current[dapp.session.key]) {
-        subscribeToEvents(dapp.session.key)
-        return
-      }
-
-      try {
-        const wcConnector = new WalletConnect({
-          session: dapp.session,
-        })
-        connectorsRef.current = {
-          ...connectorsRef.current,
-          [dapp.session.key]: wcConnector,
-        }
-
-        subscribeToEvents(wcConnector.key)
-      } catch (error) {
-        sentry.captureException(error)
-      }
-    }
-  }).current
-
-  useDeepCompareEffect(() => {
-    const reconnectDapps = async () => {
-      if (initializedRef.current && !isEqual(previousDapps, dapps)) {
-        await disconnect(previousDapps)
-        await connectDApps(dapps)
-      }
-    }
-    reconnectDapps()
-
-    return () => {
-      initializedRef.current && disconnect(dapps)
-    }
-  }, [dapps])
-
+  // Set up event listeners
   useEffect(() => {
-    const tid = setTimeout(() => {
-      if (!authenticated || initializedRef.current || isEmpty(dapps)) return
-
-      connectDApps(dapps)
-      initializedRef.current = true
-    }, 2000)
-
+    polygonIdManager.on('initializing', initialisingEventHandler)
+    polygonIdManager.on('downloading', downloadingEventHandler)
     return () => {
-      clearTimeout(tid)
+      polygonIdManager.off('initializing', initialisingEventHandler)
+      polygonIdManager.off('downloading', downloadingEventHandler)
     }
-  }, [authenticated, connectDApps, dapps])
+  }, [initialisingEventHandler, downloadingEventHandler])
+
+  const handleQRCodeData = useCallback(
+    async (qrCodeData: string) => {
+      // TODO: Remove testing code when implemented
+      // const data = polygonIdManager.decodeQRCode(testRequests.connect)
+      const data = polygonIdManager.decodeQRCode(qrCodeData)
+
+      switch (data.type) {
+        case 'https://iden3-communication.io/authorization/1.0/request':
+          // Either a Connection request or a ZK Proof request
+          if (data.body.scope) {
+            // We have a scope object implying we need to submit a ZK proof
+            navigation.navigate('ProofRequest', {
+              connectionName: `${data.hostname} (${data.from})`,
+              requestMessage: `Do you want to submit a ZKP with the following data?`,
+              data,
+              onAccept: async () => {
+                try {
+                  await polygonIdManager.handleAuthRequest(data)
+                  // TODO: define what to do afterwards (confirmation screen?)
+                } catch (error: unknown) {
+                  Sentry.captureException(error)
+                  // TODO: Handle error in UI. Use error.message?
+                }
+              },
+              onDecline: () => {
+                if (navigation.canGoBack()) {
+                  navigation.goBack()
+                }
+              },
+            })
+          } else {
+            // We have a generic connection request
+            navigation.navigate('ConnectionRequest', {
+              connectionName: `${data.hostname} (${data.from})`,
+              onAccept: async () => {
+                try {
+                  await polygonIdManager.handleAuthRequest(data)
+                  // TODO: define what to do afterwards (confirmation screen?)
+                } catch (error: unknown) {
+                  Sentry.captureException(error)
+                  // TODO: Handle error in UI. Use error.message?
+                }
+              },
+              onDecline: () => {
+                if (navigation.canGoBack()) {
+                  navigation.goBack()
+                }
+              },
+            })
+          }
+          break
+        case 'https://iden3-communication.io/credentials/1.0/offer':
+          // Offer to save a new ZK credential
+          navigation.navigate('IncomingDataRequest', {
+            connectionName: `${data.hostname} (${data.from})`,
+            requestMessage: `Do you want to accept a ZK credential with the following credential data?`,
+            incomingData: [data],
+            onAccept: async () => {
+              try {
+                await polygonIdManager.handleFetch(data)
+                // TODO: define what to do afterwards (confirmation screen?)
+              } catch (error: unknown) {
+                Sentry.captureException(error)
+                // TODO: Handle error in UI. Use error.message?
+              }
+            },
+            onDecline: () => {
+              if (navigation.canGoBack()) {
+                navigation.goBack()
+              }
+            },
+          })
+          break
+      }
+    },
+    [navigation]
+  )
 
   return {
-    dapps,
-    requestConnect,
+    handleQRCodeData,
   }
 }
 
-export function WalletConnectProvider({ children }: any) {
-  const walletConnect = useWalletConnectContext()
+export function PolygonIdProvider({ children }: any) {
+  const polygonIdContextValue = usePolygonIdContext()
   return (
-    <WalletConnectContext.Provider value={walletConnect}>
+    <PolygonIdContext.Provider value={polygonIdContextValue}>
       {children}
-    </WalletConnectContext.Provider>
+    </PolygonIdContext.Provider>
   )
 }

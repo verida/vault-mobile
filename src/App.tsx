@@ -1,7 +1,10 @@
+import 'react-native-url-polyfill/auto'
+
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { PolygonIdProvider } from 'contexts/PolygonIdContext'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
@@ -28,7 +31,6 @@ import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
-import 'react-native-url-polyfill/auto'
 
 import { ModalProvider } from './contexts/ModalContext'
 import { WalletConnectProvider } from './contexts/WalletConnectContext'
@@ -119,8 +121,10 @@ function App() {
                       <ActionSheetProvider>
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
-                            <RootNavigator />
-                            <MetaServerChecks />
+                            <PolygonIdProvider>
+                              <RootNavigator />
+                              <MetaServerChecks />
+                            </PolygonIdProvider>
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>
                       </ActionSheetProvider>
