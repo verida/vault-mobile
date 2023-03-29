@@ -1,4 +1,5 @@
 import {
+  AbstractPrivateKeyStore,
   AuthDataPrepareFunc,
   AuthHandler,
   BjjProvider,
@@ -12,7 +13,6 @@ import {
   EthConnectionConfig,
   EthStateStorage,
   FetchHandler,
-  ICredentialStorage,
   ICredentialWallet,
   IDataSource,
   IDataStorage,
@@ -22,7 +22,6 @@ import {
   IIdentityWallet,
   InMemoryDataSource,
   InMemoryMerkleTreeStorage,
-  InMemoryPrivateKeyStore,
   IPackageManager,
   IProofService,
   KMS,
@@ -42,6 +41,7 @@ import { Blockchain, DID, DidMethod, NetworkId } from '@iden3/js-iden3-core'
 import { proving } from '@iden3/js-jwz'
 import { IDatabase } from '@verida/types'
 import Axios from 'axios'
+import { EventEmitter } from 'events'
 import ReactNativeBlobUtil from 'react-native-blob-util'
 
 import AccountManager from './AccountManager'
@@ -51,7 +51,27 @@ const CONTRACT_ADDRESS = '0x134B1BE34911E39A8397ec6289782989729807a4'
 
 const storageCache: any = {}
 
-export default class PolygonIDManager {
+export interface QRCodeResult {
+  id: string
+  reason: string
+  body: Record<string, unknown>
+  from: string
+  type: string
+  hostname: string
+  requestBytes: Buffer
+}
+
+export interface DownloadProgressEvent {
+  count: number
+  total: number
+}
+
+/**
+ * @emits initializing
+ * @emits downloading
+ * @emits handleRequest
+ */
+export class PolygonIDManager extends EventEmitter {
   privateKey: string
 
   did?: DID
@@ -62,47 +82,46 @@ export default class PolygonIDManager {
   dataStorage?: IDataStorage
 
   public constructor(privateKey: string) {
+    super()
     this.privateKey = privateKey
   }
 
-  public async handleQRCode(authMessage: string): Promise<any> {
-    const jsonData = JSON.parse(authMessage)
+  public decodeQRCode(authMessage: string): QRCodeResult {
+    const result = JSON.parse(authMessage)
 
-    console.log('JSON DATA')
-    console.log(jsonData)
-    const requestType = jsonData.type
-
-    let result: any
-
-    // @todo: check data type
-    switch (requestType) {
-      case 'https://iden3-communication.io/authorization/1.0/request':
-        result = await this.handleAuthRequest(jsonData)
-        break
-      case 'https://iden3-communication.io/credentials/1.0/offer':
-        result = await this.handleFetch(jsonData)
-        break
+    if (result.body.callbackUrl) {
+      const url = new URL(result.callbackUrl)
+      result.hostname = url.hostname
+    } else if (result.body.url) {
+      const url = new URL(result.url)
+      result.hostname = url.hostname
     }
-    return result
+
+    result.requestBytes = Buffer.from(JSON.stringify(result), 'utf-8')
+    return <QRCodeResult>result
   }
 
-  private async handleFetch(jsonData: any) {
+  public async handleFetch(requestData: QRCodeResult): Promise<void> {
     console.log('handleFetch')
     await this.init()
 
     const fetchHandler = new FetchHandler(this.packageMgr!)
-    const msgBytes = Buffer.from(JSON.stringify(jsonData), 'utf-8')
-    const res = await fetchHandler.handleCredentialOffer(this.did!, msgBytes)
+    console.log(this.did)
+    const res = await fetchHandler.handleCredentialOffer(
+      this.did!,
+      requestData.requestBytes
+    )
 
     console.log('handleCredentialOffer() result:')
     console.log(res)
-    const saveResult = await this.credentialWallet!.saveAll(res)
+    await this.credentialWallet!.saveAll(res)
     console.log('saved!')
-    console.log(saveResult)
+
     return res
   }
 
-  private async handleAuthRequest(jsonData: any) {
+  public async handleAuthRequest(requestData: QRCodeResult): Promise<void> {
+    console.log('handleAuthRequest start')
     await this.init()
 
     const authHandler = new AuthHandler(
@@ -111,26 +130,35 @@ export default class PolygonIDManager {
       this.credentialWallet!
     )
 
-    console.log(jsonData)
-    const msgBytes = Buffer.from(JSON.stringify(jsonData), 'utf-8')
+    let authRes
+    try {
+      console.log('handleAuthorizationRequestForGenesisDID')
+      authRes = await authHandler.handleAuthorizationRequestForGenesisDID(
+        this.did!,
+        requestData.requestBytes
+      )
 
-    const authRes = await authHandler.handleAuthorizationRequestForGenesisDID(
-      this.did!,
-      msgBytes
-    )
-
-    console.log(authRes)
+      console.log('authRes:')
+      console.log(authRes)
+    } catch (err: any) {
+      console.log('auth handler error!')
+      console.log(err)
+      throw err
+    }
 
     try {
       const response = await Axios.post(
-        `${authRes.authRequest.body.callbackUrl}`,
+        `${authRes!.authRequest!.body!.callbackUrl}`,
         authRes.token
       )
-      console.log('response data:')
-      console.log(response.data)
       return response.data
-    } catch (err) {
-      console.log(err.response)
+    } catch (err: any) {
+      console.log('callback error!')
+      if (err.response && err.response.status) {
+        console.log(err.response.status)
+      } else {
+        console.log(err)
+      }
     }
   }
 
@@ -139,6 +167,7 @@ export default class PolygonIDManager {
       return
     }
 
+    this.emit('initializing', true)
     this.dataStorage = await this.initDataStorage()
     this.credentialWallet = await this.initCredentialWallet(this.dataStorage)
 
@@ -168,44 +197,64 @@ export default class PolygonIDManager {
     conf.url = RPC_URL
     conf.contractAddress = CONTRACT_ADDRESS
     const ethStorage = new EthStateStorage(conf)
-    console.log(conf)
 
-    const proofService = new ProofService(
+    this.proofService = new ProofService(
       this.identityWallet,
       this.credentialWallet,
       circuitStorage,
       ethStorage
     )
 
-    const now = new Date().getTime()
-    console.log('getting verification key')
-    const verificationKey = await this.fetchPolygonFile(
-      `${CircuitId.AuthV2.toString()}/verification_key.json`
+    circuitStorage.saveCircuitData(
+      CircuitId.AuthV2,
+      await this.initCircuitStorage(CircuitId.AuthV2)
     )
-    console.log('getting circuit')
-    const provingKey = await this.fetchPolygonFile(
-      `${CircuitId.AuthV2.toString()}/circuit_final.zkey`
-    )
-    console.log('getting wasm')
-    const wasm = await this.fetchPolygonFile(
-      `${CircuitId.AuthV2.toString()}/circuit.wasm`
-    )
-    console.log('fetched!')
-    const later = new Date().getTime()
-    console.log(later - now)
 
-    const authV2Data = {
-      circuitId: CircuitId.AuthV2,
+    circuitStorage.saveCircuitData(
+      CircuitId.AtomicQuerySigV2,
+      await this.initCircuitStorage(CircuitId.AtomicQuerySigV2)
+    )
+
+    this.packageMgr = await this.getPackageMgr(
+      await circuitStorage.loadCircuitData(CircuitId.AuthV2),
+      this.proofService.generateAuthV2Inputs.bind(this.proofService),
+      this.proofService.verifyState.bind(this.proofService)
+    )
+
+    this.emit('initializing', false)
+  }
+
+  private async initCircuitStorage(circuitId: CircuitId): Promise<CircuitData> {
+    const download: DownloadProgressEvent = {
+      count: 1,
+      total: 4,
+    }
+
+    this.emit('downloading', download)
+    download.count++
+    const verificationKey = await this.fetchPolygonFile(
+      `${circuitId.toString()}/verification_key.json`
+    )
+    this.emit('downloading', download)
+    download.count++
+    const provingKey = await this.fetchPolygonFile(
+      `${circuitId.toString()}/circuit_final.zkey`
+    )
+    this.emit('downloading', download)
+    download.count++
+    const wasm = await this.fetchPolygonFile(
+      `${circuitId.toString()}/circuit.wasm`
+    )
+    this.emit('downloading', download)
+
+    const circuitData = {
+      circuitId,
       wasm,
       provingKey,
       verificationKey,
     }
 
-    this.packageMgr = await this.getPackageMgr(
-      authV2Data,
-      proofService.generateAuthV2Inputs.bind(proofService),
-      proofService.verifyState.bind(proofService)
-    )
+    return circuitData
   }
 
   private async initDataStorage(): Promise<IDataStorage> {
@@ -213,24 +262,30 @@ export default class PolygonIDManager {
     conf.contractAddress = '0x134B1BE34911E39A8397ec6289782989729807a4'
     conf.url = 'https://rpc-mumbai.maticvigil.com'
 
-    const context = await AccountManager.getInstance().context
-    const databases: any = {
-      credentials: await context!.openDatabase('polygonid_credentials'),
-      identity: await context!.openDatabase('polygonid_identity'),
-      profile: await context!.openDatabase('polygonid_profile'),
-    }
-
     const dataStorage = {
       credential: new CredentialStorage(
-        new VeridaDataSource<W3CCredential>(databases.credentials)
+        await VeridaDataSourceFactory<W3CCredential>('polygonid_credentials3')
       ),
       identity: new IdentityStorage(
-        new VeridaDataSource<Identity>(databases.identity),
-        new VeridaDataSource<Profile>(databases.profile)
+        await VeridaDataSourceFactory<Identity>('polygonid_identity3'),
+        await VeridaDataSourceFactory<Profile>('polygonid_profile3')
       ),
       mt: new InMemoryMerkleTreeStorage(40),
       states: new EthStateStorage(conf),
     }
+    /*
+    const dataStorage = {
+      credential: new CredentialStorage(
+        new InMemoryDataSource<W3CCredential>()
+      ),
+      identity: new IdentityStorage(
+        new InMemoryDataSource<Identity>(),
+        new InMemoryDataSource<Profile>()
+      ),
+      mt: new InMemoryMerkleTreeStorage(40),
+      states: new EthStateStorage(conf),
+    }
+*/
     return dataStorage
   }
 
@@ -238,12 +293,18 @@ export default class PolygonIDManager {
     return new CredentialWallet(dataStorage)
   }
 
-  private initIdentityWallet(
+  private async initIdentityWallet(
     dataStorage: IDataStorage,
     credentialWallet: ICredentialWallet
-  ): IIdentityWallet {
-    const memoryKeyStore = new InMemoryPrivateKeyStore()
-    const bjjProvider = new BjjProvider(KmsKeyType.BabyJubJub, memoryKeyStore)
+  ): Promise<IIdentityWallet> {
+    const context = await AccountManager.getInstance().context
+    const privateKeyStoreDatabase = await context!.openDatabase(
+      'polygonid_keystore3'
+    )
+
+    const keyStore = new VeridaPrivateKeyStore(privateKeyStoreDatabase)
+    //const keyStore = new InMemoryPrivateKeyStore()
+    const bjjProvider = new BjjProvider(KmsKeyType.BabyJubJub, keyStore)
     const kms = new KMS()
     kms.registerKeyProvider(KmsKeyType.BabyJubJub, bjjProvider)
 
@@ -287,32 +348,33 @@ export default class PolygonIDManager {
 
   private async fetchPolygonFile(url: string): Promise<Uint8Array> {
     storageCache[`${CircuitId.AuthV2.toString()}/verification_key.json`] =
-      '/Users/chriswere/Library/Developer/CoreSimulator/Devices/B4348139-83FB-4A61-8C8F-0F5DCA1BE7D4/data/Containers/Data/Application/13A94A77-034C-4403-9BD4-065B322656B4/Documents/ReactNativeBlobUtil_tmp/ReactNativeBlobUtilTmp_z5kgs1cza55ya5m1xn4jr'
+      '/Users/chriswere/polygon_circuits/1'
     storageCache[`${CircuitId.AuthV2.toString()}/circuit_final.zkey`] =
-      '/Users/chriswere/Library/Developer/CoreSimulator/Devices/B4348139-83FB-4A61-8C8F-0F5DCA1BE7D4/data/Containers/Data/Application/13A94A77-034C-4403-9BD4-065B322656B4/Documents/ReactNativeBlobUtil_tmp/ReactNativeBlobUtilTmp_8m2yq4jgpa021mh3cit4d2'
+      '/Users/chriswere/polygon_circuits/2'
     storageCache[`${CircuitId.AuthV2.toString()}/circuit.wasm`] =
-      '/Users/chriswere/Library/Developer/CoreSimulator/Devices/B4348139-83FB-4A61-8C8F-0F5DCA1BE7D4/data/Containers/Data/Application/13A94A77-034C-4403-9BD4-065B322656B4/Documents/ReactNativeBlobUtil_tmp/ReactNativeBlobUtilTmp_gtvuqml2pv8yfu1tjflm7c'
+      '/Users/chriswere/polygon_circuits/3'
 
     let path
     if (storageCache[url]) {
       path = storageCache[url]
       const exists = await ReactNativeBlobUtil.fs.exists(path)
       if (!exists) {
-        console.log('~~~ bad cache', path)
         path = undefined
       }
     }
 
     if (!path) {
       url = `https://verida-static-resources.s3.amazonaws.com/polygonid/${url}`
+      console.log('downloading', url)
       const res = await ReactNativeBlobUtil.config({
         // add this option that makes response data to be stored as a file,
         // this is much more performant.
         fileCache: true,
       }).fetch('GET', url)
 
-      console.log(res.path())
       path = res.path()
+      console.log('download complete', path)
+      storageCache[url] = path
     }
 
     // const stat = await ReactNativeBlobUtil.fs.stat(path)
@@ -332,6 +394,12 @@ export default class PolygonIDManager {
   }
 }
 
+const VeridaDataSourceFactory = async <Type>(databaseName: string) => {
+  const context = await AccountManager.getInstance().context
+  const db = await context!.openDatabase(databaseName)
+  return new VeridaDataSource<Type>(db)
+}
+
 /**
  * Generic data source
  */
@@ -344,15 +412,19 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
 
   /** saves in the memory */
   public async save(key: string, value: Type, keyName = 'id'): Promise<void> {
-    console.log('VeridaDataSource.save: ', key, keyName, value)
-    let record: any
+    console.log(
+      'VeridaDataSource.save: ',
+      key,
+      keyName,
+      value,
+      this.database.databaseName
+    )
+    let record: any = {}
     try {
-        record = await this.database.get(key)
+      record = await this.database.get(key)
     } catch (err: any) {
-        console.log('not found?')
-        console.log(err)
-        record = value
-        record._id = value[keyName]
+      record._id = value[keyName]
+      record.data = value
     }
 
     await this.database.save(record)
@@ -360,18 +432,33 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
 
   /** updates in the memory */
   patchData(value: Type[]): void {
-    throw new Error('Not supported')
+    throw new Error('patchData Not supported')
   }
 
   /** gets value from from the memory */
   public async get(key: string, keyName = 'id'): Promise<Type | undefined> {
-    console.log('VeridaDataSource.get(): ', key, keyName)
-    return <Type>await this.database.get(key)
+    console.log(
+      'VeridaDataSource.get(): ',
+      key,
+      keyName,
+      this.database.databaseName
+    )
+    const result = <Type>await this.database.get(key)
+    return result.data
   }
 
   /** loads from value from the memory */
-  public load(): Type[] {
-    throw new Error('Not supported')
+  public async load(): Promise<Type[]> {
+    //console.log('load()', this.database.databaseName)
+    const data = <Type[]>await this.database.getMany(
+      {},
+      {
+        limit: 1000,
+      }
+    )
+    //console.log(`returning ${data.length} items`)
+
+    return data.map((item) => item.data)
   }
 
   /** deletes from value from the memory */
@@ -379,5 +466,78 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
     console.log('VeridaDataSource.delete(): ', key, keyName)
     const record: any = await this.database.get(key)
     await this.database.delete(record)
+  }
+}
+
+/**
+ * KeyStore that allows to import and get keys by alias.
+ *
+ * @export
+ * @abstract
+ * @beta
+ * @class AbstractPrivateKeyStore
+ */
+class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
+  private database: IDatabase
+
+  public constructor(database: IDatabase) {
+    this.database = database
+  }
+  //{"alias": "BJJ:d159756b0ce8ea6b0be569d1ba9ff63a4d8099c59bb6edb2aa8f5b3bcd9b1109", "key": "6461766573656564736565647365656473656564736565647365656475736572"}
+  //{"alias": "BJJ:d159756b0ce8ea6b0be569d1ba9ff63a4d8099c59bb6edb2aa8f5b3bcd9b1109", "key": "6461766573656564736565647365656473656564736565647365656475736572"}
+  //did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4
+  //did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4
+  /**
+   * imports key by alias
+   *
+   * @abstract
+   * @param {{ alias: string; key: string }} args - key alias and hex representation
+   * @returns `Promise<void>`
+   */
+  public async import(args: { alias: string; key: string }): Promise<void> {
+    const record = {
+      _id: args.alias,
+      value: args.key,
+    }
+
+    try {
+      console.log(record)
+      console.log(args.key, args.alias)
+      const existingRecord = await this.database.get(args.alias)
+      console.log('found existing key store entry')
+      console.log(existingRecord)
+      record._rev = existingRecord._rev
+    } catch (err: any) {
+      console.log('!!!! keystore error')
+      console.log(err.message)
+      // not found, which is fine
+    }
+
+    try {
+      const res = await this.database.save(record)
+    } catch (err) {
+      console.log('!!!!!!! import error')
+      console.log(err)
+    }
+  }
+  /**
+   * get key by alias
+   *
+   * @abstract
+   * @param {{ alias: string }} args -key alias
+   * @returns `Promise<string>`
+   */
+  public async get(args: { alias: string }): Promise<string> {
+    try {
+      const result: any = await this.database.get(args.alias)
+      if (!result) {
+        throw new Error('no key under given alias')
+      }
+
+      return result.value
+    } catch (err) {
+      console.log(err)
+      throw new Error('no key under given alias')
+    }
   }
 }

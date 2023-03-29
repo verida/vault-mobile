@@ -28,6 +28,7 @@ import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
+import 'react-native-url-polyfill/auto'
 
 import { ModalProvider } from './contexts/ModalContext'
 import { WalletConnectProvider } from './contexts/WalletConnectContext'
