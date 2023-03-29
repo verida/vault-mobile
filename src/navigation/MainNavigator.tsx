@@ -21,6 +21,11 @@ import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
+import {
+  ConnectionRequestScreen,
+  IncomingDataRequestScreen,
+  ProofRequestScreen,
+} from 'pages/Requests'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
@@ -119,6 +124,21 @@ function MainNavigator() {
       />
 
       <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
+      <Stack.Screen
+        name={'ConnectionRequest'}
+        component={ConnectionRequestScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name={'ProofRequest'}
+        component={ProofRequestScreen}
+        options={{ presentation: 'modal' }}
+      />
+      <Stack.Screen
+        name={'IncomingDataRequest'}
+        component={IncomingDataRequestScreen}
+        options={{ presentation: 'modal' }}
+      />
     </Stack.Navigator>
   )
 }

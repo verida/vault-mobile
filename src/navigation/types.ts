@@ -4,6 +4,11 @@ import { Network } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/AddIdentity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
+import {
+  ConnectionRequestScreenProps,
+  IncomingDataRequestScreenProps,
+  ProofRequestScreenProps,
+} from 'pages/Requests'
 
 export type RootStackParams = {
   Auth: undefined
@@ -80,4 +85,7 @@ export type MainStackParams = {
   WalletConnectDappv2: { dapp: DAppv2 }
   SingleConnection: undefined
   Success: undefined
+  ConnectionRequest: ConnectionRequestScreenProps
+  ProofRequest: ProofRequestScreenProps
+  IncomingDataRequest: IncomingDataRequestScreenProps
 }
