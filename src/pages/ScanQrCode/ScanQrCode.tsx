@@ -6,7 +6,6 @@ import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
-import { DownloadProgressEvent, PolygonIDManager } from 'api/PolygonIDManager'
 import { useDeeplink } from 'hooks/useDeeplink'
 import { usePolygonId } from 'hooks/usePolygonId'
 import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
@@ -15,7 +14,6 @@ import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
-let REQUEST_ID = 0
 
 function ScanQrCode(
   props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
@@ -24,93 +22,13 @@ function ScanQrCode(
   const [enabled, setEnabled] = useState(true)
   const [isFlashOn, setIsFlashOn] = useState(false)
   const handleDeeplink = useDeeplink(navigation as any)
-  const { requestConnect } = useWalletConnect()
-  const { requestConnect: requestConnectv2 } = useWalletConnectv2()
-  //const { requestConnect: requestPolygonId } = usePolygonId()
+  const { requestConnect: handleWalletConnectV1Data } = useWalletConnect()
+  const { requestConnect: handleWalletConnectV2Data } = useWalletConnectv2()
+  const { handleQRCodeData: handlePolygonIdData } = usePolygonId()
 
   useEffect(() => {
     setEnabled(true)
-
-    fakePolygon()
   }, [navigation])
-
-  // Temporary method to fake polygon requests for testing purposes
-  const fakePolygon = async () => {
-    // fake PolygonID scan
-    // auth request
-    const requests = [
-      '{"id":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"cc7b28e7-9f80-474e-879c-2c3db8d29b5a","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=198059","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
-
-      // auth request (connect)
-      //'{"id":"d4f9a5c1-ea40-46b4-86ef-4101f8eace15","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"d4f9a5c1-ea40-46b4-86ef-4101f8eace15","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=956037","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
-      // receive credential
-      //'{"id":"d20e7cf4-911a-4163-8374-82003eda7e04","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/credentials/1.0/offer","thid":"d20e7cf4-911a-4163-8374-82003eda7e04","body":{"url":"https://self-hosted-platform.polygonid.me/v1/agent","credentials":[{"id":"a5ee6ae7-cd4b-11ed-8e4f-0242c0a88005","description":"KYCAgeCredential"}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5","to":"did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4"}',
-      // auth request (verify)
-      //'{"id":"807cb8ea-5feb-4c4f-81d0-d756707d5024","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"807cb8ea-5feb-4c4f-81d0-d756707d5024","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=62378","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"skipClaimRevocationCheck":true,"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
-    ]
-
-    const polygonIdData = requests[REQUEST_ID]
-    REQUEST_ID++
-
-    const polygonIdSeed = 'daveseedseedseedseedseedseeduser'
-    const pm = new PolygonIDManager(polygonIdSeed)
-
-    // bind events
-    pm.on('initializing', (starting: boolean) => {
-      console.log(starting ? 'initializing' : 'initialization complete')
-    })
-
-    pm.on('downloading', (progress: DownloadProgressEvent) => {
-      console.log(`download progress; ${progress.count} / ${progress.total}`)
-    })
-
-    const qrData = pm.decodeQRCode(polygonIdData)
-
-    // @todo: check data type
-    switch (qrData.type) {
-      // Request (this may be a request to connect or a request to submit a ZKP)
-      case 'https://iden3-communication.io/authorization/1.0/request':
-        if (qrData.body.scope) {
-          // We have a scope object implying we need to submit a ZKP
-          console.log(
-            `Do you want to submit a ZKP to ${qrData.hostname} (${qrData.from}) with the following data?`,
-            JSON.stringify(qrData.body.scope)
-          )
-          console.log('@todo: display screen asking user to click "share" to submit ZK proof')
-        } else {
-          // We have a generic connection request
-          console.log(
-            `Do you want to connect to ${qrData.hostname} (${qrData.from})?`
-          )
-          console.log('@todo: display screen asking user to click "connect"')
-        }
-
-        // assume user has clicked "share" or "connect"
-        try {
-          // returns void if no issues
-          await pm.handleAuthRequest(qrData)
-        } catch (err: any) {
-          // all issues will be returned as an error
-          console.log('display error to user: ', err.message)
-        }
-        break
-      // Offer to save a new ZK credential
-      case 'https://iden3-communication.io/credentials/1.0/offer':
-        console.log(
-          `Do you want to accept a ZK credential from ${qrData.hostname} (${qrData.from}) with the following credential data?`,
-          JSON.stringify(qrData.body.credentials)
-        )
-        console.log('@todo: display screen asking user to click "save" to store ZK credential')
-        try {
-          // returns void if no issues
-          await pm.handleFetch(qrData)
-        } catch (err: any) {
-          // all issues will be returned as an error
-          console.log('display error to user: ', err.message)
-        }
-        break
-    }
-  }
 
   const toggleFlash = useCallback(() => {
     setIsFlashOn((prevState) => !prevState)
@@ -124,58 +42,62 @@ function ScanQrCode(
     if (!enabled) {
       return
     }
+
     setEnabled(false)
+
     setTimeout(() => {
       setEnabled(true)
     }, WAIT_TIME)
+
     if (route.params.onReadQRCode) {
       route.params.onReadQRCode(data)
       navigation.goBack()
-    } else {
-      // WalletConnect v1
-      // Ex: wc:9145e975-4af0-4a28-a569-19aab7a21dd8@1?bridge=https%3A%2F%2F6.bridge.walletconnect.org&key=40dbb09f0eac060885a0edaf7f1ab7efba207c9b339bc49f805d61b615ac28a7
-      if (data.startsWith('wc:') && data.indexOf('bridge') >= 0) {
-        navigation.goBack()
-        requestConnect(data)
-        return
-      }
-      // WC v2
-      // Ex: 'wc:c034ac9bf61c23d3e551663ed8bf973c260130c12f89f22a35a5d1032e3c47af@2?relay-protocol=iridium&symKey=05f034367d195bca2532385b620bd2b2a6c5c62101050bdfe9253e283fe50e12'
-      if (data.startsWith('wc:') && data.indexOf('relay-protocol') >= 0) {
-        navigation.goBack()
-        requestConnectv2(data)
-        return
-      }
-      // PolygonId
-      // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
-      if (data.match('did:polygonid:polygon')) {
-        navigation.goBack()
-        console.log('data------')
-        console.log(data)
-        requestPolygonId(data)
-        return
-      }
-
-      // Check if content is a valid URL
-      const { hostname, pathname } = parse(data, true)
-      if (isEmpty(hostname)) {
-        Alert.alert('Error', 'This domain is not supported')
-        return
-      }
-      // Try to open the URL in browser if it is not a deeplink
-      if (!canBeHandledByDeeplink(pathname) || !isSupportedDomain(hostname)) {
-        try {
-          const canOpen = await Linking.canOpenURL(data)
-          if (canOpen) {
-            await Linking.openURL(data)
-          }
-        } catch (error) {
-          Sentry.captureException(error)
-        }
-        return
-      }
-      handleDeeplink(data)
+      return
     }
+
+    // WalletConnect v1
+    // Ex: wc:9145e975-4af0-4a28-a569-19aab7a21dd8@1?bridge=https%3A%2F%2F6.bridge.walletconnect.org&key=40dbb09f0eac060885a0edaf7f1ab7efba207c9b339bc49f805d61b615ac28a7
+    if (data.startsWith('wc:') && data.indexOf('bridge') >= 0) {
+      navigation.goBack()
+      handleWalletConnectV1Data(data)
+      return
+    }
+
+    // WalletConnect v2
+    // Ex: 'wc:c034ac9bf61c23d3e551663ed8bf973c260130c12f89f22a35a5d1032e3c47af@2?relay-protocol=iridium&symKey=05f034367d195bca2532385b620bd2b2a6c5c62101050bdfe9253e283fe50e12'
+    if (data.startsWith('wc:') && data.indexOf('relay-protocol') >= 0) {
+      navigation.goBack()
+      handleWalletConnectV2Data(data)
+      return
+    }
+
+    // PolygonId
+    // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
+    if (data.match('did:polygonid:polygon')) {
+      navigation.goBack()
+      handlePolygonIdData(data)
+      return
+    }
+
+    // Check if content is a valid URL
+    const { hostname, pathname } = parse(data, true)
+    if (isEmpty(hostname)) {
+      Alert.alert('Error', 'This domain is not supported')
+      return
+    }
+    // Try to open the URL in browser if it is not a deeplink
+    if (!canBeHandledByDeeplink(pathname) || !isSupportedDomain(hostname)) {
+      try {
+        const canOpen = await Linking.canOpenURL(data)
+        if (canOpen) {
+          await Linking.openURL(data)
+        }
+      } catch (error) {
+        Sentry.captureException(error)
+      }
+      return
+    }
+    handleDeeplink(data)
   }
 
   const onBarCodeRead = async (event: BarCodeReadEvent) => {
