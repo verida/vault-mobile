@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import * as Sentry from '@sentry/react-native'
 import { Icon } from 'native-base'
 import React from 'react'

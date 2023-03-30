@@ -1,4 +1,4 @@
-import Clipboard from '@react-native-community/clipboard'
+import Clipboard from '@react-native-clipboard/clipboard'
 import * as Sentry from '@sentry/react-native'
 import { Credentials } from '@verida/verifiable-credentials'
 import { Container, Content, Icon, List } from 'native-base'

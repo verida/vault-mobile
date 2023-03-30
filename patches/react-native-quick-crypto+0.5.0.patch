@@ -1,0 +1,313 @@
+diff --git a/node_modules/react-native-quick-crypto/android/CMakeLists.txt b/node_modules/react-native-quick-crypto/android/CMakeLists.txt
+index 6b084d3..f8eace9 100644
+--- a/node_modules/react-native-quick-crypto/android/CMakeLists.txt
++++ b/node_modules/react-native-quick-crypto/android/CMakeLists.txt
+@@ -1,26 +1,23 @@
++project(react-native-quick-crypto)
+ cmake_minimum_required(VERSION 3.9.0)
+ 
+ set (PACKAGE_NAME "react-native-quick-crypto")
+ set (BUILD_DIR ${CMAKE_SOURCE_DIR}/build)
+-file (GLOB LIBFBJNI_INCLUDES "${BUILD_DIR}/fbjni-*-headers.jar/")
+-file (GLOB LIBRN_SO "${BUILD_DIR}/react-native-0*/jni/${ANDROID_ABI}")
+ set (CMAKE_CXX_STANDARD 17)
+ # TODO(osp) remove before release
+ #set (CMAKE_C_FLAGS_DEBUG "${CMAKE_C_FLAGS_DEBUG} -g")
+ #set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g")
++find_package(fbjni REQUIRED CONFIG)
++find_package(ReactAndroid REQUIRED CONFIG)
+ 
+ include_directories(
+         ../cpp
+-        "${NODE_MODULES_DIR}/react-native/React"
+-        "${NODE_MODULES_DIR}/react-native/React/Base"
+-        "${NODE_MODULES_DIR}/react-native/ReactAndroid/src/main/jni"
+-        "${NODE_MODULES_DIR}/react-native/ReactAndroid/src/main/java/com/facebook/react/turbomodule/core/jni"
++        "${NODE_MODULES_DIR}/react-native/ReactAndroid/src/main/jni/react/turbomodule"
+         "${NODE_MODULES_DIR}/react-native/ReactCommon"
+         "${NODE_MODULES_DIR}/react-native/ReactCommon/callinvoker"
+         "${NODE_MODULES_DIR}/react-native/ReactCommon/jsi"
+         "${NODE_MODULES_DIR}/react-native/ReactCommon/turbomodule/core"
+         "${NODE_MODULES_DIR}/react-native/ReactCommon/react/nativemodule/core"
+-        "${LIBFBJNI_INCLUDES}"
+ )
+ 
+ if(${REACT_NATIVE_VERSION} LESS 66)
+@@ -30,7 +27,8 @@ if(${REACT_NATIVE_VERSION} LESS 66)
+         )
+ endif()
+ 
+-add_library(reactnativequickcrypto  # <-- Library name
++add_library(
++        ${PACKAGE_NAME}
+         SHARED
+         "src/main/cpp/cpp-adapter.cpp"
+         "../cpp/MGLQuickCryptoHostObject.cpp"
+@@ -60,7 +58,8 @@ add_library(reactnativequickcrypto  # <-- Library name
+ )
+ 
+ set_target_properties(
+-        reactnativequickcrypto PROPERTIES
++        ${PACKAGE_NAME}
++        PROPERTIES
+         CXX_STANDARD 17
+         CXX_EXTENSIONS OFF
+         POSITION_INDEPENDENT_CODE ON
+@@ -72,54 +71,17 @@ find_library(
+         log-lib
+         log
+ )
+-find_library(
+-        REACT_NATIVE_JNI_LIB
+-        reactnativejni
+-        PATHS ${LIBRN_DIR}
+-        NO_CMAKE_FIND_ROOT_PATH
+-)
+-find_library(
+-        FBJNI_LIB
+-        fbjni
+-        PATHS ${LIBRN_SO}
+-        NO_CMAKE_FIND_ROOT_PATH
+-)
+-find_library(
+-        TURBOMODULES_LIB
+-        turbomodulejsijni
+-        PATHS ${LIBRN_DIR}
+-        NO_CMAKE_FIND_ROOT_PATH
+-)
+-find_library(
+-        REACT_LIB
+-        react_nativemodule_core
+-        PATHS ${LIBRN_DIR}
+-        NO_CMAKE_FIND_ROOT_PATH
+-)
+-
+-if(${REACT_NATIVE_VERSION} LESS 66)
+-        # JSI lib didn't exist on RN 0.65 and before. Simply omit it.
+-        set (JSI_LIB "")
+-else()
+-        # RN 0.66 distributes libjsi.so, can be used instead of compiling jsi.cpp manually.
+-        find_library(
+-                JSI_LIB
+-                jsi
+-                PATHS ${LIBRN_DIR}
+-                NO_CMAKE_FIND_ROOT_PATH
+-        )
+-endif()
+ 
+ find_package(openssl REQUIRED CONFIG)
+ 
+ target_link_libraries(
+-        reactnativequickcrypto
+-        ${TURBOMODULES_LIB}
+-        ${FBJNI_LIB}
++        ${PACKAGE_NAME}
++        ReactAndroid::turbomodulejsijni
++        fbjni::fbjni
+         ${log-lib}
+-        ${JSI_LIB}
+-        ${REACT_NATIVE_JNI_LIB}
+-        ${REACT_LIB}
++        ReactAndroid::jsi
++        ReactAndroid::reactnativejni
++        ReactAndroid::react_nativemodule_core
+         android
+         openssl::crypto
+ )
+\ No newline at end of file
+diff --git a/node_modules/react-native-quick-crypto/android/build.gradle b/node_modules/react-native-quick-crypto/android/build.gradle
+index 3ec9ff0..e04bf0c 100644
+--- a/node_modules/react-native-quick-crypto/android/build.gradle
++++ b/node_modules/react-native-quick-crypto/android/build.gradle
+@@ -47,8 +47,8 @@ def getExtOrIntegerDefault(name) {
+ }
+ 
+ def reactNativeArchitectures() {
+-    def value = project.getProperties().get("reactNativeArchitectures")
+-    return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
++  def value = project.getProperties().get("reactNativeArchitectures")
++  return value ? value.split(",") : ["armeabi-v7a", "x86", "x86_64", "arm64-v8a"]
+ }
+ 
+ def sourceBuild = false
+@@ -60,23 +60,23 @@ if (rootProject.ext.has('reactNativeAndroidRoot')) {
+   defaultDir = rootProject.ext.get('reactNativeAndroidRoot')
+   androidSourcesDir = defaultDir.parentFile.toString()
+ } else if (findProject(':ReactAndroid') != null) {
+-    sourceBuild = true
+-    defaultDir = project(':ReactAndroid').projectDir
+-    androidSourcesDir = defaultDir.parentFile.toString()
++  sourceBuild = true
++  defaultDir = project(':ReactAndroid').projectDir
++  androidSourcesDir = defaultDir.parentFile.toString()
+ } else {
+   defaultDir = file("$nodeModules/react-native/android")
+   androidSourcesDir = defaultDir.parentFile.toString()
+ }
+ 
+ if (!defaultDir.exists()) {
+-    throw new GradleException(
+-      "${project.name}: React Native android directory (node_modules/react-native/android) does not exist! Resolved node_modules to: ${nodeModules}"
+-    )
++  throw new GradleException(
++          "${project.name}: React Native android directory (node_modules/react-native/android) does not exist! Resolved node_modules to: ${nodeModules}"
++  )
+ }
+ 
+ def prebuiltDir = sourceBuild
+-    ? "$nodeModules/react-native/ReactAndroid/src/main/jni/prebuilt/lib"
+-    : "$buildDir/react-native-0*/jni"
++        ? "$nodeModules/react-native/ReactAndroid/src/main/jni/prebuilt/lib"
++        : "$buildDir/react-native-0*/jni"
+ 
+ 
+ def reactProperties = new Properties()
+@@ -95,11 +95,11 @@ android {
+     versionName "1.0"
+     externalNativeBuild {
+       cmake {
+-        cppFlags "-fexceptions", "-frtti", "-std=c++1y", "-DONANDROID"
++        cppFlags "-fexceptions", "-frtti", "-std=c++1y", "-DONANDROID", "-DANDROID"
+         arguments '-DANDROID_STL=c++_shared',
+-                  "-DREACT_NATIVE_VERSION=${REACT_NATIVE_VERSION}",
+-                  "-DNODE_MODULES_DIR=${nodeModules}",
+-                  "-DPREBUILT_DIR=${prebuiltDir}"
++                "-DREACT_NATIVE_VERSION=${REACT_NATIVE_VERSION}",
++                "-DNODE_MODULES_DIR=${nodeModules}",
++                "-DPREBUILT_DIR=${prebuiltDir}"
+       }
+     }
+     ndk {
+@@ -107,10 +107,6 @@ android {
+     }
+   }
+ 
+-  dexOptions {
+-    javaMaxHeapSize "4g"
+-  }
+-
+   externalNativeBuild {
+     cmake {
+       path "CMakeLists.txt"
+@@ -118,7 +114,16 @@ android {
+   }
+ 
+   packagingOptions {
+-    excludes = ["**/libc++_shared.so", "**/libfbjni.so", "**/libreactnativejni.so", "**/libjsi.so", "**/MANIFEST.MF", ""]
++    excludes = [
++            "**/libc++_shared.so",
++            "**/libfbjni.so",
++            "**/libreactnativejni.so",
++            "**/libjsi.so",
++            "**/libreact_nativemodule_core.so",
++            "**/libturbomodulejsijni.so",
++            "**/MANIFEST.MF",
++            ""
++    ]
+     doNotStrip '**/*.so'
+   }
+ 
+@@ -168,13 +173,7 @@ repositories {
+ dependencies {
+   // https://mvnrepository.com/artifact/com.android.ndk.thirdparty/openssl
+   implementation 'com.android.ndk.thirdparty:openssl:1.1.1l-beta-1'
+-  // noinspection GradleDynamicVersion
+-  implementation 'com.facebook.react:react-native:+'
+-
+-  //noinspection GradleDynamicVersion
+-  extractHeaders("com.facebook.fbjni:fbjni:+:headers")
+-  //noinspection GradleDynamicVersion
+-  extractJNI("com.facebook.fbjni:fbjni:+")
++  implementation "com.facebook.react:react-android:"
+ 
+   if (!sourceBuild) {
+     def buildType = "debug"
+@@ -183,12 +182,6 @@ dependencies {
+         buildType = "release"
+       }
+     })
+-    def rnAarMatcher = "**/react-native/**/*${buildType}.aar"
+-    if (REACT_NATIVE_VERSION < 69) {
+-      rnAarMatcher = "**/**/*.aar"
+-    }
+-    def rnAAR = fileTree("${defaultDir.toString()}").matching({ it.include rnAarMatcher }).singleFile
+-    extractJNI(files(rnAAR))
+   }
+ }
+ 
+@@ -286,21 +279,21 @@ task prepareGlog(dependsOn: downloadGlog, type: Copy) {
+   includeEmptyDirs = false
+   filesMatching("**/*.h.in") {
+     filter(ReplaceTokens, tokens: [
+-      ac_cv_have_unistd_h           : "1",
+-      ac_cv_have_stdint_h           : "1",
+-      ac_cv_have_systypes_h         : "1",
+-      ac_cv_have_inttypes_h         : "1",
+-      ac_cv_have_libgflags          : "0",
+-      ac_google_start_namespace     : "namespace google {",
+-      ac_cv_have_uint16_t           : "1",
+-      ac_cv_have_u_int16_t          : "1",
+-      ac_cv_have___uint16           : "0",
+-      ac_google_end_namespace       : "}",
+-      ac_cv_have___builtin_expect   : "1",
+-      ac_google_namespace           : "google",
+-      ac_cv___attribute___noinline  : "__attribute__ ((noinline))",
+-      ac_cv___attribute___noreturn  : "__attribute__ ((noreturn))",
+-      ac_cv___attribute___printf_4_5: "__attribute__((__format__ (__printf__, 4, 5)))"
++            ac_cv_have_unistd_h           : "1",
++            ac_cv_have_stdint_h           : "1",
++            ac_cv_have_systypes_h         : "1",
++            ac_cv_have_inttypes_h         : "1",
++            ac_cv_have_libgflags          : "0",
++            ac_google_start_namespace     : "namespace google {",
++            ac_cv_have_uint16_t           : "1",
++            ac_cv_have_u_int16_t          : "1",
++            ac_cv_have___uint16           : "0",
++            ac_google_end_namespace       : "}",
++            ac_cv_have___builtin_expect   : "1",
++            ac_google_namespace           : "google",
++            ac_cv___attribute___noinline  : "__attribute__ ((noinline))",
++            ac_cv___attribute___noreturn  : "__attribute__ ((noreturn))",
++            ac_cv___attribute___printf_4_5: "__attribute__((__format__ (__printf__, 4, 5)))"
+     ])
+     it.path = (it.name - ".in")
+   }
+@@ -363,7 +356,7 @@ extractJNIFiles.mustRunAfter extractAARHeaders
+ 
+ def nativeBuildDependsOn(dependsOnTask, variant) {
+   def buildTasks = tasks.findAll({ task ->
+-      !task.name.contains("Clean") && (task.name.contains("externalNative") || task.name.contains("CMake")) })
++    !task.name.contains("Clean") && (task.name.contains("externalNative") || task.name.contains("CMake")) })
+   if (variant != null) {
+     buildTasks = buildTasks.findAll({ task -> task.name.contains(variant) })
+   }
+@@ -375,8 +368,6 @@ afterEvaluate {
+     nativeBuildDependsOn(":ReactAndroid:packageReactNdkDebugLibsForBuck", "Debug")
+     nativeBuildDependsOn(":ReactAndroid:packageReactNdkReleaseLibsForBuck", "Rel")
+   } else {
+-    nativeBuildDependsOn(extractAARHeaders, null)
+     nativeBuildDependsOn(extractJNIFiles, null)
+-    nativeBuildDependsOn(prepareThirdPartyNdkHeaders, null)
+   }
+ }
+\ No newline at end of file
+diff --git a/node_modules/react-native-quick-crypto/android/src/main/java/com/margelo/quickcrypto/QuickCryptoModule.java b/node_modules/react-native-quick-crypto/android/src/main/java/com/margelo/quickcrypto/QuickCryptoModule.java
+index b19f79f..fb7d491 100644
+--- a/node_modules/react-native-quick-crypto/android/src/main/java/com/margelo/quickcrypto/QuickCryptoModule.java
++++ b/node_modules/react-native-quick-crypto/android/src/main/java/com/margelo/quickcrypto/QuickCryptoModule.java
+@@ -39,12 +39,12 @@ public class QuickCryptoModule extends ReactContextBaseJavaModule {
+         return false;
+       }
+       Log.i(NAME, "Loading C++ library...");
+-      System.loadLibrary("reactnativequickcrypto");
++      System.loadLibrary("react-native-quick-crypto");
+ 
+       JavaScriptContextHolder jsContext = getReactApplicationContext().getJavaScriptContextHolder();
+       CallInvokerHolderImpl jsCallInvokerHolder = (CallInvokerHolderImpl) getReactApplicationContext()
+-                                                  .getCatalystInstance()
+-                                                  .getJSCallInvokerHolder();
++              .getCatalystInstance()
++              .getJSCallInvokerHolder();
+ 
+ 
+       Log.i(NAME, "Installing JSI Bindings for react-native-quick-crypto...");
