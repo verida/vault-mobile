@@ -3,8 +3,8 @@ import * as Sentry from '@sentry/react-native'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
-import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
+import { BarCodeScanner } from 'expo-barcode-scanner';
 
 import { DownloadProgressEvent, PolygonIDManager } from 'api/PolygonIDManager'
 import { useDeeplink } from 'hooks/useDeeplink'
@@ -176,14 +176,18 @@ function ScanQrCode(
     }
   }
 
-  const onBarCodeRead = async (event: BarCodeReadEvent) => {
-    const { data } = event
+  const handleBarCodeScanned = async ({ type, data }: any) => {
     await handleQrCode(data)
-  }
+  };
 
   return (
     <View style={styles.container}>
-      <RNCamera
+      {/* TODO: Refactor */}
+      <BarCodeScanner
+        onBarCodeScanned={handleBarCodeScanned}
+        style={StyleSheet.absoluteFillObject}
+      />
+      {/* <RNCamera
         type={RNCamera.Constants.Type.back}
         flashMode={
           isFlashOn
@@ -214,7 +218,7 @@ function ScanQrCode(
         googleVisionBarcodeType={
           RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
         }
-      />
+      /> */}
       <CameraOverlay
         isFlashOn={isFlashOn}
         onToggleFlash={toggleFlash}

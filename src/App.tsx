@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
-import * as SplashScreen from 'expo-splash-screen'
+// import * as SplashScreen from 'expo-splash-screen'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -87,14 +87,14 @@ function App() {
         Alert.alert('Error', 'Failed to initialize')
       } finally {
         setLoading(false)
-        await SplashScreen.hideAsync()
+        // await SplashScreen.hideAsync()
       }
     }
 
     const init = async () => {
       try {
         // Prevent native splash screen from autohiding
-        await SplashScreen.preventAutoHideAsync()
+        // await SplashScreen.preventAutoHideAsync()
       } catch (e) {
         Sentry.captureException(e)
       }
