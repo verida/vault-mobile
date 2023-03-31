@@ -1,5 +1,5 @@
-import { decode, encode } from 'base-64'
-import { EventEmitter } from 'events'
+import { decode, encode } from 'base-64';
+import { EventEmitter } from 'events';
 import * as RNWebAssembly from 'react-native-webassembly';
 
 const { BigNumber } = require('ethers')
@@ -77,6 +77,11 @@ function makePow(pow) {
 }
 
 Math.pow = makePow(Math.pow)
+
+
+// react-native-webassembly doesn't have the `compile` function, but we can use the `instantiate` function as a replacement
+// TODO: implement the `compile` function, continue to check as I'm not sure about the result!!!
+RNWebAssembly.compile = RNWebAssembly.instantiate
 
 global.WebAssembly = RNWebAssembly;
 
