@@ -88,12 +88,13 @@ export class PolygonIDManager extends EventEmitter {
 
   public decodeQRCode(authMessage: string): QRCodeResult {
     const result = JSON.parse(authMessage)
+    console.log(result)
 
     if (result.body.callbackUrl) {
-      const url = new URL(result.callbackUrl)
+      const url = new URL(result.body.callbackUrl)
       result.hostname = url.hostname
     } else if (result.body.url) {
-      const url = new URL(result.url)
+      const url = new URL(result.body.url)
       result.hostname = url.hostname
     }
 
@@ -347,12 +348,12 @@ export class PolygonIDManager extends EventEmitter {
   }
 
   private async fetchPolygonFile(url: string): Promise<Uint8Array> {
-    storageCache[`${CircuitId.AuthV2.toString()}/verification_key.json`] =
+    /*storageCache[`${CircuitId.AuthV2.toString()}/verification_key.json`] =
       '/Users/chriswere/polygon_circuits/1'
     storageCache[`${CircuitId.AuthV2.toString()}/circuit_final.zkey`] =
       '/Users/chriswere/polygon_circuits/2'
     storageCache[`${CircuitId.AuthV2.toString()}/circuit.wasm`] =
-      '/Users/chriswere/polygon_circuits/3'
+      '/Users/chriswere/polygon_circuits/3'*/
 
     let path
     if (storageCache[url]) {
