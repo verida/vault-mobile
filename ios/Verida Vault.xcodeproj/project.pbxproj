@@ -10,7 +10,7 @@
 		050D32F826FA3D480076780F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050D32F726FA3D480076780F /* File.swift */; };
 		050D32F926FA3D480076780F /* File.swift in Sources */ = {isa = PBXBuildFile; fileRef = 050D32F726FA3D480076780F /* File.swift */; };
 		0545145726F9DB5700654C18 /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
-		0545145826F9DB5700654C18 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		0545145826F9DB5700654C18 /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.mm */; };
 		0545145C26F9DB5700654C18 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
 		0545145D26F9DB5700654C18 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		0545145E26F9DB5700654C18 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
@@ -20,13 +20,13 @@
 		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB11A68108700A75B9A /* LaunchScreen.xib */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
+		13B07FC11A68108700A75B9A /* main.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.mm */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4496B345EB039266071037DE /* libPods-Verida Vault.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB651D7E92702950EC1C4600 /* libPods-Verida Vault.a */; };
-		5B189CFE29A7B80B008ECD6F /* RNWorkers.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CFD29A7B80B008ECD6F /* RNWorkers.m */; };
-		5B189CFF29A7B80B008ECD6F /* RNWorkers.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CFD29A7B80B008ECD6F /* RNWorkers.m */; };
-		5B189D0329A7B883008ECD6F /* RNWorkersManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189D0229A7B883008ECD6F /* RNWorkersManager.m */; };
-		5B189D0429A7B883008ECD6F /* RNWorkersManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189D0229A7B883008ECD6F /* RNWorkersManager.m */; };
+		5B189CFE29A7B80B008ECD6F /* RNWorkers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CFD29A7B80B008ECD6F /* RNWorkers.mm */; };
+		5B189CFF29A7B80B008ECD6F /* RNWorkers.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CFD29A7B80B008ECD6F /* RNWorkers.mm */; };
+		5B189D0329A7B883008ECD6F /* RNWorkersManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B189D0229A7B883008ECD6F /* RNWorkersManager.mm */; };
+		5B189D0429A7B883008ECD6F /* RNWorkersManager.mm in Sources */ = {isa = PBXBuildFile; fileRef = 5B189D0229A7B883008ECD6F /* RNWorkersManager.mm */; };
 		97254FDE9EA3786C4850F5C1 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5469EA3EFC6885C9F4EDA84 /* ExpoModulesProvider.swift */; };
 		D6532E15672FB75B82CCA487 /* libPods-Verida Vault Internal.a in Frameworks */ = {isa = PBXBuildFile; fileRef = EE739673BFACFB48A43E47E9 /* libPods-Verida Vault Internal.a */; };
 /* End PBXBuildFile section */
@@ -47,15 +47,15 @@
 		13B07FB21A68108700A75B9A /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.xib; name = Base; path = Base.lproj/LaunchScreen.xib; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = myApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = myApp/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = myApp/main.m; sourceTree = "<group>"; };
+		13B07FB71A68108700A75B9A /* main.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = main.mm; path = myApp/main.mm; sourceTree = "<group>"; };
 		1855E6B3EF194A06BB4729F3 /* AntDesign.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = AntDesign.ttf; path = "../node_modules/native-base/Fonts/AntDesign.ttf"; sourceTree = "<group>"; };
 		1B628E87F69A46B99DCFE81A /* Pods-Verida Vault.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault.debug.xcconfig"; path = "Target Support Files/Pods-Verida Vault/Pods-Verida Vault.debug.xcconfig"; sourceTree = "<group>"; };
 		1CA037D9327BD46A3A11A3BF /* Pods-Verida Vault Internal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault Internal.release.xcconfig"; path = "Target Support Files/Pods-Verida Vault Internal/Pods-Verida Vault Internal.release.xcconfig"; sourceTree = "<group>"; };
 		228FC23CE0D44BE7897CDEF3 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		3DBEAF860106428B82D2C175 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
-		5B189CFD29A7B80B008ECD6F /* RNWorkers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNWorkers.m; path = myApp/RNWorkers.m; sourceTree = "<group>"; };
+		5B189CFD29A7B80B008ECD6F /* RNWorkers.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = RNWorkers.mm; path = myApp/RNWorkers.mm; sourceTree = "<group>"; };
 		5B189D0129A7B859008ECD6F /* RNWorkers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNWorkers.h; sourceTree = "<group>"; };
-		5B189D0229A7B883008ECD6F /* RNWorkersManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNWorkersManager.m; path = myApp/RNWorkersManager.m; sourceTree = "<group>"; };
+		5B189D0229A7B883008ECD6F /* RNWorkersManager.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; name = RNWorkersManager.mm; path = myApp/RNWorkersManager.mm; sourceTree = "<group>"; };
 		5B189D0729A7BA02008ECD6F /* RNWorkersManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNWorkersManager.h; sourceTree = "<group>"; };
 		5C85E421F41D4B72A10C5D5D /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F12764B221249EF9A963F52 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
@@ -115,14 +115,14 @@
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				13B07FB11A68108700A75B9A /* LaunchScreen.xib */,
-				13B07FB71A68108700A75B9A /* main.m */,
+				13B07FB71A68108700A75B9A /* main.mm */,
 				AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */,
 				050D32F726FA3D480076780F /* File.swift */,
 				050D32F526FA3D470076780F /* Verida Vault-Bridging-Header.h */,
 				050D32F626FA3D470076780F /* Verida Vault Staging-Bridging-Header.h */,
-				5B189CFD29A7B80B008ECD6F /* RNWorkers.m */,
+				5B189CFD29A7B80B008ECD6F /* RNWorkers.mm */,
 				5B189D0129A7B859008ECD6F /* RNWorkers.h */,
-				5B189D0229A7B883008ECD6F /* RNWorkersManager.m */,
+				5B189D0229A7B883008ECD6F /* RNWorkersManager.mm */,
 				5B189D0729A7BA02008ECD6F /* RNWorkersManager.h */,
 			);
 			name = myApp;
@@ -703,10 +703,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				0545145726F9DB5700654C18 /* AppDelegate.mm in Sources */,
-				5B189D0429A7B883008ECD6F /* RNWorkersManager.m in Sources */,
-				5B189CFF29A7B80B008ECD6F /* RNWorkers.m in Sources */,
+				5B189D0429A7B883008ECD6F /* RNWorkersManager.mm in Sources */,
+				5B189CFF29A7B80B008ECD6F /* RNWorkers.mm in Sources */,
 				050D32F926FA3D480076780F /* File.swift in Sources */,
-				0545145826F9DB5700654C18 /* main.m in Sources */,
+				0545145826F9DB5700654C18 /* main.mm in Sources */,
 				1052C764E433A271D674A7A7 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -716,10 +716,10 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				5B189D0329A7B883008ECD6F /* RNWorkersManager.m in Sources */,
-				5B189CFE29A7B80B008ECD6F /* RNWorkers.m in Sources */,
+				5B189D0329A7B883008ECD6F /* RNWorkersManager.mm in Sources */,
+				5B189CFE29A7B80B008ECD6F /* RNWorkers.mm in Sources */,
 				050D32F826FA3D480076780F /* File.swift in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				13B07FC11A68108700A75B9A /* main.mm in Sources */,
 				97254FDE9EA3786C4850F5C1 /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
