@@ -16,7 +16,7 @@
     "test": "jest",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
-    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify"
+    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn"
   },
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.0-beta.3",

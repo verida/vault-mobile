@@ -1,0 +1,13 @@
+diff --git a/node_modules/lottie-react-native/lib/commonjs/LottieView.js b/node_modules/lottie-react-native/lib/commonjs/LottieView.js
+index 487284c..855eb21 100644
+--- a/node_modules/lottie-react-native/lib/commonjs/LottieView.js
++++ b/node_modules/lottie-react-native/lib/commonjs/LottieView.js
+@@ -82,7 +82,7 @@ class AnimatedLottieView extends _react.default.PureComponent {
+       ...rest
+     } = this.props;
+     const sourceName = typeof source === 'string' ? source : undefined;
+-    const sourceJson = typeof source === 'object' && !source.uri ? JSON.stringify(source) : undefined;
++    const sourceJson = typeof source === 'object' && !source.uri ? global.originalJSON.stringify(source) : undefined;;
+     const sourceURL = typeof source === 'object' && source.uri ? source.uri : undefined;
+     const aspectRatioStyle = sourceJson ? {
+       aspectRatio: source.w / source.h
