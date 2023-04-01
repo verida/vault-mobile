@@ -79,9 +79,9 @@ function makePow(pow) {
 Math.pow = makePow(Math.pow)
 
 
-// react-native-webassembly doesn't have the `compile` function, but we can use the `instantiate` function as a replacement
-// TODO: implement the `compile` function, continue to check as I'm not sure about the result!!!
-RNWebAssembly.compile = RNWebAssembly.instantiate
+// react-native-webassembly doesn't have the `compile` function atm, so just ignore this optimization function for now.
+// TODO: Revisit and implement the `compile` function (c++)
+RNWebAssembly.compile = (a) => a
 
 global.WebAssembly = RNWebAssembly;
 
