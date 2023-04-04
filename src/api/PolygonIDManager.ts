@@ -43,6 +43,7 @@ import { IDatabase } from '@verida/types'
 import Axios from 'axios'
 import { EventEmitter } from 'events'
 import ReactNativeBlobUtil from 'react-native-blob-util'
+import * as Sentry from '@sentry/react-native'
 
 import AccountManager from './AccountManager'
 
@@ -144,6 +145,8 @@ export class PolygonIDManager extends EventEmitter {
     } catch (err: any) {
       console.log('auth handler error!')
       console.log(err)
+      Sentry.captureException(err)
+      
       throw err
     }
 
@@ -160,6 +163,8 @@ export class PolygonIDManager extends EventEmitter {
       } else {
         console.log(err)
       }
+
+      Sentry.captureException(err)
     }
   }
 

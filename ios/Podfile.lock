@@ -821,8 +821,14 @@ PODS:
     - React-Core
   - react-native-netinfo (8.2.0):
     - React-Core
-  - react-native-pager-view (6.0.2):
+  - react-native-pager-view (6.2.0):
+    - RCT-Folly
+    - RCTRequired
+    - RCTTypeSafety
+    - React-Codegen
     - React-Core
+    - React-RCTFabric
+    - ReactCommon/turbomodule/core
   - react-native-quick-base64 (2.0.5):
     - React-Core
   - react-native-quick-crypto (0.5.0):
@@ -1505,7 +1511,7 @@ SPEC CHECKSUMS:
   react-native-flipper: ccf9059793e4b36cb4e6e5e54208a5e01acba248
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-netinfo: e922cb2e3eaf9ccdf16b8d4744a89657377aa4a1
-  react-native-pager-view: 592421df0259bf7a7a4fe85b74c24f3f39905605
+  react-native-pager-view: 03aa0e1580050c4a47ff8ac07f43d094057be562
   react-native-quick-base64: e657e9197e61b60a9dec49807843052b830da254
   react-native-quick-crypto: a903ff39ac8fea78bb9d37cccc5cc0596afc9670
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
@@ -1561,4 +1567,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: 07611215759c1d5af320fba74fc02f410f673e83
 
-COCOAPODS: 1.11.3
+COCOAPODS: 1.12.0

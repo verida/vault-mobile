@@ -15,6 +15,7 @@ import EnvelopeSvg from 'assets/icons/envelope.svg'
 import SettingsSvg from 'assets/icons/settings.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { useWasmCircomRuntime } from 'hooks/wasm/useWasmCircomRuntime'
 
 export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   avatar: ImageSourcePropType
@@ -41,11 +42,24 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     ...rest
   } = props
 
+  const { calculateWTNSBin } = useWasmCircomRuntime();
+
   return (
     <Header transparent style={styles.header} {...rest}>
       <Left style={styles.leftContainer}>
         <View style={styles.left}>
-          <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
+          <TouchableOpacity style={styles.avatarButton} onPress={()=> {
+             try {
+              // https://github.com/cawfree/zk-starter
+              const witnessBuffer = calculateWTNSBin({ a: 3, b: 11 });
+              console.log(JSON.stringify(witnessBuffer));
+            } catch (e) {
+              // Ignore instantiation errors.
+              if (String(e) === 'Not ready to calculate.') return;
+          
+              console.error(e);
+            }
+          }}>
             <FastImage
               source={avatar as any}
               resizeMode={FastImage.resizeMode.cover}
