@@ -46,20 +46,33 @@ function ShareableData(
       const searchFilter =
         searchValue && searchValue.length > 0
           ? {
-              $or: [
-                {
-                  name: {
-                    $regex: searchValue,
-                  },
-                },
-                {
-                  summary: {
-                    $regex: searchValue,
-                  },
-                },
-              ],
+              name: {
+                $regex: searchValue,
+              },
             }
           : {}
+
+      // TODO: Allow searching on summary as well as on name
+      // This needs an upgrade of the Verida SDK to pouchDB 8.x
+      // See https://github.com/verida/vault-mobile/issues/865#issuecomment-1496905751
+      //
+      // const searchFilter =
+      //   searchValue && searchValue.length > 0
+      //     ? {
+      //         $or: [
+      //           {
+      //             name: {
+      //               $regex: searchValue,
+      //             },
+      //           },
+      //           {
+      //             summary: {
+      //               $regex: searchValue,
+      //             },
+      //           },
+      //         ],
+      //       }
+      //     : {}
 
       const query = {
         $and: [requestFilter, searchFilter],
