@@ -11,7 +11,7 @@ import Button from 'components/Button'
 import { RequestedDataSelector } from 'components/Inbox/RequestedDataSelector'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Text from 'components/Text'
-import { GREY_COLOR } from 'constants/color'
+import { ACCEPT_COLOR, DECLINE_COLOR, GREY_COLOR } from 'constants/color'
 
 export default (props) => {
   const { item, navigation } = props
@@ -42,7 +42,8 @@ export default (props) => {
 
   const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
 
-  const { userSelect, requestSchema, filter, fallbackAction } = item.item.data
+  const { userSelect, requestSchema, filter, fallbackAction, status } =
+    item.item.data
 
   const shareEnabled = (userSelect && !isEmpty(selectedItems)) || !userSelect
 
@@ -69,34 +70,52 @@ export default (props) => {
             </View>
           </View>
           <View style={styles.divider} />
-          <RequestedDataSelector
-            name={item.title} // Not the best to use the message title but better than nothing for the moment
-            schemaUrl={requestSchema}
-            userSelect={!!userSelect}
-            fallbackAction={fallbackAction}
-            onPress={onItemPress}
-            selectedItems={selectedItems}
-          />
+          {status ? (
+            <View
+              style={[styles.statusContainer, { justifyContent: 'center' }]}>
+              <Text
+                style={[
+                  styles.status,
+                  status === 'accept'
+                    ? styles.statusAccept
+                    : styles.statusDecline,
+                ]}>
+                {status === 'accept' ? 'Accepted' : 'Declined'}
+              </Text>
+            </View>
+          ) : (
+            <RequestedDataSelector
+              name={item.title} // Not the best to use the message title but better than nothing for the moment
+              schemaUrl={requestSchema}
+              userSelect={!!userSelect}
+              fallbackAction={fallbackAction}
+              onPress={onItemPress}
+              selectedItems={selectedItems}
+            />
+          )}
         </View>
       </Content>
-      <CustomFooter>
-        <View style={styles.footer}>
-          <Button
-            color='grey'
-            style={[styles.button, styles.ignoreButton]}
-            onPress={() => handleAction('decline')}
-            loading={currentAction === 'decline'}>
-            Ignore
-          </Button>
-          <Button
-            style={[styles.button, styles.shareButton]}
-            onPress={() => handleAction('accept')}
-            loading={currentAction === 'accept'}
-            disabled={!shareEnabled}>
-            Share
-          </Button>
-        </View>
-      </CustomFooter>
+      {status ? null : (
+        <CustomFooter>
+          <View style={styles.footer}>
+            <Button
+              color='grey'
+              style={[styles.button, styles.ignoreButton]}
+              onPress={() => handleAction('decline')}
+              loading={currentAction === 'decline'}
+              disabled={!!status}>
+              Decline
+            </Button>
+            <Button
+              style={[styles.button, styles.shareButton]}
+              onPress={() => handleAction('accept')}
+              loading={currentAction === 'accept'}
+              disabled={!shareEnabled || !!status}>
+              Share
+            </Button>
+          </View>
+        </CustomFooter>
+      )}
     </>
   )
 }
@@ -147,5 +166,24 @@ const styles = StyleSheet.create({
     height: 60,
     borderRadius: 30,
     resizeMode: 'contain',
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    marginVertical: 30,
+    bottom: 0,
+  },
+  status: {
+    flex: 0.5,
+    fontSize: 14,
+    color: '#ffffff',
+    textAlign: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  statusDecline: {
+    backgroundColor: DECLINE_COLOR,
+  },
+  statusAccept: {
+    backgroundColor: ACCEPT_COLOR,
   },
 })
