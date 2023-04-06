@@ -2,7 +2,7 @@ diff --git a/node_modules/react-native/React/Views/RCTFont.mm b/node_modules/rea
 index 679f2ce..a88cd63 100644
 --- a/node_modules/react-native/React/Views/RCTFont.mm
 +++ b/node_modules/react-native/React/Views/RCTFont.mm
-@@ -344,7 +344,7 @@ + (UIFont *)updateFont:(UIFont *)font
+@@ -344,7 +344,7 @@ RCT_ARRAY_CONVERTER(RCTFontVariantDescriptor)
        isCondensed = isCondensedFont(font);
      } else {
        // Not a valid font or family
@@ -11,3 +11,16 @@ index 679f2ce..a88cd63 100644
        if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)]) {
          font = [UIFont systemFontOfSize:fontSize weight:fontWeight];
        } else if (fontWeight > UIFontWeightRegular) {
+diff --git a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
+index 9986279..20389d4 100644
+--- a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
++++ b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
+@@ -2229,7 +2229,7 @@ static float YGDistributeFreeSpaceSecondPass(
+         depth,
+         generationCount);
+     node->setLayoutHadOverflow(
+-        node->getLayout().hadOverflow() |
++        node->getLayout().hadOverflow() ||
+         currentRelativeChild->getLayout().hadOverflow());
+   }
+   return deltaFreeSpace;
