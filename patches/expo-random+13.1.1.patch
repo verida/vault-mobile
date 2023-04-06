@@ -1,0 +1,25 @@
+diff --git a/node_modules/expo-random/android/src/main/java/expo/modules/random/RandomModule.kt b/node_modules/expo-random/android/src/main/java/expo/modules/random/RandomModule.kt
+index f5900d5..97c6794 100644
+--- a/node_modules/expo-random/android/src/main/java/expo/modules/random/RandomModule.kt
++++ b/node_modules/expo-random/android/src/main/java/expo/modules/random/RandomModule.kt
+@@ -11,13 +11,13 @@ class RandomModule : Module() {
+   override fun definition() = ModuleDefinition {
+     Name("ExpoRandom")
+ 
+-    Function("getRandomBase64String", this@RandomModule::getRandomBase64String)
+-    AsyncFunction("getRandomBase64StringAsync", this@RandomModule::getRandomBase64String)
++//    Function("getRandomBase64String", this@RandomModule::getRandomBase64String)
++//    AsyncFunction("getRandomBase64StringAsync", this@RandomModule::getRandomBase64String)
+   }
+ 
+-  private fun getRandomBase64String(randomByteCount: Int): String {
+-    val output = ByteArray(randomByteCount)
+-    secureRandom.nextBytes(output)
+-    return Base64.encodeToString(output, Base64.NO_WRAP)
+-  }
++//  private fun getRandomBase64String(randomByteCount: Int): String {
++//    val output = ByteArray(randomByteCount)
++//    secureRandom.nextBytes(output)
++//    return Base64.encodeToString(output, Base64.NO_WRAP)
++//  }
+ }
