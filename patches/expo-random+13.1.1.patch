@@ -23,3 +23,16 @@ index f5900d5..97c6794 100644
 +//    return Base64.encodeToString(output, Base64.NO_WRAP)
 +//  }
  }
+diff --git a/node_modules/expo-random/ios/ExpoRandom.podspec b/node_modules/expo-random/ios/ExpoRandom.podspec
+index 02c0782..abad812 100644
+--- a/node_modules/expo-random/ios/ExpoRandom.podspec
++++ b/node_modules/expo-random/ios/ExpoRandom.podspec
+@@ -10,7 +10,7 @@ Pod::Spec.new do |s|
+   s.license        = package['license']
+   s.author         = package['author']
+   s.homepage       = package['homepage']
+-  s.platform       = :ios, '13.0'
++  s.platform       = :ios, '12.0'
+   s.swift_version  = '5.4'
+   s.source         = { git: 'https://github.com/expo/expo.git' }
+   s.static_framework = true
