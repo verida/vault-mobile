@@ -68,7 +68,7 @@ function usePolygonIdContext(): PolygonIdContextType {
       switch (data.type) {
         case 'https://iden3-communication.io/authorization/1.0/request':
           // Either a Connection request or a ZK Proof request
-          if (data.body.scope) {
+          if (data.body.scope && qrData.body.scope.length) {
             // We have a scope object implying we need to submit a ZK proof
             navigation.navigate('ProofRequest', {
               connectionName: `${data.hostname} (${data.from})`,
