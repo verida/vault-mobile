@@ -30,8 +30,6 @@ PODS:
   - ExpoModulesCore (0.9.2):
     - React-Core
     - ReactCommon/turbomodule/core
-  - ExpoRandom (13.1.1):
-    - ExpoModulesCore
   - EXSecureStore (11.2.0):
     - ExpoModulesCore
   - EXSplashScreen (0.15.1):
@@ -647,11 +645,6 @@ PODS:
   - SSZipArchive (2.2.3)
   - TcpSockets (3.3.2):
     - React
-  - UMCore (7.1.2)
-  - UMReactNativeAdapter (6.3.9):
-    - ExpoModulesCore
-    - React-Core
-    - UMCore
   - Yoga (1.14.0)
   - YogaKit (1.18.1):
     - Yoga (~> 1.14)
@@ -670,7 +663,6 @@ DEPENDENCIES:
   - ExpoImagePicker (from `../node_modules/expo-image-picker/ios`)
   - ExpoLinearGradient (from `../node_modules/expo-linear-gradient/ios`)
   - ExpoModulesCore (from `../node_modules/expo-modules-core/ios`)
-  - ExpoRandom (from `../node_modules/expo-random/ios`)
   - EXSecureStore (from `../node_modules/expo-secure-store/ios`)
   - EXSplashScreen (from `../node_modules/expo-splash-screen/ios`)
   - FBLazyVector (from `../node_modules/react-native/Libraries/FBLazyVector`)
@@ -761,8 +753,6 @@ DEPENDENCIES:
   - RNSVG (from `../node_modules/react-native-svg`)
   - RNVectorIcons (from `../node_modules/react-native-vector-icons`)
   - TcpSockets (from `../node_modules/react-native-tcp`)
-  - "UMCore (from `../node_modules/@unimodules/core/ios`)"
-  - "UMReactNativeAdapter (from `../node_modules/@unimodules/react-native-adapter/ios`)"
   - Yoga (from `../node_modules/react-native/ReactCommon/yoga`)
 
 SPEC REPOS:
@@ -832,8 +822,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/expo-linear-gradient/ios"
   ExpoModulesCore:
     :path: "../node_modules/expo-modules-core/ios"
-  ExpoRandom:
-    :path: "../node_modules/expo-random/ios"
   EXSecureStore:
     :path: "../node_modules/expo-secure-store/ios"
   EXSplashScreen:
@@ -966,10 +954,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-vector-icons"
   TcpSockets:
     :path: "../node_modules/react-native-tcp"
-  UMCore:
-    :path: "../node_modules/@unimodules/core/ios"
-  UMReactNativeAdapter:
-    :path: "../node_modules/@unimodules/react-native-adapter/ios"
   Yoga:
     :path: "../node_modules/react-native/ReactCommon/yoga"
 
@@ -989,7 +973,6 @@ SPEC CHECKSUMS:
   ExpoImagePicker: d9d6b4f29db437fc7796f13cee5f133f5b4b5f7c
   ExpoLinearGradient: 0debcf7d6cd7fea3050c218544f0db2de9a64f42
   ExpoModulesCore: e4278a668e8c13c0269ed8b8a4200989deea2973
-  ExpoRandom: fa37ceb10c2cfb2afa7cbf88589a8da5998e2cab
   EXSecureStore: aaae919d83aec2faf031e99398807edac0313285
   EXSplashScreen: 34f460788db8d682883871708dddbfac72095bb7
   FBLazyVector: 2b47ff52037bd9ae07cc9b051c9975797814b736
@@ -1090,8 +1073,6 @@ SPEC CHECKSUMS:
   SocketRocket: fccef3f9c5cedea1353a9ef6ada904fde10d6608
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   TcpSockets: 14306fb79f9750ea7d2ddd02d8bed182abb01797
-  UMCore: ce3a4faa010239063b8343895b29a6d97b01069d
-  UMReactNativeAdapter: d03cefd0e4e4179ab8c490408589f1c8a6c8b785
   Yoga: c4d61225a466f250c35c1ee78d2d0b3d41fe661c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
