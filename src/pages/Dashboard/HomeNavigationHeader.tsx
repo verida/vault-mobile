@@ -1,3 +1,4 @@
+import { useTheme } from 'contexts/ThemeContext'
 import { Header, Left, Right } from 'native-base'
 import React from 'react'
 import {
@@ -41,6 +42,8 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     ...rest
   } = props
 
+  const { theme } = useTheme()
+
   return (
     <Header transparent style={styles.header} {...rest}>
       <Left style={styles.leftContainer}>
@@ -75,7 +78,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
             style={styles.inboxButton}
             onPress={onInboxPress}
             hitSlop={HITSLOP}>
-            <EnvelopeSvg />
+            <EnvelopeSvg fill={theme.color.icon} />
             {inboxCount ? (
               <View style={styles.badge}>
                 <Text style={{ fontSize: 8 }} numberOfLines={1}>
@@ -90,7 +93,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
             style={styles.settingsButton}
             onPress={onSettingsPress}
             hitSlop={HITSLOP}>
-            <SettingsSvg />
+            <SettingsSvg fill={theme.color.icon} />
           </TouchableOpacity>
         </View>
       </Right>

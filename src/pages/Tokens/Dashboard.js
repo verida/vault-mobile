@@ -1,11 +1,10 @@
+import { useNavigation } from '@react-navigation/native'
 import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 
-import SettingsSvg from 'assets/icons/settings.svg'
 import LoadingIndicator from 'components/LoadingIndicator'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
@@ -14,8 +13,9 @@ import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
 import SendListModal from './SendListModal'
 
-const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
+const TokenDashboard = ({ onGetBalances, data, wallets }) => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
+  const navigation = useNavigation()
 
   async function pullToRefresh() {
     onGetBalances()
@@ -35,14 +35,6 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
 
   return (
     <Container>
-      <NavigationHeader
-        left={{ icon: 'skip' }}
-        title='Tokens'
-        right={{
-          icon: <SettingsSvg />,
-          action: () => navigation.navigate('ManageWallets'),
-        }}
-      />
       {loading ? (
         <LoadingIndicator />
       ) : (
@@ -52,9 +44,6 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
             data={{
               amount: total,
             }}
-            // sendButtonAction={() => setSendModalVisible(true)}
-            // buyButtonAction={() => navigation.navigate('BuyToken')}
-            // receiveButtonAction={() => navigation.navigate('ReceiveToken')}
           />
           <TokensList
             list={list}
@@ -80,7 +69,7 @@ const TokenDashboard = ({ navigation, onGetBalances, data, wallets }) => {
 }
 
 const styles = StyleSheet.create({
-  contentContainer: { flex: 1 },
+  contentContainer: { flex: 1, marginTop: 10 },
 })
 
 const mapStateToProps = (rootState) => {

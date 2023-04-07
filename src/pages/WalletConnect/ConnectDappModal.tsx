@@ -50,7 +50,10 @@ const ConnectDappModal = (props: Props) => {
     () =>
       Object.keys(accounts)
         .reverse() // show ethereum first
+        // Filter only supported chains
         .filter((key) => ['algorand', 'eip155'].includes(key))
+        // Filter out watched wallets
+        .filter((key) => !!accounts[key].mnemonic || !!accounts[key].privateKey)
         .map((key) => ({
           ...accounts[key],
           label: `${accounts[key].address}`,
