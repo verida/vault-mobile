@@ -2,7 +2,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import update from 'immutability-helper'
 import { debounce } from 'lodash'
-import { Container, Content, Text } from 'native-base'
+import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import {
   FlatList,
@@ -18,6 +18,7 @@ import Button from 'components/Button'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { Text } from 'components/Typography/Text'
 import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 import ShareableDataItem, {
@@ -171,12 +172,13 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     margin: 16,
-    paddingHorizontal: 15,
+    padding: 8,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
     fontSize: 16,
+    lineHeight: 22,
   },
   noResult: {
     flex: 1,
