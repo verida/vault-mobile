@@ -61,7 +61,7 @@ export const ProfileUsenameSection = ({ did, profile }: Props) => {
           }}
           style={styles.roundedButton}
           color='transparent'
-          onPress={() => navigation.navigate('ManageWallets')}>
+          onPress={() => navigation.navigate('ClaimUsername')}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text
               style={{
@@ -125,7 +125,7 @@ export const ProfileUsenameSection = ({ did, profile }: Props) => {
             }}
             style={styles.capsuleButtton}
             color='transparent'
-            onPress={() => navigation.navigate('ManageWallets')}>
+            onPress={() => navigation.navigate('ClaimUsername')}>
             Claim username
           </Button>
         </View>

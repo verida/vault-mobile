@@ -1,3 +1,4 @@
+import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import React, {
   ForwardedRef,
@@ -42,6 +43,7 @@ export type FormInputProps = React.ComponentPropsWithRef<
   loading?: boolean
   suffix?: string
   suffixStyle?: TextStyle
+  desciption?: string
 }
 
 export const FormInput = React.forwardRef(
@@ -61,6 +63,7 @@ export const FormInput = React.forwardRef(
       checked,
       suffix,
       suffixStyle,
+      desciption,
       ...rest
     } = props
     const { theme } = useTheme()
@@ -175,29 +178,32 @@ export const FormInput = React.forwardRef(
                 onBlur={onBlur}
                 placeholderTextColor={theme.color.placeholderTextColor}
               />
-              {suffix && (
-                <Label
-                  style={[
-                    {
-                      position: 'absolute',
-                      color: theme.color.textLightGrey30,
-                      fontSize: 14,
-                      top: '50%',
-                      right: 40,
-                      transform: [
-                        {
-                          translateY: -8,
-                        },
-                      ],
-                      textAlign: 'left',
-                      flexGrow: 1,
-                      minWidth: 0,
-                    },
-                    suffixStyle,
-                  ]}>
-                  {suffix}
-                </Label>
-              )}
+              {
+                // suffix &&
+                // (
+                //   <Label
+                //     style={[
+                //       {
+                //         position: 'absolute',
+                //         color: theme.color.textLightGrey30,
+                //         fontSize: 14,
+                //         top: '50%',
+                //         right: 40,
+                //         transform: [
+                //           {
+                //             translateY: -8,
+                //           },
+                //         ],
+                //         textAlign: 'left',
+                //         flexGrow: 1,
+                //         minWidth: 0,
+                //       },
+                //       suffixStyle,
+                //     ]}>
+                //     {suffix}
+                //   </Label>
+                // )
+              }
             </View>
           </TouchableWithoutFeedback>
           {withAnimatedChecbox && !focused && (
@@ -232,6 +238,15 @@ export const FormInput = React.forwardRef(
           ]}>
           {errorMessage}
         </Label>
+        {desciption && (
+          <Label
+            style={{
+              marginTop: 2,
+              color: Color(theme.color.onBackground).alpha(0.4).toString(),
+            }}>
+            {desciption}
+          </Label>
+        )}
       </View>
     )
   }

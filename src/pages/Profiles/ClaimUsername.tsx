@@ -1,31 +1,32 @@
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import Color from 'color'
+import { useTheme } from 'contexts/ThemeContext'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
   Keyboard,
   KeyboardAvoidingView,
   Platform,
   StyleSheet,
-  Text,
+  TextInput,
   View,
 } from 'react-native'
+import ParsedText from 'react-native-parsed-text'
 import Snackbar from 'react-native-snackbar'
 
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { Headline } from 'components/Typography/Headline'
+import { Text } from 'components/Typography/Text'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
-import Label from '../../components/Label'
-import DropDownPicker from '../../components/Select'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
-import { COUNTRIES } from '../../helpers/country-list'
-import InputStyles from '../../styles/inputs'
 
 const MAX_TEXTAREA_LENGTH = 255
 const MAX_INPUT_LENGTH = 140
@@ -57,24 +58,25 @@ type ValueObject = {
  * This component is just duplicated and modified for generic purpose usage from the EditProfile.tsx component
  * TODO: Refactor
  */
-const InputUsername = () => {
+const ClaimUsername = () => {
   const navigation = useNavigation()
   const params = useParams<GenericEditPropertyScreenProps>()
   const {
     screenName,
     title,
-    option,
+    // option,
     mode,
     originalValue,
-    submitButtonLabel = 'Save',
+    submitButtonLabel = 'Claim',
     verification,
   } = params
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
 
   const [disabled, setDisabled] = useState(false)
-  const [edited, setEdited] = useState<string | ValueObject>(
-    option.value as any
-  )
+  const [edited, setEdited] = useState<string | ValueObject>('')
+  const [inputText, setInputText] = useState('')
+  const usernameInputRef = useRef<TextInput>(null)
   const [inputError, setInputError] = useState({
     inputMaxLength: 0,
     isExceededMaxLength: false,
@@ -129,70 +131,83 @@ const InputUsername = () => {
 
   return (
     <Container>
-      <NavigationHeader title={title} left={{ icon: 'close' }} />
+      <NavigationHeader title={'Username'} left={{ icon: 'close' }} />
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={{ flex: 1 }}>
         <Content
           contentContainerStyle={{
             flex: 1,
-            margin: 20,
+            paddingTop: theme.spacing.l,
+            paddingHorizontal: theme.spacing.m,
             justifyContent: 'space-between',
           }}>
           <View style={{ flex: 1 }}>
-            {option.type === 'input' && (
-              <FormInput
-                placeholder={option.placeholder}
-                label={option.label}
-                value={edited as string}
-                autoFocus={true}
-                autoCapitalize='none'
-                autoCorrect={false}
-                errorMessage={
-                  inputError.isExceededMaxLength
-                    ? `${option.type} must be less than ${inputError.inputMaxLength} characters`
-                    : undefined
+            <Headline style={{ marginBottom: 10 }}>Username</Headline>
+            <Text style={{ marginBottom: theme.spacing.l }}>
+              Your username is unique to your identity.
+            </Text>
+            <FormInput
+              ref={usernameInputRef}
+              placeholder={'veridaname.vda'}
+              label={'Username'}
+              desciption='Your username is public and optional'
+              autoFocus={true}
+              autoCapitalize='none'
+              autoCorrect={false}
+              maxLength={MAX_INPUT_LENGTH}
+              onSelectionChange={(e) => {
+                const selection = e.nativeEvent.selection
+                let start, end
+                if (selection.start > inputText.length - 4) {
+                  start = inputText.length - 4
+                } else {
+                  start = selection.start
                 }
-                placeholderTextColor='rgba(4, 17, 51, 0.3)'
-                maxLength={MAX_INPUT_LENGTH}
-                onChangeText={(text) => {
-                  handleInput(text, MAX_INPUT_LENGTH)
+
+                if (selection.end > inputText.length - 4) {
+                  end = inputText.length - 4
+                } else {
+                  end = selection.end
+                }
+
+                usernameInputRef.current?.setNativeProps({
+                  selection: {
+                    start,
+                    end,
+                  },
+                })
+              }}
+              onChangeText={(text) => {
+                if (text.length > 0 && !text.match(/.vda$/)) {
+                  setInputText(text + '.vda')
+                } else if (text === '.vda') {
+                  setInputText('')
+                } else {
+                  setInputText(text)
+                }
+              }}>
+              <ParsedText
+                style={{
+                  fontFamily: NUNITO_SANS,
+                  fontSize: theme.fontSize.m,
+                  color: theme.color.onBackground,
                 }}
-              />
-            )}
-            {option.type === 'select' && (
-              <>
-                <Label style={{ marginTop: 0 }}>{option.label}</Label>
-                <DropDownPicker
-                  searchable={true}
-                  searchablePlaceholder='Search...'
-                  placeholder=''
-                  defaultValue={option.value as string}
-                  items={COUNTRIES}
-                  containerStyle={InputStyles.select}
-                  onChangeItem={onChangeItem}
-                />
-              </>
-            )}
-            {option.type === 'textarea' && (
-              <FormInput
-                placeholder={`Enter the ${option.label}`}
-                label={option.label}
-                inputStyle={{ minHeight: 68 }}
-                value={edited as string}
-                multiline
-                numberOfLines={4}
-                maxLength={MAX_TEXTAREA_LENGTH}
-                editable
-                autoFocus={true}
-                onChangeText={(text) => {
-                  handleInput(text, MAX_TEXTAREA_LENGTH)
-                }}
-              />
-            )}
-            {Boolean(option.description) && (
-              <Text style={[styles.description]}>{option.description}</Text>
-            )}
+                parse={[
+                  {
+                    pattern: /.vda$/,
+                    style: {
+                      fontFamily: NUNITO_SANS,
+                      fontSize: theme.fontSize.m,
+                      color: Color(theme.color.onBackground)
+                        .alpha(0.4)
+                        .toString(),
+                    },
+                  },
+                ]}>
+                {inputText}
+              </ParsedText>
+            </FormInput>
           </View>
           <Button
             disabled={
@@ -209,7 +224,7 @@ const InputUsername = () => {
   )
 }
 
-export default InputUsername
+export default ClaimUsername
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
