@@ -61,8 +61,6 @@ export const FormInput = React.forwardRef(
       withAnimatedChecbox,
       loading,
       checked,
-      suffix,
-      suffixStyle,
       desciption,
       ...rest
     } = props
@@ -114,97 +112,45 @@ export const FormInput = React.forwardRef(
             onPress={() => {
               ref.current?.focus()
             }}>
-            <View
-              style={
-                [
-                  // {
-                  //   flexDirection: 'row',
-                  //   alignItems: 'flex-start',
-                  //   justifyContent: 'flex-start',
-                  // },
-                  // styles.textInput,
-                  // inputStyle,
-                  // focused
-                  //   ? { borderColor: theme.color.veridaGreen }
-                  //   : errorMessage
-                  //   ? {
-                  //       borderColor: theme.color.error,
-                  //     }
-                  //   : {},
-                  // disabled
-                  //   ? {
-                  //       color: theme.color.textGrey100,
-                  //       backgroundColor: theme.color.veryLightGrey,
-                  //     }
-                  //   : {},
-                ]
-              }>
-              <OriginalTextInput
-                {...rest}
-                testID={testID}
-                placeholder={placeholder}
-                ref={ref}
-                editable={!disabled}
-                underlineColorAndroid={theme.color.transparent}
-                style={[
-                  {
-                    textAlign: 'left',
-                    backgroundColor: 'red',
-                    padding: 0,
-                    paddingRight: 2,
-                  },
-                  {
-                    flexDirection: 'row',
-                    alignItems: 'flex-start',
-                    justifyContent: 'flex-start',
-                  },
-                  styles.textInput,
-                  inputStyle,
-                  focused
-                    ? { borderColor: theme.color.veridaGreen }
-                    : errorMessage
-                    ? {
-                        borderColor: theme.color.error,
-                      }
-                    : {},
-                  disabled
-                    ? {
-                        color: theme.color.textGrey100,
-                        backgroundColor: theme.color.veryLightGrey,
-                      }
-                    : {},
-                ]}
-                onFocus={onFocus}
-                onBlur={onBlur}
-                placeholderTextColor={theme.color.placeholderTextColor}
-              />
-              {
-                // suffix &&
-                // (
-                //   <Label
-                //     style={[
-                //       {
-                //         position: 'absolute',
-                //         color: theme.color.textLightGrey30,
-                //         fontSize: 14,
-                //         top: '50%',
-                //         right: 40,
-                //         transform: [
-                //           {
-                //             translateY: -8,
-                //           },
-                //         ],
-                //         textAlign: 'left',
-                //         flexGrow: 1,
-                //         minWidth: 0,
-                //       },
-                //       suffixStyle,
-                //     ]}>
-                //     {suffix}
-                //   </Label>
-                // )
-              }
-            </View>
+            <OriginalTextInput
+              {...rest}
+              testID={testID}
+              placeholder={placeholder}
+              ref={ref}
+              editable={!disabled}
+              underlineColorAndroid={theme.color.transparent}
+              style={[
+                {
+                  textAlign: 'left',
+                  backgroundColor: 'red',
+                  padding: 0,
+                  paddingRight: 2,
+                },
+                {
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                },
+                styles.textInput,
+                inputStyle,
+                focused
+                  ? { borderColor: theme.color.veridaGreen }
+                  : errorMessage
+                  ? {
+                      borderColor: theme.color.error,
+                    }
+                  : {},
+                disabled
+                  ? {
+                      color: theme.color.textGrey100,
+                      backgroundColor: theme.color.veryLightGrey,
+                    }
+                  : {},
+              ]}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              placeholderTextColor={theme.color.placeholderTextColor}
+            />
           </TouchableWithoutFeedback>
           {withAnimatedChecbox && !focused && (
             <View
