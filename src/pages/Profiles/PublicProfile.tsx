@@ -542,6 +542,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     setFeaturedAssets([])
     setPublicCustomLinks([])
 
+    saveStatusEnabledVeridaOneProfile(false)
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
@@ -771,7 +772,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <ProfileImageLoader />
-          <ProfileUsenameSection did={currentAccountDID} />
+          {enabledVeridaOne && (
+            <ProfileUsenameSection did={currentAccountDID} />
+          )}
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList

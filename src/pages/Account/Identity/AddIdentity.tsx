@@ -51,11 +51,11 @@ const pageData = [
     hasNext: true,
     hasBack: true,
   },
-  {
-    key: 'username',
-    hasNext: true,
-    hasBack: true,
-  },
+  // {
+  //   key: 'username',
+  //   hasNext: true,
+  //   hasBack: true,
+  // },
   {
     key: 'location',
     hasNext: true,
@@ -72,7 +72,7 @@ const numberOfPages = pageData.length
 
 enum PageType {
   Name,
-  Username,
+  // Username,
   Location,
   Confirmation,
 }
@@ -85,12 +85,12 @@ const AddIdentity = () => {
   const { top } = useSafeAreaInsets()
   const pagerRef = useRef<PagerView>(null)
   const [currentPage, setCurrentPage] = useState(PageType.Name)
-  const [enabledClaimUsername] = useState(true) // FIXME: disable input username
+  const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
   const publicNameInputRef = useRef<TextInput>(null)
   const usernameInputRef = useRef<TextInput>(null)
-  const [manualFocusUsenameInput, setManualFocusUsenameInput] = useState(true)
+  // const [manualFocusUsenameInput, setManualFocusUsenameInput] = useState(true)
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
@@ -172,9 +172,6 @@ const AddIdentity = () => {
       setShowRetry(true)
     }
     setProcessing(false)
-    setTimeout(() => {
-      pagerRef.current?.setPage(PageType.Confirmation)
-    }, 100)
   }, [profile, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
@@ -185,10 +182,10 @@ const AddIdentity = () => {
             !isEmpty(profile.name) &&
             profile.name?.length <= PUBLIC_PROFILE_NAME_MAX_LENGTH,
         }
-      case PageType.Username:
-        return {
-          formValidated: true,
-        }
+      // case PageType.Username:
+      //   return {
+      //     formValidated: true,
+      //   }
       case PageType.Location:
         return { formValidated: !isEmpty(profile.country) }
       case PageType.Confirmation:
@@ -295,22 +292,23 @@ const AddIdentity = () => {
       <View style={styles.bottomNavContainer}>
         {currentPage !== PageType.Confirmation && (
           <>
-            {currentPage === PageType.Username && (
-              <Button
-                color='transparent'
-                style={styles.nextButton}
-                disabled={!formValidated}
-                onPress={() => {
-                  setProfile((p) => ({
-                    ...p,
-                    username: '',
-                  }))
-
-                  onNext()
-                }}>
-                Skip
-              </Button>
-            )}
+            {
+              // currentPage === PageType.Username && (
+              //   <Button
+              //     color='transparent'
+              //     style={styles.nextButton}
+              //     disabled={!formValidated}
+              //     onPress={() => {
+              //       setProfile((p) => ({
+              //         ...p,
+              //         username: '',
+              //       }))
+              //       onNext()
+              //     }}>
+              //     Skip
+              //   </Button>
+              // )
+            }
 
             <Button
               style={styles.nextButton}
@@ -383,14 +381,14 @@ const AddIdentity = () => {
         style={styles.pagerView}
         initialPage={currentPage}
         scrollEnabled={false}
-        onPageSelected={() => {
-          setTimeout(() => {
-            if (manualFocusUsenameInput && currentPage === PageType.Username) {
-              usernameInputRef.current?.focus()
-              setManualFocusUsenameInput(false)
-            }
-          }, 0)
-        }}
+        // onPageSelected={() => {
+        //   setTimeout(() => {
+        //     if (manualFocusUsenameInput && currentPage === PageType.Username) {
+        //       usernameInputRef.current?.focus()
+        //       setManualFocusUsenameInput(false)
+        //     }
+        //   }, 0)
+        // }}
         ref={pagerRef}>
         <Container
           key='name'
@@ -434,51 +432,53 @@ const AddIdentity = () => {
           {renderBottomButtons()}
         </Container>
 
-        <Container
-          key='username'
-          withKeyboardAvoidingView
-          keyboadAvoidingViewProps={{ keyboardVerticalOffset: top + 60 }}>
-          <ScrollView
-            contentContainerStyle={[
-              styles.scrollViewContainer,
-              styles.contentPadding,
-            ]}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps='handled'>
-            <Headline style={styles.title}>Username</Headline>
-            <Text>Your username is unique to your identity.</Text>
-            <Spacer vertical='l' />
-            <FormInput
-              label='Username'
-              placeholder='veridaname.vda'
-              suffix={profile.username ? '.vda' : undefined}
-              ref={usernameInputRef}
-              withAnimatedChecbox={profile.username.length > 0}
-              keyboardType='url'
-              autoCapitalize='none'
-              autoCorrect={false}
-              autoFocus={false}
-              autoComplete='off'
-              loading={checkingUsername}
-              onChangeText={(text) => {
-                setProfile((p) => ({ ...p, username: text }))
-              }}
-              onBlur={() => {
-                if (profile.username.length > 0) checkUsername()
-              }}
-              onFocus={() => {
-                setUsernameError(undefined)
-              }}
-              value={profile.username}
-              checked={availableUsername}
-              errorMessage={usernameError}
-            />
-            <Label style={{ marginTop: 2 }}>
-              Your username is public and optional
-            </Label>
-          </ScrollView>
-          {renderBottomButtons()}
-        </Container>
+        {/* {enabledClaimUsername && (
+          <Container
+            key='username'
+            withKeyboardAvoidingView
+            keyboadAvoidingViewProps={{ keyboardVerticalOffset: top + 60 }}>
+            <ScrollView
+              contentContainerStyle={[
+                styles.scrollViewContainer,
+                styles.contentPadding,
+              ]}
+              showsVerticalScrollIndicator={false}
+              keyboardShouldPersistTaps='handled'>
+              <Headline style={styles.title}>Username</Headline>
+              <Text>Your username is unique to your identity.</Text>
+              <Spacer vertical='l' />
+              <FormInput
+                label='Username'
+                placeholder='veridaname.vda'
+                suffix={profile.username ? '.vda' : undefined}
+                ref={usernameInputRef}
+                withAnimatedChecbox={profile.username.length > 0}
+                keyboardType='url'
+                autoCapitalize='none'
+                autoCorrect={false}
+                autoFocus={false}
+                autoComplete='off'
+                loading={checkingUsername}
+                onChangeText={(text) => {
+                  setProfile((p) => ({ ...p, username: text }))
+                }}
+                onBlur={() => {
+                  if (profile.username.length > 0) checkUsername()
+                }}
+                onFocus={() => {
+                  setUsernameError(undefined)
+                }}
+                value={profile.username}
+                checked={availableUsername}
+                errorMessage={usernameError}
+              />
+              <Label style={{ marginTop: 2 }}>
+                Your username is public and optional
+              </Label>
+            </ScrollView>
+            {renderBottomButtons()}
+          </Container>
+        )} */}
 
         <Container key='location'>
           <ScrollView
