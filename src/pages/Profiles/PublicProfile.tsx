@@ -49,9 +49,12 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
-import { WalletAddressItem } from 'components/PublicProfile'
-import { CustomLinkItem } from 'components/PublicProfile/CustomLinkItem'
-import { FeaturedAssetItem } from 'components/PublicProfile/FeaturedAssetItem'
+import {
+  CustomLinkItem,
+  FeaturedAssetItem,
+  ProfileUsenameSection,
+  WalletAddressItem,
+} from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
@@ -768,17 +771,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <ProfileImageLoader />
-          {/** Unavailable - Temporary disabled */}
-          {/* <View style={styles.oneProfileLinkContainer}>
-            <Image
-              style={{
-                position: 'absolute',
-                width: '100%',
-              }}
-              resizeMode='stretch'
-              source={require('assets/profile_banner_bg.png')}
-            />
-          </View> */}
+          <ProfileUsenameSection did={currentAccountDID} />
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList
@@ -986,14 +979,15 @@ const createStyles = (theme: Theme) =>
       opacity: 0.6,
       marginBottom: theme.spacing.s,
     },
-    oneProfileLinkContainer: {
-      position: 'relative',
-      width: '100%',
-      height: 140,
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: theme.spacing.m,
-    },
+    // oneProfileLinkContainer: {
+    //   position: 'relative',
+    //   minHeight: 213,
+    //   flexDirection: 'column',
+    //   alignItems: 'center',
+    //   justifyContent: 'center',
+    //   resizeMode: 'center',
+    //   marginBottom: theme.spacing.m,
+    // },
     loadingContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -1005,5 +999,9 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: -theme.spacing.m,
       alignItems: 'center',
       paddingHorizontal: theme.spacing.m,
+    },
+    cardBackground: {
+      backgroundColor: theme.color.black600,
+      borderRadius: theme.roundness.m,
     },
   })

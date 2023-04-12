@@ -3,11 +3,20 @@ import React from 'react'
 
 import EditIcon from 'assets/edit_icon.svg'
 import CopyIcon from 'assets/icons/copy.svg'
+import GoToIcon from 'assets/icons/goto_icon.svg'
+import ShareIcon from 'assets/icons/share_icon.svg'
 import WalletIcon from 'assets/icons/wallet.svg'
 import PlusIcon from 'assets/plus_icon.svg'
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
 
-export type IconName = 'Wallet' | 'ethereum' | 'copy' | 'edit' | 'plus'
+export type IconName =
+  | 'Wallet'
+  | 'ethereum'
+  | 'copy'
+  | 'edit'
+  | 'plus'
+  | 'goto'
+  | 'share'
 
 /**
  *  NOTE: to apply color correctly, need to modify the SVG by replacing color value with a generic name "currentColor"
@@ -20,29 +29,37 @@ export type IconName = 'Wallet' | 'ethereum' | 'copy' | 'edit' | 'plus'
  * </svg>
  *
  */
-const Icon = (props: { name: IconName; size?: number; color?: string }) => {
+export const Icon = (props: {
+  name: IconName
+  size?: number
+  color?: string
+}) => {
   const { theme } = useTheme()
   const { name, size = 24, color = theme.color.icon } = props
-  let icon = null
+  let ic = null
   switch (name) {
     case 'Wallet':
-      icon = <WalletIcon width={size} height={size} fill={color} />
+      ic = <WalletIcon width={size} height={size} fill={color} />
       break
     case 'ethereum':
-      icon = <EthereumIcon width={size} height={size} fill={color} />
+      ic = <EthereumIcon width={size} height={size} fill={color} />
       break
     case 'copy':
-      icon = <CopyIcon width={size} height={size} fill={color} />
+      ic = <CopyIcon width={size} height={size} fill={color} />
       break
     case 'edit':
-      icon = <EditIcon width={size} height={size} fill={color} />
+      ic = <EditIcon width={size} height={size} fill={color} />
       break
     case 'plus':
-      icon = <PlusIcon width={size} height={size} fill={color} />
+      ic = <PlusIcon width={size} height={size} fill={color} />
+      break
+    case 'goto':
+      ic = <GoToIcon width={size} height={size} fill={color} />
+      break
+    case 'share':
+      ic = <ShareIcon width={size} height={size} fill={color} />
       break
   }
 
-  return icon
+  return ic
 }
-
-export default Icon

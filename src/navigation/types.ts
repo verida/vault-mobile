@@ -88,4 +88,6 @@ export type MainStackParams = {
   NFTCollectionDetail: { collection: NFTCollection }
   NFTDetail: { nft: NFT }
   SelectAsset: SelectAssetScreenProps
+
+  ClaimUsername: undefined
 }

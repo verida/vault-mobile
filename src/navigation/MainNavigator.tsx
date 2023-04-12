@@ -21,6 +21,7 @@ import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
 import AddCustomLink from 'pages/Profiles/AddCustomLink'
+import ClaimUsername from 'pages/Profiles/ClaimUsername'
 import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
@@ -148,6 +149,14 @@ function MainNavigator() {
       <Stack.Screen
         name={'SelectAsset'}
         component={SelectAsset}
+        options={{
+          presentation: 'modal',
+        }}
+      />
+
+      <Stack.Screen
+        name={'ClaimUsername'}
+        component={ClaimUsername}
         options={{
           presentation: 'modal',
         }}

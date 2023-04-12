@@ -75,7 +75,7 @@ export const WalletAddressItem = ({
               style={{ width: 48, height: 48 }}
               resizeMode='contain'
             />
-            <View style={{ marginLeft: theme.spacing.s }}>
+            <View style={{ marginHorizontal: theme.spacing.s }}>
               <SubHeadline
                 ellipsizeMode='tail'
                 numberOfLines={2}
@@ -101,7 +101,10 @@ export const WalletAddressItem = ({
                   }}>
                   {walletAddress.address}
                 </Text>
-                <Text style={styles.veridaWalletName}>
+                <Text
+                  ellipsizeMode='tail'
+                  numberOfLines={1}
+                  style={[styles.veridaWalletName, { maxWidth: 115 }]}>
                   {walletAddress.veridaWalletName}
                 </Text>
               </View>
@@ -172,6 +175,6 @@ const createStyles = (theme: Theme) =>
       marginBottom: theme.spacing.s,
     },
     veridaWalletName: {
-      color: theme.color.textLightGrey,
+      color: theme?.color.textLightGrey,
     },
   })
