@@ -90,4 +90,5 @@ export type MainStackParams = {
   SelectAsset: SelectAssetScreenProps
 
   ClaimUsername: undefined
+  VeridaOneInvitationSuccess: undefined
 }

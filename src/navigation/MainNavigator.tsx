@@ -26,6 +26,7 @@ import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
+import VeridaOneInvitationSuccess from 'pages/Profiles/VeridaOneInvitationSuccess'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
@@ -157,6 +158,14 @@ function MainNavigator() {
       <Stack.Screen
         name={'ClaimUsername'}
         component={ClaimUsername}
+        options={{
+          presentation: 'modal',
+        }}
+      />
+
+      <Stack.Screen
+        name={'VeridaOneInvitationSuccess'}
+        component={VeridaOneInvitationSuccess}
         options={{
           presentation: 'modal',
         }}

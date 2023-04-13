@@ -9,7 +9,7 @@ import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import UsernameManager from 'api/UsernameManager'
-import BlurCircle from 'assets/blur-circle.svg'
+import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import Container from 'components/Container'
@@ -19,7 +19,6 @@ import Screen from 'components/Screen'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { Title } from 'components/Typography/Title'
-import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
@@ -30,46 +29,13 @@ import { NUNITO_SANS } from '../../constants/text'
 const MAX_TEXTAREA_LENGTH = 255
 const MAX_INPUT_LENGTH = 140
 
-export interface GenericEditPropertyScreenProps {
-  screenName: string
-  title: string
-  option: {
-    label: string
-    value: string | Record<string, any>
-    type: 'input' | 'select' | 'textarea'
-    placeholder: string
-    description?: string
-  }
-  originalValue: any
-  mode: string | number
-  submitButtonLabel?: string
-  verification?: {
-    expectedValue: string
-    errorMessage: string
-  }
-}
-
 type ValueObject = {
   value: string
 }
 
-/**
- * This component is just duplicated and modified for generic purpose usage from the EditProfile.tsx component
- * TODO: Refactor
- */
 const ClaimUsername = () => {
   const navigation = useNavigation()
-  const params = useParams<GenericEditPropertyScreenProps>()
   const { top, bottom } = useSafeAreaInsets()
-  const {
-    screenName,
-    title,
-    // option,
-    mode,
-    originalValue,
-    submitButtonLabel = 'Claim',
-    verification,
-  } = params
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
 
@@ -165,6 +131,9 @@ const ClaimUsername = () => {
     const isValid = await usernameManager.usernameExists(inputText)
     console.log('inputText', inputText, isValid)
     setAvailableUsername(isValid)
+    if (!isValid) {
+      setUsernameError('This username is already taken')
+    }
     setCheckingUsername(false)
   }, [inputText])
 
@@ -323,7 +292,7 @@ const ClaimUsername = () => {
               }
               style={styles.button}
               onPress={saveValue}>
-              {submitButtonLabel}
+              Claim
             </Button>
           ) : showRetry ? (
             <Button style={styles.button} onPress={saveValue}>

@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
+import { Icon } from 'components/Icon'
 import { Text } from 'components/Typography/Text'
 
 interface Props {
@@ -60,7 +61,7 @@ const AnimatedCheckbox = (props: Props) => {
           {showLoading ? (
             <ActivityIndicator size='small' />
           ) : failed ? (
-            <AntDesign name='closecircle' size={20} color={theme.color.error} />
+            <Icon name='warning' color={theme.color.error} />
           ) : checked ? (
             <AntDesign
               name='checkcircle'

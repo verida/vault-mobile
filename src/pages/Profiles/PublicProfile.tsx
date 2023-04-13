@@ -122,6 +122,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [featuredAssets, setFeaturedAssets] = useState<any[]>([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
+  const [hasUsername, setHasUsername] = useState(false)
 
   // pull to refresh data
   const [refreshing, setRefreshing] = React.useState(false)
@@ -459,6 +460,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           setEnabledVeridaOne(true)
           saveStatusEnabledVeridaOneProfile(true)
         }
+
+        if (!hasUsername) {
+          requestAnimationFrame(() => {
+            navigation.navigate('VeridaOneInvitationSuccess')
+          })
+        }
       } else if (mode === PublicProfileEditMode.AddCustomURL) {
         const inputValue = payload.value
         const originalValue = payload.originalValue
@@ -542,7 +549,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     setFeaturedAssets([])
     setPublicCustomLinks([])
 
-    saveStatusEnabledVeridaOneProfile(false)
+    // saveStatusEnabledVeridaOneProfile(false)
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
@@ -772,9 +779,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <ProfileImageLoader />
-          {enabledVeridaOne && (
-            <ProfileUsenameSection did={currentAccountDID} />
-          )}
+          {!hasUsername && <ProfileUsenameSection did={currentAccountDID} />}
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList

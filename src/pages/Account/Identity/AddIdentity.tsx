@@ -12,7 +12,6 @@ import {
   Platform,
   ScrollView,
   StyleSheet,
-  TextInput,
   View,
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
@@ -20,10 +19,10 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import AccountManager from 'api/AccountManager'
 import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
-import BlurCircle from 'assets/blur-circle.svg'
+import AlertIcon from 'assets/alert_icon_2.svg'
+import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
-import WarningIcon from 'assets/warning-icon.svg'
 import Button from 'components/Button'
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import Container from 'components/Container'
@@ -88,32 +87,32 @@ const AddIdentity = () => {
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
 
-  const publicNameInputRef = useRef<TextInput>(null)
-  const usernameInputRef = useRef<TextInput>(null)
-  // const [manualFocusUsenameInput, setManualFocusUsenameInput] = useState(true)
-
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
   function toggleCountryCheckbox() {
     setShowCountryOnPublicProfile((prevState) => !prevState)
   }
-  const [checkingUsername, setCheckingUsername] = useState(false)
-  const [availableUsername, setAvailableUsername] = useState(false)
-  const [usernameError, setUsernameError] = useState<string | undefined>(
-    undefined
-  )
+
   const [showRetry, setShowRetry] = useState(false)
   const [createAccountErrorMessage, setCreateAccountErrorMessage] = useState('')
   const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
 
-  const checkUsername = useCallback(async () => {
-    // FIXME: Need an API for checking username is available to claim
-    setCheckingUsername(true)
-    setTimeout(() => {
-      setCheckingUsername(false)
-      setAvailableUsername(true)
-    }, 300)
-  }, [])
+  // const publicNameInputRef = useRef<TextInput>(null)
+  // const usernameInputRef = useRef<TextInput>(null)
+  // // const [manualFocusUsenameInput, setManualFocusUsenameInput] = useState(true)
+  // const [checkingUsername, setCheckingUsername] = useState(false)
+  // const [availableUsername, setAvailableUsername] = useState(false)
+  // const [usernameError, setUsernameError] = useState<string | undefined>(
+  //   undefined
+  // )
+  // const checkUsername = useCallback(async () => {
+  //   // FIXME: Need an API for checking username is available to claim
+  //   setCheckingUsername(true)
+  //   setTimeout(() => {
+  //     setCheckingUsername(false)
+  //     setAvailableUsername(true)
+  //   }, 300)
+  // }, [])
 
   const [confirmationState, setConfirmationState] = useState<{
     state?: Partial<Record<AddIdentityStepType, AddIdentityStepStatus>> & {
@@ -331,7 +330,7 @@ const AddIdentity = () => {
             <View>
               <View style={styles.seedPhraseRemindView}>
                 <View style={{ alignItems: 'center', marginTop: 3 }}>
-                  <WarningIcon />
+                  <AlertIcon />
                 </View>
                 <Text
                   style={{
@@ -409,7 +408,6 @@ const AddIdentity = () => {
             <Spacer vertical='l' />
             <FormInput
               label='Public Name'
-              ref={publicNameInputRef}
               placeholder='Enter your public name'
               autoCorrect={false}
               autoFocus={true}

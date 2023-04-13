@@ -2,8 +2,6 @@ import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import React, {
   ForwardedRef,
-  MutableRefObject,
-  Ref,
   RefObject,
   useCallback,
   useRef,

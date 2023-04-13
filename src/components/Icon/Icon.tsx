@@ -6,6 +6,7 @@ import CopyIcon from 'assets/icons/copy.svg'
 import GoToIcon from 'assets/icons/goto_icon.svg'
 import ShareIcon from 'assets/icons/share_icon.svg'
 import WalletIcon from 'assets/icons/wallet.svg'
+import WarningIcon from 'assets/icons/warning_icon.svg'
 import PlusIcon from 'assets/plus_icon.svg'
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
 
@@ -17,6 +18,7 @@ export type IconName =
   | 'plus'
   | 'goto'
   | 'share'
+  | 'warning'
 
 /**
  *  NOTE: to apply color correctly, need to modify the SVG by replacing color value with a generic name "currentColor"
@@ -58,6 +60,9 @@ export const Icon = (props: {
       break
     case 'share':
       ic = <ShareIcon width={size} height={size} fill={color} />
+      break
+    case 'warning':
+      ic = <WarningIcon width={size} height={size} fill={color} />
       break
   }
 
