@@ -123,7 +123,7 @@ export const WalletAddressItem = ({
             }}
             onPress={onEditName}>
             {/* Add a wrapped view so on click behavior fixed */}
-            <View>
+            <View style={{ marginLeft: theme.spacing.sm }}>
               <EditIcon fill={theme.color.iconDefault} />
             </View>
           </Button>

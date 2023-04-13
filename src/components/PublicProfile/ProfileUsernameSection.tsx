@@ -3,7 +3,6 @@ import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { OneProfileCustomLink } from 'types/profile'
 
 import Button from 'components/Button'
 import { Icon } from 'components/Icon'
@@ -13,12 +12,12 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 type Props = {
-  customLink: OneProfileCustomLink
   did: string
-  profile: any
+  username?: string
+  loading?: boolean
 }
 
-export const ProfileUsenameSection = ({ did, profile }: Props) => {
+export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   const navigation = useNavigation()
@@ -40,7 +39,7 @@ export const ProfileUsenameSection = ({ did, profile }: Props) => {
           style={{
             color: theme.color.onPrimary,
             marginRight: theme.spacing.xs,
-          }}>{`verida.one/${did}`}</SubHeadline>
+          }}>{`verida.one/${username || did}`}</SubHeadline>
         <Icon name='copy' color={theme.color.onPrimary} size={16} />
       </View>
       <Label
@@ -97,39 +96,41 @@ export const ProfileUsenameSection = ({ did, profile }: Props) => {
           </View>
         </Button>
       </View>
-      <View style={styles.card}>
-        <View style={{ flex: 1 }}>
-          <SubHeadline style={{ color: theme.color.onPrimary }}>
-            Claim your unique username now!
-          </SubHeadline>
-          <Text style={{ color: theme.color.onPrimary }}>
-            Secure your identity with a personalized username for easier sharing
-            and increased privacy
-          </Text>
-        </View>
-        <View style={{ flex: 1 }}>
-          <Image
-            style={{
-              marginLeft: 20,
-              marginBottom: theme.spacing.m,
-              width: 111,
-              height: 120,
-            }}
-            source={require('assets/username_placehoder.png')}
-          />
+      {username || loading ? null : (
+        <View style={styles.card}>
+          <View style={{ flex: 1 }}>
+            <SubHeadline style={{ color: theme.color.onPrimary }}>
+              Claim your unique username now!
+            </SubHeadline>
+            <Text style={{ color: theme.color.onPrimary }}>
+              Secure your identity with a personalized username for easier
+              sharing and increased privacy
+            </Text>
+          </View>
+          <View style={{ flex: 1 }}>
+            <Image
+              style={{
+                marginLeft: 20,
+                marginBottom: theme.spacing.m,
+                width: 111,
+                height: 120,
+              }}
+              source={require('assets/username_placehoder.png')}
+            />
 
-          <Button
-            textStyle={{
-              fontSize: theme.fontSize.m,
-              color: theme.color.onPrimary,
-            }}
-            style={styles.capsuleButtton}
-            color='transparent'
-            onPress={() => navigation.navigate('ClaimUsername')}>
-            Claim username
-          </Button>
+            <Button
+              textStyle={{
+                fontSize: theme.fontSize.m,
+                color: theme.color.onPrimary,
+              }}
+              style={styles.capsuleButtton}
+              color='transparent'
+              onPress={() => navigation.navigate('ClaimUsername')}>
+              Claim username
+            </Button>
+          </View>
         </View>
-      </View>
+      )}
     </ImageBackground>
   )
 }
@@ -138,7 +139,7 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     oneProfileLinkContainer: {
       position: 'relative',
-      minHeight: 220,
+      minHeight: 140,
       flexDirection: 'column',
       alignItems: 'center',
       justifyContent: 'center',
@@ -154,6 +155,7 @@ const createStyles = (theme: Theme) =>
       flexDirection: 'row',
       width: '100%',
       padding: theme.spacing.sm,
+      marginTop: theme.spacing.m,
     },
     capsuleButtton: {
       borderRadius: 38,
@@ -170,5 +172,6 @@ const createStyles = (theme: Theme) =>
       backgroundColor: Color(theme.color.onPrimary).alpha(0.15).toString(),
       alignItems: 'center',
       justifyContent: 'center',
+      marginBottom: 0,
     },
   })

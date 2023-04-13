@@ -16,6 +16,7 @@ import {
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
+import { Icon } from 'components/Icon'
 import { Label } from 'components/Typography/Label'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import inputs from 'styles/inputs'
@@ -166,6 +167,12 @@ export const FormInput = React.forwardRef(
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey500}
+                failedIcon={
+                  <Icon name='warning' color={theme.color.error} size={20} />
+                }
+                successIcon={
+                  <Icon name='tick' color={theme.color.success} size={20} />
+                }
               />
             </View>
           )}

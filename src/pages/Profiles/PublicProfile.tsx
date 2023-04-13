@@ -43,6 +43,7 @@ import { CaipWalletType, VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
 import { VeridaOneCustomLink, VeridaOneFeaturedAsset } from 'api/types'
+import UsernameManager from 'api/UsernameManager'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
@@ -52,7 +53,7 @@ import PropertyList from 'components/PropertyList'
 import {
   CustomLinkItem,
   FeaturedAssetItem,
-  ProfileUsenameSection,
+  ProfileUsernameSection,
   WalletAddressItem,
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
@@ -112,6 +113,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     selectedAccount?.did ??
     AccountManager.getInstance().getSelectedAccount()?.did
 
+  const [username, setUsername] = useState<string | undefined>(undefined)
   const chains = useSelector(selectChains)
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
@@ -122,15 +124,16 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [featuredAssets, setFeaturedAssets] = useState<any[]>([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
-  const [hasUsername, setHasUsername] = useState(false)
 
   // pull to refresh data
   const [refreshing, setRefreshing] = React.useState(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
-    Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
-      setRefreshing(false)
-    })
+    Promise.all([fetchData(), fetchVeridaOneProfle(), fetchUsername()]).finally(
+      () => {
+        setRefreshing(false)
+      }
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -388,6 +391,18 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     }
   }
 
+  const fetchUsername = async () => {
+    // Fetch Verida One Profile
+    try {
+      const accountUsernames = await new UsernameManager().get()
+      if (accountUsernames && accountUsernames?.length > 0) {
+        setUsername(accountUsernames[0])
+      }
+    } catch (e) {
+      Sentry.captureException(e)
+    }
+  }
+
   const removeFeaturedAsset = useCallback(
     (index, featuredAsset: VeridaOneFeaturedAsset) => {
       let updatedFeaturedAssets = [...featuredAssets]
@@ -461,7 +476,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           saveStatusEnabledVeridaOneProfile(true)
         }
 
-        if (!hasUsername) {
+        if (!username) {
           requestAnimationFrame(() => {
             navigation.navigate('VeridaOneInvitationSuccess')
           })
@@ -555,9 +570,11 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
     })()
 
-    Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
-      setLoading(false)
-    })
+    Promise.all([fetchData(), fetchVeridaOneProfle(), fetchUsername()]).finally(
+      () => {
+        setLoading(false)
+      }
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccountDID])
 
@@ -779,7 +796,11 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <ProfileImageLoader />
-          {!hasUsername && <ProfileUsenameSection did={currentAccountDID} />}
+          <ProfileUsernameSection
+            did={currentAccountDID}
+            username={username}
+            loading={loading || quickFetching}
+          />
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList

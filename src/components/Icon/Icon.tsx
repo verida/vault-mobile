@@ -5,6 +5,7 @@ import EditIcon from 'assets/edit_icon.svg'
 import CopyIcon from 'assets/icons/copy.svg'
 import GoToIcon from 'assets/icons/goto_icon.svg'
 import ShareIcon from 'assets/icons/share_icon.svg'
+import TickIcon from 'assets/icons/tick_icon.svg'
 import WalletIcon from 'assets/icons/wallet.svg'
 import WarningIcon from 'assets/icons/warning_icon.svg'
 import PlusIcon from 'assets/plus_icon.svg'
@@ -19,6 +20,7 @@ export type IconName =
   | 'goto'
   | 'share'
   | 'warning'
+  | 'tick'
 
 /**
  *  NOTE: to apply color correctly, need to modify the SVG by replacing color value with a generic name "currentColor"
@@ -63,6 +65,9 @@ export const Icon = (props: {
       break
     case 'warning':
       ic = <WarningIcon width={size} height={size} fill={color} />
+      break
+    case 'tick':
+      ic = <TickIcon width={size} height={size} fill={color} />
       break
   }
 

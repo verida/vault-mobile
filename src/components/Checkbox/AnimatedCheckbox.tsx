@@ -1,5 +1,5 @@
 import { useTheme } from 'contexts/ThemeContext'
-import React from 'react'
+import React, { ReactNode } from 'react'
 import {
   ActivityIndicator,
   TextStyle,
@@ -24,6 +24,8 @@ interface Props {
   label?: string
   textStyle?: TextStyle
   containerStyle?: ViewStyle
+  failedIcon?: ReactNode
+  successIcon?: ReactNode
 }
 
 const AnimatedCheckbox = (props: Props) => {
@@ -35,6 +37,8 @@ const AnimatedCheckbox = (props: Props) => {
     failed,
     textStyle,
     containerStyle,
+    failedIcon,
+    successIcon,
   } = props
   const { theme } = useTheme()
 
@@ -61,13 +65,21 @@ const AnimatedCheckbox = (props: Props) => {
           {showLoading ? (
             <ActivityIndicator size='small' />
           ) : failed ? (
-            <Icon name='warning' color={theme.color.error} />
+            failedIcon || (
+              <AntDesign
+                name='closecircle'
+                size={20}
+                color={theme.color.error}
+              />
+            )
           ) : checked ? (
-            <AntDesign
-              name='checkcircle'
-              size={20}
-              color={theme.color.success}
-            />
+            successIcon || (
+              <AntDesign
+                name='checkcircle'
+                size={20}
+                color={theme.color.success}
+              />
+            )
           ) : (
             <View
               style={{

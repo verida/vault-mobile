@@ -26,54 +26,42 @@ import Button from '../../components/Button'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
 
-const MAX_TEXTAREA_LENGTH = 255
+const dotsLoader = require('assets/animations/dots-loader.json')
+
+const MIN_INPUT_LENGTH = 2
 const MAX_INPUT_LENGTH = 140
 
-type ValueObject = {
-  value: string
-}
+const VERIDA_NAME_SUFFIX = '.vda'
+const VERIDA_NAME_PATTERN = /\.vda$/
 
 const ClaimUsername = () => {
   const navigation = useNavigation()
-  const { top, bottom } = useSafeAreaInsets()
+  const { bottom } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
 
-  const [disabled, setDisabled] = useState(false)
-  const [edited, setEdited] = useState<string | ValueObject>('')
   const [inputText, setInputText] = useState('')
   const usernameInputRef = useRef<TextInput>(null)
-  const [inputError, setInputError] = useState({
-    inputMaxLength: 0,
-    isExceededMaxLength: false,
-  })
 
   const [processing, setProcessing] = useState(false)
   const [claimingUsername, setClaimingUsername] = useState(false)
   const [showRetry, setShowRetry] = useState(false)
-  const [isDoneCreateAccount, setDoneCreateAccount] = useState(false)
-  const [createAccountErrorMessage, setCreateAccountErrorMessage] =
+  const [isDoneCreateUsername, setDoneCreateUsername] = useState(false)
+  const [createUsernameErrorMessage, setCreateUsernameErrorMessage] =
     useState('Please retry')
   const [checkingUsername, setCheckingUsername] = useState(false)
   const [availableUsername, setAvailableUsername] = useState(false)
   const [usernameError, setUsernameError] = useState<string | undefined>(
     undefined
   )
-
-  const onChangeItem = (e: any) => setEdited(e)
-
-  const saveValue = async () => {
+  const handleClaimUsername = async () => {
     try {
       setShowRetry(false)
       setProcessing(true)
       setClaimingUsername(true)
       const usernameManager = new UsernameManager()
-      // FIXME: Need an API for checking username is available to claim
       await usernameManager.set(inputText)
-
-      const username = await usernameManager.get()
-      console.log('username', username)
-      setDoneCreateAccount(true)
+      setDoneCreateUsername(true)
     } catch (error) {
       Sentry.captureException(error)
       setShowRetry(true)
@@ -84,7 +72,6 @@ const ClaimUsername = () => {
   }
 
   const handleInput = (text: string, maxLength: number) => {
-    setEdited(text)
     if (text.length >= maxLength) {
       setInputError({ inputMaxLength: maxLength, isExceededMaxLength: true })
     } else {
@@ -96,7 +83,6 @@ const ClaimUsername = () => {
     start: number
     end: number
   }) => {
-    console.log('selection', selection, inputText)
     let start, end
     if (!selection) {
       start = inputText.length - 4
@@ -124,17 +110,29 @@ const ClaimUsername = () => {
   }
 
   const checkUsername = useCallback(async () => {
-    if (inputText.length < 4) return
-    const usernameManager = new UsernameManager()
-    // FIXME: Need an API for checking username is available to claim
-    setCheckingUsername(true)
-    const isValid = await usernameManager.usernameExists(inputText)
-    console.log('inputText', inputText, isValid)
-    setAvailableUsername(isValid)
-    if (!isValid) {
-      setUsernameError('This username is already taken')
+    try {
+      const plainName = inputText.replace(VERIDA_NAME_PATTERN, '')
+      if (plainName.length > 0 && plainName.length < MIN_INPUT_LENGTH) {
+        setUsernameError('Username length must be >= 2')
+        return
+      } else if (plainName.length === 0) {
+        setUsernameError('')
+        return
+      }
+
+      setCheckingUsername(true)
+      const usernameManager = new UsernameManager()
+      const isValid = await usernameManager.usernameExists(inputText)
+      // FIXME: !!! forced usernaname available now until we can fix the checking username API
+      setAvailableUsername(true)
+      if (false) {
+        setUsernameError('This username is already taken')
+      }
+    } catch (error) {
+      setUsernameError('Unable to check the username')
+    } finally {
+      setCheckingUsername(false)
     }
-    setCheckingUsername(false)
   }, [inputText])
 
   return (
@@ -166,13 +164,13 @@ const ClaimUsername = () => {
                   <>
                     <BlurCircle />
                     <LottieView
-                      source={require('assets/animations/dots-loader.json')}
+                      source={dotsLoader}
                       autoPlay
                       loop
                       style={styles.dotsLoader}
                     />
                   </>
-                ) : isDoneCreateAccount ? (
+                ) : isDoneCreateUsername ? (
                   <SuccessTick />
                 ) : (
                   <FailureCross />
@@ -184,7 +182,7 @@ const ClaimUsername = () => {
                   fontSize: 28,
                   marginBottom: theme.spacing.sm,
                 }}>
-                {isDoneCreateAccount
+                {isDoneCreateUsername
                   ? 'Perfect'
                   : showRetry
                   ? 'Something went wrong'
@@ -198,13 +196,13 @@ const ClaimUsername = () => {
                     color: theme.color.textLightGrey,
                   },
                 ]}>
-                {isDoneCreateAccount
+                {isDoneCreateUsername
                   ? `You successfully claimed username`
                   : showRetry
-                  ? createAccountErrorMessage
+                  ? createUsernameErrorMessage
                   : 'Please wait...'}
               </Text>
-              {isDoneCreateAccount && (
+              {isDoneCreateUsername && (
                 <Title
                   style={{
                     alignSelf: 'center',
@@ -223,9 +221,13 @@ const ClaimUsername = () => {
               </Text>
               <FormInput
                 ref={usernameInputRef}
-                placeholder={'veridaname.vda'}
+                placeholder={`veridaname${VERIDA_NAME_SUFFIX}`}
                 label={'Username'}
-                desciption='Your username is public and optional'
+                desciption={
+                  usernameError
+                    ? undefined
+                    : 'Your username is public and optional'
+                }
                 autoFocus={true}
                 autoCorrect={false}
                 withAnimatedChecbox
@@ -236,10 +238,7 @@ const ClaimUsername = () => {
                 loading={checkingUsername}
                 checked={availableUsername}
                 errorMessage={usernameError}
-                onSubmitEditing={() => checkUsername()}
-                onBlur={() => {
-                  checkUsername()
-                }}
+                onBlur={checkUsername}
                 maxLength={MAX_INPUT_LENGTH}
                 onFocus={() => {
                   ensureSelctionPosition(undefined)
@@ -248,10 +247,11 @@ const ClaimUsername = () => {
                   ensureSelctionPosition(e.nativeEvent.selection)
                 }}
                 onChangeText={(value) => {
+                  setUsernameError('')
                   const text = value.replace(/\s/g, '')
-                  if (text.length > 0 && !text.match(/.vda$/)) {
-                    setInputText(text + '.vda')
-                  } else if (text === '.vda') {
+                  if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
+                    setInputText(text + VERIDA_NAME_SUFFIX)
+                  } else if (text === VERIDA_NAME_SUFFIX) {
                     setInputText('')
                   } else {
                     setInputText(text)
@@ -265,7 +265,7 @@ const ClaimUsername = () => {
                   }}
                   parse={[
                     {
-                      pattern: /.vda$/,
+                      pattern: VERIDA_NAME_PATTERN,
                       style: {
                         fontFamily: NUNITO_SANS,
                         fontSize: theme.fontSize.m,
@@ -285,20 +285,16 @@ const ClaimUsername = () => {
         <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
           {!claimingUsername ? (
             <Button
-              disabled={
-                disabled ||
-                (inputText as string).length === 0 ||
-                inputError.isExceededMaxLength
-              }
+              disabled={Boolean(usernameError) || !availableUsername}
               style={styles.button}
-              onPress={saveValue}>
+              onPress={handleClaimUsername}>
               Claim
             </Button>
           ) : showRetry ? (
-            <Button style={styles.button} onPress={saveValue}>
+            <Button style={styles.button} onPress={handleClaimUsername}>
               Retry
             </Button>
-          ) : isDoneCreateAccount ? (
+          ) : isDoneCreateUsername ? (
             <Button style={styles.button} onPress={() => navigation.goBack()}>
               Done
             </Button>
