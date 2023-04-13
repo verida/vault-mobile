@@ -1,13 +1,7 @@
 import { StackActions, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import React, { useRef, useState } from 'react'
-import {
-  Image,
-  ImageBackground,
-  ScrollView,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Image, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -24,24 +18,28 @@ import Button from '../../components/Button'
 
 enum PageType {
   InvitationSuccess,
-  SuggestCliamUsername,
+  SuggestClaimmUsername,
 }
-
-const numberOfPages = 2
 
 const VeridaOneInvitationSuccess = () => {
   const navigation = useNavigation()
-  const { top, bottom } = useSafeAreaInsets()
+  const { bottom } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const [currentPage, setCurrentPage] = useState(PageType.InvitationSuccess)
-
+  const [currentPage] = useState(PageType.InvitationSuccess)
   const pagerRef = useRef<PagerView>(null)
 
   return (
     <Screen
       navBar={
-        <NavigationHeader title={'Invitation Code'} left={{ icon: 'close' }} />
+        <NavigationHeader
+          title={
+            currentPage === PageType.InvitationSuccess
+              ? 'Invitation Code'
+              : 'Claim your username'
+          }
+          left={{ icon: 'close' }}
+        />
       }>
       <PagerView
         style={styles.pagerView}

@@ -2,9 +2,11 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
+import { emitter } from 'helpers/emitter'
 import LottieView from 'lottie-react-native'
 import React, { useCallback, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
+import PagerView from 'react-native-pager-view'
 import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -34,11 +36,18 @@ const MAX_INPUT_LENGTH = 140
 const VERIDA_NAME_SUFFIX = '.vda'
 const VERIDA_NAME_PATTERN = /\.vda$/
 
+enum PageType {
+  InputUsername,
+  ClaimUsername,
+}
+
 const ClaimUsername = () => {
   const navigation = useNavigation()
-  const { bottom } = useSafeAreaInsets()
+  const { bottom, top } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
+  const [currentPage] = useState(PageType.InputUsername)
+  const pagerRef = useRef<PagerView>(null)
 
   const [inputText, setInputText] = useState('')
   const usernameInputRef = useRef<TextInput>(null)
@@ -55,6 +64,7 @@ const ClaimUsername = () => {
     undefined
   )
   const handleClaimUsername = async () => {
+    pagerRef.current?.setPage(currentPage + 1)
     try {
       setShowRetry(false)
       setProcessing(true)
@@ -62,20 +72,14 @@ const ClaimUsername = () => {
       const usernameManager = new UsernameManager()
       await usernameManager.set(inputText)
       setDoneCreateUsername(true)
-    } catch (error) {
+      emitter.emit('UPDATE_PROFILE_USERNAME', {})
+    } catch (error: any) {
       Sentry.captureException(error)
+      setCreateUsernameErrorMessage(error.message)
       setShowRetry(true)
     } finally {
       setCheckingUsername(false)
       setProcessing(false)
-    }
-  }
-
-  const handleInput = (text: string, maxLength: number) => {
-    if (text.length >= maxLength) {
-      setInputError({ inputMaxLength: maxLength, isExceededMaxLength: true })
-    } else {
-      setInputError({ ...inputError, isExceededMaxLength: false })
     }
   }
 
@@ -113,7 +117,10 @@ const ClaimUsername = () => {
     try {
       const plainName = inputText.replace(VERIDA_NAME_PATTERN, '')
       if (plainName.length > 0 && plainName.length < MIN_INPUT_LENGTH) {
-        setUsernameError('Username length must be >= 2')
+        setUsernameError(`Username length must be >= ${MIN_INPUT_LENGTH}`)
+        return
+      } else if (plainName.length > MAX_INPUT_LENGTH) {
+        setUsernameError(`Username length must be <= ${MAX_INPUT_LENGTH}`)
         return
       } else if (plainName.length === 0) {
         setUsernameError('')
@@ -138,82 +145,22 @@ const ClaimUsername = () => {
   return (
     <Screen
       navBar={<NavigationHeader title={'Username'} left={{ icon: 'close' }} />}>
-      <Container
-        withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 }}>
-        <ScrollView
-          contentContainerStyle={{
-            flexGrow: 1,
-            paddingBottom: theme.spacing.xxl,
-            paddingTop: theme.spacing.l,
-            paddingHorizontal: theme.spacing.m,
-          }}>
-          {claimingUsername ? (
-            <>
-              <View
-                style={{
-                  width: 128,
-                  height: 128,
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  alignSelf: 'center',
-                  marginTop: 56,
-                  marginBottom: theme.spacing.xl,
-                }}>
-                {processing ? (
-                  <>
-                    <BlurCircle />
-                    <LottieView
-                      source={dotsLoader}
-                      autoPlay
-                      loop
-                      style={styles.dotsLoader}
-                    />
-                  </>
-                ) : isDoneCreateUsername ? (
-                  <SuccessTick />
-                ) : (
-                  <FailureCross />
-                )}
-              </View>
-              <Headline
-                style={{
-                  alignSelf: 'center',
-                  fontSize: 28,
-                  marginBottom: theme.spacing.sm,
-                }}>
-                {isDoneCreateUsername
-                  ? 'Perfect'
-                  : showRetry
-                  ? 'Something went wrong'
-                  : 'Creating your username'}
-              </Headline>
-              <Text
-                style={[
-                  {
-                    alignSelf: 'center',
-                    fontSize: theme.fontSize.l,
-                    color: theme.color.textLightGrey,
-                  },
-                ]}>
-                {isDoneCreateUsername
-                  ? `You successfully claimed username`
-                  : showRetry
-                  ? createUsernameErrorMessage
-                  : 'Please wait...'}
-              </Text>
-              {isDoneCreateUsername && (
-                <Title
-                  style={{
-                    alignSelf: 'center',
-                    color: theme.color.textLightGrey,
-                    fontWeight: 'bold',
-                  }}>
-                  {inputText}
-                </Title>
-              )}
-            </>
-          ) : (
+      <PagerView
+        style={styles.pagerView}
+        initialPage={currentPage}
+        scrollEnabled={false}
+        ref={pagerRef}>
+        <Container
+          withKeyboardAvoidingView
+          keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: theme.spacing.xxl,
+              paddingTop: theme.spacing.l,
+              paddingHorizontal: theme.spacing.m,
+            }}
+            keyboardShouldPersistTaps='handled'>
             <View style={{ flex: 1 }}>
               <Headline style={{ marginBottom: 10 }}>Username</Headline>
               <Text style={{ marginBottom: theme.spacing.l }}>
@@ -279,28 +226,105 @@ const ClaimUsername = () => {
                 </ParsedText>
               </FormInput>
             </View>
-          )}
-        </ScrollView>
+          </ScrollView>
 
-        <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
-          {!claimingUsername ? (
+          <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
             <Button
               disabled={Boolean(usernameError) || !availableUsername}
               style={styles.button}
               onPress={handleClaimUsername}>
               Claim
             </Button>
-          ) : showRetry ? (
-            <Button style={styles.button} onPress={handleClaimUsername}>
-              Retry
-            </Button>
-          ) : isDoneCreateUsername ? (
-            <Button style={styles.button} onPress={() => navigation.goBack()}>
-              Done
-            </Button>
-          ) : null}
-        </View>
-      </Container>
+          </View>
+        </Container>
+        <Container
+          withKeyboardAvoidingView
+          keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+          <ScrollView
+            contentContainerStyle={{
+              flexGrow: 1,
+              paddingBottom: theme.spacing.xxl,
+              paddingTop: theme.spacing.l,
+              paddingHorizontal: theme.spacing.m,
+            }}
+            keyboardShouldPersistTaps='handled'>
+            <View
+              style={{
+                width: 128,
+                height: 128,
+                alignItems: 'center',
+                justifyContent: 'center',
+                alignSelf: 'center',
+                marginTop: 56,
+                marginBottom: theme.spacing.xl,
+              }}>
+              {processing ? (
+                <>
+                  <BlurCircle />
+                  <LottieView
+                    source={dotsLoader}
+                    autoPlay
+                    loop
+                    style={styles.dotsLoader}
+                  />
+                </>
+              ) : isDoneCreateUsername ? (
+                <SuccessTick />
+              ) : (
+                <FailureCross />
+              )}
+            </View>
+            <Headline
+              style={{
+                alignSelf: 'center',
+                fontSize: 28,
+                marginBottom: theme.spacing.sm,
+              }}>
+              {isDoneCreateUsername
+                ? 'Perfect'
+                : showRetry
+                ? 'Something went wrong'
+                : 'Creating your username'}
+            </Headline>
+            <Text
+              style={[
+                {
+                  alignSelf: 'center',
+                  fontSize: theme.fontSize.l,
+                  color: theme.color.textLightGrey,
+                },
+              ]}>
+              {isDoneCreateUsername
+                ? `You successfully claimed username`
+                : showRetry
+                ? createUsernameErrorMessage
+                : 'Please wait...'}
+            </Text>
+            {isDoneCreateUsername && (
+              <Title
+                style={{
+                  alignSelf: 'center',
+                  color: theme.color.textLightGrey,
+                  fontWeight: 'bold',
+                }}>
+                {inputText}
+              </Title>
+            )}
+          </ScrollView>
+
+          <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+            {showRetry ? (
+              <Button style={styles.button} onPress={handleClaimUsername}>
+                Retry
+              </Button>
+            ) : isDoneCreateUsername ? (
+              <Button style={styles.button} onPress={() => navigation.goBack()}>
+                Done
+              </Button>
+            ) : null}
+          </View>
+        </Container>
+      </PagerView>
     </Screen>
   )
 }
@@ -339,5 +363,8 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: theme.spacing.m,
       marginTop: theme.spacing.s,
       marginBottom: 0,
+    },
+    pagerView: {
+      flex: 1,
     },
   })

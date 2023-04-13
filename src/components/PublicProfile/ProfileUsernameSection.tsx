@@ -30,7 +30,7 @@ type Props = {
 
 const VERIDA_ONE_WEBSITE = 'https://demo.verida.one/'
 
-export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
+export const ProfileUsernameSection = ({ did, username }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   const navigation = useNavigation()
@@ -126,7 +126,7 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
           </View>
         </Button>
       </View>
-      {username || loading ? null : (
+      {username ? null : (
         <View style={styles.card}>
           <View style={{ flex: 1 }}>
             <SubHeadline style={{ color: theme.color.onPrimary }}>

@@ -8,6 +8,7 @@ export type EmitterTypes = {
     originalValue?: any
     mode?: string | number
   }
+  UPDATE_PROFILE_USERNAME: Record<string, unknown>
 }
 
 const _emitter = new EventEmitter()

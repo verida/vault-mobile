@@ -432,6 +432,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [debounceSaveProfile, featuredAssets]
   )
 
+  useEmitter('UPDATE_PROFILE_USERNAME', () => {
+    setLoading(true)
+    fetchUsername().finally(() => {
+      setLoading(false)
+    })
+  })
+
   useEmitter(
     'SAVE_GENERIC_PROPERTY',
     (payload) => {
@@ -563,8 +570,8 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     setPublicWalletAddresses([])
     setFeaturedAssets([])
     setPublicCustomLinks([])
+    setUsername(undefined)
 
-    // saveStatusEnabledVeridaOneProfile(false)
     // Check Verida One enabbled status
     ;(async () => {
       setEnabledVeridaOne(await isEnabledVeridaOneProfile())
@@ -796,11 +803,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <ProfileImageLoader />
-          <ProfileUsernameSection
-            did={currentAccountDID}
-            username={username}
-            loading={loading || quickFetching}
-          />
+          {enabledVeridaOne && (
+            <ProfileUsernameSection
+              did={currentAccountDID}
+              username={username}
+              loading={loading || quickFetching}
+            />
+          )}
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList
