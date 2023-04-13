@@ -2,7 +2,7 @@ diff --git a/node_modules/react-native/React/Views/RCTFont.mm b/node_modules/rea
 index 679f2ce..a88cd63 100644
 --- a/node_modules/react-native/React/Views/RCTFont.mm
 +++ b/node_modules/react-native/React/Views/RCTFont.mm
-@@ -344,7 +344,7 @@ + (UIFont *)updateFont:(UIFont *)font
+@@ -344,7 +344,7 @@ RCT_ARRAY_CONVERTER(RCTFontVariantDescriptor)
        isCondensed = isCondensedFont(font);
      } else {
        // Not a valid font or family
@@ -11,3 +11,36 @@ index 679f2ce..a88cd63 100644
        if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)]) {
          font = [UIFont systemFontOfSize:fontSize weight:fontWeight];
        } else if (fontWeight > UIFontWeightRegular) {
+diff --git a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
+index 9986279..20389d4 100644
+--- a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
++++ b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
+@@ -2229,7 +2229,7 @@ static float YGDistributeFreeSpaceSecondPass(
+         depth,
+         generationCount);
+     node->setLayoutHadOverflow(
+-        node->getLayout().hadOverflow() |
++        node->getLayout().hadOverflow() ||
+         currentRelativeChild->getLayout().hadOverflow());
+   }
+   return deltaFreeSpace;
+diff --git a/node_modules/react-native/scripts/.packager.env b/node_modules/react-native/scripts/.packager.env
+new file mode 100644
+index 0000000..361f5fb
+--- /dev/null
++++ b/node_modules/react-native/scripts/.packager.env
+@@ -0,0 +1 @@
++export RCT_METRO_PORT=8081
+diff --git a/node_modules/react-native/scripts/react_native_pods.rb b/node_modules/react-native/scripts/react_native_pods.rb
+index f2ceeda..906e5fe 100644
+--- a/node_modules/react-native/scripts/react_native_pods.rb
++++ b/node_modules/react-native/scripts/react_native_pods.rb
+@@ -363,7 +363,7 @@ def get_react_codegen_spec(options={})
+     'source' => { :git => '' },
+     'header_mappings_dir' => './',
+     'platforms' => {
+-      'ios' => '11.0',
++      'ios' => '12.0',
+     },
+     'source_files' => "**/*.{h,mm,cpp}",
+     'pod_target_xcconfig' => { "HEADER_SEARCH_PATHS" =>

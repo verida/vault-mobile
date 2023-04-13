@@ -39,6 +39,7 @@ import NodeSelector from './NodeSelector'
 
 import CONFIG from '../config/environment'
 import EventEmitter from 'events'
+import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 type EndpointUrls = {
   dbServerUrl: string[]
@@ -303,7 +304,7 @@ class AccountManager extends EventEmitter {
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        WALLET_SCHEMA_0_2_0_URI
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -359,7 +360,7 @@ class AccountManager extends EventEmitter {
     try {
       await store.dispatch(removeUserWallets())
       const datastore = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        WALLET_SCHEMA_0_2_0_URI
       )
 
       const hdWallets: any = await datastore?.getMany()

@@ -10,10 +10,31 @@ const generateMnemonic = () => {
   return mnemonic
 }
 
-const generateSingleWallet = (data: any) => {
-  const { mnemonic, path, chain, privateKey, isHdWallet } = data
+type GenerateSingleWalletArgs = {
+  mnemonic: string | null
+  path: string
+  chain: string
+  privateKey: string | null
+  address: string | null
+  isHdWallet: boolean
+}
+const generateSingleWallet = (data: GenerateSingleWalletArgs) => {
+  const { mnemonic, path, chain, privateKey, address, isHdWallet } = data
+
+  // Handle case of "watched" wallet  with only the public address
+  if (address && !privateKey && !mnemonic) {
+    return {
+      chain,
+      mnemonic: null,
+      privateKey: null,
+      publicKey: null,
+      address,
+    }
+  }
+
   let wallet
 
+  // TODO: implement a switch
   if (chain === 'near') {
     const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
     const childNode = node.derivePath(path)
@@ -43,8 +64,15 @@ const generateSingleWallet = (data: any) => {
   return wallet
 }
 
-const generateWalletsForChains = (data: any) => {
-  const { chains, chain, mnemonic, privateKey } = data
+type GenerateWalletsForChainsArgs = {
+  chains: any // TODO: Replace by proper chains type
+  chain: string | null
+  mnemonic: string | null
+  privateKey: string | null
+  address: string | null
+}
+const generateWalletsForChains = (data: GenerateWalletsForChainsArgs) => {
+  const { chains, chain, mnemonic, privateKey, address } = data
 
   const wallets: any = {}
 
@@ -55,6 +83,7 @@ const generateWalletsForChains = (data: any) => {
       path: singleChain.path,
       chain: singleChain.data.namespace,
       privateKey,
+      address,
       isHdWallet: chain ? false : true,
     })
     if (singleWallet) wallets[singleChain.addressMapping] = singleWallet
