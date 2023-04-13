@@ -9,7 +9,6 @@ import {
 } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
-import { Icon } from 'components/Icon'
 import { Text } from 'components/Typography/Text'
 
 interface Props {

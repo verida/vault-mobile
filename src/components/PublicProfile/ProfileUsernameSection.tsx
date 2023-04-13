@@ -1,8 +1,19 @@
+import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  ImageBackground,
+  Linking,
+  Share,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import Snackbar from 'react-native-snackbar'
 
 import Button from 'components/Button'
 import { Icon } from 'components/Icon'
@@ -17,36 +28,47 @@ type Props = {
   loading?: boolean
 }
 
+const VERIDA_ONE_WEBSITE = 'https://demo.verida.one/'
+
 export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   const navigation = useNavigation()
+  const buildUrl = () => `${VERIDA_ONE_WEBSITE}${username || did}`
 
   return (
     <ImageBackground
       resizeMode='stretch'
       source={require('assets/profile_link_bg.png')}
       style={styles.oneProfileLinkContainer}>
-      <View
-        style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          marginHorizontal: 28,
+      <TouchableOpacity
+        onPress={() => {
+          Clipboard.setString(buildUrl())
+          Snackbar.show({
+            text: 'Copied to clipboard',
+            duration: Snackbar.LENGTH_SHORT,
+          })
         }}>
-        <SubHeadline
-          numberOfLines={1}
-          ellipsizeMode='tail'
+        <View
           style={{
-            color: theme.color.onPrimary,
-            marginRight: theme.spacing.xs,
-          }}>{`verida.one/${username || did}`}</SubHeadline>
-        <Icon name='copy' color={theme.color.onPrimary} size={16} />
-      </View>
+            flexDirection: 'row',
+            alignItems: 'center',
+            marginHorizontal: 28,
+          }}>
+          <SubHeadline
+            numberOfLines={1}
+            ellipsizeMode='tail'
+            style={{
+              color: theme.color.onPrimary,
+              marginRight: theme.spacing.xs,
+            }}>{`verida.one/${username || did}`}</SubHeadline>
+          <Icon name='copy' color={theme.color.onPrimary} size={16} />
+        </View>
+      </TouchableOpacity>
       <Label
         style={{ color: theme.color.onPrimary, marginBottom: theme.spacing.m }}>
         Edited 12.12.2022
       </Label>
-
       <View
         style={{
           flexDirection: 'row',
@@ -60,7 +82,9 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
           }}
           style={styles.roundedButton}
           color='transparent'
-          onPress={() => navigation.navigate('ClaimUsername')}>
+          onPress={() => {
+            Linking.openURL(buildUrl())
+          }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text
               style={{
@@ -81,7 +105,13 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
           }}
           style={[styles.roundedButton, { marginLeft: theme.spacing.m }]}
           color='transparent'
-          onPress={() => navigation.navigate('ManageWallets')}>
+          onPress={() => {
+            Share.share({
+              title: 'Verida One',
+              message: `My profile ${buildUrl()}`,
+              url: buildUrl(),
+            })
+          }}>
           <View style={{ flexDirection: 'row', alignItems: 'center' }}>
             <Text
               style={{

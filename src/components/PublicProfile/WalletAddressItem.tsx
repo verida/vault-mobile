@@ -1,12 +1,13 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { PublicWalletAddress } from 'types/profile'
 
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
 import Button from 'components/Button'
+import Text from 'components/Text'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { smallButtonHitSlop } from 'styles/button'
@@ -123,7 +124,11 @@ export const WalletAddressItem = ({
             }}
             onPress={onEditName}>
             {/* Add a wrapped view so on click behavior fixed */}
-            <View style={{ marginLeft: theme.spacing.sm }}>
+            <View
+              style={{
+                marginLeft: theme.spacing.s,
+                marginBottom: theme.spacing.xs,
+              }}>
               <EditIcon fill={theme.color.iconDefault} />
             </View>
           </Button>
