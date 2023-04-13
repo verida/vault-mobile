@@ -35,6 +35,7 @@ const MAX_INPUT_LENGTH = 140
 
 const VERIDA_NAME_SUFFIX = '.vda'
 const VERIDA_NAME_PATTERN = /\.vda$/
+const VERIDA_NAME_SUFFIX_LENGTH = VERIDA_NAME_SUFFIX.length
 
 enum PageType {
   InputUsername,
@@ -53,7 +54,7 @@ const ClaimUsername = () => {
   const usernameInputRef = useRef<TextInput>(null)
 
   const [processing, setProcessing] = useState(false)
-  const [claimingUsername, setClaimingUsername] = useState(false)
+  const [, setClaimingUsername] = useState(false)
   const [showRetry, setShowRetry] = useState(false)
   const [isDoneCreateUsername, setDoneCreateUsername] = useState(false)
   const [createUsernameErrorMessage, setCreateUsernameErrorMessage] =
@@ -89,17 +90,17 @@ const ClaimUsername = () => {
   }) => {
     let start, end
     if (!selection) {
-      start = inputText.length - 4
+      start = inputText.length - VERIDA_NAME_SUFFIX_LENGTH
       end = start
     } else {
-      if (selection.start > inputText.length - 4) {
-        start = inputText.length - 4
+      if (selection.start > inputText.length - VERIDA_NAME_SUFFIX_LENGTH) {
+        start = inputText.length - VERIDA_NAME_SUFFIX_LENGTH
       } else {
         start = selection.start
       }
 
-      if (selection.end > inputText.length - 4) {
-        end = inputText.length - 4
+      if (selection.end > inputText.length - VERIDA_NAME_SUFFIX_LENGTH) {
+        end = inputText.length - VERIDA_NAME_SUFFIX_LENGTH
       } else {
         end = selection.end
       }

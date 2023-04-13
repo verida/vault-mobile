@@ -1017,15 +1017,6 @@ const createStyles = (theme: Theme) =>
       opacity: 0.6,
       marginBottom: theme.spacing.s,
     },
-    // oneProfileLinkContainer: {
-    //   position: 'relative',
-    //   minHeight: 213,
-    //   flexDirection: 'column',
-    //   alignItems: 'center',
-    //   justifyContent: 'center',
-    //   resizeMode: 'center',
-    //   marginBottom: theme.spacing.m,
-    // },
     loadingContainer: {
       flex: 1,
       justifyContent: 'center',
@@ -1037,9 +1028,5 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: -theme.spacing.m,
       alignItems: 'center',
       paddingHorizontal: theme.spacing.m,
-    },
-    cardBackground: {
-      backgroundColor: theme.color.black600,
-      borderRadius: theme.roundness.m,
     },
   })
