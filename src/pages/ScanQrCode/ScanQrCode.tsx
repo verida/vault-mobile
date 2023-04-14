@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
+import { usePolygonId } from 'features/polygonid'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
@@ -7,13 +8,27 @@ import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
 import { useDeeplink } from 'hooks/useDeeplink'
-import { usePolygonId } from 'hooks/usePolygonId'
 import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
+
+const testPolygonId = true
+
+// Temporary data for testing purposes
+const mockRequests = {
+  connectionRequest:
+    // auth request (connect)
+    '{"id":"41959a9e-3f3a-4c20-9452-19146f1d6769","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"41959a9e-3f3a-4c20-9452-19146f1d6769","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=352836","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
+  credentialOffer:
+    // receive credential
+    '{"id":"d20e7cf4-911a-4163-8374-82003eda7e04","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/credentials/1.0/offer","thid":"d20e7cf4-911a-4163-8374-82003eda7e04","body":{"url":"https://self-hosted-platform.polygonid.me/v1/agent","credentials":[{"id":"a5ee6ae7-cd4b-11ed-8e4f-0242c0a88005","description":"KYCAgeCredential"}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5","to":"did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4"}',
+  proofRequest:
+    // auth request (verify)
+    '{"id":"807cb8ea-5feb-4c4f-81d0-d756707d5024","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"807cb8ea-5feb-4c4f-81d0-d756707d5024","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=62378","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"skipClaimRevocationCheck":true,"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
+}
 
 function ScanQrCode(
   props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
@@ -24,7 +39,7 @@ function ScanQrCode(
   const handleDeeplink = useDeeplink(navigation as any)
   const { requestConnect: handleWalletConnectV1Data } = useWalletConnect()
   const { requestConnect: handleWalletConnectV2Data } = useWalletConnectv2()
-  const { handleQRCodeData: handlePolygonIdData } = usePolygonId()
+  const { handleQRCodeMessage: handlePolygonIdData } = usePolygonId()
 
   useEffect(() => {
     setEnabled(true)
@@ -37,6 +52,13 @@ function ScanQrCode(
   const onClose = useCallback(async () => {
     navigation.goBack()
   }, [navigation])
+
+  // TODO: To remove after testing
+  if (testPolygonId) {
+    navigation.goBack()
+    handlePolygonIdData(mockRequests.connectionRequest)
+    return null
+  }
 
   const handleQrCode = async (data: string) => {
     if (!enabled) {

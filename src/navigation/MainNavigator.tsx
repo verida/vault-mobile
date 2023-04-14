@@ -157,21 +157,18 @@ function MainNavigator() {
           presentation: 'modal',
         }}
       />
-      <Stack.Screen
-        name={'ConnectionRequest'}
-        component={ConnectionRequestScreen}
-        options={{ presentation: 'modal' }}
-      />
-      <Stack.Screen
-        name={'ProofRequest'}
-        component={ProofRequestScreen}
-        options={{ presentation: 'modal' }}
-      />
-      <Stack.Screen
-        name={'IncomingDataRequest'}
-        component={IncomingDataRequestScreen}
-        options={{ presentation: 'modal' }}
-      />
+      {/* Modal screens */}
+      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+        <Stack.Screen
+          name={'ConnectionRequest'}
+          component={ConnectionRequestScreen}
+        />
+        <Stack.Screen name={'ProofRequest'} component={ProofRequestScreen} />
+        <Stack.Screen
+          name={'IncomingDataRequest'}
+          component={IncomingDataRequestScreen}
+        />
+      </Stack.Group>
     </Stack.Navigator>
   )
 }

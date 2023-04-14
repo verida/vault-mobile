@@ -1,4 +1,6 @@
-import React from 'react'
+import { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
+import { usePolygonId } from 'features/polygonid'
+import React, { useCallback } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -7,32 +9,41 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-export interface IncomingDataRequestScreenProps {
+export interface IncomingDataRequestScreenParams {
   connectionName?: string
   connectionLogo?: string
   requestDate?: Date
   requestMessage?: string
-  incomingData: any[]
-  onClose?: () => void
-  onDecline: () => void
-  onAccept: () => void
+  data: CredentialsOfferMessage // TODO: Make it multiple types, likely to be an array
 }
+
+type IncomingDataRequestScreenProps =
+  MainStackScreenProps<'IncomingDataRequest'>
 
 export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequestScreenProps> =
   (props) => {
+    const { navigation, route } = props
     const {
-      onClose,
-      onDecline,
-      onAccept,
       connectionName = 'Unidentified',
-      incomingData,
+      data,
       requestMessage,
-    } = props
+    } = route.params
 
+    const { handleAcceptCredentialOffer } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const { bottom } = useSafeAreaInsets()
+
+    const handleClose = useCallback(() => {
+      navigation.goBack()
+    }, [navigation])
+
+    const handleAccept = useCallback(() => {
+      handleAcceptCredentialOffer(data)
+      handleClose()
+    }, [handleAcceptCredentialOffer, data, handleClose])
 
     return (
       <Screen withKeyboardAvoidingView>
@@ -40,7 +51,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
           title='Incoming Data'
           left={{
             icon: 'close',
-            action: onClose,
+            action: handleClose,
           }}
         />
         <View style={[styles.constainer, { marginBottom: bottom }]}>
@@ -48,10 +59,10 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
             <Text>{connectionName}</Text>
             <Text>{requestMessage}</Text>
             <Text>Incoming Data Items</Text>
-            <View>{incomingData}</View>
+            {/* <View>{data}</View> */}
           </View>
-          <Button onPress={onAccept}>Connect</Button>
-          <Button onPress={onDecline} color='secondary'>
+          <Button onPress={handleAccept}>Accept</Button>
+          <Button onPress={handleClose} color='secondary'>
             Decline
           </Button>
         </View>

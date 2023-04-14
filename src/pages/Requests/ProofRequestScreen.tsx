@@ -1,4 +1,6 @@
-import React from 'react'
+import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
+import { usePolygonId } from 'features/polygonid'
+import React, { useCallback } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -7,32 +9,40 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-export interface ProofRequestScreenProps {
+export interface ProofRequestScreenParams {
   connectionName?: string
   connectionLogo?: string
   requestDate?: Date
   requestMessage?: string
-  data: any
-  onClose?: () => void
-  onDecline: () => void
-  onAccept: () => void
+  data: AuthorizationRequestMessage // TODO: Make it multiple types
 }
+
+type ProofRequestScreenProps = MainStackScreenProps<'ProofRequest'>
 
 export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps> =
   (props) => {
+    const { navigation, route } = props
     const {
-      onClose,
-      onDecline,
-      onAccept,
       connectionName = 'Unidentified',
       requestMessage,
       data,
-    } = props
+    } = route.params
 
+    const { handleAcceptProofRequest } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const { bottom } = useSafeAreaInsets()
+
+    const handleClose = useCallback(() => {
+      navigation.goBack()
+    }, [navigation])
+
+    const handleSendProof = useCallback(() => {
+      handleAcceptProofRequest(data)
+      handleClose()
+    }, [handleAcceptProofRequest, data, handleClose])
 
     return (
       <Screen withKeyboardAvoidingView>
@@ -40,17 +50,16 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
           title='Proof Request'
           left={{
             icon: 'close',
-            action: onClose,
+            action: handleClose,
           }}
         />
         <View style={[styles.constainer, { marginBottom: bottom }]}>
           <View style={{ flexDirection: 'column' }}>
             <Text>{connectionName}</Text>
             <Text>{requestMessage}</Text>
-            <View>{data}</View>
           </View>
-          <Button onPress={onAccept}>Connect</Button>
-          <Button onPress={onDecline} color='secondary'>
+          <Button onPress={handleSendProof}>Send Proof</Button>
+          <Button onPress={handleClose} color='secondary'>
             Decline
           </Button>
         </View>

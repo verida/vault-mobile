@@ -1,4 +1,6 @@
-import React from 'react'
+import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
+import { usePolygonId } from 'features/polygonid'
+import React, { useCallback } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -7,27 +9,39 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-export interface ConnectionRequestScreenProps {
+export interface ConnectionRequestScreenParams {
   connectionName?: string
   connectionLogo?: string
-  onClose?: () => void
-  onDecline: () => void
-  onAccept: () => void
+  requestMessage?: string
+  data: AuthorizationRequestMessage // TODO: Make it multiple types
 }
+
+type ConnectionRequestScreenProps = MainStackScreenProps<'ConnectionRequest'>
 
 export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestScreenProps> =
   (props) => {
+    const { navigation, route } = props
     const {
-      onClose,
-      onDecline,
-      onAccept,
       connectionName = 'Unidentified',
-    } = props
+      data,
+      requestMessage,
+    } = route.params
 
+    const { handleAcceptConnectionRequest } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const { bottom } = useSafeAreaInsets()
+
+    const handleClose = useCallback(() => {
+      navigation.goBack()
+    }, [navigation])
+
+    const handleConnect = useCallback(() => {
+      handleAcceptConnectionRequest(data)
+      handleClose()
+    }, [handleAcceptConnectionRequest, data, handleClose])
 
     return (
       <Screen withKeyboardAvoidingView>
@@ -35,7 +49,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
           title='Connection Request'
           left={{
             icon: 'close',
-            action: onClose,
+            action: handleClose,
           }}
         />
         <View style={[styles.constainer, { marginBottom: bottom }]}>
@@ -44,9 +58,10 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
               flexDirection: 'column',
             }}>
             <Text>{`Connect with ${connectionName}`}</Text>
+            <Text>{requestMessage}</Text>
           </View>
-          <Button onPress={onAccept}>Connect</Button>
-          <Button onPress={onDecline} color='secondary'>
+          <Button onPress={handleConnect}>Connect</Button>
+          <Button onPress={handleClose} color='secondary'>
             Decline
           </Button>
         </View>
