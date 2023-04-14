@@ -8,11 +8,13 @@ import { Alert, Image, StyleSheet, View } from 'react-native'
 import AccountManager from 'api/AccountManager'
 import { DefaultAvatar } from 'api/utils'
 import Button from 'components/Button'
-import SchemasList from 'components/Inbox/SchemasList'
+import { RequestedDataSelector } from 'components/Inbox/RequestedDataSelector'
+import CustomFooter from 'components/Layouts/CustomFooter'
 import Text from 'components/Text'
-import { GREY_COLOR } from 'constants/color'
+import { ACCEPT_COLOR, DECLINE_COLOR, GREY_COLOR } from 'constants/color'
 
-export default ({ item, inboxItem, navigation }) => {
+export default (props) => {
+  const { item, navigation } = props
   const [currentAction, setCurrentAction] = useState(null)
   const [selectedItems, setSelectedItem] = useState([])
 
@@ -24,7 +26,7 @@ export default ({ item, inboxItem, navigation }) => {
         setCurrentAction('decline')
       }
       const vault = AccountManager.getInstance().vault
-      await vault.inbox.handleAction(inboxItem, result, selectedItems)
+      await vault.inbox.handleAction(item.item, result, selectedItems)
       setCurrentAction(null)
       navigation.goBack()
     } catch (e) {
@@ -34,61 +36,87 @@ export default ({ item, inboxItem, navigation }) => {
     }
   }
 
-  async function onConfirmShareableItems(items) {
+  async function onConfirmSelectedItems(items) {
     setSelectedItem(items)
   }
 
   const formattedSentAt = moment(item.item.sentAt).format('MMM DD, HH:mm')
 
-  const { userSelect, requestSchema, filter } = item.item.data
+  const { userSelect, requestSchema, filter, fallbackAction, status } =
+    item.item.data
 
   const shareEnabled = (userSelect && !isEmpty(selectedItems)) || !userSelect
 
   function onItemPress(url) {
     navigation.navigate('ShareableData', {
       schemaUrl: url,
-      onConfirm: onConfirmShareableItems,
+      onConfirm: onConfirmSelectedItems,
       filter,
     })
   }
 
   return (
-    <Content>
-      <View style={styles.container}>
-        <View style={styles.sender}>
-          <Image
-            source={item.logo || DefaultAvatar}
-            style={styles.senderAvatar}
-          />
-          <View style={styles.senderInfo}>
-            <Text style={styles.senderName}>{item.item.sentBy.context}</Text>
-            <Text style={styles.sendAt}>{formattedSentAt}</Text>
+    <>
+      <Content>
+        <View style={styles.container}>
+          <View style={styles.sender}>
+            <Image
+              source={item.logo || DefaultAvatar}
+              style={styles.senderAvatar}
+            />
+            <View style={styles.senderInfo}>
+              <Text style={styles.senderName}>{item.item.sentBy.context}</Text>
+              <Text style={styles.sendAt}>{formattedSentAt}</Text>
+            </View>
           </View>
+          <View style={styles.divider} />
+          {status ? (
+            <View
+              style={[styles.statusContainer, { justifyContent: 'center' }]}>
+              <Text
+                style={[
+                  styles.status,
+                  status === 'accept'
+                    ? styles.statusAccept
+                    : styles.statusDecline,
+                ]}>
+                {status === 'accept' ? 'Accepted' : 'Declined'}
+              </Text>
+            </View>
+          ) : (
+            <RequestedDataSelector
+              name={item.title} // Not the best to use the message title but better than nothing for the moment
+              schemaUrl={requestSchema}
+              userSelect={!!userSelect}
+              fallbackAction={fallbackAction}
+              onPress={onItemPress}
+              selectedItems={selectedItems}
+            />
+          )}
         </View>
-        <View style={styles.divider} />
-        <SchemasList
-          schemas={[requestSchema]}
-          onItemPress={onItemPress}
-          userSelect={userSelect}
-        />
-      </View>
-      <View style={styles.footer}>
-        <Button
-          color='grey'
-          style={styles.button}
-          onPress={() => handleAction('decline')}
-          loading={currentAction === 'decline'}>
-          Ignore
-        </Button>
-        <Button
-          style={[styles.button, styles.shareButton]}
-          onPress={() => handleAction('accept')}
-          loading={currentAction === 'accept'}
-          disabled={!shareEnabled}>
-          Share
-        </Button>
-      </View>
-    </Content>
+      </Content>
+      {status ? null : (
+        <CustomFooter>
+          <View style={styles.footer}>
+            <Button
+              color='grey'
+              style={[styles.button, styles.ignoreButton]}
+              onPress={() => handleAction('decline')}
+              loading={currentAction === 'decline'}
+              disabled={!!status}>
+              Decline
+            </Button>
+            <Button
+              style={[styles.button, styles.shareButton]}
+              onPress={() => handleAction('accept')}
+              loading={currentAction === 'accept'}
+              disabled={!shareEnabled || !!status}>
+              Share
+            </Button>
+          </View>
+        </CustomFooter>
+      )}
+    </>
   )
 }
 
@@ -121,18 +149,41 @@ const styles = StyleSheet.create({
   },
   footer: {
     flexDirection: 'row',
-    paddingHorizontal: 20,
+    justifyContent: 'space-between',
+    gap: 10, // Supported in RN 0.71+
   },
   button: {
     flex: 1,
   },
+  ignoreButton: {
+    marginRight: 5, // TODO: Remove this when gap is supported in RN 0.71
+  },
   shareButton: {
-    marginLeft: 10,
+    marginLeft: 5, // TODO: Remove this when gap is supported in RN 0.71
   },
   senderAvatar: {
     width: 60,
     height: 60,
     borderRadius: 30,
     resizeMode: 'contain',
+  },
+  statusContainer: {
+    flexDirection: 'row',
+    marginVertical: 30,
+    bottom: 0,
+  },
+  status: {
+    flex: 0.5,
+    fontSize: 14,
+    color: '#ffffff',
+    textAlign: 'center',
+    paddingTop: 10,
+    paddingBottom: 10,
+  },
+  statusDecline: {
+    backgroundColor: DECLINE_COLOR,
+  },
+  statusAccept: {
+    backgroundColor: ACCEPT_COLOR,
   },
 })
