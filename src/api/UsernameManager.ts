@@ -1,24 +1,28 @@
+import { EnvironmentType, Web3CallType } from '@verida/types'
 import { VeridaNameClient } from '@verida/vda-name-client'
 
 import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
+import { Account } from './types'
 
 export default class UsernameManager {
   private client?: VeridaNameClient
 
   /**
    * Check if a username exists
-   * 
+   *
    * @return boolean true if the username already exists
    */
   public async usernameExists(username: string): Promise<boolean> {
     const client = await this.getClient()
 
     try {
-      const usernames = await client.getUsernames(username)
+      const usernames = await client.getDID(username)
       if (usernames.length) {
         return true
       }
+
+      return false
     } catch (err) {
       return false
     }
@@ -75,13 +79,15 @@ export default class UsernameManager {
     }
 
     const didClientConfig = CONFIG.VERIDA_DID_CLIENT_CONFIG
-    const account = await AccountManager.getInstance().getSelectedAccount()
+    const account = <Account>(
+      await AccountManager.getInstance().getSelectedAccount()
+    )
 
     const nameClient = new VeridaNameClient({
-      callType: didClientConfig.callType,
+      callType: <Web3CallType>didClientConfig.callType,
       did: account.did,
       signKey: account.privateKey,
-      network: CONFIG.ENVIRONMENT,
+      network: <EnvironmentType>CONFIG.ENVIRONMENT,
       web3Options: didClientConfig.web3Config,
     })
 
