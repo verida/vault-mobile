@@ -88,10 +88,10 @@ export default class UsernameManager {
       throw new Error('Account not found')
     }
 
+    // This's so the client will be reinitialized on DID change
     if (UsernameManager.client && currentDID === UsernameManager.did) {
       return UsernameManager.client
     }
-
     UsernameManager.did = currentDID
 
     const didClientConfig = CONFIG.VERIDA_DID_CLIENT_CONFIG

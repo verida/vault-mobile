@@ -39,7 +39,6 @@ import NodeSelector from './NodeSelector'
 
 import CONFIG from '../config/environment'
 import EventEmitter from 'events'
-import UsernameManager from './UsernameManager'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 type EndpointUrls = {
@@ -501,25 +500,6 @@ class AccountManager extends EventEmitter {
       setTimeout(() => {
         updateProgress?.('StorageLocation', 'Success')
       }, 1000)
-
-      if (userData.username) {
-        // this step should run parallelly with create profile step, maybe by wrapping it in a setTimeout function
-        try {
-          updateProgress?.('ClaimUsername', 'Loading')
-          const usernameManager = new UsernameManager()
-          const username = userData.username
-          await usernameManager.set(username)
-          const fetchedUsername = await usernameManager.get()
-          console.log('username:', fetchedUsername)
-          updateProgress?.(
-            'ClaimUsername',
-            fetchedUsername ? 'Success' : 'Failure'
-          )
-        } catch (error) {
-          updateProgress?.('ClaimUsername', 'Failure')
-          throw error
-        }
-      }
 
       updateProgress?.('CreateProfile', 'Loading')
 

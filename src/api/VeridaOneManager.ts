@@ -86,6 +86,7 @@ export default class VeridaOneManager {
       throw new Error('Account not found')
     }
 
+    // This's so the datastore will be reinitialized on DID change
     if (VeridaOneManager.datastore && selectedDID === VeridaOneManager.did) {
       return VeridaOneManager.datastore
     }

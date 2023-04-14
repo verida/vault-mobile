@@ -68,8 +68,7 @@ const ClaimUsername = () => {
       setShowRetry(false)
       setProcessing(true)
       setClaimingUsername(true)
-      const usernameManager = new UsernameManager()
-      await usernameManager.set(inputText)
+      await UsernameManager.set(inputText)
       setDoneCreateUsername(true)
       emitter.emit('UPDATE_PROFILE_USERNAME', {})
     } catch (error: any) {
