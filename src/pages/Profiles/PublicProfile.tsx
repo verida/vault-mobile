@@ -394,7 +394,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const fetchUsername = async () => {
     // Fetch Verida One Profile
     try {
-      const accountUsernames = await new UsernameManager().get()
+      const accountUsernames = await UsernameManager.get()
       if (accountUsernames && accountUsernames?.length > 0) {
         setUsername(accountUsernames[0])
       }

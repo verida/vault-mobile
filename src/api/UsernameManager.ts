@@ -6,14 +6,19 @@ import AccountManager from './AccountManager'
 import { Account } from './types'
 
 export default class UsernameManager {
-  private client?: VeridaNameClient
+  private static client?: VeridaNameClient
+  static did: string
+
+  private constructor() {
+    // empty
+  }
 
   /**
    * Check if a username exists
    *
    * @return boolean true if the username already exists
    */
-  public async usernameExists(username: string): Promise<boolean> {
+  public static async usernameExists(username: string): Promise<boolean> {
     const client = await this.getClient()
 
     try {
@@ -37,9 +42,9 @@ export default class UsernameManager {
    *
    * @returns string[] Array of usernames
    */
-  public async get(): Promise<string[] | undefined> {
+  public static async get(): Promise<string[] | undefined> {
     try {
-      const client = await this.getClient()
+      const client = await UsernameManager.getClient()
       const account = await AccountManager.getInstance().getSelectedAccount()
       const usernames = await client.getUsernames(
         account!.did.match(/(0x.*)/)[0]
@@ -58,11 +63,14 @@ export default class UsernameManager {
    * @param username string New username
    * @param replaceExisting boolean True if any existing usernames should be deleted first
    */
-  public async set(username: string, replaceExisting = true): Promise<void> {
-    const client = await this.getClient()
+  public static async set(
+    username: string,
+    replaceExisting = true
+  ): Promise<void> {
+    const client = await UsernameManager.getClient()
 
     if (replaceExisting) {
-      const existingUsernames = await this.get()
+      const existingUsernames = await UsernameManager.get()
       if (existingUsernames) {
         for (const e in existingUsernames) {
           const username = existingUsernames[e]
@@ -73,10 +81,18 @@ export default class UsernameManager {
     await client.register(username)
   }
 
-  private async getClient() {
-    if (this.client) {
-      return this.client
+  private static async getClient() {
+    const currentDID = await AccountManager.getInstance().getSelectedAccount()
+      ?.did
+    if (!currentDID) {
+      throw new Error('Account not found')
     }
+
+    if (UsernameManager.client && currentDID === UsernameManager.did) {
+      return UsernameManager.client
+    }
+
+    UsernameManager.did = currentDID
 
     const didClientConfig = CONFIG.VERIDA_DID_CLIENT_CONFIG
     const account = <Account>(
@@ -91,7 +107,7 @@ export default class UsernameManager {
       web3Options: didClientConfig.web3Config,
     })
 
-    this.client = nameClient
-    return this.client
+    UsernameManager.client = nameClient
+    return UsernameManager.client
   }
 }

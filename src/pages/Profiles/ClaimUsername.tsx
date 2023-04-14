@@ -25,13 +25,10 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
-import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
 
-const dotsLoader = require('assets/animations/dots-loader.json')
-
 const MIN_INPUT_LENGTH = 2
-const MAX_INPUT_LENGTH = 140
+const MAX_INPUT_LENGTH = 32
 
 const VERIDA_NAME_SUFFIX = '.vda'
 const VERIDA_NAME_PATTERN = /\.vda$/
@@ -64,6 +61,7 @@ const ClaimUsername = () => {
   const [usernameError, setUsernameError] = useState<string | undefined>(
     undefined
   )
+
   const handleClaimUsername = async () => {
     pagerRef.current?.setPage(currentPage + 1)
     try {
@@ -84,7 +82,7 @@ const ClaimUsername = () => {
     }
   }
 
-  const ensureSelctionPosition = (selection?: {
+  const ensureSelectionPosition = (selection?: {
     start: number
     end: number
   }) => {
@@ -129,11 +127,9 @@ const ClaimUsername = () => {
       }
 
       setCheckingUsername(true)
-      const usernameManager = new UsernameManager()
-      const isValid = await usernameManager.usernameExists(inputText)
-      // FIXME: !!! forced usernaname available now until we can fix the checking username API
-      setAvailableUsername(true)
-      if (false) {
+      const claimed = await UsernameManager.usernameExists(inputText)
+      setAvailableUsername(!claimed)
+      if (claimed) {
         setUsernameError('This username is already taken')
       }
     } catch (error) {
@@ -189,10 +185,10 @@ const ClaimUsername = () => {
                 onBlur={checkUsername}
                 maxLength={MAX_INPUT_LENGTH}
                 onFocus={() => {
-                  ensureSelctionPosition(undefined)
+                  ensureSelectionPosition(undefined)
                 }}
                 onSelectionChange={(e) => {
-                  ensureSelctionPosition(e.nativeEvent.selection)
+                  ensureSelectionPosition(e.nativeEvent.selection)
                 }}
                 onChangeText={(value) => {
                   setUsernameError('')
@@ -263,7 +259,7 @@ const ClaimUsername = () => {
                 <>
                   <BlurCircle />
                   <LottieView
-                    source={dotsLoader}
+                    source={require('assets/animations/dots-loader.json')}
                     autoPlay
                     loop
                     style={styles.dotsLoader}
@@ -334,21 +330,6 @@ export default ClaimUsername
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    inputValidation: {
-      borderColor: DECLINE_COLOR,
-    },
-    inputText: {
-      fontFamily: NUNITO_SANS,
-      color: DECLINE_COLOR,
-      fontStyle: 'italic',
-      fontSize: 12,
-      marginVertical: 4,
-    },
-    description: {
-      marginVertical: theme.spacing.xs,
-      color: theme.color.textLightGrey,
-      fontSize: theme.fontSize.s,
-    },
     dotsLoader: {
       width: 48,
       height: 48,
