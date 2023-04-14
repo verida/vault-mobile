@@ -65,15 +65,12 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
           <Icon name='copy' color={theme.color.onPrimary} size={16} />
         </View>
       </TouchableOpacity>
-      <Label
-        style={{ color: theme.color.onPrimary, marginBottom: theme.spacing.m }}>
-        Edited 12.12.2022
-      </Label>
       <View
         style={{
           flexDirection: 'row',
           width: '100%',
           justifyContent: 'space-between',
+          marginTop: theme.spacing.l,
         }}>
         <Button
           textStyle={{
