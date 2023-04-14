@@ -38,6 +38,7 @@ export type FormInputProps = React.ComponentPropsWithRef<
   disabled?: boolean
   inputStyle?: TextStyle
   withAnimatedChecbox?: boolean
+  checkboxEmptyState?: boolean
   checked?: boolean
   loading?: boolean
   suffix?: string
@@ -58,6 +59,7 @@ export const FormInput = React.forwardRef(
       onFocus: onInputFocus,
       onBlur: onInputBlur,
       withAnimatedChecbox,
+      checkboxEmptyState,
       loading,
       checked,
       desciption,
@@ -151,7 +153,7 @@ export const FormInput = React.forwardRef(
               placeholderTextColor={theme.color.placeholderTextColor}
             />
           </TouchableWithoutFeedback>
-          {withAnimatedChecbox && !focused && (
+          {withAnimatedChecbox && !checkboxEmptyState && (
             <View
               style={{
                 position: 'absolute',

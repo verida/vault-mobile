@@ -3,6 +3,7 @@ import * as Sentry from '@sentry/react-native'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { emitter } from 'helpers/emitter'
+import { debounce } from 'lodash'
 import LottieView from 'lottie-react-native'
 import React, { useCallback, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
@@ -61,6 +62,7 @@ const ClaimUsername = () => {
   const [usernameError, setUsernameError] = useState<string | undefined>(
     undefined
   )
+  const [checkboxEmpty, setCheckboxEmpty] = useState(true)
 
   const handleClaimUsername = async () => {
     pagerRef.current?.setPage(currentPage + 1)
@@ -111,32 +113,36 @@ const ClaimUsername = () => {
     })
   }
 
-  const checkUsername = useCallback(async () => {
-    try {
-      const plainName = inputText.replace(VERIDA_NAME_PATTERN, '')
-      if (plainName.length > 0 && plainName.length < MIN_INPUT_LENGTH) {
-        setUsernameError(`Username length must be >= ${MIN_INPUT_LENGTH}`)
-        return
-      } else if (plainName.length > MAX_INPUT_LENGTH) {
-        setUsernameError(`Username length must be <= ${MAX_INPUT_LENGTH}`)
-        return
-      } else if (plainName.length === 0) {
-        setUsernameError('')
-        return
-      }
+  const debounceCheckUsername = useCallback(
+    debounce(async (text) => {
+      try {
+        const plainName = text.replace(VERIDA_NAME_PATTERN, '')
+        if (plainName.length > 0 && plainName.length < MIN_INPUT_LENGTH) {
+          setUsernameError(`Username length must be >= ${MIN_INPUT_LENGTH}`)
+          return
+        } else if (plainName.length > MAX_INPUT_LENGTH) {
+          setUsernameError(`Username length must be <= ${MAX_INPUT_LENGTH}`)
+          return
+        } else if (plainName.length === 0) {
+          setUsernameError('')
+          return
+        }
 
-      setCheckingUsername(true)
-      const claimed = await UsernameManager.usernameExists(inputText)
-      setAvailableUsername(!claimed)
-      if (claimed) {
-        setUsernameError('This username is already taken')
+        setCheckboxEmpty(false)
+        setCheckingUsername(true)
+        const claimed = await UsernameManager.usernameExists(text)
+        setAvailableUsername(!claimed)
+        if (claimed) {
+          setUsernameError('This username is already taken')
+        }
+      } catch (error) {
+        setUsernameError('Unable to check the username')
+      } finally {
+        setCheckingUsername(false)
       }
-    } catch (error) {
-      setUsernameError('Unable to check the username')
-    } finally {
-      setCheckingUsername(false)
-    }
-  }, [inputText])
+    }, 1500),
+    []
+  )
 
   return (
     <Screen
@@ -171,17 +177,17 @@ const ClaimUsername = () => {
                     ? undefined
                     : 'Your username is public and optional'
                 }
-                autoFocus={true}
+                autoFocus
                 autoCorrect={false}
-                withAnimatedChecbox
                 autoComplete='username'
                 autoCapitalize='none'
                 keyboardType='url'
                 returnKeyType='done'
+                withAnimatedChecbox
+                checkboxEmptyState={checkboxEmpty}
                 loading={checkingUsername}
                 checked={availableUsername}
                 errorMessage={usernameError}
-                onBlur={checkUsername}
                 maxLength={MAX_INPUT_LENGTH}
                 onFocus={() => {
                   ensureSelectionPosition(undefined)
@@ -191,6 +197,7 @@ const ClaimUsername = () => {
                 }}
                 onChangeText={(value) => {
                   setUsernameError('')
+                  setCheckboxEmpty(true)
                   const text = value.replace(/\s/g, '')
                   if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
                     setInputText(text + VERIDA_NAME_SUFFIX)
@@ -199,6 +206,7 @@ const ClaimUsername = () => {
                   } else {
                     setInputText(text)
                   }
+                  debounceCheckUsername(text)
                 }}>
                 <ParsedText
                   style={{

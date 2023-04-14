@@ -557,31 +557,40 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   )
 
   useEffect(() => {
-    setLoading(true)
+    // A little bit of delay here to avoid any unclean state when switching accounts
+    const tid = setTimeout(() => {
+      setLoading(true)
 
-    setProfileReadonlyProps([
-      { label: 'DID', value: currentAccountDID, action: 'copy' },
-    ])
+      setProfileReadonlyProps([
+        { label: 'DID', value: currentAccountDID, action: 'copy' },
+      ])
 
-    // Reset
-    setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
-    setVeridaOneProfile({})
+      // Reset
+      setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
+      setVeridaOneProfile({})
 
-    setPublicWalletAddresses([])
-    setFeaturedAssets([])
-    setPublicCustomLinks([])
-    setUsername(undefined)
+      setPublicWalletAddresses([])
+      setFeaturedAssets([])
+      setPublicCustomLinks([])
+      setUsername(undefined)
 
-    // Check Verida One enabbled status
-    ;(async () => {
-      setEnabledVeridaOne(await isEnabledVeridaOneProfile())
-    })()
+      // Check Verida One enabbled status
+      ;(async () => {
+        setEnabledVeridaOne(await isEnabledVeridaOneProfile())
+      })()
 
-    Promise.all([fetchData(), fetchVeridaOneProfle(), fetchUsername()]).finally(
-      () => {
+      Promise.all([
+        fetchData(),
+        fetchVeridaOneProfle(),
+        fetchUsername(),
+      ]).finally(() => {
         setLoading(false)
-      }
-    )
+      })
+    }, 200)
+
+    return () => {
+      clearTimeout(tid)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccountDID])
 
