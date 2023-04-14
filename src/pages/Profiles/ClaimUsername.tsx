@@ -198,6 +198,7 @@ const ClaimUsername = () => {
                 onChangeText={(value) => {
                   setUsernameError('')
                   setCheckboxEmpty(true)
+                  setAvailableUsername(false)
                   const text = value.replace(/\s/g, '')
                   if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
                     setInputText(text + VERIDA_NAME_SUFFIX)
