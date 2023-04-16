@@ -69,7 +69,7 @@ export default (props) => {
                 }}
                 style={styles.connectionItem}>
                 <View style={styles.connectionItemIconLabel}>
-                  <Image style={styles.itemIcon} source={item.icon} />
+                  <Image style={styles.itemIcon} source={{ uri: item.icon }} />
                   <Text style={styles.itemText}>{item.label}</Text>
                 </View>
                 <Text style={styles.itemStatusText}>{item.syncStatus}</Text>
