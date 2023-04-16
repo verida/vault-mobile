@@ -5,6 +5,7 @@ import * as Sentry from '@sentry/react-native'
 import parse from 'url-parse'
 
 import { DashboardTabParams, MainStackParams } from 'navigation/types'
+import DataConnectorsManager from 'api/DataConnectorsManager'
 
 type NavProp = CompositeNavigationProp<
   BottomTabNavigationProp<DashboardTabParams, keyof DashboardTabParams>,
@@ -12,7 +13,7 @@ type NavProp = CompositeNavigationProp<
 >
 
 export function useDeeplink(navigation: NavProp) {
-  return function (url: string) {
+  return async function (url: string) {
     try {
       const parsedUrl = parse(url, true)
       const { pathname, query } = parsedUrl
@@ -29,6 +30,8 @@ export function useDeeplink(navigation: NavProp) {
       if (screenName === 'SingleConnection') {
         // eslint-disable-next-line @typescript-eslint/ban-ts-comment
         // @ts-ignore need to better typing here
+        query.provider = await DataConnectorsManager.getConnectionInfo(query.provider)
+
         navigation.jumpTo('Connections')
       }
       navigation.navigate(screenName, query as never)
