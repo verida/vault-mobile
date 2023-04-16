@@ -64,7 +64,7 @@ export default (props) => {
               <TouchableOpacity
                 onPress={() => {
                   props.navigation.navigate('SingleConnection', {
-                    provider: item.name,
+                    provider: item,
                   })
                 }}
                 style={styles.connectionItem}>
