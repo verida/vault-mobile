@@ -83,10 +83,25 @@ export class SBTManager {
     }
   }
 
+  public async isMinted(credentialRecord: any, mintAddress: string) {
+    console.log('isMinted?', mintAddress)
+    const client = await this.getClient()
+
+    try {
+      const claimedSbts = await client.getClaimedSBTList(
+        mintAddress.toLowerCase()
+      )
+      console.log(claimedSbts)
+    } catch (err) {
+      console.log(err.message)
+    }
+  }
+
   public async burnSbt(
     credentialRecord: any,
     mintAddress: string
   ): Promise<boolean> {
+    console.log('burnSbt', mintAddress)
     mintAddress = mintAddress.toLowerCase()
     const context = <IContext>(
       await AccountManager.getInstance().getVeridaContext()
@@ -123,7 +138,7 @@ export class SBTManager {
       console.log(err.message)
     }*/
     try {
-      const response = await client.burnSBT(59)
+      const response = await client.burnSBT(61)
       console.log('burnt', response)
     } catch (err) {
       console.log('burn error')
@@ -142,9 +157,10 @@ export class SBTManager {
     credentialRecord: any,
     mintAddress: string
   ): Promise<boolean> {
+    console.log('mintSbt', mintAddress)
     mintAddress = mintAddress.toLowerCase()
     // @todo: check it hasn't been minted already
-    console.log(credentialRecord, mintAddress)
+    //console.log(credentialRecord, mintAddress)
     //return
 
     const context = <IContext>(
