@@ -106,7 +106,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
     async (data: AuthorizationRequestMessage) => {
       try {
         console.debug('Accepting Connection Request...')
-        console.debug("managerId: ", maybeManagerId)
+        console.debug('managerId: ', maybeManagerId)
         await handleAuthRequest({ data, managerId: maybeManagerId! })
         // TODO: define what to do afterwards (confirmation screen?)
       } catch (error: unknown) {
@@ -114,7 +114,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         // TODO: Handle error in UI. Use error.message?
       }
     },
-    []
+    [maybeManagerId, handleAuthRequest]
   )
 
   const handleAcceptProofRequest = useCallback(
@@ -128,7 +128,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         // TODO: Handle error in UI. Use error.message?
       }
     },
-    []
+    [maybeManagerId, handleAuthRequest]
   )
 
   const handleAcceptCredentialOffer = useCallback(
@@ -142,7 +142,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         // TODO: Handle error in UI. Use error.message?
       }
     },
-    []
+    [maybeManagerId, hanldeFetchRequest]
   )
 
   const contextValue: PolygonIdContextType = useMemo(

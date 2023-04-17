@@ -130,7 +130,7 @@ export const PolygonProvider = ({
     }) =>
       new Promise<unknown>((resolve, reject) => {
         console.debug('invokeJs')
-        // console.debug(js)
+        console.debug(js)
         console.log('isReady:', isReady)
 
         if (!isReady) return reject(new Error('Not ready.'))
@@ -143,7 +143,7 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
-        // __DEV__ && console.log(injectedJavaScript)
+        __DEV__ && console.log(injectedJavaScript)
 
         console.debug('Injecting JS')
         return ref?.current?.injectJavaScript(injectedJavaScript)
@@ -176,7 +176,7 @@ export const PolygonProvider = ({
       const result = await invokeJs({
         js: `window.__HANDLE_QR_CODE_STRING__({managerId: ${JSON.stringify(
           managerId
-        )}, qrCodeString: ${JSON.stringify(data)}})`,
+        )}, qrCodeString: '${JSON.stringify(data)}'})`,
       })
 
       if (typeof result !== 'string' || !result.length)
@@ -197,7 +197,7 @@ export const PolygonProvider = ({
       const result = await invokeJs({
         js: `window.__HANDLE_QR_CODE_STRING__({managerId: ${JSON.stringify(
           managerId
-        )}, qrCodeString: ${JSON.stringify(data)}})`,
+        )}, qrCodeString: '${JSON.stringify(data)}'})`,
       })
 
       if (typeof result !== 'string' || !result.length)
@@ -218,7 +218,7 @@ export const PolygonProvider = ({
       const result = await invokeJs({
         js: `window.__HANDLE_QR_CODE_STRING__({managerId: ${JSON.stringify(
           managerId
-        )}, qrCodeString: ${JSON.stringify(qrCodeString)}})`,
+        )}, qrCodeString: '${JSON.stringify(qrCodeString)}'})`,
       })
 
       if (typeof result !== 'string' || !result.length)
