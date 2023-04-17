@@ -2,10 +2,12 @@ import {
   AbstractPrivateKeyStore,
   AuthDataPrepareFunc,
   AuthHandler,
+  AuthorizationRequestMessage,
   BjjProvider,
   CircuitData,
   CircuitId,
   CircuitStorage,
+  CredentialsOfferMessage,
   CredentialStorage,
   CredentialWallet,
   DataPrepareHandlerFunc,
@@ -52,6 +54,7 @@ const RPC_URL = "https://rpc-mumbai.maticvigil.com";
 const CONTRACT_ADDRESS = "0x134B1BE34911E39A8397ec6289782989729807a4";
 
 export interface PolygonIDManagerConfig {
+  // TODO: Find a better way to pass the sensitive information to the manager.
   polygonIdSeed: string;
   veridaPrivateKey: string;
   environment: EnvironmentType;
@@ -59,24 +62,14 @@ export interface PolygonIDManagerConfig {
   didClientConfig: AccountNodeDIDClientConfig;
 }
 
-export interface QRCodeResult {
-  id: string;
-  reason: string;
-  body: Record<string, unknown>;
-  from: string;
-  type: string;
-  hostname: string;
-  requestBytes: Buffer;
-}
-
 // Convert a base64 encoded string to a Uint8Array.
 const base64StringToUint8Array = (str: string): Uint8Array =>
-  Uint8Array.from(window.atob(str), c => c.charCodeAt(0));
+  Uint8Array.from(window.atob(str), (c) => c.charCodeAt(0));
 
+// TODO: Create a factory to call the init() after the constructor instead of expecting to called when instanciated elsewhere in the code.
 export class PolygonIDManager {
   config: PolygonIDManagerConfig;
   context?: Context;
-
   did?: DID;
   identityWallet?: IIdentityWallet;
   credentialWallet?: ICredentialWallet;
@@ -88,104 +81,65 @@ export class PolygonIDManager {
     this.config = config;
   }
 
-  public decodeQRCode(authMessage: string): QRCodeResult {
-    const result = JSON.parse(authMessage);
-    console.log(result);
-
-    if (result.body.callbackUrl) {
-      const url = new URL(result.body.callbackUrl);
-      result.hostname = url.hostname;
-    } else if (result.body.url) {
-      const url = new URL(result.body.url);
-      result.hostname = url.hostname;
-    }
-
-    result.requestBytes = Buffer.from(JSON.stringify(result), "utf-8");
-    return result as QRCodeResult;
-  }
-
-  public async handleFetch(requestData: QRCodeResult): Promise<void> {
-    console.log("handleFetch");
-    //await this.init();
-
-    const fetchHandler = new FetchHandler(this.packageMgr!);
-    console.log(this.did);
-    const res = await fetchHandler.handleCredentialOffer(
-      this.did!,
-      requestData.requestBytes
-    );
-
-    console.log("handleCredentialOffer() result:");
-    console.log(res);
-    await this.credentialWallet!.saveAll(res);
-    console.log("saved!");
-
-    //return res
-  }
-
-  public async handleAuthRequest(requestData: QRCodeResult): Promise<void> {
-    console.log("handleAuthRequest start");
-    //await this.init();
+  public async handleAuthorizationRequest(
+    data: AuthorizationRequestMessage
+  ): Promise<void> {
+    const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
     const authHandler = new AuthHandler(
       this.packageMgr!,
       this.proofService!,
       this.credentialWallet!
     );
+    const authRes = await authHandler.handleAuthorizationRequestForGenesisDID(
+      this.did!,
+      encodedData
+    );
 
-    let authRes;
-    try {
-      console.log("handleAuthorizationRequestForGenesisDID");
-      authRes = await authHandler.handleAuthorizationRequestForGenesisDID(
-        this.did!,
-        requestData.requestBytes
-      );
+    // TODO: Add a type to the axios response
+    const response = await Axios.post(
+      // TODO: Do not assume the callback URL is in the body with '!', check it first. Throw an error if missing.
+      `${authRes!.authRequest!.body!.callbackUrl}`,
+      authRes.token
+    );
+    return response.data;
+  }
 
-      console.log("authRes:");
-      console.log(authRes);
-    } catch (err: any) {
-      console.log("auth handler error!");
-      console.log(err);
-      throw err;
-    }
+  public async handleCredentialOffer(
+    data: CredentialsOfferMessage
+  ): Promise<void> {
+    const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
-    try {
-      const response = await Axios.post(
-        `${authRes!.authRequest!.body!.callbackUrl}`,
-        authRes.token
-      );
-      return response.data;
-    } catch (err: any) {
-      console.log("callback error!");
-      if (err.response && err.response.status) {
-        console.log(err.response.status);
-      } else {
-        console.log(err);
-      }
-    }
+    const fetchHandler = new FetchHandler(this.packageMgr!);
+    const res = await fetchHandler.handleCredentialOffer(
+      this.did!,
+      encodedData
+    );
+
+    await this.credentialWallet!.saveAll(res);
   }
 
   public async shouldInit() {
-    console.log('shouldInit()');
+    console.log("shouldInit()");
     if (this.did) {
       return;
     }
 
     await this.initVeridaContext();
-    console.log('initVeridaContext()');
+    console.log("initVeridaContext()");
 
     //this.emit("initializing", true);
     this.dataStorage = await this.initDataStorage();
-    console.log('initDataStorage()');
+    console.log("initDataStorage()");
 
     this.credentialWallet = this.initCredentialWallet(this.dataStorage);
-    console.log('initCredentialWallet()');
+    console.log("initCredentialWallet()");
 
     this.identityWallet = await this.initIdentityWallet(
       this.dataStorage,
       this.credentialWallet
     );
-    console.log('initIdentityWallet()');
+    console.log("initIdentityWallet()");
 
     const { did } = await this.identityWallet.createIdentity(
       "https://mywallet.com", // this is url that will be a part of auth bjj credential identifier
@@ -198,7 +152,7 @@ export class PolygonIDManager {
       }
     );
 
-    console.log('createIdentity()');
+    console.log("createIdentity()");
 
     this.did = did;
 
@@ -206,14 +160,14 @@ export class PolygonIDManager {
       new InMemoryDataSource<CircuitData>()
     );
 
-    console.log('CircuitStorage()');
+    console.log("CircuitStorage()");
 
     const conf = defaultEthConnectionConfig;
     conf.url = RPC_URL;
     conf.contractAddress = CONTRACT_ADDRESS;
     const ethStorage = new EthStateStorage(conf);
 
-    console.log('EthStateStorage()');
+    console.log("EthStateStorage()");
 
     this.proofService = new ProofService(
       this.identityWallet,
@@ -222,21 +176,21 @@ export class PolygonIDManager {
       ethStorage
     );
 
-    console.log('ProofService()');
+    console.log("ProofService()");
 
     await circuitStorage.saveCircuitData(
       CircuitId.AuthV2,
       await this.initCircuitStorage(CircuitId.AuthV2)
     );
 
-    console.log('saveCircuitData()');
+    console.log("saveCircuitData()");
 
     await circuitStorage.saveCircuitData(
       CircuitId.AtomicQuerySigV2,
       await this.initCircuitStorage(CircuitId.AtomicQuerySigV2)
     );
 
-    console.log('saveCircuitData()');
+    console.log("saveCircuitData()");
 
     this.packageMgr = await this.getPackageMgr(
       await circuitStorage.loadCircuitData(CircuitId.AuthV2),
@@ -244,7 +198,7 @@ export class PolygonIDManager {
       this.proofService.verifyState.bind(this.proofService)
     );
 
-    console.log('getPackageMgr()');
+    console.log("getPackageMgr()");
 
     //this.emit("initializing", false);
   }
@@ -254,28 +208,32 @@ export class PolygonIDManager {
 
     const maybeFileContent = await req.text();
 
-    if (typeof maybeFileContent !== 'string' || !maybeFileContent.length)
-      throw new Error(`Expected string file, encountered "${String(maybeFileContent)}".`);
+    if (typeof maybeFileContent !== "string" || !maybeFileContent.length)
+      throw new Error(
+        `Expected string file, encountered "${String(maybeFileContent)}".`
+      );
 
     return base64StringToUint8Array(maybeFileContent);
   }
 
   private async initCircuitStorage(circuitId: CircuitId): Promise<CircuitData> {
-
     // Our expectation is that the relevant files have been stored at the root directory
     // by the React Native runtime. These should be saved at the server directory as:
     // <server-dir>/public/circuits/<circuit-id>/<circuit-name>.<type>
-    const [
-      verificationKey,
-      provingKey,
-      wasm,
-    ] = await Promise.all([
-      PolygonIDManager.fetchAndDecodeBase64EncodedFile(`/public/circuits/${circuitId}/verification_key.base64`),
-      PolygonIDManager.fetchAndDecodeBase64EncodedFile(`/public/circuits/${circuitId}/circuit_final.base64`),
-      PolygonIDManager.fetchAndDecodeBase64EncodedFile(`/public/circuits/${circuitId}/wasm.base64`),
+    // TODO: Update the location (don't need the 'public' part)
+    const [verificationKey, provingKey, wasm] = await Promise.all([
+      PolygonIDManager.fetchAndDecodeBase64EncodedFile(
+        `/public/circuits/${circuitId}/verification_key.base64`
+      ),
+      PolygonIDManager.fetchAndDecodeBase64EncodedFile(
+        `/public/circuits/${circuitId}/circuit_final.base64`
+      ),
+      PolygonIDManager.fetchAndDecodeBase64EncodedFile(
+        `/public/circuits/${circuitId}/wasm.base64`
+      ),
     ]);
 
-    return {circuitId: String(circuitId), verificationKey, provingKey, wasm};
+    return { circuitId: String(circuitId), verificationKey, provingKey, wasm };
   }
 
   private async initDataStorage(): Promise<IDataStorage> {
@@ -365,63 +323,6 @@ export class PolygonIDManager {
 
     return mgr;
   }
-
-  //private async fetchPolygonFile(url: string): Promise<Uint8Array> {
-  //  // TODO: Define how and where to get the circuits files from?
-  //  const response = await Axios.get(`/circuits/${url}`, {
-  //    responseType: "arraybuffer",
-  //  });
-
-  //  const data = Buffer.from(response.data, "binary");
-  //  return new Uint8Array(data);
-  //}
-
-  /*private async fetchPolygonFile(url: string): Promise<Uint8Array> {
-    // storageCache[`${CircuitId.AuthV2.toString()}/verification_key.json`] =
-    //   '/Users/chriswere/polygon_circuits/1'
-    // storageCache[`${CircuitId.AuthV2.toString()}/circuit_final.zkey`] =
-    //   '/Users/chriswere/polygon_circuits/2'
-    // storageCache[`${CircuitId.AuthV2.toString()}/circuit.wasm`] =
-    //   '/Users/chriswere/polygon_circuits/3'
-
-    let path
-    if (storageCache[url]) {
-      path = storageCache[url]
-      const exists = await ReactNativeBlobUtil.fs.exists(path)
-      if (!exists) {
-        path = undefined
-      }
-    }
-
-    if (!path) {
-      url = `https://verida-static-resources.s3.amazonaws.com/polygonid/${url}`
-      console.log('downloading', url)
-      const res = await ReactNativeBlobUtil.config({
-        // add this option that makes response data to be stored as a file,
-        // this is much more performant.
-        fileCache: true,
-      }).fetch('GET', url)
-
-      path = res.path()
-      console.log('download complete', path)
-      storageCache[url] = path
-    }
-
-    // const stat = await ReactNativeBlobUtil.fs.stat(path)
-    // const exists = await ReactNativeBlobUtil.fs.exists(path)
-    // console.log(stat, exists)
-
-    try {
-      const fileData = await ReactNativeBlobUtil.fs.readFile(path, 'base64')
-      const buffer = Buffer.from(fileData, 'base64')
-      const result = new Uint8Array(buffer)
-      return result
-    } catch (err) {
-      console.log('Error reading PolygonID file!')
-      console.log(err)
-      throw err
-    }
-  }*/
 
   private async initVeridaContext() {
     if (this.context) {

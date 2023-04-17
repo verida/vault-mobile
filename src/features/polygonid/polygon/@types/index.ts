@@ -18,42 +18,32 @@ export type PolygonCreateIdManager = (
   config: PolygonIdManagerConfig
 ) => Promise<string>
 
-export type PolygonVerifyQrCodeProps = {
-  readonly managerId: string
-  readonly qrCodeString: string
-}
-
-export type PolygonVerifyQrCode = (
-  props: PolygonVerifyQrCodeProps
-) => Promise<string>
-
-export type PolygonHandleFetchProps = {
+export type PolygonHandleCredentialOfferArgs = {
   readonly managerId: string
   readonly data: CredentialsOfferMessage
 }
 
-export type PolygonHandleFetch = (
-  props: PolygonHandleFetchProps
+export type PolygonHandleCredentialOffer = (
+  args: PolygonHandleCredentialOfferArgs
 ) => Promise<string>
 
-export type PolygonHandleAuthRequestProps = {
+export type PolygonHandleAuthorizationRequestArgs = {
   readonly managerId: string
   readonly data: AuthorizationRequestMessage
 }
 
-export type PolygonHandleAuthRequest = (
-  props: PolygonHandleAuthRequestProps
+export type PolygonHandleAuthorizationRequest = (
+  args: PolygonHandleAuthorizationRequestArgs
 ) => Promise<string>
 
 export type RandomKeyGenerator = () => string
 
 export type PolygonContextValue = {
-  readonly hanldeFetchRequest: PolygonHandleFetch
-  readonly handleAuthRequest: PolygonHandleAuthRequest
-  readonly createIdManager: PolygonCreateIdManager
-  readonly verifyQrCode: PolygonVerifyQrCode
   readonly loading: boolean
   readonly generateRandomKey: RandomKeyGenerator
+  readonly createIdManager: PolygonCreateIdManager
+  readonly handleAuthorizationRequest: PolygonHandleAuthorizationRequest
+  readonly handleCredentialOffer: PolygonHandleCredentialOffer
 }
 
 export type PolygonWebViewCallbackProps = {

@@ -17,14 +17,23 @@ import { parseQrCodeMessage } from '../utils'
 
 type PolygonIdContextType = {
   handleQRCodeMessage: (data: string) => void
-  handleAcceptConnectionRequest: (data: AuthorizationRequestMessage) => void
-  handleAcceptProofRequest: (data: AuthorizationRequestMessage) => void
-  handleAcceptCredentialOffer: (data: CredentialsOfferMessage) => void
+  handleAcceptConnectionRequest: (
+    data: AuthorizationRequestMessage
+  ) => Promise<boolean>
+  handleAcceptProofRequest: (
+    data: AuthorizationRequestMessage
+  ) => Promise<boolean>
+  handleAcceptCredentialOffer: (
+    data: CredentialsOfferMessage
+  ) => Promise<boolean>
 }
+// TODO: For all handle functions, return something else than a boolean
 
 export const PolygonIdManagerContext =
   createContext<PolygonIdContextType | null>(null)
 
+// TODO: Define the config based on the current selected Account
+// TODO: Find a better way to pass the sensitive information to the manager.
 const config: PolygonIdManagerConfig = {
   polygonIdSeed: 'daveseedseedseedseedseedseeduser',
   veridaPrivateKey:
@@ -57,7 +66,8 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
 
   const navigation = useNavigation()
 
-  const { handleAuthRequest, hanldeFetchRequest } = usePolygonContext()
+  const { handleAuthorizationRequest, handleCredentialOffer } =
+    usePolygonContext()
   const state = useCreatePolygonIdManager(config)
   const maybeManagerId = 'result' in state ? state.result : undefined
 
@@ -107,42 +117,48 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
       try {
         console.debug('Accepting Connection Request...')
         console.debug('managerId: ', maybeManagerId)
-        await handleAuthRequest({ data, managerId: maybeManagerId! })
+        await handleAuthorizationRequest({ data, managerId: maybeManagerId! })
         // TODO: define what to do afterwards (confirmation screen?)
+        return true
       } catch (error: unknown) {
         Sentry.captureException(error)
         // TODO: Handle error in UI. Use error.message?
+        return false
       }
     },
-    [maybeManagerId, handleAuthRequest]
+    [maybeManagerId, handleAuthorizationRequest]
   )
 
   const handleAcceptProofRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
       try {
         console.debug('Accepting Proof Request')
-        await handleAuthRequest({ data, managerId: maybeManagerId! })
+        await handleAuthorizationRequest({ data, managerId: maybeManagerId! })
         // TODO: define what to do afterwards (confirmation screen?)
+        return true
       } catch (error: unknown) {
         Sentry.captureException(error)
         // TODO: Handle error in UI. Use error.message?
+        return false
       }
     },
-    [maybeManagerId, handleAuthRequest]
+    [maybeManagerId, handleAuthorizationRequest]
   )
 
   const handleAcceptCredentialOffer = useCallback(
     async (data: CredentialsOfferMessage) => {
       try {
         console.debug('Accepting Credential Offer...')
-        await hanldeFetchRequest({ data, managerId: maybeManagerId! })
+        await handleCredentialOffer({ data, managerId: maybeManagerId! })
         // TODO: define what to do afterwards (confirmation screen?)
+        return true
       } catch (error: unknown) {
         Sentry.captureException(error)
         // TODO: Handle error in UI. Use error.message?
+        return false
       }
     },
-    [maybeManagerId, hanldeFetchRequest]
+    [maybeManagerId, handleCredentialOffer]
   )
 
   const contextValue: PolygonIdContextType = useMemo(

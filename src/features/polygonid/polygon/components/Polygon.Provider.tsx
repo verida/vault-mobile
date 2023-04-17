@@ -10,14 +10,12 @@ import {
 import {
   PolygonContextValue,
   PolygonCreateIdManager,
-  PolygonHandleAuthRequest,
-  PolygonHandleAuthRequestProps,
-  PolygonHandleFetch,
-  PolygonHandleFetchProps,
+  PolygonHandleAuthorizationRequest,
+  PolygonHandleAuthorizationRequestArgs,
+  PolygonHandleCredentialOffer,
+  PolygonHandleCredentialOfferArgs,
   PolygonIdManagerConfig,
   PolygonPromiseCallbacks,
-  PolygonVerifyQrCode,
-  PolygonVerifyQrCodeProps,
   PolygonWebViewCallbackProps,
   RandomKeyGenerator,
 } from '../@types'
@@ -28,7 +26,7 @@ const defaultGenerateRandomKey: RandomKeyGenerator = () => String(Math.random())
 const originWhitelist = ['*']
 
 export const PolygonProvider = ({
-  generateRandomKey = defaultGenerateRandomKey /* use nanoid(), uuid(), etc. */,
+  generateRandomKey = defaultGenerateRandomKey, // TODO: use nanoid(), uuid(), etc.,
   onError = console.error,
   children,
   uri,
@@ -56,7 +54,6 @@ export const PolygonProvider = ({
 
   const onMessage = React.useCallback(
     ({ nativeEvent: { data: maybeResult } }: WebViewMessageEvent) => {
-      console.debug('onMessage')
       console.debug('maybeResult', maybeResult)
       try {
         const result = JSON.parse(maybeResult)
@@ -90,14 +87,13 @@ export const PolygonProvider = ({
           return maybeCallback.reject(new Error(error.message))
         }
 
-        if ('data' in maybePolygonResult) {
-          const { data } = maybePolygonResult
-          return maybeCallback.resolve(data)
+        if ('result' in maybePolygonResult) {
+          const { result: promiseResult } = maybePolygonResult
+          return maybeCallback.resolve(promiseResult)
         }
 
         throw new Error(`Encountered malformed message: "${maybeResult}"`)
       } catch (cause) {
-        console.error(maybeResult)
         onError(new Error('Failed to handle received message.', { cause }))
       }
     },
@@ -139,7 +135,7 @@ export const PolygonProvider = ({
           [taskId]: { resolve, reject },
         })
 
-        const injectedJavaScript = `void (window.__ASYNC_MESSAGE__({taskId: ${JSON.stringify(
+        const injectedJavaScript = `void (window.__HANDLE_PROMISE_TASK__({taskId: ${JSON.stringify(
           taskId
         )}, promise: ${js} }))`
 
@@ -171,54 +167,37 @@ export const PolygonProvider = ({
     [invokeJs, generateRandomKey]
   )
 
-  const hanldeFetchRequest: PolygonHandleFetch = React.useCallback(
-    async ({ managerId, data }: PolygonHandleFetchProps): Promise<string> => {
-      const result = await invokeJs({
-        js: `window.__HANDLE_QR_CODE_STRING__({managerId: ${JSON.stringify(
-          managerId
-        )}, qrCodeString: '${JSON.stringify(data)}'})`,
-      })
+  const handleAuthorizationRequest: PolygonHandleAuthorizationRequest =
+    React.useCallback(
+      async ({
+        managerId,
+        data,
+      }: PolygonHandleAuthorizationRequestArgs): Promise<string> => {
+        const result = await invokeJs({
+          js: `window.__HANDLE_AUTHORIZATION_REQUEST__({managerId: ${JSON.stringify(
+            managerId
+          )}, data: ${JSON.stringify(data)}})`,
+        })
 
-      if (typeof result !== 'string' || !result.length)
-        throw new Error(
-          `Expected non-empty string result, encountered "${String(result)}".`
-        )
+        if (typeof result !== 'string' || !result.length)
+          throw new Error(
+            `Expected non-empty string result, encountered "${String(result)}".`
+          )
 
-      return result
-    },
-    [invokeJs]
-  )
+        return result
+      },
+      [invokeJs]
+    )
 
-  const handleAuthRequest: PolygonHandleAuthRequest = React.useCallback(
+  const handleCredentialOffer: PolygonHandleCredentialOffer = React.useCallback(
     async ({
       managerId,
       data,
-    }: PolygonHandleAuthRequestProps): Promise<string> => {
+    }: PolygonHandleCredentialOfferArgs): Promise<string> => {
       const result = await invokeJs({
-        js: `window.__HANDLE_QR_CODE_STRING__({managerId: ${JSON.stringify(
+        js: `window.__HANDLE_CREDENTIAL_OFFER__({managerId: ${JSON.stringify(
           managerId
-        )}, qrCodeString: '${JSON.stringify(data)}'})`,
-      })
-
-      if (typeof result !== 'string' || !result.length)
-        throw new Error(
-          `Expected non-empty string result, encountered "${String(result)}".`
-        )
-
-      return result
-    },
-    [invokeJs]
-  )
-
-  const verifyQrCode: PolygonVerifyQrCode = React.useCallback(
-    async ({
-      managerId,
-      qrCodeString,
-    }: PolygonVerifyQrCodeProps): Promise<string> => {
-      const result = await invokeJs({
-        js: `window.__HANDLE_QR_CODE_STRING__({managerId: ${JSON.stringify(
-          managerId
-        )}, qrCodeString: '${JSON.stringify(qrCodeString)}'})`,
+        )}, data: ${JSON.stringify(data)}})`,
       })
 
       if (typeof result !== 'string' || !result.length)
@@ -254,20 +233,18 @@ export const PolygonProvider = ({
       <PolygonContextProvider
         value={React.useMemo<PolygonContextValue>(
           () => ({
-            hanldeFetchRequest,
-            handleAuthRequest,
+            loading,
             generateRandomKey,
             createIdManager,
-            verifyQrCode,
-            loading,
+            handleAuthorizationRequest,
+            handleCredentialOffer,
           }),
           [
             loading,
-            hanldeFetchRequest,
-            handleAuthRequest,
-            createIdManager,
             generateRandomKey,
-            verifyQrCode,
+            createIdManager,
+            handleAuthorizationRequest,
+            handleCredentialOffer,
           ]
         )}>
         {children}
