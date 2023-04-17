@@ -83,13 +83,14 @@ export class SBTManager {
     }
   }
 
-  public async isMinted(credentialRecord: any, mintAddress: string) {
-    console.log('isMinted?', mintAddress)
+  public async isMinted(credentialRecord: any) {
+    console.log('isMinted?', credentialRecord)
     const client = await this.getClient()
+    console.log(credentialRecord.credentialData.did.toLowerCase())
 
     try {
       const claimedSbts = await client.getClaimedSBTList(
-        mintAddress.toLowerCase()
+        credentialRecord.credentialData.did.toLowerCase()
       )
       console.log(claimedSbts)
     } catch (err) {
@@ -220,7 +221,7 @@ export class SBTManager {
     )*/
 
     // Generate URL to mint that generates the metadata
-    const sbtUri = wrapUri(credentialUri, 'https://data.verida.network')
+    const sbtUri = wrapUri(credentialUri, 'https://data.verida.network') + '.json'
     console.log('sbtUri', sbtUri)
 
     const credentials = new Credentials()
