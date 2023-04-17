@@ -1,7 +1,7 @@
 import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
 import { usePolygonId } from 'features/polygonid'
-import React, { useCallback } from 'react'
-import { StyleSheet, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Button from 'components/Button'
@@ -31,6 +31,9 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
       data,
     } = route.params
 
+    const [waitingConfirmation, setWaitingConfirmation] = useState(false)
+    const [error, setError] = useState(false)
+    const [success, setSuccess] = useState(false)
     const { handleAcceptProofRequest } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const { bottom } = useSafeAreaInsets()
@@ -39,10 +42,16 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
       navigation.goBack()
     }, [navigation])
 
-    const handleSendProof = useCallback(() => {
-      handleAcceptProofRequest(data)
-      handleClose()
-    }, [handleAcceptProofRequest, data, handleClose])
+    const handleSendProof = useCallback(async () => {
+      setWaitingConfirmation(true)
+      try {
+        const result = await handleAcceptProofRequest(data)
+        setSuccess(result)
+      } catch (_error: unknown) {
+        setError(true)
+      }
+      setWaitingConfirmation(false)
+    }, [handleAcceptProofRequest, data])
 
     return (
       <Screen withKeyboardAvoidingView>
@@ -53,15 +62,46 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
             action: handleClose,
           }}
         />
-        <View style={[styles.constainer, { marginBottom: bottom }]}>
-          <View style={{ flexDirection: 'column' }}>
-            <Text>{connectionName}</Text>
-            <Text>{requestMessage}</Text>
+        <View style={[styles.container, { marginBottom: bottom }]}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            {waitingConfirmation ? <ActivityIndicator /> : null}
+            {error ? <Text>Something went wrong</Text> : null}
+            {success ? <Text>Success</Text> : null}
+            {!waitingConfirmation && !error && !success ? (
+              <Text>{requestMessage}</Text>
+            ) : null}
           </View>
-          <Button onPress={handleSendProof}>Send Proof</Button>
-          <Button onPress={handleClose} color='secondary'>
-            Decline
-          </Button>
+          <View style={styles.footer}>
+            {error || success ? (
+              <>
+                <Button onPress={handleClose} style={styles.actionButton}>
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onPress={handleClose}
+                  color='secondary'
+                  disabled={waitingConfirmation}
+                  style={[styles.actionButton, styles.mr]}>
+                  Decline
+                </Button>
+                <Button
+                  onPress={handleSendProof}
+                  disabled={waitingConfirmation}
+                  style={[styles.actionButton, styles.ml]}>
+                  Send Proof
+                </Button>
+              </>
+            )}
+          </View>
         </View>
       </Screen>
     )
@@ -69,10 +109,23 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    constainer: {
+    container: {
       flex: 1,
       paddingHorizontal: theme.spacing.m,
       paddingTop: theme.spacing.m,
       justifyContent: 'space-between',
+    },
+    footer: {
+      flexDirection: 'row',
+    },
+    actionButton: {
+      flex: 1,
+      height: 40,
+    },
+    mr: {
+      marginRight: 10,
+    },
+    ml: {
+      marginLeft: 10,
     },
   })

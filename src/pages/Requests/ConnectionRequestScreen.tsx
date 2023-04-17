@@ -1,7 +1,7 @@
 import { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
 import { usePolygonId } from 'features/polygonid'
-import React, { useCallback } from 'react'
-import { StyleSheet, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { ActivityIndicator, StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Button from 'components/Button'
@@ -30,6 +30,9 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
       requestMessage,
     } = route.params
 
+    const [waitingConfirmation, setWaitingConfirmation] = useState(false)
+    const [error, setError] = useState(false)
+    const [success, setSuccess] = useState(false)
     const { handleAcceptConnectionRequest } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const { bottom } = useSafeAreaInsets()
@@ -38,13 +41,20 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
       navigation.goBack()
     }, [navigation])
 
-    const handleConnect = useCallback(() => {
-      handleAcceptConnectionRequest(data)
-      handleClose()
-    }, [handleAcceptConnectionRequest, data, handleClose])
+    const handleConnect = useCallback(async () => {
+      setWaitingConfirmation(true)
+      try {
+        const result = await handleAcceptConnectionRequest(data)
+        setSuccess(result)
+      } catch (_error: unknown) {
+        setError(true)
+      }
+      setWaitingConfirmation(false)
+    }, [handleAcceptConnectionRequest, data])
 
     return (
       <Screen withKeyboardAvoidingView>
+        <StatusBar barStyle='light-content' />
         <NavigationHeader
           title='Connection Request'
           left={{
@@ -52,18 +62,46 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
             action: handleClose,
           }}
         />
-        <View style={[styles.constainer, { marginBottom: bottom }]}>
+        <View style={[styles.container, { marginBottom: bottom }]}>
           <View
             style={{
+              flex: 1,
               flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
             }}>
-            <Text>{`Connect with ${connectionName}`}</Text>
-            <Text>{requestMessage}</Text>
+            {waitingConfirmation ? <ActivityIndicator /> : null}
+            {error ? <Text>Something went wrong</Text> : null}
+            {success ? <Text>Success</Text> : null}
+            {!waitingConfirmation && !error && !success ? (
+              <Text>{requestMessage}</Text>
+            ) : null}
           </View>
-          <Button onPress={handleConnect}>Connect</Button>
-          <Button onPress={handleClose} color='secondary'>
-            Decline
-          </Button>
+          <View style={styles.footer}>
+            {error || success ? (
+              <>
+                <Button onPress={handleClose} style={styles.actionButton}>
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onPress={handleClose}
+                  color='secondary'
+                  disabled={waitingConfirmation}
+                  style={[styles.actionButton, styles.mr]}>
+                  Decline
+                </Button>
+                <Button
+                  onPress={handleConnect}
+                  disabled={waitingConfirmation}
+                  style={[styles.actionButton, styles.ml]}>
+                  Connect
+                </Button>
+              </>
+            )}
+          </View>
         </View>
       </Screen>
     )
@@ -71,10 +109,23 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    constainer: {
+    container: {
       flex: 1,
       paddingHorizontal: theme.spacing.m,
       paddingTop: theme.spacing.m,
       justifyContent: 'space-between',
+    },
+    footer: {
+      flexDirection: 'row',
+    },
+    actionButton: {
+      flex: 1,
+      height: 40,
+    },
+    mr: {
+      marginRight: 10,
+    },
+    ml: {
+      marginLeft: 10,
     },
   })

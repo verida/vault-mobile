@@ -1,7 +1,7 @@
 import { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
 import { usePolygonId } from 'features/polygonid'
-import React, { useCallback } from 'react'
-import { StyleSheet, View } from 'react-native'
+import React, { useCallback, useState } from 'react'
+import { ActivityIndicator, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Button from 'components/Button'
@@ -32,6 +32,9 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
       requestMessage,
     } = route.params
 
+    const [waitingConfirmation, setWaitingConfirmation] = useState(false)
+    const [error, setError] = useState(false)
+    const [success, setSuccess] = useState(false)
     const { handleAcceptCredentialOffer } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const { bottom } = useSafeAreaInsets()
@@ -40,10 +43,16 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
       navigation.goBack()
     }, [navigation])
 
-    const handleAccept = useCallback(() => {
-      handleAcceptCredentialOffer(data)
-      handleClose()
-    }, [handleAcceptCredentialOffer, data, handleClose])
+    const handleAccept = useCallback(async () => {
+      setWaitingConfirmation(true)
+      try {
+        const result = await handleAcceptCredentialOffer(data)
+        setSuccess(result)
+      } catch (_error: unknown) {
+        setError(true)
+      }
+      setWaitingConfirmation(false)
+    }, [handleAcceptCredentialOffer, data])
 
     return (
       <Screen withKeyboardAvoidingView>
@@ -54,17 +63,46 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
             action: handleClose,
           }}
         />
-        <View style={[styles.constainer, { marginBottom: bottom }]}>
-          <View style={{ flexDirection: 'column' }}>
-            <Text>{connectionName}</Text>
-            <Text>{requestMessage}</Text>
-            <Text>Incoming Data Items</Text>
-            {/* <View>{data}</View> */}
+        <View style={[styles.container, { marginBottom: bottom }]}>
+          <View
+            style={{
+              flex: 1,
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}>
+            {waitingConfirmation ? <ActivityIndicator /> : null}
+            {error ? <Text>Something went wrong</Text> : null}
+            {success ? <Text>Success</Text> : null}
+            {!waitingConfirmation && !error && !success ? (
+              <Text>{requestMessage}</Text>
+            ) : null}
           </View>
-          <Button onPress={handleAccept}>Accept</Button>
-          <Button onPress={handleClose} color='secondary'>
-            Decline
-          </Button>
+          <View style={styles.footer}>
+            {error || success ? (
+              <>
+                <Button onPress={handleClose} style={styles.actionButton}>
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onPress={handleClose}
+                  color='secondary'
+                  disabled={waitingConfirmation}
+                  style={[styles.actionButton, styles.mr]}>
+                  Decline
+                </Button>
+                <Button
+                  onPress={handleAccept}
+                  disabled={waitingConfirmation}
+                  style={[styles.actionButton, styles.ml]}>
+                  Accept
+                </Button>
+              </>
+            )}
+          </View>
         </View>
       </Screen>
     )
@@ -72,10 +110,23 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    constainer: {
+    container: {
       flex: 1,
       paddingHorizontal: theme.spacing.m,
       paddingTop: theme.spacing.m,
       justifyContent: 'space-between',
+    },
+    footer: {
+      flexDirection: 'row',
+    },
+    actionButton: {
+      flex: 1,
+      height: 40,
+    },
+    mr: {
+      marginRight: 10,
+    },
+    ml: {
+      marginLeft: 10,
     },
   })
