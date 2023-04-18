@@ -84,8 +84,15 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           if (requestData.body?.scope && requestData.body.scope.length) {
             // We have a scope object implying we need to submit a ZK proof
             navigation.navigate('ProofRequest', {
-              connectionName: requestData.from,
-              requestMessage: `Do you want to submit a ZKP with the following data?`,
+              name: 'Verifier Demo', // TODO: Find a way to get it
+              details: {
+                timestamp: new Date(),
+                requesterId: requestData.from,
+                message:
+                  // requestData.body?.reason || // TODO: Enable after demo
+                  'This entity is requesting a proof of credential',
+                url: 'https://verifier-demo.com',
+              },
               data: requestData,
             })
           } else {
@@ -96,7 +103,9 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
               details: {
                 timestamp: new Date(),
                 requesterId: requestData.from,
-                message: requestData.body?.reason,
+                message:
+                  // requestData.body?.reason || // TODO: Enable after demo
+                  'Do you want to connect with this entity?',
               },
               data: requestData,
             })

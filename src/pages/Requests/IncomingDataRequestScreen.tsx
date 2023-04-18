@@ -181,9 +181,9 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
                 }
                 subtitle={
                   processing
-                    ? 'Please wait a few seconds'
+                    ? 'Please wait a few seconds.'
                     : success
-                    ? `You successfully saved the data from ${name}` // TODO: Find better messages
+                    ? `You successfully saved the data from ${name}.` // TODO: Find better messages
                     : 'Something went wrong. Try again later.'
                 }
               />

@@ -172,9 +172,9 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                 }
                 subtitle={
                   processing
-                    ? 'Please wait a few seconds'
+                    ? 'Please wait a few seconds.'
                     : success
-                    ? `You successfully connected with ${name}`
+                    ? `You successfully connected with ${name}.`
                     : 'Something went wrong. Try again later.'
                 }
               />
