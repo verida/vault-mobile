@@ -125,6 +125,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
             },
           ]}>
           <View style={styles.container}>
+            {/* TODO: Make it a scroll view */}
             {!processing && !error && !success ? (
               <>
                 <View style={styles.header}>
@@ -173,6 +174,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
             ) : (
               // TODO: Impleemnt the design from Figma (success display the request with an 'Accepted' banner)
               <Status
+                style={styles.statusContainer}
                 statusType={
                   processing ? 'processsing' : success ? 'success' : 'error'
                 }
@@ -191,6 +193,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
           </View>
 
           <View style={styles.footer}>
+            {/* TODO: Ensure the buttons have a background */}
             {processing || error || success ? (
               <>
                 <Button
@@ -389,6 +392,9 @@ const createStyles = (theme: Theme) =>
       fontFamily: NUNITO_SANS_BOLD,
       color: theme.color.black700,
     },
+    statusContainer: {
+      marginTop: 104,
+    },
     statusTitle: {
       marginTop: theme.spacing.l,
       fontSize: 28,
@@ -407,9 +413,10 @@ const createStyles = (theme: Theme) =>
       position: 'absolute',
     },
     footer: {
+      backgroundColor: theme.color.background,
       flexDirection: 'row',
       paddingHorizontal: theme.spacing.m,
-      paddingTop: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
     },

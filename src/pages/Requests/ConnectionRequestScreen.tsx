@@ -111,6 +111,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
             },
           ]}>
           <View style={styles.container}>
+            {/* TODO: Make it a scroll view */}
             {!processing && !error && !success ? (
               <>
                 <AppLogo // TODO: Define the best logo placeholder
@@ -164,6 +165,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
               </>
             ) : (
               <Status
+                style={styles.statusContainer}
                 statusType={
                   processing ? 'processsing' : success ? 'success' : 'error'
                 }
@@ -181,6 +183,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
             )}
           </View>
           <View style={styles.footer}>
+            {/* TODO: Ensure the buttons have a background */}
             {processing || error || success ? (
               <>
                 <Button
@@ -356,6 +359,9 @@ const createStyles = (theme: Theme) =>
     detailsPropertySpacing: {
       marginTop: theme.spacing.l,
     },
+    statusContainer: {
+      marginTop: 40,
+    },
     statusTitle: {
       marginTop: theme.spacing.l,
       fontSize: 28,
@@ -374,9 +380,10 @@ const createStyles = (theme: Theme) =>
       position: 'absolute',
     },
     footer: {
+      backgroundColor: theme.color.background,
       flexDirection: 'row',
       paddingHorizontal: theme.spacing.m,
-      paddingTop: theme.spacing.sm,
+      paddingVertical: theme.spacing.sm,
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
     },

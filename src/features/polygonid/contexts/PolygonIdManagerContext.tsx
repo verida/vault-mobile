@@ -91,7 +91,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
                 message:
                   // requestData.body?.reason || // TODO: Enable after demo
                   'This entity is requesting a proof of credential',
-                url: 'https://verifier-demo.com',
+                url: 'https://verifier-demo.polygonid.me',
               },
               data: requestData,
             })
@@ -99,7 +99,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // We have a generic connection request
             navigation.navigate('ConnectionRequest', {
               name: 'Issuer Demo', // TODO: Find a way to get it
-              hostname: 'issuer-demo.com', // TODO: Get from the callback?
+              hostname: 'https://issuer-demo.polygonid.me', // TODO: Get from the callback?
               details: {
                 timestamp: new Date(),
                 requesterId: requestData.from,
@@ -121,7 +121,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
               timestamp: new Date(),
               requesterId: offerData.from,
               message: `Please find your new credential attached to this message.`,
-              url: 'https://issuer-demo.com',
+              url: 'https://issuer-demo.polygonid.me',
             },
             data: offerData,
           })
