@@ -223,7 +223,8 @@
     "promise": "^8.3.0",
     "uint8arrays": "3.1.0",
     "token-types": "4.2.0",
-    "isomorphic-webcrypto": "https://github.com/verida/isomorphic-webcrypto.git"
+    "isomorphic-webcrypto": "https://github.com/verida/isomorphic-webcrypto.git",
+    "pouchdb-find": "7.2.2"
   },
   "jest": {
     "preset": "react-native",

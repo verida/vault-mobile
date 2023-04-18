@@ -1,4 +1,4 @@
-import { Container, Content } from 'native-base'
+import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 
@@ -60,16 +60,14 @@ const InboxItem = (props) => {
   return (
     <Container>
       <NavigationHeader title={getHeaderTitle(inboxType?.id)} />
-      <Content>
-        {inboxItem
-          ? React.createElement(inboxItemComponents[inboxItem.type], {
-              item,
-              type: inboxType,
-              inboxItem,
-              navigation: props.navigation,
-            })
-          : null}
-      </Content>
+      {inboxItem
+        ? React.createElement(inboxItemComponents[inboxItem.type], {
+            item,
+            type: inboxType,
+            inboxItem,
+            navigation: props.navigation,
+          })
+        : null}
     </Container>
   )
 }

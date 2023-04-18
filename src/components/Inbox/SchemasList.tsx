@@ -27,6 +27,8 @@ type RequestedData = {
   url: string
 }
 
+// TODO: Not used, to be removed eventually. Kept for RequestedDataSelector when need to implement the display of the schema icon, name and description.
+
 function SchemasList(props: SchemasListProps) {
   const { schemas, onItemPress, userSelect } = props
   const [loading, setLoading] = useState(false)
