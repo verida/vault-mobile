@@ -11,16 +11,17 @@ export const useCredential = () => {
         credential: jwt,
       })
       // TODO: Do validation of the data before as the agent is not doing it
-      // TODO: Get a stronger type for the data
 
+      // TODO: Get a stronger type for the data
       const payload = verifiedResult.payload
-      const subject = payload.sub
+      const subject = payload.sub as string | undefined
       const data = payload.vc.credentialSubject
-      const schemaUri = payload.vc.credentialSchema.id
-      const issuer = payload.iss
-      const contextName = payload.vc.veridaContextName
+      const schemaUri = payload.vc.credentialSchema.id as string | undefined
+      const issuer = payload.iss as string | undefined
+      const contextName = payload.vc.veridaContextName as string | undefined
 
       return {
+        verifiedResult,
         payload,
         subject,
         data,
@@ -31,6 +32,8 @@ export const useCredential = () => {
     },
     [agent]
   )
+
+  // TODO: Expose other Veramo functions as needed
 
   return { verifyCredential }
 }
