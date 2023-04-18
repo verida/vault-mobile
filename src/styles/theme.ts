@@ -60,6 +60,7 @@ export const defaultTheme = {
 
     transparent: 'transparent',
     black800: BLACK_COLOR_OPACITY(0.8),
+    black700: BLACK_COLOR_OPACITY(0.7),
     black600: BLACK_COLOR_OPACITY(0.6),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,

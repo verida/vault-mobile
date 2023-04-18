@@ -91,9 +91,9 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           } else {
             // We have a generic connection request
             navigation.navigate('ConnectionRequest', {
-              connectionLabel: 'Issuer Demo', // TODO: Find a way to get it
-              connectionHostname: 'issuer-demo.com', // TODO: Get from the callback?
-              requestDetails: {
+              name: 'Issuer Demo', // TODO: Find a way to get it
+              hostname: 'issuer-demo.com', // TODO: Get from the callback?
+              details: {
                 timestamp: new Date(),
                 requesterId: requestData.from,
                 message: requestData.body?.reason,
@@ -107,8 +107,13 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           const offerData = data as CredentialsOfferMessage
           // Offer to save a new ZK credential
           navigation.navigate('IncomingDataRequest', {
-            connectionName: offerData.from,
-            requestMessage: `Do you want to accept a ZK credential with the following credential data?`,
+            name: 'Issuer Demo', // TODO: Find a way to get it
+            details: {
+              timestamp: new Date(),
+              requesterId: offerData.from,
+              message: `Please find your new credential attached to this message.`,
+              url: 'https://issuer-demo.com',
+            },
             data: offerData,
           })
           break

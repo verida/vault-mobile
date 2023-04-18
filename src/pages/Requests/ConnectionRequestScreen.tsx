@@ -26,10 +26,10 @@ import { Theme } from 'styles/types'
 
 // TODO: Make sure the params are generic enough to be used for other types of requests (Verida Connect, WalletConnect, Polygon IDetc.)
 export interface ConnectionRequestScreenParams {
-  connectionLabel?: string
-  connectionLogo?: string
-  connectionHostname?: string
-  requestDetails: {
+  name?: string
+  logo?: string
+  hostname?: string
+  details: {
     timestamp?: Date // TODO: Consider a string timestamp if issue with non-seriazable data in navigation params
     requesterId?: string
     message?: string
@@ -44,10 +44,10 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
   (props) => {
     const { navigation, route } = props
     const {
-      connectionLabel = 'Unknown', // TODO: Define the best placeholder
-      connectionLogo,
-      connectionHostname,
-      requestDetails,
+      name = 'Unknown', // TODO: Define the best placeholder
+      logo,
+      hostname,
+      details,
       data,
     } = route.params
 
@@ -66,6 +66,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
     const handleConnect = useCallback(async () => {
       setProcessing(true)
       try {
+        // TODO: Handle different actions depending on the type of request
         const successfulResult = await handleAcceptConnectionRequest(data)
         if (successfulResult) {
           setSuccess(true)
@@ -113,60 +114,49 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
             {!processing && !error && !success ? (
               <>
                 <AppLogo // TODO: Define the best logo placeholder
-                  url={connectionLogo || null}
-                  style={styles.connectionLogo}
+                  url={logo || null}
+                  style={styles.logo}
                 />
-                {connectionHostname ? (
-                  <Text style={styles.connectionHostName}>
-                    {connectionHostname}
-                  </Text>
+                {hostname ? (
+                  <Text style={styles.hostname}>{hostname}</Text>
                 ) : null}
                 <Text
-                  style={
-                    styles.connectMessage
-                  }>{`Connect with ${connectionLabel}`}</Text>
+                  style={styles.connectMessage}>{`Connect with ${name}`}</Text>
                 <TouchableOpacity
                   onPress={handleToggleDetails}
-                  style={styles.requestDetailsButton}>
-                  <Text style={styles.requestDetailsButtonLabel}>
-                    Request details
-                  </Text>
+                  style={styles.detailsButton}>
+                  <Text style={styles.detailsButtonLabel}>Request details</Text>
                   <Feather
                     name={detailsOpen ? 'chevron-up' : 'chevron-down'}
                     size={16}
-                    style={styles.requestDetailsButtonLabelIcon}
+                    style={styles.detailsButtonLabelIcon}
                   />
                 </TouchableOpacity>
                 {detailsOpen ? (
-                  <View style={styles.requestDetailsContainer}>
+                  <View style={styles.detailsContainer}>
                     <View>
                       <Text
                         style={
-                          styles.requestDetailsPropertyLabel
+                          styles.detailsPropertyLabel
                         }>{`Requested on`}</Text>
-                      <Text style={styles.requestDetailsPropertyValue}>
-                        {(requestDetails.timestamp
-                          ? requestDetails.timestamp
+                      <Text style={styles.detailsPropertyValue}>
+                        {(details.timestamp
+                          ? details.timestamp
                           : new Date()
                         ).toLocaleString()}
                       </Text>
                     </View>
-                    <View style={styles.requestDetailsPropertySpacing}>
+                    <View style={styles.detailsPropertySpacing}>
                       <Text
-                        style={
-                          styles.requestDetailsPropertyLabel
-                        }>{`Reason`}</Text>
-                      <Text style={styles.requestDetailsPropertyValue}>
-                        {requestDetails.message || ' '}
+                        style={styles.detailsPropertyLabel}>{`Reason`}</Text>
+                      <Text style={styles.detailsPropertyValue}>
+                        {details.message || ' '}
                       </Text>
                     </View>
-                    <View style={styles.requestDetailsPropertySpacing}>
-                      <Text
-                        style={
-                          styles.requestDetailsPropertyLabel
-                        }>{`From`}</Text>
-                      <Text style={styles.requestDetailsPropertyValue}>
-                        {requestDetails.requesterId || ' '}
+                    <View style={styles.detailsPropertySpacing}>
+                      <Text style={styles.detailsPropertyLabel}>{`From`}</Text>
+                      <Text style={styles.detailsPropertyValue}>
+                        {details.requesterId || ' '}
                       </Text>
                     </View>
                   </View>
@@ -184,7 +174,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                   processing
                     ? 'Please wait a few seconds'
                     : success
-                    ? `You successfully connected with ${connectionLabel}`
+                    ? `You successfully connected with ${name}`
                     : 'Something went wrong. Try again later.'
                 }
               />
@@ -290,6 +280,7 @@ const Status: React.FunctionComponent<StatusProps> = (props) => {
     </View>
   )
 }
+
 // TODO: Use the them when proper typography is available
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -303,12 +294,12 @@ const createStyles = (theme: Theme) =>
       paddingHorizontal: theme.spacing.m,
       alignItems: 'center',
     },
-    connectionLogo: {
+    logo: {
       height: 72,
       aspectRatio: 1 / 1,
       borderRadius: 999999,
     },
-    connectionHostName: {
+    hostname: {
       marginTop: theme.spacing.s,
       fontSize: 14,
       lineHeight: 24,
@@ -321,7 +312,7 @@ const createStyles = (theme: Theme) =>
       lineHeight: 36,
       fontFamily: NUNITO_SANS_BOLD,
     },
-    requestDetailsButton: {
+    detailsButton: {
       flexDirection: 'row',
       alignItems: 'center',
       marginTop: theme.spacing.m,
@@ -331,17 +322,17 @@ const createStyles = (theme: Theme) =>
       borderRadius: 999999,
       borderColor: theme.color.lightGrey,
     },
-    requestDetailsButtonLabel: {
+    detailsButtonLabel: {
       fontSize: 14,
       lineHeight: 22,
       fontFamily: NUNITO_SANS_SEMIBOLD,
       color: theme.color.textLightGrey,
     },
-    requestDetailsButtonLabelIcon: {
+    detailsButtonLabelIcon: {
       marginLeft: theme.spacing.xs,
       color: theme.color.textLightGrey,
     },
-    requestDetailsContainer: {
+    detailsContainer: {
       width: '100%',
       marginTop: theme.spacing.sm,
       paddingHorizontal: theme.spacing.m,
@@ -350,19 +341,19 @@ const createStyles = (theme: Theme) =>
       borderRadius: 4,
       borderColor: theme.color.lightGrey,
     },
-    requestDetailsPropertyLabel: {
+    detailsPropertyLabel: {
       fontSize: 14,
       lineHeight: 22,
       fontFamily: NUNITO_SANS_SEMIBOLD,
       color: theme.color.textLightGrey,
     },
-    requestDetailsPropertyValue: {
+    detailsPropertyValue: {
       marginTop: theme.spacing.s,
       fontSize: 14,
       lineHeight: 22,
       fontFamily: NUNITO_SANS_SEMIBOLD,
     },
-    requestDetailsPropertySpacing: {
+    detailsPropertySpacing: {
       marginTop: theme.spacing.l,
     },
     statusTitle: {
