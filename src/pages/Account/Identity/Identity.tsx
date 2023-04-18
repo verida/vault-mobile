@@ -1,7 +1,13 @@
 import { StackActions, useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import React, { useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -35,7 +41,9 @@ const Identity = () => {
   return (
     <Screen withSafeAreaView>
       <NavigationHeader title='Identity' />
-      <View style={[styles.landing, { alignItems: 'center' }]}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.landing, { alignItems: 'center' }]}>
         <View
           style={{
             width: '100%',
@@ -58,7 +66,7 @@ const Identity = () => {
           An identity is a digital representation of yourself. You can have
           multiple, such as a personal, business or anonymous identity.
         </Text>
-        <Spacer height={115} />
+        <Spacer flex={1} />
         <TCCheckbox
           checked={agreedTC}
           style={styles.termAndCondition}
@@ -93,7 +101,7 @@ const Identity = () => {
             </Text>
           </View>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </Screen>
   )
 }
@@ -127,7 +135,7 @@ const creatStyles = (theme: Theme) => {
       textcolor: theme.color.onError,
     },
     landing: {
-      flex: 1,
+      flexGrow: 1,
       paddingTop: theme.spacing.l,
       paddingHorizontal: theme.spacing.l,
       paddingVertical: theme.spacing.m,
