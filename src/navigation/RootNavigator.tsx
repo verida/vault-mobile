@@ -1,5 +1,6 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { emitter } from 'helpers/emitter'
 import React, { useEffect, useRef } from 'react'
 
 import AccountManager from 'api/AccountManager'
@@ -29,8 +30,19 @@ function RootNavigator() {
     }
     mounted.current = true
     async function init() {
-      await AccountManager.getInstance().init()
-      await refresh()
+      try {
+        await AccountManager.getInstance().init()
+        await refresh()
+      } catch (error: any) {
+        // Handle this specific error of non-existent DID
+        if (
+          error.message.match(
+            /Unable to locate requested storage context \(Verida: Vault\) for this DID \(.*\) -- Storage context doesn't exist \(try force create\?\)/
+          )
+        ) {
+          emitter.emit('ACCOUNT_NOT_EXIST', { retry: init })
+        }
+      }
     }
     init()
   }, [refresh])

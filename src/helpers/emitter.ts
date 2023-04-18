@@ -8,6 +8,9 @@ export type EmitterTypes = {
     originalValue?: any
     mode?: string | number
   }
+  ACCOUNT_NOT_EXIST: {
+    retry?: () => void
+  }
 }
 
 const _emitter = new EventEmitter()
