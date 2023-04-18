@@ -91,9 +91,13 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           } else {
             // We have a generic connection request
             navigation.navigate('ConnectionRequest', {
-              connectionName: requestData.from,
-              requestMessage: 'Connect with Polygon ID',
-              // requestMessage: requestData.body?.reason,
+              connectionLabel: 'Issuer Demo', // TODO: Find a way to get it
+              connectionHostname: 'issuer-demo.com', // TODO: Get from the callback?
+              requestDetails: {
+                timestamp: new Date(),
+                requesterId: requestData.from,
+                message: requestData.body?.reason,
+              },
               data: requestData,
             })
           }
