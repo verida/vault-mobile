@@ -123,6 +123,11 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                 ) : null}
                 <Text
                   style={styles.connectMessage}>{`Connect with ${name}`}</Text>
+                {details.message ? (
+                  <View style={styles.message}>
+                    <Text>{details.message}</Text>
+                  </View>
+                ) : null}
                 <TouchableOpacity
                   onPress={handleToggleDetails}
                   style={styles.detailsButton}>
@@ -145,13 +150,6 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                           ? details.timestamp
                           : new Date()
                         ).toLocaleString()}
-                      </Text>
-                    </View>
-                    <View style={styles.detailsPropertySpacing}>
-                      <Text
-                        style={styles.detailsPropertyLabel}>{`Reason`}</Text>
-                      <Text style={styles.detailsPropertyValue}>
-                        {details.message || ' '}
                       </Text>
                     </View>
                     <View style={styles.detailsPropertySpacing}>
@@ -314,6 +312,13 @@ const createStyles = (theme: Theme) =>
       fontSize: 28,
       lineHeight: 36,
       fontFamily: NUNITO_SANS_BOLD,
+    },
+    message: {
+      width: '100%',
+      marginTop: theme.spacing.m,
+      padding: theme.spacing.m,
+      backgroundColor: '#F5F4FF',
+      borderRadius: theme.roundness.xs,
     },
     detailsButton: {
       flexDirection: 'row',
