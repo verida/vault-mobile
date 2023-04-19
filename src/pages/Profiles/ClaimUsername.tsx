@@ -117,16 +117,16 @@ const ClaimUsername = () => {
     debounce(async (text) => {
       try {
         const plainName = text.replace(VERIDA_NAME_PATTERN, '')
+        let errorMessage = ''
         if (plainName.length > 0 && plainName.length < MIN_INPUT_LENGTH) {
-          setUsernameError(`Username length must be >= ${MIN_INPUT_LENGTH}`)
-          return
+          errorMessage = `Username length must be >= ${MIN_INPUT_LENGTH}`
         } else if (plainName.length > MAX_INPUT_LENGTH) {
-          setUsernameError(`Username length must be <= ${MAX_INPUT_LENGTH}`)
-          return
-        } else if (plainName.length === 0) {
-          setUsernameError('')
-          return
+          errorMessage = `Username length must be <= ${MAX_INPUT_LENGTH}`
+        } else if (plainName.length > 0 && !plainName.match(/^[a-z0-9_]+$/)) {
+          errorMessage = `Only lowercase alphanumeric characters and underscore allowed`
         }
+        setUsernameError(errorMessage)
+        if (errorMessage || plainName.length === 0) return
 
         setCheckboxEmpty(false)
         setCheckingUsername(true)
@@ -181,7 +181,7 @@ const ClaimUsername = () => {
                 autoCorrect={false}
                 autoComplete='username'
                 autoCapitalize='none'
-                keyboardType='url'
+                keyboardType='email-address'
                 returnKeyType='done'
                 withAnimatedChecbox
                 checkboxEmptyState={checkboxEmpty}
@@ -195,11 +195,10 @@ const ClaimUsername = () => {
                 onSelectionChange={(e) => {
                   ensureSelectionPosition(e.nativeEvent.selection)
                 }}
-                onChangeText={(value) => {
+                onChangeText={(text) => {
                   setUsernameError('')
                   setCheckboxEmpty(true)
                   setAvailableUsername(false)
-                  const text = value.replace(/\s/g, '')
                   if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
                     setInputText(text + VERIDA_NAME_SUFFIX)
                   } else if (text === VERIDA_NAME_SUFFIX) {
