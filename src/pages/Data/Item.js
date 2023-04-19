@@ -34,7 +34,9 @@ const DataItem = (props) => {
         if (isCredential) {
           const credentialLib = new Credentials()
           const vcData = await credentialLib.verifyCredential(item.didJwtVc)
-          const credentialData = vcData.payload.vc.credentialSubject
+          // const credentialData = vcData.payload.vc.credentialSubject
+          // TODO: Revert to this after Polygon ID demo
+          const credentialData = item.credentialData.credentialSubject
           const schemaUri = vcData.payload.vc.credentialSchema.id
           const credentialDetail = await folder.getDetail(
             credentialData,

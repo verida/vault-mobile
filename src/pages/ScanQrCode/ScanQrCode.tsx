@@ -15,20 +15,18 @@ import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
 
-const testPolygonId = false
-
+// TODO: To remove after testing
 // Temporary data for testing purposes
 const mockRequests = {
   connectionRequest:
-    // auth request (connect)
     '{"id":"f94a0e87-2561-4b48-85e1-ae26af699bfb","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"f94a0e87-2561-4b48-85e1-ae26af699bfb","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=505280","reason":"test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
   credentialOffer:
-    // receive credential
     '{"id":"d20e7cf4-911a-4163-8374-82003eda7e04","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/credentials/1.0/offer","thid":"d20e7cf4-911a-4163-8374-82003eda7e04","body":{"url":"https://self-hosted-platform.polygonid.me/v1/agent","credentials":[{"id":"a5ee6ae7-cd4b-11ed-8e4f-0242c0a88005","description":"KYCAgeCredential"}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5","to":"did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4"}',
   proofRequest:
-    // auth request (verify)
     '{"id":"807cb8ea-5feb-4c4f-81d0-d756707d5024","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request","thid":"807cb8ea-5feb-4c4f-81d0-d756707d5024","body":{"callbackUrl":"https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=62378","reason":"test flow","scope":[{"id":1,"circuitId":"credentialAtomicQuerySigV2","query":{"allowedIssuers":["*"],"context":"https://raw.githubusercontent.com/iden3/claim-schema-vocab/main/schemas/json-ld/kyc-v3.json-ld","credentialSubject":{"birthday":{"$lt":20000101}},"skipClaimRevocationCheck":true,"type":"KYCAgeCredential"}}]},"from":"did:polygonid:polygon:mumbai:2qH7XAwYQzCp9VfhpNgeLtK2iCehDDrfMWUCEg5ig5"}',
 }
+const testPolygonId = false
+const mockRequestToTest = mockRequests.proofRequest
 
 function ScanQrCode(
   props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
@@ -56,7 +54,7 @@ function ScanQrCode(
   // TODO: To remove after testing
   if (testPolygonId) {
     navigation.goBack()
-    handlePolygonIdData(mockRequests.connectionRequest)
+    handlePolygonIdData(mockRequestToTest)
     return null
   }
 

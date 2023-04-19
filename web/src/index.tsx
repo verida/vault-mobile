@@ -132,8 +132,8 @@ async function handleAuthorizationRequest({
   const polygonIdManager = getPolygonIdManager({
     managerId,
   });
-  await polygonIdManager.handleAuthorizationRequest(data);
-  return "Success"; // TODO: Return a better formatted result
+  const result = await polygonIdManager.handleAuthorizationRequest(data);
+  return result; // TODO: Return a better formatted result
 
   // No try/catch here because the error is handled in handlePromiseTask
 }

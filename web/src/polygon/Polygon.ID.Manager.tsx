@@ -83,7 +83,7 @@ export class PolygonIDManager {
 
   public async handleAuthorizationRequest(
     data: AuthorizationRequestMessage
-  ): Promise<void> {
+  ): Promise<any> {
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
     const authHandler = new AuthHandler(
@@ -102,7 +102,7 @@ export class PolygonIDManager {
       `${authRes!.authRequest!.body!.callbackUrl}`,
       authRes.token
     );
-    return response.data;
+    return { callbackResponse: response.data, authResponse: authRes };
   }
 
   public async handleCredentialOffer(

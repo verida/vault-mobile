@@ -21,9 +21,11 @@ function AppLogo(props: AppLogoProps) {
   useEffect(() => {
     if (url) {
       Image.getSize(url, (width, height) => {
-        if (width === height) {
-          setSource({ uri: url })
-        }
+        // TODO: Find a better to handle non-square images
+        // TODO: Revert to this after Polygon ID demo
+        // if (width === height) {
+        setSource({ uri: url })
+        // }
       })
     }
   }, [url])

@@ -112,7 +112,8 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         <Image source={avatarSource} style={styles.logo} />
         <Text style={styles.issuerName}>{issuerName}</Text>
       </View>
-      <View style={styles.qrContainer}>
+      {/* TODO: To revert to this after Polygon ID demo */}
+      {/* <View style={styles.qrContainer}>
         {!isEmpty(credUri) ? (
           <TouchableOpacity onPress={toggleFullscreenQr}>
             {renderQRCode()}
@@ -120,7 +121,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         ) : (
           <LoadingView type={'small'} style={styles.loadingView} />
         )}
-      </View>
+      </View> */}
       {!loading && verified && (
         <View style={styles.verifiedContainer}>
           <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />
@@ -133,7 +134,6 @@ function CredentialDataItem(props: CredentialDataItemProps) {
           <Text style={styles.verifiedText}>Credential is invalid</Text>
         </View>
       )}
-
       <Text style={styles.title}>{data?.row?.name}</Text>
       <List style={{ alignSelf: 'stretch' }}>
         <DataFieldList data={data} setCopyUrl={setCopyUrl} />
@@ -164,6 +164,7 @@ const styles = StyleSheet.create({
     alignItems: 'stretch',
   },
   sender: {
+    marginTop: 16,
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 15,

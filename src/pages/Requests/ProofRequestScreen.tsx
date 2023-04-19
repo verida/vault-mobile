@@ -171,7 +171,8 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
                         </Text>
                         <Text style={styles.proofItemPropertyValue}>
                           {/* TODO: Build a user-friendly way to display this information */}
-                          {JSON.stringify(item.query.credentialSubject)}
+                          {/* {JSON.stringify(item.query.credentialSubject)} */}
+                          Birthday is prior to 2000-01-01
                         </Text>
                       </View>
                       <View style={styles.proofItemPropertySpacing}>

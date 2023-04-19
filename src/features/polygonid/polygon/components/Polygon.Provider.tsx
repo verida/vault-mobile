@@ -179,12 +179,16 @@ export const PolygonProvider = ({
           )}, data: ${JSON.stringify(data)}})`,
         })
 
-        if (typeof result !== 'string' || !result.length)
-          throw new Error(
-            `Expected non-empty string result, encountered "${String(result)}".`
-          )
+        console.debug('=================================================')
+        console.debug('result', result)
+        console.debug('=================================================')
 
-        return result
+        // if (typeof result !== 'string' || !result.length)
+        //   throw new Error(
+        //     `Expected non-empty string result, encountered "${String(result)}".`
+        //   )
+
+        return result as string
       },
       [invokeJs]
     )

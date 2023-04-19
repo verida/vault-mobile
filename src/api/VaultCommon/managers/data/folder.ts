@@ -93,7 +93,8 @@ export default class Folder {
     const schema = await this.vaultCommon.client.getSchema(schemaUri)
     const json = await schema.getSchemaJson()
     const layouts = json.layouts
-    let properties = json.properties
+    // let properties = json.properties // TODO: Revert to this after Polygon ID demo
+    let properties = json.properties.credentialSubject.properties
     if (json.allOf) {
       // This only gets the lst list of properties.. although schemas should
       // define layouts.view so it doesn't matter
@@ -103,6 +104,8 @@ export default class Folder {
     let viewAttributes = []
     if (layouts && layouts.view) {
       viewAttributes = layouts.view
+    } else {
+      viewAttributes = Object.keys(properties)
     }
 
     const displayData = this.buildDisplayData(row, viewAttributes, properties)
