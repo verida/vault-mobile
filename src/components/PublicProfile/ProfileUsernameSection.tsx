@@ -17,8 +17,8 @@ import Snackbar from 'react-native-snackbar'
 
 import Button from 'components/Button'
 import { Icon } from 'components/Icon'
-import { Label } from 'components/Typography/Label'
 import { SubHeadline } from 'components/Typography/SubHeadline'
+import { VERIDA_ONE_WEBSITE } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
@@ -27,8 +27,6 @@ type Props = {
   username?: string
   loading?: boolean
 }
-
-const VERIDA_ONE_WEBSITE = 'https://demo.verida.one/'
 
 export const ProfileUsernameSection = ({ did, username }: Props) => {
   const { theme } = useTheme()
