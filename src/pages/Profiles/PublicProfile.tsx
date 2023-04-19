@@ -69,7 +69,6 @@ import { Theme } from 'styles/types'
 
 export enum PublicProfileEditMode {
   EditWalletPublicLabel,
-  EnterInvitationCode,
   AddCustomURL,
   DeleteCustomURL,
   SelectFeaturedAsset,
@@ -438,6 +437,10 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     })
   })
 
+  useEmitter('UNLOCK_VERIDA_ONE', () => {
+    setEnabledVeridaOne(true)
+  })
+
   useEmitter(
     'SAVE_GENERIC_PROPERTY',
     (payload) => {
@@ -475,18 +478,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
         setPublicWalletAddresses(updatedPublicWalletAddresses)
         debounceSaveProfile({ walletAddresses: updatedPublicWalletAddresses })
-      } else if (mode === PublicProfileEditMode.EnterInvitationCode) {
-        const inputCode = payload.value
-        if (checkVeridaOneInviteCode(inputCode)) {
-          setEnabledVeridaOne(true)
-          saveStatusEnabledVeridaOneProfile(true)
-        }
-
-        if (!username) {
-          requestAnimationFrame(() => {
-            navigation.navigate('VeridaOneInvitationSuccess')
-          })
-        }
       } else if (mode === PublicProfileEditMode.AddCustomURL) {
         const inputValue = payload.value
         const originalValue = payload.originalValue
@@ -964,24 +955,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                   <Button
                     style={{ width: '100%', marginTop: theme.spacing.sm }}
                     onPress={() => {
-                      navigation.navigate('EditGenericProperty', {
-                        screenName: SCREEN_NAME,
-                        title: 'Invitation Code',
-                        option: {
-                          label: 'Invitation code',
-                          type: 'input',
-                          value: '',
-                          placeholder: 'Enter your code',
-                          description: '',
-                        },
-                        mode: PublicProfileEditMode.EnterInvitationCode,
-                        originalValue: null,
-                        submitButtonLabel: 'Submit',
-                        verification: {
-                          expectedValue: VERIDA_ONE_INVITE_CODE,
-                          errorMessage: 'Wrong code, please try again later.',
-                        },
-                      })
+                      navigation.navigate('UnlockVeridaOne', {})
                     }}>
                     Enter Invitation Code
                   </Button>

@@ -8,6 +8,7 @@ export type EmitterTypes = {
     originalValue?: any
     mode?: string | number
   }
+  UNLOCK_VERIDA_ONE: undefined
   UPDATE_PROFILE_USERNAME: Record<string, unknown>
 }
 

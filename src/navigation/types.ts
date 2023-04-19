@@ -91,4 +91,7 @@ export type MainStackParams = {
 
   ClaimUsername: undefined
   VeridaOneInvitationSuccess: undefined
+  UnlockVeridaOne: {
+    initialPage?: number
+  }
 }
