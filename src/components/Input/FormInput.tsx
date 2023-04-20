@@ -134,11 +134,11 @@ export const FormInput = React.forwardRef(
                 },
                 styles.textInput,
                 inputStyle,
-                focused
-                  ? { borderColor: theme.color.veridaGreen }
-                  : errorMessage
+                errorMessage
+                  ? { borderColor: theme.color.error }
+                  : focused
                   ? {
-                      borderColor: theme.color.error,
+                      borderColor: theme.color.veridaGreen,
                     }
                   : {},
                 disabled

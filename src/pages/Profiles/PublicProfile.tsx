@@ -4,11 +4,9 @@ import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import {
-  checkVeridaOneInviteCode,
   editable,
   isEnabledVeridaOneProfile,
   saveStatusEnabledVeridaOneProfile,
-  VERIDA_ONE_INVITE_CODE,
 } from 'helpers/profile'
 import { debounce, isEqual } from 'lodash'
 import React, {
@@ -564,6 +562,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       setPublicCustomLinks([])
       setUsername(undefined)
 
+      saveStatusEnabledVeridaOneProfile(false)
       // Check Verida One enabbled status
       ;(async () => {
         setEnabledVeridaOne(await isEnabledVeridaOneProfile())

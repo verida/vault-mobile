@@ -41,7 +41,7 @@ const UnlockVeridaOne = () => {
   const { bottom, top } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const [currentPage] = useState(PageType.UnlockVeridaOne)
+  const [currentPage, setCurrentPage] = useState(PageType.UnlockVeridaOne)
   const pagerRef = useRef<PagerView>(null)
   const inputUsernamePageRef = useRef<InputUsernamePageRefProps>(null)
   const claimUsernamePageRef = useRef<ClaimUsernamePageRefProps>(null)
@@ -66,14 +66,14 @@ const UnlockVeridaOne = () => {
       case PageType.InvitationSuccess:
         return 'Invitation Code'
       case PageType.SuggestClaimUsername:
-        return 'Claim your username'
+        return 'Claim your Username'
       case PageType.InputUsername:
       case PageType.ClaimUsername:
         return 'Username'
     }
   }
 
-  const submitVeidaOneInvitationCode = () => {
+  const submitVeridaOneInvitationCode = () => {
     Keyboard.dismiss()
     if (checkVeridaOneInviteCode(invitationCode!)) {
       emitter.emit('UNLOCK_VERIDA_ONE', undefined)
@@ -107,6 +107,9 @@ const UnlockVeridaOne = () => {
         style={styles.pagerView}
         initialPage={currentPage}
         scrollEnabled={false}
+        onPageSelected={(e) => {
+          setCurrentPage(e.nativeEvent.position)
+        }}
         ref={pagerRef}>
         {/* UnlockVeridaOne */}
         <Container
@@ -130,7 +133,7 @@ const UnlockVeridaOne = () => {
                 autoComplete='off'
                 autoCapitalize='none'
                 returnKeyType='done'
-                onSubmitEditing={submitVeidaOneInvitationCode}
+                onSubmitEditing={submitVeridaOneInvitationCode}
                 value={invitationCode}
                 onChangeText={(text) => setInvitationCode(text)}
               />
@@ -141,7 +144,7 @@ const UnlockVeridaOne = () => {
             <Button
               disabled={!invitationCode}
               style={styles.button}
-              onPress={submitVeidaOneInvitationCode}>
+              onPress={submitVeridaOneInvitationCode}>
               Submit
             </Button>
           </View>
