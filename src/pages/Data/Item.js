@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
-import { Credentials } from '@verida/verifiable-credentials'
+import { useCredential } from 'hooks'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
@@ -22,6 +22,7 @@ const DataItem = (props) => {
   })
   const [loading, setLoading] = useState(true)
   const [copyUrl, setCopyUrl] = useState(null)
+  const { verifyCredential } = useCredential()
 
   const isCredential = folder.config.database === 'credential'
   const isContact = folder.config.database === 'social_contact'
@@ -32,28 +33,28 @@ const DataItem = (props) => {
         setLoading(true)
         let _data
         if (isCredential) {
-          const credentialLib = new Credentials()
-          const vcData = await credentialLib.verifyCredential(item.didJwtVc)
-          // const credentialData = vcData.payload.vc.credentialSubject
-          // TODO: Revert to this after Polygon ID demo
-          const credentialData = item.credentialData.credentialSubject
-          const schemaUri = vcData.payload.vc.credentialSchema.id
+          const {
+            contextName,
+            data: credentialData,
+            issuer,
+            schemaUri,
+          } = await verifyCredential(item.didJwtVc || item.credentialData)
+          // TODO: Consider passing the whole credential (credentialData) instead of the didJwtVc
+
           const credentialDetail = await folder.getDetail(
-            credentialData,
+            // credentialData,
+            // TODO: Revert to this after Polygon ID demo
+            item.credentialData.credentialSubject,
             schemaUri
           )
-          const iss = vcData.payload.iss
 
           _data = credentialDetail
 
-          const { name, avatar } = await getPublicProfile(
-            iss,
-            vcData.payload.vc.veridaContextName
-          )
+          const { name, avatar } = await getPublicProfile(issuer, contextName)
           _data.issuer = {
             name,
             avatar,
-            did: iss,
+            did: issuer,
           }
         } else {
           _data = await folder.getDetail(item)
@@ -68,7 +69,7 @@ const DataItem = (props) => {
     }
 
     init()
-  }, [folder, item, isCredential])
+  }, [verifyCredential, folder, item, isCredential])
 
   const right = {
     action: () => {

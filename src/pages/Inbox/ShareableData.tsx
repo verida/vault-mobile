@@ -18,6 +18,7 @@ import Button from 'components/Button'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { Text } from 'components/Typography/Text'
 import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 import ShareableDataItem, {
@@ -29,61 +30,50 @@ function ShareableData(
 ) {
   const { navigation, route } = props
   const [data, setData] = useState<ShareableDataItemType[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
   const [selectedItems, setSelectedItems] = useState<ShareableDataItemType[]>(
     []
   )
 
-  const fetchData = async (text: string) => {
+  const fetchData = async (searchValue: string) => {
     try {
       setLoading(true)
+
       const { schemaUrl, filter } = route.params
+
+      const requestFilter = filter && typeof filter === 'object' ? filter : {}
+
+      const searchFilter =
+        searchValue && searchValue.length > 0
+          ? {
+              $or: [
+                {
+                  name: {
+                    $regex: searchValue,
+                  },
+                },
+                {
+                  summary: {
+                    $regex: searchValue,
+                  },
+                },
+              ],
+            }
+          : {}
+
+      const query = {
+        $and: [requestFilter, searchFilter],
+      }
+
       const datastore =
         await AccountManager.getInstance().context?.openDatastore(schemaUrl)
-      let query = {}
-      if (text && text.length > 0) {
-        if (Object.keys(filter).length > 0) {
-          query = {
-            $and: [
-              {
-                $or: [
-                  {
-                    name: {
-                      $regex: text,
-                    },
-                  },
-                  {
-                    summary: {
-                      $regex: text,
-                    },
-                  },
-                ],
-              },
-              filter,
-            ],
-          }
-        } else {
-          query = {
-            $or: [
-              {
-                name: {
-                  $regex: text,
-                },
-              },
-              {
-                summary: {
-                  $regex: text,
-                },
-              },
-            ],
-          }
-        }
-      }
+
       const result = await datastore?.getMany(query)
       if (result) {
         setData(result as ShareableDataItemType[])
       }
+
       setLoading(false)
     } catch (e) {
       Sentry.captureException(e)
@@ -158,6 +148,11 @@ function ShareableData(
           <FlatList<ShareableDataItemType>
             data={data}
             renderItem={renderItem}
+            ListEmptyComponent={
+              <View style={styles.noResult}>
+                <Text>No results</Text>
+              </View>
+            }
           />
         )}
       </Content>
@@ -174,16 +169,22 @@ const styles = StyleSheet.create({
   searchInputContainer: {
     borderRadius: 10,
     backgroundColor: LIGHTGREY_COLOR,
-    height: 36,
     flexDirection: 'row',
     alignItems: 'center',
     margin: 16,
-    paddingHorizontal: 15,
+    padding: 8,
   },
   searchInput: {
     flex: 1,
     marginLeft: 10,
     fontSize: 16,
+    lineHeight: 22,
+  },
+  noResult: {
+    flex: 1,
+    flexDirection: 'row',
+    marginTop: 15,
+    justifyContent: 'center',
   },
 })
 

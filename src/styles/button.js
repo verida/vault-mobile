@@ -16,9 +16,9 @@ export default StyleSheet.create({
   button: {
     borderRadius: 4,
     fontSize: 16,
-    marginBottom: 16,
+    marginBottom: 16, // TODO: Remove it, such a generic and atomic component should never have margins, it should not handle the layout it is in, it should only care about its own internal style
     borderWidth: 1,
-    height: 48,
+    height: 48, // TODO: Remove the hardcoded height, the height should be a result of the padding and font size/line height
     justifyContent: 'center',
     fontFamily: NUNITO_SANS_BOLD,
   },
