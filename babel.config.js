@@ -25,6 +25,16 @@ module.exports = function (api) {
         },
       ],
       'react-native-reanimated/plugin',
+      '@babel/plugin-syntax-import-assertions',
+      [
+        'babel-plugin-rewrite-require',
+        {
+          aliases: {
+            crypto: 'crypto-browserify',
+            stream: 'stream-browserify',
+          },
+        },
+      ],
     ],
   }
 }
