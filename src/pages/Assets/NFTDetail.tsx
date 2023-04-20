@@ -2,7 +2,6 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import { getNFTImageUri } from 'helpers/nft'
 import React, { FC, ReactNode } from 'react'
 import {
   Alert,
@@ -14,14 +13,10 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 import { NFTMetadata } from 'api/types'
-import MoreIcon from 'assets/more_icon.svg'
 import { NftItem } from 'components/Assets/NftItem'
-import Button from 'components/Button'
-import Icon from 'components/Icon/Icon'
-import Footer from 'components/Layouts/Footer'
+import { Icon } from 'components/Icon'
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'

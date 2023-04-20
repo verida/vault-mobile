@@ -500,6 +500,7 @@ class AccountManager extends EventEmitter {
       setTimeout(() => {
         updateProgress?.('StorageLocation', 'Success')
       }, 1000)
+
       updateProgress?.('CreateProfile', 'Loading')
 
       const setPublicProfileSuccess = await execWithTimeout(

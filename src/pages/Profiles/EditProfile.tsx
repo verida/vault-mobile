@@ -5,7 +5,6 @@ import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-// import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -16,7 +15,6 @@ import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
 import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
-import UsernameManager from 'api/UsernameManager'
 
 /**
  * Take from the schema, better to fetch them dynamic
@@ -42,15 +40,6 @@ const EditProfile = (props: any) => {
   const onChangeItem = (e: any) => setEdited(e)
 
   const saveValue = async () => {
-
-    /**
-     * Example code to save a username
-     */
-    // const usernameManager = new UsernameManager()
-    // const username = 'myusername.vda'
-    // await usernameManager.set(username)
-    // const fetchedUsername = await usernameManager.get()
-    // console.log(fetchedUsername)
     Keyboard.dismiss()
     try {
       const key = title.toLowerCase()
