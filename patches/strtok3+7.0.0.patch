@@ -1,0 +1,106 @@
+diff --git a/node_modules/strtok3/lib/AbstractTokenizer.js b/node_modules/strtok3/lib/AbstractTokenizer.js
+index e266ef1..a4e4f97 100644
+--- a/node_modules/strtok3/lib/AbstractTokenizer.js
++++ b/node_modules/strtok3/lib/AbstractTokenizer.js
+@@ -1,5 +1,4 @@
+ import { EndOfStreamError } from 'peek-readable';
+-import { Buffer } from 'node:buffer';
+ /**
+  * Core tokenizer
+  */
+diff --git a/node_modules/strtok3/lib/FsPromise.js b/node_modules/strtok3/lib/FsPromise.js
+index 4cc61d3..6a8d1d7 100644
+--- a/node_modules/strtok3/lib/FsPromise.js
++++ b/node_modules/strtok3/lib/FsPromise.js
+@@ -1,7 +1,6 @@
+ /**
+  * Module convert fs functions to promise based functions
+  */
+-import fs from 'node:fs';
+ export const pathExists = fs.existsSync;
+ export const createReadStream = fs.createReadStream;
+ export async function stat(path) {
+diff --git a/node_modules/strtok3/lib/index.js b/node_modules/strtok3/lib/index.js
+index c62c50e..c6ee931 100644
+--- a/node_modules/strtok3/lib/index.js
++++ b/node_modules/strtok3/lib/index.js
+@@ -2,6 +2,7 @@ import * as fs from './FsPromise.js';
+ import * as core from './core.js';
+ export { fromFile } from './FileTokenizer.js';
+ export { EndOfStreamError, fromBuffer } from './core.js';
++
+ /**
+  * Construct ReadStreamTokenizer from given Stream.
+  * Will set fileSize, if provided given Stream has set the .path property.
+diff --git a/node_modules/strtok3/package.json b/node_modules/strtok3/package.json
+index 0e7605f..d9ab9a0 100644
+--- a/node_modules/strtok3/package.json
++++ b/node_modules/strtok3/package.json
+@@ -33,6 +33,7 @@
+     "url": "https://github.com/Borewit/strtok3.git"
+   },
+   "license": "MIT",
++  "main": "./lib/index.js",
+   "type": "module",
+   "exports": {
+     ".": {
+@@ -90,5 +91,57 @@
+     "uint",
+     "stream",
+     "streaming"
+-  ]
++  ],
++  "react-native": {
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "net": "react-native-tcp",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
++  },
++  "browser": {
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "net": "react-native-tcp",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
++  }
+ }
+\ No newline at end of file

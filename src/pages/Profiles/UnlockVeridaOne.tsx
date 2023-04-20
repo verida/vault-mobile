@@ -2,7 +2,10 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { emitter } from 'helpers/emitter'
-import { checkVeridaOneInviteCode } from 'helpers/profile'
+import {
+  checkVeridaOneInviteCode,
+  saveStatusEnabledVeridaOneProfile,
+} from 'helpers/profile'
 import React, { useEffect, useRef, useState } from 'react'
 import { Image, Keyboard, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
@@ -76,6 +79,7 @@ const UnlockVeridaOne = () => {
   const submitVeridaOneInvitationCode = () => {
     Keyboard.dismiss()
     if (checkVeridaOneInviteCode(invitationCode!)) {
+      saveStatusEnabledVeridaOneProfile(true)
       emitter.emit('UNLOCK_VERIDA_ONE', undefined)
       pagerRef.current?.setPage(PageType.InvitationSuccess)
     } else {

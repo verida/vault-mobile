@@ -562,7 +562,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       setPublicCustomLinks([])
       setUsername(undefined)
 
-      saveStatusEnabledVeridaOneProfile(false)
       // Check Verida One enabbled status
       ;(async () => {
         setEnabledVeridaOne(await isEnabledVeridaOneProfile())
