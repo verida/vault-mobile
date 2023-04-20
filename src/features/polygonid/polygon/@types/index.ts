@@ -1,6 +1,8 @@
 import {
   AuthorizationRequestMessage,
+  AuthorizationResponseMessage,
   CredentialsOfferMessage,
+  W3CCredential,
 } from '@0xpolygonid/js-sdk'
 import type { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
 
@@ -25,7 +27,7 @@ export type PolygonHandleCredentialOfferArgs = {
 
 export type PolygonHandleCredentialOffer = (
   args: PolygonHandleCredentialOfferArgs
-) => Promise<string>
+) => Promise<W3CCredential[]>
 
 export type PolygonHandleAuthorizationRequestArgs = {
   readonly managerId: string
@@ -34,7 +36,10 @@ export type PolygonHandleAuthorizationRequestArgs = {
 
 export type PolygonHandleAuthorizationRequest = (
   args: PolygonHandleAuthorizationRequestArgs
-) => Promise<string>
+) => Promise<{
+  callbackResponse: any
+  authResponse: AuthorizationResponseMessage
+}>
 
 export type RandomKeyGenerator = () => string
 
@@ -50,7 +55,7 @@ export type PolygonWebViewCallbackProps = {
   readonly taskId: string
 } & (
   | {
-      readonly data: unknown
+      readonly result: unknown
     }
   | {
       readonly error: Error

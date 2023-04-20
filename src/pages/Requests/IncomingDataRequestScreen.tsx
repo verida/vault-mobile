@@ -64,19 +64,17 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
 
     const handleAccept = useCallback(async () => {
       setProcessing(true)
-      try {
-        // TODO: Handle different actions depending on the type of request
-        const successfulResult = await handleAcceptCredentialOffer(data)
-        if (successfulResult) {
-          setSuccess(true)
-        } else {
-          setError(true)
-        }
-      } catch (_error: unknown) {
+      // TODO: Handle different actions depending on the type of request
+
+      // Doesn't need a try/catch as handle in the function itself
+      const { result } = await handleAcceptCredentialOffer(data)
+      if (result) {
+        setSuccess(true)
+      } else {
         setError(true)
-      } finally {
-        setProcessing(false)
       }
+      setProcessing(false)
+      // TODO: Hanle the case where the user closes the screen before the request is processed
     }, [handleAcceptCredentialOffer, data])
 
     const handleToggleDetails = useCallback(() => {
@@ -155,7 +153,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
                 {detailsOpen ? detailsView : null}
                 {details.message ? (
                   <View style={styles.message}>
-                    <Text>{details.message}</Text>
+                    <Text>{`"${details.message}"`}</Text>
                   </View>
                 ) : null}
                 <View style={styles.dataContainer}>
@@ -172,20 +170,24 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
                 </View>
               </>
             ) : (
-              // TODO: Impleemnt the design from Figma (success display the request with an 'Accepted' banner)
+              // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
               <Status
                 style={styles.statusContainer}
                 statusType={
                   processing ? 'processsing' : success ? 'success' : 'error'
                 }
                 title={
-                  processing ? 'Saving data' : success ? 'Success!' : 'Error!'
+                  processing
+                    ? 'Saving data...'
+                    : success
+                    ? 'Success!'
+                    : 'Error!'
                 }
                 subtitle={
                   processing
-                    ? 'Please wait a few seconds.'
+                    ? 'Please wait a few seconds, we are verifying and saving the data.'
                     : success
-                    ? `You successfully saved the data from ${name}.` // TODO: Find better messages
+                    ? `The data from ${name} have been successfully saved.` // TODO: Find better messages
                     : 'Something went wrong. Try again later.'
                 }
               />
@@ -403,6 +405,7 @@ const createStyles = (theme: Theme) =>
     },
     statusSubtitle: {
       marginTop: theme.spacing.m,
+      paddingHorizontal: theme.spacing.l,
       fontSize: 16,
       lineHeight: 24,
       color: theme.color.textLightGrey,

@@ -28,8 +28,8 @@ import { Theme } from 'styles/types'
 export interface ConnectionRequestScreenParams {
   name?: string
   logo?: string
-  hostname?: string
   details: {
+    url?: string
     timestamp?: Date // TODO: Consider a string timestamp if issue with non-seriazable data in navigation params
     requesterId?: string
     message?: string
@@ -46,7 +46,6 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
     const {
       name = 'Unknown', // TODO: Define the best placeholder
       logo,
-      hostname,
       details,
       data,
     } = route.params
@@ -65,19 +64,17 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
 
     const handleConnect = useCallback(async () => {
       setProcessing(true)
-      try {
-        // TODO: Handle different actions depending on the type of request
-        const successfulResult = await handleAcceptConnectionRequest(data)
-        if (successfulResult) {
-          setSuccess(true)
-        } else {
-          setError(true)
-        }
-      } catch (_error: unknown) {
+      // TODO: Handle different actions depending on the type of request
+
+      // Doesn't need a try/catch as handle in the function itself
+      const { result } = await handleAcceptConnectionRequest(data)
+      if (result) {
+        setSuccess(true)
+      } else {
         setError(true)
-      } finally {
-        setProcessing(false)
       }
+      setProcessing(false)
+      // TODO: Hanle the case where the user closes the screen before the request is processed
     }, [handleAcceptConnectionRequest, data])
 
     const handleToggleDetails = useCallback(() => {
@@ -118,14 +115,14 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                   url={logo || null}
                   style={styles.logo}
                 />
-                {hostname ? (
-                  <Text style={styles.hostname}>{hostname}</Text>
+                {details.url ? (
+                  <Text style={styles.url}>{details.url}</Text>
                 ) : null}
                 <Text
-                  style={styles.connectMessage}>{`Connect with ${name}`}</Text>
+                  style={styles.connectMessage}>{`Connect to ${name}`}</Text>
                 {details.message ? (
                   <View style={styles.message}>
-                    <Text>{details.message}</Text>
+                    <Text>{`"${details.message}"`}</Text>
                   </View>
                 ) : null}
                 <TouchableOpacity
@@ -168,13 +165,13 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                   processing ? 'processsing' : success ? 'success' : 'error'
                 }
                 title={
-                  processing ? 'Connecting' : success ? 'Success!' : 'Error!'
+                  processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
                 }
                 subtitle={
                   processing
-                    ? 'Please wait a few seconds.'
+                    ? 'Please wait a moment, we are securely setting up the connection.'
                     : success
-                    ? `You successfully connected with ${name}.`
+                    ? `You are successfully connected to ${name}.`
                     : 'Something went wrong. Try again later.'
                 }
               />
@@ -300,7 +297,7 @@ const createStyles = (theme: Theme) =>
       aspectRatio: 1 / 1,
       borderRadius: 999999,
     },
-    hostname: {
+    url: {
       marginTop: theme.spacing.s,
       fontSize: 14,
       lineHeight: 24,
@@ -375,6 +372,7 @@ const createStyles = (theme: Theme) =>
     },
     statusSubtitle: {
       marginTop: theme.spacing.m,
+      paddingHorizontal: theme.spacing.l,
       fontSize: 16,
       lineHeight: 24,
       color: theme.color.textLightGrey,

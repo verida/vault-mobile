@@ -62,19 +62,17 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
 
     const handleSendProof = useCallback(async () => {
       setProcessing(true)
-      try {
-        // TODO: Handle different actions depending on the type of request
-        const successfulResult = await handleAcceptProofRequest(data)
-        if (successfulResult) {
-          setSuccess(true)
-        } else {
-          setError(true)
-        }
-      } catch (_error: unknown) {
+      // TODO: Handle different actions depending on the type of request
+
+      // Doesn't need a try/catch as handle in the function itself
+      const { result } = await handleAcceptProofRequest(data)
+      if (result) {
+        setSuccess(true)
+      } else {
         setError(true)
-      } finally {
-        setProcessing(false)
       }
+      setProcessing(false)
+      // TODO: Hanle the case where the user closes the screen before the request is processed
     }, [handleAcceptProofRequest, data])
 
     const handleToggleDetails = useCallback(() => {
@@ -153,7 +151,7 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
                 {detailsOpen ? detailsView : null}
                 {details.message ? (
                   <View style={styles.message}>
-                    <Text>{details.message}</Text>
+                    <Text>{`"${details.message}"`}</Text>
                   </View>
                 ) : null}
                 <View style={styles.proofContainer}>
@@ -212,7 +210,7 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
                 }
                 title={
                   processing
-                    ? 'Generating proof'
+                    ? 'Generating proof...'
                     : success
                     ? 'Success!'
                     : 'Error!'
@@ -220,7 +218,7 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
                 subtitle={
                   // TODO: Find better messages
                   processing
-                    ? 'Please wait a few seconds.'
+                    ? 'Please wait a moment, we are generating a cryptographic proof to share. No private data will be sent.'
                     : success
                     ? `Your proof has been generated and sent successfully.`
                     : 'Something went wrong. Try again later.'
@@ -463,6 +461,7 @@ const createStyles = (theme: Theme) =>
     },
     statusSubtitle: {
       marginTop: theme.spacing.m,
+      paddingHorizontal: theme.spacing.l,
       fontSize: 16,
       lineHeight: 24,
       color: theme.color.textLightGrey,

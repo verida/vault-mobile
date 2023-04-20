@@ -129,13 +129,11 @@ async function handleAuthorizationRequest({
   readonly managerId: string;
   readonly data: AuthorizationRequestMessage;
 }) {
+  // No try/catch here because the error is handled in handlePromiseTask
   const polygonIdManager = getPolygonIdManager({
     managerId,
   });
-  const result = await polygonIdManager.handleAuthorizationRequest(data);
-  return result; // TODO: Return a better formatted result
-
-  // No try/catch here because the error is handled in handlePromiseTask
+  return await polygonIdManager.handleAuthorizationRequest(data);
 }
 
 /**
@@ -151,13 +149,11 @@ async function handleCredentialOffer({
   readonly managerId: string;
   readonly data: CredentialsOfferMessage;
 }) {
+  // No try/catch here because the error is handled in handlePromiseTask
   const polygonIdManager = getPolygonIdManager({
     managerId,
   });
-  await polygonIdManager.handleCredentialOffer(data);
-  return "Success"; // TODO: Return a better formatted result
-
-  // No try/catch here because the error is handled in handlePromiseTask
+  return await polygonIdManager.handleCredentialOffer(data);
 }
 
 // Exposing methods to the global scope for the WebView to use.

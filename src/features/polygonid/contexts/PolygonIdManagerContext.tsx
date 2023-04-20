@@ -1,7 +1,9 @@
 import {
   AuthorizationRequestMessage,
+  AuthorizationResponseMessage,
   CredentialsOfferMessage,
   PROTOCOL_CONSTANTS,
+  W3CCredential,
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
@@ -19,13 +21,24 @@ type PolygonIdContextType = {
   handleQRCodeMessage: (data: string) => void
   handleAcceptConnectionRequest: (
     data: AuthorizationRequestMessage
-  ) => Promise<boolean>
-  handleAcceptProofRequest: (
-    data: AuthorizationRequestMessage
-  ) => Promise<boolean>
-  handleAcceptCredentialOffer: (
-    data: CredentialsOfferMessage
-  ) => Promise<boolean>
+  ) => Promise<{
+    result?: {
+      callbackResponse: any
+      authResponse: AuthorizationResponseMessage
+    }
+    error?: Error
+  }>
+  handleAcceptProofRequest: (data: AuthorizationRequestMessage) => Promise<{
+    result?: {
+      callbackResponse: any
+      authResponse: AuthorizationResponseMessage
+    }
+    error?: Error
+  }>
+  handleAcceptCredentialOffer: (data: CredentialsOfferMessage) => Promise<{
+    result?: W3CCredential[]
+    error?: Error
+  }>
 }
 // TODO: For all handle functions, return something else than a boolean
 
@@ -80,19 +93,17 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           .AUTHORIZATION_REQUEST_MESSAGE_TYPE:
           const requestData = data as AuthorizationRequestMessage
           // Either a Connection request or a ZK Proof request
-          // if (data.body.scope && data.body.scope.length) {
           if (requestData.body?.scope && requestData.body.scope.length) {
             // We have a scope object implying we need to submit a ZK proof
             navigation.navigate('ProofRequest', {
               name: 'Compliant DEX', // TODO: Find a way to get it
-              // logo: 'https://img.logoipsum.com/246.png',
               logo: 'https://img.logoipsum.com/247.png',
               details: {
                 timestamp: new Date(),
                 requesterId: requestData.from,
                 message:
                   // requestData.body?.reason || // TODO: Enable after demo
-                  'Please provide a KYC proof to unlock additional features',
+                  'Please provide a proof of age to unlock additional features',
                 url: 'https://compliant-defi.demo.verida.io',
               },
               data: requestData,
@@ -100,15 +111,15 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           } else {
             // We have a generic connection request
             navigation.navigate('ConnectionRequest', {
-              name: 'GateKeeper', // TODO: Find a way to get it
+              name: 'GateKeeper',
               logo: 'https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F2089358966-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FcsJ16ZcrlkRarpduMtf3%252Ficon%252Fw82c12VFG0mG431s6uZS%252FTwitter.png%3Falt%3Dmedia%26token%3Da8f08639-fbf6-4542-b1c3-e8b4b9f03422',
-              hostname: 'https://gatekeeper.software', // TODO: Get from the callback?
               details: {
                 timestamp: new Date(),
                 requesterId: requestData.from,
                 message:
                   // requestData.body?.reason || // TODO: Enable after demo
-                  'Please, accept this connection to perform your KYC',
+                  'Please, accept this connection to access GateKeeper',
+                url: 'https://gatekeeper.software', // TODO: Get from the callback?
               },
               data: requestData,
             })
@@ -119,12 +130,12 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           const offerData = data as CredentialsOfferMessage
           // Offer to save a new ZK credential
           navigation.navigate('IncomingDataRequest', {
-            name: 'GateKeeper', // TODO: Find a way to get it
+            name: 'GateKeeper',
             logo: 'https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F2089358966-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FcsJ16ZcrlkRarpduMtf3%252Ficon%252Fw82c12VFG0mG431s6uZS%252FTwitter.png%3Falt%3Dmedia%26token%3Da8f08639-fbf6-4542-b1c3-e8b4b9f03422',
             details: {
               timestamp: new Date(),
               requesterId: offerData.from,
-              message: `Your KYC credential is attached to this message.`,
+              message: `Your birthday credential is attached to this message.`,
               url: 'https://gatekeeper.software',
             },
             data: offerData,
@@ -138,15 +149,19 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const handleAcceptConnectionRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
       try {
-        console.debug('Accepting Connection Request...')
-        console.debug('managerId: ', maybeManagerId)
-        await handleAuthorizationRequest({ data, managerId: maybeManagerId! })
-        // TODO: define what to do afterwards (confirmation screen?)
-        return true
+        const result = await handleAuthorizationRequest({
+          data,
+          managerId: maybeManagerId!,
+        })
+        return { result }
       } catch (error: unknown) {
         Sentry.captureException(error)
-        // TODO: Handle error in UI. Use error.message?
-        return false
+        return {
+          error: new Error(
+            'Something went wrong when accepting the Polygon ID connection request.',
+            { cause: error }
+          ),
+        }
       }
     },
     [maybeManagerId, handleAuthorizationRequest]
@@ -155,14 +170,19 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const handleAcceptProofRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
       try {
-        console.debug('Accepting Proof Request')
-        await handleAuthorizationRequest({ data, managerId: maybeManagerId! })
-        // TODO: define what to do afterwards (confirmation screen?)
-        return true
+        const result = await handleAuthorizationRequest({
+          data,
+          managerId: maybeManagerId!,
+        })
+        return { result }
       } catch (error: unknown) {
         Sentry.captureException(error)
-        // TODO: Handle error in UI. Use error.message?
-        return false
+        return {
+          error: new Error(
+            'Something went wrong when answering the Polygon ID proof request.',
+            { cause: error }
+          ),
+        }
       }
     },
     [maybeManagerId, handleAuthorizationRequest]
@@ -171,14 +191,19 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const handleAcceptCredentialOffer = useCallback(
     async (data: CredentialsOfferMessage) => {
       try {
-        console.debug('Accepting Credential Offer...')
-        await handleCredentialOffer({ data, managerId: maybeManagerId! })
-        // TODO: define what to do afterwards (confirmation screen?)
-        return true
+        const result = await handleCredentialOffer({
+          data,
+          managerId: maybeManagerId!,
+        })
+        return { result }
       } catch (error: unknown) {
         Sentry.captureException(error)
-        // TODO: Handle error in UI. Use error.message?
-        return false
+        return {
+          error: new Error(
+            'Something went wrong when accepting the Polygon ID credential offer.',
+            { cause: error }
+          ),
+        }
       }
     },
     [maybeManagerId, handleCredentialOffer]

@@ -1,4 +1,8 @@
-import type { CircuitId } from '@0xpolygonid/js-sdk'
+import type {
+  AuthorizationResponseMessage,
+  CircuitId,
+  W3CCredential,
+} from '@0xpolygonid/js-sdk'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
@@ -11,9 +15,7 @@ import {
   PolygonContextValue,
   PolygonCreateIdManager,
   PolygonHandleAuthorizationRequest,
-  PolygonHandleAuthorizationRequestArgs,
   PolygonHandleCredentialOffer,
-  PolygonHandleCredentialOfferArgs,
   PolygonIdManagerConfig,
   PolygonPromiseCallbacks,
   PolygonWebViewCallbackProps,
@@ -54,7 +56,6 @@ export const PolygonProvider = ({
 
   const onMessage = React.useCallback(
     ({ nativeEvent: { data: maybeResult } }: WebViewMessageEvent) => {
-      console.debug('maybeResult', maybeResult)
       try {
         const result = JSON.parse(maybeResult)
 
@@ -101,12 +102,10 @@ export const PolygonProvider = ({
   )
 
   const onLoadStart = React.useCallback(() => {
-    console.debug('onLoadStart WebView')
     setWebPageLoading(true)
   }, [])
 
   const onLoadEnd = React.useCallback(() => {
-    console.debug('onLoadEnd WebView')
     setWebPageLoading(false)
     setWebPageLoaded(true)
   }, [])
@@ -123,13 +122,11 @@ export const PolygonProvider = ({
     }: {
       readonly js: string
       readonly taskId?: string
-    }) =>
-      new Promise<unknown>((resolve, reject) => {
-        console.debug('invokeJs')
-        console.debug(js)
-        console.log('isReady:', isReady)
-
-        if (!isReady) return reject(new Error('Not ready.'))
+    }) => {
+      return new Promise<unknown>((resolve, reject) => {
+        if (!isReady) {
+          return reject(new Error('Not ready.'))
+        }
 
         Object.assign(polygonPromiseCallbacks.current, {
           [taskId]: { resolve, reject },
@@ -139,77 +136,56 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
-        __DEV__ && console.log(injectedJavaScript)
-
-        console.debug('Injecting JS')
         return ref?.current?.injectJavaScript(injectedJavaScript)
-      }),
+      })
+    },
     [ref, generateRandomKey, isReady]
   )
 
   const createIdManager: PolygonCreateIdManager = React.useCallback(
     async (config: PolygonIdManagerConfig) => {
-      const maybeManagerId = await invokeJs({
+      const managerId = await invokeJs({
         js: `window.__CREATE_POLYGON_ID_MANAGER__({managerId: ${JSON.stringify(
           generateRandomKey()
         )}, config: ${JSON.stringify(config)}})`,
       })
 
-      if (typeof maybeManagerId !== 'string' || !maybeManagerId.length)
+      if (typeof managerId !== 'string' || !managerId.length)
         throw new Error(
           `Expected non-empty string managerId, encountered "${String(
-            maybeManagerId
+            managerId
           )}".`
         )
 
-      return maybeManagerId
+      return managerId
     },
     [invokeJs, generateRandomKey]
   )
 
   const handleAuthorizationRequest: PolygonHandleAuthorizationRequest =
     React.useCallback(
-      async ({
-        managerId,
-        data,
-      }: PolygonHandleAuthorizationRequestArgs): Promise<string> => {
+      async ({ managerId, data }) => {
         const result = await invokeJs({
           js: `window.__HANDLE_AUTHORIZATION_REQUEST__({managerId: ${JSON.stringify(
             managerId
           )}, data: ${JSON.stringify(data)}})`,
         })
-
-        console.debug('=================================================')
-        console.debug('result', result)
-        console.debug('=================================================')
-
-        // if (typeof result !== 'string' || !result.length)
-        //   throw new Error(
-        //     `Expected non-empty string result, encountered "${String(result)}".`
-        //   )
-
-        return result as string
+        return result as {
+          callbackResponse: any
+          authResponse: AuthorizationResponseMessage
+        }
       },
       [invokeJs]
     )
 
   const handleCredentialOffer: PolygonHandleCredentialOffer = React.useCallback(
-    async ({
-      managerId,
-      data,
-    }: PolygonHandleCredentialOfferArgs): Promise<string> => {
+    async ({ managerId, data }) => {
       const result = await invokeJs({
         js: `window.__HANDLE_CREDENTIAL_OFFER__({managerId: ${JSON.stringify(
           managerId
         )}, data: ${JSON.stringify(data)}})`,
       })
-
-      if (typeof result !== 'string' || !result.length)
-        throw new Error(
-          `Expected non-empty string result, encountered "${String(result)}".`
-        )
-
-      return result
+      return result as W3CCredential[]
     },
     [invokeJs]
   )

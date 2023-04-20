@@ -6,7 +6,7 @@ import { FileServerProps } from '../@types'
 
 export function useFileServer({ dir, port }: FileServerProps) {
   const server = React.useMemo<StaticServer>(
-    () => new StaticServer(port, dir, { localOnly: false }),
+    () => new StaticServer(port, dir, { localOnly: true }),
     [port, dir]
   )
 
@@ -16,15 +16,8 @@ export function useFileServer({ dir, port }: FileServerProps) {
 
   React.useEffect(() => {
     server.start().catch(console.error)
-    const handler = async () => {
-      console.log(`Server state:`)
-      console.log(await server.isRunning())
-    }
-    handler()
-
     return () => {
       try {
-        console.log(`Stopping the server`)
         server.stop()
       } catch (e) {
         console.error(e)

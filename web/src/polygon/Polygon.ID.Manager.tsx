@@ -81,42 +81,51 @@ export class PolygonIDManager {
     this.config = config;
   }
 
-  public async handleAuthorizationRequest(
-    data: AuthorizationRequestMessage
-  ): Promise<any> {
+  public async handleAuthorizationRequest(data: AuthorizationRequestMessage) {
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
+
+    // TODO: Check the instance properties 'this.packageMgr', 'this.proofService', 'this.did' and 'this.credentialWallet' before using them, then remove the '!' from the code. '!' is a workaround for the compiler but not at runtime. If these properties are not set, throw an error saying we should init the manager first.
 
     const authHandler = new AuthHandler(
       this.packageMgr!,
       this.proofService!,
       this.credentialWallet!
     );
-    const authRes = await authHandler.handleAuthorizationRequestForGenesisDID(
+    const result = await authHandler.handleAuthorizationRequestForGenesisDID(
       this.did!,
       encodedData
     );
 
     // TODO: Add a type to the axios response
     const response = await Axios.post(
-      // TODO: Do not assume the callback URL is in the body with '!', check it first. Throw an error if missing.
-      `${authRes!.authRequest!.body!.callbackUrl}`,
-      authRes.token
+      // TODO: Check the callback exists in the request before calling it. Then remove '!' on body. Should we throw an error if missing?
+      `${result.authRequest.body!.callbackUrl}`,
+      result.token
     );
-    return { callbackResponse: response.data, authResponse: authRes };
+    // TODO: Handle the response from the callback. Should we throw an error if the response is not 200?
+
+    // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
+    return {
+      callbackResponse: response.data,
+      authResponse: result.authResponse,
+    };
   }
 
-  public async handleCredentialOffer(
-    data: CredentialsOfferMessage
-  ): Promise<void> {
+  public async handleCredentialOffer(data: CredentialsOfferMessage) {
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
+    // TODO: Check the instance properties 'this.packageMgr', 'this.did' and 'this.credentialWallet' before using them, then remove the '!' from the code. '!' is a workaround for the compiler but not at runtime. If these properties are not set, throw an error saying we should init the manager first.
+
     const fetchHandler = new FetchHandler(this.packageMgr!);
-    const res = await fetchHandler.handleCredentialOffer(
+    const credentials = await fetchHandler.handleCredentialOffer(
       this.did!,
       encodedData
     );
 
-    await this.credentialWallet!.saveAll(res);
+    await this.credentialWallet!.saveAll(credentials);
+    // TODO: Also, save the credentials in the Vault. (Optimise with a Promise.allSettled to save both in parallel)
+
+    return credentials;
   }
 
   public async shouldInit() {
@@ -141,6 +150,7 @@ export class PolygonIDManager {
     );
     console.log("initIdentityWallet()");
 
+    // TODO: Check if the hostUrl and the rhsUrl are constants or if they should be configurable.
     const { did } = await this.identityWallet.createIdentity(
       "https://mywallet.com", // this is url that will be a part of auth bjj credential identifier
       {
@@ -199,8 +209,6 @@ export class PolygonIDManager {
     );
 
     console.log("getPackageMgr()");
-
-    //this.emit("initializing", false);
   }
 
   private static async fetchAndDecodeBase64EncodedFile(url: string) {
@@ -221,6 +229,7 @@ export class PolygonIDManager {
     // by the React Native runtime. These should be saved at the server directory as:
     // <server-dir>/public/circuits/<circuit-id>/<circuit-name>.<type>
     // TODO: Update the location (don't need the 'public' part)
+    // TODO: Define constants for these values
     const [verificationKey, provingKey, wasm] = await Promise.all([
       PolygonIDManager.fetchAndDecodeBase64EncodedFile(
         `/public/circuits/${circuitId}/verification_key.base64`
@@ -238,6 +247,8 @@ export class PolygonIDManager {
 
   private async initDataStorage(): Promise<IDataStorage> {
     const conf: EthConnectionConfig = defaultEthConnectionConfig;
+
+    // TODO: Define constants for these values
     conf.contractAddress = "0x134B1BE34911E39A8397ec6289782989729807a4";
     conf.url = "https://rpc-mumbai.maticvigil.com";
 
@@ -252,19 +263,7 @@ export class PolygonIDManager {
       mt: new InMemoryMerkleTreeStorage(40),
       states: new EthStateStorage(conf),
     };
-    /*
-    const dataStorage = {
-      credential: new CredentialStorage(
-        new InMemoryDataSource<W3CCredential>()
-      ),
-      identity: new IdentityStorage(
-        new InMemoryDataSource<Identity>(),
-        new InMemoryDataSource<Profile>()
-      ),
-      mt: new InMemoryMerkleTreeStorage(40),
-      states: new EthStateStorage(conf),
-    }
-*/
+
     return dataStorage;
   }
 
