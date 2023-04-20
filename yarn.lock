@@ -4945,6 +4945,20 @@
     axios "^0.27.2"
     did-resolver "^4.0.1"
 
+"@verida/account-node@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/account-node/-/account-node-2.2.1.tgz#76982c74acd012e35cb13a9000cee4c2c63ec22a"
+  integrity sha512-83oXG3J4yRUWz6oOFXGGb2stzPKDMYFu5uCN2CnpLL7HlvRbVmHJXKAvDU80hr07I+yHgwO5qqiQcIJvmoNS/g==
+  dependencies:
+    "@verida/account" "^2.2.1"
+    "@verida/did-client" "^2.2.1"
+    "@verida/did-document" "^2.2.1"
+    "@verida/encryption-utils" "^2.2.1"
+    "@verida/keyring" "^2.2.1"
+    "@verida/types" "^2.2.0"
+    axios "^0.27.2"
+    did-resolver "^4.0.1"
+
 "@verida/account@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@verida/account/-/account-2.2.0.tgz#4c647d7ee20b199a2d239a21e373f0dde62a3620"
@@ -4952,6 +4966,19 @@
   dependencies:
     "@verida/keyring" "^2.2.0"
     "@verida/storage-link" "^2.2.0"
+    "@verida/types" "^2.2.0"
+    did-jwt "^6.11.0"
+    did-resolver "^4.0.1"
+    lodash "^4.17.21"
+    tweetnacl-util "^0.15.1"
+
+"@verida/account@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/account/-/account-2.2.1.tgz#f15bb723c2dab20d56ac2212045ace161159cbfe"
+  integrity sha512-lKjIvRV73Z2lGcd6hzFQ/7LFn6NclDOZSrHrGqNTo4mUARt9X/uUlGXNgaZHFxuMYvjsiWjYdlshvYI33Ra+cg==
+  dependencies:
+    "@verida/keyring" "^2.2.1"
+    "@verida/storage-link" "^2.2.1"
     "@verida/types" "^2.2.0"
     did-jwt "^6.11.0"
     did-resolver "^4.0.1"
@@ -5036,6 +5063,20 @@
     did-resolver "^4.0.1"
     ethers "^5.5.1"
 
+"@verida/did-client@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/did-client/-/did-client-2.2.1.tgz#6ff80cdc519fb86705b4253a2f1704aaf4e225ad"
+  integrity sha512-8+mLcjw0AdVJK9Jfnyi6mXe2H0ExTNwkIAFS7dQazeoVyiGvIvkoNd5SOq0u+v9mrm1KdwBRMgtgFxKxQwaMxQ==
+  dependencies:
+    "@verida/did-document" "^2.2.1"
+    "@verida/types" "^2.2.0"
+    "@verida/vda-did-resolver" "^2.2.1"
+    "@verida/web3" "^2.2.1"
+    axios "^0.23.0"
+    deepcopy "^2.1.0"
+    did-resolver "^4.0.1"
+    ethers "^5.5.1"
+
 "@verida/did-document@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@verida/did-document/-/did-document-2.2.0.tgz#1c1337b89d0591961898013e8c974ac5e7aa4559"
@@ -5094,6 +5135,16 @@
     bs58 "^5.0.0"
     url "^0.11.0"
 
+"@verida/helpers@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/helpers/-/helpers-2.2.1.tgz#f3ea2b183e133d9f96c052b7b65da694bfed8c2f"
+  integrity sha512-Ozv9UTgHs3aLPOB1D7Cg/dvDl1GzAtSkGrP+eddUkZHpI5tp2b6W4McUd7sWDdERAmPAuKbeWeAZdnMXgRSlSQ==
+  dependencies:
+    "@verida/encryption-utils" "^2.2.1"
+    "@verida/types" "^2.2.0"
+    bs58 "^5.0.0"
+    url "^0.11.0"
+
 "@verida/keyring@^2.2.0":
   version "2.2.0"
   resolved "https://registry.yarnpkg.com/@verida/keyring/-/keyring-2.2.0.tgz#c7f7ace4b47ec8bceb626210b2f38d20b4f1e360"
@@ -5130,6 +5181,18 @@
     "@verida/did-document" "^2.2.0"
     "@verida/encryption-utils" "^2.2.0"
     "@verida/keyring" "^2.2.0"
+    did-resolver "^4.0.0"
+    url-parse "^1.5.3"
+
+"@verida/storage-link@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/storage-link/-/storage-link-2.2.1.tgz#bf3b5b61f5c767340b6095ca36c6a163fad16b7c"
+  integrity sha512-pv6io0Fp9KYfPvO9reEdlGN3O9jb2qhYGIIsYTjqzqB3OS/aCkybJjzG2YD/zzcnnixV9q/yk9SRO2U8WFu/uQ==
+  dependencies:
+    "@verida/did-client" "^2.2.1"
+    "@verida/did-document" "^2.2.1"
+    "@verida/encryption-utils" "^2.2.1"
+    "@verida/keyring" "^2.2.1"
     did-resolver "^4.0.0"
     url-parse "^1.5.3"
 
@@ -5206,15 +5269,27 @@
     axios "^0.27.2"
     ethers "^5.7.0"
 
-"@verida/verifiable-credentials@^2.2.0":
-  version "2.2.0"
-  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.2.0.tgz#abd842f2968ca72678e17ec666d9b880905ad6ae"
-  integrity sha512-UBEKIHba1YkdFDqCBqt+WlKMCdxgu0eWRa7aSUW9zl6CsjhIiOZ+JN1ZYG7w8tMaQEDtiK8Z03xE8UM+apr9tA==
+"@verida/vda-name-client@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/vda-name-client/-/vda-name-client-2.2.1.tgz#74327711565237635dd3a45cb47b1cb4af4bcb13"
+  integrity sha512-NMkJvRFN4/x1ba64cCRN8Bd4aZs8RcWAM+f+RI3zDyJI4VRw9MZ8xxNAu4Q2Bw6GjwrpAVfj/OlcCkOxmEv2sw==
   dependencies:
-    "@verida/encryption-utils" "^2.2.0"
-    "@verida/helpers" "^2.2.0"
+    "@ethersproject/providers" "^5.7.2"
+    "@verida/helpers" "^2.2.1"
     "@verida/types" "^2.2.0"
-    "@verida/vda-did-resolver" "^2.2.0"
+    "@verida/web3" "^2.2.1"
+    axios "^0.27.2"
+    ethers "^5.7.0"
+
+"@verida/verifiable-credentials@^2.2.1":
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.2.1.tgz#beda4742f7cc8cdfada13ccf404c36fa36b546f0"
+  integrity sha512-oQ0RR3NLchrlnYhICqP8JZBSFBn2W1ZTUWUoJnJkspP5p4AGAET58ZizHtYWqL5D26RdYrDrNq0kIoHxG9y4Og==
+  dependencies:
+    "@verida/encryption-utils" "^2.2.1"
+    "@verida/helpers" "^2.2.1"
+    "@verida/types" "^2.2.0"
+    "@verida/vda-did-resolver" "^2.2.1"
     axios "^1.3.3"
     dayjs "^1.10.7"
     did-jwt "^6.11.0"
@@ -15266,7 +15341,7 @@ prompts@^2.0.1, prompts@^2.3.2, prompts@^2.4.0:
     kleur "^3.0.3"
     sisteransi "^1.0.5"
 
-prop-types@*, prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@*, prop-types@^15.5.10, prop-types@^15.5.8, prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.7.x, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.yarnpkg.com/prop-types/-/prop-types-15.8.1.tgz#67d87bf1a694f48435cf332c24af10214a3140b5"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -15829,6 +15904,13 @@ react-native-pager-view@6.0.2:
   version "6.0.2"
   resolved "https://registry.yarnpkg.com/react-native-pager-view/-/react-native-pager-view-6.0.2.tgz#447b85fcb9f35225c4d6885c18689a7d30c181d9"
   integrity sha512-XL3Qc9k7o0BykclGHtuRUz97FpF6rcKbP8LqszLeS2hKnINYcbUPYqg46EhbwVhFOUJE+XhT3idrSO1e/D6jtQ==
+
+react-native-parsed-text@^0.0.22:
+  version "0.0.22"
+  resolved "https://registry.yarnpkg.com/react-native-parsed-text/-/react-native-parsed-text-0.0.22.tgz#a23c756eaa5d6724296814755085127f9072e5f5"
+  integrity sha512-hfD83RDXZf9Fvth3DowR7j65fMnlqM9PpxZBGWkzVcUTFtqe6/yPcIoIAgrJbKn6YmtzkivmhWE2MCE4JKBXrQ==
+  dependencies:
+    prop-types "^15.7.x"
 
 react-native-push-notification@^8.1.0:
   version "8.1.1"

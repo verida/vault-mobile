@@ -19,7 +19,7 @@ import { Theme } from 'styles/types'
 import { ConditionalWrap } from './ConditionalWrap'
 import LoadingIndicator from './LoadingIndicator'
 
-interface ScreenProps {
+interface ContainerProps {
   children?: ReactNode
   withSafeAreaView: boolean
   withKeyboardAvoidingView: boolean
@@ -34,7 +34,7 @@ interface ScreenProps {
   keyboadAvoidingViewProps?: KeyboardAvoidingViewProps
 }
 
-const Screen = (props: ScreenProps) => {
+const Container = (props: ContainerProps) => {
   const {
     withSafeAreaView,
     withLoadingView,
@@ -157,7 +157,7 @@ const createStyles = (theme: Theme) => {
   })
 }
 
-Screen.defaultProps = {
+Container.defaultProps = {
   withSafeAreaView: false,
   withLoadingView: false,
   withKeyboardAvoidingView: false,
@@ -165,4 +165,4 @@ Screen.defaultProps = {
   loadingOverlayColorLight: true,
 }
 
-export default Screen
+export default Container
