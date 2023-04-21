@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
+  ScrollView,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
@@ -15,6 +16,7 @@ import Feather from 'react-native-vector-icons/Feather'
 
 import BlurCircle from 'assets/blur-circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
+import PolygonIdLogo from 'assets/logos/polygon_id_logo.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import AppLogo from 'components/AppLogo'
 import Button from 'components/Button'
@@ -33,6 +35,7 @@ export interface IncomingDataRequestScreenParams {
     requesterId?: string
     message?: string
     url?: string
+    // TODO: Add protocol (Verida Connect, Polygon ID, DIDComm, ...)
   }
   data: CredentialsOfferMessage // TODO: Make it multiple types, likely to be an array
 }
@@ -107,6 +110,12 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
           <Text style={styles.detailsPropertyLabel}>{`URL`}</Text>
           <Text style={styles.detailsPropertyValue}>{details.url || ' '}</Text>
         </View>
+        <View style={styles.detailsPropertySpacing}>
+          <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
+          <Text style={styles.detailsPropertyValue}>
+            <PolygonIdLogo width={14} height={14} /> Polygon ID
+          </Text>
+        </View>
       </View>
     )
 
@@ -122,7 +131,9 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
               paddingLeft: insets.left,
             },
           ]}>
-          <View style={styles.container}>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.containerContent}>
             {/* TODO: Make it a scroll view */}
             {!processing && !error && !success ? (
               <>
@@ -192,7 +203,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
                 }
               />
             )}
-          </View>
+          </ScrollView>
 
           <View style={styles.footer}>
             {/* TODO: Ensure the buttons have a background */}
@@ -305,6 +316,8 @@ const createStyles = (theme: Theme) =>
     },
     container: {
       flex: 1,
+    },
+    containerContent: {
       padding: theme.spacing.m,
     },
     header: {

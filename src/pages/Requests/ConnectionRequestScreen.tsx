@@ -4,6 +4,7 @@ import LottieView from 'lottie-react-native'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
+  ScrollView,
   StatusBar,
   StyleSheet,
   TouchableOpacity,
@@ -15,6 +16,7 @@ import Feather from 'react-native-vector-icons/Feather'
 
 import BlurCircle from 'assets/blur-circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
+import PolygonIdLogo from 'assets/logos/polygon_id_logo.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import AppLogo from 'components/AppLogo'
 import Button from 'components/Button'
@@ -33,6 +35,7 @@ export interface ConnectionRequestScreenParams {
     timestamp?: Date // TODO: Consider a string timestamp if issue with non-seriazable data in navigation params
     requesterId?: string
     message?: string
+    // TODO: Add protocol (Verida Connect, Polygon ID, DIDComm, ...)
   }
   data: AuthorizationRequestMessage // TODO: Make it multiple types
   // TODO: Add expiry when needed
@@ -107,7 +110,9 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
               paddingLeft: insets.left,
             },
           ]}>
-          <View style={styles.container}>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.containerContent}>
             {/* TODO: Make it a scroll view */}
             {!processing && !error && !success ? (
               <>
@@ -155,6 +160,12 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                         {details.requesterId || ' '}
                       </Text>
                     </View>
+                    <View style={styles.detailsPropertySpacing}>
+                      <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
+                      <Text style={styles.detailsPropertyValue}>
+                        <PolygonIdLogo width={14} height={14} /> Polygon ID
+                      </Text>
+                    </View>
                   </View>
                 ) : null}
               </>
@@ -176,7 +187,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                 }
               />
             )}
-          </View>
+          </ScrollView>
           <View style={styles.footer}>
             {/* TODO: Ensure the buttons have a background */}
             {processing || error || success ? (
@@ -288,7 +299,10 @@ const createStyles = (theme: Theme) =>
     },
     container: {
       flex: 1,
+    },
+    containerContent: {
       paddingTop: 64,
+      paddingBottom: theme.spacing.m,
       paddingHorizontal: theme.spacing.m,
       alignItems: 'center',
     },
