@@ -18,26 +18,10 @@ export function useCreatePolygonIdManager(
     const init = async () => {
       try {
         setState(loadingState)
-        console.debug('[useCreatePolygonIdManager] start init')
-        console.debug(
-          '[useCreatePolygonIdManager] polygonIsLoading:',
-          polygonIsLoading
-        )
         if (polygonIsLoading) {
-          console.debug(
-            '[useCreatePolygonIdManager] polygonIsLoading, so exit wihtout creating manager'
-          )
           return
         }
-
-        console.debug('[useCreatePolygonIdManager] creating manager')
         const managerId = await createIdManager(config)
-        console.debug(
-          '[useCreatePolygonIdManager] manager created with id:',
-          managerId
-        )
-
-        console.debug('[useCreatePolygonIdManager] updating state')
 
         setState({ loading: false, result: managerId })
       } catch (cause) {

@@ -96,19 +96,26 @@ export class PolygonIDManager {
       encodedData
     );
 
-    // TODO: Add a type to the axios response
-    const response = await Axios.post(
-      // TODO: Check the callback exists in the request before calling it. Then remove '!' on body. Should we throw an error if missing?
-      `${result.authRequest.body!.callbackUrl}`,
-      result.token
-    );
-    // TODO: Handle the response from the callback. Should we throw an error if the response is not 200?
+    try {
+      // TODO: Add a type to the axios response
+      const response = await Axios.post(
+        // TODO: Check the callback exists before calling it with axios. Raise an specific Error if not.
+        result.authRequest.body!.callbackUrl,
+        result.token
+      );
+      // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
 
-    // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
-    return {
-      callbackResponse: response.data,
-      authResponse: result.authResponse,
-    };
+      return {
+        callbackResponse: response.data,
+        authResponse: result.authResponse,
+      };
+    } catch (_error: unknown) {
+      // TODO: Remove this after the demo. Or throw a specific error saying there was an error calling the callback (contacting the original application)
+      return {
+        callbackResponse: null,
+        authResponse: result.authResponse,
+      };
+    }
   }
 
   public async handleCredentialOffer(data: CredentialsOfferMessage) {
