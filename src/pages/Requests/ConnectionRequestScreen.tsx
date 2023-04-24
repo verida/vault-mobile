@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
+import { Protocol } from 'types'
 
 import BlurCircle from 'assets/blur-circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
@@ -26,7 +27,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-// TODO: Make sure the params are generic enough to be used for other types of requests (Verida Connect, WalletConnect, Polygon IDetc.)
+// TODO: Make sure the params are generic enough to be used for all types of requests (Verida Connect, WalletConnect, Polygon ID, etc.)
 export interface ConnectionRequestScreenParams {
   name?: string
   logo?: string
@@ -35,7 +36,7 @@ export interface ConnectionRequestScreenParams {
     timestamp?: Date // TODO: Consider a string timestamp if issue with non-seriazable data in navigation params
     requesterId?: string
     message?: string
-    // TODO: Add protocol (Verida Connect, Polygon ID, DIDComm, ...)
+    protocols: Protocol[]
   }
   data: AuthorizationRequestMessage // TODO: Make it multiple types
   // TODO: Add expiry when needed

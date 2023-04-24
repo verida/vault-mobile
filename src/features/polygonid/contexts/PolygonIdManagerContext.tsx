@@ -99,6 +99,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
               name: 'Compliant DEX', // TODO: Find a way to get it
               logo: 'https://img.logoipsum.com/247.png',
               details: {
+                protocols: ['polygonid'],
                 timestamp: new Date(),
                 requesterId: requestData.from,
                 message:
@@ -114,6 +115,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
               name: 'GateKeeper',
               logo: 'https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F2089358966-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FcsJ16ZcrlkRarpduMtf3%252Ficon%252Fw82c12VFG0mG431s6uZS%252FTwitter.png%3Falt%3Dmedia%26token%3Da8f08639-fbf6-4542-b1c3-e8b4b9f03422',
               details: {
+                protocols: ['polygonid'],
                 timestamp: new Date(),
                 requesterId: requestData.from,
                 message:
@@ -133,6 +135,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             name: 'GateKeeper',
             logo: 'https://www.gitbook.com/cdn-cgi/image/width=40,dpr=2,height=40,fit=contain,format=auto/https%3A%2F%2F2089358966-files.gitbook.io%2F~%2Ffiles%2Fv0%2Fb%2Fgitbook-x-prod.appspot.com%2Fo%2Fspaces%252FcsJ16ZcrlkRarpduMtf3%252Ficon%252Fw82c12VFG0mG431s6uZS%252FTwitter.png%3Falt%3Dmedia%26token%3Da8f08639-fbf6-4542-b1c3-e8b4b9f03422',
             details: {
+              protocols: ['polygonid'],
               timestamp: new Date(),
               requesterId: offerData.from,
               message: `Your birthday credential is attached to this message.`,

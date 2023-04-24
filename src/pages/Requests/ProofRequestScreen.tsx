@@ -13,6 +13,7 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
+import { Protocol } from 'types'
 
 import BlurCircle from 'assets/blur-circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
@@ -34,7 +35,7 @@ export interface ProofRequestScreenParams {
     requesterId?: string
     message?: string
     url?: string
-    // TODO: Add protocol (Verida Connect, Polygon ID, DIDComm, ...)
+    protocols: Protocol[]
   }
   data: AuthorizationRequestMessage // TODO: Make it multiple types
 }
