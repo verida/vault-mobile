@@ -1,4 +1,4 @@
-import { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
+import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
 import { usePolygonId } from 'features/polygonid'
 import LottieView from 'lottie-react-native'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'

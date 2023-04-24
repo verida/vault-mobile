@@ -1,4 +1,4 @@
-import {
+import type {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
   PROTOCOL_CONSTANTS,
