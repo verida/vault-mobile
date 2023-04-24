@@ -5,7 +5,6 @@ import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-// import IntlPhoneInput from 'react-native-intl-phone-input'
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'

@@ -2,6 +2,7 @@ import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { VeramoProvider } from 'contexts'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
@@ -119,10 +120,12 @@ function App() {
                       <ActionSheetProvider>
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
-                            <GestureHandlerRootView style={{ flex: 1 }}>
-                              <RootNavigator />
-                            </GestureHandlerRootView>
-                            <MetaServerChecks />
+                            <VeramoProvider>
+                              <GestureHandlerRootView style={{ flex: 1 }}>
+                                <RootNavigator />
+                              </GestureHandlerRootView>
+                              <MetaServerChecks />
+                            </VeramoProvider>
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>
                       </ActionSheetProvider>
