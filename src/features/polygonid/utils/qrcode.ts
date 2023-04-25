@@ -1,8 +1,8 @@
 import type {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
-  PROTOCOL_CONSTANTS,
 } from '@0xpolygonid/js-sdk'
+import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
 
 export function parseQrCodeMessage(
   qrCodeMessage: string
@@ -10,11 +10,10 @@ export function parseQrCodeMessage(
   const result = JSON.parse(qrCodeMessage)
 
   switch (result.type) {
-    case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
-      .AUTHORIZATION_REQUEST_MESSAGE_TYPE:
+    case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE:
       // Either a Connection request or a ZK Proof request
       return result as AuthorizationRequestMessage
-    case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE:
+    case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE:
       // Offer to save a new ZK credential
       return result as CredentialsOfferMessage
     default:

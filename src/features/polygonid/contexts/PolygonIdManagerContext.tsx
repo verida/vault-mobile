@@ -2,12 +2,12 @@ import type {
   AuthorizationRequestMessage,
   AuthorizationResponseMessage,
   CredentialsOfferMessage,
-  PROTOCOL_CONSTANTS,
   W3CCredential,
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { EnvironmentType } from '@verida/types'
+import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import {
@@ -89,8 +89,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
       const data = parseQrCodeMessage(qrCodeMessage) // TODO: Handle error
 
       switch (data.type) {
-        case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
-          .AUTHORIZATION_REQUEST_MESSAGE_TYPE:
+        case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE:
           const requestData = data as AuthorizationRequestMessage
           // Either a Connection request or a ZK Proof request
           if (requestData.body?.scope && requestData.body.scope.length) {
@@ -127,8 +126,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             })
           }
           break
-        case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
-          .CREDENTIAL_OFFER_MESSAGE_TYPE:
+        case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE:
           const offerData = data as CredentialsOfferMessage
           // Offer to save a new ZK credential
           navigation.navigate('IncomingDataRequest', {
