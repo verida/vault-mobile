@@ -1,7 +1,8 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { emitter } from 'helpers/emitter'
-import React, { useEffect, useRef } from 'react'
+import { useEmitter } from 'hooks'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
@@ -11,7 +12,6 @@ import MainNavigator from 'navigation/MainNavigator'
 import { RootStackParams } from 'navigation/types'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
-
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
 
 export function navigate(name: unknown, params: unknown) {
@@ -22,30 +22,60 @@ export function navigate(name: unknown, params: unknown) {
 
 function RootNavigator() {
   const { refresh, authenticated, loaded } = useAuth()
+  const [showBackupNavigation, setShowBackupNavigation] = useState(false)
   const mounted = useRef(false)
+
+  const init = useCallback(async () => {
+    try {
+      await AccountManager.getInstance().init()
+      await refresh()
+    } catch (error: any) {
+      // Handle this specific error of non-existent DID
+      if (
+        error.message.match(
+          /Unable to locate requested storage context \(Verida: Vault\) for this DID \(.*\) -- Storage context doesn't exist \(try force create\?\)/
+        )
+      ) {
+        emitter.emit('ACCOUNT_NOT_EXIST', {
+          retry: (forcedInit = true) => {
+            forcedInit && init()
+            setShowBackupNavigation(false)
+          },
+        })
+
+        setShowBackupNavigation(true)
+      }
+    }
+  }, [refresh])
 
   useEffect(() => {
     if (mounted.current) {
       return
     }
     mounted.current = true
-    async function init() {
-      try {
-        await AccountManager.getInstance().init()
-        await refresh()
-      } catch (error: any) {
-        // Handle this specific error of non-existent DID
-        if (
-          error.message.match(
-            /Unable to locate requested storage context \(Verida: Vault\) for this DID \(.*\) -- Storage context doesn't exist \(try force create\?\)/
-          )
-        ) {
-          emitter.emit('ACCOUNT_NOT_EXIST', { retry: init })
-        }
-      }
-    }
     init()
-  }, [refresh])
+  }, [init])
+
+  useEmitter(
+    'APP_RECOVER_FROM_ERROR',
+    async () => {
+      setShowBackupNavigation(false)
+      init()
+    },
+    []
+  )
+
+  if (showBackupNavigation) {
+    const StackBackup = createNativeStackNavigator<any>()
+    return (
+      <StackBackup.Navigator screenOptions={{ headerShown: false }}>
+        <StackBackup.Screen
+          name={'ManageIdentities'}
+          component={AuthNavigator}
+        />
+      </StackBackup.Navigator>
+    )
+  }
 
   if (!loaded) {
     return <LoadingView />

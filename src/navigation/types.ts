@@ -68,7 +68,11 @@ export type MainStackParams = {
   DeleteAccount: undefined
   Identity: undefined
   AddIdentity: { mode?: AddIdentityMode }
-  SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
+  SeedPhraseEntered: {
+    usePrivateKey: boolean
+    previousScreen?: string
+    recoverFromError?: boolean
+  }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined

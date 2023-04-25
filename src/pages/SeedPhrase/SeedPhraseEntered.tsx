@@ -1,9 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
+import { emitter } from 'helpers/emitter'
 import isEmpty from 'lodash/isEmpty'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, TextInput } from 'react-native'
+import { Alert, Keyboard } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
@@ -13,11 +14,8 @@ import Screen from 'components/Screen'
 import { MainStackParams } from 'navigation/types'
 
 import Button from '../../components/Button'
-import ErrorPhrase from '../../components/ErrorPhrase'
-import Label from '../../components/Label'
 import Layout from '../../components/Layouts/Layout'
 import CONFIG from '../../config/environment'
-import InputStyles from '../../styles/inputs'
 import ModifierStyles from '../../styles/modifier'
 
 const cleanSeedPhrase = (phrase: string): string => {
@@ -68,6 +66,7 @@ const SeedPhraseEntered = (
 
   const onContinue = async () => {
     try {
+      Keyboard.dismiss()
       setProcessing(true)
       const cleanedPhrase = cleanSeedPhrase(phrase)
       const isValid = utils.isValidMnemonic(cleanedPhrase)
@@ -80,6 +79,12 @@ const SeedPhraseEntered = (
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
       }
+
+      if (route.params.recoverFromError) {
+        emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
+        return
+      }
+
       if (route?.params?.previousScreen === 'Dashboard') {
         navigation.navigate('Dashboard')
       } else {
