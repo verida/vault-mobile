@@ -14,10 +14,11 @@ import {
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
 import { Protocol } from 'types'
+import { getProtocolLabel, getProtocolLogo } from 'utils'
 
 import BlurCircle from 'assets/blur-circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
-import PolygonIdLogo from 'assets/logos/polygon_id_logo.svg'
+// import PolygonIdLogo from 'assets/logos/polygon_id_logo.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import AppLogo from 'components/AppLogo'
 import Button from 'components/Button'
@@ -38,7 +39,7 @@ export interface ConnectionRequestScreenParams {
     message?: string
     protocols: Protocol[]
   }
-  data: AuthorizationRequestMessage // TODO: Make it multiple types
+  data: AuthorizationRequestMessage // TODO: Make it multiple types for the different protocols
   // TODO: Add expiry when needed
 }
 
@@ -88,7 +89,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
     useEffect(() => {
       navigation.setOptions({
         title: 'Connection Request',
-        // TODO: Get rid of the following when properly handling a common header
+        // TODO: Get rid of the following when properly handling a common header in the navigator
         headerShown: true,
         headerRight: () => (
           // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
@@ -98,6 +99,24 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
         ),
       })
     }, [navigation, handleClose])
+
+    const protocols = details.protocols
+      .map((protocol) => {
+        const protocolLogo = getProtocolLogo(protocol, 16)
+        const protocolLabel = getProtocolLabel(protocol)
+        return (
+          <>
+            {protocolLogo} {protocolLabel}
+          </>
+        )
+      })
+      .reduce((prev, curr) => (
+        <>
+          {prev}
+          {', '}
+          {curr}
+        </>
+      ))
 
     return (
       <>
@@ -114,7 +133,6 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
           <ScrollView
             style={styles.container}
             contentContainerStyle={styles.containerContent}>
-            {/* TODO: Make it a scroll view */}
             {!processing && !error && !success ? (
               <>
                 <AppLogo // TODO: Define the best logo placeholder
@@ -164,7 +182,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
                     <View style={styles.detailsPropertySpacing}>
                       <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
                       <Text style={styles.detailsPropertyValue}>
-                        <PolygonIdLogo width={14} height={14} /> Polygon ID
+                        {protocols}
                       </Text>
                     </View>
                   </View>
