@@ -40,7 +40,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, item, setCopyUrl, ...rest } = props
   const [credUri, setCredUri] = useState('')
   const [loading, setLoading] = useState(false)
-  const [verified, setVerified] = useState(false)
+  const [verified, setVerified] = useState(null)
   const [showFullscreenQr, setShowFullscreenQr] = useState(false)
 
   const {
@@ -122,13 +122,13 @@ function CredentialDataItem(props: CredentialDataItemProps) {
           <LoadingView type={'small'} style={styles.loadingView} />
         )}
       </View> */}
-      {!loading && verified && (
+      {!loading && verified === true && (
         <View style={styles.verifiedContainer}>
           <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />
           <Text style={styles.verifiedText}>Credential is valid</Text>
         </View>
       )}
-      {!loading && !verified && (
+      {!loading && verified === false && (
         <View style={styles.verifiedContainer}>
           <AntDesign name='exclamationcircle' size={20} color={ORANGE_COLOR} />
           <Text style={styles.verifiedText}>Credential is invalid</Text>

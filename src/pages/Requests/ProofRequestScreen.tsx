@@ -18,7 +18,6 @@ import { getProtocolLabel, getProtocolLogo } from 'utils'
 
 import BlurCircle from 'assets/blur-circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
-// import PolygonIdLogo from 'assets/logos/polygon_id_logo.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import AppLogo from 'components/AppLogo'
 import Button from 'components/Button'
@@ -29,11 +28,11 @@ import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 export interface ProofRequestScreenParams {
-  name?: string
+  name: string
   logo?: string
   details: {
     timestamp?: Date // TODO: Consider a string timestamp if issue with non-seriazable data in navigation params
-    requesterId?: string
+    requesterId: string
     message?: string
     url?: string
     protocols: Protocol[]
@@ -46,12 +45,7 @@ type ProofRequestScreenProps = MainStackScreenProps<'ProofRequest'>
 export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps> =
   (props) => {
     const { navigation, route } = props
-    const {
-      name = 'Unknown', // TODO: Define the best placeholder
-      logo,
-      details,
-      data,
-    } = route.params
+    const { name, logo, details, data } = route.params
 
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(false)
@@ -124,10 +118,12 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
             {details.requesterId || ' '}
           </Text>
         </View>
-        <View style={styles.detailsPropertySpacing}>
-          <Text style={styles.detailsPropertyLabel}>{`URL`}</Text>
-          <Text style={styles.detailsPropertyValue}>{details.url || ' '}</Text>
-        </View>
+        {details.url ? (
+          <View style={styles.detailsPropertySpacing}>
+            <Text style={styles.detailsPropertyLabel}>{`URL`}</Text>
+            <Text style={styles.detailsPropertyValue}>{details.url}</Text>
+          </View>
+        ) : null}
         <View style={styles.detailsPropertySpacing}>
           <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
           <Text style={styles.detailsPropertyValue}>{protocols}</Text>
