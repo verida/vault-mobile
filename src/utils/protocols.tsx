@@ -1,9 +1,9 @@
 import React from 'react'
 import { Protocol, ProtocolDefinition } from 'types'
 
-import PolygonIdLogo from 'assets/protocols/polygon_id_protocol_logo.svg'
-import VeridaLogo from 'assets/protocols/verida_network_protocol_logo.svg'
-import WalletConnectLogo from 'assets/protocols/walletconnect_protocol_logo.svg'
+import PolygonIdLogo from 'assets/logos/protocols/polygon_id_protocol_logo.svg'
+import VeridaLogo from 'assets/logos/protocols/verida_protocol_logo.svg'
+import WalletConnectLogo from 'assets/logos/protocols/walletconnect_protocol_logo.svg'
 
 export const protocolDefinitions: Record<Protocol, ProtocolDefinition> = {
   verida: {
@@ -20,9 +20,9 @@ export const protocolDefinitions: Record<Protocol, ProtocolDefinition> = {
     protocol: 'walletconnect',
     label: 'WalletConnect',
     getLogo: (size) => (
+      // The WalletConnect logo from their official brand assets is not a square, so have to adjust the height to keep the ratio
       <WalletConnectLogo width={size} height={(size * 332) / 480} />
     ),
-    // TODO: Get logo for WalletConnect
   },
 }
 
