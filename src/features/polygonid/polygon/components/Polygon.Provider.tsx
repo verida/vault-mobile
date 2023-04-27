@@ -136,7 +136,7 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
-        return ref?.current?.injectJavaScript(injectedJavaScript)
+        return ref.current?.injectJavaScript(injectedJavaScript)
       })
     },
     [ref, generateRandomKey, isReady]
