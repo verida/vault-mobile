@@ -1,4 +1,8 @@
 import {
+  WEBAPP_BUNDLE_DIR,
+  WEBAPP_ROOT_DIR,
+} from 'features/polygonid/constants'
+import {
   useInstallWebView,
   VeridaPolygonIdProvider,
 } from 'features/polygonid/verida'
@@ -10,7 +14,10 @@ export const PolygonIdProvider: React.FunctionComponent = (props) => {
   const { children } = props
 
   // Download the verida polygon scripts to a modifiable directory.
-  const maybeWebViewDir = useInstallWebView()
+  const maybeWebViewDir = useInstallWebView({
+    fromDir: WEBAPP_BUNDLE_DIR,
+    toDir: WEBAPP_ROOT_DIR,
+  })
 
   const maybeDir =
     'result' in maybeWebViewDir ? maybeWebViewDir.result : undefined

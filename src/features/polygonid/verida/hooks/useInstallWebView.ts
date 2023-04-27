@@ -11,7 +11,10 @@ const copyAssetWebFolderToDocument = async (fromDir: string, toDir: string) => {
   const directories = reader.filter((item) => item.isDirectory())
   await Promise.all(
     directories.map(async (directory) => {
-      const targetDirPath = `${toDir}/${directory.path.replace('www/', '')}`
+      const targetDirPath = `${toDir}/${directory.path.replace(
+        `${fromDir}/`,
+        ''
+      )}`
       await RNFS.mkdir(targetDirPath)
     })
   )
@@ -20,7 +23,10 @@ const copyAssetWebFolderToDocument = async (fromDir: string, toDir: string) => {
     reader
       .filter((item) => item.isFile())
       .map(async (file) => {
-        const targetFilePath = `${toDir}/${file.path.replace('www/', '')}`
+        const targetFilePath = `${toDir}/${file.path.replace(
+          `${fromDir}/`,
+          ''
+        )}`
         await RNFS.copyFileAssets(file.path, targetFilePath)
       })
   )
@@ -37,17 +43,14 @@ const loadingState = (): Stateful<string> => ({
 })
 
 export function useInstallWebView({
-  // Static Bundle Directory
-  fromDir = Platform.select({
-    android: 'www',
-    default: `${RNBlobUtil.fs.dirs.MainBundleDir}/www`,
-  }),
-  // Target Directory
-  toDir = `${RNBlobUtil.fs.dirs.DocumentDir}/verida`,
+  fromDir,
+  toDir,
 }: {
-  readonly fromDir?: string
-  readonly toDir?: string
-} = {}): Stateful<string> {
+  /** Location of the webapp in the Application bundle */
+  readonly fromDir: string
+  /** Where the webapp will be installed */
+  readonly toDir: string
+}): Stateful<string> {
   const [state, setState] = React.useState(loadingState)
 
   React.useEffect(() => {
