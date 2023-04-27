@@ -8,8 +8,12 @@ export type EmitterTypes = {
     originalValue?: any
     mode?: string | number
   }
+  ACCOUNT_NOT_EXIST: {
+    retry?: () => void
+  }
   UNLOCK_VERIDA_ONE: undefined
   UPDATE_PROFILE_USERNAME: Record<string, unknown>
+  APP_RECOVER_FROM_ERROR: undefined
 }
 
 const _emitter = new EventEmitter()

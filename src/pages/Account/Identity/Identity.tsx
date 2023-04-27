@@ -29,7 +29,8 @@ export enum AddIdentityMode {
 
 const Identity = () => {
   const navigation = useNavigation()
-  const params = useParams<{ mode?: AddIdentityMode }>()
+  const params =
+    useParams<{ mode?: AddIdentityMode; recoverFromError?: boolean }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
 
