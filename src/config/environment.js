@@ -1,6 +1,7 @@
 import { EnvironmentType } from '@verida/types'
 
-export const ENVIRONMENT = 'testnet'
+// @todo: change this to testnet when we do the release
+export const ENVIRONMENT = 'devnet'
 
 const ENVIRONMENTS = {
   default: {
@@ -30,24 +31,20 @@ const ENVIRONMENTS = {
             'user-agent': 'Verida-Vault',
           },
         },
-        endpointUrl: 'https://meta-tx-server1.tn.verida.tech',
+        // @todo: change this when we do the release
+        //endpointUrl: 'https://meta-tx-server1.tn.verida.tech',
+        endpointUrl: 'https://devnet-meta-tx-server.tn.verida.tech',
       },
       rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
     },
   },
   devnet: {
-    STORAGE_NODES_URI:
-      'https://assets.verida.io/registry/storageNodes/devnet.json',
-    VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
-    DEFAULT_COUNTRY: 'AU',
+    VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
   testnet: {
-    STORAGE_NODES_URI:
-      'https://assets.verida.io/registry/storageNodes/testnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
-    DEFAULT_COUNTRY: 'US',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
