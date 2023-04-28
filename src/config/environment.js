@@ -1,7 +1,28 @@
 import { EnvironmentType } from '@verida/types'
+import Config from 'react-native-config'
 
-// @todo: change this to testnet when we do the release
-export const ENVIRONMENT = 'devnet'
+/**
+ * TODO: Remove this note
+ * Network environment will be set on the .env.type file for each build types
+ *
+ * NETWORK_ENVIRONMENT: production ? testnet: devnet
+ * NETWORK_ENDPOINT_URL: production ? https://meta-tx-server1.tn.verida.tech: https://devnet-meta-tx-server.tn.verida.tech
+ */
+// eslint-disable-next-line no-console
+console.info(
+  'Network config',
+  JSON.stringify(
+    {
+      NETWORK_ENVIRONMENT: Config.NETWORK_ENVIRONMENT,
+      NETWORK_ENDPOINT_URL: Config.NETWORK_ENDPOINT_URL,
+    },
+    null,
+    2
+  )
+)
+//
+
+export const ENVIRONMENT = Config.NETWORK_ENVIRONMENT
 
 const ENVIRONMENTS = {
   default: {
@@ -31,9 +52,7 @@ const ENVIRONMENTS = {
             'user-agent': 'Verida-Vault',
           },
         },
-        // @todo: change this when we do the release
-        //endpointUrl: 'https://meta-tx-server1.tn.verida.tech',
-        endpointUrl: 'https://devnet-meta-tx-server.tn.verida.tech',
+        endpointUrl: Config.NETWORK_ENDPOINT_URL,
       },
       rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
     },

@@ -16,6 +16,10 @@ declare module "react-native-config" {
     SENTRY_ENVIRONMENT: string
     BITRISE_TRIGGERED_WORKFLOW_TITLE: string
     DEPLOY_ENVIRONMENT: string
+
+    // Network
+    NETWORK_ENVIRONMENT: string
+    NETWORK_ENDPOINT_URL: string
   }
   const BuildConfig: Env
   export default BuildConfig
