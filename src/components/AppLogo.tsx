@@ -9,8 +9,10 @@ import {
 const CORRECT_SIZE = 120
 
 export type AppLogoProps = Omit<ImageProps, 'source'> & {
-  url: string | null
+  url: string | null // TODO: Use undefined instead of null, so it can be used in Image directly
 }
+
+// TODO: Change the default logo asset by something more subtle and generic
 
 function AppLogo(props: AppLogoProps) {
   const { url, style } = props
@@ -19,15 +21,16 @@ function AppLogo(props: AppLogoProps) {
   )
 
   useEffect(() => {
-    if (url) {
-      Image.getSize(url, (width, height) => {
-        // TODO: Find a better to handle non-square images
-        // TODO: Revert to this after Polygon ID demo
-        // if (width === height) {
-        setSource({ uri: url })
-        // }
-      })
+    if (!url) {
+      return
     }
+    setSource({ uri: url })
+    // TODO: Find a better to handle non-square images
+    // Image.getSize(url, (width, height) => {
+    //   if (width === height) {
+    //     setSource({ uri: url })
+    //   }
+    // })
   }, [url])
 
   return (

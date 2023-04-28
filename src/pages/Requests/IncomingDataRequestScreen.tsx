@@ -1,6 +1,6 @@
 import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
+import { StatusInfo } from 'components'
 import { usePolygonId } from 'features/polygonid'
-import LottieView from 'lottie-react-native'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -9,16 +9,12 @@ import {
   StyleSheet,
   TouchableOpacity,
   View,
-  ViewProps,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
 import { Protocol } from 'types'
 import { getProtocolLabel, getProtocolLogo } from 'utils'
 
-import BlurCircle from 'assets/blur-circle.svg'
-import FailureCross from 'assets/failure_cross.svg'
-import SuccessTick from 'assets/success_tick.svg'
 import AppLogo from 'components/AppLogo'
 import Button from 'components/Button'
 import { Text } from 'components/Typography/Text'
@@ -29,16 +25,17 @@ import { Theme } from 'styles/types'
 
 // TODO: Make sure the params are generic enough to be used for other types of requests (Verida Connect, WalletConnect, Polygon ID, etc.)
 export interface IncomingDataRequestScreenParams {
-  name: string
+  name: string // TODO: Make it optional and provide a consistent way to representing an unknown requester
   logo?: string
   details: {
-    timestamp?: Date // TODO: Consider a string timestamp if issue with non-seriazable data in navigation params
+    timestamp?: string
     requesterId: string
     message?: string
     url?: string
     protocols: Protocol[]
   }
-  data: CredentialsOfferMessage // TODO: Make it multiple types for the different protocols
+  data: CredentialsOfferMessage
+  // TODO: Make it multiple types for the different protocols
 }
 
 type IncomingDataRequestScreenProps =
@@ -162,7 +159,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
                       style={styles.detailsButton}>
                       <Text style={styles.detailsButtonLabel}>
                         {(details.timestamp
-                          ? details.timestamp
+                          ? new Date(details.timestamp)
                           : new Date()
                         ).toLocaleString()}
                       </Text>
@@ -195,7 +192,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
               </>
             ) : (
               // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
-              <Status
+              <StatusInfo
                 style={styles.statusContainer}
                 statusType={
                   processing ? 'processsing' : success ? 'success' : 'error'
@@ -251,74 +248,6 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
       </>
     )
   }
-
-type StatusProps = {
-  statusType: 'processsing' | 'error' | 'success'
-  title?: string
-  subtitle?: string
-} & ViewProps
-
-// TODO: Make a proper component out of this
-const Status: React.FunctionComponent<StatusProps> = (props) => {
-  const { statusType, title, subtitle, ...rest } = props
-
-  const styles = useThemeAwareStyle(createStyles)
-
-  const statusTitle = title
-    ? title
-    : statusType === 'processsing'
-    ? 'Processing'
-    : statusType === 'success'
-    ? 'Success'
-    : 'Error'
-
-  const statusSubtitle = subtitle
-    ? subtitle
-    : statusType === 'processsing'
-    ? 'Please wait'
-    : statusType === 'success'
-    ? 'Congratulations!'
-    : 'Something went wrong!'
-
-  const icon =
-    statusType === 'processsing' ? (
-      <>
-        <BlurCircle />
-        {/* TODO: The animation doesn't seem to work */}
-        <LottieView
-          source={require('assets/animations/dots-loader.json')}
-          autoPlay
-          loop
-          style={styles.dotsLoader}
-        />
-      </>
-    ) : statusType === 'success' ? (
-      // TODO: Use an icon and apply it on top of the blue blur background instead of a combine icon + background
-      <SuccessTick />
-    ) : (
-      // TODO: Use an icon and apply it on top of the blue blur background instead of a combine icon + background
-      <FailureCross />
-    )
-
-  return (
-    <View {...rest}>
-      <View
-        style={{
-          alignItems: 'center',
-        }}>
-        <View
-          style={{
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          {icon}
-        </View>
-        <Text style={styles.statusTitle}>{statusTitle}</Text>
-        <Text style={styles.statusSubtitle}>{statusSubtitle}</Text>
-      </View>
-    </View>
-  )
-}
 
 // TODO: Use the them when proper typography is available
 const createStyles = (theme: Theme) =>
@@ -422,24 +351,6 @@ const createStyles = (theme: Theme) =>
     },
     statusContainer: {
       marginTop: 104,
-    },
-    statusTitle: {
-      marginTop: theme.spacing.l,
-      fontSize: 28,
-      lineHeight: 36,
-      fontFamily: NUNITO_SANS_BOLD,
-    },
-    statusSubtitle: {
-      marginTop: theme.spacing.m,
-      paddingHorizontal: theme.spacing.l,
-      fontSize: 16,
-      lineHeight: 24,
-      color: theme.color.textLightGrey,
-    },
-    dotsLoader: {
-      width: 48,
-      height: 48,
-      position: 'absolute',
     },
     footer: {
       backgroundColor: theme.color.background,
