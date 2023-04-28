@@ -176,7 +176,6 @@ class AccountManager extends EventEmitter {
       // Use empty endpointUri's as they should already have been specified
       // when the account was created
       const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
-      didClientConfig.didEndpoints = []
 
       const account = new AutoAccount({
         privateKey: mnemonic,
@@ -389,13 +388,6 @@ class AccountManager extends EventEmitter {
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
 
-      // Endpoints to be used in account config
-      const endpointUris = {
-        dbServerUrl: endpoints,
-        messageServerUrl: endpoints,
-        notificationServerUrl: NodeSelector.notificationEndpoints(),
-      }
-
       const node = utils.entropyToMnemonic(utils.randomBytes(16))
       const wallet = ethers.Wallet.fromMnemonic(node)
       const privateKey = wallet.privateKey
@@ -410,18 +402,9 @@ class AccountManager extends EventEmitter {
         },
       }
 
-      const didEndpointUris: string[] = endpointUris.dbServerUrl.reduce(
-        (result: string[], item: string) => {
-          result.push(`${item}did/`)
-          return result
-        },
-        []
-      )
-
       const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
         veridaKey: this.selectedAccount.privateKey,
       })
-      didClientConfig.didEndpoints = didEndpointUris
 
       const { mnemonic } = this.selectedAccount
 

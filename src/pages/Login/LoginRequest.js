@@ -188,7 +188,7 @@ export default (props) => {
     try {
       setStatus('approving')
 
-      const vault = AccountManager.getInstance().getVeridaContext()
+      const vault = await AccountManager.getInstance().getVeridaContext()
       const client = vault.getClient()
       const account = await vault.getAccount()
       const keyring = await account.keyring(info.request.context)
