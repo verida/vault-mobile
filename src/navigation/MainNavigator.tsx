@@ -158,7 +158,12 @@ function MainNavigator() {
         }}
       />
       {/* Modal screens */}
-      <Stack.Group screenOptions={{ presentation: 'modal' }}>
+      <Stack.Group
+        screenOptions={{
+          presentation: 'modal',
+          headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
+          // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
+        }}>
         <Stack.Screen
           name={'ConnectionRequest'}
           component={ConnectionRequestScreen}

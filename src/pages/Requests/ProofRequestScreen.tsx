@@ -80,7 +80,6 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
       navigation.setOptions({
         title: 'Proof Request',
         // TODO: Get rid of the following when properly handling a common header in the navigator
-        headerShown: true,
         headerRight: () => (
           // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
           <ButtonNativeBase transparent onPress={handleClose}>
