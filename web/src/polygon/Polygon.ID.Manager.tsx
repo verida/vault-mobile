@@ -52,10 +52,11 @@ import { AutoAccount } from "@verida/account-node";
 
 const RPC_URL = "https://rpc-mumbai.maticvigil.com";
 const CONTRACT_ADDRESS = "0x134B1BE34911E39A8397ec6289782989729807a4";
+const CREDENTIAL_SCHEMA = 'https://common.schemas.verida.io/credential/base/v0.2.0/schema.json'
 
 export interface PolygonIDManagerConfig {
   // TODO: Find a better way to pass the sensitive information to the manager.
-  polygonIdSeed: string;
+  polygonIdPrivateKey: string;
   veridaPrivateKey: string;
   environment: EnvironmentType;
   contextName: string;
@@ -129,10 +130,49 @@ export class PolygonIDManager {
       encodedData
     );
 
-    await this.credentialWallet!.saveAll(credentials);
-    // TODO: Also, save the credentials in the Vault. (Optimise with a Promise.allSettled to save both in parallel)
+    console.log(credentials)
+
+    // Optimise with a Promise.allSettled to save both in parallel
+    await this.credentialWallet!.saveAll(credentials)
+    await this.saveCredential(credentials)
 
     return credentials;
+  }
+
+  /**
+   * Save a credential to the Verida credential datastore
+   * 
+   * This record will then appear in the `Credential` section of the mobile app
+   * 
+   * @param credential 
+   */
+  private async saveCredential(credential: any): Promise<void> {
+    await this.initVeridaContext()
+    const credentialDatastore = await this.context!.openDatastore(CREDENTIAL_SCHEMA)
+
+    // @todo: Set correct values
+    const credentialName = ''
+    const credentialSummary = ''
+    // @todo: Pull schema URL from the credential object
+    const credentialSchema = ''
+    // @todo: Set as a JSON object of the full credential JSON
+    const credentialData = {}
+
+    const credentialRecord = {
+      credentialName,
+      credentialSummary,
+      credentialSchema,
+      credentialData
+    }
+
+    const saveResult = await credentialDatastore.save(credentialRecord)
+    if (!saveResult) {
+      // Is there a better way to handle a save failure?
+      // It really shouldn't happen unless the network fails
+      // in the short time period between saving the credential
+      // in the polygon ID library and then saving it here
+      console.error(credentialDatastore.errors)
+    }
   }
 
   public async shouldInit() {
@@ -164,7 +204,7 @@ export class PolygonIDManager {
         method: DidMethod.PolygonId,
         blockchain: Blockchain.Polygon,
         networkId: NetworkId.Mumbai,
-        seed: new Uint8Array(Buffer.from(this.config.polygonIdSeed, "utf-8")),
+        seed: new Uint8Array(Buffer.from(this.config.polygonIdPrivateKey.substring(2), "utf-8")),
         rhsUrl: "https://rhs-staging.polygonid.me/", // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
       }
     );
