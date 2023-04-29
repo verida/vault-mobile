@@ -1,9 +1,11 @@
 import { Platform } from 'react-native'
 import RNBlobUtil from 'react-native-blob-util'
 
+const WEBAPP_DIR = 'www'
+
 export const WEBAPP_BUNDLE_DIR = Platform.select({
-  android: 'www',
-  default: `${RNBlobUtil.fs.dirs.MainBundleDir}/www`,
+  android: WEBAPP_DIR,
+  default: `${RNBlobUtil.fs.dirs.MainBundleDir}/${WEBAPP_DIR}`,
 })
 
 export const WEBAPP_ROOT_DIR = `${RNBlobUtil.fs.dirs.DocumentDir}/verida`
