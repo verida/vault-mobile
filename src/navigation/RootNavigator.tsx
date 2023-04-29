@@ -1,5 +1,6 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { DIDClient } from '@verida/did-client'
 import { emitter } from 'helpers/emitter'
 import { useEmitter } from 'hooks'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
@@ -10,6 +11,8 @@ import { useAuth } from 'hooks/useAuth'
 import AuthNavigator from 'navigation/AuthNavigator'
 import MainNavigator from 'navigation/MainNavigator'
 import { RootStackParams } from 'navigation/types'
+
+import CONFIG from '../config/environment'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
@@ -36,6 +39,21 @@ function RootNavigator() {
           /Unable to locate requested storage context \(Verida: Vault\) for this DID \(.*\) -- Storage context doesn't exist \(try force create\?\)/
         )
       ) {
+        const selectedAccount =
+          AccountManager.getInstance().getSelectedAccount()
+
+        // try to fetch the DID
+        const did = selectedAccount!.did
+        const didClient = new DIDClient({
+          network: CONFIG.VERIDA_ENVIRONMENT,
+        })
+
+        try {
+          await didClient.get(did)
+        } catch (err) {
+          // error message will be a blockchain error if the DID doesn't exist
+        }
+
         emitter.emit('ACCOUNT_NOT_EXIST', {
           retry: (forcedInit = true) => {
             forcedInit && init()
