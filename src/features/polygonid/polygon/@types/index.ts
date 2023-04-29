@@ -7,7 +7,7 @@ import type {
 import type { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
 
 export interface PolygonIdManagerConfig {
-  readonly polygonIdSeed: string
+  readonly polygonIdPrivateKey: string
   readonly veridaPrivateKey: string
   readonly environment: EnvironmentType
   readonly contextName: string

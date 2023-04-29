@@ -6,10 +6,12 @@ import type {
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import { EnvironmentType } from '@verida/types'
 import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
 import React, { createContext, useCallback, useMemo } from 'react'
 
+import AccountManager from 'api/AccountManager'
+
+import CONFIG from '../../../config/environment'
 import {
   PolygonIdManagerConfig,
   useCreatePolygonIdManager,
@@ -44,13 +46,17 @@ type PolygonIdContextType = {
 export const PolygonIdManagerContext =
   createContext<PolygonIdContextType | null>(null)
 
+const accountManager = AccountManager.getInstance()
+const account = accountManager.getSelectedAccount()
+
 // TODO: Define the config based on the current selected Account
 // TODO: Find a better way to pass the sensitive information to the manager.
 const config: PolygonIdManagerConfig = {
-  polygonIdSeed: 'daveseedseedseedseedseedseeduser',
-  veridaPrivateKey:
-    'sphere divide black dove never shoot world issue brand achieve income raw',
-  environment: EnvironmentType.TESTNET,
+  // PolygonID Private Key is a 32 char hex
+  // Make it the same as the Verida identity so there is a 1:1 relationship
+  polygonIdPrivateKey: account!.privateKey,
+  veridaPrivateKey: account!.privateKey,
+  environment: CONFIG.VERIDA_ENVIRONMENT,
   contextName: 'Verida: Vault',
   didClientConfig: {
     callType: 'gasless',
