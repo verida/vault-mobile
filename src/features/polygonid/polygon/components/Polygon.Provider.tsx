@@ -27,6 +27,12 @@ const defaultGenerateRandomKey: RandomKeyGenerator = () => String(Math.random())
 
 const originWhitelist = ['*']
 
+type WebappLogMessage = {
+  type: 'log'
+  content: unknown
+  level: 'info' | 'warn' | 'error' | 'debug'
+}
+
 export const PolygonProvider = ({
   generateRandomKey = defaultGenerateRandomKey, // TODO: use nanoid(), uuid(), etc.,
   onError = console.error,
@@ -59,10 +65,16 @@ export const PolygonProvider = ({
       try {
         const result = JSON.parse(maybeResult)
 
-        if (!result || typeof result !== 'object')
+        if (!result || typeof result !== 'object') {
           throw new Error(
             `Expected object result, encountered ${typeof result}.`
           )
+        }
+
+        if ('type' in result && result.type === 'log') {
+          logWebappMessage(result as WebappLogMessage)
+          return
+        }
 
         const maybePolygonResult = result as PolygonWebViewCallbackProps
 
@@ -242,3 +254,20 @@ const styles = StyleSheet.create({
     opacity: 0,
   },
 })
+
+function logWebappMessage(message: WebappLogMessage) {
+  switch (message.level) {
+    case 'info':
+      console.info('Webapp message:', message.content)
+      break
+    case 'warn':
+      console.warn('Webapp message:', message.content)
+      break
+    case 'error':
+      console.error('Webapp message:', message.content)
+      break
+    case 'debug':
+      console.debug('Webapp message:', message.content)
+      break
+  }
+}
