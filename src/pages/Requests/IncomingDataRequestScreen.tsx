@@ -50,7 +50,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
     const [error, setError] = useState(false)
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
-    const { handleAcceptCredentialOffer } = usePolygonId()
+    const { handleAcceptCredentialsOffer } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 
@@ -63,7 +63,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
       // TODO: Handle different actions depending on the type of request
 
       // Doesn't need a try/catch as handle in the function itself
-      const { result } = await handleAcceptCredentialOffer(data)
+      const { result } = await handleAcceptCredentialsOffer(data)
       if (result) {
         setSuccess(true)
       } else {
@@ -71,7 +71,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
       }
       setProcessing(false)
       // TODO: Hanle the case where the user closes the screen before the request is processed
-    }, [handleAcceptCredentialOffer, data])
+    }, [handleAcceptCredentialsOffer, data])
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)
