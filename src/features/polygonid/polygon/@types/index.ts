@@ -20,13 +20,13 @@ export type PolygonCreateIdManager = (
   config: PolygonIdManagerConfig
 ) => Promise<string>
 
-export type PolygonHandleCredentialOfferArgs = {
+export type PolygonHandleCredentialsOfferArgs = {
   readonly managerId: string
   readonly data: CredentialsOfferMessage
 }
 
-export type PolygonHandleCredentialOffer = (
-  args: PolygonHandleCredentialOfferArgs
+export type PolygonHandleCredentialsOffer = (
+  args: PolygonHandleCredentialsOfferArgs
 ) => Promise<W3CCredential[]>
 
 export type PolygonHandleAuthorizationRequestArgs = {
@@ -48,7 +48,7 @@ export type PolygonContextValue = {
   readonly generateRandomKey: RandomKeyGenerator
   readonly createIdManager: PolygonCreateIdManager
   readonly handleAuthorizationRequest: PolygonHandleAuthorizationRequest
-  readonly handleCredentialOffer: PolygonHandleCredentialOffer
+  readonly handleCredentialsOffer: PolygonHandleCredentialsOffer
 }
 
 export type PolygonWebViewCallbackProps = {

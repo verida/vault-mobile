@@ -9,14 +9,7 @@ import * as Sentry from '@sentry/react-native'
 import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
 import React, { createContext, useCallback, useMemo } from 'react'
 
-import AccountManager from 'api/AccountManager'
-
-import CONFIG from '../../../config/environment'
-import {
-  PolygonIdManagerConfig,
-  useCreatePolygonIdManager,
-  usePolygonContext,
-} from '../polygon'
+import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
 import { parseQrCodeMessage } from '../utils'
 
 type PolygonIdContextType = {
@@ -37,7 +30,7 @@ type PolygonIdContextType = {
     }
     error?: Error
   }>
-  handleAcceptCredentialOffer: (data: CredentialsOfferMessage) => Promise<{
+  handleAcceptCredentialsOffer: (data: CredentialsOfferMessage) => Promise<{
     result?: W3CCredential[]
     error?: Error
   }>
@@ -46,47 +39,14 @@ type PolygonIdContextType = {
 export const PolygonIdManagerContext =
   createContext<PolygonIdContextType | null>(null)
 
-const accountManager = AccountManager.getInstance()
-const account = accountManager.getSelectedAccount()
-
-// TODO: Define the config based on the current selected Account
-// TODO: Find a better way to pass the sensitive information to the manager.
-const config: PolygonIdManagerConfig = {
-  // PolygonID Private Key is a 32 char hex
-  // Make it the same as the Verida identity so there is a 1:1 relationship
-  polygonIdPrivateKey: account!.privateKey,
-  veridaPrivateKey: account!.privateKey,
-  environment: CONFIG.VERIDA_ENVIRONMENT,
-  contextName: 'Verida: Vault',
-  didClientConfig: {
-    callType: 'gasless',
-    web3Config: {
-      rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
-      serverConfig: {
-        headers: {
-          'context-name': 'Verida: Vault',
-        },
-      },
-      postConfig: {
-        headers: {
-          'user-agent': 'Verida-Vault',
-        },
-      },
-      endpointUrl: 'https://meta-tx-server1.tn.verida.tech',
-    },
-    rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
-    didEndpoints: [],
-  },
-}
-
 export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const { children } = props
 
   const navigation = useNavigation()
 
-  const { handleAuthorizationRequest, handleCredentialOffer } =
+  const { handleAuthorizationRequest, handleCredentialsOffer } =
     usePolygonContext()
-  const state = useCreatePolygonIdManager(config)
+  const state = useCreatePolygonIdManager()
   const maybeManagerId = 'result' in state ? state.result : undefined
 
   const handleQRCodeMessage = useCallback(
@@ -199,10 +159,10 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
     [maybeManagerId, handleAuthorizationRequest]
   )
 
-  const handleAcceptCredentialOffer = useCallback(
+  const handleAcceptCredentialsOffer = useCallback(
     async (data: CredentialsOfferMessage) => {
       try {
-        const result = await handleCredentialOffer({
+        const result = await handleCredentialsOffer({
           data,
           managerId: maybeManagerId!,
         })
@@ -217,7 +177,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         }
       }
     },
-    [maybeManagerId, handleCredentialOffer]
+    [maybeManagerId, handleCredentialsOffer]
   )
 
   const contextValue: PolygonIdContextType = useMemo(
@@ -225,13 +185,13 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,
-      handleAcceptCredentialOffer,
+      handleAcceptCredentialsOffer,
     }),
     [
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,
-      handleAcceptCredentialOffer,
+      handleAcceptCredentialsOffer,
     ]
   )
 

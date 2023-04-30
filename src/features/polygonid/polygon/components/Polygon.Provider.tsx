@@ -15,7 +15,7 @@ import {
   PolygonContextValue,
   PolygonCreateIdManager,
   PolygonHandleAuthorizationRequest,
-  PolygonHandleCredentialOffer,
+  PolygonHandleCredentialsOffer,
   PolygonIdManagerConfig,
   PolygonPromiseCallbacks,
   PolygonWebViewCallbackProps,
@@ -190,17 +190,18 @@ export const PolygonProvider = ({
       [invokeJs]
     )
 
-  const handleCredentialOffer: PolygonHandleCredentialOffer = React.useCallback(
-    async ({ managerId, data }) => {
-      const result = await invokeJs({
-        js: `window.__HANDLE_CREDENTIAL_OFFER__({managerId: ${JSON.stringify(
-          managerId
-        )}, data: ${JSON.stringify(data)}})`,
-      })
-      return result as W3CCredential[]
-    },
-    [invokeJs]
-  )
+  const handleCredentialsOffer: PolygonHandleCredentialsOffer =
+    React.useCallback(
+      async ({ managerId, data }) => {
+        const result = await invokeJs({
+          js: `window.__HANDLE_CREDENTIALS_OFFER__({managerId: ${JSON.stringify(
+            managerId
+          )}, data: ${JSON.stringify(data)}})`,
+        })
+        return result as W3CCredential[]
+      },
+      [invokeJs]
+    )
 
   const source = React.useMemo(() => ({ uri }), [uri])
 
@@ -229,14 +230,14 @@ export const PolygonProvider = ({
             generateRandomKey,
             createIdManager,
             handleAuthorizationRequest,
-            handleCredentialOffer,
+            handleCredentialsOffer,
           }),
           [
             loading,
             generateRandomKey,
             createIdManager,
             handleAuthorizationRequest,
-            handleCredentialOffer,
+            handleCredentialsOffer,
           ]
         )}>
         {children}
