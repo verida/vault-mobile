@@ -49,10 +49,12 @@ import {
 import Axios from "axios";
 import { Network, Context } from "@verida/client-ts";
 import { AutoAccount } from "@verida/account-node";
+import { logger } from "./utils";
 
 const RPC_URL = "https://rpc-mumbai.maticvigil.com";
 const CONTRACT_ADDRESS = "0x134B1BE34911E39A8397ec6289782989729807a4";
-const CREDENTIAL_SCHEMA = 'https://common.schemas.verida.io/credential/base/v0.2.0/schema.json'
+const CREDENTIAL_SCHEMA =
+  "https://common.schemas.verida.io/credential/base/v0.2.0/schema.json";
 
 export interface PolygonIDManagerConfig {
   // TODO: Find a better way to pass the sensitive information to the manager.
@@ -83,9 +85,13 @@ export class PolygonIDManager {
   }
 
   public async handleAuthorizationRequest(data: AuthorizationRequestMessage) {
+    logger.debug("Receive an authorization request");
+
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
     // TODO: Check the instance properties 'this.packageMgr', 'this.proofService', 'this.did' and 'this.credentialWallet' before using them, then remove the '!' from the code. '!' is a workaround for the compiler but not at runtime. If these properties are not set, throw an error saying we should init the manager first.
+
+    logger.debug("Handling the authorization request with Polygon ID SDK");
 
     const authHandler = new AuthHandler(
       this.packageMgr!,
@@ -97,6 +103,7 @@ export class PolygonIDManager {
       encodedData
     );
 
+    logger.debug("Calling authorization request callback");
     try {
       // TODO: Add a type to the axios response
       const response = await Axios.post(
@@ -106,12 +113,17 @@ export class PolygonIDManager {
       );
       // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
 
+      logger.debug("Authorization request callback called successfully");
+
       return {
         callbackResponse: response.data,
         authResponse: result.authResponse,
       };
-    } catch (_error: unknown) {
+    } catch (error: unknown) {
       // TODO: Remove this after the demo. Or throw a specific error saying there was an error calling the callback (contacting the original application)
+      logger.error("Error calling authorization request callback");
+      logger.error(error);
+
       return {
         callbackResponse: null,
         authResponse: result.authResponse,
@@ -119,10 +131,14 @@ export class PolygonIDManager {
     }
   }
 
-  public async handleCredentialOffer(data: CredentialsOfferMessage) {
+  public async handleCredentialsOffer(data: CredentialsOfferMessage) {
+    logger.debug("Receive a credentials offer");
+
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
     // TODO: Check the instance properties 'this.packageMgr', 'this.did' and 'this.credentialWallet' before using them, then remove the '!' from the code. '!' is a workaround for the compiler but not at runtime. If these properties are not set, throw an error saying we should init the manager first.
+
+    logger.debug("Handling the credentials offer with Polygon ID SDK");
 
     const fetchHandler = new FetchHandler(this.packageMgr!);
     const credentials = await fetchHandler.handleCredentialOffer(
@@ -130,72 +146,79 @@ export class PolygonIDManager {
       encodedData
     );
 
-    console.log(credentials)
+    logger.debug("Saving the credentials in the Polygon ID credential wallet");
+    await this.credentialWallet!.saveAll(credentials);
 
-    // Optimise with a Promise.allSettled to save both in parallel
-    await this.credentialWallet!.saveAll(credentials)
-    await this.saveCredential(credentials)
+    logger.debug("Saving the credentials in the Verida Vault of the account");
+    await this.saveCredentials(credentials);
+
+    // TODO: Optimise with a Promise.allSettled to save both in parallel
 
     return credentials;
   }
 
   /**
-   * Save a credential to the Verida credential datastore
-   * 
+   * Save a credential to the Verida credential datastore.
    * This record will then appear in the `Credential` section of the mobile app
-   * 
-   * @param credential 
+   *
+   * @param credentials
    */
-  private async saveCredential(credential: any): Promise<void> {
-    await this.initVeridaContext()
-    const credentialDatastore = await this.context!.openDatastore(CREDENTIAL_SCHEMA)
+  private async saveCredentials(credentials: W3CCredential[]): Promise<void> {
+    logger.log(
+      "Saving credentials to the account's Vault credentials datastore"
+    );
+    const credentialDatastore = await this.context!.openDatastore(
+      CREDENTIAL_SCHEMA
+    );
 
-    // @todo: Set correct values
-    const credentialName = ''
-    const credentialSummary = ''
-    // @todo: Pull schema URL from the credential object
-    const credentialSchema = ''
-    // @todo: Set as a JSON object of the full credential JSON
-    const credentialData = {}
+    const results = await Promise.allSettled(
+      credentials.map(async (credential) => {
+        const name =
+          credential.credentialSubject.type || "Polygon ID credential"; // TODO: Define a better fallback name
+        const credentialSchema = credential.credentialSchema.id;
+        const credentialData = credential.credentialSubject;
 
-    const credentialRecord = {
-      credentialName,
-      credentialSummary,
-      credentialSchema,
-      credentialData
-    }
+        const credentialRecord = {
+          name,
+          // summary: "", TODO: Get a summary somewhere
+          schema: CREDENTIAL_SCHEMA,
+          credentialSchema,
+          credentialData,
+        };
 
-    const saveResult = await credentialDatastore.save(credentialRecord)
-    if (!saveResult) {
-      // Is there a better way to handle a save failure?
-      // It really shouldn't happen unless the network fails
-      // in the short time period between saving the credential
-      // in the polygon ID library and then saving it here
-      console.error(credentialDatastore.errors)
-    }
+        return await credentialDatastore.save(credentialRecord);
+      })
+    );
+
+    results.forEach((result) => {
+      if (result.status === "rejected") {
+        logger.log(result.reason);
+      } else if (!result.value) {
+        // Is there a better way to handle a save failure?
+        // It really shouldn't happen unless the network fails
+        // in the short time period between saving the credential
+        // in the polygon ID library and then saving it here
+        logger.error(credentialDatastore.errors);
+      }
+    });
   }
 
   public async shouldInit() {
-    console.log("shouldInit()");
     if (this.did) {
       return;
     }
 
     await this.initVeridaContext();
-    console.log("initVeridaContext()");
 
     //this.emit("initializing", true);
     this.dataStorage = await this.initDataStorage();
-    console.log("initDataStorage()");
 
     this.credentialWallet = this.initCredentialWallet(this.dataStorage);
-    console.log("initCredentialWallet()");
 
     this.identityWallet = await this.initIdentityWallet(
       this.dataStorage,
       this.credentialWallet
     );
-    console.log("initIdentityWallet()");
 
     // TODO: Check if the hostUrl and the rhsUrl are constants or if they should be configurable.
     const { did } = await this.identityWallet.createIdentity(
@@ -204,12 +227,12 @@ export class PolygonIDManager {
         method: DidMethod.PolygonId,
         blockchain: Blockchain.Polygon,
         networkId: NetworkId.Mumbai,
-        seed: new Uint8Array(Buffer.from(this.config.polygonIdPrivateKey.substring(2), "utf-8")),
+        seed: new Uint8Array(
+          Buffer.from(this.config.polygonIdPrivateKey, "utf-8")
+        ),
         rhsUrl: "https://rhs-staging.polygonid.me/", // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
       }
     );
-
-    console.log("createIdentity()");
 
     this.did = did;
 
@@ -217,14 +240,10 @@ export class PolygonIDManager {
       new InMemoryDataSource<CircuitData>()
     );
 
-    console.log("CircuitStorage()");
-
     const conf = defaultEthConnectionConfig;
     conf.url = RPC_URL;
     conf.contractAddress = CONTRACT_ADDRESS;
     const ethStorage = new EthStateStorage(conf);
-
-    console.log("EthStateStorage()");
 
     this.proofService = new ProofService(
       this.identityWallet,
@@ -233,29 +252,21 @@ export class PolygonIDManager {
       ethStorage
     );
 
-    console.log("ProofService()");
-
     await circuitStorage.saveCircuitData(
       CircuitId.AuthV2,
       await this.initCircuitStorage(CircuitId.AuthV2)
     );
-
-    console.log("saveCircuitData()");
 
     await circuitStorage.saveCircuitData(
       CircuitId.AtomicQuerySigV2,
       await this.initCircuitStorage(CircuitId.AtomicQuerySigV2)
     );
 
-    console.log("saveCircuitData()");
-
     this.packageMgr = await this.getPackageMgr(
       await circuitStorage.loadCircuitData(CircuitId.AuthV2),
       this.proofService.generateAuthV2Inputs.bind(this.proofService),
       this.proofService.verifyState.bind(this.proofService)
     );
-
-    console.log("getPackageMgr()");
   }
 
   private static async fetchAndDecodeBase64EncodedFile(url: string) {
@@ -421,14 +432,6 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
 
   /** saves in the memory */
   public async save(key: string, value: Type, keyName = "id"): Promise<void> {
-    console.log(
-      "VeridaDataSource.save: ",
-      key,
-      keyName,
-      value,
-      // @ts-ignore
-      this.database.databaseName
-    );
     let record: any = {};
     try {
       record = await this.database.get(key);
@@ -448,13 +451,6 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
 
   /** gets value from from the memory */
   public async get(key: string, keyName = "id"): Promise<Type | undefined> {
-    console.log(
-      "VeridaDataSource.get(): ",
-      key,
-      keyName,
-      // @ts-ignore
-      this.database.databaseName
-    );
     const result = (await this.database.get(key)) as Type;
     // @ts-ignore
     return result.data;
@@ -462,14 +458,12 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
 
   /** loads from value from the memory */
   public async load(): Promise<Type[]> {
-    //console.log('load()', this.database.databaseName)
     const data = (await this.database.getMany(
       {},
       {
         limit: 1000,
       }
     )) as Type[];
-    //console.log(`returning ${data.length} items`)
 
     // @ts-ignore
     return data.map((item) => item.data);
@@ -477,7 +471,6 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
 
   /** deletes from value from the memory */
   public async delete(key: string, keyName = "id"): Promise<void> {
-    console.log("VeridaDataSource.delete(): ", key, keyName);
     const record: any = await this.database.get(key);
     await this.database.delete(record);
   }
@@ -515,24 +508,17 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
     };
 
     try {
-      console.log(record);
-      console.log(args.key, args.alias);
       const existingRecord = await this.database.get(args.alias);
-      console.log("found existing key store entry");
-      console.log(existingRecord);
       // @ts-ignore
       record._rev = existingRecord._rev;
     } catch (err: any) {
-      console.log("!!!! keystore error");
-      console.log(err.message);
       // not found, which is fine
     }
 
     try {
       await this.database.save(record);
     } catch (err) {
-      console.log("!!!!!!! import error");
-      console.log(err);
+      logger.error(err);
     }
   }
   /**
@@ -551,7 +537,7 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
 
       return result.value;
     } catch (err) {
-      console.log(err);
+      logger.log(err);
       throw new Error("no key under given alias");
     }
   }
