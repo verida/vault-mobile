@@ -23,7 +23,7 @@ function OutOfService() {
       <Texture width={425} height={428} />
       <View style={style.positionAbsolute}>
         <View>
-          <Logo width={139} height={51} />
+          <Logo width={156} height={52} />
           <Text style={style.title}>{title}</Text>
           <Text style={style.subTitle}>{shutDownTitle}</Text>
         </View>
