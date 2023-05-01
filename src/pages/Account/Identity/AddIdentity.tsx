@@ -206,13 +206,19 @@ const AddIdentity = () => {
   const onNext = useCallback(() => {
     // Keyboard.dismiss()
     setTimeout(() => {
-      if (currentPage < numberOfPages - 1) {
+      if (currentPage < numberOfPages - 2) {
         pagerRef.current?.setPage(currentPage + 1)
         setCurrentPage(currentPage + 1)
-        if (currentPage === PageType.Confirmation - 1) {
-          // navigate to last page and create identifier
+      } else if (currentPage === PageType.Confirmation - 1) {
+        // navigate to last page and create identifier
+        pagerRef.current?.setPage(PageType.Confirmation)
+        setCurrentPage(PageType.Confirmation)
+        setProcessing(true)
+        setShowRetry(false)
+
+        requestAnimationFrame(() => {
           createIdentifier()
-        }
+        })
       }
     }, 0)
   }, [createIdentifier, currentPage])
