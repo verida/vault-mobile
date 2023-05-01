@@ -2,7 +2,6 @@ import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { COUNTRIES } from 'helpers/country-list'
-import { emitter } from 'helpers/emitter'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import { Icon } from 'native-base'
@@ -79,8 +78,7 @@ enum PageType {
 
 const AddIdentity = () => {
   const navigation = useNavigation()
-  const params =
-    useParams<{ mode?: AddIdentityMode; recoverFromError?: boolean }>()
+  const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const { top } = useSafeAreaInsets()
@@ -352,11 +350,6 @@ const AddIdentity = () => {
               <Button
                 style={styles.button}
                 onPress={() => {
-                  if (params.recoverFromError) {
-                    emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
-                    return
-                  }
-
                   params.mode === AddIdentityMode.Add
                     ? navigation.goBack()
                     : navigation.navigate('CreatePin') // Create a pin for the first time create an account
