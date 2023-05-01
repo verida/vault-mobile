@@ -1,4 +1,5 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
+import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { emitter } from 'helpers/emitter'
@@ -51,17 +52,22 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
 
   async function onLogoutAccounts(dids: string[]) {
-    dismissModal()
-    // Only flush Redux store if the current account is logged out
-    if (
-      dids.includes(
-        AccountManager.getInstance().getSelectedAccount()?.did ?? ''
-      )
-    ) {
-      dispatch(logoutAction())
+    try {
+      dismissModal()
+      // Only flush Redux store if the current account is logged out
+      if (
+        dids.includes(
+          AccountManager.getInstance().getSelectedAccount()?.did ?? ''
+        )
+      ) {
+        dispatch(logoutAction())
+      }
+      await AccountManager.getInstance().logout(dids)
+    } catch (error) {
+      Sentry.captureException(error)
+    } finally {
+      emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
     }
-    await AccountManager.getInstance().logout(dids)
-    emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
   }
 
   useEffect(() => {
