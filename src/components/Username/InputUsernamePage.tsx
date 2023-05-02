@@ -154,7 +154,6 @@ const InputUsernamePage = React.forwardRef(
               autoCorrect={false}
               autoComplete='off'
               autoCapitalize='none'
-              keyboardType='email-address'
               returnKeyType='done'
               withAnimatedChecbox
               checkboxEmptyState={checkboxEmpty}

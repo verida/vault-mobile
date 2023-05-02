@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { StyleSheet } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
@@ -24,6 +24,10 @@ const ClaimUsername = () => {
   const pagerRef = useRef<PagerView>(null)
   const inputUsernamePageRef = useRef<InputUsernamePageRefProps>(null)
   const claimUsernamePageRef = useRef<ClaimUsernamePageRefProps>(null)
+
+  useEffect(() => {
+    inputUsernamePageRef.current?.focusInput()
+  }, [])
 
   return (
     <Screen

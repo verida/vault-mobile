@@ -204,23 +204,19 @@ const AddIdentity = () => {
   }
 
   const onNext = useCallback(() => {
-    // Keyboard.dismiss()
-    setTimeout(() => {
-      if (currentPage < numberOfPages - 2) {
-        pagerRef.current?.setPage(currentPage + 1)
-        setCurrentPage(currentPage + 1)
-      } else if (currentPage === PageType.Confirmation - 1) {
-        // navigate to last page and create identifier
-        pagerRef.current?.setPage(PageType.Confirmation)
-        setCurrentPage(PageType.Confirmation)
-        setProcessing(true)
-        setShowRetry(false)
+    if (currentPage < numberOfPages - 2) {
+      pagerRef.current?.setPage(currentPage + 1)
+      setCurrentPage(currentPage + 1)
+    } else if (currentPage === PageType.Confirmation - 1) {
+      // navigate to last page and create identifier
+      pagerRef.current?.setPage(PageType.Confirmation)
+      setCurrentPage(PageType.Confirmation)
+      setProcessing(true)
 
-        requestAnimationFrame(() => {
-          createIdentifier()
-        })
-      }
-    }, 0)
+      setTimeout(() => {
+        createIdentifier()
+      }, 0)
+    }
   }, [createIdentifier, currentPage])
 
   const onBack = useCallback(() => {
