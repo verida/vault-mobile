@@ -160,7 +160,7 @@ const InputUsernamePage = React.forwardRef(
               loading={checkingUsername}
               checked={availableUsername}
               errorMessage={usernameError}
-              maxLength={MAX_INPUT_LENGTH}
+              maxLength={MAX_INPUT_LENGTH + VERIDA_NAME_SUFFIX_LENGTH}
               onFocus={() => {
                 ensureSelectionPosition(undefined)
               }}
