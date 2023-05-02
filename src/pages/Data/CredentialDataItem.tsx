@@ -40,7 +40,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
   const { data, item, setCopyUrl, ...rest } = props
   const [credUri, setCredUri] = useState('')
   const [loading, setLoading] = useState(false)
-  const [verified, setVerified] = useState(null)
+  const [verified, setVerified] = useState<boolean | null>(null)
   const [showFullscreenQr, setShowFullscreenQr] = useState(false)
 
   const {
@@ -112,8 +112,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         <Image source={avatarSource} style={styles.logo} />
         <Text style={styles.issuerName}>{issuerName}</Text>
       </View>
-      {/* TODO: To revert to this after Polygon ID demo */}
-      {/* <View style={styles.qrContainer}>
+      <View style={styles.qrContainer}>
         {!isEmpty(credUri) ? (
           <TouchableOpacity onPress={toggleFullscreenQr}>
             {renderQRCode()}
@@ -121,7 +120,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         ) : (
           <LoadingView type={'small'} style={styles.loadingView} />
         )}
-      </View> */}
+      </View>
       {!loading && verified === true && (
         <View style={styles.verifiedContainer}>
           <AntDesign name='checkcircleo' size={20} color={SUCCESS_COLOR} />

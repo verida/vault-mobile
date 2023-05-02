@@ -8,26 +8,34 @@ export const useCredential = () => {
 
   const verifyCredential = useCallback(
     async (credential: W3CVerifiableCredential) => {
-      const verifiedResult = await agent.verifyCredential({
+      const verifiedCredential = await agent.verifyCredential({
         credential,
       })
       // TODO: Do validation of the data before as the agent is not doing it
 
       // TODO: Get a stronger type for the data
-      const payload = verifiedResult.payload
+      const payload = verifiedCredential.payload
       const subject = payload.sub as string | undefined
       const data = payload.vc.credentialSubject
       const schemaUri = payload.vc.credentialSchema.id as string | undefined
       const issuer = payload.iss as string | undefined
       const contextName = payload.vc.veridaContextName as string | undefined
+      // TODO: Check if relevant as not standard and not provided on credential not created by Verida
 
       return {
-        verifiedResult,
+        /** The whole credential */
+        verifiedCredential,
+        /**  */
         payload,
+        /** The Subject DID */
         subject,
+        /** The data from credentialSubject */
         data,
+        /** The schema URI from credentialSchema */
         schemaUri,
+        /** The issuer DID */
         issuer,
+        /** The verida context that created the credential */
         contextName,
       }
     },

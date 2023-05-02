@@ -33,18 +33,16 @@ const DataItem = (props) => {
         setLoading(true)
         let _data
         if (isCredential) {
+          // If the didJwtVc is present, uses it to verify, otherwise use the whole credential
           const {
             contextName,
             data: credentialData,
             issuer,
             schemaUri,
           } = await verifyCredential(item.didJwtVc || item.credentialData)
-          // TODO: Consider passing the whole credential (credentialData) instead of the didJwtVc
 
           const credentialDetail = await folder.getDetail(
-            // credentialData,
-            // TODO: Revert to this after Polygon ID demo
-            item.credentialData.credentialSubject,
+            credentialData,
             schemaUri
           )
 
