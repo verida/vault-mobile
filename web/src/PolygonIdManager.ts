@@ -176,14 +176,13 @@ export class PolygonIDManager {
         const name =
           credential.credentialSubject.type || "Polygon ID credential"; // TODO: Define a better fallback name
         const credentialSchema = credential.credentialSchema.id;
-        const credentialData = credential.credentialSubject;
 
         const credentialRecord = {
           name,
           // summary: "", TODO: Get a summary somewhere
           schema: CREDENTIAL_SCHEMA,
           credentialSchema,
-          credentialData,
+          credentialData: credential,
         };
 
         return await credentialDatastore.save(credentialRecord);
