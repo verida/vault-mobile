@@ -50,14 +50,16 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
           }}>
           <View
             style={{
+              width: '100%',
               flexDirection: 'row',
               alignItems: 'center',
-              marginHorizontal: 28,
+              paddingHorizontal: 28,
             }}>
             <SubHeadline
               numberOfLines={1}
               ellipsizeMode='tail'
               style={{
+                flex: 1,
                 color: theme.color.onPrimary,
                 marginRight: theme.spacing.xs,
               }}>{`verida.one/${username || did}`}</SubHeadline>
