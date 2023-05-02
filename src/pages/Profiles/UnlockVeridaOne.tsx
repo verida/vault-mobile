@@ -102,6 +102,8 @@ const UnlockVeridaOne = () => {
     fetchUsername()
   }, [])
 
+  const bottomButtonsPadding = { marginBottom: bottom + theme.spacing.m }
+
   return (
     <Screen
       navBar={
@@ -119,7 +121,7 @@ const UnlockVeridaOne = () => {
         <Container
           key='UnlockVeridaOne'
           withKeyboardAvoidingView
-          keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+          keyboadAvoidingViewProps={{ keyboardVerticalOffset: 54 + top }}>
           <ScrollView
             contentContainerStyle={{
               flexGrow: 1,
@@ -144,7 +146,7 @@ const UnlockVeridaOne = () => {
             </View>
           </ScrollView>
 
-          <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+          <View style={[styles.bottomNavContainer, bottomButtonsPadding]}>
             <Button
               disabled={!invitationCode}
               style={styles.button}
@@ -194,7 +196,7 @@ const UnlockVeridaOne = () => {
               You now have access to Verida One
             </Text>
           </ScrollView>
-          <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+          <View style={[styles.bottomNavContainer, bottomButtonsPadding]}>
             <Button
               style={styles.button}
               onPress={handleVeridaOneInviationComplete}>
@@ -252,7 +254,7 @@ const UnlockVeridaOne = () => {
               You now have access to Verida One
             </Text>
           </ScrollView>
-          <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+          <View style={[styles.bottomNavContainer, bottomButtonsPadding]}>
             <Button
               color='transparent-border'
               style={styles.button}

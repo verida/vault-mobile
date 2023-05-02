@@ -11,7 +11,6 @@ import InputUsernamePage, {
   InputUsernamePageRefProps,
 } from 'components/Username/InputUsernamePage'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { Theme } from 'styles/types'
 
 enum PageType {
   InputUsername,
@@ -55,7 +54,7 @@ const ClaimUsername = () => {
 
 export default ClaimUsername
 
-const createStyles = (theme: Theme) =>
+const createStyles = () =>
   StyleSheet.create({
     pagerView: {
       flex: 1,

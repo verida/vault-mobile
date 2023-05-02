@@ -127,7 +127,7 @@ const InputUsernamePage = React.forwardRef(
       <Container
         key={'InputUsername'}
         withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 48 + top }}>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -204,7 +204,11 @@ const InputUsernamePage = React.forwardRef(
           </View>
         </ScrollView>
 
-        <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+        <View
+          style={[
+            styles.bottomNavContainer,
+            { marginBottom: bottom + theme.spacing.m },
+          ]}>
           <Button
             disabled={Boolean(usernameError) || !availableUsername}
             style={styles.button}
