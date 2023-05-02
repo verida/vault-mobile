@@ -59,9 +59,9 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
               numberOfLines={1}
               ellipsizeMode='tail'
               style={{
-                flex: 1,
                 color: theme.color.onPrimary,
                 marginRight: theme.spacing.xs,
+                ...(username ? {} : { flex: 1 }), // FIXME:  remove this hack for the Android text truncated issue
               }}>{`verida.one/${username || did}`}</SubHeadline>
             <Icon name='copy' color={theme.color.onPrimary} size={16} />
           </View>
