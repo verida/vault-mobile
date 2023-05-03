@@ -69,7 +69,7 @@ export const useCredential = () => {
         issuer: verificationResult.issuer,
         result: verificationResult,
         verifiedCredential:
-          verificationResult.verifiedCredential as VerifiableCredential,
+          verificationResult.verifiableCredential as VerifiableCredential,
       }
     },
     [agent]

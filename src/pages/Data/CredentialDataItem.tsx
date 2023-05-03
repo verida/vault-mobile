@@ -105,8 +105,10 @@ function CredentialDataItem(props: CredentialDataItemProps) {
 
       const issuerDid = result?.verified
         ? result.issuer
-        : item.credentialData.issuer?.id
-      const contextName = item.credentialData.veridaContextname
+        : item.credentialData.issuer
+      const contextName = result?.verified
+        ? result.verifiedCredential.vc?.veridaContextName
+        : undefined
       await getIssuerProfile(issuerDid, contextName)
 
       const jwt = result?.verified ? result.result.jwt : item.didJwtVc
