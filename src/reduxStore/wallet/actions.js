@@ -43,26 +43,20 @@ import {
 } from './types'
 
 export const getBalances = () => {
+  console.log('getBalances()')
   return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
 
     try {
       const wallets = getWalletsData(getState().main)
-      const chains = selectChains(getState())
-      const requestBody = Object.values(chains)
-        .filter((chain) => wallets[chain.addressMapping])
-        .map((chain) => {
-          return {
-            address: wallets[chain.addressMapping].address,
-            chainId: chain.data,
-          }
-        })
+      const walletParams = Object.values(wallets).map((item) => `${item.chainId}:${item.address}`)
+      const requestParams = {
+        wallet: walletParams
+      }
 
-      const balanceData = await walletProviderApi.post(
+      const balanceData = await walletProviderApi.get(
         'balance/getBalanceByChains',
-        {
-          accounts: requestBody,
-        }
+        requestParams
       )
 
       if (balanceData.data) {
