@@ -86,9 +86,12 @@ export default class Folder {
       row = rowOrId
     }
 
+    // TODO: Handle when it's a credential without a credentialSchema property. It is irrelevant to use the schema of the record. So should handle iterating over the item keys
     if (!schemaUri) {
       schemaUri = row.schema
     }
+
+    // TODO: Need to handle nested objects
 
     const schema = await this.vaultCommon.client.getSchema(schemaUri)
     const json = await schema.getSchemaJson()
@@ -102,6 +105,7 @@ export default class Folder {
     if (json.allOf) {
       // This only gets the lst list of properties.. although schemas should
       // define layouts.view so it doesn't matter
+      // TODO: May need to to fetch referenced schema to get all properties as we can't rely on layouts definition (+ layout won't give the label of the properties)
       properties = json.allOf[json.allOf.length - 1].properties
     }
 
