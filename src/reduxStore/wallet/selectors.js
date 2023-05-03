@@ -1,13 +1,13 @@
 import { isEmpty } from 'lodash'
+import { store } from 'reduxStore'
 import { createSelector } from 'reselect'
 import {
   getNativeForChain,
   tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 
-import { selectTokens } from 'reduxStore/tokens/selectors'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
-import { store } from 'reduxStore'
+import { selectTokens } from 'reduxStore/tokens/selectors'
 
 const s = (state) => state.main // Current wallet state sits in main reducer
 export const selectedWalletSelector = (state) => s(state).selectedWallet
@@ -38,6 +38,7 @@ export const getSingleWalletChain = (state) => {
   }
 }
 
+// @chris done, although deprecate selectTokens
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
   const balances = getBalancesData(state.main)
@@ -52,17 +53,14 @@ export const getListAndTotal = (state) => {
   }
   let list = []
   if (!isEmpty(balances)) {
-    list = tokens.map((token) => {
-      let tokenBalance = balances[token.symbol]
-      // total = total + amount
-
+    const list = balances.map((tokenBalance) => {
       return {
-        label: token.name,
-        price: tokenBalance ? tokenBalance.quote.USD.price : 0,
-        change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
-        quantity: tokenBalance ? tokenBalance.balance : 0,
-        amount: tokenBalance ? tokenBalance.amount : 0,
-        ...token,
+        label: tokenBalance.symbol,
+        price: tokenBalance.quote.USD.price,
+        change: tokenBalance.quote.USD.percent_change_24h,
+        quantity: tokenBalance.amount,
+        amount: tokenBalance.totalBalance,
+        ...tokenBalance,
       }
     })
     return { list, total }
@@ -83,28 +81,23 @@ export const selectNativeTokenBalance = (state, token) => {
   }
 }
 
-export const selectSingleTokenData = (state, assetID) => {
+// @chris done
+export const selectSingleTokenData = (state, assetId) => {
   const balances = getBalancesData(state.main)
-  const tokens = selectTokens(state)
 
-  // write the function.. find.. chain id.. reference.. compare whole onject.. convert to string?
-
-  const token = tokens.find((ele) => {
-    return (
-      tokenCaipObjectToString(ele.asset) === tokenCaipObjectToString(assetID)
-    )
+  const tokenBalance = balances.find((item) => {
+    return item.asset == assetId
   })
 
-  let tokenBalance = balances[token.symbol]
-
   return {
-    label: token.name,
-    price: tokenBalance ? tokenBalance.quote.USD.price : 0,
-    change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
-    quantity: tokenBalance ? tokenBalance.balance : 0,
-    amount: tokenBalance ? tokenBalance.amount : 0,
-    ...token,
+    label: tokenBalance.symbol,
+    price: tokenBalance.quote.USD.price,
+    change: tokenBalance.quote.USD.percent_change_24h,
+    quantity: tokenBalance.amount,
+    amount: tokenBalance.totalBalance,
+    ...tokenBalance,
   }
+
 }
 
 export const getTokensData = (state) => {
@@ -124,16 +117,15 @@ export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
+// @chris done
 export const getWalletList = (state) => {
   const allWallets = getAllWallets(state)
   const blockchainNetworks = getBlockchainNetworks(store.getState())
 
   return Object.values(allWallets).map((wallet) => {
-    const addresses = Object.values(wallet.accounts).map(
-      (account) => {
-        return account.address
-      }
-    )
+    const addresses = Object.values(wallet.accounts).map((account) => {
+      return account.address
+    })
 
     let icon
     if (!wallet.multiChain) {

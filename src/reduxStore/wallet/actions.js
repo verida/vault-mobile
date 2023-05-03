@@ -42,15 +42,18 @@ import {
   WALLET_PROCESSING_START,
 } from './types'
 
+// @chris done
 export const getBalances = () => {
   return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
 
     try {
       const wallets = getWalletsData(getState().main)
-      const walletParams = Object.values(wallets).map((item) => `${item.chainId}:${item.address}`)
+      const walletParams = Object.values(wallets).map(
+        (item) => `${item.chainId}:${item.address}`
+      )
       const requestParams = {
-        wallet: walletParams
+        wallet: walletParams,
       }
 
       const balanceData = await walletProviderApi.get(
@@ -59,7 +62,10 @@ export const getBalances = () => {
       )
 
       if (balanceData.data) {
-        dispatch({ type: FETCHED_BALANCES, data: balanceData.data.data })
+        dispatch({
+          type: FETCHED_BALANCES,
+          data: balanceData.data.data.results,
+        })
       } else {
         dispatch({
           type: BALANCES_FETCH_FAILED,
@@ -75,11 +81,13 @@ export const getBalances = () => {
   }
 }
 
+// @chris done
 export const getTransactionsForToken = (token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-    const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
+
+    const userAddress = getWalletAddressForAsset(token.asset, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/list', {
       userAddress,
@@ -100,10 +108,13 @@ export const getTransactionsForToken = (token) => {
   }
 }
 
+// @chris done
 export const getTransactionDetails = (transactionID, token) => {
+  console.log('--- getTransactionDetails')
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)
+
     const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/get', {

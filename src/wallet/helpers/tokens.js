@@ -1,8 +1,8 @@
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
 import { utils } from 'ethers'
 
-export const isNativeToken = (address) => {
-  return address.assetName.namespace === 'slip44'
+export const isNativeToken = (asset) => {
+  return asset.assetName.namespace === 'slip44'
 }
 
 export const getTruncatedWalletAddress = (
@@ -21,18 +21,6 @@ export const getTokenAddress = (address) => {
   return address.assetName.reference
 }
 
-export const getTokenChain = (address) => {
-  return address.chainId.namespace
-}
-
-export const getTokenChainId = (address) => {
-  return address.chainId
-}
-
-export const getTokenChainReference = (address) => {
-  return address.chainId.reference
-}
-
 export const getNativeForChain = (tokens, chain) => {
   let tok = tokens.find(
     (ele) =>
@@ -46,6 +34,11 @@ export const getWalletAddressForToken = (chain, wallets) => {
   return wallets[chain].address
 }
 
+export const getWalletAddressForAsset = (asset, wallets) => {
+  const chainId = new ChainId(asset.chainId).toString()
+  return wallets[chainId].address
+}
+
 export const handleTokenDecimals = (quantity, decimalPlaces) => {
   return quantity / Math.pow(10, decimalPlaces)
 }
@@ -56,10 +49,6 @@ export const formatTokenQuantity = (quantity, decimalPlaces, fixed = 3) => {
 
 export const parseUnitsForSending = (quantity, decimalPlaces) => {
   return utils.parseUnits(quantity, decimalPlaces)
-}
-
-export const getWalletAddressForAsset = (addressMapping, wallets) => {
-  return wallets[addressMapping].address
 }
 
 export const tokenCaipObjectToString = (asset) => {

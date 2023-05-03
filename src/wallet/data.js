@@ -46,6 +46,7 @@ const minABI = [
   },
 ]
 
+// @chris done
 const getTransactionParams = async (transactionData, wallets) => {
   const requestBody = {
     asset: transactionData.token.asset,

@@ -6,7 +6,7 @@ import { Image, StyleSheet } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { store } from 'reduxStore'
 
-import { getBlockchainNetworks } from 'reduxStore/selectors'
+import { getBlockchainNetworkLabel, getBlockchainNetworks } from 'reduxStore/selectors'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
@@ -19,6 +19,7 @@ export default ({
   const { showActionSheetWithOptions } = useActionSheet()
   const blockchainNetworks = getBlockchainNetworks(store.getState())
   const network = blockchainNetworks[item.chainId]
+  const networkLabel = getBlockchainNetworkLabel(network)
 
   let options = ['Copy address', 'Show Seed Phrase']
   if (item.privateKey) {
@@ -54,7 +55,7 @@ export default ({
         <FastImage source={{ uri: network.icon }} style={styles.icon} />
         <Body>
           <Text style={styles.label}>
-            {item.name ? item.name : `${network.label} (${network.name})`}
+            {item.name ? item.name : networkLabel}
           </Text>
           <Text note>{`${item.address}`}</Text>
         </Body>
