@@ -30,10 +30,6 @@ export const getNativeForChain = (tokens, chain) => {
   return tok
 }
 
-export const getWalletAddressForToken = (chain, wallets) => {
-  return wallets[chain].address
-}
-
 export const getWalletAddressForAsset = (asset, wallets) => {
   const chainId = new ChainId(asset.chainId).toString()
   return wallets[chainId].address
