@@ -1,4 +1,3 @@
-export * from './useCredential'
 export * from './useDeeplink'
 export * from './useEmitter'
 export * from './useEventHandlers'
