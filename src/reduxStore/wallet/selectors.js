@@ -150,8 +150,8 @@ export const getWalletList = (state) => {
   })
 }
 
-export const getSelectedWalletById = (state, chains) => {
-  const walletList = getWalletList(state, chains)
+export const getSelectedWalletById = (state) => {
+  const walletList = getWalletList(state)
   const selectedWalletId = state.selectedWallet
   const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
   return selectedWallet

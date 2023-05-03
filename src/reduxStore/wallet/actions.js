@@ -43,7 +43,6 @@ import {
 } from './types'
 
 export const getBalances = () => {
-  console.log('getBalances()')
   return async (dispatch, getState) => {
     dispatch({ type: BALANCES_FETCH_START })
 
