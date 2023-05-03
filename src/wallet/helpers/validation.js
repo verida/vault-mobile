@@ -13,9 +13,8 @@ const validateNearAddress = (address) => {
   }
 }
 
-export const isValidWalletAddress = (address, tokenAddress) => {
-  let chain = getTokenChain(tokenAddress)
-  switch (chain) {
+export const isValidWalletAddress = (address, asset) => {
+  switch (asset.chainId.namespace) {
     case 'algorand':
       return algosdk.isValidAddress(address)
     case 'eip155':
