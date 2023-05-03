@@ -6,9 +6,8 @@ import {
   VerifiableCredential,
   W3CVerifiableCredential,
 } from '@veramo/core'
+import { useVeramo } from 'features/veramo'
 import { useCallback } from 'react'
-
-import { useVeramo } from 'hooks/useVeramo'
 
 import { ValidState } from '../types'
 
