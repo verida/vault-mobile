@@ -1,23 +1,22 @@
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
-import { walletProviderApi } from 'wallet/helpers/api'
-import multiChainWallet from 'wallet/helpers/multiChainWallet'
 import {
   getWalletAddressForAsset,
   rawDataToReduxState,
 } from 'wallet/helpers/tokens'
 
 import AccountManager from 'api/AccountManager'
+import { WalletManager } from 'api/Wallet/WalletManager'
 import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
-  getAllWallets,
   getSelectedWalletId,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
+import { walletProviderApi } from '../../api/Wallet/WalletProvider'
 import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,
@@ -228,37 +227,15 @@ export const createNewWallet = (data) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const userHDWalletMnemonic = data.phrase
-        ? data.phrase
-        : multiChainWallet.generateMnemonic()
+      const { selectedWallet, wallets } = await WalletManager.createNewWallet(
+        data.phrase,
+        data.name
+      )
 
-      // save mnemonic to verida store
-      const walletDb =
-        await AccountManager.getInstance().context?.openDatastore(
-          WALLET_SCHEMA_0_2_0_URI
-        )
-
-      const currentWalletsData = getAllWallets(getState().main)
-
-      const wallet = {
-        mnemonic: userHDWalletMnemonic,
-        walletType: 'multi',
-        label: data
-          ? data.name
-          : 'Multi Coin Wallet ' + (Object.keys(currentWalletsData).length + 1),
-      }
-      const saved = await walletDb?.save(wallet)
-      const walletID = saved?.id
-
-      const hdWallets = await walletDb?.getMany()
-
-      if (hdWallets) {
-        const chains = selectChains(getState())
-        const wallets = rawDataToReduxState(hdWallets, chains)
-
+      if (wallets) {
         await dispatch(saveUserWallets(wallets))
 
-        await dispatch(setSelectedWallet(walletID))
+        await dispatch(setSelectedWallet(selectedWallet._id))
 
         // save to storage..
         await SecureStore.setItemAsync(
@@ -267,7 +244,7 @@ export const createNewWallet = (data) => {
         )
         await SecureStore.setItemAsync(
           CONFIG.SELECTED_WALLET_STORAGE_KEY,
-          walletID
+          selectedWallet._id
         )
       }
 

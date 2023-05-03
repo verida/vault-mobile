@@ -1,6 +1,5 @@
 import { AssetId } from 'caip'
 import { utils } from 'ethers'
-import multiChainWallet from 'wallet/helpers/multiChainWallet'
 
 export const isNativeToken = (address) => {
   return address.assetName.namespace === 'slip44'
@@ -57,32 +56,6 @@ export const formatTokenQuantity = (quantity, decimalPlaces, fixed = 3) => {
 
 export const parseUnitsForSending = (quantity, decimalPlaces) => {
   return utils.parseUnits(quantity, decimalPlaces)
-}
-
-export const rawDataToReduxState = (walletData, chains) => {
-  let wallets = {}
-  walletData.forEach((wallet) => {
-    let walletId = wallet._id
-    let accounts = multiChainWallet.generateWalletsForChains({
-      privateKey: wallet.privateKey ?? null,
-      mnemonic: wallet.mnemonic ?? null,
-      address: wallet.address ?? null,
-      chains,
-      chain: wallet.walletType === 'multi' ? null : wallet.walletType,
-    })
-
-    wallets[walletId] = {
-      seedPhrase: wallet.mnemonic ?? null,
-      privateKey: wallet.privateKey ?? null,
-      type: wallet.walletType === 'multi' ? 'multi' : 'single',
-      label: wallet.label,
-      id: walletId,
-      accounts,
-      chain: wallet.walletType === 'multi' ? null : wallet.walletType,
-    }
-  })
-
-  return wallets
 }
 
 export const getWalletAddressForAsset = (addressMapping, wallets) => {

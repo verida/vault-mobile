@@ -3,7 +3,6 @@ import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
-import { walletProviderApi } from 'wallet/helpers/api'
 import {
   getTokenAddress,
   getTokenChain,
@@ -17,6 +16,8 @@ import {
   getTransactionParamsData,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
+
+import { walletProviderApi } from '../api/Wallet/WalletProvider'
 
 const web3 = new Web3('http://localhost')
 

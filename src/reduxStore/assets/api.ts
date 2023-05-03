@@ -1,11 +1,13 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { NFT } from 'api/types'
+import { BlockchainNetwork, NFT } from 'api/types'
 
-export const assetsApi = createApi({
-  reducerPath: 'assetsApi',
+import CONFIG from '../../config/environment'
+
+export const getWalletNFTCollectionsQuery = createApi({
+  reducerPath: 'getWalletNFTCollectionsQuery',
   baseQuery: fetchBaseQuery({
-    baseUrl: 'https://devnet-walletprovider.tn.verida.tech/',
+    baseUrl: CONFIG.WALLET_PROVIDER_URL,
   }),
   endpoints: (build) => ({
     getWalletNFTCollections: build.query<NFT[], string[]>({
@@ -20,4 +22,27 @@ export const assetsApi = createApi({
   }),
 })
 
-export const { useGetWalletNFTCollectionsQuery } = assetsApi
+export const { useGetWalletNFTCollectionsQuery } = getWalletNFTCollectionsQuery
+
+/*
+export const chainsListQuery = createApi({
+  reducerPath: 'chainsListQuery',
+  baseQuery: fetchBaseQuery({
+    baseUrl: CONFIG.WALLET_PROVIDER_URL,
+  }),
+  endpoints: (build) => ({
+    chainsList: build.query<BlockchainNetwork[], void>({
+      keepUnusedDataFor: 60 * 60 * 24, // 24 hours
+      query: () => `chains/list`,
+      transformResponse: (response: any) =>
+        response.data.map(
+          (networks: Record<string, any>) =>
+            networks[<string>CONFIG.VERIDA_ENVIRONMENT]
+        ),
+    }),
+  }),
+})
+
+export const { useChainsListQuery } = chainsListQuery
+
+*/

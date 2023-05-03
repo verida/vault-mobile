@@ -1,6 +1,9 @@
 import { EnvironmentType } from '@verida/types'
 import Config from 'react-native-config'
 
+//Config.NETWORK_ENVIRONMENT = 'devnet'
+//Config.NETWORK_ENDPOINT_URL = 'https://devnet-meta-tx-server.tn.verida.tech'
+
 /**
  * TODO: Remove this note
  * Network environment will be set on the .env.type file for each build types
@@ -59,13 +62,17 @@ const ENVIRONMENTS = {
   },
   devnet: {
     VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
+    WALLET_PROVIDER_CHAINS: 'testnet',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
+    WALLET_PROVIDER_URL: 'https://devnet-walletprovider.tn.verida.tech',
   },
   testnet: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
+    WALLET_PROVIDER_CHAINS: 'testnet',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
+    WALLET_PROVIDER_URL: 'https://walletprovider.tn.verida.tech',
   },
 }
 

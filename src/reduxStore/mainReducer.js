@@ -6,9 +6,9 @@ import {
   LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
+  SET_BLOCKCHAIN_NETWORKS,
   SET_COUNTRIES,
   SET_NAVIGATION_LINK,
-  SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -92,7 +92,7 @@ const initialState = {
   switchAccountToast: null,
   showSeedPhraseReminder: false,
   ...walletInitialState,
-  networks: [],
+  blockchainNetworks: {},
   countries: [],
   navigationLink: null,
 }
@@ -300,9 +300,9 @@ export const mainReducer = (state = initialState, action) => {
         },
       }
 
-    case SET_NETWORKS:
+    case SET_BLOCKCHAIN_NETWORKS:
       return update(state, {
-        networks: {
+        blockchainNetworks: {
           $set: action.payload,
         },
       })

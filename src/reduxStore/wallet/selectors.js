@@ -6,6 +6,8 @@ import {
 } from 'wallet/helpers/tokens'
 
 import { selectTokens } from 'reduxStore/tokens/selectors'
+import { getBlockchainNetworks } from 'reduxStore/selectors'
+import { store } from 'reduxStore'
 
 const s = (state) => state.main // Current wallet state sits in main reducer
 export const selectedWalletSelector = (state) => s(state).selectedWallet
@@ -122,19 +124,26 @@ export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
-export const getWalletList = (state, allChains) => {
+export const getWalletList = (state) => {
   const allWallets = getAllWallets(state)
-  return Object.values(allWallets).map((wallet) => {
-    const { label, id, type, chain } = wallet
+  const blockchainNetworks = getBlockchainNetworks(store.getState())
 
+  return Object.values(allWallets).map((wallet) => {
     const addresses = Object.values(wallet.accounts).map(
-      (account) => account.address
+      (account) => {
+        return account.address
+      }
     )
 
+    let icon
+    if (!wallet.multiChain) {
+      icon = blockchainNetworks[wallet.chainId].icon
+    }
+
     return {
-      id,
-      label,
-      icon: type === 'single' ? allChains[chain].icon : null,
+      id: wallet._id,
+      label: wallet.label,
+      icon,
       count: Object.keys(wallet.accounts).length,
       address: addresses.length === 1 ? addresses[0] : null,
     }

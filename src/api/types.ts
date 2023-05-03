@@ -1,5 +1,18 @@
+/**
+ * Specific chain and network identifier matching the CAIP standard:
+ *
+ * - eip2551:1 = ethereum mainnet
+ * - eip2551:4 = goerli testnet
+ * - algorand:EEEz7z6z = algorand testnet
+ *
+ * Use https://github.com/ChainAgnostic/caip-js
+ */
+import { AssetId } from 'caip'
 import { ImageSourcePropType } from 'react-native'
 
+/**
+ * Verida Account
+ */
 export type Account = {
   did: string
   privateKey: string
@@ -34,6 +47,60 @@ export type NetworkNode = {
   notification_address: string
 }
 
+/**
+ * A blockchain network (ie: goerli or algorand testnet)
+ */
+export interface BlockchainNetwork {
+  asset: AssetId
+  chainId: string
+  namespace: string
+  reference: string
+  name: string
+  label: string
+  chainName: string
+  symbol: string
+  explorerURL: string
+  confirmations: number
+  isMainnet: boolean
+  decimal: number
+  icon: string
+  slip44Reference: string
+  derivationPath: string
+  subcoinType: string
+  rpcUrl: string
+}
+
+export interface BlockchainAccount {
+  privateKey?: string
+  mnemonic?: string
+  address?: string
+  chainId?: string
+  derivationPath?: string
+}
+
+/**
+ * @todo improve typescript
+ *
+ * Represents a blockchain wallet that is saved into a users list of wallets
+ *
+ * A wallet may be
+ * 1. multi-chain with a single mnemonic and no private key
+ * 2. single chain with a single private key
+ * 3. single chain with a single mnemonic
+ *
+ * Must have either (privateKey or mnemonic)
+ */
+export interface BlockchainWallet extends BlockchainAccount {
+  _id: string
+  label: string
+  multiChain: boolean
+}
+
+export interface BlockchainWalletWithAccounts extends BlockchainWallet {
+  accounts: BlockchainAccount
+}
+
+// What network is this?
 export type Network = {
   name: string
   default_node_code: string

@@ -1,5 +1,4 @@
-import { walletProviderApi } from 'wallet/helpers/api'
-
+import { walletProviderApi } from '../../api/Wallet/WalletProvider'
 // import { selectTokensTimestamp } from './selectors'
 import {
   FETCHED_TOKENS,
