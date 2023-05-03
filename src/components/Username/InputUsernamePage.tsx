@@ -127,7 +127,7 @@ const InputUsernamePage = React.forwardRef(
       <Container
         key={'InputUsername'}
         withKeyboardAvoidingView
-        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 60 + top }}>
+        keyboadAvoidingViewProps={{ keyboardVerticalOffset: 48 + top }}>
         <ScrollView
           contentContainerStyle={{
             flexGrow: 1,
@@ -154,14 +154,13 @@ const InputUsernamePage = React.forwardRef(
               autoCorrect={false}
               autoComplete='off'
               autoCapitalize='none'
-              keyboardType='email-address'
               returnKeyType='done'
               withAnimatedChecbox
               checkboxEmptyState={checkboxEmpty}
               loading={checkingUsername}
               checked={availableUsername}
               errorMessage={usernameError}
-              maxLength={MAX_INPUT_LENGTH}
+              maxLength={MAX_INPUT_LENGTH + VERIDA_NAME_SUFFIX_LENGTH}
               onFocus={() => {
                 ensureSelectionPosition(undefined)
               }}
@@ -205,7 +204,11 @@ const InputUsernamePage = React.forwardRef(
           </View>
         </ScrollView>
 
-        <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+        <View
+          style={[
+            styles.bottomNavContainer,
+            { marginBottom: bottom + theme.spacing.m },
+          ]}>
           <Button
             disabled={Boolean(usernameError) || !availableUsername}
             style={styles.button}

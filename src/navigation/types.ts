@@ -71,7 +71,6 @@ export type MainStackParams = {
   SeedPhraseEntered: {
     usePrivateKey: boolean
     previousScreen?: string
-    recoverFromError?: boolean
   }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined

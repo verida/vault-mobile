@@ -50,9 +50,10 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
           }}>
           <View
             style={{
+              width: '100%',
               flexDirection: 'row',
               alignItems: 'center',
-              marginHorizontal: 28,
+              paddingHorizontal: 28,
             }}>
             <SubHeadline
               numberOfLines={1}
@@ -60,6 +61,7 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
               style={{
                 color: theme.color.onPrimary,
                 marginRight: theme.spacing.xs,
+                ...(username ? {} : { flex: 1 }), // FIXME:  remove this hack for the Android text truncated issue
               }}>{`verida.one/${username || did}`}</SubHeadline>
             <Icon name='copy' color={theme.color.onPrimary} size={16} />
           </View>

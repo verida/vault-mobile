@@ -1,13 +1,13 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import { StackActions, useNavigation } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { emitter } from 'helpers/emitter'
 import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
   Alert,
   BackHandler,
-  InteractionManager,
   Modal,
   ScrollView,
   StyleSheet,
@@ -25,104 +25,49 @@ import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Text } from 'components/Typography/Text'
 import { Title } from 'components/Typography/Title'
-import { BACKGROUND_RADIAN_COLORS, BLACK_ORIGIN_COLOR } from 'constants/color'
+import {
+  BACKGROUND_RADIAN_COLORS,
+  BLACK_ORIGIN_COLOR,
+  LIGHTGREY_COLOR,
+} from 'constants/color'
 import { useAuth } from 'hooks/useAuth'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { AddIdentityMode } from 'pages/Account/Identity/Identity'
-import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import { logout as logoutAction } from 'reduxStore/general/actions'
 import { Theme } from 'styles/types'
 
 type Props = {
   dismissModal: () => void
-  retry: (forcedInit?: boolean) => void
 }
 
-const DIDNonExistentModal = ({ retry, dismissModal }: Props) => {
+const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const styles = useThemeAwareStyle(createStyles)
-  const navigation = useNavigation()
   const { theme } = useTheme()
-  const [showManageIdentitiesModal, setShowManageIdentitiesModal] =
-    useState(false)
   const [showSeedPhraseModal, setShowSeedPhraseModal] = useState(false)
-  const { switchToAccount, refresh } = useAuth()
+  const { refresh: retry } = useAuth()
 
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
 
-  function onAddAccount() {
-    dismissModal()
-    InteractionManager.runAfterInteractions(() => {
-      navigation.dispatch(
-        StackActions.replace('ManageIdentities', {
-          screen: 'Identity',
-          params: {
-            mode: AddIdentityMode.Add,
-            recoverFromError: true,
-          },
-        })
-      )
-    })
-  }
-
-  function onImportAccount() {
-    dismissModal()
-    setShowManageIdentitiesModal(false)
-
-    InteractionManager.runAfterInteractions(() => {
-      navigation.dispatch(
-        StackActions.replace('ManageIdentities', {
-          screen: 'SeedPhraseEntered',
-          params: {
-            recoverFromError: true,
-          },
-        })
-      )
-    })
-  }
-
-  async function onSelectAccount(did: string) {
-    const currentDid = AccountManager.getInstance().getSelectedAccount()?.did
-    if (did === currentDid) {
-      return
-    }
-
-    dismissModal()
-    retry(false)
-    setShowManageIdentitiesModal(false)
-    try {
-      await switchToAccount(did)
-    } catch (e) {
-      Alert.alert(
-        'Error',
-        `Unable to switch to that account, please try again later.`
-      )
-
-      // Switch back to the current account
-      await switchToAccount(currentDid!)
-    } finally {
-      await refresh()
-    }
-  }
-
   async function onLogoutAccounts(dids: string[]) {
-    dismissModal()
-    retry(false)
-    setShowManageIdentitiesModal(false)
-
-    // Only flush Redux store if the current account is logged out
-    if (
-      dids.includes(
-        AccountManager.getInstance().getSelectedAccount()?.did ?? ''
-      )
-    ) {
-      dispatch(logoutAction())
+    try {
+      dismissModal()
+      // Only flush Redux store if the current account is logged out
+      if (
+        dids.includes(
+          AccountManager.getInstance().getSelectedAccount()?.did ?? ''
+        )
+      ) {
+        dispatch(logoutAction())
+      }
+      await AccountManager.getInstance().logout(dids)
+    } catch (error) {
+      Sentry.captureException(error)
+    } finally {
+      emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
     }
-    await AccountManager.getInstance().logout(dids)
-    retry(true)
   }
 
   useEffect(() => {
@@ -175,12 +120,12 @@ const DIDNonExistentModal = ({ retry, dismissModal }: Props) => {
           style={styles.landing}>
           <Texture width={425} height={428} />
           <View style={styles.backgroundContainer}>
-            <Logo width={139} height={51} />
+            <Logo width={156} height={52} />
           </View>
         </LinearGradient>
         <View style={styles.container}>
           <View style={styles.card}>
-            <Title style={styles.title}>Identity Unavailable</Title>
+            <Title style={styles.title}>Identity Not Found</Title>
             <Spacer vertical='m' />
             <View style={styles.hline} />
             <Spacer vertical='m' />
@@ -188,7 +133,7 @@ const DIDNonExistentModal = ({ retry, dismissModal }: Props) => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContainer}>
               <Paragraph>
-                {`We are not able to find this Identity at the moment. You may have deleted it, or we may not be able to connect to the decentralised network.\n\n`}
+                {`This identity no longer exists due to a network upgrade and will be removed from your Wallet\n\n`}
                 <Paragraph style={{ color: theme.color.black800 }}>
                   {`Identity ${
                     AccountManager.getInstance().getSelectedAccount()?.did
@@ -197,16 +142,14 @@ const DIDNonExistentModal = ({ retry, dismissModal }: Props) => {
               </Paragraph>
             </ScrollView>
             <View style={styles.footer}>
-              {Boolean(retry) && (
-                <Button
-                  color='primary'
-                  onPress={() => {
-                    dismissModal()
-                    retry!()
-                  }}>
-                  Try Again
-                </Button>
-              )}
+              <Button
+                color='primary'
+                onPress={() => {
+                  dismissModal()
+                  retry()
+                }}>
+                Try Again
+              </Button>
               <Button
                 color='grey'
                 onPress={() => {
@@ -215,12 +158,40 @@ const DIDNonExistentModal = ({ retry, dismissModal }: Props) => {
                 Backup Seed Phrase
               </Button>
               <Button
-                color='grey'
-                style={{ marginBottom: 0 }}
+                color='warning'
+                style={{
+                  marginBottom: 0,
+                  borderColor: LIGHTGREY_COLOR,
+                }}
                 onPress={async () => {
-                  setShowManageIdentitiesModal(true)
+                  const currentDID =
+                    AccountManager.getInstance().getSelectedAccount()?.did
+                  const otherDids = Object.keys(
+                    AccountManager.getInstance().accounts
+                  )?.filter((did) => did !== currentDID)
+                  Alert.alert(
+                    'Are you sure?',
+                    `Delete identity: \n${currentDID}? ${
+                      otherDids.length > 0
+                        ? `\n\nSwitch to the next identity: \n${otherDids[0]}`
+                        : ''
+                    }`,
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: () => {
+                          onLogoutAccounts([currentDID!])
+                        },
+                      },
+                    ]
+                  )
                 }}>
-                Manage Identities
+                Delete Identity
               </Button>
             </View>
           </View>
@@ -230,15 +201,6 @@ const DIDNonExistentModal = ({ retry, dismissModal }: Props) => {
           visible={showSeedPhraseModal}
           phrase={seedPhraseData}
           toggleConfirmModal={() => setShowSeedPhraseModal(false)}
-        />
-
-        <AddAccountsModal
-          visible={showManageIdentitiesModal}
-          onClose={() => setShowManageIdentitiesModal(false)}
-          onAddNew={onAddAccount}
-          onImport={onImportAccount}
-          onSelectAccount={onSelectAccount}
-          onLogoutAccounts={onLogoutAccounts}
         />
       </SafeAreaView>
     </Modal>

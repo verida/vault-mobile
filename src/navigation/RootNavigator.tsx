@@ -1,8 +1,7 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { emitter } from 'helpers/emitter'
 import { useEmitter } from 'hooks'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
@@ -22,30 +21,11 @@ export function navigate(name: unknown, params: unknown) {
 
 function RootNavigator() {
   const { refresh, authenticated, loaded } = useAuth()
-  const [showBackupNavigation, setShowBackupNavigation] = useState(false)
   const mounted = useRef(false)
 
   const init = useCallback(async () => {
-    try {
-      await AccountManager.getInstance().init()
-      await refresh()
-    } catch (error: any) {
-      // Handle this specific error of non-existent DID
-      if (
-        error.message.match(
-          /Unable to locate requested storage context \(Verida: Vault\) for this DID \(.*\) -- Storage context doesn't exist \(try force create\?\)/
-        )
-      ) {
-        emitter.emit('ACCOUNT_NOT_EXIST', {
-          retry: (forcedInit = true) => {
-            forcedInit && init()
-            setShowBackupNavigation(false)
-          },
-        })
-
-        setShowBackupNavigation(true)
-      }
-    }
+    await AccountManager.getInstance().init()
+    await refresh()
   }, [refresh])
 
   useEffect(() => {
@@ -59,23 +39,10 @@ function RootNavigator() {
   useEmitter(
     'APP_RECOVER_FROM_ERROR',
     async () => {
-      setShowBackupNavigation(false)
       init()
     },
     []
   )
-
-  if (showBackupNavigation) {
-    const StackBackup = createNativeStackNavigator<any>()
-    return (
-      <StackBackup.Navigator screenOptions={{ headerShown: false }}>
-        <StackBackup.Screen
-          name={'ManageIdentities'}
-          component={AuthNavigator}
-        />
-      </StackBackup.Navigator>
-    )
-  }
 
   if (!loaded) {
     return <LoadingView />

@@ -26,6 +26,7 @@ module.exports = function (api) {
       ],
       'react-native-reanimated/plugin',
       '@babel/plugin-syntax-import-assertions',
+      '@babel/plugin-proposal-numeric-separator',
       [
         'babel-plugin-rewrite-require',
         {

@@ -96,8 +96,8 @@ const MetaServerChecks = () => {
     }
   }, [dismissModal, forcedCreateAccount, forcedSignOut, showModal])
 
-  useEmitter('ACCOUNT_NOT_EXIST', ({ retry }) => {
-    showModal(<DIDNonExistentModal retry={retry} dismissModal={dismissModal} />)
+  useEmitter('IDENTITY_NOT_EXIST', () => {
+    showModal(<DIDNonExistentModal dismissModal={dismissModal} />)
   })
 
   return null
