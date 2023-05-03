@@ -4962,7 +4962,7 @@
     uuid "2.0.1"
     xmlhttprequest "1.8.0"
 
-"@veramo-community/lds-ecdsa-secp256k1-recovery2020@github:uport-project/EcdsaSecp256k1RecoverySignature2020", "@veramo-community/lds-ecdsa-secp256k1-recovery2020@uport-project/EcdsaSecp256k1RecoverySignature2020":
+"@veramo-community/lds-ecdsa-secp256k1-recovery2020@uport-project/EcdsaSecp256k1RecoverySignature2020":
   version "0.0.8"
   resolved "https://codeload.github.com/uport-project/EcdsaSecp256k1RecoverySignature2020/tar.gz/ab0db52de6f4e6663ef271a48009ba26e688ef9b"
   dependencies:
@@ -5015,6 +5015,17 @@
     debug "^4.3.3"
     did-resolver "^4.0.1"
     uint8arrays "^3.0.0"
+
+"@veramo/credential-status@^5.1.2":
+  version "5.1.2"
+  resolved "https://registry.yarnpkg.com/@veramo/credential-status/-/credential-status-5.1.2.tgz#5358eedabf287f976e9c4996ac6a92afda74b610"
+  integrity sha512-ToRLVgQqR3bsL4/jsTtqKcXvI7ktmp2a17JQ+5RHX0McygTLv1mqNcOPfebMC4UMhQkdy4QUbQeaSjPG5S9ZFg==
+  dependencies:
+    "@veramo/core-types" "^5.1.2"
+    "@veramo/utils" "^5.1.2"
+    credential-status "^2.0.5"
+    did-jwt "^6.9.0"
+    did-resolver "^4.0.1"
 
 "@veramo/credential-w3c@^5.1.4":
   version "5.1.4"

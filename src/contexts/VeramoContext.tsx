@@ -9,6 +9,7 @@ import {
   VeramoEd25519Signature2020,
   VeramoJsonWebSignature2020,
 } from '@veramo/credential-ld'
+import { CredentialStatusPlugin } from '@veramo/credential-status'
 import { CredentialPlugin } from '@veramo/credential-w3c'
 import {
   DIDResolverPlugin,
@@ -25,6 +26,7 @@ const agent = createAgent<VeramoAgentInterfaces>({
       ...getVdaDidResolver(),
       ...getCheqdDidResolver(), // TODO: Remove cheqd resolver and declare it in the universal resolver
       ...getUniversalResolverFor(['polygonid']),
+      // TODO: Get the URL of the universal resolver from the env variables
     }),
     new CredentialPlugin(),
     new CredentialIssuerLD({
@@ -35,6 +37,9 @@ const agent = createAgent<VeramoAgentInterfaces>({
         new VeramoEd25519Signature2018(),
         new VeramoEd25519Signature2020(),
       ],
+    }),
+    new CredentialStatusPlugin({
+      // TODO: Add Credential status methods to support
     }),
   ],
 })

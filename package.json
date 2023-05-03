@@ -54,6 +54,7 @@
     "@tradle/react-native-http": "^2.0.1",
     "@veramo/core": "^5.1.2",
     "@veramo/credential-ld": "^5.1.2",
+    "@veramo/credential-status": "^5.1.2",
     "@veramo/credential-w3c": "^5.1.4",
     "@veramo/did-resolver": "^5.1.2",
     "@verida/account": "^2.2.0",
