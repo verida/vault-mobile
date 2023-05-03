@@ -6,7 +6,7 @@ import {
   formatTokenQuantity,
   getNativeForChain,
   getTokenChain,
-  getWalletAddressForToken,
+  getWalletAddressForAsset,
 } from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
@@ -33,7 +33,7 @@ const ConfirmTransaction = ({
 }) => {
   const { token, amount, address } = route.params
   const tokenChain = getTokenChain(token.asset)
-  const accountAddress = getWalletAddressForToken(token.addressMapping, wallets)
+  const accountAddress = getWalletAddressForAsset(token.asset, wallets)
   const nativeToken = getNativeForChain(tokens, token.chainName)
 
   let feeSymbol = nativeToken.symbol

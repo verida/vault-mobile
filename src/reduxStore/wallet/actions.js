@@ -115,7 +115,7 @@ export const getTransactionDetails = (transactionID, token) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)
 
-    const userAddress = getWalletAddressForAsset(token.addressMapping, wallets)
+    const userAddress = getWalletAddressForAsset(token.asset, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/get', {
       transactionId: transactionID,

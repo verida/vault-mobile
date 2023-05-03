@@ -7,6 +7,7 @@ import {
   getTokenAddress,
   getTokenChain,
   getTokenChainReference,
+  getWalletAddressForAsset,
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
@@ -52,8 +53,11 @@ const getTransactionParams = async (transactionData, wallets) => {
     asset: transactionData.token.asset,
   }
 
-  if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const fromAddress = wallets[transactionData.token.addressMapping].address
+  if (transactionData.token.asset.chainId.reference === 'eip155') {
+    const fromAddress = getWalletAddressForAsset(
+      transactionData.token.asset,
+      wallets
+    )
     const toAddress = transactionData.address
 
     let input
@@ -117,7 +121,10 @@ const sendTransaction = async (
     transactionData.token.asset
   )
 
-  const chainWallet = wallets[transactionData.token.addressMapping]
+  const chainWallet = getWalletAddressForAsset(
+    transactionData.token.address,
+    wallets
+  )
   const receiverAddress = transactionData.address
 
   let txString
