@@ -8,6 +8,9 @@ import { logger, postMessageToWebView } from "./utils";
 // Exposing methods to the global scope for the WebView to use.
 
 // @ts-expect-error synthesized
+window.__HANDLE_PROMISE_TASK__ = handlePromiseTask;
+
+// @ts-expect-error synthesized
 window.__CREATE_POLYGON_ID_MANAGER__ = createPolygonIdManager;
 
 // @ts-expect-error synthesized
@@ -16,8 +19,7 @@ window.__HANDLE_AUTHORIZATION_REQUEST__ = handleAuthorizationRequest;
 // @ts-expect-error synthesized
 window.__HANDLE_CREDENTIALS_OFFER__ = handleCredentialsOffer;
 
-// @ts-expect-error synthesized
-window.__HANDLE_PROMISE_TASK__ = handlePromiseTask;
+// TODO: Expose more methods as needed, for instance get credentials by ZK request
 
 /**
  * @description A mapping of manager IDs to their respective PolygonIDManager instances. Allows potential future use case of having multiple managers in the same app.

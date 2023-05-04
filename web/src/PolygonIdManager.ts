@@ -8,6 +8,7 @@ import {
   CircuitId,
   CircuitStorage,
   CredentialsOfferMessage,
+  CredentialStatusType,
   CredentialStorage,
   CredentialWallet,
   DataPrepareHandlerFunc,
@@ -51,6 +52,8 @@ import { Network, Context } from "@verida/client-ts";
 import { AutoAccount } from "@verida/account-node";
 import { logger } from "./utils";
 
+// TODO: Add the RPC URL in the config
+// TODO: Add the contract address in the config
 const RPC_URL = "https://rpc-mumbai.maticvigil.com";
 const CONTRACT_ADDRESS = "0x134B1BE34911E39A8397ec6289782989729807a4";
 const CREDENTIAL_SCHEMA =
@@ -208,30 +211,43 @@ export class PolygonIDManager {
     }
 
     await this.initVeridaContext();
-
-    //this.emit("initializing", true);
     this.dataStorage = await this.initDataStorage();
-
     this.credentialWallet = this.initCredentialWallet(this.dataStorage);
-
     this.identityWallet = await this.initIdentityWallet(
       this.dataStorage,
       this.credentialWallet
     );
 
     // TODO: Check if the hostUrl and the rhsUrl are constants or if they should be configurable.
-    const { did } = await this.identityWallet.createIdentity(
-      "https://mywallet.com", // this is url that will be a part of auth bjj credential identifier
-      {
-        method: DidMethod.PolygonId,
-        blockchain: Blockchain.Polygon,
-        networkId: NetworkId.Mumbai,
-        seed: new Uint8Array(
-          Buffer.from(this.config.polygonIdPrivateKey, "utf-8")
-        ),
-        rhsUrl: "https://rhs-staging.polygonid.me/", // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
-      }
-    );
+    const { did } = await this.identityWallet.createIdentity({
+      // TODO: Add the blockchain in the config
+      blockchain: Blockchain.Polygon,
+      // TODO: Add the network in the config
+      networkId: NetworkId.Mumbai,
+      // TODO: Add the did method in the config
+      method: DidMethod.PolygonId,
+      seed: new Uint8Array(
+        Buffer.from(this.config.polygonIdPrivateKey, "utf-8")
+      ),
+      revocationOpts: {
+        // TODO: Add the revocation base url in the config
+        baseUrl: "https://rhs-staging.polygonid.me/",
+        // TODO: Add the revocation type in the config
+        type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
+      },
+    });
+    // const { did } = await this.identityWallet.createIdentity(
+    //   "https://mywallet.com", // this is url that will be a part of auth bjj credential identifier
+    //   {
+    //     method: DidMethod.PolygonId,
+    //     blockchain: Blockchain.Polygon,
+    //     networkId: NetworkId.Mumbai,
+    //     seed: new Uint8Array(
+    //       Buffer.from(this.config.polygonIdPrivateKey, "utf-8")
+    //     ),
+    //     rhsUrl: "https://rhs-staging.polygonid.me/", // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
+    //   }
+    // );
 
     this.did = did;
 
@@ -282,9 +298,7 @@ export class PolygonIDManager {
   }
 
   private async initCircuitStorage(circuitId: CircuitId): Promise<CircuitData> {
-    // Our expectation is that the relevant files have been stored at the root directory
-    // by the React Native runtime. These should be saved at the server directory as:
-    // <server-dir>/public/circuits/<circuit-id>/<circuit-name>.<type>
+    // Our expectation is that the relevant files have been stored at the root directory by the React Native runtime. These should be saved at the server directory as: <server-dir>/public/circuits/<circuit-id>/<circuit-name>.<type>
     // TODO: Update the location (don't need the 'public' part)
     // TODO: Define constants for these values
     const [verificationKey, provingKey, wasm] = await Promise.all([
@@ -306,8 +320,8 @@ export class PolygonIDManager {
     const conf: EthConnectionConfig = defaultEthConnectionConfig;
 
     // TODO: Define constants for these values
-    conf.contractAddress = "0x134B1BE34911E39A8397ec6289782989729807a4";
-    conf.url = "https://rpc-mumbai.maticvigil.com";
+    conf.contractAddress = CONTRACT_ADDRESS;
+    conf.url = RPC_URL;
 
     const dataStorage = {
       credential: new CredentialStorage(
@@ -337,7 +351,6 @@ export class PolygonIDManager {
     );
 
     const keyStore = new VeridaPrivateKeyStore(privateKeyStoreDatabase);
-    //const keyStore = new InMemoryPrivateKeyStore()
     const bjjProvider = new BjjProvider(KmsKeyType.BabyJubJub, keyStore);
     const kms = new KMS();
     kms.registerKeyProvider(KmsKeyType.BabyJubJub, bjjProvider);
@@ -393,23 +406,11 @@ export class PolygonIDManager {
       client: {
         environment: this.config.environment,
       },
-      account: new AutoAccount(
-        {
-          defaultDatabaseServer: {
-            type: "VeridaDatabase",
-            endpointUri: [],
-          },
-          defaultMessageServer: {
-            type: "VeridaMessage",
-            endpointUri: [],
-          },
-        },
-        {
-          privateKey: this.config.veridaPrivateKey,
-          environment: this.config.environment,
-          didClientConfig: this.config.didClientConfig,
-        }
-      ),
+      account: new AutoAccount({
+        privateKey: this.config.veridaPrivateKey,
+        environment: this.config.environment,
+        didClientConfig: this.config.didClientConfig,
+      }),
     });
   }
 
@@ -489,6 +490,7 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
   public constructor(database: IDatabase) {
     this.database = database;
   }
+
   //{"alias": "BJJ:d159756b0ce8ea6b0be569d1ba9ff63a4d8099c59bb6edb2aa8f5b3bcd9b1109", "key": "6461766573656564736565647365656473656564736565647365656475736572"}
   //{"alias": "BJJ:d159756b0ce8ea6b0be569d1ba9ff63a4d8099c59bb6edb2aa8f5b3bcd9b1109", "key": "6461766573656564736565647365656473656564736565647365656475736572"}
   //did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4
@@ -520,6 +522,7 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
       logger.error(err);
     }
   }
+
   /**
    * get key by alias
    *

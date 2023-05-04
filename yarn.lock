@@ -2,14 +2,14 @@
 # yarn lockfile v1
 
 
-"@0xpolygonid/js-sdk@^1.0.0-beta.3":
-  version "1.0.0-beta.3"
-  resolved "https://registry.yarnpkg.com/@0xpolygonid/js-sdk/-/js-sdk-1.0.0-beta.3.tgz#b09ebbd38b42308f4593327e68262c6bba933292"
-  integrity sha512-Oe/YL3VDQYrQxr6uP9Le81lsb8kl8c4Z32s/4Ox00c6wW+UAgQ44+MiG3r2FRe8kFHxOx1+HTNhb5ahmvyAfTQ==
+"@0xpolygonid/js-sdk@^1.0.0-beta.7":
+  version "1.0.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@0xpolygonid/js-sdk/-/js-sdk-1.0.0-beta.7.tgz#b6529bb54e6e51bffc5e0be4d730883cd872e8cc"
+  integrity sha512-yZLTlixSKLld4CYMHqaYMxC6rAn5mLpK3UdMMujwTQgZkZB6Wii4ERw5Vr99aK44ZXzeH+zBWhmF4GZVzbKNeg==
   dependencies:
     "@iden3/js-crypto" "1.0.0-beta.1"
     "@iden3/js-iden3-core" "1.0.0-beta.2"
-    "@iden3/js-jsonld-merklization" "1.0.0-beta.6"
+    "@iden3/js-jsonld-merklization" "1.0.0-beta.7"
     "@iden3/js-jwz" "1.0.0-beta.2"
     "@iden3/js-merkletree" "1.0.0-beta.2"
     "@lumeweb/js-sha3-browser" "^0.8.1"
@@ -19,12 +19,18 @@
     buffer-browserify "^0.2.5"
     cross-sha256 "^1.2.0"
     crypto-browserify "^3.12.0"
+    did-jwt "^6.11.6"
+    did-resolver "^4.1.0"
+    elliptic "^6.5.4"
     ethers "^5.7.2"
     ffjavascript "^0.2.57"
     idb-keyval "^6.2.0"
     ipfs-http-client "56.0.3"
+    jsonld "^8.1.1"
+    multiformats "^9.6.5"
     rfc4648 "^1.5.2"
     snarkjs "^0.5.0"
+    uint8arrays "^3.0.0"
     uuid "^9.0.0"
 
 "@ampproject/remapping@^2.1.0":
@@ -2851,7 +2857,7 @@
     blake-hash "^2.0.0"
     ffjavascript "^0.2.57"
 
-"@iden3/js-iden3-core@1.0.0-beta.0", "@iden3/js-iden3-core@^1.0.0-beta.0":
+"@iden3/js-iden3-core@1.0.0-beta.0":
   version "1.0.0-beta.0"
   resolved "https://registry.yarnpkg.com/@iden3/js-iden3-core/-/js-iden3-core-1.0.0-beta.0.tgz#4c13447272642714da65b6b0f38fa4d05788e955"
   integrity sha512-+xxJcKFDJuz5hLMIDGxeC8w+TPeOqndgphnqGviGR0H4jlXs9xmdQUarH+x6IEndhn3Y7MbpXEnNBnA6xIZCTQ==
@@ -2860,7 +2866,7 @@
     base58-js "^1.0.4"
     cross-sha256 "^1.2.0"
 
-"@iden3/js-iden3-core@1.0.0-beta.2":
+"@iden3/js-iden3-core@1.0.0-beta.2", "@iden3/js-iden3-core@^1.0.0-beta.2":
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@iden3/js-iden3-core/-/js-iden3-core-1.0.0-beta.2.tgz#fe0b7e7ec4b903c956a61510708a05319566e78a"
   integrity sha512-1nQQa1NavQ2+6REmpVG7kawN+P4PmSFKYwDK/UIcQl94oNMgwfQm0ygVwWePVGqHrQSlidD9mH7C874tJlXzJA==
@@ -2869,10 +2875,10 @@
     base58-js "^1.0.4"
     cross-sha256 "^1.2.0"
 
-"@iden3/js-jsonld-merklization@1.0.0-beta.6":
-  version "1.0.0-beta.6"
-  resolved "https://registry.yarnpkg.com/@iden3/js-jsonld-merklization/-/js-jsonld-merklization-1.0.0-beta.6.tgz#86ca2c92b62bfb925eb812438af55a129931c643"
-  integrity sha512-Wtu843yXOoaq2e5O9Dd8g/BQcX1bS036l7jdvcsuvNNPkj2YnCmrx0wHQf6F9aTCCt2QHBJvIX8UhHZACi5cmw==
+"@iden3/js-jsonld-merklization@1.0.0-beta.7":
+  version "1.0.0-beta.7"
+  resolved "https://registry.yarnpkg.com/@iden3/js-jsonld-merklization/-/js-jsonld-merklization-1.0.0-beta.7.tgz#c08fd7324920a8f65805524c26881aac27a9c2c0"
+  integrity sha512-Qa9XCnAWlzXTl74FCoI0vVEmC+N2YmhoIanzZffuySph06p4aFvZqieqP4rhRPp7qAo4WkHvTwmJdkrF1Zo8CA==
   dependencies:
     "@iden3/js-crypto" "1.0.0-beta.1"
     "@iden3/js-merkletree" "1.0.0-beta.2"
@@ -2881,7 +2887,7 @@
     n3 "^1.16.3"
     temporal-polyfill "^0.1.1"
 
-"@iden3/js-jwz@1.0.0-beta.2":
+"@iden3/js-jwz@1.0.0-beta.2", "@iden3/js-jwz@^1.0.0-beta.2":
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@iden3/js-jwz/-/js-jwz-1.0.0-beta.2.tgz#7f5d2a2b8b0c6a184ae97bf13ee0ecc65497832c"
   integrity sha512-jkcm+HAZnhlXTqYCPAcgHg3XZLmgjJ7/RJwPdc6VT1CHJRPYdDYl0/2iH/4k5TwmA/gxx3S5u3k/siiAVPeVpg==
@@ -2892,19 +2898,6 @@
     base58-js "^1.0.0"
     cross-sha256 "^1.2.0"
     ffjavascript "^0.2.57"
-    rfc4648 "^1.5.2"
-    snarkjs "0.5.0"
-
-"@iden3/js-jwz@^1.0.0-beta.1":
-  version "1.0.0-beta.1"
-  resolved "https://registry.yarnpkg.com/@iden3/js-jwz/-/js-jwz-1.0.0-beta.1.tgz#d0e14816d299a4bf764c2f8d230a9d417294be13"
-  integrity sha512-dYWxjcg0DIyMxXwcTCXx5cKJgntLMjNAtwbq1yj4IHmWkBuB2g1bdc1GHhNYNzNZWMBydHWPxW8WEgigCS7yFw==
-  dependencies:
-    "@iden3/js-crypto" "1.0.0-beta.0"
-    "@iden3/js-iden3-core" "1.0.0-beta.0"
-    "@iden3/js-merkletree" "1.0.0-beta.0"
-    base58-js "^1.0.0"
-    cross-sha256 "^1.2.0"
     rfc4648 "^1.5.2"
     snarkjs "0.5.0"
 
@@ -5027,10 +5020,20 @@
     events "^3.2.0"
     z-schema "^5.0.5"
 
-"@veramo/credential-ld@^5.1.2":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@veramo/credential-ld/-/credential-ld-5.1.2.tgz#3cb3f94d4b69de49e7a47e5da946a53471ac6d60"
-  integrity sha512-cq+UcFIEIAUIT0aQbDWBkbGdg5+utyGgYhmekBTRsbXUuDO0TC25HNK4ceYuL+FRPaYHl24vPUuKd609if2L7w==
+"@veramo/core@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@veramo/core/-/core-5.2.0.tgz#03e440fbb6753221ce1188134be3b4b945e79f2d"
+  integrity sha512-DWmGZC2XNS/lCpfZ7AHYJloQk7zrQBFpZQ/AEmqgUu00xJj50V3PpQmcCjtZ+TgSj4Kv4Fj1QVf9V8kQlfNR0A==
+  dependencies:
+    "@veramo/core-types" "^5.1.2"
+    debug "^4.3.4"
+    events "^3.2.0"
+    z-schema "^6.0.0"
+
+"@veramo/credential-ld@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@veramo/credential-ld/-/credential-ld-5.2.0.tgz#d01b04413b9512fe89b1986901d0b8b0e38e5395"
+  integrity sha512-tQJpZWq143cxt9DtGTyUp4idqNZdacVpbI2IqsbDiPch1+VOpf7huE5h35CJvLaH0cld0g/+TFiJgVbon642Sw==
   dependencies:
     "@digitalcredentials/ed25519-signature-2020" "^3.0.2"
     "@digitalcredentials/ed25519-verification-key-2020" "^4.0.0"
@@ -5042,32 +5045,32 @@
     "@transmute/json-web-signature" "^0.7.0-unstable.79"
     "@veramo-community/lds-ecdsa-secp256k1-recovery2020" uport-project/EcdsaSecp256k1RecoverySignature2020
     "@veramo/core-types" "^5.1.2"
-    "@veramo/utils" "^5.1.2"
+    "@veramo/utils" "^5.2.0"
     cross-fetch "^3.1.5"
     debug "^4.3.3"
     did-resolver "^4.0.1"
     uint8arrays "^3.0.0"
 
-"@veramo/credential-status@^5.1.2":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@veramo/credential-status/-/credential-status-5.1.2.tgz#5358eedabf287f976e9c4996ac6a92afda74b610"
-  integrity sha512-ToRLVgQqR3bsL4/jsTtqKcXvI7ktmp2a17JQ+5RHX0McygTLv1mqNcOPfebMC4UMhQkdy4QUbQeaSjPG5S9ZFg==
+"@veramo/credential-status@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@veramo/credential-status/-/credential-status-5.2.0.tgz#a20cbbbe47a6fda7ee4725f0b53a8e2442ebab5a"
+  integrity sha512-XgUkCth1sIeVSO70ExcYLQTy9fAr7XAlOQXruuirp0XKA4DJf/A7qPvIt6W+wLyU6pVGVZGv3lhVjXT/L3E8iA==
   dependencies:
     "@veramo/core-types" "^5.1.2"
-    "@veramo/utils" "^5.1.2"
+    "@veramo/utils" "^5.2.0"
     credential-status "^2.0.5"
     did-jwt "^6.9.0"
     did-resolver "^4.0.1"
 
-"@veramo/credential-w3c@^5.1.4":
-  version "5.1.4"
-  resolved "https://registry.yarnpkg.com/@veramo/credential-w3c/-/credential-w3c-5.1.4.tgz#2f20a1d195980225b9caaf3709e8db565770442d"
-  integrity sha512-Ry2wvbYMg8EjAHQf57QVl8gymm9GnMW2dhXKx/o0wcQ5zm37FbMkRLAuazh61GnmsY6GAYdsVPcCFnt/HWV/iQ==
+"@veramo/credential-w3c@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@veramo/credential-w3c/-/credential-w3c-5.2.0.tgz#1e5363c3a9becbed31a62a226b07a1a30cea33dd"
+  integrity sha512-wQ6dzFChBC1DJivzghSDqe4vzZtg/IP1bjhIHh91q4Su4BmPYasvyFcwq0JjgPr4SyrPQGowZUBmGOmLZdM05g==
   dependencies:
     "@veramo/core-types" "^5.1.2"
     "@veramo/message-handler" "^5.1.2"
-    "@veramo/utils" "^5.1.2"
-    canonicalize "^1.0.8"
+    "@veramo/utils" "^5.2.0"
+    canonicalize "^2.0.0"
     debug "^4.3.3"
     did-jwt "^6.11.0"
     did-jwt-vc "^3.1.0"
@@ -5075,7 +5078,7 @@
     uint8arrays "^3.0.0"
     uuid "^9.0.0"
   optionalDependencies:
-    "@veramo/credential-ld" "^5.1.2"
+    "@veramo/credential-ld" "^5.2.0"
 
 "@veramo/did-discovery@^5.1.2":
   version "5.1.2"
@@ -5108,13 +5111,13 @@
     multibase "^4.0.6"
     multicodec "^3.2.1"
 
-"@veramo/did-resolver@^5.1.2":
-  version "5.1.2"
-  resolved "https://registry.yarnpkg.com/@veramo/did-resolver/-/did-resolver-5.1.2.tgz#913a95a46c80779fb13aebccc4d20d2e694acfa0"
-  integrity sha512-edvF4E6X3XwVUH/eeIsZmYJGfHVL0fFPzdl9lf0jrCiticik76QYiUWLXj67q8E43Lv16mYOIe3S3qQ3/vmsKg==
+"@veramo/did-resolver@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@veramo/did-resolver/-/did-resolver-5.2.0.tgz#a4177bd3f7750428bbbe024154131a6b37374d3f"
+  integrity sha512-yENN0vw/iGlQ3otsiMYBB5DMhbBOGNBvqkvjmjFRDFmm1VjvXl87ANQKhbO/bXQUkYJqO9qUJF1cf03DwrlCQg==
   dependencies:
     "@veramo/core-types" "^5.1.2"
-    "@veramo/utils" "^5.1.2"
+    "@veramo/utils" "^5.2.0"
     cross-fetch "^3.1.4"
     debug "^4.3.3"
     did-resolver "^4.0.1"
@@ -5146,6 +5149,26 @@
   version "5.1.2"
   resolved "https://registry.yarnpkg.com/@veramo/utils/-/utils-5.1.2.tgz#c5f45955a43f97b4b68207290664b6bbde902181"
   integrity sha512-1hcQzoTQ8q5LWfT1GzCA7wDyX95Pmz2xSVmV5P5otbAtrWk9GXn01snbaDlW+vz/a/iWKKcLlZbkRf5uLpHdnQ==
+  dependencies:
+    "@ethersproject/signing-key" "^5.7.0"
+    "@ethersproject/transactions" "^5.7.0"
+    "@stablelib/ed25519" "^1.0.3"
+    "@veramo/core-types" "^5.1.2"
+    blakejs "^1.1.1"
+    credential-status "^2.0.5"
+    cross-fetch "^3.1.5"
+    debug "^4.3.3"
+    did-jwt "^6.9.0"
+    did-jwt-vc "^3.1.0"
+    did-resolver "^4.0.1"
+    elliptic "^6.5.4"
+    multiformats "^9.9.0"
+    uint8arrays "^3.0.0"
+
+"@veramo/utils@^5.2.0":
+  version "5.2.0"
+  resolved "https://registry.yarnpkg.com/@veramo/utils/-/utils-5.2.0.tgz#7797a980a7728da4647101d5eb3c778b4c71d504"
+  integrity sha512-bzpwnVPKI8F3dFsPWlp8Dzl2MTjlAxRteAKKrwyJy2RB9Wjq7kpmrikHYYDWoZqNHnPFhyNuqbHD5KxTnBSgpg==
   dependencies:
     "@ethersproject/signing-key" "^5.7.0"
     "@ethersproject/transactions" "^5.7.0"
@@ -7749,6 +7772,11 @@ command-exists@^1.2.4, command-exists@^1.2.8:
   resolved "https://registry.yarnpkg.com/command-exists/-/command-exists-1.2.9.tgz#c50725af3808c8ab0260fd60b01fbfa25b954f69"
   integrity sha512-LTQ/SGc+s0Xc0Fu5WaKnR0YiygZkm9eKFvyS+fRsU7/ZWFF8ykFM6Pc9aCVf1+xasOOZpO3BAVgVrKvsqKHV7w==
 
+commander@^10.0.0:
+  version "10.0.1"
+  resolved "https://registry.yarnpkg.com/commander/-/commander-10.0.1.tgz#881ee46b4f77d1c1dccc5823433aa39b022cbe06"
+  integrity sha512-y4Mg2tXshplEbSGzx7amzPwKKOCGuoSRP/CjEdwwk0FOGlUbq6lKuoyDZTNZkmxHdJtp54hdfY/JUrdL7Xfdug==
+
 commander@^2.19.0:
   version "2.20.3"
   resolved "https://registry.yarnpkg.com/commander/-/commander-2.20.3.tgz#fd485e84c03eb4881c20722ba48035e8531aeb33"
@@ -8642,7 +8670,7 @@ did-jwt@^6.11.0:
     multiformats "^9.6.5"
     uint8arrays "^3.0.0"
 
-did-jwt@^6.11.2, did-jwt@^6.3.0, did-jwt@^6.9.0:
+did-jwt@^6.11.2, did-jwt@^6.11.6, did-jwt@^6.3.0, did-jwt@^6.9.0:
   version "6.11.6"
   resolved "https://registry.yarnpkg.com/did-jwt/-/did-jwt-6.11.6.tgz#3eeb30d6bd01f33bfa17089574915845802a7d44"
   integrity sha512-OfbWknRxJuUqH6Lk0x+H1FsuelGugLbBDEwsoJnicFOntIG/A4y19fn0a8RLxaQbWQ5gXg0yDq5E2huSBiiXzw==
@@ -12872,6 +12900,16 @@ jsonld@8.1.0:
   version "8.1.0"
   resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-8.1.0.tgz#06c71c0c1eff9be81140843362ce77622d90d67a"
   integrity sha512-6tYhiEVYO3rTcoYCGCArw8SqawuW0hf/cqmaE5WbX44CGb7d8N2UFvmUj9OYkJhChD98bfdPljUj7S39MrzsHg==
+  dependencies:
+    "@digitalbazaar/http-client" "^3.2.0"
+    canonicalize "^1.0.1"
+    lru-cache "^6.0.0"
+    rdf-canonize "^3.0.0"
+
+jsonld@^8.1.1:
+  version "8.1.1"
+  resolved "https://registry.yarnpkg.com/jsonld/-/jsonld-8.1.1.tgz#930ad043b1c39c4b64c4731b55c4114d2ccf0470"
+  integrity sha512-TbtV1hlnoDYxbscazbxcS7seDGV+pc0yktxpMySh0OBFvnLw/TIth0jiQtP/9r+ywuCbtj10XjDNBIkRgiyeUg==
   dependencies:
     "@digitalbazaar/http-client" "^3.2.0"
     canonicalize "^1.0.1"
@@ -20330,3 +20368,14 @@ z-schema@^5.0.5:
     validator "^13.7.0"
   optionalDependencies:
     commander "^9.4.1"
+
+z-schema@^6.0.0:
+  version "6.0.1"
+  resolved "https://registry.yarnpkg.com/z-schema/-/z-schema-6.0.1.tgz#985134a60e33c3527b45926c4f5c2c31b32827d3"
+  integrity sha512-9L2G/s1hJ0bWUfhPRIpY4TZIlBEesnE8NceGrpGIuCmEDTsN98rmGD5tKYgXHlQ/ypEfmZiTP3gnAGW/6gFyhQ==
+  dependencies:
+    lodash.get "^4.4.2"
+    lodash.isequal "^4.5.0"
+    validator "^13.7.0"
+  optionalDependencies:
+    commander "^10.0.0"
