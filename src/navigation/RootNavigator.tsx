@@ -1,6 +1,7 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import React, { useEffect, useRef } from 'react'
+import { useEmitter } from 'hooks'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
@@ -10,7 +11,6 @@ import MainNavigator from 'navigation/MainNavigator'
 import { RootStackParams } from 'navigation/types'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
-
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
 
 export function navigate(name: unknown, params: unknown) {
@@ -23,21 +23,26 @@ function RootNavigator() {
   const { refresh, authenticated, loaded } = useAuth()
   const mounted = useRef(false)
 
+  const init = useCallback(async () => {
+    await AccountManager.getInstance().init()
+    await refresh()
+  }, [refresh])
+
   useEffect(() => {
-    console.log('1')
     if (mounted.current) {
       return
     }
     mounted.current = true
-    async function init() {
-      console.log('2')
-      await AccountManager.getInstance().init()
-      console.log('3')
-      await refresh()
-      console.log('4')
-    }
     init()
-  }, [refresh])
+  }, [init])
+
+  useEmitter(
+    'APP_RECOVER_FROM_ERROR',
+    async () => {
+      init()
+    },
+    []
+  )
 
   if (!loaded) {
     return <LoadingView />

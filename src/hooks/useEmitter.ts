@@ -10,7 +10,9 @@ export function useEmitter<K extends keyof EmitterTypes>(
     if (!(key && callback)) return
 
     emitter.addListener(key, callback)
-    return () => emitter.removeListener(key, callback)
+    return () => {
+      emitter.removeListener(key, callback)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [callback, key, ...deps])
 

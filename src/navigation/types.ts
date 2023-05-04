@@ -83,7 +83,10 @@ export type MainStackParams = {
   DeleteAccount: undefined
   Identity: undefined
   AddIdentity: { mode?: AddIdentityMode }
-  SeedPhraseEntered: { usePrivateKey: boolean; previousScreen?: string }
+  SeedPhraseEntered: {
+    usePrivateKey: boolean
+    previousScreen?: string
+  }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
@@ -103,6 +106,13 @@ export type MainStackParams = {
   NFTCollectionDetail: { collection: NFTCollection }
   NFTDetail: { nft: NFT }
   SelectAsset: SelectAssetScreenProps
+
+  ClaimUsername: undefined
+  VeridaOneInvitationSuccess: undefined
+  UnlockVeridaOne: {
+    initialPage?: number
+  }
+
   ConnectionRequest: ConnectionRequestScreenParams
   ProofRequest: ProofRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams

@@ -1,6 +1,28 @@
 import { EnvironmentType } from '@verida/types'
+import Config from 'react-native-config'
 
-export const ENVIRONMENT = 'testnet'
+/**
+ * TODO: Remove this note
+ * Network environment will be set on the .env.type file for each build types
+ *
+ * NETWORK_ENVIRONMENT: production ? testnet: devnet
+ * NETWORK_ENDPOINT_URL: production ? https://meta-tx-server1.tn.verida.tech: https://devnet-meta-tx-server.tn.verida.tech
+ */
+// eslint-disable-next-line no-console
+console.info(
+  'Network config',
+  JSON.stringify(
+    {
+      NETWORK_ENVIRONMENT: Config.NETWORK_ENVIRONMENT,
+      NETWORK_ENDPOINT_URL: Config.NETWORK_ENDPOINT_URL,
+    },
+    null,
+    2
+  )
+)
+//
+
+export const ENVIRONMENT = Config.NETWORK_ENVIRONMENT
 
 const ENVIRONMENTS = {
   default: {
@@ -30,24 +52,18 @@ const ENVIRONMENTS = {
             'user-agent': 'Verida-Vault',
           },
         },
-        endpointUrl: 'https://meta-tx-server1.tn.verida.tech',
+        endpointUrl: Config.NETWORK_ENDPOINT_URL,
       },
       rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
     },
   },
   devnet: {
-    STORAGE_NODES_URI:
-      'https://assets.verida.io/registry/storageNodes/devnet.json',
-    VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
-    DEFAULT_COUNTRY: 'AU',
+    VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
   testnet: {
-    STORAGE_NODES_URI:
-      'https://assets.verida.io/registry/storageNodes/testnet.json',
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
-    DEFAULT_COUNTRY: 'US',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },

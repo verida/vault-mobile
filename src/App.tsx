@@ -115,9 +115,9 @@ function App() {
       <PersistGate loading={null} persistor={persistor}>
         <SafeAreaProvider>
           <ThemeProvider initial={defaultTheme}>
-            <NavigationContainer linking={linking} ref={navigationRef}>
-              <ModalProvider>
-                <AuthProvider>
+            <AuthProvider>
+              <NavigationContainer linking={linking} ref={navigationRef}>
+                <ModalProvider>
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
@@ -136,10 +136,10 @@ function App() {
                       </ActionSheetProvider>
                     </RootSiblingParent>
                   </Authenticate>
-                </AuthProvider>
-                <SwitchAccountToast />
-              </ModalProvider>
-            </NavigationContainer>
+                  <SwitchAccountToast />
+                </ModalProvider>
+              </NavigationContainer>
+            </AuthProvider>
           </ThemeProvider>
         </SafeAreaProvider>
       </PersistGate>

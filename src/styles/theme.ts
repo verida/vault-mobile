@@ -68,6 +68,7 @@ export const defaultTheme = {
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
+    textLightGrey30: Color(TEXT_COLOR).alpha(0.3).toString(),
     textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
     grey120: GREY_120,
 

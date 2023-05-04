@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 import { getWalletAddressForToken } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
-import ShareIcon from 'assets/share_icon.svg'
+import ShareIcon from 'assets/share_icon_with_bg.svg'
 import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
