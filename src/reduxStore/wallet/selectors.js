@@ -55,12 +55,12 @@ export const getListAndTotal = (state) => {
   if (!isEmpty(balances)) {
     const list = balances.map((tokenBalance) => {
       return {
+        ...tokenBalance,
         label: tokenBalance.symbol,
         price: tokenBalance.quote.USD.price,
         change: tokenBalance.quote.USD.percent_change_24h,
-        quantity: tokenBalance.amount,
-        amount: tokenBalance.totalBalance,
-        ...tokenBalance,
+        quantity: tokenBalance.balance,
+        amount: tokenBalance.amount,
       }
     })
     return { list, total }
@@ -90,14 +90,13 @@ export const selectSingleTokenData = (state, assetId) => {
   })
 
   return {
+    ...tokenBalance,
     label: tokenBalance.symbol,
     price: tokenBalance.quote.USD.price,
     change: tokenBalance.quote.USD.percent_change_24h,
-    quantity: tokenBalance.amount,
-    amount: tokenBalance.totalBalance,
-    ...tokenBalance,
+    quantity: tokenBalance.balance,
+    amount: tokenBalance.amount,
   }
-
 }
 
 export const getTokensData = (state) => {
