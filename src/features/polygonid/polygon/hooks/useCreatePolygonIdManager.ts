@@ -21,11 +21,16 @@ export function useCreatePolygonIdManager(): Stateful<string> {
   const account = accountManager.getSelectedAccount()
 
   React.useEffect(() => {
+    console.debug(
+      'useCreatePolygonIdManager ~ Trying to create a new Polygon ID Manager'
+    )
     if (!account) {
+      console.debug(
+        'useCreatePolygonIdManager ~ No Verida account, cannot create Polygon ID Manager'
+      )
       return
     }
 
-    // TODO: Define the config based on the current selected Account
     // TODO: Find a better way to pass the sensitive information to the manager.
     const config: PolygonIdManagerConfig = {
       // PolygonID Private Key is a 32 char hex
@@ -38,7 +43,6 @@ export function useCreatePolygonIdManager(): Stateful<string> {
         ...CONFIG.VERIDA_DID_CLIENT_CONFIG,
         // Currently have to ovrerride the callType because the config comes from a non-typescript file
         callType: 'gasless',
-        didEndpoints: [],
       },
     }
 
@@ -46,17 +50,26 @@ export function useCreatePolygonIdManager(): Stateful<string> {
       try {
         setState(loadingState)
         if (polygonIsLoading) {
+          console.debug(
+            'useCreatePolygonIdManager ~ Webapp is not ready, cannot create Polygon ID Manager'
+          )
           return
         }
 
         console.debug(
-          'useCreatePolygonIdManager.ts ~ React.useEffect ~ config:',
-          config
+          'useCreatePolygonIdManager ~ Creating a new Polygon ID Manager'
         )
         const managerId = await createIdManager(config)
+        console.debug(
+          'useCreatePolygonIdManager ~ New Polygon ID Manager created:',
+          managerId
+        )
 
         setState({ loading: false, result: managerId })
       } catch (cause) {
+        console.error(
+          'useCreatePolygonIdManager ~ Error while creating a Polygon ID Manager'
+        )
         setState({
           loading: false,
           error: new Error('Failed to create PolygonIdManager.', { cause }),

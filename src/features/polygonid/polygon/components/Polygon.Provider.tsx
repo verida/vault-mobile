@@ -63,6 +63,9 @@ export const PolygonProvider = ({
   const onMessage = React.useCallback(
     ({ nativeEvent: { data: maybeResult } }: WebViewMessageEvent) => {
       try {
+        console.debug(
+          'Polygon.Provider.tsx ~ onMessage ~ Receiving a message from the WebView'
+        )
         const result = JSON.parse(maybeResult)
 
         if (!result || typeof result !== 'object') {
@@ -114,18 +117,26 @@ export const PolygonProvider = ({
   )
 
   const onLoadStart = React.useCallback(() => {
+    console.debug('PolygonProvider ~ WebView loading started')
     setWebPageLoading(true)
   }, [])
 
   const onLoadEnd = React.useCallback(() => {
+    console.debug('PolygonProvider ~ WebView loaded')
     setWebPageLoading(false)
     setWebPageLoaded(true)
+  }, [])
+
+  const handleError = React.useCallback((event: any) => {
+    setWebPageLoaded(false)
+    console.error('PolygonProvider ~ Error while loading the WebView')
+    console.error(event)
   }, [])
 
   // Mark the PolygonProvider as in a loading state if either the webpage is loading
   // or we don't have all of the required circuits cached to the local device.
   const loading = webPageLoading || !isRequiredCircuitsDownloaded
-  const isReady = webPageLoaded || isRequiredCircuitsDownloaded
+  const isReady = webPageLoaded && isRequiredCircuitsDownloaded
 
   const invokeJs = React.useCallback(
     ({
@@ -148,7 +159,15 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
-        return ref.current?.injectJavaScript(injectedJavaScript)
+        console.debug('Polygon.Provider.tsx ~ Injecting JavaScript in WebView')
+        try {
+          return ref.current?.injectJavaScript(injectedJavaScript)
+        } catch (error: unknown) {
+          console.error(
+            'Polygon.Provider.tsx ~ Error while injecting JavaScript in WebView'
+          )
+          console.error(error)
+        }
       })
     },
     [ref, generateRandomKey, isReady]
@@ -156,6 +175,7 @@ export const PolygonProvider = ({
 
   const createIdManager: PolygonCreateIdManager = React.useCallback(
     async (config: PolygonIdManagerConfig) => {
+      console.debug('Polygon.Provider.tsx ~ Creating a Polygon ID Manager')
       const managerId = await invokeJs({
         js: `window.__CREATE_POLYGON_ID_MANAGER__({managerId: ${JSON.stringify(
           generateRandomKey()
@@ -169,6 +189,10 @@ export const PolygonProvider = ({
           )}".`
         )
 
+      console.debug(
+        'Polygon.Provider.tsx ~ Polygon ID Manager created',
+        managerId
+      )
       return managerId
     },
     [invokeJs, generateRandomKey]
@@ -218,6 +242,7 @@ export const PolygonProvider = ({
           onMessage={onMessage}
           onLoadStart={onLoadStart}
           onLoadEnd={onLoadEnd}
+          onError={handleError}
           ref={ref}
           javaScriptEnabled
           containerStyle={styles.hidden}
