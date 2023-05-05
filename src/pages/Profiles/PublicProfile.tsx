@@ -37,10 +37,15 @@ import {
   OneProfileFeaturedAsset,
   PublicWalletAddress,
 } from 'types/profile'
-import { CaipWalletType, VeridaWallet } from 'types/wallet'
+import { CaipWalletType, VeridaWallet, VeridaWalletAccount } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
-import { VeridaOneCustomLink, VeridaOneFeaturedAsset } from 'api/types'
+import {
+  BlockchainNetwork,
+  BlockchainWalletWithAccounts,
+  VeridaOneCustomLink,
+  VeridaOneFeaturedAsset,
+} from 'api/types'
 import UsernameManager from 'api/UsernameManager'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
@@ -61,7 +66,7 @@ import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { selectChains } from 'reduxStore/tokens/selectors'
+import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
@@ -111,7 +116,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     AccountManager.getInstance().getSelectedAccount()?.did
 
   const [username, setUsername] = useState<string | undefined>(undefined)
-  const chains = useSelector(selectChains)
+  const blockchainNetworks = useSelector(getBlockchainNetworks)
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     PublicWalletAddress[]
@@ -144,22 +149,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [publicWalletAddresses]
   )
 
-  const getPublicAdrressOrder = useCallback(
+  const getPublicAddressOrder = useCallback(
     (address: string, chainId: string) => {
       const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
       return publicWalletAddress?.order ?? 0
     },
     [getPublicWalletAddressObject]
   )
-
-  function getChainId(chainData: any) {
-    // FIXME: Remove this hack of trimming the Algorand chain ID reference to make it follow the CAIP address rule
-    let chainRef = chainData.reference
-    if (chainData.namespace === 'algorand') {
-      chainRef = chainRef.substring(0, 32)
-    }
-    return `${chainData.namespace}:${chainRef}`
-  }
 
   const walletAddresses = useMemo(() => {
     function isPublic(address: string, chainId: string) {
@@ -172,29 +168,44 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       )
     }
 
-    function getPublicName(address: string, chainId: string) {
-      const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
+    function getPublicName(
+      address: string,
+      blockchainNetwork: BlockchainNetwork
+    ) {
+      const publicWalletAddress = getPublicWalletAddressObject(
+        address,
+        blockchainNetwork.chainId
+      )
       return publicWalletAddress?.label ?? ''
     }
 
-    let mappedWallets: PublicWalletAddress[] = Object.values(chains).reduce(
-      (acc, chain) => {
+    let mappedWallets: PublicWalletAddress[] = Object.values(
+      blockchainNetworks
+    ).reduce(
+      (
+        acc: BlockchainWalletWithAccounts[],
+        blockchainNetwork: BlockchainNetwork
+      ) => {
         const sameChainAdresses = Object.values(wallets).reduce(
-          (accAddresses: PublicWalletAddress[], wallet) => {
-            const account =
-              wallet.accounts[chain.addressMapping as CaipWalletType]
+          (
+            accAddresses: PublicWalletAddress[],
+            wallet: BlockchainWalletWithAccounts
+          ) => {
+            const account = wallet.accounts[blockchainNetwork.chainId]
             if (account) {
-              const chainId = getChainId(chain.data)
               accAddresses.push({
                 address: account.address,
-                chainId: chainId,
-                label: getPublicName(account.address, chainId),
-                order: getPublicAdrressOrder(account.address, chainId),
+                chainId: blockchainNetwork.chainId,
+                label: getPublicName(account.address, blockchainNetwork),
+                order: getPublicAddressOrder(
+                  account.address,
+                  blockchainNetwork.chainId
+                ),
 
                 // Infered value for displaying
                 veridaWalletName: wallet.label,
-                isPublic: isPublic(account.address, chainId),
-                icon: chain?.icon,
+                isPublic: isPublic(account.address, blockchainNetwork.chainId),
+                icon: blockchainNetwork.icon,
               })
             }
 
@@ -219,12 +230,11 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
     return enabledVeridaOne ? mappedWallets : mappedWallets.slice(0, 1) // Shorten the wallet address to one if not enabled Verida One Profile
   }, [
-    chains,
     enabledVeridaOne,
     publicWalletAddresses,
     getPublicWalletAddressObject,
     wallets,
-    getPublicAdrressOrder,
+    getPublicAddressOrder,
   ])
 
   const debounceSaveProfile = useCallback(
