@@ -57,10 +57,10 @@ export const getListAndTotal = (state) => {
       return {
         ...tokenBalance,
         label: tokenBalance.symbol,
-        price: tokenBalance.quote.USD.price,
-        change: tokenBalance.quote.USD.percent_change_24h,
-        quantity: tokenBalance.balance,
-        amount: tokenBalance.amount,
+        price: parseFloat(tokenBalance.quote.USD.price),
+        change: parseFloat(tokenBalance.quote.USD.percent_change_24h),
+        quantity: parseFloat(tokenBalance.balance),
+        amount: parseFloat(tokenBalance.amount),
       }
     })
     return { list, total }
@@ -92,10 +92,10 @@ export const selectSingleTokenData = (state, assetId) => {
   return {
     ...tokenBalance,
     label: tokenBalance.symbol,
-    price: tokenBalance.quote.USD.price,
-    change: tokenBalance.quote.USD.percent_change_24h,
-    quantity: tokenBalance.balance,
-    amount: tokenBalance.amount,
+    price: parseFloat(tokenBalance.quote.USD.price),
+    change: parseFloat(tokenBalance.quote.USD.percent_change_24h),
+    quantity: parseFloat(tokenBalance.balance),
+    amount: parseFloat(tokenBalance.amount),
   }
 }
 
