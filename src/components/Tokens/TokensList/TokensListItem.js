@@ -5,12 +5,12 @@ import { Image, StyleSheet, View } from 'react-native'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({ item, onPressItem }) => {
-  const { change, label, icon, symbol, quantity, price, amount } = item
+  const { change, label, token, symbol, quantity, price, amount } = item
   const positive = change >= 0
 
   return (
     <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
-      <Image source={{ uri: icon }} style={styles.icon} />
+      <Image source={{ uri: token.icon }} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
