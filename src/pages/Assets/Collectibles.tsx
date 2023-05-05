@@ -31,17 +31,13 @@ import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import * as thunkActions from 'reduxStore/thunkActions'
 import {
   allWalletsSelector,
+  getUniqueWalletAddresses,
   getWalletsData,
   selectedWalletSelector,
 } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
-
-const caipNormalizeAddress = (address: string) => {
-  // FIXME: hardcode just ethereum for now
-  return `eip155:5:${address}`
-}
 
 const Collectibles = () => {
   const dispatch = useDispatch()
@@ -56,14 +52,9 @@ const Collectibles = () => {
   >
 
   const selectedWallet = wallets[selectedWalletId]
-  // TODO: remove hardcode, as the API only works with ethereum for now
-  const etherWallet = caipNormalizeAddress(
-    selectedWallet?.accounts.eip155?.address ?? ''
-  )
-
-  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
-    etherWallet,
-  ])
+  const addresses = getUniqueWalletAddresses(selectedWallet)
+  const { data, isLoading, error, refetch } =
+    useGetWalletNFTCollectionsQuery(addresses)
 
   // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
   // const data = walletNFTCollections?.[etherWallet] ?? []

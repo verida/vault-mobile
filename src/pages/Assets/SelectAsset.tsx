@@ -52,9 +52,8 @@ const SelectAsset = () => {
   const selectedWallet = wallets[selectedWalletId]
   const addresses = getUniqueWalletAddresses(selectedWallet)
 
-  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
-    addresses,
-  ])
+  const { data, isLoading, error, refetch } =
+    useGetWalletNFTCollectionsQuery(addresses)
 
   // pull to refresh data
   const [refreshing, setRefreshing] = React.useState(false)

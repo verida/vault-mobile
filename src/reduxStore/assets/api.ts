@@ -14,7 +14,7 @@ export const getWalletNFTCollectionsQuery = createApi({
       keepUnusedDataFor: 180, // 3 mins
       query: (walletAddresses) =>
         `nfts/list?${walletAddresses
-          .map((address) => `wallet[]=${address}`)
+          .map((address) => `wallet=${address}`)
           .join('&')}`,
       transformResponse: (response: any) =>
         response.data.sort((a: any) => (a.metadata?.image ? -1 : 1)),
