@@ -305,8 +305,6 @@ class AccountManager extends EventEmitter {
           accounts: userGeneratedWallets,
         },
       }
-      console.log('walletData')
-      console.log(walletData)
 
       await store.dispatch(saveUserWallets(walletData))
       await store.dispatch(setSelectedWallet(walletID))

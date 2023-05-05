@@ -98,8 +98,13 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {formatTokenQuantity(transactionParams.fee, feeDecimal, fixed)}{' '}
-                {feeSymbol}
+                {transactionParams.fee
+                  ? formatTokenQuantity(
+                      transactionParams.fee,
+                      feeDecimal,
+                      fixed
+                    ) + ` ${feeSymbol}`
+                  : 'Unknown'}
               </Text>
             </View>
           </View>

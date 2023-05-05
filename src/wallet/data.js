@@ -3,16 +3,16 @@ import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
+import { store } from 'reduxStore'
 import {
   getTokenAddress,
-  getTokenChain,
-  getTokenChainReference,
   getWalletAddressForAsset,
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
 import Web3 from 'web3'
 
+import { getBlockchainNetwork } from 'reduxStore/selectors'
 import {
   getTransactionParamsData,
   getWalletsData,
@@ -49,11 +49,16 @@ const minABI = [
 
 // @chris done
 const getTransactionParams = async (transactionData, wallets) => {
+  const asset = transactionData.token.asset
   const requestBody = {
-    asset: transactionData.token.asset,
+    asset: {
+      chainId: asset.chainId,
+      assetName: asset.assetName,
+      tokenId: asset.tokenId,
+    },
   }
 
-  if (transactionData.token.asset.chainId.reference === 'eip155') {
+  if (transactionData.token.asset.chainId.namespace === 'eip155') {
     const fromAddress = getWalletAddressForAsset(
       transactionData.token.asset,
       wallets
@@ -95,14 +100,26 @@ const getTransactionParams = async (transactionData, wallets) => {
     requestBody.transactionParameters = input
   }
 
-  const request = await walletProviderApi.post(
+  const response = await walletProviderApi.post(
     'transaction/params',
     requestBody
   )
 
-  return request.data.data
+  return response.data.data
 }
 
+/**
+ * @todo refactor
+ *
+ * This is a mess. It sends transactions to our server, but the transactions should be sent
+ * via RPC_URL on the mobile for better and more flexibility so users in the future can
+ * add other RPC_URLs tos end transactions.
+ *
+ * @param {*} transactionData
+ * @param {*} isAssetEnablingTransaction
+ * @param {*} state
+ * @returns
+ */
 const sendTransaction = async (
   transactionData,
   isAssetEnablingTransaction,
@@ -116,22 +133,20 @@ const sendTransaction = async (
 
   const tokenAddress = getTokenAddress(transactionData.token.asset)
   const isTokenNative = isNativeToken(transactionData.token.asset)
-  const tokenChain = getTokenChain(transactionData.token.asset)
-  const tokenChainReference = getTokenChainReference(
-    transactionData.token.asset
+  const blockchainNetwork = getBlockchainNetwork(
+    store.getState(),
+    transactionData.token.asset.chainId
   )
 
-  const chainWallet = getWalletAddressForAsset(
-    transactionData.token.address,
-    wallets
-  )
+  const tokenChainReference = blockchainNetwork.asset.chainId.reference
+  const chainWallet = wallets[blockchainNetwork.chainId]
   const receiverAddress = transactionData.address
 
   let txString
   let txData
   let txIdAlgo
 
-  if (tokenChain === 'near') {
+  if (blockchainNetwork.asset.chainId.namespace === 'near') {
     const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
     const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
     const publicKey = keyPair.getPublicKey()
@@ -205,9 +220,9 @@ const sendTransaction = async (
       to: receiverAddress,
       from: chainWallet.address,
       token: transactionData.token,
-      chain: tokenChain,
+      chain: blockchainNetwork,
     }
-  } else if (tokenChain === 'eip155') {
+  } else if (blockchainNetwork.asset.chainId.namespace === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
 
     const request = await walletProviderApi.post('transaction/nonce', {
@@ -226,7 +241,7 @@ const sendTransaction = async (
         nonce: request.data.data,
         chainID: tokenChainReference,
       }
-    } else {
+    } else if (blockchainNetwork.asset.chainId.namespace === 'algorand') {
       let fromAddress = chainWallet.address
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
         from: fromAddress,
@@ -245,15 +260,13 @@ const sendTransaction = async (
         nonce: request.data.data,
         chainID: tokenChainReference,
       }
-    }
-
-    let common
-
-    if (tokenChainReference === '4') {
-      common = new Common({ chain: Chain.Rinkeby })
     } else {
-      common = Common.custom({ chainId: tokenChainReference })
+      throw new Error(
+        `Unknown blockchain namespace: ${blockchainNetwork.asset.chainId.namespace}`
+      )
     }
+
+    const common = Common.custom({ chainId: tokenChainReference })
 
     const tx = Transaction.fromTxData(transaction, { common })
 
@@ -273,9 +286,9 @@ const sendTransaction = async (
       to: receiverAddress,
       from: chainWallet.address,
       token: transactionData.token,
-      chain: tokenChain,
+      chain: blockchainNetwork,
     }
-  } else if (tokenChain === 'algorand') {
+  } else if (blockchainNetwork.asset.chainId.namespace === 'algorand') {
     let transactionParams
     if (isAssetEnablingTransaction) {
       const requestBody = {
@@ -333,7 +346,7 @@ const sendTransaction = async (
       to: receiverAddress,
       from: chainWallet.address,
       token: transactionData.token,
-      chain: tokenChain,
+      chain: blockchainNetwork,
     }
   }
 
@@ -351,9 +364,18 @@ const sendTransaction = async (
       requestBody
     )
 
+    if (sentTx && sentTx.status == 'error') {
+      // @todo: How to handle error?
+      throw new Error(sentTx.error)
+    }
+
     if (sentTx && sentTx.data.data.transactionId) {
       txData.id = sentTx.data.data.transactionId
     }
+
+    // Response is a BigInt so convert to the original amount
+    // which should be human readable for the success page
+    txData.amount = transactionData.amount
     return txData
   }
 }

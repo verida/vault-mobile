@@ -4,15 +4,14 @@ import AccountManager from 'api/AccountManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 
 import { WALLET_SCHEMA_0_2_0_URI } from '../../wallet/constants'
-import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
-import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 import {
   BlockchainAccount,
   BlockchainNetwork,
   BlockchainWallet,
   BlockchainWalletWithAccounts,
-} from './types'
-import { WalletProvider } from './WalletProvider'
+} from '../types'
+import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
+import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 
 const bip39 = require('bip39')
 
@@ -28,14 +27,37 @@ export class WalletManager {
 
     const wallets: Record<string, BlockchainWalletWithAccounts> = {}
     walletData.forEach((wallet: BlockchainWallet | any) => {
-      if (wallet.walletType) {
+      if (wallet.walletType !== 'multi') {
+        wallet.multiChain = false
+        // Convert imported testnet wallets using the old format
+        // to proper CAIP addresses
+        // This is for wallets created between 4 May 2023 and the next release
+        switch (wallet.walletType) {
+          case 'ethereum':
+            wallet.chainId = 'eip155:5'
+            break
+          case 'algorand':
+            wallet.chainId = 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDe'
+            break
+          case 'polygon':
+            wallet.chainId = 'eip155:80001'
+            break
+          case 'near':
+            wallet.chainId = 'near:testnet'
+            break
+          default:
+            wallet.chainId = wallet.walletType
+            break
+        }
+
         console.log(
-          'trying to convert wallet, fix chainId for non multi chain wallets!'
+          'Converted wallet, fix chainId for non multi chain wallets!'
         )
-        console.log(wallet)
-        // We have a wallet saved with the old format, need to update it
-        wallet.multiChain = wallet.walletType === 'multi'
-        // @todo: set wallet.chainId
+
+        wallet.asset = blockchainNetworks[wallet.chainId].asset
+        wallet.blockchainNetwork = blockchainNetworks[wallet.chainId]
+      } else {
+        wallet.multiChain = true
       }
 
       const updatedWallet: BlockchainWalletWithAccounts = {
@@ -74,10 +96,10 @@ export class WalletManager {
     wallet: BlockchainWallet,
     blockchainNetworks: BlockchainNetwork[]
   ) {
-    const accounts: Record<string, BlockchainWalletWithAccounts> = {}
+    const accounts: Record<string, BlockchainAccount> = {}
 
     Object.values(blockchainNetworks).forEach(
-      (blockchainNetwork: BlockchainNetwork): BlockchainAccount => {
+      (blockchainNetwork: BlockchainNetwork): void => {
         if (
           !wallet.multiChain &&
           blockchainNetwork.chainId !== wallet.chainId
@@ -87,7 +109,15 @@ export class WalletManager {
 
         // If we have a watch only wallet, simply return it
         if (wallet.address && !wallet.privateKey && !wallet.mnemonic) {
-          return wallet
+          const blockchainAccount: BlockchainAccount = {
+            network: blockchainNetwork,
+            chainId: blockchainNetwork.chainId,
+            derivationPath: blockchainNetwork.derivationPath,
+            address: wallet.address,
+          }
+
+          accounts[blockchainNetwork.chainId] = blockchainAccount
+          return
         }
 
         if (!NAMESPACES[blockchainNetwork.namespace]) {
@@ -110,11 +140,12 @@ export class WalletManager {
         } else {
           console.error(wallet)
           throw new Error(
-            'Unexpected wallet (No address, private key or mnemonic'
+            'Unexpected wallet (No address, private key or mnemonic)'
           )
         }
 
         const blockchainAccount: BlockchainAccount = {
+          network: blockchainNetwork,
           chainId: blockchainNetwork.chainId,
           derivationPath: blockchainNetwork.derivationPath,
           address: walletDetails.address,

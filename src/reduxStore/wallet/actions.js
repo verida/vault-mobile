@@ -164,6 +164,8 @@ export const setSelectedWallet = (walletId) => {
 }
 
 export const getTransactionParams = (transactionData) => {
+  console.log('~~~ getTransactionParams')
+  console.log(transactionData)
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
     const wallets = getWalletsData(getState().main)
@@ -172,6 +174,8 @@ export const getTransactionParams = (transactionData) => {
       transactionData,
       wallets
     )
+
+    console.log(params)
 
     if (params) {
       dispatch({
@@ -263,14 +267,14 @@ export const createNewWallet = (data) => {
 }
 
 export const importWallet = (data) => {
-  return async (dispatch, getState) => {
+  return async (dispatch) => {
     dispatch({ type: WALLET_PROCESSING_START })
 
     try {
       const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
       const privateKey =
         data.inputSwitch === 'privateKey' ? data.privateKey : null
-      const walletType = data.blockchain
+      const walletType = data.blockchainNetwork.chainId
 
       // save mnemonic to verida store
       const walletDb =
@@ -285,28 +289,10 @@ export const importWallet = (data) => {
       if (mnemonic) wallet.mnemonic = mnemonic
       if (privateKey) wallet.privateKey = privateKey
       const saved = await walletDb?.save(wallet)
-      const walletID = saved?.id
+      const walletId = saved?.id
+      AccountManager.getInstance().restoreUserWallet()
+      await dispatch(setSelectedWallet(walletId))
 
-      const hdWallets = await walletDb?.getMany()
-
-      if (hdWallets) {
-        const chains = selectChains(getState())
-        const wallets = rawDataToReduxState(hdWallets, chains)
-
-        await dispatch(saveUserWallets(wallets))
-
-        await dispatch(setSelectedWallet(walletID))
-
-        // save to storage..
-        await SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
-        )
-        await SecureStore.setItemAsync(
-          CONFIG.SELECTED_WALLET_STORAGE_KEY,
-          walletID
-        )
-      }
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
       dispatch({

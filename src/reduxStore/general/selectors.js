@@ -19,5 +19,5 @@ export const getBlockchainNetwork = (state, chainIdObj) => {
 }
 
 export const getBlockchainNetworkLabel = (network) => {
-  return `${network.label} (${network.name})`
+  return `${network.label}`
 }

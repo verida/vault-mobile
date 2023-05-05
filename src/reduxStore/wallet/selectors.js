@@ -119,7 +119,6 @@ export const getSelectedWalletId = (state) => {
 // @chris done
 export const getWalletList = (state) => {
   const allWallets = getAllWallets(state)
-  const blockchainNetworks = getBlockchainNetworks(store.getState())
 
   return Object.values(allWallets).map((wallet) => {
     const addresses = Object.values(wallet.accounts).map((account) => {
@@ -128,7 +127,7 @@ export const getWalletList = (state) => {
 
     let icon
     if (!wallet.multiChain) {
-      icon = blockchainNetworks[wallet.chainId].icon
+      icon = wallet.blockchainNetwork.icon
     }
 
     return {
