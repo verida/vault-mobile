@@ -3,7 +3,7 @@ import LottieView from 'lottie-react-native'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
-import BlurCircle from 'assets/blur-circle.svg'
+import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import { NUNITO_SANS_BOLD } from 'constants/text'
