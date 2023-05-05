@@ -4,6 +4,7 @@ import {
 } from 'features/polygonid/verida'
 import React from 'react'
 
+import { ALL_CIRCUIT_IDS } from '../circuit/constants'
 import { PolygonIdManagerProvider } from './PolygonIdManagerContext'
 
 export const PolygonIdProvider: React.FunctionComponent = (props) => {
@@ -23,7 +24,7 @@ export const PolygonIdProvider: React.FunctionComponent = (props) => {
   return (
     <VeridaPolygonIdProvider // Serve from the installation directory.
       fileServer={{ port: 6002, dir: maybeDir }}
-      requiredCircuitIds={['authV2', 'credentialAtomicQuerySigV2']}>
+      requiredCircuitIds={ALL_CIRCUIT_IDS}>
       <PolygonIdManagerProvider>{children}</PolygonIdManagerProvider>
     </VeridaPolygonIdProvider>
   )

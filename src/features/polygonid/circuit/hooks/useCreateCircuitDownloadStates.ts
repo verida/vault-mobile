@@ -9,19 +9,12 @@ import {
   CircuitDownloadStatus,
   CircuitType,
 } from '../@types'
+import { ALL_CIRCUIT_IDS } from '../constants'
 import { getCircuitFilePaths } from '../utils'
 
 const loadingState = (): Stateful<CircuitDownloadStates> => ({
   loading: true,
 })
-
-// TODO: Force this to be a function of enum depth.
-const ALL_CIRCUIT_IDS: readonly `${CircuitId}`[] = [
-  'authV2',
-  'stateTransition',
-  'credentialAtomicQueryMTPV2',
-  'credentialAtomicQuerySigV2',
-]
 
 export function useCreateCircuitDownloadStates({
   publicDir,
