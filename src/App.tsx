@@ -1,12 +1,15 @@
+import 'react-native-url-polyfill/auto'
+
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import { VeramoProvider } from 'contexts'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { PolygonIdProvider } from 'features/polygonid'
+import { VeramoProvider } from 'features/veramo'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -121,10 +124,12 @@ function App() {
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
                             <VeramoProvider>
-                              <GestureHandlerRootView style={{ flex: 1 }}>
-                                <RootNavigator />
-                              </GestureHandlerRootView>
-                              <MetaServerChecks />
+                              <PolygonIdProvider>
+                                <GestureHandlerRootView style={{ flex: 1 }}>
+                                  <RootNavigator />
+                                </GestureHandlerRootView>
+                                <MetaServerChecks />
+                              </PolygonIdProvider>
                             </VeramoProvider>
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>

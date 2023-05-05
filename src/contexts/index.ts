@@ -1,5 +1,4 @@
 export * from './ModalContext'
 export * from './ThemeContext'
-export * from './VeramoContext'
 export * from './WalletConnectContext'
 export * from './WalletConnectContextv2'
