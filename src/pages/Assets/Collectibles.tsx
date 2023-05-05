@@ -6,7 +6,6 @@ import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
 import {
   ListRenderItem,
-  Pressable,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
@@ -22,17 +21,14 @@ import { NftItem } from 'components/Assets/NftItem'
 import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
-import { SearchBar } from 'components/SearchBar/SearchBar'
 import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
-import * as thunkActions from 'reduxStore/thunkActions'
 import {
   allWalletsSelector,
   getUniqueWalletAddresses,
-  getWalletsData,
   selectedWalletSelector,
 } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
@@ -53,8 +49,9 @@ const Collectibles = () => {
 
   const selectedWallet = wallets[selectedWalletId]
   const addresses = getUniqueWalletAddresses(selectedWallet)
-  const { data, isLoading, error, refetch } =
-    useGetWalletNFTCollectionsQuery(addresses)
+  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
+    addresses,
+  ])
 
   // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
   // const data = walletNFTCollections?.[etherWallet] ?? []
