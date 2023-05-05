@@ -290,7 +290,7 @@ class AccountManager extends EventEmitter {
       const walletID = saved?.id
 
       // generate wallets and save to redux state
-      const blockchainNetworks = getBlockchainNetworks()
+      const blockchainNetworks = getBlockchainNetworks(store.getState())
 
       const userGeneratedWallets = WalletManager.generateAccountsForWallet(
         {
