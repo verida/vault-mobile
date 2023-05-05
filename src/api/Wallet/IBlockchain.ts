@@ -12,7 +12,8 @@ export interface WalletUtilsWallet {
 export interface IBlockchain {
   buildAccountFromMnemonic(
     mnemonic: string,
-    derivationPath: string
+    derivationPath: string,
+    multiChain: boolean
   ): WalletUtilsWallet
 
   buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet

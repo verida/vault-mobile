@@ -10,13 +10,17 @@ import {
   BlockchainWallet,
   BlockchainWalletWithAccounts,
 } from '../types'
+import { Blockchain as algorandBlockchain } from './algorandBlockchain'
 import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
 import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
+import { Blockchain as nearBlockchain } from './nearBlockchain'
 
 const bip39 = require('bip39')
 
 const NAMESPACES: Record<string, IBlockchain> = {
   eip155: eip1558Blockchain,
+  near: nearBlockchain,
+  algorand: algorandBlockchain,
 }
 
 export class WalletManager {
@@ -49,10 +53,6 @@ export class WalletManager {
             wallet.chainId = wallet.walletType
             break
         }
-
-        console.log(
-          'Converted wallet, fix chainId for non multi chain wallets!'
-        )
 
         wallet.asset = blockchainNetworks[wallet.chainId].asset
         wallet.blockchainNetwork = blockchainNetworks[wallet.chainId]
@@ -122,7 +122,7 @@ export class WalletManager {
 
         if (!NAMESPACES[blockchainNetwork.namespace]) {
           // only support EIPP155 for now
-          return
+          throw new Error(blockchainNetwork.chainId + 'is not supported')
         }
 
         const namespaceChain = NAMESPACES[blockchainNetwork.namespace]
@@ -135,7 +135,8 @@ export class WalletManager {
         } else if (wallet.mnemonic) {
           walletDetails = namespaceChain.buildAccountFromMnemonic(
             wallet.mnemonic,
-            blockchainNetwork.derivationPath
+            blockchainNetwork.derivationPath,
+            wallet.multiChain
           )
         } else {
           console.error(wallet)
