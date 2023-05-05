@@ -6,7 +6,6 @@ import { LinearGradient } from 'expo-linear-gradient'
 import {
   editable,
   isEnabledVeridaOneProfile,
-  saveStatusEnabledVeridaOneProfile,
 } from 'helpers/profile'
 import { debounce, isEqual } from 'lodash'
 import React, {
@@ -37,7 +36,7 @@ import {
   OneProfileFeaturedAsset,
   PublicWalletAddress,
 } from 'types/profile'
-import { CaipWalletType, VeridaWallet, VeridaWalletAccount } from 'types/wallet'
+import { VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
 import {
@@ -262,6 +261,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         ) {
           await VeridaOneManager.setFeaturedAssets(featuredAssets)
         }
+
+        // refetch profile so react state correctly updates
+        fetchVeridaOneProfle()
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Failed to save profile')
@@ -753,6 +755,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                           originalValue: {
                             order: index,
                           },
+                          publicWalletAddresses,
                         })
                         break
 
@@ -773,6 +776,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                   originalValue: {
                     order: index,
                   },
+                  searchableAddresses: publicWalletAddresses.map(
+                    (item) => `${item.chainId}:${item.address}`
+                  ),
                 })
               }
             }}
