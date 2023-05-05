@@ -13,6 +13,7 @@ import { navigate } from 'navigation/RootNavigator'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   getSelectedWalletId,
+  getWalletList,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
@@ -327,27 +328,8 @@ export const addWatchedWallet = (data) => {
         throw new Error(walletsDatastore.errors)
       }
 
-      const wallets = await walletsDatastore.getMany()
-
-      if (wallets) {
-        const chains = selectChains(getState())
-        const walletsState = rawDataToReduxState(wallets, chains)
-
-        const savedWalletId = savedWallet.id
-
-        await dispatch(saveUserWallets(walletsState))
-        await dispatch(setSelectedWallet(savedWalletId))
-
-        // save to storage..
-        await SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
-          JSON.stringify(walletsState)
-        )
-        await SecureStore.setItemAsync(
-          CONFIG.SELECTED_WALLET_STORAGE_KEY,
-          savedWalletId
-        )
-      }
+      AccountManager.getInstance().restoreUserWallet()
+      await dispatch(setSelectedWallet(savedWallet.id))
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
@@ -374,28 +356,13 @@ export const deleteWallet = (walletId) => {
 
       await walletDb?.delete(walletId)
 
-      const hdWallets = await walletDb?.getMany()
-
-      if (hdWallets) {
-        const chains = selectChains(getState())
-        const wallets = rawDataToReduxState(hdWallets, chains)
-
-        if (currentlySelectedWallet === walletId) {
-          let firstWalletId = hdWallets[0]._id
-          await dispatch(setSelectedWallet(firstWalletId))
-          await SecureStore.setItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY,
-            firstWalletId
-          )
-        }
-
-        await dispatch(saveUserWallets(wallets))
-        await SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
-        )
+      if (currentlySelectedWallet === walletId) {
+        const wallets = getWalletList(getState().main)
+        const nextWalletId = Object.keys(wallets)[0]
+        await dispatch(setSelectedWallet(nextWalletId))
       }
 
+      AccountManager.getInstance().restoreUserWallet()
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
       dispatch({
