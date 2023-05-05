@@ -140,6 +140,17 @@ export const getWalletList = (state) => {
   })
 }
 
+export const getUniqueWalletAddresses = (wallet) => {
+  const addresses = []
+  Object.values(wallet.accounts).map((account) => {
+    const id = `${account.chainId}:${account.address}`
+    if (addresses.indexOf(id) === -1) {
+      addresses.push(id)
+    }
+  })
+  return addresses
+}
+
 export const getSelectedWalletById = (state) => {
   const walletList = getWalletList(state)
   const selectedWalletId = state.selectedWallet

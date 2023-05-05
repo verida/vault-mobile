@@ -19,7 +19,6 @@ import { NFT, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import { NftItem } from 'components/Assets/NftItem'
 import GridView from 'components/Grids/GridView'
-import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import { Title } from 'components/Typography/Title'
@@ -29,6 +28,7 @@ import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
 import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import {
   allWalletsSelector,
+  getUniqueWalletAddresses,
   selectedWalletSelector,
 } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
@@ -37,11 +37,6 @@ export interface SelectAssetScreenProps {
   screenName: string
   mode: string | number
   originalValue: any
-}
-
-const caipNormalizeAddress = (address: string) => {
-  // FIXME: hardcode just ethereum for now
-  return `eip155:5:${address}`
 }
 
 const SelectAsset = () => {
@@ -55,14 +50,12 @@ const SelectAsset = () => {
   >
 
   const selectedWallet = wallets[selectedWalletId]
-  // TODO: remove hardcode, as the API only works with ethereum for now
-  const etherWallet = caipNormalizeAddress(
-    selectedWallet?.accounts.eip155?.address ?? ''
-  )
+  const addresses = getUniqueWalletAddresses(selectedWallet)
 
   const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
-    etherWallet,
+    addresses,
   ])
+
   // pull to refresh data
   const [refreshing, setRefreshing] = React.useState(false)
   const onRefresh = React.useCallback(() => {
