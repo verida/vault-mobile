@@ -1,12 +1,11 @@
+import { AssetId } from 'caip'
 import { isEmpty } from 'lodash'
-import { store } from 'reduxStore'
 import { createSelector } from 'reselect'
 import {
   getNativeForChain,
   tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 
-import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { selectTokens } from 'reduxStore/tokens/selectors'
 
 const s = (state) => state.main // Current wallet state sits in main reducer
@@ -82,12 +81,24 @@ export const selectNativeTokenBalance = (state, token) => {
 }
 
 // @chris done
-export const selectSingleTokenData = (state, assetId) => {
+export const selectSingleTokenData = (state, asset) => {
   const balances = getBalancesData(state.main)
 
   const tokenBalance = balances.find((item) => {
-    return item.asset == assetId
+    return new AssetId(item.asset).toString() === new AssetId(asset).toString()
   })
+
+  // We should always find a token balance, so this shouldn't happen
+  // but just in case, return 0 values if not found
+  if (!tokenBalance) {
+    return {
+      label: '',
+      price: 0,
+      change: 0,
+      quantity: 0,
+      amount: 0,
+    }
+  }
 
   return {
     ...tokenBalance,
