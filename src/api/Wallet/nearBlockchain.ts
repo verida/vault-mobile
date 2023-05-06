@@ -1,5 +1,6 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as ethers from 'ethers'
+import nearAPI from 'near-api-js'
 
 import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 
@@ -9,13 +10,17 @@ class nearBlockchain implements IBlockchain {
     derivationPath: string,
     multiChain: boolean
   ): WalletUtilsWallet {
-    const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
-    const childNode = node.derivePath(derivationPath)
-    return WalletUtils.utils.getWallet('near', childNode.mnemonic!.phrase)
+    if (multiChain) {
+      const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
+      const childNode = node.derivePath(derivationPath)
+      return WalletUtils.utils.getWallet('near', childNode.mnemonic!.phrase)
+    } else {
+      return WalletUtils.utils.getWallet('near', mnemonic)
+    }
   }
 
   public buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet {
-    throw new Error('Creating NEAR account from private key is not supported')
+    throw new Error('Importing NEAR accounts from private key is not supported')
   }
 }
 
