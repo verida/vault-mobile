@@ -3,6 +3,7 @@ import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { priceFormatter } from 'reduxStore/wallet/selectors'
 
 export default ({ item, onPressItem }) => {
   const { change, label, token, symbol, quantity, price, amount } = item
@@ -20,7 +21,7 @@ export default ({ item, onPressItem }) => {
         </View>
         <View style={styles.priceAmount}>
           <View style={styles.priceChange}>
-            <Text style={styles.amount}>${price.toFixed(2)}</Text>
+            <Text style={styles.amount}>{priceFormatter(price)}</Text>
             <Text
               style={[
                 styles.coinPriceChange,
@@ -29,7 +30,7 @@ export default ({ item, onPressItem }) => {
               {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
             </Text>
           </View>
-          <Text style={styles.amount}>${amount.toFixed(2)}</Text>
+          <Text style={styles.amount}>{priceFormatter(amount)}</Text>
         </View>
       </View>
     </ListItem>
