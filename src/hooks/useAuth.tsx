@@ -1,3 +1,6 @@
+import * as Sentry from '@sentry/react-native'
+import { DIDClient } from '@verida/did-client'
+import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
   FC,
@@ -9,6 +12,7 @@ import React, {
 } from 'react'
 
 import AccountManager from 'api/AccountManager'
+import CONFIG from 'config/environment'
 
 type AuthContextState = {
   refresh: () => Promise<boolean>
@@ -44,15 +48,44 @@ export const AuthProvider: FC = ({ children }) => {
     checkTeamMember()
   }, [loaded])
 
-  const refresh = useCallback(async () => {
+  const findDID = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
-    if (selectedAccount) {
-      await AccountManager.getInstance().connect()
+    // try to fetch the DID
+    const did = selectedAccount!.did
+    const didClient = new DIDClient({
+      network: CONFIG.VERIDA_ENVIRONMENT,
+    })
+
+    try {
+      await didClient.get(did)
+    } catch (error: any) {
+      if (error.message.match(/DID resolution error \(notFound\)/gi)) {
+        emitter.emit('IDENTITY_NOT_EXIST', {
+          // retry: (forcedInit = true) => {
+          //   forcedInit && init()
+          //   setShowBackupNavigation(false)
+          // },
+        })
+      }
+      Sentry.captureException(error)
     }
-    setLoaded(true)
-    setAuthenticated(!!selectedAccount)
-    return !!selectedAccount
   }, [])
+
+  const refresh = useCallback(async () => {
+    try {
+      const selectedAccount = AccountManager.getInstance().getSelectedAccount()
+      if (selectedAccount) {
+        await AccountManager.getInstance().connect()
+      }
+      setLoaded(true)
+      setAuthenticated(!!selectedAccount)
+      return !!selectedAccount
+    } catch (error) {
+      Sentry.captureException(error)
+      // Could not connect to the identity, check if it exists
+      findDID()
+    }
+  }, [findDID])
 
   const switchToAccount = useCallback(async (did: string) => {
     setLoaded(false)

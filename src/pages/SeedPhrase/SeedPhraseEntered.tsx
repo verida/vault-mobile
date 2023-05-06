@@ -1,6 +1,5 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
-import { emitter } from 'helpers/emitter'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -78,11 +77,6 @@ const SeedPhraseEntered = (
       )
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
-      }
-
-      if (route.params.recoverFromError) {
-        emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
-        return
       }
 
       if (route?.params?.previousScreen === 'Dashboard') {

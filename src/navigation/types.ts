@@ -1,3 +1,4 @@
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network, NFT, NFTCollection } from 'api/types'
@@ -6,11 +7,19 @@ import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
+import {
+  ConnectionRequestScreenParams,
+  IncomingDataRequestScreenParams,
+  ProofRequestScreenParams,
+} from 'pages/Requests'
 
 export type RootStackParams = {
   Auth: undefined
   Main: undefined
 }
+
+export type RootStackScreenProps<S extends keyof RootStackParams> =
+  NativeStackScreenProps<RootStackParams, S>
 
 export type AuthStackParams = {
   Start: undefined
@@ -25,6 +34,9 @@ export type AuthStackParams = {
   SelectNetwork: undefined
 }
 
+export type AuthStackScreenProps<S extends keyof AuthStackParams> =
+  NativeStackScreenProps<AuthStackParams, S>
+
 export type DashboardTabParams = {
   Home: undefined
   Data: undefined
@@ -33,6 +45,9 @@ export type DashboardTabParams = {
   Profile: undefined
   Connections: undefined
 }
+
+export type DashboardTabScreenProps<S extends keyof DashboardTabParams> =
+  NativeStackScreenProps<DashboardTabParams, S>
 
 export type MainStackParams = {
   Inbox: undefined
@@ -71,7 +86,6 @@ export type MainStackParams = {
   SeedPhraseEntered: {
     usePrivateKey: boolean
     previousScreen?: string
-    recoverFromError?: boolean
   }
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
@@ -98,4 +112,11 @@ export type MainStackParams = {
   UnlockVeridaOne: {
     initialPage?: number
   }
+
+  ConnectionRequest: ConnectionRequestScreenParams
+  ProofRequest: ProofRequestScreenParams
+  IncomingDataRequest: IncomingDataRequestScreenParams
 }
+
+export type MainStackScreenProps<S extends keyof MainStackParams> =
+  NativeStackScreenProps<MainStackParams, S>

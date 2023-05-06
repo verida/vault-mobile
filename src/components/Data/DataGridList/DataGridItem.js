@@ -4,6 +4,7 @@ import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet } from 'react-native'
 
+// TODO: Find a better fallback icon for records
 import VeridaSvg from 'assets/icons/verida.svg'
 
 export default ({ item, folder }) => {
@@ -19,7 +20,7 @@ export default ({ item, folder }) => {
           {item.icon ? (
             <Image
               source={{ uri: item.icon }}
-              style={{ width: 40, height: 40 }}
+              style={{ width: 40, height: 40, borderRadius: 999999 }}
             />
           ) : (
             <VeridaSvg />

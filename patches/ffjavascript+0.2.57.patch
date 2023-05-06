@@ -1,0 +1,102 @@
+diff --git a/node_modules/ffjavascript/build/main.cjs b/node_modules/ffjavascript/build/main.cjs
+index b382514..d52dbb8 100644
+--- a/node_modules/ffjavascript/build/main.cjs
++++ b/node_modules/ffjavascript/build/main.cjs
+@@ -7,6 +7,10 @@ var wasmcurves = require('wasmcurves');
+ var os = require('os');
+ var Worker = require('web-worker');
+ var wasmbuilder = require('wasmbuilder');
++const { BigNumber } = require('ethers')
++
++import { Buffer } from '@craftzdog/react-native-buffer'
++import Crypto from 'react-native-quick-crypto'
+ 
+ function _interopDefaultLegacy (e) { return e && typeof e === 'object' && 'default' in e ? e : { 'default': e }; }
+ 
+@@ -140,7 +144,7 @@ function square(a) {
+ }
+ 
+ function pow(a, b) {
+-    return BigInt(a) ** BigInt(b);
++    return BigNumber.from(a).pow(BigNumber.from(b)).toBigInt()
+ }
+ 
+ function exp$1(a, b) {
+@@ -1277,20 +1281,21 @@ class ChaCha {
+ }
+ 
+ function getRandomBytes(n) {
+-    let array = new Uint8Array(n);
+-    if (process.browser) { // Browser
+-        if (typeof globalThis.crypto !== "undefined") { // Supported
+-            globalThis.crypto.getRandomValues(array);
+-        } else { // fallback
+-            for (let i=0; i<n; i++) {
+-                array[i] = (Math.random()*4294967296)>>>0;
+-            }
+-        }
+-    }
+-    else { // NodeJS
+-        crypto__default["default"].randomFillSync(array);
+-    }
+-    return array;
++    // let array = new Uint8Array(n);
++    // if (process.browser) { // Browser
++    //     if (typeof globalThis.crypto !== "undefined") { // Supported
++    //         globalThis.crypto.getRandomValues(array);
++    //     } else { // fallback
++    //         for (let i=0; i<n; i++) {
++    //             array[i] = (Math.random()*4294967296)>>>0;
++    //         }
++    //     }
++    // }
++    // else { // NodeJS
++    //     crypto__default["default"].randomFillSync(array);
++    // }
++    // return array;
++    return Crypto.randomBytes(n)
+ }
+ 
+ function getRandomSeed() {
+@@ -4422,7 +4427,8 @@ const workerSource = "data:application/javascript;base64," + threadSource;
+ 
+ 
+ 
+-async function buildThreadManager(wasm, singleThread) {
++async function buildThreadManager(wasm, _singleThread) {
++    const singleThread = true
+     const tm = new ThreadManager();
+ 
+     tm.memory = new WebAssembly.Memory({initial:MEM_SIZE});
+@@ -4460,7 +4466,8 @@ async function buildThreadManager(wasm, singleThread) {
+             code: tm.code.slice()
+         }]);
+         tm.concurrency  = 1;
+-    } else {
++    }
++     else {
+         tm.workers = [];
+         tm.pendingDeferreds = [];
+         tm.working = [];
+@@ -5835,8 +5842,8 @@ async function buildEngine(params) {
+ 
+ globalThis.curve_bn128 = null;
+ 
+-async function buildBn128(singleThread, plugins) {
+-
++async function buildBn128(_singleThread, plugins) {
++    const singleThread = true
+     const moduleBuilder = new wasmbuilder.ModuleBuilder();
+     moduleBuilder.setMemory(25);
+     wasmcurves.buildBn128(moduleBuilder);
+@@ -5891,8 +5898,8 @@ async function buildBn128(singleThread, plugins) {
+ 
+ globalThis.curve_bls12381 = null;
+ 
+-async function buildBls12381(singleThread, plugins) {
+-
++async function buildBls12381(_singleThread, plugins) {
++    const singleThread = true
+     const moduleBuilder = new wasmbuilder.ModuleBuilder();
+     moduleBuilder.setMemory(25);
+     wasmcurves.buildBls12381(moduleBuilder);

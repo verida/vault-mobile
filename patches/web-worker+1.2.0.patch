@@ -1,0 +1,54 @@
+diff --git a/node_modules/web-worker/cjs/browser.js b/node_modules/web-worker/cjs/browser.js
+index e9a5c1e..63aa5d4 100644
+--- a/node_modules/web-worker/cjs/browser.js
++++ b/node_modules/web-worker/cjs/browser.js
+@@ -13,4 +13,49 @@
+  * See the License for the specific language governing permissions and
+  * limitations under the License.
+  */
++
++
++import { DeviceEventEmitter } from 'react-native';
++
++const creator =  (eventName, sendMessage) => {
++
++  class Worker {
++
++    constructor(port = 8082) {
++      //Read only property
++      Object.defineProperty(this, "port", { value: port, writable: false });
++      this.onmessage = null;
++      this.subscription = DeviceEventEmitter.addListener(eventName, message =>
++        this.onmessage && typeof this.onmessage  === 'function' && this.onmessage(message)
++      );
++    }
++
++    terminate(){
++      this.subscription.remove();
++    }
++
++    postMessage(message){
++      if (typeof message !== 'string') {
++        console.warn("Only strings is allowed");
++        return;
++      }
++
++      sendMessage(message, this.port);
++    }
++  }
++
++  return Worker;
++}
++
++
++
++import { NativeModules } from 'react-native';
++
++const { RNWorkers } = NativeModules;
++
++export const isSimulationEnabled = RNWorkers.simulationEnabled;
++export const WorkerService = creator("RNWorkers", message => RNWorkers.sendMessageToApp(message));
++export const Worker = creator("RNWorkersApp", (message, port) => RNWorkers.sendMessageToWorker(port, message));
++
+ module.exports = Worker;
++

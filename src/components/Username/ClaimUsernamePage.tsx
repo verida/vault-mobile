@@ -140,7 +140,11 @@ const ClaimUsernamePage = React.forwardRef(
           )}
         </ScrollView>
 
-        <View style={[styles.bottomNavContainer, { marginBottom: bottom }]}>
+        <View
+          style={[
+            styles.bottomNavContainer,
+            { marginBottom: bottom + theme.spacing.m },
+          ]}>
           {showRetry ? (
             <Button
               style={styles.button}

@@ -1,13 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
-import { useCredential } from 'hooks'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 
-import { getPublicProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
@@ -22,7 +20,6 @@ const DataItem = (props) => {
   })
   const [loading, setLoading] = useState(true)
   const [copyUrl, setCopyUrl] = useState(null)
-  const { verifyCredential } = useCredential()
 
   const isCredential = folder.config.database === 'credential'
   const isContact = folder.config.database === 'social_contact'
@@ -31,31 +28,12 @@ const DataItem = (props) => {
     const init = async () => {
       try {
         setLoading(true)
-        let _data
-        if (isCredential) {
-          const {
-            contextName,
-            data: credentialData,
-            issuer,
-            schemaUri,
-          } = await verifyCredential(item.didJwtVc)
-
-          const credentialDetail = await folder.getDetail(
-            credentialData,
-            schemaUri
-          )
-
-          _data = credentialDetail
-
-          const { name, avatar } = await getPublicProfile(issuer, contextName)
-          _data.issuer = {
-            name,
-            avatar,
-            did: issuer,
-          }
-        } else {
-          _data = await folder.getDetail(item)
-        }
+        const _data = isCredential
+          ? await folder.getDetail(
+              item.credentialData.credentialSubject || item.credentialData,
+              item.credentialData.credentialSchema?.id || item.credentialSchema
+            )
+          : await folder.getDetail(item)
         setData(_data)
         setLoading(false)
       } catch (e) {
@@ -66,7 +44,7 @@ const DataItem = (props) => {
     }
 
     init()
-  }, [verifyCredential, folder, item, isCredential])
+  }, [folder, item, isCredential])
 
   const right = {
     action: () => {
