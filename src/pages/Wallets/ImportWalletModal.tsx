@@ -100,6 +100,7 @@ const ImportModal = ({
       onImportWallet({
         phrase,
         name,
+        walletType: blockchain,
         blockchainNetwork,
         privateKey,
         inputSwitch,
