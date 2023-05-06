@@ -160,7 +160,7 @@ const SingleWallet = (props: Props) => {
         list={Object.values(wallets.accounts)}
         singleWallet={singleWallet}
         onPressSeedPhrase={(seedPhrase: string) => {
-          showSeedPhrase(wallets.mnemonic)
+          showSeedPhrase(seedPhrase)
         }}
         onPressPrivateKey={(privateKey: string) => {
           showPrivateKey(privateKey)
