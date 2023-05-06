@@ -154,7 +154,11 @@ export const mainReducer = (state = initialState, action) => {
     case BALANCES_FETCH_START:
       return {
         ...state,
-        balances: { fetching: true, error: undefined, data: {} },
+        balances: {
+          fetching: true,
+          error: undefined,
+          data: state.balances.data ? state.balances.data : {},
+        },
       }
     case FETCHED_BALANCES:
       return {
