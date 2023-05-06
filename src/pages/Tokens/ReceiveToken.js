@@ -5,6 +5,7 @@ import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
+import { store } from 'reduxStore'
 import { getWalletAddressForAsset } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
@@ -16,6 +17,10 @@ import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+} from 'reduxStore/selectors'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const LogoImg = require('assets/vault-logo.png')
@@ -23,7 +28,11 @@ const LogoImg = require('assets/vault-logo.png')
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
   const address = getWalletAddressForAsset(token.asset, wallets)
-  let networkReference = token.referenceLabel
+  const blockchainNetwork = getBlockchainNetwork(
+    store.getState(),
+    token.asset.chainId
+  )
+  let networkReference = getBlockchainNetworkLabel(blockchainNetwork)
 
   return (
     <Container>
