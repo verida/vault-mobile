@@ -116,7 +116,7 @@ class AccountManager extends EventEmitter {
             await this.connect()
           }
 
-          await this.restoreUserWallet()
+          await this.restoreUserWallet(true)
         } else {
           const wallets = JSON.parse(walletsRaw)
           store.dispatch(saveUserWallets(wallets))
@@ -324,9 +324,12 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async restoreUserWallet() {
+  public async restoreUserWallet(clearWallets: boolean) {
     try {
-      await store.dispatch(removeUserWallets())
+      if (clearWallets) {
+        await store.dispatch(removeUserWallets())
+      }
+
       const datastore = await this.context?.openDatastore(
         WALLET_SCHEMA_0_2_0_URI
       )
@@ -538,7 +541,7 @@ class AccountManager extends EventEmitter {
       if (connect) {
         await this.connect(true)
       }
-      await this.restoreUserWallet()
+      await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -618,7 +621,6 @@ class AccountManager extends EventEmitter {
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
-      await this.restoreUserWallet()
       return this.selectedAccount
     } catch (e) {
       if (this.selectedAccount) await this.logout([this.selectedAccount.did])

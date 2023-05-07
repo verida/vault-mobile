@@ -95,6 +95,7 @@ export interface BlockchainWallet extends BlockchainAccount {
   _id: string
   label: string
   multiChain: boolean
+  walletType: string  // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
 }
 
 export interface BlockchainWalletWithAccounts extends BlockchainWallet {

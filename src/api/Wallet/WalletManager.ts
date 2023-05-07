@@ -172,7 +172,7 @@ export class WalletManager {
     name?: string
   ): Promise<{
     selectedWallet: BlockchainWallet
-    wallets: BlockchainWallet[]
+    wallets: Record<string, BlockchainWalletWithAccounts[]>
   }> {
     const mnemonic = seedPhrase ? seedPhrase : WalletManager.generateMnemonic()
 
@@ -181,18 +181,24 @@ export class WalletManager {
       WALLET_SCHEMA_0_2_0_URI
     )
 
-    const wallet: BlockchainWallet = {
+    const wallet = {
       mnemonic,
       multiChain: true,
       label: name ? name : 'Multi Chain Wallet',
+      walletType: 'multi',
     }
 
     const saved: any = await walletDb!.save(wallet)
-    const wallets = await walletDb!.getMany()
-    wallet._id = saved.id
+    if (!saved) {
+      throw new Error(`Unable to save wallet: ${walletDb.errors[0].message}`)
+    }
+
+    const wallets = await WalletManager.getBlockchainAccounts(
+      await walletDb!.getMany()
+    )
 
     return {
-      selectedWallet: wallet,
+      selectedWallet: wallets[saved.id],
       wallets,
     }
   }

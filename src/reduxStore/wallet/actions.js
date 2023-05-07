@@ -165,8 +165,6 @@ export const setSelectedWallet = (walletId) => {
 }
 
 export const getTransactionParams = (transactionData) => {
-  console.log('~~~ getTransactionParams')
-  console.log(transactionData)
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
     const wallets = getWalletsData(getState().main)
@@ -175,8 +173,6 @@ export const getTransactionParams = (transactionData) => {
       transactionData,
       wallets
     )
-
-    console.log(params)
 
     if (params) {
       dispatch({
@@ -243,7 +239,6 @@ export const createNewWallet = (data) => {
 
       if (wallets) {
         await dispatch(saveUserWallets(wallets))
-
         await dispatch(setSelectedWallet(selectedWallet._id))
 
         // save to storage..
@@ -291,7 +286,7 @@ export const importWallet = (data) => {
       if (privateKey) wallet.privateKey = privateKey
       const saved = await walletDb?.save(wallet)
       const walletId = saved?.id
-      AccountManager.getInstance().restoreUserWallet()
+      await AccountManager.getInstance().restoreUserWallet(false)
       await dispatch(setSelectedWallet(walletId))
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
@@ -328,7 +323,7 @@ export const addWatchedWallet = (data) => {
         throw new Error(walletsDatastore.errors)
       }
 
-      AccountManager.getInstance().restoreUserWallet()
+      await AccountManager.getInstance().restoreUserWallet(false)
       await dispatch(setSelectedWallet(savedWallet.id))
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
@@ -362,7 +357,7 @@ export const deleteWallet = (walletId) => {
         await dispatch(setSelectedWallet(nextWalletId))
       }
 
-      AccountManager.getInstance().restoreUserWallet()
+      await AccountManager.getInstance().restoreUserWallet(false)
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
       dispatch({
