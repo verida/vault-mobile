@@ -36,11 +36,18 @@ export const getWalletAddressForAsset = (asset, wallets) => {
 }
 
 export const handleTokenDecimals = (quantity, decimalPlaces) => {
+  if (!quantity) {
+    return
+  }
   return quantity / Math.pow(10, decimalPlaces)
 }
 
 export const formatTokenQuantity = (quantity, decimalPlaces, fixed = 3) => {
-  return handleTokenDecimals(quantity, decimalPlaces).toFixed(fixed)
+  const finalQuantity = handleTokenDecimals(quantity, decimalPlaces)
+  if (!finalQuantity) {
+    return '-'
+  }
+  return finalQuantity.toFixed(fixed)
 }
 
 export const parseUnitsForSending = (quantity, decimalPlaces) => {
