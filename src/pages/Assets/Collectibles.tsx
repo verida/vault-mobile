@@ -6,7 +6,6 @@ import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
 import {
   ListRenderItem,
-  Pressable,
   RefreshControl,
   StyleSheet,
   TouchableOpacity,
@@ -22,26 +21,19 @@ import { NftItem } from 'components/Assets/NftItem'
 import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
-import { SearchBar } from 'components/SearchBar/SearchBar'
 import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
-import * as thunkActions from 'reduxStore/thunkActions'
 import {
   allWalletsSelector,
-  getWalletsData,
+  getUniqueWalletAddresses,
   selectedWalletSelector,
 } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
-
-const caipNormalizeAddress = (address: string) => {
-  // FIXME: hardcode just ethereum for now
-  return `eip155:5:${address}`
-}
 
 const Collectibles = () => {
   const dispatch = useDispatch()
@@ -56,14 +48,9 @@ const Collectibles = () => {
   >
 
   const selectedWallet = wallets[selectedWalletId]
-  // TODO: remove hardcode, as the API only works with ethereum for now
-  const etherWallet = caipNormalizeAddress(
-    selectedWallet?.accounts.eip155?.address ?? ''
-  )
-
-  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
-    etherWallet,
-  ])
+  const addresses = getUniqueWalletAddresses(selectedWallet)
+  const { data, isLoading, error, refetch } =
+    useGetWalletNFTCollectionsQuery(addresses)
 
   // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
   // const data = walletNFTCollections?.[etherWallet] ?? []

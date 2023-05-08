@@ -9,8 +9,10 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+import { connect } from 'react-redux'
 import { isValidSeedPhrase } from 'wallet/helpers/validation'
 
+import { BlockchainNetwork } from 'api/types'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -18,25 +20,43 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import {
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+} from 'reduxStore/selectors'
 import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
+  blockchainNetworks: Record<string, BlockchainNetwork>
   onImportWallet: (data: any) => void
   hideModal: () => void
 }
 
-export default ({ visible, hideModal, onImportWallet }: Props) => {
-  const privateKeyEnabledChains = ['ethereum', 'polygon']
+const ImportModal = ({
+  visible,
+  hideModal,
+  onImportWallet,
+  blockchainNetworks,
+}: Props) => {
+  const privateKeyEnabledNetworks = ['eip155']
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')
   const [privateKey, setPrivateKey] = useState('')
   const [blockchain, setBlockchain] = useState('multi')
   const [inputSwitch, setInputSwitch] = useState('seedPhrase')
+
   const onBlockchainChange = (option: any) => {
-    if (!privateKeyEnabledChains.includes(option.value)) {
+    const network = blockchainNetworks[option.value]
+
+    if (option.value === 'multi') {
+      setInputSwitch('seedPhrase')
+    } else if (privateKeyEnabledNetworks.includes(network.namespace)) {
+      setInputSwitch('privateKey')
+    } else {
       setInputSwitch('seedPhrase')
     }
+
     setBlockchain(option.value)
   }
   const onSwitchChange = (option: any) => setInputSwitch(option.value)
@@ -57,12 +77,34 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
     }
   }
 
+  const blockchainItems = Object.values(blockchainNetworks).map(
+    (network: BlockchainNetwork) => {
+      return {
+        label: getBlockchainNetworkLabel(network),
+        value: network.chainId,
+      }
+    }
+  )
+
+  blockchainItems.unshift({ label: 'Multichain Wallet', value: 'multi' })
+
   const showAlert = () =>
     Alert.alert('Invalid seed phrase', `That's not a valid seed phrase`)
 
   const onPressSend = () => {
-    if (isValidSeedPhrase({ phrase, privateKey, blockchain, inputSwitch })) {
-      onImportWallet({ phrase, name, blockchain, privateKey, inputSwitch })
+    const blockchainNetwork =
+      blockchain === 'multi' ? undefined : blockchainNetworks[blockchain]
+    if (
+      isValidSeedPhrase({ phrase, privateKey, blockchainNetwork, inputSwitch })
+    ) {
+      onImportWallet({
+        phrase,
+        name,
+        walletType: blockchain,
+        blockchainNetwork,
+        privateKey,
+        inputSwitch,
+      })
       hideModal()
     } else {
       showAlert()
@@ -101,19 +143,13 @@ export default ({ visible, hideModal, onImportWallet }: Props) => {
             showArrow={true}
             placeholder=''
             defaultValue='multi'
-            items={[
-              { label: 'Multichain Wallet', value: 'multi' },
-              { label: 'Ethereum', value: 'ethereum' },
-              { label: 'Near', value: 'near' },
-              { label: 'Algorand', value: 'algorand' },
-              { label: 'Polygon', value: 'polygon' },
-            ]}
+            items={blockchainItems}
             containerStyle={InputStyles.select}
             onChangeItem={onBlockchainChange}
             zIndex={6000}
           />
 
-          {privateKeyEnabledChains.includes(blockchain) ? (
+          {privateKeyEnabledNetworks.includes(blockchain.split(':')[0]) ? (
             <>
               <Label>Import using</Label>
               <DropDownPicker
@@ -218,3 +254,11 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
   },
 })
+
+const mapStateToProps = (rootState: any) => {
+  return {
+    blockchainNetworks: getBlockchainNetworks(rootState),
+  }
+}
+
+export default connect(mapStateToProps)(ImportModal as any)

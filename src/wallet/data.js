@@ -3,20 +3,22 @@ import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
-import { walletProviderApi } from 'wallet/helpers/api'
+import { store } from 'reduxStore'
 import {
   getTokenAddress,
-  getTokenChain,
-  getTokenChainReference,
+  getWalletAddressForAsset,
   isNativeToken,
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
 import Web3 from 'web3'
 
+import { getBlockchainNetwork } from 'reduxStore/selectors'
 import {
   getTransactionParamsData,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
+
+import { walletProviderApi } from '../api/Wallet/WalletProvider'
 
 const web3 = new Web3('http://localhost')
 
@@ -45,13 +47,22 @@ const minABI = [
   },
 ]
 
+// @chris done
 const getTransactionParams = async (transactionData, wallets) => {
+  const asset = transactionData.token.asset
   const requestBody = {
-    asset: transactionData.token.asset,
+    asset: {
+      chainId: asset.chainId,
+      assetName: asset.assetName,
+      tokenId: asset.tokenId,
+    },
   }
 
-  if (getTokenChain(transactionData.token.asset) === 'eip155') {
-    const fromAddress = wallets[transactionData.token.addressMapping].address
+  if (transactionData.token.asset.chainId.namespace === 'eip155') {
+    const fromAddress = getWalletAddressForAsset(
+      transactionData.token.asset,
+      wallets
+    )
     const toAddress = transactionData.address
 
     let input
@@ -89,14 +100,26 @@ const getTransactionParams = async (transactionData, wallets) => {
     requestBody.transactionParameters = input
   }
 
-  const request = await walletProviderApi.post(
+  const response = await walletProviderApi.post(
     'transaction/params',
     requestBody
   )
 
-  return request.data.data
+  return response.data.data
 }
 
+/**
+ * @todo refactor
+ *
+ * This is a mess. It sends transactions to our server, but the transactions should be sent
+ * via RPC_URL on the mobile for better and more flexibility so users in the future can
+ * add other RPC_URLs tos end transactions.
+ *
+ * @param {*} transactionData
+ * @param {*} isAssetEnablingTransaction
+ * @param {*} state
+ * @returns
+ */
 const sendTransaction = async (
   transactionData,
   isAssetEnablingTransaction,
@@ -105,24 +128,26 @@ const sendTransaction = async (
   const wallets = getWalletsData(state)
   const amount = parseUnitsForSending(
     transactionData.amount,
-    transactionData.token.decimal
+    transactionData.token.token.decimal
   )
 
   const tokenAddress = getTokenAddress(transactionData.token.asset)
   const isTokenNative = isNativeToken(transactionData.token.asset)
-  const tokenChain = getTokenChain(transactionData.token.asset)
-  const tokenChainReference = getTokenChainReference(
-    transactionData.token.asset
+  const blockchainNetwork = getBlockchainNetwork(
+    store.getState(),
+    transactionData.token.asset.chainId
   )
 
-  const chainWallet = wallets[transactionData.token.addressMapping]
+  const tokenChainReference = blockchainNetwork.asset.chainId.reference
+  const chainWallet = wallets[blockchainNetwork.chainId]
   const receiverAddress = transactionData.address
 
   let txString
   let txData
   let txIdAlgo
 
-  if (tokenChain === 'near') {
+  if (blockchainNetwork.asset.chainId.namespace === 'near') { 
+    const nearAmount = nearAPI.utils.format.parseNearAmount(transactionData.amount)
     const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
     const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
     const publicKey = keyPair.getPublicKey()
@@ -138,7 +163,7 @@ const sendTransaction = async (
     let actions
     let txAddress
     if (isTokenNative) {
-      actions = [nearAPI.transactions.transfer(amount.toString())]
+      actions = [nearAPI.transactions.transfer(nearAmount)]
       txAddress = receiverAddress
     } else {
       actions = [
@@ -146,7 +171,7 @@ const sendTransaction = async (
           'ft_transfer',
           {
             receiver_id: receiverAddress,
-            amount: amount.toString(),
+            amount: nearAmount,
           },
           5430000000000,
           1
@@ -196,9 +221,9 @@ const sendTransaction = async (
       to: receiverAddress,
       from: chainWallet.address,
       token: transactionData.token,
-      chain: tokenChain,
+      chain: blockchainNetwork,
     }
-  } else if (tokenChain === 'eip155') {
+  } else if (blockchainNetwork.asset.chainId.namespace === 'eip155') {
     let transactionParams = getTransactionParamsData(state)
 
     const request = await walletProviderApi.post('transaction/nonce', {
@@ -238,13 +263,7 @@ const sendTransaction = async (
       }
     }
 
-    let common
-
-    if (tokenChainReference === '4') {
-      common = new Common({ chain: Chain.Rinkeby })
-    } else {
-      common = Common.custom({ chainId: tokenChainReference })
-    }
+    const common = Common.custom({ chainId: tokenChainReference })
 
     const tx = Transaction.fromTxData(transaction, { common })
 
@@ -264,9 +283,9 @@ const sendTransaction = async (
       to: receiverAddress,
       from: chainWallet.address,
       token: transactionData.token,
-      chain: tokenChain,
+      chain: blockchainNetwork,
     }
-  } else if (tokenChain === 'algorand') {
+  } else if (blockchainNetwork.asset.chainId.namespace === 'algorand') {
     let transactionParams
     if (isAssetEnablingTransaction) {
       const requestBody = {
@@ -283,26 +302,35 @@ const sendTransaction = async (
 
     let transaction
 
-    if (isTokenNative) {
-      transaction = algosdk.makePaymentTxnWithSuggestedParams(
-        chainWallet.address,
-        receiverAddress,
-        parseInt(amount.toHexString(), 16),
-        undefined,
-        undefined,
-        transactionParams
-      )
-    } else {
-      transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
-        chainWallet.address,
-        isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
-        undefined,
-        undefined,
-        isAssetEnablingTransaction ? 0 : parseInt(amount.toHexString(), 16),
-        undefined,
-        parseInt(tokenAddress, 10),
-        transactionParams
-      )
+    try {
+      if (isTokenNative) {
+        transaction = algosdk.makePaymentTxnWithSuggestedParams(
+          chainWallet.address,
+          receiverAddress,
+          parseInt(amount.toString()),
+          undefined,
+          undefined,
+          transactionParams
+        )
+      } else {
+        transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
+          chainWallet.address,
+          isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
+          undefined,
+          undefined,
+          isAssetEnablingTransaction ? 0 : parseInt(amount.toString()),
+          undefined,
+          parseInt(tokenAddress, 10),
+          transactionParams
+        )
+      }
+    } catch (err) {
+      console.log(err)
+      throw err
+    }
+
+    if (transaction.amount === 0) {
+      throw new Error('Invalid transaction amount')
     }
 
     const privateKey = chainWallet.privateKey
@@ -315,16 +343,20 @@ const sendTransaction = async (
     const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
     const wallet = algosdk.mnemonicToSecretKey(mnemonic)
 
-    txIdAlgo = transaction.txID().toString()
-
-    txString = transaction.signTxn(wallet.sk).toString()
+    try {
+      txIdAlgo = transaction.txID().toString()
+      txString = transaction.signTxn(wallet.sk).toString()
+    } catch (err) {
+      console.log(err)
+      throw err
+    }
 
     txData = {
       amount: amount,
       to: receiverAddress,
       from: chainWallet.address,
       token: transactionData.token,
-      chain: tokenChain,
+      chain: blockchainNetwork,
     }
   }
 
@@ -342,9 +374,15 @@ const sendTransaction = async (
       requestBody
     )
 
+    if (sentTx && sentTx.data.status == 'error') {
+      // @todo: How to handle error?
+      throw new Error(sentTx.data.error)
+    }
+
     if (sentTx && sentTx.data.data.transactionId) {
       txData.id = sentTx.data.data.transactionId
     }
+
     return txData
   }
 }

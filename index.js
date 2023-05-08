@@ -3,6 +3,8 @@ import 'react-native-get-random-values'
 import '@ethersproject/shims'
 import 'react-native-crypto'
 import 'text-encoding-polyfill'
+import 'intl'
+import 'intl/locale-data/jsonp/en'
 
 import { AppRegistry, LogBox } from 'react-native'
 

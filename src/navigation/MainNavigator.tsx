@@ -27,6 +27,11 @@ import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
+import {
+  ConnectionRequestScreen,
+  IncomingDataRequestScreen,
+  ProofRequestScreen,
+} from 'pages/Requests'
 import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
@@ -170,6 +175,23 @@ function MainNavigator() {
           presentation: 'modal',
         }}
       />
+      {/* Modal screens */}
+      <Stack.Group
+        screenOptions={{
+          presentation: 'modal',
+          headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
+          // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
+        }}>
+        <Stack.Screen
+          name={'ConnectionRequest'}
+          component={ConnectionRequestScreen}
+        />
+        <Stack.Screen name={'ProofRequest'} component={ProofRequestScreen} />
+        <Stack.Screen
+          name={'IncomingDataRequest'}
+          component={IncomingDataRequestScreen}
+        />
+      </Stack.Group>
     </Stack.Navigator>
   )
 }

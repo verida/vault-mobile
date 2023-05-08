@@ -155,31 +155,40 @@ const ManageWallets = (props: Props) => {
   }
 
   const handlePressWalletListItem = (item: WalletItem) => {
+    let options
+    if (item.viewOnly) {
+      options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
+    } else {
+      options = [
+        'View seed phrases',
+        'Switch to this wallet',
+        'Delete Wallet',
+        'Cancel',
+      ]
+    }
+
     showActionSheetWithOptions(
       {
-        options: [
-          'View seed phrases',
-          'Switch to this wallet',
-          'Delete Wallet',
-          'Cancel',
-        ],
-        cancelButtonIndex: 3,
-        destructiveButtonIndex: 2,
+        options,
+        cancelButtonIndex: options.length - 1,
+        destructiveButtonIndex: options.length - 2,
         tintColor: BLACK_COLOR,
       },
       (buttonIndex) => {
-        if (buttonIndex === 0) {
-          navigation.navigate('SingleWallet', { item })
+        if (item.viewOnly) {
+          buttonIndex++
         }
-        if (buttonIndex === 1) {
+
+        if (buttonIndex === 0 && !item.viewOnly) {
+          navigation.navigate('SingleWallet', { item })
+        } else if (buttonIndex === 1) {
           const selectedWalletID = item.id
           onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
             CONFIG.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
-        }
-        if (buttonIndex === 2) {
+        } else if (buttonIndex === 2) {
           if (walletCount <= 1) {
             showDeleteAlert()
           } else {
@@ -242,7 +251,7 @@ const mapStateToProps = (rootState: any) => {
   const chains = selectChains(rootState)
   return {
     chains,
-    wallets: getWalletList(state, chains),
+    wallets: getWalletList(state),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
     loading: getWalletProcessingState(state),

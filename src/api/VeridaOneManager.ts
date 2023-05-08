@@ -73,10 +73,8 @@ export default class VeridaOneManager {
       // @ts-ignore
       console.log(datastore.errors)
     }
-    console.log(result)
     const db = await datastore.getDb()
     const info = await db.info()
-    console.log(info)
   }
 
   static async getDatastore(): Promise<IDatastore> {

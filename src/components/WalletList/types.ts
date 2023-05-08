@@ -25,4 +25,5 @@ export type WalletItem = {
   label: string
   other?: any
   address?: string
+  viewOnly?: boolean
 }
