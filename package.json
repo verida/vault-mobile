@@ -105,6 +105,7 @@
     "git": "^0.1.5",
     "https-browserify": "0.0.1",
     "immutability-helper": "^3.1.1",
+    "intl": "^1.2.5",
     "js-sha256": "^0.9.0",
     "lodash": "^4.17.20",
     "lottie-react-native": "5.1.5",
