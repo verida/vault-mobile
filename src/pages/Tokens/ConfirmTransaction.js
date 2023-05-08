@@ -2,19 +2,21 @@ import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
+import { store } from 'reduxStore'
 import {
   formatTokenQuantity,
-  getNativeForChain,
-  getTokenChain,
-  getWalletAddressForToken,
+  getWalletAddressForAsset,
 } from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { selectTokens } from 'reduxStore/tokens/selectors'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+} from 'reduxStore/selectors'
 import { sendTransaction } from 'reduxStore/wallet/actions'
 import {
   getTransactionParamsData,
@@ -29,28 +31,20 @@ const ConfirmTransaction = ({
   transactionParams,
   onSendTransaction,
   sentTransaction,
-  tokens,
 }) => {
   const { token, amount, address } = route.params
-  const tokenChain = getTokenChain(token.asset)
-  const accountAddress = getWalletAddressForToken(token.addressMapping, wallets)
-  const nativeToken = getNativeForChain(tokens, token.chainName)
 
-  let feeSymbol = nativeToken.symbol
-  let feeDecimal = nativeToken.decimal
-  let fixed
-  let networkReference = token.referenceLabel
-  switch (tokenChain) {
-    case 'algorand':
-      fixed = 3
-      break
-    case 'eip155':
-      fixed = 18
-      break
-    case 'near':
-      fixed = 8
-      break
-  }
+  const blockchainNetwork = getBlockchainNetwork(
+    store.getState(),
+    token.asset.chainId
+  )
+
+  const accountAddress = getWalletAddressForAsset(token.asset, wallets)
+  const networkReference = getBlockchainNetworkLabel(blockchainNetwork)
+
+  let feeSymbol = blockchainNetwork.symbol
+  let feeDecimal = blockchainNetwork.decimal
+  let fixed = token.decimal ? token.decimal : blockchainNetwork.decimal
 
   return (
     <Container>
@@ -104,8 +98,13 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {formatTokenQuantity(transactionParams.fee, feeDecimal, fixed)}{' '}
-                {feeSymbol}
+                {transactionParams.fee
+                  ? formatTokenQuantity(
+                      transactionParams.fee,
+                      feeDecimal,
+                      fixed
+                    ) + ` ${feeSymbol}`
+                  : 'Unknown'}
               </Text>
             </View>
           </View>
@@ -116,7 +115,9 @@ const ConfirmTransaction = ({
             color='primary'
             loading={sentTransaction.fetching}
             onPress={() => onSendTransaction({ token, amount, address })}>
-            Send {token.symbol}
+            <Text style={styles.nextButton} color='primary'>
+              Send {token.symbol}
+            </Text>
           </Button>
         </View>
       </View>
@@ -139,6 +140,8 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     alignSelf: 'stretch',
+    fontFamily: NUNITO_SANS_BOLD,
+    color: 'white',
   },
   infoRow: {
     flexDirection: 'row',
@@ -167,7 +170,6 @@ const mapStateToProps = (rootState) => {
     wallets: getWalletsData(state),
     transactionParams: getTransactionParamsData(state),
     sentTransaction: selectSentTransaction(state),
-    tokens: selectTokens(rootState),
   }
 }
 

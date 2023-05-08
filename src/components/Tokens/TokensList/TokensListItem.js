@@ -3,14 +3,15 @@ import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { priceFormatter } from 'reduxStore/wallet/selectors'
 
 export default ({ item, onPressItem }) => {
-  const { change, label, icon, symbol, quantity, price, amount } = item
+  const { change, label, token, symbol, quantity, price, amount } = item
   const positive = change >= 0
 
   return (
     <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
-      <Image source={{ uri: icon }} style={styles.icon} />
+      <Image source={{ uri: token.icon }} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
@@ -20,16 +21,18 @@ export default ({ item, onPressItem }) => {
         </View>
         <View style={styles.priceAmount}>
           <View style={styles.priceChange}>
-            <Text style={styles.amount}>${price.toFixed(2)}</Text>
-            <Text
-              style={[
-                styles.coinPriceChange,
-                positive ? styles.positive : styles.negative,
-              ]}>
-              {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
-            </Text>
+            <Text style={styles.amount}>{priceFormatter(price)}</Text>
+            {change ? (
+              <Text
+                style={[
+                  styles.coinPriceChange,
+                  positive ? styles.positive : styles.negative,
+                ]}>
+                {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
+              </Text>
+            ) : undefined}
           </View>
-          <Text style={styles.amount}>${amount.toFixed(2)}</Text>
+          <Text style={styles.amount}>{priceFormatter(amount)}</Text>
         </View>
       </View>
     </ListItem>

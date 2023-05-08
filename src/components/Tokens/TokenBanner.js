@@ -8,6 +8,7 @@ import SendIcon from 'assets/send_icon.svg'
 import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { priceFormatter } from 'reduxStore/wallet/selectors'
 
 export default ({
   data,
@@ -26,14 +27,16 @@ export default ({
         <View style={styles.coinInfo}>
           <Text style={styles.coinText}>{tokenType ? tokenType : 'Coin'}</Text>
           <View style={styles.coinPriceInfo}>
-            <Text style={styles.coinPrice}>${price.toFixed(2)}</Text>
-            <Text
-              style={[
-                styles.coinPriceChange,
-                positive ? styles.positive : styles.negative,
-              ]}>
-              {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
-            </Text>
+            <Text style={styles.coinPrice}>{priceFormatter(price)}</Text>
+            {change ? (
+              <Text
+                style={[
+                  styles.coinPriceChange,
+                  positive ? styles.positive : styles.negative,
+                ]}>
+                {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
+              </Text>
+            ) : undefined}
           </View>
         </View>
       )}
@@ -44,10 +47,10 @@ export default ({
           </View>
         )}
         <Text style={styles.amount}>
-          {label ? `${quantity} ${symbol}` : `$${amount.toFixed(2)}`}
+          {label ? `${quantity} ${symbol}` : `${priceFormatter(amount)}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
+          {label ? `≈ ${priceFormatter(amount)}` : `Total Balance`}
         </Text>
       </View>
       {symbol && (

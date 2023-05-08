@@ -14,7 +14,7 @@ export default ({ navigation }) => {
       titleText={titleText}
       descriptionText={descriptionText}
       buttonLabel={buttonLabel}
-      actionButtonOnPress={() => navigation.navigate('Tokens')}
+      actionButtonOnPress={() => navigation.goBack()}
     />
   )
 }

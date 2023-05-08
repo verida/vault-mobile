@@ -242,7 +242,7 @@ const mapStateToProps = (rootState: any) => {
   const chains = selectChains(rootState)
   return {
     chains,
-    wallets: getWalletList(state, chains),
+    wallets: getWalletList(state),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
     loading: getWalletProcessingState(state),

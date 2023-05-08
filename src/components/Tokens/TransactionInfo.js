@@ -3,41 +3,23 @@ import * as Sentry from '@sentry/react-native'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
-import {
-  formatTokenQuantity,
-  getTokenChain,
-  getTokenChainId,
-} from 'wallet/helpers/tokens'
+import { store } from 'reduxStore'
+import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { getBlockchainNetwork } from 'reduxStore/selectors'
 
 export default ({ transaction, token }) => {
-  const tokenAddress = token.asset
-  const chain = getTokenChain(tokenAddress)
-  const chainId = getTokenChainId(tokenAddress)
-  const explorerURL = `${token.explorerURL}${
-    chainId.namespace === 'near' ? 'transactions/' : 'tx/'
-  }${transaction.id}`
+  const blockchainNetwork = getBlockchainNetwork(
+    store.getState(),
+    token.asset.chainId
+  )
 
-  let fixed
-  try {
-    switch (chain) {
-      case 'algorand':
-        fixed = 3
-        break
-      case 'eip155':
-        fixed = 18
-        break
-      case 'near':
-        fixed = 8
-        break
-    }
-  } catch (e) {
-    Sentry.captureException(e)
-    throw e
-  }
+  const explorerURL = blockchainNetwork.explorerURL.replace(/%s/g, transaction.id)
+
+  const decimals = token.decimal ? token.decimal : blockchainNetwork.decimal
 
   return (
     <View style={styles.container}>
@@ -58,7 +40,7 @@ export default ({ transaction, token }) => {
               ]}>
               {`${transaction.type === 'sent' ? '-' : ''}${formatTokenQuantity(
                 transaction.quantity,
-                token.decimal
+                decimals
               )} ${token.symbol}`}
             </Text>
           </View>
@@ -91,7 +73,7 @@ export default ({ transaction, token }) => {
               {formatTokenQuantity(
                 transaction.fee,
                 transaction.feeDecimal,
-                fixed
+                decimals
               )}{' '}
               {transaction.feeSymbol}
             </Text>
@@ -107,7 +89,9 @@ export default ({ transaction, token }) => {
         </View>
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>
-            {chain === 'algorand' ? 'Round' : 'Block'}
+            {blockchainNetwork.asset.chainId.namespace === 'algorand'
+              ? 'Round'
+              : 'Block'}
           </Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>{transaction.blockNumber}</Text>

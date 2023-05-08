@@ -13,6 +13,7 @@ import {
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
+import { BlockchainNetwork } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
@@ -20,11 +21,10 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
-import { AccountsType, WalletType } from 'components/WalletList/types'
+import { WalletType } from 'components/WalletList/types'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-import { selectChains } from 'reduxStore/tokens/selectors'
 import { renameWallet } from 'reduxStore/wallet/actions'
 import { getWalletObjectById } from 'reduxStore/wallet/selectors'
 
@@ -33,13 +33,14 @@ import RenameWalletModal from './RenameWalletModal'
 
 type Props = {
   wallets: WalletType
+  blockchainNetworks: Record<string, BlockchainNetwork>
   navigation: NativeStackNavigationProp<MainStackParams>
   onRenameWallet: (selectedWalletID: string) => void
   chains: any
 }
 
 const SingleWallet = (props: Props) => {
-  const { navigation, wallets, onRenameWallet, chains } = props
+  const { navigation, wallets, onRenameWallet } = props
   const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
@@ -72,28 +73,8 @@ const SingleWallet = (props: Props) => {
     toggleCopyPrivateKeyModal(true)
   }
 
-  const singleWallet: any =
-    wallets.type === 'single' ? Object.values(wallets.accounts)[0] : null
-  const isChainTypeEvm = singleWallet
-    ? Object.keys(wallets.accounts)[0] === 'eip155'
-    : null
-
-  const addressList = Object.values(chains)
-    .filter((chain: any) =>
-      wallets.type === 'single' ? wallets.chain === chain.chainName : true
-    )
-    .map((chain: any) => {
-      const wallet: AccountsType = wallets.accounts[chain.addressMapping]
-
-      return {
-        name: chain?.name,
-        address: wallet.address,
-        icon: chain?.icon,
-        seedPhrase: wallet.mnemonic,
-        privateKey: wallet.privateKey,
-        addressMapping: chain.addressMapping,
-      }
-    })
+  // @todo
+  const singleWallet = undefined
 
   if (loading) {
     return (
@@ -176,7 +157,7 @@ const SingleWallet = (props: Props) => {
       </View>
       <Text style={styles.listLabel}>Addresses</Text>
       <ChainsAddressesList
-        list={addressList}
+        list={Object.values(wallets.accounts)}
         singleWallet={singleWallet}
         onPressSeedPhrase={(seedPhrase: string) => {
           showSeedPhrase(seedPhrase)
@@ -195,7 +176,7 @@ const SingleWallet = (props: Props) => {
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
-        onPressButton={() => showSeedPhrase(wallets.seedPhrase)}
+        onPressButton={() => showSeedPhrase(wallets.mnemonic)}
       />
       <CopySeedPhraseModal
         visible={copySeedPhraseModalVisible}
@@ -260,10 +241,10 @@ const styles = StyleSheet.create({
 
 const mapStateToProps = (rootState: any, props: any) => {
   const state = rootState.main
+  const wallets = getWalletObjectById(state, props.route.params.item.id)
 
   return {
-    wallets: getWalletObjectById(state, props.route.params.item.id),
-    chains: selectChains(rootState),
+    wallets,
   }
 }
 

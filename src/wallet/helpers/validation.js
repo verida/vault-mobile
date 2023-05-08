@@ -1,6 +1,5 @@
 import algosdk from 'algosdk'
 import * as ethers from 'ethers'
-import { getTokenChain } from 'wallet/helpers/tokens'
 import Web3 from 'web3'
 
 const bip39 = require('bip39')
@@ -13,9 +12,8 @@ const validateNearAddress = (address) => {
   }
 }
 
-export const isValidWalletAddress = (address, tokenAddress) => {
-  let chain = getTokenChain(tokenAddress)
-  switch (chain) {
+export const isValidWalletAddress = (address, asset) => {
+  switch (asset.chainId.namespace) {
     case 'algorand':
       return algosdk.isValidAddress(address)
     case 'eip155':
@@ -26,12 +24,15 @@ export const isValidWalletAddress = (address, tokenAddress) => {
 }
 
 export const isValidSeedPhrase = (data) => {
-  const { phrase, privateKey, blockchain, inputSwitch } = data
+  const { phrase, privateKey, blockchainNetwork, inputSwitch } = data
 
-  if (blockchain === 'multi' || blockchain === 'near') {
+  if (
+    blockchainNetwork === undefined ||
+    blockchainNetwork.namespace === 'near'
+  ) {
     // valid bip39 12 word seedphrase
     return bip39.validateMnemonic(phrase)
-  } else if (blockchain === 'algorand') {
+  } else if (blockchainNetwork.namespace === 'algorand') {
     // is valid algorand 25 word seedphrase
     try {
       const algoWallet = algosdk.mnemonicToSecretKey(phrase)
@@ -43,7 +44,7 @@ export const isValidSeedPhrase = (data) => {
     } catch (err) {
       return false
     }
-  } else if (blockchain === 'ethereum' || blockchain === 'polygon') {
+  } else if (blockchainNetwork.namespace === 'eip155') {
     if (inputSwitch === 'privateKey') {
       // is valid evm compatible privateKey
       try {
