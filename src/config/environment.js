@@ -72,7 +72,7 @@ const ENVIRONMENTS = {
     WALLET_PROVIDER_CHAINS: 'testnet',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
-    WALLET_PROVIDER_URL: 'https://walletprovider.tn.verida.tech',
+    WALLET_PROVIDER_URL: 'https://testnet-walletprovider.tn.verida.tech',
   },
 }
 
