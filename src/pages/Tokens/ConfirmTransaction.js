@@ -12,7 +12,7 @@ import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
@@ -140,6 +140,8 @@ const styles = StyleSheet.create({
   },
   nextButton: {
     alignSelf: 'stretch',
+    fontFamily: NUNITO_SANS_BOLD,
+    color: 'white',
   },
   infoRow: {
     flexDirection: 'row',

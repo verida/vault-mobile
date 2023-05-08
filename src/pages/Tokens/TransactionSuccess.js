@@ -9,7 +9,15 @@ const TransactionSuccess = ({ navigation, sentTransaction }) => {
   const { data } = sentTransaction
   const { amount, token, to } = data
   const titleText = 'Success!'
-  const descriptionText = `${amount} ${token.symbol} sent to ${to}`
+
+  const blockchainNetwork = data.chain
+
+  const transferQuantity = formatTokenQuantity(
+    amount,
+    blockchainNetwork.decimal
+  )
+
+  const descriptionText = `${transferQuantity} ${token.symbol} sent to ${to}`
   const buttonLabel = 'Done'
 
   return (

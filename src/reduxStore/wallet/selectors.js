@@ -1,4 +1,5 @@
 import { AssetId } from 'caip'
+import { BigNumber } from 'ethers'
 import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 import {
@@ -210,7 +211,7 @@ export const selectPendingTransactions = (state, assetID) => {
 }
 
 export const selectTransactions = (state, assetID) => {
-  const transactions = state.transactions.data || []
+  const transactions = [...state.transactions.data] || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx) => {
@@ -247,7 +248,14 @@ export const getTransactionParamsData = (state) => {
 }
 
 export const selectSentTransaction = (state) => {
-  return state.sentTransaction
+  const transaction = {
+    ...state.sentTransaction,
+    data: { ...state.sentTransaction.data },
+  }
+  if (transaction.data.amount) {
+    transaction.data.amount = BigNumber.from(transaction.data.amount)
+  }
+  return transaction
 }
 
 export const selectTransaction = (state) => {

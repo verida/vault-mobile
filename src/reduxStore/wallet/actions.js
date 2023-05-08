@@ -203,7 +203,6 @@ export const sendTransaction = (
         isAssetEnablingTransaction,
         state
       )
-
       dispatch({
         type: SEND_TRANSACTION_SUCCESS,
         data: txData,
@@ -218,7 +217,7 @@ export const sendTransaction = (
     } catch (error) {
       dispatch({
         type: SEND_TRANSACTION_FAILED,
-        error: error,
+        error: error.message,
       })
       if (!isAssetEnablingTransaction) {
         navigate('TransactionFailure')

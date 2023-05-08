@@ -306,7 +306,7 @@ const sendTransaction = async (
         transaction = algosdk.makePaymentTxnWithSuggestedParams(
           chainWallet.address,
           receiverAddress,
-          amount.toBigInt(),
+          parseInt(amount.toString()),
           undefined,
           undefined,
           transactionParams
@@ -317,7 +317,7 @@ const sendTransaction = async (
           isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
           undefined,
           undefined,
-          BigInt(isAssetEnablingTransaction ? 0 : parseInt(amount.toHexString(), 6)),
+          isAssetEnablingTransaction ? 0 : parseInt(amount.toString()),
           undefined,
           parseInt(tokenAddress, 10),
           transactionParams
@@ -382,9 +382,6 @@ const sendTransaction = async (
       txData.id = sentTx.data.data.transactionId
     }
 
-    // Response is a BigInt so convert to the original amount
-    // which should be human readable for the success page
-    txData.amount = transactionData.amount
     return txData
   }
 }
