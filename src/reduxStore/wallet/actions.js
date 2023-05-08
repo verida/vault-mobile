@@ -87,7 +87,6 @@ export const getTransactionsForToken = (token) => {
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
-
     const userAddress = getWalletAddressForAsset(token.asset, wallets)
 
     const transactionsData = await walletProviderApi.post('transaction/list', {
@@ -113,7 +112,6 @@ export const getTransactionsForToken = (token) => {
 
 // @chris done
 export const getTransactionDetails = (transactionID, token) => {
-  console.log('--- getTransactionDetails')
   return async (dispatch, getState) => {
     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
     const wallets = getWalletsData(getState().main)

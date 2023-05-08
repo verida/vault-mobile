@@ -305,27 +305,35 @@ const sendTransaction = async (
 
     let transaction
 
-    if (isTokenNative) {
-      transaction = algosdk.makePaymentTxnWithSuggestedParams(
-        chainWallet.address,
-        receiverAddress,
-        parseInt(amount.toHexString(), 16),
-        undefined,
-        undefined,
-        transactionParams
-      )
-    } else {
-      transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
-        chainWallet.address,
-        isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
-        undefined,
-        undefined,
-        isAssetEnablingTransaction ? 0 : parseInt(amount.toHexString(), 16),
-        undefined,
-        parseInt(tokenAddress, 10),
-        transactionParams
-      )
+    try {
+      if (isTokenNative) {
+        transaction = algosdk.makePaymentTxnWithSuggestedParams(
+          chainWallet.address,
+          receiverAddress,
+          BigInt(parseInt(amount.toHexString(), 6)),
+          undefined,
+          undefined,
+          transactionParams
+        )
+      } else {
+        transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
+          chainWallet.address,
+          isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
+          undefined,
+          undefined,
+          BigInt(isAssetEnablingTransaction ? 0 : parseInt(amount.toHexString(), 6)),
+          undefined,
+          parseInt(tokenAddress, 10),
+          transactionParams
+        )
+      }
+    } catch (err) {
+      console.log(err)
+      throw err
     }
+
+    console.log('transaction')
+    console.log(transaction)
 
     const privateKey = chainWallet.privateKey
 
@@ -337,9 +345,13 @@ const sendTransaction = async (
     const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
     const wallet = algosdk.mnemonicToSecretKey(mnemonic)
 
-    txIdAlgo = transaction.txID().toString()
-
-    txString = transaction.signTxn(wallet.sk).toString()
+    try {
+      txIdAlgo = transaction.txID().toString()
+      txString = transaction.signTxn(wallet.sk).toString()
+    } catch (err) {
+      console.log(err)
+      throw err
+    }
 
     txData = {
       amount: amount,
