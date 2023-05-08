@@ -51,7 +51,7 @@ const ConfirmTransaction = ({
       <NavigationHeader
         left={{
           icon: <Icon name='close' style={{ color: '#000' }} />,
-          action: () => navigation.navigate('Tokens'),
+          action: () => navigation.navigate('SingleCurrency', { item: token }),
         }}
         title={'Send ' + token.symbol}
       />

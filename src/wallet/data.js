@@ -374,9 +374,9 @@ const sendTransaction = async (
       requestBody
     )
 
-    if (sentTx && sentTx.status == 'error') {
+    if (sentTx && sentTx.data.status == 'error') {
       // @todo: How to handle error?
-      throw new Error(sentTx.error)
+      throw new Error(sentTx.data.error)
     }
 
     if (sentTx && sentTx.data.data.transactionId) {

@@ -1,12 +1,13 @@
 import React from 'react'
+import { connect } from 'react-redux'
 
 import SuccessFailure from 'components/SuccessFailure'
+import { selectSentTransaction } from 'reduxStore/wallet/selectors'
 
-export default ({ navigation }) => {
+const FailureTransaction = ({ navigation, sentTransaction }) => {
   const titleText = 'Ooops..'
-  const descriptionText =
-    'Something went wrong, your transaction failed, please try again.'
-  const buttonLabel = 'Try Again'
+  const descriptionText = `Transaction failed: ${sentTransaction.error}`
+  const buttonLabel = 'Back'
 
   return (
     <SuccessFailure
@@ -18,3 +19,12 @@ export default ({ navigation }) => {
     />
   )
 }
+
+const mapStateToProps = (rootState) => {
+  const state = rootState.main
+  return {
+    sentTransaction: selectSentTransaction(state),
+  }
+}
+
+export default connect(mapStateToProps)(FailureTransaction)
