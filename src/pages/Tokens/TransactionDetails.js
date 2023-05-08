@@ -1,11 +1,16 @@
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
+import { store } from 'reduxStore'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+} from 'reduxStore/selectors'
 import { selectTokens } from 'reduxStore/tokens/selectors'
 import { getTransactionDetails } from 'reduxStore/wallet/actions'
 import { selectTransactionData } from 'reduxStore/wallet/selectors'
@@ -15,7 +20,6 @@ const TransactionDetails = ({
   route,
   data,
   onGetTransactionDetails,
-  tokens,
 }) => {
   const { id, token } = route.params
   useEffect(() => {
@@ -27,7 +31,8 @@ const TransactionDetails = ({
   }, [id, onGetTransactionDetails, token])
 
   const { transaction, loading } = data
-  let networkReference = token.referenceLabel
+  const network = getBlockchainNetwork(store.getState(), token.asset.chainId)
+  let networkReference = getBlockchainNetworkLabel(network)
 
   return (
     <Container>
@@ -42,11 +47,7 @@ const TransactionDetails = ({
       {loading ? (
         <LoadingIndicator />
       ) : (
-        <TransactionInfo
-          transaction={transaction}
-          token={token}
-          tokens={tokens}
-        />
+        <TransactionInfo transaction={transaction} token={token} />
       )}
     </Container>
   )
@@ -56,7 +57,6 @@ const mapStateToProps = (rootState) => {
   const state = rootState.main
   return {
     data: selectTransactionData(state),
-    tokens: selectTokens(rootState),
   }
 }
 

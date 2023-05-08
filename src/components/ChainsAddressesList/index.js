@@ -22,7 +22,7 @@ export default ({
     <FlatList
       data={list}
       renderItem={renderItem}
-      keyExtractor={(item) => item.address}
+      keyExtractor={(item) => `$${item.chainId}-${item.address}`}
     />
   )
 }

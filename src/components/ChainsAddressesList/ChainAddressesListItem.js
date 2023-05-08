@@ -4,6 +4,9 @@ import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import { store } from 'reduxStore'
+
+import { getBlockchainNetworkLabel, getBlockchainNetworks } from 'reduxStore/selectors'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
@@ -14,8 +17,12 @@ export default ({
   onPressPrivateKey,
 }) => {
   const { showActionSheetWithOptions } = useActionSheet()
+  const blockchainNetworks = getBlockchainNetworks(store.getState())
+  const network = blockchainNetworks[item.chainId]
+  const networkLabel = getBlockchainNetworkLabel(network)
+
   let options = ['Copy address', 'Show Seed Phrase']
-  if (item.addressMapping === 'eip155') {
+  if (item.privateKey) {
     options.push('Show Private Key')
   }
   options.push('Cancel')
@@ -34,10 +41,10 @@ export default ({
             if (buttonIndex === 0) {
               Clipboard.setString(item.address)
             }
-            if (item.seedPhrase && buttonIndex === 1) {
-              onPressSeedPhrase(item.seedPhrase)
+            if (item.mnemonic && buttonIndex === 1) {
+              onPressSeedPhrase(item.mnemonic)
             }
-            if (item.addressMapping === 'eip155' && buttonIndex === 2) {
+            if (item.privateKey && buttonIndex === 2) {
               onPressPrivateKey(item.privateKey)
             }
           }
@@ -45,9 +52,11 @@ export default ({
       }}
       style={styles.item}>
       <Left style={styles.itemWrapper}>
-        <FastImage source={{ uri: item.icon }} style={styles.icon} />
+        <FastImage source={{ uri: network.icon }} style={styles.icon} />
         <Body>
-          <Text style={styles.label}>{item.name}</Text>
+          <Text style={styles.label}>
+            {item.name ? item.name : networkLabel}
+          </Text>
           <Text note>{`${item.address}`}</Text>
         </Body>
       </Left>

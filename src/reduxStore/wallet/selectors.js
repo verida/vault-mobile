@@ -1,3 +1,5 @@
+import { AssetId } from 'caip'
+import { BigNumber } from 'ethers'
 import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 import {
@@ -36,6 +38,7 @@ export const getSingleWalletChain = (state) => {
   }
 }
 
+// @chris done, although deprecate selectTokens
 export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
   const balances = getBalancesData(state.main)
@@ -50,17 +53,14 @@ export const getListAndTotal = (state) => {
   }
   let list = []
   if (!isEmpty(balances)) {
-    list = tokens.map((token) => {
-      let tokenBalance = balances[token.symbol]
-      // total = total + amount
-
+    const list = balances.map((tokenBalance) => {
       return {
-        label: token.name,
-        price: tokenBalance ? tokenBalance.quote.USD.price : 0,
-        change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
-        quantity: tokenBalance ? tokenBalance.balance : 0,
-        amount: tokenBalance ? tokenBalance.amount : 0,
-        ...token,
+        ...tokenBalance,
+        label: tokenBalance.symbol,
+        price: parseFloat(tokenBalance.quote.USD.price),
+        change: parseFloat(tokenBalance.quote.USD.percent_change_24h),
+        quantity: parseFloat(tokenBalance.balance),
+        amount: parseFloat(tokenBalance.amount),
       }
     })
     return { list, total }
@@ -81,27 +81,33 @@ export const selectNativeTokenBalance = (state, token) => {
   }
 }
 
-export const selectSingleTokenData = (state, assetID) => {
+// @chris done
+export const selectSingleTokenData = (state, asset) => {
   const balances = getBalancesData(state.main)
-  const tokens = selectTokens(state)
 
-  // write the function.. find.. chain id.. reference.. compare whole onject.. convert to string?
-
-  const token = tokens.find((ele) => {
-    return (
-      tokenCaipObjectToString(ele.asset) === tokenCaipObjectToString(assetID)
-    )
+  const tokenBalance = balances.find((item) => {
+    return new AssetId(item.asset).toString() === new AssetId(asset).toString()
   })
 
-  let tokenBalance = balances[token.symbol]
+  // We should always find a token balance, so this shouldn't happen
+  // but just in case, return 0 values if not found
+  if (!tokenBalance) {
+    return {
+      label: '',
+      price: 0,
+      change: 0,
+      quantity: 0,
+      amount: 0,
+    }
+  }
 
   return {
-    label: token.name,
-    price: tokenBalance ? tokenBalance.quote.USD.price : 0,
-    change: tokenBalance ? tokenBalance.quote.USD.percent_change_24h : 0,
-    quantity: tokenBalance ? tokenBalance.balance : 0,
-    amount: tokenBalance ? tokenBalance.amount : 0,
-    ...token,
+    ...tokenBalance,
+    label: tokenBalance.symbol,
+    price: parseFloat(tokenBalance.quote.USD.price),
+    change: parseFloat(tokenBalance.quote.USD.percent_change_24h),
+    quantity: parseFloat(tokenBalance.balance),
+    amount: parseFloat(tokenBalance.amount),
   }
 }
 
@@ -122,27 +128,43 @@ export const getSelectedWalletId = (state) => {
   return state.selectedWallet
 }
 
-export const getWalletList = (state, allChains) => {
+// @chris done
+export const getWalletList = (state) => {
   const allWallets = getAllWallets(state)
-  return Object.values(allWallets).map((wallet) => {
-    const { label, id, type, chain } = wallet
 
-    const addresses = Object.values(wallet.accounts).map(
-      (account) => account.address
-    )
+  return Object.values(allWallets).map((wallet) => {
+    const addresses = Object.values(wallet.accounts).map((account) => {
+      return account.address
+    })
+
+    let icon
+    if (!wallet.multiChain) {
+      icon = wallet.blockchainNetwork.icon
+    }
 
     return {
-      id,
-      label,
-      icon: type === 'single' ? allChains[chain].icon : null,
+      id: wallet._id,
+      label: wallet.label,
+      icon,
       count: Object.keys(wallet.accounts).length,
       address: addresses.length === 1 ? addresses[0] : null,
     }
   })
 }
 
-export const getSelectedWalletById = (state, chains) => {
-  const walletList = getWalletList(state, chains)
+export const getUniqueWalletAddresses = (wallet) => {
+  const addresses = []
+  Object.values(wallet.accounts).map((account) => {
+    const id = `${account.chainId}:${account.address}`
+    if (addresses.indexOf(id) === -1) {
+      addresses.push(id)
+    }
+  })
+  return addresses
+}
+
+export const getSelectedWalletById = (state) => {
+  const walletList = getWalletList(state)
   const selectedWalletId = state.selectedWallet
   const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
   return selectedWallet
@@ -189,7 +211,7 @@ export const selectPendingTransactions = (state, assetID) => {
 }
 
 export const selectTransactions = (state, assetID) => {
-  const transactions = state.transactions.data || []
+  const transactions = [...state.transactions.data] || []
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx) => {
@@ -214,9 +236,10 @@ export const selectTransactionsData = (state, assetID) => {
   const { fetching, error } = state.transactions
 
   return {
-    list: selectTransactions(state, assetID),
+    list: error ? [] : selectTransactions(state, assetID),
     loading: fetching,
-    error: error,
+    errorType: error,
+    errorMessage: state.transactions.data,
   }
 }
 
@@ -225,7 +248,14 @@ export const getTransactionParamsData = (state) => {
 }
 
 export const selectSentTransaction = (state) => {
-  return state.sentTransaction
+  const transaction = {
+    ...state.sentTransaction,
+    data: { ...state.sentTransaction.data },
+  }
+  if (transaction.data.amount) {
+    transaction.data.amount = BigNumber.from(transaction.data.amount)
+  }
+  return transaction
 }
 
 export const selectTransaction = (state) => {
@@ -241,3 +271,12 @@ export const selectTransactionData = (state) => {
     error: error,
   }
 }
+
+export const priceFormatter = new Intl.NumberFormat('en-US', {
+  style: 'currency',
+  currency: 'USD',
+
+  // These options are needed to round to whole numbers if that's what you want.
+  //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+  //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+}).format

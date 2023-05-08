@@ -7,7 +7,9 @@ export default ({
   symbol,
   decimal,
   token,
+  blockchainNetwork,
   list,
+  errorType,
   onPullToRefresh,
   refreshing,
 }) => {
@@ -20,9 +22,19 @@ export default ({
     />
   )
 
+  let errorMessage = 'No transactions found'
+  switch (errorType) {
+    case 'error':
+      errorMessage = 'Server error. Please try again later.'
+      break
+    case 'unsupported':
+      errorMessage = `${blockchainNetwork.label} does not currently support transaction lists`
+      break
+  }
+
   const emptyList = () => (
     <View style={{ alignItems: 'center' }}>
-      <Text>No transactions yet</Text>
+      <Text>{errorMessage}</Text>
     </View>
   )
 

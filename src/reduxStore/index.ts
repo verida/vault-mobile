@@ -15,7 +15,7 @@ import {
 } from 'redux-persist'
 
 import assetsReducer from './assets'
-import { assetsApi } from './assets/api'
+import { getWalletNFTCollectionsQuery } from './assets/api'
 import { mainReducer } from './mainReducer'
 import { tokensReducer } from './tokens/reducer'
 import { walletConnectReducer } from './wallet-connect/reducer'
@@ -33,7 +33,8 @@ export const rootReducer = combineReducers({
   assets: assetsReducer,
 
   // API reducers
-  [assetsApi.reducerPath]: assetsApi.reducer,
+  [getWalletNFTCollectionsQuery.reducerPath]:
+    getWalletNFTCollectionsQuery.reducer,
 })
 
 const debounceNotify = debounce((notify) => notify(), 30)
@@ -55,7 +56,7 @@ export function configureAppStore() {
         },
       })
         .concat(middleware)
-        .concat(assetsApi.middleware),
+        .concat(getWalletNFTCollectionsQuery.middleware),
     devTools: __DEV__,
     enhancers: [batchedSubscribe(debounceNotify) as any],
   })

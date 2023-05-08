@@ -6,9 +6,7 @@ import { WARNING_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default (props) => {
-  const label = props.networkReference
-    ? `Testnet (${props.networkReference})`
-    : 'Testnet'
+  const label = props.networkReference ? `${props.networkReference}` : 'Testnet'
   return (
     <View style={styles.container}>
       <Text style={styles.text}>{label}</Text>
