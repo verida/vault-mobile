@@ -179,7 +179,11 @@ export const mainReducer = (state = initialState, action) => {
     case FETCHED_TRANSACTIONS:
       return {
         ...state,
-        transactions: { fetching: false, error: undefined, data: action.data },
+        transactions: {
+          fetching: false,
+          error: action.error ? action.status : undefined,
+          data: action.error ? action.error : action.data,
+        },
       }
     case TRANSACTIONS_FETCH_FAILED:
       return {

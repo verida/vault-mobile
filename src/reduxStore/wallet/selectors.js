@@ -235,9 +235,10 @@ export const selectTransactionsData = (state, assetID) => {
   const { fetching, error } = state.transactions
 
   return {
-    list: selectTransactions(state, assetID),
+    list: error ? [] : selectTransactions(state, assetID),
     loading: fetching,
-    error: error,
+    errorType: error,
+    errorMessage: state.transactions.data,
   }
 }
 

@@ -95,15 +95,17 @@ export const getTransactionsForToken = (token) => {
       asset: token.asset,
     })
 
+    const responseData = transactionsData.data
+
     if (transactionsData) {
       dispatch({
         type: FETCHED_TRANSACTIONS,
-        data: transactionsData.data.data,
+        ...responseData,
       })
     } else {
       dispatch({
         type: TRANSACTIONS_FETCH_FAILED,
-        error: "Couldn'nt load transactions",
+        error: 'Unable to reach server to fetch transactions',
       })
     }
   }

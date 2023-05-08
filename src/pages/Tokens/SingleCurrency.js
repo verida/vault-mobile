@@ -44,7 +44,7 @@ const SingleCurrency = ({
   nativeTokenBalance,
 }) => {
   const { item } = route.params
-  const { list, loading } = transactions
+  const { list, loading, errorType } = transactions
 
   const chainId = new ChainId(item.asset.chainId).toString()
   const address = wallets[chainId].address
@@ -136,9 +136,11 @@ const SingleCurrency = ({
         <TransactionsList
           symbol={item.symbol}
           decimal={item.decimal ? item.decimal : blockchainNetwork.decimal}
+          blockchainNetwork={blockchainNetwork}
           token={item}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
+          errorType={errorType}
           list={list}
         />
       )}
