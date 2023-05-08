@@ -60,6 +60,8 @@ export class WalletManager {
         wallet.multiChain = true
       }
 
+      wallet.viewOnly = !wallet.mnemonic && !wallet.privateKey
+
       const updatedWallet: BlockchainWalletWithAccounts = {
         ...wallet,
         accounts: WalletManager.generateAccountsForWallet(
@@ -67,24 +69,6 @@ export class WalletManager {
           Object.values(blockchainNetworks)
         ),
       }
-
-      /*{
-        privateKey: wallet.privateKey ?? null,
-        mnemonic: wallet.mnemonic ?? null,
-        address: wallet.address ?? null,
-        blockchainNetworks,
-        chain: wallet.walletType === 'multi' ? null : wallet.walletType,
-      })
-
-      wallets[walletId] = {
-        seedPhrase: wallet.mnemonic ?? null,
-        privateKey: wallet.privateKey ?? null,
-        type: wallet.walletType === 'multi' ? 'multi' : 'single',
-        label: wallet.label,
-        id: walletId,
-        accounts,
-        chain: wallet.walletType === 'multi' ? null : wallet.walletType,
-      }*/
 
       wallets[wallet._id] = updatedWallet
     })
@@ -186,6 +170,7 @@ export class WalletManager {
       multiChain: true,
       label: name ? name : 'Multi Chain Wallet',
       walletType: 'multi',
+      viewOnly: false,
     }
 
     const saved: any = await walletDb!.save(wallet)

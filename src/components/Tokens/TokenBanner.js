@@ -13,6 +13,7 @@ import { priceFormatter } from 'reduxStore/wallet/selectors'
 export default ({
   data,
   sendButtonAction,
+  selectedWallet,
   // buyButtonAction,
   receiveButtonAction,
   copyButtonAction,
@@ -55,12 +56,14 @@ export default ({
       </View>
       {symbol && (
         <View style={styles.actionIcons}>
-          <TouchableOpacity
-            onPress={sendButtonAction}
-            style={styles.singleActionIcon}>
-            <SendIcon />
-            <Text style={styles.actionIconText}>Send</Text>
-          </TouchableOpacity>
+          {!selectedWallet.viewOnly ? (
+            <TouchableOpacity
+              onPress={sendButtonAction}
+              style={styles.singleActionIcon}>
+              <SendIcon />
+              <Text style={styles.actionIconText}>Send</Text>
+            </TouchableOpacity>
+          ) : undefined}
           <TouchableOpacity
             onPress={receiveButtonAction}
             style={styles.singleActionIcon}>

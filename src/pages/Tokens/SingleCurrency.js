@@ -25,6 +25,7 @@ import {
   sendTransaction,
 } from 'reduxStore/wallet/actions'
 import {
+  getSelectedWalletById,
   getWalletsData,
   selectNativeTokenBalance,
   selectSingleTokenData,
@@ -40,6 +41,7 @@ const SingleCurrency = ({
   onGetBalances,
   blockchainNetwork,
   wallets,
+  selectedWallet,
   onSendTransaction,
   nativeTokenBalance,
 }) => {
@@ -111,6 +113,7 @@ const SingleCurrency = ({
       )}
       <TokenBanner
         data={tokenData}
+        selectedWallet={selectedWallet}
         receiveButtonAction={() =>
           navigation.navigate('ReceiveToken', { token: tokenData })
         }
@@ -155,6 +158,7 @@ const mapStateToProps = (rootState, props) => {
     transactions: selectTransactionsData(state, props.route.params.item.asset),
     tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
     wallets: getWalletsData(state),
+    selectedWallet: getSelectedWalletById(state),
     blockchainNetwork: getBlockchainNetwork(
       rootState,
       props.route.params.item.asset.chainId
