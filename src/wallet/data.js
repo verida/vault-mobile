@@ -128,7 +128,7 @@ const sendTransaction = async (
   const wallets = getWalletsData(state)
   const amount = parseUnitsForSending(
     transactionData.amount,
-    transactionData.token.decimal
+    transactionData.token.token.decimal
   )
 
   const tokenAddress = getTokenAddress(transactionData.token.asset)
@@ -241,7 +241,7 @@ const sendTransaction = async (
         nonce: request.data.data,
         chainID: tokenChainReference,
       }
-    } else if (blockchainNetwork.asset.chainId.namespace === 'algorand') {
+    } else {
       let fromAddress = chainWallet.address
       let contract = new web3.eth.Contract(minABI, tokenAddress, {
         from: fromAddress,
@@ -260,10 +260,6 @@ const sendTransaction = async (
         nonce: request.data.data,
         chainID: tokenChainReference,
       }
-    } else {
-      throw new Error(
-        `Unknown blockchain namespace: ${blockchainNetwork.asset.chainId.namespace}`
-      )
     }
 
     const common = Common.custom({ chainId: tokenChainReference })
@@ -310,7 +306,7 @@ const sendTransaction = async (
         transaction = algosdk.makePaymentTxnWithSuggestedParams(
           chainWallet.address,
           receiverAddress,
-          BigInt(parseInt(amount.toHexString(), 6)),
+          amount.toBigInt(),
           undefined,
           undefined,
           transactionParams
@@ -332,8 +328,9 @@ const sendTransaction = async (
       throw err
     }
 
-    console.log('transaction')
-    console.log(transaction)
+    if (transaction.amount === 0) {
+      throw new Error('Invalid transaction amount')
+    }
 
     const privateKey = chainWallet.privateKey
 

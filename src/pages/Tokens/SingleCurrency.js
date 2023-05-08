@@ -68,7 +68,7 @@ const SingleCurrency = ({
   let networkLabel = getBlockchainNetworkLabel(blockchainNetwork)
 
   const showAlert = () =>
-    Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
+    Alert.alert('Not enough balance', 'You require at least 0.001 ALGO')
 
   return (
     <Container>
