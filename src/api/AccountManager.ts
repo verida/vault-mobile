@@ -36,8 +36,8 @@ import CONFIG from '../config/environment'
 import EventEmitter from 'events'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
-import { WalletProvider } from './Wallet/WalletProvider'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
+import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -346,7 +346,11 @@ class AccountManager extends EventEmitter {
           JSON.stringify(wallets)
         )
 
-        if (hdWallets[0]) {
+        const currentlySelectedWallet = getSelectedWalletId(
+          store.getState().main
+        )
+
+        if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
           const selectedWalletID = hdWallets[0]._id
 
           await store.dispatch(setSelectedWallet(selectedWalletID))

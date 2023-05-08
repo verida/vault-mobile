@@ -143,6 +143,7 @@ export const getWalletList = (state) => {
     }
 
     return {
+      ...wallet,
       id: wallet._id,
       label: wallet.label,
       icon,
