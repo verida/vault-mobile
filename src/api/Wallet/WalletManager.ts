@@ -172,7 +172,7 @@ export class WalletManager {
     name?: string
   ): Promise<{
     selectedWallet: BlockchainWallet
-    wallets: Record<string, BlockchainWalletWithAccounts[]>
+    wallets: Record<string, BlockchainWalletWithAccounts>
   }> {
     const mnemonic = seedPhrase ? seedPhrase : WalletManager.generateMnemonic()
 

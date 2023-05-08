@@ -3,10 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  editable,
-  isEnabledVeridaOneProfile,
-} from 'helpers/profile'
+import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
@@ -36,7 +33,6 @@ import {
   OneProfileFeaturedAsset,
   PublicWalletAddress,
 } from 'types/profile'
-import { VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
 import {
@@ -105,8 +101,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
-    VeridaWallet
+    BlockchainWalletWithAccounts
   >
+
   const selectedAccount = useSelector(
     (state: any) => state.main.selectedAccount
   )
@@ -115,7 +112,10 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     AccountManager.getInstance().getSelectedAccount()?.did
 
   const [username, setUsername] = useState<string | undefined>(undefined)
-  const blockchainNetworks = useSelector(getBlockchainNetworks)
+  const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
+    string,
+    BlockchainNetwork
+  >
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     PublicWalletAddress[]
@@ -181,10 +181,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     let mappedWallets: PublicWalletAddress[] = Object.values(
       blockchainNetworks
     ).reduce(
-      (
-        acc: BlockchainWalletWithAccounts[],
-        blockchainNetwork: BlockchainNetwork
-      ) => {
+      (acc: PublicWalletAddress[], blockchainNetwork: BlockchainNetwork) => {
         const sameChainAdresses = Object.values(wallets).reduce(
           (
             accAddresses: PublicWalletAddress[],
@@ -193,17 +190,17 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             const account = wallet.accounts[blockchainNetwork.chainId]
             if (account) {
               accAddresses.push({
-                address: account.address,
+                address: account.address!,
                 chainId: blockchainNetwork.chainId,
-                label: getPublicName(account.address, blockchainNetwork),
+                label: getPublicName(account.address!, blockchainNetwork),
                 order: getPublicAddressOrder(
-                  account.address,
+                  account.address!,
                   blockchainNetwork.chainId
                 ),
 
                 // Infered value for displaying
                 veridaWalletName: wallet.label,
-                isPublic: isPublic(account.address, blockchainNetwork.chainId),
+                isPublic: isPublic(account.address!, blockchainNetwork.chainId),
                 icon: blockchainNetwork.icon,
               })
             }
@@ -229,6 +226,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
     return enabledVeridaOne ? mappedWallets : mappedWallets.slice(0, 1) // Shorten the wallet address to one if not enabled Verida One Profile
   }, [
+    blockchainNetworks,
     enabledVeridaOne,
     publicWalletAddresses,
     getPublicWalletAddressObject,
@@ -755,7 +753,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                           originalValue: {
                             order: index,
                           },
-                          publicWalletAddresses,
+                          searchableAddresses: publicWalletAddresses.map(
+                            (address) => address.address
+                          ),
                         })
                         break
 

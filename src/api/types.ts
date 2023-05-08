@@ -99,7 +99,7 @@ export interface BlockchainWallet extends BlockchainAccount {
 }
 
 export interface BlockchainWalletWithAccounts extends BlockchainWallet {
-  accounts: BlockchainAccount
+  accounts: Record<string, BlockchainAccount>
 }
 
 // What network is this?

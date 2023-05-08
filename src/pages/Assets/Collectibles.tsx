@@ -49,9 +49,8 @@ const Collectibles = () => {
 
   const selectedWallet = wallets[selectedWalletId]
   const addresses = getUniqueWalletAddresses(selectedWallet)
-  const { data, isLoading, error, refetch } = useGetWalletNFTCollectionsQuery([
-    addresses,
-  ])
+  const { data, isLoading, error, refetch } =
+    useGetWalletNFTCollectionsQuery(addresses)
 
   // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
   // const data = walletNFTCollections?.[etherWallet] ?? []
