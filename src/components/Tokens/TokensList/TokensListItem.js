@@ -22,13 +22,15 @@ export default ({ item, onPressItem }) => {
         <View style={styles.priceAmount}>
           <View style={styles.priceChange}>
             <Text style={styles.amount}>{priceFormatter(price)}</Text>
-            <Text
-              style={[
-                styles.coinPriceChange,
-                positive ? styles.positive : styles.negative,
-              ]}>
-              {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
-            </Text>
+            {change ? (
+              <Text
+                style={[
+                  styles.coinPriceChange,
+                  positive ? styles.positive : styles.negative,
+                ]}>
+                {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
+              </Text>
+            ) : undefined}
           </View>
           <Text style={styles.amount}>{priceFormatter(amount)}</Text>
         </View>
