@@ -218,7 +218,7 @@ export const mainReducer = (state = initialState, action) => {
         sentTransaction: { fetching: true, error: undefined, data: {} },
       }
     case SEND_TRANSACTION_SUCCESS:
-      action.data.amount = parseInt(action.data.amount.toString())
+      action.data.amount = action.data.amount.toHexString()
 
       return {
         ...state,

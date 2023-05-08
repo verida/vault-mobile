@@ -146,7 +146,8 @@ const sendTransaction = async (
   let txData
   let txIdAlgo
 
-  if (blockchainNetwork.asset.chainId.namespace === 'near') {
+  if (blockchainNetwork.asset.chainId.namespace === 'near') { 
+    const nearAmount = nearAPI.utils.format.parseNearAmount(transactionData.amount)
     const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
     const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
     const publicKey = keyPair.getPublicKey()
@@ -162,7 +163,7 @@ const sendTransaction = async (
     let actions
     let txAddress
     if (isTokenNative) {
-      actions = [nearAPI.transactions.transfer(amount.toString())]
+      actions = [nearAPI.transactions.transfer(nearAmount)]
       txAddress = receiverAddress
     } else {
       actions = [
@@ -170,7 +171,7 @@ const sendTransaction = async (
           'ft_transfer',
           {
             receiver_id: receiverAddress,
-            amount: amount.toString(),
+            amount: nearAmount,
           },
           5430000000000,
           1
