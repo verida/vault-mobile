@@ -240,6 +240,11 @@ export interface VeridaOneWalletAddress {
   order: number
   label?: string
   verificationProof?: string
+
+  // Transient fields
+  isPublic?: boolean
+  veridaWalletName?: string
+  icon?: string
 }
 
 export interface VeridaOneFeaturedAsset {
@@ -248,6 +253,9 @@ export interface VeridaOneFeaturedAsset {
   tokenId: string
   ownerAddress: string
   order: number
+
+  // Transient fields
+  uri?: string
 }
 
 export interface VeridaOneProfile {

@@ -116,6 +116,7 @@ export type MainStackParams = {
   ConnectionRequest: ConnectionRequestScreenParams
   ProofRequest: ProofRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
+  AddSocialNetworkLink: undefined
 }
 
 export type MainStackScreenProps<S extends keyof MainStackParams> =
