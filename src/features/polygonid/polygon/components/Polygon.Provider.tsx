@@ -38,11 +38,13 @@ export const PolygonProvider = ({
   onError = console.error,
   children,
   uri,
+  isServerReady,
   requiredCircuitIds /* CircuitIds which must exist before attempting to mount the WebView. */,
 }: React.PropsWithChildren<{
   readonly generateRandomKey?: RandomKeyGenerator
   readonly onError?: (error: Error) => void
   readonly uri: string
+  readonly isServerReady: boolean
   readonly requiredCircuitIds: readonly `${CircuitId}`[]
 }>): JSX.Element => {
   const ref = React.useRef<WebView>(null)
@@ -56,16 +58,13 @@ export const PolygonProvider = ({
     'result' in isCircuitsDownloaded && isCircuitsDownloaded.result
 
   const [webPageLoaded, setWebPageLoaded] = React.useState<boolean>(false)
-  const [webPageLoading, setWebPageLoading] = React.useState<boolean>(true)
+  // const [webPageLoading, setWebPageLoading] = React.useState<boolean>(true)
 
   const polygonPromiseCallbacks = React.useRef<PolygonPromiseCallbacks>({})
 
   const onMessage = React.useCallback(
     ({ nativeEvent: { data: maybeResult } }: WebViewMessageEvent) => {
       try {
-        console.debug(
-          'Polygon.Provider.tsx ~ onMessage ~ Receiving a message from the WebView'
-        )
         const result = JSON.parse(maybeResult)
 
         if (!result || typeof result !== 'object') {
@@ -117,26 +116,30 @@ export const PolygonProvider = ({
   )
 
   const onLoadStart = React.useCallback(() => {
-    console.debug('PolygonProvider ~ WebView loading started')
-    setWebPageLoading(true)
+    console.debug('PolygonProvider ~ WebView loading...')
+    // setWebPageLoading(true)
   }, [])
 
   const onLoadEnd = React.useCallback(() => {
     console.debug('PolygonProvider ~ WebView loaded')
-    setWebPageLoading(false)
+    // setWebPageLoading(false)
     setWebPageLoaded(true)
   }, [])
 
-  const handleError = React.useCallback((event: any) => {
+  const handleError = React.useCallback(() => {
     setWebPageLoaded(false)
     console.error('PolygonProvider ~ Error while loading the WebView')
-    console.error(event)
   }, [])
 
   // Mark the PolygonProvider as in a loading state if either the webpage is loading
   // or we don't have all of the required circuits cached to the local device.
-  const loading = webPageLoading || !isRequiredCircuitsDownloaded
-  const isReady = webPageLoaded && isRequiredCircuitsDownloaded
+  const isReady = webPageLoaded && isRequiredCircuitsDownloaded && isServerReady
+
+  React.useEffect(() => {
+    if (!isServerReady) {
+      setWebPageLoaded(false)
+    }
+  }, [isServerReady])
 
   const invokeJs = React.useCallback(
     ({
@@ -232,7 +235,7 @@ export const PolygonProvider = ({
   return (
     <>
       {/* HACK: Do not permit the WebView to mount until the circuits are downloaded. */}
-      {!!isRequiredCircuitsDownloaded && (
+      {!!isServerReady && !!isRequiredCircuitsDownloaded ? (
         <WebView
           source={source}
           originWhitelist={originWhitelist}
@@ -247,18 +250,18 @@ export const PolygonProvider = ({
           javaScriptEnabled
           containerStyle={styles.hidden}
         />
-      )}
+      ) : null}
       <PolygonContextProvider
         value={React.useMemo<PolygonContextValue>(
           () => ({
-            loading,
+            isReady,
             generateRandomKey,
             createIdManager,
             handleAuthorizationRequest,
             handleCredentialsOffer,
           }),
           [
-            loading,
+            isReady,
             generateRandomKey,
             createIdManager,
             handleAuthorizationRequest,
