@@ -23,6 +23,12 @@ export function useRemoteNotifications() {
       await registerRemoteNotification(token)
     }
 
-    init()
+    // This is to prevent the push notification initialize many times
+    // TODO: Refactor the organization of app navigation to fix this instead
+    const tid = setTimeout(() => {
+      init()
+    }, 300)
+
+    return () => clearTimeout(tid)
   }, [selectedAccount])
 }
