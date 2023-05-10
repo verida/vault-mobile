@@ -139,7 +139,7 @@ export const getWalletList = (state) => {
 
     let icon
     if (!wallet.multiChain) {
-      icon = wallet.blockchainNetwork.icon
+      icon = wallet.blockchainNetwork?.icon
     }
 
     return {
