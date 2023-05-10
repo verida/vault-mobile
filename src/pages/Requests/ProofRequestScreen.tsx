@@ -50,6 +50,7 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
     const { handleAcceptProofRequest } = usePolygonId()
+    // TODO: Use isReady from usePolygonId to adapt the UI if not ready yet
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 

@@ -51,6 +51,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
     const { handleAcceptCredentialsOffer } = usePolygonId()
+    // TODO: Use isReady from usePolygonId to adapt the UI if not ready yet
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 

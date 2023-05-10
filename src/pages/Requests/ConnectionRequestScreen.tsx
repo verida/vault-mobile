@@ -51,6 +51,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
     const { handleAcceptConnectionRequest } = usePolygonId()
+    // TODO: Use isReady from usePolygonId to adapt the UI if not ready yet
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 
