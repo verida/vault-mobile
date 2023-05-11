@@ -54,7 +54,7 @@ export class WalletManager {
             break
         }
 
-        wallet.asset = blockchainNetworks[wallet.chainId].asset
+        wallet.asset = blockchainNetworks[wallet.chainId]?.asset
         wallet.blockchainNetwork = blockchainNetworks[wallet.chainId]
       } else {
         wallet.multiChain = true
@@ -123,7 +123,6 @@ export class WalletManager {
             wallet.multiChain
           )
         } else {
-          console.error(wallet)
           throw new Error(
             'Unexpected wallet (No address, private key or mnemonic)'
           )

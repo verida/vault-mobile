@@ -44,7 +44,7 @@ export type PolygonHandleAuthorizationRequest = (
 export type RandomKeyGenerator = () => string
 
 export type PolygonContextValue = {
-  readonly loading: boolean
+  readonly isReady: boolean
   readonly generateRandomKey: RandomKeyGenerator
   readonly createIdManager: PolygonCreateIdManager
   readonly handleAuthorizationRequest: PolygonHandleAuthorizationRequest

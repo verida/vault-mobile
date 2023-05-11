@@ -5,6 +5,8 @@ import StaticServer from 'react-native-static-server'
 import { FileServerProps } from '../@types'
 
 export function useFileServer({ dir, port }: FileServerProps) {
+  const [isReady, setIsReady] = React.useState(false)
+
   const server = React.useMemo<StaticServer>(
     () => new StaticServer(port, dir, { localOnly: true }),
     [port, dir]
@@ -19,19 +21,21 @@ export function useFileServer({ dir, port }: FileServerProps) {
     server
       .start()
       .then(() => {
+        setIsReady(true)
         console.debug('useFileServer ~ Server started')
       })
       .catch(console.error)
     return () => {
       try {
         console.debug('useFileServer ~ Stopping server')
+        setIsReady(false)
         server.stop()
       } catch (e) {
-        console.error('useFileServer ~ Error stopping the server')
+        console.error('useFileServer ~ Error while stopping the server')
         console.error(e)
       }
     }
   }, [server, port])
 
-  return { uri }
+  return { uri, isReady }
 }

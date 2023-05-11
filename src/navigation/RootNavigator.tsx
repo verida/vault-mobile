@@ -33,7 +33,13 @@ function RootNavigator() {
       return
     }
     mounted.current = true
-    init()
+
+    // This is to prevent the AccountManager initialize many times
+    // TODO: Refactor the organization of app navigation to fix this instead
+    const tid = setTimeout(() => {
+      init()
+    }, 10)
+    return () => clearTimeout(tid)
   }, [init])
 
   useEmitter(
