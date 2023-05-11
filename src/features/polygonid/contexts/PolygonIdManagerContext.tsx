@@ -13,6 +13,7 @@ import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
 import { parseQrCodeMessage } from '../utils'
 
 type PolygonIdContextType = {
+  isReady: boolean
   handleQRCodeMessage: (data: string) => boolean
   handleAcceptConnectionRequest: (
     data: AuthorizationRequestMessage
@@ -44,13 +45,14 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
 
   const navigation = useNavigation()
 
-  const { handleAuthorizationRequest, handleCredentialsOffer } =
+  const { isReady, handleAuthorizationRequest, handleCredentialsOffer } =
     usePolygonContext()
   const state = useCreatePolygonIdManager()
   const maybeManagerId = 'result' in state ? state.result : undefined
 
   const handleQRCodeMessage = useCallback(
     (qrCodeMessage: string) => {
+      // TODO: Consider check if Polygon ID is ready and blocking it here until it is handled in the Request screens
       try {
         const data = parseQrCodeMessage(qrCodeMessage)
 
@@ -119,6 +121,11 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
 
   const handleAcceptConnectionRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
+      if (!isReady) {
+        return {
+          error: new Error('Polygon ID engine is not ready.'),
+        }
+      }
       try {
         const result = await handleAuthorizationRequest({
           data,
@@ -135,11 +142,16 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         }
       }
     },
-    [maybeManagerId, handleAuthorizationRequest]
+    [isReady, maybeManagerId, handleAuthorizationRequest]
   )
 
   const handleAcceptProofRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
+      if (!isReady) {
+        return {
+          error: new Error('Polygon ID engine is not ready.'),
+        }
+      }
       try {
         const result = await handleAuthorizationRequest({
           data,
@@ -156,11 +168,16 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         }
       }
     },
-    [maybeManagerId, handleAuthorizationRequest]
+    [isReady, maybeManagerId, handleAuthorizationRequest]
   )
 
   const handleAcceptCredentialsOffer = useCallback(
     async (data: CredentialsOfferMessage) => {
+      if (!isReady) {
+        return {
+          error: new Error('Polygon ID engine is not ready.'),
+        }
+      }
       try {
         const result = await handleCredentialsOffer({
           data,
@@ -177,17 +194,19 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         }
       }
     },
-    [maybeManagerId, handleCredentialsOffer]
+    [isReady, maybeManagerId, handleCredentialsOffer]
   )
 
   const contextValue: PolygonIdContextType = useMemo(
     () => ({
+      isReady,
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,
       handleAcceptCredentialsOffer,
     }),
     [
+      isReady,
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,

@@ -20,7 +20,7 @@ export const VeridaPolygonIdProvider = ({
 }>): JSX.Element => {
   const fileServerExists = useDirExists(fileServer)
 
-  const { uri } = useFileServer(fileServer)
+  const { uri, isReady: isServerReady } = useFileServer(fileServer)
 
   // Dir represents the folder root where the polygon authentication site
   // is stored; i.e. <dir>/index.html.
@@ -47,7 +47,10 @@ export const VeridaPolygonIdProvider = ({
 
   return (
     <CircuitProvider publicDir={publicDir} uri={uri}>
-      <PolygonProvider uri={uri} requiredCircuitIds={requiredCircuitIds}>
+      <PolygonProvider
+        uri={uri}
+        isServerReady={isServerReady}
+        requiredCircuitIds={requiredCircuitIds}>
         {children}
       </PolygonProvider>
     </CircuitProvider>

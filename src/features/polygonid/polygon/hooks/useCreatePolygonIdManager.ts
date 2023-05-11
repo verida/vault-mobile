@@ -14,7 +14,7 @@ const loadingState = (): Stateful<string> => ({
 
 export function useCreatePolygonIdManager(): Stateful<string> {
   const [state, setState] = React.useState<Stateful<string>>(loadingState)
-  const { createIdManager, loading: polygonIsLoading } = usePolygonContext()
+  const { createIdManager, isReady: isPolygonIdReady } = usePolygonContext()
 
   // TODO: Handle account switching
   const accountManager = AccountManager.getInstance()
@@ -24,6 +24,13 @@ export function useCreatePolygonIdManager(): Stateful<string> {
     console.debug(
       'useCreatePolygonIdManager ~ Trying to create a new Polygon ID Manager'
     )
+    setState(loadingState)
+    if (!isPolygonIdReady) {
+      console.debug(
+        'useCreatePolygonIdManager ~ Polygon ID is not ready, cannot create Polygon ID Manager'
+      )
+      return
+    }
     if (!account) {
       console.debug(
         'useCreatePolygonIdManager ~ No Verida account, cannot create Polygon ID Manager'
@@ -48,14 +55,6 @@ export function useCreatePolygonIdManager(): Stateful<string> {
 
     const init = async () => {
       try {
-        setState(loadingState)
-        if (polygonIsLoading) {
-          console.debug(
-            'useCreatePolygonIdManager ~ Webapp is not ready, cannot create Polygon ID Manager'
-          )
-          return
-        }
-
         console.debug(
           'useCreatePolygonIdManager ~ Creating a new Polygon ID Manager'
         )
@@ -77,7 +76,7 @@ export function useCreatePolygonIdManager(): Stateful<string> {
       }
     }
     init()
-  }, [account, createIdManager, polygonIsLoading])
+  }, [account, createIdManager, isPolygonIdReady])
 
   return state
 }
