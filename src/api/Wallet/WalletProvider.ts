@@ -1,5 +1,5 @@
+import * as Sentry from '@sentry/react-native'
 import { create } from 'apisauce'
-import { ChainId } from 'caip'
 
 import CONFIG from '../../config/environment'
 import { BlockchainNetwork } from '../types'
@@ -12,16 +12,22 @@ export class WalletProvider {
   public static async getBlockchainNetworks(): Promise<
     Record<string, BlockchainNetwork>
   > {
-    const response: any = await walletProviderApi.get('chains/list')
-    const networkEntries =
-      response.data.data[`${CONFIG.WALLET_PROVIDER_CHAINS}`]
+    try {
+      const response: any = await walletProviderApi.get('chains/list')
+      const networkEntries =
+        response.data.data[`${CONFIG.WALLET_PROVIDER_CHAINS}`]
 
-    const allNetworks: Record<string, BlockchainNetwork> = {}
-    for (const chainId in networkEntries) {
-      const item = <BlockchainNetwork>networkEntries[chainId]
-      item.chainId = chainId
-      allNetworks[item.chainId] = item
+      const allNetworks: Record<string, BlockchainNetwork> = {}
+      for (const chainId in networkEntries) {
+        const item = <BlockchainNetwork>networkEntries[chainId]
+        item.chainId = chainId
+        allNetworks[item.chainId] = item
+      }
+      return allNetworks
+    } catch (error) {
+      Sentry.captureException(error)
     }
-    return allNetworks
+
+    return {}
   }
 }
