@@ -58,6 +58,7 @@ export const PolygonProvider = ({
     'result' in isCircuitsDownloaded && isCircuitsDownloaded.result
 
   const [webPageLoaded, setWebPageLoaded] = React.useState<boolean>(false)
+  // TODO: Re-enable the loading indicator, so it can be used by the UI to indicate that the Polygon ID 'engine' is loading
   // const [webPageLoading, setWebPageLoading] = React.useState<boolean>(true)
 
   const polygonPromiseCallbacks = React.useRef<PolygonPromiseCallbacks>({})
@@ -131,8 +132,7 @@ export const PolygonProvider = ({
     console.error('PolygonProvider ~ Error while loading the WebView')
   }, [])
 
-  // Mark the PolygonProvider as in a loading state if either the webpage is loading
-  // or we don't have all of the required circuits cached to the local device.
+  // Mark the PolygonProvider as ready if all the required conditions are met.
   const isReady = webPageLoaded && isRequiredCircuitsDownloaded && isServerReady
 
   React.useEffect(() => {
@@ -234,7 +234,7 @@ export const PolygonProvider = ({
 
   return (
     <>
-      {/* HACK: Do not permit the WebView to mount until the circuits are downloaded. */}
+      {/* TODO: Test if we need isRequiredCircuitsDownloaded here as long as it is in the isReady above */}
       {!!isServerReady && !!isRequiredCircuitsDownloaded ? (
         <WebView
           source={source}

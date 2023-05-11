@@ -71,7 +71,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
         setError(true)
       }
       setProcessing(false)
-      // TODO: Hanle the case where the user closes the screen before the request is processed
+      // TODO: Handle the case where the user closes the screen before the request is processed
     }, [handleAcceptConnectionRequest, data])
 
     const handleToggleDetails = useCallback(() => {

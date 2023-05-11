@@ -71,7 +71,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
         setError(true)
       }
       setProcessing(false)
-      // TODO: Hanle the case where the user closes the screen before the request is processed
+      // TODO: Handle the case where the user closes the screen before the request is processed
     }, [handleAcceptCredentialsOffer, data])
 
     const handleToggleDetails = useCallback(() => {
