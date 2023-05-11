@@ -154,6 +154,8 @@ export const getWalletList = (state) => {
 }
 
 export const getUniqueWalletAddresses = (wallet) => {
+  if (!wallet) return []
+
   const addresses = []
   Object.values(wallet.accounts).map((account) => {
     const id = `${account.chainId}:${account.address}`
