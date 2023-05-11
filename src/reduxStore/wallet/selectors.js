@@ -85,7 +85,7 @@ export const selectNativeTokenBalance = (state, token) => {
 export const selectSingleTokenData = (state, asset) => {
   const balances = getBalancesData(state.main)
 
-  const tokenBalance = balances.find((item) => {
+  const tokenBalance = balances?.find((item) => {
     return new AssetId(item.asset).toString() === new AssetId(asset).toString()
   })
 
