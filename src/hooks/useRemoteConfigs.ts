@@ -18,7 +18,7 @@ export type ForcedCreateAccountType = {
   furtherInfo?: string
 }
 
-export function useRemoteConfigs() {
+export function useRemoteConfigs(isMounted: boolean) {
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
@@ -39,7 +39,7 @@ export function useRemoteConfigs() {
       })
       .then(() => remoteConfig()?.fetchAndActivate())
       .then((fetchedRemotely) => {
-        if (fetchedRemotely) {
+        if (fetchedRemotely && isMounted) {
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
           const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
           setForcedUpgrade({

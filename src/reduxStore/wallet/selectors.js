@@ -85,7 +85,7 @@ export const selectNativeTokenBalance = (state, token) => {
 export const selectSingleTokenData = (state, asset) => {
   const balances = getBalancesData(state.main)
 
-  const tokenBalance = balances.find((item) => {
+  const tokenBalance = balances?.find((item) => {
     return new AssetId(item.asset).toString() === new AssetId(asset).toString()
   })
 
@@ -139,7 +139,7 @@ export const getWalletList = (state) => {
 
     let icon
     if (!wallet.multiChain) {
-      icon = wallet.blockchainNetwork.icon
+      icon = wallet.blockchainNetwork?.icon
     }
 
     return {
@@ -154,6 +154,8 @@ export const getWalletList = (state) => {
 }
 
 export const getUniqueWalletAddresses = (wallet) => {
+  if (!wallet) return []
+
   const addresses = []
   Object.values(wallet.accounts).map((account) => {
     const id = `${account.chainId}:${account.address}`

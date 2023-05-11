@@ -21,10 +21,6 @@
 		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		3E461D99554A48A4959DE609 /* SplashScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = AA286B85B6C04FC6940260E9 /* SplashScreen.storyboard */; };
 		4496B345EB039266071037DE /* libPods-Verida Vault.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FB651D7E92702950EC1C4600 /* libPods-Verida Vault.a */; };
-		5B189CFE29A7B80B008ECD6F /* RNWorkers.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CFD29A7B80B008ECD6F /* RNWorkers.m */; };
-		5B189CFF29A7B80B008ECD6F /* RNWorkers.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189CFD29A7B80B008ECD6F /* RNWorkers.m */; };
-		5B189D0329A7B883008ECD6F /* RNWorkersManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189D0229A7B883008ECD6F /* RNWorkersManager.m */; };
-		5B189D0429A7B883008ECD6F /* RNWorkersManager.m in Sources */ = {isa = PBXBuildFile; fileRef = 5B189D0229A7B883008ECD6F /* RNWorkersManager.m */; };
 		74FBFFD529E7AEA0007E3AE7 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 74FBFFD429E7AEA0007E3AE7 /* www */; };
 		74FBFFD629E7AEA0007E3AE7 /* www in Resources */ = {isa = PBXBuildFile; fileRef = 74FBFFD429E7AEA0007E3AE7 /* www */; };
 		97254FDE9EA3786C4850F5C1 /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = C5469EA3EFC6885C9F4EDA84 /* ExpoModulesProvider.swift */; };
@@ -52,10 +48,6 @@
 		1CA037D9327BD46A3A11A3BF /* Pods-Verida Vault Internal.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Verida Vault Internal.release.xcconfig"; path = "Target Support Files/Pods-Verida Vault Internal/Pods-Verida Vault Internal.release.xcconfig"; sourceTree = "<group>"; };
 		228FC23CE0D44BE7897CDEF3 /* MaterialCommunityIcons.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = MaterialCommunityIcons.ttf; path = "../node_modules/native-base/Fonts/MaterialCommunityIcons.ttf"; sourceTree = "<group>"; };
 		3DBEAF860106428B82D2C175 /* Foundation.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Foundation.ttf; path = "../node_modules/native-base/Fonts/Foundation.ttf"; sourceTree = "<group>"; };
-		5B189CFD29A7B80B008ECD6F /* RNWorkers.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNWorkers.m; path = myApp/RNWorkers.m; sourceTree = "<group>"; };
-		5B189D0129A7B859008ECD6F /* RNWorkers.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNWorkers.h; sourceTree = "<group>"; };
-		5B189D0229A7B883008ECD6F /* RNWorkersManager.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = RNWorkersManager.m; path = myApp/RNWorkersManager.m; sourceTree = "<group>"; };
-		5B189D0729A7BA02008ECD6F /* RNWorkersManager.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNWorkersManager.h; sourceTree = "<group>"; };
 		5C85E421F41D4B72A10C5D5D /* rubicon-icon-font.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = "rubicon-icon-font.ttf"; path = "../node_modules/native-base/Fonts/rubicon-icon-font.ttf"; sourceTree = "<group>"; };
 		5F12764B221249EF9A963F52 /* Entypo.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Entypo.ttf; path = "../node_modules/native-base/Fonts/Entypo.ttf"; sourceTree = "<group>"; };
 		63554FA27E484F17B339423B /* Roboto.ttf */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = unknown; name = Roboto.ttf; path = "../node_modules/native-base/Fonts/Roboto.ttf"; sourceTree = "<group>"; };
@@ -119,10 +111,6 @@
 				050D32F726FA3D480076780F /* File.swift */,
 				050D32F526FA3D470076780F /* Verida Vault-Bridging-Header.h */,
 				050D32F626FA3D470076780F /* Verida Vault Staging-Bridging-Header.h */,
-				5B189CFD29A7B80B008ECD6F /* RNWorkers.m */,
-				5B189D0129A7B859008ECD6F /* RNWorkers.h */,
-				5B189D0229A7B883008ECD6F /* RNWorkersManager.m */,
-				5B189D0729A7BA02008ECD6F /* RNWorkersManager.h */,
 			);
 			name = myApp;
 			sourceTree = "<group>";
@@ -577,10 +565,14 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Verida Vault Internal/Pods-Verida Vault Internal-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Flipper-DoubleConversion/double-conversion.framework/double-conversion",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Flipper-Glog/glog.framework/glog",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework/OpenSSL",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/double-conversion.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/glog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -608,10 +600,14 @@
 			);
 			inputPaths = (
 				"${PODS_ROOT}/Target Support Files/Pods-Verida Vault/Pods-Verida Vault-frameworks.sh",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Flipper-DoubleConversion/double-conversion.framework/double-conversion",
+				"${PODS_XCFRAMEWORKS_BUILD_DIR}/Flipper-Glog/glog.framework/glog",
 				"${PODS_XCFRAMEWORKS_BUILD_DIR}/OpenSSL-Universal/OpenSSL.framework/OpenSSL",
 			);
 			name = "[CP] Embed Pods Frameworks";
 			outputPaths = (
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/double-conversion.framework",
+				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/glog.framework",
 				"${TARGET_BUILD_DIR}/${FRAMEWORKS_FOLDER_PATH}/OpenSSL.framework",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -695,8 +691,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				0545145726F9DB5700654C18 /* AppDelegate.mm in Sources */,
-				5B189D0429A7B883008ECD6F /* RNWorkersManager.m in Sources */,
-				5B189CFF29A7B80B008ECD6F /* RNWorkers.m in Sources */,
 				050D32F926FA3D480076780F /* File.swift in Sources */,
 				0545145826F9DB5700654C18 /* main.m in Sources */,
 				1052C764E433A271D674A7A7 /* ExpoModulesProvider.swift in Sources */,
@@ -708,8 +702,6 @@
 			buildActionMask = 2147483647;
 			files = (
 				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				5B189D0329A7B883008ECD6F /* RNWorkersManager.m in Sources */,
-				5B189CFE29A7B80B008ECD6F /* RNWorkers.m in Sources */,
 				050D32F826FA3D480076780F /* File.swift in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 				97254FDE9EA3786C4850F5C1 /* ExpoModulesProvider.swift in Sources */,
