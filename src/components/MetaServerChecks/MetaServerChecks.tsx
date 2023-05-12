@@ -28,15 +28,14 @@ const MetaServerChecks = () => {
   }, [])
 
   useEffect(() => {
-    let isMounted = true
-    fetchConfigs(isMounted)
+    fetchConfigs()
 
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (
         appState.current.match(/inactive|background/) &&
         nextAppState === 'active'
       ) {
-        fetchConfigs(isMounted)
+        fetchConfigs()
       }
 
       appState.current = nextAppState
@@ -46,7 +45,6 @@ const MetaServerChecks = () => {
       handleAppStateChange
     )
     return () => {
-      isMounted = false
       subscription?.remove()
     }
   }, [fetchConfigs])
