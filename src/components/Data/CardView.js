@@ -15,17 +15,18 @@ const CardView = ({ folder }) => {
       const vault = AccountManager.getInstance().vault
       const { folders } = vault.data.map
 
-      const generatedList = folder.config.folders.map((folderName) => {
-        const { title, titlePlural, icon, color } = folders[folderName]
+      const generatedList =
+        folder.config.folders?.map((folderName) => {
+          const { title, titlePlural, icon, color } = folders[folderName]
 
-        return {
-          label: titlePlural || title,
-          icon: icon,
-          color: color,
-          onPress: () =>
-            navigation.navigate('DataFolder', { folderName: folderName }),
-        }
-      })
+          return {
+            label: titlePlural || title,
+            icon: icon,
+            color: color,
+            onPress: () =>
+              navigation.navigate('DataFolder', { folderName: folderName }),
+          }
+        }) ?? []
 
       setList(generatedList)
     }
