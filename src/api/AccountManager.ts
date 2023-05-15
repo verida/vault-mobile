@@ -7,6 +7,7 @@ import { ethers, utils } from 'ethers'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
+import WalletUtils from '@verida/wallet-utils'
 
 import {
   Account,
@@ -612,8 +613,11 @@ class AccountManager extends EventEmitter {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null
       }
+      const veridaWallet = WalletUtils.utils.getWallet('ethr', mnemonic)
+
       this.selectedAccount = {
         mnemonic,
+        privateKey: veridaWallet.privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,
