@@ -12,6 +12,7 @@ import {
   IncomingDataRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
+import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
 
 export type RootStackParams = {
   Auth: undefined
@@ -116,6 +117,8 @@ export type MainStackParams = {
   ConnectionRequest: ConnectionRequestScreenParams
   ProofRequest: ProofRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
+
+  PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 
 export type MainStackScreenProps<S extends keyof MainStackParams> =

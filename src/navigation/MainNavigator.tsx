@@ -40,6 +40,7 @@ import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import Settings from 'pages/Settings'
+import { PolygonIdCircuitsSettingsScreen } from 'pages/Settings/PolygonID'
 import StorageNodes from 'pages/StorageNodes/StorageNodes'
 import BuyToken from 'pages/Tokens/BuyToken'
 import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
@@ -184,6 +185,16 @@ export const MainNavigator: React.FunctionComponent = () => {
             presentation: 'modal',
           }}
         />
+
+        <Stack.Screen
+          name={'PolygonIdCircuitsSettings'}
+          component={PolygonIdCircuitsSettingsScreen}
+          options={{
+            // TODO: Refactor the whole Navigation to leverage the header customisation
+            headerShown: true,
+          }}
+        />
+
         {/* Modal screens */}
         <Stack.Group
           screenOptions={{
