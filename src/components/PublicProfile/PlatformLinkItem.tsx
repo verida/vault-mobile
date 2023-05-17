@@ -1,6 +1,8 @@
+import Color from 'color'
+import { PLATFORM_LINKS } from 'constants'
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
 import { VeridaOnePlatformLink } from 'api/types'
@@ -18,8 +20,9 @@ type Props = {
   drag: () => void
   isActive: boolean
   onEditName?: () => void
-  setPublicAddress: (
-    publicAdress: VeridaOnePlatformLink,
+  showOnVeridaOne: boolean
+  setShowOnVeridaOne: (
+    platformLink: VeridaOnePlatformLink,
     visible: boolean
   ) => void
 }
@@ -29,30 +32,34 @@ export const PlatformLinkItem = ({
   drag,
   isActive,
   onEditName,
-  setPublicAddress,
+  showOnVeridaOne,
+  setShowOnVeridaOne,
 }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
-  const isPublicAddress = false
+  console.log('platformLink', JSON.stringify(platformLink, null, 2))
+
+  const platformMeta =
+    PLATFORM_LINKS[platformLink.name || platformLink.platform] ?? {}
 
   return (
     <View
       style={[
         styles.walletItemContainer,
         {
-          backgroundColor: isPublicAddress
+          backgroundColor: showOnVeridaOne
             ? theme.color.background
             : theme.color.snow,
         },
       ]}>
       <TouchableOpacity
         hitSlop={smallButtonHitSlop}
-        onPressIn={isPublicAddress ? drag : undefined}
+        onPressIn={showOnVeridaOne ? drag : undefined}
         disabled={isActive}>
         <View style={{ marginHorizontal: theme.spacing.xs }}>
           <DragIcon
             fill={
-              isPublicAddress
+              showOnVeridaOne
                 ? theme.color.iconDefault
                 : theme.color.transparent
             }
@@ -71,8 +78,8 @@ export const PlatformLinkItem = ({
               flex: 1,
               flexDirection: 'row',
             }}>
-            <FastImage
-              source={{ uri: platformLink.icon }}
+            <Image
+              source={platformMeta.icon}
               style={{ width: 48, height: 48 }}
               resizeMode='contain'
             />
@@ -82,38 +89,25 @@ export const PlatformLinkItem = ({
                 numberOfLines={2}
                 style={{
                   maxWidth: 200,
-                  color: platformLink.label
-                    ? theme.color.onBackground
-                    : theme.color.textLightGrey,
+                  color: theme.color.onBackground,
                 }}>
-                {platformLink.label || 'Public label'}
+                {platformMeta.label}
               </SubHeadline>
-              <View
+              <Text
+                ellipsizeMode='middle'
+                numberOfLines={1}
                 style={{
-                  flexDirection: 'row',
-                  alignItems: 'center',
+                  maxWidth: 180,
+                  marginRight: theme.spacing.xs,
+                  color: Color(theme.color.onBackground).alpha(0.5).toString(),
                 }}>
-                <Text
-                  ellipsizeMode='middle'
-                  numberOfLines={1}
-                  style={{
-                    maxWidth: 100,
-                    marginRight: theme.spacing.xs,
-                  }}>
-                  {platformLink.url}
-                </Text>
-                <Text
-                  ellipsizeMode='tail'
-                  numberOfLines={1}
-                  style={[styles.veridaWalletName, { maxWidth: 115 }]}>
-                  {platformLink.name}
-                </Text>
-              </View>
+                {`@${platformLink.accountId}`}
+              </Text>
             </View>
           </View>
           <Button
             color={'transparent'}
-            disabled={!isPublicAddress}
+            disabled={!showOnVeridaOne}
             style={{
               width: 40,
               height: 40,
@@ -154,9 +148,9 @@ export const PlatformLinkItem = ({
               true: theme.color.success,
             }}
             onValueChange={(value: boolean) =>
-              setPublicAddress(platformLink, value)
+              setShowOnVeridaOne(platformLink, value)
             }
-            value={isPublicAddress}
+            value={showOnVeridaOne}
           />
         </View>
       </View>

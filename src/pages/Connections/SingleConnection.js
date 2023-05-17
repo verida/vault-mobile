@@ -23,6 +23,7 @@ const calculateNextSync = function (conn) {
 
 export default ({ route, navigation }) => {
   const provider = route.params.provider
+  const connectNow = route.params.connectNow
   const connectionInfo = DataConnectorsManager.getConnectionInfo(provider)
 
   const [syncStatus, setSyncStatus] = useState('')
@@ -65,6 +66,18 @@ export default ({ route, navigation }) => {
       setShowSuccess(false)
     })
   }, [route.params.accessToken])
+
+  useEffect(() => {
+    console.log('connectNow', connectNow)
+    if (connectNow) {
+      ;(async () => {
+        const connectionInstance = await DataConnectorsManager.getConnection(
+          provider
+        )
+        connectionInstance.initiateAuth()
+      })()
+    }
+  }, [connectNow, provider])
 
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {

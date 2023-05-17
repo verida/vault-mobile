@@ -1,5 +1,6 @@
 import { StackActions } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import Color from 'color'
 import { useTheme } from 'contexts'
 import { emitter } from 'helpers/emitter'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
@@ -12,14 +13,19 @@ import {
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { EnterPlatformLinkPage } from 'components/PublicProfile'
+import {
+  EnterPlatformLinkPage,
+  EnterPlatformLinkPageRefProps,
+} from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
+import { PLATFORM_LINKS } from 'constants/profile'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
@@ -29,59 +35,6 @@ enum PageType {
   ListSocialNetworks,
   AddSocialNetwork,
   AddSocialNetworkManually,
-}
-
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
-const InstagramIcon = require('assets/social_icons/instagram.png')
-const DiscordIcon = require('assets/social_icons/discord.png')
-const LinkedinIcon = require('assets/social_icons/linkedin.png')
-const TelegramIcon = require('assets/social_icons/telegram.png')
-const GithubIcon = require('assets/social_icons/github.png')
-
-const SOCIAL_NETWORKS = {
-  facebook: {
-    name: 'facebook',
-    label: 'Facebook',
-    icon: FacebookIcon,
-    baseURL: 'https://facebook.com/',
-  },
-  twitter: {
-    name: 'twitter',
-    label: 'Twitter',
-    icon: TwitterIcon,
-    baseURL: 'https://twitter.com/',
-  },
-  instagram: {
-    name: 'instagram',
-    label: 'Instagram',
-    icon: InstagramIcon,
-    baseURL: 'https://instagram.com/',
-  },
-  discord: {
-    name: 'discord',
-    label: 'Discord',
-    icon: DiscordIcon,
-    baseURL: 'https://discord.com/',
-  },
-  linkedin: {
-    name: 'linkedin',
-    label: 'Linkedin',
-    icon: LinkedinIcon,
-    baseURL: 'https://linkedin.com/in/',
-  },
-  telegram: {
-    name: 'telegram',
-    label: 'Telegram',
-    icon: TelegramIcon,
-    baseURL: 'https://telegram.com/',
-  },
-  github: {
-    name: 'github',
-    label: 'Github',
-    icon: GithubIcon,
-    baseURL: 'https://github.com/',
-  },
 }
 
 export interface AddPlatformLinkScreenParams {
@@ -123,12 +76,13 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
   const [selectedNetwork, setSelectedNetwork] = useState({ label: 'Twitter' })
   const [loading, setLoading] = useState(true)
+  const enterPlatformLinkPageRef = useRef<EnterPlatformLinkPageRefProps>(null)
 
   const [connectors, setConnectors] = useState([])
 
   const availableSocicalNetworks = useMemo(
     () =>
-      Object.values(SOCIAL_NETWORKS).filter(
+      Object.values(PLATFORM_LINKS).filter(
         (network) =>
           !connectors.some(
             (cn) => cn.name === network.name && cn.syncStatus !== 'disabled'
@@ -248,6 +202,9 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
         scrollEnabled={false}
         onPageSelected={(e) => {
           setCurrentPage(e.nativeEvent.position)
+          if (e.nativeEvent.position === PageType.AddSocialNetworkManually) {
+            enterPlatformLinkPageRef.current?.focusInput()
+          }
         }}
         ref={pagerRef}>
         <View key={'ListSocialNetworks'}>
@@ -272,6 +229,13 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
                       <Image style={styles.iconSmall} source={item.icon} />
                       <Text style={styles.itemText}>{item.label}</Text>
                     </View>
+                    <Icon
+                      size={22}
+                      name='keyboard-arrow-right'
+                      color={Color(theme.color.onBackground)
+                        .alpha(0.45)
+                        .toString()}
+                    />
                   </TouchableOpacity>
                 )
               })}
@@ -296,6 +260,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
                   navigation.dispatch(
                     StackActions.replace('SingleConnection', {
                       provider: selectedNetwork.name,
+                      connectNow: true,
                     })
                   )
                 }}>
@@ -313,6 +278,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
         </View>
         <View key={'AddSocialNetworkManually'}>
           <EnterPlatformLinkPage
+            ref={enterPlatformLinkPageRef}
             socialNetwork={selectedNetwork}
             onAddSocialNetworkHandle={onAddSocialNetworkHandle}
           />
@@ -337,7 +303,7 @@ const createStyles = (theme: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
       justifyContent: 'space-between',
-      marginBottom: theme.spacing.m,
+      minHeight: 64,
     },
     connectionItemIconLabel: {
       flexDirection: 'row',

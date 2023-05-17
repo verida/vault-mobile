@@ -49,7 +49,6 @@ export const EnterPlatformLinkPage = React.forwardRef(
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
     const [baseURL, setBaseURL] = useState(socialNetwork.baseURL ?? '')
-    const urlPatten = /${socialNetwork.baseURL}/
 
     useEffect(() => {
       setBaseURL(socialNetwork.baseURL ?? '')
@@ -139,7 +138,7 @@ export const EnterPlatformLinkPage = React.forwardRef(
 
     return (
       <Container
-        key={'InputUsername'}
+        key={'EnterPlatformLink'}
         withKeyboardAvoidingView
         keyboadAvoidingViewProps={{ keyboardVerticalOffset: 48 + top }}>
         <ScrollView
@@ -256,7 +255,7 @@ export const EnterPlatformLinkPage = React.forwardRef(
             disabled={inputText.length < 2}
             style={styles.button}
             onPress={() => onAddSocialNetworkHandle(inputText)}>
-            Claim
+            Add
           </Button>
         </View>
       </Container>
