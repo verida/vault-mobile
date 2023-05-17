@@ -4,19 +4,25 @@ import { StyleSheet, TouchableOpacity } from 'react-native'
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color'
 import Text from '../Text'
 
-export default ({ words, template, onSelect, id, containerStyle }) =>
-  words.map((word) => (
+export default ({ words, template, onSelect, id, containerStyle }) => {
+  const displayWords = []
+  words.forEach((word, index) => {
+    if (id === 'selected' && template.indexOf(index) !== -1) {
+      displayWords.push(index)
+    } else if (id !== 'selected' && template.indexOf(index) === -1) {
+      displayWords.push(index)
+    }
+  })
+
+  return displayWords.map((value, index) => (
     <TouchableOpacity
-      key={`${id} - ${word}`}
-      style={[
-        style.word,
-        containerStyle,
-        template.includes(word) && style.selected,
-      ]}
-      onPress={() => onSelect(word)}>
-      <Text style={template.includes(word) && style.selectedText}>{word}</Text>
+      key={`${id} - ${index}`}
+      style={[style.word, containerStyle]}
+      onPress={() => onSelect(value)}>
+      <Text>{words[value]}</Text>
     </TouchableOpacity>
   ))
+}
 
 const style = StyleSheet.create({
   word: {
