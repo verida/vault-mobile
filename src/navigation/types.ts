@@ -6,6 +6,7 @@ import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
+import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddSocialNetworkLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 import {
   ConnectionRequestScreenParams,
@@ -116,7 +117,7 @@ export type MainStackParams = {
   ConnectionRequest: ConnectionRequestScreenParams
   ProofRequest: ProofRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
-  AddSocialNetworkLink: undefined
+  AddPlatformLink: AddPlatformLinkScreenParams
 }
 
 export type MainStackScreenProps<S extends keyof MainStackParams> =

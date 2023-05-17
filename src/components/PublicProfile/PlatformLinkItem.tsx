@@ -24,7 +24,7 @@ type Props = {
   ) => void
 }
 
-export const WalletAddressItem = ({
+export const PlatformLinkItem = ({
   platformLink,
   drag,
   isActive,
@@ -33,14 +33,14 @@ export const WalletAddressItem = ({
 }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
-  const isPublicAddress = walletAddress.isPublic
+  const isPublicAddress = false
 
   return (
     <View
       style={[
         styles.walletItemContainer,
         {
-          backgroundColor: walletAddress.isPublic
+          backgroundColor: isPublicAddress
             ? theme.color.background
             : theme.color.snow,
         },
@@ -72,7 +72,7 @@ export const WalletAddressItem = ({
               flexDirection: 'row',
             }}>
             <FastImage
-              source={{ uri: walletAddress.icon }}
+              source={{ uri: platformLink.icon }}
               style={{ width: 48, height: 48 }}
               resizeMode='contain'
             />
@@ -82,11 +82,11 @@ export const WalletAddressItem = ({
                 numberOfLines={2}
                 style={{
                   maxWidth: 200,
-                  color: walletAddress.label
+                  color: platformLink.label
                     ? theme.color.onBackground
                     : theme.color.textLightGrey,
                 }}>
-                {walletAddress.label || 'Public label'}
+                {platformLink.label || 'Public label'}
               </SubHeadline>
               <View
                 style={{
@@ -100,20 +100,20 @@ export const WalletAddressItem = ({
                     maxWidth: 100,
                     marginRight: theme.spacing.xs,
                   }}>
-                  {walletAddress.address}
+                  {platformLink.url}
                 </Text>
                 <Text
                   ellipsizeMode='tail'
                   numberOfLines={1}
                   style={[styles.veridaWalletName, { maxWidth: 115 }]}>
-                  {walletAddress.veridaWalletName}
+                  {platformLink.name}
                 </Text>
               </View>
             </View>
           </View>
           <Button
             color={'transparent'}
-            disabled={!walletAddress.isPublic}
+            disabled={!isPublicAddress}
             style={{
               width: 40,
               height: 40,
@@ -154,9 +154,9 @@ export const WalletAddressItem = ({
               true: theme.color.success,
             }}
             onValueChange={(value: boolean) =>
-              setPublicAddress(walletAddress, value)
+              setPublicAddress(platformLink, value)
             }
-            value={walletAddress.isPublic}
+            value={isPublicAddress}
           />
         </View>
       </View>

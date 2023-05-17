@@ -67,6 +67,7 @@ export enum PublicProfileEditMode {
   AddCustomURL,
   DeleteCustomURL,
   SelectFeaturedAsset,
+  AddSocialNetwork,
 }
 
 const SCREEN_NAME = 'PublicProfile'
@@ -234,7 +235,8 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
   const debounceSaveProfile = useCallback(
     debounce(async (updatedProfile) => {
-      const { walletAddresses, customLinks, featuredAssets } = updatedProfile
+      const { walletAddresses, customLinks, featuredAssets, platformLinks } =
+        updatedProfile
       try {
         setQuickFetching(true)
         if (
@@ -256,6 +258,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           !isEqual(veridaOneProfile.featuredAssets, featuredAssets)
         ) {
           await VeridaOneManager.setFeaturedAssets(featuredAssets)
+        }
+
+        if (
+          'platformLinks' in updatedProfile &&
+          !isEqual(veridaOneProfile.platformLinks, platformLinks)
+        ) {
+          await VeridaOneManager.setPlatformLinks(platformLinks)
         }
 
         // refetch profile so react state correctly updates
@@ -548,6 +557,35 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
         setFeaturedAssets(updatedFeaturedAssets)
         debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
+      } else if (mode === PublicProfileEditMode.AddSocialNetwork) {
+        const inputValue = payload.value
+        const originalValue = payload.originalValue
+        const updatedPlatformLinks = [...platformLinks]
+
+        const platformLink = {
+          ...originalValue,
+          ...inputValue,
+        }
+
+        console.log('PLatform ', JSON.stringify(platformLink, null, 2))
+        if (originalValue) {
+          // edit mode
+          const linkIndex = updatedPlatformLinks.findIndex(
+            (link) => link.url === originalValue.url
+          )
+
+          if (linkIndex >= 0) {
+            // Replace updated item
+            updatedPlatformLinks.splice(linkIndex, 1, platformLink as any)
+          }
+        } else {
+          // new mode
+          platformLink.order = publicCustomLinks.length // add a new link and put it bottom
+          updatedPlatformLinks.push(platformLink)
+        }
+
+        setPlatformLinks(updatedPlatformLinks)
+        debounceSaveProfile({ platformLinks: updatedPlatformLinks })
       }
     },
     [publicWalletAddresses]
@@ -693,11 +731,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   )
 
   const renderPlatformLinkItem = useCallback(
-    ({
-      item: walletAddress,
-      drag,
-      isActive,
-    }: RenderItemParams<VeridaOnePlatformLink>) => {
+    ({ item, drag, isActive }: RenderItemParams<VeridaOnePlatformLink>) => {
       async function setPublicAddress(
         publicAdress: VeridaOnePlatformLink,
         visible: boolean
@@ -731,34 +765,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         // debounceSaveProfile({ walletAddresses: newPublicWalletAddresses })
       }
 
-      return (
-        <WalletAddressItem
-          walletAddress={walletAddress}
-          drag={drag}
-          isActive={isActive}
-          onEditName={
-            !walletAddress.isPublic
-              ? undefined
-              : () => {
-                  navigation.navigate('EditGenericProperty', {
-                    screenName: SCREEN_NAME,
-                    title: 'Public Label',
-                    option: {
-                      label: 'Address public label',
-                      type: 'input',
-                      value: walletAddress.label,
-                      placeholder: 'Enter the label',
-                      description:
-                        'Address public label is visible to everyone on your Verida One profile. If it’s not set, only the address will be visible.',
-                    },
-                    mode: PublicProfileEditMode.EditWalletPublicLabel,
-                    originalValue: walletAddress,
-                  })
-                }
-          }
-          setPublicAddress={setPublicAddress}
-        />
-      )
+      return <Text>{item.url}</Text>
     },
     [debounceSaveProfile, navigation, publicWalletAddresses]
   )
@@ -904,7 +911,49 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             This information is always visible on your Verida One page
           </Text>
           <View>
-            {/* Wallet address */}
+            {/* Social Megia */}
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.sectionHeader}>SOCIAL MEDIA</Text>
+              <Button
+                textStyle={{
+                  fontSize: theme.fontSize.m,
+                  marginBottom: theme.spacing.s,
+                }}
+                color='transparent-link'
+                disabled={!enabledVeridaOne}
+                onPress={() =>
+                  navigation.navigate('AddPlatformLink', {
+                    screenName: SCREEN_NAME,
+                    mode: PublicProfileEditMode.AddSocialNetwork,
+                  })
+                }>
+                ADD NEW
+              </Button>
+            </View>
+
+            <NestableDraggableFlatList
+              data={platformLinks}
+              renderItem={renderPlatformLinkItem}
+              activationDistance={60}
+              scrollEnabled={false}
+              keyExtractor={(
+                platformLink: VeridaOnePlatformLink,
+                index: number
+              ) => `${index}-${platformLink.url}`}
+              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
+            />
+            <Text style={[styles.description, { marginVertical: 0 }]}>
+              Connect your social media accounts and select which of them you
+              want to showcase on your Veria One profile
+            </Text>
+
+            {/* Wallet address TODO: move this section up */}
             <View
               style={{
                 flexDirection: 'row',
@@ -940,43 +989,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               On your Verida One page we show your wallet addresses with their
               public labels and the assets related to them (collectibles,
               badges, etc)
-            </Text>
-
-            {/* Social Megia */}
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.sectionHeader}>SOCIAL MEDIA</Text>
-              <Button
-                textStyle={{
-                  fontSize: theme.fontSize.m,
-                  marginBottom: theme.spacing.s,
-                }}
-                color='transparent-link'
-                disabled={!enabledVeridaOne}
-                onPress={() => navigation.navigate('AddSocialNetworkLink')}>
-                ADD NEW
-              </Button>
-            </View>
-
-            <NestableDraggableFlatList
-              data={platformLinks}
-              renderItem={renderPlatformLinkItem}
-              activationDistance={60}
-              scrollEnabled={false}
-              keyExtractor={(
-                platformLink: VeridaOnePlatformLink,
-                index: number
-              ) => `${index}-${platformLink.url}`}
-              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
-            />
-            <Text style={[styles.description, { marginVertical: 0 }]}>
-              Connect your social media accounts and select which of them you
-              want to showcase on your Veria One profile
             </Text>
 
             {enabledVeridaOne ? (

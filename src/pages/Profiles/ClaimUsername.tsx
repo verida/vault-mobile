@@ -3,13 +3,13 @@ import { StyleSheet } from 'react-native'
 import PagerView from 'react-native-pager-view'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import Screen from 'components/Screen'
-import ClaimUsernamePage, {
+import {
+  ClaimUsernamePage,
   ClaimUsernamePageRefProps,
-} from 'components/Username/ClaimUsernamePage'
-import InputUsernamePage, {
+  InputUsernamePage,
   InputUsernamePageRefProps,
-} from 'components/Username/InputUsernamePage'
+} from 'components/PublicProfile'
+import Screen from 'components/Screen'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 
 enum PageType {

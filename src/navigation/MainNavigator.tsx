@@ -21,7 +21,7 @@ import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
 import AddCustomLink from 'pages/Profiles/AddCustomLink'
-import AddSocialNetworkLink from 'pages/Profiles/AddSocialNetworkLink'
+import AddPlatformLink from 'pages/Profiles/AddPlatformLink'
 import ClaimUsername from 'pages/Profiles/ClaimUsername'
 import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditProfile from 'pages/Profiles/EditProfile'
@@ -176,6 +176,15 @@ function MainNavigator() {
           presentation: 'modal',
         }}
       />
+
+      <Stack.Screen
+        name={'AddPlatformLink'}
+        component={AddPlatformLink}
+        options={{
+          presentation: 'modal',
+        }}
+      />
+
       {/* Modal screens */}
       <Stack.Group
         screenOptions={{
@@ -193,11 +202,6 @@ function MainNavigator() {
           component={IncomingDataRequestScreen}
         />
       </Stack.Group>
-
-      <Stack.Screen
-        name={'AddSocialNetworkLink'}
-        component={AddSocialNetworkLink}
-      />
     </Stack.Navigator>
   )
 }

@@ -1,8 +1,10 @@
+import Clipboard from '@react-native-community/clipboard'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import { debounce } from 'lodash'
 import React, {
   useCallback,
+  useEffect,
   useImperativeHandle,
   useRef,
   useState,
@@ -12,41 +14,52 @@ import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import UsernameManager from 'api/UsernameManager'
+import ClipboardIcon from 'assets/clipboard_icon.svg'
+import TrashBinIcon from 'assets/trash_bin_icon.svg'
+import Button from 'components/Button'
 import Container from 'components/Container'
 import { FormInput } from 'components/Input/FormInput'
-import { Headline } from 'components/Typography/Headline'
-import { Text } from 'components/Typography/Text'
+import Text from 'components/Text'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
-
-import Button from '../../components/Button'
-import { NUNITO_SANS } from '../../constants/text'
 
 const MIN_INPUT_LENGTH = 2
 const MAX_INPUT_LENGTH = 32
 
-const VERIDA_NAME_SUFFIX = '.vda'
-const VERIDA_NAME_PATTERN = /\.vda$/
+const VERIDA_NAME_SUFFIX = 'username'
+const VERIDA_NAME_PATTERN = /(?!.*\/)username/
 const VERIDA_NAME_SUFFIX_LENGTH = VERIDA_NAME_SUFFIX.length
 
 interface PageProps {
-  onClaimUsername: (username: string) => void
+  onAddSocialNetworkHandle: (url: string) => void
+  socialNetwork: any
 }
 
-export interface InputUsernamePageRefProps {
+export interface EnterPlatformLinkPageRefProps {
   focusInput: () => void
 }
 
-const InputUsernamePage = React.forwardRef(
+export const EnterPlatformLinkPage = React.forwardRef(
   (
-    { onClaimUsername }: PageProps,
-    receivedRef: React.ForwardedRef<InputUsernamePageRefProps>
+    { socialNetwork, onAddSocialNetworkHandle }: PageProps,
+    receivedRef: React.ForwardedRef<EnterPlatformLinkPageRefProps>
   ) => {
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
+    const [baseURL, setBaseURL] = useState(socialNetwork.baseURL ?? '')
+    const urlPatten = /${socialNetwork.baseURL}/
 
-    const [inputText, setInputText] = useState('')
+    useEffect(() => {
+      setBaseURL(socialNetwork.baseURL ?? '')
+      setInputText(socialNetwork.baseURL + VERIDA_NAME_SUFFIX)
+    }, [socialNetwork])
+
+    const [inputText, setInputText] = useState(
+      socialNetwork.baseURL + 'username'
+    )
+
     const usernameInputRef = useRef<TextInput>(null)
 
     const [checkingUsername, setCheckingUsername] = useState(false)
@@ -68,31 +81,30 @@ const InputUsernamePage = React.forwardRef(
     }) => {
       let start, end
       if (!selection) {
-        start = inputText.length - VERIDA_NAME_SUFFIX_LENGTH
+        start = baseURL.length
         end = start
       } else {
-        if (selection.start > inputText.length - VERIDA_NAME_SUFFIX_LENGTH) {
-          start = inputText.length - VERIDA_NAME_SUFFIX_LENGTH
+        if (selection.start < baseURL.length) {
+          start = baseURL.length
+          console.log('Case 1', baseURL.length, selection.start)
         } else {
           start = selection.start
+          console.log('Case 2', selection.start)
         }
 
-        if (selection.end > inputText.length - VERIDA_NAME_SUFFIX_LENGTH) {
-          end = inputText.length - VERIDA_NAME_SUFFIX_LENGTH
-        } else {
-          end = selection.end
-        }
+        // end = selection.end
       }
+      console.log('selection', start, end)
 
       usernameInputRef.current?.setNativeProps({
         selection: {
           start,
-          end,
+          end: end || start,
         },
       })
     }
 
-    const debounceCheckUsername = useCallback(
+    const debounceCheckURL = useCallback(
       debounce(async (text) => {
         try {
           const plainName = text.replace(VERIDA_NAME_PATTERN, '')
@@ -123,6 +135,8 @@ const InputUsernamePage = React.forwardRef(
       []
     )
 
+    if (!socialNetwork) return null
+
     return (
       <Container
         key={'InputUsername'}
@@ -137,21 +151,13 @@ const InputUsernamePage = React.forwardRef(
           }}
           keyboardShouldPersistTaps='handled'>
           <View style={{ flex: 1 }}>
-            <Headline style={{ marginBottom: 10 }}>Username</Headline>
-            <Text style={{ marginBottom: theme.spacing.l }}>
-              Your username is unique to your identity.
-            </Text>
             <FormInput
               ref={usernameInputRef}
-              placeholder={`veridaname${VERIDA_NAME_SUFFIX}`}
-              label={'Username'}
-              desciption={
-                usernameError
-                  ? undefined
-                  : 'Your username is public and optional'
-              }
-              autoFocus={false} // TODO Investigate: There's an crash when combining with pagerview, so we will do a delay and manually set focus the input
+              placeholder={`${socialNetwork.label} Account URL`}
+              label={`${socialNetwork.label} Account URL`}
+              autoFocus={false}
               autoCorrect={false}
+              keyboardType='url'
               autoComplete='off'
               autoCapitalize='none'
               returnKeyType='done'
@@ -160,7 +166,7 @@ const InputUsernamePage = React.forwardRef(
               loading={checkingUsername}
               checked={availableUsername}
               errorMessage={usernameError}
-              maxLength={MAX_INPUT_LENGTH + VERIDA_NAME_SUFFIX_LENGTH}
+              maxLength={baseURL.length + 120}
               onFocus={() => {
                 ensureSelectionPosition(undefined)
               }}
@@ -171,14 +177,38 @@ const InputUsernamePage = React.forwardRef(
                 setUsernameError('')
                 setCheckboxEmpty(true)
                 setAvailableUsername(false)
-                if (text.length > 0 && !text.match(VERIDA_NAME_PATTERN)) {
-                  setInputText(text + VERIDA_NAME_SUFFIX)
-                } else if (text === VERIDA_NAME_SUFFIX) {
-                  setInputText('')
+                console.log(
+                  'inputText',
+                  inputText,
+                  !text.startsWith(baseURL),
+                  text
+                )
+                if (text === '' || !text.startsWith(baseURL)) {
+                  console.log('Here', text)
+                  setInputText(undefined)
+                  setTimeout(() => {
+                    setInputText(baseURL + VERIDA_NAME_SUFFIX)
+                    setTimeout(() => {
+                      ensureSelectionPosition()
+                    }, 1)
+                  }, 0)
+                } else if (
+                  inputText === baseURL + VERIDA_NAME_SUFFIX &&
+                  text !== inputText
+                ) {
+                  const updateText = text.replace(VERIDA_NAME_SUFFIX, '')
+                  setInputText(updateText)
+                  setTimeout(() => {
+                    usernameInputRef.current?.setNativeProps({
+                      selection: {
+                        start: updateText.length,
+                        end: updateText.length,
+                      },
+                    })
+                  }, 10)
                 } else {
                   setInputText(text)
                 }
-                debounceCheckUsername(text)
               }}>
               <ParsedText
                 style={{
@@ -201,6 +231,19 @@ const InputUsernamePage = React.forwardRef(
                 {inputText}
               </ParsedText>
             </FormInput>
+            <Button
+              color='transparent-link'
+              onPress={async () => {
+                const text = await Clipboard.getString()
+                setInputText(text)
+              }}>
+              <View style={styles.clipboardPasteButton}>
+                <ClipboardIcon />
+                <Text style={styles.clipboardPasteButtonText}>
+                  Paste from clipboard
+                </Text>
+              </View>
+            </Button>
           </View>
         </ScrollView>
 
@@ -210,9 +253,9 @@ const InputUsernamePage = React.forwardRef(
             { marginBottom: bottom + theme.spacing.m },
           ]}>
           <Button
-            disabled={Boolean(usernameError) || !availableUsername}
+            disabled={inputText.length < 2}
             style={styles.button}
-            onPress={() => onClaimUsername(inputText)}>
+            onPress={() => onAddSocialNetworkHandle(inputText)}>
             Claim
           </Button>
         </View>
@@ -220,8 +263,6 @@ const InputUsernamePage = React.forwardRef(
     )
   }
 )
-
-export default InputUsernamePage
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -238,5 +279,15 @@ const createStyles = (theme: Theme) =>
     },
     pagerView: {
       flex: 1,
+    },
+    clipboardPasteButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginTop: theme.spacing.s,
+    },
+    clipboardPasteButtonText: {
+      color: theme.color.primary,
+      marginLeft: theme.spacing.sm,
+      fontFamily: NUNITO_SANS_BOLD,
     },
   })
