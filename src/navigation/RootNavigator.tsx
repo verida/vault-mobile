@@ -24,7 +24,6 @@ function RootNavigator() {
   const mounted = useRef(false)
 
   const init = useCallback(async () => {
-    await AccountManager.getInstance().init()
     await refresh()
   }, [refresh])
 
