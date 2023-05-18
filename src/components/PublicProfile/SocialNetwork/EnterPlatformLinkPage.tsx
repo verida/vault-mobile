@@ -255,10 +255,10 @@ export const EnterPlatformLinkPage = React.forwardRef(
             { marginBottom: bottom + theme.spacing.m },
           ]}>
           <Button
-            disabled={inputText.length < 2}
+            disabled={inputText?.length < 2}
             style={styles.button}
             onPress={() => onSaveSocialNetworkHandle(inputText)}>
-            Add
+            {originalValue?.url ? 'Save' : 'Add'}
           </Button>
         </View>
       </Container>

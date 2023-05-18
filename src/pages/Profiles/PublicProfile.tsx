@@ -472,10 +472,25 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       const accountUsernames = await UsernameManager.get()
       if (accountUsernames && accountUsernames?.length > 0) {
         setUsername(accountUsernames[0])
-        setProfileReadonlyProps((currentValues) => [
-          ...currentValues,
-          { label: 'Username', value: accountUsernames[0], action: 'copy' },
-        ])
+        setProfileReadonlyProps((currentValues) => {
+          const updateValues = [...currentValues]
+          const newItem = {
+            label: 'Username',
+            value: accountUsernames[0],
+            action: 'copy',
+          }
+          const index = currentValues.findIndex(
+            (item) => item.label === 'Username'
+          )
+
+          if (index !== -1) {
+            updateValues.splice(index, 1, newItem)
+          } else {
+            updateValues.push(newItem)
+          }
+
+          return updateValues
+        })
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -1025,6 +1040,44 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             This information is always visible on your Verida One page
           </Text>
           <View>
+            {/* Wallet address */}
+            <View
+              style={{
+                flexDirection: 'row',
+                flex: 1,
+                justifyContent: 'space-between',
+                alignItems: 'center',
+              }}>
+              <Text style={styles.sectionHeader}>WALLET ADDRESS</Text>
+              <Button
+                textStyle={{
+                  fontSize: theme.fontSize.m,
+                  marginBottom: theme.spacing.s,
+                }}
+                color='transparent-link'
+                disabled={!enabledVeridaOne}
+                onPress={() => navigation.navigate('ManageWallets')}>
+                ADD NEW
+              </Button>
+            </View>
+
+            <NestableDraggableFlatList
+              data={walletAddresses}
+              renderItem={renderWalletItem}
+              activationDistance={60}
+              scrollEnabled={false}
+              keyExtractor={(
+                walletAddress: VeridaOneWalletAddress,
+                index: number
+              ) => `${index}-${walletAddress.address}`}
+              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
+            />
+            <Text style={[styles.description, { marginVertical: 0 }]}>
+              On your Verida One page we show your wallet addresses with their
+              public labels and the assets related to them (collectibles,
+              badges, etc)
+            </Text>
+
             {/* Social Megia */}
             <View
               style={{
@@ -1065,44 +1118,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <Text style={[styles.description, { marginVertical: 0 }]}>
               Connect your social media accounts and select which of them you
               want to showcase on your Veria One profile
-            </Text>
-
-            {/* Wallet address TODO: move this section up */}
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.sectionHeader}>WALLET ADDRESS</Text>
-              <Button
-                textStyle={{
-                  fontSize: theme.fontSize.m,
-                  marginBottom: theme.spacing.s,
-                }}
-                color='transparent-link'
-                disabled={!enabledVeridaOne}
-                onPress={() => navigation.navigate('ManageWallets')}>
-                ADD NEW
-              </Button>
-            </View>
-
-            <NestableDraggableFlatList
-              data={walletAddresses}
-              renderItem={renderWalletItem}
-              activationDistance={60}
-              scrollEnabled={false}
-              keyExtractor={(
-                walletAddress: VeridaOneWalletAddress,
-                index: number
-              ) => `${index}-${walletAddress.address}`}
-              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
-            />
-            <Text style={[styles.description, { marginVertical: 0 }]}>
-              On your Verida One page we show your wallet addresses with their
-              public labels and the assets related to them (collectibles,
-              badges, etc)
             </Text>
 
             {enabledVeridaOne ? (
