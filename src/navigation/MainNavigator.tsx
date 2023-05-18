@@ -24,6 +24,7 @@ import AddCustomLink from 'pages/Profiles/AddCustomLink'
 import AddPlatformLink from 'pages/Profiles/AddPlatformLink'
 import ClaimUsername from 'pages/Profiles/ClaimUsername'
 import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
+import EditPlatformLink from 'pages/Profiles/EditPlatformLink'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
@@ -72,27 +73,18 @@ function MainNavigator() {
       <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
       <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
       <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
-      <Stack.Screen
-        name={'EditProfile'}
-        component={EditProfile}
-        options={{
+
+      <Stack.Group
+        screenOptions={{
           presentation: 'modal',
-        }}
-      />
-      <Stack.Screen
-        name={'EditGenericProperty'}
-        component={EditGenericProperty}
-        options={{
-          presentation: 'modal',
-        }}
-      />
-      <Stack.Screen
-        name={'AddCustomLink'}
-        component={AddCustomLink}
-        options={{
-          presentation: 'modal',
-        }}
-      />
+        }}>
+        <Stack.Screen name={'EditProfile'} component={EditProfile} />
+        <Stack.Screen
+          name={'EditGenericProperty'}
+          component={EditGenericProperty}
+        />
+        <Stack.Screen name={'AddCustomLink'} component={AddCustomLink} />
+      </Stack.Group>
       <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
       <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
       <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
@@ -153,37 +145,17 @@ function MainNavigator() {
         component={NFTCollectionDetail}
       />
       <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
-      <Stack.Screen
-        name={'SelectAsset'}
-        component={SelectAsset}
-        options={{
-          presentation: 'modal',
-        }}
-      />
 
-      <Stack.Screen
-        name={'ClaimUsername'}
-        component={ClaimUsername}
-        options={{
+      <Stack.Group
+        screenOptions={{
           presentation: 'modal',
-        }}
-      />
-
-      <Stack.Screen
-        name={'UnlockVeridaOne'}
-        component={UnlockVeridaOne}
-        options={{
-          presentation: 'modal',
-        }}
-      />
-
-      <Stack.Screen
-        name={'AddPlatformLink'}
-        component={AddPlatformLink}
-        options={{
-          presentation: 'modal',
-        }}
-      />
+        }}>
+        <Stack.Screen name={'SelectAsset'} component={SelectAsset} />
+        <Stack.Screen name={'ClaimUsername'} component={ClaimUsername} />
+        <Stack.Screen name={'UnlockVeridaOne'} component={UnlockVeridaOne} />
+        <Stack.Screen name={'AddPlatformLink'} component={AddPlatformLink} />
+        <Stack.Screen name={'EditPlatformLink'} component={EditPlatformLink} />
+      </Stack.Group>
 
       {/* Modal screens */}
       <Stack.Group

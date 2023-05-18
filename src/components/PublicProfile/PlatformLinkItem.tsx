@@ -1,16 +1,17 @@
 import Color from 'color'
-import { PLATFORM_LINKS } from 'constants'
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 import { VeridaOnePlatformLink } from 'api/types'
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
+import VeridaTick from 'assets/icons/verida_tick.svg'
 import Button from 'components/Button'
-import Text from 'components/Text'
+import { Label } from 'components/Typography/Label'
 import { SubHeadline } from 'components/Typography/SubHeadline'
+import { Text } from 'components/Typography/Text'
+import { PLATFORM_LINKS } from 'constants/profile'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { smallButtonHitSlop } from 'styles/button'
 import { Theme } from 'styles/types'
@@ -19,8 +20,7 @@ type Props = {
   platformLink: VeridaOnePlatformLink
   drag: () => void
   isActive: boolean
-  onEditName?: () => void
-  showOnVeridaOne: boolean
+  onEditPlatformInfo?: () => void
   setShowOnVeridaOne: (
     platformLink: VeridaOnePlatformLink,
     visible: boolean
@@ -31,13 +31,14 @@ export const PlatformLinkItem = ({
   platformLink,
   drag,
   isActive,
-  onEditName,
-  showOnVeridaOne,
+  onEditPlatformInfo,
   setShowOnVeridaOne,
 }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
-  console.log('platformLink', JSON.stringify(platformLink, null, 2))
+  // console.log('platformLink', JSON.stringify(platformLink, null, 2))
+  const showOnVeridaOne = platformLink.showOnVeridaOne
+  const connectedPlatform = platformLink.connectedPlatform
 
   const platformMeta =
     PLATFORM_LINKS[platformLink.name || platformLink.platform] ?? {}
@@ -105,28 +106,48 @@ export const PlatformLinkItem = ({
               </Text>
             </View>
           </View>
-          <Button
-            color={'transparent'}
-            disabled={!showOnVeridaOne}
-            style={{
-              width: 40,
-              height: 40,
-              marginBottom: 0,
-              alignItems: 'center',
-              justifyContent: 'center',
-              backgroundColor: 'lightGrey',
-            }}
-            onPress={onEditName}>
-            {/* Add a wrapped view so on click behavior fixed */}
-            <View
+          {!connectedPlatform && (
+            <Button
+              color={'transparent'}
+              disabled={!showOnVeridaOne}
               style={{
-                marginLeft: theme.spacing.s,
-                marginBottom: theme.spacing.xs,
-              }}>
-              <EditIcon fill={theme.color.iconDefault} />
-            </View>
-          </Button>
+                width: 40,
+                height: 40,
+                marginBottom: 0,
+                alignItems: 'center',
+                justifyContent: 'center',
+                backgroundColor: 'lightGrey',
+              }}
+              onPress={onEditPlatformInfo}>
+              {/* Add a wrapped view so on click behavior fixed */}
+              <View
+                style={{
+                  marginLeft: theme.spacing.s,
+                  marginBottom: theme.spacing.xs,
+                }}>
+                <EditIcon fill={theme.color.iconDefault} />
+              </View>
+            </Button>
+          )}
         </View>
+
+        {/* Platform badges */}
+        {connectedPlatform && (
+          <View style={{ flexDirection: 'row', marginTop: theme.spacing.s }}>
+            <View style={styles.pill}>
+              <VeridaTick width={20} height={20} />
+              <Label
+                style={{
+                  marginRight: 1,
+                  marginLeft: 4,
+                  marginVertical: 2,
+                  color: theme.color.iconDefault,
+                }}>
+                Connected
+              </Label>
+            </View>
+          </View>
+        )}
         <View
           style={{
             marginVertical: theme.spacing.s,
@@ -175,5 +196,13 @@ const createStyles = (theme: Theme) =>
     },
     veridaWalletName: {
       color: theme?.color.textLightGrey,
+    },
+    pill: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      borderWidth: 1,
+      borderColor: theme.color.lightGrey,
+      padding: 2,
+      borderRadius: 120,
     },
   })

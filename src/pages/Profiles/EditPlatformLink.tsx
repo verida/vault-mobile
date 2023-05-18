@@ -1,30 +1,18 @@
-import { StackActions } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import Color from 'color'
 import { useTheme } from 'contexts'
 import { emitter } from 'helpers/emitter'
 import React, { useEffect, useMemo, useRef, useState } from 'react'
-import {
-  Image,
-  Keyboard,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Keyboard, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import DataConnectorsManager from 'api/DataConnectorsManager'
-import Button from 'components/Button'
-import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
   EnterPlatformLinkPage,
   EnterPlatformLinkPageRefProps,
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
-import { Text } from 'components/Typography/Text'
 import { PLATFORM_LINKS } from 'constants/profile'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -32,29 +20,30 @@ import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 enum PageType {
-  ListSocialNetworks,
-  AddSocialNetwork,
   AddSocialNetworkManually,
 }
 
-export interface AddPlatformLinkScreenParams {
+export interface EditPlatformLinkScreenParams {
   screenName: string
   mode: string | number
   originalValue?: any
+  platform: string
 }
 
-type AddPlatformLinkScreenProps = MainStackScreenProps<'AddPlatformLink'>
+type EditPlatformLinkScreenProps = MainStackScreenProps<'EditPlatformLink'>
 
-const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
+const EditPlatformLink: React.FunctionComponent<EditPlatformLinkScreenProps> = (
   props
 ) => {
   const { navigation, route } = props
-  const { screenName, mode, originalValue } = route.params
+  const { screenName, mode, platform, originalValue } = route.params
 
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const { bottom } = useSafeAreaInsets()
-  const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
+  const [currentPage, setCurrentPage] = useState(
+    PageType.AddSocialNetworkManually
+  )
   const pagerRef = useRef<PagerView>(null)
   const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
   const [loading, setLoading] = useState(true)
@@ -72,6 +61,10 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
       ),
     [connectors]
   )
+
+  useEffect(() => {
+    platform && setSelectedNetwork(PLATFORM_LINKS[platform] as any)
+  }, [platform])
 
   useEffect(() => {
     const load = async () => {
@@ -112,36 +105,24 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
 
   const getPageName = () => {
     switch (currentPage) {
-      case PageType.ListSocialNetworks:
-        return 'Add new social'
-      case PageType.AddSocialNetwork:
-        return selectedNetwork.label
       case PageType.AddSocialNetworkManually:
-        return `Add ${selectedNetwork.label}`
+        return `Edit ${selectedNetwork.label}`
     }
   }
 
   const goBack = () => {
-    if (currentPage > 0) {
-      if (isSupportedNetwork(selectedNetwork)) {
-        pagerRef.current?.setPage(currentPage - 1)
-      } else {
-        pagerRef.current?.setPage(PageType.ListSocialNetworks)
-      }
-    } else {
-      navigation.goBack()
-    }
+    navigation.goBack()
   }
 
   const isSupportedNetwork = (network: any) => {
     return connectors.some((cn) => cn.name === network.name)
   }
 
-  const onAddSocialNetworkHandle = (url: string) => {
+  const onSaveSocialNetworkHandle = (url: string) => {
     try {
       Keyboard.dismiss()
 
-      // required field "category", "platform", "accountId", "url", "order"
+      // "category", "platform", "accountId", "url", "order"
       const val = {
         category: 'social',
         url: url,
@@ -167,16 +148,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   return (
     <Screen
       navBar={
-        <NavigationHeader
-          title={getPageName()}
-          left={{
-            icon:
-              currentPage === PageType.ListSocialNetworks ? 'close' : 'back',
-            action: () => {
-              goBack()
-            },
-          }}
-        />
+        <NavigationHeader title={getPageName()} left={{ icon: 'back' }} />
       }>
       <PagerView
         style={styles.pagerView}
@@ -189,80 +161,12 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
           }
         }}
         ref={pagerRef}>
-        <View key={'ListSocialNetworks'}>
-          {loading ? (
-            <LoadingView />
-          ) : (
-            <View style={styles.container}>
-              {availableSocicalNetworks.map((item) => {
-                return (
-                  <TouchableOpacity
-                    key={item.name}
-                    onPress={() => {
-                      setSelectedNetwork(item)
-                      pagerRef.current?.setPage(
-                        isSupportedNetwork(item)
-                          ? PageType.AddSocialNetwork
-                          : PageType.AddSocialNetworkManually
-                      )
-                    }}
-                    style={styles.connectionItem}>
-                    <View style={styles.connectionItemIconLabel}>
-                      <Image style={styles.iconSmall} source={item.icon} />
-                      <Text style={styles.itemText}>{item.label}</Text>
-                    </View>
-                    <Icon
-                      size={22}
-                      name='keyboard-arrow-right'
-                      color={Color(theme.color.onBackground)
-                        .alpha(0.45)
-                        .toString()}
-                    />
-                  </TouchableOpacity>
-                )
-              })}
-            </View>
-          )}
-        </View>
-        <View key={'AddSocialNetwork'}>
-          {isSupportedNetwork(selectedNetwork) ? (
-            <View style={styles.container}>
-              <View
-                style={{
-                  alignSelf: 'center',
-                  alignItems: 'center',
-                  marginBottom: theme.spacing.xl,
-                }}>
-                <Image style={styles.iconBig} source={selectedNetwork.icon} />
-                <Text style={styles.itemText}>{selectedNetwork.label}</Text>
-              </View>
-              <Button
-                onPress={() => {
-                  // navigation.goBack()
-                  navigation.dispatch(
-                    StackActions.replace('SingleConnection', {
-                      provider: selectedNetwork.name,
-                      connectNow: true,
-                    })
-                  )
-                }}>
-                Connect
-              </Button>
-              <Button
-                onPress={() => {
-                  pagerRef.current?.setPage(PageType.AddSocialNetworkManually)
-                }}
-                color={'transparent-border'}>
-                Enter URL manually
-              </Button>
-            </View>
-          ) : null}
-        </View>
         <View key={'AddSocialNetworkManually'}>
           <EnterPlatformLinkPage
             ref={enterPlatformLinkPageRef}
             socialNetwork={selectedNetwork}
-            onSaveSocialNetworkHandle={onAddSocialNetworkHandle}
+            onSaveSocialNetworkHandle={onSaveSocialNetworkHandle}
+            originalValue={originalValue}
           />
         </View>
       </PagerView>
@@ -270,7 +174,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   )
 }
 
-export default AddPlatformLink
+export default EditPlatformLink
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

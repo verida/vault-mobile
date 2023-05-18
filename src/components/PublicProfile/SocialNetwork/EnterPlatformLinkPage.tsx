@@ -27,13 +27,14 @@ import { Theme } from 'styles/types'
 const MIN_INPUT_LENGTH = 2
 const MAX_INPUT_LENGTH = 32
 
-const VERIDA_NAME_SUFFIX = 'username'
+const USERNAME_PLACEHOLDER = 'username'
 const VERIDA_NAME_PATTERN = /(?!.*\/)username/
-const VERIDA_NAME_SUFFIX_LENGTH = VERIDA_NAME_SUFFIX.length
+const VERIDA_NAME_SUFFIX_LENGTH = USERNAME_PLACEHOLDER.length
 
 interface PageProps {
-  onAddSocialNetworkHandle: (url: string) => void
+  onSaveSocialNetworkHandle: (url: string) => void
   socialNetwork: any
+  originalValue?: any // TODO: Type
 }
 
 export interface EnterPlatformLinkPageRefProps {
@@ -42,7 +43,7 @@ export interface EnterPlatformLinkPageRefProps {
 
 export const EnterPlatformLinkPage = React.forwardRef(
   (
-    { socialNetwork, onAddSocialNetworkHandle }: PageProps,
+    { socialNetwork, originalValue, onSaveSocialNetworkHandle }: PageProps,
     receivedRef: React.ForwardedRef<EnterPlatformLinkPageRefProps>
   ) => {
     const { bottom, top } = useSafeAreaInsets()
@@ -52,8 +53,10 @@ export const EnterPlatformLinkPage = React.forwardRef(
 
     useEffect(() => {
       setBaseURL(socialNetwork.baseURL ?? '')
-      setInputText(socialNetwork.baseURL + VERIDA_NAME_SUFFIX)
-    }, [socialNetwork])
+      originalValue
+        ? setInputText(originalValue.url)
+        : setInputText(socialNetwork.baseURL + USERNAME_PLACEHOLDER)
+    }, [socialNetwork, originalValue])
 
     const [inputText, setInputText] = useState(
       socialNetwork.baseURL + 'username'
@@ -80,7 +83,7 @@ export const EnterPlatformLinkPage = React.forwardRef(
     }) => {
       let start, end
       if (!selection) {
-        start = baseURL.length
+        start = originalValue?.url ? originalValue.url.length : baseURL.length
         end = start
       } else {
         if (selection.start < baseURL.length) {
@@ -186,16 +189,16 @@ export const EnterPlatformLinkPage = React.forwardRef(
                   console.log('Here', text)
                   setInputText(undefined)
                   setTimeout(() => {
-                    setInputText(baseURL + VERIDA_NAME_SUFFIX)
+                    setInputText(baseURL + USERNAME_PLACEHOLDER)
                     setTimeout(() => {
                       ensureSelectionPosition()
                     }, 1)
                   }, 0)
                 } else if (
-                  inputText === baseURL + VERIDA_NAME_SUFFIX &&
+                  inputText === baseURL + USERNAME_PLACEHOLDER &&
                   text !== inputText
                 ) {
-                  const updateText = text.replace(VERIDA_NAME_SUFFIX, '')
+                  const updateText = text.replace(USERNAME_PLACEHOLDER, '')
                   setInputText(updateText)
                   setTimeout(() => {
                     usernameInputRef.current?.setNativeProps({
@@ -254,7 +257,7 @@ export const EnterPlatformLinkPage = React.forwardRef(
           <Button
             disabled={inputText.length < 2}
             style={styles.button}
-            onPress={() => onAddSocialNetworkHandle(inputText)}>
+            onPress={() => onSaveSocialNetworkHandle(inputText)}>
             Add
           </Button>
         </View>

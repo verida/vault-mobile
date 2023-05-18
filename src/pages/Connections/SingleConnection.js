@@ -68,7 +68,6 @@ export default ({ route, navigation }) => {
   }, [route.params.accessToken])
 
   useEffect(() => {
-    console.log('connectNow', connectNow)
     if (connectNow) {
       ;(async () => {
         const connectionInstance = await DataConnectorsManager.getConnection(

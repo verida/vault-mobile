@@ -70,7 +70,7 @@ export enum PublicProfileEditMode {
   AddCustomURL,
   DeleteCustomURL,
   SelectFeaturedAsset,
-  AddSocialNetwork,
+  AddPlatformLink,
 }
 
 const SCREEN_NAME = 'PublicProfile'
@@ -241,10 +241,37 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   // Platform links
   const allPlatformLinks: VeridaOnePlatformLink[] = useMemo(() => {
     const connectedPlaforms =
-      supportedConnectPlatforms?.filter(
-        (platform) => platform.syncStatus !== 'disabled'
-      ) ?? []
-    return [...connectedPlaforms, ...platformLinks]
+      supportedConnectPlatforms
+        .filter((platform) => platform.syncStatus !== 'disabled')
+        .map((item) => ({ ...item, platform: item.platform || item.name })) ??
+      []
+
+    const combinedListPlatforms = [
+      ...connectedPlaforms.filter(
+        (connectedPlatform) =>
+          !platformLinks.some(
+            (item) => item.platform === connectedPlatform.name
+          )
+      ),
+      ...platformLinks,
+    ].map((platform) => ({
+      ...platform,
+      platform: platform.platform || platform.name,
+
+      // Infered value for displaying
+      connectedPlatform: connectedPlaforms.some(
+        (item) => item.platform === platform.platform
+      ),
+      showOnVeridaOne: platformLinks.some((item) => item.url === platform.url),
+    }))
+    const sortedListPlatforms = combinedListPlatforms.sort((a, b) => {
+      if (a.showOnVeridaOne && b.showOnVeridaOne) {
+        return a.order - b.order
+      }
+      return a.showOnVeridaOne ? -1 : b.showOnVeridaOne ? 1 : 0
+    })
+
+    return sortedListPlatforms
   }, [platformLinks, supportedConnectPlatforms])
 
   const debounceSaveProfile = useCallback(
@@ -314,6 +341,26 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       debounceSaveProfile({ walletAddresses: newPublicAddresses })
     },
     [publicWalletAddresses, debounceSaveProfile]
+  )
+
+  const updatePlatformLinksOrder = useCallback(
+    (updatedOderPlatformLinks) => {
+      let orderNumber = 0
+
+      const updatedPlatformLinks = [...platformLinks]
+      updatedOderPlatformLinks.map((plaformLink: VeridaOnePlatformLink) => {
+        const pl = updatedPlatformLinks.find(
+          (item) => item.url === plaformLink.url
+        )
+        if (pl) {
+          pl.order = orderNumber++
+        }
+      })
+
+      setPlatformLinks(updatedPlatformLinks)
+      debounceSaveProfile({ platformLinks: updatedPlatformLinks })
+    },
+    [platformLinks, debounceSaveProfile]
   )
 
   const updateCustomLinksOrder = useCallback(
@@ -425,6 +472,10 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       const accountUsernames = await UsernameManager.get()
       if (accountUsernames && accountUsernames?.length > 0) {
         setUsername(accountUsernames[0])
+        setProfileReadonlyProps((currentValues) => [
+          ...currentValues,
+          { label: 'Username', value: accountUsernames[0], action: 'copy' },
+        ])
       }
     } catch (e) {
       Sentry.captureException(e)
@@ -602,7 +653,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
         setFeaturedAssets(updatedFeaturedAssets)
         debounceSaveProfile({ featuredAssets: updatedFeaturedAssets })
-      } else if (mode === PublicProfileEditMode.AddSocialNetwork) {
+      } else if (mode === PublicProfileEditMode.AddPlatformLink) {
         const inputValue = payload.value
         const originalValue = payload.originalValue
         const updatedPlatformLinks = [...platformLinks]
@@ -612,7 +663,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           ...inputValue,
         }
 
-        console.log('PLatform ', JSON.stringify(platformLink, null, 2))
         if (originalValue) {
           // edit mode
           const linkIndex = updatedPlatformLinks.findIndex(
@@ -780,11 +830,19 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     ({ item, drag, isActive }: RenderItemParams<VeridaOnePlatformLink>) => {
       async function setShowOnVeridaOne(
         platformLink: VeridaOnePlatformLink,
-        visible: boolean
+        show: boolean
       ) {
-        const updatedPlatformLink = { ...platformLink }
+        console.log('Item', JSON.stringify({ platformLink }, null, 2))
+        // "category", "platform", "accountId", "url", "order"
+        const updatedPlatformLink = {
+          name: platformLink.platform,
+          platform: platformLink.platform,
+          category: 'social',
+          accountId: 'NA',
+          url: platformLink.platform,
+        }
         let updatedPlatformLinks = [...platformLinks]
-        if (visible) {
+        if (show) {
           updatedPlatformLinks.push(updatedPlatformLink)
           updatedPlatformLink.order = updatedPlatformLinks.length - 1
           Snackbar.show({
@@ -793,7 +851,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           })
         } else {
           updatedPlatformLinks = updatedPlatformLinks.filter(
-            (link) => link.url !== updatedPlatformLink.url
+            (link) =>
+              link.platform !== updatedPlatformLink.platform &&
+              link.url !== updatedPlatformLink.url
           )
           Snackbar.show({
             text: 'Hidden from Verida One profile',
@@ -809,12 +869,19 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           platformLink={item}
           setShowOnVeridaOne={setShowOnVeridaOne}
           drag={drag}
-          showOnVeridaOne={true}
           isActive={isActive}
+          onEditPlatformInfo={() => {
+            navigation.navigate('EditPlatformLink', {
+              screenName: SCREEN_NAME,
+              mode: PublicProfileEditMode.AddPlatformLink,
+              platform: item.platform,
+              originalValue: item,
+            })
+          }}
         />
       )
     },
-    [debounceSaveProfile, platformLinks]
+    [debounceSaveProfile, navigation, platformLinks]
   )
 
   const renderCustomLinkItem = useCallback(
@@ -977,7 +1044,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                 onPress={() =>
                   navigation.navigate('AddPlatformLink', {
                     screenName: SCREEN_NAME,
-                    mode: PublicProfileEditMode.AddSocialNetwork,
+                    mode: PublicProfileEditMode.AddPlatformLink,
                   })
                 }>
                 ADD NEW
@@ -993,7 +1060,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                 platformLink: VeridaOnePlatformLink,
                 index: number
               ) => `${index}-${platformLink.url}`}
-              onDragEnd={({ data }) => updateWalletAddressesOrder(data)}
+              onDragEnd={({ data }) => updatePlatformLinksOrder(data)}
             />
             <Text style={[styles.description, { marginVertical: 0 }]}>
               Connect your social media accounts and select which of them you
