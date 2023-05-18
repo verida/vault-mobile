@@ -5,10 +5,10 @@ import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color'
 import Text from '../Text'
 
 export default ({ words, template, onSelect, id, containerStyle }) => {
-  const displayWords = []
+  let displayWords = []
   words.forEach((word, index) => {
     if (id === 'selected' && template.indexOf(index) !== -1) {
-      displayWords.push(index)
+      displayWords = template
     } else if (id !== 'selected' && template.indexOf(index) === -1) {
       displayWords.push(index)
     }
