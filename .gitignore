@@ -1,3 +1,9 @@
+# App-specific
+www
+
+# tests
+coverage
+
 # OSX
 #
 .DS_Store

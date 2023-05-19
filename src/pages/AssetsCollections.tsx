@@ -10,7 +10,6 @@ import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import Tokens from 'pages/Tokens/Dashboard'
-import { selectChains } from 'reduxStore/tokens/selectors'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 
 import Collectibles from './Assets/Collectibles'
@@ -117,9 +116,8 @@ const AssetsCollections = (props: any) => {
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
-  const chains = selectChains(rootState)
   return {
-    selectedWallet: getSelectedWalletById(state, chains),
+    selectedWallet: getSelectedWalletById(state),
   }
 }
 

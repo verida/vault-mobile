@@ -2,9 +2,7 @@ import Color from 'color'
 
 import {
   ALERT_INFO_COLOR,
-  ALERT_WARNING_COLOR,
   BACKGROUND_GREY_COLOR,
-  BLACK_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
   DEFAULT_ICON_COLOR,
@@ -33,8 +31,7 @@ import {
 export const defaultTheme = {
   color: {
     primary: PRIMARY_COLOR,
-    primary100: TEXT_COLOR,
-    onPrimary: BLACK_COLOR,
+    onPrimary: WHITE_COLOR,
     background: WHITE_COLOR,
     backgroundGrey: BACKGROUND_GREY_COLOR,
     onBackground: TEXT_COLOR,
@@ -65,6 +62,7 @@ export const defaultTheme = {
 
     transparent: 'transparent',
     black800: BLACK_COLOR_OPACITY(0.8),
+    black700: BLACK_COLOR_OPACITY(0.7),
     black600: BLACK_COLOR_OPACITY(0.6),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,
@@ -72,6 +70,7 @@ export const defaultTheme = {
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
+    textLightGrey30: Color(TEXT_COLOR).alpha(0.3).toString(),
     textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
     grey120: GREY_120,
 

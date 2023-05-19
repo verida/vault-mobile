@@ -4,6 +4,8 @@ import { compareVersions } from 'compare-versions'
 import { useCallback, useRef, useState } from 'react'
 import { getVersion } from 'react-native-device-info'
 
+import useIsMountedRef from './useIsMountedRef'
+
 export type ForcedUpgradeType = {
   minVersion?: string
   required?: boolean
@@ -23,6 +25,7 @@ export function useRemoteConfigs() {
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
   const fetchingRef = useRef(false)
+  const isMountedRef = useIsMountedRef()
 
   const fetchConfigs = useCallback(() => {
     if (fetchingRef.current) {
@@ -39,7 +42,7 @@ export function useRemoteConfigs() {
       })
       .then(() => remoteConfig()?.fetchAndActivate())
       .then((fetchedRemotely) => {
-        if (fetchedRemotely) {
+        if (fetchedRemotely && isMountedRef.current) {
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
           const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
           setForcedUpgrade({

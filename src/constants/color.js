@@ -45,3 +45,5 @@ export const BLACK_COLOR_OPACITY = (opacity) => `rgba(4, 17, 51, ${opacity})`
 
 export const WHITE_COLOR_OPACITY = (opacity) =>
   `rgba(255, 255, 255, ${opacity})`
+
+export const BACKGROUND_RADIAN_COLORS = ['#0E1572', '#1467CB', '#1995CB']

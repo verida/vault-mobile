@@ -143,12 +143,16 @@ const Home = (props) => {
   }, [navigationLink, linkTo, setNavigationLink])
 
   useEffect(() => {
+    let isMounted = true
     const initProfile = async () => {
       try {
         setLoading(true)
         const _selectedAccount =
           AccountManager.getInstance().getSelectedAccount()
         const { name, avatar } = await getProfile(_selectedAccount.did)
+
+        if (!isMounted) return
+
         setAvatarSource(avatar)
 
         setInfo({
@@ -174,6 +178,10 @@ const Home = (props) => {
 
     if (selectedAccount && publicProfileData) {
       initProfile()
+    }
+
+    return () => {
+      isMounted = false
     }
   }, [selectedAccount, publicProfileData])
 

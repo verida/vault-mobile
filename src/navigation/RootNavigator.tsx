@@ -1,6 +1,7 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import React, { useEffect, useRef } from 'react'
+import { useEmitter } from 'hooks'
+import React, { useCallback, useEffect, useRef } from 'react'
 
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
@@ -10,7 +11,6 @@ import MainNavigator from 'navigation/MainNavigator'
 import { RootStackParams } from 'navigation/types'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
-
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
 
 export function navigate(name: unknown, params: unknown) {
@@ -23,17 +23,32 @@ function RootNavigator() {
   const { refresh, authenticated, loaded } = useAuth()
   const mounted = useRef(false)
 
+  const init = useCallback(async () => {
+    await AccountManager.getInstance().init()
+    await refresh()
+  }, [refresh])
+
   useEffect(() => {
     if (mounted.current) {
       return
     }
     mounted.current = true
-    async function init() {
-      await AccountManager.getInstance().init()
-      await refresh()
-    }
-    init()
-  }, [refresh])
+
+    // This is to prevent the AccountManager initialize many times
+    // TODO: Refactor the organization of app navigation to fix this instead
+    const tid = setTimeout(() => {
+      init()
+    }, 10)
+    return () => clearTimeout(tid)
+  }, [init])
+
+  useEmitter(
+    'APP_RECOVER_FROM_ERROR',
+    async () => {
+      init()
+    },
+    []
+  )
 
   if (!loaded) {
     return <LoadingView />

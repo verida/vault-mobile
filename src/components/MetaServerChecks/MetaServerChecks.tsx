@@ -6,9 +6,11 @@ import { getVersion } from 'react-native-device-info'
 
 import AccountManager from 'api/AccountManager'
 import { useAuth } from 'hooks/useAuth'
+import { useEmitter } from 'hooks/useEmitter'
 import { useModal } from 'hooks/useModal'
 import { useRemoteConfigs } from 'hooks/useRemoteConfigs'
 
+import DIDNonExistentModal from './DIDNonExistentModal'
 import ForcedCreateNewAccountModal from './ForcedCreateNewAccountModal'
 import ForcedUpgradeModal from './ForcedUpgradeModal'
 
@@ -77,9 +79,7 @@ const MetaServerChecks = () => {
         <ForcedCreateNewAccountModal
           forcedCreateAccount={forcedCreateAccount}
           forcedSignOut={forcedSignOut}
-          dismissModal={() => {
-            dismissModal()
-          }}
+          dismissModal={dismissModal}
         />
       )
     }
@@ -95,6 +95,10 @@ const MetaServerChecks = () => {
       )
     }
   }, [dismissModal, forcedCreateAccount, forcedSignOut, showModal])
+
+  useEmitter('IDENTITY_NOT_EXIST', () => {
+    showModal(<DIDNonExistentModal dismissModal={dismissModal} />)
+  })
 
   return null
 }

@@ -7,6 +7,7 @@ import { ethers, utils } from 'ethers'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
+import WalletUtils from '@verida/wallet-utils'
 
 import {
   Account,
@@ -21,30 +22,23 @@ import {
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
+  setBlockchainNetworks,
 } from 'reduxStore/general/actions'
 import {
   removeUserWallets,
   saveUserWallets,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
-import { getTokens } from 'reduxStore/tokens/actions'
 import { getCountryCode } from 'utils/profile'
 import { execWithTimeout } from 'api/utils'
-import { selectChains } from 'reduxStore/tokens/selectors'
 import DataConnectorsManager from './DataConnectorsManager'
-import multiChainWallet from 'wallet/helpers/multiChainWallet'
-import { rawDataToReduxState } from 'wallet/helpers/tokens'
-
-import NodeSelector from './NodeSelector'
 
 import CONFIG from '../config/environment'
 import EventEmitter from 'events'
-
-type EndpointUrls = {
-  dbServerUrl: string[]
-  messageServerUrl: string[]
-  notificationServerUrl: string[]
-}
+import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
+import { WalletManager } from './Wallet/WalletManager'
+import { getBlockchainNetworks } from 'reduxStore/selectors'
+import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -77,11 +71,10 @@ class AccountManager extends EventEmitter {
 
   public async init() {
     try {
-      const chains = selectChains(store.getState())
-      await store.dispatch(getTokens())
-      const newChains = selectChains(store.getState())
-      const updateWallets =
-        JSON.stringify(chains) !== JSON.stringify(newChains) ? true : false
+      // Load all available blockchain networks
+      await store.dispatch(setBlockchainNetworks())
+      //await store.dispatch(getTokens())
+      const updateWallets = true
       if (!this.selectedAccount) {
         const accountsRaw = await SecureStore.getItemAsync(
           CONFIG.ACCOUNTS_STORAGE_KEY
@@ -124,7 +117,7 @@ class AccountManager extends EventEmitter {
             await this.connect()
           }
 
-          await this.restoreUserWallet()
+          await this.restoreUserWallet(true)
         } else {
           const wallets = JSON.parse(walletsRaw)
           store.dispatch(saveUserWallets(wallets))
@@ -143,11 +136,11 @@ class AccountManager extends EventEmitter {
     return this.selectedAccount
   }
 
-  public async connect(forced = false, endpointUrls?: EndpointUrls) {
+  public async connect(forced = false) {
     if (!forced && this.context) {
       return
     }
-    this.context = await this.getVeridaContext(endpointUrls)
+    this.context = await this.getVeridaContext()
     this.vault = await this.getVault()
   }
 
@@ -159,9 +152,7 @@ class AccountManager extends EventEmitter {
     return AccountManager.instance
   }
 
-  public async getVeridaContext(
-    endpointUrls?: EndpointUrls
-  ): Promise<Context | undefined> {
+  public async getVeridaContext(): Promise<Context | undefined> {
     try {
       if (!this.selectedAccount) {
         return undefined
@@ -179,29 +170,12 @@ class AccountManager extends EventEmitter {
       // Use empty endpointUri's as they should already have been specified
       // when the account was created
       const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
-      didClientConfig.didEndpoints = []
 
-      const account = new AutoAccount(
-        {
-          defaultDatabaseServer: {
-            type: 'VeridaDatabase',
-            endpointUri: [],
-          },
-          defaultMessageServer: {
-            type: 'VeridaMessage',
-            endpointUri: [],
-          },
-          defaultNotificationServer: {
-            type: 'VeridaNotification',
-            endpointUri: [],
-          },
-        },
-        {
-          privateKey: mnemonic,
-          environment: CONFIG.VERIDA_ENVIRONMENT,
-          didClientConfig,
-        }
-      )
+      const account = new AutoAccount({
+        privateKey: mnemonic,
+        environment: CONFIG.VERIDA_ENVIRONMENT,
+        didClientConfig,
+      })
 
       // Fill the connected account with Verida DID
       let did
@@ -223,10 +197,13 @@ class AccountManager extends EventEmitter {
       // so that any new login requests will have default config matching the vault.
       const contextConfig = await context!.getContextConfig(did, false)
 
-      // @todo: use account.setAccountConfig()
+      // Set account config to use the same nodes as the Vault
+      // This ensures any newly created application contexts have the same nodes
+      // @todo: Replace this with the ability for users to set their own default nodes
       account.setAccountConfig({
         defaultDatabaseServer: contextConfig.services.databaseServer,
         defaultMessageServer: contextConfig.services.messageServer,
+        defaultNotificationServer: contextConfig.services.notificationServer,
       })
 
       // @todo: Do something useful with these messages
@@ -299,11 +276,11 @@ class AccountManager extends EventEmitter {
   public async setUserWallet() {
     try {
       await store.dispatch(removeUserWallets())
-      const userHDWalletMnemonic = multiChainWallet.generateMnemonic()
+      const userHDWalletMnemonic = WalletManager.generateMnemonic()
 
       // save mnemonic to verida store
       const walletDb = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        WALLET_SCHEMA_0_2_0_URI
       )
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -313,31 +290,24 @@ class AccountManager extends EventEmitter {
       const saved: any = await walletDb?.save(wallet)
       const walletID = saved?.id
 
-      // generate wallets and save em to redux state
+      // generate wallets and save to redux state
+      const blockchainNetworks = getBlockchainNetworks(store.getState())
 
-      const chains = selectChains(store.getState())
-
-      const userGeneratedWallets = multiChainWallet.generateWalletsForChains({
-        privateKey: null,
-        mnemonic: userHDWalletMnemonic,
-        chains,
-        chain: null,
-      })
+      const userGeneratedWallets = WalletManager.generateAccountsForWallet(
+        {
+          mnemonic: userHDWalletMnemonic,
+        },
+        blockchainNetworks
+      )
 
       const walletData = {
         [walletID]: {
-          seedPhrase: wallet.mnemonic,
-          privateKey: null,
-          type: wallet.walletType,
-          label: wallet.label,
-          id: walletID,
+          ...wallet,
           accounts: userGeneratedWallets,
-          chain: null,
         },
       }
 
       await store.dispatch(saveUserWallets(walletData))
-
       await store.dispatch(setSelectedWallet(walletID))
 
       // save to storage..
@@ -355,19 +325,20 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  public async restoreUserWallet() {
+  public async restoreUserWallet(clearWallets: boolean) {
     try {
-      await store.dispatch(removeUserWallets())
+      if (clearWallets) {
+        await store.dispatch(removeUserWallets())
+      }
+
       const datastore = await this.context?.openDatastore(
-        'https://vault.schemas.verida.io/wallets/v0.2.0/schema.json'
+        WALLET_SCHEMA_0_2_0_URI
       )
 
       const hdWallets: any = await datastore?.getMany()
-      const chains = selectChains(store.getState())
 
       if (!isEmpty(hdWallets)) {
-        const wallets: any = rawDataToReduxState(hdWallets, chains)
-
+        const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
         await store.dispatch(saveUserWallets(wallets))
 
         // save to storage..
@@ -376,7 +347,11 @@ class AccountManager extends EventEmitter {
           JSON.stringify(wallets)
         )
 
-        if (hdWallets[0]) {
+        const currentlySelectedWallet = getSelectedWalletId(
+          store.getState().main
+        )
+
+        if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
           const selectedWalletID = hdWallets[0]._id
 
           await store.dispatch(setSelectedWallet(selectedWalletID))
@@ -405,17 +380,6 @@ class AccountManager extends EventEmitter {
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
 
-      // Find suitable node based on selected country
-      const countryCode = getCountryCode(country)
-      const endpoints = await NodeSelector.selectEndpointUris(countryCode)
-
-      // Endpoints to be used in account config
-      const endpointUris = {
-        dbServerUrl: endpoints,
-        messageServerUrl: endpoints,
-        notificationServerUrl: NodeSelector.notificationEndpoints(),
-      }
-
       const node = utils.entropyToMnemonic(utils.randomBytes(16))
       const wallet = ethers.Wallet.fromMnemonic(node)
       const privateKey = wallet.privateKey
@@ -430,18 +394,9 @@ class AccountManager extends EventEmitter {
         },
       }
 
-      const didEndpointUris: string[] = endpointUris.dbServerUrl.reduce(
-        (result: string[], item: string) => {
-          result.push(`${item}did/`)
-          return result
-        },
-        []
-      )
-
       const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
         veridaKey: this.selectedAccount.privateKey,
       })
-      didClientConfig.didEndpoints = didEndpointUris
 
       const { mnemonic } = this.selectedAccount
 
@@ -452,35 +407,25 @@ class AccountManager extends EventEmitter {
         },
       })
 
-      const account = new AutoAccount(
-        {
-          defaultDatabaseServer: {
-            type: 'VeridaDatabase',
-            endpointUri: endpointUris.dbServerUrl,
-          },
-          defaultMessageServer: {
-            type: 'VeridaMessage',
-            endpointUri: endpointUris.messageServerUrl,
-          },
-          defaultNotificationServer: {
-            type: 'VeridaNotification',
-            endpointUri: endpointUris.notificationServerUrl,
-          },
-        },
-        {
-          privateKey: mnemonic,
-          environment: CONFIG.VERIDA_ENVIRONMENT,
-          didClientConfig,
-        }
-      )
+      const account = new AutoAccount({
+        privateKey: mnemonic,
+        environment: CONFIG.VERIDA_ENVIRONMENT,
+        didClientConfig,
+      })
+
+      // Load suitable node based on selected country
+      const countryCode = getCountryCode(country)
+      await account.loadDefaultStorageNodes(countryCode, 3, {
+        network: CONFIG.VERIDA_ENVIRONMENT,
+        notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
+      })
 
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
       // Open the Vault context, forcing its creation
-      this.context = await this.client.openContext(
-        CONFIG.VERIDA_CONTEXT_NAME,
-        true
+      this.context = <Context>(
+        await this.client.openContext(CONFIG.VERIDA_CONTEXT_NAME, true)
       )
 
       // Set the Vault
@@ -499,6 +444,7 @@ class AccountManager extends EventEmitter {
       setTimeout(() => {
         updateProgress?.('StorageLocation', 'Success')
       }, 1000)
+
       updateProgress?.('CreateProfile', 'Loading')
 
       const setPublicProfileSuccess = await execWithTimeout(
@@ -600,7 +546,7 @@ class AccountManager extends EventEmitter {
       if (connect) {
         await this.connect(true)
       }
-      await this.restoreUserWallet()
+      await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
 
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -667,8 +613,11 @@ class AccountManager extends EventEmitter {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null
       }
+      const veridaWallet = WalletUtils.utils.getWallet('ethr', mnemonic)
+
       this.selectedAccount = {
         mnemonic,
+        privateKey: veridaWallet.privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,
@@ -680,7 +629,6 @@ class AccountManager extends EventEmitter {
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
-      await this.restoreUserWallet()
       return this.selectedAccount
     } catch (e) {
       if (this.selectedAccount) await this.logout([this.selectedAccount.did])

@@ -1,13 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
-import { Credentials } from '@verida/verifiable-credentials'
 import { Container, Content, Icon, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 
-import { getPublicProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CredentialDataItem from 'pages/Data/CredentialDataItem'
@@ -30,32 +28,12 @@ const DataItem = (props) => {
     const init = async () => {
       try {
         setLoading(true)
-        let _data
-        if (isCredential) {
-          const credentialLib = new Credentials()
-          const vcData = await credentialLib.verifyCredential(item.didJwtVc)
-          const credentialData = vcData.payload.vc.credentialSubject
-          const schemaUri = vcData.payload.vc.credentialSchema.id
-          const credentialDetail = await folder.getDetail(
-            credentialData,
-            schemaUri
-          )
-          const iss = vcData.payload.iss
-
-          _data = credentialDetail
-
-          const { name, avatar } = await getPublicProfile(
-            iss,
-            vcData.payload.vc.veridaContextName
-          )
-          _data.issuer = {
-            name,
-            avatar,
-            did: iss,
-          }
-        } else {
-          _data = await folder.getDetail(item)
-        }
+        const _data = isCredential
+          ? await folder.getDetail(
+              item.credentialData.credentialSubject || item.credentialData,
+              item.credentialData.credentialSchema?.id || item.credentialSchema
+            )
+          : await folder.getDetail(item)
         setData(_data)
         setLoading(false)
       } catch (e) {

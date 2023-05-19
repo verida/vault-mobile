@@ -209,7 +209,7 @@ class DataConnection extends EventEmitter {
 
       return result
     } catch (err) {
-      // console.error('Save connection error: ', err.message)
+      console.log('Save connection error: ', err.message)
     }
   }
 
@@ -226,6 +226,8 @@ class DataConnection extends EventEmitter {
   }
 
   public async setAuth(auth: any) {
+    console.log('setAuth')
+    console.log(auth)
     await this.init()
     this.accessToken = auth.accessToken
     if (auth.refreshToken) {
@@ -325,7 +327,8 @@ class DataConnection extends EventEmitter {
         syncRequestDatabaseName
       )
     } catch (err: any) {
-      //console.log(err)
+      console.log('1')
+      console.log(err)
       this.setSyncError(err.message)
       // console.error(err)
     }
@@ -381,7 +384,7 @@ class DataConnection extends EventEmitter {
 
         if (syncRequest.status === 'error') {
           // Error syncing from API
-          this.setSyncError(`${syncRequest.syncInfo.error}`)
+          this.setSyncError(`API error: ${syncRequest.syncInfo.error}`)
           return
         }
 
@@ -398,9 +401,10 @@ class DataConnection extends EventEmitter {
         )
       }
     } catch (err: any) {
+      console.log('2')
       // @todo: Set error on this connection
       this.setSyncError(err.message)
-      // console.error(err)
+      console.error(err)
     }
   }
 
@@ -468,6 +472,7 @@ class DataConnection extends EventEmitter {
             style: 'main_only',
           })
         } catch (err: any) {
+          console.log('3')
           this.setSyncError(err.message)
           return
         }
@@ -485,6 +490,8 @@ class DataConnection extends EventEmitter {
       this.syncNext = moment().add(1, this.syncFrequency).toISOString()
 
       if (newAuth) {
+        console.log('----- new auth')
+        console.log(newAuth)
         this.accessToken = newAuth.accessToken
         this.refreshToken = newAuth.refreshToken
       }
@@ -492,6 +499,8 @@ class DataConnection extends EventEmitter {
       await this.save()
       // console.log(`Sync done and sync status updated`)
     } catch (err) {
+      console.log('4')
+      console.log(err)
       // @todo: How to handle?
       // console.error(err)
     }

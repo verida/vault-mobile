@@ -1,7 +1,12 @@
 import { StackActions, useNavigation } from '@react-navigation/native'
-import { useTheme } from 'contexts/ThemeContext'
 import React, { useState } from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Image,
+  ScrollView,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -9,11 +14,11 @@ import Screen from 'components/Screen'
 import { Spacer } from 'components/Spacer'
 import TCCheckbox from 'components/TCCheckbox'
 import { Headline } from 'components/Typography/Headline'
-import { Paragraph } from 'components/Typography/Paragraph'
 import { Text } from 'components/Typography/Text'
+import { DISABLED_COLOR, LIGHTGREY_COLOR, TEXT_COLOR } from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import TextStyles from 'styles/text'
 import { Theme } from 'styles/types'
 
 export enum AddIdentityMode {
@@ -23,8 +28,8 @@ export enum AddIdentityMode {
 
 const Identity = () => {
   const navigation = useNavigation()
-  const params = useParams<{ mode?: AddIdentityMode }>()
-  const { theme } = useTheme()
+  const params =
+    useParams<{ mode?: AddIdentityMode; recoverFromError?: boolean }>()
   const styles = useThemeAwareStyle(creatStyles)
 
   const [agreedTC, setAgreedTC] = useState(false)
@@ -35,7 +40,9 @@ const Identity = () => {
   return (
     <Screen withSafeAreaView>
       <NavigationHeader title='Identity' />
-      <View style={[styles.landing, { alignItems: 'center' }]}>
+      <ScrollView
+        showsVerticalScrollIndicator={false}
+        contentContainerStyle={[styles.landing, { alignItems: 'center' }]}>
         <View
           style={{
             width: '100%',
@@ -52,13 +59,14 @@ const Identity = () => {
           />
         </View>
         <Spacer height={32} />
-        <Headline>Create your identity</Headline>
+        <Headline>Get your identity</Headline>
         <Spacer vertical='sm' />
         <Text style={{ textAlign: 'center' }}>
           An identity is a digital representation of yourself. You can have
-          multiple, such as a personal, business or anonymous identity.
+          multiple ones, such as a personal, a business or an anonymous
+          identity.
         </Text>
-        <Spacer height={115} />
+        <Spacer flex={1} />
         <TCCheckbox
           checked={agreedTC}
           style={styles.termAndCondition}
@@ -74,26 +82,27 @@ const Identity = () => {
           }}>
           Create Identity
         </Button>
+        {/* TODO: Create proper reussable buttons of the diffferent variants */}
         <TouchableOpacity
+          hitSlop={{ top: 10, left: 10, right: 10, bottom: 10 }}
           disabled={!agreedTC}
-          style={[styles.actionButton]}
+          style={[
+            styles.actionButton,
+            styles.importButton,
+            agreedTC ? {} : styles.importButtonDisabled,
+          ]}
           onPress={() => {
             navigation.navigate('SeedPhraseEntered', { ...params } as any)
           }}>
-          <View style={{ alignItems: 'center' }}>
-            <Paragraph style={styles.subTitle}>
-              Already have a Verida Identity?
-            </Paragraph>
-            <Text
-              style={{
-                ...TextStyles.primaryColor,
-                color: theme.color.primary,
-              }}>
-              Import Identity
-            </Text>
-          </View>
+          <Text
+            style={[
+              styles.importButtonLabel,
+              agreedTC ? {} : styles.importButtonLabelDisabled,
+            ]}>
+            Import Identity
+          </Text>
         </TouchableOpacity>
-      </View>
+      </ScrollView>
     </Screen>
   )
 }
@@ -107,6 +116,26 @@ const creatStyles = (theme: Theme) => {
     actionButton: {
       width: '100%',
       alignSelf: 'center',
+    },
+    importButton: {
+      alignItems: 'center',
+      borderRadius: 4,
+      padding: theme.spacing.sm,
+      borderWidth: 1,
+      borderColor: LIGHTGREY_COLOR,
+    },
+    importButtonDisabled: {
+      opacity: 0.5,
+      borderColor: DISABLED_COLOR,
+    },
+    importButtonLabel: {
+      fontFamily: NUNITO_SANS_BOLD,
+      fontSize: 16,
+      lineHeight: 24,
+      color: TEXT_COLOR,
+    },
+    importButtonLabelDisabled: {
+      color: DISABLED_COLOR,
     },
     backButton: {
       position: 'absolute',
@@ -127,7 +156,7 @@ const creatStyles = (theme: Theme) => {
       textcolor: theme.color.onError,
     },
     landing: {
-      flex: 1,
+      flexGrow: 1,
       paddingTop: theme.spacing.l,
       paddingHorizontal: theme.spacing.l,
       paddingVertical: theme.spacing.m,

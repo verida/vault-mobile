@@ -43,14 +43,8 @@ export default class VeridaOneManager {
     await VeridaOneManager.saveProfile(profile)
   }
 
-  static async getProfile(did?: string): Promise<VeridaOneProfile> {
-    const selectedDID = await AccountManager.getInstance().getSelectedAccount()
-      ?.did
-    if (!selectedDID) {
-      throw new Error('Account not found')
-    }
-
-    const datastore = await VeridaOneManager.getDatastore(selectedDID)
+  static async getProfile(): Promise<VeridaOneProfile> {
+    const datastore = await VeridaOneManager.getDatastore()
     let profile
     try {
       profile = await datastore.get('public')
@@ -79,17 +73,22 @@ export default class VeridaOneManager {
       // @ts-ignore
       console.log(datastore.errors)
     }
-    console.log(result)
     const db = await datastore.getDb()
     const info = await db.info()
-    console.log(info)
   }
 
-  static async getDatastore(did: string): Promise<IDatastore> {
-    if (VeridaOneManager.datastore && did === VeridaOneManager.did) {
+  static async getDatastore(): Promise<IDatastore> {
+    const selectedDID = await AccountManager.getInstance().getSelectedAccount()
+      ?.did
+    if (!selectedDID) {
+      throw new Error('Account not found')
+    }
+
+    // This's so the datastore will be reinitialized on DID change
+    if (VeridaOneManager.datastore && selectedDID === VeridaOneManager.did) {
       return VeridaOneManager.datastore
     }
-    VeridaOneManager.did = did
+    VeridaOneManager.did = selectedDID
 
     // eslint-disable-next-line no-async-promise-executor
     VeridaOneManager.datastore = new Promise(async (resolve) => {

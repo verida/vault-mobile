@@ -3,13 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  checkVeridaOneInviteCode,
-  editable,
-  isEnabledVeridaOneProfile,
-  saveStatusEnabledVeridaOneProfile,
-  VERIDA_ONE_INVITE_CODE,
-} from 'helpers/profile'
+import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
@@ -39,19 +33,27 @@ import {
   OneProfileFeaturedAsset,
   PublicWalletAddress,
 } from 'types/profile'
-import { CaipWalletType, VeridaWallet } from 'types/wallet'
 
 import AccountManager from 'api/AccountManager'
-import { VeridaOneCustomLink, VeridaOneFeaturedAsset } from 'api/types'
+import {
+  BlockchainNetwork,
+  BlockchainWalletWithAccounts,
+  VeridaOneCustomLink,
+  VeridaOneFeaturedAsset,
+} from 'api/types'
+import UsernameManager from 'api/UsernameManager'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
-import { WalletAddressItem } from 'components/PublicProfile'
-import { CustomLinkItem } from 'components/PublicProfile/CustomLinkItem'
-import { FeaturedAssetItem } from 'components/PublicProfile/FeaturedAssetItem'
+import {
+  CustomLinkItem,
+  FeaturedAssetItem,
+  ProfileUsernameSection,
+  WalletAddressItem,
+} from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
@@ -59,13 +61,12 @@ import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { selectChains } from 'reduxStore/tokens/selectors'
+import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 export enum PublicProfileEditMode {
   EditWalletPublicLabel,
-  EnterInvitationCode,
   AddCustomURL,
   DeleteCustomURL,
   SelectFeaturedAsset,
@@ -100,8 +101,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
   const wallets = useSelector(allWalletsSelector) as Record<
     string,
-    VeridaWallet
+    BlockchainWalletWithAccounts
   >
+
   const selectedAccount = useSelector(
     (state: any) => state.main.selectedAccount
   )
@@ -109,7 +111,11 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     selectedAccount?.did ??
     AccountManager.getInstance().getSelectedAccount()?.did
 
-  const chains = useSelector(selectChains)
+  const [username, setUsername] = useState<string | undefined>(undefined)
+  const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
+    string,
+    BlockchainNetwork
+  >
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     PublicWalletAddress[]
@@ -124,9 +130,11 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [refreshing, setRefreshing] = React.useState(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
-    Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
-      setRefreshing(false)
-    })
+    Promise.all([fetchData(), fetchVeridaOneProfle(), fetchUsername()]).finally(
+      () => {
+        setRefreshing(false)
+      }
+    )
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -140,22 +148,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [publicWalletAddresses]
   )
 
-  const getPublicAdrressOrder = useCallback(
+  const getPublicAddressOrder = useCallback(
     (address: string, chainId: string) => {
       const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
       return publicWalletAddress?.order ?? 0
     },
     [getPublicWalletAddressObject]
   )
-
-  function getChainId(chainData: any) {
-    // FIXME: Remove this hack of trimming the Algorand chain ID reference to make it follow the CAIP address rule
-    let chainRef = chainData.reference
-    if (chainData.namespace === 'algorand') {
-      chainRef = chainRef.substring(0, 32)
-    }
-    return `${chainData.namespace}:${chainRef}`
-  }
 
   const walletAddresses = useMemo(() => {
     function isPublic(address: string, chainId: string) {
@@ -168,29 +167,41 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       )
     }
 
-    function getPublicName(address: string, chainId: string) {
-      const publicWalletAddress = getPublicWalletAddressObject(address, chainId)
+    function getPublicName(
+      address: string,
+      blockchainNetwork: BlockchainNetwork
+    ) {
+      const publicWalletAddress = getPublicWalletAddressObject(
+        address,
+        blockchainNetwork.chainId
+      )
       return publicWalletAddress?.label ?? ''
     }
 
-    let mappedWallets: PublicWalletAddress[] = Object.values(chains).reduce(
-      (acc, chain) => {
+    let mappedWallets: PublicWalletAddress[] = Object.values(
+      blockchainNetworks
+    ).reduce(
+      (acc: PublicWalletAddress[], blockchainNetwork: BlockchainNetwork) => {
         const sameChainAdresses = Object.values(wallets).reduce(
-          (accAddresses: PublicWalletAddress[], wallet) => {
-            const account =
-              wallet.accounts[chain.addressMapping as CaipWalletType]
+          (
+            accAddresses: PublicWalletAddress[],
+            wallet: BlockchainWalletWithAccounts
+          ) => {
+            const account = wallet.accounts[blockchainNetwork.chainId]
             if (account) {
-              const chainId = getChainId(chain.data)
               accAddresses.push({
-                address: account.address,
-                chainId: chainId,
-                label: getPublicName(account.address, chainId),
-                order: getPublicAdrressOrder(account.address, chainId),
+                address: account.address!,
+                chainId: blockchainNetwork.chainId,
+                label: getPublicName(account.address!, blockchainNetwork),
+                order: getPublicAddressOrder(
+                  account.address!,
+                  blockchainNetwork.chainId
+                ),
 
                 // Infered value for displaying
                 veridaWalletName: wallet.label,
-                isPublic: isPublic(account.address, chainId),
-                icon: chain?.icon,
+                isPublic: isPublic(account.address!, blockchainNetwork.chainId),
+                icon: blockchainNetwork.icon,
               })
             }
 
@@ -215,12 +226,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
     return enabledVeridaOne ? mappedWallets : mappedWallets.slice(0, 1) // Shorten the wallet address to one if not enabled Verida One Profile
   }, [
-    chains,
+    blockchainNetworks,
     enabledVeridaOne,
     publicWalletAddresses,
     getPublicWalletAddressObject,
     wallets,
-    getPublicAdrressOrder,
+    getPublicAddressOrder,
   ])
 
   const debounceSaveProfile = useCallback(
@@ -248,6 +259,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         ) {
           await VeridaOneManager.setFeaturedAssets(featuredAssets)
         }
+
+        // refetch profile so react state correctly updates
+        fetchVeridaOneProfle()
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Failed to save profile')
@@ -384,6 +398,17 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     }
   }
 
+  const fetchUsername = async () => {
+    try {
+      const accountUsernames = await UsernameManager.get()
+      if (accountUsernames && accountUsernames?.length > 0) {
+        setUsername(accountUsernames[0])
+      }
+    } catch (e) {
+      Sentry.captureException(e)
+    }
+  }
+
   const removeFeaturedAsset = useCallback(
     (index, featuredAsset: VeridaOneFeaturedAsset) => {
       let updatedFeaturedAssets = [...featuredAssets]
@@ -412,6 +437,17 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     },
     [debounceSaveProfile, featuredAssets]
   )
+
+  useEmitter('UPDATE_PROFILE_USERNAME', () => {
+    setLoading(true)
+    fetchUsername().finally(() => {
+      setLoading(false)
+    })
+  })
+
+  useEmitter('UNLOCK_VERIDA_ONE', () => {
+    setEnabledVeridaOne(true)
+  })
 
   useEmitter(
     'SAVE_GENERIC_PROPERTY',
@@ -450,12 +486,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
         setPublicWalletAddresses(updatedPublicWalletAddresses)
         debounceSaveProfile({ walletAddresses: updatedPublicWalletAddresses })
-      } else if (mode === PublicProfileEditMode.EnterInvitationCode) {
-        const inputCode = payload.value
-        if (checkVeridaOneInviteCode(inputCode)) {
-          setEnabledVeridaOne(true)
-          saveStatusEnabledVeridaOneProfile(true)
-        }
       } else if (mode === PublicProfileEditMode.AddCustomURL) {
         const inputValue = payload.value
         const originalValue = payload.originalValue
@@ -525,28 +555,40 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   )
 
   useEffect(() => {
-    setLoading(true)
+    // A little bit of delay here to avoid any unclean state when switching accounts
+    const tid = setTimeout(() => {
+      setLoading(true)
 
-    setProfileReadonlyProps([
-      { label: 'DID', value: currentAccountDID, action: 'copy' },
-    ])
+      setProfileReadonlyProps([
+        { label: 'DID', value: currentAccountDID, action: 'copy' },
+      ])
 
-    // Reset
-    setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
-    setVeridaOneProfile({})
+      // Reset
+      setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
+      setVeridaOneProfile({})
 
-    setPublicWalletAddresses([])
-    setFeaturedAssets([])
-    setPublicCustomLinks([])
+      setPublicWalletAddresses([])
+      setFeaturedAssets([])
+      setPublicCustomLinks([])
+      setUsername(undefined)
 
-    // Check Verida One enabbled status
-    ;(async () => {
-      setEnabledVeridaOne(await isEnabledVeridaOneProfile())
-    })()
+      // Check Verida One enabbled status
+      ;(async () => {
+        setEnabledVeridaOne(await isEnabledVeridaOneProfile())
+      })()
 
-    Promise.all([fetchData(), fetchVeridaOneProfle()]).finally(() => {
-      setLoading(false)
-    })
+      Promise.all([
+        fetchData(),
+        fetchVeridaOneProfle(),
+        fetchUsername(),
+      ]).finally(() => {
+        setLoading(false)
+      })
+    }, 200)
+
+    return () => {
+      clearTimeout(tid)
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccountDID])
 
@@ -711,6 +753,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                           originalValue: {
                             order: index,
                           },
+                          searchableAddresses: publicWalletAddresses.map(
+                            (address) => address.address
+                          ),
                         })
                         break
 
@@ -731,6 +776,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                   originalValue: {
                     order: index,
                   },
+                  searchableAddresses: publicWalletAddresses.map(
+                    (item) => `${item.chainId}:${item.address}`
+                  ),
                 })
               }
             }}
@@ -768,17 +816,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
           }>
           <ProfileImageLoader />
-          {/** Unavailable - Temporary disabled */}
-          {/* <View style={styles.oneProfileLinkContainer}>
-            <Image
-              style={{
-                position: 'absolute',
-                width: '100%',
-              }}
-              resizeMode='stretch'
-              source={require('assets/profile_banner_bg.png')}
+          {enabledVeridaOne && (
+            <ProfileUsernameSection
+              did={currentAccountDID}
+              username={username}
+              loading={loading || quickFetching}
             />
-          </View> */}
+          )}
           <View style={{ marginTop: theme.spacing.m }}>
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList
@@ -925,24 +969,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                   <Button
                     style={{ width: '100%', marginTop: theme.spacing.sm }}
                     onPress={() => {
-                      navigation.navigate('EditGenericProperty', {
-                        screenName: SCREEN_NAME,
-                        title: 'Invitation Code',
-                        option: {
-                          label: 'Invitation code',
-                          type: 'input',
-                          value: '',
-                          placeholder: 'Enter your code',
-                          description: '',
-                        },
-                        mode: PublicProfileEditMode.EnterInvitationCode,
-                        originalValue: null,
-                        submitButtonLabel: 'Submit',
-                        verification: {
-                          expectedValue: VERIDA_ONE_INVITE_CODE,
-                          errorMessage: 'Wrong code, please try again later.',
-                        },
-                      })
+                      navigation.navigate('UnlockVeridaOne', {})
                     }}>
                     Enter Invitation Code
                   </Button>
@@ -985,14 +1012,6 @@ const createStyles = (theme: Theme) =>
       color: theme.color.onBackground,
       opacity: 0.6,
       marginBottom: theme.spacing.s,
-    },
-    oneProfileLinkContainer: {
-      position: 'relative',
-      width: '100%',
-      height: 140,
-      flexDirection: 'row',
-      alignItems: 'center',
-      marginBottom: theme.spacing.m,
     },
     loadingContainer: {
       flex: 1,

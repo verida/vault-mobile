@@ -4,6 +4,7 @@ import {
   Animated,
   Easing,
   KeyboardAvoidingView,
+  KeyboardAvoidingViewProps,
   Platform,
   StatusBar,
   StyleSheet,
@@ -30,6 +31,7 @@ interface ScreenProps {
   containerStyle?: ViewStyle
   backgroundGrey: boolean
   loadingOverlayColorLight: boolean
+  keyboadAvoidingViewProps?: KeyboardAvoidingViewProps
 }
 
 const Screen = (props: ScreenProps) => {
@@ -43,6 +45,7 @@ const Screen = (props: ScreenProps) => {
     containerStyle,
     backgroundGrey,
     loadingOverlayColorLight,
+    keyboadAvoidingViewProps,
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
@@ -66,18 +69,14 @@ const Screen = (props: ScreenProps) => {
   return (
     <ConditionalWrap
       condition={withKeyboardAvoidingView}
-      wrap={(children) =>
-        Platform.select({
-          ios: (
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-              style={styles.wrapper}>
-              {children}
-            </KeyboardAvoidingView>
-          ),
-          default: <View style={styles.wrapper}>{children}</View>,
-        })
-      }>
+      wrap={(children) => (
+        <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          style={styles.wrapper}
+          {...keyboadAvoidingViewProps}>
+          {children}
+        </KeyboardAvoidingView>
+      )}>
       <ConditionalWrap
         condition={Platform.OS === 'ios' && withSafeAreaView}
         wrap={(children) => (

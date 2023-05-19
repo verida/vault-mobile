@@ -1,12 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
+import { ChainId } from 'caip'
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import {
-  getTokenChain,
-  getWalletAddressForToken,
   isNativeToken,
 } from 'wallet/helpers/tokens'
 
@@ -17,11 +16,16 @@ import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import { WARNING_COLOR } from 'constants/color'
 import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+} from 'reduxStore/selectors'
+import {
   getBalances,
   getTransactionsForToken,
   sendTransaction,
 } from 'reduxStore/wallet/actions'
 import {
+  getSelectedWalletById,
   getWalletsData,
   selectNativeTokenBalance,
   selectSingleTokenData,
@@ -35,14 +39,17 @@ const SingleCurrency = ({
   transactions,
   tokenData,
   onGetBalances,
+  blockchainNetwork,
   wallets,
+  selectedWallet,
   onSendTransaction,
   nativeTokenBalance,
 }) => {
   const { item } = route.params
-  const { list, loading } = transactions
-  const tokenChain = getTokenChain(item.asset)
-  const address = getWalletAddressForToken(item.addressMapping, wallets)
+  const { list, loading, errorType } = transactions
+
+  const chainId = new ChainId(item.asset.chainId).toString()
+  const address = wallets[chainId].address
 
   function pullToRefresh() {
     onGetTransactionsForToken(item)
@@ -58,12 +65,12 @@ const SingleCurrency = ({
   }, [onGetTransactionsForToken, item])
 
   const warningRequired =
-    tokenChain === 'algorand' && !isNativeToken(item.asset)
+    item.asset.chainId.namespace === 'algorand' && !isNativeToken(item.asset)
 
-  let networkReference = item.referenceLabel
+  let networkLabel = getBlockchainNetworkLabel(blockchainNetwork)
 
   const showAlert = () =>
-    Alert.alert('Not enough balance', 'You need to have at least 0.001 ALGO')
+    Alert.alert('Not enough balance', 'You require at least 0.001 ALGO')
 
   return (
     <Container>
@@ -74,7 +81,7 @@ const SingleCurrency = ({
         }}
         title={item.label}
       />
-      <TestnetWarning networkReference={networkReference} />
+      <TestnetWarning networkReference={networkLabel} />
       {warningRequired && loading === false && list.length === 0 && (
         <TouchableOpacity
           style={{
@@ -106,6 +113,7 @@ const SingleCurrency = ({
       )}
       <TokenBanner
         data={tokenData}
+        selectedWallet={selectedWallet}
         receiveButtonAction={() =>
           navigation.navigate('ReceiveToken', { token: tokenData })
         }
@@ -130,10 +138,12 @@ const SingleCurrency = ({
       ) : (
         <TransactionsList
           symbol={item.symbol}
-          decimal={item.decimal}
+          decimal={item.decimal ? item.decimal : blockchainNetwork.decimal}
+          blockchainNetwork={blockchainNetwork}
           token={item}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={loading}
+          errorType={errorType}
           list={list}
         />
       )}
@@ -143,10 +153,16 @@ const SingleCurrency = ({
 
 const mapStateToProps = (rootState, props) => {
   const state = rootState.main
+
   return {
     transactions: selectTransactionsData(state, props.route.params.item.asset),
     tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
     wallets: getWalletsData(state),
+    selectedWallet: getSelectedWalletById(state),
+    blockchainNetwork: getBlockchainNetwork(
+      rootState,
+      props.route.params.item.asset.chainId
+    ),
     nativeTokenBalance: selectNativeTokenBalance(
       rootState,
       props.route.params.item

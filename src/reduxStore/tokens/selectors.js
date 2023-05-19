@@ -5,11 +5,13 @@ export const selectTokensTimestamp = (state) => {
   return tokensData.timeFetched
 }
 
+// @todo: remove, no longer required
 export const selectRawTokens = (state) => {
   const tokensData = selectTokensData(state)
   return tokensData.data
 }
 
+// @todo: remove, no longer required
 export const selectTokens = (state) => {
   const rawTokens = selectRawTokens(state)
   const list = []
@@ -38,6 +40,7 @@ export const selectTokens = (state) => {
   return list
 }
 
+// @todo: remove, use getBlockchainNetworks()
 export const selectChains = (state) => {
   const rawTokens = selectRawTokens(state)
   const list = {}

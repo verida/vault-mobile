@@ -6,9 +6,9 @@ import {
   LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
+  SET_BLOCKCHAIN_NETWORKS,
   SET_COUNTRIES,
   SET_NAVIGATION_LINK,
-  SET_NETWORKS,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
@@ -92,7 +92,7 @@ const initialState = {
   switchAccountToast: null,
   showSeedPhraseReminder: false,
   ...walletInitialState,
-  networks: [],
+  blockchainNetworks: {},
   countries: [],
   navigationLink: null,
 }
@@ -154,7 +154,11 @@ export const mainReducer = (state = initialState, action) => {
     case BALANCES_FETCH_START:
       return {
         ...state,
-        balances: { fetching: true, error: undefined, data: {} },
+        balances: {
+          fetching: true,
+          error: undefined,
+          data: state.balances.data ? state.balances.data : {},
+        },
       }
     case FETCHED_BALANCES:
       return {
@@ -175,7 +179,12 @@ export const mainReducer = (state = initialState, action) => {
     case FETCHED_TRANSACTIONS:
       return {
         ...state,
-        transactions: { fetching: false, error: undefined, data: action.data },
+        transactions: {
+          fetching: false,
+          error: action.status === 'success' ? undefined : action.status,
+          errorMessage: action.error,
+          data: action.status === 'success' ? action.data : [],
+        },
       }
     case TRANSACTIONS_FETCH_FAILED:
       return {
@@ -200,7 +209,7 @@ export const mainReducer = (state = initialState, action) => {
     case TRANSACTION_PARAMS_FETCH_FAILED:
       return {
         ...state,
-        transactions: { fetching: false, error: action.error, data: {} },
+        transactions: { fetching: false, error: action.error, data: [] },
       }
 
     case SEND_TRANSACTION_START:
@@ -209,6 +218,8 @@ export const mainReducer = (state = initialState, action) => {
         sentTransaction: { fetching: true, error: undefined, data: {} },
       }
     case SEND_TRANSACTION_SUCCESS:
+      action.data.amount = action.data.amount.toHexString()
+
       return {
         ...state,
         sentTransaction: {
@@ -300,9 +311,9 @@ export const mainReducer = (state = initialState, action) => {
         },
       }
 
-    case SET_NETWORKS:
+    case SET_BLOCKCHAIN_NETWORKS:
       return update(state, {
-        networks: {
+        blockchainNetworks: {
           $set: action.payload,
         },
       })

@@ -1,21 +1,20 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
 import isEmpty from 'lodash/isEmpty'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, TextInput } from 'react-native'
+import { Alert, Keyboard } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
+import { FormInput } from 'components/Input/FormInput'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Screen from 'components/Screen'
 import { MainStackParams } from 'navigation/types'
 
 import Button from '../../components/Button'
-import ErrorPhrase from '../../components/ErrorPhrase'
-import Label from '../../components/Label'
 import Layout from '../../components/Layouts/Layout'
 import CONFIG from '../../config/environment'
-import InputStyles from '../../styles/inputs'
 import ModifierStyles from '../../styles/modifier'
 
 const cleanSeedPhrase = (phrase: string): string => {
@@ -66,27 +65,29 @@ const SeedPhraseEntered = (
 
   const onContinue = async () => {
     try {
+      Keyboard.dismiss()
       setProcessing(true)
       const cleanedPhrase = cleanSeedPhrase(phrase)
       const isValid = utils.isValidMnemonic(cleanedPhrase)
       if (!isValid) {
-        showError(true)
+        throw new Error('Invalid seed phrase')
       }
       const result = await AccountManager.getInstance().importAccount(
         cleanedPhrase
       )
-      setProcessing(false)
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
       }
+
       if (route?.params?.previousScreen === 'Dashboard') {
         navigation.navigate('Dashboard')
       } else {
         navigation.navigate('Success')
       }
     } catch (e) {
-      setProcessing(false)
       showError(true)
+    } finally {
+      setProcessing(false)
     }
   }
 
@@ -96,26 +97,29 @@ const SeedPhraseEntered = (
     : 'Enter seed phrase'
 
   return (
-    <Container>
-      <NavigationHeader title='Import An Account' />
+    <Screen
+      withKeyboardAvoidingView
+      navBar={<NavigationHeader title='Import An Account' />}>
       <Content>
         <Layout title={title}>
-          <Label
-            style={[ModifierStyles.label, error && ModifierStyles.errorText]}>
-            {label}
-          </Label>
-          <TextInput
+          <FormInput
             value={phrase}
-            autoFocus={true}
+            autoFocus
             multiline
             editable={!processing}
             autoCorrect={false}
+            label={label}
             autoCapitalize='none'
+            errorMessage={
+              !error
+                ? undefined
+                : 'That does not appear to be a valid seed phrase that was exported from the Verida Vault, please try again'
+            }
             onChangeText={setPhrase}
-            style={[InputStyles.textarea, error && ModifierStyles.error]}
+            style={[error && ModifierStyles.error]}
+            inputStyle={{ minHeight: 68 }}
             placeholder={'eg. Open despair creek road again ice least'}
           />
-          <ErrorPhrase shown={error} />
         </Layout>
       </Content>
       <CustomFooter>
@@ -127,7 +131,7 @@ const SeedPhraseEntered = (
           Continue
         </Button>
       </CustomFooter>
-    </Container>
+    </Screen>
   )
 }
 

@@ -25,7 +25,7 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onPressClaim }) => {
           resizeMode='cover'
           imageStyle={styles.badgeImageBackground}
           style={styles.badgeImageBackgroundContainer}>
-          <Image style={styles.badgeImage} src={badge.imageUrl} />
+          <Image style={styles.badgeImage} source={{ uri: badge.imageUrl }} />
         </ImageBackground>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{badge.label}</Text>
@@ -103,11 +103,13 @@ const createStyles = (theme: Theme) => {
       borderWidth: 0, // Have to override the default style of the Button component!
     },
     buttonLabel: {
+      // TODO: refactor
       // Have to enclose the button label in its own Text to override the default style of the Button that cannot be changed. Consider a different component or improving the Button component
       fontFamily: NUNITO_SANS,
       fontWeight: '500',
       fontSize: 12,
       lineHeight: 24,
+      color: '#FFFFFF',
     },
   })
 }
