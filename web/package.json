@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.0-beta.7",
+    "@effortlessmotion/html-webpack-inline-source-plugin": "^1.0.3",
     "@iden3/js-iden3-core": "^1.0.0-beta.2",
     "@iden3/js-jwz": "^1.0.0-beta.2",
     "@testing-library/jest-dom": "^5.16.5",
@@ -22,6 +23,7 @@
     "buffer": "^6.0.3",
     "constants-browserify": "^1.0.0",
     "crypto-browserify": "^3.12.0",
+    "html-webpack-plugin": "^5.5.1",
     "https-browserify": "^1.0.0",
     "os-browserify": "^0.3.0",
     "path-browserify": "^1.0.1",
