@@ -40,17 +40,24 @@ export function useCreatePolygonIdManager(): Stateful<string> {
 
     // TODO: Find a better way to pass the sensitive information to the manager.
     const config: PolygonIdManagerConfig = {
-      // PolygonID Private Key is a 32 char hex
-      // Make it the same as the Verida identity so there is a 1:1 relationship
-      polygonIdPrivateKey: getPolygonIdPrivateKey(account.privateKey),
       veridaPrivateKey: account.privateKey,
-      environment: CONFIG.VERIDA_ENVIRONMENT,
-      contextName: CONFIG.VERIDA_CONTEXT_NAME,
-      didClientConfig: {
+      veridaEnvironment: CONFIG.VERIDA_ENVIRONMENT,
+      veridaContextName: CONFIG.VERIDA_CONTEXT_NAME,
+      veridaDidClientConfig: {
         ...CONFIG.VERIDA_DID_CLIENT_CONFIG,
         // Currently have to ovrerride the callType because the config comes from a non-typescript file
         callType: 'gasless',
       },
+      // PolygonID Private Key is a 32 char hex
+      // Make it the same as the Verida identity so there is a 1:1 relationship
+      polygonIdPrivateKey: getPolygonIdPrivateKey(account.privateKey),
+      // TODO: Get the values from the enums once the Polygon ID SDK can be added without issue
+      polygonIdBlockchain: 'polygon',
+      polygonIdNetworkId: 'mumbai', // TODO: Base this on whether the DID is mainnet or testnet/devnet
+      polygonIdDidMethod: 'polygonid',
+      // TODO: Ask Polygon ID team about revocation
+      polygonIdRevocationBaseUrl: 'https://rhs-staging.polygonid.me/',
+      polygonIdRevocationType: 'Iden3ReverseSparseMerkleTreeProof',
     }
 
     const init = async () => {
