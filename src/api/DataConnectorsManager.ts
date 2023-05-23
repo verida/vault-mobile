@@ -6,6 +6,7 @@ import { Linking } from 'react-native'
 
 import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
+import { SBTManager } from './SBTManager'
 
 const DATA_CONNECTION_SCHEMA =
   'https://vault.schemas.verida.io/data-connections/connection/v0.1.0/schema.json'
@@ -20,24 +21,9 @@ const delay = async (ms: number) => {
   await new Promise((resolve: any) => setTimeout(() => resolve(), ms))
 }
 
+let CONNECTION_CACHE: any
+
 // possible states for status: syncing, disabled, active
-
-// @todo: Pull this from the server
-const FacebookIcon = require('assets/social_icons/facebook.png')
-const TwitterIcon = require('assets/social_icons/twitter.png')
-
-const CONNECTIONS: any = {
-  facebook: {
-    name: 'facebook',
-    label: 'Facebook',
-    icon: FacebookIcon,
-  },
-  twitter: {
-    name: 'twitter',
-    label: 'Twitter',
-    icon: TwitterIcon,
-  },
-}
 
 class DataConnectorsEvents extends EventEmitter {
   private static instance: DataConnectorsEvents
@@ -85,7 +71,19 @@ export default class DataConnectorsManager {
     return DataConnectorsManager.datastore
   }
 
-  static getConnectionInfo(connectorName: string) {
+  static async getConnections(): Promise<Record<string, any>> {
+    if (CONNECTION_CACHE) {
+      return CONNECTION_CACHE
+    }
+
+    // @todo cache
+    const response = await axios.get(`${CONFIG.DATA_CONNECTOR_URL}/providers`)
+    CONNECTION_CACHE = response.data
+    return CONNECTION_CACHE
+  }
+
+  static async getConnectionInfo(connectorName: string) {
+    const CONNECTIONS = await DataConnectorsManager.getConnections()
     return CONNECTIONS[connectorName]
   }
 
@@ -94,7 +92,15 @@ export default class DataConnectorsManager {
       return DataConnectorsManager._connections[connectorName]
     }
 
-    const connector = new DataConnection(connectorName)
+    const connectionInfo = await DataConnectorsManager.getConnectionInfo(
+      connectorName
+    )
+
+    const connector = new DataConnection(
+      connectorName,
+      connectionInfo.icon,
+      connectionInfo.label
+    )
     await connector.init()
 
     DataConnectorsManager._connections[connectorName] = connector
@@ -102,7 +108,9 @@ export default class DataConnectorsManager {
   }
 
   static async getConnectors(): Promise<any> {
-    const connections: any = Object.values(CONNECTIONS)
+    const connections: any = Object.values(
+      await DataConnectorsManager.getConnections()
+    )
     const connectors: any = {}
     for (let i = 0; i < connections.length; i++) {
       const connection = await DataConnectorsManager.getConnection(
@@ -115,7 +123,9 @@ export default class DataConnectorsManager {
   }
 
   static async resetConnector() {
-    const connections: any = Object.values(CONNECTIONS)
+    const connections: any = Object.values(
+      await DataConnectorsManager.getConnections()
+    )
     for (let i = 0; i < connections.length; i++) {
       if (
         DataConnectorsManager._connections[connections[i].name].syncStatus !==
@@ -174,12 +184,12 @@ class DataConnection extends EventEmitter {
   public metadata?: any
   public icon?: any
 
-  constructor(name: string) {
+  constructor(name: string, icon: string, label: string) {
     super()
     this.name = this.source = name
     this.syncStatus = 'disabled'
-    this.icon = CONNECTIONS[this.name].icon
-    this.label = CONNECTIONS[this.name].label
+    this.icon = icon
+    this.label = label
     this.syncFrequency = 'hour'
   }
 
@@ -372,9 +382,20 @@ class DataConnection extends EventEmitter {
       const syncRequest = await externalDatastore.get(syncRequestId)
 
       if (syncRequest.status === 'complete') {
-        // Sync has completed on the server, so complete the sync
-        // by replicating data from the server
-        this.syncReplication(serverDid, contextName, syncRequest)
+        // Sync has completed on the server
+
+        // Save a SBT credential if it was provided
+        if (syncRequest.syncInfo.profile.credential) {
+          const sbtManager = new SBTManager()
+          const profileCredentialId = `${syncRequest.source}-${syncRequest.syncInfo.profile.id}-profile`
+          await sbtManager.saveCredential(
+            profileCredentialId,
+            syncRequest.syncInfo.profile.credential
+          )
+        }
+
+        // Complete the sync by replicating data from the server
+        await this.syncReplication(serverDid, contextName, syncRequest)
       } else {
         if (retryCount === 0) {
           // Retry count limit hit
