@@ -7,10 +7,7 @@ import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
 
-import {
-  useEnsureCircuitsDownloaded,
-  useIsCircuitsDownloaded,
-} from '../../circuit'
+import { useEnsureCircuitsDownloaded } from '../../circuit'
 import {
   PolygonContextValue,
   PolygonCreateIdManager,
@@ -50,9 +47,7 @@ export const PolygonProvider = ({
   const ref = React.useRef<WebView>(null)
 
   // Ensure the circuits are downloaded.
-  useEnsureCircuitsDownloaded(requiredCircuitIds)
-
-  const isCircuitsDownloaded = useIsCircuitsDownloaded(requiredCircuitIds)
+  const isCircuitsDownloaded = useEnsureCircuitsDownloaded(requiredCircuitIds)
 
   const isRequiredCircuitsDownloaded =
     'result' in isCircuitsDownloaded && isCircuitsDownloaded.result
@@ -121,7 +116,7 @@ export const PolygonProvider = ({
     // setWebPageLoading(true)
   }, [])
 
-  const onLoadEnd = React.useCallback(() => {
+  const onLoad = React.useCallback(() => {
     console.debug('PolygonProvider ~ WebView loaded')
     // setWebPageLoading(false)
     setWebPageLoaded(true)
@@ -239,15 +234,15 @@ export const PolygonProvider = ({
         <WebView
           source={source}
           originWhitelist={originWhitelist}
-          startInLoadingState
+          startInLoadingState={true}
           pointerEvents='none'
           style={styles.hidden}
           onMessage={onMessage}
           onLoadStart={onLoadStart}
-          onLoadEnd={onLoadEnd}
+          onLoad={onLoad}
           onError={handleError}
           ref={ref}
-          javaScriptEnabled
+          javaScriptEnabled={true}
           containerStyle={styles.hidden}
         />
       ) : null}
