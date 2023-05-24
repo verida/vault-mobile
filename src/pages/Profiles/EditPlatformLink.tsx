@@ -86,7 +86,7 @@ const EditPlatformLink: React.FunctionComponent<EditPlatformLinkScreenProps> = (
                   icon: <TrashBinIcon />,
                   action: () => {
                     Alert.alert(
-                      'Are you sure you want to delete this link?',
+                      'Are you sure you want to delete this social?',
                       undefined,
                       [
                         {
