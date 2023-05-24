@@ -1,54 +1,67 @@
+import { ImageSourcePropType } from 'react-native'
+
+import { VeridaOnePlatforms } from 'api/types'
+
 const FacebookIcon = require('assets/social_icons/facebook.png')
 const TwitterIcon = require('assets/social_icons/twitter.png')
 const InstagramIcon = require('assets/social_icons/instagram.png')
 const DiscordIcon = require('assets/social_icons/discord.png')
-const LinkedinIcon = require('assets/social_icons/linkedin.png')
+const LinkedInIcon = require('assets/social_icons/linkedin.png')
 const TelegramIcon = require('assets/social_icons/telegram.png')
 const GithubIcon = require('assets/social_icons/github.png')
 
 // Take from the schema, maybe better to fetch value dynamically.
 export const PUBLIC_PROFILE_NAME_MAX_LENGTH = 140
 
-export const PLATFORM_LINKS = {
-  facebook: {
+export interface PlatformLinkData {
+  name: string
+  label: string
+  icon: ImageSourcePropType
+  baseURL: string
+}
+
+// Supported platforms
+export const PLATFORM_LINKS: Record<VeridaOnePlatforms, PlatformLinkData> = {
+  [VeridaOnePlatforms.FACEBOOK]: {
     name: 'facebook',
     label: 'Facebook',
     icon: FacebookIcon,
     baseURL: 'https://facebook.com/',
   },
-  twitter: {
+  [VeridaOnePlatforms.TWITTER]: {
     name: 'twitter',
     label: 'Twitter',
     icon: TwitterIcon,
     baseURL: 'https://twitter.com/',
   },
-  instagram: {
+  [VeridaOnePlatforms.INSTAGRAM]: {
     name: 'instagram',
     label: 'Instagram',
     icon: InstagramIcon,
     baseURL: 'https://instagram.com/',
   },
-  discord: {
-    name: 'discord',
-    label: 'Discord',
-    icon: DiscordIcon,
-    baseURL: 'https://discord.com/',
-  },
-  linkedin: {
+  // TODO: enable, Discord doesn't suport profile URL ATM
+  // [VeridaOnePlatforms.DISCORD]: {
+  //   name: 'discord',
+  //   label: 'Discord',
+  //   icon: DiscordIcon,
+  //   baseURL: 'https://discord.com/',
+  // },
+  [VeridaOnePlatforms.LINKEDIN]: {
     name: 'linkedin',
-    label: 'Linkedin',
-    icon: LinkedinIcon,
+    label: 'LinkedIn',
+    icon: LinkedInIcon,
     baseURL: 'https://linkedin.com/in/',
   },
-  telegram: {
+  [VeridaOnePlatforms.TELEGRAM]: {
     name: 'telegram',
     label: 'Telegram',
     icon: TelegramIcon,
     baseURL: 'https://telegram.com/',
   },
-  github: {
+  [VeridaOnePlatforms.GITHUB]: {
     name: 'github',
-    label: 'Github',
+    label: 'GitHub',
     icon: GithubIcon,
     baseURL: 'https://github.com/',
   },

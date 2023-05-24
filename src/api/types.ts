@@ -10,6 +10,8 @@
 import { AssetId } from 'caip'
 import { ImageSourcePropType } from 'react-native'
 
+import { PLATFORM_LINKS, Platforms } from 'constants/profile'
+
 /**
  * Verida Account
  */
@@ -96,7 +98,7 @@ export interface BlockchainWallet extends BlockchainAccount {
   label: string
   multiChain: boolean
   viewOnly: boolean
-  walletType: string  // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
+  walletType: string // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
 }
 
 export interface BlockchainWalletWithAccounts extends BlockchainWallet {
@@ -217,14 +219,30 @@ export enum VeridaOnePlatformLinkCategory {
   SOCIAL = 'social',
 }
 
+export enum VeridaOnePlatforms {
+  // DISCORD = 'discord',
+  FACEBOOK = 'facebook',
+  GITHUB = 'github',
+  LINKEDIN = 'linkedin',
+  INSTAGRAM = 'instagram',
+  TELEGRAM = 'telegram',
+  TWITTER = 'twitter',
+  // WHATSAPP = 'whatsapp',
+  // YOUTUBE = 'youtube',
+}
+
 export interface VeridaOnePlatformLink {
   category: VeridaOnePlatformLinkCategory
-  platform: string
+  platform: VeridaOnePlatforms
   accountId: string
   url: string
   order: number
   verificationProof?: VeridaOneVerificationProof
   avatarUrl?: string
+
+  // Transient fields
+  showOnVeridaOne?: boolean
+  connectedPlatform?: boolean
 }
 
 export interface VeridaOneCustomLink {

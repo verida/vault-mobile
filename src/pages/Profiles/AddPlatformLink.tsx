@@ -3,8 +3,9 @@ import * as Sentry from '@sentry/react-native'
 import Color from 'color'
 import { useTheme } from 'contexts'
 import { emitter } from 'helpers/emitter'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useRef, useState } from 'react'
 import {
+  Alert,
   Image,
   Keyboard,
   StyleSheet,
@@ -15,7 +16,7 @@ import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import DataConnectorsManager from 'api/DataConnectorsManager'
+import { VeridaOnePlatformLink, VeridaOnePlatformLinkCategory } from 'api/types'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -25,7 +26,7 @@ import {
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
-import { PLATFORM_LINKS } from 'constants/profile'
+import { PlatformLinkData } from 'constants/profile'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
@@ -41,6 +42,8 @@ export interface AddPlatformLinkScreenParams {
   screenName: string
   mode: string | number
   originalValue?: any
+  supportedConnectPlatforms: any[] // Type
+  availablePlatformLinks: PlatformLinkData[]
 }
 
 type AddPlatformLinkScreenProps = MainStackScreenProps<'AddPlatformLink'>
@@ -49,7 +52,13 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   props
 ) => {
   const { navigation, route } = props
-  const { screenName, mode, originalValue } = route.params
+  const {
+    screenName,
+    mode,
+    originalValue,
+    supportedConnectPlatforms,
+    availablePlatformLinks,
+  } = route.params
 
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
@@ -57,58 +66,8 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
   const pagerRef = useRef<PagerView>(null)
   const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const enterPlatformLinkPageRef = useRef<EnterPlatformLinkPageRefProps>(null)
-
-  const [connectors, setConnectors] = useState([])
-
-  const availableSocicalNetworks = useMemo(
-    () =>
-      Object.values(PLATFORM_LINKS).filter(
-        (network) =>
-          !connectors.some(
-            (cn) => cn.name === network.name && cn.syncStatus !== 'disabled'
-          )
-      ),
-    [connectors]
-  )
-
-  useEffect(() => {
-    const load = async () => {
-      function buildConnections(allConnectors: any) {
-        const finalConnectors = []
-        for (const connectorName in allConnectors) {
-          finalConnectors.push(allConnectors[connectorName].render())
-        }
-
-        return finalConnectors
-      }
-
-      try {
-        setLoading(true)
-        DataConnectorsManager.triggerSync()
-
-        const currentConnectors = await DataConnectorsManager.getConnectors()
-        setConnectors(buildConnections(currentConnectors))
-
-        DataConnectorsManager.on('connectionUpdated', async () => {
-          // Connection has been updated, so update UI
-          const conns = await DataConnectorsManager.getConnectors()
-          setConnectors(buildConnections(conns))
-        })
-
-        DataConnectorsManager.on('logout', async () => {
-          await DataConnectorsManager.resetConnector()
-        })
-      } catch (error) {
-        Sentry.captureException(error)
-      } finally {
-        setLoading(false)
-      }
-    }
-
-    load()
-  }, [])
 
   const getPageName = () => {
     switch (currentPage) {
@@ -134,21 +93,27 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   }
 
   const isSupportedNetwork = (network: any) => {
-    return connectors.some((cn) => cn.name === network.name)
+    return supportedConnectPlatforms.some((cn) => cn.name === network.name)
   }
 
-  const onAddSocialNetworkHandle = (url: string) => {
+  const onSaveSocialNetworkHandle = (url: string) => {
     try {
       Keyboard.dismiss()
+      if (!url?.length) {
+        Alert.alert('Error', 'The URL must not be empty')
+      }
 
-      // required field "category", "platform", "accountId", "url", "order"
-      const val = {
-        category: 'social',
-        url: url,
+      const cleanUrl = url.replace(/(\s)|(\/+$)/, '')
+      const cleanUsername = cleanUrl.split('/').pop()
+
+      console.log('cleanUsername', cleanUsername, cleanUrl, url)
+
+      const val: VeridaOnePlatformLink = {
+        category: VeridaOnePlatformLinkCategory.SOCIAL,
+        url: cleanUrl,
         platform: selectedNetwork.name,
-        accountId: url.split('/').pop(),
+        accountId: cleanUsername!,
         order: 0,
-        originalValue,
       }
 
       emitter.emit('SAVE_GENERIC_PROPERTY', {
@@ -194,7 +159,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
             <LoadingView />
           ) : (
             <View style={styles.container}>
-              {availableSocicalNetworks.map((item) => {
+              {availablePlatformLinks.map((item) => {
                 return (
                   <TouchableOpacity
                     key={item.name}
@@ -238,7 +203,6 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
               </View>
               <Button
                 onPress={() => {
-                  // navigation.goBack()
                   navigation.dispatch(
                     StackActions.replace('SingleConnection', {
                       provider: selectedNetwork.name,
@@ -261,8 +225,8 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
         <View key={'AddSocialNetworkManually'}>
           <EnterPlatformLinkPage
             ref={enterPlatformLinkPageRef}
-            socialNetwork={selectedNetwork}
-            onSaveSocialNetworkHandle={onAddSocialNetworkHandle}
+            platformLink={selectedNetwork}
+            onSaveSocialNetworkHandle={onSaveSocialNetworkHandle}
           />
         </View>
       </PagerView>

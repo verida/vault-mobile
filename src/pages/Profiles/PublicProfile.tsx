@@ -1,7 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import { PLATFORM_LINKS } from 'constants'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
@@ -16,6 +15,7 @@ import React, {
 import {
   Alert,
   Dimensions,
+  LayoutAnimation,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -38,6 +38,7 @@ import {
   VeridaOneCustomLink,
   VeridaOneFeaturedAsset,
   VeridaOnePlatformLink,
+  VeridaOnePlatformLinkCategory,
   VeridaOneWalletAddress,
 } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
@@ -58,6 +59,7 @@ import Screen from 'components/Screen'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
+import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
@@ -123,7 +125,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   >([])
 
   const [platformLinks, setPlatformLinks] = useState<any[]>([])
-  const [supportedConnectPlatforms, setSupportedConnectPlatforms] = useState([])
+  const [supportedConnectPlatforms, setSupportedConnectPlatforms] = useState<
+    any[]
+  >([])
 
   const [publicCustomLinks, setPublicCustomLinks] = useState<any[]>([])
   const [featuredAssets, setFeaturedAssets] = useState<any[]>([])
@@ -240,6 +244,14 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
   // Platform links
   const allPlatformLinks: VeridaOnePlatformLink[] = useMemo(() => {
+    // TODO: rework around the data from connectable platforms
+    // The current shape of data of a connectable platform: missing accountId and URL
+    // {
+    //   "icon": 1,
+    //   "label": "Facebook",
+    //   "name": "facebook",
+    //   "syncStatus": "disabled"
+    // },
     const connectedPlaforms =
       supportedConnectPlatforms
         .filter((platform) => platform.syncStatus !== 'disabled')
@@ -497,37 +509,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     }
   }
 
-  const fetchPlatformConnections = async () => {
-    function buildConnections(allConnectors: any) {
-      const finalConnectors = []
-      for (const connectorName in allConnectors) {
-        finalConnectors.push(allConnectors[connectorName].render())
-      }
-
-      return finalConnectors
-    }
-
-    try {
-      setLoading(true)
-      DataConnectorsManager.triggerSync()
-
-      const currentConnectors = await DataConnectorsManager.getConnectors()
-      setSupportedConnectPlatforms(buildConnections(currentConnectors))
-
-      DataConnectorsManager.on('connectionUpdated', async () => {
-        // Connection has been updated, so update UI
-        const conns = await DataConnectorsManager.getConnectors()
-        setSupportedConnectPlatforms(buildConnections(conns))
-      })
-
-      DataConnectorsManager.on('logout', async () => {
-        await DataConnectorsManager.resetConnector()
-      })
-    } catch (error) {
-      Sentry.captureException(error)
-    }
-  }
-
   const removeFeaturedAsset = useCallback(
     (index, featuredAsset: VeridaOneFeaturedAsset) => {
       let updatedFeaturedAssets = [...featuredAssets]
@@ -729,7 +710,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         fetchData(),
         fetchVeridaOneProfle(),
         fetchUsername(),
-        fetchPlatformConnections(),
       ]).finally(() => {
         setLoading(false)
       })
@@ -740,6 +720,46 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccountDID])
+
+  useEffect(() => {
+    function buildConnections(allConnectors: any) {
+      const finalConnectors = []
+      for (const connectorName in allConnectors) {
+        finalConnectors.push(allConnectors[connectorName].render())
+      }
+
+      return finalConnectors
+    }
+
+    const fetchPlatformConnections = async () => {
+      try {
+        setLoading(true)
+        DataConnectorsManager.triggerSync()
+
+        const currentConnectors = await DataConnectorsManager.getConnectors()
+        setSupportedConnectPlatforms(buildConnections(currentConnectors))
+      } catch (error) {
+        Sentry.captureException(error)
+      }
+    }
+
+    fetchPlatformConnections()
+
+    const onConnectionUpdated = async () => {
+      // Connection has been updated, so update UI
+      const conns = await DataConnectorsManager.getConnectors()
+      setSupportedConnectPlatforms(buildConnections(conns))
+    }
+    DataConnectorsManager.on('connectionUpdated', onConnectionUpdated)
+    const onLogout = async () => {
+      await DataConnectorsManager.resetConnector()
+    }
+    DataConnectorsManager.on('logout', onLogout)
+    return () => {
+      DataConnectorsManager.off('connectionUpdated', onConnectionUpdated)
+      DataConnectorsManager.off('logout', onLogout)
+    }
+  }, [])
 
   // component did mount
   useEffect(() => {
@@ -847,14 +867,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         platformLink: VeridaOnePlatformLink,
         show: boolean
       ) {
-        console.log('Item', JSON.stringify({ platformLink }, null, 2))
-        // "category", "platform", "accountId", "url", "order"
-        const updatedPlatformLink = {
-          name: platformLink.platform,
+        const updatedPlatformLink: VeridaOnePlatformLink = {
           platform: platformLink.platform,
-          category: 'social',
-          accountId: 'NA',
-          url: platformLink.platform,
+          category: VeridaOnePlatformLinkCategory.SOCIAL,
+          accountId: '',
+          url: platformLink.url || platformLink.platform,
+          order: platformLink.order,
         }
         let updatedPlatformLinks = [...platformLinks]
         if (show) {
@@ -866,10 +884,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           })
         } else {
           updatedPlatformLinks = updatedPlatformLinks.filter(
-            (link) =>
-              link.platform !== updatedPlatformLink.platform &&
-              link.url !== updatedPlatformLink.url
+            (link) => link.url !== platformLink.url
           )
+
           Snackbar.show({
             text: 'Hidden from Verida One profile',
             duration: Snackbar.LENGTH_SHORT,
@@ -890,6 +907,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               screenName: SCREEN_NAME,
               mode: PublicProfileEditMode.AddPlatformLink,
               platform: item.platform,
+              selectedPlatform: PLATFORM_LINKS[item.platform],
               originalValue: item,
             })
           }}
@@ -1098,6 +1116,17 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                   navigation.navigate('AddPlatformLink', {
                     screenName: SCREEN_NAME,
                     mode: PublicProfileEditMode.AddPlatformLink,
+                    supportedConnectPlatforms,
+                    availablePlatformLinks: Object.values(
+                      PLATFORM_LINKS
+                    ).filter(
+                      (network) =>
+                        !supportedConnectPlatforms.some(
+                          (cn) =>
+                            cn.name === network.name &&
+                            cn.syncStatus !== 'disabled'
+                        )
+                    ),
                   })
                 }>
                 ADD NEW

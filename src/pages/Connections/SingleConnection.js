@@ -180,6 +180,7 @@ const styles = StyleSheet.create({
   itemIcon: {
     width: 96,
     height: 96,
+    borderRadius: 48,
     marginTop: 10,
     marginBottom: 20,
   },

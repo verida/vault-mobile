@@ -36,12 +36,10 @@ export const PlatformLinkItem = ({
 }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
-  // console.log('platformLink', JSON.stringify(platformLink, null, 2))
   const showOnVeridaOne = platformLink.showOnVeridaOne
   const connectedPlatform = platformLink.connectedPlatform
 
-  const platformMeta =
-    PLATFORM_LINKS[platformLink.name || platformLink.platform] ?? {}
+  const platformMeta = PLATFORM_LINKS[platformLink.platform] ?? {}
 
   return (
     <View
@@ -102,7 +100,7 @@ export const PlatformLinkItem = ({
                   marginRight: theme.spacing.xs,
                   color: Color(theme.color.onBackground).alpha(0.5).toString(),
                 }}>
-                {`@${platformLink.accountId}`}
+                {platformLink.accountId ? `@${platformLink.accountId}` : 'N/A'}
               </Text>
             </View>
           </View>

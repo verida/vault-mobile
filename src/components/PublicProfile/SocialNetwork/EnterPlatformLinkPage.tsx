@@ -13,28 +13,26 @@ import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import UsernameManager from 'api/UsernameManager'
+import { VeridaOnePlatformLink } from 'api/types'
 import ClipboardIcon from 'assets/clipboard_icon.svg'
-import TrashBinIcon from 'assets/trash_bin_icon.svg'
 import Button from 'components/Button'
 import Container from 'components/Container'
 import { FormInput } from 'components/Input/FormInput'
-import Text from 'components/Text'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
+import { Caption } from 'components/Typography/Caption'
+import { PlatformLinkData } from 'constants/profile'
+import { NUNITO_SANS } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const MIN_INPUT_LENGTH = 2
-const MAX_INPUT_LENGTH = 32
+const MAX_INPUT_LENGTH = 120
 
 const USERNAME_PLACEHOLDER = 'username'
 const VERIDA_NAME_PATTERN = /(?!.*\/)username/
-const VERIDA_NAME_SUFFIX_LENGTH = USERNAME_PLACEHOLDER.length
 
 interface PageProps {
   onSaveSocialNetworkHandle: (url: string) => void
-  socialNetwork: any
-  originalValue?: any // TODO: Type
+  platformLink: PlatformLinkData
+  originalValue?: VeridaOnePlatformLink
 }
 
 export interface EnterPlatformLinkPageRefProps {
@@ -43,101 +41,94 @@ export interface EnterPlatformLinkPageRefProps {
 
 export const EnterPlatformLinkPage = React.forwardRef(
   (
-    { socialNetwork, originalValue, onSaveSocialNetworkHandle }: PageProps,
+    { platformLink, originalValue, onSaveSocialNetworkHandle }: PageProps,
     receivedRef: React.ForwardedRef<EnterPlatformLinkPageRefProps>
   ) => {
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
-    const [baseURL, setBaseURL] = useState(socialNetwork.baseURL ?? '')
-
-    useEffect(() => {
-      setBaseURL(socialNetwork.baseURL ?? '')
-      originalValue
-        ? setInputText(originalValue.url)
-        : setInputText(socialNetwork.baseURL + USERNAME_PLACEHOLDER)
-    }, [socialNetwork, originalValue])
-
+    const [baseURL, setBaseURL] = useState(platformLink.baseURL ?? '')
+    const [isValid, setIsValid] = useState(false)
     const [inputText, setInputText] = useState(
-      socialNetwork.baseURL + 'username'
+      platformLink.baseURL + USERNAME_PLACEHOLDER
     )
 
-    const usernameInputRef = useRef<TextInput>(null)
-
-    const [checkingUsername, setCheckingUsername] = useState(false)
-    const [availableUsername, setAvailableUsername] = useState(false)
-    const [usernameError, setUsernameError] = useState<string | undefined>(
-      undefined
-    )
-    const [checkboxEmpty, setCheckboxEmpty] = useState(true)
-
+    const urlInputRef = useRef<TextInput>(null)
     useImperativeHandle(receivedRef, () => ({
       focusInput: () => {
-        usernameInputRef.current?.focus()
+        urlInputRef.current?.focus()
       },
     }))
 
-    const ensureSelectionPosition = (selection?: {
-      start: number
-      end: number
-    }) => {
-      let start, end
-      if (!selection) {
-        start = originalValue?.url ? originalValue.url.length : baseURL.length
-        end = start
+    useEffect(() => {
+      setBaseURL(platformLink.baseURL ?? '')
+      originalValue
+        ? setInputText(originalValue.url)
+        : setInputText(platformLink.baseURL + USERNAME_PLACEHOLDER)
+    }, [platformLink, originalValue])
+
+    useEffect(() => {
+      const cleanUrl = inputText
+        .replace(platformLink.baseURL, '')
+        .replace(/(\s)|(\/+$)/, '')
+      const cleanUsername = cleanUrl.split('/').pop()
+      if (
+        (cleanUsername !== USERNAME_PLACEHOLDER && cleanUsername?.length) ??
+        0 > 2
+      ) {
+        setIsValid(true)
       } else {
-        if (selection.start < baseURL.length) {
-          start = baseURL.length
-          console.log('Case 1', baseURL.length, selection.start)
+        setIsValid(false)
+      }
+    }, [inputText, platformLink])
+
+    const getInitialUrl = () => platformLink.baseURL + USERNAME_PLACEHOLDER
+
+    const ensureSelectionPosition = useCallback(
+      debounce((text: string, selection?: { start: number; end: number }) => {
+        let start, end
+        if (!selection) {
+          if (text === getInitialUrl()) {
+            start = baseURL.length
+          } else {
+            start = text.length
+          }
         } else {
           start = selection.start
-          console.log('Case 2', selection.start)
+          end = selection.end
+          if (start < baseURL.length) {
+            start = baseURL.length
+          } else {
+            start = selection.start
+          }
         }
 
-        // end = selection.end
-      }
-      console.log('selection', start, end)
-
-      usernameInputRef.current?.setNativeProps({
-        selection: {
-          start,
-          end: end || start,
-        },
-      })
-    }
-
-    const debounceCheckURL = useCallback(
-      debounce(async (text) => {
-        try {
-          const plainName = text.replace(VERIDA_NAME_PATTERN, '')
-          let errorMessage = ''
-          if (plainName.length > 0 && plainName.length < MIN_INPUT_LENGTH) {
-            errorMessage = `Username length must be >= ${MIN_INPUT_LENGTH}`
-          } else if (plainName.length > MAX_INPUT_LENGTH) {
-            errorMessage = `Username length must be <= ${MAX_INPUT_LENGTH}`
-          } else if (plainName.length > 0 && !plainName.match(/^[a-z0-9_]+$/)) {
-            errorMessage = `Only lowercase alphanumeric characters and underscore allowed`
-          }
-          setUsernameError(errorMessage)
-          if (errorMessage || plainName.length === 0) return
-
-          setCheckboxEmpty(false)
-          setCheckingUsername(true)
-          const claimed = await UsernameManager.usernameExists(text)
-          setAvailableUsername(!claimed)
-          if (claimed) {
-            setUsernameError('This username is already taken')
-          }
-        } catch (error) {
-          setUsernameError('Unable to check the username')
-        } finally {
-          setCheckingUsername(false)
+        if (!end || end < start) {
+          end = start
         }
-      }, 1500),
-      []
+
+        urlInputRef.current?.setNativeProps({
+          selection: {
+            start,
+            end,
+          },
+        })
+      }, 10),
+      [platformLink, baseURL]
     )
 
-    if (!socialNetwork) return null
+    const setSelectionEnd = (text: string) => {
+      setTimeout(() => {
+        urlInputRef.current?.setNativeProps({
+          selection: {
+            start: text.length,
+            end: text.length,
+          },
+        })
+      }, 10)
+    }
+
+    if (!platformLink) return null
 
     return (
       <Container
@@ -154,60 +145,37 @@ export const EnterPlatformLinkPage = React.forwardRef(
           keyboardShouldPersistTaps='handled'>
           <View style={{ flex: 1 }}>
             <FormInput
-              ref={usernameInputRef}
-              placeholder={`${socialNetwork.label} Account URL`}
-              label={`${socialNetwork.label} Account URL`}
+              ref={urlInputRef}
+              placeholder={`${platformLink.label} Account URL`}
+              label={`${platformLink.label} Account URL`}
               autoFocus={false}
               autoCorrect={false}
               keyboardType='url'
               autoComplete='off'
               autoCapitalize='none'
               returnKeyType='done'
-              withAnimatedChecbox
-              checkboxEmptyState={checkboxEmpty}
-              loading={checkingUsername}
-              checked={availableUsername}
-              errorMessage={usernameError}
-              maxLength={baseURL.length + 120}
+              maxLength={baseURL.length + MAX_INPUT_LENGTH}
               onFocus={() => {
-                ensureSelectionPosition(undefined)
+                ensureSelectionPosition(inputText)
               }}
               onSelectionChange={(e) => {
-                ensureSelectionPosition(e.nativeEvent.selection)
+                ensureSelectionPosition(inputText, e.nativeEvent.selection)
               }}
               onChangeText={(text) => {
-                setUsernameError('')
-                setCheckboxEmpty(true)
-                setAvailableUsername(false)
-                console.log(
-                  'inputText',
-                  inputText,
-                  !text.startsWith(baseURL),
-                  text
-                )
                 if (text === '' || !text.startsWith(baseURL)) {
-                  console.log('Here', text)
-                  setInputText(undefined)
+                  setInputText('')
                   setTimeout(() => {
-                    setInputText(baseURL + USERNAME_PLACEHOLDER)
+                    setInputText(getInitialUrl())
                     setTimeout(() => {
-                      ensureSelectionPosition()
-                    }, 1)
+                      ensureSelectionPosition(inputText)
+                    }, 0)
                   }, 0)
                 } else if (
-                  inputText === baseURL + USERNAME_PLACEHOLDER &&
+                  inputText === getInitialUrl() &&
                   text !== inputText
                 ) {
                   const updateText = text.replace(USERNAME_PLACEHOLDER, '')
                   setInputText(updateText)
-                  setTimeout(() => {
-                    usernameInputRef.current?.setNativeProps({
-                      selection: {
-                        start: updateText.length,
-                        end: updateText.length,
-                      },
-                    })
-                  }, 10)
                 } else {
                   setInputText(text)
                 }
@@ -237,13 +205,14 @@ export const EnterPlatformLinkPage = React.forwardRef(
               color='transparent-link'
               onPress={async () => {
                 const text = await Clipboard.getString()
-                setInputText(text)
+                setInputText(platformLink.baseURL + text)
+                setSelectionEnd(platformLink.baseURL + text)
               }}>
               <View style={styles.clipboardPasteButton}>
                 <ClipboardIcon />
-                <Text style={styles.clipboardPasteButtonText}>
+                <Caption style={styles.clipboardPasteButtonText}>
                   Paste from clipboard
-                </Text>
+                </Caption>
               </View>
             </Button>
           </View>
@@ -255,7 +224,7 @@ export const EnterPlatformLinkPage = React.forwardRef(
             { marginBottom: bottom + theme.spacing.m },
           ]}>
           <Button
-            disabled={inputText?.length < 2}
+            disabled={!isValid}
             style={styles.button}
             onPress={() => onSaveSocialNetworkHandle(inputText)}>
             {originalValue?.url ? 'Save' : 'Add'}
@@ -289,7 +258,7 @@ const createStyles = (theme: Theme) =>
     },
     clipboardPasteButtonText: {
       color: theme.color.primary,
+      fontSize: theme.fontSize.m,
       marginLeft: theme.spacing.sm,
-      fontFamily: NUNITO_SANS_BOLD,
     },
   })
