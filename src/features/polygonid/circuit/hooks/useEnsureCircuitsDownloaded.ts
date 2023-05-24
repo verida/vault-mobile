@@ -34,4 +34,6 @@ export function useEnsureCircuitsDownloaded(
       )
     ).catch(console.error)
   }, [loading, isCircuitsDownloadedResult, downloadCircuit, circuitIds])
+
+  return isCircuitsDownloaded
 }

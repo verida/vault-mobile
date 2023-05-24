@@ -7,11 +7,16 @@ import type {
 import type { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
 
 export interface PolygonIdManagerConfig {
-  readonly polygonIdPrivateKey: string
   readonly veridaPrivateKey: string
-  readonly environment: EnvironmentType
-  readonly contextName: string
-  readonly didClientConfig: AccountNodeDIDClientConfig
+  readonly veridaEnvironment: EnvironmentType
+  readonly veridaContextName: string
+  readonly veridaDidClientConfig: AccountNodeDIDClientConfig
+  readonly polygonIdPrivateKey: string
+  readonly polygonIdBlockchain: string // Blockchain
+  readonly polygonIdNetworkId: string // NetworkId
+  readonly polygonIdDidMethod: string // DidMethod
+  readonly polygonIdRevocationBaseUrl: string
+  readonly polygonIdRevocationType: string // CredentialStatusType
 }
 
 // Creates a PolygonIdManager on the web context.
