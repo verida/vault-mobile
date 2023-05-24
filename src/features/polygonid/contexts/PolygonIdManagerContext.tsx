@@ -50,6 +50,8 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const state = useCreatePolygonIdManager()
   const maybeManagerId = 'result' in state ? state.result : undefined
 
+  const isPolygonIdReady = isReady && !!maybeManagerId
+
   const handleQRCodeMessage = useCallback(
     (qrCodeMessage: string) => {
       // TODO: Consider check if Polygon ID is ready and blocking it here until it is handled in the Request screens
@@ -121,7 +123,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
 
   const handleAcceptConnectionRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
-      if (!isReady) {
+      if (!isPolygonIdReady) {
         return {
           error: new Error('Polygon ID engine is not ready.'),
         }
@@ -136,18 +138,20 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         Sentry.captureException(error)
         return {
           error: new Error(
+            // TODO: Adapt the error message to the type of error
+            // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when accepting the Polygon ID connection request.',
             { cause: error }
           ),
         }
       }
     },
-    [isReady, maybeManagerId, handleAuthorizationRequest]
+    [isPolygonIdReady, maybeManagerId, handleAuthorizationRequest]
   )
 
   const handleAcceptProofRequest = useCallback(
     async (data: AuthorizationRequestMessage) => {
-      if (!isReady) {
+      if (!isPolygonIdReady) {
         return {
           error: new Error('Polygon ID engine is not ready.'),
         }
@@ -162,18 +166,20 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         Sentry.captureException(error)
         return {
           error: new Error(
+            // TODO: Adapt the error message to the type of error
+            // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when answering the Polygon ID proof request.',
             { cause: error }
           ),
         }
       }
     },
-    [isReady, maybeManagerId, handleAuthorizationRequest]
+    [isPolygonIdReady, maybeManagerId, handleAuthorizationRequest]
   )
 
   const handleAcceptCredentialsOffer = useCallback(
     async (data: CredentialsOfferMessage) => {
-      if (!isReady) {
+      if (!isPolygonIdReady) {
         return {
           error: new Error('Polygon ID engine is not ready.'),
         }
@@ -188,25 +194,27 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         Sentry.captureException(error)
         return {
           error: new Error(
+            // TODO: Adapt the error message to the type of error
+            // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when accepting the Polygon ID credential offer.',
             { cause: error }
           ),
         }
       }
     },
-    [isReady, maybeManagerId, handleCredentialsOffer]
+    [isPolygonIdReady, maybeManagerId, handleCredentialsOffer]
   )
 
   const contextValue: PolygonIdContextType = useMemo(
     () => ({
-      isReady,
+      isReady: isPolygonIdReady,
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,
       handleAcceptCredentialsOffer,
     }),
     [
-      isReady,
+      isPolygonIdReady,
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,

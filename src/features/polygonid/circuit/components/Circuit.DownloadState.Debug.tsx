@@ -1,4 +1,6 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
+import { useTheme } from 'contexts'
+import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import {
   ActivityIndicator,
@@ -8,6 +10,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
+
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
+import { Theme } from 'styles/types'
 
 import { CircuitDownloadStatus } from '../@types'
 import {
@@ -23,6 +28,8 @@ export const CircuitDownloadStateDebug = React.memo(
     readonly circuitId: `${CircuitId}`
     readonly style?: StyleProp<ViewStyle>
   }): JSX.Element {
+    const styles = useThemeAwareStyle(createStyles)
+    const { theme } = useTheme()
     const circuitSpecificDownloadStates = useCircuitSpecificDownloadStates({
       circuitId,
     })
@@ -34,29 +41,31 @@ export const CircuitDownloadStateDebug = React.memo(
 
     return (
       <View style={style}>
+        <View style={[styles.circuitlabelContainer]}>
+          <Text style={styles.circuitlabel}>{circuitId}</Text>
+          {!circuitIsDownloaded && (
+            <ActivityIndicator color={theme.color.primary} />
+          )}
+        </View>
         {!('result' in circuitSpecificDownloadStates) ? (
           <View style={styles.row}>
-            <ActivityIndicator />
+            <ActivityIndicator color={theme.color.primary} />
           </View>
         ) : (
           <View>
-            <View style={[styles.row, styles.center]}>
-              {!circuitIsDownloaded && <ActivityIndicator />}
-              <Text style={styles.bold}>{circuitId}</Text>
-            </View>
             {Object.entries(circuitSpecificDownloadStates.result).map(
               ([circuitType, { status }]) => (
                 <View key={circuitType} style={styles.row}>
-                  <Text>{circuitType}</Text>
+                  <Text style={styles.circuitTypelabel}>{circuitType}</Text>
                   <View style={styles.flex} />
                   {status === CircuitDownloadStatus.DOWNLOADED && (
-                    <Text children='✅' />
+                    <Text style={[styles.status]}>Available</Text>
                   )}
                   {status === CircuitDownloadStatus.DOWNLOADING && (
-                    <Text children='🔄' />
+                    <Text style={[styles.status]}>Downloading...</Text>
                   )}
                   {status === CircuitDownloadStatus.UNINITIALIZED && (
-                    <Text children='❌' />
+                    <Text style={[styles.status]}>Not Available</Text>
                   )}
                 </View>
               )
@@ -68,9 +77,28 @@ export const CircuitDownloadStateDebug = React.memo(
   }
 )
 
-const styles = StyleSheet.create({
-  bold: { fontWeight: 'bold' },
-  center: { alignItems: 'center', justifyContent: 'center' },
-  flex: { flex: 1 },
-  row: { alignItems: 'center', flexDirection: 'row' },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    circuitlabelContainer: {
+      flexDirection: 'row',
+      marginBottom: theme.spacing.s,
+    },
+    circuitlabel: {
+      fontSize: theme.fontSize.l,
+      lineHeight: 22,
+      fontFamily: NUNITO_SANS_BOLD,
+    },
+    circuitTypelabel: {
+      fontSize: theme.fontSize.m,
+      lineHeight: 22,
+      fontFamily: NUNITO_SANS,
+    },
+    status: {
+      fontSize: theme.fontSize.m,
+      lineHeight: 22,
+      fontFamily: NUNITO_SANS,
+    },
+    center: { alignItems: 'center', justifyContent: 'center' },
+    flex: { flex: 1 },
+    row: { alignItems: 'center', flexDirection: 'row' },
+  })

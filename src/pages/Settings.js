@@ -72,6 +72,15 @@ const WalletConnectList = [
   },
 ]
 
+const PolygonIdList = [
+  {
+    label: 'Circuits',
+    action: 'arrow',
+    optional: true,
+    onPress: (navigation) => navigation.navigate('PolygonIdCircuitsSettings'),
+  },
+]
+
 export default (props) => {
   const { isVeridaTeamMember } = useAuth()
   const [loading, setLoading] = useState(false)
@@ -141,9 +150,13 @@ export default (props) => {
           <View>
             <PropertyList list={modifiedGeneralList} />
           </View>
-          <Text style={style.title}>Wallet Connect</Text>
+          <Text style={style.title}>WalletConnect</Text>
           <View>
             <PropertyList list={WalletConnectList} />
+          </View>
+          <Text style={style.title}>Polygon ID</Text>
+          <View>
+            <PropertyList list={PolygonIdList} />
           </View>
 
           <Text style={style.versionText}>{versionText}</Text>
