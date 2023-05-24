@@ -8,6 +8,7 @@ import {
   VeridaOnePlatformLinkCategory,
   VeridaOnePlatforms,
 } from 'api/types'
+import TrashBinIcon from 'assets/trash_bin_icon.svg'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
   EnterPlatformLinkView,
@@ -18,6 +19,8 @@ import { PlatformLinkData } from 'constants/profile'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
+
+import { PublicProfileEditMode } from './PublicProfile'
 
 export interface EditPlatformLinkScreenParams {
   screenName: string
@@ -69,12 +72,46 @@ const EditPlatformLink: React.FunctionComponent<EditPlatformLinkScreenProps> = (
     }
   }
 
+  const isEditMode = () => !!originalValue?.url
+
   return (
     <Screen
       navBar={
         <NavigationHeader
           title={`Edit ${selectedPlatform.label}`}
           left={{ icon: 'back' }}
+          right={
+            isEditMode()
+              ? {
+                  icon: <TrashBinIcon />,
+                  action: () => {
+                    Alert.alert(
+                      'Are you sure you want to delete this link?',
+                      undefined,
+                      [
+                        {
+                          text: 'Cancel',
+                          style: 'cancel',
+                        },
+                        {
+                          text: 'Delete',
+                          style: 'destructive',
+                          onPress: () => {
+                            emitter.emit('SAVE_GENERIC_PROPERTY', {
+                              screenName,
+                              value: originalValue,
+                              mode: PublicProfileEditMode.DeletePlatformURL,
+                              originalValue,
+                            })
+                            navigation.goBack()
+                          },
+                        },
+                      ]
+                    )
+                  },
+                }
+              : undefined
+          }
         />
       }>
       <View style={styles.container}>

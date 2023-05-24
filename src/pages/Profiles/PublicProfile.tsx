@@ -15,7 +15,6 @@ import React, {
 import {
   Alert,
   Dimensions,
-  LayoutAnimation,
   RefreshControl,
   ScrollView,
   StyleSheet,
@@ -73,6 +72,7 @@ export enum PublicProfileEditMode {
   DeleteCustomURL,
   SelectFeaturedAsset,
   AddPlatformLink,
+  DeletePlatformURL,
 }
 
 const SCREEN_NAME = 'PublicProfile'
@@ -677,6 +677,21 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
         setPlatformLinks(updatedPlatformLinks)
         debounceSaveProfile({ platformLinks: updatedPlatformLinks })
+        Snackbar.show({
+          text: 'Social added',
+          duration: Snackbar.LENGTH_SHORT,
+        })
+      } else if (mode === PublicProfileEditMode.DeletePlatformURL) {
+        const originalValue = payload.originalValue
+        const updatedPlatformLinks = [...platformLinks].filter(
+          (platform) => platform.url !== originalValue.url
+        )
+        setPlatformLinks(updatedPlatformLinks)
+        debounceSaveProfile({ platformLinks: updatedPlatformLinks })
+        Snackbar.show({
+          text: 'Social deleted',
+          duration: Snackbar.LENGTH_SHORT,
+        })
       }
     },
     [publicWalletAddresses]
