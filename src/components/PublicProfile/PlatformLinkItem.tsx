@@ -81,7 +81,7 @@ export const PlatformLinkItem = ({
             }}>
             <Image
               source={platformMeta.icon}
-              style={{ width: 48, height: 48 }}
+              style={{ width: 48, height: 48, borderRadius: 24 }}
               resizeMode='contain'
             />
             <View style={{ marginHorizontal: theme.spacing.s }}>

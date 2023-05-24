@@ -291,8 +291,13 @@ const createStyles = (theme: Theme) =>
       flexDirection: 'row',
       alignItems: 'center',
     },
-    iconSmall: { width: 48, height: 48, marginRight: 10 },
-    iconBig: { width: 80, height: 80, marginBottom: theme.spacing.s },
+    iconSmall: { width: 48, height: 48, borderRadius: 24, marginRight: 10 },
+    iconBig: {
+      width: 80,
+      height: 80,
+      borderRadius: 40,
+      marginBottom: theme.spacing.s,
+    },
     itemText: {
       fontSize: 18,
     },
