@@ -13,7 +13,6 @@ import {
   View,
 } from 'react-native'
 import PagerView from 'react-native-pager-view'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { VeridaOnePlatformLink, VeridaOnePlatformLinkCategory } from 'api/types'
@@ -21,8 +20,8 @@ import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
-  EnterPlatformLinkPage,
-  EnterPlatformLinkPageRefProps,
+  EnterPlatformLinkView,
+  EnterPlatformLinkViewRefProps,
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
@@ -62,12 +61,11 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
 
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const { bottom } = useSafeAreaInsets()
   const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
   const pagerRef = useRef<PagerView>(null)
   const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
   const [loading, setLoading] = useState(false)
-  const enterPlatformLinkPageRef = useRef<EnterPlatformLinkPageRefProps>(null)
+  const enterPlatformLinkPageRef = useRef<EnterPlatformLinkViewRefProps>(null)
 
   const getPageName = () => {
     switch (currentPage) {
@@ -105,8 +103,6 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
 
       const cleanUrl = url.replace(/(\s)|(\/+$)/, '')
       const cleanUsername = cleanUrl.split('/').pop()
-
-      console.log('cleanUsername', cleanUsername, cleanUrl, url)
 
       const val: VeridaOnePlatformLink = {
         category: VeridaOnePlatformLinkCategory.SOCIAL,
@@ -223,7 +219,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
           ) : null}
         </View>
         <View key={'AddSocialNetworkManually'}>
-          <EnterPlatformLinkPage
+          <EnterPlatformLinkView
             ref={enterPlatformLinkPageRef}
             platformLink={selectedNetwork}
             onSaveSocialNetworkHandle={onSaveSocialNetworkHandle}

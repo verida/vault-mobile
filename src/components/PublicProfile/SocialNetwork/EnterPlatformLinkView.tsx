@@ -35,14 +35,14 @@ interface PageProps {
   originalValue?: VeridaOnePlatformLink
 }
 
-export interface EnterPlatformLinkPageRefProps {
+export interface EnterPlatformLinkViewRefProps {
   focusInput: () => void
 }
 
-export const EnterPlatformLinkPage = React.forwardRef(
+export const EnterPlatformLinkView = React.forwardRef(
   (
     { platformLink, originalValue, onSaveSocialNetworkHandle }: PageProps,
-    receivedRef: React.ForwardedRef<EnterPlatformLinkPageRefProps>
+    receivedRef: React.ForwardedRef<EnterPlatformLinkViewRefProps>
   ) => {
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)

@@ -671,7 +671,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           }
         } else {
           // new mode
-          platformLink.order = publicCustomLinks.length // add a new link and put it bottom
+          platformLink.order = platformLinks.length // add a new link and put it bottom
           updatedPlatformLinks.push(platformLink)
         }
 

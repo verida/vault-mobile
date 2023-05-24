@@ -10,8 +10,8 @@ import {
 } from 'api/types'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
-  EnterPlatformLinkPage,
-  EnterPlatformLinkPageRefProps,
+  EnterPlatformLinkView,
+  EnterPlatformLinkViewRefProps,
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { PlatformLinkData } from 'constants/profile'
@@ -37,7 +37,7 @@ const EditPlatformLink: React.FunctionComponent<EditPlatformLinkScreenProps> = (
     route.params
 
   const styles = useThemeAwareStyle(createStyles)
-  const enterPlatformLinkPageRef = useRef<EnterPlatformLinkPageRefProps>(null)
+  const enterPlatformLinkPageRef = useRef<EnterPlatformLinkViewRefProps>(null)
   const onSaveSocialNetworkHandle = (url: string) => {
     try {
       Keyboard.dismiss()
@@ -78,7 +78,7 @@ const EditPlatformLink: React.FunctionComponent<EditPlatformLinkScreenProps> = (
         />
       }>
       <View style={styles.container}>
-        <EnterPlatformLinkPage
+        <EnterPlatformLinkView
           ref={enterPlatformLinkPageRef}
           platformLink={selectedPlatform}
           onSaveSocialNetworkHandle={onSaveSocialNetworkHandle}
