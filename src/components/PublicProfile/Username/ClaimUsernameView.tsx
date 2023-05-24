@@ -19,12 +19,12 @@ import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-export interface ClaimUsernamePageRefProps {
+export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void
 }
 
-export const ClaimUsernamePage = React.forwardRef(
-  (_, receivedRef: React.ForwardedRef<ClaimUsernamePageRefProps>) => {
+export const ClaimUsernameView = React.forwardRef(
+  (_, receivedRef: React.ForwardedRef<ClaimUsernameViewRefProps>) => {
     const navigation = useNavigation()
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)

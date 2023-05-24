@@ -32,14 +32,14 @@ interface PageProps {
   onClaimUsername: (username: string) => void
 }
 
-export interface InputUsernamePageRefProps {
+export interface InputUsernameViewRefProps {
   focusInput: () => void
 }
 
-export const InputUsernamePage = React.forwardRef(
+export const InputUsernameView = React.forwardRef(
   (
     { onClaimUsername }: PageProps,
-    receivedRef: React.ForwardedRef<InputUsernamePageRefProps>
+    receivedRef: React.ForwardedRef<InputUsernameViewRefProps>
   ) => {
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)

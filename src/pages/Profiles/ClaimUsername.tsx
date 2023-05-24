@@ -4,10 +4,10 @@ import PagerView from 'react-native-pager-view'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
-  ClaimUsernamePage,
-  ClaimUsernamePageRefProps,
-  InputUsernamePage,
-  InputUsernamePageRefProps,
+  ClaimUsernameView,
+  ClaimUsernameViewRefProps,
+  InputUsernameView,
+  InputUsernameViewRefProps,
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -21,11 +21,11 @@ const ClaimUsername = () => {
   const styles = useThemeAwareStyle(createStyles)
   const [currentPage] = useState(PageType.InputUsername)
   const pagerRef = useRef<PagerView>(null)
-  const inputUsernamePageRef = useRef<InputUsernamePageRefProps>(null)
-  const claimUsernamePageRef = useRef<ClaimUsernamePageRefProps>(null)
+  const inputUsernameViewRef = useRef<InputUsernameViewRefProps>(null)
+  const claimUsernameViewRef = useRef<ClaimUsernameViewRefProps>(null)
 
   useEffect(() => {
-    inputUsernamePageRef.current?.focusInput()
+    inputUsernameViewRef.current?.focusInput()
   }, [])
 
   return (
@@ -37,16 +37,16 @@ const ClaimUsername = () => {
         scrollEnabled={false}
         ref={pagerRef}>
         {/* InputUsername */}
-        <InputUsernamePage
-          ref={inputUsernamePageRef}
+        <InputUsernameView
+          ref={inputUsernameViewRef}
           onClaimUsername={(newUsername) => {
             pagerRef.current?.setPage(PageType.ClaimUsername)
-            claimUsernamePageRef.current?.claimUsername(newUsername)
+            claimUsernameViewRef.current?.claimUsername(newUsername)
           }}
         />
 
         {/* ClaimUsername */}
-        <ClaimUsernamePage ref={claimUsernamePageRef} />
+        <ClaimUsernameView ref={claimUsernameViewRef} />
       </PagerView>
     </Screen>
   )
