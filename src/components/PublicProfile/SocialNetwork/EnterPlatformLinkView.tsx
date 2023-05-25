@@ -1,14 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
-import { debounce } from 'lodash'
-import React, {
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -49,9 +42,7 @@ export const EnterPlatformLinkView = React.forwardRef(
     const { theme } = useTheme()
     const [baseURL, setBaseURL] = useState(platformLink.baseURL ?? '')
     const [isValid, setIsValid] = useState(false)
-    const [inputText, setInputText] = useState(
-      platformLink.baseURL + USERNAME_PLACEHOLDER
-    )
+    const [inputText, setInputText] = useState(platformLink.baseURL)
 
     const urlInputRef = useRef<TextInput>(null)
     useImperativeHandle(receivedRef, () => ({
@@ -64,69 +55,31 @@ export const EnterPlatformLinkView = React.forwardRef(
       setBaseURL(platformLink.baseURL ?? '')
       originalValue
         ? setInputText(originalValue.url)
-        : setInputText(platformLink.baseURL + USERNAME_PLACEHOLDER)
+        : setInputText(platformLink.baseURL)
     }, [platformLink, originalValue])
 
     useEffect(() => {
+      const countHttpsString = inputText?.match(/https/g)
+      if (countHttpsString && countHttpsString.length > 1) {
+        setIsValid(false)
+        return
+      }
+
       const cleanUrl = inputText
-        .replace(platformLink.baseURL, '')
-        .replace(/(\s)|(\/+$)/, '')
-      const cleanUsername = cleanUrl.split('/').pop()
+        ?.replace(platformLink.baseURL, '')
+        ?.replace(/(\s)|(\/+$)/, '')
+      const cleanUsername = cleanUrl?.split('/').pop()
       if (
-        (cleanUsername !== USERNAME_PLACEHOLDER && cleanUsername?.length) ??
-        0 > 2
+        platformLink &&
+        cleanUsername &&
+        cleanUsername !== USERNAME_PLACEHOLDER &&
+        cleanUsername.length >= 2
       ) {
         setIsValid(true)
       } else {
         setIsValid(false)
       }
     }, [inputText, platformLink])
-
-    const getInitialUrl = () => platformLink.baseURL + USERNAME_PLACEHOLDER
-
-    const ensureSelectionPosition = useCallback(
-      debounce((text: string, selection?: { start: number; end: number }) => {
-        let start, end
-        if (!selection) {
-          if (text === getInitialUrl()) {
-            start = baseURL.length
-          } else {
-            start = text.length
-          }
-        } else {
-          start = selection.start
-          end = selection.end
-          if (start < baseURL.length) {
-            start = baseURL.length
-          } else {
-            start = selection.start
-          }
-        }
-
-        if (!end || end < start) {
-          end = start
-        }
-
-        urlInputRef.current?.setNativeProps({
-          selection: {
-            start,
-            end,
-          },
-        })
-      }, 10),
-      [platformLink, baseURL]
-    )
-
-    const setSelectionEnd = (text: string) => {
-      setTimeout(() => {
-        urlInputRef.current?.setNativeProps({
-          selection: {
-            start: text.length,
-            end: text.length,
-          },
-        })
-      }, 10)
-    }
 
     if (!platformLink) return null
 
@@ -146,7 +99,7 @@ export const EnterPlatformLinkView = React.forwardRef(
           <View style={{ flex: 1 }}>
             <FormInput
               ref={urlInputRef}
-              placeholder={`${platformLink.label} Account URL`}
+              placeholder={`${platformLink.baseURL + USERNAME_PLACEHOLDER}`}
               label={`${platformLink.label} Account URL`}
               autoFocus={false}
               autoCorrect={false}
@@ -155,30 +108,8 @@ export const EnterPlatformLinkView = React.forwardRef(
               autoCapitalize='none'
               returnKeyType='done'
               maxLength={baseURL.length + MAX_INPUT_LENGTH}
-              onFocus={() => {
-                ensureSelectionPosition(inputText)
-              }}
-              onSelectionChange={(e) => {
-                ensureSelectionPosition(inputText, e.nativeEvent.selection)
-              }}
               onChangeText={(text) => {
-                if (text === '' || !text.startsWith(baseURL)) {
-                  setInputText('')
-                  setTimeout(() => {
-                    setInputText(getInitialUrl())
-                    setTimeout(() => {
-                      ensureSelectionPosition(inputText)
-                    }, 0)
-                  }, 0)
-                } else if (
-                  inputText === getInitialUrl() &&
-                  text !== inputText
-                ) {
-                  const updateText = text.replace(USERNAME_PLACEHOLDER, '')
-                  setInputText(updateText)
-                } else {
-                  setInputText(text)
-                }
+                setInputText(text)
               }}>
               <ParsedText
                 style={{
@@ -205,8 +136,8 @@ export const EnterPlatformLinkView = React.forwardRef(
               color='transparent-link'
               onPress={async () => {
                 const text = await Clipboard.getString()
-                setInputText(platformLink.baseURL + text)
-                setSelectionEnd(platformLink.baseURL + text)
+                const cleanText = text.replace(platformLink.baseURL, '')
+                setInputText(platformLink.baseURL + cleanText)
               }}>
               <View style={styles.clipboardPasteButton}>
                 <ClipboardIcon />
