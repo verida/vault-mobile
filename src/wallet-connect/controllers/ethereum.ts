@@ -71,7 +71,6 @@ export class EthereumWalletController implements IEtherWalletController {
     }
 
     const mnemonic = wallets[this.getControllerType()!].mnemonic
-    console.log('Wallet', wallets[this.getControllerType()!])
     this.wallet = ethers.Wallet.fromMnemonic(mnemonic, this.getPath(index))
     return this.wallet
   }
