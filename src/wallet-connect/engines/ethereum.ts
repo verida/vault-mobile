@@ -132,7 +132,7 @@ export async function signEthereumRequests(
 
   if (
     !getWalletController(dapp) ||
-    getWalletController(dapp)?.getControllerType() !== 'eip155'
+    getWalletController(dapp)?.getControllerType() !== 'eip155:5'
   ) {
     connector.rejectRequest({
       id: payload.id,
@@ -153,72 +153,85 @@ export async function signEthereumRequests(
     let dataToSign = null
     let addressRequested = null
 
-    switch (payload.method) {
-      case 'eth_sendTransaction':
-        transaction = payload.params[0]
-        addressRequested = transaction.from
-        if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await controller.sendTransaction(transaction)
-        } else {
-          errorMsg = 'Address requested does not match active account'
-        }
-        break
-      case 'eth_signTransaction':
-        transaction = payload.params[0]
-        addressRequested = transaction.from
-        if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await controller.signTransaction(transaction)
-        } else {
-          errorMsg = 'Address requested does not match active account'
-        }
-        break
-      case 'eth_sign':
-        dataToSign = payload.params[1]
-        addressRequested = payload.params[0]
-        if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await controller.signMessage(dataToSign)
-        } else {
-          errorMsg = 'Address requested does not match active account'
-        }
-        break
-      case 'personal_sign':
-        dataToSign = payload.params[0]
-        addressRequested = payload.params[1]
-        if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await controller.signPersonalMessage(dataToSign)
-        } else {
-          errorMsg = 'Address requested does not match active account'
-        }
-        break
-      case 'eth_signTypedData':
-        dataToSign = payload.params[1]
-        addressRequested = payload.params[0]
-        if (address.toLowerCase() === addressRequested.toLowerCase()) {
-          result = await controller.signTypedData(dataToSign)
-        } else {
-          errorMsg = 'Address requested does not match active account'
-        }
-        break
-      default:
-        break
-    }
+    try {
+      switch (payload.method) {
+        case 'eth_sendTransaction':
+          transaction = payload.params[0]
+          addressRequested = transaction.from
+          if (address.toLowerCase() === addressRequested.toLowerCase()) {
+            result = await controller.sendTransaction(transaction)
+          } else {
+            errorMsg = 'Address requested does not match active account'
+          }
+          break
+        case 'eth_signTransaction':
+          transaction = payload.params[0]
+          addressRequested = transaction.from
+          if (address.toLowerCase() === addressRequested.toLowerCase()) {
+            result = await controller.signTransaction(transaction)
+          } else {
+            errorMsg = 'Address requested does not match active account'
+          }
+          break
+        case 'eth_sign':
+          dataToSign = payload.params[1]
+          addressRequested = payload.params[0]
+          if (address.toLowerCase() === addressRequested.toLowerCase()) {
+            result = await controller.signMessage(dataToSign)
+          } else {
+            errorMsg = 'Address requested does not match active account'
+          }
+          break
+        case 'personal_sign':
+          dataToSign = payload.params[0]
+          addressRequested = payload.params[1]
+          if (address.toLowerCase() === addressRequested.toLowerCase()) {
+            result = await controller.signPersonalMessage(dataToSign)
+          } else {
+            errorMsg = 'Address requested does not match active account'
+          }
+          break
+        case 'eth_signTypedData':
+          dataToSign = payload.params[1]
+          addressRequested = payload.params[0]
+          if (address.toLowerCase() === addressRequested.toLowerCase()) {
+            result = await controller.signTypedData(dataToSign)
+          } else {
+            errorMsg = 'Address requested does not match active account'
+          }
+          break
+        default:
+          break
+      }
 
-    if (result) {
-      connector.approveRequest({
-        id: payload.id,
-        result,
-      })
-    } else {
-      let message = 'JSON RPC method not supported'
-      if (errorMsg) {
-        message = errorMsg
+      if (result) {
+        connector.approveRequest({
+          id: payload.id,
+          result,
+        })
+      } else {
+        let message = 'JSON RPC method not supported'
+        if (errorMsg) {
+          message = errorMsg
+        }
+        if (!getWalletController(dapp)?.isActive()) {
+          message = 'No Active Account'
+        }
+        connector.rejectRequest({
+          id: payload.id,
+          error: { message },
+        })
       }
-      if (!getWalletController(dapp)?.isActive()) {
-        message = 'No Active Account'
+    } catch (error: any) {
+      errorMsg = 'Unknown error'
+      if (error.message.includes('INSUFFICIENT_FUNDS')) {
+        errorMsg = 'Unable to process transaction. Insufficient funds'
+        Alert.alert('Error', errorMsg)
       }
+
       connector.rejectRequest({
         id: payload.id,
-        error: { message },
+        error: { errorMsg },
       })
     }
   }

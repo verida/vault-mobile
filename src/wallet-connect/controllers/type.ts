@@ -1,8 +1,7 @@
 import { SigningTransaction } from '../engines/algorand'
-import { DApp } from '../types'
 
 export interface IWalletController {
-  getControllerType(): DApp['chain']
+  getControllerType(): string
   isActive(): boolean | null
 }
 
