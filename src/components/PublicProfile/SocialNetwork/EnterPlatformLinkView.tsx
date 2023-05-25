@@ -53,7 +53,7 @@ export const EnterPlatformLinkView = React.forwardRef(
     }, [platformLink, originalValue])
 
     useEffect(() => {
-      // TODO: revisit, the validation for plat form links must be more comprehensive, show user validation errors as well
+      // TODO: revisit, the validation for platform links must be more comprehensive, show user validation errors as well
       const countHttpsString = inputText?.match(/https/g)
       if (countHttpsString && countHttpsString.length > 1) {
         setIsValid(false)

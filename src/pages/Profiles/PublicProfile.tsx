@@ -1111,7 +1111,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               badges, etc)
             </Text>
 
-            {/* Social Megia */}
+            {/* Social Media */}
             <View
               style={{
                 flexDirection: 'row',
