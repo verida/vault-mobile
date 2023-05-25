@@ -1,9 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
-import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
-import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { VeridaOnePlatformLink } from 'api/types'
@@ -13,14 +11,12 @@ import Container from 'components/Container'
 import { FormInput } from 'components/Input/FormInput'
 import { Caption } from 'components/Typography/Caption'
 import { PlatformLinkData } from 'constants/profile'
-import { NUNITO_SANS } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 const MAX_INPUT_LENGTH = 120
-
+const MIN_USERNAME_LENGTH = 1
 const USERNAME_PLACEHOLDER = 'username'
-const VERIDA_NAME_PATTERN = /(?!.*\/)username/
 
 interface PageProps {
   onSaveSocialNetworkHandle: (url: string) => void
@@ -40,7 +36,6 @@ export const EnterPlatformLinkView = React.forwardRef(
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
-    const [baseURL, setBaseURL] = useState(platformLink.baseURL ?? '')
     const [isValid, setIsValid] = useState(false)
     const [inputText, setInputText] = useState(platformLink.baseURL)
 
@@ -52,13 +47,13 @@ export const EnterPlatformLinkView = React.forwardRef(
     }))
 
     useEffect(() => {
-      setBaseURL(platformLink.baseURL ?? '')
       originalValue
         ? setInputText(originalValue.url)
         : setInputText(platformLink.baseURL)
     }, [platformLink, originalValue])
 
     useEffect(() => {
+      // TODO: revisit, the validation for plat form links must be more comprehensive, show user validation errors as well
       const countHttpsString = inputText?.match(/https/g)
       if (countHttpsString && countHttpsString.length > 1) {
         setIsValid(false)
@@ -72,8 +67,7 @@ export const EnterPlatformLinkView = React.forwardRef(
       if (
         platformLink &&
         cleanUsername &&
-        cleanUsername !== USERNAME_PLACEHOLDER &&
-        cleanUsername.length >= 2
+        cleanUsername.length >= MIN_USERNAME_LENGTH
       ) {
         setIsValid(true)
       } else {
@@ -81,7 +75,7 @@ export const EnterPlatformLinkView = React.forwardRef(
       }
     }, [inputText, platformLink])
 
-    if (!platformLink) return null
+    if (!platformLink?.baseURL) return null
 
     return (
       <Container
@@ -107,31 +101,13 @@ export const EnterPlatformLinkView = React.forwardRef(
               autoComplete='off'
               autoCapitalize='none'
               returnKeyType='done'
-              maxLength={baseURL.length + MAX_INPUT_LENGTH}
+              maxLength={platformLink.baseURL.length + MAX_INPUT_LENGTH}
+              value={inputText}
               onChangeText={(text) => {
                 setInputText(text)
-              }}>
-              <ParsedText
-                style={{
-                  fontFamily: NUNITO_SANS,
-                  fontSize: theme.fontSize.m,
-                  color: theme.color.onBackground,
-                }}
-                parse={[
-                  {
-                    pattern: VERIDA_NAME_PATTERN,
-                    style: {
-                      fontFamily: NUNITO_SANS,
-                      fontSize: theme.fontSize.m,
-                      color: Color(theme.color.onBackground)
-                        .alpha(0.4)
-                        .toString(),
-                    },
-                  },
-                ]}>
-                {inputText}
-              </ParsedText>
-            </FormInput>
+              }}
+            />
+
             <Button
               color='transparent-link'
               onPress={async () => {
