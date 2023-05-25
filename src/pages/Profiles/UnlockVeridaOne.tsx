@@ -17,15 +17,15 @@ import SuccessTick from 'assets/success_tick.svg'
 import Container from 'components/Container'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import {
+  ClaimUsernameView,
+  ClaimUsernameViewRefProps,
+  InputUsernameView,
+  InputUsernameViewRefProps,
+} from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
-import ClaimUsernamePage, {
-  ClaimUsernamePageRefProps,
-} from 'components/Username/ClaimUsernamePage'
-import InputUsernamePage, {
-  InputUsernamePageRefProps,
-} from 'components/Username/InputUsernamePage'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
@@ -46,8 +46,8 @@ const UnlockVeridaOne = () => {
   const { theme } = useTheme()
   const [currentPage, setCurrentPage] = useState(PageType.UnlockVeridaOne)
   const pagerRef = useRef<PagerView>(null)
-  const inputUsernamePageRef = useRef<InputUsernamePageRefProps>(null)
-  const claimUsernamePageRef = useRef<ClaimUsernamePageRefProps>(null)
+  const inputUsernameViewRef = useRef<InputUsernameViewRefProps>(null)
+  const claimUsernameViewRef = useRef<ClaimUsernameViewRefProps>(null)
 
   const [invitationCode, setInvitationCode] = useState<string>()
   const [username, setUsername] = useState<string | undefined>(undefined)
@@ -266,7 +266,7 @@ const UnlockVeridaOne = () => {
               onPress={() => {
                 pagerRef.current?.setPage(PageType.InputUsername)
                 setTimeout(() => {
-                  inputUsernamePageRef.current?.focusInput()
+                  inputUsernameViewRef.current?.focusInput()
                 }, 400)
               }}>
               Claim Now
@@ -275,16 +275,16 @@ const UnlockVeridaOne = () => {
         </Container>
 
         {/* InputUsername */}
-        <InputUsernamePage
-          ref={inputUsernamePageRef}
+        <InputUsernameView
+          ref={inputUsernameViewRef}
           onClaimUsername={(newUsername) => {
             pagerRef.current?.setPage(PageType.ClaimUsername)
-            claimUsernamePageRef.current?.claimUsername(newUsername)
+            claimUsernameViewRef.current?.claimUsername(newUsername)
           }}
         />
 
         {/* ClaimUsername */}
-        <ClaimUsernamePage ref={claimUsernamePageRef} />
+        <ClaimUsernameView ref={claimUsernameViewRef} />
       </PagerView>
     </Screen>
   )

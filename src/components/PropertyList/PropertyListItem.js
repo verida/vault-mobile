@@ -1,12 +1,7 @@
+import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
-import {
-  Clipboard,
-  StyleSheet,
-  Switch,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 

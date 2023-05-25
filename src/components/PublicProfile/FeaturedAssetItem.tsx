@@ -1,8 +1,8 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { OneProfileFeaturedAsset } from 'types/profile'
 
+import { VeridaOneFeaturedAsset } from 'api/types'
 import EditIcon from 'assets/edit_icon.svg'
 import PlusIcon from 'assets/plus_icon.svg'
 import { NftItem } from 'components/Assets/NftItem'
@@ -10,7 +10,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 type Props = {
-  featuredAsset?: OneProfileFeaturedAsset
+  featuredAsset?: VeridaOneFeaturedAsset
   lastItemIndex: number
   index: number
   onEdit: () => void

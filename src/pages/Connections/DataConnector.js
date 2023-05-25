@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  itemIcon: { width: 48, height: 48, marginRight: 10 },
+  itemIcon: { width: 48, height: 48, borderRadius: 24, marginRight: 10 },
   itemText: {
     fontSize: 18,
   },
