@@ -8,8 +8,6 @@ import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
-import { PolygonIdProvider } from 'features/polygonid'
-import { VeramoProvider } from 'features/veramo'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -29,7 +27,7 @@ import SwitchAccountToast from 'components/SwitchAccountToast'
 import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
 import linking from 'navigation/linkingConfiguration'
-import RootNavigator, { navigationRef } from 'navigation/RootNavigator'
+import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
@@ -123,14 +121,10 @@ function App() {
                       <ActionSheetProvider>
                         <WalletConnectProvider>
                           <WalletConnectProviderv2>
-                            <VeramoProvider>
-                              <PolygonIdProvider>
-                                <GestureHandlerRootView style={{ flex: 1 }}>
-                                  <RootNavigator />
-                                </GestureHandlerRootView>
-                                <MetaServerChecks />
-                              </PolygonIdProvider>
-                            </VeramoProvider>
+                            <GestureHandlerRootView style={{ flex: 1 }}>
+                              <RootNavigator />
+                            </GestureHandlerRootView>
+                            <MetaServerChecks />
                           </WalletConnectProviderv2>
                         </WalletConnectProvider>
                       </ActionSheetProvider>

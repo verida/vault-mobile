@@ -61,11 +61,16 @@ const CREDENTIAL_SCHEMA =
 
 export interface PolygonIDManagerConfig {
   // TODO: Find a better way to pass the sensitive information to the manager.
-  polygonIdPrivateKey: string;
   veridaPrivateKey: string;
-  environment: EnvironmentType;
-  contextName: string;
-  didClientConfig: AccountNodeDIDClientConfig;
+  veridaEnvironment: EnvironmentType;
+  veridaContextName: string;
+  veridaDidClientConfig: AccountNodeDIDClientConfig;
+  polygonIdPrivateKey: string;
+  polygonIdBlockchain: Blockchain;
+  polygonIdNetworkId: NetworkId;
+  polygonIdDidMethod: DidMethod;
+  polygonIdRevocationBaseUrl: string;
+  polygonIdRevocationType: CredentialStatusType;
 }
 
 // Convert a base64 encoded string to a Uint8Array.
@@ -218,36 +223,18 @@ export class PolygonIDManager {
       this.credentialWallet
     );
 
-    // TODO: Check if the hostUrl and the rhsUrl are constants or if they should be configurable.
     const { did } = await this.identityWallet.createIdentity({
-      // TODO: Add the blockchain in the config
-      blockchain: Blockchain.Polygon,
-      // TODO: Add the network in the config
-      networkId: NetworkId.Mumbai,
-      // TODO: Add the did method in the config
-      method: DidMethod.PolygonId,
+      blockchain: this.config.polygonIdBlockchain,
+      networkId: this.config.polygonIdNetworkId,
+      method: this.config.polygonIdDidMethod,
       seed: new Uint8Array(
         Buffer.from(this.config.polygonIdPrivateKey, "utf-8")
       ),
       revocationOpts: {
-        // TODO: Add the revocation base url in the config
-        baseUrl: "https://rhs-staging.polygonid.me/",
-        // TODO: Add the revocation type in the config
-        type: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
+        baseUrl: this.config.polygonIdRevocationBaseUrl,
+        type: this.config.polygonIdRevocationType,
       },
     });
-    // const { did } = await this.identityWallet.createIdentity(
-    //   "https://mywallet.com", // this is url that will be a part of auth bjj credential identifier
-    //   {
-    //     method: DidMethod.PolygonId,
-    //     blockchain: Blockchain.Polygon,
-    //     networkId: NetworkId.Mumbai,
-    //     seed: new Uint8Array(
-    //       Buffer.from(this.config.polygonIdPrivateKey, "utf-8")
-    //     ),
-    //     rhsUrl: "https://rhs-staging.polygonid.me/", // url to check revocation status of auth bjj credential, if it's not set hostUrl is used.
-    //   }
-    // );
 
     this.did = did;
 
@@ -401,15 +388,15 @@ export class PolygonIDManager {
     // Create a connection to the network and open your context
     this.context = await Network.connect({
       context: {
-        name: this.config.contextName,
+        name: this.config.veridaContextName,
       },
       client: {
-        environment: this.config.environment,
+        environment: this.config.veridaEnvironment,
       },
       account: new AutoAccount({
         privateKey: this.config.veridaPrivateKey,
-        environment: this.config.environment,
-        didClientConfig: this.config.didClientConfig,
+        environment: this.config.veridaEnvironment,
+        didClientConfig: this.config.veridaDidClientConfig,
       }),
     });
   }

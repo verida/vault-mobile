@@ -1,5 +1,5 @@
 import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
-import { StatusInfo } from 'components'
+import { Alert, StatusInfo } from 'components'
 import { usePolygonId } from 'features/polygonid'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -48,12 +48,18 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
 
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(false)
+    const [erroMessage, setErrorMessage] = useState<string | undefined>()
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
-    const { handleAcceptCredentialsOffer } = usePolygonId()
-    // TODO: Use isReady from usePolygonId to adapt the UI if not ready yet
+    const { handleAcceptCredentialsOffer, isReady: isPolygonIdReady } =
+      usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
+
+    const polygonIdNotReady =
+      details.protocols.includes('polygonid') && !isPolygonIdReady
+
+    const processButtonDisabled = processing || polygonIdNotReady
 
     const handleClose = useCallback(() => {
       navigation.goBack()
@@ -63,12 +69,14 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
       setProcessing(true)
       // TODO: Handle different actions depending on the type of request
 
-      // Doesn't need a try/catch as handle in the function itself
-      const { result } = await handleAcceptCredentialsOffer(data)
+      // Doesn't need a try/catch as handled in the function itself
+      const { result, error: requestError } =
+        await handleAcceptCredentialsOffer(data)
       if (result) {
         setSuccess(true)
       } else {
         setError(true)
+        setErrorMessage(requestError?.message)
       }
       setProcessing(false)
       // TODO: Handle the case where the user closes the screen before the request is processed
@@ -209,40 +217,49 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
                     ? 'Please wait a few seconds, we are verifying and saving the data.'
                     : success
                     ? `The data from ${name} have been successfully saved.` // TODO: Find better messages
-                    : 'Something went wrong. Try again later.'
+                    : erroMessage || 'Something went wrong. Try again later.'
                 }
               />
             )}
           </ScrollView>
 
           <View style={styles.footer}>
-            {/* TODO: Ensure the buttons have a background */}
-            {processing || error || success ? (
-              <>
-                <Button
-                  onPress={handleClose}
-                  style={styles.actionButton}
-                  disabled={processing}>
-                  Close
-                </Button>
-              </>
-            ) : (
-              <>
-                <Button
-                  onPress={handleClose}
-                  color='grey'
-                  disabled={processing}
-                  style={[styles.actionButton, styles.mr]}>
-                  Decline
-                </Button>
-                <Button
-                  onPress={handleAccept}
-                  disabled={processing}
-                  style={[styles.actionButton, styles.ml]}>
-                  Accept
-                </Button>
-              </>
-            )}
+            {polygonIdNotReady ? (
+              <Alert type='warning' style={styles.footerAlert}>
+                <Text style={styles.footerAlertContent}>
+                  The Polygon ID engine is not ready yet. Please wait a moment
+                </Text>
+              </Alert>
+            ) : null}
+            <View style={styles.footerActionsContainer}>
+              {/* TODO: Ensure the buttons have a background */}
+              {processing || error || success ? (
+                <>
+                  <Button
+                    onPress={handleClose}
+                    style={styles.actionButton}
+                    disabled={processing}>
+                    Close
+                  </Button>
+                </>
+              ) : (
+                <>
+                  <Button
+                    onPress={handleClose}
+                    color='grey'
+                    disabled={processing}
+                    style={[styles.actionButton, styles.mr]}>
+                    Decline
+                  </Button>
+                  <Button
+                    onPress={handleAccept}
+                    disabled={processButtonDisabled}
+                    style={[styles.actionButton, styles.ml]}>
+                    Accept
+                  </Button>
+                </>
+              )}
+            </View>
           </View>
         </View>
       </>
@@ -354,11 +371,19 @@ const createStyles = (theme: Theme) =>
     },
     footer: {
       backgroundColor: theme.color.background,
-      flexDirection: 'row',
       paddingHorizontal: theme.spacing.m,
       paddingVertical: theme.spacing.sm,
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
+    },
+    footerAlert: {
+      marginBottom: theme.spacing.sm,
+    },
+    footerAlertContent: {
+      flexDirection: 'row',
+    },
+    footerActionsContainer: {
+      flexDirection: 'row',
     },
     actionButton: {
       flex: 1,
