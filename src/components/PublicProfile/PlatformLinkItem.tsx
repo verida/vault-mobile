@@ -100,7 +100,11 @@ export const PlatformLinkItem = ({
                   marginRight: theme.spacing.xs,
                   color: Color(theme.color.onBackground).alpha(0.5).toString(),
                 }}>
-                {platformLink.accountId ? `@${platformLink.accountId}` : 'N/A'}
+                {platformLink.accountId
+                  ? `${platformMeta.displayedPrefix || ''}${
+                      platformLink.accountId
+                    }`
+                  : 'N/A'}
               </Text>
             </View>
           </View>

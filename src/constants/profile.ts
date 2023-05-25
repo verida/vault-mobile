@@ -5,7 +5,7 @@ import { VeridaOnePlatforms } from 'api/types'
 const FacebookIcon = require('assets/social_icons/facebook.png')
 const TwitterIcon = require('assets/social_icons/twitter.png')
 const InstagramIcon = require('assets/social_icons/instagram.png')
-const DiscordIcon = require('assets/social_icons/discord.png')
+// const DiscordIcon = require('assets/social_icons/discord.png')
 const LinkedInIcon = require('assets/social_icons/linkedin.png')
 const TelegramIcon = require('assets/social_icons/telegram.png')
 const GithubIcon = require('assets/social_icons/github.png')
@@ -18,6 +18,7 @@ export interface PlatformLinkData {
   label: string
   icon: ImageSourcePropType
   baseURL: string
+  displayedPrefix?: string
 }
 
 // Supported platforms
@@ -33,6 +34,7 @@ export const PLATFORM_LINKS: Record<VeridaOnePlatforms, PlatformLinkData> = {
     label: 'Twitter',
     icon: TwitterIcon,
     baseURL: 'https://twitter.com/',
+    displayedPrefix: '@',
   },
   [VeridaOnePlatforms.INSTAGRAM]: {
     name: 'instagram',
@@ -57,7 +59,8 @@ export const PLATFORM_LINKS: Record<VeridaOnePlatforms, PlatformLinkData> = {
     name: 'telegram',
     label: 'Telegram',
     icon: TelegramIcon,
-    baseURL: 'https://telegram.com/',
+    baseURL: 'https://t.me/',
+    displayedPrefix: '@',
   },
   [VeridaOnePlatforms.GITHUB]: {
     name: 'github',

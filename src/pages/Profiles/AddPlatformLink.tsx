@@ -17,7 +17,6 @@ import Icon from 'react-native-vector-icons/MaterialIcons'
 
 import { VeridaOnePlatformLink, VeridaOnePlatformLinkCategory } from 'api/types'
 import Button from 'components/Button'
-import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
   EnterPlatformLinkView,
@@ -64,7 +63,6 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
   const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
   const pagerRef = useRef<PagerView>(null)
   const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
-  const [loading, setLoading] = useState(false)
   const enterPlatformLinkPageRef = useRef<EnterPlatformLinkViewRefProps>(null)
 
   const getPageName = () => {
@@ -151,39 +149,35 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
         }}
         ref={pagerRef}>
         <View key={'ListSocialNetworks'}>
-          {loading ? (
-            <LoadingView />
-          ) : (
-            <View style={styles.container}>
-              {availablePlatformLinks.map((item) => {
-                return (
-                  <TouchableOpacity
-                    key={item.name}
-                    onPress={() => {
-                      setSelectedNetwork(item)
-                      pagerRef.current?.setPage(
-                        isSupportedNetwork(item)
-                          ? PageType.AddSocialNetwork
-                          : PageType.AddSocialNetworkManually
-                      )
-                    }}
-                    style={styles.connectionItem}>
-                    <View style={styles.connectionItemIconLabel}>
-                      <Image style={styles.iconSmall} source={item.icon} />
-                      <Text style={styles.itemText}>{item.label}</Text>
-                    </View>
-                    <Icon
-                      size={22}
-                      name='keyboard-arrow-right'
-                      color={Color(theme.color.onBackground)
-                        .alpha(0.45)
-                        .toString()}
-                    />
-                  </TouchableOpacity>
-                )
-              })}
-            </View>
-          )}
+          <View style={styles.container}>
+            {availablePlatformLinks.map((item) => {
+              return (
+                <TouchableOpacity
+                  key={item.name}
+                  onPress={() => {
+                    setSelectedNetwork(item)
+                    pagerRef.current?.setPage(
+                      isSupportedNetwork(item)
+                        ? PageType.AddSocialNetwork
+                        : PageType.AddSocialNetworkManually
+                    )
+                  }}
+                  style={styles.connectionItem}>
+                  <View style={styles.connectionItemIconLabel}>
+                    <Image style={styles.iconSmall} source={item.icon} />
+                    <Text style={styles.itemText}>{item.label}</Text>
+                  </View>
+                  <Icon
+                    size={22}
+                    name='keyboard-arrow-right'
+                    color={Color(theme.color.onBackground)
+                      .alpha(0.45)
+                      .toString()}
+                  />
+                </TouchableOpacity>
+              )
+            })}
+          </View>
         </View>
         <View key={'AddSocialNetwork'}>
           {isSupportedNetwork(selectedNetwork) ? (
