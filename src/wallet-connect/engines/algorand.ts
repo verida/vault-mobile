@@ -1,5 +1,6 @@
 import algosdk from 'algosdk'
 import { Alert } from 'react-native'
+import { ALGORAND_CHAIN_TESTNET } from 'wallet-connect/constants'
 
 import { getWalletController } from '../controllers'
 import { AlgorandWalletController } from '../controllers/algorand'
@@ -110,7 +111,7 @@ export async function signAlgorandRequests(
 
   if (
     !getWalletController(dapp) ||
-    getWalletController(dapp)?.getControllerType() !== 'algorand'
+    getWalletController(dapp)?.getControllerType() !== ALGORAND_CHAIN_TESTNET
   ) {
     connector.rejectRequest({
       id: payload.id,
