@@ -3,11 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import {
-  editable,
-  isEnabledVeridaOneProfile,
-  saveStatusEnabledVeridaOneProfile,
-} from 'helpers/profile'
+import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
@@ -720,7 +716,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       setPublicCustomLinks([])
       setUsername(undefined)
 
-      saveStatusEnabledVeridaOneProfile(false)
       // Check Verida One enabbled status
       ;(async () => {
         setEnabledVeridaOne(await isEnabledVeridaOneProfile())
