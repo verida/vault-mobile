@@ -12,15 +12,14 @@ import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import UsernameManager from 'api/UsernameManager'
+import Button from 'components/Button'
 import Container from 'components/Container'
 import { FormInput } from 'components/Input/FormInput'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
+import { NUNITO_SANS } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
-
-import Button from '../../components/Button'
-import { NUNITO_SANS } from '../../constants/text'
 
 const MIN_INPUT_LENGTH = 2
 const MAX_INPUT_LENGTH = 32
@@ -33,14 +32,14 @@ interface PageProps {
   onClaimUsername: (username: string) => void
 }
 
-export interface InputUsernamePageRefProps {
+export interface InputUsernameViewRefProps {
   focusInput: () => void
 }
 
-const InputUsernamePage = React.forwardRef(
+export const InputUsernameView = React.forwardRef(
   (
     { onClaimUsername }: PageProps,
-    receivedRef: React.ForwardedRef<InputUsernamePageRefProps>
+    receivedRef: React.ForwardedRef<InputUsernameViewRefProps>
   ) => {
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
@@ -220,8 +219,6 @@ const InputUsernamePage = React.forwardRef(
     )
   }
 )
-
-export default InputUsernamePage
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

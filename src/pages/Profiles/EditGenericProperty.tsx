@@ -35,7 +35,7 @@ export interface GenericEditPropertyScreenProps {
   title: string
   option: {
     label: string
-    value: string | Record<string, any>
+    value: string | Record<string, any> | undefined
     type: 'input' | 'select' | 'textarea'
     placeholder: string
     description?: string

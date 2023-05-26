@@ -11,11 +11,11 @@ import Words from './Words'
 const WordLayout = ({ words, template, ...props }) => (
   <View style={style.layout}>
     <View style={style.container}>
-      {!template.length && <Text>None words in the order</Text>}
+      {!template.length && <Text>No words in the correct order</Text>}
       <Words
         id='selected'
-        words={template}
-        template={[]}
+        words={words}
+        template={template}
         onSelect={props.removeWord}
       />
     </View>
@@ -39,8 +39,8 @@ const mapStateToProps = (rootState) => {
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addWord: (item) => dispatch(addWord(item)),
-    removeWord: (item) => dispatch(removeWord(item)),
+    addWord: (index) => dispatch(addWord(index)),
+    removeWord: (index) => dispatch(removeWord(index)),
   }
 }
 

@@ -14,7 +14,7 @@ import Layout from '../../components/Layouts/Layout'
 import Words from '../../components/Words'
 
 const VerifyPhrase = (props) => {
-  const { words = [], resetPhrase, route } = props
+  const { selected = [], resetPhrase, route } = props
   const [error, showError] = useState(null)
   const [verified, setVerified] = useState(null)
   const dispatch = useDispatch()
@@ -22,11 +22,13 @@ const VerifyPhrase = (props) => {
 
   useEffect(() => {
     showError(false)
+    const selectedWords = selected.map((item) => route.params.shuffled[item])
+
     setVerified(
-      words.join(' ') ===
+      selectedWords.join(' ') ===
         AccountManager.getInstance().getSelectedAccount().mnemonic
     )
-  }, [words])
+  }, [selected])
 
   useEffect(() => {
     return () => {
@@ -89,7 +91,7 @@ const VerifyPhrase = (props) => {
 const mapStateToProps = (rootState) => {
   const state = rootState.main
   return {
-    words: state.template,
+    selected: state.template,
   }
 }
 

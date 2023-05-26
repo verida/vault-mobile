@@ -8,6 +8,8 @@ import {
 
 import { createAction } from '../helpers'
 
+type SimpleWalletConnect = { key: string; session: WalletConnect['session'] }
+
 export function removeWalletConnectDapp(payload: {
   walletId: string
   key: string
@@ -25,7 +27,7 @@ export function setWalletConnectDapp(payload: {
 
 export function setWalletConnectPeerMeta(payload: {
   walletId: string
-  connector: WalletConnect
+  connector: SimpleWalletConnect
   peerMeta: WalletConnectClientMeta
 }) {
   return createAction('SET_WC_PEER_META', payload)
@@ -33,21 +35,17 @@ export function setWalletConnectPeerMeta(payload: {
 
 export function approveWalletConnectSession(payload: {
   walletId: string
-  connector: WalletConnect
+  connector: SimpleWalletConnect
   chainId: number
   chain: DApp['chain']
   accounts: string[]
 }) {
-  payload.connector.approveSession({
-    chainId: payload.chainId,
-    accounts: payload.accounts,
-  })
   return createAction('APPROVE_WC_SESSION', payload)
 }
 
 export function rejectWalletConnectSession(payload: {
   walletId: string
-  connector: WalletConnect
+  connector: SimpleWalletConnect
 }) {
   return createAction('REJECT_WC_SESSION', payload)
 }

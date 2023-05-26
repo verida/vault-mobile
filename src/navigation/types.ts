@@ -6,7 +6,9 @@ import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
+import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
+import { EditPlatformLinkScreenParams } from 'pages/Profiles/EditPlatformLink'
 import {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
@@ -105,7 +107,7 @@ export type MainStackParams = {
   WalletConnect: undefined
   WalletConnectDapp: { dapp: DApp }
   WalletConnectDappv2: { dapp: DAppv2 }
-  SingleConnection: undefined
+  SingleConnection: { provider: string; connectNow?: boolean }
   Success: undefined
 
   NFTCollectionDetail: { collection: NFTCollection }
@@ -122,6 +124,8 @@ export type MainStackParams = {
   ProofRequest: ProofRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
 
+  AddPlatformLink: AddPlatformLinkScreenParams
+  EditPlatformLink: EditPlatformLinkScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 

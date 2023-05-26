@@ -52,6 +52,10 @@ export default class DataConnectorsManager {
     DataConnectorsEvents.getInstance().on(eventName, fn)
   }
 
+  static async off(eventName: string, fn: any) {
+    DataConnectorsEvents.getInstance().off(eventName, fn)
+  }
+
   static async authComplete(connectorName: string, requestParams: any) {
     const connection = await this.getConnection(connectorName)
     await connection.setAuth(requestParams)
