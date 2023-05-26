@@ -20,7 +20,7 @@
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
     "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify",
-    "build:webapp": "rm -rf www && cd web && yarn && yarn build && cd .. && rm -Rf www && mkdir -p www && cp -rf web/build/* www && yarn copy:webapp:android",
+    "build:webapp": "rm -rf www && cd web && yarn && CI=false yarn build && cd .. && rm -Rf www && mkdir -p www && cp -rf web/build/* www && yarn copy:webapp:android",
     "copy:webapp:android": "rm -rf android/app/src/main/assets/www && mkdir -p android/app/src/main/assets/www && cp -rf web/build/* android/app/src/main/assets/www",
     "release:android": "yarn build:webapp && yarn android --variant=stagingRelease"
   },
