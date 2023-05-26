@@ -1111,61 +1111,61 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               badges, etc)
             </Text>
 
-            {/* Social Media */}
-            <View
-              style={{
-                flexDirection: 'row',
-                flex: 1,
-                justifyContent: 'space-between',
-                alignItems: 'center',
-              }}>
-              <Text style={styles.sectionHeader}>SOCIAL MEDIA</Text>
-              <Button
-                textStyle={{
-                  fontSize: theme.fontSize.m,
-                  marginBottom: theme.spacing.s,
-                }}
-                color='transparent-link'
-                disabled={!enabledVeridaOne}
-                onPress={() =>
-                  navigation.navigate('AddPlatformLink', {
-                    screenName: SCREEN_NAME,
-                    mode: PublicProfileEditMode.AddPlatformLink,
-                    supportedConnectPlatforms,
-                    availablePlatformLinks: Object.values(
-                      PLATFORM_LINKS
-                    ).filter(
-                      (network) =>
-                        !supportedConnectPlatforms.some(
-                          (cn) =>
-                            cn.name === network.name &&
-                            cn.syncStatus !== 'disabled'
-                        )
-                    ),
-                  })
-                }>
-                ADD NEW
-              </Button>
-            </View>
-
-            <NestableDraggableFlatList
-              data={allPlatformLinks}
-              renderItem={renderPlatformLinkItem}
-              activationDistance={60}
-              scrollEnabled={false}
-              keyExtractor={(
-                platformLink: VeridaOnePlatformLink,
-                index: number
-              ) => `${index}-${platformLink.url}`}
-              onDragEnd={({ data }) => updatePlatformLinksOrder(data)}
-            />
-            <Text style={[styles.description, { marginVertical: 0 }]}>
-              Connect your social media accounts and select which of them you
-              want to showcase on your Veria One profile
-            </Text>
-
             {enabledVeridaOne ? (
               <>
+                {/* Social Media */}
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    flex: 1,
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
+                  }}>
+                  <Text style={styles.sectionHeader}>SOCIAL MEDIA</Text>
+                  <Button
+                    textStyle={{
+                      fontSize: theme.fontSize.m,
+                      marginBottom: theme.spacing.s,
+                    }}
+                    color='transparent-link'
+                    disabled={!enabledVeridaOne}
+                    onPress={() =>
+                      navigation.navigate('AddPlatformLink', {
+                        screenName: SCREEN_NAME,
+                        mode: PublicProfileEditMode.AddPlatformLink,
+                        supportedConnectPlatforms,
+                        availablePlatformLinks: Object.values(
+                          PLATFORM_LINKS
+                        ).filter(
+                          (network) =>
+                            !supportedConnectPlatforms.some(
+                              (cn) =>
+                                cn.name === network.name &&
+                                cn.syncStatus !== 'disabled'
+                            )
+                        ),
+                      })
+                    }>
+                    ADD NEW
+                  </Button>
+                </View>
+
+                <NestableDraggableFlatList
+                  data={allPlatformLinks}
+                  renderItem={renderPlatformLinkItem}
+                  activationDistance={60}
+                  scrollEnabled={false}
+                  keyExtractor={(
+                    platformLink: VeridaOnePlatformLink,
+                    index: number
+                  ) => `${index}-${platformLink.url}`}
+                  onDragEnd={({ data }) => updatePlatformLinksOrder(data)}
+                />
+                <Text style={[styles.description, { marginVertical: 0 }]}>
+                  Connect your social media accounts and select which of them
+                  you want to showcase on your Veria One profile
+                </Text>
+
                 {/* Featured assets */}
                 <View
                   style={{
