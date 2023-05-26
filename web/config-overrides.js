@@ -1,4 +1,6 @@
 const webpack = require("webpack");
+const HtmlWebpackPlugin = require("html-webpack-plugin");
+const HtmlWebpackInlineSourcePlugin = require("@effortlessmotion/html-webpack-inline-source-plugin");
 
 module.exports = function override(config) {
   const fallback = config.resolve.fallback || {};
@@ -21,12 +23,18 @@ module.exports = function override(config) {
   });
   config.resolve.fallback = fallback;
 
-  config.plugins = (config.plugins || []).concat([
+  config.plugins = [
     new webpack.ProvidePlugin({
       process: "process/browser.js",
       Buffer: ["buffer", "Buffer"],
     }),
-  ]);
+    new HtmlWebpackPlugin({
+      inject: "body",
+      template: "public/index.html",
+      inlineSource: ".(js|css)$",
+    }),
+    new HtmlWebpackInlineSourcePlugin(),
+  ];
 
   config.module.rules = config.module.rules.map((rule) => {
     if (rule.oneOf instanceof Array) {

@@ -11,6 +11,7 @@ import UsernameManager from 'api/UsernameManager'
 import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
+import Button from 'components/Button'
 import Container from 'components/Container'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
@@ -18,14 +19,12 @@ import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-import Button from '../../components/Button'
-
-export interface ClaimUsernamePageRefProps {
+export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void
 }
 
-const ClaimUsernamePage = React.forwardRef(
-  (_, receivedRef: React.ForwardedRef<ClaimUsernamePageRefProps>) => {
+export const ClaimUsernameView = React.forwardRef(
+  (_, receivedRef: React.ForwardedRef<ClaimUsernameViewRefProps>) => {
     const navigation = useNavigation()
     const { bottom, top } = useSafeAreaInsets()
     const styles = useThemeAwareStyle(createStyles)
@@ -161,8 +160,6 @@ const ClaimUsernamePage = React.forwardRef(
     )
   }
 )
-
-export default ClaimUsernamePage
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

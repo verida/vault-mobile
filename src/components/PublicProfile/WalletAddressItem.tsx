@@ -2,8 +2,8 @@ import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { PublicWalletAddress } from 'types/profile'
 
+import { VeridaOneWalletAddress } from 'api/types'
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
 import Button from 'components/Button'
@@ -14,12 +14,12 @@ import { smallButtonHitSlop } from 'styles/button'
 import { Theme } from 'styles/types'
 
 type Props = {
-  walletAddress: PublicWalletAddress
+  walletAddress: VeridaOneWalletAddress
   drag: () => void
   isActive: boolean
   onEditName?: () => void
   setPublicAddress: (
-    publicAdress: PublicWalletAddress,
+    publicAdress: VeridaOneWalletAddress,
     visible: boolean
   ) => void
 }

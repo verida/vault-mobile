@@ -11,9 +11,9 @@ import {
   DEFAULT_ACTIVE_INDEX,
   DEFAULT_CHAIN_ID,
   DEFAULT_GAS_LIMIT,
+  ETH_CHAIN_TESTNET,
 } from '../constants/default'
 import { getChainData } from '../helpers/utilities'
-import { DApp } from '../types'
 import { IEtherWalletController } from './type'
 
 export class EthereumWalletController implements IEtherWalletController {
@@ -32,8 +32,8 @@ export class EthereumWalletController implements IEtherWalletController {
     return this.wallet.provider
   }
 
-  public getControllerType(): DApp['chain'] {
-    return 'eip155'
+  public getControllerType(): string {
+    return ETH_CHAIN_TESTNET
   }
 
   public isActive() {

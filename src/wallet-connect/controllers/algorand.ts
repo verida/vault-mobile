@@ -1,9 +1,9 @@
 /* eslint-disable no-console */
 import algosdk, { Account } from 'algosdk'
+import { ALGORAND_CHAIN_TESTNET } from 'wallet-connect/constants'
 
 import { store } from '../../reduxStore'
 import { getWalletsData } from '../../reduxStore/wallet/selectors'
-import { DApp } from '../types'
 import { IAlgoWalletController } from './type'
 
 export class AlgorandWalletController implements IAlgoWalletController {
@@ -13,8 +13,8 @@ export class AlgorandWalletController implements IAlgoWalletController {
     this.account = this.init()
   }
 
-  getControllerType(): DApp['chain'] {
-    return 'algorand'
+  getControllerType() {
+    return ALGORAND_CHAIN_TESTNET
   }
 
   public isActive() {

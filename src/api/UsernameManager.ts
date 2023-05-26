@@ -19,7 +19,7 @@ export default class UsernameManager {
    * @return boolean true if the username already exists
    */
   public static async usernameExists(username: string): Promise<boolean> {
-    const client = await this.getClient()
+    const client = await UsernameManager.getClient()
 
     try {
       const usernames = await client.getDID(username)
