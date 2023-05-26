@@ -152,10 +152,14 @@ function useWalletConnectContext() {
         <ConnectDappModal
           client={peerMeta}
           connect={(walletAddress, chainId: number, chain: DApp['chain']) => {
+            connector.approveSession({
+              chainId: chainId,
+              accounts: [walletAddress],
+            })
             dispatch(
               approveWalletConnectSession({
                 walletId: selectedWalletId,
-                connector,
+                connector: { key: connector.key, session: connector.session },
                 chainId,
                 chain,
                 accounts: [walletAddress],
@@ -168,7 +172,7 @@ function useWalletConnectContext() {
             dispatch(
               rejectWalletConnectSession({
                 walletId: selectedWalletId,
-                connector,
+                connector: { key: connector.key, session: connector.session },
               })
             )
             dismissModal()
@@ -193,7 +197,7 @@ function useWalletConnectContext() {
         dispatch(
           setWalletConnectPeerMeta({
             walletId: selectedWalletId,
-            connector,
+            connector: { key: connector.key, session: connector.session },
             peerMeta,
           })
         )

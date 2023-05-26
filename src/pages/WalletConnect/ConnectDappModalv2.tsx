@@ -10,6 +10,7 @@ import {
   View,
 } from 'react-native'
 import { useDispatch } from 'react-redux'
+import { NEAR_CHAIN_TESTNET } from 'wallet-connect/constants'
 import { nearAddresses } from 'wallet-connect/helpers/NearWalletUtil'
 import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
 import { DApp } from 'wallet-connect/types'
@@ -89,7 +90,7 @@ const ConnectDappModalv2 = (props: Props) => {
         Object.keys(requiredNamespaces).forEach((key) => {
           const accounts: string[] = []
           requiredNamespaces[key].chains.forEach((chain) => {
-            if (chain === 'near:testnet') {
+            if (chain === NEAR_CHAIN_TESTNET) {
               accounts.push(`${chain}:${firstAccountId}`)
             }
           })

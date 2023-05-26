@@ -1,6 +1,10 @@
 import React, { useMemo, useState } from 'react'
 import { Alert, Image, StyleSheet, Text, View } from 'react-native'
-import { GOERLI_CHAIN_ID } from 'wallet-connect/constants'
+import {
+  ALGORAND_CHAIN_TESTNET,
+  ETH_CHAIN_TESTNET,
+  GOERLI_CHAIN_ID,
+} from 'wallet-connect/constants'
 import { DApp, WalletConnectClientMeta } from 'wallet-connect/types'
 
 import BottomActionsModal from 'components/BottomActionsModal'
@@ -39,7 +43,6 @@ const ConnectDappModal = (props: Props) => {
   // TODO: cleanup convert main-reducer to typescript
   const walletData = useReduxState((state) => state.main.wallets.data)
   const selectedWalletID = useReduxState((state) => state.main.selectedWallet)
-
   const currentWallet = walletData[selectedWalletID]
   const accounts = currentWallet.accounts
 
@@ -51,17 +54,22 @@ const ConnectDappModal = (props: Props) => {
       Object.keys(accounts)
         .reverse() // show ethereum first
         // Filter only supported chains
-        .filter((key) => ['algorand', 'eip155'].includes(key))
+        .filter(
+          (key) => key === ALGORAND_CHAIN_TESTNET || key === ETH_CHAIN_TESTNET
+        )
         // Filter out watched wallets
         .filter((key) => !!accounts[key].mnemonic || !!accounts[key].privateKey)
-        .map((key) => ({
-          ...accounts[key],
-          label: `${accounts[key].address}`,
-          flag: fullNetworkName(key as any),
-          value: accounts[key].address,
-          chainId: key === 'eip155' ? GOERLI_CHAIN_ID : 0, // only support Goerli for now
-          chain: key,
-        })),
+        .map((key) => {
+          const [chain] = key.split(':')
+          return {
+            ...accounts[key],
+            label: `${accounts[key].address}`,
+            flag: fullNetworkName(chain as any),
+            value: accounts[key].address,
+            chainId: key.startsWith('eip155') ? GOERLI_CHAIN_ID : 0, // only support Goerli for now
+            chain: chain,
+          }
+        }),
     [accounts]
   )
 

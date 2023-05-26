@@ -1,5 +1,5 @@
 import * as sentry from '@sentry/react-native'
-import React, { useEffect, useState } from 'react'
+import React, { Fragment, useEffect, useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import JSONTree from 'react-native-json-tree'
@@ -221,14 +221,10 @@ const TransactionRequestModal = (props: Props) => {
             ) : null}
 
             {params.map((param) => (
-              <>
-                <Row
-                  key={param.label}
-                  leftText={param.label}
-                  rightText={param.value}
-                />
+              <Fragment key={param.label}>
+                <Row leftText={param.label} rightText={param.value} />
                 <Spacer height={16} />
-              </>
+              </Fragment>
             ))}
             <Spacer height={48} />
           </ScrollView>
