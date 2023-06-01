@@ -1,6 +1,6 @@
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { AvailableBadge } from 'types/badges'
+import { AvailableBadge } from 'types/Badges'
 
 import ErrorStatusIcon from 'assets/icons/error_status_icon.svg'
 import Button from 'components/Button'
@@ -70,7 +70,14 @@ const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({
             resizeMode='contain'
             imageStyle={styles.badgeImageBackground}
             style={styles.badgeImageBackgroundContainer}>
-            <Image style={styles.badgeImage} src={badgeInfo.imageUrl} />
+            <Image
+              style={styles.badgeImage}
+              source={
+                typeof badgeInfo.image === 'string'
+                  ? { uri: badgeInfo.image }
+                  : badgeInfo.image
+              }
+            />
           </ImageBackground>
         )}
         <View style={styles.statusInfoContainer}>
@@ -126,7 +133,7 @@ const createStyles = (theme: Theme) => {
       fontSize: 28,
       lineHeight: 36.4,
       textAlign: 'center',
-      color: theme.color.primary100,
+      color: theme.color.onBackground,
       marginTop: theme.spacing.l,
       marginBottom: theme.spacing.m,
     },
@@ -135,7 +142,7 @@ const createStyles = (theme: Theme) => {
       fontSize: theme.fontSize.l,
       lineHeight: 24,
       textAlign: 'center',
-      color: theme.color.primary100,
+      color: theme.color.onBackground,
       opacity: 0.6,
     },
   })

@@ -1,3 +1,4 @@
+import Color from 'color'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
 import { AvailableBadge } from 'types/badges'
@@ -25,12 +26,19 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onPressClaim }) => {
           resizeMode='cover'
           imageStyle={styles.badgeImageBackground}
           style={styles.badgeImageBackgroundContainer}>
-          <Image style={styles.badgeImage} source={{ uri: badge.imageUrl }} />
+          <Image
+            style={styles.badgeImage}
+            source={
+              typeof badge.image === 'string'
+                ? { uri: badge.image }
+                : badge.image
+            }
+          />
         </ImageBackground>
         <View style={styles.textWrapper}>
           <Text style={styles.title}>{badge.label}</Text>
           <Text style={styles.subText} numberOfLines={1} ellipsizeMode='middle'>
-            {badge?.claimMetadata || 'Not connected'}
+            {badge?.name || 'Not connected'}
           </Text>
         </View>
       </View>
@@ -86,13 +94,13 @@ const createStyles = (theme: Theme) => {
       fontFamily: NUNITO_SANS_SEMIBOLD,
       fontWeight: '600',
       fontSize: theme.fontSize.l,
-      color: theme.color.primary100,
+      color: theme.color.onBackground,
     },
     subText: {
       fontFamily: NUNITO_SANS,
       fontWeight: '600',
       fontSize: theme.fontSize.s,
-      color: theme.color.primary100,
+      color: Color(theme.color.onBackground).alpha(0.7).toString(),
     },
     actionButton: {
       borderRadius: 70,

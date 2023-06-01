@@ -9,7 +9,6 @@ import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
-import { WHAT_IS_VERIDA_BADGES_MODAL_CONTENT } from 'constants/badges'
 import { TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { VERIDA_ONE_FAQ_URL } from 'constants/url'
@@ -87,7 +86,21 @@ const ClaimableBadges: React.FC = () => {
         footer={whatIsVeridaBadgesModalFooter}>
         <View style={styles.modalContent}>
           <Paragraph style={styles.bodyText}>
-            {WHAT_IS_VERIDA_BADGES_MODAL_CONTENT}
+            Verida One is your web3 native public profile to showcase your web2
+            and web3 identities. It provides a single source of truth about
+            activities and ownership that can be read by both humans (via a web
+            UI) and programs (via methods including on-chain records and Verida
+            APIs for off-chain data). Verida Badges represent a verified proof
+            of ownership of a web2 platform account that you control. Verida
+            badges are on-chain Soulbound Tokens which are a tokenised
+            attestation of your ownership claim. You can mint Verida Badges from
+            the Verida Vault and have them displayed on your public Verida One
+            profile. By issuing verified Badges, Verida acts as a trusted
+            authority recognised by users, communities and dapps. Soulbound
+            Tokens (SBTs) are a new cryptographic primitive that attests and
+            graphs reputational value in a native blockchain environment. SBTs
+            are a kind of non-transferable asset, often referred to as a
+            Non-Transferable NFT.
           </Paragraph>
         </View>
       </AppModal>

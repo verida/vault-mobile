@@ -220,7 +220,7 @@ export enum VeridaOnePlatformLinkCategory {
 }
 
 export enum VeridaOnePlatforms {
-  // DISCORD = 'discord',
+  DISCORD = 'discord',
   FACEBOOK = 'facebook',
   GITHUB = 'github',
   LINKEDIN = 'linkedin',

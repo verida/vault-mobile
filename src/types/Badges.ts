@@ -23,6 +23,8 @@ export interface AvailableBadge {
   /* CAIP addreses that have not yet claimed this badge, but could */
   claimableAddresses?: string[]
 
+  credentialItem?: any
+
   // image_data?: string
   // external_url?: string
   // background_color?: string
@@ -40,4 +42,15 @@ export interface ClaimBadgeQuery {
   type?: string
   origin?: string
   blockchainNetwork?: string
+}
+
+export enum BadgeType {
+  DISCORD_ACCOOUNT = 'discord-account',
+}
+
+export const BadgeTypeMeta = {
+  [BadgeType.DISCORD_ACCOOUNT]: {
+    label: 'Discord Account',
+    image: require('assets/badge_images/discord_account_badge.png'), // TODO: remove, should download somewhere, IPFS?
+  },
 }

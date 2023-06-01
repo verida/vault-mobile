@@ -11,7 +11,7 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { AvailableBadge } from 'types/badges'
+import { AvailableBadge } from 'types/Badges'
 import { WalletItem } from 'types/wallet'
 
 import { BadgeManager } from 'api/BadgeManager'
@@ -22,12 +22,13 @@ import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
+import { MINT_SBT_POLYGON_MUMBAI } from 'constants/badges'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
 import ClaimBadgeStatus from 'pages/ClaimBadges/ClaimBadgeStatus'
-import { selectChains } from 'reduxStore/tokens/selectors'
+import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getAddressList } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
@@ -52,12 +53,13 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   const { badge } = useParams<{ badge: AvailableBadge }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
+  const [mintingBadge, setMintingBadge] = useState(false)
   const [selectedAddress, setSelectedAddress] = useState<
     WalletItem | undefined
   >(defaultSelectedAddress)
   const [modalVisible, setModalVisible] = useState(false)
   // TODO: get estimated gas fee from an api for blockchain operations.
-  const [estimatedGasFee] = useState('0.001 ETH (1.55 USD)')
+  const [estimatedGasFee] = useState('0.1 MATIC (0.089 USD)')
 
   // TODO: Handle no data returned. ie: not connected or error
 
@@ -72,20 +74,23 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
 
   const handleClaimAction = async () => {
     try {
-      await BadgeManager.claimBadge(badge.origin, badge.type)
+      setMintingBadge(true)
+      await BadgeManager.claimBadge(
+        badge.credentialItem,
+        selectedAddress!.address
+      )
       setStatus('success')
     } catch (err) {
       // @todo: catch error and display error message to the user
       console.log(err.message)
+    } finally {
+      setMintingBadge(false)
     }
   }
 
   const handleAddressSelection = (selection: WalletItem) => {
-    const address = addressList.find(
-      (item) => item.id === selection.id
-    ) as WalletItem
     handleCloseModal()
-    setSelectedAddress(address)
+    setSelectedAddress(selection)
   }
 
   const handleManageWalletsPress = () => {
@@ -121,15 +126,20 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
               resizeMode='cover'
               imageStyle={styles.badgeImageBackground}
               style={styles.badgeImageBackgroundContainer}>
-              <Image src={badge.imageUrl} style={styles.badgeImage} />
+              <Image
+                source={
+                  typeof badge.image === 'string'
+                    ? { uri: badge.image }
+                    : badge.image
+                }
+                style={styles.badgeImage}
+              />
             </ImageBackground>
           </View>
           <View>
             <Text style={styles.title}>{badge.label} Badge</Text>
             <Text style={styles.bodyText}>
-              {`${badge.description}: ${
-                badge?.claimMetadata || 'Not connected'
-              }`}
+              {`${badge.description}: ${badge?.name || 'Not connected'}`}
             </Text>
           </View>
           <View style={styles.addressSection}>
@@ -157,8 +167,8 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
           </View>
           <Button
             color='primary'
-            disabled={false}
-            loading={false}
+            disabled={mintingBadge}
+            loading={mintingBadge}
             style={styles.actionButton}
             onPress={handleClaimAction}>
             Claim
@@ -187,14 +197,13 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
-  const network = 'eip155'
-  // TODO: Define the list of supported network somewhere appropriate
-  const chains = selectChains(rootState)
+  const network = MINT_SBT_POLYGON_MUMBAI
+  const chains = getBlockchainNetworks(rootState)
   const addressList = getAddressList(state, chains, network)
+
   // TODO: Allow getting addresses from a list of networks, not just one
   // TODO: Is network the right word?
-  const defaultSelectedAddress =
-    addressList.length > 0 ? addressList[0] : undefined
+  const defaultSelectedAddress = addressList?.length > 0 ? addressList[0] : ''
   // TODO: Find a better way to get the default address, maybe from the currently selected wallet.
   return {
     addressList,
@@ -265,7 +274,7 @@ const createStyles = (theme: Theme) => {
       fontFamily: NUNITO_SANS,
       fontWeight: '600',
       fontSize: theme.fontSize.m,
-      color: theme.color.primary100,
+      color: theme.color.onBackground,
       marginBottom: theme.spacing.s,
     },
     title: {
@@ -273,7 +282,7 @@ const createStyles = (theme: Theme) => {
       fontWeight: '700',
       fontSize: 22,
       textAlign: 'justify',
-      color: theme.color.primary100,
+      color: theme.color.onBackground,
       marginTop: theme.spacing.l,
       marginBottom: theme.spacing.s,
     },
@@ -281,7 +290,7 @@ const createStyles = (theme: Theme) => {
       fontFamily: NUNITO_SANS,
       fontWeight: '600',
       fontSize: theme.fontSize.s,
-      color: theme.color.grey400,
+      color: theme.color.onBackground,
       marginBottom: theme.spacing.m,
     },
     addressListItem: {

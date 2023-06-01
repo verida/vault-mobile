@@ -1,4 +1,13 @@
-import { AvailableBadge, ClaimBadgeQuery, UserBadge } from 'types/badges'
+import {
+  AvailableBadge,
+  BadgeType,
+  BadgeTypeMeta,
+  ClaimBadgeQuery,
+  UserBadge,
+} from 'types/Badges'
+
+import AccountManager from './AccountManager'
+import { SBTManager } from './SBTManager'
 
 // @todo: replace with API
 const availableBadges: AvailableBadge[] = [
@@ -39,13 +48,43 @@ const availableBadges: AvailableBadge[] = [
 ]
 
 class BadgeApi {
+  private sbtManager: SBTManager
+
+  constructor() {
+    this.sbtManager = new SBTManager()
+  }
+
   /**
    * Get all the available badges supported by Verida
    *
    * Some of these will not be claimable (see `.claimable` property)
    */
   public async getAvailableBadges(origin?: string): Promise<AvailableBadge[]> {
-    return availableBadges
+    const vault = AccountManager.getInstance().vault!
+    const folder = await vault.data.selectFolder('credentials') // TODO: config
+    const items = await folder.getMany(
+      {
+        credentialSchema:
+          'https://common.schemas.verida.io/token/sbt/credential/v0.1.0/schema.json', // TODO: is this the right filter?
+      },
+      {
+        sort: [{ insertedAt: 'desc' }],
+      }
+    )
+
+    return items.map((item: any) => ({
+      id: item._id,
+      label: BadgeTypeMeta[item.credentialData.type as BadgeType].label,
+      attributes: item.credentialData.attributes,
+      description: item.credentialData.description,
+      did: item.credentialData.did,
+      didAddress: item.credentialData.didAddress,
+      image: BadgeTypeMeta[item.credentialData.type as BadgeType].image, // Hardcode for now
+      name: item.credentialData.name,
+      type: item.credentialData.type,
+      uniqueAttribute: item.credentialData.uniqueAttribute,
+      credentialItem: item,
+    }))
   }
 
   /**
@@ -56,13 +95,15 @@ class BadgeApi {
    * @returns
    */
   public async claimBadge(
-    origin: string,
-    type: string,
-    caipAddress: string,
-    ownershipProof: string
+    // origin: string,
+    // type: string,
+    // caipAddress: string,
+    // ownershipProof: string
+    credentialRecord: any,
+    mintAddress: string
   ): Promise<boolean> {
-    console.log('claiming badge', origin, type)
-    return true
+    // console.log('claiming badge', origin, type)
+    return await this.sbtManager.mintSbt(credentialRecord, mintAddress)
   }
 
   /**

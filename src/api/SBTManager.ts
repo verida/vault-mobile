@@ -9,7 +9,6 @@ import {
   DatabasePermissionOptionsEnum,
   EnvironmentType,
   IContext,
-  IDatastore,
   Web3CallType,
 } from '@verida/types'
 import { VeridaSBTClient } from '@verida/vda-sbt-client'
@@ -89,8 +88,9 @@ export class SBTManager {
     console.log(credentialRecord.credentialData.did.toLowerCase())
 
     try {
+      // API expects a wallet address
       const claimedSbts = await client.getClaimedSBTList(
-        credentialRecord.credentialData.did.toLowerCase()
+        '0x326b857912CE962b9805881589287d786267844A' //credentialRecord.credentialData.did.toLowerCase()
       )
       console.log(claimedSbts)
     } catch (err) {
@@ -182,6 +182,7 @@ export class SBTManager {
       await datastore.get(sbtId, {})
       console.log('already exists', sbtId)
       // exists
+      // FIXME: Should handle a case sbtData exists in the datastore but the SBT does not exist on the blockchain ?
       return false
     } catch (err) {
       // doesn't exist
@@ -221,7 +222,8 @@ export class SBTManager {
     )*/
 
     // Generate URL to mint that generates the metadata
-    const sbtUri = wrapUri(credentialUri, 'https://data.verida.network') + '.json'
+    const sbtUri =
+      wrapUri(credentialUri, 'https://data.verida.network') + '.json'
     console.log('sbtUri', sbtUri)
 
     const credentials = new Credentials()

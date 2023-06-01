@@ -147,19 +147,19 @@ function CredentialDataItem(props: CredentialDataItemProps) {
 
   async function mintSbt() {
     const sbtManager = new SBTManager()
-    const mintAddress = '0x82c0146a552Edb7C00eb122ED6C81a399B873d3b'
+    const mintAddress = '0x326b857912CE962b9805881589287d786267844A'
     await sbtManager.mintSbt(item, mintAddress)
   }
 
   async function isMinted() {
     const sbtManager = new SBTManager()
-    const mintAddress = '0x82c0146a552Edb7C00eb122ED6C81a399B873d3b'
+    const mintAddress = '0x326b857912CE962b9805881589287d786267844A'
     await sbtManager.isMinted(item, mintAddress)
   }
 
   async function burnSbt() {
     const sbtManager = new SBTManager()
-    const mintAddress = '0x82c0146a552Edb7C00eb122ED6C81a399B873d3b'
+    const mintAddress = '0x326b857912CE962b9805881589287d786267844A'
     await sbtManager.burnSbt(item, mintAddress)
   }
 

@@ -153,23 +153,22 @@ export const getWalletList = (state) => {
   })
 }
 
-// TODO: check need to update
-export const getAddressList = (state, allChains, network) => {
+export const getAddressList = (state, allChains, blockchainNetwork) => {
   const allWallets = getAllWallets(state)
   return Object.values(allWallets).map((wallet) => {
     const { id, label } = wallet
     const addresses = Object.keys(wallet.accounts)
-      .map((account) => {
+      .map((key) => {
         return {
-          account,
-          address: wallet.accounts[account].address,
+          blockchainNetwork: key,
+          address: wallet.accounts[key].address,
         }
       })
-      .filter((item) => item.account === network)
+      .filter((item) => item.blockchainNetwork === blockchainNetwork)
     return {
       id,
       label,
-      icon: allChains[network === 'eip155' ? 'ethereum' : network].icon,
+      icon: allChains[blockchainNetwork].icon,
       count: Object.keys(wallet.accounts).length,
       address: addresses[0]?.address,
     }

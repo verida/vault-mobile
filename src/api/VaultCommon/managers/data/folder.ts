@@ -98,7 +98,7 @@ export default class Folder {
     const layouts = json.layouts
 
     // If the schema is a credential schema with a 'credentialSubject' property, then use it. Otherwise use all the properties.
-    let properties = json.properties.credentialSubject
+    let properties = json.properties?.credentialSubject
       ? json.properties.credentialSubject.properties
       : json.properties
 
