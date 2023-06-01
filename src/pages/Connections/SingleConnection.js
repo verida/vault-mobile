@@ -1,6 +1,7 @@
 import { Container, Content, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, View } from 'react-native'
+import FastImage from 'react-native-fast-image'
 
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import Button from 'components/Button'
@@ -117,7 +118,7 @@ export default ({ route, navigation }) => {
           </View>
         )}
         <View style={styles.connectHeader}>
-          <Image
+          <FastImage
             style={styles.itemIcon}
             source={{ uri: connectionInfo.icon }}
           />

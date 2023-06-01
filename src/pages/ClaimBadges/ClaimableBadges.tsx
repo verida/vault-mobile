@@ -1,7 +1,19 @@
+import { useNavigation } from '@react-navigation/native'
+import * as Sentry from '@sentry/react-native'
 import React, { useEffect, useState } from 'react'
-import { Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import {
+  Image,
+  Linking,
+  SafeAreaView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import FastImage from 'react-native-fast-image'
 
 import { BadgeManager } from 'api/BadgeManager'
+import DataConnectorsManager from 'api/DataConnectorsManager'
 import AppAlert from 'components/AppAlert/AppAlert'
 import BadgeList from 'components/Badges/BadgeList'
 import Button from 'components/Button'
@@ -10,15 +22,25 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { TEXT_COLOR } from 'constants/color'
-import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import {
+  NUNITO_SANS,
+  NUNITO_SANS_BOLD,
+  NUNITO_SANS_SEMIBOLD,
+} from 'constants/text'
 import { VERIDA_ONE_FAQ_URL } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 const ClaimableBadges: React.FC = () => {
   const styles = useThemeAwareStyle(createStyles)
+  const navigation = useNavigation()
   const [infoModalVisible, setInfoModalVisible] = useState(false)
   const [availableBadges, setAvailableBadges] = useState([])
+  const [loading, setLoading] = useState(true)
+
+  const [supportedConnectPlatforms, setSupportedConnectPlatforms] = useState<
+    any[]
+  >([])
 
   const handleWhatIsVeridaBadgesInfoPress = () => {
     setInfoModalVisible(true)
@@ -52,6 +74,51 @@ const ClaimableBadges: React.FC = () => {
     init()
   }, [])
 
+  useEffect(() => {
+    function buildConnections(allConnectors: any) {
+      const finalConnectors = []
+      for (const connectorName in allConnectors) {
+        finalConnectors.push(allConnectors[connectorName].render())
+      }
+
+      return finalConnectors
+    }
+
+    const fetchPlatformConnections = async () => {
+      try {
+        setLoading(true)
+        DataConnectorsManager.triggerSync()
+
+        const currentConnectors = await DataConnectorsManager.getConnectors()
+        setSupportedConnectPlatforms(buildConnections(currentConnectors))
+
+        console.log(
+          'Platforms',
+          JSON.stringify(buildConnections(currentConnectors), null, 2)
+        )
+      } catch (error) {
+        Sentry.captureException(error)
+      }
+    }
+
+    fetchPlatformConnections()
+
+    const onConnectionUpdated = async () => {
+      // Connection has been updated, so update UI
+      const conns = await DataConnectorsManager.getConnectors()
+      setSupportedConnectPlatforms(buildConnections(conns))
+    }
+    DataConnectorsManager.on('connectionUpdated', onConnectionUpdated)
+    const onLogout = async () => {
+      await DataConnectorsManager.resetConnector()
+    }
+    DataConnectorsManager.on('logout', onLogout)
+    return () => {
+      DataConnectorsManager.off('connectionUpdated', onConnectionUpdated)
+      DataConnectorsManager.off('logout', onLogout)
+    }
+  }, [])
+
   /** TODO: Add list of Connections supported by the Badges but where the user is not yet connected.
    * Create dedicated Connection list and Connection list item components
    */
@@ -77,7 +144,37 @@ const ClaimableBadges: React.FC = () => {
           <Text style={styles.listTitle}>Available Badges</Text>
           <BadgeList badges={availableBadges} />
         </View>
-        {/* TODO: Add list of Connections */}
+
+        <View style={styles.listSection}>
+          <Text style={styles.listTitle}>Connect to get more Badges</Text>
+          {supportedConnectPlatforms.map((platform) => (
+            <View key={platform.name} style={styles.connectionItem}>
+              <View style={styles.connectionItemIconLabel}>
+                <FastImage
+                  style={styles.itemIcon}
+                  source={{ uri: platform.icon }}
+                />
+                <Text style={styles.itemText}>{platform.label}</Text>
+              </View>
+
+              <Button
+                color='light-primary'
+                onPress={() => {
+                  navigation.navigate('SingleConnection', {
+                    provider: platform,
+                  })
+                }}
+                style={{
+                  paddingHorizontal: 12,
+                  height: 32,
+                  borderRadius: 99,
+                  marginBottom: 0,
+                }}>
+                Connect
+              </Button>
+            </View>
+          ))}
+        </View>
       </View>
       <AppModal
         visible={infoModalVisible}
@@ -147,6 +244,21 @@ const createStyles = (theme: Theme) => {
       fontSize: 17,
       color: TEXT_COLOR,
       marginBottom: theme.spacing.s,
+    },
+
+    connectionItem: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: 12,
+    },
+    connectionItemIconLabel: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    itemIcon: { width: 48, height: 48, borderRadius: 24, marginRight: 10 },
+    itemText: {
+      fontSize: 18,
     },
   })
 }
