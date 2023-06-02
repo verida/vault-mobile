@@ -9,6 +9,7 @@ import AddressSvg from '../../assets/icons/address.svg'
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
 export default ({ item, customStyles, onPress }) => {
+  if (!item.address) return null
   return (
     <Pressable
       onPress={onPress}

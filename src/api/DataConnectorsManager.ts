@@ -392,6 +392,17 @@ class DataConnection extends EventEmitter {
         if (syncRequest.syncInfo.profile.credential) {
           const sbtManager = new SBTManager()
           const profileCredentialId = `${syncRequest.source}-${syncRequest.syncInfo.profile.id}-profile`
+          console.log(
+            '===> SBT credential',
+            JSON.stringify(
+              {
+                profileCredentialId,
+                cred: syncRequest.syncInfo.profile.credential,
+              },
+              null,
+              2
+            )
+          )
           await sbtManager.saveCredential(
             profileCredentialId,
             syncRequest.syncInfo.profile.credential

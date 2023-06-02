@@ -83,6 +83,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
     } catch (err) {
       // @todo: catch error and display error message to the user
       console.log(err.message)
+      setStatus('error')
     } finally {
       setMintingBadge(false)
     }
@@ -161,10 +162,10 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
       )}
       {!status && (
         <View style={styles.transactionContainer}>
-          <View style={styles.transactionContent}>
+          {/* <View style={styles.transactionContent}>
             <Text style={styles.trxnText}>Estimated gas fee </Text>
             <Text style={styles.trxnText}>≈ ${estimatedGasFee}</Text>
-          </View>
+          </View> */}
           <Button
             color='primary'
             disabled={mintingBadge}
@@ -204,6 +205,11 @@ const mapStateToProps = (rootState: any) => {
   // TODO: Allow getting addresses from a list of networks, not just one
   // TODO: Is network the right word?
   const defaultSelectedAddress = addressList?.length > 0 ? addressList[0] : ''
+  console.log(
+    'addressList',
+    JSON.stringify(addressList, null, 2),
+    defaultSelectedAddress
+  )
   // TODO: Find a better way to get the default address, maybe from the currently selected wallet.
   return {
     addressList,

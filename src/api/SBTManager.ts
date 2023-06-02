@@ -322,6 +322,7 @@ export class SBTManager {
       console.log('mint error!')
       console.log(err.message)
       console.log(err.reason)
+      throw err
     }
   }
 
