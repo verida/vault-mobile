@@ -11,6 +11,7 @@ declare module '*.svg' {
 }
 
 declare module "react-native-config" {
+  
   interface Env {
     INFURA_API_KEY: string
     SENTRY_ENVIRONMENT: string
@@ -18,7 +19,7 @@ declare module "react-native-config" {
     DEPLOY_ENVIRONMENT: string
 
     // Network
-    NETWORK_ENVIRONMENT: string
+    NETWORK_ENVIRONMENT: 'devnet' | 'testnet'
     NETWORK_ENDPOINT_URL: string
   }
   const BuildConfig: Env

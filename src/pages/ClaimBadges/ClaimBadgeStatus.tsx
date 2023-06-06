@@ -1,6 +1,6 @@
+import { VeridaBadge } from 'features/badges/@types'
 import React from 'react'
 import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { AvailableBadge } from 'types/Badges'
 
 import ErrorStatusIcon from 'assets/icons/error_status_icon.svg'
 import Button from 'components/Button'
@@ -28,7 +28,7 @@ Please try again`,
 
 type ClaimBadgeStatusProps = {
   status: keyof typeof statusList
-  badgeInfo: AvailableBadge
+  badgeInfo: VeridaBadge
 }
 
 const ClaimBadgeStatus: React.FC<ClaimBadgeStatusProps> = ({

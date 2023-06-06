@@ -13,6 +13,13 @@ import {
 } from '@verida/types'
 import { VeridaSBTClient } from '@verida/vda-sbt-client'
 import { Credentials } from '@verida/verifiable-credentials'
+import {
+  ClaimBadgeQuery,
+  UserBadge,
+  VeridaBadge,
+  VeridaBadgesMetadata,
+  VeridaBagdes,
+} from 'features/badges/@types'
 import _ from 'lodash'
 
 import CONFIG from '../config/environment'
@@ -26,6 +33,15 @@ const SCHEMA_CREDENTIALS =
 
 export class SBTManager {
   private client?: VeridaSBTClient
+  private static instance: SBTManager
+
+  public static getInstance(): SBTManager {
+    if (!SBTManager.instance) {
+      SBTManager.instance = new SBTManager()
+    }
+
+    return SBTManager.instance
+  }
 
   /**
    * Save a SBT credential
@@ -136,7 +152,8 @@ export class SBTManager {
       const claimedSbts = await client.getClaimedSBTList(mintAddress.toLowerCase())
       console.log(claimedSbts)
     } catch (err) {
-      console.log(err.message)
+      console.log(err.me
+        ssage)
     }*/
     try {
       const response = await client.burnSBT(61)
@@ -324,6 +341,68 @@ export class SBTManager {
       console.log(err.reason)
       throw err
     }
+  }
+
+  // TODO: should the param has other effects or we should just mint SBT directly
+  public async claimBadge(
+    // origin: string,
+    // type: string,
+    // caipAddress: string,
+    // ownershipProof: string
+    credentialRecord: any,
+    mintAddress: string
+  ): Promise<boolean> {
+    // console.log('claiming badge', origin, type)
+    return await this.mintSbt(credentialRecord, mintAddress)
+  }
+
+  /**
+   * Get all the available badges supported by Verida
+   *
+   * Some of these will not be claimable (see `.claimable` property)
+   */
+  public async getAvailableBadges(origin?: string): Promise<VeridaBadge[]> {
+    const vault = AccountManager.getInstance().vault!
+    const folder = await vault.data.selectFolder('credentials') // TODO: config
+    const items = await folder.getMany(
+      {
+        credentialSchema:
+          'https://common.schemas.verida.io/token/sbt/credential/v0.1.0/schema.json', // TODO: is this the right filter?
+      },
+      {
+        sort: [{ insertedAt: 'desc' }],
+      }
+    )
+
+    return items.map((item: any) => ({
+      id: item._id,
+      label:
+        VeridaBadgesMetadata[item.credentialData.type as VeridaBagdes].label,
+      attributes: item.credentialData.attributes,
+      description: item.credentialData.description,
+      did: item.credentialData.did,
+      didAddress: item.credentialData.didAddress,
+      image:
+        VeridaBadgesMetadata[item.credentialData.type as VeridaBagdes].image, // Hardcode for now
+      name: item.credentialData.name,
+      type: item.credentialData.type,
+      uniqueAttribute: item.credentialData.uniqueAttribute,
+      credentialItem: item,
+    }))
+  }
+
+  /**
+   * Get all the badges claimed by this user.
+   *
+   * Do we need to filter these by origin and / or type?
+   *
+   * @param origin
+   * @returns
+   */
+  public async getClaimedBadges(
+    query: ClaimBadgeQuery = {}
+  ): Promise<UserBadge[]> {
+    return []
   }
 
   private async getClient() {

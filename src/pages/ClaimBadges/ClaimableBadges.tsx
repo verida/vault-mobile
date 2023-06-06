@@ -1,32 +1,21 @@
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { VeridaBadge } from 'features/badges/@types'
+import { BadgeList } from 'features/badges/components'
 import React, { useEffect, useState } from 'react'
-import {
-  Image,
-  Linking,
-  SafeAreaView,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { Linking, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import { BadgeManager } from 'api/BadgeManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
+import { SBTManager } from 'api/SBTManager'
 import AppAlert from 'components/AppAlert/AppAlert'
-import BadgeList from 'components/Badges/BadgeList'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Headline } from 'components/Typography/Headline'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { TEXT_COLOR } from 'constants/color'
-import {
-  NUNITO_SANS,
-  NUNITO_SANS_BOLD,
-  NUNITO_SANS_SEMIBOLD,
-} from 'constants/text'
+import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { VERIDA_ONE_FAQ_URL } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
@@ -35,7 +24,7 @@ const ClaimableBadges: React.FC = () => {
   const styles = useThemeAwareStyle(createStyles)
   const navigation = useNavigation()
   const [infoModalVisible, setInfoModalVisible] = useState(false)
-  const [availableBadges, setAvailableBadges] = useState([])
+  const [availableBadges, setAvailableBadges] = useState<VeridaBadge[]>([])
   const [loading, setLoading] = useState(true)
 
   const [supportedConnectPlatforms, setSupportedConnectPlatforms] = useState<
@@ -64,13 +53,14 @@ const ClaimableBadges: React.FC = () => {
     </Button>
   )
 
-  const init = async () => {
-    const availableBadges = await BadgeManager.getAvailableBadges()
-    // @todo: fix this TS error
-    setAvailableBadges(availableBadges)
-  }
-
   useEffect(() => {
+    const init = async () => {
+      const allAvailableBadges =
+        await SBTManager.getInstance().getAvailableBadges()
+      console.log('Badges', JSON.stringify(allAvailableBadges, null, 2))
+      setAvailableBadges(allAvailableBadges)
+    }
+
     init()
   }, [])
 
@@ -91,11 +81,6 @@ const ClaimableBadges: React.FC = () => {
 
         const currentConnectors = await DataConnectorsManager.getConnectors()
         setSupportedConnectPlatforms(buildConnections(currentConnectors))
-
-        console.log(
-          'Platforms',
-          JSON.stringify(buildConnections(currentConnectors), null, 2)
-        )
       } catch (error) {
         Sentry.captureException(error)
       }
@@ -118,10 +103,6 @@ const ClaimableBadges: React.FC = () => {
       DataConnectorsManager.off('logout', onLogout)
     }
   }, [])
-
-  /** TODO: Add list of Connections supported by the Badges but where the user is not yet connected.
-   * Create dedicated Connection list and Connection list item components
-   */
 
   return (
     <SafeAreaView style={styles.container}>

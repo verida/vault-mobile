@@ -1,2 +1,0 @@
-export const MINT_SBT_POLYGON_MUMBAI = 'eip155:80001'
-export const MINT_SBT_POLYGON_MAINET = 'eip155:137'

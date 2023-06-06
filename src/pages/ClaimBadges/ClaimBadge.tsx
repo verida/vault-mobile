@@ -1,8 +1,8 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { VeridaBadge } from 'features/badges/@types'
 import React, { useState } from 'react'
 import {
-  Image,
   ImageBackground,
   SafeAreaView,
   ScrollView,
@@ -10,11 +10,11 @@ import {
   Text,
   View,
 } from 'react-native'
+import FastImage from 'react-native-fast-image'
 import { connect } from 'react-redux'
-import { AvailableBadge } from 'types/Badges'
 import { WalletItem } from 'types/wallet'
 
-import { BadgeManager } from 'api/BadgeManager'
+import { SBTManager } from 'api/SBTManager'
 import SettingsIcon from 'assets/settings_icon.svg'
 import AddressesListItem from 'components/AddressesList/AddressesListItem'
 import AppAlert from 'components/AppAlert/AppAlert'
@@ -22,7 +22,7 @@ import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { MINT_SBT_POLYGON_MUMBAI } from 'constants/badges'
+import CONFIG from 'config/environment'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -50,7 +50,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   defaultSelectedAddress,
 }) => {
   const styles = useThemeAwareStyle(createStyles)
-  const { badge } = useParams<{ badge: AvailableBadge }>()
+  const { badge } = useParams<{ badge: VeridaBadge }>()
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const [status, setStatus] = useState<Status>()
   const [mintingBadge, setMintingBadge] = useState(false)
@@ -75,9 +75,9 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
   const handleClaimAction = async () => {
     try {
       setMintingBadge(true)
-      await BadgeManager.claimBadge(
+      await SBTManager.getInstance().claimBadge(
         badge.credentialItem,
-        selectedAddress!.address
+        selectedAddress!.address!
       )
       setStatus('success')
     } catch (err) {
@@ -127,13 +127,14 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
               resizeMode='cover'
               imageStyle={styles.badgeImageBackground}
               style={styles.badgeImageBackgroundContainer}>
-              <Image
+              <FastImage
                 source={
                   typeof badge.image === 'string'
                     ? { uri: badge.image }
                     : badge.image
                 }
                 style={styles.badgeImage}
+                resizeMode={FastImage.resizeMode.contain}
               />
             </ImageBackground>
           </View>
@@ -198,7 +199,7 @@ const ClaimBadge: React.FC<ClaimBadgeProps> = ({
 
 const mapStateToProps = (rootState: any) => {
   const state = rootState.main
-  const network = MINT_SBT_POLYGON_MUMBAI
+  const network = CONFIG.SBT_MINT_BLOCKCHAIN
   const chains = getBlockchainNetworks(rootState)
   const addressList = getAddressList(state, chains, network)
 

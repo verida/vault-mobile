@@ -2,19 +2,19 @@ import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import React from 'react'
 import { FlatList } from 'react-native'
-import { AvailableBadge } from 'types/Badges'
 
 import { MainStackParams } from 'navigation/types'
 
-import BadgeItem from './BadgeItem'
+import { VeridaBadge } from '../@types'
+import { BadgeItem } from './BadgeItem'
 
 type BadgeListProps = {
-  badges: AvailableBadge[]
+  badges: VeridaBadge[]
 }
 
-const BadgeList: React.FC<BadgeListProps> = ({ badges }) => {
+export const BadgeList: React.FC<BadgeListProps> = ({ badges }) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
-  const handleClaimPress = (badge: AvailableBadge) =>
+  const handleClaimPress = (badge: VeridaBadge) =>
     navigation.navigate('ClaimBadge', {
       badge,
     })
@@ -29,5 +29,3 @@ const BadgeList: React.FC<BadgeListProps> = ({ badges }) => {
     />
   )
 }
-
-export default BadgeList

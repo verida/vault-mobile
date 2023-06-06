@@ -1,21 +1,26 @@
 import Color from 'color'
 import React from 'react'
-import { Image, ImageBackground, StyleSheet, Text, View } from 'react-native'
-import { AvailableBadge } from 'types/badges'
+import { ImageBackground, StyleSheet, Text, View } from 'react-native'
+import FastImage from 'react-native-fast-image'
 
 import Button from 'components/Button'
 import { NUNITO_SANS, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
+import { VeridaBadge } from '../@types'
+
 const badgeImageBackground = require('assets/badge_gradient_bg.png')
 
 type BadgeItemProps = {
-  badge: AvailableBadge
-  onPressClaim: (badge: AvailableBadge) => void
+  badge: VeridaBadge
+  onPressClaim: (badge: VeridaBadge) => void
 }
 
-const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onPressClaim }) => {
+export const BadgeItem: React.FC<BadgeItemProps> = ({
+  badge,
+  onPressClaim,
+}) => {
   const styles = useThemeAwareStyle(createStyles)
 
   return (
@@ -26,13 +31,14 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onPressClaim }) => {
           resizeMode='cover'
           imageStyle={styles.badgeImageBackground}
           style={styles.badgeImageBackgroundContainer}>
-          <Image
+          <FastImage
             style={styles.badgeImage}
             source={
               typeof badge.image === 'string'
                 ? { uri: badge.image }
                 : badge.image
             }
+            resizeMode={FastImage.resizeMode.contain}
           />
         </ImageBackground>
         <View style={styles.textWrapper}>
@@ -55,8 +61,6 @@ const BadgeItem: React.FC<BadgeItemProps> = ({ badge, onPressClaim }) => {
     </View>
   )
 }
-
-export default BadgeItem
 
 // TODO: Rework the sizing of the image. Maybe create a dedicated component
 const createStyles = (theme: Theme) => {

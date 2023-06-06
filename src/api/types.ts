@@ -10,8 +10,6 @@
 import { AssetId } from 'caip'
 import { ImageSourcePropType } from 'react-native'
 
-import { PLATFORM_LINKS, Platforms } from 'constants/profile'
-
 /**
  * Verida Account
  */
@@ -172,30 +170,6 @@ export interface NFTCollection {
 export interface WalletNFTsResponse extends PagingInfo {
   collections: NFTCollection[]
   status?: string
-}
-
-// FIXME: Need to update, not the real type of badge
-export interface Badge {
-  token_address: string
-  token_id: string
-  amount: string
-  owner_of: string
-  token_hash: string
-  block_number_minted: string
-  block_number: string
-  contract_type: string
-  name: string
-  symbol: string
-  token_uri: string | null
-  metadata: string | null
-  last_token_uri_sync: string | null
-  last_metadata_sync: string | null
-  minter_address: string | null
-}
-
-export interface ClaimBadgeResponse {
-  badge?: Badge | null
-  success?: boolean
 }
 
 export type AddIdentityStepType =
