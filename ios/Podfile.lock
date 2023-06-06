@@ -490,6 +490,10 @@ PODS:
     - RCTTypeSafety
     - React
     - ReactCommon/turbomodule/core
+  - react-native-skia (0.1.193):
+    - React
+    - React-callinvoker
+    - React-Core
   - react-native-static-server (0.5.0):
     - GCDWebServer (~> 3.0)
     - React
@@ -729,6 +733,7 @@ DEPENDENCIES:
   - react-native-quick-crypto (from `../node_modules/react-native-quick-crypto`)
   - react-native-randombytes (from `../node_modules/react-native-randombytes`)
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
+  - "react-native-skia (from `../node_modules/@shopify/react-native-skia`)"
   - react-native-static-server (from `../node_modules/react-native-static-server`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - react-native-webview (from `../node_modules/react-native-webview`)
@@ -900,6 +905,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-randombytes"
   react-native-safe-area-context:
     :path: "../node_modules/react-native-safe-area-context"
+  react-native-skia:
+    :path: "../node_modules/@shopify/react-native-skia"
   react-native-static-server:
     :path: "../node_modules/react-native-static-server"
   react-native-udp:
@@ -1055,6 +1062,7 @@ SPEC CHECKSUMS:
   react-native-quick-crypto: 40402e0c2f3c2d7eaab42dc989c48cdc812b7abf
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: f98b0b16d1546d208fc293b4661e3f81a895afd9
+  react-native-skia: e92aaf74c38d71feb315deed516a91d211f90553
   react-native-static-server: 201b2a945a35096be3ae7f43e367c65bcbd61343
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1
   react-native-webview: 203b6a1c7507737f777c91d7e10c30e7e67c1a17
