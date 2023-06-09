@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
+import { useDeepCompareEffect } from 'hooks'
 import { debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
@@ -124,13 +125,19 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     VeridaOneWalletAddress[]
   >([])
 
-  const [platformLinks, setPlatformLinks] = useState<any[]>([])
+  const [platformLinks, setPlatformLinks] = useState<VeridaOnePlatformLink[]>(
+    []
+  )
   const [supportedConnectPlatforms, setSupportedConnectPlatforms] = useState<
     any[]
   >([])
 
-  const [publicCustomLinks, setPublicCustomLinks] = useState<any[]>([])
-  const [featuredAssets, setFeaturedAssets] = useState<any[]>([])
+  const [publicCustomLinks, setPublicCustomLinks] = useState<
+    VeridaOneCustomLink[]
+  >([])
+  const [featuredAssets, setFeaturedAssets] = useState<
+    VeridaOneFeaturedAsset[]
+  >([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
 
@@ -697,6 +704,60 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [publicWalletAddresses]
   )
 
+  const updateFeaturedAssets = useCallback(
+    (updatedPublicWalletAddresses: VeridaOneWalletAddress[]) => {
+      const updatedFeaturedAssets = featuredAssets
+        .filter((asset) =>
+          updatedPublicWalletAddresses.some(
+            (walletAddress) => walletAddress.address === asset.ownerAddress
+          )
+        )
+        .map((asset, idx) => ({
+          ...asset,
+          order: idx,
+        }))
+
+      return updatedFeaturedAssets
+    },
+    [featuredAssets]
+  )
+
+  const syncPublicWalletAddresses = useCallback(
+    (updatedPublicWalletAddresses: VeridaOneWalletAddress[]) => {
+      // Check to update featured assets
+      const updatedFeaturedAssets = updateFeaturedAssets(
+        updatedPublicWalletAddresses
+      )
+
+      setPublicWalletAddresses(updatedPublicWalletAddresses)
+      setFeaturedAssets(updatedFeaturedAssets)
+      debounceSaveProfile({
+        walletAddresses: updatedPublicWalletAddresses,
+        featuredAssets: updatedFeaturedAssets,
+      })
+    },
+    [debounceSaveProfile, updateFeaturedAssets]
+  )
+
+  useDeepCompareEffect(() => {
+    // remove a wallet should remove it from One Profile public wallet address
+    if (
+      !publicWalletAddresses.every((item) =>
+        walletAddresses.some(
+          (walletAddress) => walletAddress.address === item.address
+        )
+      )
+    ) {
+      syncPublicWalletAddresses(
+        publicWalletAddresses.filter((item) =>
+          walletAddresses.some(
+            (walletAddress) => walletAddress.address === item.address
+          )
+        )
+      )
+    }
+  }, [walletAddresses, publicWalletAddresses])
+
   useEffect(() => {
     // A little bit of delay here to avoid any unclean state when switching accounts
     const tid = setTimeout(() => {
@@ -827,6 +888,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             text: 'Added to Verida One profile',
             duration: Snackbar.LENGTH_SHORT,
           })
+
+          setPublicWalletAddresses(newPublicWalletAddresses)
+          debounceSaveProfile({ walletAddresses: newPublicWalletAddresses })
         } else {
           newPublicWalletAddresses = newPublicWalletAddresses.filter(
             (wAddress) =>
@@ -834,14 +898,24 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               (wAddress.address === publicAdress.address &&
                 wAddress.chainId !== publicAdress.chainId)
           )
+
+          // Remove a public wallet address from One Profile should remove its featured assets
+          const updatedFeaturedAssets = updateFeaturedAssets(
+            newPublicWalletAddresses
+          )
+          setFeaturedAssets(updatedFeaturedAssets)
+
+          setPublicWalletAddresses(newPublicWalletAddresses)
+          debounceSaveProfile({
+            walletAddresses: newPublicWalletAddresses,
+            featuredAssets: updatedFeaturedAssets,
+          })
+
           Snackbar.show({
             text: 'Hidden from Verida One profile',
             duration: Snackbar.LENGTH_SHORT,
           })
         }
-
-        setPublicWalletAddresses(newPublicWalletAddresses)
-        debounceSaveProfile({ walletAddresses: newPublicWalletAddresses })
       }
 
       return (
