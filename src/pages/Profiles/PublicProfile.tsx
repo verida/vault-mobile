@@ -947,7 +947,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         />
       )
     },
-    [debounceSaveProfile, navigation, publicWalletAddresses]
+    [
+      debounceSaveProfile,
+      navigation,
+      publicWalletAddresses,
+      updateFeaturedAssets,
+    ]
   )
 
   const renderPlatformLinkItem = useCallback(

@@ -352,7 +352,7 @@ export const deleteWallet = (walletId) => {
 
       if (currentlySelectedWallet === walletId) {
         const wallets = getWalletList(getState().main)
-        const nextWalletId = Object.keys(wallets)[0]
+        const nextWalletId = Object.values(wallets)[0].id
         await dispatch(setSelectedWallet(nextWalletId))
       }
 
