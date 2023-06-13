@@ -261,4 +261,4 @@ const mapStateToProps = (rootState: any) => {
   }
 }
 
-export default connect(mapStateToProps)(ImportModal as any)
+export default connect(mapStateToProps)(ImportModal)
