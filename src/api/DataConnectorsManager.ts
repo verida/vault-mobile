@@ -374,7 +374,7 @@ class DataConnection extends EventEmitter {
         }
       )
 
-      const syncRequest = await externalDatastore.get(syncRequestId)
+      const syncRequest = await externalDatastore.get(syncRequestId, undefined)
 
       if (syncRequest.status === 'complete') {
         // Sync has completed on the server, so complete the sync
@@ -459,7 +459,7 @@ class DataConnection extends EventEmitter {
         // In order to sync we need to locate the underlying PouchDb instances
         // for the Vault's datastore and the connector's datastore
         const externalDb = await externalDatastore?.getDb()
-        const externalCouch = await externalDb.getDb()
+        const externalCouch = await externalDb?.getDb()
 
         const vaultDatastore = await context!.openDatastore(schemaUri)
         const vaultDb = await vaultDatastore.getDb()

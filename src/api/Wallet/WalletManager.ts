@@ -77,7 +77,7 @@ export class WalletManager {
   }
 
   public static generateAccountsForWallet(
-    wallet: BlockchainWallet,
+    wallet: Partial<BlockchainWallet>,
     blockchainNetworks: BlockchainNetwork[]
   ) {
     const accounts: Record<string, BlockchainAccount> = {}
@@ -120,7 +120,7 @@ export class WalletManager {
           walletDetails = namespaceChain.buildAccountFromMnemonic(
             wallet.mnemonic,
             blockchainNetwork.derivationPath,
-            wallet.multiChain
+            Boolean(wallet.multiChain)
           )
         } else {
           throw new Error(
@@ -172,13 +172,13 @@ export class WalletManager {
       viewOnly: false,
     }
 
-    const saved: any = await walletDb!.save(wallet)
+    const saved: any = await walletDb!.save(wallet, undefined)
     if (!saved) {
       throw new Error(`Unable to save wallet: ${walletDb.errors[0].message}`)
     }
 
     const wallets = await WalletManager.getBlockchainAccounts(
-      await walletDb!.getMany<BlockchainWallet>()
+      await walletDb!.getMany<BlockchainWallet>(undefined, undefined)
     )
 
     return {

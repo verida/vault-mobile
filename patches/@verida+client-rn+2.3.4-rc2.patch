@@ -20,6 +20,19 @@ index cfa87b2..71bee4a 100644
      /**
       * Get a single database record that matches.
       *
+diff --git a/node_modules/@verida/client-rn/src/client.ts b/node_modules/@verida/client-rn/src/client.ts
+index 1cc2f71..2b027c9 100644
+--- a/node_modules/@verida/client-rn/src/client.ts
++++ b/node_modules/@verida/client-rn/src/client.ts
+@@ -50,7 +50,7 @@ class Client implements IClient {
+    *
+    * @param userConfig ClientConfig Configuration for establishing a connection to the Verida network
+    */
+-  constructor(userConfig: ClientConfig) {
++  constructor(userConfig: Partial<ClientConfig>) {
+     this.environment = userConfig.environment
+       ? <EnvironmentType> userConfig.environment
+       : DEFAULT_CONFIG.environment;
 diff --git a/node_modules/@verida/client-rn/src/context/datastore.ts b/node_modules/@verida/client-rn/src/context/datastore.ts
 index 7d09279..e28ceda 100644
 --- a/node_modules/@verida/client-rn/src/context/datastore.ts
