@@ -26,6 +26,7 @@ export function useDirExists({
       if (!force || exists) return setState({ loading: false, result: exists })
 
       // Force the directory to exist if it doesn't already.
+      // eslint-disable-next-line no-console
       await RNBlobUtil.fs.mkdir(dir).catch(console.warn) /* race_condition */
 
       setState({

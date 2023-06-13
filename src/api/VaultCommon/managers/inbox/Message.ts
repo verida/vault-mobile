@@ -1,21 +1,21 @@
-import {DataAction} from "./DataAction";
+import { DataAction } from './DataAction'
 
 export class Message extends DataAction {
   async accept() {
     return {
       success: true,
-      errors: {}
+      errors: {},
     }
   }
 
   decline() {
     return {
       success: true,
-      errors: {}
+      errors: {},
     }
   }
 
   async metadata() {
-    return {};
+    return {}
   }
 }

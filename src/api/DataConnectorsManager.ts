@@ -231,7 +231,9 @@ class DataConnection extends EventEmitter {
   }
 
   public async setAuth(auth: any) {
+    // eslint-disable-next-line no-console
     console.log('setAuth')
+    // eslint-disable-next-line no-console
     console.log(auth)
     await this.init()
     this.accessToken = auth.accessToken
@@ -256,14 +258,16 @@ class DataConnection extends EventEmitter {
 
       this.profile = this._record.profile
 
-      const obj: any = this
       const record = this._record
-      Object.keys(this._record).forEach((key: string) => {
-        if (key === 'profile') {
-          return
-        }
 
-        obj[key] = record[key]
+      Object.keys(this._record).forEach((key) => {
+        if (key === 'profile') return
+
+        // TODO: Strictly type the _record field to be
+        //       Omit<keyof DataConnection, 'profile'>.
+        // @ts-expect-error This is a dangerous assignment as we do not have
+        //                  strict guidelines as to what the keyof record is.
+        this[key] = record[key]
       })
     } catch (err: any) {
       if (err.name === 'not_found') {
@@ -332,7 +336,9 @@ class DataConnection extends EventEmitter {
         syncRequestDatabaseName
       )
     } catch (err: any) {
+      // eslint-disable-next-line no-console
       console.log('1')
+      // eslint-disable-next-line no-console
       console.log(err)
       this.setSyncError(err.message)
       // console.error(err)
@@ -406,9 +412,11 @@ class DataConnection extends EventEmitter {
         )
       }
     } catch (err: any) {
+      // eslint-disable-next-line no-console
       console.log('2')
       // @todo: Set error on this connection
       this.setSyncError(err.message)
+      // eslint-disable-next-line no-console
       console.error(err)
     }
   }
@@ -477,6 +485,7 @@ class DataConnection extends EventEmitter {
             style: 'main_only',
           })
         } catch (err: any) {
+          // eslint-disable-next-line no-console
           console.log('3')
           this.setSyncError(err.message)
           return
@@ -495,7 +504,9 @@ class DataConnection extends EventEmitter {
       this.syncNext = moment().add(1, this.syncFrequency).toISOString()
 
       if (newAuth) {
+        // eslint-disable-next-line no-console
         console.log('----- new auth')
+        // eslint-disable-next-line no-console
         console.log(newAuth)
         this.accessToken = newAuth.accessToken
         this.refreshToken = newAuth.refreshToken
@@ -504,7 +515,9 @@ class DataConnection extends EventEmitter {
       await this.save()
       // console.log(`Sync done and sync status updated`)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log('4')
+      // eslint-disable-next-line no-console
       console.log(err)
       // @todo: How to handle?
       // console.error(err)

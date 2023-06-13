@@ -9,22 +9,20 @@ import Text from 'components/Text'
 import { SUCCESS_COLOR } from 'constants/color'
 
 const calculateNextSync = function (conn) {
-  if (!conn.syncNext) {
-    return
-  }
+  if (!conn.syncNext) return
 
   const duration = conn.duration(conn.syncNext)
-  if (duration > 0) {
-    return 'now'
-  }
+
+  if (duration > 0) return 'now'
 
   return duration.humanize()
 }
 
 export default ({ route, navigation }) => {
-  const provider = route.params.provider
-  const connectNow = route.params.connectNow
-  const connectionInfo = DataConnectorsManager.getConnectionInfo(provider)
+  //const connectNow = route.params.connectNow
+  const connectionInfo = DataConnectorsManager.getConnectionInfo(
+    route.params.provider
+  )
 
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
@@ -49,13 +47,13 @@ export default ({ route, navigation }) => {
 
       if (route.params && route.params.accessToken) {
         // @todo: hide this after a while
-        DataConnectorsManager.authComplete(provider, route.params)
+        DataConnectorsManager.authComplete(route.params.provider, route.params)
       }
 
       // upgrade our connection object to be a real connection instance from
       // the DataConnectorsManager so we can call sync() etc.
       const connectionInstance = await DataConnectorsManager.getConnection(
-        provider
+        route.params.provider
       )
       setState(connectionInstance)
     }
@@ -65,35 +63,36 @@ export default ({ route, navigation }) => {
       setState(conn)
       setShowSuccess(false)
     })
-  }, [route.params.accessToken])
+  }, [route.params])
 
   useEffect(() => {
-    if (connectNow) {
-      ;(async () => {
+    if (route.params.connectNow) {
+      // eslint-disable-next-line no-void
+      void (async () => {
         const connectionInstance = await DataConnectorsManager.getConnection(
-          provider
+          route.params.provider
         )
-        connectionInstance.initiateAuth()
+        await connectionInstance.initiateAuth()
       })()
     }
-  }, [connectNow, provider])
+  }, [route.params.connectNow, route.params.provider])
 
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      provider
+      route.params.provider
     )
-    connectionInstance.initiateAuth()
+    return connectionInstance.initiateAuth()
   }
   const onPressSync = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      provider
+      route.params.provider
     )
     connectionInstance.sync()
   }
   const onPressDisconnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      provider
+      route.params.provider
     )
     connectionInstance.disconnect()
   }
@@ -108,7 +107,7 @@ export default ({ route, navigation }) => {
         }}
       />
       <Content contentContainerStyle={styles.contentContainer}>
-        {showSuccess && (
+        {Boolean(showSuccess) && (
           <View style={styles.successMessage}>
             <Icon name='checkmark-circle' style={styles.successMessageIcon} />
             <Text style={styles.successMessageText}>

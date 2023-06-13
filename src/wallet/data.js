@@ -1,4 +1,4 @@
-import Common, { Chain } from '@ethereumjs/common'
+import Common from '@ethereumjs/common'
 import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
 import sha256 from 'js-sha256'
@@ -146,8 +146,10 @@ const sendTransaction = async (
   let txData
   let txIdAlgo
 
-  if (blockchainNetwork.asset.chainId.namespace === 'near') { 
-    const nearAmount = nearAPI.utils.format.parseNearAmount(transactionData.amount)
+  if (blockchainNetwork.asset.chainId.namespace === 'near') {
+    const nearAmount = nearAPI.utils.format.parseNearAmount(
+      transactionData.amount
+    )
     const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
     const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
     const publicKey = keyPair.getPublicKey()
@@ -307,7 +309,7 @@ const sendTransaction = async (
         transaction = algosdk.makePaymentTxnWithSuggestedParams(
           chainWallet.address,
           receiverAddress,
-          parseInt(amount.toString()),
+          parseInt(amount.toString(), 10),
           undefined,
           undefined,
           transactionParams
@@ -318,13 +320,14 @@ const sendTransaction = async (
           isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
           undefined,
           undefined,
-          isAssetEnablingTransaction ? 0 : parseInt(amount.toString()),
+          isAssetEnablingTransaction ? 0 : parseInt(amount.toString(), 10),
           undefined,
           parseInt(tokenAddress, 10),
           transactionParams
         )
       }
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err)
       throw err
     }
@@ -347,6 +350,7 @@ const sendTransaction = async (
       txIdAlgo = transaction.txID().toString()
       txString = transaction.signTxn(wallet.sk).toString()
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err)
       throw err
     }
@@ -366,22 +370,19 @@ const sendTransaction = async (
       asset: transactionData.token.asset,
     }
 
-    if (txIdAlgo) {
-      requestBody.transactionId = txIdAlgo
-    }
+    if (txIdAlgo) requestBody.transactionId = txIdAlgo
+
     const sentTx = await walletProviderApi.post(
       'transaction/broadcast',
       requestBody
     )
 
-    if (sentTx && sentTx.data.status == 'error') {
-      // @todo: How to handle error?
+    // @todo: How to handle error?
+    if (sentTx && sentTx.data.status === 'error')
       throw new Error(sentTx.data.error)
-    }
 
-    if (sentTx && sentTx.data.data.transactionId) {
+    if (sentTx && sentTx.data.data.transactionId)
       txData.id = sentTx.data.data.transactionId
-    }
 
     return txData
   }

@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import * as Sentry from '@sentry/react-native'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -17,7 +16,10 @@ export default ({ transaction, token }) => {
     token.asset.chainId
   )
 
-  const explorerURL = blockchainNetwork.explorerURL.replace(/%s/g, transaction.id)
+  const explorerURL = blockchainNetwork.explorerURL.replace(
+    /%s/g,
+    transaction.id
+  )
 
   const decimals = token.decimal ? token.decimal : blockchainNetwork.decimal
 

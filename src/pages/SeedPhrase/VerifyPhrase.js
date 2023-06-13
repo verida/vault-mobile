@@ -22,13 +22,14 @@ const VerifyPhrase = (props) => {
 
   useEffect(() => {
     showError(false)
+
     const selectedWords = selected.map((item) => route.params.shuffled[item])
 
     setVerified(
       selectedWords.join(' ') ===
         AccountManager.getInstance().getSelectedAccount().mnemonic
     )
-  }, [selected])
+  }, [route.params.shuffled, selected])
 
   useEffect(() => {
     return () => {

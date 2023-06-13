@@ -38,7 +38,7 @@ const SelectAsset = () => {
   const params = useParams<SelectAssetScreenProps>()
   const { screenName, mode, originalValue, searchableAddresses } = params
 
-  const { data, isLoading, error, refetch } =
+  const { data, isLoading, refetch } =
     useGetWalletNFTCollectionsQuery(searchableAddresses)
 
   // pull to refresh data

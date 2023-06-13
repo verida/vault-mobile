@@ -2,11 +2,14 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
-import { Image, StyleSheet } from 'react-native'
+import { StyleSheet } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { store } from 'reduxStore'
 
-import { getBlockchainNetworkLabel, getBlockchainNetworks } from 'reduxStore/selectors'
+import {
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+} from 'reduxStore/selectors'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 

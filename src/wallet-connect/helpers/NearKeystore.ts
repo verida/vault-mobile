@@ -120,17 +120,17 @@ export class AsyncStorageKeyStore {
    * @returns{Promise<string[]>}
    */
   async getAccounts(networkId: string): Promise<string[]> {
-    const allkeys = await this.storageKeys()
-    const result = new Array<string>()
-    for (const key of allkeys) {
-      if (key.startsWith(this.prefix)) {
+    return (await this.storageKeys()).flatMap(
+      (key: string): readonly string[] => {
+        if (!key.startsWith(this.prefix)) return []
+
         const parts = key.substring(this.prefix.length).split(':')
-        if (parts[1] === networkId) {
-          result.push(parts[0])
-        }
+
+        if (parts[1] !== networkId) return []
+
+        return [parts[0]]
       }
-    }
-    return result
+    )
   }
 
   /**

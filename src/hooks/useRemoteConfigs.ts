@@ -67,6 +67,13 @@ export function useRemoteConfigs() {
       .finally(() => {
         fetchingRef.current = false
       })
+    // HACK: This useEffect is dependent upon the result of useMountedRef, which
+    //       we know to be a useRef() result. This makes the hook dependency
+    //       safe to ignore, however we are obscuring the logic and run the risk
+    //       of new useEffect dependencies from being ignored in future. It is
+    //       likely they we don't need useIsMountedRef() to be its own hook, or
+    //       alternatively we should create a dedicated useEffect.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return { fetchConfigs, forcedUpgrade, forcedCreateAccount }

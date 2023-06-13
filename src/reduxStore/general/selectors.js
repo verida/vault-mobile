@@ -1,4 +1,4 @@
-import { ChainId } from "caip"
+import { ChainId } from 'caip'
 
 const s = (state) => state.main
 

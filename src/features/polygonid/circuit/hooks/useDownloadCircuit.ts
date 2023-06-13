@@ -43,6 +43,7 @@ export function useDownloadCircuit({
       if (!(await RNBlobUtil.fs.exists(circuitsDir)))
         await RNBlobUtil.fs
           .mkdir(circuitsDir)
+          // eslint-disable-next-line no-console
           .catch(console.warn) /* race_condition */
 
       // Create the circuitId-specific directory within the circuits dir where
@@ -53,6 +54,7 @@ export function useDownloadCircuit({
       if (!(await RNBlobUtil.fs.exists(targetDir)))
         await RNBlobUtil.fs
           .mkdir(targetDir)
+          // eslint-disable-next-line no-console
           .catch(console.warn) /* race_condition */
 
       const circuitFilePaths = getCircuitFilePaths({

@@ -111,10 +111,8 @@ export async function approveNearRequest(
       const signedTxs = await nearWallet.signTransactions({
         chainId,
         topic,
-        transactions: params.request.params.transactions.map(
-          (tx: Uint8Array) => {
-            return transactions.Transaction.decode(Buffer.from(tx))
-          }
+        transactions: params.request.params.transactions.map((tx: Uint8Array) =>
+          transactions.Transaction.decode(Buffer.from(tx))
         ),
       })
 
@@ -126,24 +124,20 @@ export async function approveNearRequest(
     case NEAR_SIGNING_METHODS.NEAR_SIGN_AND_SEND_TRANSACTIONS: {
       console.log('approve', { id, params })
 
-      if (!chainId) {
-        throw new Error('Invalid chain id')
-      }
-
-      const transactions = await nearWallet.createTransactions({
-        chainId,
-        transactions: params.request.params.transactions.map(
-          (transaction: any) => ({
-            ...transaction,
-            actions: transaction.actions.map(createAction),
-          })
-        ),
-      })
+      if (!chainId) throw new Error('Invalid chain id')
 
       const result = await nearWallet.signAndSendTransactions({
         chainId,
         topic,
-        transactions,
+        transactions: await nearWallet.createTransactions({
+          chainId,
+          transactions: params.request.params.transactions.map(
+            (transaction: any) => ({
+              ...transaction,
+              actions: transaction.actions.map(createAction),
+            })
+          ),
+        }),
       })
 
       return formatJsonRpcResult(id, result)

@@ -21,21 +21,27 @@ export function useFileServer({ dir, port }: FileServerProps) {
   })
 
   React.useEffect(() => {
+    // eslint-disable-next-line no-console
     console.debug(`useFileServer ~ Starting server on port ${port}`)
     server
       .start()
       .then(() => {
         setIsReady(true)
+        // eslint-disable-next-line no-console
         console.debug('useFileServer ~ Server started')
       })
+      // eslint-disable-next-line no-console
       .catch(console.error)
     return () => {
       try {
+        // eslint-disable-next-line no-console
         console.debug('useFileServer ~ Stopping server')
         setIsReady(false)
         server.stop()
       } catch (e) {
+        // eslint-disable-next-line no-console
         console.error('useFileServer ~ Error while stopping the server')
+        // eslint-disable-next-line no-console
         console.error(e)
       }
     }

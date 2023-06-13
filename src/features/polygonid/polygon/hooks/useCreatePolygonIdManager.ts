@@ -21,17 +21,20 @@ export function useCreatePolygonIdManager(): Stateful<string> {
   const account = accountManager.getSelectedAccount()
 
   React.useEffect(() => {
+    // eslint-disable-next-line no-console
     console.debug(
       'useCreatePolygonIdManager ~ Trying to create a new Polygon ID Manager'
     )
     setState(loadingState)
     if (!isPolygonIdReady) {
+      // eslint-disable-next-line no-console
       console.debug(
         'useCreatePolygonIdManager ~ Polygon ID is not ready, cannot create Polygon ID Manager'
       )
       return
     }
     if (!account) {
+      // eslint-disable-next-line no-console
       console.debug(
         'useCreatePolygonIdManager ~ No Verida account, cannot create Polygon ID Manager'
       )
@@ -62,10 +65,12 @@ export function useCreatePolygonIdManager(): Stateful<string> {
 
     const init = async () => {
       try {
+        // eslint-disable-next-line no-console
         console.debug(
           'useCreatePolygonIdManager ~ Creating a new Polygon ID Manager'
         )
         const managerId = await createIdManager(config)
+        // eslint-disable-next-line no-console
         console.debug(
           'useCreatePolygonIdManager ~ New Polygon ID Manager created:',
           managerId
@@ -73,6 +78,7 @@ export function useCreatePolygonIdManager(): Stateful<string> {
 
         setState({ loading: false, result: managerId })
       } catch (cause) {
+        // eslint-disable-next-line no-console
         console.error(
           'useCreatePolygonIdManager ~ Error while creating a Polygon ID Manager'
         )

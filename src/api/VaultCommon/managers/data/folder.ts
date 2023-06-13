@@ -57,6 +57,7 @@ export default class Folder {
       // If the error is caused by a missing index, automatically create the index and try again
       if (err.message?.indexOf('default index')) {
         const matches = err.message?.match(
+          // eslint-disable-next-line no-useless-escape
           /Cannot sort on field\(s\) \"([0-9a-zA-Z\.-]+)\" when using the default index/
         )
         const missingIndexName = matches[1]
@@ -192,28 +193,28 @@ export default class Folder {
       .join(' ')
   }
 
-  /**
-   * Build headers for the fields being displayed
-   */
-  public buildHeaders() {
-    const headers: object[] = []
-    const folder = this
+  ///**
+  // * Build headers for the fields being displayed
+  // */
+  //public buildHeaders() {
+  //  const headers: object[] = []
+  //  const folder = this
 
-    this.config.layouts.list.forEach((item: any) => {
-      headers.push({
-        value: item,
-        text: folder.getLabel(item),
-      })
-    })
+  //  this.config.layouts.list.forEach((item: any) => {
+  //    headers.push({
+  //      value: item,
+  //      text: folder.getLabel(item),
+  //    })
+  //  })
 
-    return headers
-  }
+  //  return headers
+  //}
 
   // Build display data for a given row
   // Field = Field label
   // Value = Value from the row
   public buildDisplayData(data: any, layout: any, properties: any[]) {
-    const displayData: object[] = []
+    const displayData: Record<string, unknown>[] = []
 
     layout.forEach((item: any) => {
       const value = _.get(data, item)

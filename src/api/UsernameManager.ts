@@ -77,10 +77,8 @@ export default class UsernameManager {
     if (replaceExisting) {
       const existingUsernames = await UsernameManager.get()
       if (existingUsernames) {
-        for (const e in existingUsernames) {
-          const username = existingUsernames[e]
-          await client.unregister(username)
-        }
+        for (const e in existingUsernames)
+          await client.unregister(existingUsernames[e])
       }
     }
     await client.register(username)

@@ -1,4 +1,4 @@
-import { Inbox, InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
+import { InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
 import VaultCommon from '../vault'
 import { DataAction } from './inbox/DataAction'
 import { DatastoreSync } from './inbox/DatastoreSync'
@@ -48,6 +48,7 @@ export class InboxManager {
 
     const Middleware = DataHandler[inboxEntry.type]
     if (!Middleware) {
+      // eslint-disable-next-line no-console
       console.error('Unknown inbox type!: ' + inboxEntry.type)
     }
 
@@ -95,6 +96,7 @@ export class InboxManager {
 
     const Middleware = DataHandler[inboxEntry.type]
     if (!Middleware) {
+      // eslint-disable-next-line no-console
       console.error('Unknown inbox type!: ' + inboxEntry.type)
     }
 

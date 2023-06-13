@@ -1,6 +1,6 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 
-import { BlockchainNetwork, NFT } from 'api/types'
+import { NFT } from 'api/types'
 
 import CONFIG from '../../config/environment'
 

@@ -69,21 +69,25 @@ const Home = (props) => {
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
   const linkTo = useLinkTo()
-  const processDeepLink = (initialUrl) => {
-    if (initialUrl === null) {
-      return
-    }
 
-    // ignore for firebase links, let firebase handle them.
-    if (
-      initialUrl.includes('redirect') ||
-      initialUrl.includes('verida.page.link')
-    ) {
-      return
-    }
+  const processDeepLink = React.useCallback(
+    (initialUrl) => {
+      if (initialUrl === null) {
+        return
+      }
 
-    handleDeeplink(initialUrl)
-  }
+      // ignore for firebase links, let firebase handle them.
+      if (
+        initialUrl.includes('redirect') ||
+        initialUrl.includes('verida.page.link')
+      ) {
+        return
+      }
+
+      handleDeeplink(initialUrl)
+    },
+    [handleDeeplink]
+  )
 
   useEffect(() => {
     const getUrl = async () => {
@@ -96,7 +100,7 @@ const Home = (props) => {
     }
 
     getUrl()
-  }, [handleDeeplink])
+  }, [handleDeeplink, processDeepLink])
 
   useEffect(() => {
     const handleBackgroundDeepLink = async (event) => {
@@ -109,7 +113,7 @@ const Home = (props) => {
     }
 
     Linking.addEventListener('url', handleBackgroundDeepLink)
-  }, [handleDeeplink])
+  }, [handleDeeplink, processDeepLink])
 
   useEffect(() => {
     dynamicLinks()

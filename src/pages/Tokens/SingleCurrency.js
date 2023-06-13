@@ -5,9 +5,7 @@ import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
-import {
-  isNativeToken,
-} from 'wallet/helpers/tokens'
+import { isNativeToken } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
