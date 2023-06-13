@@ -47,8 +47,9 @@ export default class VeridaOneManager {
     const datastore = await VeridaOneManager.getDatastore()
     let profile
     try {
-      profile = await datastore.get('public')
+      profile = await datastore.get('public', undefined)
     } catch (err: any) {
+      // eslint-disable-next-line no-console
       console.log(err)
 
       // @todo: test this
@@ -70,11 +71,11 @@ export default class VeridaOneManager {
     const datastore = await VeridaOneManager.getDatastore()
     const result = await datastore.save(profile, {})
     if (!result) {
-      // @ts-ignore
+      // eslint-disable-next-line no-console
       console.log(datastore.errors)
     }
     const db = await datastore.getDb()
-    const info = await db.info()
+    await db.info()
   }
 
   static async getDatastore(): Promise<IDatastore> {

@@ -1,9 +1,9 @@
 import { store } from 'reduxStore'
+import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 import AccountManager from 'api/AccountManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 
-import { WALLET_SCHEMA_0_2_0_URI } from '../../wallet/constants'
 import {
   BlockchainAccount,
   BlockchainNetwork,
@@ -178,7 +178,7 @@ export class WalletManager {
     }
 
     const wallets = await WalletManager.getBlockchainAccounts(
-      await walletDb!.getMany()
+      await walletDb!.getMany<BlockchainWallet>()
     )
 
     return {

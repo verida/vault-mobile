@@ -1,6 +1,5 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as ethers from 'ethers'
-import nearAPI from 'near-api-js'
 
 import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 
@@ -19,6 +18,7 @@ class nearBlockchain implements IBlockchain {
     }
   }
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   public buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet {
     throw new Error('Importing NEAR accounts from private key is not supported')
   }

@@ -213,6 +213,7 @@ class DataConnection extends EventEmitter {
 
       return result
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log('Save connection error: ', err.message)
     }
   }
