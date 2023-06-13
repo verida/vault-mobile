@@ -31,7 +31,11 @@ export default class Folder {
    * @param {*} filter
    * @param {*} options
    */
-  public async getMany(filter: any = {}, options: any = {}) {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public async getMany<T extends object = object>(
+    filter: any = {},
+    options: any = {}
+  ): Promise<T[]> {
     await this.init()
     if (!this.db) {
       return []
@@ -49,7 +53,7 @@ export default class Folder {
     let results = []
     try {
       results = await this.db.getMany(filter, options)
-    } catch (err) {
+    } catch (err: any) {
       // If the error is caused by a missing index, automatically create the index and try again
       if (err.message?.indexOf('default index')) {
         const matches = err.message?.match(

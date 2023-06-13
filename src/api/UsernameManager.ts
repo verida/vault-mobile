@@ -23,11 +23,8 @@ export default class UsernameManager {
 
     try {
       const usernames = await client.getDID(username)
-      if (usernames.length) {
-        return true
-      }
 
-      return false
+      return Boolean(usernames.length)
     } catch (err) {
       return false
     }
@@ -46,12 +43,20 @@ export default class UsernameManager {
     try {
       const client = await UsernameManager.getClient()
       const account = await AccountManager.getInstance().getSelectedAccount()
-      const usernames = await client.getUsernames(
-        account!.did.match(/(0x.*)/)[0]
-      )
-      return usernames
+
+      const did: string | undefined = account?.did
+
+      if (!did) return undefined
+
+      const match = did.match(/(0x.*)/)?.[0]
+
+      if (!match) return undefined
+
+      return await client.getUsernames(match)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log(err)
+
       return
     }
   }
@@ -108,6 +113,7 @@ export default class UsernameManager {
     })
 
     UsernameManager.client = nameClient
+
     return UsernameManager.client
   }
 }
