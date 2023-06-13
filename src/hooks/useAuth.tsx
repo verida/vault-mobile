@@ -84,6 +84,7 @@ export const AuthProvider: FC = ({ children }) => {
       Sentry.captureException(error)
       // Could not connect to the identity, check if it exists
       findDID()
+      return false
     }
   }, [findDID])
 

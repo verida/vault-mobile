@@ -3,7 +3,7 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
     "lib": [
-      "esnext"
+      "es2017"
     ],
     "moduleResolution": "node",
     "noEmit": true,
