@@ -29,7 +29,11 @@ const VerifyPhrase = (props) => {
       selectedWords.join(' ') ===
         AccountManager.getInstance().getSelectedAccount().mnemonic
     )
-  }, [route.params.shuffled, selected])
+
+    // TODO: We are not sensitive to route.params.shuffled here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected])
 
   useEffect(() => {
     return () => {

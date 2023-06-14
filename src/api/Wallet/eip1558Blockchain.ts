@@ -6,8 +6,9 @@ import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 class eip1558Blockchain implements IBlockchain {
   public buildAccountFromMnemonic(
     mnemonic: string,
-    derivationPath: string
-    //multiChain: boolean
+    derivationPath: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    multiChain: boolean
   ): WalletUtilsWallet {
     const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
     const childNode = node.derivePath(derivationPath)

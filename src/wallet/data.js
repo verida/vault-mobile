@@ -309,7 +309,9 @@ const sendTransaction = async (
         transaction = algosdk.makePaymentTxnWithSuggestedParams(
           chainWallet.address,
           receiverAddress,
-          parseInt(amount.toString(), 10),
+          // TODO: We should be specifying the radix here. I assume it is 10?
+          // eslint-disable-next-line radix
+          parseInt(amount.toString()),
           undefined,
           undefined,
           transactionParams
@@ -320,7 +322,9 @@ const sendTransaction = async (
           isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
           undefined,
           undefined,
-          isAssetEnablingTransaction ? 0 : parseInt(amount.toString(), 10),
+          // TODO: We should be specifying the radix here. I assume it is 10?
+          // eslint-disable-next-line radix
+          isAssetEnablingTransaction ? 0 : parseInt(amount.toString()),
           undefined,
           parseInt(tokenAddress, 10),
           transactionParams

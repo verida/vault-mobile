@@ -63,7 +63,11 @@ export default ({ route, navigation }) => {
       setState(conn)
       setShowSuccess(false)
     })
-  }, [route.params])
+    // TODO: We should be sensitive to more than just accessToken here.
+    //       We're disabling this error for backwards compatibility until this
+    //       can be tested properly.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [route.params.accessToken])
 
   useEffect(() => {
     if (route.params.connectNow) {

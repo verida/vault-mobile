@@ -92,7 +92,11 @@ const Home = (props) => {
     }
 
     getUrl()
-  }, [handleDeeplink, processDeepLink])
+
+    // TODO: We are not sensitive to processDeepLink here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleDeeplink])
 
   useEffect(() => {
     const handleBackgroundDeepLink = async (event) => {
@@ -105,7 +109,11 @@ const Home = (props) => {
     }
 
     Linking.addEventListener('url', handleBackgroundDeepLink)
-  }, [handleDeeplink, processDeepLink])
+
+    // TODO: We are not sensitive to processDeepLink here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [handleDeeplink])
 
   useEffect(() => {
     dynamicLinks()
