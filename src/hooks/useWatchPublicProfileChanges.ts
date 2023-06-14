@@ -50,7 +50,7 @@ export function useWatchPublicProfileChanges() {
     watchPublicProfile()
 
     return () => {
-      listener.off('change', notifyUpdatePublicProfile)
+      listener?.off('change', notifyUpdatePublicProfile)
     }
   }, [did])
 
