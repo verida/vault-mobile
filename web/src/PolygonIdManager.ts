@@ -130,12 +130,17 @@ export class PolygonIDManager {
     } catch (error: unknown) {
       // TODO: Remove this after the demo. Or throw a specific error saying there was an error calling the callback (contacting the original application)
       logger.error("Error calling authorization request callback");
-      logger.error(error);
 
-      return {
-        callbackResponse: null,
-        authResponse: result.authResponse,
-      };
+      // TODO: Clean up below before merging PR
+
+      // We used to ignore the error and return the authResponse. This is not a good idea because the UI will show a success message when there was an error.
+      // return {
+      //   callbackResponse: null,
+      //   authResponse: result.authResponse,
+      // };
+
+      // Rethrow the error so the UI actually shows something went wrong
+      throw error;
     }
   }
 
