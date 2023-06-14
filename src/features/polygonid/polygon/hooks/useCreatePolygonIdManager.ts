@@ -7,6 +7,7 @@ import CONFIG from 'config/environment'
 import { Stateful } from '../../@types'
 import { PolygonIdManagerConfig } from '../@types'
 import { usePolygonContext } from '../contexts'
+import { Blockchain, DidMethod, NetworkId } from 'features/polygonid/constants'
 
 const loadingState = (): Stateful<string> => ({
   loading: true,
@@ -52,9 +53,9 @@ export function useCreatePolygonIdManager(): Stateful<string> {
       // Make it the same as the Verida identity so there is a 1:1 relationship
       polygonIdPrivateKey: getPolygonIdPrivateKey(account.privateKey),
       // TODO: Get the values from the enums once the Polygon ID SDK can be added without issue
-      polygonIdBlockchain: 'polygon',
-      polygonIdNetworkId: 'mumbai', // TODO: Base this on whether the DID is mainnet or testnet/devnet
-      polygonIdDidMethod: 'polygonid',
+      polygonIdBlockchain: Blockchain.Polygon,
+      polygonIdNetworkId: NetworkId.Main, // TODO: Base this on whether the DID is mainnet or testnet/devnet
+      polygonIdDidMethod: DidMethod.PolygonId,
       // TODO: Ask Polygon ID team about revocation
       polygonIdRevocationBaseUrl: 'https://rhs-staging.polygonid.me/',
       polygonIdRevocationType: 'Iden3ReverseSparseMerkleTreeProof',

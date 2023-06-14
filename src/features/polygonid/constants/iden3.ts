@@ -39,3 +39,21 @@ export const PROTOCOL_MESSAGE_TYPE = Object.freeze({
   REVOCATION_STATUS_RESPONSE_MESSAGE_TYPE:
     IDEN3_PROTOCOL + 'revocation/1.0/status',
 })
+
+export enum Blockchain {
+  Ethereum = 'eth',
+  Polygon = 'polygon',
+  Unknown = 'unknown',
+  NoChain = '',
+}
+export enum NetworkId {
+  Main = 'main',
+  Mumbai = 'mumbai',
+  Goerli = 'goerli',
+  Unknown = 'unknown',
+  NoNetwork = '',
+}
+export enum DidMethod {
+  Iden3 = 'iden3',
+  PolygonId = 'polygonid',
+}
