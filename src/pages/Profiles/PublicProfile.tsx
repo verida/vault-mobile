@@ -33,6 +33,7 @@ import { Dispatch } from 'redux'
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import {
+  Account,
   BlockchainNetwork,
   BlockchainWalletWithAccounts,
   VeridaOneCustomLink,
@@ -63,7 +64,7 @@ import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
+import { getBlockchainNetworks, getSelectedAccount } from 'reduxStore/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
@@ -108,12 +109,8 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     BlockchainWalletWithAccounts
   >
 
-  const selectedAccount = useSelector(
-    (state: any) => state.main.selectedAccount
-  )
-  const currentAccountDID =
-    selectedAccount?.did ??
-    AccountManager.getInstance().getSelectedAccount()?.did
+  const selectedAccount: Account = useSelector(getSelectedAccount)
+  const currentAccountDID = selectedAccount.did
 
   const [username, setUsername] = useState<string | undefined>(undefined)
   const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
@@ -145,11 +142,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [refreshing, setRefreshing] = React.useState(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
-    Promise.all([fetchData(), fetchVeridaOneProfle(), fetchUsername()]).finally(
-      () => {
-        setRefreshing(false)
-      }
-    )
+    Promise.all([
+      fetchPublicProfile(),
+      fetchVeridaOneProfle(),
+      fetchUsername(),
+    ]).finally(() => {
+      setRefreshing(false)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -439,7 +438,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [debounceSaveProfile, publicCustomLinks]
   )
 
-  const fetchData = async () => {
+  const fetchPublicProfile = async () => {
     try {
       setQuickFetching(true)
       const vault = AccountManager.getInstance().vault as any
@@ -543,6 +542,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       }
     },
     [debounceSaveProfile, featuredAssets]
+  )
+
+  useEmitter(
+    'UPDATE_PUBLIC_PROFILE',
+    debounce(() => {
+      fetchPublicProfile()
+    }, 600)
   )
 
   useEmitter('UPDATE_PROFILE_USERNAME', () => {
@@ -783,7 +789,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       })()
 
       Promise.all([
-        fetchData(),
+        fetchPublicProfile(),
         fetchVeridaOneProfle(),
         fetchUsername(),
       ]).finally(() => {
@@ -835,31 +841,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       DataConnectorsManager.off('connectionUpdated', onConnectionUpdated)
       DataConnectorsManager.off('logout', onLogout)
     }
-  }, [])
-
-  // component did mount
-  useEffect(() => {
-    let listener: any
-    const watchChanges = async () => {
-      const vault = AccountManager.getInstance().vault as any
-      await vault.profiles.public.init()
-      const db = await vault.profiles.public.store.getDb()
-      const dbInstance = db.db
-      listener = dbInstance
-        .changes({
-          since: 'now',
-          live: true,
-        })
-        .on('change', () => {
-          fetchData()
-        })
-    }
-    watchChanges()
-    return () => {
-      listener?.cancel()
-    }
-    // Register profile change listener one time
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const renderWalletItem = useCallback(

@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react-native'
+import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
@@ -50,6 +51,7 @@ const EditProfile = (props: any) => {
         const vault = AccountManager.getInstance().vault as any
         await vault.profiles.public.set(key, val)
         setPublicProfileData({ ...publicProfileData, [key]: val })
+        emitter.emit('UPDATE_PUBLIC_PROFILE', undefined)
       }
     } catch (error) {
       Sentry.captureException(error)
