@@ -1,5 +1,4 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { DApp, DAppv2 } from 'wallet-connect/types'
 
 import { Network, NFT, NFTCollection } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
@@ -20,9 +19,6 @@ export type RootStackParams = {
   Auth: undefined
   Main: undefined
 }
-
-export type RootStackScreenProps<S extends keyof RootStackParams> =
-  NativeStackScreenProps<RootStackParams, S>
 
 export type AuthStackParams = {
   Start: undefined
@@ -48,9 +44,6 @@ export type DashboardTabParams = {
   Profile: undefined
   Connections: undefined
 }
-
-export type DashboardTabScreenProps<S extends keyof DashboardTabParams> =
-  NativeStackScreenProps<DashboardTabParams, S>
 
 export type MainStackParams = {
   Inbox: undefined
@@ -100,9 +93,8 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
-  WalletConnect: undefined
-  WalletConnectDapp: { dapp: DApp }
-  WalletConnectDappv2: { dapp: DAppv2 }
+  WalletConnectDapp: undefined
+  WalletConnectDapps: undefined
   SingleConnection: { provider: string; connectNow?: boolean }
   Success: undefined
 

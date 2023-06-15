@@ -18,17 +18,15 @@ import assetsReducer from './assets'
 import { getWalletNFTCollectionsQuery } from './assets/api'
 import { mainReducer } from './mainReducer'
 import { tokensReducer } from './tokens/reducer'
-import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['walletConnect', 'tokens', 'assets'],
+  whitelist: ['tokens', 'assets'],
 }
 
 export const rootReducer = combineReducers({
   main: mainReducer,
-  walletConnect: walletConnectReducer,
   tokens: tokensReducer,
   assets: assetsReducer,
 

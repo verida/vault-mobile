@@ -5,9 +5,9 @@ import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from 'contexts/ThemeContext'
-import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -33,7 +33,6 @@ import Authenticate from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
-import { WalletConnectProvider } from './contexts/WalletConnectContext'
 
 configureNotifications()
 
@@ -120,12 +119,10 @@ function App() {
                     <RootSiblingParent>
                       <ActionSheetProvider>
                         <WalletConnectProvider>
-                          <WalletConnectProviderv2>
-                            <GestureHandlerRootView style={{ flex: 1 }}>
-                              <RootNavigator />
-                            </GestureHandlerRootView>
-                            <MetaServerChecks />
-                          </WalletConnectProviderv2>
+                          <GestureHandlerRootView style={{ flex: 1 }}>
+                            <RootNavigator />
+                          </GestureHandlerRootView>
+                          <MetaServerChecks />
                         </WalletConnectProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>
