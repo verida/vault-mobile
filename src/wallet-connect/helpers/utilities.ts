@@ -5,14 +5,15 @@ import { SUPPORTED_CHAINS } from '../constants'
 import { IChainData } from '../types'
 
 // TODO: hardcode just to have a running build first, fix Bitrise .env config
+// TODO: Add to environment variables
 const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
 
-export function payloadId(): number {
-  const datePart: number = new Date().getTime() * Math.pow(10, 3)
-  const extraPart: number = Math.floor(Math.random() * Math.pow(10, 3))
-  const id: number = datePart + extraPart
-  return id
-}
+//export function payloadId(): number {
+//  const datePart: number = new Date().getTime() * Math.pow(10, 3)
+//  const extraPart: number = Math.floor(Math.random() * Math.pow(10, 3))
+//  const id: number = datePart + extraPart
+//  return id
+//}
 
 export function getChainData(chainId: number): IChainData {
   const chainData = SUPPORTED_CHAINS.filter(

@@ -1,12 +1,9 @@
-import { ObjectValues } from 'types/utils'
+import * as React from 'react'
 
-import { PROTOCOLS } from '../constants'
+export type Protocol = 'verida' | 'polygonid' | 'walletconnect'
 
-export type Protocol = ObjectValues<typeof PROTOCOLS>
-
-export type ProtocolDefinition = {
+export type ProtocolDefinition = Readonly<{
   protocol: Protocol
   label: string
   getLogo: (size: number) => React.ReactNode
-  // TODO: update arguments if needed
-}
+}>

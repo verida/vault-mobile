@@ -2,10 +2,13 @@ import SignClient from '@walletconnect/sign-client'
 
 export let signClient: SignClient
 
-export async function getWC2SignClient() {
+export async function getWC2SignClient(): Promise<SignClient> {
   if (signClient) return signClient
+
   signClient = await SignClient.init({
+    // TODO: to environment variable
     projectId: '1890472fb88366dd4046858b11e705cd',
+
     relayUrl: 'wss://relay.walletconnect.com',
     metadata: {
       name: 'Verida Vault',

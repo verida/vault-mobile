@@ -27,23 +27,23 @@ export const walletConnectReducer: Reducer<State> = (
         ),
       }
     }
-    case 'SET_WC_APP': {
-      const { walletId, key } = action.payload
-      let dapps = [...state.dapps]
-      const index = dapps.findIndex((app) => app.session.key === key)
-      if (index >= 0) {
-        dapps.splice(index, 1, {
-          walletId,
-          session: { ...action.payload.session },
-        })
-      } else {
-        dapps = [...dapps, { walletId, session: { ...action.payload.session } }]
-      }
-      return {
-        ...state,
-        dapps,
-      }
-    }
+    //case 'SET_WC_APP': {
+    //  const { walletId, key } = action.payload
+    //  let dapps = [...state.dapps]
+    //  const index = dapps.findIndex((app) => app.session.key === key)
+    //  if (index >= 0) {
+    //    dapps.splice(index, 1, {
+    //      walletId,
+    //      session: { ...action.payload.session },
+    //    })
+    //  } else {
+    //    dapps = [...dapps, { walletId, session: { ...action.payload.session } }]
+    //  }
+    //  return {
+    //    ...state,
+    //    dapps,
+    //  }
+    //}
 
     case 'SET_WC_PEER_META': {
       const { walletId, connector, peerMeta } = action.payload

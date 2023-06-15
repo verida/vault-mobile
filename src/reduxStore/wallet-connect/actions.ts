@@ -3,7 +3,7 @@ import {
   DApp,
   DAppv2,
   WalletConnectClientMeta,
-  WalletConnectSession,
+  //WalletConnectSession,
 } from 'wallet-connect/types'
 
 import { createAction } from '../helpers'
@@ -17,13 +17,13 @@ export function removeWalletConnectDapp(payload: {
   return createAction('REMOVE_WC_APP', payload)
 }
 
-export function setWalletConnectDapp(payload: {
-  walletId: string
-  key: string
-  session: WalletConnectSession
-}) {
-  return createAction('SET_WC_APP', payload)
-}
+//export function setWalletConnectDapp(payload: {
+//  walletId: string
+//  key: string
+//  session: WalletConnectSession
+//}) {
+//  return createAction('SET_WC_APP', payload)
+//}
 
 export function setWalletConnectPeerMeta(payload: {
   walletId: string
