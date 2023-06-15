@@ -30,12 +30,11 @@ function ScanQrCode(
   const [isFlashOn, setIsFlashOn] = useState(false)
   const handleDeeplink = useDeeplink(navigation as any)
 
-  const { onHandleConnectionData } = useWalletConnectContext()
+  const { onRequestConnect } = useWalletConnectContext()
   const { handleQRCodeMessage: handlePolygonIdData } = usePolygonId()
 
   // HACK: In development mode, we'll also read the content of the clipboard
   //       for a connection string.
-  // @ts-expect-error dev-only conditional hooks
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [maybeClipboardContent] = __DEV__ ? useClipboard() : []
 
@@ -66,7 +65,7 @@ function ScanQrCode(
       }
 
       if (isWalletConnectConnection(data))
-        return Promise.all([onHandleConnectionData(data), navigation.goBack()])
+        return Promise.all([onRequestConnect(data), navigation.goBack()])
 
       // PolygonId
       // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
@@ -100,7 +99,7 @@ function ScanQrCode(
       handleDeeplink,
       handlePolygonIdData,
       navigation,
-      onHandleConnectionData,
+      onRequestConnect,
       route.params,
     ]
   )
