@@ -1,7 +1,7 @@
-diff --git a/node_modules/pbkdf2/lib/async.js b/node_modules/pbkdf2/lib/async.js
+diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js
 index 3af2c49..9f08ab2 100644
---- a/node_modules/pbkdf2/lib/async.js
-+++ b/node_modules/pbkdf2/lib/async.js
+--- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js
++++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/async.js
 @@ -1,5 +1,11 @@
  var Buffer = require('safe-buffer').Buffer
  
@@ -60,35 +60,37 @@ index 3af2c49..9f08ab2 100644
    }), callback)
 +
  }
-diff --git a/node_modules/pbkdf2/lib/default-encoding.js b/node_modules/pbkdf2/lib/default-encoding.js
-index 3042099..fa8adac 100644
---- a/node_modules/pbkdf2/lib/default-encoding.js
-+++ b/node_modules/pbkdf2/lib/default-encoding.js
+diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js
+index 3042099..35e04d5 100644
+--- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js
++++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/default-encoding.js
 @@ -2,8 +2,8 @@ var defaultEncoding
  /* istanbul ignore next */
  if (global.process && global.process.browser) {
    defaultEncoding = 'utf-8'
 -} else if (global.process && global.process.version) {
 -  var pVersionMajor = parseInt(process.version.split('.')[0].slice(1), 10)
-+} else if (global.process && "v14.17.1") {
-+  var pVersionMajor = parseInt("v14.17.1".split('.')[0].slice(1), 10)
++} else if (global.process && "v18.16.0") {
++  var pVersionMajor = parseInt("v18.16.0".split('.')[0].slice(1), 10)
  
    defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary'
  } else {
-diff --git a/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/pbkdf2/lib/sync-browser.js
-index 20a64b4..3389392 100644
---- a/node_modules/pbkdf2/lib/sync-browser.js
-+++ b/node_modules/pbkdf2/lib/sync-browser.js
-@@ -3,6 +3,8 @@ var RIPEMD160 = require('ripemd160')
+diff --git a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
+index 20a64b4..594e366 100644
+--- a/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
++++ b/node_modules/@verida/wallet-utils/node_modules/pbkdf2/lib/sync-browser.js
+@@ -2,6 +2,10 @@ var md5 = require('create-hash/md5')
+ var RIPEMD160 = require('ripemd160')
  var sha = require('sha.js')
  var Buffer = require('safe-buffer').Buffer
- 
-+var Crypto = require('react-native-quick-crypto')
++var fastCrypto = require('react-native-fast-crypto')
++var pbkdf2 = fastCrypto.pbkdf2
 +
++var Crypto = require('react-native-quick-crypto')
+ 
  var checkParameters = require('./precondition')
  var defaultEncoding = require('./default-encoding')
- var toBuffer = require('./to-buffer')
-@@ -67,39 +69,8 @@ function getDigest (alg) {
+@@ -67,39 +71,14 @@ function getDigest (alg) {
    return shaFunc
  }
  
@@ -126,26 +128,13 @@ index 20a64b4..3389392 100644
 -
 -  return DK
 +function jspbkdf2 (password, salt, iterations, keylen, digest) {
-+  return Crypto.pbkdf2Sync(password, salt, iterations, keylen, digest)
- }
- 
--module.exports = pbkdf2
-+module.exports = jspbkdf2
-diff --git a/node_modules/pbkdf2/lib/sync.js b/node_modules/pbkdf2/lib/sync.js
-index 9eeca48..a9dad90 100644
---- a/node_modules/pbkdf2/lib/sync.js
-+++ b/node_modules/pbkdf2/lib/sync.js
-@@ -16,7 +16,7 @@ var checkParameters = require('./precondition')
- var defaultEncoding = require('./default-encoding')
- var toBuffer = require('./to-buffer')
- 
--function pbkdf2 (password, salt, iterations, keylen, digest) {
-+function jspbkdf2 (password, salt, iterations, keylen, digest) {
-   checkParameters(iterations, keylen)
-   password = toBuffer(password, defaultEncoding, 'Password')
-   salt = toBuffer(salt, defaultEncoding, 'Salt')
-@@ -49,4 +49,4 @@ function pbkdf2 (password, salt, iterations, keylen, digest) {
-   return DK
++  return Crypto.pbkdf2Sync(
++    password,
++    salt,
++    iterations,
++    keylen,
++    digest
++  )
  }
  
 -module.exports = pbkdf2
