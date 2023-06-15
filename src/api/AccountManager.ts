@@ -72,7 +72,7 @@ class AccountManager extends EventEmitter {
   public async init() {
     try {
       // Load all available blockchain networks
-      await store.dispatch(setBlockchainNetworks())
+      // await store.dispatch(setBlockchainNetworks())
       //await store.dispatch(getTokens())
       const updateWallets = true
       if (!this.selectedAccount) {
@@ -107,25 +107,29 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSelectedAccount(this.selectedAccount))
         }
 
-        const walletsRaw = await SecureStore.getItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY
-        )
-        // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
-        if (!walletsRaw || updateWallets) {
-          const selectedAccount = this.getSelectedAccount()
-          if (selectedAccount) {
-            await this.connect()
-          }
-
-          await this.restoreUserWallet(true)
-        } else {
-          const wallets = JSON.parse(walletsRaw)
-          store.dispatch(saveUserWallets(wallets))
-          const selectedWalletID = await SecureStore.getItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY
+        // TODO: move to an appropriate function
+        setTimeout(async () => {
+          await store.dispatch(setBlockchainNetworks())
+          const walletsRaw = await SecureStore.getItemAsync(
+            CONFIG.WALLETS_STORAGE_KEY
           )
-          await store.dispatch(setSelectedWallet(selectedWalletID))
-        }
+          // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
+          if (!walletsRaw || updateWallets) {
+            const selectedAccount = this.getSelectedAccount()
+            if (selectedAccount) {
+              await this.connect()
+            }
+
+            await this.restoreUserWallet(true)
+          } else {
+            const wallets = JSON.parse(walletsRaw)
+            store.dispatch(saveUserWallets(wallets))
+            const selectedWalletID = await SecureStore.getItemAsync(
+              CONFIG.SELECTED_WALLET_STORAGE_KEY
+            )
+            await store.dispatch(setSelectedWallet(selectedWalletID))
+          }
+        }, 0)
       }
     } catch (e) {
       Sentry.captureException(e)
