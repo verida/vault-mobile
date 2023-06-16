@@ -25,6 +25,10 @@ if (__DEV__) {
     'Usage of "messaging().registerDeviceForRemoteMessages()" is not required.',
     "The provided value 'ms-stream' is not a valid 'responseType'",
     "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'",
+
+    // Errors are thrown by WalletConnect, though objects continue to be allocated successfully.
+    // @walletconnect/web3wallet
+    /"context":/gi,
   ]
 
   LogBox.ignoreLogs(ignoreWarns)
