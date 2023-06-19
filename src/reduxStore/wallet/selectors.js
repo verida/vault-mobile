@@ -180,6 +180,13 @@ export const getWalletsData = createSelector(
   (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
 )
 
+// Returns the Near wallet, or undefined if it has not yet been initialized.
+export const getNearWalletData = createSelector(
+  () => 'near',
+  getAllWallets,
+  (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
+)
+
 export const getWallets = createSelector(
   getSelectedWalletId,
   getAllWallets,

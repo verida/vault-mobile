@@ -1,0 +1,46 @@
+import {
+  useActiveWalletConnectSessionNamespaces,
+  WalletConnectSessionChainCard,
+} from 'features/walletConnect'
+import * as React from 'react'
+import { StyleSheet, Text, View } from 'react-native'
+import { text } from 'styles'
+
+export const WalletConnectSessionNamespaces = React.memo(
+  function WalletConnectSessionNamespaces({
+    walletConnectSessionKey,
+  }: {
+    readonly walletConnectSessionKey: string
+  }): JSX.Element {
+    const namespaces = useActiveWalletConnectSessionNamespaces({
+      walletConnectSessionKey,
+    })
+    return (
+      <>
+        {Object.keys(namespaces).map((chain) => {
+          return (
+            <React.Fragment key={chain}>
+              <View style={styles.row}>
+                <Text
+                  style={text.primary}>{`Review ${chain} permissions`}</Text>
+              </View>
+              <WalletConnectSessionChainCard
+                chain={chain}
+                walletConnectSessionKey={walletConnectSessionKey}
+              />
+            </React.Fragment>
+          )
+        })}
+      </>
+    )
+  }
+)
+
+const styles = StyleSheet.create({
+  row: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginVertical: 8,
+  },
+})

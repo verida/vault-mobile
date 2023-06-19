@@ -1,2 +1,5 @@
 export * from './useActiveWalletConnectSession'
+export * from './useActiveWalletConnectSessionExpiry'
+export * from './useActiveWalletConnectSessionNamespace'
+export * from './useActiveWalletConnectSessionNamespaces'
 export * from './useCreateWeb3Wallet'

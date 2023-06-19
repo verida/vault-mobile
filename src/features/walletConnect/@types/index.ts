@@ -9,3 +9,12 @@ export type WalletConnectContextValue = {
   readonly onRequestConnect: (maybeConnectionUri: unknown) => Promise<void>
   readonly onRequestRefreshActiveSessions: () => Promise<void>
 }
+
+// TODO: Hasn't this been defined somewhere else?
+export type WalletConnectChainMeta<ChainId> = {
+  readonly chainId: ChainId
+  readonly name: string
+  readonly logo: string
+  readonly rgb: string
+  readonly rpc: string
+}

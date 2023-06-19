@@ -7,10 +7,11 @@ import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { NearProvider } from 'features/near'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -118,12 +119,14 @@ function App() {
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
-                        <WalletConnectProvider>
-                          <GestureHandlerRootView style={{ flex: 1 }}>
-                            <RootNavigator />
-                          </GestureHandlerRootView>
-                          <MetaServerChecks />
-                        </WalletConnectProvider>
+                        <NearProvider nearNetwork='testnet'>
+                          <WalletConnectProvider>
+                            <GestureHandlerRootView style={styles.flex}>
+                              <RootNavigator />
+                            </GestureHandlerRootView>
+                            <MetaServerChecks />
+                          </WalletConnectProvider>
+                        </NearProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>
                   </Authenticate>
@@ -144,6 +147,10 @@ function App() {
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+})
 
 const codePushOptions: CodePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,

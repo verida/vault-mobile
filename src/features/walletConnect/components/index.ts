@@ -1,2 +1,6 @@
 export * from './WalletConnect.Provider'
+export * from './WalletConnect.Session.ChainCard'
+export * from './WalletConnect.Session.InfoCard'
 export * from './WalletConnect.Session.Item'
+export * from './WalletConnect.Session.Namespaces.ChainId'
+export * from './WalletConnect.Session.Namespaces'
