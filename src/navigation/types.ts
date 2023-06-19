@@ -93,8 +93,10 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
+  // TODO: rename
   WalletConnectDapp: undefined
-  WalletConnectDapps: undefined
+  // TODO: rename
+  WalletConnectDapps: { walletConnectSessionKey: string }
   SingleConnection: { provider: string; connectNow?: boolean }
   Success: undefined
 

@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import {
+  ActiveSessions,
   isWalletConnectConnection,
   isWalletConnectV2Connection,
   useCreateWeb3Wallet,
@@ -10,9 +11,19 @@ import {
 import * as React from 'react'
 import { Alert } from 'react-native'
 
+const DEFAULT_ACTIVE_SESSIONS: ActiveSessions = Object.freeze({})
+
+const walletNotReadyError: Error = new Error(
+  'Web3Wallet was not ready to pair.'
+)
+
 export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   children,
 }: React.PropsWithChildren<unknown>): JSX.Element {
+  const [activeSessions, setActiveSessions] = React.useState<ActiveSessions>(
+    DEFAULT_ACTIVE_SESSIONS
+  )
+
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
     useCreateWeb3Wallet({
       onSessionRequest: React.useCallback(() => undefined, []),
@@ -21,14 +32,23 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     })
   )
 
+  const onRequestRefreshActiveSessions = React.useCallback(async () => {
+    if (!maybeWeb3Wallet) throw walletNotReadyError
+
+    const nextActiveSessions: ActiveSessions =
+      await maybeWeb3Wallet.getActiveSessions()
+
+    setActiveSessions(nextActiveSessions)
+  }, [maybeWeb3Wallet])
+
   const pairWithWalletConnectUriOrThrow = React.useCallback(
-    (connectionUri: string) => {
-      if (!maybeWeb3Wallet) throw new Error('Web3Wallet was not ready to pair.')
+    async (connectionUri: string) => {
+      if (!maybeWeb3Wallet) throw walletNotReadyError
 
       if (!isWalletConnectV2Connection(connectionUri))
         throw new Error('Expected v2 connectionUri.')
 
-      return maybeWeb3Wallet.core.pairing.pair({ uri: connectionUri })
+      await maybeWeb3Wallet.core.pairing.pair({ uri: connectionUri })
     },
     [maybeWeb3Wallet]
   )
@@ -59,16 +79,39 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     [pairWithWalletConnectUriOrThrow]
   )
 
+  // HACK: This function body relies on the side effects of how
+  //       onRequestRefreshActiveSessions is reallocated whenever the
+  //       maybeWeb3Wallet changes.
+  React.useEffect(
+    () =>
+      void (async () => {
+        try {
+          // If there's no Web3Wallet, resort to the DEFAULT_ACTIVE_SESSIONS.
+          if (!maybeWeb3Wallet)
+            return setActiveSessions(DEFAULT_ACTIVE_SESSIONS)
+
+          await onRequestRefreshActiveSessions()
+        } catch (e) {
+          // eslint-disable-next-line no-console
+          __DEV__ && console.error(e)
+
+          Sentry.captureException(e)
+        }
+      })(),
+    [onRequestRefreshActiveSessions, maybeWeb3Wallet]
+  )
+
   return (
     <WalletConnectContextProvider
       // eslint-disable-next-line react/no-children-prop
       children={children}
       value={React.useMemo<WalletConnectContextValue>(
         () => ({
+          activeSessions,
           onRequestConnect,
-          maybeWeb3Wallet: maybeWeb3Wallet ?? undefined,
+          onRequestRefreshActiveSessions,
         }),
-        [onRequestConnect, maybeWeb3Wallet]
+        [onRequestConnect, activeSessions, onRequestRefreshActiveSessions]
       )}
     />
   )
