@@ -21,7 +21,7 @@ export const WalletConnectSessionItem = React.memo(
     readonly walletConnectSessionKey: string
     readonly onPress: (e: GestureResponderEvent) => void
   }): JSX.Element {
-    const dapp = useActiveWalletConnectSession()
+    const dapp = useActiveWalletConnectSession({ walletConnectSessionKey })
     return (
       <TouchableOpacity key={walletConnectSessionKey} onPress={onPress}>
         <View style={styles.appContainer}>
