@@ -1,2 +1,2 @@
-export * from './WalletConnectProvider'
-export * from './WalletConnectSessionItem'
+export * from './WalletConnect.Provider'
+export * from './WalletConnect.Session.Item'
