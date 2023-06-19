@@ -1,6 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useWalletConnectContext } from 'features/walletConnect'
+import {
+  useWalletConnectContext,
+  WalletConnectSessionItem,
+} from 'features/walletConnect'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { LayoutStyle, text } from 'styles'
@@ -11,7 +14,6 @@ import NavigationHeader, {
 } from 'components/Navigation/NavigationHeader'
 import { Spacer } from 'components/Spacer'
 import Text from 'components/Text'
-import { WalletConnectSessionItem } from 'components/WalletConnect/WalletConnectSessionItem'
 import { MainStackParams } from 'navigation/types'
 
 const leftIcon: HeaderProps['left'] = { icon: 'back' }

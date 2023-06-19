@@ -1,4 +1,4 @@
-import { useActiveWalletConnectSession } from 'features/walletConnect/hooks/useActiveWalletConnectSession'
+import { useActiveWalletConnectSession } from 'features/walletConnect'
 import * as React from 'react'
 import {
   GestureResponderEvent,
