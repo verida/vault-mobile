@@ -1,6 +1,5 @@
 import {
   useActiveWalletConnectSessionChains,
-  useActiveWalletConnectSessionNamespaces,
   WalletConnectSessionChainCard,
 } from 'features/walletConnect'
 import * as React from 'react'

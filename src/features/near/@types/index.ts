@@ -1,8 +1,6 @@
 import { NearKeystore } from 'features/near'
 import { KeyPair } from 'near-api-js'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
-
 // https://github.com/verida/vault-mobile/blob/develop/src/wallet-connect/controllers/near.ts
 // TODO: This is supposed to represent the data we save in Redux for Near wallets. Is this correct?
 export type SerializedNearWallet = {
