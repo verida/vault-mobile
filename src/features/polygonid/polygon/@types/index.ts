@@ -5,19 +5,27 @@ import type {
   W3CCredential,
 } from '@0xpolygonid/js-sdk'
 import type { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
-import { Blockchain, DidMethod, NetworkId } from 'features/polygonid/constants'
+import {
+  Blockchain,
+  CredentialStatusType,
+  DidMethod,
+  NetworkId,
+} from 'features/polygonid/constants'
 
 export interface PolygonIdManagerConfig {
   readonly veridaPrivateKey: string
   readonly veridaEnvironment: EnvironmentType
   readonly veridaContextName: string
   readonly veridaDidClientConfig: AccountNodeDIDClientConfig
+  readonly veridaCredentialRecordSchema: string
   readonly polygonIdPrivateKey: string
   readonly polygonIdBlockchain: Blockchain
   readonly polygonIdNetworkId: NetworkId
   readonly polygonIdDidMethod: DidMethod
   readonly polygonIdRevocationBaseUrl: string
-  readonly polygonIdRevocationType: string // CredentialStatusType
+  readonly polygonIdRevocationType: CredentialStatusType
+  readonly polygonIdRpcUrl: string
+  readonly polygonIdContractAddress: string
 }
 
 // Creates a PolygonIdManager on the web context.

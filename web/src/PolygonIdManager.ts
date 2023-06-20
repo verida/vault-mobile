@@ -52,25 +52,21 @@ import { Network, Context } from "@verida/client-ts";
 import { AutoAccount } from "@verida/account-node";
 import { logger } from "./utils";
 
-// TODO: Add the RPC URL in the config
-// TODO: Add the contract address in the config
-const RPC_URL = "https://rpc-mumbai.maticvigil.com";
-const CONTRACT_ADDRESS = "0x134B1BE34911E39A8397ec6289782989729807a4";
-const CREDENTIAL_SCHEMA =
-  "https://common.schemas.verida.io/credential/base/v0.2.0/schema.json";
-
 export interface PolygonIDManagerConfig {
   // TODO: Find a better way to pass the sensitive information to the manager.
   veridaPrivateKey: string;
   veridaEnvironment: EnvironmentType;
   veridaContextName: string;
   veridaDidClientConfig: AccountNodeDIDClientConfig;
+  veridaCredentialRecordSchema: string;
   polygonIdPrivateKey: string;
   polygonIdBlockchain: Blockchain;
   polygonIdNetworkId: NetworkId;
   polygonIdDidMethod: DidMethod;
   polygonIdRevocationBaseUrl: string;
   polygonIdRevocationType: CredentialStatusType;
+  polygonIdRpcUrl: string;
+  polygonIdContractAddress: string;
 }
 
 // Convert a base64 encoded string to a Uint8Array.
@@ -181,7 +177,7 @@ export class PolygonIDManager {
       "Saving credentials to the account's Vault credentials datastore"
     );
     const credentialDatastore = await this.context!.openDatastore(
-      CREDENTIAL_SCHEMA
+      this.config.veridaCredentialRecordSchema
     );
 
     const results = await Promise.allSettled(
@@ -193,7 +189,7 @@ export class PolygonIDManager {
         const credentialRecord = {
           name,
           // summary: "", TODO: Get a summary somewhere
-          schema: CREDENTIAL_SCHEMA,
+          schema: this.config.veridaCredentialRecordSchema,
           credentialSchema,
           credentialData: credential,
         };
@@ -248,8 +244,8 @@ export class PolygonIDManager {
     );
 
     const conf = defaultEthConnectionConfig;
-    conf.url = RPC_URL;
-    conf.contractAddress = CONTRACT_ADDRESS;
+    conf.url = this.config.polygonIdRpcUrl;
+    conf.contractAddress = this.config.polygonIdContractAddress;
     const ethStorage = new EthStateStorage(conf);
 
     this.proofService = new ProofService(
@@ -311,9 +307,8 @@ export class PolygonIDManager {
   private async initDataStorage(): Promise<IDataStorage> {
     const conf: EthConnectionConfig = defaultEthConnectionConfig;
 
-    // TODO: Define constants for these values
-    conf.contractAddress = CONTRACT_ADDRESS;
-    conf.url = RPC_URL;
+    conf.contractAddress = this.config.polygonIdContractAddress;
+    conf.url = this.config.polygonIdRpcUrl;
 
     const dataStorage = {
       credential: new CredentialStorage(
@@ -494,7 +489,7 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
    * @param {{ alias: string; key: string }} args - key alias and hex representation
    * @returns `Promise<void>`
    */
-  public async import(args: { alias: string; key: string }): Promise<void> {
+  public async importKey(args: { alias: string; key: string }): Promise<void> {
     const record = {
       _id: args.alias,
       value: args.key,
