@@ -1,4 +1,5 @@
 export * from './useActiveWalletConnectSession'
+export * from './useActiveWalletConnectSessionAccounts'
 export * from './useActiveWalletConnectSessionChainAccounts'
 export * from './useActiveWalletConnectSessionChainAccountsVeridaChainIds'
 export * from './useActiveWalletConnectSessionChains'

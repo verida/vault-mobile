@@ -2,6 +2,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useMaybeNearWalletAddresses } from 'features/near'
 import {
+  ChainToAccounts,
+  useActiveWalletConnectSessionAccounts,
+  useActiveWalletConnectSessionChains,
   useActiveWalletConnectSessionExpiry,
   useActiveWalletConnectSessionNamespaces,
   WalletConnectButtonDisconnectSession,
@@ -33,10 +36,10 @@ export const WalletConnectDapps = React.memo(
       walletConnectSessionKey,
     })
 
-    const nearAddresses = useMaybeNearWalletAddresses()
-
-    // TODO: This used to be just near, and would create etc. But we need to treat near like any other wallet, yes?
-    // TODO: What address to render? Near or Ethereum? Is it based on the selected chain? How to select the chain?
+    const chainsToAccounts: ChainToAccounts =
+      useActiveWalletConnectSessionAccounts({
+        walletConnectSessionKey,
+      })
 
     return (
       <View>
@@ -66,12 +69,19 @@ export const WalletConnectDapps = React.memo(
               />
             )}
 
-            {/* TODO: render all addresses? how to associate session to addresses? */}
-            {nearAddresses?.[0] && (
-              <View style={styles.row}>
-                <Text style={styles.label}>Account ID</Text>
-                <Text style={styles.value}>{nearAddresses[0]}</Text>
-              </View>
+            {Object.entries(chainsToAccounts).flatMap(
+              ([chainId, accountsForChain]) =>
+                accountsForChain.map((accountForChain: string) => (
+                  // TODO: Render the associated chain?
+                  <View
+                    style={styles.row}
+                    key={`${chainId}_${accountForChain}`}>
+                    {/* eslint-disable-next-line react/no-children-prop */}
+                    <Text children='Account ID' style={styles.label} />
+                    {/* eslint-disable-next-line react/no-children-prop */}
+                    <Text children={accountForChain} style={styles.value} />
+                  </View>
+                ))
             )}
 
             {Boolean(maybeExpiry) && (

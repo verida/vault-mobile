@@ -6,7 +6,7 @@ export function useActiveWalletConnectSessionChains({
   walletConnectSessionKey,
 }: {
   readonly walletConnectSessionKey: string | undefined
-}) {
+}): readonly string[] {
   const namespaces = useActiveWalletConnectSessionNamespaces({
     walletConnectSessionKey,
   })

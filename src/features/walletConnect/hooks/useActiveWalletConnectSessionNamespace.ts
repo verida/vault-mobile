@@ -1,6 +1,22 @@
-import { SessionTypes } from '@walletconnect/types'
-import { useActiveWalletConnectSessionNamespaces } from 'features/walletConnect'
-import Namespaces = SessionTypes.Namespaces
+import {
+  MaybeNamespace,
+  Namespaces,
+  useActiveWalletConnectSessionNamespaces,
+} from 'features/walletConnect'
+
+export const getNamespaceForChain = ({
+  chain,
+  namespaces,
+}: {
+  readonly chain: string | undefined
+  readonly namespaces: Namespaces | undefined
+}): MaybeNamespace => {
+  if (!namespaces || !chain) return undefined
+
+  const { [chain]: maybeNamespace } = namespaces
+
+  return maybeNamespace || undefined
+}
 
 export function useActiveWalletConnectSessionNamespace({
   walletConnectSessionKey,
@@ -8,14 +24,10 @@ export function useActiveWalletConnectSessionNamespace({
 }: {
   readonly walletConnectSessionKey: string | undefined
   readonly chain: string | undefined
-}): Namespaces[string] | undefined {
+}): MaybeNamespace {
   const namespaces = useActiveWalletConnectSessionNamespaces({
     walletConnectSessionKey,
   })
 
-  if (!namespaces || !chain) return undefined
-
-  const { [chain]: maybeNamespace } = namespaces
-
-  return maybeNamespace || undefined
+  return getNamespaceForChain({ chain, namespaces })
 }

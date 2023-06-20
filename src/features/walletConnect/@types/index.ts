@@ -1,4 +1,5 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
+import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 
 export type ActiveSessions = Awaited<
@@ -24,4 +25,12 @@ export type WalletConnectChainMeta<ChainId> = {
   readonly logo: string
   readonly rgb: string
   readonly rpc: string
+}
+
+export type Namespaces = SessionTypes.Namespaces
+export type MaybeNamespace = Namespaces[string] | undefined
+
+// TODO: instead of chain, namespaceId would be better??
+export type ChainToAccounts = {
+  readonly [chainId in string]: readonly string[]
 }
