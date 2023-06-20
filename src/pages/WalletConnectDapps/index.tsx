@@ -1,12 +1,12 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { useMaybeNearWalletAddresses } from 'features/near'
+import { CaipWalletTypeSpan, isCaipWalletType } from 'features/caip'
 import {
   ChainToAccounts,
   useActiveWalletConnectSessionAccounts,
-  useActiveWalletConnectSessionChains,
   useActiveWalletConnectSessionExpiry,
   useActiveWalletConnectSessionNamespaces,
+  useActiveWalletConnectSessionPeerId,
   WalletConnectButtonDisconnectSession,
   WalletConnectSessionInfoCard,
   WalletConnectSessionNamespaces,
@@ -27,6 +27,10 @@ export const WalletConnectDapps = React.memo(
     const {
       params: { walletConnectSessionKey },
     } = useRoute<RouteProp<MainStackParams, 'WalletConnectDapps'>>()
+
+    const maybePeerId = useActiveWalletConnectSessionPeerId({
+      walletConnectSessionKey,
+    })
 
     const namespaces = useActiveWalletConnectSessionNamespaces({
       walletConnectSessionKey,
@@ -69,19 +73,49 @@ export const WalletConnectDapps = React.memo(
               />
             )}
 
-            {Object.entries(chainsToAccounts).flatMap(
-              ([chainId, accountsForChain]) =>
-                accountsForChain.map((accountForChain: string) => (
-                  // TODO: Render the associated chain?
-                  <View
-                    style={styles.row}
-                    key={`${chainId}_${accountForChain}`}>
-                    {/* eslint-disable-next-line react/no-children-prop */}
-                    <Text children='Account ID' style={styles.label} />
-                    {/* eslint-disable-next-line react/no-children-prop */}
-                    <Text children={accountForChain} style={styles.value} />
-                  </View>
-                ))
+            {Object.entries(chainsToAccounts)
+              .filter(
+                ([_, accounts]) => Boolean(accounts.length) /* non-empty */
+              )
+              .flatMap(
+                // TODO: reinforce that chainId is a caipWalletType (hopefully)
+                /* network */
+                ([chainId, accountsForChain]) => [
+                  <View style={styles.row} key={chainId}>
+                    <Text style={styles.label}>Network</Text>
+                    <Text style={styles.value}>
+                      <CaipWalletTypeSpan
+                        caipWalletType={
+                          isCaipWalletType(chainId) ? chainId : undefined
+                        }
+                      />
+                    </Text>
+                  </View>,
+                  /* network accounts */
+                  // TODO: we used to filter these to only render one - necessary?
+                  ...accountsForChain.map((accountForChain: string) => (
+                    <View
+                      style={styles.row}
+                      key={`${chainId}_${accountForChain}`}>
+                      {/* eslint-disable-next-line react/no-children-prop */}
+                      <Text children='Account ID' style={styles.label} />
+                      {/* eslint-disable-next-line react/no-children-prop */}
+                      <Text children={accountForChain} style={styles.value} />
+                    </View>
+                  )),
+                ]
+              )}
+
+            {Boolean(maybePeerId) && (
+              <View style={styles.row}>
+                {/* eslint-disable-next-line react/no-children-prop */}
+                <Text style={styles.label} children='PeerId' />
+                <Text
+                  // eslint-disable-next-line react/no-children-prop
+                  children={maybePeerId}
+                  style={styles.value}
+                />
+              </View>
             )}
 
             {Boolean(maybeExpiry) && (
