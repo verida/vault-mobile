@@ -42,10 +42,13 @@ export const WalletConnectDapps = React.memo(
       <View>
         <NavigationHeader
           title='Session Details'
-          left={{
-            icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-            action: () => navigation.goBack(),
-          }}
+          left={React.useMemo(
+            () => ({
+              icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+              action: () => navigation.goBack(),
+            }),
+            [navigation]
+          )}
         />
         <View style={LayoutStyle.layout}>
           <ScrollView
@@ -86,6 +89,7 @@ export const WalletConnectDapps = React.memo(
 
             <WalletConnectButtonDisconnectSession
               walletConnectSessionKey={walletConnectSessionKey}
+              onSessionDeleted={navigation.goBack}
             />
           </ScrollView>
         </View>

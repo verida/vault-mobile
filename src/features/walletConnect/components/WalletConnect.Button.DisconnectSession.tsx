@@ -14,10 +14,12 @@ export const WalletConnectButtonDisconnectSession = React.memo(
     style,
     walletConnectSessionKey,
     reason = defaultReason,
+    onSessionDeleted: maybeOnSessionDeleted,
   }: {
     readonly style?: StyleProp<ViewStyle>
     readonly walletConnectSessionKey: string
     readonly reason?: ErrorResponse
+    readonly onSessionDeleted?: () => void
   }): JSX.Element {
     const { onRequestDeleteSession } = useWalletConnectContext()
     const [loading, setLoading] = React.useState<boolean>(false)
@@ -35,6 +37,8 @@ export const WalletConnectButtonDisconnectSession = React.memo(
               walletConnectSessionKey,
               reason || defaultReason
             )
+
+            maybeOnSessionDeleted?.()
           } catch (e) {
             // eslint-disable-next-line no-console
             __DEV__ && console.error(e)
@@ -43,7 +47,12 @@ export const WalletConnectButtonDisconnectSession = React.memo(
           } finally {
             setLoading(false)
           }
-        }, [walletConnectSessionKey, reason, onRequestDeleteSession])}>
+        }, [
+          walletConnectSessionKey,
+          reason,
+          onRequestDeleteSession,
+          maybeOnSessionDeleted,
+        ])}>
         Disconnect
       </Button>
     )
