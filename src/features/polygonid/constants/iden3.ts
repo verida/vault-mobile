@@ -57,3 +57,8 @@ export enum DidMethod {
   Iden3 = 'iden3',
   PolygonId = 'polygonid',
 }
+
+export enum CredentialStatusType {
+  SparseMerkleTreeProof = 'SparseMerkleTreeProof',
+  Iden3ReverseSparseMerkleTreeProof = 'Iden3ReverseSparseMerkleTreeProof',
+}
