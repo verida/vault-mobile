@@ -13,7 +13,7 @@ export function useActiveWalletConnectSessionChainAccountsVeridaChainIds({
     walletConnectSessionKey,
   })
 
-  return React.useMemo(
+  const veridaChainIds = React.useMemo(
     // TODO: Make this reusable, we likely do this in a lot of places
     () => [
       ...new Set(
@@ -42,4 +42,6 @@ export function useActiveWalletConnectSessionChainAccountsVeridaChainIds({
     ],
     [accounts]
   )
+
+  return { veridaChainIds }
 }

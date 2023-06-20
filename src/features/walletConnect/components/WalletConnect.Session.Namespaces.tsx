@@ -1,4 +1,5 @@
 import {
+  useActiveWalletConnectSessionChains,
   useActiveWalletConnectSessionNamespaces,
   WalletConnectSessionChainCard,
 } from 'features/walletConnect'
@@ -12,12 +13,12 @@ export const WalletConnectSessionNamespaces = React.memo(
   }: {
     readonly walletConnectSessionKey: string
   }): JSX.Element {
-    const namespaces = useActiveWalletConnectSessionNamespaces({
+    const chains = useActiveWalletConnectSessionChains({
       walletConnectSessionKey,
     })
     return (
       <>
-        {Object.keys(namespaces).map((chain) => {
+        {chains.map((chain) => {
           return (
             <React.Fragment key={chain}>
               <View style={styles.row}>

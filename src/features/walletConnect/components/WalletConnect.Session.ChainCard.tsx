@@ -16,21 +16,22 @@ export const WalletConnectSessionChainCard = React.memo(
     readonly chain: string
   }): JSX.Element {
     // TODO: wtf chain/chains? what is going on
-    const chainIds = useActiveWalletConnectSessionChainAccountsVeridaChainIds({
-      chain,
-      walletConnectSessionKey,
-    })
+    const { veridaChainIds } =
+      useActiveWalletConnectSessionChainAccountsVeridaChainIds({
+        chain,
+        walletConnectSessionKey,
+      })
 
     return (
       <React.Fragment
         // eslint-disable-next-line react/no-children-prop
-        children={chainIds.map((chainId: string) => (
+        children={veridaChainIds.map((veridaChainId: string) => (
           <WalletConnectSessionNamespacesChainId
-            key={chainId}
+            key={veridaChainId}
             walletConnectSessionKey={walletConnectSessionKey}
             // Yikes.
             chain={chain}
-            chainId={chainId}
+            veridaChainId={veridaChainId}
           />
         ))}
       />

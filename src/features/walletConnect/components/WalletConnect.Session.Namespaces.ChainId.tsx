@@ -5,17 +5,16 @@ import {
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-//import { formatChainName } from 'wallet-connect/helpers/HelperUtil'
 import text from 'styles/text'
 
 export const WalletConnectSessionNamespacesChainId = React.memo(
   function WalletConnectSessionNamespacesChainId({
     chain,
-    chainId,
+    veridaChainId,
     walletConnectSessionKey,
   }: {
     readonly chain: string /* walletConnect */
-    readonly chainId: string /* verida */
+    readonly veridaChainId: string /* verida */
     readonly walletConnectSessionKey: string
   }): JSX.Element {
     const maybeNamespace = useActiveWalletConnectSessionNamespace({
@@ -40,10 +39,10 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
     // TODO: This is https://github.com/verida/vault-mobile/blob/1d34080ed6ca9e8a821e0c7c9c33c2e62dc88a42/src/wallet-connect/helpers/HelperUtil.ts#L106
     //       Verify if we need to generalize this usage.
     const maybeChainName =
-      WALLETCONNECT_SUPPORTED_CHAINS[chainId]?.name || chainId
+      WALLETCONNECT_SUPPORTED_CHAINS[veridaChainId]?.name || veridaChainId
 
     return (
-      <View style={styles.container} key={chainId}>
+      <View style={styles.container}>
         <View style={styles.row}>
           {/* eslint-disable-next-line react/no-children-prop */}
           <Text children={maybeChainName} style={styles.label} />
