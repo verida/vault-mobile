@@ -41,12 +41,15 @@ export function useCreateWeb3Wallet({
   metadata = defaultMetadata,
 }: {
   readonly onSessionProposal: (
+    web3wallet: IWeb3Wallet,
     event: Web3WalletTypes.EventArguments['session_proposal']
   ) => void
   readonly onSessionRequest: (
+    web3wallet: IWeb3Wallet,
     event: Web3WalletTypes.EventArguments['session_request']
   ) => void
   readonly onSessionDelete: (
+    web3wallet: IWeb3Wallet,
     event: Web3WalletTypes.EventArguments['session_delete']
   ) => void
   readonly metadata?: AuthClientTypes.Metadata
@@ -69,9 +72,13 @@ export function useCreateWeb3Wallet({
             metadata,
           })
 
-          web3wallet.on('session_proposal', onSessionProposal)
-          web3wallet.on('session_request', onSessionRequest)
-          web3wallet.on('session_delete', onSessionDelete)
+          web3wallet.on('session_proposal', (e) =>
+            onSessionProposal(web3wallet, e)
+          )
+          web3wallet.on('session_request', (e) =>
+            onSessionRequest(web3wallet, e)
+          )
+          web3wallet.on('session_delete', (e) => onSessionDelete(web3wallet, e))
 
           setState({ loading: false, web3wallet })
         } catch (cause) {

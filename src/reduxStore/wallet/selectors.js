@@ -29,14 +29,14 @@ export const getTotalBalance = (state) => {
   }
 }
 
-export const getSingleWalletChain = (state) => {
-  const wallet = getWallets(state)
-  if (wallet.type === 'single' && wallet.chain) {
-    return wallet.chain
-  } else {
-    return null
-  }
-}
+//export const getSingleWalletChain = (state) => {
+//  const wallet = getWallets(state)
+//  if (wallet.type === 'single' && wallet.chain) {
+//    return wallet.chain
+//  } else {
+//    return null
+//  }
+//}
 
 // @chris done, although deprecate selectTokens
 export const getListAndTotal = (state) => {
@@ -176,13 +176,6 @@ export const getWalletCount = (state) => {
 
 export const getWalletsData = createSelector(
   getSelectedWalletId,
-  getAllWallets,
-  (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
-)
-
-// Returns the Near wallet, or undefined if it has not yet been initialized.
-export const getNearWalletData = createSelector(
-  () => 'near',
   getAllWallets,
   (selectedWallet, wallets) => wallets?.[selectedWallet]?.accounts || {}
 )

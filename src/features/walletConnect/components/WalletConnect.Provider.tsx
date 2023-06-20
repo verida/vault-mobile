@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
-import { getSdkError } from '@walletconnect/utils'
+import { IWeb3Wallet } from '@walletconnect/web3wallet'
+import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import {
   ActiveSessions,
   getMaybeWalletConnectActiveSessionByKey,
@@ -11,6 +12,8 @@ import {
   WalletConnectContextProvider,
   WalletConnectContextValue,
 } from 'features/walletConnect'
+import { WalletConnectModalConnectDapp } from 'features/walletConnect/components/WalletConnect.Modal.ConnectDapp'
+import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 
@@ -26,11 +29,24 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   const [activeSessions, setActiveSessions] = React.useState<ActiveSessions>(
     DEFAULT_ACTIVE_SESSIONS
   )
+  const { showModal } = useModal()
 
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
     useCreateWeb3Wallet({
       onSessionRequest: React.useCallback(() => undefined, []),
-      onSessionProposal: React.useCallback(() => undefined, []),
+      onSessionProposal: React.useCallback(
+        (
+          web3wallet: IWeb3Wallet,
+          proposal: Web3WalletTypes.EventArguments['session_proposal']
+        ) =>
+          showModal(
+            <WalletConnectModalConnectDapp
+              proposal={proposal}
+              web3wallet={web3wallet}
+            />
+          ),
+        [showModal]
+      ),
       onSessionDelete: React.useCallback(() => undefined, []),
     })
   )
@@ -125,6 +141,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       await maybeWeb3Wallet.disconnectSession({ topic, reason })
 
+      // TODO: Check whether this is required (we might be double-refreshing is maybeWeb3Wallet is reallocated)
       await onRequestRefreshActiveSessions()
     },
     [onRequestRefreshActiveSessions, maybeWeb3Wallet, activeSessions]

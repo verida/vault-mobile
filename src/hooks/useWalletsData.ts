@@ -1,13 +1,15 @@
+import * as React from 'react'
 import { useSelector } from 'react-redux'
+import { VeridaWallet } from 'types'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
+import { RootState } from 'reduxStore/types'
 
-// i.e. walletId "near"
-type WalletsData = {
-  readonly [walletId in string]: BlockchainWalletWithAccounts
-}
+export function useWalletsData() {
+  // TODO: what is data?
+  // @ts-expect-error Redux is untyped.
+  const maybeWalletsData = useSelector<RootState, Record<string, VeridaWallet>>(
+    (state) => state?.main?.wallets?.data
+  )
 
-export function useWalletsData(): WalletsData {
-  return useSelector(getWalletsData)
+  return React.useMemo(() => maybeWalletsData || {}, [])
 }

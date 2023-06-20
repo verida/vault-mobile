@@ -3,7 +3,7 @@ import {
   NearNetworkId,
   NearWalletAccountInfo,
   NearWalletInstance,
-  useMaybeNearWalletData,
+  useMaybeSerializedNearWallet,
 } from 'features/near'
 import * as React from 'react'
 
@@ -43,7 +43,7 @@ export function useCreateOrRestoreNearWalletInstance({
   const [state, setState] = React.useState<State>(loadingState)
 
   // The lifetime of the Near Wallet is defined by Redux state.
-  const maybeNearWalletData = useMaybeNearWalletData()
+  const maybeNearWalletData = useMaybeSerializedNearWallet()
 
   React.useEffect(
     () =>

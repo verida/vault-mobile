@@ -1,6 +1,7 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
+import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>

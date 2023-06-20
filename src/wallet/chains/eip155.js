@@ -1,3 +1,4 @@
+// TODO: We can likely remove thi
 import Web3 from 'web3'
 
 export const ethereumWeb3 = new Web3(
