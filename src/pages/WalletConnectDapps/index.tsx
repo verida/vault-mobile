@@ -57,6 +57,7 @@ export const WalletConnectDapps = React.memo(
             <WalletConnectSessionInfoCard
               walletConnectSessionKey={walletConnectSessionKey}
             />
+
             <Spacer height={16} />
 
             {Boolean(Object.keys(namespaces).length) && (
@@ -65,7 +66,7 @@ export const WalletConnectDapps = React.memo(
               />
             )}
 
-            {/* TODO: render all addresses */}
+            {/* TODO: render all addresses? how to associate session to addresses? */}
             {nearAddresses?.[0] && (
               <View style={styles.row}>
                 <Text style={styles.label}>Account ID</Text>

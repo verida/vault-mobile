@@ -1,5 +1,5 @@
 import {
-  useActiveWalletConnectSessionNamespace,
+  useActiveWalletConnectSessionChainAccountsVeridaChainIds,
   WalletConnectSessionNamespacesChainId,
 } from 'features/walletConnect'
 import * as React from 'react'
@@ -15,46 +15,11 @@ export const WalletConnectSessionChainCard = React.memo(
     readonly walletConnectSessionKey: string
     readonly chain: string
   }): JSX.Element {
-    const maybeNamespace = useActiveWalletConnectSessionNamespace({
-      walletConnectSessionKey,
-      chain,
-    })
-
-    const maybeAccounts = React.useMemo(
-      () => maybeNamespace?.accounts || [],
-      [maybeNamespace]
-    )
-
-    // TODO: Make this reusable, we likely do this in a lot of places
     // TODO: wtf chain/chains? what is going on
-    const chainIds = React.useMemo(
-      () => [
-        ...new Set(
-          maybeAccounts.flatMap((maybeAccount) => {
-            if (typeof maybeAccount !== 'string' || !maybeAccount.length)
-              return []
-
-            const [maybeType, maybeChain] = maybeAccount.split(':')
-
-            const accountIsInvalid = Boolean(!maybeType || !maybeChain)
-
-            accountIsInvalid &&
-              // eslint-disable-next-line no-console
-              console.warn(
-                `Encountered unsupported account, "${String(maybeAccount)}".`
-              )
-
-            if (accountIsInvalid) return []
-
-            // TODO: this is common logic, we should be connecting these areas
-            const chainId = `${maybeType}:${maybeChain}`
-
-            return [chainId]
-          })
-        ),
-      ],
-      [maybeAccounts]
-    )
+    const chainIds = useActiveWalletConnectSessionChainAccountsVeridaChainIds({
+      chain,
+      walletConnectSessionKey,
+    })
 
     return (
       <React.Fragment
