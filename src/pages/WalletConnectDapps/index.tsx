@@ -2,9 +2,9 @@ import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useMaybeNearWalletAddresses } from 'features/near'
 import {
-  useActiveWalletConnectSession,
   useActiveWalletConnectSessionExpiry,
   useActiveWalletConnectSessionNamespaces,
+  WalletConnectButtonDisconnectSession,
   WalletConnectSessionInfoCard,
   WalletConnectSessionNamespaces,
 } from 'features/walletConnect'
@@ -13,7 +13,6 @@ import * as React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { LayoutStyle, text } from 'styles'
 
-import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Spacer } from 'components/Spacer'
 import { MainStackParams } from 'navigation/types'
@@ -25,10 +24,6 @@ export const WalletConnectDapps = React.memo(
     const {
       params: { walletConnectSessionKey },
     } = useRoute<RouteProp<MainStackParams, 'WalletConnectDapps'>>()
-
-    const maybeActiveSession = useActiveWalletConnectSession({
-      walletConnectSessionKey,
-    })
 
     const namespaces = useActiveWalletConnectSessionNamespaces({
       walletConnectSessionKey,
@@ -67,7 +62,7 @@ export const WalletConnectDapps = React.memo(
               />
             )}
 
-            {/* TODO: near provider */}
+            {/* TODO: render all addresses */}
             {nearAddresses?.[0] && (
               <View style={styles.row}>
                 <Text style={styles.label}>Account ID</Text>
@@ -89,15 +84,9 @@ export const WalletConnectDapps = React.memo(
 
             <Spacer height={32} />
 
-            {/* TODO: walletconnect I/O */}
-            <Button
-              style={styles.actionButton}
-              color='transparent-warning'
-              disabled={loading}
-              loading={loading}
-              onPress={onDeleteSession}>
-              Disconnect
-            </Button>
+            <WalletConnectButtonDisconnectSession
+              walletConnectSessionKey={walletConnectSessionKey}
+            />
           </ScrollView>
         </View>
       </View>

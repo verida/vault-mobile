@@ -1,6 +1,9 @@
 import * as Sentry from '@sentry/react-native'
+import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
+import { getSdkError } from '@walletconnect/utils'
 import {
   ActiveSessions,
+  getMaybeWalletConnectActiveSessionByKey,
   isWalletConnectConnection,
   isWalletConnectV2Connection,
   useCreateWeb3Wallet,
@@ -101,6 +104,32 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     [onRequestRefreshActiveSessions, maybeWeb3Wallet]
   )
 
+  const onRequestDeleteSession = React.useCallback(
+    async (
+      walletConnectSessionKey: string,
+      reason: ErrorResponse
+    ): Promise<void> => {
+      if (!maybeWeb3Wallet) throw walletNotReadyError
+
+      const maybeActiveSession = getMaybeWalletConnectActiveSessionByKey({
+        activeSessions,
+        walletConnectSessionKey,
+      })
+
+      if (!maybeActiveSession)
+        throw new Error(
+          `Unable to delete session "${walletConnectSessionKey}". Session not found.`
+        )
+
+      const { topic } = maybeActiveSession
+
+      await maybeWeb3Wallet.disconnectSession({ topic, reason })
+
+      await onRequestRefreshActiveSessions()
+    },
+    [onRequestRefreshActiveSessions, maybeWeb3Wallet, activeSessions]
+  )
+
   return (
     <WalletConnectContextProvider
       // eslint-disable-next-line react/no-children-prop
@@ -110,8 +139,14 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           activeSessions,
           onRequestConnect,
           onRequestRefreshActiveSessions,
+          onRequestDeleteSession,
         }),
-        [onRequestConnect, activeSessions, onRequestRefreshActiveSessions]
+        [
+          onRequestConnect,
+          activeSessions,
+          onRequestRefreshActiveSessions,
+          onRequestDeleteSession,
+        ]
       )}
     />
   )

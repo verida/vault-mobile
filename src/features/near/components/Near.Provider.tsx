@@ -18,7 +18,7 @@ export const NearProvider: React.FC<
     nearNetwork,
   })
 
-  // Manages the alloction of a global Near wallet.
+  // Manages the allocation of a global Near wallet.
   const maybeNearWalletInstance = useMaybeNearWalletInstance(state)
   const maybeNearWalletAccounts = useMaybeNearWalletAccounts(state)
 

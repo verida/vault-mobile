@@ -1,13 +1,20 @@
+import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>
 >
 
+export type MaybeActiveSession = ActiveSessions[string] | undefined
+
 export type WalletConnectContextValue = {
   readonly activeSessions: ActiveSessions
   readonly onRequestConnect: (maybeConnectionUri: unknown) => Promise<void>
   readonly onRequestRefreshActiveSessions: () => Promise<void>
+  readonly onRequestDeleteSession: (
+    walletConnectSessionKey: string,
+    reason: ErrorResponse
+  ) => Promise<void>
 }
 
 // TODO: Hasn't this been defined somewhere else?

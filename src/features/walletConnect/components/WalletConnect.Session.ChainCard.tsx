@@ -25,6 +25,7 @@ export const WalletConnectSessionChainCard = React.memo(
       [maybeNamespace]
     )
 
+    // TODO: Make this reusable, we likely do this in a lot of places
     // TODO: wtf chain/chains? what is going on
     const chainIds = React.useMemo(
       () => [
