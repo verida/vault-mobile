@@ -37,10 +37,6 @@ export async function createNearWalletInstance({
     i < Math.max(maxAccounts - nearWalletAccounts.length, 0);
     i += 1
   ) {
-    // TODO: Dangerous!
-    //       Here, there is no explicit relationship between the publicKey and
-    //       private key. We are relying on generating a know set of contiguous
-    //       accounts, but this will not always be true.
     const nearDevAccount: NearDevAccount = await createDevAccount({
       privateKey,
     })

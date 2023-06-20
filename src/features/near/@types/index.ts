@@ -4,11 +4,10 @@ import { KeyPair } from 'near-api-js'
 import { BlockchainWalletWithAccounts } from 'api/types'
 
 // https://github.com/verida/vault-mobile/blob/develop/src/wallet-connect/controllers/near.ts
-// TODO: Is this true?
-// TODO: Fix this (remove this, find appropriate type for ".publicKey") because NearWallet here is actually NearWalletData
-export type NearWallet = BlockchainWalletWithAccounts & {
-  // TODO: This is likely an indication that a NearWallet is NOT BlockchainWalletWithAccounts.
+// TODO: This is supposed to represent the data we save in Redux for Near wallets. Is this correct?
+export type SerializedNearWallet = {
   readonly publicKey: string
+  readonly privateKey: string
 }
 
 // TODO: Is this a Verida concept or Near?
