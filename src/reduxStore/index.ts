@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { configureStore } from '@reduxjs/toolkit'
+import { assetsApi } from 'features/nfts'
+import { walletsApi } from 'features/wallets'
 import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
@@ -14,8 +16,6 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
-import assetsReducer from './assets'
-import { getWalletNFTCollectionsQuery } from './assets/api'
 import { mainReducer } from './mainReducer'
 import { tokensReducer } from './tokens/reducer'
 import { walletConnectReducer } from './wallet-connect/reducer'
@@ -23,18 +23,17 @@ import { walletConnectReducer } from './wallet-connect/reducer'
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['walletConnect', 'tokens', 'assets'],
+  whitelist: ['walletConnect', 'tokens', walletsApi.reducerPath],
 }
 
 export const rootReducer = combineReducers({
   main: mainReducer,
   walletConnect: walletConnectReducer,
-  tokens: tokensReducer,
-  assets: assetsReducer,
+  tokens: tokensReducer, // TODO: Refactor tokens to be in walletsApi slice?
 
   // API reducers
-  [getWalletNFTCollectionsQuery.reducerPath]:
-    getWalletNFTCollectionsQuery.reducer,
+  [walletsApi.reducerPath]: walletsApi.reducer,
+  [assetsApi.reducerPath]: assetsApi.reducer,
 })
 
 const debounceNotify = debounce((notify) => notify(), 30)
@@ -56,7 +55,8 @@ export function configureAppStore() {
         },
       })
         .concat(middleware)
-        .concat(getWalletNFTCollectionsQuery.middleware),
+        .concat(walletsApi.middleware)
+        .concat(assetsApi.middleware),
     devTools: __DEV__,
     enhancers: [batchedSubscribe(debounceNotify) as any],
   })

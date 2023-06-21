@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { useGetWalletNFTCollectionsQuery } from 'features/nfts'
 import { emitter } from 'helpers/emitter'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
@@ -23,7 +24,6 @@ import { Title } from 'components/Typography/Title'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
-import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import { Theme } from 'styles/types'
 
 export interface SelectAssetScreenProps {

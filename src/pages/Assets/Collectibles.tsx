@@ -2,6 +2,7 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { useGetWalletNFTCollectionsQuery } from 'features/nfts'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
 import {
@@ -25,7 +26,6 @@ import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import {
   allWalletsSelector,
   getUniqueWalletAddresses,

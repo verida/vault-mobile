@@ -22,7 +22,6 @@ import {
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
-  setBlockchainNetworks,
 } from 'reduxStore/general/actions'
 import {
   removeUserWallets,
@@ -39,6 +38,7 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
+import { walletsApi } from 'features/wallets'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -109,7 +109,14 @@ class AccountManager extends EventEmitter {
 
         // TODO: move to an appropriate function
         setTimeout(async () => {
-          await store.dispatch(setBlockchainNetworks())
+          // Fetch blockchain networks
+          // TODO: Move to an async way to manage user's wallets
+          await store.dispatch(
+            walletsApi.endpoints.chainsList.initiate(undefined, {
+              forceRefetch: false,
+            })
+          )
+
           const walletsRaw = await SecureStore.getItemAsync(
             CONFIG.WALLETS_STORAGE_KEY
           )
