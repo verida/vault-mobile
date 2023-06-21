@@ -3,7 +3,6 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 
 export default ({ item }) => {
-  console.debug('item.value', item.value)
   return (
     <Card transparent style={style.card}>
       <CardItem>
