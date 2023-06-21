@@ -71,9 +71,6 @@ class AccountManager extends EventEmitter {
 
   public async init() {
     try {
-      // Load all available blockchain networks
-      // await store.dispatch(setBlockchainNetworks())
-      //await store.dispatch(getTokens())
       const updateWallets = true
       if (!this.selectedAccount) {
         const accountsRaw = await SecureStore.getItemAsync(
@@ -109,7 +106,7 @@ class AccountManager extends EventEmitter {
 
         // TODO: move to an appropriate function
         setTimeout(async () => {
-          // Fetch blockchain networks
+          // Load all available blockchain networks
           // TODO: Move to an async way to manage user's wallets
           await store.dispatch(
             walletsApi.endpoints.chainsList.initiate(undefined, {

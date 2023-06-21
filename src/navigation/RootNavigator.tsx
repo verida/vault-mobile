@@ -20,36 +20,7 @@ export function navigate(name: unknown, params: unknown) {
 }
 
 export const RootNavigator: React.FunctionComponent = () => {
-  const { refresh, authenticated, loaded } = useAuth()
-  const mounted = useRef(false)
-
-  const init = useCallback(async () => {
-    await AccountManager.getInstance().init()
-    await refresh()
-  }, [refresh])
-
-  useEffect(() => {
-    if (mounted.current) {
-      return
-    }
-    mounted.current = true
-
-    // This is to prevent the AccountManager initialize many times
-    // TODO: Refactor the organization of app navigation to fix this instead
-    const tid = setTimeout(() => {
-      init()
-    }, 10)
-    return () => clearTimeout(tid)
-  }, [init])
-
-  useEmitter(
-    'APP_RECOVER_FROM_ERROR',
-    async () => {
-      init()
-    },
-    []
-  )
-
+  const { authenticated, loaded } = useAuth()
   if (!loaded) {
     return <LoadingView />
   }
