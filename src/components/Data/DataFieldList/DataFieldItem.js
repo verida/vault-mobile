@@ -3,12 +3,13 @@ import React from 'react'
 import { StyleSheet } from 'react-native'
 
 export default ({ item }) => {
+  console.debug('item.value', item.value)
   return (
     <Card transparent style={style.card}>
       <CardItem>
         <Body>
           <Text note>{item.field}:</Text>
-          <Text style={style.value}>{item.value}</Text>
+          <Text style={style.value}>{String(item.value)}</Text>
         </Body>
       </CardItem>
     </Card>
