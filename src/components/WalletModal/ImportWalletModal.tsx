@@ -13,6 +13,7 @@ import { connect } from 'react-redux'
 import { isValidSeedPhrase } from 'wallet/helpers/validation'
 
 import { BlockchainNetwork } from 'api/types'
+import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -118,7 +119,7 @@ const ImportModal = ({
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => hideModal(),
         }}
         title='Import wallet'

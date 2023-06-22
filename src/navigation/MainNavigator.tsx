@@ -12,6 +12,8 @@ import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import ChangePin from 'pages/Authentication/ChangePin'
+import ClaimableBadges from 'pages/ClaimBadges/ClaimableBadges'
+import ClaimBadge from 'pages/ClaimBadges/ClaimBadge'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import Folder from 'pages/Data/Folder'
 import Item from 'pages/Data/Item'
@@ -159,6 +161,9 @@ export const MainNavigator: React.FunctionComponent = () => {
         />
 
         <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
+
+        <Stack.Screen name={'ClaimBadge'} component={ClaimBadge} />
+        <Stack.Screen name={'ClaimableBadges'} component={ClaimableBadges} />
 
         <Stack.Screen
           name={'NFTCollectionDetail'}

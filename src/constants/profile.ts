@@ -5,7 +5,7 @@ import { VeridaOnePlatforms } from 'api/types'
 const FacebookIcon = require('assets/social_icons/facebook.png')
 const TwitterIcon = require('assets/social_icons/twitter.png')
 const InstagramIcon = require('assets/social_icons/instagram.png')
-// const DiscordIcon = require('assets/social_icons/discord.png')
+const DiscordIcon = require('assets/social_icons/discord.png')
 const LinkedInIcon = require('assets/social_icons/linkedin.png')
 const TelegramIcon = require('assets/social_icons/telegram.png')
 const GithubIcon = require('assets/social_icons/github.png')
@@ -43,12 +43,12 @@ export const PLATFORM_LINKS: Record<VeridaOnePlatforms, PlatformLinkData> = {
     baseURL: 'https://instagram.com/',
   },
   // TODO: enable, Discord doesn't suport profile URL ATM
-  // [VeridaOnePlatforms.DISCORD]: {
-  //   name: 'discord',
-  //   label: 'Discord',
-  //   icon: DiscordIcon,
-  //   baseURL: 'https://discord.com/',
-  // },
+  [VeridaOnePlatforms.DISCORD]: {
+    name: 'discord',
+    label: 'Discord',
+    icon: DiscordIcon,
+    baseURL: 'https://discord.com/',
+  },
   [VeridaOnePlatforms.LINKEDIN]: {
     name: 'linkedin',
     label: 'LinkedIn',

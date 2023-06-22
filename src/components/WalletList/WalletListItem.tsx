@@ -1,6 +1,7 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { WalletItem } from 'types/wallet'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
@@ -13,8 +14,6 @@ import {
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
-
-import { WalletItem } from './types'
 
 interface WalletListItemProps {
   item: WalletItem
@@ -84,6 +83,7 @@ const styles = StyleSheet.create({
     backgroundColor: WHITE_COLOR,
     borderColor: BLACK_COLOR_OPACITY(0.1),
     borderWidth: 0.2,
+    borderBottomWidth: 0.6,
   },
   selectedItem: {
     backgroundColor: PRIMARY_COLOR_200,

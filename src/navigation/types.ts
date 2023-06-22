@@ -1,7 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { Network, NFT, NFTCollection } from 'api/types'
+import { Badge, Network, NFT, NFTCollection } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -54,6 +54,10 @@ export type DashboardTabScreenProps<S extends keyof DashboardTabParams> =
 
 export type MainStackParams = {
   Inbox: undefined
+  ClaimableBadges: undefined
+  ClaimBadge: {
+    badgeType: Badge
+  }
   Dashboard: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined

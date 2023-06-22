@@ -1,11 +1,10 @@
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
+import { WalletItem } from 'types/wallet'
 
 import WalletListItem from 'components/WalletList/WalletListItem'
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
-
-import { WalletItem } from './types'
 
 interface WalletListProps {
   list: WalletItem[]
@@ -67,5 +66,8 @@ const styles = StyleSheet.create({
   removeButtonOther: {
     marginTop: 30.5,
   },
-  removeButtonText: { color: WHITE_COLOR, textAlign: 'center' },
+  removeButtonText: {
+    color: WHITE_COLOR,
+    textAlign: 'center',
+  },
 })

@@ -1,10 +1,8 @@
 import React, { useCallback, useImperativeHandle, useState } from 'react'
 import { StyleSheet, Text, TouchableWithoutFeedback, View } from 'react-native'
 
-import { TEXT_COLOR, WHITE_COLOR } from 'constants/color'
-
-import { BLACK_COLOR_OPACITY } from '../../constants/color'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
+import { BLACK_COLOR_OPACITY, TEXT_COLOR, WHITE_COLOR } from 'constants/color'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 export interface SegmentData {
   title?: string

@@ -1,6 +1,7 @@
 import Color from 'color'
 
 import {
+  ALERT_INFO_COLOR,
   BACKGROUND_GREY_COLOR,
   BLACK_COLOR_OPACITY,
   DECLINE_COLOR,
@@ -39,6 +40,7 @@ export const defaultTheme = {
     onDarkBackground: WHITE_COLOR,
 
     error: DECLINE_COLOR,
+    info: ALERT_INFO_COLOR,
     onError: WHITE_COLOR,
     success: SUCCESS_COLOR,
     onSuccess: WHITE_COLOR,
@@ -121,5 +123,12 @@ export const defaultTheme = {
   iconSize: {
     s: 16,
     m: 24,
+  },
+  borderRadius: {
+    xs: 4,
+    s: 8,
+    sm: 12,
+    m: 16,
+    l: 24,
   },
 }

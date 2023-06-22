@@ -4,11 +4,14 @@ import { Body, Button, Header, Icon, Left, Right, Title } from 'native-base'
 import React from 'react'
 import { Platform, StyleSheet, View } from 'react-native'
 
+import LeftArrowIcon from 'assets/left_arrow_icon.svg'
 import Text from 'components/Text'
-import { DECLINE_COLOR, SEPARATOR_EXTRA_LIGHT } from 'constants/color'
-
-import LeftArrowIcon from '../../assets/left_arrow_icon.svg'
-import { NUNITO_SANS_BOLD } from '../../constants/text'
+import {
+  BLACK_COLOR,
+  DECLINE_COLOR,
+  SEPARATOR_EXTRA_LIGHT,
+} from 'constants/color'
+import { NUNITO_SANS_BOLD } from 'constants/text'
 
 export type HeaderSideButton = {
   icon: string | React.ReactElement
@@ -117,7 +120,7 @@ const styles = StyleSheet.create({
     fontSize: 15,
   },
   textTitle: {
-    color: '#000',
+    color: BLACK_COLOR,
     fontFamily: NUNITO_SANS_BOLD,
     fontWeight: '600',
     fontSize: 17,

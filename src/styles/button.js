@@ -4,9 +4,11 @@ import {
   DISABLED_COLOR,
   LIGHTGREY_COLOR,
   PRIMARY_COLOR,
+  PRIMARY_COLOR_200,
+  PRIMARY_COLOR_300,
   WHITE_COLOR,
-} from '../constants/color'
-import { NUNITO_SANS_BOLD } from '../constants/text'
+} from '/constants/color'
+import { NUNITO_SANS_BOLD } from '/constants/text'
 
 const transparent = {
   backgroundColor: 'transparent',
@@ -31,13 +33,19 @@ export default StyleSheet.create({
     backgroundColor: 'transparent',
     borderColor: WHITE_COLOR,
   },
+  'light-primary': {
+    backgroundColor: PRIMARY_COLOR_200,
+    color: PRIMARY_COLOR_300,
+    borderWidth: 0,
+  },
   primary: {
     backgroundColor: PRIMARY_COLOR,
     borderColor: PRIMARY_COLOR,
   },
   secondary: {
     backgroundColor: WHITE_COLOR,
-    borderColor: WHITE_COLOR,
+    borderColor: LIGHTGREY_COLOR,
+    borderWidth: 1,
   },
   warning: {
     backgroundColor: WHITE_COLOR,

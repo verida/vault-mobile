@@ -153,6 +153,30 @@ export const getWalletList = (state) => {
   })
 }
 
+export const getAddressList = (state, allChains, blockchainNetwork) => {
+  const allWallets = getAllWallets(state)
+  return Object.values(allWallets)
+    .filter((wallet) => Boolean(wallet.mnemonic)) // filter out watched wallets
+    .map((wallet) => {
+      const { id, label } = wallet
+      const addresses = Object.keys(wallet.accounts)
+        .map((key) => {
+          return {
+            blockchainNetwork: key,
+            address: wallet.accounts[key].address,
+          }
+        })
+        .filter((item) => item.blockchainNetwork === blockchainNetwork)
+      return {
+        id,
+        label,
+        icon: allChains[blockchainNetwork].icon,
+        count: Object.keys(wallet.accounts).length,
+        address: addresses[0]?.address,
+      }
+    })
+}
+
 export const getUniqueWalletAddresses = (wallet) => {
   if (!wallet) return []
 
@@ -168,6 +192,13 @@ export const getUniqueWalletAddresses = (wallet) => {
 
 export const getSelectedWalletById = (state) => {
   const walletList = getWalletList(state)
+  const selectedWalletId = state.selectedWallet
+  const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
+  return selectedWallet
+}
+
+export const getSelectedAddressById = (state, chains, network) => {
+  const walletList = getAddressList(state, chains, network)
   const selectedWalletId = state.selectedWallet
   const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
   return selectedWallet

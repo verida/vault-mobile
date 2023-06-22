@@ -9,7 +9,6 @@ import {
   Linking,
   Share,
   StyleSheet,
-  Text,
   TouchableOpacity,
   View,
 } from 'react-native'
@@ -17,7 +16,9 @@ import Snackbar from 'react-native-snackbar'
 
 import Button from 'components/Button'
 import { Icon } from 'components/Icon'
+import { Caption } from 'components/Typography/Caption'
 import { SubHeadline } from 'components/Typography/SubHeadline'
+import { Text } from 'components/Typography/Text'
 import { VERIDA_ONE_WEBSITE } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
@@ -84,15 +85,15 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
               Linking.openURL(buildUrl())
             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
+              <Caption
                 style={{
+                  fontWeight: '900',
                   fontSize: theme.fontSize.m,
-                  fontWeight: '700',
                   color: theme.color.onPrimary,
                   marginRight: theme.spacing.s,
                 }}>
                 Go to
-              </Text>
+              </Caption>
               <Icon name='goto' color={theme.color.onPrimary} size={16} />
             </View>
           </Button>
@@ -111,7 +112,7 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
               })
             }}>
             <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
+              <Caption
                 style={{
                   fontSize: theme.fontSize.m,
                   fontWeight: '700',
@@ -119,7 +120,7 @@ export const ProfileUsernameSection = ({ did, username }: Props) => {
                   marginRight: theme.spacing.s,
                 }}>
                 Share
-              </Text>
+              </Caption>
               <Icon name='share' color={theme.color.onPrimary} size={16} />
             </View>
           </Button>

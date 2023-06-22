@@ -64,8 +64,9 @@ const ENVIRONMENTS = {
     VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
     WALLET_PROVIDER_CHAINS: 'testnet',
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
+    DATA_CONNECTOR_URL: 'https://dataconnector-staging.tn.verida.tech',
     WALLET_PROVIDER_URL: 'https://devnet-walletprovider.tn.verida.tech',
+    SBT_MINT_BLOCKCHAIN: 'eip155:80001', // Polygon Mumbai
   },
   testnet: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
@@ -73,6 +74,7 @@ const ENVIRONMENTS = {
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
     WALLET_PROVIDER_URL: 'https://testnet-walletprovider.tn.verida.tech',
+    SBT_MINT_BLOCKCHAIN: 'eip155:80001',
   },
 }
 

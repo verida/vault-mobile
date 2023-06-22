@@ -1,7 +1,7 @@
-import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
 
+import LeftArrowIcon from 'assets/icons/left_arrow_icon.svg'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'
@@ -14,7 +14,7 @@ type Props = {
   hideModal: () => void
 }
 
-export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
+const AddWalletModal = ({ visible, hideModal, onCreateNewWallet }: Props) => {
   const [name, setName] = useState('')
 
   const onPressSend = () => {
@@ -29,7 +29,7 @@ export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
       visible={visible}>
       <NavigationHeader
         left={{
-          icon: <Icon name='close' style={{ color: '#000' }} />,
+          icon: <LeftArrowIcon />,
           action: () => hideModal(),
         }}
         title='Create wallet'
@@ -62,6 +62,8 @@ export default ({ visible, hideModal, onCreateNewWallet }: Props) => {
     </Modal>
   )
 }
+
+export default AddWalletModal
 
 const styles = StyleSheet.create({
   container: {

@@ -1,8 +1,8 @@
 import React from 'react'
 import {
   Modal,
+  ModalProps,
   Pressable,
-  ScrollView,
   StyleSheet,
   Text,
   View,
@@ -19,13 +19,13 @@ import {
 } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-interface AppModalProps {
+type AppModalProps = {
   title: string
   visible: boolean
   onClose: () => void
   footer?: React.ReactNode
   children: React.ReactNode
-}
+} & ModalProps
 
 const HIT_SLOP = {
   bottom: 20,
@@ -40,9 +40,11 @@ const AppModal = ({
   children,
   title,
   footer,
+  ...rest
 }: AppModalProps) => {
   return (
     <Modal
+      {...rest}
       animationType='slide'
       transparent={true}
       visible={visible}
@@ -59,7 +61,7 @@ const AppModal = ({
             <View />
           </View>
           <View style={styles.divider} />
-          <ScrollView style={styles.modalView}>{children}</ScrollView>
+          <View style={styles.modalView}>{children}</View>
           {footer && <View style={styles.bottom}>{footer}</View>}
         </View>
       </View>
@@ -69,7 +71,6 @@ const AppModal = ({
 
 const styles = StyleSheet.create({
   container: {
-    alignItems: 'stretch',
     flex: 1,
     backgroundColor: BLACK_COLOR_OPACITY(0.5),
   },
@@ -108,11 +109,11 @@ const styles = StyleSheet.create({
     backgroundColor: SNOW_COLOR,
   },
   bottom: {
-    alignItems: 'center',
     backgroundColor: WHITE_COLOR,
     borderTopColor: LIGHTGREY_COLOR,
-    padding: 16,
+    paddingHorizontal: 16,
     paddingTop: 12,
+    paddingBottom: 16,
     elevation: 4,
     shadowColor: LIGHTGREY_COLOR,
     shadowOffset: {

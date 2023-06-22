@@ -137,7 +137,7 @@ const SingleWallet = (props: Props) => {
                 <Text style={styles.actionButtonText}>Seed phrase</Text>
               </TouchableOpacity>
             )}
-            {isChainTypeEvm && singleWallet.privateKey && (
+            {singleWallet.privateKey && (
               <TouchableOpacity
                 onPress={() => showPrivateKey(singleWallet.privateKey)}
                 style={styles.actionButton}>

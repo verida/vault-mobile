@@ -22,7 +22,9 @@ import { QRCode } from 'react-native-custom-qr-codes-expo'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import AccountManager from 'api/AccountManager'
+import { SBTManager } from 'api/SBTManager'
 import { DefaultAvatar, getPublicProfile } from 'api/utils'
+import Button from 'components/Button'
 import DataFieldList from 'components/Data/DataFieldList'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
@@ -143,6 +145,24 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     )
   }
 
+  async function mintSbt() {
+    const sbtManager = new SBTManager()
+    const mintAddress = '0x326b857912CE962b9805881589287d786267844A'
+    await sbtManager.mintSbt(item, mintAddress)
+  }
+
+  async function isMinted() {
+    const sbtManager = new SBTManager()
+    const mintAddress = '0x326b857912CE962b9805881589287d786267844A'
+    await sbtManager.isMinted(item, mintAddress)
+  }
+
+  async function burnSbt() {
+    const sbtManager = new SBTManager()
+    const mintAddress = '0x326b857912CE962b9805881589287d786267844A'
+    await sbtManager.burnSbt(item, mintAddress)
+  }
+
   function toggleFullscreenQr() {
     setShowFullscreenQr((prevState) => !prevState)
   }
@@ -162,6 +182,20 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         </View>
       ) : (
         <>
+          {/* TODO: Move this SBT buttons */}
+          <View>
+            <Button onPress={isMinted} title='Burn SBT'>
+              isMinted?
+            </Button>
+            <Button onPress={mintSbt} title='Mint SBT'>
+              Mint SBT
+            </Button>
+            <Button onPress={burnSbt} title='Burn SBT'>
+              Burn SBT
+            </Button>
+          </View>
+          {/* * */}
+
           {!isEmpty(credentialPresentationUri) ? (
             <View style={styles.qrContainer}>
               <TouchableOpacity onPress={toggleFullscreenQr}>

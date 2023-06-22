@@ -5,15 +5,13 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { WalletItem } from 'types/wallet'
 
 import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
 import CONFIG from 'config/environment'
-import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
@@ -61,7 +59,6 @@ const WalletSelectorModal = ({
   const ModalFooter = (
     <Button
       icon={<SettingsIcon />}
-      style={styles.footerButton}
       onPress={handleManageWalletsPress}
       hitSlop={HIT_SLOP}>
       Manage Wallets
@@ -108,23 +105,5 @@ export default connect(mapStateToProps, mapDispatchToProps)(WalletSelectorModal)
 const styles = StyleSheet.create({
   walletList: {
     marginTop: 24,
-  },
-  footerButton: {
-    flexDirection: 'row',
-    backgroundColor: PRIMARY_COLOR,
-    width: '100%',
-    color: WHITE_COLOR,
-    borderRadius: 4,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  buttonIcon: {
-    marginRight: 10,
-  },
-  buttonText: {
-    color: WHITE_COLOR,
-    fontFamily: NUNITO_SANS,
-    fontWeight: '700',
-    fontSize: 17,
   },
 })

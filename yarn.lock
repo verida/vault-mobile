@@ -5538,6 +5538,17 @@
     axios "^0.27.2"
     ethers "^5.7.0"
 
+"@verida/vda-sbt-client@^2.2.1":
+  version "2.3.5"
+  resolved "https://registry.yarnpkg.com/@verida/vda-sbt-client/-/vda-sbt-client-2.3.5.tgz#361f2030bd4a15895bccb465518993a5190ed919"
+  integrity sha512-kwF6NrRtcBGMXWNzleobMM4YrCvAfTtQSsMlSKGiB8Ka3BAlPwuOmqJo1Hw1qe/hRN9CJkvYCBqFwUE84H2iSg==
+  dependencies:
+    "@ethersproject/providers" "^5.7.2"
+    "@verida/helpers" "^2.3.1"
+    "@verida/web3" "^2.3.4"
+    axios "^0.27.2"
+    ethers "^5.7.0"
+
 "@verida/verifiable-credentials@^2.3.4":
   version "2.3.4"
   resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-2.3.4.tgz#1d6f23d759b19000a8b863af364980136db19864"

@@ -6,12 +6,17 @@ import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { WalletItem } from 'types/wallet'
 
+import PlusIcon from 'assets/plus_icon.svg'
+import UnionIcon from 'assets/union_icon.svg'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
+import CreateWalletModal from 'components/WalletModal/AddWalletModal'
+import ImportWalletModal from 'components/WalletModal/ImportWalletModal'
 import CONFIG from 'config/environment'
+import { BLACK_COLOR, SNOW_COLOR } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 import { selectChains } from 'reduxStore/tokens/selectors'
 import {
@@ -28,12 +33,7 @@ import {
   getWalletProcessingState,
 } from 'reduxStore/wallet/selectors'
 
-import PlusIcon from '../../assets/plus_icon.svg'
-import UnionIcon from '../../assets/union_icon.svg'
-import { BLACK_COLOR, SNOW_COLOR } from '../../constants/color'
-import CreateWalletModal from './AddWalletModal'
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
-import ImportWalletModal from './ImportWalletModal'
 
 export type walletIdType = string
 

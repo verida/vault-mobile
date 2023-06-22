@@ -12,6 +12,7 @@ import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelec
 import Tokens from 'pages/Tokens/Dashboard'
 import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 
+import Badges from './Assets/Badges'
 import Collectibles from './Assets/Collectibles'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
@@ -23,19 +24,18 @@ const segmentLists = [
   {
     title: 'Collectibles',
   },
-  // {
-  //   title: 'Badges',
-  // },
+  {
+    title: 'Badges',
+  },
 ]
-
 const TokensRoute = () => <Tokens />
 const CollectiblesRoute = () => <Collectibles />
-// const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
+const BadgesRoute = () => <Badges />
 
 const renderScene = SceneMap({
   tokens: TokensRoute,
   nfts: CollectiblesRoute,
-  // badges: BadgesRoute,
+  badges: BadgesRoute,
 })
 
 enum Assets {
@@ -56,7 +56,7 @@ const AssetsCollections = (props: any) => {
   const [routes] = React.useState([
     { key: 'tokens' },
     { key: 'nfts' },
-    // { key: 'badges' },
+    { key: 'badges' },
   ])
 
   const onChangedSegmentIndex = (index: number) => {

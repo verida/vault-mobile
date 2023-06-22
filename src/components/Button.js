@@ -26,6 +26,8 @@ export default function Button(props) {
         return 'warning'
       case 'transparent-warning':
         return 'warning'
+      case 'light-primary':
+        return 'light-primary'
       case 'transparent':
         return 'primary'
       case 'transparent-link':

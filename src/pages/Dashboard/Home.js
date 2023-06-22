@@ -52,6 +52,10 @@ const LogoImg = require('assets/vault-logo.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
+/**
+ * @deprecated This olf page will be eventually deleted and replaced by [HomeNew](./HomeNew.js) when it's ready
+ *
+ */
 const Home = (props) => {
   const {
     navigation,
