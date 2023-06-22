@@ -42,10 +42,13 @@ export function useCreatePolygonIdManager(): Stateful<string> {
       return
     }
 
-    const network: 'mainnet' | 'testnet' = 'mainnet'
+    // TODO: Base the Polygon ID network on the Verida network (Testnet or Mainnet) when available
+    const polygonIdNetwork: 'mainnet' | 'testnet' = 'mainnet'
 
     const polygonIdConfig =
-      network === 'mainnet' ? polygonIdMainnetConfig : polygonIdTestnetConfig
+      polygonIdNetwork === 'mainnet'
+        ? polygonIdMainnetConfig
+        : polygonIdTestnetConfig
 
     // TODO: Find a better way to pass the sensitive information to the manager.
     const config: PolygonIdManagerConfig = {
