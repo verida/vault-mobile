@@ -2,19 +2,18 @@
 # yarn lockfile v1
 
 
-"@0xpolygonid/js-sdk@^1.0.0-beta.7":
-  version "1.0.0-beta.7"
-  resolved "https://registry.yarnpkg.com/@0xpolygonid/js-sdk/-/js-sdk-1.0.0-beta.7.tgz#b6529bb54e6e51bffc5e0be4d730883cd872e8cc"
-  integrity sha512-yZLTlixSKLld4CYMHqaYMxC6rAn5mLpK3UdMMujwTQgZkZB6Wii4ERw5Vr99aK44ZXzeH+zBWhmF4GZVzbKNeg==
+"@0xpolygonid/js-sdk@^1.0.0-beta.9":
+  version "1.0.0-beta.9"
+  resolved "https://registry.yarnpkg.com/@0xpolygonid/js-sdk/-/js-sdk-1.0.0-beta.9.tgz#46e66154a18c7eec609ec07023ae43641565cb3c"
+  integrity sha512-rlKFmDMYdTfY1K/pU0F/yZQld0qsFNF4dHff0eoDogxpDDjr7kk0+q45VxGpXdZwbsSmvLSavavYeOg7Gc5sww==
   dependencies:
     "@iden3/js-crypto" "1.0.0-beta.1"
     "@iden3/js-iden3-core" "1.0.0-beta.2"
-    "@iden3/js-jsonld-merklization" "1.0.0-beta.7"
+    "@iden3/js-jsonld-merklization" "1.0.0-beta.8"
     "@iden3/js-jwz" "1.0.0-beta.2"
-    "@iden3/js-merkletree" "1.0.0-beta.2"
+    "@iden3/js-merkletree" "1.0.0-beta.4"
     "@lumeweb/js-sha3-browser" "^0.8.1"
     ajv "^6.12.6"
-    axios "^1.2.1"
     base58-js "^1.0.4"
     buffer-browserify "^0.2.5"
     cross-sha256 "^1.2.0"
@@ -2875,17 +2874,17 @@
     base58-js "^1.0.4"
     cross-sha256 "^1.2.0"
 
-"@iden3/js-jsonld-merklization@1.0.0-beta.7":
-  version "1.0.0-beta.7"
-  resolved "https://registry.yarnpkg.com/@iden3/js-jsonld-merklization/-/js-jsonld-merklization-1.0.0-beta.7.tgz#c08fd7324920a8f65805524c26881aac27a9c2c0"
-  integrity sha512-Qa9XCnAWlzXTl74FCoI0vVEmC+N2YmhoIanzZffuySph06p4aFvZqieqP4rhRPp7qAo4WkHvTwmJdkrF1Zo8CA==
+"@iden3/js-jsonld-merklization@1.0.0-beta.8":
+  version "1.0.0-beta.8"
+  resolved "https://registry.yarnpkg.com/@iden3/js-jsonld-merklization/-/js-jsonld-merklization-1.0.0-beta.8.tgz#aafeccd4df7b6b2a33b085d60f5c2d1b57cfa849"
+  integrity sha512-PK/WUosJ8hy3xFFVS9bX+EUwgQF36Jh+0sZcHTfM5Szak7BkCDokxd8G5Wp2HertQyiZ0AIk0iL4MiieS/sQOg==
   dependencies:
     "@iden3/js-crypto" "1.0.0-beta.1"
     "@iden3/js-merkletree" "1.0.0-beta.2"
+    "@js-temporal/polyfill" "^0.4.4"
     jsonld "8.1.0"
     jsonld-context-parser "^2.2.2"
     n3 "^1.16.3"
-    temporal-polyfill "^0.1.1"
 
 "@iden3/js-jwz@1.0.0-beta.2", "@iden3/js-jwz@^1.0.0-beta.2":
   version "1.0.0-beta.2"
@@ -2912,6 +2911,14 @@
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@iden3/js-merkletree/-/js-merkletree-1.0.0-beta.2.tgz#8f5b98e2789a2907b8246f6b8195400146c5b332"
   integrity sha512-7Q9QnvHSZOZw9vNa7OWsc7Y+gmnHFAGLFo0l1PlaUlNHz1Yji/CFDPcCR6/LuYvvGfyMkn4BIcbu0tWtiIA+SQ==
+  dependencies:
+    "@iden3/js-crypto" "1.0.0-beta.1"
+    idb-keyval "^6.2.0"
+
+"@iden3/js-merkletree@1.0.0-beta.4":
+  version "1.0.0-beta.4"
+  resolved "https://registry.yarnpkg.com/@iden3/js-merkletree/-/js-merkletree-1.0.0-beta.4.tgz#2115da8fb3e72c9ff40a7c094f632d7b8e206481"
+  integrity sha512-7eiyvep0dXy4Ww21Mip6ONfRsJeYcVHp2B3l1c2230oG9CMPRiSPkkThk7h/aWhVfyuzxG7RT06BagsaAS5L7A==
   dependencies:
     "@iden3/js-crypto" "1.0.0-beta.1"
     idb-keyval "^6.2.0"
@@ -3191,6 +3198,14 @@
   dependencies:
     "@jridgewell/resolve-uri" "^3.0.3"
     "@jridgewell/sourcemap-codec" "^1.4.10"
+
+"@js-temporal/polyfill@^0.4.4":
+  version "0.4.4"
+  resolved "https://registry.yarnpkg.com/@js-temporal/polyfill/-/polyfill-0.4.4.tgz#4c26b4a1a68c19155808363f520204712cfc2558"
+  integrity sha512-2X6bvghJ/JAoZO52lbgyAPFj8uCflhTo2g7nkFzEQdXd/D8rEeD4HtmTEpmtGCva260fcd66YNXBOYdnmHqSOg==
+  dependencies:
+    jsbi "^4.3.0"
+    tslib "^2.4.1"
 
 "@jsdevtools/ono@^7.1.3":
   version "7.1.3"
@@ -6516,19 +6531,19 @@ axios@^0.27.2:
     follow-redirects "^1.14.9"
     form-data "^4.0.0"
 
-axios@^1.2.1, axios@^1.3.3:
-  version "1.4.0"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.4.0.tgz#38a7bf1224cd308de271146038b551d725f0be1f"
-  integrity sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==
+axios@^1.2.3:
+  version "1.3.6"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.3.6.tgz#1ace9a9fb994314b5f6327960918406fa92c6646"
+  integrity sha512-PEcdkk7JcdPiMDkvM4K6ZBRYq9keuVJsToxm2zQIM70Qqo2WHTdJZMXcG9X+RmRp2VPNUQC8W1RAGbgt6b1yMg==
   dependencies:
     follow-redirects "^1.15.0"
     form-data "^4.0.0"
     proxy-from-env "^1.1.0"
 
-axios@^1.2.3:
-  version "1.3.6"
-  resolved "https://registry.yarnpkg.com/axios/-/axios-1.3.6.tgz#1ace9a9fb994314b5f6327960918406fa92c6646"
-  integrity sha512-PEcdkk7JcdPiMDkvM4K6ZBRYq9keuVJsToxm2zQIM70Qqo2WHTdJZMXcG9X+RmRp2VPNUQC8W1RAGbgt6b1yMg==
+axios@^1.3.3:
+  version "1.4.0"
+  resolved "https://registry.yarnpkg.com/axios/-/axios-1.4.0.tgz#38a7bf1224cd308de271146038b551d725f0be1f"
+  integrity sha512-S4XCWMEmzvo64T9GfvQDOXgYRDJ/wsSZc7Jvdgx5u1sd0JwsuPLqb3SYmusag+edF6ziyMensPVqLTSc1PiSEA==
   dependencies:
     follow-redirects "^1.15.0"
     form-data "^4.0.0"
@@ -12683,6 +12698,11 @@ js-yaml@^4.1.0:
   dependencies:
     argparse "^2.0.1"
 
+jsbi@^4.3.0:
+  version "4.3.0"
+  resolved "https://registry.yarnpkg.com/jsbi/-/jsbi-4.3.0.tgz#b54ee074fb6fcbc00619559305c8f7e912b04741"
+  integrity sha512-SnZNcinB4RIcnEyZqFPdGPVgrg2AcnykiBy0sHVJQKHYeaLUvi3Exj+iaPpLnFVkDPZIV4U0yvgC9/R4uEAZ9g==
+
 jsbn@~0.1.0:
   version "0.1.1"
   resolved "https://registry.yarnpkg.com/jsbn/-/jsbn-0.1.1.tgz#a5e654c2e5a2deb5f201d96cefbca80c0ef2f513"
@@ -18773,18 +18793,6 @@ temp@^0.8.4:
   dependencies:
     rimraf "~2.6.2"
 
-temporal-polyfill@^0.1.1:
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/temporal-polyfill/-/temporal-polyfill-0.1.1.tgz#093d3a5c29278b689362420502dd82a3f576b5c2"
-  integrity sha512-/5e4EVRA0wBI/bEhWLirSjwUg1lELhQyTXxw9zNbVhqjKvI9BLczs+3wtsoD9sn3HN2ImAMW5XJQwAiXgWT+GA==
-  dependencies:
-    temporal-spec "~0.1.0"
-
-temporal-spec@~0.1.0:
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/temporal-spec/-/temporal-spec-0.1.0.tgz#f50cf6eb3b5b40175743ee9fc84afe27c785324b"
-  integrity sha512-sMNggMeS6trCgMQuudgFHhX1gtBK3e+AT1zGrMsFYG1wlqtRT5E9rcvm3I1iNlvHpJX/3DO6L4qtWAuEl/T04Q==
-
 tempy@0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/tempy/-/tempy-0.3.0.tgz#6f6c5b295695a16130996ad5ab01a8bd726e8bf8"
@@ -19088,6 +19096,11 @@ tslib@^2.0.1, tslib@^2.1.0:
   version "2.4.0"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.4.0.tgz#7cecaa7f073ce680a05847aa77be941098f36dc3"
   integrity sha512-d6xOpEDfsi2CZVlPQzGeux8XMwLT9hssAsaPYExaQMuYskwb+x1x7J371tWlbBdWHroy99KnVB6qIkUbs5X3UQ==
+
+tslib@^2.4.1:
+  version "2.5.3"
+  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.3.tgz#24944ba2d990940e6e982c4bea147aba80209913"
+  integrity sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==
 
 tslib@~2.1.0:
   version "2.1.0"
