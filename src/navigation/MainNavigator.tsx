@@ -1,9 +1,7 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { BehindAuthContextProviders } from 'contexts'
-import { useWatchPublicProfileChanges } from 'hooks'
 import React from 'react'
 
-import { useEventHandlers } from 'hooks/useEventHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import DeleteAccount from 'pages/Account/DeleteAccount'
@@ -65,9 +63,6 @@ import SuccessFailure from 'pages/Wallets/SuccessFailure'
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 export const MainNavigator: React.FunctionComponent = () => {
-  useEventHandlers()
-  useWatchPublicProfileChanges()
-
   return (
     // As the MainNavigator is only mounted after the user is authenticated, so are these context providers.
     <BehindAuthContextProviders>
