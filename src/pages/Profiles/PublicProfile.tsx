@@ -4,7 +4,6 @@ import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
-import { useDeepCompareEffect } from 'hooks'
 import { debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
@@ -29,6 +28,7 @@ import {
 import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
