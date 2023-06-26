@@ -2,7 +2,7 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
-import { useGetWalletNFTCollectionsQuery } from 'features/nfts'
+import { useGetNFTsQuery } from 'features/assets'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
 import {
@@ -49,11 +49,8 @@ const Collectibles = () => {
 
   const selectedWallet = wallets[selectedWalletId]
   const addresses = getUniqueWalletAddresses(selectedWallet)
-  const { data, isLoading, error, refetch } =
-    useGetWalletNFTCollectionsQuery(addresses)
+  const { data, isLoading, error, refetch } = useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
 
-  // const walletNFTCollections = useReduxState(walletNFTCollectionsSelector)
-  // const data = walletNFTCollections?.[etherWallet] ?? []
   const isEmptyList = !data || data.length === 0
 
   // pull to refresh data
@@ -181,7 +178,7 @@ const Collectibles = () => {
       {/* Temp code  */}
       <GridView
         numColumns={NUMBER_OF_COLUMNS}
-        data={data || ([] as any)}
+        data={data}
         style={styles.grid}
         contentContainerStyle={
           isEmptyList

@@ -11,17 +11,18 @@ export const assetsApi = createApi({
   reducerPath: 'assetsApi',
   baseQuery: baseQuery,
   endpoints: (build) => ({
-    getWalletNFTCollections: build.query<NFT[], string[]>({
+    getNFTs: build.query({
       keepUnusedDataFor: 10 * 60, // 10 mins
-      query: (walletAddresses) =>
+      query: (walletAddresses: string[]) =>
         `nfts/list?${walletAddresses
           .map((address) => `wallet[]=${address}`)
           .join('&')}`,
-      transformResponse: (response: any) =>
+      transformResponse: (response: { data: NFT[] }): NFT[] =>
         response.data.sort((a: any) => (a.metadata?.image ? -1 : 1)),
+      // TODO: Handle error
     }),
-    // Other NFT APIs
+    // Other assets Apis
   }),
 })
 
-export const { useGetWalletNFTCollectionsQuery } = assetsApi
+export const { useGetNFTsQuery } = assetsApi

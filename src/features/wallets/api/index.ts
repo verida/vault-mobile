@@ -1,4 +1,5 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import { EnvironmentType } from '@verida/types/dist/NetworkInterfaces'
 import { REHYDRATE } from 'redux-persist'
 
 import { BlockchainNetwork } from 'api/types'
@@ -18,11 +19,14 @@ export const walletsApi = createApi({
     }
   },
   endpoints: (build) => ({
-    chainsList: build.query<Record<string, BlockchainNetwork>, void>({
+    chainsList: build.query({
       keepUnusedDataFor: 60 * 60 * 24, // 24 hours
       query: () => `chains/list`,
-      transformResponse: async (response: any) => {
-        const networkEntries = response.data[`${CONFIG.WALLET_PROVIDER_CHAINS}`]
+      transformResponse: (response: {
+        data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
+      }): Record<string, BlockchainNetwork> => {
+        const networkEntries =
+          response.data[`${CONFIG.WALLET_PROVIDER_CHAINS as EnvironmentType}`]
 
         const allNetworks: Record<string, BlockchainNetwork> = {}
         for (const chainId in networkEntries) {
@@ -32,7 +36,9 @@ export const walletsApi = createApi({
         }
         return allNetworks
       },
+      // TODO: Handle error
     }),
+    // Other wallets Apis
   }),
 })
 
