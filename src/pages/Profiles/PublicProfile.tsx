@@ -1050,7 +1050,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                             order: index,
                           },
                           searchableAddresses: publicWalletAddresses.map(
-                            (address) => address.address
+                            (address) => `${address.chainId}:${address.address}`
                           ),
                         })
                         break
