@@ -76,7 +76,7 @@ index 3042099..fa8adac 100644
    defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary'
  } else {
 diff --git a/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/pbkdf2/lib/sync-browser.js
-index 20a64b4..3389392 100644
+index 20a64b4..891b1d6 100644
 --- a/node_modules/pbkdf2/lib/sync-browser.js
 +++ b/node_modules/pbkdf2/lib/sync-browser.js
 @@ -3,6 +3,8 @@ var RIPEMD160 = require('ripemd160')
@@ -88,11 +88,10 @@ index 20a64b4..3389392 100644
  var checkParameters = require('./precondition')
  var defaultEncoding = require('./default-encoding')
  var toBuffer = require('./to-buffer')
-@@ -67,39 +69,8 @@ function getDigest (alg) {
-   return shaFunc
+@@ -68,38 +70,7 @@ function getDigest (alg) {
  }
  
--function pbkdf2 (password, salt, iterations, keylen, digest) {
+ function pbkdf2 (password, salt, iterations, keylen, digest) {
 -  checkParameters(iterations, keylen)
 -  password = toBuffer(password, defaultEncoding, 'Password')
 -  salt = toBuffer(salt, defaultEncoding, 'Salt')
@@ -125,12 +124,10 @@ index 20a64b4..3389392 100644
 -  }
 -
 -  return DK
-+function jspbkdf2 (password, salt, iterations, keylen, digest) {
 +  return Crypto.pbkdf2Sync(password, salt, iterations, keylen, digest)
  }
  
--module.exports = pbkdf2
-+module.exports = jspbkdf2
+ module.exports = pbkdf2
 diff --git a/node_modules/pbkdf2/lib/sync.js b/node_modules/pbkdf2/lib/sync.js
 index 9eeca48..a9dad90 100644
 --- a/node_modules/pbkdf2/lib/sync.js
