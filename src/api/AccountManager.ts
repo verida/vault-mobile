@@ -72,13 +72,13 @@ class AccountManager extends EventEmitter {
   public async init() {
     try {
       if (!this.selectedAccount) {
-        const accountsRaw = await SecureStore.getItemAsync(
-          CONFIG.ACCOUNTS_STORAGE_KEY
-        )
-        //accountsRaw = undefined
-        //store.dispatch(setAccounts([]))
-        if (accountsRaw) {
-          this.accounts = JSON.parse(accountsRaw)
+        const [storedAccounts, storedSelectedAccountDid] = await Promise.all([
+          SecureStore.getItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY),
+          SecureStore.getItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY),
+        ])
+
+        if (storedAccounts) {
+          this.accounts = JSON.parse(storedAccounts)
           // Sometimes if the app crashes when creating an account, it creates one that is empty
           // In that case, remove it so the app doesn't return to the create account screen
           // causing loss of access to all other accounts
@@ -89,21 +89,18 @@ class AccountManager extends EventEmitter {
           store.dispatch(setAccounts(this.accounts))
         }
 
-        let selectedAccountDid = await SecureStore.getItemAsync(
-          CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
-        )
-
-        // If no selected DID, choose the first
-        if (!selectedAccountDid && Object.keys(this.accounts).length) {
-          selectedAccountDid = this.accounts[Object.keys(this.accounts)[0]].did
-        }
+        const selectedAccountDid =
+          storedSelectedAccountDid ||
+          (Object.keys(this.accounts).length > 0
+            ? this.accounts[Object.keys(this.accounts)[0]].did
+            : undefined)
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
         }
 
-        // Restore or generate user's wallets
+        // Load or restore user wallets from the mnemonic
         this.initUserWallets()
       }
     } catch (e) {
