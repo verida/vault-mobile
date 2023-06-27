@@ -1,9 +1,7 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { useEmitter } from 'hooks'
-import React, { useCallback, useEffect, useRef } from 'react'
+import React from 'react'
 
-import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import { useAuth } from 'hooks/useAuth'
 import AuthNavigator from 'navigation/AuthNavigator'
