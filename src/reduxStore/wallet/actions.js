@@ -234,13 +234,13 @@ export const createNewWallet = (data) => {
         dispatch(saveUserWallets(wallets))
         dispatch(setSelectedWallet(selectedWallet._id))
 
-        // save to storage..
+        // save to the storage..
         await Promise.all([
-          await SecureStore.setItemAsync(
+          SecureStore.setItemAsync(
             CONFIG.WALLETS_STORAGE_KEY,
             JSON.stringify(wallets)
           ),
-          await SecureStore.setItemAsync(
+          SecureStore.setItemAsync(
             CONFIG.SELECTED_WALLET_STORAGE_KEY,
             selectedWallet._id
           ),

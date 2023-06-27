@@ -1,5 +1,3 @@
-import { WalletProvider } from 'api/Wallet/WalletProvider'
-
 import {
   ADD_ACCOUNT,
   LOG_OUT,
