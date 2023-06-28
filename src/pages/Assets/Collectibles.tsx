@@ -115,14 +115,6 @@ const Collectibles = () => {
             onPress={() => navigation.navigate('NFTDetail', { nft: item })}>
             <View style={styles.column}>
               <NftItem containerStyle={styles.image} nft={item} />
-              <Tag withBlur style={styles.itemTag}>
-                <Tag.Label numberOfLines={1} style={styles.tagLabel}>
-                  {item.name}
-                </Tag.Label>
-                <Tag.Label style={styles.tagLabelNumber}>
-                  #{item.token_id}
-                </Tag.Label>
-              </Tag>
             </View>
           </TouchableOpacity>
         )

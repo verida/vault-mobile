@@ -337,19 +337,22 @@ export const deleteWallet = (walletId) => {
 
     try {
       const currentlySelectedWallet = getSelectedWalletId(getState().main)
-
-      // save mnemonic to verida store
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
           WALLET_SCHEMA_0_2_0_URI
         )
-
+      // save to verida store
       await walletDb?.delete(walletId)
 
+      // update redux store
+      const updatedWalletsList = getWalletList(getState().main).filter(
+        (wallet) => wallet._id !== walletId
+      )
+      dispatch(saveUserWallets(updatedWalletsList))
+
       if (currentlySelectedWallet === walletId) {
-        const wallets = getWalletList(getState().main)
-        const nextWalletId = Object.keys(wallets)[0]
-        dispatch(setSelectedWallet(nextWalletId))
+        const nextWalletId = Object.values(updatedWalletsList)[0].id
+        await dispatch(setSelectedWallet(nextWalletId))
       }
 
       await AccountManager.getInstance().restoreUserWallet(false)

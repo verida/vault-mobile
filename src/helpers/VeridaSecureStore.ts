@@ -93,6 +93,12 @@ export async function getItemAsync(key: string): Promise<string | null> {
 }
 
 export async function setItemAsync(key: string, value: string): Promise<void> {
+  if (value === undefined || value === null) {
+    // delete null item
+    await deleteItemAsync(key)
+    return
+  }
+
   // encrypt value on save it
   const encryptedValue = await Encrypter.getInstance().encrypt(value)
   await AsyncStorage.setItem(key, encryptedValue)

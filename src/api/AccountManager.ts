@@ -13,6 +13,7 @@ import {
   Account,
   AddIdentityStepStatus,
   AddIdentityStepType,
+  BlockchainWallet,
   NormalizedAccounts,
   UserData,
 } from 'api/types'
@@ -291,6 +292,7 @@ class AccountManager extends EventEmitter {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
         label: 'Multi Coin Wallet',
+        multiChain: true, // Set this's a multi-chain wallet
       }
       const saved: any = await walletDb?.save(wallet)
       const walletID = saved?.id
@@ -299,15 +301,14 @@ class AccountManager extends EventEmitter {
       const blockchainNetworks = getBlockchainNetworks(store.getState())
 
       const userGeneratedWallets = WalletManager.generateAccountsForWallet(
-        {
-          mnemonic: userHDWalletMnemonic,
-        },
+        { ...wallet } as BlockchainWallet,
         blockchainNetworks
       )
 
       const walletData = {
         [walletID]: {
           ...wallet,
+          _id: walletID, // wallet saved id
           accounts: userGeneratedWallets,
         },
       }
