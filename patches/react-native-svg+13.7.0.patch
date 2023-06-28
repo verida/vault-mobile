@@ -1,0 +1,18 @@
+diff --git a/node_modules/react-native-svg/src/xml.tsx b/node_modules/react-native-svg/src/xml.tsx
+index c6f1799..d75a506 100644
+--- a/node_modules/react-native-svg/src/xml.tsx
++++ b/node_modules/react-native-svg/src/xml.tsx
+@@ -433,6 +433,13 @@ export function parse(source: string, middleware?: Middleware): JsxAST | null {
+       );
+     }
+ 
++    // Allow spaces on the closing tag to extend support on some badly formatted svg close tag, eg:
++    // <g
++    //   >
++    // ...
++    // </g
++    //   >
++    allowSpaces();
+     if (source[i] !== '>') {
+       error('Expected >');
+     }

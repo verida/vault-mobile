@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "0.3.48",
+  "version": "0.3.49",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -29,6 +29,7 @@
     "@babel/helper-environment-visitor": "^7.16.7",
     "@cheqd/did-provider-cheqd": "^3.0.4",
     "@ethereumjs/tx": "^3.5.2",
+    "@ethersproject/pbkdf2": "5.7.0",
     "@ethersproject/shims": "^5.6.0",
     "@expo/react-native-action-sheet": "^3.11.0",
     "@haskkor/react-native-pincode": "^1.22.5",
@@ -125,6 +126,7 @@
     "querystring-es3": "^0.2.1",
     "react": "17.0.2",
     "react-dom": "17.0.2",
+    "react-error-boundary": "^4.0.10",
     "react-native": "0.68.5",
     "react-native-animated-pagination-dots": "^0.1.73",
     "react-native-blob-util": "^0.17.2",
@@ -137,7 +139,6 @@
     "react-native-device-info": "^8.5.1",
     "react-native-draggable-flatlist": "^4.0.0",
     "react-native-elements": "^2.0.4",
-    "react-native-fast-crypto": "^2.2.0",
     "react-native-fast-image": "^8.6.3",
     "react-native-flipper": "^0.152.0",
     "react-native-fs": "^2.20.0",
@@ -212,7 +213,6 @@
     "@walletconnect/types": "1.8.0",
     "@walletconnect/typesv2": "npm:@walletconnect/types@2.0.0-rc.3",
     "babel-jest": "^26.6.3",
-    "babel-plugin-rewrite-require": "^1.14.5",
     "eslint": "^7.32.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-import": "^2.25.4",
@@ -242,7 +242,9 @@
     "uint8arrays": "3.1.0",
     "token-types": "4.2.0",
     "isomorphic-webcrypto": "https://github.com/verida/isomorphic-webcrypto.git",
-    "pouchdb-find": "7.2.2"
+    "pouchdb-find": "7.2.2",
+    "pbkdf2": "3.1.2",
+    "@ethersproject/pbkdf2": "5.7.0"
   },
   "jest": {
     "preset": "react-native",
