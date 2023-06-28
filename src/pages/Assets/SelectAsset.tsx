@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { useGetNFTsQuery } from 'features/assets'
 import { emitter } from 'helpers/emitter'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
@@ -23,7 +24,6 @@ import { Title } from 'components/Typography/Title'
 import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
-import { useGetWalletNFTCollectionsQuery } from 'reduxStore/assets/api'
 import { Theme } from 'styles/types'
 
 export interface SelectAssetScreenProps {
@@ -39,7 +39,7 @@ const SelectAsset = () => {
   const { screenName, mode, originalValue, searchableAddresses } = params
 
   const { data, isLoading, error, refetch } =
-    useGetWalletNFTCollectionsQuery(searchableAddresses)
+    useGetNFTsQuery(searchableAddresses)
 
   // pull to refresh data
   const [refreshing, setRefreshing] = React.useState(false)
@@ -52,7 +52,7 @@ const SelectAsset = () => {
   }, [])
 
   const { theme } = useTheme()
-  const isEmptyList = data?.length === 0
+  const isEmptyList = !data || data.length === 0
   const styles = useThemeAwareStyle(createStyles)
   const { bottom } = useSafeAreaInsets()
 
@@ -104,7 +104,7 @@ const SelectAsset = () => {
           icon: 'close',
         }}
       />
-      {data ? (
+      {!isLoading && (
         <View style={[styles.constainer, { marginBottom: bottom }]}>
           <GridView
             numColumns={NUMBER_OF_COLUMNS}
@@ -135,7 +135,7 @@ const SelectAsset = () => {
             )}
           />
         </View>
-      ) : null}
+      )}
     </Screen>
   )
 }
@@ -146,15 +146,18 @@ const createStyles = (theme: Theme) =>
   StyleSheet.create({
     constainer: {
       flex: 1,
-      // paddingHorizontal: theme.spacing.m,
-      // paddingTop: theme.spacing.m,
-      // justifyContent: 'space-between',
     },
     grid: {
       flex: 1,
       paddingHorizontal: theme.spacing.m,
     },
-    listEmptyContainer: { height: '100%' },
+    listEmptyContainer: {
+      flex: 1,
+      flexDirection: 'column',
+      height: '100%',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
     emptyListContainer: {
       ...StyleSheet.absoluteFillObject,
       flexDirection: 'column',

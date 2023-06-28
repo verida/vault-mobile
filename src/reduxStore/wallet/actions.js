@@ -139,28 +139,22 @@ export const getTransactionDetails = (transactionID, token) => {
 }
 
 export const saveUserWallets = (wallets) => {
-  return async (dispatch) => {
-    dispatch({
-      type: SET_USER_WALLETS,
-      data: wallets,
-    })
+  return {
+    type: SET_USER_WALLETS,
+    data: wallets,
   }
 }
 
 export const removeUserWallets = () => {
-  return async (dispatch) => {
-    dispatch({
-      type: REMOVE_USER_WALLETS,
-    })
+  return {
+    type: REMOVE_USER_WALLETS,
   }
 }
 
 export const setSelectedWallet = (walletId) => {
-  return async (dispatch) => {
-    await dispatch({
-      type: SET_SELECTED_WALLET,
-      data: walletId,
-    })
+  return {
+    type: SET_SELECTED_WALLET,
+    data: walletId,
   }
 }
 
@@ -237,18 +231,20 @@ export const createNewWallet = (data) => {
       )
 
       if (wallets) {
-        await dispatch(saveUserWallets(wallets))
-        await dispatch(setSelectedWallet(selectedWallet._id))
+        dispatch(saveUserWallets(wallets))
+        dispatch(setSelectedWallet(selectedWallet._id))
 
-        // save to storage..
-        await SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
-          JSON.stringify(wallets)
-        )
-        await SecureStore.setItemAsync(
-          CONFIG.SELECTED_WALLET_STORAGE_KEY,
-          selectedWallet._id
-        )
+        // save to the storage..
+        await Promise.all([
+          SecureStore.setItemAsync(
+            CONFIG.WALLETS_STORAGE_KEY,
+            JSON.stringify(wallets)
+          ),
+          SecureStore.setItemAsync(
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            selectedWallet._id
+          ),
+        ])
       }
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
@@ -286,7 +282,7 @@ export const importWallet = (data) => {
       const saved = await walletDb?.save(wallet)
       const walletId = saved?.id
       await AccountManager.getInstance().restoreUserWallet(false)
-      await dispatch(setSelectedWallet(walletId))
+      dispatch(setSelectedWallet(walletId))
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
@@ -323,7 +319,7 @@ export const addWatchedWallet = (data) => {
       }
 
       await AccountManager.getInstance().restoreUserWallet(false)
-      await dispatch(setSelectedWallet(savedWallet.id))
+      dispatch(setSelectedWallet(savedWallet.id))
 
       dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
@@ -353,7 +349,7 @@ export const deleteWallet = (walletId) => {
       if (currentlySelectedWallet === walletId) {
         const wallets = getWalletList(getState().main)
         const nextWalletId = Object.keys(wallets)[0]
-        await dispatch(setSelectedWallet(nextWalletId))
+        dispatch(setSelectedWallet(nextWalletId))
       }
 
       await AccountManager.getInstance().restoreUserWallet(false)
@@ -390,7 +386,7 @@ export const renameWallet = (walletId, data) => {
         const chains = selectChains(getState())
         const wallets = rawDataToReduxState(hdWallets, chains)
 
-        await dispatch(saveUserWallets(wallets))
+        dispatch(saveUserWallets(wallets))
         await SecureStore.setItemAsync(
           CONFIG.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)

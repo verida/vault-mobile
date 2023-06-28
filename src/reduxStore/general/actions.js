@@ -1,11 +1,8 @@
-import { WalletProvider } from 'api/Wallet/WalletProvider'
-
 import {
   ADD_ACCOUNT,
   LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
-  SET_BLOCKCHAIN_NETWORKS,
   SET_COUNTRIES,
   SET_INBOX_ITEMS,
   SET_NAVIGATION_LINK,
@@ -50,17 +47,6 @@ export const setSwitchAccountToast = (payload) => {
 
 export const setShowSeedPhraseReminder = (payload) => {
   return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
-}
-
-export const setBlockchainNetworks = () => {
-  return async (dispatch) => {
-    const blockchainNetworks = await WalletProvider.getBlockchainNetworks()
-
-    await dispatch({
-      type: SET_BLOCKCHAIN_NETWORKS,
-      payload: blockchainNetworks,
-    })
-  }
 }
 
 export const setNavigationLink = (payload) => {

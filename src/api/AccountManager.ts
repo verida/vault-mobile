@@ -22,7 +22,6 @@ import {
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
-  setBlockchainNetworks,
 } from 'reduxStore/general/actions'
 import {
   removeUserWallets,
@@ -39,6 +38,7 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
+import { walletsApi } from 'features/wallets'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -71,18 +71,14 @@ class AccountManager extends EventEmitter {
 
   public async init() {
     try {
-      // Load all available blockchain networks
-      await store.dispatch(setBlockchainNetworks())
-      //await store.dispatch(getTokens())
-      const updateWallets = true
       if (!this.selectedAccount) {
-        const accountsRaw = await SecureStore.getItemAsync(
-          CONFIG.ACCOUNTS_STORAGE_KEY
-        )
-        //accountsRaw = undefined
-        //store.dispatch(setAccounts([]))
-        if (accountsRaw) {
-          this.accounts = JSON.parse(accountsRaw)
+        const [storedAccounts, storedSelectedAccountDid] = await Promise.all([
+          SecureStore.getItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY),
+          SecureStore.getItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY),
+        ])
+
+        if (storedAccounts) {
+          this.accounts = JSON.parse(storedAccounts)
           // Sometimes if the app crashes when creating an account, it creates one that is empty
           // In that case, remove it so the app doesn't return to the create account screen
           // causing loss of access to all other accounts
@@ -93,42 +89,51 @@ class AccountManager extends EventEmitter {
           store.dispatch(setAccounts(this.accounts))
         }
 
-        let selectedAccountDid = await SecureStore.getItemAsync(
-          CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
-        )
-
-        // If no selected DID, choose the first
-        if (!selectedAccountDid && Object.keys(this.accounts).length) {
-          selectedAccountDid = this.accounts[Object.keys(this.accounts)[0]].did
-        }
+        const selectedAccountDid =
+          storedSelectedAccountDid ||
+          (Object.keys(this.accounts).length > 0
+            ? this.accounts[Object.keys(this.accounts)[0]].did
+            : undefined)
 
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
         }
 
-        const walletsRaw = await SecureStore.getItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY
-        )
-        // if there's no seed phrase in wallet data (and near address doesnt exist), create wallets again using seedphrase in verida store
-        if (!walletsRaw || updateWallets) {
-          const selectedAccount = this.getSelectedAccount()
-          if (selectedAccount) {
-            await this.connect()
-          }
-
-          await this.restoreUserWallet(true)
-        } else {
-          const wallets = JSON.parse(walletsRaw)
-          store.dispatch(saveUserWallets(wallets))
-          const selectedWalletID = await SecureStore.getItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY
-          )
-          await store.dispatch(setSelectedWallet(selectedWalletID))
-        }
+        // Load or restore user wallets from the mnemonic
+        this.initUserWallets()
       }
     } catch (e) {
       Sentry.captureException(e)
+    }
+  }
+
+  private async initUserWallets() {
+    try {
+      const [walletsRaw, selectedWalletId] = await Promise.all([
+        SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
+        SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
+        store.dispatch(
+          walletsApi.endpoints.chainsList.initiate(undefined, {
+            forceRefetch: false,
+          })
+        ),
+      ])
+
+      const wallets = JSON.parse(walletsRaw || '{}')
+      // No accounts available so needs to restore the wallets
+      if (isEmpty(wallets?.[selectedWalletId!]?.accounts)) {
+        const selectedAccount = this.getSelectedAccount()
+        if (selectedAccount) {
+          await this.connect()
+        }
+        await this.restoreUserWallet(true)
+      } else {
+        store.dispatch(saveUserWallets(wallets))
+        store.dispatch(setSelectedWallet(selectedWalletId))
+      }
+    } catch (error) {
+      Sentry.captureException(error)
     }
   }
 
@@ -307,18 +312,18 @@ class AccountManager extends EventEmitter {
         },
       }
 
-      await store.dispatch(saveUserWallets(walletData))
-      await store.dispatch(setSelectedWallet(walletID))
+      // Update redux wallet states
+      store.dispatch(saveUserWallets(walletData))
+      store.dispatch(setSelectedWallet(walletID))
 
-      // save to storage..
-      await SecureStore.setItemAsync(
-        CONFIG.WALLETS_STORAGE_KEY,
-        JSON.stringify(walletData)
-      )
-      await SecureStore.setItemAsync(
-        CONFIG.SELECTED_WALLET_STORAGE_KEY,
-        walletID
-      )
+      // save wallet state to secure storage
+      await Promise.all([
+        SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(walletData)
+        ),
+        SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, walletID),
+      ])
     } catch (e) {
       Sentry.captureException(e)
       throw e
@@ -339,7 +344,7 @@ class AccountManager extends EventEmitter {
 
       if (!isEmpty(hdWallets)) {
         const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
-        await store.dispatch(saveUserWallets(wallets))
+        store.dispatch(saveUserWallets(wallets))
 
         // save to storage..
         await SecureStore.setItemAsync(
@@ -354,7 +359,7 @@ class AccountManager extends EventEmitter {
         if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
           const selectedWalletID = hdWallets[0]._id
 
-          await store.dispatch(setSelectedWallet(selectedWalletID))
+          store.dispatch(setSelectedWallet(selectedWalletID))
 
           await SecureStore.setItemAsync(
             CONFIG.SELECTED_WALLET_STORAGE_KEY,
