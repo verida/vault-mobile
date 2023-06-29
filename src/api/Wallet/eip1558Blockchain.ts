@@ -7,8 +7,7 @@ class eip1558Blockchain implements IBlockchain {
   public buildAccountFromMnemonic(
     mnemonic: string,
     derivationPath: string,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    multiChain: boolean
+    _multiChain: boolean
   ): WalletUtilsWallet {
     const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
     const childNode = node.derivePath(derivationPath)
