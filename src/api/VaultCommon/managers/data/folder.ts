@@ -193,6 +193,7 @@ export default class Folder {
       .join(' ')
   }
 
+  // TODO: Remove this.
   ///**
   // * Build headers for the fields being displayed
   // */
