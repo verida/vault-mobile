@@ -39,7 +39,7 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
-import { IContext, IDatastore } from '@verida/types'
+import { IContext } from '@verida/types'
 import { walletsApi } from 'features/wallets'
 
 class AccountManager extends EventEmitter {
@@ -290,8 +290,9 @@ class AccountManager extends EventEmitter {
       const userHDWalletMnemonic = WalletManager.generateMnemonic()
 
       // save mnemonic to verida store
-      const walletDb: IDatastore | undefined =
-        await this.context?.openDatastore(WALLET_SCHEMA_0_2_0_URI)
+      const walletDb = await this.context?.openDatastore(
+        WALLET_SCHEMA_0_2_0_URI
+      )
 
       const wallet = {
         mnemonic: userHDWalletMnemonic,
@@ -344,8 +345,9 @@ class AccountManager extends EventEmitter {
         await store.dispatch(removeUserWallets())
       }
 
-      const datastore: IDatastore | undefined =
-        await this.context?.openDatastore(WALLET_SCHEMA_0_2_0_URI)
+      const datastore = await this.context?.openDatastore(
+        WALLET_SCHEMA_0_2_0_URI
+      )
 
       const hdWallets: any = await datastore?.getMany<BlockchainWallet>(
         undefined,
