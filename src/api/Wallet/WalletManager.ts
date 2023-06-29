@@ -79,8 +79,14 @@ export class WalletManager {
 
   public static generateAccountsForWallet(
     wallet: Partial<BlockchainWallet>,
-    blockchainNetworks: BlockchainNetwork[]
+    // TODO: We are misusing this type - we should just use use the result of getBlockchainNetworks()
+    maybeBlockchainNetworks:
+      | BlockchainNetwork[]
+      | Record<string, BlockchainNetwork>
+      | undefined
   ) {
+    const blockchainNetworks = maybeBlockchainNetworks || {}
+
     const accounts: Record<string, BlockchainAccount> = {}
 
     Object.values(blockchainNetworks).forEach(

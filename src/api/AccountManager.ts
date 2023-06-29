@@ -161,14 +161,15 @@ class AccountManager extends EventEmitter {
 
   public async getVeridaContext(): Promise<IContext | undefined> {
     try {
-      if (!this.selectedAccount) {
-        return undefined
-      }
+      if (!this.selectedAccount) return undefined
+
+      const environment = CONFIG.VERIDA_ENVIRONMENT
 
       this.client = new Client({
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig: {
           rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          network: environment,
         },
       })
 
@@ -180,7 +181,7 @@ class AccountManager extends EventEmitter {
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig,
       })
 
@@ -414,23 +415,27 @@ class AccountManager extends EventEmitter {
 
       const { mnemonic } = this.selectedAccount
 
+      const environment = CONFIG.VERIDA_ENVIRONMENT
+
       this.client = new Client({
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig: {
           rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          network: environment,
         },
       })
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig,
       })
 
       // Load suitable node based on selected country
       const countryCode = getCountryCode(country)
+
       await account.loadDefaultStorageNodes(countryCode, 3, {
-        network: CONFIG.VERIDA_ENVIRONMENT,
+        network: environment,
         notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
       })
 

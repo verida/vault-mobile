@@ -28,17 +28,23 @@ import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  blockchainNetworks: Record<string, BlockchainNetwork>
+  blockchainNetworks: Record<string, BlockchainNetwork> | undefined
   onImportWallet: (data: any) => void
   hideModal: () => void
 }
+
+const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
+  Object.freeze({})
 
 const ImportModal = ({
   visible,
   hideModal,
   onImportWallet,
-  blockchainNetworks,
+  blockchainNetworks: maybeBlockchainNetworks,
 }: Props) => {
+  const blockchainNetworks =
+    maybeBlockchainNetworks || defaultBlockchainNetworks
+
   const privateKeyEnabledNetworks = ['eip155']
   const [name, setName] = useState('')
   const [phrase, setPhrase] = useState('')

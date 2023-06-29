@@ -7,6 +7,7 @@ import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
+import debounce from 'lodash/debounce'
 import React, {
   Fragment,
   useCallback,
@@ -31,6 +32,7 @@ import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
 import { useDebouncedCallback } from 'use-debounce'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
