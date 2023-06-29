@@ -8,7 +8,7 @@ export default ({ item }) => {
       <CardItem>
         <Body>
           <Text note>{item.field}:</Text>
-          <Text style={style.value}>{item.value}</Text>
+          <Text style={style.value}>{String(item.value)}</Text>
         </Body>
       </CardItem>
     </Card>

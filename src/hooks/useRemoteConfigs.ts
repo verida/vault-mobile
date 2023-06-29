@@ -4,7 +4,7 @@ import { compareVersions } from 'compare-versions'
 import { useCallback, useRef, useState } from 'react'
 import { getVersion } from 'react-native-device-info'
 
-import useIsMountedRef from './useIsMountedRef'
+import { useIsMounted } from './useIsMounted'
 
 export type ForcedUpgradeType = {
   minVersion?: string
@@ -25,15 +25,18 @@ export function useRemoteConfigs() {
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
   const fetchingRef = useRef(false)
-  const isMountedRef = useIsMountedRef()
+  const isMounted = useIsMounted()
 
   const fetchConfigs = useCallback(() => {
     if (fetchingRef.current) {
       // Avoid duplicate requests
       return
     }
-
     fetchingRef.current = true
+
+    remoteConfig().setConfigSettings({
+      minimumFetchIntervalMillis: 30000,
+    })
 
     remoteConfig()
       .setDefaults({
@@ -41,8 +44,9 @@ export function useRemoteConfigs() {
         forced_create_new_account: '{}',
       })
       .then(() => remoteConfig()?.fetchAndActivate())
+      .then(Boolean)
       .then((fetchedRemotely) => {
-        if (fetchedRemotely && isMountedRef.current) {
+        if (fetchedRemotely && isMounted()) {
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
           const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
           setForcedUpgrade({
@@ -73,8 +77,7 @@ export function useRemoteConfigs() {
     //       of new useEffect dependencies from being ignored in future. It is
     //       likely they we don't need useIsMountedRef() to be its own hook, or
     //       alternatively we should create a dedicated useEffect.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  }, [isMounted])
 
   return { fetchConfigs, forcedUpgrade, forcedCreateAccount }
 }

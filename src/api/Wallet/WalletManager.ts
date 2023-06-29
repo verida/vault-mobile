@@ -28,6 +28,7 @@ export class WalletManager {
     walletData: BlockchainWallet[]
   ): Promise<Record<string, BlockchainWalletWithAccounts>> {
     const blockchainNetworks = getBlockchainNetworks(store.getState())
+    if (!blockchainNetworks) return {} // TODO: better way to handle this case
 
     const wallets: Record<string, BlockchainWalletWithAccounts> = {}
     walletData.forEach((wallet: BlockchainWallet | any) => {

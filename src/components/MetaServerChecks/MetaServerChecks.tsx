@@ -1,4 +1,3 @@
-import remoteConfig from '@react-native-firebase/remote-config'
 import { compareVersions } from 'compare-versions'
 import React, { useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
@@ -22,14 +21,7 @@ const MetaServerChecks = () => {
   const { forcedSignOut } = useAuth()
 
   useEffect(() => {
-    remoteConfig().setConfigSettings({
-      minimumFetchIntervalMillis: 30000,
-    })
-  }, [])
-
-  useEffect(() => {
     fetchConfigs()
-
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
       if (
         appState.current.match(/inactive|background/) &&

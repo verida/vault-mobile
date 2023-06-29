@@ -10,6 +10,7 @@ export type EmitterTypes = {
   }
   UNLOCK_VERIDA_ONE: undefined
   UPDATE_PROFILE_USERNAME: Record<string, unknown>
+  UPDATE_PUBLIC_PROFILE: undefined
 
   // Identity status
   IDENTITY_NOT_EXIST: {

@@ -23,6 +23,8 @@ import {
   BALANCES_FETCH_FAILED,
   BALANCES_FETCH_START,
   FETCHED_BALANCES,
+  FETCHED_TRANSACTION_DETAIL,
+  FETCHED_TRANSACTION_PARAMS,
   FETCHED_TRANSACTIONS,
   REMOVE_USER_WALLETS,
   SEND_TRANSACTION_FAILED,
@@ -30,6 +32,10 @@ import {
   SEND_TRANSACTION_SUCCESS,
   SET_SELECTED_WALLET,
   SET_USER_WALLETS,
+  TRANSACTION_DETAIL_FETCH_FAILED,
+  TRANSACTION_DETAIL_FETCH_START,
+  TRANSACTION_PARAMS_FETCH_FAILED,
+  TRANSACTION_PARAMS_FETCH_START,
   TRANSACTIONS_FETCH_FAILED,
   TRANSACTIONS_FETCH_START,
   WALLET_PROCESSING_FAILED,
@@ -38,45 +44,47 @@ import {
 } from './types'
 
 // @chris done
-export const getBalances = () => async (dispatch, getState) => {
-  dispatch({ type: BALANCES_FETCH_START })
+export const getBalances = () => {
+  return async (dispatch, getState) => {
+    dispatch({ type: BALANCES_FETCH_START })
 
-  try {
-    const wallets = getWalletsData(getState().main)
-    const walletParams = Object.values(wallets).map(
-      (item) => `${item.chainId}:${item.address}`
-    )
-    const requestParams = {
-      wallet: walletParams,
-    }
+    try {
+      const wallets = getWalletsData(getState().main)
+      const walletParams = Object.values(wallets).map(
+        (item) => `${item.chainId}:${item.address}`
+      )
+      const requestParams = {
+        wallet: walletParams,
+      }
 
-    const balanceData = await walletProviderApi.get(
-      'balance/getBalanceByChains',
-      requestParams
-    )
+      const balanceData = await walletProviderApi.get(
+        'balance/getBalanceByChains',
+        requestParams
+      )
 
-    if (balanceData.data) {
-      dispatch({
-        type: FETCHED_BALANCES,
-        data: balanceData.data.data.results,
-      })
-    } else {
+      if (balanceData.data) {
+        dispatch({
+          type: FETCHED_BALANCES,
+          data: balanceData.data.data.results,
+        })
+      } else {
+        dispatch({
+          type: BALANCES_FETCH_FAILED,
+          error: 'error',
+        })
+      }
+    } catch (error) {
       dispatch({
         type: BALANCES_FETCH_FAILED,
         error: 'error',
       })
     }
-  } catch (error) {
-    dispatch({
-      type: BALANCES_FETCH_FAILED,
-      error: 'error',
-    })
   }
 }
 
 // @chris done
-export const getTransactionsForToken =
-  (token) => async (dispatch, getState) => {
+export const getTransactionsForToken = (token) => {
+  return async (dispatch, getState) => {
     dispatch({ type: TRANSACTIONS_FETCH_START })
     const wallets = getWalletsData(getState().main)
     const userAddress = getWalletAddressForAsset(token.asset, wallets)
@@ -100,57 +108,86 @@ export const getTransactionsForToken =
       })
     }
   }
+}
 
-//// @chris done
-//const getTransactionDetails =
-//  (transactionID, token) => async (dispatch, getState) => {
-//    dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
-//    const wallets = getWalletsData(getState().main)
-//
-//    const userAddress = getWalletAddressForAsset(token.asset, wallets)
-//
-//    const transactionsData = await walletProviderApi.post('transaction/get', {
-//      transactionId: transactionID,
-//      userAddress,
-//      asset: token.asset,
-//    })
-//
-//    if (transactionsData) {
-//      dispatch({
-//        type: FETCHED_TRANSACTION_DETAIL,
-//        data: transactionsData.data.data,
-//      })
-//    } else {
-//      dispatch({
-//        type: TRANSACTION_DETAIL_FETCH_FAILED,
-//        error: "Couldn'nt load transactions",
-//      })
-//    }
-//  }
+// @chris done
+export const getTransactionDetails = (transactionID, token) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
+    const wallets = getWalletsData(getState().main)
 
-export const saveUserWallets = (wallets) => async (dispatch) => {
-  dispatch({
+    const userAddress = getWalletAddressForAsset(token.asset, wallets)
+
+    const transactionsData = await walletProviderApi.post('transaction/get', {
+      transactionId: transactionID,
+      userAddress,
+      asset: token.asset,
+    })
+
+    if (transactionsData) {
+      dispatch({
+        type: FETCHED_TRANSACTION_DETAIL,
+        data: transactionsData.data.data,
+      })
+    } else {
+      dispatch({
+        type: TRANSACTION_DETAIL_FETCH_FAILED,
+        error: "Couldn'nt load transactions",
+      })
+    }
+  }
+}
+
+export const saveUserWallets = (wallets) => {
+  return {
     type: SET_USER_WALLETS,
     data: wallets,
-  })
+  }
 }
 
-export const removeUserWallets = () => async (dispatch) => {
-  dispatch({
+export const removeUserWallets = () => {
+  return {
     type: REMOVE_USER_WALLETS,
-  })
+  }
 }
 
-export const setSelectedWallet = (walletId) => async (dispatch) => {
-  await dispatch({
+export const setSelectedWallet = (walletId) => {
+  return {
     type: SET_SELECTED_WALLET,
     data: walletId,
-  })
+  }
 }
 
-export const sendTransaction =
-  (transactionData, isAssetEnablingTransaction) =>
-  async (dispatch, getState) => {
+export const getTransactionParams = (transactionData) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
+    const wallets = getWalletsData(getState().main)
+
+    const params = await dataHelper.getTransactionParams(
+      transactionData,
+      wallets
+    )
+
+    if (params) {
+      dispatch({
+        type: FETCHED_TRANSACTION_PARAMS,
+        data: params,
+      })
+      navigate('ConfirmTransaction', transactionData)
+    } else {
+      dispatch({
+        type: TRANSACTION_PARAMS_FETCH_FAILED,
+        error: "Couldn't load params",
+      })
+    }
+  }
+}
+
+export const sendTransaction = (
+  transactionData,
+  isAssetEnablingTransaction
+) => {
+  return async (dispatch, getState) => {
     dispatch({ type: SEND_TRANSACTION_START })
     const state = getState().main
 
@@ -181,171 +218,190 @@ export const sendTransaction =
       }
     }
   }
+}
 
-export const createNewWallet = (data) => async (dispatch) => {
-  dispatch({ type: WALLET_PROCESSING_START })
+export const createNewWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
 
-  try {
-    const { selectedWallet, wallets } = await WalletManager.createNewWallet(
-      data.phrase,
-      data.name
-    )
-
-    if (wallets) {
-      await dispatch(saveUserWallets(wallets))
-      await dispatch(setSelectedWallet(selectedWallet._id))
-
-      // save to storage..
-      await SecureStore.setItemAsync(
-        CONFIG.WALLETS_STORAGE_KEY,
-        JSON.stringify(wallets)
+    try {
+      const { selectedWallet, wallets } = await WalletManager.createNewWallet(
+        data.phrase,
+        data.name
       )
-      await SecureStore.setItemAsync(
-        CONFIG.SELECTED_WALLET_STORAGE_KEY,
-        selectedWallet._id
-      )
+
+      if (wallets) {
+        dispatch(saveUserWallets(wallets))
+        dispatch(setSelectedWallet(selectedWallet._id))
+
+        // save to the storage..
+        await Promise.all([
+          SecureStore.setItemAsync(
+            CONFIG.WALLETS_STORAGE_KEY,
+            JSON.stringify(wallets)
+          ),
+          SecureStore.setItemAsync(
+            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            selectedWallet._id
+          ),
+        ])
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
     }
-
-    dispatch({ type: WALLET_PROCESSING_FINISHED })
-  } catch (error) {
-    dispatch({
-      type: WALLET_PROCESSING_FAILED,
-      error: error,
-    })
   }
 }
 
-export const importWallet = (data) => async (dispatch) => {
-  dispatch({ type: WALLET_PROCESSING_START })
+export const importWallet = (data) => {
+  return async (dispatch) => {
+    dispatch({ type: WALLET_PROCESSING_START })
 
-  try {
-    const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
-    const privateKey =
-      data.inputSwitch === 'privateKey' ? data.privateKey : null
-    const walletType = data.walletType
+    try {
+      const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
+      const privateKey =
+        data.inputSwitch === 'privateKey' ? data.privateKey : null
+      const walletType = data.walletType
 
-    // save mnemonic to verida store
-    const walletDb = await AccountManager.getInstance().context?.openDatastore(
-      WALLET_SCHEMA_0_2_0_URI
-    )
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          WALLET_SCHEMA_0_2_0_URI
+        )
 
-    const wallet = {
-      walletType,
-      label: data.name,
+      const wallet = {
+        walletType,
+        label: data.name,
+      }
+      if (mnemonic) wallet.mnemonic = mnemonic
+      if (privateKey) wallet.privateKey = privateKey
+      const saved = await walletDb?.save(wallet)
+      const walletId = saved?.id
+      await AccountManager.getInstance().restoreUserWallet(false)
+      dispatch(setSelectedWallet(walletId))
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
     }
-    if (mnemonic) wallet.mnemonic = mnemonic
-    if (privateKey) wallet.privateKey = privateKey
-    const saved = await walletDb?.save(wallet)
-    const walletId = saved?.id
-    await AccountManager.getInstance().restoreUserWallet(false)
-    await dispatch(setSelectedWallet(walletId))
-
-    dispatch({ type: WALLET_PROCESSING_FINISHED })
-  } catch (error) {
-    dispatch({
-      type: WALLET_PROCESSING_FAILED,
-      error: error,
-    })
   }
 }
 
-export const addWatchedWallet = (data) => async (dispatch) => {
-  dispatch({ type: WALLET_PROCESSING_START })
-  try {
-    const walletsDatastore =
-      await AccountManager.getInstance().context?.openDatastore(
-        WALLET_SCHEMA_0_2_0_URI
+export const addWatchedWallet = (data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+    try {
+      const walletsDatastore =
+        await AccountManager.getInstance().context?.openDatastore(
+          WALLET_SCHEMA_0_2_0_URI
+        )
+
+      if (!walletsDatastore) {
+        throw new Error('Cannot get wallets datastore')
+      }
+
+      const wallet = {
+        label: data.label,
+        walletType: data.blockchain,
+        address: data.publicAddress,
+      }
+
+      const savedWallet = await walletsDatastore.save(wallet)
+      if (!savedWallet) {
+        throw new Error(walletsDatastore.errors)
+      }
+
+      await AccountManager.getInstance().restoreUserWallet(false)
+      dispatch(setSelectedWallet(savedWallet.id))
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
+    }
+  }
+}
+
+export const deleteWallet = (walletId) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
+
+    try {
+      const currentlySelectedWallet = getSelectedWalletId(getState().main)
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          WALLET_SCHEMA_0_2_0_URI
+        )
+      // save to verida store
+      await walletDb?.delete(walletId)
+
+      // update redux store
+      const updatedWalletsList = getWalletList(getState().main).filter(
+        (wallet) => wallet._id !== walletId
       )
+      dispatch(saveUserWallets(updatedWalletsList))
 
-    if (!walletsDatastore) {
-      throw new Error('Cannot get wallets datastore')
+      if (currentlySelectedWallet === walletId) {
+        const nextWalletId = Object.values(updatedWalletsList)[0].id
+        await dispatch(setSelectedWallet(nextWalletId))
+      }
+
+      await AccountManager.getInstance().restoreUserWallet(false)
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
     }
-
-    const wallet = {
-      label: data.label,
-      walletType: data.blockchain,
-      address: data.publicAddress,
-    }
-
-    const savedWallet = await walletsDatastore.save(wallet)
-    if (!savedWallet) {
-      throw new Error(walletsDatastore.errors)
-    }
-
-    await AccountManager.getInstance().restoreUserWallet(false)
-    await dispatch(setSelectedWallet(savedWallet.id))
-
-    dispatch({ type: WALLET_PROCESSING_FINISHED })
-  } catch (error) {
-    dispatch({
-      type: WALLET_PROCESSING_FAILED,
-      error: error,
-    })
   }
 }
 
-export const deleteWallet = (walletId) => async (dispatch, getState) => {
-  dispatch({ type: WALLET_PROCESSING_START })
+export const renameWallet = (walletId, data) => {
+  return async (dispatch, getState) => {
+    dispatch({ type: WALLET_PROCESSING_START })
 
-  try {
-    const currentlySelectedWallet = getSelectedWalletId(getState().main)
+    try {
+      // save mnemonic to verida store
+      const walletDb =
+        await AccountManager.getInstance().context?.openDatastore(
+          WALLET_SCHEMA_0_2_0_URI
+        )
 
-    // save mnemonic to verida store
-    const walletDb = await AccountManager.getInstance().context?.openDatastore(
-      WALLET_SCHEMA_0_2_0_URI
-    )
+      const row = await walletDb?.get(walletId)
 
-    await walletDb?.delete(walletId)
+      row.label = data.name
 
-    if (currentlySelectedWallet === walletId) {
-      const wallets = getWalletList(getState().main)
-      const nextWalletId = Object.keys(wallets)[0]
-      await dispatch(setSelectedWallet(nextWalletId))
+      await walletDb.save(row)
+
+      const hdWallets = await walletDb?.getMany()
+
+      if (hdWallets) {
+        const chains = selectChains(getState())
+        const wallets = rawDataToReduxState(hdWallets, chains)
+
+        dispatch(saveUserWallets(wallets))
+        await SecureStore.setItemAsync(
+          CONFIG.WALLETS_STORAGE_KEY,
+          JSON.stringify(wallets)
+        )
+      }
+
+      dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error) {
+      dispatch({
+        type: WALLET_PROCESSING_FAILED,
+        error: error,
+      })
     }
-
-    await AccountManager.getInstance().restoreUserWallet(false)
-    dispatch({ type: WALLET_PROCESSING_FINISHED })
-  } catch (error) {
-    dispatch({
-      type: WALLET_PROCESSING_FAILED,
-      error: error,
-    })
-  }
-}
-
-export const renameWallet = (walletId, data) => async (dispatch, getState) => {
-  dispatch({ type: WALLET_PROCESSING_START })
-
-  try {
-    // save mnemonic to verida store
-    const walletDb = await AccountManager.getInstance().context?.openDatastore(
-      WALLET_SCHEMA_0_2_0_URI
-    )
-
-    const row = await walletDb?.get(walletId)
-
-    row.label = data.name
-
-    await walletDb.save(row)
-
-    const hdWallets = await walletDb?.getMany()
-
-    if (hdWallets) {
-      const chains = selectChains(getState())
-      const wallets = rawDataToReduxState(hdWallets, chains)
-
-      await dispatch(saveUserWallets(wallets))
-      await SecureStore.setItemAsync(
-        CONFIG.WALLETS_STORAGE_KEY,
-        JSON.stringify(wallets)
-      )
-    }
-
-    dispatch({ type: WALLET_PROCESSING_FINISHED })
-  } catch (error) {
-    dispatch({
-      type: WALLET_PROCESSING_FAILED,
-      error: error,
-    })
   }
 }

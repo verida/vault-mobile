@@ -5,6 +5,7 @@ import FastImage from 'react-native-fast-image'
 import { SvgCss, SvgCssUri } from 'react-native-svg'
 
 import { NFT, NFTMetadata } from 'api/types'
+import { ErrorBoundary } from 'components/ErrorBoundary'
 import { Tag } from 'components/Tag'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { IMAGE_WIDTH } from 'pages/Assets/constants'
@@ -31,36 +32,44 @@ export const NftItem = ({ nft, containerStyle, imageStyle }: Props) => {
   const isSVGBase64 = uri?.includes('data:image/svg+xml;base64,')
   return (
     <View style={[styles.itemContainer, containerStyle]}>
-      {isSVG || (isSVGBase64 && Platform.OS === 'ios') ? (
-        <View style={[styles.image, imageStyle as any]}>
-          <SvgCssUri width='100%' height='100%' uri={uri} />
-        </View>
-      ) : isSVGBase64 ? (
-        <View style={[styles.image, imageStyle as any]}>
-          <SvgCss
-            width='100%'
-            height='100%'
-            xml={decodeBase64Svg(uri)}
-            color='#ffff'
+      {/* SVGs can easily fall into an unsupported format */}
+      <ErrorBoundary>
+        {isSVG || (isSVGBase64 && Platform.OS === 'ios') ? (
+          <View style={[styles.image, imageStyle as any]}>
+            <SvgCssUri width='100%' height='100%' uri={uri} />
+          </View>
+        ) : isSVGBase64 ? (
+          <View style={[styles.image, imageStyle as any]}>
+            <SvgCss
+              width='100%'
+              height='100%'
+              xml={decodeBase64Svg(uri)}
+              color='#ffff'
+            />
+          </View>
+        ) : (
+          <FastImage
+            style={[styles.image, imageStyle as any]}
+            defaultSource={require('assets/picture.png')}
+            source={{
+              uri,
+              priority: FastImage.priority.normal,
+            }}
+            resizeMode={FastImage.resizeMode.cover}
           />
-        </View>
-      ) : (
-        <FastImage
-          style={[styles.image, imageStyle as any]}
-          defaultSource={require('assets/picture.png')}
-          source={{
-            uri,
-            priority: FastImage.priority.normal,
-          }}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-      )}
+        )}
+      </ErrorBoundary>
       {nft.name ? (
         <Tag withBlur style={styles.itemTag}>
           <Tag.Label numberOfLines={1} style={styles.tagLabel}>
             {nft.name}
           </Tag.Label>
-          <Tag.Label style={styles.tagLabelNumber}>#{nft.token_id}</Tag.Label>
+          <Tag.Label
+            style={styles.tagLabelNumber}
+            ellipsizeMode='middle'
+            numberOfLines={1}>
+            #{nft.token_id}
+          </Tag.Label>
         </Tag>
       ) : null}
     </View>
@@ -79,15 +88,17 @@ const createStyles = (theme: Theme) =>
       overflow: 'hidden',
     },
     itemTag: {
+      maxWidth: IMAGE_WIDTH - 2 * theme.spacing.s,
       position: 'absolute',
       left: theme.spacing.s,
       bottom: theme.spacing.s,
     },
     tagLabel: {
-      maxWidth: 0.68 * IMAGE_WIDTH,
+      maxWidth: 0.6 * IMAGE_WIDTH,
       color: theme.color.onPrimary,
     },
     tagLabelNumber: {
+      maxWidth: 40,
       marginLeft: theme.spacing.s,
       color: theme.color.onPrimary,
     },

@@ -24,7 +24,7 @@ import { Theme } from 'styles/types'
 
 type Props = {
   did: string
-  username?: string
+  username?: string | undefined
   loading?: boolean
 }
 
