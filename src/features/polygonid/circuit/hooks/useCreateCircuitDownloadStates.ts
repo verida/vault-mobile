@@ -74,6 +74,7 @@ export function useCreateCircuitDownloadStates({
       } catch (cause) {
         setState({
           loading: false,
+          // @ts-expect-error language_version
           error: new Error('Failed to determine CircuitDownloadStates.', {
             cause,
           }),
