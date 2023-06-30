@@ -11,8 +11,8 @@ import {
 
 export function useWatchPublicProfileChanges() {
   const publicProfile: UserData = useSelector(getAccountPublicProfile)
-  const account: Account = useSelector(getSelectedAccount)
-  const did = account.did
+  const account: Account | undefined = useSelector(getSelectedAccount)
+  const did = account?.did
 
   useEffect(() => {
     let listener: any
