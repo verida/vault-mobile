@@ -1,4 +1,4 @@
-import { useActiveWalletConnectSession } from 'features/walletConnect'
+import { MaybeActiveSession } from 'features/walletConnect'
 import * as React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
@@ -8,13 +8,10 @@ import iconStyle from 'styles/icon'
 
 export const WalletConnectSessionInfoCard = React.memo(
   function WalletConnectSessionInfoCard({
-    walletConnectSessionKey,
+    maybeActiveSession,
   }: {
-    readonly walletConnectSessionKey: string
+    readonly maybeActiveSession: MaybeActiveSession
   }): JSX.Element {
-    const maybeActiveSession = useActiveWalletConnectSession({
-      walletConnectSessionKey,
-    })
     const maybePeerMetadata = maybeActiveSession?.peer?.metadata
 
     return (
