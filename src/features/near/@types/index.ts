@@ -31,8 +31,8 @@ export type NearWalletAccountInfo = {
 
 export type NearContextValue = {
   readonly keystore: NearKeystore
-  readonly maybeNearWalletInstance: NearWalletInstance | undefined
-  readonly maybeNearWalletAccounts: readonly NearWalletAccountInfo[]
+  //readonly maybeNearWalletInstance: NearWalletInstance | undefined
+  //readonly maybeNearWalletAccounts: readonly NearWalletAccountInfo[]
   readonly nearNetwork: NearNetworkId
 }
 

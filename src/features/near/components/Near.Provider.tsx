@@ -17,14 +17,10 @@ export const NearProvider: React.FC<
 > = React.memo(function NearProvider({ children, nearNetwork }): JSX.Element {
   const keystore = React.useMemo(() => new NearKeystore(), [])
 
-  const state = useCreateOrRestoreNearWalletInstance({
+  useCreateOrRestoreNearWalletInstance({
     nearNetwork,
     keystore,
   })
-
-  // Manages the allocation of a global Near wallet.
-  const maybeNearWalletInstance = useMaybeNearWalletInstance(state)
-  const maybeNearWalletAccounts = useMaybeNearWalletAccounts(state)
 
   return (
     <NearContextProvider
@@ -32,17 +28,10 @@ export const NearProvider: React.FC<
       children={children}
       value={React.useMemo<NearContextValue>(
         () => ({
-          maybeNearWalletInstance,
           nearNetwork,
-          maybeNearWalletAccounts: maybeNearWalletAccounts || [],
           keystore,
         }),
-        [
-          maybeNearWalletInstance,
-          nearNetwork,
-          maybeNearWalletAccounts,
-          keystore,
-        ]
+        [nearNetwork, keystore]
       )}
     />
   )

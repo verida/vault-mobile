@@ -11,11 +11,7 @@ import * as React from 'react'
 export const useWalletConnectSessionRequestCallbackNear = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<void>) => {
-  const {
-    maybeNearWalletInstance,
-    nearNetwork: nearNetworkId,
-    keystore,
-  } = useNearContext()
+  const { nearNetwork: nearNetworkId, keystore } = useNearContext()
 
   const nearSessionRequestHandlers = useSessionRequestHandlersNear()
 
@@ -25,11 +21,6 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
       request,
       rpc,
     }: WalletConnectSessionRequestCallbackParams) => {
-      if (!maybeNearWalletInstance)
-        throw new Error(
-          `Unable to handle session_request for Near blockchain - the wallet instance was unavailable.`
-        )
-
       const { topic } = request
 
       const maybeNearAccount = await getMaybeNearAccountForWalletConnectTopic({
@@ -39,7 +30,9 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
       })
 
       if (!maybeNearAccount)
-        throw new Error(`Unable to find matching Near account for "${topic}".`)
+        throw new Error(
+          `No active account. Unable to find matching Near account for "${topic}".`
+        )
 
       const method = request?.params?.request?.method
 
@@ -55,6 +48,6 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
         result: handle({ web3wallet, request, provider }),
       })
     },
-    [maybeNearWalletInstance, nearSessionRequestHandlers]
+    [nearSessionRequestHandlers]
   )
 }
