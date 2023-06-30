@@ -10,12 +10,14 @@ import {
 import { NearKeystore } from '../classes'
 
 export async function createNearWalletInstance({
+  keystore,
   publicKey,
   privateKey,
   networkId,
   // just one account for now
   maxAccounts = 1,
 }: {
+  readonly keystore: NearKeystore
   readonly networkId: NearNetworkId
   readonly publicKey: string
   readonly privateKey: string
@@ -24,8 +26,6 @@ export async function createNearWalletInstance({
   readonly nearWalletInstance: NearWalletInstance
   readonly nearWalletAccounts: readonly NearWalletAccountInfo[]
 }> {
-  const keystore = new NearKeystore()
-
   const nearWalletAccounts = await getNearAccountsForPublicKey({
     publicKey,
     keystore,

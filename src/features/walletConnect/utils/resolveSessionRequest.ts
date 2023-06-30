@@ -2,12 +2,12 @@ import { formatJsonRpcResult } from '@json-rpc-tools/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 
-export function resolveSessionRequest<ResultType>({
+export function resolveSessionRequest<T>({
   result,
   request,
   web3wallet,
 }: {
-  readonly result: ResultType
+  readonly result: T
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly web3wallet: IWeb3Wallet
 }) {

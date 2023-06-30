@@ -1,5 +1,5 @@
 import { NearKeystore } from 'features/near'
-import { KeyPair } from 'near-api-js'
+import { KeyPair, transactions } from 'near-api-js'
 
 // https://github.com/verida/vault-mobile/blob/develop/src/wallet-connect/controllers/near.ts
 // TODO: This is supposed to represent the data we save in Redux for Near wallets. Is this correct?
@@ -30,6 +30,7 @@ export type NearWalletAccountInfo = {
 }
 
 export type NearContextValue = {
+  readonly keystore: NearKeystore
   readonly maybeNearWalletInstance: NearWalletInstance | undefined
   readonly maybeNearWalletAccounts: readonly NearWalletAccountInfo[]
   readonly nearNetwork: NearNetworkId
@@ -43,4 +44,12 @@ export enum NearSigningMethod {
   NEAR_SIGN_AND_SEND_TRANSACTION = 'near_signAndSendTransaction',
   NEAR_SIGN_TRANSACTIONS = 'near_signTransactions',
   NEAR_SIGN_AND_SEND_TRANSACTIONS = 'near_signAndSendTransactions',
+}
+
+export type NearTransactionActions = transactions.Action[]
+
+export interface NearTransaction {
+  signerId: string
+  receiverId: string
+  actions: NearTransactionActions
 }

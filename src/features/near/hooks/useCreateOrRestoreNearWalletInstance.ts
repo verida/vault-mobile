@@ -1,5 +1,6 @@
 import {
   createNearWalletInstance,
+  NearKeystore,
   NearNetworkId,
   NearWalletAccountInfo,
   NearWalletInstance,
@@ -36,8 +37,10 @@ export function useMaybeNearWalletAccounts(
 }
 
 export function useCreateOrRestoreNearWalletInstance({
+  keystore,
   nearNetwork,
 }: {
+  readonly keystore: NearKeystore
   readonly nearNetwork: NearNetworkId
 }): State {
   const [state, setState] = React.useState<State>(loadingState)
@@ -70,6 +73,7 @@ export function useCreateOrRestoreNearWalletInstance({
 
           const { nearWalletInstance, nearWalletAccounts } =
             await createNearWalletInstance({
+              keystore,
               privateKey,
               publicKey,
               networkId: nearNetwork,
@@ -92,7 +96,7 @@ export function useCreateOrRestoreNearWalletInstance({
           })
         }
       })(),
-    [maybeNearWalletData, nearNetwork]
+    [keystore, maybeNearWalletData, nearNetwork]
   )
 
   return state

@@ -1,8 +1,8 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import {
+  getMaybeWalletConnectRpcUriForChainId,
   rejectSessionRequest,
-  resolveSessionRequest,
   useWalletConnectSessionRequestCallbackEthereum,
   useWalletConnectSessionRequestCallbackNear,
 } from 'features/walletConnect'
@@ -26,23 +26,24 @@ export const useWalletConnectSessionRequestCallback = (): ((
       const maybeChainId = request?.params?.chainId
 
       try {
-        const reply = (result: unknown) =>
-          resolveSessionRequest({
-            result,
-            request,
-            web3wallet,
-          })
-
-        // TODO: This can become polygon.
+        // TODO: This can become polygon. Enumerate supported chains accordingly.
         // TODO: @cawfree We don't know what these are yet.
+        if (maybeChainId !== 'ethereum' && maybeChainId !== 'near')
+          throw new Error(`Encountered unexpected chainId, "${maybeChainId}".`)
+
+        const rpc = getMaybeWalletConnectRpcUriForChainId(maybeChainId)
+
+        if (typeof rpc !== 'string' || !rpc.length)
+          throw new Error(
+            `Expected non-empty string rpc, encountered "${rpc}".`
+          )
+
         if (maybeChainId === 'ethereum') {
           // TODO: rename to evm like
-          await reply(await ethereum(web3wallet, request))
+          await ethereum({ web3wallet, request, rpc })
           // TODO: @cawfree We don't know what these are yet.
         } else if (maybeChainId === 'near') {
-          await reply(await near(web3wallet, request))
-        } else {
-          throw new Error(`Encountered unexpected chainId, "${maybeChainId}".`)
+          await near({ web3wallet, request, rpc })
         }
       } catch (e) {
         const reason = e instanceof Error ? e.message : String(e)
