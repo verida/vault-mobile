@@ -23,17 +23,21 @@ export const useWalletConnectSessionRequestCallback = (): ((
     ) => {
       const maybeChainId = request?.params?.chainId
 
-      // TODO: @cawfree We don't know what these are yet.
-      if (maybeChainId === 'ethereum') return ethereum(web3wallet, request)
+      try {
+        // TODO: @cawfree We don't know what these are yet.
+        if (maybeChainId === 'ethereum') return ethereum(web3wallet, request)
 
-      // TODO: @cawfree We don't know what these are yet.
-      if (maybeChainId === 'near') return near(web3wallet, request)
+        // TODO: @cawfree We don't know what these are yet.
+        if (maybeChainId === 'near') return near(web3wallet, request)
 
-      return rejectSessionRequest({
-        web3wallet,
-        request,
-        reason: `Encountered unexpected chainId, "${maybeChainId}".`,
-      })
+        throw new Error(`Encountered unexpected chainId, "${maybeChainId}".`)
+      } catch (e) {
+        return rejectSessionRequest({
+          web3wallet,
+          request,
+          reason: e instanceof Error ? e.message : String(e),
+        })
+      }
     },
     [ethereum, near]
   )
