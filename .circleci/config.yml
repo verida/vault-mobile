@@ -27,6 +27,9 @@ jobs:
       - run:
           name: Check TS
           command: npx tsc --noemit
+      - run:
+          name: Unit Tests
+          command: yarn test
 
 workflows:
   orb-free-workflow:
