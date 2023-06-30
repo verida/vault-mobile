@@ -6,6 +6,7 @@ import {
   useWalletConnectSessionRequestCallbackNear,
 } from 'features/walletConnect'
 import * as React from 'react'
+import { Alert } from 'react-native'
 
 // Acts as a multiplexer for WalletConnect session requests. It determines which
 // network to dispatch the request to.
@@ -25,17 +26,21 @@ export const useWalletConnectSessionRequestCallback = (): ((
 
       try {
         // TODO: @cawfree We don't know what these are yet.
-        if (maybeChainId === 'ethereum') return ethereum(web3wallet, request)
+        if (maybeChainId === 'ethereum') await ethereum(web3wallet, request)
 
         // TODO: @cawfree We don't know what these are yet.
-        if (maybeChainId === 'near') return near(web3wallet, request)
+        if (maybeChainId === 'near') await near(web3wallet, request)
 
         throw new Error(`Encountered unexpected chainId, "${maybeChainId}".`)
       } catch (e) {
+        const reason = e instanceof Error ? e.message : String(e)
+
+        Alert.alert('Error', reason)
+
         return rejectSessionRequest({
           web3wallet,
           request,
-          reason: e instanceof Error ? e.message : String(e),
+          reason,
         })
       }
     },
