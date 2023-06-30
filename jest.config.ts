@@ -8,4 +8,7 @@ export default async (): Promise<Config> => ({
     '\\.tsx?$': ['ts-jest', { tsconfig: '<rootDir>/__tests__/tsconfig.json' }],
     '^.+\\.(js|jsx|ts)$': 'babel-jest',
   },
+  moduleNameMapper: {
+    '^features(.*)$': ['<rootDir>/src/features$1'],
+  },
 })
