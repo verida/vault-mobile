@@ -1,16 +1,20 @@
+import { EnvironmentType } from '@verida/types'
 import { getCaipWalletTypeFriendlyName, isCaipWalletType } from 'features/caip'
 import { isWatchedWallet } from 'features/wallet'
 import * as React from 'react'
 import { VeridaWalletAccount, VeridaWalletAccounts } from 'types'
 
 import { Option } from 'components/Select'
+import CONFIG from 'config/environment'
 
 const veridaWalletAccountsToDropdownOptions = ({
   maybeVeridaWalletAccounts,
   includesWatchedWallets,
+  environmentType = CONFIG.VERIDA_ENVIRONMENT,
 }: {
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
   readonly includesWatchedWallets: boolean
+  readonly environmentType?: EnvironmentType
 }): readonly Option[] => {
   if (!maybeVeridaWalletAccounts) return []
 
@@ -31,7 +35,7 @@ const veridaWalletAccountsToDropdownOptions = ({
         label: veridaWalletAccount.address,
         value: veridaWalletAccount.address,
         disabled,
-        flag: getCaipWalletTypeFriendlyName(chain),
+        flag: getCaipWalletTypeFriendlyName(chain, environmentType),
       }
 
       return [option]

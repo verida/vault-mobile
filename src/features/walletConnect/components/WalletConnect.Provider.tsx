@@ -9,13 +9,15 @@ import {
   isWalletConnectV2Connection,
   useCreateWeb3Wallet,
   useMaybeWeb3Wallet,
+  useWalletConnectSessionRequestCallback,
   WalletConnectContextProvider,
   WalletConnectContextValue,
 } from 'features/walletConnect'
-import { WalletConnectModalConnectDapp } from 'features/walletConnect/components/WalletConnect.Modal.ConnectDapp'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
+
+import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
 
 const DEFAULT_ACTIVE_SESSIONS: ActiveSessions = Object.freeze({})
 
@@ -33,7 +35,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
     useCreateWeb3Wallet({
-      onSessionRequest: React.useCallback(() => undefined, []),
+      onSessionRequest: useWalletConnectSessionRequestCallback(),
       onSessionProposal: React.useCallback(
         (
           web3wallet: IWeb3Wallet,
@@ -47,7 +49,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           ),
         [showModal]
       ),
-      onSessionDelete: React.useCallback(() => undefined, []),
+      onSessionDelete: React.useCallback(() => /* */ undefined, []),
     })
   )
 
