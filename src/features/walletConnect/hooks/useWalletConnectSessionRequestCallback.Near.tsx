@@ -1,17 +1,34 @@
-import { throwIfInvalidNearSigningMethod, useNearContext } from 'features/near'
+import {
+  NearSigningMethod,
+  throwIfInvalidNearSigningMethod,
+  useNearContext,
+} from 'features/near'
 import {
   getMaybeNearAccountForWalletConnectTopic,
   resolveSessionRequest,
   useSessionRequestHandlersNear,
   WalletConnectSessionRequestCallbackParams,
+  WalletConnectTransactionRequestModal,
 } from 'features/walletConnect'
+import { useModal } from 'hooks'
 import { providers } from 'near-api-js'
 import * as React from 'react'
+
+const NEAR_METHODS_REQUIRING_VISUAL_CONFIRMATION: readonly NearSigningMethod[] =
+  [
+    NearSigningMethod.NEAR_SIGN_IN,
+    NearSigningMethod.NEAR_SIGN_OUT,
+    NearSigningMethod.NEAR_SIGN_TRANSACTION,
+    NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTION,
+    NearSigningMethod.NEAR_SIGN_TRANSACTIONS,
+    NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTIONS,
+  ]
 
 export const useWalletConnectSessionRequestCallbackNear = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<void>) => {
   const { nearNetwork: nearNetworkId, keystore } = useNearContext()
+  const { showModal } = useModal()
 
   const nearSessionRequestHandlers = useSessionRequestHandlersNear()
 
@@ -38,9 +55,18 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
 
       if (!throwIfInvalidNearSigningMethod(method)) return
 
-      const { [method]: handle } = nearSessionRequestHandlers
-
       const provider = new providers.JsonRpcProvider(rpc)
+
+      if (NEAR_METHODS_REQUIRING_VISUAL_CONFIRMATION.includes(method))
+        return showModal(
+          <WalletConnectTransactionRequestModal
+            provider={provider}
+            web3wallet={web3wallet}
+            request={request}
+          />
+        )
+
+      const { [method]: handle } = nearSessionRequestHandlers
 
       return resolveSessionRequest({
         request,
@@ -48,6 +74,6 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
         result: handle({ web3wallet, request, provider }),
       })
     },
-    [nearSessionRequestHandlers]
+    [keystore, nearNetworkId, nearSessionRequestHandlers, showModal]
   )
 }
