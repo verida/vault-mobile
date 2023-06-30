@@ -5,12 +5,7 @@ export default async (): Promise<Config> => ({
   preset: 'ts-jest',
   testMatch: ['**/__tests__/**/*.[jt]s?(x)'],
   transform: {
-    '\\.tsx?$': 'ts-jest',
+    '\\.tsx?$': ['ts-jest', { tsconfig: '<rootDir>/__tests__/tsconfig.json' }],
     '^.+\\.(js|jsx|ts)$': 'babel-jest',
-  },
-  globals: {
-    'ts-jest': {
-      tsconfig: '<rootDir>/__tests__/tsconfig.json',
-    },
   },
 })
