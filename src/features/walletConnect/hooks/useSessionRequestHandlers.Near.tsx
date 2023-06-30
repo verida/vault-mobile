@@ -1,4 +1,5 @@
 import {
+  getNearAccounts,
   nearSignIn,
   NearSigningMethod,
   nearSignOut,
@@ -61,7 +62,10 @@ export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
         })
       },
       [NearSigningMethod.NEAR_GET_ACCOUNTS]: () =>
-        stub(NearSigningMethod.NEAR_GET_ACCOUNTS),
+        getNearAccounts({
+          keystore,
+          networkId: nearNetworkId,
+        }),
       [NearSigningMethod.NEAR_SIGN_TRANSACTION]: () =>
         stub(NearSigningMethod.NEAR_SIGN_TRANSACTION),
       [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTION]: () =>

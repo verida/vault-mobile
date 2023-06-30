@@ -1,5 +1,6 @@
 export * from './createDevAccount'
 export * from './createNearWalletInstance'
+export * from './getNearAccounts'
 export * from './getNearAccountsForPublicKey'
 export * from './nearCreateTransactions'
 export * from './nearKeyPairFromPrivateKey'

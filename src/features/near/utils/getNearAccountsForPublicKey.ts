@@ -1,5 +1,7 @@
 import { NearWalletAccountInfo, NearWalletInstance } from 'features/near'
 
+import { getNearAccounts } from './getNearAccounts'
+
 export async function getNearAccountsForPublicKey({
   keystore,
   publicKey,
@@ -7,27 +9,13 @@ export async function getNearAccountsForPublicKey({
 }: Pick<NearWalletInstance, 'keystore' | 'publicKey' | 'networkId'>): Promise<
   readonly NearWalletAccountInfo[]
 > {
-  const allAccounts = await keystore.getAccounts(networkId)
+  const accounts: readonly NearWalletAccountInfo[] = await getNearAccounts({
+    keystore,
+    networkId,
+  })
 
-  const maybeMatchingAccounts = await Promise.allSettled(
-    allAccounts.map(
-      async (accountId): Promise<NearWalletAccountInfo | null> => {
-        const keypair = await keystore.getKey(networkId, accountId)
-
-        return keypair.getPublicKey().toString() === publicKey
-          ? { publicKey, accountId }
-          : null
-      }
-    )
-  )
-
-  return maybeMatchingAccounts.flatMap(
-    (maybeMatchingAccount): readonly NearWalletAccountInfo[] => {
-      if (maybeMatchingAccount.status !== 'fulfilled') return []
-
-      if (!maybeMatchingAccount.value) return []
-
-      return [maybeMatchingAccount.value]
-    }
+  return accounts.filter(
+    ({ publicKey: maybeMatchingPublicKey }) =>
+      maybeMatchingPublicKey === publicKey
   )
 }
