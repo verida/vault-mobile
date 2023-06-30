@@ -14,6 +14,8 @@ import React, {
 import AccountManager from 'api/AccountManager'
 import CONFIG from 'config/environment'
 
+import { useEmitter } from './useEmitter'
+
 type AuthContextState = {
   refresh: () => Promise<boolean>
   authenticated: boolean
@@ -23,6 +25,7 @@ type AuthContextState = {
   forcedSignOut: () => Promise<boolean>
 }
 
+// TODO: should move to context folder
 const AuthContext = createContext<AuthContextState>({
   refresh: async () => false,
   authenticated: false,
@@ -60,12 +63,7 @@ export const AuthProvider: FC = ({ children }) => {
       await didClient.get(did)
     } catch (error: any) {
       if (error.message.match(/DID resolution error \(notFound\)/gi)) {
-        emitter.emit('IDENTITY_NOT_EXIST', {
-          // retry: (forcedInit = true) => {
-          //   forcedInit && init()
-          //   setShowBackupNavigation(false)
-          // },
-        })
+        emitter.emit('IDENTITY_NOT_EXIST', {})
       }
       Sentry.captureException(error)
     }
@@ -98,6 +96,24 @@ export const AuthProvider: FC = ({ children }) => {
     setAuthenticated(false)
     return true
   }, [])
+
+  useEmitter(
+    'APP_RECOVER_FROM_ERROR',
+    async () => {
+      init()
+    },
+    []
+  )
+
+  // Account manager initialize
+  const init = useCallback(async () => {
+    await AccountManager.getInstance().init()
+    await refresh()
+  }, [refresh])
+
+  useEffect(() => {
+    init()
+  }, [init])
 
   const context = useMemo(
     () => ({

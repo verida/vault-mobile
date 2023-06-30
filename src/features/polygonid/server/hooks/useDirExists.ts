@@ -36,6 +36,7 @@ export function useDirExists({
     } catch (cause) {
       setState({
         loading: false,
+        // @ts-expect-error language_version
         error: new Error('Failed to check if directory exists.', { cause }),
       })
     }

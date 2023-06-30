@@ -85,6 +85,7 @@ export function useCreateOrRestoreNearWalletInstance({
           __DEV__ && console.error(cause)
           setState({
             loading: false,
+            // @ts-expect-error language_version
             error: new Error('Unable to create or restore NearWallet.', {
               cause,
             }),

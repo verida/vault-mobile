@@ -2,6 +2,7 @@ import { SerializedNearWallet } from 'features/near'
 import { useSelector } from 'react-redux'
 
 import { RootState } from 'reduxStore/types'
+import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 export function useMaybeSerializedNearWallet():
   | SerializedNearWallet
@@ -10,6 +11,6 @@ export function useMaybeSerializedNearWallet():
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
   return useSelector<RootState, SerializedNearWallet | undefined>(
-    (state) => state?.main?.near
+    (state) => getWalletsData(state?.main)?.near
   )
 }

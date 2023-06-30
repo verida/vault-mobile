@@ -30,8 +30,7 @@ class algorandBlockchain implements IBlockchain {
     )
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet {
+  public buildAccountFromPrivateKey(_privateKey: string): WalletUtilsWallet {
     throw new Error(
       'Creating Algorand account from private key is not supported'
     )

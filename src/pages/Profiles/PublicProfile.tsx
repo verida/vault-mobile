@@ -2,9 +2,12 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { LinearGradient } from 'expo-linear-gradient'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
+import debounce from 'lodash/debounce'
 import React, {
   Fragment,
   useCallback,
@@ -29,16 +32,19 @@ import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
 import { useDebouncedCallback } from 'use-debounce'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import {
+  Account,
   BlockchainNetwork,
   BlockchainWalletWithAccounts,
   VeridaOneCustomLink,
   VeridaOneFeaturedAsset,
   VeridaOnePlatformLink,
   VeridaOnePlatformLinkCategory,
+  VeridaOneProfile,
   VeridaOneWalletAddress,
 } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
@@ -63,7 +69,7 @@ import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
+import { getBlockchainNetworks, getSelectedAccount } from 'reduxStore/selectors'
 import { allWalletsSelector } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
@@ -108,12 +114,8 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     BlockchainWalletWithAccounts
   >
 
-  const selectedAccount = useSelector(
-    (state: any) => state.main.selectedAccount
-  )
-  const currentAccountDID =
-    selectedAccount?.did ??
-    AccountManager.getInstance().getSelectedAccount()?.did
+  const selectedAccount: Account = useSelector(getSelectedAccount)
+  const currentAccountDID = selectedAccount.did
 
   const [username, setUsername] = useState<string | undefined>(undefined)
   const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
@@ -125,13 +127,19 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     VeridaOneWalletAddress[]
   >([])
 
-  const [platformLinks, setPlatformLinks] = useState<any[]>([])
+  const [platformLinks, setPlatformLinks] = useState<VeridaOnePlatformLink[]>(
+    []
+  )
   const [supportedConnectPlatforms, setSupportedConnectPlatforms] = useState<
     any[]
   >([])
 
-  const [publicCustomLinks, setPublicCustomLinks] = useState<any[]>([])
-  const [featuredAssets, setFeaturedAssets] = useState<any[]>([])
+  const [publicCustomLinks, setPublicCustomLinks] = useState<
+    VeridaOneCustomLink[]
+  >([])
+  const [featuredAssets, setFeaturedAssets] = useState<
+    VeridaOneFeaturedAsset[]
+  >([])
 
   const [enabledVeridaOne, setEnabledVeridaOne] = useState(false)
 
@@ -139,11 +147,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [refreshing, setRefreshing] = React.useState(false)
   const onRefresh = React.useCallback(() => {
     setRefreshing(true)
-    Promise.all([fetchData(), fetchVeridaOneProfle(), fetchUsername()]).finally(
-      () => {
-        setRefreshing(false)
-      }
-    )
+    Promise.all([
+      fetchPublicProfile(),
+      fetchVeridaOneProfle(),
+      fetchUsername(),
+    ]).finally(() => {
+      setRefreshing(false)
+    })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
@@ -289,7 +299,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
   const debounceSaveProfile = useDebouncedCallback(
     React.useCallback(
-      async (updatedProfile) => {
+      async (updatedProfile: Partial<VeridaOneProfile>) => {
         // eslint-disable-next-line @typescript-eslint/no-shadow
         const { walletAddresses, customLinks, featuredAssets, platformLinks } =
           updatedProfile
@@ -299,28 +309,28 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             'walletAddresses' in updatedProfile &&
             !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
           ) {
-            await VeridaOneManager.setWalletAddresses(walletAddresses)
+            await VeridaOneManager.setWalletAddresses(walletAddresses || [])
           }
 
           if (
             'customLinks' in updatedProfile &&
             !isEqual(veridaOneProfile.customLinks, customLinks)
           ) {
-            await VeridaOneManager.setCustomLinks(customLinks)
+            await VeridaOneManager.setCustomLinks(customLinks || [])
           }
 
           if (
             'featuredAssets' in updatedProfile &&
             !isEqual(veridaOneProfile.featuredAssets, featuredAssets)
           ) {
-            await VeridaOneManager.setFeaturedAssets(featuredAssets)
+            await VeridaOneManager.setFeaturedAssets(featuredAssets || [])
           }
 
           if (
             'platformLinks' in updatedProfile &&
             !isEqual(veridaOneProfile.platformLinks, platformLinks)
           ) {
-            await VeridaOneManager.setPlatformLinks(platformLinks)
+            await VeridaOneManager.setPlatformLinks(platformLinks || [])
           }
 
           // refetch profile so react state correctly updates
@@ -443,7 +453,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [debounceSaveProfile, publicCustomLinks]
   )
 
-  const fetchData = async () => {
+  const fetchPublicProfile = async () => {
     try {
       setQuickFetching(true)
       const vault = AccountManager.getInstance().vault as any
@@ -547,6 +557,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       }
     },
     [debounceSaveProfile, featuredAssets]
+  )
+
+  useEmitter(
+    'UPDATE_PUBLIC_PROFILE',
+    debounce(() => {
+      fetchPublicProfile()
+    }, 600)
   )
 
   useEmitter('UPDATE_PROFILE_USERNAME', () => {
@@ -708,6 +725,60 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     [publicWalletAddresses]
   )
 
+  const updateFeaturedAssets = useCallback(
+    (updatedPublicWalletAddresses: VeridaOneWalletAddress[]) => {
+      const updatedFeaturedAssets = featuredAssets
+        .filter((asset) =>
+          updatedPublicWalletAddresses.some(
+            (walletAddress) => walletAddress.address === asset.ownerAddress
+          )
+        )
+        .map((asset, idx) => ({
+          ...asset,
+          order: idx,
+        }))
+
+      return updatedFeaturedAssets
+    },
+    [featuredAssets]
+  )
+
+  const syncPublicWalletAddresses = useCallback(
+    (updatedPublicWalletAddresses: VeridaOneWalletAddress[]) => {
+      // Check to update featured assets
+      const updatedFeaturedAssets = updateFeaturedAssets(
+        updatedPublicWalletAddresses
+      )
+
+      setPublicWalletAddresses(updatedPublicWalletAddresses)
+      setFeaturedAssets(updatedFeaturedAssets)
+      debounceSaveProfile({
+        walletAddresses: updatedPublicWalletAddresses,
+        featuredAssets: updatedFeaturedAssets,
+      })
+    },
+    [debounceSaveProfile, updateFeaturedAssets]
+  )
+
+  useDeepCompareEffect(() => {
+    // remove a wallet should remove it from One Profile public wallet address
+    if (
+      !publicWalletAddresses.every((item) =>
+        walletAddresses.some(
+          (walletAddress) => walletAddress.address === item.address
+        )
+      )
+    ) {
+      syncPublicWalletAddresses(
+        publicWalletAddresses.filter((item) =>
+          walletAddresses.some(
+            (walletAddress) => walletAddress.address === item.address
+          )
+        )
+      )
+    }
+  }, [walletAddresses, publicWalletAddresses])
+
   useEffect(() => {
     // A little bit of delay here to avoid any unclean state when switching accounts
     const tid = setTimeout(() => {
@@ -733,7 +804,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       })()
 
       Promise.all([
-        fetchData(),
+        fetchPublicProfile(),
         fetchVeridaOneProfle(),
         fetchUsername(),
       ]).finally(() => {
@@ -787,31 +858,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     }
   }, [])
 
-  // component did mount
-  useEffect(() => {
-    let listener: any
-    const watchChanges = async () => {
-      const vault = AccountManager.getInstance().vault as any
-      await vault.profiles.public.init()
-      const db = await vault.profiles.public.store.getDb()
-      const dbInstance = db.db
-      listener = dbInstance
-        .changes({
-          since: 'now',
-          live: true,
-        })
-        .on('change', () => {
-          fetchData()
-        })
-    }
-    watchChanges()
-    return () => {
-      listener?.cancel()
-    }
-    // Register profile change listener one time
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
   const renderWalletItem = useCallback(
     ({
       item: walletAddress,
@@ -838,6 +884,9 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
             text: 'Added to Verida One profile',
             duration: Snackbar.LENGTH_SHORT,
           })
+
+          setPublicWalletAddresses(newPublicWalletAddresses)
+          debounceSaveProfile({ walletAddresses: newPublicWalletAddresses })
         } else {
           newPublicWalletAddresses = newPublicWalletAddresses.filter(
             (wAddress) =>
@@ -845,14 +894,24 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               (wAddress.address === publicAdress.address &&
                 wAddress.chainId !== publicAdress.chainId)
           )
+
+          // Remove a public wallet address from One Profile should remove its featured assets
+          const updatedFeaturedAssets = updateFeaturedAssets(
+            newPublicWalletAddresses
+          )
+          setFeaturedAssets(updatedFeaturedAssets)
+
+          setPublicWalletAddresses(newPublicWalletAddresses)
+          debounceSaveProfile({
+            walletAddresses: newPublicWalletAddresses,
+            featuredAssets: updatedFeaturedAssets,
+          })
+
           Snackbar.show({
             text: 'Hidden from Verida One profile',
             duration: Snackbar.LENGTH_SHORT,
           })
         }
-
-        setPublicWalletAddresses(newPublicWalletAddresses)
-        debounceSaveProfile({ walletAddresses: newPublicWalletAddresses })
       }
 
       return (
@@ -862,7 +921,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           isActive={isActive}
           onEditName={
             !walletAddress.isPublic
-              ? undefined
+              ? () => undefined
               : () => {
                   navigation.navigate('EditGenericProperty', {
                     screenName: SCREEN_NAME,
@@ -884,7 +943,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         />
       )
     },
-    [debounceSaveProfile, navigation, publicWalletAddresses]
+    [
+      debounceSaveProfile,
+      navigation,
+      publicWalletAddresses,
+      updateFeaturedAssets,
+    ]
   )
 
   const renderPlatformLinkItem = useCallback(
@@ -1001,7 +1065,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
                             order: index,
                           },
                           searchableAddresses: publicWalletAddresses.map(
-                            (address) => address.address
+                            (address) => `${address.chainId}:${address.address}`
                           ),
                         })
                         break

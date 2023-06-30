@@ -72,6 +72,7 @@ export function useInstallWebView(): Stateful<string> {
         // eslint-disable-next-line no-console
         console.error(cause)
         setState({
+          // @ts-expect-error language_version
           error: new Error('Failed to install WebView', { cause }),
           loading: false,
         })

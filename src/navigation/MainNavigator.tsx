@@ -2,7 +2,7 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
-import { useEventHandlers } from 'hooks/useEventHandlers'
+import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
 import DashboardNavigator from 'navigation/DashboardNavigator'
 import { MainStackParams } from 'navigation/types'
 import DeleteAccount from 'pages/Account/DeleteAccount'
@@ -63,132 +63,149 @@ import SuccessFailure from 'pages/Wallets/SuccessFailure'
 const Stack = createNativeStackNavigator<MainStackParams>()
 
 export const MainNavigator: React.FunctionComponent = () => {
-  useEventHandlers()
-
   return (
-    // As the MainNavigator is only mounted after the user is authenticated, so are these context providers.
-    <BehindAuthContextProviders>
-      <Stack.Navigator screenOptions={{ headerShown: false }}>
-        <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
-        <Stack.Screen name={'Inbox'} component={Inbox} />
-        <Stack.Screen name={'InboxItem'} component={InboxItem} />
-        <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
-        <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
-        <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
-        <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
+    <>
+      {/* An empty component, just to register all of the main app events after the user has authenticated. */}
+      <BehindAuthHandlers />
 
-        {/* Public profile modal screens */}
-        <Stack.Group
-          screenOptions={{
-            presentation: 'modal',
-          }}>
-          <Stack.Screen name={'EditProfile'} component={EditProfile} />
+      {/* As the MainNavigator is only mounted after the user is authenticated, so are these context providers. */}
+      <BehindAuthContextProviders>
+        <Stack.Navigator screenOptions={{ headerShown: false }}>
+          <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
+          <Stack.Screen name={'Inbox'} component={Inbox} />
+          <Stack.Screen name={'InboxItem'} component={InboxItem} />
+          <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
+          <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
+          <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
+          <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
+
+          {/* Public profile modal screens */}
+          <Stack.Group
+            screenOptions={{
+              presentation: 'modal',
+            }}>
+            <Stack.Screen name={'EditProfile'} component={EditProfile} />
+            <Stack.Screen
+              name={'EditGenericProperty'}
+              component={EditGenericProperty}
+            />
+            <Stack.Screen name={'AddCustomLink'} component={AddCustomLink} />
+            <Stack.Screen name={'SelectAsset'} component={SelectAsset} />
+            <Stack.Screen name={'ClaimUsername'} component={ClaimUsername} />
+            <Stack.Screen
+              name={'UnlockVeridaOne'}
+              component={UnlockVeridaOne}
+            />
+            <Stack.Screen
+              name={'AddPlatformLink'}
+              component={AddPlatformLink}
+            />
+            <Stack.Screen
+              name={'EditPlatformLink'}
+              component={EditPlatformLink}
+            />
+          </Stack.Group>
+
+          <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
+          <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
+          <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
+          <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
+          <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
+          <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
+          <Stack.Screen name={'SendToken'} component={SendToken} />
           <Stack.Screen
-            name={'EditGenericProperty'}
-            component={EditGenericProperty}
+            name={'ConfirmTransaction'}
+            component={ConfirmTransaction}
           />
-          <Stack.Screen name={'AddCustomLink'} component={AddCustomLink} />
-          <Stack.Screen name={'SelectAsset'} component={SelectAsset} />
-          <Stack.Screen name={'ClaimUsername'} component={ClaimUsername} />
-          <Stack.Screen name={'UnlockVeridaOne'} component={UnlockVeridaOne} />
-          <Stack.Screen name={'AddPlatformLink'} component={AddPlatformLink} />
           <Stack.Screen
-            name={'EditPlatformLink'}
-            component={EditPlatformLink}
+            name={'TransactionSuccess'}
+            component={TransactionSuccess}
           />
-        </Stack.Group>
-
-        <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
-        <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
-        <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
-        <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
-        <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
-        <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
-        <Stack.Screen name={'SendToken'} component={SendToken} />
-        <Stack.Screen
-          name={'ConfirmTransaction'}
-          component={ConfirmTransaction}
-        />
-        <Stack.Screen
-          name={'TransactionSuccess'}
-          component={TransactionSuccess}
-        />
-        <Stack.Screen
-          name={'TransactionFailure'}
-          component={TransactionFailure}
-        />
-        <Stack.Screen
-          name={'TransactionDetails'}
-          component={TransactionDetails}
-        />
-        <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
-        <Stack.Screen name={'BuyToken'} component={BuyToken} />
-        <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
-        <Stack.Screen name={'DataFolder'} component={Folder} />
-        <Stack.Screen name={'DataItem'} component={Item} />
-        <Stack.Screen name={'Settings'} component={Settings} />
-        <Stack.Screen name={'ChangePin'} component={ChangePin} />
-        <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
-        <Stack.Screen
-          name={'SeedPhraseEntered'}
-          component={SeedPhraseEntered}
-        />
-        <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
-        <Stack.Screen name={'Identity'} component={Identity} />
-        <Stack.Screen name={'AddIdentity'} component={AddIdentity} />
-
-        <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
-        <Stack.Screen
-          name={'SeedPhraseGenerated'}
-          component={SeedPhraseGenerated}
-        />
-        <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
-        <Stack.Screen name={'ShareableData'} component={ShareableData} />
-        <Stack.Screen name={'Networks'} component={Networks} />
-        <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
-
-        {/* WalletConnect 🤳 */}
-        <Stack.Screen name='WalletConnectDapp' component={WalletConnectDapp} />
-        <Stack.Screen
-          name='WalletConnectDapps'
-          component={WalletConnectDapps}
-        />
-
-        <Stack.Screen name={'SingleConnection'} component={SingleConnection} />
-
-        <Stack.Screen
-          name={'NFTCollectionDetail'}
-          component={NFTCollectionDetail}
-        />
-        <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
-
-        <Stack.Screen
-          name={'PolygonIdCircuitsSettings'}
-          component={PolygonIdCircuitsSettingsScreen}
-          options={{
-            // TODO: Refactor the whole Navigation to leverage the header customisation
-            headerShown: true,
-          }}
-        />
-
-        {/* Modal screens */}
-        <Stack.Group
-          screenOptions={{
-            presentation: 'modal',
-            headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
-            // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
-          }}>
           <Stack.Screen
-            name={'ConnectionRequest'}
-            component={ConnectionRequestScreen}
+            name={'TransactionFailure'}
+            component={TransactionFailure}
           />
-          <Stack.Screen name={'ProofRequest'} component={ProofRequestScreen} />
           <Stack.Screen
-            name={'IncomingDataRequest'}
-            component={IncomingDataRequestScreen}
+            name={'TransactionDetails'}
+            component={TransactionDetails}
           />
-        </Stack.Group>
-      </Stack.Navigator>
-    </BehindAuthContextProviders>
+          <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
+          <Stack.Screen name={'BuyToken'} component={BuyToken} />
+          <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
+          <Stack.Screen name={'DataFolder'} component={Folder} />
+          <Stack.Screen name={'DataItem'} component={Item} />
+          <Stack.Screen name={'Settings'} component={Settings} />
+          <Stack.Screen name={'ChangePin'} component={ChangePin} />
+          <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
+          <Stack.Screen
+            name={'SeedPhraseEntered'}
+            component={SeedPhraseEntered}
+          />
+          <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
+          <Stack.Screen name={'Identity'} component={Identity} />
+          <Stack.Screen name={'AddIdentity'} component={AddIdentity} />
+
+          <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
+          <Stack.Screen
+            name={'SeedPhraseGenerated'}
+            component={SeedPhraseGenerated}
+          />
+          <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
+          <Stack.Screen name={'ShareableData'} component={ShareableData} />
+          <Stack.Screen name={'Networks'} component={Networks} />
+          <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
+
+          <Stack.Screen
+            name='WalletConnectDapp'
+            component={WalletConnectDapp}
+          />
+          <Stack.Screen
+            name='WalletConnectDapps'
+            component={WalletConnectDapps}
+          />
+
+          <Stack.Screen
+            name={'SingleConnection'}
+            component={SingleConnection}
+          />
+
+          <Stack.Screen
+            name={'NFTCollectionDetail'}
+            component={NFTCollectionDetail}
+          />
+          <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
+
+          <Stack.Screen
+            name={'PolygonIdCircuitsSettings'}
+            component={PolygonIdCircuitsSettingsScreen}
+            options={{
+              // TODO: Refactor the whole Navigation to leverage the header customisation
+              headerShown: true,
+            }}
+          />
+
+          {/* Modal screens */}
+          <Stack.Group
+            screenOptions={{
+              presentation: 'modal',
+              headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
+              // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
+            }}>
+            <Stack.Screen
+              name={'ConnectionRequest'}
+              component={ConnectionRequestScreen}
+            />
+            <Stack.Screen
+              name={'ProofRequest'}
+              component={ProofRequestScreen}
+            />
+            <Stack.Screen
+              name={'IncomingDataRequest'}
+              component={IncomingDataRequestScreen}
+            />
+          </Stack.Group>
+        </Stack.Navigator>
+      </BehindAuthContextProviders>
+    </>
   )
 }

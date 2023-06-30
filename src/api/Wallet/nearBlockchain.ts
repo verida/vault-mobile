@@ -18,8 +18,7 @@ class nearBlockchain implements IBlockchain {
     }
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  public buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet {
+  public buildAccountFromPrivateKey(_privateKey: string): WalletUtilsWallet {
     throw new Error('Importing NEAR accounts from private key is not supported')
   }
 }

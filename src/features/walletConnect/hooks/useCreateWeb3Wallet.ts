@@ -84,6 +84,7 @@ export function useCreateWeb3Wallet({
         } catch (cause) {
           setState({
             loading: false,
+            // @ts-expect-error language_version
             error: new Error('Failed to instantiate a Web3Wallet.', { cause }),
           })
         }

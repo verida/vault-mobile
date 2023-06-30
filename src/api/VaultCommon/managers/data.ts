@@ -12,6 +12,7 @@ export class DataManager {
     this.map = map
   }
 
+  // TODO: Remove this.
   //public getFolderList() {
   //  const { navigation, folders } = this.map
 
