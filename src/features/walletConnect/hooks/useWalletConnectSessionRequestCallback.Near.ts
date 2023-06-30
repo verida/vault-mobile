@@ -1,9 +1,6 @@
+import { throwIfInvalidNearSigningMethod, useNearContext } from 'features/near'
 import {
-  getNearAccountsForPublicKey,
-  throwIfInvalidNearSigningMethod,
-  useNearContext,
-} from 'features/near'
-import {
+  getMaybeNearAccountForWalletConnectTopic,
   resolveSessionRequest,
   useSessionRequestHandlersNear,
   WalletConnectSessionRequestCallbackParams,
@@ -14,7 +11,11 @@ import * as React from 'react'
 export const useWalletConnectSessionRequestCallbackNear = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<void>) => {
-  const { maybeNearWalletInstance } = useNearContext()
+  const {
+    maybeNearWalletInstance,
+    nearNetwork: nearNetworkId,
+    keystore,
+  } = useNearContext()
 
   const nearSessionRequestHandlers = useSessionRequestHandlersNear()
 
@@ -29,18 +30,16 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
           `Unable to handle session_request for Near blockchain - the wallet instance was unavailable.`
         )
 
-      const nearAccounts = await getNearAccountsForPublicKey(
-        maybeNearWalletInstance
-      )
+      const { topic } = request
 
-      const maybeNearAccount = nearAccounts.filter(
-        (e) => e.publicKey === request.topic
-      )
+      const maybeNearAccount = await getMaybeNearAccountForWalletConnectTopic({
+        nearNetworkId,
+        topic,
+        keystore,
+      })
 
       if (!maybeNearAccount)
-        throw new Error(
-          `Unable to find matching Near account for "${request.topic}".`
-        )
+        throw new Error(`Unable to find matching Near account for "${topic}".`)
 
       const method = request?.params?.request?.method
 
