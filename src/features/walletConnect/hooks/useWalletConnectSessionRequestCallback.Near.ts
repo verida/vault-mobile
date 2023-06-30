@@ -1,6 +1,11 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { getNearAccountsForPublicKey, useNearContext } from 'features/near'
+import {
+  getNearAccountsForPublicKey,
+  throwIfInvalidNearSigningMethod,
+  useNearContext,
+} from 'features/near'
+import { useSessionRequestHandlersNear } from 'features/walletConnect'
 import * as React from 'react'
 
 export const useWalletConnectSessionRequestCallbackNear = (): ((
@@ -8,6 +13,7 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
   event: Web3WalletTypes.EventArguments['session_request']
 ) => Promise<void>) => {
   const { maybeNearWalletInstance } = useNearContext()
+  const nearSessionRequestHandlers = useSessionRequestHandlersNear()
   return React.useCallback(
     async (
       web3wallet: IWeb3Wallet,
@@ -30,7 +36,16 @@ export const useWalletConnectSessionRequestCallbackNear = (): ((
         throw new Error(
           `Unable to find matching Near account for "${event.topic}".`
         )
+
+      const method = event?.params?.request?.method
+
+      if (!throwIfInvalidNearSigningMethod(method)) return
+
+      const { [method]: handle } = nearSessionRequestHandlers
+
+      // TODO: handle T for result
+      return handle(web3wallet, event)
     },
-    [maybeNearWalletInstance]
+    [maybeNearWalletInstance, nearSessionRequestHandlers]
   )
 }

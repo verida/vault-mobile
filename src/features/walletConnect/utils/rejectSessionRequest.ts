@@ -13,8 +13,11 @@ export const rejectSessionRequest = ({
   readonly web3wallet: IWeb3Wallet
 }) =>
   void Promise.all([
-    // eslint-disable-next-line no-console
-    __DEV__ && console.error(`Rejected session request: "${reason}".`),
+    __DEV__ &&
+      // eslint-disable-next-line no-console
+      console.error(
+        `[WalletConnect::RPC]: session_request rejected (#${request.id}, "${request.topic}", "${reason}")`
+      ),
     Sentry.captureException(new Error(reason)),
     web3wallet.respondSessionRequest({
       topic: request.topic,
