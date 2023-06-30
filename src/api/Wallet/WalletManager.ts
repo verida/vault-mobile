@@ -10,7 +10,6 @@ import {
   BlockchainWallet,
   BlockchainWalletWithAccounts,
 } from '../types'
-import { Blockchain as algorandBlockchain } from './algorandBlockchain'
 import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
 import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 import { Blockchain as nearBlockchain } from './nearBlockchain'
@@ -20,7 +19,6 @@ const bip39 = require('bip39')
 const NAMESPACES: Record<string, IBlockchain> = {
   eip155: eip1558Blockchain,
   near: nearBlockchain,
-  algorand: algorandBlockchain,
 }
 
 export class WalletManager {
@@ -40,9 +38,6 @@ export class WalletManager {
         switch (wallet.walletType) {
           case 'ethereum':
             wallet.chainId = 'eip155:5'
-            break
-          case 'algorand':
-            wallet.chainId = 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDe'
             break
           case 'polygon':
             wallet.chainId = 'eip155:80001'

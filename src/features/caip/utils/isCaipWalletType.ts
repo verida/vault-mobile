@@ -5,9 +5,5 @@ export function isCaipWalletType(
 ): maybeCaipWalletType is CaipWalletType {
   // TODO: use an enum for CaipWalletType so we can iterate these conditions
   //       instead of manually maintain them
-  return (
-    maybeCaipWalletType === 'eip155' ||
-    maybeCaipWalletType === 'algorand' ||
-    maybeCaipWalletType === 'near'
-  )
+  return maybeCaipWalletType === 'eip155' || maybeCaipWalletType === 'near'
 }

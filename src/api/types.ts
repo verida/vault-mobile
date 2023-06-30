@@ -3,7 +3,6 @@
  *
  * - eip2551:1 = ethereum mainnet
  * - eip2551:4 = goerli testnet
- * - algorand:EEEz7z6z = algorand testnet
  *
  * Use https://github.com/ChainAgnostic/caip-js
  */
@@ -48,7 +47,7 @@ export type NetworkNode = {
 }
 
 /**
- * A blockchain network (ie: goerli or algorand testnet)
+ * A blockchain network (ie: goerli)
  */
 export interface BlockchainNetwork {
   asset: AssetId

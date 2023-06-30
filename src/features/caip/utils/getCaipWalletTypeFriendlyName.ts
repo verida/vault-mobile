@@ -1,12 +1,16 @@
-// TODO: these will change depending whether we're on testnet or not
+import { EnvironmentType } from '@verida/types'
+
 export function getCaipWalletTypeFriendlyName(
-  caipWalletType: string | undefined
+  caipWalletType: string | undefined,
+  environmentType: EnvironmentType
 ): string {
   return caipWalletType === 'eip155'
-    ? 'Ethereum Goerli'
-    : caipWalletType === 'algorand'
-    ? 'Algorand Testnet'
+    ? `Ethereum ${
+        environmentType === EnvironmentType.MAINNET ? 'Mainnet' : 'Goerli'
+      }`
     : caipWalletType === 'near'
-    ? 'Near Testnet'
+    ? `Near ${
+        environmentType === EnvironmentType.MAINNET ? 'Mainnet' : 'Testnet'
+      }`
     : 'Unknown'
 }

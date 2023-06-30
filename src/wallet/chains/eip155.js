@@ -1,4 +1,4 @@
-// TODO: We can likely remove thi
+// TODO: We can likely remove these
 import Web3 from 'web3'
 
 export const ethereumWeb3 = new Web3(

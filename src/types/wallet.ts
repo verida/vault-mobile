@@ -1,5 +1,5 @@
 export type VeridaWalletType = 'single' | 'multi'
-export type CaipWalletType = 'eip155' | 'algorand' | 'near'
+export type CaipWalletType = 'eip155' | 'near'
 
 // TODO: @cawfree where you introduced privateKey, you were likely interacting with a VeridaWallet, double check this
 export interface VeridaWalletAccount {

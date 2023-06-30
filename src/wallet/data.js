@@ -1,6 +1,5 @@
 import Common from '@ethereumjs/common'
-import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
-import algosdk from 'algosdk'
+import { Transaction } from '@ethereumjs/tx'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
 import { store } from 'reduxStore'
@@ -279,85 +278,6 @@ const sendTransaction = async (
     const serializedTx = signedTx.serialize()
 
     txString = '0x' + serializedTx.toString('hex')
-
-    txData = {
-      amount: amount,
-      to: receiverAddress,
-      from: chainWallet.address,
-      token: transactionData.token,
-      chain: blockchainNetwork,
-    }
-  } else if (blockchainNetwork.asset.chainId.namespace === 'algorand') {
-    let transactionParams
-    if (isAssetEnablingTransaction) {
-      const requestBody = {
-        asset: transactionData.token.asset,
-      }
-      const request = await walletProviderApi.post(
-        'transaction/params',
-        requestBody
-      )
-      transactionParams = request.data.data
-    } else {
-      transactionParams = getTransactionParamsData(state)
-    }
-
-    let transaction
-
-    try {
-      if (isTokenNative) {
-        transaction = algosdk.makePaymentTxnWithSuggestedParams(
-          chainWallet.address,
-          receiverAddress,
-          // TODO: We should be specifying the radix here. I assume it is 10?
-          // eslint-disable-next-line radix
-          parseInt(amount.toString()),
-          undefined,
-          undefined,
-          transactionParams
-        )
-      } else {
-        transaction = algosdk.makeAssetTransferTxnWithSuggestedParams(
-          chainWallet.address,
-          isAssetEnablingTransaction ? chainWallet.address : receiverAddress,
-          undefined,
-          undefined,
-          // TODO: We should be specifying the radix here. I assume it is 10?
-          // eslint-disable-next-line radix
-          isAssetEnablingTransaction ? 0 : parseInt(amount.toString()),
-          undefined,
-          parseInt(tokenAddress, 10),
-          transactionParams
-        )
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
-      throw err
-    }
-
-    if (transaction.amount === 0) {
-      throw new Error('Invalid transaction amount')
-    }
-
-    const privateKey = chainWallet.privateKey
-
-    const secretKey = Buffer.from(
-      privateKey.substring(2, privateKey.length),
-      'hex'
-    ).toJSON().data
-
-    const mnemonic = algosdk.secretKeyToMnemonic(secretKey)
-    const wallet = algosdk.mnemonicToSecretKey(mnemonic)
-
-    try {
-      txIdAlgo = transaction.txID().toString()
-      txString = transaction.signTxn(wallet.sk).toString()
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
-      throw err
-    }
 
     txData = {
       amount: amount,
