@@ -1,7 +1,7 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { NearKeystore, NearSigningMethod } from 'features/near'
+import { NearSigningMethod } from 'features/near'
 import { providers } from 'near-api-js'
 
 export type ActiveSessions = Awaited<
