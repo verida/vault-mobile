@@ -12,6 +12,7 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
+import { VeridaWalletAccount } from 'types'
 
 import { BlockchainNetwork } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
@@ -74,7 +75,12 @@ const SingleWallet = (props: Props) => {
   }
 
   // @todo
-  const singleWallet = undefined
+  const singleWallet: VeridaWalletAccount | undefined =
+    undefined as unknown as VeridaWalletAccount
+
+  const isChainTypeEvm = singleWallet
+    ? Object.keys(wallets.accounts)[0] === 'evm'
+    : null
 
   if (loading) {
     return (
@@ -176,6 +182,9 @@ const SingleWallet = (props: Props) => {
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
+        // TODO: Here we are trying to get mnemonic of a WalletType, but this is
+        //       invalid. Is the expectation here that this is a VeridaWalletAccount?
+        // @ts-expect-error This lookup is either incorrect or typed incorrectly.
         onPressButton={() => showSeedPhrase(wallets.mnemonic)}
       />
       <CopySeedPhraseModal

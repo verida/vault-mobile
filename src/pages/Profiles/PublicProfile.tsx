@@ -2,9 +2,12 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { LinearGradient } from 'expo-linear-gradient'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
-import { debounce, isEqual } from 'lodash'
+import { isEqual } from 'lodash'
+import debounce from 'lodash/debounce'
 import React, {
   Fragment,
   useCallback,
@@ -28,6 +31,7 @@ import {
 import Snackbar from 'react-native-snackbar'
 import { connect, useSelector } from 'react-redux'
 import { Dispatch } from 'redux'
+import { useDebouncedCallback } from 'use-debounce'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
@@ -40,6 +44,7 @@ import {
   VeridaOneFeaturedAsset,
   VeridaOnePlatformLink,
   VeridaOnePlatformLinkCategory,
+  VeridaOneProfile,
   VeridaOneWalletAddress,
 } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
@@ -292,51 +297,61 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     return sortedListPlatforms
   }, [platformLinks, supportedConnectPlatforms])
 
-  const debounceSaveProfile = useCallback(
-    debounce(async (updatedProfile) => {
-      const { walletAddresses, customLinks, featuredAssets, platformLinks } =
-        updatedProfile
-      try {
-        setQuickFetching(true)
-        if (
-          'walletAddresses' in updatedProfile &&
-          !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
-        ) {
-          await VeridaOneManager.setWalletAddresses(walletAddresses)
-        }
+  const debounceSaveProfile = useDebouncedCallback(
+    React.useCallback(
+      async (updatedProfile: Partial<VeridaOneProfile>) => {
+        // eslint-disable-next-line @typescript-eslint/no-shadow
+        const { walletAddresses, customLinks, featuredAssets, platformLinks } =
+          updatedProfile
+        try {
+          setQuickFetching(true)
+          if (
+            'walletAddresses' in updatedProfile &&
+            !isEqual(veridaOneProfile.walletAddresses, walletAddresses)
+          ) {
+            await VeridaOneManager.setWalletAddresses(walletAddresses || [])
+          }
 
-        if (
-          'customLinks' in updatedProfile &&
-          !isEqual(veridaOneProfile.customLinks, customLinks)
-        ) {
-          await VeridaOneManager.setCustomLinks(customLinks)
-        }
+          if (
+            'customLinks' in updatedProfile &&
+            !isEqual(veridaOneProfile.customLinks, customLinks)
+          ) {
+            await VeridaOneManager.setCustomLinks(customLinks || [])
+          }
 
-        if (
-          'featuredAssets' in updatedProfile &&
-          !isEqual(veridaOneProfile.featuredAssets, featuredAssets)
-        ) {
-          await VeridaOneManager.setFeaturedAssets(featuredAssets)
-        }
+          if (
+            'featuredAssets' in updatedProfile &&
+            !isEqual(veridaOneProfile.featuredAssets, featuredAssets)
+          ) {
+            await VeridaOneManager.setFeaturedAssets(featuredAssets || [])
+          }
 
-        if (
-          'platformLinks' in updatedProfile &&
-          !isEqual(veridaOneProfile.platformLinks, platformLinks)
-        ) {
-          await VeridaOneManager.setPlatformLinks(platformLinks)
-        }
+          if (
+            'platformLinks' in updatedProfile &&
+            !isEqual(veridaOneProfile.platformLinks, platformLinks)
+          ) {
+            await VeridaOneManager.setPlatformLinks(platformLinks || [])
+          }
 
-        // refetch profile so react state correctly updates
-        fetchVeridaOneProfle()
-      } catch (e) {
-        Sentry.captureException(e)
-        Alert.alert('Error', 'Failed to save profile')
-        onRefresh()
-      } finally {
-        setQuickFetching(false)
-      }
-    }, 1000),
-    []
+          // refetch profile so react state correctly updates
+          fetchVeridaOneProfle()
+        } catch (e) {
+          Sentry.captureException(e)
+          Alert.alert('Error', 'Failed to save profile')
+          onRefresh()
+        } finally {
+          setQuickFetching(false)
+        }
+      },
+      [
+        onRefresh,
+        veridaOneProfile.customLinks,
+        veridaOneProfile.featuredAssets,
+        veridaOneProfile.platformLinks,
+        veridaOneProfile.walletAddresses,
+      ]
+    ),
+    1000
   )
 
   const updateWalletAddressesOrder = useCallback(
@@ -906,7 +921,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
           isActive={isActive}
           onEditName={
             !walletAddress.isPublic
-              ? undefined
+              ? () => undefined
               : () => {
                   navigation.navigate('EditGenericProperty', {
                     screenName: SCREEN_NAME,

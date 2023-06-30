@@ -1,11 +1,9 @@
-import { BlockchainAccount } from 'api/types'
-
 export interface WalletUtilsWallet {
   chain: string
   mnemonic: string
   privateKey: string
   publicKey: string
-  did: did
+  did: string
   address: string
 }
 

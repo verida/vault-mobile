@@ -10,8 +10,6 @@
 import { AssetId } from 'caip'
 import { ImageSourcePropType } from 'react-native'
 
-import { PLATFORM_LINKS, Platforms } from 'constants/profile'
-
 /**
  * Verida Account
  */

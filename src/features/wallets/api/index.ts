@@ -25,8 +25,9 @@ export const walletsApi = createApi({
       transformResponse: (response: {
         data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
-        const networkEntries =
-          response.data[`${CONFIG.WALLET_PROVIDER_CHAINS as EnvironmentType}`]
+        const environmentType: EnvironmentType = CONFIG.WALLET_PROVIDER_CHAINS
+
+        const networkEntries = response.data[environmentType]
 
         const allNetworks: Record<string, BlockchainNetwork> = {}
         for (const chainId in networkEntries) {

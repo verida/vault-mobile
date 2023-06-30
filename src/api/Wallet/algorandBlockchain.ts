@@ -30,8 +30,10 @@ class algorandBlockchain implements IBlockchain {
     )
   }
 
-  public buildAccountFromPrivateKey(privateKey: string): WalletUtilsWallet {
-    throw new Error('Creating Algorand account from private key is not supported')
+  public buildAccountFromPrivateKey(_privateKey: string): WalletUtilsWallet {
+    throw new Error(
+      'Creating Algorand account from private key is not supported'
+    )
   }
 }
 

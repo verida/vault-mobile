@@ -1,10 +1,30 @@
 # Installation
 
-### Run the following commands:
+After cloning the repository, you must define an `.env` file at the project root:
 
-1. Replace `client-rn` path in **package.json** with your local `client-rn` path.
-2. `yarn`
-3. `npx pod-install`
+```shell
+CODE_PUSH_DEPLOYMENT_KEY_ANDROID=
+CODE_PUSH_DEPLOYMENT_KEY_IOS=
+INFURA_API_KEY=
+SENTRY_ENVIRONMENT=
+DEPLOY_ENVIRONMENT=
+
+# Network
+NETWORK_ENVIRONMENT=
+NETWORK_ENDPOINT_URL=
+```
+
+> If you're unsure of values to use here, please contact a [__member of the team__](https://github.com/orgs/verida/people).
+
+Great! To get started, simply run `yarn`:
+
+```shell
+yarn
+```
+
+> **Info**
+> 
+> Running `yarn` executes `jetifier` for Android and `pod-install` for iOS.
 
 ## Notes
 

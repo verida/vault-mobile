@@ -57,7 +57,7 @@ function GenericMessage(props: GenericMessageProps) {
     fetchSenderData()
   }, [inboxItem])
 
-  const openLink = async (url) => {
+  const openLink = async (url: string) => {
     onSubmit()
     Linking.openURL(url)
   }

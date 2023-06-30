@@ -1,9 +1,9 @@
 import { store } from 'reduxStore'
+import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 import AccountManager from 'api/AccountManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 
-import { WALLET_SCHEMA_0_2_0_URI } from '../../wallet/constants'
 import {
   BlockchainAccount,
   BlockchainNetwork,
@@ -78,9 +78,15 @@ export class WalletManager {
   }
 
   public static generateAccountsForWallet(
-    wallet: BlockchainWallet,
-    blockchainNetworks: BlockchainNetwork[]
+    wallet: Partial<BlockchainWallet>,
+    // TODO: We are misusing this type - we should just use use the result of getBlockchainNetworks()
+    maybeBlockchainNetworks:
+      | BlockchainNetwork[]
+      | Record<string, BlockchainNetwork>
+      | undefined
   ) {
+    const blockchainNetworks = maybeBlockchainNetworks || {}
+
     const accounts: Record<string, BlockchainAccount> = {}
 
     Object.values(blockchainNetworks).forEach(
@@ -121,7 +127,7 @@ export class WalletManager {
           walletDetails = namespaceChain.buildAccountFromMnemonic(
             wallet.mnemonic,
             blockchainNetwork.derivationPath,
-            wallet.multiChain
+            Boolean(wallet.multiChain)
           )
         } else {
           throw new Error(
@@ -173,13 +179,13 @@ export class WalletManager {
       viewOnly: false,
     }
 
-    const saved: any = await walletDb!.save(wallet)
+    const saved: any = await walletDb!.save(wallet, undefined)
     if (!saved) {
       throw new Error(`Unable to save wallet: ${walletDb.errors[0].message}`)
     }
 
     const wallets = await WalletManager.getBlockchainAccounts(
-      await walletDb!.getMany()
+      await walletDb!.getMany<BlockchainWallet>(undefined, undefined)
     )
 
     return {

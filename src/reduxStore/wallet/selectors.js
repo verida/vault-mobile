@@ -43,17 +43,11 @@ export const getListAndTotal = (state) => {
   // map prices and balances to recognized coins list and standardize
   const balances = getBalancesData(state.main)
   const total = getTotalBalance(state.main)
-  const singleChain = getSingleWalletChain(state.main)
-  const allTokens = selectTokens(state)
-  let tokens
-  if (singleChain) {
-    tokens = allTokens.filter((token) => token.chainName === singleChain)
-  } else {
-    tokens = allTokens
-  }
-  let list = []
-  if (!isEmpty(balances)) {
-    const list = balances.map((tokenBalance) => {
+
+  if (isEmpty(balances)) return { list: [], total }
+
+  return {
+    list: balances.map((tokenBalance) => {
       return {
         ...tokenBalance,
         label: tokenBalance.symbol,
@@ -62,10 +56,8 @@ export const getListAndTotal = (state) => {
         quantity: parseFloat(tokenBalance.balance),
         amount: parseFloat(tokenBalance.amount),
       }
-    })
-    return { list, total }
-  } else {
-    return { list, total }
+    }),
+    total,
   }
 }
 

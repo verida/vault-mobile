@@ -32,6 +32,7 @@ type WebappLogMessage = {
 
 export const PolygonProvider = ({
   generateRandomKey = defaultGenerateRandomKey, // TODO: use nanoid(), uuid(), etc.,
+  // eslint-disable-next-line no-console
   onError = console.error,
   children,
   uri,
@@ -44,7 +45,7 @@ export const PolygonProvider = ({
   readonly isServerReady: boolean
   readonly requiredCircuitIds: readonly `${CircuitId}`[]
 }>): JSX.Element => {
-  const ref = React.useRef<WebView>(null)
+  const ref = React.useRef<WebView | null>(null)
 
   // Ensure the circuits are downloaded.
   const isCircuitsDownloaded = useEnsureCircuitsDownloaded(requiredCircuitIds)
@@ -105,6 +106,7 @@ export const PolygonProvider = ({
 
         throw new Error(`Encountered malformed message: "${maybeResult}"`)
       } catch (cause) {
+        // @ts-expect-error language_version
         onError(new Error('Failed to handle received message.', { cause }))
       }
     },
@@ -112,11 +114,13 @@ export const PolygonProvider = ({
   )
 
   const onLoadStart = React.useCallback(() => {
+    // eslint-disable-next-line no-console
     console.debug('PolygonProvider ~ WebView loading...')
     // setWebPageLoading(true)
   }, [])
 
   const onLoad = React.useCallback(() => {
+    // eslint-disable-next-line no-console
     console.debug('PolygonProvider ~ WebView loaded')
     // setWebPageLoading(false)
     setWebPageLoaded(true)
@@ -124,6 +128,7 @@ export const PolygonProvider = ({
 
   const handleError = React.useCallback(() => {
     setWebPageLoaded(false)
+    // eslint-disable-next-line no-console
     console.error('PolygonProvider ~ Error while loading the WebView')
   }, [])
 
@@ -157,13 +162,17 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
+        // eslint-disable-next-line no-console
         console.debug('Polygon.Provider.tsx ~ Injecting JavaScript in WebView')
+
         try {
           return ref.current?.injectJavaScript(injectedJavaScript)
         } catch (error: unknown) {
+          // eslint-disable-next-line no-console
           console.error(
             'Polygon.Provider.tsx ~ Error while injecting JavaScript in WebView'
           )
+          // eslint-disable-next-line no-console
           console.error(error)
         }
       })
@@ -173,7 +182,9 @@ export const PolygonProvider = ({
 
   const createIdManager: PolygonCreateIdManager = React.useCallback(
     async (config: PolygonIdManagerConfig) => {
+      // eslint-disable-next-line no-console
       console.debug('Polygon.Provider.tsx ~ Creating a Polygon ID Manager')
+
       const managerId = await invokeJs({
         js: `window.__CREATE_POLYGON_ID_MANAGER__({managerId: ${JSON.stringify(
           generateRandomKey()
@@ -187,6 +198,7 @@ export const PolygonProvider = ({
           )}".`
         )
 
+      // eslint-disable-next-line no-console
       console.debug(
         'Polygon.Provider.tsx ~ Polygon ID Manager created',
         managerId
@@ -282,15 +294,19 @@ const styles = StyleSheet.create({
 function logWebappMessage(message: WebappLogMessage) {
   switch (message.level) {
     case 'info':
+      // eslint-disable-next-line no-console
       console.info('Webapp message:', message.content)
       break
     case 'warn':
+      // eslint-disable-next-line no-console
       console.warn('Webapp message:', message.content)
       break
     case 'error':
+      // eslint-disable-next-line no-console
       console.error('Webapp message:', message.content)
       break
     case 'debug':
+      // eslint-disable-next-line no-console
       console.debug('Webapp message:', message.content)
       break
   }

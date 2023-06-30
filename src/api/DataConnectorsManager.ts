@@ -212,7 +212,8 @@ class DataConnection extends EventEmitter {
       DataConnectorsManager.emit('connectionUpdated', this)
 
       return result
-    } catch (err) {
+    } catch (err: any) {
+      // eslint-disable-next-line no-console
       console.log('Save connection error: ', err.message)
     }
   }
@@ -230,7 +231,9 @@ class DataConnection extends EventEmitter {
   }
 
   public async setAuth(auth: any) {
+    // eslint-disable-next-line no-console
     console.log('setAuth')
+    // eslint-disable-next-line no-console
     console.log(auth)
     await this.init()
     this.accessToken = auth.accessToken
@@ -255,14 +258,16 @@ class DataConnection extends EventEmitter {
 
       this.profile = this._record.profile
 
-      const obj: any = this
       const record = this._record
-      Object.keys(this._record).forEach((key: string) => {
-        if (key === 'profile') {
-          return
-        }
 
-        obj[key] = record[key]
+      Object.keys(this._record).forEach((key) => {
+        if (key === 'profile') return
+
+        // TODO: Strictly type the _record field to be
+        //       Omit<keyof DataConnection, 'profile'>.
+        // @ts-expect-error This is a dangerous assignment as we do not have
+        //                  strict guidelines as to what the keyof record is.
+        this[key] = record[key]
       })
     } catch (err: any) {
       if (err.name === 'not_found') {
@@ -331,7 +336,9 @@ class DataConnection extends EventEmitter {
         syncRequestDatabaseName
       )
     } catch (err: any) {
+      // eslint-disable-next-line no-console
       console.log('1')
+      // eslint-disable-next-line no-console
       console.log(err)
       this.setSyncError(err.message)
       // console.error(err)
@@ -373,7 +380,7 @@ class DataConnection extends EventEmitter {
         }
       )
 
-      const syncRequest = await externalDatastore.get(syncRequestId)
+      const syncRequest = await externalDatastore.get(syncRequestId, undefined)
 
       if (syncRequest.status === 'complete') {
         // Sync has completed on the server, so complete the sync
@@ -405,9 +412,11 @@ class DataConnection extends EventEmitter {
         )
       }
     } catch (err: any) {
+      // eslint-disable-next-line no-console
       console.log('2')
       // @todo: Set error on this connection
       this.setSyncError(err.message)
+      // eslint-disable-next-line no-console
       console.error(err)
     }
   }
@@ -458,7 +467,7 @@ class DataConnection extends EventEmitter {
         // In order to sync we need to locate the underlying PouchDb instances
         // for the Vault's datastore and the connector's datastore
         const externalDb = await externalDatastore?.getDb()
-        const externalCouch = await externalDb.getDb()
+        const externalCouch = await externalDb?.getDb()
 
         const vaultDatastore = await context!.openDatastore(schemaUri)
         const vaultDb = await vaultDatastore.getDb()
@@ -476,6 +485,7 @@ class DataConnection extends EventEmitter {
             style: 'main_only',
           })
         } catch (err: any) {
+          // eslint-disable-next-line no-console
           console.log('3')
           this.setSyncError(err.message)
           return
@@ -494,7 +504,9 @@ class DataConnection extends EventEmitter {
       this.syncNext = moment().add(1, this.syncFrequency).toISOString()
 
       if (newAuth) {
+        // eslint-disable-next-line no-console
         console.log('----- new auth')
+        // eslint-disable-next-line no-console
         console.log(newAuth)
         this.accessToken = newAuth.accessToken
         this.refreshToken = newAuth.refreshToken
@@ -503,7 +515,9 @@ class DataConnection extends EventEmitter {
       await this.save()
       // console.log(`Sync done and sync status updated`)
     } catch (err) {
+      // eslint-disable-next-line no-console
       console.log('4')
+      // eslint-disable-next-line no-console
       console.log(err)
       // @todo: How to handle?
       // console.error(err)

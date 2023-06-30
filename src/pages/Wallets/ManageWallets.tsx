@@ -35,8 +35,6 @@ import CreateWalletModal from './AddWalletModal'
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import ImportWalletModal from './ImportWalletModal'
 
-export type walletIdType = string
-
 type Props = {
   wallets: WalletItem[]
   walletCount: number
@@ -175,9 +173,9 @@ const ManageWallets = (props: Props) => {
         tintColor: BLACK_COLOR,
       },
       (buttonIndex) => {
-        if (item.viewOnly) {
-          buttonIndex++
-        }
+        if (typeof buttonIndex !== 'number') return
+
+        if (item.viewOnly) buttonIndex++
 
         if (buttonIndex === 0 && !item.viewOnly) {
           navigation.navigate('SingleWallet', { item })

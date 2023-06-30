@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { W3CVerifiableCredential } from '@veramo/core'
-import { Context } from '@verida/client-ts'
+import { Context } from '@verida/client-rn'
 import { SharingCredential } from '@verida/verifiable-credentials'
 import { useCredential } from 'features/verifiableCredential'
 import { isEmpty } from 'lodash'

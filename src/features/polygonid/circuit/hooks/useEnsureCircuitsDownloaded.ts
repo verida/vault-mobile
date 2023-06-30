@@ -11,6 +11,7 @@ export function useEnsureCircuitsDownloaded(
 
   // HACK: Here we should useDeepCompareMemo. Until then, NEVER change
   //       the length of maybeCircuitIds at runtime.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const circuitIds = React.useMemo(() => maybeCircuitIds, [...maybeCircuitIds])
 
   const isCircuitsDownloaded = useIsCircuitsDownloaded(circuitIds)
@@ -24,6 +25,7 @@ export function useEnsureCircuitsDownloaded(
     // If we're loading or all the circuits are downloaded, don't attempt to download them.
     if (loading || isCircuitsDownloadedResult) return
 
+    // eslint-disable-next-line no-console
     console.warn('trying to install', Math.random())
 
     Promise.all(
@@ -32,6 +34,7 @@ export function useEnsureCircuitsDownloaded(
           circuitId: circuitId as CircuitId,
         })
       )
+      // eslint-disable-next-line no-console
     ).catch(console.error)
   }, [loading, isCircuitsDownloadedResult, downloadCircuit, circuitIds])
 

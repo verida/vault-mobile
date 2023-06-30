@@ -33,7 +33,7 @@ export type FormInputProps = React.ComponentPropsWithRef<
   typeof OriginalTextInput
 > & {
   label?: string
-  errorMessage?: string
+  errorMessage?: string | undefined
   type?: FormInputType
   disabled?: boolean
   inputStyle?: TextStyle
@@ -43,7 +43,7 @@ export type FormInputProps = React.ComponentPropsWithRef<
   loading?: boolean
   suffix?: string
   suffixStyle?: TextStyle
-  desciption?: string
+  desciption?: string | undefined
 }
 
 export const FormInput = React.forwardRef(

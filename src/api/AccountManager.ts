@@ -39,11 +39,12 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
+import { IContext } from '@verida/types'
 import { walletsApi } from 'features/wallets'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
-  public context: Context | undefined
+  public context: IContext | undefined
   public client: Client | undefined
   public vault: Vault | undefined
   public accounts: NormalizedAccounts
@@ -158,16 +159,17 @@ class AccountManager extends EventEmitter {
     return AccountManager.instance
   }
 
-  public async getVeridaContext(): Promise<Context | undefined> {
+  public async getVeridaContext(): Promise<IContext | undefined> {
     try {
-      if (!this.selectedAccount) {
-        return undefined
-      }
+      if (!this.selectedAccount) return undefined
+
+      const environment = CONFIG.VERIDA_ENVIRONMENT
 
       this.client = new Client({
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig: {
           rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          network: environment,
         },
       })
 
@@ -179,7 +181,7 @@ class AccountManager extends EventEmitter {
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig,
       })
 
@@ -213,11 +215,14 @@ class AccountManager extends EventEmitter {
       })
 
       // @todo: Do something useful with these messages
+      // @ts-expect-error This event emitter interface is not documented.
       context!.on('EndpointUnavailable', (endpointUri: string) => {
         // eslint-disable-next-line no-console
         console.info(`Endpoint is currently unavailable: ${endpointUri}`)
       })
 
+      // @todo: Do something useful with these messages
+      // @ts-expect-error This event emitter interface is not documented.
       context!.on('EndpointWarning', (endpointUri: string, message: string) => {
         // eslint-disable-next-line no-console
         console.info(`Warning from endpoint ${endpointUri}: ${message}`)
@@ -288,13 +293,16 @@ class AccountManager extends EventEmitter {
       const walletDb = await this.context?.openDatastore(
         WALLET_SCHEMA_0_2_0_URI
       )
+
       const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
         label: 'Multi Coin Wallet',
         multiChain: true, // Set this's a multi-chain wallet
       }
-      const saved: any = await walletDb?.save(wallet)
+
+      const saved: any = await walletDb?.save(wallet, undefined)
+
       const walletID = saved?.id
 
       // generate wallets and save to redux state
@@ -341,7 +349,10 @@ class AccountManager extends EventEmitter {
         WALLET_SCHEMA_0_2_0_URI
       )
 
-      const hdWallets: any = await datastore?.getMany()
+      const hdWallets: any = await datastore?.getMany<BlockchainWallet>(
+        undefined,
+        undefined
+      )
 
       if (!isEmpty(hdWallets)) {
         const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
@@ -406,23 +417,27 @@ class AccountManager extends EventEmitter {
 
       const { mnemonic } = this.selectedAccount
 
+      const environment = CONFIG.VERIDA_ENVIRONMENT
+
       this.client = new Client({
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig: {
           rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          network: environment,
         },
       })
 
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment: CONFIG.VERIDA_ENVIRONMENT,
+        environment,
         didClientConfig,
       })
 
       // Load suitable node based on selected country
       const countryCode = getCountryCode(country)
+
       await account.loadDefaultStorageNodes(countryCode, 3, {
-        network: CONFIG.VERIDA_ENVIRONMENT,
+        network: environment,
         notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
       })
 
@@ -478,10 +493,11 @@ class AccountManager extends EventEmitter {
       return this.selectedAccount
     } catch (e) {
       updateProgress?.('CreateProfile', 'Failure')
+
       // If the corrupted account is already connected, we need to remove it
-      if (connected && this.selectedAccount) {
-        await this.logout([this.selectedAccount?.did])
-      }
+      if (connected && this.selectedAccount)
+        await this.logout([this.selectedAccount.did])
+
       Sentry.captureException(e)
       throw e
     }
@@ -582,26 +598,25 @@ class AccountManager extends EventEmitter {
   }
 
   private async updateCurrentAccount(data: Partial<Account>) {
-    if (!this.selectedAccount) {
-      this.selectedAccount = {
-        mnemonic: '',
-        did: '', // DID will be filled after connecting to Verida
-        seedPhraseReminder: {
-          lastTime: undefined,
-          backedup: false,
-        },
-      }
+    const nextSelectedAccount: Account = this.selectedAccount || {
+      mnemonic: '',
+      did: '', // DID will be filled after connecting to Verida
+      privateKey: '',
+      seedPhraseReminder: {
+        lastTime: undefined,
+        backedup: false,
+      },
     }
 
-    this.selectedAccount = {
-      ...(this.selectedAccount || {}),
-      ...data,
-    }
+    this.selectedAccount = { ...nextSelectedAccount, ...data }
+
     this.accounts[this.selectedAccount.did] = this.selectedAccount
+
     await SecureStore.setItemAsync(
       CONFIG.ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
     )
+
     await SecureStore.setItemAsync(
       CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
