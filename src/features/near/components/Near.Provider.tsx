@@ -1,6 +1,7 @@
-import { ParsedCaipType } from 'features/caip'
+import { parseCaipOrThrow, ParsedCaipType } from 'features/caip'
 import {
   NearKeystore,
+  NearNetworkId,
   useCreateOrRestoreNearWalletInstance,
 } from 'features/near'
 import * as React from 'react'
@@ -8,13 +9,15 @@ import * as React from 'react'
 import { NearContextValue } from '../@types'
 import { NearContextProvider } from '../contexts'
 
+const defaultNearNetworkParsedCaipType = parseCaipOrThrow(NearNetworkId.TESTNET)
+
 export const NearProvider: React.FC<
   React.PropsWithChildren<{
-    readonly nearNetworkParsedCaipType: ParsedCaipType
+    readonly nearNetworkParsedCaipType?: ParsedCaipType
   }>
 > = React.memo(function NearProvider({
   children,
-  nearNetworkParsedCaipType,
+  nearNetworkParsedCaipType = defaultNearNetworkParsedCaipType,
 }): JSX.Element {
   const keystore = React.useMemo(() => new NearKeystore(), [])
 
