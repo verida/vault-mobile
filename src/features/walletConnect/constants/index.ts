@@ -1,6 +1,8 @@
+import { EIP155NetworkId } from 'features/ethereum'
 import { NearNetworkId } from 'features/near'
 import type { WalletConnectChainMeta } from 'features/walletConnect'
 import { WalletConnectChainStyle } from 'features/walletConnect'
+import Config from 'react-native-config'
 
 const WALLETCONNECT_PROTOCOL = 'wc:'
 
@@ -34,14 +36,32 @@ export const isWalletConnectConnection = (
   isWalletConnectV1Connection(maybeWalletConnectConnection) ||
   isWalletConnectV2Connection(maybeWalletConnectConnection)
 
-export const NEAR_CHAIN_TESTNET = 'near:testnet'
+// TODO: Use environment variables
+// TODO: Is this correct?
+const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
+
+export const EIP155_WALLETCONNECT_CHAIN_META: {
+  readonly [key in EIP155NetworkId]: WalletConnectChainMeta<
+    EIP155NetworkId,
+    WalletConnectChainStyle.EVM_LIKE
+  >
+} = {
+  [EIP155NetworkId.ETHEREM_GOERLI]: {
+    style: WalletConnectChainStyle.EVM_LIKE,
+    chainId: EIP155NetworkId.ETHEREM_GOERLI,
+    // TODO: fn of calls
+    name: 'Ethereum Goerli',
+    logo: '/chain-logos/eip155-1.png',
+    rgb: '99, 125, 234',
+    rpc: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
+  },
+}
 
 export const NEAR_WALLETCONNECT_CHAIN_META: Record<
   string,
   WalletConnectChainMeta<NearNetworkId, WalletConnectChainStyle.NEAR_LIKE>
 > = {
-  /* near:testnet */
-  [NEAR_CHAIN_TESTNET]: {
+  ['near:testnet']: {
     style: WalletConnectChainStyle.NEAR_LIKE,
     chainId: NearNetworkId.TESTNET,
     name: 'NEAR Testnet',
@@ -55,5 +75,6 @@ export const WALLETCONNECT_SUPPORTED_CHAINS: Record<
   string,
   WalletConnectChainMeta<unknown, WalletConnectChainStyle>
 > = {
+  ...EIP155_WALLETCONNECT_CHAIN_META,
   ...NEAR_WALLETCONNECT_CHAIN_META,
 }

@@ -1,5 +1,7 @@
 import { EnvironmentType } from '@verida/types'
 
+// TODO: This is not multichain friendly. Make this a function of the full chain
+//       enumerated id.
 export function getCaipWalletTypeFriendlyName(
   caipWalletType: string | undefined,
   environmentType: EnvironmentType
