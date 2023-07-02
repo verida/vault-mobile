@@ -119,6 +119,7 @@ function App() {
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
+                        {/* TODO: @cawfree remember nearNetwork used to be "testnet", extract caip accordingly*/}
                         <NearProvider nearNetwork={NearNetworkId.TESTNET}>
                           <WalletConnectProvider>
                             <GestureHandlerRootView style={styles.flex}>
