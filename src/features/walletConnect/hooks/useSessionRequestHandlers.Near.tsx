@@ -14,20 +14,25 @@ import {
   useNearContext,
 } from 'features/near'
 import {
-  NearSessionRequestHandlerParams,
   NearSessionRequestHandlers,
+  WalletConnectSessionRequestCallbackParams,
 } from 'features/walletConnect'
-import { transactions } from 'near-api-js/lib'
+import { providers, transactions } from 'near-api-js/lib'
 import * as React from 'react'
+
+const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
 export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
   const { nearNetwork: nearNetworkId, keystore } = useNearContext()
+
   return React.useMemo<NearSessionRequestHandlers>(
     () => ({
       [NearSigningMethod.NEAR_SIGN_IN]: async ({
         request,
-        provider,
-      }: NearSessionRequestHandlerParams) => {
+        rpc,
+      }: WalletConnectSessionRequestCallbackParams) => {
+        const provider = getNearProvider(rpc)
+
         const permission: transactions.FunctionCallPermission =
           request.params.request.params.permission
 
@@ -49,8 +54,9 @@ export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
       },
       [NearSigningMethod.NEAR_SIGN_OUT]: async ({
         request,
-        provider,
-      }: NearSessionRequestHandlerParams) => {
+        rpc,
+      }: WalletConnectSessionRequestCallbackParams) => {
+        const provider = getNearProvider(rpc)
         const accounts = request.params.request.params
 
         if (!Array.isArray(accounts))
@@ -72,7 +78,7 @@ export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
         }),
       [NearSigningMethod.NEAR_SIGN_TRANSACTION]: async ({
         request,
-      }: NearSessionRequestHandlerParams) => {
+      }: WalletConnectSessionRequestCallbackParams) => {
         const transactionData = request.params.request.params.transaction
 
         const [signedTransaction] = await nearSignTransactions({
@@ -87,8 +93,10 @@ export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
       },
       [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTION]: async ({
         request,
-        provider,
-      }: NearSessionRequestHandlerParams) => {
+        rpc,
+      }: WalletConnectSessionRequestCallbackParams) => {
+        const provider = getNearProvider(rpc)
+
         const { transaction } = request.params.request.params
         const { actions } = transaction
 
@@ -127,7 +135,7 @@ export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
       },
       [NearSigningMethod.NEAR_SIGN_TRANSACTIONS]: async ({
         request,
-      }: NearSessionRequestHandlerParams) => {
+      }: WalletConnectSessionRequestCallbackParams) => {
         const signedTransactions = await nearSignTransactions({
           keystore,
           nearNetworkId,
@@ -142,9 +150,10 @@ export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
         )
       },
       [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTIONS]: async ({
-        provider,
+        rpc,
         request,
-      }: NearSessionRequestHandlerParams) => {
+      }: WalletConnectSessionRequestCallbackParams) => {
+        const provider = getNearProvider(rpc)
         const { transactions } = request.params.request.params
 
         if (!Array.isArray(transactions))

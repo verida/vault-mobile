@@ -2,8 +2,6 @@ import {
   NearKeystore,
   NearNetworkId,
   useCreateOrRestoreNearWalletInstance,
-  useMaybeNearWalletAccounts,
-  useMaybeNearWalletInstance,
 } from 'features/near'
 import * as React from 'react'
 

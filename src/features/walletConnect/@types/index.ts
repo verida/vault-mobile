@@ -2,13 +2,14 @@ import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { NearSigningMethod } from 'features/near'
-import { providers } from 'near-api-js'
 
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>
 >
 
-export type MaybeActiveSession = ActiveSessions[string] | undefined
+export type ActiveSession = ActiveSessions[string]
+
+export type MaybeActiveSession = ActiveSession | undefined
 
 export type WalletConnectContextValue = {
   readonly activeSessions: ActiveSessions
@@ -43,17 +44,10 @@ export type WalletConnectSessionRequestCallbackParams = {
   readonly rpc: string
 }
 
-export type NearSessionRequestHandlerParams = Omit<
-  WalletConnectSessionRequestCallbackParams,
-  'rpc'
-> & {
-  readonly provider: providers.Provider
-}
-
-export type NearSessionRequestHandler<T = unknown> = (
-  params: NearSessionRequestHandlerParams
+export type WalletConnectSessionRequestCallback<T = unknown> = (
+  params: WalletConnectSessionRequestCallbackParams
 ) => Promise<T>
 
 export type NearSessionRequestHandlers = {
-  readonly [key in NearSigningMethod]: NearSessionRequestHandler
+  readonly [key in NearSigningMethod]: WalletConnectSessionRequestCallback
 }

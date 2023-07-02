@@ -1,7 +1,7 @@
 import { WalletConnectSessionRequestCallbackParams } from 'features/walletConnect'
 import * as React from 'react'
 
-export const useWalletConnectSessionRequestCallbackEthereum = (): ((
+export const useWalletConnectSessionRequestApproveCallbackEthereum = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<void>) =>
   React.useCallback(async () => {

@@ -3,6 +3,7 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { CaipWalletTypeSpan, isCaipWalletType } from 'features/caip'
 import {
   ChainToAccounts,
+  useActiveWalletConnectSession,
   useActiveWalletConnectSessionAccounts,
   useActiveWalletConnectSessionExpiry,
   useActiveWalletConnectSessionNamespaces,
@@ -45,6 +46,10 @@ export const WalletConnectDapps = React.memo(
         walletConnectSessionKey,
       })
 
+    const maybeActiveSession = useActiveWalletConnectSession({
+      walletConnectSessionKey,
+    })
+
     return (
       <View>
         <NavigationHeader
@@ -62,7 +67,7 @@ export const WalletConnectDapps = React.memo(
             showsVerticalScrollIndicator={false}
             contentContainerStyle={styles.scrollViewContainer}>
             <WalletConnectSessionInfoCard
-              walletConnectSessionKey={walletConnectSessionKey}
+              maybeActiveSession={maybeActiveSession}
             />
 
             <Spacer height={16} />

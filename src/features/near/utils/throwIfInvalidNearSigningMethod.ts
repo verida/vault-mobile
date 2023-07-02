@@ -2,7 +2,7 @@ import { $enum } from 'ts-enum-util'
 
 import { NearSigningMethod } from '../@types'
 
-const isValidNearSigningMethod = (
+export const isValidNearSigningMethod = (
   maybeNearSigningMethod: string | undefined
 ): maybeNearSigningMethod is NearSigningMethod => {
   if (typeof maybeNearSigningMethod !== 'string') return false

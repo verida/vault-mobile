@@ -1,4 +1,6 @@
+export * from './extractWalletConnectRpcOrThrow'
 export * from './getMaybeNearAccountForWalletConnectTopic'
 export * from './getMaybeWalletConnectRpcUriForChainId'
+export * from './isWalletConnectRequestRequiresVisualConfirmation'
 export * from './rejectSessionRequest'
 export * from './resolveSessionRequest'

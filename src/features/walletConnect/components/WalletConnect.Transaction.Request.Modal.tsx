@@ -2,13 +2,14 @@ import Sentry from '@sentry/react-native'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { NearSigningMethod } from 'features/near'
 import {
-  MaybeActiveSession,
-  NearSessionRequestHandlerParams,
-  rejectSessionRequest, resolveSessionRequest,
+  ActiveSession,
+  useWalletConnectSessionApproveCallback,
+  useWalletConnectSessionRejectCallback,
   WALLETCONNECT_SUPPORTED_CHAINS,
   WalletConnectSessionInfoCard,
-  WalletConnectTransactionRequestModalRow
-} from "features/walletConnect";
+  WalletConnectSessionRequestCallbackParams,
+  WalletConnectTransactionRequestModalRow,
+} from 'features/walletConnect'
 import { useModal } from 'hooks'
 import { transactions } from 'near-api-js/lib'
 import * as React from 'react'
@@ -141,28 +142,25 @@ const formatParams = (
 
 export const WalletConnectTransactionRequestModal = React.memo(
   function WalletConnectTransactionRequestModal({
-    provider,
     web3wallet,
     request,
-    maybeActiveSession,
-  }: NearSessionRequestHandlerParams & {
-    readonly maybeActiveSession: MaybeActiveSession
+    activeSession,
+  }: WalletConnectSessionRequestCallbackParams & {
+    readonly activeSession: ActiveSession
   }): JSX.Element {
     const { dismissModal } = useModal()
     const [loading, setLoading] = React.useState<boolean>(false)
 
-    const onApprove = React.useCallback(() => {
+    const shouldApprove = useWalletConnectSessionApproveCallback()
+    const shouldReject = useWalletConnectSessionRejectCallback()
+
+    const onApprove = React.useCallback(async () => {
       if (!request) return
 
       try {
         setLoading(true)
 
-        await resolveSessionRequest({
-          // TODO: use handlers here (break up ethereum and near condition into dedicated hook)
-          result: ,
-          web3wallet,
-          request,
-        })
+        await shouldApprove(web3wallet, request)
 
         dismissModal()
       } catch (e) {
@@ -176,7 +174,7 @@ export const WalletConnectTransactionRequestModal = React.memo(
       } finally {
         setLoading(false)
       }
-    }, [dismissModal, request])
+    }, [dismissModal, request, shouldApprove, web3wallet])
 
     const onReject = React.useCallback(async () => {
       if (!request) return
@@ -184,11 +182,7 @@ export const WalletConnectTransactionRequestModal = React.memo(
       try {
         setLoading(true)
 
-        await rejectSessionRequest({
-          request,
-          reason: 'User rejected the request.',
-          web3wallet,
-        })
+        await shouldReject(web3wallet, request, 'User rejected the request')
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Unable to reject request.')
@@ -197,11 +191,11 @@ export const WalletConnectTransactionRequestModal = React.memo(
 
         dismissModal()
       }
-    }, [request, web3wallet, dismissModal])
+    }, [request, shouldReject, web3wallet, dismissModal])
 
     const chainId = request.params.chainId
 
-    const maybeRelayProtocol = maybeActiveSession?.relay?.protocol
+    const maybeRelayProtocol = activeSession?.relay?.protocol
 
     // TODO: dedicated function
     const maybeSupportedChain = Object.values(
@@ -212,7 +206,7 @@ export const WalletConnectTransactionRequestModal = React.memo(
 
     const maybeChainName = maybeSupportedChain?.name
 
-    if (!maybeActiveSession || !provider || !web3wallet || !request)
+    if (!activeSession || !web3wallet || !request)
       // eslint-disable-next-line react/no-children-prop
       return <Text children='Missing request data' />
 
@@ -227,7 +221,7 @@ export const WalletConnectTransactionRequestModal = React.memo(
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContainer}>
               <WalletConnectSessionInfoCard
-                maybeActiveSession={maybeActiveSession}
+                maybeActiveSession={activeSession}
               />
               <Spacer height={16} />
 
