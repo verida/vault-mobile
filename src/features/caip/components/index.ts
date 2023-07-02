@@ -1,1 +1,1 @@
-export * from './Caip.WalletType.Span'
+export * from './Caip.SupportedProtocol.Span'

@@ -1,6 +1,9 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { CaipWalletTypeSpan, isSupportedCaipProtocol } from 'features/caip'
+import {
+  CaipSupportedProtocolSpan,
+  isSupportedCaipProtocol,
+} from 'features/caip'
 import {
   ChainToAccounts,
   useActiveWalletConnectSession,
@@ -89,8 +92,8 @@ export const WalletConnectDapps = React.memo(
                   <View style={styles.row} key={chainId}>
                     <Text style={styles.label}>Network</Text>
                     <Text style={styles.value}>
-                      <CaipWalletTypeSpan
-                        caipWalletType={
+                      <CaipSupportedProtocolSpan
+                        supportedCaipProtocol={
                           isSupportedCaipProtocol(chainId) ? chainId : undefined
                         }
                       />
