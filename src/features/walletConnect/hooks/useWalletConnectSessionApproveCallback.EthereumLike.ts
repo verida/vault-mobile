@@ -6,6 +6,8 @@ import {
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
+// TODO: Are dapps even required now? Check redux usage.
+
 export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {

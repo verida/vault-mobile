@@ -19,6 +19,6 @@ export function isWalletConnectRequestRequiresVisualConfirmation(
   if (isValidNearSigningMethod(method))
     return NEAR_METHODS_REQUIRING_VISUAL_CONFIRMATION.includes(method)
 
-  // TODO: Ethereum?
-  return false
+  // HACK: Assume all EVM-style requests require some form of confirmation.
+  return true
 }
