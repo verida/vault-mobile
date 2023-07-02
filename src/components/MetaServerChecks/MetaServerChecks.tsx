@@ -57,7 +57,7 @@ const MetaServerChecks = () => {
     }
 
     const tid = setTimeout(() => {
-      // checkForcedUpgrade()
+      checkForcedUpgrade()
     }, 1000) // debounce check
 
     return () => {
