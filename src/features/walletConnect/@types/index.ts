@@ -27,7 +27,6 @@ export type WalletConnectContextValue = {
   ) => Promise<void>
 }
 
-// TODO: Hasn't this been defined somewhere else?
 export type WalletConnectChainMeta<
   ChainId,
   ChainStyle extends WalletConnectChainStyle

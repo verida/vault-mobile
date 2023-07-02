@@ -3,17 +3,16 @@ import {
   extractWalletConnectRpcOrThrow,
   getMaybeWalletConnectConfigForChainId,
   resolveSessionRequest,
-  useWalletConnectSessionRequestApproveCallbackEthereumLike,
-  useWalletConnectSessionRequestApproveCallbackNearLike,
+  useWalletConnectSessionApproveCallbackEthereumLike,
+  useWalletConnectSessionApproveCallbackNearLike,
   WalletConnectChainStyle,
 } from 'features/walletConnect'
 import * as React from 'react'
 
 export function useWalletConnectSessionApproveCallback() {
   const ethereumLikeApprove =
-    useWalletConnectSessionRequestApproveCallbackEthereumLike()
-  const nearLikeApprove =
-    useWalletConnectSessionRequestApproveCallbackNearLike()
+    useWalletConnectSessionApproveCallbackEthereumLike()
+  const nearLikeApprove = useWalletConnectSessionApproveCallbackNearLike()
 
   const chainSpecificApproveOrThrow = React.useCallback(
     (

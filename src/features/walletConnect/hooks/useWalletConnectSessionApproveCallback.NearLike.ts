@@ -6,7 +6,7 @@ import {
 } from 'features/walletConnect'
 import * as React from 'react'
 
-export const useWalletConnectSessionRequestApproveCallbackNearLike = (): ((
+export const useWalletConnectSessionApproveCallbackNearLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
   const { nearNetwork: nearNetworkId, keystore } = useNearContext()

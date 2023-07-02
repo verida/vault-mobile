@@ -6,7 +6,7 @@ import {
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
-export const useWalletConnectSessionRequestApproveCallbackEthereumLike = (): ((
+export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
   const walletsData = useWalletsData()
