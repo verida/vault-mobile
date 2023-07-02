@@ -1,7 +1,7 @@
 import { throwIfInvalidNearSigningMethod, useNearContext } from 'features/near'
 import {
   getMaybeNearAccountForWalletConnectTopic,
-  useSessionRequestHandlersNearLike,
+  useWalletConnectSessionRequestHandlersNearLike,
   WalletConnectSessionRequestCallbackParams,
 } from 'features/walletConnect'
 import * as React from 'react'
@@ -11,7 +11,8 @@ export const useWalletConnectSessionRequestApproveCallbackNearLike = (): ((
 ) => Promise<unknown>) => {
   const { nearNetwork: nearNetworkId, keystore } = useNearContext()
 
-  const nearSessionRequestHandlers = useSessionRequestHandlersNearLike()
+  const nearSessionRequestHandlers =
+    useWalletConnectSessionRequestHandlersNearLike()
 
   return React.useCallback(
     async ({
