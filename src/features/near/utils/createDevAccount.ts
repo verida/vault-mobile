@@ -1,9 +1,16 @@
 import * as Sentry from '@sentry/react-native'
-import { NearDevAccount, nearKeyPairFromPrivateKey } from 'features/near'
+import { ParsedCaipType } from 'features/caip'
+import {
+  isNearTestnet,
+  NearDevAccount,
+  nearKeyPairFromPrivateKey,
+} from 'features/near'
 
 export async function createDevAccount({
+  nearNetworkParsedCaipType,
   privateKey,
 }: {
+  readonly nearNetworkParsedCaipType: ParsedCaipType
   readonly privateKey: string
 }): Promise<NearDevAccount> {
   const keyPair = nearKeyPairFromPrivateKey({ privateKey })
@@ -16,8 +23,12 @@ export async function createDevAccount({
   const accountId = `dev-vda-${Date.now()}-${randomNumber}`
   const publicKey = keyPair.getPublicKey().toString()
 
+  const uri = `https://helper${
+    isNearTestnet(nearNetworkParsedCaipType) ? '.testnet' : ''
+  }.near.org/account`
+
   try {
-    const res = await fetch(`https://helper.testnet.near.org/account`, {
+    const res = await fetch(uri, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({

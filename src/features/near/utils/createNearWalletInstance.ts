@@ -38,6 +38,7 @@ export async function createNearWalletInstance({
     i += 1
   ) {
     const nearDevAccount: NearDevAccount = await createDevAccount({
+      nearNetworkParsedCaipType,
       privateKey,
     })
 
