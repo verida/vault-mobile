@@ -8,11 +8,8 @@ export type SerializedNearWallet = {
   readonly privateKey: string
 }
 
-// TODO: Is this a Verida concept or Near?
-// TODO: Reinforce
-// TODO: Branded type for <Blockchain:VeridaNetwork>
 export enum NearNetworkId {
-  TESTNET = 'testnet',
+  TESTNET = 'near:testnet',
 }
 
 export type NearDevAccount = {

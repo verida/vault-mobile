@@ -7,7 +7,7 @@ import { WALLETCONNECT_SUPPORTED_CHAINS } from '../constants'
 
 export function getMaybeWalletConnectConfigForChainId(
   chainId: string | null | undefined
-): WalletConnectChainMeta<unknown, WalletConnectChainStyle> | undefined {
+): WalletConnectChainMeta<WalletConnectChainStyle> | undefined {
   if (typeof chainId !== 'string' || !chainId.length) return undefined
 
   const maybeMatchingChainConfig = Object.values(
@@ -21,7 +21,7 @@ export function getMaybeWalletConnectConfigForChainId(
 
 export function getWalletConnectConfigForChainIdOrThrow(
   chainId: string | null | undefined
-): WalletConnectChainMeta<unknown, WalletConnectChainStyle> {
+): WalletConnectChainMeta<WalletConnectChainStyle> {
   const maybeWalletConnectConfig =
     getMaybeWalletConnectConfigForChainId(chainId)
 

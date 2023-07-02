@@ -27,17 +27,15 @@ export type WalletConnectContextValue = {
   ) => Promise<void>
 }
 
-export type WalletConnectChainMeta<
-  ChainId,
-  ChainStyle extends WalletConnectChainStyle
-> = {
-  readonly style: ChainStyle
-  readonly chainId: ChainId
-  readonly name: string
-  readonly logo: string
-  readonly rgb: string
-  readonly rpc: string
-}
+export type WalletConnectChainMeta<ChainStyle extends WalletConnectChainStyle> =
+  {
+    readonly style: ChainStyle
+    readonly chainId: string
+    readonly name: string
+    readonly logo: string
+    readonly rgb: string
+    readonly rpc: string
+  }
 
 export type Namespaces = SessionTypes.Namespaces
 export type MaybeNamespace = Namespaces[string] | undefined

@@ -41,15 +41,11 @@ export const isWalletConnectConnection = (
 const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
 
 export const EIP155_WALLETCONNECT_CHAIN_META: {
-  readonly [key in EIP155NetworkId]: WalletConnectChainMeta<
-    EIP155NetworkId,
-    WalletConnectChainStyle.EVM_LIKE
-  >
+  readonly [key in EIP155NetworkId]: WalletConnectChainMeta<WalletConnectChainStyle.EVM_LIKE>
 } = {
   [EIP155NetworkId.ETHEREM_GOERLI]: {
     style: WalletConnectChainStyle.EVM_LIKE,
-    chainId: EIP155NetworkId.ETHEREM_GOERLI,
-    // TODO: fn of calls
+    chainId: '5',
     name: 'Ethereum Goerli',
     logo: '/chain-logos/eip155-1.png',
     rgb: '99, 125, 234',
@@ -57,13 +53,12 @@ export const EIP155_WALLETCONNECT_CHAIN_META: {
   },
 }
 
-export const NEAR_WALLETCONNECT_CHAIN_META: Record<
-  string,
-  WalletConnectChainMeta<NearNetworkId, WalletConnectChainStyle.NEAR_LIKE>
-> = {
-  ['near:testnet']: {
+export const NEAR_WALLETCONNECT_CHAIN_META: {
+  readonly [key in NearNetworkId]: WalletConnectChainMeta<WalletConnectChainStyle.NEAR_LIKE>
+} = {
+  [NearNetworkId.TESTNET]: {
     style: WalletConnectChainStyle.NEAR_LIKE,
-    chainId: NearNetworkId.TESTNET,
+    chainId: 'testnet',
     name: 'NEAR Testnet',
     logo: '/chain-logos/near.png',
     rgb: '99, 125, 234',
@@ -73,7 +68,7 @@ export const NEAR_WALLETCONNECT_CHAIN_META: Record<
 
 export const WALLETCONNECT_SUPPORTED_CHAINS: Record<
   string,
-  WalletConnectChainMeta<unknown, WalletConnectChainStyle>
+  WalletConnectChainMeta<WalletConnectChainStyle>
 > = {
   ...EIP155_WALLETCONNECT_CHAIN_META,
   ...NEAR_WALLETCONNECT_CHAIN_META,
