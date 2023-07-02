@@ -1,6 +1,7 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { EthereumSigningMethod } from 'features/ethereum'
 import { NearSigningMethod } from 'features/near'
 
 export enum WalletConnectChainStyle {
@@ -59,4 +60,8 @@ export type WalletConnectSessionRequestCallback<T = unknown> = (
 
 export type NearSessionRequestHandlers = {
   readonly [key in NearSigningMethod]: WalletConnectSessionRequestCallback
+}
+
+export type EthereumSessionRequestHandlers = {
+  readonly [key in EthereumSigningMethod]: WalletConnectSessionRequestCallback
 }

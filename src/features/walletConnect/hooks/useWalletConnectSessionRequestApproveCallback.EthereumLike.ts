@@ -1,9 +1,39 @@
-import { WalletConnectSessionRequestCallbackParams } from 'features/walletConnect'
+import { throwIfInvalidEthereumSigningMethod } from 'features/ethereum'
+import {
+  useWalletConnectSessionRequestHandlersEthereumLike,
+  WalletConnectSessionRequestCallbackParams,
+} from 'features/walletConnect'
+import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
 export const useWalletConnectSessionRequestApproveCallbackEthereumLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
-) => Promise<unknown>) =>
-  React.useCallback(async () => {
-    throw new Error('EVM is currently unsupported.')
-  }, [])
+) => Promise<unknown>) => {
+  const walletsData = useWalletsData()
+  const handlers = useWalletConnectSessionRequestHandlersEthereumLike()
+
+  return React.useCallback(
+    async ({
+      web3wallet,
+      request,
+      rpc,
+    }: WalletConnectSessionRequestCallbackParams) => {
+      const { topic } = request
+
+      // TODO: idk if this is correct
+      const maybeSelectedWallet = walletsData[topic]
+
+      if (!maybeSelectedWallet)
+        throw new Error(`Unable to find wallet for topic "${topic}".`)
+
+      const method = request?.params?.request?.method
+
+      if (!throwIfInvalidEthereumSigningMethod(method)) return
+
+      const { [method]: handle } = handlers
+
+      return handle({ web3wallet, request, rpc })
+    },
+    [walletsData, handlers]
+  )
+}
