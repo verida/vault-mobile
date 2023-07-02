@@ -9,7 +9,7 @@ import * as React from 'react'
 export const useWalletConnectSessionApproveCallbackNearLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
-  const { nearNetwork: nearNetworkId, keystore } = useNearContext()
+  const { nearNetworkParsedCaipType, keystore } = useNearContext()
 
   const nearSessionRequestHandlers =
     useWalletConnectSessionRequestHandlersNearLike()
@@ -23,7 +23,7 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
       const { topic } = request
 
       const maybeNearAccount = await getMaybeNearAccountForWalletConnectTopic({
-        nearNetworkId,
+        nearNetworkParsedCaipType,
         topic,
         keystore,
       })
@@ -41,6 +41,6 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
 
       return handle({ web3wallet, request, rpc })
     },
-    [keystore, nearNetworkId, nearSessionRequestHandlers]
+    [keystore, nearNetworkParsedCaipType, nearSessionRequestHandlers]
   )
 }

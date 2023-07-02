@@ -1,3 +1,4 @@
+import { ParsedCaipType } from 'features/caip'
 import { NearKeystore } from 'features/near'
 import { KeyPair, transactions } from 'near-api-js'
 
@@ -19,7 +20,7 @@ export type NearDevAccount = {
 
 export type NearWalletInstance = {
   readonly publicKey: string
-  readonly networkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
   readonly keystore: NearKeystore
 }
 
@@ -32,7 +33,7 @@ export type NearContextValue = {
   readonly keystore: NearKeystore
   //readonly maybeNearWalletInstance: NearWalletInstance | undefined
   //readonly maybeNearWalletAccounts: readonly NearWalletAccountInfo[]
-  readonly nearNetwork: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
 }
 
 export enum NearSigningMethod {

@@ -1,23 +1,23 @@
+import { ParsedCaipType } from 'features/caip'
 import {
   getNearAccounts,
   NearKeystore,
-  NearNetworkId,
   NearTransaction,
   NearWalletAccountInfo,
 } from 'features/near'
 
 export async function getMaybeNearAccountForTransactionSignatory({
   keystore,
-  nearNetworkId,
+  nearNetworkParsedCaipType,
   transaction,
 }: {
   readonly keystore: NearKeystore
-  readonly nearNetworkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
   readonly transaction: NearTransaction
 }): Promise<NearWalletAccountInfo | undefined> {
   const accounts = await getNearAccounts({
     keystore,
-    networkId: nearNetworkId,
+    nearNetworkParsedCaipType,
   })
 
   const maybeAccount = accounts.find(

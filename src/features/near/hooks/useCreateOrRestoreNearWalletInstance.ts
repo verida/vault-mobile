@@ -1,7 +1,7 @@
+import { ParsedCaipType } from 'features/caip'
 import {
   createNearWalletInstance,
   NearKeystore,
-  NearNetworkId,
   NearWalletAccountInfo,
   NearWalletInstance,
   useMaybeSerializedNearWallet,
@@ -20,28 +20,28 @@ type State = Readonly<
 
 const loadingState = (): State => ({ loading: true })
 
-export function useMaybeNearWalletInstance(
-  state: State
-): NearWalletInstance | undefined {
-  if (state.loading || !('nearWalletInstance' in state)) return undefined
-
-  return state.nearWalletInstance
-}
-
-export function useMaybeNearWalletAccounts(
-  state: State
-): readonly NearWalletAccountInfo[] | undefined {
-  if (state.loading || !('nearWalletAccounts' in state)) return undefined
-
-  return state.nearWalletAccounts
-}
+//export function useMaybeNearWalletInstance(
+//  state: State
+//): NearWalletInstance | undefined {
+//  if (state.loading || !('nearWalletInstance' in state)) return undefined
+//
+//  return state.nearWalletInstance
+//}
+//
+//export function useMaybeNearWalletAccounts(
+//  state: State
+//): readonly NearWalletAccountInfo[] | undefined {
+//  if (state.loading || !('nearWalletAccounts' in state)) return undefined
+//
+//  return state.nearWalletAccounts
+//}
 
 export function useCreateOrRestoreNearWalletInstance({
   keystore,
-  nearNetwork,
+  nearNetworkParsedCaipType,
 }: {
   readonly keystore: NearKeystore
-  readonly nearNetwork: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
 }): State {
   const [state, setState] = React.useState<State>(loadingState)
 
@@ -76,7 +76,7 @@ export function useCreateOrRestoreNearWalletInstance({
               keystore,
               privateKey,
               publicKey,
-              networkId: nearNetwork,
+              nearNetworkParsedCaipType,
             })
 
           return setState({
@@ -96,7 +96,7 @@ export function useCreateOrRestoreNearWalletInstance({
           })
         }
       })(),
-    [keystore, maybeNearWalletData, nearNetwork]
+    [keystore, maybeNearWalletData, nearNetworkParsedCaipType]
   )
 
   return state

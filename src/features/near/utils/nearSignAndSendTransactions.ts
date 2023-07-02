@@ -1,25 +1,22 @@
-import {
-  NearKeystore,
-  NearNetworkId,
-  nearSignTransactions,
-} from 'features/near'
+import { ParsedCaipType } from 'features/caip'
+import { NearKeystore, nearSignTransactions } from 'features/near'
 import { providers, transactions } from 'near-api-js/lib'
 
 export const nearSignAndSendTransactions = async ({
   transactions: defaultTransactions,
   provider,
   keystore,
-  nearNetworkId,
+  nearNetworkParsedCaipType,
 }: {
   readonly provider: providers.Provider
   readonly transactions: readonly transactions.Transaction[]
   readonly keystore: NearKeystore
-  readonly nearNetworkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
 }) => {
   const signedTransactions = await nearSignTransactions({
     transactions: defaultTransactions,
     keystore,
-    nearNetworkId,
+    nearNetworkParsedCaipType,
   })
 
   return Promise.all(

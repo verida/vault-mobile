@@ -7,7 +7,8 @@ import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
-import { NearNetworkId, NearProvider } from 'features/near'
+import { parseCaipOrThrow } from 'features/caip'
+import { NearProvider } from 'features/near'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
@@ -69,6 +70,9 @@ Sentry.init({
   },
 })
 
+// TODO: @cawfree simplify
+const nearNetworkParsedCaipType = parseCaipOrThrow('near:testnet')
+
 function App() {
   const [loading, setLoading] = useState(true)
 
@@ -119,8 +123,8 @@ function App() {
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
-                        {/* TODO: @cawfree remember nearNetwork used to be "testnet", extract caip accordingly*/}
-                        <NearProvider nearNetwork={NearNetworkId.TESTNET}>
+                        <NearProvider
+                          nearNetworkParsedCaipType={nearNetworkParsedCaipType}>
                           <WalletConnectProvider>
                             <GestureHandlerRootView style={styles.flex}>
                               <RootNavigator />

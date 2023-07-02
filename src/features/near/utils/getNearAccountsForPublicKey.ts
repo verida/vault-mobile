@@ -1,17 +1,20 @@
-import { NearWalletAccountInfo, NearWalletInstance } from 'features/near'
-
-import { getNearAccounts } from './getNearAccounts'
+import {
+  getNearAccounts,
+  NearWalletAccountInfo,
+  NearWalletInstance,
+} from 'features/near'
 
 export async function getNearAccountsForPublicKey({
   keystore,
   publicKey,
-  networkId,
-}: Pick<NearWalletInstance, 'keystore' | 'publicKey' | 'networkId'>): Promise<
-  readonly NearWalletAccountInfo[]
-> {
+  nearNetworkParsedCaipType,
+}: Pick<
+  NearWalletInstance,
+  'keystore' | 'publicKey' | 'nearNetworkParsedCaipType'
+>): Promise<readonly NearWalletAccountInfo[]> {
   const accounts: readonly NearWalletAccountInfo[] = await getNearAccounts({
     keystore,
-    networkId,
+    nearNetworkParsedCaipType,
   })
 
   return accounts.filter(

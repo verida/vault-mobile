@@ -1,17 +1,18 @@
-import { getNearAccounts, NearKeystore, NearNetworkId } from 'features/near'
+import { ParsedCaipType } from 'features/caip'
+import { getNearAccounts, NearKeystore } from 'features/near'
 
 export async function getMaybeNearAccountForWalletConnectTopic({
   topic,
   keystore,
-  nearNetworkId,
+  nearNetworkParsedCaipType,
 }: {
   readonly topic: string
   readonly keystore: NearKeystore
-  readonly nearNetworkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
 }) {
   const nearAccounts = await getNearAccounts({
     keystore,
-    networkId: nearNetworkId,
+    nearNetworkParsedCaipType,
   })
 
   return nearAccounts.filter((e) => e.publicKey === topic)

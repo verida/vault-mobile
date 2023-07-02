@@ -2,13 +2,18 @@ import { NearWalletAccountInfo, NearWalletInstance } from 'features/near'
 
 export async function getNearAccounts({
   keystore,
-  networkId,
-}: Pick<NearWalletInstance, 'keystore' | 'networkId'>) {
-  const allAccounts = await keystore.getAccounts(networkId)
+  nearNetworkParsedCaipType,
+}: Pick<NearWalletInstance, 'keystore' | 'nearNetworkParsedCaipType'>) {
+  const allAccounts = await keystore.getAccounts(
+    nearNetworkParsedCaipType.chainId
+  )
 
   const maybeMatchingAccounts = await Promise.allSettled(
     allAccounts.map(async (accountId): Promise<NearWalletAccountInfo> => {
-      const keypair = await keystore.getKey(networkId, accountId)
+      const keypair = await keystore.getKey(
+        nearNetworkParsedCaipType.chainId,
+        accountId
+      )
       const publicKey = keypair.getPublicKey().toString()
       return { publicKey, accountId }
     })

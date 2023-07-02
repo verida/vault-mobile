@@ -23,7 +23,7 @@ import * as React from 'react'
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
 export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
-  const { nearNetwork: nearNetworkId, keystore } = useNearContext()
+  const { nearNetworkParsedCaipType, keystore } = useNearContext()
 
   return React.useMemo<NearSessionRequestHandlers>(
     () => ({
@@ -49,7 +49,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
           provider,
           accounts,
           keystore,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
         })
       },
       [NearSigningMethod.NEAR_SIGN_OUT]: async ({
@@ -67,14 +67,14 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         return nearSignOut({
           accounts,
           provider,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
           keystore,
         })
       },
       [NearSigningMethod.NEAR_GET_ACCOUNTS]: () =>
         getNearAccounts({
           keystore,
-          networkId: nearNetworkId,
+          nearNetworkParsedCaipType,
         }),
       [NearSigningMethod.NEAR_SIGN_TRANSACTION]: async ({
         request,
@@ -83,7 +83,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
 
         const [signedTransaction] = await nearSignTransactions({
           keystore,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
           transactions: [
             transactions.Transaction.decode(Buffer.from(transactionData)),
           ],
@@ -102,7 +102,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
 
         const account = await getMaybeNearAccountForTransactionSignatory({
           keystore,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
           transaction,
         })
 
@@ -128,7 +128,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
           transactions: [transactionToSignAndSend],
           provider,
           keystore,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
         })
 
         return result
@@ -138,7 +138,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
       }: WalletConnectSessionRequestCallbackParams) => {
         const signedTransactions = await nearSignTransactions({
           keystore,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
           transactions: request.params.request.params.transactions.map(
             (transactionData: Uint8Array) =>
               transactions.Transaction.decode(Buffer.from(transactionData))
@@ -168,7 +168,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
             transactions.map((transaction: NearTransaction) =>
               getMaybeNearAccountForTransactionSignatory({
                 keystore,
-                nearNetworkId,
+                nearNetworkParsedCaipType,
                 transaction,
               })
             )
@@ -187,7 +187,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         return nearSignAndSendTransactions({
           provider,
           keystore,
-          nearNetworkId,
+          nearNetworkParsedCaipType,
           transactions: await nearCreateTransactions({
             provider,
             account,
@@ -199,6 +199,6 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         })
       },
     }),
-    [keystore, nearNetworkId]
+    [keystore, nearNetworkParsedCaipType]
   )
 }

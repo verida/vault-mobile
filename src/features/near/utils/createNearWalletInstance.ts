@@ -1,8 +1,8 @@
+import { ParsedCaipType } from 'features/caip'
 import {
   createDevAccount,
   getNearAccountsForPublicKey,
   NearDevAccount,
-  NearNetworkId,
   NearWalletAccountInfo,
   NearWalletInstance,
 } from 'features/near'
@@ -13,12 +13,12 @@ export async function createNearWalletInstance({
   keystore,
   publicKey,
   privateKey,
-  networkId,
+  nearNetworkParsedCaipType,
   // just one account for now
   maxAccounts = 1,
 }: {
   readonly keystore: NearKeystore
-  readonly networkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
   readonly publicKey: string
   readonly privateKey: string
   readonly maxAccounts?: number
@@ -29,7 +29,7 @@ export async function createNearWalletInstance({
   const nearWalletAccounts = await getNearAccountsForPublicKey({
     publicKey,
     keystore,
-    networkId,
+    nearNetworkParsedCaipType,
   })
 
   for (
@@ -46,11 +46,11 @@ export async function createNearWalletInstance({
     if (keyPair.getPublicKey().toString() !== publicKey)
       throw new Error('Failed to createDevAccount for contiguous public key.')
 
-    await keystore.setKey(networkId, accountId, keyPair)
+    await keystore.setKey(nearNetworkParsedCaipType.chainId, accountId, keyPair)
   }
 
   const nearWalletInstance: NearWalletInstance = {
-    networkId,
+    nearNetworkParsedCaipType,
     keystore,
     publicKey,
   }

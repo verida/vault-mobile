@@ -1,6 +1,6 @@
+import { ParsedCaipType } from 'features/caip'
 import {
   NearKeystore,
-  NearNetworkId,
   useCreateOrRestoreNearWalletInstance,
 } from 'features/near'
 import * as React from 'react'
@@ -10,13 +10,16 @@ import { NearContextProvider } from '../contexts'
 
 export const NearProvider: React.FC<
   React.PropsWithChildren<{
-    readonly nearNetwork: NearNetworkId
+    readonly nearNetworkParsedCaipType: ParsedCaipType
   }>
-> = React.memo(function NearProvider({ children, nearNetwork }): JSX.Element {
+> = React.memo(function NearProvider({
+  children,
+  nearNetworkParsedCaipType,
+}): JSX.Element {
   const keystore = React.useMemo(() => new NearKeystore(), [])
 
   useCreateOrRestoreNearWalletInstance({
-    nearNetwork,
+    nearNetworkParsedCaipType,
     keystore,
   })
 
@@ -26,10 +29,10 @@ export const NearProvider: React.FC<
       children={children}
       value={React.useMemo<NearContextValue>(
         () => ({
-          nearNetwork,
+          nearNetworkParsedCaipType,
           keystore,
         }),
-        [nearNetwork, keystore]
+        [nearNetworkParsedCaipType, keystore]
       )}
     />
   )

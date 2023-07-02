@@ -1,8 +1,8 @@
 import Sentry from '@sentry/react-native'
+import { ParsedCaipType } from 'features/caip'
 import {
   nearCreateTransactions,
   NearKeystore,
-  NearNetworkId,
   nearSignAndSendTransactions,
   NearTransaction,
   NearWalletAccountInfo,
@@ -14,13 +14,13 @@ export const nearSignIn = async ({
   accounts,
   provider,
   keystore,
-  nearNetworkId,
+  nearNetworkParsedCaipType,
 }: {
   readonly permission: transactions.FunctionCallPermission
   readonly accounts: readonly NearWalletAccountInfo[]
   readonly provider: providers.Provider
   readonly keystore: NearKeystore
-  readonly nearNetworkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
 }): Promise<readonly NearWalletAccountInfo[]> =>
   (
     await Promise.all(
@@ -50,7 +50,7 @@ export const nearSignIn = async ({
             transactions: [transactionToSend],
             provider,
             keystore,
-            nearNetworkId,
+            nearNetworkParsedCaipType,
           })
 
           // HACK: Upon success, return the account that was created.

@@ -1,8 +1,8 @@
 import Sentry from '@sentry/react-native'
+import { ParsedCaipType } from 'features/caip'
 import {
   nearCreateTransactions,
   NearKeystore,
-  NearNetworkId,
   nearSignAndSendTransactions,
   NearWalletAccountInfo,
 } from 'features/near'
@@ -12,12 +12,12 @@ export async function nearSignOut({
   accounts,
   provider,
   keystore,
-  nearNetworkId,
+  nearNetworkParsedCaipType,
 }: {
   readonly accounts: readonly NearWalletAccountInfo[]
   readonly provider: providers.Provider
   readonly keystore: NearKeystore
-  readonly nearNetworkId: NearNetworkId
+  readonly nearNetworkParsedCaipType: ParsedCaipType
 }): Promise<readonly NearWalletAccountInfo[]> {
   return (
     await Promise.all(
@@ -42,7 +42,7 @@ export async function nearSignOut({
           await nearSignAndSendTransactions({
             transactions: [transaction],
             provider,
-            nearNetworkId,
+            nearNetworkParsedCaipType,
             keystore,
           })
 
