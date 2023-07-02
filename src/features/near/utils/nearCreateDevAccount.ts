@@ -6,7 +6,7 @@ import {
   nearKeyPairFromPrivateKey,
 } from 'features/near'
 
-export async function createDevAccount({
+export async function nearCreateDevAccount({
   nearNetworkParsedCaipType,
   privateKey,
 }: {

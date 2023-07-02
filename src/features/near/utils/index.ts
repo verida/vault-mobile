@@ -1,5 +1,5 @@
-export * from './createDevAccount'
-export * from './createNearWalletInstance'
+export * from './nearCreateDevAccount'
+export * from './nearCreateWalletInstance'
 export * from './getMaybeNearAccountForTransactionSignatory'
 export * from './getNearAccounts'
 export * from './getNearAccountsForPublicKey'

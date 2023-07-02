@@ -1,6 +1,6 @@
 import { ParsedCaipType } from 'features/caip'
 import {
-  createNearWalletInstance,
+  nearCreateWalletInstance,
   NearKeystore,
   NearWalletAccountInfo,
   NearWalletInstance,
@@ -72,7 +72,7 @@ export function useCreateOrRestoreNearWalletInstance({
             )
 
           const { nearWalletInstance, nearWalletAccounts } =
-            await createNearWalletInstance({
+            await nearCreateWalletInstance({
               keystore,
               privateKey,
               publicKey,
