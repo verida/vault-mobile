@@ -1,5 +1,6 @@
 import { throwIfInvalidEthereumSigningMethod } from 'features/ethereum'
 import {
+  getEthereumWalletForWalletConnectTopicOrThrow,
   useWalletConnectSessionRequestHandlersEthereumLike,
   WalletConnectSessionRequestCallbackParams,
 } from 'features/walletConnect'
@@ -22,11 +23,11 @@ export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
     }: WalletConnectSessionRequestCallbackParams) => {
       const { topic } = request
 
-      // TODO: idk if this is correct
-      const maybeSelectedWallet = walletsData[topic]
-
-      if (!maybeSelectedWallet)
-        throw new Error(`Unable to find wallet for topic "${topic}".`)
+      /* ensure wallet */
+      getEthereumWalletForWalletConnectTopicOrThrow({
+        topic,
+        walletsData,
+      })
 
       const method = request?.params?.request?.method
 

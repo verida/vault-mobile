@@ -1,4 +1,5 @@
 export * from './extractWalletConnectRpcOrThrow'
+export * from './getMaybeEthereumWalletForWalletConnectTopic'
 export * from './getMaybeNearAccountForWalletConnectTopic'
 export * from './getMaybeWalletConnectConfigForChainId'
 export * from './getMaybeWalletConnectRpcUriForChainId'
