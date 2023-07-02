@@ -44,7 +44,8 @@ const ENVIRONMENTS = {
       callType: 'gasless',
       web3Config: {
         callType: 'gasless',
-        rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
+        rpcUrl:
+          'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN',
         serverConfig: {
           headers: {
             'context-name': 'Verida: Vault',
@@ -57,7 +58,8 @@ const ENVIRONMENTS = {
         },
         endpointUrl: Config.NETWORK_ENDPOINT_URL,
       },
-      rpcUrl: 'https://rpc-mumbai.maticvigil.com/',
+      rpcUrl:
+        'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN',
     },
   },
   devnet: {

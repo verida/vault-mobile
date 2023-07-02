@@ -25,7 +25,8 @@ export const polygonIdTestnetConfig: PolygonIdPartialConfig = {
   polygonIdRevocationBaseUrl: '',
   polygonIdRevocationType:
     CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-  polygonIdRpcUrl: 'https://rpc-mumbai.maticvigil.com',
+  polygonIdRpcUrl:
+    'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN',
   polygonIdContractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4', // Mumbai address
 }
 
@@ -36,6 +37,7 @@ export const polygonIdMainnetConfig: PolygonIdPartialConfig = {
   polygonIdRevocationBaseUrl: '',
   polygonIdRevocationType:
     CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-  polygonIdRpcUrl: 'https://rpc-mainnet.maticvigil.com',
+  polygonIdRpcUrl:
+    'https://polygon-mainnet.g.alchemy.com/v2/CJgbQjPD-NUTcZNMf4jt-mwb-xOQMq6e',
   polygonIdContractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D', // Mainnet address
 }
