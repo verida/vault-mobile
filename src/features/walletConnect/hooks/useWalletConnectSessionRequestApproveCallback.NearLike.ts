@@ -1,24 +1,24 @@
 import { throwIfInvalidNearSigningMethod, useNearContext } from 'features/near'
 import {
   getMaybeNearAccountForWalletConnectTopic,
-  useSessionRequestHandlersNear,
+  useSessionRequestHandlersNearLike,
   WalletConnectSessionRequestCallbackParams,
 } from 'features/walletConnect'
 import * as React from 'react'
 
-export const useWalletConnectSessionRequestApproveCallbackNear = (): ((
+export const useWalletConnectSessionRequestApproveCallbackNearLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
   const { nearNetwork: nearNetworkId, keystore } = useNearContext()
 
-  const nearSessionRequestHandlers = useSessionRequestHandlersNear()
+  const nearSessionRequestHandlers = useSessionRequestHandlersNearLike()
 
   return React.useCallback(
     async ({
       web3wallet,
       request,
       rpc,
-    }: WalletConnectSessionRequestCallbackParams) => {
+    }: WalletConnectSessionRequestCallbackParams): Promise<unknown> => {
       const { topic } = request
 
       const maybeNearAccount = await getMaybeNearAccountForWalletConnectTopic({

@@ -1,5 +1,6 @@
-import type { NearNetworkId } from 'features/near'
+import { NearNetworkId } from 'features/near'
 import type { WalletConnectChainMeta } from 'features/walletConnect'
+import { WalletConnectChainStyle } from 'features/walletConnect'
 
 const WALLETCONNECT_PROTOCOL = 'wc:'
 
@@ -37,11 +38,12 @@ export const NEAR_CHAIN_TESTNET = 'near:testnet'
 
 export const NEAR_WALLETCONNECT_CHAIN_META: Record<
   string,
-  WalletConnectChainMeta<NearNetworkId>
+  WalletConnectChainMeta<NearNetworkId, WalletConnectChainStyle.NEAR_LIKE>
 > = {
   /* near:testnet */
   [NEAR_CHAIN_TESTNET]: {
-    chainId: 'testnet',
+    style: WalletConnectChainStyle.NEAR_LIKE,
+    chainId: NearNetworkId.TESTNET,
     name: 'NEAR Testnet',
     logo: '/chain-logos/near.png',
     rgb: '99, 125, 234',
@@ -51,7 +53,7 @@ export const NEAR_WALLETCONNECT_CHAIN_META: Record<
 
 export const WALLETCONNECT_SUPPORTED_CHAINS: Record<
   string,
-  WalletConnectChainMeta<unknown>
+  WalletConnectChainMeta<unknown, WalletConnectChainStyle>
 > = {
   ...NEAR_WALLETCONNECT_CHAIN_META,
 }

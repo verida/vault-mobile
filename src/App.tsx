@@ -7,7 +7,7 @@ import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
-import { NearProvider } from 'features/near'
+import { NearNetworkId, NearProvider } from 'features/near'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
@@ -119,7 +119,7 @@ function App() {
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
-                        <NearProvider nearNetwork='testnet'>
+                        <NearProvider nearNetwork={NearNetworkId.TESTNET}>
                           <WalletConnectProvider>
                             <GestureHandlerRootView style={styles.flex}>
                               <RootNavigator />

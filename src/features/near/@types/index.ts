@@ -11,7 +11,9 @@ export type SerializedNearWallet = {
 // TODO: Is this a Verida concept or Near?
 // TODO: Reinforce
 // TODO: Branded type for <Blockchain:VeridaNetwork>
-export type NearNetworkId = 'testnet'
+export enum NearNetworkId {
+  TESTNET = 'testnet',
+}
 
 export type NearDevAccount = {
   readonly accountId: string

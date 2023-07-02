@@ -1,17 +1,15 @@
 import Sentry from '@sentry/react-native'
-import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { NearSigningMethod } from 'features/near'
 import {
   ActiveSession,
+  getMaybeWalletConnectConfigForChainId,
+  useWalletConnectDataFormatting,
   useWalletConnectSessionApproveCallback,
   useWalletConnectSessionRejectCallback,
-  WALLETCONNECT_SUPPORTED_CHAINS,
   WalletConnectSessionInfoCard,
   WalletConnectSessionRequestCallbackParams,
   WalletConnectTransactionRequestModalRow,
 } from 'features/walletConnect'
 import { useModal } from 'hooks'
-import { transactions } from 'near-api-js/lib'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
@@ -21,124 +19,6 @@ import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-// TODO: This is near specific
-const formatTransaction = (transaction: Uint8Array) => {
-  const tx = transactions.Transaction.decode(Buffer.from(transaction))
-
-  return {
-    signerId: tx.signerId,
-    receiverId: tx.receiverId,
-    publicKey: tx.publicKey.toString(),
-    actions: tx.actions.map((action) => {
-      switch (action.enum) {
-        case 'createAccount': {
-          return {
-            type: 'CreateAccount',
-            params: action.createAccount,
-          }
-        }
-        case 'deployContract': {
-          return {
-            type: 'DeployContract',
-            params: {
-              ...action.deployContract,
-              args: Buffer.from(action.deployContract.code).toString(),
-            },
-          }
-        }
-        case 'functionCall': {
-          return {
-            type: 'FunctionCall',
-            params: {
-              ...action.functionCall,
-              args: JSON.parse(
-                Buffer.from(action.functionCall.args).toString()
-              ),
-            },
-          }
-        }
-        case 'transfer': {
-          return {
-            type: 'Transfer',
-            params: action.transfer,
-          }
-        }
-        case 'stake': {
-          return {
-            type: 'Stake',
-            params: {
-              ...action.stake,
-              publicKey: action.stake.publicKey.toString(),
-            },
-          }
-        }
-        case 'addKey': {
-          return {
-            type: 'AddKey',
-            params: {
-              ...action.addKey,
-              publicKey: action.addKey.publicKey.toString(),
-            },
-          }
-        }
-        case 'deleteKey': {
-          return {
-            type: 'DeleteKey',
-            params: {
-              ...action.deleteKey,
-              publicKey: action.deleteKey.publicKey.toString(),
-            },
-          }
-        }
-        case 'deleteAccount': {
-          return {
-            type: 'DeleteAccount',
-            params: action.deleteAccount,
-          }
-        }
-        default:
-          return {
-            type: action.enum,
-            params: undefined, //action[action.enum],
-          }
-      }
-    }),
-  }
-}
-
-// TODO: make conditional for different blockchains
-const formatParams = (
-  params: Web3WalletTypes.EventArguments['session_request']['params']['request']['params']
-) => {
-  switch (params.request.method) {
-    case NearSigningMethod.NEAR_SIGN_TRANSACTION:
-      return {
-        ...params,
-        request: {
-          ...params.request,
-          params: {
-            ...params.request.params,
-            transaction: formatTransaction(params.request.params.transaction),
-          },
-        },
-      }
-    case NearSigningMethod.NEAR_SIGN_TRANSACTIONS:
-      return {
-        ...params,
-        request: {
-          ...params.request,
-          params: {
-            ...params.request.params,
-            transactions:
-              params.request.params.transactions.map(formatTransaction),
-          },
-        },
-      }
-    default:
-      return params
-  }
-}
 
 export const WalletConnectTransactionRequestModal = React.memo(
   function WalletConnectTransactionRequestModal({
@@ -153,6 +33,8 @@ export const WalletConnectTransactionRequestModal = React.memo(
 
     const shouldApprove = useWalletConnectSessionApproveCallback()
     const shouldReject = useWalletConnectSessionRejectCallback()
+
+    const { formatTransactionData } = useWalletConnectDataFormatting()
 
     const onApprove = React.useCallback(async () => {
       if (!request) return
@@ -197,12 +79,7 @@ export const WalletConnectTransactionRequestModal = React.memo(
 
     const maybeRelayProtocol = activeSession?.relay?.protocol
 
-    // TODO: dedicated function
-    const maybeSupportedChain = Object.values(
-      WALLETCONNECT_SUPPORTED_CHAINS
-    ).find(
-      ({ chainId: maybeMatchingChainId }) => maybeMatchingChainId === chainId
-    )
+    const maybeSupportedChain = getMaybeWalletConnectConfigForChainId(chainId)
 
     const maybeChainName = maybeSupportedChain?.name
 
@@ -249,7 +126,7 @@ export const WalletConnectTransactionRequestModal = React.memo(
 
               <WalletConnectTransactionRequestModalRow
                 left='Data'
-                right={formatParams(request)}
+                right={formatTransactionData({ web3wallet, request })}
               />
 
               <Spacer height={12} />

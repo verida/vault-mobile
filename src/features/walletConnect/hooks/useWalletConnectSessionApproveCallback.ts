@@ -1,17 +1,19 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import {
   extractWalletConnectRpcOrThrow,
+  getMaybeWalletConnectConfigForChainId,
   resolveSessionRequest,
-  useWalletConnectSessionRequestApproveCallbackEthereum,
-  useWalletConnectSessionRequestApproveCallbackNear,
+  useWalletConnectSessionRequestApproveCallbackEthereumLike,
+  useWalletConnectSessionRequestApproveCallbackNearLike,
+  WalletConnectChainStyle,
 } from 'features/walletConnect'
 import * as React from 'react'
 
-// TODO: make sure wherever we call we are handling with reject
 export function useWalletConnectSessionApproveCallback() {
-  const ethereumApprove =
-    useWalletConnectSessionRequestApproveCallbackEthereum()
-  const nearApprove = useWalletConnectSessionRequestApproveCallbackNear()
+  const ethereumLikeApprove =
+    useWalletConnectSessionRequestApproveCallbackEthereumLike()
+  const nearLikeApprove =
+    useWalletConnectSessionRequestApproveCallbackNearLike()
 
   const chainSpecificApproveOrThrow = React.useCallback(
     (
@@ -23,15 +25,27 @@ export function useWalletConnectSessionApproveCallback() {
         request
       )
 
-      // TODO: @cawfree We don't know what these are yet.
-      if (chainId === 'ethereum')
-        return ethereumApprove({ web3wallet, request, rpc })
+      const maybeWalletConnectConfig =
+        getMaybeWalletConnectConfigForChainId(chainId)
 
-      if (chainId === 'near') return nearApprove({ web3wallet, request, rpc })
+      if (!maybeWalletConnectConfig)
+        throw new Error(
+          `Unable to find walletConnectConfig for chainId "${chainId}".`
+        )
+
+      const { style } = maybeWalletConnectConfig
+
+      // TODO: Make this static compilation error
+
+      if (style === WalletConnectChainStyle.EVM_LIKE)
+        return ethereumLikeApprove({ web3wallet, request, rpc })
+
+      if (style === WalletConnectChainStyle.NEAR_LIKE)
+        return nearLikeApprove({ web3wallet, request, rpc })
 
       throw new Error(`Sorry, ${chainId} is not supported.`)
     },
-    [ethereumApprove, nearApprove]
+    [ethereumLikeApprove, nearLikeApprove]
   )
 
   return React.useCallback(

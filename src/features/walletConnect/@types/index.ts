@@ -3,6 +3,11 @@ import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { NearSigningMethod } from 'features/near'
 
+export enum WalletConnectChainStyle {
+  EVM_LIKE = 'EVM_LIKE',
+  NEAR_LIKE = 'NEAR_LIKE',
+}
+
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>
 >
@@ -22,7 +27,11 @@ export type WalletConnectContextValue = {
 }
 
 // TODO: Hasn't this been defined somewhere else?
-export type WalletConnectChainMeta<ChainId> = {
+export type WalletConnectChainMeta<
+  ChainId,
+  ChainStyle extends WalletConnectChainStyle
+> = {
+  readonly style: ChainStyle
   readonly chainId: ChainId
   readonly name: string
   readonly logo: string

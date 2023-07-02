@@ -22,7 +22,7 @@ import * as React from 'react'
 
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
-export function useSessionRequestHandlersNear(): NearSessionRequestHandlers {
+export function useSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
   const { nearNetwork: nearNetworkId, keystore } = useNearContext()
 
   return React.useMemo<NearSessionRequestHandlers>(
