@@ -1,5 +1,6 @@
+import { ParsedCaipType, stringifyCaip } from 'features/caip'
 import {
-  useActiveWalletConnectSessionChainAccountsVeridaChainIds,
+  useActiveWalletConnectSessionChainAccountsCaipTypes,
   WalletConnectSessionNamespacesChainId,
 } from 'features/walletConnect'
 import * as React from 'react'
@@ -16,22 +17,21 @@ export const WalletConnectSessionChainCard = React.memo(
     readonly chain: string
   }): JSX.Element {
     // TODO: wtf chain/chains? what is going on
-    const { veridaChainIds } =
-      useActiveWalletConnectSessionChainAccountsVeridaChainIds({
-        chain,
-        walletConnectSessionKey,
-      })
+    const { caipTypes } = useActiveWalletConnectSessionChainAccountsCaipTypes({
+      chain,
+      walletConnectSessionKey,
+    })
 
     return (
       <React.Fragment
         // eslint-disable-next-line react/no-children-prop
-        children={veridaChainIds.map((veridaChainId: string) => (
+        children={caipTypes.map((parsedCaipType: ParsedCaipType) => (
           <WalletConnectSessionNamespacesChainId
-            key={veridaChainId}
+            key={stringifyCaip(parsedCaipType)}
             walletConnectSessionKey={walletConnectSessionKey}
             // Yikes.
             chain={chain}
-            veridaChainId={veridaChainId}
+            parsedCaipType={parsedCaipType}
           />
         ))}
       />

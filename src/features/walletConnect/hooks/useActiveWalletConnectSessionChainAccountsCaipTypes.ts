@@ -1,7 +1,9 @@
+import { ParsedCaipType } from 'features/caip'
+import { maybeParseCaip } from 'features/caip/utils/parseCaip'
 import { useActiveWalletConnectSessionChainAccounts } from 'features/walletConnect'
 import * as React from 'react'
 
-export function useActiveWalletConnectSessionChainAccountsVeridaChainIds({
+export function useActiveWalletConnectSessionChainAccountsCaipTypes({
   chain,
   walletConnectSessionKey,
 }: {
@@ -13,7 +15,7 @@ export function useActiveWalletConnectSessionChainAccountsVeridaChainIds({
     walletConnectSessionKey,
   })
 
-  const veridaChainIds = React.useMemo(
+  const caipTypes = React.useMemo<readonly ParsedCaipType[]>(
     // TODO: Make this reusable, we likely do this in a lot of places
     () => [
       ...new Set(
@@ -21,27 +23,22 @@ export function useActiveWalletConnectSessionChainAccountsVeridaChainIds({
           if (typeof maybeAccount !== 'string' || !maybeAccount.length)
             return []
 
-          const [maybeType, maybeChain] = maybeAccount.split(':')
+          const maybeCaip = maybeParseCaip(maybeAccount)
 
-          const accountIsInvalid = Boolean(!maybeType || !maybeChain)
-
-          accountIsInvalid &&
+          if (!maybeCaip) {
             // eslint-disable-next-line no-console
             console.warn(
               `Encountered unsupported account, "${String(maybeAccount)}".`
             )
+            return []
+          }
 
-          if (accountIsInvalid) return []
-
-          // TODO: this is common logic, we should be connecting these areas
-          const chainId = `${maybeType}:${maybeChain}`
-
-          return [chainId]
+          return [maybeCaip]
         })
       ),
     ],
     [accounts]
   )
 
-  return { veridaChainIds }
+  return { caipTypes }
 }

@@ -1,5 +1,6 @@
 export type VeridaWalletType = 'single' | 'multi'
-export type CaipWalletType = 'eip155' | 'near'
+// TODO: @cawfree, experiment with removing
+export type SupportedCaipProtocol = 'eip155' | 'near'
 
 // TODO: @cawfree where you introduced privateKey, you were likely interacting with a VeridaWallet, double check this
 export interface VeridaWalletAccount {
@@ -11,7 +12,10 @@ export interface VeridaWalletAccount {
   publicKey: string
 }
 
-export type VeridaWalletAccounts = Record<CaipWalletType, VeridaWalletAccount>
+export type VeridaWalletAccounts = Record<
+  SupportedCaipProtocol,
+  VeridaWalletAccount
+>
 
 export interface VeridaWallet {
   label: string

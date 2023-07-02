@@ -6,13 +6,11 @@ export function maybeParseCaip(
   if (typeof value !== 'string' || !value.length || !value.includes(':'))
     return undefined
 
-  const [protocol, chainId, ...extras] = value.split(':')
-
-  if (extras.length) return undefined
+  const [protocol, chainId, maybeAddress] = value.split(':')
 
   if (!protocol.length || !chainId.length) return undefined
 
-  return { protocol, chainId }
+  return { protocol, chainId, address: maybeAddress }
 }
 
 export function parseCaipOrThrow(value: string | null | undefined) {

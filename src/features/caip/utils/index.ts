@@ -1,2 +1,4 @@
-export * from './getCaipWalletTypeFriendlyName'
-export * from './isCaipWalletType'
+export * from './getSupportedCaipProtocolFriendlyName'
+export * from './isSupportedCaipProtocol'
+export * from './parseCaip'
+export * from './stringifyCaip'

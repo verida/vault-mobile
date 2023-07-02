@@ -1,5 +1,9 @@
 import { EnvironmentType } from '@verida/types'
-import { getCaipWalletTypeFriendlyName, isCaipWalletType } from 'features/caip'
+import {
+  getSupportedCaipProtocolFriendlyName,
+  isSupportedCaipProtocol,
+  maybeParseCaip,
+} from 'features/caip'
 import { isWatchedWallet } from 'features/wallet'
 import * as React from 'react'
 import { VeridaWalletAccount, VeridaWalletAccounts } from 'types'
@@ -23,10 +27,11 @@ const veridaWalletAccountsToDropdownOptions = ({
       string,
       VeridaWalletAccount
     ]): readonly Option[] => {
-      // TODO: we are doing this a lot, use a common method
-      const [chain] = key.split(':')
+      const maybeParsedCaip = maybeParseCaip(key)
 
-      if (!isCaipWalletType(chain)) return []
+      const blockchain = maybeParsedCaip?.protocol
+
+      if (!isSupportedCaipProtocol(blockchain)) return []
 
       const disabled =
         !includesWatchedWallets && isWatchedWallet(veridaWalletAccount)
@@ -35,7 +40,7 @@ const veridaWalletAccountsToDropdownOptions = ({
         label: veridaWalletAccount.address,
         value: veridaWalletAccount.address,
         disabled,
-        flag: getCaipWalletTypeFriendlyName(chain, environmentType),
+        flag: getSupportedCaipProtocolFriendlyName(blockchain, environmentType),
       }
 
       return [option]

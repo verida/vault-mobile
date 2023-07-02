@@ -1,3 +1,4 @@
+import { ParsedCaipType, stringifyCaip } from 'features/caip'
 import {
   useActiveWalletConnectSessionNamespace,
   WALLETCONNECT_SUPPORTED_CHAINS,
@@ -7,14 +8,15 @@ import { StyleSheet, Text, View } from 'react-native'
 
 import text from 'styles/text'
 
+// TODO: @cawfree seek to remove CaipWalletType (deprecated)
 export const WalletConnectSessionNamespacesChainId = React.memo(
   function WalletConnectSessionNamespacesChainId({
     chain,
-    veridaChainId,
+    parsedCaipType,
     walletConnectSessionKey,
   }: {
     readonly chain: string /* walletConnect */
-    readonly veridaChainId: string /* verida */
+    readonly parsedCaipType: ParsedCaipType
     readonly walletConnectSessionKey: string
   }): JSX.Element {
     const maybeNamespace = useActiveWalletConnectSessionNamespace({
@@ -36,10 +38,11 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
       [maybeNamespace]
     )
 
+    const caip = stringifyCaip(parsedCaipType, true)
+
     // TODO: This is https://github.com/verida/vault-mobile/blob/1d34080ed6ca9e8a821e0c7c9c33c2e62dc88a42/src/wallet-connect/helpers/HelperUtil.ts#L106
     //       Verify if we need to generalize this usage.
-    const maybeChainName =
-      WALLETCONNECT_SUPPORTED_CHAINS[veridaChainId]?.name || veridaChainId
+    const maybeChainName = WALLETCONNECT_SUPPORTED_CHAINS[caip]?.name || caip
 
     return (
       <View style={styles.container}>
