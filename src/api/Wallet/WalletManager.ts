@@ -16,6 +16,9 @@ import { Blockchain as nearBlockchain } from './nearBlockchain'
 
 const bip39 = require('bip39')
 
+const NAMESPACES_NO_LONGER_SUPPORTED = ['algorand']
+
+// TODO: @cawfree extend support
 const NAMESPACES: Record<string, IBlockchain> = {
   eip155: eip1558Blockchain,
   near: nearBlockchain,
@@ -86,6 +89,18 @@ export class WalletManager {
 
     Object.values(blockchainNetworks).forEach(
       (blockchainNetwork: BlockchainNetwork): void => {
+        // TODO: @cawfree is this the correct migration pattern? what to do with
+        //       old algorand wallets? This might be unhelpful for users who wish
+        //       to exit out.
+        if (
+          NAMESPACES_NO_LONGER_SUPPORTED.includes(blockchainNetwork.namespace)
+        ) {
+          // eslint-disable-next-line no-console
+          return console.warn(
+            `Refusing to process "${blockchainNetwork.chainId}". Algorand is no longer supported.`
+          )
+        }
+
         if (
           !wallet.multiChain &&
           blockchainNetwork.chainId !== wallet.chainId
