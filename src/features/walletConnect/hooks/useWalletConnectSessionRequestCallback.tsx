@@ -1,10 +1,10 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
 
 import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
-import { useWalletConnectContext } from '../contexts'
 import {
   extractWalletConnectRpcOrThrow,
   isWalletConnectRequestRequiresVisualConfirmation,
@@ -23,8 +23,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
   const approve = useWalletConnectSessionApproveCallback()
   const reject = useWalletConnectSessionRejectCallback()
 
-  const { activeSessions } = useWalletConnectContext()
-
   return React.useCallback(
     async (
       web3wallet: IWeb3Wallet,
@@ -35,6 +33,9 @@ export const useWalletConnectSessionRequestCallback = (): ((
 
         if (isWalletConnectRequestRequiresVisualConfirmation(request)) {
           const { topic } = request
+
+          const activeSessions: ActiveSessions =
+            await web3wallet.getActiveSessions()
 
           const { [topic]: maybeActiveSession } = activeSessions
 
@@ -58,6 +59,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
         return reject(web3wallet, request, e)
       }
     },
-    [activeSessions, approve, reject, showModal]
+    [approve, reject, showModal]
   )
 }
