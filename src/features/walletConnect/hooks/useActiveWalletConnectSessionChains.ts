@@ -1,5 +1,6 @@
-import { useActiveWalletConnectSessionNamespaces } from 'features/walletConnect'
 import * as React from 'react'
+
+import { useActiveWalletConnectSessionNamespaces } from './useActiveWalletConnectSessionNamespaces'
 
 // WARNING: These are WalletConnect chains and not Verida chainIds.
 export function useActiveWalletConnectSessionChains({

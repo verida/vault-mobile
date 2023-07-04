@@ -1,8 +1,5 @@
-import {
-  ActiveSessions,
-  MaybeActiveSession,
-  useWalletConnectContext,
-} from 'features/walletConnect'
+import { ActiveSessions, MaybeActiveSession } from '../@types'
+import { useWalletConnectContext } from '../contexts'
 
 export function getMaybeWalletConnectActiveSessionByKey({
   activeSessions,

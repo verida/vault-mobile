@@ -2,21 +2,22 @@ import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import {
-  ActiveSessions,
-  getMaybeWalletConnectActiveSessionByKey,
-  isWalletConnectConnection,
-  isWalletConnectV2Connection,
-  useCreateWeb3Wallet,
-  useMaybeWeb3Wallet,
-  useWalletConnectSessionRequestCallback,
-  WalletConnectContextProvider,
-  WalletConnectContextValue,
-} from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 
+import { ActiveSessions, WalletConnectContextValue } from '../@types'
+import {
+  isWalletConnectConnection,
+  isWalletConnectV2Connection,
+} from '../constants'
+import { WalletConnectContextProvider } from '../contexts'
+import {
+  getMaybeWalletConnectActiveSessionByKey,
+  useCreateWeb3Wallet,
+  useMaybeWeb3Wallet,
+  useWalletConnectSessionRequestCallback,
+} from '../hooks'
 import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
 
 const DEFAULT_ACTIVE_SESSIONS: ActiveSessions = Object.freeze({})

@@ -1,6 +1,7 @@
 import { ParsedCaipType } from 'features/caip'
-import { NearKeystore } from 'features/near'
 import { KeyPair, transactions } from 'near-api-js'
+
+import { NearKeystore } from '../classes/Near.Keystore'
 
 // https://github.com/verida/vault-mobile/blob/develop/src/wallet-connect/controllers/near.ts
 // TODO: This is supposed to represent the data we save in Redux for Near wallets. Is this correct?
@@ -9,6 +10,8 @@ export type SerializedNearWallet = {
   readonly privateKey: string
 }
 
+// TODO: sanity check usage
+// TODO: rename to reflect caip
 export enum NearNetworkId {
   TESTNET = 'near:testnet',
 }

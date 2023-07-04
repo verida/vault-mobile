@@ -1,12 +1,10 @@
 import { ParsedCaipType } from 'features/caip'
-import {
-  nearCreateWalletInstance,
-  NearKeystore,
-  NearWalletAccountInfo,
-  NearWalletInstance,
-  useMaybeSerializedNearWallet,
-} from 'features/near'
 import * as React from 'react'
+
+import { NearWalletAccountInfo, NearWalletInstance } from '../@types'
+import { NearKeystore } from '../classes'
+import { nearCreateWalletInstance } from '../utils'
+import { useMaybeSerializedNearWallet } from './useMaybeSerializedNearWallet'
 
 type State = Readonly<
   | { loading: true }

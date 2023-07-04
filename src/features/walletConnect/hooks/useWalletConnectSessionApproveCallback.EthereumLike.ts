@@ -1,11 +1,10 @@
 import { throwIfInvalidEthereumSigningMethod } from 'features/ethereum'
-import {
-  getEthereumWalletForWalletConnectTopicOrThrow,
-  useWalletConnectSessionRequestHandlersEthereumLike,
-  WalletConnectSessionRequestCallbackParams,
-} from 'features/walletConnect'
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
+
+import { WalletConnectSessionRequestCallbackParams } from '../@types'
+import { getEthereumWalletForWalletConnectTopicOrThrow } from '../utils'
+import { useWalletConnectSessionRequestHandlersEthereumLike } from './useWalletConnectSessionRequestHandlers.EthereumLike'
 
 // TODO: rename EthereumLike to EIP155Like
 

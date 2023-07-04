@@ -1,10 +1,9 @@
 import { throwIfInvalidNearSigningMethod, useNearContext } from 'features/near'
-import {
-  getMaybeNearAccountForWalletConnectTopic,
-  useWalletConnectSessionRequestHandlersNearLike,
-  WalletConnectSessionRequestCallbackParams,
-} from 'features/walletConnect'
 import * as React from 'react'
+
+import { WalletConnectSessionRequestCallbackParams } from '../@types'
+import { getMaybeNearAccountForWalletConnectTopic } from '../utils'
+import { useWalletConnectSessionRequestHandlersNearLike } from './useWalletConnectSessionRequestHandlers.NearLike'
 
 export const useWalletConnectSessionApproveCallbackNearLike = (): ((
   params: WalletConnectSessionRequestCallbackParams

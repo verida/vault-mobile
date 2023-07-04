@@ -1,11 +1,12 @@
 import Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
-import { useWalletConnectContext } from 'features/walletConnect'
 import * as React from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 
 import Button from 'components/Button'
+
+import { useWalletConnectContext } from '../contexts'
 
 const defaultReason: ErrorResponse = getSdkError('USER_DISCONNECTED')
 

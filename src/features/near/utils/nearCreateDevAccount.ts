@@ -1,10 +1,9 @@
 import * as Sentry from '@sentry/react-native'
 import { ParsedCaipType } from 'features/caip'
-import {
-  isNearTestnet,
-  NearDevAccount,
-  nearKeyPairFromPrivateKey,
-} from 'features/near'
+
+import { NearDevAccount } from '../@types'
+import { isNearTestnet } from './isNearTestnet'
+import { nearKeyPairFromPrivateKey } from './nearKeyPairFromPrivateKey'
 
 export async function nearCreateDevAccount({
   nearNetworkParsedCaipType,

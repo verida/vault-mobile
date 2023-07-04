@@ -1,13 +1,10 @@
 import { parseCaipOrThrow, ParsedCaipType } from 'features/caip'
-import {
-  NearKeystore,
-  NearNetworkId,
-  useCreateOrRestoreNearWalletInstance,
-} from 'features/near'
 import * as React from 'react'
 
-import { NearContextValue } from '../@types'
+import { NearContextValue, NearNetworkId } from '../@types'
+import { NearKeystore } from '../classes'
 import { NearContextProvider } from '../contexts'
+import { useCreateOrRestoreNearWalletInstance } from '../hooks'
 
 const defaultNearNetworkParsedCaipType = parseCaipOrThrow(NearNetworkId.TESTNET)
 

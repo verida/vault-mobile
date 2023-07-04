@@ -1,13 +1,13 @@
 import { ParsedCaipType } from 'features/caip'
+
 import {
-  getNearAccountsForPublicKey,
-  nearCreateDevAccount,
   NearDevAccount,
   NearWalletAccountInfo,
   NearWalletInstance,
-} from 'features/near'
-
+} from '../@types'
 import { NearKeystore } from '../classes'
+import { getNearAccountsForPublicKey } from './getNearAccountsForPublicKey'
+import { nearCreateDevAccount } from './nearCreateDevAccount'
 
 export async function nearCreateWalletInstance({
   keystore,

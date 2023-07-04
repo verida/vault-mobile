@@ -1,5 +1,6 @@
-import { useActiveWalletConnectSession } from 'features/walletConnect'
 import * as React from 'react'
+
+import { useActiveWalletConnectSession } from './useActiveWalletConnectSession'
 
 export function useActiveWalletConnectSessionExpiry({
   walletConnectSessionKey,

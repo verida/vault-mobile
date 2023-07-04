@@ -1,4 +1,4 @@
-import { useActiveWalletConnectSession } from 'features/walletConnect'
+import { useActiveWalletConnectSession } from './useActiveWalletConnectSession'
 
 export function useActiveWalletConnectSessionPeerId({
   walletConnectSessionKey,

@@ -1,11 +1,14 @@
+import * as React from 'react'
+
+import {
+  WalletConnectChainStyle,
+  WalletConnectSessionRequestCallbackParams,
+} from '../@types'
 import {
   extractWalletConnectRpcOrThrow,
   getWalletConnectConfigForChainIdOrThrow,
-  useWalletConnectDataFormattingNearLike,
-  WalletConnectChainStyle,
-  WalletConnectSessionRequestCallbackParams,
-} from 'features/walletConnect'
-import * as React from 'react'
+} from '../utils'
+import { useWalletConnectDataFormattingNearLike } from './useWalletConnectDataFormatting.NearLike'
 
 export function useWalletConnectDataFormatting() {
   const formatTransactionDataNearLike = useWalletConnectDataFormattingNearLike()

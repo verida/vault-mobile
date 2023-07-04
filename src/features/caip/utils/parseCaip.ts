@@ -1,4 +1,4 @@
-import { ParsedCaipType } from 'features/caip/@types'
+import { ParsedCaipType } from '../@types'
 
 export function maybeParseCaip(
   value: string | null | undefined

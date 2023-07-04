@@ -1,8 +1,9 @@
-import { SerializedNearWallet } from 'features/near'
 import { useSelector } from 'react-redux'
 
 import { RootState } from 'reduxStore/types'
 import { getWalletsData } from 'reduxStore/wallet/selectors'
+
+import { SerializedNearWallet } from '../@types'
 
 export function useMaybeSerializedNearWallet():
   | SerializedNearWallet

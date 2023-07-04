@@ -13,12 +13,13 @@ import {
   NearWalletAccountInfo,
   useNearContext,
 } from 'features/near'
+import { providers, transactions } from 'near-api-js/lib'
+import * as React from 'react'
+
 import {
   NearSessionRequestHandlers,
   WalletConnectSessionRequestCallbackParams,
-} from 'features/walletConnect'
-import { providers, transactions } from 'near-api-js/lib'
-import * as React from 'react'
+} from '../@types'
 
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 

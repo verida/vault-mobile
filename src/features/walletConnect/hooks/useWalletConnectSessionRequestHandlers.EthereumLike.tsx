@@ -1,13 +1,14 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
 import { EthereumSigningMethod } from 'features/ethereum'
-import {
-  EthereumSessionRequestHandlers,
-  getEthereumWalletForWalletConnectTopicOrThrow,
-  WalletConnectSessionRequestCallbackParams,
-} from 'features/walletConnect'
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
+
+import {
+  EthereumSessionRequestHandlers,
+  WalletConnectSessionRequestCallbackParams,
+} from '../@types'
+import { getEthereumWalletForWalletConnectTopicOrThrow } from '../utils'
 
 const getEthereumWalletOrThrow = ({
   rpc,

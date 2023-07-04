@@ -1,10 +1,11 @@
-import { MaybeActiveSession } from 'features/walletConnect'
 import * as React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
 import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import iconStyle from 'styles/icon'
+
+import { MaybeActiveSession } from '../@types'
 
 export const WalletConnectSessionInfoCard = React.memo(
   function WalletConnectSessionInfoCard({

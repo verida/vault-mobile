@@ -1,7 +1,8 @@
 import { ParsedCaipType } from 'features/caip'
 import { maybeParseCaip } from 'features/caip/utils/parseCaip'
-import { useActiveWalletConnectSessionChainAccounts } from 'features/walletConnect'
 import * as React from 'react'
+
+import { useActiveWalletConnectSessionChainAccounts } from './useActiveWalletConnectSessionChainAccounts'
 
 export function useActiveWalletConnectSessionChainAccountsCaipTypes({
   chain,

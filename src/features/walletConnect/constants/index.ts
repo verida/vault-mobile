@@ -1,8 +1,8 @@
 import { EIP155NetworkId } from 'features/ethereum'
 import { NearNetworkId } from 'features/near'
-import type { WalletConnectChainMeta } from 'features/walletConnect'
-import { WalletConnectChainStyle } from 'features/walletConnect'
 import Config from 'react-native-config'
+
+import { WalletConnectChainMeta, WalletConnectChainStyle } from '../@types'
 
 const WALLETCONNECT_PROTOCOL = 'wc:'
 

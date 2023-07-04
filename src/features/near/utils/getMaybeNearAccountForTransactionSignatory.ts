@@ -1,10 +1,8 @@
 import { ParsedCaipType } from 'features/caip'
-import {
-  getNearAccounts,
-  NearKeystore,
-  NearTransaction,
-  NearWalletAccountInfo,
-} from 'features/near'
+
+import { NearTransaction, NearWalletAccountInfo } from '../@types'
+import { NearKeystore } from '../classes'
+import { getNearAccounts } from './getNearAccounts'
 
 export async function getMaybeNearAccountForTransactionSignatory({
   keystore,

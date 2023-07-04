@@ -1,8 +1,5 @@
-import {
-  MaybeNamespace,
-  Namespaces,
-  useActiveWalletConnectSessionNamespaces,
-} from 'features/walletConnect'
+import { MaybeNamespace, Namespaces } from '../@types'
+import { useActiveWalletConnectSessionNamespaces } from './useActiveWalletConnectSessionNamespaces'
 
 export const getNamespaceForChain = ({
   chain,

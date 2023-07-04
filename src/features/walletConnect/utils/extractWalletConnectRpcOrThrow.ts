@@ -1,5 +1,6 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { getWalletConnectConfigForChainIdOrThrow } from 'features/walletConnect'
+
+import { getWalletConnectConfigForChainIdOrThrow } from './getMaybeWalletConnectConfigForChainId'
 
 export function extractWalletConnectRpcOrThrow(
   web3wallet: IWeb3Wallet,

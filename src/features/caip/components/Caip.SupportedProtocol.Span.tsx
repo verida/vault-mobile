@@ -1,9 +1,10 @@
 import { EnvironmentType } from '@verida/types'
-import { getSupportedCaipProtocolFriendlyName } from 'features/caip'
 import * as React from 'react'
 import { SupportedCaipProtocol } from 'types'
 
 import CONFIG from 'config/environment'
+
+import { getSupportedCaipProtocolFriendlyName } from '../utils'
 
 export const CaipSupportedProtocolSpan = React.memo(
   function CaipWalletTypeSpan({

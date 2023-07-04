@@ -1,4 +1,4 @@
-import { ParsedCaipType } from 'features/caip'
+import { ParsedCaipType } from '../@types'
 
 export function stringifyCaip(
   parsedCaipType: ParsedCaipType,

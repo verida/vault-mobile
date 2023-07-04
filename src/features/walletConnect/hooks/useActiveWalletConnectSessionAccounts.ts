@@ -1,12 +1,10 @@
-import {
-  ChainToAccounts,
-  getAccountsForMaybeNamespace,
-  getNamespaceForChain,
-  Namespaces,
-  useActiveWalletConnectSessionChains,
-  useActiveWalletConnectSessionNamespaces,
-} from 'features/walletConnect'
 import * as React from 'react'
+
+import { ChainToAccounts, Namespaces } from '../@types'
+import { getAccountsForMaybeNamespace } from './useActiveWalletConnectSessionChainAccounts'
+import { useActiveWalletConnectSessionChains } from './useActiveWalletConnectSessionChains'
+import { getNamespaceForChain } from './useActiveWalletConnectSessionNamespace'
+import { useActiveWalletConnectSessionNamespaces } from './useActiveWalletConnectSessionNamespaces'
 
 const getChainsToAccounts = ({
   chains,

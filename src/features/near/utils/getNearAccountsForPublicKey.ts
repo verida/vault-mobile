@@ -1,8 +1,5 @@
-import {
-  getNearAccounts,
-  NearWalletAccountInfo,
-  NearWalletInstance,
-} from 'features/near'
+import { NearWalletAccountInfo, NearWalletInstance } from '../@types'
+import { getNearAccounts } from './getNearAccounts'
 
 export async function getNearAccountsForPublicKey({
   keystore,

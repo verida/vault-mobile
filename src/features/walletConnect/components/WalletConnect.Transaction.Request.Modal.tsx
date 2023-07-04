@@ -1,14 +1,4 @@
 import Sentry from '@sentry/react-native'
-import {
-  ActiveSession,
-  getMaybeWalletConnectConfigForChainId,
-  useWalletConnectDataFormatting,
-  useWalletConnectSessionApproveCallback,
-  useWalletConnectSessionRejectCallback,
-  WalletConnectSessionInfoCard,
-  WalletConnectSessionRequestCallbackParams,
-  WalletConnectTransactionRequestModalRow,
-} from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
@@ -19,6 +9,19 @@ import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+
+import {
+  ActiveSession,
+  WalletConnectSessionRequestCallbackParams,
+} from '../@types'
+import {
+  useWalletConnectDataFormatting,
+  useWalletConnectSessionApproveCallback,
+  useWalletConnectSessionRejectCallback,
+} from '../hooks'
+import { getMaybeWalletConnectConfigForChainId } from '../utils'
+import { WalletConnectSessionInfoCard } from './WalletConnect.Session.InfoCard'
+import { WalletConnectTransactionRequestModalRow } from './WalletConnect.Transaction.Request.Modal.Row'
 
 export const WalletConnectTransactionRequestModal = React.memo(
   function WalletConnectTransactionRequestModal({

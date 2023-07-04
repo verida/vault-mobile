@@ -1,12 +1,11 @@
 import { ParsedCaipType, stringifyCaip } from 'features/caip'
-import {
-  useActiveWalletConnectSessionNamespace,
-  WALLETCONNECT_SUPPORTED_CHAINS,
-} from 'features/walletConnect'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import text from 'styles/text'
+
+import { WALLETCONNECT_SUPPORTED_CHAINS } from '../constants'
+import { useActiveWalletConnectSessionNamespace } from '../hooks'
 
 // TODO: @cawfree seek to remove CaipWalletType (deprecated)
 export const WalletConnectSessionNamespacesChainId = React.memo(

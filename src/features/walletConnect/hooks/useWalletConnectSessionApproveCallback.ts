@@ -1,13 +1,14 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import * as React from 'react'
+
+import { WalletConnectChainStyle } from '../@types'
 import {
   extractWalletConnectRpcOrThrow,
   getMaybeWalletConnectConfigForChainId,
   resolveSessionRequest,
-  useWalletConnectSessionApproveCallbackEthereumLike,
-  useWalletConnectSessionApproveCallbackNearLike,
-  WalletConnectChainStyle,
-} from 'features/walletConnect'
-import * as React from 'react'
+} from '../utils'
+import { useWalletConnectSessionApproveCallbackEthereumLike } from './useWalletConnectSessionApproveCallback.EthereumLike'
+import { useWalletConnectSessionApproveCallbackNearLike } from './useWalletConnectSessionApproveCallback.NearLike'
 
 export function useWalletConnectSessionApproveCallback() {
   const ethereumLikeApprove =

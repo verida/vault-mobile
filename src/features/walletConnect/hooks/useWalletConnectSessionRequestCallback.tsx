@@ -1,15 +1,16 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { useModal } from 'hooks'
+import * as React from 'react'
+
+import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
+import { useWalletConnectContext } from '../contexts'
 import {
   extractWalletConnectRpcOrThrow,
   isWalletConnectRequestRequiresVisualConfirmation,
-  useWalletConnectContext,
-  useWalletConnectSessionApproveCallback,
-  useWalletConnectSessionRejectCallback,
-  WalletConnectTransactionRequestModal,
-} from 'features/walletConnect'
-import { useModal } from 'hooks'
-import * as React from 'react'
+} from '../utils'
+import { useWalletConnectSessionApproveCallback } from './useWalletConnectSessionApproveCallback'
+import { useWalletConnectSessionRejectCallback } from './useWalletConnectSessionRejectCallback'
 
 // Acts as a multiplexer for WalletConnect session requests. It determines which
 // network to dispatch the request to.

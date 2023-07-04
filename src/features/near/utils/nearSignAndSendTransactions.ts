@@ -1,6 +1,8 @@
 import { ParsedCaipType } from 'features/caip'
-import { NearKeystore, nearSignTransactions } from 'features/near'
 import { providers, transactions } from 'near-api-js/lib'
+
+import { NearKeystore } from '../classes'
+import { nearSignTransactions } from './nearSignTransactions'
 
 export const nearSignAndSendTransactions = async ({
   transactions: defaultTransactions,

@@ -1,8 +1,4 @@
-import {
-  WalletConnectChainMeta,
-  WalletConnectChainStyle,
-} from 'features/walletConnect'
-
+import { WalletConnectChainMeta, WalletConnectChainStyle } from '../@types'
 import { WALLETCONNECT_SUPPORTED_CHAINS } from '../constants'
 
 export function getMaybeWalletConnectConfigForChainId(

@@ -1,7 +1,7 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { EthereumSigningMethod } from 'features/ethereum'
-import { NearSigningMethod } from 'features/near'
+import type { EthereumSigningMethod } from 'features/ethereum'
+import type { NearSigningMethod } from 'features/near'
 
 export enum WalletConnectChainStyle {
   EVM_LIKE = 'EVM_LIKE',

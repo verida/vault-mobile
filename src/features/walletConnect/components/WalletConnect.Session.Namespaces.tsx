@@ -1,10 +1,9 @@
-import {
-  useActiveWalletConnectSessionChains,
-  WalletConnectSessionChainCard,
-} from 'features/walletConnect'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 import { text } from 'styles'
+
+import { useActiveWalletConnectSessionChains } from '../hooks'
+import { WalletConnectSessionChainCard } from './WalletConnect.Session.ChainCard'
 
 export const WalletConnectSessionNamespaces = React.memo(
   function WalletConnectSessionNamespaces({

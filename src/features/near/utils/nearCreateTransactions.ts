@@ -1,8 +1,7 @@
-import { NearWalletAccountInfo } from 'features/near'
 import { providers, transactions, utils } from 'near-api-js'
 import { AccessKeyView } from 'near-api-js/lib/providers/provider'
 
-import { NearTransaction } from '../@types'
+import { NearTransaction, NearWalletAccountInfo } from '../@types'
 
 export async function nearCreateTransactions({
   transactions: defaultTransactions,

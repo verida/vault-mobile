@@ -1,7 +1,7 @@
-import { SessionTypes } from '@walletconnect/types'
-import { useActiveWalletConnectSession } from 'features/walletConnect'
 import * as React from 'react'
-import Namespaces = SessionTypes.Namespaces
+
+import { Namespaces } from '../@types'
+import { useActiveWalletConnectSession } from './useActiveWalletConnectSession'
 
 export function useActiveWalletConnectSessionNamespaces({
   walletConnectSessionKey,

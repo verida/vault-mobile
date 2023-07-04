@@ -1,13 +1,11 @@
 import Sentry from '@sentry/react-native'
 import { ParsedCaipType } from 'features/caip'
-import {
-  nearCreateTransactions,
-  NearKeystore,
-  nearSignAndSendTransactions,
-  NearTransaction,
-  NearWalletAccountInfo,
-} from 'features/near'
 import { providers, transactions, utils } from 'near-api-js/lib'
+
+import { NearTransaction, NearWalletAccountInfo } from '../@types'
+import { NearKeystore } from '../classes'
+import { nearCreateTransactions } from './nearCreateTransactions'
+import { nearSignAndSendTransactions } from './nearSignAndSendTransactions'
 
 export const nearSignIn = async ({
   permission,

@@ -1,7 +1,8 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { rejectSessionRequest } from 'features/walletConnect'
 import * as React from 'react'
 import { Alert } from 'react-native'
+
+import { rejectSessionRequest } from '../utils'
 
 export function useWalletConnectSessionRejectCallback() {
   return React.useCallback(

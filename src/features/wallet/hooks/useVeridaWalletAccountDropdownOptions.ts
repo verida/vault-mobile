@@ -4,12 +4,13 @@ import {
   isSupportedCaipProtocol,
   maybeParseCaip,
 } from 'features/caip'
-import { isWatchedWallet } from 'features/wallet'
 import * as React from 'react'
 import { VeridaWalletAccount, VeridaWalletAccounts } from 'types'
 
 import { Option } from 'components/Select'
 import CONFIG from 'config/environment'
+
+import { isWatchedWallet } from '../utils'
 
 const veridaWalletAccountsToDropdownOptions = ({
   maybeVeridaWalletAccounts,

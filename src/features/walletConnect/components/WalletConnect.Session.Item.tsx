@@ -1,4 +1,3 @@
-import { useActiveWalletConnectSession } from 'features/walletConnect'
 import * as React from 'react'
 import {
   GestureResponderEvent,
@@ -12,6 +11,8 @@ import { iconStyle, text } from 'styles'
 
 import Text from 'components/Text'
 import { BLACK_COLOR_OPACITY } from 'constants/color'
+
+import { useActiveWalletConnectSession } from '../hooks'
 
 export const WalletConnectSessionItem = React.memo(
   function WalletConnectSessionItem({

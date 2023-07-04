@@ -1,9 +1,8 @@
 import { ParsedCaipType, stringifyCaip } from 'features/caip'
-import {
-  useActiveWalletConnectSessionChainAccountsCaipTypes,
-  WalletConnectSessionNamespacesChainId,
-} from 'features/walletConnect'
 import * as React from 'react'
+
+import { useActiveWalletConnectSessionChainAccountsCaipTypes } from '../hooks'
+import { WalletConnectSessionNamespacesChainId } from './WalletConnect.Session.Namespaces.ChainId'
 
 export const WalletConnectSessionChainCard = React.memo(
   function WalletConnectSessionChainCard({
