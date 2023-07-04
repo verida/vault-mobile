@@ -1,4 +1,4 @@
-import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
 import { EthereumSigningMethod } from 'features/ethereum'
 import { useWalletsData } from 'hooks'
@@ -8,19 +8,23 @@ import {
   EthereumSessionRequestHandlers,
   WalletConnectSessionRequestCallbackParams,
 } from '../@types'
-import { getEthereumWalletForWalletConnectRequestOrThrow } from '../utils'
+import { getVeridaWalletAccountForWalletConnectRequestOrThrow } from '../utils'
 
 const getEthereumWalletOrThrow = ({
   rpc,
   request,
   walletsData,
+  web3wallet,
 }: {
   readonly rpc: string
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly web3wallet: IWeb3Wallet
 }) => {
   const provider = new ethers.providers.JsonRpcProvider(rpc)
-  const { privateKey } = getEthereumWalletForWalletConnectRequestOrThrow({
+
+  const { privateKey } = getVeridaWalletAccountForWalletConnectRequestOrThrow({
+    web3wallet,
     request,
     walletsData,
   })
@@ -82,58 +86,100 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
       [EthereumSigningMethod.PERSONAL_SIGN]: ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignMessage({
-          wallet: getEthereumWalletOrThrow({ rpc, request, walletsData }),
+          wallet: getEthereumWalletOrThrow({
+            rpc,
+            request,
+            walletsData,
+            web3wallet,
+          }),
           params: request.params.request.params,
         }),
       [EthereumSigningMethod.ETH_SIGN]: ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignMessage({
-          wallet: getEthereumWalletOrThrow({ rpc, request, walletsData }),
+          wallet: getEthereumWalletOrThrow({
+            rpc,
+            request,
+            walletsData,
+            web3wallet,
+          }),
           params: request.params.request.params,
         }),
       [EthereumSigningMethod.ETH_SIGN_TRANSACTION]: async ({
         rpc,
         request,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
-        const wallet = getEthereumWalletOrThrow({ request, rpc, walletsData })
+        const wallet = getEthereumWalletOrThrow({
+          request,
+          rpc,
+          walletsData,
+          web3wallet,
+        })
         const signTransaction = request.params.request.params[0]
         return wallet.signTransaction(signTransaction)
       },
       [EthereumSigningMethod.ETH_SIGN_TYPED_DATA]: ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignTypedData({
           params: request.params.request.params,
-          wallet: getEthereumWalletOrThrow({ rpc, request, walletsData }),
+          wallet: getEthereumWalletOrThrow({
+            rpc,
+            request,
+            walletsData,
+            web3wallet,
+          }),
         }),
       [EthereumSigningMethod.ETH_SIGN_TYPED_DATA_V3]: ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignTypedData({
           params: request.params.request.params,
-          wallet: getEthereumWalletOrThrow({ rpc, request, walletsData }),
+          wallet: getEthereumWalletOrThrow({
+            rpc,
+            request,
+            walletsData,
+            web3wallet,
+          }),
         }),
       [EthereumSigningMethod.ETH_SIGN_TYPED_DATA_V4]: ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignTypedData({
           params: request.params.request.params,
-          wallet: getEthereumWalletOrThrow({ rpc, request, walletsData }),
+          wallet: getEthereumWalletOrThrow({
+            rpc,
+            request,
+            walletsData,
+            web3wallet,
+          }),
         }),
       // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L21
       [EthereumSigningMethod.ETH_SEND_RAW_TRANSACTION]: async ({
         rpc,
         request,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        const wallet = getEthereumWalletOrThrow({ rpc, request, walletsData })
+        const wallet = getEthereumWalletOrThrow({
+          rpc,
+          request,
+          walletsData,
+          web3wallet,
+        })
 
         // For some reason, WalletConnect have not provided an implementation of send raw transaction.
         // We'll follow suit here in case there's an important reason why.
@@ -146,8 +192,14 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
       [EthereumSigningMethod.ETH_SEND_TRANSACTION]: async ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
-        const wallet = getEthereumWalletOrThrow({ request, rpc, walletsData })
+        const wallet = getEthereumWalletOrThrow({
+          request,
+          rpc,
+          walletsData,
+          web3wallet,
+        })
         const sendTransaction = request.params.request.params[0]
         const { hash } = await wallet.sendTransaction(sendTransaction)
         return hash

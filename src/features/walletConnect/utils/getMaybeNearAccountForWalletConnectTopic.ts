@@ -1,6 +1,7 @@
 import { ParsedCaipType } from 'features/caip'
 import { getNearAccounts, NearKeystore } from 'features/near'
 
+// TODO: This is wrong, fix it, we can go through a common path
 export async function getMaybeNearAccountForWalletConnectTopic({
   topic,
   keystore,

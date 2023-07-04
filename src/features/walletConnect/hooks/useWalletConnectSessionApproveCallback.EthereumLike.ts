@@ -3,7 +3,7 @@ import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
-import { getEthereumWalletForWalletConnectRequestOrThrow } from '../utils'
+import { getVeridaWalletAccountForWalletConnectRequestOrThrow } from '../utils'
 import { useWalletConnectSessionRequestHandlersEthereumLike } from './useWalletConnectSessionRequestHandlers.EthereumLike'
 
 // TODO: rename EthereumLike to EIP155Like
@@ -21,9 +21,10 @@ export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
       rpc,
     }: WalletConnectSessionRequestCallbackParams) => {
       /* ensure wallet */
-      getEthereumWalletForWalletConnectRequestOrThrow({
+      getVeridaWalletAccountForWalletConnectRequestOrThrow({
         request,
         walletsData,
+        web3wallet,
       })
 
       const method = request?.params?.request?.method
