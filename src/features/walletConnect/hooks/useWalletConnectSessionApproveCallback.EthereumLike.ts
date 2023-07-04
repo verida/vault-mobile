@@ -7,7 +7,7 @@ import {
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
-// TODO: Are dapps even required now? Check redux usage.
+// TODO: rename EthereumLike to EIP155Like
 
 export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
   params: WalletConnectSessionRequestCallbackParams

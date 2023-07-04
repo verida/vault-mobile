@@ -13,6 +13,7 @@ export function maybeParseCaip(
   return { protocol, chainId, address: maybeAddress }
 }
 
+// TODO: Add a protocol enum and have the codebase evaluate support.
 export function parseCaipOrThrow(value: string | null | undefined) {
   const maybeParsedCaip: ParsedCaipType | undefined = maybeParseCaip(value)
 
