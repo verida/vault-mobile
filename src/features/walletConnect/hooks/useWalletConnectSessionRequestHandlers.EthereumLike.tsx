@@ -8,7 +8,7 @@ import {
   EthereumSessionRequestHandlers,
   WalletConnectSessionRequestCallbackParams,
 } from '../@types'
-import { getEthereumWalletForWalletConnectTopicOrThrow } from '../utils'
+import { getEthereumWalletForWalletConnectRequestOrThrow } from '../utils'
 
 const getEthereumWalletOrThrow = ({
   rpc,
@@ -20,9 +20,8 @@ const getEthereumWalletOrThrow = ({
   readonly walletsData: ReturnType<typeof useWalletsData>
 }) => {
   const provider = new ethers.providers.JsonRpcProvider(rpc)
-  const { topic } = request
-  const { privateKey } = getEthereumWalletForWalletConnectTopicOrThrow({
-    topic,
+  const { privateKey } = getEthereumWalletForWalletConnectRequestOrThrow({
+    request,
     walletsData,
   })
 

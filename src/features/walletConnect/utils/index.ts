@@ -1,6 +1,6 @@
 export * from './createWalletConnectSessionApprovalConfiguration'
 export * from './extractWalletConnectRpcOrThrow'
-export * from './getMaybeEthereumWalletForWalletConnectTopic'
+export * from './getMaybeEthereumWalletForWalletConnectRequest'
 export * from './getMaybeNearAccountForWalletConnectTopic'
 export * from './getMaybeWalletConnectConfigForChainId'
 export * from './isWalletConnectRequestRequiresVisualConfirmation'
