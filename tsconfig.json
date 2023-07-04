@@ -32,6 +32,9 @@
       "constants/*": [
         "src/constants/*"
       ],
+      "features/*": [
+        "src/features/*"
+      ],
       "helpers/*": [
         "src/helpers/*"
       ],
