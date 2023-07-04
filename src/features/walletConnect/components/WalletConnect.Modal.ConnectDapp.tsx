@@ -25,6 +25,8 @@ import Button from 'components/Button'
 import DropDownPicker, { Option } from 'components/Select'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
+import { WALLETCONNECT_LABEL } from '../constants'
+
 const maybeThrowMissingDependenciesError = (
   proposal: Web3WalletTypes.EventArguments['session_proposal'],
   web3wallet: IWeb3Wallet
@@ -107,7 +109,7 @@ export const WalletConnectModalConnectDapp = React.memo(
 
     return (
       <BottomActionsModal
-        title='WalletConnect'
+        title={WALLETCONNECT_LABEL}
         onClose={loading ? dismissModal : onReject}>
         <View style={styles.container}>
           <Image

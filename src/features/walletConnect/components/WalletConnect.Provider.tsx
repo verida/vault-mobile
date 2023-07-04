@@ -86,9 +86,6 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       try {
         await pairWithWalletConnectUriOrThrow(maybeConnectionUri)
-
-        // eslint-disable-next-line no-console
-        __DEV__ && console.warn('Successfully paired.')
       } catch (e) {
         Sentry.captureException(e)
 
