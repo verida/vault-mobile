@@ -40,8 +40,9 @@ export type Namespaces = ActiveSession['namespaces']
 export type MaybeNamespace = Namespaces[string] | undefined
 
 // TODO: instead of chain, namespaceId would be better??
-export type ChainToAccounts = {
-  readonly [chainId in string]: readonly string[]
+// TODO: It would be more useful to parse the identifier for specificity
+export type CaipProtocolToCaipIdentifiers = {
+  readonly [caipProtocol in string]: readonly string[]
 }
 
 export type WalletConnectSessionRequestCallbackParams = {

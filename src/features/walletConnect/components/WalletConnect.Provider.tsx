@@ -44,6 +44,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         ) =>
           showModal(
             <WalletConnectModalConnectDapp
+              setActiveSessions={setActiveSessions}
               proposal={proposal}
               web3wallet={web3wallet}
             />

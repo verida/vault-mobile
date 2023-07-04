@@ -1,18 +1,19 @@
 import * as React from 'react'
 
-import { ChainToAccounts, Namespaces } from '../@types'
+import { CaipProtocolToCaipIdentifiers, Namespaces } from '../@types'
 import { getAccountsForMaybeNamespace } from './useActiveWalletConnectSessionChainAccounts'
 import { useActiveWalletConnectSessionChains } from './useActiveWalletConnectSessionChains'
 import { getNamespaceForChain } from './useActiveWalletConnectSessionNamespace'
 import { useActiveWalletConnectSessionNamespaces } from './useActiveWalletConnectSessionNamespaces'
 
-const getChainsToAccounts = ({
+// TODO: Emphasises that these caip identifiers return full addresses.
+const getCaipProtocolsToCaipIdentifiers = ({
   chains,
   namespaces,
 }: {
   readonly chains: readonly string[]
   readonly namespaces: Namespaces
-}): ChainToAccounts =>
+}): CaipProtocolToCaipIdentifiers =>
   Object.fromEntries(
     chains.map(
       (chain: string) =>
@@ -29,11 +30,11 @@ const getChainsToAccounts = ({
   )
 
 // Returns a list of all accounts for the active session.
-export function useActiveWalletConnectSessionAccounts({
+export function useActiveWalletConnectSessionCaipProtocolToCaipIdentifiers({
   walletConnectSessionKey,
 }: {
   readonly walletConnectSessionKey: string | undefined
-}): ChainToAccounts {
+}): CaipProtocolToCaipIdentifiers {
   const namespaces = useActiveWalletConnectSessionNamespaces({
     walletConnectSessionKey,
   })
@@ -41,8 +42,9 @@ export function useActiveWalletConnectSessionAccounts({
     walletConnectSessionKey,
   })
 
-  return React.useMemo<ChainToAccounts>(
-    () => getChainsToAccounts({ chains: sessionChains, namespaces }),
+  return React.useMemo<CaipProtocolToCaipIdentifiers>(
+    () =>
+      getCaipProtocolsToCaipIdentifiers({ chains: sessionChains, namespaces }),
     [sessionChains, namespaces]
   )
 }

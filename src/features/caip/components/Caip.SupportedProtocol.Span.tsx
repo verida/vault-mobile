@@ -1,26 +1,18 @@
-import { EnvironmentType } from '@verida/types'
+import { ParsedCaipType } from 'features/caip'
 import * as React from 'react'
-import { SupportedCaipProtocol } from 'types'
-
-import CONFIG from 'config/environment'
 
 import { getSupportedCaipProtocolFriendlyName } from '../utils'
 
 export const CaipSupportedProtocolSpan = React.memo(
   function CaipWalletTypeSpan({
-    supportedCaipProtocol = undefined,
-    environmentType = CONFIG.VERIDA_ENVIRONMENT,
+    parsedCaipType = undefined,
   }: {
-    readonly supportedCaipProtocol: SupportedCaipProtocol | undefined
-    readonly environmentType?: EnvironmentType
+    readonly parsedCaipType: ParsedCaipType | undefined
   }): JSX.Element {
     return (
       <React.Fragment
         // eslint-disable-next-line react/no-children-prop
-        children={getSupportedCaipProtocolFriendlyName(
-          supportedCaipProtocol,
-          environmentType
-        )}
+        children={getSupportedCaipProtocolFriendlyName(parsedCaipType)}
       />
     )
   }

@@ -1,3 +1,4 @@
+export * from './WalletConnect.ActiveSession'
 export * from './WalletConnect.Button.DisconnectSession'
 export * from './WalletConnect.Provider'
 export * from './WalletConnect.Session.ChainCard'

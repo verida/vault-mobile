@@ -1,25 +1,25 @@
-import { EnvironmentType } from '@verida/types'
 import {
+  addressAgnosticIsCaipEqual,
   getSupportedCaipProtocolFriendlyName,
   isSupportedCaipProtocol,
   maybeParseCaip,
+  ParsedCaipType,
 } from 'features/caip'
 import * as React from 'react'
 import { VeridaWalletAccount, VeridaWalletAccounts } from 'types'
 
 import { Option } from 'components/Select'
-import CONFIG from 'config/environment'
 
 import { isWatchedWallet } from '../utils'
 
 const veridaWalletAccountsToDropdownOptions = ({
   maybeVeridaWalletAccounts,
+  onlyMatchingCaipTypes,
   includesWatchedWallets,
-  environmentType = CONFIG.VERIDA_ENVIRONMENT,
 }: {
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
   readonly includesWatchedWallets: boolean
-  readonly environmentType?: EnvironmentType
+  readonly onlyMatchingCaipTypes: readonly ParsedCaipType[] | null
 }): readonly Option[] => {
   if (!maybeVeridaWalletAccounts) return []
 
@@ -29,6 +29,18 @@ const veridaWalletAccountsToDropdownOptions = ({
       VeridaWalletAccount
     ]): readonly Option[] => {
       const maybeParsedCaip = maybeParseCaip(key)
+
+      if (!maybeParsedCaip) return []
+
+      const isMatchingCaipType = Boolean(
+        (onlyMatchingCaipTypes || []).find((maybeMatchingCaipType) =>
+          addressAgnosticIsCaipEqual(maybeMatchingCaipType, maybeParsedCaip)
+        )
+      )
+
+      // If an array of ParsedCaipTypes has been provided, we should filter out the
+      // results to contain only caips that are supported.
+      if (Array.isArray(onlyMatchingCaipTypes) && !isMatchingCaipType) return []
 
       const blockchain = maybeParsedCaip?.protocol
 
@@ -41,7 +53,7 @@ const veridaWalletAccountsToDropdownOptions = ({
         label: veridaWalletAccount.address,
         value: veridaWalletAccount.address,
         disabled,
-        flag: getSupportedCaipProtocolFriendlyName(blockchain, environmentType),
+        flag: getSupportedCaipProtocolFriendlyName(maybeParsedCaip),
       }
 
       return [option]
@@ -52,16 +64,19 @@ const veridaWalletAccountsToDropdownOptions = ({
 export function useVeridaWalletAccountDropdownOptions({
   includesWatchedWallets,
   maybeVeridaWalletAccounts,
+  onlyMatchingCaipTypes = null,
 }: {
   readonly includesWatchedWallets: boolean
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
+  readonly onlyMatchingCaipTypes?: readonly ParsedCaipType[] | null
 }) {
   return React.useMemo<readonly Option[]>(
     () =>
       veridaWalletAccountsToDropdownOptions({
         includesWatchedWallets,
         maybeVeridaWalletAccounts,
+        onlyMatchingCaipTypes,
       }),
-    [maybeVeridaWalletAccounts, includesWatchedWallets]
+    [maybeVeridaWalletAccounts, includesWatchedWallets, onlyMatchingCaipTypes]
   )
 }

@@ -4,6 +4,7 @@ import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { Spacer } from 'components'
 import { useVeridaWalletAccountDropdownOptions } from 'features/wallet'
+import { ActiveSessions } from 'features/walletConnect'
 import { useMaybeSelectedWallet, useModal } from 'hooks'
 import * as React from 'react'
 import {
@@ -26,6 +27,8 @@ import DropDownPicker, { Option } from 'components/Select'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import { WALLETCONNECT_LABEL } from '../constants'
+import { useWalletConnectProposalRequiredCaipTypes } from '../hooks'
+import { createWalletConnectSessionApprovalConfiguration } from '../utils'
 
 const maybeThrowMissingDependenciesError = (
   proposal: Web3WalletTypes.EventArguments['session_proposal'],
@@ -43,9 +46,13 @@ export const WalletConnectModalConnectDapp = React.memo(
   function WalletConnectModalConnectDapp({
     proposal,
     web3wallet,
+    setActiveSessions,
   }: {
     readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
     readonly web3wallet: IWeb3Wallet
+    readonly setActiveSessions: React.Dispatch<
+      React.SetStateAction<ActiveSessions>
+    >
   }): JSX.Element {
     const [loading, setLoading] = React.useState(false)
     const { dismissModal } = useModal()
@@ -76,9 +83,20 @@ export const WalletConnectModalConnectDapp = React.memo(
 
     const maybeSelectedWallet = useMaybeSelectedWallet()
 
+    const onlyMatchingCaipTypes =
+      useWalletConnectProposalRequiredCaipTypes(proposal)
+
     const wallets: readonly Option[] = useVeridaWalletAccountDropdownOptions({
       includesWatchedWallets: false,
       maybeVeridaWalletAccounts: maybeSelectedWallet?.accounts,
+
+      // HACK: Only show wallets which possess a caip identifier which supports the request.
+      //       This prevents us from showing duplicate wallets for a single request, i.e. the
+      //       same wallet for Ethereum Goerli and Polygon Mumbai. We could simply filter the
+      //       address component, however semantically this could result in a user selecting
+      //       the incorrect account for the requested network, which may have consequences
+      //       downstream.
+      onlyMatchingCaipTypes,
     })
 
     const [selectedWallet, setSelectedWallet] = React.useState<
@@ -93,6 +111,16 @@ export const WalletConnectModalConnectDapp = React.memo(
         maybeThrowMissingDependenciesError(proposal, web3wallet)
 
         setLoading(true)
+
+        await web3wallet.approveSession(
+          createWalletConnectSessionApprovalConfiguration({
+            // TODO: We can enable address multiselect in future
+            approvedAddresses: [selectedWallet.value],
+            proposal,
+          })
+        )
+
+        setActiveSessions(await web3wallet.getActiveSessions())
       } catch (e) {
         Alert.alert(
           'Error',
@@ -103,9 +131,10 @@ export const WalletConnectModalConnectDapp = React.memo(
         Sentry.captureException(e)
       } finally {
         setLoading(false)
+
         InteractionManager.runAfterInteractions(dismissModal)
       }
-    }, [dismissModal, proposal, web3wallet, selectedWallet])
+    }, [selectedWallet, proposal, web3wallet, setActiveSessions, dismissModal])
 
     return (
       <BottomActionsModal
@@ -126,6 +155,7 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={16} />
           <Text style={styles.url}>{metadata?.url}</Text>
           <Spacer height={24} />
+          {/* TODO: We should use a different Dropdown Picker or refactor this one to enable the caller to define rendering, as it stands this is quite infexible */}
           <DropDownPicker
             showArrow
             placeholder='Select wallet'
@@ -150,6 +180,7 @@ export const WalletConnectModalConnectDapp = React.memo(
               style={styles.connectButton}
               color='primary'
               onPress={onApprove}
+              disabled={!selectedWallet}
             />
           </View>
         </View>

@@ -1,3 +1,4 @@
+export * from './addressAgnosticIsCaipEqual'
 export * from './getSupportedCaipProtocolFriendlyName'
 export * from './isSupportedCaipProtocol'
 export * from './parseCaip'
