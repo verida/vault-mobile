@@ -9,11 +9,12 @@ export function useWalletConnectSessionRejectCallback() {
     (
       web3wallet: IWeb3Wallet,
       request: Web3WalletTypes.EventArguments['session_request'],
-      error: unknown
+      error: unknown,
+      shouldShowAlert = true
     ) => {
       const reason = error instanceof Error ? error.message : String(error)
 
-      Alert.alert('Error', reason)
+      shouldShowAlert && Alert.alert('Error', reason)
 
       return rejectSessionRequest({
         web3wallet,

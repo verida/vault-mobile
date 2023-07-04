@@ -21,10 +21,10 @@ export function useWalletConnectDataFormatting() {
       WalletConnectSessionRequestCallbackParams,
       'web3wallet' | 'request'
     >): Record<string, unknown> => {
-      const { chainId } = extractWalletConnectRpcOrThrow(web3wallet, request)
-      const { style } = getWalletConnectConfigForChainIdOrThrow(chainId)
+      const { parsedCaip } = extractWalletConnectRpcOrThrow(web3wallet, request)
+      const { style } = getWalletConnectConfigForChainIdOrThrow(parsedCaip)
 
-      const data = request.params
+      const data = request.params.request.params
 
       if (style === WalletConnectChainStyle.NEAR_LIKE)
         return formatTransactionDataNearLike(data)

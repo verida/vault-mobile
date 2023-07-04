@@ -1,4 +1,5 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { stringifyCaip } from 'features/caip'
 import * as React from 'react'
 
 import { WalletConnectChainStyle } from '../@types'
@@ -20,17 +21,20 @@ export function useWalletConnectSessionApproveCallback() {
       web3wallet: IWeb3Wallet,
       request: Web3WalletTypes.EventArguments['session_request']
     ) => {
-      const { rpc, chainId } = extractWalletConnectRpcOrThrow(
+      const { rpc, parsedCaip } = extractWalletConnectRpcOrThrow(
         web3wallet,
         request
       )
 
       const maybeWalletConnectConfig =
-        getMaybeWalletConnectConfigForChainId(chainId)
+        getMaybeWalletConnectConfigForChainId(parsedCaip)
 
       if (!maybeWalletConnectConfig)
         throw new Error(
-          `Unable to find walletConnectConfig for chainId "${chainId}".`
+          `Unable to find walletConnectConfig for "${stringifyCaip(
+            parsedCaip,
+            true
+          )}".`
         )
 
       const { style } = maybeWalletConnectConfig
@@ -43,7 +47,9 @@ export function useWalletConnectSessionApproveCallback() {
       if (style === WalletConnectChainStyle.NEAR_LIKE)
         return nearLikeApprove({ web3wallet, request, rpc })
 
-      throw new Error(`Sorry, ${chainId} is not supported.`)
+      throw new Error(
+        `Sorry, ${stringifyCaip(parsedCaip, true)} is not supported.`
+      )
     },
     [ethereumLikeApprove, nearLikeApprove]
   )

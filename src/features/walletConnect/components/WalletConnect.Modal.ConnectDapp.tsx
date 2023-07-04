@@ -1,4 +1,4 @@
-import Sentry from '@sentry/react-native'
+import * as Sentry from '@sentry/react-native'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'

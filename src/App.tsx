@@ -115,23 +115,23 @@ function App() {
           <ThemeProvider initial={defaultTheme}>
             <AuthProvider>
               <NavigationContainer linking={linking} ref={navigationRef}>
-                <ModalProvider>
-                  <Authenticate>
-                    <RootSiblingParent>
-                      <ActionSheetProvider>
-                        <NearProvider>
+                <NearProvider>
+                  <ModalProvider>
+                    <Authenticate>
+                      <RootSiblingParent>
+                        <ActionSheetProvider>
                           <WalletConnectProvider>
                             <GestureHandlerRootView style={styles.flex}>
                               <RootNavigator />
                             </GestureHandlerRootView>
                             <MetaServerChecks />
                           </WalletConnectProvider>
-                        </NearProvider>
-                      </ActionSheetProvider>
-                    </RootSiblingParent>
-                  </Authenticate>
-                  <SwitchAccountToast />
-                </ModalProvider>
+                        </ActionSheetProvider>
+                      </RootSiblingParent>
+                    </Authenticate>
+                    <SwitchAccountToast />
+                  </ModalProvider>
+                </NearProvider>
               </NavigationContainer>
             </AuthProvider>
           </ThemeProvider>

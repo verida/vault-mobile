@@ -1,29 +1,34 @@
+import { ParsedCaipType, stringifyCaip } from 'features/caip'
+
 import { WalletConnectChainMeta, WalletConnectChainStyle } from '../@types'
 import { WALLETCONNECT_SUPPORTED_CHAINS } from '../constants'
 
 export function getMaybeWalletConnectConfigForChainId(
-  chainId: string | null | undefined
+  parsedCaipType: ParsedCaipType | null | undefined
 ): WalletConnectChainMeta<WalletConnectChainStyle> | undefined {
-  if (typeof chainId !== 'string' || !chainId.length) return undefined
+  if (!parsedCaipType) return undefined
 
   const maybeMatchingChainConfig = Object.values(
     WALLETCONNECT_SUPPORTED_CHAINS
   ).find(
-    ({ chainId: maybeMatchingChainId }) => maybeMatchingChainId === chainId
+    ({ chainId: maybeMatchingChainId }) =>
+      maybeMatchingChainId === parsedCaipType.chainId
   )
 
   return maybeMatchingChainConfig || undefined
 }
 
 export function getWalletConnectConfigForChainIdOrThrow(
-  chainId: string | null | undefined
+  parsedCaipType: ParsedCaipType
 ): WalletConnectChainMeta<WalletConnectChainStyle> {
   const maybeWalletConnectConfig =
-    getMaybeWalletConnectConfigForChainId(chainId)
+    getMaybeWalletConnectConfigForChainId(parsedCaipType)
 
   if (!maybeWalletConnectConfig)
     throw new Error(
-      `Unable to find WalletConnectConfig for chainId "${chainId}".`
+      `Unable to find WalletConnectConfig for "${stringifyCaip(
+        parsedCaipType
+      )}".`
     )
 
   return maybeWalletConnectConfig

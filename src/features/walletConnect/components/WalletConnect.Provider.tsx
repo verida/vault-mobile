@@ -51,7 +51,14 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           ),
         [showModal]
       ),
-      onSessionDelete: React.useCallback(() => /* */ undefined, []),
+      onSessionDelete: React.useCallback(async (web3wallet) => {
+        // TODO: Add tracking?
+        // TODO: Notify user? Snackbar would be nice.
+        // eslint-disable-next-line no-console
+        __DEV__ && console.warn('Session deleted!')
+
+        setActiveSessions(await web3wallet.getActiveSessions())
+      }, []),
     })
   )
 

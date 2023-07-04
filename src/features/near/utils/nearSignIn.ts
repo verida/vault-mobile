@@ -1,4 +1,4 @@
-import Sentry from '@sentry/react-native'
+import * as Sentry from '@sentry/react-native'
 import { ParsedCaipType } from 'features/caip'
 import { providers, transactions, utils } from 'near-api-js/lib'
 

@@ -1,4 +1,4 @@
-import Sentry from '@sentry/react-native'
+import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
 import * as React from 'react'

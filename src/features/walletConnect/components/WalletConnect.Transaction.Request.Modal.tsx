@@ -1,4 +1,5 @@
-import Sentry from '@sentry/react-native'
+import * as Sentry from '@sentry/react-native'
+import { maybeParseCaip } from 'features/caip'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
@@ -67,7 +68,12 @@ export const WalletConnectTransactionRequestModal = React.memo(
       try {
         setLoading(true)
 
-        await shouldReject(web3wallet, request, 'User rejected the request')
+        await shouldReject(
+          web3wallet,
+          request,
+          'User rejected the request',
+          false
+        )
       } catch (e) {
         Sentry.captureException(e)
         Alert.alert('Error', 'Unable to reject request.')
@@ -78,11 +84,12 @@ export const WalletConnectTransactionRequestModal = React.memo(
       }
     }, [request, shouldReject, web3wallet, dismissModal])
 
-    const chainId = request.params.chainId
+    const parsedCaip = maybeParseCaip(request.params.chainId)
 
     const maybeRelayProtocol = activeSession?.relay?.protocol
 
-    const maybeSupportedChain = getMaybeWalletConnectConfigForChainId(chainId)
+    const maybeSupportedChain =
+      getMaybeWalletConnectConfigForChainId(parsedCaip)
 
     const maybeChainName = maybeSupportedChain?.name
 
