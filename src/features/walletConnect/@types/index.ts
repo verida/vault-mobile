@@ -1,5 +1,4 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
-import { SessionTypes } from '@walletconnect/types'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { EthereumSigningMethod } from 'features/ethereum'
 import { NearSigningMethod } from 'features/near'
@@ -37,7 +36,7 @@ export type WalletConnectChainMeta<ChainStyle extends WalletConnectChainStyle> =
     readonly rpc: string
   }
 
-export type Namespaces = SessionTypes.Namespaces
+export type Namespaces = ActiveSession['namespaces']
 export type MaybeNamespace = Namespaces[string] | undefined
 
 // TODO: instead of chain, namespaceId would be better??
