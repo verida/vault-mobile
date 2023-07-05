@@ -1,64 +1,63 @@
 import * as Sentry from '@sentry/react-native'
-import { ParsedCaipType } from 'features/caip'
 import { providers, transactions, utils } from 'near-api-js/lib'
 
-import { NearTransaction, NearWalletAccountInfo } from '../@types'
-import { NearKeystore } from '../classes'
+import { NearAccount, NearAccountPointer, NearTransaction } from '../@types'
 import { nearCreateTransactions } from './nearCreateTransactions'
 import { nearSignAndSendTransactions } from './nearSignAndSendTransactions'
 
 export const nearSignIn = async ({
+  nearAccount,
+  nearAccountPointers,
   permission,
-  accounts,
   provider,
-  keystore,
-  nearNetworkParsedCaipType,
 }: {
+  readonly nearAccount: NearAccount
+  readonly nearAccountPointers: readonly NearAccountPointer[]
   readonly permission: transactions.FunctionCallPermission
-  readonly accounts: readonly NearWalletAccountInfo[]
   readonly provider: providers.Provider
-  readonly keystore: NearKeystore
-  readonly nearNetworkParsedCaipType: ParsedCaipType
-}): Promise<readonly NearWalletAccountInfo[]> =>
+}): Promise<readonly NearAccountPointer[]> =>
   (
     await Promise.all(
-      accounts.map(async (account: NearWalletAccountInfo) => {
-        const transactionToCreate: NearTransaction = {
-          signerId: account.accountId,
-          receiverId: account.accountId,
-          actions: [
-            transactions.addKey(
-              utils.PublicKey.from(account.publicKey),
-              transactions.functionCallAccessKey(
-                permission.receiverId,
-                permission.methodNames,
-                permission.allowance
-              )
-            ),
-          ],
-        }
-        try {
-          const [transactionToSend] = await nearCreateTransactions({
-            account,
-            provider,
-            transactions: [transactionToCreate],
-          })
+      nearAccountPointers.map(
+        async (nearAccountPointer: NearAccountPointer) => {
+          const { accountId, publicKey } = nearAccountPointer
 
-          await nearSignAndSendTransactions({
-            transactions: [transactionToSend],
-            provider,
-            keystore,
-            nearNetworkParsedCaipType,
-          })
+          const transactionToCreate: NearTransaction = {
+            signerId: accountId,
+            receiverId: accountId,
+            actions: [
+              transactions.addKey(
+                utils.PublicKey.from(publicKey),
+                transactions.functionCallAccessKey(
+                  permission.receiverId,
+                  permission.methodNames,
+                  permission.allowance
+                )
+              ),
+            ],
+          }
+          try {
+            const [transactionToSend] = await nearCreateTransactions({
+              nearAccount,
+              provider,
+              transactions: [transactionToCreate],
+            })
 
-          // HACK: Upon success, return the account that was created.
-          return account
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          __DEV__ && console.error(e)
-          Sentry.captureException(e)
-          return null
+            await nearSignAndSendTransactions({
+              transactions: [transactionToSend],
+              provider,
+              nearAccount,
+            })
+
+            // HACK: Upon success, return the account that was created.
+            return nearAccountPointer
+          } catch (e) {
+            // eslint-disable-next-line no-console
+            __DEV__ && console.error(e)
+            Sentry.captureException(e)
+            return null
+          }
         }
-      })
+      )
     )
   ).flatMap((e) => (e ? [e] : []))

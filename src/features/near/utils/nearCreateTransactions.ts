@@ -1,16 +1,16 @@
+import { getNearAccountId, nearCreateViewAccessKey } from 'features/near'
 import { providers, transactions, utils } from 'near-api-js'
-import { AccessKeyView } from 'near-api-js/lib/providers/provider'
 
-import { NearTransaction, NearWalletAccountInfo } from '../@types'
+import { NearAccount, NearTransaction } from '../@types'
 
 export async function nearCreateTransactions({
   transactions: defaultTransactions,
   provider,
-  account,
+  nearAccount,
 }: {
   readonly transactions: readonly NearTransaction[]
   readonly provider: providers.Provider
-  readonly account: NearWalletAccountInfo
+  readonly nearAccount: NearAccount
 }): Promise<readonly transactions.Transaction[]> {
   const block = await provider.block({ finality: 'final' })
 
@@ -20,18 +20,21 @@ export async function nearCreateTransactions({
         { signerId, receiverId, actions },
         i
       ): Promise<transactions.Transaction> => {
-        const { publicKey: public_key } = account
+        const { publicKey } = nearAccount
 
-        const accessKey = await provider.query<AccessKeyView>({
-          request_type: 'view_access_key',
-          finality: 'final',
-          account_id: signerId,
-          public_key,
+        const nearAccountPointer = {
+          accountId: getNearAccountId({ signerId }),
+          publicKey,
+        }
+
+        const accessKey = await nearCreateViewAccessKey({
+          provider,
+          nearAccountPointer,
         })
 
         return transactions.createTransaction(
           signerId,
-          utils.PublicKey.from(account.publicKey),
+          utils.PublicKey.from(publicKey),
           receiverId,
           accessKey.nonce + i + 1,
           actions,

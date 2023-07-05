@@ -2,6 +2,13 @@ import { connect, keyStores } from 'near-api-js'
 
 import { NearNetworkId } from '../@types'
 
+export function getNearNodeUrlOrThrow(nearNetworkId: NearNetworkId): string {
+  if (nearNetworkId !== NearNetworkId.TESTNET)
+    throw new Error(`Encountered unsupported network, "${nearNetworkId}".`)
+
+  return 'https://rpc.testnet.near.org'
+}
+
 export function getNearNetworkConfig({
   keystore: keyStore,
   nearNetworkId,
@@ -18,7 +25,7 @@ export function getNearNetworkConfig({
   return {
     networkId: 'testnet',
     keyStore,
-    nodeUrl: 'https://rpc.testnet.near.org',
+    nodeUrl: getNearNodeUrlOrThrow(nearNetworkId),
     walletUrl: 'https://wallet.testnet.near.org',
     helperUrl: 'https://helper.testnet.near.org',
     explorerUrl: 'https://explorer.testnet.near.org',

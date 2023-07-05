@@ -1,26 +1,26 @@
-import { ParsedCaipType } from 'features/caip'
+import { parseCaipOrThrow } from 'features/caip'
+import { getNearAccountId, NearAccount } from 'features/near'
 import { InMemorySigner, transactions } from 'near-api-js/lib'
 
-import { NearKeystore } from '../classes'
-
 export const nearSignTransactions = async ({
-  keystore,
+  nearAccount,
   transactions: defaultTransactions,
-  nearNetworkParsedCaipType,
 }: {
-  readonly keystore: NearKeystore
+  readonly nearAccount: NearAccount
   readonly transactions: readonly transactions.Transaction[]
-  readonly nearNetworkParsedCaipType: ParsedCaipType
 }): Promise<readonly transactions.SignedTransaction[]> => {
+  const { keystore, nearNetworkId } = nearAccount
   const signer = new InMemorySigner(keystore)
+
+  const { chainId } = parseCaipOrThrow(nearNetworkId)
 
   return Promise.all(
     defaultTransactions.map(async (transaction: transactions.Transaction) => {
       const [, signedTx] = await transactions.signTransaction(
         transaction,
         signer,
-        transaction.signerId,
-        nearNetworkParsedCaipType.chainId
+        getNearAccountId({ signerId: transaction.signerId }),
+        chainId
       )
       return signedTx
     })

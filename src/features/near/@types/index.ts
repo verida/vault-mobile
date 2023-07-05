@@ -7,10 +7,15 @@ export enum NearNetworkId {
   TESTNET = 'near:testnet',
 }
 
-export type NearWalletAccountInfo = {
-  readonly keystore: keyStores.KeyStore
+export type NearAccountPointer = {
   readonly publicKey: string
   readonly accountId: string
+}
+
+export type NearAccount = NearAccountPointer & {
+  readonly signerId: string
+  readonly nearNetworkId: NearNetworkId
+  readonly keystore: keyStores.KeyStore
 }
 
 export enum NearSigningMethod {

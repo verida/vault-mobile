@@ -1,18 +1,21 @@
-import { createAction } from '@near-wallet-selector/wallet-utils'
 import { Buffer } from 'buffer'
 import {
-  getMaybeNearAccountForTransactionSignatory,
-  getNearAccounts,
+  NearAccountPointer,
   nearCreateTransactions,
+  nearGetAccounts,
+  nearMaybeAccountForTransactionSignatory,
   nearSignAndSendTransactions,
   nearSignIn,
   NearSigningMethod,
   nearSignOut,
   nearSignTransactions,
   NearTransaction,
-  NearWalletAccountInfo,
+  throwIfNearAccountDoesNotMatchNearAccountPointer,
 } from 'features/near'
-import { providers, transactions } from 'near-api-js/lib'
+import { nearCreateAction } from 'features/near/utils/nearCreateAction'
+import { getNearAccountForWalletConnectRequestOrThrow } from 'features/walletConnect'
+import { useWalletsData } from 'hooks'
+import { providers, transactions } from 'near-api-js'
 import * as React from 'react'
 
 import {
@@ -20,68 +23,114 @@ import {
   WalletConnectSessionRequestCallbackParams,
 } from '../@types'
 
+// TODO: we need to leverage walletconnect's implementation rather than rolling
+//       our own copies each time - we should be adapting a common interface
+
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
+// HACK: In the previous codebase, it was possible to perform a "global" lookup for
+//       accounts since we were using a shared persistent keystore.
+//       However, this scope exceeds the bounds of the proposed implementation here,
+//       where the keystore is inferred by the WalletConnect request. In the function
+//       below, we are still only going to return the NearAccountPointers associated
+//       with the scope of the WalletConnect request, and use this function to merely
+//       capture the potential intent if this needs to be refactored.
+const HACK__notSureIfSupposedToBeGlobalAccountLookup = async (
+  params: WalletConnectSessionRequestCallbackParams,
+  walletsData: ReturnType<typeof useWalletsData>
+): Promise<readonly NearAccountPointer[]> => {
+  const { keystore, nearNetworkId } =
+    await getNearAccountForWalletConnectRequestOrThrow({
+      ...params,
+      walletsData,
+    })
+  return nearGetAccounts({
+    keystore,
+    nearNetworkId,
+  })
+}
+
 export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
+  const walletsData = useWalletsData()
   return React.useMemo<NearSessionRequestHandlers>(
     () => ({
       [NearSigningMethod.NEAR_SIGN_IN]: async ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
         const provider = getNearProvider(rpc)
 
         const permission: transactions.FunctionCallPermission =
           request.params.request.params.permission
 
-        const accounts: NearWalletAccountInfo =
+        const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          web3wallet,
+          walletsData,
+          request,
+        })
+
+        const nearAccountPointers: readonly NearAccountPointer[] =
           request.params.request.params.accounts
 
-        if (!Array.isArray(accounts))
+        if (!Array.isArray(nearAccountPointers))
           throw new Error(
-            `Expected array accounts, encountered "${String(accounts)}".`
+            `Expected array nearAccountPointers, encountered "${String(
+              nearAccountPointers
+            )}".`
           )
 
         return nearSignIn({
+          nearAccount,
+          nearAccountPointers,
           permission,
           provider,
-          accounts,
-          keystore,
-          nearNetworkParsedCaipType,
         })
       },
       [NearSigningMethod.NEAR_SIGN_OUT]: async ({
         request,
         rpc,
+        web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
         const provider = getNearProvider(rpc)
-        const accounts = request.params.request.params
+        const nearAccountPointers = request.params.request.params
 
-        if (!Array.isArray(accounts))
+        const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          request,
+          walletsData,
+          web3wallet,
+        })
+
+        if (!Array.isArray(nearAccountPointers))
           throw new Error(
-            `Expected array accounts, encountered "${String(accounts)}".`
+            `Expected array accounts, encountered "${String(
+              nearAccountPointers
+            )}".`
           )
 
         return nearSignOut({
-          accounts,
+          nearAccount,
+          nearAccountPointers,
           provider,
-          nearNetworkParsedCaipType,
-          keystore,
         })
       },
-      [NearSigningMethod.NEAR_GET_ACCOUNTS]: () =>
-        getNearAccounts({
-          keystore,
-          nearNetworkParsedCaipType,
-        }),
+      [NearSigningMethod.NEAR_GET_ACCOUNTS]: async (
+        params: WalletConnectSessionRequestCallbackParams
+      ) => HACK__notSureIfSupposedToBeGlobalAccountLookup(params, walletsData),
       [NearSigningMethod.NEAR_SIGN_TRANSACTION]: async ({
+        web3wallet,
         request,
       }: WalletConnectSessionRequestCallbackParams) => {
         const transactionData = request.params.request.params.transaction
 
+        const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          web3wallet,
+          request,
+          walletsData,
+        })
+
         const [signedTransaction] = await nearSignTransactions({
-          keystore,
-          nearNetworkParsedCaipType,
+          nearAccount,
           transactions: [
             transactions.Transaction.decode(Buffer.from(transactionData)),
           ],
@@ -89,35 +138,54 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
 
         return signedTransaction.encode()
       },
-      [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTION]: async ({
-        request,
-        rpc,
-      }: WalletConnectSessionRequestCallbackParams) => {
+      [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTION]: async (
+        params: WalletConnectSessionRequestCallbackParams
+      ) => {
+        const { request, rpc, web3wallet } = params
+
         const provider = getNearProvider(rpc)
 
         const { transaction } = request.params.request.params
         const { actions } = transaction
 
-        const account = await getMaybeNearAccountForTransactionSignatory({
-          keystore,
-          nearNetworkParsedCaipType,
-          transaction,
-        })
+        const [nearAccountPointers, nearAccount] = await Promise.all([
+          HACK__notSureIfSupposedToBeGlobalAccountLookup(params, walletsData),
+          getNearAccountForWalletConnectRequestOrThrow({
+            web3wallet,
+            request,
+            walletsData,
+          }),
+        ])
 
-        if (!account)
+        const nearAccountPointer: NearAccountPointer | undefined =
+          nearMaybeAccountForTransactionSignatory({
+            nearAccountPointers,
+            transaction,
+          })
+
+        if (!nearAccountPointer)
           throw new Error(
             `Failed to find matching account for transaction signed by "${String(
               transaction?.signerId
             )}".`
           )
 
+        // HACK: Ensure the NearAccountPointer being requested for signing matches
+        //       the allocated signer.
+        throwIfNearAccountDoesNotMatchNearAccountPointer({
+          nearAccountPointer,
+          nearAccount,
+        })
+
+        const nextActions = actions.map(nearCreateAction)
+
         const [transactionToSignAndSend] = await nearCreateTransactions({
           provider,
-          account,
+          nearAccount,
           transactions: [
             {
               ...transaction,
-              actions: actions.map(createAction),
+              actions: nextActions,
             },
           ],
         })
@@ -125,18 +193,23 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         const [result] = await nearSignAndSendTransactions({
           transactions: [transactionToSignAndSend],
           provider,
-          keystore,
-          nearNetworkParsedCaipType,
+          nearAccount,
         })
 
         return result
       },
       [NearSigningMethod.NEAR_SIGN_TRANSACTIONS]: async ({
+        web3wallet,
         request,
       }: WalletConnectSessionRequestCallbackParams) => {
+        const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          request,
+          web3wallet,
+          walletsData,
+        })
+
         const signedTransactions = await nearSignTransactions({
-          keystore,
-          nearNetworkParsedCaipType,
+          nearAccount,
           transactions: request.params.request.params.transactions.map(
             (transactionData: Uint8Array) =>
               transactions.Transaction.decode(Buffer.from(transactionData))
@@ -147,10 +220,10 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
           signedTransaction.encode()
         )
       },
-      [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTIONS]: async ({
-        rpc,
-        request,
-      }: WalletConnectSessionRequestCallbackParams) => {
+      [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTIONS]: async (
+        params: WalletConnectSessionRequestCallbackParams
+      ) => {
+        const { rpc, request } = params
         const provider = getNearProvider(rpc)
         const { transactions } = request.params.request.params
 
@@ -161,42 +234,56 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
             )}".`
           )
 
-        const accounts = (
+        const [nearAccountPointers, nearAccount] = await Promise.all([
+          HACK__notSureIfSupposedToBeGlobalAccountLookup(params, walletsData),
+          getNearAccountForWalletConnectRequestOrThrow({
+            ...params,
+            walletsData,
+          }),
+        ])
+
+        const nearAccountPointersForTransactions = (
           await Promise.all(
             transactions.map((transaction: NearTransaction) =>
-              getMaybeNearAccountForTransactionSignatory({
-                keystore,
-                nearNetworkParsedCaipType,
+              nearMaybeAccountForTransactionSignatory({
+                nearAccountPointers,
                 transaction,
               })
             )
           )
         ).flatMap((e) => (e ? [e] : []))
 
-        const accountIds = [...new Set(accounts)]
+        const uniqueNearAccountPointersForTransactions = [
+          ...new Set(nearAccountPointersForTransactions),
+        ]
 
-        if (accountIds.length > 1)
+        if (uniqueNearAccountPointersForTransactions.length > 1)
           throw new Error(
-            `Expected single accountId, encountered ${accountIds.length}.`
+            `Expected single NearAccountPointer, encountered ${uniqueNearAccountPointersForTransactions.length}.`
           )
 
-        const [account] = accountIds
+        const [uniqueNearAccountPointerForTransactions] =
+          uniqueNearAccountPointersForTransactions
+
+        throwIfNearAccountDoesNotMatchNearAccountPointer({
+          nearAccountPointer: uniqueNearAccountPointerForTransactions,
+          nearAccount,
+        })
 
         return nearSignAndSendTransactions({
           provider,
-          keystore,
-          nearNetworkParsedCaipType,
+          nearAccount,
           transactions: await nearCreateTransactions({
             provider,
-            account,
+            nearAccount,
             transactions: transactions.map((transaction) => ({
               ...transaction,
-              actions: transaction.actions.map(createAction),
+              actions: transaction.actions.map(nearCreateAction),
             })),
           }),
         })
       },
     }),
-    []
+    [walletsData]
   )
 }

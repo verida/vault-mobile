@@ -1,5 +1,5 @@
 import { EIP155NetworkId } from 'features/ethereum'
-import { NearNetworkId } from 'features/near'
+import { getNearNodeUrlOrThrow, NearNetworkId } from 'features/near'
 import Config from 'react-native-config'
 
 import { WalletConnectChainMeta, WalletConnectChainStyle } from '../@types'
@@ -62,7 +62,7 @@ export const NEAR_WALLETCONNECT_CHAIN_META: {
     name: 'NEAR Testnet',
     logo: '/chain-logos/near.png',
     rgb: '99, 125, 234',
-    rpc: 'https://rpc.testnet.near.org',
+    rpc: getNearNodeUrlOrThrow(NearNetworkId.TESTNET),
   },
 }
 

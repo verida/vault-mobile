@@ -36,7 +36,7 @@
     "@iden3/js-iden3-core": "^1.0.0-beta.2",
     "@iden3/js-jwz": "^1.0.0-beta.2",
     "@json-rpc-tools/utils": "1.7.6",
-    "@near-wallet-selector/wallet-utils": "^5.0.0",
+    "@near-wallet-selector/wallet-utils": "^8.2.0",
     "@react-native-async-storage/async-storage": "1.17.7",
     "@react-native-community/blur": "^4.3.0",
     "@react-native-community/clipboard": "^1.2.3",

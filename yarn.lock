@@ -3537,23 +3537,21 @@
   resolved "https://registry.yarnpkg.com/@multiformats/base-x/-/base-x-4.0.1.tgz#95ff0fa58711789d53aefb2590a8b7a4e715d121"
   integrity sha512-eMk0b9ReBbV23xXU693TAIrLyeO5iTgBZGSJfpqriG8UkYvr/hC9u9pyMlAakDNHWmbhMZCDs6KQO0jzKD8OTw==
 
-"@near-wallet-selector/core@5.0.3":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-5.0.3.tgz#f35b0d5c232d1efc2e1f2bb3ba6d2910a96140b7"
-  integrity sha512-RB2qhBs0oYfxx+ddJASBYJ7l0QG+bzNp29X+5hpFqTg+0iQN8sZnfU6bHUQlfBj9ky65RDX/A4rraG59BvB/Mg==
+"@near-wallet-selector/core@8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/core/-/core-8.2.0.tgz#5be2f5e371d84bba99edfcef2b056c03fc99d0c7"
+  integrity sha512-IHIGfT2Ce7CI5z9srC4tQkhHw/2acAIrZWIcTWLbfzN9u6eWB143hLxTe3eTD1hUVeJBXVxfZR+Ano9nKKBypw==
   dependencies:
-    near-api-js "0.44.2"
-    rxjs "~7.4.0"
+    events "3.3.0"
+    rxjs "7.8.1"
 
-"@near-wallet-selector/wallet-utils@^5.0.0":
-  version "5.0.3"
-  resolved "https://registry.yarnpkg.com/@near-wallet-selector/wallet-utils/-/wallet-utils-5.0.3.tgz#4303ed7209277af065099670e8db62ff1974ad40"
-  integrity sha512-NDQ7dEFXrR6M3B+1A7LAs6VbL3zMmu582syQg577b7sMvuZS+L7LMrNlUhx0+7YYxVpb9POqqB/7ULynbfTZ4g==
+"@near-wallet-selector/wallet-utils@^8.2.0":
+  version "8.2.0"
+  resolved "https://registry.yarnpkg.com/@near-wallet-selector/wallet-utils/-/wallet-utils-8.2.0.tgz#49e36ae13944fb6ff6877a31a1c709235961ca2f"
+  integrity sha512-vNwYDBpYK1VRVpHtsDEPFxpgGZJsx9mBdN3tS+Z30ou1sUGhd8MAynejLWJjh1LSMZD+PHBmIynExMLtYwy9YA==
   dependencies:
-    "@near-wallet-selector/core" "5.0.3"
-    bn.js "^5.2.0"
-    near-api-js "0.44.2"
-    rxjs "~7.4.0"
+    "@near-wallet-selector/core" "8.2.0"
+    bn.js "5.2.1"
 
 "@noble/ed25519@^1.7.1":
   version "1.7.3"
@@ -7330,15 +7328,15 @@ bn.js@5.2.0:
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.0.tgz#358860674396c6997771a9d051fcc1b57d4ae002"
   integrity sha512-D7iWRBvnZE8ecXiLj/9wbxH7Tk79fAh8IHaTNq1RWRixsS02W+5qS+iE9yq6RYl0asXx5tw0bLhmT5pIfbSquw==
 
+bn.js@5.2.1, bn.js@^5.0.0, bn.js@^5.1.1, bn.js@^5.1.2, bn.js@^5.2.0, bn.js@^5.2.1:
+  version "5.2.1"
+  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.1.tgz#0bc527a6a0d18d0aa8d5b0538ce4a77dccfa7b70"
+  integrity sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==
+
 bn.js@^4.0.0, bn.js@^4.1.0, bn.js@^4.11.0, bn.js@^4.11.6, bn.js@^4.11.8, bn.js@^4.11.9, bn.js@^4.4.0:
   version "4.12.0"
   resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-4.12.0.tgz#775b3f278efbb9718eec7361f483fb36fbbfea88"
   integrity sha512-c98Bf3tPniI+scsdk237ku1Dc3ujXQTSgyiPUDEOe7tRkhrqridvh8klBv0HCEso1OLOYcHuCv/cS6DNxKH+ZA==
-
-bn.js@^5.0.0, bn.js@^5.1.1, bn.js@^5.1.2, bn.js@^5.2.0, bn.js@^5.2.1:
-  version "5.2.1"
-  resolved "https://registry.yarnpkg.com/bn.js/-/bn.js-5.2.1.tgz#0bc527a6a0d18d0aa8d5b0538ce4a77dccfa7b70"
-  integrity sha512-eXRvHzWyYPBuB4NBy0cmYQjGitUrtqwbvlzP3G6VFnNRbsZQIxQ10PbKKHt8gZ/HW/D/747aDl+QkDqg3KQLMQ==
 
 body-parser@1.19.0:
   version "1.19.0"
@@ -17992,6 +17990,13 @@ run-parallel@^1.1.2, run-parallel@^1.1.9:
   dependencies:
     queue-microtask "^1.2.2"
 
+rxjs@7.8.1:
+  version "7.8.1"
+  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.8.1.tgz#6f6f3d99ea8044291efd92e7c7fcf562c4057543"
+  integrity sha512-AA3TVj+0A2iuIoQkWEK/tqFjBq2j+6PO6Y0zJcvzLAFhEFIO3HL0vls9hWLncZbAAbK0mar7oZ4V079I/qPMxg==
+  dependencies:
+    tslib "^2.1.0"
+
 rxjs@^6.4.0:
   version "6.6.7"
   resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-6.6.7.tgz#90ac018acabf491bf65044235d5863c4dab804c9"
@@ -18005,13 +18010,6 @@ rxjs@^7.5.5:
   integrity sha512-sy+H0pQofO95VDmFLzyaw9xNJU4KTRSwQIGM6+iG3SypAtCiLDzpeG8sJrNCWn2Up9km+KhkvTdbkrdy+yzZdw==
   dependencies:
     tslib "^2.1.0"
-
-rxjs@~7.4.0:
-  version "7.4.0"
-  resolved "https://registry.yarnpkg.com/rxjs/-/rxjs-7.4.0.tgz#a12a44d7eebf016f5ff2441b87f28c9a51cebc68"
-  integrity sha512-7SQDi7xeTMCJpqViXh8gL/lebcwlp3d831F05+9B44A4B0WfsEwUQHR64gsH1kvJ+Ep/J9K2+n1hVl1CsGN23w==
-  dependencies:
-    tslib "~2.1.0"
 
 safari-14-idb-fix@^3.0.0:
   version "3.0.0"
@@ -19442,11 +19440,6 @@ tslib@^2.4.1:
   version "2.5.3"
   resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.5.3.tgz#24944ba2d990940e6e982c4bea147aba80209913"
   integrity sha512-mSxlJJwl3BMEQCUNnxXBU9jP4JBktcEGhURcPR6VQVlnP0FdDEsIaz0C35dXNGLyRfrATNofF0F5p2KPxQgB+w==
-
-tslib@~2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/tslib/-/tslib-2.1.0.tgz#da60860f1c2ecaa5703ab7d39bc05b6bf988b97a"
-  integrity sha512-hcVC3wYEziELGGmEEXue7D75zbwIIVUMWAVbHItGPx0ziyXxrOMQx4rQEVEV45Ut/1IotuEvwqPopzIOkDMf0A==
 
 tsutils@^3.21.0:
   version "3.21.0"
