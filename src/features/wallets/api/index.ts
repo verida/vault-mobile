@@ -1,9 +1,15 @@
+import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { EnvironmentType } from '@verida/types/dist/NetworkInterfaces'
+import { AssetId } from 'caip'
+import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
 import { BlockchainNetwork } from 'api/types'
 import CONFIG from 'config/environment'
+import { RootState } from 'reduxStore/types'
+
+import { BalanceByChain, Transaction } from '../@types'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: CONFIG.WALLET_PROVIDER_URL,
@@ -21,7 +27,7 @@ export const walletsApi = createApi({
   endpoints: (build) => ({
     chainsList: build.query({
       keepUnusedDataFor: 60 * 60 * 24, // 24 hours
-      query: () => `chains/list`,
+      query: () => 'chains/list',
       transformResponse: (response: {
         data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
@@ -37,10 +43,88 @@ export const walletsApi = createApi({
         }
         return allNetworks
       },
-      // TODO: Handle error
+    }),
+    getBalances: build.query({
+      keepUnusedDataFor: 60 * 60 * 10, // 10 mins TODO: change value
+      query: (walletAddresses: string[]) =>
+        `balance/getBalanceByChains?${walletAddresses
+          .map((address) => `wallet[]=${address}`)
+          .join('&')}`,
+      transformResponse: (response: {
+        data: { results: BalanceByChain }
+      }): {
+        list: BalanceByChain['results']
+        total: number
+      } => {
+        const balanceByChains = response.data.results
+
+        if (isEmpty(balanceByChains.results)) return { list: [], total: 0 }
+
+        // map prices and balances to recognized coins list and standardize
+        const balances = balanceByChains.results
+        const total = balanceByChains.totalBalance
+
+        return {
+          list: balances.map((tokenBalance) => {
+            return {
+              ...tokenBalance,
+              label: tokenBalance.symbol,
+              price: tokenBalance.quote.USD.price,
+              change: tokenBalance.quote.USD.percent_change_24h,
+              quantity: tokenBalance.balance,
+              amount: tokenBalance.amount,
+            }
+          }),
+          total,
+        }
+      },
+    }),
+    getTransactionsForToken: build.query({
+      query: (body: { userAddress: string; asset: AssetId }) => ({
+        url: 'transaction/list',
+        method: 'POST',
+        body,
+      }),
+      transformResponse: (response: { data: Transaction[] }): Transaction[] => {
+        const transactions = response.data
+        return transactions
+      },
     }),
     // Other wallets Apis
   }),
 })
 
-export const { useChainsListQuery } = walletsApi
+// Query hooks
+
+export const {
+  useChainsListQuery,
+  useGetBalancesQuery,
+  useGetTransactionsForTokenQuery,
+} = walletsApi
+
+// Selectors
+export const getBlockchainNetworks = createSelector(
+  walletsApi.endpoints.chainsList.select(undefined),
+  (data) => {
+    return data.data
+  }
+)
+
+export const getBalancesData = (state: RootState, walletAddresses: string[]) =>
+  walletsApi.endpoints.getBalances.select(walletAddresses)(state)?.data ?? {
+    list: [],
+    total: 0,
+  }
+
+export const getTransactionsForTokenData = (
+  state: RootState,
+  userAddress: string,
+  asset: AssetId
+) => {
+  const transactions =
+    walletsApi.endpoints.getTransactionsForToken.select({ userAddress, asset })(
+      state
+    )?.data ?? []
+
+  return transactions
+}
