@@ -1,8 +1,8 @@
+import { getBlockchainNetworks } from 'features/wallets'
 import { store } from 'reduxStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 import AccountManager from 'api/AccountManager'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
 
 import {
   BlockchainAccount,

@@ -14,6 +14,7 @@ import {
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
+import { Reducer } from './types'
 import {
   ADD_PENDING_TRANSACTION,
   BALANCES_FETCH_FAILED,

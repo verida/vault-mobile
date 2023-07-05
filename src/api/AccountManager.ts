@@ -37,10 +37,9 @@ import CONFIG from '../config/environment'
 import EventEmitter from 'events'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 import { IContext } from '@verida/types'
-import { walletsApi } from 'features/wallets'
+import { walletsApi, getBlockchainNetworks } from 'features/wallets'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -364,9 +363,7 @@ class AccountManager extends EventEmitter {
           JSON.stringify(wallets)
         )
 
-        const currentlySelectedWallet = getSelectedWalletId(
-          store.getState().main
-        )
+        const currentlySelectedWallet = getSelectedWalletId(store.getState())
 
         if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
           const selectedWalletID = hdWallets[0]._id

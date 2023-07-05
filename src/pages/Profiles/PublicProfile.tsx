@@ -2,9 +2,8 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { LinearGradient } from 'expo-linear-gradient'
+import { getBlockchainNetworks } from 'features/wallets'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
 import debounce from 'lodash/debounce'
@@ -69,8 +68,8 @@ import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { setPublicProfileData } from 'reduxStore/general/actions'
-import { getBlockchainNetworks, getSelectedAccount } from 'reduxStore/selectors'
-import { allWalletsSelector } from 'reduxStore/wallet/selectors'
+import { getSelectedAccount } from 'reduxStore/selectors'
+import { getAllWallets } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 export enum PublicProfileEditMode {
@@ -109,7 +108,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const [loading, setLoading] = useState(true)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
-  const wallets = useSelector(allWalletsSelector) as Record<
+  const wallets = useSelector(getAllWallets) as Record<
     string,
     BlockchainWalletWithAccounts
   >
@@ -1356,10 +1355,9 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData,
+    publicProfileData: state.main.publicProfileData,
   }
 }
 

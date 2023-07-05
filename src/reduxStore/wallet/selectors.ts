@@ -1,83 +1,77 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
-import { isEmpty } from 'lodash'
+import { getBalancesData, getTransactionsForTokenData } from 'features/wallets'
 import { createSelector } from 'reselect'
 import {
-  getNativeForChain,
+  getWalletAddressForAsset,
   tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 
-import { selectTokens } from 'reduxStore/tokens/selectors'
+import { RootState } from 'reduxStore/types'
 
-const s = (state) => state.main // Current wallet state sits in main reducer
-export const selectedWalletSelector = (state) => s(state).selectedWallet
-export const allWalletsSelector = (state) => getAllWallets(s(state)) || {}
+const s = (state: RootState) => state.main // Current wallet state sits in main reducer
+// export const selectedWalletSelector = (state: RootState) =>
+//   s(state).selectedWallet
+// export const getAllWallets = (state: RootState) =>
+//   getAllWallets(s(state)) || {}
 
-export const getBalancesData = (state) => {
-  if (state.balances.data && state.balances.data.results) {
-    return state.balances.data.results
-  } else {
-    return {}
-  }
-}
+// export const getBalancesData = (state) => {
+//   if (state.balances.data && state.balances.data.results) {
+//     return state.balances.data.results
+//   } else {
+//     return {}
+//   }
+// }
 
-export const getTotalBalance = (state) => {
-  if (state.balances.data && state.balances.data.totalBalance) {
-    return state.balances.data.totalBalance
-  } else {
-    return 0
-  }
-}
+// export const getTotalBalance = (state) => {
+//   if (state.balances.data && state.balances.data.totalBalance) {
+//     return state.balances.data.totalBalance
+//   } else {
+//     return 0
+//   }
+// }
 
-export const getSingleWalletChain = (state) => {
-  const wallet = getWallets(state)
-  if (wallet.type === 'single' && wallet.chain) {
-    return wallet.chain
-  } else {
-    return null
-  }
-}
+// export const getSingleWalletChain = (state) => {
+//   const wallet = getWallets(state)
+//   if (wallet.type === 'single' && wallet.chain) {
+//     return wallet.chain
+//   } else {
+//     return null
+//   }
+// }
 
 // @chris done, although deprecate selectTokens
-export const getListAndTotal = (state) => {
-  // map prices and balances to recognized coins list and standardize
-  const balances = getBalancesData(state.main)
-  const total = getTotalBalance(state.main)
+// export const getListAndTotal = (state) => {
+//   // map prices and balances to recognized coins list and standardize
+//   const { list, total } = getBalancesData(state.main)
+//   // const total = getTotalBalance(state.main)
 
-  if (isEmpty(balances)) return { list: [], total }
+//   // if (isEmpty(balances)) return { list: [], total }
 
-  return {
-    list: balances.map((tokenBalance) => {
-      return {
-        ...tokenBalance,
-        label: tokenBalance.symbol,
-        price: parseFloat(tokenBalance.quote.USD.price),
-        change: parseFloat(tokenBalance.quote.USD.percent_change_24h),
-        quantity: parseFloat(tokenBalance.balance),
-        amount: parseFloat(tokenBalance.amount),
-      }
-    }),
-    total,
-  }
-}
+//   return {
+//     list,
+//     total,
+//   }
+// }
 
-export const selectNativeTokenBalance = (state, token) => {
-  const tokens = selectTokens(state)
-  const native = getNativeForChain(tokens, token.chainName)
-  const balances = getBalancesData(state.main)
+// export const selectNativeTokenBalance = (state, token) => {
+//   const native = getNativeForChain(tokens, token.chainName)
+//   const balances = getBalancesData(state.main)
 
-  if (balances && native && balances[native.symbol]) {
-    return balances[native.symbol].balance
-  } else {
-    0
-  }
-}
+//   if (balances && native && balances[native.symbol]) {
+//     return balances[native.symbol].balance
+//   } else {
+//     0
+//   }
+// }
 
 // @chris done
-export const selectSingleTokenData = (state, asset) => {
-  const balances = getBalancesData(state.main)
+export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
+  const selectedWallet = getSelectedWalletById(state)
+  const addresses = getUniqueWalletAddresses(selectedWallet)
+  const { list } = getBalancesData(state, addresses)
 
-  const tokenBalance = balances?.find((item) => {
+  const tokenBalance = list?.find((item) => {
     return new AssetId(item.asset).toString() === new AssetId(asset).toString()
   })
 
@@ -96,28 +90,28 @@ export const selectSingleTokenData = (state, asset) => {
   return {
     ...tokenBalance,
     label: tokenBalance.symbol,
-    price: parseFloat(tokenBalance.quote.USD.price),
-    change: parseFloat(tokenBalance.quote.USD.percent_change_24h),
-    quantity: parseFloat(tokenBalance.balance),
-    amount: parseFloat(tokenBalance.amount),
+    price: tokenBalance.quote.USD.price,
+    change: tokenBalance.quote.USD.percent_change_24h,
+    quantity: tokenBalance.balance,
+    amount: tokenBalance.amount,
   }
 }
 
-export const getTokensData = (state) => {
-  const loading = state.main.balances.fetching
+// export const getTokensData = (state) => {
+//   const loading = state.main.balances.fetching
 
-  return {
-    listAndTotal: getListAndTotal(state),
-    loading: loading,
-  }
-}
+//   return {
+//     listAndTotal: getListAndTotal(state),
+//     loading: loading,
+//   }
+// }
 
 export const getAllWallets = (state) => {
-  return state.wallets.data || {}
+  return s(state).wallets.data || {}
 }
 
 export const getSelectedWalletId = (state) => {
-  return state.selectedWallet
+  return s(state).selectedWallet
 }
 
 // @chris done
@@ -160,13 +154,13 @@ export const getUniqueWalletAddresses = (wallet) => {
 
 export const getSelectedWalletById = (state) => {
   const walletList = getWalletList(state)
-  const selectedWalletId = state.selectedWallet
+  const selectedWalletId = s(state).selectedWallet
   const selectedWallet = walletList.find((item) => item.id === selectedWalletId)
   return selectedWallet
 }
 
 export const getWalletProcessingState = (state) => {
-  return state.walletProcessing.loading
+  return s(state).walletProcessing.loading
 }
 
 export const getWalletCount = (state) => {
@@ -187,11 +181,12 @@ export const getWallets = createSelector(
 )
 
 export const getWalletObjectById = (state, ID) => {
-  return state.wallets.data[ID] || {}
+  return s(state).wallets.data[ID] || {}
 }
 
+// TODO: Replace with API data
 export const selectPendingTransactions = (state, assetID) => {
-  const pendingTransactions = state.pendingTransactions.data
+  const pendingTransactions = s(state).pendingTransactions.data
   const transactionsForAsset = pendingTransactions.filter((ele) => {
     return (
       tokenCaipObjectToString(ele.token.asset) ===
@@ -205,12 +200,17 @@ export const selectPendingTransactions = (state, assetID) => {
   }
 }
 
-export const selectTransactions = (state, assetID) => {
-  const transactions = [...state.transactions.data] || []
+export const selectTransactions = (state: RootState, assetID: AssetId) => {
+  const wallets = getWalletsData(state)
+  const userAddress = getWalletAddressForAsset(assetID, wallets)
+  const transactions = [
+    ...getTransactionsForTokenData(state, userAddress, assetID),
+  ]
   const pendingTransactions = selectPendingTransactions(state, assetID)
   if (pendingTransactions.length > 0) {
-    pendingTransactions.map((tx) => {
-      let transactionCompleted = transactions.find((trans) => {
+    pendingTransactions.map((tx: any) => {
+      // TODO: tx type
+      const transactionCompleted = transactions.find((trans) => {
         return trans.id === tx.id
       })
       if (!transactionCompleted) {
@@ -227,25 +227,25 @@ export const selectTransactions = (state, assetID) => {
   return transactions
 }
 
-export const selectTransactionsData = (state, assetID) => {
-  const { fetching, error } = state.transactions
+// export const selectTransactionsData = (state, assetID) => {
+//   const { fetching, error } = state.transactions
 
-  return {
-    list: error ? [] : selectTransactions(state, assetID),
-    loading: fetching,
-    errorType: error,
-    errorMessage: state.transactions.data,
-  }
-}
+//   return {
+//     list: error ? [] : selectTransactions(state, assetID),
+//     loading: fetching,
+//     errorType: error,
+//     errorMessage: state.transactions.data,
+//   }
+// }
 
 export const getTransactionParamsData = (state) => {
-  return state.transactionParams.data || {}
+  return s(state).transactionParams.data || {}
 }
 
 export const selectSentTransaction = (state) => {
   const transaction = {
-    ...state.sentTransaction,
-    data: { ...state.sentTransaction.data },
+    ...s(state).sentTransaction,
+    data: { ...s(state).sentTransaction.data },
   }
   if (transaction.data.amount) {
     transaction.data.amount = BigNumber.from(transaction.data.amount)
@@ -254,11 +254,11 @@ export const selectSentTransaction = (state) => {
 }
 
 export const selectTransaction = (state) => {
-  return state.transactionDetails.data || {}
+  return s(state).transactionDetails.data || {}
 }
 
 export const selectTransactionData = (state) => {
-  const { fetching, error } = state.transactionDetails
+  const { fetching, error } = s(state).transactionDetails
 
   return {
     transaction: selectTransaction(state),

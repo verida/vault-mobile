@@ -17,19 +17,17 @@ import {
 } from 'redux-persist'
 
 import { mainReducer } from './mainReducer'
-import { tokensReducer } from './tokens/reducer'
 import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['walletConnect', 'tokens', walletsApi.reducerPath],
+  whitelist: ['walletConnect', walletsApi.reducerPath],
 }
 
 export const rootReducer = combineReducers({
   main: mainReducer,
   walletConnect: walletConnectReducer,
-  tokens: tokensReducer, // TODO: Refactor tokens to be in walletsApi slice?
 
   // API reducers
   [walletsApi.reducerPath]: walletsApi.reducer,

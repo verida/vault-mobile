@@ -10,7 +10,7 @@ export type AccountsType = {
 }
 
 export type WalletType = {
-  id: string
+  _id: string
   type: string
   seedPhrase: string
   label: string
@@ -19,9 +19,9 @@ export type WalletType = {
 }
 
 export type WalletItem = {
+  _id: string
   count: number
   icon: string
-  id: string
   label: string
   other?: any
   address?: string

@@ -88,9 +88,8 @@ const style = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
+const mapStateToProps = (state) => {
+  return { publicProfileData: state.main.publicProfileData }
 }
 
 const mapDispatchToProps = (dispatch) => {
