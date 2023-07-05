@@ -18,10 +18,9 @@ export const nearSignAndSendTransactions = async ({
   })
 
   const results = await Promise.all(
+    // TODO: was sendTransaction
     signedTransactions.map((tx) => provider.sendTransactionAsync(tx))
   )
-
-  console.warn(nearAccount.accountId)
 
   return results
 }
