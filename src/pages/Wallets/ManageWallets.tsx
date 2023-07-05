@@ -13,7 +13,6 @@ import WalletList from 'components/WalletList'
 import { WalletItem } from 'components/WalletList/types'
 import CONFIG from 'config/environment'
 import { MainStackParams } from 'navigation/types'
-import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -41,7 +40,6 @@ type Props = {
   navigation: NativeStackNavigationProp<MainStackParams, any>
   selectedWalletId: number | string
   loading: boolean
-  chains: any
   onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
   onCreateWallet: () => Promise<void>
   onImportWallet: () => Promise<void>
@@ -56,7 +54,6 @@ const ManageWallets = (props: Props) => {
     navigation,
     selectedWalletId,
     loading,
-    chains,
     onSetSelectedWalletId,
     onCreateWallet,
     onImportWallet,
@@ -78,7 +75,7 @@ const ManageWallets = (props: Props) => {
     if (wallets) {
       setWalletList(wallets)
     }
-  }, [chains, wallets])
+  }, [wallets])
 
   const showDeleteAlert = () => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
@@ -97,7 +94,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const selectedWalletID = item.id
+            const selectedWalletID = item._id
             onDeleteWallet(selectedWalletID)
           },
         },
@@ -244,11 +241,8 @@ const styles = StyleSheet.create({
   content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  const chains = selectChains(rootState)
+const mapStateToProps = (state: any) => {
   return {
-    chains,
     wallets: getWalletList(state),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),

@@ -176,7 +176,7 @@ const SingleWallet = (props: Props) => {
         hideModal={() => setRenameModalVisible(false)}
         visible={renameModalVisible}
         onPressRename={onRenameWallet as any}
-        data={{ id: wallets.id, label: wallets.label }}
+        data={{ id: wallets._id, label: wallets.label }}
       />
       <SeedPhraseWarningModal
         hideModal={() => setSeedPhraseModalVisible(false)}
@@ -248,8 +248,7 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-const mapStateToProps = (rootState: any, props: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any, props: any) => {
   const wallets = getWalletObjectById(state, props.route.params.item.id)
 
   return {
