@@ -90,34 +90,27 @@ const formatTransaction = (transaction: Uint8Array) => {
 export function useWalletConnectDataFormattingNearLike() {
   return React.useCallback(
     (params: Web3WalletTypes.EventArguments['session_request']['params']) => {
-      switch (params.request.method) {
-        case NearSigningMethod.NEAR_SIGN_TRANSACTION:
+      const { params: data, method } = params.request
+
+      switch (method) {
+        case NearSigningMethod.NEAR_SIGN_TRANSACTION: {
+          const { transaction, ...extras } = data
           return {
-            ...params,
-            request: {
-              ...params.request,
-              params: {
-                ...params.request.params,
-                transaction: formatTransaction(
-                  params.request.params.transaction
-                ),
-              },
-            },
+            ...extras,
+            transaction: formatTransaction(transaction),
           }
-        case NearSigningMethod.NEAR_SIGN_TRANSACTIONS:
+        }
+
+        case NearSigningMethod.NEAR_SIGN_TRANSACTIONS: {
+          const { transactions, ...extras } = data
           return {
-            ...params,
-            request: {
-              ...params.request,
-              params: {
-                ...params.request.params,
-                transactions:
-                  params.request.params.transactions.map(formatTransaction),
-              },
-            },
+            ...extras,
+            transactions: transactions.map(formatTransaction),
           }
+        }
+
         default:
-          return params
+          return data
       }
     },
     []

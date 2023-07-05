@@ -1,7 +1,10 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { maybeParseCaip } from 'features/caip'
-import { getMaybeVeridaWalletAccountForWalletConnectRequest } from 'features/walletConnect'
+import { NearWalletAccountInfo } from 'features/near'
 import { useWalletsData } from 'hooks'
+import { keyStores, utils } from 'near-api-js'
+
+import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
 
 // https://docs.near.org/tools/near-api-js/quick-reference#key-store
 export async function getMaybeNearAccountForWalletConnectRequest({
@@ -12,11 +15,8 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
-  //readonly topic: string
-  //readonly keystore: NearKeystore
-  //readonly nearNetworkParsedCaipType: ParsedCaipType
-}) {
-  const { params } = request
+}): Promise<NearWalletAccountInfo | undefined> {
+  const { params, topic } = request
   const { chainId: caipIdentifier } = params
 
   const maybeParsedCaip = maybeParseCaip(caipIdentifier)
@@ -30,23 +30,20 @@ export async function getMaybeNearAccountForWalletConnectRequest({
       walletsData,
     })
 
-  //if (!maybeVeridaWalletAccount) return undefined
+  if (!maybeVeridaWalletAccount) return undefined
 
-  //const { privateKey } = maybeVeridaWalletAccount
-  //const { chainId } = maybeParsedCaip
+  const { privateKey } = maybeVeridaWalletAccount
+  const { chainId } = maybeParsedCaip
 
-  //const keyPair = KeyPair.fromString(privateKey)
+  const keyPair = utils.KeyPair.fromString(privateKey)
 
-  //const keyStore = new keyStores.InMemoryKeyStore()
+  const publicKey = keyPair.getPublicKey().toString()
 
-  //// TODO: fix
-  //await keyStore.setKey(chainId, 'example-account.testnet', keyPair)
+  const keystore = new keyStores.InMemoryKeyStore()
 
-  throw new Error('near get account not yet implemented')
+  const accountId = topic
 
-  //const nearAccounts = await getNearAccounts({
-  //  keystore,
-  //  nearNetworkParsedCaipType,
-  //})
-  //return nearAccounts.filter((e) => e.publicKey === topic)
+  await keystore.setKey(chainId, accountId, keyPair)
+
+  return { keystore, accountId, publicKey }
 }

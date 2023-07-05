@@ -111,6 +111,7 @@
     "lottie-react-native": "5.1.5",
     "metro-config": "^0.61.0",
     "moment": "^2.29.4",
+    "nanoid": "^4.0.2",
     "native-base": "^2.13.14",
     "near-api-js": "^0.44.2",
     "node-libs-react-native": "^1.2.0",

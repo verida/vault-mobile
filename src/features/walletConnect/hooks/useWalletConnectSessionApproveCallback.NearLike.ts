@@ -34,6 +34,8 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
           `No active account. Unable to find matching NEAR account.`
         )
 
+      if (Math.random() > 0) throw new Error('Did manage to find NEAR account!')
+
       const method = request?.params?.request?.method
 
       if (!throwIfInvalidNearSigningMethod(method)) return

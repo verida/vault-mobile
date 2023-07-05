@@ -11,7 +11,6 @@ import {
   nearSignTransactions,
   NearTransaction,
   NearWalletAccountInfo,
-  useNearContext,
 } from 'features/near'
 import { providers, transactions } from 'near-api-js/lib'
 import * as React from 'react'
@@ -24,8 +23,6 @@ import {
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
 export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
-  const { nearNetworkParsedCaipType, keystore } = useNearContext()
-
   return React.useMemo<NearSessionRequestHandlers>(
     () => ({
       [NearSigningMethod.NEAR_SIGN_IN]: async ({
@@ -200,6 +197,6 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         })
       },
     }),
-    [keystore, nearNetworkParsedCaipType]
+    []
   )
 }
