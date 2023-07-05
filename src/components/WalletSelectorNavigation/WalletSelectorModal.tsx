@@ -15,7 +15,6 @@ import CONFIG from 'config/environment'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-import { selectChains } from 'reduxStore/tokens/selectors'
 import { setSelectedWallet } from 'reduxStore/wallet/actions'
 import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
 
@@ -32,7 +31,6 @@ const HIT_SLOP = { top: 15, right: 15, bottom: 15, left: 15 }
 
 const WalletSelectorModal = ({
   modalVisible,
-  chains,
   wallets,
   selectedWalletId,
   onCloseModal,
@@ -45,7 +43,7 @@ const WalletSelectorModal = ({
     if (wallets) {
       setWalletList(wallets)
     }
-  }, [chains, wallets])
+  }, [wallets])
 
   const handleWalletSelection = (item: WalletItem) => {
     onSetSelectedWallet(item.id)
@@ -86,11 +84,8 @@ const WalletSelectorModal = ({
   )
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  const chains = selectChains(rootState)
+const mapStateToProps = (state: any) => {
   return {
-    chains,
     wallets: getWalletList(state),
     selectedWalletId: getSelectedWalletId(state),
   }

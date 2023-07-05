@@ -10,7 +10,7 @@ export let nearWallet: NearWalletController
  * Utilities
  */
 export async function createOrRestoreNearWallet() {
-  const wallets = getWalletsData(store.getState().main)
+  const wallets = getWalletsData(store.getState())
   if (!wallets.near) {
     // eslint-disable-next-line no-console
     console.info('No Near address available')

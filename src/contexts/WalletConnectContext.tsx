@@ -22,7 +22,7 @@ import {
   setWalletConnectPeerMeta,
 } from 'reduxStore/actions'
 import { authenticatedSelector, dappsSelector } from 'reduxStore/selectors'
-import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
+import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 import { useModal } from '../hooks/useModal'
 import ConnectDappModal from '../pages/WalletConnect/ConnectDappModal'
@@ -52,7 +52,7 @@ function useWalletConnectContext() {
   const dapps = useReduxState(dappsSelector)
   const authenticated = useReduxState(authenticatedSelector)
   const appState = useRef(AppState.currentState)
-  const selectedWalletId = useReduxState(selectedWalletSelector)
+  const selectedWalletId = useReduxState(getSelectedWalletId)
   const previousDapps = usePrevious(dapps)
 
   const { showModal, dismissModal } = useModal()

@@ -171,9 +171,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   }
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
+const mapStateToProps = (state: any) => {
+  return { publicProfileData: state.main.publicProfileData }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)

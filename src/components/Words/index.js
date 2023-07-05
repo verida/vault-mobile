@@ -32,9 +32,8 @@ const WordLayout = ({ words, template, ...props }) => (
   </View>
 )
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { template: state.template }
+const mapStateToProps = (state) => {
+  return { template: state.main.template }
 }
 
 const mapDispatchToProps = (dispatch) => {

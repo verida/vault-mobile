@@ -331,13 +331,12 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
-    publicProfileData: state.publicProfileData,
-    newMessagesCount: state.newMessagesCount,
-    selectedAccount: state.selectedAccount,
-    navigationLink: state.navigationLink,
+    publicProfileData: state.main.publicProfileData,
+    newMessagesCount: state.main.newMessagesCount,
+    selectedAccount: state.main.selectedAccount,
+    navigationLink: state.main.navigationLink,
   }
 }
 

@@ -6,9 +6,10 @@ import { connect } from 'react-redux'
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-import { getBalances } from 'reduxStore/wallet/actions'
-import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
+// import { getBalances } from 'reduxStore/wallet/actions'
+import { getWalletsData } from 'reduxStore/wallet/selectors'
 
+// import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 import {
   PRIMARY_COLOR_100,
   PRIMARY_COLOR_200,
@@ -64,17 +65,16 @@ const WalletSummary = (props: WalletSummaryProps) => {
   )
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any) => {
   return {
     wallets: getWalletsData(state),
-    data: getTokensData(rootState),
+    // data: getTokensData(rootState),
   }
 }
 
 const mapDispatchToProps = (dispatch: any) => {
   return {
-    onGetBalances: () => dispatch(getBalances()),
+    // onGetBalances: () => dispatch(getBalances()),
   }
 }
 

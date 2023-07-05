@@ -73,7 +73,7 @@ export class NearWalletController {
 
   static async init(networkId: string) {
     const keyStore = new AsyncStorageKeyStore()
-    const wallets = getWalletsData(store.getState().main)
+    const wallets = getWalletsData(store.getState())
     const nearWallet = wallets.near
     const allAccounts = await keyStore.getAccounts(networkId)
     const accounts = (
@@ -97,7 +97,7 @@ export class NearWalletController {
   }
 
   static async createDevAccount() {
-    const wallets = getWalletsData(store.getState().main)
+    const wallets = getWalletsData(store.getState())
     const nearWallet = wallets.near
     const keyPair = utils.KeyPair.fromString(nearWallet.privateKey)
     const randomNumber = Math.floor(
@@ -137,7 +137,7 @@ export class NearWalletController {
   // Retrieve all imported accounts from wallet.
   async getAllAccounts() {
     const accountIds = await this.keyStore.getAccounts(this.networkId)
-    const wallets = getWalletsData(store.getState().main)
+    const wallets = getWalletsData(store.getState())
     const nearWallet = wallets.near
 
     const accounts = (
@@ -235,7 +235,7 @@ export class NearWalletController {
   async getAccounts({ topic }: GetAccountsParams) {
     const signClient = await getWC2SignClient()
     const session = signClient.session.get(topic)
-    const wallets = getWalletsData(store.getState().main)
+    const wallets = getWalletsData(store.getState())
     const nearWallet = wallets.near
 
     const accounts = (

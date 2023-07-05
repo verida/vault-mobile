@@ -93,10 +93,9 @@ const VerifyPhrase = (props) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
-    selected: state.template,
+    selected: state.main.template,
   }
 }
 

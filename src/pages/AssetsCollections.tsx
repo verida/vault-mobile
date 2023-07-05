@@ -115,8 +115,7 @@ const AssetsCollections = (props: any) => {
   )
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any) => {
   return {
     selectedWallet: getSelectedWalletById(state),
   }

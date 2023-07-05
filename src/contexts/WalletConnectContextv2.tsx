@@ -26,7 +26,7 @@ import ConnectDappModalv2 from 'pages/WalletConnect/ConnectDappModalv2'
 import TransactionRequestModalv2 from 'pages/WalletConnect/TransactionRequestModalv2'
 import { removeWalletConnectSessionv2 } from 'reduxStore/actions'
 import { authenticatedSelector, dappsSelectorv2 } from 'reduxStore/selectors'
-import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
+import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 import { useModal } from '../hooks/useModal'
 
@@ -39,7 +39,7 @@ function useWalletConnectContextv2() {
   const dispatch = useDispatch()
   const dapps = useReduxState(dappsSelectorv2)
   const authenticated = useReduxState(authenticatedSelector)
-  const selectedWalletId = useReduxState(selectedWalletSelector)
+  const selectedWalletId = useReduxState(getSelectedWalletId)
 
   const { showModal, dismissModal } = useModal()
 

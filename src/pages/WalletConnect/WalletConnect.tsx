@@ -166,11 +166,10 @@ const styles = StyleSheet.create({
   appTextContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
 })
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData,
-    selectedAccount: state.selectedAccount,
+    publicProfileData: state.main.publicProfileData,
+    selectedAccount: state.main.selectedAccount,
   }
 }
 

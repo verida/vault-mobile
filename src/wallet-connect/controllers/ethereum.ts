@@ -64,7 +64,7 @@ export class EthereumWalletController implements IEtherWalletController {
   }
 
   public generateWallet(index: number) {
-    const wallets = getWalletsData(store.getState().main)
+    const wallets = getWalletsData(store.getState())
 
     if (!wallets[this.getControllerType()!]) {
       throw new Error('No active account')

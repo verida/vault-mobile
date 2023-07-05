@@ -39,10 +39,9 @@ const Profiles = () => {
   )
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.publicProfileData,
+    publicProfileData: state.main.publicProfileData,
   }
 }
 

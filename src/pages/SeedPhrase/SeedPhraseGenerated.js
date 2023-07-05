@@ -88,9 +88,8 @@ const SeedPhraseGenerated = (props) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
+const mapStateToProps = (state) => {
+  return { publicProfileData: state.main.publicProfileData }
 }
 
 export default connect(mapStateToProps, null)(SeedPhraseGenerated)
