@@ -1,25 +1,27 @@
+import { connect, utils } from 'near-api-js'
+
 import { NearAccount } from '../@types'
 import { getNearNetworkConfig } from '../constants'
 import { nearDoesAccountExist } from './nearDoesAccountExist'
 
 export async function nearInstantiateAccount(nearAccount: NearAccount) {
   const { accountId, publicKey, nearNetworkId } = nearAccount
-  const { helperUrl } = getNearNetworkConfig(nearAccount)
-  const res = await fetch(`${helperUrl}/account`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      newAccountId: accountId,
-      newAccountPublicKey: publicKey,
-    }),
-  })
 
-  const result = await res.text()
+  const connection = await connect(getNearNetworkConfig(nearAccount))
 
-  if (!res.ok) throw new Error(result)
+  const createdAccount = await connection.createAccount(
+    accountId,
+    utils.PublicKey.from(publicKey)
+  )
+
+  const [balance, details, state] = await Promise.all([
+    createdAccount.getAccountBalance(),
+    createdAccount.getAccountDetails(),
+    createdAccount.state(),
+  ])
 
   // eslint-disable-next-line no-console
-  __DEV__ && console.warn(result)
+  console.warn(JSON.stringify({ balance, details, state }))
 
   const doesExist = await nearDoesAccountExist({
     nearAccountPointer: nearAccount,

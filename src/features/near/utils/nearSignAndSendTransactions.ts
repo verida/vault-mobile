@@ -17,17 +17,11 @@ export const nearSignAndSendTransactions = async ({
     nearAccount,
   })
 
-  //const connection = await connect(getNearNetworkConfig(nearAccount))
-  //const balance = await (
-  //  await connection.account(nearAccount.accountId)
-  //).getAccountBalance()
-
-  return Promise.all(
-    signedTransactions.map((tx) => provider.sendTransaction(tx))
+  const results = await Promise.all(
+    signedTransactions.map((tx) => provider.sendTransactionAsync(tx))
   )
 
-  //const x: providers.JsonRpcProvider = provider as providers.JsonRpcProvider
-  //x.sendJsonRpc('broadcast_tx_commit', result[0].transaction)
+  console.warn(nearAccount.accountId)
 
-  //console.warn(Math.random())
+  return results
 }
