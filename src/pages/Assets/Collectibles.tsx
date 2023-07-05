@@ -14,22 +14,21 @@ import {
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { useDispatch, useSelector } from 'react-redux'
-import { VeridaWallet } from 'types/wallet'
 
 import { NFT, NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import { NftItem } from 'components/Assets/NftItem'
+import Container from 'components/Container'
+import { ErrorFallbackCard } from 'components/Errors'
 import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
 import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
-import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import {
-  allWalletsSelector,
+  getSelectedWalletById,
   getUniqueWalletAddresses,
-  selectedWalletSelector,
 } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
@@ -41,15 +40,10 @@ const Collectibles = () => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
 
-  const selectedWalletId = useSelector(selectedWalletSelector)
-  const wallets = useSelector(allWalletsSelector) as Record<
-    string,
-    VeridaWallet
-  >
-
-  const selectedWallet = wallets[selectedWalletId]
+  const selectedWallet = useSelector(getSelectedWalletById)
   const addresses = getUniqueWalletAddresses(selectedWallet)
-  const { data, isLoading, error, refetch } = useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
+  const { data, isLoading, isFetching, error, refetch } =
+    useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
 
   const isEmptyList = !data || data.length === 0
 
@@ -128,10 +122,16 @@ const Collectibles = () => {
   )
 
   if (isLoading) return <LoadingIndicator />
-  // if (error) return <Title>{'Something went wrong...'}</Title>
+  if (error)
+    return (
+      <ErrorFallbackCard
+        error={new Error('Failed to load NFTs')}
+        resetErrorBoundary={refetch}
+      />
+    )
 
   return (
-    <View style={styles.container}>
+    <Container withLoadingView showLoading={isFetching}>
       {
         // !isEmptyList && (
         //   <SearchBar
@@ -175,7 +175,10 @@ const Collectibles = () => {
         contentContainerStyle={
           isEmptyList
             ? styles.listEmptyContainer
-            : { paddingBottom: theme.spacing.xxl, paddingTop: theme.spacing.m }
+            : {
+                paddingBottom: theme.spacing.xxl,
+                paddingTop: theme.spacing.m,
+              }
         }
         keyExtractor={(item, index) => `${index}-${item.token_id}`}
         renderItem={renderNft}
@@ -191,7 +194,7 @@ const Collectibles = () => {
           </View>
         )}
       />
-    </View>
+    </Container>
   )
 }
 
