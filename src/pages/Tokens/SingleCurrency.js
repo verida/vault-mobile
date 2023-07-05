@@ -1,10 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
 import { ChainId } from 'caip'
+import { useGetTransactionsForTokenQuery } from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
-import { connect } from 'react-redux'
+import { connect, useSelector } from 'react-redux'
 import { isNativeToken } from 'wallet/helpers/tokens'
 
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -18,15 +19,15 @@ import {
   getBlockchainNetworkLabel,
 } from 'reduxStore/selectors'
 import {
-  getBalances,
+  // getBalances,
   getTransactionsForToken,
   sendTransaction,
 } from 'reduxStore/wallet/actions'
 import {
   getSelectedWalletById,
   getWalletsData,
-  selectNativeTokenBalance,
   selectSingleTokenData,
+  selectTransactions,
   selectTransactionsData,
 } from 'reduxStore/wallet/selectors'
 
@@ -34,29 +35,45 @@ const SingleCurrency = ({
   navigation,
   route,
   onGetTransactionsForToken,
-  transactions,
-  tokenData,
-  onGetBalances,
-  blockchainNetwork,
-  wallets,
-  selectedWallet,
+  // transactions,
+  // tokenData,
+  // onGetBalances,
+  // blockchainNetwork,
+  // wallets,
+  // selectedWallet,
   onSendTransaction,
-  nativeTokenBalance,
+  // nativeTokenBalance,
 }) => {
   const { item } = route.params
-  const { list, loading, errorType } = transactions
+  // const { list, loading, errorType } = transactions
 
+  const wallets = useSelector(getWalletsData)
+  const selectedWallet = useSelector(getSelectedWalletById)
+  const blockchainNetwork = useSelector((state) =>
+    getBlockchainNetwork(state, route.params.item.asset.chainId)
+  )
   const chainId = new ChainId(item.asset.chainId).toString()
   const address = wallets[chainId].address
 
+  const { data, isLoading, isFetching, error, refetch } =
+    useGetTransactionsForTokenQuery({
+      userAddress: address,
+      asset: item.asset,
+    })
+
+  const list = useSelector((state) => selectTransactions(state, item.asset))
+  const tokenData = useSelector((state) =>
+    selectSingleTokenData(state, item.asset)
+  )
+
   function pullToRefresh() {
-    onGetTransactionsForToken(item)
-    onGetBalances()
+    // onGetTransactionsForToken(item)
+    // onGetBalances()
   }
 
   useEffect(() => {
     async function loadData() {
-      onGetTransactionsForToken(item)
+      // onGetTransactionsForToken(item)
     }
 
     loadData()
@@ -80,7 +97,7 @@ const SingleCurrency = ({
         title={item.label}
       />
       <TestnetWarning networkReference={networkLabel} />
-      {warningRequired && loading === false && list.length === 0 && (
+      {warningRequired && isLoading === false && list.length === 0 && (
         <TouchableOpacity
           style={{
             backgroundColor: WARNING_COLOR,
@@ -92,14 +109,14 @@ const SingleCurrency = ({
             marginTop: 10,
           }}
           onPress={() => {
-            if (nativeTokenBalance >= 0.001) {
-              onSendTransaction(
-                { token: item, amount: 0, address: address },
-                true
-              )
-            } else {
-              showAlert()
-            }
+            // if (nativeTokenBalance >= 0.001) {
+            onSendTransaction(
+              { token: item, amount: 0, address: address },
+              true
+            )
+            // } else {
+            //   showAlert()
+            // }
           }}>
           <Icon name='warning' style={{ color: '#fff', marginRight: 10 }} />
           <Text style={{ color: '#FFF', flex: 1 }}>
@@ -131,7 +148,7 @@ const SingleCurrency = ({
           })
         }}
       />
-      {loading ? (
+      {isLoading ? (
         <LoadingIndicator />
       ) : (
         <TransactionsList
@@ -140,8 +157,8 @@ const SingleCurrency = ({
           blockchainNetwork={blockchainNetwork}
           token={item}
           onPullToRefresh={() => pullToRefresh()}
-          refreshing={loading}
-          errorType={errorType}
+          refreshing={isFetching}
+          // errorType={errorType}
           list={list}
         />
       )}
@@ -149,22 +166,20 @@ const SingleCurrency = ({
   )
 }
 
-const mapStateToProps = (rootState, props) => {
-  const state = rootState.main
-
+const mapStateToProps = (state, props) => {
   return {
-    transactions: selectTransactionsData(state, props.route.params.item.asset),
-    tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
-    wallets: getWalletsData(state),
-    selectedWallet: getSelectedWalletById(state),
-    blockchainNetwork: getBlockchainNetwork(
-      rootState,
-      props.route.params.item.asset.chainId
-    ),
-    nativeTokenBalance: selectNativeTokenBalance(
-      rootState,
-      props.route.params.item
-    ),
+    // transactions: selectTransactionsData(state, props.route.params.item.asset),
+    // tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
+    // wallets: getWalletsData(state),
+    // selectedWallet: getSelectedWalletById(state),
+    // blockchainNetwork: getBlockchainNetwork(
+    //   rootState,
+    //   props.route.params.item.asset.chainId
+    // ),
+    // nativeTokenBalance: selectNativeTokenBalance(
+    //   rootState,
+    //   props.route.params.item
+    // ),
   }
 }
 
@@ -172,7 +187,7 @@ const mapDispatchToProps = (dispatch) => {
   return {
     onGetTransactionsForToken: (token) =>
       dispatch(getTransactionsForToken(token)),
-    onGetBalances: () => dispatch(getBalances()),
+    // onGetBalances: () => dispatch(getBalances()),
     onSendTransaction: (params, isAssetEnablingTransaction) =>
       dispatch(sendTransaction(params, isAssetEnablingTransaction)),
   }

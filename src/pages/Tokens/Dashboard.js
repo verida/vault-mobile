@@ -1,41 +1,56 @@
 import { useNavigation } from '@react-navigation/native'
-import { Container } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import { useGetBalancesQuery } from 'features/wallets'
+import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 
+import Container from 'components/Container'
 import LoadingIndicator from 'components/LoadingIndicator'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
-import { getBalances } from 'reduxStore/wallet/actions'
-import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
+import {
+  getAllWallets,
+  getSelectedWalletId,
+  getUniqueWalletAddresses,
+} from 'reduxStore/wallet/selectors'
 
 import SendListModal from './SendListModal'
 
-const TokenDashboard = ({ onGetBalances, data, wallets }) => {
+const TokenDashboard = () => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
   const navigation = useNavigation()
 
+  const selectedWalletId = useSelector(getSelectedWalletId)
+  const wallets = useSelector(getAllWallets)
+
+  const selectedWallet = wallets[selectedWalletId]
+  const addresses = getUniqueWalletAddresses(selectedWallet)
+
+  const { data, isLoading, isFetching, error, refetch } =
+    useGetBalancesQuery(addresses)
+  console.log('isLoading', isLoading, isFetching, error)
+
   async function pullToRefresh() {
-    onGetBalances()
+    // onGetBalances()
+    refetch()
   }
 
-  useEffect(() => {
-    async function loadData() {
-      onGetBalances()
-    }
+  // useEffect(() => {
+  //   async function loadData() {
+  //     // onGetBalances()
+  //   }
 
-    loadData()
-  }, [onGetBalances, wallets])
+  //   loadData()
+  // }, [onGetBalances, wallets])
 
-  const { loading, listAndTotal } = data
+  // const { loading, listAndTotal } = data2 || { listAndTotal: {} }
 
-  const { list, total } = listAndTotal
+  const { list, total } = data || {}
 
   return (
-    <Container>
-      {loading ? (
+    <Container withLoadingView showLoading={!isLoading && isFetching}>
+      {isLoading ? (
         <LoadingIndicator />
       ) : (
         <View style={styles.contentContainer}>
@@ -51,7 +66,7 @@ const TokenDashboard = ({ onGetBalances, data, wallets }) => {
               navigation.navigate('SingleCurrency', { item })
             }
             onPullToRefresh={() => pullToRefresh()}
-            refreshing={loading}
+            refreshing={isLoading}
           />
           <SendListModal
             visible={sendModalVisible}
@@ -72,18 +87,4 @@ const styles = StyleSheet.create({
   contentContainer: { flex: 1, marginTop: 10 },
 })
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return {
-    wallets: getWalletsData(state),
-    data: getTokensData(rootState),
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onGetBalances: () => dispatch(getBalances()),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TokenDashboard)
+export default TokenDashboard
