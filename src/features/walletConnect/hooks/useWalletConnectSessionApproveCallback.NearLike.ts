@@ -1,14 +1,15 @@
-import { throwIfInvalidNearSigningMethod, useNearContext } from 'features/near'
+import { throwIfInvalidNearSigningMethod } from 'features/near'
+import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
-import { getMaybeNearAccountForWalletConnectTopic } from '../utils'
+import { getMaybeNearAccountForWalletConnectRequest } from '../utils'
 import { useWalletConnectSessionRequestHandlersNearLike } from './useWalletConnectSessionRequestHandlers.NearLike'
 
 export const useWalletConnectSessionApproveCallbackNearLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
-  const { nearNetworkParsedCaipType, keystore } = useNearContext()
+  const walletsData = useWalletsData()
 
   const nearSessionRequestHandlers =
     useWalletConnectSessionRequestHandlersNearLike()
@@ -19,17 +20,18 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
       request,
       rpc,
     }: WalletConnectSessionRequestCallbackParams): Promise<unknown> => {
-      const { topic } = request
-
-      const maybeNearAccount = await getMaybeNearAccountForWalletConnectTopic({
-        nearNetworkParsedCaipType,
-        topic,
-        keystore,
-      })
+      const maybeNearAccount = await getMaybeNearAccountForWalletConnectRequest(
+        {
+          web3wallet,
+          request,
+          walletsData,
+        }
+      )
 
       if (!maybeNearAccount)
+        // TODO: @cawfree better error
         throw new Error(
-          `No active account. Unable to find matching Near account for "${topic}".`
+          `No active account. Unable to find matching NEAR account.`
         )
 
       const method = request?.params?.request?.method
@@ -40,6 +42,6 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
 
       return handle({ web3wallet, request, rpc })
     },
-    [keystore, nearNetworkParsedCaipType, nearSessionRequestHandlers]
+    [nearSessionRequestHandlers, walletsData]
   )
 }

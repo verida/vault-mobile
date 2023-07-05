@@ -27,7 +27,6 @@ export function getMaybeVeridaWalletAccountForWalletConnectRequest({
   })
 }
 
-// TODO: @cawfree this isn't anything specific to ethereum, refactor for near
 export function getVeridaWalletAccountForWalletConnectRequestOrThrow({
   web3wallet,
   request,
