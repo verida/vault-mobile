@@ -4,6 +4,7 @@ import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
 import { identitiesSlice } from 'features/identities'
 import { inboxSlice } from 'features/inbox'
+import { linksSlice } from 'features/links'
 import { profilesSlice } from 'features/profiles'
 import { seedphrasesSlice } from 'features/seedphrases'
 import { settingsSlice } from 'features/settings'
@@ -43,6 +44,7 @@ export const rootReducer = combineReducers({
   seedPhrases: seedphrasesSlice.reducer,
   inbox: inboxSlice.reducer,
   profiles: profilesSlice.reducer,
+  links: linksSlice.reducer,
 
   // API reducers
   [walletsApi.reducerPath]: walletsApi.reducer,

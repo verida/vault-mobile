@@ -1,17 +1,16 @@
-import update from 'immutability-helper'
-import { cloneDeep } from 'lodash'
+// import update from 'immutability-helper'
 
 import {
-  ADD_ACCOUNT,
+  // ADD_ACCOUNT,
   LOG_OUT,
-  SET_ACCOUNTS,
+  // SET_ACCOUNTS,
   // SET_AUTH_STATUS,
-  SET_NAVIGATION_LINK,
+  // SET_NAVIGATION_LINK,
   // SET_NEW_MESSAGES_COUNT,
   // SET_PUBLIC_PROFILE_DATA,
-  SET_SELECTED_ACCOUNT,
+  // SET_SELECTED_ACCOUNT,
   // SET_SHOW_SEED_PHRASE_REMINDER,
-  SET_SWITCH_ACCOUNT_TOAST,
+  // SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
 // import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
@@ -24,11 +23,11 @@ const initialState = {
   //   country: '',
   //   description: '',
   // },
-  accounts: {},
-  selectedAccount: null,
-  switchAccountToast: null,
+  // accounts: {},
+  // selectedAccount: null,
+  // switchAccountToast: null,
   // showSeedPhraseReminder: false,
-  navigationLink: null,
+  // navigationLink: null,
 }
 
 export const mainReducer = (state = initialState, action) => {
@@ -49,29 +48,29 @@ export const mainReducer = (state = initialState, action) => {
     // case SET_NEW_MESSAGES_COUNT:
     //   return { ...state, newMessagesCount: action.payload }
 
-    case SET_ACCOUNTS:
-      return update(state, {
-        accounts: {
-          $set: cloneDeep(action.payload),
-        },
-      })
-    case SET_SELECTED_ACCOUNT:
-      return update(state, {
-        selectedAccount: {
-          $set: cloneDeep(action.payload),
-        },
-      })
-    case ADD_ACCOUNT:
-      return update(state, {
-        accounts: {
-          $apply: function (value) {
-            return {
-              ...value,
-              [action.payload.did]: cloneDeep(action.payload),
-            }
-          },
-        },
-      })
+    // case SET_ACCOUNTS:
+    //   return update(state, {
+    //     accounts: {
+    //       $set: cloneDeep(action.payload),
+    //     },
+    //   })
+    // case SET_SELECTED_ACCOUNT:
+    //   return update(state, {
+    //     selectedAccount: {
+    //       $set: cloneDeep(action.payload),
+    //     },
+    //   })
+    // case ADD_ACCOUNT:
+    //   return update(state, {
+    //     accounts: {
+    //       $apply: function (value) {
+    //         return {
+    //           ...value,
+    //           [action.payload.did]: cloneDeep(action.payload),
+    //         }
+    //       },
+    //     },
+    //   })
 
     // case SET_SWITCH_ACCOUNT_TOAST:
     //   return update(state, {
@@ -87,12 +86,12 @@ export const mainReducer = (state = initialState, action) => {
     //     },
     //   })
 
-    case SET_NAVIGATION_LINK:
-      return update(state, {
-        navigationLink: {
-          $set: action.payload,
-        },
-      })
+    // case SET_NAVIGATION_LINK:
+    //   return update(state, {
+    //     navigationLink: {
+    //       $set: action.payload,
+    //     },
+    //   })
 
     case LOG_OUT: // TODO: handle logout
     // return update(state, {

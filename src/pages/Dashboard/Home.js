@@ -6,6 +6,10 @@ import {
   selectNewMessagesCount,
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'features/inbox'
+import {
+  selectNavigationLink,
+  setNavigationLink as setNavigationLinkAction,
+} from 'features/links'
 import { selectPublicProfile } from 'features/profiles'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -44,10 +48,7 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import {
-  logout as logoutAction,
-  setNavigationLink as setNavigationLinkAction,
-} from 'reduxStore/general/actions'
+import { logout as logoutAction } from 'reduxStore/general/actions'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 const LogoImg = require('assets/vault-logo.png')
@@ -340,7 +341,7 @@ const mapStateToProps = (state) => {
     publicProfileData: selectPublicProfile(state),
     newMessagesCount: selectNewMessagesCount(state),
     selectedAccount: selectSelectedAccount(state),
-    navigationLink: state.main.navigationLink,
+    navigationLink: selectNavigationLink(state),
   }
 }
 

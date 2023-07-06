@@ -6,6 +6,10 @@ import {
   selectNewMessagesCount,
   setNewMessagesCount as setNewMessagesCountAction,
 } from 'features/inbox'
+import {
+  selectNavigationLink,
+  setNavigationLink as setNavigationLinkAction,
+} from 'features/links'
 import { selectPublicProfile } from 'features/profiles'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -35,10 +39,7 @@ import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import {
-  logout as logoutAction,
-  setNavigationLink as setNavigationLinkAction,
-} from 'reduxStore/general/actions'
+import { logout as logoutAction } from 'reduxStore/general/actions'
 
 import PromoBannersCarousel from './Banners/CarouselBanner'
 import WalletSummary from './Banners/WalletBanner'
@@ -324,7 +325,7 @@ const mapStateToProps = (state) => {
     publicProfileData: selectPublicProfile(state),
     newMessagesCount: selectNewMessagesCount(state),
     selectedAccount: selectSelectedAccount(state),
-    navigationLink: state.main.navigationLink,
+    navigationLink: selectNavigationLink(state),
   }
 }
 

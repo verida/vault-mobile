@@ -11,6 +11,10 @@ const initialState: SettingsState = {
   showSeedPhraseReminder: false,
 }
 
+/**
+ * All the app settings and user preferences should be placed here
+ * Data will be persisted
+ */
 export const settingsSlice = createSlice({
   name: 'settings',
   initialState,
