@@ -1,43 +1,28 @@
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
-import {
-  getWalletAddressForAsset,
-  rawDataToReduxState,
-} from 'wallet/helpers/tokens'
 
 import AccountManager from 'api/AccountManager'
 import { WalletManager } from 'api/Wallet/WalletManager'
 import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
-// import { selectChains } from 'reduxStore/tokens/selectors'
 import {
   getSelectedWalletId,
   getWalletList,
   getWalletsData,
 } from 'reduxStore/wallet/selectors'
 
-import { walletProviderApi } from '../../api/Wallet/WalletProvider'
 import {
   ADD_PENDING_TRANSACTION,
-  BALANCES_FETCH_FAILED,
-  BALANCES_FETCH_START,
-  FETCHED_BALANCES,
-  FETCHED_TRANSACTION_DETAIL,
   FETCHED_TRANSACTION_PARAMS,
-  FETCHED_TRANSACTIONS,
   REMOVE_USER_WALLETS,
   SEND_TRANSACTION_FAILED,
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
   SET_SELECTED_WALLET,
   SET_USER_WALLETS,
-  TRANSACTION_DETAIL_FETCH_FAILED,
-  TRANSACTION_DETAIL_FETCH_START,
   TRANSACTION_PARAMS_FETCH_FAILED,
   TRANSACTION_PARAMS_FETCH_START,
-  TRANSACTIONS_FETCH_FAILED,
-  TRANSACTIONS_FETCH_START,
   WALLET_PROCESSING_FAILED,
   WALLET_PROCESSING_FINISHED,
   WALLET_PROCESSING_START,
@@ -83,59 +68,59 @@ import {
 // }
 
 // @chris done
-export const getTransactionsForToken = (token) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: TRANSACTIONS_FETCH_START })
-    const wallets = getWalletsData(getState())
-    const userAddress = getWalletAddressForAsset(token.asset, wallets)
-    const transactionsData = await walletProviderApi.post('transaction/list', {
-      userAddress,
-      asset: token.asset,
-    })
+// export const getTransactionsForToken = (token) => {
+//   return async (dispatch, getState) => {
+//     dispatch({ type: TRANSACTIONS_FETCH_START })
+//     const wallets = getWalletsData(getState())
+//     const userAddress = getWalletAddressForAsset(token.asset, wallets)
+//     const transactionsData = await walletProviderApi.post('transaction/list', {
+//       userAddress,
+//       asset: token.asset,
+//     })
 
-    const responseData = transactionsData.data
+//     const responseData = transactionsData.data
 
-    if (transactionsData) {
-      dispatch({
-        type: FETCHED_TRANSACTIONS,
-        ...responseData,
-      })
-    } else {
-      dispatch({
-        type: TRANSACTIONS_FETCH_FAILED,
-        error: 'Unable to reach server to fetch transactions',
-      })
-    }
-  }
-}
+//     if (transactionsData) {
+//       dispatch({
+//         type: FETCHED_TRANSACTIONS,
+//         ...responseData,
+//       })
+//     } else {
+//       dispatch({
+//         type: TRANSACTIONS_FETCH_FAILED,
+//         error: 'Unable to reach server to fetch transactions',
+//       })
+//     }
+//   }
+// }
 
 // @chris done
-export const getTransactionDetails = (transactionID, token) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
-    const wallets = getWalletsData(getState())
+// export const getTransactionDetails = (transactionID, token) => {
+//   return async (dispatch, getState) => {
+//     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
+//     const wallets = getWalletsData(getState())
 
-    const userAddress = getWalletAddressForAsset(token.asset, wallets)
+//     const userAddress = getWalletAddressForAsset(token.asset, wallets)
 
-    const transactionsData = await walletProviderApi.post('transaction/get', {
-      transactionId: transactionID,
-      userAddress,
-      asset: token.asset,
-    })
+//     const transactionsData = await walletProviderApi.post('transaction/get', {
+//       transactionId: transactionID,
+//       userAddress,
+//       asset: token.asset,
+//     })
 
-    if (transactionsData) {
-      dispatch({
-        type: FETCHED_TRANSACTION_DETAIL,
-        data: transactionsData.data.data,
-      })
-    } else {
-      dispatch({
-        type: TRANSACTION_DETAIL_FETCH_FAILED,
-        error: "Couldn'nt load transactions",
-      })
-    }
-  }
-}
+//     if (transactionsData) {
+//       dispatch({
+//         type: FETCHED_TRANSACTION_DETAIL,
+//         data: transactionsData.data.data,
+//       })
+//     } else {
+//       dispatch({
+//         type: TRANSACTION_DETAIL_FETCH_FAILED,
+//         error: "Couldn'nt load transactions",
+//       })
+//     }
+//   }
+// }
 
 export const saveUserWallets = (wallets) => {
   return {

@@ -6,7 +6,6 @@ import {
   LOG_OUT,
   SET_ACCOUNTS,
   SET_AUTH_STATUS,
-  SET_COUNTRIES,
   SET_NAVIGATION_LINK,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
@@ -14,27 +13,17 @@ import {
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
-import { Reducer } from './types'
 import {
   ADD_PENDING_TRANSACTION,
-  BALANCES_FETCH_FAILED,
-  BALANCES_FETCH_START,
-  FETCHED_BALANCES,
-  FETCHED_TRANSACTION_DETAIL,
   FETCHED_TRANSACTION_PARAMS,
-  FETCHED_TRANSACTIONS,
   REMOVE_USER_WALLETS,
   SEND_TRANSACTION_FAILED,
   SEND_TRANSACTION_START,
   SEND_TRANSACTION_SUCCESS,
   SET_SELECTED_WALLET,
   SET_USER_WALLETS,
-  TRANSACTION_DETAIL_FETCH_FAILED,
-  TRANSACTION_DETAIL_FETCH_START,
   TRANSACTION_PARAMS_FETCH_FAILED,
   TRANSACTION_PARAMS_FETCH_START,
-  TRANSACTIONS_FETCH_FAILED,
-  TRANSACTIONS_FETCH_START,
   WALLET_PROCESSING_FAILED,
   WALLET_PROCESSING_FINISHED,
   WALLET_PROCESSING_START,
@@ -42,16 +31,6 @@ import {
 import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
 const walletInitialState = {
-  balances: {
-    data: {},
-    fetching: false,
-    error: undefined,
-  },
-  transactions: {
-    data: [],
-    fetching: false,
-    error: undefined,
-  },
   transactionParams: {
     data: {},
     fetching: false,
@@ -59,11 +38,6 @@ const walletInitialState = {
   },
   sentTransaction: {
     data: {},
-    fetching: false,
-    error: undefined,
-  },
-  transactionDetails: {
-    data: null,
     fetching: false,
     error: undefined,
   },
@@ -92,7 +66,6 @@ const initialState = {
   switchAccountToast: null,
   showSeedPhraseReminder: false,
   ...walletInitialState,
-  countries: [],
   navigationLink: null,
 }
 
@@ -150,47 +123,6 @@ export const mainReducer = (state = initialState, action) => {
         },
       })
 
-    case BALANCES_FETCH_START:
-      return {
-        ...state,
-        balances: {
-          fetching: true,
-          error: undefined,
-          data: state.balances.data ? state.balances.data : {},
-        },
-      }
-    case FETCHED_BALANCES:
-      return {
-        ...state,
-        balances: { fetching: false, error: undefined, data: action.data },
-      }
-    case BALANCES_FETCH_FAILED:
-      return {
-        ...state,
-        balances: { fetching: false, error: action.error, data: {} },
-      }
-
-    case TRANSACTIONS_FETCH_START:
-      return {
-        ...state,
-        transactions: { fetching: true, error: undefined, data: [] },
-      }
-    case FETCHED_TRANSACTIONS:
-      return {
-        ...state,
-        transactions: {
-          fetching: false,
-          error: action.status === 'success' ? undefined : action.status,
-          errorMessage: action.error,
-          data: action.status === 'success' ? action.data : [],
-        },
-      }
-    case TRANSACTIONS_FETCH_FAILED:
-      return {
-        ...state,
-        transactions: { fetching: false, error: action.error, data: [] },
-      }
-
     case TRANSACTION_PARAMS_FETCH_START:
       return {
         ...state,
@@ -231,30 +163,6 @@ export const mainReducer = (state = initialState, action) => {
       return {
         ...state,
         sentTransaction: { fetching: false, error: action.error, data: {} },
-      }
-
-    case TRANSACTION_DETAIL_FETCH_START:
-      return {
-        ...state,
-        transactionDetails: { fetching: true, error: undefined, data: null },
-      }
-    case FETCHED_TRANSACTION_DETAIL:
-      return {
-        ...state,
-        transactionDetails: {
-          fetching: false,
-          error: undefined,
-          data: action.data,
-        },
-      }
-    case TRANSACTION_DETAIL_FETCH_FAILED:
-      return {
-        ...state,
-        transactionDetails: {
-          fetching: false,
-          error: action.error,
-          data: null,
-        },
       }
 
     case ADD_PENDING_TRANSACTION:
@@ -313,13 +221,6 @@ export const mainReducer = (state = initialState, action) => {
     case SET_NAVIGATION_LINK:
       return update(state, {
         navigationLink: {
-          $set: action.payload,
-        },
-      })
-
-    case SET_COUNTRIES:
-      return update(state, {
-        countries: {
           $set: action.payload,
         },
       })

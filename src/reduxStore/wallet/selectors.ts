@@ -1,10 +1,6 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
-import {
-  getBalancesData,
-  getTransactionDetailsData,
-  getTransactionsForTokenData,
-} from 'features/wallets'
+import { getBalancesData, getTransactionsForTokenData } from 'features/wallets'
 import { createSelector } from 'reselect'
 import {
   getWalletAddressForAsset,
