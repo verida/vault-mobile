@@ -10,13 +10,13 @@ import {
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
-  SET_SHOW_SEED_PHRASE_REMINDER,
+  // SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './general/action-types'
-import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
+// import { ADD_WORD, REMOVE_WORD, RESET_PHRASE } from './words/action-types'
 
 const initialState = {
-  template: [],
+  // template: [],
   authenticated: false,
   newMessagesCount: 0,
   publicProfileData: {
@@ -27,21 +27,21 @@ const initialState = {
   accounts: {},
   selectedAccount: null,
   switchAccountToast: null,
-  showSeedPhraseReminder: false,
+  // showSeedPhraseReminder: false,
   navigationLink: null,
 }
 
 export const mainReducer = (state = initialState, action) => {
   switch (action.type) {
-    case ADD_WORD:
-      if (state.template.includes(action.payload)) return state
-      const template = [...state.template, action.payload]
-      return { ...state, template }
-    case REMOVE_WORD:
-      const filtered = state.template.filter((item) => item !== action.payload)
-      return { ...state, template: filtered }
-    case RESET_PHRASE:
-      return { ...state, template: [] }
+    // case ADD_WORD:
+    //   if (state.template.includes(action.payload)) return state
+    //   const template = [...state.template, action.payload]
+    //   return { ...state, template }
+    // case REMOVE_WORD:
+    //   const filtered = state.template.filter((item) => item !== action.payload)
+    //   return { ...state, template: filtered }
+    // case RESET_PHRASE:
+    //   return { ...state, template: [] }
     case SET_AUTH_STATUS:
       return { ...state, authenticated: action.payload }
     case SET_PUBLIC_PROFILE_DATA:
@@ -78,12 +78,12 @@ export const mainReducer = (state = initialState, action) => {
         },
       })
 
-    case SET_SHOW_SEED_PHRASE_REMINDER:
-      return update(state, {
-        showSeedPhraseReminder: {
-          $set: cloneDeep(action.payload),
-        },
-      })
+    // case SET_SHOW_SEED_PHRASE_REMINDER:
+    //   return update(state, {
+    //     showSeedPhraseReminder: {
+    //       $set: cloneDeep(action.payload),
+    //     },
+    //   })
 
     case SET_NAVIGATION_LINK:
       return update(state, {
