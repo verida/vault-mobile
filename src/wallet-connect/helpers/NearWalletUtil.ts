@@ -1,7 +1,6 @@
+import { getWalletsData } from 'features/wallets'
 import { store } from 'reduxStore'
 import { NearWalletController } from 'wallet-connect/controllers/near'
-
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 export let nearAddresses: string[]
 export let nearWallet: NearWalletController

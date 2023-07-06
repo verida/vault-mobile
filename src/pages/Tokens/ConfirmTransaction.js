@@ -1,3 +1,9 @@
+import {
+  getTransactionParamsData,
+  getWalletsData,
+  selectSentTransaction,
+  sendTransaction,
+} from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -17,12 +23,6 @@ import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
 } from 'reduxStore/selectors'
-import { sendTransaction } from 'reduxStore/wallet/actions'
-import {
-  getTransactionParamsData,
-  getWalletsData,
-  selectSentTransaction,
-} from 'reduxStore/wallet/selectors'
 
 const ConfirmTransaction = ({
   navigation,

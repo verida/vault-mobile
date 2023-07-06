@@ -1,5 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
-import { useGetBalancesQuery } from 'features/wallets'
+import {
+  getAllWallets,
+  getSelectedWalletId,
+  getUniqueWalletAddresses,
+  useGetBalancesQuery,
+} from 'features/wallets'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { useSelector } from 'react-redux'
@@ -9,11 +14,6 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
-import {
-  getAllWallets,
-  getSelectedWalletId,
-  getUniqueWalletAddresses,
-} from 'reduxStore/wallet/selectors'
 
 import SendListModal from './SendListModal'
 
@@ -29,7 +29,6 @@ const TokenDashboard = () => {
 
   const { data, isLoading, isFetching, error, refetch } =
     useGetBalancesQuery(addresses)
-  console.log('isLoading', isLoading, isFetching, error)
 
   async function pullToRefresh() {
     // onGetBalances()

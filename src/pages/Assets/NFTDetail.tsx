@@ -1,6 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
+import { getWallets } from 'features/wallets'
 import React, { FC, ReactNode } from 'react'
 import {
   Alert,
@@ -27,7 +28,6 @@ import { Text } from 'components/Typography/Text'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
-import { getWallets } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 type NFTDetailRouteProp = RouteProp<MainStackParams, 'NFTDetail'>

@@ -1,4 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
+import { getWalletsData } from 'features/wallets'
 import React, { useEffect } from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -6,10 +7,7 @@ import { connect } from 'react-redux'
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-// import { getBalances } from 'reduxStore/wallet/actions'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
-// import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 import {
   PRIMARY_COLOR_100,
   PRIMARY_COLOR_200,

@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { useGetTransactionDetailsQuery } from 'features/wallets'
+import { getWalletsData, useGetTransactionDetailsQuery } from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -13,7 +13,6 @@ import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
 } from 'reduxStore/selectors'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const TransactionDetails = ({ navigation, route }) => {
   const { id, token } = route.params

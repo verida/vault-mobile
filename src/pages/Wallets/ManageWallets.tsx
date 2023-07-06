@@ -1,5 +1,16 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import {
+  addWatchedWallet,
+  createNewWallet,
+  deleteWallet,
+  getSelectedWalletId,
+  getWalletCount,
+  getWalletList,
+  getWalletProcessingState,
+  importWallet,
+  setSelectedWallet,
+} from 'features/wallets'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -13,19 +24,6 @@ import WalletList from 'components/WalletList'
 import { WalletItem } from 'components/WalletList/types'
 import CONFIG from 'config/environment'
 import { MainStackParams } from 'navigation/types'
-import {
-  addWatchedWallet,
-  createNewWallet,
-  deleteWallet,
-  importWallet,
-  setSelectedWallet,
-} from 'reduxStore/wallet/actions'
-import {
-  getSelectedWalletId,
-  getWalletCount,
-  getWalletList,
-  getWalletProcessingState,
-} from 'reduxStore/wallet/selectors'
 
 import PlusIcon from '../../assets/plus_icon.svg'
 import UnionIcon from '../../assets/union_icon.svg'
@@ -177,7 +175,7 @@ const ManageWallets = (props: Props) => {
         if (buttonIndex === 0 && !item.viewOnly) {
           navigation.navigate('SingleWallet', { item })
         } else if (buttonIndex === 1) {
-          const selectedWalletID = item.id
+          const selectedWalletID = item._id
           onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
             CONFIG.SELECTED_WALLET_STORAGE_KEY,
@@ -254,7 +252,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onSetSelectedWalletId: (walletID: string) =>
       dispatch(setSelectedWallet(walletID) as any),
-    onCreateWallet: (args: unknown) => dispatch(createNewWallet(args) as any),
+    onCreateWallet: (args: unknown) =>
+      dispatch(createNewWallet(args as any) as any),
     onImportWallet: (args: any) => dispatch(importWallet(args) as any),
     onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
     onDeleteWallet: (walletId: string) =>

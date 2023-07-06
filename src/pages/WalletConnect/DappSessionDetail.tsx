@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import WalletConnect from '@walletconnect/client'
+import { getSelectedWalletId } from 'features/wallets'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
@@ -9,7 +10,6 @@ import { DApp } from 'wallet-connect/types'
 
 import Button from 'components/Button'
 import { useReduxState } from 'hooks/useReduxState'
-import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
 
 import NavigationHeader from '../../components/Navigation/NavigationHeader'
 import { Spacer } from '../../components/Spacer'
@@ -23,7 +23,7 @@ const DappSessionDetailv2 = () => {
   const params = useParams<{ dapp: DApp }>()
   const navigation = useNavigation()
   const dispatch = useDispatch()
-  const selectedWalletId = useReduxState(selectedWalletSelector)
+  const selectedWalletId = useReduxState(getSelectedWalletId)
 
   const {
     session: { peerMeta, key, connected, peerId, accounts },

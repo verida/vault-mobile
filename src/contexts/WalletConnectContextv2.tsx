@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { SignClientTypes } from '@walletconnect/typesv2'
+import { getSelectedWalletId } from 'features/wallets'
 import isEmpty from 'lodash/isEmpty'
 import React, {
   createContext,
@@ -26,7 +27,6 @@ import ConnectDappModalv2 from 'pages/WalletConnect/ConnectDappModalv2'
 import TransactionRequestModalv2 from 'pages/WalletConnect/TransactionRequestModalv2'
 import { removeWalletConnectSessionv2 } from 'reduxStore/actions'
 import { authenticatedSelector, dappsSelectorv2 } from 'reduxStore/selectors'
-import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 import { useModal } from '../hooks/useModal'
 

@@ -1,3 +1,4 @@
+import { priceFormatter } from 'features/wallets'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -8,7 +9,6 @@ import SendIcon from 'assets/send_icon.svg'
 import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { priceFormatter } from 'reduxStore/wallet/selectors'
 
 export default ({
   data,

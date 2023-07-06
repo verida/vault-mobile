@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
-import { walletsApi } from 'features/wallets'
+import { walletsApi, walletsSlice } from 'features/wallets'
 import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
@@ -28,6 +28,9 @@ const persistConfig = {
 export const rootReducer = combineReducers({
   main: mainReducer,
   walletConnect: walletConnectReducer,
+
+  // New reducers
+  wallets: walletsSlice.reducer,
 
   // API reducers
   [walletsApi.reducerPath]: walletsApi.reducer,

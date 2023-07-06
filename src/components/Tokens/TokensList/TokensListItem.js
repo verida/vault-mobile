@@ -1,9 +1,9 @@
+import { priceFormatter } from 'features/wallets'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { Image, StyleSheet, View } from 'react-native'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { priceFormatter } from 'reduxStore/wallet/selectors'
 
 export default ({ item, onPressItem }) => {
   const { change, label, token, symbol, quantity, price, amount } = item

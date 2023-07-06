@@ -1,3 +1,9 @@
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import {
+  getSelectedWalletId,
+  getWalletList,
+  getWalletsData,
+} from 'features/wallets'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
@@ -6,27 +12,12 @@ import AccountManager from 'api/AccountManager'
 import { WalletManager } from 'api/Wallet/WalletManager'
 import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
-import {
-  getSelectedWalletId,
-  getWalletList,
-  getWalletsData,
-} from 'reduxStore/wallet/selectors'
+import { RootState } from 'reduxStore/types'
 
-import {
-  ADD_PENDING_TRANSACTION,
-  FETCHED_TRANSACTION_PARAMS,
-  REMOVE_USER_WALLETS,
-  SEND_TRANSACTION_FAILED,
-  SEND_TRANSACTION_START,
-  SEND_TRANSACTION_SUCCESS,
-  SET_SELECTED_WALLET,
-  SET_USER_WALLETS,
-  TRANSACTION_PARAMS_FETCH_FAILED,
-  TRANSACTION_PARAMS_FETCH_START,
-  WALLET_PROCESSING_FAILED,
-  WALLET_PROCESSING_FINISHED,
-  WALLET_PROCESSING_START,
-} from './types'
+import { walletsSlice } from './walletsSlice'
+
+export const { saveUserWallets, setSelectedWallet, removeUserWallets } =
+  walletsSlice.actions
 
 // @chris done
 // export const getBalances = () => {
@@ -122,57 +113,66 @@ import {
 //   }
 // }
 
-export const saveUserWallets = (wallets) => {
-  return {
-    type: SET_USER_WALLETS,
-    data: wallets,
-  }
-}
+// @Andy done
+// export const saveUserWallets = (wallets) => {
+//   return {
+//     type: SET_USER_WALLETS,
+//     data: wallets,
+//   }
+// }
 
-export const removeUserWallets = () => {
-  return {
-    type: REMOVE_USER_WALLETS,
-  }
-}
+// // @Andy done
+// export const removeUserWallets = () => {
+//   return {
+//     type: REMOVE_USER_WALLETS,
+//   }
+// }
 
-export const setSelectedWallet = (walletId) => {
-  return {
-    type: SET_SELECTED_WALLET,
-    data: walletId,
-  }
-}
+// // @Andy done
+// export const setSelectedWallet = (walletId) => {
+//   return {
+//     type: SET_SELECTED_WALLET,
+//     data: walletId,
+//   }
+// }
 
-export const getTransactionParams = (transactionData) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
-    const wallets = getWalletsData(getState())
-
+// TODO migrate to API
+export const getTransactionParams = createAsyncThunk(
+  'wallets/getTransactionParams',
+  async (transactionData, { getState, rejectWithValue }) => {
+    // dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
+    const wallets = getWalletsData(getState() as RootState)
     const params = await dataHelper.getTransactionParams(
       transactionData,
       wallets
     )
 
     if (params) {
-      dispatch({
-        type: FETCHED_TRANSACTION_PARAMS,
-        data: params,
-      })
+      // dispatch({
+      //   type: FETCHED_TRANSACTION_PARAMS,
+      //   data: params,
+      // })
+
+      // fulfillWithValue(params)
       navigate('ConfirmTransaction', transactionData)
+      return params
     } else {
-      dispatch({
-        type: TRANSACTION_PARAMS_FETCH_FAILED,
-        error: "Couldn't load params",
-      })
+      // dispatch({
+      //   type: TRANSACTION_PARAMS_FETCH_FAILED,
+      //   error: "Couldn't load params",
+      // })
+      rejectWithValue({ error: "Couldn't load params" })
     }
   }
-}
+)
 
-export const sendTransaction = (
-  transactionData,
-  isAssetEnablingTransaction
-) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: SEND_TRANSACTION_START })
+export const sendTransaction = createAsyncThunk(
+  'wallets/sendTransaction',
+  async (
+    { transactionData, isAssetEnablingTransaction }: any,
+    { getState, rejectWithValue, fulfillWithValue }
+  ) => {
+    // dispatch({ type: SEND_TRANSACTION_START })
     const state = getState()
 
     try {
@@ -181,32 +181,46 @@ export const sendTransaction = (
         isAssetEnablingTransaction,
         state
       )
-      dispatch({
-        type: SEND_TRANSACTION_SUCCESS,
-        data: txData,
-      })
-      dispatch({
-        type: ADD_PENDING_TRANSACTION,
-        data: txData,
-      })
+      // dispatch({
+      //   type: SEND_TRANSACTION_SUCCESS,
+      //   data: txData,
+      // })
+
+      // dispatch({
+      //   type: ADD_PENDING_TRANSACTION,
+      //   data: txData,
+      // })
+
+      fulfillWithValue(txData)
+
       if (!isAssetEnablingTransaction) {
-        navigate('TransactionSuccess')
+        navigate('TransactionSuccess', undefined)
       }
     } catch (error) {
-      dispatch({
-        type: SEND_TRANSACTION_FAILED,
+      // dispatch({
+      //   type: SEND_TRANSACTION_FAILED,
+      //   error: error.message,
+      // })
+      rejectWithValue({
+        message: 'Could not create wallet',
         error: error.message,
       })
+
       if (!isAssetEnablingTransaction) {
-        navigate('TransactionFailure')
+        navigate('TransactionFailure', undefined)
       }
     }
   }
-}
+)
 
-export const createNewWallet = (data) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: WALLET_PROCESSING_START })
+// These first
+export const createNewWallet = createAsyncThunk(
+  'wallets/createNewWallet',
+  async (
+    data: { phrase: string; name: string },
+    { rejectWithValue, dispatch }
+  ) => {
+    // dispatch({ type: WALLET_PROCESSING_START })
 
     try {
       const { selectedWallet, wallets } = await WalletManager.createNewWallet(
@@ -231,19 +245,30 @@ export const createNewWallet = (data) => {
         ])
       }
 
-      dispatch({ type: WALLET_PROCESSING_FINISHED })
-    } catch (error) {
-      dispatch({
-        type: WALLET_PROCESSING_FAILED,
-        error: error,
-      })
+      // dispatch({ type: WALLET_PROCESSING_FINISHED })
+    } catch (error: any) {
+      // dispatch({
+      //   type: WALLET_PROCESSING_FAILED,
+      //   error: error,
+      // })
+      rejectWithValue({ error: 'Could not create wallet' })
     }
   }
-}
+)
 
-export const importWallet = (data) => {
-  return async (dispatch) => {
-    dispatch({ type: WALLET_PROCESSING_START })
+export const importWallet = createAsyncThunk(
+  'wallets/importWallet',
+  async (
+    data: {
+      name: string
+      inputSwitch: string
+      phrase: string
+      walletType: string
+      privateKey: string
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    // dispatch({ type: WALLET_PROCESSING_START })
 
     try {
       const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
@@ -268,19 +293,28 @@ export const importWallet = (data) => {
       await AccountManager.getInstance().restoreUserWallet(false)
       dispatch(setSelectedWallet(walletId))
 
-      dispatch({ type: WALLET_PROCESSING_FINISHED })
+      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      dispatch({
-        type: WALLET_PROCESSING_FAILED,
-        error: error,
-      })
+      rejectWithValue('Could not import wallet')
+      // dispatch({
+      //   type: WALLET_PROCESSING_FAILED,
+      //   error: error,
+      // })
     }
   }
-}
+)
 
-export const addWatchedWallet = (data) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: WALLET_PROCESSING_START })
+export const addWatchedWallet = createAsyncThunk(
+  'wallets/addWatchedWallet',
+  async (
+    data: {
+      label: string
+      blockchain: string
+      publicAddress: string
+    },
+    { rejectWithValue, dispatch }
+  ) => {
+    // dispatch({ type: WALLET_PROCESSING_START })
     try {
       const walletsDatastore =
         await AccountManager.getInstance().context?.openDatastore(
@@ -305,19 +339,21 @@ export const addWatchedWallet = (data) => {
       await AccountManager.getInstance().restoreUserWallet(false)
       dispatch(setSelectedWallet(savedWallet.id))
 
-      dispatch({ type: WALLET_PROCESSING_FINISHED })
+      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      dispatch({
-        type: WALLET_PROCESSING_FAILED,
-        error: error,
-      })
+      // dispatch({
+      //   type: WALLET_PROCESSING_FAILED,
+      //   error: error,
+      // })
+      rejectWithValue('Could not add watched wallet')
     }
   }
-}
+)
 
-export const deleteWallet = (walletId) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: WALLET_PROCESSING_START })
+export const deleteWallet = createAsyncThunk(
+  'wallets/deleteWallet',
+  async (walletId: string, { getState, rejectWithValue, dispatch }) => {
+    // dispatch({ type: WALLET_PROCESSING_START })
 
     try {
       const currentlySelectedWallet = getSelectedWalletId(getState())
@@ -332,7 +368,7 @@ export const deleteWallet = (walletId) => {
       const updatedWalletsList = getWalletList(getState()).filter(
         (wallet) => wallet._id !== walletId
       )
-      dispatch(saveUserWallets(updatedWalletsList))
+      dispatch(saveUserWallets(updatedWalletsList as any)) // TODO: type
 
       if (currentlySelectedWallet === walletId) {
         const nextWalletId = Object.values(updatedWalletsList)[0].id
@@ -340,19 +376,24 @@ export const deleteWallet = (walletId) => {
       }
 
       await AccountManager.getInstance().restoreUserWallet(false)
-      dispatch({ type: WALLET_PROCESSING_FINISHED })
+      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      dispatch({
-        type: WALLET_PROCESSING_FAILED,
-        error: error,
-      })
+      // dispatch({
+      //   type: WALLET_PROCESSING_FAILED,
+      //   error: error,
+      // })
+      rejectWithValue('Could not delete wallet')
     }
   }
-}
+)
 
-export const renameWallet = (walletId, data) => {
-  return async (dispatch, getState) => {
-    dispatch({ type: WALLET_PROCESSING_START })
+export const renameWallet = createAsyncThunk(
+  'wallets/renameWallet',
+  async (
+    { walletId, data }: { walletId: string; data: { name: string } },
+    { rejectWithValue }
+  ) => {
+    // dispatch({ type: WALLET_PROCESSING_START })
 
     try {
       const walletDb =
@@ -381,12 +422,13 @@ export const renameWallet = (walletId, data) => {
       // dispatch({ type: WALLET_PROCESSING_FINISHED })
 
       await AccountManager.getInstance().restoreUserWallet(false)
-      dispatch({ type: WALLET_PROCESSING_FINISHED })
+      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      dispatch({
-        type: WALLET_PROCESSING_FAILED,
-        error: error,
-      })
+      // dispatch({
+      //   type: WALLET_PROCESSING_FAILED,
+      //   error: error,
+      // })
+      rejectWithValue('Could not rename wallet')
     }
   }
-}
+)

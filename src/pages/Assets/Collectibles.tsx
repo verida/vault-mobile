@@ -3,6 +3,10 @@ import { useNavigation } from '@react-navigation/native'
 import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { useGetNFTsQuery } from 'features/assets'
+import {
+  getSelectedWalletById,
+  getUniqueWalletAddresses,
+} from 'features/wallets'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback, useEffect } from 'react'
 import {
@@ -26,10 +30,6 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import {
-  getSelectedWalletById,
-  getUniqueWalletAddresses,
-} from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'

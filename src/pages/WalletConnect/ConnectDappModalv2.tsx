@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { SessionTypes, SignClientTypes } from '@walletconnect/typesv2'
+import { getSelectedWalletId } from 'features/wallets'
 import React, { useMemo, useState } from 'react'
 import {
   ActivityIndicator,
@@ -22,7 +23,6 @@ import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useReduxState } from 'hooks/useReduxState'
 import { approveWalletConnectSessionv2 } from 'reduxStore/actions'
-import { selectedWalletSelector } from 'reduxStore/wallet/selectors'
 import iconStyle from 'styles/icon'
 
 type Props = {
@@ -55,7 +55,7 @@ const ConnectDappModalv2 = (props: Props) => {
   const multiWallets = walletData[selectedWallets]
   const walletAccounts = multiWallets.accounts
 
-  const selectedWalletId = useReduxState(selectedWalletSelector)
+  const selectedWalletId = useReduxState(getSelectedWalletId)
   const [, setSelectedWallet] = useState<any>()
   const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()

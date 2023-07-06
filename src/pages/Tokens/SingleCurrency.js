@@ -1,6 +1,14 @@
 import Clipboard from '@react-native-community/clipboard'
 import { ChainId } from 'caip'
-import { useGetTransactionsForTokenQuery } from 'features/wallets'
+import {
+  getSelectedWalletById,
+  getTransactionsForToken,
+  getWalletsData,
+  selectSingleTokenData,
+  selectTransactions,
+  sendTransaction,
+  useGetTransactionsForTokenQuery,
+} from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React, { useEffect } from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
@@ -18,18 +26,6 @@ import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
 } from 'reduxStore/selectors'
-import {
-  // getBalances,
-  getTransactionsForToken,
-  sendTransaction,
-} from 'reduxStore/wallet/actions'
-import {
-  getSelectedWalletById,
-  getWalletsData,
-  selectSingleTokenData,
-  selectTransactions,
-  selectTransactionsData,
-} from 'reduxStore/wallet/selectors'
 
 const SingleCurrency = ({
   navigation,

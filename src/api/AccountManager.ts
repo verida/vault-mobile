@@ -28,7 +28,10 @@ import {
   removeUserWallets,
   saveUserWallets,
   setSelectedWallet,
-} from 'reduxStore/wallet/actions'
+  walletsApi,
+  getBlockchainNetworks,
+  getSelectedWalletId,
+} from 'features/wallets'
 import { getCountryCode } from 'utils/profile'
 import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
@@ -37,9 +40,7 @@ import CONFIG from '../config/environment'
 import EventEmitter from 'events'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
-import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 import { IContext } from '@verida/types'
-import { walletsApi, getBlockchainNetworks } from 'features/wallets'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN

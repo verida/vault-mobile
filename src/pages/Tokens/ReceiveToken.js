@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
+import { getWalletsData } from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -21,7 +22,6 @@ import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
 } from 'reduxStore/selectors'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const LogoImg = require('assets/vault-logo.png')
 

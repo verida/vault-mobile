@@ -1,4 +1,5 @@
 import * as Sentry from '@sentry/react-native'
+import { getWalletsData } from 'features/wallets'
 import {
   InMemorySigner,
   keyStores as nearKeyStores,
@@ -11,8 +12,6 @@ import { store } from 'reduxStore'
 import { NEAR_CHAINS, TNearChain } from 'wallet-connect/data/NEARData'
 import { AsyncStorageKeyStore } from 'wallet-connect/helpers/NearKeystore'
 import { getWC2SignClient } from 'wallet-connect/helpers/SignClient'
-
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const MAX_ACCOUNTS = 1 // just one account for now
 

@@ -1,5 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import {
+  getSelectedWalletId,
+  getWalletList,
+  setSelectedWallet,
+} from 'features/wallets'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -15,8 +20,6 @@ import CONFIG from 'config/environment'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-import { setSelectedWallet } from 'reduxStore/wallet/actions'
-import { getSelectedWalletId, getWalletList } from 'reduxStore/wallet/selectors'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void

@@ -1,8 +1,8 @@
+import { selectSentTransaction } from 'features/wallets'
 import React from 'react'
 import { connect } from 'react-redux'
 
 import SuccessFailure from 'components/SuccessFailure'
-import { selectSentTransaction } from 'reduxStore/wallet/selectors'
 
 const FailureTransaction = ({ navigation, sentTransaction }) => {
   const titleText = 'Ooops..'
@@ -20,8 +20,7 @@ const FailureTransaction = ({ navigation, sentTransaction }) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     sentTransaction: selectSentTransaction(state),
   }

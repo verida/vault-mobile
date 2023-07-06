@@ -2,9 +2,9 @@ import '@ethersproject/shims'
 
 import { signTypedData_v4 } from 'eth-sig-util'
 import * as ethers from 'ethers'
+import { getWalletsData } from 'features/wallets'
 
 import { store } from '../../reduxStore'
-import { getWalletsData } from '../../reduxStore/wallet/selectors'
 import { ethereumWeb3 as web3 } from '../../wallet/chains/eip155'
 import { getWalletConnectConfig } from '../config'
 import {

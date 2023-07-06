@@ -1,6 +1,7 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { getWalletObjectById, renameWallet } from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
@@ -26,8 +27,6 @@ import { WalletType } from 'components/WalletList/types'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
-import { renameWallet } from 'reduxStore/wallet/actions'
-import { getWalletObjectById } from 'reduxStore/wallet/selectors'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'

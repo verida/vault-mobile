@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
+import { getTransactionParams } from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -16,7 +17,6 @@ import Label from 'components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { getTransactionParams } from 'reduxStore/wallet/actions'
 import InputStyles from 'styles/inputs'
 
 const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {

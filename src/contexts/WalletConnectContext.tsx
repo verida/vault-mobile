@@ -1,5 +1,6 @@
 import * as sentry from '@sentry/react-native'
 import WalletConnect from '@walletconnect/client'
+import { getSelectedWalletId } from 'features/wallets'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import React, {
@@ -22,7 +23,6 @@ import {
   setWalletConnectPeerMeta,
 } from 'reduxStore/actions'
 import { authenticatedSelector, dappsSelector } from 'reduxStore/selectors'
-import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 
 import { useModal } from '../hooks/useModal'
 import ConnectDappModal from '../pages/WalletConnect/ConnectDappModal'
