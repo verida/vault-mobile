@@ -86,7 +86,7 @@ export default (props) => {
   const [loading, setLoading] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
 
-  const networks = useSelector((state) => state.main.networks)
+  const networks = useSelector((state) => state.settings.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `Verida Vault ${capitalize(
     Config.BITRISE_TRIGGERED_WORKFLOW_TITLE || Config.DEPLOY_ENVIRONMENT
@@ -115,7 +115,7 @@ export default (props) => {
       label: 'Log Out',
       text: style.logoutText,
       optional: true,
-      onPress: (navigation) => logout(navigation),
+      onPress: () => logout(),
     },
     {
       label: 'Delete Account',

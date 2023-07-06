@@ -34,4 +34,4 @@ export const { addWord, removeWord, resetPhrase } = seedphrasesSlice.actions
 
 // Selectors
 export const selectSeedPhraseTemplate = (state: RootState) =>
-  state.settings.showSeedPhraseReminder
+  state.seedPhrases.template

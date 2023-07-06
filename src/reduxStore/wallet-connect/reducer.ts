@@ -1,7 +1,5 @@
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { LOG_OUT } from 'reduxStore/general/action-types'
-
 import { Reducer } from '../types'
 
 export interface State {
@@ -125,7 +123,7 @@ export const walletConnectReducer: Reducer<State> = (
       }
     }
 
-    case LOG_OUT as any:
+    case 'auth/logout' as any:
       return initialState
 
     default:

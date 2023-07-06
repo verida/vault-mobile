@@ -1,6 +1,7 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { logout as logoutAction } from 'features/auth'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectNewMessagesCount,
@@ -39,7 +40,6 @@ import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import { logout as logoutAction } from 'reduxStore/general/actions'
 
 import PromoBannersCarousel from './Banners/CarouselBanner'
 import WalletSummary from './Banners/WalletBanner'

@@ -1,4 +1,8 @@
-import { addWord, removeWord } from 'features/seedphrases'
+import {
+  addWord,
+  removeWord,
+  selectSeedPhraseTemplate,
+} from 'features/seedphrases'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
@@ -33,7 +37,7 @@ const WordLayout = ({ words, template, ...props }) => (
 )
 
 const mapStateToProps = (state) => {
-  return { template: state.main.template }
+  return { template: selectSeedPhraseTemplate(state) }
 }
 
 const mapDispatchToProps = (dispatch) => {

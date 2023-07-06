@@ -1,3 +1,4 @@
+import { getWallets } from 'features/wallets'
 import React, { useMemo, useState } from 'react'
 import { Alert, Image, StyleSheet, Text, View } from 'react-native'
 import {
@@ -40,10 +41,7 @@ const ConnectDappModal = (props: Props) => {
     dismissModal,
   } = props
 
-  // TODO: cleanup convert main-reducer to typescript
-  const walletData = useReduxState((state) => state.main.wallets.data)
-  const selectedWalletID = useReduxState((state) => state.main.selectedWallet)
-  const currentWallet = walletData[selectedWalletID]
+  const currentWallet = useReduxState(getWallets)
   const accounts = currentWallet.accounts
 
   const [selectedWallet, setSelectedWallet] = useState<any>()
@@ -91,7 +89,7 @@ const ConnectDappModal = (props: Props) => {
         <DropDownPicker
           showArrow
           placeholder='Select wallet'
-          items={wallets}
+          items={wallets as any} // Temp
           containerStyle={styles.select}
           onChangeItem={(item: any) => {
             setSelectedWallet(item)

@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { SessionTypes, SignClientTypes } from '@walletconnect/typesv2'
-import { getSelectedWalletId } from 'features/wallets'
+import { getSelectedWalletId, getWallets } from 'features/wallets'
 import React, { useMemo, useState } from 'react'
 import {
   ActivityIndicator,
@@ -49,10 +49,7 @@ const ConnectDappModalv2 = (props: Props) => {
   const { id, params } = proposal
   const { proposer, requiredNamespaces, relays } = params
   const { metadata } = proposer
-  // TODO: cleanup convert main-reducer to typescript
-  const walletData = useReduxState((state) => state.main.wallets.data)
-  const selectedWallets = useReduxState((state) => state.main.selectedWallet)
-  const multiWallets = walletData[selectedWallets]
+  const multiWallets = useReduxState(getWallets)
   const walletAccounts = multiWallets.accounts
 
   const selectedWalletId = useReduxState(getSelectedWalletId)

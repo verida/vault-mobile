@@ -1,6 +1,7 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { logout as logoutAction } from 'features/auth'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectNewMessagesCount,
@@ -48,7 +49,6 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import { logout as logoutAction } from 'reduxStore/general/actions'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 const LogoImg = require('assets/vault-logo.png')

@@ -23,7 +23,6 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
-import { mainReducer } from './mainReducer'
 import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
@@ -33,7 +32,6 @@ const persistConfig = {
 }
 
 export const rootReducer = combineReducers({
-  main: mainReducer,
   walletConnect: walletConnectReducer,
 
   // New reducers

@@ -78,8 +78,8 @@ const mapDispatchToProps = () => {
 
 const mapStateToProps = (state) => {
   return {
-    setInboxItem: state.main.setInboxItem,
-    setInboxType: state.main.setInboxType,
+    setInboxItem: state.inbox.setInboxItem, // TODO: check this screen and the necessity of these states.
+    setInboxType: state.inbox.setInboxType,
   }
 }
 
