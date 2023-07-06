@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import { setNewMessagesCount } from 'features/inbox'
+import { debounce } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
@@ -79,7 +80,12 @@ export const fetchPublicProfileData = async () => {
   }
 }
 
-export async function fetchInboxCount() {
+/**
+ * This function can be triggered in many situations(app state changes, the home screen got focus, got inbox notifications)
+ * So we add debounce to help reduce duplicated calls
+ * TODO: should handle fetch inbox count in a single place
+ */
+export const fetchInboxCount = debounce(async () => {
   try {
     const messages =
       await AccountManager.getInstance().vault?.inbox.fetchLatest(
@@ -90,7 +96,7 @@ export async function fetchInboxCount() {
   } catch (error) {
     Sentry.captureException(error)
   }
-}
+}, 2500)
 
 export async function getProfile(did: string) {
   try {
