@@ -15,7 +15,6 @@ import {
   AddIdentityStepType,
   BlockchainWallet,
   NormalizedAccounts,
-  UserData,
 } from 'api/types'
 import dataMap from 'config/data-map'
 import {
@@ -41,6 +40,7 @@ import EventEmitter from 'events'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
+import { PublicProfile } from 'features/profiles'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -250,7 +250,7 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  private async setPublicProfile(data: UserData) {
+  private async setPublicProfile(data: PublicProfile) {
     const entries = Object.entries(data)
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i]
@@ -303,7 +303,7 @@ class AccountManager extends EventEmitter {
 
       const saved: any = await walletDb?.save(wallet, undefined)
 
-      const walletID = saved?.id
+      const walletID = saved?.id as string
 
       // generate wallets and save to redux state
       const blockchainNetworks = getBlockchainNetworks(store.getState())
@@ -384,7 +384,7 @@ class AccountManager extends EventEmitter {
   }
 
   public async createAccount(
-    userData: UserData,
+    userData: PublicProfile,
     country: string,
     updateProgress?: (
       step: AddIdentityStepType,

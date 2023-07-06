@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { selectPublicProfile } from 'features/profiles'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 import Icon from 'react-native-vector-icons/MaterialIcons'
@@ -7,6 +8,7 @@ import { connect } from 'react-redux'
 
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { RootState } from 'reduxStore/types'
 
 import { Spacer } from '../../components/Spacer'
 import Text from '../../components/Text'
@@ -166,9 +168,9 @@ const styles = StyleSheet.create({
   appTextContainer: { flex: 1, alignItems: 'flex-start', marginLeft: 16 },
 })
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState) => {
   return {
-    publicProfileData: state.main.publicProfileData,
+    publicProfileData: selectPublicProfile(state),
     selectedAccount: state.main.selectedAccount,
   }
 }

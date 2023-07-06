@@ -8,7 +8,7 @@ import {
   // SET_AUTH_STATUS,
   SET_NAVIGATION_LINK,
   // SET_NEW_MESSAGES_COUNT,
-  SET_PUBLIC_PROFILE_DATA,
+  // SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
   // SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
@@ -18,12 +18,12 @@ import {
 const initialState = {
   // template: [],
   // authenticated: false,
-  newMessagesCount: 0,
-  publicProfileData: {
-    name: '',
-    country: '',
-    description: '',
-  },
+  // newMessagesCount: 0,
+  // publicProfileData: {
+  //   name: '',
+  //   country: '',
+  //   description: '',
+  // },
   accounts: {},
   selectedAccount: null,
   switchAccountToast: null,
@@ -44,8 +44,8 @@ export const mainReducer = (state = initialState, action) => {
     //   return { ...state, template: [] }
     // case SET_AUTH_STATUS:
     //   return { ...state, authenticated: action.payload }
-    case SET_PUBLIC_PROFILE_DATA:
-      return { ...state, publicProfileData: action.payload }
+    // case SET_PUBLIC_PROFILE_DATA:
+    //   return { ...state, publicProfileData: action.payload }
     // case SET_NEW_MESSAGES_COUNT:
     //   return { ...state, newMessagesCount: action.payload }
     case SET_ACCOUNTS:
@@ -92,19 +92,19 @@ export const mainReducer = (state = initialState, action) => {
         },
       })
 
-    case LOG_OUT:
-      return update(state, {
-        newMessagesCount: {
-          $set: 0,
-        },
-        publicProfileData: {
-          $set: {
-            name: '',
-            country: '',
-            description: '',
-          },
-        },
-      })
+    case LOG_OUT: // TODO: handle logout
+    // return update(state, {
+    //   newMessagesCount: {
+    //     $set: 0,
+    //   },
+    //   publicProfileData: {
+    //     $set: {
+    //       name: '',
+    //       country: '',
+    //       description: '',
+    //     },
+    //   },
+    // })
 
     default:
       return state

@@ -1,4 +1,9 @@
 import * as Sentry from '@sentry/react-native'
+import {
+  PublicProfile,
+  selectPublicProfile,
+  setPublicProfileData,
+} from 'features/profiles'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
@@ -9,7 +14,7 @@ import { Dispatch } from 'redux'
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData } from 'reduxStore/general/actions'
+import { RootState } from 'reduxStore/types'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
@@ -166,13 +171,13 @@ const EditProfile = (props: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    setPublicProfileData: (data: unknown) =>
+    setPublicProfileData: (data: PublicProfile) =>
       dispatch(setPublicProfileData(data)),
   }
 }
 
-const mapStateToProps = (state: any) => {
-  return { publicProfileData: state.main.publicProfileData }
+const mapStateToProps = (state: RootState) => {
+  return { publicProfileData: selectPublicProfile(state) }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)

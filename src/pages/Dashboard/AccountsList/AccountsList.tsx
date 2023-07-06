@@ -1,3 +1,4 @@
+import { PublicProfile } from 'features/profiles'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   FlatList,
@@ -7,7 +8,7 @@ import {
   ViewStyle,
 } from 'react-native'
 
-import { Account, UserData } from 'api/types'
+import { Account } from 'api/types'
 import { fetchPublicProfileData } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
@@ -59,7 +60,7 @@ function AccountsList(props: AccountsListProps) {
     (info: ListRenderItemInfo<Account>) => {
       const { did, publicProfile = {} } = info.item
 
-      const { name = '', avatar = undefined } = publicProfile as UserData
+      const { name = '', avatar = undefined } = publicProfile as PublicProfile
 
       const selected = selectedDids.indexOf(did) !== -1
 

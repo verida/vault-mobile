@@ -1,5 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useTheme } from 'contexts/ThemeContext'
+import { selectPublicProfile } from 'features/profiles'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -89,7 +90,7 @@ const SeedPhraseGenerated = (props) => {
 }
 
 const mapStateToProps = (state) => {
-  return { publicProfileData: state.main.publicProfileData }
+  return { publicProfileData: selectPublicProfile(state) }
 }
 
 export default connect(mapStateToProps, null)(SeedPhraseGenerated)

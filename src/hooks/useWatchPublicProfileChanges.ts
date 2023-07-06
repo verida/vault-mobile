@@ -1,16 +1,17 @@
+import { PublicProfile } from 'features/profiles'
 import { emitter } from 'helpers/emitter'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
-import { Account, UserData } from 'api/types'
+import { Account } from 'api/types'
 import {
   getAccountPublicProfile,
   getSelectedAccount,
 } from 'reduxStore/selectors'
 
 export function useWatchPublicProfileChanges() {
-  const publicProfile: UserData = useSelector(getAccountPublicProfile)
+  const publicProfile: PublicProfile = useSelector(getAccountPublicProfile)
   const account: Account | undefined = useSelector(getSelectedAccount)
   const did = account?.did
 

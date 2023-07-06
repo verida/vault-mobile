@@ -8,7 +8,7 @@
  * Use https://github.com/ChainAgnostic/caip-js
  */
 import { AssetId } from 'caip'
-import { ImageSourcePropType } from 'react-native'
+import { PublicProfile } from 'features/profiles'
 
 /**
  * Verida Account
@@ -17,19 +17,11 @@ export type Account = {
   did: string
   privateKey: string
   mnemonic: string
-  publicProfile?: UserData
+  publicProfile?: PublicProfile
   seedPhraseReminder: {
     lastTime?: number
     backedup: boolean
   }
-}
-
-export type UserData = {
-  name: string
-  country: string
-  username?: string
-  avatar?: ImageSourcePropType
-  description?: string
 }
 
 export type NormalizedAccounts = {
@@ -72,6 +64,7 @@ export interface BlockchainNetwork {
 
 export interface BlockchainAccount {
   privateKey?: string
+  publicKey?: string
   mnemonic?: string
   address?: string
   chainId?: string
@@ -95,7 +88,7 @@ export interface BlockchainWallet extends BlockchainAccount {
   _id: string
   label: string
   multiChain: boolean
-  viewOnly: boolean
+  viewOnly?: boolean
   walletType: string // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
 }
 

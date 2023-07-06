@@ -1,5 +1,9 @@
 import * as Sentry from '@sentry/react-native'
 import * as ImagePicker from 'expo-image-picker'
+import {
+  selectPublicProfile,
+  setPublicProfileData as setPublicProfileDataAction,
+} from 'features/profiles'
 import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
@@ -7,7 +11,6 @@ import { connect } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import { loadAvatarSource } from 'api/utils'
-import { setPublicProfileData as setPublicProfileDataAction } from 'reduxStore/general/actions'
 
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 
@@ -89,7 +92,7 @@ const style = StyleSheet.create({
 })
 
 const mapStateToProps = (state) => {
-  return { publicProfileData: state.main.publicProfileData }
+  return { publicProfileData: selectPublicProfile(state) }
 }
 
 const mapDispatchToProps = (dispatch) => {

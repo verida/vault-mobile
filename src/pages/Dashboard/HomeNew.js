@@ -1,6 +1,11 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import {
+  selectNewMessagesCount,
+  setNewMessagesCount as setNewMessagesCountAction,
+} from 'features/inbox'
+import { selectPublicProfile } from 'features/profiles'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -33,7 +38,6 @@ import {
   logout as logoutAction,
   setNavigationLink as setNavigationLinkAction,
 } from 'reduxStore/general/actions'
-import { setNewMessagesCount as setNewMessagesCountAction } from 'features/inbox'
 
 import PromoBannersCarousel from './Banners/CarouselBanner'
 import WalletSummary from './Banners/WalletBanner'
@@ -314,10 +318,10 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const mapStateToProps = (state) => 
+const mapStateToProps = (state) => {
   return {
-    publicProfileData: state.main.publicProfileData,
-    newMessagesCount: state.main.newMessagesCount,
+    publicProfileData: selectPublicProfile(state),
+    newMessagesCount: selectNewMessagesCount(state),
     selectedAccount: state.main.selectedAccount,
     navigationLink: state.main.navigationLink,
   }

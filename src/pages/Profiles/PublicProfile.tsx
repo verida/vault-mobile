@@ -3,6 +3,11 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import {
+  PublicProfile as IPublicProfile,
+  selectPublicProfile,
+  setPublicProfileData,
+} from 'features/profiles'
 import { getAllWallets, getBlockchainNetworks } from 'features/wallets'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
@@ -67,8 +72,8 @@ import { Text } from 'components/Typography/Text'
 import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { setPublicProfileData } from 'reduxStore/general/actions'
 import { getSelectedAccount } from 'reduxStore/selectors'
+import { RootState } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 export enum PublicProfileEditMode {
@@ -1349,14 +1354,14 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    updatePublicProfileData: (data: unknown) =>
+    updatePublicProfileData: (data: IPublicProfile) =>
       dispatch(setPublicProfileData(data)),
   }
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState) => {
   return {
-    publicProfileData: state.main.publicProfileData,
+    publicProfileData: selectPublicProfile(state),
   }
 }
 

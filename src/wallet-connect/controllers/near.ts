@@ -98,7 +98,7 @@ export class NearWalletController {
   static async createDevAccount() {
     const wallets = getWalletsData(store.getState())
     const nearWallet = wallets.near
-    const keyPair = utils.KeyPair.fromString(nearWallet.privateKey)
+    const keyPair = utils.KeyPair.fromString(nearWallet.privateKey!)
     const randomNumber = Math.floor(
       Math.random() * (99999999999999 - 10000000000000) + 10000000000000
     )

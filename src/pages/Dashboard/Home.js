@@ -1,8 +1,11 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
-import { setNewMessagesCount as setNewMessagesCountAction } from 'features/inbox'
-// import * as SecureStore from 'helpers/VeridaSecureStore'
+import {
+  selectNewMessagesCount,
+  setNewMessagesCount as setNewMessagesCountAction,
+} from 'features/inbox'
+import { selectPublicProfile } from 'features/profiles'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -333,8 +336,8 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    publicProfileData: state.main.publicProfileData,
-    newMessagesCount: state.main.newMessagesCount,
+    publicProfileData: selectPublicProfile(state),
+    newMessagesCount: selectNewMessagesCount(state),
     selectedAccount: state.main.selectedAccount,
     navigationLink: state.main.navigationLink,
   }

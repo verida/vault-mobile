@@ -101,7 +101,7 @@ export class WalletManager {
         // If we have a watch only wallet, simply return it
         if (wallet.address && !wallet.privateKey && !wallet.mnemonic) {
           const blockchainAccount: BlockchainAccount = {
-            network: blockchainNetwork,
+            blockchainNetwork,
             chainId: blockchainNetwork.chainId,
             derivationPath: blockchainNetwork.derivationPath,
             address: wallet.address,
@@ -136,7 +136,7 @@ export class WalletManager {
         }
 
         const blockchainAccount: BlockchainAccount = {
-          network: blockchainNetwork,
+          blockchainNetwork,
           chainId: blockchainNetwork.chainId,
           derivationPath: blockchainNetwork.derivationPath,
           address: walletDetails.address,

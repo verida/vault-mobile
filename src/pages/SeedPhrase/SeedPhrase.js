@@ -1,3 +1,4 @@
+import { selectPublicProfile } from 'features/profiles'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
@@ -60,7 +61,7 @@ const SeedPhrase = (props) => {
 }
 
 const mapStateToProps = (state) => {
-  return { publicProfileData: state.main.publicProfileData }
+  return { publicProfileData: selectPublicProfile(state) }
 }
 
 export default connect(mapStateToProps, null)(SeedPhrase)

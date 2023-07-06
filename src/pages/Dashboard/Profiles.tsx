@@ -1,3 +1,4 @@
+import { selectPublicProfile } from 'features/profiles'
 import { Container, Content } from 'native-base'
 import React from 'react'
 import { View } from 'react-native'
@@ -41,7 +42,7 @@ const Profiles = () => {
 
 const mapStateToProps = (state: any) => {
   return {
-    publicProfileData: state.main.publicProfileData,
+    publicProfileData: selectPublicProfile(state),
   }
 }
 
