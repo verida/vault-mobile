@@ -1,9 +1,9 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
+import { setNewMessagesCount } from 'features/inbox'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
-import { setNewMessagesCount } from 'reduxStore/general/actions'
 
 import CONFIG from '../config/environment'
 

@@ -7,7 +7,7 @@ import {
   SET_ACCOUNTS,
   // SET_AUTH_STATUS,
   SET_NAVIGATION_LINK,
-  SET_NEW_MESSAGES_COUNT,
+  // SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
   SET_SELECTED_ACCOUNT,
   // SET_SHOW_SEED_PHRASE_REMINDER,
@@ -46,8 +46,8 @@ export const mainReducer = (state = initialState, action) => {
     //   return { ...state, authenticated: action.payload }
     case SET_PUBLIC_PROFILE_DATA:
       return { ...state, publicProfileData: action.payload }
-    case SET_NEW_MESSAGES_COUNT:
-      return { ...state, newMessagesCount: action.payload }
+    // case SET_NEW_MESSAGES_COUNT:
+    //   return { ...state, newMessagesCount: action.payload }
     case SET_ACCOUNTS:
       return update(state, {
         accounts: {

@@ -32,8 +32,8 @@ import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import {
   logout as logoutAction,
   setNavigationLink as setNavigationLinkAction,
-  setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
+import { setNewMessagesCount as setNewMessagesCountAction } from 'features/inbox'
 
 import PromoBannersCarousel from './Banners/CarouselBanner'
 import WalletSummary from './Banners/WalletBanner'

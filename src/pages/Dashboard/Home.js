@@ -1,6 +1,7 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { setNewMessagesCount as setNewMessagesCountAction } from 'features/inbox'
 // import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -42,7 +43,6 @@ import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import {
   logout as logoutAction,
   setNavigationLink as setNavigationLinkAction,
-  setNewMessagesCount as setNewMessagesCountAction,
 } from 'reduxStore/general/actions'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
