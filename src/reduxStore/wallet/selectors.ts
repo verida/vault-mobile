@@ -1,6 +1,10 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
-import { getBalancesData, getTransactionsForTokenData } from 'features/wallets'
+import {
+  getBalancesData,
+  getTransactionDetailsData,
+  getTransactionsForTokenData,
+} from 'features/wallets'
 import { createSelector } from 'reselect'
 import {
   getWalletAddressForAsset,
@@ -253,19 +257,20 @@ export const selectSentTransaction = (state) => {
   return transaction
 }
 
-export const selectTransaction = (state) => {
-  return s(state).transactionDetails.data || {}
-}
+// export const selectTransaction = (state) => {
+//   getTransactionDetailsData(state)
+//   return s(state).transactionDetails.data || {}
+// }
 
-export const selectTransactionData = (state) => {
-  const { fetching, error } = s(state).transactionDetails
+// export const selectTransactionData = (state) => {
+//   const { fetching, error } = s(state).transactionDetails
 
-  return {
-    transaction: selectTransaction(state),
-    loading: fetching,
-    error: error,
-  }
-}
+//   return {
+//     transaction: selectTransaction(state),
+//     loading: fetching,
+//     error: error,
+//   }
+// }
 
 export const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',

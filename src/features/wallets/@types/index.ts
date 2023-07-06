@@ -59,4 +59,17 @@ export interface Transaction {
   quantity: bigint
   pending: boolean
 }
+
+export interface DetailedTransaction {
+  id: string
+  type: string
+  address: string
+  quantity: bigint
+  pending: boolean
+  fee: string
+  feeDecimal: number
+  feeSymbol: string
+  blockNumber: string
+  time: string
+}
 // End Walett Provider types

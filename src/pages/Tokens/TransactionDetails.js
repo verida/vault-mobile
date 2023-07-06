@@ -1,6 +1,8 @@
+import { ChainId } from 'caip'
+import { useGetTransactionDetailsQuery } from 'features/wallets'
 import { Container, Icon } from 'native-base'
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
 import { store } from 'reduxStore'
 
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -11,25 +13,21 @@ import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
 } from 'reduxStore/selectors'
-import { getTransactionDetails } from 'reduxStore/wallet/actions'
-import { selectTransactionData } from 'reduxStore/wallet/selectors'
+import { getWalletsData } from 'reduxStore/wallet/selectors'
 
-const TransactionDetails = ({
-  navigation,
-  route,
-  data,
-  onGetTransactionDetails,
-}) => {
+const TransactionDetails = ({ navigation, route }) => {
   const { id, token } = route.params
-  useEffect(() => {
-    async function init() {
-      onGetTransactionDetails(id, token)
-    }
 
-    init()
-  }, [id, onGetTransactionDetails, token])
+  const wallets = useSelector(getWalletsData)
+  const chainId = new ChainId(token.asset.chainId).toString()
+  const address = wallets[chainId].address
 
-  const { transaction, loading } = data
+  const { data: transaction, isLoading } = useGetTransactionDetailsQuery({
+    transactionId: id,
+    userAddress: address,
+    asset: token.asset,
+  })
+
   const network = getBlockchainNetwork(store.getState(), token.asset.chainId)
   let networkReference = getBlockchainNetworkLabel(network)
 
@@ -43,7 +41,7 @@ const TransactionDetails = ({
         title={'Transaction Details'}
       />
       <TestnetWarning networkReference={networkReference} />
-      {loading ? (
+      {isLoading ? (
         <LoadingIndicator />
       ) : (
         <TransactionInfo transaction={transaction} token={token} />
@@ -52,17 +50,4 @@ const TransactionDetails = ({
   )
 }
 
-const mapStateToProps = (state) => {
-  return {
-    data: selectTransactionData(state),
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onGetTransactionDetails: (id, token) =>
-      dispatch(getTransactionDetails(id, token)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransactionDetails)
+export default TransactionDetails

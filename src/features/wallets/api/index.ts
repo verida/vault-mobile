@@ -9,7 +9,7 @@ import { BlockchainNetwork } from 'api/types'
 import CONFIG from 'config/environment'
 import { RootState } from 'reduxStore/types'
 
-import { BalanceByChain, Transaction } from '../@types'
+import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: CONFIG.WALLET_PROVIDER_URL,
@@ -90,6 +90,23 @@ export const walletsApi = createApi({
         return transactions
       },
     }),
+    getTransactionDetails: build.query({
+      query: (body: {
+        transactionId: string
+        userAddress: string
+        asset: AssetId
+      }) => ({
+        url: 'transaction/get',
+        method: 'POST',
+        body,
+      }),
+      transformResponse: (response: {
+        data: DetailedTransaction
+      }): DetailedTransaction => {
+        const transaction = response.data
+        return transaction
+      },
+    }),
     // Other wallets Apis
   }),
 })
@@ -100,6 +117,7 @@ export const {
   useChainsListQuery,
   useGetBalancesQuery,
   useGetTransactionsForTokenQuery,
+  useGetTransactionDetailsQuery,
 } = walletsApi
 
 // Selectors
