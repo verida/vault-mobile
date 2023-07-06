@@ -1,3 +1,4 @@
+import { selectShowSeedPhraseReminder } from 'features/settings'
 import React, { useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -21,9 +22,7 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
   const selectedAccount = useSelector(
     (state: any) => state.main.selectedAccount
   )
-  const showSeedPhraseReminder = useSelector(
-    (state: any) => state.main.showSeedPhraseReminder
-  )
+  const showSeedPhraseReminder = useSelector(selectShowSeedPhraseReminder)
 
   useEffect(() => {
     async function checkReminder() {
