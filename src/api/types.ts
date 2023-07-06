@@ -69,7 +69,7 @@ export interface BlockchainAccount {
   address?: string
   chainId?: string
   derivationPath?: string
-  blockchainNetwork: BlockchainNetwork
+  blockchainNetwork?: BlockchainNetwork
 }
 
 /**

@@ -3,6 +3,7 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
   selectPublicProfile,
@@ -72,7 +73,6 @@ import { Text } from 'components/Typography/Text'
 import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { getSelectedAccount } from 'reduxStore/selectors'
 import { RootState } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
@@ -117,7 +117,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     BlockchainWalletWithAccounts
   >
 
-  const selectedAccount: Account = useSelector(getSelectedAccount)
+  const selectedAccount: Account = useSelector(selectSelectedAccount)!
   const currentAccountDID = selectedAccount.did
 
   const [username, setUsername] = useState<string | undefined>(undefined)

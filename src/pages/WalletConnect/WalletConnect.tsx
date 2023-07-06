@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { selectSelectedAccount } from 'features/identities'
 import { selectPublicProfile } from 'features/profiles'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -171,7 +172,7 @@ const styles = StyleSheet.create({
 const mapStateToProps = (state: RootState) => {
   return {
     publicProfileData: selectPublicProfile(state),
-    selectedAccount: state.main.selectedAccount,
+    selectedAccount: selectSelectedAccount(state),
   }
 }
 

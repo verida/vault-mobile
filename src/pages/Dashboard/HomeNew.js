@@ -1,6 +1,7 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { selectSelectedAccount } from 'features/identities'
 import {
   selectNewMessagesCount,
   setNewMessagesCount as setNewMessagesCountAction,
@@ -322,7 +323,7 @@ const mapStateToProps = (state) => {
   return {
     publicProfileData: selectPublicProfile(state),
     newMessagesCount: selectNewMessagesCount(state),
-    selectedAccount: state.main.selectedAccount,
+    selectedAccount: selectSelectedAccount(state),
     navigationLink: state.main.navigationLink,
   }
 }

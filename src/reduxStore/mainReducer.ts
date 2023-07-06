@@ -48,6 +48,7 @@ export const mainReducer = (state = initialState, action) => {
     //   return { ...state, publicProfileData: action.payload }
     // case SET_NEW_MESSAGES_COUNT:
     //   return { ...state, newMessagesCount: action.payload }
+
     case SET_ACCOUNTS:
       return update(state, {
         accounts: {
@@ -71,12 +72,13 @@ export const mainReducer = (state = initialState, action) => {
           },
         },
       })
-    case SET_SWITCH_ACCOUNT_TOAST:
-      return update(state, {
-        switchAccountToast: {
-          $set: cloneDeep(action.payload),
-        },
-      })
+
+    // case SET_SWITCH_ACCOUNT_TOAST:
+    //   return update(state, {
+    //     switchAccountToast: {
+    //       $set: cloneDeep(action.payload),
+    //     },
+    //   })
 
     // case SET_SHOW_SEED_PHRASE_REMINDER:
     //   return update(state, {

@@ -1,3 +1,4 @@
+import { selectSelectedAccount } from 'features/identities'
 import React from 'react'
 import {
   ImageSourcePropType,
@@ -27,9 +28,7 @@ export type AccountItemProps = Omit<ViewProps, 'children'> & {
 
 function AccountItem(props: AccountItemProps) {
   const { name, did, selected, avatar, onSelect, multipleSelect } = props
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const selectedAccount = useSelector((state) => state.main.selectedAccount)
+  const selectedAccount = useSelector(selectSelectedAccount)
 
   function onPress() {
     onSelect(did)

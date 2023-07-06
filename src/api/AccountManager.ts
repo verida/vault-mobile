@@ -22,7 +22,7 @@ import {
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
-} from 'reduxStore/general/actions'
+} from 'features/identities'
 import {
   removeUserWallets,
   saveUserWallets,
@@ -132,7 +132,7 @@ class AccountManager extends EventEmitter {
         await this.restoreUserWallet(true)
       } else {
         store.dispatch(saveUserWallets(wallets))
-        store.dispatch(setSelectedWallet(selectedWalletId))
+        store.dispatch(setSelectedWallet(selectedWalletId!))
       }
     } catch (error) {
       Sentry.captureException(error)
@@ -536,7 +536,7 @@ class AccountManager extends EventEmitter {
         await SecureStore.deleteItemAsync(
           CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
-        store.dispatch(setSelectedAccount(null))
+        store.dispatch(setSelectedAccount(undefined))
       }
       store.dispatch(setAccounts(this.accounts))
 
@@ -586,7 +586,7 @@ class AccountManager extends EventEmitter {
         )
 
         setTimeout(() => {
-          store.dispatch(setSwitchAccountToast(null))
+          store.dispatch(setSwitchAccountToast(undefined))
         }, 5000)
       }, 100)
     } catch (e) {

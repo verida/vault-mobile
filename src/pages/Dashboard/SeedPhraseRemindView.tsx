@@ -1,4 +1,8 @@
-import { selectShowSeedPhraseReminder } from 'features/settings'
+import { selectSelectedAccount } from 'features/identities'
+import {
+  selectShowSeedPhraseReminder,
+  setShowSeedPhraseReminder,
+} from 'features/settings'
 import React, { useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -8,7 +12,6 @@ import AccountManager from 'api/AccountManager'
 import Text from 'components/Text'
 import { ORANGE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
 
 export type SeedPhraseRemindViewProps = Omit<ViewProps, 'children'> & {
   onRecordPress: () => void
@@ -19,9 +22,7 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
   const { onRecordPress, style, ...rest } = props
 
   const dispatch = useDispatch()
-  const selectedAccount = useSelector(
-    (state: any) => state.main.selectedAccount
-  )
+  const selectedAccount = useSelector(selectSelectedAccount)
   const showSeedPhraseReminder = useSelector(selectShowSeedPhraseReminder)
 
   useEffect(() => {

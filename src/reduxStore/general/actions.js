@@ -30,13 +30,13 @@ export const addAccount = (payload) => {
   return { type: ADD_ACCOUNT, payload }
 }
 
-export const setSwitchAccountToast = (payload) => {
-  return { type: SET_SWITCH_ACCOUNT_TOAST, payload }
-}
+// export const setSwitchAccountToast = (payload) => {
+//   return { type: SET_SWITCH_ACCOUNT_TOAST, payload }
+// }
 
-export const setShowSeedPhraseReminder = (payload) => {
-  return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
-}
+// export const setShowSeedPhraseReminder = (payload) => {
+//   return { type: SET_SHOW_SEED_PHRASE_REMINDER, payload }
+// }
 
 export const setNavigationLink = (payload) => {
   return { type: SET_NAVIGATION_LINK, payload }
