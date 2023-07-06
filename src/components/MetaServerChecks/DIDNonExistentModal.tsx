@@ -2,6 +2,7 @@ import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { logout as logoutAction } from 'features/auth'
 import { emitter } from 'helpers/emitter'
 import React, { useEffect, useState } from 'react'
 import {
@@ -32,7 +33,6 @@ import {
 } from 'constants/color'
 import { useAuth } from 'hooks/useAuth'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { logout as logoutAction } from 'reduxStore/general/actions'
 import { Theme } from 'styles/types'
 
 type Props = {

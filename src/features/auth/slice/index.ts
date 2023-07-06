@@ -1,5 +1,5 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
-import { createSlice } from '@reduxjs/toolkit'
+import { createAction, createSlice } from '@reduxjs/toolkit'
 
 import { RootState } from 'reduxStore/types'
 
@@ -23,6 +23,8 @@ export const authSlice = createSlice({
 
 // Actions
 export const { setBioAuthStatus } = authSlice.actions
+
+export const logout = createAction('auth/logout')
 
 // Selectors
 export const selectIsBioAuthenticated = (state: RootState) =>
