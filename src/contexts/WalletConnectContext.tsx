@@ -1,5 +1,6 @@
 import * as sentry from '@sentry/react-native'
 import WalletConnect from '@walletconnect/client'
+import { selectIsBioAuthenticated } from 'features/auth'
 import { getSelectedWalletId } from 'features/wallets'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -22,7 +23,7 @@ import {
   removeWalletConnectDapp,
   setWalletConnectPeerMeta,
 } from 'reduxStore/actions'
-import { authenticatedSelector, dappsSelector } from 'reduxStore/selectors'
+import { dappsSelector } from 'reduxStore/selectors'
 
 import { useModal } from '../hooks/useModal'
 import ConnectDappModal from '../pages/WalletConnect/ConnectDappModal'
@@ -50,7 +51,7 @@ export const WalletConnectContext = createContext<
 function useWalletConnectContext() {
   const dispatch = useDispatch()
   const dapps = useReduxState(dappsSelector)
-  const authenticated = useReduxState(authenticatedSelector)
+  const bioAuthenticated = useReduxState(selectIsBioAuthenticated)
   const appState = useRef(AppState.currentState)
   const selectedWalletId = useReduxState(getSelectedWalletId)
   const previousDapps = usePrevious(dapps)
@@ -136,7 +137,7 @@ function useWalletConnectContext() {
   )
 
   const { current: resubscribeToEvents } = useRef(() => {
-    if (!authenticated) return
+    if (!bioAuthenticated) return
     dapps.forEach(async (dapp: DApp) => {
       subscribeToEvents(dapp.session.key)
     })
@@ -158,7 +159,7 @@ function useWalletConnectContext() {
             })
             dispatch(
               approveWalletConnectSession({
-                walletId: selectedWalletId,
+                walletId: selectedWalletId!,
                 connector: { key: connector.key, session: connector.session },
                 chainId,
                 chain,
@@ -171,7 +172,7 @@ function useWalletConnectContext() {
           dismissModal={() => {
             dispatch(
               rejectWalletConnectSession({
-                walletId: selectedWalletId,
+                walletId: selectedWalletId!,
                 connector: { key: connector.key, session: connector.session },
               })
             )
@@ -196,7 +197,7 @@ function useWalletConnectContext() {
         const { peerMeta } = payload.params[0]
         dispatch(
           setWalletConnectPeerMeta({
-            walletId: selectedWalletId,
+            walletId: selectedWalletId!,
             connector: { key: connector.key, session: connector.session },
             peerMeta,
           })
@@ -234,7 +235,7 @@ function useWalletConnectContext() {
         delete connectorsRef.current[connector.key]
         dispatch(
           removeWalletConnectDapp({
-            walletId: selectedWalletId,
+            walletId: selectedWalletId!,
             key: connector.key,
           })
         )
@@ -294,7 +295,7 @@ function useWalletConnectContext() {
       if (!dapp.session.peerId) {
         dispatch(
           removeWalletConnectDapp({
-            walletId: selectedWalletId,
+            walletId: selectedWalletId!,
             key: dapp.session.key,
           })
         )
@@ -338,7 +339,7 @@ function useWalletConnectContext() {
 
   useEffect(() => {
     const tid = setTimeout(() => {
-      if (!authenticated || initializedRef.current || isEmpty(dapps)) return
+      if (!bioAuthenticated || initializedRef.current || isEmpty(dapps)) return
 
       connectDApps(dapps)
       initializedRef.current = true
@@ -347,7 +348,7 @@ function useWalletConnectContext() {
     return () => {
       clearTimeout(tid)
     }
-  }, [authenticated, connectDApps, dapps])
+  }, [bioAuthenticated, connectDApps, dapps])
 
   return {
     dapps,

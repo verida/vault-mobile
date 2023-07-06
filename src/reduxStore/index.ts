@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
+import { authSlice } from 'features/auth'
 import { seedphrasesSlice } from 'features/seedphrases'
 import { settingsSlice } from 'features/settings'
 import { walletsApi, walletsSlice } from 'features/wallets'
@@ -32,6 +33,7 @@ export const rootReducer = combineReducers({
   walletConnect: walletConnectReducer,
 
   // New reducers
+  auth: authSlice.reducer,
   wallets: walletsSlice.reducer,
   settings: settingsSlice.reducer,
   seedPhrases: seedphrasesSlice.reducer,

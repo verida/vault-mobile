@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { SignClientTypes } from '@walletconnect/typesv2'
+import { selectIsBioAuthenticated } from 'features/auth'
 import { getSelectedWalletId } from 'features/wallets'
 import isEmpty from 'lodash/isEmpty'
 import React, {
@@ -26,7 +27,7 @@ import { useReduxState } from 'hooks/useReduxState'
 import ConnectDappModalv2 from 'pages/WalletConnect/ConnectDappModalv2'
 import TransactionRequestModalv2 from 'pages/WalletConnect/TransactionRequestModalv2'
 import { removeWalletConnectSessionv2 } from 'reduxStore/actions'
-import { authenticatedSelector, dappsSelectorv2 } from 'reduxStore/selectors'
+import { dappsSelectorv2 } from 'reduxStore/selectors'
 
 import { useModal } from '../hooks/useModal'
 
@@ -38,7 +39,7 @@ function useWalletConnectContextv2() {
   const [initialized, setInitialized] = useState(false)
   const dispatch = useDispatch()
   const dapps = useReduxState(dappsSelectorv2)
-  const authenticated = useReduxState(authenticatedSelector)
+  const bioAuthenticated = useReduxState(selectIsBioAuthenticated)
   const selectedWalletId = useReduxState(getSelectedWalletId)
 
   const { showModal, dismissModal } = useModal()
@@ -112,20 +113,20 @@ function useWalletConnectContextv2() {
     }
   }, [])
 
-  const currentWalletIdRef = useRef(null)
+  const currentWalletIdRef = useRef<string>()
   useEffect(() => {
-    if (!authenticated || !selectedWalletId) return
+    if (!bioAuthenticated || !selectedWalletId) return
     if (currentWalletIdRef.current !== selectedWalletId) {
       ;(async () => {
         const data = await createOrRestoreNearWallet()
-        currentWalletIdRef.current = selectedWalletId
+        currentWalletIdRef.current = selectedWalletId!
         setInitialized(!!data)
       })()
     }
-  }, [authenticated, initialized, selectedWalletId])
+  }, [bioAuthenticated, initialized, selectedWalletId])
 
   useEffect(() => {
-    if (!authenticated || !initialized) return
+    if (!bioAuthenticated || !initialized) return
     const initialize = async () => {
       const signClient = await getWC2SignClient()
       signClient.on('session_proposal', onSessionProposal)
@@ -141,7 +142,7 @@ function useWalletConnectContextv2() {
 
     initialize()
   }, [
-    authenticated,
+    bioAuthenticated,
     dispatch,
     initialized,
     onSessionProposal,

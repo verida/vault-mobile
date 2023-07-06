@@ -5,7 +5,7 @@ import {
   ADD_ACCOUNT,
   LOG_OUT,
   SET_ACCOUNTS,
-  SET_AUTH_STATUS,
+  // SET_AUTH_STATUS,
   SET_NAVIGATION_LINK,
   SET_NEW_MESSAGES_COUNT,
   SET_PUBLIC_PROFILE_DATA,
@@ -17,7 +17,7 @@ import {
 
 const initialState = {
   // template: [],
-  authenticated: false,
+  // authenticated: false,
   newMessagesCount: 0,
   publicProfileData: {
     name: '',
@@ -42,8 +42,8 @@ export const mainReducer = (state = initialState, action) => {
     //   return { ...state, template: filtered }
     // case RESET_PHRASE:
     //   return { ...state, template: [] }
-    case SET_AUTH_STATUS:
-      return { ...state, authenticated: action.payload }
+    // case SET_AUTH_STATUS:
+    //   return { ...state, authenticated: action.payload }
     case SET_PUBLIC_PROFILE_DATA:
       return { ...state, publicProfileData: action.payload }
     case SET_NEW_MESSAGES_COUNT:

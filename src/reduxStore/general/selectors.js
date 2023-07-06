@@ -3,8 +3,6 @@ import { getBlockchainNetworks } from 'features/wallets'
 
 const s = (state) => state.main
 
-export const authenticatedSelector = (state) => s(state).authenticated
-
 export const getSelectedAccount = (state) => s(state).selectedAccount
 
 export const getAccountPublicProfile = (state) => s(state).publicProfileData

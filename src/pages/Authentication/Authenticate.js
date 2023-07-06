@@ -1,38 +1,40 @@
 import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import { LinearGradient } from 'expo-linear-gradient'
 import * as LocalAuthentication from 'expo-local-authentication'
+import { selectIsBioAuthenticated, setBioAuthStatus } from 'features/auth'
 import React, { useEffect, useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
-import { connect } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { useAuth } from 'hooks/useAuth'
 
 import Logo from '../../assets/logo.svg'
-import { setAuthStatus as setAuthStatusAction } from '../../reduxStore/general/actions'
 import CheckPin from './CheckPin'
 
 const Authenticate = (props) => {
-  const { setAuthStatus, authenticated: localAuthenticated, children } = props
+  const { children } = props
+  const dispatch = useDispatch()
   const [pinAuth, setPinAuth] = useState(false)
+  const bioAuthenicated = useSelector(selectIsBioAuthenticated)
   const { authenticated } = useAuth()
 
   useEffect(() => {
     async function setShouldAuthByPIN() {
       const hasPIN = await hasUserSetPinCode()
       if (!hasPIN) {
-        setAuthStatus(true)
+        dispatch(setBioAuthStatus(true))
       }
       setPinAuth(true)
     }
 
     const init = async () => {
-      if (localAuthenticated || !authenticated) return
+      if (bioAuthenicated || !authenticated) return
       const enrolledLevel = await LocalAuthentication.getEnrolledLevelAsync()
 
       if (enrolledLevel === LocalAuthentication.SecurityLevel.BIOMETRIC) {
         const { success } = await LocalAuthentication.authenticateAsync()
         if (success) {
-          setAuthStatus(true)
+          dispatch(setBioAuthStatus(true))
         } else {
           setShouldAuthByPIN()
         }
@@ -42,10 +44,11 @@ const Authenticate = (props) => {
     }
 
     init()
-  }, [authenticated, localAuthenticated, setAuthStatus])
+  }, [authenticated, bioAuthenicated, dispatch])
 
-  if (!authenticated || localAuthenticated) return children
-  if (pinAuth) return <CheckPin finishProcess={() => setAuthStatus(true)} />
+  if (!authenticated || bioAuthenicated) return children
+  if (pinAuth)
+    return <CheckPin finishProcess={() => dispatch(setBioAuthStatus(true))} />
 
   return (
     <LinearGradient
@@ -60,17 +63,7 @@ const Authenticate = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
-  return { authenticated: state.main.authenticated }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Authenticate)
+export default Authenticate
 
 const styles = StyleSheet.create({
   container: {

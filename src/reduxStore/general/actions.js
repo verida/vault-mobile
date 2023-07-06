@@ -2,7 +2,6 @@ import {
   ADD_ACCOUNT,
   LOG_OUT,
   SET_ACCOUNTS,
-  SET_AUTH_STATUS,
   SET_INBOX_ITEMS,
   SET_NAVIGATION_LINK,
   SET_NEW_MESSAGES_COUNT,
@@ -11,10 +10,6 @@ import {
   SET_SHOW_SEED_PHRASE_REMINDER,
   SET_SWITCH_ACCOUNT_TOAST,
 } from './action-types'
-
-export const setAuthStatus = (payload) => {
-  return { type: SET_AUTH_STATUS, payload }
-}
 
 export const setPublicProfileData = (payload) => {
   return { type: SET_PUBLIC_PROFILE_DATA, payload }
