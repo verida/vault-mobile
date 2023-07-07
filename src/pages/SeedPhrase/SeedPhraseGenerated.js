@@ -1,10 +1,8 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useTheme } from 'contexts/ThemeContext'
-import { selectPublicProfile } from 'features/profiles'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
 import _ from 'underscore'
 
 import AccountManager from 'api/AccountManager'
@@ -89,11 +87,7 @@ const SeedPhraseGenerated = (props) => {
   )
 }
 
-const mapStateToProps = (state) => {
-  return { publicProfileData: selectPublicProfile(state) }
-}
-
-export default connect(mapStateToProps, null)(SeedPhraseGenerated)
+export default SeedPhraseGenerated
 
 const createStyles = (theme) =>
   StyleSheet.create({
