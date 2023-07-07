@@ -3,6 +3,7 @@ import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
 import MoreIcon from 'assets/more_icon.svg'
 import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
@@ -14,12 +15,10 @@ import {
 } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 
-import { WalletItem } from './types'
-
 interface WalletListItemProps {
-  item: WalletItem
+  item: BlockchainWalletWithAccounts
   selected: boolean
-  onPressItem?: (item: WalletItem) => void
+  onPressItem?: (item: BlockchainWalletWithAccounts) => void
   leftIconType: 'checked' | 'dots'
 }
 

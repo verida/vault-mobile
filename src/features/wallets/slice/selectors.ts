@@ -7,66 +7,9 @@ import {
   tokenCaipObjectToString,
 } from 'wallet/helpers/tokens'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
+import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import { RootState } from 'reduxStore/types'
 
-// const s = (state: RootState) => state.main // Current wallet state sits in main reducer
-// export const selectedWalletSelector = (state: RootState) =>
-//   s(state).selectedWallet
-// export const getAllWallets = (state: RootState) =>
-//   getAllWallets(s(state)) || {}
-
-// export const getBalancesData = (state) => {
-//   if (state.balances.data && state.balances.data.results) {
-//     return state.balances.data.results
-//   } else {
-//     return {}
-//   }
-// }
-
-// export const getTotalBalance = (state) => {
-//   if (state.balances.data && state.balances.data.totalBalance) {
-//     return state.balances.data.totalBalance
-//   } else {
-//     return 0
-//   }
-// }
-
-// export const getSingleWalletChain = (state) => {
-//   const wallet = getWallets(state)
-//   if (wallet.type === 'single' && wallet.chain) {
-//     return wallet.chain
-//   } else {
-//     return null
-//   }
-// }
-
-// @chris done, although deprecate selectTokens
-// export const getListAndTotal = (state) => {
-//   // map prices and balances to recognized coins list and standardize
-//   const { list, total } = getBalancesData(state.main)
-//   // const total = getTotalBalance(state.main)
-
-//   // if (isEmpty(balances)) return { list: [], total }
-
-//   return {
-//     list,
-//     total,
-//   }
-// }
-
-// export const selectNativeTokenBalance = (state, token) => {
-//   const native = getNativeForChain(tokens, token.chainName)
-//   const balances = getBalancesData(state.main)
-
-//   if (balances && native && balances[native.symbol]) {
-//     return balances[native.symbol].balance
-//   } else {
-//     0
-//   }
-// }
-
-// @chris done
 export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
   const selectedWallet = getSelectedWalletById(state)
   const addresses = getUniqueWalletAddresses(selectedWallet)
@@ -98,15 +41,6 @@ export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
   }
 }
 
-// export const getTokensData = (state) => {
-//   const loading = state.main.balances.fetching
-
-//   return {
-//     listAndTotal: getListAndTotal(state),
-//     loading: loading,
-//   }
-// }
-
 export const getAllWallets = (state: RootState) => {
   return state.wallets.walletsData
 }
@@ -115,8 +49,9 @@ export const getSelectedWalletId = (state: RootState) => {
   return state.wallets.selectedWalletId
 }
 
-// @chris done
-export const getWalletList = (state: RootState) => {
+export const getWalletList = (
+  state: RootState
+): BlockchainWalletWithAccounts[] => {
   const allWallets = getAllWallets(state)
 
   return Object.values(allWallets).map((wallet) => {
@@ -131,11 +66,9 @@ export const getWalletList = (state: RootState) => {
 
     return {
       ...wallet,
-      id: wallet._id,
-      label: wallet.label,
       icon,
       count: Object.keys(wallet.accounts).length,
-      address: addresses.length === 1 ? addresses[0] : null,
+      address: addresses.length === 1 ? addresses[0] : undefined,
     }
   })
 }
@@ -235,17 +168,6 @@ export const selectTransactions = (state: RootState, assetID: AssetId) => {
   return transactions
 }
 
-// export const selectTransactionsData = (state, assetID) => {
-//   const { fetching, error } = state.transactions
-
-//   return {
-//     list: error ? [] : selectTransactions(state, assetID),
-//     loading: fetching,
-//     errorType: error,
-//     errorMessage: state.transactions.data,
-//   }
-// }
-
 export const getTransactionParamsData = (state: RootState) => {
   return state.wallets.transactionParams.data || {}
 }
@@ -261,20 +183,20 @@ export const selectSentTransaction = (state: RootState) => {
   return transaction
 }
 
-// export const selectTransaction = (state) => {
-//   getTransactionDetailsData(state)
-//   return s(state).transactionDetails.data || {}
-// }
+export const selectNativeTokenBalance = (
+  state: RootState,
+  token: BlockchainNetwork
+) => {
+  const wallets = getWallets(state)
+  const addresses = getUniqueWalletAddresses(wallets)
+  const { list: balances } = getBalancesData(state, addresses)
 
-// export const selectTransactionData = (state) => {
-//   const { fetching, error } = s(state).transactionDetails
-
-//   return {
-//     transaction: selectTransaction(state),
-//     loading: fetching,
-//     error: error,
-//   }
-// }
+  if (balances && balances.some((item) => item.symbol === token.symbol)) {
+    return balances.find((item) => item.symbol === token.symbol)?.balance ?? 0
+  } else {
+    0
+  }
+}
 
 export const priceFormatter = new Intl.NumberFormat('en-US', {
   style: 'currency',

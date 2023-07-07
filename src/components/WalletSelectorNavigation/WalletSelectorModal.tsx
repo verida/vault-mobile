@@ -11,6 +11,7 @@ import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
@@ -20,12 +21,13 @@ import CONFIG from 'config/environment'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
+import { RootState } from 'reduxStore/types'
 
 interface WalletSelectorModalProps {
   onCloseModal: () => void
   modalVisible: boolean
   selectedWalletId?: any
-  wallets?: WalletItem[]
+  wallets?: BlockchainWalletWithAccounts[]
   chains?: any
   onSetSelectedWallet: (selectedWalletID: string) => Promise<void>
 }
@@ -39,7 +41,9 @@ const WalletSelectorModal = ({
   onCloseModal,
   onSetSelectedWallet,
 }: WalletSelectorModalProps) => {
-  const [walletList, setWalletList] = useState<WalletItem[]>([])
+  const [walletList, setWalletList] = useState<BlockchainWalletWithAccounts[]>(
+    []
+  )
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   useEffect(() => {
@@ -49,8 +53,8 @@ const WalletSelectorModal = ({
   }, [wallets])
 
   const handleWalletSelection = (item: WalletItem) => {
-    onSetSelectedWallet(item.id)
-    SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, item.id)
+    onSetSelectedWallet(item._id)
+    SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, item._id)
     onCloseModal()
   }
 
@@ -87,7 +91,7 @@ const WalletSelectorModal = ({
   )
 }
 
-const mapStateToProps = (state: any) => {
+const mapStateToProps = (state: RootState) => {
   return {
     wallets: getWalletList(state),
     selectedWalletId: getSelectedWalletId(state),

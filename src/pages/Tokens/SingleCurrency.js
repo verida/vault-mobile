@@ -5,18 +5,21 @@ import {
   getBlockchainNetworkLabel,
   getSelectedWalletById,
   getWalletsData,
+  selectNativeTokenBalance,
   selectSingleTokenData,
   selectTransactions,
   sendTransaction,
   useGetTransactionsForTokenQuery,
 } from 'features/wallets'
-import { Container, Icon } from 'native-base'
+import { Icon } from 'native-base'
 import React from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect, useSelector } from 'react-redux'
 import { isNativeToken } from 'wallet/helpers/tokens'
 
+import Container from 'components/Container'
+import { ErrorFallbackCard } from 'components/Errors'
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
@@ -34,8 +37,11 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
   )
   const chainId = new ChainId(item.asset.chainId).toString()
   const address = wallets[chainId].address
+  const nativeTokenBalance = useSelector((state) =>
+    selectNativeTokenBalance(state, item)
+  )
 
-  const { data, isLoading, isFetching, error, refetch } =
+  const { isLoading, isFetching, error, refetch } =
     useGetTransactionsForTokenQuery({
       userAddress: address,
       asset: item.asset,
@@ -47,9 +53,6 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
   )
 
   function pullToRefresh() {
-    // onGetTransactionsForToken(item)
-    // onGetBalances()
-    // TODO: check should we need o geBalaces
     refetch()
   }
 
@@ -60,6 +63,14 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
 
   const showAlert = () =>
     Alert.alert('Not enough balance', 'You require at least 0.001 ALGO')
+
+  if (error)
+    return (
+      <ErrorFallbackCard
+        error={new Error('Failed to load transactions')}
+        resetErrorBoundary={refetch}
+      />
+    )
 
   return (
     <Container>
@@ -83,14 +94,14 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
             marginTop: 10,
           }}
           onPress={() => {
-            // if (nativeTokenBalance >= 0.001) {
-            onSendTransaction(
-              { token: item, amount: 0, address: address },
-              true
-            )
-            // } else {
-            //   showAlert()
-            // }
+            if (nativeTokenBalance >= 0.001) {
+              onSendTransaction(
+                { token: item, amount: 0, address: address },
+                true
+              )
+            } else {
+              showAlert()
+            }
           }}>
           <Icon name='warning' style={{ color: '#fff', marginRight: 10 }} />
           <Text style={{ color: '#FFF', flex: 1 }}>

@@ -94,6 +94,11 @@ export interface BlockchainWallet extends BlockchainAccount {
 
 export interface BlockchainWalletWithAccounts extends BlockchainWallet {
   accounts: Record<string, BlockchainAccount>
+
+  // Transient fields for displaying
+  icon?: string
+  count?: number
+  address?: string
 }
 
 // What network is this?

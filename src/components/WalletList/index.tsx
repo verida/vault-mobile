@@ -2,13 +2,14 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { SwipeListView } from 'react-native-swipe-list-view'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import WalletListItem from 'components/WalletList/WalletListItem'
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
 import { WalletItem } from './types'
 
 interface WalletListProps {
-  list: WalletItem[]
+  list: BlockchainWalletWithAccounts[]
   selectedWalletId: string | number
   onPressItem?: (item: WalletItem) => void
   leftIconType?: 'checked' | 'dots'
@@ -34,7 +35,7 @@ const WalletList = ({
             item={data.item}
             onPressItem={onPressItem}
             leftIconType={leftIconType}
-            selected={selectedWalletId === data.item.id}
+            selected={selectedWalletId === data.item._id}
           />
         </View>
       )}

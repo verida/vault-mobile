@@ -1,8 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import {
-  getAllWallets,
-  getSelectedWalletId,
   getUniqueWalletAddresses,
+  getWallets,
   useGetBalancesQuery,
 } from 'features/wallets'
 import React, { useState } from 'react'
@@ -10,6 +9,7 @@ import { StyleSheet, View } from 'react-native'
 import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
+import { ErrorBoundary } from 'components/ErrorBoundary'
 import LoadingIndicator from 'components/LoadingIndicator'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
@@ -21,63 +21,51 @@ const TokenDashboard = () => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
   const navigation = useNavigation()
 
-  const selectedWalletId = useSelector(getSelectedWalletId)
-  const wallets = useSelector(getAllWallets)
+  const wallets = useSelector(getWallets)
+  const addresses = getUniqueWalletAddresses(wallets)
 
-  const selectedWallet = wallets[selectedWalletId]
-  const addresses = getUniqueWalletAddresses(selectedWallet)
-
-  const { data, isLoading, isFetching, error, refetch } =
+  const { data, isLoading, isFetching, refetch } =
     useGetBalancesQuery(addresses)
 
   async function pullToRefresh() {
-    // onGetBalances()
     refetch()
   }
-
-  // useEffect(() => {
-  //   async function loadData() {
-  //     // onGetBalances()
-  //   }
-
-  //   loadData()
-  // }, [onGetBalances, wallets])
-
-  // const { loading, listAndTotal } = data2 || { listAndTotal: {} }
 
   const { list, total } = data || {}
 
   return (
     <Container withLoadingView showLoading={!isLoading && isFetching}>
-      {isLoading ? (
-        <LoadingIndicator />
-      ) : (
-        <View style={styles.contentContainer}>
-          <TestnetWarning networkReference={null} />
-          <TokenBanner
-            data={{
-              amount: total,
-            }}
-          />
-          <TokensList
-            list={list}
-            onPressItem={(item) =>
-              navigation.navigate('SingleCurrency', { item })
-            }
-            onPullToRefresh={() => pullToRefresh()}
-            refreshing={isLoading}
-          />
-          <SendListModal
-            visible={sendModalVisible}
-            hideModal={() => setSendModalVisible(false)}
-            list={list}
-            onPressItem={() => {
-              setSendModalVisible(false)
-              navigation.navigate('SendToken')
-            }}
-          />
-        </View>
-      )}
+      <ErrorBoundary>
+        {isLoading ? (
+          <LoadingIndicator />
+        ) : (
+          <View style={styles.contentContainer}>
+            <TestnetWarning networkReference={null} />
+            <TokenBanner
+              data={{
+                amount: total,
+              }}
+            />
+            <TokensList
+              list={list}
+              onPressItem={(item) =>
+                navigation.navigate('SingleCurrency', { item })
+              }
+              onPullToRefresh={() => pullToRefresh()}
+              refreshing={isLoading}
+            />
+            <SendListModal
+              visible={sendModalVisible}
+              hideModal={() => setSendModalVisible(false)}
+              list={list}
+              onPressItem={() => {
+                setSendModalVisible(false)
+                navigation.navigate('SendToken')
+              }}
+            />
+          </View>
+        )}
+      </ErrorBoundary>
     </Container>
   )
 }

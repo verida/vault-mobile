@@ -21,15 +21,6 @@ export const getTokenAddress = (address) => {
   return address.assetName.reference
 }
 
-export const getNativeForChain = (tokens, chain) => {
-  let tok = tokens.find(
-    (ele) =>
-      ele.chainName === chain && ele.asset.assetName.namespace === 'slip44'
-  )
-
-  return tok
-}
-
 export const getWalletAddressForAsset = (asset, wallets) => {
   const chainId = new ChainId(asset.chainId).toString()
   return wallets[chainId].address
