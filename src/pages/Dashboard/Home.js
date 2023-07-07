@@ -52,15 +52,12 @@ import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
 const LogoImg = require('assets/vault-logo.png')
 
-// const SHOW_BANNER_KEY = 'show_banner'
-
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 const Home = (props) => {
   const {
     navigation,
     selectedAccount,
-    publicProfileData,
     navigationLink,
     setNavigationLink,
     logout,
@@ -69,9 +66,10 @@ const Home = (props) => {
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
-  useRemoteNotifications()
   const linkTo = useLinkTo()
   const qrAddress = PROFILE_URL + selectedAccount.did
+
+  useRemoteNotifications()
 
   const processDeepLink = React.useCallback(
     (initialUrl) => {

@@ -50,37 +50,6 @@ export const loadAvatarSource = async () => {
   }
 }
 
-//@deprcated
-export const fetchPublicProfileData = async () => {
-  try {
-    const accounts = { ...AccountManager.getInstance().accounts }
-    await Promise.all(
-      Object.values(accounts).map(async (account) => {
-        const externalProfile =
-          await AccountManager.getInstance().context?.openProfile(
-            'basicProfile',
-            account.did
-          )
-
-        const avatar = await externalProfile?.get('avatar')
-        const name = await externalProfile?.get('name')
-        const country = await externalProfile?.get('country')
-
-        accounts[account.did].publicProfile = {
-          avatar: avatar,
-          name,
-          country,
-        }
-      })
-    )
-
-    return accounts
-  } catch (e) {
-    Sentry.captureException(e)
-    return AccountManager.getInstance().accounts
-  }
-}
-
 /**
  * This function can be triggered in many situations(app state changes, the home screen got focus, got inbox notifications)
  * So we add debounce to help reduce duplicated calls

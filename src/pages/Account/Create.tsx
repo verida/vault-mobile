@@ -20,6 +20,7 @@ import TCCheckbox from 'components/TCCheckbox'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { useAppDispatch } from 'reduxStore/types'
 import InputStyles from 'styles/inputs'
 
 export enum CreateAccountMode {
@@ -40,7 +41,7 @@ function Create(
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
-  const dispatch = useDispatch()
+  const dispatch = useAppDispatch()
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140

@@ -1,12 +1,9 @@
 import { selectAccounts } from 'features/identities'
 import {
   fetchAllPublicProfilesData,
-  fetchPublicProfileData,
-  PublicProfile,
   selectPublicProfiles,
-  selectPublicProfilesLoadingState,
 } from 'features/profiles'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo } from 'react'
 import {
   FlatList,
   ListRenderItemInfo,
@@ -16,9 +13,6 @@ import {
 } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 
-import { Account } from 'api/types'
-// import { fetchPublicProfileData } from 'api/utils'
-import LoadingView from 'components/LoadingView'
 import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
 
 export type AccountsListProps = {
@@ -37,8 +31,6 @@ function AccountsList(props: AccountsListProps) {
     multipleSelect,
     showSelectedOnly,
   } = props
-  const [data, setData] = useState<Account[]>([])
-  // const [loading, setLoading] = useState(false)
   const dispatch = useDispatch()
   const publicProfiles = useSelector(selectPublicProfiles)
   const accounts = useSelector(selectAccounts)
@@ -48,28 +40,6 @@ function AccountsList(props: AccountsListProps) {
     }
     return Object.keys(accounts)
   }, [accounts, selectedDids, showSelectedOnly])
-
-  useEffect(() => {
-    async function fetchData() {
-      // setLoading(true)
-      let normalizedData = {} //await fetchPublicProfileData()
-      if (showSelectedOnly) {
-        const selectedData: any = {}
-        Object.keys(normalizedData).map((key) => {
-          if (selectedDids.includes(key)) {
-            selectedData[key] = normalizedData[key]
-          }
-        })
-        normalizedData = selectedData
-      }
-
-      setData(Object.values(normalizedData))
-      // setLoading(false)
-    }
-
-    // fetchData()
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [showSelectedOnly])
 
   useEffect(() => {
     ;(() => {
