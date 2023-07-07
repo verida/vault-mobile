@@ -34,7 +34,7 @@ const TokenDashboard = () => {
   const { list, total } = data || {}
 
   return (
-    <Container withLoadingView showLoading={!isLoading && isFetching}>
+    <Container>
       <ErrorBoundary>
         {isLoading ? (
           <LoadingIndicator />
@@ -52,7 +52,7 @@ const TokenDashboard = () => {
                 navigation.navigate('SingleCurrency', { item })
               }
               onPullToRefresh={() => pullToRefresh()}
-              refreshing={isLoading}
+              refreshing={isFetching}
             />
             <SendListModal
               visible={sendModalVisible}

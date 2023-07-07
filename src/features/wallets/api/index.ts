@@ -128,7 +128,7 @@ export const getBlockchainNetworks = createSelector(
   }
 )
 
-export const getBlockchainNetwork = (state: RootState, chainIdObj: string) => {
+export const getBlockchainNetwork = (state: RootState, chainIdObj: ChainId) => {
   const networks = getBlockchainNetworks(state)
   const chainId = new ChainId(chainIdObj).toString()
 
