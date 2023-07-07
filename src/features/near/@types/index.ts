@@ -15,6 +15,8 @@ export type NearAccountPointer = {
 export type NearAccount = NearAccountPointer & {
   readonly signerId: string
   readonly nearNetworkId: NearNetworkId
+  readonly privateKey: string
+  // TODO: determine if we need this or not
   readonly keystore: keyStores.KeyStore
 }
 

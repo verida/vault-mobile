@@ -17,10 +17,8 @@ export const nearSignAndSendTransactions = async ({
     nearAccount,
   })
 
-  const results = await Promise.all(
+  return Promise.all(
     // TODO: was sendTransaction
-    signedTransactions.map((tx) => provider.sendTransactionAsync(tx))
+    signedTransactions.map((tx) => provider.sendTransaction(tx))
   )
-
-  return results
 }

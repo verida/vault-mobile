@@ -69,6 +69,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
     signerId,
     publicKey,
     nearNetworkId: maybeNearCaipIdentifier,
+    privateKey,
   }
 
   const doesAccountExist = await nearDoesAccountExist({

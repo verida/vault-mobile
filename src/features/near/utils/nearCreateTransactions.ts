@@ -22,6 +22,8 @@ export async function nearCreateTransactions({
       ): Promise<transactions.Transaction> => {
         const { publicKey } = nearAccount
 
+        const accountId = getNearAccountId({ signerId })
+
         const nearAccountPointer = {
           accountId: getNearAccountId({ signerId }),
           publicKey,
@@ -33,7 +35,7 @@ export async function nearCreateTransactions({
         })
 
         return transactions.createTransaction(
-          signerId,
+          accountId,
           utils.PublicKey.from(publicKey),
           receiverId,
           accessKey.nonce + i + 1,

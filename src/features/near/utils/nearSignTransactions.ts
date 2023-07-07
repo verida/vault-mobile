@@ -1,5 +1,5 @@
 import { parseCaipOrThrow } from 'features/caip'
-import { getNearAccountId, NearAccount } from 'features/near'
+import { NearAccount } from 'features/near'
 import { InMemorySigner, transactions } from 'near-api-js'
 
 export const nearSignTransactions = async ({
@@ -19,7 +19,7 @@ export const nearSignTransactions = async ({
       const [, signedTx] = await transactions.signTransaction(
         transaction,
         signer,
-        getNearAccountId({ signerId: transaction.signerId }),
+        transaction.signerId,
         chainId
       )
 
