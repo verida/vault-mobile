@@ -1,5 +1,8 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getBlockchainNetworks } from 'features/wallets'
+import {
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+} from 'features/wallets'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -21,7 +24,6 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import { getBlockchainNetworkLabel } from 'reduxStore/selectors'
 import InputStyles from 'styles/inputs'
 
 type Props = {

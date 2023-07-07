@@ -1,8 +1,9 @@
 import Clipboard from '@react-native-community/clipboard'
 import { ChainId } from 'caip'
 import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
   getSelectedWalletById,
-  getTransactionsForToken,
   getWalletsData,
   selectSingleTokenData,
   selectTransactions,
@@ -10,7 +11,7 @@ import {
   useGetTransactionsForTokenQuery,
 } from 'features/wallets'
 import { Container, Icon } from 'native-base'
-import React, { useEffect } from 'react'
+import React from 'react'
 import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { connect, useSelector } from 'react-redux'
@@ -22,26 +23,9 @@ import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import { WARNING_COLOR } from 'constants/color'
-import {
-  getBlockchainNetwork,
-  getBlockchainNetworkLabel,
-} from 'reduxStore/selectors'
 
-const SingleCurrency = ({
-  navigation,
-  route,
-  onGetTransactionsForToken,
-  // transactions,
-  // tokenData,
-  // onGetBalances,
-  // blockchainNetwork,
-  // wallets,
-  // selectedWallet,
-  onSendTransaction,
-  // nativeTokenBalance,
-}) => {
+const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
   const { item } = route.params
-  // const { list, loading, errorType } = transactions
 
   const wallets = useSelector(getWalletsData)
   const selectedWallet = useSelector(getSelectedWalletById)
@@ -65,15 +49,9 @@ const SingleCurrency = ({
   function pullToRefresh() {
     // onGetTransactionsForToken(item)
     // onGetBalances()
+    // TODO: check should we need o geBalaces
+    refetch()
   }
-
-  useEffect(() => {
-    async function loadData() {
-      // onGetTransactionsForToken(item)
-    }
-
-    loadData()
-  }, [onGetTransactionsForToken, item])
 
   const warningRequired =
     item.asset.chainId.namespace === 'algorand' && !isNativeToken(item.asset)
@@ -162,31 +140,11 @@ const SingleCurrency = ({
   )
 }
 
-const mapStateToProps = (state, props) => {
-  return {
-    // transactions: selectTransactionsData(state, props.route.params.item.asset),
-    // tokenData: selectSingleTokenData(rootState, props.route.params.item.asset),
-    // wallets: getWalletsData(state),
-    // selectedWallet: getSelectedWalletById(state),
-    // blockchainNetwork: getBlockchainNetwork(
-    //   rootState,
-    //   props.route.params.item.asset.chainId
-    // ),
-    // nativeTokenBalance: selectNativeTokenBalance(
-    //   rootState,
-    //   props.route.params.item
-    // ),
-  }
-}
-
 const mapDispatchToProps = (dispatch) => {
   return {
-    onGetTransactionsForToken: (token) =>
-      dispatch(getTransactionsForToken(token)),
-    // onGetBalances: () => dispatch(getBalances()),
     onSendTransaction: (params, isAssetEnablingTransaction) =>
       dispatch(sendTransaction(params, isAssetEnablingTransaction)),
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(SingleCurrency)
+export default connect(mapDispatchToProps)(SingleCurrency)

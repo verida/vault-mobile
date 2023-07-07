@@ -1,7 +1,11 @@
 import Common from '@ethereumjs/common'
 import { Transaction } from '@ethereumjs/tx' // const customChainParams = {
 import algosdk from 'algosdk'
-import { getTransactionParamsData, getWalletsData } from 'features/wallets'
+import {
+  getBlockchainNetwork,
+  getTransactionParamsData,
+  getWalletsData,
+} from 'features/wallets'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
 import { store } from 'reduxStore'
@@ -12,8 +16,6 @@ import {
   parseUnitsForSending,
 } from 'wallet/helpers/tokens'
 import Web3 from 'web3'
-
-import { getBlockchainNetwork } from 'reduxStore/selectors'
 
 import { walletProviderApi } from '../api/Wallet/WalletProvider'
 

@@ -1,7 +1,7 @@
 import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { EnvironmentType } from '@verida/types/dist/NetworkInterfaces'
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
 import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
@@ -127,6 +127,19 @@ export const getBlockchainNetworks = createSelector(
     return data.data
   }
 )
+
+export const getBlockchainNetwork = (state: RootState, chainIdObj) => {
+  const networks = getBlockchainNetworks(state)
+  const chainId = new ChainId(chainIdObj).toString()
+
+  if (networks?.[chainId]) return networks[chainId]
+
+  throw new Error(`Unknown blockchain network: ${chainId}`)
+}
+
+export const getBlockchainNetworkLabel = (network: BlockchainNetwork) => {
+  return `${network.label}`
+}
 
 export const getBalancesData = (state: RootState, walletAddresses: string[]) =>
   walletsApi.endpoints.getBalances.select(walletAddresses)(state)?.data ?? {

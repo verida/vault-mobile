@@ -1,5 +1,10 @@
 import { ChainId } from 'caip'
-import { getWalletsData, useGetTransactionDetailsQuery } from 'features/wallets'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getWalletsData,
+  useGetTransactionDetailsQuery,
+} from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { useSelector } from 'react-redux'
@@ -9,10 +14,6 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
-import {
-  getBlockchainNetwork,
-  getBlockchainNetworkLabel,
-} from 'reduxStore/selectors'
 
 const TransactionDetails = ({ navigation, route }) => {
   const { id, token } = route.params

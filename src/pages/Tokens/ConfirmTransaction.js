@@ -1,4 +1,6 @@
 import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
   getTransactionParamsData,
   getWalletsData,
   selectSentTransaction,
@@ -19,10 +21,6 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import {
-  getBlockchainNetwork,
-  getBlockchainNetworkLabel,
-} from 'reduxStore/selectors'
 
 const ConfirmTransaction = ({
   navigation,

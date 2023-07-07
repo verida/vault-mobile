@@ -28,7 +28,7 @@ import { walletConnectReducer } from './wallet-connect/reducer'
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['walletConnect'],
+  whitelist: ['walletConnect', 'settings'],
 }
 
 export const rootReducer = combineReducers({

@@ -1,5 +1,9 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getWalletsData } from 'features/wallets'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getWalletsData,
+} from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -18,10 +22,6 @@ import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import {
-  getBlockchainNetwork,
-  getBlockchainNetworkLabel,
-} from 'reduxStore/selectors'
 
 const LogoImg = require('assets/vault-logo.png')
 
