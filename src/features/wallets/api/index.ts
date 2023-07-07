@@ -45,7 +45,7 @@ export const walletsApi = createApi({
       },
     }),
     getBalances: build.query({
-      keepUnusedDataFor: 60 * 60 * 10, // 10 mins TODO: change value
+      keepUnusedDataFor: 60 * 15, // 15 mins
       query: (walletAddresses: string[]) =>
         `balance/getBalanceByChains?${walletAddresses
           .map((address) => `wallet[]=${address}`)
