@@ -18,10 +18,10 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
 import CONFIG from 'config/environment'
 import { MainStackParams } from 'navigation/types'
 
@@ -33,7 +33,7 @@ import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import ImportWalletModal from './ImportWalletModal'
 
 type Props = {
-  wallets: WalletItem[]
+  wallets: BlockchainWalletWithAccounts[]
   walletCount: number
   navigation: NativeStackNavigationProp<MainStackParams, any>
   selectedWalletId: number | string
@@ -65,7 +65,9 @@ const ManageWallets = (props: Props) => {
     useState(false)
   const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
     useState(false)
-  const [walletList, setWalletList] = useState<WalletItem[]>([])
+  const [walletList, setWalletList] = useState<BlockchainWalletWithAccounts[]>(
+    []
+  )
 
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -79,7 +81,7 @@ const ManageWallets = (props: Props) => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
   }
 
-  const showConfirmationAlert = (item: WalletItem) =>
+  const showConfirmationAlert = (item: BlockchainWalletWithAccounts) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -147,7 +149,7 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const handlePressWalletListItem = (item: WalletItem) => {
+  const handlePressWalletListItem = (item: BlockchainWalletWithAccounts) => {
     let options
     if (item.viewOnly) {
       options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']

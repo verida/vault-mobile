@@ -121,7 +121,7 @@ export class AsyncStorageKeyStore {
    */
   async getAccounts(networkId: string): Promise<string[]> {
     const allkeys = await this.storageKeys()
-    const result = new Array<string>()
+    const result: string[] = []
     for (const key of allkeys) {
       if (key.startsWith(this.prefix)) {
         const parts = key.substring(this.prefix.length).split(':')

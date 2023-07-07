@@ -70,7 +70,7 @@ export class EthereumWalletController implements IEtherWalletController {
       throw new Error('No active account')
     }
 
-    const mnemonic = wallets[this.getControllerType()!].mnemonic
+    const mnemonic = wallets[this.getControllerType()!].mnemonic!
     this.wallet = ethers.Wallet.fromMnemonic(mnemonic, this.getPath(index))
     return this.wallet
   }

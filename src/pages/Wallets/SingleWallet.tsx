@@ -257,8 +257,8 @@ const mapStateToProps = (state: any, props: any) => {
 
 const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
-    onRenameWallet: (walletId: string, args: any) =>
-      dispatch(renameWallet(walletId, args) as any),
+    onRenameWallet: (walletId: string, args: { name: string }) =>
+      dispatch(renameWallet({ walletId, data: args }) as any),
   }
 }
 

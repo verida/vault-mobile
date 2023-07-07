@@ -18,7 +18,7 @@ import { DApp } from 'wallet-connect/types'
 
 import BottomActionsModal from 'components/BottomActionsModal'
 import Button from 'components/Button'
-import DropDownPicker from 'components/Select'
+import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useReduxState } from 'hooks/useReduxState'
@@ -108,7 +108,7 @@ const ConnectDappModalv2 = (props: Props) => {
         // Save new dApp to redux store
         dispatch(
           approveWalletConnectSessionv2({
-            walletId: selectedWalletId,
+            walletId: selectedWalletId!,
             id, // session id
             topic,
             metadata,
@@ -170,7 +170,7 @@ const ConnectDappModalv2 = (props: Props) => {
         <DropDownPicker
           showArrow
           placeholder='Select wallet'
-          items={wallets}
+          items={wallets as Option[]}
           defaultValue={wallets[0].value}
           containerStyle={styles.select}
           onChangeItem={(item: any) => {

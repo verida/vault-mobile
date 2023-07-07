@@ -16,7 +16,6 @@ import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
 import CONFIG from 'config/environment'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
@@ -52,7 +51,7 @@ const WalletSelectorModal = ({
     }
   }, [wallets])
 
-  const handleWalletSelection = (item: WalletItem) => {
+  const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
     onSetSelectedWallet(item._id)
     SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, item._id)
     onCloseModal()

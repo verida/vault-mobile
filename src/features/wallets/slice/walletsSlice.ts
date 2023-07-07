@@ -98,28 +98,31 @@ export const walletsSlice = createSlice({
         }
       })
 
-      // TODO: check, Send transaction
+      // TODO: Test, Send transaction
       .addCase(sendTransaction.pending, (state) => {
         state.sentTransaction = { fetching: true, error: undefined, data: {} }
       })
-      .addCase(sendTransaction.fulfilled, (state, action) => {
-        const amount = action.payload.amount.toHexString()
-        state.sentTransaction = {
-          fetching: false,
-          error: undefined,
-          data: {
-            ...action.payload,
-            amount,
-          },
+      .addCase(
+        sendTransaction.fulfilled,
+        (state, action: PayloadAction<any>) => {
+          const amount = action.payload.amount.toHexString()
+          state.sentTransaction = {
+            fetching: false,
+            error: undefined,
+            data: {
+              ...action.payload,
+              amount,
+            },
+          }
+          state.pendingTransactions = {
+            data: [action.payload, ...state.pendingTransactions.data],
+          }
         }
-        state.pendingTransactions = {
-          data: [action.data, ...state.pendingTransactions.data],
-        }
-      })
+      )
       .addCase(sendTransaction.rejected, (state, action) => {
         state.sentTransaction = {
           fetching: false,
-          error: action.error,
+          error: action.error.message,
           data: {},
         }
       })

@@ -26,7 +26,7 @@ export class AlgorandWalletController implements IAlgoWalletController {
 
   public init(): Account {
     const wallets = getWalletsData(store.getState())
-    const mnemonic = wallets[this.getControllerType()!].mnemonic
+    const mnemonic = wallets[this.getControllerType()!].mnemonic!
     const wallet = algosdk.mnemonicToSecretKey(mnemonic)
 
     return wallet

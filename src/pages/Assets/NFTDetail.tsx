@@ -124,7 +124,7 @@ const NFTDetail = () => {
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
-  const wallet = useReduxState((state) => getWallets(state.main))
+  const wallet = useReduxState(getWallets)
 
   const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {

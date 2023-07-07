@@ -9,6 +9,7 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
 
 import AccountManager from 'api/AccountManager'
+import { BlockchainWallet } from 'api/types'
 import { WalletManager } from 'api/Wallet/WalletManager'
 import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
@@ -18,123 +19,6 @@ import { walletsSlice } from './walletsSlice'
 
 export const { saveUserWallets, setSelectedWallet, removeUserWallets } =
   walletsSlice.actions
-
-// @chris done
-// export const getBalances = () => {
-//   return async (dispatch, getState) => {
-//     dispatch({ type: BALANCES_FETCH_START })
-
-//     try {
-//       const wallets = getWalletsData(getState())
-//       const walletParams = Object.values(wallets).map(
-//         (item) => `${item.chainId}:${item.address}`
-//       )
-//       const requestParams = {
-//         wallet: walletParams,
-//       }
-
-//       const balanceData = await walletProviderApi.get(
-//         'balance/getBalanceByChains',
-//         requestParams
-//       )
-
-//       if (balanceData.data) {
-//         dispatch({
-//           type: FETCHED_BALANCES,
-//           data: balanceData.data.data.results,
-//         })
-//       } else {
-//         dispatch({
-//           type: BALANCES_FETCH_FAILED,
-//           error: 'error',
-//         })
-//       }
-//     } catch (error) {
-//       dispatch({
-//         type: BALANCES_FETCH_FAILED,
-//         error: 'error',
-//       })
-//     }
-//   }
-// }
-
-// @chris done
-// export const getTransactionsForToken = (token) => {
-//   return async (dispatch, getState) => {
-//     dispatch({ type: TRANSACTIONS_FETCH_START })
-//     const wallets = getWalletsData(getState())
-//     const userAddress = getWalletAddressForAsset(token.asset, wallets)
-//     const transactionsData = await walletProviderApi.post('transaction/list', {
-//       userAddress,
-//       asset: token.asset,
-//     })
-
-//     const responseData = transactionsData.data
-
-//     if (transactionsData) {
-//       dispatch({
-//         type: FETCHED_TRANSACTIONS,
-//         ...responseData,
-//       })
-//     } else {
-//       dispatch({
-//         type: TRANSACTIONS_FETCH_FAILED,
-//         error: 'Unable to reach server to fetch transactions',
-//       })
-//     }
-//   }
-// }
-
-// @chris done
-// export const getTransactionDetails = (transactionID, token) => {
-//   return async (dispatch, getState) => {
-//     dispatch({ type: TRANSACTION_DETAIL_FETCH_START })
-//     const wallets = getWalletsData(getState())
-
-//     const userAddress = getWalletAddressForAsset(token.asset, wallets)
-
-//     const transactionsData = await walletProviderApi.post('transaction/get', {
-//       transactionId: transactionID,
-//       userAddress,
-//       asset: token.asset,
-//     })
-
-//     if (transactionsData) {
-//       dispatch({
-//         type: FETCHED_TRANSACTION_DETAIL,
-//         data: transactionsData.data.data,
-//       })
-//     } else {
-//       dispatch({
-//         type: TRANSACTION_DETAIL_FETCH_FAILED,
-//         error: "Couldn'nt load transactions",
-//       })
-//     }
-//   }
-// }
-
-// @Andy done
-// export const saveUserWallets = (wallets) => {
-//   return {
-//     type: SET_USER_WALLETS,
-//     data: wallets,
-//   }
-// }
-
-// // @Andy done
-// export const removeUserWallets = () => {
-//   return {
-//     type: REMOVE_USER_WALLETS,
-//   }
-// }
-
-// // @Andy done
-// export const setSelectedWallet = (walletId) => {
-//   return {
-//     type: SET_SELECTED_WALLET,
-//     data: walletId,
-//   }
-// }
 
 // TODO migrate to API
 export const getTransactionParams = createAsyncThunk(
@@ -170,7 +54,7 @@ export const sendTransaction = createAsyncThunk(
   'wallets/sendTransaction',
   async (
     { transactionData, isAssetEnablingTransaction }: any,
-    { getState, rejectWithValue, fulfillWithValue }
+    { getState, rejectWithValue }
   ) => {
     // dispatch({ type: SEND_TRANSACTION_START })
     const state = getState()
@@ -191,12 +75,12 @@ export const sendTransaction = createAsyncThunk(
       //   data: txData,
       // })
 
-      fulfillWithValue(txData)
-
       if (!isAssetEnablingTransaction) {
         navigate('TransactionSuccess', undefined)
       }
-    } catch (error) {
+
+      return txData
+    } catch (error: any) {
       // dispatch({
       //   type: SEND_TRANSACTION_FAILED,
       //   error: error.message,
@@ -282,14 +166,15 @@ export const importWallet = createAsyncThunk(
           WALLET_SCHEMA_0_2_0_URI
         )
 
-      const wallet = {
+      const wallet: Partial<BlockchainWallet> = {
         walletType,
         label: data.name,
       }
       if (mnemonic) wallet.mnemonic = mnemonic
       if (privateKey) wallet.privateKey = privateKey
-      const saved = await walletDb?.save(wallet)
-      const walletId = saved?.id
+      const saved = (await walletDb?.save(wallet, {})) as { id: string } // FIXME: Temp, this is not optimal, should be able specified by a generic type
+
+      const walletId = saved?.id as string
       await AccountManager.getInstance().restoreUserWallet(false)
       dispatch(setSelectedWallet(walletId))
 
@@ -331,7 +216,10 @@ export const addWatchedWallet = createAsyncThunk(
         address: data.publicAddress,
       }
 
-      const savedWallet = await walletsDatastore.save(wallet)
+      const savedWallet = (await walletsDatastore.save(wallet, {})) as {
+        id: string
+      } // FIXME: Temp, this is not optimal, should be able specified by a generic type
+
       if (!savedWallet) {
         throw new Error(walletsDatastore.errors)
       }
@@ -356,7 +244,9 @@ export const deleteWallet = createAsyncThunk(
     // dispatch({ type: WALLET_PROCESSING_START })
 
     try {
-      const currentlySelectedWallet = getSelectedWalletId(getState())
+      const currentlySelectedWallet = getSelectedWalletId(
+        getState() as RootState
+      )
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
           WALLET_SCHEMA_0_2_0_URI
@@ -365,13 +255,13 @@ export const deleteWallet = createAsyncThunk(
       await walletDb?.delete(walletId)
 
       // update redux store
-      const updatedWalletsList = getWalletList(getState()).filter(
+      const updatedWalletsList = getWalletList(getState() as RootState).filter(
         (wallet) => wallet._id !== walletId
       )
       dispatch(saveUserWallets(updatedWalletsList as any)) // TODO: type
 
       if (currentlySelectedWallet === walletId) {
-        const nextWalletId = Object.values(updatedWalletsList)[0].id
+        const nextWalletId = Object.values(updatedWalletsList)[0]._id
         await dispatch(setSelectedWallet(nextWalletId))
       }
 
@@ -401,11 +291,14 @@ export const renameWallet = createAsyncThunk(
           WALLET_SCHEMA_0_2_0_URI
         )
 
-      const row = await walletDb?.get(walletId)
+      const row = (await walletDb?.get(walletId, {})) as {
+        id: string
+        label: string
+      } // FIXME: Temp, this is not optimal, should be able specified by a generic type
 
       row.label = data.name
 
-      await walletDb.save(row)
+      await walletDb?.save(row, {})
 
       // TODO: find and update the wallet label in the store
 

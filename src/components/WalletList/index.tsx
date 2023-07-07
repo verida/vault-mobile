@@ -6,12 +6,10 @@ import { BlockchainWalletWithAccounts } from 'api/types'
 import WalletListItem from 'components/WalletList/WalletListItem'
 import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
-import { WalletItem } from './types'
-
 interface WalletListProps {
   list: BlockchainWalletWithAccounts[]
   selectedWalletId: string | number
-  onPressItem?: (item: WalletItem) => void
+  onPressItem?: (item: BlockchainWalletWithAccounts) => void
   leftIconType?: 'checked' | 'dots'
 }
 
@@ -29,7 +27,8 @@ const WalletList = ({
         <View
           style={[
             styles.listItemWrapper,
-            data.item.other && styles.otherListItem,
+            // TODO: Check why needs?
+            // data.item.other && styles.otherListItem,
           ]}>
           <WalletListItem
             item={data.item}

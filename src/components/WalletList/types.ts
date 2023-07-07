@@ -1,3 +1,4 @@
+//@deprecated should be types from features/wallets
 export type SingleAccountType = {
   mnemonic: string
   privateKey: string
@@ -5,10 +6,12 @@ export type SingleAccountType = {
   address: string
 }
 
+//@deprecated
 export type AccountsType = {
   [key: string]: SingleAccountType
 }
 
+//@deprecated
 export type WalletType = {
   _id: string
   type: string
@@ -18,6 +21,7 @@ export type WalletType = {
   chain?: string
 }
 
+//@deprecated
 export type WalletItem = {
   _id: string
   count: number

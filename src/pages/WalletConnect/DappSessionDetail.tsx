@@ -79,7 +79,7 @@ const DappSessionDetailv2 = () => {
           onPress={() => {
             try {
               dispatch(
-                removeWalletConnectDapp({ walletId: selectedWalletId, key })
+                removeWalletConnectDapp({ walletId: selectedWalletId!, key })
               )
               navigation.goBack()
               const wcConnector = new WalletConnect({
