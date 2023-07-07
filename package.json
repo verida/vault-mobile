@@ -160,6 +160,7 @@
     "react-native-root-toast": "^3.2.1",
     "react-native-safe-area-context": "4.2.4",
     "react-native-screens": "^3.17.0",
+    "react-native-shimmer-placeholder": "^2.0.9",
     "react-native-snackbar": "^2.4.0",
     "react-native-sqlite-2": "^3.5.2",
     "react-native-static-server": "^0.5.0",

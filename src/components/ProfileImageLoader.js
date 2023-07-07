@@ -1,34 +1,39 @@
 import * as Sentry from '@sentry/react-native'
 import * as ImagePicker from 'expo-image-picker'
+import { LinearGradient } from 'expo-linear-gradient'
+import { selectSelectedAccount } from 'features/identities'
 import {
-  selectPublicProfile,
-  setPublicProfileData as setPublicProfileDataAction,
+  fetchPublicProfileData,
+  selectPublicProfilesLoadingState,
+  selectSelectedPublicProfile,
+  setPublicProfileByDid,
 } from 'features/profiles'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { connect } from 'react-redux'
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
+import { connect, useDispatch, useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
-import { loadAvatarSource } from 'api/utils'
 
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 
 const userImg = require('assets/stubs/avatar.png')
 
 function ProfileImageLoader(props) {
-  const { publicProfileData, setPublicProfileData } = props
-  const [image, setImage] = useState(userImg)
-  //const [granted, setGranted] = useState(null);
-
-  const loadAvatar = useCallback(async () => {
-    const avatarSource = await loadAvatarSource()
-    setImage(avatarSource)
-  }, [])
+  const { publicProfileData } = props
+  const dispatch = useDispatch()
+  const selectAccount = useSelector(selectSelectedAccount)
+  const did = selectAccount?.did
+  const publicProfile = useSelector(selectSelectedPublicProfile)
+  const loadingState = useSelector((state) =>
+    selectPublicProfilesLoadingState(state, did)
+  )
+  const image = publicProfile?.avatar
 
   useEffect(() => {
-    loadAvatar()
-  }, [loadAvatar])
+    if (did) dispatch(fetchPublicProfileData(did))
+  }, [did, dispatch])
 
   const loadPhoto = async () => {
     try {
@@ -49,9 +54,12 @@ function ProfileImageLoader(props) {
 
         await vault.profiles.public.set('avatar', avatar)
 
-        setPublicProfileData({ ...publicProfileData, avatar })
-
-        loadAvatar()
+        dispatch(
+          setPublicProfileByDid({
+            did,
+            publicProfile: { ...publicProfileData, avatar },
+          })
+        )
       }
     } catch (error) {
       Sentry.captureException(error)
@@ -60,14 +68,22 @@ function ProfileImageLoader(props) {
 
   return (
     <View style={style.img}>
-      <TouchableOpacity style={style.loader} onPress={loadPhoto}>
-        <FastImage
-          style={style.imgContainer}
-          source={image}
-          resizeMode={FastImage.resizeMode.cover}
-        />
-        <PhotoCameraSvg style={style.svg} />
-      </TouchableOpacity>
+      <ShimmerPlaceHolder
+        LinearGradient={LinearGradient}
+        visible={!loadingState.loading}
+        width={120}
+        height={120}
+        shimmerStyle={[{ borderRadius: 60 }]}>
+        <TouchableOpacity style={style.loader} onPress={loadPhoto}>
+          <FastImage
+            style={style.imgContainer}
+            source={image}
+            resizeMode={FastImage.resizeMode.cover}
+            defaultSource={userImg}
+          />
+          <PhotoCameraSvg style={style.svg} />
+        </TouchableOpacity>
+      </ShimmerPlaceHolder>
     </View>
   )
 }
@@ -92,13 +108,7 @@ const style = StyleSheet.create({
 })
 
 const mapStateToProps = (state) => {
-  return { publicProfileData: selectPublicProfile(state) }
+  return { publicProfileData: selectSelectedPublicProfile(state) }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setPublicProfileData: (data) => dispatch(setPublicProfileDataAction(data)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ProfileImageLoader)
+export default connect(mapStateToProps)(ProfileImageLoader)

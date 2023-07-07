@@ -4,11 +4,7 @@ import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { selectSelectedAccount } from 'features/identities'
-import {
-  PublicProfile as IPublicProfile,
-  selectPublicProfile,
-  setPublicProfileData,
-} from 'features/profiles'
+import { setPublicProfileByDid } from 'features/profiles'
 import { getAllWallets, getBlockchainNetworks } from 'features/wallets'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
@@ -34,15 +30,13 @@ import {
   RenderItemParams,
 } from 'react-native-draggable-flatlist'
 import Snackbar from 'react-native-snackbar'
-import { connect, useSelector } from 'react-redux'
-import { Dispatch } from 'redux'
+import { useSelector } from 'react-redux'
 import { useDebouncedCallback } from 'use-debounce'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import {
-  Account,
   BlockchainNetwork,
   BlockchainWalletWithAccounts,
   VeridaOneCustomLink,
@@ -73,7 +67,7 @@ import { Text } from 'components/Typography/Text'
 import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { RootState } from 'reduxStore/types'
+import { useAppDispatch } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 export enum PublicProfileEditMode {
@@ -98,7 +92,7 @@ const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
 
-const PublicProfile = ({ updatePublicProfileData }: any) => {
+const PublicProfile = () => {
   const [profileEditableProps, setProfileEditableProps] = useState(
     EMPTY_PROFILE_EDITABLE_PROPS
   )
@@ -117,8 +111,10 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     BlockchainWalletWithAccounts
   >
 
-  const selectedAccount: Account = useSelector(selectSelectedAccount)!
+  const selectedAccount = useSelector(selectSelectedAccount)!
   const currentAccountDID = selectedAccount.did
+
+  const dispatch = useAppDispatch()
 
   const [username, setUsername] = useState<string | undefined>(undefined)
   const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
@@ -462,7 +458,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
-      updatePublicProfileData(publicData)
+      dispatch(
+        setPublicProfileByDid({
+          did: currentAccountDID,
+          publicProfile: publicData,
+        })
+      )
+
       const updatedList = profileEditableProps.map((item: any) => {
         const label = item.label.toLowerCase()
         item.value = publicData[label] ?? undefined
@@ -1352,20 +1354,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   )
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    updatePublicProfileData: (data: IPublicProfile) =>
-      dispatch(setPublicProfileData(data)),
-  }
-}
-
-const mapStateToProps = (state: RootState) => {
-  return {
-    publicProfileData: selectPublicProfile(state),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PublicProfile)
+export default PublicProfile
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

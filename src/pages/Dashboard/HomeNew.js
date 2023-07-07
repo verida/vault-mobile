@@ -11,7 +11,7 @@ import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
-import { selectPublicProfile } from 'features/profiles'
+import { selectSelectedPublicProfile } from 'features/profiles'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -322,7 +322,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    publicProfileData: selectPublicProfile(state),
+    publicProfileData: selectSelectedPublicProfile(state),
     newMessagesCount: selectNewMessagesCount(state),
     selectedAccount: selectSelectedAccount(state),
     navigationLink: selectNavigationLink(state),

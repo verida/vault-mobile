@@ -1,5 +1,12 @@
-import { PublicProfile } from 'features/profiles'
-import React, { useCallback, useEffect, useState } from 'react'
+import { selectAccounts } from 'features/identities'
+import {
+  fetchAllPublicProfilesData,
+  fetchPublicProfileData,
+  PublicProfile,
+  selectPublicProfiles,
+  selectPublicProfilesLoadingState,
+} from 'features/profiles'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import {
   FlatList,
   ListRenderItemInfo,
@@ -7,9 +14,10 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
+import { useDispatch, useSelector } from 'react-redux'
 
 import { Account } from 'api/types'
-import { fetchPublicProfileData } from 'api/utils'
+// import { fetchPublicProfileData } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
 
@@ -30,12 +38,21 @@ function AccountsList(props: AccountsListProps) {
     showSelectedOnly,
   } = props
   const [data, setData] = useState<Account[]>([])
-  const [loading, setLoading] = useState(false)
+  // const [loading, setLoading] = useState(false)
+  const dispatch = useDispatch()
+  const publicProfiles = useSelector(selectPublicProfiles)
+  const accounts = useSelector(selectAccounts)
+  const accountIds = useMemo(() => {
+    if (showSelectedOnly) {
+      return Object.keys(accounts).filter((did) => selectedDids.includes(did))
+    }
+    return Object.keys(accounts)
+  }, [accounts, selectedDids, showSelectedOnly])
 
   useEffect(() => {
     async function fetchData() {
-      setLoading(true)
-      let normalizedData = await fetchPublicProfileData()
+      // setLoading(true)
+      let normalizedData = {} //await fetchPublicProfileData()
       if (showSelectedOnly) {
         const selectedData: any = {}
         Object.keys(normalizedData).map((key) => {
@@ -47,20 +64,27 @@ function AccountsList(props: AccountsListProps) {
       }
 
       setData(Object.values(normalizedData))
-      setLoading(false)
+      // setLoading(false)
     }
 
-    fetchData()
+    // fetchData()
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [showSelectedOnly])
+
+  useEffect(() => {
+    ;(() => {
+      dispatch(fetchAllPublicProfilesData())
+    })()
+  }, [dispatch])
 
   const renderDivider = () => <View style={styles.divider} />
 
   const renderItem = useCallback(
-    (info: ListRenderItemInfo<Account>) => {
-      const { did, publicProfile = {} } = info.item
+    ({ item: did }: ListRenderItemInfo<string>) => {
+      // const { did, publicProfile = {} } = info.item
+      const publicProfile = publicProfiles[did]
 
-      const { name = '', avatar = undefined } = publicProfile as PublicProfile
+      const { name = '', avatar = undefined } = publicProfile || {}
 
       const selected = selectedDids.indexOf(did) !== -1
 
@@ -75,20 +99,12 @@ function AccountsList(props: AccountsListProps) {
         />
       )
     },
-    [onSelectAccount, selectedDids, multipleSelect]
+    [publicProfiles, selectedDids, onSelectAccount, multipleSelect]
   )
 
-  if (loading) {
-    return (
-      <View style={styles.loadingContainer}>
-        <LoadingView type={'small'} />
-      </View>
-    )
-  }
-
   return (
-    <FlatList<Account>
-      data={data}
+    <FlatList<string>
+      data={accountIds}
       renderItem={renderItem}
       contentContainerStyle={containerStyle}
       ItemSeparatorComponent={renderDivider}

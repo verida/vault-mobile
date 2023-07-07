@@ -1,4 +1,3 @@
-import { createAsyncThunk } from '@reduxjs/toolkit'
 import {
   getSelectedWalletId,
   getWalletList,
@@ -13,15 +12,14 @@ import { BlockchainWallet } from 'api/types'
 import { WalletManager } from 'api/Wallet/WalletManager'
 import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
-import { RootState } from 'reduxStore/types'
+import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 
 import { walletsSlice } from './walletsSlice'
 
 export const { saveUserWallets, setSelectedWallet, removeUserWallets } =
   walletsSlice.actions
 
-// TODO migrate to API
-export const getTransactionParams = createAsyncThunk(
+export const getTransactionParams = createAppAsyncThunk(
   'wallets/getTransactionParams',
   async (transactionData, { getState, rejectWithValue }) => {
     // dispatch({ type: TRANSACTION_PARAMS_FETCH_START })
@@ -45,12 +43,12 @@ export const getTransactionParams = createAsyncThunk(
       //   type: TRANSACTION_PARAMS_FETCH_FAILED,
       //   error: "Couldn't load params",
       // })
-      rejectWithValue({ error: "Couldn't load params" })
+      rejectWithValue("Couldn't load params")
     }
   }
 )
 
-export const sendTransaction = createAsyncThunk(
+export const sendTransaction = createAppAsyncThunk(
   'wallets/sendTransaction',
   async (
     { transactionData, isAssetEnablingTransaction }: any,
@@ -85,10 +83,7 @@ export const sendTransaction = createAsyncThunk(
       //   type: SEND_TRANSACTION_FAILED,
       //   error: error.message,
       // })
-      rejectWithValue({
-        message: 'Could not create wallet',
-        error: error.message,
-      })
+      rejectWithValue('Could not create wallet')
 
       if (!isAssetEnablingTransaction) {
         navigate('TransactionFailure', undefined)
@@ -98,7 +93,7 @@ export const sendTransaction = createAsyncThunk(
 )
 
 // These first
-export const createNewWallet = createAsyncThunk(
+export const createNewWallet = createAppAsyncThunk(
   'wallets/createNewWallet',
   async (
     data: { phrase: string; name: string },
@@ -135,12 +130,12 @@ export const createNewWallet = createAsyncThunk(
       //   type: WALLET_PROCESSING_FAILED,
       //   error: error,
       // })
-      rejectWithValue({ error: 'Could not create wallet' })
+      rejectWithValue('Could not create wallet')
     }
   }
 )
 
-export const importWallet = createAsyncThunk(
+export const importWallet = createAppAsyncThunk(
   'wallets/importWallet',
   async (
     data: {
@@ -189,7 +184,7 @@ export const importWallet = createAsyncThunk(
   }
 )
 
-export const addWatchedWallet = createAsyncThunk(
+export const addWatchedWallet = createAppAsyncThunk(
   'wallets/addWatchedWallet',
   async (
     data: {
@@ -238,7 +233,7 @@ export const addWatchedWallet = createAsyncThunk(
   }
 )
 
-export const deleteWallet = createAsyncThunk(
+export const deleteWallet = createAppAsyncThunk(
   'wallets/deleteWallet',
   async (walletId: string, { getState, rejectWithValue, dispatch }) => {
     // dispatch({ type: WALLET_PROCESSING_START })
@@ -277,7 +272,7 @@ export const deleteWallet = createAsyncThunk(
   }
 )
 
-export const renameWallet = createAsyncThunk(
+export const renameWallet = createAppAsyncThunk(
   'wallets/renameWallet',
   async (
     { walletId, data }: { walletId: string; data: { name: string } },

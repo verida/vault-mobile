@@ -1,21 +1,28 @@
+import { LinearGradient } from 'expo-linear-gradient'
 import { selectSelectedAccount } from 'features/identities'
+import {
+  selectPublicProfileByDid,
+  selectPublicProfilesLoadingState,
+} from 'features/profiles'
 import React from 'react'
 import {
   ImageSourcePropType,
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
-import { useSelector } from 'react-redux'
 
 import { DefaultAvatar } from 'api/utils'
 import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { useAppSelector } from 'reduxStore/types'
 
 export type AccountItemProps = Omit<ViewProps, 'children'> & {
   name: string
@@ -27,8 +34,16 @@ export type AccountItemProps = Omit<ViewProps, 'children'> & {
 }
 
 function AccountItem(props: AccountItemProps) {
-  const { name, did, selected, avatar, onSelect, multipleSelect } = props
-  const selectedAccount = useSelector(selectSelectedAccount)
+  const { did, selected, onSelect, multipleSelect } = props
+  const selectedAccount = useAppSelector(selectSelectedAccount)
+  const { avatar, name } = useAppSelector((state) =>
+    selectPublicProfileByDid(state, did)
+  )
+  const loadingState = useAppSelector((state) =>
+    selectPublicProfilesLoadingState(state, did!)
+  )
+
+  const { width } = useWindowDimensions()
 
   function onPress() {
     onSelect(did)
@@ -55,13 +70,27 @@ function AccountItem(props: AccountItemProps) {
         isCurrentAccount && styles.currentAccountContainer,
       ]}
       onPress={onPress}>
-      <FastImage
-        style={styles.avatar}
-        source={avatar || DefaultAvatar}
-        resizeMode='cover'
-      />
+      <ShimmerPlaceHolder
+        LinearGradient={LinearGradient}
+        visible={!loadingState.loading}
+        width={45}
+        height={45}
+        shimmerStyle={{ borderRadius: 22.5 }}>
+        <FastImage
+          style={styles.avatar}
+          source={avatar || DefaultAvatar}
+          resizeMode='cover'
+        />
+      </ShimmerPlaceHolder>
       <View style={styles.info}>
-        <Text style={styles.name}>{name}</Text>
+        <ShimmerPlaceHolder
+          LinearGradient={LinearGradient}
+          visible={!loadingState.loading}
+          width={0.7 * width}
+          height={22}
+          shimmerStyle={{ borderRadius: 6 }}>
+          <Text style={styles.name}>{name}</Text>
+        </ShimmerPlaceHolder>
         <Text style={styles.did}>{did}</Text>
       </View>
       {renderCheckbox()}

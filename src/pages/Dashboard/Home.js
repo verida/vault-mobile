@@ -11,7 +11,7 @@ import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
-import { selectPublicProfile } from 'features/profiles'
+import { selectSelectedPublicProfile } from 'features/profiles'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -28,7 +28,7 @@ import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
-import { fetchInboxCount, getProfile } from 'api/utils'
+import { fetchInboxCount } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
@@ -50,7 +50,6 @@ import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
-const DefaultAvatar = require('assets/stubs/avatar.png')
 const LogoImg = require('assets/vault-logo.png')
 
 // const SHOW_BANNER_KEY = 'show_banner'
@@ -66,14 +65,13 @@ const Home = (props) => {
     setNavigationLink,
     logout,
   } = props
-  const [info, setInfo] = useState({})
-  const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [showAddAccounts, setShowAddAccounts] = useState(false)
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
   const linkTo = useLinkTo()
+  const qrAddress = PROFILE_URL + selectedAccount.did
 
   const processDeepLink = React.useCallback(
     (initialUrl) => {
@@ -155,49 +153,7 @@ const Home = (props) => {
     }
   }, [navigationLink, linkTo, setNavigationLink])
 
-  useEffect(() => {
-    let isMounted = true
-    const initProfile = async () => {
-      try {
-        setLoading(true)
-        const _selectedAccount =
-          AccountManager.getInstance().getSelectedAccount()
-        const { name, avatar } = await getProfile(_selectedAccount.did)
-
-        if (!isMounted) return
-
-        setAvatarSource(avatar)
-
-        setInfo({
-          address: PROFILE_URL + _selectedAccount.did,
-          name,
-          did: _selectedAccount.did,
-        })
-        // const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
-        // if (!showBanner || showBanner !== 'set') {
-        //   Alert.alert(
-        //     'Important Notice',
-        //     'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
-        //   )
-        //   await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
-        // }
-        setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
-        Alert.alert('Error', 'Cannot get account information')
-        setLoading(false)
-      }
-    }
-
-    if (selectedAccount && publicProfileData) {
-      initProfile()
-    }
-
-    return () => {
-      isMounted = false
-    }
-  }, [selectedAccount, publicProfileData])
-
+  // TODO: remove, and refactor the inbox count feature
   useFocusEffect(
     useCallback(() => {
       fetchInboxCount()
@@ -269,8 +225,6 @@ const Home = (props) => {
   return (
     <Container>
       <HomeNavigationHeader
-        name={info.name || ''}
-        avatar={avatarSource}
         inboxCount={props.newMessagesCount}
         onNamePress={toggleAddAccountsModal}
         onAvatarPress={() => props.navigation.navigate('Profile')}
@@ -288,15 +242,17 @@ const Home = (props) => {
         ) : (
           <>
             <View style={style.qr}>
-              <QRCode
-                logo={LogoImg}
-                logoSize={60}
-                size={207}
-                codeStyle='dot'
-                innerEyeStyle='circle'
-                padding={0.5}
-                content={info.address}
-              />
+              {qrAddress && (
+                <QRCode
+                  logo={LogoImg}
+                  logoSize={60}
+                  size={207}
+                  codeStyle='dot'
+                  innerEyeStyle='circle'
+                  padding={0.5}
+                  content={qrAddress}
+                />
+              )}
             </View>
             <Text style={style.notes}>
               This is your QR-Code. Present it to others so they can scan it and
@@ -311,7 +267,7 @@ const Home = (props) => {
           </>
         )}
       </Content>
-      <DidView did={info.did || ''} />
+      <DidView did={selectedAccount.did || ''} />
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
@@ -338,7 +294,7 @@ const mapDispatchToProps = (dispatch) => {
 
 const mapStateToProps = (state) => {
   return {
-    publicProfileData: selectPublicProfile(state),
+    publicProfileData: selectSelectedPublicProfile(state),
     newMessagesCount: selectNewMessagesCount(state),
     selectedAccount: selectSelectedAccount(state),
     navigationLink: selectNavigationLink(state),
@@ -385,6 +341,8 @@ const style = StyleSheet.create({
     height: 240,
     borderRadius: 12,
     padding: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: WHITE_COLOR,
 
     shadowColor: BLACK_ORIGIN_COLOR,

@@ -3,6 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
 
+import { Transaction } from '../@types'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -27,7 +28,7 @@ export interface WalletState {
   }
 
   pendingTransactions: {
-    data: any[] // TOO: type
+    data: Transaction[]
   }
 
   walletsData: Record<string, BlockchainWalletWithAccounts>

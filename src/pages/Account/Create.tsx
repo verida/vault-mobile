@@ -1,5 +1,4 @@
-// import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { PublicProfile, setPublicProfileData } from 'features/profiles'
+import { setPublicProfileByDid } from 'features/profiles'
 import { COUNTRIES } from 'helpers/country-list'
 import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -10,8 +9,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
 import Button from 'components/Button'
@@ -43,6 +40,7 @@ function Create(
   const [processing, setProcessing] = useState(false)
   const [agreedTC, setAgreedTC] = useState(false)
   const [isFormValid, setIsFormValid] = useState(false)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const isNameValid = name.length >= 2 && name.length <= 140
@@ -70,13 +68,19 @@ function Create(
           },
           country?.value
         )
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        // @ts-ignore
-        props.setPublicProfileData({
-          name,
-          country: country?.value,
-          description: '',
-        })
+
+        // Update code, but this hold component won't be used anymore
+        dispatch(
+          setPublicProfileByDid({
+            did: AccountManager.getInstance().getSelectedAccount()!.did!,
+            publicProfile: {
+              name,
+              country: country?.value,
+              description: '',
+            },
+          })
+        )
+
         setProcessing(false)
 
         if (
@@ -184,11 +188,4 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    setPublicProfileData: (data: PublicProfile) =>
-      dispatch(setPublicProfileData(data)),
-  }
-}
-
-export default connect(null, mapDispatchToProps)(Create)
+export default Create

@@ -50,6 +50,7 @@ export const loadAvatarSource = async () => {
   }
 }
 
+//@deprcated
 export const fetchPublicProfileData = async () => {
   try {
     const accounts = { ...AccountManager.getInstance().accounts }
