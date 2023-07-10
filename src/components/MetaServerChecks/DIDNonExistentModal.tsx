@@ -133,7 +133,7 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContainer}>
               <Paragraph>
-                {`This identity no longer exists due to a network upgrade and will be removed from your Wallet\n\n`}
+                {`This Identity is not available at the moment. This can be due to a Network or Blockchain issue. Please wait a moment. If you think this Identity don't exist anymore, you can remove it from your Wallet.\n\n`}
                 <Paragraph style={{ color: theme.color.black800 }}>
                   {`Identity ${
                     AccountManager.getInstance().getSelectedAccount()?.did
@@ -171,7 +171,7 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
                   )?.filter((did) => did !== currentDID)
                   Alert.alert(
                     'Are you sure?',
-                    `Delete identity: \n${currentDID}? ${
+                    `Remove Identity from Wallet: \n${currentDID}? ${
                       otherDids.length > 0
                         ? `\n\nSwitch to the next identity: \n${otherDids[0]}`
                         : ''
@@ -182,7 +182,7 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
                         style: 'cancel',
                       },
                       {
-                        text: 'Delete',
+                        text: 'Remove',
                         style: 'destructive',
                         onPress: () => {
                           onLogoutAccounts([currentDID!])
@@ -191,7 +191,7 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
                     ]
                   )
                 }}>
-                Delete Identity
+                Remove Identity from Wallet
               </Button>
             </View>
           </View>
