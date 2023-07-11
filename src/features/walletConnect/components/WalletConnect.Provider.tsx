@@ -6,6 +6,7 @@ import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
+import { useDebouncedCallback } from 'use-debounce'
 
 import { ActiveSessions, WalletConnectContextValue } from '../@types'
 import {
@@ -35,6 +36,18 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   )
   const { showModal } = useModal()
 
+  const debouncedDisconnectMessage = useDebouncedCallback(
+    React.useCallback(
+      () =>
+        Snackbar.show({
+          text: 'Session disconnected',
+          duration: Snackbar.LENGTH_LONG,
+        }),
+      []
+    ),
+    120
+  )
+
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
     useCreateWeb3Wallet({
       onSessionRequest: useWalletConnectSessionRequestCallback(),
@@ -52,15 +65,13 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           ),
         [showModal]
       ),
-      onSessionDelete: React.useCallback(async (web3wallet) => {
-        // TODO: Add tracking?
-        Snackbar.show({
-          text: 'Session disconnected',
-          duration: Snackbar.LENGTH_LONG,
-        })
-
-        setActiveSessions(await web3wallet.getActiveSessions())
-      }, []),
+      onSessionDelete: React.useCallback(
+        async (web3wallet) => {
+          debouncedDisconnectMessage()
+          setActiveSessions(await web3wallet.getActiveSessions())
+        },
+        [debouncedDisconnectMessage]
+      ),
     })
   )
 
