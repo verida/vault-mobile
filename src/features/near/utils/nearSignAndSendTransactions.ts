@@ -18,7 +18,6 @@ export const nearSignAndSendTransactions = async ({
   })
 
   return Promise.all(
-    // TODO: was sendTransaction
     signedTransactions.map((tx) => provider.sendTransaction(tx))
   )
 }

@@ -38,9 +38,7 @@ export const WalletConnectDapps = React.memo(
         />
         <View style={LayoutStyle.layout}>
           {walletConnectSessionKeys.length ? (
-            <ScrollView
-              showsVerticalScrollIndicator={false}
-              contentContainerStyle={styles.scrollViewContainer}>
+            <ScrollView showsVerticalScrollIndicator={false}>
               {walletConnectSessionKeys.map((walletConnectSessionKey) => (
                 <React.Fragment key={walletConnectSessionKey}>
                   <WalletConnectActiveSession
@@ -49,6 +47,7 @@ export const WalletConnectDapps = React.memo(
                   />
                 </React.Fragment>
               ))}
+              <View style={styles.extraScrollHeight} />
             </ScrollView>
           ) : (
             <Text
@@ -64,12 +63,12 @@ export const WalletConnectDapps = React.memo(
 )
 
 const styles = StyleSheet.create({
-  // TODO: @cawfree stolen from LoginHistory - not sure if this styling is correct
   emptyText: {
     fontSize: 14,
     textAlign: 'center',
   },
-  scrollViewContainer: {
-    paddingBottom: 32,
+  extraScrollHeight: {
+    // HACK: I don't know why this value needs to be so large.
+    height: 250,
   },
 })

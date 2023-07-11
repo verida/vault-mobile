@@ -67,8 +67,6 @@ export const WalletConnectModalConnectDapp = React.memo(
           id: proposal.id,
           reason: getSdkError('USER_REJECTED_METHODS'),
         })
-
-        // TODO: do we need to update anything here?
       } catch (e) {
         // eslint-disable-next-line no-console
         __DEV__ && console.error(e)

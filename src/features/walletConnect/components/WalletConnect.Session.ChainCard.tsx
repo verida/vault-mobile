@@ -7,32 +7,28 @@ import { WalletConnectSessionNamespacesChainId } from './WalletConnect.Session.N
 export const WalletConnectSessionChainCard = React.memo(
   function WalletConnectSessionChainCard({
     walletConnectSessionKey,
-    // TODO: Consider branding.
-    // HACK: Note here, chain is WalletConnect specific terminology. These are NOT
-    //       Verida ChainIds.
+    // TODO: Consider branding: https://dev.to/hateablestream/typescript-tip-safer-functions-with-branded-types-14o4
     chain,
   }: {
     readonly walletConnectSessionKey: string
     readonly chain: string
   }): JSX.Element {
-    // TODO: wtf chain/chains? what is going on
-    const { caipTypes } = useActiveWalletConnectSessionChainAccountsCaipTypes({
-      chain,
-      walletConnectSessionKey,
-    })
+    const { parsedCaipTypes } =
+      useActiveWalletConnectSessionChainAccountsCaipTypes({
+        chain,
+        walletConnectSessionKey,
+      })
 
     return (
       <React.Fragment
         // eslint-disable-next-line react/no-children-prop
-        children={caipTypes.map((parsedCaipType: ParsedCaipType) => (
+        children={parsedCaipTypes.map((parsedCaipType: ParsedCaipType) => (
           <WalletConnectSessionNamespacesChainId
             key={stringifyCaip({
               parsedCaipType,
               suppressAddressComponent: false,
             })}
             walletConnectSessionKey={walletConnectSessionKey}
-            // Yikes.
-            chain={chain}
             parsedCaipType={parsedCaipType}
           />
         ))}

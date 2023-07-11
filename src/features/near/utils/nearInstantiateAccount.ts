@@ -21,7 +21,7 @@ export async function nearInstantiateAccount(nearAccount: NearAccount) {
   ])
 
   // eslint-disable-next-line no-console
-  console.warn(JSON.stringify({ balance, details, state }))
+  __DEV__ && console.warn(JSON.stringify({ balance, details, state }))
 
   const doesExist = await nearDoesAccountExist({
     nearAccountPointer: nearAccount,

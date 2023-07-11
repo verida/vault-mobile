@@ -7,17 +7,16 @@ import text from 'styles/text'
 import { WALLETCONNECT_SUPPORTED_CHAINS } from '../constants'
 import { useActiveWalletConnectSessionNamespace } from '../hooks'
 
-// TODO: @cawfree seek to remove CaipWalletType (deprecated)
 export const WalletConnectSessionNamespacesChainId = React.memo(
   function WalletConnectSessionNamespacesChainId({
-    chain,
     parsedCaipType,
     walletConnectSessionKey,
   }: {
-    readonly chain: string /* walletConnect */
     readonly parsedCaipType: ParsedCaipType
     readonly walletConnectSessionKey: string
   }): JSX.Element {
+    const { protocol: chain } = parsedCaipType
+
     const maybeNamespace = useActiveWalletConnectSessionNamespace({
       walletConnectSessionKey,
       chain,
@@ -42,8 +41,6 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
       suppressAddressComponent: true,
     })
 
-    // TODO: This is https://github.com/verida/vault-mobile/blob/1d34080ed6ca9e8a821e0c7c9c33c2e62dc88a42/src/wallet-connect/helpers/HelperUtil.ts#L106
-    //       Verify if we need to generalize this usage.
     const maybeChainName = WALLETCONNECT_SUPPORTED_CHAINS[caip]?.name || caip
 
     return (
@@ -91,4 +88,5 @@ const styles = StyleSheet.create({
     textAlign: 'right',
     fontSize: 16,
   },
+  extraScrollHeight: { height: 55 },
 })

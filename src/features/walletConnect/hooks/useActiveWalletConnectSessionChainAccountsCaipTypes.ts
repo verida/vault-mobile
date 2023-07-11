@@ -16,8 +16,7 @@ export function useActiveWalletConnectSessionChainAccountsCaipTypes({
     walletConnectSessionKey,
   })
 
-  const caipTypes = React.useMemo<readonly ParsedCaipType[]>(
-    // TODO: Make this reusable, we likely do this in a lot of places
+  const parsedCaipTypes = React.useMemo<readonly ParsedCaipType[]>(
     () => [
       ...new Set(
         accounts.flatMap((maybeAccount) => {
@@ -41,5 +40,5 @@ export function useActiveWalletConnectSessionChainAccountsCaipTypes({
     [accounts]
   )
 
-  return { caipTypes }
+  return { parsedCaipTypes }
 }

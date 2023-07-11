@@ -41,8 +41,7 @@ export async function nearSignOut({
               nearAccount,
             })
 
-            // TODO: I am copying this logic. Is this correct for the error response?
-            //       https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L341
+            // Reference: https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L341
             return null
           } catch (e) {
             Sentry.captureException(e)
@@ -51,8 +50,7 @@ export async function nearSignOut({
               `Failed to remove FunctionCall access key for ${accountId}`
             )
 
-            // TODO: I am copying this logic. Is this correct for the error response?
-            //       https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L349
+            // Reference: https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L349
             return nearAccountPointer
           }
         }
