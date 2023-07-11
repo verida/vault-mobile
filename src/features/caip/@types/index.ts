@@ -19,14 +19,3 @@ export type ChainMetadata<Standard extends SupportedCaipProtocolStandard> =
     readonly rgb: string
     readonly rpc: string
   }
-
-//export enum EIP155NetworkId {
-//  ETHEREM_GOERLI = 'eip155:5',
-//}
-
-//// TODO: sanity check usage
-//// TODO: rename to reflect caip
-//// TODO: make NearNetworkId function of connection config
-//export enum NearNetworkId {
-//  TESTNET = 'near:testnet',
-//}
