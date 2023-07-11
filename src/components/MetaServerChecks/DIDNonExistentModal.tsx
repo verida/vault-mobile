@@ -133,7 +133,7 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
               showsVerticalScrollIndicator={false}
               contentContainerStyle={styles.scrollViewContainer}>
               <Paragraph>
-                {`This Identity is not available at the moment. This can be due to a Network or Blockchain issue. Please wait a moment. If you think this Identity don't exist anymore, you can remove it from your Wallet.\n\n`}
+                {`This Identity is not available at the moment. This can be due to a Network or Blockchain issue. Please wait a moment.\nIf you think this Identity doesn't exist anymore, you can remove it from your Wallet.\nIdentities cannot be recovered without the Seed Phrase, please make a backup first.\n\n`}
                 <Paragraph style={{ color: theme.color.black800 }}>
                   {`Identity ${
                     AccountManager.getInstance().getSelectedAccount()?.did
