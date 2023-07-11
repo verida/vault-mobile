@@ -1,35 +1,46 @@
+import {
+  addressAgnosticIsCaipEqual,
+  getRpcUrlOrThrow,
+  NEAR_TESTNET_CAIP,
+  ParsedCaipType,
+  stringifyCaip,
+  SupportedCaipProtocolStandard,
+} from 'features/caip'
 import { connect, keyStores } from 'near-api-js'
-
-import { NearNetworkId } from '../@types'
-
-export function getNearNodeUrlOrThrow(nearNetworkId: NearNetworkId): string {
-  if (nearNetworkId !== NearNetworkId.TESTNET)
-    throw new Error(`Encountered unsupported network, "${nearNetworkId}".`)
-
-  return 'https://rpc.testnet.near.org'
-}
 
 export function getNearNetworkConfig({
   keystore: keyStore,
-  nearNetworkId,
+  parsedCaipType,
 }: {
   readonly keystore: keyStores.KeyStore
-  readonly nearNetworkId: NearNetworkId
+  readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
 }): Parameters<typeof connect>[0] & {
   // https://docs.near.org/tools/near-api-js/quick-reference#connect
   readonly explorerUrl: string
 } {
-  if (nearNetworkId !== NearNetworkId.TESTNET)
-    throw new Error(`Encountered unsupported network, "${nearNetworkId}".`)
+  // TODO: If near mainnet URLs are simply "mainnet" we should be okay to remove this
+  //       and evaluate the URLs below dynamically.
+  // HACK: We must to explicitly code for a NEAR CAIP identifier because
+  //       we're forced to hardcode different URLs below.
+  if (!addressAgnosticIsCaipEqual(NEAR_TESTNET_CAIP, parsedCaipType))
+    throw new Error(
+      `Encountered unsupported network, "${stringifyCaip({
+        parsedCaipType,
+        suppressAddressComponent: true,
+      })}".`
+    )
+
+  const { chainId: networkId } = parsedCaipType
 
   return {
-    networkId: 'testnet',
+    networkId, // i.e. "testnet"
     keyStore,
-    nodeUrl: getNearNodeUrlOrThrow(nearNetworkId),
+    nodeUrl: getRpcUrlOrThrow(parsedCaipType),
     walletUrl: 'https://wallet.testnet.near.org',
     helperUrl: 'https://helper.testnet.near.org',
     explorerUrl: 'https://explorer.testnet.near.org',
-    // TODO: ?? idk what is needed here
+
+    // HACK: The typing demanded declaration of this value.
     headers: {},
   }
 }

@@ -5,7 +5,7 @@ import { getNearNetworkConfig } from '../constants'
 import { nearDoesAccountExist } from './nearDoesAccountExist'
 
 export async function nearInstantiateAccount(nearAccount: NearAccount) {
-  const { accountId, publicKey, nearNetworkId } = nearAccount
+  const { accountId, publicKey, parsedCaipType } = nearAccount
 
   const connection = await connect(getNearNetworkConfig(nearAccount))
 
@@ -23,9 +23,12 @@ export async function nearInstantiateAccount(nearAccount: NearAccount) {
   // eslint-disable-next-line no-console
   __DEV__ && console.warn(JSON.stringify({ balance, details, state }))
 
+  // Wait a little for the network to sync up.
+  await new Promise((resolve) => setTimeout(resolve, 5000))
+
   const doesExist = await nearDoesAccountExist({
     nearAccountPointer: nearAccount,
-    nearNetworkId,
+    parsedCaipType,
   })
 
   if (!doesExist) throw new Error(`NearAccount does not exist after creation!`)

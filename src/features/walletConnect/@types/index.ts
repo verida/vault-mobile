@@ -1,12 +1,8 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { SupportedCaipProtocolStandard } from 'features/caip'
 import type { EthereumSigningMethod } from 'features/ethereum'
 import type { NearSigningMethod } from 'features/near'
-
-export enum WalletConnectChainStyle {
-  EVM_LIKE = 'EVM_LIKE',
-  NEAR_LIKE = 'NEAR_LIKE',
-}
 
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>
@@ -25,16 +21,6 @@ export type WalletConnectContextValue = {
     reason: ErrorResponse
   ) => Promise<void>
 }
-
-export type WalletConnectChainMeta<ChainStyle extends WalletConnectChainStyle> =
-  {
-    readonly style: ChainStyle
-    readonly chainId: string
-    readonly name: string
-    readonly logo: string
-    readonly rgb: string
-    readonly rpc: string
-  }
 
 export type Namespaces = ActiveSession['namespaces']
 export type MaybeNamespace = Namespaces[string] | undefined
@@ -59,4 +45,8 @@ export type NearSessionRequestHandlers = {
 
 export type EthereumSessionRequestHandlers = {
   readonly [key in EthereumSigningMethod]: WalletConnectSessionRequestCallback
+}
+
+export type SupportedCaipProtocolSessionHandlers = {
+  readonly [key in SupportedCaipProtocolStandard]: WalletConnectSessionRequestCallback
 }

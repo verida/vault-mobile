@@ -1,14 +1,13 @@
-import { SupportedCaipProtocol } from 'types'
+import { $enum } from 'ts-enum-util'
+
+import { SupportedCaipProtocolStandard } from '../@types'
 
 export function isSupportedCaipProtocol(
   maybeSupportedCaipProtocol: string | undefined
-): maybeSupportedCaipProtocol is SupportedCaipProtocol {
+): maybeSupportedCaipProtocol is SupportedCaipProtocolStandard {
   if (!maybeSupportedCaipProtocol) return false
 
-  // TODO: use an enum for CaipWalletType so we can iterate these conditions
-  //       instead of manually maintain them
-  return (
-    maybeSupportedCaipProtocol === 'eip155' ||
-    maybeSupportedCaipProtocol === 'near'
-  )
+  return [...$enum(SupportedCaipProtocolStandard).values()]
+    .map(String)
+    .includes(maybeSupportedCaipProtocol)
 }

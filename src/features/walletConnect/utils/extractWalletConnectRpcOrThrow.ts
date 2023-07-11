@@ -1,7 +1,5 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { parseCaipOrThrow } from 'features/caip'
-
-import { getWalletConnectConfigForChainIdOrThrow } from './getMaybeWalletConnectConfigForChainId'
+import { getRpcUrlOrThrow, parseCaipOrThrow } from 'features/caip'
 
 export function extractWalletConnectRpcOrThrow(
   web3wallet: IWeb3Wallet,
@@ -11,7 +9,7 @@ export function extractWalletConnectRpcOrThrow(
 
   const parsedCaipType = parseCaipOrThrow(maybeChainId)
 
-  const { rpc } = getWalletConnectConfigForChainIdOrThrow(parsedCaipType)
+  const rpc = getRpcUrlOrThrow(parsedCaipType)
 
   return { rpc, parsedCaipType }
 }

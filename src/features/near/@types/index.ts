@@ -1,11 +1,5 @@
+import { ParsedCaipType, SupportedCaipProtocolStandard } from 'features/caip'
 import { keyStores, transactions } from 'near-api-js'
-
-// TODO: sanity check usage
-// TODO: rename to reflect caip
-// TODO: make NearNetworkId function of connection config
-export enum NearNetworkId {
-  TESTNET = 'near:testnet',
-}
 
 export type NearAccountPointer = {
   readonly publicKey: string
@@ -14,9 +8,8 @@ export type NearAccountPointer = {
 
 export type NearAccount = NearAccountPointer & {
   readonly signerId: string
-  readonly nearNetworkId: NearNetworkId
+  readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
   readonly privateKey: string
-  // TODO: determine if we need this or not
   readonly keystore: keyStores.KeyStore
 }
 

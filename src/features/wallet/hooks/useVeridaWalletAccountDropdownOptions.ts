@@ -42,7 +42,7 @@ const veridaWalletAccountsToDropdownOptions = ({
       // results to contain only caips that are supported.
       if (Array.isArray(onlyMatchingCaipTypes) && !isMatchingCaipType) return []
 
-      const blockchain = maybeParsedCaip?.protocol
+      const blockchain = maybeParsedCaip?.standard
 
       if (!isSupportedCaipProtocol(blockchain)) return []
 

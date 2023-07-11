@@ -1,11 +1,11 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { maybeParseCaip } from 'features/caip'
+import { maybeParseCaip, SupportedCaipProtocolStandard } from 'features/caip'
 import {
   getNearAccountId,
   NearAccount,
   nearDoesAccountExist,
   nearInstantiateAccount,
-  NearNetworkId,
+  throwIfNotNearTestnet,
 } from 'features/near'
 import { useWalletsData } from 'hooks'
 import { keyStores, utils } from 'near-api-js'
@@ -23,18 +23,16 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   readonly walletsData: ReturnType<typeof useWalletsData>
 }): Promise<NearAccount | undefined> {
   const { params } = request
-  const { chainId: maybeNearCaipIdentifier } = params
 
-  // TODO: generalize this
-  // HACK: Satisify the requirement to return a NearNetworkId.
-  if (maybeNearCaipIdentifier !== NearNetworkId.TESTNET)
-    throw new Error(
-      `Encountered unsupported NearNetworkId, "${maybeNearCaipIdentifier}".`
-    )
+  const maybeParsedCaip = maybeParseCaip(params.chainId)
 
-  const maybeParsedCaip = maybeParseCaip(maybeNearCaipIdentifier)
+  if (
+    !maybeParsedCaip ||
+    maybeParsedCaip.standard !== SupportedCaipProtocolStandard.NEAR
+  )
+    return undefined
 
-  if (!maybeParsedCaip) return undefined
+  if (!throwIfNotNearTestnet(maybeParsedCaip)) return undefined
 
   const maybeVeridaWalletAccount =
     getMaybeVeridaWalletAccountForWalletConnectRequest({
@@ -67,13 +65,13 @@ export async function getMaybeNearAccountForWalletConnectRequest({
     accountId,
     signerId,
     publicKey,
-    nearNetworkId: maybeNearCaipIdentifier,
+    parsedCaipType: maybeParsedCaip,
     privateKey,
   }
 
   const doesAccountExist = await nearDoesAccountExist({
     nearAccountPointer: nearAccount,
-    nearNetworkId: maybeNearCaipIdentifier,
+    parsedCaipType: maybeParsedCaip,
   })
 
   if (!doesAccountExist) {

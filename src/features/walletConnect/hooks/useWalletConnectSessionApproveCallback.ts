@@ -1,13 +1,13 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { stringifyCaip } from 'features/caip'
+import {
+  getChainMetadataByCaipTypeOrThrow,
+  stringifyCaip,
+  SupportedCaipProtocolStandard,
+} from 'features/caip'
 import * as React from 'react'
 
-import { WalletConnectChainStyle } from '../@types'
-import {
-  extractWalletConnectRpcOrThrow,
-  getMaybeWalletConnectConfigForChainId,
-  resolveSessionRequest,
-} from '../utils'
+import { SupportedCaipProtocolSessionHandlers } from '../@types'
+import { extractWalletConnectRpcOrThrow, resolveSessionRequest } from '../utils'
 import { useWalletConnectSessionApproveCallbackEthereumLike } from './useWalletConnectSessionApproveCallback.EthereumLike'
 import { useWalletConnectSessionApproveCallbackNearLike } from './useWalletConnectSessionApproveCallback.NearLike'
 
@@ -15,6 +15,16 @@ export function useWalletConnectSessionApproveCallback() {
   const ethereumLikeApprove =
     useWalletConnectSessionApproveCallbackEthereumLike()
   const nearLikeApprove = useWalletConnectSessionApproveCallbackNearLike()
+
+  // For each supported protocol, a corresponding handler implementation *must* be provided.
+  const supportedStandardHandlers: SupportedCaipProtocolSessionHandlers =
+    React.useMemo(
+      () => ({
+        [SupportedCaipProtocolStandard.EIP_155]: ethereumLikeApprove,
+        [SupportedCaipProtocolStandard.NEAR]: nearLikeApprove,
+      }),
+      [ethereumLikeApprove, nearLikeApprove]
+    )
 
   const chainSpecificApproveOrThrow = React.useCallback(
     (
@@ -26,35 +36,31 @@ export function useWalletConnectSessionApproveCallback() {
         request
       )
 
-      const maybeWalletConnectConfig =
-        getMaybeWalletConnectConfigForChainId(parsedCaipType)
+      const chainMetadata = getChainMetadataByCaipTypeOrThrow(parsedCaipType)
 
-      if (!maybeWalletConnectConfig)
+      if (!chainMetadata)
         throw new Error(
-          `Unable to find walletConnectConfig for "${stringifyCaip({
+          `Unable to find ChainMetadata for "${stringifyCaip({
             parsedCaipType,
             suppressAddressComponent: true,
           })}".`
         )
 
-      const { style } = maybeWalletConnectConfig
+      const { standard } = chainMetadata
 
-      // TODO: Make this static compilation error
+      const { [standard]: maybeStandardHandler } = supportedStandardHandlers
 
-      if (style === WalletConnectChainStyle.EVM_LIKE)
-        return ethereumLikeApprove({ web3wallet, request, rpc })
+      if (!maybeStandardHandler)
+        throw new Error(
+          `Sorry, ${stringifyCaip({
+            parsedCaipType,
+            suppressAddressComponent: true,
+          })} is not supported.`
+        )
 
-      if (style === WalletConnectChainStyle.NEAR_LIKE)
-        return nearLikeApprove({ web3wallet, request, rpc })
-
-      throw new Error(
-        `Sorry, ${stringifyCaip({
-          parsedCaipType,
-          suppressAddressComponent: true,
-        })} is not supported.`
-      )
+      return maybeStandardHandler({ web3wallet, request, rpc })
     },
-    [ethereumLikeApprove, nearLikeApprove]
+    [supportedStandardHandlers]
   )
 
   return React.useCallback(

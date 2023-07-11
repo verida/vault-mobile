@@ -1,6 +1,6 @@
+import { SupportedCaipProtocolStandard } from 'features/caip'
+
 export type VeridaWalletType = 'single' | 'multi'
-// TODO: @cawfree, experiment with removing
-export type SupportedCaipProtocol = 'eip155' | 'near'
 
 export interface VeridaWalletAccount {
   address: string
@@ -12,7 +12,10 @@ export interface VeridaWalletAccount {
 }
 
 export type VeridaWalletAccounts = Record<
-  SupportedCaipProtocol,
+  // HACK: There are also some deprecated standards, such as algorand, which may
+  //       appear in an instance of VeridaWalletAccounts. Please take
+  //       "SupportedCaipProtocolStandard" with a grain of salt here.
+  SupportedCaipProtocolStandard,
   VeridaWalletAccount
 >
 

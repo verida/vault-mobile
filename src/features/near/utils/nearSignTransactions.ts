@@ -1,4 +1,3 @@
-import { parseCaipOrThrow } from 'features/caip'
 import { NearAccount } from 'features/near'
 import { InMemorySigner, transactions } from 'near-api-js'
 
@@ -9,10 +8,11 @@ export const nearSignTransactions = async ({
   readonly nearAccount: NearAccount
   readonly transactions: readonly transactions.Transaction[]
 }): Promise<readonly transactions.SignedTransaction[]> => {
-  const { keystore, nearNetworkId } = nearAccount
+  const {
+    keystore,
+    parsedCaipType: { chainId },
+  } = nearAccount
   const signer = new InMemorySigner(keystore)
-
-  const { chainId } = parseCaipOrThrow(nearNetworkId)
 
   return Promise.all(
     defaultTransactions.map(async (transaction: transactions.Transaction) => {

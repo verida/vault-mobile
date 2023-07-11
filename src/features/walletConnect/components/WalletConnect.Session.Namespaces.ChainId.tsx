@@ -1,10 +1,12 @@
-import { ParsedCaipType, stringifyCaip } from 'features/caip'
+import {
+  getSupportedCaipProtocolFriendlyName,
+  ParsedCaipType,
+} from 'features/caip'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import text from 'styles/text'
 
-import { WALLETCONNECT_SUPPORTED_CHAINS } from '../constants'
 import { useActiveWalletConnectSessionNamespace } from '../hooks'
 
 export const WalletConnectSessionNamespacesChainId = React.memo(
@@ -15,7 +17,7 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
     readonly parsedCaipType: ParsedCaipType
     readonly walletConnectSessionKey: string
   }): JSX.Element {
-    const { protocol: chain } = parsedCaipType
+    const { standard: chain } = parsedCaipType
 
     const maybeNamespace = useActiveWalletConnectSessionNamespace({
       walletConnectSessionKey,
@@ -36,12 +38,7 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
       [maybeNamespace]
     )
 
-    const caip = stringifyCaip({
-      parsedCaipType,
-      suppressAddressComponent: true,
-    })
-
-    const maybeChainName = WALLETCONNECT_SUPPORTED_CHAINS[caip]?.name || caip
+    const maybeChainName = getSupportedCaipProtocolFriendlyName(parsedCaipType)
 
     return (
       <View style={styles.container}>

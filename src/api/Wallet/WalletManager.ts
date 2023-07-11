@@ -1,3 +1,4 @@
+import { isSupportedCaipProtocol } from 'features/caip'
 import { store } from 'reduxStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
@@ -16,7 +17,7 @@ import { Blockchain as nearBlockchain } from './nearBlockchain'
 
 const bip39 = require('bip39')
 
-const NAMESPACES_NO_LONGER_SUPPORTED = ['algorand']
+//const NAMESPACES_NO_LONGER_SUPPORTED = ['algorand']
 
 // TODO: @cawfree extend support
 const NAMESPACES: Record<string, IBlockchain> = {
@@ -92,12 +93,10 @@ export class WalletManager {
         // TODO: @cawfree is this the correct migration pattern? what to do with
         //       old algorand wallets? This might be unhelpful for users who wish
         //       to exit out.
-        if (
-          NAMESPACES_NO_LONGER_SUPPORTED.includes(blockchainNetwork.namespace)
-        ) {
+        if (!isSupportedCaipProtocol(blockchainNetwork.namespace)) {
           // eslint-disable-next-line no-console
           return console.warn(
-            `Refusing to process "${blockchainNetwork.chainId}". Algorand is no longer supported.`
+            `Refusing to process "${blockchainNetwork.chainId}", since it is no longer supported.`
           )
         }
 

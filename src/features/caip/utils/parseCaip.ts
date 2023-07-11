@@ -1,4 +1,5 @@
 import { ParsedCaipType } from '../@types'
+import { isSupportedCaipProtocol } from './isSupportedCaipProtocol'
 
 export function maybeParseCaip(
   value: string | null | undefined
@@ -6,11 +7,13 @@ export function maybeParseCaip(
   if (typeof value !== 'string' || !value.length || !value.includes(':'))
     return undefined
 
-  const [protocol, chainId, maybeAddress] = value.split(':')
+  const [standard, chainId, maybeAddress] = value.split(':')
 
-  if (!protocol.length || !chainId.length) return undefined
+  if (!isSupportedCaipProtocol(standard)) return undefined
 
-  return { protocol, chainId, address: maybeAddress }
+  if (!chainId.length) return undefined
+
+  return { standard, chainId, address: maybeAddress }
 }
 
 // TODO: Add a protocol enum and have the codebase evaluate support.

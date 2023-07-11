@@ -9,7 +9,3 @@ export enum EthereumSigningMethod {
   ETH_SEND_RAW_TRANSACTION = 'eth_sendRawTransaction',
   ETH_SEND_TRANSACTION = 'eth_sendTransaction',
 }
-
-export enum EIP155NetworkId {
-  ETHEREM_GOERLI = 'eip155:5',
-}
