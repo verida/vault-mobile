@@ -5,4 +5,4 @@ import { VeridaWalletAccount } from 'types'
 export const isWatchedWallet = ({
   mnemonic,
   privateKey,
-}: VeridaWalletAccount) => !mnemonic || !privateKey
+}: VeridaWalletAccount) => !mnemonic && !privateKey
