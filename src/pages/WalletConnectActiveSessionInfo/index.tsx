@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Spacer } from 'components'
 import {
   useWalletConnectContext,
   WalletConnectActiveSession,
@@ -47,7 +48,7 @@ export const WalletConnectActiveSessionDetails = React.memo(
                   />
                 </React.Fragment>
               ))}
-              <View style={styles.extraScrollHeight} />
+              <Spacer height={250} />
             </ScrollView>
           ) : (
             <Text
@@ -66,9 +67,5 @@ const styles = StyleSheet.create({
   emptyText: {
     fontSize: 14,
     textAlign: 'center',
-  },
-  extraScrollHeight: {
-    // HACK: I don't know why this value needs to be so large.
-    height: 250,
   },
 })
