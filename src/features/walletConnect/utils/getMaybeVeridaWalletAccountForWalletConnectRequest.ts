@@ -7,7 +7,6 @@ import { getMaybeVeridaWalletAccountForWalletConnectActiveSession } from './getM
 
 export function getMaybeVeridaWalletAccountForWalletConnectRequest({
   web3wallet,
-
   request,
   walletsData,
 }: {
@@ -23,6 +22,7 @@ export function getMaybeVeridaWalletAccountForWalletConnectRequest({
 
   return getMaybeVeridaWalletAccountForWalletConnectActiveSession({
     activeSession: maybeActiveSession,
+    request,
     walletsData,
   })
 }

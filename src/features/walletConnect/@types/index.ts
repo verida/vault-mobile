@@ -39,8 +39,6 @@ export type WalletConnectChainMeta<ChainStyle extends WalletConnectChainStyle> =
 export type Namespaces = ActiveSession['namespaces']
 export type MaybeNamespace = Namespaces[string] | undefined
 
-// TODO: instead of chain, namespaceId would be better??
-// TODO: It would be more useful to parse the identifier for specificity
 export type CaipProtocolToCaipIdentifiers = {
   readonly [caipProtocol in string]: readonly string[]
 }

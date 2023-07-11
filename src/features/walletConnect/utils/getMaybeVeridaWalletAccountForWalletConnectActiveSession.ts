@@ -1,4 +1,9 @@
-import { parseCaipOrThrow, stringifyCaip } from 'features/caip'
+import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import {
+  addressAgnosticIsCaipEqual,
+  parseCaipOrThrow,
+  stringifyCaip,
+} from 'features/caip'
 import { useWalletsData } from 'hooks'
 import { VeridaWallet, VeridaWalletAccount } from 'types'
 
@@ -6,17 +11,30 @@ import { ActiveSession } from '../@types'
 
 export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
   activeSession,
+  request,
   walletsData,
 }: {
   readonly activeSession: ActiveSession | null | undefined
+  readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
 }): VeridaWalletAccount | undefined {
   if (!activeSession) return undefined
 
+  const requiredCaip = request.params.chainId
+
   const accounts: readonly string[] = Object.values(
     activeSession.namespaces
-  ).flatMap(
-    ({ accounts: accountsWithinCaipNamespace }) => accountsWithinCaipNamespace
+  ).flatMap(({ accounts: accountsWithinCaipNamespace }) =>
+    // HACK: WalletConnect may provide multiple accounts for the namespace -
+    //       for example, an account for Ethereum Goerli and MultiverseX.
+    //       Here, we ensure to only find a matching wallet instance which
+    //       corresponds to the requested chain.
+    accountsWithinCaipNamespace.filter((accountWithinCaipNamespace) =>
+      addressAgnosticIsCaipEqual(
+        parseCaipOrThrow(requiredCaip),
+        parseCaipOrThrow(accountWithinCaipNamespace)
+      )
+    )
   )
 
   const [maybeMatchingCaip, ...maybeOtherAccounts] = accounts

@@ -5,6 +5,7 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
+import Snackbar from 'react-native-snackbar'
 
 import { ActiveSessions, WalletConnectContextValue } from '../@types'
 import {
@@ -53,9 +54,10 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       ),
       onSessionDelete: React.useCallback(async (web3wallet) => {
         // TODO: Add tracking?
-        // TODO: Notify user? Snackbar would be nice.
-        // eslint-disable-next-line no-console
-        __DEV__ && console.warn('Session deleted!')
+        Snackbar.show({
+          text: 'Session disconnected',
+          duration: Snackbar.LENGTH_LONG,
+        })
 
         setActiveSessions(await web3wallet.getActiveSessions())
       }, []),
