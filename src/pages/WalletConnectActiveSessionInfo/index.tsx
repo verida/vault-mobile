@@ -7,7 +7,7 @@ import {
 import { Icon } from 'native-base'
 import * as React from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
-import { LayoutStyle } from 'styles'
+import { LAYOUT_BASE } from 'styles'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
@@ -36,7 +36,7 @@ export const WalletConnectActiveSessionDetails = React.memo(
             [navigation]
           )}
         />
-        <View style={LayoutStyle.layout}>
+        <View style={LAYOUT_BASE}>
           {walletConnectSessionKeys.length ? (
             <ScrollView showsVerticalScrollIndicator={false}>
               {walletConnectSessionKeys.map((walletConnectSessionKey) => (
