@@ -68,7 +68,7 @@ const WalletConnectList = [
     label: 'Dapps',
     action: 'arrow',
     optional: true,
-    onPress: (navigation) => navigation.navigate('WalletConnectDapps'),
+    onPress: (navigation) => navigation.navigate('WalletConnectActiveSessions'),
   },
 ]
 

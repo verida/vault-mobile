@@ -53,8 +53,8 @@ import TokenRecipient from 'pages/Tokens/TokenRecipient'
 import TransactionDetails from 'pages/Tokens/TransactionDetails'
 import TransactionFailure from 'pages/Tokens/TransactionFailure'
 import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
-import { WalletConnectDapp } from 'pages/WalletConnectDapp'
-import { WalletConnectDapps } from 'pages/WalletConnectDapps'
+import { WalletConnectActiveSessionDetails } from 'pages/WalletConnectActiveSessionInfo'
+import { WalletConnectActiveSessions } from 'pages/WalletConnectActiveSessions'
 import ManageWallets from 'pages/Wallets/ManageWallets'
 import OtherAddresses from 'pages/Wallets/OtherAddresses'
 import SingleWallet from 'pages/Wallets/SingleWallet'
@@ -156,12 +156,12 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
 
           <Stack.Screen
-            name='WalletConnectDapp'
-            component={WalletConnectDapp}
+            name='WalletConnectActiveSessions'
+            component={WalletConnectActiveSessions}
           />
           <Stack.Screen
-            name='WalletConnectDapps'
-            component={WalletConnectDapps}
+            name='WalletConnectActiveSessionDetails'
+            component={WalletConnectActiveSessionDetails}
           />
 
           <Stack.Screen

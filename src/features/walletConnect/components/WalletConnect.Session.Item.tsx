@@ -37,14 +37,12 @@ export const WalletConnectSessionItem = React.memo(
             <Text style={[text.primary, styles.textAlignLeft]}>
               {dapp?.peer?.metadata?.name}
             </Text>
-            <Text style={[text.grey, styles.textAlignLeft]}>
+            <Text
+              style={[text.grey, styles.textAlignLeft]}
+              numberOfLines={1}
+              ellipsizeMode='tail'>
               {dapp?.peer?.metadata?.url}
             </Text>
-            <Text
-              //eslint-disable-next-line react/no-children-prop
-              children={`PeerId: ${dapp?.peer?.publicKey}`}
-              style={[text.grey, styles.textAlignLeft]}
-            />
           </View>
           <Icon
             size={22}

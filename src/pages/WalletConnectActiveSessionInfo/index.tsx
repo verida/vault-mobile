@@ -12,8 +12,8 @@ import { LayoutStyle } from 'styles'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackParams } from 'navigation/types'
 
-export const WalletConnectDapps = React.memo(
-  function WalletConnectDapps(): JSX.Element {
+export const WalletConnectActiveSessionDetails = React.memo(
+  function WalletConnectActiveSessionDetails(): JSX.Element {
     const navigation =
       useNavigation<NativeStackNavigationProp<MainStackParams>>()
 

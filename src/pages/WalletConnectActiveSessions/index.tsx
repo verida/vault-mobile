@@ -18,8 +18,8 @@ import { MainStackParams } from 'navigation/types'
 
 const leftIcon: HeaderProps['left'] = { icon: 'back' }
 
-export const WalletConnectDapp = React.memo(
-  function WalletConnectDapp(): JSX.Element {
+export const WalletConnectActiveSessions = React.memo(
+  function WalletConnectActiveSessions(): JSX.Element {
     const navigation =
       useNavigation<NativeStackNavigationProp<MainStackParams>>()
     const { activeSessions: defaultActiveSessions } = useWalletConnectContext()
@@ -39,9 +39,8 @@ export const WalletConnectDapp = React.memo(
                   key={walletConnectSessionKey}
                   walletConnectSessionKey={walletConnectSessionKey}
                   onPress={() =>
-                    // TODO: Fix this poor route naming convention
-                    navigation.navigate<'WalletConnectDapps'>(
-                      'WalletConnectDapps',
+                    navigation.navigate<'WalletConnectActiveSessionDetails'>(
+                      'WalletConnectActiveSessionDetails',
                       { walletConnectSessionKey }
                     )
                   }
