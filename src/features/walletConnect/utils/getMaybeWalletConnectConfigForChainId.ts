@@ -8,12 +8,9 @@ export function getMaybeWalletConnectConfigForChainId(
 ): WalletConnectChainMeta<WalletConnectChainStyle> | undefined {
   if (!parsedCaipType) return undefined
 
-  const maybeMatchingChainConfig = Object.values(
-    WALLETCONNECT_SUPPORTED_CHAINS
-  ).find(
-    ({ chainId: maybeMatchingChainId }) =>
-      maybeMatchingChainId === parsedCaipType.chainId
-  )
+  const caip = stringifyCaip({ parsedCaipType, suppressAddressComponent: true })
+
+  const { [caip]: maybeMatchingChainConfig } = WALLETCONNECT_SUPPORTED_CHAINS
 
   return maybeMatchingChainConfig || undefined
 }
@@ -26,9 +23,10 @@ export function getWalletConnectConfigForChainIdOrThrow(
 
   if (!maybeWalletConnectConfig)
     throw new Error(
-      `Unable to find WalletConnectConfig for "${stringifyCaip(
-        parsedCaipType
-      )}".`
+      `Unable to find WalletConnectConfig for "${stringifyCaip({
+        parsedCaipType,
+        suppressAddressComponent: true,
+      })}".`
     )
 
   return maybeWalletConnectConfig

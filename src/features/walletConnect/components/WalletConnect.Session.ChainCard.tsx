@@ -26,7 +26,10 @@ export const WalletConnectSessionChainCard = React.memo(
         // eslint-disable-next-line react/no-children-prop
         children={caipTypes.map((parsedCaipType: ParsedCaipType) => (
           <WalletConnectSessionNamespacesChainId
-            key={stringifyCaip(parsedCaipType)}
+            key={stringifyCaip({
+              parsedCaipType,
+              suppressAddressComponent: false,
+            })}
             walletConnectSessionKey={walletConnectSessionKey}
             // Yikes.
             chain={chain}

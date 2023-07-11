@@ -9,9 +9,9 @@ export function extractWalletConnectRpcOrThrow(
 ) {
   const maybeChainId = request?.params?.chainId
 
-  const parsedCaip = parseCaipOrThrow(maybeChainId)
+  const parsedCaipType = parseCaipOrThrow(maybeChainId)
 
-  const { rpc } = getWalletConnectConfigForChainIdOrThrow(parsedCaip)
+  const { rpc } = getWalletConnectConfigForChainIdOrThrow(parsedCaipType)
 
-  return { rpc, parsedCaip }
+  return { rpc, parsedCaipType }
 }

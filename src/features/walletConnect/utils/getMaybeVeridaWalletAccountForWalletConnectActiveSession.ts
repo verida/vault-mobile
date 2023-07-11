@@ -4,7 +4,6 @@ import { VeridaWallet, VeridaWalletAccount } from 'types'
 
 import { ActiveSession } from '../@types'
 
-// TODO: make sure we're using this in get near wallet function too
 export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
   activeSession,
   walletsData,
@@ -40,7 +39,10 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
     )
 
   // What address-agnostic caip identifier is being targeted?
-  const target = stringifyCaip(parsedCaipType, true)
+  const target = stringifyCaip({
+    parsedCaipType,
+    suppressAddressComponent: true,
+  })
 
   const possibleVeridaWalletAccounts = Object.values(walletsData).flatMap(
     (maybeMatchingVeridaWalletWallet: VeridaWallet): VeridaWalletAccount[] => {
@@ -69,11 +71,7 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
     )
 
   if (!maybeMatchingVeridaWalletAccount)
-    throw new Error(
-      `Unable to find VeridaWalletAccount for "${stringifyCaip(
-        parsedCaipType
-      )}".`
-    )
+    throw new Error(`Unable to find VeridaWalletAccount for "${target}".`)
 
   return maybeMatchingVeridaWalletAccount
 }

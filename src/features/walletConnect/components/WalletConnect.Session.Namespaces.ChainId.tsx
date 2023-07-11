@@ -37,7 +37,10 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
       [maybeNamespace]
     )
 
-    const caip = stringifyCaip(parsedCaipType, true)
+    const caip = stringifyCaip({
+      parsedCaipType,
+      suppressAddressComponent: true,
+    })
 
     // TODO: This is https://github.com/verida/vault-mobile/blob/1d34080ed6ca9e8a821e0c7c9c33c2e62dc88a42/src/wallet-connect/helpers/HelperUtil.ts#L106
     //       Verify if we need to generalize this usage.

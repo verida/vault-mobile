@@ -74,9 +74,14 @@ export const WalletConnectActiveSession = React.memo(
                   accountsForChain.flatMap((accountForChain) => {
                     const maybeParsedCaip = maybeParseCaip(accountForChain)
 
-                    if (!maybeParsedCaip) return maybeParsedCaip
+                    if (!maybeParsedCaip) return []
 
-                    return [stringifyCaip(maybeParsedCaip, false)]
+                    return [
+                      stringifyCaip({
+                        parsedCaipType: maybeParsedCaip,
+                        suppressAddressComponent: false,
+                      }),
+                    ]
                   })
                 ),
               ]
@@ -92,7 +97,10 @@ export const WalletConnectActiveSession = React.memo(
                       })
                       .flatMap((parsedCaipType: ParsedCaipType, i, orig) => [
                         <CaipSupportedProtocolSpan
-                          key={stringifyCaip(parsedCaipType)}
+                          key={stringifyCaip({
+                            parsedCaipType,
+                            suppressAddressComponent: false,
+                          })}
                           parsedCaipType={parsedCaipType}
                         />,
                         // eslint-disable-next-line react/no-children-prop

@@ -21,20 +21,20 @@ export function useWalletConnectSessionApproveCallback() {
       web3wallet: IWeb3Wallet,
       request: Web3WalletTypes.EventArguments['session_request']
     ) => {
-      const { rpc, parsedCaip } = extractWalletConnectRpcOrThrow(
+      const { rpc, parsedCaipType } = extractWalletConnectRpcOrThrow(
         web3wallet,
         request
       )
 
       const maybeWalletConnectConfig =
-        getMaybeWalletConnectConfigForChainId(parsedCaip)
+        getMaybeWalletConnectConfigForChainId(parsedCaipType)
 
       if (!maybeWalletConnectConfig)
         throw new Error(
-          `Unable to find walletConnectConfig for "${stringifyCaip(
-            parsedCaip,
-            true
-          )}".`
+          `Unable to find walletConnectConfig for "${stringifyCaip({
+            parsedCaipType,
+            suppressAddressComponent: true,
+          })}".`
         )
 
       const { style } = maybeWalletConnectConfig
@@ -48,7 +48,10 @@ export function useWalletConnectSessionApproveCallback() {
         return nearLikeApprove({ web3wallet, request, rpc })
 
       throw new Error(
-        `Sorry, ${stringifyCaip(parsedCaip, true)} is not supported.`
+        `Sorry, ${stringifyCaip({
+          parsedCaipType,
+          suppressAddressComponent: true,
+        })} is not supported.`
       )
     },
     [ethereumLikeApprove, nearLikeApprove]

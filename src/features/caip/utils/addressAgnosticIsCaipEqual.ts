@@ -4,5 +4,8 @@ export function addressAgnosticIsCaipEqual(
   a: ParsedCaipType,
   b: ParsedCaipType
 ) {
-  return stringifyCaip(a, false) === stringifyCaip(b, false)
+  return (
+    stringifyCaip({ parsedCaipType: a, suppressAddressComponent: true }) ===
+    stringifyCaip({ parsedCaipType: b, suppressAddressComponent: true })
+  )
 }
