@@ -110,14 +110,6 @@ export type Network = {
   selected_node?: number
 }
 
-export type NetworkCountry = {
-  [key: string]: string
-}
-
-export type NetworkCountries = {
-  [name: string]: NetworkCountry[]
-}
-
 export interface PagingInfo {
   total: number
   page: number
