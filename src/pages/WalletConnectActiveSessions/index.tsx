@@ -69,13 +69,11 @@ export const WalletConnectActiveSessions = React.memo(
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },
-  // TODO: Should this be a dedicated style?
   title: {
     ...text.primary,
     fontSize: 18,
     textAlign: 'left',
   },
-  // TODO: Should this be a dedicated style?
   label: {
     ...text.grey,
     fontSize: 16,

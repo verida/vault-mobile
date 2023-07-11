@@ -2,7 +2,7 @@ import * as React from 'react'
 
 import { useActiveWalletConnectSessionNamespaces } from './useActiveWalletConnectSessionNamespaces'
 
-// WARNING: These are WalletConnect chains and not Verida chainIds.
+// Returns a string array of caip identifiers i.e. ["eip155:1", "near:testnet"]
 export function useActiveWalletConnectSessionChains({
   walletConnectSessionKey,
 }: {

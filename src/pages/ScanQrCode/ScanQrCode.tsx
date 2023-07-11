@@ -105,9 +105,7 @@ function ScanQrCode(
   )
 
   const onBarCodeRead = React.useCallback(
-    async ({ data }: BarCodeReadEvent) => {
-      await handleQrCode(data)
-    },
+    ({ data }: BarCodeReadEvent) => handleQrCode(data),
     [handleQrCode]
   )
 

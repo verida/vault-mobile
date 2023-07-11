@@ -19,24 +19,14 @@ import {
 import { mainReducer } from './mainReducer'
 import { tokensReducer } from './tokens/reducer'
 
-// TODO: @cawfree validate
-//import { walletConnectReducer } from './wallet-connect/reducer'
-
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: [
-    // TODO: @cawfree validate
-    'walletConnect',
-    'tokens',
-    walletsApi.reducerPath,
-  ],
+  whitelist: ['tokens', walletsApi.reducerPath],
 }
 
 export const rootReducer = combineReducers({
   main: mainReducer,
-  // TODO: @cawfree validate
-  //walletConnect: walletConnectReducer,
   tokens: tokensReducer, // TODO: Refactor tokens to be in walletsApi slice?
 
   // API reducers

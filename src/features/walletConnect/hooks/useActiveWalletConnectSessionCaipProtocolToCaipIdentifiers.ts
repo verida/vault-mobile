@@ -6,7 +6,6 @@ import { useActiveWalletConnectSessionChains } from './useActiveWalletConnectSes
 import { getNamespaceForChain } from './useActiveWalletConnectSessionNamespace'
 import { useActiveWalletConnectSessionNamespaces } from './useActiveWalletConnectSessionNamespaces'
 
-// TODO: Emphasises that these caip identifiers return full addresses.
 const getCaipProtocolsToCaipIdentifiers = ({
   chains,
   namespaces,

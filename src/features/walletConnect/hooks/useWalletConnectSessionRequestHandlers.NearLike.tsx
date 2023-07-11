@@ -28,26 +28,16 @@ import {
 
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
-// HACK: In the previous codebase, it was possible to perform a "global" lookup for
-//       accounts since we were using a shared persistent keystore.
-//       However, this scope exceeds the bounds of the proposed implementation here,
-//       where the keystore is inferred by the WalletConnect request. In the function
-//       below, we are still only going to return the NearAccountPointers associated
-//       with the scope of the WalletConnect request, and use this function to merely
-//       capture the potential intent if this needs to be refactored.
-const HACK__notSureIfSupposedToBeGlobalAccountLookup = async (
+const walletConnectSessionRequestToNearAccountPointers = async (
   params: WalletConnectSessionRequestCallbackParams,
   walletsData: ReturnType<typeof useWalletsData>
 ): Promise<readonly NearAccountPointer[]> => {
-  const { keystore, nearNetworkId } =
+  return nearGetAccounts(
     await getNearAccountForWalletConnectRequestOrThrow({
       ...params,
       walletsData,
     })
-  return nearGetAccounts({
-    keystore,
-    nearNetworkId,
-  })
+  )
 }
 
 export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
@@ -116,7 +106,8 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
       },
       [NearSigningMethod.NEAR_GET_ACCOUNTS]: async (
         params: WalletConnectSessionRequestCallbackParams
-      ) => HACK__notSureIfSupposedToBeGlobalAccountLookup(params, walletsData),
+      ) =>
+        walletConnectSessionRequestToNearAccountPointers(params, walletsData),
       [NearSigningMethod.NEAR_SIGN_TRANSACTION]: async ({
         web3wallet,
         request,
@@ -149,7 +140,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         const { actions } = transaction
 
         const [nearAccountPointers, nearAccount] = await Promise.all([
-          HACK__notSureIfSupposedToBeGlobalAccountLookup(params, walletsData),
+          walletConnectSessionRequestToNearAccountPointers(params, walletsData),
           getNearAccountForWalletConnectRequestOrThrow({
             web3wallet,
             request,
@@ -235,7 +226,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
           )
 
         const [nearAccountPointers, nearAccount] = await Promise.all([
-          HACK__notSureIfSupposedToBeGlobalAccountLookup(params, walletsData),
+          walletConnectSessionRequestToNearAccountPointers(params, walletsData),
           getNearAccountForWalletConnectRequestOrThrow({
             ...params,
             walletsData,

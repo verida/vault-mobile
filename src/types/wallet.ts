@@ -2,7 +2,6 @@ export type VeridaWalletType = 'single' | 'multi'
 // TODO: @cawfree, experiment with removing
 export type SupportedCaipProtocol = 'eip155' | 'near'
 
-// TODO: @cawfree where you introduced privateKey, you were likely interacting with a VeridaWallet, double check this
 export interface VeridaWalletAccount {
   address: string
   chain: string

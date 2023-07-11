@@ -5,10 +5,7 @@ import { useModal } from 'hooks'
 import * as React from 'react'
 
 import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
-import {
-  extractWalletConnectRpcOrThrow,
-  isWalletConnectRequestRequiresVisualConfirmation,
-} from '../utils'
+import { extractWalletConnectRpcOrThrow } from '../utils'
 import { useWalletConnectSessionApproveCallback } from './useWalletConnectSessionApproveCallback'
 import { useWalletConnectSessionRejectCallback } from './useWalletConnectSessionRejectCallback'
 
@@ -31,30 +28,24 @@ export const useWalletConnectSessionRequestCallback = (): ((
       try {
         const { rpc } = extractWalletConnectRpcOrThrow(web3wallet, request)
 
-        if (isWalletConnectRequestRequiresVisualConfirmation(request)) {
-          const { topic } = request
+        const { topic } = request
 
-          const activeSessions: ActiveSessions =
-            await web3wallet.getActiveSessions()
+        const activeSessions: ActiveSessions =
+          await web3wallet.getActiveSessions()
 
-          const { [topic]: maybeActiveSession } = activeSessions
+        const { [topic]: maybeActiveSession } = activeSessions
 
-          if (!maybeActiveSession)
-            throw new Error(
-              `Unable to find activeSession for topic "${topic}".`
-            )
+        if (!maybeActiveSession)
+          throw new Error(`Unable to find activeSession for topic "${topic}".`)
 
-          return showModal(
-            <WalletConnectTransactionRequestModal
-              web3wallet={web3wallet}
-              request={request}
-              rpc={rpc}
-              activeSession={maybeActiveSession}
-            />
-          )
-        }
-
-        return approve(web3wallet, request)
+        return showModal(
+          <WalletConnectTransactionRequestModal
+            web3wallet={web3wallet}
+            request={request}
+            rpc={rpc}
+            activeSession={maybeActiveSession}
+          />
+        )
       } catch (e) {
         return reject(web3wallet, request, e)
       }

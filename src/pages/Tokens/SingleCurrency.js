@@ -32,8 +32,6 @@ const SingleCurrency = ({
   blockchainNetwork,
   wallets,
   selectedWallet,
-  //onSendTransaction,
-  //nativeTokenBalance,
 }) => {
   const { item } = route.params
   const { list, loading, errorType } = transactions

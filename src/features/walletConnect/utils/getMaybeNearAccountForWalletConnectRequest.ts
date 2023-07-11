@@ -64,7 +64,6 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   const nearAccount: NearAccount = {
     keystore,
-    // TODO: force callers to evaluate this using the signerId
     accountId,
     signerId,
     publicKey,
@@ -78,10 +77,11 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   })
 
   if (!doesAccountExist) {
-    // eslint-disable-next-line no-console
-    console.log(
-      `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
-    )
+    __DEV__ &&
+      // eslint-disable-next-line no-console
+      console.log(
+        `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
+      )
 
     await nearInstantiateAccount(nearAccount)
   }

@@ -24,7 +24,7 @@ type Props = {
   hideModal: () => void
 }
 
-// TODO: Get this from a maintained centralised list of supported blockchain.
+// TODO: Use a single source of truth for supported blockchains.
 const BLOCKCHAINS = Object.freeze([
   { label: 'Ethereum', value: 'ethereum' },
   { label: 'Near', value: 'near' },
