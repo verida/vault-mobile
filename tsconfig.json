@@ -23,6 +23,9 @@
       "assets/*": [
         "src/assets/*"
       ],
+      "blockchain/*": [
+        "src/blockchain/*"
+      ],
       "components/*": [
         "src/components/*"
       ],

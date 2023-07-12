@@ -1,11 +1,6 @@
-import { Buffer } from 'buffer'
-import {
-  ChainMetadatas,
-  getMaybeChainMetadatas,
-  useChainMetadatas,
-} from 'features/caip'
 import {
   NearAccountPointer,
+  nearCreateAction,
   nearCreateTransactions,
   nearGetAccounts,
   nearMaybeAccountForTransactionSignatory,
@@ -16,8 +11,13 @@ import {
   nearSignTransactions,
   NearTransaction,
   throwIfNearAccountDoesNotMatchNearAccountPointer,
-} from 'features/near'
-import { nearCreateAction } from 'features/near/utils/nearCreateAction'
+} from 'blockchain/near'
+import { Buffer } from 'buffer'
+import {
+  ChainMetadatas,
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from 'features/caip'
 import { useWalletsData } from 'features/wallet'
 import { getNearAccountForWalletConnectRequestOrThrow } from 'features/walletConnect'
 import { providers, transactions } from 'near-api-js'

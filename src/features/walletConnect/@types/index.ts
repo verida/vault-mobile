@@ -1,8 +1,8 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import type { EthereumRpcMethod } from 'blockchain/ethereum'
+import type { NearSigningMethod } from 'blockchain/near'
 import { SupportedCaipProtocolStandard } from 'features/caip'
-import type { EthereumRpcMethod } from 'features/ethereum'
-import type { NearSigningMethod } from 'features/near'
 
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>

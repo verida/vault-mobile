@@ -1,4 +1,4 @@
-import { throwIfInvalidEthereumRpcMethod } from 'features/ethereum'
+import { throwIfInvalidEthereumRpcMethod } from 'blockchain/ethereum'
 import { useWalletsData } from 'features/wallet'
 import * as React from 'react'
 

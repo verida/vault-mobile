@@ -1,16 +1,16 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import {
-  ChainMetadatas,
-  maybeParseCaip,
-  SupportedCaipProtocolStandard,
-} from 'features/caip'
-import {
   getNearAccountId,
   NearAccount,
   nearDoesAccountExist,
   nearInstantiateAccount,
   throwIfNotNearTestnet,
-} from 'features/near'
+} from 'blockchain/near'
+import {
+  ChainMetadatas,
+  maybeParseCaip,
+  SupportedCaipProtocolStandard,
+} from 'features/caip'
 import { useWalletsData } from 'features/wallet'
 import { keyStores, utils } from 'near-api-js'
 

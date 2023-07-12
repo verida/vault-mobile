@@ -1,5 +1,5 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { NearSigningMethod } from 'features/near'
+import { NearSigningMethod } from 'blockchain/near'
 import { transactions } from 'near-api-js/lib'
 import * as React from 'react'
 

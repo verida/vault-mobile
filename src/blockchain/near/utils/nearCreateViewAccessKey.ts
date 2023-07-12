@@ -1,6 +1,7 @@
-import { NearAccountPointer } from 'features/near'
 import { providers } from 'near-api-js'
 import { AccessKeyView } from 'near-api-js/lib/providers/provider'
+
+import { NearAccountPointer } from '../@types'
 
 export function nearCreateViewAccessKey({
   provider,

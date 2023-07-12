@@ -1,6 +1,5 @@
-import { getNearAccountId } from 'features/near'
-
 import { NearAccountPointer, NearTransaction } from '../@types'
+import { getNearAccountId } from './getNearAccountId'
 
 export function nearMaybeAccountForTransactionSignatory({
   nearAccountPointers,

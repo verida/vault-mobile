@@ -1,5 +1,6 @@
-import { NearAccount } from 'features/near'
 import { InMemorySigner, transactions } from 'near-api-js'
+
+import { NearAccount } from '../@types'
 
 export const nearSignTransactions = async ({
   nearAccount,

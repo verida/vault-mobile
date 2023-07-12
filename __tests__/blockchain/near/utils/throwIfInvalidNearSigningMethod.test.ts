@@ -1,7 +1,7 @@
 import 'jest'
 
-import { NearSigningMethod } from 'features/near/@types'
-import { throwIfInvalidNearSigningMethod } from 'features/near/utils/throwIfInvalidNearSigningMethod'
+import { NearSigningMethod } from 'blockchain/near/@types'
+import { throwIfInvalidNearSigningMethod } from 'blockchain/near/utils/throwIfInvalidNearSigningMethod'
 import { $enum } from 'ts-enum-util'
 
 describe('throwIfInvalidNearSigningMethod', () => {

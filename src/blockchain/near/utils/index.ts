@@ -1,4 +1,5 @@
 export * from './getNearAccountId'
+export * from './nearCreateAction'
 export * from './nearCreateViewAccessKey'
 export * from './nearDoesAccountExist'
 export * from './nearCreateTransactions'

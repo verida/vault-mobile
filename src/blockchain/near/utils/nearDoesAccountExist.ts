@@ -4,9 +4,9 @@ import {
   ParsedCaipType,
   SupportedCaipProtocolStandard,
 } from 'features/caip'
-import { NearAccountPointer } from 'features/near'
 import { providers } from 'near-api-js'
 
+import { NearAccountPointer } from '../@types'
 import { nearCreateViewAccessKey } from './nearCreateViewAccessKey'
 
 export async function nearDoesAccountExist({
