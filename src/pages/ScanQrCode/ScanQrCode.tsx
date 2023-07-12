@@ -1,7 +1,7 @@
 import { useClipboard } from '@react-native-community/clipboard'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
-import { usePolygonId } from 'features/polygonid'
+import { isPolygonIdQrCodeMessage, usePolygonId } from 'features/polygonid'
 import {
   isWalletConnectConnection,
   useWalletConnectContext,
@@ -24,9 +24,7 @@ function ScanQrCode(
 ) {
   const { navigation, route } = props
 
-  const isEnabled = React.useRef<boolean>(true)
-
-  //const [enabled, setEnabled] = useState(true)
+  const [enabled, setEnabled] = useState(true)
   const [isFlashOn, setIsFlashOn] = useState(false)
   const handleDeeplink = useDeeplink(navigation as any)
 
@@ -38,7 +36,9 @@ function ScanQrCode(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [maybeClipboardContent] = __DEV__ ? useClipboard() : []
 
-  useEffect(() => void (isEnabled.current = true), [navigation])
+  useEffect(() => {
+    setEnabled(true)
+  }, [navigation])
 
   const toggleFlash = useCallback(
     () => setIsFlashOn((prevState) => !prevState),
@@ -52,11 +52,15 @@ function ScanQrCode(
 
   const handleQrCode = React.useCallback(
     async (data: string) => {
-      if (!isEnabled.current) return
+      if (!enabled) {
+        return
+      }
 
-      isEnabled.current = false
+      setEnabled(false)
 
-      setTimeout(() => (isEnabled.current = true), WAIT_TIME)
+      setTimeout(() => {
+        setEnabled(true)
+      }, WAIT_TIME)
 
       if (route.params.onReadQRCode) {
         route.params.onReadQRCode(data)
@@ -67,9 +71,8 @@ function ScanQrCode(
       if (isWalletConnectConnection(data))
         return Promise.all([onRequestConnect(data), navigation.goBack()])
 
-      // PolygonId
-      // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
-      if (String(data).match('did:polygonid:polygon')) {
+      // Polygon ID
+      if (isPolygonIdQrCodeMessage(data)) {
         navigation.goBack()
         handlePolygonIdData(data)
         return
@@ -96,6 +99,7 @@ function ScanQrCode(
       handleDeeplink(data)
     },
     [
+      enabled,
       handleDeeplink,
       handlePolygonIdData,
       navigation,

@@ -1,6 +1,6 @@
 // TODO: Get these values from the Polygon ID SDK once the tree-shaking and BigInt issue is resolved
 
-const IDEN3_PROTOCOL = 'https://iden3-communication.io/'
+export const IDEN3_PROTOCOL = 'https://iden3-communication.io/'
 /**
  * Constants for Iden3 protocol
  */
