@@ -80,14 +80,25 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           web3wallet: IWeb3Wallet,
           proposal: Web3WalletTypes.EventArguments['session_proposal']
         ) => {
-          if (!isSessionProposalSupported(proposal))
-            return Promise.all([
-              debouncedSnackbar('Sorry, this chain is not yet supported.'),
-              web3wallet.rejectSession({
-                id: proposal.id,
-                reason: getSdkError('UNSUPPORTED_ACCOUNTS'),
-              }),
-            ])
+          if (!isSessionProposalSupported(proposal)) {
+            Sentry.captureException(
+              new Error(
+                `Encountered unsupported WalletConnect proposal. (${JSON.stringify(
+                  proposal?.params?.requiredNamespaces || []
+                )})`
+              )
+            )
+
+            Alert.alert(
+              'Unable to connect',
+              `The required chains requested by this dApp are not yet supported.`
+            )
+
+            return web3wallet.rejectSession({
+              id: proposal.id,
+              reason: getSdkError('UNSUPPORTED_ACCOUNTS'),
+            })
+          }
 
           // Check if there are caip typed.
           return showModal(
@@ -98,7 +109,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
             />
           )
         },
-        [debouncedSnackbar, isSessionProposalSupported, showModal]
+        [isSessionProposalSupported, showModal]
       ),
       onSessionDelete: React.useCallback(
         async (web3wallet) => {
