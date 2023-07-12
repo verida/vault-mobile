@@ -59,6 +59,8 @@ const DEFAULT_ENVIRONMENT = {
     rpcUrl:
       'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN',
   },
+  WALLETCONNECT_PROJECT_ID: '1890472fb88366dd4046858b11e705cd',
+  WALLETCONNECT_RELAY_URL: 'wss://relay.walletconnect.com',
 } as const
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {

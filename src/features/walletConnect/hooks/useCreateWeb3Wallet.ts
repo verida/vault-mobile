@@ -4,11 +4,7 @@ import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import * as React from 'react'
 
-const WALLETCONNECT_PROJECT_ID_SHOULD_BE_ENVIRONMENT_VARIABLE =
-  '1890472fb88366dd4046858b11e705cd'
-
-const WALLETCONNECT_RELAY_URL_SHOULD_BE_ENVIRONMENT_VARIABLE =
-  'wss://relay.walletconnect.com'
+import Config from '../../../config/environment'
 
 // TODO: Should be a function of config.
 const defaultMetadata: AuthClientTypes.Metadata = {
@@ -63,8 +59,8 @@ export function useCreateWeb3Wallet({
           setState(loadingState)
 
           const core = new Core({
-            projectId: WALLETCONNECT_PROJECT_ID_SHOULD_BE_ENVIRONMENT_VARIABLE,
-            relayUrl: WALLETCONNECT_RELAY_URL_SHOULD_BE_ENVIRONMENT_VARIABLE,
+            projectId: Config.WALLETCONNECT_PROJECT_ID,
+            relayUrl: Config.WALLETCONNECT_RELAY_URL,
           })
 
           const web3wallet = await Web3Wallet.init({
