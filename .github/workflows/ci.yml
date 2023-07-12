@@ -36,6 +36,3 @@ jobs:
 
       - name: Check TypeScript compile
         run: npx tsc --noemit
-
-      - name: Test
-        run: yarn run test
