@@ -30,6 +30,16 @@ const ethereumGoerli: ChainMetadata<SupportedCaipProtocolStandard.EIP_155> = {
   rpc: `https://goerli.infura.io/v3/${INFURA_API_KEY}`,
 }
 
+// For now, treat as the single source of truth for chain information - evaluate all metadata from here.
+const ethereumSepolia: ChainMetadata<SupportedCaipProtocolStandard.EIP_155> = {
+  standard: SupportedCaipProtocolStandard.EIP_155,
+  chainId: '511155111',
+  name: 'Ethereum Sepolia',
+  logo: '/chain-logos/eip155-1.png',
+  rgb: '99, 125, 234',
+  rpc: `https://sepolia.infura.io/v3/${INFURA_API_KEY}`,
+}
+
 const polygonMumbai: ChainMetadata<SupportedCaipProtocolStandard.EIP_155> = {
   standard: SupportedCaipProtocolStandard.EIP_155,
   chainId: '80001',
@@ -74,7 +84,9 @@ export const SUPPORTED_CHAINS: Record<
 > = Object.freeze(
   Object.fromEntries(
     [
+      // TODO: All of these need to be inferred by the WalletProvider.
       ethereumGoerli,
+      ethereumSepolia,
       polygonMumbai,
       optimismGoerli,
       avalancheFuji,
