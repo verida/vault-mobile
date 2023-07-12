@@ -1,20 +1,20 @@
 import { $enum } from 'ts-enum-util'
 
-import { EthereumSigningMethod } from '../@types'
+import { EthereumRpcMethod } from '../@types'
 
-export const isValidEthereumSigningMethod = (
+export const isValidEthereumRpcMethod = (
   maybeEthereumSigningMethod: string | undefined
-): maybeEthereumSigningMethod is EthereumSigningMethod => {
+): maybeEthereumSigningMethod is EthereumRpcMethod => {
   if (typeof maybeEthereumSigningMethod !== 'string') return false
 
-  return [...$enum(EthereumSigningMethod).values()]
+  return [...$enum(EthereumRpcMethod).values()]
     .map(String)
     .includes(maybeEthereumSigningMethod)
 }
 
-export function throwIfInvalidEthereumSigningMethod(
+export function throwIfInvalidEthereumRpcMethod(
   maybeEthereumSigningMethod: string | undefined
-): maybeEthereumSigningMethod is EthereumSigningMethod {
+): maybeEthereumSigningMethod is EthereumRpcMethod {
   if (
     typeof maybeEthereumSigningMethod !== 'string' ||
     !maybeEthereumSigningMethod.length
@@ -25,7 +25,7 @@ export function throwIfInvalidEthereumSigningMethod(
       )}".`
     )
 
-  if (!isValidEthereumSigningMethod(maybeEthereumSigningMethod))
+  if (!isValidEthereumRpcMethod(maybeEthereumSigningMethod))
     throw new Error(
       `"${maybeEthereumSigningMethod}" is not a valid ethereum signing method.`
     )

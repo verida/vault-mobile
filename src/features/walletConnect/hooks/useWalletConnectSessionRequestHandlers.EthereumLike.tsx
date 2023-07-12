@@ -1,6 +1,6 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
-import { EthereumSigningMethod } from 'features/ethereum'
+import { EthereumRpcMethod } from 'features/ethereum'
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
@@ -83,7 +83,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
-      [EthereumSigningMethod.PERSONAL_SIGN]: ({
+      [EthereumRpcMethod.PERSONAL_SIGN]: ({
         request,
         rpc,
         web3wallet,
@@ -97,7 +97,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
           }),
           params: request.params.request.params,
         }),
-      [EthereumSigningMethod.ETH_SIGN]: ({
+      [EthereumRpcMethod.ETH_SIGN]: ({
         request,
         rpc,
         web3wallet,
@@ -111,7 +111,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
           }),
           params: request.params.request.params,
         }),
-      [EthereumSigningMethod.ETH_SIGN_TRANSACTION]: async ({
+      [EthereumRpcMethod.ETH_SIGN_TRANSACTION]: async ({
         rpc,
         request,
         web3wallet,
@@ -125,7 +125,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
         const signTransaction = request.params.request.params[0]
         return wallet.signTransaction(signTransaction)
       },
-      [EthereumSigningMethod.ETH_SIGN_TYPED_DATA]: ({
+      [EthereumRpcMethod.ETH_SIGN_TYPED_DATA]: ({
         request,
         rpc,
         web3wallet,
@@ -139,7 +139,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
             web3wallet,
           }),
         }),
-      [EthereumSigningMethod.ETH_SIGN_TYPED_DATA_V3]: ({
+      [EthereumRpcMethod.ETH_SIGN_TYPED_DATA_V3]: ({
         request,
         rpc,
         web3wallet,
@@ -153,7 +153,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
             web3wallet,
           }),
         }),
-      [EthereumSigningMethod.ETH_SIGN_TYPED_DATA_V4]: ({
+      [EthereumRpcMethod.ETH_SIGN_TYPED_DATA_V4]: ({
         request,
         rpc,
         web3wallet,
@@ -168,7 +168,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
           }),
         }),
       // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L21
-      [EthereumSigningMethod.ETH_SEND_RAW_TRANSACTION]: async ({
+      [EthereumRpcMethod.ETH_SEND_RAW_TRANSACTION]: async ({
         rpc,
         request,
         web3wallet,
@@ -186,10 +186,10 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
         // return wallet.sendTransaction(request.params.request.params[0])
 
         throw new Error(
-          `"${EthereumSigningMethod.ETH_SEND_RAW_TRANSACTION}" is not yet supported.`
+          `"${EthereumRpcMethod.ETH_SEND_RAW_TRANSACTION}" is not yet supported.`
         )
       },
-      [EthereumSigningMethod.ETH_SEND_TRANSACTION]: async ({
+      [EthereumRpcMethod.ETH_SEND_TRANSACTION]: async ({
         request,
         rpc,
         web3wallet,

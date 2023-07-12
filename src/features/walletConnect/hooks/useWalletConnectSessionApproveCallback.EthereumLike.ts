@@ -1,4 +1,4 @@
-import { throwIfInvalidEthereumSigningMethod } from 'features/ethereum'
+import { throwIfInvalidEthereumRpcMethod } from 'features/ethereum'
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
 
@@ -29,7 +29,7 @@ export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
 
       const method = request?.params?.request?.method
 
-      if (!throwIfInvalidEthereumSigningMethod(method)) return
+      if (!throwIfInvalidEthereumRpcMethod(method)) return
 
       const { [method]: handle } = handlers
 

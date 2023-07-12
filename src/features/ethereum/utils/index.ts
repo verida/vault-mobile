@@ -1,1 +1,1 @@
-export * from './throwIfInvalidEthereumSigningMethod'
+export * from './throwIfInvalidEthereumRpcMethod'

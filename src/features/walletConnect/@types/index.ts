@@ -1,7 +1,7 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { SupportedCaipProtocolStandard } from 'features/caip'
-import type { EthereumSigningMethod } from 'features/ethereum'
+import type { EthereumRpcMethod } from 'features/ethereum'
 import type { NearSigningMethod } from 'features/near'
 
 export type ActiveSessions = Awaited<
@@ -44,7 +44,7 @@ export type NearSessionRequestHandlers = {
 }
 
 export type EthereumSessionRequestHandlers = {
-  readonly [key in EthereumSigningMethod]: WalletConnectSessionRequestCallback
+  readonly [key in EthereumRpcMethod]: WalletConnectSessionRequestCallback
 }
 
 export type SupportedCaipProtocolSessionHandlers = {

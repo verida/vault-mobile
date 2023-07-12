@@ -1,5 +1,5 @@
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-v2/src/data/EIP155Data.ts#L95
-export enum EthereumSigningMethod {
+export enum EthereumRpcMethod {
   PERSONAL_SIGN = 'personal_sign',
   ETH_SIGN = 'eth_sign',
   ETH_SIGN_TRANSACTION = 'eth_signTransaction',
