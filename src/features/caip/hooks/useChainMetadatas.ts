@@ -1,4 +1,5 @@
 import {
+  ChainMetadatas,
   isSupportedCaipStandard,
   maybeParseCaip,
   stringifyCaip,
@@ -24,7 +25,7 @@ type State = Readonly<
   | { loading: true }
   | {
       loading: false
-      result: Record<string, ChainMetadata<SupportedCaipProtocolStandard>>
+      result: ChainMetadatas
     }
   | { loading: false; error: Error }
 >

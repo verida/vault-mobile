@@ -19,3 +19,8 @@ export type ChainMetadata<Standard extends SupportedCaipProtocolStandard> =
     readonly rgb: string
     readonly rpc: string
   }
+
+export type ChainMetadatas = Record<
+  string,
+  ChainMetadata<SupportedCaipProtocolStandard>
+>
