@@ -4,7 +4,7 @@ import {
   maybeParseCaip,
   stringifyCaip,
 } from 'features/caip'
-import { walletsApi } from 'features/wallets'
+import { walletsApi } from 'features/cryptoWallet'
 import * as React from 'react'
 import Config from 'react-native-config'
 

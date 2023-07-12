@@ -6,7 +6,7 @@ import { Spacer } from 'components'
 import {
   useMaybeSelectedWallet,
   useVeridaWalletAccountDropdownOptions,
-} from 'features/wallet'
+} from 'features/cryptoWallet'
 import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'

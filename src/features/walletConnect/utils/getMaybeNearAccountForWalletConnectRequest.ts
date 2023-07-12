@@ -11,7 +11,7 @@ import {
   maybeParseCaip,
   SupportedCaipProtocolStandard,
 } from 'features/caip'
-import { useWalletsData } from 'features/wallet'
+import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'

@@ -7,7 +7,7 @@ import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import {
   useMaybeSelectedWallet,
   veridaWalletAccountsToDropdownOptions,
-} from 'features/wallet'
+} from 'features/cryptoWallet'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'

@@ -18,7 +18,7 @@ import {
   getMaybeChainMetadatas,
   useChainMetadatas,
 } from 'features/caip'
-import { useWalletsData } from 'features/wallet'
+import { useWalletsData } from 'features/cryptoWallet'
 import { getNearAccountForWalletConnectRequestOrThrow } from 'features/walletConnect'
 import { providers, transactions } from 'near-api-js'
 import * as React from 'react'

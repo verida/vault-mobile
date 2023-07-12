@@ -1,5 +1,5 @@
 import { throwIfInvalidEip155RpcMethod } from 'blockchain/eip155'
-import { useWalletsData } from 'features/wallet'
+import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'

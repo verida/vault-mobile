@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
-import { walletsApi } from 'features/wallets'
+import { walletsApi } from 'features/cryptoWallet'
 import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
