@@ -6,7 +6,6 @@ import * as React from 'react'
 
 import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
 import { extractWalletConnectRpcOrThrow } from '../utils'
-import { useWalletConnectSessionApproveCallback } from './useWalletConnectSessionApproveCallback'
 import { useWalletConnectSessionRejectCallback } from './useWalletConnectSessionRejectCallback'
 
 // Acts as a multiplexer for WalletConnect session requests. It determines which
@@ -17,7 +16,8 @@ export const useWalletConnectSessionRequestCallback = (): ((
 ) => void) => {
   const { showModal } = useModal()
 
-  const approve = useWalletConnectSessionApproveCallback()
+  // We could also optionally automatically approve calls here if needed:
+  //const approve = useWalletConnectSessionApproveCallback()
   const reject = useWalletConnectSessionRejectCallback()
 
   return React.useCallback(
@@ -50,6 +50,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
         return reject(web3wallet, request, e)
       }
     },
-    [approve, reject, showModal]
+    [reject, showModal]
   )
 }
