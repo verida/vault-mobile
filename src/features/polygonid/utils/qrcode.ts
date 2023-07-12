@@ -2,7 +2,14 @@ import type {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
 } from '@0xpolygonid/js-sdk'
-import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
+import {
+  IDEN3_PROTOCOL,
+  PROTOCOL_MESSAGE_TYPE,
+} from 'features/polygonid/constants'
+
+export function isPolygonIdQrCodeMessage(qrCodeMessage: string): boolean {
+  return !!qrCodeMessage?.match(IDEN3_PROTOCOL)?.length
+}
 
 export function parseQrCodeMessage(
   qrCodeMessage: string
