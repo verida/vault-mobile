@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { walletsApi } from 'features/wallets'
+import { walletsApi } from 'features/cryptoWallet'
 
 const s = (state) => state.main
 
