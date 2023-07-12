@@ -14,6 +14,7 @@ import {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
   Auth: undefined
@@ -94,7 +95,7 @@ export type MainStackParams = {
   Networks: undefined
   StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
-  WalletConnectActiveSessionDetails: { walletConnectSessionKey: string }
+  WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
   Success: undefined
 

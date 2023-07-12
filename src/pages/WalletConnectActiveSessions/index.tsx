@@ -1,5 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import {
   useWalletConnectContext,
   WalletConnectSessionItem,
@@ -14,14 +12,14 @@ import NavigationHeader, {
 } from 'components/Navigation/NavigationHeader'
 import { Spacer } from 'components/Spacer'
 import Text from 'components/Text'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
 const leftIcon: HeaderProps['left'] = { icon: 'back' }
 
 export const WalletConnectActiveSessions = React.memo(
-  function WalletConnectActiveSessions(): JSX.Element {
-    const navigation =
-      useNavigation<NativeStackNavigationProp<MainStackParams>>()
+  function WalletConnectActiveSessions({
+    navigation,
+  }: MainStackScreenProps<'WalletConnectActiveSessions'>): JSX.Element {
     const { activeSessions: defaultActiveSessions } = useWalletConnectContext()
 
     const activeSessions = Object.keys(defaultActiveSessions)
