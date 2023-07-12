@@ -1,4 +1,4 @@
-import { throwIfInvalidNearSigningMethod } from 'blockchain/near'
+import { throwIfInvalidNearRpcMethod } from 'blockchain/near'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
@@ -39,7 +39,7 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
 
       const method = request?.params?.request?.method
 
-      if (!throwIfInvalidNearSigningMethod(method)) return
+      if (!throwIfInvalidNearRpcMethod(method)) return
 
       const { [method]: handle } = nearSessionRequestHandlers
 

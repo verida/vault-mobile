@@ -1,20 +1,20 @@
 import { $enum } from 'ts-enum-util'
 
-import { NearSigningMethod } from '../@types'
+import { NearRpcMethod } from '../@types'
 
 export const isValidNearSigningMethod = (
   maybeNearSigningMethod: string | undefined
-): maybeNearSigningMethod is NearSigningMethod => {
+): maybeNearSigningMethod is NearRpcMethod => {
   if (typeof maybeNearSigningMethod !== 'string') return false
 
-  return [...$enum(NearSigningMethod).values()]
+  return [...$enum(NearRpcMethod).values()]
     .map(String)
     .includes(maybeNearSigningMethod)
 }
 
-export function throwIfInvalidNearSigningMethod(
+export function throwIfInvalidNearRpcMethod(
   maybeNearSigningMethod: string | undefined
-): maybeNearSigningMethod is NearSigningMethod {
+): maybeNearSigningMethod is NearRpcMethod {
   if (
     typeof maybeNearSigningMethod !== 'string' ||
     !maybeNearSigningMethod.length

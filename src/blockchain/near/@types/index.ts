@@ -13,7 +13,7 @@ export type NearAccount = NearAccountPointer & {
   readonly keystore: keyStores.KeyStore
 }
 
-export enum NearSigningMethod {
+export enum NearRpcMethod {
   NEAR_SIGN_IN = 'near_signIn',
   NEAR_SIGN_OUT = 'near_signOut',
   NEAR_GET_ACCOUNTS = 'near_getAccounts',

@@ -4,9 +4,9 @@ import {
   nearCreateTransactions,
   nearGetAccounts,
   nearMaybeAccountForTransactionSignatory,
+  NearRpcMethod,
   nearSignAndSendTransactions,
   nearSignIn,
-  NearSigningMethod,
   nearSignOut,
   nearSignTransactions,
   NearTransaction,
@@ -58,7 +58,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
 
   return React.useMemo<NearSessionRequestHandlers>(
     () => ({
-      [NearSigningMethod.NEAR_SIGN_IN]: async ({
+      [NearRpcMethod.NEAR_SIGN_IN]: async ({
         request,
         rpc,
         web3wallet,
@@ -92,7 +92,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
           provider,
         })
       },
-      [NearSigningMethod.NEAR_SIGN_OUT]: async ({
+      [NearRpcMethod.NEAR_SIGN_OUT]: async ({
         request,
         rpc,
         web3wallet,
@@ -120,7 +120,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
           provider,
         })
       },
-      [NearSigningMethod.NEAR_GET_ACCOUNTS]: async (
+      [NearRpcMethod.NEAR_GET_ACCOUNTS]: async (
         params: WalletConnectSessionRequestCallbackParams
       ) =>
         walletConnectSessionRequestToNearAccountPointers({
@@ -128,7 +128,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
           params,
           walletsData,
         }),
-      [NearSigningMethod.NEAR_SIGN_TRANSACTION]: async ({
+      [NearRpcMethod.NEAR_SIGN_TRANSACTION]: async ({
         web3wallet,
         request,
       }: WalletConnectSessionRequestCallbackParams) => {
@@ -150,7 +150,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
 
         return signedTransaction.encode()
       },
-      [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTION]: async (
+      [NearRpcMethod.NEAR_SIGN_AND_SEND_TRANSACTION]: async (
         params: WalletConnectSessionRequestCallbackParams
       ) => {
         const { request, rpc, web3wallet } = params
@@ -215,7 +215,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
 
         return result
       },
-      [NearSigningMethod.NEAR_SIGN_TRANSACTIONS]: async ({
+      [NearRpcMethod.NEAR_SIGN_TRANSACTIONS]: async ({
         web3wallet,
         request,
       }: WalletConnectSessionRequestCallbackParams) => {
@@ -238,7 +238,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
           signedTransaction.encode()
         )
       },
-      [NearSigningMethod.NEAR_SIGN_AND_SEND_TRANSACTIONS]: async (
+      [NearRpcMethod.NEAR_SIGN_AND_SEND_TRANSACTIONS]: async (
         params: WalletConnectSessionRequestCallbackParams
       ) => {
         const { rpc, request } = params

@@ -1,5 +1,5 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { NearSigningMethod } from 'blockchain/near'
+import { NearRpcMethod } from 'blockchain/near'
 import { transactions } from 'near-api-js/lib'
 import * as React from 'react'
 
@@ -93,7 +93,7 @@ export function useWalletConnectDataFormattingNearLike() {
       const { params: data, method } = params.request
 
       switch (method) {
-        case NearSigningMethod.NEAR_SIGN_TRANSACTION: {
+        case NearRpcMethod.NEAR_SIGN_TRANSACTION: {
           const { transaction, ...extras } = data
           return {
             ...extras,
@@ -101,7 +101,7 @@ export function useWalletConnectDataFormattingNearLike() {
           }
         }
 
-        case NearSigningMethod.NEAR_SIGN_TRANSACTIONS: {
+        case NearRpcMethod.NEAR_SIGN_TRANSACTIONS: {
           const { transactions, ...extras } = data
           return {
             ...extras,
