@@ -10,24 +10,23 @@ import * as React from 'react'
 
 import { SupportedCaipProtocolSessionHandlers } from '../@types'
 import { extractWalletConnectRpcOrThrow, resolveSessionRequest } from '../utils'
-import { useWalletConnectSessionApproveCallbackEthereumLike } from './useWalletConnectSessionApproveCallback.EthereumLike'
-import { useWalletConnectSessionApproveCallbackNearLike } from './useWalletConnectSessionApproveCallback.NearLike'
+import { useWalletConnectSessionApproveCallbackEip155 } from './useWalletConnectSessionApproveCallback.Eip155'
+import { useWalletConnectSessionApproveCallbackNear } from './useWalletConnectSessionApproveCallback.Near'
 
 export function useWalletConnectSessionApproveCallback() {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const ethereumLikeApprove =
-    useWalletConnectSessionApproveCallbackEthereumLike()
-  const nearLikeApprove = useWalletConnectSessionApproveCallbackNearLike()
+  const eip155Approve = useWalletConnectSessionApproveCallbackEip155()
+  const nearApprove = useWalletConnectSessionApproveCallbackNear()
 
   // For each supported protocol, a corresponding handler implementation *must* be provided.
   const supportedStandardHandlers: SupportedCaipProtocolSessionHandlers =
     React.useMemo(
       () => ({
-        [SupportedCaipProtocolStandard.EIP_155]: ethereumLikeApprove,
-        [SupportedCaipProtocolStandard.NEAR]: nearLikeApprove,
+        [SupportedCaipProtocolStandard.EIP_155]: eip155Approve,
+        [SupportedCaipProtocolStandard.NEAR]: nearApprove,
       }),
-      [ethereumLikeApprove, nearLikeApprove]
+      [eip155Approve, nearApprove]
     )
 
   const chainSpecificApproveOrThrow = React.useCallback(

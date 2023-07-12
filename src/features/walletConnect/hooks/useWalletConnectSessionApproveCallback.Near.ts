@@ -5,16 +5,16 @@ import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
 import { getMaybeNearAccountForWalletConnectRequest } from '../utils'
-import { useWalletConnectSessionRequestHandlersNearLike } from './useWalletConnectSessionRequestHandlers.NearLike'
+import { useWalletConnectSessionRequestHandlersNear } from './useWalletConnectSessionRequestHandlers.Near'
 
-export const useWalletConnectSessionApproveCallbackNearLike = (): ((
+export const useWalletConnectSessionApproveCallbackNear = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
   const walletsData = useWalletsData()
 
   const nearSessionRequestHandlers =
-    useWalletConnectSessionRequestHandlersNearLike()
+    useWalletConnectSessionRequestHandlersNear()
 
   return React.useCallback(
     async ({

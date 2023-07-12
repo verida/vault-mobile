@@ -51,7 +51,7 @@ const walletConnectSessionRequestToNearAccountPointers = async ({
   )
 }
 
-export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
+export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequestHandlers {
   const walletsData = useWalletsData()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())

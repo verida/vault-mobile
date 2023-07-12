@@ -1,5 +1,5 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { EthereumRpcMethod } from 'blockchain/ethereum'
+import { Eip155RpcMethod } from 'blockchain/eip155'
 import { ethers } from 'ethers'
 import { useWalletsData } from 'features/wallet'
 import * as React from 'react'
@@ -79,11 +79,11 @@ const shouldSignMessage = ({
 }) => wallet.signMessage(getSignParamsMessage(params))
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L37
-export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSessionRequestHandlers {
+export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionRequestHandlers {
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
-      [EthereumRpcMethod.PERSONAL_SIGN]: ({
+      [Eip155RpcMethod.PERSONAL_SIGN]: ({
         request,
         rpc,
         web3wallet,
@@ -97,7 +97,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
           }),
           params: request.params.request.params,
         }),
-      [EthereumRpcMethod.ETH_SIGN]: ({
+      [Eip155RpcMethod.ETH_SIGN]: ({
         request,
         rpc,
         web3wallet,
@@ -111,7 +111,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
           }),
           params: request.params.request.params,
         }),
-      [EthereumRpcMethod.ETH_SIGN_TRANSACTION]: async ({
+      [Eip155RpcMethod.ETH_SIGN_TRANSACTION]: async ({
         rpc,
         request,
         web3wallet,
@@ -125,7 +125,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
         const signTransaction = request.params.request.params[0]
         return wallet.signTransaction(signTransaction)
       },
-      [EthereumRpcMethod.ETH_SIGN_TYPED_DATA]: ({
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA]: ({
         request,
         rpc,
         web3wallet,
@@ -139,7 +139,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
             web3wallet,
           }),
         }),
-      [EthereumRpcMethod.ETH_SIGN_TYPED_DATA_V3]: ({
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V3]: ({
         request,
         rpc,
         web3wallet,
@@ -153,7 +153,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
             web3wallet,
           }),
         }),
-      [EthereumRpcMethod.ETH_SIGN_TYPED_DATA_V4]: ({
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V4]: ({
         request,
         rpc,
         web3wallet,
@@ -168,7 +168,7 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
           }),
         }),
       // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L21
-      [EthereumRpcMethod.ETH_SEND_RAW_TRANSACTION]: async ({
+      [Eip155RpcMethod.ETH_SEND_RAW_TRANSACTION]: async ({
         rpc,
         request,
         web3wallet,
@@ -186,10 +186,10 @@ export function useWalletConnectSessionRequestHandlersEthereumLike(): EthereumSe
         // return wallet.sendTransaction(request.params.request.params[0])
 
         throw new Error(
-          `"${EthereumRpcMethod.ETH_SEND_RAW_TRANSACTION}" is not yet supported.`
+          `"${Eip155RpcMethod.ETH_SEND_RAW_TRANSACTION}" is not yet supported.`
         )
       },
-      [EthereumRpcMethod.ETH_SEND_TRANSACTION]: async ({
+      [Eip155RpcMethod.ETH_SEND_TRANSACTION]: async ({
         request,
         rpc,
         web3wallet,

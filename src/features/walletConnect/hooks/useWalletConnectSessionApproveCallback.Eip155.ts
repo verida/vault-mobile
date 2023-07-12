@@ -1,18 +1,16 @@
-import { throwIfInvalidEthereumRpcMethod } from 'blockchain/ethereum'
+import { throwIfInvalidEip155RpcMethod } from 'blockchain/eip155'
 import { useWalletsData } from 'features/wallet'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
 import { getVeridaWalletAccountForWalletConnectRequestOrThrow } from '../utils'
-import { useWalletConnectSessionRequestHandlersEthereumLike } from './useWalletConnectSessionRequestHandlers.EthereumLike'
+import { useWalletConnectSessionRequestHandlersEip155 } from './useWalletConnectSessionRequestHandlers.Eip155'
 
-// TODO: rename EthereumLike to EIP155Like
-
-export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
+export const useWalletConnectSessionApproveCallbackEip155 = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
   const walletsData = useWalletsData()
-  const handlers = useWalletConnectSessionRequestHandlersEthereumLike()
+  const handlers = useWalletConnectSessionRequestHandlersEip155()
 
   return React.useCallback(
     async ({
@@ -29,7 +27,7 @@ export const useWalletConnectSessionApproveCallbackEthereumLike = (): ((
 
       const method = request?.params?.request?.method
 
-      if (!throwIfInvalidEthereumRpcMethod(method)) return
+      if (!throwIfInvalidEip155RpcMethod(method)) return
 
       const { [method]: handle } = handlers
 
