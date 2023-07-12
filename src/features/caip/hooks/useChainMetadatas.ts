@@ -55,6 +55,12 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   }
 }
 
+export function getMaybeChainMetadatas(state: State): ChainMetadatas {
+  if (state.loading || !('result' in state)) return {}
+
+  return state.result
+}
+
 // Transforms the ChainsList into executable provider configuration by WalletConnect.
 export function useChainMetadatas(): State {
   const { data, error: cause, isLoading } = useChainsListQuery({})

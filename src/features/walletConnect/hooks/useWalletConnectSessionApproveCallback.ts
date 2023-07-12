@@ -1,8 +1,10 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import {
   getChainMetadataByCaipTypeOrThrow,
+  getMaybeChainMetadatas,
   stringifyCaip,
   SupportedCaipProtocolStandard,
+  useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
 
@@ -12,6 +14,8 @@ import { useWalletConnectSessionApproveCallbackEthereumLike } from './useWalletC
 import { useWalletConnectSessionApproveCallbackNearLike } from './useWalletConnectSessionApproveCallback.NearLike'
 
 export function useWalletConnectSessionApproveCallback() {
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
   const ethereumLikeApprove =
     useWalletConnectSessionApproveCallbackEthereumLike()
   const nearLikeApprove = useWalletConnectSessionApproveCallbackNearLike()
@@ -31,12 +35,15 @@ export function useWalletConnectSessionApproveCallback() {
       web3wallet: IWeb3Wallet,
       request: Web3WalletTypes.EventArguments['session_request']
     ) => {
-      const { rpc, parsedCaipType } = extractWalletConnectRpcOrThrow(
-        web3wallet,
-        request
-      )
+      const { rpc, parsedCaipType } = extractWalletConnectRpcOrThrow({
+        chainMetadatas,
+        request,
+      })
 
-      const chainMetadata = getChainMetadataByCaipTypeOrThrow(parsedCaipType)
+      const chainMetadata = getChainMetadataByCaipTypeOrThrow(
+        chainMetadatas,
+        parsedCaipType
+      )
 
       if (!chainMetadata)
         throw new Error(
@@ -60,7 +67,7 @@ export function useWalletConnectSessionApproveCallback() {
 
       return maybeStandardHandler({ web3wallet, request, rpc })
     },
-    [supportedStandardHandlers]
+    [chainMetadatas, supportedStandardHandlers]
   )
 
   return React.useCallback(

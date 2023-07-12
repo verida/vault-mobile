@@ -1,4 +1,8 @@
-import { SupportedCaipProtocolStandard } from 'features/caip'
+import {
+  getMaybeChainMetadatas,
+  SupportedCaipProtocolStandard,
+  useChainMetadatas,
+} from 'features/caip'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
@@ -6,20 +10,21 @@ import { extractWalletConnectRpcOrThrow } from '../utils'
 import { useWalletConnectDataFormattingNearLike } from './useWalletConnectDataFormatting.NearLike'
 
 export function useWalletConnectDataFormatting() {
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
   const formatTransactionDataNearLike = useWalletConnectDataFormattingNearLike()
 
   const formatTransactionData = React.useCallback(
     ({
-      web3wallet,
       request,
     }: Pick<
       WalletConnectSessionRequestCallbackParams,
       'web3wallet' | 'request'
     >): Record<string, unknown> => {
-      const { parsedCaipType } = extractWalletConnectRpcOrThrow(
-        web3wallet,
-        request
-      )
+      const { parsedCaipType } = extractWalletConnectRpcOrThrow({
+        chainMetadatas,
+        request,
+      })
 
       const { standard } = parsedCaipType
 
@@ -28,7 +33,7 @@ export function useWalletConnectDataFormatting() {
 
       return request.params.request.params
     },
-    [formatTransactionDataNearLike]
+    [chainMetadatas, formatTransactionDataNearLike]
   )
 
   return { formatTransactionData }

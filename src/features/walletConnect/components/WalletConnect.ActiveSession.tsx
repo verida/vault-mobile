@@ -1,9 +1,11 @@
 import { Spacer } from 'components'
 import {
   CaipSupportedProtocolSpan,
+  getMaybeChainMetadatas,
   maybeParseCaip,
   ParsedCaipType,
   stringifyCaip,
+  useChainMetadatas,
 } from 'features/caip'
 import {
   WalletConnectButtonDisconnectSession,
@@ -52,6 +54,8 @@ export const WalletConnectActiveSession = React.memo(
         walletConnectSessionKey,
       })
 
+    const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
     return (
       <>
         <WalletConnectSessionInfoCard maybeActiveSession={maybeActiveSession} />
@@ -97,6 +101,7 @@ export const WalletConnectActiveSession = React.memo(
                       })
                       .flatMap((parsedCaipType: ParsedCaipType, i, orig) => [
                         <CaipSupportedProtocolSpan
+                          chainMetadatas={chainMetadatas}
                           key={stringifyCaip({
                             parsedCaipType,
                             suppressAddressComponent: false,

@@ -1,5 +1,10 @@
 import * as Sentry from '@sentry/react-native'
-import { getMaybeChainMetadataByCaipType, maybeParseCaip } from 'features/caip'
+import {
+  getMaybeChainMetadataByCaipType,
+  getMaybeChainMetadatas,
+  maybeParseCaip,
+  useChainMetadatas,
+} from 'features/caip'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
@@ -33,6 +38,8 @@ export const WalletConnectTransactionRequestModal = React.memo(
   }): JSX.Element {
     const { dismissModal } = useModal()
     const [loading, setLoading] = React.useState<boolean>(false)
+
+    const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
     const shouldApprove = useWalletConnectSessionApproveCallback()
     const shouldReject = useWalletConnectSessionRejectCallback()
@@ -87,7 +94,10 @@ export const WalletConnectTransactionRequestModal = React.memo(
 
     const maybeRelayProtocol = activeSession?.relay?.protocol
 
-    const maybeSupportedChain = getMaybeChainMetadataByCaipType(parsedCaip)
+    const maybeSupportedChain = getMaybeChainMetadataByCaipType(
+      chainMetadatas,
+      parsedCaip
+    )
 
     const maybeChainName = maybeSupportedChain?.name
 

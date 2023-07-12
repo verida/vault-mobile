@@ -1,9 +1,12 @@
 import {
   addressAgnosticIsCaipEqual,
+  ChainMetadatas,
+  getMaybeChainMetadatas,
   getSupportedCaipProtocolFriendlyName,
   isSupportedCaipStandard,
   maybeParseCaip,
   ParsedCaipType,
+  useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
 import { VeridaWalletAccount, VeridaWalletAccounts } from 'types'
@@ -13,10 +16,12 @@ import { Option } from 'components/Select'
 import { isWatchedWallet } from '../utils'
 
 export const veridaWalletAccountsToDropdownOptions = ({
+  chainMetadatas,
   maybeVeridaWalletAccounts,
   onlyMatchingCaipTypes,
   includesWatchedWallets,
 }: {
+  readonly chainMetadatas: ChainMetadatas
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
   readonly includesWatchedWallets: boolean
   readonly onlyMatchingCaipTypes: readonly ParsedCaipType[] | null
@@ -53,7 +58,10 @@ export const veridaWalletAccountsToDropdownOptions = ({
         label: veridaWalletAccount.address,
         value: veridaWalletAccount.address,
         disabled,
-        flag: getSupportedCaipProtocolFriendlyName(maybeParsedCaip),
+        flag: getSupportedCaipProtocolFriendlyName(
+          chainMetadatas,
+          maybeParsedCaip
+        ),
       }
 
       return [option]
@@ -70,13 +78,21 @@ export function useVeridaWalletAccountDropdownOptions({
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
   readonly onlyMatchingCaipTypes?: readonly ParsedCaipType[] | null
 }) {
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
   return React.useMemo<readonly Option[]>(
     () =>
       veridaWalletAccountsToDropdownOptions({
+        chainMetadatas,
         includesWatchedWallets,
         maybeVeridaWalletAccounts,
         onlyMatchingCaipTypes,
       }),
-    [maybeVeridaWalletAccounts, includesWatchedWallets, onlyMatchingCaipTypes]
+    [
+      chainMetadatas,
+      maybeVeridaWalletAccounts,
+      includesWatchedWallets,
+      onlyMatchingCaipTypes,
+    ]
   )
 }

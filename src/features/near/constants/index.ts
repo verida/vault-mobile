@@ -1,5 +1,6 @@
 import {
   addressAgnosticIsCaipEqual,
+  ChainMetadatas,
   getRpcUrlOrThrow,
   NEAR_TESTNET_CAIP,
   ParsedCaipType,
@@ -9,9 +10,11 @@ import {
 import { connect, keyStores } from 'near-api-js'
 
 export function getNearNetworkConfig({
+  chainMetadatas,
   keystore: keyStore,
   parsedCaipType,
 }: {
+  readonly chainMetadatas: ChainMetadatas
   readonly keystore: keyStores.KeyStore
   readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
 }): Parameters<typeof connect>[0] & {
@@ -35,7 +38,7 @@ export function getNearNetworkConfig({
   return {
     networkId, // i.e. "testnet"
     keyStore,
-    nodeUrl: getRpcUrlOrThrow(parsedCaipType),
+    nodeUrl: getRpcUrlOrThrow(chainMetadatas, parsedCaipType),
     walletUrl: 'https://wallet.testnet.near.org',
     helperUrl: 'https://helper.testnet.near.org',
     explorerUrl: 'https://explorer.testnet.near.org',

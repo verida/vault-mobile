@@ -1,3 +1,4 @@
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { throwIfInvalidNearSigningMethod } from 'features/near'
 import { useWalletsData } from 'hooks'
 import * as React from 'react'
@@ -9,6 +10,7 @@ import { useWalletConnectSessionRequestHandlersNearLike } from './useWalletConne
 export const useWalletConnectSessionApproveCallbackNearLike = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
   const walletsData = useWalletsData()
 
   const nearSessionRequestHandlers =
@@ -22,6 +24,7 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
     }: WalletConnectSessionRequestCallbackParams): Promise<unknown> => {
       const maybeNearAccount = await getMaybeNearAccountForWalletConnectRequest(
         {
+          chainMetadatas,
           web3wallet,
           request,
           walletsData,
@@ -42,6 +45,6 @@ export const useWalletConnectSessionApproveCallbackNearLike = (): ((
 
       return handle({ web3wallet, request, rpc })
     },
-    [nearSessionRequestHandlers, walletsData]
+    [chainMetadatas, nearSessionRequestHandlers, walletsData]
   )
 }

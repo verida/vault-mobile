@@ -1,13 +1,22 @@
+import { ChainMetadatas } from 'features/caip'
 import { connect, utils } from 'near-api-js'
 
 import { NearAccount } from '../@types'
 import { getNearNetworkConfig } from '../constants'
 import { nearDoesAccountExist } from './nearDoesAccountExist'
 
-export async function nearInstantiateAccount(nearAccount: NearAccount) {
-  const { accountId, publicKey, parsedCaipType } = nearAccount
+export async function nearInstantiateAccount({
+  chainMetadatas,
+  nearAccount,
+}: {
+  readonly chainMetadatas: ChainMetadatas
+  readonly nearAccount: NearAccount
+}) {
+  const { accountId, publicKey, parsedCaipType, keystore } = nearAccount
 
-  const connection = await connect(getNearNetworkConfig(nearAccount))
+  const connection = await connect(
+    getNearNetworkConfig({ chainMetadatas, keystore, parsedCaipType })
+  )
 
   const createdAccount = await connection.createAccount(
     accountId,
@@ -27,6 +36,7 @@ export async function nearInstantiateAccount(nearAccount: NearAccount) {
   await new Promise((resolve) => setTimeout(resolve, 5000))
 
   const doesExist = await nearDoesAccountExist({
+    chainMetadatas,
     nearAccountPointer: nearAccount,
     parsedCaipType,
   })

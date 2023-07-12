@@ -3,6 +3,7 @@ import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { veridaWalletAccountsToDropdownOptions } from 'features/wallet'
 import { useMaybeSelectedWallet, useModal } from 'hooks'
 import * as React from 'react'
@@ -40,6 +41,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   const { showModal } = useModal()
 
   const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const debouncedSnackbar = useDebouncedCallback(
     React.useCallback(
@@ -62,6 +64,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       const { length: maybeHasCompatibleAccounts } =
         veridaWalletAccountsToDropdownOptions({
+          chainMetadatas,
           maybeVeridaWalletAccounts,
           onlyMatchingCaipTypes,
           includesWatchedWallets: false,
@@ -69,7 +72,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       return Boolean(maybeHasCompatibleAccounts)
     },
-    [maybeVeridaWalletAccounts]
+    [maybeVeridaWalletAccounts, chainMetadatas]
   )
 
   const maybeWeb3Wallet = useMaybeWeb3Wallet(

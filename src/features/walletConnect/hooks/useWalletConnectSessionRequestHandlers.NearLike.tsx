@@ -1,5 +1,10 @@
 import { Buffer } from 'buffer'
 import {
+  ChainMetadatas,
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from 'features/caip'
+import {
   NearAccountPointer,
   nearCreateTransactions,
   nearGetAccounts,
@@ -28,13 +33,19 @@ import {
 
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
-const walletConnectSessionRequestToNearAccountPointers = async (
-  params: WalletConnectSessionRequestCallbackParams,
-  walletsData: ReturnType<typeof useWalletsData>
-): Promise<readonly NearAccountPointer[]> => {
+const walletConnectSessionRequestToNearAccountPointers = async ({
+  chainMetadatas,
+  params,
+  walletsData,
+}: {
+  readonly chainMetadatas: ChainMetadatas
+  readonly params: WalletConnectSessionRequestCallbackParams
+  readonly walletsData: ReturnType<typeof useWalletsData>
+}): Promise<readonly NearAccountPointer[]> => {
   return nearGetAccounts(
     await getNearAccountForWalletConnectRequestOrThrow({
       ...params,
+      chainMetadatas,
       walletsData,
     })
   )
@@ -42,6 +53,9 @@ const walletConnectSessionRequestToNearAccountPointers = async (
 
 export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionRequestHandlers {
   const walletsData = useWalletsData()
+
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
   return React.useMemo<NearSessionRequestHandlers>(
     () => ({
       [NearSigningMethod.NEAR_SIGN_IN]: async ({
@@ -55,6 +69,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
           request.params.request.params.permission
 
         const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          chainMetadatas,
           web3wallet,
           walletsData,
           request,
@@ -86,6 +101,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         const nearAccountPointers = request.params.request.params
 
         const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          chainMetadatas,
           request,
           walletsData,
           web3wallet,
@@ -107,7 +123,11 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
       [NearSigningMethod.NEAR_GET_ACCOUNTS]: async (
         params: WalletConnectSessionRequestCallbackParams
       ) =>
-        walletConnectSessionRequestToNearAccountPointers(params, walletsData),
+        walletConnectSessionRequestToNearAccountPointers({
+          chainMetadatas,
+          params,
+          walletsData,
+        }),
       [NearSigningMethod.NEAR_SIGN_TRANSACTION]: async ({
         web3wallet,
         request,
@@ -115,6 +135,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         const transactionData = request.params.request.params.transaction
 
         const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          chainMetadatas,
           web3wallet,
           request,
           walletsData,
@@ -140,8 +161,13 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         const { actions } = transaction
 
         const [nearAccountPointers, nearAccount] = await Promise.all([
-          walletConnectSessionRequestToNearAccountPointers(params, walletsData),
+          walletConnectSessionRequestToNearAccountPointers({
+            chainMetadatas,
+            params,
+            walletsData,
+          }),
           getNearAccountForWalletConnectRequestOrThrow({
+            chainMetadatas,
             web3wallet,
             request,
             walletsData,
@@ -194,6 +220,7 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         request,
       }: WalletConnectSessionRequestCallbackParams) => {
         const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
+          chainMetadatas,
           request,
           web3wallet,
           walletsData,
@@ -226,9 +253,14 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
           )
 
         const [nearAccountPointers, nearAccount] = await Promise.all([
-          walletConnectSessionRequestToNearAccountPointers(params, walletsData),
+          walletConnectSessionRequestToNearAccountPointers({
+            chainMetadatas,
+            params,
+            walletsData,
+          }),
           getNearAccountForWalletConnectRequestOrThrow({
             ...params,
+            chainMetadatas,
             walletsData,
           }),
         ])
@@ -275,6 +307,6 @@ export function useWalletConnectSessionRequestHandlersNearLike(): NearSessionReq
         })
       },
     }),
-    [walletsData]
+    [chainMetadatas, walletsData]
   )
 }

@@ -1,5 +1,9 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { maybeParseCaip, SupportedCaipProtocolStandard } from 'features/caip'
+import {
+  ChainMetadatas,
+  maybeParseCaip,
+  SupportedCaipProtocolStandard,
+} from 'features/caip'
 import {
   getNearAccountId,
   NearAccount,
@@ -14,10 +18,12 @@ import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVe
 
 // https://docs.near.org/tools/near-api-js/quick-reference#key-store
 export async function getMaybeNearAccountForWalletConnectRequest({
+  chainMetadatas,
   web3wallet,
   request,
   walletsData,
 }: {
+  readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
@@ -70,6 +76,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   }
 
   const doesAccountExist = await nearDoesAccountExist({
+    chainMetadatas,
     nearAccountPointer: nearAccount,
     parsedCaipType: maybeParsedCaip,
   })
@@ -81,23 +88,26 @@ export async function getMaybeNearAccountForWalletConnectRequest({
         `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
       )
 
-    await nearInstantiateAccount(nearAccount)
+    await nearInstantiateAccount({ chainMetadatas, nearAccount })
   }
 
   return nearAccount
 }
 
 export async function getNearAccountForWalletConnectRequestOrThrow({
+  chainMetadatas,
   web3wallet,
   request,
   walletsData,
 }: {
+  readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({
+      chainMetadatas,
       web3wallet,
       request,
       walletsData,

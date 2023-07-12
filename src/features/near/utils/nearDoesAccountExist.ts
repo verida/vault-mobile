@@ -1,4 +1,5 @@
 import {
+  ChainMetadatas,
   getRpcUrlOrThrow,
   ParsedCaipType,
   SupportedCaipProtocolStandard,
@@ -9,15 +10,17 @@ import { providers } from 'near-api-js'
 import { nearCreateViewAccessKey } from './nearCreateViewAccessKey'
 
 export async function nearDoesAccountExist({
+  chainMetadatas,
   nearAccountPointer,
   parsedCaipType,
 }: {
+  readonly chainMetadatas: ChainMetadatas
   readonly nearAccountPointer: NearAccountPointer
   // TODO: @cawfree should networkId be inside pointer? probably?
   readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
 }) {
   const provider = new providers.JsonRpcProvider(
-    getRpcUrlOrThrow(parsedCaipType)
+    getRpcUrlOrThrow(chainMetadatas, parsedCaipType)
   )
 
   try {
