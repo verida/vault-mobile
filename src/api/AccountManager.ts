@@ -438,7 +438,7 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
+        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
       })
 
       // Connect the Verida account to the Verida client
