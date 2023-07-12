@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
-import { usePolygonId } from 'features/polygonid'
+import { isPolygonIdQrCodeMessage, usePolygonId } from 'features/polygonid'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
@@ -71,9 +71,8 @@ function ScanQrCode(
       return
     }
 
-    // PolygonId
-    // Ex: `{"id":"c8fb4f92-3d5d-4634-b292-1d39a001f4dd","typ":"application/iden3comm-plain-json","type":"https://iden3-communication.io/authorization/1.0/request%22,%22thid%22:%22c8fb4f92-3d5d-4634-b292-1d39a001f4dd%22,%22body%22:%7B%22callbackUrl%22:%22https://self-hosted-demo-backend-platform.polygonid.me/api/callback?sessionId=858469%22,%22reason%22:%22test flow","scope":[]},"from":"did:polygonid:polygon:mumbai:2qDyy1kEo2AYcP3RT4XGea7BtxsY285szg6yP9SPrs"}`
-    if (data.match('did:polygonid:polygon')) {
+    // Polygon ID
+    if (isPolygonIdQrCodeMessage(data)) {
       navigation.goBack()
       handlePolygonIdData(data)
       return
