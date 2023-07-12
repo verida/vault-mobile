@@ -13,7 +13,7 @@
     "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
     "ios": "react-native run-ios --scheme 'Verida Vault Internal'",
     "web": "expo start --web",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/myApp/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",
