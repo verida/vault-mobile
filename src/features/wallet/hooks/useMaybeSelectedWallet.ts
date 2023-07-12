@@ -1,7 +1,7 @@
-import { useWalletsData } from 'hooks'
 import { VeridaWallet } from 'types'
 
-import { useMaybeSelectedWalletId } from 'hooks/useMaybeSelectedWalletId'
+import { useMaybeSelectedWalletId } from './useMaybeSelectedWalletId'
+import { useWalletsData } from './useWalletsData'
 
 export function useMaybeSelectedWallet(): VeridaWallet | undefined {
   const walletsData = useWalletsData()

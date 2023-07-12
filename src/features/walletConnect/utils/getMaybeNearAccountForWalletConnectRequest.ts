@@ -11,7 +11,7 @@ import {
   nearInstantiateAccount,
   throwIfNotNearTestnet,
 } from 'features/near'
-import { useWalletsData } from 'hooks'
+import { useWalletsData } from 'features/wallet'
 import { keyStores, utils } from 'near-api-js'
 
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'

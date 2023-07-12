@@ -1,5 +1,5 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { useWalletsData } from 'hooks'
+import { useWalletsData } from 'features/wallet'
 import { VeridaWalletAccount } from 'types'
 
 import { ActiveSession, ActiveSessions } from '../@types'

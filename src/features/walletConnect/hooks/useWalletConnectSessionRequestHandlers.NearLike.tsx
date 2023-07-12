@@ -18,8 +18,8 @@ import {
   throwIfNearAccountDoesNotMatchNearAccountPointer,
 } from 'features/near'
 import { nearCreateAction } from 'features/near/utils/nearCreateAction'
+import { useWalletsData } from 'features/wallet'
 import { getNearAccountForWalletConnectRequestOrThrow } from 'features/walletConnect'
-import { useWalletsData } from 'hooks'
 import { providers, transactions } from 'near-api-js'
 import * as React from 'react'
 

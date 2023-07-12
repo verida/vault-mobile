@@ -4,8 +4,11 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
-import { veridaWalletAccountsToDropdownOptions } from 'features/wallet'
-import { useMaybeSelectedWallet, useModal } from 'hooks'
+import {
+  useMaybeSelectedWallet,
+  veridaWalletAccountsToDropdownOptions,
+} from 'features/wallet'
+import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'

@@ -4,7 +4,7 @@ import {
   parseCaipOrThrow,
   stringifyCaip,
 } from 'features/caip'
-import { useWalletsData } from 'hooks'
+import { useWalletsData } from 'features/wallet'
 import { VeridaWallet, VeridaWalletAccount } from 'types'
 
 import { ActiveSession } from '../@types'

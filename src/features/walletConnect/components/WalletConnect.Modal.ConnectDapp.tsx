@@ -3,9 +3,12 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { Spacer } from 'components'
-import { useVeridaWalletAccountDropdownOptions } from 'features/wallet'
+import {
+  useMaybeSelectedWallet,
+  useVeridaWalletAccountDropdownOptions,
+} from 'features/wallet'
 import { ActiveSessions } from 'features/walletConnect'
-import { useMaybeSelectedWallet, useModal } from 'hooks'
+import { useModal } from 'hooks'
 import * as React from 'react'
 import {
   ActivityIndicator,

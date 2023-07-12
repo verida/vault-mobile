@@ -1,6 +1,6 @@
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { throwIfInvalidNearSigningMethod } from 'features/near'
-import { useWalletsData } from 'hooks'
+import { useWalletsData } from 'features/wallet'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
