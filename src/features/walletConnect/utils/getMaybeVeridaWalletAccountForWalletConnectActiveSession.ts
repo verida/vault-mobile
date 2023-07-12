@@ -1,9 +1,5 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import {
-  addressAgnosticIsCaipEqual,
-  parseCaipOrThrow,
-  stringifyCaip,
-} from 'features/caip'
+import { AccountId, ChainId } from 'caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { VeridaWallet, VeridaWalletAccount } from 'types'
 
@@ -20,7 +16,7 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
 }): VeridaWalletAccount | undefined {
   if (!activeSession) return undefined
 
-  const requiredCaip = request.params.chainId
+  const requiredCaip = new ChainId(request.params.chainId)
 
   const accounts: readonly string[] = Object.values(
     activeSession.namespaces
@@ -29,11 +25,10 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
     //       for example, an account for Ethereum Goerli and MultiverseX.
     //       Here, we ensure to only find a matching wallet instance which
     //       corresponds to the requested chain.
-    accountsWithinCaipNamespace.filter((accountWithinCaipNamespace) =>
-      addressAgnosticIsCaipEqual(
-        parseCaipOrThrow(requiredCaip),
-        parseCaipOrThrow(accountWithinCaipNamespace)
-      )
+    accountsWithinCaipNamespace.filter(
+      (accountWithinCaipNamespace) =>
+        requiredCaip.toString() ===
+        new AccountId(accountWithinCaipNamespace).chainId.toString()
     )
   )
 
@@ -45,22 +40,14 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
   if (maybeOtherAccounts.length)
     throw new Error(`Unable to determine which account is being selected.`)
 
-  const parsedCaipType = parseCaipOrThrow(maybeMatchingCaip)
+  const { address, chainId: target } = new AccountId(maybeMatchingCaip)
 
   // HACK: Enforce that wallet connect should provide us with a full qualified
   //       address.
-  const { address } = parsedCaipType
-
   if (typeof address !== 'string' || !address.length)
     throw new Error(
       `Expected qualified address, encountered "${String(address)}".`
     )
-
-  // What address-agnostic caip identifier is being targeted?
-  const target = stringifyCaip({
-    parsedCaipType,
-    suppressAddressComponent: true,
-  })
 
   const possibleVeridaWalletAccounts = Object.values(walletsData).flatMap(
     (maybeMatchingVeridaWalletWallet: VeridaWallet): VeridaWalletAccount[] => {

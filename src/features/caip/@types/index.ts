@@ -6,10 +6,6 @@ export enum SupportedCaipNamespace {
   NEAR = 'near',
 }
 
-export type ParsedCaipType = ChainIdParams & {
-  readonly address: string | undefined
-}
-
 export type ChainMetadata = ChainIdParams & {
   readonly name: string
   readonly logo: string

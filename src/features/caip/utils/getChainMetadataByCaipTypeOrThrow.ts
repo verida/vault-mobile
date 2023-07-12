@@ -1,22 +1,20 @@
-import { ChainMetadata, ChainMetadatas, ParsedCaipType } from '../@types'
-import { getMaybeChainMetadataByCaipType } from './getMaybeChainMetadataByCaipType'
-import { stringifyCaip } from './stringifyCaip'
+import { ChainId } from 'caip'
+
+import { ChainMetadata, ChainMetadatas } from '../@types'
+import { getMaybeChainMetadataByCaipChainId } from './getMaybeChainMetadataByCaipChainId'
 
 export const getChainMetadataByCaipTypeOrThrow = (
   chainMetadatas: ChainMetadatas,
-  parsedCaipType: ParsedCaipType
+  chainId: ChainId
 ): ChainMetadata => {
-  const maybeChainMetadata = getMaybeChainMetadataByCaipType(
+  const maybeChainMetadata = getMaybeChainMetadataByCaipChainId(
     chainMetadatas,
-    parsedCaipType
+    chainId
   )
 
   if (!maybeChainMetadata)
     throw new Error(
-      `Unable to determine ChainMetadata for "${stringifyCaip({
-        parsedCaipType,
-        suppressAddressComponent: true,
-      })}".`
+      `Unable to determine ChainMetadata for "${chainId.toString()}".`
     )
 
   return maybeChainMetadata

@@ -1,7 +1,7 @@
+import { ChainId } from 'caip'
 import {
   getMaybeChainMetadatas,
   getSupportedCaipProtocolFriendlyName,
-  ParsedCaipType,
   useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
@@ -13,13 +13,13 @@ import { useActiveWalletConnectSessionNamespace } from '../hooks'
 
 export const WalletConnectSessionNamespacesChainId = React.memo(
   function WalletConnectSessionNamespacesChainId({
-    parsedCaipType,
+    caipChainId,
     walletConnectSessionKey,
   }: {
-    readonly parsedCaipType: ParsedCaipType
+    readonly caipChainId: ChainId
     readonly walletConnectSessionKey: string
   }): JSX.Element {
-    const { namespace: chain } = parsedCaipType
+    const { namespace: chain } = caipChainId
 
     const maybeNamespace = useActiveWalletConnectSessionNamespace({
       walletConnectSessionKey,
@@ -44,7 +44,7 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
 
     const maybeChainName = getSupportedCaipProtocolFriendlyName(
       chainMetadatas,
-      parsedCaipType
+      caipChainId
     )
 
     return (

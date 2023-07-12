@@ -1,4 +1,4 @@
-import { ParsedCaipType } from 'features/caip'
+import { ChainId } from 'caip'
 import { keyStores, transactions } from 'near-api-js'
 
 export type NearAccountPointer = {
@@ -8,7 +8,7 @@ export type NearAccountPointer = {
 
 export type NearAccount = NearAccountPointer & {
   readonly signerId: string
-  readonly parsedCaipType: ParsedCaipType
+  readonly caipChainId: ChainId
   readonly privateKey: string
   readonly keystore: keyStores.KeyStore
 }

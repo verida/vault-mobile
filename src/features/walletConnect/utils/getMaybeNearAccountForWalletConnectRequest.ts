@@ -6,11 +6,8 @@ import {
   nearInstantiateAccount,
   throwIfNotNearTestnet,
 } from 'blockchain/near'
-import {
-  ChainMetadatas,
-  maybeParseCaip,
-  SupportedCaipNamespace,
-} from 'features/caip'
+import { ChainId } from 'caip'
+import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
@@ -30,15 +27,11 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 }): Promise<NearAccount | undefined> {
   const { params } = request
 
-  const maybeParsedCaip = maybeParseCaip(params.chainId)
+  const caipChainId = new ChainId(params.chainId)
 
-  if (
-    !maybeParsedCaip ||
-    maybeParsedCaip.namespace !== SupportedCaipNamespace.NEAR
-  )
-    return undefined
+  if (caipChainId.namespace !== SupportedCaipNamespace.NEAR) return undefined
 
-  throwIfNotNearTestnet(maybeParsedCaip)
+  throwIfNotNearTestnet(caipChainId)
 
   const maybeVeridaWalletAccount =
     getMaybeVeridaWalletAccountForWalletConnectRequest({
@@ -51,7 +44,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   const { privateKey, address: signerId } = maybeVeridaWalletAccount
 
-  const { reference } = maybeParsedCaip
+  const { reference } = caipChainId
 
   const keyPair = utils.KeyPair.fromString(privateKey)
 
@@ -71,14 +64,14 @@ export async function getMaybeNearAccountForWalletConnectRequest({
     accountId,
     signerId,
     publicKey,
-    parsedCaipType: maybeParsedCaip,
+    caipChainId,
     privateKey,
   }
 
   const doesAccountExist = await nearDoesAccountExist({
     chainMetadatas,
     nearAccountPointer: nearAccount,
-    parsedCaipType: maybeParsedCaip,
+    caipChainId,
   })
 
   if (!doesAccountExist) {

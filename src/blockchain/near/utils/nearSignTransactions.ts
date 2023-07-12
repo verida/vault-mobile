@@ -11,7 +11,7 @@ export const nearSignTransactions = async ({
 }): Promise<readonly transactions.SignedTransaction[]> => {
   const {
     keystore,
-    parsedCaipType: { reference: chainId },
+    caipChainId: { reference: chainId },
   } = nearAccount
   const signer = new InMemorySigner(keystore)
 

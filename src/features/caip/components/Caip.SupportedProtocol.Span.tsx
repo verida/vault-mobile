@@ -1,4 +1,5 @@
-import { ChainMetadatas, ParsedCaipType } from 'features/caip'
+import { ChainId } from 'caip'
+import { ChainMetadatas } from 'features/caip'
 import * as React from 'react'
 
 import { getSupportedCaipProtocolFriendlyName } from '../utils'
@@ -6,17 +7,17 @@ import { getSupportedCaipProtocolFriendlyName } from '../utils'
 export const CaipSupportedProtocolSpan = React.memo(
   function CaipWalletTypeSpan({
     chainMetadatas,
-    parsedCaipType = undefined,
+    caipChainId,
   }: {
     readonly chainMetadatas: ChainMetadatas
-    readonly parsedCaipType: ParsedCaipType | undefined
+    readonly caipChainId: ChainId | undefined
   }): JSX.Element {
     return (
       <React.Fragment
         // eslint-disable-next-line react/no-children-prop
         children={getSupportedCaipProtocolFriendlyName(
           chainMetadatas,
-          parsedCaipType
+          caipChainId
         )}
       />
     )

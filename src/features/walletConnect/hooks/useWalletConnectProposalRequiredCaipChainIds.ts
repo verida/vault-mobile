@@ -1,8 +1,8 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { maybeParseCaip, ParsedCaipType } from 'features/caip'
+import { ChainId } from 'caip'
 import * as React from 'react'
 
-export const getWalletConnectProposalRequiredCaipTypes = (
+export const getWalletConnectProposalRequiredCaipChainIds = (
   proposal:
     | Web3WalletTypes.EventArguments['session_proposal']
     | null
@@ -21,22 +21,20 @@ export const getWalletConnectProposalRequiredCaipTypes = (
   ]
 
   return uniqueCaipIdentifiers.flatMap((uniqueCaipIdentifier) => {
-    const maybeParsedCaipType = maybeParseCaip(uniqueCaipIdentifier)
+    if (!uniqueCaipIdentifier) return []
 
-    if (!maybeParsedCaipType) return []
-
-    return [maybeParsedCaipType]
+    return [new ChainId(uniqueCaipIdentifier)]
   })
 }
 
-export function useWalletConnectProposalRequiredCaipTypes(
+export function useWalletConnectProposalRequiredCaipChainIds(
   proposal:
     | Web3WalletTypes.EventArguments['session_proposal']
     | null
     | undefined
-): readonly ParsedCaipType[] {
+): readonly ChainId[] {
   return React.useMemo(
-    () => getWalletConnectProposalRequiredCaipTypes(proposal),
+    () => getWalletConnectProposalRequiredCaipChainIds(proposal),
     [proposal]
   )
 }

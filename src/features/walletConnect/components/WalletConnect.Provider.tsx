@@ -12,7 +12,6 @@ import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
-import { useSelector } from 'react-redux'
 import { useDebouncedCallback } from 'use-debounce'
 
 import { useAuth } from 'hooks/useAuth'
@@ -25,7 +24,7 @@ import {
 import { WalletConnectContextProvider } from '../contexts'
 import {
   getMaybeWalletConnectActiveSessionByKey,
-  getWalletConnectProposalRequiredCaipTypes,
+  getWalletConnectProposalRequiredCaipChainIds,
   useCreateWeb3Wallet,
   useMaybeWeb3Wallet,
   useWalletConnectSessionRequestCallback,
@@ -67,14 +66,14 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   // given proposal.
   const isSessionProposalSupported = React.useCallback(
     (proposal: Web3WalletTypes.EventArguments['session_proposal']) => {
-      const onlyMatchingCaipTypes =
-        getWalletConnectProposalRequiredCaipTypes(proposal)
+      const onlyMatchingCaipChainIds =
+        getWalletConnectProposalRequiredCaipChainIds(proposal)
 
       const { length: maybeHasCompatibleAccounts } =
         veridaWalletAccountsToDropdownOptions({
           chainMetadatas,
           maybeVeridaWalletAccounts,
-          onlyMatchingCaipTypes,
+          onlyMatchingCaipChainIds,
           includesWatchedWallets: false,
         })
 

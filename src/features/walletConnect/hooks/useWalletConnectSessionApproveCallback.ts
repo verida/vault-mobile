@@ -3,7 +3,6 @@ import {
   getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
   isSupportedCaipNamespace,
-  stringifyCaip,
   SupportedCaipNamespace,
   useChainMetadatas,
 } from 'features/caip'
@@ -35,22 +34,19 @@ export function useWalletConnectSessionApproveCallback() {
       web3wallet: IWeb3Wallet,
       request: Web3WalletTypes.EventArguments['session_request']
     ) => {
-      const { rpc, parsedCaipType } = extractWalletConnectRpcOrThrow({
+      const { rpc, chainId } = extractWalletConnectRpcOrThrow({
         chainMetadatas,
         request,
       })
 
       const chainMetadata = getChainMetadataByCaipTypeOrThrow(
         chainMetadatas,
-        parsedCaipType
+        chainId
       )
 
       if (!chainMetadata)
         throw new Error(
-          `Unable to find ChainMetadata for "${stringifyCaip({
-            parsedCaipType,
-            suppressAddressComponent: true,
-          })}".`
+          `Unable to find ChainMetadata for "${chainId.toString()}".`
         )
 
       const { namespace } = chainMetadata
@@ -61,12 +57,7 @@ export function useWalletConnectSessionApproveCallback() {
       const { [namespace]: maybeStandardHandler } = supportedStandardHandlers
 
       if (!maybeStandardHandler)
-        throw new Error(
-          `Sorry, ${stringifyCaip({
-            parsedCaipType,
-            suppressAddressComponent: true,
-          })} is not supported.`
-        )
+        throw new Error(`Sorry, ${chainId.toString()} is not supported.`)
 
       return maybeStandardHandler({ web3wallet, request, rpc })
     },

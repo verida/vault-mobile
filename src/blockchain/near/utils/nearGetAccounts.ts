@@ -1,16 +1,16 @@
-import { ParsedCaipType } from 'features/caip'
+import { ChainId } from 'caip'
 import { keyStores } from 'near-api-js'
 
 import { NearAccountPointer } from '../@types'
 
 export async function nearGetAccounts({
   keystore,
-  parsedCaipType,
+  caipChainId,
 }: {
   readonly keystore: keyStores.KeyStore
-  readonly parsedCaipType: ParsedCaipType
+  readonly caipChainId: ChainId
 }): Promise<readonly NearAccountPointer[]> {
-  const { reference: networkId } = parsedCaipType
+  const { reference: networkId } = caipChainId
   return (
     await Promise.allSettled(
       (

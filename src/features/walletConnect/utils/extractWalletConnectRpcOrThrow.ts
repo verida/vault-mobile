@@ -1,9 +1,6 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import {
-  ChainMetadatas,
-  getRpcUrlOrThrow,
-  parseCaipOrThrow,
-} from 'features/caip'
+import { ChainId } from 'caip'
+import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
 
 export function extractWalletConnectRpcOrThrow({
   chainMetadatas,
@@ -14,9 +11,9 @@ export function extractWalletConnectRpcOrThrow({
 }) {
   const maybeChainId = request?.params?.chainId
 
-  const parsedCaipType = parseCaipOrThrow(maybeChainId)
+  const chainId = new ChainId(maybeChainId)
 
-  const rpc = getRpcUrlOrThrow(chainMetadatas, parsedCaipType)
+  const rpc = getRpcUrlOrThrow(chainMetadatas, chainId)
 
-  return { rpc, parsedCaipType }
+  return { rpc, chainId }
 }

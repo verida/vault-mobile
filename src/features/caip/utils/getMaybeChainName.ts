@@ -1,7 +1,9 @@
-import { ChainMetadatas, ParsedCaipType } from '../@types'
-import { getMaybeChainMetadataByCaipType } from './getMaybeChainMetadataByCaipType'
+import { ChainId } from 'caip'
+
+import { ChainMetadatas } from '../@types'
+import { getMaybeChainMetadataByCaipChainId } from './getMaybeChainMetadataByCaipChainId'
 
 export const getMaybeChainName = (
   chainMetadatas: ChainMetadatas,
-  parsedCaipType: ParsedCaipType
-) => getMaybeChainMetadataByCaipType(chainMetadatas, parsedCaipType)?.name
+  caipChainId: ChainId
+) => getMaybeChainMetadataByCaipChainId(chainMetadatas, caipChainId)?.name

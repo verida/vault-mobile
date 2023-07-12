@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/react-native'
+import { ChainId } from 'caip'
 import {
-  getMaybeChainMetadataByCaipType,
+  getMaybeChainMetadataByCaipChainId,
   getMaybeChainMetadatas,
-  maybeParseCaip,
   useChainMetadatas,
 } from 'features/caip'
 import { useModal } from 'hooks'
@@ -90,13 +90,13 @@ export const WalletConnectTransactionRequestModal = React.memo(
       }
     }, [request, shouldReject, web3wallet, dismissModal])
 
-    const parsedCaip = maybeParseCaip(request.params.chainId)
+    const chainId = new ChainId(request.params.chainId)
 
     const maybeRelayProtocol = activeSession?.relay?.protocol
 
-    const maybeSupportedChain = getMaybeChainMetadataByCaipType(
+    const maybeSupportedChain = getMaybeChainMetadataByCaipChainId(
       chainMetadatas,
-      parsedCaip
+      chainId
     )
 
     const maybeChainName = maybeSupportedChain?.name

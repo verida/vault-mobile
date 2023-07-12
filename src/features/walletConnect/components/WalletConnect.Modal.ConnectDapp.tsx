@@ -30,7 +30,7 @@ import DropDownPicker, { Option } from 'components/Select'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import { WALLETCONNECT_LABEL } from '../constants'
-import { useWalletConnectProposalRequiredCaipTypes } from '../hooks'
+import { useWalletConnectProposalRequiredCaipChainIds } from '../hooks'
 import { createWalletConnectSessionApprovalConfiguration } from '../utils'
 
 const maybeThrowMissingDependenciesError = (
@@ -84,8 +84,8 @@ export const WalletConnectModalConnectDapp = React.memo(
 
     const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
 
-    const onlyMatchingCaipTypes =
-      useWalletConnectProposalRequiredCaipTypes(proposal)
+    const onlyMatchingCaipChainIds =
+      useWalletConnectProposalRequiredCaipChainIds(proposal)
 
     const wallets: readonly Option[] = useVeridaWalletAccountDropdownOptions({
       includesWatchedWallets: false,
@@ -97,7 +97,7 @@ export const WalletConnectModalConnectDapp = React.memo(
       //       address component, however semantically this could result in a user selecting
       //       the incorrect account for the requested network, which may have consequences
       //       downstream.
-      onlyMatchingCaipTypes,
+      onlyMatchingCaipChainIds,
     })
 
     const [selectedWallet, setSelectedWallet] = React.useState<

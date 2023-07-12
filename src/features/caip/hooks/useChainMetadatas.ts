@@ -1,16 +1,12 @@
-import {
-  ChainMetadatas,
-  isSupportedCaipNamespace,
-  maybeParseCaip,
-  stringifyCaip,
-} from 'features/caip'
+import { ChainId } from 'caip'
+import { ChainMetadatas, isSupportedCaipNamespace } from 'features/caip'
 import { walletsApi } from 'features/cryptoWallet'
 import * as React from 'react'
 import Config from 'react-native-config'
 
 import { BlockchainNetwork } from 'api/types'
 
-import { ChainMetadata, ParsedCaipType } from '../@types'
+import { ChainMetadata } from '../@types'
 
 // TODO: Use environment variables
 const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
@@ -28,12 +24,12 @@ type State = Readonly<
 
 const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,
-  parsedCaipType,
+  caipChainId,
 }: {
   readonly blockchainNetwork: BlockchainNetwork
-  readonly parsedCaipType: ParsedCaipType
+  readonly caipChainId: ChainId
 }): ChainMetadata | undefined => {
-  const { namespace, reference } = parsedCaipType
+  const { namespace, reference } = caipChainId
 
   if (!isSupportedCaipNamespace(namespace)) return undefined
 
@@ -85,29 +81,21 @@ export function useChainMetadatas(): State {
           ([maybeSupportedCaip, blockchainNetwork]):
             | [caipIdentifier: string, chainMetadata: ChainMetadata]
             | undefined => {
-            const maybeParsedCaipType = maybeParseCaip(maybeSupportedCaip)
+            const caipChainId = new ChainId(maybeSupportedCaip)
 
-            if (!maybeParsedCaipType) return undefined
-
-            const { namespace } = maybeParsedCaipType
+            const { namespace } = caipChainId
 
             if (!isSupportedCaipNamespace(namespace)) return undefined
 
             const maybeChainMetadata =
               maybeBlockchainNetworkEntryToChainMetadata({
                 blockchainNetwork,
-                parsedCaipType: maybeParsedCaipType,
+                caipChainId,
               })
 
             if (!maybeChainMetadata) return undefined
 
-            return [
-              stringifyCaip({
-                parsedCaipType: maybeParsedCaipType,
-                suppressAddressComponent: true,
-              }),
-              maybeChainMetadata,
-            ]
+            return [caipChainId.toString(), maybeChainMetadata]
           }
         )
         .flatMap((e) => (e ? [e] : []))

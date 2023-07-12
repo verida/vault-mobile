@@ -1,10 +1,8 @@
+import { ChainId } from 'caip'
 import { Spacer } from 'components'
 import {
   CaipSupportedProtocolSpan,
   getMaybeChainMetadatas,
-  maybeParseCaip,
-  ParsedCaipType,
-  stringifyCaip,
   useChainMetadatas,
 } from 'features/caip'
 import {
@@ -73,40 +71,19 @@ export const WalletConnectActiveSession = React.memo(
           .flatMap(
             /* network */
             ([caipProtocol, accountsForChain]) => {
-              const supportedCaipTypes = [
-                ...new Set(
-                  accountsForChain.flatMap((accountForChain) => {
-                    const maybeParsedCaip = maybeParseCaip(accountForChain)
-
-                    if (!maybeParsedCaip) return []
-
-                    return [
-                      stringifyCaip({
-                        parsedCaipType: maybeParsedCaip,
-                        suppressAddressComponent: false,
-                      }),
-                    ]
-                  })
-                ),
-              ]
+              const supportedCaipTypes = [...new Set(accountsForChain)]
 
               return [
                 <View style={styles.row} key={caipProtocol}>
                   <Text style={styles.label}>{caipProtocol} Network</Text>
                   <Text style={styles.value}>
                     {supportedCaipTypes
-                      .flatMap((caipType) => {
-                        const maybeParsedCaip = maybeParseCaip(caipType)
-                        return maybeParsedCaip ? [maybeParsedCaip] : []
-                      })
-                      .flatMap((parsedCaipType: ParsedCaipType, i, orig) => [
+                      .flatMap((caipType) => new ChainId(caipType))
+                      .flatMap((caipChainId: ChainId, i, orig) => [
                         <CaipSupportedProtocolSpan
+                          key={caipChainId.toString()}
                           chainMetadatas={chainMetadatas}
-                          key={stringifyCaip({
-                            parsedCaipType,
-                            suppressAddressComponent: false,
-                          })}
-                          parsedCaipType={parsedCaipType}
+                          caipChainId={caipChainId}
                         />,
                         // eslint-disable-next-line react/no-children-prop
                         i < orig.length - 1 ? <Text children=',' /> : undefined,

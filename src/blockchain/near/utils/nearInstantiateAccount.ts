@@ -12,10 +12,10 @@ export async function nearInstantiateAccount({
   readonly chainMetadatas: ChainMetadatas
   readonly nearAccount: NearAccount
 }) {
-  const { accountId, publicKey, parsedCaipType, keystore } = nearAccount
+  const { accountId, publicKey, caipChainId, keystore } = nearAccount
 
   const connection = await connect(
-    getNearNetworkConfig({ chainMetadatas, keystore, parsedCaipType })
+    getNearNetworkConfig({ chainMetadatas, keystore, caipChainId })
   )
 
   const createdAccount = await connection.createAccount(
@@ -38,7 +38,7 @@ export async function nearInstantiateAccount({
   const doesExist = await nearDoesAccountExist({
     chainMetadatas,
     nearAccountPointer: nearAccount,
-    parsedCaipType,
+    caipChainId,
   })
 
   if (!doesExist) throw new Error(`NearAccount does not exist after creation!`)

@@ -1,21 +1,19 @@
+import { ChainId } from 'caip'
 import {
-  addressAgnosticIsCaipEqual,
   ChainMetadatas,
   getRpcUrlOrThrow,
   NEAR_TESTNET_CAIP,
-  ParsedCaipType,
-  stringifyCaip,
 } from 'features/caip'
 import { connect, keyStores } from 'near-api-js'
 
 export function getNearNetworkConfig({
   chainMetadatas,
   keystore: keyStore,
-  parsedCaipType,
+  caipChainId,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly keystore: keyStores.KeyStore
-  readonly parsedCaipType: ParsedCaipType
+  readonly caipChainId: ChainId
 }): Parameters<typeof connect>[0] & {
   // https://docs.near.org/tools/near-api-js/quick-reference#connect
   readonly explorerUrl: string
@@ -24,20 +22,17 @@ export function getNearNetworkConfig({
   //       and evaluate the URLs below dynamically.
   // HACK: We must to explicitly code for a NEAR CAIP identifier because
   //       we're forced to hardcode different URLs below.
-  if (!addressAgnosticIsCaipEqual(NEAR_TESTNET_CAIP, parsedCaipType))
+  if (caipChainId.toString() !== ChainId.format(NEAR_TESTNET_CAIP))
     throw new Error(
-      `Encountered unsupported network, "${stringifyCaip({
-        parsedCaipType,
-        suppressAddressComponent: true,
-      })}".`
+      `Encountered unsupported network, "${caipChainId.toString()}".`
     )
 
-  const { reference: networkId } = parsedCaipType
+  const { reference: networkId } = caipChainId
 
   return {
     networkId, // i.e. "testnet"
     keyStore,
-    nodeUrl: getRpcUrlOrThrow(chainMetadatas, parsedCaipType),
+    nodeUrl: getRpcUrlOrThrow(chainMetadatas, caipChainId),
     walletUrl: 'https://wallet.testnet.near.org',
     helperUrl: 'https://helper.testnet.near.org',
     explorerUrl: 'https://explorer.testnet.near.org',

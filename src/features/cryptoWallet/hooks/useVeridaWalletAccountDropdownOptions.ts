@@ -1,11 +1,9 @@
+import { ChainId } from 'caip'
 import {
-  addressAgnosticIsCaipEqual,
   ChainMetadatas,
   getMaybeChainMetadatas,
   getSupportedCaipProtocolFriendlyName,
   isSupportedCaipNamespace,
-  maybeParseCaip,
-  ParsedCaipType,
   useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
@@ -18,13 +16,13 @@ import { isWatchedWallet } from '../utils'
 export const veridaWalletAccountsToDropdownOptions = ({
   chainMetadatas,
   maybeVeridaWalletAccounts,
-  onlyMatchingCaipTypes,
+  onlyMatchingCaipChainIds,
   includesWatchedWallets,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
   readonly includesWatchedWallets: boolean
-  readonly onlyMatchingCaipTypes: readonly ParsedCaipType[] | null
+  readonly onlyMatchingCaipChainIds: readonly ChainId[] | null
 }): readonly Option[] => {
   if (!maybeVeridaWalletAccounts) return []
 
@@ -33,21 +31,21 @@ export const veridaWalletAccountsToDropdownOptions = ({
       string,
       VeridaWalletAccount
     ]): readonly Option[] => {
-      const maybeParsedCaip = maybeParseCaip(key)
-
-      if (!maybeParsedCaip) return []
+      const caipChainId = new ChainId(key)
 
       const isMatchingCaipType = Boolean(
-        (onlyMatchingCaipTypes || []).find((maybeMatchingCaipType) =>
-          addressAgnosticIsCaipEqual(maybeMatchingCaipType, maybeParsedCaip)
+        (onlyMatchingCaipChainIds || []).find(
+          (maybeMatchingCaipType) =>
+            caipChainId.toString() === maybeMatchingCaipType.toString()
         )
       )
 
       // If an array of ParsedCaipTypes has been provided, we should filter out the
       // results to contain only caips that are supported.
-      if (Array.isArray(onlyMatchingCaipTypes) && !isMatchingCaipType) return []
+      if (Array.isArray(onlyMatchingCaipChainIds) && !isMatchingCaipType)
+        return []
 
-      const blockchain = maybeParsedCaip?.namespace
+      const blockchain = caipChainId?.namespace
 
       if (!isSupportedCaipNamespace(blockchain)) return []
 
@@ -58,10 +56,7 @@ export const veridaWalletAccountsToDropdownOptions = ({
         label: veridaWalletAccount.address,
         value: veridaWalletAccount.address,
         disabled,
-        flag: getSupportedCaipProtocolFriendlyName(
-          chainMetadatas,
-          maybeParsedCaip
-        ),
+        flag: getSupportedCaipProtocolFriendlyName(chainMetadatas, caipChainId),
       }
 
       return [option]
@@ -72,11 +67,11 @@ export const veridaWalletAccountsToDropdownOptions = ({
 export function useVeridaWalletAccountDropdownOptions({
   includesWatchedWallets,
   maybeVeridaWalletAccounts,
-  onlyMatchingCaipTypes = null,
+  onlyMatchingCaipChainIds = null,
 }: {
   readonly includesWatchedWallets: boolean
   readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
-  readonly onlyMatchingCaipTypes?: readonly ParsedCaipType[] | null
+  readonly onlyMatchingCaipChainIds?: readonly ChainId[] | null
 }) {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -86,13 +81,13 @@ export function useVeridaWalletAccountDropdownOptions({
         chainMetadatas,
         includesWatchedWallets,
         maybeVeridaWalletAccounts,
-        onlyMatchingCaipTypes,
+        onlyMatchingCaipChainIds,
       }),
     [
       chainMetadatas,
       maybeVeridaWalletAccounts,
       includesWatchedWallets,
-      onlyMatchingCaipTypes,
+      onlyMatchingCaipChainIds,
     ]
   )
 }
