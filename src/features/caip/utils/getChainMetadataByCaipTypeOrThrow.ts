@@ -1,18 +1,11 @@
-import {
-  ChainMetadata,
-  ChainMetadatas,
-  ParsedCaipType,
-  SupportedCaipProtocolStandard,
-} from '../@types'
+import { ChainMetadata, ChainMetadatas, ParsedCaipType } from '../@types'
 import { getMaybeChainMetadataByCaipType } from './getMaybeChainMetadataByCaipType'
 import { stringifyCaip } from './stringifyCaip'
 
-export const getChainMetadataByCaipTypeOrThrow = <
-  T extends SupportedCaipProtocolStandard
->(
+export const getChainMetadataByCaipTypeOrThrow = (
   chainMetadatas: ChainMetadatas,
-  parsedCaipType: ParsedCaipType<T>
-): ChainMetadata<T> => {
+  parsedCaipType: ParsedCaipType
+): ChainMetadata => {
   const maybeChainMetadata = getMaybeChainMetadataByCaipType(
     chainMetadatas,
     parsedCaipType

@@ -1,18 +1,13 @@
-import {
-  ChainMetadata,
-  ChainMetadatas,
-  ParsedCaipType,
-  SupportedCaipProtocolStandard,
-} from '../@types'
-import { isChainMetadataMatchingStandard } from './isChainMetadataMatchingStandard'
+import { isSupportedCaipNamespace } from 'features/caip'
+
+import { ChainMetadata, ChainMetadatas, ParsedCaipType } from '../@types'
+import { isChainMetadataMatchingNamespace } from './isChainMetadataMatchingNamespace'
 import { stringifyCaip } from './stringifyCaip'
 
-export const getMaybeChainMetadataByCaipType = <
-  T extends SupportedCaipProtocolStandard
->(
+export const getMaybeChainMetadataByCaipType = (
   chainMetadatas: ChainMetadatas,
-  parsedCaipType: ParsedCaipType<T> | undefined
-): ChainMetadata<T> | undefined => {
+  parsedCaipType: ParsedCaipType | undefined
+): ChainMetadata | undefined => {
   if (!parsedCaipType) return undefined
 
   const {
@@ -20,11 +15,12 @@ export const getMaybeChainMetadataByCaipType = <
       maybeChainMetadata,
   } = chainMetadatas
 
-  const { standard } = parsedCaipType
+  const { namespace } = parsedCaipType
 
   if (
     !maybeChainMetadata ||
-    !isChainMetadataMatchingStandard(maybeChainMetadata, standard)
+    !isSupportedCaipNamespace(namespace) ||
+    !isChainMetadataMatchingNamespace(maybeChainMetadata, namespace)
   )
     return undefined
 

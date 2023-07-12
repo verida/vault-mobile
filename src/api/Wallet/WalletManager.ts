@@ -1,4 +1,4 @@
-import { isSupportedCaipStandard } from 'features/caip'
+import { isSupportedCaipNamespace } from 'features/caip'
 import { store } from 'reduxStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
@@ -93,7 +93,7 @@ export class WalletManager {
         // TODO: @cawfree is this the correct migration pattern? what to do with
         //       old algorand wallets? This might be unhelpful for users who wish
         //       to exit out.
-        if (!isSupportedCaipStandard(blockchainNetwork.namespace)) {
+        if (!isSupportedCaipNamespace(blockchainNetwork.namespace)) {
           // eslint-disable-next-line no-console
           return console.warn(
             `Refusing to process "${blockchainNetwork.chainId}", since it is no longer supported.`

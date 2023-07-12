@@ -1,9 +1,4 @@
-import {
-  ChainMetadatas,
-  getRpcUrlOrThrow,
-  ParsedCaipType,
-  SupportedCaipProtocolStandard,
-} from 'features/caip'
+import { ChainMetadatas, getRpcUrlOrThrow, ParsedCaipType } from 'features/caip'
 import { providers } from 'near-api-js'
 
 import { NearAccountPointer } from '../@types'
@@ -16,8 +11,7 @@ export async function nearDoesAccountExist({
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly nearAccountPointer: NearAccountPointer
-  // TODO: @cawfree should networkId be inside pointer? probably?
-  readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
+  readonly parsedCaipType: ParsedCaipType
 }) {
   const provider = new providers.JsonRpcProvider(
     getRpcUrlOrThrow(chainMetadatas, parsedCaipType)

@@ -5,7 +5,6 @@ import {
   NEAR_TESTNET_CAIP,
   ParsedCaipType,
   stringifyCaip,
-  SupportedCaipProtocolStandard,
 } from 'features/caip'
 import { connect, keyStores } from 'near-api-js'
 
@@ -16,7 +15,7 @@ export function getNearNetworkConfig({
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly keystore: keyStores.KeyStore
-  readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
+  readonly parsedCaipType: ParsedCaipType
 }): Parameters<typeof connect>[0] & {
   // https://docs.near.org/tools/near-api-js/quick-reference#connect
   readonly explorerUrl: string
@@ -33,7 +32,7 @@ export function getNearNetworkConfig({
       })}".`
     )
 
-  const { chainId: networkId } = parsedCaipType
+  const { reference: networkId } = parsedCaipType
 
   return {
     networkId, // i.e. "testnet"

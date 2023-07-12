@@ -1,4 +1,4 @@
-import { ParsedCaipType, SupportedCaipProtocolStandard } from 'features/caip'
+import { ParsedCaipType } from 'features/caip'
 import { keyStores, transactions } from 'near-api-js'
 
 export type NearAccountPointer = {
@@ -8,7 +8,7 @@ export type NearAccountPointer = {
 
 export type NearAccount = NearAccountPointer & {
   readonly signerId: string
-  readonly parsedCaipType: ParsedCaipType<SupportedCaipProtocolStandard.NEAR>
+  readonly parsedCaipType: ParsedCaipType
   readonly privateKey: string
   readonly keystore: keyStores.KeyStore
 }

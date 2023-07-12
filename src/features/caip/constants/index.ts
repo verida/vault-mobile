@@ -1,11 +1,10 @@
-import { ParsedCaipType, SupportedCaipProtocolStandard } from '../@types'
+import { ParsedCaipType, SupportedCaipNamespace } from '../@types'
 
-// TODO: It is not ideal to work this way (knowing a specific chainId), however
+// TODO: It is not ideal to work this way (knowing a specific reference), however
 //       the implementation of Near protocol demands we do this for when we generate
 //       NEAR metadata URLs.
-export const NEAR_TESTNET_CAIP: ParsedCaipType<SupportedCaipProtocolStandard.NEAR> =
-  {
-    address: undefined,
-    standard: SupportedCaipProtocolStandard.NEAR,
-    chainId: 'testnet',
-  }
+export const NEAR_TESTNET_CAIP: ParsedCaipType = {
+  address: undefined,
+  namespace: SupportedCaipNamespace.NEAR,
+  reference: 'testnet',
+}

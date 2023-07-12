@@ -1,6 +1,6 @@
 import {
   ChainMetadatas,
-  isSupportedCaipStandard,
+  isSupportedCaipNamespace,
   maybeParseCaip,
   stringifyCaip,
 } from 'features/caip'
@@ -10,11 +10,7 @@ import Config from 'react-native-config'
 
 import { BlockchainNetwork } from 'api/types'
 
-import {
-  ChainMetadata,
-  ParsedCaipType,
-  SupportedCaipProtocolStandard,
-} from '../@types'
+import { ChainMetadata, ParsedCaipType } from '../@types'
 
 // TODO: Use environment variables
 const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
@@ -36,20 +32,20 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
 }: {
   readonly blockchainNetwork: BlockchainNetwork
   readonly parsedCaipType: ParsedCaipType
-}): ChainMetadata<SupportedCaipProtocolStandard> | undefined => {
-  const { standard, chainId } = parsedCaipType
+}): ChainMetadata | undefined => {
+  const { namespace, reference } = parsedCaipType
 
-  if (!isSupportedCaipStandard(standard)) return undefined
+  if (!isSupportedCaipNamespace(namespace)) return undefined
 
   const { label: name, rpcUrl: rpc } = blockchainNetwork
 
   return {
-    standard,
-    chainId,
+    namespace,
+    reference,
     name,
     rpc: rpc.replaceAll('%INFURA_KEY%', INFURA_API_KEY),
 
-    // TODO: fix this lookup
+    // TODO: fix this lookup - use real images and colors
     logo: '/chain-logos/eip155-43113.png',
     rgb: '232, 65, 66',
   }
@@ -83,25 +79,19 @@ export function useChainMetadatas(): State {
         ),
       }
 
-    const result: Record<
-      string,
-      ChainMetadata<SupportedCaipProtocolStandard>
-    > = Object.fromEntries(
+    const result: Record<string, ChainMetadata> = Object.fromEntries(
       Object.entries(data)
         .map(
           ([maybeSupportedCaip, blockchainNetwork]):
-            | [
-                caipIdentifier: string,
-                chainMetadata: ChainMetadata<SupportedCaipProtocolStandard>
-              ]
+            | [caipIdentifier: string, chainMetadata: ChainMetadata]
             | undefined => {
             const maybeParsedCaipType = maybeParseCaip(maybeSupportedCaip)
 
             if (!maybeParsedCaipType) return undefined
 
-            const { standard } = maybeParsedCaipType
+            const { namespace } = maybeParsedCaipType
 
-            if (!isSupportedCaipStandard(standard)) return undefined
+            if (!isSupportedCaipNamespace(namespace)) return undefined
 
             const maybeChainMetadata =
               maybeBlockchainNetworkEntryToChainMetadata({

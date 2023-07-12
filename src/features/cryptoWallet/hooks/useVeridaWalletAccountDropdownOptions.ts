@@ -3,7 +3,7 @@ import {
   ChainMetadatas,
   getMaybeChainMetadatas,
   getSupportedCaipProtocolFriendlyName,
-  isSupportedCaipStandard,
+  isSupportedCaipNamespace,
   maybeParseCaip,
   ParsedCaipType,
   useChainMetadatas,
@@ -47,9 +47,9 @@ export const veridaWalletAccountsToDropdownOptions = ({
       // results to contain only caips that are supported.
       if (Array.isArray(onlyMatchingCaipTypes) && !isMatchingCaipType) return []
 
-      const blockchain = maybeParsedCaip?.standard
+      const blockchain = maybeParsedCaip?.namespace
 
-      if (!isSupportedCaipStandard(blockchain)) return []
+      if (!isSupportedCaipNamespace(blockchain)) return []
 
       const disabled =
         !includesWatchedWallets && isWatchedWallet(veridaWalletAccount)

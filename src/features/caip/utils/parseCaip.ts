@@ -1,5 +1,5 @@
 import { ParsedCaipType } from '../@types'
-import { isSupportedCaipStandard } from './isSupportedCaipStandard'
+import { isSupportedCaipNamespace } from './isSupportedCaipNamespace'
 
 export function maybeParseCaip(
   value: string | null | undefined
@@ -7,13 +7,13 @@ export function maybeParseCaip(
   if (typeof value !== 'string' || !value.length || !value.includes(':'))
     return undefined
 
-  const [standard, chainId, maybeAddress] = value.split(':')
+  const [namespace, reference, maybeAddress] = value.split(':')
 
-  if (!isSupportedCaipStandard(standard)) return undefined
+  if (!isSupportedCaipNamespace(namespace)) return undefined
 
-  if (!chainId.length) return undefined
+  if (!reference.length) return undefined
 
-  return { standard, chainId, address: maybeAddress }
+  return { namespace, reference, address: maybeAddress }
 }
 
 // TODO: Add a protocol enum and have the codebase evaluate support.

@@ -9,7 +9,7 @@ import {
 import {
   ChainMetadatas,
   maybeParseCaip,
-  SupportedCaipProtocolStandard,
+  SupportedCaipNamespace,
 } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
@@ -34,11 +34,11 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   if (
     !maybeParsedCaip ||
-    maybeParsedCaip.standard !== SupportedCaipProtocolStandard.NEAR
+    maybeParsedCaip.namespace !== SupportedCaipNamespace.NEAR
   )
     return undefined
 
-  if (!throwIfNotNearTestnet(maybeParsedCaip)) return undefined
+  throwIfNotNearTestnet(maybeParsedCaip)
 
   const maybeVeridaWalletAccount =
     getMaybeVeridaWalletAccountForWalletConnectRequest({
@@ -51,7 +51,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   const { privateKey, address: signerId } = maybeVeridaWalletAccount
 
-  const { chainId } = maybeParsedCaip
+  const { reference } = maybeParsedCaip
 
   const keyPair = utils.KeyPair.fromString(privateKey)
 
@@ -64,7 +64,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
     signerId,
   })
 
-  await keystore.setKey(chainId, accountId, keyPair)
+  await keystore.setKey(reference, accountId, keyPair)
 
   const nearAccount: NearAccount = {
     keystore,

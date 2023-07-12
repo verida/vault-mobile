@@ -2,8 +2,9 @@ import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import {
   getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
+  isSupportedCaipNamespace,
   stringifyCaip,
-  SupportedCaipProtocolStandard,
+  SupportedCaipNamespace,
   useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
@@ -23,8 +24,8 @@ export function useWalletConnectSessionApproveCallback() {
   const supportedStandardHandlers: SupportedCaipProtocolSessionHandlers =
     React.useMemo(
       () => ({
-        [SupportedCaipProtocolStandard.EIP_155]: eip155Approve,
-        [SupportedCaipProtocolStandard.NEAR]: nearApprove,
+        [SupportedCaipNamespace.EIP_155]: eip155Approve,
+        [SupportedCaipNamespace.NEAR]: nearApprove,
       }),
       [eip155Approve, nearApprove]
     )
@@ -52,9 +53,12 @@ export function useWalletConnectSessionApproveCallback() {
           })}".`
         )
 
-      const { standard } = chainMetadata
+      const { namespace } = chainMetadata
 
-      const { [standard]: maybeStandardHandler } = supportedStandardHandlers
+      if (!isSupportedCaipNamespace(namespace))
+        throw new Error(`"${namespace}" is not a supported namespace.`)
+
+      const { [namespace]: maybeStandardHandler } = supportedStandardHandlers
 
       if (!maybeStandardHandler)
         throw new Error(

@@ -3,12 +3,9 @@ import {
   NEAR_TESTNET_CAIP,
   ParsedCaipType,
   stringifyCaip,
-  SupportedCaipProtocolStandard,
 } from 'features/caip'
 
-export function throwIfNotNearTestnet(
-  parsedCaipType: ParsedCaipType
-): parsedCaipType is ParsedCaipType<SupportedCaipProtocolStandard.NEAR> {
+export function throwIfNotNearTestnet(parsedCaipType: ParsedCaipType) {
   // TODO: If near mainnet URLs are simply "mainnet" we should be okay to remove this
   //       and evaluate the URLs below dynamically.
   // HACK: We must to explicitly code for a NEAR CAIP identifier because
@@ -20,6 +17,4 @@ export function throwIfNotNearTestnet(
         suppressAddressComponent: true,
       })}".`
     )
-
-  return true
 }

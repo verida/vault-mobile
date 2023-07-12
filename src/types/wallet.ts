@@ -1,4 +1,4 @@
-import { SupportedCaipProtocolStandard } from 'features/caip'
+import { SupportedCaipNamespace } from 'features/caip'
 
 export type VeridaWalletType = 'single' | 'multi'
 
@@ -15,7 +15,7 @@ export type VeridaWalletAccounts = Record<
   // HACK: There are also some deprecated standards, such as algorand, which may
   //       appear in an instance of VeridaWalletAccounts. Please take
   //       "SupportedCaipProtocolStandard" with a grain of salt here.
-  SupportedCaipProtocolStandard,
+  SupportedCaipNamespace,
   VeridaWalletAccount
 >
 

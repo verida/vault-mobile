@@ -1,11 +1,7 @@
-import {
-  ChainMetadatas,
-  ParsedCaipType,
-  SupportedCaipProtocolStandard,
-} from '../@types'
+import { ChainMetadatas, ParsedCaipType } from '../@types'
 import { getChainMetadataByCaipTypeOrThrow } from './getChainMetadataByCaipTypeOrThrow'
 
-export const getRpcUrlOrThrow = <T extends SupportedCaipProtocolStandard>(
+export const getRpcUrlOrThrow = (
   chainMetadatas: ChainMetadatas,
-  parsedCaipType: ParsedCaipType<T>
+  parsedCaipType: ParsedCaipType
 ) => getChainMetadataByCaipTypeOrThrow(chainMetadatas, parsedCaipType).rpc

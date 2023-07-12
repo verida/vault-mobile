@@ -1,6 +1,6 @@
 import 'jest'
 
-import { SupportedCaipProtocolStandard } from 'features/caip/@types'
+import { SupportedCaipNamespace } from 'features/caip/@types'
 import { stringifyCaip } from 'features/caip/utils/stringifyCaip'
 
 describe('stringifyCaip', () => {
@@ -9,8 +9,8 @@ describe('stringifyCaip', () => {
       stringifyCaip({
         parsedCaipType: {
           address: undefined,
-          standard: SupportedCaipProtocolStandard.EIP_155,
-          chainId: '1',
+          namespace: SupportedCaipNamespace.EIP_155,
+          reference: '1',
         },
         suppressAddressComponent: false,
       })
@@ -19,8 +19,8 @@ describe('stringifyCaip', () => {
       stringifyCaip({
         parsedCaipType: {
           address: 'cawfree.eth',
-          standard: SupportedCaipProtocolStandard.EIP_155,
-          chainId: '1',
+          namespace: SupportedCaipNamespace.EIP_155,
+          reference: '1',
         },
         suppressAddressComponent: false,
       })
@@ -29,8 +29,8 @@ describe('stringifyCaip', () => {
       stringifyCaip({
         parsedCaipType: {
           address: 'cawfree.eth',
-          standard: SupportedCaipProtocolStandard.EIP_155,
-          chainId: '1',
+          namespace: SupportedCaipNamespace.EIP_155,
+          reference: '1',
         },
         suppressAddressComponent: true,
       })

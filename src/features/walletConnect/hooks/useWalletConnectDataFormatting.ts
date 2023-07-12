@@ -1,6 +1,6 @@
 import {
   getMaybeChainMetadatas,
-  SupportedCaipProtocolStandard,
+  SupportedCaipNamespace,
   useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
@@ -26,9 +26,9 @@ export function useWalletConnectDataFormatting() {
         request,
       })
 
-      const { standard } = parsedCaipType
+      const { namespace } = parsedCaipType
 
-      if (standard === SupportedCaipProtocolStandard.NEAR)
+      if (namespace === SupportedCaipNamespace.NEAR)
         return formatTransactionDataNearLike(request.params)
 
       return request.params.request.params

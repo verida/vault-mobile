@@ -19,7 +19,7 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
     readonly parsedCaipType: ParsedCaipType
     readonly walletConnectSessionKey: string
   }): JSX.Element {
-    const { standard: chain } = parsedCaipType
+    const { namespace: chain } = parsedCaipType
 
     const maybeNamespace = useActiveWalletConnectSessionNamespace({
       walletConnectSessionKey,
