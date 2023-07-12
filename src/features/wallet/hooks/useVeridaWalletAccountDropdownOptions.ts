@@ -12,7 +12,7 @@ import { Option } from 'components/Select'
 
 import { isWatchedWallet } from '../utils'
 
-const veridaWalletAccountsToDropdownOptions = ({
+export const veridaWalletAccountsToDropdownOptions = ({
   maybeVeridaWalletAccounts,
   onlyMatchingCaipTypes,
   includesWatchedWallets,

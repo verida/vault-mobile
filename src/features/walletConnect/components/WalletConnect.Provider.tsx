@@ -1,8 +1,10 @@
 import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
+import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { useModal } from 'hooks'
+import { veridaWalletAccountsToDropdownOptions } from 'features/wallet'
+import { useMaybeSelectedWallet, useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
@@ -16,6 +18,7 @@ import {
 import { WalletConnectContextProvider } from '../contexts'
 import {
   getMaybeWalletConnectActiveSessionByKey,
+  getWalletConnectProposalRequiredCaipTypes,
   useCreateWeb3Wallet,
   useMaybeWeb3Wallet,
   useWalletConnectSessionRequestCallback,
@@ -36,16 +39,37 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   )
   const { showModal } = useModal()
 
-  const debouncedDisconnectMessage = useDebouncedCallback(
+  const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
+
+  const debouncedSnackbar = useDebouncedCallback(
     React.useCallback(
-      () =>
+      (text: string) =>
         Snackbar.show({
-          text: 'Session disconnected',
+          text,
           duration: Snackbar.LENGTH_LONG,
         }),
       []
     ),
     120
+  )
+
+  // Will return true if we will have compatible wallets to render for a
+  // given proposal.
+  const isSessionProposalSupported = React.useCallback(
+    (proposal: Web3WalletTypes.EventArguments['session_proposal']) => {
+      const onlyMatchingCaipTypes =
+        getWalletConnectProposalRequiredCaipTypes(proposal)
+
+      const { length: maybeHasCompatibleAccounts } =
+        veridaWalletAccountsToDropdownOptions({
+          maybeVeridaWalletAccounts,
+          onlyMatchingCaipTypes,
+          includesWatchedWallets: false,
+        })
+
+      return Boolean(maybeHasCompatibleAccounts)
+    },
+    [maybeVeridaWalletAccounts]
   )
 
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
@@ -55,22 +79,33 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         (
           web3wallet: IWeb3Wallet,
           proposal: Web3WalletTypes.EventArguments['session_proposal']
-        ) =>
-          showModal(
+        ) => {
+          if (!isSessionProposalSupported(proposal))
+            return Promise.all([
+              debouncedSnackbar('Sorry, this chain is not yet supported.'),
+              web3wallet.rejectSession({
+                id: proposal.id,
+                reason: getSdkError('UNSUPPORTED_ACCOUNTS'),
+              }),
+            ])
+
+          // Check if there are caip typed.
+          return showModal(
             <WalletConnectModalConnectDapp
               setActiveSessions={setActiveSessions}
               proposal={proposal}
               web3wallet={web3wallet}
             />
-          ),
-        [showModal]
+          )
+        },
+        [debouncedSnackbar, isSessionProposalSupported, showModal]
       ),
       onSessionDelete: React.useCallback(
         async (web3wallet) => {
-          debouncedDisconnectMessage()
+          debouncedSnackbar('Session disconnected')
           setActiveSessions(await web3wallet.getActiveSessions())
         },
-        [debouncedDisconnectMessage]
+        [debouncedSnackbar]
       ),
     })
   )

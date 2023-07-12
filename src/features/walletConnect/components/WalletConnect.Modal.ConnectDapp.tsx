@@ -79,14 +79,14 @@ export const WalletConnectModalConnectDapp = React.memo(
 
     const metadata = proposal?.params?.proposer?.metadata
 
-    const maybeSelectedWallet = useMaybeSelectedWallet()
+    const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
 
     const onlyMatchingCaipTypes =
       useWalletConnectProposalRequiredCaipTypes(proposal)
 
     const wallets: readonly Option[] = useVeridaWalletAccountDropdownOptions({
       includesWatchedWallets: false,
-      maybeVeridaWalletAccounts: maybeSelectedWallet?.accounts,
+      maybeVeridaWalletAccounts,
 
       // HACK: Only show wallets which possess a caip identifier which supports the request.
       //       This prevents us from showing duplicate wallets for a single request, i.e. the
@@ -153,9 +153,9 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={16} />
           <Text style={styles.url}>{metadata?.url}</Text>
           <Spacer height={24} />
-          {/* TODO: We should use a different Dropdown Picker or refactor this one to enable the caller to define rendering, as it stands this is quite infexible */}
           <DropDownPicker
             showArrow
+            searchableError='No supported wallet'
             placeholder='Select wallet'
             items={wallets}
             containerStyle={styles.select}
