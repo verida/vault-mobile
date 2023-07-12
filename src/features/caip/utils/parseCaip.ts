@@ -1,5 +1,5 @@
 import { ParsedCaipType } from '../@types'
-import { isSupportedCaipProtocol } from './isSupportedCaipProtocol'
+import { isSupportedCaipStandard } from './isSupportedCaipStandard'
 
 export function maybeParseCaip(
   value: string | null | undefined
@@ -9,7 +9,7 @@ export function maybeParseCaip(
 
   const [standard, chainId, maybeAddress] = value.split(':')
 
-  if (!isSupportedCaipProtocol(standard)) return undefined
+  if (!isSupportedCaipStandard(standard)) return undefined
 
   if (!chainId.length) return undefined
 

@@ -1,5 +1,5 @@
 export * from './addressAgnosticIsCaipEqual'
 export * from './getSupportedCaipProtocolFriendlyName'
-export * from './isSupportedCaipProtocol'
+export * from './isSupportedCaipStandard'
 export * from './parseCaip'
 export * from './stringifyCaip'

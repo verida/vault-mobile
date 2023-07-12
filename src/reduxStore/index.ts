@@ -38,6 +38,7 @@ const debounceNotify = debounce((notify) => notify(), 30)
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const middleware = [] as any
+
 if (__DEV__) {
   const createDebugger = require('redux-flipper').default
   middleware.push(createDebugger())

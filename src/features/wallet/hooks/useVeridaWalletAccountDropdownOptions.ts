@@ -1,7 +1,7 @@
 import {
   addressAgnosticIsCaipEqual,
   getSupportedCaipProtocolFriendlyName,
-  isSupportedCaipProtocol,
+  isSupportedCaipStandard,
   maybeParseCaip,
   ParsedCaipType,
 } from 'features/caip'
@@ -44,7 +44,7 @@ export const veridaWalletAccountsToDropdownOptions = ({
 
       const blockchain = maybeParsedCaip?.standard
 
-      if (!isSupportedCaipProtocol(blockchain)) return []
+      if (!isSupportedCaipStandard(blockchain)) return []
 
       const disabled =
         !includesWatchedWallets && isWatchedWallet(veridaWalletAccount)
