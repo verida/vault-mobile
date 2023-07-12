@@ -5,6 +5,8 @@ import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
 
+import { useAuth } from 'hooks/useAuth'
+
 import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
 import { extractWalletConnectRpcOrThrow } from '../utils'
 import { useWalletConnectSessionRejectCallback } from './useWalletConnectSessionRejectCallback'
@@ -16,6 +18,7 @@ export const useWalletConnectSessionRequestCallback = (): ((
   event: Web3WalletTypes.EventArguments['session_request']
 ) => void) => {
   const { showModal } = useModal()
+  const { authenticated } = useAuth()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -29,6 +32,15 @@ export const useWalletConnectSessionRequestCallback = (): ((
       request: Web3WalletTypes.EventArguments['session_request']
     ): Promise<void> => {
       try {
+        // If the user hasn't authenticated the app, then don't do anything.
+        if (!authenticated)
+          return reject(
+            web3wallet,
+            request,
+            new Error('Not authenticated.'),
+            false
+          )
+
         const { rpc } = extractWalletConnectRpcOrThrow({
           request,
           chainMetadatas,
@@ -56,6 +68,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
         return reject(web3wallet, request, e)
       }
     },
-    [chainMetadatas, reject, showModal]
+    [chainMetadatas, reject, showModal, authenticated]
   )
 }

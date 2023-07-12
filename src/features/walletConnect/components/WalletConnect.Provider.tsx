@@ -12,7 +12,10 @@ import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 import Snackbar from 'react-native-snackbar'
+import { useSelector } from 'react-redux'
 import { useDebouncedCallback } from 'use-debounce'
+
+import { useAuth } from 'hooks/useAuth'
 
 import { ActiveSessions, WalletConnectContextValue } from '../@types'
 import {
@@ -41,6 +44,8 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   const [activeSessions, setActiveSessions] = React.useState<ActiveSessions>(
     DEFAULT_ACTIVE_SESSIONS
   )
+
+  const { authenticated } = useAuth()
   const { showModal } = useModal()
 
   const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
@@ -78,6 +83,27 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     [maybeVeridaWalletAccounts, chainMetadatas]
   )
 
+  const shouldTerminateProposal = React.useCallback(
+    ({
+      web3wallet,
+      proposal,
+      sdkError,
+    }: {
+      readonly web3wallet: IWeb3Wallet
+      readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
+      readonly sdkError: Parameters<typeof getSdkError>[0]
+    }) => {
+      Sentry.captureException(
+        new Error(`WalletConnect proposal terminated. (${sdkError})`)
+      )
+      return web3wallet.rejectSession({
+        id: proposal.id,
+        reason: getSdkError(sdkError),
+      })
+    },
+    []
+  )
+
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
     useCreateWeb3Wallet({
       onSessionRequest: useWalletConnectSessionRequestCallback(),
@@ -86,23 +112,23 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           web3wallet: IWeb3Wallet,
           proposal: Web3WalletTypes.EventArguments['session_proposal']
         ) => {
-          if (!isSessionProposalSupported(proposal)) {
-            Sentry.captureException(
-              new Error(
-                `Encountered unsupported WalletConnect proposal. (${JSON.stringify(
-                  proposal?.params?.requiredNamespaces || []
-                )})`
-              )
-            )
+          if (!authenticated)
+            return shouldTerminateProposal({
+              web3wallet,
+              proposal,
+              sdkError: 'USER_REJECTED',
+            })
 
+          if (!isSessionProposalSupported(proposal)) {
             Alert.alert(
               'Unable to connect',
               `The required chains requested by this dApp are not yet supported.`
             )
 
-            return web3wallet.rejectSession({
-              id: proposal.id,
-              reason: getSdkError('UNSUPPORTED_ACCOUNTS'),
+            return shouldTerminateProposal({
+              web3wallet,
+              proposal,
+              sdkError: 'UNSUPPORTED_ACCOUNTS',
             })
           }
 
@@ -115,7 +141,12 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
             />
           )
         },
-        [isSessionProposalSupported, showModal]
+        [
+          authenticated,
+          isSessionProposalSupported,
+          shouldTerminateProposal,
+          showModal,
+        ]
       ),
       onSessionDelete: React.useCallback(
         async (web3wallet) => {
