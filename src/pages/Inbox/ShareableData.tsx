@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
+import { IDatastore } from '@verida/types'
 import update from 'immutability-helper'
 import { debounce } from 'lodash'
 import { Container, Content } from 'native-base'
@@ -66,13 +67,16 @@ function ShareableData(
         $and: [requestFilter, searchFilter],
       }
 
-      const datastore =
-        await AccountManager.getInstance().context?.openDatastore(schemaUrl)
+      const datastore: IDatastore | undefined =
+        await AccountManager.getInstance().context?.openDatastore(
+          schemaUrl,
+          undefined
+        )
 
-      const result = await datastore?.getMany(query)
-      if (result) {
-        setData(result as ShareableDataItemType[])
-      }
+      const result: ShareableDataItemType[] | undefined =
+        await datastore?.getMany<ShareableDataItemType>(query, undefined)
+
+      if (result) setData(result)
 
       setLoading(false)
     } catch (e) {

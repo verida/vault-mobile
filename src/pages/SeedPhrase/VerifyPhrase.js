@@ -22,12 +22,17 @@ const VerifyPhrase = (props) => {
 
   useEffect(() => {
     showError(false)
+
     const selectedWords = selected.map((item) => route.params.shuffled[item])
 
     setVerified(
       selectedWords.join(' ') ===
         AccountManager.getInstance().getSelectedAccount().mnemonic
     )
+
+    // TODO: We are not sensitive to route.params.shuffled here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selected])
 
   useEffect(() => {

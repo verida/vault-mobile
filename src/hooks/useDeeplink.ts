@@ -12,7 +12,7 @@ type NavProp = CompositeNavigationProp<
 >
 
 export function useDeeplink(navigation: NavProp) {
-  return function (url: string) {
+  return (url: string) => {
     try {
       const parsedUrl = parse(url, true)
       const { pathname, query } = parsedUrl

@@ -1,15 +1,10 @@
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
-import { debounce } from 'lodash'
-import React, {
-  useCallback,
-  useImperativeHandle,
-  useRef,
-  useState,
-} from 'react'
+import React, { useImperativeHandle, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import ParsedText from 'react-native-parsed-text'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useDebouncedCallback } from 'use-debounce'
 
 import UsernameManager from 'api/UsernameManager'
 import Button from 'components/Button'
@@ -46,7 +41,7 @@ export const InputUsernameView = React.forwardRef(
     const { theme } = useTheme()
 
     const [inputText, setInputText] = useState('')
-    const usernameInputRef = useRef<TextInput>(null)
+    const usernameInputRef = useRef<TextInput | null>(null)
 
     const [checkingUsername, setCheckingUsername] = useState(false)
     const [availableUsername, setAvailableUsername] = useState(false)
@@ -91,8 +86,8 @@ export const InputUsernameView = React.forwardRef(
       })
     }
 
-    const debounceCheckUsername = useCallback(
-      debounce(async (text) => {
+    const debounceCheckUsername = useDebouncedCallback(
+      React.useCallback(async (text: string) => {
         try {
           const plainName = text.replace(VERIDA_NAME_PATTERN, '')
           let errorMessage = ''
@@ -118,8 +113,8 @@ export const InputUsernameView = React.forwardRef(
         } finally {
           setCheckingUsername(false)
         }
-      }, 1500),
-      []
+      }, []),
+      1500
     )
 
     return (

@@ -21,12 +21,14 @@ export function useInstallWebView(): Stateful<string> {
     const init = async () => {
       try {
         const fromDir = WEBAPP_BUNDLE_DIR
+        // eslint-disable-next-line no-console
         console.debug(
           'useInstallWebView.ts ~ useInstallWebView ~ fromDir:',
           fromDir
         )
 
         const toDir = WEBAPP_ROOT_DIR
+        // eslint-disable-next-line no-console
         console.debug(
           'useInstallWebView.ts ~ useInstallWebView ~ toDir:',
           toDir
@@ -41,12 +43,14 @@ export function useInstallWebView(): Stateful<string> {
           await isWebappVersionAlreadyInstalled(fromDir, toDir)
 
         if (webappVersionAlreadyInstalled) {
+          // eslint-disable-next-line no-console
           console.debug(
             'useInstallWebView.ts ~ useInstallWebView ~ Webapp version already installed'
           )
 
           // Do nothing
         } else {
+          // eslint-disable-next-line no-console
           console.debug(
             'useInstallWebView.ts ~ useInstallWebView ~ Webapp version not yet installed'
           )
@@ -54,18 +58,24 @@ export function useInstallWebView(): Stateful<string> {
           await installWebapp(fromDir, toDir)
         }
 
+        // eslint-disable-next-line no-console
         console.debug(
           'useInstallWebView.ts ~ useInstallWebView ~ Webapp directory content:',
           await RNBlobUtil.fs.ls(toDir)
         )
 
+        // eslint-disable-next-line no-console
         console.log('[useInstallWebView] Webapp successfully installed!')
 
         setState({ result: toDir, loading: false })
       } catch (cause) {
+        // eslint-disable-next-line no-console
         console.error(cause)
-        // @ts-expect-error "cause"
-        setState({ error: new Error('Failed to install WebView', { cause }) })
+        setState({
+          // @ts-expect-error language_version
+          error: new Error('Failed to install WebView', { cause }),
+          loading: false,
+        })
       }
     }
     init()
@@ -81,10 +91,12 @@ async function checkWebappBundleExist(webappBundleDir: string) {
       : await RNFS.exists(webappBundleDir)
 
   if (isFromDirExist) {
+    // eslint-disable-next-line no-console
     console.debug(
       'useInstallWebView.ts ~ checkWebappBundleExist ~ webappBundleDir exists'
     )
   } else {
+    // eslint-disable-next-line no-console
     console.debug(
       'useInstallWebView.ts ~ checkWebappBundleExist ~ webappBundleDir doesnt exist'
     )
@@ -131,12 +143,14 @@ async function installWebapp(webappBundleDir: string, webappTargetDir: string) {
   const webappDirExists = await isWebappDirExist(webappTargetDir)
 
   if (webappDirExists) {
+    // eslint-disable-next-line no-console
     console.debug(
       'useInstallWebView.ts ~ installWebapp ~ Webapp target dir already exists, meaning it is a previous version of the Webapp'
     )
 
     await removeWebAppContent(webappTargetDir)
   } else {
+    // eslint-disable-next-line no-console
     console.debug(
       'useInstallWebView.ts ~ installWebapp ~ Webapp target dir doesnt exist'
     )
@@ -148,6 +162,7 @@ async function installWebapp(webappBundleDir: string, webappTargetDir: string) {
 }
 
 async function removeWebAppContent(webappDir: string) {
+  // eslint-disable-next-line no-console
   console.debug(
     'useInstallWebView.ts ~ removeWebAppContent ~ Removing previous webapp version content'
   )
@@ -159,6 +174,7 @@ async function removeWebAppContent(webappDir: string) {
       .filter((item) => item.path !== WEBAPP_PUBLIC_DIR)
       // Removing all other files
       .map(async (item) => {
+        // eslint-disable-next-line no-console
         console.debug(
           'useInstallWebView.ts ~ removeWebAppContent ~ Removing item:',
           item.path
@@ -170,6 +186,7 @@ async function removeWebAppContent(webappDir: string) {
 }
 
 async function copyWebapp(fromDir: string, toDir: string) {
+  // eslint-disable-next-line no-console
   console.debug(
     'useInstallWebView.ts ~ copyWebapp ~ Copying the new version of the Webapp'
   )
@@ -182,9 +199,11 @@ async function copyWebappItems(
   fromDir: string,
   toDir: string
 ) {
+  // eslint-disable-next-line no-console
   console.debug(
     `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying Webapp items from ${fromDir}`
   )
+  // eslint-disable-next-line no-console
   console.debug(
     `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying Webapp items to ${toDir}`
   )
@@ -198,6 +217,7 @@ async function copyWebappItems(
 
   await Promise.all(
     directories.map(async (directory) => {
+      // eslint-disable-next-line no-console
       console.debug(
         `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ directory.path:`,
         directory.path
@@ -208,6 +228,7 @@ async function copyWebappItems(
         ''
       )}`
 
+      // eslint-disable-next-line no-console
       console.debug(
         `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Creating directory ${targetDirPath}`
       )
@@ -225,6 +246,7 @@ async function copyWebappItems(
           ''
         )}`
 
+        // eslint-disable-next-line no-console
         console.debug(
           `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying file ${file.path} to ${targetFilePath}`
         )

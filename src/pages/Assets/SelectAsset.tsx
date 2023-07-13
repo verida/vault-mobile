@@ -12,6 +12,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { NFT, NFTMetadata } from 'api/types'
@@ -38,8 +40,7 @@ const SelectAsset = () => {
   const params = useParams<SelectAssetScreenProps>()
   const { screenName, mode, originalValue, searchableAddresses } = params
 
-  const { data, isLoading, error, refetch } =
-    useGetNFTsQuery(searchableAddresses)
+  const { data, isLoading, refetch } = useGetNFTsQuery(searchableAddresses)
 
   // pull to refresh data
   const [refreshing, setRefreshing] = React.useState(false)

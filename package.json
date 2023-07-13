@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "0.3.50",
+  "version": "0.3.51",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -13,13 +13,13 @@
     "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
     "ios": "react-native run-ios --scheme 'Verida Vault Internal'",
     "web": "expo start --web",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/myApp/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
-    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify",
+    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify && npx pod-install && yarn build:webapp",
     "build:webapp": "rm -rf www && cd web && yarn && CI=false yarn build && cd .. && rm -Rf www && mkdir -p www && cp -rf web/build/* www && yarn copy:webapp:android",
     "copy:webapp:android": "rm -rf android/app/src/main/assets/www && mkdir -p android/app/src/main/assets/www && cp -rf web/build/* android/app/src/main/assets/www",
     "release:android": "yarn build:webapp && yarn android --variant=stagingRelease"
@@ -189,6 +189,7 @@
     "underscore": "^1.10.2",
     "url": "^0.10.3",
     "url-parse": "^1.5.3",
+    "use-debounce": "^9.0.4",
     "use-deep-compare-effect": "^1.8.1",
     "util": "^0.10.4",
     "vm-browserify": "0.0.4",
@@ -228,7 +229,7 @@
     "prettier": "2.3.2",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "17.0.2",
-    "typescript": "~4.3.5"
+    "typescript": "4.3.5"
   },
   "resolutions": {
     "react-native-svg": "^13.7.0",

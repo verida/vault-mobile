@@ -12,19 +12,20 @@ export class DataManager {
     this.map = map
   }
 
-  public getFolderList() {
-    const { navigation, folders } = this.map
+  // TODO: Remove this.
+  //public getFolderList() {
+  //  const { navigation, folders } = this.map
 
-    return navigation.map((folder: string) => {
-      const { title, titlePlural, icon } = folders[folder]
-      console.log('icon', icon)
-      return {
-        title: titlePlural || title,
-        folder,
-        icon,
-      }
-    })
-  }
+  //  return navigation.map((folder: string) => {
+  //    const { title, titlePlural, icon } = folders[folder]
+  //    console.log('icon', icon)
+  //    return {
+  //      title: titlePlural || title,
+  //      folder,
+  //      icon,
+  //    }
+  //  })
+  //}
 
   public async selectFolder(folder: string) {
     const { folders } = this.map

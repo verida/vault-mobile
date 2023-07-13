@@ -1,4 +1,3 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
@@ -121,7 +120,7 @@ const Property = ({
 }
 
 const NFTDetail = () => {
-  const { showActionSheetWithOptions } = useActionSheet()
+  //const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
@@ -134,35 +133,35 @@ const NFTDetail = () => {
   const name = nft.name + ` #${nft.token_id}`
   const hasMinterWallet = nft.minter_address?.startsWith('0x')
 
-  const handleMoreActions = () => {
-    const options = ['Send', 'View in Explorer', 'Share', 'Cancel']
-    const cancelButtonIndex = 3
+  //const handleMoreActions = () => {
+  //  const options = ['Send', 'View in Explorer', 'Share', 'Cancel']
+  //  const cancelButtonIndex = 3
 
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (selectedIndex?: number) => {
-        switch (selectedIndex!) {
-          case 1:
-            // Send
-            break
+  //  showActionSheetWithOptions(
+  //    {
+  //      options,
+  //      cancelButtonIndex,
+  //    },
+  //    (selectedIndex?: number) => {
+  //      switch (selectedIndex!) {
+  //        case 1:
+  //          // Send
+  //          break
 
-          case 2:
-            // View in Explorer
-            break
-          case 3:
-            // Share
-            break
+  //        case 2:
+  //          // View in Explorer
+  //          break
+  //        case 3:
+  //          // Share
+  //          break
 
-          case cancelButtonIndex:
-            // Canceled
-            break
-        }
-      }
-    )
-  }
+  //        case cancelButtonIndex:
+  //          // Canceled
+  //          break
+  //      }
+  //    }
+  //  )
+  //}
 
   if (!nft) return <LoadingIndicator />
 

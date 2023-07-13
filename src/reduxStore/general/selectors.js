@@ -16,9 +16,8 @@ export const getBlockchainNetworks = (state) =>
 export const getBlockchainNetwork = (state, chainIdObj) => {
   const networks = getBlockchainNetworks(state)
   const chainId = new ChainId(chainIdObj).toString()
-  if (networks[chainId]) {
-    return networks[chainId]
-  }
+
+  if (networks[chainId]) return networks[chainId]
 
   throw new Error(`Unknown blockchain network: ${chainId}`)
 }

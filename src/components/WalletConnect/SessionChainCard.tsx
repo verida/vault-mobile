@@ -27,8 +27,11 @@ export default function SessionChainCard({ namespace }: IProps) {
         namespace.extension?.map(({ accounts, methods, events }) => {
           accounts.forEach((account) => {
             const [type, chain] = account.split(':')
-            const chainId = `${type}:${chain}`
-            if (chains.includes(chainId)) {
+
+            // TODO: This chain id generation logic should be a common function:
+            //       1. Increases code reuse/testability
+            //       2. Connects ideologically similar code bodies.
+            if (chains.includes(`${type}:${chain}`)) {
               extensionMethods.push(...methods)
               extensionEvents.push(...events)
             }
