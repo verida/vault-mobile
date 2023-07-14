@@ -1,3 +1,4 @@
+import { useWatchDeeplinks } from 'features/protocals'
 import { useEventHandlers, useWatchPublicProfileChanges } from 'hooks'
 import { FC } from 'react'
 
@@ -5,6 +6,7 @@ import { FC } from 'react'
 export const BehindAuthHandlers: FC = () => {
   useEventHandlers()
   useWatchPublicProfileChanges()
+  useWatchDeeplinks()
 
   return null
 }
