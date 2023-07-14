@@ -13,14 +13,22 @@ export class PolygonIdProtocalHandler implements ProtocolHandler {
   }
 
   handleDeepLink(uri: string): Promise<boolean> {
-    console.log('handleDeepLink', uri)
-    Alert.alert('Deeplink', uri)
-    // TODO: handle URI
-    const url = new URL(uri)
-    console.log('url params: i_m =', url.searchParams.get('i_m'))
-    // Base64 decode
-    // base64.decode(url.searchParams.get('i_m'))
+    try {
+      console.log('handleDeepLink', uri)
 
-    Promise.resolve(true)
+      // TODO: handle URI
+      const url = new URL(uri)
+
+      // Base64 decode
+      Alert.alert(
+        'Deeplink',
+        JSON.stringify(base64.decode(url.searchParams.get('i_m')!))
+      )
+
+      Promise.resolve(true)
+    } catch (error) {
+      console.error(error)
+    }
+    Promise.reject('Error handle PolygonID URI')
   }
 }
