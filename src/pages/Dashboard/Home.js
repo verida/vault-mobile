@@ -70,9 +70,15 @@ const Home = (props) => {
   useRemoteNotifications()
   const linkTo = useLinkTo()
 
+  // TODO: Clean up and migrate all the deeplink handlers here to features/protocals/configProtocalHandlers
   const processDeepLink = React.useCallback(
-    (initialUrl) => {
+    (initialUrl?: string) => {
       if (initialUrl === null) {
+        return
+      }
+
+      // Ignore PolygonID deeplink here, as it's handled in features/protocals/polygonid
+      if (initialUrl.match(/^iden3comm:/)) {
         return
       }
 
@@ -100,11 +106,7 @@ const Home = (props) => {
     }
 
     getUrl()
-
-    // TODO: We are not sensitive to processDeepLink here, but we should be.
-    //       This is for backwards-compatible linter satisfaction only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDeeplink])
+  }, [processDeepLink])
 
   useEffect(() => {
     const handleBackgroundDeepLink = async (event) => {
@@ -116,12 +118,11 @@ const Home = (props) => {
       }
     }
 
-    Linking.addEventListener('url', handleBackgroundDeepLink)
-
-    // TODO: We are not sensitive to processDeepLink here, but we should be.
-    //       This is for backwards-compatible linter satisfaction only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDeeplink])
+    const subscriber = Linking.addEventListener('url', handleBackgroundDeepLink)
+    return () => {
+      subscriber?.remove()
+    }
+  }, [processDeepLink])
 
   useEffect(() => {
     dynamicLinks()

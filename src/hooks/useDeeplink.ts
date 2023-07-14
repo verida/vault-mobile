@@ -2,6 +2,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { CompositeNavigationProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
+import { useCallback } from 'react'
 import parse from 'url-parse'
 
 import { DashboardTabParams, MainStackParams } from 'navigation/types'
@@ -12,7 +13,7 @@ type NavProp = CompositeNavigationProp<
 >
 
 export function useDeeplink(navigation: NavProp) {
-  return (url: string) => {
+  return useCallback((url: string) => {
     try {
       const parsedUrl = parse(url, true)
       const { pathname, query } = parsedUrl
@@ -35,5 +36,5 @@ export function useDeeplink(navigation: NavProp) {
     } catch (error) {
       Sentry.captureException(error)
     }
-  }
+  }, [])
 }
