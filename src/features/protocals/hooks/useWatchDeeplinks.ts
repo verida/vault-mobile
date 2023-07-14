@@ -32,6 +32,9 @@ export function useWatchDeeplinks() {
       }
     }
 
-    Linking.addEventListener('url', handleDeepLink)
+    const subscriber = Linking.addEventListener('url', handleDeepLink)
+    return () => {
+      subscriber?.remove()
+    }
   }, [processDeeplink])
 }
