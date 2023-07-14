@@ -12,7 +12,7 @@ export function useWatchDeeplinks() {
       try {
         const initialUrl = await Linking.getInitialURL()
         if (initialUrl) {
-          processDeeplink(initialUrl!)
+          processDeeplink(initialUrl)
         }
       } catch (e) {
         Sentry.captureException(e)

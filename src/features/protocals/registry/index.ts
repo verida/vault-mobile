@@ -32,7 +32,9 @@ class ProtocalHandlerRegistry {
   }
 
   public removeHandler(handler: ProtocolHandler) {
-    this.handlers = this.handlers.filter((it) => it !== handler)
+    this.handlers = this.handlers.filter(
+      (it) => it.identifier() !== handler.identifier() || it === handler
+    )
   }
 
   public removeAll() {
