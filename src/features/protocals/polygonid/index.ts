@@ -28,7 +28,7 @@ export class PolygonIdProtocalHandler implements ProtocolHandler {
       Promise.resolve(true)
     } catch (error) {
       console.error(error)
+      Promise.reject('Error handle PolygonID URI')
     }
-    Promise.reject('Error handle PolygonID URI')
   }
 }
