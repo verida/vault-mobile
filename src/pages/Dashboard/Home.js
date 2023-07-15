@@ -70,14 +70,14 @@ const Home = (props) => {
   useRemoteNotifications()
   const linkTo = useLinkTo()
 
-  // TODO: Clean up and migrate all the deeplink handlers here to features/protocals/configProtocalHandlers
+  // TODO: Clean up and migrate all the deeplink handlers here to their respective features/protocols
   const processDeepLink = React.useCallback(
-    (initialUrl?: string) => {
+    (initialUrl) => {
       if (initialUrl === null) {
         return
       }
 
-      // Ignore PolygonID deeplink here, as it's handled in features/protocals/polygonid
+      // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
       if (initialUrl.match(/^iden3comm:/)) {
         return
       }
@@ -125,6 +125,7 @@ const Home = (props) => {
   }, [processDeepLink])
 
   useEffect(() => {
+    // TODO: Find out what's going on here :-/
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
