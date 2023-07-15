@@ -1,3 +1,3 @@
 export * from './key'
 export * from './proofRequest'
-export * from './qrcode'
+export * from './message'
