@@ -1,5 +1,10 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
+import {
+  canBeHandledByDeeplink,
+  isSupportedDomain,
+  useDeeplink,
+} from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -7,11 +12,9 @@ import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
-import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
 

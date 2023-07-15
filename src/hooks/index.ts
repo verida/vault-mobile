@@ -1,4 +1,3 @@
-export * from './useDeeplink'
 export * from './useEmitter'
 export * from './useEventHandlers'
 export * from './useModal'

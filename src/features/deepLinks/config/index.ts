@@ -2,7 +2,7 @@ import { LinkingOptions } from '@react-navigation/native'
 
 import { RootStackParams } from 'navigation/types'
 
-const linking: LinkingOptions<RootStackParams> = {
+export const navigationLinkingConfiguration: LinkingOptions<RootStackParams> = {
   prefixes: ['https://vault.verida.io/'],
   config: {
     screens: {
@@ -15,5 +15,3 @@ const linking: LinkingOptions<RootStackParams> = {
     },
   },
 }
-
-export default linking
