@@ -22,12 +22,11 @@ export function useDeeplink(navigation: NavProp) {
         const { pathname, query } = parsedUrl
         let screenName: keyof MainStackParams
         switch (pathname) {
-          //TODO: Handle more deeplink thre
-          case '/connection-success':
+          case '/connection-success': // TODO: I guess, should move to navigation linking configuration
             screenName = 'SingleConnection'
             break
           default:
-            screenName = 'LoginRequest'
+            screenName = 'LoginRequest' // TODO: Should move to a Verida Connect protocol handler
         }
 
         if (screenName === 'SingleConnection') {
