@@ -29,7 +29,7 @@ import {
   saveUserWallets,
   setSelectedWallet,
 } from 'reduxStore/wallet/actions'
-import { getCountryCode } from 'utils/profile'
+import { getCountryCode } from 'helpers/countries'
 import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
 
