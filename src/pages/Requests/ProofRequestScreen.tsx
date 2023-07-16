@@ -5,6 +5,8 @@ import {
   getUserFriendlyProofRequestRequirements,
   usePolygonId,
 } from 'features/polygonid'
+import type { Protocol } from 'features/protocols'
+import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -16,8 +18,6 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Feather from 'react-native-vector-icons/Feather'
-import { Protocol } from 'types'
-import { getProtocolLabel, getProtocolLogo } from 'utils'
 
 import AppLogo from 'components/AppLogo'
 import Button from 'components/Button'
