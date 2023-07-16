@@ -1,4 +1,4 @@
-import { Protocol, ProtocolDefinition } from 'features/protocols'
+import type { Protocol, ProtocolDefinition } from 'features/protocols'
 import React from 'react'
 
 import PolygonIdLogo from 'assets/logos/protocols/polygon_id_protocol_logo.svg'

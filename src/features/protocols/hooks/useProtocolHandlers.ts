@@ -1,5 +1,5 @@
-import { usePolygonIdProtocolHandler } from 'features/polygonid/hooks/usePolygonIdProtocolHandler'
-import { ProtocolHandler } from 'features/protocols/@types'
+import { usePolygonIdProtocolHandler } from 'features/polygonid'
+import type { ProtocolHandler } from 'features/protocols'
 import { useRef } from 'react'
 
 export function useProtocolHandlers() {
