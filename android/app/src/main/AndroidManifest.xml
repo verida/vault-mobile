@@ -29,8 +29,13 @@
         <action android:name="android.intent.action.VIEW"/>
         <category android:name="android.intent.category.DEFAULT"/>
         <category android:name="android.intent.category.BROWSABLE"/>
-        <data android:scheme="http" android:host="vault.verida.io" android:pathPrefix="/request"/>
-        <data android:scheme="https"/>
+        <data android:scheme="https" android:host="vault.verida.io" android:pathPrefix="/request"/>
+        <data android:scheme="http"/>
+      </intent-filter>
+      <intent-filter android:autoVerify="true">
+        <action android:name="android.intent.action.VIEW"/>
+        <category android:name="android.intent.category.DEFAULT"/>
+        <category android:name="android.intent.category.BROWSABLE"/>
         <data android:scheme="iden3comm"/>
       </intent-filter>
     </activity>
