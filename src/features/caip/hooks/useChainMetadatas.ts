@@ -47,8 +47,10 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   }
 }
 
+const defaultResult: ChainMetadatas = Object.freeze({})
+
 export function getMaybeChainMetadatas(state: State): ChainMetadatas {
-  if (state.loading || !('result' in state)) return {}
+  if (state.loading || !('result' in state)) return defaultResult
 
   return state.result
 }
