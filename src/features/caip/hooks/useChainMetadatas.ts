@@ -8,8 +8,7 @@ import { BlockchainNetwork } from 'api/types'
 
 import { ChainMetadata } from '../@types'
 
-// TODO: Use environment variables
-const { INFURA_API_KEY = '6e4bf0201647493e93c9eea13b70bd4d' } = Config
+const { INFURA_API_KEY } = Config
 
 const { useChainsListQuery } = walletsApi
 
