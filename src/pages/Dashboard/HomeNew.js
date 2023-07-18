@@ -2,6 +2,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { logout as logoutAction } from 'features/auth'
+import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectNewMessagesCount,
@@ -35,7 +36,6 @@ import {
 } from 'constants/color'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'

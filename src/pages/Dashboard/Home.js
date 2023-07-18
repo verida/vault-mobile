@@ -2,6 +2,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { logout as logoutAction } from 'features/auth'
+import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectNewMessagesCount,
@@ -11,6 +12,7 @@ import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
+import { isPolygonIdDeepLink } from 'features/polygonid'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -42,7 +44,6 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
@@ -71,9 +72,15 @@ const Home = (props) => {
 
   useRemoteNotifications()
 
+  // TODO: Clean up and migrate all the deeplink handlers here to their respective features/protocols
   const processDeepLink = React.useCallback(
     (initialUrl) => {
       if (initialUrl === null) {
+        return
+      }
+
+      // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
+      if (isPolygonIdDeepLink(initialUrl)) {
         return
       }
 
@@ -101,11 +108,7 @@ const Home = (props) => {
     }
 
     getUrl()
-
-    // TODO: We are not sensitive to processDeepLink here, but we should be.
-    //       This is for backwards-compatible linter satisfaction only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDeeplink])
+  }, [processDeepLink])
 
   useEffect(() => {
     const handleBackgroundDeepLink = async (event) => {
@@ -117,14 +120,14 @@ const Home = (props) => {
       }
     }
 
-    Linking.addEventListener('url', handleBackgroundDeepLink)
-
-    // TODO: We are not sensitive to processDeepLink here, but we should be.
-    //       This is for backwards-compatible linter satisfaction only.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [handleDeeplink])
+    const subscriber = Linking.addEventListener('url', handleBackgroundDeepLink)
+    return () => {
+      subscriber?.remove()
+    }
+  }, [processDeepLink])
 
   useEffect(() => {
+    // TODO: Find out what's going on here :-/
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {

@@ -1,6 +1,5 @@
 export * from './color'
 export * from './config'
 export * from './profile'
-export * from './protocols'
 export * from './text'
 export * from './url'

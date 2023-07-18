@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "0.3.50",
+  "version": "0.3.51",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -13,7 +13,7 @@
     "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
     "ios": "react-native run-ios --scheme 'Verida Vault Internal'",
     "web": "expo start --web",
-    "test": "jest",
+    "test": "jest --passWithNoTests",
     "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/myApp/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",

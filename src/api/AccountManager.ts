@@ -1,6 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import * as Sentry from '@sentry/react-native'
-import { Client, Context } from '@verida/client-rn'
+import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from './VaultCommon/vault'
 import { ethers, utils } from 'ethers'
@@ -14,6 +14,7 @@ import {
   AddIdentityStepStatus,
   AddIdentityStepType,
   BlockchainWallet,
+  BlockchainWalletWithAccounts,
   NormalizedAccounts,
 } from 'api/types'
 import dataMap from 'config/data-map'
@@ -31,7 +32,7 @@ import {
   getBlockchainNetworks,
   getSelectedWalletId,
 } from 'features/wallets'
-import { getCountryCode } from 'utils/profile'
+import { getCountryCode } from 'helpers/countries'
 import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
 
@@ -349,10 +350,11 @@ class AccountManager extends EventEmitter {
         WALLET_SCHEMA_0_2_0_URI
       )
 
-      const hdWallets: any = await datastore?.getMany<BlockchainWallet>(
-        undefined,
-        undefined
-      )
+      const hdWallets: any =
+        await datastore?.getMany<BlockchainWalletWithAccounts>(
+          undefined,
+          undefined
+        )
 
       if (!isEmpty(hdWallets)) {
         const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
@@ -443,7 +445,7 @@ class AccountManager extends EventEmitter {
       await this.client.connect(account)
 
       // Open the Vault context, forcing its creation
-      this.context = <Context>(
+      this.context = <IContext>(
         await this.client.openContext(CONFIG.VERIDA_CONTEXT_NAME, true)
       )
 

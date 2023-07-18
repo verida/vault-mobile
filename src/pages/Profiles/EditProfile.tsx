@@ -4,6 +4,7 @@ import {
   selectSelectedPublicProfile,
   setPublicProfileByDid,
 } from 'features/profiles'
+import { COUNTRIES } from 'helpers/countries'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
@@ -18,7 +19,6 @@ import { RootState, useAppDispatch, useAppSelector } from 'reduxStore/types'
 import Button from '../../components/Button'
 import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
-import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 /**

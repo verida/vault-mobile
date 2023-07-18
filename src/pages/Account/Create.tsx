@@ -1,5 +1,5 @@
 import { setPublicProfileByDid } from 'features/profiles'
-import { COUNTRIES } from 'helpers/country-list'
+import { COUNTRIES } from 'helpers/countries'
 import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import {

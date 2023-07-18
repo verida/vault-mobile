@@ -8,6 +8,7 @@ import { ThemeProvider } from 'contexts/ThemeContext'
 import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -26,7 +27,6 @@ import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
-import linking from 'navigation/linkingConfiguration'
 import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
 import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
@@ -114,7 +114,9 @@ function App() {
         <SafeAreaProvider>
           <ThemeProvider initial={defaultTheme}>
             <AuthProvider>
-              <NavigationContainer linking={linking} ref={navigationRef}>
+              <NavigationContainer
+                linking={navigationLinkingConfiguration}
+                ref={navigationRef}>
                 <ModalProvider>
                   <Authenticate>
                     <RootSiblingParent>
