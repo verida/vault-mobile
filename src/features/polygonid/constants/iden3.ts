@@ -1,3 +1,6 @@
+export const IDEN3_PROTOCOL_DEEPLINK_SCHEME = 'iden3comm://'
+export const IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM = 'i_m'
+
 // TODO: Get these values from the Polygon ID SDK once the tree-shaking and BigInt issue is resolved
 
 export const IDEN3_PROTOCOL = 'https://iden3-communication.io/'

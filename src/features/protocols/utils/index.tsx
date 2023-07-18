@@ -1,5 +1,5 @@
+import type { Protocol, ProtocolDefinition } from 'features/protocols'
 import React from 'react'
-import { Protocol, ProtocolDefinition } from 'types'
 
 import PolygonIdLogo from 'assets/logos/protocols/polygon_id_protocol_logo.svg'
 import VeridaLogo from 'assets/logos/protocols/verida_protocol_logo.svg'

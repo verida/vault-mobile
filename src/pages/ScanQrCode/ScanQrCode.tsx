@@ -1,17 +1,20 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
-import { isPolygonIdQrCodeMessage, usePolygonId } from 'features/polygonid'
+import {
+  canBeHandledByDeeplink,
+  isSupportedDomain,
+  useDeeplink,
+} from 'features/deepLinks'
+import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
-import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
 
@@ -21,10 +24,10 @@ function ScanQrCode(
   const { navigation, route } = props
   const [enabled, setEnabled] = useState(true)
   const [isFlashOn, setIsFlashOn] = useState(false)
+  const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
   const handleDeeplink = useDeeplink(navigation as any)
   const { requestConnect: handleWalletConnectV1Data } = useWalletConnect()
   const { requestConnect: handleWalletConnectV2Data } = useWalletConnectv2()
-  const { handleQRCodeMessage: handlePolygonIdData } = usePolygonId()
 
   useEffect(() => {
     setEnabled(true)
@@ -46,6 +49,7 @@ function ScanQrCode(
     setEnabled(false)
 
     setTimeout(() => {
+      // TODO: This is causing a state update on an unmounted component, use a debounce/throttle on handleQrCode instead
       setEnabled(true)
     }, WAIT_TIME)
 
@@ -54,6 +58,13 @@ function ScanQrCode(
       navigation.goBack()
       return
     }
+
+    const handledByProtocols = processQrCodeByProtocolHandlers(data)
+    if (handledByProtocols) {
+      // It's assumed the protocol handlers will handle the navigation
+      return
+    }
+    // TODO: Progressively move the protocols into the protocol handlers
 
     // WalletConnect v1
     // Ex: wc:9145e975-4af0-4a28-a569-19aab7a21dd8@1?bridge=https%3A%2F%2F6.bridge.walletconnect.org&key=40dbb09f0eac060885a0edaf7f1ab7efba207c9b339bc49f805d61b615ac28a7
@@ -71,32 +82,30 @@ function ScanQrCode(
       return
     }
 
-    // Polygon ID
-    if (isPolygonIdQrCodeMessage(data)) {
-      navigation.goBack()
-      handlePolygonIdData(data)
+    const { hostname, pathname } = parse(data, true)
+    // Check if supported URL
+    if (
+      !isEmpty(hostname) &&
+      isSupportedDomain(hostname) &&
+      canBeHandledByDeeplink(pathname)
+    ) {
+      // TODO: Move Verida Connect to protocol handlers
+      handleDeeplink(data)
       return
     }
 
-    // Check if content is a valid URL
-    const { hostname, pathname } = parse(data, true)
-    if (isEmpty(hostname)) {
-      Alert.alert('Error', 'QR Code not supported')
-      return
-    }
-    // Try to open the URL in browser if it is not a deeplink
-    if (!canBeHandledByDeeplink(pathname) || !isSupportedDomain(hostname)) {
-      try {
-        const canOpen = await Linking.canOpenURL(data)
-        if (canOpen) {
-          await Linking.openURL(data)
-        }
-      } catch (error) {
-        Sentry.captureException(error)
+    // Check if can be opened by device
+    try {
+      if (await Linking.canOpenURL(data)) {
+        // TODO: Do we really want to continue opening any data non-supported by the Verida Wallet?
+        await Linking.openURL(data)
+        return
       }
-      return
+    } catch (error) {
+      Sentry.captureException(error)
     }
-    handleDeeplink(data)
+
+    Alert.alert('Error', 'QR Code not supported')
   }
 
   const onBarCodeRead = async (event: BarCodeReadEvent) => {

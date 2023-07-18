@@ -66,11 +66,10 @@ const Stack = createNativeStackNavigator<MainStackParams>()
 export const MainNavigator: React.FunctionComponent = () => {
   return (
     <>
-      {/* An empty component, just to register all of the main app events after the user has authenticated. */}
-      <BehindAuthHandlers />
-
       {/* As the MainNavigator is only mounted after the user is authenticated, so are these context providers. */}
       <BehindAuthContextProviders>
+        {/* An empty component, just to register all of the main app events after the user has authenticated. */}
+        <BehindAuthHandlers />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
           <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
           <Stack.Screen name={'Inbox'} component={Inbox} />
