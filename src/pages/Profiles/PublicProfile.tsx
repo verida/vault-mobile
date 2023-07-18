@@ -1143,7 +1143,7 @@ const PublicProfile = () => {
           <ProfileUsernameSection
             did={currentAccountDID}
             username={username}
-            loading={loading || quickFetching}
+            loading={loading}
           />
         )}
         <View style={{ marginTop: theme.spacing.m }}>
