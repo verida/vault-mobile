@@ -2,7 +2,7 @@ import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { CompositeNavigationProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
-import * as React from 'react'
+import { useCallback } from 'react'
 import parse from 'url-parse'
 
 import { DashboardTabParams, MainStackParams } from 'navigation/types'
@@ -12,20 +12,21 @@ type NavProp = CompositeNavigationProp<
   NativeStackNavigationProp<MainStackParams, keyof MainStackParams>
 >
 
+// TODO: To be handled as a protocol handler (for the Verida Connect part) or in Navigation linking configuration for pure screens navigation
+
 export function useDeeplink(navigation: NavProp) {
-  return React.useCallback(
+  return useCallback(
     (url: string) => {
       try {
         const parsedUrl = parse(url, true)
         const { pathname, query } = parsedUrl
         let screenName: keyof MainStackParams
         switch (pathname) {
-          //TODO: Handle more deeplink thre
-          case '/connection-success':
+          case '/connection-success': // TODO: I guess, should move to navigation linking configuration
             screenName = 'SingleConnection'
             break
           default:
-            screenName = 'LoginRequest'
+            screenName = 'LoginRequest' // TODO: Should move to a Verida Connect protocol handler
         }
 
         if (screenName === 'SingleConnection') {
