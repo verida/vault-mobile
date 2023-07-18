@@ -110,9 +110,6 @@ const EMPTY_PROFILE_READONLY_PROPS = [
 ]
 
 const PublicProfile = () => {
-  // const [profileEditableProps, setProfileEditableProps] = useState(
-  //   EMPTY_PROFILE_EDITABLE_PROPS
-  // )
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
   const profileEditableProps = useMemo(() => {
@@ -492,14 +489,6 @@ const PublicProfile = () => {
           publicProfile: publicData,
         })
       )
-
-      // const updatedList = profileEditableProps.map((item: any) => {
-      //   const label = item.label.toLowerCase()
-      //   item.value = publicData[label] ?? undefined
-      //   return item
-      // })
-
-      // setProfileEditableProps(updatedList)
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
@@ -822,7 +811,6 @@ const PublicProfile = () => {
       ])
 
       // Reset
-      // setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
       setVeridaOneProfile({})
 
       setPublicWalletAddresses([])
@@ -836,11 +824,7 @@ const PublicProfile = () => {
         setEnabledVeridaOne(await isEnabledVeridaOneProfile())
       })()
 
-      Promise.all([
-        // fetchPublicProfile(),
-        fetchVeridaOneProfle(),
-        fetchUsername(),
-      ]).finally(() => {
+      Promise.all([fetchVeridaOneProfle(), fetchUsername()]).finally(() => {
         setLoading(false)
       })
     }, 200)
@@ -848,7 +832,6 @@ const PublicProfile = () => {
     return () => {
       clearTimeout(tid)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccountDID])
 
   useEffect(() => {
