@@ -1,4 +1,4 @@
-import { throwIfInvalidNearRpcMethod } from 'blockchain/near'
+import { throwIfInvalidNearRpcMethod } from 'features/blockchain/near'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'

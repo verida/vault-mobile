@@ -1,3 +1,4 @@
+import { Buffer } from 'buffer'
 import {
   NearAccountPointer,
   nearCreateAction,
@@ -11,8 +12,7 @@ import {
   nearSignTransactions,
   NearTransaction,
   throwIfNearAccountDoesNotMatchNearAccountPointer,
-} from 'blockchain/near'
-import { Buffer } from 'buffer'
+} from 'features/blockchain/near'
 import {
   ChainMetadatas,
   getMaybeChainMetadatas,

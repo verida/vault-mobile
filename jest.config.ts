@@ -10,6 +10,5 @@ export default async (): Promise<Config> => ({
   },
   moduleNameMapper: {
     '^features(.*)$': ['<rootDir>/src/features$1'],
-    '^blockchain(.*)$': ['<rootDir>/src/blockchain$1'],
   },
 })

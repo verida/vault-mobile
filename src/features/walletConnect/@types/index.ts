@@ -1,7 +1,7 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import type { Eip155RpcMethod } from 'blockchain/eip155'
-import type { NearRpcMethod } from 'blockchain/near'
+import type { Eip155RpcMethod } from 'features/blockchain/eip155'
+import type { NearRpcMethod } from 'features/blockchain/near'
 import { SupportedCaipNamespace } from 'features/caip'
 
 export type ActiveSessions = Awaited<

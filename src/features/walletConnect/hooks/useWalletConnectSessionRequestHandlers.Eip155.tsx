@@ -1,6 +1,6 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { Eip155RpcMethod } from 'blockchain/eip155'
 import { ethers } from 'ethers'
+import { Eip155RpcMethod } from 'features/blockchain/eip155'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
 
