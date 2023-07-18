@@ -1154,13 +1154,6 @@ const PublicProfile = () => {
         <Text style={styles.description}>
           This information is always visible on your Verida One page
         </Text>
-        <ShimmerPlaceholder
-          visible={false}
-          style={{ marginBottom: theme.spacing.l }}
-          width={width - 2 * theme.spacing.m}
-          height={140}
-          shimmerStyle={{ borderRadius: 12 }}
-        />
         {loading ? (
           <View style={styles.loadingContainer}>
             {Array(4) // 4 remaining loading blocks
