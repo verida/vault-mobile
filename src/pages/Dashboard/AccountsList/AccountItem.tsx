@@ -15,11 +15,11 @@ import {
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 
 import { DefaultAvatar } from 'api/utils'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useAppSelector } from 'reduxStore/types'
@@ -70,7 +70,7 @@ function AccountItem(props: AccountItemProps) {
         isCurrentAccount && styles.currentAccountContainer,
       ]}
       onPress={onPress}>
-      <ShimmerPlaceHolder
+      <ShimmerPlaceholder
         LinearGradient={LinearGradient}
         visible={!loadingState.loading}
         width={45}
@@ -81,16 +81,16 @@ function AccountItem(props: AccountItemProps) {
           source={avatar || DefaultAvatar}
           resizeMode='cover'
         />
-      </ShimmerPlaceHolder>
+      </ShimmerPlaceholder>
       <View style={styles.info}>
-        <ShimmerPlaceHolder
+        <ShimmerPlaceholder
           LinearGradient={LinearGradient}
           visible={!loadingState.loading}
           width={0.7 * width}
           height={22}
           shimmerStyle={{ borderRadius: 6 }}>
           <Text style={styles.name}>{name}</Text>
-        </ShimmerPlaceHolder>
+        </ShimmerPlaceholder>
         <Text style={styles.did}>{did}</Text>
       </View>
       {renderCheckbox()}

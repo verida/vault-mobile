@@ -33,7 +33,6 @@ import {
   NestableScrollContainer,
   RenderItemParams,
 } from 'react-native-draggable-flatlist'
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder'
 import Snackbar from 'react-native-snackbar'
 import { useSelector } from 'react-redux'
 import { useDebouncedCallback } from 'use-debounce'
@@ -54,7 +53,6 @@ import {
 import UsernameManager from 'api/UsernameManager'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
-// import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
@@ -66,6 +64,7 @@ import {
 } from 'components/PublicProfile'
 import { PlatformLinkItem } from 'components/PublicProfile/PlatformLinkItem'
 import Screen from 'components/Screen'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
@@ -1155,7 +1154,13 @@ const PublicProfile = () => {
         <Text style={styles.description}>
           This information is always visible on your Verida One page
         </Text>
-
+        <ShimmerPlaceholder
+          visible={false}
+          style={{ marginBottom: theme.spacing.l }}
+          width={width - 2 * theme.spacing.m}
+          height={140}
+          shimmerStyle={{ borderRadius: 12 }}
+        />
         {loading ? (
           <View style={styles.loadingContainer}>
             {Array(4) // 4 remaining loading blocks
@@ -1163,7 +1168,6 @@ const PublicProfile = () => {
               .map((_, index) => (
                 <ShimmerPlaceholder
                   key={`loading-view-${index}`}
-                  LinearGradient={LinearGradient}
                   visible={false}
                   style={{ marginBottom: theme.spacing.l }}
                   width={width - 2 * theme.spacing.m}

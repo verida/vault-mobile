@@ -1,5 +1,4 @@
 import { useTheme } from 'contexts/ThemeContext'
-import { LinearGradient } from 'expo-linear-gradient'
 import { selectSelectedAccount } from 'features/identities'
 import {
   fetchPublicProfileData,
@@ -16,12 +15,12 @@ import {
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import ShimmerPlaceHolder from 'react-native-shimmer-placeholder'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useDispatch } from 'react-redux'
 
 import EnvelopeSvg from 'assets/icons/envelope.svg'
 import SettingsSvg from 'assets/icons/settings.svg'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useAppSelector } from 'reduxStore/types'
@@ -66,8 +65,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     <Header transparent style={styles.header} {...rest}>
       <Left style={styles.leftContainer}>
         <View style={styles.left}>
-          <ShimmerPlaceHolder
-            LinearGradient={LinearGradient}
+          <ShimmerPlaceholder
             visible={!loadingState.loading}
             width={40}
             height={40}
@@ -81,11 +79,10 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
                 style={styles.avatar}
               />
             </TouchableOpacity>
-          </ShimmerPlaceHolder>
+          </ShimmerPlaceholder>
 
           <View style={styles.titleContainer}>
-            <ShimmerPlaceHolder
-              LinearGradient={LinearGradient}
+            <ShimmerPlaceholder
               visible={!loadingState.loading}
               style={{ marginLeft: 6, marginRight: 6 }}
               shimmerStyle={{ borderRadius: 4 }}
@@ -108,7 +105,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
                 />
                 <Text style={styles.networkText}>Testnet</Text>
               </View>
-            </ShimmerPlaceHolder>
+            </ShimmerPlaceholder>
           </View>
         </View>
       </Left>

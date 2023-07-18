@@ -2,7 +2,6 @@ import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
-import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
 import {
   Image,
@@ -15,11 +14,11 @@ import {
   useWindowDimensions,
   View,
 } from 'react-native'
-import ShimmerPlaceholder from 'react-native-shimmer-placeholder'
 import Snackbar from 'react-native-snackbar'
 
 import Button from 'components/Button'
 import { Icon } from 'components/Icon'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { VERIDA_ONE_WEBSITE } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -40,7 +39,6 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
 
   return (
     <ShimmerPlaceholder
-      LinearGradient={LinearGradient}
       visible={!loading}
       width={width - 2 * theme.spacing.m}
       height={140}
