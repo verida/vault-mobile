@@ -2,33 +2,28 @@ import { $enum } from 'ts-enum-util'
 
 import { NearRpcMethod } from '../@types'
 
-export const isValidNearSigningMethod = (
-  maybeNearSigningMethod: string | undefined
-): maybeNearSigningMethod is NearRpcMethod => {
-  if (typeof maybeNearSigningMethod !== 'string') return false
+export const isValidNearRpcMethod = (
+  maybeNearRpcMethod: string | undefined
+): maybeNearRpcMethod is NearRpcMethod => {
+  if (typeof maybeNearRpcMethod !== 'string') return false
 
   return [...$enum(NearRpcMethod).values()]
     .map(String)
-    .includes(maybeNearSigningMethod)
+    .includes(maybeNearRpcMethod)
 }
 
 export function throwIfInvalidNearRpcMethod(
-  maybeNearSigningMethod: string | undefined
-): maybeNearSigningMethod is NearRpcMethod {
-  if (
-    typeof maybeNearSigningMethod !== 'string' ||
-    !maybeNearSigningMethod.length
-  )
+  maybeNearRpcMethod: string | undefined
+): maybeNearRpcMethod is NearRpcMethod {
+  if (typeof maybeNearRpcMethod !== 'string' || !maybeNearRpcMethod.length)
     throw new Error(
-      `Expected non-empty string maybeNearSigningMethod, encountered "${String(
-        maybeNearSigningMethod
+      `Expected non-empty string maybeNearRpcMethod, encountered "${String(
+        maybeNearRpcMethod
       )}".`
     )
 
-  if (!isValidNearSigningMethod(maybeNearSigningMethod))
-    throw new Error(
-      `"${maybeNearSigningMethod}" is not a valid near signing method.`
-    )
+  if (!isValidNearRpcMethod(maybeNearRpcMethod))
+    throw new Error(`"${maybeNearRpcMethod}" is not a valid near RPC method.`)
 
   return true
 }
