@@ -39,10 +39,6 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     reference,
     name,
     rpc: rpc.replaceAll('%INFURA_KEY%', INFURA_API_KEY),
-
-    // TODO: fix this lookup - use real images and colors
-    logo: '/chain-logos/eip155-43113.png',
-    rgb: '232, 65, 66',
   }
 }
 

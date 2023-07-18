@@ -8,8 +8,6 @@ export enum SupportedCaipNamespace {
 
 export type ChainMetadata = ChainIdParams & {
   readonly name: string
-  readonly logo: string
-  readonly rgb: string
   readonly rpc: string
 }
 
