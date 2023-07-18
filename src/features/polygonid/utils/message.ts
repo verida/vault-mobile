@@ -26,7 +26,7 @@ export function parseMessage(
 }
 
 export function isPolygonIdDeepLink(url: string) {
-  return url.startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME)
+  return url.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME)
 }
 
 export function parseDeepLinkUrl(url: string) {

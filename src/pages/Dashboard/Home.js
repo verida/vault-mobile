@@ -2,6 +2,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useDeeplink } from 'features/deepLinks'
+import { isPolygonIdDeepLink } from 'features/polygonid'
 // import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -78,7 +79,7 @@ const Home = (props) => {
       }
 
       // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
-      if (initialUrl.match(/^iden3comm:/)) {
+      if (isPolygonIdDeepLink(initialUrl)) {
         return
       }
 
