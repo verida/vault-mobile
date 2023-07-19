@@ -232,7 +232,7 @@
     "prettier": "2.3.2",
     "react-native-svg-transformer": "^0.14.3",
     "react-test-renderer": "17.0.2",
-    "typescript": "4.3.5"
+    "typescript": "4.9.4"
   },
   "resolutions": {
     "react-native-svg": "^13.7.0",

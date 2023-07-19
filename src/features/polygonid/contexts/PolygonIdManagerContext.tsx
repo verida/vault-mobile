@@ -196,7 +196,6 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // TODO: Adapt the error message to the type of error
             // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when accepting the Polygon ID connection request.',
-            // @ts-expect-error language_version
             { cause: error }
           ),
         }
@@ -225,7 +224,6 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // TODO: Adapt the error message to the type of error
             // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when answering the Polygon ID proof request.',
-            // @ts-expect-error language_version
             { cause: error }
           ),
         }
@@ -254,7 +252,6 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // TODO: Adapt the error message to the type of error
             // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when accepting the Polygon ID credential offer.',
-            // @ts-expect-error language_version
             { cause: error }
           ),
         }
