@@ -446,7 +446,7 @@ export type Option = {
 
 type SelectProps = {
   autoFocus?: boolean
-  items: Array<Option>
+  items: readonly Option[]
   placeholder: string
   placeholderStyle: StyleProp<TextStyle>
   dropDownMaxHeight: number

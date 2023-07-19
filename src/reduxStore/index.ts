@@ -1,13 +1,14 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
+import { walletsApi } from 'features/cryptoWallet'
 import { identitiesSlice } from 'features/identities'
 import { inboxSlice } from 'features/inbox'
 import { linksSlice } from 'features/links'
 import { profilesSlice } from 'features/profiles'
 import { seedphrasesSlice } from 'features/seedphrases'
 import { settingsSlice } from 'features/settings'
-import { walletsApi, walletsSlice } from 'features/wallets'
+import { walletsSlice } from 'features/wallets'
 import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
@@ -23,7 +24,6 @@ import {
 } from 'redux-persist'
 
 import { reduxPersistMkvStorage } from './utils/mkvPersistStorage'
-import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
   key: 'root',
@@ -42,9 +42,6 @@ const persistConfig = {
 }
 
 export const rootReducer = combineReducers({
-  walletConnect: walletConnectReducer,
-
-  // New reducers
   auth: authSlice.reducer,
   identities: identitiesSlice.reducer,
   wallets: walletsSlice.reducer,
@@ -63,6 +60,7 @@ const debounceNotify = debounce((notify) => notify(), 30)
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const middleware = [] as any
+
 if (__DEV__) {
   const createDebugger = require('redux-flipper').default
   middleware.push(createDebugger())

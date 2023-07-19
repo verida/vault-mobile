@@ -28,8 +28,6 @@ import {
   removeUserWallets,
   saveUserWallets,
   setSelectedWallet,
-  walletsApi,
-  getBlockchainNetworks,
   getSelectedWalletId,
 } from 'features/wallets'
 import { getCountryCode } from 'helpers/countries'
@@ -42,6 +40,7 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'
+import { walletsApi, getBlockchainNetworks } from 'features/cryptoWallet'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -438,7 +437,7 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
+        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
       })
 
       // Connect the Verida account to the Verida client

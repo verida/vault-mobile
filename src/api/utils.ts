@@ -96,7 +96,7 @@ export async function getProfile(did: string) {
 
 export async function getPublicProfile(
   did: string,
-  contextName = CONFIG.VERIDA_CONTEXT_NAME
+  contextName: string = CONFIG.VERIDA_CONTEXT_NAME
 ) {
   try {
     const publicProfile = await AccountManager.getInstance()

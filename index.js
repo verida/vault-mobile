@@ -1,3 +1,4 @@
+import '@walletconnect/react-native-compat'
 import './shim'
 import 'react-native-get-random-values'
 import '@ethersproject/shims'
@@ -24,6 +25,10 @@ if (__DEV__) {
     'Usage of "messaging().registerDeviceForRemoteMessages()" is not required.',
     "The provided value 'ms-stream' is not a valid 'responseType'",
     "The provided value 'moz-chunked-arraybuffer' is not a valid 'responseType'",
+
+    // WalletConnect
+    'Verify iframe failed to load: https://verify.walletconnect.com',
+    'core/verify-api',
   ]
 
   LogBox.ignoreLogs(ignoreWarns)

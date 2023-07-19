@@ -1,3 +1,4 @@
+import { useClipboard } from '@react-native-community/clipboard'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import {
@@ -6,13 +7,16 @@ import {
   useDeeplink,
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
+import {
+  isWalletConnectConnection,
+  useWalletConnectContext,
+} from 'features/walletConnect'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
-import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
 
@@ -26,8 +30,7 @@ function ScanQrCode(
   const [isFlashOn, setIsFlashOn] = useState(false)
   const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
   const handleDeeplink = useDeeplink(navigation as any)
-  const { requestConnect: handleWalletConnectV1Data } = useWalletConnect()
-  const { requestConnect: handleWalletConnectV2Data } = useWalletConnectv2()
+  const { onRequestConnect } = useWalletConnectContext()
 
   useEffect(() => {
     setEnabled(true)
@@ -64,25 +67,14 @@ function ScanQrCode(
       // It's assumed the protocol handlers will handle the navigation
       return
     }
+
     // TODO: Progressively move the protocols into the protocol handlers
 
-    // WalletConnect v1
-    // Ex: wc:9145e975-4af0-4a28-a569-19aab7a21dd8@1?bridge=https%3A%2F%2F6.bridge.walletconnect.org&key=40dbb09f0eac060885a0edaf7f1ab7efba207c9b339bc49f805d61b615ac28a7
-    if (data.startsWith('wc:') && data.indexOf('bridge') >= 0) {
-      navigation.goBack()
-      handleWalletConnectV1Data(data)
-      return
-    }
-
-    // WalletConnect v2
-    // Ex: 'wc:c034ac9bf61c23d3e551663ed8bf973c260130c12f89f22a35a5d1032e3c47af@2?relay-protocol=iridium&symKey=05f034367d195bca2532385b620bd2b2a6c5c62101050bdfe9253e283fe50e12'
-    if (data.startsWith('wc:') && data.indexOf('relay-protocol') >= 0) {
-      navigation.goBack()
-      handleWalletConnectV2Data(data)
-      return
-    }
+    if (isWalletConnectConnection(data))
+      return Promise.all([onRequestConnect(data), navigation.goBack()])
 
     const { hostname, pathname } = parse(data, true)
+
     // Check if supported URL
     if (
       !isEmpty(hostname) &&
@@ -112,6 +104,21 @@ function ScanQrCode(
     const { data } = event
     await handleQrCode(data)
   }
+
+  // HACK: In development mode, we'll also read the content of the clipboard
+  //       for a connection string.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [maybeClipboardContent] = __DEV__ ? useClipboard() : []
+
+  React.useEffect(
+    () =>
+      void (async () => {
+        if (!maybeClipboardContent) return
+
+        return handleQrCode(maybeClipboardContent)
+      })(),
+    [maybeClipboardContent, handleQrCode]
+  )
 
   return (
     <View style={styles.container}>

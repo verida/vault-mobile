@@ -90,11 +90,7 @@ export default ({ transaction, token }) => {
           </View>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>
-            {blockchainNetwork.asset.chainId.namespace === 'algorand'
-              ? 'Round'
-              : 'Block'}
-          </Text>
+          <Text style={styles.infoLabel}>{'Block'}</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>{transaction.blockNumber}</Text>
           </View>
