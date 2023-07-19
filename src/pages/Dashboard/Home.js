@@ -14,7 +14,7 @@ import {
 } from 'features/links'
 import { isPolygonIdDeepLink } from 'features/polygonid'
 import { selectSelectedPublicProfile } from 'features/profiles'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -32,6 +32,7 @@ import parse from 'url-parse'
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
+import Container from 'components/Container'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import {

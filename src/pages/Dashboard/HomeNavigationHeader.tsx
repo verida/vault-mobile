@@ -5,7 +5,7 @@ import {
   selectPublicProfilesLoadingState,
   selectSelectedPublicProfile,
 } from 'features/profiles'
-import { Header, Left, Right } from 'native-base'
+import { Left, Right } from 'native-base'
 import React, { useEffect } from 'react'
 import {
   Image,
@@ -15,6 +15,7 @@ import {
   ViewProps,
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useDispatch } from 'react-redux'
 
@@ -47,7 +48,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
     onSettingsPress,
     ...rest
   } = props
-
+  const { top } = useSafeAreaInsets()
   const { theme } = useTheme()
   const dispatch = useDispatch()
   const selectAccount = useAppSelector(selectSelectedAccount)
@@ -62,7 +63,14 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   }, [did, dispatch])
 
   return (
-    <Header transparent style={styles.header} {...rest}>
+    <View
+      style={[
+        styles.header,
+        {
+          paddingTop: top,
+        },
+      ]}
+      {...rest}>
       <Left style={styles.leftContainer}>
         <View style={styles.left}>
           <ShimmerPlaceholder
@@ -134,7 +142,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
           </TouchableOpacity>
         </View>
       </Right>
-    </Header>
+    </View>
   )
 }
 
@@ -142,6 +150,7 @@ const styles = StyleSheet.create({
   header: {
     elevation: 1,
     paddingLeft: 16,
+    flexDirection: 'row',
   },
   leftContainer: {
     flex: 2,
