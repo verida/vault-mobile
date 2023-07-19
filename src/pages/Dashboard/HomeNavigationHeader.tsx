@@ -67,7 +67,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
       style={[
         styles.header,
         {
-          paddingTop: top,
+          paddingTop: top + theme.spacing.s,
         },
       ]}
       {...rest}>

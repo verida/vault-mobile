@@ -1154,7 +1154,7 @@ const PublicProfile = () => {
         <Text style={styles.description}>
           This information is always visible on your Verida One page
         </Text>
-        {loading ? (
+        {loading && enabledVeridaOne ? (
           <View style={styles.loadingContainer}>
             {Array(4) // 4 remaining loading blocks
               .fill(true)
