@@ -1,4 +1,3 @@
-import AsyncStorage from '@react-native-async-storage/async-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
@@ -23,12 +22,23 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
+import { reduxPersistMkvStorage } from './utils/mkvPersistStorage'
 import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
   key: 'root',
-  storage: AsyncStorage,
-  whitelist: ['walletConnect', 'settings', 'profiles'],
+  storage: reduxPersistMkvStorage,
+  // Whitelisted nonsensitive data slides to store inside redux-persist
+  whitelist: [
+    'walletConnect',
+    'settings',
+    'profiles',
+
+    // TODO: Revisit, maybe we shouldn't persist API results in the first place.
+    // But that's really a nice performance enhancement ATM considering some APIs take an average of 3-10 seconds to load.
+    walletsApi.reducerPath,
+    assetsApi.reducerPath,
+  ],
 }
 
 export const rootReducer = combineReducers({
@@ -66,6 +76,7 @@ export function configureAppStore() {
         serializableCheck: {
           ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
         },
+        immutableCheck: false, // Disable immutable check as takes more than 32 ms and shows a warning, may enable when need to deep debug redux
       })
         .concat(middleware)
         .concat(walletsApi.middleware)
