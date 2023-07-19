@@ -1,7 +1,9 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AccountId, ChainId } from 'caip'
 import { useWalletsData } from 'features/cryptoWallet'
-import { VeridaWallet, VeridaWalletAccount } from 'types'
+import { VeridaWalletAccount } from 'types'
+
+import { BlockchainWalletWithAccounts } from 'api/types'
 
 import { ActiveSession } from '../@types'
 
@@ -50,7 +52,9 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
     )
 
   const possibleVeridaWalletAccounts = Object.values(walletsData).flatMap(
-    (maybeMatchingVeridaWalletWallet: VeridaWallet): VeridaWalletAccount[] => {
+    (
+      maybeMatchingVeridaWalletWallet: BlockchainWalletWithAccounts
+    ): BlockchainWalletWithAccounts[] => {
       const maybeAccounts = maybeMatchingVeridaWalletWallet?.accounts
 
       if (!maybeAccounts) return []

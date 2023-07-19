@@ -128,7 +128,7 @@ const SingleWallet = (props: Props) => {
           <>
             {singleWallet.address && (
               <TouchableOpacity
-                onPress={() => Clipboard.setString(singleWallet.address)}
+                onPress={() => Clipboard.setString(singleWallet.address!)}
                 style={styles.actionButton}>
                 <CopyIcon />
                 <Text style={styles.actionButtonText}>Copy address</Text>

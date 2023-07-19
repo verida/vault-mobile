@@ -53,8 +53,8 @@ export const veridaWalletAccountsToDropdownOptions = ({
         !includesWatchedWallets && isWatchedWallet(veridaWalletAccount)
 
       const option: Option = {
-        label: veridaWalletAccount.address,
-        value: veridaWalletAccount.address,
+        label: veridaWalletAccount.address!,
+        value: veridaWalletAccount.address!,
         disabled,
         flag: getSupportedCaipProtocolFriendlyName(chainMetadatas, caipChainId),
       }

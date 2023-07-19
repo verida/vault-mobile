@@ -63,9 +63,9 @@ export interface BlockchainNetwork {
 
 export interface BlockchainAccount {
   privateKey?: string
+  address?: string
   publicKey?: string
   mnemonic?: string
-  address?: string
   chainId?: string
   derivationPath?: string
   blockchainNetwork?: BlockchainNetwork
@@ -97,7 +97,6 @@ export interface BlockchainWalletWithAccounts extends BlockchainWallet {
   // Transient fields for displaying
   icon?: string
   count?: number
-  address?: string
 }
 
 // What network is this?

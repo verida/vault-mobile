@@ -1,5 +1,3 @@
-import { SupportedCaipNamespace } from 'features/caip'
-
 import { BlockchainAccount } from 'api/types'
 
 /**
@@ -16,7 +14,7 @@ export type VeridaWalletAccounts = Record<
   // HACK: There are also some deprecated standards, such as algorand, which may
   //       appear in an instance of VeridaWalletAccounts. Please take
   //       "SupportedCaipProtocolStandard" with a grain of salt here.
-  SupportedCaipNamespace,
+  string,
   BlockchainAccount
 >
 

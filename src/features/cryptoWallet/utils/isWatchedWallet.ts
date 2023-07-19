@@ -1,8 +1,6 @@
 // Defines if a VeridaWalletAccount is just being watched by the user, i.e. they
 // do not know the private key or mnemonic which accesses the account.
-import { BlockchainWalletWithAccounts } from 'api/types'
+import { BlockchainAccount } from 'api/types'
 
-export const isWatchedWallet = ({
-  mnemonic,
-  privateKey,
-}: BlockchainWalletWithAccounts) => !mnemonic && !privateKey
+export const isWatchedWallet = ({ mnemonic, privateKey }: BlockchainAccount) =>
+  !mnemonic && !privateKey

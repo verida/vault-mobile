@@ -42,7 +42,9 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   if (!maybeVeridaWalletAccount) return undefined
 
-  const { privateKey, address: signerId } = maybeVeridaWalletAccount
+  let { privateKey, address: signerId } = maybeVeridaWalletAccount
+  privateKey = privateKey!
+  signerId = signerId!
 
   const { reference } = caipChainId
 
