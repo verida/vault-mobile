@@ -117,9 +117,12 @@ class AccountManager extends EventEmitter {
         SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
         SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
-          cryptoWalletApi.endpoints.chainsList.initiate(undefined, {
-            forceRefetch: false,
-          })
+          cryptoWalletApi.endpoints.chainsList.initiate(
+            {},
+            {
+              forceRefetch: false,
+            }
+          )
         ),
       ])
 
