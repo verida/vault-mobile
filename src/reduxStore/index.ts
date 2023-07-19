@@ -29,7 +29,6 @@ const persistConfig = {
   storage: reduxPersistMkvStorage,
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
-    'walletConnect',
     'settings',
     'profiles',
 
