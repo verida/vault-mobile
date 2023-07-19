@@ -60,8 +60,8 @@ const initialState: WalletState = {
   },
 }
 
-export const walletsSlice = createSlice({
-  name: 'wallets',
+export const cryptoWalletSlice = createSlice({
+  name: 'cryptoWallet',
   initialState,
   reducers: {
     saveUserWallets: (
@@ -228,3 +228,12 @@ export const walletsSlice = createSlice({
       })
   },
 })
+
+// Actions
+export const { saveUserWallets, setSelectedWallet, removeUserWallets } =
+  cryptoWalletSlice.actions
+
+export * from './actions'
+
+// Selectors
+export * from './selectors'

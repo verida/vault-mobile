@@ -1,5 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getTransactionParams } from 'features/wallets'
+import { getTransactionParams } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {

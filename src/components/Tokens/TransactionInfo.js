@@ -1,5 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getBlockchainNetwork } from 'features/wallets'
+import { getBlockchainNetwork } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'

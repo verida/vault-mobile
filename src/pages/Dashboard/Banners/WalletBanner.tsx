@@ -3,7 +3,7 @@ import {
   getUniqueWalletAddresses,
   getWallets,
   useGetBalancesQuery,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 import { useSelector } from 'react-redux'

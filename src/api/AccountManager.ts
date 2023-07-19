@@ -29,7 +29,9 @@ import {
   saveUserWallets,
   setSelectedWallet,
   getSelectedWalletId,
-} from 'features/wallets'
+  cryptoWalletApi,
+  getBlockchainNetworks,
+} from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
 import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
@@ -40,7 +42,6 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'
-import { walletsApi, getBlockchainNetworks } from 'features/cryptoWallet'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -116,7 +117,7 @@ class AccountManager extends EventEmitter {
         SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
         SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
-          walletsApi.endpoints.chainsList.initiate(undefined, {
+          cryptoWalletApi.endpoints.chainsList.initiate(undefined, {
             forceRefetch: false,
           })
         ),

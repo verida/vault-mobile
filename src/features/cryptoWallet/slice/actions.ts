@@ -2,7 +2,7 @@ import {
   getSelectedWalletId,
   getWalletList,
   getWalletsData,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
@@ -14,10 +14,7 @@ import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
 import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 
-import { walletsSlice } from './walletsSlice'
-
-export const { saveUserWallets, setSelectedWallet, removeUserWallets } =
-  walletsSlice.actions
+import { saveUserWallets, setSelectedWallet } from './'
 
 export const getTransactionParams = createAppAsyncThunk(
   'wallets/getTransactionParams',

@@ -15,8 +15,8 @@ const baseQuery = fetchBaseQuery({
   baseUrl: CONFIG.WALLET_PROVIDER_URL,
 })
 
-export const walletsApi = createApi({
-  reducerPath: 'walletsApi',
+export const cryptoWalletApi = createApi({
+  reducerPath: 'cryptoWalletApi',
   baseQuery: baseQuery,
   // We want to persist/rehydrate this redux api slide
   extractRehydrationInfo(action, { reducerPath }) {
@@ -118,11 +118,11 @@ export const {
   useGetBalancesQuery,
   useGetTransactionsForTokenQuery,
   useGetTransactionDetailsQuery,
-} = walletsApi
+} = cryptoWalletApi
 
 // Selectors
 export const getBlockchainNetworks = createSelector(
-  walletsApi.endpoints.chainsList.select(undefined),
+  cryptoWalletApi.endpoints.chainsList.select(undefined),
   (data) => {
     return data.data
   }
@@ -142,7 +142,8 @@ export const getBlockchainNetworkLabel = (network: BlockchainNetwork) => {
 }
 
 export const getBalancesData = (state: RootState, walletAddresses: string[]) =>
-  walletsApi.endpoints.getBalances.select(walletAddresses)(state)?.data ?? {
+  cryptoWalletApi.endpoints.getBalances.select(walletAddresses)(state)
+    ?.data ?? {
     list: [],
     total: 0,
   }
@@ -153,9 +154,10 @@ export const getTransactionsForTokenData = (
   asset: AssetId
 ) => {
   const transactions =
-    walletsApi.endpoints.getTransactionsForToken.select({ userAddress, asset })(
-      state
-    )?.data ?? []
+    cryptoWalletApi.endpoints.getTransactionsForToken.select({
+      userAddress,
+      asset,
+    })(state)?.data ?? []
 
   return transactions
 }

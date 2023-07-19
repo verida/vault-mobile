@@ -1,6 +1,9 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
-import { getBalancesData, getTransactionsForTokenData } from 'features/wallets'
+import {
+  getBalancesData,
+  getTransactionsForTokenData,
+} from 'features/cryptoWallet'
 import { createSelector } from 'reselect'
 import {
   getWalletAddressForAsset,
@@ -42,11 +45,11 @@ export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
 }
 
 export const getAllWallets = (state: RootState) => {
-  return state.wallets.walletsData
+  return state.cryptoWallets.walletsData
 }
 
 export const getSelectedWalletId = (state: RootState) => {
-  return state.wallets.selectedWalletId
+  return state.cryptoWallets.selectedWalletId
 }
 
 export const getWalletList = (
@@ -90,7 +93,7 @@ export const getUniqueWalletAddresses = (
 
 export const getSelectedWalletById = (state: RootState) => {
   const walletList = getWalletList(state)
-  const selectedWalletId = state.wallets.selectedWalletId
+  const selectedWalletId = state.cryptoWallets.selectedWalletId
   const selectedWallet = walletList.find(
     (item) => item._id === selectedWalletId
   )!
@@ -98,7 +101,7 @@ export const getSelectedWalletById = (state: RootState) => {
 }
 
 export const getWalletProcessingState = (state: RootState) => {
-  return state.wallets.walletProcessing.loading
+  return state.cryptoWallets.walletProcessing.loading
 }
 
 export const getWalletCount = (state: RootState) => {
@@ -119,7 +122,7 @@ export const getWallets = createSelector(
 )
 
 export const getWalletObjectById = (state: RootState, id: string) => {
-  return state.wallets.walletsData[id] || {}
+  return state.cryptoWallets.walletsData[id] || {}
 }
 
 // TODO: Replace with API data
@@ -127,7 +130,7 @@ export const selectPendingTransactions = (
   state: RootState,
   assetID: AssetId
 ) => {
-  const pendingTransactions = state.wallets.pendingTransactions.data
+  const pendingTransactions = state.cryptoWallets.pendingTransactions.data
   const transactionsForAsset = pendingTransactions.filter((ele) => {
     return (
       tokenCaipObjectToString(ele.token.asset) ===
@@ -169,13 +172,13 @@ export const selectTransactions = (state: RootState, assetID: AssetId) => {
 }
 
 export const getTransactionParamsData = (state: RootState) => {
-  return state.wallets.transactionParams.data || {}
+  return state.cryptoWallets.transactionParams.data || {}
 }
 
 export const selectSentTransaction = (state: RootState) => {
   const transaction = {
-    ...state.wallets.sentTransaction,
-    data: { ...state.wallets.sentTransaction.data },
+    ...state.cryptoWallets.sentTransaction,
+    data: { ...state.cryptoWallets.sentTransaction.data },
   }
   if (transaction.data.amount) {
     transaction.data.amount = BigNumber.from(transaction.data.amount)

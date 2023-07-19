@@ -1,7 +1,7 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { getWalletObjectById, renameWallet } from 'features/wallets'
+import { getWalletObjectById, renameWallet } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {

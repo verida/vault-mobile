@@ -1,14 +1,7 @@
-import { VeridaWallet } from 'types'
+import { useAppSelector } from 'reduxStore/types'
 
-import { useMaybeSelectedWalletId } from './useMaybeSelectedWalletId'
-import { useWalletsData } from './useWalletsData'
+import { getWallets } from '../slice'
 
-export function useMaybeSelectedWallet(): VeridaWallet | undefined {
-  const walletsData = useWalletsData()
-  const selectedWalletId = useMaybeSelectedWalletId()
-
-  if (typeof selectedWalletId !== 'string' || !selectedWalletId.length)
-    return undefined
-
-  return walletsData?.[selectedWalletId] || undefined
+export function useMaybeSelectedWallet() {
+  return useAppSelector(getWallets)
 }

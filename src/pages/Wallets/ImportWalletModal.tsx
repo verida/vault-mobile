@@ -2,7 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import {
   getBlockchainNetworkLabel,
   getBlockchainNetworks,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {

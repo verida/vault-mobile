@@ -4,7 +4,7 @@ import {
   getBlockchainNetwork,
   getTransactionParamsData,
   getWalletsData,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
 import { store } from 'reduxStore'

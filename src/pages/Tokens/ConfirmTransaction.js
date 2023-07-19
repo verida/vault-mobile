@@ -5,7 +5,7 @@ import {
   getWalletsData,
   selectSentTransaction,
   sendTransaction,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
