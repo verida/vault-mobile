@@ -1,4 +1,4 @@
-import { ChainId } from 'caip'
+import { AccountId, ChainId } from 'caip'
 import * as React from 'react'
 
 import { useActiveWalletConnectSessionChainAccounts } from './useActiveWalletConnectSessionChainAccounts'
@@ -22,7 +22,7 @@ export function useActiveWalletConnectSessionChainAccountsCaipChainIds({
           if (typeof maybeAccount !== 'string' || !maybeAccount.length)
             return []
 
-          return [new ChainId(maybeAccount)]
+          return [new AccountId(maybeAccount).chainId]
         })
       ),
     ],

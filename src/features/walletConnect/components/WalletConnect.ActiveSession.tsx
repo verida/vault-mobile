@@ -1,4 +1,4 @@
-import { ChainId } from 'caip'
+import { AccountId, ChainId } from 'caip'
 import { Spacer } from 'components'
 import {
   CaipSupportedProtocolSpan,
@@ -71,7 +71,10 @@ export const WalletConnectActiveSession = React.memo(
           .flatMap(
             /* network */
             ([caipProtocol, accountsForChain]) => {
-              const supportedCaipTypes = [...new Set(accountsForChain)]
+              const caipTypesFromAccounts = accountsForChain.flatMap(
+                (account) => new AccountId(account).chainId
+              )
+              const supportedCaipTypes = [...new Set(caipTypesFromAccounts)]
 
               return [
                 <View style={styles.row} key={caipProtocol}>
