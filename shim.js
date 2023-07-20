@@ -180,3 +180,5 @@ TextDecoder.prototype.decode = function (octets) {
 }
 
 global.TextDecoder = TextDecoder
+
+if (typeof BigInt === 'undefined') global.BigInt = require('big-integer')
