@@ -1,20 +1,15 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
-import { renameWallet } from 'features/wallets'
-import { Container, Icon } from 'native-base'
+import { getWalletObjectById, renameWallet } from 'features/wallets'
+import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  BackHandler,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { VeridaWalletAccount } from 'types'
 
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
+import Container from 'components/Container'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
@@ -22,7 +17,7 @@ import Text from 'components/Text'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch } from 'reduxStore/types'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
@@ -31,7 +26,7 @@ type SingleWalletScreenProps = MainStackScreenProps<'SingleWallet'>
 
 const SingleWallet = (props: SingleWalletScreenProps) => {
   const { navigation, route } = props
-  const { item: wallets } = route.params
+  const { item } = route.params
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
@@ -44,10 +39,15 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
   const [privateKeyData, setPrivateKeyData] = useState('')
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
+  const wallets = useAppSelector((state) =>
+    getWalletObjectById(state, item._id)
+  )
 
-  const onRenameWallet = (walletId: string, data: { name: string }) =>
-    dispatch(renameWallet({ walletId, data }))
-
+  const onRenameWallet = async (walletId: string, data: { name: string }) => {
+    setLoading(true)
+    await dispatch(renameWallet({ walletId, data }))
+    setLoading(false)
+  }
   useEffect(() => {
     const initUserPin = async () => {
       const status = await hasUserSetPinCode()
@@ -76,15 +76,6 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
     ? Object.keys(wallets.accounts)[0] === 'evm'
     : null
 
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading </Text>
-        <ActivityIndicator size='large' />
-      </View>
-    )
-  }
-
   if (pinCodeStatus && !isPinCorrect) {
     return (
       <PINCode
@@ -103,7 +94,7 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
   }
 
   return (
-    <Container>
+    <Container withLoadingView showLoading={loading}>
       <NavigationHeader
         title={wallets.label}
         left={{

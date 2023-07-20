@@ -278,8 +278,6 @@ export const renameWallet = createAppAsyncThunk(
     { walletId, data }: { walletId: string; data: { name: string } },
     { rejectWithValue }
   ) => {
-    // dispatch({ type: WALLET_PROCESSING_START })
-
     try {
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
@@ -295,27 +293,9 @@ export const renameWallet = createAppAsyncThunk(
 
       await walletDb?.save(row, {})
 
-      // TODO: find and update the wallet label in the store
-
-      // if (hdWallets) {
-      // const chains = selectChains(getState())
-      // const wallets = rawDataToReduxState(hdWallets, chains)
-      // dispatch(saveUserWallets(wallets))
-      // await SecureStore.setItemAsync(
-      //   CONFIG.WALLETS_STORAGE_KEY,
-      //   JSON.stringify(wallets)
-      // )
-      // }
-
-      // dispatch({ type: WALLET_PROCESSING_FINISHED })
-
+      // Full update wallets data
       await AccountManager.getInstance().restoreUserWallet(false)
-      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      // dispatch({
-      //   type: WALLET_PROCESSING_FAILED,
-      //   error: error,
-      // })
       rejectWithValue('Could not rename wallet')
     }
   }
