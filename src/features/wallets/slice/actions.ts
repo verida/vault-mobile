@@ -147,13 +147,13 @@ export const importWallet = createAppAsyncThunk(
     },
     { rejectWithValue, dispatch }
   ) => {
-    // dispatch({ type: WALLET_PROCESSING_START })
-
     try {
       const mnemonic = data.inputSwitch === 'seedPhrase' ? data.phrase : null
       const privateKey =
         data.inputSwitch === 'privateKey' ? data.privateKey : null
       const walletType = data.walletType
+
+      console.log('importWallet', data)
 
       // save mnemonic to verida store
       const walletDb =
@@ -169,17 +169,13 @@ export const importWallet = createAppAsyncThunk(
       if (privateKey) wallet.privateKey = privateKey
       const saved = (await walletDb?.save(wallet, {})) as { id: string } // FIXME: Temp, this is not optimal, should be able specified by a generic type
 
-      const walletId = saved?.id as string
+      const walletId = saved?.id
+
+      // Fully update wallets data
       await AccountManager.getInstance().restoreUserWallet(false)
       dispatch(setSelectedWallet(walletId))
-
-      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
       rejectWithValue('Could not import wallet')
-      // dispatch({
-      //   type: WALLET_PROCESSING_FAILED,
-      //   error: error,
-      // })
     }
   }
 )
@@ -194,7 +190,6 @@ export const addWatchedWallet = createAppAsyncThunk(
     },
     { rejectWithValue, dispatch }
   ) => {
-    // dispatch({ type: WALLET_PROCESSING_START })
     try {
       const walletsDatastore =
         await AccountManager.getInstance().context?.openDatastore(
@@ -219,15 +214,10 @@ export const addWatchedWallet = createAppAsyncThunk(
         throw new Error(walletsDatastore.errors)
       }
 
+      // Fully update wallets data
       await AccountManager.getInstance().restoreUserWallet(false)
       dispatch(setSelectedWallet(savedWallet.id))
-
-      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      // dispatch({
-      //   type: WALLET_PROCESSING_FAILED,
-      //   error: error,
-      // })
       rejectWithValue('Could not add watched wallet')
     }
   }
