@@ -1,6 +1,6 @@
 import {
+  getAllWallets,
   getSelectedWalletId,
-  getWalletList,
   getWalletsData,
 } from 'features/wallets'
 import * as SecureStore from 'helpers/VeridaSecureStore'
@@ -236,12 +236,8 @@ export const addWatchedWallet = createAppAsyncThunk(
 export const deleteWallet = createAppAsyncThunk(
   'wallets/deleteWallet',
   async (walletId: string, { getState, rejectWithValue, dispatch }) => {
-    // dispatch({ type: WALLET_PROCESSING_START })
-
     try {
-      const currentlySelectedWallet = getSelectedWalletId(
-        getState() as RootState
-      )
+      const currentlySelectedWallet = getSelectedWalletId(getState())
       const walletDb =
         await AccountManager.getInstance().context?.openDatastore(
           WALLET_SCHEMA_0_2_0_URI
@@ -250,23 +246,18 @@ export const deleteWallet = createAppAsyncThunk(
       await walletDb?.delete(walletId)
 
       // update redux store
-      const updatedWalletsList = getWalletList(getState() as RootState).filter(
-        (wallet) => wallet._id !== walletId
-      )
-      dispatch(saveUserWallets(updatedWalletsList as any)) // TODO: type
+      const updatedWalletsList = { ...getAllWallets(getState()) }
+      delete updatedWalletsList[walletId]
+      dispatch(saveUserWallets(updatedWalletsList))
 
       if (currentlySelectedWallet === walletId) {
-        const nextWalletId = Object.values(updatedWalletsList)[0]._id
-        await dispatch(setSelectedWallet(nextWalletId))
+        const nextWalletId = Object.keys(updatedWalletsList)[0]
+        dispatch(setSelectedWallet(nextWalletId))
       }
 
+      // Fully update wallets data
       await AccountManager.getInstance().restoreUserWallet(false)
-      // dispatch({ type: WALLET_PROCESSING_FINISHED })
     } catch (error) {
-      // dispatch({
-      //   type: WALLET_PROCESSING_FAILED,
-      //   error: error,
-      // })
       rejectWithValue('Could not delete wallet')
     }
   }
@@ -293,7 +284,7 @@ export const renameWallet = createAppAsyncThunk(
 
       await walletDb?.save(row, {})
 
-      // Full update wallets data
+      //Fully update wallets data
       await AccountManager.getInstance().restoreUserWallet(false)
     } catch (error) {
       rejectWithValue('Could not rename wallet')
