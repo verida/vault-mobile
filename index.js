@@ -1,7 +1,7 @@
 /* eslint-disable import/first */
+// HACK: Satisfy @walletconnect/utils:isReactNative
 Object.assign(navigator || {}, { product: 'ReactNative' })
 
-// HACK: Satisfy @walletconnect/utils:isReactNative
 import '@walletconnect/react-native-compat'
 import './shim'
 import 'react-native-get-random-values'
