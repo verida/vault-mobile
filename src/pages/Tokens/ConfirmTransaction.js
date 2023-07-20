@@ -115,7 +115,7 @@ const ConfirmTransaction = ({
             loading={sentTransaction.fetching}
             onPress={async () => {
               try {
-                await dispatch(
+                const result = await dispatch(
                   sendTransaction({
                     transactionData: {
                       token,
@@ -124,7 +124,12 @@ const ConfirmTransaction = ({
                     },
                   })
                 )
-                navigation.navigate('TransactionSuccess')
+
+                if (result.meta.requestStatus === 'rejected') {
+                  throw new Error(result.payload)
+                } else {
+                  navigation.navigate('TransactionSuccess')
+                }
               } catch (error) {
                 navigation.navigate('TransactionFailure', undefined)
               }

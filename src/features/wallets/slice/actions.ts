@@ -32,8 +32,8 @@ export const getTransactionParams = createAppAsyncThunk(
         navigate('ConfirmTransaction', transactionData)
         return params
       }
-    } catch (error) {
-      return rejectWithValue("Couldn't load params")
+    } catch (error: any) {
+      return rejectWithValue("Couldn't load params:" + error.message)
     }
   }
 )
@@ -54,6 +54,7 @@ export const sendTransaction = createAppAsyncThunk(
         isAssetEnablingTransaction,
         state
       )
+
       return {
         ...txData,
         amount: txData?.amount.toHexString(),
