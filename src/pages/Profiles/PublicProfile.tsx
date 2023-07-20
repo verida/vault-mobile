@@ -130,10 +130,7 @@ const PublicProfile = () => {
   const [loading, setLoading] = useState(false)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
-  const wallets = useSelector(getAllWallets) as Record<
-    string,
-    BlockchainWalletWithAccounts
-  >
+  const wallets = useSelector(getAllWallets)
 
   const selectedAccount = useSelector(selectSelectedAccount)!
   const currentAccountDID = selectedAccount.did
@@ -141,10 +138,7 @@ const PublicProfile = () => {
   const dispatch = useAppDispatch()
 
   const [username, setUsername] = useState<string | undefined>(undefined)
-  const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
-    string,
-    BlockchainNetwork
-  >
+  const blockchainNetworks = useSelector(getBlockchainNetworks)!
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     VeridaOneWalletAddress[]

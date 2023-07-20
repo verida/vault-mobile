@@ -1,7 +1,6 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { getWalletObjectById, renameWallet } from 'features/wallets'
+import { renameWallet } from 'features/wallets'
 import { Container, Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
@@ -11,11 +10,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 import { VeridaWalletAccount } from 'types'
 
-import { BlockchainNetwork } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
@@ -23,24 +19,20 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
-import { WalletType } from 'components/WalletList/types'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
+import { useAppDispatch } from 'reduxStore/types'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 
-type Props = {
-  wallets: WalletType
-  blockchainNetworks: Record<string, BlockchainNetwork>
-  navigation: NativeStackNavigationProp<MainStackParams>
-  onRenameWallet: (selectedWalletID: string) => void
-  chains: any
-}
+type SingleWalletScreenProps = MainStackScreenProps<'SingleWallet'>
 
-const SingleWallet = (props: Props) => {
-  const { navigation, wallets, onRenameWallet } = props
+const SingleWallet = (props: SingleWalletScreenProps) => {
+  const { navigation, route } = props
+  const { item: wallets } = route.params
+  const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
@@ -52,6 +44,9 @@ const SingleWallet = (props: Props) => {
   const [privateKeyData, setPrivateKeyData] = useState('')
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
+
+  const onRenameWallet = (walletId: string, data: { name: string }) =>
+    dispatch(renameWallet({ walletId, data }))
 
   useEffect(() => {
     const initUserPin = async () => {
@@ -181,9 +176,6 @@ const SingleWallet = (props: Props) => {
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
-        // TODO: Here we are trying to get mnemonic of a WalletType, but this is
-        //       invalid. Is the expectation here that this is a VeridaWalletAccount?
-        // @ts-expect-error This lookup is either incorrect or typed incorrectly.
         onPressButton={() => showSeedPhrase(wallets.mnemonic)}
       />
       <CopySeedPhraseModal
@@ -247,19 +239,4 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-const mapStateToProps = (state: any, props: any) => {
-  const wallets = getWalletObjectById(state, props.route.params.item.id)
-
-  return {
-    wallets,
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onRenameWallet: (walletId: string, args: { name: string }) =>
-      dispatch(renameWallet({ walletId, data: args }) as any),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SingleWallet as any)
+export default SingleWallet

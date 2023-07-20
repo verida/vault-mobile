@@ -1,7 +1,12 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { Network, NFT, NFTCollection } from 'api/types'
+import {
+  BlockchainWalletWithAccounts,
+  Network,
+  NFT,
+  NFTCollection,
+} from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -74,7 +79,7 @@ export type MainStackParams = {
   TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
-  SingleWallet: { item: any }
+  SingleWallet: { item: BlockchainWalletWithAccounts }
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
