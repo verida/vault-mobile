@@ -3,6 +3,7 @@ import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { ChainId } from 'caip'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import {
   useMaybeSelectedWallet,
@@ -104,6 +105,27 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       if (numberOfRequiredNamespaces > 1)
         return new Error(
           'This Dapp has requested more than one chain simultaneously, however only a single chain at a time is currently supported.'
+        )
+
+      const requestedNamespaces = onlyMatchingCaipChainIds.map((e) =>
+        e.toString()
+      )
+
+      // Here, we are filtering out to find the requested chain identifiers that
+      // we don't have existing ChainMetadata for. Although the same EIP155 wallet
+      // can definitely be used on different chains, our current RPC URL structure
+      // demands we know the chain exists a-priori.
+      const unsupportedNamespaces = requestedNamespaces
+        .filter((e) => !(e in chainMetadatas))
+        .map((e) => new ChainId(e))
+
+      if (unsupportedNamespaces.length)
+        return new Error(
+          `Sorry, the following chain${
+            unsupportedNamespaces.length > 1 ? 's' : ''
+          } ${
+            unsupportedNamespaces.length > 1 ? 'are' : 'is'
+          } not yet supported: ${unsupportedNamespaces.map(String).join(', ')}.`
         )
 
       return undefined

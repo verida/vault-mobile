@@ -2,10 +2,12 @@ import * as Sentry from '@sentry/react-native'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { AccountId } from 'caip'
 import { Spacer } from 'components'
 import {
   useMaybeSelectedWallet,
   useVeridaWalletAccountDropdownOptions,
+  VeridaWalletAccountOption,
 } from 'features/cryptoWallet'
 import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
@@ -26,7 +28,7 @@ import BottomActionsModal from 'components/BottomActionsModal'
 // TODO: fix imports
 import Button from 'components/Button'
 // TODO: fix imports
-import DropDownPicker, { Option } from 'components/Select'
+import DropDownPicker from 'components/Select'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import { WALLETCONNECT_LABEL } from '../constants'
@@ -87,21 +89,22 @@ export const WalletConnectModalConnectDapp = React.memo(
     const onlyMatchingCaipChainIds =
       useWalletConnectProposalRequiredCaipChainIds(proposal)
 
-    const wallets: readonly Option[] = useVeridaWalletAccountDropdownOptions({
-      includesWatchedWallets: false,
-      maybeVeridaWalletAccounts,
+    const wallets: readonly VeridaWalletAccountOption[] =
+      useVeridaWalletAccountDropdownOptions({
+        includesWatchedWallets: false,
+        maybeVeridaWalletAccounts,
 
-      // HACK: Only show wallets which possess a caip identifier which supports the request.
-      //       This prevents us from showing duplicate wallets for a single request, i.e. the
-      //       same wallet for Ethereum Goerli and Polygon Mumbai. We could simply filter the
-      //       address component, however semantically this could result in a user selecting
-      //       the incorrect account for the requested network, which may have consequences
-      //       downstream.
-      onlyMatchingCaipChainIds,
-    })
+        // HACK: Only show wallets which possess a caip identifier which supports the request.
+        //       This prevents us from showing duplicate wallets for a single request, i.e. the
+        //       same wallet for Ethereum Goerli and Polygon Mumbai. We could simply filter the
+        //       address component, however semantically this could result in a user selecting
+        //       the incorrect account for the requested network, which may have consequences
+        //       downstream.
+        onlyMatchingCaipChainIds,
+      })
 
     const [selectedWallet, setSelectedWallet] = React.useState<
-      Option | undefined
+      VeridaWalletAccountOption | undefined
     >()
 
     const onApprove = React.useCallback(async () => {
@@ -113,10 +116,12 @@ export const WalletConnectModalConnectDapp = React.memo(
 
         setLoading(true)
 
+        const { value: address, caipChainId: chainId } = selectedWallet
+
         await web3wallet.approveSession(
           createWalletConnectSessionApprovalConfiguration({
             // TODO: We can enable address multiselect in future
-            approvedAddresses: [selectedWallet.value],
+            approvedAccounts: [new AccountId({ chainId, address })],
             proposal,
           })
         )
@@ -156,7 +161,7 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={16} />
           <Text style={styles.url}>{metadata?.url}</Text>
           <Spacer height={24} />
-          <DropDownPicker
+          <DropDownPicker<VeridaWalletAccountOption>
             showArrow
             searchableError='No supported wallet'
             placeholder='Select wallet'
