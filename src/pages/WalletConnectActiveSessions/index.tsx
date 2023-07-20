@@ -26,11 +26,11 @@ export const WalletConnectActiveSessions = React.memo(
 
     return (
       <View style={styles.flex}>
-        <NavigationHeader left={leftIcon} title='WalletConnect' />
+        <NavigationHeader left={leftIcon} title='WalletConnect DApps' />
         <Layout style={[LayoutStyle.layout]}>
           {activeSessions.length ? (
             <>
-              <Text style={styles.title}>dApps</Text>
+              <Text style={styles.title}>Active DApp Sessions</Text>
               <Spacer height={32} />
               {activeSessions.map((walletConnectSessionKey) => (
                 <WalletConnectSessionItem
@@ -55,7 +55,7 @@ export const WalletConnectActiveSessions = React.memo(
                   styles.label,
                   { flex: 1, alignSelf: 'center' },
                 ]}>
-                {'No dApps'}
+                {'No active DApp sessions'}
               </Text>
             </>
           )}
