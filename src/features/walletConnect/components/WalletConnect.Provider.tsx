@@ -64,8 +64,10 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
   // Will return true if we will have compatible wallets to render for a
   // given proposal.
-  const isSessionProposalSupported = React.useCallback(
-    (proposal: Web3WalletTypes.EventArguments['session_proposal']) => {
+  const getMaybeUnsupportedProposalError = React.useCallback(
+    (
+      proposal: Web3WalletTypes.EventArguments['session_proposal']
+    ): Error | undefined => {
       const onlyMatchingCaipChainIds =
         getWalletConnectProposalRequiredCaipChainIds(proposal)
 
@@ -77,7 +79,34 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           includesWatchedWallets: false,
         })
 
-      return Boolean(maybeHasCompatibleAccounts)
+      if (!maybeHasCompatibleAccounts)
+        return new Error(
+          'The required chains requested by this dApp are not yet supported.'
+        )
+
+      const { length: numberOfRequiredNamespaces } = Object.keys(
+        proposal.params.requiredNamespaces
+      )
+
+      // HACK: For the case of required namespaces, it is not possible to only
+      //       some of all that were requested; this means Verida's current
+      //       wallet selection UX, which forces the caller to pick a single
+      //       account for a given chainId - is not compatible with multiple
+      //       selections.
+      //
+      //       Attempting to make a partial connection will result in a low
+      //       level error, so here we attempt to provide better clarity to
+      //       the user.
+      // TODO: We need to update WalletConnect.Modal.ConnectDapp to force the
+      //       user to make an appropriate selection for ALL required chains,
+      //       or they should not be allowed to continue.
+
+      if (numberOfRequiredNamespaces > 1)
+        return new Error(
+          'This Dapp has requested more than one chain simultaneously, however only a single chain at a time is currently supported.'
+        )
+
+      return undefined
     },
     [maybeVeridaWalletAccounts, chainMetadatas]
   )
@@ -118,10 +147,13 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
               sdkError: 'USER_REJECTED',
             })
 
-          if (!isSessionProposalSupported(proposal)) {
+          const maybeUnsupportedProposalError =
+            getMaybeUnsupportedProposalError(proposal)
+
+          if (maybeUnsupportedProposalError) {
             Alert.alert(
               'Unable to connect',
-              `The required chains requested by this dApp are not yet supported.`
+              maybeUnsupportedProposalError.message
             )
 
             return shouldTerminateProposal({
@@ -142,7 +174,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         },
         [
           authenticated,
-          isSessionProposalSupported,
+          getMaybeUnsupportedProposalError,
           shouldTerminateProposal,
           showModal,
         ]

@@ -31,5 +31,14 @@ export function createWalletConnectSessionApprovalConfiguration({
     {}
   )
 
+  // The returned namespaces object looks something like:
+  // {
+  //   "near": {
+  //     "accounts": ["near:testnet:ed57e3893b4ae21a924ef44943acecacd663e4a3a756299f098f34f390decdeb"],
+  //     "events": [],
+  //     "methods": ["near_signIn", "near_signOut", "near_getAccounts", "near_signAndSendTransaction", "near_signAndSendTransactions"]
+  //   }
+  // }
+
   return { id, relayProtocol, namespaces }
 }
