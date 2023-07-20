@@ -130,10 +130,10 @@ export const fetchPublicProfileData = createAppAsyncThunk(
 
       return publicProfile as PublicProfile
     } catch (e: any) {
-      rejectWithValue(
+      Sentry.captureException(e)
+      return rejectWithValue(
         `Failed to load public profile for DID ${did}: ${e.message}`
       )
-      Sentry.captureException(e)
     }
   }
 )
