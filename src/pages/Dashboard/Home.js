@@ -69,7 +69,7 @@ const Home = (props) => {
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
   const linkTo = useLinkTo()
-  const qrAddress = PROFILE_URL + selectedAccount.did
+  const qrAddress = PROFILE_URL + (selectedAccount?.did ?? '')
 
   useRemoteNotifications()
 

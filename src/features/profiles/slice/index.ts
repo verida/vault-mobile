@@ -84,13 +84,16 @@ export const profilesSlice = createSlice({
 })
 // Selectors
 export const selectSelectedPublicProfile = (state: RootState) =>
-  selectPublicProfileByDid(state, state.identities.selectedAccount!.did!)
+  selectPublicProfileByDid(
+    state,
+    state.identities?.selectedAccount?.did ?? undefined
+  )
 
 export const selectPublicProfiles = (state: RootState) =>
   state.profiles.publicProfiles
 
-export const selectPublicProfileByDid = (state: RootState, did: string) =>
-  state.profiles.publicProfiles[did] || publicProfileEmptyState
+export const selectPublicProfileByDid = (state: RootState, did?: string) =>
+  state.profiles.publicProfiles[did || ''] ?? publicProfileEmptyState
 
 export const selectPublicProfilesLoadingState = (
   state: RootState,
