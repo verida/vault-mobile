@@ -269,7 +269,7 @@ const Home = (props) => {
           </>
         )}
       </Content>
-      <DidView did={selectedAccount.did || ''} />
+      {Boolean(selectedAccount?.did) && <DidView did={selectedAccount.did} />}
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}

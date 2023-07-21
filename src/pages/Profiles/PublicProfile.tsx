@@ -133,7 +133,7 @@ const PublicProfile = () => {
   const wallets = useSelector(getAllWallets)
 
   const selectedAccount = useSelector(selectSelectedAccount)!
-  const currentAccountDID = selectedAccount.did
+  const currentAccountDID = selectedAccount?.did
 
   const dispatch = useAppDispatch()
 
