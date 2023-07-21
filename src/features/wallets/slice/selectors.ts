@@ -1,6 +1,7 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
 import { getBalancesData, getTransactionsForTokenData } from 'features/wallets'
+import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 import {
   getWalletAddressForAsset,
@@ -76,7 +77,7 @@ export const getWalletList = (
 export const getUniqueWalletAddresses = (
   wallet: BlockchainWalletWithAccounts
 ) => {
-  if (!wallet) return []
+  if (isEmpty(wallet) || isEmpty(wallet.accounts)) return []
 
   const addresses: string[] = []
   Object.values(wallet.accounts).map((account) => {

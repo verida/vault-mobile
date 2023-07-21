@@ -69,7 +69,9 @@ const Home = (props) => {
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
   const linkTo = useLinkTo()
-  const qrAddress = PROFILE_URL + (selectedAccount?.did ?? '')
+  const qrAddress = selectedAccount?.did
+    ? PROFILE_URL + selectedAccount?.did
+    : ''
 
   useRemoteNotifications()
 
@@ -244,7 +246,7 @@ const Home = (props) => {
         ) : (
           <>
             <View style={style.qr}>
-              {qrAddress && (
+              {Boolean(qrAddress) && (
                 <QRCode
                   logo={LogoImg}
                   logoSize={60}
