@@ -1,4 +1,5 @@
 import type { Protocol, ProtocolDefinition } from 'features/protocols'
+import { WALLETCONNECT_LABEL } from 'features/walletConnect/constants'
 import React from 'react'
 
 import PolygonIdLogo from 'assets/logos/protocols/polygon_id_protocol_logo.svg'
@@ -18,7 +19,7 @@ export const protocolDefinitions: Record<Protocol, ProtocolDefinition> = {
   },
   walletconnect: {
     protocol: 'walletconnect',
-    label: 'WalletConnect',
+    label: WALLETCONNECT_LABEL,
     getLogo: (size) => (
       // The WalletConnect logo from their official brand assets is not a square, so have to adjust the height to keep the ratio
       <WalletConnectLogo width={size} height={(size * 332) / 480} />

@@ -1,7 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
-import { walletsApi } from 'features/wallets'
+import { walletsApi } from 'features/cryptoWallet'
 import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
@@ -18,17 +18,15 @@ import {
 
 import { mainReducer } from './mainReducer'
 import { tokensReducer } from './tokens/reducer'
-import { walletConnectReducer } from './wallet-connect/reducer'
 
 const persistConfig = {
   key: 'root',
   storage: AsyncStorage,
-  whitelist: ['walletConnect', 'tokens', walletsApi.reducerPath],
+  whitelist: ['tokens', walletsApi.reducerPath],
 }
 
 export const rootReducer = combineReducers({
   main: mainReducer,
-  walletConnect: walletConnectReducer,
   tokens: tokensReducer, // TODO: Refactor tokens to be in walletsApi slice?
 
   // API reducers
@@ -40,6 +38,7 @@ const debounceNotify = debounce((notify) => notify(), 30)
 const persistedReducer = persistReducer(persistConfig, rootReducer)
 
 const middleware = [] as any
+
 if (__DEV__) {
   const createDebugger = require('redux-flipper').default
   middleware.push(createDebugger())

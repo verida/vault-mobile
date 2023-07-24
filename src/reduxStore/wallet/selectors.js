@@ -29,14 +29,14 @@ export const getTotalBalance = (state) => {
   }
 }
 
-export const getSingleWalletChain = (state) => {
-  const wallet = getWallets(state)
-  if (wallet.type === 'single' && wallet.chain) {
-    return wallet.chain
-  } else {
-    return null
-  }
-}
+//export const getSingleWalletChain = (state) => {
+//  const wallet = getWallets(state)
+//  if (wallet.type === 'single' && wallet.chain) {
+//    return wallet.chain
+//  } else {
+//    return null
+//  }
+//}
 
 // @chris done, although deprecate selectTokens
 export const getListAndTotal = (state) => {

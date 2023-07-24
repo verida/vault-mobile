@@ -65,10 +65,10 @@ const generalList = [
 
 const WalletConnectList = [
   {
-    label: 'Dapps',
+    label: 'DApps',
     action: 'arrow',
     optional: true,
-    onPress: (navigation) => navigation.navigate('WalletConnect'),
+    onPress: (navigation) => navigation.navigate('WalletConnectActiveSessions'),
   },
 ]
 

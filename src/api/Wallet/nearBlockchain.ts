@@ -13,9 +13,9 @@ class nearBlockchain implements IBlockchain {
       const node = ethers.utils.HDNode.fromMnemonic(mnemonic)
       const childNode = node.derivePath(derivationPath)
       return WalletUtils.utils.getWallet('near', childNode.mnemonic!.phrase)
-    } else {
-      return WalletUtils.utils.getWallet('near', mnemonic)
     }
+
+    return WalletUtils.utils.getWallet('near', mnemonic)
   }
 
   public buildAccountFromPrivateKey(_privateKey: string): WalletUtilsWallet {

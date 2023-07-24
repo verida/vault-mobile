@@ -35,7 +35,7 @@ jobs:
         run: yarn lint
 
       - name: Check TypeScript compile
-        run: npx tsc --noemit
+        run: npx tsc --noEmit
 
-      # - name: Test
-      #   run: yarn run test
+      - name: Unit tests
+        run: yarn test

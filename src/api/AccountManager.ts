@@ -40,7 +40,7 @@ import { WalletManager } from './Wallet/WalletManager'
 import { getBlockchainNetworks } from 'reduxStore/selectors'
 import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 import { IContext } from '@verida/types'
-import { walletsApi } from 'features/wallets'
+import { walletsApi } from 'features/cryptoWallet'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -438,7 +438,7 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
+        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
       })
 
       // Connect the Verida account to the Verida client

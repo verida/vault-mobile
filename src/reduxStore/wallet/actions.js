@@ -3,6 +3,7 @@ import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import dataHelper from 'wallet/data'
 import {
   getWalletAddressForAsset,
+  // TODO: this doesn't exist
   rawDataToReduxState,
 } from 'wallet/helpers/tokens'
 
