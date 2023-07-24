@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
+import { logout } from 'features/auth'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
 
@@ -79,6 +80,10 @@ export const cryptoWalletSlice = createSlice({
   },
   extraReducers(builder) {
     builder
+      // log out the selected identity
+      .addCase(logout, () => {
+        return initialState
+      })
       // getTransactionParams
       .addCase(getTransactionParams.pending, (state) => {
         state.transactionParams = { fetching: true, error: undefined, data: {} }

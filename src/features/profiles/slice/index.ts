@@ -11,8 +11,8 @@ import { PublicProfile } from '../@types'
 
 const publicProfileEmptyState: PublicProfile = {
   name: '',
-  country: '',
-  description: '',
+  country: undefined,
+  description: undefined,
 }
 
 const loadingDefaultState = {
@@ -53,10 +53,13 @@ export const profilesSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder
-      .addCase(logout, () => {
-        return initialState
+      // log out the selected identity
+      .addCase(logout, (state, action: PayloadAction<{ did?: string }>) => {
+        if (action.payload.did) {
+          delete state.publicProfiles[action.payload.did]
+        }
       })
-      //Fetch public profile data
+      // Fetch public profile data
       .addCase(fetchPublicProfileData.pending, (state, action) => {
         const did = action.meta.arg
         state.profilesProcessing[did] = {
@@ -82,6 +85,7 @@ export const profilesSlice = createSlice({
       })
   },
 })
+
 // Selectors
 export const selectSelectedPublicProfile = (state: RootState) =>
   selectPublicProfileByDid(

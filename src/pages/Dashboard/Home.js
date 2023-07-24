@@ -5,15 +5,10 @@ import { logout as logoutAction } from 'features/auth'
 import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
 import {
-  selectNewMessagesCount,
-  setNewMessagesCount as setNewMessagesCountAction,
-} from 'features/inbox'
-import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
 import { isPolygonIdDeepLink } from 'features/polygonid'
-import { selectSelectedPublicProfile } from 'features/profiles'
 import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -26,7 +21,6 @@ import {
   View,
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
-import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
@@ -51,21 +45,25 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 const LogoImg = require('assets/vault-logo.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
 const Home = (props) => {
-  const {
-    navigation,
-    selectedAccount,
-    navigationLink,
-    setNavigationLink,
-    logout,
-  } = props
+  const { navigation } = props
   const [loading, setLoading] = useState(false)
   const [showAddAccounts, setShowAddAccounts] = useState(false)
+  const dispatch = useAppDispatch()
+  const selectedAccount = useAppSelector(selectSelectedAccount)
+  const navigationLink = useAppSelector(selectNavigationLink)
+  const setNavigationLink = useCallback(
+    (link) => dispatch(setNavigationLinkAction(link)),
+    [dispatch]
+  )
+  const logout = () => dispatch(logoutAction({ did: selectedAccount?.did }))
+
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
   const linkTo = useLinkTo()
@@ -288,24 +286,7 @@ const Home = (props) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
-    setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
-    logout: () => dispatch(logoutAction()),
-  }
-}
-
-const mapStateToProps = (state) => {
-  return {
-    publicProfileData: selectSelectedPublicProfile(state),
-    newMessagesCount: selectNewMessagesCount(state),
-    selectedAccount: selectSelectedAccount(state),
-    navigationLink: selectNavigationLink(state),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
+export default Home
 
 const marginTop = 0
 const style = StyleSheet.create({

@@ -1,5 +1,6 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
+import { logout } from 'features/auth'
 import { cloneDeep } from 'lodash'
 
 import { Account } from 'api/types'
@@ -40,6 +41,18 @@ export const identitiesSlice = createSlice({
       state.switchAccountToast = action.payload
     },
   },
+  extraReducers: (builder) => {
+    builder
+      // log out the selected identity
+      .addCase(logout, (state, action: PayloadAction<{ did?: string }>) => {
+        if (action.payload.did) {
+          delete state.accounts[action.payload.did]
+          if (state.selectedAccount?.did === action.payload.did) {
+            state.selectedAccount = undefined
+          }
+        }
+      })
+  },
 })
 
 // Actions
@@ -57,4 +70,4 @@ export const selectSwitchAccountToast = (state: RootState) =>
 export const selectAccounts = (state: RootState) => state.identities.accounts
 
 export const selectSelectedAccount = (state: RootState) =>
-  state.identities.selectedAccount
+  state.identities?.selectedAccount

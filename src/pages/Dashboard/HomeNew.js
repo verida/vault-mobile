@@ -54,6 +54,9 @@ const DefaultAvatar = require('assets/stubs/avatar.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
+/**
+ * TODO: Have to sync with updates on the old Home page
+ */
 const Home = (props) => {
   const {
     navigation,

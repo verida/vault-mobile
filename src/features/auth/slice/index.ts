@@ -24,7 +24,10 @@ export const authSlice = createSlice({
 // Actions
 export const { setBioAuthStatus } = authSlice.actions
 
-export const logout = createAction('auth/logout')
+export const logout = createAction(
+  'auth/logout',
+  (payload: { did?: string }) => ({ payload })
+)
 
 // Selectors
 export const selectIsBioAuthenticated = (state: RootState) =>
