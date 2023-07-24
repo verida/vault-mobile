@@ -13,7 +13,7 @@ import { Namespaces } from 'features/walletConnect'
 // WalletConnect is requesting to attach to Sepolia as well as Goerli. If we didn't
 // explicitly check to see if the wallet was enabled for all accounts, a user could
 // unknowingly connect to an unsupported chain. Here we check that the requestedAddress
-// exists inside of the approverdAccounts for ALL chains.
+// exists inside of the approvedAccounts for ALL chains.
 //
 // If the single address doesn't exist for BOTH Sepolia and Goerli, it would be
 // deemed to not support all required chains, and therefore return false.

@@ -38,6 +38,11 @@ const walletNotReadyError: Error = new Error(
   'Web3Wallet was not ready to pair.'
 )
 
+const tooManyChainsError = () =>
+  new Error(
+    'The DApp requires several blockchain connections, however only a single is currently supported.'
+  )
+
 export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   children,
 }: React.PropsWithChildren<unknown>): JSX.Element {
@@ -102,14 +107,26 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       //       user to make an appropriate selection for ALL required chains,
       //       or they should not be allowed to continue.
 
-      if (numberOfRequiredNamespaces > 1)
-        return new Error(
-          'This Dapp has requested more than one chain simultaneously, however only a single chain at a time is currently supported.'
-        )
+      if (numberOfRequiredNamespaces > 1) return tooManyChainsError()
+
+      // HACK: Relies on the fact we know there's only a single namespace.
+      const [requiredNamespace] = Object.values(
+        proposal.params.requiredNamespaces
+      )
+
+      const maybeRequiredNamespaceChains = requiredNamespace?.chains
+
+      // We want to enforce connection to only a single chain at a time, since this
+      // is all the user can select from the dropdown.
+      if (
+        Array.isArray(maybeRequiredNamespaceChains) &&
+        maybeRequiredNamespaceChains.length > 1
+      )
+        return tooManyChainsError()
 
       const requestedNamespaces = onlyMatchingCaipChainIds.map((e) =>
         e.toString()
-      )
+      ) // i.e. ["eip155:5"]
 
       // Here, we are filtering out to find the requested chain identifiers that
       // we don't have existing ChainMetadata for. Although the same EIP155 wallet
