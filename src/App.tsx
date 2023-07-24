@@ -17,7 +17,10 @@ import Config from 'react-native-config'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
-import { SafeAreaProvider } from 'react-native-safe-area-context'
+import {
+  initialWindowMetrics,
+  SafeAreaProvider,
+} from 'react-native-safe-area-context'
 import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/es/integration/react'
@@ -109,8 +112,8 @@ function App() {
 
   const AppContent = (
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
-        <SafeAreaProvider>
+      <PersistGate persistor={persistor}>
+        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
           <ThemeProvider initial={defaultTheme}>
             <AuthProvider>
               <NavigationContainer

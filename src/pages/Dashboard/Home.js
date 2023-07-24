@@ -14,7 +14,7 @@ import {
 } from 'features/links'
 import { isPolygonIdDeepLink } from 'features/polygonid'
 import { selectSelectedPublicProfile } from 'features/profiles'
-import { Container, Content } from 'native-base'
+import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -32,6 +32,7 @@ import parse from 'url-parse'
 import AccountManager from 'api/AccountManager'
 import { fetchInboxCount } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
+import Container from 'components/Container'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import {
@@ -68,7 +69,9 @@ const Home = (props) => {
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
   const linkTo = useLinkTo()
-  const qrAddress = PROFILE_URL + selectedAccount.did
+  const qrAddress = selectedAccount?.did
+    ? PROFILE_URL + selectedAccount?.did
+    : ''
 
   useRemoteNotifications()
 
@@ -243,7 +246,7 @@ const Home = (props) => {
         ) : (
           <>
             <View style={style.qr}>
-              {qrAddress && (
+              {Boolean(qrAddress) && (
                 <QRCode
                   logo={LogoImg}
                   logoSize={60}
@@ -268,7 +271,7 @@ const Home = (props) => {
           </>
         )}
       </Content>
-      <DidView did={selectedAccount.did || ''} />
+      {Boolean(selectedAccount?.did) && <DidView did={selectedAccount.did} />}
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}

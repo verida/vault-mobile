@@ -62,7 +62,6 @@ export function useChainMetadatas(): State {
     if (cause)
       return {
         loading: false,
-        // @ts-expect-error language_version
         error: new Error('Failed to fetch ChainsList.', { cause }),
       }
 

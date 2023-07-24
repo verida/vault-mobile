@@ -93,7 +93,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(getTransactionParams.rejected, (state, action) => {
         state.transactionParams = {
           fetching: false,
-          error: action.error.message,
+          error: action.payload,
           data: {},
         }
       })
@@ -105,14 +105,10 @@ export const cryptoWalletSlice = createSlice({
       .addCase(
         sendTransaction.fulfilled,
         (state, action: PayloadAction<any>) => {
-          const amount = action.payload.amount.toHexString()
           state.sentTransaction = {
             fetching: false,
             error: undefined,
-            data: {
-              ...action.payload,
-              amount,
-            },
+            data: action.payload,
           }
           state.pendingTransactions = {
             data: [action.payload, ...state.pendingTransactions.data],
@@ -122,7 +118,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(sendTransaction.rejected, (state, action) => {
         state.sentTransaction = {
           fetching: false,
-          error: action.error.message,
+          error: action.payload,
           data: {},
         }
       })
@@ -143,7 +139,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(createNewWallet.rejected, (state, action) => {
         state.walletProcessing = {
           loading: false,
-          error: action.error.message,
+          error: action.payload,
         }
       })
 
@@ -163,7 +159,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(importWallet.rejected, (state, action) => {
         state.walletProcessing = {
           loading: false,
-          error: action.error.message,
+          error: action.payload,
         }
       })
 
@@ -183,7 +179,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(addWatchedWallet.rejected, (state, action) => {
         state.walletProcessing = {
           loading: false,
-          error: action.error.message,
+          error: action.payload,
         }
       })
 
@@ -203,7 +199,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(deleteWallet.rejected, (state, action) => {
         state.walletProcessing = {
           loading: false,
-          error: action.error.message,
+          error: action.payload,
         }
       })
 
@@ -223,7 +219,7 @@ export const cryptoWalletSlice = createSlice({
       .addCase(renameWallet.rejected, (state, action) => {
         state.walletProcessing = {
           loading: false,
-          error: action.error.message,
+          error: action.payload,
         }
       })
   },

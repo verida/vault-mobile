@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import { setNewMessagesCount } from 'features/inbox'
-import { debounce } from 'lodash'
+import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
@@ -55,18 +55,22 @@ export const loadAvatarSource = async () => {
  * So we add debounce to help reduce duplicated calls
  * TODO: should handle fetch inbox count in a single place
  */
-export const fetchInboxCount = debounce(async () => {
-  try {
-    const messages =
-      await AccountManager.getInstance().vault?.inbox.fetchLatest(
-        { read: false },
-        { limit: MAX_MESSAGE_COUNT }
-      )
-    store.dispatch(setNewMessagesCount(messages?.length ?? 0))
-  } catch (error) {
-    Sentry.captureException(error)
-  }
-}, 2500)
+export const fetchInboxCount = throttle(
+  async () => {
+    try {
+      const messages =
+        await AccountManager.getInstance().vault?.inbox.fetchLatest(
+          { read: false },
+          { limit: MAX_MESSAGE_COUNT }
+        )
+      store.dispatch(setNewMessagesCount(messages?.length ?? 0))
+    } catch (error) {
+      Sentry.captureException(error)
+    }
+  },
+  3000,
+  { leading: true, trailing: false }
+)
 
 export async function getProfile(did: string) {
   try {

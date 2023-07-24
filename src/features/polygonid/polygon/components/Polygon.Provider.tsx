@@ -106,7 +106,6 @@ export const PolygonProvider = ({
 
         throw new Error(`Encountered malformed message: "${maybeResult}"`)
       } catch (cause) {
-        // @ts-expect-error language_version
         onError(new Error('Failed to handle received message.', { cause }))
       }
     },

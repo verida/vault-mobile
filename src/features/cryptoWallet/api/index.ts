@@ -27,7 +27,8 @@ export const cryptoWalletApi = createApi({
   endpoints: (build) => ({
     chainsList: build.query({
       keepUnusedDataFor: 60 * 60 * 24, // 24 hours
-      query: () => 'chains/list',
+      // enforced empty object {} as this query params to have a unique cache key
+      query: (_: Record<string, never> = {}) => 'chains/list',
       transformResponse: (response: {
         data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
@@ -122,9 +123,9 @@ export const {
 
 // Selectors
 export const getBlockchainNetworks = createSelector(
-  cryptoWalletApi.endpoints.chainsList.select(undefined),
+  cryptoWalletApi.endpoints.chainsList.select({}),
   (data) => {
-    return data.data
+    return data.data || {}
   }
 )
 

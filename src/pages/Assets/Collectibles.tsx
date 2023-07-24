@@ -8,7 +8,7 @@ import {
   getUniqueWalletAddresses,
 } from 'features/cryptoWallet'
 import { getNFTImageUri } from 'helpers/nft'
-import React, { useCallback, useEffect } from 'react'
+import React, { useCallback } from 'react'
 import {
   ListRenderItem,
   RefreshControl,
@@ -23,7 +23,6 @@ import { NFT, NFTCollection, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import { NftItem } from 'components/Assets/NftItem'
 import Container from 'components/Container'
-import { ErrorFallbackCard } from 'components/Errors'
 import GridView from 'components/Grids/GridView'
 import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -42,8 +41,7 @@ const Collectibles = () => {
 
   const selectedWallet = useSelector(getSelectedWalletById)
   const addresses = getUniqueWalletAddresses(selectedWallet)
-  const { data, isLoading, isFetching, error, refetch } =
-    useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
+  const { data, isLoading, isFetching, refetch } = useGetNFTsQuery(addresses) // TODO: replace with NFT colections API
 
   const isEmptyList = !data || data.length === 0
 
@@ -122,13 +120,15 @@ const Collectibles = () => {
   )
 
   if (isLoading) return <LoadingIndicator />
-  if (error)
-    return (
-      <ErrorFallbackCard
-        error={new Error('Failed to load NFTs')}
-        resetErrorBoundary={refetch}
-      />
-    )
+
+  // TODO: enable, currently having an error when fetching assets for NEAR and Algorand addresses from the Wallet Provider API https://devnet-walletprovider.tn.verida.tech/nfts/list?
+  // if (error)
+  //   return (
+  //     <ErrorFallbackCard
+  //       error={new Error('Failed to load NFTs')}
+  //       resetErrorBoundary={refetch}
+  //     />
+  //   )
 
   return (
     <Container withLoadingView showLoading={isFetching}>

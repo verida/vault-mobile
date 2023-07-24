@@ -4,6 +4,7 @@ import {
   getBalancesData,
   getTransactionsForTokenData,
 } from 'features/cryptoWallet'
+import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 import {
   getWalletAddressForAsset,
@@ -79,7 +80,7 @@ export const getWalletList = (
 export const getUniqueWalletAddresses = (
   wallet: BlockchainWalletWithAccounts
 ) => {
-  if (!wallet) return []
+  if (isEmpty(wallet) || isEmpty(wallet.accounts)) return []
 
   const addresses: string[] = []
   Object.values(wallet.accounts).map((account) => {
@@ -131,7 +132,7 @@ export const selectPendingTransactions = (
   assetID: AssetId
 ) => {
   const pendingTransactions = state.cryptoWallets.pendingTransactions.data
-  const transactionsForAsset = pendingTransactions.filter((ele) => {
+  const transactionsForAsset = pendingTransactions?.filter((ele) => {
     return (
       tokenCaipObjectToString(ele.token.asset) ===
       tokenCaipObjectToString(assetID)

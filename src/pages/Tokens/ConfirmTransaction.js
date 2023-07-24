@@ -21,16 +21,17 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { useAppDispatch } from 'reduxStore/types'
 
 const ConfirmTransaction = ({
   navigation,
   route,
   wallets,
   transactionParams,
-  onSendTransaction,
   sentTransaction,
 }) => {
   const { token, amount, address } = route.params
+  const dispatch = useAppDispatch()
 
   const blockchainNetwork = getBlockchainNetwork(
     store.getState(),
@@ -112,7 +113,27 @@ const ConfirmTransaction = ({
             style={styles.nextButton}
             color='primary'
             loading={sentTransaction.fetching}
-            onPress={() => onSendTransaction({ token, amount, address })}>
+            onPress={async () => {
+              try {
+                const result = await dispatch(
+                  sendTransaction({
+                    transactionData: {
+                      token,
+                      amount,
+                      address,
+                    },
+                  })
+                )
+
+                if (result.meta.requestStatus === 'rejected') {
+                  throw new Error(result.payload)
+                } else {
+                  navigation.navigate('TransactionSuccess')
+                }
+              } catch (error) {
+                navigation.navigate('TransactionFailure', undefined)
+              }
+            }}>
             <Text style={styles.nextButton} color='primary'>
               Send {token.symbol}
             </Text>
@@ -170,10 +191,4 @@ const mapStateToProps = (state) => {
   }
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onSendTransaction: (params) => dispatch(sendTransaction(params)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(ConfirmTransaction)
+export default connect(mapStateToProps)(ConfirmTransaction)
