@@ -22,11 +22,11 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
-import { reduxPersistMkvStorage } from './utils/mkvPersistStorage'
+import { reduxPersistMmkvStorage } from './utils/mmkvPersistStorage'
 
 const persistConfig = {
   key: 'root',
-  storage: reduxPersistMkvStorage,
+  storage: reduxPersistMmkvStorage,
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
     'settings',

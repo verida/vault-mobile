@@ -9,7 +9,7 @@ if (__DEV__) {
   initializeMMKVFlipper({ default: storage })
 }
 
-export const reduxPersistMkvStorage: Storage = {
+export const reduxPersistMmkvStorage: Storage = {
   setItem: (key, value) => {
     storage.set(key, value)
     return Promise.resolve(true)
