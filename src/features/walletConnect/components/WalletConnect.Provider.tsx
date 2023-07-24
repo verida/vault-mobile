@@ -1,3 +1,5 @@
+import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
@@ -16,6 +18,7 @@ import Snackbar from 'react-native-snackbar'
 import { useDebouncedCallback } from 'use-debounce'
 
 import { useAuth } from 'hooks/useAuth'
+import { MainStackParams } from 'navigation/types'
 
 import { ActiveSessions, WalletConnectContextValue } from '../@types'
 import {
@@ -50,6 +53,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     DEFAULT_ACTIVE_SESSIONS
   )
 
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
   const { authenticated } = useAuth()
   const { showModal } = useModal()
 
@@ -249,7 +253,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     [maybeWeb3Wallet]
   )
 
-  const onRequestConnect = React.useCallback(
+  const handleQrCodeMessage = React.useCallback(
     async (maybeConnectionUri: unknown): Promise<void> => {
       if (!isWalletConnectConnection(maybeConnectionUri))
         throw new Error(
@@ -267,9 +271,11 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
           'Error',
           `Unable to pair${e instanceof Error ? `: ${e.message}` : '.'}`
         )
+      } finally {
+        navigation.goBack() // Assume this is used from the QR Code scanner screen, so have to close it.
       }
     },
-    [pairWithWalletConnectUriOrThrow]
+    [pairWithWalletConnectUriOrThrow, navigation]
   )
 
   // HACK: This function body relies on the side effects of how
@@ -328,12 +334,12 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       value={React.useMemo<WalletConnectContextValue>(
         () => ({
           activeSessions,
-          onRequestConnect,
+          handleQrCodeMessage,
           onRequestRefreshActiveSessions,
           onRequestDeleteSession,
         }),
         [
-          onRequestConnect,
+          handleQrCodeMessage,
           activeSessions,
           onRequestRefreshActiveSessions,
           onRequestDeleteSession,

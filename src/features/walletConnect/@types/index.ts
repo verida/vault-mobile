@@ -14,7 +14,7 @@ export type MaybeActiveSession = ActiveSession | undefined
 
 export type WalletConnectContextValue = {
   readonly activeSessions: ActiveSessions
-  readonly onRequestConnect: (maybeConnectionUri: unknown) => Promise<void>
+  readonly handleQrCodeMessage: (qrCodeMessage: unknown) => Promise<void>
   readonly onRequestRefreshActiveSessions: () => Promise<void>
   readonly onRequestDeleteSession: (
     walletConnectSessionKey: string,
