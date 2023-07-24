@@ -39,6 +39,16 @@ const addressExistsForAllRequestedChains = ({
   )
 }
 
+// Generates a session approval response object for WalletConnect.
+//
+// Note, this function is only capable of returning an approval for all of the
+// approvedAccounts provided by the caller. It is possible for
+// the caller to provide only a subset of the approvedAccounts actually demanded
+// by the session request; in this scenario, the approval can be rejected.
+//
+// Callers must ensure the array of approvedAccounts they pass meets the
+// requirements of the request.
+//
 // https://github.com/WalletConnect/web-examples/blob/e0059fa65c7dd9d26e8e9deb834e7af39fe7fb0b/wallets/react-web3wallet/src/views/SessionProposalModal.tsx#L62
 export function createWalletConnectSessionApprovalConfiguration({
   approvedAccounts,
