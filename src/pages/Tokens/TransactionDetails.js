@@ -4,7 +4,7 @@ import {
   getBlockchainNetworkLabel,
   getWalletsData,
   useGetTransactionDetailsQuery,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { useSelector } from 'react-redux'

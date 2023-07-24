@@ -5,18 +5,14 @@ import {
   getBlockchainNetworkLabel,
   getSelectedWalletById,
   getWalletsData,
-  selectNativeTokenBalance,
   selectSingleTokenData,
   selectTransactions,
-  sendTransaction,
   useGetTransactionsForTokenQuery,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
-import { Alert, Text, TouchableOpacity } from 'react-native'
 import Toast from 'react-native-root-toast'
-import { connect, useSelector } from 'react-redux'
-import { isNativeToken } from 'wallet/helpers/tokens'
+import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
@@ -25,9 +21,8 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
-import { WARNING_COLOR } from 'constants/color'
 
-const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
+const SingleCurrency = ({ navigation, route }) => {
   const { item } = route.params
 
   const wallets = useSelector(getWalletsData)
@@ -37,9 +32,6 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
   )
   const chainId = new ChainId(item.asset.chainId).toString()
   const address = wallets[chainId].address
-  const nativeTokenBalance = useSelector((state) =>
-    selectNativeTokenBalance(state, item)
-  )
 
   const { isLoading, isFetching, error, refetch } =
     useGetTransactionsForTokenQuery({
@@ -55,14 +47,6 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
   function pullToRefresh() {
     refetch()
   }
-
-  const warningRequired =
-    item.asset.chainId.namespace === 'algorand' && !isNativeToken(item.asset)
-
-  let networkLabel = getBlockchainNetworkLabel(blockchainNetwork)
-
-  const showAlert = () =>
-    Alert.alert('Not enough balance', 'You require at least 0.001 ALGO')
 
   if (error)
     return (
@@ -81,36 +65,9 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
         }}
         title={item.label}
       />
-      <TestnetWarning networkReference={networkLabel} />
-      {warningRequired && isLoading === false && list.length === 0 && (
-        <TouchableOpacity
-          style={{
-            backgroundColor: WARNING_COLOR,
-            padding: 15,
-            marginHorizontal: 15,
-            borderRadius: 5,
-            flexDirection: 'row',
-            alignItems: 'center',
-            marginTop: 10,
-          }}
-          onPress={() => {
-            if (nativeTokenBalance >= 0.001) {
-              onSendTransaction(
-                { token: item, amount: 0, address: address },
-                true
-              )
-            } else {
-              showAlert()
-            }
-          }}>
-          <Icon name='warning' style={{ color: '#fff', marginRight: 10 }} />
-          <Text style={{ color: '#FFF', flex: 1 }}>
-            Algorand network requires a special transaction to enable receiving
-            of non native assets, tap to enable {item.symbol} transactions (Fee:
-            0.001 ALGO).
-          </Text>
-        </TouchableOpacity>
-      )}
+      <TestnetWarning
+        networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
+      />
       <TokenBanner
         data={tokenData}
         selectedWallet={selectedWallet}
@@ -151,11 +108,4 @@ const SingleCurrency = ({ navigation, route, onSendTransaction }) => {
   )
 }
 
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onSendTransaction: (params, isAssetEnablingTransaction) =>
-      dispatch(sendTransaction(params, isAssetEnablingTransaction)),
-  }
-}
-
-export default connect(mapDispatchToProps)(SingleCurrency)
+export default SingleCurrency

@@ -5,13 +5,13 @@ import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { ThemeProvider } from 'contexts/ThemeContext'
-import { WalletConnectProviderv2 } from 'contexts/WalletConnectContextv2'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
+import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
-import { Alert } from 'react-native'
+import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import Config from 'react-native-config'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
@@ -36,7 +36,6 @@ import Authenticate from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
-import { WalletConnectProvider } from './contexts/WalletConnectContext'
 
 configureNotifications()
 
@@ -125,12 +124,10 @@ function App() {
                     <RootSiblingParent>
                       <ActionSheetProvider>
                         <WalletConnectProvider>
-                          <WalletConnectProviderv2>
-                            <GestureHandlerRootView style={{ flex: 1 }}>
-                              <RootNavigator />
-                            </GestureHandlerRootView>
-                            <MetaServerChecks />
-                          </WalletConnectProviderv2>
+                          <GestureHandlerRootView style={styles.flex}>
+                            <RootNavigator />
+                          </GestureHandlerRootView>
+                          <MetaServerChecks />
                         </WalletConnectProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>
@@ -152,6 +149,10 @@ function App() {
     </>
   )
 }
+
+const styles = StyleSheet.create({
+  flex: { flex: 1 },
+})
 
 const codePushOptions: CodePushOptions = {
   checkFrequency: codePush.CheckFrequency.ON_APP_RESUME,

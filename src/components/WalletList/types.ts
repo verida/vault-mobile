@@ -1,4 +1,4 @@
-//@deprecated should be types from features/wallets
+//@deprecated should be types from features/cryptoWallet
 export type SingleAccountType = {
   mnemonic: string
   privateKey: string

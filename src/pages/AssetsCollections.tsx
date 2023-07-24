@@ -1,5 +1,5 @@
 import { useTheme } from 'contexts/ThemeContext'
-import { getSelectedWalletById } from 'features/wallets'
+import { getSelectedWalletById } from 'features/cryptoWallet'
 import { Container } from 'native-base'
 import React, { useRef, useState } from 'react'
 import { Image, StyleSheet, useWindowDimensions } from 'react-native'

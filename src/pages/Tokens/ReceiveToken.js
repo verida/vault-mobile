@@ -3,7 +3,7 @@ import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
   getWalletsData,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'

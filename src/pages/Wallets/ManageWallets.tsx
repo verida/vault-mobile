@@ -10,7 +10,7 @@ import {
   getWalletProcessingState,
   importWallet,
   setSelectedWallet,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'

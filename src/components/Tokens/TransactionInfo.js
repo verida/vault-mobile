@@ -1,5 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getBlockchainNetwork } from 'features/wallets'
+import { getBlockchainNetwork } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -90,11 +90,7 @@ export default ({ transaction, token }) => {
           </View>
         </View>
         <View style={styles.infoRow}>
-          <Text style={styles.infoLabel}>
-            {blockchainNetwork.asset.chainId.namespace === 'algorand'
-              ? 'Round'
-              : 'Block'}
-          </Text>
+          <Text style={styles.infoLabel}>{'Block'}</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>{transaction.blockNumber}</Text>
           </View>

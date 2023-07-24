@@ -4,7 +4,7 @@ import {
   getSelectedWalletId,
   getWalletList,
   setSelectedWallet,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'

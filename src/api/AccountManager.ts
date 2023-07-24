@@ -28,10 +28,10 @@ import {
   removeUserWallets,
   saveUserWallets,
   setSelectedWallet,
-  walletsApi,
-  getBlockchainNetworks,
   getSelectedWalletId,
-} from 'features/wallets'
+  cryptoWalletApi,
+  getBlockchainNetworks,
+} from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
 import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
@@ -117,9 +117,12 @@ class AccountManager extends EventEmitter {
         SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
         SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
-          walletsApi.endpoints.chainsList.initiate(undefined, {
-            forceRefetch: false,
-          })
+          cryptoWalletApi.endpoints.chainsList.initiate(
+            {},
+            {
+              forceRefetch: false,
+            }
+          )
         ),
       ])
 
@@ -438,7 +441,7 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
+        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
       })
 
       // Connect the Verida account to the Verida client

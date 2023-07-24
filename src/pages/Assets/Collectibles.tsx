@@ -6,7 +6,7 @@ import { useGetNFTsQuery } from 'features/assets'
 import {
   getSelectedWalletById,
   getUniqueWalletAddresses,
-} from 'features/wallets'
+} from 'features/cryptoWallet'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
 import {

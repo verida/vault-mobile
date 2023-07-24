@@ -1,4 +1,4 @@
-import { priceFormatter } from 'features/wallets'
+import { priceFormatter } from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'

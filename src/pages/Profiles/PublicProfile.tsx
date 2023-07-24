@@ -3,13 +3,13 @@ import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
   selectSelectedPublicProfile,
   setPublicProfileByDid,
 } from 'features/profiles'
-import { getAllWallets, getBlockchainNetworks } from 'features/wallets'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
 import debounce from 'lodash/debounce'

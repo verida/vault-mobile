@@ -1,6 +1,6 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
-import { getWalletObjectById, renameWallet } from 'features/wallets'
+import { getWalletObjectById, renameWallet } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -114,7 +114,7 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
           <>
             {singleWallet.address && (
               <TouchableOpacity
-                onPress={() => Clipboard.setString(singleWallet.address)}
+                onPress={() => Clipboard.setString(singleWallet.address!)}
                 style={styles.actionButton}>
                 <CopyIcon />
                 <Text style={styles.actionButtonText}>Copy address</Text>
