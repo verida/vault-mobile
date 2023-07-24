@@ -2,17 +2,10 @@ import { AuthClientTypes } from '@walletconnect/auth-client'
 import { Core } from '@walletconnect/core'
 import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { veridaWalletMetadata } from 'features/walletConnect'
 import * as React from 'react'
 
 import Config from '../../../config/environment'
-
-// TODO: Should be a function of config.
-const defaultMetadata: AuthClientTypes.Metadata = {
-  name: 'Verida Vault',
-  description: 'Verida Vault for WalletConnect',
-  url: 'https://walletconnect.com/',
-  icons: ['https://avatars.githubusercontent.com/u/37784886'],
-}
 
 // TODO: This should be IStateful.
 type State = Readonly<
@@ -34,7 +27,7 @@ export function useCreateWeb3Wallet({
   onSessionRequest,
   onSessionProposal,
   onSessionDelete,
-  metadata = defaultMetadata,
+  metadata = veridaWalletMetadata,
 }: {
   readonly onSessionProposal: (
     web3wallet: IWeb3Wallet,

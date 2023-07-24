@@ -88,8 +88,10 @@ export const WalletConnectActiveSession = React.memo(
                           chainMetadatas={chainMetadatas}
                           caipChainId={caipChainId}
                         />,
-                        // eslint-disable-next-line react/no-children-prop
-                        i < orig.length - 1 ? <Text children=',' /> : undefined,
+                        i < orig.length - 1 ? (
+                          // eslint-disable-next-line react/no-children-prop
+                          <Text children=',' key={String(i)} />
+                        ) : undefined,
                       ])}
                   </Text>
                 </View>,

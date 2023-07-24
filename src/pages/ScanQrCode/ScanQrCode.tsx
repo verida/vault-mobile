@@ -7,10 +7,6 @@ import {
   useDeeplink,
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
-import {
-  isWalletConnectConnection,
-  useWalletConnectContext,
-} from 'features/walletConnect'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
@@ -30,7 +26,6 @@ function ScanQrCode(
   const [isFlashOn, setIsFlashOn] = useState(false)
   const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
   const handleDeeplink = useDeeplink(navigation as any)
-  const { onRequestConnect } = useWalletConnectContext()
 
   useEffect(() => {
     setEnabled(true)
@@ -44,61 +39,67 @@ function ScanQrCode(
     navigation.goBack()
   }, [navigation])
 
-  const handleQrCode = async (data: string) => {
-    if (!enabled) {
-      return
-    }
-
-    setEnabled(false)
-
-    setTimeout(() => {
-      // TODO: This is causing a state update on an unmounted component, use a debounce/throttle on handleQrCode instead
-      setEnabled(true)
-    }, WAIT_TIME)
-
-    if (route.params.onReadQRCode) {
-      route.params.onReadQRCode(data)
-      navigation.goBack()
-      return
-    }
-
-    const handledByProtocols = processQrCodeByProtocolHandlers(data)
-    if (handledByProtocols) {
-      // It's assumed the protocol handlers will handle the navigation
-      return
-    }
-
-    // TODO: Progressively move the protocols into the protocol handlers
-
-    if (isWalletConnectConnection(data))
-      return Promise.all([onRequestConnect(data), navigation.goBack()])
-
-    const { hostname, pathname } = parse(data, true)
-
-    // Check if supported URL
-    if (
-      !isEmpty(hostname) &&
-      isSupportedDomain(hostname) &&
-      canBeHandledByDeeplink(pathname)
-    ) {
-      // TODO: Move Verida Connect to protocol handlers
-      handleDeeplink(data)
-      return
-    }
-
-    // Check if can be opened by device
-    try {
-      if (await Linking.canOpenURL(data)) {
-        // TODO: Do we really want to continue opening any data non-supported by the Verida Wallet?
-        await Linking.openURL(data)
+  const handleQrCode = useCallback(
+    async (data: string) => {
+      if (!enabled) {
         return
       }
-    } catch (error) {
-      Sentry.captureException(error)
-    }
 
-    Alert.alert('Error', 'QR Code not supported')
-  }
+      setEnabled(false)
+
+      setTimeout(() => {
+        // TODO: This is causing a state update on an unmounted component, use a debounce/throttle on handleQrCode instead
+        setEnabled(true)
+      }, WAIT_TIME)
+
+      if (route.params.onReadQRCode) {
+        route.params.onReadQRCode(data)
+        navigation.goBack()
+        return
+      }
+
+      const handledByProtocols = processQrCodeByProtocolHandlers(data)
+      if (handledByProtocols) {
+        // It's assumed the protocol handlers manage the navigation but i would be better to TODO: Find a way to not have the handler manager closing the QR Code scanner.
+        return
+      }
+
+      // TODO: Progressively move the protocols into the protocol handlers
+
+      const { hostname, pathname } = parse(data, true)
+
+      // Check if supported URL
+      if (
+        !isEmpty(hostname) &&
+        isSupportedDomain(hostname) &&
+        canBeHandledByDeeplink(pathname)
+      ) {
+        // TODO: Move Verida Connect to protocol handlers
+        handleDeeplink(data)
+        return
+      }
+
+      // Check if can be opened by device
+      try {
+        if (await Linking.canOpenURL(data)) {
+          // TODO: Do we really want to continue opening any data non-supported by the Verida Wallet?
+          await Linking.openURL(data)
+          return
+        }
+      } catch (error) {
+        Sentry.captureException(error)
+      }
+
+      Alert.alert('Error', 'QR Code not supported')
+    },
+    [
+      enabled,
+      processQrCodeByProtocolHandlers,
+      handleDeeplink,
+      navigation,
+      route.params,
+    ]
+  )
 
   const onBarCodeRead = async (event: BarCodeReadEvent) => {
     const { data } = event

@@ -1,4 +1,6 @@
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
+
+import { Option } from 'components/Select'
 
 // Types copied from the Wallet-Provider
 // TODO: Should be able to auto generated or import types directly from wallet provider module
@@ -73,3 +75,7 @@ export interface DetailedTransaction {
   time: string
 }
 // End Walett Provider types
+
+export type VeridaWalletAccountOption = Option & {
+  readonly caipChainId: ChainId
+}

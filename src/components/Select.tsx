@@ -22,19 +22,23 @@ const empty = (): Pick<Option, 'label' | 'value'> => ({
   value: '',
 })
 
-class DropDownPicker extends Component<SelectProps, SelectState> {
+class DropDownPicker<T extends Option = Option> extends Component<
+  SelectProps<T>,
+  SelectState
+> {
   inputRef = React.createRef<TextInput>()
 
-  constructor(props: SelectProps) {
+  constructor(props: SelectProps<T>) {
     super(props)
 
-    const choice: Option[] = []
+    const choice: T[] = []
     if (!props.multiple) {
       choice.push(
         (props.defaultValue
           ? props.items.find((item) => item.value === props.defaultValue)
           : props.items.filter((item) => item?.selected === true)?.[0]) ??
-          empty()
+          // TODO: This is NOT correct; emptys items are NOT Ts.
+          (empty() as T)
       )
     } else {
       if (
@@ -63,7 +67,10 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
     }
   }
 
-  static getDerivedStateFromProps(props: SelectProps, state: SelectState) {
+  static getDerivedStateFromProps<T extends Option>(
+    props: SelectProps<T>,
+    state: SelectState
+  ) {
     const { defaultValue, multiple } = props
     // Change default value (! multiple)
     if (!multiple && defaultValue !== state.props.defaultValue) {
@@ -146,7 +153,7 @@ class DropDownPicker extends Component<SelectProps, SelectState> {
     )
   }
 
-  select(item: Option, index: number) {
+  select(item: T, index: number) {
     if (this.props.multiple) {
       let choice = [...this.state.choice]
       const exists = choice.findIndex(
@@ -444,9 +451,9 @@ export type Option = {
   selected?: boolean
 }
 
-type SelectProps = {
+type SelectProps<T extends Option> = {
   autoFocus?: boolean
-  items: readonly Option[]
+  items: readonly T[]
   placeholder: string
   placeholderStyle: StyleProp<TextStyle>
   dropDownMaxHeight: number
@@ -485,7 +492,7 @@ type SelectProps = {
   | {
       multiple?: false
       defaultValue?: string
-      onChangeItem: (item: Option, idx?: number) => void
+      onChangeItem: (item: T, idx?: number) => void
     }
 )
 

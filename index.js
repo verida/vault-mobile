@@ -1,3 +1,8 @@
+/* eslint-disable import/first */
+// HACK: Satisfy @walletconnect/utils:isReactNative
+// https://github.com/WalletConnect/walletconnect-utils/blob/d057e0f63f726b3cb6595dc3ca1a32234240c2e5/misc/environment/src/env.ts#L1
+Object.assign(navigator || {}, { product: 'ReactNative' })
+
 import '@walletconnect/react-native-compat'
 import './shim'
 import 'react-native-get-random-values'

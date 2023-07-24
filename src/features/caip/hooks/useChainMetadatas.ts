@@ -32,13 +32,15 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
 
   if (!isSupportedCaipNamespace(namespace)) return undefined
 
-  const { label: name, rpcUrl: rpc } = blockchainNetwork
+  const { label: name, rpcUrl } = blockchainNetwork
+
+  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, INFURA_API_KEY)
 
   return {
     namespace,
     reference,
     name,
-    rpc: rpc.replaceAll('%INFURA_KEY%', INFURA_API_KEY),
+    rpc,
   }
 }
 

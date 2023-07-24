@@ -1,3 +1,5 @@
+import type { AuthClientTypes } from '@walletconnect/auth-client'
+
 const WALLETCONNECT_PROTOCOL = 'wc:'
 
 //// Ex: wc:9145e975-4af0-4a28-a569-19aab7a21dd8@1?bridge=https%3A%2F%2F6.bridge.walletconnect.org&key=40dbb09f0eac060885a0edaf7f1ab7efba207c9b339bc49f805d61b615ac28a7
@@ -31,3 +33,14 @@ export const isWalletConnectConnection = (
   isWalletConnectV2Connection(maybeWalletConnectConnection)
 
 export const WALLETCONNECT_LABEL = 'WalletConnect v2'
+
+// TODO: Should be a function of config?
+export const veridaWalletMetadata: AuthClientTypes.Metadata = {
+  name: 'Verida Wallet',
+  description: 'Verida Wallet for WalletConnect',
+  url: 'https://www.verida.io/',
+  icons: [
+    'https://assets.verida.io/verida_wallet_logo.svg',
+    'https://assets.verida.io/verida_wallet_logo.png',
+  ],
+}
