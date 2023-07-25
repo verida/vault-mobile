@@ -3,13 +3,11 @@ import { BigNumber } from 'ethers'
 import {
   getBalancesData,
   getTransactionsForTokenData,
+  getWalletAddressForAsset,
+  tokenCaipObjectToString,
 } from 'features/cryptoWallet'
 import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
-import {
-  getWalletAddressForAsset,
-  tokenCaipObjectToString,
-} from 'wallet/helpers/tokens'
 
 import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import { RootState } from 'reduxStore/types'

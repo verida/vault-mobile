@@ -1,7 +1,9 @@
 import {
+  formatTokenQuantity,
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
   getTransactionParamsData,
+  getWalletAddressForAsset,
   getWalletsData,
   selectSentTransaction,
   sendTransaction,
@@ -11,10 +13,6 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { store } from 'reduxStore'
-import {
-  formatTokenQuantity,
-  getWalletAddressForAsset,
-} from 'wallet/helpers/tokens'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'

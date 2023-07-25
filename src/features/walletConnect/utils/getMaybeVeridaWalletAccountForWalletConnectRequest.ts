@@ -1,6 +1,7 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { useWalletsData } from 'features/cryptoWallet'
-import { VeridaWalletAccount } from 'types'
+
+import { BlockchainAccount } from 'api/types'
 
 import { ActiveSession, ActiveSessions } from '../@types'
 import { getMaybeVeridaWalletAccountForWalletConnectActiveSession } from './getMaybeVeridaWalletAccountForWalletConnectActiveSession'
@@ -13,7 +14,7 @@ export function getMaybeVeridaWalletAccountForWalletConnectRequest({
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
-}): VeridaWalletAccount | undefined {
+}): BlockchainAccount | undefined {
   const activeSessions: ActiveSessions = web3wallet.getActiveSessions()
 
   const maybeActiveSession: ActiveSession = activeSessions?.[request.topic]

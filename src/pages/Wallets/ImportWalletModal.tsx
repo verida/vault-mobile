@@ -2,6 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import {
   getBlockchainNetworkLabel,
   getBlockchainNetworks,
+  isValidSeedPhrase,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
@@ -14,7 +15,6 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { isValidSeedPhrase } from 'wallet/helpers/validation'
 
 import { BlockchainNetwork } from 'api/types'
 import Button from 'components/Button'

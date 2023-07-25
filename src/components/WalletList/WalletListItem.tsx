@@ -1,7 +1,7 @@
 import { useTheme } from 'contexts/ThemeContext'
+import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
 import CheckBoxIcon from 'assets/checkbox_icon.svg'

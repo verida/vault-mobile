@@ -1,5 +1,8 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getTransactionParams } from 'features/cryptoWallet'
+import {
+  getTransactionParams,
+  isValidWalletAddress,
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -10,7 +13,6 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { isValidWalletAddress } from 'wallet/helpers/validation'
 
 import Button from 'components/Button'
 import Label from 'components/Label'

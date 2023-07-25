@@ -74,7 +74,7 @@ export interface DetailedTransaction {
   blockNumber: string
   time: string
 }
-// End Walett Provider types
+// End Wallet Provider types
 
 export type VeridaWalletAccountOption = Option & {
   readonly caipChainId: ChainId

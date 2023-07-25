@@ -1,4 +1,5 @@
 import { useTheme } from 'contexts/ThemeContext'
+import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import React from 'react'
 import {
   ImageSourcePropType,
@@ -10,7 +11,6 @@ import {
 } from 'react-native'
 import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
 import EnvelopeSvg from 'assets/icons/envelope.svg'

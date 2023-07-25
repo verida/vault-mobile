@@ -31,6 +31,7 @@ import {
   getSelectedWalletId,
   cryptoWalletApi,
   getBlockchainNetworks,
+  WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
 import { execWithTimeout } from 'api/utils'
@@ -38,7 +39,6 @@ import DataConnectorsManager from './DataConnectorsManager'
 
 import CONFIG from '../config/environment'
 import EventEmitter from 'events'
-import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'

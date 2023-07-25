@@ -2,10 +2,9 @@ import {
   getAllWallets,
   getSelectedWalletId,
   getWalletsData,
+  WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
-import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
-import dataHelper from 'wallet/data'
 
 import AccountManager from 'api/AccountManager'
 import { BlockchainWallet } from 'api/types'
@@ -14,6 +13,7 @@ import CONFIG from 'config/environment'
 import { navigate } from 'navigation/RootNavigator'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
+import dataHelper from '../utils/data'
 import { saveUserWallets, setSelectedWallet } from './'
 
 export const getTransactionParams = createAppAsyncThunk(

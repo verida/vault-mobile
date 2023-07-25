@@ -1,10 +1,12 @@
 import Clipboard from '@react-native-community/clipboard'
-import { getBlockchainNetwork } from 'features/cryptoWallet'
+import {
+  formatTokenQuantity,
+  getBlockchainNetwork,
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { store } from 'reduxStore'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'

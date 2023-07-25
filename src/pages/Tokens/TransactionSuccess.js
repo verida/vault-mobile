@@ -1,7 +1,9 @@
-import { selectSentTransaction } from 'features/cryptoWallet'
+import {
+  formatTokenQuantity,
+  selectSentTransaction,
+} from 'features/cryptoWallet'
 import React from 'react'
 import { connect } from 'react-redux'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import SuccessFailure from 'components/SuccessFailure'
 

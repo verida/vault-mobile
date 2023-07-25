@@ -4,8 +4,8 @@ import { getWalletObjectById, renameWallet } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { VeridaWalletAccount } from 'types'
 
+import { BlockchainAccount } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
@@ -69,8 +69,8 @@ const SingleWallet = (props: SingleWalletScreenProps) => {
   }
 
   // @todo
-  const singleWallet: VeridaWalletAccount | undefined =
-    undefined as unknown as VeridaWalletAccount
+  const singleWallet: BlockchainAccount | undefined =
+    undefined as unknown as BlockchainAccount
 
   const isChainTypeEvm = singleWallet
     ? Object.keys(wallets.accounts)[0] === 'evm'

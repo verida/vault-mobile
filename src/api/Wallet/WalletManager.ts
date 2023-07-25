@@ -1,7 +1,9 @@
 import { isSupportedCaipNamespace } from 'features/caip'
-import { getBlockchainNetworks } from 'features/cryptoWallet'
+import {
+  getBlockchainNetworks,
+  WALLET_SCHEMA_0_2_0_URI,
+} from 'features/cryptoWallet'
 import { store } from 'reduxStore'
-import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 import AccountManager from 'api/AccountManager'
 

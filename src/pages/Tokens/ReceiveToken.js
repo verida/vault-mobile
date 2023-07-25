@@ -2,6 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import {
   getBlockchainNetwork,
   getBlockchainNetworkLabel,
+  getWalletAddressForAsset,
   getWalletsData,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
@@ -11,7 +12,6 @@ import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import { store } from 'reduxStore'
-import { getWalletAddressForAsset } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon_with_bg.svg'

@@ -2,21 +2,19 @@ import Common from '@ethereumjs/common'
 import { Transaction } from '@ethereumjs/tx'
 import {
   getBlockchainNetwork,
+  getTokenAddress,
   getTransactionParamsData,
+  getWalletAddressForAsset,
   getWalletsData,
+  isNativeToken,
+  parseUnitsForSending,
 } from 'features/cryptoWallet'
 import sha256 from 'js-sha256'
 import * as nearAPI from 'near-api-js'
 import { store } from 'reduxStore'
-import {
-  getTokenAddress,
-  getWalletAddressForAsset,
-  isNativeToken,
-  parseUnitsForSending,
-} from 'wallet/helpers/tokens'
 import Web3 from 'web3'
 
-import { walletProviderApi } from '../api/Wallet/WalletProvider'
+import { walletProviderApi } from 'api/Wallet/WalletProvider'
 
 const web3 = new Web3('http://localhost')
 

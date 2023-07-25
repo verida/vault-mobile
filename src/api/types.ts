@@ -71,6 +71,14 @@ export interface BlockchainAccount {
   blockchainNetwork?: BlockchainNetwork
 }
 
+export type BlockchainAccounts = Record<
+  // HACK: There are also some deprecated standards, such as algorand, which may
+  //       appear in an instance of VeridaWalletAccounts. Please take
+  //       "SupportedCaipProtocolStandard" with a grain of salt here.
+  string,
+  BlockchainAccount
+>
+
 /**
  * @todo improve typescript
  *
