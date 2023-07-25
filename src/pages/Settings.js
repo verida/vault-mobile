@@ -3,7 +3,6 @@ import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
 import Config from 'react-native-config'
-import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
 import LoadingView from 'components/LoadingView'
@@ -12,6 +11,7 @@ import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'
+import { APP_NAME, APP_VERSION_FORMATTED } from '../constants'
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
@@ -88,9 +88,9 @@ export default (props) => {
 
   const networks = useSelector((state) => state.settings.networks)
   const modifiedGeneralList = [...generalList]
-  const versionText = `Verida Vault ${capitalize(
+  const versionText = `${APP_NAME} ${capitalize(
     Config.BITRISE_TRIGGERED_WORKFLOW_TITLE || Config.DEPLOY_ENVIRONMENT
-  )} v${getVersion()}(${getBuildNumber()})`
+  )} ${APP_VERSION_FORMATTED}`
 
   if (!isEmpty(networks)) {
     const selectedNode = networks[0].nodes[networks[0].selected_node]
