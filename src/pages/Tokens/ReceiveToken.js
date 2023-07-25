@@ -1,4 +1,10 @@
 import Clipboard from '@react-native-community/clipboard'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getWalletAddressForAsset,
+  getWalletsData,
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -6,7 +12,6 @@ import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
 import { store } from 'reduxStore'
-import { getWalletAddressForAsset } from 'wallet/helpers/tokens'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon_with_bg.svg'
@@ -17,11 +22,6 @@ import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import {
-  getBlockchainNetwork,
-  getBlockchainNetworkLabel,
-} from 'reduxStore/selectors'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const LogoImg = require('assets/vault-logo.png')
 
@@ -178,8 +178,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     wallets: getWalletsData(state),
   }

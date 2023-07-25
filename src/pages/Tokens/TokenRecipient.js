@@ -1,4 +1,8 @@
 import Clipboard from '@react-native-community/clipboard'
+import {
+  getTransactionParams,
+  isValidWalletAddress,
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -9,14 +13,12 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { isValidWalletAddress } from 'wallet/helpers/validation'
 
 import Button from 'components/Button'
 import Label from 'components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { getTransactionParams } from 'reduxStore/wallet/actions'
 import InputStyles from 'styles/inputs'
 
 const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {

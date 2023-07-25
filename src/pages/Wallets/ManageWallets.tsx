@@ -1,5 +1,16 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import {
+  addWatchedWallet,
+  createNewWallet,
+  deleteWallet,
+  getSelectedWalletId,
+  getWalletCount,
+  getWalletList,
+  getWalletProcessingState,
+  importWallet,
+  setSelectedWallet,
+} from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -7,26 +18,12 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import { WalletItem } from 'components/WalletList/types'
 import CONFIG from 'config/environment'
 import { MainStackParams } from 'navigation/types'
-import { selectChains } from 'reduxStore/tokens/selectors'
-import {
-  addWatchedWallet,
-  createNewWallet,
-  deleteWallet,
-  importWallet,
-  setSelectedWallet,
-} from 'reduxStore/wallet/actions'
-import {
-  getSelectedWalletId,
-  getWalletCount,
-  getWalletList,
-  getWalletProcessingState,
-} from 'reduxStore/wallet/selectors'
 
 import PlusIcon from '../../assets/plus_icon.svg'
 import UnionIcon from '../../assets/union_icon.svg'
@@ -36,12 +33,11 @@ import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import ImportWalletModal from './ImportWalletModal'
 
 type Props = {
-  wallets: WalletItem[]
+  wallets: BlockchainWalletWithAccounts[]
   walletCount: number
   navigation: NativeStackNavigationProp<MainStackParams, any>
   selectedWalletId: number | string
   loading: boolean
-  chains: any
   onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
   onCreateWallet: () => Promise<void>
   onImportWallet: () => Promise<void>
@@ -56,7 +52,6 @@ const ManageWallets = (props: Props) => {
     navigation,
     selectedWalletId,
     loading,
-    chains,
     onSetSelectedWalletId,
     onCreateWallet,
     onImportWallet,
@@ -70,7 +65,9 @@ const ManageWallets = (props: Props) => {
     useState(false)
   const [addWatchedWalletModalVisible, setAddWatchedWalletModalVisible] =
     useState(false)
-  const [walletList, setWalletList] = useState<WalletItem[]>([])
+  const [walletList, setWalletList] = useState<BlockchainWalletWithAccounts[]>(
+    []
+  )
 
   const { showActionSheetWithOptions } = useActionSheet()
 
@@ -78,13 +75,13 @@ const ManageWallets = (props: Props) => {
     if (wallets) {
       setWalletList(wallets)
     }
-  }, [chains, wallets])
+  }, [wallets])
 
   const showDeleteAlert = () => {
     Alert.alert('Default wallet', `Error, can't delete the last wallet`)
   }
 
-  const showConfirmationAlert = (item: WalletItem) =>
+  const showConfirmationAlert = (item: BlockchainWalletWithAccounts) =>
     Alert.alert(
       'Are you sure?',
       `This is irreversible, please backup your seed phrase before deleting the wallet.`,
@@ -97,7 +94,7 @@ const ManageWallets = (props: Props) => {
           text: 'Delete',
           style: 'destructive',
           onPress: () => {
-            const selectedWalletID = item.id
+            const selectedWalletID = item._id
             onDeleteWallet(selectedWalletID)
           },
         },
@@ -152,7 +149,7 @@ const ManageWallets = (props: Props) => {
     )
   }
 
-  const handlePressWalletListItem = (item: WalletItem) => {
+  const handlePressWalletListItem = (item: BlockchainWalletWithAccounts) => {
     let options
     if (item.viewOnly) {
       options = ['Switch to this wallet', 'Delete Wallet', 'Cancel']
@@ -180,7 +177,7 @@ const ManageWallets = (props: Props) => {
         if (buttonIndex === 0 && !item.viewOnly) {
           navigation.navigate('SingleWallet', { item })
         } else if (buttonIndex === 1) {
-          const selectedWalletID = item.id
+          const selectedWalletID = item._id
           onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
             CONFIG.SELECTED_WALLET_STORAGE_KEY,
@@ -244,11 +241,8 @@ const styles = StyleSheet.create({
   content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  const chains = selectChains(rootState)
+const mapStateToProps = (state: any) => {
   return {
-    chains,
     wallets: getWalletList(state),
     walletCount: getWalletCount(state),
     selectedWalletId: getSelectedWalletId(state),
@@ -260,7 +254,8 @@ const mapDispatchToProps = (dispatch: Dispatch) => {
   return {
     onSetSelectedWalletId: (walletID: string) =>
       dispatch(setSelectedWallet(walletID) as any),
-    onCreateWallet: (args: unknown) => dispatch(createNewWallet(args) as any),
+    onCreateWallet: (args: unknown) =>
+      dispatch(createNewWallet(args as any) as any),
     onImportWallet: (args: any) => dispatch(importWallet(args) as any),
     onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
     onDeleteWallet: (walletId: string) =>

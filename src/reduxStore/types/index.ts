@@ -1,7 +1,16 @@
-import { Reducer as ReduxReducer } from 'redux'
+import { createAsyncThunk } from '@reduxjs/toolkit'
+import { TypedUseSelectorHook, useDispatch, useSelector } from 'react-redux'
 
-import { rootReducer } from '..'
+import { store } from '..'
 
-export type RootState = typeof rootReducer extends ReduxReducer<infer S>
-  ? S
-  : never
+export type RootState = ReturnType<typeof store.getState>
+
+export type AppDispatch = typeof store.dispatch
+export const useAppDispatch: () => AppDispatch = useDispatch
+export const useAppSelector: TypedUseSelectorHook<RootState> = useSelector
+
+export const createAppAsyncThunk = createAsyncThunk.withTypes<{
+  state: RootState
+  dispatch: AppDispatch
+  rejectValue: string
+}>()

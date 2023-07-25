@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 import { ChainMetadatas, isSupportedCaipNamespace } from 'features/caip'
-import { walletsApi } from 'features/cryptoWallet'
+import { cryptoWalletApi } from 'features/cryptoWallet'
 import * as React from 'react'
 import Config from 'react-native-config'
 
@@ -10,7 +10,7 @@ import { ChainMetadata } from '../@types'
 
 const { INFURA_API_KEY } = Config
 
-const { useChainsListQuery } = walletsApi
+const { useChainsListQuery } = cryptoWalletApi
 
 type State = Readonly<
   | { loading: true }
@@ -62,7 +62,6 @@ export function useChainMetadatas(): State {
     if (cause)
       return {
         loading: false,
-        // @ts-expect-error language_version
         error: new Error('Failed to fetch ChainsList.', { cause }),
       }
 

@@ -1,6 +1,6 @@
+import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
-import { getTruncatedWalletAddress } from 'wallet/helpers/tokens'
 
 import ChevronDownIcon from 'assets/chevron_down_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'

@@ -1,13 +1,16 @@
 import { useNavigation } from '@react-navigation/native'
-import React, { useEffect } from 'react'
+import {
+  getUniqueWalletAddresses,
+  getWallets,
+  useGetBalancesQuery,
+} from 'features/cryptoWallet'
+import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { connect } from 'react-redux'
+import { useSelector } from 'react-redux'
 
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
-import { getBalances } from 'reduxStore/wallet/actions'
-import { getTokensData, getWalletsData } from 'reduxStore/wallet/selectors'
 
 import {
   PRIMARY_COLOR_100,
@@ -16,35 +19,18 @@ import {
   PRIMARY_COLOR_500,
 } from '../../../constants/color'
 
-interface WalletSummaryProps {
-  onGetBalances: () => void
-  data: {
-    listAndTotal: {
-      total: number
-    }
-  }
-  wallets: unknown
-}
+const WalletSummary = () => {
+  const wallets = useSelector(getWallets)
+  const addresses = getUniqueWalletAddresses(wallets)
 
-const WalletSummary = (props: WalletSummaryProps) => {
-  const { onGetBalances, data, wallets } = props
-
-  const { listAndTotal } = data
-  const { total } = listAndTotal
+  const { data } = useGetBalancesQuery(addresses)
+  const { total } = data || {}
 
   const navigation = useNavigation()
 
   const handlePress = () => {
     navigation.navigate('Assets' as never)
   }
-
-  useEffect(() => {
-    async function loadData() {
-      onGetBalances()
-    }
-
-    loadData()
-  }, [onGetBalances, wallets])
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
@@ -54,7 +40,7 @@ const WalletSummary = (props: WalletSummaryProps) => {
         </View>
         <View>
           <Text style={styles.walletLabel}>All wallets</Text>
-          <Text style={styles.walletAmount}>$ {total.toFixed(2)}</Text>
+          <Text style={styles.walletAmount}>$ {total?.toFixed(2) ?? 0}</Text>
         </View>
       </View>
       <View>
@@ -64,21 +50,7 @@ const WalletSummary = (props: WalletSummaryProps) => {
   )
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  return {
-    wallets: getWalletsData(state),
-    data: getTokensData(rootState),
-  }
-}
-
-const mapDispatchToProps = (dispatch: any) => {
-  return {
-    onGetBalances: () => dispatch(getBalances()),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(WalletSummary)
+export default WalletSummary
 
 const styles = StyleSheet.create({
   container: {

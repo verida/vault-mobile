@@ -8,7 +8,8 @@ import {
 } from 'features/caip'
 import { VeridaWalletAccountOption } from 'features/cryptoWallet/@types'
 import * as React from 'react'
-import { VeridaWalletAccount, VeridaWalletAccounts } from 'types'
+
+import { BlockchainAccount, BlockchainAccounts } from 'api/types'
 
 import { isWatchedWallet } from '../utils'
 
@@ -19,7 +20,7 @@ export const veridaWalletAccountsToDropdownOptions = ({
   includesWatchedWallets,
 }: {
   readonly chainMetadatas: ChainMetadatas
-  readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
+  readonly maybeVeridaWalletAccounts: BlockchainAccounts | undefined
   readonly includesWatchedWallets: boolean
   readonly onlyMatchingCaipChainIds: readonly ChainId[] | null
 }): readonly VeridaWalletAccountOption[] => {
@@ -28,7 +29,7 @@ export const veridaWalletAccountsToDropdownOptions = ({
   return Object.entries(maybeVeridaWalletAccounts).flatMap(
     ([key, veridaWalletAccount]: [
       string,
-      VeridaWalletAccount
+      BlockchainAccount
     ]): readonly VeridaWalletAccountOption[] => {
       const caipChainId = new ChainId(key)
 
@@ -53,8 +54,8 @@ export const veridaWalletAccountsToDropdownOptions = ({
 
       const option: VeridaWalletAccountOption = {
         caipChainId,
-        label: veridaWalletAccount.address,
-        value: veridaWalletAccount.address,
+        label: veridaWalletAccount.address!,
+        value: veridaWalletAccount.address!,
         disabled,
         flag: getSupportedCaipProtocolFriendlyName(chainMetadatas, caipChainId),
       }
@@ -70,7 +71,7 @@ export function useVeridaWalletAccountDropdownOptions({
   onlyMatchingCaipChainIds = null,
 }: {
   readonly includesWatchedWallets: boolean
-  readonly maybeVeridaWalletAccounts: VeridaWalletAccounts | undefined
+  readonly maybeVeridaWalletAccounts: BlockchainAccounts | undefined
   readonly onlyMatchingCaipChainIds?: readonly ChainId[] | null
 }) {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())

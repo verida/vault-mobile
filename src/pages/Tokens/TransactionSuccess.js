@@ -1,9 +1,11 @@
+import {
+  formatTokenQuantity,
+  selectSentTransaction,
+} from 'features/cryptoWallet'
 import React from 'react'
 import { connect } from 'react-redux'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import SuccessFailure from 'components/SuccessFailure'
-import { selectSentTransaction } from 'reduxStore/wallet/selectors'
 
 const TransactionSuccess = ({ navigation, sentTransaction }) => {
   const { data } = sentTransaction
@@ -33,8 +35,7 @@ const TransactionSuccess = ({ navigation, sentTransaction }) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     sentTransaction: selectSentTransaction(state),
   }

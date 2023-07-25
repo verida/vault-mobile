@@ -1,5 +1,7 @@
 import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import { logout } from 'features/auth'
+import { selectSelectedAccount } from 'features/identities'
 import React, { useState } from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -14,7 +16,7 @@ import { Title } from 'components/Typography/Title'
 import { ForcedCreateAccountType } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { navigate } from 'navigation/RootNavigator'
-import { logout } from 'reduxStore/general/actions'
+import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 type Props = {
@@ -32,11 +34,12 @@ const ForcedCreateNewAccountModal = ({
   const styles = useThemeAwareStyle(createStyles)
   const dispatch = useDispatch()
   const [loading, setLoading] = useState(false)
+  const selectedAccount = useAppSelector(selectSelectedAccount)
 
   const onForcedCreateAccountPress = async () => {
     // Log out
     setLoading(true)
-    dispatch(logout())
+    dispatch(logout({ did: selectedAccount?.did }))
 
     await forcedSignOut()
     setLoading(false)

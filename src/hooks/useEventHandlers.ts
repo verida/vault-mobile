@@ -1,6 +1,7 @@
 import NetInfo from '@react-native-community/netinfo'
 import fbMessaging from '@react-native-firebase/messaging'
 import * as Sentry from '@sentry/react-native'
+import { selectSelectedAccount } from 'features/identities'
 import { CHANNEL_ID } from 'helpers/notifications'
 import { get } from 'lodash'
 import * as React from 'react'
@@ -21,9 +22,8 @@ export const useEventHandlers = () => {
   const dispatch = useDispatch()
   const isConnectingRef = useRef(false)
   const latestNotificationRef = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const selectedAccount = useSelector((state) => state.main.selectedAccount)
+
+  const selectedAccount = useSelector(selectSelectedAccount)
 
   const onMessage = useThrottledCallback(
     React.useCallback(async function onMessage(newMessage: any) {

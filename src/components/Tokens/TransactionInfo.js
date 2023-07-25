@@ -1,14 +1,16 @@
 import Clipboard from '@react-native-community/clipboard'
+import {
+  formatTokenQuantity,
+  getBlockchainNetwork,
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { store } from 'reduxStore'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { getBlockchainNetwork } from 'reduxStore/selectors'
 
 export default ({ transaction, token }) => {
   const blockchainNetwork = getBlockchainNetwork(

@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import EncryptionUtils from '@verida/encryption-utils'
 import didJWT from 'did-jwt'
-import { useWalletConnect } from 'features/walletConnect'
+import { useWalletConnectContext } from 'features/walletConnect'
 import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -36,7 +36,7 @@ export default (props) => {
   const [ws, setWebsocket] = useState(null)
   const [expired, setExpired] = useState(false)
 
-  const { onRequestConnect } = useWalletConnect()
+  const { onRequestConnect } = useWalletConnectContext()
 
   useEffect(() => {
     const init = async () => {

@@ -1,6 +1,6 @@
+import { tokenCaipObjectToString } from 'features/cryptoWallet'
 import React from 'react'
 import { FlatList } from 'react-native'
-import { tokenCaipObjectToString } from 'wallet/helpers/tokens'
 
 import TokensListItem from './TokensListItem'
 

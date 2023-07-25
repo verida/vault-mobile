@@ -1,9 +1,11 @@
 import { isSupportedCaipNamespace } from 'features/caip'
+import {
+  getBlockchainNetworks,
+  WALLET_SCHEMA_0_2_0_URI,
+} from 'features/cryptoWallet'
 import { store } from 'reduxStore'
-import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 import AccountManager from 'api/AccountManager'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
 
 import {
   BlockchainAccount,
@@ -110,7 +112,7 @@ export class WalletManager {
         // If we have a watch only wallet, simply return it
         if (wallet.address && !wallet.privateKey && !wallet.mnemonic) {
           const blockchainAccount: BlockchainAccount = {
-            network: blockchainNetwork,
+            blockchainNetwork,
             chainId: blockchainNetwork.chainId,
             derivationPath: blockchainNetwork.derivationPath,
             address: wallet.address,
@@ -145,7 +147,7 @@ export class WalletManager {
         }
 
         const blockchainAccount: BlockchainAccount = {
-          network: blockchainNetwork,
+          blockchainNetwork,
           chainId: blockchainNetwork.chainId,
           derivationPath: blockchainNetwork.derivationPath,
           address: walletDetails.address,

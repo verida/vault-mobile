@@ -2,9 +2,14 @@ import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { LinearGradient } from 'expo-linear-gradient'
+import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
+import { selectSelectedAccount } from 'features/identities'
+import {
+  PublicProfile as IPublicProfile,
+  selectSelectedPublicProfile,
+  setPublicProfileByDid,
+} from 'features/profiles'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { isEqual } from 'lodash'
 import debounce from 'lodash/debounce'
@@ -17,10 +22,10 @@ import React, {
 } from 'react'
 import {
   Alert,
-  Dimensions,
   RefreshControl,
   ScrollView,
   StyleSheet,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import {
@@ -29,15 +34,13 @@ import {
   RenderItemParams,
 } from 'react-native-draggable-flatlist'
 import Snackbar from 'react-native-snackbar'
-import { connect, useSelector } from 'react-redux'
-import { Dispatch } from 'redux'
+import { useSelector } from 'react-redux'
 import { useDebouncedCallback } from 'use-debounce'
 import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import {
-  Account,
   BlockchainNetwork,
   BlockchainWalletWithAccounts,
   VeridaOneCustomLink,
@@ -50,7 +53,6 @@ import {
 import UsernameManager from 'api/UsernameManager'
 import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
-import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
@@ -62,15 +64,14 @@ import {
 } from 'components/PublicProfile'
 import { PlatformLinkItem } from 'components/PublicProfile/PlatformLinkItem'
 import Screen from 'components/Screen'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { setPublicProfileData } from 'reduxStore/general/actions'
-import { getBlockchainNetworks, getSelectedAccount } from 'reduxStore/selectors'
-import { allWalletsSelector } from 'reduxStore/wallet/selectors'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 export enum PublicProfileEditMode {
@@ -87,18 +88,38 @@ const MAX_NUMBER_OF_FEATURED_CUSTOM_LINK = 2
 const NUMBER_FEATURED_ASSETS = 4
 
 const EMPTY_PROFILE_EDITABLE_PROPS = [
-  { label: 'Name', value: '', action: 'arrow', type: 'input' },
-  { label: 'Country', value: '', action: 'arrow', type: 'select' },
-  { label: 'Description', value: '', action: 'arrow', type: 'textarea' },
+  { label: 'Name', key: 'name', value: '', action: 'arrow', type: 'input' },
+  {
+    label: 'Country',
+    key: 'country',
+    value: '',
+    action: 'arrow',
+    type: 'select',
+  },
+  {
+    label: 'Description',
+    key: 'description',
+    value: '',
+    action: 'arrow',
+    type: 'textarea',
+  },
 ]
 const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
 
-const PublicProfile = ({ updatePublicProfileData }: any) => {
-  const [profileEditableProps, setProfileEditableProps] = useState(
-    EMPTY_PROFILE_EDITABLE_PROPS
-  )
+const PublicProfile = () => {
+  const { width } = useWindowDimensions()
+  const publicProfileData = useAppSelector(selectSelectedPublicProfile)
+  const profileEditableProps = useMemo(() => {
+    const updatedList = EMPTY_PROFILE_EDITABLE_PROPS.map((item) => {
+      return {
+        ...item,
+        value: publicProfileData[item.key as keyof IPublicProfile] ?? undefined,
+      }
+    })
+    return updatedList
+  }, [publicProfileData])
   const [profileReadonlyProps, setProfileReadonlyProps] = useState(
     EMPTY_PROFILE_READONLY_PROPS
   )
@@ -106,22 +127,18 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
   const { theme } = useTheme()
   const navigation = useNavigation()
   const { showActionSheetWithOptions } = useActionSheet()
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
   const [veridaOneProfile, setVeridaOneProfile] = useState<any>({})
-  const wallets = useSelector(allWalletsSelector) as Record<
-    string,
-    BlockchainWalletWithAccounts
-  >
+  const wallets = useSelector(getAllWallets)
 
-  const selectedAccount: Account = useSelector(getSelectedAccount)
-  const currentAccountDID = selectedAccount.did
+  const selectedAccount = useSelector(selectSelectedAccount)!
+  const currentAccountDID = selectedAccount?.did
+
+  const dispatch = useAppDispatch()
 
   const [username, setUsername] = useState<string | undefined>(undefined)
-  const blockchainNetworks = useSelector(getBlockchainNetworks) as Record<
-    string,
-    BlockchainNetwork
-  >
+  const blockchainNetworks = useSelector(getBlockchainNetworks)!
   const styles = useThemeAwareStyle(createStyles)
   const [publicWalletAddresses, setPublicWalletAddresses] = useState<
     VeridaOneWalletAddress[]
@@ -459,14 +476,12 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       const vault = AccountManager.getInstance().vault as any
       const publicData = await vault.profiles.public.getMany()
 
-      updatePublicProfileData(publicData)
-      const updatedList = profileEditableProps.map((item: any) => {
-        const label = item.label.toLowerCase()
-        item.value = publicData[label] ?? undefined
-        return item
-      })
-
-      setProfileEditableProps(updatedList)
+      dispatch(
+        setPublicProfileByDid({
+          did: currentAccountDID,
+          publicProfile: publicData,
+        })
+      )
     } catch (e) {
       Sentry.captureException(e)
       Alert.alert('Error', 'Cannot load public profile data')
@@ -789,7 +804,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       ])
 
       // Reset
-      setProfileEditableProps(EMPTY_PROFILE_EDITABLE_PROPS)
       setVeridaOneProfile({})
 
       setPublicWalletAddresses([])
@@ -803,11 +817,7 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
         setEnabledVeridaOne(await isEnabledVeridaOneProfile())
       })()
 
-      Promise.all([
-        fetchPublicProfile(),
-        fetchVeridaOneProfle(),
-        fetchUsername(),
-      ]).finally(() => {
+      Promise.all([fetchVeridaOneProfle(), fetchUsername()]).finally(() => {
         setLoading(false)
       })
     }, 200)
@@ -815,7 +825,6 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
     return () => {
       clearTimeout(tid)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentAccountDID])
 
   useEffect(() => {
@@ -1114,39 +1123,47 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
       withLoadingView
       showLoading={!loading && quickFetching}>
       <NavigationHeader title='Profile' left={{ icon: null } as any} />
-      {loading ? (
-        <View style={styles.loadingContainer}>
-          <LoadingView />
+      <NestableScrollContainer
+        contentContainerStyle={{
+          padding: theme.spacing.m,
+          paddingBottom: 0,
+        }}
+        refreshControl={
+          <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
+        }>
+        <ProfileImageLoader />
+        {enabledVeridaOne && (
+          <ProfileUsernameSection
+            did={currentAccountDID}
+            username={username}
+            loading={loading}
+          />
+        )}
+        <View style={{ marginTop: theme.spacing.m }}>
+          <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
+          <PropertyList
+            list={[...editable(profileEditableProps), ...profileReadonlyProps]}
+          />
         </View>
-      ) : (
-        <NestableScrollContainer
-          contentContainerStyle={{
-            padding: theme.spacing.m,
-            paddingBottom: 0,
-          }}
-          refreshControl={
-            <RefreshControl refreshing={refreshing} onRefresh={onRefresh} />
-          }>
-          <ProfileImageLoader />
-          {enabledVeridaOne && (
-            <ProfileUsernameSection
-              did={currentAccountDID}
-              username={username}
-              loading={loading || quickFetching}
-            />
-          )}
-          <View style={{ marginTop: theme.spacing.m }}>
-            <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
-            <PropertyList
-              list={[
-                ...editable(profileEditableProps),
-                ...profileReadonlyProps,
-              ]}
-            />
+        <Text style={styles.description}>
+          This information is always visible on your Verida One page
+        </Text>
+        {loading && enabledVeridaOne ? (
+          <View style={styles.loadingContainer}>
+            {Array(4) // 4 remaining loading blocks
+              .fill(true)
+              .map((_, index) => (
+                <ShimmerPlaceholder
+                  key={`loading-view-${index}`}
+                  visible={false}
+                  style={{ marginBottom: theme.spacing.l }}
+                  width={width - 2 * theme.spacing.m}
+                  height={140}
+                  shimmerStyle={{ borderRadius: 12 }}
+                />
+              ))}
           </View>
-          <Text style={styles.description}>
-            This information is always visible on your Verida One page
-          </Text>
+        ) : (
           <View>
             {/* Wallet address */}
             <View
@@ -1343,27 +1360,13 @@ const PublicProfile = ({ updatePublicProfileData }: any) => {
               </>
             )}
           </View>
-        </NestableScrollContainer>
-      )}
+        )}
+      </NestableScrollContainer>
     </Screen>
   )
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    updatePublicProfileData: (data: unknown) =>
-      dispatch(setPublicProfileData(data)),
-  }
-}
-
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  return {
-    publicProfileData: state.publicProfileData,
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(PublicProfile)
+export default PublicProfile
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -1381,9 +1384,6 @@ const createStyles = (theme: Theme) =>
     },
     loadingContainer: {
       flex: 1,
-      justifyContent: 'center',
-      alignItems: 'center',
-      minHeight: Dimensions.get('window').height * 0.8,
     },
     overlayContent: {
       ...StyleSheet.absoluteFillObject,
