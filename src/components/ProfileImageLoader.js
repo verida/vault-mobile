@@ -28,7 +28,7 @@ function ProfileImageLoader(props) {
   const loadingState = useSelector((state) =>
     selectPublicProfilesLoadingState(state, did)
   )
-  const image = publicProfile?.avatar
+  const image = publicProfile?.avatar ?? userImg
 
   useEffect(() => {
     if (did) dispatch(fetchPublicProfileData(did))
