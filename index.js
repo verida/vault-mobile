@@ -11,6 +11,7 @@ import 'react-native-crypto'
 import 'text-encoding-polyfill'
 import 'intl'
 import 'intl/locale-data/jsonp/en'
+import 'react-native-gesture-handler'
 
 import { AppRegistry, LogBox } from 'react-native'
 
