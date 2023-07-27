@@ -147,7 +147,10 @@ export const fetchPublicProfileData = createAppAsyncThunk(
 
 export const fetchAllPublicProfilesData = createAppAsyncThunk(
   'profiles/fetchAllPublicProfileData',
-  async (_, { getState, dispatch }) => {
+  async (_, { getState, dispatch, signal, rejectWithValue }) => {
+    if (signal.aborted) {
+      return rejectWithValue('Cancel requuest')
+    }
     const accounts = selectAccounts(getState())
     Object.values(accounts).forEach((account) => {
       dispatch(fetchPublicProfileData(account.did))

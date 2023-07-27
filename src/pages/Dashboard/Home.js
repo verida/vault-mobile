@@ -194,18 +194,27 @@ const Home = (props) => {
     }
 
     toggleAddAccountsModal()
-    try {
-      await switchToAccount(did)
-    } catch (e) {
-      Alert.alert(
-        'Error',
-        `Unable to switch to that account, please try again later.`
-      )
+    InteractionManager.runAfterInteractions(async () => {
+      //  // Not a good practice, though this helps to prevent a crash related to iOS animation
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve()
+        }, 500)
+      })
 
-      // Switch back to the current account
-      await switchToAccount(currentDid)
-      await refresh()
-    }
+      try {
+        await switchToAccount(did)
+      } catch (e) {
+        Alert.alert(
+          'Error',
+          `Unable to switch to that account, please try again later.`
+        )
+
+        // Switch back to the current account
+        await switchToAccount(currentDid)
+        await refresh()
+      }
+    })
   }
 
   async function onLogoutAccounts(dids) {

@@ -11,9 +11,9 @@ import {
   View,
   ViewStyle,
 } from 'react-native'
-import { useDispatch, useSelector } from 'react-redux'
 
 import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 export type AccountsListProps = {
   containerStyle: ViewStyle
@@ -31,9 +31,9 @@ function AccountsList(props: AccountsListProps) {
     multipleSelect,
     showSelectedOnly,
   } = props
-  const dispatch = useDispatch()
-  const publicProfiles = useSelector(selectPublicProfiles)
-  const accounts = useSelector(selectAccounts)
+  const dispatch = useAppDispatch()
+  const publicProfiles = useAppSelector(selectPublicProfiles)
+  const accounts = useAppSelector(selectAccounts)
   const accountIds = useMemo(() => {
     if (showSelectedOnly) {
       return Object.keys(accounts).filter((did) => selectedDids.includes(did))
@@ -42,9 +42,10 @@ function AccountsList(props: AccountsListProps) {
   }, [accounts, selectedDids, showSelectedOnly])
 
   useEffect(() => {
-    ;(() => {
-      dispatch(fetchAllPublicProfilesData())
-    })()
+    const promise = dispatch(fetchAllPublicProfilesData())
+    return () => {
+      promise?.abort()
+    }
   }, [dispatch])
 
   const renderDivider = () => <View style={styles.divider} />
