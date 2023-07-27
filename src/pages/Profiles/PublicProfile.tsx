@@ -11,7 +11,7 @@ import {
   setPublicProfileByDid,
 } from 'features/profiles'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
-import { isEqual } from 'lodash'
+import { cloneDeep, isEqual } from 'lodash'
 import debounce from 'lodash/debounce'
 import React, {
   Fragment,
@@ -377,7 +377,7 @@ const PublicProfile = () => {
       let orderNumber = 0
 
       const newPublicAddresses = [...publicWalletAddresses]
-      walletAddressesOrder.map((walletAddress: VeridaOneWalletAddress) => {
+      walletAddressesOrder.forEach((walletAddress: VeridaOneWalletAddress) => {
         const publicAddress = newPublicAddresses.find(
           (pa) =>
             pa.address === walletAddress.address &&
@@ -497,9 +497,11 @@ const PublicProfile = () => {
       const oneProfile = (await VeridaOneManager.getProfile()) as any
       if (oneProfile) {
         setVeridaOneProfile(oneProfile)
-        setPublicWalletAddresses([...oneProfile.walletAddresses])
-        setPublicCustomLinks([...oneProfile.customLinks])
-        setPlatformLinks([...oneProfile.platformLinks])
+
+        // Clone deep to avoid nested objects updating cross changes
+        setPublicWalletAddresses(cloneDeep(oneProfile.walletAddresses))
+        setPublicCustomLinks(cloneDeep(oneProfile.customLinks))
+        setPlatformLinks(cloneDeep(oneProfile.platformLinks))
 
         // Update items order
         const updatedFeaturedAssets = oneProfile.featuredAssets.map(
