@@ -597,13 +597,13 @@ PODS:
     - RNFBApp
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.2.1):
+  - RNGestureHandler (2.9.0):
     - React-Core
   - RNKeychain (6.2.0):
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (2.12.0):
+  - RNReanimated (2.17.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -1085,10 +1085,10 @@ SPEC CHECKSUMS:
   RNFBMessaging: 40dac204b4197a2661dec5be964780c6ec39bf65
   RNFBRemoteConfig: 92fbb75ceb69fec44ae727b70d23c5d1798f7648
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 1dc1ea9d4b64f999042afafbaccf5b143f0b2fa2
+  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: 0ff5e7f619a7524d237848ecb4c47650c4946f71
+  RNReanimated: 1f117be601c59177816351a965bc57320b766c15
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
   RNSnackbar: be3333a21a453ccc272f41a8add5a71f7d44dfcd

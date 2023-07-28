@@ -59,7 +59,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   )
 
   useEffect(() => {
-    dispatch(fetchPublicProfileData(did!))
+    if (did) dispatch(fetchPublicProfileData(did!))
   }, [did, dispatch])
 
   return (
