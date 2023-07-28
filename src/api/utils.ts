@@ -1,9 +1,10 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
+import { setNewMessagesCount } from 'features/inbox'
+import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
-import { setNewMessagesCount } from 'reduxStore/general/actions'
 
 import CONFIG from '../config/environment'
 
@@ -49,48 +50,27 @@ export const loadAvatarSource = async () => {
   }
 }
 
-export const fetchPublicProfileData = async () => {
-  try {
-    const accounts = { ...AccountManager.getInstance().accounts }
-    await Promise.all(
-      Object.values(accounts).map(async (account) => {
-        const externalProfile =
-          await AccountManager.getInstance().context?.openProfile(
-            'basicProfile',
-            account.did
-          )
-
-        const avatar = await externalProfile?.get('avatar')
-        const name = await externalProfile?.get('name')
-        const country = await externalProfile?.get('country')
-
-        accounts[account.did].publicProfile = {
-          avatar: avatar,
-          name,
-          country,
-        }
-      })
-    )
-
-    return accounts
-  } catch (e) {
-    Sentry.captureException(e)
-    return AccountManager.getInstance().accounts
-  }
-}
-
-export async function fetchInboxCount() {
-  try {
-    const messages =
-      await AccountManager.getInstance().vault?.inbox.fetchLatest(
-        { read: false },
-        { limit: MAX_MESSAGE_COUNT }
-      )
-    store.dispatch(setNewMessagesCount(messages?.length ?? 0))
-  } catch (error) {
-    Sentry.captureException(error)
-  }
-}
+/**
+ * This function can be triggered in many situations(app state changes, the home screen got focus, got inbox notifications)
+ * So we add debounce to help reduce duplicated calls
+ * TODO: should handle fetch inbox count in a single place
+ */
+export const fetchInboxCount = throttle(
+  async () => {
+    try {
+      const messages =
+        await AccountManager.getInstance().vault?.inbox.fetchLatest(
+          { read: false },
+          { limit: MAX_MESSAGE_COUNT }
+        )
+      store.dispatch(setNewMessagesCount(messages?.length ?? 0))
+    } catch (error) {
+      Sentry.captureException(error)
+    }
+  },
+  3000,
+  { leading: true, trailing: false }
+)
 
 export async function getProfile(did: string) {
   try {
@@ -120,7 +100,7 @@ export async function getProfile(did: string) {
 
 export async function getPublicProfile(
   did: string,
-  contextName = CONFIG.VERIDA_CONTEXT_NAME
+  contextName: string = CONFIG.VERIDA_CONTEXT_NAME
 ) {
   try {
     const publicProfile = await AccountManager.getInstance()

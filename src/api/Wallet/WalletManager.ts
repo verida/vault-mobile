@@ -1,8 +1,11 @@
+import { isSupportedCaipNamespace } from 'features/caip'
+import {
+  getBlockchainNetworks,
+  WALLET_SCHEMA_0_2_0_URI,
+} from 'features/cryptoWallet'
 import { store } from 'reduxStore'
-import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 
 import AccountManager from 'api/AccountManager'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
 
 import {
   BlockchainAccount,
@@ -10,17 +13,16 @@ import {
   BlockchainWallet,
   BlockchainWalletWithAccounts,
 } from '../types'
-import { Blockchain as algorandBlockchain } from './algorandBlockchain'
 import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
 import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 import { Blockchain as nearBlockchain } from './nearBlockchain'
 
 const bip39 = require('bip39')
 
+// TODO: @cawfree extend support
 const NAMESPACES: Record<string, IBlockchain> = {
   eip155: eip1558Blockchain,
   near: nearBlockchain,
-  algorand: algorandBlockchain,
 }
 
 export class WalletManager {
@@ -40,9 +42,6 @@ export class WalletManager {
         switch (wallet.walletType) {
           case 'ethereum':
             wallet.chainId = 'eip155:5'
-            break
-          case 'algorand':
-            wallet.chainId = 'algorand:SGO1GKSzyE7IEPItTxCByw9x8FmnrCDe'
             break
           case 'polygon':
             wallet.chainId = 'eip155:80001'
@@ -91,6 +90,18 @@ export class WalletManager {
 
     Object.values(blockchainNetworks).forEach(
       (blockchainNetwork: BlockchainNetwork): void => {
+        // HACK: It is possible that a user may have access to unsupported
+        //       wallets, for example, an algorand wallet, which was
+        //       previously supported. Here we filter out the unsupported wallet
+        //       to prevent the application from having to deal with instances
+        //       it doesn't support natively further downstream.
+        if (!isSupportedCaipNamespace(blockchainNetwork.namespace)) {
+          // eslint-disable-next-line no-console
+          return console.warn(
+            `Refusing to process "${blockchainNetwork.chainId}", since it is no longer supported.`
+          )
+        }
+
         if (
           !wallet.multiChain &&
           blockchainNetwork.chainId !== wallet.chainId
@@ -101,7 +112,7 @@ export class WalletManager {
         // If we have a watch only wallet, simply return it
         if (wallet.address && !wallet.privateKey && !wallet.mnemonic) {
           const blockchainAccount: BlockchainAccount = {
-            network: blockchainNetwork,
+            blockchainNetwork,
             chainId: blockchainNetwork.chainId,
             derivationPath: blockchainNetwork.derivationPath,
             address: wallet.address,
@@ -136,7 +147,7 @@ export class WalletManager {
         }
 
         const blockchainAccount: BlockchainAccount = {
-          network: blockchainNetwork,
+          blockchainNetwork,
           chainId: blockchainNetwork.chainId,
           derivationPath: blockchainNetwork.derivationPath,
           address: walletDetails.address,

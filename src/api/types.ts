@@ -3,12 +3,11 @@
  *
  * - eip2551:1 = ethereum mainnet
  * - eip2551:4 = goerli testnet
- * - algorand:EEEz7z6z = algorand testnet
  *
  * Use https://github.com/ChainAgnostic/caip-js
  */
 import { AssetId } from 'caip'
-import { ImageSourcePropType } from 'react-native'
+import { PublicProfile } from 'features/profiles'
 
 /**
  * Verida Account
@@ -17,19 +16,11 @@ export type Account = {
   did: string
   privateKey: string
   mnemonic: string
-  publicProfile?: UserData
+  publicProfile?: PublicProfile
   seedPhraseReminder: {
     lastTime?: number
     backedup: boolean
   }
-}
-
-export type UserData = {
-  name: string
-  country: string
-  username?: string
-  avatar?: ImageSourcePropType
-  description?: string
 }
 
 export type NormalizedAccounts = {
@@ -48,7 +39,7 @@ export type NetworkNode = {
 }
 
 /**
- * A blockchain network (ie: goerli or algorand testnet)
+ * A blockchain network (ie: goerli)
  */
 export interface BlockchainNetwork {
   asset: AssetId
@@ -72,12 +63,21 @@ export interface BlockchainNetwork {
 
 export interface BlockchainAccount {
   privateKey?: string
-  mnemonic?: string
   address?: string
+  publicKey?: string
+  mnemonic?: string
   chainId?: string
   derivationPath?: string
-  network: BlockchainNetwork
+  blockchainNetwork?: BlockchainNetwork
 }
+
+export type BlockchainAccounts = Record<
+  // HACK: There are also some deprecated standards, such as algorand, which may
+  //       appear in an instance of VeridaWalletAccounts. Please take
+  //       "SupportedCaipProtocolStandard" with a grain of salt here.
+  string,
+  BlockchainAccount
+>
 
 /**
  * @todo improve typescript
@@ -95,12 +95,16 @@ export interface BlockchainWallet extends BlockchainAccount {
   _id: string
   label: string
   multiChain: boolean
-  viewOnly: boolean
+  viewOnly?: boolean
   walletType: string // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
 }
 
 export interface BlockchainWalletWithAccounts extends BlockchainWallet {
   accounts: Record<string, BlockchainAccount>
+
+  // Transient fields for displaying
+  icon?: string
+  count?: number
 }
 
 // What network is this?
@@ -109,14 +113,6 @@ export type Network = {
   default_node_code: string
   nodes: NetworkNode[]
   selected_node?: number
-}
-
-export type NetworkCountry = {
-  [key: string]: string
-}
-
-export type NetworkCountries = {
-  [name: string]: NetworkCountry[]
 }
 
 export interface PagingInfo {
