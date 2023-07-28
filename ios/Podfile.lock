@@ -235,6 +235,9 @@ PODS:
   - lottie-react-native (5.1.5):
     - lottie-ios (~> 3.4.0)
     - React-Core
+  - MMKV (1.3.0):
+    - MMKVCore (~> 1.3.0)
+  - MMKVCore (1.3.0)
   - nanopb (2.30908.0):
     - nanopb/decode (= 2.30908.0)
     - nanopb/encode (= 2.30908.0)
@@ -469,6 +472,9 @@ PODS:
     - React-Core
   - react-native-get-random-values (1.8.0):
     - React-Core
+  - react-native-mmkv (2.5.1):
+    - MMKV (>= 1.2.13)
+    - React-Core
   - react-native-netinfo (8.2.0):
     - React-Core
   - react-native-pager-view (6.0.2):
@@ -482,12 +488,8 @@ PODS:
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
-  - react-native-safe-area-context (4.2.4):
-    - RCT-Folly
-    - RCTRequired
-    - RCTTypeSafety
-    - React
-    - ReactCommon/turbomodule/core
+  - react-native-safe-area-context (4.7.1):
+    - React-Core
   - react-native-static-server (0.5.0):
     - GCDWebServer (~> 3.0)
     - React
@@ -595,13 +597,13 @@ PODS:
     - RNFBApp
   - RNFS (2.20.0):
     - React-Core
-  - RNGestureHandler (2.2.1):
+  - RNGestureHandler (2.9.0):
     - React-Core
   - RNKeychain (6.2.0):
     - React
   - RNOS (1.2.6):
     - React
-  - RNReanimated (2.12.0):
+  - RNReanimated (2.17.0):
     - DoubleConversion
     - FBLazyVector
     - FBReactNativeSpec
@@ -720,6 +722,7 @@ DEPENDENCIES:
   - react-native-config (from `../node_modules/react-native-config`)
   - react-native-flipper (from `../node_modules/react-native-flipper`)
   - react-native-get-random-values (from `../node_modules/react-native-get-random-values`)
+  - react-native-mmkv (from `../node_modules/react-native-mmkv`)
   - "react-native-netinfo (from `../node_modules/@react-native-community/netinfo`)"
   - react-native-pager-view (from `../node_modules/react-native-pager-view`)
   - react-native-quick-base64 (from `../node_modules/react-native-quick-base64`)
@@ -796,6 +799,8 @@ SPEC REPOS:
     - libevent
     - libwebp
     - lottie-ios
+    - MMKV
+    - MMKVCore
     - nanopb
     - OpenSSL-Universal
     - PromisesObjC
@@ -883,6 +888,8 @@ EXTERNAL SOURCES:
     :path: "../node_modules/react-native-flipper"
   react-native-get-random-values:
     :path: "../node_modules/react-native-get-random-values"
+  react-native-mmkv:
+    :path: "../node_modules/react-native-mmkv"
   react-native-netinfo:
     :path: "../node_modules/@react-native-community/netinfo"
   react-native-pager-view:
@@ -1021,6 +1028,8 @@ SPEC CHECKSUMS:
   libwebp: f62cb61d0a484ba548448a4bd52aabf150ff6eef
   lottie-ios: 8f97d3271e155c2d688875c29cd3c74908aef5f8
   lottie-react-native: 3e722c63015fdb9c27638b0a77969fc412067c18
+  MMKV: 9c6c3fa4ddd849f28c7b9a5c9d23aab84f14ee35
+  MMKVCore: 9bb7440b170181ac5b81f542ac258103542e693d
   nanopb: a0ba3315591a9ae0a16a309ee504766e90db0c96
   OpenSSL-Universal: ebc357f1e6bc71fa463ccb2fe676756aff50e88c
   PromisesObjC: 09985d6d70fbe7878040aa746d78236e6946d2ef
@@ -1043,12 +1052,13 @@ SPEC CHECKSUMS:
   react-native-config: 7cd105e71d903104e8919261480858940a6b9c0e
   react-native-flipper: eacaef640b1804d3bb6bf039a72b63d29a902fbd
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
+  react-native-mmkv: 69b9c003f10afdd01addf7c6ee784ce42ee2eff3
   react-native-netinfo: e922cb2e3eaf9ccdf16b8d4744a89657377aa4a1
   react-native-pager-view: 592421df0259bf7a7a4fe85b74c24f3f39905605
   react-native-quick-base64: e657e9197e61b60a9dec49807843052b830da254
   react-native-quick-crypto: 40402e0c2f3c2d7eaab42dc989c48cdc812b7abf
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
-  react-native-safe-area-context: f98b0b16d1546d208fc293b4661e3f81a895afd9
+  react-native-safe-area-context: 9697629f7b2cda43cf52169bb7e0767d330648c2
   react-native-static-server: 201b2a945a35096be3ae7f43e367c65bcbd61343
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1
   react-native-webview: 203b6a1c7507737f777c91d7e10c30e7e67c1a17
@@ -1075,10 +1085,10 @@ SPEC CHECKSUMS:
   RNFBMessaging: 40dac204b4197a2661dec5be964780c6ec39bf65
   RNFBRemoteConfig: 92fbb75ceb69fec44ae727b70d23c5d1798f7648
   RNFS: 4ac0f0ea233904cb798630b3c077808c06931688
-  RNGestureHandler: 1dc1ea9d4b64f999042afafbaccf5b143f0b2fa2
+  RNGestureHandler: 071d7a9ad81e8b83fe7663b303d132406a7d8f39
   RNKeychain: b8e0711b959a19c5b057d1e970d3c83d159b6da5
   RNOS: 6f2f9a70895bbbfbdad7196abd952e7b01d45027
-  RNReanimated: 0ff5e7f619a7524d237848ecb4c47650c4946f71
+  RNReanimated: 1f117be601c59177816351a965bc57320b766c15
   RNScreens: 0df01424e9e0ed7827200d6ed1087ddd06c493f9
   RNSentry: 4c09f4dd9740cb9b33e94303de5b6d0dbeb0737d
   RNSnackbar: be3333a21a453ccc272f41a8add5a71f7d44dfcd

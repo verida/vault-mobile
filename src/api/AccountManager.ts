@@ -1,6 +1,6 @@
 // eslint-disable-next-line simple-import-sort/imports
 import * as Sentry from '@sentry/react-native'
-import { Client, Context } from '@verida/client-rn'
+import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from './VaultCommon/vault'
 import { ethers, utils } from 'ethers'
@@ -14,8 +14,8 @@ import {
   AddIdentityStepStatus,
   AddIdentityStepType,
   BlockchainWallet,
+  BlockchainWalletWithAccounts,
   NormalizedAccounts,
-  UserData,
 } from 'api/types'
 import dataMap from 'config/data-map'
 import {
@@ -23,24 +23,25 @@ import {
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
-} from 'reduxStore/general/actions'
+} from 'features/identities'
 import {
   removeUserWallets,
   saveUserWallets,
   setSelectedWallet,
-} from 'reduxStore/wallet/actions'
+  getSelectedWalletId,
+  cryptoWalletApi,
+  getBlockchainNetworks,
+  WALLET_SCHEMA_0_2_0_URI,
+} from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
 import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
 
 import CONFIG from '../config/environment'
 import EventEmitter from 'events'
-import { WALLET_SCHEMA_0_2_0_URI } from 'wallet/constants'
 import { WalletManager } from './Wallet/WalletManager'
-import { getBlockchainNetworks } from 'reduxStore/selectors'
-import { getSelectedWalletId } from 'reduxStore/wallet/selectors'
 import { IContext } from '@verida/types'
-import { walletsApi } from 'features/wallets'
+import { PublicProfile } from 'features/profiles'
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -116,9 +117,12 @@ class AccountManager extends EventEmitter {
         SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
         SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
-          walletsApi.endpoints.chainsList.initiate(undefined, {
-            forceRefetch: false,
-          })
+          cryptoWalletApi.endpoints.chainsList.initiate(
+            {},
+            {
+              forceRefetch: false,
+            }
+          )
         ),
       ])
 
@@ -132,7 +136,7 @@ class AccountManager extends EventEmitter {
         await this.restoreUserWallet(true)
       } else {
         store.dispatch(saveUserWallets(wallets))
-        store.dispatch(setSelectedWallet(selectedWalletId))
+        store.dispatch(setSelectedWallet(selectedWalletId!))
       }
     } catch (error) {
       Sentry.captureException(error)
@@ -250,7 +254,7 @@ class AccountManager extends EventEmitter {
     }
   }
 
-  private async setPublicProfile(data: UserData) {
+  private async setPublicProfile(data: PublicProfile) {
     const entries = Object.entries(data)
     for (let i = 0; i < entries.length; i++) {
       const entry = entries[i]
@@ -303,7 +307,7 @@ class AccountManager extends EventEmitter {
 
       const saved: any = await walletDb?.save(wallet, undefined)
 
-      const walletID = saved?.id
+      const walletID = saved?.id as string
 
       // generate wallets and save to redux state
       const blockchainNetworks = getBlockchainNetworks(store.getState())
@@ -349,10 +353,11 @@ class AccountManager extends EventEmitter {
         WALLET_SCHEMA_0_2_0_URI
       )
 
-      const hdWallets: any = await datastore?.getMany<BlockchainWallet>(
-        undefined,
-        undefined
-      )
+      const hdWallets: any =
+        await datastore?.getMany<BlockchainWalletWithAccounts>(
+          undefined,
+          undefined
+        )
 
       if (!isEmpty(hdWallets)) {
         const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
@@ -364,9 +369,7 @@ class AccountManager extends EventEmitter {
           JSON.stringify(wallets)
         )
 
-        const currentlySelectedWallet = getSelectedWalletId(
-          store.getState().main
-        )
+        const currentlySelectedWallet = getSelectedWalletId(store.getState())
 
         if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
           const selectedWalletID = hdWallets[0]._id
@@ -386,7 +389,7 @@ class AccountManager extends EventEmitter {
   }
 
   public async createAccount(
-    userData: UserData,
+    userData: PublicProfile,
     country: string,
     updateProgress?: (
       step: AddIdentityStepType,
@@ -438,14 +441,14 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: CONFIG.NOTIFICATION_ENDPOINTS,
+        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
       })
 
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
       // Open the Vault context, forcing its creation
-      this.context = <Context>(
+      this.context = <IContext>(
         await this.client.openContext(CONFIG.VERIDA_CONTEXT_NAME, true)
       )
 
@@ -538,7 +541,7 @@ class AccountManager extends EventEmitter {
         await SecureStore.deleteItemAsync(
           CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
-        store.dispatch(setSelectedAccount(null))
+        store.dispatch(setSelectedAccount(undefined))
       }
       store.dispatch(setAccounts(this.accounts))
 
@@ -588,7 +591,7 @@ class AccountManager extends EventEmitter {
         )
 
         setTimeout(() => {
-          store.dispatch(setSwitchAccountToast(null))
+          store.dispatch(setSwitchAccountToast(undefined))
         }, 5000)
       }, 100)
     } catch (e) {

@@ -350,7 +350,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequestId: string,
     syncRequestDatabaseName: string,
-    retryCount = CONFIG.DATA_CONNECTOR_RETRY_LIMIT
+    retryCount: number = CONFIG.DATA_CONNECTOR_RETRY_LIMIT
   ) {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()

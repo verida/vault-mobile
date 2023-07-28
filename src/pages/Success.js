@@ -1,3 +1,4 @@
+import { setBioAuthStatus as setBioAuthStatusAction } from 'features/auth'
 import { Container, Content } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -6,7 +7,6 @@ import { connect } from 'react-redux'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
-import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
 
 import Success from '../assets/success.svg'
 import Button from '../components/Button'
@@ -79,7 +79,7 @@ const mapStateToProps = () => ({})
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
+    setAuthStatus: (status) => dispatch(setBioAuthStatusAction(status)),
   }
 }
 

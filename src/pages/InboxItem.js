@@ -76,9 +76,11 @@ const mapDispatchToProps = () => {
   return {}
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { setInboxItem: state.setInboxItem, setInboxType: state.setInboxType }
+const mapStateToProps = (state) => {
+  return {
+    setInboxItem: state.inbox.setInboxItem, // TODO: check this screen and the necessity of these states.
+    setInboxType: state.inbox.setInboxType,
+  }
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(InboxItem)

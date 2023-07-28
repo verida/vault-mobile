@@ -11,9 +11,10 @@ import { RootStackParams } from 'navigation/types'
 const Stack = createNativeStackNavigator<RootStackParams>()
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
 
-export function navigate(name: unknown, params: unknown) {
+// TODO: type
+export function navigate(name: any, params: any) {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name as never, params as never)
+    navigationRef.navigate(name, params)
   }
 }
 

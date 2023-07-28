@@ -1,7 +1,11 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { DApp, DAppv2 } from 'wallet-connect/types'
 
-import { Network, NFT, NFTCollection } from 'api/types'
+import {
+  BlockchainWalletWithAccounts,
+  Network,
+  NFT,
+  NFTCollection,
+} from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -15,14 +19,12 @@ import {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
   Auth: undefined
   Main: undefined
 }
-
-export type RootStackScreenProps<S extends keyof RootStackParams> =
-  NativeStackScreenProps<RootStackParams, S>
 
 export type AuthStackParams = {
   Start: undefined
@@ -49,9 +51,6 @@ export type DashboardTabParams = {
   Connections: undefined
 }
 
-export type DashboardTabScreenProps<S extends keyof DashboardTabParams> =
-  NativeStackScreenProps<DashboardTabParams, S>
-
 export type MainStackParams = {
   Inbox: undefined
   Dashboard: undefined
@@ -74,7 +73,7 @@ export type MainStackParams = {
   TransactionDetails: undefined
   BuyToken: undefined
   ReceiveToken: undefined
-  SingleWallet: { item: any }
+  SingleWallet: { item: BlockchainWalletWithAccounts }
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
@@ -100,9 +99,8 @@ export type MainStackParams = {
   }
   Networks: undefined
   StorageNodes: { data: Network[] }
-  WalletConnect: undefined
-  WalletConnectDapp: { dapp: DApp }
-  WalletConnectDappv2: { dapp: DAppv2 }
+  WalletConnectActiveSessions: undefined
+  WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
   Success: undefined
 

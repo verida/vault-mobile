@@ -2,6 +2,8 @@ import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
+import { logout as logoutAction } from 'features/auth'
+import { selectSelectedAccount } from 'features/identities'
 import { emitter } from 'helpers/emitter'
 import React, { useEffect, useState } from 'react'
 import {
@@ -32,7 +34,7 @@ import {
 } from 'constants/color'
 import { useAuth } from 'hooks/useAuth'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { logout as logoutAction } from 'reduxStore/general/actions'
+import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 type Props = {
@@ -50,17 +52,14 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
+  const selectedAccount = useAppSelector(selectSelectedAccount)
 
   async function onLogoutAccounts(dids: string[]) {
     try {
       dismissModal()
       // Only flush Redux store if the current account is logged out
-      if (
-        dids.includes(
-          AccountManager.getInstance().getSelectedAccount()?.did ?? ''
-        )
-      ) {
-        dispatch(logoutAction())
+      if (dids.includes(selectedAccount?.did ?? '')) {
+        dispatch(logoutAction({ did: selectedAccount?.did }))
       }
       await AccountManager.getInstance().logout(dids)
     } catch (error) {

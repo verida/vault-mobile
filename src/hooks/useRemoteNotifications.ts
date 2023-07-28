@@ -1,13 +1,12 @@
 import messaging from '@react-native-firebase/messaging'
+import { selectSelectedAccount } from 'features/identities'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import { registerRemoteNotification } from 'api/utils'
 
 export function useRemoteNotifications() {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const selectedAccount = useSelector((state) => state.main.selectedAccount)
+  const selectedAccount = useSelector(selectSelectedAccount)
 
   useEffect(() => {
     async function init() {
