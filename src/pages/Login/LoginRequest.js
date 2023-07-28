@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import EncryptionUtils from '@verida/encryption-utils'
 import didJWT from 'did-jwt'
+import { useWalletConnectContext } from 'features/walletConnect'
 import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -13,7 +14,6 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
-import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 
 import MobileSvg from '../../assets/mobile.svg'
 import Button from '../../components/Button'
@@ -35,8 +35,8 @@ export default (props) => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [ws, setWebsocket] = useState(null)
   const [expired, setExpired] = useState(false)
-  const { requestConnect } = useWalletConnect()
-  const { requestConnect: requestConnectv2 } = useWalletConnectv2()
+
+  const { onRequestConnect } = useWalletConnectContext()
 
   useEffect(() => {
     const init = async () => {
@@ -249,13 +249,8 @@ export default (props) => {
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
       }
 
-      if (info.walletConnect?.uri) {
-        if (info.walletConnect.version === 1) {
-          requestConnect(info.walletConnect.uri)
-        } else if (info.walletConnect.version === 2) {
-          requestConnectv2(info.walletConnect.uri)
-        }
-      }
+      if (info.walletConnect?.uri)
+        await onRequestConnect(info.walletConnect.uri)
 
       await saveLoginRequest(true, deviceId)
     } catch (error) {

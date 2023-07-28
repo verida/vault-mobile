@@ -1,0 +1,14 @@
+diff --git a/node_modules/near-api-js/lib/providers/json-rpc-provider.js b/node_modules/near-api-js/lib/providers/json-rpc-provider.js
+index c4fb1c2..7c904c8 100644
+--- a/node_modules/near-api-js/lib/providers/json-rpc-provider.js
++++ b/node_modules/near-api-js/lib/providers/json-rpc-provider.js
+@@ -311,6 +311,9 @@ class JsonRpcProvider extends provider_1.Provider {
+                 };
+                 const response = await web_1.fetchJson(this.connection, JSON.stringify(request));
+                 if (response.error) {
++
++                    __DEV__ && console.log('Near RPC Error:', JSON.stringify(response.error));
++
+                     if (typeof response.error.data === 'object') {
+                         if (typeof response.error.data.error_message === 'string' && typeof response.error.data.error_type === 'string') {
+                             // if error data has error_message and error_type properties, we consider that node returned an error in the old format

@@ -11,12 +11,14 @@ import {
   StyleSheet,
   Text,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import Snackbar from 'react-native-snackbar'
 
 import Button from 'components/Button'
 import { Icon } from 'components/Icon'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { VERIDA_ONE_WEBSITE } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
@@ -28,139 +30,146 @@ type Props = {
   loading?: boolean
 }
 
-export const ProfileUsernameSection = ({ did, username }: Props) => {
+export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   const navigation = useNavigation()
+  const { width } = useWindowDimensions()
   const buildUrl = () => `${VERIDA_ONE_WEBSITE}${username || did}`
 
   return (
-    <View style={styles.oneProfileLinkContainer}>
-      <ImageBackground
-        resizeMode='stretch'
-        source={require('assets/profile_link_bg.png')}
-        style={styles.background}>
-        <TouchableOpacity
-          onPress={() => {
-            Clipboard.setString(buildUrl())
-            Snackbar.show({
-              text: 'Copied to clipboard',
-              duration: Snackbar.LENGTH_SHORT,
-            })
-          }}>
-          <View
-            style={{
-              width: '100%',
-              flexDirection: 'row',
-              alignItems: 'center',
-              paddingHorizontal: 28,
-            }}>
-            <SubHeadline
-              numberOfLines={1}
-              ellipsizeMode='tail'
-              style={{
-                color: theme.color.onPrimary,
-                marginRight: theme.spacing.xs,
-                ...(username ? {} : { flex: 1 }), // FIXME:  remove this hack for the Android text truncated issue
-              }}>{`verida.one/${username || did}`}</SubHeadline>
-            <Icon name='copy' color={theme.color.onPrimary} size={16} />
-          </View>
-        </TouchableOpacity>
-        <View
-          style={{
-            flexDirection: 'row',
-            width: '100%',
-            justifyContent: 'space-between',
-            marginTop: theme.spacing.l,
-          }}>
-          <Button
-            textStyle={{
-              fontSize: theme.fontSize.m,
-              color: theme.color.onPrimary,
-            }}
-            style={styles.roundedButton}
-            color='transparent'
+    <ShimmerPlaceholder
+      visible={!loading}
+      width={width - 2 * theme.spacing.m}
+      height={140}
+      shimmerStyle={{ borderRadius: 12 }}>
+      <View style={styles.oneProfileLinkContainer}>
+        <ImageBackground
+          resizeMode='stretch'
+          source={require('assets/profile_link_bg.png')}
+          style={styles.background}>
+          <TouchableOpacity
             onPress={() => {
-              Linking.openURL(buildUrl())
-            }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
-                style={{
-                  fontSize: theme.fontSize.m,
-                  fontWeight: '700',
-                  color: theme.color.onPrimary,
-                  marginRight: theme.spacing.s,
-                }}>
-                Go to
-              </Text>
-              <Icon name='goto' color={theme.color.onPrimary} size={16} />
-            </View>
-          </Button>
-          <Button
-            textStyle={{
-              fontSize: theme.fontSize.m,
-              color: theme.color.onPrimary,
-            }}
-            style={[styles.roundedButton, { marginLeft: theme.spacing.m }]}
-            color='transparent'
-            onPress={() => {
-              Share.share({
-                title: 'Verida One',
-                message: `My profile ${buildUrl()}`,
-                url: buildUrl(),
+              Clipboard.setString(buildUrl())
+              Snackbar.show({
+                text: 'Copied to clipboard',
+                duration: Snackbar.LENGTH_SHORT,
               })
             }}>
-            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-              <Text
+            <View
+              style={{
+                width: '100%',
+                flexDirection: 'row',
+                alignItems: 'center',
+                paddingHorizontal: 28,
+              }}>
+              <SubHeadline
+                numberOfLines={1}
+                ellipsizeMode='tail'
                 style={{
-                  fontSize: theme.fontSize.m,
-                  fontWeight: '700',
                   color: theme.color.onPrimary,
-                  marginRight: theme.spacing.s,
-                }}>
-                Share
-              </Text>
-              <Icon name='share' color={theme.color.onPrimary} size={16} />
+                  marginRight: theme.spacing.xs,
+                  ...(username ? {} : { flex: 1 }), // FIXME:  remove this hack for the Android text truncated issue
+                }}>{`verida.one/${username || did}`}</SubHeadline>
+              <Icon name='copy' color={theme.color.onPrimary} size={16} />
             </View>
-          </Button>
-        </View>
-        {username ? null : (
-          <View style={styles.card}>
-            <View style={{ flex: 1 }}>
-              <SubHeadline style={{ color: theme.color.onPrimary }}>
-                Claim your unique username now!
-              </SubHeadline>
-              <Text style={{ color: theme.color.onPrimary }}>
-                Secure your identity with a personalized username for easier
-                sharing and increased privacy
-              </Text>
-            </View>
-            <View style={{ flex: 1 }}>
-              <Image
-                style={{
-                  marginLeft: 20,
-                  marginBottom: theme.spacing.m,
-                  width: 111,
-                  height: 120,
-                }}
-                source={require('assets/username_placehoder.png')}
-              />
-
-              <Button
-                textStyle={{
-                  fontSize: theme.fontSize.m,
-                  color: theme.color.onPrimary,
-                }}
-                style={styles.capsuleButtton}
-                color='transparent'
-                onPress={() => navigation.navigate('ClaimUsername')}>
-                Claim username
-              </Button>
-            </View>
+          </TouchableOpacity>
+          <View
+            style={{
+              flexDirection: 'row',
+              width: '100%',
+              justifyContent: 'space-between',
+              marginTop: theme.spacing.l,
+            }}>
+            <Button
+              textStyle={{
+                fontSize: theme.fontSize.m,
+                color: theme.color.onPrimary,
+              }}
+              style={styles.roundedButton}
+              color='transparent'
+              onPress={() => {
+                Linking.openURL(buildUrl())
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: theme.fontSize.m,
+                    fontWeight: '700',
+                    color: theme.color.onPrimary,
+                    marginRight: theme.spacing.s,
+                  }}>
+                  Go to
+                </Text>
+                <Icon name='goto' color={theme.color.onPrimary} size={16} />
+              </View>
+            </Button>
+            <Button
+              textStyle={{
+                fontSize: theme.fontSize.m,
+                color: theme.color.onPrimary,
+              }}
+              style={[styles.roundedButton, { marginLeft: theme.spacing.m }]}
+              color='transparent'
+              onPress={() => {
+                Share.share({
+                  title: 'Verida One',
+                  message: `My profile ${buildUrl()}`,
+                  url: buildUrl(),
+                })
+              }}>
+              <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                <Text
+                  style={{
+                    fontSize: theme.fontSize.m,
+                    fontWeight: '700',
+                    color: theme.color.onPrimary,
+                    marginRight: theme.spacing.s,
+                  }}>
+                  Share
+                </Text>
+                <Icon name='share' color={theme.color.onPrimary} size={16} />
+              </View>
+            </Button>
           </View>
-        )}
-      </ImageBackground>
-    </View>
+          {username ? null : (
+            <View style={styles.card}>
+              <View style={{ flex: 1 }}>
+                <SubHeadline style={{ color: theme.color.onPrimary }}>
+                  Claim your unique username now!
+                </SubHeadline>
+                <Text style={{ color: theme.color.onPrimary }}>
+                  Secure your identity with a personalized username for easier
+                  sharing and increased privacy
+                </Text>
+              </View>
+              <View style={{ flex: 1 }}>
+                <Image
+                  style={{
+                    marginLeft: 20,
+                    marginBottom: theme.spacing.m,
+                    width: 111,
+                    height: 120,
+                  }}
+                  source={require('assets/username_placehoder.png')}
+                />
+
+                <Button
+                  textStyle={{
+                    fontSize: theme.fontSize.m,
+                    color: theme.color.onPrimary,
+                  }}
+                  style={styles.capsuleButtton}
+                  color='transparent'
+                  onPress={() => navigation.navigate('ClaimUsername')}>
+                  Claim username
+                </Button>
+              </View>
+            </View>
+          )}
+        </ImageBackground>
+      </View>
+    </ShimmerPlaceholder>
   )
 }
 

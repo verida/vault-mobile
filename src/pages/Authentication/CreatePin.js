@@ -1,9 +1,9 @@
 import PINCode from '@haskkor/react-native-pincode'
+import { setBioAuthStatus as setBioAuthStatusAction } from 'features/auth'
 import React from 'react'
 import { connect } from 'react-redux'
 
 import { useAuth } from 'hooks/useAuth'
-import { setAuthStatus as setAuthStatusAction } from 'reduxStore/general/actions'
 
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 
@@ -34,7 +34,7 @@ const mapStateToProps = () => ({})
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    setAuthStatus: (status) => dispatch(setAuthStatusAction(status)),
+    setAuthStatus: (status) => dispatch(setBioAuthStatusAction(status)),
   }
 }
 

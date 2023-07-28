@@ -1,7 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
-import { COUNTRIES } from 'helpers/country-list'
+import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
 import { Icon } from 'native-base'
@@ -618,18 +618,6 @@ const AddIdentity = () => {
               )}
               <Spacer vertical='m' />
               <AnimatedCheckbox
-                checked={confirmationState?.state?.CreateProfile === 'Success'}
-                failed={confirmationState?.state?.CreateProfile === 'Failure'}
-                showLoading={
-                  confirmationState?.state?.CreateProfile === 'Loading'
-                }
-                label='Creating your public profile'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
-              />
-              <Spacer vertical='m' />
-              <AnimatedCheckbox
                 checked={
                   confirmationState?.state?.StorageLocation === 'Success'
                 }
@@ -638,6 +626,18 @@ const AddIdentity = () => {
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
                 label='Connecting to your storage nodes'
+                highlightColor={theme.color.success}
+                checkmarkColor={theme.color.onSuccess}
+                boxOutlineColor={theme.color.grey400}
+              />
+              <Spacer vertical='m' />
+              <AnimatedCheckbox
+                checked={confirmationState?.state?.CreateProfile === 'Success'}
+                failed={confirmationState?.state?.CreateProfile === 'Failure'}
+                showLoading={
+                  confirmationState?.state?.CreateProfile === 'Loading'
+                }
+                label='Creating your public profile'
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey400}

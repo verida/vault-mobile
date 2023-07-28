@@ -1,4 +1,5 @@
 import { PolygonIdProvider } from 'features/polygonid'
+import { ProtocolsProvider } from 'features/protocols'
 import { VeramoProvider } from 'features/veramo'
 import React from 'react'
 
@@ -16,7 +17,9 @@ export const BehindAuthContextProviders: React.FunctionComponent<BehindAuthConte
     // TODO: Move other relavant context providers here
     return (
       <VeramoProvider>
-        <PolygonIdProvider>{children}</PolygonIdProvider>
+        <PolygonIdProvider>
+          <ProtocolsProvider>{children}</ProtocolsProvider>
+        </PolygonIdProvider>
       </VeramoProvider>
     )
   }

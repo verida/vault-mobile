@@ -5,16 +5,25 @@ import type {
   W3CCredential,
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
+import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
 import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
 import React, { createContext, useCallback, useMemo } from 'react'
 
+import { MainStackParams } from 'navigation/types'
+import type {
+  ConnectionRequestScreenParams,
+  IncomingDataRequestScreenParams,
+  ProofRequestScreenParams,
+} from 'pages/Requests'
+
 import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
-import { parseQrCodeMessage } from '../utils'
+import { parseDeepLinkUrl, parseQrCodeMessage } from '../utils'
 
 type PolygonIdContextType = {
   isReady: boolean
-  handleQRCodeMessage: (data: string) => boolean
+  handleDeepLinkUrl: (url: string) => void
+  handleQRCodeMessage: (data: string) => void
   handleAcceptConnectionRequest: (
     data: AuthorizationRequestMessage
   ) => Promise<{
@@ -37,13 +46,26 @@ type PolygonIdContextType = {
   }>
 }
 
-export const PolygonIdManagerContext =
-  createContext<PolygonIdContextType | null>(null)
+// export const PolygonIdManagerContext =
+//   createContext<PolygonIdContextType | null>(null)
+// TODO: Revert back to null initial value after changing Polygon ID implementation. The current WebView implementation means that the context is not available until the WebView is ready.
+export const PolygonIdManagerContext = createContext<PolygonIdContextType>({
+  isReady: false,
+  handleDeepLinkUrl: () => {
+    // Nothing
+  },
+  handleQRCodeMessage: () => {
+    // Nothing
+  },
+  handleAcceptConnectionRequest: async () => ({}),
+  handleAcceptProofRequest: async () => ({}),
+  handleAcceptCredentialsOffer: async () => ({}),
+})
 
 export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const { children } = props
 
-  const navigation = useNavigation()
+  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const { isReady, handleAuthorizationRequest, handleCredentialsOffer } =
     usePolygonContext()
@@ -52,73 +74,106 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
 
   const isPolygonIdReady = isReady && !!maybeManagerId
 
-  const handleQRCodeMessage = useCallback(
-    (qrCodeMessage: string) => {
-      // TODO: Consider check if Polygon ID is ready and blocking it here until it is handled in the Request screens
-      try {
-        const data = parseQrCodeMessage(qrCodeMessage)
-
-        switch (data.type) {
-          case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
-            const requestData = data as AuthorizationRequestMessage
-            if (requestData.body?.scope && requestData.body.scope.length) {
-              // We have a scope object implying we need to submit a ZK proof
-              navigation.navigate('ProofRequest', {
-                // TODO: Find a way to get the name of the requester
-                name: 'Unknown',
-                // TODO: Find a way to get the logo of the requester
-                details: {
-                  protocols: ['polygonid'],
-                  timestamp: new Date().toISOString(),
-                  requesterId: requestData.from || 'Unknown',
-                  // TODO: Check if requestData.body?.message is better than reason
-                  message: requestData.body?.reason,
-                },
-                data: requestData,
-              })
-            } else {
-              // We have a generic connection request
-              navigation.navigate('ConnectionRequest', {
-                // TODO: Find a way to get the name of the requester
-                name: 'Unknown',
-                // TODO: Find a way to get the logo of the requester
-                details: {
-                  protocols: ['polygonid'],
-                  timestamp: new Date().toISOString(),
-                  requesterId: requestData.from || 'Unknown',
-                  // TODO: Check if requestData.body?.message is better than reason
-                  message: requestData.body?.reason,
-                },
-                data: requestData,
-              })
-            }
-            return true
-          }
-          case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE: {
-            const offerData = data as CredentialsOfferMessage
-            navigation.navigate('IncomingDataRequest', {
+  const handleMessage = useCallback(
+    (
+      message: AuthorizationRequestMessage | CredentialsOfferMessage,
+      replaceNavigationScreen?: boolean
+    ) => {
+      // TODO: factorise this function that's becoming too big
+      switch (message.type) {
+        case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
+          const requestData = message as AuthorizationRequestMessage
+          if (requestData.body?.scope && requestData.body.scope.length) {
+            // We have a scope object implying we need to submit a ZK proof
+            const screenParams: ProofRequestScreenParams = {
               // TODO: Find a way to get the name of the requester
               name: 'Unknown',
               // TODO: Find a way to get the logo of the requester
               details: {
                 protocols: ['polygonid'],
                 timestamp: new Date().toISOString(),
-                requesterId: offerData.from || 'Unknown',
+                requesterId: requestData.from || 'Unknown',
+                // TODO: Check if requestData.body?.message is better than reason
+                message: requestData.body?.reason,
               },
-              data: offerData,
-            })
-            return true
+              data: requestData,
+            }
+            if (replaceNavigationScreen) {
+              navigation.replace('ProofRequest', screenParams)
+            } else {
+              navigation.navigate('ProofRequest', screenParams)
+            }
+          } else {
+            // We have a generic connection request
+            const screenParams: ConnectionRequestScreenParams = {
+              // TODO: Find a way to get the name of the requester
+              name: 'Unknown',
+              // TODO: Find a way to get the logo of the requester
+              details: {
+                protocols: ['polygonid'],
+                timestamp: new Date().toISOString(),
+                requesterId: requestData.from || 'Unknown',
+                // TODO: Check if requestData.body?.message is better than reason
+                message: requestData.body?.reason,
+              },
+              data: requestData,
+            }
+            if (replaceNavigationScreen) {
+              navigation.replace('ConnectionRequest', screenParams)
+            } else {
+              navigation.navigate('ConnectionRequest', screenParams)
+            }
           }
-          default: {
-            return false
-          }
+          return
         }
-      } catch (error: unknown) {
-        // Error somewhere in the QR code parsing or Polygon ID type not supported. Return false so the QR Code scanner can use it if needed.
-        return false
+        case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE: {
+          const offerData = message as CredentialsOfferMessage
+          const screenParams: IncomingDataRequestScreenParams = {
+            // TODO: Find a way to get the name of the requester
+            name: 'Unknown',
+            // TODO: Find a way to get the logo of the requester
+            details: {
+              protocols: ['polygonid'],
+              timestamp: new Date().toISOString(),
+              requesterId: offerData.from || 'Unknown',
+            },
+            data: offerData,
+          }
+          if (replaceNavigationScreen) {
+            navigation.replace('IncomingDataRequest', screenParams)
+          } else {
+            navigation.navigate('IncomingDataRequest', screenParams)
+          }
+          return
+        }
+        default: {
+          throw new Error(
+            `Polygon ID message type not supported: ${message.type}}`
+          )
+        }
       }
     },
     [navigation]
+  )
+
+  const handleDeepLinkUrl = useCallback(
+    (url: string) => {
+      // No try/cath needed, as handled by the consumer
+      const message = parseDeepLinkUrl(url)
+      handleMessage(message, false)
+      // Assuming the deep link doesn't come a particular screen so we don't replace it.
+    },
+    [handleMessage]
+  )
+
+  const handleQRCodeMessage = useCallback(
+    (qrCodeMessage: string) => {
+      // No try/cath needed, as handled by the consumer
+      const message = parseQrCodeMessage(qrCodeMessage)
+      handleMessage(message, true)
+      // Assuming the QR Code comes from the scanner screen, we replace this screen, so when the user is finished with the Polygon ID screen, they go back to the previous screen, not the QR Code scanner screen
+    },
+    [handleMessage]
   )
 
   const handleAcceptConnectionRequest = useCallback(
@@ -141,7 +196,6 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // TODO: Adapt the error message to the type of error
             // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when accepting the Polygon ID connection request.',
-            // @ts-expect-error language_version
             { cause: error }
           ),
         }
@@ -170,7 +224,6 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // TODO: Adapt the error message to the type of error
             // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when answering the Polygon ID proof request.',
-            // @ts-expect-error language_version
             { cause: error }
           ),
         }
@@ -199,7 +252,6 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // TODO: Adapt the error message to the type of error
             // The error message must be user-friendly, as it will be displayed in the UI
             'Something went wrong when accepting the Polygon ID credential offer.',
-            // @ts-expect-error language_version
             { cause: error }
           ),
         }
@@ -211,6 +263,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const contextValue: PolygonIdContextType = useMemo(
     () => ({
       isReady: isPolygonIdReady,
+      handleDeepLinkUrl,
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,
@@ -218,6 +271,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
     }),
     [
       isPolygonIdReady,
+      handleDeepLinkUrl,
       handleQRCodeMessage,
       handleAcceptConnectionRequest,
       handleAcceptProofRequest,

@@ -1,4 +1,5 @@
 import { useTheme } from 'contexts/ThemeContext'
+import { getSelectedWalletById } from 'features/cryptoWallet'
 import { Container } from 'native-base'
 import React, { useRef, useState } from 'react'
 import { Image, StyleSheet, useWindowDimensions } from 'react-native'
@@ -10,7 +11,6 @@ import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import Tokens from 'pages/Tokens/Dashboard'
-import { getSelectedWalletById } from 'reduxStore/wallet/selectors'
 
 import Collectibles from './Assets/Collectibles'
 
@@ -115,8 +115,7 @@ const AssetsCollections = (props: any) => {
   )
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
+const mapStateToProps = (state: any) => {
   return {
     selectedWallet: getSelectedWalletById(state),
   }

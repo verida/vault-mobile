@@ -1,3 +1,4 @@
+import { selectSwitchAccountToast } from 'features/identities'
 import React from 'react'
 import { Dimensions, Image, StyleSheet, View, ViewProps } from 'react-native'
 import { useSelector } from 'react-redux'
@@ -12,7 +13,7 @@ const MARGIN_HORIZONTAL = 16
 
 function SwitchAccountToast(props: Omit<ViewProps, 'children'>) {
   const { style, ...rest } = props
-  const data = useSelector((state: any) => state.main.switchAccountToast)
+  const data = useSelector(selectSwitchAccountToast)
 
   if (!data) {
     return null

@@ -1,4 +1,9 @@
 import Clipboard from '@react-native-community/clipboard'
+import {
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+  isValidSeedPhrase,
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -10,7 +15,6 @@ import {
   View,
 } from 'react-native'
 import { connect } from 'react-redux'
-import { isValidSeedPhrase } from 'wallet/helpers/validation'
 
 import { BlockchainNetwork } from 'api/types'
 import Button from 'components/Button'
@@ -20,10 +24,6 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import {
-  getBlockchainNetworkLabel,
-  getBlockchainNetworks,
-} from 'reduxStore/selectors'
 import InputStyles from 'styles/inputs'
 
 type Props = {

@@ -1,20 +1,24 @@
 import * as Sentry from '@sentry/react-native'
+import { selectSelectedAccount } from 'features/identities'
+import {
+  selectSelectedPublicProfile,
+  setPublicProfileByDid,
+} from 'features/profiles'
+import { COUNTRIES } from 'helpers/countries'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
 import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setPublicProfileData } from 'reduxStore/general/actions'
+import { RootState, useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
-import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 /**
@@ -28,6 +32,8 @@ const MAX_INPUT_LENGTH = 140
 const EditProfile = (props: any) => {
   const { navigation, route, publicProfileData } = props
   const { title, option } = route.params
+  const dispach = useAppDispatch()
+  const selectedAccount = useAppSelector(selectSelectedAccount)
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState(option.value)
@@ -50,7 +56,13 @@ const EditProfile = (props: any) => {
         setDisabled(true)
         const vault = AccountManager.getInstance().vault as any
         await vault.profiles.public.set(key, val.length === 0 ? undefined : val) // Must be undefined to clear out the field
-        setPublicProfileData({ ...publicProfileData, [key]: val })
+
+        dispach(
+          setPublicProfileByDid({
+            did: selectedAccount!.did!,
+            publicProfile: { ...publicProfileData, [key]: val },
+          })
+        )
         emitter.emit('UPDATE_PUBLIC_PROFILE', undefined)
       }
     } catch (error) {
@@ -164,16 +176,8 @@ const EditProfile = (props: any) => {
   )
 }
 
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    setPublicProfileData: (data: unknown) =>
-      dispatch(setPublicProfileData(data)),
-  }
+const mapStateToProps = (state: RootState) => {
+  return { publicProfileData: selectSelectedPublicProfile(state) }
 }
 
-const mapStateToProps = (rootState: any) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(EditProfile)
+export default connect(mapStateToProps)(EditProfile)

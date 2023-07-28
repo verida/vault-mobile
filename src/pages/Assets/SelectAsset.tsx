@@ -12,8 +12,6 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { NFT, NFTMetadata } from 'api/types'

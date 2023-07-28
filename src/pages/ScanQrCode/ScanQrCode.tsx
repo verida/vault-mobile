@@ -1,17 +1,20 @@
+import { useClipboard } from '@react-native-community/clipboard'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import * as Sentry from '@sentry/react-native'
-import { isPolygonIdQrCodeMessage, usePolygonId } from 'features/polygonid'
+import {
+  canBeHandledByDeeplink,
+  isSupportedDomain,
+  useDeeplink,
+} from 'features/deepLinks'
+import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 
-import { useDeeplink } from 'hooks/useDeeplink'
-import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 import { MainStackParams } from 'navigation/types'
 import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
-import { canBeHandledByDeeplink, isSupportedDomain } from 'utils/linking'
 
 const WAIT_TIME = 3000
 
@@ -21,10 +24,8 @@ function ScanQrCode(
   const { navigation, route } = props
   const [enabled, setEnabled] = useState(true)
   const [isFlashOn, setIsFlashOn] = useState(false)
+  const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
   const handleDeeplink = useDeeplink(navigation as any)
-  const { requestConnect: handleWalletConnectV1Data } = useWalletConnect()
-  const { requestConnect: handleWalletConnectV2Data } = useWalletConnectv2()
-  const { handleQRCodeMessage: handlePolygonIdData } = usePolygonId()
 
   useEffect(() => {
     setEnabled(true)
@@ -38,71 +39,87 @@ function ScanQrCode(
     navigation.goBack()
   }, [navigation])
 
-  const handleQrCode = async (data: string) => {
-    if (!enabled) {
-      return
-    }
+  const handleQrCode = useCallback(
+    async (data: string) => {
+      if (!enabled) {
+        return
+      }
 
-    setEnabled(false)
+      setEnabled(false)
 
-    setTimeout(() => {
-      setEnabled(true)
-    }, WAIT_TIME)
+      setTimeout(() => {
+        // TODO: This is causing a state update on an unmounted component, use a debounce/throttle on handleQrCode instead
+        setEnabled(true)
+      }, WAIT_TIME)
 
-    if (route.params.onReadQRCode) {
-      route.params.onReadQRCode(data)
-      navigation.goBack()
-      return
-    }
+      if (route.params.onReadQRCode) {
+        route.params.onReadQRCode(data)
+        navigation.goBack()
+        return
+      }
 
-    // WalletConnect v1
-    // Ex: wc:9145e975-4af0-4a28-a569-19aab7a21dd8@1?bridge=https%3A%2F%2F6.bridge.walletconnect.org&key=40dbb09f0eac060885a0edaf7f1ab7efba207c9b339bc49f805d61b615ac28a7
-    if (data.startsWith('wc:') && data.indexOf('bridge') >= 0) {
-      navigation.goBack()
-      handleWalletConnectV1Data(data)
-      return
-    }
+      const handledByProtocols = processQrCodeByProtocolHandlers(data)
+      if (handledByProtocols) {
+        // It's assumed the protocol handlers manage the navigation but i would be better to TODO: Find a way to not have the handler manager closing the QR Code scanner.
+        return
+      }
 
-    // WalletConnect v2
-    // Ex: 'wc:c034ac9bf61c23d3e551663ed8bf973c260130c12f89f22a35a5d1032e3c47af@2?relay-protocol=iridium&symKey=05f034367d195bca2532385b620bd2b2a6c5c62101050bdfe9253e283fe50e12'
-    if (data.startsWith('wc:') && data.indexOf('relay-protocol') >= 0) {
-      navigation.goBack()
-      handleWalletConnectV2Data(data)
-      return
-    }
+      // TODO: Progressively move the protocols into the protocol handlers
 
-    // Polygon ID
-    if (isPolygonIdQrCodeMessage(data)) {
-      navigation.goBack()
-      handlePolygonIdData(data)
-      return
-    }
+      const { hostname, pathname } = parse(data, true)
 
-    // Check if content is a valid URL
-    const { hostname, pathname } = parse(data, true)
-    if (isEmpty(hostname)) {
-      Alert.alert('Error', 'QR Code not supported')
-      return
-    }
-    // Try to open the URL in browser if it is not a deeplink
-    if (!canBeHandledByDeeplink(pathname) || !isSupportedDomain(hostname)) {
+      // Check if supported URL
+      if (
+        !isEmpty(hostname) &&
+        isSupportedDomain(hostname) &&
+        canBeHandledByDeeplink(pathname)
+      ) {
+        // TODO: Move Verida Connect to protocol handlers
+        handleDeeplink(data)
+        return
+      }
+
+      // Check if can be opened by device
       try {
-        const canOpen = await Linking.canOpenURL(data)
-        if (canOpen) {
+        if (await Linking.canOpenURL(data)) {
+          // TODO: Do we really want to continue opening any data non-supported by the Verida Wallet?
           await Linking.openURL(data)
+          return
         }
       } catch (error) {
         Sentry.captureException(error)
       }
-      return
-    }
-    handleDeeplink(data)
-  }
+
+      Alert.alert('Error', 'QR Code not supported')
+    },
+    [
+      enabled,
+      processQrCodeByProtocolHandlers,
+      handleDeeplink,
+      navigation,
+      route.params,
+    ]
+  )
 
   const onBarCodeRead = async (event: BarCodeReadEvent) => {
     const { data } = event
     await handleQrCode(data)
   }
+
+  // HACK: In development mode, we'll also read the content of the clipboard
+  //       for a connection string.
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const [maybeClipboardContent] = __DEV__ ? useClipboard() : []
+
+  React.useEffect(
+    () =>
+      void (async () => {
+        if (!maybeClipboardContent) return
+
+        return handleQrCode(maybeClipboardContent)
+      })(),
+    [maybeClipboardContent, handleQrCode]
+  )
 
   return (
     <View style={styles.container}>

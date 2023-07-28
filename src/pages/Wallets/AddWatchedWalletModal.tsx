@@ -24,18 +24,17 @@ type Props = {
   hideModal: () => void
 }
 
+// TODO: Use a single source of truth for supported blockchains.
+const BLOCKCHAINS = Object.freeze([
+  { label: 'Ethereum', value: 'ethereum' },
+  { label: 'Near', value: 'near' },
+  { label: 'Polygon', value: 'polygon' },
+])
+
 export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
   props
 ) => {
   const { visible, hideModal, onAddWatchedWallet } = props
-
-  // TODO: Get this from a maintained centralised list of supported blockchain.
-  const blockchains = [
-    { label: 'Ethereum', value: 'ethereum' },
-    { label: 'Near', value: 'near' },
-    { label: 'Algorand', value: 'algorand' },
-    { label: 'Polygon', value: 'polygon' },
-  ]
 
   const defaultBlockchain = 'ethereum'
 
@@ -91,7 +90,7 @@ export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
             showArrow={true}
             placeholder=''
             defaultValue={defaultBlockchain}
-            items={blockchains}
+            items={BLOCKCHAINS}
             containerStyle={InputStyles.select}
             onChangeItem={handleBlockchainChange}
             zIndex={6000}

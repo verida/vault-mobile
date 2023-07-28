@@ -10,15 +10,14 @@ import InputStyles from 'styles/inputs'
 
 type Props = {
   visible: boolean
-  onPressRename: (id: number, data: any) => void
+  onPressRename: (name: string, data: any) => void
   hideModal: () => void
-  data: any
+  data: { id: string; label: string }
 }
 
 export default (props: Props) => {
   const { visible, hideModal, data, onPressRename } = props
   const [name, setName] = useState(data.label)
-
   const onPressSave = () => {
     onPressRename(data.id, { name })
     hideModal()

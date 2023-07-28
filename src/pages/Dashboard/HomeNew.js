@@ -1,6 +1,18 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { logout as logoutAction } from 'features/auth'
+import { useDeeplink } from 'features/deepLinks'
+import { selectSelectedAccount } from 'features/identities'
+import {
+  selectNewMessagesCount,
+  setNewMessagesCount as setNewMessagesCountAction,
+} from 'features/inbox'
+import {
+  selectNavigationLink,
+  setNavigationLink as setNavigationLinkAction,
+} from 'features/links'
+import { selectSelectedPublicProfile } from 'features/profiles'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -24,16 +36,10 @@ import {
 } from 'constants/color'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import {
-  logout as logoutAction,
-  setNavigationLink as setNavigationLinkAction,
-  setNewMessagesCount as setNewMessagesCountAction,
-} from 'reduxStore/general/actions'
 
 import PromoBannersCarousel from './Banners/CarouselBanner'
 import WalletSummary from './Banners/WalletBanner'
@@ -48,6 +54,9 @@ const DefaultAvatar = require('assets/stubs/avatar.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
+/**
+ * TODO: Have to sync with updates on the old Home page
+ */
 const Home = (props) => {
   const {
     navigation,
@@ -314,13 +323,12 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
-    publicProfileData: state.publicProfileData,
-    newMessagesCount: state.newMessagesCount,
-    selectedAccount: state.selectedAccount,
-    navigationLink: state.navigationLink,
+    publicProfileData: selectSelectedPublicProfile(state),
+    newMessagesCount: selectNewMessagesCount(state),
+    selectedAccount: selectSelectedAccount(state),
+    navigationLink: selectNavigationLink(state),
   }
 }
 

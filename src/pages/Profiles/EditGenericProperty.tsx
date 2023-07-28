@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
+import { COUNTRIES } from 'helpers/countries'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
@@ -24,7 +25,6 @@ import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
-import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
 
 const MAX_TEXTAREA_LENGTH = 255
