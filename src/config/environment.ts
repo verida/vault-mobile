@@ -1,4 +1,5 @@
 import { EnvironmentType } from '@verida/types'
+import { LogLevel } from 'features/telemetry'
 import Config from 'react-native-config'
 
 //Config.NETWORK_ENVIRONMENT = 'devnet'
@@ -24,9 +25,31 @@ console.info(
   )
 )
 
+const logLevel: LogLevel =
+  Config.LOG_LEVEL === 'error'
+    ? 'error'
+    : Config.LOG_LEVEL === 'warn'
+    ? 'warn'
+    : Config.LOG_LEVEL === 'debug'
+    ? 'debug'
+    : 'info'
+
 export const ENVIRONMENT = Config.NETWORK_ENVIRONMENT as EnvironmentType
 
 const DEFAULT_ENVIRONMENT = {
+  logLevel,
+  sentry: {
+    enabled: true,
+    dsn: 'https://b850525444734a138f9fddcc918d5ac1@o4503997119725568.ingest.sentry.io/4503997121495040',
+    // release: `${APP_PACKAGE_NAME}@${version}`,
+    // tracesSampleRate: Number(Config.SENTRY_TRACE_SAMPLE_RATE || 0.1),
+    // replaysSessionSampleRate: Number(
+    //   Config.SENTRY_REPLAY_SESSION_SAMPLE_RATE || 0.1
+    // ),
+    // replaysOnErrorSampleRate: Number(
+    //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
+    // ),
+  },
   ACCOUNTS_STORAGE_KEY: 'accounts',
   SELECTED_ACCOUNT_DID_STORAGE_KEY: 'selected-account-did',
   WALLETS_STORAGE_KEY: 'wallets-v4',
