@@ -13,7 +13,6 @@ import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
-import Config from 'react-native-config'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
 import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
@@ -25,6 +24,7 @@ import PolyfillCrypto from 'react-native-webview-crypto'
 import { Provider } from 'react-redux'
 import { PersistGate } from 'redux-persist/es/integration/react'
 import { persistor, store } from 'reduxStore'
+import { initApplication } from 'utils'
 
 import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
@@ -37,6 +37,8 @@ import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
 
+initApplication()
+
 configureNotifications()
 
 messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
@@ -48,27 +50,6 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
       category: 'Inbox',
     },
   })
-})
-
-Sentry.init({
-  dsn: 'https://b850525444734a138f9fddcc918d5ac1@o4503997119725568.ingest.sentry.io/4503997121495040',
-  environment: Config.SENTRY_ENVIRONMENT,
-  beforeSend: (event, hint) => {
-    if (__DEV__) {
-      const error =
-        hint?.originalException ||
-        JSON.stringify(
-          event?.exception ?? { message: 'Unknown error' },
-          null,
-          2
-        )
-      // eslint-disable-next-line no-console
-      console.error(error) // error will be shown on LogBox and Console
-
-      return null // this drops the event and nothing will be send to Sentry
-    }
-    return event
-  },
 })
 
 function App() {
