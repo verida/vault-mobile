@@ -1,9 +1,12 @@
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { Platform } from 'react-native'
 // @ts-expect-error missing_declaration
 import StaticServer from 'react-native-static-server'
 
 import { FileServerProps } from '../@types'
+
+const logger = new Logger('Polygon ID')
 
 export function useFileServer({ dir, port }: FileServerProps) {
   const [isReady, setIsReady] = React.useState(false)
@@ -21,28 +24,21 @@ export function useFileServer({ dir, port }: FileServerProps) {
   })
 
   React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.debug(`useFileServer ~ Starting server on port ${port}`)
+    logger.debug(`Starting server`, { port })
     server
       .start()
       .then(() => {
         setIsReady(true)
-        // eslint-disable-next-line no-console
-        console.debug('useFileServer ~ Server started')
+        logger.debug('Server started')
       })
-      // eslint-disable-next-line no-console
-      .catch(console.error)
+      .catch(logger.error)
     return () => {
       try {
-        // eslint-disable-next-line no-console
-        console.debug('useFileServer ~ Stopping server')
+        logger.debug('Stopping server')
         setIsReady(false)
         server.stop()
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error('useFileServer ~ Error while stopping the server')
-        // eslint-disable-next-line no-console
-        console.error(e)
+      } catch (error: unknown) {
+        logger.error('Error while stopping the server', { error })
       }
     }
   }, [server, port])

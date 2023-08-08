@@ -3,12 +3,14 @@ import {
   WEBAPP_PUBLIC_DIR,
   WEBAPP_ROOT_DIR,
 } from 'features/polygonid/constants'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { Platform } from 'react-native'
-import RNBlobUtil from 'react-native-blob-util'
 import RNFS from 'react-native-fs'
 
 import { Stateful } from '../../@types'
+
+const logger = new Logger('Polygon ID')
 
 const loadingState = (): Stateful<string> => ({
   loading: true,
@@ -21,18 +23,14 @@ export function useInstallWebView(): Stateful<string> {
     const init = async () => {
       try {
         const fromDir = WEBAPP_BUNDLE_DIR
-        // eslint-disable-next-line no-console
-        console.debug(
-          'useInstallWebView.ts ~ useInstallWebView ~ fromDir:',
-          fromDir
-        )
-
         const toDir = WEBAPP_ROOT_DIR
-        // eslint-disable-next-line no-console
-        console.debug(
-          'useInstallWebView.ts ~ useInstallWebView ~ toDir:',
-          toDir
-        )
+
+        logger.debug('useInstallWebView.ts ~ useInstallWebView ~ fromDir:', {
+          fromDir,
+        })
+        logger.debug('useInstallWebView.ts ~ useInstallWebView ~ toDir:', {
+          toDir,
+        })
 
         setState(loadingState)
 
@@ -43,29 +41,25 @@ export function useInstallWebView(): Stateful<string> {
           await isWebappVersionAlreadyInstalled(fromDir, toDir)
 
         if (webappVersionAlreadyInstalled) {
-          // eslint-disable-next-line no-console
-          console.debug(
+          logger.debug(
             'useInstallWebView.ts ~ useInstallWebView ~ Webapp version already installed'
           )
 
           // Do nothing
         } else {
-          // eslint-disable-next-line no-console
-          console.debug(
+          logger.debug(
             'useInstallWebView.ts ~ useInstallWebView ~ Webapp version not yet installed'
           )
 
           await installWebapp(fromDir, toDir)
         }
 
-        // eslint-disable-next-line no-console
-        console.debug(
-          'useInstallWebView.ts ~ useInstallWebView ~ Webapp directory content:',
-          await RNBlobUtil.fs.ls(toDir)
-        )
+        // logger.debug(
+        //   'useInstallWebView.ts ~ useInstallWebView ~ Webapp directory content:',
+        //   await RNBlobUtil.fs.ls(toDir)
+        // )
 
-        // eslint-disable-next-line no-console
-        console.log('[useInstallWebView] Webapp successfully installed!')
+        logger.info('[useInstallWebView] Webapp successfully installed!')
 
         setState({ result: toDir, loading: false })
       } catch (cause) {
@@ -90,13 +84,11 @@ async function checkWebappBundleExist(webappBundleDir: string) {
       : await RNFS.exists(webappBundleDir)
 
   if (isFromDirExist) {
-    // eslint-disable-next-line no-console
-    console.debug(
+    logger.debug(
       'useInstallWebView.ts ~ checkWebappBundleExist ~ webappBundleDir exists'
     )
   } else {
-    // eslint-disable-next-line no-console
-    console.debug(
+    logger.debug(
       'useInstallWebView.ts ~ checkWebappBundleExist ~ webappBundleDir doesnt exist'
     )
     throw new Error(
@@ -142,15 +134,13 @@ async function installWebapp(webappBundleDir: string, webappTargetDir: string) {
   const webappDirExists = await isWebappDirExist(webappTargetDir)
 
   if (webappDirExists) {
-    // eslint-disable-next-line no-console
-    console.debug(
+    logger.debug(
       'useInstallWebView.ts ~ installWebapp ~ Webapp target dir already exists, meaning it is a previous version of the Webapp'
     )
 
     await removeWebAppContent(webappTargetDir)
   } else {
-    // eslint-disable-next-line no-console
-    console.debug(
+    logger.debug(
       'useInstallWebView.ts ~ installWebapp ~ Webapp target dir doesnt exist'
     )
 
@@ -161,8 +151,7 @@ async function installWebapp(webappBundleDir: string, webappTargetDir: string) {
 }
 
 async function removeWebAppContent(webappDir: string) {
-  // eslint-disable-next-line no-console
-  console.debug(
+  logger.debug(
     'useInstallWebView.ts ~ removeWebAppContent ~ Removing previous webapp version content'
   )
 
@@ -173,10 +162,8 @@ async function removeWebAppContent(webappDir: string) {
       .filter((item) => item.path !== WEBAPP_PUBLIC_DIR)
       // Removing all other files
       .map(async (item) => {
-        // eslint-disable-next-line no-console
-        console.debug(
-          'useInstallWebView.ts ~ removeWebAppContent ~ Removing item:',
-          item.path
+        logger.debug(
+          `useInstallWebView.ts ~ removeWebAppContent ~ Removing item: ${item.path}`
         )
 
         await RNFS.unlink(item.path)
@@ -185,8 +172,7 @@ async function removeWebAppContent(webappDir: string) {
 }
 
 async function copyWebapp(fromDir: string, toDir: string) {
-  // eslint-disable-next-line no-console
-  console.debug(
+  logger.debug(
     'useInstallWebView.ts ~ copyWebapp ~ Copying the new version of the Webapp'
   )
 
@@ -198,12 +184,10 @@ async function copyWebappItems(
   fromDir: string,
   toDir: string
 ) {
-  // eslint-disable-next-line no-console
-  console.debug(
+  logger.debug(
     `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying Webapp items from ${fromDir}`
   )
-  // eslint-disable-next-line no-console
-  console.debug(
+  logger.debug(
     `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying Webapp items to ${toDir}`
   )
 
@@ -216,10 +200,8 @@ async function copyWebappItems(
 
   await Promise.all(
     directories.map(async (directory) => {
-      // eslint-disable-next-line no-console
-      console.debug(
-        `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ directory.path:`,
-        directory.path
+      logger.debug(
+        `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ directory.path: ${directory.path}`
       )
 
       const targetDirPath = `${toDir}/${directory.path.replace(
@@ -227,8 +209,7 @@ async function copyWebappItems(
         ''
       )}`
 
-      // eslint-disable-next-line no-console
-      console.debug(
+      logger.debug(
         `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Creating directory ${targetDirPath}`
       )
 
@@ -245,10 +226,7 @@ async function copyWebappItems(
           ''
         )}`
 
-        // eslint-disable-next-line no-console
-        console.debug(
-          `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying file ${file.path} to ${targetFilePath}`
-        )
+        logger.debug(`Copying file ${file.path} to ${targetFilePath}`)
 
         if (Platform.OS === 'android') {
           await RNFS.copyFileAssets(file.path, targetFilePath)

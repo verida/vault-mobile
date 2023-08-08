@@ -3,6 +3,7 @@ import {
   polygonIdTestnetConfig,
 } from 'features/polygonid/constants'
 import { getPolygonIdPrivateKey } from 'features/polygonid/utils'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import AccountManager from 'api/AccountManager'
@@ -11,6 +12,8 @@ import CONFIG from 'config/environment'
 import { Stateful } from '../../@types'
 import { PolygonIdManagerConfig } from '../@types'
 import { usePolygonContext } from '../contexts'
+
+const logger = new Logger('Polygon ID')
 
 const loadingState = (): Stateful<string> => ({
   loading: true,
@@ -25,23 +28,14 @@ export function useCreatePolygonIdManager(): Stateful<string> {
   const account = accountManager.getSelectedAccount()
 
   React.useEffect(() => {
-    // eslint-disable-next-line no-console
-    console.debug(
-      'useCreatePolygonIdManager ~ Trying to create a new Polygon ID Manager'
-    )
+    logger.debug('Trying to create a new Polygon ID Manager')
     setState(loadingState)
     if (!isPolygonIdReady) {
-      // eslint-disable-next-line no-console
-      console.debug(
-        'useCreatePolygonIdManager ~ Polygon ID is not ready, cannot create Polygon ID Manager'
-      )
+      logger.debug('Polygon ID is not ready, cannot create Polygon ID Manager')
       return
     }
     if (!account) {
-      // eslint-disable-next-line no-console
-      console.debug(
-        'useCreatePolygonIdManager ~ No Verida account, cannot create Polygon ID Manager'
-      )
+      logger.debug('No Verida account, cannot create Polygon ID Manager')
       return
     }
 
@@ -73,23 +67,13 @@ export function useCreatePolygonIdManager(): Stateful<string> {
 
     const init = async () => {
       try {
-        // eslint-disable-next-line no-console
-        console.debug(
-          'useCreatePolygonIdManager ~ Creating a new Polygon ID Manager'
-        )
+        logger.debug('Creating a new Polygon ID Manager')
         const managerId = await createIdManager(config)
-        // eslint-disable-next-line no-console
-        console.debug(
-          'useCreatePolygonIdManager ~ New Polygon ID Manager created:',
-          managerId
-        )
+        logger.debug('New Polygon ID Manager created', { managerId })
 
         setState({ loading: false, result: managerId })
       } catch (cause) {
-        // eslint-disable-next-line no-console
-        console.error(
-          'useCreatePolygonIdManager ~ Error while creating a Polygon ID Manager'
-        )
+        logger.error('Error while creating a Polygon ID Manager')
         setState({
           loading: false,
           error: new Error('Failed to create PolygonIdManager.', { cause }),

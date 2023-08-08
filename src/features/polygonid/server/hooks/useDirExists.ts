@@ -1,7 +1,10 @@
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import RNBlobUtil from 'react-native-blob-util'
 
 import { Stateful } from '../../@types'
+
+const logger = new Logger('Polygon ID')
 
 const loadingState = (): Stateful<boolean> => ({
   loading: true,
@@ -26,8 +29,7 @@ export function useDirExists({
       if (!force || exists) return setState({ loading: false, result: exists })
 
       // Force the directory to exist if it doesn't already.
-      // eslint-disable-next-line no-console
-      await RNBlobUtil.fs.mkdir(dir).catch(console.warn) /* race_condition */
+      await RNBlobUtil.fs.mkdir(dir).catch(logger.warn) /* race_condition */
 
       setState({
         loading: false,

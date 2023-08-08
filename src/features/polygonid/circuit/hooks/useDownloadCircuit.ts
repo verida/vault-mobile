@@ -1,4 +1,5 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import RNBlobUtil from 'react-native-blob-util'
 
@@ -14,6 +15,8 @@ import {
   getCircuitRemoteUri,
   getCircuitsDir,
 } from '../utils'
+
+const logger = new Logger('Polygon ID')
 
 export function useDownloadCircuit({
   veridaBaseUri = 'https://verida-static-resources.s3.amazonaws.com/polygonid',
@@ -43,8 +46,7 @@ export function useDownloadCircuit({
       if (!(await RNBlobUtil.fs.exists(circuitsDir)))
         await RNBlobUtil.fs
           .mkdir(circuitsDir)
-          // eslint-disable-next-line no-console
-          .catch(console.warn) /* race_condition */
+          .catch(logger.warn) /* race_condition */
 
       // Create the circuitId-specific directory within the circuits dir where
       // we'll store these files.
@@ -54,8 +56,7 @@ export function useDownloadCircuit({
       if (!(await RNBlobUtil.fs.exists(targetDir)))
         await RNBlobUtil.fs
           .mkdir(targetDir)
-          // eslint-disable-next-line no-console
-          .catch(console.warn) /* race_condition */
+          .catch(logger.warn) /* race_condition */
 
       const circuitFilePaths = getCircuitFilePaths({
         publicDir,

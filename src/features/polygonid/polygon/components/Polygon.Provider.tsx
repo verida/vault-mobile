@@ -3,6 +3,7 @@ import type {
   CircuitId,
   W3CCredential,
 } from '@0xpolygonid/js-sdk'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
@@ -19,6 +20,8 @@ import {
   RandomKeyGenerator,
 } from '../@types'
 import { PolygonContextProvider } from '../contexts'
+
+const logger = new Logger('Polygon ID')
 
 const defaultGenerateRandomKey: RandomKeyGenerator = () => String(Math.random())
 
@@ -113,22 +116,19 @@ export const PolygonProvider = ({
   )
 
   const onLoadStart = React.useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.debug('PolygonProvider ~ WebView loading...')
+    logger.debug('PolygonProvider ~ WebView loading...')
     // setWebPageLoading(true)
   }, [])
 
   const onLoad = React.useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.debug('PolygonProvider ~ WebView loaded')
+    logger.debug('PolygonProvider ~ WebView loaded')
     // setWebPageLoading(false)
     setWebPageLoaded(true)
   }, [])
 
   const handleError = React.useCallback(() => {
     setWebPageLoaded(false)
-    // eslint-disable-next-line no-console
-    console.error('PolygonProvider ~ Error while loading the WebView')
+    logger.error('PolygonProvider ~ Error while loading the WebView')
   }, [])
 
   // Mark the PolygonProvider as ready if all the required conditions are met.
@@ -161,18 +161,15 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
-        // eslint-disable-next-line no-console
-        console.debug('Polygon.Provider.tsx ~ Injecting JavaScript in WebView')
+        logger.debug('Polygon.Provider.tsx ~ Injecting JavaScript in WebView')
 
         try {
           return ref.current?.injectJavaScript(injectedJavaScript)
         } catch (error: unknown) {
-          // eslint-disable-next-line no-console
-          console.error(
-            'Polygon.Provider.tsx ~ Error while injecting JavaScript in WebView'
+          logger.error(
+            'Polygon.Provider.tsx ~ Error while injecting JavaScript in WebView',
+            { error }
           )
-          // eslint-disable-next-line no-console
-          console.error(error)
         }
       })
     },
@@ -181,8 +178,7 @@ export const PolygonProvider = ({
 
   const createIdManager: PolygonCreateIdManager = React.useCallback(
     async (config: PolygonIdManagerConfig) => {
-      // eslint-disable-next-line no-console
-      console.debug('Polygon.Provider.tsx ~ Creating a Polygon ID Manager')
+      logger.debug('Polygon.Provider.tsx ~ Creating a Polygon ID Manager')
 
       const managerId = await invokeJs({
         js: `window.__CREATE_POLYGON_ID_MANAGER__({managerId: ${JSON.stringify(
@@ -197,11 +193,9 @@ export const PolygonProvider = ({
           )}".`
         )
 
-      // eslint-disable-next-line no-console
-      console.debug(
-        'Polygon.Provider.tsx ~ Polygon ID Manager created',
-        managerId
-      )
+      logger.debug('Polygon.Provider.tsx ~ Polygon ID Manager created', {
+        managerId,
+      })
       return managerId
     },
     [invokeJs, generateRandomKey]
@@ -293,20 +287,16 @@ const styles = StyleSheet.create({
 function logWebappMessage(message: WebappLogMessage) {
   switch (message.level) {
     case 'info':
-      // eslint-disable-next-line no-console
-      console.info('Webapp message:', message.content)
+      logger.info('Webapp message:', { message: message.content })
       break
     case 'warn':
-      // eslint-disable-next-line no-console
-      console.warn('Webapp message:', message.content)
+      logger.warn('Webapp message:', { message: message.content })
       break
     case 'error':
-      // eslint-disable-next-line no-console
-      console.error('Webapp message:', message.content)
+      logger.error('Webapp message:', { message: message.content })
       break
     case 'debug':
-      // eslint-disable-next-line no-console
-      console.debug('Webapp message:', message.content)
+      logger.debug('Webapp message:', { message: message.content })
       break
   }
 }

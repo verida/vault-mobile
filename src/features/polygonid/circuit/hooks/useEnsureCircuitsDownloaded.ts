@@ -1,8 +1,11 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import { useDownloadCircuit } from './useDownloadCircuit'
 import { useIsCircuitsDownloaded } from './useIsCircuitsDownloaded'
+
+const logger = new Logger('Polygon ID')
 
 export function useEnsureCircuitsDownloaded(
   maybeCircuitIds: readonly `${CircuitId}`[]
@@ -25,8 +28,7 @@ export function useEnsureCircuitsDownloaded(
     // If we're loading or all the circuits are downloaded, don't attempt to download them.
     if (loading || isCircuitsDownloadedResult) return
 
-    // eslint-disable-next-line no-console
-    console.warn('trying to install', Math.random())
+    logger.warn('Trying to download the circuits')
 
     Promise.all(
       circuitIds.map((circuitId) =>
