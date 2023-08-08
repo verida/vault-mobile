@@ -28,7 +28,7 @@ export function useEnsureCircuitsDownloaded(
     // If we're loading or all the circuits are downloaded, don't attempt to download them.
     if (loading || isCircuitsDownloadedResult) return
 
-    logger.warn('Trying to download the circuits')
+    logger.info('Trying to download the circuits')
 
     Promise.all(
       circuitIds.map((circuitId) =>
