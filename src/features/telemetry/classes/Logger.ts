@@ -1,7 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import { LogLevel } from 'features/telemetry'
 
-import config from 'config/environment'
+import { config } from 'config/environment'
 
 const levelOrder: LogLevel[] = ['error', 'warn', 'info', 'debug']
 const currentLogLevelIndex = levelOrder.indexOf(config.logLevel)
@@ -56,7 +56,7 @@ export class Logger {
       })
     }
 
-    if (!__DEV__) {
+    if (!config.devMode) {
       // Simply skip `console` if not in dev mode
       return
     }
