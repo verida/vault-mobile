@@ -196,7 +196,7 @@ export class PolygonIDManager {
         // It really shouldn't happen unless the network fails
         // in the short time period between saving the credential
         // in the polygon ID library and then saving it here
-        logger.error(credentialDatastore.errors);
+        logger.error(JSON.stringify(credentialDatastore.errors));
       }
     });
   }
@@ -489,14 +489,14 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
       const existingRecord = await this.database.get(args.alias);
       // @ts-ignore
       record._rev = existingRecord._rev;
-    } catch (err: any) {
+    } catch (err: unknown) {
       // not found, which is fine
     }
 
     try {
       await this.database.save(record);
-    } catch (err) {
-      logger.error(err);
+    } catch (error: unknown) {
+      logger.error(JSON.stringify(error));
     }
   }
 

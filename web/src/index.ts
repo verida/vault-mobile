@@ -150,18 +150,20 @@ async function handlePromiseTask<T>({
 
     // Resolve with a "result" field to signify successful execution.
     return postMessageToWebView(JSON.stringify({ taskId, result }));
-  } catch (cause) {
+  } catch (cause: unknown) {
     logger.error(`Task ${taskId} failed to resolve.`);
-    logger.error(cause);
 
-    const error = new Error("Failed to resolve.", { cause });
+    const stringifiedCause = JSON.stringify(
+      cause,
+      Object.getOwnPropertyNames(cause)
+    );
+    logger.error(stringifiedCause);
+
     return postMessageToWebView(
       JSON.stringify({
         taskId,
         // Resolve with an "error" field to signify an erroneous invocation.
-        error: JSON.parse(
-          JSON.stringify(error, Object.getOwnPropertyNames(error))
-        ),
+        error: JSON.parse(stringifiedCause),
       })
     );
   }
