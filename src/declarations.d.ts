@@ -12,15 +12,15 @@ declare module '*.svg' {
 
 declare module 'react-native-config' {
   interface Env {
-    LOG_LEVEL?: string
-    INFURA_API_KEY: string
-    SENTRY_ENVIRONMENT: string
-    BITRISE_TRIGGERED_WORKFLOW_TITLE: string
+    CODE_PUSH_DEPLOYMENT_KEY_ANDROID?: string
+    CODE_PUSH_DEPLOYMENT_KEY_IOS?: string
     DEPLOY_ENVIRONMENT: string
-
-    // Network
-    NETWORK_ENVIRONMENT: string
+    BITRISE_TRIGGERED_WORKFLOW_TITLE: string
+    NETWORK_ENVIRONMENT?: string
     NETWORK_ENDPOINT_URL: string
+    INFURA_API_KEY: string
+    LOG_LEVEL?: string
+    SENTRY_ENVIRONMENT: string
   }
   const BuildConfig: Env
   export default BuildConfig
