@@ -89,13 +89,13 @@ export class PolygonIDManager {
   }
 
   public async handleAuthorizationRequest(data: AuthorizationRequestMessage) {
-    logger.debug("Receive an authorization request");
+    logger.info("Receive an authorization request");
 
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
     // TODO: Check the instance properties 'this.packageMgr', 'this.proofService', 'this.did' and 'this.credentialWallet' before using them, then remove the '!' from the code. '!' is a workaround for the compiler but not at runtime. If these properties are not set, throw an error saying we should init the manager first.
 
-    logger.debug("Handling the authorization request with Polygon ID SDK");
+    logger.info("Handling the authorization request with Polygon ID SDK");
 
     const authHandler = new AuthHandler(
       this.packageMgr!,
@@ -107,7 +107,7 @@ export class PolygonIDManager {
       encodedData
     );
 
-    logger.debug("Calling authorization request callback");
+    logger.info("Calling authorization request callback");
     try {
       // TODO: Add a type to the axios response
       const response = await Axios.post(
@@ -117,27 +117,27 @@ export class PolygonIDManager {
       );
       // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
 
-      logger.debug("Authorization request callback called successfully");
+      logger.info("Authorization request callback called successfully");
 
       return {
         callbackResponse: response.data,
         authResponse: result.authResponse,
       };
     } catch (error: unknown) {
-      logger.error("Error calling authorization request callback");
+      logger.warn("Error calling authorization request callback");
       // Rethrow the error so the UI actually shows something went wrong
       throw error;
     }
   }
 
   public async handleCredentialsOffer(data: CredentialsOfferMessage) {
-    logger.debug("Receive a credentials offer");
+    logger.info("Receive a credentials offer");
 
     const encodedData = Buffer.from(JSON.stringify(data), "utf-8");
 
     // TODO: Check the instance properties 'this.packageMgr', 'this.did' and 'this.credentialWallet' before using them, then remove the '!' from the code. '!' is a workaround for the compiler but not at runtime. If these properties are not set, throw an error saying we should init the manager first.
 
-    logger.debug("Handling the credentials offer with Polygon ID SDK");
+    logger.info("Handling the credentials offer with Polygon ID SDK");
 
     const fetchHandler = new FetchHandler(this.packageMgr!);
     const credentials = await fetchHandler.handleCredentialOffer(
@@ -145,10 +145,10 @@ export class PolygonIDManager {
       encodedData
     );
 
-    logger.debug("Saving the credentials in the Polygon ID credential wallet");
+    logger.info("Saving the credentials in the Polygon ID credential wallet");
     await this.credentialWallet!.saveAll(credentials);
 
-    logger.debug("Saving the credentials in the Verida Vault of the account");
+    logger.info("Saving the credentials in the Verida Vault of the account");
     await this.saveCredentials(credentials);
 
     // TODO: Optimise with a Promise.allSettled to save both in parallel
@@ -190,13 +190,25 @@ export class PolygonIDManager {
 
     results.forEach((result) => {
       if (result.status === "rejected") {
-        logger.log(result.reason);
+        logger.error(
+          "Error while saving Polygon ID credential in Verida Vault",
+          result.reason
+        );
       } else if (!result.value) {
         // Is there a better way to handle a save failure?
         // It really shouldn't happen unless the network fails
         // in the short time period between saving the credential
         // in the polygon ID library and then saving it here
-        logger.error(JSON.stringify(credentialDatastore.errors));
+        logger.error(
+          "Error while saving Polygon ID credential in Verida Vault",
+          new Error("Saving Polygon ID credential in Verida Vault failed"),
+          {
+            error: JSON.stringify(
+              credentialDatastore.errors,
+              Object.getOwnPropertyNames(credentialDatastore.errors)
+            ),
+          }
+        );
       }
     });
   }
@@ -412,7 +424,7 @@ class VeridaDataSource<Type> implements IDataSource<Type> {
     let record: any = {};
     try {
       record = await this.database.get(key);
-    } catch (err: any) {
+    } catch (error: unknown) {
       // @ts-ignore
       record._id = value[keyName];
       record.data = value;
@@ -489,14 +501,17 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
       const existingRecord = await this.database.get(args.alias);
       // @ts-ignore
       record._rev = existingRecord._rev;
-    } catch (err: unknown) {
+    } catch (error: unknown) {
       // not found, which is fine
     }
 
     try {
       await this.database.save(record);
     } catch (error: unknown) {
-      logger.error(JSON.stringify(error));
+      // TODO: Shouldn't we throw an error instead?
+      if (error instanceof Error) {
+        logger.error("Error while importing key by alias", error);
+      }
     }
   }
 
@@ -511,13 +526,12 @@ class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
     try {
       const result: any = await this.database.get(args.alias);
       if (!result) {
-        throw new Error("no key under given alias");
+        throw new Error("No key under given alias");
       }
 
       return result.value;
-    } catch (err) {
-      logger.log(err);
-      throw new Error("no key under given alias");
+    } catch (error: unknown) {
+      throw new Error("No key under given alias");
     }
   }
 }

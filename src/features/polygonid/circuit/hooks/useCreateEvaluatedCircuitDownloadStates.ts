@@ -1,3 +1,4 @@
+import { Sentry } from 'features/telemetry'
 import * as React from 'react'
 
 import { Stateful } from '../../@types'
@@ -16,6 +17,10 @@ export function useCreateEvaluatedCircuitDownloadStates({
   // These are the download states as asserted by reading the file system. If a file exists,
   // it is assumed downloaded. Else, uninitialized.
   const circuitDownloadStates = useCreateCircuitDownloadStates({ publicDir })
+
+  if ('error' in circuitDownloadStates && circuitDownloadStates.error) {
+    Sentry.captureException(circuitDownloadStates.error)
+  }
 
   // Asserted download states can be written manually from the codebase at runtime; here, we
   // can update the current state of a download like progress.

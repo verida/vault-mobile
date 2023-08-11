@@ -28,16 +28,20 @@ export function useCreatePolygonIdManager(): Stateful<string> {
   const account = accountManager.getSelectedAccount()
 
   React.useEffect(() => {
-    logger.debug('Trying to create a new Polygon ID Manager')
+    logger.debug('Checking to create a new Polygon ID Manager')
     setState(loadingState)
     if (!isPolygonIdReady) {
-      logger.debug('Polygon ID is not ready, cannot create Polygon ID Manager')
+      logger.debug(
+        'Polygon ID is not ready, cannot create Polygon ID Manager yet'
+      )
       return
     }
     if (!account) {
-      logger.debug('No Verida account, cannot create Polygon ID Manager')
+      logger.warn('No Verida account, cannot create Polygon ID Manager yet')
       return
     }
+
+    logger.info('Polygon ID is ready and Verida account is available')
 
     // TODO: Base the Polygon ID network on the Verida network (Testnet or Mainnet) when available
     const polygonIdNetwork: 'mainnet' | 'testnet' = 'mainnet'
@@ -67,16 +71,18 @@ export function useCreatePolygonIdManager(): Stateful<string> {
 
     const init = async () => {
       try {
-        logger.debug('Creating a new Polygon ID Manager')
+        logger.info('Creating a new Polygon ID Manager')
         const managerId = await createIdManager(config)
-        logger.debug('New Polygon ID Manager created', { managerId })
+        logger.info('New Polygon ID Manager created', { managerId })
 
         setState({ loading: false, result: managerId })
-      } catch (cause) {
-        logger.error('Error while creating a Polygon ID Manager')
+      } catch (error: unknown) {
+        logger.warn('Error while creating a Polygon ID Manager')
         setState({
           loading: false,
-          error: new Error('Failed to create PolygonIdManager.', { cause }),
+          error: new Error('Failed to create PolygonIdManager', {
+            cause: error,
+          }),
         })
       }
     }

@@ -1,4 +1,4 @@
-import { Logger } from 'features/telemetry'
+import { Logger, Sentry } from 'features/telemetry'
 import * as React from 'react'
 import { Platform } from 'react-native'
 // @ts-expect-error missing_declaration
@@ -24,21 +24,27 @@ export function useFileServer({ dir, port }: FileServerProps) {
   })
 
   React.useEffect(() => {
-    logger.debug(`Starting server`, { port })
+    logger.info(`Starting web app server`, { port })
     server
       .start()
       .then(() => {
         setIsReady(true)
-        logger.debug('Server started')
+        logger.info('Web app server started', { port })
       })
-      .catch(logger.error)
+      .catch((error: unknown) => {
+        logger.warn('Error while starting the server')
+        Sentry.captureException(error)
+      })
+
     return () => {
       try {
-        logger.debug('Stopping server')
+        logger.info('Stopping web app server')
         setIsReady(false)
         server.stop()
+        logger.info('Web app server stopped')
       } catch (error: unknown) {
-        logger.error('Error while stopping the server', { error })
+        logger.warn('Error while stopping the server')
+        Sentry.captureException(error)
       }
     }
   }, [server, port])

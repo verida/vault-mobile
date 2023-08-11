@@ -25,48 +25,45 @@ export function useInstallWebView(): Stateful<string> {
         const fromDir = WEBAPP_BUNDLE_DIR
         const toDir = WEBAPP_ROOT_DIR
 
-        logger.debug('useInstallWebView.ts ~ useInstallWebView ~ fromDir:', {
-          fromDir,
-        })
-        logger.debug('useInstallWebView.ts ~ useInstallWebView ~ toDir:', {
-          toDir,
-        })
+        logger.info('Checking the Polygon ID web app')
 
         setState(loadingState)
 
         // Will throw an Error if the webapp isn't in the bundle
         await checkWebappBundleExist(fromDir)
 
+        // Will throw an error if the bundle is empty
         const webappVersionAlreadyInstalled =
           await isWebappVersionAlreadyInstalled(fromDir, toDir)
 
         if (webappVersionAlreadyInstalled) {
-          logger.debug(
-            'useInstallWebView.ts ~ useInstallWebView ~ Webapp version already installed'
-          )
-
-          // Do nothing
+          logger.info('Web app version is already installed')
         } else {
-          logger.debug(
-            'useInstallWebView.ts ~ useInstallWebView ~ Webapp version not yet installed'
-          )
+          logger.info('Web app version is not yet installed')
 
           await installWebapp(fromDir, toDir)
+
+          const checkWebappIsInstalled = await isWebappVersionAlreadyInstalled(
+            fromDir,
+            toDir
+          )
+          if (checkWebappIsInstalled) {
+            logger.info('Web app installation verified')
+          } else {
+            logger.warn('Web app installation cannot be verified')
+            throw new Error('Web app installation cannot be verified')
+          }
+
+          logger.info('Web app successfully installed')
         }
 
-        // logger.debug(
-        //   'useInstallWebView.ts ~ useInstallWebView ~ Webapp directory content:',
-        //   await RNBlobUtil.fs.ls(toDir)
-        // )
-
-        logger.info('[useInstallWebView] Webapp successfully installed!')
-
         setState({ result: toDir, loading: false })
-      } catch (cause) {
-        // eslint-disable-next-line no-console
-        console.error(cause)
+      } catch (error: unknown) {
+        logger.error('Failed to install Polygon ID web app', { error })
         setState({
-          error: new Error('Failed to install WebView', { cause }),
+          error: new Error('Failed to install Polygon ID web app', {
+            cause: error,
+          }),
           loading: false,
         })
       }
@@ -84,16 +81,12 @@ async function checkWebappBundleExist(webappBundleDir: string) {
       : await RNFS.exists(webappBundleDir)
 
   if (isFromDirExist) {
-    logger.debug(
-      'useInstallWebView.ts ~ checkWebappBundleExist ~ webappBundleDir exists'
-    )
+    logger.info('Web app bundle Dir exists')
   } else {
-    logger.debug(
-      'useInstallWebView.ts ~ checkWebappBundleExist ~ webappBundleDir doesnt exist'
-    )
-    throw new Error(
-      `Failed to install the Webapp. Directory in bundle doesn't exists.`
-    )
+    logger.warn(`Web app bundle Dir doesn't exists`, {
+      webappBundleDir,
+    })
+    throw new Error(`Polygon ID web app bundle Dir doesn't exists`)
   }
 }
 
@@ -119,9 +112,10 @@ async function isWebappVersionAlreadyInstalled(
   const files = assets.filter((item) => item.isFile())
 
   if (files.length === 0) {
-    throw new Error(
-      `Failed to install the Webapp. Directory in bundle is empty.`
-    )
+    logger.warn(`Polygon ID web app bundle Dir is empty`, {
+      webappBundleDir,
+    })
+    throw new Error(`Polygon ID web app bundle Dir is empty`)
   }
 
   const firstFile = files[0]
@@ -131,19 +125,16 @@ async function isWebappVersionAlreadyInstalled(
 }
 
 async function installWebapp(webappBundleDir: string, webappTargetDir: string) {
+  logger.info('Installing new version of the web app')
+
   const webappDirExists = await isWebappDirExist(webappTargetDir)
 
   if (webappDirExists) {
-    logger.debug(
-      'useInstallWebView.ts ~ installWebapp ~ Webapp target dir already exists, meaning it is a previous version of the Webapp'
-    )
-
+    logger.info('Web app target dir already exists from a previous version')
     await removeWebAppContent(webappTargetDir)
   } else {
-    logger.debug(
-      'useInstallWebView.ts ~ installWebapp ~ Webapp target dir doesnt exist'
-    )
-
+    logger.info(`Web app target dir doesn't exist`)
+    logger.info(`Creating empty web app target dir`)
     await RNFS.mkdir(webappTargetDir)
   }
 
@@ -151,9 +142,7 @@ async function installWebapp(webappBundleDir: string, webappTargetDir: string) {
 }
 
 async function removeWebAppContent(webappDir: string) {
-  logger.debug(
-    'useInstallWebView.ts ~ removeWebAppContent ~ Removing previous webapp version content'
-  )
+  logger.info('Removing current content of the web app')
 
   const reader = await RNFS.readDir(webappDir)
   await Promise.all(
@@ -162,9 +151,7 @@ async function removeWebAppContent(webappDir: string) {
       .filter((item) => item.path !== WEBAPP_PUBLIC_DIR)
       // Removing all other files
       .map(async (item) => {
-        logger.debug(
-          `useInstallWebView.ts ~ removeWebAppContent ~ Removing item: ${item.path}`
-        )
+        logger.debug(`Removing item from web app: ${item.path}`)
 
         await RNFS.unlink(item.path)
       })
@@ -172,9 +159,7 @@ async function removeWebAppContent(webappDir: string) {
 }
 
 async function copyWebapp(fromDir: string, toDir: string) {
-  logger.debug(
-    'useInstallWebView.ts ~ copyWebapp ~ Copying the new version of the Webapp'
-  )
+  logger.info('Copying the new version of the web app')
 
   await copyWebappItems(fromDir, fromDir, toDir)
 }
@@ -184,12 +169,8 @@ async function copyWebappItems(
   fromDir: string,
   toDir: string
 ) {
-  logger.debug(
-    `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying Webapp items from ${fromDir}`
-  )
-  logger.debug(
-    `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Copying Webapp items to ${toDir}`
-  )
+  logger.debug(`Copying web app items from ${fromDir}`)
+  logger.debug(`Copying web app items to ${toDir}`)
 
   const reader =
     Platform.OS === 'android'
@@ -200,18 +181,12 @@ async function copyWebappItems(
 
   await Promise.all(
     directories.map(async (directory) => {
-      logger.debug(
-        `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ directory.path: ${directory.path}`
-      )
-
       const targetDirPath = `${toDir}/${directory.path.replace(
         `${rootFromDir}/`,
         ''
       )}`
 
-      logger.debug(
-        `useInstallWebView.ts ~ copyAssetWebFolderToDocument ~ Creating directory ${targetDirPath}`
-      )
+      logger.debug(`Creating directory ${targetDirPath}`)
 
       await RNFS.mkdir(targetDirPath)
     })
