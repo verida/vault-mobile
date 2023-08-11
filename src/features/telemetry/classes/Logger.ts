@@ -1,5 +1,4 @@
-import * as Sentry from '@sentry/react-native'
-import { LogLevel } from 'features/telemetry'
+import { LogLevel, Sentry } from 'features/telemetry'
 
 import { config } from 'config/environment'
 
