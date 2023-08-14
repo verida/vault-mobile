@@ -1,6 +1,7 @@
 import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import { setNewMessagesCount } from 'features/inbox'
+import { isValidVeridaDid } from 'features/verida'
 import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
@@ -72,6 +73,7 @@ export const fetchInboxCount = throttle(
   { leading: true, trailing: false }
 )
 
+// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 export async function getProfile(did: string) {
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -98,11 +100,23 @@ export async function getProfile(did: string) {
   }
 }
 
+// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 export async function getPublicProfile(
   did: string,
   contextName: string = CONFIG.VERIDA_CONTEXT_NAME
 ) {
   try {
+    if (!isValidVeridaDid(did)) {
+      // No need to try get the public profile of a non-Verida DID.
+
+      // TODO: Report the DID to the telemetry so that we can plan on supporting the DID method but for the moment our telemetry quota is limited
+
+      return {
+        name: 'Unknown',
+        avatar: DefaultAvatar,
+      }
+    }
+
     const publicProfile = await AccountManager.getInstance()
       .getClient()
       ?.openPublicProfile(did, contextName, 'basicProfile')
@@ -123,6 +137,7 @@ export async function getPublicProfile(
   }
 }
 
+// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 // @todo: Add to vault common
 export const getInboxProfile = async (did: string, context: string) => {
   const client = AccountManager.getInstance().client
@@ -239,6 +254,7 @@ export async function fetchConfigJson<T>(url: string): Promise<T[]> {
   }
 }
 
+// TODO: Move to src/utils
 /**
  * Sleep for an exact amount of milliseconds
  * @param ms milliseconds
@@ -248,6 +264,7 @@ export async function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+// TODO: Move to src/utils
 /**
  * Execute an async function and abort if it takes too much time
  * @param promise the async function
