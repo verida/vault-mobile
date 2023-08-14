@@ -2,6 +2,7 @@ import * as Sentry from '@sentry/react-native'
 
 import { config } from 'config/environment'
 
+// Re-export Sentry from here so it's easier to import
 export { Sentry }
 
 export function initSentry() {

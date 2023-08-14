@@ -39,6 +39,8 @@ import { ModalProvider } from './contexts/ModalContext'
 
 initApplication()
 
+// TODO: Move other initialisations into the 'initApplication'
+
 configureNotifications()
 
 messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
