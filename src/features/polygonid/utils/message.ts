@@ -15,7 +15,7 @@ function checkParsedMessage(
   parsedMessage: Record<string, unknown>,
   originalMessage: string
 ) {
-  // Merely checking the parsedMessage is not null/undefined/empty
+  // For now, merely checking the parsedMessage is not null/undefined/empty. Could add stronger checks.
   if (parsedMessage) {
     return
   }
