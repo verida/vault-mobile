@@ -11,8 +11,8 @@ export const rejectSessionRequest = ({
   readonly reason: string
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly web3wallet: IWeb3Wallet
-}) =>
-  void Promise.all([
+}) => {
+  Promise.all([
     __DEV__ &&
       // eslint-disable-next-line no-console
       console.error(
@@ -24,3 +24,4 @@ export const rejectSessionRequest = ({
       response: formatJsonRpcError(request.id, reason),
     }),
   ])
+}
