@@ -20,7 +20,7 @@ import {
 } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { getNearAccountForWalletConnectRequestOrThrow } from 'features/walletConnect'
-import { providers, transactions } from 'near-api-js'
+import { providers, transactions as Transactions } from 'near-api-js'
 import * as React from 'react'
 
 import {
@@ -65,7 +65,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
       }: WalletConnectSessionRequestCallbackParams) => {
         const provider = getNearProvider(rpc)
 
-        const permission: transactions.FunctionCallPermission =
+        const permission: Transactions.FunctionCallPermission =
           request.params.request.params.permission
 
         const nearAccount = await getNearAccountForWalletConnectRequestOrThrow({
@@ -144,7 +144,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
         const [signedTransaction] = await nearSignTransactions({
           nearAccount,
           transactions: [
-            transactions.Transaction.decode(Buffer.from(transactionData)),
+            Transactions.Transaction.decode(Buffer.from(transactionData)),
           ],
         })
 
@@ -230,7 +230,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
           nearAccount,
           transactions: request.params.request.params.transactions.map(
             (transactionData: Uint8Array) =>
-              transactions.Transaction.decode(Buffer.from(transactionData))
+              Transactions.Transaction.decode(Buffer.from(transactionData))
           ),
         })
 
