@@ -111,15 +111,13 @@ function ScanQrCode(
   // eslint-disable-next-line react-hooks/rules-of-hooks
   const [maybeClipboardContent] = __DEV__ ? useClipboard() : []
 
-  React.useEffect(
-    () =>
-      void (async () => {
-        if (!maybeClipboardContent) return
+  React.useEffect(() => {
+    ;(async () => {
+      if (!maybeClipboardContent) return
 
-        return handleQrCode(maybeClipboardContent)
-      })(),
-    [maybeClipboardContent, handleQrCode]
-  )
+      return handleQrCode(maybeClipboardContent)
+    })()
+  }, [maybeClipboardContent, handleQrCode])
 
   return (
     <View style={styles.container}>
