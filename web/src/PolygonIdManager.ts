@@ -39,8 +39,8 @@ import {
   VerificationParams,
   W3CCredential,
   ZKPPacker,
+  core,
 } from "@0xpolygonid/js-sdk";
-import { Blockchain, DID, DidMethod, NetworkId } from "@iden3/js-iden3-core";
 import { proving } from "@iden3/js-jwz";
 import {
   IDatabase,
@@ -60,9 +60,9 @@ export interface PolygonIDManagerConfig {
   veridaDidClientConfig: AccountNodeDIDClientConfig;
   veridaCredentialRecordSchema: string;
   polygonIdPrivateKey: string;
-  polygonIdBlockchain: Blockchain;
-  polygonIdNetworkId: NetworkId;
-  polygonIdDidMethod: DidMethod;
+  polygonIdBlockchain: core.Blockchain;
+  polygonIdNetworkId: core.NetworkId;
+  polygonIdDidMethod: core.DidMethod;
   polygonIdRevocationBaseUrl: string;
   polygonIdRevocationType: CredentialStatusType;
   polygonIdRpcUrl: string;
@@ -77,7 +77,7 @@ const base64StringToUint8Array = (str: string): Uint8Array =>
 export class PolygonIDManager {
   config: PolygonIDManagerConfig;
   context?: Context;
-  did?: DID;
+  did?: core.DID;
   identityWallet?: IIdentityWallet;
   credentialWallet?: ICredentialWallet;
   proofService?: IProofService;

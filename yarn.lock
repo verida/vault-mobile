@@ -3067,7 +3067,7 @@
     base58-js "^1.0.4"
     cross-sha256 "^1.2.0"
 
-"@iden3/js-iden3-core@1.0.0-beta.2", "@iden3/js-iden3-core@^1.0.0-beta.2":
+"@iden3/js-iden3-core@1.0.0-beta.2":
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@iden3/js-iden3-core/-/js-iden3-core-1.0.0-beta.2.tgz#fe0b7e7ec4b903c956a61510708a05319566e78a"
   integrity sha512-1nQQa1NavQ2+6REmpVG7kawN+P4PmSFKYwDK/UIcQl94oNMgwfQm0ygVwWePVGqHrQSlidD9mH7C874tJlXzJA==
@@ -3088,7 +3088,7 @@
     jsonld-context-parser "^2.2.2"
     n3 "^1.16.3"
 
-"@iden3/js-jwz@1.0.0-beta.2", "@iden3/js-jwz@^1.0.0-beta.2":
+"@iden3/js-jwz@1.0.0-beta.2":
   version "1.0.0-beta.2"
   resolved "https://registry.yarnpkg.com/@iden3/js-jwz/-/js-jwz-1.0.0-beta.2.tgz#7f5d2a2b8b0c6a184ae97bf13ee0ecc65497832c"
   integrity sha512-jkcm+HAZnhlXTqYCPAcgHg3XZLmgjJ7/RJwPdc6VT1CHJRPYdDYl0/2iH/4k5TwmA/gxx3S5u3k/siiAVPeVpg==
