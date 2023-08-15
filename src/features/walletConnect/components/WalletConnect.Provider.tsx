@@ -281,24 +281,21 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   // HACK: This function body relies on the side effects of how
   //       onRequestRefreshActiveSessions is reallocated whenever the
   //       maybeWeb3Wallet changes.
-  React.useEffect(
-    () =>
-      void (async () => {
-        try {
-          // If there's no Web3Wallet, resort to the DEFAULT_ACTIVE_SESSIONS.
-          if (!maybeWeb3Wallet)
-            return setActiveSessions(DEFAULT_ACTIVE_SESSIONS)
+  React.useEffect(() => {
+    ;(async () => {
+      try {
+        // If there's no Web3Wallet, resort to the DEFAULT_ACTIVE_SESSIONS.
+        if (!maybeWeb3Wallet) return setActiveSessions(DEFAULT_ACTIVE_SESSIONS)
 
-          await onRequestRefreshActiveSessions()
-        } catch (e) {
-          // eslint-disable-next-line no-console
-          __DEV__ && console.error(e)
+        await onRequestRefreshActiveSessions()
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        __DEV__ && console.error(e)
 
-          Sentry.captureException(e)
-        }
-      })(),
-    [onRequestRefreshActiveSessions, maybeWeb3Wallet]
-  )
+        Sentry.captureException(e)
+      }
+    })()
+  }, [onRequestRefreshActiveSessions, maybeWeb3Wallet])
 
   const onRequestDeleteSession = React.useCallback(
     async (
