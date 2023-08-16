@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
-    "@0xpolygonid/js-sdk": "^1.0.0-beta.9",
+    "@0xpolygonid/js-sdk": "^1.0.2",
     "@effortlessmotion/html-webpack-inline-source-plugin": "^1.0.3",
-    "@iden3/js-jwz": "^1.0.0-beta.2",
+    "@iden3/js-jwz": "^1.0.0",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",
@@ -36,8 +36,7 @@
     "stream-http": "^3.2.0",
     "typescript": "^4.9.5",
     "url": "^0.11.0",
-    "util": "^0.12.5",
-    "web-vitals": "^2.1.4"
+    "util": "^0.12.5"
   },
   "resolutions": {
     "fastfile": "0.0.19"
