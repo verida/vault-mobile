@@ -143,18 +143,20 @@ export function createCircuitStorage() {
 }
 
 export async function initCircuitStorage(circuitStorage: CircuitStorage) {
-  // TODO: Optimise with loading in parallel via Promise.allSettled
-  // TODO: Do we need all circuits instead of just two of them?
-
-  await circuitStorage.saveCircuitData(
-    CircuitId.AuthV2,
-    await getCircuitData(CircuitId.AuthV2)
-  );
-
-  await circuitStorage.saveCircuitData(
-    CircuitId.AtomicQuerySigV2,
-    await getCircuitData(CircuitId.AtomicQuerySigV2)
-  );
+  Promise.all([
+    circuitStorage.saveCircuitData(
+      CircuitId.AuthV2,
+      await getCircuitData(CircuitId.AuthV2)
+    ),
+    circuitStorage.saveCircuitData(
+      CircuitId.AtomicQuerySigV2,
+      await getCircuitData(CircuitId.AtomicQuerySigV2)
+    ),
+    circuitStorage.saveCircuitData(
+      CircuitId.AtomicQueryMTPV2,
+      await getCircuitData(CircuitId.AtomicQueryMTPV2)
+    ),
+  ]);
 }
 
 export async function getCircuitData(
@@ -188,7 +190,8 @@ export function buildProofService(
     identityWallet,
     credentialWallet,
     circuitStorage,
-    stateStorage
+    stateStorage,
+    { ipfsGatewayURL: "https://ipfs.io" } // TODO: Get from configuration
   );
 }
 

@@ -13,7 +13,7 @@ import {
   PackageManager,
   defaultEthConnectionConfig,
 } from "@0xpolygonid/js-sdk";
-import Axios from "axios";
+import Axios, { AxiosRequestConfig } from "axios";
 import { Context } from "@verida/client-ts";
 import {
   getVeridaContext,
@@ -40,6 +40,8 @@ export class PolygonIDManager {
   proofService?: ProofService;
   packageManager?: PackageManager;
   dataStorage?: IDataStorage;
+  authHandler?: AuthHandler;
+  fetchHandler?: FetchHandler;
 
   public constructor(config: PolygonIDManagerConfig) {
     // TODO: Find a better way to pass the sensitive information to the manager.
@@ -59,7 +61,7 @@ export class PolygonIDManager {
     }
     if (!this.context) {
       throw new Error(
-        "Cannot build Data Storage with undefined Verida Context"
+        "Cannot initialise Polygon with undefined Verida Context"
       );
     }
 
@@ -72,7 +74,10 @@ export class PolygonIDManager {
       ethConnectionConfig
     );
 
-    this.credentialWallet = buildCredentialWallet(this.dataStorage);
+    this.credentialWallet = buildCredentialWallet(
+      this.dataStorage,
+      ethConnectionConfig
+    );
 
     this.identityWallet = await buildIdentityWallet(
       this.context,
@@ -102,6 +107,9 @@ export class PolygonIDManager {
       this.proofService.generateAuthV2Inputs.bind(this.proofService),
       this.proofService.verifyState.bind(this.proofService)
     );
+
+    this.authHandler = new AuthHandler(this.packageManager, this.proofService);
+    this.fetchHandler = new FetchHandler(this.packageManager);
   }
 
   /**
@@ -115,53 +123,49 @@ export class PolygonIDManager {
   ) {
     logger.info("Receive an authorization request");
 
-    if (!this.packageManager) {
-      throw new Error(""); // TODO:
-    }
-
-    if (!this.proofService) {
-      throw new Error(""); // TODO:
-    }
-
-    if (!this.did) {
-      throw new Error(""); // TODO:
-    }
-
-    // TODO: Use TextEncoder instead
-    // var authRawRequest = new TextEncoder().encode(JSON.stringify(message));
-    const encodedMessage = Buffer.from(JSON.stringify(message), "utf-8");
+    const encodedMessage = new TextEncoder().encode(JSON.stringify(message));
 
     logger.info("Handling the authorization request with Polygon ID SDK");
 
-    // TODO: Move authHandler in instance variables
-    const authHandler = new AuthHandler(this.packageManager, this.proofService);
-    const result = await authHandler.handleAuthorizationRequest(
+    if (!this.authHandler) {
+      throw new Error("Cannot handle request as AuthHandler is undefined");
+    }
+
+    if (!this.did) {
+      throw new Error("Cannot handle request as user DID is undefined");
+    }
+
+    const result = await this.authHandler.handleAuthorizationRequest(
       this.did,
       encodedMessage
     );
 
-    logger.info("Calling authorization request callback");
     try {
-      // TODO: Add config to axios call
-      // const config = {
-      //   headers: {
-      //     "Content-Type": "text/plain",
-      //   },
-      //   responseType: "json",
-      // };
+      let response;
+      if (result.authRequest.body?.callbackUrl) {
+        logger.info("Calling authorization request callback");
 
-      // TODO: Add a type to the axios response
-      const response = await Axios.post(
-        // TODO: Check the callback exists before calling it with axios. Raise an specific Error if not.
-        result.authRequest.body!.callbackUrl,
-        result.token
-      );
-      // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
+        const config: AxiosRequestConfig = {
+          headers: {
+            "Content-Type": "text/plain",
+          },
+          responseType: "json",
+        };
 
-      logger.info("Authorization request callback called successfully");
+        // TODO: Add a type to the axios response
+        response = await Axios.post(
+          result.authRequest.body.callbackUrl,
+          result.token,
+          config
+        );
+
+        logger.info("Authorization request callback called successfully");
+      } else {
+        logger.warn("No callback to call in the authorization request");
+      }
 
       return {
-        callbackResponse: response.data,
+        callbackResponse: response?.data,
         authResponse: result.authResponse,
       };
     } catch (error: unknown) {
@@ -180,31 +184,27 @@ export class PolygonIDManager {
   public async handleCredentialsOffer(message: CredentialsOfferMessage) {
     logger.info("Receive a credentials offer");
 
-    if (!this.packageManager) {
-      throw new Error(""); // TODO:
+    const encodedData = new TextEncoder().encode(JSON.stringify(message));
+
+    if (!this.fetchHandler) {
+      throw new Error("Cannot handle offer as FetchHandler is undefined");
     }
 
     if (!this.credentialWallet) {
-      throw new Error(""); // TODO:
+      throw new Error("Cannot handle offer as CredentialWallet is undefined");
     }
-
-    // TODO: Use TextEncoder instead
-    // var authRawRequest = new TextEncoder().encode(JSON.stringify(message));
-    const encodedData = Buffer.from(JSON.stringify(message), "utf-8");
 
     logger.info("Handling the credentials offer with Polygon ID SDK");
 
-    // TODO: Move fetchHandler in instance variables
-    const fetchHandler = new FetchHandler(this.packageManager);
-    const credentials = await fetchHandler.handleCredentialOffer(encodedData);
+    const credentials = await this.fetchHandler.handleCredentialOffer(
+      encodedData
+    );
 
     logger.info("Saving the credentials in the Polygon ID credential wallet");
     await this.credentialWallet.saveAll(credentials);
 
     logger.info("Saving the credentials in the Verida Vault of the account");
     await this.saveCredentials(credentials);
-
-    // TODO: Optimise with a Promise.allSettled to save both in parallel
 
     return credentials;
   }
@@ -221,7 +221,9 @@ export class PolygonIDManager {
     );
 
     if (!this.context) {
-      throw new Error(""); // TODO:
+      throw new Error(
+        "Cannot save credentials to account's Vault as Verida Context is undefined"
+      );
     }
 
     const credentialDatastore = await getVeridaDatastore(
