@@ -1,0 +1,4 @@
+export const POLYGON_ID_KEYSTORE_DATABASE_NAME = "polygonid_keystore3";
+export const POLYGON_ID_CREDENTIALS_DATABASE_NAME = "polygonid_credentials3";
+export const POLYGON_ID_IDENTITY_DATABASE_NAME = "polygonid_identity3";
+export const POLYGON_ID_PROFILE_DATABASE_NAME = "polygonid_profile3";

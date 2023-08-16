@@ -1,0 +1,274 @@
+import {
+  AuthHandler,
+  AuthorizationRequestMessage,
+  CircuitId,
+  CredentialsOfferMessage,
+  FetchHandler,
+  IDataStorage,
+  W3CCredential,
+  core,
+  IdentityWallet,
+  CredentialWallet,
+  ProofService,
+  PackageManager,
+  defaultEthConnectionConfig,
+} from "@0xpolygonid/js-sdk";
+import Axios from "axios";
+import { Context } from "@verida/client-ts";
+import {
+  getVeridaContext,
+  logger,
+  buildDataStorage,
+  buildCredentialWallet,
+  buildIdentityWallet,
+  createPolygonIdIdentity,
+  createCircuitStorage,
+  initCircuitStorage,
+  getVeridaDatastore,
+  buildProofService,
+  buildPackageManager,
+} from "../utils";
+import { PolygonIDManagerConfig } from "../types";
+
+// TODO: Create a factory to call the init() after the constructor instead of expecting to called when instanciated elsewhere in the code.
+export class PolygonIDManager {
+  config: PolygonIDManagerConfig;
+  context?: Context;
+  did?: core.DID;
+  identityWallet?: IdentityWallet;
+  credentialWallet?: CredentialWallet;
+  proofService?: ProofService;
+  packageManager?: PackageManager;
+  dataStorage?: IDataStorage;
+
+  public constructor(config: PolygonIDManagerConfig) {
+    // TODO: Find a better way to pass the sensitive information to the manager.
+    this.config = config;
+  }
+
+  /**
+   * Initialise the Polygon ID Manager.
+   */
+  public async init() {
+    if (this.did) {
+      return;
+    }
+
+    if (!this.context) {
+      this.context = await getVeridaContext(this.config);
+    }
+    if (!this.context) {
+      throw new Error(
+        "Cannot build Data Storage with undefined Verida Context"
+      );
+    }
+
+    const ethConnectionConfig = defaultEthConnectionConfig;
+    ethConnectionConfig.contractAddress = this.config.polygonIdContractAddress;
+    ethConnectionConfig.url = this.config.polygonIdRpcUrl;
+
+    this.dataStorage = await buildDataStorage(
+      this.context,
+      ethConnectionConfig
+    );
+
+    this.credentialWallet = buildCredentialWallet(this.dataStorage);
+
+    this.identityWallet = await buildIdentityWallet(
+      this.context,
+      this.dataStorage,
+      this.credentialWallet
+    );
+
+    const { did } = await createPolygonIdIdentity(
+      this.identityWallet,
+      this.config
+    );
+    this.did = did;
+
+    const circuitStorage = createCircuitStorage();
+
+    this.proofService = buildProofService(
+      this.identityWallet,
+      this.credentialWallet,
+      circuitStorage,
+      this.dataStorage.states
+    );
+
+    await initCircuitStorage(circuitStorage);
+
+    this.packageManager = buildPackageManager(
+      await circuitStorage.loadCircuitData(CircuitId.AuthV2),
+      this.proofService.generateAuthV2Inputs.bind(this.proofService),
+      this.proofService.verifyState.bind(this.proofService)
+    );
+  }
+
+  /**
+   * Process an authorization request
+   *
+   * @param message
+   * @returns
+   */
+  public async handleAuthorizationRequest(
+    message: AuthorizationRequestMessage
+  ) {
+    logger.info("Receive an authorization request");
+
+    if (!this.packageManager) {
+      throw new Error(""); // TODO:
+    }
+
+    if (!this.proofService) {
+      throw new Error(""); // TODO:
+    }
+
+    if (!this.did) {
+      throw new Error(""); // TODO:
+    }
+
+    // TODO: Use TextEncoder instead
+    // var authRawRequest = new TextEncoder().encode(JSON.stringify(message));
+    const encodedMessage = Buffer.from(JSON.stringify(message), "utf-8");
+
+    logger.info("Handling the authorization request with Polygon ID SDK");
+
+    // TODO: Move authHandler in instance variables
+    const authHandler = new AuthHandler(this.packageManager, this.proofService);
+    const result = await authHandler.handleAuthorizationRequest(
+      this.did,
+      encodedMessage
+    );
+
+    logger.info("Calling authorization request callback");
+    try {
+      // TODO: Add config to axios call
+      // const config = {
+      //   headers: {
+      //     "Content-Type": "text/plain",
+      //   },
+      //   responseType: "json",
+      // };
+
+      // TODO: Add a type to the axios response
+      const response = await Axios.post(
+        // TODO: Check the callback exists before calling it with axios. Raise an specific Error if not.
+        result.authRequest.body!.callbackUrl,
+        result.token
+      );
+      // TODO: Check what is in the response.data to see if worth returning it, otherwise just return the authResponse.
+
+      logger.info("Authorization request callback called successfully");
+
+      return {
+        callbackResponse: response.data,
+        authResponse: result.authResponse,
+      };
+    } catch (error: unknown) {
+      logger.warn("Error calling authorization request callback");
+      // Rethrow the error so the UI actually shows something went wrong
+      throw error;
+    }
+  }
+
+  /**
+   * Process a credential offer.
+   *
+   * @param message the offer message.
+   * @returns The credentials
+   */
+  public async handleCredentialsOffer(message: CredentialsOfferMessage) {
+    logger.info("Receive a credentials offer");
+
+    if (!this.packageManager) {
+      throw new Error(""); // TODO:
+    }
+
+    if (!this.credentialWallet) {
+      throw new Error(""); // TODO:
+    }
+
+    // TODO: Use TextEncoder instead
+    // var authRawRequest = new TextEncoder().encode(JSON.stringify(message));
+    const encodedData = Buffer.from(JSON.stringify(message), "utf-8");
+
+    logger.info("Handling the credentials offer with Polygon ID SDK");
+
+    // TODO: Move fetchHandler in instance variables
+    const fetchHandler = new FetchHandler(this.packageManager);
+    const credentials = await fetchHandler.handleCredentialOffer(encodedData);
+
+    logger.info("Saving the credentials in the Polygon ID credential wallet");
+    await this.credentialWallet.saveAll(credentials);
+
+    logger.info("Saving the credentials in the Verida Vault of the account");
+    await this.saveCredentials(credentials);
+
+    // TODO: Optimise with a Promise.allSettled to save both in parallel
+
+    return credentials;
+  }
+
+  /**
+   * Save a credential to the Verida credential datastore.
+   * This record will then appear in the `Credential` section of the mobile app
+   *
+   * @param credentials
+   */
+  private async saveCredentials(credentials: W3CCredential[]): Promise<void> {
+    logger.log(
+      "Saving credentials to the account's Vault credentials datastore"
+    );
+
+    if (!this.context) {
+      throw new Error(""); // TODO:
+    }
+
+    const credentialDatastore = await getVeridaDatastore(
+      this.context,
+      this.config.veridaCredentialRecordSchema
+    );
+
+    const results = await Promise.allSettled(
+      credentials.map(async (credential) => {
+        const name =
+          credential.credentialSubject.type || "Polygon ID credential"; // TODO: Define a better fallback name
+        const credentialSchema = credential.credentialSchema.id;
+
+        const credentialRecord = {
+          name,
+          // summary: "", TODO: Get a summary somewhere
+          schema: this.config.veridaCredentialRecordSchema,
+          credentialSchema,
+          credentialData: credential,
+        };
+
+        return await credentialDatastore.save(credentialRecord);
+      })
+    );
+
+    results.forEach((result) => {
+      if (result.status === "rejected") {
+        logger.error(
+          "Error while saving Polygon ID credential in Verida Vault",
+          result.reason
+        );
+      } else if (!result.value) {
+        // Is there a better way to handle a save failure?
+        // It really shouldn't happen unless the network fails
+        // in the short time period between saving the credential
+        // in the polygon ID library and then saving it here
+        logger.error(
+          "Error while saving Polygon ID credential in Verida Vault",
+          new Error("Saving Polygon ID credential in Verida Vault failed"),
+          {
+            error: JSON.stringify(
+              credentialDatastore.errors,
+              Object.getOwnPropertyNames(credentialDatastore.errors)
+            ),
+          }
+        );
+      }
+    });
+  }
+}
