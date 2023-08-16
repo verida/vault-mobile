@@ -28,6 +28,12 @@ import {
   VerificationHandlerFunc,
   type VerificationParams,
   ZKPPacker,
+  CredentialStatusResolverRegistry,
+  CredentialStatusType,
+  IssuerResolver,
+  RHSResolver,
+  OnChainResolver,
+  AgentResolver,
 } from "@0xpolygonid/js-sdk";
 import { proving } from "@iden3/js-jwz";
 import { fetchAndDecodeBase64EncodedFile } from "./file";
@@ -42,10 +48,33 @@ import {
 } from "../constants";
 import { PolygonIdConfig } from "../types";
 
-export function buildCredentialWallet(dataStorage: IDataStorage) {
-  // TODO: Create a StatusRegistry?
+export function buildCredentialWallet(
+  dataStorage: IDataStorage,
+  ethConnectionConfig: EthConnectionConfig
+) {
+  const statusRegistry = new CredentialStatusResolverRegistry();
 
-  return new CredentialWallet(dataStorage);
+  statusRegistry.register(
+    CredentialStatusType.SparseMerkleTreeProof,
+    new IssuerResolver()
+  );
+
+  statusRegistry.register(
+    CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
+    new RHSResolver(dataStorage.states)
+  );
+
+  statusRegistry.register(
+    CredentialStatusType.Iden3OnchainSparseMerkleTreeProof2023,
+    new OnChainResolver([ethConnectionConfig])
+  );
+
+  statusRegistry.register(
+    CredentialStatusType.Iden3commRevocationStatusV1,
+    new AgentResolver()
+  );
+
+  return new CredentialWallet(dataStorage, statusRegistry);
 }
 
 export async function buildDataStorage(
