@@ -8,15 +8,31 @@ export function base64StringToUint8Array(value: string) {
   return Uint8Array.from(window.atob(value), (c) => c.charCodeAt(0));
 }
 
+/**
+ * Fetch a file and encode its content to Uint8Array
+ *
+ * @param url URL of the file
+ * @returns the file encoded as Uint8Array
+ */
 export async function fetchAndDecodeBase64EncodedFile(url: string) {
-  const req = await fetch(url); // TODO: handle errors from fetch
-
-  const maybeFileContent = await req.text();
-
-  if (typeof maybeFileContent !== "string" || !maybeFileContent.length)
-    throw new Error(
-      `Expected string file, encountered "${String(maybeFileContent)}".`
-    );
-
-  return base64StringToUint8Array(maybeFileContent); // TODO: Use the utility function from the Polygon ID package instead?
+  return new Promise<Uint8Array>((resolve, reject) => {
+    fetch(url)
+      .then((response) => {
+        if (!response.ok) {
+          reject(new Error(`Error fetching the circuit ${url}`));
+        }
+        return response.text();
+      })
+      .then((fileContent) => {
+        if (typeof fileContent !== "string" || !fileContent.length)
+          reject(
+            new Error(
+              `Error with the circuit file, expected a non-empty string, encountered "${String(
+                fileContent
+              )}".`
+            )
+          );
+        resolve(base64StringToUint8Array(fileContent));
+      });
+  });
 }
