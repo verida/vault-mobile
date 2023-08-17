@@ -24,9 +24,14 @@ export function initSentry() {
     // Session Replay
     // replaysSessionSampleRate: config.sentry.replaysSessionSampleRate,
     // replaysOnErrorSampleRate: config.sentry.replaysOnErrorSampleRate,
-    // beforeSend: (event, hint) => {
-    //   return event
-    // },
+    beforeSend: (event, hint) => {
+      if (config.devMode) {
+        // TODO: To remove once all `Sentry.captureException` are replaced by `logger.error`
+        // eslint-disable-next-line no-console
+        console.error(hint.originalException)
+      }
+      return event
+    },
     ignoreErrors: [
       // TODO: Add errors to ignore in Sentry
     ],
