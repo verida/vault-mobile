@@ -65,6 +65,8 @@ export class PolygonIDManager {
       );
     }
 
+    logger.info("Verida Context set successfully");
+
     const ethConnectionConfig = defaultEthConnectionConfig;
     ethConnectionConfig.contractAddress = this.config.polygonIdContractAddress;
     ethConnectionConfig.url = this.config.polygonIdRpcUrl;
@@ -74,10 +76,14 @@ export class PolygonIDManager {
       ethConnectionConfig
     );
 
+    logger.info("Data storage built successfully");
+
     this.credentialWallet = buildCredentialWallet(
       this.dataStorage,
       ethConnectionConfig
     );
+
+    logger.info("Credential Wallet built successfully");
 
     this.identityWallet = await buildIdentityWallet(
       this.context,
@@ -85,13 +91,19 @@ export class PolygonIDManager {
       this.credentialWallet
     );
 
+    logger.info("Identity Wallet built successfully");
+
     const { did } = await createPolygonIdIdentity(
       this.identityWallet,
       this.config
     );
     this.did = did;
 
+    logger.info("Polygon ID identity created successfully");
+
     const circuitStorage = createCircuitStorage();
+
+    logger.info("Circuit storage created successfully");
 
     this.proofService = buildProofService(
       this.identityWallet,
@@ -100,7 +112,11 @@ export class PolygonIDManager {
       this.dataStorage.states
     );
 
+    logger.info("Proof service built successfully");
+
     await initCircuitStorage(circuitStorage);
+
+    logger.info("Circuit storage initialised successfully");
 
     this.packageManager = buildPackageManager(
       await circuitStorage.loadCircuitData(CircuitId.AuthV2),
@@ -108,8 +124,12 @@ export class PolygonIDManager {
       this.proofService.verifyState.bind(this.proofService)
     );
 
+    logger.info("Package Manager built successfully");
+
     this.authHandler = new AuthHandler(this.packageManager, this.proofService);
+    logger.info("AuthHandler created successfully");
     this.fetchHandler = new FetchHandler(this.packageManager);
+    logger.info("FetchHandler created successfully");
   }
 
   /**
