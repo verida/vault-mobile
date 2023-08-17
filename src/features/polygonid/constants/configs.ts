@@ -1,17 +1,8 @@
-import { PolygonIdManagerConfig } from 'features/polygonid/polygon'
+import { PolygonIdConfig } from 'features/polygonid/polygon'
 
 import { Blockchain, CredentialStatusType, DidMethod, NetworkId } from './iden3'
 
-type PolygonIdPartialConfig = Pick<
-  PolygonIdManagerConfig,
-  | 'polygonIdBlockchain'
-  | 'polygonIdNetworkId'
-  | 'polygonIdDidMethod'
-  | 'polygonIdRevocationBaseUrl'
-  | 'polygonIdRevocationType'
-  | 'polygonIdRpcUrl'
-  | 'polygonIdContractAddress'
->
+type PolygonIdPartialConfig = Omit<PolygonIdConfig, 'polygonIdPrivateKey'>
 
 // TODO: Ask Polygon ID team about revocation
 
@@ -28,6 +19,7 @@ export const polygonIdTestnetConfig: PolygonIdPartialConfig = {
   polygonIdRpcUrl:
     'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN',
   polygonIdContractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4', // Mumbai address
+  polygonIdIpfsGatewayUrl: 'https://ipfs.io',
 }
 
 export const polygonIdMainnetConfig: PolygonIdPartialConfig = {
@@ -40,4 +32,5 @@ export const polygonIdMainnetConfig: PolygonIdPartialConfig = {
   polygonIdRpcUrl:
     'https://polygon-mainnet.g.alchemy.com/v2/CJgbQjPD-NUTcZNMf4jt-mwb-xOQMq6e',
   polygonIdContractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D', // Mainnet address
+  polygonIdIpfsGatewayUrl: 'https://ipfs.io',
 }

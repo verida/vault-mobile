@@ -109,7 +109,8 @@ export class PolygonIDManager {
       this.identityWallet,
       this.credentialWallet,
       circuitStorage,
-      this.dataStorage.states
+      this.dataStorage.states,
+      this.config
     );
 
     logger.info("Proof service built successfully");

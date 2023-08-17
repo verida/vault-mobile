@@ -157,6 +157,7 @@ export async function initCircuitStorage(circuitStorage: CircuitStorage) {
       await getCircuitData(CircuitId.AtomicQueryMTPV2)
     ),
   ]);
+  // TODO: Consider using Promise.allSettled, capturing errors gracefully and accepting to go forward if the bare minimum of circuits (to define) are a success
 }
 
 export async function getCircuitData(
@@ -184,14 +185,15 @@ export function buildProofService(
   identityWallet: IdentityWallet,
   credentialWallet: CredentialWallet,
   circuitStorage: CircuitStorage,
-  stateStorage: IStateStorage
+  stateStorage: IStateStorage,
+  config: PolygonIdConfig
 ) {
   return new ProofService(
     identityWallet,
     credentialWallet,
     circuitStorage,
     stateStorage,
-    { ipfsGatewayURL: "https://ipfs.io" } // TODO: Get from configuration
+    { ipfsGatewayURL: config.polygonIdIpfsGatewayUrl }
   );
 }
 

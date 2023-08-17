@@ -18,6 +18,7 @@ export type PolygonIdConfig = {
   polygonIdRevocationType: CredentialStatusType;
   polygonIdRpcUrl: string;
   polygonIdContractAddress: string;
+  polygonIdIpfsGatewayUrl?: string;
 };
 
 export type PolygonIDManagerConfig = VeridaConfig & PolygonIdConfig;
