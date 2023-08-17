@@ -1,4 +1,10 @@
 import { EnvironmentType } from '@verida/types'
+import {
+  Blockchain,
+  CredentialStatusType,
+  DidMethod,
+  NetworkId,
+} from 'features/polygonid/constants'
 import { LogLevel } from 'features/telemetry'
 import Config from 'react-native-config'
 
@@ -49,6 +55,28 @@ const COMMON_CONFIG = {
     // replaysOnErrorSampleRate: Number(
     //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
+  },
+  polygonId: {
+    common: {
+      blockchain: Blockchain.Polygon,
+      didMethod: DidMethod.PolygonId,
+      revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
+      ipfsGatewayUrl: 'https://ipfs.io', // TODO: Make it an environment variable
+    },
+    testnet: {
+      networkId: NetworkId.Mumbai,
+      revocationBaseUrl: 'https://rhs-staging.polygonid.me/', // TODO: Make it an environment variable
+      rpcUrl:
+        'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN', // TODO: Make it an environment variable
+      contractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4', // TODO: Make it an environment variable?
+    },
+    mainnet: {
+      networkId: NetworkId.Main,
+      revocationBaseUrl: 'https://rhs-staging.polygonid.me/', // TODO: Make it an environment variable
+      rpcUrl:
+        'https://polygon-mainnet.g.alchemy.com/v2/CJgbQjPD-NUTcZNMf4jt-mwb-xOQMq6e', // TODO: Make it an environment variable
+      contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D', // TODO: Make it an environment variable?
+    },
   },
   // --------------------
   ACCOUNTS_STORAGE_KEY: 'accounts',
