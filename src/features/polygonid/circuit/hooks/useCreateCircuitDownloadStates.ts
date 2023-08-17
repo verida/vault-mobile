@@ -1,5 +1,4 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
-import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import RNBlobUtil from 'react-native-blob-util'
 
@@ -12,8 +11,6 @@ import {
 } from '../@types'
 import { ALL_CIRCUIT_IDS } from '../constants'
 import { getCircuitFilePaths } from '../utils'
-
-const logger = new Logger('Polygon ID')
 
 const loadingState = (): Stateful<CircuitDownloadStates> => ({
   loading: true,
@@ -75,7 +72,6 @@ export function useCreateCircuitDownloadStates({
 
         setState({ loading: false, result: circuitDownloadStates })
       } catch (error: unknown) {
-        logger.error('Failed to determine CircuitDownloadStates', { error })
         setState({
           loading: false,
           error: new Error('Failed to determine CircuitDownloadStates', {

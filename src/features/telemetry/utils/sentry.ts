@@ -24,21 +24,9 @@ export function initSentry() {
     // Session Replay
     // replaysSessionSampleRate: config.sentry.replaysSessionSampleRate,
     // replaysOnErrorSampleRate: config.sentry.replaysOnErrorSampleRate,
-    beforeSend: (event, hint) => {
-      if (config.devMode) {
-        // TODO: Challenge this versus using the custom Logger (which will provide the category information)
-        const error =
-          hint?.originalException ||
-          JSON.stringify(
-            event?.exception ?? { message: 'Unknown error' },
-            null,
-            2
-          )
-        // eslint-disable-next-line no-console
-        console.error(error) // error will be shown on LogBox and Console
-      }
-      return event
-    },
+    // beforeSend: (event, hint) => {
+    //   return event
+    // },
     ignoreErrors: [
       // TODO: Add errors to ignore in Sentry
     ],

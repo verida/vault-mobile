@@ -17,13 +17,11 @@ const sentryLevelMapping = {
  *
  * The log level can be configured globally with the environment variable `LOG_LEVEL`.
  *
- * The console won't be used unless in `__DEV__` mode
+ * The console will be used if in `__DEV__` mode
  *
- * A Sentry breadcrumb won't be added unless the `config.sentry.enabled` is set to `true`.
+ * A Sentry breadcrumb will be added for the 'info' and 'warn' level.
  *
- * Note that, for Sentry, only 'info' and 'warn' level are added as breadcrumb, 'debug' is skipped and `Sentry.captureException` must be used separately for errors.
- *
- * @todo Add the `Sentry.captureException` as part of this logger for the `error` level.
+ * For `logger.error`, the error will be captured with `Sentry.captureException`.
  */
 export class Logger {
   private readonly category: string
@@ -70,8 +68,15 @@ export class Logger {
     }
   }
 
-  public error(message: string, data?: Record<string, unknown>) {
-    this.log('error', message, data)
+  public error(error: Error | unknown) {
+    if (config.sentry.enabled) {
+      Sentry.captureException(error)
+    }
+
+    if (config.devMode) {
+      // eslint-disable-next-line no-console
+      console.error(error)
+    }
   }
 
   public warn(message: string, data?: Record<string, unknown>) {

@@ -141,10 +141,7 @@ export const PolygonProvider = ({
   const handleError = React.useCallback(() => {
     setWebPageLoaded(false)
     // TODO: Get the error from the handler
-    logger.error('Error while loading the Polygon ID WebView')
-    Sentry.captureException(
-      new Error('Error while loading the Polygon ID WebView')
-    )
+    logger.error(new Error('Error while loading the Polygon ID WebView'))
   }, [])
 
   // Mark the PolygonProvider as ready if all the required conditions are met.
@@ -310,8 +307,6 @@ function logWebappMessage(log: WebappLogMessage) {
       logger.warn(`Web app: ${log.message}`, log.data)
       break
     case 'error':
-      logger.error(`Web app: ${log.message}`, log.data)
-
       let originalError
       if (log.data && 'error' in log.data && log.data.error) {
         originalError = JSON.parse(log.data.error as string)

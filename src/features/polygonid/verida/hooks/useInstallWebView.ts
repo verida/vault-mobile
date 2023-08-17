@@ -59,7 +59,6 @@ export function useInstallWebView(): Stateful<string> {
 
         setState({ result: toDir, loading: false })
       } catch (error: unknown) {
-        logger.error('Failed to install Polygon ID web app', { error })
         setState({
           error: new Error('Failed to install Polygon ID web app', {
             cause: error,
