@@ -61,7 +61,7 @@ const COMMON_CONFIG = {
       blockchain: Blockchain.Polygon,
       didMethod: DidMethod.PolygonId,
       revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-      ipfsGatewayUrl: 'https://ipfs.io', // TODO: Make it an environment variable
+      ipfsGatewayUrl: 'https://data.verida.network/ipfs', // TODO: Make it an environment variable
     },
     testnet: {
       networkId: NetworkId.Mumbai,
