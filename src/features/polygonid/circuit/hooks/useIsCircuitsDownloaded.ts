@@ -1,5 +1,5 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
-import { Logger, Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 
 import { Stateful } from '../../@types'
 import { CircuitSpecificDownloadStates } from '../@types'
@@ -16,8 +16,11 @@ export function useIsCircuitsDownloaded(
   const { circuitDownloadStates } = useCircuitContext()
 
   if ('error' in circuitDownloadStates && circuitDownloadStates.error) {
-    logger.warn('There was an error downloading the circuits')
-    Sentry.captureException(circuitDownloadStates.error)
+    logger.error(
+      new Error('Error downloading the circuits', {
+        cause: circuitDownloadStates.error,
+      })
+    )
   }
 
   const result =

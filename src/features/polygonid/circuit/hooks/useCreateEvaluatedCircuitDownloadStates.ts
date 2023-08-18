@@ -1,4 +1,4 @@
-import { Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import { Stateful } from '../../@types'
@@ -8,6 +8,8 @@ import {
   CircuitDownloadStates,
 } from '../@types'
 import { useCreateCircuitDownloadStates } from './useCreateCircuitDownloadStates'
+
+const logger = new Logger('Polygon ID')
 
 export function useCreateEvaluatedCircuitDownloadStates({
   publicDir,
@@ -19,7 +21,7 @@ export function useCreateEvaluatedCircuitDownloadStates({
   const circuitDownloadStates = useCreateCircuitDownloadStates({ publicDir })
 
   if ('error' in circuitDownloadStates && circuitDownloadStates.error) {
-    Sentry.captureException(circuitDownloadStates.error)
+    logger.error(circuitDownloadStates.error)
   }
 
   // Asserted download states can be written manually from the codebase at runtime; here, we
