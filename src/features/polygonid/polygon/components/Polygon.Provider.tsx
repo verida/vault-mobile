@@ -111,11 +111,16 @@ export const PolygonProvider = ({
         if ('error' in maybePolygonResult) {
           const { error } = maybePolygonResult
           logger.warn(
-            'Received Polygon ID web app message with an error result',
-            maybePolygonResult
+            'Received Polygon ID web app message with an error result'
           )
+
+          // Need to reconstruct the error as the `error` property has been stringified and then parsed.
+          const cause = new Error(error.message)
+          cause.name = error.name
+          cause.stack = error.stack
+
           return maybeCallback.reject(
-            new Error('Failed to resolved Polygon ID task', { cause: error })
+            new Error('Failed to resolved Polygon ID task', { cause })
           )
         }
 
