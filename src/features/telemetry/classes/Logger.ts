@@ -1,3 +1,4 @@
+import type { CaptureContext } from '@sentry/types'
 import { LogLevel, Sentry } from 'features/telemetry'
 
 import { config } from 'config/environment'
@@ -58,19 +59,32 @@ export class Logger {
       return
     }
 
+    const formattedMessage = `${new Date().toISOString()} - [${
+      this.category
+    }] ${message}`
+
     // To avoid the 'undefined' being displayed in the console
     if (data) {
       // eslint-disable-next-line no-console
-      console[level](`[${this.category}] ${message}`, data)
+      console[level](formattedMessage, data)
     } else {
       // eslint-disable-next-line no-console
-      console[level](`[${this.category}] ${message}`)
+      console[level](formattedMessage)
     }
   }
 
-  public error(error: Error | unknown) {
+  public error(error: Error | unknown, captureContext?: CaptureContext) {
     if (config.sentry.enabled) {
-      Sentry.captureException(error)
+      Sentry.captureException(error, {
+        ...captureContext,
+        tags: {
+          // For some reason the `tags` property is not recognise while clearly defined. Not a big deal to ignore the warning given how we use this property here
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          ...captureContext?.tags,
+          feature: this.category,
+        },
+      })
     }
 
     if (config.devMode) {

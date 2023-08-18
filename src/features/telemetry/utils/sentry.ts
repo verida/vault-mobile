@@ -11,7 +11,6 @@ export function initSentry() {
   // TODO: Enable performance monitoring
   // TODO: Enable profiling
   // TODO: Double check how it works with code push
-  // TODO: set the user DID
 
   Sentry.init({
     enabled: config.sentry.enabled,
@@ -26,7 +25,8 @@ export function initSentry() {
     // replaysOnErrorSampleRate: config.sentry.replaysOnErrorSampleRate,
     beforeSend: (event, hint) => {
       if (config.devMode) {
-        // TODO: To remove once all `Sentry.captureException` are replaced by `logger.error`
+        // TODO: To remove once all `Sentry.captureException` are replaced by `logger.error`.
+        // Until then error handled by `logger.error` will logged twice in the console
         // eslint-disable-next-line no-console
         console.error(hint.originalException)
       }
