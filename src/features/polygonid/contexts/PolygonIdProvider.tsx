@@ -3,11 +3,13 @@ import {
   useInstallWebView,
   VeridaPolygonIdProvider,
 } from 'features/polygonid/verida'
-import { Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import React from 'react'
 
 import { ALL_CIRCUIT_IDS } from '../circuit/constants'
 import { PolygonIdManagerProvider } from './PolygonIdManagerContext'
+
+const logger = new Logger('Polygon ID')
 
 export const PolygonIdProvider: React.FunctionComponent = (props) => {
   const { children } = props
@@ -16,7 +18,7 @@ export const PolygonIdProvider: React.FunctionComponent = (props) => {
   const webappInstallState = useInstallWebView()
 
   if ('error' in webappInstallState) {
-    Sentry.captureException(webappInstallState.error)
+    logger.error(webappInstallState.error)
   }
 
   const webAppDir =

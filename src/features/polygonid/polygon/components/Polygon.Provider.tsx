@@ -3,7 +3,7 @@ import type {
   CircuitId,
   W3CCredential,
 } from '@0xpolygonid/js-sdk'
-import { Logger, Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
@@ -66,9 +66,12 @@ export const PolygonProvider = ({
         const result = JSON.parse(maybeResult)
 
         if (!result || typeof result !== 'object') {
-          throw new Error(
-            `Expected object result from Polygon ID web app, encountered ${typeof result}.`
+          logger.error(
+            new Error(
+              `Expected object result from Polygon ID web app, encountered ${typeof result}.`
+            )
           )
+          return
         }
 
         if ('type' in result && result.type === 'log') {
@@ -80,19 +83,27 @@ export const PolygonProvider = ({
 
         const { taskId } = maybePolygonResult
 
-        if (typeof taskId !== 'string' || !taskId.length)
-          throw new Error(
-            `Expected non-empty string taskId from Polygon ID web app, encountered "${String(
-              taskId
-            )}".`
+        if (typeof taskId !== 'string' || !taskId.length) {
+          logger.error(
+            new Error(
+              `Expected non-empty string taskId from Polygon ID web app, encountered "${String(
+                taskId
+              )}".`
+            )
           )
+          return
+        }
 
         const { [taskId]: maybeCallback } = polygonPromiseCallbacks.current
 
-        if (!maybeCallback)
-          throw new Error(
-            `Encountered callback asynchrony for Polygon ID web app; there was no taskId with signalling value "${taskId}" detected.`
+        if (!maybeCallback) {
+          logger.error(
+            new Error(
+              `Encountered callback asynchrony for Polygon ID web app; there was no taskId with signalling value "${taskId}" detected.`
+            )
           )
+          return
+        }
 
         // Clear this task; we have now latched the value within the scope of callback.
         delete polygonPromiseCallbacks.current[taskId]
@@ -100,11 +111,16 @@ export const PolygonProvider = ({
         if ('error' in maybePolygonResult) {
           const { error } = maybePolygonResult
           logger.warn(
-            'Received Polygon ID web app message with an error result',
-            maybePolygonResult
+            'Received Polygon ID web app message with an error result'
           )
+
+          // Need to reconstruct the error as the `error` property has been stringified and then parsed.
+          const cause = new Error(error.message)
+          cause.name = error.name
+          cause.stack = error.stack
+
           return maybeCallback.reject(
-            new Error('Failed to resolved Polygon ID task', { cause: error })
+            new Error('Failed to resolved Polygon ID task', { cause })
           )
         }
 
@@ -118,10 +134,12 @@ export const PolygonProvider = ({
           `Encountered malformed message from Polygon ID web app: "${maybeResult}"`
         )
       } catch (error: unknown) {
-        logger.warn(
-          'Failed to handle received message from the Polygon ID web app'
+        logger.error(
+          new Error(
+            'Failed to handle received message from the Polygon ID web app',
+            { cause: error }
+          )
         )
-        Sentry.captureException(error)
       }
     },
     []
@@ -141,10 +159,7 @@ export const PolygonProvider = ({
   const handleError = React.useCallback(() => {
     setWebPageLoaded(false)
     // TODO: Get the error from the handler
-    logger.error('Error while loading the Polygon ID WebView')
-    Sentry.captureException(
-      new Error('Error while loading the Polygon ID WebView')
-    )
+    logger.error(new Error('Error while loading the Polygon ID WebView'))
   }, [])
 
   // Mark the PolygonProvider as ready if all the required conditions are met.
@@ -183,8 +198,11 @@ export const PolygonProvider = ({
         try {
           return ref.current?.injectJavaScript(injectedJavaScript)
         } catch (error: unknown) {
-          logger.warn('Error while injecting JavaScript in WebView')
-          Sentry.captureException(error)
+          logger.error(
+            new Error('Error while injecting JavaScript in WebView', {
+              cause: error,
+            })
+          )
         }
       })
     },
@@ -310,14 +328,12 @@ function logWebappMessage(log: WebappLogMessage) {
       logger.warn(`Web app: ${log.message}`, log.data)
       break
     case 'error':
-      logger.error(`Web app: ${log.message}`, log.data)
-
       let originalError
       if (log.data && 'error' in log.data && log.data.error) {
         originalError = JSON.parse(log.data.error as string)
       }
 
-      Sentry.captureException(new Error(originalError?.message || log.message))
+      logger.error(new Error(originalError?.message || log.message))
       break
   }
 }
