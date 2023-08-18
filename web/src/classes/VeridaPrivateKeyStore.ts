@@ -18,8 +18,6 @@ export class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
   }
 
   //{"alias": "BJJ:d159756b0ce8ea6b0be569d1ba9ff63a4d8099c59bb6edb2aa8f5b3bcd9b1109", "key": "6461766573656564736565647365656473656564736565647365656475736572"}
-  //{"alias": "BJJ:d159756b0ce8ea6b0be569d1ba9ff63a4d8099c59bb6edb2aa8f5b3bcd9b1109", "key": "6461766573656564736565647365656473656564736565647365656475736572"}
-  //did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4
   //did:polygonid:polygon:mumbai:2qHtz8rrerMMAFEcQSRu6Mvajxx7vkNLptw7LSS6C4
   /**
    * imports key by alias
@@ -45,10 +43,8 @@ export class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
     try {
       await this.database.save(record);
     } catch (error: unknown) {
-      // TODO: Shouldn't we throw an error instead?
-      if (error instanceof Error) {
-        logger.error("Error while importing key by alias", error);
-      }
+      logger.warn("Error while importing key by alias");
+      throw error;
     }
   }
 

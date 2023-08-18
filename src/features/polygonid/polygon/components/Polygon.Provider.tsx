@@ -327,13 +327,7 @@ function logWebappMessage(log: WebappLogMessage) {
     case 'warn':
       logger.warn(`Web app: ${log.message}`, log.data)
       break
-    case 'error':
-      let originalError
-      if (log.data && 'error' in log.data && log.data.error) {
-        originalError = JSON.parse(log.data.error as string)
-      }
-
-      logger.error(new Error(originalError?.message || log.message))
-      break
+    default:
+    // Nothing
   }
 }

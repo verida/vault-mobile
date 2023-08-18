@@ -272,25 +272,17 @@ export class PolygonIDManager {
 
     results.forEach((result) => {
       if (result.status === "rejected") {
-        logger.error(
-          "Error while saving Polygon ID credential in Verida Vault",
-          result.reason
-        );
+        logger.warn("Error while saving Polygon ID credential in Verida Vault");
+        if (result.reason instanceof Error) {
+          throw result.reason;
+        }
       } else if (!result.value) {
         // Is there a better way to handle a save failure?
         // It really shouldn't happen unless the network fails
         // in the short time period between saving the credential
         // in the polygon ID library and then saving it here
-        logger.error(
-          "Error while saving Polygon ID credential in Verida Vault",
-          new Error("Saving Polygon ID credential in Verida Vault failed"),
-          {
-            error: JSON.stringify(
-              credentialDatastore.errors,
-              Object.getOwnPropertyNames(credentialDatastore.errors)
-            ),
-          }
-        );
+        logger.warn("Error while saving Polygon ID credential in Verida Vault");
+        throw new Error("Saving Polygon ID credential in Verida Vault failed");
       }
     });
   }
