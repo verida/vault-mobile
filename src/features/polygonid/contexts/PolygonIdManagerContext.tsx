@@ -7,7 +7,7 @@ import type {
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
-import { Logger, Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
@@ -78,7 +78,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
     'error' in polygonIdManagerCreationState &&
     polygonIdManagerCreationState.error
   ) {
-    Sentry.captureException(polygonIdManagerCreationState.error)
+    logger.error(polygonIdManagerCreationState.error)
   }
 
   const maybeManagerId =
@@ -213,10 +213,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           'Something went wrong when accepting the Polygon ID connection request',
           { cause }
         )
-        logger.warn(
-          'Something went wrong when accepting the Polygon ID connection request'
-        )
-        Sentry.captureException(error)
+        logger.error(error)
         return {
           error,
         }
@@ -245,10 +242,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           'Something went wrong when answering the Polygon ID proof request',
           { cause }
         )
-        logger.warn(
-          'Something went wrong when answering the Polygon ID proof request'
-        )
-        Sentry.captureException(error)
+        logger.error(error)
         return {
           error,
         }
@@ -277,8 +271,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           'Something went wrong when accepting the Polygon ID credential offer.',
           { cause }
         )
-        logger.warn('Error while handling credential offer')
-        Sentry.captureException(error)
+        logger.error(error)
         return {
           error,
         }

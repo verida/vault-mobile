@@ -1,6 +1,6 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
 import { POLYGON_ID_CIRCUITS_DOWNLOAD_URL } from 'features/polygonid'
-import { Logger, Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import { useDownloadCircuit } from './useDownloadCircuit'
@@ -49,8 +49,11 @@ export function useEnsureCircuitsDownloaded(
         })
       )
     ).catch((error: unknown) => {
-      logger.warn('There was an error downloading the circuits')
-      Sentry.captureException(error)
+      logger.error(
+        new Error('There was an error downloading the circuits', {
+          cause: error,
+        })
+      )
     })
   }, [loading, isCircuitsDownloadedResult, downloadCircuit, circuitIds])
 
