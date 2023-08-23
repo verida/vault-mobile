@@ -8,8 +8,11 @@ export const CircuitContextProvider = CircuitContext.Provider
 
 export function useCircuitContext(): CircuitContextValue {
   const maybeContext = React.useContext(CircuitContext)
-
-  if (!maybeContext) throw new Error('Missing <CircuitContextProvider />.')
+  if (!maybeContext) {
+    throw new Error(
+      'useCircuitContext must be used within a CircuitContextProvider'
+    )
+  }
 
   return maybeContext
 }

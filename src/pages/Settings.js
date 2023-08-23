@@ -2,12 +2,12 @@ import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import Config from 'react-native-config'
 import { useSelector } from 'react-redux'
 
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import { config } from 'config/environment'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'
@@ -89,7 +89,7 @@ export default (props) => {
   const networks = useSelector((state) => state.settings.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `${APP_NAME} ${capitalize(
-    Config.BITRISE_TRIGGERED_WORKFLOW_TITLE || Config.DEPLOY_ENVIRONMENT
+    config.BITRISE_TRIGGERED_WORKFLOW_TITLE || config.DEPLOY_ENVIRONMENT
   )} ${APP_VERSION_FORMATTED}`
 
   if (!isEmpty(networks)) {

@@ -2,7 +2,6 @@ import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
-import { getVersion } from 'react-native-device-info'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import Texture from 'assets/landing-bg.svg'
@@ -11,6 +10,7 @@ import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
+import { APP_VERSION } from 'constants/application'
 import { ForcedUpgradeType } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
@@ -61,7 +61,7 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
               contentContainerStyle={styles.scrollViewContainer}>
               <Paragraph>{forcedUpgrade?.message ?? ''}</Paragraph>
               <Spacer vertical='l' />
-              <Paragraph>Current version: {getVersion()}</Paragraph>
+              <Paragraph>Current version: {APP_VERSION}</Paragraph>
               <Paragraph>
                 Minimum required version: {forcedUpgrade?.minVersion}
               </Paragraph>

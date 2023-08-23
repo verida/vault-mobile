@@ -43,7 +43,7 @@ async function handleAuthorizationRequest({
   const polygonIdManager = getPolygonIdManager({
     managerId,
   });
-  logger.debug("Handle authorization request");
+  logger.info("Handle authorization request");
   return await polygonIdManager.handleAuthorizationRequest(data);
 }
 
@@ -64,7 +64,7 @@ async function handleCredentialsOffer({
   const polygonIdManager = getPolygonIdManager({
     managerId,
   });
-  logger.debug("Handle credentials offer");
+  logger.info("Handle credentials offer");
   return await polygonIdManager.handleCredentialsOffer(data);
 }
 
@@ -79,12 +79,12 @@ function getPolygonIdManager({
 }: {
   readonly managerId: string;
 }): PolygonIDManager {
-  logger.debug(`Getting Polygon ID Manager ${managerId}`);
+  logger.info(`Getting Polygon ID Manager ${managerId}`);
 
   const { [managerId]: maybeExistingManager } = POLYGON_ID_MANAGERS;
 
   if (!maybeExistingManager) {
-    logger.error(`Polygon ID Manager ${managerId} does not exist.`);
+    logger.warn(`Polygon ID Manager ${managerId} does not exist.`);
     throw new Error(
       `Attempted to access PolygonIDManager with managerId "${managerId}", but this does not exist.`
     );
@@ -106,12 +106,12 @@ async function createPolygonIdManager({
   readonly config: PolygonIDManagerConfig;
   readonly managerId: string;
 }): Promise<string> {
-  logger.debug("Creating a Polygon ID Manager");
+  logger.info("Creating a Polygon ID Manager");
 
   const { [managerId]: maybeExistingManager } = POLYGON_ID_MANAGERS;
 
   if (maybeExistingManager) {
-    logger.error(`Polygon ID Manager ${managerId} already exists.`);
+    logger.warn(`Polygon ID Manager ${managerId} already exists.`);
     throw new Error(
       `Attempted to allocate a PolygonIDManager with managerId "${managerId}", but this was reserved.`
     );
@@ -123,7 +123,7 @@ async function createPolygonIdManager({
 
   Object.assign(POLYGON_ID_MANAGERS, { [managerId]: polygonIdManager });
 
-  logger.debug(`Polygon ID Manager ${managerId} successfully created`);
+  logger.info(`Polygon ID Manager ${managerId} successfully created`);
 
   return managerId;
 }
@@ -142,26 +142,30 @@ async function handlePromiseTask<T>({
   readonly promise: Promise<T>;
 }) {
   try {
-    logger.debug(`Executing task ${taskId}...`);
+    logger.info(`Executing Polygon ID task`, { taskId });
 
     const result: T = await promise;
 
-    logger.debug(`Task ${taskId} resolved successfully.`);
+    logger.info(`Polygon ID task resolved successfully`, { taskId });
 
     // Resolve with a "result" field to signify successful execution.
     return postMessageToWebView(JSON.stringify({ taskId, result }));
-  } catch (cause) {
-    logger.error(`Task ${taskId} failed to resolve.`);
-    logger.error(cause);
+  } catch (cause: unknown) {
+    const stringifiedCause = JSON.stringify(
+      cause,
+      Object.getOwnPropertyNames(cause)
+    );
 
-    const error = new Error("Failed to resolve.", { cause });
+    logger.warn(`Polygon ID task failed to resolve`, {
+      taskId,
+      error: stringifiedCause,
+    });
+
     return postMessageToWebView(
       JSON.stringify({
         taskId,
         // Resolve with an "error" field to signify an erroneous invocation.
-        error: JSON.parse(
-          JSON.stringify(error, Object.getOwnPropertyNames(error))
-        ),
+        error: JSON.parse(stringifiedCause),
       })
     );
   }

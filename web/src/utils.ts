@@ -21,24 +21,45 @@ export function postMessageToWebView(message: string) {
   );
 }
 
-function log(content: unknown, level: "error" | "warn" | "info" | "debug") {
-  postMessageToWebView(JSON.stringify({ type: "log", content, level }));
+function log(
+  level: "error" | "warn" | "info" | "debug",
+  message: string,
+  data?: Record<string, unknown>
+) {
+  postMessageToWebView(
+    JSON.stringify({
+      type: "log",
+      level,
+      message,
+      data,
+      // data: !!data
+      //   ? JSON.stringify(data, Object.getOwnPropertyNames(data))
+      //   : undefined,
+    })
+  );
 }
 
-function logError(content: unknown) {
-  log(content, "error");
+function logError(
+  message: string,
+  error: Error,
+  data?: Record<string, unknown>
+) {
+  log("error", message, {
+    error: JSON.stringify(error, Object.getOwnPropertyNames(error)),
+    ...data,
+  });
 }
 
-function logWarn(content: unknown) {
-  log(content, "warn");
+function logWarn(message: string, data?: Record<string, unknown>) {
+  log("warn", message, data);
 }
 
-function logInfo(content: unknown) {
-  log(content, "info");
+function logInfo(message: string, data?: Record<string, unknown>) {
+  log("info", message, data);
 }
 
-function logDebug(content: unknown) {
-  log(content, "debug");
+function logDebug(message: string, data?: Record<string, unknown>) {
+  log("debug", message, data);
 }
 
 export const logger = {

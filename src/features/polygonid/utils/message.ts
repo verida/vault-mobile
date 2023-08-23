@@ -2,7 +2,6 @@ import type {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
 } from '@0xpolygonid/js-sdk'
-import * as Sentry from '@sentry/react-native'
 import { base64 } from 'ethers/lib/utils' // TODO: Is it ok to use the base64 from the ethers package?
 import {
   IDEN3_PROTOCOL,
@@ -10,6 +9,9 @@ import {
   IDEN3_PROTOCOL_DEEPLINK_SCHEME,
   PROTOCOL_MESSAGE_TYPE,
 } from 'features/polygonid/constants'
+import { Logger } from 'features/telemetry'
+
+const logger = new Logger('Polygon ID')
 
 function checkParsedMessage(
   parsedMessage: Record<string, unknown>,
@@ -21,7 +23,7 @@ function checkParsedMessage(
   }
 
   const error = new Error(`Invalid Polygon ID message`)
-  Sentry.captureException(error, {
+  logger.error(error, {
     tags: {
       originalMessage,
       parsedMessage,

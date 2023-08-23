@@ -2,7 +2,8 @@ import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
 import { compareVersions } from 'compare-versions'
 import { useCallback, useRef, useState } from 'react'
-import { getVersion } from 'react-native-device-info'
+
+import { APP_VERSION } from 'constants/application'
 
 import { useIsMounted } from './useIsMounted'
 
@@ -52,7 +53,7 @@ export function useRemoteConfigs() {
           setForcedUpgrade({
             ...forcedUpgradeInfo,
             required:
-              compareVersions(getVersion(), forcedUpgradeInfo.minVersion) < 0, // Current version < required version
+              compareVersions(APP_VERSION, forcedUpgradeInfo.minVersion) < 0, // Current version < required version
           })
 
           // Force create new account

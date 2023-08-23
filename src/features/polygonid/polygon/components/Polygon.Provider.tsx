@@ -3,6 +3,7 @@ import type {
   CircuitId,
   W3CCredential,
 } from '@0xpolygonid/js-sdk'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { StyleSheet } from 'react-native'
 import { WebView, WebViewMessageEvent } from 'react-native-webview'
@@ -20,27 +21,27 @@ import {
 } from '../@types'
 import { PolygonContextProvider } from '../contexts'
 
+const logger = new Logger('Polygon ID')
+
 const defaultGenerateRandomKey: RandomKeyGenerator = () => String(Math.random())
 
 const originWhitelist = ['*']
 
 type WebappLogMessage = {
   type: 'log'
-  content: unknown
   level: 'info' | 'warn' | 'error' | 'debug'
+  message: string
+  data?: Record<string, unknown>
 }
 
 export const PolygonProvider = ({
   generateRandomKey = defaultGenerateRandomKey, // TODO: use nanoid(), uuid(), etc.,
-  // eslint-disable-next-line no-console
-  onError = console.error,
   children,
   uri,
   isServerReady,
   requiredCircuitIds /* CircuitIds which must exist before attempting to mount the WebView. */,
 }: React.PropsWithChildren<{
   readonly generateRandomKey?: RandomKeyGenerator
-  readonly onError?: (error: Error) => void
   readonly uri: string
   readonly isServerReady: boolean
   readonly requiredCircuitIds: readonly `${CircuitId}`[]
@@ -65,9 +66,12 @@ export const PolygonProvider = ({
         const result = JSON.parse(maybeResult)
 
         if (!result || typeof result !== 'object') {
-          throw new Error(
-            `Expected object result, encountered ${typeof result}.`
+          logger.error(
+            new Error(
+              `Expected object result from Polygon ID web app, encountered ${typeof result}.`
+            )
           )
+          return
         }
 
         if ('type' in result && result.type === 'log') {
@@ -79,56 +83,83 @@ export const PolygonProvider = ({
 
         const { taskId } = maybePolygonResult
 
-        if (typeof taskId !== 'string' || !taskId.length)
-          throw new Error(
-            `Expected non-empty string taskId, encountered "${String(taskId)}".`
+        if (typeof taskId !== 'string' || !taskId.length) {
+          logger.error(
+            new Error(
+              `Expected non-empty string taskId from Polygon ID web app, encountered "${String(
+                taskId
+              )}".`
+            )
           )
+          return
+        }
 
         const { [taskId]: maybeCallback } = polygonPromiseCallbacks.current
 
-        if (!maybeCallback)
-          throw new Error(
-            `Encountered callback asynchrony; there was no taskId with signalling value "${taskId}" detected.`
+        if (!maybeCallback) {
+          logger.error(
+            new Error(
+              `Encountered callback asynchrony for Polygon ID web app; there was no taskId with signalling value "${taskId}" detected.`
+            )
           )
+          return
+        }
 
         // Clear this task; we have now latched the value within the scope of callback.
         delete polygonPromiseCallbacks.current[taskId]
 
         if ('error' in maybePolygonResult) {
           const { error } = maybePolygonResult
-          return maybeCallback.reject(new Error(error.message))
+          logger.warn(
+            'Received Polygon ID web app message with an error result'
+          )
+
+          // Need to reconstruct the error as the `error` property has been stringified and then parsed.
+          const cause = new Error(error.message)
+          cause.name = error.name
+          cause.stack = error.stack
+
+          return maybeCallback.reject(
+            new Error('Failed to resolved Polygon ID task', { cause })
+          )
         }
 
         if ('result' in maybePolygonResult) {
+          logger.info('Received Polygon ID web app message with a success')
           const { result: promiseResult } = maybePolygonResult
           return maybeCallback.resolve(promiseResult)
         }
 
-        throw new Error(`Encountered malformed message: "${maybeResult}"`)
-      } catch (cause) {
-        onError(new Error('Failed to handle received message.', { cause }))
+        throw new Error(
+          `Encountered malformed message from Polygon ID web app: "${maybeResult}"`
+        )
+      } catch (error: unknown) {
+        logger.error(
+          new Error(
+            'Failed to handle received message from the Polygon ID web app',
+            { cause: error }
+          )
+        )
       }
     },
-    [onError]
+    []
   )
 
   const onLoadStart = React.useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.debug('PolygonProvider ~ WebView loading...')
+    logger.info('Polygon ID WebView loading...')
     // setWebPageLoading(true)
   }, [])
 
   const onLoad = React.useCallback(() => {
-    // eslint-disable-next-line no-console
-    console.debug('PolygonProvider ~ WebView loaded')
+    logger.info('Polygon ID WebView loaded')
     // setWebPageLoading(false)
     setWebPageLoaded(true)
   }, [])
 
   const handleError = React.useCallback(() => {
     setWebPageLoaded(false)
-    // eslint-disable-next-line no-console
-    console.error('PolygonProvider ~ Error while loading the WebView')
+    // TODO: Get the error from the handler
+    logger.error(new Error('Error while loading the Polygon ID WebView'))
   }, [])
 
   // Mark the PolygonProvider as ready if all the required conditions are met.
@@ -150,7 +181,7 @@ export const PolygonProvider = ({
     }) => {
       return new Promise<unknown>((resolve, reject) => {
         if (!isReady) {
-          return reject(new Error('Not ready.'))
+          return reject(new Error('Polygon ID engine is not ready'))
         }
 
         Object.assign(polygonPromiseCallbacks.current, {
@@ -161,18 +192,17 @@ export const PolygonProvider = ({
           taskId
         )}, promise: ${js} }))`
 
-        // eslint-disable-next-line no-console
-        console.debug('Polygon.Provider.tsx ~ Injecting JavaScript in WebView')
+        logger.info(`Passing task to Polygon ID web app`, { taskId })
+        logger.debug('Injecting JavaScript in Polygon ID WebView')
 
         try {
           return ref.current?.injectJavaScript(injectedJavaScript)
         } catch (error: unknown) {
-          // eslint-disable-next-line no-console
-          console.error(
-            'Polygon.Provider.tsx ~ Error while injecting JavaScript in WebView'
+          logger.error(
+            new Error('Error while injecting JavaScript in WebView', {
+              cause: error,
+            })
           )
-          // eslint-disable-next-line no-console
-          console.error(error)
         }
       })
     },
@@ -181,8 +211,7 @@ export const PolygonProvider = ({
 
   const createIdManager: PolygonCreateIdManager = React.useCallback(
     async (config: PolygonIdManagerConfig) => {
-      // eslint-disable-next-line no-console
-      console.debug('Polygon.Provider.tsx ~ Creating a Polygon ID Manager')
+      logger.info('Creating a Polygon ID Manager in the web app')
 
       const managerId = await invokeJs({
         js: `window.__CREATE_POLYGON_ID_MANAGER__({managerId: ${JSON.stringify(
@@ -190,18 +219,15 @@ export const PolygonProvider = ({
         )}, config: ${JSON.stringify(config)}})`,
       })
 
-      if (typeof managerId !== 'string' || !managerId.length)
+      if (typeof managerId !== 'string' || !managerId.length) {
         throw new Error(
           `Expected non-empty string managerId, encountered "${String(
             managerId
-          )}".`
+          )}"`
         )
+      }
 
-      // eslint-disable-next-line no-console
-      console.debug(
-        'Polygon.Provider.tsx ~ Polygon ID Manager created',
-        managerId
-      )
+      logger.info(`Polygon ID Manager created: ${managerId}`)
       return managerId
     },
     [invokeJs, generateRandomKey]
@@ -290,23 +316,24 @@ const styles = StyleSheet.create({
   },
 })
 
-function logWebappMessage(message: WebappLogMessage) {
-  switch (message.level) {
+function logWebappMessage(log: WebappLogMessage) {
+  switch (log.level) {
+    case 'debug':
+      logger.debug(`Web app: ${log.message}`, log.data)
+      break
     case 'info':
-      // eslint-disable-next-line no-console
-      console.info('Webapp message:', message.content)
+      logger.info(`Web app: ${log.message}`, log.data)
       break
     case 'warn':
-      // eslint-disable-next-line no-console
-      console.warn('Webapp message:', message.content)
+      logger.warn(`Web app: ${log.message}`, log.data)
       break
     case 'error':
-      // eslint-disable-next-line no-console
-      console.error('Webapp message:', message.content)
-      break
-    case 'debug':
-      // eslint-disable-next-line no-console
-      console.debug('Webapp message:', message.content)
+      let originalError
+      if (log.data && 'error' in log.data && log.data.error) {
+        originalError = JSON.parse(log.data.error as string)
+      }
+
+      logger.error(new Error(originalError?.message || log.message))
       break
   }
 }
