@@ -36,7 +36,7 @@ export function useCreatePolygonIdManager(): Stateful<string> {
       )
       return
     }
-    if (!account) {
+    if (!account || !account.privateKey) {
       logger.warn('No Verida account, cannot create Polygon ID Manager yet')
       return
     }
