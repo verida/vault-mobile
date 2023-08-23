@@ -2,8 +2,9 @@ import {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
 } from "@0xpolygonid/js-sdk";
-import { PolygonIDManager, PolygonIDManagerConfig } from "./PolygonIdManager";
+import { PolygonIDManager } from "./classes";
 import { logger, postMessageToWebView } from "./utils";
+import { PolygonIDManagerConfig } from "./types";
 
 // Exposing methods to the global scope for the WebView to use.
 
@@ -119,7 +120,7 @@ async function createPolygonIdManager({
 
   // TODO: Implement a factory method for the PolygonIDManager class taking the config object and returns a new instance already initialised.
   const polygonIdManager = new PolygonIDManager(config);
-  await polygonIdManager.shouldInit();
+  await polygonIdManager.init();
 
   Object.assign(POLYGON_ID_MANAGERS, { [managerId]: polygonIdManager });
 
