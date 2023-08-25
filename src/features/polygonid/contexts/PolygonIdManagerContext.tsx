@@ -18,7 +18,11 @@ import type {
 } from 'pages/Requests'
 
 import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
-import { parseDeepLinkUrl, parseQrCodeMessage } from '../utils'
+import {
+  fetchEntityMetadata,
+  parseDeepLinkUrl,
+  parseQrCodeMessage,
+} from '../utils'
 
 const logger = new Logger('Polygon ID')
 
@@ -89,7 +93,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   const isPolygonIdReady = isReady && !!maybeManagerId
 
   const handleMessage = useCallback(
-    (
+    async (
       message: AuthorizationRequestMessage | CredentialsOfferMessage,
       replaceNavigationScreen?: boolean
     ) => {
@@ -97,17 +101,19 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
       switch (message.type) {
         case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
           const requestData = message as AuthorizationRequestMessage
+          const entityMetadata = await fetchEntityMetadata(
+            requestData.body.callbackUrl
+          )
           if (requestData.body?.scope && requestData.body.scope.length) {
             // We have a scope object implying we need to submit a ZK proof
             const screenParams: ProofRequestScreenParams = {
-              // TODO: Find a way to get the name of the requester
-              name: 'Unknown',
-              // TODO: Find a way to get the logo of the requester
+              name: entityMetadata.name || 'Unknown',
+              logo: entityMetadata.avatar,
               details: {
                 protocols: ['polygonid'],
                 timestamp: new Date().toISOString(),
+                url: entityMetadata.url,
                 requesterId: requestData.from || 'Unknown',
-                // TODO: Check if requestData.body?.message is better than reason
                 message: requestData.body?.reason,
               },
               data: requestData,
@@ -120,14 +126,13 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           } else {
             // We have a generic connection request
             const screenParams: ConnectionRequestScreenParams = {
-              // TODO: Find a way to get the name of the requester
-              name: 'Unknown',
-              // TODO: Find a way to get the logo of the requester
+              name: entityMetadata.name || 'Unknown',
+              logo: entityMetadata.avatar,
               details: {
                 protocols: ['polygonid'],
                 timestamp: new Date().toISOString(),
+                url: entityMetadata.url,
                 requesterId: requestData.from || 'Unknown',
-                // TODO: Check if requestData.body?.message is better than reason
                 message: requestData.body?.reason,
               },
               data: requestData,

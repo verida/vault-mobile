@@ -2,6 +2,7 @@ import type {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
 } from '@0xpolygonid/js-sdk'
+import axios from 'axios'
 import { base64 } from 'ethers/lib/utils' // TODO: Is it ok to use the base64 from the ethers package?
 import {
   IDEN3_PROTOCOL,
@@ -78,4 +79,39 @@ export function parseQrCodeMessage(
   const jsonMessage = JSON.parse(qrCodeMessage)
   checkParsedMessage(jsonMessage, qrCodeMessage)
   return parseMessage(jsonMessage)
+}
+
+export async function fetchEntityMetadata(
+  url: string
+): Promise<{ name?: string; avatar?: string; url: string; hostname: string }> {
+  const parsedUrl = new URL(url)
+
+  let html = ''
+  try {
+    // Fetching the page content of the origin, not the full URL as it's likely a REST API route.
+    const { data } = await axios.get<string>(parsedUrl.origin)
+    html = data
+  } catch (_error: unknown) {
+    // Something went wrong fetching the origin, likely th epage doesn't exist.
+    // It's ok, we can't assume all entities are setting up a page there.
+    // The subsequent logic has fallbacks if there is no page available
+  }
+
+  const titleRegex = /<title>(.*?)<\/title>/i
+  const titleMatch = titleRegex.exec(html)
+  const title = titleMatch ? titleMatch[1] : parsedUrl.hostname
+
+  const iconRegex = /<link\s+rel="(?:shortcut )?icon"\s+[^>]*href="([^"]+)"/i
+  const iconMatch = iconRegex.exec(html)
+  const iconPath = iconMatch ? iconMatch[1] : 'favicon.ico'
+  const iconUrl = iconPath.startsWith('http')
+    ? iconPath
+    : `${parsedUrl.origin}/${iconPath}`
+
+  return {
+    name: title,
+    avatar: iconUrl,
+    url: parsedUrl.origin,
+    hostname: parsedUrl.hostname,
+  }
 }
