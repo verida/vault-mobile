@@ -71,11 +71,11 @@ export function useCreateCircuitDownloadStates({
         const circuitDownloadStates = await fetch()
 
         setState({ loading: false, result: circuitDownloadStates })
-      } catch (cause) {
+      } catch (error: unknown) {
         setState({
           loading: false,
-          error: new Error('Failed to determine CircuitDownloadStates.', {
-            cause,
+          error: new Error('Failed to determine CircuitDownloadStates', {
+            cause: error,
           }),
         })
       }

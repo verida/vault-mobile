@@ -1,4 +1,6 @@
 import type { CircuitId } from '@0xpolygonid/js-sdk'
+import { POLYGON_ID_CIRCUITS_DOWNLOAD_URL } from 'features/polygonid/constants'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import RNBlobUtil from 'react-native-blob-util'
 
@@ -15,16 +17,15 @@ import {
   getCircuitsDir,
 } from '../utils'
 
+const logger = new Logger('Polygon ID')
+
 export function useDownloadCircuit({
-  veridaBaseUri = 'https://verida-static-resources.s3.amazonaws.com/polygonid',
+  veridaBaseUri = POLYGON_ID_CIRCUITS_DOWNLOAD_URL,
 }: {
   readonly veridaBaseUri?: string
 } = {}) {
   // Base directory to save circuits.
   const { publicDir, assertDownloadState } = useCircuitContext()
-
-  if (veridaBaseUri.endsWith('/'))
-    throw new Error('Do not include a trailing slash in the veridaBaseUri!')
 
   const downloadCircuit = React.useCallback(
     async ({
@@ -32,6 +33,9 @@ export function useDownloadCircuit({
     }: {
       readonly circuitId: `${CircuitId}`
     }): Promise<CircuitSpecificStrings> => {
+      if (veridaBaseUri.endsWith('/'))
+        throw new Error('Do not include a trailing slash in the veridaBaseUri!')
+
       const circuitRemoteUris = getCircuitRemoteUri({
         veridaBaseUri,
         circuitId,
@@ -40,22 +44,23 @@ export function useDownloadCircuit({
       const circuitsDir = getCircuitsDir({ publicDir })
 
       // If the circuits dir doesn't exist, create it.
-      if (!(await RNBlobUtil.fs.exists(circuitsDir)))
-        await RNBlobUtil.fs
-          .mkdir(circuitsDir)
-          // eslint-disable-next-line no-console
-          .catch(console.warn) /* race_condition */
+      if (!(await RNBlobUtil.fs.exists(circuitsDir))) {
+        await RNBlobUtil.fs.mkdir(circuitsDir).catch(() => {
+          // race_condition
+        })
+      }
 
       // Create the circuitId-specific directory within the circuits dir where
       // we'll store these files.
       const targetDir = getCircuitDir({ publicDir, circuitId })
 
       // If the target dir doesn't exist, create it.
-      if (!(await RNBlobUtil.fs.exists(targetDir)))
-        await RNBlobUtil.fs
-          .mkdir(targetDir)
-          // eslint-disable-next-line no-console
-          .catch(console.warn) /* race_condition */
+      if (!(await RNBlobUtil.fs.exists(targetDir))) {
+        logger.info(`Creating the circuit dir for ${circuitId}`)
+        await RNBlobUtil.fs.mkdir(targetDir).catch(() => {
+          // race_condition
+        })
+      }
 
       const circuitFilePaths = getCircuitFilePaths({
         publicDir,
@@ -89,6 +94,7 @@ export function useDownloadCircuit({
             })
         )
       )
+      // No catch here, error will bubble to the upper level
 
       // Upon completion, ensure we mark that all downloads have completed.
       // The top level provider may have only initialized against the empty/partial

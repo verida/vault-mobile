@@ -45,40 +45,36 @@ export function useCreateWeb3Wallet({
 }): State {
   const [state, setState] = React.useState<State>(loadingState)
 
-  React.useEffect(
-    () =>
-      void (async () => {
-        try {
-          setState(loadingState)
+  React.useEffect(() => {
+    ;(async () => {
+      try {
+        setState(loadingState)
 
-          const core = new Core({
-            projectId: Config.WALLETCONNECT_PROJECT_ID,
-            relayUrl: Config.WALLETCONNECT_RELAY_URL,
-          })
+        const core = new Core({
+          projectId: Config.WALLETCONNECT_PROJECT_ID,
+          relayUrl: Config.WALLETCONNECT_RELAY_URL,
+        })
 
-          const web3wallet = await Web3Wallet.init({
-            core,
-            metadata,
-          })
+        const web3wallet = await Web3Wallet.init({
+          core,
+          metadata,
+        })
 
-          web3wallet.on('session_proposal', (e) =>
-            onSessionProposal(web3wallet, e)
-          )
-          web3wallet.on('session_request', (e) =>
-            onSessionRequest(web3wallet, e)
-          )
-          web3wallet.on('session_delete', (e) => onSessionDelete(web3wallet, e))
+        web3wallet.on('session_proposal', (e) =>
+          onSessionProposal(web3wallet, e)
+        )
+        web3wallet.on('session_request', (e) => onSessionRequest(web3wallet, e))
+        web3wallet.on('session_delete', (e) => onSessionDelete(web3wallet, e))
 
-          setState({ loading: false, web3wallet })
-        } catch (cause) {
-          setState({
-            loading: false,
-            error: new Error('Failed to instantiate a Web3Wallet.', { cause }),
-          })
-        }
-      })(),
-    [onSessionRequest, onSessionProposal, onSessionDelete, metadata]
-  )
+        setState({ loading: false, web3wallet })
+      } catch (cause) {
+        setState({
+          loading: false,
+          error: new Error('Failed to instantiate a Web3Wallet.', { cause }),
+        })
+      }
+    })()
+  }, [onSessionRequest, onSessionProposal, onSessionDelete, metadata])
 
   return state
 }

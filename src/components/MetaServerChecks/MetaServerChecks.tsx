@@ -1,9 +1,9 @@
 import { compareVersions } from 'compare-versions'
 import React, { useEffect, useRef } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
-import { getVersion } from 'react-native-device-info'
 
 import AccountManager from 'api/AccountManager'
+import { APP_VERSION } from 'constants/application'
 import { useAuth } from 'hooks/useAuth'
 import { useEmitter } from 'hooks/useEmitter'
 import { useModal } from 'hooks/useModal'
@@ -45,7 +45,7 @@ const MetaServerChecks = () => {
     const checkForcedUpgrade = () => {
       if (
         forcedUpgrade?.required &&
-        compareVersions(getVersion(), forcedUpgrade.minVersion!) < 0 // Current version < required version
+        compareVersions(APP_VERSION, forcedUpgrade.minVersion!) < 0 // Current version < required version
       ) {
         showModal(
           <ForcedUpgradeModal

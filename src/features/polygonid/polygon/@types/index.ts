@@ -12,12 +12,15 @@ import {
   NetworkId,
 } from 'features/polygonid/constants'
 
-export interface PolygonIdManagerConfig {
+export type PolygonIdVeridaConfig = {
   readonly veridaPrivateKey: string
   readonly veridaEnvironment: EnvironmentType
   readonly veridaContextName: string
   readonly veridaDidClientConfig: AccountNodeDIDClientConfig
   readonly veridaCredentialRecordSchema: string
+}
+
+export type PolygonIdConfig = {
   readonly polygonIdPrivateKey: string
   readonly polygonIdBlockchain: Blockchain
   readonly polygonIdNetworkId: NetworkId
@@ -26,7 +29,10 @@ export interface PolygonIdManagerConfig {
   readonly polygonIdRevocationType: CredentialStatusType
   readonly polygonIdRpcUrl: string
   readonly polygonIdContractAddress: string
+  readonly polygonIdIpfsGatewayUrl?: string
 }
+
+export type PolygonIdManagerConfig = PolygonIdVeridaConfig & PolygonIdConfig
 
 // Creates a PolygonIdManager on the web context.
 // Returns a unique identifier for the manager.

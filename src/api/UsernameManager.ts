@@ -106,7 +106,7 @@ export default class UsernameManager {
       callType: <Web3CallType>didClientConfig.callType,
       did: account.did,
       signKey: account.privateKey,
-      network: <EnvironmentType>CONFIG.ENVIRONMENT,
+      network: <EnvironmentType>CONFIG.VERIDA_ENVIRONMENT,
       web3Options: didClientConfig.web3Config,
     })
 

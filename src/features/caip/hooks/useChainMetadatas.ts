@@ -2,13 +2,11 @@ import { ChainId } from 'caip'
 import { ChainMetadatas, isSupportedCaipNamespace } from 'features/caip'
 import { cryptoWalletApi } from 'features/cryptoWallet'
 import * as React from 'react'
-import Config from 'react-native-config'
 
 import { BlockchainNetwork } from 'api/types'
+import { config } from 'config/environment'
 
 import { ChainMetadata } from '../@types'
-
-const { INFURA_API_KEY } = Config
 
 const { useChainsListQuery } = cryptoWalletApi
 
@@ -34,7 +32,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
 
   const { label: name, rpcUrl } = blockchainNetwork
 
-  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, INFURA_API_KEY)
+  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.INFURA_API_KEY)
 
   return {
     namespace,

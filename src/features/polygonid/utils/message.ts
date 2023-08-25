@@ -9,6 +9,29 @@ import {
   IDEN3_PROTOCOL_DEEPLINK_SCHEME,
   PROTOCOL_MESSAGE_TYPE,
 } from 'features/polygonid/constants'
+import { Logger } from 'features/telemetry'
+
+const logger = new Logger('Polygon ID')
+
+function checkParsedMessage(
+  parsedMessage: Record<string, unknown>,
+  originalMessage: string
+) {
+  // For now, merely checking the parsedMessage is not null/undefined/empty. Could add stronger checks.
+  if (parsedMessage) {
+    return
+  }
+
+  const error = new Error(`Invalid Polygon ID message`)
+  logger.error(error, {
+    tags: {
+      originalMessage,
+      parsedMessage,
+    },
+  })
+
+  throw error
+}
 
 export function parseMessage(
   message: Record<string, unknown>
@@ -41,6 +64,7 @@ export function parseDeepLinkUrl(url: string) {
   const unint8Message = base64.decode(base64Message)
   const decodedString = new TextDecoder().decode(unint8Message)
   const jsonMessage = JSON.parse(decodedString)
+  checkParsedMessage(jsonMessage, url)
   return parseMessage(jsonMessage)
 }
 
@@ -52,5 +76,6 @@ export function parseQrCodeMessage(
   qrCodeMessage: string
 ): AuthorizationRequestMessage | CredentialsOfferMessage {
   const jsonMessage = JSON.parse(qrCodeMessage)
+  checkParsedMessage(jsonMessage, qrCodeMessage)
   return parseMessage(jsonMessage)
 }

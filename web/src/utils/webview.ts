@@ -20,31 +20,3 @@ export function postMessageToWebView(message: string) {
       : document.location
   );
 }
-
-function log(content: unknown, level: "error" | "warn" | "info" | "debug") {
-  postMessageToWebView(JSON.stringify({ type: "log", content, level }));
-}
-
-function logError(content: unknown) {
-  log(content, "error");
-}
-
-function logWarn(content: unknown) {
-  log(content, "warn");
-}
-
-function logInfo(content: unknown) {
-  log(content, "info");
-}
-
-function logDebug(content: unknown) {
-  log(content, "debug");
-}
-
-export const logger = {
-  error: logError,
-  warn: logWarn,
-  info: logInfo,
-  log: logInfo,
-  debug: logDebug,
-};

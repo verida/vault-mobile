@@ -6,8 +6,8 @@ import type {
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as Sentry from '@sentry/react-native'
 import { PROTOCOL_MESSAGE_TYPE } from 'features/polygonid/constants'
+import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
@@ -19,6 +19,8 @@ import type {
 
 import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
 import { parseDeepLinkUrl, parseQrCodeMessage } from '../utils'
+
+const logger = new Logger('Polygon ID')
 
 type PolygonIdContextType = {
   isReady: boolean
@@ -69,8 +71,20 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
 
   const { isReady, handleAuthorizationRequest, handleCredentialsOffer } =
     usePolygonContext()
-  const state = useCreatePolygonIdManager()
-  const maybeManagerId = 'result' in state ? state.result : undefined
+
+  const polygonIdManagerCreationState = useCreatePolygonIdManager()
+
+  if (
+    'error' in polygonIdManagerCreationState &&
+    polygonIdManagerCreationState.error
+  ) {
+    logger.error(polygonIdManagerCreationState.error)
+  }
+
+  const maybeManagerId =
+    'result' in polygonIdManagerCreationState
+      ? polygonIdManagerCreationState.result
+      : undefined
 
   const isPolygonIdReady = isReady && !!maybeManagerId
 
@@ -147,6 +161,9 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           return
         }
         default: {
+          logger.warn(`Polygon ID message type not supported`, {
+            messageType: message.type,
+          })
           throw new Error(
             `Polygon ID message type not supported: ${message.type}}`
           )
@@ -189,15 +206,16 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           managerId: maybeManagerId!,
         })
         return { result }
-      } catch (error: unknown) {
-        Sentry.captureException(error)
+      } catch (cause: unknown) {
+        const error = new Error(
+          // TODO: Adapt the error message to the type of error
+          // The error message must be user-friendly, as it will be displayed in the UI
+          'Something went wrong when accepting the Polygon ID connection request',
+          { cause }
+        )
+        logger.error(error)
         return {
-          error: new Error(
-            // TODO: Adapt the error message to the type of error
-            // The error message must be user-friendly, as it will be displayed in the UI
-            'Something went wrong when accepting the Polygon ID connection request.',
-            { cause: error }
-          ),
+          error,
         }
       }
     },
@@ -217,15 +235,16 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           managerId: maybeManagerId!,
         })
         return { result }
-      } catch (error: unknown) {
-        Sentry.captureException(error)
+      } catch (cause: unknown) {
+        const error = new Error(
+          // TODO: Adapt the error message to the type of error
+          // The error message must be user-friendly, as it will be displayed in the UI
+          'Something went wrong when answering the Polygon ID proof request',
+          { cause }
+        )
+        logger.error(error)
         return {
-          error: new Error(
-            // TODO: Adapt the error message to the type of error
-            // The error message must be user-friendly, as it will be displayed in the UI
-            'Something went wrong when answering the Polygon ID proof request.',
-            { cause: error }
-          ),
+          error,
         }
       }
     },
@@ -245,15 +264,16 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
           managerId: maybeManagerId!,
         })
         return { result }
-      } catch (error: unknown) {
-        Sentry.captureException(error)
+      } catch (cause: unknown) {
+        const error = new Error(
+          // TODO: Adapt the error message to the type of error
+          // The error message must be user-friendly, as it will be displayed in the UI
+          'Something went wrong when accepting the Polygon ID credential offer.',
+          { cause }
+        )
+        logger.error(error)
         return {
-          error: new Error(
-            // TODO: Adapt the error message to the type of error
-            // The error message must be user-friendly, as it will be displayed in the UI
-            'Something went wrong when accepting the Polygon ID credential offer.',
-            { cause: error }
-          ),
+          error,
         }
       }
     },

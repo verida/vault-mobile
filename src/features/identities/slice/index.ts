@@ -1,6 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import { logout } from 'features/auth'
+import { Sentry } from 'features/telemetry'
 import { cloneDeep } from 'lodash'
 
 import { Account } from 'api/types'
@@ -29,6 +30,11 @@ export const identitiesSlice = createSlice({
     setSelectedAccount: (state, action: PayloadAction<Account | undefined>) => {
       // FIXME: The account object should be cloned to be detached from the instance variable in Account Manager
       state.selectedAccount = cloneDeep(action.payload)
+      if (action.payload?.did) {
+        Sentry.setUser({ id: action.payload?.did })
+      } else {
+        Sentry.setUser(null)
+      }
     },
     addAccount: (state, action: PayloadAction<Account>) => {
       // FIXME: The account object should be cloned to be detached from the instance variable in Account Manager
