@@ -19,8 +19,8 @@ export class VeridaDataSource<T> implements IDataSource<T> {
     } catch (error: unknown) {
       // @ts-ignore
       record._id = value[keyName];
-      record.data = value;
     }
+    record.data = value;
 
     await this.database.save(record);
   }
