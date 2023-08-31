@@ -8,49 +8,38 @@ import {
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
 import { isEmpty } from 'lodash'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
+import { useDebouncedCallback } from 'use-debounce'
 
 import { MainStackParams } from 'navigation/types'
-import CameraOverlay from 'pages/ScanQrCode/CameraOverlay'
+import { QrCodeScannerOverlay } from 'pages/ScanQrCode/CameraOverlay'
 
 const WAIT_TIME = 3000
 
-function ScanQrCode(
+export const QrCodeScannerScreen = (
   props: NativeStackScreenProps<MainStackParams, 'ScanQrCode'>
-) {
+) => {
   const { navigation, route } = props
-  const [enabled, setEnabled] = useState(true)
+
+  const [processing, setProcessing] = useState(false)
   const [isFlashOn, setIsFlashOn] = useState(false)
   const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
   const handleDeeplink = useDeeplink(navigation as any)
 
-  useEffect(() => {
-    setEnabled(true)
-  }, [navigation])
-
-  const toggleFlash = useCallback(() => {
+  const handleToggleFlash = useCallback(() => {
     setIsFlashOn((prevState) => !prevState)
   }, [])
 
-  const onClose = useCallback(async () => {
+  const handleClose = useCallback(async () => {
     navigation.goBack()
   }, [navigation])
 
-  const handleQrCode = useCallback(
+  const processQrCodeMessage = useCallback(
     async (data: string) => {
-      if (!enabled) {
-        return
-      }
-
-      setEnabled(false)
-
-      setTimeout(() => {
-        // TODO: This is causing a state update on an unmounted component, use a debounce/throttle on handleQrCode instead
-        setEnabled(true)
-      }, WAIT_TIME)
+      setProcessing(true)
 
       if (route.params.onReadQRCode) {
         route.params.onReadQRCode(data)
@@ -90,20 +79,23 @@ function ScanQrCode(
         Sentry.captureException(error)
       }
 
+      setProcessing(false)
       Alert.alert('Error', 'QR Code not supported')
     },
-    [
-      enabled,
-      processQrCodeByProtocolHandlers,
-      handleDeeplink,
-      navigation,
-      route.params,
-    ]
+    [processQrCodeByProtocolHandlers, handleDeeplink, navigation, route.params]
   )
 
-  const onBarCodeRead = async (event: BarCodeReadEvent) => {
+  const debouncedProcessQrCodeMessage = useDebouncedCallback(
+    processQrCodeMessage,
+    WAIT_TIME,
+    {
+      leading: true,
+    }
+  )
+
+  const handleQrCodeRead = async (event: BarCodeReadEvent) => {
     const { data } = event
-    await handleQrCode(data)
+    await debouncedProcessQrCodeMessage(data)
   }
 
   // HACK: In development mode, we'll also read the content of the clipboard
@@ -115,13 +107,14 @@ function ScanQrCode(
     ;(async () => {
       if (!maybeClipboardContent) return
 
-      return handleQrCode(maybeClipboardContent)
+      // return debouncedProcessQrCodeMessage(maybeClipboardContent)
     })()
-  }, [maybeClipboardContent, handleQrCode])
+  }, [maybeClipboardContent, debouncedProcessQrCodeMessage])
 
   return (
     <View style={styles.container}>
       <RNCamera
+        style={styles.camera}
         type={RNCamera.Constants.Type.back}
         flashMode={
           isFlashOn
@@ -135,28 +128,23 @@ function ScanQrCode(
           buttonPositive: 'Ok',
           buttonNegative: 'Cancel',
         }}
-        androidRecordAudioPermissionOptions={{
-          title: 'Permission to use audio recording',
-          message: 'We need your permission to use your audio',
-          buttonPositive: 'Ok',
-          buttonNegative: 'Cancel',
-        }}
-        style={styles.camera}
-        onBarCodeRead={Platform.OS === 'ios' ? onBarCodeRead : undefined}
+        onBarCodeRead={Platform.OS === 'ios' ? handleQrCodeRead : undefined}
         onGoogleVisionBarcodesDetected={({ barcodes }) => {
           if (isEmpty(barcodes) || isEmpty(barcodes[0].data)) {
             return
           }
-          handleQrCode(barcodes[0].data)
+          debouncedProcessQrCodeMessage(barcodes[0].data)
         }}
         googleVisionBarcodeType={
           RNCamera.Constants.GoogleVisionBarcodeDetection.BarcodeType.QR_CODE
         }
       />
-      <CameraOverlay
+      <QrCodeScannerOverlay
+        processing={processing}
+        // processing={true}
         isFlashOn={isFlashOn}
-        onToggleFlash={toggleFlash}
-        onClose={onClose}
+        onToggleFlash={handleToggleFlash}
+        onClose={handleClose}
         firstTime={route.params.firstTime}
       />
     </View>
@@ -166,12 +154,10 @@ function ScanQrCode(
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    flexDirection: 'column',
-    backgroundColor: 'black',
   },
   camera: {
     flex: 1,
   },
 })
 
-export default ScanQrCode
+export default QrCodeScannerScreen
