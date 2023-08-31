@@ -19,7 +19,7 @@ import type {
 
 import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
 import {
-  fetchEntityMetadata,
+  getEntityMetadata,
   parseDeepLinkUrl,
   parseQrCodeMessage,
 } from '../utils'
@@ -97,22 +97,30 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
       message: AuthorizationRequestMessage | CredentialsOfferMessage,
       replaceNavigationScreen?: boolean
     ) => {
+      const entityMetadata = await getEntityMetadata(
+        message.from,
+        message.type ===
+          PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE
+          ? (message as AuthorizationRequestMessage).body.callbackUrl
+          : undefined
+      )
+
       // TODO: factorise this function that's becoming too big
       switch (message.type) {
         case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
           const requestData = message as AuthorizationRequestMessage
-          const entityMetadata = await fetchEntityMetadata(
-            requestData.body.callbackUrl
-          )
+
+          const url = new URL(requestData.body.callbackUrl) // TODO: Handle error
+
           if (requestData.body?.scope && requestData.body.scope.length) {
             // We have a scope object implying we need to submit a ZK proof
             const screenParams: ProofRequestScreenParams = {
               name: entityMetadata.name || 'Unknown',
-              logo: entityMetadata.avatar,
+              logo: entityMetadata.icon,
               details: {
                 protocols: ['polygonid'],
                 timestamp: new Date().toISOString(),
-                url: entityMetadata.url,
+                url: url.origin,
                 requesterId: requestData.from || 'Unknown',
                 message: requestData.body?.reason,
               },
@@ -127,11 +135,11 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
             // We have a generic connection request
             const screenParams: ConnectionRequestScreenParams = {
               name: entityMetadata.name || 'Unknown',
-              logo: entityMetadata.avatar,
+              logo: entityMetadata.icon,
               details: {
                 protocols: ['polygonid'],
                 timestamp: new Date().toISOString(),
-                url: entityMetadata.url,
+                url: url.origin,
                 requesterId: requestData.from || 'Unknown',
                 message: requestData.body?.reason,
               },
@@ -147,10 +155,10 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
         }
         case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE: {
           const offerData = message as CredentialsOfferMessage
+
           const screenParams: IncomingDataRequestScreenParams = {
-            // TODO: Find a way to get the name of the requester
-            name: 'Unknown',
-            // TODO: Find a way to get the logo of the requester
+            name: entityMetadata.name || 'Unknown',
+            logo: entityMetadata.icon,
             details: {
               protocols: ['polygonid'],
               timestamp: new Date().toISOString(),

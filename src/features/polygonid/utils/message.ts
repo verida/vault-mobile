@@ -4,6 +4,7 @@ import type {
 } from '@0xpolygonid/js-sdk'
 import axios from 'axios'
 import { base64 } from 'ethers/lib/utils' // TODO: Is it ok to use the base64 from the ethers package?
+import { DidMetadata, getDidMetadata, saveDidMetadata } from 'features/did'
 import {
   IDEN3_PROTOCOL,
   IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM,
@@ -81,9 +82,9 @@ export function parseQrCodeMessage(
   return parseMessage(jsonMessage)
 }
 
-export async function fetchEntityMetadata(
-  url: string
-): Promise<{ name?: string; avatar?: string; url: string; hostname: string }> {
+export async function fetchEntityMetadata(url: string): Promise<DidMetadata> {
+  logger.info('Fetching metadata from URL')
+
   const parsedUrl = new URL(url)
 
   let html = ''
@@ -110,8 +111,39 @@ export async function fetchEntityMetadata(
 
   return {
     name: title,
-    avatar: iconUrl,
-    url: parsedUrl.origin,
-    hostname: parsedUrl.hostname,
+    icon: iconUrl,
+  }
+}
+
+export async function getEntityMetadata(
+  did: string,
+  url?: string
+): Promise<DidMetadata> {
+  logger.debug('Getting Polygon ID entity metadata')
+  try {
+    const [didMetadata, fetchedMetadata] = await Promise.all([
+      getDidMetadata(did),
+      url ? fetchEntityMetadata(url) : Promise.resolve(undefined),
+    ])
+
+    logger.debug('didMetadata', { didMetadata })
+    logger.debug('fetchedMetadata', { fetchedMetadata })
+
+    if (fetchedMetadata) {
+      logger.debug('Saving the fetched metadata into the DID metadata store')
+
+      saveDidMetadata(did, {
+        name: fetchedMetadata.name,
+        icon: fetchedMetadata.icon,
+      })
+    }
+
+    return {
+      name: fetchedMetadata?.name || didMetadata?.name,
+      icon: fetchedMetadata?.icon || didMetadata?.icon,
+    }
+  } catch (error: unknown) {
+    logger.error(new Error('Error getting entity metadata', { cause: error }))
+    return {}
   }
 }
