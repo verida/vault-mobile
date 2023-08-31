@@ -2,6 +2,8 @@ import * as Sentry from '@sentry/react-native'
 import { W3CVerifiableCredential } from '@veramo/core'
 import { Context } from '@verida/client-rn'
 import { SharingCredential } from '@verida/verifiable-credentials'
+import { getDidMetadata } from 'features/did'
+import { isValidVeridaDid } from 'features/verida'
 import { useCredential } from 'features/verifiableCredential'
 import { isEmpty } from 'lodash'
 import { List } from 'native-base'
@@ -67,7 +69,17 @@ function CredentialDataItem(props: CredentialDataItemProps) {
 
     async function getIssuerProfile(issuerDid: string, contextName?: string) {
       try {
-        const issuerProfile = await getPublicProfile(issuerDid, contextName)
+        let issuerProfile
+        // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
+        if (isValidVeridaDid(issuerDid)) {
+          issuerProfile = await getPublicProfile(issuerDid, contextName)
+        } else {
+          const didMetadata = await getDidMetadata(issuerDid)
+          issuerProfile = {
+            name: didMetadata?.name || 'Unknown',
+            avatar: didMetadata?.icon || DefaultAvatar,
+          }
+        }
         setIssuer(issuerProfile)
       } catch (error: unknown) {
         Sentry.captureException(error)
@@ -147,7 +159,11 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     setShowFullscreenQr((prevState) => !prevState)
   }
 
-  const avatarSource = issuer.avatar || DefaultAvatar
+  const avatarSource = issuer.avatar
+    ? typeof issuer.avatar === 'string' && issuer.avatar.startsWith('http')
+      ? { uri: issuer.avatar }
+      : issuer.avatar
+    : DefaultAvatar
   return (
     <View style={styles.container} {...rest}>
       <View style={styles.sender}>
@@ -246,7 +262,7 @@ const styles = StyleSheet.create({
     height: 40,
     borderRadius: 20,
     resizeMode: 'contain',
-    marginLeft: 10,
+    marginLeft: 5,
     marginRight: 5,
   },
   verifiedContainer: {
