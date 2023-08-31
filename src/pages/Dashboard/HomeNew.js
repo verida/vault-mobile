@@ -46,7 +46,7 @@ import WalletSummary from './Banners/WalletBanner'
 import DidView from './DidView'
 import GettingStarted from './GettingStarted/GettingStartedSection'
 import HomeNavigationHeader from './HomeNavigationHeader'
-import QRCodeScannerButton from './QrcodeScanner'
+import { QRCodeScannerButton } from './QrCodeScannerButton'
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 

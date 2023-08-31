@@ -13,6 +13,7 @@ import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 import { EditPlatformLinkScreenParams } from 'pages/Profiles/EditPlatformLink'
+import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
@@ -80,8 +81,7 @@ export type MainStackParams = {
   DataItem: undefined
   Settings: undefined
   ChangePin: undefined
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
+  ScanQrCode: QrCodeScannerScreenParams
   DeleteAccount: undefined
   Identity: undefined
   AddIdentity: { mode?: AddIdentityMode }
