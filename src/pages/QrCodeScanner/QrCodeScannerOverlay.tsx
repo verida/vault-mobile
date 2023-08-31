@@ -37,9 +37,6 @@ export const QrCodeScannerOverlay: React.FunctionComponent<QrCodeScannerOverlayP
       processing,
     } = props
 
-    // eslint-disable-next-line no-console
-    console.debug('============= processing:', processing)
-
     const insets = useSafeAreaInsets()
 
     return (

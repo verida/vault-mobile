@@ -117,7 +117,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
       ;(async () => {
         if (!maybeClipboardContent) return
 
-        // return debouncedProcessQrCodeMessage(maybeClipboardContent)
+        return debouncedProcessQrCodeMessage(maybeClipboardContent)
       })()
     }, [maybeClipboardContent, debouncedProcessQrCodeMessage])
 
@@ -151,7 +151,6 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
         />
         <QrCodeScannerOverlay
           processing={processing}
-          // processing={true}
           isFlashOn={isFlashOn}
           onToggleFlash={handleToggleFlash}
           onClose={handleClose}
