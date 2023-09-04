@@ -2,6 +2,8 @@ import * as Sentry from '@sentry/react-native'
 import { W3CVerifiableCredential } from '@veramo/core'
 import { Context } from '@verida/client-rn'
 import { SharingCredential } from '@verida/verifiable-credentials'
+import { getDidMetadata } from 'features/did'
+import { isValidVeridaDid } from 'features/verida'
 import { useCredential } from 'features/verifiableCredential'
 import { isEmpty } from 'lodash'
 import { List } from 'native-base'
@@ -27,7 +29,7 @@ import DataFieldList from 'components/Data/DataFieldList'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 type ValidState = 'valid' | 'invalid' | 'unknown'
 
@@ -45,6 +47,7 @@ function CredentialDataItem(props: CredentialDataItemProps) {
 
   const [loading, setLoading] = useState(true)
   const [issuer, setIssuer] = useState({
+    did: '',
     name: '',
     avatar: '',
   })
@@ -67,7 +70,23 @@ function CredentialDataItem(props: CredentialDataItemProps) {
 
     async function getIssuerProfile(issuerDid: string, contextName?: string) {
       try {
-        const issuerProfile = await getPublicProfile(issuerDid, contextName)
+        let issuerProfile
+        // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
+        if (isValidVeridaDid(issuerDid)) {
+          const publicProfile = await getPublicProfile(issuerDid, contextName)
+          issuerProfile = {
+            did: issuerDid,
+            name: publicProfile?.name || 'Unknown',
+            avatar: publicProfile?.avatar || DefaultAvatar,
+          }
+        } else {
+          const didMetadata = await getDidMetadata(issuerDid)
+          issuerProfile = {
+            did: issuerDid,
+            name: didMetadata?.name || 'Unknown',
+            avatar: didMetadata?.icon || DefaultAvatar,
+          }
+        }
         setIssuer(issuerProfile)
       } catch (error: unknown) {
         Sentry.captureException(error)
@@ -147,14 +166,15 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     setShowFullscreenQr((prevState) => !prevState)
   }
 
-  const avatarSource = issuer.avatar || DefaultAvatar
+  const avatarSource = issuer.avatar
+    ? typeof issuer.avatar === 'string' && issuer.avatar.startsWith('http')
+      ? { uri: issuer.avatar }
+      : issuer.avatar
+    : DefaultAvatar
+
   return (
     <View style={styles.container} {...rest}>
-      <View style={styles.sender}>
-        <Text>Signed by</Text>
-        <Image source={avatarSource} style={styles.logo} />
-        <Text style={styles.issuerName}>{issuer.name}</Text>
-      </View>
+      <Text style={styles.title}>{data?.row?.name || item?.name}</Text>
       {loading ? (
         <View style={styles.loadingStatusContainer}>
           <LoadingView type={'small'} style={styles.loadingView} />
@@ -205,7 +225,26 @@ function CredentialDataItem(props: CredentialDataItemProps) {
           </View>
         </>
       )}
-      <Text style={styles.title}>{data?.row?.name}</Text>
+      <View style={styles.issuerSection}>
+        <Text>Signed by</Text>
+        <View style={styles.issuerInfo}>
+          <Image source={avatarSource} style={styles.issuerLogo} />
+          <View style={styles.issuerNameAndDidContainer}>
+            <Text
+              style={styles.issuerName}
+              numberOfLines={1}
+              ellipsizeMode='middle'>
+              {issuer.name}
+            </Text>
+            <Text
+              style={styles.issuerDid}
+              numberOfLines={1}
+              ellipsizeMode='tail'>
+              {issuer.did}
+            </Text>
+          </View>
+        </View>
+      </View>
       <List style={{ alignSelf: 'stretch' }}>
         <DataFieldList data={data} setCopyUrl={setCopyUrl} />
       </List>
@@ -234,20 +273,33 @@ const styles = StyleSheet.create({
   container: {
     alignItems: 'stretch',
   },
-  sender: {
-    marginTop: 16,
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 15,
-    alignSelf: 'center',
+  issuerSection: {
+    marginTop: 20,
+    marginBottom: 10,
+    flexDirection: 'column',
+    paddingHorizontal: 20,
   },
-  logo: {
+  issuerInfo: {
+    width: '100%',
+    marginTop: 10,
+    flexDirection: 'row',
+  },
+  issuerLogo: {
     width: 40,
     height: 40,
     borderRadius: 20,
     resizeMode: 'contain',
-    marginLeft: 10,
     marginRight: 5,
+  },
+  issuerNameAndDidContainer: {
+    flexDirection: 'column',
+    flex: 1,
+  },
+  issuerName: {
+    fontFamily: NUNITO_SANS_BOLD,
+  },
+  issuerDid: {
+    fontFamily: NUNITO_SANS,
   },
   verifiedContainer: {
     flexDirection: 'row',
@@ -261,7 +313,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 18,
     fontFamily: NUNITO_SANS_BOLD,
-    alignSelf: 'flex-start',
+    alignSelf: 'center',
     marginTop: 20,
     marginLeft: 15,
   },
@@ -270,9 +322,6 @@ const styles = StyleSheet.create({
   },
   loadingStatusContainer: {
     alignSelf: 'center',
-  },
-  issuerName: {
-    fontFamily: NUNITO_SANS_BOLD,
   },
   loadingView: {
     maxHeight: 50,

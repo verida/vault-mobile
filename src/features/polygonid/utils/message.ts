@@ -2,7 +2,9 @@ import type {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
 } from '@0xpolygonid/js-sdk'
+import axios from 'axios'
 import { base64 } from 'ethers/lib/utils' // TODO: Is it ok to use the base64 from the ethers package?
+import { DidMetadata, getDidMetadata, saveDidMetadata } from 'features/did'
 import {
   IDEN3_PROTOCOL,
   IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM,
@@ -78,4 +80,70 @@ export function parseQrCodeMessage(
   const jsonMessage = JSON.parse(qrCodeMessage)
   checkParsedMessage(jsonMessage, qrCodeMessage)
   return parseMessage(jsonMessage)
+}
+
+export async function fetchEntityMetadata(url: string): Promise<DidMetadata> {
+  logger.info('Fetching metadata from URL')
+
+  const parsedUrl = new URL(url)
+
+  let html = ''
+  try {
+    // Fetching the page content of the origin, not the full URL as it's likely a REST API route.
+    const { data } = await axios.get<string>(parsedUrl.origin)
+    html = data
+  } catch (_error: unknown) {
+    // Something went wrong fetching the origin, likely th epage doesn't exist.
+    // It's ok, we can't assume all entities are setting up a page there.
+    // The subsequent logic has fallbacks if there is no page available
+  }
+
+  const titleRegex = /<title>(.*?)<\/title>/i
+  const titleMatch = titleRegex.exec(html)
+  const title = titleMatch ? titleMatch[1] : parsedUrl.hostname
+
+  const iconRegex = /<link\s+rel="(?:shortcut )?icon"\s+[^>]*href="([^"]+)"/i
+  const iconMatch = iconRegex.exec(html)
+  const iconPath = iconMatch ? iconMatch[1] : 'favicon.ico'
+  const iconUrl = iconPath.startsWith('http')
+    ? iconPath
+    : `${parsedUrl.origin}/${iconPath}`
+
+  return {
+    name: title,
+    icon: iconUrl,
+  }
+}
+
+export async function getEntityMetadata(
+  did: string,
+  url?: string
+): Promise<DidMetadata> {
+  logger.debug('Getting Polygon ID entity metadata')
+  try {
+    const [didMetadata, fetchedMetadata] = await Promise.all([
+      getDidMetadata(did),
+      url ? fetchEntityMetadata(url) : Promise.resolve(undefined),
+    ])
+
+    logger.debug('didMetadata', { didMetadata })
+    logger.debug('fetchedMetadata', { fetchedMetadata })
+
+    if (fetchedMetadata) {
+      logger.debug('Saving the fetched metadata into the DID metadata store')
+
+      saveDidMetadata(did, {
+        name: fetchedMetadata.name,
+        icon: fetchedMetadata.icon,
+      })
+    }
+
+    return {
+      name: fetchedMetadata?.name || didMetadata?.name,
+      icon: fetchedMetadata?.icon || didMetadata?.icon,
+    }
+  } catch (error: unknown) {
+    logger.error(new Error('Error getting entity metadata', { cause: error }))
+    return {}
+  }
 }

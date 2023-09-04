@@ -30,12 +30,12 @@ import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
+import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreen,
   IncomingDataRequestScreen,
   ProofRequestScreen,
 } from 'pages/Requests'
-import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
@@ -135,7 +135,7 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'DataItem'} component={Item} />
           <Stack.Screen name={'Settings'} component={Settings} />
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
-          <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
+          <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
           <Stack.Screen
             name={'SeedPhraseEntered'}
             component={SeedPhraseEntered}
