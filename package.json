@@ -27,7 +27,7 @@
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.2",
     "@babel/helper-environment-visitor": "^7.16.7",
-    "@cheqd/did-provider-cheqd": "^3.0.4",
+    "@cheqd/did-provider-cheqd": "^3.6.6",
     "@ethereumjs/tx": "^3.5.2",
     "@ethersproject/pbkdf2": "5.7.0",
     "@ethersproject/shims": "^5.6.0",
