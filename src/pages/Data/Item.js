@@ -8,7 +8,7 @@ import { connect } from 'react-redux'
 
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import CredentialDataItem from 'pages/Data/CredentialDataItem'
+import { CredentialDataItem } from 'pages/Data/CredentialDataItem'
 
 import DataFieldList from '../../components/Data/DataFieldList'
 
