@@ -8,6 +8,7 @@ import {
 } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
+import { DataItemScreenParams } from 'pages/Data'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
@@ -78,7 +79,7 @@ export type MainStackParams = {
   OtherAddresses: undefined
   SuccessFailure: undefined
   DataFolder: { folderName: string }
-  DataItem: undefined
+  DataItem: DataItemScreenParams
   Settings: undefined
   ChangePin: undefined
   ScanQrCode: QrCodeScannerScreenParams
