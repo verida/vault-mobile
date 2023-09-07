@@ -1,75 +1,71 @@
-import * as Sentry from '@sentry/react-native'
+import { ICheqdVerifyCredentialWithStatusList2021Args } from '@cheqd/did-provider-cheqd'
 import {
-  IError,
   IVerifyCredentialArgs,
   IVerifyResult,
   VerifiableCredential,
-  W3CVerifiableCredential,
 } from '@veramo/core'
+import { extractIssuer } from '@veramo/utils'
+import { Logger } from 'features/telemetry'
 import { useVeramo } from 'features/veramo'
 import { useCallback } from 'react'
 
-import { ValidState } from '../types'
+import { VerificationResult } from '../types'
+
+const logger = new Logger('Verifiable Credential')
+
+const defaultVerificationOptions: Omit<IVerifyCredentialArgs, 'credential'> = {
+  fetchRemoteContexts: true,
+  policies: {
+    audience: true,
+    issuanceDate: true,
+    credentialStatus: true,
+    expirationDate: true,
+  },
+}
 
 export const useCredential = () => {
   const { agent } = useVeramo()
 
   const verifyCredential = useCallback(
     async (
-      credential: W3CVerifiableCredential,
+      credential: VerifiableCredential,
       options?: Omit<IVerifyCredentialArgs, 'credential'>
-    ): Promise<
-      | {
-          verified: false
-          valid: 'unknown'
-          error: IError
-        }
-      | {
-          verified: true
-          valid: ValidState
-          issuer: string
-          result: IVerifyResult
-          verifiedCredential: VerifiableCredential
-        }
-    > => {
-      const defaultVerificationOptions: IVerifyCredentialArgs = {
-        credential,
-        fetchRemoteContexts: true,
-        policies: {
-          audience: true,
-          issuanceDate: true,
-          credentialStatus: true,
-          expirationDate: true,
-        },
-      }
+    ): Promise<VerificationResult | undefined> => {
+      const resolvedOptions: Omit<IVerifyCredentialArgs, 'credential'> =
+        Object.assign({}, defaultVerificationOptions, options)
 
-      const opts: IVerifyCredentialArgs = Object.assign(
-        {},
-        defaultVerificationOptions,
-        options
-      )
-
-      let verificationResult: IVerifyResult
       try {
-        // TODO: Do validation of the data before as the agent is not doing it
-        verificationResult = await agent.verifyCredential(opts)
+        let verificationResult: IVerifyResult
+
+        logger.debug('Credential', { credential })
+
+        const issuer = extractIssuer(credential)
+
+        if (issuer.startsWith('did:cheqd') && !!credential.credentialStatus) {
+          logger.debug('Verifying Cheqd credential with status list')
+          verificationResult = await agent.cheqdVerifyCredential({
+            credential,
+            fetchList: true,
+            verificationArgs: {
+              ...resolvedOptions,
+            },
+          } as ICheqdVerifyCredentialWithStatusList2021Args)
+        } else {
+          logger.debug('Verifying credential')
+          verificationResult = await agent.verifyCredential({
+            credential,
+            ...resolvedOptions,
+          })
+        }
+        logger.debug('Verification result:', {
+          result: verificationResult,
+        })
+
+        return verificationResult
       } catch (error: unknown) {
         // Likely to be something unsupported by our Veramo agent configuration
-        Sentry.captureException(error)
-        return {
-          verified: false,
-          valid: 'unknown',
-          error: error as IError,
-        }
-      }
-
-      return {
-        verified: true,
-        valid: 'error' in verificationResult ? 'invalid' : 'valid',
-        issuer: verificationResult.issuer,
-        result: verificationResult,
-        verifiedCredential:
-          verificationResult.verifiableCredential as VerifiableCredential,
+        // Returning undefined means the verification is inconclusive
+        logger.error(error)
       }
     },
     [agent]
