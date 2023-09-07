@@ -1,4 +1,10 @@
-import { getResolver as getCheqdDidResolver } from '@cheqd/did-provider-cheqd'
+import {
+  Cheqd,
+  CheqdDIDProvider,
+  getResolver as getCheqdDidResolver,
+  ICheqd,
+} from '@cheqd/did-provider-cheqd'
+import { CheqdNetwork } from '@cheqd/sdk'
 import { createAgent, ICredentialPlugin, IResolver, TAgent } from '@veramo/core'
 import {
   CredentialIssuerLD,
@@ -18,13 +24,28 @@ import {
 import { getResolver as getVdaDidResolver } from '@verida/vda-did-resolver'
 import React, { createContext } from 'react'
 
-type VeramoAgentInterfaces = IResolver & ICredentialPlugin & ICredentialIssuerLD
+const cheqdMainnetProvider = new CheqdDIDProvider({
+  defaultKms: '',
+  cosmosPayerSeed: '',
+  networkType: CheqdNetwork.Mainnet,
+})
+
+const cheqdTestnetProvider = new CheqdDIDProvider({
+  defaultKms: '',
+  cosmosPayerSeed: '',
+  networkType: CheqdNetwork.Testnet,
+})
+
+type VeramoAgentInterfaces = IResolver &
+  ICredentialPlugin &
+  ICredentialIssuerLD &
+  ICheqd
 
 const agent = createAgent<VeramoAgentInterfaces>({
   plugins: [
     new DIDResolverPlugin({
       ...getVdaDidResolver(),
-      ...getCheqdDidResolver(), // TODO: Remove cheqd resolver and declare it in the universal resolver
+      ...getCheqdDidResolver(),
       ...getUniversalResolverFor(['polygonid']),
       // TODO: Get the URL of the universal resolver from the env variables
     }),
@@ -40,6 +61,9 @@ const agent = createAgent<VeramoAgentInterfaces>({
     }),
     new CredentialStatusPlugin({
       // TODO: Add Credential status methods to support
+    }),
+    new Cheqd({
+      providers: [cheqdMainnetProvider, cheqdTestnetProvider],
     }),
   ],
 })
