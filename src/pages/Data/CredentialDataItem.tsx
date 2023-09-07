@@ -1,15 +1,19 @@
 import * as Sentry from '@sentry/react-native'
 import { VerifiableCredential } from '@veramo/core'
 import { extractIssuer } from '@veramo/utils'
+import { DataFieldItem, DataItem } from 'features/data'
 import { getDidMetadata } from 'features/did'
 import { isValidVeridaDid } from 'features/verida'
 import {
   CredentialValidityStatus,
   getCredentialValidityStatus,
   useCredential,
+  VeridaVerifiableCredentialRecord,
 } from 'features/verifiableCredential'
 import { isEmpty } from 'lodash'
-import { List } from 'native-base'
+import moment from 'moment'
+// TODO: Get rid of native-base
+import { Body, Card, CardItem, Text as NativeBaseText } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
@@ -21,25 +25,50 @@ import {
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { DefaultAvatar, getPublicProfile } from 'api/utils'
-import DataFieldList from 'components/Data/DataFieldList'
+import { DataFieldList } from 'components/Data/DataFieldList'
 import Text from 'components/Text'
 import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
-  data: any
-  item: any
-  setCopyUrl: any
+  data: DataItem
+  item: VeridaVerifiableCredentialRecord
 }
 
 export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps> =
   (props) => {
-    const { data, item, setCopyUrl, ...rest } = props
+    const { data, item } = props
+
+    // TODO: Validate the item is a Verifiable Credential Record
+    const { credentialData } = item
+
+    const extractedIssuer = extractIssuer(credentialData)
+
+    const credentialDataFields: DataFieldItem[] = data.data
+
+    const credentialMetadataFields: DataFieldItem[] = [
+      {
+        field: 'Issuance Date',
+        value: item.credentialData.issuanceDate
+          ? moment(item.credentialData.issuanceDate).format(
+              'DD MMM YYYY, h:mm a'
+            )
+          : '-',
+      },
+      {
+        field: 'Expiration Date',
+        value: item.credentialData.expirationDate
+          ? moment(item.credentialData.expirationDate).format(
+              'DD MMM YYYY, h:mm a'
+            )
+          : 'No expiration',
+      },
+    ]
 
     const [loading, setLoading] = useState(true)
     const [issuer, setIssuer] = useState({
-      did: '',
-      name: '',
+      did: extractedIssuer,
+      name: 'Unknown',
       avatar: '',
     })
     const [status, setStatus] = useState<CredentialValidityStatus>('unknown')
@@ -82,21 +111,14 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
           return
         }
 
-        const { credentialData } = item
-
         setLoading(true)
         await checkCredential(credentialData)
-        const extractedIssuer = extractIssuer(credentialData)
         await getIssuerProfile(extractedIssuer)
         setLoading(false)
       }
 
       init()
-    }, [item, verifyCredential])
-
-    if (isEmpty(data.data)) {
-      return null
-    }
+    }, [item, credentialData, extractedIssuer, verifyCredential])
 
     const avatarSource = issuer.avatar
       ? typeof issuer.avatar === 'string' && issuer.avatar.startsWith('http')
@@ -105,8 +127,8 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
       : DefaultAvatar
 
     return (
-      <View style={styles.container} {...rest}>
-        <Text style={styles.title}>{data?.row?.name || item?.name}</Text>
+      <View style={styles.container}>
+        <Text style={styles.title}>{item?.name}</Text>
         <View style={styles.verificationStatusContainer}>
           {loading ? (
             <>
@@ -182,29 +204,38 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
             </>
           )}
         </View>
-        <View style={styles.issuerSection}>
-          <Text>Signed by</Text>
-          <View style={styles.issuerInfo}>
-            <Image source={avatarSource} style={styles.issuerLogo} />
-            <View style={styles.issuerNameAndDidContainer}>
-              <Text
-                style={styles.issuerName}
-                numberOfLines={1}
-                ellipsizeMode='middle'>
-                {issuer.name}
-              </Text>
-              <Text
-                style={styles.issuerDid}
-                numberOfLines={1}
-                ellipsizeMode='tail'>
-                {issuer.did}
-              </Text>
-            </View>
-          </View>
+        <Card transparent style={styles.card}>
+          <CardItem>
+            <Body>
+              <NativeBaseText note>Issuer</NativeBaseText>
+              <View style={styles.issuerInfo}>
+                <Image source={avatarSource} style={styles.issuerLogo} />
+                <View style={styles.issuerNameAndDidContainer}>
+                  <Text
+                    style={styles.issuerName}
+                    numberOfLines={1}
+                    ellipsizeMode='middle'>
+                    {issuer.name}
+                  </Text>
+                  <Text
+                    style={styles.issuerDid}
+                    numberOfLines={1}
+                    ellipsizeMode='tail'>
+                    {issuer.did}
+                  </Text>
+                </View>
+              </View>
+            </Body>
+          </CardItem>
+        </Card>
+        <View>
+          <Text style={styles.sectionTitle}>Credential Data</Text>
+          <DataFieldList fields={credentialDataFields} />
         </View>
-        <List style={{ alignSelf: 'stretch' }}>
-          <DataFieldList data={data} setCopyUrl={setCopyUrl} />
-        </List>
+        <View>
+          <Text style={styles.sectionTitle}>Other Information</Text>
+          <DataFieldList fields={credentialMetadataFields} />
+        </View>
       </View>
     )
   }
@@ -257,10 +288,25 @@ const styles = StyleSheet.create({
     marginTop: 20,
     marginLeft: 15,
   },
+  sectionTitle: {
+    fontSize: 18,
+    fontFamily: NUNITO_SANS_BOLD,
+    alignSelf: 'flex-start',
+    marginTop: 40,
+    marginLeft: 15,
+  },
   loadingStatusContainer: {
     alignSelf: 'center',
   },
   loadingView: {
     maxHeight: 50,
+  },
+  card: {
+    marginTop: 40,
+    marginBottom: 0,
+  },
+  value: {
+    fontSize: 14,
+    marginTop: 5,
   },
 })
