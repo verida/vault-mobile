@@ -112,8 +112,8 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
         }
 
         setLoading(true)
+        getIssuerProfile(extractedIssuer)
         await checkCredential(credentialData)
-        await getIssuerProfile(extractedIssuer)
         setLoading(false)
       }
 

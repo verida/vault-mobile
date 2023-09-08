@@ -27,7 +27,8 @@ async function getDidMetadataRecord(
   logger.info(`Getting DID metadata record for ${did}`)
   try {
     const record = await didMetadataDatastore.get(did, {})
-    logger.info(`DID Metadata record for ${did}`, { record })
+    logger.info(`DID Metadata record for ${did} found`)
+    logger.debug(`DID Metadata record for ${did}:`, { record })
     return record as DidMetadataRecord
   } catch (error: unknown) {
     // TODO: Check if the error is a "not found" error, report the erro if not

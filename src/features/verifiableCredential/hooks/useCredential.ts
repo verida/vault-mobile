@@ -64,7 +64,7 @@ export const useCredential = () => {
         return verificationResult
       } catch (error: unknown) {
         // Likely to be something unsupported by our Veramo agent configuration
-        // Returning undefined means the verification is inconclusive
+        // Returning undefined means the verification is not conclusive
         logger.error(error)
       }
     },
