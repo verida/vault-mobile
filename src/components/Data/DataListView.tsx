@@ -14,20 +14,20 @@ export const DataListView: React.FunctionComponent<DataListViewProps> = (
 ) => {
   const { folder } = props
 
-  const [list, setList] = useState<Record<string, unknown>[]>([])
+  const [items, setItems] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const init = async () => {
       // TODO: Add stronger typing
-      const items = await folder.getMany<Record<string, unknown>>(
+      const fetchedItems = await folder.getMany<Record<string, unknown>>(
         {},
         {
           sort: [{ insertedAt: 'desc' }],
         }
       )
 
-      setList(items)
+      setItems(fetchedItems)
       setLoading(false)
     }
 
@@ -40,9 +40,9 @@ export const DataListView: React.FunctionComponent<DataListViewProps> = (
         <View style={style.placeholder}>
           <Text>Loading...</Text>
         </View>
-      ) : list.length ? (
+      ) : items.length ? (
         <View style={style.itemsList}>
-          <DataGridList list={list} folder={folder} />
+          <DataGridList items={items} folder={folder} />
         </View>
       ) : (
         <View style={style.placeholder}>

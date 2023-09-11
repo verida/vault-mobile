@@ -4,17 +4,17 @@ import { DataCardListItem } from './DataCardListItem'
 
 export type DataCardListProps = {
   // TODO: Add stronger typing
-  list: any[]
+  items: any[]
 }
 
 export const DataCardList: React.FunctionComponent<DataCardListProps> = (
   props
 ) => {
-  const { list } = props
+  const { items } = props
 
   return (
     <>
-      {list.map((item, index) => {
+      {items.map((item, index) => {
         return <DataCardListItem key={`data-card-${index}`} item={item} />
       })}
     </>

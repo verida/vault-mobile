@@ -47,7 +47,7 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
   return (
     <View>
       <View style={style.itemsList}>
-        <DataCardList list={list} />
+        <DataCardList items={list} />
       </View>
     </View>
   )

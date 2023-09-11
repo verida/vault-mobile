@@ -6,19 +6,19 @@ import { DataGridListItem } from './DataGridListItem'
 
 export type DataGridListProps = {
   // TODO: Add stronger typing
-  list: any[]
+  items: any[]
   folder: Folder
 }
 
 export const DataGridList: React.FunctionComponent<DataGridListProps> = (
   props
 ) => {
-  const { list, folder } = props
+  const { items, folder } = props
 
   return (
     <>
       {/* TODO: Use an actual List component */}
-      {list.map((item, index) => {
+      {items.map((item, index) => {
         return (
           <DataGridListItem
             key={`data-grid-${index}`}
