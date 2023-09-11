@@ -81,6 +81,7 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
         setStatus(validityStatus)
       }
 
+      // TODO: Factorise this (or part of it) as it's also used in DataGridListItem
       async function getIssuerProfile(issuerDid: string, contextName?: string) {
         try {
           let issuerProfile
