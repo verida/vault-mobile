@@ -1,8 +1,8 @@
 import * as Sentry from '@sentry/react-native'
 import { VerifiableCredential } from '@veramo/core'
-import { extractIssuer } from '@veramo/utils'
 import { DataFieldItem, DataItem } from 'features/data'
 import { getDidMetadata } from 'features/did'
+import { extractIssuer } from 'features/veramo'
 import { isValidVeridaDid } from 'features/verida'
 import {
   CredentialValidityStatus,

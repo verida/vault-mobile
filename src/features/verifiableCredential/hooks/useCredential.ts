@@ -4,9 +4,8 @@ import {
   IVerifyResult,
   VerifiableCredential,
 } from '@veramo/core'
-import { extractIssuer } from '@veramo/utils'
 import { Logger } from 'features/telemetry'
-import { useVeramo } from 'features/veramo'
+import { extractIssuer, useVeramo } from 'features/veramo'
 import { useCallback } from 'react'
 
 import { VerificationResult } from '../types'
