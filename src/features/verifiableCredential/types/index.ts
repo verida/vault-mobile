@@ -1,5 +1,5 @@
 import { IVerifyResult, VerifiableCredential } from '@veramo/core'
-import { VeridaBaseRecord } from 'features/verida'
+import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
 
 export type CredentialValidityStatus =
   | 'unknown'
@@ -16,12 +16,18 @@ export type VerificationResult = {
   error?: IVerifyResult['error']
 }
 
-export type VeridaVerifiableCredentialRecord<T = Record<string, unknown>> =
-  VeridaBaseRecord & {
-    credentialData: VerifiableCredential & {
-      credentialSubject: {
-        id?: string
-      } & T
-    }
-    credentialSchema: string
+export type VeridaVerifiableCredentialBase<T = Record<string, unknown>> = {
+  credentialData: VerifiableCredential & {
+    credentialSubject: {
+      id?: string
+    } & T
   }
+  credentialSchema: string
+}
+
+export type VeridaVerifiableCredentialUnsavedRecord<
+  T = Record<string, unknown>
+> = VeridaUnsavedRecord<VeridaVerifiableCredentialBase<T>>
+
+export type VeridaVerifiableCredentialRecord<T = Record<string, unknown>> =
+  VeridaRecord<VeridaVerifiableCredentialBase<T>>
