@@ -3,20 +3,30 @@ import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
+import Folder from 'api/VaultCommon/managers/data/folder'
 
-import DataCardList from './DataCardList'
+import { DataCardList } from './DataCardList'
 
-const CardView = ({ folder }) => {
+export type DataCardViewProps = {
+  folder: Folder
+}
+
+export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
+  props
+) => {
+  const { folder } = props
+
   const [list, setList] = useState([])
   const navigation = useNavigation()
 
   useEffect(() => {
     const init = async () => {
       const vault = AccountManager.getInstance().vault
-      const { folders } = vault.data.map
+      // TODO: Remove the ! once the whole thing is refactored
+      const { folders } = vault!.data.map
 
       const generatedList =
-        folder.config.folders?.map((folderName) => {
+        folder.config.folders?.map((folderName: string) => {
           const { title, titlePlural, icon, color } = folders[folderName]
 
           return {
@@ -52,5 +62,3 @@ const style = StyleSheet.create({
     alignItems: 'center',
   },
 })
-
-export default CardView

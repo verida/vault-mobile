@@ -1,19 +1,20 @@
 import * as Sentry from '@sentry/react-native'
 import { DataItem } from 'features/data'
+import { isCredentialsDatabase } from 'features/verifiableCredential'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 
 import Folder from 'api/VaultCommon/managers/data/folder'
-import { DataFieldList } from 'components/Data/DataFieldList'
+import { CredentialDataItem, DataFieldList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
-import { CredentialDataItem } from 'pages/Data/CredentialDataItem'
 
 export interface DataItemScreenParams {
   // TODO: Type the data item
   item: any
+  // TODO: Avoid passing a whole folder object that cannot be serialised in navigation params
   folder: Folder
 }
 
@@ -31,7 +32,7 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
   })
   const [loading, setLoading] = useState(true)
 
-  const isCredential = folder.config.database === 'credential'
+  const isCredential = isCredentialsDatabase(folder)
 
   useEffect(() => {
     const init = async () => {

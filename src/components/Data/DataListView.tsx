@@ -1,15 +1,26 @@
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
-import DataGridList from './DataGridList'
+import Folder from 'api/VaultCommon/managers/data/folder'
 
-const ListView = ({ folder }) => {
-  const [list, setList] = useState([])
+import { DataGridList } from './DataGridList'
+
+export type DataListViewProps = {
+  folder: Folder
+}
+
+export const DataListView: React.FunctionComponent<DataListViewProps> = (
+  props
+) => {
+  const { folder } = props
+
+  const [list, setList] = useState<Record<string, unknown>[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
     const init = async () => {
-      const items = await folder.getMany(
+      // TODO: Add stronger typing
+      const items = await folder.getMany<Record<string, unknown>>(
         {},
         {
           sort: [{ insertedAt: 'desc' }],
@@ -59,5 +70,3 @@ const style = StyleSheet.create({
     justifyContent: 'center',
   },
 })
-
-export default ListView

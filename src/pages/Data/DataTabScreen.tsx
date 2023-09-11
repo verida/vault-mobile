@@ -1,16 +1,22 @@
-import { useNavigation } from '@react-navigation/native'
 import { Container, Content, List } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { connect } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { TabsScreenProps } from 'navigation/types'
 
 import DataList from '../../components/DataList'
 
-const Folders = () => {
-  const navigationProp = useNavigation()
+export type DataTabScreenParams = undefined
+
+type DataTabScreenProps = TabsScreenProps<'Data'>
+
+export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
   const [list, setList] = useState([])
   const [loading, setLoading] = useState(false)
 
@@ -18,9 +24,10 @@ const Folders = () => {
     const init = async () => {
       setLoading(true)
       const vault = AccountManager.getInstance().vault
-      const { navigation, folders } = vault.data.map
+      // TODO: Remove the ! once the whole thing is refactored
+      const { navigation: navigationFolders, folders } = vault!.data.map
 
-      const items = navigation.map((folder) => {
+      const items = navigationFolders.map((folder: string) => {
         if (!folders[folder]) {
           // folder doesn't exist
           return
@@ -32,7 +39,7 @@ const Folders = () => {
           label: titlePlural || title,
           icon: icon,
           onPress: () => {
-            navigationProp.navigate('DataFolder', { folderName: folder })
+            navigation.navigate('DataFolder', { folderName: folder })
           },
         }
       })
@@ -42,7 +49,7 @@ const Folders = () => {
     }
 
     init()
-  }, [navigationProp])
+  }, [navigation])
 
   return (
     <Container>
@@ -59,13 +66,3 @@ const Folders = () => {
     </Container>
   )
 }
-
-const mapDispatchToProps = () => {
-  return {}
-}
-
-const mapStateToProps = () => {
-  return {}
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Folders)
