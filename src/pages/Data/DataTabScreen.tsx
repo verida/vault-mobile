@@ -1,8 +1,8 @@
+import { dataFolders } from 'features/data'
 import { Logger } from 'features/telemetry'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 
-import AccountManager from 'api/AccountManager'
 import { DataList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -19,33 +19,26 @@ export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
 ) => {
   const { navigation } = props
 
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const init = async () => {
       try {
         setLoading(true)
-        const vault = AccountManager.getInstance().vault
-        // TODO: Remove the ! once the whole thing is refactored
-        const { navigation: navigationFolders, folders } = vault!.data.map
+        const _items = dataFolders
+          .filter((folderDefinition) => folderDefinition.root)
+          .map((folderDefinition) => {
+            const { name, title, titlePlural, icon } = folderDefinition
 
-        const _items = navigationFolders.map((folder: string) => {
-          if (!folders[folder]) {
-            // folder doesn't exist
-            return
-          }
-
-          const { title, titlePlural, icon } = folders[folder]
-
-          return {
-            label: titlePlural || title,
-            icon: icon,
-            onPress: () => {
-              navigation.navigate('DataFolder', { folderName: folder })
-            },
-          }
-        })
+            return {
+              label: titlePlural || title,
+              icon: icon,
+              onPress: () => {
+                navigation.navigate('DataFolder', { folderName: name })
+              },
+            }
+          })
 
         setItems(_items)
       } catch (error: unknown) {

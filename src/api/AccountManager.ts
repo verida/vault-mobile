@@ -17,7 +17,6 @@ import {
   BlockchainWalletWithAccounts,
   NormalizedAccounts,
 } from 'api/types'
-import dataMap from 'config/data-map'
 import {
   addAccount,
   setAccounts,
@@ -245,7 +244,7 @@ class AccountManager extends EventEmitter {
 
   private async getVault() {
     try {
-      const vault = new Vault(this.client, this.context, dataMap)
+      const vault = new Vault(this.client, this.context)
       await vault.init()
       return vault
     } catch (e) {

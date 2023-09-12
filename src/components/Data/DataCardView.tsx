@@ -1,9 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
+import { DataFolderDefinition, dataFolders } from 'features/data'
 import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import AccountManager from 'api/AccountManager'
 import Folder from 'api/VaultCommon/managers/data/folder'
 
 import { DataCardList } from './DataCardList'
@@ -19,28 +19,32 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
 ) => {
   const { folder } = props
 
-  const [items, setItems] = useState([])
+  const [items, setItems] = useState<any[]>([])
   const navigation = useNavigation()
 
   useEffect(() => {
     const init = () => {
       try {
-        const vault = AccountManager.getInstance().vault
-        // TODO: Remove the ! once the whole thing is refactored
-        const { folders } = vault!.data.map
+        const currentFolderDefinition = folder.config as DataFolderDefinition
 
         const _items =
-          folder.config.folders?.map((folderName: string) => {
-            const { title, titlePlural, icon, color } = folders[folderName]
+          dataFolders
+            .filter(
+              (folderDefinition) =>
+                currentFolderDefinition.display === 'folders' &&
+                currentFolderDefinition.folders?.includes(folderDefinition.name)
+            )
+            .map((folderDefinition) => {
+              const { name, title, titlePlural, icon, color } = folderDefinition
 
-            return {
-              label: titlePlural || title,
-              icon: icon,
-              color: color,
-              onPress: () =>
-                navigation.navigate('DataFolder', { folderName: folderName }),
-            }
-          }) ?? []
+              return {
+                label: titlePlural || title,
+                icon: icon,
+                color: color,
+                onPress: () =>
+                  navigation.navigate('DataFolder', { folderName: name }),
+              }
+            }) ?? []
 
         setItems(_items)
       } catch (error: unknown) {
@@ -54,7 +58,7 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
     }
 
     init()
-  }, [folder.config.folders, navigation])
+  }, [folder.config, navigation])
 
   return (
     <View>

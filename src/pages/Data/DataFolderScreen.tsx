@@ -31,7 +31,7 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
       try {
         setLoading(true)
         const vault = AccountManager.getInstance().vault
-        // TODO: Remove the ! once the whole thing is refactored
+        // TODO: Refactor the whole Vault, DataManager, etc.
         const _folder = await vault!.data.selectFolder(folderName)
         setFolder(_folder)
       } catch (error: unknown) {
