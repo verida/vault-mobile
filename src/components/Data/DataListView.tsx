@@ -1,9 +1,12 @@
+import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
 import Folder from 'api/VaultCommon/managers/data/folder'
 
 import { DataGridList } from './DataGridList'
+
+const logger = new Logger('Data Screen')
 
 export type DataListViewProps = {
   folder: Folder
@@ -15,20 +18,30 @@ export const DataListView: React.FunctionComponent<DataListViewProps> = (
   const { folder } = props
 
   const [items, setItems] = useState<Record<string, unknown>[]>([])
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const init = async () => {
-      // TODO: Add stronger typing
-      const fetchedItems = await folder.getMany<Record<string, unknown>>(
-        {},
-        {
-          sort: [{ insertedAt: 'desc' }],
-        }
-      )
+      try {
+        setLoading(true)
+        // TODO: Add stronger typing
+        const fetchedItems = await folder.getMany<Record<string, unknown>>(
+          {},
+          {
+            sort: [{ insertedAt: 'desc' }],
+          }
+        )
 
-      setItems(fetchedItems)
-      setLoading(false)
+        setItems(fetchedItems)
+      } catch (error: unknown) {
+        logger.error(
+          new Error(`Failed to load the records of a Data folder`, {
+            cause: error,
+          })
+        )
+      } finally {
+        setLoading(false)
+      }
     }
 
     init()

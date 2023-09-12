@@ -1,7 +1,6 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import Folder from 'api/VaultCommon/managers/data/folder'
@@ -9,6 +8,8 @@ import { DataCardView, DataListView } from 'components/Data'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
+
+const logger = new Logger('Data Screen')
 
 export interface DataFolderScreenParams {
   folderName: string
@@ -20,37 +21,45 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
   props
 ) => {
   const { route } = props
+  const { folderName } = route.params
 
   const [folder, setFolder] = useState<Folder>()
-  const [loaded, setLoaded] = useState(false)
+  const [loading, setLoading] = useState(false)
 
   useEffect(() => {
     const init = async () => {
       try {
-        setLoaded(false)
-        const { folderName } = route.params
+        setLoading(true)
         const vault = AccountManager.getInstance().vault
+        // TODO: Remove the ! once the whole thing is refactored
         const _folder = await vault!.data.selectFolder(folderName)
-        setLoaded(true)
         setFolder(_folder)
-      } catch (e) {
-        setLoaded(true)
-        Sentry.captureException(e)
+      } catch (error: unknown) {
+        logger.error(
+          new Error(`Failed to load the selected Data folder`, {
+            cause: error,
+          }),
+          {
+            extra: {
+              folderName,
+            },
+          }
+        )
+      } finally {
+        setLoading(false)
       }
     }
 
     init()
-  }, [route.params])
+  }, [folderName])
 
   return (
     <Container>
       <NavigationHeader
         title={folder ? folder.config.titlePlural || folder.config.title : ''}
       />
-      {!loaded ? (
-        <View style={styles.loadingContainer}>
-          <LoadingView />
-        </View>
+      {loading ? (
+        <LoadingView />
       ) : folder ? (
         <Content>
           {folder.config.display === 'folders' ? (
@@ -63,11 +72,3 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-})

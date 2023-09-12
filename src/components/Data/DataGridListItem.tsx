@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { extractIssuer } from '@veramo/utils'
 import { getDidMetadata } from 'features/did'
-import { Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import { isValidVeridaDid } from 'features/verida'
 import {
   isCredentialsDatabase,
@@ -17,6 +17,8 @@ import { DefaultAvatar, getPublicProfile } from 'api/utils'
 import Folder from 'api/VaultCommon/managers/data/folder'
 // TODO: Factorise this (or part of it) as it's also used in CredentialDataItem
 import VeridaSvg from 'assets/icons/verida.svg'
+
+const logger = new Logger('Data Screen')
 
 export type DataGridListItemProps = {
   // TODO: Add stronger typing
@@ -56,7 +58,7 @@ export const DataGridListItem: React.FunctionComponent<DataGridListItemProps> =
     )
 
     useEffect(() => {
-      if (!isCredential) {
+      if (!isCredential || isEmpty(item)) {
         return
       }
 
@@ -95,19 +97,13 @@ export const DataGridListItem: React.FunctionComponent<DataGridListItemProps> =
               : DefaultAvatar,
           }))
         } catch (error: unknown) {
-          Sentry.captureException(error)
+          logger.error(
+            new Error('Failed to get the issuer profile', { cause: error })
+          )
         }
       }
 
-      async function init() {
-        if (isEmpty(item)) {
-          return
-        }
-
-        getIssuerProfile(extractedIssuer)
-      }
-
-      init()
+      getIssuerProfile(extractedIssuer)
     }, [isCredential, folder, item])
 
     return (

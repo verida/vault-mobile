@@ -1,15 +1,17 @@
-import * as Sentry from '@sentry/react-native'
 import { DataItem } from 'features/data'
+import { Logger } from 'features/telemetry'
 import { isCredentialsDatabase } from 'features/verifiableCredential'
 import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, StyleSheet } from 'react-native'
+import { Alert } from 'react-native'
 
 import Folder from 'api/VaultCommon/managers/data/folder'
 import { CredentialDataItem, DataFieldList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
+
+const logger = new Logger('Data Screen')
 
 export interface DataItemScreenParams {
   // TODO: Type the data item
@@ -30,7 +32,7 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
     data: [],
     title: '',
   })
-  const [loading, setLoading] = useState(true)
+  const [loading, setLoading] = useState(false)
 
   const isCredential = isCredentialsDatabase(folder)
 
@@ -45,11 +47,13 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
             )
           : await folder.getDetail(item)
         setData(_data)
+      } catch (error: unknown) {
+        logger.error(
+          new Error('Failed to load the Data item', { cause: error })
+        )
+        Alert.alert('Failed to load the data item')
+      } finally {
         setLoading(false)
-      } catch (e) {
-        setLoading(false)
-        Alert.alert('Failed to fetch data')
-        Sentry.captureException(e)
       }
     }
 
@@ -59,25 +63,17 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
   return (
     <Container>
       <NavigationHeader title={folder.config.title} />
-      <Content contentContainerStyle={styles.content}>
-        {loading ? (
-          <LoadingView />
-        ) : (
-          <>
-            {isCredential ? (
-              <CredentialDataItem data={data} item={item} />
-            ) : (
-              <DataFieldList fields={data.data} />
-            )}
-          </>
-        )}
-      </Content>
+      {loading ? (
+        <LoadingView />
+      ) : (
+        <Content>
+          {isCredential ? (
+            <CredentialDataItem data={data} item={item} />
+          ) : (
+            <DataFieldList fields={data.data} />
+          )}
+        </Content>
+      )}
     </Container>
   )
 }
-
-const styles = StyleSheet.create({
-  content: {
-    flexGrow: 1,
-  },
-})

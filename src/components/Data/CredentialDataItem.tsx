@@ -1,7 +1,7 @@
-import * as Sentry from '@sentry/react-native'
 import { VerifiableCredential } from '@veramo/core'
-import { DataFieldItem, DataItem } from 'features/data'
+import { DataField, DataItem } from 'features/data'
 import { getDidMetadata } from 'features/did'
+import { Logger } from 'features/telemetry'
 import { extractIssuer } from 'features/veramo'
 import { isValidVeridaDid } from 'features/verida'
 import {
@@ -30,6 +30,8 @@ import Text from 'components/Text'
 import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
+const logger = new Logger('Data Screen')
+
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: DataItem
   item: VeridaVerifiableCredentialRecord
@@ -44,9 +46,9 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
 
     const extractedIssuer = extractIssuer(credentialData)
 
-    const credentialDataFields: DataFieldItem[] = data.data
+    const credentialDataFields: DataField[] = data.data
 
-    const credentialMetadataFields: DataFieldItem[] = [
+    const credentialMetadataFields: DataField[] = [
       {
         field: 'Issuance Date',
         value: item.credentialData.issuanceDate
@@ -65,7 +67,7 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
       },
     ]
 
-    const [loading, setLoading] = useState(true)
+    const [loading, setLoading] = useState(false)
     const [issuer, setIssuer] = useState({
       did: extractedIssuer,
       name: 'Unknown',
@@ -75,6 +77,10 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
     const { verifyCredential } = useCredential()
 
     useEffect(() => {
+      if (isEmpty(item)) {
+        return
+      }
+
       async function checkCredential(credential: VerifiableCredential) {
         const result = await verifyCredential(credential)
         const validityStatus = getCredentialValidityStatus(result)
@@ -103,19 +109,24 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
           }
           setIssuer(issuerProfile)
         } catch (error: unknown) {
-          Sentry.captureException(error)
+          logger.error(
+            new Error('Failed to get the issuer profile', { cause: error })
+          )
         }
       }
 
       async function init() {
-        if (isEmpty(item)) {
-          return
+        try {
+          setLoading(true)
+          getIssuerProfile(extractedIssuer)
+          await checkCredential(credentialData)
+        } catch (error: unknown) {
+          logger.error(
+            new Error('Failed to check the credential', { cause: error })
+          )
+        } finally {
+          setLoading(false)
         }
-
-        setLoading(true)
-        getIssuerProfile(extractedIssuer)
-        await checkCredential(credentialData)
-        setLoading(false)
       }
 
       init()
