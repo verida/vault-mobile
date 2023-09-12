@@ -4,7 +4,15 @@ import { StyleSheet } from 'react-native'
 
 import RightArrowSvg from '../../assets/icons/data/right-arrow.svg'
 
-export default ({ item }) => {
+export type DataListItemProps = {
+  item: any
+}
+
+export const DataListItem: React.FunctionComponent<DataListItemProps> = (
+  props
+) => {
+  const { item } = props
+
   return (
     <ListItem button onPress={item.onPress} style={style.listItem}>
       <Left>
