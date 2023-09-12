@@ -1,4 +1,4 @@
-import { DataFieldItem } from 'features/data'
+import { DataField } from 'features/data'
 import _ from 'lodash'
 
 import VaultCommon from '../../vault'
@@ -216,7 +216,7 @@ export default class Folder {
   // Field = Field label
   // Value = Value from the row
   public buildDisplayData(data: any, layout: any, properties: any[]) {
-    const displayData: DataFieldItem[] = []
+    const displayData: DataField[] = []
 
     layout.forEach((item: any) => {
       const value = _.get(data, item)

@@ -1,9 +1,9 @@
-export type DataFieldItem = {
+export type DataField = {
   field: string
   value: unknown
 }
 
 export type DataItem = {
-  data: DataFieldItem[]
+  data: DataField[]
   title: string
 }

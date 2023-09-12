@@ -1,10 +1,10 @@
-import { DataFieldItem } from 'features/data'
+import { DataField } from 'features/data'
 import { Body, Card, CardItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
 
 export type DataFieldListItemProps = {
-  field: DataFieldItem
+  field: DataField
 }
 
 export const DataFieldListItem: React.FunctionComponent<DataFieldListItemProps> =

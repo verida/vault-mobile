@@ -1,11 +1,11 @@
-import { DataFieldItem } from 'features/data'
+import { DataField } from 'features/data'
 import { List } from 'native-base'
 import React from 'react'
 
 import { DataFieldListItem } from './DataFieldListItem'
 
 export type DataFieldListProps = {
-  fields: DataFieldItem[]
+  fields: DataField[]
 }
 
 export const DataFieldList: React.FunctionComponent<DataFieldListProps> = (
