@@ -30,13 +30,13 @@ export const useCredential = () => {
       credential: VerifiableCredential,
       options?: Omit<IVerifyCredentialArgs, 'credential'>
     ): Promise<VerificationResult | undefined> => {
+      logger.info('Verifying credential')
+
       const resolvedOptions: Omit<IVerifyCredentialArgs, 'credential'> =
         Object.assign({}, defaultVerificationOptions, options)
 
       try {
         let verificationResult: IVerifyResult
-
-        logger.debug('Credential', { credential })
 
         const issuer = extractIssuer(credential)
 
@@ -50,15 +50,12 @@ export const useCredential = () => {
             },
           } as ICheqdVerifyCredentialWithStatusList2021Args)
         } else {
-          logger.debug('Verifying credential')
+          logger.debug('Verifying generic credential with Veramo native method')
           verificationResult = await agent.verifyCredential({
             credential,
             ...resolvedOptions,
           })
         }
-        logger.debug('Verification result:', {
-          result: verificationResult,
-        })
 
         return verificationResult
       } catch (error: unknown) {

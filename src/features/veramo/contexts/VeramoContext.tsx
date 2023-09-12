@@ -22,7 +22,10 @@ import {
   getUniversalResolverFor,
 } from '@veramo/did-resolver'
 import { getResolver as getVdaDidResolver } from '@verida/vda-did-resolver'
+import { Logger } from 'features/telemetry'
 import React, { createContext } from 'react'
+
+const logger = new Logger('Veramo')
 
 const cheqdMainnetProvider = new CheqdDIDProvider({
   defaultKms: '',
@@ -40,6 +43,8 @@ type VeramoAgentInterfaces = IResolver &
   ICredentialPlugin &
   ICredentialIssuerLD &
   ICheqd
+
+logger.info('Creating Veramo agent')
 
 const agent = createAgent<VeramoAgentInterfaces>({
   plugins: [
@@ -67,6 +72,8 @@ const agent = createAgent<VeramoAgentInterfaces>({
     }),
   ],
 })
+
+logger.info('Veramo agent created')
 
 export type VeramoContextType = {
   agent: TAgent<VeramoAgentInterfaces>
