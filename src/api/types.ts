@@ -7,25 +7,6 @@
  * Use https://github.com/ChainAgnostic/caip-js
  */
 import { AssetId } from 'caip'
-import { PublicProfile } from 'features/profiles'
-
-/**
- * Verida Account
- */
-export type Account = {
-  did: string
-  privateKey: string
-  mnemonic: string
-  publicProfile?: PublicProfile
-  seedPhraseReminder: {
-    lastTime?: number
-    backedup: boolean
-  }
-}
-
-export type NormalizedAccounts = {
-  [k: string]: Account
-}
 
 export type NetworkNode = {
   node_code: string

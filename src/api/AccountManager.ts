@@ -3,22 +3,22 @@ import * as Sentry from '@sentry/react-native'
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from './VaultCommon/vault'
-import { ethers, utils } from 'ethers'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
-import WalletUtils from '@verida/wallet-utils'
 
 import {
-  Account,
   AddIdentityStepStatus,
   AddIdentityStepType,
   BlockchainWallet,
-  NormalizedAccounts,
 } from 'api/types'
 import dataMap from 'config/data-map'
 import {
+  Account,
+  NormalizedAccounts,
   addAccount,
+  generateIdentityMnemonic,
+  getPrivateKeyFromMnemonic,
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
@@ -41,7 +41,7 @@ import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
-import { executeWithTimeout, wait } from 'utils'
+import { executeWithTimeout } from 'utils'
 
 const logger = new Logger('AccountManager')
 
@@ -404,12 +404,11 @@ class AccountManager extends EventEmitter {
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
 
-      const node = utils.entropyToMnemonic(utils.randomBytes(16))
-      const wallet = ethers.Wallet.fromMnemonic(node)
+      const { mnemonic, privateKey } = generateIdentityMnemonic()
 
       this.selectedAccount = {
-        mnemonic: node,
-        privateKey: wallet.privateKey,
+        mnemonic,
+        privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,
@@ -486,7 +485,6 @@ class AccountManager extends EventEmitter {
     }
 
     updateProgress?.('CreateIdentifier', 'Success')
-    await wait(1000) // Delay for UX purposes
     updateProgress?.('StorageLocation', 'Success')
 
     try {
@@ -658,11 +656,11 @@ class AccountManager extends EventEmitter {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null
       }
-      const veridaWallet = WalletUtils.utils.getWallet('ethr', mnemonic)
+      const privateKey = getPrivateKeyFromMnemonic(mnemonic)
 
       this.selectedAccount = {
         mnemonic,
-        privateKey: veridaWallet.privateKey,
+        privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,
