@@ -18,14 +18,12 @@ export default class VaultCommon {
 
   public profiles: Record<string, unknown> = {}
 
-  constructor(client: any, vault: any, dataMap: any) {
+  constructor(client: any, vault: any) {
     this.client = client
     this.vault = vault
-    this.inbox = new InboxManager(this) // done
-    this.sync = new SyncManager(this) // done
-    this.data = new DataManager(this, dataMap)
-
-    //this.credentials = new CredentialsManager(this)
+    this.inbox = new InboxManager(this)
+    this.sync = new SyncManager(this)
+    this.data = new DataManager(this)
   }
 
   public async init() {

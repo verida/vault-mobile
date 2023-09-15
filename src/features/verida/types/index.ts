@@ -1,7 +1,19 @@
-import { VeridaBaseRecordSchema } from 'features/verida/schemas'
+import {
+  VeridaBaseRecordSchema,
+  VeridaBaseUnsavedRecordSchema,
+} from 'features/verida/schemas'
 import { z } from 'zod'
 
+export type VeridaBaseUnsavedRecord = z.infer<
+  typeof VeridaBaseUnsavedRecordSchema
+>
+
+export type VeridaUnsavedRecord<T = Record<string, unknown>> =
+  VeridaBaseUnsavedRecord & T
+
 export type VeridaBaseRecord = z.infer<typeof VeridaBaseRecordSchema>
+
+export type VeridaRecord<T = Record<string, unknown>> = VeridaBaseRecord & T
 
 export enum VeridaMessageType {
   SIMPLE_MESSAGE = 'inbox/type/message',

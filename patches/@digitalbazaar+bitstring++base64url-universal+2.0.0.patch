@@ -1,0 +1,74 @@
+diff --git a/node_modules/@digitalbazaar/bitstring/node_modules/base64url-universal/package.json b/node_modules/@digitalbazaar/bitstring/node_modules/base64url-universal/package.json
+index ecf0dbf..1d87fe5 100644
+--- a/node_modules/@digitalbazaar/bitstring/node_modules/base64url-universal/package.json
++++ b/node_modules/@digitalbazaar/bitstring/node_modules/base64url-universal/package.json
+@@ -18,9 +18,34 @@
+   },
+   "license": "BSD-3-Clause",
+   "type": "module",
++  "main": "./lib/index.js",
+   "exports": "./lib/index.js",
+   "browser": {
+-    "./lib/index.js": "./lib/browser.js"
++    "./lib/index.js": "./lib/browser.js",
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "net": "react-native-tcp",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
+   },
+   "files": [
+     "lib/**/*.js"
+@@ -69,5 +94,32 @@
+   "keywords": [
+     "base64",
+     "base64url"
+-  ]
++  ],
++  "react-native": {
++    "./lib/index.js": "./lib/browser.js",
++    "zlib": "browserify-zlib",
++    "console": "console-browserify",
++    "constants": "constants-browserify",
++    "crypto": "react-native-crypto",
++    "dns": "dns.js",
++    "net": "react-native-tcp",
++    "domain": "domain-browser",
++    "http": "@tradle/react-native-http",
++    "https": "https-browserify",
++    "os": "react-native-os",
++    "path": "path-browserify",
++    "querystring": "querystring-es3",
++    "fs": "react-native-level-fs",
++    "_stream_transform": "readable-stream/transform",
++    "_stream_readable": "readable-stream/readable",
++    "_stream_writable": "readable-stream/writable",
++    "_stream_duplex": "readable-stream/duplex",
++    "_stream_passthrough": "readable-stream/passthrough",
++    "dgram": "react-native-udp",
++    "stream": "stream-browserify",
++    "timers": "timers-browserify",
++    "tty": "tty-browserify",
++    "vm": "vm-browserify",
++    "tls": false
++  }
+ }

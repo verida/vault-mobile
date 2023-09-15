@@ -1,14 +1,5 @@
-diff --git a/node_modules/file-type/browser.js b/node_modules/file-type/browser.js
-index 23716a9..cf44913 100644
---- a/node_modules/file-type/browser.js
-+++ b/node_modules/file-type/browser.js
-@@ -1,4 +1,3 @@
--import {Buffer} from 'node:buffer';
- import {ReadableWebToNodeStream} from 'readable-web-to-node-stream';
- import {fileTypeFromBuffer, fileTypeFromStream as coreFileTypeFromStream} from './core.js';
- 
 diff --git a/node_modules/file-type/core.js b/node_modules/file-type/core.js
-index 345e45c..26a2f55 100644
+index 9a2cb2a..99258c7 100644
 --- a/node_modules/file-type/core.js
 +++ b/node_modules/file-type/core.js
 @@ -1,6 +1,5 @@
@@ -19,23 +10,22 @@ index 345e45c..26a2f55 100644
  import {
  	stringToBytes,
  	tarHeaderChecksumMatches,
-@@ -1539,8 +1538,6 @@ class FileTypeParser {
+@@ -1603,7 +1602,6 @@ class FileTypeParser {
  }
  
  export async function fileTypeStream(readableStream, {sampleSize = minimumBytes} = {}) {
 -	const {default: stream} = await import('node:stream');
--
+ 
  	return new Promise((resolve, reject) => {
  		readableStream.on('error', reject);
- 
 diff --git a/node_modules/file-type/package.json b/node_modules/file-type/package.json
-index 0ef844a..817583d 100644
+index ad15589..078af0e 100644
 --- a/node_modules/file-type/package.json
 +++ b/node_modules/file-type/package.json
-@@ -1,234 +1,287 @@
+@@ -1,241 +1,294 @@
  {
 -	"name": "file-type",
--	"version": "18.2.1",
+-	"version": "18.5.0",
 -	"description": "Detect the file type of a Buffer/Uint8Array/ArrayBuffer",
 -	"license": "MIT",
 -	"repository": "sindresorhus/file-type",
@@ -167,6 +157,7 @@ index 0ef844a..817583d 100644
 -		"pptx",
 -		"xlsx",
 -		"3gp",
+-		"j2c",
 -		"jp2",
 -		"jpm",
 -		"jpx",
@@ -232,7 +223,13 @@ index 0ef844a..817583d 100644
 -		"jls",
 -		"pst",
 -		"dwg",
--		"parquet"
+-		"parquet",
+-		"class",
+-		"arj",
+-		"cpio",
+-		"ace",
+-		"avro",
+-		"icc"
 -	],
 -	"dependencies": {
 -		"readable-web-to-node-stream": "^3.0.2",
@@ -241,12 +238,12 @@ index 0ef844a..817583d 100644
 -	},
 -	"devDependencies": {
 -		"@tokenizer/token": "^0.3.0",
--		"@types/node": "^18.7.13",
--		"ava": "^5.1.0",
+-		"@types/node": "^20.1.2",
+-		"ava": "^5.2.0",
 -		"commonmark": "^0.30.0",
 -		"noop-stream": "^1.0.0",
--		"tsd": "^0.25.0",
--		"xo": "^0.53.1"
+-		"tsd": "^0.28.1",
+-		"xo": "^0.54.2"
 -	},
 -	"xo": {
 -		"envs": [
@@ -267,7 +264,7 @@ index 0ef844a..817583d 100644
 -		"serial": true
 -	}
 +  "name": "file-type",
-+  "version": "18.2.1",
++  "version": "18.5.0",
 +  "description": "Detect the file type of a Buffer/Uint8Array/ArrayBuffer",
 +  "license": "MIT",
 +  "repository": "sindresorhus/file-type",
@@ -400,6 +397,7 @@ index 0ef844a..817583d 100644
 +    "pptx",
 +    "xlsx",
 +    "3gp",
++    "j2c",
 +    "jp2",
 +    "jpm",
 +    "jpx",
@@ -465,7 +463,13 @@ index 0ef844a..817583d 100644
 +    "jls",
 +    "pst",
 +    "dwg",
-+    "parquet"
++    "parquet",
++    "class",
++    "arj",
++    "cpio",
++    "ace",
++    "avro",
++    "icc"
 +  ],
 +  "dependencies": {
 +    "readable-web-to-node-stream": "^3.0.2",
@@ -474,12 +478,12 @@ index 0ef844a..817583d 100644
 +  },
 +  "devDependencies": {
 +    "@tokenizer/token": "^0.3.0",
-+    "@types/node": "^18.7.13",
-+    "ava": "^5.1.0",
++    "@types/node": "^20.1.2",
++    "ava": "^5.2.0",
 +    "commonmark": "^0.30.0",
 +    "noop-stream": "^1.0.0",
-+    "tsd": "^0.25.0",
-+    "xo": "^0.53.1"
++    "tsd": "^0.28.1",
++    "xo": "^0.54.2"
 +  },
 +  "xo": {
 +    "envs": [
@@ -552,4 +556,3 @@ index 0ef844a..817583d 100644
 +    "tls": false
 +  }
  }
-\ No newline at end of file
