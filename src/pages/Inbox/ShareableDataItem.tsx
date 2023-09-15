@@ -12,7 +12,7 @@ export type ShareableDataItemType = {
   _id: string
   name: string
   summary: string
-  time: string
+  insertedAt: string
 }
 
 export type ShareableDataItemProps = Omit<ViewProps, 'children'> & {
@@ -23,7 +23,7 @@ export type ShareableDataItemProps = Omit<ViewProps, 'children'> & {
 
 function ShareableDataItem(props: ShareableDataItemProps) {
   const {
-    item: { name, summary, time },
+    item: { name, summary, insertedAt },
     selected,
     onSelect,
   } = props
@@ -36,7 +36,7 @@ function ShareableDataItem(props: ShareableDataItemProps) {
           {name}
         </Text>
         <Text>{summary}</Text>
-        <Text>{moment(time).format('DD MMM YYYY, HH:mm')}</Text>
+        <Text>{moment(insertedAt).format('DD MMM YYYY, HH:mm')}</Text>
       </View>
       <CheckBox
         containerStyle={styles.checkbox}
