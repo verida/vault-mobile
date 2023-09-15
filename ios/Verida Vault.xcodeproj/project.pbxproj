@@ -720,7 +720,7 @@
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -730,7 +730,7 @@
 				INFOPLIST_FILE = myApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.2;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -757,7 +757,7 @@
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = myApp/Info.plist;
@@ -828,7 +828,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-udp\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-webview\"",
 				);
-				MARKETING_VERSION = 0.4.2;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -854,7 +854,7 @@
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
 				GCC_PREPROCESSOR_DEFINITIONS = (
@@ -864,7 +864,7 @@
 				INFOPLIST_FILE = myApp/Info.plist;
 				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				MARKETING_VERSION = 0.4.2;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
@@ -891,7 +891,7 @@
 				CODE_SIGN_ENTITLEMENTS = myApp/test.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 41;
+				CURRENT_PROJECT_VERSION = 42;
 				DEVELOPMENT_TEAM = VV5KCZVD2D;
 				ENABLE_BITCODE = NO;
 				INFOPLIST_FILE = myApp/Info.plist;
@@ -958,7 +958,7 @@
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-safe-area-context\"",
 					"\"${PODS_CONFIGURATION_BUILD_DIR}/react-native-udp\"",
 				);
-				MARKETING_VERSION = 0.4.2;
+				MARKETING_VERSION = 0.5.0;
 				OTHER_LDFLAGS = (
 					"$(inherited)",
 					"-ObjC",
