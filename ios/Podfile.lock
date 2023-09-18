@@ -439,9 +439,9 @@ PODS:
     - React-Core
   - react-native-camera/RN (4.2.1):
     - React-Core
-  - react-native-config (1.4.6):
-    - react-native-config/App (= 1.4.6)
-  - react-native-config/App (1.4.6):
+  - react-native-config (1.5.1):
+    - react-native-config/App (= 1.5.1)
+  - react-native-config/App (1.5.1):
     - React-Core
   - react-native-flipper (0.152.0):
     - React-Core
@@ -1024,7 +1024,7 @@ SPEC CHECKSUMS:
   react-native-blob-util: 31b9463ef2efe90e841e7525d687ec69b1d71157
   react-native-blur: 50c9feabacbc5f49b61337ebc32192c6be7ec3c3
   react-native-camera: 3eae183c1d111103963f3dd913b65d01aef8110f
-  react-native-config: 7cd105e71d903104e8919261480858940a6b9c0e
+  react-native-config: 86038147314e2e6d10ea9972022aa171e6b1d4d8
   react-native-flipper: eacaef640b1804d3bb6bf039a72b63d29a902fbd
   react-native-get-random-values: a6ea6a8a65dc93e96e24a11105b1a9c8cfe1d72a
   react-native-mmkv: 69b9c003f10afdd01addf7c6ee784ce42ee2eff3
@@ -1079,6 +1079,6 @@ SPEC CHECKSUMS:
   Yoga: c4d61225a466f250c35c1ee78d2d0b3d41fe661c
   YogaKit: f782866e155069a2cca2517aafea43200b01fd5a
 
-PODFILE CHECKSUM: f024925b6b6e57e8c699c53f0078605a6e0db426
+PODFILE CHECKSUM: fbb0528ded132010dea72c8f28b61e4b558c59d5
 
 COCOAPODS: 1.11.3

@@ -14,6 +14,7 @@ import 'intl/locale-data/jsonp/en'
 import 'react-native-gesture-handler'
 
 import { AppRegistry, LogBox } from 'react-native'
+import Config from 'react-native-config'
 
 import App from './src/App'
 
@@ -37,7 +38,11 @@ if (__DEV__) {
     'core/verify-api',
   ]
 
-  LogBox.ignoreLogs(ignoreWarns)
+  if (Config.LOG_BOX_ENABLED !== 'true') {
+    LogBox.ignoreAllLogs()
+  } else {
+    LogBox.ignoreLogs(ignoreWarns)
+  }
 }
 
 AppRegistry.registerComponent('main', () => App)

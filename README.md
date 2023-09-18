@@ -1,20 +1,11 @@
 # Installation
 
-After cloning the repository, you must define an `.env` file at the project root:
+After cloning the repository, you can go to BitWarden and download two of the environment variable files for staging and production, which are attached in the BitWarden secure note `Verida Wallet Environment Variables` Then, place them inside the root project folder. During build time, depending on the build type (Staging or Production), the `.env` file will be created or overwritten by copying from either the `.env.staging` or `.env.production` file (that is just the way the react-native-config module works).
 
-```shell
-CODE_PUSH_DEPLOYMENT_KEY_ANDROID=
-CODE_PUSH_DEPLOYMENT_KEY_IOS=
-INFURA_API_KEY=
-SENTRY_ENVIRONMENT=
-DEPLOY_ENVIRONMENT=
+To update the environment variables, you need to make changes to the environment files in the BitWarden secure note `Verida Wallet Environment Variables` and update them in BitRise (CD environment) as well. Additionally, please notify the team for safety.
 
-# Network
-NETWORK_ENVIRONMENT=
-NETWORK_ENDPOINT_URL=
-```
 
-> If you're unsure of values to use here, please contact a [__member of the team__](https://github.com/orgs/verida/people).
+> If you're unsure how to do that, please contact a [__member of the team__](https://github.com/orgs/verida/people).
 
 Great! To get started, simply run `yarn`:
 
