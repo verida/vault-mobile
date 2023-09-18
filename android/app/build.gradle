@@ -88,7 +88,8 @@ import com.android.build.OutputFile
  */
 
 project.ext.react = [
-    enableHermes: false
+    enableHermes: false,
+    nodeExecutableAndArgs: ["node", "--max_old_space_size=8192"], // Fix for dev-mode: Increase the node max old space size to handle heavy JS dependencies cache.
 ]
 
 apply from: "../../node_modules/react-native/react.gradle"
