@@ -1,0 +1,28 @@
+diff --git a/node_modules/@cheqd/did-provider-cheqd/build/esm/agent/ICheqd.js b/node_modules/@cheqd/did-provider-cheqd/build/esm/agent/ICheqd.js
+index e958156..b48718a 100644
+--- a/node_modules/@cheqd/did-provider-cheqd/build/esm/agent/ICheqd.js
++++ b/node_modules/@cheqd/did-provider-cheqd/build/esm/agent/ICheqd.js
+@@ -3730,7 +3730,9 @@ export class Cheqd {
+         if (credential.credentialStatus.statusPurpose !== 'revocation' && credential.credentialStatus.statusPurpose !== 'suspension')
+             throw new Error('[did-provider-cheqd]: fetch status list: Credential status purpose is not valid');
+         // fetch status list 2021
+-        const content = await (await fetch(credential.credentialStatus.id.split('#')[0])).json();
++        const content = await (await fetch(credential.credentialStatus.id.split('#')[0], {
++            headers: { 'Content-Type': 'application/did+json', Accept: '*/*' },
++        })).json();
+         if (!(content.StatusList2021 && content.metadata && content.StatusList2021.encodedList && content.StatusList2021.statusPurpose && content.metadata.encoding)) {
+             throw new Error(`'[did-provider-cheqd]: fetch status list: Status List resource content is not valid'`);
+         }
+diff --git a/node_modules/@cheqd/did-provider-cheqd/build/esm/did-manager/cheqd-did-resolver.js b/node_modules/@cheqd/did-provider-cheqd/build/esm/did-manager/cheqd-did-resolver.js
+index 69fe7c4..ce95008 100644
+--- a/node_modules/@cheqd/did-provider-cheqd/build/esm/did-manager/cheqd-did-resolver.js
++++ b/node_modules/@cheqd/did-provider-cheqd/build/esm/did-manager/cheqd-did-resolver.js
+@@ -31,7 +31,7 @@ export class CheqdDidResolver {
+     options) {
+         try {
+             const result = await fetch(this.resolverUrl + did, {
+-                headers: { 'Content-Type': 'application/did+json' },
++                headers: { 'Content-Type': 'application/did+json', Accept: '*/*' },
+             });
+             const ddo = (await result.json());
+             return ddo;
