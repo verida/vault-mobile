@@ -54,7 +54,7 @@ export class Logger {
       })
     }
 
-    if (!config.devMode) {
+    if (!config.dev.devMode) {
       // Simply skip `console` if not in dev mode
       return
     }
@@ -87,7 +87,7 @@ export class Logger {
       })
     }
 
-    if (config.devMode) {
+    if (config.dev.devMode) {
       // eslint-disable-next-line no-console
       console.error(error)
     }

@@ -10,10 +10,10 @@ import { isEmpty } from 'lodash'
 import React, { useCallback, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
-import Config from 'react-native-config'
 import parse from 'url-parse'
 import { useDebouncedCallback } from 'use-debounce'
 
+import { config } from 'config/environment'
 import { MainStackScreenProps } from 'navigation/types'
 import { QrCodeScannerOverlay } from 'pages/QrCodeScanner/QrCodeScannerOverlay'
 
@@ -113,7 +113,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
     //       for a connection string.
     const [maybeClipboardContent] =
       // eslint-disable-next-line react-hooks/rules-of-hooks
-      __DEV__ && Config.USE_QR_CODE_FROM_CLIPBOARD ? useClipboard() : []
+      __DEV__ && config.dev.enableClipboardInQrCodeScanner ? useClipboard() : []
 
     React.useEffect(() => {
       ;(async () => {
