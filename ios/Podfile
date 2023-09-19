@@ -7,7 +7,7 @@ podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties
 
 platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
- 
+
 # Config using analytics without Apple Ad ID (IDFA)
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
 
