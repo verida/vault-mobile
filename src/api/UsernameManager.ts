@@ -1,9 +1,9 @@
 import { EnvironmentType, Web3CallType } from '@verida/types'
 import { VeridaNameClient } from '@verida/vda-name-client'
+import { Account } from 'features/identities'
 
 import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
-import { Account } from './types'
 
 export default class UsernameManager {
   private static client?: VeridaNameClient

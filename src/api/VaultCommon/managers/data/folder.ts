@@ -1,3 +1,4 @@
+import { DataField } from 'features/data'
 import _ from 'lodash'
 
 import VaultCommon from '../../vault'
@@ -32,7 +33,7 @@ export default class Folder {
    * @param {*} options
    */
   // eslint-disable-next-line @typescript-eslint/ban-types
-  public async getMany<T extends object = object>(
+  public async getMany<T extends object = Record<string, unknown>>(
     filter: any = {},
     options: any = {}
   ): Promise<T[]> {
@@ -103,7 +104,7 @@ export default class Folder {
     const layouts = json.layouts
 
     // If the schema is a credential schema with a 'credentialSubject' property, then use it. Otherwise use all the properties.
-    let properties = json.properties.credentialSubject
+    let properties = json.properties?.credentialSubject
       ? json.properties.credentialSubject.properties
       : json.properties
 
@@ -215,7 +216,7 @@ export default class Folder {
   // Field = Field label
   // Value = Value from the row
   public buildDisplayData(data: any, layout: any, properties: any[]) {
-    const displayData: Record<string, unknown>[] = []
+    const displayData: DataField[] = []
 
     layout.forEach((item: any) => {
       const value = _.get(data, item)

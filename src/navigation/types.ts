@@ -1,3 +1,5 @@
+import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
+import { CompositeScreenProps } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import {
@@ -8,11 +10,17 @@ import {
 } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
+import {
+  DataFolderScreenParams,
+  DataItemScreenParams,
+  DataTabScreenParams,
+} from 'pages/Data'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 import { EditPlatformLinkScreenParams } from 'pages/Profiles/EditPlatformLink'
+import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
@@ -44,12 +52,17 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
 
 export type DashboardTabParams = {
   Home: undefined
-  Data: undefined
-  Tokens: undefined
-  Assets: undefined
   Profile: undefined
+  Data: DataTabScreenParams
   Connections: undefined
+  Assets: undefined
 }
+
+export type TabsScreenProps<S extends keyof DashboardTabParams> =
+  CompositeScreenProps<
+    BottomTabScreenProps<DashboardTabParams, S>,
+    MainStackScreenProps<keyof MainStackParams>
+  >
 
 export type MainStackParams = {
   Inbox: undefined
@@ -76,12 +89,11 @@ export type MainStackParams = {
   SingleWallet: { item: BlockchainWalletWithAccounts }
   OtherAddresses: undefined
   SuccessFailure: undefined
-  DataFolder: { folderName: string }
-  DataItem: undefined
+  DataFolder: DataFolderScreenParams
+  DataItem: DataItemScreenParams
   Settings: undefined
   ChangePin: undefined
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  ScanQrCode: { firstTime: boolean; onReadQRCode?: Function }
+  ScanQrCode: QrCodeScannerScreenParams
   DeleteAccount: undefined
   Identity: undefined
   AddIdentity: { mode?: AddIdentityMode }

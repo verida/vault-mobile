@@ -3,23 +3,21 @@ import * as Sentry from '@sentry/react-native'
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from './VaultCommon/vault'
-import { ethers, utils } from 'ethers'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
-import WalletUtils from '@verida/wallet-utils'
 
 import {
-  Account,
   AddIdentityStepStatus,
   AddIdentityStepType,
   BlockchainWallet,
-  BlockchainWalletWithAccounts,
-  NormalizedAccounts,
 } from 'api/types'
-import dataMap from 'config/data-map'
 import {
+  Account,
+  NormalizedAccounts,
   addAccount,
+  generateIdentityMnemonic,
+  getPrivateKeyFromMnemonic,
   setAccounts,
   setSelectedAccount,
   setSwitchAccountToast,
@@ -34,7 +32,6 @@ import {
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
-import { execWithTimeout } from 'api/utils'
 import DataConnectorsManager from './DataConnectorsManager'
 
 import CONFIG from '../config/environment'
@@ -42,6 +39,10 @@ import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'
+import { Logger } from 'features/telemetry'
+import { executeWithTimeout } from 'utils'
+
+const logger = new Logger('AccountManager')
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN
@@ -245,7 +246,7 @@ class AccountManager extends EventEmitter {
 
   private async getVault() {
     try {
-      const vault = new Vault(this.client, this.context, dataMap)
+      const vault = new Vault(this.client, this.context)
       await vault.init()
       return vault
     } catch (e) {
@@ -353,11 +354,7 @@ class AccountManager extends EventEmitter {
         WALLET_SCHEMA_0_2_0_URI
       )
 
-      const hdWallets: any =
-        await datastore?.getMany<BlockchainWalletWithAccounts>(
-          undefined,
-          undefined
-        )
+      const hdWallets: any = await datastore?.getMany(undefined, undefined)
 
       if (!isEmpty(hdWallets)) {
         const wallets = await WalletManager.getBlockchainAccounts(hdWallets)
@@ -397,15 +394,19 @@ class AccountManager extends EventEmitter {
     ) => void
   ): Promise<Account | undefined> {
     let connected = false
+    updateProgress?.('StorageLocation', 'None')
+    updateProgress?.('CreateProfile', 'None')
+    updateProgress?.('ClaimUsername', 'None')
+
+    const environment = CONFIG.VERIDA_ENVIRONMENT
+
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
 
-      const node = utils.entropyToMnemonic(utils.randomBytes(16))
-      const wallet = ethers.Wallet.fromMnemonic(node)
-      const privateKey = wallet.privateKey
+      const { mnemonic, privateKey } = generateIdentityMnemonic()
 
       this.selectedAccount = {
-        mnemonic: node,
+        mnemonic,
         privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
@@ -413,14 +414,20 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
+    } catch (error: unknown) {
+      logger.error(
+        new Error('Failed to create a mnemonic for new account', {
+          cause: error,
+        })
+      )
+      updateProgress?.('CreateIdentifier', 'Failure')
+      throw error
+    }
 
+    try {
       const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
-        veridaKey: this.selectedAccount.privateKey,
+        veridaKey: this.selectedAccount!.privateKey,
       })
-
-      const { mnemonic } = this.selectedAccount
-
-      const environment = CONFIG.VERIDA_ENVIRONMENT
 
       this.client = new Client({
         environment,
@@ -431,7 +438,7 @@ class AccountManager extends EventEmitter {
       })
 
       const account = new AutoAccount({
-        privateKey: mnemonic,
+        privateKey: this.selectedAccount!.mnemonic,
         environment,
         didClientConfig,
       })
@@ -444,66 +451,77 @@ class AccountManager extends EventEmitter {
         notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
       })
 
+      updateProgress?.('StorageLocation', 'Loading')
       // Connect the Verida account to the Verida client
       await this.client.connect(account)
 
       // Open the Vault context, forcing its creation
-      this.context = <IContext>(
-        await this.client.openContext(CONFIG.VERIDA_CONTEXT_NAME, true)
+      const context = await this.client.openContext(
+        CONFIG.VERIDA_CONTEXT_NAME,
+        true
       )
+
+      if (context === undefined) {
+        throw new Error(`Failed to open context ${CONFIG.VERIDA_CONTEXT_NAME}`)
+      }
+      this.context = context
 
       // Set the Vault
       this.vault = await this.getVault()
 
       // Fill the connected account with Verida DID
-      if (isEmpty(this.selectedAccount.did)) {
+      if (isEmpty(this.selectedAccount!.did)) {
         const did = await account.did()
         await this.updateCurrentAccount({ did })
       }
 
       connected = true
+    } catch (error: unknown) {
+      logger.error(new Error('Failed to create new account', { cause: error }))
+      updateProgress?.('CreateIdentifier', 'Failure')
+      updateProgress?.('StorageLocation', 'Failure')
+      throw error
+    }
 
-      updateProgress?.('CreateIdentifier', 'Success')
-      // just a nice UI delay, smooth state tranisition
-      setTimeout(() => {
-        updateProgress?.('StorageLocation', 'Success')
-      }, 1000)
+    updateProgress?.('CreateIdentifier', 'Success')
+    updateProgress?.('StorageLocation', 'Success')
 
+    try {
       updateProgress?.('CreateProfile', 'Loading')
 
-      const setPublicProfileSuccess = await execWithTimeout(
+      const setPublicProfileSuccess = await executeWithTimeout(
         this.setPublicProfile(userData),
         100000
       )
 
       if (!setPublicProfileSuccess) {
-        updateProgress?.('CreateProfile', 'Failure')
         throw new Error('Failed to set public profile')
       }
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
 
-      await this.setUserWallet()
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
-      setTimeout(async () => {
-        await this.setBackedupSeedPhraseConfig(false)
-      }, 0)
+      this.setUserWallet()
+      this.setBackedupSeedPhraseConfig(false)
 
       updateProgress?.('CreateProfile', 'Success')
-
-      return this.selectedAccount
-    } catch (e) {
+    } catch (error: unknown) {
+      logger.error(
+        new Error('Failed to set profile on new account', { cause: error })
+      )
       updateProgress?.('CreateProfile', 'Failure')
 
       // If the corrupted account is already connected, we need to remove it
-      if (connected && this.selectedAccount)
+      if (connected && this.selectedAccount) {
         await this.logout([this.selectedAccount.did])
+      }
 
-      Sentry.captureException(e)
-      throw e
+      throw error
     }
+
+    return this.selectedAccount
   }
 
   public async logout(dids: string[] = []) {
@@ -637,11 +655,11 @@ class AccountManager extends EventEmitter {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null
       }
-      const veridaWallet = WalletUtils.utils.getWallet('ethr', mnemonic)
+      const privateKey = getPrivateKeyFromMnemonic(mnemonic)
 
       this.selectedAccount = {
         mnemonic,
-        privateKey: veridaWallet.privateKey,
+        privateKey,
         did: '', // DID will be filled after connecting to Verida
         seedPhraseReminder: {
           lastTime: undefined,

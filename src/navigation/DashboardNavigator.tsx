@@ -9,7 +9,7 @@ import { DashboardTabParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
 import DataConnector from 'pages/Connections/DataConnector'
 import Home from 'pages/Dashboard/Home'
-import Folders from 'pages/Data/Folders'
+import { DataTabScreen } from 'pages/Data'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 
 const Tab = createBottomTabNavigator<DashboardTabParams>()
@@ -45,7 +45,7 @@ function DashboardNavigator() {
       />
       <Tab.Screen
         name={'Data'}
-        component={Folders}
+        component={DataTabScreen}
         options={{
           tabBarIcon: ({ color }) => (
             <Ionicons name='server' size={24} color={color} />
@@ -61,7 +61,6 @@ function DashboardNavigator() {
           ),
         }}
       />
-      {/* {isVeridaTeamMember && ( */}
       <Tab.Screen
         name={'Assets'}
         component={Assets}
@@ -71,7 +70,6 @@ function DashboardNavigator() {
           ),
         }}
       />
-      {/* )} */}
     </Tab.Navigator>
   )
 }

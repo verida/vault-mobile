@@ -13,8 +13,7 @@ import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import ChangePin from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
-import Folder from 'pages/Data/Folder'
-import Item from 'pages/Data/Item'
+import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import Inbox from 'pages/Inbox'
 import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
@@ -30,12 +29,12 @@ import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
 import PublicProfile from 'pages/Profiles/PublicProfile'
 import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
+import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreen,
   IncomingDataRequestScreen,
   ProofRequestScreen,
 } from 'pages/Requests'
-import ScanQrCode from 'pages/ScanQrCode/ScanQrCode'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
@@ -131,11 +130,11 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
           <Stack.Screen name={'BuyToken'} component={BuyToken} />
           <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
-          <Stack.Screen name={'DataFolder'} component={Folder} />
-          <Stack.Screen name={'DataItem'} component={Item} />
+          <Stack.Screen name={'DataFolder'} component={DataFolderScreen} />
+          <Stack.Screen name={'DataItem'} component={DataItemScreen} />
           <Stack.Screen name={'Settings'} component={Settings} />
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
-          <Stack.Screen name={'ScanQrCode'} component={ScanQrCode} />
+          <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
           <Stack.Screen
             name={'SeedPhraseEntered'}
             component={SeedPhraseEntered}
