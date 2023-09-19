@@ -57,6 +57,10 @@ export const useCredential = () => {
           })
         }
 
+        if (verificationResult.error?.errorCode === 'Network request failed') {
+          return undefined
+        }
+
         return verificationResult
       } catch (error: unknown) {
         // Likely to be something unsupported by our Veramo agent configuration
