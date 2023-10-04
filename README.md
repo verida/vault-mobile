@@ -1,25 +1,49 @@
-# Installation
+# Verida Wallet
 
-After cloning the repository, you can go to BitWarden and download two of the environment variable files for staging and production, which are attached in the BitWarden secure note `Verida Wallet Environment Variables` Then, place them inside the root project folder. During build time, depending on the build type (Staging or Production), the `.env` file will be created or overwritten by copying from either the `.env.staging` or `.env.production` file (that is just the way the react-native-config module works).
+## Requirements
 
-To update the environment variables, you need to make changes to the environment files in the BitWarden secure note `Verida Wallet Environment Variables` and update them in BitRise (CD environment) as well. Additionally, please notify the team for safety.
+Before you start, make sure you have installed:
 
+- [Android Studio](https://developer.android.com/studio/index.html)(Latest version) : Android Dev Environment
+- [Xcode](https://developer.apple.com/xcode/)(Latest version)
+- [Node](https://nodejs.org) and [React Native CLI](http://facebook.github.io/react-native/docs/getting-started.html): React Native Dev Environment
+
+### Good to have packages/tools
+
+- [Xcodes](https://www.xcodes.app/): The easist way to install and manage multiple versions of Xcode
+- [asdf](https://asdf-vm.com/): Manage all your runtime versions with one tool! (Node, Ruby, etc)
+
+### Debugging Tools
+
+- [Flipper](https://fbflipper.com/)
+
+## Project Setup
+
+### Environment variables
+
+After cloning the repository, you can go to BitWarden and download the environment variable files `.env.development, .env.staging and .env.production` (you may not need `.env.production` it will likely be removed and moved to a more secure place). They are attached in the BitWarden secure note `Verida Wallet Environment Variables`, then place them inside the root project folder.
+
+*** Note ***
+To update the environment variables, you need to make changes to the environment files in the BitWarden secure note `Verida Wallet Environment Variables` and update them in BitRise (the CD environment) as well. Additionally, please notify the team to update their local machines to avoid any broken experience.
 
 > If you're unsure how to do that, please contact a [__member of the team__](https://github.com/orgs/verida/people).
 
-Great! To get started, simply run `yarn`:
+### Install dependencies and start developing
 
-```shell
-yarn
-```
+Recommend configuring local Ruby version using one of Ruby version manager tools like `asdf` or `rbenv` or `rvm` as your choice.
+ 
+1. Run `bundle install` to install cocoapod(this is a one-time setup).
+2. Run `yarn install` to install all the dependencies.
+3. Run `yarn start` to reset the RN cache and launch the packager 
 
 > **Info**
 > 
 > Running `yarn` executes `jetifier` for Android and `pod-install` for iOS.
 
+
 ## Notes
 
-1. Due to the iOS keychain value max length being 2048 limitation, all the secure values need to save using our builtin VeridaSecureStore helper
+1. Due to the iOS keychain value max length being 2048 limitation, all the secure values need to save/load using our built-in VeridaSecureStore helper
 
 ## Integrate with client-rn
 
@@ -30,22 +54,74 @@ yarn
 
 3. Terminate metro bundler process (if it's running) and run the app again.
 
-## Customize android settings
+<br/>
 
-1. Download and put this file in `vault-mobile/android/app` folder: https://raw.githubusercontent.com/facebook/react-native/master/template/android/app/debug.keystore
-2. You should install `adb`:
+## Build and and Deploy applications manually
 
-- `sudo apt update`
-- `sudo apt install android-tools-adb android-tools-fastboot`
+Below are instructions to build and deploy iOS and Android versions manually. Besides that, we already set up Bitrise as the automation build tool.
 
-## To run in Android emulator
+### Build and and Deploy iOS version using Xcode
+
+1. **Select Scheme**: Open your Xcode project and click on the scheme dropdown in the top left corner. 
+   - Choose "Verida.development" for development and debugging.
+   - Choose "Verida.staging" for testing in a staging environment.
+   - Choose "Verida" for the production app build.
+
+<br/>
+
+![Select iOS build scheme](images/ios-select-scheme.png)
+
+2. **Select Target Device**: Next to the scheme dropdown, choose the target device (e.g., iPhone 14 Pro) you want to run the app on.
+
+3. **Run the App**: Click the "Run" button (a triangle icon) or use the shortcut `Cmd+R`. Xcode will build and run the app with the selected configuration and device.
+
+### Deploying the App:
+
+1. **Prepare for Deployment**: Before deploying, ensure that you have configured the production flavor with all necessary production settings, such as API endpoints and keys.
+
+2. **Set Scheme to Production**: In Xcode, choose the "Verida" scheme as explained in the "Running the App" section.
+
+3. **Build the App**: Navigate to "Product" in the top menu and select "Archive" This creates an app archive ready for distribution.
+
+**Advance mode**: All of these actions can also be replaced with the equivalence commands using the command line interface
+
+
+### Build and and Deploy Android version using Android Studio
+
+#### Running the App:
+
+1. **Select build variants**: Open your Android project in Android Studio.
+   - In the "Build Variants" tab on the left side, choose `DevelopmentDebug/DevelopmentRelease` or `StagingDebug/StagingRelease` or `ProductionDebug/ProdutionRelease` as the target build variant.
+
+<br/>
+
+![Select Android build variants](images/android-select-variant.png)
+
+2. **Select Target Device**: Choose an emulator or physical device from the Android Virtual Device (AVD) manager or connect your Android device to your computer.
+
+3. **Run the App**: Click the "Run" button (a green triangle icon) or use the shortcut `Shift + F10`. Android Studio will build and run the app with the selected flavor and device.
+
+#### Deploying the App:
+
+1. **Prepare for Deployment**: Before deploying, ensure that you have configured the production flavor with all necessary production settings, such as API endpoints and keys.
+
+2. **Set Flavor to Production**: In the "Build Variants" tab, choose "StagingRelease" or `ProductionRelease` as explained in the "Running the App" section.
+
+3. **Build the App**: Go to "Build" in the top menu and select "Build Bundle(s) / APK(s)," then choose "Build Bundle" or "Build APK(s)" based on your deployment method. This generates an APK file ready for distribution.
+
+**Advance mode**: All of these actions can also be replaced with the equivalence commands using the command line interface
+
+
+## Useful build commands
+
+### To run in Android emulator
 
 1. You should install `android studio`
 2. `export ANDROID_HOME=/home/user/Android/Sdk` or specify `local.properties` file in `vault-mobile/android` dir with: `sdk.dir = /home/user/Android/Sdk`
 3. `yarn start`
 4. `react-native run-android --deviceId emulator-5554`
 
-## To run app on your Android device
+### To run app on your Android device
 
 1. Put your android device in dev mode. Enable debug and installing app via usb.
 2. Connect you phone and enable file transfer

@@ -35,11 +35,11 @@ def shared_pods
 
 end
 
-target 'Verida Vault' do
+target 'Verida' do
   shared_pods
 end
 
-target 'Verida Vault Internal' do
+target 'Verida.Internal' do
   shared_pods
 end
 

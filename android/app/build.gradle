@@ -3,12 +3,15 @@ apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
 
 project.ext.envConfigFiles = [
-    stagingDebug: ".env.staging",
-    stagingRelease: ".env.staging",
-    productionDebug: ".env.production",
-    productionRelease: ".env.production",
-]
+    developmentdebug: ".env.development",
+    developmentrelease: ".env.development",
+    stagingrelease: ".env.staging",
+    stagingdebug: ".env.staging",
+    productiondebug: ".env.production",
+    productionrelease: ".env.production"
+] // the matching is done with buildFlavor.startsWith
 apply from: project(':react-native-config').projectDir.getPath() + "/dotenv.gradle"
+
 
 import com.android.build.OutputFile
 
@@ -262,6 +265,12 @@ android {
 
     flavorDimensions "environment"
     productFlavors {
+        development {
+            dimension "environment"
+            applicationId "io.verida.vault.internal"
+            resValue "string", "app_name", "Verida Internal"
+            resValue "string", "build_config_package", "io.verida.vault"
+        }
         staging {
             dimension "environment"
             applicationId "io.verida.vault.internal"
