@@ -11,7 +11,7 @@
     "pod:install:clean:arm64": "cd ios && rm -rf Podfile.lock && arch -x86_64 pod install --repo-update --verbose && cd ..",
     "start": "watchman watch-del-all && react-native start --reset-cache",
     "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
-    "ios": "react-native run-ios --scheme 'Verida Vault Internal'",
+    "ios": "react-native run-ios --scheme 'Verida.development'",
     "test": "jest --passWithNoTests",
     "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/myApp/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
