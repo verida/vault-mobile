@@ -1,7 +1,7 @@
 import type { CaptureContext } from '@sentry/types'
 import { LogLevel, Sentry } from 'features/telemetry'
 
-import { config } from 'config/environment'
+import { config } from 'config'
 
 const levelOrder: LogLevel[] = ['error', 'warn', 'info', 'debug']
 const currentLogLevelIndex = levelOrder.indexOf(config.logLevel)

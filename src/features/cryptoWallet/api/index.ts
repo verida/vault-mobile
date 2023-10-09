@@ -6,7 +6,7 @@ import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
 import { BlockchainNetwork } from 'api/types'
-import CONFIG from 'config/environment'
+import CONFIG from 'config'
 import { RootState } from 'reduxStore/types'
 
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'

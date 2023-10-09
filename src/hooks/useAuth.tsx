@@ -12,7 +12,7 @@ import React, {
 } from 'react'
 
 import AccountManager from 'api/AccountManager'
-import CONFIG from 'config/environment'
+import CONFIG from 'config'
 
 import { useEmitter } from './useEmitter'
 

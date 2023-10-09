@@ -9,7 +9,7 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import AccountManager from 'api/AccountManager'
 import { BlockchainWallet } from 'api/types'
 import { WalletManager } from 'api/Wallet/WalletManager'
-import CONFIG from 'config/environment'
+import CONFIG from 'config'
 import { navigate } from 'navigation/RootNavigator'
 import { createAppAsyncThunk } from 'reduxStore/types'
 

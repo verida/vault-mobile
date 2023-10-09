@@ -1,7 +1,7 @@
 //import * as Sentry from '@sentry/react-native'
 import { create } from 'apisauce'
 
-import CONFIG from '../../config/environment'
+import CONFIG from '../../config'
 //import { BlockchainNetwork } from '../types'
 
 export const walletProviderApi = create({

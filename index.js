@@ -16,7 +16,7 @@ import 'react-native-gesture-handler'
 import { AppRegistry, LogBox } from 'react-native'
 
 import App from './src/App'
-import { config } from './src/config/environment'
+import { config } from './src/config'
 
 if (__DEV__) {
   if (config.dev.disableLogBox) {

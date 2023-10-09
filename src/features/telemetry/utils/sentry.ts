@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 
-import { config } from 'config/environment'
+import { config } from 'config'
 
 // Re-export Sentry from here so it's easier to import
 export { Sentry }

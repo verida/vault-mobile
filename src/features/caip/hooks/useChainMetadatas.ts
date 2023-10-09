@@ -4,7 +4,7 @@ import { cryptoWalletApi } from 'features/cryptoWallet'
 import * as React from 'react'
 
 import { BlockchainNetwork } from 'api/types'
-import { config } from 'config/environment'
+import { config } from 'config'
 
 import { ChainMetadata } from '../@types'
 

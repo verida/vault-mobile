@@ -1,6 +1,6 @@
 import { initSentry, Logger } from 'features/telemetry'
 
-import { config } from 'config/environment'
+import { config } from 'config'
 
 const logger = new Logger('Initialisation')
 

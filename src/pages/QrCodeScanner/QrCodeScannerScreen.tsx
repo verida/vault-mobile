@@ -13,7 +13,7 @@ import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 import { useDebouncedCallback } from 'use-debounce'
 
-import { config } from 'config/environment'
+import { config } from 'config'
 import { MainStackScreenProps } from 'navigation/types'
 import { QrCodeScannerOverlay } from 'pages/QrCodeScanner/QrCodeScannerOverlay'
 
