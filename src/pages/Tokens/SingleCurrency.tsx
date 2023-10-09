@@ -12,7 +12,6 @@ import {
   useGetTransactionsForTokenQuery,
   useMaybeBalanceForChainId,
   useMaybeBlockchainNetwork,
-  useWalletBannerBalance,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
