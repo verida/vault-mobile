@@ -63,9 +63,9 @@ Below are instructions to build and deploy iOS and Android versions manually. Be
 ### Build and and Deploy iOS version using Xcode
 
 1. **Select Scheme**: Open your Xcode project and click on the scheme dropdown in the top left corner. 
-   - Choose "Verida.development" for development and debugging.
-   - Choose "Verida.staging" for testing in a staging environment.
-   - Choose "Verida" for the production app build.
+   - Choose "Development" for development and debugging.
+   - Choose "Staging" for testing in a staging environment.
+   - Choose "Production" for the production app build.
 
 <br/>
 
@@ -79,7 +79,7 @@ Below are instructions to build and deploy iOS and Android versions manually. Be
 
 1. **Prepare for Deployment**: Before deploying, ensure that you have configured the production flavor with all necessary production settings, such as API endpoints and keys.
 
-2. **Set Scheme to Production**: In Xcode, choose the "Verida" scheme as explained in the "Running the App" section.
+2. **Set Scheme to Production**: In Xcode, choose the "Production" scheme as explained in the "Running the App" section.
 
 3. **Build the App**: Navigate to "Product" in the top menu and select "Archive" This creates an app archive ready for distribution.
 
