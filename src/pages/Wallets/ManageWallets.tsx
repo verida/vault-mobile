@@ -1,5 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import CONFIG from 'config'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -22,7 +23,6 @@ import { BlockchainWalletWithAccounts } from 'api/types'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
-import CONFIG from 'config'
 import { MainStackParams } from 'navigation/types'
 
 import PlusIcon from '../../assets/plus_icon.svg'

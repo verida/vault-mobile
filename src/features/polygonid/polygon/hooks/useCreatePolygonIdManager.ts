@@ -1,9 +1,9 @@
+import { config } from 'config'
 import { getPolygonIdPrivateKey } from 'features/polygonid/utils'
 import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import AccountManager from 'api/AccountManager'
-import { config } from 'config'
 
 import { Stateful } from '../../@types'
 import { PolygonIdConfig, PolygonIdManagerConfig } from '../@types'

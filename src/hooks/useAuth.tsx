@@ -1,5 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { DIDClient } from '@verida/did-client'
+import CONFIG from 'config'
 import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
@@ -12,7 +13,6 @@ import React, {
 } from 'react'
 
 import AccountManager from 'api/AccountManager'
-import CONFIG from 'config'
 
 import { useEmitter } from './useEmitter'
 

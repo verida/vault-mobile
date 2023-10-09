@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import CONFIG from 'config'
 import {
   getSelectedWalletId,
   getWalletList,
@@ -16,7 +17,6 @@ import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'
 import WalletList from 'components/WalletList'
-import CONFIG from 'config'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackParams } from 'navigation/types'

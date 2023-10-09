@@ -1,5 +1,6 @@
 import { useClipboard } from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
+import { config } from 'config'
 import {
   canBeHandledByDeeplink,
   isSupportedDomain,
@@ -13,7 +14,6 @@ import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 import { useDebouncedCallback } from 'use-debounce'
 
-import { config } from 'config'
 import { MainStackScreenProps } from 'navigation/types'
 import { QrCodeScannerOverlay } from 'pages/QrCodeScanner/QrCodeScannerOverlay'
 
