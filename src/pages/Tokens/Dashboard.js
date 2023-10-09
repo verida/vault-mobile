@@ -1,12 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
-import {
-  getUniqueWalletAddresses,
-  getWallets,
-  useGetBalancesQuery,
-} from 'features/cryptoWallet'
+import { useWalletBannerBalance } from 'features/cryptoWallet'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
 import { ErrorBoundary } from 'components/ErrorBoundary'
@@ -21,17 +16,13 @@ const TokenDashboard = () => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
   const navigation = useNavigation()
 
-  const wallets = useSelector(getWallets)
-  const addresses = getUniqueWalletAddresses(wallets)
-
-  const { data, isLoading, isFetching, refetch } =
-    useGetBalancesQuery(addresses)
-
-  async function pullToRefresh() {
-    refetch()
-  }
-
-  const { list, total } = data || {}
+  const {
+    list,
+    total,
+    isLoading,
+    isFetching,
+    refetch: pullToRefresh,
+  } = useWalletBannerBalance()
 
   return (
     <Container>

@@ -27,6 +27,11 @@ import {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import { ReceiveTokenScreenProps } from 'pages/Tokens/ReceiveToken'
+import { SendTokenScreenProps } from 'pages/Tokens/SendToken'
+import { SingleCurrencyScreenProps } from 'pages/Tokens/SingleCurrency'
+import { TokenRecipientScreenProps } from 'pages/Tokens/TokenRecipient'
+import { TransactionDetailsScreenProps } from 'pages/Tokens/TransactionDetails'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
@@ -77,15 +82,15 @@ export type MainStackParams = {
   AddCustomLink: AddCustomLinkScreenProps
   SeedPhraseView: undefined
   ManageWallets: undefined
-  SingleCurrency: undefined
-  SendToken: undefined
-  TokenRecipient: undefined
+  SingleCurrency: SingleCurrencyScreenProps
+  SendToken: SendTokenScreenProps
+  TokenRecipient: TokenRecipientScreenProps
   ConfirmTransaction: undefined
   TransactionSuccess: undefined
   TransactionFailure: undefined
-  TransactionDetails: undefined
+  TransactionDetails: TransactionDetailsScreenProps
   BuyToken: undefined
-  ReceiveToken: undefined
+  ReceiveToken: ReceiveTokenScreenProps
   SingleWallet: { item: BlockchainWalletWithAccounts }
   OtherAddresses: undefined
   SuccessFailure: undefined

@@ -2,6 +2,7 @@ import {
   getAllWallets,
   getSelectedWalletId,
   getWalletsData,
+  SelectSingleTokenData,
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
@@ -16,9 +17,18 @@ import { createAppAsyncThunk } from 'reduxStore/types'
 import dataHelper from '../utils/data'
 import { saveUserWallets, setSelectedWallet } from './'
 
+export type GetTransactionParamsParams = {
+  readonly token: SelectSingleTokenData
+  readonly amount: number | null
+  readonly address: string
+}
+
 export const getTransactionParams = createAppAsyncThunk(
   'wallets/getTransactionParams',
-  async (transactionData, { getState, rejectWithValue }) => {
+  async (
+    transactionData: GetTransactionParamsParams,
+    { getState, rejectWithValue }
+  ) => {
     const wallets = getWalletsData(getState())
     try {
       const params = await dataHelper.getTransactionParams(

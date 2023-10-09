@@ -4,7 +4,12 @@ import {
   getBalancesData,
   getTransactionsForTokenData,
   getWalletAddressForAsset,
+  SelectSingleTokenData,
+  SelectSingleTokenDataFailureCase,
   tokenCaipObjectToString,
+  Transaction,
+  TransactionType,
+  WalletsData,
 } from 'features/cryptoWallet'
 import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
@@ -12,7 +17,21 @@ import { createSelector } from 'reselect'
 import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import { RootState } from 'reduxStore/types'
 
-export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
+const createDefaultErrorResponse = (): SelectSingleTokenDataFailureCase => ({
+  label: '',
+  price: 0,
+  change: 0,
+  quantity: 0,
+  amount: 0,
+})
+
+// TODO: @cawfree If there was a `tokenType` field, it should be created here.
+export const selectSingleTokenData = (
+  state: RootState,
+  asset: AssetId | undefined
+): SelectSingleTokenData => {
+  if (!asset) return createDefaultErrorResponse()
+
   const selectedWallet = getSelectedWalletById(state)
   const addresses = getUniqueWalletAddresses(selectedWallet)
   const { list } = getBalancesData(state, addresses)
@@ -23,15 +42,7 @@ export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
 
   // We should always find a token balance, so this shouldn't happen
   // but just in case, return 0 values if not found
-  if (!tokenBalance) {
-    return {
-      label: '',
-      price: 0,
-      change: 0,
-      quantity: 0,
-      amount: 0,
-    }
-  }
+  if (!tokenBalance) return createDefaultErrorResponse()
 
   return {
     ...tokenBalance,
@@ -43,13 +54,11 @@ export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
   }
 }
 
-export const getAllWallets = (state: RootState) => {
-  return state.cryptoWallets.walletsData
-}
+export const getAllWallets = (state: RootState) =>
+  state.cryptoWallets.walletsData
 
-export const getSelectedWalletId = (state: RootState) => {
-  return state.cryptoWallets.selectedWalletId
-}
+export const getSelectedWalletId = (state: RootState) =>
+  state.cryptoWallets.selectedWalletId
 
 export const getWalletList = (
   state: RootState
@@ -111,7 +120,8 @@ export const getWalletCount = (state: RootState) => {
 export const getWalletsData = createSelector(
   getSelectedWalletId,
   getAllWallets,
-  (selectedWalletId, wallets) => wallets?.[selectedWalletId!]?.accounts || {}
+  (selectedWalletId, wallets): WalletsData =>
+    wallets?.[selectedWalletId!]?.accounts || {}
 )
 
 export const getWallets = createSelector(
@@ -143,13 +153,22 @@ export const selectPendingTransactions = (
   }
 }
 
-export const selectTransactions = (state: RootState, assetID: AssetId) => {
+export const selectTransactions = (
+  state: RootState,
+  assetID: AssetId | undefined
+): readonly Transaction[] => {
   const wallets = getWalletsData(state)
   const userAddress = getWalletAddressForAsset(assetID, wallets)
-  const transactions = [
-    ...getTransactionsForTokenData(state, userAddress, assetID),
-  ]
-  const pendingTransactions = selectPendingTransactions(state, assetID)
+
+  const transactions: Transaction[] =
+    userAddress && assetID
+      ? [...getTransactionsForTokenData(state, userAddress, assetID)]
+      : []
+
+  const pendingTransactions = assetID
+    ? selectPendingTransactions(state, assetID)
+    : []
+
   if (pendingTransactions.length > 0) {
     pendingTransactions.map((tx: any) => {
       // TODO: tx type
@@ -159,7 +178,7 @@ export const selectTransactions = (state: RootState, assetID: AssetId) => {
       if (!transactionCompleted) {
         transactions.unshift({
           id: tx.id,
-          type: 'sent',
+          type: TransactionType.SENT,
           address: tx.to,
           quantity: tx.amount,
           pending: true,
@@ -170,9 +189,8 @@ export const selectTransactions = (state: RootState, assetID: AssetId) => {
   return transactions
 }
 
-export const getTransactionParamsData = (state: RootState) => {
-  return state.cryptoWallets.transactionParams.data || {}
-}
+export const getTransactionParamsData = (state: RootState) =>
+  state.cryptoWallets.transactionParams.data || {}
 
 export const selectSentTransaction = (state: RootState) => {
   const transaction = {

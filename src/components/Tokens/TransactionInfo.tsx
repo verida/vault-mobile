@@ -1,29 +1,34 @@
 import Clipboard from '@react-native-community/clipboard'
 import {
+  DetailedTransaction,
   formatTokenQuantity,
-  getBlockchainNetwork,
+  getSupportedTokenObjectDecimals,
+  SupportedTokenObject,
+  useMaybeBlockchainNetwork,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
 import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
-import { store } from 'reduxStore'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({ transaction, token }) => {
-  const blockchainNetwork = getBlockchainNetwork(
-    store.getState(),
-    token.asset.chainId
-  )
+export default ({
+  transaction,
+  token,
+}: {
+  readonly token: SupportedTokenObject
+  readonly transaction: DetailedTransaction
+}) => {
+  const blockchainNetwork = useMaybeBlockchainNetwork(token?.asset?.chainId)
 
-  const explorerURL = blockchainNetwork.explorerURL.replace(
+  const maybeExplorerUrl = blockchainNetwork?.explorerURL?.replace?.(
     /%s/g,
     transaction.id
   )
 
-  const decimals = token.decimal ? token.decimal : blockchainNetwork.decimal
+  const decimals = getSupportedTokenObjectDecimals(token, blockchainNetwork)
 
   return (
     <View style={styles.container}>
@@ -43,7 +48,7 @@ export default ({ transaction, token }) => {
                 transaction.type === 'sent' ? styles.negative : styles.positive,
               ]}>
               {`${transaction.type === 'sent' ? '-' : ''}${formatTokenQuantity(
-                transaction.quantity,
+                Number(transaction.quantity),
                 decimals
               )} ${token.symbol}`}
             </Text>
@@ -75,7 +80,7 @@ export default ({ transaction, token }) => {
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
               {formatTokenQuantity(
-                transaction.fee,
+                Number(transaction.fee),
                 transaction.feeDecimal,
                 decimals
               )}{' '}
@@ -116,23 +121,27 @@ export default ({ transaction, token }) => {
             </TouchableOpacity>
           </View>
         </View>
-
-        <TouchableOpacity style={styles.viewOnExplorerWrapper}>
-          <Text
-            onPress={() => {
-              Linking.openURL(explorerURL)
-            }}>
-            View on explorer
-          </Text>
-          <Icon
-            name='enter-outline'
-            style={{
-              color: 'rgba(66, 59, 206, 1)',
-              fontSize: 21,
-              marginLeft: 2,
-            }}
-          />
-        </TouchableOpacity>
+        {Boolean(
+          typeof maybeExplorerUrl === 'string' && maybeExplorerUrl.length
+        ) && (
+          <TouchableOpacity style={styles.viewOnExplorerWrapper}>
+            <Text
+              onPress={() => {
+                typeof maybeExplorerUrl === 'string' &&
+                  Linking.openURL(maybeExplorerUrl)
+              }}>
+              View on explorer
+            </Text>
+            <Icon
+              name='enter-outline'
+              style={{
+                color: 'rgba(66, 59, 206, 1)',
+                fontSize: 21,
+                marginLeft: 2,
+              }}
+            />
+          </TouchableOpacity>
+        )}
       </View>
     </View>
   )
@@ -173,6 +182,7 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_SEMIBOLD,
     fontSize: 14,
   },
+  infoValueFull: {},
   valueText: {
     color: 'rgba(4, 17, 51, 1)',
     fontFamily: NUNITO_SANS_SEMIBOLD,

@@ -1,12 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
-import {
-  getUniqueWalletAddresses,
-  getWallets,
-  useGetBalancesQuery,
-} from 'features/cryptoWallet'
+import { useWalletBannerBalance } from 'features/cryptoWallet'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
-import { useSelector } from 'react-redux'
 
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
@@ -20,11 +15,7 @@ import {
 } from '../../../constants/color'
 
 const WalletSummary = () => {
-  const wallets = useSelector(getWallets)
-  const addresses = getUniqueWalletAddresses(wallets)
-
-  const { data } = useGetBalancesQuery(addresses)
-  const { total } = data || {}
+  const { total } = useWalletBannerBalance()
 
   const navigation = useNavigation()
 

@@ -1,17 +1,22 @@
 import Clipboard from '@react-native-community/clipboard'
+import { RouteProp } from '@react-navigation/native'
+import { AssetId } from 'caip'
 import {
-  getBlockchainNetwork,
   getBlockchainNetworkLabel,
   getWalletAddressForAsset,
   getWalletsData,
+  SelectSingleTokenData,
+  useMaybeBlockchainNetwork,
+  WalletsData,
 } from 'features/cryptoWallet'
+import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
+// @ts-expect-error missing_declaration
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
-import { store } from 'reduxStore'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon_with_bg.svg'
@@ -22,17 +27,32 @@ import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import useParams from 'hooks/useParams'
+import { useMainNavigation } from 'navigation/hooks'
+import { MainStackParams } from 'navigation/types'
+import { RootState } from 'reduxStore/types'
 
 const LogoImg = require('assets/vault-logo.png')
 
-const ReceiveToken = ({ navigation, route, wallets }) => {
-  const token = route.params.token
-  const address = getWalletAddressForAsset(token.asset, wallets)
-  const blockchainNetwork = getBlockchainNetwork(
-    store.getState(),
-    token.asset.chainId
-  )
-  let networkReference = getBlockchainNetworkLabel(blockchainNetwork)
+export type ReceiveTokenRouteProp = RouteProp<MainStackParams, 'ReceiveToken'>
+
+export type ReceiveTokenScreenProps = {
+  readonly token: SelectSingleTokenData
+}
+
+const ReceiveToken = ({ wallets }: { readonly wallets: WalletsData }) => {
+  const navigation = useMainNavigation()
+  const { token } = useParams<ReceiveTokenScreenProps>()
+
+  const maybeAsset: AssetId | undefined =
+    Boolean(token) && 'asset' in token ? token.asset : undefined
+
+  const blockchainNetwork = useMaybeBlockchainNetwork(maybeAsset?.chainId)
+  const networkReference = getBlockchainNetworkLabel(blockchainNetwork)
+
+  const maybeAddress = getWalletAddressForAsset(maybeAsset, wallets)
+
+  const hasAddress = typeof maybeAddress === 'string' && Boolean(maybeAddress)
 
   return (
     <Container>
@@ -41,59 +61,70 @@ const ReceiveToken = ({ navigation, route, wallets }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={'Receive ' + token.symbol}
+        title={'Receive ' + getTokenUnitName(token)}
       />
       <TestnetWarning networkReference={networkReference} />
       <Layout style={styles.container}>
         <View style={styles.content}>
-          <Text style={styles.address}>{address}</Text>
-          <View style={styles.qr}>
-            <QRCode
-              logo={LogoImg}
-              logoSize={60}
-              size={207}
-              codeStyle='dot'
-              innerEyeStyle='circle'
-              padding={0.5}
-              content={address}
-            />
-          </View>
+          {hasAddress && (
+            <>
+              <Text style={styles.address} children={maybeAddress} />
+              <View style={styles.qr}>
+                <QRCode
+                  logo={LogoImg}
+                  logoSize={60}
+                  size={207}
+                  codeStyle='dot'
+                  innerEyeStyle='circle'
+                  padding={0.5}
+                  content={maybeAddress}
+                />
+              </View>
+            </>
+          )}
+
           {/* <Text style={styles.amount}>
             <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
           </Text> */}
           <Text style={styles.notice}>
-            Send only {token.label} (
-            {token.tokenType ? token.tokenType : token.symbol}) to this address.
-            Sending any other coins may result in permanent loss.
+            Send only {token.label}
+            {getTokenUnitName(token)} to this address. Sending any other coins
+            may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
-            <TouchableOpacity
-              onPress={() => {
-                Clipboard.setString(address)
-                Toast.show('Address copied', {
-                  duration: Toast.durations.LONG,
-                  position: -130,
-                  shadow: false,
-                  animation: true,
-                  hideOnPress: true,
-                  delay: 0,
-                  backgroundColor: 'rgba(4, 17, 51, 1)',
-                })
-              }}
-              style={styles.actionButton}>
-              <CopyIconDark />
-              <Text style={styles.actionText}>Copy</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              onPress={() =>
-                Share.share({
-                  message: `My address to receive ${token.symbol} \r${address}`,
-                })
-              }
-              style={styles.actionButton}>
-              <ShareIcon />
-              <Text style={styles.actionText}>Share</Text>
-            </TouchableOpacity>
+            {hasAddress && (
+              <TouchableOpacity
+                onPress={() => {
+                  Clipboard.setString(maybeAddress)
+                  Toast.show('Address copied', {
+                    duration: Toast.durations.LONG,
+                    position: -130,
+                    shadow: false,
+                    animation: true,
+                    hideOnPress: true,
+                    delay: 0,
+                    backgroundColor: 'rgba(4, 17, 51, 1)',
+                  })
+                }}
+                style={styles.actionButton}>
+                <CopyIconDark />
+                <Text style={styles.actionText}>Copy</Text>
+              </TouchableOpacity>
+            )}
+            {hasAddress && (
+              <TouchableOpacity
+                onPress={() =>
+                  Share.share({
+                    message: `My address to receive ${getTokenUnitName(
+                      token
+                    )} \r${maybeAddress}`,
+                  })
+                }
+                style={styles.actionButton}>
+                <ShareIcon />
+                <Text style={styles.actionText}>Share</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.footer}>
@@ -176,16 +207,14 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontFamily: NUNITO_SANS_SEMIBOLD,
   },
+  footer: {},
+  saveButton: {},
 })
 
-const mapStateToProps = (state) => {
-  return {
-    wallets: getWalletsData(state),
-  }
-}
+const mapStateToProps = (state: RootState) => ({
+  wallets: getWalletsData(state),
+})
 
-const mapDispatchToProps = () => {
-  return {}
-}
+const mapDispatchToProps = () => ({})
 
 export default connect(mapStateToProps, mapDispatchToProps)(ReceiveToken)

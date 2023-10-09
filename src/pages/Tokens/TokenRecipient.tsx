@@ -1,8 +1,12 @@
 import Clipboard from '@react-native-community/clipboard'
+import { RouteProp } from '@react-navigation/native'
 import {
   getTransactionParams,
+  GetTransactionParamsParams,
   isValidWalletAddress,
+  SelectSingleTokenData,
 } from 'features/cryptoWallet'
+import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -19,17 +23,36 @@ import Label from 'components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import useParams from 'hooks/useParams'
+import { useMainNavigation } from 'navigation/hooks'
+import { MainStackParams } from 'navigation/types'
+import { AppDispatch } from 'reduxStore/types'
 import InputStyles from 'styles/inputs'
 
-const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
-  const { token, amount } = route.params
-  const [address, setAddress] = useState('')
+export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
+
+export type TokenRecipientScreenProps = {
+  readonly token: SelectSingleTokenData
+  readonly amount: number | null
+}
+
+const TokenRecipient = ({
+  onGetTransactionParams,
+}: {
+  readonly onGetTransactionParams: (
+    params: GetTransactionParamsParams
+  ) => unknown
+}) => {
+  const navigation = useMainNavigation()
+  const { token, amount } = useParams<TokenRecipientScreenProps>()
+
+  const [address, setAddress] = useState<string>('')
   const [processing, setProcessing] = useState(false)
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
     setAddress(clipboardData)
   }
-  function onReadQRCode(data) {
+  function onReadQRCode(data: string) {
     setAddress(data)
   }
   function onScanQRPress() {
@@ -42,8 +65,12 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
     Alert.alert('Invalid address', `That's not a valid address`)
 
   const onPressSend = () => {
-    if (isValidWalletAddress(address, token.asset)) {
+    const maybeAsset =
+      Boolean(token) && 'asset' in token ? token.asset : undefined
+
+    if (isValidWalletAddress(address, maybeAsset)) {
       setProcessing(true)
+
       onGetTransactionParams({
         token,
         amount,
@@ -61,7 +88,7 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={'Send ' + token.symbol}
+        title={`Send ${getTokenUnitName(token)}`}
       />
       <View style={styles.container}>
         <View style={styles.content}>
@@ -69,7 +96,6 @@ const TokenRecipient = ({ navigation, route, onGetTransactionParams }) => {
           <TextInput
             value={address}
             autoFocus={true}
-            // multiline
             editable
             autoCorrect={false}
             autoCapitalize='none'
@@ -208,13 +234,12 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = () => {
-  return {}
-}
+const mapStateToProps = () => ({})
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: AppDispatch) => {
   return {
-    onGetTransactionParams: (params) => dispatch(getTransactionParams(params)),
+    onGetTransactionParams: (params: GetTransactionParamsParams) =>
+      dispatch(getTransactionParams(params)),
   }
 }
 

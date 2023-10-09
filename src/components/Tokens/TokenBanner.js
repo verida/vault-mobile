@@ -20,6 +20,7 @@ export default ({
 }) => {
   const { label, price, change, amount, symbol, quantity, icon, tokenType } =
     data
+
   const positive = change > 0
 
   return (

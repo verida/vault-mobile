@@ -1,5 +1,9 @@
-import { useNavigation } from '@react-navigation/native'
-import { formatTokenQuantity } from 'features/cryptoWallet'
+import {
+  formatTokenQuantity,
+  SupportedTokenObject,
+  Transaction,
+  TransactionType,
+} from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -7,23 +11,32 @@ import { StyleSheet, View } from 'react-native'
 import ReceivedIcon from 'assets/received_icon.svg'
 import SentIcon from 'assets/sent_icon.svg'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { useMainNavigation } from 'navigation/hooks'
 
-const icons = {
+const icons: { readonly [key in TransactionType]: JSX.Element } = {
   sent: <SentIcon />,
   received: <ReceivedIcon />,
 }
 
-export default ({ symbol, decimal, token, item }) => {
-  const navigation = useNavigation()
+export default ({
+  symbol,
+  decimal,
+  token,
+  item,
+}: {
+  readonly symbol: unknown
+  readonly decimal: number
+  readonly token: SupportedTokenObject | undefined
+  readonly item: Transaction
+}) => {
+  const navigation = useMainNavigation()
   const { type, quantity, address, id, pending } = item
 
   return (
     <ListItem
       button
       onPress={() => {
-        if (!pending) {
-          navigation.navigate('TransactionDetails', { id, token })
-        }
+        if (!pending) navigation.navigate('TransactionDetails', { id, token })
       }}
       style={styles.listItem}>
       {icons[type]}
@@ -37,7 +50,8 @@ export default ({ symbol, decimal, token, item }) => {
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {formatTokenQuantity(quantity, decimal)} {symbol}
+            {/* HACK: formatTokenQuantity expects a number, but quantity from transactions is a BigInt.*/}
+            {formatTokenQuantity(Number(quantity), decimal)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>

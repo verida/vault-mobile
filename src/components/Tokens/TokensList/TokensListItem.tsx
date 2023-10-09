@@ -1,4 +1,5 @@
-import { priceFormatter } from 'features/cryptoWallet'
+import { priceFormatter, SelectSingleTokenData } from 'features/cryptoWallet'
+import { getTokenUnitName } from 'features/token'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -6,18 +7,26 @@ import FastImage from 'react-native-fast-image'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({ item, onPressItem }) => {
-  const { change, label, token, symbol, quantity, price, amount } = item
-  const positive = change >= 0
+export default ({
+  item,
+  onPressItem,
+}: {
+  readonly item: SelectSingleTokenData
+  readonly onPressItem: (item: SelectSingleTokenData) => void
+}) => {
+  const { change, label, quantity, price, amount } = item
+
+  const maybeToken = Boolean(item) && 'token' in item ? item.token : undefined
+  const positive = typeof change === 'number' && change >= 0
 
   return (
     <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
-      <FastImage source={{ uri: token.icon }} style={styles.icon} />
+      <FastImage source={{ uri: maybeToken?.icon }} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
           <Text>
-            {quantity.toFixed(3)} {symbol}
+            {quantity.toFixed(3)} {getTokenUnitName(item)}
           </Text>
         </View>
         <View style={styles.priceAmount}>
