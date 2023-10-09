@@ -50,7 +50,6 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
     return (
       <View style={styles.container}>
         <View style={styles.row}>
-          {/* eslint-disable-next-line react/no-children-prop */}
           <Text children={maybeChainName} style={styles.label} />
         </View>
         <View style={styles.row}>

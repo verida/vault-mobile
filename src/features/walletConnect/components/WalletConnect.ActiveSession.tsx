@@ -89,7 +89,6 @@ export const WalletConnectActiveSession = React.memo(
                           caipChainId={caipChainId}
                         />,
                         i < orig.length - 1 ? (
-                          // eslint-disable-next-line react/no-children-prop
                           <Text children=',' key={String(i)} />
                         ) : undefined,
                       ])}
@@ -101,9 +100,7 @@ export const WalletConnectActiveSession = React.memo(
                   <View
                     style={styles.row}
                     key={`${caipProtocol}_${accountForChain}`}>
-                    {/* eslint-disable-next-line react/no-children-prop */}
                     <Text children='Account ID' style={styles.label} />
-                    {/* eslint-disable-next-line react/no-children-prop */}
                     <Text children={accountForChain} style={styles.value} />
                   </View>
                 )),
@@ -113,25 +110,15 @@ export const WalletConnectActiveSession = React.memo(
 
         {Boolean(maybePeerId) && (
           <View style={styles.row}>
-            {/* eslint-disable-next-line react/no-children-prop */}
             <Text style={styles.label} children='PeerId' />
-            <Text
-              // eslint-disable-next-line react/no-children-prop
-              children={maybePeerId}
-              style={styles.value}
-            />
+            <Text children={maybePeerId} style={styles.value} />
           </View>
         )}
 
         {Boolean(maybeExpiry) && (
           <View style={styles.row}>
-            {/* eslint-disable-next-line react/no-children-prop */}
             <Text style={styles.label} children='Expiry' />
-            <Text
-              // eslint-disable-next-line react/no-children-prop
-              children={maybeExpiry!.toDateString()}
-              style={styles.value}
-            />
+            <Text children={maybeExpiry!.toDateString()} style={styles.value} />
           </View>
         )}
 

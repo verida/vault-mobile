@@ -326,7 +326,6 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
   return (
     <WalletConnectContextProvider
-      // eslint-disable-next-line react/no-children-prop
       children={children}
       value={React.useMemo<WalletConnectContextValue>(
         () => ({

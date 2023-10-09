@@ -51,7 +51,6 @@ const shouldExpandNode = () => true
 const keyPath = ['Object']
 
 const labelRenderer: JSONTreeProps['labelRenderer'] = (raw) => (
-  // eslint-disable-next-line react/no-children-prop
   <Text style={{ maxWidth: '20%' }} children={raw[0]} />
 )
 

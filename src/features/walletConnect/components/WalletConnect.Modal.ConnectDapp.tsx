@@ -181,7 +181,6 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={48} />
           <View style={styles.footer}>
             <Button
-              // eslint-disable-next-line react/no-children-prop
               children='Connect'
               style={styles.connectButton}
               color='primary'

@@ -1,9 +1,11 @@
+import { AssetId } from 'caip'
 import * as ethers from 'ethers'
-import Web3 from 'web3'
+
+import { ImportedSeedPhrase } from '../@types'
 
 const bip39 = require('bip39')
 
-const validateNearAddress = (address) => {
+const validateNearAddress = (address: string) => {
   if (address.includes('.') && address.length >= 2 && address.length <= 64) {
     return true
   } else {
@@ -11,10 +13,15 @@ const validateNearAddress = (address) => {
   }
 }
 
-export const isValidWalletAddress = (address, asset) => {
+export const isValidWalletAddress = (
+  address: string,
+  asset: AssetId | undefined
+) => {
+  if (!asset) return false
+
   switch (asset.chainId.namespace) {
     case 'eip155':
-      return Web3.utils.isAddress(address)
+      return ethers.utils.isAddress(address)
     case 'near':
       return validateNearAddress(address)
   }
@@ -22,13 +29,13 @@ export const isValidWalletAddress = (address, asset) => {
   return false
 }
 
-export const isValidSeedPhrase = (data) => {
-  const { phrase, privateKey, blockchainNetwork, inputSwitch } = data
-
-  if (
-    blockchainNetwork === undefined ||
-    blockchainNetwork.namespace === 'near'
-  ) {
+export const isValidSeedPhrase = ({
+  phrase,
+  privateKey,
+  blockchainNetwork,
+  inputSwitch,
+}: ImportedSeedPhrase) => {
+  if (!blockchainNetwork || blockchainNetwork.namespace === 'near') {
     // valid bip39 12 word seedphrase
     return bip39.validateMnemonic(phrase)
   } else if (blockchainNetwork.namespace === 'eip155') {

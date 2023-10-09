@@ -1,6 +1,6 @@
 import { AssetId, ChainId } from 'caip'
 
-import { BlockchainAccount } from 'api/types'
+import { BlockchainAccount, BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
 
 // Types copied from the Wallet-Provider
@@ -111,3 +111,10 @@ export type VeridaWalletAccountOption = Option & {
 }
 
 export type WalletsData = Record<string, BlockchainAccount>
+
+export type ImportedSeedPhrase = {
+  readonly phrase: string
+  readonly privateKey: string
+  readonly blockchainNetwork: BlockchainNetwork | null | undefined
+  readonly inputSwitch: string
+}
