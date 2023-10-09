@@ -1,3 +1,4 @@
+export * from './useBlockchainNetwork'
 export * from './useMaybeSelectedWallet'
 export * from './useMaybeSelectedWalletId'
 export * from './useVeridaWalletAccountDropdownOptions'

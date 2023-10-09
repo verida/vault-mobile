@@ -1,12 +1,12 @@
 import Clipboard from '@react-native-community/clipboard'
 import { ChainId } from 'caip'
 import {
-  getBlockchainNetwork,
   getBlockchainNetworkLabel,
   getSelectedWalletById,
   getWalletsData,
   selectSingleTokenData,
   selectTransactions,
+  useBlockchainNetwork,
   useGetTransactionsForTokenQuery,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
@@ -27,9 +27,11 @@ const SingleCurrency = ({ navigation, route }) => {
 
   const wallets = useSelector(getWalletsData)
   const selectedWallet = useSelector(getSelectedWalletById)
-  const blockchainNetwork = useSelector((state) =>
-    getBlockchainNetwork(state, route.params.item.asset.chainId)
+
+  const blockchainNetwork = useBlockchainNetwork(
+    route.params.item.asset.chainId
   )
+
   const chainId = new ChainId(item.asset.chainId).toString()
   const address = wallets[chainId].address
 
