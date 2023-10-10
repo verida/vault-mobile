@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Scheme
-   LastUpgradeVersion = "1150"
+   LastUpgradeVersion = "1250"
    version = "1.7">
    <BuildAction
       parallelizeBuildables = "YES"
@@ -10,13 +10,13 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cp &quot;${PROJECT_DIR}/../.env.production&quot; &quot;${PROJECT_DIR}/../.env&quot;&#10;&#10;&quot;${SRCROOT}/../node_modules/react-native-config/ios/ReactNativeConfig/BuildXCConfig.rb&quot; &quot;${SRCROOT}/..&quot; &quot;${SRCROOT}/tmp.xcconfig&quot;&#10;">
+               scriptText = "# Remove the generated GeneratedDotEnv.m to force it updated&#10;rm ${SRCROOT}/../node_modules/react-native-config/ios/ReactNativeConfig/GeneratedDotEnv.m&#10;&#10;# Set development env file&#10;echo &quot;.env.development&quot; &gt; /tmp/envfile&#10;&#10;# Make the env variables to be available in xcode, info.plist...&#10;&quot;${SRCROOT}/../node_modules/react-native-config/ios/ReactNativeConfig/BuildXCConfig.rb&quot; &quot;${SRCROOT}/..&quot; &quot;${SRCROOT}/tmp.xcconfig&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
-                     BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-                     BuildableName = "Verida.app"
-                     BlueprintName = "Verida Vault"
+                     BlueprintIdentifier = "0545145326F9DB5700654C18"
+                     BuildableName = "Verida Internal.app"
+                     BlueprintName = "Wallet-Staging"
                      ReferencedContainer = "container:Verida Vault.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
@@ -32,9 +32,9 @@
             buildForAnalyzing = "YES">
             <BuildableReference
                BuildableIdentifier = "primary"
-               BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-               BuildableName = "Verida.app"
-               BlueprintName = "Verida Vault"
+               BlueprintIdentifier = "5BF4E1262AD3C3CE00E5D4AD"
+               BuildableName = "Verida Dev.app"
+               BlueprintName = "Wallet-Development"
                ReferencedContainer = "container:Verida Vault.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -50,8 +50,8 @@
    </TestAction>
    <LaunchAction
       buildConfiguration = "Debug"
-      selectedDebuggerIdentifier = ""
-      selectedLauncherIdentifier = "Xcode.IDEFoundation.Launcher.PosixSpawn"
+      selectedDebuggerIdentifier = "Xcode.DebuggerFoundation.Debugger.LLDB"
+      selectedLauncherIdentifier = "Xcode.DebuggerFoundation.Launcher.LLDB"
       launchStyle = "0"
       useCustomWorkingDirectory = "NO"
       ignoresPersistentStateOnLaunch = "NO"
@@ -62,9 +62,9 @@
          runnableDebuggingMode = "0">
          <BuildableReference
             BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Verida.app"
-            BlueprintName = "Verida Vault"
+            BlueprintIdentifier = "5BF4E1262AD3C3CE00E5D4AD"
+            BuildableName = "Verida Dev.app"
+            BlueprintName = "Wallet-Development"
             ReferencedContainer = "container:Verida Vault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -75,16 +75,6 @@
       savedToolIdentifier = ""
       useCustomWorkingDirectory = "NO"
       debugDocumentVersioning = "YES">
-      <BuildableProductRunnable
-         runnableDebuggingMode = "0">
-         <BuildableReference
-            BuildableIdentifier = "primary"
-            BlueprintIdentifier = "13B07F861A680F5B00A75B9A"
-            BuildableName = "Verida.app"
-            BlueprintName = "Verida Vault"
-            ReferencedContainer = "container:Verida Vault.xcodeproj">
-         </BuildableReference>
-      </BuildableProductRunnable>
    </ProfileAction>
    <AnalyzeAction
       buildConfiguration = "Debug">

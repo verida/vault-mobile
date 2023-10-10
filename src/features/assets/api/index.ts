@@ -1,7 +1,7 @@
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
+import CONFIG from 'config'
 
 import { NFT } from 'api/types'
-import CONFIG from 'config/environment'
 
 const baseQuery = fetchBaseQuery({
   baseUrl: CONFIG.WALLET_PROVIDER_URL,

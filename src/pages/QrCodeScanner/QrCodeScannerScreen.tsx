@@ -1,5 +1,6 @@
 import { useClipboard } from '@react-native-community/clipboard'
 import * as Sentry from '@sentry/react-native'
+import { config } from 'config'
 import {
   canBeHandledByDeeplink,
   isSupportedDomain,
@@ -110,8 +111,9 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
 
     // HACK: In development mode, we'll also read the content of the clipboard
     //       for a connection string.
-    // eslint-disable-next-line react-hooks/rules-of-hooks
-    const [maybeClipboardContent] = __DEV__ ? useClipboard() : []
+    const [maybeClipboardContent] =
+      // eslint-disable-next-line react-hooks/rules-of-hooks
+      __DEV__ && config.dev.enableClipboardInQrCodeScanner ? useClipboard() : []
 
     React.useEffect(() => {
       ;(async () => {

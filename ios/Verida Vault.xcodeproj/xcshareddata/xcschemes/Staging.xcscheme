@@ -10,13 +10,13 @@
             ActionType = "Xcode.IDEStandardExecutionActionsCore.ExecutionActionType.ShellScriptAction">
             <ActionContent
                title = "Run Script"
-               scriptText = "cp &quot;${PROJECT_DIR}/../.env.staging&quot; &quot;${PROJECT_DIR}/../.env&quot;&#10;&#10;&quot;${SRCROOT}/../node_modules/react-native-config/ios/ReactNativeConfig/BuildXCConfig.rb&quot; &quot;${SRCROOT}/..&quot; &quot;${SRCROOT}/tmp.xcconfig&quot;&#10;">
+               scriptText = "# Remove the generated GeneratedDotEnv.m to force it updated&#10;rm ${SRCROOT}/../node_modules/react-native-config/ios/ReactNativeConfig/GeneratedDotEnv.m&#10;&#10;# Set .en.staging as the env file&#10;echo &quot;.env.staging&quot; &gt; /tmp/envfile&#10;&#10;# Make the env variables to be available in xcode, info.plist...&#10;&quot;${SRCROOT}/../node_modules/react-native-config/ios/ReactNativeConfig/BuildXCConfig.rb&quot; &quot;${SRCROOT}/..&quot; &quot;${SRCROOT}/tmp.xcconfig&quot;&#10;">
                <EnvironmentBuildable>
                   <BuildableReference
                      BuildableIdentifier = "primary"
                      BlueprintIdentifier = "0545145326F9DB5700654C18"
                      BuildableName = "Verida Internal.app"
-                     BlueprintName = "Verida Vault Internal"
+                     BlueprintName = "Wallet-Staging"
                      ReferencedContainer = "container:Verida Vault.xcodeproj">
                   </BuildableReference>
                </EnvironmentBuildable>
@@ -34,7 +34,7 @@
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "0545145326F9DB5700654C18"
                BuildableName = "Verida Internal.app"
-               BlueprintName = "Verida Vault Internal"
+               BlueprintName = "Wallet-Staging"
                ReferencedContainer = "container:Verida Vault.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -64,7 +64,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0545145326F9DB5700654C18"
             BuildableName = "Verida Internal.app"
-            BlueprintName = "Verida Vault Internal"
+            BlueprintName = "Wallet-Staging"
             ReferencedContainer = "container:Verida Vault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
@@ -81,7 +81,7 @@
             BuildableIdentifier = "primary"
             BlueprintIdentifier = "0545145326F9DB5700654C18"
             BuildableName = "Verida Internal.app"
-            BlueprintName = "Verida Vault Internal"
+            BlueprintName = "Wallet-Staging"
             ReferencedContainer = "container:Verida Vault.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>

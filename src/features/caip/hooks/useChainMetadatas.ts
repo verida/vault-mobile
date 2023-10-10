@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
+import { config } from 'config'
 import { ChainMetadatas, isSupportedCaipNamespace } from 'features/caip'
 import { cryptoWalletApi } from 'features/cryptoWallet'
 import * as React from 'react'
 
 import { BlockchainNetwork } from 'api/types'
-import { config } from 'config/environment'
 
 import { ChainMetadata } from '../@types'
 

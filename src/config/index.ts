@@ -25,11 +25,11 @@ const logLevel: LogLevel =
 
 // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether).
 const veridaNetwork: EnvironmentType =
-  Config.NETWORK_ENVIRONMENT === EnvironmentType.MAINNET
+  Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.MAINNET
     ? EnvironmentType.MAINNET
-    : Config.NETWORK_ENVIRONMENT === EnvironmentType.DEVNET
+    : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.DEVNET
     ? EnvironmentType.DEVNET
-    : Config.NETWORK_ENVIRONMENT === EnvironmentType.LOCAL
+    : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.LOCAL
     ? EnvironmentType.LOCAL
     : EnvironmentType.TESTNET
 
@@ -37,15 +37,16 @@ const veridaNetwork: EnvironmentType =
 
 // TODO: Clean up the configuration, group in sub-object when relevant (for instance sentry), remove unnecessary properties, etc.
 const COMMON_CONFIG = {
-  BITRISE_TRIGGERED_WORKFLOW_TITLE: Config.BITRISE_TRIGGERED_WORKFLOW_TITLE,
-  DEPLOY_ENVIRONMENT: Config.DEPLOY_ENVIRONMENT,
-  // --------------------
-  devMode: __DEV__,
+  dev: {
+    devMode: __DEV__,
+    disableLogBox: Config.DISABLE_LOG_BOX === 'true',
+    enableClipboardInQrCodeScanner:
+      Config.ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER === 'true',
+  },
   logLevel,
-  // --------------------
   sentry: {
-    enabled: true, // TODO: Make it an environment variable
-    dsn: 'https://b850525444734a138f9fddcc918d5ac1@o4503997119725568.ingest.sentry.io/4503997121495040', // TODO: Make it an environment variable
+    enabled: Config.ENABLE_SENTRY === 'true',
+    dsn: Config.SENTRY_DSN,
     environment: Config.SENTRY_ENVIRONMENT || 'local',
     release: `${APP_PACKAGE}@${APP_VERSION_WITH_BUILD}`,
     // tracesSampleRate: Number(Config.SENTRY_TRACE_SAMPLE_RATE || 0.1),
@@ -61,21 +62,19 @@ const COMMON_CONFIG = {
       blockchain: Blockchain.Polygon,
       didMethod: DidMethod.PolygonId,
       revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-      ipfsGatewayUrl: 'https://data.verida.network/ipfs', // TODO: Make it an environment variable
+      ipfsGatewayUrl: Config.IPFS_GATEWAY_URL,
     },
     testnet: {
       networkId: NetworkId.Mumbai,
-      revocationBaseUrl: 'https://rhs-staging.polygonid.me/', // TODO: Make it an environment variable
-      rpcUrl:
-        'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN', // TODO: Make it an environment variable
-      contractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4', // TODO: Make it an environment variable?
+      revocationBaseUrl: Config.POLYGON_ID_REVOCATION_BASE_URL,
+      rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
+      contractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4',
     },
     mainnet: {
       networkId: NetworkId.Main,
-      revocationBaseUrl: 'https://rhs-staging.polygonid.me/', // TODO: Make it an environment variable
-      rpcUrl:
-        'https://polygon-mainnet.g.alchemy.com/v2/CJgbQjPD-NUTcZNMf4jt-mwb-xOQMq6e', // TODO: Make it an environment variable
-      contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D', // TODO: Make it an environment variable?
+      revocationBaseUrl: Config.POLYGON_ID_REVOCATION_BASE_URL,
+      rpcUrl: Config.POLYGON_MAINNET_RPC_URL,
+      contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D',
     },
   },
   // --------------------
@@ -100,8 +99,7 @@ const COMMON_CONFIG = {
     callType: 'gasless',
     web3Config: {
       callType: 'gasless',
-      rpcUrl:
-        'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN', // TODO: Make it an environment variable? But how about when neded for multiple networks
+      rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
       serverConfig: {
         headers: {
           'context-name': VERIDA_VAULT_CONTEXT_NAME,
@@ -112,18 +110,17 @@ const COMMON_CONFIG = {
           'user-agent': 'Verida-Vault', // TODO: Move to a constant, don't know what to call it though
         },
       },
-      endpointUrl: Config.NETWORK_ENDPOINT_URL,
+      endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
     },
-    rpcUrl:
-      'https://polygon-mumbai.g.alchemy.com/v2/Q4NRuRlwTNyI90dDCgiX_KT_vS_2gpbN', // TODO: Make it an environment variable? But how about when neded for multiple networks
+    rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
   },
-  NETWORK_ENDPOINT_URL: Config.NETWORK_ENDPOINT_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
+  NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
   // --------------------
   INFURA_API_KEY: Config.INFURA_API_KEY, // TODO: Move to specific network config, but will need to be for multiple networks
   // --------------------
   // TODO: Group WalletConnect config in its own sub property walletConnect: {projectId: '...', relayUrl: '...'}
-  WALLETCONNECT_PROJECT_ID: '1890472fb88366dd4046858b11e705cd', // TODO: Make it an environment variable
-  WALLETCONNECT_RELAY_URL: 'wss://relay.walletconnect.com', // TODO: Make it an environment variable
+  WALLETCONNECT_PROJECT_ID: Config.WALLETCONNECT_PROJECT_ID,
+  WALLETCONNECT_RELAY_URL: Config.WALLETCONNECT_RELAY_URL,
 } as const
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
@@ -139,6 +136,7 @@ type VeridaEnvironmentConfig<T extends EnvironmentType> = {
 }
 
 // TODO: All the specific configs will eventually need to be available through the config when the Wallet will have to support all the network types altogether.
+// TODO: VERIDA_WALLET_PROVIDER_URL is a single env var but we'll need to figure out how to support multiple networks. Wallet Provider should not be related to the Verida Network, so a single env var should be enough.
 const SPECIFIC_CONFIGS: {
   readonly [key in EnvironmentType]: Partial<
     typeof COMMON_CONFIG & VeridaEnvironmentConfig<key>
@@ -150,16 +148,16 @@ const SPECIFIC_CONFIGS: {
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
-    WALLET_PROVIDER_URL: 'https://devnet-walletprovider.tn.verida.tech',
-    NETWORK_ENDPOINT_URL: Config.NETWORK_ENDPOINT_URL,
+    WALLET_PROVIDER_URL: Config.VERIDA_WALLET_PROVIDER_URL,
+    NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
   },
   [EnvironmentType.TESTNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
-    WALLET_PROVIDER_URL: 'https://testnet-walletprovider.tn.verida.tech',
-    NETWORK_ENDPOINT_URL: Config.NETWORK_ENDPOINT_URL,
+    WALLET_PROVIDER_URL: Config.VERIDA_WALLET_PROVIDER_URL,
+    NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
   },
   [EnvironmentType.MAINNET]: {},
 }
