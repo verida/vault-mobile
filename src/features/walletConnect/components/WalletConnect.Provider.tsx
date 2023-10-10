@@ -20,7 +20,11 @@ import { useDebouncedCallback } from 'use-debounce'
 import { useAuth } from 'hooks/useAuth'
 import { MainStackParams } from 'navigation/types'
 
-import { ActiveSessions, WalletConnectContextValue } from '../@types'
+import {
+  ActiveSessions,
+  CreatePairingCallback,
+  WalletConnectContextValue,
+} from '../@types'
 import {
   isWalletConnectConnection,
   isWalletConnectV2Connection,
@@ -253,6 +257,17 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     [maybeWeb3Wallet]
   )
 
+  const createPairing: CreatePairingCallback = React.useCallback(() => {
+    if (!maybeWeb3Wallet)
+      throw new Error('Web3Wallet was not ready to createPairing.')
+
+    const maybePairing = maybeWeb3Wallet?.core?.pairing?.create()
+
+    if (!maybePairing) throw new Error('Unable to create pairing.')
+
+    return maybePairing
+  }, [maybeWeb3Wallet])
+
   const handleQrCodeMessage = React.useCallback(
     async (maybeConnectionUri: unknown): Promise<void> => {
       if (!isWalletConnectConnection(maybeConnectionUri))
@@ -329,12 +344,14 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       children={children}
       value={React.useMemo<WalletConnectContextValue>(
         () => ({
+          createPairing,
           activeSessions,
           handleQrCodeMessage,
           onRequestRefreshActiveSessions,
           onRequestDeleteSession,
         }),
         [
+          createPairing,
           handleQrCodeMessage,
           activeSessions,
           onRequestRefreshActiveSessions,

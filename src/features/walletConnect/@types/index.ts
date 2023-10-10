@@ -12,8 +12,17 @@ export type ActiveSession = ActiveSessions[string]
 
 export type MaybeActiveSession = ActiveSession | undefined
 
+// https://github.com/WalletConnect/walletconnect-monorepo/blob/2a4188ee986c3e26a37241601733bcb92018c580/packages/types/src/core/pairing.ts#L75
+export type CreatePairingCallbackResult = {
+  readonly topic: string
+  readonly uri: string
+}
+
+export type CreatePairingCallback = () => Promise<CreatePairingCallbackResult>
+
 export type WalletConnectContextValue = {
   readonly activeSessions: ActiveSessions
+  readonly createPairing: CreatePairingCallback
   readonly handleQrCodeMessage: (qrCodeMessage: unknown) => Promise<void>
   readonly onRequestRefreshActiveSessions: () => Promise<void>
   readonly onRequestDeleteSession: (

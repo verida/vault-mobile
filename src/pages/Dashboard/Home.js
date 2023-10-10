@@ -1,3 +1,4 @@
+import Clipboard from '@react-native-community/clipboard'
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
@@ -9,6 +10,7 @@ import {
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
 import { isPolygonIdDeepLink } from 'features/polygonid'
+import { useWalletConnectContext } from 'features/walletConnect'
 import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -21,6 +23,7 @@ import {
   View,
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
+import Snackbar from 'react-native-snackbar'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
@@ -233,6 +236,28 @@ const Home = (props) => {
     navigation.navigate('SeedPhrase')
   }
 
+  const { createPairing } = useWalletConnectContext()
+
+  // TODO: @cawfree we are misusing the QR code here (it should be for Verida).
+  const onLongPressQrCode = React.useCallback(async () => {
+    try {
+      const { uri } = await createPairing()
+
+      Clipboard.setString(uri)
+
+      Snackbar.show({
+        text: 'Copied WalletConnect URI to clipboard.',
+        duration: Snackbar.LENGTH_SHORT,
+      })
+
+      // Try to create a simple local client.
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      __DEV__ && console.error(e)
+      Sentry.captureException(e)
+    }
+  }, [createPairing])
+
   return (
     <Container>
       <HomeNavigationHeader
@@ -254,27 +279,33 @@ const Home = (props) => {
           <>
             <View style={style.qr}>
               {Boolean(qrAddress) && (
-                <QRCode
-                  logo={LogoImg}
-                  logoSize={60}
-                  size={207}
-                  codeStyle='dot'
-                  innerEyeStyle='circle'
-                  padding={0.5}
-                  content={qrAddress}
-                />
+                <TouchableOpacity
+                  onLongPress={onLongPressQrCode}
+                  disabled={!__DEV__}>
+                  <QRCode
+                    logo={LogoImg}
+                    logoSize={60}
+                    size={207}
+                    codeStyle='dot'
+                    innerEyeStyle='circle'
+                    padding={0.5}
+                    content={qrAddress}
+                  />
+                </TouchableOpacity>
               )}
             </View>
             <Text style={style.notes}>
               This is your QR-Code. Present it to others so they can scan it and
               connect to you
             </Text>
-            <TouchableOpacity
-              style={style.scanQRButton}
-              onPress={onScanQRPress}>
-              <QRCodeIcon />
-              <Text style={style.scanQRButtonText}>Scan QR</Text>
-            </TouchableOpacity>
+            <View>
+              <TouchableOpacity
+                style={style.scanQRButton}
+                onPress={onScanQRPress}>
+                <QRCodeIcon />
+                <Text style={style.scanQRButtonText}>Scan QR</Text>
+              </TouchableOpacity>
+            </View>
           </>
         )}
       </Content>
