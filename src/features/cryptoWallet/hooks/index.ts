@@ -1,3 +1,5 @@
+export * from './useCryptoWallet'
+export * from './useCryptoWalletProtocolHandler'
 export * from './useMaybeSelectedWallet'
 export * from './useMaybeSelectedWalletId'
 export * from './useVeridaWalletAccountDropdownOptions'
