@@ -2,6 +2,20 @@ import { AssetId, ChainId } from 'caip'
 
 import { Option } from 'components/Select'
 
+export type CryptoWalletRequestAction = 'pay'
+
+export type CryptoWalletRequest = {
+  namespace: string
+  action: CryptoWalletRequestAction
+  address: string
+  chainId?: string
+  params: Record<string, unknown>
+}
+
+export type CryptoWalletPaymentRequest = CryptoWalletRequest & {
+  action: 'pay'
+}
+
 // Types copied from the Wallet-Provider
 // TODO: Should be able to auto generated or import types directly from wallet provider module
 export type ChainNameType = 'near' | 'algorand' | 'ethereum' | 'polygon'

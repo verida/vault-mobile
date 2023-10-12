@@ -1,6 +1,6 @@
 import {
-  isBlockchainRequestDeepLink,
-  isBlockchainRequestQrCode,
+  isCryptoRequestDeepLink,
+  isCryptoRequestQrCode,
 } from 'features/cryptoWallet/utils'
 import { ProtocolHandler } from 'features/protocols'
 import { useCallback } from 'react'
@@ -13,7 +13,7 @@ export function useCryptoWalletProtocolHandler(): ProtocolHandler {
   const handleDeepLink = useCallback(
     (url: string) => {
       // No try/cath needed, as handled by the consumer
-      if (isBlockchainRequestDeepLink(url)) {
+      if (isCryptoRequestDeepLink(url)) {
         handleDeepLinkUrl(url)
         return true
       }
@@ -25,7 +25,7 @@ export function useCryptoWalletProtocolHandler(): ProtocolHandler {
   const handleQrCode = useCallback(
     (qrCodeMessage: string) => {
       // No try/cath needed, as handled by the consumer
-      if (isBlockchainRequestQrCode(qrCodeMessage)) {
+      if (isCryptoRequestQrCode(qrCodeMessage)) {
         handleQrCodeMessage(qrCodeMessage)
         return true
       }

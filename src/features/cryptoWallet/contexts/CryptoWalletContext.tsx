@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { CryptoWalletRequest } from 'features/cryptoWallet/@types'
 import {
-  parseBlockchainRequestDeepLink,
-  parseBlockchainRequestQrCode,
+  parseCryptoRequestDeepLink,
+  parseCryptoRequestQrCode,
 } from 'features/cryptoWallet/utils'
 import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
@@ -29,14 +30,15 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
   const handleRequest = useCallback(
-    (request: Record<string, unknown>, replaceNavigationScreen?: boolean) => {
+    (request: CryptoWalletRequest, replaceNavigationScreen?: boolean) => {
       logger.debug('Handling request', request)
+
       const screenParams: PaymentRequestScreenParams = {
-        name: 'Unknown',
+        name: request.address,
         details: {
           protocols: [],
           timestamp: new Date().toISOString(),
-          requesterId: '',
+          requesterId: request.address,
         },
         data: request,
       }
@@ -44,7 +46,6 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
       logger.debug("Navigating to 'PaymentRequest' screen", { screenParams })
 
       if (replaceNavigationScreen) {
-        // FIXME: replace doesn't exist here because the context is above the navigator
         navigation.replace('PaymentRequest', screenParams)
       } else {
         navigation.navigate('PaymentRequest', screenParams)
@@ -57,7 +58,7 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
     (url: string) => {
       logger.debug('Handling deep link', { url })
       // No try/cath needed, as handled by the consumer
-      const request = parseBlockchainRequestDeepLink(url)
+      const request = parseCryptoRequestDeepLink(url)
       handleRequest(request, false)
       // Assuming the deep link doesn't come a particular screen so we don't replace it.
     },
@@ -68,9 +69,9 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
     (qrCodeMessage: string) => {
       logger.debug('Handling QR Code message', { qrCodeMessage })
       // No try/cath needed, as handled by the consumer
-      const request = parseBlockchainRequestQrCode(qrCodeMessage)
+      const request = parseCryptoRequestQrCode(qrCodeMessage)
       try {
-        handleRequest(request, false)
+        handleRequest(request, true)
       } catch (error: unknown) {
         logger.warn("Couldn't handle QR Code message", { error })
       }

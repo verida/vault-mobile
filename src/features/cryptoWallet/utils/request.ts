@@ -1,3 +1,4 @@
+import { CryptoWalletRequest } from 'features/cryptoWallet/@types'
 import { Logger } from 'features/telemetry'
 
 const SUPPORTED_BLOCKCHAIN_NAMESPACE = ['eip155', 'near']
@@ -8,30 +9,30 @@ const SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES = [
 
 const logger = new Logger('Crypto Wallet')
 
-export function isBlockchainRequestDeepLink(url: string) {
-  return isBlockchainRequestUrl(url)
+export function isCryptoRequestDeepLink(url: string) {
+  return isCryptoRequestUrl(url)
 }
 
-export function isBlockchainRequestQrCode(qrCodeMessage: string) {
-  return isBlockchainRequestUrl(qrCodeMessage)
+export function isCryptoRequestQrCode(qrCodeMessage: string) {
+  return isCryptoRequestUrl(qrCodeMessage)
 }
 
-export function isBlockchainRequestUrl(url: string) {
+function isCryptoRequestUrl(url: string) {
   logger.debug('Checking if URL is a blockchain request', { url })
   return SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES.some((namespace) =>
     url.startsWith(`${namespace}:`)
   )
 }
 
-export function parseBlockchainRequestDeepLink(url: string) {
-  return parseBlockchainRequest(url)
+export function parseCryptoRequestDeepLink(url: string) {
+  return parseCryptoRequest(url)
 }
 
-export function parseBlockchainRequestQrCode(qrCodeMessage: string) {
-  return parseBlockchainRequest(qrCodeMessage)
+export function parseCryptoRequestQrCode(qrCodeMessage: string) {
+  return parseCryptoRequest(qrCodeMessage)
 }
 
-export function parseBlockchainRequest(url: string): Record<string, unknown> {
+function parseCryptoRequest(url: string): CryptoWalletRequest {
   logger.debug('parsing blockchain request URL', { url })
   // Request structure:
   // <namespace>:[<prefix>-]<address>[@<chainId>][?<params>]
@@ -49,23 +50,32 @@ export function parseBlockchainRequest(url: string): Record<string, unknown> {
   const match = url.match(regex)
 
   if (!match) {
-    throw new Error('Invalid blockchain request URL')
+    throw new Error('Invalid crypto request')
   }
 
-  const { namespace, prefix, address, chainId, params } = match.groups!
+  // Not extracting the prefix yet as it's only 'pay' for the now
+  const { namespace, address, chainId, params } = match.groups!
 
-  const request = {
-    namespace: namespace
-      ? namespace === 'ethereum'
-        ? 'eip155'
-        : namespace
-      : undefined,
-    action: prefix ? prefix.slice(0, -1) : undefined,
+  if (!namespace) {
+    throw new Error('Crypto request is missing the blockchain namespace')
+  }
+
+  const resolvedNamespace = namespace === 'ethereum' ? 'eip155' : namespace
+
+  if (!SUPPORTED_BLOCKCHAIN_NAMESPACE.includes(resolvedNamespace)) {
+    throw new Error('Crypto request has unsupported blockchain namespace')
+  }
+
+  if (!address) {
+    throw new Error('Crypto request is missing the address')
+  }
+
+  const request: CryptoWalletRequest = {
+    namespace: resolvedNamespace,
+    action: 'pay',
     address,
     chainId: chainId ? chainId : namespace === 'ethereum' ? '1' : undefined,
-    params: params
-      ? Object.fromEntries(new URLSearchParams(params))
-      : undefined,
+    params: params ? Object.fromEntries(new URLSearchParams(params)) : {},
   }
 
   logger.debug('parsed blockchain request URL', { request })
