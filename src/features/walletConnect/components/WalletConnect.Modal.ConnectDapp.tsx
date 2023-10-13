@@ -103,9 +103,12 @@ export const WalletConnectModalConnectDapp = React.memo(
         onlyMatchingCaipChainIds,
       })
 
+    // If there is only a single wallet to choose from, select this by default.
+    const defaultValue = wallets?.length === 1 ? wallets[0] : undefined
+
     const [selectedWallet, setSelectedWallet] = React.useState<
       VeridaWalletAccountOption | undefined
-    >()
+    >(defaultValue)
 
     const onApprove = React.useCallback(async () => {
       if (!selectedWallet)
@@ -163,6 +166,7 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={24} />
           <DropDownPicker<VeridaWalletAccountOption>
             showArrow
+            defaultValue={defaultValue?.value}
             searchableError='No supported wallet'
             placeholder='Select wallet'
             items={wallets}

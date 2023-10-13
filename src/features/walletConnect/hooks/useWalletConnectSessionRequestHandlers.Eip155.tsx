@@ -98,6 +98,9 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
+      [Eip155RpcMethod.ADD_ETHEREUM_CHAIN]: async () => {
+        throw new Error('do not know how to add ethereum chain')
+      },
       [Eip155RpcMethod.PERSONAL_SIGN]: ({
         request,
         rpc,

@@ -1,5 +1,7 @@
 import * as Sentry from '@sentry/react-native'
+import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
+import { Eip155RpcMethod } from 'features/blockchain/eip155'
 import {
   getMaybeChainMetadataByCaipChainId,
   getMaybeChainMetadatas,
@@ -27,6 +29,13 @@ import {
 } from '../hooks'
 import { WalletConnectSessionInfoCard } from './WalletConnect.Session.InfoCard'
 import { WalletConnectTransactionRequestModalRow } from './WalletConnect.Transaction.Request.Modal.Row'
+
+const getTitleForRequest = (request: Web3WalletTypes.SessionRequest) => {
+  if (request?.params?.request?.method === Eip155RpcMethod.ADD_ETHEREUM_CHAIN)
+    return 'Add Network'
+
+  return 'Smart Contract Call'
+}
 
 export const WalletConnectTransactionRequestModal = React.memo(
   function WalletConnectTransactionRequestModal({
@@ -102,11 +111,12 @@ export const WalletConnectTransactionRequestModal = React.memo(
     const maybeChainName = maybeSupportedChain?.name
 
     if (!activeSession || !web3wallet || !request)
+      // eslint-disable-next-line react/no-children-prop
       return <Text children='Missing request data' />
 
     return (
       <BottomActionsModal
-        title={'Smart Contract Call'}
+        title={getTitleForRequest(request)}
         onClose={loading ? dismissModal : onReject}>
         <View style={{ minHeight: '90%' }}>
           <View

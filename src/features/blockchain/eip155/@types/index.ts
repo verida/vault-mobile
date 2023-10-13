@@ -8,4 +8,5 @@ export enum Eip155RpcMethod {
   ETH_SIGN_TYPED_DATA_V4 = 'eth_signTypedData_v4',
   ETH_SEND_RAW_TRANSACTION = 'eth_sendRawTransaction',
   ETH_SEND_TRANSACTION = 'eth_sendTransaction',
+  ADD_ETHEREUM_CHAIN = 'wallet_addEthereumChain',
 }
