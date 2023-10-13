@@ -4,7 +4,7 @@ import {
   AddEthereumChainRequestParams,
   Eip155RpcMethod,
 } from 'features/blockchain/eip155'
-import { useCustomChainMetadatas } from 'features/caip/hooks/useCustomChainMetadatas'
+import { useChainMetadatasCustom } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
@@ -100,7 +100,7 @@ const shouldSignMessage = ({
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L37
 export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionRequestHandlers {
-  const { addCustomChains } = useCustomChainMetadatas()
+  const { addCustomEthereumNetworks } = useChainMetadatasCustom()
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
@@ -117,7 +117,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
 
         if (!result.success) throw fromZodError(result.error)
 
-        return addCustomChains(result.data)
+        return addCustomEthereumNetworks(result.data)
       },
       [Eip155RpcMethod.PERSONAL_SIGN]: ({
         request,
@@ -246,6 +246,6 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         return hash
       },
     }),
-    [walletsData, addCustomChains]
+    [walletsData, addCustomEthereumNetworks]
   )
 }

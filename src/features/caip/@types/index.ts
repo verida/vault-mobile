@@ -1,5 +1,4 @@
 import { ChainIdParams } from 'caip'
-import { AddEthereumChainRequestParam } from 'features/blockchain/eip155'
 
 // Source of truth for what protocols are supported by the app.
 export enum SupportedCaipNamespace {
@@ -27,8 +26,14 @@ export type CustomNetwork = {
 
 export type CustomChains = {
   readonly loading: boolean
-  readonly result: AddEthereumChainRequestParam[]
+  readonly result: ChainMetadata[]
   readonly error?: Error
 }
 
 export const CAIP_SLICE_NAME = 'caip'
+
+export type UseChainMetadataState = {
+  readonly loading: boolean
+  readonly result?: ChainMetadatas
+  readonly error?: Error
+}

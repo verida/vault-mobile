@@ -7,7 +7,7 @@ import {
 import AccountManager from 'api/AccountManager'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
-import { CAIP_SLICE_NAME, CustomNetwork } from '../@types'
+import { CAIP_SLICE_NAME, ChainMetadata, CustomNetwork } from '../@types'
 
 // HACK: For now, we'll save networks as shopping coupons. 🤡
 const HACK_SHOPPING_COUPON_DATASTORE =
@@ -18,15 +18,13 @@ type Params = {
   readonly reset?: boolean
 }
 
-export const addCustomNetworks = createAppAsyncThunk(
-  `${CAIP_SLICE_NAME}/addCustomNetworks`,
+export const addCustomEthereumNetwork = createAppAsyncThunk(
+  `${CAIP_SLICE_NAME}/addCustomEthereumNetwork`,
   async (
     { addEthereumChainRequestParams, reset = true }: Params,
     { rejectWithValue }
   ) => {
     try {
-      // TODO: Next, datastore...
-
       // TODO: @cawfree idk if this is correct
       const vault = AccountManager.getInstance().context
 
@@ -71,7 +69,7 @@ export const addCustomNetworks = createAppAsyncThunk(
       const [...results] = await datastore.getMany({}, undefined)
 
       // Parse into correctly-formatted chains.
-      return results.flatMap((result) => {
+      return results.flatMap((result): ChainMetadata[] => {
         if (!result || typeof result !== 'object') return []
 
         if (!('value' in result)) return []
@@ -90,7 +88,23 @@ export const addCustomNetworks = createAppAsyncThunk(
 
         if (!maybeParsed.success) return []
 
-        return [maybeParsed.data]
+        const {
+          data: {
+            chainId,
+            chainName,
+            rpcUrls: [rpc],
+          },
+        } = maybeParsed
+
+        const customChainMetadata: ChainMetadata = {
+          name: chainName,
+          // HACK: Notice this is `addEthereumNetwork`!
+          namespace: 'eip155',
+          reference: String(Number.parseInt(chainId, 16)),
+          rpc,
+        }
+
+        return [customChainMetadata]
       })
     } catch (error) {
       return rejectWithValue(`Failed to add custom network. ${String(error)}`)
