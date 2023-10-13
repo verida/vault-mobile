@@ -124,14 +124,26 @@ export interface NFT {
   minter_address: string | null
 }
 
+export type OpenSeaStringTrait = {
+  readonly trait_type: string
+  readonly value: string
+}
+
 export interface NFTMetadata {
-  name: string
-  symbol: string
-  description: string
-  animation_url: string
-  image: string
-  external_url: string
-  attributes: any[]
+  readonly name: string
+  readonly description: string
+  readonly animation_url: string
+  readonly external_url: string
+  readonly attributes: OpenSeaStringTrait[]
+  readonly background_color: string
+  readonly youtube_url: string
+
+  // TODO: This is not part of the OpenSea Metadata Standard: https://docs.opensea.io/docs/metadata-standards
+  readonly symbol: string // ?
+
+  // TODO: The standard demands you either specify `image` or `image_data`, not both:
+  readonly image: string
+  readonly image_data: string
 }
 
 export interface NFTCollection {

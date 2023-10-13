@@ -1,4 +1,5 @@
 import { ChainIdParams } from 'caip'
+import { AddEthereumChainRequestParam } from 'features/blockchain/eip155'
 
 // Source of truth for what protocols are supported by the app.
 export enum SupportedCaipNamespace {
@@ -12,3 +13,22 @@ export type ChainMetadata = ChainIdParams & {
 }
 
 export type ChainMetadatas = Record<string, ChainMetadata>
+
+// TODO: implement me with verida datastore
+// HACK: This is actually a ShoppingCoupon: https://common.schemas.verida.io/shopping/coupon/v0.1.0/schema.json
+export type CustomNetwork = {
+  readonly title: string
+  readonly description: string
+  readonly value: string
+  readonly valueType: string
+  readonly currency: string
+  readonly barcode: string
+}
+
+export type CustomChains = {
+  readonly loading: boolean
+  readonly result: AddEthereumChainRequestParam[]
+  readonly error?: Error
+}
+
+export const CAIP_SLICE_NAME = 'caip'
