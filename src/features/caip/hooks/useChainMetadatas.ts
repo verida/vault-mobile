@@ -52,6 +52,7 @@ export function getMaybeChainMetadatas(state: State): ChainMetadatas {
 
 // Transforms the ChainsList into executable provider configuration by WalletConnect.
 export function useChainMetadatas(): State {
+  // Returns chains which are sanctioned by the backend.
   const { data, error: cause, isLoading } = useChainsListQuery({})
 
   return React.useMemo<State>(() => {

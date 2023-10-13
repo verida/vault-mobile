@@ -1,8 +1,13 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
-import { Eip155RpcMethod } from 'features/blockchain/eip155'
+import {
+  AddEthereumChainRequestParams,
+  Eip155RpcMethod,
+} from 'features/blockchain/eip155'
+import { useCustomChainMetadatas } from 'features/caip/hooks/useCustomChainMetadatas'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
+import { fromZodError } from 'zod-validation-error'
 
 import {
   EthereumSessionRequestHandlers,
@@ -95,11 +100,24 @@ const shouldSignMessage = ({
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L37
 export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionRequestHandlers {
+  const { addCustomChain } = useCustomChainMetadatas()
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
-      [Eip155RpcMethod.ADD_ETHEREUM_CHAIN]: async () => {
-        throw new Error('do not know how to add ethereum chain')
+      [Eip155RpcMethod.ADD_ETHEREUM_CHAIN]: async ({
+        request,
+      }: WalletConnectSessionRequestCallbackParams) => {
+        // Here we explicitly ensure all requested chains are valid before attempting
+        // to serialize.
+        // TODO: It would be less frustrating for the end user if we were to validate
+        //       these parameters up front.
+        const result = AddEthereumChainRequestParams.safeParse(
+          request.params.request.params
+        )
+
+        if (!result.success) throw fromZodError(result.error)
+
+        throw new Error("Don't know how to add chain.")
       },
       [Eip155RpcMethod.PERSONAL_SIGN]: ({
         request,
@@ -228,6 +246,6 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         return hash
       },
     }),
-    [walletsData]
+    [walletsData, addCustomChain]
   )
 }
