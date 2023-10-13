@@ -100,7 +100,7 @@ const shouldSignMessage = ({
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L37
 export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionRequestHandlers {
-  const { addCustomChain } = useCustomChainMetadatas()
+  const { addCustomChains } = useCustomChainMetadatas()
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
@@ -117,7 +117,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
 
         if (!result.success) throw fromZodError(result.error)
 
-        throw new Error("Don't know how to add chain.")
+        return addCustomChains(result.data)
       },
       [Eip155RpcMethod.PERSONAL_SIGN]: ({
         request,
@@ -246,6 +246,6 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         return hash
       },
     }),
-    [walletsData, addCustomChain]
+    [walletsData, addCustomChains]
   )
 }

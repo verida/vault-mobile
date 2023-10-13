@@ -1,3 +1,4 @@
+import { AddEthereumChainRequestParams } from 'features/blockchain/eip155/@types'
 import * as React from 'react'
 
 /**
@@ -7,7 +8,14 @@ import * as React from 'react'
  */
 // TODO: This schema is **NOT** final - it is just a proof of concept.
 export function useCustomChainMetadatas() {
-  const addCustomChain = React.useCallback(async () => {}, [])
+  const addCustomChains = React.useCallback(
+    // TODO: This type is very specific to the wallet_addEthereumWallet flow. We
+    //       can generalize later on.
+    async (addEthereumChainRequestParams: AddEthereumChainRequestParams) => {
+      throw new Error("Don't know how to add chain.")
+    },
+    []
+  )
 
-  return { addCustomChain }
+  return { addCustomChains }
 }
