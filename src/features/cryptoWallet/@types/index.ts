@@ -107,9 +107,10 @@ export interface DetailedTransaction {
 }
 // End Wallet Provider types
 
-export type VeridaWalletAccountOption = Option & {
-  readonly caipChainId: ChainId
-}
+export type VeridaWalletAccountOption = Option
+// & {
+//  readonly caipChainId: ChainId
+//}
 
 export type WalletsData = Record<string, BlockchainAccount>
 
@@ -140,3 +141,5 @@ export type MinifiedVeridaAccountNear =
 export type MinifiedVeridaAccount =
   | MinifiedVeridaAccountEip155
   | MinifiedVeridaAccountNear
+
+export type MinifiedVeridaAccounts = readonly MinifiedVeridaAccount[]

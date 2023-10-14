@@ -8,7 +8,7 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { ChainId } from 'caip'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import {
-  useMaybeSelectedWallet,
+  useSelectedMinifiedVeridaAccounts,
   veridaWalletAccountsToDropdownOptions,
 } from 'features/cryptoWallet'
 import { useModal } from 'hooks'
@@ -61,7 +61,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   const { authenticated } = useAuth()
   const { showModal } = useModal()
 
-  const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
+  const selectedMinifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -83,15 +83,21 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     (
       proposal: Web3WalletTypes.EventArguments['session_proposal']
     ): Error | undefined => {
+      /// @custom:implicit WalletConnectOnlyAcceptsRequiredChains
       const onlyMatchingCaipChainIds =
         getWalletConnectProposalRequiredCaipChainIds(proposal)
 
+      const onlyMatchingNamespaces = onlyMatchingCaipChainIds.map(
+        (e) => e.namespace
+      )
+
       const { length: maybeHasCompatibleAccounts } =
         veridaWalletAccountsToDropdownOptions({
-          chainMetadatas,
-          maybeVeridaWalletAccounts,
-          onlyMatchingCaipChainIds,
-          includesWatchedWallets: false,
+          selectedMinifiedVeridaAccounts,
+          //chainMetadatas,
+          //maybeVeridaWalletAccounts,
+          onlyMatchingNamespaces,
+          //includesWatchedWallets: false,
         })
 
       if (!maybeHasCompatibleAccounts)
@@ -119,6 +125,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       if (numberOfRequiredNamespaces > 1) return tooManyChainsError()
 
       // HACK: Relies on the fact we know there's only a single namespace.
+      /// @custom:implicit WalletConnectOnlyAcceptsRequiredChains
       const [requiredNamespace] = Object.values(
         proposal.params.requiredNamespaces
       )
@@ -160,7 +167,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       return undefined
     },
-    [maybeVeridaWalletAccounts, chainMetadatas]
+    [chainMetadatas, selectedMinifiedVeridaAccounts]
   )
 
   const shouldTerminateProposal = React.useCallback(

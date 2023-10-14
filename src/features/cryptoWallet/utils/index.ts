@@ -1,5 +1,5 @@
 export * from './data'
 export * from './formatter'
-export * from './isWatchedWallet'
+export * from './getMinifiedVeridaAccountId'
 export * from './tokens'
 export * from './validation'

@@ -9,6 +9,7 @@ import {
   MinifiedVeridaAccount,
   MinifiedVeridaAccountEip155,
   MinifiedVeridaAccountNear,
+  MinifiedVeridaAccounts,
 } from '../@types'
 import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
 
@@ -77,6 +78,44 @@ const veridaAccountMaybeToMinifiedVeridaAccount = (
   return undefined
 }
 
+export const getMinifiedVeridaAccountId = (
+  minifiedVeridaAccount: MinifiedVeridaAccount
+): string =>
+  ethers.utils.keccak256(
+    ethers.utils.toUtf8Bytes(JSON.stringify(minifiedVeridaAccount))
+  )
+
+export const getAddressForMinifiedVeridaAccount = (
+  minifiedVeridaAccount: MinifiedVeridaAccount
+): string => {
+  const { namespace } = minifiedVeridaAccount
+
+  if (namespace === SupportedCaipNamespace.EIP_155) {
+    const { address } = minifiedVeridaAccount
+    return address
+  } else if (namespace === SupportedCaipNamespace.NEAR) {
+    const { signerId } = minifiedVeridaAccount
+    return signerId
+  }
+
+  throw new Error(`Unable to determine address for namespace "${namespace}".`)
+}
+
+export const getLabelForMinifiedVeridaAccount = (
+  minifiedVeridaAccount: MinifiedVeridaAccount
+) => {
+  const { namespace } = minifiedVeridaAccount
+
+  if (namespace === SupportedCaipNamespace.EIP_155) {
+    return getAddressForMinifiedVeridaAccount(minifiedVeridaAccount)
+  } else if (namespace === SupportedCaipNamespace.NEAR) {
+    return getAddressForMinifiedVeridaAccount(minifiedVeridaAccount)
+  }
+
+  // Return a default label for the account.
+  return `${getMinifiedVeridaAccountId(minifiedVeridaAccount)} (${namespace})`
+}
+
 // The persistence model saves multiple copies of the same private key
 // for different chains, i.e. a duplicate mnemonic for both a mainnet and
 // testnet. When a new compatible chain is referenced, since we don't
@@ -86,7 +125,7 @@ const veridaAccountMaybeToMinifiedVeridaAccount = (
 // namespace - this allows us to represent each private key uniquely,
 // and greatly increase the exposure - without actually having to migrate
 // the existing persistence model.
-export function useSelectedMinifiedVeridaWalletAccounts(): readonly MinifiedVeridaAccount[] {
+export function useSelectedMinifiedVeridaAccounts(): MinifiedVeridaAccounts {
   const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
 
   return React.useMemo<readonly MinifiedVeridaAccount[]>(() => {
@@ -103,9 +142,7 @@ export function useSelectedMinifiedVeridaWalletAccounts(): readonly MinifiedVeri
     // Invariably, this list contains duplicates. Dedup.
     // TODO: This is slow.
     // TODO: This is unsafe!
-    const hashes = minifiedAccounts.map((e) =>
-      ethers.utils.keccak256(ethers.utils.toUtf8Bytes(JSON.stringify(e)))
-    )
+    const hashes = minifiedAccounts.map(getMinifiedVeridaAccountId)
 
     // If we encounter a duplicate, the `indexOf` for position `i` will not be identical.
     return minifiedAccounts.filter((_, i) => hashes.indexOf(hashes[i]) === i)

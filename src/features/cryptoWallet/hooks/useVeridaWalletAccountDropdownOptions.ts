@@ -1,63 +1,63 @@
-import { ChainId } from 'caip'
+//import { ChainId } from 'caip'
 import {
-  ChainMetadatas,
-  getMaybeChainMetadatas,
-  getSupportedCaipProtocolFriendlyName,
+  //ChainMetadatas,
+  //getSupportedCaipProtocolFriendlyName,
   isSupportedCaipNamespace,
-  useChainMetadatas,
 } from 'features/caip'
-import { VeridaWalletAccountOption } from 'features/cryptoWallet/@types'
+import {
+  MinifiedVeridaAccount,
+  MinifiedVeridaAccounts,
+  VeridaWalletAccountOption,
+} from 'features/cryptoWallet/@types'
 import * as React from 'react'
 
-import { BlockchainAccount, BlockchainAccounts } from 'api/types'
-
-import { isWatchedWallet } from '../utils'
+//import { BlockchainAccount } from 'api/types'
+//import { isWatchedWallet } from '../utils'
+import {
+  getLabelForMinifiedVeridaAccount,
+  getMinifiedVeridaAccountId,
+} from './useSelectedMinifiedVeridaAccounts'
 
 export const veridaWalletAccountsToDropdownOptions = ({
-  chainMetadatas,
-  maybeVeridaWalletAccounts,
-  onlyMatchingCaipChainIds,
-  includesWatchedWallets,
-}: {
-  readonly chainMetadatas: ChainMetadatas
-  readonly maybeVeridaWalletAccounts: BlockchainAccounts | undefined
-  readonly includesWatchedWallets: boolean
-  readonly onlyMatchingCaipChainIds: readonly ChainId[] | null
+  //chainMetadatas,
+  selectedMinifiedVeridaAccounts,
+  onlyMatchingNamespaces,
+}: //includesWatchedWallets,
+{
+  //readonly chainMetadatas: ChainMetadatas
+  readonly selectedMinifiedVeridaAccounts: MinifiedVeridaAccounts
+  //readonly includesWatchedWallets: boolean
+  readonly onlyMatchingNamespaces: readonly string[] | null
 }): readonly VeridaWalletAccountOption[] => {
-  if (!maybeVeridaWalletAccounts) return []
+  return selectedMinifiedVeridaAccounts.flatMap(
+    (
+      minifiedVeridaAccount: MinifiedVeridaAccount
+    ): readonly VeridaWalletAccountOption[] => {
+      const { namespace } = minifiedVeridaAccount
 
-  return Object.entries(maybeVeridaWalletAccounts).flatMap(
-    ([key, veridaWalletAccount]: [
-      string,
-      BlockchainAccount
-    ]): readonly VeridaWalletAccountOption[] => {
-      const caipChainId = new ChainId(key)
+      // Just to be sure. Note it is possible that there are some legacy
+      // unsupported private keys in local storage that we wouldn't want
+      // to outright remove.
+      if (!isSupportedCaipNamespace(namespace)) return []
 
-      const isMatchingCaipType = Boolean(
-        (onlyMatchingCaipChainIds || []).find(
-          (maybeMatchingCaipType) =>
-            caipChainId.toString() === maybeMatchingCaipType.toString()
-        )
+      const isMatchingNamespace = (onlyMatchingNamespaces || []).includes(
+        namespace
       )
 
       // If an array of ParsedCaipTypes has been provided, we should filter out the
       // results to contain only caips that are supported.
-      if (Array.isArray(onlyMatchingCaipChainIds) && !isMatchingCaipType)
+      if (Array.isArray(onlyMatchingNamespaces) && !isMatchingNamespace)
         return []
 
-      const blockchain = caipChainId?.namespace
-
-      if (!isSupportedCaipNamespace(blockchain)) return []
-
-      const disabled =
-        !includesWatchedWallets && isWatchedWallet(veridaWalletAccount)
+      //const disabled =
+      //  !includesWatchedWallets && isWatchedWallet(veridaWalletAccount)
 
       const option: VeridaWalletAccountOption = {
-        caipChainId,
-        label: veridaWalletAccount.address!,
-        value: veridaWalletAccount.address!,
-        disabled,
-        flag: getSupportedCaipProtocolFriendlyName(chainMetadatas, caipChainId),
+        //caipChainId,
+        label: getLabelForMinifiedVeridaAccount(minifiedVeridaAccount),
+        value: getMinifiedVeridaAccountId(minifiedVeridaAccount),
+        disabled: false,
+        //flag: getSupportedCaipProtocolFriendlyName(chainMetadatas, caipChainId),
       }
 
       return [option]
@@ -66,29 +66,29 @@ export const veridaWalletAccountsToDropdownOptions = ({
 }
 
 export function useVeridaWalletAccountDropdownOptions({
-  includesWatchedWallets,
-  maybeVeridaWalletAccounts,
-  onlyMatchingCaipChainIds = null,
+  //includesWatchedWallets,
+  selectedMinifiedVeridaAccounts,
+  onlyMatchingNamespaces = null,
 }: {
-  readonly includesWatchedWallets: boolean
-  readonly maybeVeridaWalletAccounts: BlockchainAccounts | undefined
-  readonly onlyMatchingCaipChainIds?: readonly ChainId[] | null
+  //readonly includesWatchedWallets: boolean
+  readonly selectedMinifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly onlyMatchingNamespaces?: readonly string[] | null
 }) {
-  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+  //const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   return React.useMemo<readonly VeridaWalletAccountOption[]>(
     () =>
       veridaWalletAccountsToDropdownOptions({
-        chainMetadatas,
-        includesWatchedWallets,
-        maybeVeridaWalletAccounts,
-        onlyMatchingCaipChainIds,
+        //chainMetadatas,
+        //includesWatchedWallets,
+        selectedMinifiedVeridaAccounts,
+        onlyMatchingNamespaces,
       }),
     [
-      chainMetadatas,
-      maybeVeridaWalletAccounts,
-      includesWatchedWallets,
-      onlyMatchingCaipChainIds,
+      //chainMetadatas,
+      selectedMinifiedVeridaAccounts,
+      //includesWatchedWallets,
+      onlyMatchingNamespaces,
     ]
   )
 }
