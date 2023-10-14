@@ -36,7 +36,7 @@ export function useWalletConnectCustomNetworks() {
             count === 1 ? 'a' : String(count)
           } new blockchain network${
             count > 1 ? 's' : ''
-          } to your Verida account.`,
+          } to your Verida Account.`,
           [
             {
               text: 'Reject',
