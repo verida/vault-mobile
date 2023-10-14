@@ -56,7 +56,9 @@ export const WalletConnectActiveSession = React.memo(
 
     return (
       <>
-        <WalletConnectSessionInfoCard maybeActiveSession={maybeActiveSession} />
+        <WalletConnectSessionInfoCard
+          peerMetadata={maybeActiveSession?.peer?.metadata}
+        />
 
         <Spacer height={16} />
 

@@ -17,10 +17,10 @@ export function useWalletConnectDataFormatting() {
   const formatTransactionData = React.useCallback(
     ({
       request,
-    }: Pick<
-      WalletConnectSessionRequestCallbackParams,
-      'web3wallet' | 'request'
-    >): Record<string, unknown> => {
+    }: Pick<WalletConnectSessionRequestCallbackParams, 'request'>): Record<
+      string,
+      unknown
+    > => {
       const { chainId } = extractWalletConnectRpcOrThrow({
         chainMetadatas,
         request,
