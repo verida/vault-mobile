@@ -5,9 +5,10 @@ import {
 } from 'features/blockchain/eip155'
 
 import AccountManager from 'api/AccountManager'
+import { ShoppingCoupon } from 'api/types'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
-import { CAIP_SLICE_NAME, ChainMetadata, CustomNetwork } from '../@types'
+import { CAIP_SLICE_NAME, ChainMetadata } from '../@types'
 
 // HACK: For now, we'll save networks as shopping coupons. 🤡
 const HACK_SHOPPING_COUPON_DATASTORE =
@@ -42,7 +43,9 @@ export const addCustomEthereumNetwork = createAppAsyncThunk(
         const { chainName, nativeCurrency } = addEthereumChainRequestParam
         const value = JSON.stringify(addEthereumChainRequestParam)
 
-        const chainToAddAsShoppingCoupon: CustomNetwork = {
+        // TODO: We need a dedicated data model for this kind of information.
+        // TODO: The data model would also need to save a caip identifier.
+        const chainToAddAsShoppingCoupon: ShoppingCoupon = {
           title: chainName,
           description: 'A custom chain created using the Vault App.',
           value,
@@ -65,7 +68,7 @@ export const addCustomEthereumNetwork = createAppAsyncThunk(
           throw new Error('Failed to save custom network!')
       }
 
-      // Read all the networks back.
+      // Read *all* the custom networks configurations back.
       const [...results] = await datastore.getMany({}, undefined)
 
       // Parse into correctly-formatted chains.
@@ -89,22 +92,23 @@ export const addCustomEthereumNetwork = createAppAsyncThunk(
         if (!maybeParsed.success) return []
 
         const {
-          data: {
-            chainId,
-            chainName,
-            rpcUrls: [rpc],
-          },
+          data: { chainId, chainName, rpcUrls },
         } = maybeParsed
 
-        const customChainMetadata: ChainMetadata = {
-          name: chainName,
-          // HACK: Notice this is `addEthereumNetwork`!
-          namespace: 'eip155',
-          reference: String(Number.parseInt(chainId, 16)),
-          rpc,
-        }
-
-        return [customChainMetadata]
+        // NOTE: Each individual RPC endpoint can be modelled as a dedicated ChainMetadata.
+        //       This coincides with the property that a ChainMetadatas can contain duplicate
+        //       configurations for the same network - ideally, it would be up to the user to
+        //       decide which RPC makes sense for which context; i.e. avoiding frontrunning
+        //       when transacting via Flashbots Protect, or using a home node.
+        return rpcUrls.map(
+          (rpc: string): ChainMetadata => ({
+            name: chainName,
+            // HACK: Notice this is `addEthereumNetwork`!
+            namespace: 'eip155',
+            reference: String(Number.parseInt(chainId, 16)),
+            rpc,
+          })
+        )
       })
     } catch (error) {
       return rejectWithValue(`Failed to add custom network. ${String(error)}`)

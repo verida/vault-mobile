@@ -33,12 +33,14 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   }
 }
 
-const defaultResult: ChainMetadatas = Object.freeze({})
+const DEFAULT_RESULT: ChainMetadatas = Object.freeze([])
+
+const DEFAULT_CHAIN_LIST_QUERY = Object.freeze({})
 
 export function getMaybeChainMetadatas(
   state: UseChainMetadataState
 ): ChainMetadatas {
-  if (!('result' in state) || !state.result) return defaultResult
+  if (!('result' in state) || !state.result) return DEFAULT_RESULT
 
   return state.result
 }
@@ -51,14 +53,13 @@ export function getMaybeChainMetadatasError(
   return state.error
 }
 
-// Transforms the ChainsList into executable provider configuration by WalletConnect.
+// Returns a stateful list of ChainMetadatas which are served by the Verida backend.
 export function useChainMetadatasChainsList(): UseChainMetadataState {
-  // Returns chains which are sanctioned by the backend.
   const {
     data,
     error: cause,
     isLoading: isLoadingChainsList,
-  } = useChainsListQuery({})
+  } = useChainsListQuery(DEFAULT_CHAIN_LIST_QUERY)
 
   return React.useMemo<UseChainMetadataState>(() => {
     if (isLoadingChainsList) return { loading: true }
@@ -77,31 +78,30 @@ export function useChainMetadatasChainsList(): UseChainMetadataState {
         ),
       }
 
-    const result: Record<string, ChainMetadata> = Object.fromEntries(
-      Object.entries(data)
-        .map(
-          ([maybeSupportedCaip, blockchainNetwork]):
-            | [caipIdentifier: string, chainMetadata: ChainMetadata]
-            | undefined => {
-            const caipChainId = new ChainId(maybeSupportedCaip)
+    const result: ChainMetadatas = Object.entries(data)
+      .map(
+        ([maybeSupportedCaip, blockchainNetwork]):
+          | ChainMetadata
+          | undefined => {
+          const caipChainId = new ChainId(maybeSupportedCaip)
 
-            const { namespace } = caipChainId
+          const { namespace } = caipChainId
 
-            if (!isSupportedCaipNamespace(namespace)) return undefined
+          if (!isSupportedCaipNamespace(namespace)) return undefined
 
-            const maybeChainMetadata =
-              maybeBlockchainNetworkEntryToChainMetadata({
-                blockchainNetwork,
-                caipChainId,
-              })
+          const maybeChainMetadata = maybeBlockchainNetworkEntryToChainMetadata(
+            {
+              blockchainNetwork,
+              caipChainId,
+            }
+          )
 
-            if (!maybeChainMetadata) return undefined
+          if (!maybeChainMetadata) return undefined
 
-            return [caipChainId.toString(), maybeChainMetadata]
-          }
-        )
-        .flatMap((e) => (e ? [e] : []))
-    )
+          return maybeChainMetadata
+        }
+      )
+      .flatMap((e) => (e ? [e] : []))
 
     return { loading: false, result }
   }, [isLoadingChainsList, cause, data])

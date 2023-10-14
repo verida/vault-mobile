@@ -1,19 +1,12 @@
-import { ChainId } from 'caip'
 import * as React from 'react'
 
-import { ChainMetadata, ChainMetadatas, UseChainMetadataState } from '../@types'
+import { ChainMetadatas, UseChainMetadataState } from '../@types'
 import {
   getMaybeChainMetadatas,
   getMaybeChainMetadatasError,
   useChainMetadatasChainsList,
 } from './useChainMetadatas.ChainsList'
 import { useChainMetadatasCustom } from './useChainMetadatas.Custom'
-
-// NOTE: Competing chain configuration instances will be overwritten here.
-const customChainsTouseChainMetadatas = (
-  e: readonly ChainMetadata[]
-): ChainMetadatas =>
-  e.reduce((res, f) => ({ ...res, [new ChainId(f).toString()]: f }), {})
 
 export function useChainMetadatas(): UseChainMetadataState {
   const chainsListState = useChainMetadatasChainsList()
@@ -32,12 +25,10 @@ export function useChainMetadatas(): UseChainMetadataState {
   return React.useMemo<UseChainMetadataState>(() => {
     const loading = loadingChainsList || loadingCustom
 
-    const chainsResult = resultChainsList || {}
-    const customResult = resultCustom
-      ? customChainsTouseChainMetadatas(resultCustom)
-      : {}
+    const chainsResult = resultChainsList || []
+    const customResult = resultCustom || []
 
-    const result = { ...chainsResult, ...customResult }
+    const result: ChainMetadatas = [...chainsResult, ...customResult]
 
     return {
       loading,

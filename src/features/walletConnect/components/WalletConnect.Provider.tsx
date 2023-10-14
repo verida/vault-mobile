@@ -136,12 +136,16 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         e.toString()
       ) // i.e. ["eip155:5"]
 
+      const supportedNamespaces = chainMetadatas.map((e) =>
+        new ChainId(e).toString()
+      )
+
       // Here, we are filtering out to find the requested chain identifiers that
       // we don't have existing ChainMetadata for. Although the same EIP155 wallet
       // can definitely be used on different chains, our current RPC URL structure
       // demands we know the chain exists a-priori.
       const unsupportedNamespaces = requestedNamespaces
-        .filter((e) => !(e in chainMetadatas))
+        .filter((e) => !supportedNamespaces.includes(e))
         .map((e) => new ChainId(e))
 
       if (unsupportedNamespaces.length)

@@ -4,8 +4,18 @@ import { useDispatch, useStore } from 'react-redux'
 
 import { RootState, useAppSelector } from 'reduxStore/types'
 
-import { CAIP_SLICE_NAME } from '../@types'
+import {
+  CAIP_SLICE_NAME,
+  ChainMetadatas,
+  UseChainMetadataState,
+} from '../@types'
 import { addCustomEthereumNetwork } from '../slice'
+
+type UseChainMetadatasCustomResult = UseChainMetadataState & {
+  readonly addCustomEthereumNetworks: (
+    addEthereumChainRequestParams: AddEthereumChainRequestParams
+  ) => Promise<ChainMetadatas>
+}
 
 /**
  * Interacts with a Verida datastore to pull all of the chains a user has created into
@@ -13,7 +23,7 @@ import { addCustomEthereumNetwork } from '../slice'
  * as a user's home node, a test environment, or a new blockchain.
  */
 // TODO: This schema is **NOT** final - it is just a proof of concept.
-export function useChainMetadatasCustom() {
+export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
   const dispatch = useDispatch()
   const { getState } = useStore<RootState>()
 

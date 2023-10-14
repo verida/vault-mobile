@@ -111,7 +111,6 @@ export const WalletConnectTransactionRequestModal = React.memo(
     const maybeChainName = maybeSupportedChain?.name
 
     if (!activeSession || !web3wallet || !request)
-      // eslint-disable-next-line react/no-children-prop
       return <Text children='Missing request data' />
 
     return (
