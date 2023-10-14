@@ -44,6 +44,8 @@ export const WalletConnectTransactionRequestModal = React.memo(
       [request, shouldReject, web3wallet]
     )
 
+    console.log(JSON.stringify(request))
+
     return (
       <WalletConnectTransactionRequestModalAdapter
         peerMetadata={peerMetadata}
