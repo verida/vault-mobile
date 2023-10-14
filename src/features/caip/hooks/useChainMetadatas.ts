@@ -7,6 +7,7 @@ import {
   useChainMetadatasChainsList,
 } from './useChainMetadatas.ChainsList'
 import { useChainMetadatasCustom } from './useChainMetadatas.Custom'
+import { useChainMetadatasRegional } from './useChainMetadatas.Regional'
 
 export function useChainMetadatas(): UseChainMetadataState {
   const chainsListState = useChainMetadatasChainsList()
@@ -22,17 +23,28 @@ export function useChainMetadatas(): UseChainMetadataState {
     error: errorCustom,
   } = useChainMetadatasCustom()
 
+  const {
+    loading: loadingRegional,
+    result: resultRegional,
+    error: errorRegional,
+  } = useChainMetadatasRegional()
+
   return React.useMemo<UseChainMetadataState>(() => {
-    const loading = loadingChainsList || loadingCustom
+    const loading = loadingChainsList || loadingCustom || loadingRegional
 
     const chainsResult = resultChainsList || []
     const customResult = resultCustom || []
+    const regionalResult = resultRegional || []
 
-    const result: ChainMetadatas = [...chainsResult, ...customResult]
+    const result: ChainMetadatas = [
+      ...chainsResult,
+      ...customResult,
+      ...regionalResult,
+    ]
 
     return {
       loading,
-      error: errorChainsList || errorCustom || undefined,
+      error: errorChainsList || errorCustom || errorRegional || undefined,
 
       // This isn't ideal for a couple of reasons:
       //
@@ -45,9 +57,12 @@ export function useChainMetadatas(): UseChainMetadataState {
   }, [
     loadingChainsList,
     loadingCustom,
+    loadingRegional,
     resultChainsList,
     resultCustom,
+    resultRegional,
     errorChainsList,
     errorCustom,
+    errorRegional,
   ])
 }
