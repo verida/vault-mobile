@@ -23,9 +23,9 @@ const REDBELLY_NETWORK_TESNET: ChainMetadata = {
 export function useChainMetadatasRegional(): UseChainMetadataState {
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
 
-  return React.useMemo<UseChainMetadataState>(() => {
-    const maybeCountry = publicProfileData?.country
+  const maybeCountry = publicProfileData?.country
 
+  return React.useMemo<UseChainMetadataState>(() => {
     if (typeof maybeCountry !== 'string' || !maybeCountry.length)
       return EMPTY_RESULT
 
@@ -34,5 +34,5 @@ export function useChainMetadatasRegional(): UseChainMetadataState {
     }
 
     return EMPTY_RESULT
-  }, [publicProfileData])
+  }, [maybeCountry])
 }
