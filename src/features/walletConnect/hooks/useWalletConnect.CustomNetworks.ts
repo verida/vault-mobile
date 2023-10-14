@@ -21,9 +21,10 @@ export function useWalletConnectCustomNetworks() {
 
       const maybeProposerName = proposal?.params?.proposer?.metadata?.name
 
-      const proposer = maybeProposerName
-        ? `"${maybeProposerName}"`
-        : 'This DApp'
+      const proposer =
+        typeof maybeProposerName === 'string' && maybeProposerName.length
+          ? `"${maybeProposerName}"`
+          : 'This DApp'
 
       const count = currentlyUnsupportedChainIds.length
 
