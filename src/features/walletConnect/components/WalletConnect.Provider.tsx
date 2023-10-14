@@ -35,6 +35,7 @@ import {
   getWalletConnectProposalRequiredCaipChainIds,
   useCreateWeb3Wallet,
   useMaybeWeb3Wallet,
+  useWalletConnectCustomNetworks,
   useWalletConnectSessionRequestCallback,
 } from '../hooks'
 import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
@@ -77,12 +78,15 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     120
   )
 
+  const { maybeAddCustomNetworksOrErrorAsync } =
+    useWalletConnectCustomNetworks()
+
   // Will return true if we will have compatible wallets to render for a
   // given proposal.
   const getMaybeUnsupportedProposalError = React.useCallback(
-    (
+    async (
       proposal: Web3WalletTypes.EventArguments['session_proposal']
-    ): Error | undefined => {
+    ): Promise<Error | undefined> => {
       /// @custom:implicit WalletConnectOnlyAcceptsRequiredChains
       const onlyMatchingCaipChainIds =
         getWalletConnectProposalRequiredCaipChainIds(proposal)
@@ -94,10 +98,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       const { length: maybeHasCompatibleAccounts } =
         veridaWalletAccountsToDropdownOptions({
           selectedMinifiedVeridaAccounts,
-          //chainMetadatas,
-          //maybeVeridaWalletAccounts,
           onlyMatchingNamespaces,
-          //includesWatchedWallets: false,
         })
 
       if (!maybeHasCompatibleAccounts)
@@ -152,22 +153,24 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       // we don't have existing ChainMetadata for. Although the same EIP155 wallet
       // can definitely be used on different chains, our current RPC URL structure
       // demands we know the chain exists a-priori.
-      const unsupportedNamespaces = requestedNamespaces
+      const currentlyUnsupportedChainIds = requestedNamespaces
         .filter((e) => !supportedNamespaces.includes(e))
         .map((e) => new ChainId(e))
 
-      if (unsupportedNamespaces.length)
-        return new Error(
-          `Sorry, the following chain${
-            unsupportedNamespaces.length > 1 ? 's' : ''
-          } ${
-            unsupportedNamespaces.length > 1 ? 'are' : 'is'
-          } not yet supported: ${unsupportedNamespaces.map(String).join(', ')}.`
-        )
-
-      return undefined
+      // If the connection has requested unsupported namespaces, we can probe
+      // the proposal object to determine whether there is sufficient information to
+      // dynamically create the custom namespace, and if so, request the user to
+      // create them.
+      return maybeAddCustomNetworksOrErrorAsync({
+        currentlyUnsupportedChainIds,
+        proposal,
+      })
     },
-    [chainMetadatas, selectedMinifiedVeridaAccounts]
+    [
+      chainMetadatas,
+      selectedMinifiedVeridaAccounts,
+      maybeAddCustomNetworksOrErrorAsync,
+    ]
   )
 
   const shouldTerminateProposal = React.useCallback(
@@ -195,7 +198,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     useCreateWeb3Wallet({
       onSessionRequest: useWalletConnectSessionRequestCallback(),
       onSessionProposal: React.useCallback(
-        (
+        async (
           web3wallet: IWeb3Wallet,
           proposal: Web3WalletTypes.EventArguments['session_proposal']
         ) => {
@@ -207,7 +210,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
             })
 
           const maybeUnsupportedProposalError =
-            getMaybeUnsupportedProposalError(proposal)
+            await getMaybeUnsupportedProposalError(proposal)
 
           if (maybeUnsupportedProposalError) {
             Alert.alert(

@@ -32,7 +32,7 @@ export function useCreateWeb3Wallet({
   readonly onSessionProposal: (
     web3wallet: IWeb3Wallet,
     event: Web3WalletTypes.EventArguments['session_proposal']
-  ) => void
+  ) => Promise<void>
   readonly onSessionRequest: (
     web3wallet: IWeb3Wallet,
     event: Web3WalletTypes.EventArguments['session_request']
