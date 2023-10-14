@@ -1,4 +1,5 @@
 import { AssetId, ChainId } from 'caip'
+import { SupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainAccount, BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
@@ -118,3 +119,24 @@ export type ImportedSeedPhrase = {
   readonly blockchainNetwork: BlockchainNetwork | null | undefined
   readonly inputSwitch: string
 }
+
+type AbstractMinifiedVeridaAccount<Namespace extends SupportedCaipNamespace> = {
+  readonly namespace: Namespace
+}
+
+export type MinifiedVeridaAccountEip155 =
+  AbstractMinifiedVeridaAccount<SupportedCaipNamespace.EIP_155> & {
+    readonly address: string
+    readonly privateKey: string
+  }
+
+// TODO: add required fields
+export type MinifiedVeridaAccountNear =
+  AbstractMinifiedVeridaAccount<SupportedCaipNamespace.NEAR> & {
+    readonly signerId: string
+    readonly privateKey: string
+  }
+
+export type MinifiedVeridaAccount =
+  | MinifiedVeridaAccountEip155
+  | MinifiedVeridaAccountNear

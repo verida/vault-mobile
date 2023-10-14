@@ -62,6 +62,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   const { showModal } = useModal()
 
   const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
+
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const debouncedSnackbar = useDebouncedCallback(
