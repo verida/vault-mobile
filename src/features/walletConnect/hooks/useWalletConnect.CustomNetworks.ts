@@ -3,6 +3,8 @@ import { ChainId } from 'caip'
 import * as React from 'react'
 import { Alert } from 'react-native'
 
+import { walletConnectProposalUnsupportedNetworksToChainMetadatas } from '../utils'
+
 export function useWalletConnectCustomNetworks() {
   const maybeAddCustomNetworksOrErrorAsync = React.useCallback(
     async ({
@@ -15,9 +17,12 @@ export function useWalletConnectCustomNetworks() {
       // If there are no chains to add, terminate early.
       if (currentlyUnsupportedChainIds.length === 0) return undefined
 
-      // TODO: check if there is an unsupported namespace and fail early
-
-      // TODO: check whether is is possible to synthesize the necessary information
+      // Attempt to create the corresponding ChainMetadatas for the unsupported networks.
+      const chainMetadatasToCreate =
+        walletConnectProposalUnsupportedNetworksToChainMetadatas({
+          currentlyUnsupportedChainIds,
+          proposal,
+        })
 
       const maybeProposerName = proposal?.params?.proposer?.metadata?.name
 
@@ -25,6 +30,17 @@ export function useWalletConnectCustomNetworks() {
         typeof maybeProposerName === 'string' && maybeProposerName.length
           ? `"${maybeProposerName}"`
           : 'This DApp'
+
+      // If we weren't able to recreate all of the required ChainMetadatas, then we cannot continue.
+      if (
+        chainMetadatasToCreate.length !== currentlyUnsupportedChainIds.length
+      ) {
+        return new Error(
+          `Sorry, ${proposer} depends upon blockchain protocols which not fully supported. (${currentlyUnsupportedChainIds
+            .map(String)
+            .join(', ')})`
+        )
+      }
 
       const count = currentlyUnsupportedChainIds.length
 
@@ -59,15 +75,9 @@ export function useWalletConnectCustomNetworks() {
           `${proposer} requested access to unsupported networks.`
         )
 
-      console.warn('aye lets go')
-
-      //return new Error(
-      //  `Sorry, the following chain${
-      //    unsupportedNamespaces.length > 1 ? 's' : ''
-      //  } ${
-      //    unsupportedNamespaces.length > 1 ? 'are' : 'is'
-      //  } not yet supported: ${unsupportedNamespaces.map(String).join(', ')}.`
-      //)
+      // TODO: Prompt the user to save the network settings.
+      // eslint-disable-next-line no-console
+      console.warn('Did not save network settings!')
 
       return undefined
     },
