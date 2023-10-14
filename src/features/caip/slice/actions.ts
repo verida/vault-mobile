@@ -1,8 +1,4 @@
 import { ethers } from 'ethers'
-import {
-  AddEthereumChainRequestParam,
-  AddEthereumChainRequestParams,
-} from 'features/blockchain/eip155'
 
 import AccountManager from 'api/AccountManager'
 import { ShoppingCoupon } from 'api/types'
@@ -15,14 +11,14 @@ const HACK_SHOPPING_COUPON_DATASTORE =
   'https://common.schemas.verida.io/shopping/coupon/v0.1.0/schema.json'
 
 type Params = {
-  readonly addEthereumChainRequestParams: AddEthereumChainRequestParams
+  readonly addCustomNetworkParams: readonly ChainMetadata[]
   readonly reset?: boolean
 }
 
-export const addCustomEthereumNetwork = createAppAsyncThunk(
-  `${CAIP_SLICE_NAME}/addCustomEthereumNetwork`,
+export const addCustomNetwork = createAppAsyncThunk(
+  `${CAIP_SLICE_NAME}/addCustomNetwork`,
   async (
-    { addEthereumChainRequestParams, reset = true }: Params,
+    { addCustomNetworkParams, reset = false }: Params,
     { rejectWithValue }
   ) => {
     try {
@@ -39,18 +35,19 @@ export const addCustomEthereumNetwork = createAppAsyncThunk(
       if (reset) await datastore.deleteAll()
 
       // TODO: parallelize
-      for (const addEthereumChainRequestParam of addEthereumChainRequestParams) {
-        const { chainName, nativeCurrency } = addEthereumChainRequestParam
-        const value = JSON.stringify(addEthereumChainRequestParam)
+      for (const addCustomNetworkParam of addCustomNetworkParams) {
+        const { name: title } = addCustomNetworkParam
+
+        const value = JSON.stringify(addCustomNetworkParam)
 
         // TODO: We need a dedicated data model for this kind of information.
         // TODO: The data model would also need to save a caip identifier.
         const chainToAddAsShoppingCoupon: ShoppingCoupon = {
-          title: chainName,
+          title,
           description: 'A custom chain created using the Vault App.',
           value,
           valueType: 'CustomChain',
-          currency: nativeCurrency.name,
+          currency: 'Crypto',
           barcode: ethers.utils.keccak256(ethers.utils.toUtf8Bytes(value)),
         }
 
@@ -87,28 +84,16 @@ export const addCustomEthereumNetwork = createAppAsyncThunk(
           value = JSON.parse(maybeValue)
         } catch {}
 
-        const maybeParsed = AddEthereumChainRequestParam.safeParse(value)
+        const maybeParsed = ChainMetadata.safeParse(value)
 
         if (!maybeParsed.success) return []
-
-        const {
-          data: { chainId, chainName, rpcUrls },
-        } = maybeParsed
 
         // NOTE: Each individual RPC endpoint can be modelled as a dedicated ChainMetadata.
         //       This coincides with the property that a ChainMetadatas can contain duplicate
         //       configurations for the same network - ideally, it would be up to the user to
         //       decide which RPC makes sense for which context; i.e. avoiding frontrunning
         //       when transacting via Flashbots Protect, or using a home node.
-        return rpcUrls.map(
-          (rpc: string): ChainMetadata => ({
-            name: chainName,
-            // HACK: Notice this is `addEthereumNetwork`!
-            namespace: 'eip155',
-            reference: String(Number.parseInt(chainId, 16)),
-            rpc,
-          })
-        )
+        return [maybeParsed.data]
       })
     } catch (error) {
       return rejectWithValue(`Failed to add custom network. ${String(error)}`)

@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { CAIP_SLICE_NAME, CustomChains } from '../@types'
-import { addCustomEthereumNetwork } from './actions'
+import { addCustomNetwork } from './actions'
 
 export type CaipSliceState = {
   customNetworks: CustomChains
@@ -16,9 +16,9 @@ export const caipSlice = createSlice({
   initialState,
   reducers: {},
   extraReducers(builder) {
-    /* addCustomNetworks */
+    /* addCustomNetwork */
     builder
-      .addCase(addCustomEthereumNetwork.pending, (state) => {
+      .addCase(addCustomNetwork.pending, (state) => {
         const {
           customNetworks: { result },
         } = state
@@ -26,14 +26,11 @@ export const caipSlice = createSlice({
         // HACK: Keep the customNetworks in memory.
         state.customNetworks = { loading: true, result }
       })
-      .addCase(
-        addCustomEthereumNetwork.fulfilled,
-        (state, { payload: result }) => {
-          // HACK: Keep the customNetworks in memory.
-          state.customNetworks = { loading: false, result }
-        }
-      )
-      .addCase(addCustomEthereumNetwork.rejected, (state, action) => {
+      .addCase(addCustomNetwork.fulfilled, (state, { payload: result }) => {
+        // HACK: Keep the customNetworks in memory.
+        state.customNetworks = { loading: false, result }
+      })
+      .addCase(addCustomNetwork.rejected, (state, action) => {
         const {
           customNetworks: { result },
         } = state

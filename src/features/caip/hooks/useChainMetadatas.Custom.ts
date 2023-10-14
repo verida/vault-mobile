@@ -1,4 +1,3 @@
-import { AddEthereumChainRequestParams } from 'features/blockchain/eip155/@types'
 import * as React from 'react'
 import { useDispatch, useStore } from 'react-redux'
 
@@ -6,14 +5,15 @@ import { RootState, useAppSelector } from 'reduxStore/types'
 
 import {
   CAIP_SLICE_NAME,
+  ChainMetadata,
   ChainMetadatas,
   UseChainMetadataState,
 } from '../@types'
-import { addCustomEthereumNetwork } from '../slice'
+import { addCustomNetwork } from '../slice'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
-  readonly addCustomEthereumNetworks: (
-    addEthereumChainRequestParams: AddEthereumChainRequestParams
+  readonly addCustomNetworks: (
+    addCustomNetworkParams: readonly ChainMetadata[]
   ) => Promise<ChainMetadatas>
 }
 
@@ -27,13 +27,11 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
   const dispatch = useDispatch()
   const { getState } = useStore<RootState>()
 
-  const addCustomEthereumNetworks = React.useCallback(
+  const addCustomNetworks = React.useCallback(
     // TODO: This type is very specific to the wallet_addEthereumWallet flow. We
     //       can generalize later on.
-    async (addEthereumChainRequestParams: AddEthereumChainRequestParams) => {
-      await dispatch(
-        addCustomEthereumNetwork({ addEthereumChainRequestParams })
-      )
+    async (addCustomNetworkParams: readonly ChainMetadata[]) => {
+      await dispatch(addCustomNetwork({ addCustomNetworkParams }))
 
       // HACK: Although we can receive the result from the call to `dispatch()` above,
       //       the returned types are unsatisfactory, so we request them explicitly
@@ -49,5 +47,5 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
     (state) => state[CAIP_SLICE_NAME].customNetworks
   )
 
-  return { addCustomEthereumNetworks, result, loading, error }
+  return { addCustomNetworks, result, loading, error }
 }

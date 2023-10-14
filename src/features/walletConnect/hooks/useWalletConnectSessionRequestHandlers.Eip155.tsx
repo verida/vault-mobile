@@ -1,10 +1,16 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 import {
   AddEthereumChainRequestParams,
   Eip155RpcMethod,
 } from 'features/blockchain/eip155'
-import { useChainMetadatasCustom } from 'features/caip'
+import {
+  ChainMetadata,
+  ChainMetadatas,
+  SupportedCaipNamespace,
+  useChainMetadatasCustom,
+} from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
@@ -90,6 +96,21 @@ const shouldSignTypedData = ({
   return wallet._signTypedData(domain, types, data)
 }
 
+const addEthereumChainRequestParamsToChainMetadatas = (
+  params: AddEthereumChainRequestParams
+): ChainMetadatas =>
+  params.flatMap(
+    ({ rpcUrls, chainId, chainName: name }): ChainMetadatas =>
+      rpcUrls.map(
+        (rpc: string): ChainMetadata => ({
+          reference: String(parseInt(chainId, 16)),
+          namespace: SupportedCaipNamespace.EIP_155,
+          name,
+          rpc,
+        })
+      )
+  )
+
 const shouldSignMessage = ({
   wallet,
   params,
@@ -100,7 +121,7 @@ const shouldSignMessage = ({
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L37
 export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionRequestHandlers {
-  const { addCustomEthereumNetworks } = useChainMetadatasCustom()
+  const { addCustomNetworks } = useChainMetadatasCustom()
   const walletsData = useWalletsData()
   return React.useMemo<EthereumSessionRequestHandlers>(
     () => ({
@@ -117,7 +138,9 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
 
         if (!result.success) throw fromZodError(result.error)
 
-        return addCustomEthereumNetworks(result.data)
+        return addCustomNetworks(
+          addEthereumChainRequestParamsToChainMetadatas(result.data)
+        ) /* Promise<[...allCustomNetworks]> */
       },
       [Eip155RpcMethod.PERSONAL_SIGN]: ({
         request,
@@ -246,6 +269,6 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         return hash
       },
     }),
-    [walletsData, addCustomEthereumNetworks]
+    [addCustomNetworks, walletsData]
   )
 }
