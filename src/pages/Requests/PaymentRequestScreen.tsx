@@ -1,9 +1,17 @@
+import {
+  RequestDetails,
+  RequestHeader,
+  RequestMessage,
+  StatusInfo,
+} from 'components'
+import { CryptoWalletPaymentRequest } from 'features/cryptoWallet'
 import { Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { wait } from 'utils'
 
 import Button from 'components/Button'
 import { MainStackScreenProps } from 'navigation/types'
@@ -19,7 +27,7 @@ export interface PaymentRequestScreenParams {
     url?: string
     protocols: Protocol[]
   }
-  data: Record<string, unknown>
+  data: CryptoWalletPaymentRequest
 }
 
 type PaymentRequestScreenProps = MainStackScreenProps<'PaymentRequest'>
@@ -33,15 +41,24 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const [error, setError] = useState(false)
     const [erroMessage, setErrorMessage] = useState<string | undefined>()
     const [success, setSuccess] = useState(false)
+    const [detailsOpen, setDetailsOpen] = useState(false)
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
+
+    const handleToggleDetails = useCallback(() => {
+      setDetailsOpen((prevValue) => !prevValue)
+    }, [])
 
     const handleClose = useCallback(() => {
       navigation.goBack()
     }, [navigation])
 
-    const handlePay = useCallback(() => {
-      // TODO: To inmplement
+    const handlePay = useCallback(async () => {
+      setProcessing(true)
+      await wait(2000)
+      setSuccess(true)
+      setProcessing(false)
+      // TODO: Handle the case where the user closes the screen before the request is processed
     }, [])
 
     useEffect(() => {
@@ -69,10 +86,65 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
               paddingLeft: insets.left,
             },
           ]}>
-          <ScrollView>
-            <Text>Payment Request</Text>
-            <Text>{JSON.stringify(data)}</Text>
+          <ScrollView
+            style={styles.container}
+            contentContainerStyle={styles.containerContent}>
+            {!processing && !error && !success ? (
+              <>
+                <RequestHeader
+                  senderName={name}
+                  avatar={logo}
+                  timestamp={details.timestamp}
+                  isDetailsOpen={detailsOpen}
+                  onToggleDetails={handleToggleDetails}
+                  style={styles.headerContainer}
+                />
+                {detailsOpen ? (
+                  <RequestDetails
+                    properties={[
+                      {
+                        label: 'Recipient address',
+                        value: details.requesterId,
+                      },
+                    ]}
+                    style={styles.detailsContainer}
+                  />
+                ) : null}
+                {details.message ? (
+                  <RequestMessage style={styles.messageContainer}>
+                    {details.message}
+                  </RequestMessage>
+                ) : null}
+                <View style={styles.dataContainer}>
+                  <Text>Payment Request</Text>
+                  <Text>{JSON.stringify(data)}</Text>
+                </View>
+              </>
+            ) : (
+              // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
+              <StatusInfo
+                style={styles.statusContainer}
+                statusType={
+                  processing ? 'processsing' : success ? 'success' : 'error'
+                }
+                title={
+                  processing
+                    ? 'Processing payment...'
+                    : success
+                    ? 'Success!'
+                    : 'Error!'
+                }
+                subtitle={
+                  processing
+                    ? 'Please wait a moment, we are transfering your payment.'
+                    : success
+                    ? `You have successfully paid ${name}!`
+                    : erroMessage || 'Something went wrong. Try again later.'
+                }
+              />
+            )}
           </ScrollView>
+
           <View style={styles.footer}>
             <View style={styles.footerActionsContainer}>
               {/* TODO: Ensure the buttons have a background */}
@@ -109,94 +181,34 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     )
   }
 
-// TODO: Use the them when proper typography is available
+// TODO: Use the theme when proper typography is available
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     wrapper: {
       flex: 1,
       backgroundColor: theme.color.background,
     },
-    // container: {
-    //   flex: 1,
-    // },
-    // containerContent: {
-    //   paddingTop: 64,
-    //   paddingBottom: theme.spacing.m,
-    //   paddingHorizontal: theme.spacing.m,
-    //   alignItems: 'center',
-    // },
-    // logo: {
-    //   height: 72,
-    //   aspectRatio: 1 / 1,
-    //   borderRadius: 999999,
-    // },
-    // url: {
-    //   marginTop: theme.spacing.s,
-    //   fontSize: 14,
-    //   lineHeight: 24,
-    //   fontFamily: NUNITO_SANS_BOLD,
-    //   color: theme.color.textLightGrey,
-    // },
-    // connectMessage: {
-    //   marginTop: theme.spacing.sm,
-    //   fontSize: 28,
-    //   lineHeight: 36,
-    //   fontFamily: NUNITO_SANS_BOLD,
-    // },
-    // message: {
-    //   width: '100%',
-    //   marginTop: theme.spacing.m,
-    //   padding: theme.spacing.m,
-    //   backgroundColor: '#F5F4FF',
-    //   borderRadius: theme.roundness.xs,
-    // },
-    // detailsButton: {
-    //   flexDirection: 'row',
-    //   alignItems: 'center',
-    //   marginTop: theme.spacing.m,
-    //   paddingVertical: theme.spacing.xs,
-    //   paddingHorizontal: theme.spacing.sm,
-    //   borderWidth: 1,
-    //   borderRadius: 999999,
-    //   borderColor: theme.color.lightGrey,
-    // },
-    // detailsButtonLabel: {
-    //   fontSize: 14,
-    //   lineHeight: 22,
-    //   fontFamily: NUNITO_SANS_SEMIBOLD,
-    //   color: theme.color.textLightGrey,
-    // },
-    // detailsButtonLabelIcon: {
-    //   marginLeft: theme.spacing.xs,
-    //   color: theme.color.textLightGrey,
-    // },
-    // detailsContainer: {
-    //   width: '100%',
-    //   marginTop: theme.spacing.sm,
-    //   paddingHorizontal: theme.spacing.m,
-    //   paddingVertical: theme.spacing.sm,
-    //   borderWidth: 1,
-    //   borderRadius: 4,
-    //   borderColor: theme.color.lightGrey,
-    // },
-    // detailsPropertyLabel: {
-    //   fontSize: 14,
-    //   lineHeight: 22,
-    //   fontFamily: NUNITO_SANS_SEMIBOLD,
-    //   color: theme.color.textLightGrey,
-    // },
-    // detailsPropertyValue: {
-    //   marginTop: theme.spacing.s,
-    //   fontSize: 14,
-    //   lineHeight: 22,
-    //   fontFamily: NUNITO_SANS_SEMIBOLD,
-    // },
-    // detailsPropertySpacing: {
-    //   marginTop: theme.spacing.l,
-    // },
-    // statusContainer: {
-    //   marginTop: 40,
-    // },
+    container: {
+      flex: 1,
+    },
+    containerContent: {
+      padding: theme.spacing.m,
+    },
+    headerContainer: {
+      marginTop: theme.spacing.s,
+    },
+    detailsContainer: {
+      marginTop: theme.spacing.m,
+    },
+    messageContainer: {
+      marginTop: theme.spacing.l,
+    },
+    dataContainer: {
+      marginTop: theme.spacing.xl,
+    },
+    statusContainer: {
+      marginTop: 104,
+    },
     footer: {
       backgroundColor: theme.color.background,
       paddingHorizontal: theme.spacing.m,
@@ -204,12 +216,6 @@ const createStyles = (theme: Theme) =>
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
     },
-    // footerAlert: {
-    //   marginBottom: theme.spacing.sm,
-    // },
-    // footerAlertContent: {
-    //   flexDirection: 'row',
-    // },
     footerActionsContainer: {
       flexDirection: 'row',
     },
