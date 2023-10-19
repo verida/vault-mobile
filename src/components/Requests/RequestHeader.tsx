@@ -50,8 +50,10 @@ export const RequestHeader: React.FunctionComponent<RequestHeaderProps> = (
           url={avatar || null}
           style={styles.avatar}
         />
-        <View>
-          <Text style={styles.name}>{senderName}</Text>
+        <View style={{ flex: 1 }}>
+          <Text style={styles.name} ellipsizeMode='middle' numberOfLines={1}>
+            {senderName}
+          </Text>
           {onToggleDetails ? (
             <>
               <TouchableOpacity

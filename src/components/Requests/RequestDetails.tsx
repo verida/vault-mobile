@@ -7,7 +7,7 @@ import { Theme } from 'styles/types'
 
 type RequestDetailProperty = {
   label: string
-  value?: string
+  value?: string | React.ReactNode
   // TODO: Add copy to clipboard as suggested per UX design
 }
 
@@ -30,7 +30,13 @@ export const RequestDetails: React.FunctionComponent<RequestDetailsProps> = (
           properties.map((property) => (
             <View key={property.label}>
               <Text style={styles.propertyLabel}>{property.label}</Text>
-              <Text style={styles.propertyValue}>{property.value || '-'}</Text>
+              {!property.value ? (
+                <Text style={styles.propertyValue}>{'-'}</Text>
+              ) : typeof property.value === 'string' ? (
+                <Text style={styles.propertyValue}>{property.value}</Text>
+              ) : (
+                <>{property.value}</>
+              )}
             </View>
           ))
         ) : (
