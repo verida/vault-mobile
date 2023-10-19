@@ -117,6 +117,7 @@ export const defaultTheme = {
     l: 12,
     xl: 20,
     xxl: 24,
+    full: 999999,
   },
   iconSize: {
     s: 16,
