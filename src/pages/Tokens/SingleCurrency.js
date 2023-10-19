@@ -43,6 +43,9 @@ const SingleCurrency = ({ navigation, route }) => {
   const tokenData = useSelector((state) =>
     selectSingleTokenData(state, item.asset)
   )
+  // TODO: check `tokenData` is not null
+  // selectSingleTokenData can now return null if the asset is not found in the list of assets/balance/token but this component `SingleCurrency` is built from that list so it should never be null.
+  //  `tokenData` is basically the same as `item` but selectSingleTokenData makes some transformation
 
   function pullToRefresh() {
     refetch()

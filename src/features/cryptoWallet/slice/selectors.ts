@@ -24,13 +24,7 @@ export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
   // We should always find a token balance, so this shouldn't happen
   // but just in case, return 0 values if not found
   if (!tokenBalance) {
-    return {
-      label: '',
-      price: 0,
-      change: 0,
-      quantity: 0,
-      amount: 0,
-    }
+    return null
   }
 
   return {
