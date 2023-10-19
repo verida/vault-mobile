@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-export type Protocol = 'verida' | 'polygonid' | 'walletconnect'
+export type Protocol = 'verida' | 'polygonid' | 'walletconnect' | 'blockchain'
 
 export type ProtocolDefinition = {
   protocol: Protocol
