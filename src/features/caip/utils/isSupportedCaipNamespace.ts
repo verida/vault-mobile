@@ -1,4 +1,4 @@
-import { $enum } from 'ts-enum-util'
+import { SUPPORTED_BLOCKCHAIN_NAMESPACES } from 'features/caip/constants'
 
 import { SupportedCaipNamespace } from '../@types'
 
@@ -7,7 +7,7 @@ export function isSupportedCaipNamespace(
 ): maybeSupportedCaipProtocol is SupportedCaipNamespace {
   if (!maybeSupportedCaipProtocol) return false
 
-  return [...$enum(SupportedCaipNamespace).values()]
-    .map(String)
-    .includes(maybeSupportedCaipProtocol)
+  return SUPPORTED_BLOCKCHAIN_NAMESPACES.map(String).includes(
+    maybeSupportedCaipProtocol
+  )
 }
