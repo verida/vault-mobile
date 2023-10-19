@@ -1,15 +1,18 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { CryptoWalletRequest } from 'features/cryptoWallet/@types'
+import { CryptoWalletRawRequest } from 'features/cryptoWallet/@types'
+import { getBlockchainNetworks } from 'features/cryptoWallet/api'
 import {
   parseCryptoRequestDeepLink,
   parseCryptoRequestQrCode,
+  processCryptoRequest,
 } from 'features/cryptoWallet/utils'
 import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
 import { PaymentRequestScreenParams } from 'pages/Requests'
+import { useAppSelector } from 'reduxStore/types'
 
 const logger = new Logger('Crypto Wallet')
 
@@ -29,29 +32,49 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
 
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
+  const blockchainNetworks = useAppSelector((state) =>
+    getBlockchainNetworks(state)
+  )
+
   const handleRequest = useCallback(
-    (request: CryptoWalletRequest, replaceNavigationScreen?: boolean) => {
+    (request: CryptoWalletRawRequest, replaceNavigationScreen?: boolean) => {
       logger.debug('Handling request', request)
 
-      const screenParams: PaymentRequestScreenParams = {
-        name: request.address,
-        details: {
-          protocols: [],
-          timestamp: new Date().toISOString(),
-          requesterId: request.address,
-        },
-        data: request,
-      }
+      const processedRequest = processCryptoRequest(request, blockchainNetworks)
 
-      logger.debug("Navigating to 'PaymentRequest' screen", { screenParams })
+      switch (request.action) {
+        case 'pay':
+          const screenParams: PaymentRequestScreenParams = {
+            name: request.address,
+            details: {
+              protocols: ['blockchain'],
+              timestamp: new Date().toISOString(),
+              requesterId: request.address,
+              message: request.params?.message
+                ? String(request.params?.message)
+                : undefined,
+            },
+            data: processedRequest,
+          }
 
-      if (replaceNavigationScreen) {
-        navigation.replace('PaymentRequest', screenParams)
-      } else {
-        navigation.navigate('PaymentRequest', screenParams)
+          logger.debug("Navigating to 'PaymentRequest' screen", {
+            screenParams,
+          })
+
+          if (replaceNavigationScreen) {
+            navigation.replace('PaymentRequest', screenParams)
+          } else {
+            navigation.navigate('PaymentRequest', screenParams)
+          }
+          break
+        default:
+          // TODO: Should display an Alert?
+          throw new Error(
+            `Unsupported crypto wallet request action: ${request.action}`
+          )
       }
     },
-    [navigation]
+    [navigation, blockchainNetworks]
   )
 
   const handleDeepLinkUrl = useCallback(

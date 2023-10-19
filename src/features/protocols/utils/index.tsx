@@ -6,6 +6,7 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import PolygonIdLogo from 'assets/logos/protocols/polygon_id_protocol_logo.svg'
 import VeridaLogo from 'assets/logos/protocols/verida_protocol_logo.svg'
 import WalletConnectLogo from 'assets/logos/protocols/walletconnect_protocol_logo.svg'
+import { defaultTheme } from 'styles/theme'
 
 export const protocolDefinitions: Record<Protocol, ProtocolDefinition> = {
   verida: {
@@ -29,7 +30,9 @@ export const protocolDefinitions: Record<Protocol, ProtocolDefinition> = {
   blockchain: {
     protocol: 'blockchain',
     label: 'Blockchain',
-    getLogo: (size) => <Icon name='chain' size={size} />,
+    getLogo: (size) => (
+      <Icon name='chain' size={size} color={defaultTheme.color.textLightGrey} />
+    ),
   },
 }
 

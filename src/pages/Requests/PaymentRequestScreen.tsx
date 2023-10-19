@@ -2,10 +2,16 @@ import {
   RequestDetails,
   RequestHeader,
   RequestMessage,
+  RequestPaymentValue,
   StatusInfo,
 } from 'components'
-import { CryptoWalletPaymentRequest } from 'features/cryptoWallet'
-import { Protocol } from 'features/protocols'
+import {
+  CryptoWalletRequest,
+  getSelectedWalletById,
+  priceFormatter,
+  selectSingleTokenData,
+} from 'features/cryptoWallet'
+import { getProtocolLabel, getProtocolLogo, Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -15,6 +21,7 @@ import { wait } from 'utils'
 
 import Button from 'components/Button'
 import { MainStackScreenProps } from 'navigation/types'
+import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 export interface PaymentRequestScreenParams {
@@ -27,7 +34,7 @@ export interface PaymentRequestScreenParams {
     url?: string
     protocols: Protocol[]
   }
-  data: CryptoWalletPaymentRequest
+  data: CryptoWalletRequest<'pay'>
 }
 
 type PaymentRequestScreenProps = MainStackScreenProps<'PaymentRequest'>
@@ -44,6 +51,22 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const [detailsOpen, setDetailsOpen] = useState(false)
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
+
+    // FIXME: NEAR native token is not recognised
+    // `data.asset`, when native token, comes from the blockchain network definition (where NEAR slip44Reference is 397).
+    // To get more info on the asset, we use the existing `selectSingleTokenData` which matches the assetId with the token list fetched for the wallet balances.
+
+    const asset = useAppSelector((state) =>
+      selectSingleTokenData(state, data.asset)
+    )
+
+    const selectedWallet = useAppSelector((state) =>
+      getSelectedWalletById(state)
+    )
+    // TODO: Check selectedWallet is defined
+    const account = selectedWallet.accounts[data.blockchainNetwork.chainId]
+
+    console.debug('account', account)
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)
@@ -74,6 +97,24 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       })
     }, [navigation, handleClose])
 
+    const protocols = details.protocols
+      .map((protocol) => {
+        const protocolLogo = getProtocolLogo(protocol, 16)
+        const protocolLabel = getProtocolLabel(protocol)
+        return (
+          <>
+            {protocolLogo} {protocolLabel}
+          </>
+        )
+      })
+      .reduce((prev, curr) => (
+        <>
+          {prev}
+          {', '}
+          {curr}
+        </>
+      ))
+
     return (
       <>
         <StatusBar barStyle='light-content' />
@@ -97,7 +138,6 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                   timestamp={details.timestamp}
                   isDetailsOpen={detailsOpen}
                   onToggleDetails={handleToggleDetails}
-                  style={styles.headerContainer}
                 />
                 {detailsOpen ? (
                   <RequestDetails
@@ -105,6 +145,10 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                       {
                         label: 'Recipient address',
                         value: details.requesterId,
+                      },
+                      {
+                        label: 'Protocols',
+                        value: <>{protocols}</>,
                       },
                     ]}
                     style={styles.detailsContainer}
@@ -115,10 +159,28 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     {details.message}
                   </RequestMessage>
                 ) : null}
-                <View style={styles.dataContainer}>
-                  <Text>Payment Request</Text>
-                  <Text>{JSON.stringify(data)}</Text>
-                </View>
+                {asset ? (
+                  <RequestPaymentValue
+                    assetAmount={String(
+                      data.amount / Math.pow(10, asset.token.decimal)
+                    )}
+                    assetSymbol={asset.symbol}
+                    assetLogo={asset.token.icon}
+                    formattedAssetPrice={priceFormatter(asset.price)}
+                    formattedFiatValue={priceFormatter(
+                      (asset.price * data.amount) /
+                        Math.pow(10, asset.token.decimal)
+                    )}
+                    chainLabel={data.blockchainNetwork.label}
+                    chainLogo={data.blockchainNetwork.icon}
+                    style={styles.valueContainer}
+                  />
+                ) : (
+                  <View>
+                    <Text>Requested asset not found</Text>
+                  </View>
+                )}
+                {/* TODO: Add wallet */}
               </>
             ) : (
               // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
@@ -192,16 +254,17 @@ const createStyles = (theme: Theme) =>
       flex: 1,
     },
     containerContent: {
-      padding: theme.spacing.m,
-    },
-    headerContainer: {
-      marginTop: theme.spacing.s,
+      paddingVertical: theme.spacing.l,
+      paddingHorizontal: theme.spacing.m,
     },
     detailsContainer: {
       marginTop: theme.spacing.m,
     },
     messageContainer: {
       marginTop: theme.spacing.l,
+    },
+    valueContainer: {
+      marginTop: theme.spacing.xl,
     },
     dataContainer: {
       marginTop: theme.spacing.xl,

@@ -1,19 +1,24 @@
-import { AssetId, ChainId } from 'caip'
+import { AccountId, AssetId, ChainId } from 'caip'
 
+import { BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
 
 export type CryptoWalletRequestAction = 'pay'
 
-export type CryptoWalletRequest = {
-  namespace: string
+export type CryptoWalletRawRequest = {
+  chainNamespace: string
+  chainReference: string
   action: CryptoWalletRequestAction
   address: string
-  chainId?: string
   params: Record<string, unknown>
 }
 
-export type CryptoWalletPaymentRequest = CryptoWalletRequest & {
-  action: 'pay'
+export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {
+  action: A
+  blockchainNetwork: BlockchainNetwork
+  asset: AssetId
+  recipientAccount: AccountId
+  amount: number // TODO: Should probably be a string for big numbers
 }
 
 // Types copied from the Wallet-Provider

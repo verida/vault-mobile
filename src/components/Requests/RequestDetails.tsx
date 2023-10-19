@@ -28,14 +28,34 @@ export const RequestDetails: React.FunctionComponent<RequestDetailsProps> = (
       <View style={styles.container}>
         {properties.length > 0 ? (
           properties.map((property) => (
-            <View key={property.label}>
-              <Text style={styles.propertyLabel}>{property.label}</Text>
+            <View key={property.label} style={styles.propertyWrapper}>
+              <Text
+                style={styles.propertyLabel}
+                numberOfLines={1}
+                ellipsizeMode='tail'>
+                {property.label}
+              </Text>
               {!property.value ? (
-                <Text style={styles.propertyValue}>{'-'}</Text>
+                <Text
+                  style={styles.propertyValue}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {'-'}
+                </Text>
               ) : typeof property.value === 'string' ? (
-                <Text style={styles.propertyValue}>{property.value}</Text>
+                <Text
+                  style={styles.propertyValue}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {property.value}
+                </Text>
               ) : (
-                <>{property.value}</>
+                <Text
+                  style={styles.propertyValue}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {property.value}
+                </Text>
               )}
             </View>
           ))
@@ -52,19 +72,23 @@ const createStyles = (theme: Theme) =>
     container: {
       width: '100%',
       paddingHorizontal: theme.spacing.m,
-      paddingVertical: theme.spacing.sm,
+      paddingVertical: 0,
       borderWidth: 1,
       borderRadius: 4,
       borderColor: theme.color.lightGrey,
+    },
+    propertyWrapper: {
+      flex: 1,
+      marginVertical: theme.spacing.sm,
     },
     propertyLabel: {
       fontSize: 14,
       lineHeight: 22,
       fontFamily: NUNITO_SANS_SEMIBOLD,
       color: theme.color.textLightGrey,
+      marginBottom: theme.spacing.s,
     },
     propertyValue: {
-      marginTop: theme.spacing.s,
       fontSize: 14,
       lineHeight: 22,
       fontFamily: NUNITO_SANS_SEMIBOLD,
