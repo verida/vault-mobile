@@ -1,8 +1,8 @@
+import { Logo } from 'components'
 import { priceFormatter } from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
@@ -12,7 +12,7 @@ export default ({ item, onPressItem }) => {
 
   return (
     <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
-      <FastImage source={{ uri: token.icon }} style={styles.icon} />
+      <Logo uri={token.icon} alt={symbol} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
