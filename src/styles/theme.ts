@@ -59,9 +59,11 @@ export const defaultTheme = {
     primary100: PRIMARY_COLOR_100,
 
     transparent: 'transparent',
+    black: BLACK_COLOR_OPACITY(1),
     black800: BLACK_COLOR_OPACITY(0.8),
     black700: BLACK_COLOR_OPACITY(0.7),
     black600: BLACK_COLOR_OPACITY(0.6),
+    black500: BLACK_COLOR_OPACITY(0.5),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,
     textGrey100: TEXT_GREY_100,
