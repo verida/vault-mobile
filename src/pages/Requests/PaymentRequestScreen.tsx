@@ -5,6 +5,7 @@ import {
   RequestPaymentFee,
   RequestPaymentValue,
   StatusInfo,
+  WalletSelectorButton,
 } from 'components'
 import {
   CryptoWalletRequest,
@@ -74,13 +75,19 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       selectSingleTokenData(state, data.blockchainNetwork.asset)
     )
 
-    // const selectedWallet = useAppSelector((state) =>
-    //   getSelectedWalletById(state)
-    // )
-    // TODO: Check selectedWallet is defined
-    // const account = selectedWallet.accounts[data.blockchainNetwork.chainId]
+    // Get the number of significant decimal for the assets (ie. the fraction of the asset for which the value is above 0.01 cents)
+    const nativeAssetSignificantDecimals = nativeAsset?.price
+      ? getSignificantDigits(0.01 / nativeAsset.price, 2, 8, 2)
+      : 2
+    const assetSignificantDecimals = asset?.price
+      ? getSignificantDigits(0.01 / asset.price, 2, 8, 2)
+      : 2
 
-    // logger.debug('account', { account })
+    const selectedWallet = useAppSelector((state) =>
+      getSelectedWalletById(state)
+    )
+    // TODO: Check selectedWallet is defined
+    const account = selectedWallet.accounts[data.blockchainNetwork.chainId]
 
     const transactionParams = useAppSelector((state) =>
       getTransactionParamsData(state)
@@ -89,11 +96,6 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const estimatedFee = transactionParams?.fee
       ? transactionParams?.fee / Math.pow(10, data.blockchainNetwork.decimal)
       : undefined
-
-    // Get the number of significant decimal for the native asset (ie. the fraction of the native asset for which the value is above 0.01 cents)
-    const significantQuantityDecimal = nativeAsset?.price
-      ? getSignificantDigits(0.01 / nativeAsset?.price)
-      : 3
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)
@@ -223,7 +225,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     <RequestPaymentFee
                       feeAmount={
                         estimatedFee
-                          ? estimatedFee.toFixed(significantQuantityDecimal)
+                          ? estimatedFee.toFixed(nativeAssetSignificantDecimals)
                           : undefined
                       }
                       feeSymbol={nativeAsset?.symbol}
@@ -234,6 +236,26 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                       }
                       style={styles.feeContainer}
                     />
+                    {selectedWallet && account ? (
+                      <WalletSelectorButton
+                        logo={
+                          selectedWallet.icon || data.blockchainNetwork.icon
+                        }
+                        label={selectedWallet.label}
+                        address={account.address}
+                        formattedBalance={`${asset.balance.toFixed(
+                          assetSignificantDecimals
+                        )} ${asset.symbol}`}
+                        alertType='error'
+                        alertContent={
+                          asset.balance <
+                          data.amount / Math.pow(10, asset.token.decimal)
+                            ? 'Insufficient funds'
+                            : undefined
+                        }
+                        style={styles.walletSelectorButton}
+                      />
+                    ) : null}
                   </>
                 ) : (
                   <View>
@@ -327,6 +349,9 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.xl,
     },
     feeContainer: {
+      marginTop: theme.spacing.l,
+    },
+    walletSelectorButton: {
       marginTop: theme.spacing.l,
     },
     statusContainer: {
