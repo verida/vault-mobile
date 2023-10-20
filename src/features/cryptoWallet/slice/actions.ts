@@ -18,7 +18,7 @@ import { saveUserWallets, setSelectedWallet } from './'
 
 export const getTransactionParams = createAppAsyncThunk(
   'wallets/getTransactionParams',
-  async (transactionData, { getState, rejectWithValue }) => {
+  async (transactionData: any, { getState, rejectWithValue }) => {
     const wallets = getWalletsData(getState())
     try {
       const params = await dataHelper.getTransactionParams(

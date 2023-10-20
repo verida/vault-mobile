@@ -2,27 +2,35 @@ import {
   RequestDetails,
   RequestHeader,
   RequestMessage,
+  RequestPaymentFee,
   RequestPaymentValue,
   StatusInfo,
 } from 'components'
 import {
   CryptoWalletRequest,
   getSelectedWalletById,
+  getSignificantDigits,
+  getTransactionParams,
+  getTransactionParamsData,
   priceFormatter,
   selectSingleTokenData,
 } from 'features/cryptoWallet'
 import { getProtocolLabel, getProtocolLogo, Protocol } from 'features/protocols'
+import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useDispatch } from 'react-redux'
 import { wait } from 'utils'
 
 import Button from 'components/Button'
 import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('PaymentRequestScreen')
 
 export interface PaymentRequestScreenParams {
   name: string
@@ -44,6 +52,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { navigation, route } = props
     const { name, logo, details, data } = route.params
 
+    const transactionParamCalledRef = useRef(false)
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(false)
     const [erroMessage, setErrorMessage] = useState<string | undefined>()
@@ -52,6 +61,8 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 
+    const dispatch = useDispatch()
+
     // FIXME: NEAR native token is not recognised
     // `data.asset`, when native token, comes from the blockchain network definition (where NEAR slip44Reference is 397).
     // To get more info on the asset, we use the existing `selectSingleTokenData` which matches the assetId with the token list fetched for the wallet balances.
@@ -59,14 +70,30 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const asset = useAppSelector((state) =>
       selectSingleTokenData(state, data.asset)
     )
-
-    const selectedWallet = useAppSelector((state) =>
-      getSelectedWalletById(state)
+    const nativeAsset = useAppSelector((state) =>
+      selectSingleTokenData(state, data.blockchainNetwork.asset)
     )
-    // TODO: Check selectedWallet is defined
-    const account = selectedWallet.accounts[data.blockchainNetwork.chainId]
 
-    console.debug('account', account)
+    // const selectedWallet = useAppSelector((state) =>
+    //   getSelectedWalletById(state)
+    // )
+    // TODO: Check selectedWallet is defined
+    // const account = selectedWallet.accounts[data.blockchainNetwork.chainId]
+
+    // logger.debug('account', { account })
+
+    const transactionParams = useAppSelector((state) =>
+      getTransactionParamsData(state)
+    )
+    // Get the estimated fee in the native asset
+    const estimatedFee = transactionParams?.fee
+      ? transactionParams?.fee / Math.pow(10, data.blockchainNetwork.decimal)
+      : undefined
+
+    // Get the number of significant decimal for the native asset (ie. the fraction of the native asset for which the value is above 0.01 cents)
+    const significantQuantityDecimal = nativeAsset?.price
+      ? getSignificantDigits(0.01 / nativeAsset?.price)
+      : 3
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)
@@ -84,6 +111,23 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       // TODO: Handle the case where the user closes the screen before the request is processed
     }, [])
 
+    // Call Wallet Provider to get the transaction params
+    useEffect(() => {
+      if (!asset || transactionParamCalledRef.current) {
+        return
+      }
+      logger.debug('Calling getTransactionParams')
+      dispatch(
+        getTransactionParams({
+          token: asset,
+          amount: String(data.amount),
+          address: data.recipientAccount.address,
+        })
+      )
+      transactionParamCalledRef.current = true
+    }, [dispatch, transactionParams, asset, data])
+
+    // Set the content of the screen header
     useEffect(() => {
       navigation.setOptions({
         title: 'Payment Request',
@@ -160,21 +204,37 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                   </RequestMessage>
                 ) : null}
                 {asset ? (
-                  <RequestPaymentValue
-                    assetAmount={String(
-                      data.amount / Math.pow(10, asset.token.decimal)
-                    )}
-                    assetSymbol={asset.symbol}
-                    assetLogo={asset.token.icon}
-                    formattedAssetPrice={priceFormatter(asset.price)}
-                    formattedFiatValue={priceFormatter(
-                      (asset.price * data.amount) /
-                        Math.pow(10, asset.token.decimal)
-                    )}
-                    chainLabel={data.blockchainNetwork.label}
-                    chainLogo={data.blockchainNetwork.icon}
-                    style={styles.valueContainer}
-                  />
+                  <>
+                    <RequestPaymentValue
+                      assetAmount={String(
+                        data.amount / Math.pow(10, asset.token.decimal)
+                      )}
+                      assetSymbol={asset.symbol}
+                      assetLogo={asset.token.icon}
+                      formattedAssetPrice={priceFormatter(asset.price)}
+                      formattedFiatValue={priceFormatter(
+                        (asset.price * data.amount) /
+                          Math.pow(10, asset.token.decimal)
+                      )}
+                      chainLabel={data.blockchainNetwork.label}
+                      chainLogo={data.blockchainNetwork.icon}
+                      style={styles.valueContainer}
+                    />
+                    <RequestPaymentFee
+                      feeAmount={
+                        estimatedFee
+                          ? estimatedFee.toFixed(significantQuantityDecimal)
+                          : undefined
+                      }
+                      feeSymbol={nativeAsset?.symbol}
+                      formattedFiatValue={
+                        estimatedFee && nativeAsset
+                          ? priceFormatter(estimatedFee * nativeAsset.price)
+                          : undefined
+                      }
+                      style={styles.feeContainer}
+                    />
+                  </>
                 ) : (
                   <View>
                     <Text>Requested asset not found</Text>
@@ -266,8 +326,8 @@ const createStyles = (theme: Theme) =>
     valueContainer: {
       marginTop: theme.spacing.xl,
     },
-    dataContainer: {
-      marginTop: theme.spacing.xl,
+    feeContainer: {
+      marginTop: theme.spacing.l,
     },
     statusContainer: {
       marginTop: 104,

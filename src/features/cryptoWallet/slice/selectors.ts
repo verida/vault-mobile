@@ -165,7 +165,7 @@ export const selectTransactions = (state: RootState, assetID: AssetId) => {
 }
 
 export const getTransactionParamsData = (state: RootState) => {
-  return state.cryptoWallets.transactionParams.data || {}
+  return state.cryptoWallets.transactionParams.data
 }
 
 export const selectSentTransaction = (state: RootState) => {
