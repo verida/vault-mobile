@@ -75,6 +75,15 @@ export type SelectSingleTokenData =
   | BalanceByChainResult
   | SelectSingleTokenDataFailureCase
 
+export const isBalanceByChainResult = (
+  selectSingleTokenData: SelectSingleTokenData
+): selectSingleTokenData is BalanceByChainResult => {
+  if (!selectSingleTokenData || typeof selectSingleTokenData !== 'object')
+    return false
+  // TODO: Are there any simpler/additional checks we can perform?
+  return 'asset' in selectSingleTokenData
+}
+
 export interface BalanceByChain {
   totalBalance: number
   results: Array<BalanceByChainResult>
