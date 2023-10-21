@@ -1,5 +1,4 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 import {
   AddEthereumChainRequestParams,
