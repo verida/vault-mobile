@@ -42,7 +42,7 @@ describe('blockchain/eip155/utils/chainsList', () => {
         chainMetadatas: [
           {
             name: 'My Ethereum :)',
-            rpc: '$TEST_RPC_URL',
+            rpcUrls: ['$TEST_RPC_URL'],
             namespace: SupportedCaipNamespace.EIP_155,
             reference: '1',
           },

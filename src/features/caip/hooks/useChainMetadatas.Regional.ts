@@ -15,7 +15,9 @@ const EMPTY_RESULT: UseChainMetadataState = { loading: false, result: [] }
 const REDBELLY_NETWORK_TESNET: ChainMetadata = {
   namespace: SupportedCaipNamespace.EIP_155,
   reference: '153',
-  rpc: 'https://rbn-gcp-australia-southeast1-a-0-b-v2.devnet.redbelly.network:8545',
+  rpcUrls: [
+    'https://rbn-gcp-australia-southeast1-a-0-b-v2.devnet.redbelly.network:8545',
+  ],
   name: 'Redbelly Network Testnet',
 }
 

@@ -6,7 +6,9 @@ exports[`walletConnectProposalUnsupportedNetworksToChainMetadatas proposal 1`] =
     "name": "eip155:1",
     "namespace": "eip155",
     "reference": "1",
-    "rpc": "https://mainnet.infura.io/v3/099fc58e0de9451d80b18d7c74caa7c1",
+    "rpcUrls": [
+      "https://mainnet.infura.io/v3/099fc58e0de9451d80b18d7c74caa7c1",
+    ],
   },
 ]
 `;

@@ -3,6 +3,7 @@ import { ChainId, ChainIdParams } from 'caip'
 import { ChainsList, ChainsListItem } from 'features/blockchain/eip155'
 import {
   ChainMetadata,
+  ChainMetadataRpcs,
   ChainMetadatas,
   SupportedCaipNamespace,
 } from 'features/caip/@types'
@@ -113,14 +114,19 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
       if (!maybeRpc && !maybeRpcFromChainsList.length) return []
 
       // TODO: use an array instead
-      const rpc = maybeRpc || maybeRpcFromChainsList[0]
+
+      const maybeRpcUrls = ChainMetadataRpcs.safeParse(
+        maybeRpc ? [maybeRpc] : maybeRpcFromChainsList
+      )
+
+      if (!maybeRpcUrls.success) return []
 
       const chainMetadata: ChainMetadata = {
         namespace,
         reference,
         // TODO: programmatically find the name, i.e. 4byte directory
         name: currentlyUnsupportedChainId.toString(),
-        rpc,
+        rpcUrls: maybeRpcUrls.data,
       }
 
       return [chainMetadata]

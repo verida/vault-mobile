@@ -11,6 +11,7 @@ import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
+import { RpcSelector } from '..'
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
 
 // https://docs.near.org/tools/near-api-js/quick-reference#key-store
@@ -19,11 +20,13 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   web3wallet,
   request,
   walletsData,
+  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly rpcSelector: RpcSelector
 }): Promise<NearAccount | undefined> {
   const { params } = request
 
@@ -74,6 +77,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
     chainMetadatas,
     nearAccountPointer: nearAccount,
     caipChainId,
+    rpcSelector,
   })
 
   if (!doesAccountExist) {
@@ -83,7 +87,7 @@ export async function getMaybeNearAccountForWalletConnectRequest({
         `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
       )
 
-    await nearInstantiateAccount({ chainMetadatas, nearAccount })
+    await nearInstantiateAccount({ chainMetadatas, nearAccount, rpcSelector })
   }
 
   return nearAccount
@@ -94,11 +98,13 @@ export async function getNearAccountForWalletConnectRequestOrThrow({
   web3wallet,
   request,
   walletsData,
+  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly rpcSelector: RpcSelector
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({
@@ -106,6 +112,7 @@ export async function getNearAccountForWalletConnectRequestOrThrow({
       web3wallet,
       request,
       walletsData,
+      rpcSelector,
     })
 
   if (!maybeNearAccount)

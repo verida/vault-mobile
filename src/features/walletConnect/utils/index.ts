@@ -1,5 +1,6 @@
 export * from './createWalletConnectVerifyContext'
 export * from './createWalletConnectSessionApprovalConfiguration'
+export * from './extractWalletConnectChainIdOrThrow'
 export * from './extractWalletConnectRpcOrThrow'
 export * from './getMaybeVeridaWalletAccountForWalletConnectRequest'
 export * from './getMaybeNearAccountForWalletConnectRequest'

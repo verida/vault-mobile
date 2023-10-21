@@ -6,11 +6,14 @@ export enum SupportedCaipNamespace {
   NEAR = 'near',
 }
 
+export const ChainMetadataRpcs = z.array(z.string().url()).nonempty()
+
+export type ChainMetadataRpcs = z.infer<typeof ChainMetadataRpcs>
+
 export const ChainMetadata = z
   .object({
     name: z.string(),
-    // TODO: this **must** be an array
-    rpc: z.string(),
+    rpcUrls: ChainMetadataRpcs,
     namespace: z.string(),
     reference: z.string(),
   })

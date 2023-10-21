@@ -8,12 +8,19 @@ import {
 } from 'features/caip'
 import * as React from 'react'
 
-import { SupportedCaipProtocolSessionHandlers } from '../@types'
-import { extractWalletConnectRpcOrThrow, resolveSessionRequest } from '../utils'
+import { RpcSelector, SupportedCaipProtocolSessionHandlers } from '../@types'
+import {
+  extractWalletConnectChainIdOrThrow,
+  resolveSessionRequest,
+} from '../utils'
 import { useWalletConnectSessionApproveCallbackEip155 } from './useWalletConnectSessionApproveCallback.Eip155'
 import { useWalletConnectSessionApproveCallbackNear } from './useWalletConnectSessionApproveCallback.Near'
 
-export function useWalletConnectSessionApproveCallback() {
+export function useWalletConnectSessionApproveCallback({
+  rpcSelector,
+}: {
+  readonly rpcSelector: RpcSelector
+}) {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const eip155Approve = useWalletConnectSessionApproveCallbackEip155()
@@ -34,10 +41,7 @@ export function useWalletConnectSessionApproveCallback() {
       web3wallet: IWeb3Wallet,
       request: Web3WalletTypes.EventArguments['session_request']
     ) => {
-      const { rpc, chainId } = extractWalletConnectRpcOrThrow({
-        chainMetadatas,
-        request,
-      })
+      const chainId = extractWalletConnectChainIdOrThrow({ request })
 
       const chainMetadata = getChainMetadataByCaipTypeOrThrow(
         chainMetadatas,
@@ -59,9 +63,9 @@ export function useWalletConnectSessionApproveCallback() {
       if (!maybeStandardHandler)
         throw new Error(`Sorry, ${chainId.toString()} is not supported.`)
 
-      return maybeStandardHandler({ web3wallet, request, rpc })
+      return maybeStandardHandler({ web3wallet, request, rpcSelector })
     },
-    [chainMetadatas, supportedStandardHandlers]
+    [chainMetadatas, supportedStandardHandlers, rpcSelector]
   )
 
   return React.useCallback(

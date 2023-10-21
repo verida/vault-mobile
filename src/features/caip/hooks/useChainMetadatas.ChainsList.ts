@@ -29,7 +29,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     namespace,
     reference,
     name,
-    rpc,
+    rpcUrls: [rpc],
   }
 }
 

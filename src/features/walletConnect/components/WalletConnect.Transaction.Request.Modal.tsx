@@ -2,6 +2,7 @@ import * as React from 'react'
 
 import {
   ActiveSession,
+  RpcSelector,
   WalletConnectSessionRequestCallbackParams,
 } from '../@types'
 import {
@@ -15,8 +16,10 @@ export const WalletConnectTransactionRequestModal = React.memo(
     web3wallet,
     request,
     activeSession,
+    rpcSelector,
   }: WalletConnectSessionRequestCallbackParams & {
     readonly activeSession: ActiveSession
+    readonly rpcSelector: RpcSelector
   }): JSX.Element {
     const peerMetadata = activeSession?.peer?.metadata
 
@@ -30,7 +33,9 @@ export const WalletConnectTransactionRequestModal = React.memo(
       [maybeProtocol]
     )
 
-    const shouldApprove = useWalletConnectSessionApproveCallback()
+    const shouldApprove = useWalletConnectSessionApproveCallback({
+      rpcSelector,
+    })
     const shouldReject = useWalletConnectSessionRejectCallback()
 
     const onRequestApprove = React.useCallback(

@@ -1,17 +1,11 @@
-import {
-  getMaybeChainMetadatas,
-  SupportedCaipNamespace,
-  useChainMetadatas,
-} from 'features/caip'
+import { SupportedCaipNamespace } from 'features/caip'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
-import { extractWalletConnectRpcOrThrow } from '../utils'
+import { extractWalletConnectChainIdOrThrow } from '../utils'
 import { useWalletConnectDataFormattingNearLike } from './useWalletConnectDataFormatting.NearLike'
 
 export function useWalletConnectDataFormatting() {
-  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
-
   const formatTransactionDataNearLike = useWalletConnectDataFormattingNearLike()
 
   const formatTransactionData = React.useCallback(
@@ -21,10 +15,7 @@ export function useWalletConnectDataFormatting() {
       string,
       unknown
     > => {
-      const { chainId } = extractWalletConnectRpcOrThrow({
-        chainMetadatas,
-        request,
-      })
+      const chainId = extractWalletConnectChainIdOrThrow({ request })
 
       const { namespace } = chainId
 
@@ -33,7 +24,7 @@ export function useWalletConnectDataFormatting() {
 
       return request.params.request.params
     },
-    [chainMetadatas, formatTransactionDataNearLike]
+    [formatTransactionDataNearLike]
   )
 
   return { formatTransactionData }

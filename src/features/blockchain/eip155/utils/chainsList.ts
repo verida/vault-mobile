@@ -113,12 +113,12 @@ export const chainMetadatasToAddEthereumChainRequestParamsOrThrow = ({
   return addEthereumChainRequestParams.flatMap((e, i) => {
     if (!e) return []
 
-    const { rpc, name: chainName } = chainMetadatas[i]
+    const { rpcUrls, name: chainName } = chainMetadatas[i]
 
     // HACK: Even though the chainList defines an array of valid rpcURLs,
     //       we must respect the URLs described in the ChainMetadata - we
     //       should only provide supplementary information, and not invalidate
     //       the request of the caller.
-    return e ? [{ ...e, rpcUrls: [rpc], chainName }] : []
+    return e ? [{ ...e, rpcUrls, chainName }] : []
   }) /* satisfy_types */
 }

@@ -6,7 +6,11 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import {
+  ChainMetadataRpcs,
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from 'features/caip'
 import {
   useSelectedMinifiedVeridaAccounts,
   veridaWalletAccountsToDropdownOptions,
@@ -23,6 +27,7 @@ import { MainStackParams } from 'navigation/types'
 import {
   ActiveSessions,
   CreatePairingCallback,
+  RpcSelector,
   WalletConnectContextValue,
 } from '../@types'
 import {
@@ -194,9 +199,31 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     []
   )
 
+  // TODO: Here we can create the ability to allow the user to select which RPC
+  //       to use for their transactions. For simplicity, we just pick the first for now,
+  //       (this is equivalent to how the app originally behaved) but this can now become a
+  //       function of state instead, allowing users to select their RPCs for different chains.
+  const rpcSelector: RpcSelector = React.useCallback(
+    (rpcUrls: ChainMetadataRpcs) => {
+      const [maybeRpcUrl] = rpcUrls
+
+      if (typeof maybeRpcUrl !== 'string' || !maybeRpcUrl.length)
+        throw new Error(
+          `Expected non-empty string rpcUrl, encountered "${String(
+            maybeRpcUrl
+          )}".`
+        )
+
+      return maybeRpcUrl
+    },
+    []
+  )
+
   const maybeWeb3Wallet = useMaybeWeb3Wallet(
     useCreateWeb3Wallet({
-      onSessionRequest: useWalletConnectSessionRequestCallback(),
+      onSessionRequest: useWalletConnectSessionRequestCallback({
+        rpcSelector,
+      }),
       onSessionProposal: React.useCallback(
         async (
           web3wallet: IWeb3Wallet,
