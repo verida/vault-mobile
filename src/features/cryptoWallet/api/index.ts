@@ -2,11 +2,11 @@ import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { EnvironmentType } from '@verida/types/dist/NetworkInterfaces'
 import { AssetId, ChainId } from 'caip'
+import CONFIG from 'config'
 import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
 import { BlockchainNetwork } from 'api/types'
-import CONFIG from 'config/environment'
 import { RootState } from 'reduxStore/types'
 
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'

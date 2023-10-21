@@ -11,17 +11,34 @@ declare module '*.svg' {
 }
 
 declare module 'react-native-config' {
-  interface Env {
-    CODE_PUSH_DEPLOYMENT_KEY_ANDROID?: string
-    CODE_PUSH_DEPLOYMENT_KEY_IOS?: string
-    DEPLOY_ENVIRONMENT: string
-    BITRISE_TRIGGERED_WORKFLOW_TITLE: string
-    NETWORK_ENVIRONMENT?: string
-    NETWORK_ENDPOINT_URL: string
+  export interface NativeConfig {
+    VERIDA_NETWORK_ENVIRONMENT?: 'local' | 'devnet' | 'testnet' | 'mainnet'
+    VERIDA_TESTNET_META_TRANSACTION_SERVER_URL: string
+    VERIDA_MAINNET_META_TRANSACTION_SERVER_URL?: string
+    VERIDA_WALLET_PROVIDER_URL: string
+
+    POLYGON_MUMBAI_RPC_URL: string
+    POLYGON_MAINNET_RPC_URL: string
     INFURA_API_KEY: string
-    LOG_LEVEL?: string
-    SENTRY_ENVIRONMENT: string
+    IPFS_GATEWAY_URL?: string
+
+    POLYGON_ID_REVOCATION_BASE_URL: string
+
+    WALLETCONNECT_PROJECT_ID: string
+    WALLETCONNECT_RELAY_URL: string
+
+    CODE_PUSH_DEPLOYMENT_KEY_ANDROID: string
+    CODE_PUSH_DEPLOYMENT_KEY_IOS: string
+
+    LOG_LEVEL?: 'error' | 'warn' | 'info' | 'debug'
+    ENABLE_SENTRY?: 'true' | 'false'
+    SENTRY_DSN?: string
+    SENTRY_ENVIRONMENT?: 'local'
+
+    DISABLE_LOG_BOX?: 'true' | 'false'
+    ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER?: 'true' | 'false'
   }
-  const BuildConfig: Env
-  export default BuildConfig
+
+  export const Config: NativeConfig
+  export default Config
 }

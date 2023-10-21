@@ -4,7 +4,7 @@ import EventEmitter from 'events'
 import moment from 'moment'
 import { Linking } from 'react-native'
 
-import CONFIG from '../config/environment'
+import CONFIG from '../config'
 import AccountManager from './AccountManager'
 
 const DATA_CONNECTION_SCHEMA =

@@ -7,7 +7,7 @@ import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
 
-import CONFIG from '../config/environment'
+import CONFIG from '../config'
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')

@@ -29,7 +29,7 @@
 			<string>bundle id</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>io.verida.vault.internal</string>
+				<string>io.verida.vault</string>
 			</array>
 		</dict>
 		<dict>

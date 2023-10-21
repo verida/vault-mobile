@@ -5,7 +5,7 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { veridaWalletMetadata } from 'features/walletConnect'
 import * as React from 'react'
 
-import Config from '../../../config/environment'
+import Config from '../../../config'
 
 // TODO: This should be IStateful.
 type State = Readonly<

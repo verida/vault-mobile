@@ -14,7 +14,7 @@ import { MainStackParams } from 'navigation/types'
 
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
-import CONFIG from '../../config/environment'
+import CONFIG from '../../config'
 import ModifierStyles from '../../styles/modifier'
 
 const cleanSeedPhrase = (phrase: string): string => {

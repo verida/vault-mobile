@@ -34,7 +34,7 @@ import {
 import { getCountryCode } from 'helpers/countries'
 import DataConnectorsManager from './DataConnectorsManager'
 
-import CONFIG from '../config/environment'
+import CONFIG from '../config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
