@@ -66,4 +66,4 @@ export type WalletConnectRequestParams = Parameters<SignClient['request']>[0]
 // A function which determines how to select an RPC for a given context.
 export type RpcSelector = (
   rpcUrls: ChainMetadataRpcs
-) => ChainMetadataRpcs[number]
+) => Promise<ChainMetadataRpcs[number]>

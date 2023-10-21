@@ -14,7 +14,7 @@ export const getRpcUrlOrThrow = ({
   readonly chainId: ChainId
   readonly chainMetadatas: ChainMetadatas
   readonly rpcSelector: RpcSelector
-}) => {
+}): Promise<string> => {
   const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(chainMetadatas, chainId)
   return rpcSelector(rpcUrls)
 }

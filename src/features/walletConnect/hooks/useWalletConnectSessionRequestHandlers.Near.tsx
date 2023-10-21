@@ -67,7 +67,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
         web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
         const provider = getNearProvider(
-          extractWalletConnectRpcOrThrow({
+          await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,
@@ -108,7 +108,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
         web3wallet,
       }: WalletConnectSessionRequestCallbackParams) => {
         const provider = getNearProvider(
-          extractWalletConnectRpcOrThrow({
+          await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,
@@ -175,7 +175,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
         const { request, rpcSelector, web3wallet } = params
 
         const provider = getNearProvider(
-          extractWalletConnectRpcOrThrow({
+          await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,
@@ -272,7 +272,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
         const { request, rpcSelector } = params
 
         const provider = getNearProvider(
-          extractWalletConnectRpcOrThrow({
+          await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,

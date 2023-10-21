@@ -18,7 +18,12 @@ export async function nearInstantiateAccount({
   const { accountId, publicKey, caipChainId, keystore } = nearAccount
 
   const connection = await connect(
-    getNearNetworkConfig({ chainMetadatas, keystore, caipChainId, rpcSelector })
+    await getNearNetworkConfig({
+      chainMetadatas,
+      keystore,
+      caipChainId,
+      rpcSelector,
+    })
   )
 
   const createdAccount = await connection.createAccount(

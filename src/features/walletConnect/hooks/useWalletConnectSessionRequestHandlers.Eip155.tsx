@@ -145,14 +145,14 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
           addEthereumChainRequestParamsToChainMetadatas(result.data)
         ) /* Promise<[...allCustomNetworks]> */
       },
-      [Eip155RpcMethod.PERSONAL_SIGN]: ({
+      [Eip155RpcMethod.PERSONAL_SIGN]: async ({
         request,
         rpcSelector,
         web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignMessage({
           wallet: getEthereumWalletOrThrow({
-            rpc: extractWalletConnectRpcOrThrow({
+            rpc: await extractWalletConnectRpcOrThrow({
               chainMetadatas,
               request,
               rpcSelector,
@@ -163,14 +163,14 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
           }),
           params: request.params.request.params,
         }),
-      [Eip155RpcMethod.ETH_SIGN]: ({
+      [Eip155RpcMethod.ETH_SIGN]: async ({
         request,
         rpcSelector,
         web3wallet,
       }: WalletConnectSessionRequestCallbackParams) =>
         shouldSignMessage({
           wallet: getEthereumWalletOrThrow({
-            rpc: extractWalletConnectRpcOrThrow({
+            rpc: await extractWalletConnectRpcOrThrow({
               chainMetadatas,
               request,
               rpcSelector,
@@ -188,7 +188,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
       }: WalletConnectSessionRequestCallbackParams) => {
         const wallet = getEthereumWalletOrThrow({
           request,
-          rpc: extractWalletConnectRpcOrThrow({
+          rpc: await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,
@@ -199,7 +199,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         const signTransaction = request.params.request.params[0]
         return wallet.signTransaction(signTransaction)
       },
-      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA]: ({
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA]: async ({
         request,
         rpcSelector,
         web3wallet,
@@ -207,7 +207,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         shouldSignTypedData({
           params: request.params.request.params,
           wallet: getEthereumWalletOrThrow({
-            rpc: extractWalletConnectRpcOrThrow({
+            rpc: await extractWalletConnectRpcOrThrow({
               chainMetadatas,
               request,
               rpcSelector,
@@ -217,7 +217,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
             web3wallet,
           }),
         }),
-      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V3]: ({
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V3]: async ({
         request,
         rpcSelector,
         web3wallet,
@@ -225,7 +225,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         shouldSignTypedData({
           params: request.params.request.params,
           wallet: getEthereumWalletOrThrow({
-            rpc: extractWalletConnectRpcOrThrow({
+            rpc: await extractWalletConnectRpcOrThrow({
               chainMetadatas,
               request,
               rpcSelector,
@@ -235,7 +235,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
             web3wallet,
           }),
         }),
-      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V4]: ({
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V4]: async ({
         request,
         rpcSelector,
         web3wallet,
@@ -243,7 +243,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
         shouldSignTypedData({
           params: request.params.request.params,
           wallet: getEthereumWalletOrThrow({
-            rpc: extractWalletConnectRpcOrThrow({
+            rpc: await extractWalletConnectRpcOrThrow({
               chainMetadatas,
               request,
               rpcSelector,
@@ -261,7 +261,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
       }: WalletConnectSessionRequestCallbackParams) => {
         // eslint-disable-next-line @typescript-eslint/no-unused-vars
         const wallet = getEthereumWalletOrThrow({
-          rpc: extractWalletConnectRpcOrThrow({
+          rpc: await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,
@@ -286,7 +286,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
       }: WalletConnectSessionRequestCallbackParams) => {
         const wallet = getEthereumWalletOrThrow({
           request,
-          rpc: extractWalletConnectRpcOrThrow({
+          rpc: await extractWalletConnectRpcOrThrow({
             chainMetadatas,
             request,
             rpcSelector,

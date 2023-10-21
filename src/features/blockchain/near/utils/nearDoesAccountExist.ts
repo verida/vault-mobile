@@ -18,7 +18,11 @@ export async function nearDoesAccountExist({
   readonly rpcSelector: RpcSelector
 }) {
   const provider = new providers.JsonRpcProvider(
-    getRpcUrlOrThrow({ chainMetadatas, chainId: caipChainId, rpcSelector })
+    await getRpcUrlOrThrow({
+      chainMetadatas,
+      chainId: caipChainId,
+      rpcSelector,
+    })
   )
 
   try {

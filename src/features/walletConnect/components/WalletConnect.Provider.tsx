@@ -204,7 +204,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   //       (this is equivalent to how the app originally behaved) but this can now become a
   //       function of state instead, allowing users to select their RPCs for different chains.
   const rpcSelector: RpcSelector = React.useCallback(
-    (rpcUrls: ChainMetadataRpcs) => {
+    async (rpcUrls: ChainMetadataRpcs): Promise<string> => {
       const [maybeRpcUrl] = rpcUrls
 
       if (typeof maybeRpcUrl !== 'string' || !maybeRpcUrl.length)
