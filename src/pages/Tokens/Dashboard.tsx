@@ -1,5 +1,7 @@
-import { useNavigation } from '@react-navigation/native'
-import { useWalletBannerBalance } from 'features/cryptoWallet'
+import {
+  SelectSingleTokenData,
+  useWalletBannerBalance,
+} from 'features/cryptoWallet'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -9,15 +11,16 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
+import { useMainNavigation } from 'navigation/hooks'
 
 import SendListModal from './SendListModal'
 
 const TokenDashboard = () => {
   const [sendModalVisible, setSendModalVisible] = useState(false)
-  const navigation = useNavigation()
+  const navigation = useMainNavigation()
 
   const {
-    list,
+    list: maybeList,
     total,
     isLoading,
     isFetching,
@@ -34,11 +37,11 @@ const TokenDashboard = () => {
             <TestnetWarning networkReference={null} />
             <TokenBanner
               data={{
-                amount: total,
+                amount: total || 0,
               }}
             />
             <TokensList
-              list={list}
+              list={maybeList}
               onPressItem={(item) =>
                 navigation.navigate('SingleCurrency', { item })
               }
@@ -48,10 +51,10 @@ const TokenDashboard = () => {
             <SendListModal
               visible={sendModalVisible}
               hideModal={() => setSendModalVisible(false)}
-              list={list}
-              onPressItem={() => {
+              list={maybeList}
+              onPressItem={(token: SelectSingleTokenData) => {
                 setSendModalVisible(false)
-                navigation.navigate('SendToken')
+                navigation.navigate('SendToken', { token })
               }}
             />
           </View>

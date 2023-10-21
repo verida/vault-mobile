@@ -14,7 +14,7 @@ import {
   useMaybeBlockchainNetwork,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
-import React from 'react'
+import * as React from 'react'
 import Toast from 'react-native-root-toast'
 import { useSelector } from 'react-redux'
 
@@ -91,6 +91,8 @@ const SingleCurrency = () => {
     selectTransactions(state, maybeAsset)
   )
 
+  const maybeData = React.useMemo(() => maybeBalance || {}, [maybeBalance])
+
   if (error)
     return (
       <ErrorFallbackCard
@@ -117,7 +119,7 @@ const SingleCurrency = () => {
         networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
       />
       <TokenBanner
-        data={maybeBalance}
+        data={maybeData}
         selectedWallet={selectedWallet}
         receiveButtonAction={() =>
           navigation.navigate('ReceiveToken', { token: tokenData })

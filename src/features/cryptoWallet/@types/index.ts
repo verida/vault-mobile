@@ -8,10 +8,9 @@ import { Option } from 'components/Select'
 // TODO: Should be able to auto generated or import types directly from wallet provider module
 export type ChainNameType = 'near' | 'algorand' | 'ethereum' | 'polygon'
 
-export type BasicTokenData = {
+export type BasicTokenData = WithMaybeIcon<{
   name: string
   symbol: string
-  icon: string | undefined
   asset: AssetId
   chainName: ChainNameType
 
@@ -20,7 +19,7 @@ export type BasicTokenData = {
   cmcRank?: number // use this when de-deplicating
   tokenAddress?: string
   priceAlwaysZero?: boolean
-}
+}>
 
 export type AssetQuote = {
   [currency: string]: { price: number; percent_change_24h?: number }
@@ -40,10 +39,13 @@ export type SupportedTokenObject = BasicTokenDataWithQuote & {
   referenceLabel?: string
 }
 
-export type BalanceByChainResultData = {
+export type BalanceByChainAmount<T extends number = number> = {
+  readonly amount: T
+}
+
+export type BalanceByChainResultData = BalanceByChainAmount & {
   symbol: string
   balance: number
-  amount: number
   asset: AssetId
   quote: AssetQuote
   token: SupportedTokenObject
@@ -59,16 +61,18 @@ export type BalanceByChainResultDerivedData = {
 export type BalanceByChainResult = BalanceByChainResultData &
   BalanceByChainResultDerivedData
 
-export type SelectSingleTokenDataFailureCase =
-  BalanceByChainResultDerivedData & {
-    readonly amount: 0
-  }
+export type SelectSingleTokenDataFailureCase = BalanceByChainResultDerivedData &
+  BalanceByChainAmount<0>
 
 export type WithMaybeTokenType<T> = T & {
   // TODO: Elements of the codebase expect a field called tokenType, but this never seems to be assigned based upon the flow.
   //       I've left this as a placeholder (it might make sense to eventually become an enum?) to satisfy the type system, but
   //       my impression is we shouldn't use it (since all usage seems to fall back to `decimal`s instead).
   readonly tokenType?: string
+}
+
+export type WithMaybeIcon<T> = T & {
+  readonly icon?: string
 }
 
 export type SelectSingleTokenData =

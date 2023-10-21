@@ -1,7 +1,13 @@
-import { priceFormatter } from 'features/cryptoWallet'
+import {
+  BalanceByChainResult,
+  priceFormatter,
+  WithMaybeIcon,
+  WithMaybeTokenType,
+} from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 // import BuyIcon from 'assets/buy_icon.svg'
 import CopyIcon from 'assets/copy_icon.svg'
 import ReceiveIcon from 'assets/receive_icon.svg'
@@ -10,18 +16,35 @@ import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-export default ({
+const TokenBanner = React.memo(function TokenBanner({
   data,
-  sendButtonAction,
+  sendButtonAction: maybeSendButtonAction,
   selectedWallet,
-  // buyButtonAction,
-  receiveButtonAction,
-  copyButtonAction,
-}) => {
-  const { label, price, change, amount, symbol, quantity, icon, tokenType } =
-    data
+  receiveButtonAction: maybeReceiveButtonAction,
+  copyButtonAction: maybeCopyButtonAction,
+}: {
+  readonly selectedWallet?: BlockchainWalletWithAccounts
+  readonly sendButtonAction?: () => void
+  readonly receiveButtonAction?: () => void
+  readonly copyButtonAction?: () => void
+  readonly data: Partial<
+    WithMaybeIcon<WithMaybeTokenType<BalanceByChainResult>>
+  >
+}): JSX.Element {
+  const {
+    label,
+    price = 0,
+    change: maybeChange,
+    amount = 0,
+    symbol,
+    quantity,
+    icon,
+    tokenType,
+  } = data
 
-  const positive = change > 0
+  const hasChange = typeof maybeChange === 'number'
+
+  const positive = hasChange && maybeChange > 0
 
   return (
     <View style={styles.bannerWrapper}>
@@ -30,13 +53,15 @@ export default ({
           <Text style={styles.coinText}>{tokenType ? tokenType : 'Coin'}</Text>
           <View style={styles.coinPriceInfo}>
             <Text style={styles.coinPrice}>{priceFormatter(price)}</Text>
-            {change ? (
+            {hasChange ? (
               <Text
                 style={[
                   styles.coinPriceChange,
                   positive ? styles.positive : styles.negative,
                 ]}>
-                {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
+                {positive
+                  ? `+ ${maybeChange.toFixed(2)}%`
+                  : `${maybeChange.toFixed(2)}%`}
               </Text>
             ) : undefined}
           </View>
@@ -57,17 +82,25 @@ export default ({
       </View>
       {symbol && (
         <View style={styles.actionIcons}>
-          {!selectedWallet.viewOnly ? (
+          {Boolean(selectedWallet && !selectedWallet.viewOnly) && (
             <TouchableOpacity
-              onPress={sendButtonAction}
-              style={styles.singleActionIcon}>
+              disabled={!maybeSendButtonAction}
+              onPress={maybeSendButtonAction}
+              style={[
+                styles.singleActionIcon,
+                !maybeSendButtonAction && styles.disabled,
+              ]}>
               <SendIcon />
               <Text style={styles.actionIconText}>Send</Text>
             </TouchableOpacity>
-          ) : undefined}
+          )}
           <TouchableOpacity
-            onPress={receiveButtonAction}
-            style={styles.singleActionIcon}>
+            disabled={!maybeReceiveButtonAction}
+            onPress={maybeReceiveButtonAction}
+            style={[
+              styles.singleActionIcon,
+              !maybeReceiveButtonAction && styles.disabled,
+            ]}>
             <ReceiveIcon />
             <Text style={styles.actionIconText}>Receive</Text>
           </TouchableOpacity>
@@ -78,8 +111,12 @@ export default ({
             <Text style={styles.actionIconText}>Buy</Text>
           </TouchableOpacity> */}
           <TouchableOpacity
-            onPress={copyButtonAction}
-            style={styles.singleActionIcon}>
+            disabled={!maybeCopyButtonAction}
+            onPress={maybeCopyButtonAction}
+            style={[
+              styles.singleActionIcon,
+              !maybeCopyButtonAction && styles.disabled,
+            ]}>
             <CopyIcon />
             <Text style={styles.actionIconText}>Copy</Text>
           </TouchableOpacity>
@@ -87,7 +124,7 @@ export default ({
       )}
     </View>
   )
-}
+})
 
 const styles = StyleSheet.create({
   bannerWrapper: {
@@ -109,6 +146,9 @@ const styles = StyleSheet.create({
   },
   coinPriceChange: {
     marginLeft: 10,
+  },
+  disabled: {
+    opacity: 0.5,
   },
   positive: {
     color: '#5ECEA5',
@@ -146,4 +186,7 @@ const styles = StyleSheet.create({
     marginTop: 4,
   },
   icon: { width: 45, height: 45 },
+  singleActionIcon: {},
 })
+
+export default TokenBanner

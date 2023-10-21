@@ -15,7 +15,7 @@ const TokensList = React.memo(function TokensList({
   onPullToRefresh,
   refreshing,
 }: {
-  readonly list: readonly SelectSingleTokenData[]
+  readonly list: readonly SelectSingleTokenData[] | undefined
   readonly onPullToRefresh: () => void
   readonly onPressItem: (item: SelectSingleTokenData) => void
   readonly refreshing: boolean
