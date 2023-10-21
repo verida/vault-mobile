@@ -99,7 +99,7 @@ const addEthereumChainRequestParamsToChainMetadatas = (
   params: AddEthereumChainRequestParams
 ): ChainMetadatas =>
   params.flatMap(
-    ({ rpcUrls, chainId, chainName: name }): ChainMetadatas =>
+    ({ rpcUrls /* nonempty */, chainId, chainName: name }): ChainMetadatas =>
       rpcUrls.map(
         (rpc: string): ChainMetadata => ({
           reference: String(parseInt(chainId, 16)),

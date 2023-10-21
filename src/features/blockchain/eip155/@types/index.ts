@@ -13,16 +13,24 @@ export enum Eip155RpcMethod {
   ADD_ETHEREUM_CHAIN = 'wallet_addEthereumChain',
 }
 
+export const AddEthereumChainRequestParamRpcUrls = z
+  .array(z.string().url())
+  .nonempty()
+
+export const AddEthereumChainRequestParamBlockExplorerUrls = z.array(
+  z.string().url()
+)
+
 export const AddEthereumChainRequestParam = z
   .object({
-    blockExplorerUrls: z.array(z.string().url()),
+    blockExplorerUrls: AddEthereumChainRequestParamBlockExplorerUrls,
     chainId: z
       .string()
       .nonempty()
       // Ensure the chainId is a valid zero-prefixed hex value.
       .refine((value: string) => /^(0x|0X)[0-9A-Fa-f]+$/.test(value)),
     chainName: z.string().nonempty(),
-    rpcUrls: z.array(z.string().url()).nonempty(),
+    rpcUrls: AddEthereumChainRequestParamRpcUrls,
     nativeCurrency: z.object({
       name: z.string().nonempty(),
       symbol: z.string().nonempty(),
@@ -41,3 +49,35 @@ export const AddEthereumChainRequestParams = z
 export type AddEthereumChainRequestParams = z.infer<
   typeof AddEthereumChainRequestParams
 >
+
+const ChainListMiniItemNativeCurrency = z.object({
+  name: z.string().nonempty(),
+  symbol: z.string().nonempty(),
+  decimals: z.number(),
+})
+
+const ChainsListExplorer = z
+  .object({
+    name: z.string(),
+    url: z.string().url(),
+    standard: z.string(),
+  })
+  .passthrough()
+
+const ChainsListExplorers = z.array(ChainsListExplorer)
+
+export const ChainListItem = z
+  .object({
+    name: z.string().nonempty(),
+    chainId: z.number(),
+    nativeCurrency: ChainListMiniItemNativeCurrency,
+    rpc: z.array(z.string().url()),
+    explorers: ChainsListExplorers.optional(),
+  })
+  .passthrough()
+
+export type ChainsListItem = z.infer<typeof ChainListItem>
+
+export const ChainsList = z.array(ChainListItem).nonempty()
+
+export type ChainsList = z.infer<typeof ChainsList>

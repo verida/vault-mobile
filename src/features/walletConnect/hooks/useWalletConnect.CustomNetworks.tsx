@@ -1,11 +1,21 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
+import {
+  chainMetadatasToAddEthereumChainRequestParamsOrThrow,
+  ChainsList,
+  fetchChainsList,
+} from 'features/blockchain/eip155'
+import { ChainMetadatas } from 'features/caip'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
 
 import { WalletConnectTransactionRequestModalAdapter } from '../components'
-import { walletConnectProposalUnsupportedNetworksToChainMetadatas } from '../utils'
+import {
+  createWalletConnectVerifyContext,
+  mockAddEthereumChainRequest,
+  walletConnectProposalUnsupportedNetworksToChainMetadatas,
+} from '../utils'
 
 // TODO: make dynamic
 
@@ -13,12 +23,32 @@ export function useWalletConnectCustomNetworks() {
   const { showModal } = useModal()
 
   const requestAddCustomNetworks = React.useCallback(
-    ({
+    async ({
+      chainsList,
+      chainMetadatasToCreate: chainMetadatas,
       proposal,
+      topic,
     }: {
+      readonly chainsList: ChainsList
+      readonly chainMetadatasToCreate: ChainMetadatas
       readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
-    }) =>
-      new Promise<Error | undefined>((resolve) =>
+      readonly topic: string
+    }) => {
+      const addEthereumChainRequestParams =
+        chainMetadatasToAddEthereumChainRequestParamsOrThrow({
+          chainsList,
+          chainMetadatas,
+        })
+
+      const mockedAddEthereumChainRequest = mockAddEthereumChainRequest({
+        topic,
+        chainId: new ChainId('eip155:5'),
+        params: addEthereumChainRequestParams,
+      })
+
+      // TODO: next, we need to add custom networks
+
+      return new Promise<Error | undefined>((resolve) =>
         showModal(
           <WalletConnectTransactionRequestModalAdapter
             relayProtocols={
@@ -31,37 +61,15 @@ export function useWalletConnectCustomNetworks() {
               resolve(new Error('User rejected the request.'))
             }
             request={{
-              id: 1697306604097911,
-              params: {
-                chainId: 'eip155:5',
-                request: {
-                  method: 'wallet_addEthereumChain',
-                  params: [
-                    {
-                      blockExplorerUrls: [
-                        'https://blockscout.com/xdai/mainnet/',
-                      ],
-                      chainId: '0x64',
-                      chainName: 'Gnosis Chain',
-                      nativeCurrency: { name: 'xDAI', symbol: 'xDAI' },
-                      rpcUrls: ['https://rpc.gnosischain.com/'],
-                    },
-                  ],
-                },
-              },
-              topic:
-                'f2a8a9e27918bb87066419d884ef43306f19cc8a9c1e57290cc3c26bb5a5f2fc',
-              verifyContext: {
-                verified: {
-                  origin: 'https://www.verida.io/',
-                  validation: 'UNKNOWN',
-                  verifyUrl: '',
-                },
-              },
+              id: proposal.id,
+              params: mockedAddEthereumChainRequest,
+              topic,
+              verifyContext: createWalletConnectVerifyContext(),
             }}
           />
         )
-      ),
+      )
+    },
     [showModal]
   )
 
@@ -76,11 +84,24 @@ export function useWalletConnectCustomNetworks() {
       // If there are no chains to add, terminate early.
       if (currentlyUnsupportedChainIds.length === 0) return undefined
 
+      const maybePairingTopic = proposal?.params?.pairingTopic
+
+      if (typeof maybePairingTopic !== 'string' || !maybePairingTopic.length)
+        throw new Error(
+          `Expected non-empty string pairingTopic, encountered "${String(
+            maybePairingTopic
+          )}".`
+        )
+
+      // TODO: cache the chainsList.
+      const chainsList = await fetchChainsList()
+
       // Attempt to create the corresponding ChainMetadatas for the unsupported networks.
       const chainMetadatasToCreate =
         walletConnectProposalUnsupportedNetworksToChainMetadatas({
           currentlyUnsupportedChainIds,
           proposal,
+          chainsList,
         })
 
       const maybeProposerName = proposal?.params?.proposer?.metadata?.name
@@ -95,7 +116,7 @@ export function useWalletConnectCustomNetworks() {
         chainMetadatasToCreate.length !== currentlyUnsupportedChainIds.length
       ) {
         return new Error(
-          `Sorry, ${proposer} depends upon blockchain protocols which not fully supported. (${currentlyUnsupportedChainIds
+          `Sorry, ${proposer} depends upon blockchain protocols which aren't fully supported. (${currentlyUnsupportedChainIds
             .map(String)
             .join(', ')})`
         )
@@ -135,7 +156,10 @@ export function useWalletConnectCustomNetworks() {
         )
 
       return requestAddCustomNetworks({
+        chainsList,
+        chainMetadatasToCreate,
         proposal,
+        topic: maybePairingTopic,
       })
     },
     [requestAddCustomNetworks]

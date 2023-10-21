@@ -1,5 +1,12 @@
 import { SignClient } from '@walletconnect/sign-client'
+import { ChainId } from 'caip'
 import * as child_process from 'child_process'
+
+import {
+  fetchChainsList,
+  getMaybeAddEthereumChainRequestParamByChainId,
+} from '../src/features/blockchain/eip155/utils/chainsList'
+import { mockAddEthereumChainRequest } from '../src/features/walletConnect/utils/mockAddEthereumChainRequest'
 
 const openDeepLinkInSimulator = (uri: string) => {
   child_process.execSync(`xcrun simctl openurl booted "${uri}"`, {
@@ -45,30 +52,48 @@ void (async () => {
     // eslint-disable-next-line no-console
     console.log(topic)
 
-    // HACK: If we try to open the Modal too quickly, PointerEvents on
-    //       the modal do not propagate to any views!
-    // TODO: The native modal library is doing something strange with
-    //       the touch context - opening a new dialog too quickly results
-    //       in the events becoming orphaned. It might make sense to force
-    //       all requests to open the native modal into a delay queue.
-    await new Promise((resolve) => setTimeout(resolve, 1000))
+    const [chainsList] = await Promise.all([
+      fetchChainsList(),
+      // HACK: If we try to open the Modal too quickly, PointerEvents on
+      //       the modal do not propagate to any views!
+      // TODO: The native modal library is doing something strange with
+      //       the touch context - opening a new dialog too quickly results
+      //       in the events becoming orphaned. It might make sense to force
+      //       all requests to open the native modal into a delay queue.
+      new Promise((resolve) => setTimeout(resolve, 1000)),
+    ])
 
-    await signClient.request({
-      topic,
-      chainId: 'eip155:5',
-      request: {
-        method: 'wallet_addEthereumChain',
-        params: [
-          {
-            chainId: '0x64',
-            chainName: 'Gnosis Chain',
-            rpcUrls: ['https://rpc.gnosischain.com/'],
-            nativeCurrency: { name: 'xDAI', symbol: 'xDAI' },
-            blockExplorerUrls: ['https://blockscout.com/xdai/mainnet/'],
-          },
-        ],
-      },
+    const xDAI = getMaybeAddEthereumChainRequestParamByChainId({
+      chainId: 100,
+      chainsList,
     })
+
+    if (!xDAI) throw new Error(`Expected xDAI, encountered "${String(xDAI)}".`)
+
+    await signClient.request(
+      mockAddEthereumChainRequest({
+        topic,
+        chainId: new ChainId('eip155:5'),
+        params: [xDAI],
+      })
+    )
+
+    //await signClient.request({
+    //  topic,
+    //  chainId: 'eip155:5',
+    //  request: {
+    //    method: 'wallet_addEthereumChain',
+    //    params: [
+    //      {
+    //        chainId: '0x64',
+    //        chainName: 'Gnosis Chain',
+    //        rpcUrls: ['https://rpc.gnosischain.com/'],
+    //        nativeCurrency: { name: 'xDAI', symbol: 'xDAI' },
+    //        blockExplorerUrls: ['https://blockscout.com/xdai/mainnet/'],
+    //      },
+    //    ],
+    //  },
+    //})
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e)

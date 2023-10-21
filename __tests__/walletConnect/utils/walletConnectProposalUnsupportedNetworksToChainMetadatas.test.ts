@@ -3,6 +3,7 @@ import 'jest'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
 
+import { fetchChainsList } from '../../../src/features/blockchain/eip155/utils/chainsList'
 import { walletConnectProposalUnsupportedNetworksToChainMetadatas } from '../../../src/features/walletConnect/utils/walletConnectProposalUnsupportedNetworksToChainMetadatas'
 
 const EXAMPLE_PROPOSAL = {
@@ -109,16 +110,30 @@ const EXAMPLE_PROPOSAL = {
   },
 } as Web3WalletTypes.EventArguments['session_proposal']
 
+jest.setTimeout(10 * 1000)
+
+// TODO: make chainsList static for all calls to fetchChainList
+let chainsList: Awaited<ReturnType<typeof fetchChainsList>> | undefined
+
+beforeAll(async () => {
+  chainsList = await fetchChainsList()
+
+  if (!Array.isArray(chainsList) || !chainsList.length)
+    throw new Error(`Was unable to determine chainsList.`)
+})
+
 describe('walletConnectProposalUnsupportedNetworksToChainMetadatas', () => {
   it('proposal', () => {
     expect(
       walletConnectProposalUnsupportedNetworksToChainMetadatas({
+        chainsList: chainsList!,
         proposal: EXAMPLE_PROPOSAL,
         currentlyUnsupportedChainIds: [new ChainId('eip155:1')],
       })
     ).toMatchSnapshot()
     expect(
       walletConnectProposalUnsupportedNetworksToChainMetadatas({
+        chainsList: chainsList!,
         proposal: EXAMPLE_PROPOSAL,
         currentlyUnsupportedChainIds: [new ChainId('eip155:0')],
       })

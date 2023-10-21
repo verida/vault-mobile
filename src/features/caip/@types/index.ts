@@ -9,6 +9,7 @@ export enum SupportedCaipNamespace {
 export const ChainMetadata = z
   .object({
     name: z.string(),
+    // TODO: this **must** be an array
     rpc: z.string(),
     namespace: z.string(),
     reference: z.string(),

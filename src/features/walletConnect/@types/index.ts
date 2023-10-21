@@ -1,4 +1,5 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
+import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import type { Eip155RpcMethod } from 'features/blockchain/eip155'
 import type { NearRpcMethod } from 'features/blockchain/near'
@@ -59,3 +60,5 @@ export type EthereumSessionRequestHandlers = {
 export type SupportedCaipProtocolSessionHandlers = {
   readonly [key in SupportedCaipNamespace]: WalletConnectSessionRequestCallback
 }
+
+export type WalletConnectRequestParams = Parameters<SignClient['request']>[0]
