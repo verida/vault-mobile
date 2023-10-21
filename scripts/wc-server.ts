@@ -77,23 +77,6 @@ void (async () => {
         params: [xDAI],
       })
     )
-
-    //await signClient.request({
-    //  topic,
-    //  chainId: 'eip155:5',
-    //  request: {
-    //    method: 'wallet_addEthereumChain',
-    //    params: [
-    //      {
-    //        chainId: '0x64',
-    //        chainName: 'Gnosis Chain',
-    //        rpcUrls: ['https://rpc.gnosischain.com/'],
-    //        nativeCurrency: { name: 'xDAI', symbol: 'xDAI' },
-    //        blockExplorerUrls: ['https://blockscout.com/xdai/mainnet/'],
-    //      },
-    //    ],
-    //  },
-    //})
   } catch (e) {
     // eslint-disable-next-line no-console
     console.error(e)
