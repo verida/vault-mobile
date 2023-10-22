@@ -3,7 +3,7 @@ import { ChainId } from 'caip'
 import {
   AddEthereumChainRequestParam,
   Eip155RpcMethod,
-} from '../../blockchain/eip155'
+} from '../../blockchain/eip155/@types'
 import { WalletConnectRequestParams } from '../@types'
 
 export function mockAddEthereumChainRequest({
