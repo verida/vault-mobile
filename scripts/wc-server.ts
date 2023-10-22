@@ -19,11 +19,11 @@ const createSignClient = () =>
     // HACK: This is a burner projectId. It is useful only for experimentation.
     projectId: 'ba6086f6dafcad46bb4555a36647396c',
     metadata: {
-      name: 'Verida Development',
+      name: 'Verida CLI',
       description: 'A utility to help debug WalletConnect in the Verida Vault.',
       url: 'https://www.verida.io/',
       icons: [
-        'https://yt3.ggpht.com/ytc/APkrFKabi2p4h6kk7OQsDY7L6ZYx92eDf3VnW_RyWQFL=s68-c-k-c0x00ffffff-no-rj',
+        'https://upload.wikimedia.org/wikipedia/commons/b/b3/Terminalicon2.png',
       ],
     },
   })

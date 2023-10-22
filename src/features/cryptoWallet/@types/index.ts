@@ -139,6 +139,7 @@ export type ImportedSeedPhrase = {
 }
 
 type AbstractMinifiedVeridaAccount<Namespace extends SupportedCaipNamespace> = {
+  readonly address: string
   readonly namespace: Namespace
 }
 
@@ -151,7 +152,8 @@ export type MinifiedVeridaAccountEip155 =
 // TODO: add required fields
 export type MinifiedVeridaAccountNear =
   AbstractMinifiedVeridaAccount<SupportedCaipNamespace.NEAR> & {
-    readonly signerId: string
+    // TODO: Note near uses slightly different terminology... address === signerId!
+    //readonly signerId: string
     readonly privateKey: string
   }
 

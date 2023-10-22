@@ -5,7 +5,6 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { AccountId } from 'caip'
 import { Spacer } from 'components'
 import {
-  getAddressForMinifiedVeridaAccount,
   getMinifiedVeridaAccountId,
   useSelectedMinifiedVeridaAccounts,
   useVeridaWalletAccountDropdownOptions,
@@ -155,7 +154,7 @@ export const WalletConnectModalConnectDapp = React.memo(
             e.toString()
           ) // i.e. ["eip155:5"]
 
-        const address = getAddressForMinifiedVeridaAccount(matchingAccount)
+        const { address } = matchingAccount
 
         const approvedAccounts = requestedNamespaces.map(
           (chainId) =>

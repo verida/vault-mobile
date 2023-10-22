@@ -46,7 +46,7 @@ const veridaAccountToMinifiedVeridaAccountNear = ({
   return {
     namespace: SupportedCaipNamespace.NEAR,
     privateKey,
-    signerId,
+    address: signerId,
   }
 }
 
@@ -85,35 +85,11 @@ export const getMinifiedVeridaAccountId = (
     ethers.utils.toUtf8Bytes(JSON.stringify(minifiedVeridaAccount))
   )
 
-export const getAddressForMinifiedVeridaAccount = (
-  minifiedVeridaAccount: MinifiedVeridaAccount
-): string => {
-  const { namespace } = minifiedVeridaAccount
-
-  if (namespace === SupportedCaipNamespace.EIP_155) {
-    const { address } = minifiedVeridaAccount
-    return address
-  } else if (namespace === SupportedCaipNamespace.NEAR) {
-    const { signerId } = minifiedVeridaAccount
-    return signerId
-  }
-
-  throw new Error(`Unable to determine address for namespace "${namespace}".`)
-}
-
 export const getLabelForMinifiedVeridaAccount = (
   minifiedVeridaAccount: MinifiedVeridaAccount
 ) => {
-  const { namespace } = minifiedVeridaAccount
-
-  if (namespace === SupportedCaipNamespace.EIP_155) {
-    return getAddressForMinifiedVeridaAccount(minifiedVeridaAccount)
-  } else if (namespace === SupportedCaipNamespace.NEAR) {
-    return getAddressForMinifiedVeridaAccount(minifiedVeridaAccount)
-  }
-
-  // Return a default label for the account.
-  return `${getMinifiedVeridaAccountId(minifiedVeridaAccount)} (${namespace})`
+  const { address } = minifiedVeridaAccount
+  return address
 }
 
 // The persistence model saves multiple copies of the same private key

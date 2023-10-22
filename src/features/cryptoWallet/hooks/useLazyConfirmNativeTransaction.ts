@@ -63,20 +63,20 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
       ChainIdParams & {
         readonly fromAddress: string
       }): Promise<ConfirmNativeTransactionCallbackResult> => {
+      const maybeMatchingAccount = selectedMinifiedAccounts.find(
+        (e) =>
+          e.namespace === namespace &&
+          ethers.utils.getAddress(fromAddress) ===
+            ethers.utils.getAddress(e.address)
+      )
+
+      if (!maybeMatchingAccount)
+        throw new Error(
+          `Unable to find matching selected account for "${fromAddress}".`
+        )
+
       switch (namespace) {
         case SupportedCaipNamespace.EIP_155:
-          const maybeMatchingAccount = selectedMinifiedAccounts.find(
-            (e) =>
-              e.namespace === namespace &&
-              ethers.utils.getAddress(fromAddress) ===
-                ethers.utils.getAddress(e.address)
-          )
-
-          if (!maybeMatchingAccount)
-            throw new Error(
-              `Unable to find matching selected account for "${fromAddress}".`
-            )
-
           const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(
             chainMetadatas,
             new ChainId({ namespace, reference })
