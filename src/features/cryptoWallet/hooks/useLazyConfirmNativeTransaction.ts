@@ -21,11 +21,7 @@ import {
 } from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
 import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
-import {
-  providers as nearProviders,
-  transactions as nearTransactions,
-  utils as nearUtils,
-} from 'near-api-js'
+import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 import * as React from 'react'
 
 import { useAppSelector } from 'reduxStore/types'
@@ -137,17 +133,26 @@ const sendBaseCurrencyNear = async ({
 
   if (!maybeNearAccount) throw new Error('Unable to find matching NearAccount.')
 
+  const transaction = {
+    actions: [
+      {
+        params: {
+          deposit: new BN(amount).toString(),
+        },
+        type: 'Transfer',
+      },
+    ],
+    receiverId,
+    signerId,
+  }
+
   return near_signAndSendTransaction({
     context: {
       nearAccount: maybeNearAccount,
       nearProvider,
     },
     params: {
-      transaction: {
-        actions: [nearTransactions.transfer(new BN(amount))],
-        receiverId,
-        signerId,
-      },
+      transaction,
     },
     rpcSelector,
   })
@@ -187,8 +192,8 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
       const maybeMatchingAccount = selectedMinifiedAccounts.find(
         (e) =>
           e.namespace === namespace &&
-          ethers.utils.getAddress(fromAddress) ===
-            ethers.utils.getAddress(e.address)
+          // TODO: This is not ideal
+          fromAddress.toLowerCase() === e.address.toLowerCase()
       )
 
       if (!maybeMatchingAccount)

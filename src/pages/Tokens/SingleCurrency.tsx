@@ -87,14 +87,11 @@ const SingleCurrency = () => {
     refetchBalance()
   }, [refetchTransactions, refetchBalance])
 
-  // TODO: how transactions
+  // TODO: how to render transactions?
   //const list = useSelector<RootState, readonly Transaction[]>((state) =>
   //  selectTransactions(state, maybeAsset)
   //)
   const list = React.useMemo<readonly Transaction[]>(() => [], [])
-
-  // eslint-disable-next-line no-console
-  console.warn('not rendering transaction history!')
 
   const maybeData = React.useMemo(() => maybeBalance || {}, [maybeBalance])
 
@@ -133,9 +130,7 @@ const SingleCurrency = () => {
           navigation.navigate('SendToken', { token: tokenData })
         }
         copyButtonAction={() => {
-          if (!maybeAddress) {
-            return
-          }
+          if (!maybeAddress) return
 
           Clipboard.setString(maybeAddress)
 

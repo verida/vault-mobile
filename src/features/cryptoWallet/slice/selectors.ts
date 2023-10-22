@@ -1,16 +1,8 @@
 import { AssetId } from 'caip'
-//import { BigNumber } from 'ethers'
 import {
   getBalancesData,
-  //getTransactionsForTokenData,
-  //getWalletAddressForAsset,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
-  //SentTransaction,
-  //tokenCaipObjectToString,
-  //Transaction,
-  //TransactionParamsData,
-  //TransactionType,
   WalletsData,
 } from 'features/cryptoWallet'
 import { isEmpty } from 'lodash'
@@ -91,13 +83,18 @@ export const getUniqueWalletAddresses = (
 ) => {
   if (isEmpty(wallet) || isEmpty(wallet.accounts)) return []
 
-  const addresses: string[] = []
-  Object.values(wallet.accounts).map((account) => {
-    const id = `${account.chainId}:${account.address}`
-    if (addresses.indexOf(id) === -1) {
-      addresses.push(id)
-    }
-  })
+  const addresses: string[] = [
+    ...new Set(
+      Object.values(wallet.accounts).flatMap((account) => {
+        // Ensure a valid chainId.
+        if (typeof account.chainId !== 'string' || !account.chainId.length)
+          return []
+
+        return [`${account.chainId}:${account.address}`]
+      })
+    ),
+  ]
+
   return addresses
 }
 

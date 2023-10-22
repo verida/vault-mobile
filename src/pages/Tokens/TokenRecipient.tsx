@@ -1,5 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
+import { ethers } from 'ethers'
+import { SupportedCaipNamespace } from 'features/caip'
 import {
   BalanceByChainResult,
   //getTransactionParams,
@@ -119,10 +121,17 @@ const TokenRecipient = () => {
             </TouchableOpacity>
             {Boolean(__DEV__) && (
               <TouchableOpacity
-                onPress={() =>
-                  // TODO: Compute a chain-specific random address.
-                  onPressSend('0xf74f91fF41565F48FA386CD04E7bA683ef6a4315')
-                }
+                onPress={() => {
+                  const { namespace } = token.asset.chainId
+
+                  // TODO: Create a random NEAR address
+                  if (namespace === SupportedCaipNamespace.NEAR)
+                    return onPressSend('guest-book.testnet')
+
+                  const { address: randomAddress } =
+                    ethers.Wallet.createRandom()
+                  return onPressSend(randomAddress)
+                }}
                 style={styles.actionButton}>
                 <Icon name='rocket' style={styles.actionButtonIcon} />
                 <Text style={styles.actionButtonText}>Random Address</Text>

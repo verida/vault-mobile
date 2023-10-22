@@ -6,8 +6,11 @@ export function useMaybeBalanceForChainId(chainId: ChainId | null | undefined) {
   const { list, ...extras } = useWalletBannerBalance()
 
   const maybeBalance =
-    Boolean(chainId) &&
-    list?.find((e) => e.asset.chainId.toString() === chainId?.toString())
+    chainId && Array.isArray(list)
+      ? list
+          .filter((e) => e.token.asset.chainId.namespace === chainId.namespace)
+          .find((e) => e.token.asset.chainId.reference === chainId.reference)
+      : undefined
 
   return { ...extras, maybeBalance }
 }
