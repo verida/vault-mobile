@@ -1,9 +1,10 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { RpcSelector } from 'features/blockchain/@types'
 import type { Eip155RpcMethod } from 'features/blockchain/eip155'
 import type { NearRpcMethod } from 'features/blockchain/near'
-import { ChainMetadataRpcs, SupportedCaipNamespace } from 'features/caip'
+import { SupportedCaipNamespace } from 'features/caip'
 
 export type ActiveSessions = Awaited<
   ReturnType<IWeb3Wallet['getActiveSessions']>
@@ -62,8 +63,3 @@ export type SupportedCaipProtocolSessionHandlers = {
 }
 
 export type WalletConnectRequestParams = Parameters<SignClient['request']>[0]
-
-// A function which determines how to select an RPC for a given context.
-export type RpcSelector = (
-  rpcUrls: ChainMetadataRpcs
-) => Promise<ChainMetadataRpcs[number]>

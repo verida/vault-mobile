@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { RpcSelector } from 'features/walletConnect'
+import { RpcSelector } from 'features/blockchain/@types'
 
 import { ChainMetadatas } from '../@types'
 import { getChainMetadataByCaipTypeOrThrow } from './getChainMetadataByCaipTypeOrThrow'

@@ -1,5 +1,5 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
-import { RpcSelector } from 'features/walletConnect'
+import { ChainMetadataRpcs } from 'features/caip'
 
 export type BlockchainRequestHandlerCallbackParams<Context> = {
   readonly rpcSelector: RpcSelector
@@ -16,4 +16,13 @@ export type BlockchainRequestHandlers<
   Context
 > = {
   readonly [key in T]: BlockchainRequestHandlerCallback<Context>
+}
+
+// A function which determines how to select an RPC for a given context.
+export type RpcSelector = (
+  rpcUrls: ChainMetadataRpcs
+) => Promise<ChainMetadataRpcs[number]>
+
+export type BlockchainContextValue = {
+  readonly rpcSelector: RpcSelector
 }

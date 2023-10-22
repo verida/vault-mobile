@@ -1,6 +1,7 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { ActiveSessions, RpcSelector } from 'features/walletConnect'
+import { useBlockchainContext } from 'features/blockchain'
+import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
 
@@ -11,16 +12,14 @@ import { useWalletConnectSessionRejectCallback } from './useWalletConnectSession
 
 // Acts as a multiplexer for WalletConnect session requests. It determines which
 // network to dispatch the request to.
-export const useWalletConnectSessionRequestCallback = ({
-  rpcSelector,
-}: {
-  readonly rpcSelector: RpcSelector
-}): ((
+export const useWalletConnectSessionRequestCallback = (): ((
   web3wallet: IWeb3Wallet,
   event: Web3WalletTypes.EventArguments['session_request']
 ) => void) => {
   const { showModal } = useModal()
   const { authenticated } = useAuth()
+
+  const { rpcSelector } = useBlockchainContext()
 
   // We could also optionally automatically approve calls here if needed:
   //const approve = useWalletConnectSessionApproveCallback()

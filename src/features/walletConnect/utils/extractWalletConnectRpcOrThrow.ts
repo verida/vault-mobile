@@ -1,7 +1,7 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import { RpcSelector } from 'features/blockchain/@types'
 import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
 
-import { RpcSelector } from '../@types'
 import { extractWalletConnectChainIdOrThrow } from './extractWalletConnectChainIdOrThrow'
 
 export async function extractWalletConnectRpcOrThrow({

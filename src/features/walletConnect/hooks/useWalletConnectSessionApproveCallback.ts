@@ -1,4 +1,5 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { RpcSelector } from 'features/blockchain/@types'
 import {
   getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
@@ -8,7 +9,7 @@ import {
 } from 'features/caip'
 import * as React from 'react'
 
-import { RpcSelector, SupportedCaipProtocolSessionHandlers } from '../@types'
+import { SupportedCaipProtocolSessionHandlers } from '../@types'
 import {
   extractWalletConnectChainIdOrThrow,
   resolveSessionRequest,

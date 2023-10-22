@@ -6,6 +6,7 @@ import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { BlockchainProvider } from 'features/blockchain'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
@@ -106,12 +107,14 @@ function App() {
                   <Authenticate>
                     <RootSiblingParent>
                       <ActionSheetProvider>
-                        <WalletConnectProvider>
-                          <GestureHandlerRootView style={styles.flex}>
-                            <RootNavigator />
-                          </GestureHandlerRootView>
-                          <MetaServerChecks />
-                        </WalletConnectProvider>
+                        <BlockchainProvider>
+                          <WalletConnectProvider>
+                            <GestureHandlerRootView style={styles.flex}>
+                              <RootNavigator />
+                            </GestureHandlerRootView>
+                            <MetaServerChecks />
+                          </WalletConnectProvider>
+                        </BlockchainProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>
                   </Authenticate>

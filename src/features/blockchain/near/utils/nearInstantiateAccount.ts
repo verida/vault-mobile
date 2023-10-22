@@ -1,5 +1,5 @@
+import { RpcSelector } from 'features/blockchain/@types'
 import { ChainMetadatas } from 'features/caip'
-import { RpcSelector } from 'features/walletConnect'
 import { connect, utils } from 'near-api-js'
 
 import { NearAccount } from '../@types'

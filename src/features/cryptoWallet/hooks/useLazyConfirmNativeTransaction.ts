@@ -1,7 +1,15 @@
+import { ChainId, ChainIdParams } from 'caip'
 import { ethers } from 'ethers'
+import { useBlockchainContext } from 'features/blockchain'
 import { useBlockchainRequestHandlersEip155 } from 'features/blockchain/eip155'
 import { useBlockchainRequestHandlersNear } from 'features/blockchain/near'
-import { isSupportedCaipNamespace, SupportedCaipNamespace } from 'features/caip'
+import {
+  getChainMetadataByCaipTypeOrThrow,
+  getMaybeChainMetadatas,
+  isSupportedCaipNamespace,
+  SupportedCaipNamespace,
+  useChainMetadatas,
+} from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
 import * as React from 'react'
 
@@ -10,6 +18,7 @@ import { useAppSelector } from 'reduxStore/types'
 import { BalanceByChainResult } from '../@types'
 import { getWalletsData } from '../slice'
 import { getWalletAddressForAsset, isNativeToken } from '../utils'
+import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
 
 type ConfirmNativeTransactionCallbackParams = {
   readonly amount: number
@@ -34,26 +43,63 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
   >({ loading: false, result: false })
 
   const wallets = useAppSelector(getWalletsData)
+  const { rpcSelector } = useBlockchainContext()
 
   const blockchainRequestHandlersEip155 = useBlockchainRequestHandlersEip155()
   const blockchainRequestHandlersNear = useBlockchainRequestHandlersNear()
 
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
+  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
   const executeBlockchainSpecificNativeTransactionOrThrow = React.useCallback(
     async ({
+      fromAddress,
       amount,
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
       toAddress,
       namespace,
-    }: Omit<ConfirmNativeTransactionCallbackParams, 'token'> & {
-      readonly namespace: SupportedCaipNamespace
-    }): Promise<ConfirmNativeTransactionCallbackResult> => {
+      reference,
+    }: Omit<ConfirmNativeTransactionCallbackParams, 'token'> &
+      ChainIdParams & {
+        readonly fromAddress: string
+      }): Promise<ConfirmNativeTransactionCallbackResult> => {
       switch (namespace) {
         case SupportedCaipNamespace.EIP_155:
-          // eslint-disable-next-line @typescript-eslint/no-unused-vars
-          const amountOfEth = ethers.utils.parseEther(String(amount))
-          // TODO: remember we need to wait for the transaction to be confirmed
-          // TODO: remember break
-          throw new Error('Not yet implemented!')
+          const maybeMatchingAccount = selectedMinifiedAccounts.find(
+            (e) =>
+              e.namespace === namespace &&
+              ethers.utils.getAddress(fromAddress) ===
+                ethers.utils.getAddress(e.address)
+          )
+
+          if (!maybeMatchingAccount)
+            throw new Error(
+              `Unable to find matching selected account for "${fromAddress}".`
+            )
+
+          const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(
+            chainMetadatas,
+            new ChainId({ namespace, reference })
+          )
+
+          const provider = new ethers.providers.JsonRpcProvider(
+            await rpcSelector(rpcUrls)
+          )
+
+          await blockchainRequestHandlersEip155.eth_sendTransaction({
+            context: new ethers.Wallet(
+              maybeMatchingAccount.privateKey,
+              provider
+            ),
+            params: {
+              value: ethers.utils.parseEther(String(amount)),
+              to: toAddress,
+            },
+            rpcSelector,
+          })
+
+          return true
+
         case SupportedCaipNamespace.NEAR:
           // TODO: remember we need to wait for the transaction to be confirmed
           // TODO: remember break
@@ -65,7 +111,13 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
           )
       }
     },
-    [blockchainRequestHandlersEip155, blockchainRequestHandlersNear]
+    [
+      blockchainRequestHandlersEip155,
+      rpcSelector,
+      selectedMinifiedAccounts,
+      chainMetadatas,
+      blockchainRequestHandlersNear,
+    ]
   )
 
   //if (result.meta.requestStatus === 'rejected')
@@ -90,7 +142,7 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
 
           const { chainId } = token.asset
 
-          const { namespace } = chainId
+          const { namespace, reference } = chainId
 
           const fromAddress = getWalletAddressForAsset(token.asset, wallets)
 
@@ -109,7 +161,9 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
           const result =
             await executeBlockchainSpecificNativeTransactionOrThrow({
               namespace,
+              reference,
               amount,
+              fromAddress,
               toAddress,
             })
 

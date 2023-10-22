@@ -1,5 +1,6 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
+import { RpcSelector } from 'features/blockchain/@types'
 import {
   getNearAccountId,
   NearAccount,
@@ -11,7 +12,6 @@ import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
-import { RpcSelector } from '..'
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
 
 // https://docs.near.org/tools/near-api-js/quick-reference#key-store

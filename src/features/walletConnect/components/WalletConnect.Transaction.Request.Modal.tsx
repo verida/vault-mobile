@@ -1,8 +1,8 @@
+import { RpcSelector } from 'features/blockchain/@types'
 import * as React from 'react'
 
 import {
   ActiveSession,
-  RpcSelector,
   WalletConnectSessionRequestCallbackParams,
 } from '../@types'
 import {

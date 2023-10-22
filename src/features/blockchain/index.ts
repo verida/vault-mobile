@@ -1,3 +1,5 @@
 export * from './@types'
-export * as eip155 from './eip155'
-export * as near from './near'
+export * from './components'
+export * from './contexts'
+export * from './eip155'
+export * from './near'

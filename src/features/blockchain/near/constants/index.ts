@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
+import { RpcSelector } from 'features/blockchain/@types'
 import {
   ChainMetadatas,
   getRpcUrlOrThrow,
   NEAR_TESTNET_CAIP,
 } from 'features/caip'
-import { RpcSelector } from 'features/walletConnect/@types'
 import { connect, keyStores } from 'near-api-js'
 
 export async function getNearNetworkConfig({

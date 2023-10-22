@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
+import { RpcSelector } from 'features/blockchain/@types'
 import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
-import { RpcSelector } from 'features/walletConnect'
 import { providers } from 'near-api-js'
 
 import { NearAccountPointer } from '../@types'
