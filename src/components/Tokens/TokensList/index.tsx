@@ -1,7 +1,5 @@
 import {
   BalanceByChainResult,
-  isBalanceByChainResult,
-  SelectSingleTokenData,
   tokenCaipObjectToString,
 } from 'features/cryptoWallet'
 import React from 'react'
@@ -12,25 +10,19 @@ import TokensListItem from './TokensListItem'
 const defaultOnPullToRefresh = () => undefined
 
 const TokensList = React.memo(function TokensList({
-  list: maybeList,
+  list: data,
   onPressItem,
   onPullToRefresh = defaultOnPullToRefresh,
   refreshing = false,
 }: {
-  readonly list: readonly SelectSingleTokenData[] | undefined
+  readonly list: readonly BalanceByChainResult[]
   readonly onPullToRefresh?: () => void
-  readonly onPressItem: (item: SelectSingleTokenData) => void
+  readonly onPressItem: (item: BalanceByChainResult) => void
   readonly refreshing?: boolean
 }): JSX.Element {
   return (
     <FlatList
-      data={React.useMemo<readonly BalanceByChainResult[]>(
-        () =>
-          (maybeList || []).flatMap((e: SelectSingleTokenData) =>
-            isBalanceByChainResult(e) ? [e] : []
-          ),
-        [maybeList]
-      )}
+      data={data}
       renderItem={React.useCallback(
         ({ item }) => (
           <TokensListItem item={item} onPressItem={onPressItem} />

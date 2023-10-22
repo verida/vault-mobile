@@ -1,10 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import {
-  getTransactionParams,
-  GetTransactionParamsParams,
+  BalanceByChainResult,
+  //getTransactionParams,
+  //GetTransactionParamsParams,
+  isBalanceByChainResult,
   isValidWalletAddress,
-  SelectSingleTokenData,
 } from 'features/cryptoWallet'
 import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
@@ -16,8 +17,8 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import { connect } from 'react-redux'
 
+//import { connect } from 'react-redux'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -26,28 +27,22 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import { AppDispatch } from 'reduxStore/types'
+//import { AppDispatch } from 'reduxStore/types'
 import InputStyles from 'styles/inputs'
 
 export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
 export type TokenRecipientScreenProps = {
-  readonly token: SelectSingleTokenData
-  readonly amount: number | null
+  readonly token: BalanceByChainResult
+  readonly amount: number
 }
 
-const TokenRecipient = ({
-  onGetTransactionParams,
-}: {
-  readonly onGetTransactionParams: (
-    params: GetTransactionParamsParams
-  ) => unknown
-}) => {
+const TokenRecipient = () => {
   const navigation = useMainNavigation()
-  const { token, amount } = useParams<TokenRecipientScreenProps>()
+  const { token, amount: amount } = useParams<TokenRecipientScreenProps>()
 
   const [address, setAddress] = useState<string>('')
-  const [processing, setProcessing] = useState(false)
+
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
     setAddress(clipboardData)
@@ -61,25 +56,28 @@ const TokenRecipient = ({
       onReadQRCode: (data) => onReadQRCode(data),
     })
   }
-  const showAlert = () =>
-    Alert.alert('Invalid address', `That's not a valid address`)
 
-  const onPressSend = () => {
-    const maybeAsset =
-      Boolean(token) && 'asset' in token ? token.asset : undefined
+  const onPressSend = React.useCallback(async () => {
+    const showGenericFailure = (reason: string) =>
+      Alert.alert('Unable to Send', reason)
 
-    if (isValidWalletAddress(address, maybeAsset)) {
-      setProcessing(true)
+    if (!isBalanceByChainResult(token))
+      return showGenericFailure('An internal error occurred.')
 
-      onGetTransactionParams({
-        token,
+    try {
+      navigation.navigate('ConfirmTransaction', {
         amount,
-        address,
+        token,
+        toAddress: address,
       })
-    } else {
-      showAlert()
+    } catch (e) {
+      // eslint-disable-next-line no-console
+      console.error(e)
+      showGenericFailure(String(e))
     }
-  }
+  }, [token, address, navigation, amount])
+
+  const disabled = !isValidWalletAddress(address, token.asset)
 
   return (
     <Container>
@@ -122,8 +120,7 @@ const TokenRecipient = ({
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={!address}
-            loading={processing}
+            disabled={disabled}
             onPress={onPressSend}>
             Next
           </Button>
@@ -234,13 +231,14 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = () => ({})
+//const mapStateToProps = () => ({})
+//
+//const mapDispatchToProps = (dispatch: AppDispatch) => {
+//  return {
+//    onGetTransactionParams: (params: GetTransactionParamsParams) =>
+//      dispatch(getTransactionParams(params)),
+//  }
+//}
 
-const mapDispatchToProps = (dispatch: AppDispatch) => {
-  return {
-    onGetTransactionParams: (params: GetTransactionParamsParams) =>
-      dispatch(getTransactionParams(params)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TokenRecipient)
+export default TokenRecipient
+//connect(mapStateToProps, mapDispatchToProps)(TokenRecipient)

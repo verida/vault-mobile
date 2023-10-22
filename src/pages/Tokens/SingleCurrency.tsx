@@ -2,12 +2,12 @@ import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import { AssetId, ChainId } from 'caip'
 import {
+  BalanceByChainResult,
   getBlockchainNetworkLabel,
   getSelectedWalletById,
   getSupportedTokenObjectDecimals,
   getWalletsData,
-  SelectSingleTokenData,
-  selectTransactions,
+  //selectTransactions,
   Transaction,
   useGetTransactionsForTokenQuery,
   useMaybeBalanceForChainId,
@@ -28,7 +28,7 @@ import TransactionsList from 'components/Tokens/TransactionsList'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import { RootState } from 'reduxStore/types'
+//import { RootState } from 'reduxStore/types'
 
 export type SingleCurrencyRouteProp = RouteProp<
   MainStackParams,
@@ -36,7 +36,7 @@ export type SingleCurrencyRouteProp = RouteProp<
 >
 
 export type SingleCurrencyScreenProps = {
-  readonly item: SelectSingleTokenData
+  readonly item: BalanceByChainResult
 }
 
 const SingleCurrency = () => {
@@ -87,9 +87,14 @@ const SingleCurrency = () => {
     refetchBalance()
   }, [refetchTransactions, refetchBalance])
 
-  const list = useSelector<RootState, readonly Transaction[]>((state) =>
-    selectTransactions(state, maybeAsset)
-  )
+  // TODO: how transactions
+  //const list = useSelector<RootState, readonly Transaction[]>((state) =>
+  //  selectTransactions(state, maybeAsset)
+  //)
+  const list = React.useMemo<readonly Transaction[]>(() => [], [])
+
+  // eslint-disable-next-line no-console
+  console.warn('not rendering transaction history!')
 
   const maybeData = React.useMemo(() => maybeBalance || {}, [maybeBalance])
 

@@ -1,12 +1,18 @@
-import React from 'react'
+import { BalanceByChainResult } from 'features/cryptoWallet'
+import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 import SwapIcon from 'assets/swap_icon.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-const convert = (number, mode, price) => {
-  let numberFloat = parseFloat(number)
+enum Format {
+  CRYPTO = 'crypto',
+  FIAT = 'fiat',
+}
+
+const convert = (value: `${number}`, mode: Format, price: number) => {
+  const numberFloat = parseFloat(value)
   if (numberFloat > 0) {
     return mode === 'fiat' ? numberFloat / price : numberFloat * price
   } else {
@@ -14,58 +20,82 @@ const convert = (number, mode, price) => {
   }
 }
 
-export default ({ onUpdateAmount, onUpdateValidation, token }) => {
-  const [number, onChangeNumber] = React.useState('0')
-  const [mode, onSwitchMode] = React.useState('crypto')
+const TokenCalculator = React.memo(function TokenCalculator({
+  autoFocus: maybeAutoFocus = false,
+  onUpdateAmount,
+  onUpdateValidation,
+  token,
+}: {
+  readonly autoFocus?: boolean
+  readonly onUpdateAmount: React.Dispatch<React.SetStateAction<number | null>>
+  readonly onUpdateValidation: React.Dispatch<React.SetStateAction<boolean>>
+  readonly token: BalanceByChainResult
+}): JSX.Element {
+  const [number, onChangeNumber] = React.useState<`${number}`>('0')
+  const [mode, onSwitchMode] = React.useState<Format>(Format.CRYPTO)
   const { symbol, price, quantity } = token
   const converted = convert(number, mode, price)
   const maxFiat = quantity * price
-  let maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity
+  const maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity
 
-  function updateAmount(num) {
+  const ref = React.useRef<TextInput>(null)
+
+  function updateAmount(num: `${number}`) {
     onChangeNumber(num)
-    onUpdateAmount(num)
-    let isValidAmount = parseFloat(num) <= parseFloat(maxNumber)
+    onUpdateAmount(parseFloat(num))
+    const isValidAmount = parseFloat(num) <= parseFloat(String(maxNumber))
     onUpdateValidation(isValidAmount)
   }
+
+  // HACK: For some reason the text input did not focus on its own.
+  React.useEffect(() => {
+    if (!maybeAutoFocus) return
+
+    setTimeout(() => ref?.current?.focus?.(), 10)
+  }, [ref, maybeAutoFocus])
 
   return (
     <View style={styles.bannerWrapper}>
       <TouchableOpacity
         onPress={() => {
-          updateAmount(maxNumber.toString())
+          updateAmount(maxNumber.toString() as `${number}`)
         }}
         style={styles.button}>
         <Text style={styles.maxButtonText}>Max</Text>
       </TouchableOpacity>
       <View style={styles.amountsWrapper}>
         <View style={styles.mainAmount}>
-          {mode === 'fiat' && <Text style={styles.amountText}>$</Text>}
+          {mode === Format.FIAT && <Text style={styles.amountText}>$</Text>}
           <TextInput
+            ref={ref}
             style={styles.amountInput}
-            onChangeText={(text) => {
-              updateAmount(text)
-            }}
+            onChangeText={(text) => updateAmount(text as `${number}`)}
             value={number}
+            keyboardType='numeric'
           />
-          {mode === 'crypto' && (
+          {mode === Format.CRYPTO && (
             <Text style={styles.amountText}> {symbol}</Text>
           )}
         </View>
         <Text style={styles.convertedAmount}>
-          ≈ {mode === 'crypto' ? `$${converted}` : `${converted} ${symbol}`}
+          {`≈ ${
+            mode === Format.CRYPTO ? `$${converted}` : `${converted} ${symbol}`
+          }`}
+          {}
         </Text>
       </View>
       <TouchableOpacity
         onPress={() => {
-          onSwitchMode(mode === 'fiat' ? 'crypto' : 'fiat')
+          onSwitchMode(mode === Format.FIAT ? Format.CRYPTO : Format.FIAT)
         }}
         style={styles.button}>
         <SwapIcon />
       </TouchableOpacity>
     </View>
   )
-}
+})
+
+export default TokenCalculator
 
 const styles = StyleSheet.create({
   bannerWrapper: {

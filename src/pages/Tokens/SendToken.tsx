@@ -1,9 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
-import { SelectSingleTokenData } from 'features/cryptoWallet'
+import { BalanceByChainResult } from 'features/cryptoWallet'
 import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
+import { ScrollView } from 'react-native-gesture-handler'
 
 import Button from 'components/Button'
 // import Text from 'components/Text'
@@ -20,14 +21,22 @@ const showAlert = () =>
 export type SendTokenRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
 export type SendTokenScreenProps = {
-  readonly token: SelectSingleTokenData
+  readonly token: BalanceByChainResult
 }
 
-export default () => {
+const SendToken = React.memo(function SendToken() {
   const navigation = useMainNavigation()
   const { token } = useParams<SendTokenScreenProps>()
   const [amount, onUpdateAmount] = React.useState<number | null>(null)
   const [amountValid, onUpdateValidation] = React.useState<boolean>(false)
+
+  const disabled = !amount || !amountValid
+
+  const onPress = React.useCallback(() => {
+    if (disabled || !amountValid) return showAlert()
+
+    navigation.navigate('TokenRecipient', { token, amount })
+  }, [amount, amountValid, disabled, navigation, token])
 
   return (
     <Container>
@@ -36,11 +45,12 @@ export default () => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={'Send ' + getTokenUnitName(token)}
+        title={`Send ${getTokenUnitName(token)}`}
       />
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View style={styles.content}>
           <TokenCalculator
+            autoFocus
             token={token}
             onUpdateAmount={onUpdateAmount}
             onUpdateValidation={onUpdateValidation}
@@ -50,21 +60,17 @@ export default () => {
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={Boolean(amount)}
-            onPress={() => {
-              if (amountValid) {
-                navigation.navigate('TokenRecipient', { token, amount })
-              } else {
-                showAlert()
-              }
-            }}>
+            disabled={disabled}
+            onPress={onPress}>
             Next
           </Button>
         </View>
-      </View>
+      </ScrollView>
     </Container>
   )
-}
+})
+
+export default SendToken
 
 const styles = StyleSheet.create({
   container: {

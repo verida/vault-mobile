@@ -1,4 +1,4 @@
-import { priceFormatter, SelectSingleTokenData } from 'features/cryptoWallet'
+import { BalanceByChainResult, priceFormatter } from 'features/cryptoWallet'
 import { getTokenUnitName } from 'features/token'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
@@ -11,8 +11,8 @@ export default ({
   item,
   onPressItem,
 }: {
-  readonly item: SelectSingleTokenData
-  readonly onPressItem: (item: SelectSingleTokenData) => void
+  readonly item: BalanceByChainResult
+  readonly onPressItem: (item: BalanceByChainResult) => void
 }) => {
   const { change, label, quantity, price, amount } = item
 

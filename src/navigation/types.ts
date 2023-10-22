@@ -27,11 +27,14 @@ import {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import { ConfirmTransactionScreenProps } from 'pages/Tokens/ConfirmTransaction'
 import { ReceiveTokenScreenProps } from 'pages/Tokens/ReceiveToken'
 import { SendTokenScreenProps } from 'pages/Tokens/SendToken'
 import { SingleCurrencyScreenProps } from 'pages/Tokens/SingleCurrency'
 import { TokenRecipientScreenProps } from 'pages/Tokens/TokenRecipient'
 import { TransactionDetailsScreenProps } from 'pages/Tokens/TransactionDetails'
+import { TransactionFailureScreenProps } from 'pages/Tokens/TransactionFailure'
+import { TransactionSuccessScreenProps } from 'pages/Tokens/TransactionSuccess'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
@@ -85,9 +88,9 @@ export type MainStackParams = {
   SingleCurrency: SingleCurrencyScreenProps
   SendToken: SendTokenScreenProps
   TokenRecipient: TokenRecipientScreenProps
-  ConfirmTransaction: undefined
-  TransactionSuccess: undefined
-  TransactionFailure: undefined
+  ConfirmTransaction: ConfirmTransactionScreenProps
+  TransactionSuccess: TransactionSuccessScreenProps
+  TransactionFailure: TransactionFailureScreenProps
   TransactionDetails: TransactionDetailsScreenProps
   BuyToken: undefined
   ReceiveToken: ReceiveTokenScreenProps

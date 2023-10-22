@@ -1,4 +1,4 @@
-import { AssetId, ChainId } from 'caip'
+import { AssetId } from 'caip'
 import { SupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainAccount, BlockchainNetwork } from 'api/types'
@@ -25,7 +25,11 @@ export type AssetQuote = {
   [currency: string]: { price: number; percent_change_24h?: number }
 }
 
-export type BasicTokenDataWithDecimal = BasicTokenData & { decimal: number }
+export type WithDecimal<T> = T & {
+  readonly decimal: number
+}
+
+export type BasicTokenDataWithDecimal = WithDecimal<BasicTokenData>
 
 export type BasicTokenDataWithQuote = BasicTokenDataWithDecimal & {
   quote: AssetQuote

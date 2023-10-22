@@ -1,4 +1,4 @@
-import { SelectSingleTokenData } from 'features/cryptoWallet/@types'
+import { BalanceByChainResult } from 'features/cryptoWallet/@types'
 import { Icon, List } from 'native-base'
 import React from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
@@ -14,8 +14,8 @@ const SendListModal = React.memo(function SendListModal({
 }: {
   readonly visible: boolean
   readonly hideModal: () => void
-  readonly list: readonly SelectSingleTokenData[] | undefined
-  readonly onPressItem: (item: SelectSingleTokenData) => void
+  readonly list: readonly BalanceByChainResult[]
+  readonly onPressItem: (item: BalanceByChainResult) => void
 }): JSX.Element {
   return (
     <Modal

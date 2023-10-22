@@ -1,14 +1,16 @@
 import { AssetId } from 'caip'
-import { BigNumber } from 'ethers'
+//import { BigNumber } from 'ethers'
 import {
   getBalancesData,
-  getTransactionsForTokenData,
-  getWalletAddressForAsset,
+  //getTransactionsForTokenData,
+  //getWalletAddressForAsset,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
-  tokenCaipObjectToString,
-  Transaction,
-  TransactionType,
+  //SentTransaction,
+  //tokenCaipObjectToString,
+  //Transaction,
+  //TransactionParamsData,
+  //TransactionType,
   WalletsData,
 } from 'features/cryptoWallet'
 import { isEmpty } from 'lodash'
@@ -134,74 +136,76 @@ export const getWalletObjectById = (state: RootState, id: string) => {
   return state.cryptoWallets.walletsData[id] || {}
 }
 
-// TODO: Replace with API data
-export const selectPendingTransactions = (
-  state: RootState,
-  assetID: AssetId
-) => {
-  const pendingTransactions = state.cryptoWallets.pendingTransactions.data
-  const transactionsForAsset = pendingTransactions?.filter((ele) => {
-    return (
-      tokenCaipObjectToString(ele.token.asset) ===
-      tokenCaipObjectToString(assetID)
-    )
-  })
-  if (transactionsForAsset) {
-    return transactionsForAsset
-  } else {
-    return []
-  }
-}
+//// TODO: Replace with API data
+//export const selectPendingTransactions = (
+//  state: RootState,
+//  assetID: AssetId
+//) => {
+//  const pendingTransactions = state.cryptoWallets.pendingTransactions.data
+//  const transactionsForAsset = pendingTransactions?.filter((ele) => {
+//    return (
+//      tokenCaipObjectToString(ele.token.asset) ===
+//      tokenCaipObjectToString(assetID)
+//    )
+//  })
+//  if (transactionsForAsset) {
+//    return transactionsForAsset
+//  } else {
+//    return []
+//  }
+//}
 
-export const selectTransactions = (
-  state: RootState,
-  assetID: AssetId | undefined
-): readonly Transaction[] => {
-  const wallets = getWalletsData(state)
-  const userAddress = getWalletAddressForAsset(assetID, wallets)
+//export const selectTransactions = (
+//  state: RootState,
+//  assetID: AssetId | undefined
+//): readonly Transaction[] => {
+//  const wallets = getWalletsData(state)
+//  const userAddress = getWalletAddressForAsset(assetID, wallets)
+//
+//  const transactions: Transaction[] =
+//    userAddress && assetID
+//      ? [...getTransactionsForTokenData(state, userAddress, assetID)]
+//      : []
+//
+//  const pendingTransactions = assetID
+//    ? selectPendingTransactions(state, assetID)
+//    : []
+//
+//  if (pendingTransactions.length > 0) {
+//    pendingTransactions.map((tx: any) => {
+//      // TODO: tx type
+//      const transactionCompleted = transactions.find((trans) => {
+//        return trans.id === tx.id
+//      })
+//      if (!transactionCompleted) {
+//        transactions.unshift({
+//          id: tx.id,
+//          type: TransactionType.SENT,
+//          address: tx.to,
+//          quantity: tx.amount,
+//          pending: true,
+//        })
+//      }
+//    })
+//  }
+//  return transactions
+//}
 
-  const transactions: Transaction[] =
-    userAddress && assetID
-      ? [...getTransactionsForTokenData(state, userAddress, assetID)]
-      : []
-
-  const pendingTransactions = assetID
-    ? selectPendingTransactions(state, assetID)
-    : []
-
-  if (pendingTransactions.length > 0) {
-    pendingTransactions.map((tx: any) => {
-      // TODO: tx type
-      const transactionCompleted = transactions.find((trans) => {
-        return trans.id === tx.id
-      })
-      if (!transactionCompleted) {
-        transactions.unshift({
-          id: tx.id,
-          type: TransactionType.SENT,
-          address: tx.to,
-          quantity: tx.amount,
-          pending: true,
-        })
-      }
-    })
-  }
-  return transactions
-}
-
-export const getTransactionParamsData = (state: RootState) =>
-  state.cryptoWallets.transactionParams.data || {}
-
-export const selectSentTransaction = (state: RootState) => {
-  const transaction = {
-    ...state.cryptoWallets.sentTransaction,
-    data: { ...state.cryptoWallets.sentTransaction.data },
-  }
-  if (transaction.data.amount) {
-    transaction.data.amount = BigNumber.from(transaction.data.amount)
-  }
-  return transaction
-}
+//export const getTransactionParamsData = (
+//  state: RootState
+//): TransactionParamsData => state.cryptoWallets.transactionParams.data || {}
+//
+//export const selectSentTransaction = (state: RootState): SentTransaction => {
+//  const transaction = {
+//    ...state.cryptoWallets.sentTransaction,
+//    data: { ...state.cryptoWallets.sentTransaction.data },
+//  }
+//
+//  if (transaction.data.amount)
+//    transaction.data.amount = BigNumber.from(transaction.data.amount)
+//
+//  return transaction
+//}
 
 export const selectNativeTokenBalance = (
   state: RootState,

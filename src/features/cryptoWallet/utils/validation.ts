@@ -50,12 +50,7 @@ export const isValidSeedPhrase = ({
     if (inputSwitch === 'privateKey') {
       // is valid evm compatible privateKey
       try {
-        const wallet = new ethers.Wallet(privateKey)
-        if (wallet && wallet.address) {
-          return true
-        } else {
-          return false
-        }
+        return Boolean(new ethers.Wallet(privateKey)?.address)
       } catch (err) {
         return false
       }

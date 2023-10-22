@@ -1,5 +1,6 @@
 import {
-  SelectSingleTokenData,
+  BalanceByChainResult,
+  isBalanceByChainResult,
   useWalletBannerBalance,
 } from 'features/cryptoWallet'
 import React, { useState } from 'react'
@@ -21,11 +22,19 @@ const TokenDashboard = React.memo(function TokenDashboard() {
 
   const {
     list: maybeList,
-    total,
+    total = 0,
     isLoading,
     isFetching,
     refetch: pullToRefresh,
   } = useWalletBannerBalance()
+
+  const list = React.useMemo<readonly BalanceByChainResult[]>(() => {
+    if (!maybeList) return []
+
+    return maybeList.flatMap((e) => (isBalanceByChainResult(e) ? [e] : []))
+  }, [maybeList])
+
+  const data = React.useMemo(() => ({ amount: total }), [total])
 
   return (
     <Container>
@@ -35,14 +44,10 @@ const TokenDashboard = React.memo(function TokenDashboard() {
         ) : (
           <View style={styles.contentContainer}>
             <TestnetWarning networkReference={null} />
-            <TokenBanner
-              data={{
-                amount: total || 0,
-              }}
-            />
+            <TokenBanner data={data} />
             <TokensList
-              list={maybeList}
-              onPressItem={(item) =>
+              list={list}
+              onPressItem={(item: BalanceByChainResult) =>
                 navigation.navigate('SingleCurrency', { item })
               }
               onPullToRefresh={() => pullToRefresh()}
@@ -51,8 +56,8 @@ const TokenDashboard = React.memo(function TokenDashboard() {
             <SendListModal
               visible={sendModalVisible}
               hideModal={() => setSendModalVisible(false)}
-              list={maybeList}
-              onPressItem={(token: SelectSingleTokenData) => {
+              list={list}
+              onPressItem={(token: BalanceByChainResult) => {
                 setSendModalVisible(false)
                 navigation.navigate('SendToken', { token })
               }}
