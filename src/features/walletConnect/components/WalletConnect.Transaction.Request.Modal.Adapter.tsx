@@ -23,9 +23,11 @@ import { useWalletConnectDataFormatting } from '../hooks'
 import { WalletConnectSessionInfoCard } from './WalletConnect.Session.InfoCard'
 import { WalletConnectTransactionRequestModalRow } from './WalletConnect.Transaction.Request.Modal.Row'
 
+const isAddEthereumChainRequest = (request: Web3WalletTypes.SessionRequest) =>
+  request?.params?.request?.method === Eip155RpcMethod.ADD_ETHEREUM_CHAIN
+
 const getTitleForRequest = (request: Web3WalletTypes.SessionRequest) => {
-  if (request?.params?.request?.method === Eip155RpcMethod.ADD_ETHEREUM_CHAIN)
-    return 'Add Network'
+  if (isAddEthereumChainRequest(request)) return 'Add Network'
 
   return 'Smart Contract Call'
 }
@@ -103,6 +105,10 @@ export const WalletConnectTransactionRequestModalAdapter = React.memo(
 
     if (!request) return <Text children='Missing request data' />
 
+    /// HACK: When requesting to add another network, it does not make sense
+    //        to render the current network.
+    const shouldRenderNetwork = !isAddEthereumChainRequest(request)
+
     return (
       <BottomActionsModal
         title={getTitleForRequest(request)}
@@ -124,7 +130,8 @@ export const WalletConnectTransactionRequestModalAdapter = React.memo(
               <Spacer height={12} />
 
               {typeof maybeChainName === 'string' &&
-                Boolean(maybeChainName.length) && (
+                Boolean(maybeChainName.length) &&
+                shouldRenderNetwork && (
                   <>
                     <WalletConnectTransactionRequestModalRow
                       left='Blockchain'

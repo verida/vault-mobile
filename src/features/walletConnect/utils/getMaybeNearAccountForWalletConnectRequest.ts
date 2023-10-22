@@ -14,40 +14,20 @@ import { keyStores, utils } from 'near-api-js'
 
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
 
-// https://docs.near.org/tools/near-api-js/quick-reference#key-store
-export async function getMaybeNearAccountForWalletConnectRequest({
+export async function getMaybeNearAccountForPrivateKey({
   chainMetadatas,
-  web3wallet,
-  request,
-  walletsData,
+  privateKey,
+  signerId,
+  caipChainId,
   rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
-  readonly web3wallet: IWeb3Wallet
-  readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly privateKey: string
+  readonly signerId: string
+  readonly caipChainId: ChainId
   readonly rpcSelector: RpcSelector
-}): Promise<NearAccount | undefined> {
-  const { params } = request
-
-  const caipChainId = new ChainId(params.chainId)
-
+}) {
   if (caipChainId.namespace !== SupportedCaipNamespace.NEAR) return undefined
-
-  throwIfNotNearTestnet(caipChainId)
-
-  const maybeVeridaWalletAccount =
-    getMaybeVeridaWalletAccountForWalletConnectRequest({
-      web3wallet,
-      request,
-      walletsData,
-    })
-
-  if (!maybeVeridaWalletAccount) return undefined
-
-  let { privateKey, address: signerId } = maybeVeridaWalletAccount
-  privateKey = privateKey!
-  signerId = signerId!
 
   const { reference } = caipChainId
 
@@ -91,6 +71,50 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   }
 
   return nearAccount
+}
+
+// https://docs.near.org/tools/near-api-js/quick-reference#key-store
+export async function getMaybeNearAccountForWalletConnectRequest({
+  chainMetadatas,
+  web3wallet,
+  request,
+  walletsData,
+  rpcSelector,
+}: {
+  readonly chainMetadatas: ChainMetadatas
+  readonly web3wallet: IWeb3Wallet
+  readonly request: Web3WalletTypes.EventArguments['session_request']
+  readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly rpcSelector: RpcSelector
+}): Promise<NearAccount | undefined> {
+  const { params } = request
+
+  const caipChainId = new ChainId(params.chainId)
+
+  if (caipChainId.namespace !== SupportedCaipNamespace.NEAR) return undefined
+
+  throwIfNotNearTestnet(caipChainId)
+
+  const maybeVeridaWalletAccount =
+    getMaybeVeridaWalletAccountForWalletConnectRequest({
+      web3wallet,
+      request,
+      walletsData,
+    })
+
+  if (!maybeVeridaWalletAccount) return undefined
+
+  let { privateKey, address: signerId } = maybeVeridaWalletAccount
+  privateKey = privateKey!
+  signerId = signerId!
+
+  return getMaybeNearAccountForPrivateKey({
+    caipChainId,
+    privateKey,
+    rpcSelector,
+    signerId,
+    chainMetadatas,
+  })
 }
 
 export async function getNearAccountForWalletConnectRequestOrThrow({

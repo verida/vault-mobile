@@ -1,9 +1,18 @@
+import { BN } from 'bn.js'
 import { ChainId, ChainIdParams } from 'caip'
 import { ethers } from 'ethers'
-import { useBlockchainContext } from 'features/blockchain'
-import { useBlockchainRequestHandlersEip155 } from 'features/blockchain/eip155'
-import { useBlockchainRequestHandlersNear } from 'features/blockchain/near'
 import {
+  BlockchainRequestHandlerCallback,
+  RpcSelector,
+  useBlockchainContext,
+} from 'features/blockchain'
+import { useBlockchainRequestHandlersEip155 } from 'features/blockchain/eip155'
+import {
+  NearAccountBundle,
+  useBlockchainRequestHandlersNear,
+} from 'features/blockchain/near'
+import {
+  ChainMetadatas,
   getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
   isSupportedCaipNamespace,
@@ -11,11 +20,17 @@ import {
   useChainMetadatas,
 } from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
+import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
+import {
+  providers as nearProviders,
+  transactions as nearTransactions,
+  utils as nearUtils,
+} from 'near-api-js'
 import * as React from 'react'
 
 import { useAppSelector } from 'reduxStore/types'
 
-import { BalanceByChainResult } from '../@types'
+import { BalanceByChainResult, MinifiedVeridaAccount } from '../@types'
 import { getWalletsData } from '../slice'
 import { getWalletAddressForAsset, isNativeToken } from '../utils'
 import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
@@ -31,6 +46,112 @@ type ConfirmNativeTransactionCallbackResult = boolean
 type ConfirmNativeTransactionCallback = (
   params: ConfirmNativeTransactionCallbackParams
 ) => Promise<ConfirmNativeTransactionCallbackResult>
+
+const sendBaseCurrencyEip155 = async ({
+  value,
+  to,
+  eth_sendTransaction,
+  minifiedVeridaAccount,
+  rpc,
+}: {
+  readonly to: string
+  readonly value: number
+  readonly eth_sendTransaction: BlockchainRequestHandlerCallback<ethers.Wallet>
+  readonly minifiedVeridaAccount: MinifiedVeridaAccount
+  readonly rpc: string
+}) => {
+  const { namespace } = minifiedVeridaAccount
+
+  if (namespace !== SupportedCaipNamespace.EIP_155)
+    throw new Error(
+      `Expected "${SupportedCaipNamespace.EIP_155}", encountered "${namespace}".`
+    )
+
+  const { privateKey } = minifiedVeridaAccount
+
+  const provider = new ethers.providers.JsonRpcProvider(rpc)
+
+  const maybeTransactionHash = await eth_sendTransaction({
+    context: new ethers.Wallet(privateKey, provider),
+    params: {
+      value: ethers.utils.parseEther(String(value)),
+      to,
+    },
+    // TODO: this should NOT be needed if we already have the provider... verify usage
+    rpcSelector: async () => rpc /* already_selected */,
+  })
+
+  if (typeof maybeTransactionHash !== 'string' || !maybeTransactionHash.length)
+    throw new Error(
+      `Expected non-empty string transactionHash, encountered "${String(
+        maybeTransactionHash
+      )}".`
+    )
+}
+
+const sendBaseCurrencyNear = async ({
+  chainMetadatas,
+  chainId: caipChainId,
+  to: receiverId,
+  value,
+  near_signAndSendTransaction,
+  rpc,
+  minifiedVeridaAccount,
+}: {
+  readonly chainMetadatas: ChainMetadatas
+  readonly chainId: ChainId
+  readonly to: string
+  readonly value: number
+  readonly near_signAndSendTransaction: BlockchainRequestHandlerCallback<NearAccountBundle>
+  readonly rpc: string
+  readonly minifiedVeridaAccount: MinifiedVeridaAccount
+}) => {
+  const { namespace } = minifiedVeridaAccount
+
+  if (namespace !== SupportedCaipNamespace.NEAR)
+    throw new Error(
+      `Expected "${SupportedCaipNamespace.NEAR}", encountered "${namespace}".`
+    )
+
+  const nearProvider = new nearProviders.JsonRpcProvider(rpc)
+
+  const amount = nearUtils.format.parseNearAmount(String(value))
+
+  if (typeof amount !== 'string' || !amount.length)
+    throw new Error(
+      `Expected non-empty string amount, encountered "${amount}".`
+    )
+
+  const { privateKey, address: signerId } = minifiedVeridaAccount
+
+  // TODO: this should NOT be needed if we already have the provider... verify usage
+  const rpcSelector: RpcSelector = async () => rpc
+
+  const maybeNearAccount = await getMaybeNearAccountForPrivateKey({
+    caipChainId,
+    privateKey,
+    signerId,
+    chainMetadatas,
+    rpcSelector,
+  })
+
+  if (!maybeNearAccount) throw new Error('Unable to find matching NearAccount.')
+
+  return near_signAndSendTransaction({
+    context: {
+      nearAccount: maybeNearAccount,
+      nearProvider,
+    },
+    params: {
+      transaction: {
+        actions: [nearTransactions.transfer(new BN(amount))],
+        receiverId,
+        signerId,
+      },
+    },
+    rpcSelector,
+  })
+}
 
 // Lazily sends a transaction of the native currency.
 // TODO: Use a more exciting ReturnType.
@@ -75,35 +196,47 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
           `Unable to find matching selected account for "${fromAddress}".`
         )
 
+      const chainId = new ChainId({ namespace, reference })
+
+      const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(
+        chainMetadatas,
+        chainId
+      )
+
+      const rpc = await rpcSelector(rpcUrls)
+
+      if (typeof rpc !== 'string' || !rpc.length)
+        throw new Error(`Expected non-empty string rpc, encounterd "${rpc}".`)
+
       switch (namespace) {
         case SupportedCaipNamespace.EIP_155:
-          const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(
-            chainMetadatas,
-            new ChainId({ namespace, reference })
-          )
+          const { eth_sendTransaction } = blockchainRequestHandlersEip155
 
-          const provider = new ethers.providers.JsonRpcProvider(
-            await rpcSelector(rpcUrls)
-          )
-
-          await blockchainRequestHandlersEip155.eth_sendTransaction({
-            context: new ethers.Wallet(
-              maybeMatchingAccount.privateKey,
-              provider
-            ),
-            params: {
-              value: ethers.utils.parseEther(String(amount)),
-              to: toAddress,
-            },
-            rpcSelector,
+          await sendBaseCurrencyEip155({
+            rpc,
+            value: amount,
+            to: toAddress,
+            minifiedVeridaAccount: maybeMatchingAccount,
+            eth_sendTransaction,
           })
 
           return true
 
         case SupportedCaipNamespace.NEAR:
-          // TODO: remember we need to wait for the transaction to be confirmed
-          // TODO: remember break
-          throw new Error('Not yet implemented!')
+          const { near_signAndSendTransaction } = blockchainRequestHandlersNear
+
+          await sendBaseCurrencyNear({
+            chainId,
+            chainMetadatas,
+            rpc,
+            value: amount,
+            to: toAddress,
+            minifiedVeridaAccount: maybeMatchingAccount,
+            near_signAndSendTransaction,
+          })
+
+          return true
+
         default:
           // TODO: Turn into a static compilation error.
           throw new Error(
