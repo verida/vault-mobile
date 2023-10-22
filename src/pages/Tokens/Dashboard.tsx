@@ -15,7 +15,7 @@ import { useMainNavigation } from 'navigation/hooks'
 
 import SendListModal from './SendListModal'
 
-const TokenDashboard = () => {
+const TokenDashboard = React.memo(function TokenDashboard() {
   const [sendModalVisible, setSendModalVisible] = useState(false)
   const navigation = useMainNavigation()
 
@@ -62,7 +62,7 @@ const TokenDashboard = () => {
       </ErrorBoundary>
     </Container>
   )
-}
+})
 
 const styles = StyleSheet.create({
   contentContainer: { flex: 1, marginTop: 10 },
