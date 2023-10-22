@@ -1,5 +1,7 @@
 import { AssetId } from 'caip'
 import * as ethers from 'ethers'
+import { SupportedCaipNamespace } from 'features/caip'
+import { Sentry } from 'features/telemetry'
 
 import { ImportedSeedPhrase } from '../@types'
 
@@ -19,11 +21,17 @@ export const isValidWalletAddress = (
 ) => {
   if (!asset) return false
 
-  switch (asset.chainId.namespace) {
-    case 'eip155':
+  const { namespace } = asset.chainId
+
+  switch (namespace) {
+    case SupportedCaipNamespace.EIP_155:
       return ethers.utils.isAddress(address)
-    case 'near':
+    case SupportedCaipNamespace.NEAR:
       return validateNearAddress(address)
+    default:
+      Sentry.captureException(
+        `[isValidWalletAddress]: Encountered unexpected namespace, "${namespace}".`
+      )
   }
 
   return false

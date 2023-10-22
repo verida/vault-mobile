@@ -1,4 +1,4 @@
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
 import { SupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainAccount, BlockchainNetwork } from 'api/types'
