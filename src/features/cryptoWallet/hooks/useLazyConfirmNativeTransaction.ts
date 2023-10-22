@@ -1,4 +1,6 @@
+import { ethers } from 'ethers'
 import { useBlockchainRequestHandlersEip155 } from 'features/blockchain/eip155'
+import { useBlockchainRequestHandlersNear } from 'features/blockchain/near'
 import { isSupportedCaipNamespace, SupportedCaipNamespace } from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
 import * as React from 'react'
@@ -33,8 +35,38 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
 
   const wallets = useAppSelector(getWalletsData)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const blockchainRequestHandlersEip155 = useBlockchainRequestHandlersEip155()
+  const blockchainRequestHandlersNear = useBlockchainRequestHandlersNear()
+
+  const executeBlockchainSpecificNativeTransactionOrThrow = React.useCallback(
+    async ({
+      amount,
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      toAddress,
+      namespace,
+    }: Omit<ConfirmNativeTransactionCallbackParams, 'token'> & {
+      readonly namespace: SupportedCaipNamespace
+    }): Promise<ConfirmNativeTransactionCallbackResult> => {
+      switch (namespace) {
+        case SupportedCaipNamespace.EIP_155:
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const amountOfEth = ethers.utils.parseEther(String(amount))
+          // TODO: remember we need to wait for the transaction to be confirmed
+          // TODO: remember break
+          throw new Error('Not yet implemented!')
+        case SupportedCaipNamespace.NEAR:
+          // TODO: remember we need to wait for the transaction to be confirmed
+          // TODO: remember break
+          throw new Error('Not yet implemented!')
+        default:
+          // TODO: Turn into a static compilation error.
+          throw new Error(
+            `Internal error: Namespace ${namespace} is not supported.`
+          )
+      }
+    },
+    [blockchainRequestHandlersEip155, blockchainRequestHandlersNear]
+  )
 
   //if (result.meta.requestStatus === 'rejected')
   //  throw new Error(String(result.payload))
@@ -42,9 +74,7 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
   const confirmNativeTransaction: ConfirmNativeTransactionCallback =
     React.useCallback(
       async ({
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         amount,
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
         toAddress,
         token,
       }: ConfirmNativeTransactionCallbackParams): Promise<boolean> => {
@@ -76,23 +106,17 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
 
           setState({ loading: true })
 
-          // TODO: here we need to delegate to blockchain-specific hooks
+          const result =
+            await executeBlockchainSpecificNativeTransactionOrThrow({
+              namespace,
+              amount,
+              toAddress,
+            })
 
-          switch (namespace) {
-            case SupportedCaipNamespace.EIP_155:
-              // TODO: remember we need to wait for the transaction to be confirmed
-              // TODO: remember break
-              throw new Error('Not yet implemented!')
-            case SupportedCaipNamespace.NEAR:
-              // TODO: remember we need to wait for the transaction to be confirmed
-              // TODO: remember break
-              throw new Error('Not yet implemented!')
-            default:
-              // TODO: Turn into a static compilation error.
-              throw new Error(
-                `Internal error: Namespace ${namespace} is not supported.`
-              )
-          }
+          // TODO: we need to tell if the transaction was successfully mined or not
+          setState({ loading: false, result })
+
+          return result
         } catch (cause) {
           // eslint-disable-next-line no-console
           __DEV__ && console.error(cause)
@@ -107,7 +131,7 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
           throw cause
         }
       },
-      [wallets, state]
+      [state, wallets, executeBlockchainSpecificNativeTransactionOrThrow]
     )
 
   return { ...state, confirmNativeTransaction }

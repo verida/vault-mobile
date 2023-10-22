@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 import { BlockchainRequestHandlers } from 'features/blockchain/@types'
-import { keyStores, transactions } from 'near-api-js'
+import { keyStores, providers, transactions } from 'near-api-js'
 
 export type NearAccountPointer = {
   readonly publicKey: string
@@ -34,10 +34,10 @@ export interface NearTransaction {
 
 export type NearAccountBundle = {
   readonly nearAccount: NearAccount
-  readonly nearAccountPointers: readonly NearAccountPointer[]
+  readonly nearProvider: providers.JsonRpcProvider
 }
 
-export type BlockchainRequestHandlersEip155 = BlockchainRequestHandlers<
+export type BlockchainRequestHandlersNear = BlockchainRequestHandlers<
   NearRpcMethod,
   NearAccountBundle
 >
