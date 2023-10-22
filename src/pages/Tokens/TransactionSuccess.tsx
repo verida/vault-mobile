@@ -1,10 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
 import {
   BalanceByChainResult,
-  formatTokenQuantity,
-  getSupportedTokenObjectDecimals,
+  //formatTokenQuantity,
+  //getSupportedTokenObjectDecimals,
   //selectSentTransaction,
-  useMaybeBlockchainNetwork,
+  //useMaybeBlockchainNetwork,
 } from 'features/cryptoWallet'
 import React from 'react'
 
@@ -35,18 +35,18 @@ const TransactionSuccess = React.memo(
     //const { data } = sentTransaction
     const titleText = 'Success!'
 
-    const maybeBlockchainNetwork = useMaybeBlockchainNetwork(
-      token.asset.chainId
-    )
+    //const maybeBlockchainNetwork = useMaybeBlockchainNetwork(
+    //  token.asset.chainId
+    //)
 
-    const decimals = getSupportedTokenObjectDecimals(
-      token.token,
-      maybeBlockchainNetwork
-    )
+    //const decimals = getSupportedTokenObjectDecimals(
+    //  token.token,
+    //  maybeBlockchainNetwork
+    //)
 
-    const transferQuantity = formatTokenQuantity(amount, decimals)
+    //const transferQuantity = formatTokenQuantity(amount, decimals)
 
-    const descriptionText = `${transferQuantity} ${token.symbol} sent to ${toAddress}`
+    const descriptionText = `You sent ${amount} ${token.symbol} to ${toAddress}.`
     const buttonLabel = 'Done'
 
     return (
@@ -64,15 +64,3 @@ const TransactionSuccess = React.memo(
 )
 
 export default TransactionSuccess
-
-//const mapStateToProps = (state) => {
-//  return {
-//    sentTransaction: selectSentTransaction(state),
-//  }
-//}
-//
-//const mapDispatchToProps = () => {
-//  return {}
-//}
-//
-//export default connect(mapStateToProps, mapDispatchToProps)(TransactionSuccess)

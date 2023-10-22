@@ -47,9 +47,9 @@ export const formatTokenQuantity = (
   fixed = 3
 ) => {
   const finalQuantity = handleTokenDecimals(quantity, decimalPlaces)
-  if (!finalQuantity) {
-    return '-'
-  }
+
+  if (!finalQuantity) return '-'
+
   return finalQuantity.toFixed(fixed)
 }
 

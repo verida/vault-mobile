@@ -1,3 +1,5 @@
+import { ethers } from 'ethers'
+import { BlockchainRequestHandlers } from 'features/blockchain/@types'
 import { z } from 'zod'
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-v2/src/data/EIP155Data.ts#L95
@@ -81,3 +83,8 @@ export type ChainsListItem = z.infer<typeof ChainListItem>
 export const ChainsList = z.array(ChainListItem).nonempty()
 
 export type ChainsList = z.infer<typeof ChainsList>
+
+export type BlockchainRequestHandlersEip155 = BlockchainRequestHandlers<
+  Eip155RpcMethod,
+  ethers.Wallet
+>

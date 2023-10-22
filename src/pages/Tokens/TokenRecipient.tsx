@@ -41,8 +41,6 @@ const TokenRecipient = () => {
   const navigation = useMainNavigation()
   const { token, amount: amount } = useParams<TokenRecipientScreenProps>()
 
-  const [address, setAddress] = useState<string>('')
-
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
     setAddress(clipboardData)
@@ -57,25 +55,30 @@ const TokenRecipient = () => {
     })
   }
 
-  const onPressSend = React.useCallback(async () => {
-    const showGenericFailure = (reason: string) =>
-      Alert.alert('Unable to Send', reason)
+  const onPressSend = React.useCallback(
+    async (toAddress: string) => {
+      const showGenericFailure = (reason: string) =>
+        Alert.alert('Unable to Send', reason)
 
-    if (!isBalanceByChainResult(token))
-      return showGenericFailure('An internal error occurred.')
+      if (!isBalanceByChainResult(token))
+        return showGenericFailure('An internal error occurred.')
 
-    try {
-      navigation.navigate('ConfirmTransaction', {
-        amount,
-        token,
-        toAddress: address,
-      })
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.error(e)
-      showGenericFailure(String(e))
-    }
-  }, [token, address, navigation, amount])
+      try {
+        navigation.navigate('ConfirmTransaction', {
+          amount,
+          token,
+          toAddress,
+        })
+      } catch (e) {
+        // eslint-disable-next-line no-console
+        console.error(e)
+        showGenericFailure(String(e))
+      }
+    },
+    [token, navigation, amount]
+  )
+
+  const [address, setAddress] = useState<string>('')
 
   const disabled = !isValidWalletAddress(address, token.asset)
 
@@ -114,6 +117,17 @@ const TokenRecipient = () => {
               <Icon name='clipboard' style={styles.actionButtonIcon} />
               <Text style={styles.actionButtonText}>Paste</Text>
             </TouchableOpacity>
+            {Boolean(__DEV__) && (
+              <TouchableOpacity
+                onPress={() =>
+                  // TODO: Compute a chain-specific random address.
+                  onPressSend('0xf74f91fF41565F48FA386CD04E7bA683ef6a4315')
+                }
+                style={styles.actionButton}>
+                <Icon name='rocket' style={styles.actionButtonIcon} />
+                <Text style={styles.actionButtonText}>Random Address</Text>
+              </TouchableOpacity>
+            )}
           </View>
         </View>
         <View style={styles.footer}>
@@ -121,7 +135,7 @@ const TokenRecipient = () => {
             style={styles.nextButton}
             color='primary'
             disabled={disabled}
-            onPress={onPressSend}>
+            onPress={() => onPressSend(address)}>
             Next
           </Button>
         </View>

@@ -116,6 +116,13 @@ export const WalletConnectTransactionRequestModalAdapter = React.memo(
               <WalletConnectSessionInfoCard peerMetadata={maybePeerMetadata} />
               <Spacer height={16} />
 
+              <WalletConnectTransactionRequestModalRow
+                left={'Method'}
+                right={request.params.request.method}
+              />
+
+              <Spacer height={12} />
+
               {typeof maybeChainName === 'string' &&
                 Boolean(maybeChainName.length) && (
                   <>
@@ -140,13 +147,6 @@ export const WalletConnectTransactionRequestModalAdapter = React.memo(
               <WalletConnectTransactionRequestModalRow
                 left='Data'
                 right={formatTransactionData({ request })}
-              />
-
-              <Spacer height={12} />
-
-              <WalletConnectTransactionRequestModalRow
-                left={'Method'}
-                right={request.params.request.method}
               />
 
               <Spacer height={48} />
