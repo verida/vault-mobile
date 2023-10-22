@@ -1,3 +1,4 @@
+import { SelectSingleTokenData } from 'features/cryptoWallet/@types'
 import { Icon, List } from 'native-base'
 import React from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
@@ -5,7 +6,17 @@ import { Modal, StyleSheet, TextInput, View } from 'react-native'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokensList from 'components/Tokens/TokensList'
 
-export default ({ visible, hideModal, list, onPressItem }) => {
+const SendListModal = React.memo(function SendListModal({
+  visible,
+  hideModal,
+  list,
+  onPressItem,
+}: {
+  readonly visible: boolean
+  readonly hideModal: () => void
+  readonly list: readonly SelectSingleTokenData[] | undefined
+  readonly onPressItem: (item: SelectSingleTokenData) => void
+}): JSX.Element {
   return (
     <Modal
       presentationStyle='pageSheet'
@@ -29,7 +40,9 @@ export default ({ visible, hideModal, list, onPressItem }) => {
       </View>
     </Modal>
   )
-}
+})
+
+export default SendListModal
 
 const styles = StyleSheet.create({
   container: {

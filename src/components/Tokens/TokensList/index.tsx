@@ -9,16 +9,18 @@ import { FlatList } from 'react-native'
 
 import TokensListItem from './TokensListItem'
 
+const defaultOnPullToRefresh = () => undefined
+
 const TokensList = React.memo(function TokensList({
   list: maybeList,
   onPressItem,
-  onPullToRefresh,
-  refreshing,
+  onPullToRefresh = defaultOnPullToRefresh,
+  refreshing = false,
 }: {
   readonly list: readonly SelectSingleTokenData[] | undefined
-  readonly onPullToRefresh: () => void
+  readonly onPullToRefresh?: () => void
   readonly onPressItem: (item: SelectSingleTokenData) => void
-  readonly refreshing: boolean
+  readonly refreshing?: boolean
 }): JSX.Element {
   return (
     <FlatList
