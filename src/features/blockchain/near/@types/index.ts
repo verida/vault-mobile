@@ -1,4 +1,5 @@
 import { ChainId } from 'caip'
+import { BlockchainRequestHandlers } from 'features/blockchain/@types'
 import { keyStores, transactions } from 'near-api-js'
 
 export type NearAccountPointer = {
@@ -30,3 +31,13 @@ export interface NearTransaction {
   receiverId: string
   actions: NearTransactionActions
 }
+
+export type NearAccountBundle = {
+  readonly nearAccount: NearAccount
+  readonly nearAccountPointers: readonly NearAccountPointer[]
+}
+
+export type BlockchainRequestHandlersEip155 = BlockchainRequestHandlers<
+  NearRpcMethod,
+  NearAccountBundle
+>

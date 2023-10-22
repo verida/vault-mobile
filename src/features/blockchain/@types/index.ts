@@ -1,16 +1,19 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { RpcSelector } from 'features/walletConnect'
 
-export type BlockchainRequestHandlerCallbackParams<Wallet> = {
+export type BlockchainRequestHandlerCallbackParams<Context> = {
   readonly rpcSelector: RpcSelector
   readonly params: Web3WalletTypes.EventArguments['session_request']['params']['request']['params']
-  readonly wallet: Wallet
+  readonly context: Context
 }
 
-export type BlockchainRequestHandlerCallback<Wallet> = (
-  params: BlockchainRequestHandlerCallbackParams<Wallet>
+export type BlockchainRequestHandlerCallback<Context> = (
+  params: BlockchainRequestHandlerCallbackParams<Context>
 ) => Promise<unknown>
 
-export type BlockchainRequestHandlers<T extends string | number | symbol, W> = {
-  readonly [key in T]: BlockchainRequestHandlerCallback<W>
+export type BlockchainRequestHandlers<
+  T extends string | number | symbol,
+  Context
+> = {
+  readonly [key in T]: BlockchainRequestHandlerCallback<Context>
 }

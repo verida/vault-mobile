@@ -97,16 +97,29 @@ export function useBlockchainRequestHandlersEip155(): BlockchainRequestHandlersE
           addEthereumChainRequestParamsToChainMetadatas(result.data)
         ) /* Promise<[...allCustomNetworks]> */
       },
-      [Eip155RpcMethod.PERSONAL_SIGN]: async (args) => shouldSignMessage(args),
-      [Eip155RpcMethod.ETH_SIGN]: async (args) => shouldSignMessage(args),
-      [Eip155RpcMethod.ETH_SIGN_TRANSACTION]: async ({ params, wallet }) =>
-        wallet.signTransaction(params[0]),
-      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA]: async (args) =>
-        shouldSignTypedData(args),
-      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V3]: async (args) =>
-        shouldSignTypedData(args),
-      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V4]: async (args) =>
-        shouldSignTypedData(args),
+      [Eip155RpcMethod.PERSONAL_SIGN]: async ({ context: wallet, params }) =>
+        shouldSignMessage({ wallet, params }),
+      [Eip155RpcMethod.ETH_SIGN]: async ({ context: wallet, params }) =>
+        shouldSignMessage({
+          wallet,
+          params,
+        }),
+      [Eip155RpcMethod.ETH_SIGN_TRANSACTION]: async ({
+        params,
+        context: wallet,
+      }) => wallet.signTransaction(params[0]),
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA]: async ({
+        context: wallet,
+        params,
+      }) => shouldSignTypedData({ wallet, params }),
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V3]: async ({
+        context: wallet,
+        params,
+      }) => shouldSignTypedData({ wallet, params }),
+      [Eip155RpcMethod.ETH_SIGN_TYPED_DATA_V4]: async ({
+        context: wallet,
+        params,
+      }) => shouldSignTypedData({ wallet, params }),
       [Eip155RpcMethod.ETH_SEND_RAW_TRANSACTION]: async () => {
         // For some reason, WalletConnect have not provided an implementation of send raw transaction.
         // We'll follow suit here in case there's an important reason why.
@@ -115,7 +128,10 @@ export function useBlockchainRequestHandlersEip155(): BlockchainRequestHandlersE
           `"${Eip155RpcMethod.ETH_SEND_RAW_TRANSACTION}" is not yet supported.`
         )
       },
-      [Eip155RpcMethod.ETH_SEND_TRANSACTION]: async ({ wallet, params }) => {
+      [Eip155RpcMethod.ETH_SEND_TRANSACTION]: async ({
+        context: wallet,
+        params,
+      }) => {
         const transactionToSend = await adjustTransactionData({
           transaction: params[0],
         })

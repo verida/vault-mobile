@@ -65,7 +65,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
             web3wallet,
           }: WalletConnectSessionRequestCallbackParams) =>
             blockchainRequestHandlersEip155[method]({
-              wallet: getEthereumWalletOrThrow({
+              context: getEthereumWalletOrThrow({
                 rpc: await extractWalletConnectRpcOrThrow({
                   chainMetadatas,
                   request,
