@@ -15,20 +15,28 @@ import {
   getTransactionParamsData,
   priceFormatter,
   selectSingleTokenData,
+  sendTransaction,
+  SentTransaction,
+  TransactionData,
 } from 'features/cryptoWallet'
 import { getProtocolLabel, getProtocolLogo, Protocol } from 'features/protocols'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect, useRef, useState } from 'react'
-import { ScrollView, StatusBar, StyleSheet, Text, View } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import {
+  Linking,
+  ScrollView,
+  StatusBar,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import { useDispatch } from 'react-redux'
-import { wait } from 'utils'
 
 import Button from 'components/Button'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 const logger = new Logger('PaymentRequestScreen')
@@ -56,13 +64,15 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const transactionParamCalledRef = useRef(false)
     const [processing, setProcessing] = useState(false)
     const [error, setError] = useState(false)
-    const [erroMessage, setErrorMessage] = useState<string | undefined>()
+    // const [erroMessage, setErrorMessage] = useState<string | undefined>()
     const [success, setSuccess] = useState(false)
+    const [sentTransaction, setSentTransaction] =
+      useState<SentTransaction | null>(null)
     const [detailsOpen, setDetailsOpen] = useState(false)
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 
-    const dispatch = useDispatch()
+    const dispatch = useAppDispatch()
 
     // FIXME: NEAR native token is not recognised
     // `data.asset`, when native token, comes from the blockchain network definition (where NEAR slip44Reference is 397).
@@ -86,16 +96,35 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const selectedWallet = useAppSelector((state) =>
       getSelectedWalletById(state)
     )
-    // TODO: Check selectedWallet is defined
-    const account = selectedWallet.accounts[data.blockchainNetwork.chainId]
+
+    const account = selectedWallet?.accounts[data.blockchainNetwork.chainId]
 
     const transactionParams = useAppSelector((state) =>
       getTransactionParamsData(state)
     )
+
+    const amount = asset?.token.decimal
+      ? data.amount / Math.pow(10, asset.token.decimal)
+      : null
+
     // Get the estimated fee in the native asset
     const estimatedFee = transactionParams?.fee
       ? transactionParams?.fee / Math.pow(10, data.blockchainNetwork.decimal)
       : undefined
+
+    const transactionData: TransactionData | null = useMemo(() => {
+      if (!asset || !amount || !data.recipientAccount.address) {
+        return null
+      }
+
+      return {
+        token: asset,
+        amount: String(amount),
+        address: data.recipientAccount.address,
+      }
+    }, [asset, amount, data.recipientAccount.address])
+
+    const isReady = !!transactionParams && !!transactionData
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)
@@ -106,28 +135,50 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     }, [navigation])
 
     const handlePay = useCallback(async () => {
+      if (!transactionData) {
+        return
+      }
+
       setProcessing(true)
-      await wait(2000)
-      setSuccess(true)
-      setProcessing(false)
+      try {
+        const result = await dispatch(
+          sendTransaction({
+            transactionData,
+          })
+        )
+        setProcessing(false)
+        if (result.meta.requestStatus === 'rejected') {
+          setError(true)
+          // setErrorMessage(result.meta.requestError.message)
+          return
+        }
+        setSentTransaction(result.payload as SentTransaction) // TODO: Have to type 'sendTransaction' to avoid this assertion
+        setSuccess(true)
+      } catch (cause: unknown) {
+        logger.error(cause)
+        setProcessing(false)
+        setError(true)
+      }
       // TODO: Handle the case where the user closes the screen before the request is processed
-    }, [])
+    }, [dispatch, transactionData])
+
+    const handleViewInExplorer = useCallback(() => {
+      if (!sentTransaction?.id) {
+        return
+      }
+      const url = `${data.blockchainNetwork.explorerURL}/tx/${sentTransaction?.id}`
+      Linking.openURL(url)
+    }, [data.blockchainNetwork.explorerURL, sentTransaction])
 
     // Call Wallet Provider to get the transaction params
     useEffect(() => {
-      if (!asset || transactionParamCalledRef.current) {
+      if (!transactionData || transactionParamCalledRef.current) {
         return
       }
       logger.debug('Calling getTransactionParams')
-      dispatch(
-        getTransactionParams({
-          token: asset,
-          amount: String(data.amount),
-          address: data.recipientAccount.address,
-        })
-      )
+      dispatch(getTransactionParams(transactionData))
       transactionParamCalledRef.current = true
-    }, [dispatch, transactionParams, asset, data])
+    }, [dispatch, transactionParams, transactionData, asset])
 
     // Set the content of the screen header
     useEffect(() => {
@@ -205,19 +256,14 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     {details.message}
                   </RequestMessage>
                 ) : null}
-                {asset ? (
+                {asset && amount ? (
                   <>
                     <RequestPaymentValue
-                      assetAmount={String(
-                        data.amount / Math.pow(10, asset.token.decimal)
-                      )}
+                      assetAmount={String(amount)}
                       assetSymbol={asset.symbol}
                       assetLogo={asset.token.icon}
                       formattedAssetPrice={priceFormatter(asset.price)}
-                      formattedFiatValue={priceFormatter(
-                        (asset.price * data.amount) /
-                          Math.pow(10, asset.token.decimal)
-                      )}
+                      formattedFiatValue={priceFormatter(asset.price * amount)}
                       chainLabel={data.blockchainNetwork.label}
                       chainLogo={data.blockchainNetwork.icon}
                       style={styles.valueContainer}
@@ -248,8 +294,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                         )} ${asset.symbol}`}
                         alertType='error'
                         alertContent={
-                          asset.balance <
-                          data.amount / Math.pow(10, asset.token.decimal)
+                          asset.balance < amount
                             ? 'Insufficient funds'
                             : undefined
                         }
@@ -259,33 +304,51 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                   </>
                 ) : (
                   <View>
+                    {/* TODO: Handle unsupported case */}
                     <Text>Requested asset not found</Text>
                   </View>
                 )}
-                {/* TODO: Add wallet */}
               </>
             ) : (
               // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
-              <StatusInfo
-                style={styles.statusContainer}
-                statusType={
-                  processing ? 'processsing' : success ? 'success' : 'error'
-                }
-                title={
-                  processing
-                    ? 'Processing payment...'
-                    : success
-                    ? 'Success!'
-                    : 'Error!'
-                }
-                subtitle={
-                  processing
-                    ? 'Please wait a moment, we are transfering your payment.'
-                    : success
-                    ? `You have successfully paid ${name}!`
-                    : erroMessage || 'Something went wrong. Try again later.'
-                }
-              />
+              <>
+                <StatusInfo
+                  style={styles.statusContainer}
+                  statusType={
+                    processing ? 'processsing' : success ? 'success' : 'error'
+                  }
+                  title={
+                    processing
+                      ? 'Processing payment...'
+                      : success
+                      ? 'Success!'
+                      : 'Error!'
+                  }
+                  subtitle={
+                    processing
+                      ? 'Please wait a moment, we are transfering your payment.'
+                      : success
+                      ? asset && amount
+                        ? `${String(amount)} ${asset.symbol} (${priceFormatter(
+                            asset.price * amount
+                          )}) has been sent to ${name}!`
+                        : `Payment sent to ${name}!`
+                      : // : erroMessage || 'Something went wrong. Try again later.' // TODO: Try to display a useful message to users
+                        'Something went wrong. Try again later.'
+                  }
+                />
+                {sentTransaction && success ? (
+                  <View style={styles.viewInExplorerButtonWrapper}>
+                    <Button
+                      onPress={handleViewInExplorer}
+                      color='grey'
+                      disabled={processing}
+                      style={[styles.actionButton]}>
+                      View in Blockchain Explorer
+                    </Button>
+                  </View>
+                ) : null}
+              </>
             )}
           </ScrollView>
 
@@ -312,7 +375,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                   </Button>
                   <Button
                     onPress={handlePay}
-                    disabled={processing}
+                    disabled={processing || !isReady}
                     style={[styles.actionButton, styles.ml]}>
                     Pay
                   </Button>
@@ -356,6 +419,9 @@ const createStyles = (theme: Theme) =>
     },
     statusContainer: {
       marginTop: 104,
+    },
+    viewInExplorerButtonWrapper: {
+      marginTop: theme.spacing.l,
     },
     footer: {
       backgroundColor: theme.color.background,

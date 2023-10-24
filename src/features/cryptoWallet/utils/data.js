@@ -142,6 +142,11 @@ const sendTransaction = async (
   let txData
   let txIdAlgo
 
+  const transactionParams = getTransactionParamsData(state)
+  if (!transactionParams) {
+    throw new Error('Transaction params missing')
+  }
+
   if (blockchainNetwork.asset.chainId.namespace === 'near') {
     const nearAmount = nearAPI.utils.format.parseNearAmount(
       transactionData.amount
@@ -149,8 +154,6 @@ const sendTransaction = async (
     const prvtKey = chainWallet.privateKey.replace('ed25519:', '')
     const keyPair = nearAPI.utils.key_pair.KeyPairEd25519.fromString(prvtKey)
     const publicKey = keyPair.getPublicKey()
-
-    let transactionParams = getTransactionParamsData(state)
 
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
@@ -222,8 +225,6 @@ const sendTransaction = async (
       chain: blockchainNetwork,
     }
   } else if (blockchainNetwork.asset.chainId.namespace === 'eip155') {
-    let transactionParams = getTransactionParamsData(state)
-
     const request = await walletProviderApi.post('transaction/nonce', {
       userAddress: chainWallet.address,
       asset: transactionData.token.asset,
