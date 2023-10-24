@@ -1,6 +1,7 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
 import {
+  AssetWithBalance,
   getBalancesData,
   getTransactionsForTokenData,
   getWalletAddressForAsset,
@@ -12,7 +13,10 @@ import { createSelector } from 'reselect'
 import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import { RootState } from 'reduxStore/types'
 
-export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
+export const selectSingleTokenData = (
+  state: RootState,
+  asset: AssetId
+): AssetWithBalance | null => {
   const selectedWallet = getSelectedWalletById(state)
   const addresses = getUniqueWalletAddresses(selectedWallet)
   const { list } = getBalancesData(state, addresses)

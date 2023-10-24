@@ -55,22 +55,38 @@ export type SupportedTokenObject = BasicTokenDataWithQuote & {
   referenceLabel?: string
 }
 
+export type AssetWithBalance = {
+  symbol: string
+  balance: number
+  amount: number
+  asset: AssetId
+  quote: AssetQuote
+  token: SupportedTokenObject
+
+  // Derived fields
+  label: string
+  price: number
+  change: number | undefined
+  quantity: number
+}
+
 export interface BalanceByChain {
   totalBalance: number
-  results: Array<{
-    symbol: string
-    balance: number
-    amount: number
-    asset: AssetId
-    quote: AssetQuote
-    token: SupportedTokenObject
+  results: Array<AssetWithBalance>
+}
 
-    // Derived fields
-    label: string
-    price: number
-    change: number | undefined
-    quantity: number
-  }>
+export type TransactionData = {
+  token: AssetWithBalance // TODO: Just need a subset, just the Asset metadata
+  amount: string
+  address: string
+}
+
+export type SentTransaction = {
+  id: string
+  amount: string
+  to: string
+  from: string
+  chain: BlockchainNetwork
 }
 
 export interface Transaction {

@@ -3,6 +3,7 @@ import {
   getAllWallets,
   getSelectedWalletId,
   getWalletsData,
+  TransactionData,
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
@@ -18,7 +19,7 @@ import { saveUserWallets, setSelectedWallet } from './'
 
 export const getTransactionParams = createAppAsyncThunk(
   'wallets/getTransactionParams',
-  async (transactionData: any, { getState, rejectWithValue }) => {
+  async (transactionData: TransactionData, { getState, rejectWithValue }) => {
     const wallets = getWalletsData(getState())
     try {
       const params = await dataHelper.getTransactionParams(
@@ -41,7 +42,10 @@ export const sendTransaction = createAppAsyncThunk(
     {
       transactionData,
       isAssetEnablingTransaction,
-    }: { transactionData: any; isAssetEnablingTransaction: boolean },
+    }: {
+      transactionData: TransactionData
+      isAssetEnablingTransaction?: boolean
+    },
     { getState, rejectWithValue }
   ) => {
     const state = getState()
