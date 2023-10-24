@@ -149,6 +149,14 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
         setProcessing(false)
         if (result.meta.requestStatus === 'rejected') {
           setError(true)
+          logger.error(
+            new Error('Crypto payment failed', {
+              cause:
+                typeof result.payload === 'string'
+                  ? new Error(result.payload)
+                  : undefined,
+            })
+          )
           // setErrorMessage(result.meta.requestError.message)
           return
         }

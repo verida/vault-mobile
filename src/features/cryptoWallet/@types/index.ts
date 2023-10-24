@@ -4,13 +4,21 @@ import { BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
 
 export type CryptoWalletRequestAction = 'pay'
+export type CryptoWalletRequestFunction = 'transfer'
+
+export type CryptoWalletRequestParams = {
+  value?: string
+  uint256?: string
+  address?: string
+}
 
 export type CryptoWalletRawRequest = {
   chainNamespace: string
   chainReference: string
   action: CryptoWalletRequestAction
   address: string
-  params: Record<string, unknown>
+  function?: CryptoWalletRequestFunction
+  params: CryptoWalletRequestParams
 }
 
 export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {

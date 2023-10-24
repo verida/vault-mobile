@@ -1,4 +1,4 @@
-import { AccountId, ChainId } from 'caip'
+import { AccountId, AssetId, ChainId } from 'caip'
 import { isSupportedCaipNamespace } from 'features/caip'
 import {
   CryptoWalletRawRequest,
@@ -43,10 +43,12 @@ export function parseCryptoRequestQrCode(qrCodeMessage: string) {
 }
 
 function parseCryptoRequest(url: string): CryptoWalletRawRequest {
-  // TODO: Extract transfers and additional params
+  // <namespace>:[<prefix>-]<address>[@<chainId>][/<function>][?<params>]
+
+  //eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18
 
   const regex =
-    /^(?<namespace>\w+):(?<prefix>\w+-)?(?<address>\w+)@?(?<chainId>\w+)?\??(?<params>.+)?$/
+    /^(?<namespace>\w+):(?<prefix>\w+-)?(?<address>\w+)@?(?<chainId>\w+)?\/?(?<functionName>\w+)?\??(?<params>.+)?$/
 
   const match = url.match(regex)
 
@@ -55,7 +57,7 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
   }
 
   // Not extracting the prefix yet as it's only 'pay' for the now
-  const { namespace, address, chainId, params } = match.groups!
+  const { namespace, address, chainId, functionName, params } = match.groups!
 
   if (!namespace) {
     throw new Error('Crypto request is missing the blockchain namespace')
@@ -88,6 +90,7 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
     chainReference,
     action: 'pay',
     address,
+    function: functionName === 'transfer' ? 'transfer' : undefined,
     params: params ? Object.fromEntries(new URLSearchParams(params)) : {},
   }
 
@@ -118,14 +121,28 @@ export function processCryptoRequest(
 
   const nativeAsset = blockchainNetwork.asset
 
-  const asset = nativeAsset // TODO: support other assets from the request
+  const asset =
+    request.function === 'transfer' && request.params.address
+      ? new AssetId({
+          chainId: chain,
+          assetName: {
+            namespace: chain.namespace === 'eip155' ? 'ERC20' : 'NEP141', // TODO: Find a better way to determine the asset namespace based on the blockchain. Note that EIP-681 doesn't provide the information, so have to assume that it's ERC-20 or NEP-141
+            reference: request.params.address,
+          },
+          tokenId: '1',
+        })
+      : nativeAsset
 
   return {
     action: request.action,
     blockchainNetwork,
     asset,
     recipientAccount,
-    amount: request.params.value ? Number(request.params.value) : 0,
+    amount: request.params.value
+      ? Number(request.params.value)
+      : request.params.uint256
+      ? Number(request.params.uint256)
+      : 0,
     // FIXME: using Number may not be the best, as amount is in the smallest atomic unit and noted like 1e18, so big numbers
   }
 }
