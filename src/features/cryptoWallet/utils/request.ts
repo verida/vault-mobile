@@ -10,16 +10,33 @@ import { BlockchainNetwork } from 'api/types'
 
 // Request structure:
 // <namespace>:[<prefix>-]<address>[@<chainId>][?<params>]
-// Examples:
+//
+// Ethereum
 // ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=1e18
-// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=0.01e18&message=test
-// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=10e18&message=test
+// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=0.01e18&message=Hey%20Jim!%20Just%20reminding%20you%20owe%20me%205%20USDC%20for%20that%20lunch
+//
+// USDC on Goerli
+// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18&message=Hey%20Jim!%20Just%20reminding%20you%20owe%20me%205%20USDC%20for%20that%20lunch
+//
+// Polygon
 // eip155:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@80001?value=1e18
 // eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@80001?value=0.01e18
-// eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@80001/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=10e18
-//eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18
+//
+// NEAR
 // near:pay-3076f3dee55eac87d1d4cb721716ca4fc64ed73e25c5665fc8457dbd0a71cb71@testnet?value=1e18
 // near:3076f3dee55eac87d1d4cb721716ca4fc64ed73e25c5665fc8457dbd0a71cb71@testnet?value=1e18
+//
+// Invalid
+// cosmos-hub:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@567/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18
+//
+// eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@567/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18
+//
+// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f
+//
+// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5a18
+//
+// ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa38f&uint256=5e18
+//
 
 export function isCryptoRequestDeepLink(url: string) {
   return isCryptoRequestUrl(url)

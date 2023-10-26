@@ -1,4 +1,5 @@
 import {
+  AlertType,
   BottomActionBar,
   RequestDetails,
   RequestHeader,
@@ -10,22 +11,16 @@ import {
 } from 'components'
 import {
   CryptoWalletRequest,
-  priceFormatter,
+  isWatchedWallet,
   useCryptoPaymentRequest,
 } from 'features/cryptoWallet'
 import { Protocol, reduceProtocols } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
-import {
-  Linking,
-  ScrollView,
-  StatusBar,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native'
+import { Linking, ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { formatFiatCurrency } from 'utils'
 
 import Button from 'components/Button'
 import { MainStackScreenProps } from 'navigation/types'
@@ -52,6 +47,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { name, logo, details, data } = route.params
 
     const [detailsOpen, setDetailsOpen] = useState(false)
+
     const {
       account,
       amount,
@@ -66,6 +62,28 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       sentTransaction,
       status,
     } = useCryptoPaymentRequest(data)
+
+    const alertMessage = !asset
+      ? {
+          type: 'error' as AlertType,
+          message: 'The requested asset has not been found!',
+        }
+      : !amount
+      ? {
+          type: 'error' as AlertType,
+          message: 'The requested amount is not valid!',
+        }
+      : isWatchedWallet(account)
+      ? {
+          type: 'error' as AlertType,
+          message: 'The selected wallet is a watched wallet!',
+        }
+      : !isReady
+      ? {
+          type: 'warning' as AlertType,
+          message: 'Checking the blockchain...',
+        }
+      : undefined
 
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
@@ -146,58 +164,57 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     {details.message}
                   </RequestMessage>
                 ) : null}
-                {asset && amount ? (
-                  <>
-                    <RequestPaymentValue
-                      assetAmount={String(amount)}
-                      assetSymbol={asset.symbol}
-                      assetLogo={asset.token.icon}
-                      formattedAssetPrice={priceFormatter(asset.price)}
-                      formattedFiatValue={priceFormatter(asset.price * amount)}
-                      chainLabel={data.blockchainNetwork.label}
-                      chainLogo={data.blockchainNetwork.icon}
-                      style={styles.valueContainer}
-                    />
-                    <RequestPaymentFee
-                      feeAmount={
-                        estimatedFee
-                          ? estimatedFee.toFixed(nativeAssetSignificantDecimals)
-                          : undefined
-                      }
-                      feeSymbol={nativeAsset?.symbol}
-                      formattedFiatValue={
-                        estimatedFee && nativeAsset
-                          ? priceFormatter(estimatedFee * nativeAsset.price)
-                          : undefined
-                      }
-                      style={styles.feeContainer}
-                    />
-                    {selectedWallet && account ? (
-                      <WalletSelectorButton
-                        logo={
-                          selectedWallet.icon || data.blockchainNetwork.icon
-                        }
-                        label={selectedWallet.label}
-                        address={account.address}
-                        formattedBalance={`${asset.balance.toFixed(
-                          assetSignificantDecimals
-                        )} ${asset.symbol}`}
-                        alertType='error'
-                        alertContent={
-                          asset.balance < amount
-                            ? 'Insufficient funds'
-                            : undefined
-                        }
-                        style={styles.walletSelectorButton}
-                      />
-                    ) : null}
-                  </>
-                ) : (
-                  <View>
-                    {/* TODO: Handle unsupported case */}
-                    <Text>Requested asset not found</Text>
-                  </View>
-                )}
+                <RequestPaymentValue
+                  assetAmount={amount ? String(amount) : undefined}
+                  assetSymbol={asset?.symbol}
+                  assetLogo={asset?.token.icon}
+                  formattedAssetPrice={
+                    asset?.price ? formatFiatCurrency(asset.price) : undefined
+                  }
+                  formattedFiatValue={
+                    asset?.price && amount
+                      ? formatFiatCurrency(asset.price * amount)
+                      : undefined
+                  }
+                  chainLabel={data.blockchainNetwork.label}
+                  chainLogo={data.blockchainNetwork.icon}
+                  style={styles.valueContainer}
+                />
+                <RequestPaymentFee
+                  feeAmount={
+                    estimatedFee
+                      ? estimatedFee.toFixed(nativeAssetSignificantDecimals)
+                      : undefined
+                  }
+                  feeSymbol={nativeAsset?.symbol}
+                  formattedFiatValue={
+                    estimatedFee && nativeAsset
+                      ? formatFiatCurrency(estimatedFee * nativeAsset.price)
+                      : undefined
+                  }
+                  style={styles.feeContainer}
+                />
+                {selectedWallet && account ? (
+                  <WalletSelectorButton
+                    logo={selectedWallet.icon || data.blockchainNetwork.icon}
+                    label={selectedWallet.label}
+                    address={account.address}
+                    formattedBalance={
+                      asset
+                        ? `${asset.balance.toFixed(assetSignificantDecimals)} ${
+                            asset.symbol
+                          }`
+                        : undefined
+                    }
+                    alertType='error'
+                    alertContent={
+                      asset && amount && asset.balance < amount
+                        ? 'Insufficient funds'
+                        : undefined
+                    }
+                    style={styles.walletSelectorButton}
+                  />
+                ) : null}
               </>
             ) : (
               // TODO: Implement the design from Figma (success display the request with an 'Accepted' banner and display the data item)
@@ -223,7 +240,9 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                       ? 'Please wait a moment, we are transfering your payment.'
                       : status === 'success'
                       ? asset && amount
-                        ? `${String(amount)} ${asset.symbol} (${priceFormatter(
+                        ? `${String(amount)} ${
+                            asset.symbol
+                          } (${formatFiatCurrency(
                             asset.price * amount
                           )}) has been sent to ${name}!`
                         : `Payment sent to ${name}!`
@@ -246,10 +265,8 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           </ScrollView>
 
           <BottomActionBar
-            alertType='warning'
-            alertContent={
-              isReady ? undefined : 'Checking some blockchain parameters'
-            }
+            alertType={alertMessage?.type}
+            alertContent={alertMessage?.message}
             actions={
               status === 'notStarted'
                 ? [
