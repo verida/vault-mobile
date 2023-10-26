@@ -10,7 +10,10 @@ import {
   selectSingleTokenData,
   sendTransaction,
 } from 'features/cryptoWallet/slice'
-import { getSignificantDigits } from 'features/cryptoWallet/utils'
+import {
+  getSignificantDigits,
+  isWatchedWallet,
+} from 'features/cryptoWallet/utils'
 import { Logger } from 'features/telemetry'
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
@@ -49,6 +52,7 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
   const selectedWallet = useAppSelector((state) => getSelectedWalletById(state))
 
   const account = selectedWallet?.accounts[request.blockchainNetwork.chainId]
+  const isAccountValid = !isWatchedWallet(account)
 
   const transactionParams = useAppSelector((state) =>
     getTransactionParamsData(state)
@@ -93,10 +97,10 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     transactionParamCalledRef.current = true
   }, [dispatch, transactionParams, transactionData, asset])
 
-  const isReady = !!transactionParams && !!transactionData
+  const isReady = isAccountValid && !!transactionParams && !!transactionData
 
   const processPayment = useCallback(async () => {
-    if (!transactionData) {
+    if (!isReady) {
       return
     }
 
@@ -126,7 +130,7 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
       logger.error(new Error('Failed to send transaction', { cause }))
     }
     // TODO: Handle the case where the user closes the screen before the request is processed
-  }, [dispatch, transactionData])
+  }, [dispatch, isReady, transactionData])
 
   return {
     account,
