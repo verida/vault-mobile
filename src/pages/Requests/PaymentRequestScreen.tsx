@@ -1,4 +1,5 @@
 import {
+  BottomActionBar,
   RequestDetails,
   RequestHeader,
   RequestMessage,
@@ -134,7 +135,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       navigation.goBack()
     }, [navigation])
 
-    const handlePay = useCallback(async () => {
+    const handlePressPay = useCallback(async () => {
       if (!transactionData) {
         return
       }
@@ -360,37 +361,35 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
             )}
           </ScrollView>
 
-          <View style={styles.footer}>
-            <View style={styles.footerActionsContainer}>
-              {/* TODO: Ensure the buttons have a background */}
-              {processing || error || success ? (
-                <>
-                  <Button
-                    onPress={handleClose}
-                    style={styles.actionButton}
-                    disabled={processing}>
-                    Close
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onPress={handleClose}
-                    color='grey'
-                    disabled={processing}
-                    style={[styles.actionButton, styles.mr]}>
-                    Decline
-                  </Button>
-                  <Button
-                    onPress={handlePay}
-                    disabled={processing || !isReady}
-                    style={[styles.actionButton, styles.ml]}>
-                    Pay
-                  </Button>
-                </>
-              )}
-            </View>
-          </View>
+          <BottomActionBar
+            alertType='warning'
+            alertContent={
+              isReady ? undefined : 'Checking some blockchain parameters'
+            }
+            actions={
+              processing || error || success
+                ? [
+                    {
+                      label: 'Close',
+                      onPress: handleClose,
+                      disabled: processing,
+                    },
+                  ]
+                : [
+                    {
+                      label: 'Decline',
+                      onPress: handleClose,
+                      disabled: processing,
+                      color: 'grey',
+                    },
+                    {
+                      label: 'Pay',
+                      onPress: handlePressPay,
+                      disabled: processing || !isReady,
+                    },
+                  ]
+            }
+          />
         </View>
       </>
     )
@@ -431,24 +430,8 @@ const createStyles = (theme: Theme) =>
     viewInExplorerButtonWrapper: {
       marginTop: theme.spacing.l,
     },
-    footer: {
-      backgroundColor: theme.color.background,
-      paddingHorizontal: theme.spacing.m,
-      paddingVertical: theme.spacing.sm,
-      borderTopColor: theme.color.lightGrey,
-      borderTopWidth: 1,
-    },
-    footerActionsContainer: {
-      flexDirection: 'row',
-    },
     actionButton: {
       flex: 1,
       marginBottom: 0,
-    },
-    mr: {
-      marginRight: 10,
-    },
-    ml: {
-      marginLeft: 10,
     },
   })

@@ -1,5 +1,6 @@
 export * from './Alert'
 export * from './Images'
+export * from './Layouts'
 export * from './Status'
 export * from './Spacer'
 export * from './Requests'
