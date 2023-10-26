@@ -1,3 +1,4 @@
+export * from './useCryptoPaymentRequest'
 export * from './useCryptoWallet'
 export * from './useCryptoWalletProtocolHandler'
 export * from './useMaybeSelectedWallet'

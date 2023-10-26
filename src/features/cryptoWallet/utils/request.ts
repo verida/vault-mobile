@@ -17,6 +17,7 @@ import { BlockchainNetwork } from 'api/types'
 // eip155:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@80001?value=1e18
 // eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@80001?value=0.01e18
 // eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@80001/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=10e18
+//eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18
 // near:pay-3076f3dee55eac87d1d4cb721716ca4fc64ed73e25c5665fc8457dbd0a71cb71@testnet?value=1e18
 // near:3076f3dee55eac87d1d4cb721716ca4fc64ed73e25c5665fc8457dbd0a71cb71@testnet?value=1e18
 
@@ -44,8 +45,6 @@ export function parseCryptoRequestQrCode(qrCodeMessage: string) {
 
 function parseCryptoRequest(url: string): CryptoWalletRawRequest {
   // <namespace>:[<prefix>-]<address>[@<chainId>][/<function>][?<params>]
-
-  //eip155:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5/transfer?address=0x07865c6e87b9f70255377e024ace6630c1eaa37f&uint256=5e18
 
   const regex =
     /^(?<namespace>\w+):(?<prefix>\w+-)?(?<address>\w+)@?(?<chainId>\w+)?\/?(?<functionName>\w+)?\??(?<params>.+)?$/

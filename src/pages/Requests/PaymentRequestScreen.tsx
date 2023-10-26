@@ -10,21 +10,13 @@ import {
 } from 'components'
 import {
   CryptoWalletRequest,
-  getSelectedWalletById,
-  getSignificantDigits,
-  getTransactionParams,
-  getTransactionParamsData,
   priceFormatter,
-  selectSingleTokenData,
-  sendTransaction,
-  SentTransaction,
-  TransactionData,
+  useCryptoPaymentRequest,
 } from 'features/cryptoWallet'
 import { Protocol, reduceProtocols } from 'features/protocols'
-import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import {
   Linking,
   ScrollView,
@@ -37,10 +29,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import Button from 'components/Button'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
-
-const logger = new Logger('PaymentRequestScreen')
 
 export interface PaymentRequestScreenParams {
   name: string
@@ -62,69 +51,24 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { navigation, route } = props
     const { name, logo, details, data } = route.params
 
-    const transactionParamCalledRef = useRef(false)
-    const [status, setStatus] = useState<
-      'notStarted' | 'processing' | 'error' | 'success'
-    >('notStarted')
-    const [sentTransaction, setSentTransaction] =
-      useState<SentTransaction | null>(null)
     const [detailsOpen, setDetailsOpen] = useState(false)
+    const {
+      status,
+      account,
+      asset,
+      assetSignificantDecimals,
+      amount,
+      estimatedFee,
+      handlePay,
+      isReady,
+      nativeAsset,
+      nativeAssetSignificantDecimals,
+      sentTransaction,
+      selectedWallet,
+    } = useCryptoPaymentRequest(data)
+
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
-
-    const dispatch = useAppDispatch()
-
-    // FIXME: NEAR native token is not recognised
-    // `data.asset`, when native token, comes from the blockchain network definition (where NEAR slip44Reference is 397).
-    // To get more info on the asset, we use the existing `selectSingleTokenData` which matches the assetId with the token list fetched for the wallet balances.
-
-    const asset = useAppSelector((state) =>
-      selectSingleTokenData(state, data.asset)
-    )
-    const nativeAsset = useAppSelector((state) =>
-      selectSingleTokenData(state, data.blockchainNetwork.asset)
-    )
-
-    // Get the number of significant decimal for the assets (ie. the fraction of the asset for which the value is above 0.01 cents)
-    const nativeAssetSignificantDecimals = nativeAsset?.price
-      ? getSignificantDigits(0.01 / nativeAsset.price, 2, 8, 2)
-      : 2
-    const assetSignificantDecimals = asset?.price
-      ? getSignificantDigits(0.01 / asset.price, 2, 8, 2)
-      : 2
-
-    const selectedWallet = useAppSelector((state) =>
-      getSelectedWalletById(state)
-    )
-
-    const account = selectedWallet?.accounts[data.blockchainNetwork.chainId]
-
-    const transactionParams = useAppSelector((state) =>
-      getTransactionParamsData(state)
-    )
-
-    const amount = asset?.token.decimal
-      ? data.amount / Math.pow(10, asset.token.decimal)
-      : null
-
-    // Get the estimated fee in the native asset
-    const estimatedFee = transactionParams?.fee
-      ? transactionParams?.fee / Math.pow(10, data.blockchainNetwork.decimal)
-      : undefined
-
-    const transactionData: TransactionData | null = useMemo(() => {
-      if (!asset || !amount || !data.recipientAccount.address) {
-        return null
-      }
-
-      return {
-        token: asset,
-        amount: String(amount),
-        address: data.recipientAccount.address,
-      }
-    }, [asset, amount, data.recipientAccount.address])
-
-    const isReady = !!transactionParams && !!transactionData
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)
@@ -134,40 +78,6 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       navigation.goBack()
     }, [navigation])
 
-    const handlePressPay = useCallback(async () => {
-      if (!transactionData) {
-        return
-      }
-
-      setStatus('processing')
-      try {
-        const result = await dispatch(
-          sendTransaction({
-            transactionData,
-          })
-        )
-        if (result.meta.requestStatus === 'rejected') {
-          setStatus('error')
-          logger.error(
-            new Error('Crypto payment failed', {
-              cause:
-                typeof result.payload === 'string'
-                  ? new Error(result.payload)
-                  : undefined,
-            })
-          )
-          // setErrorMessage(result.meta.requestError.message)
-          return
-        }
-        setSentTransaction(result.payload as SentTransaction) // TODO: Have to type 'sendTransaction' to avoid this assertion
-        setStatus('success')
-      } catch (cause: unknown) {
-        setStatus('error')
-        logger.error(cause)
-      }
-      // TODO: Handle the case where the user closes the screen before the request is processed
-    }, [dispatch, transactionData])
-
     const handleViewInExplorer = useCallback(() => {
       if (!sentTransaction?.id) {
         return
@@ -175,16 +85,6 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       const url = `${data.blockchainNetwork.explorerURL}/tx/${sentTransaction?.id}`
       Linking.openURL(url)
     }, [data.blockchainNetwork.explorerURL, sentTransaction])
-
-    // Call Wallet Provider to get the transaction params
-    useEffect(() => {
-      if (!transactionData || transactionParamCalledRef.current) {
-        return
-      }
-      logger.debug('Calling getTransactionParams')
-      dispatch(getTransactionParams(transactionData))
-      transactionParamCalledRef.current = true
-    }, [dispatch, transactionParams, transactionData, asset])
 
     // Set the content of the screen header
     useEffect(() => {
@@ -360,7 +260,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     },
                     {
                       label: 'Pay',
-                      onPress: handlePressPay,
+                      onPress: handlePay,
                       disabled: !isReady,
                     },
                   ]
