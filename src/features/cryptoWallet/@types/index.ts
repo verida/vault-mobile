@@ -10,6 +10,7 @@ export type CryptoWalletRequestParams = {
   value?: string
   uint256?: string
   address?: string
+  message?: string
 }
 
 export type CryptoWalletRawRequest = {
