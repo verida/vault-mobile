@@ -86,6 +86,7 @@ const createStyles = (theme: Theme) =>
       flex: 1,
       flexDirection: 'column',
       alignItems: 'flex-start',
+      justifyContent: 'center',
     },
     walletLabel: {
       color: theme.color.black,
