@@ -7,11 +7,11 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
 export type RequestPaymentValueProps = {
-  assetAmount: string
-  assetSymbol: string
+  assetAmount?: string
+  assetSymbol?: string
   assetLogo?: string
   formattedAssetPrice?: string
-  chainLabel: string
+  chainLabel?: string
   chainLogo?: string
   formattedFiatValue?: string
 } & ViewProps
@@ -38,12 +38,14 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
             <Logo uri={assetLogo} alt={assetSymbol} style={styles.assetLogo} />
           </View>
           <View style={styles.valueContainer}>
-            <Text
-              style={
-                styles.primaryValue
-              }>{`${assetAmount} ${assetSymbol}`}</Text>
-            <Text
-              style={styles.secondaryValue}>{`≈ ${formattedFiatValue}`}</Text>
+            <Text style={styles.primaryValue}>
+              {assetAmount && assetSymbol
+                ? `${assetAmount} ${assetSymbol}`
+                : ':-/'}
+            </Text>
+            <Text style={styles.secondaryValue}>
+              {formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
+            </Text>
           </View>
           <View style={styles.footer}>
             <View>
@@ -52,7 +54,9 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
                   styles.footerText,
                   styles.footerLeftText,
                   styles.footerLabelText,
-                ]}>{`1 ${assetSymbol} ≈`}</Text>
+                ]}>
+                {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
+              </Text>
               <Text
                 style={[
                   styles.footerText,
