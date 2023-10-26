@@ -43,3 +43,43 @@ export function getProtocolLabel(protocol: Protocol) {
 export function getProtocolLogo(protocol: Protocol, size: number) {
   return protocolDefinitions[protocol].getLogo(size)
 }
+
+/**
+ * Build a component with the Protocol logo and label for display (UI) purpose.
+ *
+ * Note: This should then be placed inside a Text component
+ *
+ * @param protocol The protocol
+ * @param size size of the logo
+ * @returns a JSX element
+ */
+export function formatProtocol(protocol: Protocol, size: number) {
+  const protocolLogo = getProtocolLogo(protocol, size)
+  const protocolLabel = getProtocolLabel(protocol)
+  return (
+    <>
+      {protocolLogo} {protocolLabel}
+    </>
+  )
+}
+
+/**
+ * Reduce an array of protocols into a single component with the Protocol logo and label for display (UI) purpose.
+ *
+ * Note: This should then be placed inside a Text component
+ *
+ * @param protocol The protocol
+ * @param size size of the logo
+ * @returns a JSX element
+ */
+export function reduceProtocols(protocols: Protocol[], size: number) {
+  return protocols
+    .map((protocol) => formatProtocol(protocol, size))
+    .reduce((prev, curr) => (
+      <>
+        {prev}
+        {', '}
+        {curr}
+      </>
+    ))
+}

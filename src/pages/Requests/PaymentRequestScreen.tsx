@@ -20,7 +20,7 @@ import {
   SentTransaction,
   TransactionData,
 } from 'features/cryptoWallet'
-import { getProtocolLabel, getProtocolLogo, Protocol } from 'features/protocols'
+import { Protocol, reduceProtocols } from 'features/protocols'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
@@ -63,10 +63,9 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { name, logo, details, data } = route.params
 
     const transactionParamCalledRef = useRef(false)
-    const [processing, setProcessing] = useState(false)
-    const [error, setError] = useState(false)
-    // const [erroMessage, setErrorMessage] = useState<string | undefined>()
-    const [success, setSuccess] = useState(false)
+    const [status, setStatus] = useState<
+      'notStarted' | 'processing' | 'error' | 'success'
+    >('notStarted')
     const [sentTransaction, setSentTransaction] =
       useState<SentTransaction | null>(null)
     const [detailsOpen, setDetailsOpen] = useState(false)
@@ -140,16 +139,15 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
         return
       }
 
-      setProcessing(true)
+      setStatus('processing')
       try {
         const result = await dispatch(
           sendTransaction({
             transactionData,
           })
         )
-        setProcessing(false)
         if (result.meta.requestStatus === 'rejected') {
-          setError(true)
+          setStatus('error')
           logger.error(
             new Error('Crypto payment failed', {
               cause:
@@ -162,11 +160,10 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           return
         }
         setSentTransaction(result.payload as SentTransaction) // TODO: Have to type 'sendTransaction' to avoid this assertion
-        setSuccess(true)
+        setStatus('success')
       } catch (cause: unknown) {
+        setStatus('error')
         logger.error(cause)
-        setProcessing(false)
-        setError(true)
       }
       // TODO: Handle the case where the user closes the screen before the request is processed
     }, [dispatch, transactionData])
@@ -203,23 +200,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       })
     }, [navigation, handleClose])
 
-    const protocols = details.protocols
-      .map((protocol) => {
-        const protocolLogo = getProtocolLogo(protocol, 16)
-        const protocolLabel = getProtocolLabel(protocol)
-        return (
-          <>
-            {protocolLogo} {protocolLabel}
-          </>
-        )
-      })
-      .reduce((prev, curr) => (
-        <>
-          {prev}
-          {', '}
-          {curr}
-        </>
-      ))
+    const protocols = reduceProtocols(details.protocols, 16)
 
     return (
       <>
@@ -236,7 +217,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           <ScrollView
             style={styles.container}
             contentContainerStyle={styles.containerContent}>
-            {!processing && !error && !success ? (
+            {status === 'notStarted' ? (
               <>
                 <RequestHeader
                   senderName={name}
@@ -324,19 +305,23 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                 <StatusInfo
                   style={styles.statusContainer}
                   statusType={
-                    processing ? 'processsing' : success ? 'success' : 'error'
+                    status === 'processing'
+                      ? 'processsing'
+                      : status === 'success'
+                      ? 'success'
+                      : 'error'
                   }
                   title={
-                    processing
+                    status === 'processing'
                       ? 'Processing payment...'
-                      : success
+                      : status === 'success'
                       ? 'Success!'
                       : 'Error!'
                   }
                   subtitle={
-                    processing
+                    status === 'processing'
                       ? 'Please wait a moment, we are transfering your payment.'
-                      : success
+                      : status === 'success'
                       ? asset && amount
                         ? `${String(amount)} ${asset.symbol} (${priceFormatter(
                             asset.price * amount
@@ -346,12 +331,11 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                         'Something went wrong. Try again later.'
                   }
                 />
-                {sentTransaction && success ? (
+                {sentTransaction && status === 'success' ? (
                   <View style={styles.viewInExplorerButtonWrapper}>
                     <Button
                       onPress={handleViewInExplorer}
                       color='grey'
-                      disabled={processing}
                       style={[styles.actionButton]}>
                       View in Blockchain Explorer
                     </Button>
@@ -367,25 +351,24 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
               isReady ? undefined : 'Checking some blockchain parameters'
             }
             actions={
-              processing || error || success
+              status === 'notStarted'
                 ? [
-                    {
-                      label: 'Close',
-                      onPress: handleClose,
-                      disabled: processing,
-                    },
-                  ]
-                : [
                     {
                       label: 'Decline',
                       onPress: handleClose,
-                      disabled: processing,
                       color: 'grey',
                     },
                     {
                       label: 'Pay',
                       onPress: handlePressPay,
-                      disabled: processing || !isReady,
+                      disabled: !isReady,
+                    },
+                  ]
+                : [
+                    {
+                      label: 'Close',
+                      onPress: handleClose,
+                      disabled: status === 'processing',
                     },
                   ]
             }
