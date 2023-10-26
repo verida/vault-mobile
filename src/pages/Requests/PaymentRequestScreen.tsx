@@ -53,18 +53,18 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
 
     const [detailsOpen, setDetailsOpen] = useState(false)
     const {
-      status,
       account,
+      amount,
       asset,
       assetSignificantDecimals,
-      amount,
       estimatedFee,
-      handlePay,
       isReady,
       nativeAsset,
       nativeAssetSignificantDecimals,
-      sentTransaction,
+      processPayment,
       selectedWallet,
+      sentTransaction,
+      status,
     } = useCryptoPaymentRequest(data)
 
     const styles = useThemeAwareStyle(createStyles)
@@ -260,7 +260,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     },
                     {
                       label: 'Pay',
-                      onPress: handlePay,
+                      onPress: processPayment,
                       disabled: !isReady,
                     },
                   ]

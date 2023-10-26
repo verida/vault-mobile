@@ -88,6 +88,7 @@ export type TransactionData = {
   token: AssetWithBalance // TODO: Just need a subset, just the Asset metadata
   amount: string
   address: string
+  disableNavigate?: boolean // Not proud of this but it's a quick fix to avoid payment request to navigate to the confirm screen as implemented in the getTransactionParams methods
 }
 
 export type SentTransaction = {

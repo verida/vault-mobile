@@ -72,6 +72,7 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
       token: asset,
       amount: String(amount),
       address: request.recipientAccount.address,
+      disableNavigate: true,
     }
   }, [asset, amount, request.recipientAccount.address])
 
@@ -80,14 +81,21 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     if (!transactionData || transactionParamCalledRef.current) {
       return
     }
-    logger.debug('Calling getTransactionParams')
-    dispatch(getTransactionParams(transactionData))
+    try {
+      dispatch(getTransactionParams(transactionData))
+    } catch (error: unknown) {
+      logger.error(
+        new Error('Failed to get transaction params', {
+          cause: error,
+        })
+      )
+    }
     transactionParamCalledRef.current = true
   }, [dispatch, transactionParams, transactionData, asset])
 
   const isReady = !!transactionParams && !!transactionData
 
-  const handlePay = useCallback(async () => {
+  const processPayment = useCallback(async () => {
     if (!transactionData) {
       return
     }
@@ -109,30 +117,29 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
                 : undefined,
           })
         )
-        // setErrorMessage(result.meta.requestError.message)
         return
       }
       setSentTransaction(result.payload as SentTransaction) // TODO: Have to type 'sendTransaction' to avoid this assertion
       setStatus('success')
     } catch (cause: unknown) {
       setStatus('error')
-      logger.error(cause)
+      logger.error(new Error('Failed to send transaction', { cause }))
     }
     // TODO: Handle the case where the user closes the screen before the request is processed
   }, [dispatch, transactionData])
 
   return {
-    status,
-    asset,
-    amount,
-    nativeAsset,
-    assetSignificantDecimals,
-    nativeAssetSignificantDecimals,
     account,
-    isReady,
+    amount,
+    asset,
+    assetSignificantDecimals,
     estimatedFee,
-    handlePay,
-    sentTransaction,
+    isReady,
+    nativeAsset,
+    nativeAssetSignificantDecimals,
+    processPayment,
     selectedWallet,
+    sentTransaction,
+    status,
   }
 }

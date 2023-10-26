@@ -7,14 +7,11 @@ import {
   parseCryptoRequestQrCode,
   processCryptoRequest,
 } from 'features/cryptoWallet/utils'
-import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
 import { PaymentRequestScreenParams } from 'pages/Requests'
 import { useAppSelector } from 'reduxStore/types'
-
-const logger = new Logger('Crypto Wallet')
 
 export type CryptoWalletContextType = {
   handleDeepLinkUrl: (url: string) => void
@@ -38,8 +35,6 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
 
   const handleRequest = useCallback(
     (request: CryptoWalletRawRequest, replaceNavigationScreen?: boolean) => {
-      logger.debug('Handling request', request)
-
       const processedRequest = processCryptoRequest(request, blockchainNetworks)
 
       switch (request.action) {
@@ -56,10 +51,6 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
             },
             data: processedRequest,
           }
-
-          logger.debug("Navigating to 'PaymentRequest' screen", {
-            screenParams,
-          })
 
           if (replaceNavigationScreen) {
             navigation.replace('PaymentRequest', screenParams)
@@ -79,7 +70,6 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
 
   const handleDeepLinkUrl = useCallback(
     (url: string) => {
-      logger.debug('Handling deep link', { url })
       // No try/cath needed, as handled by the consumer
       const request = parseCryptoRequestDeepLink(url)
       handleRequest(request, false)
@@ -90,14 +80,9 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
 
   const handleQrCodeMessage = useCallback(
     (qrCodeMessage: string) => {
-      logger.debug('Handling QR Code message', { qrCodeMessage })
       // No try/cath needed, as handled by the consumer
       const request = parseCryptoRequestQrCode(qrCodeMessage)
-      try {
-        handleRequest(request, true)
-      } catch (error: unknown) {
-        logger.warn("Couldn't handle QR Code message", { error })
-      }
+      handleRequest(request, true)
       // Assuming the QR Code comes from the scanner screen, we replace this screen, so when the user is finished with the Polygon ID screen, they go back to the previous screen, not the QR Code scanner screen
     },
     [handleRequest]

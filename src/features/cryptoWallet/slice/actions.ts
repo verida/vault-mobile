@@ -27,7 +27,9 @@ export const getTransactionParams = createAppAsyncThunk(
         wallets
       )
       if (params) {
-        navigate('ConfirmTransaction', transactionData)
+        if (!transactionData.disableNavigate) {
+          navigate('ConfirmTransaction', transactionData)
+        }
         return params
       }
     } catch (error: any) {
