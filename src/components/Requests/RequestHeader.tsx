@@ -9,7 +9,7 @@ import {
 } from 'react-native'
 import Feather from 'react-native-vector-icons/Feather'
 
-import AppLogo from 'components/AppLogo'
+import { Avatar } from 'components/Images'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
@@ -46,10 +46,7 @@ export const RequestHeader: React.FunctionComponent<RequestHeaderProps> = (
   return (
     <View {...viewProps}>
       <View style={styles.container}>
-        <AppLogo // TODO: Rework the avatar
-          url={avatar || null}
-          style={styles.avatar}
-        />
+        <Avatar source={avatar} fallbackType='person' style={styles.avatar} />
         <View style={{ flex: 1 }}>
           <Text style={styles.name} ellipsizeMode='middle' numberOfLines={1}>
             {senderName}
