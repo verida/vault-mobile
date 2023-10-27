@@ -53,8 +53,9 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       amount,
       asset,
       assetSignificantDecimals,
+      canProcess,
       estimatedFee,
-      isReady,
+      gettingTransactionParams,
       nativeAsset,
       nativeAssetSignificantDecimals,
       processPayment,
@@ -68,7 +69,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           type: 'error' as AlertType,
           message: 'The requested asset has not been found!',
         }
-      : !amount
+      : amount === null
       ? {
           type: 'error' as AlertType,
           message: 'The requested amount is not valid!',
@@ -76,12 +77,17 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       : isWatchedWallet(account)
       ? {
           type: 'error' as AlertType,
-          message: 'The selected wallet is a watched wallet!',
+          message: `Can't process payment with a watched wallet!`,
         }
-      : !isReady
+      : gettingTransactionParams
       ? {
           type: 'warning' as AlertType,
-          message: 'Checking the blockchain...',
+          message: 'Getting blockchain information...',
+        }
+      : !canProcess
+      ? {
+          type: 'error' as AlertType,
+          message: `Can't process the payment request!`,
         }
       : undefined
 
@@ -165,14 +171,14 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                   </RequestMessage>
                 ) : null}
                 <RequestPaymentValue
-                  assetAmount={amount ? String(amount) : undefined}
+                  assetAmount={amount !== null ? String(amount) : undefined}
                   assetSymbol={asset?.symbol}
                   assetLogo={asset?.token.icon}
                   formattedAssetPrice={
                     asset?.price ? formatFiatCurrency(asset.price) : undefined
                   }
                   formattedFiatValue={
-                    asset?.price && amount
+                    asset?.price && amount !== null
                       ? formatFiatCurrency(asset.price * amount)
                       : undefined
                   }
@@ -208,7 +214,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     }
                     alertType='error'
                     alertContent={
-                      asset && amount && asset.balance < amount
+                      asset && amount !== null && asset.balance < amount
                         ? 'Insufficient funds'
                         : undefined
                     }
@@ -239,7 +245,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     status === 'processing'
                       ? 'Please wait a moment, we are transfering your payment.'
                       : status === 'success'
-                      ? asset && amount
+                      ? asset && amount !== null
                         ? `${String(amount)} ${
                             asset.symbol
                           } (${formatFiatCurrency(
@@ -278,7 +284,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     {
                       label: 'Pay',
                       onPress: processPayment,
-                      disabled: !isReady,
+                      disabled: !canProcess,
                     },
                   ]
                 : [

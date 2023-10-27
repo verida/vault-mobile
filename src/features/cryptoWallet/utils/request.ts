@@ -12,7 +12,7 @@ import { BlockchainNetwork } from 'api/types'
 // <namespace>:[<prefix>-]<address>[@<chainId>][?<params>]
 //
 // Ethereum
-// ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=1e18
+// ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=0
 // ethereum:0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=0.01e18&message=Hey%20Jim!%20Just%20reminding%20you%20owe%20me%205%20USDC%20for%20that%20lunch
 //
 // USDC on Goerli

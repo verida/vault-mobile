@@ -58,9 +58,10 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     getTransactionParamsData(state)
   )
 
-  const amount = asset?.token.decimal
-    ? request.amount / Math.pow(10, asset.token.decimal)
-    : null
+  const amount =
+    !Number.isNaN(request.amount) && asset?.token.decimal
+      ? request.amount / Math.pow(10, asset.token.decimal)
+      : null
 
   // Get the estimated fee in the native asset
   const estimatedFee = transactionParams?.fee
@@ -68,7 +69,7 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     : null
 
   const transactionData: TransactionData | null = useMemo(() => {
-    if (!asset || !amount || !request.recipientAccount.address) {
+    if (!asset || amount === null || !request.recipientAccount.address) {
       return null
     }
 
@@ -97,10 +98,18 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     transactionParamCalledRef.current = true
   }, [dispatch, transactionParams, transactionData, asset])
 
-  const isReady = isAccountValid && !!transactionParams && !!transactionData
+  const gettingTransactionParams = !transactionParams
+
+  const canProcess =
+    !gettingTransactionParams &&
+    asset &&
+    amount !== null &&
+    asset.balance >= amount &&
+    isAccountValid &&
+    !!transactionData
 
   const processPayment = useCallback(async () => {
-    if (!isReady) {
+    if (!canProcess) {
       return
     }
 
@@ -130,15 +139,16 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
       logger.error(new Error('Failed to send transaction', { cause }))
     }
     // TODO: Handle the case where the user closes the screen before the request is processed
-  }, [dispatch, isReady, transactionData])
+  }, [dispatch, canProcess, transactionData])
 
   return {
     account,
     amount,
     asset,
     assetSignificantDecimals,
+    canProcess,
     estimatedFee,
-    isReady,
+    gettingTransactionParams,
     nativeAsset,
     nativeAssetSignificantDecimals,
     processPayment,
