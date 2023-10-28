@@ -1,5 +1,5 @@
 export * from './useAggregateWalletBannerBalances'
-export * from './useAggregateWalletBannerBalancesFiatEquivalentValue'
+export * from './useAggregateWalletBannerBalancesValuation'
 export * from './useLazyConfirmTransaction'
 export * from './useMaybeBlockchainNetwork'
 export * from './useMaybeSelectedWallet'
