@@ -5,7 +5,7 @@ import {
 import React from 'react'
 import { FlatList } from 'react-native'
 
-import TokensListItem from './TokensListItem'
+import TokensListItem from './TokensList.Item'
 
 const defaultOnPullToRefresh = () => undefined
 
