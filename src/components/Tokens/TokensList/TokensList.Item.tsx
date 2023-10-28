@@ -7,7 +7,6 @@ import React from 'react'
 import { GestureResponderEvent, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import VaultLogo from 'assets/visa_logo.svg'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'

@@ -16,6 +16,9 @@ const openDeepLinkInSimulator = (uri: string) => {
   })
 }
 
+const terminalIcon =
+  'https://upload.wikimedia.org/wikipedia/commons/b/b3/Terminalicon2.png'
+
 const createSignClient = () =>
   SignClient.init({
     // HACK: This is a burner projectId. It is useful only for experimentation.
@@ -24,9 +27,7 @@ const createSignClient = () =>
       name: 'Verida CLI',
       description: 'A utility to help debug WalletConnect in the Verida Vault.',
       url: 'https://www.verida.io/',
-      icons: [
-        'https://upload.wikimedia.org/wikipedia/commons/b/b3/Terminalicon2.png',
-      ],
+      icons: [terminalIcon],
     },
   })
 
@@ -83,17 +84,24 @@ void (async () => {
       chainName: 'Anvil',
       rpcUrls: [`http://${localhost}:8545`],
       nativeCurrency: {
-        name: 'Anvil Test ETH',
+        name: 'Anvil',
         symbol: 'aETH',
         decimals: 18,
       },
+      icon: terminalIcon,
     }
 
     await signClient.request(
       mockAddEthereumChainRequest({
         topic,
         chainId: new ChainId(proposalChainId),
-        params: [anvil, xDAI],
+        params: [
+          anvil,
+          {
+            ...xDAI,
+            icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/8635.png',
+          },
+        ],
       })
     )
   } catch (e) {

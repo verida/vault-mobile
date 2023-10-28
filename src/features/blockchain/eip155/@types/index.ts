@@ -38,6 +38,8 @@ export const AddEthereumChainRequestParam = z
       symbol: z.string().nonempty(),
       decimals: z.number().default(18),
     }),
+    // NOTE: This is not part of the spec!
+    icon: z.string().optional(),
   })
   .passthrough()
 

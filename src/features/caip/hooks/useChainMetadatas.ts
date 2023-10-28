@@ -38,8 +38,8 @@ export function useChainMetadatas(): UseChainMetadataState {
 
     const result: ChainMetadatas = [
       ...chainsResult,
-      ...customResult,
       ...regionalResult,
+      ...customResult,
     ]
 
     return {
