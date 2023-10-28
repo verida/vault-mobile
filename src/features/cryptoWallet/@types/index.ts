@@ -162,3 +162,8 @@ export type MinifiedVeridaAccount =
   | MinifiedVeridaAccountNear
 
 export type MinifiedVeridaAccounts = readonly MinifiedVeridaAccount[]
+
+export type AggregateWalletBannerBalance = {}
+
+export type AggregateWalletBannerBalances =
+  readonly AggregateWalletBannerBalances[]
