@@ -31,17 +31,17 @@ import { getWalletsData } from '../slice'
 import { getWalletAddressForAsset, isNativeToken } from '../utils'
 import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
 
-type ConfirmNativeTransactionCallbackParams = {
+type ConfirmTransactionCallbackParams = {
   readonly amount: number
   readonly toAddress: string
   readonly token: BalanceByChainResult
 }
 
-type ConfirmNativeTransactionCallbackResult = boolean
+type ConfirmTransactionCallbackResult = boolean
 
-type ConfirmNativeTransactionCallback = (
-  params: ConfirmNativeTransactionCallbackParams
-) => Promise<ConfirmNativeTransactionCallbackResult>
+type ConfirmTransactionCallback = (
+  params: ConfirmTransactionCallbackParams
+) => Promise<ConfirmTransactionCallbackResult>
 
 const sendBaseCurrencyEip155 = async ({
   value,
@@ -161,11 +161,11 @@ const sendBaseCurrencyNear = async ({
 // Lazily sends a transaction of the native currency.
 // TODO: Use a more exciting ReturnType.
 // TODO: Note this doesn't support ERC20s -> Is there an existing user flow which enables this?
-export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransactionCallbackResult> & {
-  readonly confirmNativeTransaction: ConfirmNativeTransactionCallback
+export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallbackResult> & {
+  readonly confirmTransaction: ConfirmTransactionCallback
 } {
   const [state, setState] = React.useState<
-    Stateful<ConfirmNativeTransactionCallbackResult>
+    Stateful<ConfirmTransactionCallbackResult>
   >({ loading: false, result: false })
 
   const wallets = useAppSelector(getWalletsData)
@@ -185,10 +185,10 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
       toAddress,
       namespace,
       reference,
-    }: Omit<ConfirmNativeTransactionCallbackParams, 'token'> &
+    }: Omit<ConfirmTransactionCallbackParams, 'token'> &
       ChainIdParams & {
         readonly fromAddress: string
-      }): Promise<ConfirmNativeTransactionCallbackResult> => {
+      }): Promise<ConfirmTransactionCallbackResult> => {
       const maybeMatchingAccount = selectedMinifiedAccounts.find(
         (e) =>
           e.namespace === namespace &&
@@ -258,73 +258,65 @@ export function useLazyConfirmNativeTransaction(): Stateful<ConfirmNativeTransac
     ]
   )
 
-  //if (result.meta.requestStatus === 'rejected')
-  //  throw new Error(String(result.payload))
   // TODO: Generalize to confirmTransaction when using ERC20s.
-  const confirmNativeTransaction: ConfirmNativeTransactionCallback =
-    React.useCallback(
-      async ({
-        amount,
-        toAddress,
-        token,
-      }: ConfirmNativeTransactionCallbackParams): Promise<boolean> => {
-        const { loading } = state
+  const confirmTransaction: ConfirmTransactionCallback = React.useCallback(
+    async ({
+      amount,
+      toAddress,
+      token,
+    }: ConfirmTransactionCallbackParams): Promise<boolean> => {
+      const { loading } = state
 
-        if (loading) throw new Error('Already loading!')
+      if (loading) throw new Error('Already loading!')
 
-        try {
-          if (!isNativeToken(token.token.asset))
-            throw new Error(
-              `Only base layer currencies are currently supported.`
-            )
+      try {
+        if (!isNativeToken(token.token.asset))
+          throw new Error(`Only base layer currencies are currently supported.`)
 
-          const { chainId } = token.asset
+        const { chainId } = token.asset
 
-          const { namespace, reference } = chainId
+        const { namespace, reference } = chainId
 
-          const fromAddress = getWalletAddressForAsset(token.asset, wallets)
+        const fromAddress = getWalletAddressForAsset(token.asset, wallets)
 
-          if (typeof fromAddress !== 'string' || !fromAddress.length)
-            throw new Error(
-              `Expected non-empty string fromAddress, encountered "${fromAddress}".`
-            )
+        if (typeof fromAddress !== 'string' || !fromAddress.length)
+          throw new Error(
+            `Expected non-empty string fromAddress, encountered "${fromAddress}".`
+          )
 
-          if (!isSupportedCaipNamespace(namespace))
-            throw new Error(
-              `Sorry, "${namespace}" is not a supported namespace.`
-            )
+        if (!isSupportedCaipNamespace(namespace))
+          throw new Error(`Sorry, "${namespace}" is not a supported namespace.`)
 
-          setState({ loading: true })
+        setState({ loading: true })
 
-          const result =
-            await executeBlockchainSpecificNativeTransactionOrThrow({
-              namespace,
-              reference,
-              amount,
-              fromAddress,
-              toAddress,
-            })
+        const result = await executeBlockchainSpecificNativeTransactionOrThrow({
+          namespace,
+          reference,
+          amount,
+          fromAddress,
+          toAddress,
+        })
 
-          // TODO: we need to tell if the transaction was successfully mined or not
-          setState({ loading: false, result })
+        // TODO: we need to tell if the transaction was successfully mined or not
+        setState({ loading: false, result })
 
-          return result
-        } catch (cause) {
-          // eslint-disable-next-line no-console
-          __DEV__ && console.error(cause)
+        return result
+      } catch (cause) {
+        // eslint-disable-next-line no-console
+        __DEV__ && console.error(cause)
 
-          setState({
-            loading: false,
-            error: new Error('Failed to send transaction.', {
-              cause,
-            }),
-          })
+        setState({
+          loading: false,
+          error: new Error('Failed to send transaction.', {
+            cause,
+          }),
+        })
 
-          throw cause
-        }
-      },
-      [state, wallets, executeBlockchainSpecificNativeTransactionOrThrow]
-    )
+        throw cause
+      }
+    },
+    [state, wallets, executeBlockchainSpecificNativeTransactionOrThrow]
+  )
 
-  return { ...state, confirmNativeTransaction }
+  return { ...state, confirmTransaction }
 }

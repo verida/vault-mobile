@@ -1,4 +1,4 @@
-export * from './useLazyConfirmNativeTransaction'
+export * from './useLazyConfirmTransaction'
 export * from './useMaybeBalanceForChainId'
 export * from './useMaybeBlockchainNetwork'
 export * from './useMaybeSelectedWallet'

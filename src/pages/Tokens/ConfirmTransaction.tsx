@@ -8,7 +8,7 @@ import {
   //GetTransactionParamsParams,
   getWalletAddressForAsset,
   getWalletsData,
-  useLazyConfirmNativeTransaction,
+  useLazyConfirmTransaction,
   //selectSentTransaction,
   //sendTransaction,
   //SentTransaction,
@@ -75,8 +75,7 @@ const ConfirmTransaction = ({
 
   const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
 
-  const { confirmNativeTransaction, loading } =
-    useLazyConfirmNativeTransaction()
+  const { confirmTransaction, loading } = useLazyConfirmTransaction()
 
   //const fixed = getSupportedTokenObjectDecimals(
   //  balanceByChainResult.token,
@@ -176,7 +175,7 @@ const ConfirmTransaction = ({
               loading={loading}
               onPress={async () => {
                 try {
-                  await confirmNativeTransaction({
+                  await confirmTransaction({
                     amount,
                     toAddress,
                     token: balanceByChainResult,
