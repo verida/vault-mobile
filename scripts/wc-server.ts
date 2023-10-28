@@ -1,6 +1,8 @@
 import { SignClient } from '@walletconnect/sign-client'
 import { ChainId } from 'caip'
 import * as child_process from 'child_process'
+import { AddEthereumChainRequestParam } from 'features/blockchain/eip155/@types'
+import localhost from 'react-native-localhost'
 
 import {
   fetchChainsList,
@@ -31,10 +33,15 @@ const createSignClient = () =>
 // eslint-disable-next-line no-void
 void (async () => {
   try {
+    // XXX: This identifies the chain the app is currently connected to
+    //      and does not relate to the chains we intend to add. Here, we
+    //      just assume it is connected to ETH Goerli.
+    const proposalChainId = 'eip155:5'
+
     const proposalNamespace = {
       eip155: {
         methods: ['eth_sendTransaction', 'wallet_addEthereumChain'],
-        chains: ['eip155:5'],
+        chains: [proposalChainId],
         events: [],
       },
     }
@@ -70,11 +77,22 @@ void (async () => {
 
     if (!xDAI) throw new Error(`Expected xDAI, encountered "${String(xDAI)}".`)
 
+    const anvil: AddEthereumChainRequestParam = {
+      blockExplorerUrls: [],
+      chainId: `0x${Number(31337).toString(16)}`,
+      chainName: 'Anvil',
+      rpcUrls: [`http://${localhost}:8545`],
+      nativeCurrency: {
+        name: 'Anvil Test ETH',
+        symbol: 'aETH',
+      },
+    }
+
     await signClient.request(
       mockAddEthereumChainRequest({
         topic,
-        chainId: new ChainId('eip155:5'),
-        params: [xDAI],
+        chainId: new ChainId(proposalChainId),
+        params: [anvil, xDAI],
       })
     )
   } catch (e) {

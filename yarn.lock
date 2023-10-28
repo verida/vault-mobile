@@ -7155,6 +7155,11 @@ apisauce@^2.1.2:
   dependencies:
     axios "^0.21.4"
 
+app-root-path@^3.0.0:
+  version "3.1.0"
+  resolved "https://registry.yarnpkg.com/app-root-path/-/app-root-path-3.1.0.tgz#5971a2fc12ba170369a7a1ef018c71e6e47c2e86"
+  integrity sha512-biN3PwB2gUtjaYy/isrU3aNWI5w+fAfvHkSvCKeQGxhmYpwKFUxudR3Yya+KqVRHBmEDYh+/lTozYCFbmzX4nA==
+
 appcenter-file-upload-client@0.0.24:
   version "0.0.24"
   resolved "https://registry.yarnpkg.com/appcenter-file-upload-client/-/appcenter-file-upload-client-0.0.24.tgz#ba1fb3c0f0073d56168a1853f5e9e9cf38a5114c"
@@ -18012,6 +18017,14 @@ react-native-level-fs@^3.0.0, react-native-level-fs@^3.0.1:
   dependencies:
     level-filesystem "^1.0.1"
     levelup "^0.18.2"
+
+react-native-localhost@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/react-native-localhost/-/react-native-localhost-1.0.0.tgz#f185c79a9fc1be2a0670cd12511d5a383059c22e"
+  integrity sha512-HwGYNMzR9zUAbjiQi4vtrXKlRlhyRJ3aNLtVrxHLSZwyU2KgAlAVD9k5LiaS616GDuUtTnFKu+9oHqz0WhR3Bg==
+  dependencies:
+    app-root-path "^3.0.0"
+    ip "^1.1.5"
 
 react-native-mmkv-flipper-plugin@^1.0.0:
   version "1.0.0"
