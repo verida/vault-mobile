@@ -198,7 +198,7 @@ export type ValuedAtWithAccuracy<T extends Valuation = Valuation> = T & {
   readonly isAccurate: boolean
 }
 
-enum AggregateWalletBannerBalanceType {
+export enum AggregateWalletBannerBalanceType {
   // i.e. ETH
   BASE_CURRENCY /* TODO: slip44? */,
   // i.e. USDC
@@ -232,6 +232,7 @@ type AbstractAggregateWalletBannerBalance<
   /* required */
   readonly resource: Resource
   readonly type: Type
+  readonly decimals: number
 
   // Defines price information for the asset - this can currenttly only be
   // determined by querying the Wallet Provider API, meaning custom networks
@@ -240,12 +241,9 @@ type AbstractAggregateWalletBannerBalance<
 
   // TODO: look at removing getTokenUnitName
   // TODO: look at getTokenUnitName() -> probably can be found by looking at network config
-  readonly symbol: string
   // A stringified integer amount of tokens held. For example, 1 ETH would be `${ethers.weiPerEther}`.
   readonly balance: string
-  // The number of decimals to use for fixed point math.
-  readonly decimals: number
-  /* implied */
+  readonly symbol: string | null
   readonly icon: string | null
   readonly label: string
 }

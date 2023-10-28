@@ -7,6 +7,7 @@ import React from 'react'
 import { GestureResponderEvent, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
+import VaultLogo from 'assets/visa_logo.svg'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'
@@ -23,7 +24,14 @@ export const TokensListItem = React.memo(function TokensListItem({
   return (
     <ListItem button onPress={onPress} style={styles.listItem}>
       {/* TODO: We need a default image to use when `uri` is not available. */}
-      <FastImage source={{ uri: uri || '' }} style={styles.icon} />
+      <FastImage
+        source={{
+          uri:
+            uri ||
+            'https://pbs.twimg.com/profile_images/1422735183606812675/OyNZftN__400x400.jpg',
+        }}
+        style={styles.icon}
+      />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>

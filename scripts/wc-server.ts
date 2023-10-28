@@ -85,6 +85,7 @@ void (async () => {
       nativeCurrency: {
         name: 'Anvil Test ETH',
         symbol: 'aETH',
+        decimals: 18,
       },
     }
 

@@ -33,12 +33,22 @@ const addEthereumChainRequestParamsToChainMetadatas = (
   params: AddEthereumChainRequestParams
 ): ChainMetadatas =>
   params.flatMap(
-    ({ rpcUrls /* nonempty */, chainId, chainName: name }): ChainMetadatas => [
+    ({
+      rpcUrls /* nonempty */,
+      chainId,
+      chainName: name,
+      nativeCurrency: { name: nativeCurrencyName, decimals, symbol },
+    }): ChainMetadatas => [
       {
         reference: String(parseInt(chainId, 16)),
         namespace: SupportedCaipNamespace.EIP_155,
         name,
         rpcUrls,
+        nativeCurrencyName,
+        decimals,
+        symbol,
+        // TODO: allow the user to customize the icon
+        icon: null,
       },
     ]
   )

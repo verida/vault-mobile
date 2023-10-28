@@ -22,7 +22,7 @@ export async function fetchChainsList(): Promise<ChainsList> {
 export const chainsListItemToMaybeAddEthereumRequestParam = ({
   name: chainName,
   chainId,
-  nativeCurrency: { name: nativeCurrencyName, symbol },
+  nativeCurrency: { name: nativeCurrencyName, symbol, decimals },
   rpc,
   explorers,
 }: ChainsListItem): AddEthereumChainRequestParam | undefined => {
@@ -43,6 +43,7 @@ export const chainsListItemToMaybeAddEthereumRequestParam = ({
     nativeCurrency: {
       name: nativeCurrencyName,
       symbol,
+      decimals,
     },
     blockExplorerUrls: blockExplorerUrlsResult.data,
   }
@@ -119,6 +120,14 @@ export const chainMetadatasToAddEthereumChainRequestParamsOrThrow = ({
     //       we must respect the URLs described in the ChainMetadata - we
     //       should only provide supplementary information, and not invalidate
     //       the request of the caller.
-    return e ? [{ ...e, rpcUrls, chainName }] : []
+    return e
+      ? [
+          {
+            ...e,
+            rpcUrls,
+            chainName,
+          },
+        ]
+      : []
   }) /* satisfy_types */
 }

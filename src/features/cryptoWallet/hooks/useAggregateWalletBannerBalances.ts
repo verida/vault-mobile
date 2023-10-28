@@ -1,3 +1,4 @@
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import * as React from 'react'
 import { useSelector } from 'react-redux'
 
@@ -11,6 +12,7 @@ import {
 import { useGetBalancesQuery } from '../api'
 import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
 import { getUniqueWalletAddresses, getWallets } from '../slice'
+import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
 
 export const getAggregateWalletBannerBalanceError = (
@@ -41,6 +43,8 @@ export function useAggregateWalletBannerBalances(
   readonly refetch: () => Promise<void>
 } {
   const wallets = useSelector(getWallets)
+
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const { resource: maybeResource } = params
 
@@ -78,9 +82,9 @@ export function useAggregateWalletBannerBalances(
         isBalanceByChainResult(e) ? [e] : []
       )
 
-    // TODO: implement me
-    const aggregateWalletBannerBalances =
-      DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT
+    const aggregateWalletBannerBalances = chainMetadatas.map((chainMetadata) =>
+      chainMetadataToAggregateWalletBannerBalance({ chainMetadata })
+    )
 
     const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
       aggregateWalletBannerBalances.filter((aggregateWalletBannerBalance) => {
@@ -107,6 +111,7 @@ export function useAggregateWalletBannerBalances(
     errorWalletProvider,
     maybeResource,
     didDefineResource,
+    chainMetadatas,
   ])
 
   const refetch = React.useCallback(

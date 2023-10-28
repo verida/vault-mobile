@@ -19,6 +19,10 @@ const REDBELLY_NETWORK_TESNET: ChainMetadata = {
     'https://rbn-gcp-australia-southeast1-a-0-b-v2.devnet.redbelly.network:8545',
   ],
   name: 'Redbelly Network Testnet',
+  symbol: 'RBNT',
+  decimals: 18,
+  nativeCurrencyName: 'Redbelly Network Token',
+  icon: 'https://miro.medium.com/v2/resize:fit:2400/1*DTXE8qJPlRelwhGfo1YSkQ.png',
 }
 
 // Returns default networks depending upon a user's region.

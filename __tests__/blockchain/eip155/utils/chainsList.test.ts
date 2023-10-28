@@ -39,12 +39,17 @@ describe('blockchain/eip155/utils/chainsList', () => {
     expect(
       chainMetadatasToAddEthereumChainRequestParamsOrThrow({
         chainsList: chainsList!,
+        // TODO: chainMetadatas should just use the chainListItem implementation
         chainMetadatas: [
           {
             name: 'My Ethereum :)',
             rpcUrls: ['$TEST_RPC_URL'],
             namespace: SupportedCaipNamespace.EIP_155,
             reference: '1',
+            decimals: 6,
+            nativeCurrencyName: 'MyEther',
+            symbol: 'MY',
+            icon: 'trollface.png',
           },
         ],
       })

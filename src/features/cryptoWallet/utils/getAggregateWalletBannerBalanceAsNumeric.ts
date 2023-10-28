@@ -8,5 +8,7 @@ export function getAggregateWalletBannerBalanceAsNumeric({
   balance,
   decimals,
 }: AggregateWalletBannerBalance): number {
-  return BigInt(balance).divide(BigInt(10).pow(decimals)).toJSNumber()
+  return BigInt(balance)
+    .divide(BigInt(10).pow(BigInt(decimals)))
+    .toJSNumber()
 }

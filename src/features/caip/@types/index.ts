@@ -12,10 +12,15 @@ export type ChainMetadataRpcs = z.infer<typeof ChainMetadataRpcs>
 
 export const ChainMetadata = z
   .object({
+    // TODO: rename to chainName
     name: z.string(),
     rpcUrls: ChainMetadataRpcs,
     namespace: z.string(),
     reference: z.string(),
+    decimals: z.number(),
+    nativeCurrencyName: z.string(),
+    symbol: z.string(),
+    icon: z.string().or(z.null()),
   })
   .passthrough()
 

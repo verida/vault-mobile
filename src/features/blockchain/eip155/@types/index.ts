@@ -36,6 +36,7 @@ export const AddEthereumChainRequestParam = z
     nativeCurrency: z.object({
       name: z.string().nonempty(),
       symbol: z.string().nonempty(),
+      decimals: z.number().default(18),
     }),
   })
   .passthrough()

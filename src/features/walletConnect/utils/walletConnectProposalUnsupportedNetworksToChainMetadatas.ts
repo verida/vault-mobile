@@ -40,23 +40,34 @@ const extractMaybeRpcForCurrentlyUnsupportedChainIdFromProposal = ({
   return maybeRpc
 }
 
-const getMaybeRpcsUsingChainsList = ({
+export const getMaybeChainsListItemByChainsListByChainId = ({
   chainsList,
   forChainId: chainId,
 }: {
   readonly chainsList: ChainsList
   readonly forChainId: ChainId
-}): readonly string[] => {
+}): ChainsListItem | undefined => {
   const { namespace } = chainId
 
   // The ChainsList only defines EVM-compatible chains.
-  if (namespace !== SupportedCaipNamespace.EIP_155) return []
+  if (namespace !== SupportedCaipNamespace.EIP_155) return undefined
 
   const { reference } = chainId
 
-  const maybeChainsListItem: ChainsListItem | undefined = chainsList.find(
-    (e) => e.chainId === parseInt(reference, 10)
-  )
+  return chainsList.find((e) => e.chainId === parseInt(reference, 10))
+}
+
+const getMaybeRpcsUsingChainsList = ({
+  chainsList,
+  forChainId,
+}: {
+  readonly chainsList: ChainsList
+  readonly forChainId: ChainId
+}): readonly string[] => {
+  const maybeChainsListItem = getMaybeChainsListItemByChainsListByChainId({
+    chainsList,
+    forChainId,
+  })
 
   if (!maybeChainsListItem) return []
 
@@ -121,12 +132,27 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
 
       if (!maybeRpcUrls.success) return []
 
+      const maybeChainsListItem = getMaybeChainsListItemByChainsListByChainId({
+        forChainId: chainId,
+        chainsList,
+      })
+
+      if (!maybeChainsListItem) return []
+
+      const { nativeCurrency, name } = maybeChainsListItem
+      const { decimals, symbol, name: nativeCurrencyName } = nativeCurrency
+
       const chainMetadata: ChainMetadata = {
         namespace,
         reference,
-        // TODO: programmatically find the name, i.e. 4byte directory
-        name: currentlyUnsupportedChainId.toString(),
+        name,
         rpcUrls: maybeRpcUrls.data,
+        decimals,
+        symbol,
+        nativeCurrencyName,
+
+        // TODO: how to determine the icon to use?
+        icon: null,
       }
 
       return [chainMetadata]
