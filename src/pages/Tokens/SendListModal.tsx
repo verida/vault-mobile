@@ -1,4 +1,7 @@
-import { BalanceByChainResult } from 'features/cryptoWallet/@types'
+import {
+  AggregateWalletBannerBalance,
+  AggregateWalletBannerBalances,
+} from 'features/cryptoWallet/@types'
 import { Icon, List } from 'native-base'
 import React from 'react'
 import { Modal, StyleSheet, TextInput, View } from 'react-native'
@@ -9,13 +12,13 @@ import TokensList from 'components/Tokens/TokensList'
 const SendListModal = React.memo(function SendListModal({
   visible,
   hideModal,
-  list,
+  aggregateWalletBannerBalances,
   onPressItem,
 }: {
   readonly visible: boolean
   readonly hideModal: () => void
-  readonly list: readonly BalanceByChainResult[]
-  readonly onPressItem: (item: BalanceByChainResult) => void
+  readonly aggregateWalletBannerBalances: AggregateWalletBannerBalances
+  readonly onPressItem: (item: AggregateWalletBannerBalance) => void
 }): JSX.Element {
   return (
     <Modal
@@ -35,7 +38,10 @@ const SendListModal = React.memo(function SendListModal({
       </View>
       <View style={styles.container}>
         <List>
-          <TokensList list={list} onPressItem={onPressItem} />
+          <TokensList
+            aggregateWalletBannerBalances={aggregateWalletBannerBalances}
+            onPressItem={onPressItem}
+          />
         </List>
       </View>
     </Modal>

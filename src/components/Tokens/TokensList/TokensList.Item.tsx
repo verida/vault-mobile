@@ -1,40 +1,44 @@
-import { BalanceByChainResult } from 'features/cryptoWallet'
-import { getTokenUnitName } from 'features/token'
+import {
+  AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceAsNumeric,
+} from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { GestureResponderEvent, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'
 
-export default ({
-  item,
-  onPressItem,
+export const TokensListItem = React.memo(function TokensListItem({
+  aggregateWalletBannerBalance,
+  onPress,
 }: {
-  readonly item: BalanceByChainResult
-  readonly onPressItem: (item: BalanceByChainResult) => void
-}) => {
-  const { change, label, quantity, price, amount } = item
-
-  const maybeToken = Boolean(item) && 'token' in item ? item.token : undefined
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  readonly onPress: (e: GestureResponderEvent) => void
+}): JSX.Element {
+  const { icon: uri, label, symbol, valuation } = aggregateWalletBannerBalance
 
   return (
-    <ListItem button onPress={() => onPressItem(item)} style={styles.listItem}>
-      <FastImage source={{ uri: maybeToken?.icon }} style={styles.icon} />
+    <ListItem button onPress={onPress} style={styles.listItem}>
+      {/* TODO: We need a default image to use when `uri` is not available. */}
+      <FastImage source={{ uri: uri || '' }} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
           <Text>
-            {quantity.toFixed(3)} {getTokenUnitName(item)}
+            {getAggregateWalletBannerBalanceAsNumeric(
+              aggregateWalletBannerBalance
+            ).toFixed(3)}{' '}
+            {symbol}
           </Text>
         </View>
-        <TokensListItemPrice amount={amount} price={price} change={change} />
+        {!!valuation && <TokensListItemPrice valuation={valuation} />}
       </View>
     </ListItem>
   )
-}
+})
 
 const styles = StyleSheet.create({
   listItem: {

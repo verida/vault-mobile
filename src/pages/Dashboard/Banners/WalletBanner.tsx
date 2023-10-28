@@ -1,5 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
-import { useWalletBannerBalance } from 'features/cryptoWallet'
+import {
+  CURRENCY_SYMBOLS,
+  useAggregateWalletBannerBalances,
+  useAggregateWalletBannerBalancesValuation,
+} from 'features/cryptoWallet'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
@@ -15,7 +19,10 @@ import {
 } from '../../../constants/color'
 
 const WalletSummary = () => {
-  const { total } = useWalletBannerBalance()
+  const { price, isAccurate, currency } =
+    useAggregateWalletBannerBalancesValuation(
+      useAggregateWalletBannerBalances()
+    )
 
   const navigation = useNavigation()
 
@@ -31,7 +38,10 @@ const WalletSummary = () => {
         </View>
         <View>
           <Text style={styles.walletLabel}>All wallets</Text>
-          <Text style={styles.walletAmount}>$ {total?.toFixed(2) ?? 0}</Text>
+          <Text style={styles.walletAmount}>
+            {CURRENCY_SYMBOLS[currency]} {price?.toFixed(2) ?? 0}
+            {!isAccurate && '*'}
+          </Text>
         </View>
       </View>
       <View>

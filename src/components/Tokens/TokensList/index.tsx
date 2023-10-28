@@ -1,36 +1,45 @@
 import {
-  BalanceByChainResult,
-  tokenCaipObjectToString,
+  AggregateWalletBannerBalance,
+  AggregateWalletBannerBalances,
 } from 'features/cryptoWallet'
 import React from 'react'
-import { FlatList } from 'react-native'
+import { FlatList, ListRenderItem } from 'react-native'
 
-import TokensListItem from './TokensList.Item'
+import { TokensListItem } from './TokensList.Item'
 
 const defaultOnPullToRefresh = () => undefined
 
 const TokensList = React.memo(function TokensList({
-  list: data,
+  aggregateWalletBannerBalances,
   onPressItem,
   onPullToRefresh = defaultOnPullToRefresh,
   refreshing = false,
 }: {
-  readonly list: readonly BalanceByChainResult[]
+  readonly aggregateWalletBannerBalances: AggregateWalletBannerBalances
   readonly onPullToRefresh?: () => void
-  readonly onPressItem: (item: BalanceByChainResult) => void
+  readonly onPressItem: (
+    aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  ) => void
   readonly refreshing?: boolean
 }): JSX.Element {
+  const renderItem: ListRenderItem<AggregateWalletBannerBalance> =
+    React.useCallback(
+      ({ item: aggregateWalletBannerBalance }) => (
+        <TokensListItem
+          aggregateWalletBannerBalance={aggregateWalletBannerBalance}
+          onPress={() => onPressItem(aggregateWalletBannerBalance)}
+        />
+      ),
+      [onPressItem]
+    )
   return (
     <FlatList
-      data={data}
-      renderItem={React.useCallback(
-        ({ item }) => (
-          <TokensListItem item={item} onPressItem={onPressItem} />
-        ),
-        [onPressItem]
-      )}
+      data={aggregateWalletBannerBalances}
+      renderItem={renderItem}
       keyExtractor={React.useCallback(
-        (item) => tokenCaipObjectToString(item.asset),
+        (item: AggregateWalletBannerBalance) =>
+          // TODO: needs a better implementation than this
+          `${JSON.stringify(item.resource)}${item.type}`,
         []
       )}
       onRefresh={onPullToRefresh}

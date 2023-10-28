@@ -1,3 +1,4 @@
+import { DetailedValuation, Interval } from 'features/cryptoWallet'
 import { priceFormatter } from 'features/cryptoWallet/utils/formatter'
 import { Text } from 'native-base'
 import * as React from 'react'
@@ -6,31 +7,29 @@ import { StyleSheet, View } from 'react-native'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export const TokensListItemPrice = React.memo(function TokensListItemPrice({
-  amount /* amount of the token owned in terms of price */,
-  change /* relative price change */,
-  price /* price of the token */,
+  valuation: {
+    price,
+    conversionRate,
+    rates: { [Interval.DAILY]: dailyRateChange },
+  },
 }: {
-  readonly amount: number
-  readonly change: number | null | undefined
-  readonly price: number
+  readonly valuation: DetailedValuation
 }): JSX.Element {
-  const positive = typeof change === 'number' && change >= 0
+  const positive = dailyRateChange >= 0
   return (
     <>
       <View style={styles.priceAmount}>
         <View style={styles.priceChange}>
-          <Text style={styles.amount}>{priceFormatter(price)}</Text>
-          {change ? (
-            <Text
-              style={[
-                styles.coinPriceChange,
-                positive ? styles.positive : styles.negative,
-              ]}>
-              {positive ? `+${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
-            </Text>
-          ) : undefined}
+          <Text style={styles.amount}>{priceFormatter(conversionRate)}</Text>
+          <Text
+            style={[
+              styles.coinPriceChange,
+              positive ? styles.positive : styles.negative,
+            ]}
+            children={`${positive ? '+' : ''}${dailyRateChange.toFixed(2)}`}
+          />
         </View>
-        <Text style={styles.amount}>{priceFormatter(amount)}</Text>
+        <Text style={styles.amount}>{priceFormatter(price)}</Text>
       </View>
     </>
   )

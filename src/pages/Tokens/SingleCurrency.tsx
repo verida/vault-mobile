@@ -3,14 +3,16 @@ import { RouteProp } from '@react-navigation/native'
 import { AssetId, ChainId } from 'caip'
 import {
   BalanceByChainResult,
+  getAggregateWalletBannerBalanceError,
   getBlockchainNetworkLabel,
   getSelectedWalletById,
   getSupportedTokenObjectDecimals,
   getWalletsData,
   //selectTransactions,
   Transaction,
+  useAggregateWalletBannerBalances,
+  useAggregateWalletBannerBalancesValuation,
   useGetTransactionsForTokenQuery,
-  useMaybeBalanceForChainId,
   useMaybeBlockchainNetwork,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
@@ -60,6 +62,9 @@ const SingleCurrency = () => {
     ? wallets?.[maybeChainId]?.address
     : undefined
 
+  // TODO: If we store this as a verida datastore, we can save transactions
+  //       on the decentralized network instead of rely on the backend to tell
+  //       us what happened...
   const {
     isLoading: isLoadingTransactions,
     isFetching: isFetchingTransactions,
@@ -70,17 +75,41 @@ const SingleCurrency = () => {
     asset: maybeAsset || null,
   })
 
-  const {
-    maybeBalance,
-    isLoading: isLoadingBalance,
-    isFetching: isFetchingBalance,
-    error: errorBalance,
-    refetch: refetchBalance,
-  } = useMaybeBalanceForChainId(maybeAsset?.chainId)
+  // Here we fetch the balance for the specific selected asset.
+  const aggregateWalletBannerBalances = useAggregateWalletBannerBalances({
+    // TODO: we need to fix this so it works for either a chainId or an asset - guessing for now this won't work
+    resource: maybeAsset,
+  })
+
+  const { price } = useAggregateWalletBannerBalancesValuation(
+    aggregateWalletBannerBalances
+  )
+
+  const { loading: isLoadingBalance, refetch: refetchBalance } =
+    aggregateWalletBannerBalances
+
+  const maybeErrorBalance = getAggregateWalletBannerBalanceError(
+    aggregateWalletBannerBalances
+  )
+
+  // TODO: We need to fix maybeData to return something useful for aggregate
+  //       balances -
+  const data = React.useMemo(() => ({ amount: price }), [price])
+
+  // const {
+  //   maybeBalance,
+  //   isLoading: isLoadingBalance,
+  //   isFetching: isFetchingBalance,
+  //   error: errorBalance,
+  //   refetch: refetchBalance,
+  // } = useMaybeBalanceForChainId(maybeAsset?.chainId)
 
   const isLoading = isLoadingTransactions || isLoadingBalance
-  const isFetching = isFetchingTransactions || isFetchingBalance
-  const error = errorTransactions || errorBalance
+
+  // TODO: Difference between isLoading and isFetching?
+  const isFetching = isFetchingTransactions || isLoadingBalance
+
+  const error = errorTransactions || maybeErrorBalance
 
   const pullToRefresh = React.useCallback(() => {
     refetchTransactions()
@@ -91,9 +120,8 @@ const SingleCurrency = () => {
   //const list = useSelector<RootState, readonly Transaction[]>((state) =>
   //  selectTransactions(state, maybeAsset)
   //)
+  //const maybeData = React.useMemo(() => maybeBalance || {}, [maybeBalance])
   const list = React.useMemo<readonly Transaction[]>(() => [], [])
-
-  const maybeData = React.useMemo(() => maybeBalance || {}, [maybeBalance])
 
   if (error)
     return (
@@ -121,7 +149,7 @@ const SingleCurrency = () => {
         networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
       />
       <TokenBanner
-        data={maybeData}
+        data={data}
         selectedWallet={selectedWallet}
         receiveButtonAction={() =>
           navigation.navigate('ReceiveToken', { token: tokenData })

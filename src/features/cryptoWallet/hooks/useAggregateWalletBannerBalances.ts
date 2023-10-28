@@ -1,31 +1,31 @@
 import * as React from 'react'
 import { useSelector } from 'react-redux'
 
-import { AggregateWalletBannerBalances } from '../@types'
+import {
+  AggregateWalletBannerBalances,
+  BalanceByChainResult,
+  isBalanceByChainResult,
+  UseAggregateWalletBannerBalancesParams,
+  UseAggregateWalletBannerBalancesState,
+} from '../@types'
 import { useGetBalancesQuery } from '../api'
+import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
 import { getUniqueWalletAddresses, getWallets } from '../slice'
+import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
 
-type State = Readonly<
-  | { loading: true }
-  | { loading: false; result: AggregateWalletBannerBalances }
-  | { loading: false; error: Error }
->
 export const getAggregateWalletBannerBalanceError = (
-  state: State
+  state: UseAggregateWalletBannerBalancesState
 ): Error | undefined => {
   if (state.loading || !('error' in state)) return undefined
 
   return state.error
 }
 
-const DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES: AggregateWalletBannerBalances =
-  Object.freeze([])
-
 export const getAggregateWalletBannerBalanceResult = (
-  state: State
+  state: UseAggregateWalletBannerBalancesState
 ): AggregateWalletBannerBalances => {
   if (state.loading || !('result' in state))
-    return DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES
+    return DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT
 
   return state.result
 }
@@ -35,10 +35,20 @@ export const getAggregateWalletBannerBalanceResult = (
 // however, the app is capable of integrating with custom networks which the
 // Wallet Provider does not have an a priori awareness of. Instead, we lean
 // on the Wallet Provider to return cached price information.
-export function useAggregateWalletBannerBalances(): State & {
+export function useAggregateWalletBannerBalances(
+  params: UseAggregateWalletBannerBalancesParams = {}
+): UseAggregateWalletBannerBalancesState & {
   readonly refetch: () => Promise<void>
 } {
   const wallets = useSelector(getWallets)
+
+  const { resource: maybeResource } = params
+
+  // Note: We need a way to distinguish between when the caller
+  //       has intended to scope the returned balances to a particular
+  //       resource but that information was not yet ready, versus
+  //       wanting to determine balances across all resources.
+  const didDefineResource = 'resource' in params
 
   const {
     data: dataWalletProvider,
@@ -49,7 +59,7 @@ export function useAggregateWalletBannerBalances(): State & {
     React.useMemo(() => getUniqueWalletAddresses(wallets), [wallets])
   )
 
-  const state = React.useMemo<State>(() => {
+  const state = React.useMemo<UseAggregateWalletBannerBalancesState>(() => {
     if (errorWalletProvider)
       return {
         loading: false,
@@ -60,14 +70,44 @@ export function useAggregateWalletBannerBalances(): State & {
 
     if (isLoadingWalletProvider || !dataWalletProvider) return { loading: true }
 
-    //const { list, total } = dataWalletProvider || {}
+    // Fetch the value balanceByChainResults.
+    // TODO: pair this information with the collected network balances
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const balanceByChainResults: readonly BalanceByChainResult[] =
+      dataWalletProvider.list.flatMap((e) =>
+        isBalanceByChainResult(e) ? [e] : []
+      )
+
+    // TODO: implement me
+    const aggregateWalletBannerBalances =
+      DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT
+
+    const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
+      aggregateWalletBannerBalances.filter((aggregateWalletBannerBalance) => {
+        // If we didn't define a resource to filter against, then assume all match.
+        if (!didDefineResource) return true
+
+        // If we did define a resource to use but that resource isn't ready, nothing
+        // should match.
+        if (!maybeResource) return false
+
+        return isAggregateWalletBannerBalanceMatchesResource({
+          aggregateWalletBannerBalance,
+          resource: maybeResource,
+        })
+      })
 
     return {
       loading: false,
-      // TODO: implement me
-      result: [],
+      result: resultForOnlyMatchingChains,
     }
-  }, [dataWalletProvider, isLoadingWalletProvider, errorWalletProvider])
+  }, [
+    dataWalletProvider,
+    isLoadingWalletProvider,
+    errorWalletProvider,
+    maybeResource,
+    didDefineResource,
+  ])
 
   const refetch = React.useCallback(
     async (): Promise<void> =>
@@ -77,15 +117,3 @@ export function useAggregateWalletBannerBalances(): State & {
 
   return React.useMemo(() => ({ ...state, refetch }), [state, refetch])
 }
-
-// function useWalletBannerBalance() {
-//   const wallets = useSelector(getWallets)
-
-//   const { data, ...extras } = useGetBalancesQuery(
-//     React.useMemo(() => getUniqueWalletAddresses(wallets), [wallets])
-//   )
-
-//   const { list, total } = data || {}
-
-//   return { list, total, ...extras }
-// }

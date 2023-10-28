@@ -1,7 +1,8 @@
 import {
-  BalanceByChainResult,
-  isBalanceByChainResult,
-  useWalletBannerBalance,
+  AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceResult,
+  useAggregateWalletBannerBalances,
+  useAggregateWalletBannerBalancesValuation,
 } from 'features/cryptoWallet'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -18,48 +19,57 @@ import SendListModal from './SendListModal'
 
 const TokenDashboard = React.memo(function TokenDashboard() {
   const [sendModalVisible, setSendModalVisible] = useState(false)
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigation = useMainNavigation()
 
-  const {
-    list: maybeList,
-    total = 0,
-    isLoading,
-    isFetching,
-    refetch: pullToRefresh,
-  } = useWalletBannerBalance()
+  const aggregateWalletBannerBalances = useAggregateWalletBannerBalances()
+  const { loading, refetch: pullToRefresh } = aggregateWalletBannerBalances
+  const [wasInitiallyLoading] = React.useState<boolean>(loading)
 
-  const list = React.useMemo<readonly BalanceByChainResult[]>(() => {
-    if (!maybeList) return []
+  const shouldShowLoadingIndicator = wasInitiallyLoading && loading
 
-    return maybeList.flatMap((e) => (isBalanceByChainResult(e) ? [e] : []))
-  }, [maybeList])
+  const { price } = useAggregateWalletBannerBalancesValuation(
+    aggregateWalletBannerBalances
+  )
 
-  const data = React.useMemo(() => ({ amount: total }), [total])
+  // TODO: refactor this object so that it respects fiat equivalent values may not be accurate
+  const data = React.useMemo(() => ({ amount: price }), [price])
 
   return (
     <Container>
       <ErrorBoundary>
-        {isLoading ? (
+        {shouldShowLoadingIndicator ? (
           <LoadingIndicator />
         ) : (
           <View style={styles.contentContainer}>
             <TestnetWarning networkReference={null} />
             <TokenBanner data={data} />
             <TokensList
-              list={list}
-              onPressItem={(item: BalanceByChainResult) =>
-                navigation.navigate('SingleCurrency', { item })
-              }
-              onPullToRefresh={() => pullToRefresh()}
-              refreshing={isFetching}
+              aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
+                aggregateWalletBannerBalances
+              )}
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              onPressItem={(item: AggregateWalletBannerBalance) => {
+                // eslint-disable-next-line no-console
+                console.error('idk')
+                //navigation.navigate('SingleCurrency', { item })
+              }}
+              onPullToRefresh={pullToRefresh}
+              refreshing={loading}
             />
             <SendListModal
               visible={sendModalVisible}
               hideModal={() => setSendModalVisible(false)}
-              list={list}
-              onPressItem={(token: BalanceByChainResult) => {
+              aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
+                aggregateWalletBannerBalances
+              )}
+              // eslint-disable-next-line @typescript-eslint/no-unused-vars
+              onPressItem={(item: AggregateWalletBannerBalance) => {
                 setSendModalVisible(false)
-                navigation.navigate('SendToken', { token })
+                // eslint-disable-next-line no-console
+                console.error('idk')
+                //navigation.navigate('SendToken', { token })
               }}
             />
           </View>

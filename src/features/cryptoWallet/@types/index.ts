@@ -1,4 +1,4 @@
-import { AssetId } from 'caip'
+import { AssetId, AssetIdParams, ChainIdParams } from 'caip'
 import { SupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainAccount, BlockchainNetwork } from 'api/types'
@@ -163,7 +163,122 @@ export type MinifiedVeridaAccount =
 
 export type MinifiedVeridaAccounts = readonly MinifiedVeridaAccount[]
 
-export type AggregateWalletBannerBalance = {}
+export enum Currency {
+  USD = 'USD',
+}
+
+export type CurrencySymbols = {
+  readonly [key in Currency]: string
+}
+
+export enum Interval {
+  DAILY = 'DAILY',
+}
+
+// TODO: Should be a BigDecimal
+export type PriceIntervals = {
+  readonly [key in Interval]: number
+}
+
+export type Valuation = {
+  readonly currency: Currency
+  // TODO: Should be a BigDecimal
+  readonly price: number
+}
+
+export type DetailedValuation = Valuation & {
+  // Historic rates over a range of intervals.
+  readonly rates: PriceIntervals
+  // Defines how much a whole unit of an asset is worth in terms of `currency`.
+  // TODO: Should be a BigDecimal
+  readonly conversionRate: number
+}
+
+export type ValuedAtWithAccuracy<T extends Valuation = Valuation> = T & {
+  readonly isAccurate: boolean
+}
+
+enum AggregateWalletBannerBalanceType {
+  // i.e. ETH
+  BASE_CURRENCY /* TODO: slip44? */,
+  // i.e. USDC
+  ERC_20,
+}
+
+// TODO: Move somewhere more general, we do this a lot
+export type ResourceParams = ChainIdParams | AssetIdParams
+
+export function isAssetIdResourceParams(
+  resourceParams: ResourceParams
+): resourceParams is AssetIdParams {
+  // TODO: maybe settle on a better implementation - needs tests
+  return (
+    'tokenId' in resourceParams &&
+    typeof resourceParams.tokenId === 'string' &&
+    Boolean(resourceParams.tokenId.length)
+  )
+}
+
+export function isChainIdResourceParams(
+  resourceParams: ResourceParams
+): resourceParams is ChainIdParams {
+  return !isChainIdResourceParams(resourceParams)
+}
+
+type AbstractAggregateWalletBannerBalance<
+  Resource extends ResourceParams,
+  Type extends AggregateWalletBannerBalanceType
+> = {
+  /* required */
+  readonly resource: Resource
+  readonly type: Type
+
+  // Defines price information for the asset - this can currenttly only be
+  // determined by querying the Wallet Provider API, meaning custom networks
+  // cannot define a concrete valuation.
+  readonly valuation: DetailedValuation | null
+
+  // TODO: look at removing getTokenUnitName
+  // TODO: look at getTokenUnitName() -> probably can be found by looking at network config
+  readonly symbol: string
+  // A stringified integer amount of tokens held. For example, 1 ETH would be `${ethers.weiPerEther}`.
+  readonly balance: string
+  // The number of decimals to use for fixed point math.
+  readonly decimals: number
+  /* implied */
+  readonly icon: string | null
+  readonly label: string
+}
+
+export type AggregateWalletBannerBalanceBaseCurrency =
+  AbstractAggregateWalletBannerBalance<
+    ChainIdParams,
+    AggregateWalletBannerBalanceType.BASE_CURRENCY
+  >
+
+export type AggregateWalletBannerBalanceErc20 =
+  AbstractAggregateWalletBannerBalance<
+    AssetIdParams,
+    AggregateWalletBannerBalanceType.ERC_20
+  >
+
+// A balance may be denoted in a blockchain's base currency or a fungible
+// asset expressed on top of the protocol.
+export type AggregateWalletBannerBalance =
+  | AggregateWalletBannerBalanceBaseCurrency
+  | AggregateWalletBannerBalanceErc20
 
 export type AggregateWalletBannerBalances =
-  readonly AggregateWalletBannerBalances[]
+  readonly AggregateWalletBannerBalance[]
+
+export type UseAggregateWalletBannerBalancesParams = {
+  // Defines whether to filter the balances returned by a specific resource reference.
+  // This can be scoped to a specific chain, or a given asset on a specific chain.
+  readonly resource?: ResourceParams
+}
+
+export type UseAggregateWalletBannerBalancesState = Readonly<
+  | { loading: true }
+  | { loading: false; result: AggregateWalletBannerBalances }
+  | { loading: false; error: Error }
+>
