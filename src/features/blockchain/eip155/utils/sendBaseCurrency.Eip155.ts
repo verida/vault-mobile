@@ -29,10 +29,12 @@ export const sendBaseCurrencyEip155 = async ({
 
   const maybeTransactionHash = await eth_sendTransaction({
     context: new ethers.Wallet(privateKey, provider),
-    params: {
-      value: ethers.utils.parseEther(String(value)),
-      to,
-    },
+    params: [
+      {
+        value: ethers.utils.parseEther(String(value)).toHexString(),
+        to,
+      },
+    ],
     // TODO: this should NOT be needed if we already have the provider... verify usage
     rpcSelector: async () => rpc /* already_selected */,
   })
