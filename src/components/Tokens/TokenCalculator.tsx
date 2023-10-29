@@ -78,6 +78,7 @@ const TokenCalculator = React.memo(function TokenCalculator({
             value={number || ''}
             keyboardType='numeric'
             placeholder='0'
+            maxLength={7}
           />
           {mode === Format.CRYPTO && (
             <Text style={styles.amountText}> {symbol}</Text>
