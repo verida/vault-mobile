@@ -1,15 +1,17 @@
 import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
 import {
+  AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getWalletsData,
-  SupportedTokenObject,
+  getChainIdParamsFromResourceParams,
+  getWalletAddressForChainId,
   useGetTransactionDetailsQuery,
+  useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeBlockchainNetwork,
+  useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
-import { useSelector } from 'react-redux'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -26,31 +28,34 @@ export type TransactionDetailsRouteProp = RouteProp<
 
 export type TransactionDetailsScreenProps = {
   readonly id: string
-  readonly token: SupportedTokenObject | null | undefined
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 const TransactionDetails = () => {
   const navigation = useMainNavigation()
-  const { id, token } = useParams<TransactionDetailsScreenProps>()
+  const { id, aggregateWalletBannerBalance } =
+    useParams<TransactionDetailsScreenProps>()
 
-  const wallets = useSelector(getWalletsData)
+  const { resource } = aggregateWalletBannerBalance
 
-  const maybeChainId = token?.asset?.chainId
-    ? new ChainId(token.asset.chainId).toString()
-    : undefined
+  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
 
-  const address: string | undefined = maybeChainId
-    ? wallets[maybeChainId].address
-    : undefined
+  const address = getWalletAddressForChainId(chainId, selectedMinifiedAccounts)
+
+  const maybeAsset = useMaybeAssetIdForAggregateWalletBannerBalance({
+    aggregateWalletBannerBalance,
+  })
 
   const { data: transaction, isLoading } = useGetTransactionDetailsQuery({
     transactionId: id,
     userAddress: address || null,
-    asset: token?.asset,
+    asset: maybeAsset || null,
   })
 
-  const network = useMaybeBlockchainNetwork(token?.asset?.chainId)
-  const networkReference = getBlockchainNetworkLabel(network)
+  const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
+
+  const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
 
   return (
     <Container>
@@ -62,10 +67,13 @@ const TransactionDetails = () => {
         title={'Transaction Details'}
       />
       <TestnetWarning networkReference={networkReference} />
-      {isLoading || !transaction || !token ? (
+      {isLoading || !transaction || !aggregateWalletBannerBalance ? (
         <LoadingIndicator />
       ) : (
-        <TransactionInfo transaction={transaction} token={token} />
+        <TransactionInfo
+          transaction={transaction}
+          aggregateWalletBannerBalance={aggregateWalletBannerBalance}
+        />
       )}
     </Container>
   )

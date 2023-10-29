@@ -1,9 +1,10 @@
 import Clipboard from '@react-native-community/clipboard'
+import { ChainId } from 'caip'
 import {
+  AggregateWalletBannerBalance,
   DetailedTransaction,
   formatTokenQuantity,
-  getSupportedTokenObjectDecimals,
-  SupportedTokenObject,
+  getChainIdParamsFromResourceParams,
   useMaybeBlockchainNetwork,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
@@ -16,19 +17,23 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({
   transaction,
-  token,
+  aggregateWalletBannerBalance,
 }: {
-  readonly token: SupportedTokenObject
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly transaction: DetailedTransaction
 }) => {
-  const blockchainNetwork = useMaybeBlockchainNetwork(token?.asset?.chainId)
+  const { resource, decimals, symbol } = aggregateWalletBannerBalance
+  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+
+  const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
 
   const maybeExplorerUrl = blockchainNetwork?.explorerURL?.replace?.(
     /%s/g,
     transaction.id
   )
 
-  const decimals = getSupportedTokenObjectDecimals(token, blockchainNetwork)
+  // TODO: remove getSupportedTokenObjectDecimals
+  //const decimals = getSupportedTokenObjectDecimals(token, blockchainNetwork)
 
   return (
     <View style={styles.container}>
@@ -50,7 +55,7 @@ export default ({
               {`${transaction.type === 'sent' ? '-' : ''}${formatTokenQuantity(
                 Number(transaction.quantity),
                 decimals
-              )} ${token.symbol}`}
+              )} ${symbol}`}
             </Text>
           </View>
         </View>

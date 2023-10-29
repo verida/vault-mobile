@@ -34,7 +34,7 @@ const TokenBanner = React.memo(function TokenBanner({
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void
   // TODO: How to determine tokenType using updated model?
-  readonly tokenType: 'Coin' | null
+  readonly tokenType: string | null
   // TODO: should be "currencyBalance" or something
   readonly totalBalance: number
   readonly symbol: string | null
@@ -55,7 +55,9 @@ const TokenBanner = React.memo(function TokenBanner({
     <View style={styles.bannerWrapper}>
       {showControls && (
         <View style={styles.coinInfo}>
-          <Text style={styles.coinText}>{tokenType ? tokenType : 'Coin'}</Text>
+          <Text style={styles.coinText}>
+            {typeof tokenType === 'string' ? tokenType : 'Coin'}
+          </Text>
           <View style={styles.coinPriceInfo}>
             {typeof conversionRate === 'number' && (
               <Text style={styles.coinPrice}>

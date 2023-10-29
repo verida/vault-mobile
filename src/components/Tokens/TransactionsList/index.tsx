@@ -1,6 +1,6 @@
 import {
+  AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  SupportedTokenObject,
   Transaction,
 } from 'features/cryptoWallet'
 import React from 'react'
@@ -11,18 +11,16 @@ import { BlockchainNetwork } from 'api/types'
 import TransactionsListItem from './TransactionsListItem'
 
 export default ({
-  symbol,
-  decimal,
-  token,
+  //symbol,
+  //decimal,
+  aggregateWalletBannerBalance,
   blockchainNetwork,
   list,
   errorType,
   onPullToRefresh,
   refreshing,
 }: {
-  readonly symbol: string | undefined
-  readonly decimal: number
-  readonly token: SupportedTokenObject | undefined
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly blockchainNetwork: BlockchainNetwork | undefined
   readonly list: readonly Transaction[]
   readonly errorType?: unknown
@@ -32,13 +30,11 @@ export default ({
   const renderItem = React.useCallback(
     ({ item }) => (
       <TransactionsListItem
-        symbol={symbol}
-        token={token}
-        decimal={decimal}
+        aggregateWalletBannerBalance={aggregateWalletBannerBalance}
         item={item}
       />
     ),
-    [decimal, symbol, token]
+    [aggregateWalletBannerBalance]
   )
 
   let errorMessage = 'No transactions found'

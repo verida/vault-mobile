@@ -22,7 +22,6 @@ import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
-import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
@@ -103,6 +102,10 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance,
   })
 
+  // HACK: We'll only be returning assetIds for resources which the
+  //       WalletProvider has an a-priori awareness of.
+  const isAssetSupportedByWalletProvider = Boolean(assetId)
+
   const {
     loading: isLoadingTransactions,
     refetch: refetchTransactions,
@@ -114,8 +117,8 @@ const SingleCurrency = () => {
 
   const isLoading = isLoadingTransactions || isLoadingBalance
 
-  // TODO: re-enable transactions list
-  const error = (false && errorTransactions) || maybeErrorBalance
+  const error =
+    (isAssetSupportedByWalletProvider && errorTransactions) || maybeErrorBalance
 
   const pullToRefresh = React.useCallback(
     // eslint-disable-next-line no-void
@@ -146,8 +149,7 @@ const SingleCurrency = () => {
       <TokenBanner
         isSumOfMultipleBalances={false}
         decimals={decimals}
-        // TODO: Implement me
-        tokenType={null}
+        tokenType={isAssetSupportedByWalletProvider ? null : ''}
         totalBalance={price}
         tokenBalance={balance}
         conversionRate={maybeValuation?.conversionRate || null}
@@ -178,16 +180,13 @@ const SingleCurrency = () => {
           })
         }}
       />
-      {false ? (
-        <LoadingIndicator />
+      {!isAssetSupportedByWalletProvider ? (
+        // Here, we're handling a custom asset. We could render something accordingly.
+        <React.Fragment />
       ) : (
-        // TODO: we will fix the transaction list in general
         <TransactionsList
-          symbol={aggregateWalletBannerBalance.symbol}
-          decimal={aggregateWalletBannerBalance.decimals}
           blockchainNetwork={blockchainNetwork}
-          // TODO: what is a token in this instance?
-          token={undefined}
+          aggregateWalletBannerBalance={aggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
           refreshing={isLoading}
           // errorType={errorType}

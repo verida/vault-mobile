@@ -1,6 +1,7 @@
+// TODO: what to do with SupportedTokenObject?
 import {
+  AggregateWalletBannerBalance,
   formatTokenQuantity,
-  SupportedTokenObject,
   Transaction,
   TransactionType,
 } from 'features/cryptoWallet'
@@ -19,24 +20,29 @@ const icons: { readonly [key in TransactionType]: JSX.Element } = {
 }
 
 export default ({
-  symbol,
-  decimal,
-  token,
+  //symbol,
+  //decimal,
+  aggregateWalletBannerBalance,
   item,
 }: {
-  readonly symbol: unknown
-  readonly decimal: number
-  readonly token: SupportedTokenObject | undefined
+  //readonly symbol: unknown
+  //readonly decimal: number
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly item: Transaction
 }) => {
   const navigation = useMainNavigation()
+  const { symbol, decimals } = aggregateWalletBannerBalance
   const { type, quantity, address, id, pending } = item
 
   return (
     <ListItem
       button
+      disabled={pending}
       onPress={() => {
-        if (!pending) navigation.navigate('TransactionDetails', { id, token })
+        navigation.navigate('TransactionDetails', {
+          id,
+          aggregateWalletBannerBalance,
+        })
       }}
       style={styles.listItem}>
       {icons[type]}
@@ -51,7 +57,7 @@ export default ({
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
             {/* HACK: formatTokenQuantity expects a number, but quantity from transactions is a BigInt.*/}
-            {formatTokenQuantity(Number(quantity), decimal)} {symbol}
+            {formatTokenQuantity(Number(quantity), decimals)} {symbol}
           </Text>
         </View>
         <View style={styles.priceAmount}>
