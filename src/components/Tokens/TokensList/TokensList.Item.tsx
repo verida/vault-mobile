@@ -1,7 +1,4 @@
-import {
-  AggregateWalletBannerBalance,
-  getAggregateWalletBannerBalanceAsNumeric,
-} from 'features/cryptoWallet'
+import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { GestureResponderEvent, StyleSheet, View } from 'react-native'
@@ -9,6 +6,7 @@ import FastImage from 'react-native-fast-image'
 
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
+import { TokenListItemBalanceSpan } from './TokenListItem.Balance.Span'
 import { TokensListItemPrice } from './TokensList.Item.Price'
 
 export const TokensListItem = React.memo(function TokensListItem({
@@ -35,10 +33,10 @@ export const TokensListItem = React.memo(function TokensListItem({
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
           <Text>
-            {getAggregateWalletBannerBalanceAsNumeric(
-              aggregateWalletBannerBalance
-            ).toFixed(3)}{' '}
-            {symbol}
+            <TokenListItemBalanceSpan
+              {...aggregateWalletBannerBalance}
+              symbol={symbol}
+            />
           </Text>
         </View>
         {!!valuation && <TokensListItemPrice valuation={valuation} />}

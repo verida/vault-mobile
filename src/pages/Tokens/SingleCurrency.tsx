@@ -88,7 +88,14 @@ const SingleCurrency = () => {
     asset: null,
   })
 
-  const { symbol, resource } = aggregateWalletBannerBalance
+  const {
+    symbol,
+    resource,
+    icon,
+    balance,
+    decimals,
+    valuation: maybeValuation,
+  } = aggregateWalletBannerBalance
 
   // TODO: we don't need this, we already have the item, fix..
   // Here we fetch the balance for the specific selected asset.
@@ -107,10 +114,6 @@ const SingleCurrency = () => {
   const maybeErrorBalance = getAggregateWalletBannerBalanceError(
     aggregateWalletBannerBalances
   )
-
-  // TODO: We need to fix maybeData to return something useful for aggregate
-  //       balances -
-  const data = React.useMemo(() => ({ amount: price, symbol }), [price, symbol])
 
   // const {
   //   maybeBalance,
@@ -166,8 +169,18 @@ const SingleCurrency = () => {
         networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
       />
       <TokenBanner
-        data={data}
+        isSumOfMultipleBalances={false}
+        decimals={decimals}
+        // TODO: Implement me
+        tokenType={null}
+        totalBalance={price}
+        tokenBalance={balance}
+        conversionRate={maybeValuation?.conversionRate || null}
+        change={maybeValuation?.rates?.DAILY || null}
+        showControls
         selectedWallet={selectedWallet}
+        symbol={symbol}
+        icon={icon}
         receiveButtonAction={() =>
           navigation.navigate('ReceiveToken', { aggregateWalletBannerBalance })
         }

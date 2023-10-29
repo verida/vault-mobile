@@ -1,9 +1,4 @@
-import {
-  BalanceByChainResult,
-  priceFormatter,
-  WithMaybeIcon,
-  WithMaybeTokenType,
-} from 'features/cryptoWallet'
+import { priceFormatter } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -16,31 +11,62 @@ import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
+import { TokenListItemBalanceSpan } from './TokensList/TokenListItem.Balance.Span'
+
 const TokenBanner = React.memo(function TokenBanner({
-  data,
+  //data,
   sendButtonAction: maybeSendButtonAction,
   selectedWallet,
   receiveButtonAction: maybeReceiveButtonAction,
   copyButtonAction: maybeCopyButtonAction,
+
+  // New:
+  tokenType,
+  totalBalance,
+  tokenBalance,
+  showControls,
+  symbol,
+  icon,
+  decimals: maybeDecimals,
+  change: maybeChange,
+  conversionRate,
+  isSumOfMultipleBalances,
 }: {
   readonly selectedWallet?: BlockchainWalletWithAccounts
   readonly sendButtonAction?: () => void
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void
-  readonly data: Partial<
-    WithMaybeIcon<WithMaybeTokenType<BalanceByChainResult>>
-  >
+  //readonly data: Partial<
+  //  WithMaybeIcon<WithMaybeTokenType<BalanceByChainResult>>
+  //>
+
+  // TODO: How to determine tokenType using updated model?
+  readonly tokenType: 'Coin' | null
+  // TODO: should be "currencyBalance" or something
+  readonly totalBalance: number
+  readonly symbol: string | null
+  readonly icon: string | null
+  readonly tokenBalance: string | null
+  readonly decimals: number | null
+  readonly change: number | null
+  readonly conversionRate: number | null
+
+  // NOTE: This used to be the presence of "symbol" or not.
+  readonly showControls: boolean
+  readonly isSumOfMultipleBalances: boolean
 }): JSX.Element {
-  const {
-    label,
-    price = 0,
-    change: maybeChange,
-    amount = 0,
-    symbol,
-    quantity,
-    icon,
-    tokenType,
-  } = data
+  //const {
+  //  //label,
+  //  //price = 0,
+  //  //change: maybeChange,
+  //  //amount = 0,
+  //  // symbol,
+  //  //quantity,
+  //  // icon,
+  //  //tokenType,
+  //} = data
+
+  //const label = 'hello'
 
   const hasChange = typeof maybeChange === 'number'
 
@@ -48,11 +74,15 @@ const TokenBanner = React.memo(function TokenBanner({
 
   return (
     <View style={styles.bannerWrapper}>
-      {symbol && (
+      {showControls && (
         <View style={styles.coinInfo}>
           <Text style={styles.coinText}>{tokenType ? tokenType : 'Coin'}</Text>
           <View style={styles.coinPriceInfo}>
-            <Text style={styles.coinPrice}>{priceFormatter(price)}</Text>
+            {typeof conversionRate === 'number' && (
+              <Text style={styles.coinPrice}>
+                {priceFormatter(conversionRate)}
+              </Text>
+            )}
             {hasChange ? (
               <Text
                 style={[
@@ -74,13 +104,24 @@ const TokenBanner = React.memo(function TokenBanner({
           </View>
         )}
         <Text style={styles.amount}>
-          {label ? `${quantity} ${symbol}` : `${priceFormatter(amount)}`}
+          {/* */}
+          {!!tokenBalance && symbol && typeof maybeDecimals === 'number' ? (
+            <TokenListItemBalanceSpan
+              symbol={symbol}
+              balance={tokenBalance}
+              decimals={maybeDecimals}
+            />
+          ) : (
+            `${priceFormatter(totalBalance)}`
+          )}
         </Text>
         <Text style={styles.amountLabel}>
-          {label ? `≈ ${priceFormatter(amount)}` : `Total Balance`}
+          {!isSumOfMultipleBalances
+            ? `≈ ${priceFormatter(totalBalance)}`
+            : `Total Balance`}
         </Text>
       </View>
-      {symbol && (
+      {showControls && (
         <View style={styles.actionIcons}>
           {Boolean(selectedWallet && !selectedWallet.viewOnly) && (
             <TouchableOpacity

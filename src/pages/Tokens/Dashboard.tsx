@@ -32,9 +32,6 @@ const TokenDashboard = React.memo(function TokenDashboard() {
     aggregateWalletBannerBalances
   )
 
-  // TODO: refactor this object so that it respects fiat equivalent values may not be accurate
-  const data = React.useMemo(() => ({ amount: price }), [price])
-
   return (
     <Container>
       <ErrorBoundary>
@@ -43,7 +40,20 @@ const TokenDashboard = React.memo(function TokenDashboard() {
         ) : (
           <View style={styles.contentContainer}>
             <TestnetWarning networkReference={null} />
-            <TokenBanner data={data} />
+            <TokenBanner
+              // TODO: Implement me (is this supposed to be the user's sum balance change???)
+              conversionRate={null}
+              // TODO: Implement me
+              tokenType={null}
+              totalBalance={price}
+              showControls={false}
+              symbol={null}
+              isSumOfMultipleBalances
+              icon={null}
+              tokenBalance={null}
+              decimals={null}
+              change={null}
+            />
             <TokensList
               aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
                 aggregateWalletBannerBalances
