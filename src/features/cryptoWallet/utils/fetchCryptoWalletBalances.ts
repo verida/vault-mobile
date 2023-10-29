@@ -2,7 +2,6 @@ import { ChainId } from 'caip'
 import {
   getBalanceEip155,
   getBalanceNear,
-  getNearAccountId,
   RpcSelector,
 } from 'features/blockchain'
 import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
@@ -34,11 +33,13 @@ export async function fetchCryptoWalletBalances({
     ),
   ]
 
+  //console.log(JSON.stringify({ nearAddresses }))
+
   // This is NOT correct. It assumes we can always derive the NEAR address
   // from the minified account, which will not hold true for very long.
-  const nearAccounts = nearAddresses.map((address) =>
-    getNearAccountId({ signerId: address })
-  )
+  //const nearAccounts = nearAddresses.map((address) =>
+  //  getNearAccountId({ signerId: address })
+  //)
 
   // TODO: dedup
   const eip155Chains = chainMetadatas.filter(
@@ -71,7 +72,7 @@ export async function fetchCryptoWalletBalances({
     Promise.all(
       nearChains.map(({ namespace, reference }) =>
         Promise.all(
-          nearAccounts.map((address) =>
+          nearAddresses.map((address) =>
             getBalanceNear({
               chainId: new ChainId({ namespace, reference }),
               chainMetadatas,
