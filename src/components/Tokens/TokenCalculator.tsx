@@ -37,9 +37,9 @@ const TokenCalculator = React.memo(function TokenCalculator({
   readonly price: number
   readonly quantity: number
 }): JSX.Element {
-  const [number, onChangeNumber] = React.useState<`${number}`>('0')
+  const [number, onChangeNumber] = React.useState<`${number}` | null>(null)
   const [mode, onSwitchMode] = React.useState<Format>(Format.CRYPTO)
-  const converted = convert(number, mode, price)
+  const converted = convert(number || '0', mode, price)
   const maxFiat = quantity * price
   const maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity
 
@@ -75,8 +75,9 @@ const TokenCalculator = React.memo(function TokenCalculator({
             ref={ref}
             style={styles.amountInput}
             onChangeText={(text) => updateAmount(text as `${number}`)}
-            value={number}
+            value={number || ''}
             keyboardType='numeric'
+            placeholder='0'
           />
           {mode === Format.CRYPTO && (
             <Text style={styles.amountText}> {symbol}</Text>
