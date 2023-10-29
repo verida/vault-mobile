@@ -1,3 +1,4 @@
+import { DetailedValuation } from 'features/cryptoWallet'
 import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -23,25 +24,33 @@ const TokenCalculator = React.memo(function TokenCalculator({
   autoFocus: maybeAutoFocus = false,
   onUpdateAmount,
   onUpdateValidation,
-
-  // TODO: pair these back up
   symbol,
-  price,
-  quantity,
+  valuation: maybeValuation,
+  maxCrypto,
 }: {
   readonly autoFocus?: boolean
   readonly onUpdateAmount: React.Dispatch<React.SetStateAction<number | null>>
   readonly onUpdateValidation: React.Dispatch<React.SetStateAction<boolean>>
-
   readonly symbol: string
-  readonly price: number
-  readonly quantity: number
+  readonly valuation: DetailedValuation | null
+  readonly maxCrypto: number
 }): JSX.Element {
   const [number, onChangeNumber] = React.useState<`${number}` | null>(null)
   const [mode, onSwitchMode] = React.useState<Format>(Format.CRYPTO)
+
+  // Only allow to switch between entering a crypto amount and a fiat amount
+  // if there's a fiat amount to switch to.
+
+  const canSwitchModes = Boolean(maybeValuation)
+  // max I think
+  const quantity = maybeValuation?.price || 0
+  const price = maybeValuation?.conversionRate || 0
+
   const converted = convert(number || '0', mode, price)
-  const maxFiat = quantity * price
-  const maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity
+
+  const maxFiat = canSwitchModes ? quantity : Number.POSITIVE_INFINITY
+
+  const maxNumber = mode === Format.FIAT ? maxFiat.toFixed(2) : maxCrypto
 
   const ref = React.useRef<TextInput>(null)
 
@@ -84,18 +93,23 @@ const TokenCalculator = React.memo(function TokenCalculator({
             <Text style={styles.amountText}> {symbol}</Text>
           )}
         </View>
-        <Text style={styles.convertedAmount}>
-          {`≈ ${
-            mode === Format.CRYPTO ? `$${converted}` : `${converted} ${symbol}`
-          }`}
-          {}
-        </Text>
+        {canSwitchModes && (
+          <Text style={styles.convertedAmount}>
+            {`≈ ${
+              mode === Format.CRYPTO
+                ? `$${converted}`
+                : `${converted} ${symbol}`
+            }`}
+            {}
+          </Text>
+        )}
       </View>
       <TouchableOpacity
+        disabled={!canSwitchModes}
         onPress={() => {
           onSwitchMode(mode === Format.FIAT ? Format.CRYPTO : Format.FIAT)
         }}
-        style={styles.button}>
+        style={[styles.button, !canSwitchModes && styles.invisible]}>
         <SwapIcon />
       </TouchableOpacity>
     </View>
@@ -105,6 +119,7 @@ const TokenCalculator = React.memo(function TokenCalculator({
 export default TokenCalculator
 
 const styles = StyleSheet.create({
+  invisible: { opacity: 0 },
   bannerWrapper: {
     marginBottom: 15,
     backgroundColor: 'rgba(245, 244, 255, 1)',

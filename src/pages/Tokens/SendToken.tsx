@@ -1,5 +1,8 @@
 import { RouteProp } from '@react-navigation/native'
-import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
+import {
+  AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceAsNumeric,
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
@@ -29,7 +32,10 @@ const SendToken = React.memo(function SendToken() {
   const [amount, onUpdateAmount] = React.useState<number | null>(null)
   const [amountValid, onUpdateValidation] = React.useState<boolean>(false)
 
-  const disabled = !amount || !amountValid
+  const disabled =
+    typeof amount !== 'number' || amount <= 0 || isNaN(amount) || !amountValid
+
+  const { valuation } = aggregateWalletBannerBalance
 
   const onPress = React.useCallback(() => {
     if (disabled || !amountValid) return showAlert()
@@ -41,6 +47,9 @@ const SendToken = React.memo(function SendToken() {
   }, [amount, amountValid, disabled, navigation, aggregateWalletBannerBalance])
 
   // TODO: what to do about getTokenUnitName
+  const maxCrypto = getAggregateWalletBannerBalanceAsNumeric(
+    aggregateWalletBannerBalance
+  )
 
   return (
     <Container>
@@ -55,11 +64,9 @@ const SendToken = React.memo(function SendToken() {
         <View style={styles.content}>
           <TokenCalculator
             autoFocus
+            maxCrypto={maxCrypto}
             symbol={aggregateWalletBannerBalance.symbol}
-            // TODO: what value to use?
-            price={6969}
-            // TODO: what value to use?
-            quantity={696969}
+            valuation={valuation}
             onUpdateAmount={onUpdateAmount}
             onUpdateValidation={onUpdateValidation}
           />
