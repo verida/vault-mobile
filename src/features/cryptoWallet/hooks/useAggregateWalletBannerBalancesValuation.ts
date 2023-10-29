@@ -8,9 +8,8 @@ import {
 export function useAggregateWalletBannerBalancesValuation(
   result: ReturnType<typeof useAggregateWalletBannerBalances>
 ): ValuedAtWithAccuracy {
-  const aggregateWalletBannerBalances = getAggregateWalletBannerBalanceResult(
-    useAggregateWalletBannerBalances()
-  )
+  const aggregateWalletBannerBalances =
+    getAggregateWalletBannerBalanceResult(result)
 
   const { price, currency, isAccurate } =
     computeValuationForAggregateWalletBannerBalances({
