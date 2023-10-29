@@ -96,8 +96,8 @@ const ReceiveToken = () => {
           </Text> */}
           <Text style={styles.notice}>
             Send only {aggregateWalletBannerBalance.label}
-            {aggregateWalletBannerBalance.symbol} to this address. Sending any
-            other coins may result in permanent loss.
+            {` (${aggregateWalletBannerBalance.symbol})`} to this address.
+            Sending any other coins may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
             {hasAddress && (
