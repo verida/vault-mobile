@@ -7,7 +7,7 @@ import { AggregateWalletBannerBalance } from '../@types'
 export function getAggregateWalletBannerBalanceAsNumeric({
   balance,
   decimals,
-}: AggregateWalletBannerBalance): number {
+}: Pick<AggregateWalletBannerBalance, 'balance' | 'decimals'>): number {
   return new BigDecimal(balance)
     .div(new BigDecimal(10).pow(decimals))
     .toNumber()

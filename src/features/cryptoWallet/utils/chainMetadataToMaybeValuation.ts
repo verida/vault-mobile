@@ -7,11 +7,16 @@ import {
   DetailedValuation,
   Interval,
 } from '../@types'
+import { getAggregateWalletBannerBalanceAsNumeric } from './getAggregateWalletBannerBalanceAsNumeric'
 
 export function chainMetadataToMaybeValuation({
+  balance,
+  decimals,
   chainMetadata,
   balanceByChainResults,
 }: {
+  readonly decimals: number
+  readonly balance: string
   readonly chainMetadata: ChainMetadata
   readonly balanceByChainResults: readonly BalanceByChainResult[]
 }): DetailedValuation | null {
@@ -26,10 +31,16 @@ export function chainMetadataToMaybeValuation({
 
   // TODO: oh jeez i am sorry
   const {
-    amount: price,
+    //amount: price,
     price: conversionRate,
     change: maybeChange,
   } = maybeBalanceByChainResult
+
+  const price =
+    getAggregateWalletBannerBalanceAsNumeric({
+      balance,
+      decimals,
+    }) * conversionRate
 
   return {
     // HACK: The Wallet Provider currently only supports USD.

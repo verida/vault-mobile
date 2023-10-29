@@ -42,6 +42,8 @@ export function chainMetadataToAggregateWalletBannerBalance({
         .reduce((b: BigNumber, e: string) => b.add(e), BigNumber.from('0'))
     : BigNumber.from('0')
 
+  const balance = totalBalance.toString()
+
   return {
     resource: chainId,
     type: AggregateWalletBannerBalanceType.BASE_CURRENCY,
@@ -49,8 +51,10 @@ export function chainMetadataToAggregateWalletBannerBalance({
     label: nativeCurrencyName,
     symbol,
     icon,
-    balance: totalBalance.toString(),
+    balance,
     valuation: chainMetadataToMaybeValuation({
+      balance,
+      decimals,
       chainMetadata,
       balanceByChainResults,
     }),
