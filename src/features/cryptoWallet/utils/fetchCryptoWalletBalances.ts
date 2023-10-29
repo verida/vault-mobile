@@ -2,6 +2,7 @@ import { ChainId } from 'caip'
 import {
   getBalanceEip155,
   getBalanceNear,
+  getNearAccountId,
   RpcSelector,
 } from 'features/blockchain'
 import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
@@ -37,9 +38,13 @@ export async function fetchCryptoWalletBalances({
 
   // This is NOT correct. It assumes we can always derive the NEAR address
   // from the minified account, which will not hold true for very long.
-  //const nearAccounts = nearAddresses.map((address) =>
-  //  getNearAccountId({ signerId: address })
-  //)
+  // TODO: How do we tell which balance a user wants to send from? It seems like
+  //       both raw addresses and accounts possess balances.
+  const nearAccounts = nearAddresses.map((address) =>
+    getNearAccountId({ signerId: address })
+  )
+
+  const allNearSources = [...new Set([...nearAddresses, ...nearAccounts])]
 
   // TODO: dedup
   const eip155Chains = chainMetadatas.filter(
@@ -72,7 +77,7 @@ export async function fetchCryptoWalletBalances({
     Promise.all(
       nearChains.map(({ namespace, reference }) =>
         Promise.all(
-          nearAddresses.map((address) =>
+          allNearSources.map((address) =>
             getBalanceNear({
               chainId: new ChainId({ namespace, reference }),
               chainMetadatas,
@@ -103,7 +108,7 @@ export async function fetchCryptoWalletBalances({
       return [
         new ChainId(nearChain).toString(),
         Object.fromEntries(
-          nearAddresses.map((address, j) => [address, nearBalances[i][j]])
+          allNearSources.map((address, j) => [address, nearBalances[i][j]])
         ),
       ]
     })
