@@ -1,5 +1,6 @@
+export * from './chainMetadataToAggregateWalletBannerBalance'
+export * from './chainMetadataToMaybeValuation'
 export * from './computeValuationForAggregateWalletBannerBalances'
-//export * from './data'
 export * from './fetchCryptoWalletBalances'
 export * from './formatter'
 export * from './getAggregateWalletBannerBalanceAsNumeric'

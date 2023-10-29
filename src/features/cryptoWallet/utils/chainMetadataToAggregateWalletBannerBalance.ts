@@ -5,16 +5,20 @@ import { ChainMetadata } from 'features/caip'
 import {
   AggregateWalletBannerBalanceBaseCurrency,
   AggregateWalletBannerBalanceType,
+  BalanceByChainResult,
   CryptoWalletBalance,
   CryptoWalletBalances,
 } from '../@types'
+import { chainMetadataToMaybeValuation } from './chainMetadataToMaybeValuation'
 
 // Converts a ChainMetadata into an equivalent AggregateWalletBannerBalance.
 // Specifically, this takes a raw chain declaration and determines the .
 export function chainMetadataToAggregateWalletBannerBalance({
+  balanceByChainResults,
   chainMetadata,
   cryptoWalletBalances,
 }: {
+  readonly balanceByChainResults: readonly BalanceByChainResult[]
   readonly chainMetadata: ChainMetadata
   readonly cryptoWalletBalances: CryptoWalletBalances
 }): AggregateWalletBannerBalanceBaseCurrency {
@@ -46,8 +50,9 @@ export function chainMetadataToAggregateWalletBannerBalance({
     symbol,
     icon,
     balance: totalBalance.toString(),
-
-    // TODO: determine valuation
-    valuation: null,
+    valuation: chainMetadataToMaybeValuation({
+      chainMetadata,
+      balanceByChainResults,
+    }),
   }
 }

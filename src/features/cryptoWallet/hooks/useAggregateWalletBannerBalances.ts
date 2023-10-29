@@ -91,6 +91,7 @@ export function useAggregateWalletBannerBalances(
 
     const aggregateWalletBannerBalances = chainMetadatas.map((chainMetadata) =>
       chainMetadataToAggregateWalletBannerBalance({
+        balanceByChainResults,
         chainMetadata,
         cryptoWalletBalances,
       })
