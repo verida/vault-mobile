@@ -23,6 +23,7 @@ const TokenDashboard = React.memo(function TokenDashboard() {
   const navigation = useMainNavigation()
 
   const aggregateWalletBannerBalances = useAggregateWalletBannerBalances()
+
   const { loading, refetch: pullToRefresh } = aggregateWalletBannerBalances
   const [wasInitiallyLoading] = React.useState<boolean>(loading)
 

@@ -8,12 +8,12 @@ import {
   getChainIdParamsFromResourceParams,
   getSelectedWalletById,
   getWalletAddressForChainId,
-  Transaction,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
-  useGetTransactionsForTokenQuery,
+  useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeBlockchainNetwork,
   useSelectedMinifiedVeridaAccounts,
+  useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import * as React from 'react'
@@ -72,22 +72,6 @@ const SingleCurrency = () => {
     selectedMinifiedAccounts
   )
 
-  // TODO: If we store this as a verida datastore, we can save transactions
-  //       on the decentralized network instead of rely on the backend to tell
-  //       us what happened...
-  const {
-    isLoading: isLoadingTransactions,
-    isFetching: isFetchingTransactions,
-    error: errorTransactions,
-    refetch: refetchTransactions,
-  } = useGetTransactionsForTokenQuery({
-    userAddress: maybeAddress || null,
-    //asset: maybeAsset || null,
-
-    // TODO: need to fix base currency asset model
-    asset: null,
-  })
-
   const {
     symbol,
     resource,
@@ -115,33 +99,29 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalances
   )
 
-  // const {
-  //   maybeBalance,
-  //   isLoading: isLoadingBalance,
-  //   isFetching: isFetchingBalance,
-  //   error: errorBalance,
-  //   refetch: refetchBalance,
-  // } = useMaybeBalanceForChainId(maybeAsset?.chainId)
+  const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
+    aggregateWalletBannerBalance,
+  })
+
+  const {
+    loading: isLoadingTransactions,
+    refetch: refetchTransactions,
+    transactions,
+    error: errorTransactions,
+  } = useTransactionsForMaybeAssetId({
+    assetId,
+  })
 
   const isLoading = isLoadingTransactions || isLoadingBalance
-
-  // TODO: Difference between isLoading and isFetching?
-  const isFetching = isFetchingTransactions || isLoadingBalance
 
   // TODO: re-enable transactions list
   const error = (false && errorTransactions) || maybeErrorBalance
 
-  const pullToRefresh = React.useCallback(() => {
-    refetchTransactions()
-    refetchBalance()
-  }, [refetchTransactions, refetchBalance])
-
-  // TODO: how to render transactions?
-  //const list = useSelector<RootState, readonly Transaction[]>((state) =>
-  //  selectTransactions(state, maybeAsset)
-  //)
-  //const maybeData = React.useMemo(() => maybeBalance || {}, [maybeBalance])
-  const list = React.useMemo<readonly Transaction[]>(() => [], [])
+  const pullToRefresh = React.useCallback(
+    // eslint-disable-next-line no-void
+    () => void Promise.all([refetchTransactions(), refetchBalance()]),
+    [refetchTransactions, refetchBalance]
+  )
 
   if (error)
     return (
@@ -150,11 +130,6 @@ const SingleCurrency = () => {
         resetErrorBoundary={pullToRefresh}
       />
     )
-
-  //const maybeToken =
-  //  Boolean(tokenData) && 'token' in tokenData ? tokenData.token : undefined
-
-  //const maybeSymbol = maybeToken?.symbol
 
   return (
     <Container>
@@ -203,7 +178,7 @@ const SingleCurrency = () => {
           })
         }}
       />
-      {isLoading ? (
+      {false ? (
         <LoadingIndicator />
       ) : (
         // TODO: we will fix the transaction list in general
@@ -213,10 +188,10 @@ const SingleCurrency = () => {
           blockchainNetwork={blockchainNetwork}
           // TODO: what is a token in this instance?
           token={undefined}
-          onPullToRefresh={() => pullToRefresh()}
-          refreshing={isFetching}
+          onPullToRefresh={pullToRefresh}
+          refreshing={isLoading}
           // errorType={errorType}
-          list={list}
+          list={transactions}
         />
       )}
     </Container>

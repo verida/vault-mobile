@@ -1,8 +1,11 @@
 import { AssetId } from 'caip'
 import {
   getBalancesData,
+  //getTransactionsForTokenData,
+  //getWalletAddressForAsset,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
+  //Transaction,
   WalletsData,
 } from 'features/cryptoWallet'
 import { isEmpty } from 'lodash'
@@ -164,27 +167,27 @@ export const getWalletObjectById = (state: RootState, id: string) => {
 //      ? [...getTransactionsForTokenData(state, userAddress, assetID)]
 //      : []
 //
-//  const pendingTransactions = assetID
-//    ? selectPendingTransactions(state, assetID)
-//    : []
+//  //const pendingTransactions = assetID
+//  //  ? selectPendingTransactions(state, assetID)
+//  //  : []
 //
-//  if (pendingTransactions.length > 0) {
-//    pendingTransactions.map((tx: any) => {
-//      // TODO: tx type
-//      const transactionCompleted = transactions.find((trans) => {
-//        return trans.id === tx.id
-//      })
-//      if (!transactionCompleted) {
-//        transactions.unshift({
-//          id: tx.id,
-//          type: TransactionType.SENT,
-//          address: tx.to,
-//          quantity: tx.amount,
-//          pending: true,
-//        })
-//      }
-//    })
-//  }
+//  //if (pendingTransactions.length > 0) {
+//  //  pendingTransactions.map((tx: any) => {
+//  //    // TODO: tx type
+//  //    const transactionCompleted = transactions.find((trans) => {
+//  //      return trans.id === tx.id
+//  //    })
+//  //    if (!transactionCompleted) {
+//  //      transactions.unshift({
+//  //        id: tx.id,
+//  //        type: TransactionType.SENT,
+//  //        address: tx.to,
+//  //        quantity: tx.amount,
+//  //        pending: true,
+//  //      })
+//  //    }
+//  //  })
+//  //}
 //  return transactions
 //}
 

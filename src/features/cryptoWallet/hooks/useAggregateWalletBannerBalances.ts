@@ -1,20 +1,16 @@
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import * as React from 'react'
-import { useSelector } from 'react-redux'
 
 import {
   AggregateWalletBannerBalances,
-  BalanceByChainResult,
-  isBalanceByChainResult,
   UseAggregateWalletBannerBalancesParams,
   UseAggregateWalletBannerBalancesState,
 } from '../@types'
-import { useGetBalancesQuery } from '../api'
 import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
 import { useCryptoWalletContext } from '../contexts'
-import { getUniqueWalletAddresses, getWallets } from '../slice'
 import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
+import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
 import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
 
 export const getAggregateWalletBannerBalanceError = (
@@ -44,8 +40,6 @@ export function useAggregateWalletBannerBalances(
 ): UseAggregateWalletBannerBalancesState & {
   readonly refetch: () => Promise<void>
 } {
-  const wallets = useSelector(getWallets)
-
   const cryptoWalletContext = useCryptoWalletContext()
   const cryptoWalletBalances =
     getMaybeCreateCryptoWalletBalancesResult(cryptoWalletContext)
@@ -62,13 +56,11 @@ export function useAggregateWalletBannerBalances(
   const didDefineResource = 'resource' in params
 
   const {
-    data: dataWalletProvider,
-    isLoading: isLoadingWalletProvider,
     error: errorWalletProvider,
+    loading: isLoadingWalletProvider,
+    balanceByChainResults,
     refetch: refetchWalletProvider,
-  } = useGetBalancesQuery(
-    React.useMemo(() => getUniqueWalletAddresses(wallets), [wallets])
-  )
+  } = useBalanceByChainResultsForUniqueWalletAddresses()
 
   const state = React.useMemo<UseAggregateWalletBannerBalancesState>(() => {
     if (errorWalletProvider)
@@ -79,15 +71,7 @@ export function useAggregateWalletBannerBalances(
         }),
       }
 
-    if (isLoadingWalletProvider || !dataWalletProvider) return { loading: true }
-
-    // Fetch the value balanceByChainResults.
-    // TODO: pair this information with the collected network balances
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const balanceByChainResults: readonly BalanceByChainResult[] =
-      dataWalletProvider.list.flatMap((e) =>
-        isBalanceByChainResult(e) ? [e] : []
-      )
+    if (isLoadingWalletProvider) return { loading: true }
 
     const aggregateWalletBannerBalances = chainMetadatas.map((chainMetadata) =>
       chainMetadataToAggregateWalletBannerBalance({
@@ -117,13 +101,13 @@ export function useAggregateWalletBannerBalances(
       result: resultForOnlyMatchingChains,
     }
   }, [
-    dataWalletProvider,
-    isLoadingWalletProvider,
     errorWalletProvider,
-    maybeResource,
-    didDefineResource,
+    isLoadingWalletProvider,
     chainMetadatas,
+    balanceByChainResults,
     cryptoWalletBalances,
+    didDefineResource,
+    maybeResource,
   ])
 
   const refetch = React.useCallback(
