@@ -130,18 +130,15 @@ export const getBlockchainNetworks = createSelector(
   (data) => data.data || {}
 )
 
-export const getBlockchainNetwork = (
+export const getMaybeBlockchainNetwork = (
   state: RootState,
   chainIdObj: ChainId | null | undefined
 ): BlockchainNetwork | undefined => {
   if (!chainIdObj) return undefined
 
   const networks = getBlockchainNetworks(state)
-  const chainId = new ChainId(chainIdObj).toString()
 
-  if (networks?.[chainId]) return networks[chainId]
-
-  throw new Error(`Unknown blockchain network: ${chainId}`)
+  return networks?.[new ChainId(chainIdObj).toString()]
 }
 
 export const getBlockchainNetworkLabel = (
