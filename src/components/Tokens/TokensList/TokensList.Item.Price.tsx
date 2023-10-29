@@ -27,7 +27,7 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
                 styles.coinPriceChange,
                 positive ? styles.positive : styles.negative,
               ]}
-              children={`${positive ? '+' : ''}${dailyRateChange.toFixed(2)}`}
+              children={`${positive ? '+' : ''}${dailyRateChange.toFixed(2)}%`}
             />
           )}
         </View>
