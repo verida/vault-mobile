@@ -7,6 +7,7 @@ import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
+import { FirebaseRemoteConfigProvider } from 'features/remoteConfig/RemoteConfigProvider'
 import { Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
@@ -94,35 +95,37 @@ function App() {
   if (SHUTDOWN_APP) return <OutOfService />
 
   const AppContent = (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <ThemeProvider initial={defaultTheme}>
-            <AuthProvider>
-              <NavigationContainer
-                linking={navigationLinkingConfiguration}
-                ref={navigationRef}>
-                <ModalProvider>
-                  <Authenticate>
-                    <RootSiblingParent>
-                      <ActionSheetProvider>
-                        <WalletConnectProvider>
-                          <GestureHandlerRootView style={styles.flex}>
-                            <RootNavigator />
-                          </GestureHandlerRootView>
-                          <MetaServerChecks />
-                        </WalletConnectProvider>
-                      </ActionSheetProvider>
-                    </RootSiblingParent>
-                  </Authenticate>
-                  <SwitchAccountToast />
-                </ModalProvider>
-              </NavigationContainer>
-            </AuthProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </PersistGate>
-    </Provider>
+    <FirebaseRemoteConfigProvider>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <ThemeProvider initial={defaultTheme}>
+              <AuthProvider>
+                <NavigationContainer
+                  linking={navigationLinkingConfiguration}
+                  ref={navigationRef}>
+                  <ModalProvider>
+                    <Authenticate>
+                      <RootSiblingParent>
+                        <ActionSheetProvider>
+                          <WalletConnectProvider>
+                            <GestureHandlerRootView style={styles.flex}>
+                              <RootNavigator />
+                            </GestureHandlerRootView>
+                            <MetaServerChecks />
+                          </WalletConnectProvider>
+                        </ActionSheetProvider>
+                      </RootSiblingParent>
+                    </Authenticate>
+                    <SwitchAccountToast />
+                  </ModalProvider>
+                </NavigationContainer>
+              </AuthProvider>
+            </ThemeProvider>
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
+    </FirebaseRemoteConfigProvider>
   )
 
   return loading ? null : (

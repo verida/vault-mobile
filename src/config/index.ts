@@ -6,6 +6,7 @@ import {
   NetworkId,
 } from 'features/polygonid/constants'
 import { LogLevel } from 'features/telemetry'
+import { isEqual } from 'lodash'
 import Config from 'react-native-config'
 
 import {
@@ -169,7 +170,34 @@ const RESOLVED_CONFIG = Object.assign(
   SPECIFIC_CONFIGS[veridaNetwork]
 )
 
+// Merge config with firebase remote config
+export function mergeWithRemoteConfig(
+  remoteConfig: Partial<typeof RESOLVED_CONFIG>
+) {
+  for (const [key, value] of Object.entries(remoteConfig)) {
+    console.log('=> Key', key, value, RESOLVED_CONFIG[key])
+    if (!isEqual(RESOLVED_CONFIG[key], value)) {
+      console.log('==> not equal', key, config[key], value)
+      RESOLVED_CONFIG[key] = value
+      // Alert.alert(
+      //   'Configuration updated',
+      //   'Application configurations updated, need to restart the app',
+      //   [
+      //     {
+      //       text: 'OK',
+      //       onPress: () => {
+      //         RNRestart.restart()
+      //       },
+      //     },
+      //   ]
+      // )
+    }
+  }
+}
+
 export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
+
+// console.log('Config ', JSON.stringify(config, null, 2))
 
 // TODO: Eventually get rid of default export
 export default RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>

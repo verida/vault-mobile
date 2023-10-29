@@ -1,7 +1,11 @@
 import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
 import { compareVersions } from 'compare-versions'
+import { config } from 'config'
+import { isEqual } from 'lodash'
 import { useCallback, useRef, useState } from 'react'
+import { Alert } from 'react-native'
+import RNRestart from 'react-native-restart'
 
 import { APP_VERSION } from 'constants/application'
 
@@ -21,10 +25,14 @@ export type ForcedCreateAccountType = {
   furtherInfo?: string
 }
 
+export type AppConfig = Partial<typeof config>
+
 export function useRemoteConfigs() {
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
+  const [appConfig, setAppConfig] = useState<AppConfig>({})
+
   const fetchingRef = useRef(false)
   const isMounted = useIsMounted()
 
@@ -43,6 +51,7 @@ export function useRemoteConfigs() {
       .setDefaults({
         forced_upgrade: '{}',
         forced_create_new_account: '{}',
+        wallet_app_configs: '{}',
       })
       .then(() => isMounted() && remoteConfig()?.fetchAndActivate())
       .then(Boolean)
@@ -64,6 +73,29 @@ export function useRemoteConfigs() {
             forcedCreateAccountJSON.asString()
           )
           setForcedCreateAccount(forcedCreateAccountInfo)
+
+          const wallet_app_configs = JSON.parse(
+            remoteConfig().getValue('wallet_app_configs').asString()
+          )
+
+          setAppConfig(wallet_app_configs)
+
+          for (const [key, value] of Object.entries(wallet_app_configs)) {
+            if (!isEqual(config[key], value)) {
+              Alert.alert(
+                'Configuration updated',
+                'Application configurations updated, need to restart the app',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      RNRestart.restart()
+                    },
+                  },
+                ]
+              )
+            }
+          }
         }
       })
       .catch((error) => {
