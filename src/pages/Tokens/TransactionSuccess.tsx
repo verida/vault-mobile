@@ -1,14 +1,7 @@
 import { RouteProp } from '@react-navigation/native'
-import {
-  BalanceByChainResult,
-  //formatTokenQuantity,
-  //getSupportedTokenObjectDecimals,
-  //selectSentTransaction,
-  //useMaybeBlockchainNetwork,
-} from 'features/cryptoWallet'
+import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 import React from 'react'
 
-//import { connect } from 'react-redux'
 import SuccessFailure from 'components/SuccessFailure'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
@@ -22,31 +15,19 @@ export type TransactionSuccessRouteProp = RouteProp<
 export type TransactionSuccessScreenProps = {
   readonly amount: number
   readonly toAddress: string
-  readonly token: BalanceByChainResult
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 const TransactionSuccess = React.memo(
   function TransactionSuccess(): JSX.Element {
     const navigation = useMainNavigation()
 
-    const { amount, toAddress, token } =
+    const { amount, toAddress, aggregateWalletBannerBalance } =
       useParams<TransactionSuccessScreenProps>()
 
-    //const { data } = sentTransaction
     const titleText = 'Success!'
 
-    //const maybeBlockchainNetwork = useMaybeBlockchainNetwork(
-    //  token.asset.chainId
-    //)
-
-    //const decimals = getSupportedTokenObjectDecimals(
-    //  token.token,
-    //  maybeBlockchainNetwork
-    //)
-
-    //const transferQuantity = formatTokenQuantity(amount, decimals)
-
-    const descriptionText = `You sent ${amount} ${token.symbol} to ${toAddress}.`
+    const descriptionText = `You sent ${amount} ${aggregateWalletBannerBalance.symbol} to ${toAddress}.`
     const buttonLabel = 'Done'
 
     return (
@@ -56,7 +37,9 @@ const TransactionSuccess = React.memo(
         descriptionText={descriptionText}
         buttonLabel={buttonLabel}
         actionButtonOnPress={() =>
-          navigation.navigate('SingleCurrency', { item: token })
+          navigation.navigate('SingleCurrency', {
+            aggregateWalletBannerBalance,
+          })
         }
       />
     )

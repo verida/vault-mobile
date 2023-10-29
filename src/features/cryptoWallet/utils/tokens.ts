@@ -1,9 +1,10 @@
 import { AssetId, AssetIdParams, ChainId } from 'caip'
 import { BigNumberish, utils } from 'ethers'
+import { isSupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainNetwork } from 'api/types'
 
-import { SupportedTokenObject, WalletsData } from '../@types'
+import { MinifiedVeridaAccounts, SupportedTokenObject } from '../@types'
 
 export const isNativeToken = (asset: AssetId) =>
   asset.assetName.namespace === 'slip44'
@@ -22,14 +23,36 @@ export const getTokenAddress = (address: AssetId) => {
   return address.assetName.reference
 }
 
+export const getWalletAddressForChainId = (
+  chainId: ChainId | null | undefined,
+  minifiedVeridaAccounts: MinifiedVeridaAccounts
+  //wallets: WalletsData
+) => {
+  if (!chainId) return undefined
+
+  const { namespace } = chainId
+
+  if (!isSupportedCaipNamespace(namespace)) return undefined
+
+  // TODO: What happens if there are dupliate keys?
+  const maybeMatchingAccount = minifiedVeridaAccounts.find(
+    (e) => e.namespace === namespace
+  )
+
+  if (!maybeMatchingAccount) return undefined
+
+  const { address } = maybeMatchingAccount
+
+  return address
+}
+
 export const getWalletAddressForAsset = (
   asset: AssetId | null | undefined,
-  wallets: WalletsData
+  minifiedVeridaAccounts: MinifiedVeridaAccounts
 ) => {
   if (!asset) return undefined
 
-  const chainId = new ChainId(asset.chainId).toString()
-  return wallets[chainId].address
+  return getWalletAddressForChainId(asset.chainId, minifiedVeridaAccounts)
 }
 
 export const handleTokenDecimals = (

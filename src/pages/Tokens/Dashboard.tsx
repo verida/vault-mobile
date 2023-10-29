@@ -48,8 +48,12 @@ const TokenDashboard = React.memo(function TokenDashboard() {
               aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
                 aggregateWalletBannerBalances
               )}
-              onPressItem={(item: AggregateWalletBannerBalance) => {
-                navigation.navigate('SingleCurrency', { item })
+              onPressItem={(
+                aggregateWalletBannerBalance: AggregateWalletBannerBalance
+              ) => {
+                navigation.navigate('SingleCurrency', {
+                  aggregateWalletBannerBalance,
+                })
               }}
               onPullToRefresh={pullToRefresh}
               refreshing={loading}
@@ -60,9 +64,13 @@ const TokenDashboard = React.memo(function TokenDashboard() {
               aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
                 aggregateWalletBannerBalances
               )}
-              onPressItem={(token: AggregateWalletBannerBalance) => {
+              onPressItem={(
+                aggregateWalletBannerBalance: AggregateWalletBannerBalance
+              ) => {
                 setSendModalVisible(false)
-                navigation.navigate('SendToken', { token })
+                navigation.navigate('SendToken', {
+                  aggregateWalletBannerBalance,
+                })
               }}
             />
           </View>

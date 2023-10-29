@@ -1,6 +1,5 @@
 import { RouteProp } from '@react-navigation/native'
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
-import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
@@ -21,12 +20,12 @@ const showAlert = () =>
 export type SendTokenRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
 export type SendTokenScreenProps = {
-  readonly token: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 const SendToken = React.memo(function SendToken() {
   const navigation = useMainNavigation()
-  const { token } = useParams<SendTokenScreenProps>()
+  const { aggregateWalletBannerBalance } = useParams<SendTokenScreenProps>()
   const [amount, onUpdateAmount] = React.useState<number | null>(null)
   const [amountValid, onUpdateValidation] = React.useState<boolean>(false)
 
@@ -35,8 +34,13 @@ const SendToken = React.memo(function SendToken() {
   const onPress = React.useCallback(() => {
     if (disabled || !amountValid) return showAlert()
 
-    navigation.navigate('TokenRecipient', { token, amount })
-  }, [amount, amountValid, disabled, navigation, token])
+    navigation.navigate('TokenRecipient', {
+      aggregateWalletBannerBalance,
+      amount,
+    })
+  }, [amount, amountValid, disabled, navigation, aggregateWalletBannerBalance])
+
+  // TODO: what to do about getTokenUnitName
 
   return (
     <Container>
@@ -45,13 +49,17 @@ const SendToken = React.memo(function SendToken() {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={`Send ${getTokenUnitName(token)}`}
+        title={`Send ${aggregateWalletBannerBalance.symbol}`}
       />
       <ScrollView style={styles.container}>
         <View style={styles.content}>
           <TokenCalculator
             autoFocus
-            token={token}
+            symbol={aggregateWalletBannerBalance.symbol}
+            // TODO: what value to use?
+            price={6969}
+            // TODO: what value to use?
+            quantity={696969}
             onUpdateAmount={onUpdateAmount}
             onUpdateValidation={onUpdateValidation}
           />

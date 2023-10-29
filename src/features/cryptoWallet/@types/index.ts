@@ -233,6 +233,8 @@ type AbstractAggregateWalletBannerBalance<
   readonly resource: Resource
   readonly type: Type
   readonly decimals: number
+  readonly balance: string
+  readonly symbol: string
 
   // Defines price information for the asset - this can currenttly only be
   // determined by querying the Wallet Provider API, meaning custom networks
@@ -242,8 +244,6 @@ type AbstractAggregateWalletBannerBalance<
   // TODO: look at removing getTokenUnitName
   // TODO: look at getTokenUnitName() -> probably can be found by looking at network config
   // A stringified integer amount of tokens held. For example, 1 ETH would be `${ethers.weiPerEther}`.
-  readonly balance: string
-  readonly symbol: string | null
   readonly icon: string | null
   readonly label: string
 }

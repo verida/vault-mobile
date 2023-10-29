@@ -1,4 +1,3 @@
-import { BalanceByChainResult } from 'features/cryptoWallet'
 import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -24,16 +23,22 @@ const TokenCalculator = React.memo(function TokenCalculator({
   autoFocus: maybeAutoFocus = false,
   onUpdateAmount,
   onUpdateValidation,
-  token,
+
+  // TODO: pair these back up
+  symbol,
+  price,
+  quantity,
 }: {
   readonly autoFocus?: boolean
   readonly onUpdateAmount: React.Dispatch<React.SetStateAction<number | null>>
   readonly onUpdateValidation: React.Dispatch<React.SetStateAction<boolean>>
-  readonly token: BalanceByChainResult
+
+  readonly symbol: string
+  readonly price: number
+  readonly quantity: number
 }): JSX.Element {
   const [number, onChangeNumber] = React.useState<`${number}`>('0')
   const [mode, onSwitchMode] = React.useState<Format>(Format.CRYPTO)
-  const { symbol, price, quantity } = token
   const converted = convert(number, mode, price)
   const maxFiat = quantity * price
   const maxNumber = mode === 'fiat' ? maxFiat.toFixed(2) : quantity

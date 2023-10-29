@@ -1,4 +1,4 @@
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
 import * as ethers from 'ethers'
 import { SupportedCaipNamespace } from 'features/caip'
 
@@ -14,13 +14,13 @@ const validateNearAddress = (address: string) => {
   }
 }
 
-export const isValidWalletAddress = (
+export const isValidWalletAddressForChainId = (
   address: string,
-  asset: AssetId | undefined
+  chainId: ChainId | undefined
 ) => {
-  if (!asset) return false
+  if (!chainId) return false
 
-  const { namespace } = asset.chainId
+  const { namespace } = chainId
 
   switch (namespace) {
     case SupportedCaipNamespace.EIP_155:
@@ -35,6 +35,15 @@ export const isValidWalletAddress = (
   }
 
   return false
+}
+
+export const isValidWalletAddressForAssetId = (
+  address: string,
+  asset: AssetId | undefined
+) => {
+  if (!asset) return false
+
+  return isValidWalletAddressForChainId(address, asset.chainId)
 }
 
 export const isValidSeedPhrase = ({

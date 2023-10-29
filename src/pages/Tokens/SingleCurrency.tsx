@@ -7,12 +7,13 @@ import {
   getBlockchainNetworkLabel,
   getChainIdParamsFromResourceParams,
   getSelectedWalletById,
-  getWalletsData,
+  getWalletAddressForChainId,
   Transaction,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useGetTransactionsForTokenQuery,
   useMaybeBlockchainNetwork,
+  useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import * as React from 'react'
@@ -36,18 +37,22 @@ export type SingleCurrencyRouteProp = RouteProp<
 >
 
 export type SingleCurrencyScreenProps = {
-  readonly item: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 const SingleCurrency = () => {
   const navigation = useMainNavigation()
-  const wallets = useSelector(getWalletsData)
+
+  // TODO: idk what to do about this yet
   const selectedWallet = useSelector(getSelectedWalletById)
 
   // TODO: we should fetch here instead, not pass the route params
-  const { item } = useParams<SingleCurrencyScreenProps>()
+  const { aggregateWalletBannerBalance } =
+    useParams<SingleCurrencyScreenProps>()
 
-  const chainId = new ChainId(getChainIdParamsFromResourceParams(item.resource))
+  const chainId = new ChainId(
+    getChainIdParamsFromResourceParams(aggregateWalletBannerBalance.resource)
+  )
 
   //const maybeAsset: AssetId | undefined =
   //  Boolean(tokenData) && 'asset' in tokenData ? tokenData.asset : undefined
@@ -58,8 +63,14 @@ const SingleCurrency = () => {
   //  ? new ChainId(maybeAsset.chainId).toString()
   //  : undefined
 
+  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
   // TODO: is this right? what about multiple competing private keys for the same network?
-  const maybeAddress = wallets?.[chainId.toString()]?.address
+  //const maybeAddress = wallets?.[chainId.toString()]?.address
+  const maybeAddress = getWalletAddressForChainId(
+    chainId,
+    selectedMinifiedAccounts
+  )
 
   // TODO: If we store this as a verida datastore, we can save transactions
   //       on the decentralized network instead of rely on the backend to tell
@@ -77,14 +88,14 @@ const SingleCurrency = () => {
     asset: null,
   })
 
+  const { symbol, resource } = aggregateWalletBannerBalance
+
   // TODO: we don't need this, we already have the item, fix..
   // Here we fetch the balance for the specific selected asset.
   const aggregateWalletBannerBalances = useAggregateWalletBannerBalances({
     // TODO: we need to fix this so it works for either a chainId or an asset - guessing for now this won't work
-    resource: item.resource,
+    resource,
   })
-
-  const { symbol } = item
 
   const { price } = useAggregateWalletBannerBalancesValuation(
     aggregateWalletBannerBalances
@@ -149,7 +160,7 @@ const SingleCurrency = () => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={item.label}
+        title={aggregateWalletBannerBalance.label}
       />
       <TestnetWarning
         networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
@@ -158,10 +169,10 @@ const SingleCurrency = () => {
         data={data}
         selectedWallet={selectedWallet}
         receiveButtonAction={() =>
-          navigation.navigate('ReceiveToken', { token: item })
+          navigation.navigate('ReceiveToken', { aggregateWalletBannerBalance })
         }
         sendButtonAction={() =>
-          navigation.navigate('SendToken', { token: item })
+          navigation.navigate('SendToken', { aggregateWalletBannerBalance })
         }
         copyButtonAction={() => {
           if (!maybeAddress) return
@@ -184,8 +195,8 @@ const SingleCurrency = () => {
       ) : (
         // TODO: we will fix the transaction list in general
         <TransactionsList
-          symbol={item.symbol || undefined}
-          decimal={item.decimals}
+          symbol={aggregateWalletBannerBalance.symbol}
+          decimal={aggregateWalletBannerBalance.decimals}
           blockchainNetwork={blockchainNetwork}
           // TODO: what is a token in this instance?
           token={undefined}

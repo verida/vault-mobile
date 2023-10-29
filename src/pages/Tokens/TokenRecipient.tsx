@@ -1,12 +1,13 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
+import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 import { SupportedCaipNamespace } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
-  isValidWalletAddress,
+  getChainIdParamsFromResourceParams,
+  isValidWalletAddressForChainId,
 } from 'features/cryptoWallet'
-import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -30,13 +31,14 @@ import InputStyles from 'styles/inputs'
 export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
 export type TokenRecipientScreenProps = {
-  readonly token: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly amount: number
 }
 
 const TokenRecipient = () => {
   const navigation = useMainNavigation()
-  const { token, amount: amount } = useParams<TokenRecipientScreenProps>()
+  const { aggregateWalletBannerBalance, amount: amount } =
+    useParams<TokenRecipientScreenProps>()
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
@@ -60,7 +62,7 @@ const TokenRecipient = () => {
       try {
         navigation.navigate('ConfirmTransaction', {
           amount,
-          token,
+          aggregateWalletBannerBalance,
           toAddress,
         })
       } catch (e) {
@@ -69,12 +71,18 @@ const TokenRecipient = () => {
         showGenericFailure(String(e))
       }
     },
-    [token, navigation, amount]
+    [aggregateWalletBannerBalance, navigation, amount]
   )
 
   const [address, setAddress] = useState<string>('')
 
-  const disabled = !isValidWalletAddress(address, token.asset)
+  const { resource } = aggregateWalletBannerBalance
+
+  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+
+  const { namespace } = chainId
+
+  const disabled = !isValidWalletAddressForChainId(address, chainId)
 
   return (
     <Container>
@@ -83,7 +91,7 @@ const TokenRecipient = () => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={`Send ${getTokenUnitName(token)}`}
+        title={`Send ${aggregateWalletBannerBalance.symbol}`}
       />
       <View style={styles.container}>
         <View style={styles.content}>
@@ -114,8 +122,6 @@ const TokenRecipient = () => {
             {Boolean(__DEV__) && (
               <TouchableOpacity
                 onPress={() => {
-                  const { namespace } = token.asset.chainId
-
                   // TODO: Create a random NEAR address
                   if (namespace === SupportedCaipNamespace.NEAR)
                     return onPressSend('guest-book.testnet')

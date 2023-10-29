@@ -1,18 +1,17 @@
 import { RouteProp } from '@react-navigation/native'
+import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getWalletAddressForAsset,
-  getWalletsData,
+  getChainIdParamsFromResourceParams,
+  getWalletAddressForChainId,
   useLazyConfirmTransaction,
   useMaybeBlockchainNetwork,
-  WalletsData,
+  useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
-import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -22,7 +21,6 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import { RootState } from 'reduxStore/types'
 
 export type ConfirmTransactionRouteProp = RouteProp<
   MainStackParams,
@@ -32,27 +30,30 @@ export type ConfirmTransactionRouteProp = RouteProp<
 export type ConfirmTransactionScreenProps = {
   readonly amount: number
   readonly toAddress: string
-  readonly token: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
-  const {
-    token: balanceByChainResult,
-    amount,
-    toAddress,
-  } = useParams<ConfirmTransactionScreenProps>()
+const ConfirmTransaction = () => {
+  const { aggregateWalletBannerBalance, amount, toAddress } =
+    useParams<ConfirmTransactionScreenProps>()
 
   const navigation = useMainNavigation()
 
-  const maybeBlockchainNetwork = useMaybeBlockchainNetwork(
-    balanceByChainResult.asset.chainId
+  const { resource } = aggregateWalletBannerBalance
+
+  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+
+  const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
+
+  // TODO: what to do about getWalletsData - is it needed any more?
+  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
+  const accountAddress = getWalletAddressForChainId(
+    chainId,
+    selectedMinifiedAccounts
   )
 
-  const accountAddress = getWalletAddressForAsset(
-    balanceByChainResult.asset,
-    wallets
-  )
-
+  // TODO: fix this, we can probably just introspect the token right
   const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
 
   const { confirmTransaction, loading } = useLazyConfirmTransaction()
@@ -98,13 +99,13 @@ const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
           icon: <Icon name='close' style={{ color: '#000' }} />,
           action: () =>
             navigation.navigate('SingleCurrency', {
-              item: balanceByChainResult,
+              aggregateWalletBannerBalance,
             }),
         }}
-        title={`Send ${getTokenUnitName(balanceByChainResult.token)}`}
+        title={`Send ${aggregateWalletBannerBalance.symbol}`}
       />
       <TestnetWarning networkReference={networkReference} />
-      {Boolean(maybeBlockchainNetwork) && (
+      {true && (
         <View style={styles.container}>
           <View style={styles.content}>
             <View style={styles.infoRow}>
@@ -122,7 +123,7 @@ const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
               <Text style={styles.infoLabel}>Token</Text>
               <View style={styles.infoValue}>
                 <Text style={styles.valueText}>
-                  {balanceByChainResult.label}
+                  {aggregateWalletBannerBalance.label}
                 </Text>
               </View>
             </View>
@@ -131,7 +132,7 @@ const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
               <View style={styles.infoValue}>
                 <Text style={styles.valueText}>
                   {parseFloat(String(amount)).toFixed(3)}{' '}
-                  {getTokenUnitName(balanceByChainResult.token)}
+                  {aggregateWalletBannerBalance.symbol}
                 </Text>
               </View>
             </View>
@@ -158,13 +159,13 @@ const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
                   await confirmTransaction({
                     amount,
                     toAddress,
-                    token: balanceByChainResult,
+                    aggregateWalletBannerBalance,
                   })
 
                   navigation.navigate('TransactionSuccess', {
                     amount,
                     toAddress,
-                    token: balanceByChainResult,
+                    aggregateWalletBannerBalance,
                   })
                 } catch (error) {
                   navigation.navigate('TransactionFailure', {
@@ -174,7 +175,7 @@ const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
               }}>
               {/* @ts-expect-error "color" is not a valid prop */}
               <Text style={styles.nextButton} color='primary'>
-                Send {getTokenUnitName(balanceByChainResult.token)}
+                Send {aggregateWalletBannerBalance.symbol}
               </Text>
             </Button>
           </View>
@@ -223,13 +224,4 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (state: RootState) => {
-  return {
-    // TODO: We need to create a hook for this - unfortunately,
-    //       `useWalletsData()` already seems to do something different.
-    //       We need to make more obvious what this data represents.
-    wallets: getWalletsData(state),
-  }
-}
-
-export default connect(mapStateToProps)(ConfirmTransaction)
+export default ConfirmTransaction

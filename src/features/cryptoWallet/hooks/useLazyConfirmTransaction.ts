@@ -18,17 +18,17 @@ import {
 import { Stateful } from 'features/polygonid/@types'
 import * as React from 'react'
 
-import { useAppSelector } from 'reduxStore/types'
-
-import { BalanceByChainResult } from '../@types'
-import { getWalletsData } from '../slice'
-import { getWalletAddressForAsset, isNativeToken } from '../utils'
+import {
+  AggregateWalletBannerBalance,
+  AggregateWalletBannerBalanceType,
+} from '../@types'
+import { getWalletAddressForChainId } from '../utils'
 import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
 
 type ConfirmTransactionCallbackParams = {
   readonly amount: number
   readonly toAddress: string
-  readonly token: BalanceByChainResult
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 type ConfirmTransactionCallbackResult = boolean
@@ -48,7 +48,6 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
     Stateful<ConfirmTransactionCallbackResult>
   >({ loading: false, result: false })
 
-  const wallets = useAppSelector(getWalletsData)
   const { rpcSelector } = useBlockchainContext()
 
   const blockchainRequestHandlersEip155 = useBlockchainRequestHandlersEip155()
@@ -65,7 +64,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       toAddress,
       namespace,
       reference,
-    }: Omit<ConfirmTransactionCallbackParams, 'token'> &
+    }: Omit<ConfirmTransactionCallbackParams, 'aggregateWalletBannerBalance'> &
       ChainIdParams & {
         readonly fromAddress: string
       }): Promise<ConfirmTransactionCallbackResult> => {
@@ -143,21 +142,25 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
     async ({
       amount,
       toAddress,
-      token,
+      aggregateWalletBannerBalance,
     }: ConfirmTransactionCallbackParams): Promise<boolean> => {
       const { loading } = state
 
       if (loading) throw new Error('Already loading!')
 
       try {
-        if (!isNativeToken(token.token.asset))
+        const { type } = aggregateWalletBannerBalance
+
+        if (type !== AggregateWalletBannerBalanceType.BASE_CURRENCY)
           throw new Error(`Only base layer currencies are currently supported.`)
 
-        const { chainId } = token.asset
+        const { resource } = aggregateWalletBannerBalance
+        const { namespace, reference } = resource
 
-        const { namespace, reference } = chainId
-
-        const fromAddress = getWalletAddressForAsset(token.asset, wallets)
+        const fromAddress = getWalletAddressForChainId(
+          new ChainId(resource),
+          selectedMinifiedAccounts
+        )
 
         if (typeof fromAddress !== 'string' || !fromAddress.length)
           throw new Error(
@@ -195,7 +198,11 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
         throw cause
       }
     },
-    [state, wallets, executeBlockchainSpecificNativeTransactionOrThrow]
+    [
+      state,
+      selectedMinifiedAccounts,
+      executeBlockchainSpecificNativeTransactionOrThrow,
+    ]
   )
 
   return { ...state, confirmTransaction }

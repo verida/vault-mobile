@@ -1,22 +1,20 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
-import { AssetId } from 'caip'
+import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getWalletAddressForAsset,
-  getWalletsData,
+  getChainIdParamsFromResourceParams,
+  getWalletAddressForChainId,
   useMaybeBlockchainNetwork,
-  WalletsData,
+  useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
-import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 // @ts-expect-error missing_declaration
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
-import { connect } from 'react-redux'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
 import ShareIcon from 'assets/share_icon_with_bg.svg'
@@ -30,27 +28,37 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import { RootState } from 'reduxStore/types'
 
 const LogoImg = require('assets/vault-logo.png')
 
 export type ReceiveTokenRouteProp = RouteProp<MainStackParams, 'ReceiveToken'>
 
 export type ReceiveTokenScreenProps = {
-  readonly token: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-const ReceiveToken = ({ wallets }: { readonly wallets: WalletsData }) => {
+const ReceiveToken = () => {
   const navigation = useMainNavigation()
-  const { token } = useParams<ReceiveTokenScreenProps>()
+  const { aggregateWalletBannerBalance } = useParams<ReceiveTokenScreenProps>()
 
-  const maybeAsset: AssetId | undefined =
-    Boolean(token) && 'asset' in token ? token.asset : undefined
+  const { resource } = aggregateWalletBannerBalance
 
-  const blockchainNetwork = useMaybeBlockchainNetwork(maybeAsset?.chainId)
+  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+
+  // TODO: remove getTokenUnitName
+  // TODO: What to do about maybeAsset?
+  //const maybeAsset: AssetId | undefined =
+  //  Boolean(token) && 'asset' in token ? token.asset : undefined
+
+  const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
   const networkReference = getBlockchainNetworkLabel(blockchainNetwork)
 
-  const maybeAddress = getWalletAddressForAsset(maybeAsset, wallets)
+  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
+  const maybeAddress = getWalletAddressForChainId(
+    chainId,
+    selectedMinifiedAccounts
+  )
 
   const hasAddress = typeof maybeAddress === 'string' && Boolean(maybeAddress)
 
@@ -61,7 +69,7 @@ const ReceiveToken = ({ wallets }: { readonly wallets: WalletsData }) => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={'Receive ' + getTokenUnitName(token)}
+        title={`Receive ${aggregateWalletBannerBalance.symbol}`}
       />
       <TestnetWarning networkReference={networkReference} />
       <Layout style={styles.container}>
@@ -87,9 +95,9 @@ const ReceiveToken = ({ wallets }: { readonly wallets: WalletsData }) => {
             <Text style={styles.cryptoAmount}>5.33 ETH </Text>≈ $10000
           </Text> */}
           <Text style={styles.notice}>
-            Send only {token.label}
-            {getTokenUnitName(token)} to this address. Sending any other coins
-            may result in permanent loss.
+            Send only {aggregateWalletBannerBalance.label}
+            {aggregateWalletBannerBalance.symbol} to this address. Sending any
+            other coins may result in permanent loss.
           </Text>
           <View style={styles.actionButtons}>
             {hasAddress && (
@@ -115,9 +123,7 @@ const ReceiveToken = ({ wallets }: { readonly wallets: WalletsData }) => {
               <TouchableOpacity
                 onPress={() =>
                   Share.share({
-                    message: `My address to receive ${getTokenUnitName(
-                      token
-                    )} \r${maybeAddress}`,
+                    message: `My address to receive ${aggregateWalletBannerBalance.symbol} \r${maybeAddress}`,
                   })
                 }
                 style={styles.actionButton}>
@@ -211,10 +217,4 @@ const styles = StyleSheet.create({
   saveButton: {},
 })
 
-const mapStateToProps = (state: RootState) => ({
-  wallets: getWalletsData(state),
-})
-
-const mapDispatchToProps = () => ({})
-
-export default connect(mapStateToProps, mapDispatchToProps)(ReceiveToken)
+export default ReceiveToken
