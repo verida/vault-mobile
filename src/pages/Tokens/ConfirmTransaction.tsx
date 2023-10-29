@@ -1,18 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
 import {
-  BalanceByChainResult,
-  //formatTokenQuantity,
+  AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  //getSupportedTokenObjectDecimals,
-  //getTransactionParamsData,
-  //GetTransactionParamsParams,
   getWalletAddressForAsset,
   getWalletsData,
   useLazyConfirmTransaction,
-  //selectSentTransaction,
-  //sendTransaction,
-  //SentTransaction,
-  //TransactionParamsData,
   useMaybeBlockchainNetwork,
   WalletsData,
 } from 'features/cryptoWallet'
@@ -30,10 +22,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import {
-  RootState,
-  //useAppDispatch,
-} from 'reduxStore/types'
+import { RootState } from 'reduxStore/types'
 
 export type ConfirmTransactionRouteProp = RouteProp<
   MainStackParams,
@@ -43,18 +32,10 @@ export type ConfirmTransactionRouteProp = RouteProp<
 export type ConfirmTransactionScreenProps = {
   readonly amount: number
   readonly toAddress: string
-  readonly token: BalanceByChainResult
+  readonly token: AggregateWalletBannerBalance
 }
 
-const ConfirmTransaction = ({
-  wallets,
-}: //transactionParams,
-//sentTransaction,
-{
-  //readonly transactionParams: TransactionParamsData
-  readonly wallets: WalletsData
-  //readonly sentTransaction: SentTransaction
-}) => {
+const ConfirmTransaction = ({ wallets }: { readonly wallets: WalletsData }) => {
   const {
     token: balanceByChainResult,
     amount,
@@ -62,7 +43,6 @@ const ConfirmTransaction = ({
   } = useParams<ConfirmTransactionScreenProps>()
 
   const navigation = useMainNavigation()
-  //const dispatch = useAppDispatch()
 
   const maybeBlockchainNetwork = useMaybeBlockchainNetwork(
     balanceByChainResult.asset.chainId
@@ -249,8 +229,6 @@ const mapStateToProps = (state: RootState) => {
     //       `useWalletsData()` already seems to do something different.
     //       We need to make more obvious what this data represents.
     wallets: getWalletsData(state),
-    //transactionParams: getTransactionParamsData(state),
-    //sentTransaction: selectSentTransaction(state),
   }
 }
 

@@ -1,14 +1,13 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
-import { AssetId, ChainId } from 'caip'
+import { ChainId } from 'caip'
 import {
-  BalanceByChainResult,
+  AggregateWalletBannerBalance,
   getAggregateWalletBannerBalanceError,
   getBlockchainNetworkLabel,
+  getChainIdParamsFromResourceParams,
   getSelectedWalletById,
-  getSupportedTokenObjectDecimals,
   getWalletsData,
-  //selectTransactions,
   Transaction,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
@@ -30,7 +29,6 @@ import TransactionsList from 'components/Tokens/TransactionsList'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-//import { RootState } from 'reduxStore/types'
 
 export type SingleCurrencyRouteProp = RouteProp<
   MainStackParams,
@@ -38,7 +36,7 @@ export type SingleCurrencyRouteProp = RouteProp<
 >
 
 export type SingleCurrencyScreenProps = {
-  readonly item: BalanceByChainResult
+  readonly item: AggregateWalletBannerBalance
 }
 
 const SingleCurrency = () => {
@@ -47,20 +45,21 @@ const SingleCurrency = () => {
   const selectedWallet = useSelector(getSelectedWalletById)
 
   // TODO: we should fetch here instead, not pass the route params
-  const { item: tokenData } = useParams<SingleCurrencyScreenProps>()
+  const { item } = useParams<SingleCurrencyScreenProps>()
 
-  const maybeAsset: AssetId | undefined =
-    Boolean(tokenData) && 'asset' in tokenData ? tokenData.asset : undefined
+  const chainId = new ChainId(getChainIdParamsFromResourceParams(item.resource))
 
-  const blockchainNetwork = useMaybeBlockchainNetwork(maybeAsset?.chainId)
+  //const maybeAsset: AssetId | undefined =
+  //  Boolean(tokenData) && 'asset' in tokenData ? tokenData.asset : undefined
 
-  const maybeChainId: string | undefined = maybeAsset
-    ? new ChainId(maybeAsset.chainId).toString()
-    : undefined
+  const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
 
-  const maybeAddress = maybeChainId
-    ? wallets?.[maybeChainId]?.address
-    : undefined
+  //const maybeChainId: string | undefined = maybeAsset
+  //  ? new ChainId(maybeAsset.chainId).toString()
+  //  : undefined
+
+  // TODO: is this right? what about multiple competing private keys for the same network?
+  const maybeAddress = wallets?.[chainId.toString()]?.address
 
   // TODO: If we store this as a verida datastore, we can save transactions
   //       on the decentralized network instead of rely on the backend to tell
@@ -72,14 +71,20 @@ const SingleCurrency = () => {
     refetch: refetchTransactions,
   } = useGetTransactionsForTokenQuery({
     userAddress: maybeAddress || null,
-    asset: maybeAsset || null,
+    //asset: maybeAsset || null,
+
+    // TODO: need to fix base currency asset model
+    asset: null,
   })
 
+  // TODO: we don't need this, we already have the item, fix..
   // Here we fetch the balance for the specific selected asset.
   const aggregateWalletBannerBalances = useAggregateWalletBannerBalances({
     // TODO: we need to fix this so it works for either a chainId or an asset - guessing for now this won't work
-    resource: maybeAsset,
+    resource: item.resource,
   })
+
+  const { symbol } = item
 
   const { price } = useAggregateWalletBannerBalancesValuation(
     aggregateWalletBannerBalances
@@ -94,7 +99,7 @@ const SingleCurrency = () => {
 
   // TODO: We need to fix maybeData to return something useful for aggregate
   //       balances -
-  const data = React.useMemo(() => ({ amount: price }), [price])
+  const data = React.useMemo(() => ({ amount: price, symbol }), [price, symbol])
 
   // const {
   //   maybeBalance,
@@ -109,7 +114,8 @@ const SingleCurrency = () => {
   // TODO: Difference between isLoading and isFetching?
   const isFetching = isFetchingTransactions || isLoadingBalance
 
-  const error = errorTransactions || maybeErrorBalance
+  // TODO: re-enable transactions list
+  const error = (false && errorTransactions) || maybeErrorBalance
 
   const pullToRefresh = React.useCallback(() => {
     refetchTransactions()
@@ -131,10 +137,10 @@ const SingleCurrency = () => {
       />
     )
 
-  const maybeToken =
-    Boolean(tokenData) && 'token' in tokenData ? tokenData.token : undefined
+  //const maybeToken =
+  //  Boolean(tokenData) && 'token' in tokenData ? tokenData.token : undefined
 
-  const maybeSymbol = maybeToken?.symbol
+  //const maybeSymbol = maybeToken?.symbol
 
   return (
     <Container>
@@ -143,7 +149,7 @@ const SingleCurrency = () => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={tokenData.label}
+        title={item.label}
       />
       <TestnetWarning
         networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
@@ -152,10 +158,10 @@ const SingleCurrency = () => {
         data={data}
         selectedWallet={selectedWallet}
         receiveButtonAction={() =>
-          navigation.navigate('ReceiveToken', { token: tokenData })
+          navigation.navigate('ReceiveToken', { token: item })
         }
         sendButtonAction={() =>
-          navigation.navigate('SendToken', { token: tokenData })
+          navigation.navigate('SendToken', { token: item })
         }
         copyButtonAction={() => {
           if (!maybeAddress) return
@@ -176,14 +182,13 @@ const SingleCurrency = () => {
       {isLoading ? (
         <LoadingIndicator />
       ) : (
+        // TODO: we will fix the transaction list in general
         <TransactionsList
-          symbol={maybeSymbol}
-          decimal={getSupportedTokenObjectDecimals(
-            maybeToken,
-            blockchainNetwork
-          )}
+          symbol={item.symbol || undefined}
+          decimal={item.decimals}
           blockchainNetwork={blockchainNetwork}
-          token={maybeToken}
+          // TODO: what is a token in this instance?
+          token={undefined}
           onPullToRefresh={() => pullToRefresh()}
           refreshing={isFetching}
           // errorType={errorType}

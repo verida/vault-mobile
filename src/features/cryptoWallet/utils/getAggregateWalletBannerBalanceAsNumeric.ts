@@ -1,4 +1,4 @@
-import BigInt from 'big-integer'
+import BigDecimal from 'bignumber.js'
 
 import { AggregateWalletBannerBalance } from '../@types'
 
@@ -8,7 +8,7 @@ export function getAggregateWalletBannerBalanceAsNumeric({
   balance,
   decimals,
 }: AggregateWalletBannerBalance): number {
-  return BigInt(balance)
-    .divide(BigInt(10).pow(BigInt(decimals)))
-    .toJSNumber()
+  return new BigDecimal(balance)
+    .div(new BigDecimal(10).pow(decimals))
+    .toNumber()
 }

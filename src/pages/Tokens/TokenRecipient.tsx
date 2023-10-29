@@ -3,10 +3,7 @@ import { RouteProp } from '@react-navigation/native'
 import { ethers } from 'ethers'
 import { SupportedCaipNamespace } from 'features/caip'
 import {
-  BalanceByChainResult,
-  //getTransactionParams,
-  //GetTransactionParamsParams,
-  isBalanceByChainResult,
+  AggregateWalletBannerBalance,
   isValidWalletAddress,
 } from 'features/cryptoWallet'
 import { getTokenUnitName } from 'features/token'
@@ -20,7 +17,6 @@ import {
   View,
 } from 'react-native'
 
-//import { connect } from 'react-redux'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -29,13 +25,12 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-//import { AppDispatch } from 'reduxStore/types'
 import InputStyles from 'styles/inputs'
 
 export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
 export type TokenRecipientScreenProps = {
-  readonly token: BalanceByChainResult
+  readonly token: AggregateWalletBannerBalance
   readonly amount: number
 }
 
@@ -61,9 +56,6 @@ const TokenRecipient = () => {
     async (toAddress: string) => {
       const showGenericFailure = (reason: string) =>
         Alert.alert('Unable to Send', reason)
-
-      if (!isBalanceByChainResult(token))
-        return showGenericFailure('An internal error occurred.')
 
       try {
         navigation.navigate('ConfirmTransaction', {
@@ -254,14 +246,4 @@ const styles = StyleSheet.create({
   },
 })
 
-//const mapStateToProps = () => ({})
-//
-//const mapDispatchToProps = (dispatch: AppDispatch) => {
-//  return {
-//    onGetTransactionParams: (params: GetTransactionParamsParams) =>
-//      dispatch(getTransactionParams(params)),
-//  }
-//}
-
 export default TokenRecipient
-//connect(mapStateToProps, mapDispatchToProps)(TokenRecipient)

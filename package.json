@@ -77,6 +77,7 @@
     "asyncstorage-down": "^4.2.0",
     "axios": "^0.24.0",
     "big-integer": "^1.6.51",
+    "bignumber.js": "^9.1.2",
     "bip39": "^3.0.4",
     "browserify-zlib": "^0.1.4",
     "buffer": "^6.0.3",

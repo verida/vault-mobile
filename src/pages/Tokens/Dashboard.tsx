@@ -20,7 +20,6 @@ import SendListModal from './SendListModal'
 const TokenDashboard = React.memo(function TokenDashboard() {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const navigation = useMainNavigation()
 
   const aggregateWalletBannerBalances = useAggregateWalletBannerBalances()
@@ -49,11 +48,8 @@ const TokenDashboard = React.memo(function TokenDashboard() {
               aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
                 aggregateWalletBannerBalances
               )}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
               onPressItem={(item: AggregateWalletBannerBalance) => {
-                // eslint-disable-next-line no-console
-                console.error('idk')
-                //navigation.navigate('SingleCurrency', { item })
+                navigation.navigate('SingleCurrency', { item })
               }}
               onPullToRefresh={pullToRefresh}
               refreshing={loading}
@@ -64,12 +60,9 @@ const TokenDashboard = React.memo(function TokenDashboard() {
               aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
                 aggregateWalletBannerBalances
               )}
-              // eslint-disable-next-line @typescript-eslint/no-unused-vars
-              onPressItem={(item: AggregateWalletBannerBalance) => {
+              onPressItem={(token: AggregateWalletBannerBalance) => {
                 setSendModalVisible(false)
-                // eslint-disable-next-line no-console
-                console.error('idk')
-                //navigation.navigate('SendToken', { token })
+                navigation.navigate('SendToken', { token })
               }}
             />
           </View>

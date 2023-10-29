@@ -222,7 +222,7 @@ export function isAssetIdResourceParams(
 export function isChainIdResourceParams(
   resourceParams: ResourceParams
 ): resourceParams is ChainIdParams {
-  return !isChainIdResourceParams(resourceParams)
+  return !isAssetIdResourceParams(resourceParams)
 }
 
 type AbstractAggregateWalletBannerBalance<

@@ -1,5 +1,5 @@
 import { RouteProp } from '@react-navigation/native'
-import { BalanceByChainResult } from 'features/cryptoWallet'
+import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 import { getTokenUnitName } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -21,7 +21,7 @@ const showAlert = () =>
 export type SendTokenRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
 export type SendTokenScreenProps = {
-  readonly token: BalanceByChainResult
+  readonly token: AggregateWalletBannerBalance
 }
 
 const SendToken = React.memo(function SendToken() {

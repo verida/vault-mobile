@@ -2,10 +2,10 @@ import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import { AssetId } from 'caip'
 import {
+  AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
   getWalletAddressForAsset,
   getWalletsData,
-  SelectSingleTokenData,
   useMaybeBlockchainNetwork,
   WalletsData,
 } from 'features/cryptoWallet'
@@ -37,7 +37,7 @@ const LogoImg = require('assets/vault-logo.png')
 export type ReceiveTokenRouteProp = RouteProp<MainStackParams, 'ReceiveToken'>
 
 export type ReceiveTokenScreenProps = {
-  readonly token: SelectSingleTokenData
+  readonly token: AggregateWalletBannerBalance
 }
 
 const ReceiveToken = ({ wallets }: { readonly wallets: WalletsData }) => {
