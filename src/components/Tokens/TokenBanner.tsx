@@ -14,13 +14,10 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { TokenListItemBalanceSpan } from './TokensList/TokenListItem.Balance.Span'
 
 const TokenBanner = React.memo(function TokenBanner({
-  //data,
   sendButtonAction: maybeSendButtonAction,
   selectedWallet,
   receiveButtonAction: maybeReceiveButtonAction,
   copyButtonAction: maybeCopyButtonAction,
-
-  // New:
   tokenType,
   totalBalance,
   tokenBalance,
@@ -36,10 +33,6 @@ const TokenBanner = React.memo(function TokenBanner({
   readonly sendButtonAction?: () => void
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void
-  //readonly data: Partial<
-  //  WithMaybeIcon<WithMaybeTokenType<BalanceByChainResult>>
-  //>
-
   // TODO: How to determine tokenType using updated model?
   readonly tokenType: 'Coin' | null
   // TODO: should be "currencyBalance" or something
@@ -50,24 +43,10 @@ const TokenBanner = React.memo(function TokenBanner({
   readonly decimals: number | null
   readonly change: number | null
   readonly conversionRate: number | null
-
   // NOTE: This used to be the presence of "symbol" or not.
   readonly showControls: boolean
   readonly isSumOfMultipleBalances: boolean
 }): JSX.Element {
-  //const {
-  //  //label,
-  //  //price = 0,
-  //  //change: maybeChange,
-  //  //amount = 0,
-  //  // symbol,
-  //  //quantity,
-  //  // icon,
-  //  //tokenType,
-  //} = data
-
-  //const label = 'hello'
-
   const hasChange = typeof maybeChange === 'number'
 
   const positive = hasChange && maybeChange > 0
