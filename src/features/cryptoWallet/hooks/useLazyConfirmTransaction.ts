@@ -39,6 +39,7 @@ type ConfirmTransactionCallback = (
 
 // Lazily sends a transaction of the native currency.
 // TODO: Use a more exciting ReturnType.
+// TODO: Rename to respect that this does something more general.
 // TODO: Note this doesn't support ERC20s -> Is there an existing user flow which enables this?
 export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallbackResult> & {
   readonly confirmTransaction: ConfirmTransactionCallback

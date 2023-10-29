@@ -1,9 +1,9 @@
 import { RpcSelector } from 'features/blockchain/@types'
 import { ChainMetadatas } from 'features/caip'
-import { connect, utils } from 'near-api-js'
+import { utils } from 'near-api-js'
 
 import { NearAccount } from '../@types'
-import { getNearNetworkConfig } from '../constants'
+import { nearCreateConnection } from './nearCreateConnection'
 import { nearDoesAccountExist } from './nearDoesAccountExist'
 
 export async function nearInstantiateAccount({
@@ -17,14 +17,12 @@ export async function nearInstantiateAccount({
 }) {
   const { accountId, publicKey, caipChainId, keystore } = nearAccount
 
-  const connection = await connect(
-    await getNearNetworkConfig({
-      chainMetadatas,
-      keystore,
-      caipChainId,
-      rpcSelector,
-    })
-  )
+  const connection = await nearCreateConnection({
+    keystore,
+    chainMetadatas,
+    caipChainId,
+    rpcSelector,
+  })
 
   const createdAccount = await connection.createAccount(
     accountId,

@@ -35,8 +35,8 @@ export async function getNearNetworkConfig({
   const { reference: networkId } = caipChainId
 
   return {
-    networkId, // i.e. "testnet"
     keyStore,
+    networkId, // i.e. "testnet"
     nodeUrl: await getRpcUrlOrThrow({
       chainMetadatas,
       chainId: caipChainId,

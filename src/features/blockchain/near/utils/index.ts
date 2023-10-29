@@ -1,5 +1,7 @@
+export * from './getBalance.Near'
 export * from './getNearAccountId'
 export * from './nearCreateAction'
+export * from './nearCreateConnection'
 export * from './nearCreateViewAccessKey'
 export * from './nearDoesAccountExist'
 export * from './nearCreateTransactions'

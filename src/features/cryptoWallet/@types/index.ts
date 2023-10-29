@@ -280,3 +280,26 @@ export type UseAggregateWalletBannerBalancesState = Readonly<
   | { loading: false; result: AggregateWalletBannerBalances }
   | { loading: false; error: Error }
 >
+
+export type CryptoWalletBalance = {
+  readonly [address: string]: string | null
+}
+
+export type CryptoWalletBalances = {
+  readonly [caipId: string]: CryptoWalletBalance
+}
+
+export type UseCreateCryptoWalletBalancesState = Readonly<
+  | { loading: true }
+  | { loading: false; data: CryptoWalletBalances }
+  | { loading: false; error: Error }
+>
+
+export type RefetchCryptoWalletBalances = () => Promise<CryptoWalletBalances>
+
+export type UseCreateCryptoWalletBalancesResult =
+  UseCreateCryptoWalletBalancesState & {
+    readonly refetch: RefetchCryptoWalletBalances
+  }
+
+export type CryptoWalletContextValue = UseCreateCryptoWalletBalancesResult

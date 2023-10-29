@@ -1,0 +1,76 @@
+import { useBlockchainContext } from 'features/blockchain'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import * as React from 'react'
+
+import {
+  CryptoWalletBalances,
+  UseCreateCryptoWalletBalancesResult,
+  UseCreateCryptoWalletBalancesState,
+} from '../@types'
+import { fetchCryptoWalletBalances } from '../utils'
+import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+
+const DEFAULT_CRYPTO_WALLET_BALANCES: CryptoWalletBalances = {}
+
+export const getMaybeCreateCryptoWalletBalancesResult = (
+  state: UseCreateCryptoWalletBalancesState
+) => {
+  if (state.loading || !('data' in state)) return DEFAULT_CRYPTO_WALLET_BALANCES
+
+  return state.data
+}
+
+export function useCreateCryptoWalletBalances(): UseCreateCryptoWalletBalancesResult {
+  const { rpcSelector } = useBlockchainContext()
+  const [state, setState] = React.useState<UseCreateCryptoWalletBalancesState>({
+    loading: true,
+  })
+
+  // minifed accounts plus networks
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+  const minifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
+  const shouldRefetch =
+    React.useCallback(async (): Promise<CryptoWalletBalances> => {
+      // If there's nothing to fetch, terminate early.
+      if (!chainMetadatas?.length || !minifiedAccounts?.length) return {}
+
+      // Else, fetch native balances for each network.
+      return fetchCryptoWalletBalances({
+        chainMetadatas,
+        minifiedAccounts,
+        rpcSelector,
+      })
+    }, [chainMetadatas, minifiedAccounts, rpcSelector])
+
+  const refetch = React.useCallback(async () => {
+    try {
+      setState({ loading: true })
+
+      const data = await shouldRefetch()
+
+      setState({
+        loading: false,
+        data,
+      })
+
+      return data
+    } catch (cause) {
+      setState({
+        loading: false,
+        error: new Error('Failed to refetch CryptoWalletBalances.', { cause }),
+      })
+      throw cause
+    }
+  }, [shouldRefetch])
+
+  // HACK: Whenever the refetch method is reallocated, we'll automatically
+  //       refetch to remain up-to-date with the latest configuration.
+  // eslint-disable-next-line no-void, no-console
+  React.useEffect(() => void refetch().catch(console.error), [refetch])
+
+  return React.useMemo<UseCreateCryptoWalletBalancesResult>(
+    () => ({ ...state, refetch }),
+    [refetch, state]
+  )
+}

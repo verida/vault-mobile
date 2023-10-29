@@ -2,7 +2,6 @@ import { SignClient } from '@walletconnect/sign-client'
 import { ChainId } from 'caip'
 import * as child_process from 'child_process'
 import { AddEthereumChainRequestParam } from 'features/blockchain/eip155/@types'
-import localhost from 'react-native-localhost'
 
 import {
   fetchChainsList,
@@ -82,7 +81,7 @@ void (async () => {
       blockExplorerUrls: [],
       chainId: `0x${Number(31337).toString(16)}`,
       chainName: 'Anvil',
-      rpcUrls: [`http://${localhost}:8545`],
+      rpcUrls: ['http://127.0.0.1:8545'],
       nativeCurrency: {
         name: 'Anvil',
         symbol: 'aETH',

@@ -11,9 +11,11 @@ import {
 } from '../@types'
 import { useGetBalancesQuery } from '../api'
 import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
+import { useCryptoWalletContext } from '../contexts'
 import { getUniqueWalletAddresses, getWallets } from '../slice'
 import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
+import { getMaybeCreateCryptoWalletBalancesResult } from './useCreateCryptoWalletBalances'
 
 export const getAggregateWalletBannerBalanceError = (
   state: UseAggregateWalletBannerBalancesState
@@ -43,6 +45,11 @@ export function useAggregateWalletBannerBalances(
   readonly refetch: () => Promise<void>
 } {
   const wallets = useSelector(getWallets)
+
+  const cryptoWalletContext = useCryptoWalletContext()
+  const cryptoWalletBalances =
+    getMaybeCreateCryptoWalletBalancesResult(cryptoWalletContext)
+  const { refetch: refetchCryptoWalletContext } = cryptoWalletContext
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -83,7 +90,10 @@ export function useAggregateWalletBannerBalances(
       )
 
     const aggregateWalletBannerBalances = chainMetadatas.map((chainMetadata) =>
-      chainMetadataToAggregateWalletBannerBalance({ chainMetadata })
+      chainMetadataToAggregateWalletBannerBalance({
+        chainMetadata,
+        cryptoWalletBalances,
+      })
     )
 
     const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
@@ -112,12 +122,15 @@ export function useAggregateWalletBannerBalances(
     maybeResource,
     didDefineResource,
     chainMetadatas,
+    cryptoWalletBalances,
   ])
 
   const refetch = React.useCallback(
     async (): Promise<void> =>
-      Promise.all([refetchWalletProvider()]).then(() => undefined),
-    [refetchWalletProvider]
+      Promise.all([refetchWalletProvider(), refetchCryptoWalletContext()]).then(
+        () => undefined
+      ),
+    [refetchWalletProvider, refetchCryptoWalletContext]
   )
 
   return React.useMemo(() => ({ ...state, refetch }), [state, refetch])

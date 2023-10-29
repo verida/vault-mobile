@@ -7,6 +7,7 @@ import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { BlockchainProvider } from 'features/blockchain'
+import { CryptoWalletProvider } from 'features/cryptoWallet'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
@@ -108,12 +109,14 @@ function App() {
                     <RootSiblingParent>
                       <ActionSheetProvider>
                         <BlockchainProvider>
-                          <WalletConnectProvider>
-                            <GestureHandlerRootView style={styles.flex}>
-                              <RootNavigator />
-                            </GestureHandlerRootView>
-                            <MetaServerChecks />
-                          </WalletConnectProvider>
+                          <CryptoWalletProvider>
+                            <WalletConnectProvider>
+                              <GestureHandlerRootView style={styles.flex}>
+                                <RootNavigator />
+                              </GestureHandlerRootView>
+                              <MetaServerChecks />
+                            </WalletConnectProvider>
+                          </CryptoWalletProvider>
                         </BlockchainProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>
