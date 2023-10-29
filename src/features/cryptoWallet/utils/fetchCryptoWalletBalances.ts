@@ -36,6 +36,9 @@ export async function fetchCryptoWalletBalances({
 
   //console.log(JSON.stringify({ nearAddresses }))
 
+  // TODO: It makes a lot more sense to just ignore accounts entirely and do
+  //       every transaction from a raw address, since this adds too much complexity.
+  //       The existing codebase would get simpler too.
   // This is NOT correct. It assumes we can always derive the NEAR address
   // from the minified account, which will not hold true for very long.
   // TODO: How do we tell which balance a user wants to send from? It seems like
