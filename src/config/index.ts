@@ -6,7 +6,7 @@ import {
   NetworkId,
 } from 'features/polygonid/constants'
 import { LogLevel } from 'features/telemetry'
-import { isEqual } from 'lodash'
+import { isEmpty, isEqual } from 'lodash'
 import Config from 'react-native-config'
 
 import {
@@ -174,25 +174,17 @@ const RESOLVED_CONFIG = Object.assign(
 export function mergeWithRemoteConfig(
   remoteConfig: Partial<typeof RESOLVED_CONFIG>
 ) {
+  if (isEmpty(remoteConfig)) return false
+  let appNeedsReload = false
   for (const [key, value] of Object.entries(remoteConfig)) {
-    console.log('=> Key', key, value, RESOLVED_CONFIG[key])
-    if (!isEqual(RESOLVED_CONFIG[key], value)) {
+    if (!isEqual(RESOLVED_CONFIG[key as keyof typeof RESOLVED_CONFIG], value)) {
       console.log('==> not equal', key, config[key], value)
       RESOLVED_CONFIG[key] = value
-      // Alert.alert(
-      //   'Configuration updated',
-      //   'Application configurations updated, need to restart the app',
-      //   [
-      //     {
-      //       text: 'OK',
-      //       onPress: () => {
-      //         RNRestart.restart()
-      //       },
-      //     },
-      //   ]
-      // )
+      appNeedsReload = true
     }
   }
+
+  return appNeedsReload
 }
 
 export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>

@@ -1,22 +1,21 @@
-import remoteConfig, {
-  FirebaseRemoteConfigTypes,
-} from '@react-native-firebase/remote-config'
+import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
-import { compareVersions } from 'compare-versions'
 import { config, mergeWithRemoteConfig } from 'config'
-import { APP_VERSION } from 'constants'
-import { isEqual } from 'lodash'
+import * as SecureStore from 'helpers/VeridaSecureStore'
 import React, {
   createContext,
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react'
-import { Alert } from 'react-native'
+import { Alert, AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 
 import LoadingView from 'components/LoadingView'
+
+import { compareAppConfig } from './utils'
 
 export type ForcedUpgradeType = {
   minVersion?: string
@@ -32,14 +31,10 @@ export type ForcedCreateAccountType = {
   furtherInfo?: string
 }
 
-type RemoteConfig = FirebaseRemoteConfigTypes.Module
-type RemoteConfigParameters = {
-  parameter_key: string // Define the parameter keys and their types
-}
-
 interface FirebaseRemoteConfigContextType {
-  remoteConfig: RemoteConfig | null
-  remoteConfigParameters: RemoteConfigParameters | null
+  forcedUpgrade?: ForcedUpgradeType
+  forcedCreateAccount?: ForcedCreateAccountType
+  fetchRemoteConfig: () => void
 }
 
 const FirebaseRemoteConfigContext = createContext<
@@ -61,14 +56,13 @@ export function FirebaseRemoteConfigProvider({
 }: {
   children: React.ReactNode
 }) {
-  const [appRemoteConfig, setAppRemoteConfig] = useState<RemoteConfig | null>(
-    null
-  )
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
 
   const [loading, setLoading] = useState(true)
+  const [initialLoad, setInitialLoad] = useState(true)
+  const appState = useRef(AppState.currentState)
 
   const fetchRemoteConfig = useCallback(() => {
     remoteConfig().setConfigSettings({
@@ -83,46 +77,55 @@ export function FirebaseRemoteConfigProvider({
       })
       .then(() => remoteConfig()?.fetchAndActivate())
       .then(Boolean)
-      .then((fetchedRemotely) => {
+      .then(async (fetchedRemotely) => {
         if (fetchedRemotely) {
+          // Handle forced app upgrade
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
           const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
-          setForcedUpgrade({
-            ...forcedUpgradeInfo,
-            required:
-              compareVersions(APP_VERSION, forcedUpgradeInfo.minVersion) < 0, // Current version < required version
-          })
+          setForcedUpgrade(forcedUpgradeInfo)
 
-          // Force create new account
-          const forcedCreateAccountJSON = remoteConfig().getValue(
-            'forced_create_new_account'
-          )
+          // Handle forced create new account
           const forcedCreateAccountInfo = JSON.parse(
-            forcedCreateAccountJSON.asString()
+            remoteConfig().getValue('forced_create_new_account').asString()
           )
-          // setForcedCreateAccount(forcedCreateAccountInfo)
+          setForcedCreateAccount(forcedCreateAccountInfo)
 
-          const wallet_app_configs = JSON.parse(
+          // Handle remote app config
+          const remoteAppConfig = JSON.parse(
             remoteConfig().getValue('wallet_app_configs').asString()
           )
 
-          // setAppConfig(wallet_app_configs)
-
-          if (wallet_app_configs) {
-            mergeWithRemoteConfig(wallet_app_configs)
-          } else {
-            Alert.alert(
-              'Configuration updated',
-              'Application configurations updated, need to restart the app',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    RNRestart.restart()
-                  },
-                },
-              ]
+          const APP_CONFIG_STORAGE_KEY = 'APP_CONFIG'
+          const localAppConfig = JSON.parse(
+            (await SecureStore.getItemAsync(APP_CONFIG_STORAGE_KEY)) || '{}'
+          )
+          if (!compareAppConfig(remoteAppConfig, localAppConfig)) {
+            SecureStore.setItemAsync(
+              APP_CONFIG_STORAGE_KEY,
+              remoteConfig().getValue('wallet_app_configs').asString()
             )
+          }
+
+          // Merge with remote config on the app initial load
+          if (initialLoad) {
+            mergeWithRemoteConfig(remoteAppConfig || localAppConfig)
+          } else if (!compareAppConfig(remoteAppConfig, config)) {
+            // Handle runtime app config updated, need to reload the app
+            const appNeedsReload = mergeWithRemoteConfig(remoteAppConfig)
+            if (appNeedsReload) {
+              Alert.alert(
+                'Application Configuration Updated',
+                'Application configurations have been updated, the app needs to be restarted.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      RNRestart.restart()
+                    },
+                  },
+                ]
+              )
+            }
           }
         }
       })
@@ -130,56 +133,33 @@ export function FirebaseRemoteConfigProvider({
         Sentry.captureException(error)
       })
       .finally(() => {
+        setInitialLoad(false)
         setLoading(false)
       })
-  }, [])
+  }, [initialLoad])
 
   useEffect(() => {
-    const fetchRemoteConfig2 = async () => {
-      remoteConfig().setConfigSettings({
-        minimumFetchIntervalMillis: 30000,
-      })
+    const handleAppStateChange = (nextAppState: AppStateStatus) => {
+      if (
+        appState.current.match(/inactive|background/) &&
+        nextAppState === 'active'
+      ) {
+        fetchRemoteConfig()
+      }
 
-      remoteConfig()
-        .setDefaults({
-          forced_upgrade: '{}',
-          forced_create_new_account: '{}',
-          wallet_app_configs: '{}',
-        })
-        .then(() => remoteConfig()?.fetchAndActivate())
-        .then(Boolean)
-        .then((fetchedRemotely) => {
-          if (fetchedRemotely) {
-            const wallet_app_configs = JSON.parse(
-              remoteConfig().getValue('wallet_app_configs').asString()
-            )
-
-            mergeWithRemoteConfig(wallet_app_configs)
-          } else {
-            Alert.alert(
-              'Configuration updated',
-              'Application configurations updated, need to restart the app',
-              [
-                {
-                  text: 'OK',
-                  onPress: () => {
-                    RNRestart.restart()
-                  },
-                },
-              ]
-            )
-          }
-        })
-        .catch((error) => {
-          Sentry.captureException(error)
-        })
-        .finally(() => {
-          setLoading(false)
-        })
+      appState.current = nextAppState
     }
-    // fetchRemoteConfig2()
+    const subscription = AppState.addEventListener(
+      'change',
+      handleAppStateChange
+    )
 
+    // Initial fetch
     fetchRemoteConfig()
+
+    return () => {
+      subscription?.remove()
+    }
   }, [fetchRemoteConfig])
 
   if (loading) {
@@ -188,7 +168,11 @@ export function FirebaseRemoteConfigProvider({
 
   return (
     <FirebaseRemoteConfigContext.Provider
-      value={{ remoteConfig, fetchRemoteConfig }}>
+      value={{
+        fetchRemoteConfig,
+        forcedUpgrade,
+        forcedCreateAccount,
+      }}>
       {children}
     </FirebaseRemoteConfigContext.Provider>
   )
