@@ -1,6 +1,7 @@
 import { LinearGradient } from 'expo-linear-gradient'
+import { MaintenanceMode } from 'features/remoteConfig'
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Linking, ScrollView, StyleSheet, View } from 'react-native'
 
 import Texture from 'assets/landing-bg.svg'
 import Logo from 'assets/logo.svg'
@@ -10,11 +11,16 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import Button from '../../components/Button'
 
-function OutOfService() {
-  const title = 'Oh uh!'
+interface Props {
+  maintenanceMode: MaintenanceMode
+}
 
+const OutOfService: React.FC<Props> = ({ maintenanceMode }) => {
+  const title = 'Oh uh!'
   const shutDownTitle =
     'Our networks are temporarily out of service\nPlease check back later.'
+  const furtherInfoLink =
+    maintenanceMode.furtherInfo || 'https://news.verida.io/'
 
   return (
     <LinearGradient
@@ -22,14 +28,39 @@ function OutOfService() {
       style={style.landing}>
       <Texture width={425} height={428} />
       <View style={style.positionAbsolute}>
-        <View>
+        <ScrollView contentContainerStyle={{}}>
           <Logo width={156} height={52} />
           <Text style={style.title}>{title}</Text>
           <Text style={style.subTitle}>{shutDownTitle}</Text>
-        </View>
+          {Boolean(maintenanceMode.reason) && (
+            <Text
+              style={
+                style.subTitle
+              }>{`Reason: ${maintenanceMode.reason}`}</Text>
+          )}
+
+          {Boolean(maintenanceMode.startTime) && (
+            <Text style={style.subTitle2}>
+              {`Start time: ${new Date(maintenanceMode.startTime!)}`}
+            </Text>
+          )}
+          {Boolean(maintenanceMode.expectedEndTime) && (
+            <Text style={style.subTitle2}>
+              {`Expected end time: ${new Date(
+                maintenanceMode.expectedEndTime!
+              )}`}
+            </Text>
+          )}
+        </ScrollView>
         <View>
-          <Button color='secondary' disabled>
-            Get Started
+          <Button
+            color='secondary'
+            onPress={() =>
+              Linking.canOpenURL(furtherInfoLink).then(() =>
+                Linking.openURL(furtherInfoLink)
+              )
+            }>
+            Further Info
           </Button>
         </View>
       </View>
@@ -41,7 +72,8 @@ const style = StyleSheet.create({
   positionAbsolute: {
     position: 'absolute',
     paddingHorizontal: 24,
-    paddingVertical: 77,
+    paddingTop: 60,
+    paddingBottom: 32,
     height: '100%',
     width: '100%',
     justifyContent: 'space-between',
@@ -59,7 +91,14 @@ const style = StyleSheet.create({
     color: WHITE_COLOR,
     fontFamily: NUNITO_SANS_BOLD,
     fontSize: 18,
-    marginTop: '15%',
+    marginTop: 32,
+  },
+
+  subTitle2: {
+    color: WHITE_COLOR,
+    fontFamily: NUNITO_SANS_BOLD,
+    fontSize: 18,
+    marginTop: 12,
   },
   text: {
     fontFamily: NUNITO_SANS_SEMIBOLD,

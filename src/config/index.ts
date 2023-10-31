@@ -122,7 +122,7 @@ const COMMON_CONFIG = {
   // TODO: Group WalletConnect config in its own sub property walletConnect: {projectId: '...', relayUrl: '...'}
   WALLETCONNECT_PROJECT_ID: Config.WALLETCONNECT_PROJECT_ID,
   WALLETCONNECT_RELAY_URL: Config.WALLETCONNECT_RELAY_URL,
-} as const
+}
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
   VERIDA_ENVIRONMENT: T // TODO: Find a better name, it's not en environment, it's a network!
@@ -170,26 +170,25 @@ const RESOLVED_CONFIG = Object.assign(
   SPECIFIC_CONFIGS[veridaNetwork]
 )
 
-// Merge config with firebase remote config
+export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
+
+// TODO: Eventually get rid of default export
+export default RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
+
+// Merge app config with Firebase remote config
 export function mergeWithRemoteConfig(
   remoteConfig: Partial<typeof RESOLVED_CONFIG>
 ) {
   if (isEmpty(remoteConfig)) return false
   let appNeedsReload = false
-  for (const [key, value] of Object.entries(remoteConfig)) {
-    if (!isEqual(RESOLVED_CONFIG[key as keyof typeof RESOLVED_CONFIG], value)) {
-      console.log('==> not equal', key, config[key], value)
-      RESOLVED_CONFIG[key] = value
+  for (const entry of Object.entries(remoteConfig)) {
+    const [key, value] = entry as [keyof typeof RESOLVED_CONFIG, any]
+    if (!isEqual(config[key], value)) {
+      // Temp fix for a weird warning from Typescript
+      ;(config as any)[key] = value
       appNeedsReload = true
     }
   }
 
   return appNeedsReload
 }
-
-export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
-
-// console.log('Config ', JSON.stringify(config, null, 2))
-
-// TODO: Eventually get rid of default export
-export default RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>

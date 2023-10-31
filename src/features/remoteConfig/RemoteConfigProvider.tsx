@@ -14,6 +14,7 @@ import { Alert, AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 
 import LoadingView from 'components/LoadingView'
+import OutOfService from 'pages/Account/OutOfService'
 
 import { compareAppConfig } from './utils'
 
@@ -29,6 +30,14 @@ export type ForcedCreateAccountType = {
   required?: boolean
   message?: string
   furtherInfo?: string
+}
+
+export type MaintenanceMode = {
+  status?: 'in-progress' | 'completed'
+  reason?: string
+  startTime?: string
+  expectedEndTime?: string
+  furtherInfo?: string // blog post
 }
 
 interface FirebaseRemoteConfigContextType {
@@ -59,6 +68,7 @@ export function FirebaseRemoteConfigProvider({
   const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
   const [forcedCreateAccount, setForcedCreateAccount] =
     useState<ForcedCreateAccountType>({})
+  const [maintenanceMode, setMaintenanceMode] = useState<MaintenanceMode>({})
 
   const [loading, setLoading] = useState(true)
   const [initialLoad, setInitialLoad] = useState(true)
@@ -73,12 +83,19 @@ export function FirebaseRemoteConfigProvider({
       .setDefaults({
         forced_upgrade: '{}',
         forced_create_new_account: '{}',
-        wallet_app_configs: '{}',
+        wallet_app_config: '{}',
+        maintenance_mode: '{}',
       })
       .then(() => remoteConfig()?.fetchAndActivate())
       .then(Boolean)
       .then(async (fetchedRemotely) => {
         if (fetchedRemotely) {
+          // Handle maintenance mode
+          const maintenanceModeValue = JSON.parse(
+            remoteConfig().getValue('maintenance_mode').asString()
+          )
+          setMaintenanceMode(maintenanceModeValue)
+
           // Handle forced app upgrade
           const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
           const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
@@ -92,7 +109,7 @@ export function FirebaseRemoteConfigProvider({
 
           // Handle remote app config
           const remoteAppConfig = JSON.parse(
-            remoteConfig().getValue('wallet_app_configs').asString()
+            remoteConfig().getValue('wallet_app_config').asString()
           )
 
           const APP_CONFIG_STORAGE_KEY = 'APP_CONFIG'
@@ -102,7 +119,7 @@ export function FirebaseRemoteConfigProvider({
           if (!compareAppConfig(remoteAppConfig, localAppConfig)) {
             SecureStore.setItemAsync(
               APP_CONFIG_STORAGE_KEY,
-              remoteConfig().getValue('wallet_app_configs').asString()
+              remoteConfig().getValue('wallet_app_config').asString()
             )
           }
 
@@ -173,7 +190,11 @@ export function FirebaseRemoteConfigProvider({
         forcedUpgrade,
         forcedCreateAccount,
       }}>
-      {children}
+      {maintenanceMode.status === 'in-progress' ? (
+        <OutOfService maintenanceMode={maintenanceMode} />
+      ) : (
+        children
+      )}
     </FirebaseRemoteConfigContext.Provider>
   )
 }

@@ -29,10 +29,8 @@ import { initApplication } from 'utils'
 
 import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
-import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
 import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
-import OutOfService from 'pages/Account/OutOfService'
 import Authenticate from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
@@ -91,8 +89,6 @@ function App() {
 
     init()
   }, [])
-
-  if (SHUTDOWN_APP) return <OutOfService />
 
   const AppContent = (
     <FirebaseRemoteConfigProvider>
