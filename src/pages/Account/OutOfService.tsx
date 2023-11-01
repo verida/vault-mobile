@@ -28,7 +28,7 @@ const OutOfService: React.FC<Props> = ({ maintenanceMode }) => {
       style={style.landing}>
       <Texture width={425} height={428} />
       <View style={style.positionAbsolute}>
-        <ScrollView contentContainerStyle={{}}>
+        <ScrollView>
           <Logo width={156} height={52} />
           <Text style={style.title}>{title}</Text>
           <Text style={style.subTitle}>{shutDownTitle}</Text>

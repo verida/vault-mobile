@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/types'
+import { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
 import {
   Blockchain,
   CredentialStatusType,
@@ -114,7 +114,7 @@ const COMMON_CONFIG = {
       endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
     },
     rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
-  },
+  } as AccountNodeDIDClientConfig,
   NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
   // --------------------
   INFURA_API_KEY: Config.INFURA_API_KEY, // TODO: Move to specific network config, but will need to be for multiple networks
@@ -180,6 +180,7 @@ export function mergeWithRemoteConfig(
   remoteConfig: Partial<typeof RESOLVED_CONFIG>
 ) {
   if (isEmpty(remoteConfig)) return false
+
   let appNeedsReload = false
   for (const entry of Object.entries(remoteConfig)) {
     const [key, value] = entry as [keyof typeof RESOLVED_CONFIG, any]
