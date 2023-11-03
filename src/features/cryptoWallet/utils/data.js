@@ -299,11 +299,15 @@ const sendTransaction = async (
       requestBody
     )
 
-    // @todo: How to handle error?
-    if (sentTx && sentTx.data.status === 'error')
-      throw new Error(sentTx.data.error)
+    if (!sentTx.data) {
+      if (sentTx.originalError?.message)
+        throw new Error(sentTx.originalError.message)
+      throw new Error('Request failed')
+    }
 
-    if (sentTx && sentTx.data.data.transactionId)
+    if (sentTx.data.status === 'error') throw new Error(sentTx.data.error)
+
+    if (sentTx.data.data?.transactionId)
       txData.id = sentTx.data.data.transactionId
 
     return txData
