@@ -12,7 +12,7 @@ export const getRpcUrlOrThrow = ({
 }): string => {
   const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(chainMetadatas, chainId)
 
-  if (rpcUrls.length) throw new Error('Expected at least a single RPC.')
+  if (!rpcUrls.length) throw new Error('Expected at least a single RPC.')
 
   // HACK: Here we just select the first RPC in the array.
   //       In future, it might be beneficial to allow a user to choose

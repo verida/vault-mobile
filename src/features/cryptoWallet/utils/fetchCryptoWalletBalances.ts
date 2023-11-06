@@ -35,8 +35,6 @@ export async function fetchCryptoWalletBalances({
     ),
   ]
 
-  //console.log(JSON.stringify({ nearAddresses }))
-
   // TODO: It makes a lot more sense to just ignore accounts entirely and do
   //       every transaction from a raw address, since this adds too much complexity.
   //       The existing codebase would get simpler too.
@@ -65,6 +63,8 @@ export async function fetchCryptoWalletBalances({
       chainMetadatas,
     })
   )
+
+  console.log(eip155Rpcs)
 
   const [eip155Balances, nearBalances] = await Promise.all([
     Promise.all(
