@@ -13,8 +13,6 @@ export type AggregateWalletBannerBalanceAsNumericProps = Pick<
 export function getAggregateWalletBannerBalanceAsNumeric({
   balance,
   decimals,
-}: AggregateWalletBannerBalanceAsNumericProps): number {
-  return new BigDecimal(balance)
-    .div(new BigDecimal(10).pow(decimals))
-    .toNumber()
+}: AggregateWalletBannerBalanceAsNumericProps): BigDecimal {
+  return new BigDecimal(balance).div(new BigDecimal(10).pow(decimals))
 }

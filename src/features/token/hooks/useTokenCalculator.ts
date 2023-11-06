@@ -17,8 +17,13 @@ const unableToConvertError = () =>
 // Defines common business logic for converting between currencies for a given format.
 export function useTokenCalculator({
   aggregateWalletBannerBalance,
+  // HACK: Using big numbers leads to high-precision decimals which cannot yet
+  //       be rendered elegantly on the frontend. Here, we choose to settle on
+  //       a maximum length representation we're willing to render.
+  maximumNumberOfDecimalPlaces = 8,
 }: {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  readonly maximumNumberOfDecimalPlaces?: number
 }) {
   const { valuation: maybeValuation, symbol } = aggregateWalletBannerBalance
 
@@ -36,15 +41,23 @@ export function useTokenCalculator({
     : null
 
   const getNormalizedValue = React.useCallback(
-    (forValue: string | null): `${number}` | null =>
-      typeof forValue !== 'string'
-        ? null
-        : !forValue.length
-        ? null
-        : isNaN(parseFloat(forValue))
-        ? null
-        : (forValue as `${number}`),
-    []
+    (forValue: string | null): `${number}` | null => {
+      const maybeValue =
+        typeof forValue !== 'string'
+          ? null
+          : !forValue.length
+          ? null
+          : isNaN(parseFloat(forValue))
+          ? null
+          : (forValue as `${number}`)
+      if (typeof forValue !== 'string') return forValue
+
+      return Number(maybeValue).toFixed(
+        maximumNumberOfDecimalPlaces
+      ) as `${number}`
+    },
+
+    [maximumNumberOfDecimalPlaces]
   )
 
   const getStateAsCrypto = React.useCallback(
@@ -164,7 +177,8 @@ export function useTokenCalculator({
     typeof state.value === 'string' /* has interacted */ &&
     state.value.length > 0 /* has typed */ &&
     typeof currentCryptoValue === 'string' &&
-    parseFloat(currentCryptoValue) <= maximumCryptoAmount /* has balance */ &&
+    parseFloat(currentCryptoValue) <=
+      maximumCryptoAmount.toNumber() /* has balance */ &&
     parseFloat(currentCryptoValue) > 0 /* is non-zero */
 
   const getCurrentValueStringAsCryptoOrZero = React.useCallback(

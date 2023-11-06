@@ -1,3 +1,4 @@
+import BigDecimal from 'bignumber.js'
 import { DetailedValuation } from 'features/cryptoWallet/@types'
 
 export const convertFromCryptoToFiat = ({
@@ -7,4 +8,6 @@ export const convertFromCryptoToFiat = ({
   readonly valueInCrypto: `${number}`
   readonly valuation: DetailedValuation
 }): `${number}` =>
-  String(parseFloat(valueInCrypto) * conversionRate) as `${number}`
+  String(
+    new BigDecimal(valueInCrypto).multipliedBy(conversionRate).toNumber()
+  ) as `${number}`

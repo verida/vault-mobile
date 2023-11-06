@@ -1,3 +1,4 @@
+import BigDecimal from 'bignumber.js'
 import { AssetId, AssetIdParams, ChainIdParams } from 'caip'
 import { SupportedCaipNamespace } from 'features/caip'
 
@@ -182,19 +183,21 @@ export type PriceIntervals = {
 
 export type Valuation = {
   readonly currency: Currency
-  // TODO: Should be a BigDecimal
-  readonly price: number
+  readonly price: BigDecimal
 }
 
 export type DetailedValuation = Valuation & {
   // Historic rates over a range of intervals.
   readonly rates: PriceIntervals
   // Defines how much a whole unit of an asset is worth in terms of `currency`.
-  // TODO: Should be a BigDecimal
-  readonly conversionRate: number
+  readonly conversionRate: BigDecimal
 }
 
 export type ValuedAtWithAccuracy<T extends Valuation = Valuation> = T & {
+  // Defines whether we capable to sum up all of the balances and create a
+  // detailed valuation, otherwise if some balances had to be skipped out due
+  // to missing information (i.e. unknown `conversionRate`), the presented
+  // balance is only a suggestion.
   readonly isAccurate: boolean
 }
 

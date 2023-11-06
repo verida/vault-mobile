@@ -1,3 +1,4 @@
+import BigDecimal from 'bignumber.js'
 import { ChainId } from 'caip'
 import { ChainMetadata } from 'features/caip'
 
@@ -36,17 +37,17 @@ export function chainMetadataToMaybeValuation({
     change: maybeChange,
   } = maybeBalanceByChainResult
 
-  const price =
-    getAggregateWalletBannerBalanceAsNumeric({
-      balance,
-      decimals,
-    }) * conversionRate
+  const price = getAggregateWalletBannerBalanceAsNumeric({
+    balance,
+    decimals,
+  }).multipliedBy(conversionRate)
 
   return {
-    // HACK: The Wallet Provider currently only supports USD.
+    // HACK: The Wallet Provider currently only supports USD. In future,
+    //       if this can be changed, we'd need to parse the value here.
     currency: Currency.USD,
     price,
-    conversionRate,
+    conversionRate: new BigDecimal(conversionRate),
     rates: {
       [Interval.DAILY]: maybeChange || 0,
     },

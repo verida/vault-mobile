@@ -1,3 +1,5 @@
+import BigDecimal from 'bignumber.js'
+
 import {
   AggregateWalletBannerBalances,
   Currency,
@@ -23,7 +25,7 @@ export function computeValuationForAggregateWalletBannerBalances({
   if (!valuations.length)
     return {
       currency: Currency.USD,
-      price: 0,
+      price: new BigDecimal(0),
       isAccurate: valuations.length === maybeValuations.length,
     }
 
@@ -43,7 +45,10 @@ export function computeValuationForAggregateWalletBannerBalances({
 
   const [currency] = currencies
 
-  const price = valuations.reduce((r, e) => r + e.price, 0)
+  const price: BigDecimal = valuations.reduce(
+    (r, e) => r.plus(e.price),
+    new BigDecimal(0)
+  )
 
   return { currency, price, isAccurate }
 }

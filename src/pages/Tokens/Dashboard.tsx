@@ -1,5 +1,6 @@
 import {
   AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceError,
   getAggregateWalletBannerBalanceResult,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
@@ -27,6 +28,9 @@ const TokenDashboard = React.memo(function TokenDashboard() {
   const { loading, refetch: pullToRefresh } = aggregateWalletBannerBalances
   const [wasInitiallyLoading] = React.useState<boolean>(loading)
 
+  const maybeError = getAggregateWalletBannerBalanceError(
+    aggregateWalletBannerBalances
+  )
   const shouldShowLoadingIndicator = wasInitiallyLoading && loading
 
   const { price } = useAggregateWalletBannerBalancesValuation(
@@ -36,7 +40,7 @@ const TokenDashboard = React.memo(function TokenDashboard() {
   return (
     <Container>
       <ErrorBoundary>
-        {shouldShowLoadingIndicator ? (
+        {shouldShowLoadingIndicator || maybeError ? (
           <LoadingIndicator />
         ) : (
           <View style={styles.contentContainer}>

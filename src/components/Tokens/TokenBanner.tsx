@@ -1,3 +1,4 @@
+import BigDecimal from 'bignumber.js'
 import { priceFormatter } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
@@ -36,13 +37,13 @@ const TokenBanner = React.memo(function TokenBanner({
   // TODO: How to determine tokenType using updated model?
   readonly tokenType: string | null
   // TODO: should be "currencyBalance" or something
-  readonly totalBalance: number
+  readonly totalBalance: BigDecimal
   readonly symbol: string | null
   readonly icon: string | null
   readonly tokenBalance: string | null
   readonly decimals: number | null
   readonly change: number | null
-  readonly conversionRate: number | null
+  readonly conversionRate: BigDecimal | null
   // NOTE: This used to be the presence of "symbol" or not.
   readonly showControls: boolean
   readonly isSumOfMultipleBalances: boolean
@@ -93,12 +94,12 @@ const TokenBanner = React.memo(function TokenBanner({
               decimals={maybeDecimals}
             />
           ) : (
-            `${priceFormatter(totalBalance)}`
+            `${priceFormatter(totalBalance.toNumber())}`
           )}
         </Text>
         <Text style={styles.amountLabel}>
           {!isSumOfMultipleBalances
-            ? `≈ ${priceFormatter(totalBalance)}`
+            ? `≈ ${priceFormatter(totalBalance.toNumber())}`
             : `Total Balance`}
         </Text>
       </View>

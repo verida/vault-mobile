@@ -20,7 +20,9 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
     <>
       <View style={styles.priceAmount}>
         <View style={styles.priceChange}>
-          <Text style={styles.amount}>{priceFormatter(conversionRate)}</Text>
+          <Text style={styles.amount}>
+            {priceFormatter(conversionRate.toNumber())}
+          </Text>
           {dailyRateChange !== 0 && (
             <Text
               style={[
@@ -31,7 +33,7 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
             />
           )}
         </View>
-        <Text style={styles.amount}>{priceFormatter(price)}</Text>
+        <Text style={styles.amount}>{priceFormatter(price.toNumber())}</Text>
       </View>
     </>
   )
