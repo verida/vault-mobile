@@ -8,6 +8,7 @@ import {
 } from '../@types'
 import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
 import { useCryptoWalletContext } from '../contexts'
+import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../utils'
 import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
 import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceByChainResultsForUniqueWalletAddresses'
@@ -73,13 +74,23 @@ export function useAggregateWalletBannerBalances(
 
     if (isLoadingWalletProvider) return { loading: true }
 
-    const aggregateWalletBannerBalances = chainMetadatas.map((chainMetadata) =>
+    const nativeBalances = chainMetadatas.map((chainMetadata) =>
       chainMetadataToAggregateWalletBannerBalance({
         balanceByChainResults,
         chainMetadata,
         cryptoWalletBalances,
       })
     )
+
+    const erc20Balances =
+      balanceByChainResultsToErc20AggregateWalletBannerBalance({
+        balanceByChainResults,
+      })
+
+    const aggregateWalletBannerBalances: AggregateWalletBannerBalances = [
+      ...erc20Balances,
+      ...nativeBalances,
+    ]
 
     const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
       aggregateWalletBannerBalances.filter((aggregateWalletBannerBalance) => {

@@ -64,8 +64,6 @@ export async function fetchCryptoWalletBalances({
     })
   )
 
-  console.log(eip155Rpcs)
-
   const [eip155Balances, nearBalances] = await Promise.all([
     Promise.all(
       eip155Rpcs.map((rpcUrl) =>

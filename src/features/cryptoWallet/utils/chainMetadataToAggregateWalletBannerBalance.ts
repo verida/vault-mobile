@@ -12,7 +12,8 @@ import {
 import { chainMetadataToMaybeValuation } from './chainMetadataToMaybeValuation'
 
 // Converts a ChainMetadata into an equivalent AggregateWalletBannerBalance.
-// Specifically, this takes a raw chain declaration and determines the .
+// Specifically, this takes a raw chain declaration and determines the balance
+// for the caller on that chain.
 export function chainMetadataToAggregateWalletBannerBalance({
   balanceByChainResults,
   chainMetadata,
@@ -42,7 +43,7 @@ export function chainMetadataToAggregateWalletBannerBalance({
         .reduce((b: BigNumber, e: string) => b.add(e), BigNumber.from('0'))
     : BigNumber.from('0')
 
-  const balance = totalBalance.toString()
+  const balance = totalBalance.toString() as `${number}`
 
   return {
     resource: chainId,

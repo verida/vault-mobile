@@ -10,5 +10,7 @@ export function getChainIdParamsFromResourceParams(
   // NOTE: The caip spec indicates we can use either a string identifier
   //       or ChainIdParams to construct AssetIdParams. Here, we normalize
   //       into ChainIdParams.
-  return new ChainId(resourceParams.chainId).toJSON()
+
+  const { reference, namespace } = new ChainId(resourceParams.chainId)
+  return { reference, namespace }
 }

@@ -5,9 +5,7 @@ import { isSupportedCaipNamespace } from 'features/caip'
 import { BlockchainNetwork } from 'api/types'
 
 import { MinifiedVeridaAccounts, SupportedTokenObject } from '../@types'
-
-export const isNativeToken = (asset: AssetId) =>
-  asset.assetName.namespace === 'slip44'
+import { isNativeToken } from './isNativeToken'
 
 export const getTruncatedWalletAddress = (
   address: string,
