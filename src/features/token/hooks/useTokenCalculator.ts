@@ -20,7 +20,7 @@ export function useTokenCalculator({
   // When auto-filling values, use this value to limit to what
   // amount of numeric representation is desirable without cluttering
   // the text input value.
-  prettyNumberOfDecimalPlaces = 6,
+  prettyNumberOfDecimalPlaces = 4,
 }: {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly prettyNumberOfDecimalPlaces?: number
@@ -190,36 +190,36 @@ export function useTokenCalculator({
 
     if (format === CurrencyFormat.CRYPTO)
       return setState(
-        getStateAsCrypto({
-          format: CurrencyFormat.CRYPTO,
-          value: convertIntoPrettyNumber(
-            `${maximumCryptoAmount}` as `${number}`
-          ),
-        })
+        toPrettyState(
+          getStateAsCrypto({
+            format: CurrencyFormat.CRYPTO,
+            value: `${maximumCryptoAmount}` as `${number}`,
+          })
+        )
       )
 
     if (format === CurrencyFormat.FIAT) {
       if (!canConvertBetweenFiatAndCrypto) throw unableToConvertError()
 
       return setState(
-        getStateAsFiat({
-          format: CurrencyFormat.FIAT,
-          value: convertIntoPrettyNumber(
-            convertFromCryptoToFiat({
+        toPrettyState(
+          getStateAsFiat({
+            format: CurrencyFormat.FIAT,
+            value: convertFromCryptoToFiat({
               // HACK: We scale the value here because selecting the max value tends
               //       to produce a lot of decimal points which are unnecessary for
               //       frontend.
               valueInCrypto: `${maximumCryptoAmount}` as `${number}`,
               valuation: maybeValuation,
-            })
-          ),
-        })
+            }),
+          })
+        )
       )
     }
   }, [
     state,
+    toPrettyState,
     getStateAsCrypto,
-    convertIntoPrettyNumber,
     maximumCryptoAmount,
     canConvertBetweenFiatAndCrypto,
     getStateAsFiat,
