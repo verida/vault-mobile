@@ -44,7 +44,8 @@ const SendToken = React.memo(function SendToken() {
   const { predictedMaxTransactionFee: maybePredictedMaxTransactionFee } =
     usePredictMaxTransactionFee({
       chainId,
-      // HACK: This is Ethereum.
+      // HACK: This is equal Ethereum and Near:
+      //       https://docs.near.org/concepts/basics/transactions/gas-advanced#ballpark-comparisons-to-ethereum
       amountOfGasConsumed: GAS_TO_SEND,
     })
 
