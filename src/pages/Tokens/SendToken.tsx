@@ -1,15 +1,12 @@
 import { RouteProp } from '@react-navigation/native'
-import {
-  AggregateWalletBannerBalance,
-  getAggregateWalletBannerBalanceAsNumeric,
-} from 'features/cryptoWallet'
+import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
+import { useTokenCalculator } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 import Button from 'components/Button'
-// import Text from 'components/Text'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenCalculator from 'components/Tokens/TokenCalculator'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -29,27 +26,28 @@ export type SendTokenScreenProps = {
 const SendToken = React.memo(function SendToken() {
   const navigation = useMainNavigation()
   const { aggregateWalletBannerBalance } = useParams<SendTokenScreenProps>()
-  const [amount, onUpdateAmount] = React.useState<number | null>(null)
-  const [amountValid, onUpdateValidation] = React.useState<boolean>(false)
 
-  const disabled =
-    typeof amount !== 'number' || amount <= 0 || isNaN(amount) || !amountValid
+  const tokenCalculatorProps = useTokenCalculator({
+    aggregateWalletBannerBalance,
+  })
 
-  const { valuation } = aggregateWalletBannerBalance
+  const { isValidValue, getCurrentValueStringAsCryptoOrZero } =
+    tokenCalculatorProps
 
   const onPress = React.useCallback(() => {
-    if (disabled || !amountValid) return showAlert()
+    if (!isValidValue) return showAlert()
 
     navigation.navigate('TokenRecipient', {
       aggregateWalletBannerBalance,
-      amount,
+      // TODO: not must be amount in crypto
+      amount: parseFloat(getCurrentValueStringAsCryptoOrZero()),
     })
-  }, [amount, amountValid, disabled, navigation, aggregateWalletBannerBalance])
-
-  // TODO: what to do about getTokenUnitName
-  const maxCrypto = getAggregateWalletBannerBalanceAsNumeric(
-    aggregateWalletBannerBalance
-  )
+  }, [
+    aggregateWalletBannerBalance,
+    getCurrentValueStringAsCryptoOrZero,
+    isValidValue,
+    navigation,
+  ])
 
   return (
     <Container>
@@ -62,20 +60,13 @@ const SendToken = React.memo(function SendToken() {
       />
       <ScrollView style={styles.container}>
         <View style={styles.content}>
-          <TokenCalculator
-            autoFocus
-            maxCrypto={maxCrypto}
-            symbol={aggregateWalletBannerBalance.symbol}
-            valuation={valuation}
-            onUpdateAmount={onUpdateAmount}
-            onUpdateValidation={onUpdateValidation}
-          />
+          <TokenCalculator {...tokenCalculatorProps} autoFocus />
         </View>
         <View style={styles.footer}>
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={disabled}
+            disabled={!isValidValue}
             onPress={onPress}>
             Next
           </Button>

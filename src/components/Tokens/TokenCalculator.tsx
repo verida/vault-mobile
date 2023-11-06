@@ -1,4 +1,4 @@
-import { DetailedValuation } from 'features/cryptoWallet'
+import { CurrencyFormat, useTokenCalculator } from 'features/token'
 import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
@@ -6,60 +6,22 @@ import SwapIcon from 'assets/swap_icon.svg'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
-enum Format {
-  CRYPTO = 'crypto',
-  FIAT = 'fiat',
-}
-
-const convert = (value: `${number}`, mode: Format, price: number) => {
-  const numberFloat = parseFloat(value)
-  if (numberFloat > 0) {
-    return mode === 'fiat' ? numberFloat / price : numberFloat * price
-  } else {
-    return 0
-  }
-}
-
 const TokenCalculator = React.memo(function TokenCalculator({
   autoFocus: maybeAutoFocus = false,
-  onUpdateAmount,
-  onUpdateValidation,
+  toggleFormat,
   symbol,
-  valuation: maybeValuation,
-  maxCrypto,
-}: {
+  format,
+  value,
+  canConvertBetweenFiatAndCrypto,
+  onUpdateCalculatedValue,
+  selectMaxValue,
+  getCurrentValueStringAsCryptoOrZero,
+  getCurrentValueStringAsFiatOrZero,
+  maybeCurrencySymbol,
+}: ReturnType<typeof useTokenCalculator> & {
   readonly autoFocus?: boolean
-  readonly onUpdateAmount: React.Dispatch<React.SetStateAction<number | null>>
-  readonly onUpdateValidation: React.Dispatch<React.SetStateAction<boolean>>
-  readonly symbol: string
-  readonly valuation: DetailedValuation | null
-  readonly maxCrypto: number
 }): JSX.Element {
-  const [number, onChangeNumber] = React.useState<`${number}` | null>(null)
-  const [mode, onSwitchMode] = React.useState<Format>(Format.CRYPTO)
-
-  // Only allow to switch between entering a crypto amount and a fiat amount
-  // if there's a fiat amount to switch to.
-
-  const canSwitchModes = Boolean(maybeValuation)
-  // max I think
-  const quantity = maybeValuation?.price || 0
-  const price = maybeValuation?.conversionRate || 0
-
-  const converted = convert(number || '0', mode, price)
-
-  const maxFiat = canSwitchModes ? quantity : Number.POSITIVE_INFINITY
-
-  const maxNumber = mode === Format.FIAT ? maxFiat.toFixed(2) : maxCrypto
-
   const ref = React.useRef<TextInput>(null)
-
-  function updateAmount(num: `${number}`) {
-    onChangeNumber(num)
-    onUpdateAmount(parseFloat(num))
-    const isValidAmount = parseFloat(num) <= parseFloat(String(maxNumber))
-    onUpdateValidation(isValidAmount)
-  }
 
   // HACK: For some reason the text input did not focus on its own.
   React.useEffect(() => {
@@ -70,46 +32,47 @@ const TokenCalculator = React.memo(function TokenCalculator({
 
   return (
     <View style={styles.bannerWrapper}>
-      <TouchableOpacity
-        onPress={() => {
-          updateAmount(maxNumber.toString() as `${number}`)
-        }}
-        style={styles.button}>
+      <TouchableOpacity onPress={selectMaxValue} style={styles.button}>
         <Text style={styles.maxButtonText}>Max</Text>
       </TouchableOpacity>
       <View style={styles.amountsWrapper}>
         <View style={styles.mainAmount}>
-          {mode === Format.FIAT && <Text style={styles.amountText}>$</Text>}
+          {format === CurrencyFormat.FIAT && (
+            <Text style={styles.amountText}>$</Text>
+          )}
           <TextInput
             ref={ref}
             style={styles.amountInput}
-            onChangeText={(text) => updateAmount(text as `${number}`)}
-            value={number || ''}
+            onChangeText={(text) => onUpdateCalculatedValue(text)}
+            value={value || ''}
             keyboardType='numeric'
             placeholder='0'
             maxLength={7}
           />
-          {mode === Format.CRYPTO && (
+          {format === CurrencyFormat.CRYPTO && (
             <Text style={styles.amountText}> {symbol}</Text>
           )}
         </View>
-        {canSwitchModes && (
+        {canConvertBetweenFiatAndCrypto && (
           <Text style={styles.convertedAmount}>
             {`≈ ${
-              mode === Format.CRYPTO
-                ? `$${converted}`
-                : `${converted} ${symbol}`
+              format === CurrencyFormat.CRYPTO
+                ? `${
+                    maybeCurrencySymbol || ''
+                  }${getCurrentValueStringAsFiatOrZero()}`
+                : `${getCurrentValueStringAsCryptoOrZero()} ${symbol}`
             }`}
             {}
           </Text>
         )}
       </View>
       <TouchableOpacity
-        disabled={!canSwitchModes}
-        onPress={() => {
-          onSwitchMode(mode === Format.FIAT ? Format.CRYPTO : Format.FIAT)
-        }}
-        style={[styles.button, !canSwitchModes && styles.invisible]}>
+        disabled={!canConvertBetweenFiatAndCrypto}
+        onPress={toggleFormat}
+        style={[
+          styles.button,
+          !canConvertBetweenFiatAndCrypto && styles.invisible,
+        ]}>
         <SwapIcon />
       </TouchableOpacity>
     </View>

@@ -236,7 +236,7 @@ type AbstractAggregateWalletBannerBalance<
   readonly balance: string
   readonly symbol: string
 
-  // Defines price information for the asset - this can currenttly only be
+  // Defines price information for the asset - this can currently only be
   // determined by querying the Wallet Provider API, meaning custom networks
   // cannot define a concrete valuation.
   readonly valuation: DetailedValuation | null
