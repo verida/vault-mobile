@@ -1,6 +1,5 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { useBlockchainContext } from 'features/blockchain'
 import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
@@ -18,8 +17,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
 ) => void) => {
   const { showModal } = useModal()
   const { authenticated } = useAuth()
-
-  const { rpcSelector } = useBlockchainContext()
 
   // We could also optionally automatically approve calls here if needed:
   //const approve = useWalletConnectSessionApproveCallback()
@@ -54,7 +51,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
           <WalletConnectTransactionRequestModal
             web3wallet={web3wallet}
             request={request}
-            rpcSelector={rpcSelector}
             activeSession={maybeActiveSession}
           />
         )
@@ -62,6 +58,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
         return reject(web3wallet, request, e)
       }
     },
-    [reject, showModal, authenticated, rpcSelector]
+    [reject, showModal, authenticated]
   )
 }

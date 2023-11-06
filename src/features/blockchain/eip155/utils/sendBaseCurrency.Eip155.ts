@@ -35,8 +35,6 @@ export const sendBaseCurrencyEip155 = async ({
         to,
       },
     ],
-    // TODO: this should NOT be needed if we already have the provider... verify usage
-    rpcSelector: async () => rpc /* already_selected */,
   })
 
   if (typeof maybeTransactionHash !== 'string' || !maybeTransactionHash.length)

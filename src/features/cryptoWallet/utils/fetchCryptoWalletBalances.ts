@@ -3,20 +3,21 @@ import {
   getBalanceEip155,
   getBalanceNear,
   getNearAccountId,
-  RpcSelector,
 } from 'features/blockchain'
-import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
+import {
+  ChainMetadatas,
+  getRpcUrlOrThrow,
+  SupportedCaipNamespace,
+} from 'features/caip'
 
 import { CryptoWalletBalances, MinifiedVeridaAccounts } from '../@types'
 
 export async function fetchCryptoWalletBalances({
   chainMetadatas,
   minifiedAccounts,
-  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly minifiedAccounts: MinifiedVeridaAccounts
-  readonly rpcSelector: RpcSelector
 }): Promise<CryptoWalletBalances> {
   const eip155Addresses = [
     ...new Set(
@@ -58,9 +59,12 @@ export async function fetchCryptoWalletBalances({
     (e) => e.namespace === SupportedCaipNamespace.NEAR
   )
 
-  const [eip155Rpcs] = await Promise.all([
-    await Promise.all(eip155Chains.map(({ rpcUrls }) => rpcSelector(rpcUrls))),
-  ])
+  const eip155Rpcs = eip155Chains.map((e) =>
+    getRpcUrlOrThrow({
+      chainId: new ChainId(e),
+      chainMetadatas,
+    })
+  )
 
   const [eip155Balances, nearBalances] = await Promise.all([
     Promise.all(
@@ -85,7 +89,6 @@ export async function fetchCryptoWalletBalances({
               chainId: new ChainId({ namespace, reference }),
               chainMetadatas,
               address,
-              rpcSelector,
             })
               .then((e) => e.available)
               .catch(() => null)

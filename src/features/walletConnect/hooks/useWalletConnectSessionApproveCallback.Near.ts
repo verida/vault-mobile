@@ -20,7 +20,6 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
     async ({
       web3wallet,
       request,
-      rpcSelector,
     }: WalletConnectSessionRequestCallbackParams): Promise<unknown> => {
       const maybeNearAccount = await getMaybeNearAccountForWalletConnectRequest(
         {
@@ -28,7 +27,6 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
           web3wallet,
           request,
           walletsData,
-          rpcSelector,
         }
       )
 
@@ -44,7 +42,7 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
 
       const { [method]: handle } = nearSessionRequestHandlers
 
-      return handle({ web3wallet, request, rpcSelector })
+      return handle({ web3wallet, request })
     },
     [chainMetadatas, nearSessionRequestHandlers, walletsData]
   )

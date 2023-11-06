@@ -1,6 +1,5 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { RpcSelector } from 'features/blockchain/@types'
 import {
   getNearAccountId,
   NearAccount,
@@ -19,13 +18,11 @@ export async function getMaybeNearAccountForPrivateKey({
   privateKey,
   signerId,
   caipChainId,
-  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly privateKey: string
   readonly signerId: string
   readonly caipChainId: ChainId
-  readonly rpcSelector: RpcSelector
 }) {
   if (caipChainId.namespace !== SupportedCaipNamespace.NEAR) return undefined
 
@@ -57,7 +54,6 @@ export async function getMaybeNearAccountForPrivateKey({
     chainMetadatas,
     nearAccountPointer: nearAccount,
     caipChainId,
-    rpcSelector,
   })
 
   if (!doesAccountExist) {
@@ -67,7 +63,7 @@ export async function getMaybeNearAccountForPrivateKey({
         `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
       )
 
-    await nearInstantiateAccount({ chainMetadatas, nearAccount, rpcSelector })
+    await nearInstantiateAccount({ chainMetadatas, nearAccount })
   }
 
   return nearAccount
@@ -79,13 +75,11 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   web3wallet,
   request,
   walletsData,
-  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
-  readonly rpcSelector: RpcSelector
 }): Promise<NearAccount | undefined> {
   const { params } = request
 
@@ -111,7 +105,6 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   return getMaybeNearAccountForPrivateKey({
     caipChainId,
     privateKey,
-    rpcSelector,
     signerId,
     chainMetadatas,
   })
@@ -122,13 +115,11 @@ export async function getNearAccountForWalletConnectRequestOrThrow({
   web3wallet,
   request,
   walletsData,
-  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
-  readonly rpcSelector: RpcSelector
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({
@@ -136,7 +127,6 @@ export async function getNearAccountForWalletConnectRequestOrThrow({
       web3wallet,
       request,
       walletsData,
-      rpcSelector,
     })
 
   if (!maybeNearAccount)

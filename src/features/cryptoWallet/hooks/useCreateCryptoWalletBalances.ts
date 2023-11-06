@@ -1,4 +1,3 @@
-import { useBlockchainContext } from 'features/blockchain'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import * as React from 'react'
 
@@ -21,7 +20,6 @@ export const getMaybeCreateCryptoWalletBalancesResult = (
 }
 
 export function useCreateCryptoWalletBalances(): UseCreateCryptoWalletBalancesResult {
-  const { rpcSelector } = useBlockchainContext()
   const [state, setState] = React.useState<UseCreateCryptoWalletBalancesState>({
     loading: true,
   })
@@ -39,9 +37,8 @@ export function useCreateCryptoWalletBalances(): UseCreateCryptoWalletBalancesRe
       return fetchCryptoWalletBalances({
         chainMetadatas,
         minifiedAccounts,
-        rpcSelector,
       })
-    }, [chainMetadatas, minifiedAccounts, rpcSelector])
+    }, [chainMetadatas, minifiedAccounts])
 
   const refetch = React.useCallback(async () => {
     try {

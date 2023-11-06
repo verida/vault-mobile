@@ -1,9 +1,6 @@
 import { ChainId } from 'caip'
 import { BigNumber, ethers } from 'ethers'
-import {
-  calculateTransactionFeeEip155,
-  useBlockchainContext,
-} from 'features/blockchain'
+import { calculateTransactionFeeEip155 } from 'features/blockchain'
 import {
   getMaybeChainMetadatas,
   getRpcUrlOrThrow,
@@ -35,8 +32,6 @@ export function usePredictMaxTransactionFee({
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const { rpcSelector } = useBlockchainContext()
-
   React.useEffect(
     () =>
       // eslint-disable-next-line no-void
@@ -57,7 +52,6 @@ export function usePredictMaxTransactionFee({
           const rpc = await getRpcUrlOrThrow({
             chainId,
             chainMetadatas,
-            rpcSelector,
           })
 
           if (namespace === SupportedCaipNamespace.EIP_155) {
@@ -100,7 +94,7 @@ export function usePredictMaxTransactionFee({
           })
         }
       })(),
-    [maybeAmountOfGasConsumed, chainId, chainMetadatas, rpcSelector]
+    [maybeAmountOfGasConsumed, chainId, chainMetadatas]
   )
 
   return state

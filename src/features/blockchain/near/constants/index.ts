@@ -1,5 +1,4 @@
 import { ChainId } from 'caip'
-import { RpcSelector } from 'features/blockchain/@types'
 import {
   ChainMetadatas,
   getRpcUrlOrThrow,
@@ -11,12 +10,10 @@ export async function getNearNetworkConfig({
   chainMetadatas,
   keystore: keyStore,
   caipChainId,
-  rpcSelector,
 }: {
   readonly chainMetadatas: ChainMetadatas
   readonly keystore: keyStores.KeyStore
   readonly caipChainId: ChainId
-  readonly rpcSelector: RpcSelector
 }): Promise<
   Parameters<typeof connect>[0] & {
     // https://docs.near.org/tools/near-api-js/quick-reference#connect
@@ -40,7 +37,6 @@ export async function getNearNetworkConfig({
     nodeUrl: await getRpcUrlOrThrow({
       chainMetadatas,
       chainId: caipChainId,
-      rpcSelector,
     }),
     walletUrl: 'https://wallet.testnet.near.org',
     helperUrl: 'https://helper.testnet.near.org',

@@ -1,7 +1,6 @@
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { SignClient } from '@walletconnect/sign-client/dist/types/client'
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { RpcSelector } from 'features/blockchain/@types'
 import type { Eip155RpcMethod } from 'features/blockchain/eip155'
 import type { NearRpcMethod } from 'features/blockchain/near'
 import { SupportedCaipNamespace } from 'features/caip'
@@ -43,7 +42,6 @@ export type CaipProtocolToCaipIdentifiers = {
 export type WalletConnectSessionRequestCallbackParams = {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly rpcSelector: RpcSelector
 }
 
 export type WalletConnectSessionRequestCallback<T = unknown> = (

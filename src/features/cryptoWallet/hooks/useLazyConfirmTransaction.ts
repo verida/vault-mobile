@@ -1,5 +1,4 @@
 import { ChainId, ChainIdParams } from 'caip'
-import { useBlockchainContext } from 'features/blockchain'
 import {
   sendBaseCurrencyEip155,
   useBlockchainRequestHandlersEip155,
@@ -9,8 +8,8 @@ import {
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
 import {
-  getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
+  getRpcUrlOrThrow,
   isSupportedCaipNamespace,
   SupportedCaipNamespace,
   useChainMetadatas,
@@ -48,8 +47,6 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
     Stateful<ConfirmTransactionCallbackResult>
   >({ loading: false, result: false })
 
-  const { rpcSelector } = useBlockchainContext()
-
   const blockchainRequestHandlersEip155 = useBlockchainRequestHandlersEip155()
   const blockchainRequestHandlersNear = useBlockchainRequestHandlersNear()
 
@@ -82,12 +79,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
       const chainId = new ChainId({ namespace, reference })
 
-      const { rpcUrls } = getChainMetadataByCaipTypeOrThrow(
-        chainMetadatas,
-        chainId
-      )
-
-      const rpc = await rpcSelector(rpcUrls)
+      const rpc = getRpcUrlOrThrow({ chainId, chainMetadatas })
 
       if (typeof rpc !== 'string' || !rpc.length)
         throw new Error(`Expected non-empty string rpc, encounterd "${rpc}".`)
@@ -130,7 +122,6 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
     },
     [
       blockchainRequestHandlersEip155,
-      rpcSelector,
       selectedMinifiedAccounts,
       chainMetadatas,
       blockchainRequestHandlersNear,

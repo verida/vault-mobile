@@ -37,14 +37,12 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
             nearRpcMethod,
             async ({
               request,
-              rpcSelector,
               web3wallet,
             }: WalletConnectSessionRequestCallbackParams) => {
               const provider = getNearProvider(
                 await extractWalletConnectRpcOrThrow({
                   chainMetadatas,
                   request,
-                  rpcSelector,
                 })
               )
 
@@ -54,7 +52,6 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
                   web3wallet,
                   walletsData,
                   request,
-                  rpcSelector,
                 })
 
               return blockchainRequestHandlersNear[nearRpcMethod]({
@@ -62,7 +59,6 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
                   nearAccount,
                   nearProvider: provider,
                 },
-                rpcSelector,
                 params: request.params.request.params,
               })
             },

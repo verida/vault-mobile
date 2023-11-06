@@ -1,5 +1,4 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
-import { RpcSelector } from 'features/blockchain/@types'
 import {
   getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
@@ -17,11 +16,7 @@ import {
 import { useWalletConnectSessionApproveCallbackEip155 } from './useWalletConnectSessionApproveCallback.Eip155'
 import { useWalletConnectSessionApproveCallbackNear } from './useWalletConnectSessionApproveCallback.Near'
 
-export function useWalletConnectSessionApproveCallback({
-  rpcSelector,
-}: {
-  readonly rpcSelector: RpcSelector
-}) {
+export function useWalletConnectSessionApproveCallback() {
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const eip155Approve = useWalletConnectSessionApproveCallbackEip155()
@@ -64,9 +59,9 @@ export function useWalletConnectSessionApproveCallback({
       if (!maybeStandardHandler)
         throw new Error(`Sorry, ${chainId.toString()} is not supported.`)
 
-      return maybeStandardHandler({ web3wallet, request, rpcSelector })
+      return maybeStandardHandler({ web3wallet, request })
     },
-    [chainMetadatas, supportedStandardHandlers, rpcSelector]
+    [chainMetadatas, supportedStandardHandlers]
   )
 
   return React.useCallback(

@@ -16,7 +16,6 @@ export const useWalletConnectSessionApproveCallbackEip155 = (): ((
     async ({
       web3wallet,
       request,
-      rpcSelector,
     }: WalletConnectSessionRequestCallbackParams) => {
       /* ensure wallet */
       getVeridaWalletAccountForWalletConnectRequestOrThrow({
@@ -31,7 +30,7 @@ export const useWalletConnectSessionApproveCallbackEip155 = (): ((
 
       const { [method]: handle } = handlers
 
-      return handle({ web3wallet, request, rpcSelector })
+      return handle({ web3wallet, request })
     },
     [walletsData, handlers]
   )

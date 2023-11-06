@@ -61,7 +61,6 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
           method,
           async ({
             request,
-            rpcSelector,
             web3wallet,
           }: WalletConnectSessionRequestCallbackParams) =>
             blockchainRequestHandlersEip155[method]({
@@ -69,14 +68,12 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
                 rpc: await extractWalletConnectRpcOrThrow({
                   chainMetadatas,
                   request,
-                  rpcSelector,
                 }),
                 request,
                 walletsData,
                 web3wallet,
               }),
               params: request.params.request.params,
-              rpcSelector,
             }),
         ])
       ) as unknown as EthereumSessionRequestHandlers,
