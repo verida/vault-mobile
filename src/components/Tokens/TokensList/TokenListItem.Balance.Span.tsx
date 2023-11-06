@@ -1,20 +1,18 @@
-import {
-  AggregateWalletBannerBalanceAsNumericProps,
-  getAggregateWalletBannerBalanceAsNumeric,
-} from 'features/cryptoWallet/utils/getAggregateWalletBannerBalanceAsNumeric'
+import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
+import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet/utils/fixedPointCryptoAsBigDecimal'
 import * as React from 'react'
 import { Text } from 'react-native'
 
 export const TokenListItemBalanceSpan = React.memo(
   function TokenListItemBalanceSpan({
-    balance,
+    balance: amount,
     decimals,
     symbol,
-  }: AggregateWalletBannerBalanceAsNumericProps & {
+  }: Pick<AggregateWalletBannerBalance, 'decimals' | 'balance'> & {
     readonly symbol: string
   }): JSX.Element {
-    const n = getAggregateWalletBannerBalanceAsNumeric({
-      balance,
+    const n = fixedPointCryptoAsBigDecimal({
+      amount,
       decimals,
     })
 

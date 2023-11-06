@@ -8,7 +8,7 @@ import {
   DetailedValuation,
   Interval,
 } from '../@types'
-import { getAggregateWalletBannerBalanceAsNumeric } from './getAggregateWalletBannerBalanceAsNumeric'
+import { fixedPointCryptoAsBigDecimal } from './fixedPointCryptoAsBigDecimal'
 
 export function chainMetadataToMaybeValuation({
   balance,
@@ -37,8 +37,8 @@ export function chainMetadataToMaybeValuation({
     change: maybeChange,
   } = maybeBalanceByChainResult
 
-  const price = getAggregateWalletBannerBalanceAsNumeric({
-    balance,
+  const price = fixedPointCryptoAsBigDecimal({
+    amount: balance,
     decimals,
   }).multipliedBy(conversionRate)
 

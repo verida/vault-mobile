@@ -1,6 +1,8 @@
+import BigDecimal from 'bignumber.js'
+import { BigNumber } from 'ethers'
 import { CURRENCY_SYMBOLS } from 'features/cryptoWallet'
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet/@types'
-import { getAggregateWalletBannerBalanceAsNumeric } from 'features/cryptoWallet/utils'
+import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet/utils'
 import * as React from 'react'
 
 import { CurrencyFormat } from '../@types'
@@ -21,9 +23,11 @@ export function useTokenCalculator({
   // amount of numeric representation is desirable without cluttering
   // the text input value.
   prettyNumberOfDecimalPlaces = 4,
+  predictedMaxTransactionFee = BigNumber.from('0'),
 }: {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly prettyNumberOfDecimalPlaces?: number
+  readonly predictedMaxTransactionFee?: BigNumber
 }) {
   const { valuation: maybeValuation, symbol } = aggregateWalletBannerBalance
 
@@ -180,8 +184,37 @@ export function useTokenCalculator({
     [getNormalizedValue]
   )
 
-  const maximumCryptoAmount = getAggregateWalletBannerBalanceAsNumeric(
-    aggregateWalletBannerBalance
+  const { decimals, balance: amount } = aggregateWalletBannerBalance
+
+  const maximumCryptoBalance = React.useMemo(
+    () =>
+      fixedPointCryptoAsBigDecimal({
+        decimals,
+        amount,
+      }),
+    [amount, decimals]
+  )
+
+  const maxTransactionFee = React.useMemo(
+    () =>
+      fixedPointCryptoAsBigDecimal({
+        decimals,
+        amount: String(predictedMaxTransactionFee),
+      }),
+    [decimals, predictedMaxTransactionFee]
+  )
+
+  const maybeMaximumCryptoAmount = React.useMemo(
+    () => maximumCryptoBalance.minus(maxTransactionFee),
+    [maxTransactionFee, maximumCryptoBalance]
+  )
+
+  const maximumCryptoAmount: BigDecimal = React.useMemo(
+    () =>
+      maybeMaximumCryptoAmount.gt(0)
+        ? maybeMaximumCryptoAmount
+        : new BigDecimal(0),
+    [maybeMaximumCryptoAmount]
   )
 
   // Create a function which selects the maximum value to send.
@@ -198,9 +231,9 @@ export function useTokenCalculator({
         )
       )
 
-    if (format === CurrencyFormat.FIAT) {
-      if (!canConvertBetweenFiatAndCrypto) throw unableToConvertError()
+    if (!canConvertBetweenFiatAndCrypto) throw unableToConvertError()
 
+    if (format === CurrencyFormat.FIAT)
       return setState(
         toPrettyState(
           getStateAsFiat({
@@ -215,7 +248,6 @@ export function useTokenCalculator({
           })
         )
       )
-    }
   }, [
     state,
     toPrettyState,
