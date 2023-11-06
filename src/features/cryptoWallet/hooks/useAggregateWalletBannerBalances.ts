@@ -90,7 +90,18 @@ export function useAggregateWalletBannerBalances(
     const aggregateWalletBannerBalances: AggregateWalletBannerBalances = [
       ...erc20Balances,
       ...nativeBalances,
-    ]
+    ].sort((a, b) => {
+      // If both the balances carry a valuation, compare them.
+      if (a.valuation && b.valuation)
+        return b.valuation.price.minus(a.valuation.price).toNumber()
+
+      // Else, when comparing tokens without a valuation...
+      if (a.valuation) return -1
+      if (b.valuation) return 1
+
+      // Otherwise, sort by name.
+      return a.label.localeCompare(b.label)
+    })
 
     const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
       aggregateWalletBannerBalances.filter((aggregateWalletBannerBalance) => {
