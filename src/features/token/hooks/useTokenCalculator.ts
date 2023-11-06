@@ -17,13 +17,13 @@ const unableToConvertError = () =>
 // Defines common business logic for converting between currencies for a given format.
 export function useTokenCalculator({
   aggregateWalletBannerBalance,
-  // HACK: Using big numbers leads to high-precision decimals which cannot yet
-  //       be rendered elegantly on the frontend. Here, we choose to settle on
-  //       a maximum length representation we're willing to render.
-  maximumNumberOfDecimalPlaces = 8,
+  // When auto-filling values, use this value to limit to what
+  // amount of numeric representation is desirable without cluttering
+  // the text input value.
+  prettyNumberOfDecimalPlaces = 6,
 }: {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
-  readonly maximumNumberOfDecimalPlaces?: number
+  readonly prettyNumberOfDecimalPlaces?: number
 }) {
   const { valuation: maybeValuation, symbol } = aggregateWalletBannerBalance
 
@@ -40,29 +40,63 @@ export function useTokenCalculator({
     ? CURRENCY_SYMBOLS[maybeCurrency]
     : null
 
+  // HACK: When using automated values like "max" or toggling between
+  //       values, we tend to populate the `TextInput` with very long
+  //       numerics given the high-precision integer math of blockchain
+  //       platforms. These don't look great on frontend, so when
+  //       normalizing, we can optionally specify to render a visually
+  //       more appealing string - very small decimals generally do not
+  //       interest users.
+  const convertIntoPrettyNumber = React.useCallback(
+    (value: `${number}`): `${number}` =>
+      Number(value)
+        .toFixed(prettyNumberOfDecimalPlaces)
+        .replace(/\.?0*$/, '') as `${number}`,
+    [prettyNumberOfDecimalPlaces]
+  )
+
   const getNormalizedValue = React.useCallback(
-    (forValue: string | null): `${number}` | null => {
-      const maybeValue =
-        typeof forValue !== 'string'
-          ? null
-          : !forValue.length
-          ? null
-          : isNaN(parseFloat(forValue))
-          ? null
-          : (forValue as `${number}`)
-      if (typeof forValue !== 'string') return forValue
+    ({
+      valueToNormalize,
+    }: {
+      readonly valueToNormalize: string | null
+    }): `${number}` | null =>
+      typeof valueToNormalize !== 'string'
+        ? null
+        : !valueToNormalize.length
+        ? null
+        : isNaN(parseFloat(valueToNormalize))
+        ? null
+        : (valueToNormalize as `${number}`),
+    []
+  )
 
-      return Number(maybeValue).toFixed(
-        maximumNumberOfDecimalPlaces
-      ) as `${number}`
+  // HACK: Calls toPrettyState will take the `value` inside the state,
+  //       and where possible, prettify it. This is useful for when we
+  //       populate values of state automatically, which have a tendency
+  //       to use especially long decimal places which are unhelpful to
+  //       users.
+  const toPrettyState = React.useCallback(
+    (nextState: State) => {
+      const { value: valueToNormalize, ...extras } = nextState
+
+      const normalizedValue = getNormalizedValue({ valueToNormalize })
+
+      if (typeof normalizedValue !== 'string') return nextState
+
+      return {
+        ...extras,
+        value: convertIntoPrettyNumber(normalizedValue),
+      }
     },
-
-    [maximumNumberOfDecimalPlaces]
+    [convertIntoPrettyNumber, getNormalizedValue]
   )
 
   const getStateAsCrypto = React.useCallback(
     ({ format, value: maybeValue }: State): State => {
-      const normalizedValue = getNormalizedValue(maybeValue)
+      const normalizedValue = getNormalizedValue({
+        valueToNormalize: maybeValue,
+      })
 
       if (typeof normalizedValue !== 'string')
         return { format: CurrencyFormat.CRYPTO, value: normalizedValue }
@@ -88,7 +122,9 @@ export function useTokenCalculator({
 
   const getStateAsFiat = React.useCallback(
     ({ format, value: maybeValue }: State): State => {
-      const normalizedValue = getNormalizedValue(maybeValue)
+      const normalizedValue = getNormalizedValue({
+        valueToNormalize: maybeValue,
+      })
 
       if (typeof normalizedValue !== 'string')
         return { format: CurrencyFormat.FIAT, value: normalizedValue }
@@ -121,17 +157,26 @@ export function useTokenCalculator({
         : CurrencyFormat.CRYPTO
 
     if (nextFormat === CurrencyFormat.CRYPTO)
-      return setState(getStateAsCrypto(state))
+      return setState(toPrettyState(getStateAsCrypto(state)))
 
     if (nextFormat === CurrencyFormat.FIAT)
-      return setState(getStateAsFiat(state))
+      return setState(toPrettyState(getStateAsFiat(state)))
 
     throw new Error(`Encountered unexpercted CurrencyFormat, "${nextFormat}".`)
-  }, [state, canConvertBetweenFiatAndCrypto, getStateAsCrypto, getStateAsFiat])
+  }, [
+    state,
+    canConvertBetweenFiatAndCrypto,
+    toPrettyState,
+    getStateAsCrypto,
+    getStateAsFiat,
+  ])
 
   const onUpdateCalculatedValue = React.useCallback(
     (str: string) =>
-      setState((e) => ({ ...e, value: getNormalizedValue(str) })),
+      setState((e) => ({
+        ...e,
+        value: getNormalizedValue({ valueToNormalize: str }),
+      })),
     [getNormalizedValue]
   )
 
@@ -144,26 +189,40 @@ export function useTokenCalculator({
     const { format } = state
 
     if (format === CurrencyFormat.CRYPTO)
-      return setState({
-        format: CurrencyFormat.CRYPTO,
-        value: `${maximumCryptoAmount}` as `${number}`,
-      })
+      return setState(
+        getStateAsCrypto({
+          format: CurrencyFormat.CRYPTO,
+          value: convertIntoPrettyNumber(
+            `${maximumCryptoAmount}` as `${number}`
+          ),
+        })
+      )
 
     if (format === CurrencyFormat.FIAT) {
       if (!canConvertBetweenFiatAndCrypto) throw unableToConvertError()
 
-      return setState({
-        format: CurrencyFormat.FIAT,
-        value: convertFromCryptoToFiat({
-          valueInCrypto: String(maximumCryptoAmount) as `${number}`,
-          valuation: maybeValuation,
-        }),
-      })
+      return setState(
+        getStateAsFiat({
+          format: CurrencyFormat.FIAT,
+          value: convertIntoPrettyNumber(
+            convertFromCryptoToFiat({
+              // HACK: We scale the value here because selecting the max value tends
+              //       to produce a lot of decimal points which are unnecessary for
+              //       frontend.
+              valueInCrypto: `${maximumCryptoAmount}` as `${number}`,
+              valuation: maybeValuation,
+            })
+          ),
+        })
+      )
     }
   }, [
     state,
+    getStateAsCrypto,
+    convertIntoPrettyNumber,
     maximumCryptoAmount,
     canConvertBetweenFiatAndCrypto,
+    getStateAsFiat,
     maybeValuation,
   ])
 
