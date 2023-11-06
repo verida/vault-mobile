@@ -1,6 +1,8 @@
-import { ChainId, ChainIdParams } from 'caip'
+import { AssetId, ChainId } from 'caip'
+import { ethers } from 'ethers'
 import {
   sendBaseCurrencyEip155,
+  sendErc20Eip155,
   useBlockchainRequestHandlersEip155,
 } from 'features/blockchain/eip155'
 import {
@@ -19,29 +21,41 @@ import * as React from 'react'
 
 import {
   AggregateWalletBannerBalance,
+  AggregateWalletBannerBalanceBaseCurrency,
+  AggregateWalletBannerBalanceErc20,
   AggregateWalletBannerBalanceType,
 } from '../@types'
-import { getWalletAddressForChainId } from '../utils'
+import {
+  getChainIdParamsFromResourceParams,
+  getWalletAddressForChainId,
+} from '../utils'
 import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
 
-type ConfirmTransactionCallbackParams = {
-  readonly amount: number
-  readonly toAddress: string
-  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
-}
+type ConfirmTransactionCallbackParams<T extends AggregateWalletBannerBalance> =
+  {
+    readonly amount: number
+    readonly toAddress: string
+    readonly aggregateWalletBannerBalance: T
+  }
 
 type ConfirmTransactionCallbackResult = boolean
 
-type ConfirmTransactionCallback = (
-  params: ConfirmTransactionCallbackParams
+type ConfirmTransactionCallback<T extends AggregateWalletBannerBalance> = (
+  params: ConfirmTransactionCallbackParams<T>
 ) => Promise<ConfirmTransactionCallbackResult>
+
+type ExecuteLazyTransactionParams<
+  T extends AggregateWalletBannerBalance = AggregateWalletBannerBalance
+> = ConfirmTransactionCallbackParams<T> & {
+  readonly fromAddress: string
+}
 
 // Lazily sends a transaction of the native currency.
 // TODO: Use a more exciting ReturnType.
 // TODO: Rename to respect that this does something more general.
 // TODO: Note this doesn't support ERC20s -> Is there an existing user flow which enables this?
 export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallbackResult> & {
-  readonly confirmTransaction: ConfirmTransactionCallback
+  readonly confirmTransaction: ConfirmTransactionCallback<AggregateWalletBannerBalance>
 } {
   const [state, setState] = React.useState<
     Stateful<ConfirmTransactionCallbackResult>
@@ -54,17 +68,20 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
 
-  const executeBlockchainSpecificNativeTransactionOrThrow = React.useCallback(
-    async ({
+  // Attempts to collect all of the necessary data dependencies before
+  // queuing a transaction.
+  const getTransferContextOrThrow = React.useCallback(
+    ({
+      aggregateWalletBannerBalance,
       fromAddress,
-      amount,
-      toAddress,
-      namespace,
-      reference,
-    }: Omit<ConfirmTransactionCallbackParams, 'aggregateWalletBannerBalance'> &
-      ChainIdParams & {
-        readonly fromAddress: string
-      }): Promise<ConfirmTransactionCallbackResult> => {
+    }: Pick<
+      ExecuteLazyTransactionParams,
+      'aggregateWalletBannerBalance' | 'fromAddress'
+    >) => {
+      const { resource } = aggregateWalletBannerBalance
+      const { namespace, reference } =
+        getChainIdParamsFromResourceParams(resource)
+
       const maybeMatchingAccount = selectedMinifiedAccounts.find(
         (e) =>
           e.namespace === namespace &&
@@ -84,6 +101,27 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       if (typeof rpc !== 'string' || !rpc.length)
         throw new Error(`Expected non-empty string rpc, encounterd "${rpc}".`)
 
+      return { rpc, minifiedVeridaAccount: maybeMatchingAccount, chainId }
+    },
+    [chainMetadatas, selectedMinifiedAccounts]
+  )
+
+  const executeBlockchainSpecificNativeTransactionOrThrow = React.useCallback(
+    async ({
+      fromAddress,
+      amount,
+      toAddress,
+      aggregateWalletBannerBalance,
+    }: ExecuteLazyTransactionParams<AggregateWalletBannerBalanceBaseCurrency>): Promise<ConfirmTransactionCallbackResult> => {
+      const { minifiedVeridaAccount, rpc, chainId } = getTransferContextOrThrow(
+        {
+          aggregateWalletBannerBalance,
+          fromAddress,
+        }
+      )
+
+      const { namespace } = chainId
+
       switch (namespace) {
         case SupportedCaipNamespace.EIP_155:
           const { eth_sendTransaction } = blockchainRequestHandlersEip155
@@ -92,7 +130,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             rpc,
             value: amount,
             to: toAddress,
-            minifiedVeridaAccount: maybeMatchingAccount,
+            minifiedVeridaAccount,
             eth_sendTransaction,
           })
 
@@ -107,7 +145,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             rpc,
             value: amount,
             to: toAddress,
-            minifiedVeridaAccount: maybeMatchingAccount,
+            minifiedVeridaAccount,
             near_signAndSendTransaction,
           })
 
@@ -121,80 +159,147 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       }
     },
     [
+      getTransferContextOrThrow,
       blockchainRequestHandlersEip155,
-      selectedMinifiedAccounts,
-      chainMetadatas,
       blockchainRequestHandlersNear,
+      chainMetadatas,
     ]
+  )
+
+  const executeBlockchainSpecificErc20TransactionOrThrow = React.useCallback(
+    async ({
+      fromAddress,
+      toAddress: to,
+      amount,
+      aggregateWalletBannerBalance,
+    }: ExecuteLazyTransactionParams<AggregateWalletBannerBalanceErc20>): Promise<ConfirmTransactionCallbackResult> => {
+      const { resource, decimals } = aggregateWalletBannerBalance
+      const { minifiedVeridaAccount, rpc, chainId } = getTransferContextOrThrow(
+        {
+          aggregateWalletBannerBalance,
+          fromAddress,
+        }
+      )
+
+      const { namespace } = chainId
+
+      const maybeErc20Address = new AssetId(resource).assetName?.reference
+
+      switch (namespace) {
+        case SupportedCaipNamespace.EIP_155:
+          const { eth_sendTransaction } = blockchainRequestHandlersEip155
+
+          if (!ethers.utils.isAddress(maybeErc20Address))
+            throw new Error(
+              `Expected address erc20Address, encountered "${String(
+                maybeErc20Address
+              )}".`
+            )
+
+          await sendErc20Eip155({
+            erc20Address: maybeErc20Address,
+            to,
+            value: amount,
+            eth_sendTransaction,
+            minifiedVeridaAccount,
+            rpc,
+            decimals,
+          })
+
+          return true
+        default:
+          throw new Error(
+            `Sending ERC-20s on ${namespace} is not yet supported. Please accept our apologies for the inconvenience!`
+          )
+      }
+    },
+    [blockchainRequestHandlersEip155, getTransferContextOrThrow]
   )
 
   // TODO: Generalize to confirmTransaction when using ERC20s.
-  const confirmTransaction: ConfirmTransactionCallback = React.useCallback(
-    async ({
-      amount,
-      toAddress,
-      aggregateWalletBannerBalance,
-    }: ConfirmTransactionCallbackParams): Promise<boolean> => {
-      const { loading } = state
+  const confirmTransaction: ConfirmTransactionCallback<AggregateWalletBannerBalance> =
+    React.useCallback(
+      async ({
+        amount,
+        toAddress,
+        aggregateWalletBannerBalance,
+      }: ConfirmTransactionCallbackParams<AggregateWalletBannerBalance>): Promise<ConfirmTransactionCallbackResult> => {
+        const { loading } = state
 
-      if (loading) throw new Error('Already loading!')
+        if (loading) throw new Error('Already loading!')
 
-      try {
-        const { type } = aggregateWalletBannerBalance
+        try {
+          const { resource } = aggregateWalletBannerBalance
+          const chainIdParams = getChainIdParamsFromResourceParams(resource)
 
-        if (type !== AggregateWalletBannerBalanceType.BASE_CURRENCY)
-          throw new Error(`Only base layer currencies are currently supported.`)
+          const { namespace } = chainIdParams
 
-        const { resource } = aggregateWalletBannerBalance
-        const { namespace, reference } = resource
-
-        const fromAddress = getWalletAddressForChainId(
-          new ChainId(resource),
-          selectedMinifiedAccounts
-        )
-
-        if (typeof fromAddress !== 'string' || !fromAddress.length)
-          throw new Error(
-            `Expected non-empty string fromAddress, encountered "${fromAddress}".`
+          const fromAddress = getWalletAddressForChainId(
+            new ChainId(chainIdParams),
+            selectedMinifiedAccounts
           )
 
-        if (!isSupportedCaipNamespace(namespace))
-          throw new Error(`Sorry, "${namespace}" is not a supported namespace.`)
+          if (typeof fromAddress !== 'string' || !fromAddress.length)
+            throw new Error(
+              `Expected non-empty string fromAddress, encountered "${fromAddress}".`
+            )
 
-        setState({ loading: true })
+          if (!isSupportedCaipNamespace(namespace))
+            throw new Error(
+              `Sorry, "${namespace}" is not a supported namespace.`
+            )
 
-        const result = await executeBlockchainSpecificNativeTransactionOrThrow({
-          namespace,
-          reference,
-          amount,
-          fromAddress,
-          toAddress,
-        })
+          setState({ loading: true })
 
-        // TODO: we need to tell if the transaction was successfully mined or not
-        setState({ loading: false, result })
+          const { type } = aggregateWalletBannerBalance
 
-        return result
-      } catch (cause) {
-        // eslint-disable-next-line no-console
-        __DEV__ && console.error(cause)
+          const params: Omit<
+            ExecuteLazyTransactionParams<AggregateWalletBannerBalance>,
+            'aggregateWalletBannerBalance'
+          > = {
+            amount,
+            fromAddress,
+            toAddress,
+          }
 
-        setState({
-          loading: false,
-          error: new Error('Failed to send transaction.', {
-            cause,
-          }),
-        })
+          const result: ConfirmTransactionCallbackResult =
+            type === AggregateWalletBannerBalanceType.BASE_CURRENCY
+              ? await executeBlockchainSpecificNativeTransactionOrThrow({
+                  ...params,
+                  aggregateWalletBannerBalance,
+                })
+              : type === AggregateWalletBannerBalanceType.ERC_20
+              ? await executeBlockchainSpecificErc20TransactionOrThrow({
+                  ...params,
+                  aggregateWalletBannerBalance,
+                })
+              : false
 
-        throw cause
-      }
-    },
-    [
-      state,
-      selectedMinifiedAccounts,
-      executeBlockchainSpecificNativeTransactionOrThrow,
-    ]
-  )
+          // TODO: we need to tell if the transaction was successfully mined or not
+          setState({ loading: false, result })
+
+          return result
+        } catch (cause) {
+          // eslint-disable-next-line no-console
+          __DEV__ && console.error(cause)
+
+          setState({
+            loading: false,
+            error: new Error('Failed to send transaction.', {
+              cause,
+            }),
+          })
+
+          throw cause
+        }
+      },
+      [
+        state,
+        selectedMinifiedAccounts,
+        executeBlockchainSpecificNativeTransactionOrThrow,
+        executeBlockchainSpecificErc20TransactionOrThrow,
+      ]
+    )
 
   return { ...state, confirmTransaction }
 }
