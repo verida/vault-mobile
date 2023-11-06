@@ -1,3 +1,4 @@
+import BigDecimal from 'bignumber.js'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import * as React from 'react'
 
@@ -96,11 +97,11 @@ export function useAggregateWalletBannerBalances(
         return b.valuation.price.minus(a.valuation.price).toNumber()
 
       // Else, when comparing tokens without a valuation...
-      if (a.valuation) return -1
-      if (b.valuation) return 1
+      if (a.valuation && a.valuation.price.gt(0)) return -1
+      if (b.valuation && b.valuation.price.gt(0)) return 1
 
-      // Otherwise, sort by name.
-      return a.label.localeCompare(b.label)
+      // Else, compare by the size of the position.
+      return BigDecimal(b.balance).minus(BigDecimal(a.balance)).toNumber()
     })
 
     const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
