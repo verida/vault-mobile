@@ -1,3 +1,4 @@
+export * from './calculateTransactionFee.Eip155'
 export * from './chainsList'
 export * from './getBalance.Eip155'
 export * from './sendBaseCurrency.Eip155'
