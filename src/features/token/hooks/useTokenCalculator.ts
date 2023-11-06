@@ -52,10 +52,16 @@ export function useTokenCalculator({
   //       more appealing string - very small decimals generally do not
   //       interest users.
   const convertIntoPrettyNumber = React.useCallback(
-    (value: `${number}`): `${number}` =>
-      Number(value)
-        .toFixed(prettyNumberOfDecimalPlaces)
-        .replace(/\.?0*$/, '') as `${number}`,
+    (value: `${number}`): `${number}` => {
+      const toFixedWithExtraDecimalPlaces = Number(value).toFixed(
+        // HACK: Use extra precision to avoid rounding issues during truncation.
+        prettyNumberOfDecimalPlaces + 5
+      )
+
+      return toFixedWithExtraDecimalPlaces
+        .substring(0, toFixedWithExtraDecimalPlaces.length - 5)
+        .replace(/\.?0*$/, '') as `${number}`
+    },
     [prettyNumberOfDecimalPlaces]
   )
 
