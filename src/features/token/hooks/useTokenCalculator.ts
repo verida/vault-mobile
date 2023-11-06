@@ -1,6 +1,9 @@
 import BigDecimal from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import { CURRENCY_SYMBOLS } from 'features/cryptoWallet'
+import {
+  AggregateWalletBannerBalanceType,
+  CURRENCY_SYMBOLS,
+} from 'features/cryptoWallet'
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet/@types'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet/utils'
 import * as React from 'react'
@@ -30,6 +33,7 @@ export function useTokenCalculator({
   readonly predictedMaxTransactionFee: BigNumber
 }) {
   const { valuation: maybeValuation, symbol } = aggregateWalletBannerBalance
+  const { type } = aggregateWalletBannerBalance
 
   const [state, setState] = React.useState<State>({
     value: null,
@@ -211,8 +215,16 @@ export function useTokenCalculator({
   )
 
   const maybeMaximumCryptoAmount = React.useMemo(
-    () => maximumCryptoBalance.minus(maxTransactionFee),
-    [maxTransactionFee, maximumCryptoBalance]
+    // HACK: The maximum value of an ERC-20 that can be sent is
+    //       NOT affected by the transaction fee, since this is
+    //       denominated by the native asset instead.
+    () => {
+      if (type === AggregateWalletBannerBalanceType.ERC_20)
+        return maximumCryptoBalance
+
+      return maximumCryptoBalance.minus(maxTransactionFee)
+    },
+    [maxTransactionFee, maximumCryptoBalance, type]
   )
 
   const maximumCryptoAmount: BigDecimal = React.useMemo(
