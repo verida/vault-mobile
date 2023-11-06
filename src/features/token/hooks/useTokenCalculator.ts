@@ -23,11 +23,11 @@ export function useTokenCalculator({
   // amount of numeric representation is desirable without cluttering
   // the text input value.
   prettyNumberOfDecimalPlaces = 4,
-  predictedMaxTransactionFee = BigNumber.from('0'),
+  predictedMaxTransactionFee,
 }: {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly prettyNumberOfDecimalPlaces?: number
-  readonly predictedMaxTransactionFee?: BigNumber
+  readonly predictedMaxTransactionFee: BigNumber
 }) {
   const { valuation: maybeValuation, symbol } = aggregateWalletBannerBalance
 

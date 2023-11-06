@@ -7,7 +7,7 @@ export type FixedPointCryptoAsBigDecimalProps = {
 
 // Returns the token balance of an AggregateWalletBannerBalance as a numeric value.
 // For example, of 0.5 ether (500000000000000000) would be returned as '0.5'.
-// TODO: rename to tokenBalance or something
+// TODO: replace usage of formatTokenQuantity
 export function fixedPointCryptoAsBigDecimal({
   amount,
   decimals,

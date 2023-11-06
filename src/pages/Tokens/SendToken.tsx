@@ -1,6 +1,11 @@
 import { RouteProp } from '@react-navigation/native'
-import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
-import { useTokenCalculator } from 'features/token'
+import { ChainId } from 'caip'
+import { BigNumber } from 'ethers'
+import {
+  AggregateWalletBannerBalance,
+  getChainIdParamsFromResourceParams,
+} from 'features/cryptoWallet'
+import { usePredictMaxTransactionFee, useTokenCalculator } from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
@@ -23,12 +28,34 @@ export type SendTokenScreenProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
+const GAS_TO_SEND = BigNumber.from(21_000)
+
 const SendToken = React.memo(function SendToken() {
   const navigation = useMainNavigation()
   const { aggregateWalletBannerBalance } = useParams<SendTokenScreenProps>()
 
+  const { resource } = aggregateWalletBannerBalance
+
+  const chainId = React.useMemo(
+    () => new ChainId(getChainIdParamsFromResourceParams(resource)),
+    [resource]
+  )
+
+  const { predictedMaxTransactionFee: maybePredictedMaxTransactionFee } =
+    usePredictMaxTransactionFee({
+      chainId,
+      // HACK: This is Ethereum.
+      amountOfGasConsumed: GAS_TO_SEND,
+    })
+
+  const predictedMaxTransactionFee = React.useMemo(
+    () => maybePredictedMaxTransactionFee || BigNumber.from('0'),
+    [maybePredictedMaxTransactionFee]
+  )
+
   const tokenCalculatorProps = useTokenCalculator({
     aggregateWalletBannerBalance,
+    predictedMaxTransactionFee,
   })
 
   const { isValidValue, getCurrentValueStringAsCryptoOrZero } =
@@ -41,12 +68,14 @@ const SendToken = React.memo(function SendToken() {
       aggregateWalletBannerBalance,
       // TODO: not must be amount in crypto
       amount: parseFloat(getCurrentValueStringAsCryptoOrZero()),
+      predictedMaxTransactionFee,
     })
   }, [
     aggregateWalletBannerBalance,
     getCurrentValueStringAsCryptoOrZero,
     isValidValue,
     navigation,
+    predictedMaxTransactionFee,
   ])
 
   return (

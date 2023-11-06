@@ -1,5 +1,6 @@
 import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
+import { BigNumber } from 'ethers'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
@@ -9,6 +10,7 @@ import {
   useMaybeBlockchainNetwork,
   useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
+import { convertPredictedTransactionFeeToString } from 'features/token/utils/convertPredictedTransactionFeeToString'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -31,17 +33,25 @@ export type ConfirmTransactionScreenProps = {
   readonly amount: number
   readonly toAddress: string
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  readonly predictedMaxTransactionFee: BigNumber
 }
 
 const ConfirmTransaction = () => {
-  const { aggregateWalletBannerBalance, amount, toAddress } =
-    useParams<ConfirmTransactionScreenProps>()
+  const {
+    aggregateWalletBannerBalance,
+    amount,
+    toAddress,
+    predictedMaxTransactionFee,
+  } = useParams<ConfirmTransactionScreenProps>()
 
   const navigation = useMainNavigation()
 
-  const { resource } = aggregateWalletBannerBalance
+  const { resource, decimals, symbol } = aggregateWalletBannerBalance
 
-  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+  const chainId = React.useMemo(
+    () => new ChainId(getChainIdParamsFromResourceParams(resource)),
+    [resource]
+  )
 
   const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
 
@@ -58,39 +68,25 @@ const ConfirmTransaction = () => {
 
   const { confirmTransaction, loading } = useLazyConfirmTransaction()
 
-  //const fixed = getSupportedTokenObjectDecimals(
-  //  balanceByChainResult.token,
-  //  maybeBlockchainNetwork
-  //)
-
-  // TODO: Render the transaction fee
-  const renderFeeRow = React.useCallback(() => {
-    //{transactionParams.fee
-    //  ? formatTokenQuantity(
-    //      transactionParams.fee,
-    //      maybeBlockchainNetwork!.decimal,
-    //      fixed
-    //    ) + ` ${maybeBlockchainNetwork!.symbol}`
-    //  : 'Unknown'}
-    return (
+  const renderFeeRow = React.useCallback(
+    () => (
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>Fee</Text>
         <View style={styles.infoValue}>
           <Text
-            style={[
-              styles.valueText,
-              {
-                color: 'red',
-                fontWeight: 'bold',
-                textDecorationLine: 'underline',
-              },
-            ]}
-            children='TODO: Calculate fee!!!'
+            style={styles.valueText}
+            children={convertPredictedTransactionFeeToString({
+              chainId,
+              predictedMaxTransactionFee,
+              decimals,
+              symbol,
+            })}
           />
         </View>
       </View>
-    )
-  }, [])
+    ),
+    [chainId, predictedMaxTransactionFee, decimals, symbol]
+  )
 
   return (
     <Container>

@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
-import { ethers } from 'ethers'
+import { BigNumber, ethers } from 'ethers'
 import { SupportedCaipNamespace } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
@@ -33,12 +33,16 @@ export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
 export type TokenRecipientScreenProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly amount: number
+  readonly predictedMaxTransactionFee: BigNumber
 }
 
 const TokenRecipient = () => {
   const navigation = useMainNavigation()
-  const { aggregateWalletBannerBalance, amount: amount } =
-    useParams<TokenRecipientScreenProps>()
+  const {
+    aggregateWalletBannerBalance,
+    amount: amount,
+    predictedMaxTransactionFee,
+  } = useParams<TokenRecipientScreenProps>()
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
@@ -64,6 +68,7 @@ const TokenRecipient = () => {
           amount,
           aggregateWalletBannerBalance,
           toAddress,
+          predictedMaxTransactionFee,
         })
       } catch (e) {
         // eslint-disable-next-line no-console
@@ -71,7 +76,12 @@ const TokenRecipient = () => {
         showGenericFailure(String(e))
       }
     },
-    [aggregateWalletBannerBalance, navigation, amount]
+    [
+      aggregateWalletBannerBalance,
+      navigation,
+      amount,
+      predictedMaxTransactionFee,
+    ]
   )
 
   const [address, setAddress] = useState<string>('')
