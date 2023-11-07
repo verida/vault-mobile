@@ -1,4 +1,5 @@
 export * from './useAggregateWalletBannerBalances'
+export * from './useAggregateWalletBannerBalances.WithResultCaching'
 export * from './useAggregateWalletBannerBalancesValuation'
 export * from './useBalanceByChainResultsForUniqueWalletAddresses'
 export * from './useCreateCryptoWalletBalances'

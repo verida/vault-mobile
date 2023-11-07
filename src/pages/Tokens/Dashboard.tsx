@@ -1,14 +1,10 @@
 import {
   AggregateWalletBannerBalance,
-  AggregateWalletBannerBalances,
-  getAggregateWalletBannerBalanceError,
-  getAggregateWalletBannerBalanceResult,
-  useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
+  useAggregateWalletBannerBalancesWithResultCaching,
 } from 'features/cryptoWallet'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import Container from 'components/Container'
 import { ErrorBoundary } from 'components/ErrorBoundary'
@@ -20,51 +16,13 @@ import { useMainNavigation } from 'navigation/hooks'
 
 import SendListModal from './SendListModal'
 
-// HACK: Loading the wallet banner balances can impact the content
-//       what's rendered in the list, for example, balances can
-//       temporarily turn to `0` since they are in the loading state
-//       and this is a safe fallback for the temporarily invalidated
-//       information.
-//
-//       Here, we ensure that the state is cached whilst unavailable
-//       to ensure the interface remains stable.
-function useAggregateWalletBannerBalancesCached() {
-  const aggregateWalletBannerBalances = useAggregateWalletBannerBalances()
-
-  const { loading } = aggregateWalletBannerBalances
-
-  const currentError = getAggregateWalletBannerBalanceError(
-    aggregateWalletBannerBalances
-  )
-
-  const currentResult = getAggregateWalletBannerBalanceResult(
-    aggregateWalletBannerBalances
-  )
-
-  const [cachedResult, setCachedResult] =
-    React.useState<AggregateWalletBannerBalances>(currentResult)
-
-  useDeepCompareEffect(() => {
-    if (loading) return
-
-    setCachedResult(currentResult)
-  }, [currentResult, loading])
-
-  return {
-    ...aggregateWalletBannerBalances,
-    loading,
-    result: cachedResult,
-    error: currentError,
-  }
-}
-
 const TokenDashboard = React.memo(function TokenDashboard() {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
   const navigation = useMainNavigation()
 
   const cachedAggregateWalletBannerBalances =
-    useAggregateWalletBannerBalancesCached()
+    useAggregateWalletBannerBalancesWithResultCaching()
 
   const {
     loading,

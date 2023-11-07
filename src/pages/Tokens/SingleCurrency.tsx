@@ -3,14 +3,12 @@ import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
-  getAggregateWalletBannerBalanceError,
-  getAggregateWalletBannerBalanceResult,
   getBlockchainNetworkLabel,
   getChainIdParamsFromResourceParams,
   getSelectedWalletById,
   getWalletAddressForChainId,
-  useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
+  useAggregateWalletBannerBalancesWithResultCaching,
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeBlockchainNetwork,
   useSelectedMinifiedVeridaAccounts,
@@ -87,22 +85,18 @@ const SingleCurrency = () => {
   // which was passed as a parameter to achieve the same effect, however, below
   // we depend on the ability fo `refetch` balances, so we'd depend on this stateful
   // hook regardless.
-  const aggregateWalletBannerBalances = useAggregateWalletBannerBalances({
+  const {
+    result: aggregateWalletBannerBalances,
+    loading: isLoadingBalance,
+    refetch: refetchBalance,
+    error: maybeErrorBalance,
+  } = useAggregateWalletBannerBalancesWithResultCaching({
     resource,
   })
 
   const { price } = useAggregateWalletBannerBalancesValuation({
-    aggregateWalletBannerBalances: getAggregateWalletBannerBalanceResult(
-      aggregateWalletBannerBalances
-    ),
+    aggregateWalletBannerBalances,
   })
-
-  const { loading: isLoadingBalance, refetch: refetchBalance } =
-    aggregateWalletBannerBalances
-
-  const maybeErrorBalance = getAggregateWalletBannerBalanceError(
-    aggregateWalletBannerBalances
-  )
 
   const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance,
