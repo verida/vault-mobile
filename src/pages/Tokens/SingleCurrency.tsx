@@ -4,6 +4,7 @@ import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   getAggregateWalletBannerBalanceError,
+  getAggregateWalletBannerBalanceResult,
   getBlockchainNetworkLabel,
   getChainIdParamsFromResourceParams,
   getSelectedWalletById,
@@ -80,16 +81,21 @@ const SingleCurrency = () => {
     valuation: maybeValuation,
   } = aggregateWalletBannerBalance
 
-  // TODO: we don't need this, we already have the item, fix..
-  // Here we fetch the balance for the specific selected asset.
+  // Here we fetch the balance for the specific selected asset, which returns
+  // all assets which match the specified `resource`. Note, we could have just
+  // created aggregateWalletBannerBalances simply using [aggregateWalletBannerBalance]
+  // which was passed as a parameter to achieve the same effect, however, below
+  // we depend on the ability fo `refetch` balances, so we'd depend on this stateful
+  // hook regardless.
   const aggregateWalletBannerBalances = useAggregateWalletBannerBalances({
-    // TODO: we need to fix this so it works for either a chainId or an asset - guessing for now this won't work
     resource,
   })
 
-  const { price } = useAggregateWalletBannerBalancesValuation(
-    aggregateWalletBannerBalances
-  )
+  const { price } = useAggregateWalletBannerBalancesValuation({
+    aggregateWalletBannerBalances: getAggregateWalletBannerBalanceResult(
+      aggregateWalletBannerBalances
+    ),
+  })
 
   const { loading: isLoadingBalance, refetch: refetchBalance } =
     aggregateWalletBannerBalances

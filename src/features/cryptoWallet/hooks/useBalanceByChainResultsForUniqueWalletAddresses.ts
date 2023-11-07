@@ -10,12 +10,15 @@ export function useBalanceByChainResultsForUniqueWalletAddresses() {
 
   const {
     data,
-    isLoading: loading,
+    isLoading,
+    isFetching,
     error: cause,
     refetch,
   } = useGetBalancesQuery(
     React.useMemo(() => getUniqueWalletAddresses(wallets), [wallets])
   )
+
+  const loading = isLoading || isFetching
 
   return React.useMemo(() => {
     const maybeBalanceByChainResults = data?.list

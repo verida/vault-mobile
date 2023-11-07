@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import {
   CURRENCY_SYMBOLS,
+  getAggregateWalletBannerBalanceResult,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
 } from 'features/cryptoWallet'
@@ -20,9 +21,11 @@ import {
 
 const WalletSummary = () => {
   const { price, isAccurate, currency } =
-    useAggregateWalletBannerBalancesValuation(
-      useAggregateWalletBannerBalances()
-    )
+    useAggregateWalletBannerBalancesValuation({
+      aggregateWalletBannerBalances: getAggregateWalletBannerBalanceResult(
+        useAggregateWalletBannerBalances()
+      ),
+    })
 
   const navigation = useNavigation()
 

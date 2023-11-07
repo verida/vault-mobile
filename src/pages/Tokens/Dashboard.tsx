@@ -1,5 +1,6 @@
 import {
   AggregateWalletBannerBalance,
+  AggregateWalletBannerBalances,
   getAggregateWalletBannerBalanceError,
   getAggregateWalletBannerBalanceResult,
   useAggregateWalletBannerBalances,
@@ -7,6 +8,7 @@ import {
 } from 'features/cryptoWallet'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import Container from 'components/Container'
 import { ErrorBoundary } from 'components/ErrorBoundary'
@@ -18,24 +20,66 @@ import { useMainNavigation } from 'navigation/hooks'
 
 import SendListModal from './SendListModal'
 
+// HACK: Loading the wallet banner balances can impact the content
+//       what's rendered in the list, for example, balances can
+//       temporarily turn to `0` since they are in the loading state
+//       and this is a safe fallback for the temporarily invalidated
+//       information.
+//
+//       Here, we ensure that the state is cached whilst unavailable
+//       to ensure the interface remains stable.
+function useAggregateWalletBannerBalancesCached() {
+  const aggregateWalletBannerBalances = useAggregateWalletBannerBalances()
+
+  const { loading } = aggregateWalletBannerBalances
+
+  const currentError = getAggregateWalletBannerBalanceError(
+    aggregateWalletBannerBalances
+  )
+
+  const currentResult = getAggregateWalletBannerBalanceResult(
+    aggregateWalletBannerBalances
+  )
+
+  const [cachedResult, setCachedResult] =
+    React.useState<AggregateWalletBannerBalances>(currentResult)
+
+  useDeepCompareEffect(() => {
+    if (loading) return
+
+    setCachedResult(currentResult)
+  }, [currentResult, loading])
+
+  return {
+    ...aggregateWalletBannerBalances,
+    loading,
+    result: cachedResult,
+    error: currentError,
+  }
+}
+
 const TokenDashboard = React.memo(function TokenDashboard() {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
   const navigation = useMainNavigation()
 
-  const aggregateWalletBannerBalances = useAggregateWalletBannerBalances()
+  const cachedAggregateWalletBannerBalances =
+    useAggregateWalletBannerBalancesCached()
 
-  const { loading, refetch: pullToRefresh } = aggregateWalletBannerBalances
+  const {
+    loading,
+    result: aggregateWalletBannerBalances,
+    refetch: pullToRefresh,
+    error: maybeError,
+  } = cachedAggregateWalletBannerBalances
+
   const [wasInitiallyLoading] = React.useState<boolean>(loading)
 
-  const maybeError = getAggregateWalletBannerBalanceError(
-    aggregateWalletBannerBalances
-  )
   const shouldShowLoadingIndicator = wasInitiallyLoading && loading
 
-  const { price } = useAggregateWalletBannerBalancesValuation(
-    aggregateWalletBannerBalances
-  )
+  const { price } = useAggregateWalletBannerBalancesValuation({
+    aggregateWalletBannerBalances,
+  })
 
   return (
     <Container>
@@ -60,9 +104,7 @@ const TokenDashboard = React.memo(function TokenDashboard() {
               change={null}
             />
             <TokensList
-              aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
-                aggregateWalletBannerBalances
-              )}
+              aggregateWalletBannerBalances={aggregateWalletBannerBalances}
               onPressItem={(
                 aggregateWalletBannerBalance: AggregateWalletBannerBalance
               ) => {
@@ -76,9 +118,7 @@ const TokenDashboard = React.memo(function TokenDashboard() {
             <SendListModal
               visible={sendModalVisible}
               hideModal={() => setSendModalVisible(false)}
-              aggregateWalletBannerBalances={getAggregateWalletBannerBalanceResult(
-                aggregateWalletBannerBalances
-              )}
+              aggregateWalletBannerBalances={aggregateWalletBannerBalances}
               onPressItem={(
                 aggregateWalletBannerBalance: AggregateWalletBannerBalance
               ) => {

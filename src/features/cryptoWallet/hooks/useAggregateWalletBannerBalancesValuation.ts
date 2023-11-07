@@ -1,20 +1,15 @@
-import { ValuedAtWithAccuracy } from '../@types'
+import { AggregateWalletBannerBalances, ValuedAtWithAccuracy } from '../@types'
 import { computeValuationForAggregateWalletBannerBalances } from '../utils'
-import {
-  getAggregateWalletBannerBalanceResult,
-  useAggregateWalletBannerBalances,
-} from './useAggregateWalletBannerBalances'
 
-export function useAggregateWalletBannerBalancesValuation(
-  result: ReturnType<typeof useAggregateWalletBannerBalances>
-): ValuedAtWithAccuracy {
-  const aggregateWalletBannerBalances =
-    getAggregateWalletBannerBalanceResult(result)
-
+export function useAggregateWalletBannerBalancesValuation({
+  aggregateWalletBannerBalances,
+}: {
+  readonly aggregateWalletBannerBalances: AggregateWalletBannerBalances
+}): ValuedAtWithAccuracy {
   const { price, currency, isAccurate } =
     computeValuationForAggregateWalletBannerBalances({
       aggregateWalletBannerBalances,
     })
 
-  return { ...result, price, currency, isAccurate }
+  return { price, currency, isAccurate }
 }
