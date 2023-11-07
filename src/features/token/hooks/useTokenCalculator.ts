@@ -19,6 +19,16 @@ type State = {
 const unableToConvertError = () =>
   new Error('It is not possible to convert due to missing valuation.')
 
+// HACK: To prevent successive precision loss when switching between
+//       currency formats, we can cache results from the previous
+//       representation to ensure consistent operation.
+type CachedResults = { readonly [key in CurrencyFormat]: `${number}` | null }
+
+const createDefaultCachedResults = (): CachedResults => ({
+  [CurrencyFormat.CRYPTO]: null,
+  [CurrencyFormat.FIAT]: null,
+})
+
 // Defines common business logic for converting between currencies for a given format.
 export function useTokenCalculator({
   aggregateWalletBannerBalance,
@@ -40,6 +50,10 @@ export function useTokenCalculator({
     format: CurrencyFormat.CRYPTO,
   })
 
+  const cachedResults = React.useRef<CachedResults>(
+    createDefaultCachedResults()
+  )
+
   const canConvertBetweenFiatAndCrypto = !!maybeValuation
 
   const maybeCurrency = maybeValuation?.currency
@@ -47,6 +61,14 @@ export function useTokenCalculator({
   const maybeCurrencySymbol: string | null = maybeCurrency
     ? CURRENCY_SYMBOLS[maybeCurrency]
     : null
+
+  // Used to "forget" cached results which are used when toggling back-and-forth
+  // between currencies. Call where needed - usually when the entered value has
+  // been intentionally changed by the user outside of the toggle flow.
+  const purgeCachedResults = React.useCallback(
+    () => Object.assign(cachedResults.current, createDefaultCachedResults()),
+    [cachedResults]
+  )
 
   // HACK: When using automated values like "max" or toggling between
   //       values, we tend to populate the `TextInput` with very long
@@ -160,7 +182,7 @@ export function useTokenCalculator({
   )
 
   const toggleFormat = React.useCallback(() => {
-    const { format } = state
+    const { format, value: oldValue } = state
 
     if (!canConvertBetweenFiatAndCrypto)
       throw new Error('It is not possible to convert due to missing valuation.')
@@ -170,14 +192,28 @@ export function useTokenCalculator({
         ? CurrencyFormat.FIAT
         : CurrencyFormat.CRYPTO
 
-    if (nextFormat === CurrencyFormat.CRYPTO)
-      return setState(toPrettyState(getStateAsCrypto(state)))
+    const maybeLastCachedResultForNextFormat = cachedResults.current[nextFormat]
 
-    if (nextFormat === CurrencyFormat.FIAT)
-      return setState(toPrettyState(getStateAsFiat(state)))
+    // HACK: If we'd already previously toggled without submitting changes,
+    //       use the originally entered value to avoid precision loss through
+    //       repeated conversions.
+    if (maybeLastCachedResultForNextFormat)
+      return setState({
+        format: nextFormat,
+        value: maybeLastCachedResultForNextFormat,
+      })
 
-    throw new Error(`Encountered unexpercted CurrencyFormat, "${nextFormat}".`)
+    const nextState =
+      nextFormat === CurrencyFormat.CRYPTO
+        ? toPrettyState(getStateAsCrypto(state))
+        : toPrettyState(getStateAsFiat(state))
+
+    // Track the old result.
+    Object.assign(cachedResults.current, { [format]: oldValue })
+
+    setState(nextState)
   }, [
+    cachedResults,
     state,
     canConvertBetweenFiatAndCrypto,
     toPrettyState,
@@ -186,12 +222,18 @@ export function useTokenCalculator({
   ])
 
   const onUpdateCalculatedValue = React.useCallback(
-    (str: string) =>
-      setState((e) => ({
+    (str: string) => {
+      // Ensure we invalidate whatever fallback results from the
+      // toggle controls that may have been held onto.
+      purgeCachedResults()
+
+      // Update state.
+      return setState((e) => ({
         ...e,
         value: getNormalizedValue({ valueToNormalize: str }),
-      })),
-    [getNormalizedValue]
+      }))
+    },
+    [getNormalizedValue, purgeCachedResults]
   )
 
   const { decimals, balance: amount } = aggregateWalletBannerBalance
@@ -239,6 +281,11 @@ export function useTokenCalculator({
   const selectMaxValue = React.useCallback(() => {
     const { format } = state
 
+    // Invalidate the cachedResults used for toggles - these
+    // have no relevance since their representation has no
+    // guarantee of compatibility with the maximum value.
+    purgeCachedResults()
+
     if (format === CurrencyFormat.CRYPTO)
       return setState(
         toPrettyState(
@@ -268,6 +315,7 @@ export function useTokenCalculator({
       )
   }, [
     state,
+    purgeCachedResults,
     toPrettyState,
     getStateAsCrypto,
     maximumCryptoAmount,
