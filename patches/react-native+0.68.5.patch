@@ -2,7 +2,7 @@ diff --git a/node_modules/react-native/React/Views/RCTFont.mm b/node_modules/rea
 index 679f2ce..a88cd63 100644
 --- a/node_modules/react-native/React/Views/RCTFont.mm
 +++ b/node_modules/react-native/React/Views/RCTFont.mm
-@@ -344,7 +344,7 @@ + (UIFont *)updateFont:(UIFont *)font
+@@ -344,7 +344,7 @@ RCT_ARRAY_CONVERTER(RCTFontVariantDescriptor)
        isCondensed = isCondensedFont(font);
      } else {
        // Not a valid font or family
@@ -11,21 +11,6 @@ index 679f2ce..a88cd63 100644
        if ([UIFont respondsToSelector:@selector(systemFontOfSize:weight:)]) {
          font = [UIFont systemFontOfSize:fontSize weight:fontWeight];
        } else if (fontWeight > UIFontWeightRegular) {
-diff --git a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/network/NetworkingModule.java b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/network/NetworkingModule.java
-index 55cfb20..1bef214 100644
---- a/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/network/NetworkingModule.java
-+++ b/node_modules/react-native/ReactAndroid/src/main/java/com/facebook/react/modules/network/NetworkingModule.java
-@@ -352,7 +352,10 @@ public final class NetworkingModule extends NativeNetworkingAndroidSpec {
-     // See https://github.com/square/okhttp/wiki/Recipes#per-call-configuration for more information
-     if (timeout != mClient.connectTimeoutMillis()) {
-       clientBuilder.connectTimeout(timeout, TimeUnit.MILLISECONDS); 
-+      // Fix Android network timeout issue https://github.com/facebook/react-native/pull/29471
-+      clientBuilder.callTimeout(timeout, TimeUnit.MILLISECONDS);
-     }
-+    
-     OkHttpClient client = clientBuilder.build();
- 
-     Headers requestHeaders = extractHeaders(headers, data);
 diff --git a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp b/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
 index 9986279..20389d4 100644
 --- a/node_modules/react-native/ReactCommon/yoga/yoga/Yoga.cpp
