@@ -28,6 +28,8 @@ export type SendTokenScreenProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
+// HACK: This is equal Ethereum and Near:
+//       https://docs.near.org/concepts/basics/transactions/gas-advanced#ballpark-comparisons-to-ethereum
 const GAS_TO_SEND = BigNumber.from(21_000)
 
 const SendToken = React.memo(function SendToken() {
@@ -44,8 +46,9 @@ const SendToken = React.memo(function SendToken() {
   const { predictedMaxTransactionFee: maybePredictedMaxTransactionFee } =
     usePredictMaxTransactionFee({
       chainId,
-      // HACK: This is equal Ethereum and Near:
-      //       https://docs.near.org/concepts/basics/transactions/gas-advanced#ballpark-comparisons-to-ethereum
+      // TODO: Note this is not valid for things like an ERC-20 send, which would require estimation.
+      //       Future enhancement - extract the transaction generation so they can be first predicted
+      //       before executed.
       amountOfGasConsumed: GAS_TO_SEND,
     })
 
