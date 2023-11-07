@@ -141,7 +141,6 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
           await sendBaseCurrencyNear({
             chainId,
-            chainMetadatas,
             rpc,
             value: amount,
             to: toAddress,
@@ -162,7 +161,6 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       getTransferContextOrThrow,
       blockchainRequestHandlersEip155,
       blockchainRequestHandlersNear,
-      chainMetadatas,
     ]
   )
 

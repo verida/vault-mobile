@@ -1,25 +1,17 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import {
-  getNearAccountId,
-  NearAccount,
-  nearDoesAccountExist,
-  nearInstantiateAccount,
-  throwIfNotNearTestnet,
-} from 'features/blockchain/near'
-import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
+import { NearAccount, throwIfNotNearTestnet } from 'features/blockchain/near'
+import { SupportedCaipNamespace } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
 
 export async function getMaybeNearAccountForPrivateKey({
-  chainMetadatas,
   privateKey,
   signerId,
   caipChainId,
 }: {
-  readonly chainMetadatas: ChainMetadatas
   readonly privateKey: string
   readonly signerId: string
   readonly caipChainId: ChainId
@@ -35,35 +27,16 @@ export async function getMaybeNearAccountForPrivateKey({
   const keystore = new keyStores.InMemoryKeyStore()
 
   // HACK: Deterministic account creation.
-  const accountId = getNearAccountId({
-    signerId,
-  })
+  const accountId = signerId
 
   await keystore.setKey(reference, accountId, keyPair)
 
   const nearAccount: NearAccount = {
     keystore,
-    accountId,
     signerId,
     publicKey,
     caipChainId,
     privateKey,
-  }
-
-  const doesAccountExist = await nearDoesAccountExist({
-    chainMetadatas,
-    nearAccountPointer: nearAccount,
-    caipChainId,
-  })
-
-  if (!doesAccountExist) {
-    __DEV__ &&
-      // eslint-disable-next-line no-console
-      console.log(
-        `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
-      )
-
-    await nearInstantiateAccount({ chainMetadatas, nearAccount })
   }
 
   return nearAccount
@@ -71,12 +44,10 @@ export async function getMaybeNearAccountForPrivateKey({
 
 // https://docs.near.org/tools/near-api-js/quick-reference#key-store
 export async function getMaybeNearAccountForWalletConnectRequest({
-  chainMetadatas,
   web3wallet,
   request,
   walletsData,
 }: {
-  readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
@@ -106,24 +77,20 @@ export async function getMaybeNearAccountForWalletConnectRequest({
     caipChainId,
     privateKey,
     signerId,
-    chainMetadatas,
   })
 }
 
 export async function getNearAccountForWalletConnectRequestOrThrow({
-  chainMetadatas,
   web3wallet,
   request,
   walletsData,
 }: {
-  readonly chainMetadatas: ChainMetadatas
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
   readonly walletsData: ReturnType<typeof useWalletsData>
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({
-      chainMetadatas,
       web3wallet,
       request,
       walletsData,

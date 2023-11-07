@@ -1,5 +1,4 @@
 import { throwIfInvalidNearRpcMethod } from 'features/blockchain/near'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import * as React from 'react'
 
@@ -10,7 +9,6 @@ import { useWalletConnectSessionRequestHandlersNear } from './useWalletConnectSe
 export const useWalletConnectSessionApproveCallbackNear = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
-  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
   const walletsData = useWalletsData()
 
   const nearSessionRequestHandlers =
@@ -23,7 +21,6 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
     }: WalletConnectSessionRequestCallbackParams): Promise<unknown> => {
       const maybeNearAccount = await getMaybeNearAccountForWalletConnectRequest(
         {
-          chainMetadatas,
           web3wallet,
           request,
           walletsData,
@@ -44,6 +41,6 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
 
       return handle({ web3wallet, request })
     },
-    [chainMetadatas, nearSessionRequestHandlers, walletsData]
+    [nearSessionRequestHandlers, walletsData]
   )
 }

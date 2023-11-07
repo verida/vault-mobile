@@ -1,7 +1,7 @@
 import { BN } from 'bn.js'
 import { ChainId } from 'caip'
 import { BlockchainRequestHandlerCallback } from 'features/blockchain/@types'
-import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip/@types'
+import { SupportedCaipNamespace } from 'features/caip/@types'
 import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
 import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
 import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
@@ -9,7 +9,6 @@ import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 import { NearAccountBundle } from '../@types'
 
 export const sendBaseCurrencyNear = async ({
-  chainMetadatas,
   chainId: caipChainId,
   to: receiverId,
   value,
@@ -17,7 +16,6 @@ export const sendBaseCurrencyNear = async ({
   rpc,
   minifiedVeridaAccount,
 }: {
-  readonly chainMetadatas: ChainMetadatas
   readonly chainId: ChainId
   readonly to: string
   readonly value: number
@@ -47,7 +45,6 @@ export const sendBaseCurrencyNear = async ({
     caipChainId,
     privateKey,
     signerId,
-    chainMetadatas,
   })
 
   if (!maybeNearAccount) throw new Error('Unable to find matching NearAccount.')

@@ -8,7 +8,7 @@ export function throwIfNearAccountDoesNotMatchNearAccountPointer({
   readonly nearAccountPointer: NearAccountPointer
 }) {
   if (
-    nearAccount.accountId !== nearAccountPointer.accountId ||
+    nearAccount.signerId !== nearAccountPointer.signerId ||
     nearAccount.publicKey !== nearAccountPointer.publicKey
   )
     throw new Error(

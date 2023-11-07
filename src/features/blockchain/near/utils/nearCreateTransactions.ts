@@ -1,7 +1,6 @@
 import { providers, transactions, utils } from 'near-api-js'
 
-import { NearAccount, NearTransaction } from '../@types'
-import { getNearAccountId } from './getNearAccountId'
+import { NearAccount, NearAccountPointer, NearTransaction } from '../@types'
 import { nearCreateViewAccessKey } from './nearCreateViewAccessKey'
 
 export async function nearCreateTransactions({
@@ -17,16 +16,11 @@ export async function nearCreateTransactions({
 
   return Promise.all(
     defaultTransactions.map(
-      async (
-        { signerId, receiverId, actions },
-        i
-      ): Promise<transactions.Transaction> => {
-        const { publicKey } = nearAccount
+      async ({ receiverId, actions }, i): Promise<transactions.Transaction> => {
+        const { publicKey, signerId } = nearAccount
 
-        const accountId = getNearAccountId({ signerId })
-
-        const nearAccountPointer = {
-          accountId: getNearAccountId({ signerId }),
+        const nearAccountPointer: NearAccountPointer = {
+          signerId,
           publicKey,
         }
 
@@ -36,7 +30,7 @@ export async function nearCreateTransactions({
         })
 
         return transactions.createTransaction(
-          accountId,
+          signerId,
           utils.PublicKey.from(publicKey),
           receiverId,
           accessKey.nonce + i + 1,

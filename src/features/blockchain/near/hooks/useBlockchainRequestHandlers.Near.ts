@@ -13,8 +13,6 @@ import {
   nearGetAccounts,
   nearMaybeAccountForTransactionSignatory,
   nearSignAndSendTransactions,
-  nearSignIn,
-  nearSignOut,
   nearSignTransactions,
   throwIfNearAccountDoesNotMatchNearAccountPointer,
 } from '../utils'
@@ -22,47 +20,6 @@ import {
 export function useBlockchainRequestHandlersNear(): BlockchainRequestHandlersNear {
   return React.useMemo<BlockchainRequestHandlersNear>(
     () => ({
-      [NearRpcMethod.NEAR_SIGN_IN]: async ({
-        context: { nearProvider: provider, nearAccount },
-        params,
-      }) => {
-        const permission: Transactions.FunctionCallPermission =
-          params.permission
-
-        const nearAccountPointers: readonly NearAccountPointer[] =
-          params.accounts
-
-        if (!Array.isArray(nearAccountPointers))
-          throw new Error(
-            `Expected array nearAccountPointers, encountered "${String(
-              nearAccountPointers
-            )}".`
-          )
-
-        return nearSignIn({
-          nearAccount,
-          nearAccountPointers,
-          permission,
-          provider,
-        })
-      },
-      [NearRpcMethod.NEAR_SIGN_OUT]: async ({
-        context: { nearAccount, nearProvider: provider },
-        params: nearAccountPointers,
-      }) => {
-        if (!Array.isArray(nearAccountPointers))
-          throw new Error(
-            `Expected array accounts, encountered "${String(
-              nearAccountPointers
-            )}".`
-          )
-
-        return nearSignOut({
-          nearAccount,
-          nearAccountPointers,
-          provider,
-        })
-      },
       [NearRpcMethod.NEAR_GET_ACCOUNTS]: async ({ context: { nearAccount } }) =>
         nearGetAccounts(nearAccount),
       [NearRpcMethod.NEAR_SIGN_TRANSACTION]: async ({

@@ -48,7 +48,6 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
 
               const nearAccount =
                 await getNearAccountForWalletConnectRequestOrThrow({
-                  chainMetadatas,
                   web3wallet,
                   walletsData,
                   request,
