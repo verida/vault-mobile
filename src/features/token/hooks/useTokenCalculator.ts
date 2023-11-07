@@ -208,7 +208,11 @@ export function useTokenCalculator({
         ? toPrettyState(getStateAsCrypto(state))
         : toPrettyState(getStateAsFiat(state))
 
-    // Track the old result.
+    // Track the old result so that if the user immediately toggles back,
+    // their entered numeric value continues to be respected (and is not
+    // the converted version of their current value, which due to limited
+    // precision can lead to a change in value, which is unintuitive for
+    // the end user).
     Object.assign(cachedResults.current, { [format]: oldValue })
 
     setState(nextState)
