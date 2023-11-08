@@ -30,6 +30,12 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     useState<SentTransaction | null>(null)
   const dispatch = useAppDispatch()
 
+  useEffect(() => {
+    setStatus('notStarted')
+    setSentTransaction(null)
+    transactionParamCalledRef.current = false
+  }, [request])
+
   // FIXME: NEAR native token is not recognised
   // `data.asset`, when native token, comes from the blockchain network definition (where NEAR slip44Reference is 397).
   // To get more info on the asset, we use the existing `selectSingleTokenData` which matches the assetId with the token list fetched for the wallet balances.
