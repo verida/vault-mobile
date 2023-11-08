@@ -49,7 +49,7 @@ export const cryptoWalletApi = createApi({
       keepUnusedDataFor: 60 * 15, // 15 mins
       query: (walletAddresses: string[]) =>
         `balance/getBalanceByChains?${walletAddresses
-          .map((address) => `wallet[]=${address}`)
+          .map((address) => `wallet=${address}`)
           .join('&')}`,
       transformResponse: (response: {
         data: { results: BalanceByChain }

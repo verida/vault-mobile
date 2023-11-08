@@ -62,7 +62,6 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontFamily: NUNITO_SANS_BOLD,
     fontWeight: '600',
-    textTransform: 'capitalize',
     color: BLACK_COLOR,
   },
   subText: {

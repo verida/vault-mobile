@@ -95,7 +95,7 @@ const ConfirmTransaction = ({
             <Text style={styles.infoLabel}>Fee</Text>
             <View style={styles.infoValue}>
               <Text style={styles.valueText}>
-                {transactionParams.fee
+                {transactionParams?.fee
                   ? formatTokenQuantity(
                       transactionParams.fee,
                       feeDecimal,
