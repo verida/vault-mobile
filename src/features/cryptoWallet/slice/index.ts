@@ -18,7 +18,13 @@ export interface WalletState {
   transactionParams: {
     fetching: boolean
     error?: string
-    data: Record<string, any> // TOO: type
+    data?: {
+      fee?: number
+      gasPrice?: number // on eip155
+      gas_price?: number // on near
+      gasEstimate?: number // on eip155
+      block_hash?: string // on near
+    } // Unfortunately, the type coming from Wallet Provider is not uniform between the type of chains
   }
 
   sentTransaction: {
@@ -41,7 +47,7 @@ export interface WalletState {
 
 const initialState: WalletState = {
   transactionParams: {
-    data: {},
+    data: undefined,
     fetching: false,
     error: undefined,
   },
@@ -86,7 +92,11 @@ export const cryptoWalletSlice = createSlice({
       })
       // getTransactionParams
       .addCase(getTransactionParams.pending, (state) => {
-        state.transactionParams = { fetching: true, error: undefined, data: {} }
+        state.transactionParams = {
+          fetching: true,
+          error: undefined,
+          data: undefined,
+        }
       })
       .addCase(getTransactionParams.fulfilled, (state, action) => {
         state.transactionParams = {
@@ -99,7 +109,7 @@ export const cryptoWalletSlice = createSlice({
         state.transactionParams = {
           fetching: false,
           error: action.payload,
-          data: {},
+          data: undefined,
         }
       })
 

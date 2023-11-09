@@ -1,5 +1,6 @@
 export * from './application'
 export * from './color'
+export * from './currency'
 export * from './profile'
 export * from './text'
 export * from './url'
