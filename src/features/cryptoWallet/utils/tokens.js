@@ -50,3 +50,21 @@ export const tokenCaipObjectToString = (asset) => {
 
   return assetId.toString()
 }
+
+/**
+ * Return the number of decimals (zeros)
+ * @param {*} value
+ * @param {*} min
+ * @param {*} max
+ * @param {*} offset
+ * @returns
+ */
+export const getSignificantDigits = (
+  value, //: number,
+  min = 0, //: number,
+  max = 6, //: number,
+  offset = 2
+) => {
+  const nbZero = -Math.floor(Math.log10(value) + 1)
+  return Math.min(Math.max(nbZero + offset, min), max)
+}

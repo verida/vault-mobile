@@ -1,6 +1,7 @@
 import { AssetId } from 'caip'
 import { BigNumber } from 'ethers'
 import {
+  AssetWithBalance,
   getBalancesData,
   getTransactionsForTokenData,
   getWalletAddressForAsset,
@@ -12,7 +13,10 @@ import { createSelector } from 'reselect'
 import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import { RootState } from 'reduxStore/types'
 
-export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
+export const selectSingleTokenData = (
+  state: RootState,
+  asset: AssetId
+): AssetWithBalance | null => {
   const selectedWallet = getSelectedWalletById(state)
   const addresses = getUniqueWalletAddresses(selectedWallet)
   const { list } = getBalancesData(state, addresses)
@@ -24,13 +28,7 @@ export const selectSingleTokenData = (state: RootState, asset: AssetId) => {
   // We should always find a token balance, so this shouldn't happen
   // but just in case, return 0 values if not found
   if (!tokenBalance) {
-    return {
-      label: '',
-      price: 0,
-      change: 0,
-      quantity: 0,
-      amount: 0,
-    }
+    return null
   }
 
   return {
@@ -171,7 +169,7 @@ export const selectTransactions = (state: RootState, assetID: AssetId) => {
 }
 
 export const getTransactionParamsData = (state: RootState) => {
-  return state.cryptoWallets.transactionParams.data || {}
+  return state.cryptoWallets.transactionParams.data
 }
 
 export const selectSentTransaction = (state: RootState) => {

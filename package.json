@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "0.5.0",
+  "version": "0.6.0",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -9,12 +9,11 @@
     "pod:install:clean": "cd ios && rm -rf Podfile.lock && pod install --repo-update --verbose && cd ..",
     "pod:install:arm64": "cd ios && arch -x86_64 pod install && cd ..",
     "pod:install:clean:arm64": "cd ios && rm -rf Podfile.lock && arch -x86_64 pod install --repo-update --verbose && cd ..",
-    "start": "react-native start",
-    "android": "react-native run-android --variant=stagingDebug --appId=io.verida.vault.internal",
-    "ios": "react-native run-ios --scheme 'Verida Vault Internal'",
-    "web": "expo start --web",
+    "start": "watchman watch-del-all && react-native start --reset-cache",
+    "android": "react-native run-android --variant=developmentDebug --appId=io.verida.vault.internal",
+    "ios": "react-native run-ios --scheme 'Development'",
     "test": "jest --passWithNoTests",
-    "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/myApp/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
+    "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/Wallet/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
@@ -131,7 +130,7 @@
     "react-native-blob-util": "^0.17.2",
     "react-native-camera": "^4.0.2",
     "react-native-code-push": "^7.0.2",
-    "react-native-config": "^1.4.4",
+    "react-native-config": "^1.5.1",
     "react-native-crypto": "^2.2.0",
     "react-native-custom-qr-codes-expo": "^2.2.0",
     "react-native-datepicker": "^1.7.2",
@@ -197,7 +196,7 @@
     "util": "^0.10.4",
     "vm-browserify": "0.0.4",
     "web3": "^1.8.1",
-    "zod": "^3.22.2"
+    "zod": "^3.22.3"
   },
   "devDependencies": {
     "@babel/core": "^7.12.9",

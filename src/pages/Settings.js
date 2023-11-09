@@ -1,3 +1,4 @@
+import { config } from 'config'
 import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
@@ -7,7 +8,6 @@ import { useSelector } from 'react-redux'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
-import { config } from 'config/environment'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'

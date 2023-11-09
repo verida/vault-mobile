@@ -1,12 +1,15 @@
 import React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-type AlertProps = {
-  type?: 'info' | 'success' | 'warning' | 'error'
-  children: React.ReactNode
+export type AlertType = 'info' | 'success' | 'warning' | 'error'
+
+export type AlertProps = {
+  type?: AlertType
+  children: React.ReactNode | string
 } & React.ComponentProps<typeof View>
 
 export const Alert: React.FunctionComponent<AlertProps> = (props) => {
@@ -20,7 +23,15 @@ export const Alert: React.FunctionComponent<AlertProps> = (props) => {
 
   return (
     <View {...rest}>
-      <View style={[styles.container, typeStype]}>{children}</View>
+      <View style={[styles.container, typeStype]}>
+        {typeof children === 'string' ? (
+          <Text style={styles.text} numberOfLines={3} ellipsizeMode='tail'>
+            {children}
+          </Text>
+        ) : (
+          children
+        )}
+      </View>
     </View>
   )
 }
@@ -45,5 +56,11 @@ const createStyles = (theme: Theme) =>
     },
     error: {
       borderLeftColor: theme.color.error,
+    },
+    text: {
+      fontSize: theme.fontSize.m,
+      color: theme.color.black,
+      lineHeight: 20,
+      fontFamily: NUNITO_SANS_SEMIBOLD,
     },
   })

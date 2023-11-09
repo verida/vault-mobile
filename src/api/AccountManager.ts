@@ -30,11 +30,13 @@ import {
   cryptoWalletApi,
   getBlockchainNetworks,
   WALLET_SCHEMA_0_2_0_URI,
+  getUniqueWalletAddresses,
+  getWallets,
 } from 'features/cryptoWallet'
 import { getCountryCode } from 'helpers/countries'
 import DataConnectorsManager from './DataConnectorsManager'
 
-import CONFIG from '../config/environment'
+import CONFIG from '../config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
@@ -139,6 +141,15 @@ class AccountManager extends EventEmitter {
         store.dispatch(saveUserWallets(wallets))
         store.dispatch(setSelectedWallet(selectedWalletId!))
       }
+
+      const state = store.getState()
+      const storedWallet = getWallets(state)
+      const addresses = getUniqueWalletAddresses(storedWallet)
+      store.dispatch(
+        cryptoWalletApi.endpoints.getBalances.initiate(addresses, {
+          forceRefetch: false,
+        })
+      )
     } catch (error) {
       Sentry.captureException(error)
     }

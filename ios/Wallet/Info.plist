@@ -29,7 +29,7 @@
 			<string>bundle id</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>io.verida.vault.internal</string>
+				<string>io.verida.vault</string>
 			</array>
 		</dict>
 		<dict>
@@ -38,6 +38,30 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>iden3comm</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>ethereum</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>eip155</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>near</string>
 			</array>
 		</dict>
 	</array>

@@ -1,6 +1,34 @@
-import { AssetId, ChainId } from 'caip'
+import { AccountId, AssetId, ChainId } from 'caip'
 
+import { BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
+
+export type CryptoWalletRequestAction = 'pay'
+export type CryptoWalletRequestFunction = 'transfer'
+
+export type CryptoWalletRequestParams = {
+  value?: string
+  uint256?: string
+  address?: string
+  message?: string
+}
+
+export type CryptoWalletRawRequest = {
+  chainNamespace: string
+  chainReference: string
+  action: CryptoWalletRequestAction
+  address: string
+  function?: CryptoWalletRequestFunction
+  params: CryptoWalletRequestParams
+}
+
+export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {
+  action: A
+  blockchainNetwork: BlockchainNetwork
+  asset: AssetId
+  recipientAccount: AccountId
+  amount: number // TODO: Should probably be a string for big numbers
+}
 
 // Types copied from the Wallet-Provider
 // TODO: Should be able to auto generated or import types directly from wallet provider module
@@ -36,22 +64,39 @@ export type SupportedTokenObject = BasicTokenDataWithQuote & {
   referenceLabel?: string
 }
 
+export type AssetWithBalance = {
+  symbol: string
+  balance: number
+  amount: number
+  asset: AssetId
+  quote: AssetQuote
+  token: SupportedTokenObject
+
+  // Derived fields
+  label: string
+  price: number
+  change: number | undefined
+  quantity: number
+}
+
 export interface BalanceByChain {
   totalBalance: number
-  results: Array<{
-    symbol: string
-    balance: number
-    amount: number
-    asset: AssetId
-    quote: AssetQuote
-    token: SupportedTokenObject
+  results: Array<AssetWithBalance>
+}
 
-    // Derived fields
-    label: string
-    price: number
-    change: number | undefined
-    quantity: number
-  }>
+export type TransactionData = {
+  token: AssetWithBalance // TODO: Just need a subset, just the Asset metadata
+  amount: string
+  address: string
+  disableNavigate?: boolean // Not proud of this but it's a quick fix to avoid payment request to navigate to the confirm screen as implemented in the getTransactionParams methods
+}
+
+export type SentTransaction = {
+  id: string
+  amount: string
+  to: string
+  from: string
+  chain: BlockchainNetwork
 }
 
 export interface Transaction {

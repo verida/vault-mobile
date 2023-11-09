@@ -1,0 +1,2 @@
+export const SUPPORTED_FIAT_CURRENCIES = ['USD']
+export const DEFAULT_FIAT_CURRENCY = 'USD'
