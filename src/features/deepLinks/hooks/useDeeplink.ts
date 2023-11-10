@@ -5,10 +5,10 @@ import * as Sentry from '@sentry/react-native'
 import { useCallback } from 'react'
 import parse from 'url-parse'
 
-import { DashboardTabParams, MainStackParams } from 'navigation/types'
+import { MainStackParams, TabsScreenParams } from 'navigation/types'
 
 type NavProp = CompositeNavigationProp<
-  BottomTabNavigationProp<DashboardTabParams, keyof DashboardTabParams>,
+  BottomTabNavigationProp<TabsScreenParams, keyof TabsScreenParams>,
   NativeStackNavigationProp<MainStackParams, keyof MainStackParams>
 >
 
