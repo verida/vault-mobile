@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { PRIMARY_COLOR } from 'constants/color'
 import { TabsScreenParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
-import { ConnectionsTabScreen } from 'pages/Connections/DataConnector'
+// import { ConnectionsTabScreen } from 'pages/Connections/DataConnector'
 import { HomeTabScreen } from 'pages/Dashboard/Home'
 import { DataTabScreen } from 'pages/Data'
 import { PublicProfile } from 'pages/Profiles/PublicProfile'
@@ -18,7 +18,7 @@ const tabIcons: Record<
   Home: { default: 'home', focused: 'home' },
   Profile: { default: 'person', focused: 'person' },
   Data: { default: 'server', focused: 'server' },
-  Connections: { default: 'share-social', focused: 'share-social' },
+  // Connections: { default: 'share-social', focused: 'share-social' },
   Assets: { default: 'wallet', focused: 'wallet' },
 }
 
@@ -33,9 +33,9 @@ export const TabsNavigator: React.FunctionComponent = () => {
         headerShown: false,
         tabBarActiveTintColor: PRIMARY_COLOR,
         tabBarStyle: {
-          height: insets.bottom === 0 ? 56 : insets.bottom + 50,
+          height: 50 + (insets.bottom === 0 ? 6 : insets.bottom), // 40 (icon and label) + 10 (padding top) + 6 or instes.bottom (padding bottom)
           paddingTop: 10,
-          paddingBottom: insets.bottom || 6,
+          paddingBottom: insets.bottom || 6, // insets.bottom act as padding
         },
         tabBarIcon: ({ color, focused, size }) => {
           const iconName = focused
@@ -47,7 +47,7 @@ export const TabsNavigator: React.FunctionComponent = () => {
       <Tabs.Screen name='Home' component={HomeTabScreen} />
       <Tabs.Screen name='Profile' component={PublicProfile} />
       <Tabs.Screen name='Data' component={DataTabScreen} />
-      <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
+      {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} /> */}
       <Tabs.Screen name='Assets' component={Assets} />
     </Tabs.Navigator>
   )
