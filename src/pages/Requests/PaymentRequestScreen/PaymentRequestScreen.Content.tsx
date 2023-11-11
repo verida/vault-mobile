@@ -13,13 +13,19 @@ import {
   AggregateWalletBannerBalance,
   ConfirmTransactionCallbackResult,
   CryptoWalletRequest,
+  CURRENCY_SYMBOLS,
   getAggregateWalletBannerBalanceResult,
   getChainIdParamsFromResourceParams,
   useAggregateWalletBannerBalances,
   useMaybeBlockchainAccountForResource,
 } from 'features/cryptoWallet'
 import { reduceProtocols } from 'features/protocols'
-import { useTokenCalculator } from 'features/token'
+import {
+  convertFromCryptoIntegerToDecimal,
+  convertFromCryptoToFiat,
+  convertPredictedTransactionFeeToString,
+  useTokenCalculator,
+} from 'features/token'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
@@ -147,22 +153,44 @@ export const PaymentRequestScreenContent = React.memo(
               chainLogo={data.blockchainNetwork.icon}
               style={styles.valueContainer}
             />
-            {!!maybeNativeAssetWalletBannerBalance && (
-              <RequestPaymentFee
-                feeAmount={predictedMaxTransactionFee.toNumber().toFixed()}
-                // TODO: fix native asset
-                feeSymbol={maybeNativeAssetWalletBannerBalance.symbol}
-                formattedFiatValue={
-                  'TODO format fee'
-                  //estimatedFee && nativeAsset
-                  //  ? formatFiatCurrency(
-                  //      estimatedFee * nativeAsset.price
-                  //    )
-                  //  : undefined
-                }
-                style={styles.feeContainer}
-              />
-            )}
+            {!!maybeNativeAssetWalletBannerBalance &&
+              (() => {
+                const { feeAmount, feeSymbol } =
+                  convertPredictedTransactionFeeToString({
+                    ...maybeNativeAssetWalletBannerBalance,
+                    chainId,
+                    predictedMaxTransactionFee,
+                  })
+
+                const maybeValuation =
+                  maybeNativeAssetWalletBannerBalance.valuation
+
+                const { decimals } = maybeNativeAssetWalletBannerBalance
+
+                const maybeFiatSymbol =
+                  !!maybeValuation && CURRENCY_SYMBOLS[maybeValuation.currency]
+
+                const maybeFiatEquivalent =
+                  !!maybeValuation &&
+                  convertFromCryptoToFiat({
+                    valueInCrypto: convertFromCryptoIntegerToDecimal({
+                      integerCryptoAmount: String(predictedMaxTransactionFee),
+                      decimals,
+                    }),
+                    valuation: maybeValuation,
+                    decimalPlaces: 3,
+                  })
+
+                return (
+                  <RequestPaymentFee
+                    feeAmount={feeAmount}
+                    feeSymbol={feeSymbol}
+                    formattedFiatSymbol={maybeFiatSymbol || undefined}
+                    formattedFiatValue={maybeFiatEquivalent || ''}
+                    style={styles.feeContainer}
+                  />
+                )
+              })()}
 
             {!!maybeBlockchainWallet && (
               <WalletSelectorButton

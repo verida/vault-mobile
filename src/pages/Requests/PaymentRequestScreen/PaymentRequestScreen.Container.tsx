@@ -1,4 +1,3 @@
-import BigDecimal from 'bignumber.js'
 import { ChainId } from 'caip'
 import { AlertType, BottomActionBar } from 'components'
 import {
@@ -8,6 +7,7 @@ import {
   useLazyConfirmTransaction,
 } from 'features/cryptoWallet'
 import {
+  convertFromCryptoIntegerToDecimal,
   usePredictMaxTransactionFeeOrZero,
   useTokenCalculator,
 } from 'features/token'
@@ -63,15 +63,12 @@ export const PaymentRequestScreenContainer = React.memo(
 
     const { decimals } = aggregateWalletBannerBalance
 
-    // TODO: need to format to currency units
-    // initial value is in wei, but we expect the human-friendly string, so...
-    const initialValue = String(
-      parseFloat(
-        String(
-          new BigDecimal(integerAmount).div(new BigDecimal(10).pow(decimals))
-        )
-      )
-    ) as `${number}`
+    // HACK: The value passed to us is in an integer unit, i.e. wei, but
+    //       TokenCalculator works using decimal representation, i.e. in ETH.
+    const initialValue = convertFromCryptoIntegerToDecimal({
+      integerCryptoAmount: String(integerAmount),
+      decimals,
+    })
 
     const tokenCalculator = useTokenCalculator({
       initialValue,

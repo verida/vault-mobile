@@ -1,3 +1,4 @@
+export * from './convertFromCryptoIntegerToDecimal'
 export * from './convertFromCryptoToFiat'
 export * from './convertFromFiatToCrypto'
 export * from './convertPredictedTransactionFeeToString'

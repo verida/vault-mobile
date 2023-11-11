@@ -8,12 +8,19 @@ import { Theme } from 'styles/types'
 export type RequestPaymentFeeProps = {
   feeAmount?: string
   feeSymbol?: string
+  formattedFiatSymbol?: string
   formattedFiatValue?: string
 } & ViewProps
 
 export const RequestPaymentFee: React.FunctionComponent<RequestPaymentFeeProps> =
   (props) => {
-    const { feeAmount, feeSymbol, formattedFiatValue, ...viewProps } = props
+    const {
+      feeAmount,
+      feeSymbol,
+      formattedFiatValue,
+      formattedFiatSymbol,
+      ...viewProps
+    } = props
 
     const styles = useThemeAwareStyle(createStyles)
 
@@ -23,7 +30,9 @@ export const RequestPaymentFee: React.FunctionComponent<RequestPaymentFeeProps> 
           <Text style={styles.text}>{`Estimated fee ≈ ${
             feeAmount ? feeAmount : '-'
           } ${feeSymbol}${
-            formattedFiatValue ? ` (${formattedFiatValue})` : ''
+            formattedFiatValue
+              ? ` (${formattedFiatSymbol || ''}${formattedFiatValue})`
+              : ''
           }`}</Text>
         </View>
       </View>

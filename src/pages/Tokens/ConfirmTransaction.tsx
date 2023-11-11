@@ -68,25 +68,25 @@ const ConfirmTransaction = () => {
 
   const { confirmTransaction, loading } = useLazyConfirmTransaction()
 
-  const renderFeeRow = React.useCallback(
-    () => (
+  const renderFeeRow = React.useCallback(() => {
+    const { feeAmount, feeSymbol } = convertPredictedTransactionFeeToString({
+      chainId,
+      predictedMaxTransactionFee,
+      decimals,
+      symbol,
+    })
+    return (
       <View style={styles.infoRow}>
         <Text style={styles.infoLabel}>Fee</Text>
         <View style={styles.infoValue}>
           <Text
             style={styles.valueText}
-            children={convertPredictedTransactionFeeToString({
-              chainId,
-              predictedMaxTransactionFee,
-              decimals,
-              symbol,
-            })}
+            children={`${feeAmount} ${feeSymbol}`}
           />
         </View>
       </View>
-    ),
-    [chainId, predictedMaxTransactionFee, decimals, symbol]
-  )
+    )
+  }, [chainId, predictedMaxTransactionFee, decimals, symbol])
 
   return (
     <Container>

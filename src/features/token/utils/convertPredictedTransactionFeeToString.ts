@@ -13,19 +13,32 @@ export function convertPredictedTransactionFeeToString({
   readonly chainId: ChainId
   readonly predictedMaxTransactionFee: BigNumber
   readonly symbol: string
-}) {
+}): {
+  readonly feeAmount: string
+  readonly feeSymbol: string
+} {
   const feeIsUnknown = predictedMaxTransactionFee.lte(BigNumber.from('0'))
 
-  if (feeIsUnknown) return 'Unknown'
+  if (feeIsUnknown)
+    return {
+      feeAmount: 'Unknown',
+      feeSymbol: '',
+    }
 
   if (chainId.namespace === SupportedCaipNamespace.EIP_155)
-    return `${ethers.utils.formatUnits(
-      predictedMaxTransactionFee,
-      'gwei'
-    )} gwei`
+    return {
+      feeAmount: `${ethers.utils.formatUnits(
+        predictedMaxTransactionFee,
+        'gwei'
+      )}`,
+      feeSymbol: 'gwei',
+    }
 
-  return `${fixedPointCryptoAsBigDecimal({
-    amount: predictedMaxTransactionFee.toString(),
-    decimals,
-  }).toString()} ${symbol}`
+  return {
+    feeAmount: `${fixedPointCryptoAsBigDecimal({
+      amount: predictedMaxTransactionFee.toString(),
+      decimals,
+    }).toString()}`,
+    feeSymbol: symbol,
+  }
 }
