@@ -37,7 +37,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { navigation, route } = props
     const { params } = route
     const { data } = params
-    const { asset: resource } = data
+    const { resource } = data
 
     const [maybeAggregateWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(

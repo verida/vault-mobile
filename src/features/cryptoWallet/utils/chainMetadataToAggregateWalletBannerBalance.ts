@@ -19,8 +19,8 @@ export function chainMetadataToAggregateWalletBannerBalance({
   chainMetadata,
   cryptoWalletBalances,
 }: {
-  readonly balanceByChainResults: readonly BalanceByChainResult[]
   readonly chainMetadata: ChainMetadata
+  readonly balanceByChainResults: readonly BalanceByChainResult[]
   readonly cryptoWalletBalances: CryptoWalletBalances
 }): AggregateWalletBannerBalanceBaseCurrency {
   const { reference, namespace, decimals, nativeCurrencyName, symbol, icon } =

@@ -112,16 +112,16 @@ function App() {
                     <RootSiblingParent>
                       <ActionSheetProvider>
                         <BlockchainProvider>
-                          <CryptoWalletProvider>
-                            <CryptoWalletCawfreeProvider>
+                          <CryptoWalletCawfreeProvider>
+                            <CryptoWalletProvider>
                               <WalletConnectProvider>
                                 <GestureHandlerRootView style={styles.flex}>
                                   <RootNavigator />
                                 </GestureHandlerRootView>
                                 <MetaServerChecks />
                               </WalletConnectProvider>
-                            </CryptoWalletCawfreeProvider>
-                          </CryptoWalletProvider>
+                            </CryptoWalletProvider>
+                          </CryptoWalletCawfreeProvider>
                         </BlockchainProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>

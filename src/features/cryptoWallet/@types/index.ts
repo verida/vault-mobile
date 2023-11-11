@@ -30,8 +30,10 @@ export type CryptoWalletRawRequest = {
 
 export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {
   action: A
-  blockchainNetwork: BlockchainNetwork
-  asset: AssetId
+  //chainMetadata: ChainMetadata
+  resource: ResourceParams
+  //blockchainNetwork: BlockchainNetwork
+  //asset: AssetId
   recipientAccount: AccountId
   amount: number // TODO: Should probably be a string for big numbers
 }

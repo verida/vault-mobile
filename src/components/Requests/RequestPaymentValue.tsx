@@ -47,51 +47,60 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
               {formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
             </Text>
           </View>
-          <View style={styles.footer}>
-            <View>
-              <Text
-                style={[
-                  styles.footerText,
-                  styles.footerLeftText,
-                  styles.footerLabelText,
-                ]}>
-                {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
-              </Text>
-              <Text
-                style={[
-                  styles.footerText,
-                  styles.footerLeftText,
-                  styles.footerValueText,
-                ]}>
-                {formattedAssetPrice}
-              </Text>
+          {Boolean(formattedAssetPrice || chainLabel || chainLogo) && (
+            <View style={styles.footer}>
+              {formattedAssetPrice ? (
+                <View>
+                  <Text
+                    style={[
+                      styles.footerText,
+                      styles.footerLeftText,
+                      styles.footerLabelText,
+                    ]}>
+                    {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.footerText,
+                      styles.footerLeftText,
+                      styles.footerValueText,
+                    ]}>
+                    {formattedAssetPrice}
+                  </Text>
+                </View>
+              ) : (
+                <View style={{ flex: 1 }} />
+              )}
+
+              {Boolean(chainLabel || chainLogo) && (
+                <View>
+                  <Text
+                    style={[
+                      styles.footerText,
+                      styles.footerRightText,
+                      styles.footerLabelText,
+                    ]}>
+                    Network
+                  </Text>
+                  <View style={styles.chainContainer}>
+                    <Logo
+                      uri={chainLogo}
+                      alt={chainLabel}
+                      style={styles.chainLogo}
+                    />
+                    <Text
+                      style={[
+                        styles.footerText,
+                        styles.footerRightText,
+                        styles.footerValueText,
+                      ]}>
+                      {chainLabel}
+                    </Text>
+                  </View>
+                </View>
+              )}
             </View>
-            <View>
-              <Text
-                style={[
-                  styles.footerText,
-                  styles.footerRightText,
-                  styles.footerLabelText,
-                ]}>
-                Network
-              </Text>
-              <View style={styles.chainContainer}>
-                <Logo
-                  uri={chainLogo}
-                  alt={chainLabel}
-                  style={styles.chainLogo}
-                />
-                <Text
-                  style={[
-                    styles.footerText,
-                    styles.footerRightText,
-                    styles.footerValueText,
-                  ]}>
-                  {chainLabel}
-                </Text>
-              </View>
-            </View>
-          </View>
+          )}
         </View>
       </View>
     )

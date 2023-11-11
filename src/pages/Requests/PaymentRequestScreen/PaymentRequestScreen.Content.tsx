@@ -82,19 +82,32 @@ export const PaymentRequestScreenContent = React.memo(
       [resource]
     )
 
+    //// TODO: explorerURLs
+    //const maybeChainMetadata = useMaybeChainMetadataForResource({
+    //  resource,
+    //})
+
+    // TOOD: maybe remove this
     const maybeBlockchainWallet = useMaybeBlockchainAccountForResource({
       resource,
     })
 
+    // TODO: instead of blockchainNetwork, we need to use chainMetdatas
+
+    // TODO: use chainMetadatas for blockchainExplorerUrl
+    const maybeBlockchainNetwork = maybeBlockchainWallet?.blockchainNetwork
+
+    // TODO: generalize this
+    const maybeBlockchainExplorerUrl =
+      !!transactionConfirmation &&
+      !!maybeBlockchainNetwork &&
+      `${maybeBlockchainNetwork.explorerURL}/tx/${transactionConfirmation.transactionHash}`
+
     const handleViewInExplorer = React.useCallback(() => {
-      if (!transactionConfirmation) return
+      if (!maybeBlockchainExplorerUrl) return
 
-      const { transactionHash } = transactionConfirmation
-
-      // TODO: generalize this
-      const url = `${data.blockchainNetwork.explorerURL}/tx/${transactionHash}`
-      Linking.openURL(url)
-    }, [data.blockchainNetwork.explorerURL, transactionConfirmation])
+      Linking.openURL(maybeBlockchainExplorerUrl)
+    }, [maybeBlockchainExplorerUrl])
 
     // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
     // and the base currency.
@@ -161,8 +174,8 @@ export const PaymentRequestScreenContent = React.memo(
                   : ''
               }`}
               formattedFiatValue={maybeFormattedFiatValue}
-              chainLabel={data.blockchainNetwork.label}
-              chainLogo={data.blockchainNetwork.icon}
+              chainLabel={maybeNativeAssetWalletBannerBalance?.label}
+              chainLogo={maybeNativeAssetWalletBannerBalance?.icon || undefined}
               style={styles.valueContainer}
             />
             {!!maybeNativeAssetWalletBannerBalance &&
@@ -196,7 +209,9 @@ export const PaymentRequestScreenContent = React.memo(
 
             {!!maybeBlockchainWallet && (
               <WalletSelectorButton
-                logo={maybeBlockchainWallet.icon || data.blockchainNetwork.icon}
+                logo={
+                  maybeBlockchainWallet.icon || maybeBlockchainNetwork?.icon
+                }
                 label={maybeBlockchainWallet.label}
                 address={maybeBlockchainWallet.address}
                 formattedBalance={`${convertFromCryptoIntegerToDecimal({
@@ -246,7 +261,7 @@ export const PaymentRequestScreenContent = React.memo(
                   } sent to ${senderName}!`
             }
           />
-          {Boolean(transactionConfirmation) && (
+          {Boolean(maybeBlockchainExplorerUrl) && (
             <View style={styles.viewInExplorerButtonWrapper}>
               <Button
                 onPress={handleViewInExplorer}

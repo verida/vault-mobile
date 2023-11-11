@@ -32,7 +32,7 @@ export const PaymentRequestScreenContainer = React.memo(
     readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
     readonly onRequestClose: () => void
   }): JSX.Element {
-    const { asset: resource, amount: integerAmount, recipientAccount } = data
+    const { resource, amount: integerAmount, recipientAccount } = data
 
     const { address: toAddress } = recipientAccount
 

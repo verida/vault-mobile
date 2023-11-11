@@ -5,6 +5,7 @@ export * from './useBalanceByChainResultsForUniqueWalletAddresses'
 export * from './useCreateCryptoWalletBalances'
 export * from './useLazyConfirmTransaction'
 export * from './useMaybeAssetIdForAggregateWalletBannerBalance'
+// TODO: do we need this?
 export * from './useMaybeBlockchainNetwork'
 export * from './useMaybeBlockchainAccountForResource'
 export * from './useMaybeFromAddressForResource'
