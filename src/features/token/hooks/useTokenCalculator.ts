@@ -332,17 +332,22 @@ export function useTokenCalculator({
 
   const { value: currentCryptoValue } = getStateAsCrypto(state)
 
+  const hasSufficientBalance =
+    typeof currentCryptoValue === 'string' &&
+    parseFloat(currentCryptoValue) <=
+      maximumCryptoAmount.toNumber() /* has balance */
+
   // A "valid" value in this case is one that is truthy (`getStateAsCrypto`) ensures
   // that `currentCryptoValue` has been normalized, and therefore a string will be
   // a valid numeric string and the parsed value of that string is within the operating
   // balance of the asset.
-  const isValidValue =
+  const isNotMalformed =
     typeof state.value === 'string' /* has interacted */ &&
     state.value.length > 0 /* has typed */ &&
-    typeof currentCryptoValue === 'string' &&
-    parseFloat(currentCryptoValue) <=
-      maximumCryptoAmount.toNumber() /* has balance */ &&
+    hasSufficientBalance &&
     parseFloat(currentCryptoValue) > 0 /* is non-zero */
+
+  const canExecutePayment = isNotMalformed && hasSufficientBalance
 
   const getCurrentValueStringAsCryptoOrZero = React.useCallback(
     (): `${number}` => getStateAsCrypto(state).value || '0',
@@ -361,25 +366,29 @@ export function useTokenCalculator({
       canConvertBetweenFiatAndCrypto,
       onUpdateCalculatedValue,
       getNormalizedValue,
-      isValidValue,
       symbol,
       selectMaxValue,
       getCurrentValueStringAsCryptoOrZero,
       getCurrentValueStringAsFiatOrZero,
       maybeCurrencySymbol,
+      hasSufficientBalance,
+      isNotMalformed,
+      canExecutePayment,
     }),
     [
       canConvertBetweenFiatAndCrypto,
       getCurrentValueStringAsCryptoOrZero,
       getCurrentValueStringAsFiatOrZero,
       getNormalizedValue,
-      isValidValue,
       maybeCurrencySymbol,
       onUpdateCalculatedValue,
       selectMaxValue,
       state,
       symbol,
       toggleFormat,
+      hasSufficientBalance,
+      isNotMalformed,
+      canExecutePayment,
     ]
   )
 }

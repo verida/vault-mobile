@@ -39,7 +39,10 @@ import type { PaymentRequestScreenParams } from './'
 export const PaymentRequestScreenContent = React.memo(
   function PaymentRequestScreenContent({
     details,
-    tokenCalculator: { getCurrentValueStringAsCryptoOrZero, isValidValue },
+    tokenCalculator: {
+      getCurrentValueStringAsCryptoOrZero,
+      hasSufficientBalance,
+    },
     loading,
     predictedMaxTransactionFee,
     data,
@@ -204,7 +207,7 @@ export const PaymentRequestScreenContent = React.memo(
                   decimalPlaces: 3,
                 })} ${aggregateWalletBannerBalance.symbol}`}
                 alertType='error'
-                alertContent={!isValidValue ? 'Insufficient funds' : ''}
+                alertContent={!hasSufficientBalance ? 'Insufficient funds' : ''}
                 style={styles.walletSelectorButton}
               />
             )}

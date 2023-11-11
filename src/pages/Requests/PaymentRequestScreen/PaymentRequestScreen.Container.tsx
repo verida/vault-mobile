@@ -76,8 +76,12 @@ export const PaymentRequestScreenContainer = React.memo(
       predictedMaxTransactionFee,
     })
 
-    const { getCurrentValueStringAsCryptoOrZero, isValidValue } =
-      tokenCalculator
+    const {
+      getCurrentValueStringAsCryptoOrZero,
+      isNotMalformed,
+      hasSufficientBalance,
+      canExecutePayment,
+    } = tokenCalculator
 
     const processPaymentAsync = React.useCallback(async () => {
       if (!aggregateWalletBannerBalance)
@@ -117,35 +121,22 @@ export const PaymentRequestScreenContainer = React.memo(
       [processPaymentAsync]
     )
 
-    // TODO: elevate alert for error
-    //const alertMessage = !maybeAggregateWalletBannerBalance
     const alertMessage = false
       ? {
           type: 'error',
           message: 'The requested asset has not been found!',
         }
-      : !isValidValue
+      : !hasSufficientBalance
+      ? {
+          type: 'error',
+          message: 'Insufficient balance.',
+        }
+      : !isNotMalformed
       ? {
           type: 'error',
           message: 'The requested amount is not valid!',
         }
-      : //: isWatchedWallet(account)
-        //? {
-        //    type: 'error' as AlertType,
-        //    message: `Can't process payment with a watched wallet!`,
-        //  }
-        //: gettingTransactionParams
-        //? {
-        //    type: 'warning' as AlertType,
-        //    message: 'Getting blockchain information...',
-        //  }
-        // TODO: check what conditions for canProcess are
-        //: !canProcess
-        //? {
-        //    type: 'error' as AlertType,
-        //    message: `Can't process the payment request!`,
-        //  }
-        undefined
+      : undefined
 
     return (
       <React.Fragment>
@@ -180,7 +171,7 @@ export const PaymentRequestScreenContainer = React.memo(
                   {
                     label: 'Pay',
                     onPress: onPressPay,
-                    disabled: !isValidValue,
+                    disabled: !canExecutePayment,
                   },
                 ]
               : [

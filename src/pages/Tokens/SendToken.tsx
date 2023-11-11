@@ -50,11 +50,11 @@ const SendToken = React.memo(function SendToken() {
     predictedMaxTransactionFee,
   })
 
-  const { isValidValue, getCurrentValueStringAsCryptoOrZero } =
+  const { canExecutePayment, getCurrentValueStringAsCryptoOrZero } =
     tokenCalculatorProps
 
   const onPress = React.useCallback(() => {
-    if (!isValidValue) return showAlert()
+    if (!canExecutePayment) return showAlert()
 
     navigation.navigate('TokenRecipient', {
       aggregateWalletBannerBalance,
@@ -65,7 +65,7 @@ const SendToken = React.memo(function SendToken() {
   }, [
     aggregateWalletBannerBalance,
     getCurrentValueStringAsCryptoOrZero,
-    isValidValue,
+    canExecutePayment,
     navigation,
     predictedMaxTransactionFee,
   ])
@@ -87,7 +87,7 @@ const SendToken = React.memo(function SendToken() {
           <Button
             style={styles.nextButton}
             color='primary'
-            disabled={!isValidValue}
+            disabled={!canExecutePayment}
             onPress={onPress}>
             Next
           </Button>
