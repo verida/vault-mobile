@@ -10,6 +10,8 @@ import {
 } from 'features/caip'
 import * as React from 'react'
 
+import { GAS_TO_TRANSFER_NATIVE_CURRENCY } from '../constants'
+
 type State = {
   readonly loading: boolean
   readonly error?: Error
@@ -22,10 +24,14 @@ const loadingState = (): State => ({
 })
 
 export function usePredictMaxTransactionFee({
-  amountOfGasConsumed: maybeAmountOfGasConsumed,
+  // TODO: Note this is not valid for things like an ERC-20 send, which would require estimation.
+  //       Future enhancement - extract the transaction generation so they can be first predicted
+  //       before executed.
+  amountOfGasConsumed:
+    maybeAmountOfGasConsumed = GAS_TO_TRANSFER_NATIVE_CURRENCY,
   chainId,
 }: {
-  readonly amountOfGasConsumed: BigNumber | null | undefined
+  readonly amountOfGasConsumed?: BigNumber | null
   readonly chainId: ChainId
 }): State {
   const [state, setState] = React.useState<State>(loadingState)

@@ -1,5 +1,6 @@
 export * from './@types'
 export * from './components'
 export * from './contexts'
+export * from './constants'
 export * from './eip155'
 export * from './near'

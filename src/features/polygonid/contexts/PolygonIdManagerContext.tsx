@@ -191,7 +191,7 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
       // No try/cath needed, as handled by the consumer
       const message = parseDeepLinkUrl(url)
       handleMessage(message, false)
-      // Assuming the deep link doesn't come a particular screen so we don't replace it.
+      // Assuming the deep link doesn't come from a particular screen so we don't replace it.
     },
     [handleMessage]
   )

@@ -2,6 +2,7 @@ import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
 import * as Sentry from '@sentry/react-native'
 import { logout as logoutAction } from 'features/auth'
+import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
 import {
@@ -81,7 +82,10 @@ const Home = (props) => {
       }
 
       // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
-      if (isPolygonIdDeepLink(initialUrl)) {
+      if (
+        isPolygonIdDeepLink(initialUrl) ||
+        isCryptoRequestDeepLink(initialUrl)
+      ) {
         return
       }
 

@@ -1,6 +1,7 @@
 import { ethers } from 'ethers'
 import { BlockchainRequestHandlerCallback } from 'features/blockchain/@types'
 import { SupportedCaipNamespace } from 'features/caip/@types'
+import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
 import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
 import { numericAmountToFixedPointCrypto } from 'features/cryptoWallet/utils/numericAmountToFixedPointCrypto'
 
@@ -20,7 +21,7 @@ export const sendErc20Eip155 = async ({
   readonly eth_sendTransaction: BlockchainRequestHandlerCallback<ethers.Wallet>
   readonly minifiedVeridaAccount: MinifiedVeridaAccount
   readonly rpc: string
-}) => {
+}): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedVeridaAccount
 
   if (namespace !== SupportedCaipNamespace.EIP_155)
@@ -82,4 +83,6 @@ export const sendErc20Eip155 = async ({
         maybeTransactionHash
       )}".`
     )
+
+  return { transactionHash: maybeTransactionHash }
 }

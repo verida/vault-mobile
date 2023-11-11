@@ -1,5 +1,5 @@
 import BigDecimal from 'bignumber.js'
-import { AssetId, AssetIdParams, ChainIdParams } from 'caip'
+import { AccountId, AssetId, AssetIdParams, ChainIdParams } from 'caip'
 import { SupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainAccount, BlockchainNetwork } from 'api/types'
@@ -8,6 +8,33 @@ import { Option } from 'components/Select'
 // Types copied from the Wallet-Provider
 // TODO: Should be able to auto generated or import types directly from wallet provider module
 export type ChainNameType = 'near' | 'algorand' | 'ethereum' | 'polygon'
+
+export type CryptoWalletRequestAction = 'pay'
+export type CryptoWalletRequestFunction = 'transfer'
+
+export type CryptoWalletRequestParams = {
+  value?: string
+  uint256?: string
+  address?: string
+  message?: string
+}
+
+export type CryptoWalletRawRequest = {
+  chainNamespace: string
+  chainReference: string
+  action: CryptoWalletRequestAction
+  address: string
+  function?: CryptoWalletRequestFunction
+  params: CryptoWalletRequestParams
+}
+
+export type CryptoWalletRequest<A extends CryptoWalletRequestAction = 'pay'> = {
+  action: A
+  blockchainNetwork: BlockchainNetwork
+  asset: AssetId
+  recipientAccount: AccountId
+  amount: number // TODO: Should probably be a string for big numbers
+}
 
 export type BasicTokenData = WithMaybeIcon<{
   name: string
@@ -305,4 +332,5 @@ export type UseCreateCryptoWalletBalancesResult =
     readonly refetch: RefetchCryptoWalletBalances
   }
 
-export type CryptoWalletContextValue = UseCreateCryptoWalletBalancesResult
+export type CryptoWalletCawfreeContextValue =
+  UseCreateCryptoWalletBalancesResult

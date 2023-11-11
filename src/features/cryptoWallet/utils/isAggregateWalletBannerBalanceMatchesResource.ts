@@ -1,4 +1,4 @@
-import { AssetIdParams, ChainIdParams } from 'caip'
+import { AssetId, AssetIdParams, ChainIdParams } from 'caip'
 
 import {
   AggregateWalletBannerBalance,
@@ -7,6 +7,7 @@ import {
   ResourceParams,
 } from '../@types'
 import { getChainIdParamsFromResourceParams } from './getChainIdParamsFromResourceParams'
+import { isNativeToken } from './isNativeToken'
 
 function isAggregateWalletBannerBalanceMatchesChainIdResource({
   aggregateWalletBannerBalance,
@@ -54,17 +55,21 @@ export function isAggregateWalletBannerBalanceMatchesResource({
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly resource: ResourceParams
 }): boolean {
-  if (isChainIdResourceParams(resource))
+  if (
+    isChainIdResourceParams(resource) ||
+    (isAssetIdResourceParams(resource) && isNativeToken(new AssetId(resource)))
+  )
     return isAggregateWalletBannerBalanceMatchesChainIdResource({
-      resource,
+      resource: getChainIdParamsFromResourceParams(resource),
       aggregateWalletBannerBalance,
     })
 
-  if (isAssetIdResourceParams(resource))
+  if (isAssetIdResourceParams(resource)) {
     return isAggregateWalletBannerBalanceMatchesAssetIdResource({
       resource,
       aggregateWalletBannerBalance,
     })
+  }
 
   return false
 }

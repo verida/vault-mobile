@@ -24,6 +24,7 @@ import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
+  PaymentRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
 import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
@@ -135,8 +136,9 @@ export type MainStackParams = {
   }
 
   ConnectionRequest: ConnectionRequestScreenParams
-  ProofRequest: ProofRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
+  PaymentRequest: PaymentRequestScreenParams
+  ProofRequest: ProofRequestScreenParams
 
   AddPlatformLink: AddPlatformLinkScreenParams
   EditPlatformLink: EditPlatformLinkScreenParams

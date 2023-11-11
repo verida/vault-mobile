@@ -15,6 +15,10 @@ class CustomNetworkModule implements OkHttpClientFactory {
 
     public OkHttpClient createNewNetworkModuleClient() {
         return new OkHttpClient.Builder()
+                .callTimeout(60000, TimeUnit.MILLISECONDS)
+                .readTimeout(0, TimeUnit.MILLISECONDS)
+                .writeTimeout(0, TimeUnit.MILLISECONDS)
+                .connectTimeout(0, TimeUnit.MILLISECONDS)
                 .cookieJar(new ReactCookieJarContainer())
                 .dispatcher(createDispatcher())
                 .connectionPool(createConnectionPool())

@@ -1,1 +1,1 @@
-export * from './CryptoWallet.Provider'
+export * from './CryptoWallet.Cawfree.Provider'

@@ -1,11 +1,13 @@
 import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
-import { BigNumber } from 'ethers'
 import {
   AggregateWalletBannerBalance,
   getChainIdParamsFromResourceParams,
 } from 'features/cryptoWallet'
-import { usePredictMaxTransactionFee, useTokenCalculator } from 'features/token'
+import {
+  usePredictMaxTransactionFeeOrZero,
+  useTokenCalculator,
+} from 'features/token'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
@@ -28,10 +30,6 @@ export type SendTokenScreenProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-// HACK: This is equal Ethereum and Near:
-//       https://docs.near.org/concepts/basics/transactions/gas-advanced#ballpark-comparisons-to-ethereum
-const GAS_TO_SEND = BigNumber.from(21_000)
-
 const SendToken = React.memo(function SendToken() {
   const navigation = useMainNavigation()
   const { aggregateWalletBannerBalance } = useParams<SendTokenScreenProps>()
@@ -43,19 +41,9 @@ const SendToken = React.memo(function SendToken() {
     [resource]
   )
 
-  const { predictedMaxTransactionFee: maybePredictedMaxTransactionFee } =
-    usePredictMaxTransactionFee({
-      chainId,
-      // TODO: Note this is not valid for things like an ERC-20 send, which would require estimation.
-      //       Future enhancement - extract the transaction generation so they can be first predicted
-      //       before executed.
-      amountOfGasConsumed: GAS_TO_SEND,
-    })
-
-  const predictedMaxTransactionFee = React.useMemo(
-    () => maybePredictedMaxTransactionFee || BigNumber.from('0'),
-    [maybePredictedMaxTransactionFee]
-  )
+  const predictedMaxTransactionFee = usePredictMaxTransactionFeeOrZero({
+    chainId,
+  })
 
   const tokenCalculatorProps = useTokenCalculator({
     aggregateWalletBannerBalance,

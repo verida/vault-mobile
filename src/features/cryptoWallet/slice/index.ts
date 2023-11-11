@@ -1,6 +1,5 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-//import { BigNumber } from 'ethers'
 import { logout } from 'features/auth'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
@@ -9,43 +8,11 @@ import {
   addWatchedWallet,
   createNewWallet,
   deleteWallet,
-  //getTransactionParams,
   importWallet,
   renameWallet,
-  //sendTransaction,
 } from './actions'
 
-//// TODO: type
-//export type TransactionParamsData = Record<string, unknown> & {
-//  readonly fee: number | undefined
-//}
-//
-//export type TransactionParams = {
-//  fetching: boolean
-//  error?: string
-//  data: TransactionParamsData
-//}
-//
-//// TODO: type
-//export type SentTransactionData = Record<string, any> & {
-//  readonly amount?: BigNumber
-//}
-
-//export type SentTransaction = {
-//  fetching: boolean
-//  error?: string
-//  data: SentTransactionData
-//}
-
 export interface WalletState {
-  //transactionParams: TransactionParams
-
-  //sentTransaction: SentTransaction
-
-  //pendingTransactions: {
-  //  data: any[] // TODO: type
-  //}
-
   walletsData: Record<string, BlockchainWalletWithAccounts>
   selectedWalletId?: string
   walletProcessing: {
@@ -55,23 +22,8 @@ export interface WalletState {
 }
 
 const initialState: WalletState = {
-  //transactionParams: {
-  //  data: {
-  //    fee: undefined,
-  //  },
-  //  fetching: false,
-  //  error: undefined,
-  //},
-  //sentTransaction: {
-  //  fetching: false,
-  //  data: {},
-  //},
-  //pendingTransactions: {
-  //  data: [],
-  //},
   walletsData: {},
   selectedWalletId: undefined,
-
   walletProcessing: {
     loading: false,
     error: undefined,
@@ -97,61 +49,10 @@ export const cryptoWalletSlice = createSlice({
   },
   extraReducers(builder) {
     builder
-      // log out the selected identity
-      .addCase(logout, () => {
-        return initialState
-      })
-      //// getTransactionParams
-      //.addCase(getTransactionParams.pending, (state) => {
-      //  state.transactionParams = {
-      //    fetching: true,
-      //    error: undefined,
-      //    data: { fee: undefined },
-      //  }
-      //})
-      //.addCase(getTransactionParams.fulfilled, (state, action) => {
-      //  state.transactionParams = {
-      //    fetching: true,
-      //    error: undefined,
-      //    data: action.payload,
-      //  }
-      //})
-      //.addCase(getTransactionParams.rejected, (state, action) => {
-      //  state.transactionParams = {
-      //    fetching: false,
-      //    error: action.payload,
-      //    data: {
-      //      fee: undefined,
-      //    },
-      //  }
-      //})
+      // Log out
+      .addCase(logout, () => initialState)
 
-      //// TODO: Test, Send transaction
-      //.addCase(sendTransaction.pending, (state) => {
-      //  state.sentTransaction = { fetching: true, error: undefined, data: {} }
-      //})
-      //.addCase(
-      //  sendTransaction.fulfilled,
-      //  (state, action: PayloadAction<any>) => {
-      //    state.sentTransaction = {
-      //      fetching: false,
-      //      error: undefined,
-      //      data: action.payload,
-      //    }
-      //    state.pendingTransactions = {
-      //      data: [action.payload, ...state.pendingTransactions.data],
-      //    }
-      //  }
-      //)
-      //.addCase(sendTransaction.rejected, (state, action) => {
-      //  state.sentTransaction = {
-      //    fetching: false,
-      //    error: action.payload,
-      //    data: {},
-      //  }
-      //})
-
-      // Create new Wallet
+      // Create new wallet
       .addCase(createNewWallet.pending, (state) => {
         state.walletProcessing = {
           loading: true,

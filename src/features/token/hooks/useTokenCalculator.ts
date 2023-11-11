@@ -31,6 +31,7 @@ const createDefaultCachedResults = (): CachedResults => ({
 
 // Defines common business logic for converting between currencies for a given format.
 export function useTokenCalculator({
+  initialValue = null,
   aggregateWalletBannerBalance,
   // When auto-filling values, use this value to limit to what
   // amount of numeric representation is desirable without cluttering
@@ -38,6 +39,7 @@ export function useTokenCalculator({
   prettyNumberOfDecimalPlaces = 4,
   predictedMaxTransactionFee,
 }: {
+  readonly initialValue?: `${number}` | null
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly prettyNumberOfDecimalPlaces?: number
   readonly predictedMaxTransactionFee: BigNumber
@@ -46,7 +48,7 @@ export function useTokenCalculator({
   const { type } = aggregateWalletBannerBalance
 
   const [state, setState] = React.useState<State>({
-    value: null,
+    value: initialValue,
     format: CurrencyFormat.CRYPTO,
   })
 
@@ -352,17 +354,32 @@ export function useTokenCalculator({
     [getStateAsFiat, state]
   )
 
-  return {
-    ...state,
-    toggleFormat,
-    canConvertBetweenFiatAndCrypto,
-    onUpdateCalculatedValue,
-    getNormalizedValue,
-    isValidValue,
-    symbol,
-    selectMaxValue,
-    getCurrentValueStringAsCryptoOrZero,
-    getCurrentValueStringAsFiatOrZero,
-    maybeCurrencySymbol,
-  }
+  return React.useMemo(
+    () => ({
+      ...state,
+      toggleFormat,
+      canConvertBetweenFiatAndCrypto,
+      onUpdateCalculatedValue,
+      getNormalizedValue,
+      isValidValue,
+      symbol,
+      selectMaxValue,
+      getCurrentValueStringAsCryptoOrZero,
+      getCurrentValueStringAsFiatOrZero,
+      maybeCurrencySymbol,
+    }),
+    [
+      canConvertBetweenFiatAndCrypto,
+      getCurrentValueStringAsCryptoOrZero,
+      getCurrentValueStringAsFiatOrZero,
+      getNormalizedValue,
+      isValidValue,
+      maybeCurrencySymbol,
+      onUpdateCalculatedValue,
+      selectMaxValue,
+      state,
+      symbol,
+      toggleFormat,
+    ]
+  )
 }

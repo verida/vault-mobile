@@ -1,8 +1,8 @@
+import { Logo } from 'components'
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { GestureResponderEvent, StyleSheet, View } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
@@ -20,15 +20,7 @@ export const TokensListItem = React.memo(function TokensListItem({
 
   return (
     <ListItem button onPress={onPress} style={styles.listItem}>
-      {/* TODO: We need a default image to use when `uri` is not available. */}
-      <FastImage
-        source={{
-          uri:
-            uri ||
-            'https://pbs.twimg.com/profile_images/1422735183606812675/OyNZftN__400x400.jpg',
-        }}
-        style={styles.icon}
-      />
+      <Logo uri={uri || undefined} alt={symbol} style={styles.icon} />
       <View style={styles.listItemDetail}>
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>

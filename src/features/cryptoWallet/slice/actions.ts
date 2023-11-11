@@ -1,9 +1,7 @@
 import CONFIG from 'config'
 import {
-  //BalanceByChainResult,
   getAllWallets,
   getSelectedWalletId,
-  //getWalletsData,
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
@@ -11,73 +9,9 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import AccountManager from 'api/AccountManager'
 import { BlockchainWallet } from 'api/types'
 import { WalletManager } from 'api/Wallet/WalletManager'
-//import { navigate } from 'navigation/RootNavigator'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
-//import dataHelper from '../utils/data'
 import { saveUserWallets, setSelectedWallet } from './'
-
-//export type GetTransactionParamsParams = {
-//  readonly token: BalanceByChainResult
-//  readonly amount: number | null
-//  readonly address: string
-//}
-
-//export const getTransactionParams = createAppAsyncThunk(
-//  'wallets/getTransactionParams',
-//  async (
-//    transactionData: GetTransactionParamsParams,
-//    { getState, rejectWithValue }
-//  ) => {
-//    const wallets = getWalletsData(getState())
-//    try {
-//      //console.log('getting params...')
-//      const params = await dataHelper.getTransactionParams(
-//        transactionData,
-//        wallets
-//      )
-//      if (params) {
-//        navigate('ConfirmTransaction', transactionData)
-//        return params
-//      }
-//    } catch (error: any) {
-//      return rejectWithValue("Couldn't load params:" + error.message)
-//    }
-//  }
-//)
-
-//export const sendTransaction = createAppAsyncThunk(
-//  'wallets/sendTransaction',
-//  async (
-//    {
-//      transactionData: _transactionData,
-//      isAssetEnablingTransaction:
-//        _isAssetEnablingTransaction /* TODO: What does this mean? */,
-//    }: {
-//      transactionData: GetTransactionParamsParams
-//      isAssetEnablingTransaction?: boolean
-//    },
-//    { getState: _getState, rejectWithValue }
-//  ) => {
-//    //const state = getState()
-//    try {
-//      throw new Error('dont know how to navigate to confirm')
-//
-//      //const txData = await dataHelper.sendTransaction(
-//      //  transactionData,
-//      //  isAssetEnablingTransaction,
-//      //  state
-//      //)
-//
-//      //return {
-//      //  ...txData,
-//      //  amount: txData?.amount.toHexString(),
-//      //}
-//    } catch (error: any) {
-//      return rejectWithValue('Could not send token: ' + error.message)
-//    }
-//  }
-//)
 
 export const createNewWallet = createAppAsyncThunk(
   'wallets/createNewWallet',

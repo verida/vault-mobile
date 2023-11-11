@@ -33,6 +33,7 @@ import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreen,
   IncomingDataRequestScreen,
+  PaymentRequestScreen,
   ProofRequestScreen,
 } from 'pages/Requests'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
@@ -194,12 +195,16 @@ export const MainNavigator: React.FunctionComponent = () => {
               component={ConnectionRequestScreen}
             />
             <Stack.Screen
-              name={'ProofRequest'}
-              component={ProofRequestScreen}
-            />
-            <Stack.Screen
               name={'IncomingDataRequest'}
               component={IncomingDataRequestScreen}
+            />
+            <Stack.Screen
+              name={'PaymentRequest'}
+              component={PaymentRequestScreen}
+            />
+            <Stack.Screen
+              name={'ProofRequest'}
+              component={ProofRequestScreen}
             />
           </Stack.Group>
         </Stack.Navigator>

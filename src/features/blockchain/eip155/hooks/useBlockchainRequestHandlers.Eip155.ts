@@ -148,7 +148,11 @@ export function useBlockchainRequestHandlersEip155(): BlockchainRequestHandlersE
           transaction: params[0],
         })
 
-        const { hash } = await wallet.sendTransaction(transactionToSend)
+        const tx = await wallet.sendTransaction(transactionToSend)
+
+        await tx.wait()
+
+        const { hash } = tx
 
         return hash
       },

@@ -100,3 +100,21 @@ export const getSupportedTokenObjectDecimals = (
   //       as the common case, but this may be invalid.
   return 18
 }
+
+/**
+ * Return the number of decimals (zeros)
+ * @param {*} value
+ * @param {*} min
+ * @param {*} max
+ * @param {*} offset
+ * @returns
+ */
+export const getSignificantDigits = (
+  value: number,
+  min = 0, //: number,
+  max = 6, //: number,
+  offset = 2
+) => {
+  const nbZero = -Math.floor(Math.log10(value) + 1)
+  return Math.min(Math.max(nbZero + offset, min), max)
+}
