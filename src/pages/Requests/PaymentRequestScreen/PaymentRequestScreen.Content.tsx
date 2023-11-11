@@ -1,3 +1,4 @@
+import BigDecimal from 'bignumber.js'
 import { ChainId } from 'caip'
 import {
   RequestDetails,
@@ -81,13 +82,6 @@ export const PaymentRequestScreenContent = React.memo(
       [resource]
     )
 
-    const [maybeNativeAssetWalletBannerBalance] =
-      getAggregateWalletBannerBalanceResult(
-        useAggregateWalletBannerBalances({
-          resource: chainId,
-        })
-      )
-
     const maybeBlockchainWallet = useMaybeBlockchainAccountForResource({
       resource,
     })
@@ -101,6 +95,18 @@ export const PaymentRequestScreenContent = React.memo(
       const url = `${data.blockchainNetwork.explorerURL}/tx/${transactionHash}`
       Linking.openURL(url)
     }, [data.blockchainNetwork.explorerURL, transactionConfirmation])
+
+    // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
+    // and the base currency.
+    const maybeValuation = aggregateWalletBannerBalance.valuation
+    //?.conversionRate
+
+    const [maybeNativeAssetWalletBannerBalance] =
+      getAggregateWalletBannerBalanceResult(
+        useAggregateWalletBannerBalances({
+          resource: chainId,
+        })
+      )
 
     if (isNotStarted) {
       return (
@@ -138,7 +144,16 @@ export const PaymentRequestScreenContent = React.memo(
               assetSymbol={aggregateWalletBannerBalance.symbol}
               assetLogo={aggregateWalletBannerBalance.icon || undefined}
               formattedAssetPrice={
-                getCurrentValueStringAsCryptoOrZero()
+                `${
+                  maybeValuation
+                    ? `${
+                        CURRENCY_SYMBOLS[maybeValuation.currency]
+                      }${new BigDecimal(
+                        maybeValuation.conversionRate
+                      ).decimalPlaces(2)}`
+                    : ''
+                }`
+                //getCurrentValueStringAsCryptoOrZero()
                 //asset?.price
                 //  ? formatFiatCurrency(asset.price)
                 //  : undefined
@@ -178,7 +193,7 @@ export const PaymentRequestScreenContent = React.memo(
                       decimals,
                     }),
                     valuation: maybeValuation,
-                    decimalPlaces: 3,
+                    decimalPlaces: 2,
                   })
 
                 return (
