@@ -27,9 +27,8 @@ export function convertPredictedTransactionFeeToString({
 
   if (chainId.namespace === SupportedCaipNamespace.EIP_155)
     return {
-      feeAmount: `${ethers.utils.formatUnits(
-        predictedMaxTransactionFee,
-        'gwei'
+      feeAmount: `${Math.round(
+        parseFloat(ethers.utils.formatUnits(predictedMaxTransactionFee, 'gwei'))
       )}`,
       feeSymbol: 'gwei',
     }

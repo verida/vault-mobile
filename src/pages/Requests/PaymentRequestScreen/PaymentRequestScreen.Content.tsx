@@ -23,7 +23,7 @@ import {
 import { reduceProtocols } from 'features/protocols'
 import {
   convertFromCryptoIntegerToDecimal,
-  convertFromCryptoToFiat,
+  convertFromCryptoIntegerToMaybeDecimalFiat,
   convertPredictedTransactionFeeToString,
   useTokenCalculator,
 } from 'features/token'
@@ -39,10 +39,7 @@ import type { PaymentRequestScreenParams } from './'
 export const PaymentRequestScreenContent = React.memo(
   function PaymentRequestScreenContent({
     details,
-    tokenCalculator: {
-      getCurrentValueStringAsCryptoOrZero,
-      getCurrentValueStringAsFiatOrZero,
-    },
+    tokenCalculator: { getCurrentValueStringAsCryptoOrZero, isValidValue },
     loading,
     predictedMaxTransactionFee,
     data,
@@ -98,8 +95,16 @@ export const PaymentRequestScreenContent = React.memo(
 
     // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
     // and the base currency.
-    const maybeValuation = aggregateWalletBannerBalance.valuation
-    //?.conversionRate
+    const { valuation: maybeValuation } = aggregateWalletBannerBalance
+
+    const maybeFiatPaymentAmount = convertFromCryptoIntegerToMaybeDecimalFiat({
+      integerCryptoAmount: String(data.amount),
+      aggregateWalletBannerBalance,
+    })
+
+    const maybeFormattedFiatValue = maybeFiatPaymentAmount
+      ? `${maybeFiatPaymentAmount.fiatSymbol}${maybeFiatPaymentAmount.fiatAmount}`
+      : undefined
 
     const [maybeNativeAssetWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(
@@ -143,27 +148,16 @@ export const PaymentRequestScreenContent = React.memo(
               assetAmount={getCurrentValueStringAsCryptoOrZero()}
               assetSymbol={aggregateWalletBannerBalance.symbol}
               assetLogo={aggregateWalletBannerBalance.icon || undefined}
-              formattedAssetPrice={
-                `${
-                  maybeValuation
-                    ? `${
-                        CURRENCY_SYMBOLS[maybeValuation.currency]
-                      }${new BigDecimal(
-                        maybeValuation.conversionRate
-                      ).decimalPlaces(2)}`
-                    : ''
-                }`
-                //getCurrentValueStringAsCryptoOrZero()
-                //asset?.price
-                //  ? formatFiatCurrency(asset.price)
-                //  : undefined
-              }
-              formattedFiatValue={
-                getCurrentValueStringAsFiatOrZero()
-                //asset?.price && amount !== null
-                //  ? formatFiatCurrency(asset.price * amount)
-                //  : undefined
-              }
+              formattedAssetPrice={`${
+                maybeValuation
+                  ? `${
+                      CURRENCY_SYMBOLS[maybeValuation.currency]
+                    }${new BigDecimal(
+                      maybeValuation.conversionRate
+                    ).decimalPlaces(2)}`
+                  : ''
+              }`}
+              formattedFiatValue={maybeFormattedFiatValue}
               chainLabel={data.blockchainNetwork.label}
               chainLogo={data.blockchainNetwork.icon}
               style={styles.valueContainer}
@@ -177,31 +171,21 @@ export const PaymentRequestScreenContent = React.memo(
                     predictedMaxTransactionFee,
                   })
 
-                const maybeValuation =
-                  maybeNativeAssetWalletBannerBalance.valuation
-
-                const { decimals } = maybeNativeAssetWalletBannerBalance
-
-                const maybeFiatSymbol =
-                  !!maybeValuation && CURRENCY_SYMBOLS[maybeValuation.currency]
-
-                const maybeFiatEquivalent =
-                  !!maybeValuation &&
-                  convertFromCryptoToFiat({
-                    valueInCrypto: convertFromCryptoIntegerToDecimal({
-                      integerCryptoAmount: String(predictedMaxTransactionFee),
-                      decimals,
-                    }),
-                    valuation: maybeValuation,
-                    decimalPlaces: 2,
+                const maybeFiatTransactionFee =
+                  convertFromCryptoIntegerToMaybeDecimalFiat({
+                    integerCryptoAmount: String(predictedMaxTransactionFee),
+                    aggregateWalletBannerBalance:
+                      maybeNativeAssetWalletBannerBalance,
                   })
 
                 return (
                   <RequestPaymentFee
                     feeAmount={feeAmount}
                     feeSymbol={feeSymbol}
-                    formattedFiatSymbol={maybeFiatSymbol || undefined}
-                    formattedFiatValue={maybeFiatEquivalent || ''}
+                    formattedFiatSymbol={maybeFiatTransactionFee?.fiatSymbol}
+                    formattedFiatValue={
+                      maybeFiatTransactionFee?.fiatAmount || ''
+                    }
                     style={styles.feeContainer}
                   />
                 )
@@ -212,21 +196,15 @@ export const PaymentRequestScreenContent = React.memo(
                 logo={maybeBlockchainWallet.icon || data.blockchainNetwork.icon}
                 label={maybeBlockchainWallet.label}
                 address={maybeBlockchainWallet.address}
-                formattedBalance={
-                  'TODO format balance'
-                  //asset
-                  //  ? `${asset.balance.toFixed(
-                  //      assetSignificantDecimals
-                  //    )} ${asset.symbol}`
-                  //  : undefined
-                }
+                formattedBalance={`${convertFromCryptoIntegerToDecimal({
+                  integerCryptoAmount: String(
+                    aggregateWalletBannerBalance.balance
+                  ),
+                  decimals: aggregateWalletBannerBalance.decimals,
+                  decimalPlaces: 3,
+                })} ${aggregateWalletBannerBalance.symbol}`}
                 alertType='error'
-                alertContent={
-                  'TODO format funds content'
-                  //asset && amount !== null && asset.balance < amount
-                  //  ? 'Insufficient funds'
-                  //  : undefined
-                }
+                alertContent={!isValidValue ? 'Insufficient funds' : ''}
                 style={styles.walletSelectorButton}
               />
             )}
@@ -243,37 +221,26 @@ export const PaymentRequestScreenContent = React.memo(
               maybeConfirmTransactionError
                 ? 'error'
                 : loading || !transactionConfirmation
-                ? // TODO: typo in type definition
-                  'processsing'
+                ? 'processsing'
                 : 'success'
             }
             title={
               maybeConfirmTransactionError
                 ? 'Error!'
                 : loading || !transactionConfirmation
-                ? // TODO: typo in type definition
-                  'Processing payment...'
+                ? 'Processing payment...'
                 : 'Success!'
             }
             subtitle={
               maybeConfirmTransactionError
                 ? 'Something went wrong. Please try again later.'
                 : loading || !transactionConfirmation
-                ? // TODO: typo in type definition
-                  'Please wait a moment, we are transfering your payment.'
-                : 'TODO transaction amount!'
-              //status === 'processing'
-              //  ? 'Please wait a moment, we are transfering your payment.'
-              //  : status === 'success'
-              //  ? asset && amount !== null
-              //    ? `${String(amount)} ${
-              //        asset.symbol
-              //      } (${formatFiatCurrency(
-              //        asset.price * amount
-              //      )}) has been sent to ${name}!`
-              //    : `Payment sent to ${name}!`
-              //  : // : erroMessage || 'Something went wrong. Try again later.' // TODO: Try to display a useful message to users
-              //    'Something went wrong. Try again later.'
+                ? 'Please wait a moment, we are transferring your payment.'
+                : `${
+                    maybeFormattedFiatValue
+                      ? maybeFormattedFiatValue
+                      : 'Payment'
+                  } sent to ${senderName}!`
             }
           />
           {Boolean(transactionConfirmation) && (
