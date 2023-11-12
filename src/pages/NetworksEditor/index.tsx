@@ -115,8 +115,10 @@ export const NetworksEditor = React.memo(
       initialValue,
     })
 
-    const { isMalformed, getMaybeEvaluatedChainMetadata } =
+    const { evaluationResult, getMaybeEvaluatedChainMetadata } =
       chainMetadataFormFields
+
+    const isMalformed = Boolean(evaluationResult.error)
 
     const saveControlsEnabled = !isMalformed && !disabled
 
@@ -124,18 +126,18 @@ export const NetworksEditor = React.memo(
       try {
         if (!saveControlsEnabled) throw attemptedToModifyDisabledNetworkError()
 
-        const evaluatedChainMetadata = getMaybeEvaluatedChainMetadata()
+        const { data } = getMaybeEvaluatedChainMetadata()
 
-        if (!evaluatedChainMetadata)
+        if (!data)
           throw new Error(
             `Developer error. Expected EvaluatedChainMetadata, encountered "${String(
-              evaluatedChainMetadata
+              data
             )}".`
           )
 
         // HACK: Adding a custom network will implicitly overwrite
         //       duplicate fields.
-        await addCustomNetworks([evaluatedChainMetadata])
+        await addCustomNetworks([data])
 
         return navigation.goBack()
       } catch (e) {

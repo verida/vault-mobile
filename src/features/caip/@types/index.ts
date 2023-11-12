@@ -1,5 +1,7 @@
 import { z } from 'zod'
 
+import { SupportedBlockchainNamespace } from '../../blockchain/@types/enums'
+
 export const ChainMetadataBlockExplorerUrl = z.string().url()
 
 export const ChainMetadataBlockExplorer = z.object({
@@ -28,14 +30,14 @@ export type ChainMetadataRpcs = z.infer<typeof ChainMetadataRpcs>
 
 export const ChainMetadata = z
   .object({
-    name: z.string(),
+    name: z.string().nonempty(),
     rpcUrls: ChainMetadataRpcs,
-    namespace: z.string(),
-    reference: z.string(),
-    decimals: z.number(),
+    namespace: z.nativeEnum(SupportedBlockchainNamespace),
+    reference: z.string().nonempty(),
+    decimals: z.number().positive(),
     isMainnet: z.boolean().or(z.null()),
-    nativeCurrencyName: z.string(),
-    symbol: z.string(),
+    nativeCurrencyName: z.string().nonempty(),
+    symbol: z.string().nonempty(),
     icon: z.string().or(z.null()),
     blockExplorers: ChainMetadataBlockExplorers,
   })

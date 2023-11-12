@@ -17,7 +17,10 @@ import {
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
+import PlusIcon from 'assets/plus_icon.svg'
+import NavigationHeader, {
+  HeaderSideButton,
+} from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
 import { useMainNavigation } from 'navigation/hooks'
 
@@ -68,6 +71,24 @@ function Networks(): JSX.Element {
     )
   }, [chainMetadatas, searchText])
 
+  const onPressAddNetwork = React.useCallback(
+    () =>
+      navigation.navigate('NetworksEditor', {
+        title: 'Create custom network',
+        disabled: false,
+        initialValue: null,
+      }),
+    [navigation]
+  )
+
+  const headerSideButton: HeaderSideButton = React.useMemo(
+    () => ({
+      icon: <PlusIcon />,
+      action: onPressAddNetwork,
+    }),
+    [onPressAddNetwork]
+  )
+
   useImmediateLayoutAnimation([searchText])
 
   return (
@@ -76,6 +97,7 @@ function Networks(): JSX.Element {
         bottomBorder={false}
         title='Networks'
         renderNetInfo={false}
+        right={headerSideButton}
       />
       <View style={styles.content}>
         <SearchBar

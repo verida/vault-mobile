@@ -3,8 +3,9 @@ import * as React from 'react'
 import { StyleSheet, TextInput, View } from 'react-native'
 import { $enum } from 'ts-enum-util'
 
-import Label from 'components/Label'
+import Label, { DEFAULT_LABEL_COLOR } from 'components/Label'
 import DropDownPicker, { Option } from 'components/Select'
+import { DECLINE_COLOR } from 'constants/color'
 import InputStyles from 'styles/inputs'
 
 import { useCreateChainMetadataFormFields } from '../hooks'
@@ -56,11 +57,12 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
   setSymbol,
   icon,
   setIcon,
-  blockExplorer,
-  setBlockExplorer,
+  blockExplorerUrl,
+  setBlockExplorerUrl,
   isMainnet,
   setIsMainnet,
   disabled,
+  evaluationResult: { error: maybeError },
 }: ReturnType<typeof useCreateChainMetadataFormFields> & {
   readonly disabled: boolean
 }): JSX.Element {
@@ -86,9 +88,34 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
     [setIsMainnet]
   )
 
+  const getMaybeFieldError = React.useCallback(
+    (fieldName: string) => {
+      if (!maybeError || !('issues' in maybeError)) return null
+
+      const { issues } = maybeError
+
+      const maybeIssue = issues?.find((e) => e.path?.[0] === fieldName)
+
+      if (!maybeIssue) return null
+
+      return maybeIssue.message
+    },
+    [maybeError]
+  )
+
+  const computeLabelStyleForError = React.useCallback(
+    (fieldName: string) =>
+      getMaybeFieldError(fieldName)
+        ? { color: DECLINE_COLOR }
+        : { color: DEFAULT_LABEL_COLOR },
+    [getMaybeFieldError]
+  )
+
   return (
     <View style={styles.container}>
-      <Label>Blockchain namespace</Label>
+      <Label style={computeLabelStyleForError('namespace')}>
+        Blockchain namespace
+      </Label>
       <DropDownPicker
         disabled={disabled}
         showArrow
@@ -99,7 +126,7 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         containerStyle={styles.select}
         onChangeItem={onChangeNamespaceDropdownOption}
       />
-      <Label>Chain name</Label>
+      <Label style={computeLabelStyleForError('name')}>Chain name</Label>
       <TextInput
         value={name}
         editable={!disabled}
@@ -109,7 +136,7 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Enter chain name'}
       />
-      <Label>Chain ID</Label>
+      <Label style={computeLabelStyleForError('reference')}>Chain ID</Label>
       <TextInput
         value={reference}
         editable={!disabled}
@@ -120,7 +147,7 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Enter Chain ID'}
       />
-      <Label>Network type</Label>
+      <Label style={computeLabelStyleForError('isMainnet')}>Network type</Label>
       <DropDownPicker
         disabled={disabled}
         showArrow
@@ -131,7 +158,7 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         containerStyle={styles.select}
         onChangeItem={onChangeMainnetDropdownOption}
       />
-      <Label>Decimals</Label>
+      <Label style={computeLabelStyleForError('decimals')}>Decimals</Label>
       <TextInput
         value={String(decimals)}
         editable={!disabled}
@@ -142,7 +169,7 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Enter decimals'}
       />
-      <Label>RPC URL</Label>
+      <Label style={computeLabelStyleForError('rpcUrls')}>RPC URL</Label>
       <TextInput
         value={rpcUrl}
         editable={!disabled}
@@ -152,7 +179,9 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Enter RPC URL'}
       />
-      <Label>Network icon URL (optional)</Label>
+      <Label style={computeLabelStyleForError('icon')}>
+        Network icon URL (optional)
+      </Label>
       <TextInput
         value={icon}
         editable={!disabled}
@@ -162,7 +191,9 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Enter Network icon URL'}
       />
-      <Label>Network token name</Label>
+      <Label style={computeLabelStyleForError('nativeCurrencyName')}>
+        Network token name
+      </Label>
       <TextInput
         value={nativeCurrencyName}
         editable={!disabled}
@@ -172,7 +203,9 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Set native token name'}
       />
-      <Label>Network token symbol</Label>
+      <Label style={computeLabelStyleForError('symbol')}>
+        Network token symbol
+      </Label>
       <TextInput
         value={symbol}
         editable={!disabled}
@@ -182,13 +215,15 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
         style={InputStyles.input}
         placeholder={'Set native token symbol'}
       />
-      <Label>Block explorer URL</Label>
+      <Label style={computeLabelStyleForError('blockExplorers')}>
+        Block explorer URL (optional)
+      </Label>
       <TextInput
-        value={blockExplorer}
+        value={blockExplorerUrl}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
-        onChangeText={setBlockExplorer}
+        onChangeText={setBlockExplorerUrl}
         style={InputStyles.input}
         placeholder={'Set block explorer URL'}
       />

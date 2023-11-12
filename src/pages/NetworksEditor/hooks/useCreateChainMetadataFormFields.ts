@@ -5,6 +5,12 @@ import {
   isSupportedCaipNamespace,
 } from 'features/caip'
 import * as React from 'react'
+import { ZodError } from 'zod-validation-error'
+
+type EvaluationResult = {
+  readonly data: ChainMetadata | null
+  readonly error?: ZodError
+}
 
 export function useCreateChainMetadataFormFields({
   initialValue,
@@ -49,7 +55,7 @@ export function useCreateChainMetadataFormFields({
 
   // HACK: Here we only support a single block explorer for now. We also don't
   //       define the standard or the name.
-  const [blockExplorer, setBlockExplorer] = React.useState<string>(
+  const [blockExplorerUrl, setBlockExplorerUrl] = React.useState<string>(
     initialValue?.blockExplorers?.[0]?.url || ''
   )
 
@@ -60,7 +66,12 @@ export function useCreateChainMetadataFormFields({
   )
 
   const getMaybeEvaluatedChainMetadata =
-    React.useCallback((): ChainMetadata | null => {
+    React.useCallback((): EvaluationResult => {
+      const blockExplorers =
+        typeof blockExplorerUrl === 'string' && blockExplorerUrl.length
+          ? [{ url: blockExplorerUrl }]
+          : []
+
       const maybeChainMetadata = {
         namespace,
         reference,
@@ -70,32 +81,31 @@ export function useCreateChainMetadataFormFields({
         decimals,
         nativeCurrencyName,
         icon,
-        blockExplorers: [
-          {
-            url: blockExplorer,
-          },
-        ],
+        blockExplorers,
         isMainnet,
       }
       const result = ChainMetadata.safeParse(maybeChainMetadata)
 
-      if (!result.success) return null
+      if (!result.success) return { data: null, error: result.error }
 
-      return result.data
+      const { data } = result
+      return { data }
     }, [
-      blockExplorer,
-      decimals,
-      icon,
-      name,
+      blockExplorerUrl,
       namespace,
-      nativeCurrencyName,
       reference,
       rpcUrl,
+      name,
       symbol,
+      decimals,
+      nativeCurrencyName,
+      icon,
       isMainnet,
     ])
 
-  const isMalformed = !getMaybeEvaluatedChainMetadata()
+  const evaluationResult = React.useMemo(getMaybeEvaluatedChainMetadata, [
+    getMaybeEvaluatedChainMetadata,
+  ])
 
   return {
     name,
@@ -114,11 +124,11 @@ export function useCreateChainMetadataFormFields({
     setSymbol,
     icon,
     setIcon,
-    blockExplorer,
-    setBlockExplorer,
+    blockExplorerUrl,
+    setBlockExplorerUrl,
     getMaybeEvaluatedChainMetadata,
     isMainnet,
     setIsMainnet,
-    isMalformed,
+    evaluationResult,
   }
 }

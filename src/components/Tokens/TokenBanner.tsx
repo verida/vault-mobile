@@ -4,7 +4,6 @@ import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
-// import BuyIcon from 'assets/buy_icon.svg'
 import CopyIcon from 'assets/copy_icon.svg'
 import ReceiveIcon from 'assets/receive_icon.svg'
 import SendIcon from 'assets/send_icon.svg'
