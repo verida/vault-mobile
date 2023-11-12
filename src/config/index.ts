@@ -6,7 +6,7 @@ import {
   NetworkId,
 } from 'features/polygonid/constants'
 import { LogLevel } from 'features/telemetry'
-import { clone, cloneDeep, isEmpty, isEqual, merge } from 'lodash'
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
 import {
@@ -171,9 +171,6 @@ const RESOLVED_CONFIG = Object.assign(
 )
 
 export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
-
-// TODO: Eventually get rid of default export
-export default RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
 
 /*
  * Merge local app-config with remote-config

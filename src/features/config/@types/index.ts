@@ -1,4 +1,4 @@
-import { config as appConfig } from '../../../config'
+import { config as appConfig } from 'config'
 
 export type ForcedUpgradeType = {
   minVersion?: string

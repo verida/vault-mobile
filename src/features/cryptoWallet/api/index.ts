@@ -2,7 +2,7 @@ import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
 import { EnvironmentType } from '@verida/types/dist/NetworkInterfaces'
 import { AssetId, ChainId } from 'caip'
-import CONFIG from 'config'
+import { config } from 'config'
 import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
@@ -12,7 +12,7 @@ import { RootState } from 'reduxStore/types'
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: CONFIG.WALLET_PROVIDER_URL,
+  baseUrl: config.WALLET_PROVIDER_URL,
 })
 
 export const cryptoWalletApi = createApi({
@@ -32,7 +32,7 @@ export const cryptoWalletApi = createApi({
       transformResponse: (response: {
         data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
-        const environmentType: EnvironmentType = CONFIG.WALLET_PROVIDER_CHAINS
+        const environmentType: EnvironmentType = config.WALLET_PROVIDER_CHAINS
 
         const networkEntries = response.data[environmentType]
 

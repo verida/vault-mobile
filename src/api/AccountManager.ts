@@ -36,7 +36,7 @@ import {
 import { getCountryCode } from 'helpers/countries'
 import DataConnectorsManager from './DataConnectorsManager'
 
-import CONFIG from '../config'
+import { config } from 'config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
@@ -68,8 +68,8 @@ class AccountManager extends EventEmitter {
 
     if (hasInvalidData) {
       this.accounts = {}
-      await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.ACCOUNTS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.SELECTED_ACCOUNT_DID_STORAGE_KEY)
 
       AccountManager.getInstance().emit('ForcedDeleteAccounts', null)
     }
@@ -79,8 +79,8 @@ class AccountManager extends EventEmitter {
     try {
       if (!this.selectedAccount) {
         const [storedAccounts, storedSelectedAccountDid] = await Promise.all([
-          SecureStore.getItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY),
-          SecureStore.getItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY),
+          SecureStore.getItemAsync(config.ACCOUNTS_STORAGE_KEY),
+          SecureStore.getItemAsync(config.SELECTED_ACCOUNT_DID_STORAGE_KEY),
         ])
 
         if (storedAccounts) {
@@ -117,8 +117,8 @@ class AccountManager extends EventEmitter {
   private async initUserWallets() {
     try {
       const [walletsRaw, selectedWalletId] = await Promise.all([
-        SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
-        SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
+        SecureStore.getItemAsync(config.WALLETS_STORAGE_KEY),
+        SecureStore.getItemAsync(config.SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
           cryptoWalletApi.endpoints.chainsList.initiate(
             {},
@@ -179,12 +179,12 @@ class AccountManager extends EventEmitter {
     try {
       if (!this.selectedAccount) return undefined
 
-      const environment = CONFIG.VERIDA_ENVIRONMENT
+      const environment = config.VERIDA_ENVIRONMENT
 
       this.client = new Client({
         environment,
         didClientConfig: {
-          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
           network: environment,
         },
       })
@@ -193,7 +193,7 @@ class AccountManager extends EventEmitter {
 
       // Use empty endpointUri's as they should already have been specified
       // when the account was created
-      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
+      const didClientConfig = merge({}, config.VERIDA_DID_CLIENT_CONFIG)
 
       const account = new AutoAccount({
         privateKey: mnemonic,
@@ -213,7 +213,7 @@ class AccountManager extends EventEmitter {
 
       // Open an application context
       const context = await this.client.openContext(
-        CONFIG.VERIDA_CONTEXT_NAME,
+        config.VERIDA_CONTEXT_NAME,
         false
       )
 
@@ -279,9 +279,9 @@ class AccountManager extends EventEmitter {
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
     try {
-      const configDb = await this.context?.openDatabase(CONFIG.CONFIG_DB)
+      const configDb = await this.context?.openDatabase(config.CONFIG_DB)
       await configDb?.save(
-        { _id: CONFIG.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
+        { _id: config.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
         {}
       )
     } catch (e) {
@@ -292,8 +292,8 @@ class AccountManager extends EventEmitter {
 
   public async getBackedupSeedPhraseConfig() {
     try {
-      const configDb = await this.context?.openDatabase(CONFIG.CONFIG_DB)
-      return await configDb?.get(CONFIG.SEED_PHRASE_BACKED_UP_CONFIG, {})
+      const configDb = await this.context?.openDatabase(config.CONFIG_DB)
+      return await configDb?.get(config.SEED_PHRASE_BACKED_UP_CONFIG, {})
     } catch (e) {
       Sentry.captureException(e)
       throw e
@@ -344,10 +344,10 @@ class AccountManager extends EventEmitter {
       // save wallet state to secure storage
       await Promise.all([
         SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
+          config.WALLETS_STORAGE_KEY,
           JSON.stringify(walletData)
         ),
-        SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, walletID),
+        SecureStore.setItemAsync(config.SELECTED_WALLET_STORAGE_KEY, walletID),
       ])
     } catch (e) {
       Sentry.captureException(e)
@@ -373,7 +373,7 @@ class AccountManager extends EventEmitter {
 
         // save to storage..
         await SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
+          config.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
 
@@ -385,7 +385,7 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSelectedWallet(selectedWalletID))
 
           await SecureStore.setItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            config.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         }
@@ -409,7 +409,7 @@ class AccountManager extends EventEmitter {
     updateProgress?.('CreateProfile', 'None')
     updateProgress?.('ClaimUsername', 'None')
 
-    const environment = CONFIG.VERIDA_ENVIRONMENT
+    const environment = config.VERIDA_ENVIRONMENT
 
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
@@ -436,14 +436,14 @@ class AccountManager extends EventEmitter {
     }
 
     try {
-      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
+      const didClientConfig = merge({}, config.VERIDA_DID_CLIENT_CONFIG, {
         veridaKey: this.selectedAccount!.privateKey,
       })
 
       this.client = new Client({
         environment,
         didClientConfig: {
-          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
           network: environment,
         },
       })
@@ -459,7 +459,7 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
+        notificationEndpoints: [...config.NOTIFICATION_ENDPOINTS],
       })
 
       updateProgress?.('StorageLocation', 'Loading')
@@ -468,12 +468,12 @@ class AccountManager extends EventEmitter {
 
       // Open the Vault context, forcing its creation
       const context = await this.client.openContext(
-        CONFIG.VERIDA_CONTEXT_NAME,
+        config.VERIDA_CONTEXT_NAME,
         true
       )
 
       if (context === undefined) {
-        throw new Error(`Failed to open context ${CONFIG.VERIDA_CONTEXT_NAME}`)
+        throw new Error(`Failed to open context ${config.VERIDA_CONTEXT_NAME}`)
       }
       this.context = context
 
@@ -545,8 +545,8 @@ class AccountManager extends EventEmitter {
       selectedDids = Object.keys(this.accounts)
     }
     try {
-      await SecureStore.deleteItemAsync(CONFIG.WALLETS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.WALLETS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.SELECTED_WALLET_STORAGE_KEY)
       await store.dispatch(removeUserWallets())
       DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
@@ -554,10 +554,10 @@ class AccountManager extends EventEmitter {
       })
 
       if (isEmpty(this.selectedAccount)) {
-        await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
+        await SecureStore.deleteItemAsync(config.ACCOUNTS_STORAGE_KEY)
       } else {
         await SecureStore.setItemAsync(
-          CONFIG.ACCOUNTS_STORAGE_KEY,
+          config.ACCOUNTS_STORAGE_KEY,
           JSON.stringify(this.accounts)
         )
       }
@@ -568,7 +568,7 @@ class AccountManager extends EventEmitter {
         this.client = undefined
         this.vault = undefined
         await SecureStore.deleteItemAsync(
-          CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
+          config.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
         store.dispatch(setSelectedAccount(undefined))
       }
@@ -593,7 +593,7 @@ class AccountManager extends EventEmitter {
         this.selectedAccount.seedPhraseReminder.lastTime = Date.now()
       }
       await SecureStore.setItemAsync(
-        CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
+        config.SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
 
@@ -645,12 +645,12 @@ class AccountManager extends EventEmitter {
     this.accounts[this.selectedAccount.did] = this.selectedAccount
 
     await SecureStore.setItemAsync(
-      CONFIG.ACCOUNTS_STORAGE_KEY,
+      config.ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
     )
 
     await SecureStore.setItemAsync(
-      CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      config.SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
   }

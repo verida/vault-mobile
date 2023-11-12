@@ -1,6 +1,6 @@
 import remoteConfig from '@react-native-firebase/remote-config'
 import * as Sentry from '@sentry/react-native'
-import { config, mergeWithRemoteConfig } from 'config'
+import { config as appConfig, mergeWithRemoteConfig } from 'config'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEqual } from 'lodash'
 import React, {
@@ -16,14 +16,12 @@ import RNRestart from 'react-native-restart'
 import LoadingView from 'components/LoadingView'
 import { MaintenanceScreen } from 'pages/Account/MaintenanceScreen'
 
-import { config as appConfig } from '../../../config'
 import {
   ConfigContextType,
   ForcedCreateAccountType,
   ForcedUpgradeType,
   MaintenanceMode,
 } from '../@types'
-import { compareAppConfig } from '../utils'
 
 const DEFAULT_REMOTE_CONFIG = {
   forced_upgrade: '{}',
@@ -43,7 +41,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
   const [maintenanceMode, setMaintenanceMode] = useState<MaintenanceMode>({})
 
   const [loading, setLoading] = useState(true)
-  const [initialLoad, setInitialLoad] = useState(true)
+  const initialLoadRef = useRef(true)
   const appState = useRef(AppState.currentState)
 
   const fetchRemoteConfig = useCallback(() => {
@@ -51,6 +49,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
       minimumFetchIntervalMillis: REMOTE_CONFIG_FETCH_INTERVAL_MILLIS,
     })
 
+    console.log('Fetch Remote Config')
     remoteConfig()
       .setDefaults(DEFAULT_REMOTE_CONFIG)
       .then(() => remoteConfig()?.fetchAndActivate())
@@ -98,7 +97,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
           }
 
           // Merge with remote config on the app initial load
-          if (initialLoad) {
+          if (initialLoadRef.current) {
             mergeWithRemoteConfig(remoteAppConfig || savedRemoteConfig)
           } else if (remoteConfigUpdated) {
             // Handle runtime app config updated, need to reload the app
@@ -124,10 +123,11 @@ export const ConfigProvider: React.FC = ({ children }) => {
         Sentry.captureException(error)
       })
       .finally(() => {
-        setInitialLoad(false)
+        console.log('Done Load Config')
+        initialLoadRef.current = false
         setLoading(false)
       })
-  }, [initialLoad])
+  }, [])
 
   useEffect(() => {
     const handleAppStateChange = (nextAppState: AppStateStatus) => {
