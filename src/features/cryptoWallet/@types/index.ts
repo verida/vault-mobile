@@ -334,5 +334,5 @@ export type UseCreateCryptoWalletBalancesResult =
     readonly refetch: RefetchCryptoWalletBalances
   }
 
-export type CryptoWalletCawfreeContextValue =
+export type CryptoWalletBalanceContextValue =
   UseCreateCryptoWalletBalancesResult

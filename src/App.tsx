@@ -8,7 +8,7 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { BlockchainProvider } from 'features/blockchain'
 import {
-  CryptoWalletCawfreeProvider,
+  CryptoWalletBalanceProvider,
   CryptoWalletProvider,
 } from 'features/cryptoWallet'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
@@ -112,7 +112,7 @@ function App() {
                     <RootSiblingParent>
                       <ActionSheetProvider>
                         <BlockchainProvider>
-                          <CryptoWalletCawfreeProvider>
+                          <CryptoWalletBalanceProvider>
                             <CryptoWalletProvider>
                               <WalletConnectProvider>
                                 <GestureHandlerRootView style={styles.flex}>
@@ -121,7 +121,7 @@ function App() {
                                 <MetaServerChecks />
                               </WalletConnectProvider>
                             </CryptoWalletProvider>
-                          </CryptoWalletCawfreeProvider>
+                          </CryptoWalletBalanceProvider>
                         </BlockchainProvider>
                       </ActionSheetProvider>
                     </RootSiblingParent>

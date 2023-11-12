@@ -1,14 +1,14 @@
 import * as React from 'react'
 
-import { CryptoWalletContextCawfreeProvider } from '../contexts'
+import { CryptoWalletContextBalanceProvider } from '../contexts'
 import { useCreateCryptoWalletBalances } from '../hooks'
 
-export const CryptoWalletCawfreeProvider = React.memo(
-  function CryptoWalletCawfreeProvider({
+export const CryptoWalletBalanceProvider = React.memo(
+  function CryptoWalletBalanceProvider({
     children,
   }: React.PropsWithChildren<unknown>): JSX.Element {
     return (
-      <CryptoWalletContextCawfreeProvider
+      <CryptoWalletContextBalanceProvider
         children={children}
         value={useCreateCryptoWalletBalances()}
       />

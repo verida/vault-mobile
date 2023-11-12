@@ -1,1 +1,1 @@
-export * from './CryptoWallet.Cawfree.Provider'
+export * from './CryptoWallet.Balance.Provider'

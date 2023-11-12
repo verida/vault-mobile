@@ -32,7 +32,6 @@ export interface PaymentRequestScreenParams {
 
 type PaymentRequestScreenProps = MainStackScreenProps<'PaymentRequest'>
 
-// TODO: programmatically trigger a payment request
 export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenProps> =
   (props) => {
     const { navigation, route } = props

@@ -24,7 +24,7 @@ import {
   AggregateWalletBannerBalanceErc20,
   AggregateWalletBannerBalanceType,
 } from '../@types'
-import { useCryptoWalletCawfreeContext } from '../contexts'
+import { useCryptoWalletBalanceContext } from '../contexts'
 import {
   getChainIdParamsFromResourceParams,
   getFromAddressForResourceOrThrow,
@@ -70,7 +70,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
 
-  const { refetch } = useCryptoWalletCawfreeContext()
+  const { refetch } = useCryptoWalletBalanceContext()
 
   // Attempts to collect all of the necessary data dependencies before
   // queuing a transaction.

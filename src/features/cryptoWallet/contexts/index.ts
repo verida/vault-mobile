@@ -1,2 +1,2 @@
-export * from './CryptoWallet.Cawfree.Context'
+export * from './CryptoWallet.Balance.Context'
 export * from './CryptoWalletContext'

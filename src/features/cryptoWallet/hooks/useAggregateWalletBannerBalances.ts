@@ -8,7 +8,7 @@ import {
   UseAggregateWalletBannerBalancesState,
 } from '../@types'
 import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
-import { useCryptoWalletCawfreeContext } from '../contexts'
+import { useCryptoWalletBalanceContext } from '../contexts'
 import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../utils'
 import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
@@ -42,7 +42,7 @@ export function useAggregateWalletBannerBalances(
 ): UseAggregateWalletBannerBalancesState & {
   readonly refetch: () => Promise<void>
 } {
-  const cryptoWalletContext = useCryptoWalletCawfreeContext()
+  const cryptoWalletContext = useCryptoWalletBalanceContext()
   const cryptoWalletBalances =
     getMaybeCreateCryptoWalletBalancesResult(cryptoWalletContext)
   const { refetch: refetchCryptoWalletContext } = cryptoWalletContext
