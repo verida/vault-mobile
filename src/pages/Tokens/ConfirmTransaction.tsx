@@ -91,7 +91,7 @@ const ConfirmTransaction = () => {
           icon: <Icon name='close' style={{ color: '#000' }} />,
           action: () =>
             navigation.navigate('SingleCurrency', {
-              aggregateWalletBannerBalance,
+              resource,
             }),
         }}
         title={`Send ${aggregateWalletBannerBalance.symbol}`}

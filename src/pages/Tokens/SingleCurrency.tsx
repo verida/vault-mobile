@@ -1,10 +1,12 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import {
-  AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceResult,
   getBlockchainNetworkLabel,
   getSelectedWalletById,
   getWalletAddressForChainId,
+  ResourceParams,
+  useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
@@ -34,7 +36,8 @@ export type SingleCurrencyRouteProp = RouteProp<
 >
 
 export type SingleCurrencyScreenProps = {
-  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  readonly resource: ResourceParams
+  //readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
 const SingleCurrency = () => {
@@ -44,10 +47,13 @@ const SingleCurrency = () => {
   const selectedWallet = useSelector(getSelectedWalletById)
 
   // TODO: we should fetch here instead, not pass the route params
-  const { aggregateWalletBannerBalance } =
-    useParams<SingleCurrencyScreenProps>()
+  const { resource } = useParams<SingleCurrencyScreenProps>()
 
-  const { resource } = aggregateWalletBannerBalance
+  const [aggregateWalletBannerBalance] = getAggregateWalletBannerBalanceResult(
+    useAggregateWalletBannerBalances({
+      resource,
+    })
+  )
 
   const chainId = useChainIdForResourceParams({ resource })
 
@@ -56,7 +62,6 @@ const SingleCurrency = () => {
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
 
   // TODO: is this right? what about multiple competing private keys for the same network?
-  //const maybeAddress = wallets?.[chainId.toString()]?.address
   const maybeAddress = getWalletAddressForChainId(
     chainId,
     selectedMinifiedAccounts

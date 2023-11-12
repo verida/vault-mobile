@@ -25,6 +25,8 @@ const TransactionSuccess = React.memo(
     const { amount, toAddress, aggregateWalletBannerBalance } =
       useParams<TransactionSuccessScreenProps>()
 
+    const { resource } = aggregateWalletBannerBalance
+
     const titleText = 'Success!'
 
     const descriptionText = `You sent ${amount} ${aggregateWalletBannerBalance.symbol} to ${toAddress}.`
@@ -38,7 +40,7 @@ const TransactionSuccess = React.memo(
         buttonLabel={buttonLabel}
         actionButtonOnPress={() =>
           navigation.navigate('SingleCurrency', {
-            aggregateWalletBannerBalance,
+            resource,
           })
         }
       />
