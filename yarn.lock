@@ -20839,6 +20839,11 @@ use-latest-callback@^0.1.5:
   resolved "https://registry.yarnpkg.com/use-latest-callback/-/use-latest-callback-0.1.5.tgz#a4a836c08fa72f6608730b5b8f4bbd9c57c04f51"
   integrity sha512-HtHatS2U4/h32NlkhupDsPlrbiD27gSH5swBdtXbCAlc6pfOFzaj0FehW/FO12rx8j2Vy4/lJScCiJyM01E+bQ==
 
+use-layout-animation@^0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/use-layout-animation/-/use-layout-animation-0.0.2.tgz#ac8eb488e74dc2e56988246983da2278b3cdd143"
+  integrity sha512-N71kmMs4Ni1Gc4QVqQg7cC8EsrybU0QEhp6Rl06V1Em7/6QBLDLXqc+NQRNVaqC5KRnE0FVKJCyy9Jc+uQbVsA==
+
 "use-subscription@>=1.0.0 <1.6.0":
   version "1.5.1"
   resolved "https://registry.yarnpkg.com/use-subscription/-/use-subscription-1.5.1.tgz#73501107f02fad84c6dd57965beb0b75c68c42d1"

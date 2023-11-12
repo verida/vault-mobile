@@ -9,6 +9,7 @@ import { Container } from 'native-base'
 import * as React from 'react'
 import { ListRenderItem, StyleSheet, View } from 'react-native'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
@@ -50,6 +51,8 @@ function Networks(): JSX.Element {
         .includes(searchText.toLocaleLowerCase())
     )
   }, [chainMetadatas, searchText])
+
+  useImmediateLayoutAnimation([searchText])
 
   return (
     <Container>
