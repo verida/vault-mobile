@@ -16,20 +16,25 @@ import { useBalanceByChainResultsForUniqueWalletAddresses } from './useBalanceBy
 //       effort basis which does not require imbuing the AggregateWalletBannerBalance
 //       with perfunctory information.
 export function useMaybeAssetIdForAggregateWalletBannerBalance({
-  aggregateWalletBannerBalance,
+  aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
 }: {
-  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance:
+    | AggregateWalletBannerBalance
+    | null
+    | undefined
 }): AssetId | undefined {
   const { balanceByChainResults } =
     useBalanceByChainResultsForUniqueWalletAddresses()
 
   return React.useMemo<AssetId | undefined>(() => {
-    const { type } = aggregateWalletBannerBalance
+    if (!maybeAggregateWalletBannerBalance) return undefined
+
+    const { type } = maybeAggregateWalletBannerBalance
 
     if (type !== AggregateWalletBannerBalanceType.BASE_CURRENCY)
       return undefined
 
-    const { resource } = aggregateWalletBannerBalance
+    const { resource } = maybeAggregateWalletBannerBalance
     const { namespace, reference } = resource
 
     // Search for matching AssetIds for a base-layer currency.
@@ -39,5 +44,5 @@ export function useMaybeAssetIdForAggregateWalletBannerBalance({
       .find(({ chainId: { namespace: n, reference: r } }) => {
         return n === namespace && r === reference
       })
-  }, [aggregateWalletBannerBalance, balanceByChainResults])
+  }, [maybeAggregateWalletBannerBalance, balanceByChainResults])
 }

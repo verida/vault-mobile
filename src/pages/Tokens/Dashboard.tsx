@@ -63,9 +63,13 @@ const TokenDashboard = React.memo(function TokenDashboard() {
             />
             <TokensList
               aggregateWalletBannerBalances={aggregateWalletBannerBalances}
-              onPressItem={({ resource }: AggregateWalletBannerBalance) => {
+              onPressItem={({
+                resource,
+                label: title,
+              }: AggregateWalletBannerBalance) => {
                 navigation.navigate('SingleCurrency', {
                   resource,
+                  title,
                 })
               }}
               onPullToRefresh={pullToRefresh}

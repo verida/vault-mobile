@@ -35,6 +35,7 @@ export type SingleCurrencyRouteProp = RouteProp<
 >
 
 export type SingleCurrencyScreenProps = {
+  readonly title: string
   readonly resource: ResourceParams
   //readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
@@ -46,15 +47,19 @@ const SingleCurrency = () => {
   const selectedWallet = useSelector(getSelectedWalletById)
 
   // TODO: we should fetch here instead, not pass the route params
-  const { resource } = useParams<SingleCurrencyScreenProps>()
-
-  const [aggregateWalletBannerBalance] = getAggregateWalletBannerBalanceResult(
-    useAggregateWalletBannerBalances({
-      resource,
-    })
-  )
+  const { resource, title } = useParams<SingleCurrencyScreenProps>()
 
   const chainId = useChainIdForResourceParams({ resource })
+
+  const [maybeAggregateWalletBannerBalance] =
+    getAggregateWalletBannerBalanceResult(
+      useAggregateWalletBannerBalances({
+        resource,
+      })
+    )
+  const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
+    aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+  })
 
   //const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
@@ -67,13 +72,13 @@ const SingleCurrency = () => {
     selectedMinifiedAccounts
   )
 
-  const {
-    symbol,
-    icon,
-    balance,
-    decimals,
-    valuation: maybeValuation,
-  } = aggregateWalletBannerBalance
+  // const {
+  //   symbol,
+  //   icon,
+  //   balance,
+  //   decimals,
+  //   valuation: maybeValuation,
+  // } = aggregateWalletBannerBalance
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
@@ -92,10 +97,6 @@ const SingleCurrency = () => {
 
   const { price } = useAggregateWalletBannerBalancesValuation({
     aggregateWalletBannerBalances,
-  })
-
-  const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
-    aggregateWalletBannerBalance,
   })
 
   // HACK: We'll only be returning assetIds for resources which the
@@ -137,27 +138,39 @@ const SingleCurrency = () => {
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
         }}
-        title={aggregateWalletBannerBalance.label}
+        title={title}
       />
       <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <TokenBanner
         isSumOfMultipleBalances={false}
-        decimals={decimals}
+        decimals={maybeAggregateWalletBannerBalance?.decimals}
         tokenType={isAssetSupportedByWalletProvider ? null : ''}
         totalBalance={price}
-        tokenBalance={balance}
-        conversionRate={maybeValuation?.conversionRate || null}
-        change={maybeValuation?.rates?.DAILY || null}
+        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
+        conversionRate={
+          maybeAggregateWalletBannerBalance?.valuation?.conversionRate || null
+        }
+        change={
+          maybeAggregateWalletBannerBalance?.valuation?.rates?.DAILY || null
+        }
         showControls
         selectedWallet={selectedWallet}
-        symbol={symbol}
-        icon={icon}
-        receiveButtonAction={() =>
-          navigation.navigate('ReceiveToken', { aggregateWalletBannerBalance })
-        }
-        sendButtonAction={() =>
-          navigation.navigate('SendToken', { aggregateWalletBannerBalance })
-        }
+        symbol={maybeAggregateWalletBannerBalance?.symbol}
+        icon={maybeAggregateWalletBannerBalance?.icon}
+        receiveButtonAction={() => {
+          if (!maybeAggregateWalletBannerBalance) return
+
+          return navigation.navigate('ReceiveToken', {
+            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+          })
+        }}
+        sendButtonAction={() => {
+          if (!maybeAggregateWalletBannerBalance) return
+
+          return navigation.navigate('SendToken', {
+            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+          })
+        }}
         copyButtonAction={() => {
           if (!maybeAddress) return
 
@@ -174,12 +187,13 @@ const SingleCurrency = () => {
           })
         }}
       />
-      {!isAssetSupportedByWalletProvider ? (
+      {!isAssetSupportedByWalletProvider ||
+      !maybeAggregateWalletBannerBalance ? (
         // Here, we're handling a custom asset. We could render something accordingly.
         <React.Fragment />
       ) : (
         <TransactionsList
-          aggregateWalletBannerBalance={aggregateWalletBannerBalance}
+          aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
           refreshing={isLoading}
           // errorType={errorType}
