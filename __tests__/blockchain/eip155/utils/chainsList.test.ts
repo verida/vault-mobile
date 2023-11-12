@@ -50,6 +50,7 @@ describe('blockchain/eip155/utils/chainsList', () => {
             nativeCurrencyName: 'MyEther',
             symbol: 'MY',
             icon: 'trollface.png',
+            blockExplorers: [{ url: 'https://my.block.explorer.net/' }],
           },
         ],
       })

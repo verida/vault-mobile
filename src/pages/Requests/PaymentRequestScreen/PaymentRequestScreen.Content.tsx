@@ -18,6 +18,8 @@ import {
   useAggregateWalletBannerBalances,
   useChainIdForResourceParams,
   useMaybeBlockchainAccountForResource,
+  useMaybeChainMetadataExplorerUrl,
+  useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
 import { reduceProtocols } from 'features/protocols'
 import {
@@ -84,16 +86,12 @@ export const PaymentRequestScreenContent = React.memo(
       resource,
     })
 
-    // TODO: instead of blockchainNetwork, we need to use chainMetdatas
+    const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
-    // TODO: use chainMetadatas for blockchainExplorerUrl
-    const maybeBlockchainNetwork = maybeBlockchainWallet?.blockchainNetwork
-
-    // TODO: generalize this
-    const maybeBlockchainExplorerUrl =
-      !!transactionConfirmation &&
-      !!maybeBlockchainNetwork &&
-      `${maybeBlockchainNetwork.explorerURL}/tx/${transactionConfirmation.transactionHash}`
+    const maybeBlockchainExplorerUrl = useMaybeChainMetadataExplorerUrl({
+      chainMetadata: maybeChainMetadata,
+      transactionHash: transactionConfirmation?.transactionHash,
+    })
 
     const handleViewInExplorer = React.useCallback(() => {
       if (!maybeBlockchainExplorerUrl) return
@@ -202,7 +200,9 @@ export const PaymentRequestScreenContent = React.memo(
             {!!maybeBlockchainWallet && (
               <WalletSelectorButton
                 logo={
-                  maybeBlockchainWallet.icon || maybeBlockchainNetwork?.icon
+                  maybeBlockchainWallet.icon ||
+                  maybeChainMetadata?.icon ||
+                  undefined
                 }
                 label={maybeBlockchainWallet.label}
                 address={maybeBlockchainWallet.address}
@@ -253,7 +253,7 @@ export const PaymentRequestScreenContent = React.memo(
                   } sent to ${senderName}!`
             }
           />
-          {Boolean(maybeBlockchainExplorerUrl) && (
+          {Boolean(maybeBlockchainExplorerUrl && transactionConfirmation) && (
             <View style={styles.viewInExplorerButtonWrapper}>
               <Button
                 onPress={handleViewInExplorer}

@@ -1,5 +1,23 @@
 import { z } from 'zod'
 
+export const ChainMetadataBlockExplorerUrl = z.string().url()
+
+export const ChainMetadataBlockExplorer = z.object({
+  name: z.string().or(z.null()).optional(),
+  url: ChainMetadataBlockExplorerUrl,
+  standard: z.string().or(z.null()).optional(),
+})
+
+export type ChainMetadataBlockExplorer = z.infer<
+  typeof ChainMetadataBlockExplorer
+>
+
+export const ChainMetadataBlockExplorers = z.array(ChainMetadataBlockExplorer)
+
+export type ChainMetadataBlockExplorers = z.infer<
+  typeof ChainMetadataBlockExplorers
+>
+
 export const ChainMetadataRpc = z.string().url()
 
 export type ChainMetadataRpc = z.infer<typeof ChainMetadataRpc>
@@ -19,6 +37,7 @@ export const ChainMetadata = z
     nativeCurrencyName: z.string(),
     symbol: z.string(),
     icon: z.string().or(z.null()),
+    blockExplorers: ChainMetadataBlockExplorers,
   })
   .passthrough()
 

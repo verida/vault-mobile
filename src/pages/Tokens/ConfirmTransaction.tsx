@@ -2,11 +2,10 @@ import { RouteProp } from '@react-navigation/native'
 import { BigNumber } from 'ethers'
 import {
   AggregateWalletBannerBalance,
-  getBlockchainNetworkLabel,
   getWalletAddressForChainId,
   useChainIdForResourceParams,
   useLazyConfirmTransaction,
-  useMaybeBlockchainNetwork,
+  useMaybeChainMetadataForResource,
   useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
 import { convertPredictedTransactionFeeToString } from 'features/token/utils/convertPredictedTransactionFeeToString'
@@ -49,7 +48,9 @@ const ConfirmTransaction = () => {
 
   const chainId = useChainIdForResourceParams({ resource })
 
-  const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+
+  //const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
 
   // TODO: what to do about getWalletsData - is it needed any more?
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
@@ -60,7 +61,7 @@ const ConfirmTransaction = () => {
   )
 
   // TODO: fix this, we can probably just introspect the token right
-  const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
+  //const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
 
   const { confirmTransaction, loading } = useLazyConfirmTransaction()
 
@@ -96,7 +97,7 @@ const ConfirmTransaction = () => {
         }}
         title={`Send ${aggregateWalletBannerBalance.symbol}`}
       />
-      <TestnetWarning networkReference={networkReference} />
+      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       {true && (
         <View style={styles.container}>
           <View style={styles.content}>

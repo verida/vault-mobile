@@ -1,12 +1,11 @@
 import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
-  getBlockchainNetworkLabel,
   getWalletAddressForChainId,
   useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeBlockchainNetwork,
+  useMaybeChainMetadataForResource,
   useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
@@ -52,9 +51,7 @@ const TransactionDetails = () => {
     asset: maybeAsset || null,
   })
 
-  const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
-
-  const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   return (
     <Container>
@@ -65,7 +62,7 @@ const TransactionDetails = () => {
         }}
         title={'Transaction Details'}
       />
-      <TestnetWarning networkReference={networkReference} />
+      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       {isLoading || !transaction || !aggregateWalletBannerBalance ? (
         <LoadingIndicator />
       ) : (

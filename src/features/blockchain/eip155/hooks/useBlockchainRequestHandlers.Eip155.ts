@@ -36,6 +36,7 @@ const addEthereumChainRequestParamsToChainMetadatas = (
       chainName: name,
       nativeCurrency: { name: nativeCurrencyName, decimals, symbol },
       icon: maybeIcon,
+      blockExplorerUrls,
     }): ChainMetadatas => [
       {
         reference: String(parseInt(chainId, 16)),
@@ -48,6 +49,9 @@ const addEthereumChainRequestParamsToChainMetadatas = (
         // TODO: allow the user to customize the icon
         icon:
           typeof maybeIcon === 'string' && maybeIcon.length ? maybeIcon : null,
+        blockExplorers: blockExplorerUrls.map((url: string) => ({
+          url,
+        })),
       },
     ]
   )

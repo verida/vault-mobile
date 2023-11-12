@@ -3,8 +3,8 @@ import {
   AggregateWalletBannerBalance,
   DetailedTransaction,
   formatTokenQuantity,
-  useChainIdForResourceParams,
-  useMaybeBlockchainNetwork,
+  useMaybeChainMetadataExplorerUrl,
+  useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React from 'react'
@@ -23,14 +23,12 @@ export default ({
 }) => {
   const { resource, decimals, symbol } = aggregateWalletBannerBalance
 
-  const chainId = useChainIdForResourceParams({ resource })
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
-  const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
-
-  const maybeExplorerUrl = blockchainNetwork?.explorerURL?.replace?.(
-    /%s/g,
-    transaction.id
-  )
+  const maybeExplorerUrl = useMaybeChainMetadataExplorerUrl({
+    chainMetadata: maybeChainMetadata,
+    transactionHash: transaction?.id,
+  })
 
   // TODO: remove getSupportedTokenObjectDecimals
   //const decimals = getSupportedTokenObjectDecimals(token, blockchainNetwork)

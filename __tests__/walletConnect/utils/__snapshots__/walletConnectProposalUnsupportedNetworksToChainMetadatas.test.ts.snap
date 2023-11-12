@@ -3,6 +3,25 @@
 exports[`walletConnectProposalUnsupportedNetworksToChainMetadatas proposal 1`] = `
 [
   {
+    "blockExplorers": [
+      {
+        "name": "etherscan",
+        "standard": "EIP3091",
+        "url": "https://etherscan.io",
+      },
+      {
+        "icon": "blockscout",
+        "name": "blockscout",
+        "standard": "EIP3091",
+        "url": "https://eth.blockscout.com",
+      },
+      {
+        "icon": "dexguru",
+        "name": "dexguru",
+        "standard": "EIP3091",
+        "url": "https://ethereum.dex.guru",
+      },
+    ],
     "decimals": 18,
     "icon": null,
     "name": "Ethereum Mainnet",

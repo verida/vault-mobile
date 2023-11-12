@@ -1,27 +1,21 @@
 import {
   AggregateWalletBannerBalance,
-  getBlockchainNetworkLabel,
   Transaction,
+  useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
 import React from 'react'
 import { FlatList, Text, View } from 'react-native'
 
-import { BlockchainNetwork } from 'api/types'
-
 import TransactionsListItem from './TransactionsListItem'
 
 export default ({
-  //symbol,
-  //decimal,
   aggregateWalletBannerBalance,
-  blockchainNetwork,
   list,
   errorType,
   onPullToRefresh,
   refreshing,
 }: {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
-  readonly blockchainNetwork: BlockchainNetwork | undefined
   readonly list: readonly Transaction[]
   readonly errorType?: unknown
   readonly onPullToRefresh: () => void
@@ -36,6 +30,9 @@ export default ({
     ),
     [aggregateWalletBannerBalance]
   )
+  const { resource } = aggregateWalletBannerBalance
+
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   let errorMessage = 'No transactions found'
   switch (errorType) {
@@ -43,9 +40,7 @@ export default ({
       errorMessage = 'Server error. Please try again later.'
       break
     case 'unsupported':
-      errorMessage = `${getBlockchainNetworkLabel(
-        blockchainNetwork
-      )} does not currently support transaction lists`
+      errorMessage = `${maybeChainMetadata?.name} does not currently support transaction lists`
       break
   }
 

@@ -2,7 +2,6 @@ import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import {
   getAggregateWalletBannerBalanceResult,
-  getBlockchainNetworkLabel,
   getSelectedWalletById,
   getWalletAddressForChainId,
   ResourceParams,
@@ -11,7 +10,7 @@ import {
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeBlockchainNetwork,
+  useMaybeChainMetadataForResource,
   useSelectedMinifiedVeridaAccounts,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
@@ -57,7 +56,8 @@ const SingleCurrency = () => {
 
   const chainId = useChainIdForResourceParams({ resource })
 
-  const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
+  //const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
 
@@ -139,9 +139,7 @@ const SingleCurrency = () => {
         }}
         title={aggregateWalletBannerBalance.label}
       />
-      <TestnetWarning
-        networkReference={getBlockchainNetworkLabel(blockchainNetwork)}
-      />
+      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <TokenBanner
         isSumOfMultipleBalances={false}
         decimals={decimals}
@@ -181,7 +179,6 @@ const SingleCurrency = () => {
         <React.Fragment />
       ) : (
         <TransactionsList
-          blockchainNetwork={blockchainNetwork}
           aggregateWalletBannerBalance={aggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
           refreshing={isLoading}

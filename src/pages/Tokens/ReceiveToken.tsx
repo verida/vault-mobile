@@ -2,10 +2,9 @@ import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
-  getBlockchainNetworkLabel,
   getWalletAddressForChainId,
   useChainIdForResourceParams,
-  useMaybeBlockchainNetwork,
+  useMaybeChainMetadataForResource,
   useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
@@ -44,13 +43,15 @@ const ReceiveToken = () => {
 
   const chainId = useChainIdForResourceParams({ resource })
 
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+
   // TODO: remove getTokenUnitName
   // TODO: What to do about maybeAsset?
   //const maybeAsset: AssetId | undefined =
   //  Boolean(token) && 'asset' in token ? token.asset : undefined
 
-  const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
-  const networkReference = getBlockchainNetworkLabel(blockchainNetwork)
+  //const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
+  //const networkReference = getBlockchainNetworkLabel(blockchainNetwork)
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
 
@@ -70,7 +71,7 @@ const ReceiveToken = () => {
         }}
         title={`Receive ${aggregateWalletBannerBalance.symbol}`}
       />
-      <TestnetWarning networkReference={networkReference} />
+      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <Layout style={styles.container}>
         <View style={styles.content}>
           {hasAddress && (

@@ -6,7 +6,12 @@ import * as React from 'react'
 
 import { BlockchainNetwork } from 'api/types'
 
-import { ChainMetadata, UseChainMetadataState } from '../@types'
+import {
+  ChainMetadata,
+  ChainMetadataBlockExplorers,
+  ChainMetadataBlockExplorerUrl,
+  UseChainMetadataState,
+} from '../@types'
 
 const { useChainsListQuery } = cryptoWalletApi
 
@@ -28,9 +33,17 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     decimal: decimals,
     label,
     icon,
+    explorerURL: maybeExplorerUrl,
   } = blockchainNetwork
 
   const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.INFURA_API_KEY)
+
+  const explorerURLResult =
+    ChainMetadataBlockExplorerUrl.safeParse(maybeExplorerUrl)
+
+  const blockExplorers: ChainMetadataBlockExplorers = explorerURLResult.success
+    ? [{ url: explorerURLResult.data }]
+    : []
 
   return {
     namespace,
@@ -41,6 +54,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     decimals,
     nativeCurrencyName: label,
     icon,
+    blockExplorers,
   }
 }
 

@@ -155,9 +155,6 @@ export interface DetailedTransaction {
 // End Wallet Provider types
 
 export type VeridaWalletAccountOption = Option
-// & {
-//  readonly caipChainId: ChainId
-//}
 
 export type WalletsData = Record<string, BlockchainAccount>
 
@@ -181,11 +178,8 @@ export type MinifiedVeridaAccountEip155 =
     readonly privateKey: string
   }
 
-// TODO: add required fields
 export type MinifiedVeridaAccountNear =
   AbstractMinifiedVeridaAccount<SupportedBlockchainNamespace.NEAR> & {
-    // TODO: Note near uses slightly different terminology... address === signerId!
-    //readonly signerId: string
     readonly privateKey: string
   }
 

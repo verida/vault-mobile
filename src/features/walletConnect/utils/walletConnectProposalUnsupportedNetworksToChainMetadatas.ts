@@ -4,6 +4,7 @@ import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { ChainsList, ChainsListItem } from 'features/blockchain/eip155'
 import {
   ChainMetadata,
+  ChainMetadataBlockExplorers,
   ChainMetadataRpcs,
   ChainMetadatas,
 } from 'features/caip/@types'
@@ -139,8 +140,12 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
 
       if (!maybeChainsListItem) return []
 
-      const { nativeCurrency, name } = maybeChainsListItem
+      const { nativeCurrency, name, explorers } = maybeChainsListItem
       const { decimals, symbol, name: nativeCurrencyName } = nativeCurrency
+
+      const blockExplorers: ChainMetadataBlockExplorers = explorers
+        ? explorers
+        : []
 
       const chainMetadata: ChainMetadata = {
         namespace,
@@ -153,6 +158,7 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
 
         // TODO: how to determine the icon to use?
         icon: null,
+        blockExplorers,
       }
 
       return [chainMetadata]

@@ -20,6 +20,12 @@ const REDBELLY_NETWORK_TESNET: ChainMetadata = {
   decimals: 18,
   nativeCurrencyName: 'Redbelly Network Token',
   icon: 'https://miro.medium.com/v2/resize:fit:2400/1*DTXE8qJPlRelwhGfo1YSkQ.png',
+  blockExplorers: [
+    {
+      url: 'https://explorer.devnet.redbelly.network',
+      name: 'Redbelly Blockchain Explorer',
+    },
+  ],
 }
 
 // Returns default networks depending upon a user's region.
