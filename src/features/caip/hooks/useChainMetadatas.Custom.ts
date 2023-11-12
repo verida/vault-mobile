@@ -1,3 +1,4 @@
+import { ChainId } from 'caip'
 import * as React from 'react'
 import { useDispatch, useStore } from 'react-redux'
 
@@ -9,11 +10,15 @@ import {
   ChainMetadatas,
   UseChainMetadataState,
 } from '../@types'
-import { addCustomNetwork } from '../slice'
+import { addCustomNetwork, removeCustomNetwork } from '../slice'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
   readonly addCustomNetworks: (
     addCustomNetworkParams: readonly ChainMetadata[]
+  ) => Promise<ChainMetadatas>
+
+  readonly removeCustomNetworks: (
+    addCustomNetworkParams: readonly ChainId[]
   ) => Promise<ChainMetadatas>
 }
 
@@ -43,9 +48,23 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
     [dispatch, getState]
   )
 
+  const removeCustomNetworks = React.useCallback(
+    async (chainIds: readonly ChainId[]) => {
+      await dispatch(removeCustomNetwork({ chainIds }))
+
+      // HACK: Although we can receive the result from the call to `dispatch()` above,
+      //       the returned types are unsatisfactory, so we request them explicitly
+      //       here.
+      const { result } = getState()[CAIP_SLICE_NAME].customNetworks
+
+      return result
+    },
+    [dispatch, getState]
+  )
+
   const { result, loading, error } = useAppSelector(
     (state) => state[CAIP_SLICE_NAME].customNetworks
   )
 
-  return { addCustomNetworks, result, loading, error }
+  return { addCustomNetworks, removeCustomNetworks, result, loading, error }
 }

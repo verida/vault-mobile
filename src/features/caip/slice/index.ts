@@ -1,7 +1,7 @@
 import { createSlice } from '@reduxjs/toolkit'
 
 import { CAIP_SLICE_NAME, CustomChains } from '../@types'
-import { addCustomNetwork } from './actions'
+import { addCustomNetwork, removeCustomNetwork } from './actions'
 
 export type CaipSliceState = {
   customNetworks: CustomChains
@@ -31,6 +31,32 @@ export const caipSlice = createSlice({
         state.customNetworks = { loading: false, result }
       })
       .addCase(addCustomNetwork.rejected, (state, action) => {
+        const {
+          customNetworks: { result },
+        } = state
+        // HACK: Keep the customNetworks in memory.
+        state.customNetworks = {
+          result,
+          loading: false,
+          error: new Error(action.payload),
+        }
+      })
+
+    /* removeCustomNetwork */
+    builder
+      .addCase(removeCustomNetwork.pending, (state) => {
+        const {
+          customNetworks: { result },
+        } = state
+
+        // HACK: Keep the customNetworks in memory.
+        state.customNetworks = { loading: true, result }
+      })
+      .addCase(removeCustomNetwork.fulfilled, (state, { payload: result }) => {
+        // HACK: Keep the customNetworks in memory.
+        state.customNetworks = { loading: false, result }
+      })
+      .addCase(removeCustomNetwork.rejected, (state, action) => {
         const {
           customNetworks: { result },
         } = state

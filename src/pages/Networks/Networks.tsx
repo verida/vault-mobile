@@ -3,42 +3,58 @@ import { useTheme } from 'contexts/ThemeContext'
 import {
   ChainMetadata,
   getMaybeChainMetadatas,
+  useChainMetadataDetails,
   useChainMetadatas,
 } from 'features/caip'
 import { Container } from 'native-base'
 import * as React from 'react'
-import { ListRenderItem, StyleSheet, View } from 'react-native'
+import {
+  ListRenderItem,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
 import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
-import { SEPARATOR_LIGHT } from 'constants/color'
+import { useMainNavigation } from 'navigation/hooks'
 
-import { ChainMetadataListItem } from './components'
+import {
+  ChainMetadataListItem,
+  ChainMetadataListSeparatorComponent,
+} from './components'
 
 const keyExtractor = (e: ChainMetadata) => new ChainId(e).toString()
-
-const ItemSeparatorComponent = () => (
-  <View
-    style={{
-      borderBottomWidth: 1,
-      borderBottomColor: SEPARATOR_LIGHT,
-    }}
-  />
-)
 
 function Networks(): JSX.Element {
   const [searchText, setSearchText] = React.useState<string>('')
   const { theme } = useTheme()
 
+  const navigation = useMainNavigation()
+  const { getChainMetadataDetails } = useChainMetadataDetails()
+
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const renderItem: ListRenderItem<ChainMetadata> = React.useCallback(
-    ({ item: chainMetadata }) => (
-      <ChainMetadataListItem chainMetadata={chainMetadata} />
-    ),
-    []
+    ({ item: chainMetadata }) => {
+      const { isCustom } = getChainMetadataDetails(chainMetadata)
+      return (
+        <TouchableOpacity
+          onPress={() =>
+            // HACK: Only allow custom networks to be edited.
+            navigation.navigate('NetworksEditor', {
+              title: isCustom ? 'Edit custom network' : 'Network settings',
+              disabled: !isCustom,
+              initialValue: chainMetadata,
+            })
+          }>
+          <ChainMetadataListItem chainMetadata={chainMetadata} />
+        </TouchableOpacity>
+      )
+    },
+    [navigation, getChainMetadataDetails]
   )
 
   const chainMetadatasToRender = React.useMemo(() => {
@@ -80,19 +96,20 @@ function Networks(): JSX.Element {
           }}
         />
         <ScrollView>
-          <ItemSeparatorComponent />
+          <ChainMetadataListSeparatorComponent />
           <FlatList
             data={chainMetadatasToRender}
             renderItem={renderItem}
             keyExtractor={keyExtractor}
-            ItemSeparatorComponent={ItemSeparatorComponent}
+            ItemSeparatorComponent={ChainMetadataListSeparatorComponent}
           />
-          <ItemSeparatorComponent />
+          <ChainMetadataListSeparatorComponent />
         </ScrollView>
       </View>
     </Container>
   )
 }
+
 const styles = StyleSheet.create({
   content: {
     backgroundColor: '#fff',

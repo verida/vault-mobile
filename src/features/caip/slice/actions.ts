@@ -1,3 +1,4 @@
+import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 
 import AccountManager from 'api/AccountManager'
@@ -10,7 +11,7 @@ import { CAIP_SLICE_NAME, ChainMetadata } from '../@types'
 const HACK_SHOPPING_COUPON_DATASTORE =
   'https://common.schemas.verida.io/shopping/coupon/v0.1.0/schema.json'
 
-type Params = {
+type AddCustomNetworkParams = {
   readonly addCustomNetworkParams: readonly ChainMetadata[]
   readonly reset?: boolean
 }
@@ -18,7 +19,7 @@ type Params = {
 export const addCustomNetwork = createAppAsyncThunk(
   `${CAIP_SLICE_NAME}/addCustomNetwork`,
   async (
-    { addCustomNetworkParams, reset = false }: Params,
+    { addCustomNetworkParams, reset = false }: AddCustomNetworkParams,
     { rejectWithValue }
   ) => {
     try {
@@ -97,6 +98,43 @@ export const addCustomNetwork = createAppAsyncThunk(
       })
     } catch (error) {
       return rejectWithValue(`Failed to add custom network. ${String(error)}`)
+    }
+  }
+)
+
+type RemoveCustomNetworkParams = {
+  readonly chainIds: readonly ChainId[]
+}
+
+export const removeCustomNetwork = createAppAsyncThunk(
+  `${CAIP_SLICE_NAME}/removeCustomNetwork`,
+  async (
+    { chainIds }: RemoveCustomNetworkParams,
+    { rejectWithValue, getState }
+  ) => {
+    try {
+      const state = getState()
+
+      const {
+        customNetworks: { result },
+      } = state.caip
+
+      const chainIdsToDelete = chainIds.map((e) => e.toString())
+
+      const chainsThatSurvivedDeletion = result.filter(
+        ({ namespace, reference }) =>
+          !chainIdsToDelete.includes(
+            new ChainId({ namespace, reference }).toString()
+          )
+      )
+
+      // TODO: edit the state here
+
+      return chainsThatSurvivedDeletion
+    } catch (error) {
+      return rejectWithValue(
+        `Failed to remove custom network. ${String(error)}`
+      )
     }
   }
 )

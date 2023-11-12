@@ -16,6 +16,7 @@ import {
   DataTabScreenParams,
 } from 'pages/Data'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { NetworksEditorScreenProps } from 'pages/NetworksEditor'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
@@ -119,6 +120,7 @@ export type MainStackParams = {
     filter: any
   }
   Networks: undefined
+  NetworksEditor: NetworksEditorScreenProps
   StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
