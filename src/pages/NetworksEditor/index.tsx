@@ -161,14 +161,15 @@ export const NetworksEditor = React.memo(
             style={[styles.flex]}
             keyboardShouldPersistTaps='always'
             keyboardDismissMode='on-drag'>
-            <ChainsMetadataForm
-              {...chainMetadataFormFields}
-              disabled={disabled}
-            />
+            {/* TODO: Needs KeyboardAwareScrollView, the component specified in package.json causes crashes? */}
             <KeyboardAvoidingView
-              style={{ height: 24 }}
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-            />
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+              <ChainsMetadataForm
+                {...chainMetadataFormFields}
+                disabled={disabled}
+              />
+              <View style={{ height: 24 }} />
+            </KeyboardAvoidingView>
           </ScrollView>
           <View>
             <ChainMetadataListSeparatorComponent />
