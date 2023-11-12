@@ -1,55 +1,102 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { Container, Content } from 'native-base'
-import React, { useState } from 'react'
-import { StyleSheet } from 'react-native'
+import { ChainId } from 'caip'
+import { useTheme } from 'contexts/ThemeContext'
+import {
+  ChainMetadata,
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from 'features/caip'
+import { Container } from 'native-base'
+import * as React from 'react'
+import { ListRenderItem, StyleSheet, View } from 'react-native'
+import { FlatList, ScrollView } from 'react-native-gesture-handler'
 
-import MainnetSvg from 'assets/icons/mainnet.svg'
-import TestnetSvg from 'assets/icons/testnet.svg'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { MainStackParams } from 'navigation/types'
+import { SearchBar } from 'components/SearchBar/SearchBar'
+import { SEPARATOR_LIGHT } from 'constants/color'
 
-import NetworkItem from './NetworkItem'
+import { ChainMetadataListItem } from './components'
 
-const NETWORKS = [
-  {
-    id: 'testnet',
-    title: 'Testnet',
-    logo: <TestnetSvg />,
-    disabled: false,
-  },
-  {
-    id: 'mainnet',
-    title: 'Mainnet',
-    logo: <MainnetSvg />,
-    disabled: true,
-  },
-]
+const keyExtractor = (e: ChainMetadata) => new ChainId(e).toString()
 
-function Networks(_props: NativeStackScreenProps<MainStackParams, 'Networks'>) {
-  const [selectedNetwork, setSelectedNetwork] = useState(NETWORKS[0].id)
+const ItemSeparatorComponent = () => (
+  <View
+    style={{
+      borderBottomWidth: 1,
+      borderBottomColor: SEPARATOR_LIGHT,
+    }}
+  />
+)
+
+function Networks(): JSX.Element {
+  const [searchText, setSearchText] = React.useState<string>('')
+  const { theme } = useTheme()
+
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
+  const renderItem: ListRenderItem<ChainMetadata> = React.useCallback(
+    ({ item: chainMetadata }) => (
+      <ChainMetadataListItem chainMetadata={chainMetadata} />
+    ),
+    []
+  )
+
+  const chainMetadatasToRender = React.useMemo(() => {
+    if (typeof searchText !== 'string' || !searchText.length)
+      return chainMetadatas
+
+    return chainMetadatas.filter((e) =>
+      `${e.name} ${e.nativeCurrencyName} ${e.namespace} ${e.reference}`
+        .toLocaleLowerCase()
+        .includes(searchText.toLocaleLowerCase())
+    )
+  }, [chainMetadatas, searchText])
 
   return (
     <Container>
-      <NavigationHeader title={'Networks'} />
-      <Content style={styles.content}>
-        {NETWORKS.map((network) => (
-          <NetworkItem
-            network={network}
-            onSelect={() => setSelectedNetwork(network.id)}
-            selected={selectedNetwork === network.id}
-            key={network.id}
+      <NavigationHeader
+        bottomBorder={false}
+        title='Networks'
+        renderNetInfo={false}
+      />
+      <View style={styles.content}>
+        <SearchBar
+          showSortButton={false}
+          showFilterButton={false}
+          style={{
+            paddingHorizontal: theme.spacing.m,
+            // HACK: Where does this value come from?
+            marginTop: -10,
+            paddingBottom: 22,
+          }}
+          inputProps={{
+            autoFocus: false,
+            onChangeText: setSearchText,
+            value: searchText,
+            placeholder: 'Search networks',
+            spellCheck: false,
+          }}
+        />
+        <ScrollView>
+          <ItemSeparatorComponent />
+          <FlatList
+            data={chainMetadatasToRender}
+            renderItem={renderItem}
+            keyExtractor={keyExtractor}
+            ItemSeparatorComponent={ItemSeparatorComponent}
           />
-        ))}
-      </Content>
+          <ItemSeparatorComponent />
+        </ScrollView>
+      </View>
     </Container>
   )
 }
-
 const styles = StyleSheet.create({
   content: {
-    backgroundColor: '#E5E5E5',
+    backgroundColor: '#fff',
+    flex: 1,
     paddingVertical: 24,
   },
+  flex: { flex: 1 },
 })
 
 export default Networks

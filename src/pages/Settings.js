@@ -53,17 +53,16 @@ const publicList = [
 // const teamList = [manageWalletOption, ...publicList]
 const teamList = publicList
 
-const generalList = [
-  {
-    label: 'Network',
-    action: 'arrow',
-    optional: false,
-    onPress: (navigation) => navigation.navigate('Networks'),
-    value: 'Testnet',
-  },
-]
+const generalList = []
 
-const WalletConnectList = [
+const BlockchainList = [
+  {
+    label: 'Networks',
+    action: 'arrow',
+    optional: true,
+    onPress: (navigation) => navigation.navigate('Networks'),
+    //value: 'Testnet',
+  },
   {
     label: 'DApps',
     action: 'arrow',
@@ -146,19 +145,22 @@ export default (props) => {
           <View>
             <PropertyList list={mergedList} />
           </View>
-          <Text style={style.title}>General</Text>
+          {Boolean(modifiedGeneralList.length) && (
+            <>
+              <Text style={style.title}>General</Text>
+              <View>
+                <PropertyList list={modifiedGeneralList} />
+              </View>
+            </>
+          )}
+          <Text style={style.title}>Blockchain</Text>
           <View>
-            <PropertyList list={modifiedGeneralList} />
-          </View>
-          <Text style={style.title}>WalletConnect</Text>
-          <View>
-            <PropertyList list={WalletConnectList} />
+            <PropertyList list={BlockchainList} />
           </View>
           <Text style={style.title}>Polygon ID</Text>
           <View>
             <PropertyList list={PolygonIdList} />
           </View>
-
           <Text style={style.versionText}>{versionText}</Text>
         </View>
         <AddAccountsModal

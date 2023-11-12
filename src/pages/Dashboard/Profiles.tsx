@@ -13,7 +13,7 @@ import LayoutStyle from '../../styles/layouts'
 const list = [
   {
     label: 'Public Profile',
-    icon: <EarthSvg />,
+    icon: <EarthSvg fill='#041133' />,
     action: 'arrow',
     onPress: (navigation: any) => navigation.navigate('PublicProfile'),
     optional: true,
