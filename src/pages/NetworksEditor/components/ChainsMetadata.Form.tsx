@@ -102,7 +102,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Chain name</Label>
       <TextInput
         value={name}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -113,7 +112,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Chain ID</Label>
       <TextInput
         value={reference}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -136,7 +134,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Decimals</Label>
       <TextInput
         value={String(decimals)}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -148,7 +145,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>RPC URL</Label>
       <TextInput
         value={rpcUrl}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -159,7 +155,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Network icon URL (optional)</Label>
       <TextInput
         value={icon}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -170,7 +165,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Network token name</Label>
       <TextInput
         value={nativeCurrencyName}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -181,7 +175,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Network token symbol</Label>
       <TextInput
         value={symbol}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'
@@ -192,7 +185,6 @@ export const ChainsMetadataForm = React.memo(function ChainsMetadataForm({
       <Label>Block explorer URL</Label>
       <TextInput
         value={blockExplorer}
-        autoFocus={true}
         editable={!disabled}
         autoCorrect={false}
         autoCapitalize='none'

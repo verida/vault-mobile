@@ -3,7 +3,13 @@ import { ChainId } from 'caip'
 import { ChainMetadata, useChainMetadatasCustom } from 'features/caip'
 import { Container } from 'native-base'
 import * as React from 'react'
-import { Alert, StyleSheet, View } from 'react-native'
+import {
+  Alert,
+  KeyboardAvoidingView,
+  Platform,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
@@ -151,12 +157,18 @@ export const NetworksEditor = React.memo(
           right={deleteControlsEnabled ? headerSideButton : undefined}
         />
         <SafeAreaView style={[styles.flex, { marginTop: -35 }]}>
-          <ScrollView style={[styles.flex]}>
+          <ScrollView
+            style={[styles.flex]}
+            keyboardShouldPersistTaps='always'
+            keyboardDismissMode='on-drag'>
             <ChainsMetadataForm
               {...chainMetadataFormFields}
               disabled={disabled}
             />
-            <View style={{ height: 24 }} />
+            <KeyboardAvoidingView
+              style={{ height: 24 }}
+              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+            />
           </ScrollView>
           <View>
             <ChainMetadataListSeparatorComponent />
