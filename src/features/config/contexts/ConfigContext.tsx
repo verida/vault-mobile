@@ -49,7 +49,6 @@ export const ConfigProvider: React.FC = ({ children }) => {
       minimumFetchIntervalMillis: REMOTE_CONFIG_FETCH_INTERVAL_MILLIS,
     })
 
-    console.log('Fetch Remote Config')
     remoteConfig()
       .setDefaults(DEFAULT_REMOTE_CONFIG)
       .then(() => remoteConfig()?.fetchAndActivate())
@@ -73,23 +72,41 @@ export const ConfigProvider: React.FC = ({ children }) => {
           )
           setForcedCreateAccount(forcedCreateAccountInfo)
 
-          // Handle remote app config
+          /**
+           * Handle remote app config
+           * Remote config contain configurations for all the network environments:
+           *
+           * {
+           *   "devnet": {
+           *      ...
+           *   }
+           *   "testnet": {
+           *      ...
+           *   }
+           *   "mainnet": {
+           *      ...
+           *   }
+           * }
+           */
+          const veridaEnvironment = appConfig.VERIDA_ENVIRONMENT
           const remoteAppConfig = JSON.parse(
             remoteConfig().getValue('wallet_app_config').asString()
           )
 
+          // Save the last update from remote config to update the app on initial load
           const APP_REMOTE_CONFIG_STORAGE_KEY = 'SAVED_REMOTE_CONFIG'
           const savedRemoteConfig = JSON.parse(
             (await SecureStore.getItemAsync(APP_REMOTE_CONFIG_STORAGE_KEY)) ||
               '{}'
           )
+          if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
+            SecureStore.setItemAsync(
+              APP_REMOTE_CONFIG_STORAGE_KEY,
+              remoteConfig().getValue('wallet_app_config').asString()
+            )
+          }
 
-          const remoteConfigUpdated = !isEqual(
-            remoteAppConfig,
-            savedRemoteConfig
-          )
-
-          if (remoteConfigUpdated) {
+          if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
             SecureStore.setItemAsync(
               APP_REMOTE_CONFIG_STORAGE_KEY,
               remoteConfig().getValue('wallet_app_config').asString()
@@ -98,10 +115,20 @@ export const ConfigProvider: React.FC = ({ children }) => {
 
           // Merge with remote config on the app initial load
           if (initialLoadRef.current) {
-            mergeWithRemoteConfig(remoteAppConfig || savedRemoteConfig)
-          } else if (remoteConfigUpdated) {
+            mergeWithRemoteConfig(
+              remoteAppConfig?.[veridaEnvironment] ||
+                savedRemoteConfig?.[veridaEnvironment]
+            )
+          } else if (
+            !isEqual(
+              remoteAppConfig?.[veridaEnvironment],
+              savedRemoteConfig?.[veridaEnvironment]
+            )
+          ) {
             // Handle runtime app config updated, need to reload the app
-            const appNeedsReload = mergeWithRemoteConfig(remoteAppConfig)
+            const appNeedsReload = mergeWithRemoteConfig(
+              remoteAppConfig[veridaEnvironment]
+            )
             if (appNeedsReload) {
               Alert.alert(
                 'Application Configuration Updated',
@@ -123,7 +150,6 @@ export const ConfigProvider: React.FC = ({ children }) => {
         Sentry.captureException(error)
       })
       .finally(() => {
-        console.log('Done Load Config')
         initialLoadRef.current = false
         setLoading(false)
       })
