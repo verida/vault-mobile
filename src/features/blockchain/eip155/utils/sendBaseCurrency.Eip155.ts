@@ -32,7 +32,7 @@ export const sendBaseCurrencyEip155 = async ({
     context: new ethers.Wallet(privateKey, provider),
     params: [
       {
-        value: ethers.utils.parseEther(String(value)).toHexString(),
+        value: ethers.utils.parseEther(String(value.toFixed(18))).toHexString(),
         to,
       },
     ],
