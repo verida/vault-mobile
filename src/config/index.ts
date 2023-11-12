@@ -6,7 +6,7 @@ import {
   NetworkId,
 } from 'features/polygonid/constants'
 import { LogLevel } from 'features/telemetry'
-import { isEmpty, isEqual } from 'lodash'
+import { clone, cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
 import {
@@ -175,21 +175,20 @@ export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
 // TODO: Eventually get rid of default export
 export default RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
 
-// Merge app config with Firebase remote config
+/*
+ * Merge local app-config with remote-config
+ *
+ * @param remoteConfig
+ * @returns
+ */
 export function mergeWithRemoteConfig(
   remoteConfig: Partial<typeof RESOLVED_CONFIG>
 ) {
   if (isEmpty(remoteConfig)) return false
 
-  let appNeedsReload = false
-  for (const entry of Object.entries(remoteConfig)) {
-    const [key, value] = entry as [keyof typeof RESOLVED_CONFIG, any]
-    if (!isEqual(config[key], value)) {
-      // Temp fix for a weird warning from Typescript
-      ;(config as any)[key] = value
-      appNeedsReload = true
-    }
-  }
+  const originalConfig = cloneDeep(config)
+  // Mutate config
+  merge(config, remoteConfig)
 
-  return appNeedsReload
+  return !isEqual(config, originalConfig)
 }

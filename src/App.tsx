@@ -6,8 +6,8 @@ import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { ConfigProvider } from 'features/config'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
-import { FirebaseRemoteConfigProvider } from 'features/remoteConfig'
 import { Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
@@ -91,7 +91,7 @@ function App() {
   }, [])
 
   const AppContent = (
-    <FirebaseRemoteConfigProvider>
+    <ConfigProvider>
       <Provider store={store}>
         <PersistGate persistor={persistor}>
           <SafeAreaProvider initialMetrics={initialWindowMetrics}>
@@ -121,7 +121,7 @@ function App() {
           </SafeAreaProvider>
         </PersistGate>
       </Provider>
-    </FirebaseRemoteConfigProvider>
+    </ConfigProvider>
   )
 
   return loading ? null : (

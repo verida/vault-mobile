@@ -2,6 +2,7 @@ import { isEmpty, isEqual } from 'lodash'
 
 /**
  * Custom comparing function for app config
+ * Only compare first level values of two objects
  */
 export function compareAppConfig(
   configA: Record<string, any> | null,

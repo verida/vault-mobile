@@ -1,5 +1,5 @@
 import { LinearGradient } from 'expo-linear-gradient'
-import { MaintenanceMode } from 'features/remoteConfig'
+import { MaintenanceMode } from 'features/config'
 import React from 'react'
 import { Linking, ScrollView, StyleSheet, View } from 'react-native'
 
@@ -15,12 +15,11 @@ interface Props {
   maintenanceMode: MaintenanceMode
 }
 
-const OutOfService: React.FC<Props> = ({ maintenanceMode }) => {
-  const title = 'Oh uh!'
+export const MaintenanceScreen: React.FC<Props> = ({ maintenanceMode }) => {
+  const title = ':-/'
   const shutDownTitle =
-    'Our networks are temporarily out of service\nPlease check back later.'
-  const furtherInfoLink =
-    maintenanceMode.furtherInfo || 'https://news.verida.io/'
+    'The Verida Wallet is currently in maintenance. Sorry for the inconvenience.'
+  const furtherInfoLink = maintenanceMode.link || 'https://news.verida.io/'
 
   return (
     <LinearGradient
@@ -32,25 +31,19 @@ const OutOfService: React.FC<Props> = ({ maintenanceMode }) => {
           <Logo width={156} height={52} />
           <Text style={style.title}>{title}</Text>
           <Text style={style.subTitle}>{shutDownTitle}</Text>
-          {Boolean(maintenanceMode.reason) && (
+          {Boolean(maintenanceMode.message) && (
             <Text
               style={
                 style.subTitle
-              }>{`Reason: ${maintenanceMode.reason}`}</Text>
+              }>{`Reason: ${maintenanceMode.message}`}</Text>
           )}
-
-          {Boolean(maintenanceMode.startTime) && (
-            <Text style={style.subTitle2}>
-              {`Start time: ${new Date(maintenanceMode.startTime!)}`}
-            </Text>
-          )}
-          {Boolean(maintenanceMode.expectedEndTime) && (
-            <Text style={style.subTitle2}>
-              {`Expected end time: ${new Date(
-                maintenanceMode.expectedEndTime!
-              )}`}
-            </Text>
-          )}
+          <Text style={style.subTitle2}>
+            {`Expected end time: ${
+              maintenanceMode.expectedEndTime
+                ? new Date(maintenanceMode.expectedEndTime)
+                : 'Unknown'
+            }`}
+          </Text>
         </ScrollView>
         <View>
           <Button
@@ -114,5 +107,3 @@ const style = StyleSheet.create({
     borderRadius: 5,
   },
 })
-
-export default OutOfService

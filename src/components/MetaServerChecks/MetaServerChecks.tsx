@@ -1,5 +1,5 @@
 import { compareVersions } from 'compare-versions'
-import { useFirebaseRemoteConfig } from 'features/remoteConfig/RemoteConfigProvider'
+import { useConfig } from 'features/config'
 import React, { useEffect } from 'react'
 
 import AccountManager from 'api/AccountManager'
@@ -14,7 +14,7 @@ import ForcedUpgradeModal from './ForcedUpgradeModal'
 
 const MetaServerChecks = () => {
   const { showModal, dismissModal } = useModal()
-  const { forcedUpgrade, forcedCreateAccount } = useFirebaseRemoteConfig()
+  const { forcedUpgrade, forcedCreateAccount } = useConfig()
   const { forcedSignOut } = useAuth()
 
   useEffect(() => {
