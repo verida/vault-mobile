@@ -22,7 +22,7 @@
     "build:webapp": "rm -rf www && cd web && yarn && CI=false yarn build && cd .. && rm -Rf www && mkdir -p www && cp -rf web/build/* www && yarn copy:webapp:android",
     "copy:webapp:android": "rm -rf android/app/src/main/assets/www && mkdir -p android/app/src/main/assets/www && cp -rf web/build/* android/app/src/main/assets/www",
     "release:android": "yarn build:webapp && yarn android --variant=stagingRelease",
-    "wc-server": "npx ts-node scripts/wc-server",
+    "wc": "npx ts-node scripts/wc",
     "pay": "npx ts-node scripts/pay"
   },
   "dependencies": {

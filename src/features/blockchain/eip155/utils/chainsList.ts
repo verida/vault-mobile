@@ -1,8 +1,8 @@
 import axios from 'axios'
 import { ChainId } from 'caip'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 
 import { ChainMetadatas } from '../../../caip/@types'
+import { SupportedBlockchainNamespace } from '../../@types/enums'
 import {
   AddEthereumChainRequestParam,
   AddEthereumChainRequestParamBlockExplorerUrls,
