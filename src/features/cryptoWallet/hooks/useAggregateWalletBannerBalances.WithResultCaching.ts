@@ -18,7 +18,6 @@ import {
 //       information.
 //
 //       Here, we ensure that the state is cached whilst unavailable
-
 //       to ensure the interface remains stable.
 export function useAggregateWalletBannerBalancesWithResultCaching(
   params: UseAggregateWalletBannerBalancesParams = {}

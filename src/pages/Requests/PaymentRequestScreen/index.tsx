@@ -1,5 +1,6 @@
 import { BottomActionBar } from 'components'
 import {
+  AggregateWalletBannerBalance,
   CryptoWalletRequest,
   getAggregateWalletBannerBalanceResult,
   useAggregateWalletBannerBalances,
@@ -39,12 +40,16 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { data } = params
     const { resource } = data
 
-    const [maybeAggregateWalletBannerBalance] =
+    const [maybeAggregateWalletBannerBalanceThatVariesOnRefetch] =
       getAggregateWalletBannerBalanceResult(
         useAggregateWalletBannerBalances({
           resource,
         })
       )
+
+    const [maybeAggregateWalletBannerBalance] = React.useState<
+      AggregateWalletBannerBalance | undefined
+    >(maybeAggregateWalletBannerBalanceThatVariesOnRefetch)
 
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()

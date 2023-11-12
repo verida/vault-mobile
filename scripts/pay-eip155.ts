@@ -9,15 +9,15 @@ const openDeepLinkInSimulator = (uri: string) => {
 // eslint-disable-next-line no-void
 void (async () => {
   try {
-    //openDeepLinkInSimulator(
-    //  // goerli eth
-    //  'ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=5e16'
-    //)
-
     openDeepLinkInSimulator(
-      // anvil eth
-      'ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@31337?value=5e16'
+      // goerli eth
+      'ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@5?value=1e16'
     )
+
+    //openDeepLinkInSimulator(
+    //  // anvil eth
+    //  'ethereum:pay-0x49EB80ff0472F930588745f4dAe7ca7c5C1A9B2F@31337?value=1e16'
+    //)
 
     // goerli usdc
     // 0x07865c6e87b9f70255377e024ace6630c1eaa37f

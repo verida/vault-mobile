@@ -24,6 +24,7 @@ import {
   AggregateWalletBannerBalanceErc20,
   AggregateWalletBannerBalanceType,
 } from '../@types'
+import { useCryptoWalletCawfreeContext } from '../contexts'
 import {
   getChainIdParamsFromResourceParams,
   getFromAddressForResourceOrThrow,
@@ -68,6 +69,8 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
+  const { refetch } = useCryptoWalletCawfreeContext()
 
   // Attempts to collect all of the necessary data dependencies before
   // queuing a transaction.
@@ -261,6 +264,8 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
               `Failed to determine result for wallet balance type "${type}".`
             )
 
+          await refetch()
+
           // TODO: we need to tell if the transaction was successfully mined or not
           setState({ loading: false, result })
 
@@ -280,6 +285,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
         }
       },
       [
+        refetch,
         state,
         selectedMinifiedAccounts,
         executeBlockchainSpecificNativeTransactionOrThrow,
