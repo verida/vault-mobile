@@ -17,6 +17,9 @@ import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
 import { ChainMetadataListSeparatorComponent } from 'pages/Networks/components'
 
+import { ChainsMetadataForm } from './components'
+import { useCreateChainMetadataFormFields } from './hooks'
+
 export type NetworksEditorRouteProp = RouteProp<
   MainStackParams,
   'NetworksEditor'
@@ -40,7 +43,8 @@ export const NetworksEditor = React.memo(
 
     const navigation = useMainNavigation()
 
-    const { removeCustomNetworks } = useChainMetadatasCustom()
+    const { removeCustomNetworks, addCustomNetworks } =
+      useChainMetadatasCustom()
 
     const maybeInitialNamespace = initialValue?.namespace
     const maybeInitialReference = initialValue?.reference
@@ -99,18 +103,45 @@ export const NetworksEditor = React.memo(
       [onPressDeleteNetwork]
     )
 
+    const deleteControlsEnabled = Boolean(!disabled && maybeChainIdToDelete)
+
+    const chainMetadataFormFields = useCreateChainMetadataFormFields({
+      initialValue,
+    })
+
+    const { isMalformed, getMaybeEvaluatedChainMetadata } =
+      chainMetadataFormFields
+
+    const saveControlsEnabled = !isMalformed && !disabled
+
     const onPressSave = React.useCallback(async () => {
       try {
-        if (disabled) throw attemptedToModifyDisabledNetworkError()
+        if (!saveControlsEnabled) throw attemptedToModifyDisabledNetworkError()
 
-        throw new Error('not yet implemented')
+        const evaluatedChainMetadata = getMaybeEvaluatedChainMetadata()
+
+        if (!evaluatedChainMetadata)
+          throw new Error(
+            `Developer error. Expected EvaluatedChainMetadata, encountered "${String(
+              evaluatedChainMetadata
+            )}".`
+          )
+
+        // HACK: Adding a custom network will implicitly overwrite
+        //       duplicate fields.
+        await addCustomNetworks([evaluatedChainMetadata])
+
+        return navigation.goBack()
       } catch (e) {
         // eslint-disable-next-line no-console
         console.error(e)
       }
-    }, [disabled])
-
-    const deleteControlsEnabled = Boolean(!disabled && maybeChainIdToDelete)
+    }, [
+      saveControlsEnabled,
+      navigation,
+      getMaybeEvaluatedChainMetadata,
+      addCustomNetworks,
+    ])
 
     return (
       <Container>
@@ -121,7 +152,10 @@ export const NetworksEditor = React.memo(
         />
         <SafeAreaView style={[styles.flex, { marginTop: -35 }]}>
           <ScrollView style={[styles.flex]}>
-            <View style={{ backgroundColor: 'red', width: 10, height: 5000 }} />
+            <ChainsMetadataForm
+              {...chainMetadataFormFields}
+              disabled={disabled}
+            />
             <View style={{ height: 24 }} />
           </ScrollView>
           <View>
@@ -130,8 +164,8 @@ export const NetworksEditor = React.memo(
               <Button
                 onPress={onPressSave}
                 style={[styles.actionButton]}
-                disabled={disabled}>
-                Save
+                disabled={!saveControlsEnabled}>
+                {isMalformed ? 'Invalid' : 'Save'}
               </Button>
             </View>
           </View>

@@ -34,6 +34,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     label,
     icon,
     explorerURL: maybeExplorerUrl,
+    isMainnet,
   } = blockchainNetwork
 
   const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.INFURA_API_KEY)
@@ -55,6 +56,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     nativeCurrencyName: label,
     icon,
     blockExplorers,
+    isMainnet,
   }
 }
 

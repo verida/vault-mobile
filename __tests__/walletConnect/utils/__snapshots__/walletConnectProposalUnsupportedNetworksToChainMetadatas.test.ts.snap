@@ -24,6 +24,7 @@ exports[`walletConnectProposalUnsupportedNetworksToChainMetadatas proposal 1`] =
     ],
     "decimals": 18,
     "icon": null,
+    "isMainnet": null,
     "name": "Ethereum Mainnet",
     "namespace": "eip155",
     "nativeCurrencyName": "Ether",

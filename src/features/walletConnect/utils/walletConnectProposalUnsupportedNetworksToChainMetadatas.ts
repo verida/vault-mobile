@@ -155,10 +155,12 @@ export const walletConnectProposalUnsupportedNetworksToChainMetadatas = ({
         decimals,
         symbol,
         nativeCurrencyName,
+        blockExplorers,
 
         // TODO: how to determine the icon to use?
         icon: null,
-        blockExplorers,
+        // TODO: how to determine if testnet or mainnet?
+        isMainnet: null,
       }
 
       return [chainMetadata]

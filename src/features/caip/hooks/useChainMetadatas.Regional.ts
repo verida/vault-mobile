@@ -26,6 +26,7 @@ const REDBELLY_NETWORK_TESNET: ChainMetadata = {
       name: 'Redbelly Blockchain Explorer',
     },
   ],
+  isMainnet: true,
 }
 
 // Returns default networks depending upon a user's region.
