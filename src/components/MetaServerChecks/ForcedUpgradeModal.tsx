@@ -1,6 +1,6 @@
 import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
-import { ForcedUpgradeType } from 'features/remoteConfig'
+import { ForcedUpgradeType } from 'features/config'
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
