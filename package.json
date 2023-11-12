@@ -23,7 +23,7 @@
     "copy:webapp:android": "rm -rf android/app/src/main/assets/www && mkdir -p android/app/src/main/assets/www && cp -rf web/build/* android/app/src/main/assets/www",
     "release:android": "yarn build:webapp && yarn android --variant=stagingRelease",
     "wc-server": "npx ts-node scripts/wc-server",
-    "pay-eip155": "npx ts-node scripts/pay-eip155"
+    "pay": "npx ts-node scripts/pay"
   },
   "dependencies": {
     "@0xpolygonid/js-sdk": "^1.0.2",
