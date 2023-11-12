@@ -89,6 +89,7 @@ export function useCreateChainMetadataFormFields({
       if (!result.success) return { data: null, error: result.error }
 
       const { data } = result
+
       return { data }
     }, [
       blockExplorerUrl,

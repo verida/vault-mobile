@@ -1,6 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
-import { ChainMetadata, useChainMetadatasCustom } from 'features/caip'
+import {
+  ChainMetadata,
+  useChainMetadataDetails,
+  useChainMetadatasCustom,
+} from 'features/caip'
 import { Container } from 'native-base'
 import * as React from 'react'
 import {
@@ -122,6 +126,8 @@ export const NetworksEditor = React.memo(
 
     const saveControlsEnabled = !isMalformed && !disabled
 
+    const { isReservedChainId } = useChainMetadataDetails()
+
     const onPressSave = React.useCallback(async () => {
       try {
         if (!saveControlsEnabled) throw attemptedToModifyDisabledNetworkError()
@@ -135,6 +141,20 @@ export const NetworksEditor = React.memo(
             )}".`
           )
 
+        const { namespace, reference } = data
+
+        const desiredChainId = new ChainId({ namespace, reference })
+
+        if (isReservedChainId(desiredChainId)) {
+          Alert.alert(
+            'Unable to continue',
+            `Sorry, ${desiredChainId.toString()} is currently reserved.`
+          )
+
+          // Prevent the operation from continuing.
+          throw new Error('Attempted to save a reserved chainId.')
+        }
+
         // HACK: Adding a custom network will implicitly overwrite
         //       duplicate fields.
         await addCustomNetworks([data])
@@ -145,6 +165,7 @@ export const NetworksEditor = React.memo(
         console.error(e)
       }
     }, [
+      isReservedChainId,
       saveControlsEnabled,
       navigation,
       getMaybeEvaluatedChainMetadata,
