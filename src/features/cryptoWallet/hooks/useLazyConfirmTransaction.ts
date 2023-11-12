@@ -266,7 +266,6 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
           await refetch()
 
-          // TODO: we need to tell if the transaction was successfully mined or not
           setState({ loading: false, result })
 
           return result
