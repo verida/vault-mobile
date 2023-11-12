@@ -9,6 +9,8 @@ import EditIcon from 'assets/edit_icon.svg'
 import HouseIcon from 'assets/icons/earth.svg'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
+import { ChainMetadataListItemTag } from './ChainMetadata.List.Item.Tag'
+
 export const ChainMetadataListItem = React.memo(function ChainMetadataListItem({
   chainMetadata,
 }: {
@@ -28,6 +30,7 @@ export const ChainMetadataListItem = React.memo(function ChainMetadataListItem({
       <View style={styles.row}>
         <View style={{ paddingLeft: 10 }}>
           <Text children={label} style={styles.label} />
+          <ChainMetadataListItemTag chainMetadata={chainMetadata} />
         </View>
       </View>
       <View style={[styles.center, { width: 20 }]}>
