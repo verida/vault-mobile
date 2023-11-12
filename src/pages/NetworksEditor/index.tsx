@@ -45,6 +45,8 @@ export const NetworksEditor = React.memo(
     const maybeInitialNamespace = initialValue?.namespace
     const maybeInitialReference = initialValue?.reference
 
+    // TODO: prevent the user from modifying reserved chains
+
     // TODO: which namespace should this be? initial or current?
     const maybeChainIdToDelete = React.useMemo(
       () =>
