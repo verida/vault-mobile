@@ -1,8 +1,7 @@
 import { RouteProp } from '@react-navigation/native'
-import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
-  getChainIdParamsFromResourceParams,
+  useChainIdForResourceParams,
 } from 'features/cryptoWallet'
 import {
   usePredictMaxTransactionFeeOrZero,
@@ -36,10 +35,7 @@ const SendToken = React.memo(function SendToken() {
 
   const { resource } = aggregateWalletBannerBalance
 
-  const chainId = React.useMemo(
-    () => new ChainId(getChainIdParamsFromResourceParams(resource)),
-    [resource]
-  )
+  const chainId = useChainIdForResourceParams({ resource })
 
   const predictedMaxTransactionFee = usePredictMaxTransactionFeeOrZero({
     chainId,

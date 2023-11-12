@@ -1,11 +1,10 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
-import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getChainIdParamsFromResourceParams,
   getWalletAddressForChainId,
+  useChainIdForResourceParams,
   useMaybeBlockchainNetwork,
   useSelectedMinifiedVeridaAccounts,
 } from 'features/cryptoWallet'
@@ -43,7 +42,7 @@ const ReceiveToken = () => {
 
   const { resource } = aggregateWalletBannerBalance
 
-  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+  const chainId = useChainIdForResourceParams({ resource })
 
   // TODO: remove getTokenUnitName
   // TODO: What to do about maybeAsset?

@@ -1,10 +1,9 @@
 import Clipboard from '@react-native-community/clipboard'
-import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   DetailedTransaction,
   formatTokenQuantity,
-  getChainIdParamsFromResourceParams,
+  useChainIdForResourceParams,
   useMaybeBlockchainNetwork,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
@@ -23,7 +22,8 @@ export default ({
   readonly transaction: DetailedTransaction
 }) => {
   const { resource, decimals, symbol } = aggregateWalletBannerBalance
-  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+
+  const chainId = useChainIdForResourceParams({ resource })
 
   const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
 

@@ -1,9 +1,8 @@
-import { ChainId } from 'caip'
 import { AlertType, BottomActionBar } from 'components'
 import {
   AggregateWalletBannerBalance,
   ConfirmTransactionCallbackResult,
-  getChainIdParamsFromResourceParams,
+  useChainIdForResourceParams,
   useLazyConfirmTransaction,
 } from 'features/cryptoWallet'
 import {
@@ -52,10 +51,7 @@ export const PaymentRequestScreenContainer = React.memo(
 
     const styles = useThemeAwareStyle(createStyles)
 
-    const chainId = React.useMemo(
-      () => new ChainId(getChainIdParamsFromResourceParams(resource)),
-      [resource]
-    )
+    const chainId = useChainIdForResourceParams({ resource })
 
     const predictedMaxTransactionFee = usePredictMaxTransactionFeeOrZero({
       chainId,

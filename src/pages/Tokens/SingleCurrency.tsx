@@ -1,14 +1,13 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
-import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getChainIdParamsFromResourceParams,
   getSelectedWalletById,
   getWalletAddressForChainId,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
+  useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeBlockchainNetwork,
   useSelectedMinifiedVeridaAccounts,
@@ -48,18 +47,11 @@ const SingleCurrency = () => {
   const { aggregateWalletBannerBalance } =
     useParams<SingleCurrencyScreenProps>()
 
-  const chainId = new ChainId(
-    getChainIdParamsFromResourceParams(aggregateWalletBannerBalance.resource)
-  )
+  const { resource } = aggregateWalletBannerBalance
 
-  //const maybeAsset: AssetId | undefined =
-  //  Boolean(tokenData) && 'asset' in tokenData ? tokenData.asset : undefined
+  const chainId = useChainIdForResourceParams({ resource })
 
   const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
-
-  //const maybeChainId: string | undefined = maybeAsset
-  //  ? new ChainId(maybeAsset.chainId).toString()
-  //  : undefined
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
 
@@ -72,7 +64,6 @@ const SingleCurrency = () => {
 
   const {
     symbol,
-    resource,
     icon,
     balance,
     decimals,

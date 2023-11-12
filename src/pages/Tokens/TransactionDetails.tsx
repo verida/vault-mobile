@@ -1,10 +1,9 @@
 import { RouteProp } from '@react-navigation/native'
-import { ChainId } from 'caip'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getChainIdParamsFromResourceParams,
   getWalletAddressForChainId,
+  useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeBlockchainNetwork,
@@ -39,7 +38,7 @@ const TransactionDetails = () => {
   const { resource } = aggregateWalletBannerBalance
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
-  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+  const chainId = useChainIdForResourceParams({ resource })
 
   const address = getWalletAddressForChainId(chainId, selectedMinifiedAccounts)
 

@@ -1,11 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
-import { ChainId } from 'caip'
 import { BigNumber } from 'ethers'
 import {
   AggregateWalletBannerBalance,
   getBlockchainNetworkLabel,
-  getChainIdParamsFromResourceParams,
   getWalletAddressForChainId,
+  useChainIdForResourceParams,
   useLazyConfirmTransaction,
   useMaybeBlockchainNetwork,
   useSelectedMinifiedVeridaAccounts,
@@ -48,10 +47,7 @@ const ConfirmTransaction = () => {
 
   const { resource, decimals, symbol } = aggregateWalletBannerBalance
 
-  const chainId = React.useMemo(
-    () => new ChainId(getChainIdParamsFromResourceParams(resource)),
-    [resource]
-  )
+  const chainId = useChainIdForResourceParams({ resource })
 
   const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
 

@@ -1,5 +1,4 @@
 import BigDecimal from 'bignumber.js'
-import { ChainId } from 'caip'
 import {
   RequestDetails,
   RequestHeader,
@@ -16,8 +15,8 @@ import {
   CryptoWalletRequest,
   CURRENCY_SYMBOLS,
   getAggregateWalletBannerBalanceResult,
-  getChainIdParamsFromResourceParams,
   useAggregateWalletBannerBalances,
+  useChainIdForResourceParams,
   useMaybeBlockchainAccountForResource,
 } from 'features/cryptoWallet'
 import { reduceProtocols } from 'features/protocols'
@@ -73,19 +72,12 @@ export const PaymentRequestScreenContent = React.memo(
 
     const protocols = reduceProtocols(details.protocols, 16)
 
-    const handleToggleDetails = React.useCallback(() => {
-      setDetailsOpen((prevValue) => !prevValue)
-    }, [])
-
-    const chainId = React.useMemo(
-      () => new ChainId(getChainIdParamsFromResourceParams(resource)),
-      [resource]
+    const handleToggleDetails = React.useCallback(
+      () => setDetailsOpen((prevValue) => !prevValue),
+      []
     )
 
-    //// TODO: explorerURLs
-    //const maybeChainMetadata = useMaybeChainMetadataForResource({
-    //  resource,
-    //})
+    const chainId = useChainIdForResourceParams({ resource })
 
     // TOOD: maybe remove this
     const maybeBlockchainWallet = useMaybeBlockchainAccountForResource({

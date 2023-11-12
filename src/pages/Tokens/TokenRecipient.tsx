@@ -1,12 +1,11 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
-import { ChainId } from 'caip'
 import { BigNumber, ethers } from 'ethers'
 import { SupportedCaipNamespace } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
-  getChainIdParamsFromResourceParams,
   isValidWalletAddressForChainId,
+  useChainIdForResourceParams,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
@@ -88,7 +87,7 @@ const TokenRecipient = () => {
 
   const { resource } = aggregateWalletBannerBalance
 
-  const chainId = new ChainId(getChainIdParamsFromResourceParams(resource))
+  const chainId = useChainIdForResourceParams({ resource })
 
   const { namespace } = chainId
 
