@@ -1,12 +1,5 @@
 import { z } from 'zod'
 
-// Source of truth for what protocols are supported by the app.
-// TODO: should be moved to 'blockchain' feature
-export enum SupportedCaipNamespace {
-  EIP_155 = 'eip155',
-  NEAR = 'near',
-}
-
 export const ChainMetadataRpc = z.string().url()
 
 export type ChainMetadataRpc = z.infer<typeof ChainMetadataRpc>

@@ -1,6 +1,8 @@
 import { ethers } from 'ethers'
-import { BlockchainRequestHandlerCallback } from 'features/blockchain/@types'
-import { SupportedCaipNamespace } from 'features/caip/@types'
+import {
+  BlockchainRequestHandlerCallback,
+  SupportedBlockchainNamespace,
+} from 'features/blockchain/@types'
 import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
 import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
 import { numericAmountToFixedPointCrypto } from 'features/cryptoWallet/utils/numericAmountToFixedPointCrypto'
@@ -24,9 +26,9 @@ export const sendErc20Eip155 = async ({
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedVeridaAccount
 
-  if (namespace !== SupportedCaipNamespace.EIP_155)
+  if (namespace !== SupportedBlockchainNamespace.EIP_155)
     throw new Error(
-      `Expected "${SupportedCaipNamespace.EIP_155}", encountered "${namespace}".`
+      `Expected "${SupportedBlockchainNamespace.EIP_155}", encountered "${namespace}".`
     )
 
   const { privateKey } = minifiedVeridaAccount

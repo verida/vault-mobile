@@ -1,10 +1,10 @@
 import { ChainId } from 'caip'
-import { getBalanceEip155, getBalanceNear } from 'features/blockchain'
 import {
-  ChainMetadatas,
-  getRpcUrlOrThrow,
-  SupportedCaipNamespace,
-} from 'features/caip'
+  getBalanceEip155,
+  getBalanceNear,
+  SupportedBlockchainNamespace,
+} from 'features/blockchain'
+import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
 
 import { CryptoWalletBalances, MinifiedVeridaAccounts } from '../@types'
 
@@ -18,7 +18,9 @@ export async function fetchCryptoWalletBalances({
   const eip155Addresses = [
     ...new Set(
       minifiedAccounts
-        .filter(({ namespace }) => namespace === SupportedCaipNamespace.EIP_155)
+        .filter(
+          ({ namespace }) => namespace === SupportedBlockchainNamespace.EIP_155
+        )
         .map(({ address }) => address)
     ),
   ]
@@ -26,20 +28,21 @@ export async function fetchCryptoWalletBalances({
   const nearAddresses = [
     ...new Set(
       minifiedAccounts
-        .filter(({ namespace }) => namespace === SupportedCaipNamespace.NEAR)
+        .filter(
+          ({ namespace }) => namespace === SupportedBlockchainNamespace.NEAR
+        )
         .map(({ address }) => address)
     ),
   ]
 
   const allNearSources = [...new Set([...nearAddresses])]
 
-  // TODO: dedup
   const eip155Chains = chainMetadatas.filter(
-    (e) => e.namespace === SupportedCaipNamespace.EIP_155
+    (e) => e.namespace === SupportedBlockchainNamespace.EIP_155
   )
 
   const nearChains = chainMetadatas.filter(
-    (e) => e.namespace === SupportedCaipNamespace.NEAR
+    (e) => e.namespace === SupportedBlockchainNamespace.NEAR
   )
 
   const eip155Rpcs = eip155Chains.map((e) =>

@@ -1,7 +1,9 @@
 import { BN } from 'bn.js'
 import { ChainId } from 'caip'
-import { BlockchainRequestHandlerCallback } from 'features/blockchain/@types'
-import { SupportedCaipNamespace } from 'features/caip/@types'
+import {
+  BlockchainRequestHandlerCallback,
+  SupportedBlockchainNamespace,
+} from 'features/blockchain/@types'
 import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
 import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
 import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
@@ -26,9 +28,9 @@ export const sendBaseCurrencyNear = async ({
 }): Promise<ConfirmTransactionCallbackResult> => {
   const { namespace } = minifiedVeridaAccount
 
-  if (namespace !== SupportedCaipNamespace.NEAR)
+  if (namespace !== SupportedBlockchainNamespace.NEAR)
     throw new Error(
-      `Expected "${SupportedCaipNamespace.NEAR}", encountered "${namespace}".`
+      `Expected "${SupportedBlockchainNamespace.NEAR}", encountered "${namespace}".`
     )
 
   const nearProvider = new nearProviders.JsonRpcProvider(rpc)
@@ -63,9 +65,10 @@ export const sendBaseCurrencyNear = async ({
     signerId,
   }
 
-  // TODO: verify this is true
-  // @ts-expect-error untyped
-  const { transaction: transactionHash } = await near_signAndSendTransaction({
+  const {
+    // @ts-expect-error untyped
+    transaction: { hash: transactionHash },
+  } = await near_signAndSendTransaction({
     context: {
       nearAccount: maybeNearAccount,
       nearProvider,
@@ -77,8 +80,10 @@ export const sendBaseCurrencyNear = async ({
 
   if (typeof transactionHash !== 'string')
     throw new Error(
-      `Expected string transactionHash, encountered "${transactionHash}".`
+      `Expected string transactionHash, encountered "${JSON.stringify(
+        transactionHash
+      )}".`
     )
 
-  return { transactionHash: String(transactionHash) }
+  return { transactionHash }
 }

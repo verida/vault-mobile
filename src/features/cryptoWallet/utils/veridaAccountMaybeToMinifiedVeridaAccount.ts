@@ -1,6 +1,7 @@
 import { ChainId } from 'caip'
 import { ethers } from 'ethers'
-import { isSupportedCaipNamespace, SupportedCaipNamespace } from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import { isSupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainAccount } from 'api/types'
 
@@ -22,7 +23,7 @@ const veridaAccountToMinifiedVeridaAccountEip155 = (
     throw new Error('Expected non-empty string privateKey.')
 
   return {
-    namespace: SupportedCaipNamespace.EIP_155,
+    namespace: SupportedBlockchainNamespace.EIP_155,
     address,
     privateKey,
   }
@@ -41,7 +42,7 @@ const veridaAccountToMinifiedVeridaAccountNear = ({
     throw new Error('Expected non-empty string privateKey.')
 
   return {
-    namespace: SupportedCaipNamespace.NEAR,
+    namespace: SupportedBlockchainNamespace.NEAR,
     privateKey,
     address: signerId,
   }
@@ -59,9 +60,9 @@ export function veridaAccountMaybeToMinifiedVeridaAccount(
 
   const { namespace } = new ChainId(chainId)
 
-  if (namespace === SupportedCaipNamespace.EIP_155) {
+  if (namespace === SupportedBlockchainNamespace.EIP_155) {
     return veridaAccountToMinifiedVeridaAccountEip155(blockchainAccount)
-  } else if (namespace === SupportedCaipNamespace.NEAR) {
+  } else if (namespace === SupportedBlockchainNamespace.NEAR) {
     return veridaAccountToMinifiedVeridaAccountNear(blockchainAccount)
   }
 

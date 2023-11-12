@@ -1,4 +1,4 @@
-import { SupportedCaipNamespace } from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
@@ -19,7 +19,7 @@ export function useWalletConnectDataFormatting() {
 
       const { namespace } = chainId
 
-      if (namespace === SupportedCaipNamespace.NEAR)
+      if (namespace === SupportedBlockchainNamespace.NEAR)
         return formatTransactionDataNearLike(request.params)
 
       return request.params.request.params

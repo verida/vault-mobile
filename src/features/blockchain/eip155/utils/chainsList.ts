@@ -1,7 +1,8 @@
 import axios from 'axios'
 import { ChainId } from 'caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 
-import { ChainMetadatas, SupportedCaipNamespace } from '../../../caip/@types'
+import { ChainMetadatas } from '../../../caip/@types'
 import {
   AddEthereumChainRequestParam,
   AddEthereumChainRequestParamBlockExplorerUrls,
@@ -78,7 +79,7 @@ export const chainMetadatasToAddEthereumChainRequestParamsOrThrow = ({
     ...new Set(chainMetadatas.map((e) => e.namespace)),
   ]
   const unsupportedNamspaces = requestedNamespaces.filter(
-    (e) => e !== SupportedCaipNamespace.EIP_155
+    (e) => e !== SupportedBlockchainNamespace.EIP_155
   )
 
   if (unsupportedNamspaces.length)
@@ -86,7 +87,7 @@ export const chainMetadatasToAddEthereumChainRequestParamsOrThrow = ({
       `Attempted to process (${unsupportedNamspaces.join(
         ','
       )}) namespaces within an ${
-        SupportedCaipNamespace.EIP_155
+        SupportedBlockchainNamespace.EIP_155
       }-specific context.`
     )
 

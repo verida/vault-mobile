@@ -1,6 +1,6 @@
 import BigDecimal from 'bignumber.js'
 import { AccountId, AssetId, AssetIdParams, ChainIdParams } from 'caip'
-import { SupportedCaipNamespace } from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 
 import { BlockchainAccount, BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
@@ -168,20 +168,22 @@ export type ImportedSeedPhrase = {
   readonly inputSwitch: string
 }
 
-type AbstractMinifiedVeridaAccount<Namespace extends SupportedCaipNamespace> = {
+type AbstractMinifiedVeridaAccount<
+  Namespace extends SupportedBlockchainNamespace
+> = {
   readonly address: string
   readonly namespace: Namespace
 }
 
 export type MinifiedVeridaAccountEip155 =
-  AbstractMinifiedVeridaAccount<SupportedCaipNamespace.EIP_155> & {
+  AbstractMinifiedVeridaAccount<SupportedBlockchainNamespace.EIP_155> & {
     readonly address: string
     readonly privateKey: string
   }
 
 // TODO: add required fields
 export type MinifiedVeridaAccountNear =
-  AbstractMinifiedVeridaAccount<SupportedCaipNamespace.NEAR> & {
+  AbstractMinifiedVeridaAccount<SupportedBlockchainNamespace.NEAR> & {
     // TODO: Note near uses slightly different terminology... address === signerId!
     //readonly signerId: string
     readonly privateKey: string

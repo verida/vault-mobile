@@ -1,6 +1,6 @@
 import { AssetId, ChainId } from 'caip'
 import * as ethers from 'ethers'
-import { SupportedCaipNamespace } from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 
 import { ImportedSeedPhrase } from '../@types'
 
@@ -23,9 +23,9 @@ export const isValidWalletAddressForChainId = (
   const { namespace } = chainId
 
   switch (namespace) {
-    case SupportedCaipNamespace.EIP_155:
+    case SupportedBlockchainNamespace.EIP_155:
       return ethers.utils.isAddress(address)
-    case SupportedCaipNamespace.NEAR:
+    case SupportedBlockchainNamespace.NEAR:
       return validateNearAddress(address)
     default:
       // eslint-disable-next-line no-console

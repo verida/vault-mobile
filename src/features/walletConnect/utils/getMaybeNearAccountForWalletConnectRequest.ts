@@ -1,7 +1,7 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { NearAccount, throwIfNotNearTestnet } from 'features/blockchain/near'
-import { SupportedCaipNamespace } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
@@ -16,7 +16,8 @@ export async function getMaybeNearAccountForPrivateKey({
   readonly signerId: string
   readonly caipChainId: ChainId
 }) {
-  if (caipChainId.namespace !== SupportedCaipNamespace.NEAR) return undefined
+  if (caipChainId.namespace !== SupportedBlockchainNamespace.NEAR)
+    return undefined
 
   const { reference } = caipChainId
 
@@ -56,7 +57,8 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   const caipChainId = new ChainId(params.chainId)
 
-  if (caipChainId.namespace !== SupportedCaipNamespace.NEAR) return undefined
+  if (caipChainId.namespace !== SupportedBlockchainNamespace.NEAR)
+    return undefined
 
   throwIfNotNearTestnet(caipChainId)
 

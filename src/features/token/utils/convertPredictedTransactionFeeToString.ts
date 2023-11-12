@@ -1,6 +1,6 @@
 import { ChainId } from 'caip'
 import { BigNumber, ethers } from 'ethers'
-import { SupportedCaipNamespace } from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet'
 
 export function convertPredictedTransactionFeeToString({
@@ -25,7 +25,7 @@ export function convertPredictedTransactionFeeToString({
       feeSymbol: '',
     }
 
-  if (chainId.namespace === SupportedCaipNamespace.EIP_155)
+  if (chainId.namespace === SupportedBlockchainNamespace.EIP_155)
     return {
       feeAmount: `${Math.round(
         parseFloat(ethers.utils.formatUnits(predictedMaxTransactionFee, 'gwei'))

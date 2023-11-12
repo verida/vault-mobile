@@ -1,11 +1,13 @@
 import { ChainId } from 'caip'
 import { BigNumber, ethers } from 'ethers'
-import { calculateTransactionFeeEip155 } from 'features/blockchain'
+import {
+  calculateTransactionFeeEip155,
+  SupportedBlockchainNamespace,
+} from 'features/blockchain'
 import {
   getMaybeChainMetadatas,
   getRpcUrlOrThrow,
   isSupportedCaipNamespace,
-  SupportedCaipNamespace,
   useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
@@ -60,7 +62,7 @@ export function usePredictMaxTransactionFee({
             chainMetadatas,
           })
 
-          if (namespace === SupportedCaipNamespace.EIP_155) {
+          if (namespace === SupportedBlockchainNamespace.EIP_155) {
             const provider = new ethers.providers.JsonRpcProvider(rpc)
             const { maxFeePerGas } = await provider.getFeeData()
 
@@ -82,7 +84,7 @@ export function usePredictMaxTransactionFee({
             })
           }
 
-          if (namespace === SupportedCaipNamespace.NEAR)
+          if (namespace === SupportedBlockchainNamespace.NEAR)
             throw new Error(
               'Transaction get estimate detection for NEAR is not yet supported.'
             )

@@ -1,6 +1,6 @@
 import 'jest'
 
-import { SupportedCaipNamespace } from 'features/caip/@types'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 
 import {
   chainMetadatasToAddEthereumChainRequestParamsOrThrow,
@@ -44,7 +44,7 @@ describe('blockchain/eip155/utils/chainsList', () => {
           {
             name: 'My Ethereum :)',
             rpcUrls: ['$TEST_RPC_URL'],
-            namespace: SupportedCaipNamespace.EIP_155,
+            namespace: SupportedBlockchainNamespace.EIP_155,
             reference: '1',
             decimals: 6,
             nativeCurrencyName: 'MyEther',

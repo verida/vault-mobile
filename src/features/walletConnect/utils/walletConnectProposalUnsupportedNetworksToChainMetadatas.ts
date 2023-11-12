@@ -1,11 +1,11 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/index'
 import { ChainId, ChainIdParams } from 'caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { ChainsList, ChainsListItem } from 'features/blockchain/eip155'
 import {
   ChainMetadata,
   ChainMetadataRpcs,
   ChainMetadatas,
-  SupportedCaipNamespace,
 } from 'features/caip/@types'
 import { isSupportedCaipNamespace } from 'features/caip/utils/isSupportedCaipNamespace'
 
@@ -50,7 +50,7 @@ export const getMaybeChainsListItemByChainsListByChainId = ({
   const { namespace } = chainId
 
   // The ChainsList only defines EVM-compatible chains.
-  if (namespace !== SupportedCaipNamespace.EIP_155) return undefined
+  if (namespace !== SupportedBlockchainNamespace.EIP_155) return undefined
 
   const { reference } = chainId
 

@@ -1,10 +1,7 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
-import {
-  ChainMetadatas,
-  SupportedCaipNamespace,
-  useChainMetadatasCustom,
-} from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import { ChainMetadatas, useChainMetadatasCustom } from 'features/caip'
 import * as React from 'react'
 import { fromZodError } from 'zod-validation-error'
 
@@ -42,7 +39,7 @@ const addEthereumChainRequestParamsToChainMetadatas = (
     }): ChainMetadatas => [
       {
         reference: String(parseInt(chainId, 16)),
-        namespace: SupportedCaipNamespace.EIP_155,
+        namespace: SupportedBlockchainNamespace.EIP_155,
         name,
         rpcUrls,
         nativeCurrencyName,

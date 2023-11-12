@@ -1,5 +1,6 @@
 import { AssetId, ChainId } from 'caip'
 import { ethers } from 'ethers'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
   sendBaseCurrencyEip155,
   sendErc20Eip155,
@@ -12,7 +13,6 @@ import {
 import {
   getMaybeChainMetadatas,
   getRpcUrlOrThrow,
-  SupportedCaipNamespace,
   useChainMetadatas,
 } from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
@@ -127,7 +127,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       const { namespace } = chainId
 
       switch (namespace) {
-        case SupportedCaipNamespace.EIP_155:
+        case SupportedBlockchainNamespace.EIP_155:
           const { eth_sendTransaction } = blockchainRequestHandlersEip155
 
           return sendBaseCurrencyEip155({
@@ -138,7 +138,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             eth_sendTransaction,
           })
 
-        case SupportedCaipNamespace.NEAR:
+        case SupportedBlockchainNamespace.NEAR:
           const { near_signAndSendTransaction } = blockchainRequestHandlersNear
 
           return sendBaseCurrencyNear({
@@ -184,7 +184,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       const maybeErc20Address = new AssetId(resource).assetName?.reference
 
       switch (namespace) {
-        case SupportedCaipNamespace.EIP_155:
+        case SupportedBlockchainNamespace.EIP_155:
           const { eth_sendTransaction } = blockchainRequestHandlersEip155
 
           if (!ethers.utils.isAddress(maybeErc20Address))

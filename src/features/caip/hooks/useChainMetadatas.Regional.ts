@@ -1,19 +1,16 @@
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import * as React from 'react'
 
 import { useAppSelector } from 'reduxStore/types'
 
-import {
-  ChainMetadata,
-  SupportedCaipNamespace,
-  UseChainMetadataState,
-} from '../@types'
+import { ChainMetadata, UseChainMetadataState } from '../@types'
 
 const EMPTY_RESULT: UseChainMetadataState = { loading: false, result: [] }
 
 // TODO: To wallet provider?
 const REDBELLY_NETWORK_TESNET: ChainMetadata = {
-  namespace: SupportedCaipNamespace.EIP_155,
+  namespace: SupportedBlockchainNamespace.EIP_155,
   reference: '153',
   rpcUrls: [
     'https://rbn-gcp-australia-southeast1-a-0-b-v2.devnet.redbelly.network:8545',

@@ -1,7 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import { BigNumber, ethers } from 'ethers'
-import { SupportedCaipNamespace } from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
   AggregateWalletBannerBalance,
   isValidWalletAddressForChainId,
@@ -131,8 +131,7 @@ const TokenRecipient = () => {
             {Boolean(__DEV__) && (
               <TouchableOpacity
                 onPress={() => {
-                  // TODO: Create a random NEAR address
-                  if (namespace === SupportedCaipNamespace.NEAR)
+                  if (namespace === SupportedBlockchainNamespace.NEAR)
                     return onPressSend('guest-book.testnet')
 
                   const { address: randomAddress } =

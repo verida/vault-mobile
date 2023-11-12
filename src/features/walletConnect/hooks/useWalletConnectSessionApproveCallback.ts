@@ -1,9 +1,9 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
   getChainMetadataByCaipTypeOrThrow,
   getMaybeChainMetadatas,
   isSupportedCaipNamespace,
-  SupportedCaipNamespace,
   useChainMetadatas,
 } from 'features/caip'
 import * as React from 'react'
@@ -26,8 +26,8 @@ export function useWalletConnectSessionApproveCallback() {
   const supportedStandardHandlers: SupportedCaipProtocolSessionHandlers =
     React.useMemo(
       () => ({
-        [SupportedCaipNamespace.EIP_155]: eip155Approve,
-        [SupportedCaipNamespace.NEAR]: nearApprove,
+        [SupportedBlockchainNamespace.EIP_155]: eip155Approve,
+        [SupportedBlockchainNamespace.NEAR]: nearApprove,
       }),
       [eip155Approve, nearApprove]
     )
