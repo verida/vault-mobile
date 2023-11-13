@@ -27,7 +27,7 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import { persistor, store } from 'reduxStore'
 import { initApplication } from 'utils'
 
-import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
+import { MetaServerChecks } from 'components/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
 import { navigationRef, RootNavigator } from 'navigation/RootNavigator'

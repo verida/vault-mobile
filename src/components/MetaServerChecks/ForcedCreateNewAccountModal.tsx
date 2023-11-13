@@ -26,7 +26,7 @@ type Props = {
   forcedSignOut: () => Promise<boolean>
 }
 
-const ForcedCreateNewAccountModal = ({
+export const ForcedCreateNewAccountModal = ({
   forcedCreateAccount,
   dismissModal,
   forcedSignOut,
@@ -97,8 +97,6 @@ const ForcedCreateNewAccountModal = ({
     </Modal>
   )
 }
-
-export default ForcedCreateNewAccountModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({

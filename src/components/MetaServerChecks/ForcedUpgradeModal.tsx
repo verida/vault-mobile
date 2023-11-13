@@ -20,7 +20,7 @@ type Props = {
   forcedUpgrade: ForcedUpgradeType
 }
 
-const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
+export const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
 
   const onDownloadPress = () => {
@@ -80,8 +80,6 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
     </Modal>
   )
 }
-
-export default ForcedUpgradeModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({

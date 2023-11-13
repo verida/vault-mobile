@@ -41,7 +41,7 @@ type Props = {
   dismissModal: () => void
 }
 
-const DIDNonExistentModal = ({ dismissModal }: Props) => {
+export const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const styles = useThemeAwareStyle(createStyles)
@@ -205,8 +205,6 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
     </Modal>
   )
 }
-
-export default DIDNonExistentModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({

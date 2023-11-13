@@ -8,11 +8,11 @@ import { useAuth } from 'hooks/useAuth'
 import { useEmitter } from 'hooks/useEmitter'
 import { useModal } from 'hooks/useModal'
 
-import DIDNonExistentModal from './DIDNonExistentModal'
-import ForcedCreateNewAccountModal from './ForcedCreateNewAccountModal'
-import ForcedUpgradeModal from './ForcedUpgradeModal'
+import { DIDNonExistentModal } from './DIDNonExistentModal'
+import { ForcedCreateNewAccountModal } from './ForcedCreateNewAccountModal'
+import { ForcedUpgradeModal } from './ForcedUpgradeModal'
 
-const MetaServerChecks = () => {
+export const MetaServerChecks = () => {
   const { showModal, dismissModal } = useModal()
   const { forcedUpgrade, forcedCreateAccount } = useConfig()
   const { forcedSignOut } = useAuth()
@@ -70,5 +70,3 @@ const MetaServerChecks = () => {
 
   return null
 }
-
-export default MetaServerChecks
