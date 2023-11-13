@@ -13,7 +13,6 @@ import React, {
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 
-import LoadingView from 'components/LoadingView'
 import { MaintenanceScreen } from 'pages/Account/MaintenanceScreen'
 
 import {
@@ -40,11 +39,37 @@ export const ConfigProvider: React.FC = ({ children }) => {
     useState<ForcedCreateAccountType>({})
   const [maintenanceMode, setMaintenanceMode] = useState<MaintenanceMode>({})
 
-  const [loading, setLoading] = useState(true)
   const initialLoadRef = useRef(true)
   const appState = useRef(AppState.currentState)
 
-  const fetchRemoteConfig = useCallback(() => {
+  const fetchRemoteConfig = useCallback(async () => {
+    /*
+     * Handle remote app config based on environment
+     * Remote config contain configurations for all the network environments:
+     * {
+     *   "devnet": {
+     *      ...
+     *   }
+     *   "testnet": {
+     *      ...
+     *   }
+     *   "mainnet": {
+     *      ...
+     *   }
+     * }
+     */
+    const veridaEnvironment = appConfig.VERIDA_ENVIRONMENT
+
+    const APP_REMOTE_CONFIG_STORAGE_KEY = 'SAVED_REMOTE_CONFIG'
+    const savedRemoteConfig = JSON.parse(
+      (await SecureStore.getItemAsync(APP_REMOTE_CONFIG_STORAGE_KEY)) || '{}'
+    )
+    // Merge the last update from remote config on initial load
+    if (initialLoadRef.current && savedRemoteConfig?.[veridaEnvironment]) {
+      mergeWithRemoteConfig(savedRemoteConfig[veridaEnvironment])
+      initialLoadRef.current = false
+    }
+
     remoteConfig().setConfigSettings({
       minimumFetchIntervalMillis: REMOTE_CONFIG_FETCH_INTERVAL_MILLIS,
     })
@@ -71,34 +96,10 @@ export const ConfigProvider: React.FC = ({ children }) => {
             remoteConfig().getValue('forced_create_new_account').asString()
           )
           setForcedCreateAccount(forcedCreateAccountInfo)
-
-          /**
-           * Handle remote app config
-           * Remote config contain configurations for all the network environments:
-           *
-           * {
-           *   "devnet": {
-           *      ...
-           *   }
-           *   "testnet": {
-           *      ...
-           *   }
-           *   "mainnet": {
-           *      ...
-           *   }
-           * }
-           */
-          const veridaEnvironment = appConfig.VERIDA_ENVIRONMENT
           const remoteAppConfig = JSON.parse(
             remoteConfig().getValue('wallet_app_config').asString()
           )
 
-          // Save the last update from remote config to update the app on initial load
-          const APP_REMOTE_CONFIG_STORAGE_KEY = 'SAVED_REMOTE_CONFIG'
-          const savedRemoteConfig = JSON.parse(
-            (await SecureStore.getItemAsync(APP_REMOTE_CONFIG_STORAGE_KEY)) ||
-              '{}'
-          )
           if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
             SecureStore.setItemAsync(
               APP_REMOTE_CONFIG_STORAGE_KEY,
@@ -106,20 +107,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
             )
           }
 
-          if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
-            SecureStore.setItemAsync(
-              APP_REMOTE_CONFIG_STORAGE_KEY,
-              remoteConfig().getValue('wallet_app_config').asString()
-            )
-          }
-
-          // Merge with remote config on the app initial load
-          if (initialLoadRef.current) {
-            mergeWithRemoteConfig(
-              remoteAppConfig?.[veridaEnvironment] ||
-                savedRemoteConfig?.[veridaEnvironment]
-            )
-          } else if (
+          if (
             !isEqual(
               remoteAppConfig?.[veridaEnvironment],
               savedRemoteConfig?.[veridaEnvironment]
@@ -151,7 +139,6 @@ export const ConfigProvider: React.FC = ({ children }) => {
       })
       .finally(() => {
         initialLoadRef.current = false
-        setLoading(false)
       })
   }, [])
 
@@ -178,10 +165,6 @@ export const ConfigProvider: React.FC = ({ children }) => {
       subscription?.remove()
     }
   }, [fetchRemoteConfig])
-
-  if (loading) {
-    return <LoadingView />
-  }
 
   return (
     <ConfigContext.Provider
