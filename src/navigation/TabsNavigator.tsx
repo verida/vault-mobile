@@ -6,7 +6,7 @@ import Ionicons from 'react-native-vector-icons/Ionicons'
 import { PRIMARY_COLOR } from 'constants/color'
 import { TabsScreenParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
-// import { ConnectionsTabScreen } from 'pages/Connections/DataConnector'
+// import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
 import { HomeTabScreen } from 'pages/Dashboard/Home'
 import { DataTabScreen } from 'pages/Data'
 import { PublicProfile } from 'pages/Profiles/PublicProfile'
@@ -18,7 +18,7 @@ const tabIcons: Record<
   Home: { default: 'home', focused: 'home' },
   Profile: { default: 'person', focused: 'person' },
   Data: { default: 'server', focused: 'server' },
-  // Connections: { default: 'share-social', focused: 'share-social' },
+  // Connections: { default: 'share-social', focused: 'share-social' }, // TODO: uncomment when ready
   Assets: { default: 'wallet', focused: 'wallet' },
 }
 
@@ -47,7 +47,8 @@ export const TabsNavigator: React.FunctionComponent = () => {
       <Tabs.Screen name='Home' component={HomeTabScreen} />
       <Tabs.Screen name='Profile' component={PublicProfile} />
       <Tabs.Screen name='Data' component={DataTabScreen} />
-      {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} /> */}
+      {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
+       TODO: uncomment when ready */}
       <Tabs.Screen name='Assets' component={Assets} />
     </Tabs.Navigator>
   )
