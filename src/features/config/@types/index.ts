@@ -28,5 +28,4 @@ export interface ConfigContextType {
   config: AppConfig
   forcedUpgrade?: ForcedUpgradeType
   forcedCreateAccount?: ForcedCreateAccountType
-  fetchRemoteConfig: () => void
 }

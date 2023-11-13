@@ -170,7 +170,6 @@ export const ConfigProvider: React.FC = ({ children }) => {
     <ConfigContext.Provider
       value={{
         config: appConfig,
-        fetchRemoteConfig,
         forcedUpgrade,
         forcedCreateAccount,
       }}>
