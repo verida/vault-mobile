@@ -24,19 +24,21 @@ export const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
 
   const onDownloadPress = () => {
-    Linking.canOpenURL(forcedUpgrade.storeUrl!)
+    Linking.canOpenURL(forcedUpgrade.storeUrl)
       .then(() => {
-        Linking.openURL(forcedUpgrade.storeUrl!)
+        Linking.openURL(forcedUpgrade.storeUrl)
       })
       .catch((e) => sentry.captureException(e))
   }
 
   const onFurtherInfoPress = () => {
-    Linking.canOpenURL(forcedUpgrade.furtherInfo!)
-      .then(() => {
-        Linking.openURL(forcedUpgrade.furtherInfo!)
-      })
-      .catch((e) => sentry.captureException(e))
+    if (forcedUpgrade.furtherInfo) {
+      Linking.canOpenURL(forcedUpgrade.furtherInfo)
+        .then(() => {
+          Linking.openURL(forcedUpgrade.furtherInfo!)
+        })
+        .catch((e) => sentry.captureException(e))
+    }
   }
 
   return (
@@ -70,9 +72,11 @@ export const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
               <Button color='primary' onPress={onDownloadPress}>
                 Download
               </Button>
-              <Button color='grey' onPress={onFurtherInfoPress}>
-                Further Info
-              </Button>
+              {Boolean(forcedUpgrade.furtherInfo) && (
+                <Button color='grey' onPress={onFurtherInfoPress}>
+                  Further Info
+                </Button>
+              )}
             </View>
           </View>
         </View>

@@ -1,12 +1,13 @@
 import remoteConfig from '@react-native-firebase/remote-config'
-import * as Sentry from '@sentry/react-native'
 import { config as appConfig, mergeWithRemoteConfig } from 'config'
+import { Logger } from 'features/telemetry'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEqual } from 'lodash'
 import React, {
   createContext,
   useCallback,
   useEffect,
+  useMemo,
   useRef,
   useState,
 } from 'react'
@@ -21,6 +22,8 @@ import {
   ForcedUpgradeType,
   MaintenanceMode,
 } from '../@types'
+
+const logger = new Logger('ConfigContext')
 
 const DEFAULT_REMOTE_CONFIG = {
   forced_upgrade: '{}',
@@ -81,61 +84,101 @@ export const ConfigProvider: React.FC = ({ children }) => {
       .then(async (fetchedRemotely) => {
         if (fetchedRemotely) {
           // Handle maintenance mode
-          const maintenanceModeValue = JSON.parse(
-            remoteConfig().getValue('maintenance_mode').asString()
-          )
-          setMaintenanceMode(maintenanceModeValue)
-
-          // Handle forced app upgrade
-          const forcedUpgradeJSON = remoteConfig().getValue('forced_upgrade')
-          const forcedUpgradeInfo = JSON.parse(forcedUpgradeJSON.asString())
-          setForcedUpgrade(forcedUpgradeInfo)
-
-          // Handle forced create new account
-          const forcedCreateAccountInfo = JSON.parse(
-            remoteConfig().getValue('forced_create_new_account').asString()
-          )
-          setForcedCreateAccount(forcedCreateAccountInfo)
-          const remoteAppConfig = JSON.parse(
-            remoteConfig().getValue('wallet_app_config').asString()
-          )
-
-          if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
-            SecureStore.setItemAsync(
-              APP_REMOTE_CONFIG_STORAGE_KEY,
-              remoteConfig().getValue('wallet_app_config').asString()
+          try {
+            const maintenanceModeData = JSON.parse(
+              remoteConfig().getValue('maintenance_mode').asString()
+            )
+            setMaintenanceMode(maintenanceModeData)
+          } catch (error) {
+            logger.error(
+              new Error('Failed to load maintenance mode', {
+                cause: error,
+              })
             )
           }
 
-          if (
-            !isEqual(
-              remoteAppConfig?.[veridaEnvironment],
-              savedRemoteConfig?.[veridaEnvironment]
+          // Handle forced app upgrade
+          try {
+            const forcedUpgradeInfo = JSON.parse(
+              remoteConfig().getValue('forced_upgrade').asString()
             )
-          ) {
-            // Handle runtime app config updated, need to reload the app
-            const appNeedsReload = mergeWithRemoteConfig(
-              remoteAppConfig[veridaEnvironment]
+            setForcedUpgrade(forcedUpgradeInfo)
+          } catch (error) {
+            logger.error(
+              new Error('Failed to load forced upgrade info', {
+                cause: error,
+              })
             )
-            if (appNeedsReload) {
-              Alert.alert(
-                'Application Configuration Updated',
-                'Application configurations have been updated, the app needs to be restarted.',
-                [
-                  {
-                    text: 'OK',
-                    onPress: () => {
-                      RNRestart.restart()
-                    },
-                  },
-                ]
+          }
+
+          // Handle forced create new account
+          try {
+            const forcedCreateAccountInfo = JSON.parse(
+              remoteConfig().getValue('forced_create_new_account').asString()
+            )
+            setForcedCreateAccount(forcedCreateAccountInfo)
+          } catch (error) {
+            logger.error(
+              new Error('Failed to load forced create account info', {
+                cause: error,
+              })
+            )
+          }
+
+          // Handle remote config
+          try {
+            const remoteAppConfig = JSON.parse(
+              remoteConfig().getValue('wallet_app_config').asString()
+            )
+            // Save a copy of remote config for updating the app on initialization
+            if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
+              SecureStore.setItemAsync(
+                APP_REMOTE_CONFIG_STORAGE_KEY,
+                remoteConfig().getValue('wallet_app_config').asString()
               )
             }
+
+            // Update app config for the active environment in case having config change
+            if (
+              !isEqual(
+                remoteAppConfig?.[veridaEnvironment],
+                savedRemoteConfig?.[veridaEnvironment]
+              )
+            ) {
+              // Handle runtime app config updated, need to reload the app
+              const appNeedsReload = mergeWithRemoteConfig(
+                remoteAppConfig[veridaEnvironment]
+              )
+              if (appNeedsReload) {
+                Alert.alert(
+                  'Application Configuration Updated',
+                  'Application configurations have been updated, the app needs to be restarted.',
+                  [
+                    {
+                      text: 'OK',
+                      onPress: () => {
+                        RNRestart.restart()
+                      },
+                    },
+                  ]
+                )
+              }
+            }
+          } catch (error) {
+            logger.error(
+              new Error('Failed to update from remote config', {
+                cause: error,
+              })
+            )
           }
         }
       })
       .catch((error) => {
-        Sentry.captureException(error)
+        logger.error(
+          new Error('Failed to fetch remote config', {
+            cause: error,
+          })
+        )
       })
       .finally(() => {
         initialLoadRef.current = false
@@ -166,13 +209,13 @@ export const ConfigProvider: React.FC = ({ children }) => {
     }
   }, [fetchRemoteConfig])
 
+  const contextValue = useMemo(
+    () => ({ config: appConfig, forcedUpgrade, forcedCreateAccount }),
+    [forcedCreateAccount, forcedUpgrade]
+  )
+
   return (
-    <ConfigContext.Provider
-      value={{
-        config: appConfig,
-        forcedUpgrade,
-        forcedCreateAccount,
-      }}>
+    <ConfigContext.Provider value={contextValue}>
       {maintenanceMode.status === 'enabled' ? (
         <MaintenanceScreen maintenanceMode={maintenanceMode} />
       ) : (

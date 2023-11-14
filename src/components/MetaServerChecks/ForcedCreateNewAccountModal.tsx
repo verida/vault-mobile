@@ -49,13 +49,15 @@ export const ForcedCreateNewAccountModal = ({
   }
 
   const onFurtherInfoPress = () => {
-    Linking.canOpenURL(forcedCreateAccount.furtherInfo!)
-      .then(() => {
-        Linking.openURL(forcedCreateAccount.furtherInfo!)
-      })
-      .catch((error) => {
-        sentry.captureException(error)
-      })
+    if (forcedCreateAccount.furtherInfo) {
+      Linking.canOpenURL(forcedCreateAccount.furtherInfo)
+        .then(() => {
+          Linking.openURL(forcedCreateAccount.furtherInfo!)
+        })
+        .catch((error) => {
+          sentry.captureException(error)
+        })
+    }
   }
 
   return (
@@ -87,9 +89,11 @@ export const ForcedCreateNewAccountModal = ({
                 onPress={() => onForcedCreateAccountPress()}>
                 Create New Account
               </Button>
-              <Button color='grey' onPress={onFurtherInfoPress}>
-                Learn more
-              </Button>
+              {Boolean(forcedCreateAccount.furtherInfo) && (
+                <Button color='grey' onPress={onFurtherInfoPress}>
+                  Learn more
+                </Button>
+              )}
             </View>
           </View>
         </View>
