@@ -107,7 +107,7 @@ function GenericMessage(props: GenericMessageProps) {
     return <Text>Invalid data</Text>
   }
 
-  const formattedSendAt = moment(inboxItem.sendAt).format('MMM D, HH:mm')
+  const formattedSentAt = moment(inboxItem.sentAt).format('MMM D, HH:mm')
 
   return (
     <Content>
@@ -126,7 +126,7 @@ function GenericMessage(props: GenericMessageProps) {
         />
         <View>
           <Text style={styles.senderName}>{sender.name}</Text>
-          <Text style={styles.sendAt}>{formattedSendAt}</Text>
+          <Text style={styles.sentAt}>{formattedSentAt}</Text>
         </View>
       </View>
       <View style={styles.messageContent}>
@@ -194,7 +194,7 @@ const styles = StyleSheet.create({
   senderName: {
     fontSize: 14,
   },
-  sendAt: {
+  sentAt: {
     fontSize: 12,
   },
   message: {
