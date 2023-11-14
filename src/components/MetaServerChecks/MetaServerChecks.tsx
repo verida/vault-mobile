@@ -21,7 +21,7 @@ export const MetaServerChecks = () => {
     const checkForcedUpgrade = () => {
       if (
         forcedUpgrade?.required &&
-        compareVersions(APP_VERSION, forcedUpgrade.minVersion!) < 0 // Current version < required version
+        compareVersions(APP_VERSION, forcedUpgrade.minVersion) < 0 // Current version < required version
       ) {
         showModal(
           <ForcedUpgradeModal

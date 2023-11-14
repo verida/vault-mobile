@@ -37,10 +37,15 @@ const REMOTE_CONFIG_FETCH_INTERVAL_MILLIS = 30000
 export const ConfigContext = createContext<ConfigContextType | null>(null)
 
 export const ConfigProvider: React.FC = ({ children }) => {
-  const [forcedUpgrade, setForcedUpgrade] = useState<ForcedUpgradeType>({})
-  const [forcedCreateAccount, setForcedCreateAccount] =
-    useState<ForcedCreateAccountType>({})
-  const [maintenanceMode, setMaintenanceMode] = useState<MaintenanceMode>({})
+  const [forcedUpgrade, setForcedUpgrade] = useState<
+    ForcedUpgradeType | undefined
+  >(undefined)
+  const [forcedCreateAccount, setForcedCreateAccount] = useState<
+    ForcedCreateAccountType | undefined
+  >(undefined)
+  const [maintenanceMode, setMaintenanceMode] = useState<
+    MaintenanceMode | undefined
+  >(undefined)
 
   const initialLoadRef = useRef(true)
   const appState = useRef(AppState.currentState)
@@ -216,7 +221,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
 
   return (
     <ConfigContext.Provider value={contextValue}>
-      {maintenanceMode.status === 'enabled' ? (
+      {maintenanceMode?.status === 'enabled' ? (
         <MaintenanceScreen maintenanceMode={maintenanceMode} />
       ) : (
         children
