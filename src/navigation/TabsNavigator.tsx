@@ -2,6 +2,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
+import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { PRIMARY_COLOR } from 'constants/color'
 import { TabsScreenParams } from 'navigation/types'
@@ -44,7 +45,18 @@ export const TabsNavigator: React.FunctionComponent = () => {
           return <Ionicons name={iconName} size={size} color={color} />
         },
       })}>
-      <Tabs.Screen name='Home' component={HomeTabScreen} />
+      <Tabs.Screen
+        name='Home'
+        component={HomeTabScreen}
+        options={({ route }) => ({
+          tabBarIcon: ({ color, focused, size }) => {
+            const iconName = focused
+              ? tabIcons[route.name].focused
+              : tabIcons[route.name].default
+            return <MaterialIcons name={iconName} size={size} color={color} />
+          },
+        })}
+      />
       <Tabs.Screen name='Profile' component={PublicProfile} />
       <Tabs.Screen name='Data' component={DataTabScreen} />
       {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
