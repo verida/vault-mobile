@@ -603,14 +603,14 @@ class AccountManager extends EventEmitter {
       await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
 
+      store.dispatch(setSelectedAccount(this.selectedAccount))
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const avatar = await this.vault?.profiles.public.get('avatar')
-
-      store.dispatch(setSelectedAccount(this.selectedAccount))
       setTimeout(() => {
         store.dispatch(
           setSwitchAccountToast({
@@ -681,6 +681,7 @@ class AccountManager extends EventEmitter {
       await this.connect(true)
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      await this.restoreUserWallet(true)
 
       return this.selectedAccount
     } catch (e) {
