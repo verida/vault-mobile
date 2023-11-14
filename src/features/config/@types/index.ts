@@ -1,5 +1,6 @@
 import { config as appConfig } from 'config'
 
+// TODO: Infer the type from a zod schema
 export type ForcedUpgradeType = {
   minVersion: string
   storeUrl: string
@@ -8,12 +9,14 @@ export type ForcedUpgradeType = {
   furtherInfo?: string
 }
 
+// TODO: Infer the type from a zod schema
 export type ForcedCreateAccountType = {
   required: boolean
   message: string
   furtherInfo?: string
 }
 
+// TODO: Infer the type from a zod schema
 export type MaintenanceMode = {
   status: 'enabled' | 'disabled'
   message: string
@@ -22,6 +25,7 @@ export type MaintenanceMode = {
   link?: string // blog post
 }
 
+// TODO: Infer the type from a zod schema
 export type AppConfig = typeof appConfig
 
 export interface ConfigContextType {

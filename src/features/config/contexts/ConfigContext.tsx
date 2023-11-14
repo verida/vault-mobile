@@ -93,6 +93,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
             const maintenanceModeData = JSON.parse(
               remoteConfig().getValue('maintenance_mode').asString()
             )
+            // TODO: Validate the data with zod
             setMaintenanceMode(maintenanceModeData)
           } catch (error) {
             logger.error(
@@ -107,6 +108,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
             const forcedUpgradeInfo = JSON.parse(
               remoteConfig().getValue('forced_upgrade').asString()
             )
+            // TODO: Validate the data with zod
             setForcedUpgrade(forcedUpgradeInfo)
           } catch (error) {
             logger.error(
@@ -121,6 +123,7 @@ export const ConfigProvider: React.FC = ({ children }) => {
             const forcedCreateAccountInfo = JSON.parse(
               remoteConfig().getValue('forced_create_new_account').asString()
             )
+            // TODO: Validate the data with zod
             setForcedCreateAccount(forcedCreateAccountInfo)
           } catch (error) {
             logger.error(
@@ -135,6 +138,8 @@ export const ConfigProvider: React.FC = ({ children }) => {
             const remoteAppConfig = JSON.parse(
               remoteConfig().getValue('wallet_app_config').asString()
             )
+            // TODO: Validate the config with zod, have to think about if before or after merging or both.
+
             // Save a copy of remote config for updating the app on initialization
             if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
               SecureStore.setItemAsync(
