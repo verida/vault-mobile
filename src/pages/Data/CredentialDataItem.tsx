@@ -20,7 +20,9 @@ import { QRCode } from 'react-native-custom-qr-codes-expo'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import AccountManager from 'api/AccountManager'
+import { SBTManager } from 'api/SBTManager'
 import { DefaultAvatar } from 'api/utils'
+import Button from 'components/Button'
 import DataFieldList from 'components/Data/DataFieldList'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
@@ -100,6 +102,24 @@ function CredentialDataItem(props: CredentialDataItemProps) {
     )
   }
 
+  async function mintSbt() {
+    const sbtManager = new SBTManager()
+    const mintAddress = '0x82c0146a552Edb7C00eb122ED6C81a399B873d3b'
+    await sbtManager.mintSbt(item, mintAddress)
+  }
+
+  async function isMinted() {
+    const sbtManager = new SBTManager()
+    const mintAddress = '0x82c0146a552Edb7C00eb122ED6C81a399B873d3b'
+    await sbtManager.isMinted(item, mintAddress)
+  }
+
+  async function burnSbt() {
+    const sbtManager = new SBTManager()
+    const mintAddress = '0x82c0146a552Edb7C00eb122ED6C81a399B873d3b'
+    await sbtManager.burnSbt(item, mintAddress)
+  }
+
   function toggleFullscreenQr() {
     setShowFullscreenQr((prevState) => !prevState)
   }
@@ -120,6 +140,17 @@ function CredentialDataItem(props: CredentialDataItemProps) {
         ) : (
           <LoadingView type={'small'} style={styles.loadingView} />
         )}
+      </View>
+      <View>
+        <Button onPress={isMinted} title='Burn SBT'>
+          isMinted?
+        </Button>
+        <Button onPress={mintSbt} title='Mint SBT'>
+          Mint SBT
+        </Button>
+        <Button onPress={burnSbt} title='Burn SBT'>
+          Burn SBT
+        </Button>
       </View>
       {!loading && verified && (
         <View style={styles.verifiedContainer}>

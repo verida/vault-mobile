@@ -1013,7 +1013,7 @@ SPEC CHECKSUMS:
   RCTTypeSafety: b0ee81f10ef1b7d977605a2b266823dabd565e65
   React: 3becd12bd51ea8a43bdde7e09d0f40fba7820e03
   React-callinvoker: 11abfff50e6bf7a55b3a90b4dc2187f71f224593
-  React-Codegen: f8946ce0768fb8e92e092e30944489c4b2955b2d
+  React-Codegen: d5042aa8e88ed5af7bdf23c069826a2c575aecbc
   React-Core: 203cdb6ee2657b198d97d41031c249161060e6ca
   React-CoreModules: 6eb0c06a4a223fde2cb6a8d0f44f58b67e808942
   React-cxxreact: afb0c6c07d19adbd850747fedeac20c6832d40b9
@@ -1030,7 +1030,7 @@ SPEC CHECKSUMS:
   react-native-netinfo: e922cb2e3eaf9ccdf16b8d4744a89657377aa4a1
   react-native-pager-view: 592421df0259bf7a7a4fe85b74c24f3f39905605
   react-native-quick-base64: e657e9197e61b60a9dec49807843052b830da254
-  react-native-quick-crypto: a903ff39ac8fea78bb9d37cccc5cc0596afc9670
+  react-native-quick-crypto: 40402e0c2f3c2d7eaab42dc989c48cdc812b7abf
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
   react-native-safe-area-context: f98b0b16d1546d208fc293b4661e3f81a895afd9
   react-native-udp: 8864b1211857e9d8224ae5cbaf8580970fb99de1

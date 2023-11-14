@@ -22,8 +22,8 @@ const calculateNextSync = function (conn) {
 }
 
 export default ({ route, navigation }) => {
-  const provider = route.params.provider
-  const connectionInfo = DataConnectorsManager.getConnectionInfo(provider)
+  const connectionInfo = route.params.provider
+  const provider = connectionInfo.name
 
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
@@ -105,7 +105,10 @@ export default ({ route, navigation }) => {
           </View>
         )}
         <View style={styles.connectHeader}>
-          <Image style={styles.itemIcon} source={connectionInfo.icon} />
+          <Image
+            style={styles.itemIcon}
+            source={{ uri: connectionInfo.icon }}
+          />
           <View style={styles.actionButtons}>
             {syncStatus === 'disabled' ? (
               <Button

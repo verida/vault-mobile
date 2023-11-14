@@ -39,8 +39,9 @@ import { Theme } from 'styles/types'
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
 const caipNormalizeAddress = (address: string) => {
-  // FIXME: hardcode just ethereum for now
-  return `eip155:5:${address}`
+  // FIXME: hardcode just mumbai for now
+  // was 5
+  return `eip155:80001:${address}`
 }
 
 const Collectibles = () => {
