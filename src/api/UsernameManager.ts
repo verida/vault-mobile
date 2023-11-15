@@ -2,8 +2,11 @@ import { EnvironmentType, Web3CallType } from '@verida/types'
 import { VeridaNameClient } from '@verida/vda-name-client'
 import { config } from 'config'
 import { Account } from 'features/identities'
+import { Logger } from 'features/telemetry'
 
 import AccountManager from './AccountManager'
+
+const logger = new Logger('UsernameManager')
 
 export default class UsernameManager {
   private static client?: VeridaNameClient
@@ -53,10 +56,8 @@ export default class UsernameManager {
       if (!match) return undefined
 
       return await client.getUsernames(match)
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
-
+    } catch (error: unknown) {
+      logger.error(error)
       return
     }
   }

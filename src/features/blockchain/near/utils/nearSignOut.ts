@@ -1,9 +1,11 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { providers, transactions, utils } from 'near-api-js/lib'
 
 import { NearAccount, NearAccountPointer } from '../@types'
 import { nearCreateTransactions } from './nearCreateTransactions'
 import { nearSignAndSendTransactions } from './nearSignAndSendTransactions'
+
+const logger = new Logger('Blockchains')
 
 export async function nearSignOut({
   nearAccount,
@@ -43,11 +45,12 @@ export async function nearSignOut({
 
             // Reference: https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L341
             return null
-          } catch (e) {
-            Sentry.captureException(e)
-            // eslint-disable-next-line no-console
-            console.log(
-              `Failed to remove FunctionCall access key for ${accountId}`
+          } catch (error: unknown) {
+            logger.error(
+              new Error(
+                `Failed to remove FunctionCall access key for ${accountId}`,
+                { cause: error }
+              )
             )
 
             // Reference: https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L349

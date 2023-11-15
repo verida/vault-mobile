@@ -233,15 +233,13 @@ class AccountManager extends EventEmitter {
       // @todo: Do something useful with these messages
       // @ts-expect-error This event emitter interface is not documented.
       context!.on('EndpointUnavailable', (endpointUri: string) => {
-        // eslint-disable-next-line no-console
-        console.info(`Endpoint is currently unavailable: ${endpointUri}`)
+        logger.info(`Endpoint is currently unavailable`, { endpointUri })
       })
 
       // @todo: Do something useful with these messages
       // @ts-expect-error This event emitter interface is not documented.
       context!.on('EndpointWarning', (endpointUri: string, message: string) => {
-        // eslint-disable-next-line no-console
-        console.info(`Warning from endpoint ${endpointUri}: ${message}`)
+        logger.info(`Warning from endpoint`, { endpointUri, message })
       })
 
       return context

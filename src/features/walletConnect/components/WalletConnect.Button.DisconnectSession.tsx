@@ -1,12 +1,14 @@
-import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 import { StyleProp, ViewStyle } from 'react-native'
 
 import Button from 'components/Button'
 
 import { useWalletConnectContext } from '../contexts'
+
+const logger = new Logger('WalletConnect')
 
 const defaultReason: ErrorResponse = getSdkError('USER_DISCONNECTED')
 
@@ -40,11 +42,8 @@ export const WalletConnectButtonDisconnectSession = React.memo(
             )
 
             maybeOnSessionDeleted?.()
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            __DEV__ && console.error(e)
-
-            Sentry.captureException(e)
+          } catch (error: unknown) {
+            logger.error(error)
           } finally {
             setLoading(false)
           }

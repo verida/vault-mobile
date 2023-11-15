@@ -1,9 +1,12 @@
 import { ChainMetadatas } from 'features/caip'
+import { Logger } from 'features/telemetry'
 import { connect, utils } from 'near-api-js'
 
 import { NearAccount } from '../@types'
 import { getNearNetworkConfig } from '../constants'
 import { nearDoesAccountExist } from './nearDoesAccountExist'
+
+const logger = new Logger('Blockchains')
 
 export async function nearInstantiateAccount({
   chainMetadatas,
@@ -29,8 +32,7 @@ export async function nearInstantiateAccount({
     createdAccount.state(),
   ])
 
-  // eslint-disable-next-line no-console
-  __DEV__ && console.warn(JSON.stringify({ balance, details, state }))
+  logger.warn(JSON.stringify({ balance, details, state }))
 
   // Wait a little for the network to sync up.
   await new Promise((resolve) => setTimeout(resolve, 5000))
