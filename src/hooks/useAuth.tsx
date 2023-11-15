@@ -1,6 +1,6 @@
 import * as Sentry from '@sentry/react-native'
 import { DIDClient } from '@verida/did-client'
-import CONFIG from 'config'
+import { config } from 'config'
 import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
@@ -56,7 +56,7 @@ export const AuthProvider: FC = ({ children }) => {
     // try to fetch the DID
     const did = selectedAccount!.did
     const didClient = new DIDClient({
-      network: CONFIG.VERIDA_ENVIRONMENT,
+      network: config.VERIDA_ENVIRONMENT,
     })
 
     try {

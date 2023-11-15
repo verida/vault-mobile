@@ -1,6 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import CONFIG from 'config'
+import { config } from 'config'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -180,7 +180,7 @@ const ManageWallets = (props: Props) => {
           const selectedWalletID = item._id
           onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            config.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         } else if (buttonIndex === 2) {

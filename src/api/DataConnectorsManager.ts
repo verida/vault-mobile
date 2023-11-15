@@ -1,10 +1,10 @@
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
+import { config } from 'config'
 import EventEmitter from 'events'
 import moment from 'moment'
 import { Linking } from 'react-native'
 
-import CONFIG from '../config'
 import AccountManager from './AccountManager'
 
 const DATA_CONNECTION_SCHEMA =
@@ -226,7 +226,7 @@ class DataConnection extends EventEmitter {
 
     // console.log(`Initiating auth for ${this.source}`, did)
     Linking.openURL(
-      `${CONFIG.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
+      `${config.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
     )
   }
 
@@ -324,7 +324,7 @@ class DataConnection extends EventEmitter {
 
       // @todo: handle errors
       const syncRequestResult = await axiosInstance.get(
-        `${CONFIG.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
+        `${config.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
       )
       const { serverDid, contextName, syncRequestId, syncRequestDatabaseName } =
         syncRequestResult.data
@@ -350,7 +350,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequestId: string,
     syncRequestDatabaseName: string,
-    retryCount: number = CONFIG.DATA_CONNECTOR_RETRY_LIMIT
+    retryCount: number = config.DATA_CONNECTOR_RETRY_LIMIT
   ) {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
@@ -400,7 +400,7 @@ class DataConnection extends EventEmitter {
         }
 
         // Delay for five seconds, then try again
-        await delay(CONFIG.DATA_CONNECTOR_RETRY_INTERVAL)
+        await delay(config.DATA_CONNECTOR_RETRY_INTERVAL)
         retryCount--
 
         this.checkSync(
@@ -495,7 +495,7 @@ class DataConnection extends EventEmitter {
       // cleanup by calling sync done to the server so the temporary data can be deleted
       const axiosInstance = axios.create()
       await axiosInstance.get(
-        `${CONFIG.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
+        `${config.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
       )
 
       this.syncLast = new Date().toISOString()

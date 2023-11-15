@@ -1,5 +1,6 @@
 import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
+import { ForcedUpgradeType } from 'features/config'
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -11,7 +12,6 @@ import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
 import { APP_VERSION } from 'constants/application'
-import { ForcedUpgradeType } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
@@ -20,23 +20,25 @@ type Props = {
   forcedUpgrade: ForcedUpgradeType
 }
 
-const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
+export const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
 
   const onDownloadPress = () => {
-    Linking.canOpenURL(forcedUpgrade.storeUrl!)
+    Linking.canOpenURL(forcedUpgrade.storeUrl)
       .then(() => {
-        Linking.openURL(forcedUpgrade.storeUrl!)
+        Linking.openURL(forcedUpgrade.storeUrl)
       })
       .catch((e) => sentry.captureException(e))
   }
 
   const onFurtherInfoPress = () => {
-    Linking.canOpenURL(forcedUpgrade.furtherInfo!)
-      .then(() => {
-        Linking.openURL(forcedUpgrade.furtherInfo!)
-      })
-      .catch((e) => sentry.captureException(e))
+    if (forcedUpgrade.furtherInfo) {
+      Linking.canOpenURL(forcedUpgrade.furtherInfo)
+        .then(() => {
+          Linking.openURL(forcedUpgrade.furtherInfo!)
+        })
+        .catch((e) => sentry.captureException(e))
+    }
   }
 
   return (
@@ -70,9 +72,11 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
               <Button color='primary' onPress={onDownloadPress}>
                 Download
               </Button>
-              <Button color='grey' onPress={onFurtherInfoPress}>
-                Further Info
-              </Button>
+              {Boolean(forcedUpgrade.furtherInfo) && (
+                <Button color='grey' onPress={onFurtherInfoPress}>
+                  Further Info
+                </Button>
+              )}
             </View>
           </View>
         </View>
@@ -80,8 +84,6 @@ const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
     </Modal>
   )
 }
-
-export default ForcedUpgradeModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
