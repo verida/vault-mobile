@@ -109,7 +109,7 @@ const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
 
-const PublicProfile = () => {
+export const PublicProfile: React.FunctionComponent = () => {
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
   const profileEditableProps = useMemo(() => {
@@ -1385,8 +1385,6 @@ const PublicProfile = () => {
     </Screen>
   )
 }
-
-export default PublicProfile
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

@@ -52,7 +52,7 @@ const LogoImg = require('assets/vault-logo.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
-const Home = (props) => {
+export const HomeTabScreen = (props) => {
   const { navigation } = props
   const [loading, setLoading] = useState(false)
   const [showAddAccounts, setShowAddAccounts] = useState(false)
@@ -298,8 +298,6 @@ const Home = (props) => {
     </Container>
   )
 }
-
-export default Home
 
 const marginTop = 0
 const style = StyleSheet.create({

@@ -3,7 +3,7 @@ import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
 import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
-import DashboardNavigator from 'navigation/DashboardNavigator'
+import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import AddIdentity from 'pages/Account/Identity/AddIdentity'
@@ -27,7 +27,7 @@ import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditPlatformLink from 'pages/Profiles/EditPlatformLink'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
-import PublicProfile from 'pages/Profiles/PublicProfile'
+import { PublicProfile } from 'pages/Profiles/PublicProfile'
 import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
 import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
@@ -70,7 +70,7 @@ export const MainNavigator: React.FunctionComponent = () => {
         {/* An empty component, just to register all of the main app events after the user has authenticated. */}
         <BehindAuthHandlers />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
+          <Stack.Screen name={'Dashboard'} component={TabsNavigator} />
           <Stack.Screen name={'Inbox'} component={Inbox} />
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
