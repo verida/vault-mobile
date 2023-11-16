@@ -1,4 +1,7 @@
 import EventEmitter from 'events'
+import { Logger } from 'features/telemetry'
+
+const logger = new Logger('Emitter')
 
 export type EmitterTypes = {
   SAVE_GENERIC_PROPERTY: {
@@ -37,8 +40,7 @@ export const emitter = {
   },
 
   emit<K extends keyof EmitterTypes>(key: K, payload: EmitterTypes[K]) {
-    // eslint-disable-next-line no-console
-    if (__DEV__) console.debug('[EMITTER]', key, payload)
+    logger.debug(`Emitting ${key}`, { payload })
     _emitter.emit(key, payload)
   },
 }

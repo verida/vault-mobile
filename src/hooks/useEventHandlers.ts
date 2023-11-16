@@ -1,7 +1,7 @@
 import NetInfo from '@react-native-community/netinfo'
 import fbMessaging from '@react-native-firebase/messaging'
-import * as Sentry from '@sentry/react-native'
 import { selectSelectedAccount } from 'features/identities'
+import { Logger } from 'features/telemetry'
 import { CHANNEL_ID } from 'helpers/notifications'
 import { get } from 'lodash'
 import * as React from 'react'
@@ -14,6 +14,8 @@ import { useThrottledCallback } from 'use-debounce'
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import { fetchInboxCount } from 'api/utils'
+
+const logger = new Logger('EventHandler')
 
 export const useEventHandlers = () => {
   const isNetworkConnected = useRef<boolean | null>(null)
@@ -72,8 +74,8 @@ export const useEventHandlers = () => {
 
         await fetchInboxCount()
         isConnectingRef.current = false
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
@@ -93,7 +95,7 @@ export const useEventHandlers = () => {
 
           onMessage(latestMessage)
         } catch (error) {
-          Sentry.captureException(error)
+          logger.error(error)
         }
       })
 

@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
-import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { useGetNFTsQuery } from 'features/assets'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
@@ -25,6 +25,8 @@ import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('Pages/SelectAsset')
 
 export interface SelectAssetScreenProps {
   searchableAddresses: string[]
@@ -86,8 +88,8 @@ const SelectAsset = () => {
             </View>
           </TouchableOpacity>
         )
-      } catch (e) {
-        sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
 
       return null

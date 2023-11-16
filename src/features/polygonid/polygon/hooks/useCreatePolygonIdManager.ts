@@ -92,7 +92,7 @@ export function useCreatePolygonIdManager(): Stateful<string> {
         logger.info('New Polygon ID Manager created', { managerId })
 
         setState({ loading: false, result: managerId })
-      } catch (error: unknown) {
+      } catch (error) {
         logger.warn('Error while creating a Polygon ID Manager')
         setState({
           loading: false,

@@ -1,5 +1,4 @@
 import { useClipboard } from '@react-native-community/clipboard'
-import * as Sentry from '@sentry/react-native'
 import { config } from 'config'
 import {
   canBeHandledByDeeplink,
@@ -7,6 +6,7 @@ import {
   useDeeplink,
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
+import { Logger } from 'features/telemetry'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useState } from 'react'
 import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
@@ -16,6 +16,8 @@ import { useDebouncedCallback } from 'use-debounce'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { QrCodeScannerOverlay } from 'pages/QrCodeScanner/QrCodeScannerOverlay'
+
+const logger = new Logger('Pages/QrCodeScanner/QrCodeScannerScreen')
 
 const WAIT_TIME = 3000
 
@@ -82,7 +84,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
             return
           }
         } catch (error) {
-          Sentry.captureException(error)
+          logger.error(error)
         }
 
         setProcessing(false)

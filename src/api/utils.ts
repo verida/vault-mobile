@@ -1,12 +1,14 @@
-import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
 import { config } from 'config'
 import { setNewMessagesCount } from 'features/inbox'
+import { Logger } from 'features/telemetry'
 import { isValidVeridaDid } from 'features/verida'
 import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
+
+const logger = new Logger('Utils')
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -46,7 +48,7 @@ export const loadAvatarSource = async () => {
 
     return DefaultAvatar
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
   }
 }
 
@@ -65,7 +67,7 @@ export const fetchInboxCount = throttle(
         )
       store.dispatch(setNewMessagesCount(messages?.length ?? 0))
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   },
   3000,
@@ -90,7 +92,7 @@ export async function getProfile(did: string) {
       avatar: avatar || DefaultAvatar,
     }
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
 
     return {
       name: 'Unknown',
@@ -127,7 +129,7 @@ export async function getPublicProfile(
       avatar: avatar || DefaultAvatar,
     }
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
 
     return {
       name: 'Unknown',
@@ -148,8 +150,9 @@ export const getInboxProfile = async (did: string, context: string) => {
     )
     const profileData = await profile!.getMany({}, {})
     return profileData
-  } catch (err) {
+  } catch (error) {
     // User may not have created a profile
+    logger.warn('Failed to get profile, or no profile found', { did })
     return {}
   }
 }
@@ -214,8 +217,8 @@ export async function registerRemoteNotification(token: string) {
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/register`, body)
-  } catch (e) {
-    Sentry.captureException(e)
+  } catch (error) {
+    logger.error(error)
   }
 }
 
@@ -237,8 +240,8 @@ export async function unRegisterRemoteNotification(token: string) {
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
-  } catch (e) {
-    Sentry.captureException(e)
+  } catch (error) {
+    logger.error(error)
   }
 }
 
@@ -247,8 +250,8 @@ export async function fetchConfigJson<T>(url: string): Promise<T[]> {
     const res = await fetch(url + `?t=${Date.now()}`)
     const json = await res.json()
     return json
-  } catch (e) {
-    Sentry.captureException(e)
+  } catch (error) {
+    logger.error(error)
     return []
   }
 }

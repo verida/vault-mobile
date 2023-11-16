@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import * as ImagePicker from 'expo-image-picker'
 import { selectSelectedAccount } from 'features/identities'
 import {
@@ -7,6 +6,7 @@ import {
   selectSelectedPublicProfile,
   setPublicProfileByDid,
 } from 'features/profiles'
+import { Logger } from 'features/telemetry'
 import React, { useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
@@ -16,6 +16,8 @@ import AccountManager from 'api/AccountManager'
 
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 import { ShimmerPlaceholder } from './ShimmerPlaceholder'
+
+const logger = new Logger('Components/ProfileImageLoader')
 
 const userImg = require('assets/stubs/avatar.png')
 
@@ -61,7 +63,7 @@ function ProfileImageLoader(props) {
         )
       }
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 

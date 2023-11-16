@@ -1,9 +1,9 @@
-import * as Sentry from '@sentry/react-native'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectSelectedPublicProfile,
   setPublicProfileByDid,
 } from 'features/profiles'
+import { Logger } from 'features/telemetry'
 import { COUNTRIES } from 'helpers/countries'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
@@ -20,6 +20,8 @@ import Button from '../../components/Button'
 import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
 import InputStyles from '../../styles/inputs'
+
+const logger = new Logger('Pages/Profiles/EditProfile')
 
 /**
  * Take from the schema, better to fetch them dynamic
@@ -66,7 +68,7 @@ const EditProfile = (props: any) => {
         emitter.emit('UPDATE_PUBLIC_PROFILE', undefined)
       }
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
 
     navigation.goBack()

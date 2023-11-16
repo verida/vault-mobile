@@ -30,7 +30,7 @@ async function getDidMetadataRecord(
     logger.info(`DID Metadata record for ${did} found`)
     logger.debug(`DID Metadata record for ${did}:`, { record })
     return record as DidMetadataRecord
-  } catch (error: unknown) {
+  } catch (error) {
     // TODO: Check if the error is a "not found" error, report the erro if not
     logger.warn(`DID Metadata record not found for ${did}`)
     return undefined
@@ -62,7 +62,7 @@ export async function getDidMetadata(
       name,
       icon,
     }
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error(new Error('Error getting did metadata', { cause: error }))
     return undefined
   }
@@ -108,7 +108,7 @@ export async function saveDidMetadata(did: string, didMetadata: DidMetadata) {
       {}
     )
     logger.info('DID metadata saved')
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error(new Error('Error saving did metadata', { cause: error }))
   }
 }

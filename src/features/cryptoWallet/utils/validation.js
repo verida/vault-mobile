@@ -41,7 +41,7 @@ export const isValidSeedPhrase = (data) => {
         } else {
           return false
         }
-      } catch (err) {
+      } catch (error) {
         return false
       }
     } else {

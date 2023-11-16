@@ -9,7 +9,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Pages/Data/DataFolderScreen')
 
 export interface DataFolderScreenParams {
   folderName: string
@@ -34,7 +34,7 @@ export const DataFolderScreen: React.FunctionComponent<DataItemScreenProps> = (
         // TODO: Refactor the whole Vault, DataManager, etc.
         const _folder = await vault!.data.selectFolder(folderName)
         setFolder(_folder)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error(`Failed to load the selected Data folder`, {
             cause: error,

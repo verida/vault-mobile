@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as Sentry from '@sentry/react-native'
 import { ErrorResponse } from '@walletconnect/jsonrpc-utils'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
@@ -11,6 +10,7 @@ import {
   useMaybeSelectedWallet,
   veridaWalletAccountsToDropdownOptions,
 } from 'features/cryptoWallet'
+import { Logger } from 'features/telemetry'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
@@ -34,6 +34,8 @@ import {
   useWalletConnectSessionRequestCallback,
 } from '../hooks'
 import { WalletConnectModalConnectDapp } from './WalletConnect.Modal.ConnectDapp'
+
+const logger = new Logger('WalletConnect')
 
 const DEFAULT_ACTIVE_SESSIONS: ActiveSessions = Object.freeze({})
 
@@ -164,7 +166,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       readonly proposal: Web3WalletTypes.EventArguments['session_proposal']
       readonly sdkError: Parameters<typeof getSdkError>[0]
     }) => {
-      Sentry.captureException(
+      logger.error(
         new Error(`WalletConnect proposal terminated. (${sdkError})`)
       )
       return web3wallet.rejectSession({
@@ -264,12 +266,12 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       try {
         await pairWithWalletConnectUriOrThrow(maybeConnectionUri)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
 
         Alert.alert(
           'Error',
-          `Unable to pair${e instanceof Error ? `: ${e.message}` : '.'}`
+          `Unable to pair${error instanceof Error ? `: ${error.message}` : '.'}`
         )
       } finally {
         navigation.goBack() // Assume this is used from the QR Code scanner screen, so have to close it.
@@ -288,11 +290,8 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         if (!maybeWeb3Wallet) return setActiveSessions(DEFAULT_ACTIVE_SESSIONS)
 
         await onRequestRefreshActiveSessions()
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        __DEV__ && console.error(e)
-
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     })()
   }, [onRequestRefreshActiveSessions, maybeWeb3Wallet])

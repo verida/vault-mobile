@@ -36,13 +36,13 @@ export class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
       const existingRecord = await this.database.get(args.alias);
       // @ts-ignore
       record._rev = existingRecord._rev;
-    } catch (error: unknown) {
+    } catch (error) {
       // not found, which is fine
     }
 
     try {
       await this.database.save(record);
-    } catch (error: unknown) {
+    } catch (error) {
       logger.warn("Error while importing key by alias");
       throw error;
     }
@@ -63,7 +63,7 @@ export class VeridaPrivateKeyStore implements AbstractPrivateKeyStore {
       }
 
       return result.value;
-    } catch (error: unknown) {
+    } catch (error) {
       throw new Error("No key under given alias");
     }
   }

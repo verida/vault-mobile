@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import LottieView from 'lottie-react-native'
 import React, { useImperativeHandle, useState } from 'react'
@@ -18,6 +18,8 @@ import { Text } from 'components/Typography/Text'
 import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('Components/ClaimUsernameView')
 
 export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void
@@ -53,9 +55,11 @@ export const ClaimUsernameView = React.forwardRef(
         await UsernameManager.set(newUsername)
         setDoneCreateUsername(true)
         emitter.emit('UPDATE_PROFILE_USERNAME', {})
-      } catch (error: any) {
-        Sentry.captureException(error)
-        setCreateUsernameErrorMessage(error.message)
+      } catch (error) {
+        logger.error(error)
+        if (error instanceof Error) {
+          setCreateUsernameErrorMessage(error.message)
+        }
         setShowRetry(true)
       } finally {
         setProcessing(false)

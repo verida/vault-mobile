@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
@@ -12,6 +12,8 @@ import { RequestedDataSelector } from 'components/Inbox/RequestedDataSelector'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import Text from 'components/Text'
 import { ACCEPT_COLOR, DECLINE_COLOR, GREY_COLOR } from 'constants/color'
+
+const logger = new Logger('Components/Inbox/types/DatabaseSync')
 
 export default (props) => {
   const { item, navigation } = props
@@ -29,9 +31,9 @@ export default (props) => {
       await vault.inbox.handleAction(item.item, result, selectedItems)
       setCurrentAction(null)
       navigation.goBack()
-    } catch (e) {
+    } catch (error) {
       Alert.alert('Error', 'Cannot sync data now')
-      Sentry.captureException(e)
+      logger.error(error)
       setCurrentAction(null)
     }
   }

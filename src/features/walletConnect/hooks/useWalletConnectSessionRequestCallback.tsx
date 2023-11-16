@@ -64,8 +64,8 @@ export const useWalletConnectSessionRequestCallback = (): ((
             activeSession={maybeActiveSession}
           />
         )
-      } catch (e) {
-        return reject(web3wallet, request, e)
+      } catch (error) {
+        return reject(web3wallet, request, error)
       }
     },
     [chainMetadatas, reject, showModal, authenticated]

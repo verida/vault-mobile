@@ -1,8 +1,8 @@
-import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { logout } from 'features/auth'
 import { ForcedCreateAccountType } from 'features/config'
 import { selectSelectedAccount } from 'features/identities'
+import { Logger } from 'features/telemetry'
 import React, { useState } from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -18,6 +18,8 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { navigate } from 'navigation/RootNavigator'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('Components/ForcedCreateNewAccountModal')
 
 type Props = {
   dismissModal: () => void
@@ -54,8 +56,8 @@ export const ForcedCreateNewAccountModal = ({
         .then(() => {
           Linking.openURL(forcedCreateAccount.furtherInfo!)
         })
-        .catch((error) => {
-          sentry.captureException(error)
+        .catch((error: unknown) => {
+          logger.error(error)
         })
     }
   }
