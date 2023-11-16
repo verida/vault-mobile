@@ -84,7 +84,7 @@ const SeedPhraseEntered = (
       } else {
         navigation.navigate('Success')
       }
-    } catch (e) {
+    } catch (cause) {
       showError(true)
     } finally {
       setProcessing(false)

@@ -1,6 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import { isEmpty } from 'lodash'
 import React, { useState } from 'react'
@@ -21,6 +21,8 @@ import Button from '../../components/Button'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
 import { PublicProfileEditMode } from './PublicProfile'
+
+const logger = new Logger('Pages/AddCustomLink')
 
 export interface AddCustomLinkScreenProps {
   screenName: string
@@ -69,7 +71,7 @@ const AddCustomLink = () => {
 
       navigation.goBack()
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 

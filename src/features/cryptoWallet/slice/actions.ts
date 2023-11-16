@@ -32,8 +32,12 @@ export const getTransactionParams = createAppAsyncThunk(
         }
         return params
       }
-    } catch (error: any) {
-      return rejectWithValue("Couldn't load params:" + error.message)
+    } catch (error) {
+      return rejectWithValue(
+        `Couldn't load params${
+          error instanceof Error ? `: ${error.message}` : ''
+        }`
+      )
     }
   }
 )
@@ -62,8 +66,12 @@ export const sendTransaction = createAppAsyncThunk(
         ...txData,
         amount: txData?.amount.toHexString(),
       }
-    } catch (error: any) {
-      return rejectWithValue('Could not send token: ' + error.message)
+    } catch (error) {
+      return rejectWithValue(
+        `Could not send token${
+          error instanceof Error ? `:${error.message}` : ''
+        }`
+      )
     }
   }
 )
@@ -96,7 +104,7 @@ export const createNewWallet = createAppAsyncThunk(
           ),
         ])
       }
-    } catch (error: any) {
+    } catch (error) {
       return rejectWithValue('Could not create wallet')
     }
   }

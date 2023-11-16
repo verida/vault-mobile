@@ -1,6 +1,6 @@
-import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { ForcedUpgradeType } from 'features/config'
+import { Logger } from 'features/telemetry'
 import React from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -15,6 +15,8 @@ import { APP_VERSION } from 'constants/application'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
+const logger = new Logger('Components/ForcedUpgradeModal')
+
 type Props = {
   dismissModal: () => void
   forcedUpgrade: ForcedUpgradeType
@@ -28,7 +30,7 @@ export const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
       .then(() => {
         Linking.openURL(forcedUpgrade.storeUrl)
       })
-      .catch((e) => sentry.captureException(e))
+      .catch((error: unknown) => logger.error(error))
   }
 
   const onFurtherInfoPress = () => {
@@ -37,7 +39,7 @@ export const ForcedUpgradeModal = ({ forcedUpgrade }: Props) => {
         .then(() => {
           Linking.openURL(forcedUpgrade.furtherInfo!)
         })
-        .catch((e) => sentry.captureException(e))
+        .catch((error: unknown) => logger.error(error))
     }
   }
 

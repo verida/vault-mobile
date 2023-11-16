@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
@@ -6,6 +6,8 @@ import AccountManager from '../../api/AccountManager'
 import EmptyList from '../Lists/EmptyList'
 import Text from '../Text'
 import History from './History'
+
+const logger = new Logger('Components/History')
 
 export default ({ route }) => {
   const [history, setHistory] = useState(null)
@@ -35,8 +37,8 @@ export default ({ route }) => {
 
         setHistory(_history)
         setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 

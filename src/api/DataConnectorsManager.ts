@@ -215,7 +215,7 @@ class DataConnection extends EventEmitter {
       DataConnectorsManager.emit('connectionUpdated', this)
 
       return result
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(new Error('Save connection error', { cause: error }))
     }
   }
@@ -334,7 +334,7 @@ class DataConnection extends EventEmitter {
         syncRequestId,
         syncRequestDatabaseName
       )
-    } catch (error: unknown) {
+    } catch (error) {
       logger.debug('1')
       logger.error(error)
       if (error instanceof Error) {
@@ -409,7 +409,7 @@ class DataConnection extends EventEmitter {
           retryCount
         )
       }
-    } catch (error: unknown) {
+    } catch (error) {
       logger.debug('2')
       logger.error(error)
       // @todo: Set error on this connection
@@ -482,7 +482,7 @@ class DataConnection extends EventEmitter {
             // This ensures that if there is a conflict between the documents, the "latest" wins
             style: 'main_only',
           })
-        } catch (error: unknown) {
+        } catch (error) {
           logger.debug('3')
           logger.error(error)
           if (error instanceof Error) {
@@ -511,7 +511,7 @@ class DataConnection extends EventEmitter {
 
       await this.save()
       // logger.debug(`Sync done and sync status updated`)
-    } catch (error: unknown) {
+    } catch (error) {
       logger.debug('4')
       logger.error(error)
       // @todo: How to handle?

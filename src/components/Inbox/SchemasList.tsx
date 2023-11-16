@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import {
   Image,
@@ -13,6 +13,8 @@ import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+
+const logger = new Logger('Components/Data/SchemasList')
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]
@@ -59,8 +61,8 @@ function SchemasList(props: SchemasListProps) {
         )
         setDataList(_dataList)
         setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         setLoading(false)
       }
     }

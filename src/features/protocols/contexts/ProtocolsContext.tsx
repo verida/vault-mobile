@@ -1,5 +1,5 @@
 import { useProtocolHandlers } from 'features/protocols/hooks'
-import { Logger, Sentry } from 'features/telemetry'
+import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 const logger = new Logger('ProtocolsContext')
@@ -27,9 +27,11 @@ export const ProtocolsProvider: React.FunctionComponent = (props) => {
           // The handler will return true if it handled the deep link, false otherwise
           // A handler is considered synchronous, refactor if needed
           return handler.handleDeepLink(uri)
-        } catch (error: unknown) {
-          logger.warn('Protocol failed to handle deep link', { deepLink: uri }) // TODO: Check if ne sensitive info leaked here
-          Sentry.captureException(error)
+        } catch (cause: unknown) {
+          const error = new Error('Protocol failed to handle deep link', {
+            cause,
+          }) // TODO: Check if ne sensitive info leaked here
+          logger.error(error)
           // Return false to indicate that the deep link was not handled
           return false
         }
@@ -59,11 +61,11 @@ export const ProtocolsProvider: React.FunctionComponent = (props) => {
           // The handler will return true if it handled the QR code, false otherwise
           // A handler is considered synchronous, refactor if needed
           return handler.handleQrCode(qrCodeMessage)
-        } catch (error: unknown) {
-          logger.warn('Protocol failed to handle QR code message', {
-            qrCodeMessage,
+        } catch (cause: unknown) {
+          const error = new Error('Protocol failed to handle QR code message', {
+            cause,
           }) // TODO: Check if ne sensitive info leaked here
-          Sentry.captureException(error)
+          logger.error(error)
           // Return false to indicate that the QR code was not handled
           return false
         }

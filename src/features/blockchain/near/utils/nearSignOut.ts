@@ -45,7 +45,7 @@ export async function nearSignOut({
 
             // Reference: https://github.com/verida/vault-mobile/blob/4f422accde253ced426ee25de5000ef5eeb2543d/src/wallet-connect/controllers/near.ts#L341
             return null
-          } catch (error: unknown) {
+          } catch (error) {
             logger.error(
               new Error(
                 `Failed to remove FunctionCall access key for ${accountId}`,

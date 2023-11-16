@@ -266,7 +266,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
 
       try {
         await pairWithWalletConnectUriOrThrow(maybeConnectionUri)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(error)
 
         Alert.alert(
@@ -290,7 +290,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
         if (!maybeWeb3Wallet) return setActiveSessions(DEFAULT_ACTIVE_SESSIONS)
 
         await onRequestRefreshActiveSessions()
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(error)
       }
     })()

@@ -142,7 +142,7 @@ export async function getEntityMetadata(
       name: fetchedMetadata?.name || didMetadata?.name,
       icon: fetchedMetadata?.icon || didMetadata?.icon,
     }
-  } catch (error: unknown) {
+  } catch (error) {
     logger.error(new Error('Error getting entity metadata', { cause: error }))
     return {}
   }

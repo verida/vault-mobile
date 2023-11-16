@@ -93,7 +93,7 @@ export class InboxManager {
         senderApp
       )
       senderProfile = await sender.getMany({ key: 'name' })
-    } catch (err) {
+    } catch (error) {
       // user may not have a profile
     }
 

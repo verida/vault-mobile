@@ -1,6 +1,5 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
 import { logout as logoutAction } from 'features/auth'
 import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
@@ -10,6 +9,7 @@ import {
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
 import { isPolygonIdDeepLink } from 'features/polygonid'
+import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
@@ -47,6 +47,8 @@ import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
+
+const logger = new Logger('Pages/Dashboard/Home')
 
 const LogoImg = require('assets/vault-logo.png')
 
@@ -107,8 +109,8 @@ export const HomeTabScreen = (props) => {
       try {
         const initialUrl = await Linking.getInitialURL()
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
@@ -120,8 +122,8 @@ export const HomeTabScreen = (props) => {
       try {
         const initialUrl = event.url
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
@@ -144,7 +146,7 @@ export const HomeTabScreen = (props) => {
               'https://www.google.com/search?q=' + query.keyword
             )
           } catch (error) {
-            Sentry.captureException(error)
+            logger.error(error)
           }
         }
       })
@@ -208,7 +210,7 @@ export const HomeTabScreen = (props) => {
 
       try {
         await switchToAccount(did)
-      } catch (e) {
+      } catch (error) {
         Alert.alert(
           'Error',
           `Unable to switch to that account, please try again later.`

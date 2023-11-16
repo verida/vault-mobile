@@ -155,10 +155,11 @@ const AddIdentity = () => {
       )
 
       setDoneCreateAccount(true)
-    } catch (error: any) {
+    } catch (error) {
       if (
+        error instanceof Error &&
         error.message ===
-        'Unable to force creation of storage context for this DID'
+          'Unable to force creation of storage context for this DID'
       ) {
         setCreateAccountErrorMessage(
           'Blockchain is temporarily unavailable, please try again later.'

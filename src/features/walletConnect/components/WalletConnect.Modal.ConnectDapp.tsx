@@ -74,7 +74,7 @@ export const WalletConnectModalConnectDapp = React.memo(
           id: proposal.id,
           reason: getSdkError('USER_REJECTED_METHODS'),
         })
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(error)
       } finally {
         setLoading(false)
@@ -127,7 +127,7 @@ export const WalletConnectModalConnectDapp = React.memo(
         )
 
         setActiveSessions(await web3wallet.getActiveSessions())
-      } catch (error: unknown) {
+      } catch (error) {
         Alert.alert(
           'Error',
           `Unable to connect${

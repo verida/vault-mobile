@@ -24,7 +24,7 @@ export const walletProviderApi = create({
 //      }
 //      return allNetworks
 //    } catch (error) {
-//      Sentry.captureException(error)
+//      logger.error(error)
 //    }
 //
 //    return {}

@@ -53,7 +53,7 @@ export const nearSignIn = async ({
 
             // HACK: Upon success, return the account that was created.
             return nearAccountPointer
-          } catch (error: unknown) {
+          } catch (error) {
             logger.error(error)
             return null
           }

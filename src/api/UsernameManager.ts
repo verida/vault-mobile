@@ -28,7 +28,7 @@ export default class UsernameManager {
       const usernames = await client.getDID(username)
 
       return Boolean(usernames.length)
-    } catch (err) {
+    } catch (error) {
       return false
     }
   }
@@ -56,7 +56,7 @@ export default class UsernameManager {
       if (!match) return undefined
 
       return await client.getUsernames(match)
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(error)
       return
     }

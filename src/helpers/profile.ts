@@ -1,5 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage'
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
+
+const logger = new Logger('Profile')
 
 const edit = (navigation: any, option: any) =>
   navigation.navigate('EditProfile', { title: option.label, option })
@@ -22,7 +24,7 @@ export const isEnabledVeridaOneProfile = async () => {
     const statusStr = await AsyncStorage.getItem(VERIDA_ONE_INVITE_STORAGE_KEY)
     return statusStr === VERIDA_ONE_ENABLED_VALUE
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
   }
 
   return false

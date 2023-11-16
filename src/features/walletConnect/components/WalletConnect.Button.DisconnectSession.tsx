@@ -42,7 +42,7 @@ export const WalletConnectButtonDisconnectSession = React.memo(
             )
 
             maybeOnSessionDeleted?.()
-          } catch (error: unknown) {
+          } catch (error) {
             logger.error(error)
           } finally {
             setLoading(false)

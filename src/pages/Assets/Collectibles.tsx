@@ -7,6 +7,7 @@ import {
   getSelectedWalletById,
   getUniqueWalletAddresses,
 } from 'features/cryptoWallet'
+import { Logger } from 'features/telemetry'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
 import {
@@ -32,6 +33,8 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
+
+const logger = new Logger('Pages/Collectibles')
 
 const Collectibles = () => {
   const dispatch = useDispatch()
@@ -89,8 +92,8 @@ const Collectibles = () => {
             </View>
           </TouchableOpacity>
         )
-      } catch (e) {
-        sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
 
       return null
@@ -110,8 +113,8 @@ const Collectibles = () => {
             </View>
           </TouchableOpacity>
         )
-      } catch (e) {
-        sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
 
       return null

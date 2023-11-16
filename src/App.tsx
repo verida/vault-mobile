@@ -8,7 +8,7 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { ConfigProvider } from 'features/config'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
-import { Sentry } from 'features/telemetry'
+import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
@@ -53,6 +53,8 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
   })
 })
 
+const logger = new Logger('App')
+
 function App() {
   const [loading, setLoading] = useState(true)
 
@@ -69,7 +71,7 @@ function App() {
           Font.loadAsync({ NunitoSansBold }),
         ])
       } catch (error) {
-        Sentry.captureException(error)
+        logger.error(error)
         Alert.alert('Error', 'Failed to initialize')
       } finally {
         setLoading(false)
@@ -81,8 +83,8 @@ function App() {
       try {
         // Prevent native splash screen from autohiding
         await SplashScreen.preventAutoHideAsync()
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
       loadFonts()
     }

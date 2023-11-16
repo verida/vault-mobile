@@ -1,5 +1,4 @@
 // eslint-disable-next-line simple-import-sort/imports
-import * as Sentry from '@sentry/react-native'
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from './VaultCommon/vault'
@@ -109,8 +108,8 @@ class AccountManager extends EventEmitter {
         // Load or restore user wallets from the mnemonic
         this.initUserWallets()
       }
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
     }
   }
 
@@ -151,7 +150,7 @@ class AccountManager extends EventEmitter {
         })
       )
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 
@@ -243,9 +242,9 @@ class AccountManager extends EventEmitter {
       })
 
       return context
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -258,9 +257,9 @@ class AccountManager extends EventEmitter {
       const vault = new Vault(this.client, this.context)
       await vault.init()
       return vault
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -282,9 +281,9 @@ class AccountManager extends EventEmitter {
         { _id: config.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
         {}
       )
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -292,9 +291,9 @@ class AccountManager extends EventEmitter {
     try {
       const configDb = await this.context?.openDatabase(config.CONFIG_DB)
       return await configDb?.get(config.SEED_PHRASE_BACKED_UP_CONFIG, {})
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -347,9 +346,9 @@ class AccountManager extends EventEmitter {
         ),
         SecureStore.setItemAsync(config.SELECTED_WALLET_STORAGE_KEY, walletID),
       ])
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -388,9 +387,9 @@ class AccountManager extends EventEmitter {
           )
         }
       }
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -423,7 +422,7 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(
         new Error('Failed to create a mnemonic for new account', {
           cause: error,
@@ -485,7 +484,7 @@ class AccountManager extends EventEmitter {
       }
 
       connected = true
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(new Error('Failed to create new account', { cause: error }))
       updateProgress?.('CreateIdentifier', 'Failure')
       updateProgress?.('StorageLocation', 'Failure')
@@ -516,7 +515,7 @@ class AccountManager extends EventEmitter {
       this.setBackedupSeedPhraseConfig(false)
 
       updateProgress?.('CreateProfile', 'Success')
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(
         new Error('Failed to set profile on new account', { cause: error })
       )
@@ -577,9 +576,9 @@ class AccountManager extends EventEmitter {
         const nextAccount = Object.values(this.accounts)[0]
         await this.switchToAccount(nextAccount.did)
       }
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -621,9 +620,9 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSwitchAccountToast(undefined))
         }, 5000)
       }, 100)
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -682,10 +681,10 @@ class AccountManager extends EventEmitter {
       await this.restoreUserWallet(true)
 
       return this.selectedAccount
-    } catch (e) {
+    } catch (error) {
       if (this.selectedAccount) await this.logout([this.selectedAccount.did])
-      Sentry.captureException(e)
-      throw e
+      logger.error(error)
+      throw error
     }
   }
 
@@ -704,7 +703,8 @@ class AccountManager extends EventEmitter {
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
       return name?.includes('_vda') ?? false
-    } catch (e) {
+    } catch (error) {
+      logger.error(error)
       return false
     }
   }
