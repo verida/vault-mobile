@@ -1,4 +1,5 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
+import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
@@ -8,9 +9,13 @@ import {
   View,
 } from 'react-native'
 
+import { MainStackParams } from 'navigation/types'
+
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 
-export default (props) => {
+export const ChangePin: React.FC<
+  NativeStackScreenProps<MainStackParams, 'ChangePin'>
+> = (props) => {
   const [loading, setLoading] = useState(true)
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)

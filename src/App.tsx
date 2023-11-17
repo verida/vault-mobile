@@ -31,7 +31,7 @@ import { MetaServerChecks } from 'components/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
 import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
-import Authenticate from 'pages/Authentication/Authenticate'
+import { Authenticate } from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'

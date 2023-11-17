@@ -1,10 +1,15 @@
-import PINCode from '@haskkor/react-native-pincode'
+import PINCode, { IProps as PinCodeProps } from '@haskkor/react-native-pincode'
 import React from 'react'
 import { BackHandler } from 'react-native'
 
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 
-export default (props) => {
+interface Props extends Partial<PinCodeProps> {
+  title?: string
+  subtitle?: string
+}
+
+export const CheckPin: React.FC<Props> = (props) => {
   return (
     <PINCode
       status={'enter'}
