@@ -5,7 +5,7 @@ import {
   ChainsList,
   fetchChainsList,
 } from 'features/blockchain/eip155'
-import { ChainMetadatas } from 'features/caip'
+import { ChainMetadatas, useChainMetadatasCustom } from 'features/caip'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { Alert } from 'react-native'
@@ -17,10 +17,9 @@ import {
   walletConnectProposalUnsupportedNetworksToChainMetadatas,
 } from '../utils'
 
-// TODO: make dynamic
-
 export function useWalletConnectCustomNetworks() {
   const { showModal } = useModal()
+  const { addCustomNetworks } = useChainMetadatasCustom()
 
   const requestAddCustomNetworks = React.useCallback(
     async ({
@@ -155,14 +154,21 @@ export function useWalletConnectCustomNetworks() {
           `${proposer} requested access to unsupported networks.`
         )
 
-      return requestAddCustomNetworks({
-        chainsList,
-        chainMetadatasToCreate,
-        proposal,
-        topic: maybePairingTopic,
-      })
+      const maybeRejectedRequestToAddCustomNetwork: Error | undefined =
+        await requestAddCustomNetworks({
+          chainsList,
+          chainMetadatasToCreate,
+          proposal,
+          topic: maybePairingTopic,
+        })
+
+      if (maybeRejectedRequestToAddCustomNetwork)
+        return maybeRejectedRequestToAddCustomNetwork
+
+      // If we made it this far, the user has asserted they would like to add the custom network.
+      await addCustomNetworks(chainMetadatasToCreate)
     },
-    [requestAddCustomNetworks]
+    [requestAddCustomNetworks, addCustomNetworks]
   )
 
   return { maybeAddCustomNetworksOrErrorAsync }
