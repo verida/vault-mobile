@@ -1,20 +1,21 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AccountId, ChainId } from 'caip'
-import { useWalletsData } from 'features/cryptoWallet'
-
-import { BlockchainAccount, BlockchainWalletWithAccounts } from 'api/types'
+import {
+  MinifiedVeridaAccount,
+  MinifiedVeridaAccounts,
+} from 'features/cryptoWallet'
 
 import { ActiveSession } from '../@types'
 
-export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
+export function getMaybeMinifiedVeridaAccountForWalletConnectActiveSession({
   activeSession,
   request,
-  walletsData,
+  minifiedVeridaAccounts,
 }: {
   readonly activeSession: ActiveSession | null | undefined
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly walletsData: ReturnType<typeof useWalletsData>
-}): BlockchainAccount | undefined {
+  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
+}): MinifiedVeridaAccount | undefined {
   if (!activeSession) return undefined
 
   const requiredCaip = new ChainId(request.params.chainId)
@@ -50,24 +51,12 @@ export function getMaybeVeridaWalletAccountForWalletConnectActiveSession({
       `Expected qualified address, encountered "${String(address)}".`
     )
 
-  const possibleVeridaWalletAccounts = Object.values(walletsData).flatMap(
-    (
-      maybeMatchingVeridaWalletWallet: BlockchainWalletWithAccounts
-    ): BlockchainWalletWithAccounts[] => {
-      const maybeAccounts = maybeMatchingVeridaWalletWallet?.accounts
-
-      if (!maybeAccounts) return []
-
-      // @ts-expect-error over-generalization
-      const { [target]: maybeMatchingAccount } = maybeAccounts
-
-      return maybeMatchingAccount ? [maybeMatchingAccount] : []
-    }
-  )
-
-  const maybeMatchingVeridaWalletAccounts = possibleVeridaWalletAccounts.filter(
-    (possibleVeridaWalletAccount: BlockchainAccount) =>
-      possibleVeridaWalletAccount?.address === address
+  const maybeMatchingVeridaWalletAccounts = minifiedVeridaAccounts.filter(
+    ({
+      address: maybeAddress,
+      namespace: maybeNamespace,
+    }: MinifiedVeridaAccount): boolean =>
+      maybeNamespace === requiredCaip.namespace && maybeAddress === address
   )
 
   const [maybeMatchingVeridaWalletAccount, ...maybeOtherMatches] =

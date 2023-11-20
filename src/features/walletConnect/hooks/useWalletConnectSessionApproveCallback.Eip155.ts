@@ -1,15 +1,15 @@
 import { throwIfInvalidEip155RpcMethod } from 'features/blockchain/eip155'
-import { useWalletsData } from 'features/cryptoWallet'
+import { useSelectedMinifiedVeridaAccounts } from 'features/cryptoWallet'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
-import { getVeridaWalletAccountForWalletConnectRequestOrThrow } from '../utils'
+import { getMinifiedVeridaAccountForWalletConnectRequestOrThrow } from '../utils'
 import { useWalletConnectSessionRequestHandlersEip155 } from './useWalletConnectSessionRequestHandlers.Eip155'
 
 export const useWalletConnectSessionApproveCallbackEip155 = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
-  const walletsData = useWalletsData()
+  const selectedMinifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
   const handlers = useWalletConnectSessionRequestHandlersEip155()
 
   return React.useCallback(
@@ -18,9 +18,9 @@ export const useWalletConnectSessionApproveCallbackEip155 = (): ((
       request,
     }: WalletConnectSessionRequestCallbackParams) => {
       /* ensure wallet */
-      getVeridaWalletAccountForWalletConnectRequestOrThrow({
+      getMinifiedVeridaAccountForWalletConnectRequestOrThrow({
         request,
-        walletsData,
+        minifiedVeridaAccounts: selectedMinifiedVeridaAccounts,
         web3wallet,
       })
 
@@ -32,6 +32,6 @@ export const useWalletConnectSessionApproveCallbackEip155 = (): ((
 
       return handle({ web3wallet, request })
     },
-    [walletsData, handlers]
+    [handlers, selectedMinifiedVeridaAccounts]
   )
 }

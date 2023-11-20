@@ -2,10 +2,10 @@ import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { NearAccount, throwIfNotNearTestnet } from 'features/blockchain/near'
-import { useWalletsData } from 'features/cryptoWallet'
+import { MinifiedVeridaAccounts } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
-import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
+import { getMaybeMinifiedVeridaAccountForWalletConnectRequest } from './getMaybeMinifiedVeridaAccountForWalletConnectRequest'
 
 export async function getMaybeNearAccountForPrivateKey({
   privateKey,
@@ -47,11 +47,11 @@ export async function getMaybeNearAccountForPrivateKey({
 export async function getMaybeNearAccountForWalletConnectRequest({
   web3wallet,
   request,
-  walletsData,
+  minifiedVeridaAccounts,
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
 }): Promise<NearAccount | undefined> {
   const { params } = request
 
@@ -63,10 +63,10 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   throwIfNotNearTestnet(caipChainId)
 
   const maybeVeridaWalletAccount =
-    getMaybeVeridaWalletAccountForWalletConnectRequest({
+    getMaybeMinifiedVeridaAccountForWalletConnectRequest({
       web3wallet,
       request,
-      walletsData,
+      minifiedVeridaAccounts,
     })
 
   if (!maybeVeridaWalletAccount) return undefined
@@ -85,17 +85,17 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 export async function getNearAccountForWalletConnectRequestOrThrow({
   web3wallet,
   request,
-  walletsData,
+  minifiedVeridaAccounts,
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly walletsData: ReturnType<typeof useWalletsData>
+  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({
       web3wallet,
       request,
-      walletsData,
+      minifiedVeridaAccounts,
     })
 
   if (!maybeNearAccount)
