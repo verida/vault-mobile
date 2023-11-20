@@ -60,17 +60,17 @@ export type AuthStackParams = {
 export type AuthStackScreenProps<S extends keyof AuthStackParams> =
   NativeStackScreenProps<AuthStackParams, S>
 
-export type DashboardTabParams = {
+export type TabsScreenParams = {
   Home: undefined
   Profile: undefined
   Data: DataTabScreenParams
-  Connections: undefined
+  // Connections: undefined // TODO: uncomment when ready
   Assets: undefined
 }
 
-export type TabsScreenProps<S extends keyof DashboardTabParams> =
+export type TabsScreenProps<S extends keyof TabsScreenParams> =
   CompositeScreenProps<
-    BottomTabScreenProps<DashboardTabParams, S>,
+    BottomTabScreenProps<TabsScreenParams, S>,
     MainStackScreenProps<keyof MainStackParams>
   >
 

@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { get, isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
@@ -14,6 +14,8 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 
 import Text from '../../Text'
+
+const logger = new Logger('Component/GenericMessage')
 
 type GenericMessageProps = {
   inboxItem: any
@@ -50,7 +52,7 @@ function GenericMessage(props: GenericMessageProps) {
           avatar,
         })
       } catch (error) {
-        Sentry.captureException(error)
+        logger.error(error)
       }
     }
 
@@ -83,10 +85,10 @@ function GenericMessage(props: GenericMessageProps) {
         navigation.goBack()
       }
       setSubmitting(false)
-    } catch (e) {
+    } catch (error) {
       setSubmitting(false)
       Alert.alert('Error', 'Can not set message as read')
-      Sentry.captureException(e)
+      logger.error(error)
     }
   }
 
@@ -107,7 +109,7 @@ function GenericMessage(props: GenericMessageProps) {
     return <Text>Invalid data</Text>
   }
 
-  const formattedSendAt = moment(inboxItem.sendAt).format('MMM D, HH:mm')
+  const formattedSentAt = moment(inboxItem.sentAt).format('MMM D, HH:mm')
 
   return (
     <Content>
@@ -126,7 +128,7 @@ function GenericMessage(props: GenericMessageProps) {
         />
         <View>
           <Text style={styles.senderName}>{sender.name}</Text>
-          <Text style={styles.sendAt}>{formattedSendAt}</Text>
+          <Text style={styles.sentAt}>{formattedSentAt}</Text>
         </View>
       </View>
       <View style={styles.messageContent}>
@@ -194,7 +196,7 @@ const styles = StyleSheet.create({
   senderName: {
     fontSize: 14,
   },
-  sendAt: {
+  sentAt: {
     fontSize: 12,
   },
   message: {

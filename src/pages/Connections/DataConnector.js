@@ -22,7 +22,7 @@ function buildConnections(allConnectors) {
   return finalConnectors
 }
 
-export default (props) => {
+export const ConnectionsTabScreen = (props) => {
   const [connectors, setConnectors] = useState([])
 
   useEffect(() => {

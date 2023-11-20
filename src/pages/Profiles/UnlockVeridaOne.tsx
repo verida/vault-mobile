@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import {
   checkVeridaOneInviteCode,
@@ -31,6 +31,8 @@ import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
 
+const logger = new Logger('Pages/UnlockVeridaOne')
+
 enum PageType {
   UnlockVeridaOne,
   InvitationSuccess,
@@ -58,8 +60,8 @@ const UnlockVeridaOne = () => {
       if (accountUsernames && accountUsernames?.length > 0) {
         setUsername(accountUsernames[0])
       }
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
     }
   }
 

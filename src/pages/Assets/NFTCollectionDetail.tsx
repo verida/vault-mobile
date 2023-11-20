@@ -1,5 +1,5 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
-import * as sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
 import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
@@ -15,6 +15,8 @@ import { MainStackParams } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
+
+const logger = new Logger('Pages/NFTCollectionDetail')
 
 type NFTCollectionDetailRouteProp = RouteProp<
   MainStackParams,
@@ -58,8 +60,8 @@ const NFTCollectionDetail = () => {
             </View>
           </Pressable>
         )
-      } catch (e) {
-        sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
 
       return null

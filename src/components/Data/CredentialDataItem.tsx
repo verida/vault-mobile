@@ -30,7 +30,7 @@ import Text from 'components/Text'
 import { GREY_COLOR, ORANGE_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Components/Data/CredentialDataItem')
 
 export type CredentialDataItemProps = Omit<ViewProps, 'children'> & {
   data: DataItem
@@ -108,7 +108,7 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
             }
           }
           setIssuer(issuerProfile)
-        } catch (error: unknown) {
+        } catch (error) {
           logger.error(
             new Error('Failed to get the issuer profile', { cause: error })
           )
@@ -120,7 +120,7 @@ export const CredentialDataItem: React.FunctionComponent<CredentialDataItemProps
           setLoading(true)
           getIssuerProfile(extractedIssuer)
           await checkCredential(credentialData)
-        } catch (error: unknown) {
+        } catch (error) {
           logger.error(
             new Error('Failed to check the credential', { cause: error })
           )

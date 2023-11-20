@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import { config } from 'config'
 import {
   getAllWallets,
   getSelectedWalletId,
@@ -32,16 +32,16 @@ export const createNewWallet = createAppAsyncThunk(
         // save to the secure storage..
         await Promise.all([
           SecureStore.setItemAsync(
-            CONFIG.WALLETS_STORAGE_KEY,
+            config.WALLETS_STORAGE_KEY,
             JSON.stringify(wallets)
           ),
           SecureStore.setItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            config.SELECTED_WALLET_STORAGE_KEY,
             selectedWallet._id
           ),
         ])
       }
-    } catch (error: any) {
+    } catch (error) {
       return rejectWithValue('Could not create wallet')
     }
   }

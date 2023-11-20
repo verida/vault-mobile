@@ -1,5 +1,4 @@
 // eslint-disable-next-line simple-import-sort/imports
-import * as Sentry from '@sentry/react-native'
 import { Client } from '@verida/client-rn'
 import { AutoAccount } from '@verida/account-node'
 import Vault from './VaultCommon/vault'
@@ -36,7 +35,7 @@ import {
 import { getCountryCode } from 'helpers/countries'
 import DataConnectorsManager from './DataConnectorsManager'
 
-import CONFIG from '../config'
+import { config } from 'config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { IContext } from '@verida/types'
@@ -68,8 +67,8 @@ class AccountManager extends EventEmitter {
 
     if (hasInvalidData) {
       this.accounts = {}
-      await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.ACCOUNTS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.SELECTED_ACCOUNT_DID_STORAGE_KEY)
 
       AccountManager.getInstance().emit('ForcedDeleteAccounts', null)
     }
@@ -79,8 +78,8 @@ class AccountManager extends EventEmitter {
     try {
       if (!this.selectedAccount) {
         const [storedAccounts, storedSelectedAccountDid] = await Promise.all([
-          SecureStore.getItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY),
-          SecureStore.getItemAsync(CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY),
+          SecureStore.getItemAsync(config.ACCOUNTS_STORAGE_KEY),
+          SecureStore.getItemAsync(config.SELECTED_ACCOUNT_DID_STORAGE_KEY),
         ])
 
         if (storedAccounts) {
@@ -109,16 +108,16 @@ class AccountManager extends EventEmitter {
         // Load or restore user wallets from the mnemonic
         this.initUserWallets()
       }
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
     }
   }
 
   private async initUserWallets() {
     try {
       const [walletsRaw, selectedWalletId] = await Promise.all([
-        SecureStore.getItemAsync(CONFIG.WALLETS_STORAGE_KEY),
-        SecureStore.getItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY),
+        SecureStore.getItemAsync(config.WALLETS_STORAGE_KEY),
+        SecureStore.getItemAsync(config.SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
           cryptoWalletApi.endpoints.chainsList.initiate(
             {},
@@ -151,7 +150,7 @@ class AccountManager extends EventEmitter {
         })
       )
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 
@@ -179,12 +178,12 @@ class AccountManager extends EventEmitter {
     try {
       if (!this.selectedAccount) return undefined
 
-      const environment = CONFIG.VERIDA_ENVIRONMENT
+      const environment = config.VERIDA_ENVIRONMENT
 
       this.client = new Client({
         environment,
         didClientConfig: {
-          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
           network: environment,
         },
       })
@@ -193,7 +192,7 @@ class AccountManager extends EventEmitter {
 
       // Use empty endpointUri's as they should already have been specified
       // when the account was created
-      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG)
+      const didClientConfig = merge({}, config.VERIDA_DID_CLIENT_CONFIG)
 
       const account = new AutoAccount({
         privateKey: mnemonic,
@@ -213,7 +212,7 @@ class AccountManager extends EventEmitter {
 
       // Open an application context
       const context = await this.client.openContext(
-        CONFIG.VERIDA_CONTEXT_NAME,
+        config.VERIDA_CONTEXT_NAME,
         false
       )
 
@@ -233,21 +232,19 @@ class AccountManager extends EventEmitter {
       // @todo: Do something useful with these messages
       // @ts-expect-error This event emitter interface is not documented.
       context!.on('EndpointUnavailable', (endpointUri: string) => {
-        // eslint-disable-next-line no-console
-        console.info(`Endpoint is currently unavailable: ${endpointUri}`)
+        logger.info(`Endpoint is currently unavailable`, { endpointUri })
       })
 
       // @todo: Do something useful with these messages
       // @ts-expect-error This event emitter interface is not documented.
       context!.on('EndpointWarning', (endpointUri: string, message: string) => {
-        // eslint-disable-next-line no-console
-        console.info(`Warning from endpoint ${endpointUri}: ${message}`)
+        logger.info(`Warning from endpoint`, { endpointUri, message })
       })
 
       return context
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -260,9 +257,9 @@ class AccountManager extends EventEmitter {
       const vault = new Vault(this.client, this.context)
       await vault.init()
       return vault
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -279,24 +276,24 @@ class AccountManager extends EventEmitter {
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
     try {
-      const configDb = await this.context?.openDatabase(CONFIG.CONFIG_DB)
+      const configDb = await this.context?.openDatabase(config.CONFIG_DB)
       await configDb?.save(
-        { _id: CONFIG.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
+        { _id: config.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
         {}
       )
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
   public async getBackedupSeedPhraseConfig() {
     try {
-      const configDb = await this.context?.openDatabase(CONFIG.CONFIG_DB)
-      return await configDb?.get(CONFIG.SEED_PHRASE_BACKED_UP_CONFIG, {})
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+      const configDb = await this.context?.openDatabase(config.CONFIG_DB)
+      return await configDb?.get(config.SEED_PHRASE_BACKED_UP_CONFIG, {})
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -344,14 +341,14 @@ class AccountManager extends EventEmitter {
       // save wallet state to secure storage
       await Promise.all([
         SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
+          config.WALLETS_STORAGE_KEY,
           JSON.stringify(walletData)
         ),
-        SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, walletID),
+        SecureStore.setItemAsync(config.SELECTED_WALLET_STORAGE_KEY, walletID),
       ])
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -373,7 +370,7 @@ class AccountManager extends EventEmitter {
 
         // save to storage..
         await SecureStore.setItemAsync(
-          CONFIG.WALLETS_STORAGE_KEY,
+          config.WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
 
@@ -385,14 +382,14 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSelectedWallet(selectedWalletID))
 
           await SecureStore.setItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            config.SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         }
       }
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -409,7 +406,7 @@ class AccountManager extends EventEmitter {
     updateProgress?.('CreateProfile', 'None')
     updateProgress?.('ClaimUsername', 'None')
 
-    const environment = CONFIG.VERIDA_ENVIRONMENT
+    const environment = config.VERIDA_ENVIRONMENT
 
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
@@ -425,7 +422,7 @@ class AccountManager extends EventEmitter {
           backedup: false,
         },
       }
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(
         new Error('Failed to create a mnemonic for new account', {
           cause: error,
@@ -436,14 +433,14 @@ class AccountManager extends EventEmitter {
     }
 
     try {
-      const didClientConfig = merge({}, CONFIG.VERIDA_DID_CLIENT_CONFIG, {
+      const didClientConfig = merge({}, config.VERIDA_DID_CLIENT_CONFIG, {
         veridaKey: this.selectedAccount!.privateKey,
       })
 
       this.client = new Client({
         environment,
         didClientConfig: {
-          rpcUrl: CONFIG.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
           network: environment,
         },
       })
@@ -459,7 +456,7 @@ class AccountManager extends EventEmitter {
 
       await account.loadDefaultStorageNodes(countryCode, 3, {
         network: environment,
-        notificationEndpoints: [...CONFIG.NOTIFICATION_ENDPOINTS],
+        notificationEndpoints: [...config.NOTIFICATION_ENDPOINTS],
       })
 
       updateProgress?.('StorageLocation', 'Loading')
@@ -468,12 +465,12 @@ class AccountManager extends EventEmitter {
 
       // Open the Vault context, forcing its creation
       const context = await this.client.openContext(
-        CONFIG.VERIDA_CONTEXT_NAME,
+        config.VERIDA_CONTEXT_NAME,
         true
       )
 
       if (context === undefined) {
-        throw new Error(`Failed to open context ${CONFIG.VERIDA_CONTEXT_NAME}`)
+        throw new Error(`Failed to open context ${config.VERIDA_CONTEXT_NAME}`)
       }
       this.context = context
 
@@ -487,7 +484,7 @@ class AccountManager extends EventEmitter {
       }
 
       connected = true
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(new Error('Failed to create new account', { cause: error }))
       updateProgress?.('CreateIdentifier', 'Failure')
       updateProgress?.('StorageLocation', 'Failure')
@@ -518,7 +515,7 @@ class AccountManager extends EventEmitter {
       this.setBackedupSeedPhraseConfig(false)
 
       updateProgress?.('CreateProfile', 'Success')
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(
         new Error('Failed to set profile on new account', { cause: error })
       )
@@ -545,8 +542,8 @@ class AccountManager extends EventEmitter {
       selectedDids = Object.keys(this.accounts)
     }
     try {
-      await SecureStore.deleteItemAsync(CONFIG.WALLETS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.WALLETS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(config.SELECTED_WALLET_STORAGE_KEY)
       await store.dispatch(removeUserWallets())
       DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
@@ -554,10 +551,10 @@ class AccountManager extends EventEmitter {
       })
 
       if (isEmpty(this.selectedAccount)) {
-        await SecureStore.deleteItemAsync(CONFIG.ACCOUNTS_STORAGE_KEY)
+        await SecureStore.deleteItemAsync(config.ACCOUNTS_STORAGE_KEY)
       } else {
         await SecureStore.setItemAsync(
-          CONFIG.ACCOUNTS_STORAGE_KEY,
+          config.ACCOUNTS_STORAGE_KEY,
           JSON.stringify(this.accounts)
         )
       }
@@ -568,7 +565,7 @@ class AccountManager extends EventEmitter {
         this.client = undefined
         this.vault = undefined
         await SecureStore.deleteItemAsync(
-          CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY
+          config.SELECTED_ACCOUNT_DID_STORAGE_KEY
         )
         store.dispatch(setSelectedAccount(undefined))
       }
@@ -579,9 +576,9 @@ class AccountManager extends EventEmitter {
         const nextAccount = Object.values(this.accounts)[0]
         await this.switchToAccount(nextAccount.did)
       }
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -593,7 +590,7 @@ class AccountManager extends EventEmitter {
         this.selectedAccount.seedPhraseReminder.lastTime = Date.now()
       }
       await SecureStore.setItemAsync(
-        CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
+        config.SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
 
@@ -603,14 +600,14 @@ class AccountManager extends EventEmitter {
       await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
 
+      store.dispatch(setSelectedAccount(this.selectedAccount))
+
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore
       const avatar = await this.vault?.profiles.public.get('avatar')
-
-      store.dispatch(setSelectedAccount(this.selectedAccount))
       setTimeout(() => {
         store.dispatch(
           setSwitchAccountToast({
@@ -623,9 +620,9 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSwitchAccountToast(undefined))
         }, 5000)
       }, 100)
-    } catch (e) {
-      Sentry.captureException(e)
-      throw e
+    } catch (error) {
+      logger.error(error)
+      throw error
     }
   }
 
@@ -645,12 +642,12 @@ class AccountManager extends EventEmitter {
     this.accounts[this.selectedAccount.did] = this.selectedAccount
 
     await SecureStore.setItemAsync(
-      CONFIG.ACCOUNTS_STORAGE_KEY,
+      config.ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
     )
 
     await SecureStore.setItemAsync(
-      CONFIG.SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      config.SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
   }
@@ -681,12 +678,13 @@ class AccountManager extends EventEmitter {
       await this.connect(true)
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      await this.restoreUserWallet(true)
 
       return this.selectedAccount
-    } catch (e) {
+    } catch (error) {
       if (this.selectedAccount) await this.logout([this.selectedAccount.did])
-      Sentry.captureException(e)
-      throw e
+      logger.error(error)
+      throw error
     }
   }
 
@@ -705,7 +703,8 @@ class AccountManager extends EventEmitter {
       // @ts-ignore
       const name = await this.vault?.profiles.public.get('name')
       return name?.includes('_vda') ?? false
-    } catch (e) {
+    } catch (error) {
+      logger.error(error)
       return false
     }
   }

@@ -3,7 +3,7 @@ import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
 import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
-import DashboardNavigator from 'navigation/DashboardNavigator'
+import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
 import DeleteAccount from 'pages/Account/DeleteAccount'
 import AddIdentity from 'pages/Account/Identity/AddIdentity'
@@ -11,7 +11,7 @@ import Identity from 'pages/Account/Identity/Identity'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
-import ChangePin from 'pages/Authentication/ChangePin'
+import { ChangePin } from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import Inbox from 'pages/Inbox'
@@ -28,7 +28,7 @@ import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditPlatformLink from 'pages/Profiles/EditPlatformLink'
 import EditProfile from 'pages/Profiles/EditProfile'
 import PrivateProfile from 'pages/Profiles/PrivateProfile'
-import PublicProfile from 'pages/Profiles/PublicProfile'
+import { PublicProfile } from 'pages/Profiles/PublicProfile'
 import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
 import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
@@ -71,7 +71,7 @@ export const MainNavigator: React.FunctionComponent = () => {
         {/* An empty component, just to register all of the main app events after the user has authenticated. */}
         <BehindAuthHandlers />
         <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={'Dashboard'} component={DashboardNavigator} />
+          <Stack.Screen name={'Dashboard'} component={TabsNavigator} />
           <Stack.Screen name={'Inbox'} component={Inbox} />
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />

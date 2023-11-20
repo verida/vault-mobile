@@ -1,7 +1,9 @@
 import { formatJsonRpcError } from '@json-rpc-tools/utils'
-import * as Sentry from '@sentry/react-native'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { Logger } from 'features/telemetry'
+
+const logger = new Logger('WalletConnect')
 
 export const rejectSessionRequest = ({
   reason,
@@ -13,12 +15,11 @@ export const rejectSessionRequest = ({
   readonly web3wallet: IWeb3Wallet
 }) => {
   Promise.all([
-    __DEV__ &&
-      // eslint-disable-next-line no-console
-      console.error(
-        `[WalletConnect::RPC]: session_request rejected (#${request.id}, "${request.topic}", "${reason}")`
-      ),
-    Sentry.captureException(new Error(reason)),
+    logger.warn(`RPC session_request rejected`, {
+      id: request.id,
+      topic: request.topic,
+      reason,
+    }),
     web3wallet.respondSessionRequest({
       topic: request.topic,
       response: formatJsonRpcError(request.id, reason),

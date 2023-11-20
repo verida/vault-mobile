@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import { CoreTypes } from '@walletconnect/types'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
@@ -8,6 +7,7 @@ import {
   getMaybeChainMetadatas,
   useChainMetadatas,
 } from 'features/caip'
+import { Logger } from 'features/telemetry'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
@@ -31,6 +31,8 @@ const getTitleForRequest = (request: Web3WalletTypes.SessionRequest) => {
 
   return 'Smart Contract Call'
 }
+
+const logger = new Logger('WalletConnect')
 
 export const WalletConnectTransactionRequestModalAdapter = React.memo(
   function WalletConnectTransactionRequestModalAdapter({
@@ -62,12 +64,12 @@ export const WalletConnectTransactionRequestModalAdapter = React.memo(
         await onRequestApprove()
 
         dismissModal()
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         Alert.alert(
           'Error',
           `Unable to process request${
-            e instanceof Error ? `: ${e.message}` : '.'
+            error instanceof Error ? `: ${error.message}` : '.'
           }`
         )
       } finally {
@@ -82,8 +84,8 @@ export const WalletConnectTransactionRequestModalAdapter = React.memo(
         setLoading(true)
 
         await onRequestReject()
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         Alert.alert('Error', 'Unable to reject request.')
       } finally {
         setLoading(false)

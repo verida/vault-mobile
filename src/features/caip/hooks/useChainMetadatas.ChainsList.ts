@@ -3,7 +3,7 @@ import { cryptoWalletApi } from 'features/cryptoWallet'
 import * as React from 'react'
 
 import { BlockchainNetwork } from '../../../api/types'
-import config from '../../../config'
+import { config } from '../../../config'
 import { ChainMetadatas, isSupportedCaipNamespace } from '../../caip'
 import {
   ChainMetadata,

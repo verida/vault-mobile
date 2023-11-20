@@ -1,13 +1,15 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
-import * as Sentry from '@sentry/react-native'
 import { logout } from 'features/auth'
 import { selectAccounts } from 'features/identities'
+import { Logger } from 'features/telemetry'
 
 import AccountManager from 'api/AccountManager'
 import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 
 import { PublicProfile } from '../@types'
+
+const logger = new Logger('Profiles')
 
 const publicProfileEmptyState: PublicProfile = {
   name: '',
@@ -136,10 +138,12 @@ export const fetchPublicProfileData = createAppAsyncThunk(
       }
 
       return publicProfile as PublicProfile
-    } catch (e: any) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
       return rejectWithValue(
-        `Failed to load public profile for DID ${did}: ${e.message}`
+        `Failed to load public profile for DID ${did}: ${
+          error instanceof Error ? error.message : ''
+        }`
       )
     }
   }

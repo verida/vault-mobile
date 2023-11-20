@@ -50,7 +50,7 @@ const VerifyPhrase = (props) => {
       dispatch(setShowSeedPhraseReminder(false))
       await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
       navigation.goBack()
-    } catch (e) {
+    } catch (cause) {
       showError(true)
     }
   }

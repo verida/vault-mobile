@@ -1,7 +1,8 @@
-import * as sentry from '@sentry/react-native'
 import { LinearGradient } from 'expo-linear-gradient'
 import { logout } from 'features/auth'
+import { ForcedCreateAccountType } from 'features/config'
 import { selectSelectedAccount } from 'features/identities'
+import { Logger } from 'features/telemetry'
 import React, { useState } from 'react'
 import { Linking, Modal, ScrollView, StyleSheet, View } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
@@ -13,11 +14,12 @@ import Button from 'components/Button'
 import { Spacer } from 'components/Spacer'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Title } from 'components/Typography/Title'
-import { ForcedCreateAccountType } from 'hooks/useRemoteConfigs'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { navigate } from 'navigation/RootNavigator'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('Components/ForcedCreateNewAccountModal')
 
 type Props = {
   dismissModal: () => void
@@ -26,7 +28,7 @@ type Props = {
   forcedSignOut: () => Promise<boolean>
 }
 
-const ForcedCreateNewAccountModal = ({
+export const ForcedCreateNewAccountModal = ({
   forcedCreateAccount,
   dismissModal,
   forcedSignOut,
@@ -49,13 +51,15 @@ const ForcedCreateNewAccountModal = ({
   }
 
   const onFurtherInfoPress = () => {
-    Linking.canOpenURL(forcedCreateAccount.furtherInfo!)
-      .then(() => {
-        Linking.openURL(forcedCreateAccount.furtherInfo!)
-      })
-      .catch((error) => {
-        sentry.captureException(error)
-      })
+    if (forcedCreateAccount.furtherInfo) {
+      Linking.canOpenURL(forcedCreateAccount.furtherInfo)
+        .then(() => {
+          Linking.openURL(forcedCreateAccount.furtherInfo!)
+        })
+        .catch((error: unknown) => {
+          logger.error(error)
+        })
+    }
   }
 
   return (
@@ -87,9 +91,11 @@ const ForcedCreateNewAccountModal = ({
                 onPress={() => onForcedCreateAccountPress()}>
                 Create New Account
               </Button>
-              <Button color='grey' onPress={onFurtherInfoPress}>
-                Learn more
-              </Button>
+              {Boolean(forcedCreateAccount.furtherInfo) && (
+                <Button color='grey' onPress={onFurtherInfoPress}>
+                  Learn more
+                </Button>
+              )}
             </View>
           </View>
         </View>
@@ -97,8 +103,6 @@ const ForcedCreateNewAccountModal = ({
     </Modal>
   )
 }
-
-export default ForcedCreateNewAccountModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({
