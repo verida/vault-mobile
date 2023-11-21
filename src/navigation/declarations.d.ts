@@ -1,7 +1,16 @@
-import {RootStackParams, AuthStackParams, DashboardTabParams, MainStackParams} from 'navigation/types'
+import {
+  RootStackParams,
+  AuthStackParams,
+  TabsScreenParams,
+  MainStackParams,
+} from 'navigation/types'
 
 declare global {
   namespace ReactNavigation {
-    interface RootParamList extends RootStackParamList, AuthStackParams, DashboardTabParams, MainStackParams  {}
+    interface RootParamList
+      extends RootStackParamList,
+        AuthStackParams,
+        TabsScreenParams,
+        MainStackParams {}
   }
 }

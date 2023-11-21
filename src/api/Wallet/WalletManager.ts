@@ -3,6 +3,7 @@ import {
   getBlockchainNetworks,
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
+import { Logger } from 'features/telemetry'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
@@ -16,6 +17,8 @@ import {
 import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
 import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
 import { Blockchain as nearBlockchain } from './nearBlockchain'
+
+const logger = new Logger('WalletManager')
 
 const bip39 = require('bip39')
 
@@ -96,10 +99,10 @@ export class WalletManager {
         //       to prevent the application from having to deal with instances
         //       it doesn't support natively further downstream.
         if (!isSupportedCaipNamespace(blockchainNetwork.namespace)) {
-          // eslint-disable-next-line no-console
-          return console.warn(
+          logger.warn(
             `Refusing to process "${blockchainNetwork.chainId}", since it is no longer supported.`
           )
+          return
         }
 
         if (

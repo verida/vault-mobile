@@ -1,4 +1,4 @@
-import { EnvironmentType } from '@verida/types'
+import { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
 import {
   Blockchain,
   CredentialStatusType,
@@ -6,6 +6,7 @@ import {
   NetworkId,
 } from 'features/polygonid/constants'
 import { LogLevel } from 'features/telemetry'
+import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
 import {
@@ -113,7 +114,7 @@ const COMMON_CONFIG = {
       endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
     },
     rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
-  },
+  } as AccountNodeDIDClientConfig,
   NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
   // --------------------
   INFURA_API_KEY: Config.INFURA_API_KEY, // TODO: Move to specific network config, but will need to be for multiple networks
@@ -121,7 +122,7 @@ const COMMON_CONFIG = {
   // TODO: Group WalletConnect config in its own sub property walletConnect: {projectId: '...', relayUrl: '...'}
   WALLETCONNECT_PROJECT_ID: Config.WALLETCONNECT_PROJECT_ID,
   WALLETCONNECT_RELAY_URL: Config.WALLETCONNECT_RELAY_URL,
-} as const
+}
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
   VERIDA_ENVIRONMENT: T // TODO: Find a better name, it's not en environment, it's a network!
@@ -171,5 +172,20 @@ const RESOLVED_CONFIG = Object.assign(
 
 export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
 
-// TODO: Eventually get rid of default export
-export default RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
+/*
+ * Merge local app-config with remote-config
+ *
+ * @param remoteConfig
+ * @returns
+ */
+export function mergeWithRemoteConfig(
+  remoteConfig: Partial<typeof RESOLVED_CONFIG>
+) {
+  if (isEmpty(remoteConfig)) return false
+
+  const originalConfig = cloneDeep(config)
+  // Mutate config
+  merge(config, remoteConfig)
+
+  return !isEqual(config, originalConfig)
+}

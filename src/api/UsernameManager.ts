@@ -1,9 +1,12 @@
 import { EnvironmentType, Web3CallType } from '@verida/types'
 import { VeridaNameClient } from '@verida/vda-name-client'
+import { config } from 'config'
 import { Account } from 'features/identities'
+import { Logger } from 'features/telemetry'
 
-import CONFIG from '../config'
 import AccountManager from './AccountManager'
+
+const logger = new Logger('UsernameManager')
 
 export default class UsernameManager {
   private static client?: VeridaNameClient
@@ -25,7 +28,7 @@ export default class UsernameManager {
       const usernames = await client.getDID(username)
 
       return Boolean(usernames.length)
-    } catch (err) {
+    } catch (error) {
       return false
     }
   }
@@ -53,10 +56,8 @@ export default class UsernameManager {
       if (!match) return undefined
 
       return await client.getUsernames(match)
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log(err)
-
+    } catch (error) {
+      logger.error(error)
       return
     }
   }
@@ -97,7 +98,7 @@ export default class UsernameManager {
     }
     UsernameManager.did = currentDID
 
-    const didClientConfig = CONFIG.VERIDA_DID_CLIENT_CONFIG
+    const didClientConfig = config.VERIDA_DID_CLIENT_CONFIG
     const account = <Account>(
       await AccountManager.getInstance().getSelectedAccount()
     )
@@ -106,7 +107,7 @@ export default class UsernameManager {
       callType: <Web3CallType>didClientConfig.callType,
       did: account.did,
       signKey: account.privateKey,
-      network: <EnvironmentType>CONFIG.VERIDA_ENVIRONMENT,
+      network: <EnvironmentType>config.VERIDA_ENVIRONMENT,
       web3Options: didClientConfig.web3Config,
     })
 

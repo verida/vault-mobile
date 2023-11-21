@@ -9,9 +9,12 @@ import {
 } from 'features/blockchain/near'
 import { ChainMetadatas, SupportedCaipNamespace } from 'features/caip'
 import { useWalletsData } from 'features/cryptoWallet'
+import { Logger } from 'features/telemetry'
 import { keyStores, utils } from 'near-api-js'
 
 import { getMaybeVeridaWalletAccountForWalletConnectRequest } from './getMaybeVeridaWalletAccountForWalletConnectRequest'
+
+const logger = new Logger('WalletConnect')
 
 // https://docs.near.org/tools/near-api-js/quick-reference#key-store
 export async function getMaybeNearAccountForWalletConnectRequest({
@@ -77,11 +80,9 @@ export async function getMaybeNearAccountForWalletConnectRequest({
   })
 
   if (!doesAccountExist) {
-    __DEV__ &&
-      // eslint-disable-next-line no-console
-      console.log(
-        `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
-      )
+    logger.info(
+      `🛰️ Detected that the NearAccount does not exist. Attempting instantiation...`
+    )
 
     await nearInstantiateAccount({ chainMetadatas, nearAccount })
   }

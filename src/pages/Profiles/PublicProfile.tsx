@@ -1,6 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useNavigation } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
@@ -10,6 +9,7 @@ import {
   selectSelectedPublicProfile,
   setPublicProfileByDid,
 } from 'features/profiles'
+import { Logger } from 'features/telemetry'
 import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
 import { cloneDeep, isEqual } from 'lodash'
 import debounce from 'lodash/debounce'
@@ -75,6 +75,10 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
+// TODO: We absolutely have to refactor and breakdown this page!
+
+const logger = new Logger('Pages/Profiles/PublicProfile')
+
 export enum PublicProfileEditMode {
   EditWalletPublicLabel,
   AddCustomURL,
@@ -109,7 +113,7 @@ const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
 
-const PublicProfile = () => {
+export const PublicProfile: React.FunctionComponent = () => {
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
   const profileEditableProps = useMemo(() => {
@@ -353,8 +357,8 @@ const PublicProfile = () => {
 
           // refetch profile so react state correctly updates
           fetchVeridaOneProfle()
-        } catch (e) {
-          Sentry.captureException(e)
+        } catch (error) {
+          logger.error(error)
           Alert.alert('Error', 'Failed to save profile')
           onRefresh()
         } finally {
@@ -483,8 +487,8 @@ const PublicProfile = () => {
           publicProfile: publicData,
         })
       )
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
       Alert.alert('Error', 'Cannot load public profile data')
     } finally {
       setQuickFetching(false)
@@ -512,8 +516,8 @@ const PublicProfile = () => {
         )
         setFeaturedAssets(updatedFeaturedAssets)
       }
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
       Alert.alert('Error', 'Cannot load Verida profile data')
     }
   }
@@ -543,8 +547,8 @@ const PublicProfile = () => {
           return updateValues
         })
       }
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
     }
   }
 
@@ -849,7 +853,7 @@ const PublicProfile = () => {
         const currentConnectors = await DataConnectorsManager.getConnectors()
         setSupportedConnectPlatforms(buildConnections(currentConnectors))
       } catch (error) {
-        Sentry.captureException(error)
+        logger.error(error)
       }
     }
 
@@ -1385,8 +1389,6 @@ const PublicProfile = () => {
     </Screen>
   )
 }
-
-export default PublicProfile
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

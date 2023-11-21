@@ -2,35 +2,37 @@ import { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import { LinearGradient } from 'expo-linear-gradient'
 import * as LocalAuthentication from 'expo-local-authentication'
 import { selectIsBioAuthenticated, setBioAuthStatus } from 'features/auth'
-import React, { useEffect, useState } from 'react'
+import React, { FC, useEffect, useState } from 'react'
 import { ActivityIndicator, StyleSheet, Text, View } from 'react-native'
 import { useDispatch, useSelector } from 'react-redux'
 
 import { useAuth } from 'hooks/useAuth'
 
 import Logo from '../../assets/logo.svg'
-import CheckPin from './CheckPin'
+import { CheckPin } from './CheckPin'
+import { CreatePin } from './CreatePin'
 
-const Authenticate = (props) => {
-  const { children } = props
+export const Authenticate: FC = ({ children }) => {
   const dispatch = useDispatch()
   const [pinAuth, setPinAuth] = useState(false)
-  const bioAuthenicated = useSelector(selectIsBioAuthenticated)
+  const bioAuthenticated = useSelector(selectIsBioAuthenticated)
   const { authenticated } = useAuth()
+  const [showCreatePin, setShowCreatePin] = useState(false)
 
   useEffect(() => {
     async function setShouldAuthByPIN() {
       const hasPIN = await hasUserSetPinCode()
       if (!hasPIN) {
-        dispatch(setBioAuthStatus(true))
+        setShowCreatePin(true)
+      } else {
+        setPinAuth(true)
       }
-      setPinAuth(true)
     }
 
     const init = async () => {
-      if (bioAuthenicated || !authenticated) return
-      const enrolledLevel = await LocalAuthentication.getEnrolledLevelAsync()
+      if (!authenticated || bioAuthenticated) return
 
+      const enrolledLevel = await LocalAuthentication.getEnrolledLevelAsync()
       if (enrolledLevel === LocalAuthentication.SecurityLevel.BIOMETRIC) {
         const { success } = await LocalAuthentication.authenticateAsync()
         if (success) {
@@ -44,10 +46,16 @@ const Authenticate = (props) => {
     }
 
     init()
-  }, [authenticated, bioAuthenicated, dispatch])
+  }, [bioAuthenticated, authenticated, dispatch])
 
-  if (!authenticated || bioAuthenicated) return children
-  if (pinAuth)
+  // Has no account or not yet did Bio authenticate
+  if (!authenticated || bioAuthenticated) return <>{children}</>
+
+  // Needs to create a Pin code
+  if (showCreatePin) return <CreatePin />
+
+  // Show Pin Authentication
+  if (pinAuth && !bioAuthenticated)
     return <CheckPin finishProcess={() => dispatch(setBioAuthStatus(true))} />
 
   return (

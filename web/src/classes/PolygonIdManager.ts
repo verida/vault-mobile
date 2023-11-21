@@ -189,7 +189,7 @@ export class PolygonIDManager {
         callbackResponse: response?.data,
         authResponse: result.authResponse,
       };
-    } catch (error: unknown) {
+    } catch (error) {
       logger.warn("Error calling authorization request callback");
       // Rethrow the error so the UI actually shows something went wrong
       throw error;

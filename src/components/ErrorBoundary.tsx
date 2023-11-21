@@ -1,5 +1,5 @@
-import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts'
+import { Logger } from 'features/telemetry'
 import React, { FC, ReactNode } from 'react'
 import {
   ErrorBoundary as ReactErrorBoundary,
@@ -12,6 +12,8 @@ import Button from './Button'
 import { Caption } from './Typography/Caption'
 import { Label } from './Typography/Label'
 
+const logger = new Logger('Components/ErrorBoundary')
+
 export interface ErrorBoundaryProps extends ErrorBoundaryPropsWithFallback {
   children?: ReactNode
 }
@@ -20,7 +22,11 @@ export const genericErrorHandler = (
   error: Error,
   info: { componentStack: string }
 ) => {
-  Sentry.captureException({ ...error, componentStack: info.componentStack })
+  logger.error(error, {
+    extra: {
+      componentStack: info.componentStack,
+    },
+  })
 }
 
 export const GenericErrorFallback: FC<FallbackProps> = ({

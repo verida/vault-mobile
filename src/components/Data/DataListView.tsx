@@ -6,7 +6,7 @@ import Folder from 'api/VaultCommon/managers/data/folder'
 
 import { DataGridList } from './DataGridList'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Components/Data/DataListView')
 
 export type DataListViewProps = {
   folder: Folder
@@ -33,7 +33,7 @@ export const DataListView: React.FunctionComponent<DataListViewProps> = (
         )
 
         setItems(fetchedItems)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error(`Failed to load the records of a Data folder`, {
             cause: error,

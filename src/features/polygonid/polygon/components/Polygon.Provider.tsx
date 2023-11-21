@@ -133,7 +133,7 @@ export const PolygonProvider = ({
         throw new Error(
           `Encountered malformed message from Polygon ID web app: "${maybeResult}"`
         )
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error(
             'Failed to handle received message from the Polygon ID web app',
@@ -197,7 +197,7 @@ export const PolygonProvider = ({
 
         try {
           return ref.current?.injectJavaScript(injectedJavaScript)
-        } catch (error: unknown) {
+        } catch (error) {
           logger.error(
             new Error('Error while injecting JavaScript in WebView', {
               cause: error,

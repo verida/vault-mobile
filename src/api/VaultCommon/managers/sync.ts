@@ -1,8 +1,12 @@
+import { Logger } from 'features/telemetry'
+
 import {
   InboxDatabaseSyncRequest,
   InboxDatastoreSyncRequest,
 } from '../interfaces/inbox/Inbox'
 import VaultCommon from '../vault'
+
+const logger = new Logger('VaultSyncManager')
 
 /**
  * Manage login requests and responses
@@ -176,22 +180,15 @@ export class SyncManager {
     }
   }
 
-  onError(err: unknown) {
-    // eslint-disable-next-line no-console
-    console.log('sync error')
-    // eslint-disable-next-line no-console
-    console.log(err)
+  onError(error: unknown) {
+    logger.error(new Error('Sync error', { cause: error }))
   }
 
-  onDenied(err: unknown) {
-    // eslint-disable-next-line no-console
-    console.log('sync denied')
-    // eslint-disable-next-line no-console
-    console.log(err)
+  onDenied(error: unknown) {
+    logger.error(new Error('Sync denied', { cause: error }))
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   onComplete(info: unknown) {
-    //console.log("sync complete", info)
+    logger.debug('sync complete', { info })
   }
 }

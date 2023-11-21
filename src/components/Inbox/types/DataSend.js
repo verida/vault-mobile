@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { isEmpty } from 'lodash'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
@@ -7,6 +7,8 @@ import AccountManager from 'api/AccountManager'
 import ErrorModal from 'components/ErrorModal/ErrorModal'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
+
+const logger = new Logger('Components/Inbox/types/DataSend')
 
 function buildErrorMessage(errors) {
   const message = {
@@ -30,7 +32,7 @@ function buildErrorMessage(errors) {
 
     return message
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
     return message
   }
 }
@@ -54,9 +56,9 @@ export default ({ item, inboxItem, type, navigation }) => {
       } else {
         navigation.goBack()
       }
-    } catch (e) {
-      setErrorMessage(e)
-      Sentry.captureException(e)
+    } catch (error) {
+      setErrorMessage(error)
+      logger.error(error)
       setCurrentAction(null)
     }
   }

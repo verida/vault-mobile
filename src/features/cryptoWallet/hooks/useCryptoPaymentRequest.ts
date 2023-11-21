@@ -94,7 +94,7 @@ export function useCryptoPaymentRequest(request: CryptoWalletRequest<'pay'>) {
     }
     try {
       dispatch(getTransactionParams(transactionData))
-    } catch (error: unknown) {
+    } catch (error) {
       logger.error(
         new Error('Failed to get transaction params', {
           cause: error,

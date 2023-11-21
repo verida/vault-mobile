@@ -1,14 +1,16 @@
 import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
 import { CompositeNavigationProp } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { useCallback } from 'react'
 import parse from 'url-parse'
 
-import { DashboardTabParams, MainStackParams } from 'navigation/types'
+import { MainStackParams, TabsScreenParams } from 'navigation/types'
+
+const logger = new Logger('DeepLinks')
 
 type NavProp = CompositeNavigationProp<
-  BottomTabNavigationProp<DashboardTabParams, keyof DashboardTabParams>,
+  BottomTabNavigationProp<TabsScreenParams, keyof TabsScreenParams>,
   NativeStackNavigationProp<MainStackParams, keyof MainStackParams>
 >
 
@@ -36,7 +38,7 @@ export function useDeeplink(navigation: NavProp) {
         }
         navigation.navigate(screenName, query as never)
       } catch (error) {
-        Sentry.captureException(error)
+        logger.error(error)
       }
     },
     [navigation]

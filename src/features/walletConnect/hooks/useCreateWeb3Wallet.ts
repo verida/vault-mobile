@@ -2,10 +2,9 @@ import { AuthClientTypes } from '@walletconnect/auth-client'
 import { Core } from '@walletconnect/core'
 import { IWeb3Wallet, Web3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
+import { config } from 'config'
 import { veridaWalletMetadata } from 'features/walletConnect'
 import * as React from 'react'
-
-import Config from '../../../config'
 
 // TODO: This should be IStateful.
 type State = Readonly<
@@ -51,8 +50,8 @@ export function useCreateWeb3Wallet({
         setState(loadingState)
 
         const core = new Core({
-          projectId: Config.WALLETCONNECT_PROJECT_ID,
-          relayUrl: Config.WALLETCONNECT_RELAY_URL,
+          projectId: config.WALLETCONNECT_PROJECT_ID,
+          relayUrl: config.WALLETCONNECT_RELAY_URL,
         })
 
         const web3wallet = await Web3Wallet.init({

@@ -1,4 +1,3 @@
-import * as Sentry from '@sentry/react-native'
 import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
@@ -9,6 +8,7 @@ import {
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
 } from 'features/cryptoWallet'
+import { Logger } from 'features/telemetry'
 import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
@@ -34,6 +34,8 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { WALLETCONNECT_LABEL } from '../constants'
 import { useWalletConnectProposalRequiredCaipChainIds } from '../hooks'
 import { createWalletConnectSessionApprovalConfiguration } from '../utils'
+
+const logger = new Logger('WalletConnect')
 
 const maybeThrowMissingDependenciesError = (
   proposal: Web3WalletTypes.EventArguments['session_proposal'],
@@ -72,10 +74,8 @@ export const WalletConnectModalConnectDapp = React.memo(
           id: proposal.id,
           reason: getSdkError('USER_REJECTED_METHODS'),
         })
-      } catch (e) {
-        // eslint-disable-next-line no-console
-        __DEV__ && console.error(e)
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       } finally {
         setLoading(false)
         InteractionManager.runAfterInteractions(dismissModal)
@@ -127,14 +127,14 @@ export const WalletConnectModalConnectDapp = React.memo(
         )
 
         setActiveSessions(await web3wallet.getActiveSessions())
-      } catch (e) {
+      } catch (error) {
         Alert.alert(
           'Error',
-          `Unable to connect${e instanceof Error ? `: ${e.message}` : '.'}`
+          `Unable to connect${
+            error instanceof Error ? `: ${error.message}` : '.'
+          }`
         )
-        // eslint-disable-next-line no-console
-        __DEV__ && console.error(e)
-        Sentry.captureException(e)
+        logger.error(error)
       } finally {
         setLoading(false)
 

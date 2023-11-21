@@ -8,7 +8,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { TabsScreenProps } from 'navigation/types'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Pages/Data/DataTabScreen')
 
 export type DataTabScreenParams = undefined
 
@@ -41,7 +41,7 @@ export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
           })
 
         setItems(_items)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error(`Failed to load the Data folders`, {
             cause: error,

@@ -22,15 +22,6 @@ export function initSentry() {
     // Session Replay
     // replaysSessionSampleRate: config.sentry.replaysSessionSampleRate,
     // replaysOnErrorSampleRate: config.sentry.replaysOnErrorSampleRate,
-    beforeSend: (event, hint) => {
-      if (config.dev.devMode) {
-        // TODO: To remove once all `Sentry.captureException` are replaced by `logger.error`.
-        // Until then error handled by `logger.error` will logged twice in the console
-        // eslint-disable-next-line no-console
-        console.error(hint.originalException)
-      }
-      return event
-    },
     ignoreErrors: [
       // TODO: Add errors to ignore in Sentry
     ],

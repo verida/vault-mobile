@@ -1,10 +1,10 @@
-import * as Sentry from '@sentry/react-native'
 import { ChainId } from 'caip'
 import {
   getMaybeChainMetadataByCaipChainId,
   getMaybeChainMetadatas,
   useChainMetadatas,
 } from 'features/caip'
+import { Logger } from 'features/telemetry'
 import { useModal } from 'hooks'
 import * as React from 'react'
 import { ActivityIndicator, Alert, StyleSheet, Text, View } from 'react-native'
@@ -27,6 +27,8 @@ import {
 } from '../hooks'
 import { WalletConnectSessionInfoCard } from './WalletConnect.Session.InfoCard'
 import { WalletConnectTransactionRequestModalRow } from './WalletConnect.Transaction.Request.Modal.Row'
+
+const logger = new Logger('WalletConnect')
 
 export const WalletConnectTransactionRequestModal = React.memo(
   function WalletConnectTransactionRequestModal({
@@ -55,12 +57,12 @@ export const WalletConnectTransactionRequestModal = React.memo(
         await shouldApprove(web3wallet, request)
 
         dismissModal()
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         Alert.alert(
           'Error',
           `Unable to process request${
-            e instanceof Error ? `: ${e.message}` : '.'
+            error instanceof Error ? `: ${error.message}` : '.'
           }`
         )
       } finally {
@@ -80,8 +82,8 @@ export const WalletConnectTransactionRequestModal = React.memo(
           'User rejected the request',
           false
         )
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         Alert.alert('Error', 'Unable to reject request.')
       } finally {
         setLoading(false)

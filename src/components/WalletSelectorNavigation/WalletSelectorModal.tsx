@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import CONFIG from 'config'
+import { config } from 'config'
 import {
   getSelectedWalletId,
   getWalletList,
@@ -53,7 +53,7 @@ const WalletSelectorModal = ({
 
   const handleWalletSelection = (item: BlockchainWalletWithAccounts) => {
     onSetSelectedWallet(item._id)
-    SecureStore.setItemAsync(CONFIG.SELECTED_WALLET_STORAGE_KEY, item._id)
+    SecureStore.setItemAsync(config.SELECTED_WALLET_STORAGE_KEY, item._id)
     onCloseModal()
   }
 

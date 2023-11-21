@@ -1,6 +1,6 @@
-import * as Sentry from '@sentry/react-native'
 import EncryptionUtils from '@verida/encryption-utils'
 import didJWT from 'did-jwt'
+import { Logger } from 'features/telemetry'
 import { useWalletConnectContext } from 'features/walletConnect'
 import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
@@ -25,6 +25,8 @@ import {
   WARNING_COLOR,
 } from '../../constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
+
+const logger = new Logger('Pages/Login/LoginRequest')
 
 global.EncryptionUtils = EncryptionUtils
 
@@ -104,8 +106,8 @@ export default (props) => {
                 walletConnect: parsed.walletConnect,
               })
               setStatus('loaded')
-            } catch (e) {
-              Sentry.captureException(e)
+            } catch (error) {
+              logger.error(error)
             }
             break
 
@@ -176,7 +178,7 @@ export default (props) => {
       }
       props.navigation.navigate('Home')
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
       setStatus('loaded')
     }
   }
@@ -254,7 +256,7 @@ export default (props) => {
 
       await saveLoginRequest(true, deviceId)
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
       setStatus('loaded')
     }
   }

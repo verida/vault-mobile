@@ -43,7 +43,7 @@ export function useFileServer({ dir, port }: FileServerProps) {
         setIsReady(false)
         server.stop()
         logger.info('Web app server stopped')
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error('Error while stopping the server', { cause: error })
         )
