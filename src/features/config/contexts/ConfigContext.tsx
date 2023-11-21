@@ -84,103 +84,100 @@ export const ConfigProvider: React.FC = ({ children }) => {
 
     remoteConfig()
       .setDefaults(DEFAULT_REMOTE_CONFIG)
-      .then(() => remoteConfig()?.fetchAndActivate())
-      .then(Boolean)
-      .then(async (fetchedRemotely) => {
-        if (fetchedRemotely) {
-          // Handle maintenance mode
-          try {
-            const maintenanceModeData = JSON.parse(
-              remoteConfig().getValue('maintenance_mode').asString()
-            )
-            // TODO: Validate the data with zod
-            setMaintenanceMode(maintenanceModeData)
-          } catch (error) {
-            logger.error(
-              new Error('Failed to load maintenance mode', {
-                cause: error,
-              })
-            )
-          }
+      .then(() => remoteConfig().fetchAndActivate())
+      .then(async () => {
+        // Handle maintenance mode
+        try {
+          const maintenanceModeData = JSON.parse(
+            remoteConfig().getValue('maintenance_mode').asString()
+          )
+          // TODO: Validate the data with zod
+          setMaintenanceMode(maintenanceModeData)
+        } catch (error) {
+          logger.error(
+            new Error('Failed to load maintenance mode', {
+              cause: error,
+            })
+          )
+        }
 
-          // Handle forced app upgrade
-          try {
-            const forcedUpgradeInfo = JSON.parse(
-              remoteConfig().getValue('forced_upgrade').asString()
-            )
-            // TODO: Validate the data with zod
-            setForcedUpgrade(forcedUpgradeInfo)
-          } catch (error) {
-            logger.error(
-              new Error('Failed to load forced upgrade info', {
-                cause: error,
-              })
-            )
-          }
+        // Handle forced app upgrade
+        try {
+          const forcedUpgradeInfo = JSON.parse(
+            remoteConfig().getValue('forced_upgrade').asString()
+          )
+          // TODO: Validate the data with zod
+          setForcedUpgrade(forcedUpgradeInfo)
+        } catch (error) {
+          logger.error(
+            new Error('Failed to load forced upgrade info', {
+              cause: error,
+            })
+          )
+        }
 
-          // Handle forced create new account
-          try {
-            const forcedCreateAccountInfo = JSON.parse(
-              remoteConfig().getValue('forced_create_new_account').asString()
-            )
-            // TODO: Validate the data with zod
-            setForcedCreateAccount(forcedCreateAccountInfo)
-          } catch (error) {
-            logger.error(
-              new Error('Failed to load forced create account info', {
-                cause: error,
-              })
-            )
-          }
+        // Handle forced create new account
+        try {
+          const forcedCreateAccountInfo = JSON.parse(
+            remoteConfig().getValue('forced_create_new_account').asString()
+          )
+          // TODO: Validate the data with zod
+          setForcedCreateAccount(forcedCreateAccountInfo)
+        } catch (error) {
+          logger.error(
+            new Error('Failed to load forced create account info', {
+              cause: error,
+            })
+          )
+        }
 
-          // Handle remote config
-          try {
-            const remoteAppConfig = JSON.parse(
+        // Handle remote config
+        try {
+          const remoteAppConfig = JSON.parse(
+            remoteConfig().getValue('wallet_app_config').asString()
+          )
+          // TODO: Validate the config with zod, have to think about if before or after merging or both.
+
+          // Save a copy of remote config for updating the app on initialization
+          if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
+            SecureStore.setItemAsync(
+              APP_REMOTE_CONFIG_STORAGE_KEY,
               remoteConfig().getValue('wallet_app_config').asString()
             )
-            // TODO: Validate the config with zod, have to think about if before or after merging or both.
-
-            // Save a copy of remote config for updating the app on initialization
-            if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
-              SecureStore.setItemAsync(
-                APP_REMOTE_CONFIG_STORAGE_KEY,
-                remoteConfig().getValue('wallet_app_config').asString()
-              )
-            }
-
-            // Update app config for the active environment in case having config change
-            if (
-              !isEqual(
-                remoteAppConfig?.[veridaEnvironment],
-                savedRemoteConfig?.[veridaEnvironment]
-              )
-            ) {
-              // Handle runtime app config updated, need to reload the app
-              const appNeedsReload = mergeWithRemoteConfig(
-                remoteAppConfig[veridaEnvironment]
-              )
-              if (appNeedsReload) {
-                Alert.alert(
-                  'Application Configuration Updated',
-                  'Application configurations have been updated, the app needs to be restarted.',
-                  [
-                    {
-                      text: 'OK',
-                      onPress: () => {
-                        RNRestart.restart()
-                      },
-                    },
-                  ]
-                )
-              }
-            }
-          } catch (error) {
-            logger.error(
-              new Error('Failed to update from remote config', {
-                cause: error,
-              })
-            )
           }
+
+          // Update app config for the active environment in case having config change
+          if (
+            !isEqual(
+              remoteAppConfig?.[veridaEnvironment],
+              savedRemoteConfig?.[veridaEnvironment]
+            )
+          ) {
+            // Handle runtime app config updated, need to reload the app
+            const appNeedsReload = mergeWithRemoteConfig(
+              remoteAppConfig[veridaEnvironment]
+            )
+            if (appNeedsReload) {
+              Alert.alert(
+                'Application Configuration Updated',
+                'Application configurations have been updated, the app needs to be restarted.',
+                [
+                  {
+                    text: 'OK',
+                    onPress: () => {
+                      RNRestart.restart()
+                    },
+                  },
+                ]
+              )
+            }
+          }
+        } catch (error) {
+          logger.error(
+            new Error('Failed to update from remote config', {
+              cause: error,
+            })
+          )
         }
       })
       .catch((error) => {
