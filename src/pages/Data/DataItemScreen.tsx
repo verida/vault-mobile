@@ -11,7 +11,7 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Pages/Data/DataItemScreen')
 
 export interface DataItemScreenParams {
   // TODO: Type the data item
@@ -47,7 +47,7 @@ export const DataItemScreen: React.FunctionComponent<DataItemScreenProps> = (
             )
           : await folder.getDetail(item)
         setData(_data)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error('Failed to load the Data item', { cause: error })
         )

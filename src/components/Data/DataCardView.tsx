@@ -8,7 +8,7 @@ import Folder from 'api/VaultCommon/managers/data/folder'
 
 import { DataCardList } from './DataCardList'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Components/Data/DataCardView')
 
 export type DataCardViewProps = {
   folder: Folder
@@ -47,7 +47,7 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
             }) ?? []
 
         setItems(_items)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
           new Error(
             'Failed getting the nested folders of the selected folder',

@@ -6,8 +6,9 @@ import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { ConfigProvider } from 'features/config'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
-import { Sentry } from 'features/telemetry'
+import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
@@ -26,13 +27,11 @@ import { PersistGate } from 'redux-persist/es/integration/react'
 import { persistor, store } from 'reduxStore'
 import { initApplication } from 'utils'
 
-import MetaServerChecks from 'components/MetaServerChecks/MetaServerChecks'
+import { MetaServerChecks } from 'components/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
-import { SHUTDOWN_APP } from 'constants/config'
 import { AuthProvider } from 'hooks/useAuth'
 import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
-import OutOfService from 'pages/Account/OutOfService'
-import Authenticate from 'pages/Authentication/Authenticate'
+import { Authenticate } from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
 import { ModalProvider } from './contexts/ModalContext'
@@ -54,6 +53,8 @@ messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
   })
 })
 
+const logger = new Logger('App')
+
 function App() {
   const [loading, setLoading] = useState(true)
 
@@ -70,7 +71,7 @@ function App() {
           Font.loadAsync({ NunitoSansBold }),
         ])
       } catch (error) {
-        Sentry.captureException(error)
+        logger.error(error)
         Alert.alert('Error', 'Failed to initialize')
       } finally {
         setLoading(false)
@@ -82,8 +83,8 @@ function App() {
       try {
         // Prevent native splash screen from autohiding
         await SplashScreen.preventAutoHideAsync()
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
       loadFonts()
     }
@@ -91,38 +92,38 @@ function App() {
     init()
   }, [])
 
-  if (SHUTDOWN_APP) return <OutOfService />
-
   const AppContent = (
-    <Provider store={store}>
-      <PersistGate persistor={persistor}>
-        <SafeAreaProvider initialMetrics={initialWindowMetrics}>
-          <ThemeProvider initial={defaultTheme}>
-            <AuthProvider>
-              <NavigationContainer
-                linking={navigationLinkingConfiguration}
-                ref={navigationRef}>
-                <ModalProvider>
-                  <Authenticate>
-                    <RootSiblingParent>
-                      <ActionSheetProvider>
-                        <WalletConnectProvider>
-                          <GestureHandlerRootView style={styles.flex}>
-                            <RootNavigator />
-                          </GestureHandlerRootView>
-                          <MetaServerChecks />
-                        </WalletConnectProvider>
-                      </ActionSheetProvider>
-                    </RootSiblingParent>
-                  </Authenticate>
-                  <SwitchAccountToast />
-                </ModalProvider>
-              </NavigationContainer>
-            </AuthProvider>
-          </ThemeProvider>
-        </SafeAreaProvider>
-      </PersistGate>
-    </Provider>
+    <ConfigProvider>
+      <Provider store={store}>
+        <PersistGate persistor={persistor}>
+          <SafeAreaProvider initialMetrics={initialWindowMetrics}>
+            <ThemeProvider initial={defaultTheme}>
+              <AuthProvider>
+                <NavigationContainer
+                  linking={navigationLinkingConfiguration}
+                  ref={navigationRef}>
+                  <ModalProvider>
+                    <Authenticate>
+                      <RootSiblingParent>
+                        <ActionSheetProvider>
+                          <WalletConnectProvider>
+                            <GestureHandlerRootView style={styles.flex}>
+                              <RootNavigator />
+                            </GestureHandlerRootView>
+                            <MetaServerChecks />
+                          </WalletConnectProvider>
+                        </ActionSheetProvider>
+                      </RootSiblingParent>
+                    </Authenticate>
+                    <SwitchAccountToast />
+                  </ModalProvider>
+                </NavigationContainer>
+              </AuthProvider>
+            </ThemeProvider>
+          </SafeAreaProvider>
+        </PersistGate>
+      </Provider>
+    </ConfigProvider>
   )
 
   return loading ? null : (

@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { Container } from 'native-base'
 import React, { useCallback, useEffect, useRef } from 'react'
 import { StyleSheet } from 'react-native'
@@ -10,6 +10,8 @@ import CustomFlatList, { ITEM_PER_PAGE } from 'components/CustomFlatList'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 
 import { buildItem } from '../helpers/inbox'
+
+const logger = new Logger('Pages/Inbox')
 
 const Inbox = () => {
   const listRef = useRef(null)
@@ -31,7 +33,7 @@ const Inbox = () => {
 
       return results
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }, [])
 

@@ -1,5 +1,5 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { get, isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
@@ -14,6 +14,8 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 
 import Text from '../../Text'
+
+const logger = new Logger('Component/GenericMessage')
 
 type GenericMessageProps = {
   inboxItem: any
@@ -50,7 +52,7 @@ function GenericMessage(props: GenericMessageProps) {
           avatar,
         })
       } catch (error) {
-        Sentry.captureException(error)
+        logger.error(error)
       }
     }
 
@@ -83,10 +85,10 @@ function GenericMessage(props: GenericMessageProps) {
         navigation.goBack()
       }
       setSubmitting(false)
-    } catch (e) {
+    } catch (error) {
       setSubmitting(false)
       Alert.alert('Error', 'Can not set message as read')
-      Sentry.captureException(e)
+      logger.error(error)
     }
   }
 

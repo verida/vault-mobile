@@ -1,6 +1,6 @@
-import * as Sentry from '@sentry/react-native'
 import { DIDClient } from '@verida/did-client'
-import CONFIG from 'config'
+import { config } from 'config'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
@@ -15,6 +15,8 @@ import React, {
 import AccountManager from 'api/AccountManager'
 
 import { useEmitter } from './useEmitter'
+
+const logger = new Logger('Auth')
 
 type AuthContextState = {
   refresh: () => Promise<boolean>
@@ -56,16 +58,19 @@ export const AuthProvider: FC = ({ children }) => {
     // try to fetch the DID
     const did = selectedAccount!.did
     const didClient = new DIDClient({
-      network: CONFIG.VERIDA_ENVIRONMENT,
+      network: config.VERIDA_ENVIRONMENT,
     })
 
     try {
       await didClient.get(did)
-    } catch (error: any) {
-      if (error.message.match(/DID resolution error \(notFound\)/gi)) {
+    } catch (error) {
+      logger.error(error)
+      if (
+        error instanceof Error &&
+        error.message.match(/DID resolution error \(notFound\)/gi)
+      ) {
         emitter.emit('IDENTITY_NOT_EXIST', {})
       }
-      Sentry.captureException(error)
     }
   }, [])
 
@@ -79,7 +84,7 @@ export const AuthProvider: FC = ({ children }) => {
       setAuthenticated(!!selectedAccount)
       return !!selectedAccount
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
       // Could not connect to the identity, check if it exists
       findDID()
       return false

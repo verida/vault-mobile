@@ -25,13 +25,13 @@ export async function nearDoesAccountExist({
     })
 
     return true
-  } catch (e) {
-    if (!(e instanceof Error)) throw e
+  } catch (error) {
+    if (!(error instanceof Error)) throw error
 
-    const { message } = e
+    const { message } = error
 
     if (message.includes('does not exist while viewing')) return false
 
-    throw e
+    throw error
   }
 }

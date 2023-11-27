@@ -1,4 +1,4 @@
-import CONFIG from 'config'
+import { config } from 'config'
 import {
   getAllWallets,
   getSelectedWalletId,
@@ -32,8 +32,12 @@ export const getTransactionParams = createAppAsyncThunk(
         }
         return params
       }
-    } catch (error: any) {
-      return rejectWithValue("Couldn't load params:" + error.message)
+    } catch (error) {
+      return rejectWithValue(
+        `Couldn't load params${
+          error instanceof Error ? `: ${error.message}` : ''
+        }`
+      )
     }
   }
 )
@@ -62,8 +66,12 @@ export const sendTransaction = createAppAsyncThunk(
         ...txData,
         amount: txData?.amount.toHexString(),
       }
-    } catch (error: any) {
-      return rejectWithValue('Could not send token: ' + error.message)
+    } catch (error) {
+      return rejectWithValue(
+        `Could not send token${
+          error instanceof Error ? `:${error.message}` : ''
+        }`
+      )
     }
   }
 )
@@ -87,16 +95,16 @@ export const createNewWallet = createAppAsyncThunk(
         // save to the secure storage..
         await Promise.all([
           SecureStore.setItemAsync(
-            CONFIG.WALLETS_STORAGE_KEY,
+            config.WALLETS_STORAGE_KEY,
             JSON.stringify(wallets)
           ),
           SecureStore.setItemAsync(
-            CONFIG.SELECTED_WALLET_STORAGE_KEY,
+            config.SELECTED_WALLET_STORAGE_KEY,
             selectedWallet._id
           ),
         ])
       }
-    } catch (error: any) {
+    } catch (error) {
       return rejectWithValue('Could not create wallet')
     }
   }

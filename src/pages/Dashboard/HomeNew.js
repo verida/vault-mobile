@@ -1,6 +1,5 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
 import { logout as logoutAction } from 'features/auth'
 import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
@@ -13,6 +12,7 @@ import {
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
 import { selectSelectedPublicProfile } from 'features/profiles'
+import { Logger } from 'features/telemetry'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -47,6 +47,8 @@ import DidView from './DidView'
 import GettingStarted from './GettingStarted/GettingStartedSection'
 import HomeNavigationHeader from './HomeNavigationHeader'
 import { QRCodeScannerButton } from './QrCodeScannerButton'
+
+const logger = new Logger('Pages/Dashboard/HomeNew')
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -95,8 +97,8 @@ const Home = (props) => {
       try {
         const initialUrl = await Linking.getInitialURL()
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
@@ -112,8 +114,8 @@ const Home = (props) => {
       try {
         const initialUrl = event.url
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
@@ -136,7 +138,7 @@ const Home = (props) => {
               'https://www.google.com/search?q=' + query.keyword
             )
           } catch (error) {
-            Sentry.captureException(error)
+            logger.error(error)
           }
         }
       })
@@ -174,8 +176,8 @@ const Home = (props) => {
         //   await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
         // }
         setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         Alert.alert('Error', 'Cannot get account information')
         setLoading(false)
       }
@@ -226,7 +228,7 @@ const Home = (props) => {
     toggleAddAccountsModal()
     try {
       await switchToAccount(did)
-    } catch (e) {
+    } catch (error) {
       Alert.alert(
         'Error',
         `Unable to switch to that account, please try again later.`

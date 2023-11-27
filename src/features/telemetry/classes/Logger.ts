@@ -35,10 +35,15 @@ export class Logger {
     this.category = category
   }
 
+  private formatMessage(message: string) {
+    return `${new Date().toISOString()} - [${this.category}] ${message}`
+  }
+
   private log(
     level: LogLevel,
     message: string,
-    data?: Record<string, unknown>
+    data?: Record<string, unknown>,
+    error?: Error | unknown
   ) {
     if (levelOrder.indexOf(level) > currentLogLevelIndex) {
       return
@@ -54,42 +59,40 @@ export class Logger {
     }
 
     if (!config.dev.devMode) {
-      // Simply skip `console` if not in dev mode
+      // Skip `console` if not in dev mode
       return
     }
 
-    const formattedMessage = `${new Date().toISOString()} - [${
-      this.category
-    }] ${message}`
+    const formattedMessage = this.formatMessage(message)
 
-    // To avoid the 'undefined' being displayed in the console
-    if (data) {
-      // eslint-disable-next-line no-console
-      console[level](formattedMessage, data)
-    } else {
-      // eslint-disable-next-line no-console
-      console[level](formattedMessage)
-    }
+    const extra = []
+    if (data) extra.push(data)
+    if (error) extra.push(error)
+
+    // eslint-disable-next-line no-console
+    console[level](formattedMessage, ...extra)
   }
 
-  public error(error: Error | unknown, captureContext?: CaptureContext) {
+  public error(error: Error | unknown, sentryCaptureContext?: CaptureContext) {
     if (config.sentry.enabled) {
       Sentry.captureException(error, {
-        ...captureContext,
+        ...sentryCaptureContext,
         tags: {
           // For some reason the `tags` property is not recognise while clearly defined. Not a big deal to ignore the warning given how we use this property here
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
-          ...captureContext?.tags,
+          ...sentryCaptureContext?.tags,
           feature: this.category,
         },
       })
     }
 
-    if (config.dev.devMode) {
-      // eslint-disable-next-line no-console
-      console.error(error)
-    }
+    this.log(
+      'error',
+      error instanceof Error ? error.message : '',
+      undefined,
+      error
+    )
   }
 
   public warn(message: string, data?: Record<string, unknown>) {

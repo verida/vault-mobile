@@ -1,11 +1,10 @@
 //import * as Sentry from '@sentry/react-native'
 import { create } from 'apisauce'
-
-import CONFIG from '../../config'
+import { config } from 'config'
 //import { BlockchainNetwork } from '../types'
 
 export const walletProviderApi = create({
-  baseURL: CONFIG.WALLET_PROVIDER_URL,
+  baseURL: config.WALLET_PROVIDER_URL,
 })
 
 //export class WalletProvider {
@@ -25,7 +24,7 @@ export const walletProviderApi = create({
 //      }
 //      return allNetworks
 //    } catch (error) {
-//      Sentry.captureException(error)
+//      logger.error(error)
 //    }
 //
 //    return {}

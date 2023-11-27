@@ -1,9 +1,11 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { providers, transactions, utils } from 'near-api-js/lib'
 
 import { NearAccount, NearAccountPointer, NearTransaction } from '../@types'
 import { nearCreateTransactions } from './nearCreateTransactions'
 import { nearSignAndSendTransactions } from './nearSignAndSendTransactions'
+
+const logger = new Logger('Blockchains')
 
 export const nearSignIn = async ({
   nearAccount,
@@ -51,10 +53,8 @@ export const nearSignIn = async ({
 
             // HACK: Upon success, return the account that was created.
             return nearAccountPointer
-          } catch (e) {
-            // eslint-disable-next-line no-console
-            __DEV__ && console.error(e)
-            Sentry.captureException(e)
+          } catch (error) {
+            logger.error(error)
             return null
           }
         }

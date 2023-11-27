@@ -1,5 +1,6 @@
 import { Context } from '@verida/client-rn'
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
+import { Logger } from 'features/telemetry'
 
 import AccountManager from './AccountManager'
 import {
@@ -9,6 +10,8 @@ import {
   VeridaOneProfile,
   VeridaOneWalletAddress,
 } from './types'
+
+const logger = new Logger('VeridaOneManager')
 
 const VERIDA_ONE_CONTEXT = 'Verida: One'
 const PROFILE_SCHEMA_URL =
@@ -49,8 +52,7 @@ export default class VeridaOneManager {
     try {
       profile = await datastore.get('public', undefined)
     } catch (err: any) {
-      // eslint-disable-next-line no-console
-      console.log(err)
+      logger.error(err)
 
       // @todo: test this
       if (err.error === 'not_found') {
@@ -71,8 +73,7 @@ export default class VeridaOneManager {
     const datastore = await VeridaOneManager.getDatastore()
     const result = await datastore.save(profile, {})
     if (!result) {
-      // eslint-disable-next-line no-console
-      console.log(datastore.errors)
+      logger.warn(datastore.errors) // TODO: datastore.errors is really not convenient to use. Not sure the errors comes from the method we just called
     }
     const db = await datastore.getDb()
     await db.info()

@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
 import React, { useState } from 'react'
 import { Alert } from 'react-native'
@@ -6,6 +6,8 @@ import { Alert } from 'react-native'
 import AccountManager from 'api/AccountManager'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
+
+const logger = new Logger('Components/Inbox/types/DatabaseSync')
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)
@@ -21,9 +23,9 @@ export default ({ item, inboxItem, type, navigation }) => {
       await vault.inbox.handleAction(inboxItem, result, {})
       setCurrentAction(null)
       navigation.goBack()
-    } catch (e) {
+    } catch (error) {
       Alert.alert('Error', 'Cannot accept data now')
-      Sentry.captureException(e)
+      logger.error(error)
       setCurrentAction(null)
     }
   }

@@ -1,4 +1,4 @@
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, { useRef } from 'react'
 import { Alert, Keyboard, StyleSheet, View } from 'react-native'
@@ -21,6 +21,8 @@ import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 import { PublicProfileEditMode } from './PublicProfile'
+
+const logger = new Logger('Pages/Profiles/EditPlatformLink')
 
 export interface EditPlatformLinkScreenParams {
   screenName: string
@@ -68,7 +70,7 @@ const EditPlatformLink: React.FunctionComponent<EditPlatformLinkScreenProps> = (
 
       navigation.goBack()
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 

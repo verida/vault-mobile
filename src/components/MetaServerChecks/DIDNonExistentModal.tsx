@@ -1,9 +1,9 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import * as Sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { logout as logoutAction } from 'features/auth'
 import { selectSelectedAccount } from 'features/identities'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, { useEffect, useState } from 'react'
 import {
@@ -37,11 +37,13 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
+const logger = new Logger('Component/DIDNonExistentModal')
+
 type Props = {
   dismissModal: () => void
 }
 
-const DIDNonExistentModal = ({ dismissModal }: Props) => {
+export const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [loading, setLoading] = useState(true)
   const dispatch = useDispatch()
   const styles = useThemeAwareStyle(createStyles)
@@ -63,7 +65,7 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
       }
       await AccountManager.getInstance().logout(dids)
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     } finally {
       emitter.emit('APP_RECOVER_FROM_ERROR', undefined)
     }
@@ -205,8 +207,6 @@ const DIDNonExistentModal = ({ dismissModal }: Props) => {
     </Modal>
   )
 }
-
-export default DIDNonExistentModal
 
 const createStyles = (theme: Theme) => {
   return StyleSheet.create({

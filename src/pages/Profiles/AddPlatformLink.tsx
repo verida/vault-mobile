@@ -1,7 +1,7 @@
 import { StackActions } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
 import Color from 'color'
 import { useTheme } from 'contexts'
+import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, { useRef, useState } from 'react'
 import {
@@ -29,6 +29,8 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('Pages/Profiles/AddPlatformLink')
 
 enum PageType {
   ListSocialNetworks,
@@ -119,7 +121,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
 
       navigation.goBack()
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 

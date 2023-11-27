@@ -18,7 +18,7 @@ import Folder from 'api/VaultCommon/managers/data/folder'
 // TODO: Factorise this (or part of it) as it's also used in CredentialDataItem
 import VeridaSvg from 'assets/icons/verida.svg'
 
-const logger = new Logger('Data Screen')
+const logger = new Logger('Components/Data/DataGridListItem')
 
 export type DataGridListItemProps = {
   // TODO: Add stronger typing
@@ -96,7 +96,7 @@ export const DataGridListItem: React.FunctionComponent<DataGridListItemProps> =
                 : issuerProfile.avatar
               : DefaultAvatar,
           }))
-        } catch (error: unknown) {
+        } catch (error) {
           logger.error(
             new Error('Failed to get the issuer profile', { cause: error })
           )

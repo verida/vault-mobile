@@ -1,7 +1,10 @@
 import { Buffer } from '@craftzdog/react-native-buffer'
 import AsyncStorage from '@react-native-async-storage/async-storage'
 import * as SystemSecureStore from 'expo-secure-store'
+import { Logger } from 'features/telemetry'
 import Crypto from 'react-native-quick-crypto'
+
+const logger = new Logger('VeridaSecureStore')
 
 const SYSTEM_SECURE_STORAGE_NEEDS_MIGRATE = true
 const SYSTEM_SECURE_STORAGE_KEY = 'verida-main-key'
@@ -78,8 +81,7 @@ export async function getItemAsync(key: string): Promise<string | null> {
       // delete the value from old store
       await SystemSecureStore.deleteItemAsync(key)
 
-      // eslint-disable-next-line no-console
-      console.info('Migrated value for key', key)
+      logger.info('Migrated value for key', { key })
       return oldPlainValue
     }
   }
