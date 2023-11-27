@@ -1,21 +1,25 @@
+import {
+  addWord,
+  removeWord,
+  selectSeedPhraseTemplate,
+} from 'features/seedphrases'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 
 import { BLACK_COLOR_OPACITY, LIGHTGREY_COLOR } from '../../constants/color'
 import { NUNITO_SANS_SEMIBOLD } from '../../constants/text'
-import { addWord, removeWord } from '../../reduxStore/words/actions'
 import Text from '../Text'
 import Words from './Words'
 
 const WordLayout = ({ words, template, ...props }) => (
   <View style={style.layout}>
     <View style={style.container}>
-      {!template.length && <Text>None words in the order</Text>}
+      {!template.length && <Text>No words in the correct order</Text>}
       <Words
         id='selected'
-        words={template}
-        template={[]}
+        words={words}
+        template={template}
         onSelect={props.removeWord}
       />
     </View>
@@ -32,15 +36,14 @@ const WordLayout = ({ words, template, ...props }) => (
   </View>
 )
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { template: state.template }
+const mapStateToProps = (state) => {
+  return { template: selectSeedPhraseTemplate(state) }
 }
 
 const mapDispatchToProps = (dispatch) => {
   return {
-    addWord: (item) => dispatch(addWord(item)),
-    removeWord: (item) => dispatch(removeWord(item)),
+    addWord: (index) => dispatch(addWord(index)),
+    removeWord: (index) => dispatch(removeWord(index)),
   }
 }
 

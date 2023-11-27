@@ -1,15 +1,20 @@
 diff --git a/node_modules/pbkdf2/lib/async.js b/node_modules/pbkdf2/lib/async.js
-index 3af2c49..ad52bad 100644
+index 3af2c49..9f08ab2 100644
 --- a/node_modules/pbkdf2/lib/async.js
 +++ b/node_modules/pbkdf2/lib/async.js
-@@ -1,4 +1,6 @@
+@@ -1,5 +1,11 @@
  var Buffer = require('safe-buffer').Buffer
-+var fastCrypto = require('react-native-fast-crypto')
-+var pbkdf2 = fastCrypto.pbkdf2
  
++var Crypto = require('react-native-quick-crypto')
++
++var bytes_1 = require("@ethersproject/bytes");
++var sha2_1 = require("@ethersproject/sha2");
++var base64 = require('@ethersproject/base64')
++
  var checkParameters = require('./precondition')
  var defaultEncoding = require('./default-encoding')
-@@ -84,35 +86,13 @@ function resolvePromise (promise, callback) {
+ var sync = require('./sync')
+@@ -84,35 +90,16 @@ function resolvePromise (promise, callback) {
    })
  }
  module.exports = function (password, salt, iterations, keylen, digest, callback) {
@@ -20,7 +25,9 @@ index 3af2c49..ad52bad 100644
 -
 -  digest = digest || 'sha1'
 -  var algo = toBrowser[digest.toLowerCase()]
--
++  // Fallback to the pbkdf2Sync function (so that it's compatible with the @ethersproject/pbkdf2 module)
++  if (!callback) return Crypto.pbkdf2Sync(password, salt, iterations, keylen, digest)
+ 
 -  if (!algo || typeof global.Promise !== 'function') {
 -    getNextTick()(function () {
 -      var out
@@ -45,7 +52,7 @@ index 3af2c49..ad52bad 100644
 -    return sync(password, salt, iterations, keylen, digest)
 +  resolvePromise(new Promise((resolve, reject) => {
 +    try {
-+      const res = pbkdf2.deriveSync(password, salt, iterations, keylen, digest)
++      const res = Crypto.pbkdf2Sync(password, salt, iterations, keylen, digest)
 +      resolve(res)
 +    } catch (error) {
 +      reject(error)
@@ -69,23 +76,22 @@ index 3042099..fa8adac 100644
    defaultEncoding = pVersionMajor >= 6 ? 'utf-8' : 'binary'
  } else {
 diff --git a/node_modules/pbkdf2/lib/sync-browser.js b/node_modules/pbkdf2/lib/sync-browser.js
-index 20a64b4..c35a4f9 100644
+index 20a64b4..891b1d6 100644
 --- a/node_modules/pbkdf2/lib/sync-browser.js
 +++ b/node_modules/pbkdf2/lib/sync-browser.js
-@@ -2,6 +2,8 @@ var md5 = require('create-hash/md5')
- var RIPEMD160 = require('ripemd160')
+@@ -3,6 +3,8 @@ var RIPEMD160 = require('ripemd160')
  var sha = require('sha.js')
  var Buffer = require('safe-buffer').Buffer
-+var fastCrypto = require('react-native-fast-crypto')
-+var pbkdf2 = fastCrypto.pbkdf2
  
++var Crypto = require('react-native-quick-crypto')
++
  var checkParameters = require('./precondition')
  var defaultEncoding = require('./default-encoding')
-@@ -67,39 +69,13 @@ function getDigest (alg) {
-   return shaFunc
+ var toBuffer = require('./to-buffer')
+@@ -68,38 +70,7 @@ function getDigest (alg) {
  }
  
--function pbkdf2 (password, salt, iterations, keylen, digest) {
+ function pbkdf2 (password, salt, iterations, keylen, digest) {
 -  checkParameters(iterations, keylen)
 -  password = toBuffer(password, defaultEncoding, 'Password')
 -  salt = toBuffer(salt, defaultEncoding, 'Salt')
@@ -118,17 +124,10 @@ index 20a64b4..c35a4f9 100644
 -  }
 -
 -  return DK
-+function jspbkdf2 (password, salt, iterations, keylen, digest) {
-+  return pbkdf2.deriveSync(
-+    password,
-+    salt,
-+    iterations,
-+    keylen
-+  )
++  return Crypto.pbkdf2Sync(password, salt, iterations, keylen, digest)
  }
  
--module.exports = pbkdf2
-+module.exports = jspbkdf2
+ module.exports = pbkdf2
 diff --git a/node_modules/pbkdf2/lib/sync.js b/node_modules/pbkdf2/lib/sync.js
 index 9eeca48..a9dad90 100644
 --- a/node_modules/pbkdf2/lib/sync.js

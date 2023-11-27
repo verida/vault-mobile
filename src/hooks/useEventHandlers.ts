@@ -1,16 +1,21 @@
 import NetInfo from '@react-native-community/netinfo'
 import fbMessaging from '@react-native-firebase/messaging'
-import * as Sentry from '@sentry/react-native'
+import { selectSelectedAccount } from 'features/identities'
+import { Logger } from 'features/telemetry'
 import { CHANNEL_ID } from 'helpers/notifications'
-import { get, throttle } from 'lodash'
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { get } from 'lodash'
+import * as React from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
 import PushNotification from 'react-native-push-notification'
 import { useDispatch, useSelector } from 'react-redux'
+import { useThrottledCallback } from 'use-debounce'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
 import { fetchInboxCount } from 'api/utils'
+
+const logger = new Logger('EventHandler')
 
 export const useEventHandlers = () => {
   const isNetworkConnected = useRef<boolean | null>(null)
@@ -19,12 +24,11 @@ export const useEventHandlers = () => {
   const dispatch = useDispatch()
   const isConnectingRef = useRef(false)
   const latestNotificationRef = useRef<any>(null)
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  const selectedAccount = useSelector((state) => state.main.selectedAccount)
 
-  const onMessage = useCallback(
-    throttle(async function onMessage(newMessage: any) {
+  const selectedAccount = useSelector(selectSelectedAccount)
+
+  const onMessage = useThrottledCallback(
+    React.useCallback(async function onMessage(newMessage: any) {
       await fetchInboxCount()
       if (
         !newMessage ||
@@ -44,8 +48,8 @@ export const useEventHandlers = () => {
           data: newMessage.message,
         },
       })
-    }, 500),
-    []
+    }, []),
+    500
   )
 
   useEffect(() => {
@@ -70,8 +74,8 @@ export const useEventHandlers = () => {
 
         await fetchInboxCount()
         isConnectingRef.current = false
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
@@ -91,7 +95,7 @@ export const useEventHandlers = () => {
 
           onMessage(latestMessage)
         } catch (error) {
-          Sentry.captureException(error)
+          logger.error(error)
         }
       })
 

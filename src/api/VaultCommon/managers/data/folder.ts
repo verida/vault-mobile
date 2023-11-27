@@ -1,3 +1,4 @@
+import { DataField } from 'features/data'
 import _ from 'lodash'
 
 import VaultCommon from '../../vault'
@@ -31,7 +32,11 @@ export default class Folder {
    * @param {*} filter
    * @param {*} options
    */
-  public async getMany(filter: any = {}, options: any = {}) {
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  public async getMany<T extends object = Record<string, unknown>>(
+    filter: any = {},
+    options: any = {}
+  ): Promise<T[]> {
     await this.init()
     if (!this.db) {
       return []
@@ -49,10 +54,11 @@ export default class Folder {
     let results = []
     try {
       results = await this.db.getMany(filter, options)
-    } catch (err) {
+    } catch (err: any) {
       // If the error is caused by a missing index, automatically create the index and try again
       if (err.message?.indexOf('default index')) {
         const matches = err.message?.match(
+          // eslint-disable-next-line no-useless-escape
           /Cannot sort on field\(s\) \"([0-9a-zA-Z\.-]+)\" when using the default index/
         )
         const missingIndexName = matches[1]
@@ -86,23 +92,34 @@ export default class Folder {
       row = rowOrId
     }
 
+    // TODO: Handle when it's a credential without a credentialSchema property. It is irrelevant to use the schema of the record. So should handle iterating over the item keys
     if (!schemaUri) {
       schemaUri = row.schema
     }
 
+    // TODO: Need to handle nested objects
+
     const schema = await this.vaultCommon.client.getSchema(schemaUri)
     const json = await schema.getSchemaJson()
     const layouts = json.layouts
-    let properties = json.properties
+
+    // If the schema is a credential schema with a 'credentialSubject' property, then use it. Otherwise use all the properties.
+    let properties = json.properties?.credentialSubject
+      ? json.properties.credentialSubject.properties
+      : json.properties
+
     if (json.allOf) {
       // This only gets the lst list of properties.. although schemas should
       // define layouts.view so it doesn't matter
+      // TODO: May need to to fetch referenced schema to get all properties as we can't rely on layouts definition (+ layout won't give the label of the properties)
       properties = json.allOf[json.allOf.length - 1].properties
     }
 
     let viewAttributes = []
     if (layouts && layouts.view) {
       viewAttributes = layouts.view
+    } else {
+      viewAttributes = Object.keys(properties)
     }
 
     const displayData = this.buildDisplayData(row, viewAttributes, properties)
@@ -177,28 +194,29 @@ export default class Folder {
       .join(' ')
   }
 
-  /**
-   * Build headers for the fields being displayed
-   */
-  public buildHeaders() {
-    const headers: object[] = []
-    const folder = this
+  // TODO: Remove this.
+  ///**
+  // * Build headers for the fields being displayed
+  // */
+  //public buildHeaders() {
+  //  const headers: object[] = []
+  //  const folder = this
 
-    this.config.layouts.list.forEach((item: any) => {
-      headers.push({
-        value: item,
-        text: folder.getLabel(item),
-      })
-    })
+  //  this.config.layouts.list.forEach((item: any) => {
+  //    headers.push({
+  //      value: item,
+  //      text: folder.getLabel(item),
+  //    })
+  //  })
 
-    return headers
-  }
+  //  return headers
+  //}
 
   // Build display data for a given row
   // Field = Field label
   // Value = Value from the row
   public buildDisplayData(data: any, layout: any, properties: any[]) {
-    const displayData: object[] = []
+    const displayData: DataField[] = []
 
     layout.forEach((item: any) => {
       const value = _.get(data, item)

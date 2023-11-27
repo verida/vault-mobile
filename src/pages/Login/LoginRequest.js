@@ -1,6 +1,7 @@
-import * as Sentry from '@sentry/react-native'
 import EncryptionUtils from '@verida/encryption-utils'
 import didJWT from 'did-jwt'
+import { Logger } from 'features/telemetry'
+import { useWalletConnectContext } from 'features/walletConnect'
 import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -13,7 +14,6 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
-import { useWalletConnect, useWalletConnectv2 } from 'hooks/useWalletConnect'
 
 import MobileSvg from '../../assets/mobile.svg'
 import Button from '../../components/Button'
@@ -26,6 +26,8 @@ import {
 } from '../../constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 
+const logger = new Logger('Pages/Login/LoginRequest')
+
 global.EncryptionUtils = EncryptionUtils
 
 export default (props) => {
@@ -35,8 +37,8 @@ export default (props) => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [ws, setWebsocket] = useState(null)
   const [expired, setExpired] = useState(false)
-  const { requestConnect } = useWalletConnect()
-  const { requestConnect: requestConnectv2 } = useWalletConnectv2()
+
+  const { onRequestConnect } = useWalletConnectContext()
 
   useEffect(() => {
     const init = async () => {
@@ -104,8 +106,8 @@ export default (props) => {
                 walletConnect: parsed.walletConnect,
               })
               setStatus('loaded')
-            } catch (e) {
-              Sentry.captureException(e)
+            } catch (error) {
+              logger.error(error)
             }
             break
 
@@ -176,7 +178,7 @@ export default (props) => {
       }
       props.navigation.navigate('Home')
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
       setStatus('loaded')
     }
   }
@@ -188,8 +190,8 @@ export default (props) => {
     try {
       setStatus('approving')
 
-      const vault = AccountManager.getInstance().context
-      const client = AccountManager.getInstance().client
+      const vault = await AccountManager.getInstance().getVeridaContext()
+      const client = vault.getClient()
       const account = await vault.getAccount()
       const keyring = await account.keyring(info.request.context)
       const signature = keyring.getSeed()
@@ -249,17 +251,12 @@ export default (props) => {
         await Linking.openURL(info.openUrl + '?_verida_auth=' + encoded)
       }
 
-      if (info.walletConnect?.uri) {
-        if (info.walletConnect.version === 1) {
-          requestConnect(info.walletConnect.uri)
-        } else if (info.walletConnect.version === 2) {
-          requestConnectv2(info.walletConnect.uri)
-        }
-      }
+      if (info.walletConnect?.uri)
+        await onRequestConnect(info.walletConnect.uri)
 
       await saveLoginRequest(true, deviceId)
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
       setStatus('loaded')
     }
   }

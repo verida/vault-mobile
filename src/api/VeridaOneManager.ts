@@ -1,5 +1,6 @@
 import { Context } from '@verida/client-rn'
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
+import { Logger } from 'features/telemetry'
 
 import AccountManager from './AccountManager'
 import {
@@ -9,6 +10,8 @@ import {
   VeridaOneProfile,
   VeridaOneWalletAddress,
 } from './types'
+
+const logger = new Logger('VeridaOneManager')
 
 const VERIDA_ONE_CONTEXT = 'Verida: One'
 const PROFILE_SCHEMA_URL =
@@ -43,19 +46,13 @@ export default class VeridaOneManager {
     await VeridaOneManager.saveProfile(profile)
   }
 
-  static async getProfile(did?: string): Promise<VeridaOneProfile> {
-    const selectedDID = await AccountManager.getInstance().getSelectedAccount()
-      ?.did
-    if (!selectedDID) {
-      throw new Error('Account not found')
-    }
-
-    const datastore = await VeridaOneManager.getDatastore(selectedDID)
+  static async getProfile(): Promise<VeridaOneProfile> {
+    const datastore = await VeridaOneManager.getDatastore()
     let profile
     try {
-      profile = await datastore.get('public')
+      profile = await datastore.get('public', undefined)
     } catch (err: any) {
-      console.log(err)
+      logger.error(err)
 
       // @todo: test this
       if (err.error === 'not_found') {
@@ -76,20 +73,24 @@ export default class VeridaOneManager {
     const datastore = await VeridaOneManager.getDatastore()
     const result = await datastore.save(profile, {})
     if (!result) {
-      // @ts-ignore
-      console.log(datastore.errors)
+      logger.warn(datastore.errors) // TODO: datastore.errors is really not convenient to use. Not sure the errors comes from the method we just called
     }
-    console.log(result)
     const db = await datastore.getDb()
-    const info = await db.info()
-    console.log(info)
+    await db.info()
   }
 
-  static async getDatastore(did: string): Promise<IDatastore> {
-    if (VeridaOneManager.datastore && did === VeridaOneManager.did) {
+  static async getDatastore(): Promise<IDatastore> {
+    const selectedDID = await AccountManager.getInstance().getSelectedAccount()
+      ?.did
+    if (!selectedDID) {
+      throw new Error('Account not found')
+    }
+
+    // This's so the datastore will be reinitialized on DID change
+    if (VeridaOneManager.datastore && selectedDID === VeridaOneManager.did) {
       return VeridaOneManager.datastore
     }
-    VeridaOneManager.did = did
+    VeridaOneManager.did = selectedDID
 
     // eslint-disable-next-line no-async-promise-executor
     VeridaOneManager.datastore = new Promise(async (resolve) => {

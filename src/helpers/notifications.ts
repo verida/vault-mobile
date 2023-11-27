@@ -1,11 +1,13 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
-import * as Sentry from '@sentry/react-native'
+import { setNavigationLink } from 'features/links'
+import { Logger } from 'features/telemetry'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 import { store } from 'reduxStore'
 
 import { navigate } from 'navigation/RootNavigator'
-import { setNavigationLink } from 'reduxStore/general/actions'
+
+const logger = new Logger('Notification')
 
 export const CHANNEL_ID = 'verida-vault'
 
@@ -54,8 +56,8 @@ export function configureNotifications() {
 
         // (required) Called when a remote is received or opened, or local notification is opened
         notification.finish(PushNotificationIOS.FetchResult.NoData)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     },
 

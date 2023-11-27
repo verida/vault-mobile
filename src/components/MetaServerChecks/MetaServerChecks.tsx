@@ -1,57 +1,27 @@
-import remoteConfig from '@react-native-firebase/remote-config'
 import { compareVersions } from 'compare-versions'
-import React, { useEffect, useRef } from 'react'
-import { AppState, AppStateStatus } from 'react-native'
-import { getVersion } from 'react-native-device-info'
+import { useConfig } from 'features/config'
+import React, { useEffect } from 'react'
 
 import AccountManager from 'api/AccountManager'
+import { APP_VERSION } from 'constants/application'
 import { useAuth } from 'hooks/useAuth'
+import { useEmitter } from 'hooks/useEmitter'
 import { useModal } from 'hooks/useModal'
-import { useRemoteConfigs } from 'hooks/useRemoteConfigs'
 
-import ForcedCreateNewAccountModal from './ForcedCreateNewAccountModal'
-import ForcedUpgradeModal from './ForcedUpgradeModal'
+import { DIDNonExistentModal } from './DIDNonExistentModal'
+import { ForcedCreateNewAccountModal } from './ForcedCreateNewAccountModal'
+import { ForcedUpgradeModal } from './ForcedUpgradeModal'
 
-const MetaServerChecks = () => {
+export const MetaServerChecks = () => {
   const { showModal, dismissModal } = useModal()
-  const appState = useRef(AppState.currentState)
-  const { fetchConfigs, forcedUpgrade, forcedCreateAccount } =
-    useRemoteConfigs()
+  const { forcedUpgrade, forcedCreateAccount } = useConfig()
   const { forcedSignOut } = useAuth()
-
-  useEffect(() => {
-    remoteConfig().setConfigSettings({
-      minimumFetchIntervalMillis: 30000,
-    })
-  }, [])
-
-  useEffect(() => {
-    fetchConfigs()
-
-    const handleAppStateChange = (nextAppState: AppStateStatus) => {
-      if (
-        appState.current.match(/inactive|background/) &&
-        nextAppState === 'active'
-      ) {
-        fetchConfigs()
-      }
-
-      appState.current = nextAppState
-    }
-    const subscription = AppState.addEventListener(
-      'change',
-      handleAppStateChange
-    )
-    return () => {
-      subscription?.remove()
-    }
-  }, [fetchConfigs])
 
   useEffect(() => {
     const checkForcedUpgrade = () => {
       if (
         forcedUpgrade?.required &&
-        compareVersions(getVersion(), forcedUpgrade.minVersion!) < 0 // Current version < required version
+        compareVersions(APP_VERSION, forcedUpgrade.minVersion) < 0 // Current version < required version
       ) {
         showModal(
           <ForcedUpgradeModal
@@ -75,11 +45,9 @@ const MetaServerChecks = () => {
     const handleForcedDeleteAccounts = () => {
       showModal(
         <ForcedCreateNewAccountModal
-          forcedCreateAccount={forcedCreateAccount}
+          forcedCreateAccount={forcedCreateAccount!}
           forcedSignOut={forcedSignOut}
-          dismissModal={() => {
-            dismissModal()
-          }}
+          dismissModal={dismissModal}
         />
       )
     }
@@ -96,7 +64,9 @@ const MetaServerChecks = () => {
     }
   }, [dismissModal, forcedCreateAccount, forcedSignOut, showModal])
 
+  useEmitter('IDENTITY_NOT_EXIST', () => {
+    showModal(<DIDNonExistentModal dismissModal={dismissModal} />)
+  })
+
   return null
 }
-
-export default MetaServerChecks

@@ -1,0 +1,77 @@
+import { ICheqdVerifyCredentialWithStatusList2021Args } from '@cheqd/did-provider-cheqd'
+import {
+  IVerifyCredentialArgs,
+  IVerifyResult,
+  VerifiableCredential,
+} from '@veramo/core'
+import { Logger } from 'features/telemetry'
+import { extractIssuer, useVeramo } from 'features/veramo'
+import { useCallback } from 'react'
+
+import { VerificationResult } from '../types'
+
+const logger = new Logger('Verifiable Credential')
+
+const defaultVerificationOptions: Omit<IVerifyCredentialArgs, 'credential'> = {
+  fetchRemoteContexts: true,
+  policies: {
+    audience: true,
+    issuanceDate: true,
+    credentialStatus: true,
+    expirationDate: true,
+  },
+}
+
+export const useCredential = () => {
+  const { agent } = useVeramo()
+
+  const verifyCredential = useCallback(
+    async (
+      credential: VerifiableCredential,
+      options?: Omit<IVerifyCredentialArgs, 'credential'>
+    ): Promise<VerificationResult | undefined> => {
+      logger.info('Verifying credential')
+
+      const resolvedOptions: Omit<IVerifyCredentialArgs, 'credential'> =
+        Object.assign({}, defaultVerificationOptions, options)
+
+      try {
+        let verificationResult: IVerifyResult
+
+        const issuer = extractIssuer(credential)
+
+        if (issuer.startsWith('did:cheqd') && !!credential.credentialStatus) {
+          logger.debug('Verifying Cheqd credential with status list')
+          verificationResult = await agent.cheqdVerifyCredential({
+            credential,
+            fetchList: true,
+            verificationArgs: {
+              ...resolvedOptions,
+            },
+          } as ICheqdVerifyCredentialWithStatusList2021Args)
+        } else {
+          logger.debug('Verifying generic credential with Veramo native method')
+          verificationResult = await agent.verifyCredential({
+            credential,
+            ...resolvedOptions,
+          })
+        }
+
+        if (verificationResult.error?.errorCode === 'Network request failed') {
+          return undefined
+        }
+
+        return verificationResult
+      } catch (error) {
+        // Likely to be something unsupported by our Veramo agent configuration
+        // Returning undefined means the verification is not conclusive
+        logger.error(error)
+      }
+    },
+    [agent]
+  )
+
+  // Expose other Veramo functions as needed
+
+  return { verifyCredential }
+}

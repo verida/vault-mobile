@@ -1,4 +1,7 @@
 import EventEmitter from 'events'
+import { Logger } from 'features/telemetry'
+
+const logger = new Logger('Emitter')
 
 export type EmitterTypes = {
   SAVE_GENERIC_PROPERTY: {
@@ -8,6 +11,15 @@ export type EmitterTypes = {
     originalValue?: any
     mode?: string | number
   }
+  UNLOCK_VERIDA_ONE: undefined
+  UPDATE_PROFILE_USERNAME: Record<string, unknown>
+  UPDATE_PUBLIC_PROFILE: undefined
+
+  // Identity status
+  IDENTITY_NOT_EXIST: {
+    retry?: () => void
+  }
+  APP_RECOVER_FROM_ERROR: undefined
 }
 
 const _emitter = new EventEmitter()
@@ -28,8 +40,7 @@ export const emitter = {
   },
 
   emit<K extends keyof EmitterTypes>(key: K, payload: EmitterTypes[K]) {
-    // eslint-disable-next-line no-console
-    if (__DEV__) console.debug('[EMITTER]', key, payload)
+    logger.debug(`Emitting ${key}`, { payload })
     _emitter.emit(key, payload)
   },
 }

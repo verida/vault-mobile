@@ -1,3 +1,4 @@
+//@deprecated should be types from features/cryptoWallet
 export type SingleAccountType = {
   mnemonic: string
   privateKey: string
@@ -5,12 +6,14 @@ export type SingleAccountType = {
   address: string
 }
 
+//@deprecated
 export type AccountsType = {
   [key: string]: SingleAccountType
 }
 
+//@deprecated
 export type WalletType = {
-  id: string
+  _id: string
   type: string
   seedPhrase: string
   label: string
@@ -18,11 +21,13 @@ export type WalletType = {
   chain?: string
 }
 
+//@deprecated
 export type WalletItem = {
+  _id: string
   count: number
   icon: string
-  id: string
   label: string
   other?: any
   address?: string
+  viewOnly?: boolean
 }

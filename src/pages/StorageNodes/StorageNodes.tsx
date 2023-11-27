@@ -4,7 +4,6 @@ import { Container, Content } from 'native-base'
 import React from 'react'
 import {
   FlatList,
-  Image,
   Linking,
   ListRenderItemInfo,
   StyleSheet,
@@ -14,8 +13,10 @@ import {
 import { useSelector } from 'react-redux'
 
 import { NetworkNode } from 'api/types'
+import { Icon } from 'components/Icon'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import { TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 import NodeItem from 'pages/StorageNodes/NodeItem'
@@ -25,7 +26,7 @@ function StorageNodes(
 ) {
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   // @ts-ignore
-  const networks = useSelector((state) => state.main.networks)
+  const networks = useSelector((state) => state.settings.networks)
   const selectedNode = !isEmpty(networks)
     ? networks[0].nodes[networks[0].selected_node]
     : null
@@ -72,10 +73,7 @@ function StorageNodes(
         </TouchableOpacity>
         <TouchableOpacity style={styles.hostButton} onPress={onHostButtonPress}>
           <Text style={styles.hostButtonText}>Host my own node</Text>
-          <Image
-            style={styles.hostButtonIcon}
-            source={require('assets/icons/share_icon.png')}
-          />
+          <Icon name='share' size={19} color={TEXT_COLOR} />
         </TouchableOpacity>
       </Content>
     </Container>
@@ -116,11 +114,6 @@ const styles = StyleSheet.create({
     paddingVertical: 16,
     paddingHorizontal: 20,
     marginTop: 33,
-  },
-  hostButtonIcon: {
-    width: 19,
-    height: 19,
-    resizeMode: 'cover',
   },
   hostButtonText: {
     fontSize: 16,

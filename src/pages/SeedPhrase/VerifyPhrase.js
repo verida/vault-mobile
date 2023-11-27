@@ -1,12 +1,15 @@
 import { useNavigation } from '@react-navigation/native'
+import {
+  resetPhrase as resetPhraseAction,
+  selectSeedPhraseTemplate,
+} from 'features/seedphrases'
+import { setShowSeedPhraseReminder } from 'features/settings'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 import { connect, useDispatch } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { setShowSeedPhraseReminder } from 'reduxStore/general/actions'
-import { resetPhrase as resetPhraseAction } from 'reduxStore/words/actions'
 
 import Button from '../../components/Button'
 import ErrorPhrase from '../../components/ErrorPhrase'
@@ -14,7 +17,7 @@ import Layout from '../../components/Layouts/Layout'
 import Words from '../../components/Words'
 
 const VerifyPhrase = (props) => {
-  const { words = [], resetPhrase, route } = props
+  const { selected = [], resetPhrase, route } = props
   const [error, showError] = useState(null)
   const [verified, setVerified] = useState(null)
   const dispatch = useDispatch()
@@ -22,11 +25,18 @@ const VerifyPhrase = (props) => {
 
   useEffect(() => {
     showError(false)
+
+    const selectedWords = selected.map((item) => route.params.shuffled[item])
+
     setVerified(
-      words.join(' ') ===
+      selectedWords.join(' ') ===
         AccountManager.getInstance().getSelectedAccount().mnemonic
     )
-  }, [words])
+
+    // TODO: We are not sensitive to route.params.shuffled here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [selected])
 
   useEffect(() => {
     return () => {
@@ -40,7 +50,7 @@ const VerifyPhrase = (props) => {
       dispatch(setShowSeedPhraseReminder(false))
       await AccountManager.getInstance().updateLastTimeSeedPhraseReminder(true)
       navigation.goBack()
-    } catch (e) {
+    } catch (cause) {
       showError(true)
     }
   }
@@ -86,10 +96,9 @@ const VerifyPhrase = (props) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
-    words: state.template,
+    selected: selectSeedPhraseTemplate(state),
   }
 }
 

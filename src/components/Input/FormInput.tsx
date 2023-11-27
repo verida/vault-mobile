@@ -1,13 +1,22 @@
+import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
-import React, { Ref, useCallback, useRef, useState } from 'react'
+import React, {
+  ForwardedRef,
+  RefObject,
+  useCallback,
+  useRef,
+  useState,
+} from 'react'
 import {
   StyleSheet,
   TextInput as OriginalTextInput,
   TextStyle,
   View,
 } from 'react-native'
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
 import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
+import { Icon } from 'components/Icon'
 import { Label } from 'components/Typography/Label'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import inputs from 'styles/inputs'
@@ -24,17 +33,21 @@ export type FormInputProps = React.ComponentPropsWithRef<
   typeof OriginalTextInput
 > & {
   label?: string
-  errorMessage?: string
+  errorMessage?: string | undefined
   type?: FormInputType
   disabled?: boolean
   inputStyle?: TextStyle
   withAnimatedChecbox?: boolean
+  checkboxEmptyState?: boolean
   checked?: boolean
   loading?: boolean
+  suffix?: string
+  suffixStyle?: TextStyle
+  desciption?: string | undefined
 }
 
 export const FormInput = React.forwardRef(
-  (props: FormInputProps, receivedRef: Ref<OriginalTextInput>) => {
+  (props: FormInputProps, receivedRef: ForwardedRef<OriginalTextInput>) => {
     const {
       label,
       placeholder,
@@ -46,15 +59,17 @@ export const FormInput = React.forwardRef(
       onFocus: onInputFocus,
       onBlur: onInputBlur,
       withAnimatedChecbox,
+      checkboxEmptyState,
       loading,
       checked,
+      desciption,
       ...rest
     } = props
     const { theme } = useTheme()
     const styles = useThemeAwareStyle(createStyles)
     const [focused, setFocused] = useState(false)
-    const fallbackRef = useRef(null)
-    const ref = receivedRef || fallbackRef
+    const fallbackRef = useRef<OriginalTextInput>(null)
+    const ref = (receivedRef || fallbackRef) as RefObject<OriginalTextInput>
     const onFocus = useCallback(
       (e) => {
         setFocused(true)
@@ -94,35 +109,51 @@ export const FormInput = React.forwardRef(
         <View
           testID={`${testID}.inputContainer`}
           pointerEvents={disabled ? 'none' : 'auto'}>
-          <OriginalTextInput
-            {...rest}
-            testID={testID}
-            placeholder={placeholder}
-            ref={ref}
-            editable={!disabled}
-            underlineColorAndroid={theme.color.transparent}
-            style={[
-              styles.textInput,
-              inputStyle,
-              focused
-                ? { borderColor: theme.color.veridaGreen }
-                : errorMessage
-                ? {
-                    borderColor: theme.color.error,
-                  }
-                : {},
-              disabled
-                ? {
-                    color: theme.color.textGrey100,
-                    backgroundColor: theme.color.veryLightGrey,
-                  }
-                : {},
-            ]}
-            onFocus={onFocus}
-            onBlur={onBlur}
-            placeholderTextColor={theme.color.placeholderTextColor}
-          />
-          {withAnimatedChecbox && !focused && (
+          <TouchableWithoutFeedback
+            onPress={() => {
+              ref.current?.focus()
+            }}>
+            <OriginalTextInput
+              {...rest}
+              testID={testID}
+              placeholder={placeholder}
+              ref={ref}
+              editable={!disabled}
+              underlineColorAndroid={theme.color.transparent}
+              style={[
+                {
+                  textAlign: 'left',
+                  backgroundColor: 'red',
+                  padding: 0,
+                  paddingRight: 2,
+                },
+                {
+                  flexDirection: 'row',
+                  alignItems: 'flex-start',
+                  justifyContent: 'flex-start',
+                },
+                styles.textInput,
+                inputStyle,
+                errorMessage
+                  ? { borderColor: theme.color.error }
+                  : focused
+                  ? {
+                      borderColor: theme.color.veridaGreen,
+                    }
+                  : {},
+                disabled
+                  ? {
+                      color: theme.color.textGrey100,
+                      backgroundColor: theme.color.veryLightGrey,
+                    }
+                  : {},
+              ]}
+              onFocus={onFocus}
+              onBlur={onBlur}
+              placeholderTextColor={theme.color.placeholderTextColor}
+            />
+          </TouchableWithoutFeedback>
+          {withAnimatedChecbox && !checkboxEmptyState && (
             <View
               style={{
                 position: 'absolute',
@@ -138,6 +169,12 @@ export const FormInput = React.forwardRef(
                 highlightColor={theme.color.success}
                 checkmarkColor={theme.color.onSuccess}
                 boxOutlineColor={theme.color.grey500}
+                failedIcon={
+                  <Icon name='warning' color={theme.color.error} size={20} />
+                }
+                successIcon={
+                  <Icon name='tick' color={theme.color.success} size={20} />
+                }
               />
             </View>
           )}
@@ -154,6 +191,15 @@ export const FormInput = React.forwardRef(
           ]}>
           {errorMessage}
         </Label>
+        {desciption && (
+          <Label
+            style={{
+              marginTop: 2,
+              color: Color(theme.color.onBackground).alpha(0.4).toString(),
+            }}>
+            {desciption}
+          </Label>
+        )}
       </View>
     )
   }

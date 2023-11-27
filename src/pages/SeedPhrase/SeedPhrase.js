@@ -1,7 +1,6 @@
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { StyleSheet } from 'react-native'
-import { connect } from 'react-redux'
 
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
@@ -59,12 +58,7 @@ const SeedPhrase = (props) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
-}
-
-export default connect(mapStateToProps, null)(SeedPhrase)
+export default SeedPhrase
 
 const style = StyleSheet.create({
   description: {

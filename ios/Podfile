@@ -5,9 +5,12 @@ require File.join(File.dirname(`node --print "require.resolve('@react-native-com
 require 'json'
 podfile_properties = JSON.parse(File.read(File.join(__dir__, 'Podfile.properties.json'))) rescue {}
 
-platform :ios, '12.0'
+platform :ios, '12.4'
 install! 'cocoapods', :deterministic_uuids => false
- 
+
+# Config using analytics without Apple Ad ID (IDFA)
+$RNFirebaseAnalyticsWithoutAdIdSupport = true
+
 def shared_pods
   use_expo_modules!
   config = use_native_modules!
@@ -32,11 +35,15 @@ def shared_pods
 
 end
 
-target 'Verida Vault' do
+target 'Wallet-Production' do
   shared_pods
 end
 
-target 'Verida Vault Internal' do
+target 'Wallet-Staging' do
+  shared_pods
+end
+
+target 'Wallet-Development' do
   shared_pods
 end
 
@@ -45,6 +52,10 @@ post_install do |installer|
   __apply_Xcode_12_5_M1_post_install_workaround(installer)
 
   installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
+    end
+
     if target.respond_to?(:product_type) and target.product_type == "com.apple.product-type.bundle"
       target.build_configurations.each do |config|
           config.build_settings['CODE_SIGNING_ALLOWED'] = 'NO'

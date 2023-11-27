@@ -1,33 +1,35 @@
+import { ChainId } from 'caip'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getWalletsData,
+  useGetTransactionDetailsQuery,
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
-import React, { useEffect } from 'react'
-import { connect } from 'react-redux'
+import React from 'react'
+import { useSelector } from 'react-redux'
+import { store } from 'reduxStore'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
-import { selectTokens } from 'reduxStore/tokens/selectors'
-import { getTransactionDetails } from 'reduxStore/wallet/actions'
-import { selectTransactionData } from 'reduxStore/wallet/selectors'
 
-const TransactionDetails = ({
-  navigation,
-  route,
-  data,
-  onGetTransactionDetails,
-  tokens,
-}) => {
+const TransactionDetails = ({ navigation, route }) => {
   const { id, token } = route.params
-  useEffect(() => {
-    async function init() {
-      onGetTransactionDetails(id, token)
-    }
 
-    init()
-  }, [id, onGetTransactionDetails, token])
+  const wallets = useSelector(getWalletsData)
+  const chainId = new ChainId(token.asset.chainId).toString()
+  const address = wallets[chainId].address
 
-  const { transaction, loading } = data
-  let networkReference = token.referenceLabel
+  const { data: transaction, isLoading } = useGetTransactionDetailsQuery({
+    transactionId: id,
+    userAddress: address,
+    asset: token.asset,
+  })
+
+  const network = getBlockchainNetwork(store.getState(), token.asset.chainId)
+  let networkReference = getBlockchainNetworkLabel(network)
 
   return (
     <Container>
@@ -39,32 +41,13 @@ const TransactionDetails = ({
         title={'Transaction Details'}
       />
       <TestnetWarning networkReference={networkReference} />
-      {loading ? (
+      {isLoading ? (
         <LoadingIndicator />
       ) : (
-        <TransactionInfo
-          transaction={transaction}
-          token={token}
-          tokens={tokens}
-        />
+        <TransactionInfo transaction={transaction} token={token} />
       )}
     </Container>
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return {
-    data: selectTransactionData(state),
-    tokens: selectTokens(rootState),
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    onGetTransactionDetails: (id, token) =>
-      dispatch(getTransactionDetails(id, token)),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(TransactionDetails)
+export default TransactionDetails

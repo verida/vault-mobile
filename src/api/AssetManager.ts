@@ -1,9 +1,8 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { walletProviderApi } from 'wallet/helpers/api'
-
 import { walletBadges } from './mocks/WalletBadges'
 import { walletNFTs } from './mocks/WalletNfts'
 import { Badge, ClaimBadgeResponse, WalletNFTsResponse } from './types'
+import { walletProviderApi } from './Wallet/WalletProvider'
 
 export class AssetManager {
   private static instance: AssetManager

@@ -3,7 +3,6 @@ import { useTheme } from 'contexts/ThemeContext'
 import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
 import _ from 'underscore'
 
 import AccountManager from 'api/AccountManager'
@@ -88,12 +87,7 @@ const SeedPhraseGenerated = (props) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return { publicProfileData: state.publicProfileData }
-}
-
-export default connect(mapStateToProps, null)(SeedPhraseGenerated)
+export default SeedPhraseGenerated
 
 const createStyles = (theme) =>
   StyleSheet.create({

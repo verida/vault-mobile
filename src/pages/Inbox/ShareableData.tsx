@@ -1,5 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import * as Sentry from '@sentry/react-native'
+import { IDatastore } from '@verida/types'
+import { Logger } from 'features/telemetry'
 import update from 'immutability-helper'
 import { debounce } from 'lodash'
 import { Container, Content } from 'native-base'
@@ -24,6 +25,8 @@ import { MainStackParams } from 'navigation/types'
 import ShareableDataItem, {
   ShareableDataItemType,
 } from 'pages/Inbox/ShareableDataItem'
+
+const logger = new Logger('Pages/Inbox/ShareableData')
 
 function ShareableData(
   props: NativeStackScreenProps<MainStackParams, 'ShareableData'>
@@ -66,17 +69,21 @@ function ShareableData(
         $and: [requestFilter, searchFilter],
       }
 
-      const datastore =
-        await AccountManager.getInstance().context?.openDatastore(schemaUrl)
+      const datastore: IDatastore | undefined =
+        await AccountManager.getInstance().context?.openDatastore(
+          schemaUrl,
+          undefined
+        )
 
-      const result = await datastore?.getMany(query)
-      if (result) {
-        setData(result as ShareableDataItemType[])
-      }
+      const result = (await datastore?.getMany(query, undefined)) as
+        | ShareableDataItemType[]
+        | undefined
+
+      if (result) setData(result)
 
       setLoading(false)
-    } catch (e) {
-      Sentry.captureException(e)
+    } catch (error) {
+      logger.error(error)
       setLoading(false)
     }
   }

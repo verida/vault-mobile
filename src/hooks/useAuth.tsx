@@ -1,3 +1,7 @@
+import { DIDClient } from '@verida/did-client'
+import { config } from 'config'
+import { Logger } from 'features/telemetry'
+import { emitter } from 'helpers/emitter'
 import React, {
   createContext,
   FC,
@@ -10,6 +14,10 @@ import React, {
 
 import AccountManager from 'api/AccountManager'
 
+import { useEmitter } from './useEmitter'
+
+const logger = new Logger('Auth')
+
 type AuthContextState = {
   refresh: () => Promise<boolean>
   authenticated: boolean
@@ -19,6 +27,7 @@ type AuthContextState = {
   forcedSignOut: () => Promise<boolean>
 }
 
+// TODO: should move to context folder
 const AuthContext = createContext<AuthContextState>({
   refresh: async () => false,
   authenticated: false,
@@ -44,15 +53,43 @@ export const AuthProvider: FC = ({ children }) => {
     checkTeamMember()
   }, [loaded])
 
-  const refresh = useCallback(async () => {
+  const findDID = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
-    if (selectedAccount) {
-      await AccountManager.getInstance().connect()
+    // try to fetch the DID
+    const did = selectedAccount!.did
+    const didClient = new DIDClient({
+      network: config.VERIDA_ENVIRONMENT,
+    })
+
+    try {
+      await didClient.get(did)
+    } catch (error) {
+      logger.error(error)
+      if (
+        error instanceof Error &&
+        error.message.match(/DID resolution error \(notFound\)/gi)
+      ) {
+        emitter.emit('IDENTITY_NOT_EXIST', {})
+      }
     }
-    setLoaded(true)
-    setAuthenticated(!!selectedAccount)
-    return !!selectedAccount
   }, [])
+
+  const refresh = useCallback(async () => {
+    try {
+      const selectedAccount = AccountManager.getInstance().getSelectedAccount()
+      if (selectedAccount) {
+        await AccountManager.getInstance().connect()
+      }
+      setLoaded(true)
+      setAuthenticated(!!selectedAccount)
+      return !!selectedAccount
+    } catch (error) {
+      logger.error(error)
+      // Could not connect to the identity, check if it exists
+      findDID()
+      return false
+    }
+  }, [findDID])
 
   const switchToAccount = useCallback(async (did: string) => {
     setLoaded(false)
@@ -64,6 +101,24 @@ export const AuthProvider: FC = ({ children }) => {
     setAuthenticated(false)
     return true
   }, [])
+
+  useEmitter(
+    'APP_RECOVER_FROM_ERROR',
+    async () => {
+      init()
+    },
+    []
+  )
+
+  // Account manager initialize
+  const init = useCallback(async () => {
+    await AccountManager.getInstance().init()
+    await refresh()
+  }, [refresh])
+
+  useEffect(() => {
+    init()
+  }, [init])
 
   const context = useMemo(
     () => ({

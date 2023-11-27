@@ -1,11 +1,6 @@
+import Clipboard from '@react-native-community/clipboard'
 import React, { useState } from 'react'
-import {
-  Clipboard,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  ViewProps,
-} from 'react-native'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import Text from 'components/Text'

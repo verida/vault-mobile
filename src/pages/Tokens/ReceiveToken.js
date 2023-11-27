@@ -1,14 +1,20 @@
 import Clipboard from '@react-native-community/clipboard'
+import {
+  getBlockchainNetwork,
+  getBlockchainNetworkLabel,
+  getWalletAddressForAsset,
+  getWalletsData,
+} from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { Share, StyleSheet, TouchableOpacity, View } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import Toast from 'react-native-root-toast'
 import { connect } from 'react-redux'
-import { getWalletAddressForToken } from 'wallet/helpers/tokens'
+import { store } from 'reduxStore'
 
 import CopyIconDark from 'assets/copy_icon_dark.svg'
-import ShareIcon from 'assets/share_icon.svg'
+import ShareIcon from 'assets/share_icon_with_bg.svg'
 import Button from 'components/Button'
 import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -16,14 +22,17 @@ import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { getWalletsData } from 'reduxStore/wallet/selectors'
 
 const LogoImg = require('assets/vault-logo.png')
 
 const ReceiveToken = ({ navigation, route, wallets }) => {
   const token = route.params.token
-  const address = getWalletAddressForToken(token.addressMapping, wallets)
-  let networkReference = token.referenceLabel
+  const address = getWalletAddressForAsset(token.asset, wallets)
+  const blockchainNetwork = getBlockchainNetwork(
+    store.getState(),
+    token.asset.chainId
+  )
+  let networkReference = getBlockchainNetworkLabel(blockchainNetwork)
 
   return (
     <Container>
@@ -169,8 +178,7 @@ const styles = StyleSheet.create({
   },
 })
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     wallets: getWalletsData(state),
   }

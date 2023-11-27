@@ -6,8 +6,8 @@ import {
 } from '@verida/types'
 import { SBTClientConfig, VeridaSBTClient } from '@verida/vda-sbt-client'
 import { Credentials } from '@verida/verifiable-credentials'
+import { config } from 'config'
 
-import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
 
 const SCHEMA_SBT =
@@ -88,18 +88,18 @@ export class SBTMintManager {
       return
     }
 
-    const didClientConfig = CONFIG.VERIDA_DID_CLIENT_CONFIG
+    const didClientConfig = config.VERIDA_DID_CLIENT_CONFIG
     const account = await AccountManager.getInstance().getSelectedAccount()
     const did = await account!.did()
 
-    const config: SBTClientConfig = {
+    const sbtClientConfig: SBTClientConfig = {
       callType: <Web3CallType>didClientConfig.callType,
       did,
       signKey: account!.privateKey,
-      network: <EnvironmentType>CONFIG.ENVIRONMENT,
+      network: config.VERIDA_ENVIRONMENT,
       web3Options: didClientConfig.web3Config,
     }
 
-    return new VeridaSBTClient(config)
+    return new VeridaSBTClient(sbtClientConfig)
   }
 }

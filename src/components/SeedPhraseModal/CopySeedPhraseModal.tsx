@@ -16,7 +16,6 @@ export default (props: Props) => {
   return (
     <BottomActionsModal
       visible={visible}
-      animated={true}
       animationType={'slide'}
       title={'Seed Phrase'}
       message={phrase}
@@ -42,7 +41,6 @@ const styles = StyleSheet.create({
   },
   closeButton: {
     flex: 1,
-    marginRight: 20,
     marginBottom: 0,
   },
   copyButton: {

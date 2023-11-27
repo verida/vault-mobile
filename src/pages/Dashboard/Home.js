@@ -1,8 +1,16 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
-// import * as SecureStore from 'helpers/VeridaSecureStore'
-import { Container, Content } from 'native-base'
+import { logout as logoutAction } from 'features/auth'
+import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
+import { useDeeplink } from 'features/deepLinks'
+import { selectSelectedAccount } from 'features/identities'
+import {
+  selectNavigationLink,
+  setNavigationLink as setNavigationLinkAction,
+} from 'features/links'
+import { isPolygonIdDeepLink } from 'features/polygonid'
+import { Logger } from 'features/telemetry'
+import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -14,12 +22,12 @@ import {
   View,
 } from 'react-native'
 import { QRCode } from 'react-native-custom-qr-codes-expo'
-import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
-import { fetchInboxCount, getProfile } from 'api/utils'
+import { fetchInboxCount } from 'api/utils'
 import QRCodeIcon from 'assets/icons/qr-code.svg'
+import Container from 'components/Container'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import {
@@ -32,86 +40,101 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import {
-  logout as logoutAction,
-  setNavigationLink as setNavigationLinkAction,
-  setNewMessagesCount as setNewMessagesCountAction,
-} from 'reduxStore/general/actions'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
-const DefaultAvatar = require('assets/stubs/avatar.png')
+const logger = new Logger('Pages/Dashboard/Home')
+
 const LogoImg = require('assets/vault-logo.png')
-
-// const SHOW_BANNER_KEY = 'show_banner'
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
-const Home = (props) => {
-  const {
-    navigation,
-    selectedAccount,
-    publicProfileData,
-    navigationLink,
-    setNavigationLink,
-    logout,
-  } = props
-  const [info, setInfo] = useState({})
-  const [avatarSource, setAvatarSource] = useState(DefaultAvatar)
-  const [loading, setLoading] = useState(true)
+export const HomeTabScreen = (props) => {
+  const { navigation } = props
+  const [loading, setLoading] = useState(false)
   const [showAddAccounts, setShowAddAccounts] = useState(false)
+  const dispatch = useAppDispatch()
+  const selectedAccount = useAppSelector(selectSelectedAccount)
+  const navigationLink = useAppSelector(selectNavigationLink)
+  const setNavigationLink = useCallback(
+    (link) => dispatch(setNavigationLinkAction(link)),
+    [dispatch]
+  )
+  const logout = () => dispatch(logoutAction({ did: selectedAccount?.did }))
+
   const handleDeeplink = useDeeplink(navigation)
   const { switchToAccount, refresh } = useAuth()
-  useRemoteNotifications()
   const linkTo = useLinkTo()
-  const processDeepLink = (initialUrl) => {
-    if (initialUrl === null) {
-      return
-    }
+  const qrAddress = selectedAccount?.did
+    ? PROFILE_URL + selectedAccount?.did
+    : ''
 
-    // ignore for firebase links, let firebase handle them.
-    if (
-      initialUrl.includes('redirect') ||
-      initialUrl.includes('verida.page.link')
-    ) {
-      return
-    }
+  useRemoteNotifications()
 
-    handleDeeplink(initialUrl)
-  }
+  // TODO: Clean up and migrate all the deeplink handlers here to their respective features/protocols
+  const processDeepLink = React.useCallback(
+    (initialUrl) => {
+      if (initialUrl === null) {
+        return
+      }
+
+      // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
+      if (
+        isPolygonIdDeepLink(initialUrl) ||
+        isCryptoRequestDeepLink(initialUrl)
+      ) {
+        return
+      }
+
+      // ignore for firebase links, let firebase handle them.
+      if (
+        initialUrl.includes('redirect') ||
+        initialUrl.includes('verida.page.link')
+      ) {
+        return
+      }
+
+      handleDeeplink(initialUrl)
+    },
+    [handleDeeplink]
+  )
 
   useEffect(() => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
     getUrl()
-  }, [handleDeeplink])
+  }, [processDeepLink])
 
   useEffect(() => {
     const handleBackgroundDeepLink = async (event) => {
       try {
         const initialUrl = event.url
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
-    Linking.addEventListener('url', handleBackgroundDeepLink)
-  }, [handleDeeplink])
+    const subscriber = Linking.addEventListener('url', handleBackgroundDeepLink)
+    return () => {
+      subscriber?.remove()
+    }
+  }, [processDeepLink])
 
   useEffect(() => {
+    // TODO: Find out what's going on here :-/
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {
@@ -123,7 +146,7 @@ const Home = (props) => {
               'https://www.google.com/search?q=' + query.keyword
             )
           } catch (error) {
-            Sentry.captureException(error)
+            logger.error(error)
           }
         }
       })
@@ -138,41 +161,7 @@ const Home = (props) => {
     }
   }, [navigationLink, linkTo, setNavigationLink])
 
-  useEffect(() => {
-    const initProfile = async () => {
-      try {
-        setLoading(true)
-        const _selectedAccount =
-          AccountManager.getInstance().getSelectedAccount()
-        const { name, avatar } = await getProfile(_selectedAccount.did)
-        setAvatarSource(avatar)
-
-        setInfo({
-          address: PROFILE_URL + _selectedAccount.did,
-          name,
-          did: _selectedAccount.did,
-        })
-        // const showBanner = await SecureStore.getItemAsync(SHOW_BANNER_KEY)
-        // if (!showBanner || showBanner !== 'set') {
-        //   Alert.alert(
-        //     'Important Notice',
-        //     'Testnet 1 data has been reset, if you are unable to access your accounts, this is normal. You can now create new accounts in such cases.'
-        //   )
-        //   await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
-        // }
-        setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
-        Alert.alert('Error', 'Cannot get account information')
-        setLoading(false)
-      }
-    }
-
-    if (selectedAccount && publicProfileData) {
-      initProfile()
-    }
-  }, [selectedAccount, publicProfileData])
-
+  // TODO: remove, and refactor the inbox count feature
   useFocusEffect(
     useCallback(() => {
       fetchInboxCount()
@@ -211,18 +200,27 @@ const Home = (props) => {
     }
 
     toggleAddAccountsModal()
-    try {
-      await switchToAccount(did)
-    } catch (e) {
-      Alert.alert(
-        'Error',
-        `Unable to switch to that account, please try again later.`
-      )
+    InteractionManager.runAfterInteractions(async () => {
+      //  // Not a good practice, though this helps to prevent a crash related to iOS animation
+      await new Promise((resolve) => {
+        setTimeout(() => {
+          resolve()
+        }, 500)
+      })
 
-      // Switch back to the current account
-      await switchToAccount(currentDid)
-      await refresh()
-    }
+      try {
+        await switchToAccount(did)
+      } catch (error) {
+        Alert.alert(
+          'Error',
+          `Unable to switch to that account, please try again later.`
+        )
+
+        // Switch back to the current account
+        await switchToAccount(currentDid)
+        await refresh()
+      }
+    })
   }
 
   async function onLogoutAccounts(dids) {
@@ -244,8 +242,6 @@ const Home = (props) => {
   return (
     <Container>
       <HomeNavigationHeader
-        name={info.name || ''}
-        avatar={avatarSource}
         inboxCount={props.newMessagesCount}
         onNamePress={toggleAddAccountsModal}
         onAvatarPress={() => props.navigation.navigate('Profile')}
@@ -263,15 +259,17 @@ const Home = (props) => {
         ) : (
           <>
             <View style={style.qr}>
-              <QRCode
-                logo={LogoImg}
-                logoSize={60}
-                size={207}
-                codeStyle='dot'
-                innerEyeStyle='circle'
-                padding={0.5}
-                content={info.address}
-              />
+              {Boolean(qrAddress) && (
+                <QRCode
+                  logo={LogoImg}
+                  logoSize={60}
+                  size={207}
+                  codeStyle='dot'
+                  innerEyeStyle='circle'
+                  padding={0.5}
+                  content={qrAddress}
+                />
+              )}
             </View>
             <Text style={style.notes}>
               This is your QR-Code. Present it to others so they can scan it and
@@ -286,7 +284,7 @@ const Home = (props) => {
           </>
         )}
       </Content>
-      <DidView did={info.did || ''} />
+      {Boolean(selectedAccount?.did) && <DidView did={selectedAccount.did} />}
       <AddAccountsModal
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
@@ -302,26 +300,6 @@ const Home = (props) => {
     </Container>
   )
 }
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    setNewMessagesCount: (data) => dispatch(setNewMessagesCountAction(data)),
-    setNavigationLink: (link) => dispatch(setNavigationLinkAction(link)),
-    logout: () => dispatch(logoutAction()),
-  }
-}
-
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
-  return {
-    publicProfileData: state.publicProfileData,
-    newMessagesCount: state.newMessagesCount,
-    selectedAccount: state.selectedAccount,
-    navigationLink: state.navigationLink,
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const marginTop = 0
 const style = StyleSheet.create({
@@ -361,6 +339,8 @@ const style = StyleSheet.create({
     height: 240,
     borderRadius: 12,
     padding: 17,
+    alignItems: 'center',
+    justifyContent: 'center',
     backgroundColor: WHITE_COLOR,
 
     shadowColor: BLACK_ORIGIN_COLOR,

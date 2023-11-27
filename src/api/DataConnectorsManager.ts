@@ -1,12 +1,15 @@
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
+import { config } from 'config'
 import EventEmitter from 'events'
+import { Logger } from 'features/telemetry'
 import moment from 'moment'
 import { Linking } from 'react-native'
 
-import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
 import { SBTManager } from './SBTManager'
+
+const logger = new Logger('DataConnectorsManager')
 
 const DATA_CONNECTION_SCHEMA =
   'https://vault.schemas.verida.io/data-connections/connection/v0.1.0/schema.json'
@@ -50,6 +53,10 @@ export default class DataConnectorsManager {
 
   static async on(eventName: string, fn: any) {
     DataConnectorsEvents.getInstance().on(eventName, fn)
+  }
+
+  static async off(eventName: string, fn: any) {
+    DataConnectorsEvents.getInstance().off(eventName, fn)
   }
 
   static async authComplete(connectorName: string, requestParams: any) {
@@ -211,15 +218,15 @@ class DataConnection extends EventEmitter {
       const result = await this._datastore.save(this._record)
       this._rev = this._record._rev = result.rev
       if (!result) {
-        // console.error(this._datastore.errors)
+        // TODO: Handle this._datastore.errors
         return result
       }
 
       DataConnectorsManager.emit('connectionUpdated', this)
 
       return result
-    } catch (err) {
-      // console.error('Save connection error: ', err.message)
+    } catch (error) {
+      logger.error(new Error('Save connection error', { cause: error }))
     }
   }
 
@@ -229,13 +236,14 @@ class DataConnection extends EventEmitter {
     const account = context?.getAccount()
     const did = await account?.did()
 
-    // console.log(`Initiating auth for ${this.source}`, did)
+    // logger.debug(`Initiating auth for ${this.source}`, { did })
     Linking.openURL(
-      `${CONFIG.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
+      `${config.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
     )
   }
 
   public async setAuth(auth: any) {
+    logger.debug('setAuth', { auth })
     await this.init()
     this.accessToken = auth.accessToken
     if (auth.refreshToken) {
@@ -259,14 +267,16 @@ class DataConnection extends EventEmitter {
 
       this.profile = this._record.profile
 
-      const obj: any = this
       const record = this._record
-      Object.keys(this._record).forEach((key: string) => {
-        if (key === 'profile') {
-          return
-        }
 
-        obj[key] = record[key]
+      Object.keys(this._record).forEach((key) => {
+        if (key === 'profile') return
+
+        // TODO: Strictly type the _record field to be
+        //       Omit<keyof DataConnection, 'profile'>.
+        // @ts-expect-error This is a dangerous assignment as we do not have
+        //                  strict guidelines as to what the keyof record is.
+        this[key] = record[key]
       })
     } catch (err: any) {
       if (err.name === 'not_found') {
@@ -304,7 +314,7 @@ class DataConnection extends EventEmitter {
       return
     }
 
-    // console.log(`Syncing ${this.name}!`)
+    // logger.debug(`Syncing ${this.name}!`)
 
     const accessToken = this.accessToken
     const refreshToken = this.refreshToken
@@ -323,7 +333,7 @@ class DataConnection extends EventEmitter {
 
       // @todo: handle errors
       const syncRequestResult = await axiosInstance.get(
-        `${CONFIG.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
+        `${config.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
       )
       const { serverDid, contextName, syncRequestId, syncRequestDatabaseName } =
         syncRequestResult.data
@@ -334,10 +344,12 @@ class DataConnection extends EventEmitter {
         syncRequestId,
         syncRequestDatabaseName
       )
-    } catch (err: any) {
-      //console.log(err)
-      this.setSyncError(err.message)
-      // console.error(err)
+    } catch (error) {
+      logger.debug('1')
+      logger.error(error)
+      if (error instanceof Error) {
+        this.setSyncError(error.message)
+      }
     }
   }
 
@@ -346,7 +358,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequestId: string,
     syncRequestDatabaseName: string,
-    retryCount = CONFIG.DATA_CONNECTOR_RETRY_LIMIT
+    retryCount: number = config.DATA_CONNECTOR_RETRY_LIMIT
   ) {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
@@ -376,7 +388,7 @@ class DataConnection extends EventEmitter {
         }
       )
 
-      const syncRequest = await externalDatastore.get(syncRequestId)
+      const syncRequest = await externalDatastore.get(syncRequestId, undefined)
 
       if (syncRequest.status === 'complete') {
         // Sync has completed on the server
@@ -402,12 +414,12 @@ class DataConnection extends EventEmitter {
 
         if (syncRequest.status === 'error') {
           // Error syncing from API
-          this.setSyncError(`${syncRequest.syncInfo.error}`)
+          this.setSyncError(`API error: ${syncRequest.syncInfo.error}`)
           return
         }
 
         // Delay for five seconds, then try again
-        await delay(CONFIG.DATA_CONNECTOR_RETRY_INTERVAL)
+        await delay(config.DATA_CONNECTOR_RETRY_INTERVAL)
         retryCount--
 
         this.checkSync(
@@ -418,10 +430,13 @@ class DataConnection extends EventEmitter {
           retryCount
         )
       }
-    } catch (err: any) {
+    } catch (error) {
+      logger.debug('2')
+      logger.error(error)
       // @todo: Set error on this connection
-      this.setSyncError(err.message)
-      // console.error(err)
+      if (error instanceof Error) {
+        this.setSyncError(error.message)
+      }
     }
   }
 
@@ -471,7 +486,7 @@ class DataConnection extends EventEmitter {
         // In order to sync we need to locate the underlying PouchDb instances
         // for the Vault's datastore and the connector's datastore
         const externalDb = await externalDatastore?.getDb()
-        const externalCouch = await externalDb.getDb()
+        const externalCouch = await externalDb?.getDb()
 
         const vaultDatastore = await context!.openDatastore(schemaUri)
         const vaultDb = await vaultDatastore.getDb()
@@ -479,7 +494,7 @@ class DataConnection extends EventEmitter {
 
         // Replicate (pull) data from the connector's datastore to this user's Vault datastore
         try {
-          // console.log(`Starting replication ${schemaUri}`)
+          // logger.debug(`Starting replication ${schemaUri}`)
           await externalCouch.replicate.to(vaultCouch, {
             // Don't replicate design documents (such as permissions)
             filter: (doc: any) => {
@@ -488,8 +503,12 @@ class DataConnection extends EventEmitter {
             // This ensures that if there is a conflict between the documents, the "latest" wins
             style: 'main_only',
           })
-        } catch (err: any) {
-          this.setSyncError(err.message)
+        } catch (error) {
+          logger.debug('3')
+          logger.error(error)
+          if (error instanceof Error) {
+            this.setSyncError(error.message)
+          }
           return
         }
       }
@@ -497,7 +516,7 @@ class DataConnection extends EventEmitter {
       // cleanup by calling sync done to the server so the temporary data can be deleted
       const axiosInstance = axios.create()
       await axiosInstance.get(
-        `${CONFIG.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
+        `${config.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
       )
 
       this.syncLast = new Date().toISOString()
@@ -506,21 +525,23 @@ class DataConnection extends EventEmitter {
       this.syncNext = moment().add(1, this.syncFrequency).toISOString()
 
       if (newAuth) {
+        logger.debug('New auth', { newAuth })
         this.accessToken = newAuth.accessToken
         this.refreshToken = newAuth.refreshToken
       }
 
       await this.save()
-      // console.log(`Sync done and sync status updated`)
-    } catch (err) {
+      // logger.debug(`Sync done and sync status updated`)
+    } catch (error) {
+      logger.debug('4')
+      logger.error(error)
       // @todo: How to handle?
-      // console.error(err)
     }
   }
 
   // @todo: Disconnect a connector so it stops syncing
   public async disconnect() {
-    // console.log(`Disconnect ${this.name}`)
+    // logger.debug(`Disconnect ${this.name}`)
     const syncStatus = this.syncStatus
     this.syncStatus = 'disabled'
     const success = await this.save()

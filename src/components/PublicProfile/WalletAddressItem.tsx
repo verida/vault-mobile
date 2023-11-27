@@ -1,24 +1,25 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { PublicWalletAddress } from 'types/profile'
 
+import { VeridaOneWalletAddress } from 'api/types'
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
 import Button from 'components/Button'
+import Text from 'components/Text'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { smallButtonHitSlop } from 'styles/button'
 import { Theme } from 'styles/types'
 
 type Props = {
-  walletAddress: PublicWalletAddress
+  walletAddress: VeridaOneWalletAddress
   drag: () => void
   isActive: boolean
   onEditName?: () => void
   setPublicAddress: (
-    publicAdress: PublicWalletAddress,
+    publicAdress: VeridaOneWalletAddress,
     visible: boolean
   ) => void
 }
@@ -75,7 +76,7 @@ export const WalletAddressItem = ({
               style={{ width: 48, height: 48 }}
               resizeMode='contain'
             />
-            <View style={{ marginLeft: theme.spacing.s }}>
+            <View style={{ marginHorizontal: theme.spacing.s }}>
               <SubHeadline
                 ellipsizeMode='tail'
                 numberOfLines={2}
@@ -101,7 +102,10 @@ export const WalletAddressItem = ({
                   }}>
                   {walletAddress.address}
                 </Text>
-                <Text style={styles.veridaWalletName}>
+                <Text
+                  ellipsizeMode='tail'
+                  numberOfLines={1}
+                  style={[styles.veridaWalletName, { maxWidth: 115 }]}>
                   {walletAddress.veridaWalletName}
                 </Text>
               </View>
@@ -120,7 +124,11 @@ export const WalletAddressItem = ({
             }}
             onPress={onEditName}>
             {/* Add a wrapped view so on click behavior fixed */}
-            <View>
+            <View
+              style={{
+                marginLeft: theme.spacing.s,
+                marginBottom: theme.spacing.xs,
+              }}>
               <EditIcon fill={theme.color.iconDefault} />
             </View>
           </Button>
@@ -172,6 +180,6 @@ const createStyles = (theme: Theme) =>
       marginBottom: theme.spacing.s,
     },
     veridaWalletName: {
-      color: theme.color.textLightGrey,
+      color: theme?.color.textLightGrey,
     },
   })

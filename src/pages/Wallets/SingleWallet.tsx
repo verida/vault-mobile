@@ -1,45 +1,33 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import Clipboard from '@react-native-community/clipboard'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Container, Icon } from 'native-base'
+import { getWalletObjectById, renameWallet } from 'features/cryptoWallet'
+import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import {
-  ActivityIndicator,
-  BackHandler,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-} from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
+import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import { BlockchainAccount } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
+import Container from 'components/Container'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import Text from 'components/Text'
-import { AccountsType, WalletType } from 'components/WalletList/types'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { MainStackParams } from 'navigation/types'
-import { selectChains } from 'reduxStore/tokens/selectors'
-import { renameWallet } from 'reduxStore/wallet/actions'
-import { getWalletObjectById } from 'reduxStore/wallet/selectors'
+import { MainStackScreenProps } from 'navigation/types'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 
-type Props = {
-  wallets: WalletType
-  navigation: NativeStackNavigationProp<MainStackParams>
-  onRenameWallet: (selectedWalletID: string) => void
-  chains: any
-}
+type SingleWalletScreenProps = MainStackScreenProps<'SingleWallet'>
 
-const SingleWallet = (props: Props) => {
-  const { navigation, wallets, onRenameWallet, chains } = props
+const SingleWallet = (props: SingleWalletScreenProps) => {
+  const { navigation, route } = props
+  const { item } = route.params
+  const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
   const [copySeedPhraseModalVisible, toggleCopySeedPhraseModal] =
@@ -51,7 +39,15 @@ const SingleWallet = (props: Props) => {
   const [privateKeyData, setPrivateKeyData] = useState('')
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
+  const wallets = useAppSelector((state) =>
+    getWalletObjectById(state, item._id)
+  )
 
+  const onRenameWallet = async (walletId: string, data: { name: string }) => {
+    setLoading(true)
+    await dispatch(renameWallet({ walletId, data }))
+    setLoading(false)
+  }
   useEffect(() => {
     const initUserPin = async () => {
       const status = await hasUserSetPinCode()
@@ -72,37 +68,13 @@ const SingleWallet = (props: Props) => {
     toggleCopyPrivateKeyModal(true)
   }
 
-  const singleWallet: any =
-    wallets.type === 'single' ? Object.values(wallets.accounts)[0] : null
+  // @todo
+  const singleWallet: BlockchainAccount | undefined =
+    undefined as unknown as BlockchainAccount
+
   const isChainTypeEvm = singleWallet
-    ? Object.keys(wallets.accounts)[0] === 'eip155'
+    ? Object.keys(wallets.accounts)[0] === 'evm'
     : null
-
-  const addressList = Object.values(chains)
-    .filter((chain: any) =>
-      wallets.type === 'single' ? wallets.chain === chain.chainName : true
-    )
-    .map((chain: any) => {
-      const wallet: AccountsType = wallets.accounts[chain.addressMapping]
-
-      return {
-        name: chain?.name,
-        address: wallet.address,
-        icon: chain?.icon,
-        seedPhrase: wallet.mnemonic,
-        privateKey: wallet.privateKey,
-        addressMapping: chain.addressMapping,
-      }
-    })
-
-  if (loading) {
-    return (
-      <View style={styles.container}>
-        <Text>Loading </Text>
-        <ActivityIndicator size='large' />
-      </View>
-    )
-  }
 
   if (pinCodeStatus && !isPinCorrect) {
     return (
@@ -122,7 +94,7 @@ const SingleWallet = (props: Props) => {
   }
 
   return (
-    <Container>
+    <Container withLoadingView showLoading={loading}>
       <NavigationHeader
         title={wallets.label}
         left={{
@@ -142,7 +114,7 @@ const SingleWallet = (props: Props) => {
           <>
             {singleWallet.address && (
               <TouchableOpacity
-                onPress={() => Clipboard.setString(singleWallet.address)}
+                onPress={() => Clipboard.setString(singleWallet.address!)}
                 style={styles.actionButton}>
                 <CopyIcon />
                 <Text style={styles.actionButtonText}>Copy address</Text>
@@ -176,7 +148,7 @@ const SingleWallet = (props: Props) => {
       </View>
       <Text style={styles.listLabel}>Addresses</Text>
       <ChainsAddressesList
-        list={addressList}
+        list={Object.values(wallets.accounts)}
         singleWallet={singleWallet}
         onPressSeedPhrase={(seedPhrase: string) => {
           showSeedPhrase(seedPhrase)
@@ -189,13 +161,13 @@ const SingleWallet = (props: Props) => {
         hideModal={() => setRenameModalVisible(false)}
         visible={renameModalVisible}
         onPressRename={onRenameWallet as any}
-        data={{ id: wallets.id, label: wallets.label }}
+        data={{ id: wallets._id, label: wallets.label }}
       />
       <SeedPhraseWarningModal
         hideModal={() => setSeedPhraseModalVisible(false)}
         visible={seedPhraseModalVisible}
         type='seed_phrase'
-        onPressButton={() => showSeedPhrase(wallets.seedPhrase)}
+        onPressButton={() => showSeedPhrase(wallets.mnemonic)}
       />
       <CopySeedPhraseModal
         visible={copySeedPhraseModalVisible}
@@ -258,20 +230,4 @@ const styles = StyleSheet.create({
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
 
-const mapStateToProps = (rootState: any, props: any) => {
-  const state = rootState.main
-
-  return {
-    wallets: getWalletObjectById(state, props.route.params.item.id),
-    chains: selectChains(rootState),
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onRenameWallet: (walletId: string, args: any) =>
-      dispatch(renameWallet(walletId, args) as any),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(SingleWallet as any)
+export default SingleWallet

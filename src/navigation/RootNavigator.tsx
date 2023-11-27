@@ -1,40 +1,25 @@
 import { createNavigationContainerRef } from '@react-navigation/native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 
-import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import { useAuth } from 'hooks/useAuth'
 import AuthNavigator from 'navigation/AuthNavigator'
-import MainNavigator from 'navigation/MainNavigator'
+import { MainNavigator } from 'navigation/MainNavigator'
 import { RootStackParams } from 'navigation/types'
 
 const Stack = createNativeStackNavigator<RootStackParams>()
-
 export const navigationRef = createNavigationContainerRef<RootStackParams>()
 
-export function navigate(name: unknown, params: unknown) {
+// TODO: type
+export function navigate(name: any, params: any) {
   if (navigationRef.isReady()) {
-    navigationRef.navigate(name as never, params as never)
+    navigationRef.navigate(name, params)
   }
 }
 
-function RootNavigator() {
-  const { refresh, authenticated, loaded } = useAuth()
-  const mounted = useRef(false)
-
-  useEffect(() => {
-    if (mounted.current) {
-      return
-    }
-    mounted.current = true
-    async function init() {
-      await AccountManager.getInstance().init()
-      await refresh()
-    }
-    init()
-  }, [refresh])
-
+export const RootNavigator: React.FunctionComponent = () => {
+  const { authenticated, loaded } = useAuth()
   if (!loaded) {
     return <LoadingView />
   }
@@ -49,5 +34,3 @@ function RootNavigator() {
     </Stack.Navigator>
   )
 }
-
-export default RootNavigator

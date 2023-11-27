@@ -59,14 +59,18 @@ export const defaultTheme = {
     primary100: PRIMARY_COLOR_100,
 
     transparent: 'transparent',
+    black: BLACK_COLOR_OPACITY(1),
     black800: BLACK_COLOR_OPACITY(0.8),
+    black700: BLACK_COLOR_OPACITY(0.7),
     black600: BLACK_COLOR_OPACITY(0.6),
+    black500: BLACK_COLOR_OPACITY(0.5),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,
     textGrey100: TEXT_GREY_100,
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
+    textLightGrey30: Color(TEXT_COLOR).alpha(0.3).toString(),
     textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
     grey120: GREY_120,
 
@@ -115,6 +119,7 @@ export const defaultTheme = {
     l: 12,
     xl: 20,
     xxl: 24,
+    full: 999999,
   },
   iconSize: {
     s: 16,

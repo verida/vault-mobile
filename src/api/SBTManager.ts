@@ -7,18 +7,15 @@ import {
 } from '@verida/helpers'
 import {
   DatabasePermissionOptionsEnum,
-  EnvironmentType,
   IContext,
-  IDatastore,
   Web3CallType,
 } from '@verida/types'
 import { VeridaSBTClient } from '@verida/vda-sbt-client'
 import { Credentials } from '@verida/verifiable-credentials'
+import { config } from 'config'
 import _ from 'lodash'
 
-import CONFIG from '../config/environment'
 import AccountManager from './AccountManager'
-import { Account } from './types'
 
 const SCHEMA_SBT =
   'https://common.schemas.verida.io/token/sbt/storage/v0.1.0/schema.json'
@@ -221,7 +218,8 @@ export class SBTManager {
     )*/
 
     // Generate URL to mint that generates the metadata
-    const sbtUri = wrapUri(credentialUri, 'https://data.verida.network') + '.json'
+    const sbtUri =
+      wrapUri(credentialUri, 'https://data.verida.network') + '.json'
     console.log('sbtUri', sbtUri)
 
     const credentials = new Credentials()
@@ -328,16 +326,14 @@ export class SBTManager {
       return this.client
     }
 
-    const didClientConfig = CONFIG.VERIDA_DID_CLIENT_CONFIG
-    const account = <Account>(
-      await AccountManager.getInstance().getSelectedAccount()
-    )
+    const didClientConfig = config.VERIDA_DID_CLIENT_CONFIG
+    const account = await AccountManager.getInstance().getSelectedAccount()
 
     const sbtClient = new VeridaSBTClient({
       callType: <Web3CallType>didClientConfig.callType,
       did: account.did,
       signKey: account.privateKey,
-      network: <EnvironmentType>CONFIG.ENVIRONMENT,
+      network: config.VERIDA_ENVIRONMENT,
       web3Options: didClientConfig.web3Config,
     })
 

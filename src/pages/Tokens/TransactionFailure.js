@@ -1,12 +1,13 @@
+import { selectSentTransaction } from 'features/cryptoWallet'
 import React from 'react'
+import { connect } from 'react-redux'
 
 import SuccessFailure from 'components/SuccessFailure'
 
-export default ({ navigation }) => {
+const FailureTransaction = ({ navigation, sentTransaction }) => {
   const titleText = 'Ooops..'
-  const descriptionText =
-    'Something went wrong, your transaction failed, please try again.'
-  const buttonLabel = 'Try Again'
+  const descriptionText = `Transaction failed: ${sentTransaction.error}`
+  const buttonLabel = 'Back'
 
   return (
     <SuccessFailure
@@ -14,7 +15,15 @@ export default ({ navigation }) => {
       titleText={titleText}
       descriptionText={descriptionText}
       buttonLabel={buttonLabel}
-      actionButtonOnPress={() => navigation.navigate('Tokens')}
+      actionButtonOnPress={() => navigation.goBack()}
     />
   )
 }
+
+const mapStateToProps = (state) => {
+  return {
+    sentTransaction: selectSentTransaction(state),
+  }
+}
+
+export default connect(mapStateToProps)(FailureTransaction)

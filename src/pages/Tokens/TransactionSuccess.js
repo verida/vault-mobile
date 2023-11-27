@@ -1,17 +1,25 @@
+import {
+  formatTokenQuantity,
+  selectSentTransaction,
+} from 'features/cryptoWallet'
 import React from 'react'
 import { connect } from 'react-redux'
-import { formatTokenQuantity } from 'wallet/helpers/tokens'
 
 import SuccessFailure from 'components/SuccessFailure'
-import { selectSentTransaction } from 'reduxStore/wallet/selectors'
 
 const TransactionSuccess = ({ navigation, sentTransaction }) => {
   const { data } = sentTransaction
   const { amount, token, to } = data
   const titleText = 'Success!'
-  const descriptionText = `${formatTokenQuantity(amount, token.decimal)} ${
-    token.symbol
-  } sent to ${to}`
+
+  const blockchainNetwork = data.chain
+
+  const transferQuantity = formatTokenQuantity(
+    amount,
+    blockchainNetwork.decimal
+  )
+
+  const descriptionText = `${transferQuantity} ${token.symbol} sent to ${to}`
   const buttonLabel = 'Done'
 
   return (
@@ -27,8 +35,7 @@ const TransactionSuccess = ({ navigation, sentTransaction }) => {
   )
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
     sentTransaction: selectSentTransaction(state),
   }

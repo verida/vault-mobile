@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
+import { Logger } from 'features/telemetry'
+import { COUNTRIES } from 'helpers/countries'
 import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
@@ -24,8 +25,9 @@ import Label from '../../components/Label'
 import DropDownPicker from '../../components/Select'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS } from '../../constants/text'
-import { COUNTRIES } from '../../helpers/country-list'
 import InputStyles from '../../styles/inputs'
+
+const logger = new Logger('Pages/Profiles/EditGenericProperty')
 
 const MAX_TEXTAREA_LENGTH = 255
 const MAX_INPUT_LENGTH = 140
@@ -35,7 +37,7 @@ export interface GenericEditPropertyScreenProps {
   title: string
   option: {
     label: string
-    value: string | Record<string, any>
+    value: string | Record<string, any> | undefined
     type: 'input' | 'select' | 'textarea'
     placeholder: string
     description?: string
@@ -114,7 +116,7 @@ const EditGenericProperty = () => {
 
       navigation.goBack()
     } catch (error) {
-      Sentry.captureException(error)
+      logger.error(error)
     }
   }
 

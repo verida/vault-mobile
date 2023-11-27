@@ -1,3 +1,4 @@
+import { priceFormatter } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -12,6 +13,7 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 export default ({
   data,
   sendButtonAction,
+  selectedWallet,
   // buyButtonAction,
   receiveButtonAction,
   copyButtonAction,
@@ -26,14 +28,16 @@ export default ({
         <View style={styles.coinInfo}>
           <Text style={styles.coinText}>{tokenType ? tokenType : 'Coin'}</Text>
           <View style={styles.coinPriceInfo}>
-            <Text style={styles.coinPrice}>${price.toFixed(2)}</Text>
-            <Text
-              style={[
-                styles.coinPriceChange,
-                positive ? styles.positive : styles.negative,
-              ]}>
-              {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
-            </Text>
+            <Text style={styles.coinPrice}>{priceFormatter(price)}</Text>
+            {change ? (
+              <Text
+                style={[
+                  styles.coinPriceChange,
+                  positive ? styles.positive : styles.negative,
+                ]}>
+                {positive ? `+ ${change.toFixed(2)}%` : `${change.toFixed(2)}%`}
+              </Text>
+            ) : undefined}
           </View>
         </View>
       )}
@@ -44,20 +48,22 @@ export default ({
           </View>
         )}
         <Text style={styles.amount}>
-          {label ? `${quantity} ${symbol}` : `$${amount.toFixed(2)}`}
+          {label ? `${quantity} ${symbol}` : `${priceFormatter(amount)}`}
         </Text>
         <Text style={styles.amountLabel}>
-          {label ? `≈ $${amount.toFixed(2)}` : `Total Balance`}
+          {label ? `≈ ${priceFormatter(amount)}` : `Total Balance`}
         </Text>
       </View>
       {symbol && (
         <View style={styles.actionIcons}>
-          <TouchableOpacity
-            onPress={sendButtonAction}
-            style={styles.singleActionIcon}>
-            <SendIcon />
-            <Text style={styles.actionIconText}>Send</Text>
-          </TouchableOpacity>
+          {!selectedWallet.viewOnly ? (
+            <TouchableOpacity
+              onPress={sendButtonAction}
+              style={styles.singleActionIcon}>
+              <SendIcon />
+              <Text style={styles.actionIconText}>Send</Text>
+            </TouchableOpacity>
+          ) : undefined}
           <TouchableOpacity
             onPress={receiveButtonAction}
             style={styles.singleActionIcon}>

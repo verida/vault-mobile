@@ -1,10 +1,14 @@
-import { Inbox, InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
+import { Logger } from 'features/telemetry'
+
+import { InboxEntry, InboxType } from '../interfaces/inbox/Inbox'
 import VaultCommon from '../vault'
 import { DataAction } from './inbox/DataAction'
 import { DatastoreSync } from './inbox/DatastoreSync'
 import { Message } from './inbox/Message'
 import { Request } from './inbox/Request'
 import { Send } from './inbox/Send'
+
+const logger = new Logger('InboxManager')
 
 const DataHandler = {
   [InboxType.DATA_SEND]: Send,
@@ -48,7 +52,12 @@ export class InboxManager {
 
     const Middleware = DataHandler[inboxEntry.type]
     if (!Middleware) {
-      console.error('Unknown inbox type!: ' + inboxEntry.type)
+      const error = new Error('Unknown inbox type!: ' + inboxEntry.type)
+      logger.error(error)
+      return {
+        success: false,
+        errors: [error],
+      }
     }
 
     const MiddlewareInstance = new Middleware(
@@ -84,7 +93,7 @@ export class InboxManager {
         senderApp
       )
       senderProfile = await sender.getMany({ key: 'name' })
-    } catch (err) {
+    } catch (error) {
       // user may not have a profile
     }
 
@@ -95,7 +104,12 @@ export class InboxManager {
 
     const Middleware = DataHandler[inboxEntry.type]
     if (!Middleware) {
-      console.error('Unknown inbox type!: ' + inboxEntry.type)
+      const error = new Error('Unknown inbox type: ' + inboxEntry.type)
+      logger.error(error)
+      return {
+        success: false,
+        errors: [error],
+      }
     }
 
     const MiddlewareInstance = new Middleware(

@@ -1,24 +1,25 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import { OneProfileCustomLink } from 'types/profile'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
+import { VeridaOneCustomLink } from 'api/types'
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
 import StarOutlineIcon from 'assets/star_outline.svg'
 import StarSolidIcon from 'assets/star_solid.svg'
 import Button from 'components/Button'
+import Text from 'components/Text'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { smallButtonHitSlop } from 'styles/button'
 import { Theme } from 'styles/types'
 
 type Props = {
-  customLink: OneProfileCustomLink
+  customLink: VeridaOneCustomLink
   drag: () => void
   isActive: boolean
   onEdit: () => void
-  setFeatured: (customLink: OneProfileCustomLink, featured: boolean) => void
+  setFeatured: (customLink: VeridaOneCustomLink, featured: boolean) => void
 }
 
 export const CustomLinkItem = ({

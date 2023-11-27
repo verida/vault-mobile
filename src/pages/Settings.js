@@ -1,9 +1,8 @@
+import { config } from 'config'
 import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import { ScrollView, StyleSheet, View } from 'react-native'
-import Config from 'react-native-config'
-import { getBuildNumber, getVersion } from 'react-native-device-info'
 import { useSelector } from 'react-redux'
 
 import LoadingView from 'components/LoadingView'
@@ -12,6 +11,7 @@ import Text from 'components/Text'
 import { useAuth } from 'hooks/useAuth'
 
 import PropertyList from '../components/PropertyList'
+import { APP_NAME, APP_VERSION_FORMATTED } from '../constants'
 import {
   BLACK_COLOR,
   BLACK_COLOR_OPACITY,
@@ -65,10 +65,19 @@ const generalList = [
 
 const WalletConnectList = [
   {
-    label: 'Dapps',
+    label: 'DApps',
     action: 'arrow',
     optional: true,
-    onPress: (navigation) => navigation.navigate('WalletConnect'),
+    onPress: (navigation) => navigation.navigate('WalletConnectActiveSessions'),
+  },
+]
+
+const PolygonIdList = [
+  {
+    label: 'Circuits',
+    action: 'arrow',
+    optional: true,
+    onPress: (navigation) => navigation.navigate('PolygonIdCircuitsSettings'),
   },
 ]
 
@@ -77,11 +86,11 @@ export default (props) => {
   const [loading, setLoading] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
 
-  const networks = useSelector((state) => state.main.networks)
+  const networks = useSelector((state) => state.settings.networks)
   const modifiedGeneralList = [...generalList]
-  const versionText = `Verida Vault ${capitalize(
-    Config.BITRISE_TRIGGERED_WORKFLOW_TITLE || Config.DEPLOY_ENVIRONMENT
-  )} v${getVersion()}(${getBuildNumber()})`
+  const versionText = `${APP_NAME} ${capitalize(
+    config.BITRISE_TRIGGERED_WORKFLOW_TITLE || config.DEPLOY_ENVIRONMENT
+  )} ${APP_VERSION_FORMATTED}`
 
   if (!isEmpty(networks)) {
     const selectedNode = networks[0].nodes[networks[0].selected_node]
@@ -106,7 +115,7 @@ export default (props) => {
       label: 'Log Out',
       text: style.logoutText,
       optional: true,
-      onPress: (navigation) => logout(navigation),
+      onPress: () => logout(),
     },
     {
       label: 'Delete Account',
@@ -141,9 +150,13 @@ export default (props) => {
           <View>
             <PropertyList list={modifiedGeneralList} />
           </View>
-          <Text style={style.title}>Wallet Connect</Text>
+          <Text style={style.title}>WalletConnect</Text>
           <View>
             <PropertyList list={WalletConnectList} />
+          </View>
+          <Text style={style.title}>Polygon ID</Text>
+          <View>
+            <PropertyList list={PolygonIdList} />
           </View>
 
           <Text style={style.versionText}>{versionText}</Text>

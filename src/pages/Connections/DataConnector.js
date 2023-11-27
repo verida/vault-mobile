@@ -22,7 +22,7 @@ function buildConnections(allConnectors) {
   return finalConnectors
 }
 
-export default (props) => {
+export const ConnectionsTabScreen = (props) => {
   const [connectors, setConnectors] = useState([])
 
   useEffect(() => {
@@ -98,7 +98,7 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
   },
-  itemIcon: { width: 48, height: 48, marginRight: 10 },
+  itemIcon: { width: 48, height: 48, borderRadius: 24, marginRight: 10 },
   itemText: {
     fontSize: 18,
   },

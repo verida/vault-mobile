@@ -1,11 +1,14 @@
-import * as Sentry from '@sentry/react-native'
 import axios from 'axios'
+import { config } from 'config'
+import { setNewMessagesCount } from 'features/inbox'
+import { Logger } from 'features/telemetry'
+import { isValidVeridaDid } from 'features/verida'
+import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
-import { setNewMessagesCount } from 'reduxStore/general/actions'
 
-import CONFIG from '../config/environment'
+const logger = new Logger('Utils')
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
@@ -45,53 +48,33 @@ export const loadAvatarSource = async () => {
 
     return DefaultAvatar
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
   }
 }
 
-export const fetchPublicProfileData = async () => {
-  try {
-    const accounts = { ...AccountManager.getInstance().accounts }
-    await Promise.all(
-      Object.values(accounts).map(async (account) => {
-        const externalProfile =
-          await AccountManager.getInstance().context?.openProfile(
-            'basicProfile',
-            account.did
-          )
+/**
+ * This function can be triggered in many situations(app state changes, the home screen got focus, got inbox notifications)
+ * So we add debounce to help reduce duplicated calls
+ * TODO: should handle fetch inbox count in a single place
+ */
+export const fetchInboxCount = throttle(
+  async () => {
+    try {
+      const messages =
+        await AccountManager.getInstance().vault?.inbox.fetchLatest(
+          { read: false },
+          { limit: MAX_MESSAGE_COUNT }
+        )
+      store.dispatch(setNewMessagesCount(messages?.length ?? 0))
+    } catch (error) {
+      logger.error(error)
+    }
+  },
+  3000,
+  { leading: true, trailing: false }
+)
 
-        const avatar = await externalProfile?.get('avatar')
-        const name = await externalProfile?.get('name')
-        const country = await externalProfile?.get('country')
-
-        accounts[account.did].publicProfile = {
-          avatar: avatar,
-          name,
-          country,
-        }
-      })
-    )
-
-    return accounts
-  } catch (e) {
-    Sentry.captureException(e)
-    return AccountManager.getInstance().accounts
-  }
-}
-
-export async function fetchInboxCount() {
-  try {
-    const messages =
-      await AccountManager.getInstance().vault?.inbox.fetchLatest(
-        { read: false },
-        { limit: MAX_MESSAGE_COUNT }
-      )
-    store.dispatch(setNewMessagesCount(messages?.length ?? 0))
-  } catch (error) {
-    Sentry.captureException(error)
-  }
-}
-
+// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 export async function getProfile(did: string) {
   try {
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -109,7 +92,7 @@ export async function getProfile(did: string) {
       avatar: avatar || DefaultAvatar,
     }
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
 
     return {
       name: 'Unknown',
@@ -118,11 +101,23 @@ export async function getProfile(did: string) {
   }
 }
 
+// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 export async function getPublicProfile(
   did: string,
-  contextName = CONFIG.VERIDA_CONTEXT_NAME
+  contextName: string = config.VERIDA_CONTEXT_NAME
 ) {
   try {
+    if (!isValidVeridaDid(did)) {
+      // No need to try get the public profile of a non-Verida DID.
+
+      // TODO: Report the DID to the telemetry so that we can plan on supporting the DID method but for the moment our telemetry quota is limited
+
+      return {
+        name: 'Unknown',
+        avatar: DefaultAvatar,
+      }
+    }
+
     const publicProfile = await AccountManager.getInstance()
       .getClient()
       ?.openPublicProfile(did, contextName, 'basicProfile')
@@ -134,7 +129,7 @@ export async function getPublicProfile(
       avatar: avatar || DefaultAvatar,
     }
   } catch (error) {
-    Sentry.captureException(error)
+    logger.error(error)
 
     return {
       name: 'Unknown',
@@ -143,6 +138,7 @@ export async function getPublicProfile(
   }
 }
 
+// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 // @todo: Add to vault common
 export const getInboxProfile = async (did: string, context: string) => {
   const client = AccountManager.getInstance().client
@@ -154,16 +150,17 @@ export const getInboxProfile = async (did: string, context: string) => {
     )
     const profileData = await profile!.getMany({}, {})
     return profileData
-  } catch (err) {
+  } catch (error) {
     // User may not have created a profile
+    logger.warn('Failed to get profile, or no profile found', { did })
     return {}
   }
 }
 
 export async function getAxios() {
-  const config: any = {
+  const fetchConfig: any = {
     headers: {
-      'context-name': CONFIG.VERIDA_CONTEXT_NAME,
+      'context-name': config.VERIDA_CONTEXT_NAME,
     },
   }
 
@@ -173,17 +170,17 @@ export async function getAxios() {
 
   const keyring = await AccountManager.getInstance()
     .context?.getAccount()
-    .keyring(CONFIG.VERIDA_CONTEXT_NAME)
+    .keyring(config.VERIDA_CONTEXT_NAME)
   const axiosAuthPassword = await keyring?.sign(
-    `Access the notification service using context: "${CONFIG.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+    `Access the notification service using context: "${config.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
   )
 
-  config.auth = {
+  fetchConfig.auth = {
     username: currentDid?.replace(/:/g, '_'),
     password: axiosAuthPassword,
   }
 
-  return axios.create(config)
+  return axios.create(fetchConfig)
 }
 
 export async function getNotificationServerUrl() {
@@ -213,15 +210,15 @@ export async function registerRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: CONFIG.VERIDA_CONTEXT_NAME,
+        context: config.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/register`, body)
-  } catch (e) {
-    Sentry.captureException(e)
+  } catch (error) {
+    logger.error(error)
   }
 }
 
@@ -236,15 +233,15 @@ export async function unRegisterRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: CONFIG.VERIDA_CONTEXT_NAME,
+        context: config.VERIDA_CONTEXT_NAME,
         deviceId: token,
       },
     }
 
     const axiosInstance = await getAxios()
     await axiosInstance.post(`${notificationServerUrl}/unregister`, body)
-  } catch (e) {
-    Sentry.captureException(e)
+  } catch (error) {
+    logger.error(error)
   }
 }
 
@@ -253,30 +250,8 @@ export async function fetchConfigJson<T>(url: string): Promise<T[]> {
     const res = await fetch(url + `?t=${Date.now()}`)
     const json = await res.json()
     return json
-  } catch (e) {
-    Sentry.captureException(e)
+  } catch (error) {
+    logger.error(error)
     return []
   }
-}
-
-/**
- * Sleep for an exact amount of milliseconds
- * @param ms milliseconds
- * @return Promise
- */
-export async function sleep(ms: number): Promise<void> {
-  return new Promise((resolve) => setTimeout(resolve, ms))
-}
-
-/**
- * Execute an async function and abort if it takes too much time
- * @param promise the async function
- * @param timeout timeout in milliseconds
- * @return type of return value from the async function or throw an error if aborted
- */
-export async function execWithTimeout<T>(
-  promise: Promise<T>,
-  timeout: number
-): Promise<T | void> {
-  return Promise.race([promise, sleep(timeout)])
 }

@@ -1,26 +1,12 @@
-import { ImageSourcePropType } from 'react-native'
-
-export type Account = {
-  did: string
-  privateKey: string
-  mnemonic: string
-  publicProfile?: UserData
-  seedPhraseReminder: {
-    lastTime?: number
-    backedup: boolean
-  }
-}
-
-export type UserData = {
-  name: string
-  country: string
-  avatar?: ImageSourcePropType
-  description?: string
-}
-
-export type NormalizedAccounts = {
-  [k: string]: Account
-}
+/**
+ * Specific chain and network identifier matching the CAIP standard:
+ *
+ * - eip2551:1 = ethereum mainnet
+ * - eip2551:4 = goerli testnet
+ *
+ * Use https://github.com/ChainAgnostic/caip-js
+ */
+import { AssetId } from 'caip'
 
 export type NetworkNode = {
   node_code: string
@@ -33,19 +19,81 @@ export type NetworkNode = {
   notification_address: string
 }
 
+/**
+ * A blockchain network (ie: goerli)
+ */
+export interface BlockchainNetwork {
+  asset: AssetId
+  chainId: string
+  namespace: string
+  reference: string
+  name: string
+  label: string
+  chainName: string
+  symbol: string
+  explorerURL: string
+  confirmations: number
+  isMainnet: boolean
+  decimal: number
+  icon: string
+  slip44Reference: string
+  derivationPath: string
+  subcoinType: string
+  rpcUrl: string
+}
+
+export interface BlockchainAccount {
+  privateKey?: string
+  address?: string
+  publicKey?: string
+  mnemonic?: string
+  chainId?: string
+  derivationPath?: string
+  blockchainNetwork?: BlockchainNetwork
+}
+
+export type BlockchainAccounts = Record<
+  // HACK: There are also some deprecated standards, such as algorand, which may
+  //       appear in an instance of VeridaWalletAccounts. Please take
+  //       "SupportedCaipProtocolStandard" with a grain of salt here.
+  string,
+  BlockchainAccount
+>
+
+/**
+ * @todo improve typescript
+ *
+ * Represents a blockchain wallet that is saved into a users list of wallets
+ *
+ * A wallet may be
+ * 1. multi-chain with a single mnemonic and no private key
+ * 2. single chain with a single private key
+ * 3. single chain with a single mnemonic
+ *
+ * Must have either (privateKey or mnemonic)
+ */
+export interface BlockchainWallet extends BlockchainAccount {
+  _id: string
+  label: string
+  multiChain: boolean
+  viewOnly?: boolean
+  walletType: string // "multi" for a multi coin, otherwise the CAIP chain reference (ie: "eip155:5")
+}
+
+export interface BlockchainWalletWithAccounts extends BlockchainWallet {
+  accounts: Record<string, BlockchainAccount>
+
+  // Transient fields for displaying
+  icon?: string
+  count?: number
+}
+
+// What network is this?
 export type Network = {
   name: string
   default_node_code: string
   nodes: NetworkNode[]
   selected_node?: number
-}
-
-export type NetworkCountry = {
-  [key: string]: string
-}
-
-export type NetworkCountries = {
-  [name: string]: NetworkCountry[]
 }
 
 export interface PagingInfo {
@@ -127,7 +175,7 @@ export interface ClaimBadgeResponse {
 
 export type AddIdentityStepType =
   | 'CreateIdentifier'
-  | 'DefineNameAndUsername'
+  | 'ClaimUsername'
   | 'StorageLocation'
   | 'CreateProfile'
 
@@ -146,14 +194,30 @@ export enum VeridaOnePlatformLinkCategory {
   SOCIAL = 'social',
 }
 
+export enum VeridaOnePlatforms {
+  // DISCORD = 'discord',
+  FACEBOOK = 'facebook',
+  GITHUB = 'github',
+  LINKEDIN = 'linkedin',
+  INSTAGRAM = 'instagram',
+  TELEGRAM = 'telegram',
+  TWITTER = 'twitter',
+  // WHATSAPP = 'whatsapp',
+  // YOUTUBE = 'youtube',
+}
+
 export interface VeridaOnePlatformLink {
   category: VeridaOnePlatformLinkCategory
-  platform: string
+  platform: VeridaOnePlatforms
   accountId: string
   url: string
   order: number
   verificationProof?: VeridaOneVerificationProof
   avatarUrl?: string
+
+  // Transient fields
+  showOnVeridaOne?: boolean
+  connectedPlatform?: boolean
 }
 
 export interface VeridaOneCustomLink {
@@ -169,6 +233,11 @@ export interface VeridaOneWalletAddress {
   order: number
   label?: string
   verificationProof?: string
+
+  // Transient fields
+  isPublic?: boolean
+  veridaWalletName?: string
+  icon?: string
 }
 
 export interface VeridaOneFeaturedAsset {
@@ -177,6 +246,9 @@ export interface VeridaOneFeaturedAsset {
   tokenId: string
   ownerAddress: string
   order: number
+
+  // Transient fields
+  uri?: string
 }
 
 export interface VeridaOneProfile {

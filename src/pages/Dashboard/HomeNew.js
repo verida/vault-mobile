@@ -1,8 +1,18 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect, useLinkTo } from '@react-navigation/native'
-import * as Sentry from '@sentry/react-native'
-// import * as SecureStore from 'helpers/VeridaSecureStore'
-import { Container, Content } from 'native-base'
+import { logout as logoutAction } from 'features/auth'
+import { useDeeplink } from 'features/deepLinks'
+import { selectSelectedAccount } from 'features/identities'
+import {
+  selectNewMessagesCount,
+  setNewMessagesCount as setNewMessagesCountAction,
+} from 'features/inbox'
+import {
+  selectNavigationLink,
+  setNavigationLink as setNavigationLinkAction,
+} from 'features/links'
+import { selectSelectedPublicProfile } from 'features/profiles'
+import { Logger } from 'features/telemetry'
 import React, { useCallback, useEffect, useState } from 'react'
 import {
   Alert,
@@ -26,23 +36,19 @@ import {
 } from 'constants/color'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useDeeplink } from 'hooks/useDeeplink'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import {
-  logout as logoutAction,
-  setNavigationLink as setNavigationLinkAction,
-  setNewMessagesCount as setNewMessagesCountAction,
-} from 'reduxStore/general/actions'
 
 import PromoBannersCarousel from './Banners/CarouselBanner'
 import WalletSummary from './Banners/WalletBanner'
 import DidView from './DidView'
 import GettingStarted from './GettingStarted/GettingStartedSection'
 import HomeNavigationHeader from './HomeNavigationHeader'
-import QRCodeScannerButton from './QrcodeScanner'
+import { QRCodeScannerButton } from './QrCodeScannerButton'
+
+const logger = new Logger('Pages/Dashboard/HomeNew')
 
 const DefaultAvatar = require('assets/stubs/avatar.png')
 
@@ -50,6 +56,9 @@ const DefaultAvatar = require('assets/stubs/avatar.png')
 
 const { width: SCREEN_WIDTH } = Dimensions.get('screen')
 
+/**
+ * TODO: Have to sync with updates on the old Home page
+ */
 const Home = (props) => {
   const {
     navigation,
@@ -67,32 +76,37 @@ const Home = (props) => {
   const { switchToAccount, refresh } = useAuth()
   useRemoteNotifications()
   const linkTo = useLinkTo()
-  const processDeepLink = (initialUrl) => {
-    if (initialUrl === null) {
-      return
-    }
-    // ignore for firebase links, let firebase handle them.
-    if (
-      initialUrl.includes('redirect') ||
-      initialUrl.includes('verida.page.link')
-    ) {
-      return
-    }
 
-    handleDeeplink(initialUrl)
-  }
+  const processDeepLink = React.useCallback(
+    (initialUrl) => {
+      // ignore for firebase links, let firebase handle them.
+      if (
+        !initialUrl ||
+        initialUrl.includes('redirect') ||
+        initialUrl.includes('verida.page.link')
+      )
+        return
+
+      handleDeeplink(initialUrl)
+    },
+    [handleDeeplink]
+  )
 
   useEffect(() => {
     const getUrl = async () => {
       try {
         const initialUrl = await Linking.getInitialURL()
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
     getUrl()
+
+    // TODO: We are not sensitive to processDeepLink here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleDeeplink])
 
   useEffect(() => {
@@ -100,12 +114,16 @@ const Home = (props) => {
       try {
         const initialUrl = event.url
         processDeepLink(initialUrl)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
       }
     }
 
     Linking.addEventListener('url', handleBackgroundDeepLink)
+
+    // TODO: We are not sensitive to processDeepLink here, but we should be.
+    //       This is for backwards-compatible linter satisfaction only.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [handleDeeplink])
 
   useEffect(() => {
@@ -120,7 +138,7 @@ const Home = (props) => {
               'https://www.google.com/search?q=' + query.keyword
             )
           } catch (error) {
-            Sentry.captureException(error)
+            logger.error(error)
           }
         }
       })
@@ -158,8 +176,8 @@ const Home = (props) => {
         //   await SecureStore.setItemAsync(SHOW_BANNER_KEY, 'set')
         // }
         setLoading(false)
-      } catch (e) {
-        Sentry.captureException(e)
+      } catch (error) {
+        logger.error(error)
         Alert.alert('Error', 'Cannot get account information')
         setLoading(false)
       }
@@ -210,7 +228,7 @@ const Home = (props) => {
     toggleAddAccountsModal()
     try {
       await switchToAccount(did)
-    } catch (e) {
+    } catch (error) {
       Alert.alert(
         'Error',
         `Unable to switch to that account, please try again later.`
@@ -307,13 +325,12 @@ const mapDispatchToProps = (dispatch) => {
   }
 }
 
-const mapStateToProps = (rootState) => {
-  const state = rootState.main
+const mapStateToProps = (state) => {
   return {
-    publicProfileData: state.publicProfileData,
-    newMessagesCount: state.newMessagesCount,
-    selectedAccount: state.selectedAccount,
-    navigationLink: state.navigationLink,
+    publicProfileData: selectSelectedPublicProfile(state),
+    newMessagesCount: selectNewMessagesCount(state),
+    selectedAccount: selectSelectedAccount(state),
+    navigationLink: selectNavigationLink(state),
   }
 }
 

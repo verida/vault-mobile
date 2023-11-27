@@ -1,3 +1,5 @@
+import { dataFolders } from 'features/data'
+
 import VaultCommon from '../vault'
 import Folder from './data/folder'
 
@@ -5,35 +7,21 @@ export class DataManager {
   private vaultCommon: VaultCommon
   private currentFolder: Folder | null = null
 
-  public map: any
-
-  constructor(vaultCommon: VaultCommon, map: any) {
+  constructor(vaultCommon: VaultCommon) {
     this.vaultCommon = vaultCommon
-    this.map = map
   }
 
-  public getFolderList() {
-    const { navigation, folders } = this.map
+  public async selectFolder(folderName: string) {
+    const folderDefinition = dataFolders.find(
+      (folder) => folder.name === folderName
+    )
 
-    return navigation.map((folder: string) => {
-      const { title, titlePlural, icon } = folders[folder]
-      console.log('icon', icon)
-      return {
-        title: titlePlural || title,
-        folder,
-        icon,
-      }
-    })
-  }
-
-  public async selectFolder(folder: string) {
-    const { folders } = this.map
-    if (!folders[folder]) {
-      throw new Error('Invalid folder specified: ' + folder)
+    if (!folderDefinition) {
+      throw new Error('Invalid folder specified: ' + folderName)
     }
 
     this.closeFolder()
-    this.currentFolder = new Folder(this.vaultCommon, folders[folder])
+    this.currentFolder = new Folder(this.vaultCommon, folderDefinition)
     await this.currentFolder!.init()
 
     return this.currentFolder

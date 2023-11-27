@@ -1,8 +1,7 @@
-import { useActionSheet } from '@expo/react-native-action-sheet'
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import { getNFTImageUri } from 'helpers/nft'
+import { getWallets } from 'features/cryptoWallet'
 import React, { FC, ReactNode } from 'react'
 import {
   Alert,
@@ -14,14 +13,10 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 import { NFTMetadata } from 'api/types'
-import MoreIcon from 'assets/more_icon.svg'
 import { NftItem } from 'components/Assets/NftItem'
-import Button from 'components/Button'
-import Icon from 'components/Icon/Icon'
-import Footer from 'components/Layouts/Footer'
+import { Icon } from 'components/Icon'
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
@@ -33,7 +28,6 @@ import { Text } from 'components/Typography/Text'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackParams } from 'navigation/types'
-import { getWallets } from 'reduxStore/wallet/selectors'
 import { Theme } from 'styles/types'
 
 type NFTDetailRouteProp = RouteProp<MainStackParams, 'NFTDetail'>
@@ -126,11 +120,11 @@ const Property = ({
 }
 
 const NFTDetail = () => {
-  const { showActionSheetWithOptions } = useActionSheet()
+  //const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const route = useRoute<NFTDetailRouteProp>()
-  const wallet = useReduxState((state) => getWallets(state.main))
+  const wallet = useReduxState(getWallets)
 
   const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
@@ -139,35 +133,35 @@ const NFTDetail = () => {
   const name = nft.name + ` #${nft.token_id}`
   const hasMinterWallet = nft.minter_address?.startsWith('0x')
 
-  const handleMoreActions = () => {
-    const options = ['Send', 'View in Explorer', 'Share', 'Cancel']
-    const cancelButtonIndex = 3
+  //const handleMoreActions = () => {
+  //  const options = ['Send', 'View in Explorer', 'Share', 'Cancel']
+  //  const cancelButtonIndex = 3
 
-    showActionSheetWithOptions(
-      {
-        options,
-        cancelButtonIndex,
-      },
-      (selectedIndex?: number) => {
-        switch (selectedIndex!) {
-          case 1:
-            // Send
-            break
+  //  showActionSheetWithOptions(
+  //    {
+  //      options,
+  //      cancelButtonIndex,
+  //    },
+  //    (selectedIndex?: number) => {
+  //      switch (selectedIndex!) {
+  //        case 1:
+  //          // Send
+  //          break
 
-          case 2:
-            // View in Explorer
-            break
-          case 3:
-            // Share
-            break
+  //        case 2:
+  //          // View in Explorer
+  //          break
+  //        case 3:
+  //          // Share
+  //          break
 
-          case cancelButtonIndex:
-            // Canceled
-            break
-        }
-      }
-    )
-  }
+  //        case cancelButtonIndex:
+  //          // Canceled
+  //          break
+  //      }
+  //    }
+  //  )
+  //}
 
   if (!nft) return <LoadingIndicator />
 

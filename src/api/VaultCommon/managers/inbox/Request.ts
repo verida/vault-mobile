@@ -1,29 +1,34 @@
-import {DataAction} from "./DataAction"
-import {InboxResponse, InboxType} from "../../interfaces/inbox/Inbox"
+import { InboxResponse, InboxType } from '../../interfaces/inbox/Inbox'
+import { DataAction } from './DataAction'
 
 const MSG = 'Send you the requested data'
 
 export class Request extends DataAction {
-    async accept () {
-        const dataRequest = this.inboxEntry.data
-        const { did, context } = this.inboxEntry.sentBy
+  async accept() {
+    const dataRequest = this.inboxEntry.data
+    const { did, context } = this.inboxEntry.sentBy
 
-        const response = new InboxResponse(this.inboxEntry._id)
+    const response = new InboxResponse(this.inboxEntry._id)
 
-        if (dataRequest.userSelect) {
-            response.data = this.payload
-        } else {
-            const store = await this.vaultCommon.vault.openDatastore(this.inboxEntry.data.requestSchema)
-            const foundData = await store.getMany(dataRequest.filter || {})
-            response.data = [ foundData ]
-        }
-
-        await this.messaging.send(did, InboxType.DATA_SEND, response, MSG, { recipientContextName: context })
+    if (dataRequest.userSelect) {
+      response.data = this.payload
+    } else {
+      const store = await this.vaultCommon.vault.openDatastore(
+        this.inboxEntry.data.requestSchema
+      )
+      const foundData = await store.getMany(dataRequest.filter || {})
+      response.data = [foundData]
     }
 
-    decline() {}
+    await this.messaging.send(did, InboxType.DATA_SEND, response, MSG, {
+      recipientContextName: context,
+    })
+  }
 
-    async metadata() {
-        return {}
-    }
+  // eslint-disable-next-line @typescript-eslint/no-empty-function
+  decline() {}
+
+  async metadata() {
+    return {}
+  }
 }
