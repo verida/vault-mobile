@@ -1,8 +1,4 @@
-import {
-  isPolygonIdDeepLink,
-  isPolygonIdQrCodeMessage,
-  usePolygonId,
-} from 'features/polygonid'
+import { isPolygonIdMessage, usePolygonId } from 'features/polygonid'
 import type { ProtocolHandler } from 'features/protocols'
 import { useCallback } from 'react'
 
@@ -12,7 +8,7 @@ export function usePolygonIdProtocolHandler(): ProtocolHandler {
   const handleDeepLink = useCallback(
     (url: string) => {
       // No try/cath needed, as handled by the consumer
-      if (isPolygonIdDeepLink(url)) {
+      if (isPolygonIdMessage(url)) {
         handleDeepLinkUrl(url)
         return true
       }
@@ -24,7 +20,7 @@ export function usePolygonIdProtocolHandler(): ProtocolHandler {
   const handleQrCode = useCallback(
     (qrCodeMessage: string) => {
       // No try/cath needed, as handled by the consumer
-      if (isPolygonIdQrCodeMessage(qrCodeMessage)) {
+      if (isPolygonIdMessage(qrCodeMessage)) {
         handleQRCodeMessage(qrCodeMessage)
         return true
       }

@@ -15,6 +15,18 @@ import { Logger } from 'features/telemetry'
 
 const logger = new Logger('Polygon ID')
 
+export function isPolygonIdMessage(message: string) {
+  return (
+    message.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME) ||
+    !!message?.match(IDEN3_PROTOCOL)?.length
+  )
+}
+
+function isEncodedMessage(message: string) {
+  // Encoded message follows the deep link syntax iden3comm://?...
+  return message.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME)
+}
+
 function checkParsedMessage(
   parsedMessage: Record<string, unknown>,
   originalMessage: string
@@ -35,7 +47,31 @@ function checkParsedMessage(
   throw error
 }
 
-export function parseMessage(
+function parseEncodedMessage(message: string) {
+  const urlObj = new URL(message)
+  const base64Message = urlObj.searchParams.get(
+    IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM
+  )
+
+  if (!base64Message) {
+    // TODO: Check and support the request_uri parameter
+    throw new Error('Invalid PolygonID deeplink')
+  }
+
+  const unint8Message = base64.decode(base64Message)
+  const decodedString = new TextDecoder().decode(unint8Message)
+  const jsonMessage = JSON.parse(decodedString)
+  checkParsedMessage(jsonMessage, message)
+  return parseMessage(jsonMessage)
+}
+
+function parseRawMessage(message: string) {
+  const jsonMessage = JSON.parse(message)
+  checkParsedMessage(jsonMessage, message)
+  return parseMessage(jsonMessage)
+}
+
+function parseMessage(
   message: Record<string, unknown>
 ): AuthorizationRequestMessage | CredentialsOfferMessage {
   switch (message.type) {
@@ -50,36 +86,11 @@ export function parseMessage(
   }
 }
 
-export function isPolygonIdDeepLink(url: string) {
-  return url.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME)
-}
-
-export function parseDeepLinkUrl(url: string) {
-  const urlObj = new URL(url)
-  const base64Message = urlObj.searchParams.get(
-    IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM
-  )
-  if (!base64Message) {
-    throw new Error('Invalid PolygonID deeplink')
+export function parsePolygonIdMessage(message: string) {
+  if (isEncodedMessage(message)) {
+    return parseEncodedMessage(message)
   }
-
-  const unint8Message = base64.decode(base64Message)
-  const decodedString = new TextDecoder().decode(unint8Message)
-  const jsonMessage = JSON.parse(decodedString)
-  checkParsedMessage(jsonMessage, url)
-  return parseMessage(jsonMessage)
-}
-
-export function isPolygonIdQrCodeMessage(qrCodeMessage: string) {
-  return !!qrCodeMessage?.match(IDEN3_PROTOCOL)?.length
-}
-
-export function parseQrCodeMessage(
-  qrCodeMessage: string
-): AuthorizationRequestMessage | CredentialsOfferMessage {
-  const jsonMessage = JSON.parse(qrCodeMessage)
-  checkParsedMessage(jsonMessage, qrCodeMessage)
-  return parseMessage(jsonMessage)
+  return parseRawMessage(message)
 }
 
 export async function fetchEntityMetadata(url: string): Promise<DidMetadata> {
