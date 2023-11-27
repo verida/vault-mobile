@@ -84,7 +84,7 @@ export default class DataConnectorsManager {
     }
 
     // @todo cache
-    const response = await axios.get(`${CONFIG.DATA_CONNECTOR_URL}/providers`)
+    const response = await axios.get(`${config.DATA_CONNECTOR_URL}/providers`)
     CONNECTION_CACHE = response.data
     return CONNECTION_CACHE
   }

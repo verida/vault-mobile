@@ -55,7 +55,7 @@ export type TabsScreenParams = {
   Home: undefined
   Profile: undefined
   Data: DataTabScreenParams
-  // Connections: undefined // TODO: uncomment when ready
+  Connections: undefined
   Assets: undefined
 }
 
