@@ -7,7 +7,6 @@ export function usePolygonIdProtocolHandler(): ProtocolHandler {
 
   const handleDeepLink = useCallback(
     (url: string) => {
-      // No try/cath needed, as handled by the consumer
       if (isPolygonIdMessage(url)) {
         handleDeepLinkUrl(url)
         return true
@@ -19,7 +18,6 @@ export function usePolygonIdProtocolHandler(): ProtocolHandler {
 
   const handleQrCode = useCallback(
     (qrCodeMessage: string) => {
-      // No try/cath needed, as handled by the consumer
       if (isPolygonIdMessage(qrCodeMessage)) {
         handleQRCodeMessage(qrCodeMessage)
         return true
