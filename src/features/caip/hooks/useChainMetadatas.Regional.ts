@@ -9,7 +9,7 @@ import { ChainMetadata, UseChainMetadataState } from '../@types'
 const EMPTY_RESULT: UseChainMetadataState = { loading: false, result: [] }
 
 // TODO: To wallet provider?
-const REDBELLY_NETWORK_TESNET: ChainMetadata = {
+const REDBELLY_NETWORK: ChainMetadata = {
   namespace: SupportedBlockchainNamespace.EIP_155,
   reference: '153',
   rpcUrls: [
@@ -40,7 +40,7 @@ export function useChainMetadatasRegional(): UseChainMetadataState {
       return EMPTY_RESULT
 
     if (maybeCountry === 'Australia') {
-      return { loading: false, result: [REDBELLY_NETWORK_TESNET] }
+      return { loading: false, result: [REDBELLY_NETWORK] }
     }
 
     return EMPTY_RESULT

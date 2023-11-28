@@ -174,7 +174,7 @@ type AbstractMinifiedVeridaAccount<
 
 export type MinifiedVeridaAccountEip155 =
   AbstractMinifiedVeridaAccount<SupportedBlockchainNamespace.EIP_155> & {
-    readonly address: string
+    // readonly address: string
     readonly privateKey: string
   }
 
