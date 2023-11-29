@@ -51,8 +51,10 @@ function checkParsedMessage(
 async function fetchMessageFromUri(
   url: string
 ): Promise<Record<string, unknown>> {
+  logger.debug('Fetching Polygon ID message from request_uri')
   try {
     const response = await axios.get(url)
+    logger.debug('Fetching Polygon ID message from request_uri successful')
     return response.data
   } catch (error) {
     logger.error(
@@ -78,6 +80,7 @@ function parseUriMessage(message: string) {
   )
 
   if (base64Message) {
+    logger.debug('Polygon ID message is an embedded encoded message')
     return decodeMessage(base64Message)
   }
 
@@ -86,9 +89,11 @@ function parseUriMessage(message: string) {
   )
 
   if (requestUri) {
+    logger.debug('Polygon ID message is a request URI to fetch')
     return fetchMessageFromUri(requestUri)
   }
 
+  logger.warn('The Polygon ID message is invalid')
   throw new Error('Invalid PolygonID message')
 }
 
@@ -113,6 +118,7 @@ export async function parsePolygonIdMessage(message: string) {
   if (isUriMessage(message)) {
     jsonMessage = await parseUriMessage(message)
   } else {
+    logger.debug('Polygon ID message is a raw JSON message')
     jsonMessage = JSON.parse(message)
   }
 
