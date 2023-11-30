@@ -1,13 +1,5 @@
 import BigDecimal from 'bignumber.js'
-import {
-  RequestDetails,
-  RequestHeader,
-  RequestMessage,
-  RequestPaymentFee,
-  RequestPaymentValue,
-  StatusInfo,
-  WalletSelectorButton,
-} from 'components'
+import { RequestPaymentFeeProps, StatusInfo } from 'components'
 import { ethers } from 'ethers'
 import {
   AggregateWalletBannerBalance,
@@ -21,7 +13,6 @@ import {
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
-import { reduceProtocols } from 'features/protocols'
 import {
   convertFromCryptoIntegerToDecimal,
   convertFromCryptoIntegerToMaybeDecimalFiat,
@@ -36,6 +27,7 @@ import Button from 'components/Button'
 import { Theme } from 'styles/types'
 
 import type { PaymentRequestScreenParams } from './'
+import { PaymentRequestScreenContentBody } from './PaymentRequestScreen.Content.Body'
 
 export const PaymentRequestScreenContent = React.memo(
   function PaymentRequestScreenContent({
@@ -71,8 +63,6 @@ export const PaymentRequestScreenContent = React.memo(
     const styles = useThemeAwareStyle(createStyles)
 
     const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
-
-    const protocols = reduceProtocols(details.protocols, 16)
 
     const handleToggleDetails = React.useCallback(
       () => setDetailsOpen((prevValue) => !prevValue),
@@ -121,105 +111,80 @@ export const PaymentRequestScreenContent = React.memo(
 
     if (isNotStarted) {
       return (
-        <>
-          <RequestHeader
-            senderName={senderName}
-            avatar={logo || undefined}
-            timestamp={details.timestamp}
-            isDetailsOpen={detailsOpen}
-            onToggleDetails={handleToggleDetails}
-          />
-          {detailsOpen ? (
-            <RequestDetails
-              properties={[
-                {
-                  label: 'Recipient address',
-                  value: details.requesterId,
-                },
-                {
-                  label: 'Protocols',
-                  value: <>{protocols}</>,
-                },
-              ]}
-              style={styles.detailsContainer}
-            />
-          ) : null}
-          {details.message ? (
-            <RequestMessage style={styles.messageContainer}>
-              {details.message}
-            </RequestMessage>
-          ) : null}
-          <React.Fragment>
-            <RequestPaymentValue
-              assetAmount={getCurrentValueStringAsCryptoOrZero()}
-              assetSymbol={aggregateWalletBannerBalance.symbol}
-              assetLogo={aggregateWalletBannerBalance.icon || undefined}
-              formattedAssetPrice={`${
-                maybeValuation
-                  ? `${
-                      CURRENCY_SYMBOLS[maybeValuation.currency]
-                    }${new BigDecimal(
-                      maybeValuation.conversionRate
-                    ).decimalPlaces(2)}`
-                  : ''
-              }`}
-              formattedFiatValue={maybeFormattedFiatValue}
-              chainLabel={maybeNativeAssetWalletBannerBalance?.label}
-              chainLogo={maybeNativeAssetWalletBannerBalance?.icon || undefined}
-              style={styles.valueContainer}
-            />
-            {!!maybeNativeAssetWalletBannerBalance &&
-              (() => {
-                const { feeAmount, feeSymbol } =
-                  convertPredictedTransactionFeeToString({
-                    ...maybeNativeAssetWalletBannerBalance,
-                    chainId,
-                    predictedMaxTransactionFee,
-                  })
+        <PaymentRequestScreenContentBody
+          details={details}
+          detailsOpen={detailsOpen}
+          requestHeaderProps={{
+            senderName: senderName,
+            avatar: logo || undefined,
+            onToggleDetails: handleToggleDetails,
+          }}
+          requestPaymentValueProps={{
+            assetAmount: getCurrentValueStringAsCryptoOrZero(),
+            assetSymbol: aggregateWalletBannerBalance.symbol,
+            assetLogo: aggregateWalletBannerBalance.icon || undefined,
+            formattedAssetPrice: `${
+              maybeValuation
+                ? `${CURRENCY_SYMBOLS[maybeValuation.currency]}${new BigDecimal(
+                    maybeValuation.conversionRate
+                  ).decimalPlaces(2)}`
+                : ''
+            }`,
+            formattedFiatValue: maybeFormattedFiatValue,
+            chainLabel: maybeNativeAssetWalletBannerBalance?.label,
+            chainLogo: maybeNativeAssetWalletBannerBalance?.icon || undefined,
+          }}
+          requestPaymentFeeProps={
+            maybeNativeAssetWalletBannerBalance
+              ? ((): Omit<RequestPaymentFeeProps, 'style'> => {
+                  const { feeAmount, feeSymbol } =
+                    convertPredictedTransactionFeeToString({
+                      ...maybeNativeAssetWalletBannerBalance,
+                      chainId,
+                      predictedMaxTransactionFee,
+                    })
 
-                const maybeFiatTransactionFee =
-                  convertFromCryptoIntegerToMaybeDecimalFiat({
-                    integerCryptoAmount: String(predictedMaxTransactionFee),
-                    aggregateWalletBannerBalance:
-                      maybeNativeAssetWalletBannerBalance,
-                  })
+                  const maybeFiatTransactionFee =
+                    convertFromCryptoIntegerToMaybeDecimalFiat({
+                      integerCryptoAmount: String(predictedMaxTransactionFee),
+                      aggregateWalletBannerBalance:
+                        maybeNativeAssetWalletBannerBalance,
+                    })
 
-                return (
-                  <RequestPaymentFee
-                    feeAmount={feeAmount}
-                    feeSymbol={feeSymbol}
-                    formattedFiatSymbol={maybeFiatTransactionFee?.fiatSymbol}
-                    formattedFiatValue={
-                      maybeFiatTransactionFee?.fiatAmount || ''
-                    }
-                    style={styles.feeContainer}
-                  />
-                )
-              })()}
-
-            {!!maybeBlockchainWallet && (
-              <WalletSelectorButton
-                logo={
-                  maybeBlockchainWallet.icon ||
-                  maybeChainMetadata?.icon ||
-                  undefined
+                  return {
+                    feeAmount,
+                    feeSymbol,
+                    formattedFiatSymbol: maybeFiatTransactionFee?.fiatSymbol,
+                    formattedFiatValue:
+                      maybeFiatTransactionFee?.fiatAmount || '',
+                  }
+                })()
+              : null
+          }
+          walletSelectorButtonProps={
+            maybeBlockchainWallet
+              ? {
+                  logo:
+                    maybeBlockchainWallet.icon ||
+                    maybeChainMetadata?.icon ||
+                    undefined,
+                  label: maybeBlockchainWallet.label,
+                  address: maybeBlockchainWallet.address,
+                  formattedBalance: `${convertFromCryptoIntegerToDecimal({
+                    integerCryptoAmount: String(
+                      aggregateWalletBannerBalance.balance
+                    ),
+                    decimals: aggregateWalletBannerBalance.decimals,
+                    decimalPlaces: 3,
+                  })} ${aggregateWalletBannerBalance.symbol}`,
+                  alertType: 'error',
+                  alertContent: !hasSufficientBalance
+                    ? 'Insufficient funds'
+                    : '',
                 }
-                label={maybeBlockchainWallet.label}
-                address={maybeBlockchainWallet.address}
-                formattedBalance={`${convertFromCryptoIntegerToDecimal({
-                  integerCryptoAmount: String(
-                    aggregateWalletBannerBalance.balance
-                  ),
-                  decimals: aggregateWalletBannerBalance.decimals,
-                  decimalPlaces: 3,
-                })} ${aggregateWalletBannerBalance.symbol}`}
-                alertType='error'
-                alertContent={!hasSufficientBalance ? 'Insufficient funds' : ''}
-                style={styles.walletSelectorButton}
-              />
-            )}
-          </React.Fragment>
-        </>
+              : null
+          }
+        />
       )
     } else {
       return (
