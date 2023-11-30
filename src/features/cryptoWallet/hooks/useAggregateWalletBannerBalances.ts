@@ -121,13 +121,6 @@ export function useAggregateWalletBannerBalances(
         return matches
       })
 
-    console.log(
-      JSON.stringify({
-        resultForOnlyMatchingChains,
-        maybeResource,
-      })
-    )
-
     return {
       loading: false,
       result: resultForOnlyMatchingChains,
