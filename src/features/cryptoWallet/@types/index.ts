@@ -239,12 +239,7 @@ export type ResourceParams = ChainIdParams | AssetIdParams
 export function isAssetIdResourceParams(
   resourceParams: ResourceParams
 ): resourceParams is AssetIdParams {
-  // TODO: maybe settle on a better implementation - needs tests
-  return (
-    'tokenId' in resourceParams &&
-    typeof resourceParams.tokenId === 'string' &&
-    Boolean(resourceParams.tokenId.length)
-  )
+  return 'tokenId' in resourceParams && 'assetName' in resourceParams
 }
 
 export function isChainIdResourceParams(

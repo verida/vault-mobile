@@ -113,11 +113,20 @@ export function useAggregateWalletBannerBalances(
         // should match.
         if (!maybeResource) return false
 
-        return isAggregateWalletBannerBalanceMatchesResource({
+        const matches = isAggregateWalletBannerBalanceMatchesResource({
           aggregateWalletBannerBalance,
           resource: maybeResource,
         })
+
+        return matches
       })
+
+    console.log(
+      JSON.stringify({
+        resultForOnlyMatchingChains,
+        maybeResource,
+      })
+    )
 
     return {
       loading: false,

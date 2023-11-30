@@ -63,6 +63,7 @@ export const PaymentRequestScreenContent = React.memo(
     >
   }): JSX.Element {
     const { resource } = aggregateWalletBannerBalance
+
     const { senderName } = requestHeaderProps
 
     const styles = useThemeAwareStyle(createStyles)
