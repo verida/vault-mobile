@@ -1,3 +1,9 @@
+import { ChainIdParams } from 'caip'
+import {
+  useMaybeBlockchainAccountForResource,
+  useMaybeChainMetadataForResource,
+  useMaybeFromAddressForResource,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
@@ -12,10 +18,53 @@ export type WalletSelectorButtonProps = {
   logo?: string
   address?: string
   formattedBalance?: string
-  //onPress: () => void
   alertType?: AlertType // FIXME: Tried with Pick<AlertProps, 'type'> but got ts errors
   alertContent?: React.ReactNode | string // FIXME: Tried with Pick<AlertProps, 'children'> but got ts errors
 } & ViewProps
+
+export function useMaybeWalletSelectorButtonProps({
+  resource,
+  formattedBalance,
+  alertContent,
+  alertType,
+}: {
+  readonly resource: ChainIdParams
+  readonly formattedBalance?: string
+  readonly alertContent?: string
+  readonly alertType?: AlertType
+}): WalletSelectorButtonProps | null {
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+
+  const maybeBlockchainWallet = useMaybeBlockchainAccountForResource({
+    resource,
+  })
+
+  const maybeFromAddressForResource = useMaybeFromAddressForResource({
+    resource,
+  })
+
+  return React.useMemo(() => {
+    if (!maybeBlockchainWallet) return null
+
+    const { icon, label } = maybeBlockchainWallet
+
+    return {
+      logo: icon || maybeChainMetadata?.icon || undefined,
+      label: label,
+      address: maybeFromAddressForResource?.fromAddress,
+      formattedBalance,
+      alertType,
+      alertContent,
+    }
+  }, [
+    alertContent,
+    alertType,
+    formattedBalance,
+    maybeBlockchainWallet,
+    maybeFromAddressForResource,
+    maybeChainMetadata,
+  ])
+}
 
 export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonProps> =
   (props) => {

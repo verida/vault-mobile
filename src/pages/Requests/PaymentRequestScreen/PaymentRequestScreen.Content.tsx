@@ -1,5 +1,10 @@
 import BigDecimal from 'bignumber.js'
-import { RequestPaymentFeeProps, StatusInfo } from 'components'
+import {
+  RequestHeaderProps,
+  RequestPaymentFeeProps,
+  StatusInfo,
+  useMaybeWalletSelectorButtonProps,
+} from 'components'
 import { ethers } from 'ethers'
 import {
   AggregateWalletBannerBalance,
@@ -9,7 +14,6 @@ import {
   getAggregateWalletBannerBalanceResult,
   useAggregateWalletBannerBalances,
   useChainIdForResourceParams,
-  useMaybeBlockchainAccountForResource,
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
@@ -32,49 +36,38 @@ import { PaymentRequestScreenContentBody } from './PaymentRequestScreen.Content.
 export const PaymentRequestScreenContent = React.memo(
   function PaymentRequestScreenContent({
     details,
-    tokenCalculator: {
-      getCurrentValueStringAsCryptoOrZero,
-      hasSufficientBalance,
-    },
+    tokenCalculator: { getCurrentValueStringAsCryptoOrZero },
     loading,
     predictedMaxTransactionFee,
     data,
-    logo,
     maybeConfirmTransactionError,
-    senderName,
     aggregateWalletBannerBalance,
     transactionConfirmation,
     isNotStarted,
+    detailsOpen,
+    requestHeaderProps,
   }: {
     readonly details: PaymentRequestScreenParams['details']
     readonly tokenCalculator: ReturnType<typeof useTokenCalculator>
     readonly loading: boolean
     readonly predictedMaxTransactionFee: ethers.BigNumber
     readonly data: CryptoWalletRequest<'pay'>
-    readonly logo: string | null | undefined
     readonly maybeConfirmTransactionError: Error | undefined
-    readonly senderName: string
     readonly transactionConfirmation: ConfirmTransactionCallbackResult | null
     readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
     readonly isNotStarted: boolean
+    readonly detailsOpen: boolean
+    readonly requestHeaderProps: Omit<
+      RequestHeaderProps,
+      'timestamp' | 'isDetailsOpen'
+    >
   }): JSX.Element {
     const { resource } = aggregateWalletBannerBalance
+    const { senderName } = requestHeaderProps
 
     const styles = useThemeAwareStyle(createStyles)
 
-    const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
-
-    const handleToggleDetails = React.useCallback(
-      () => setDetailsOpen((prevValue) => !prevValue),
-      []
-    )
-
     const chainId = useChainIdForResourceParams({ resource })
-
-    // TOOD: maybe remove this
-    const maybeBlockchainWallet = useMaybeBlockchainAccountForResource({
-      resource,
-    })
 
     const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
@@ -109,16 +102,21 @@ export const PaymentRequestScreenContent = React.memo(
         })
       )
 
+    const maybeWalletSelectorButtonProps = useMaybeWalletSelectorButtonProps({
+      resource: chainId,
+      formattedBalance: `${convertFromCryptoIntegerToDecimal({
+        integerCryptoAmount: String(aggregateWalletBannerBalance.balance),
+        decimals: aggregateWalletBannerBalance.decimals,
+        decimalPlaces: 3,
+      })} ${aggregateWalletBannerBalance.symbol}`,
+    })
+
     if (isNotStarted) {
       return (
         <PaymentRequestScreenContentBody
           details={details}
           detailsOpen={detailsOpen}
-          requestHeaderProps={{
-            senderName: senderName,
-            avatar: logo || undefined,
-            onToggleDetails: handleToggleDetails,
-          }}
+          requestHeaderProps={requestHeaderProps}
           requestPaymentValueProps={{
             assetAmount: getCurrentValueStringAsCryptoOrZero(),
             assetSymbol: aggregateWalletBannerBalance.symbol,
@@ -161,29 +159,7 @@ export const PaymentRequestScreenContent = React.memo(
                 })()
               : null
           }
-          walletSelectorButtonProps={
-            maybeBlockchainWallet
-              ? {
-                  logo:
-                    maybeBlockchainWallet.icon ||
-                    maybeChainMetadata?.icon ||
-                    undefined,
-                  label: maybeBlockchainWallet.label,
-                  address: maybeBlockchainWallet.address,
-                  formattedBalance: `${convertFromCryptoIntegerToDecimal({
-                    integerCryptoAmount: String(
-                      aggregateWalletBannerBalance.balance
-                    ),
-                    decimals: aggregateWalletBannerBalance.decimals,
-                    decimalPlaces: 3,
-                  })} ${aggregateWalletBannerBalance.symbol}`,
-                  alertType: 'error',
-                  alertContent: !hasSufficientBalance
-                    ? 'Insufficient funds'
-                    : '',
-                }
-              : null
-          }
+          walletSelectorButtonProps={maybeWalletSelectorButtonProps}
         />
       )
     } else {

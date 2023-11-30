@@ -5,7 +5,7 @@ import { AggregateWalletBannerBalance, MinifiedVeridaAccounts } from '../@types'
 import { getChainIdParamsFromResourceParams } from './getChainIdParamsFromResourceParams'
 import { getWalletAddressForChainId } from './tokens'
 
-export function getFromAddressForResourceOrThrow({
+export function getMaybeFromAddressForResource({
   resource,
   selectedMinifiedAccounts,
 }: {
@@ -21,13 +21,29 @@ export function getFromAddressForResourceOrThrow({
     selectedMinifiedAccounts
   )
 
-  if (typeof fromAddress !== 'string' || !fromAddress.length)
-    throw new Error(
-      `Expected non-empty string fromAddress, encountered "${fromAddress}".`
-    )
+  if (typeof fromAddress !== 'string' || !fromAddress.length) return undefined
 
-  if (!isSupportedCaipNamespace(namespace))
-    throw new Error(`Sorry, "${namespace}" is not a supported namespace.`)
+  if (!isSupportedCaipNamespace(namespace)) return undefined
 
   return { fromAddress, namespace }
+}
+
+export function getFromAddressForResourceOrThrow({
+  resource,
+  selectedMinifiedAccounts,
+}: {
+  readonly resource: AggregateWalletBannerBalance['resource']
+  readonly selectedMinifiedAccounts: MinifiedVeridaAccounts
+}) {
+  const maybeResult = getMaybeFromAddressForResource({
+    resource,
+    selectedMinifiedAccounts,
+  })
+
+  if (!maybeResult)
+    throw new Error(
+      `Expected fromAddressForResource, encountered ${String(maybeResult)}.`
+    )
+
+  return maybeResult
 }

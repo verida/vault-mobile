@@ -1,4 +1,4 @@
-import { AlertType, BottomActionBar } from 'components'
+import { AlertType, BottomActionBar, RequestHeaderProps } from 'components'
 import {
   AggregateWalletBannerBalance,
   ConfirmTransactionCallbackResult,
@@ -21,15 +21,20 @@ import { PaymentRequestScreenContent } from './PaymentRequestScreen.Content'
 
 export const PaymentRequestScreenContainer = React.memo(
   function PaymentRequestScreenContainer({
-    name: senderName,
-    logo,
     details,
     data,
     aggregateWalletBannerBalance,
     onRequestClose,
+    detailsOpen,
+    requestHeaderProps,
   }: PaymentRequestScreenParams & {
     readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
     readonly onRequestClose: () => void
+    readonly detailsOpen: boolean
+    readonly requestHeaderProps: Omit<
+      RequestHeaderProps,
+      'timestamp' | 'isDetailsOpen'
+    >
   }): JSX.Element {
     const { resource, amount: integerAmount, recipientAccount } = data
 
@@ -140,13 +145,13 @@ export const PaymentRequestScreenContainer = React.memo(
           style={styles.container}
           contentContainerStyle={styles.containerContent}>
           <PaymentRequestScreenContent
+            requestHeaderProps={requestHeaderProps}
             details={details}
+            detailsOpen={detailsOpen}
             tokenCalculator={tokenCalculator}
             loading={loading}
             data={data}
             predictedMaxTransactionFee={predictedMaxTransactionFee}
-            logo={logo}
-            senderName={senderName}
             maybeConfirmTransactionError={maybeConfirmTransactionError}
             aggregateWalletBannerBalance={aggregateWalletBannerBalance}
             transactionConfirmation={transactionConfirmation}

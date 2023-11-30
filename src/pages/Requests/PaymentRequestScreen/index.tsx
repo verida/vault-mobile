@@ -1,21 +1,28 @@
-import { BottomActionBar } from 'components'
+import {
+  BottomActionBar,
+  RequestHeaderProps,
+  useMaybeWalletSelectorButtonProps,
+} from 'components'
 import {
   AggregateWalletBannerBalance,
   CryptoWalletRequest,
   getAggregateWalletBannerBalanceResult,
+  getChainIdParamsFromResourceParams,
   useAggregateWalletBannerBalances,
+  useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
 import { Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
-import { StatusBar, StyleSheet, View } from 'react-native'
+import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 import { PaymentRequestScreenContainer } from './PaymentRequestScreen.Container'
+import { PaymentRequestScreenContentBody } from './PaymentRequestScreen.Content.Body'
 
 export interface PaymentRequestScreenParams {
   name: string
@@ -36,8 +43,17 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
   (props) => {
     const { navigation, route } = props
     const { params } = route
-    const { data } = params
+    const { data, name: senderName, logo } = params
     const { resource } = data
+
+    const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
+
+    const onToggleDetails = React.useCallback(
+      () => setDetailsOpen((prevValue) => !prevValue),
+      []
+    )
+
+    const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
     const [maybeAggregateWalletBannerBalanceThatVariesOnRefetch] =
       getAggregateWalletBannerBalanceResult(
@@ -71,6 +87,23 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       })
     }, [navigation, handleClose])
 
+    const requestHeaderProps: Omit<
+      RequestHeaderProps,
+      'timestamp' | 'isDetailsOpen'
+    > = React.useMemo(
+      () => ({
+        senderName: senderName,
+        avatar: logo || undefined,
+        onToggleDetails,
+      }),
+      [logo, onToggleDetails, senderName]
+    )
+
+    const maybeUnknownAssetWalletSelectorButtonProps =
+      useMaybeWalletSelectorButtonProps({
+        resource: getChainIdParamsFromResourceParams(resource),
+      })
+
     return (
       <>
         <StatusBar barStyle='light-content' />
@@ -88,12 +121,33 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
               {...params}
               aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
               onRequestClose={handleClose}
+              detailsOpen={detailsOpen}
+              requestHeaderProps={requestHeaderProps}
             />
           ) : (
             <React.Fragment>
-              <View style={styles.flex}>
-                {/* <SomePrettyMissingAssetAnimation /> */}
-              </View>
+              <ScrollView
+                style={styles.container}
+                contentContainerStyle={styles.containerContent}>
+                <PaymentRequestScreenContentBody
+                  details={params.details}
+                  detailsOpen={detailsOpen}
+                  requestHeaderProps={requestHeaderProps}
+                  requestPaymentValueProps={{
+                    chainLabel: maybeChainMetadata?.nativeCurrencyName,
+                    chainLogo: maybeChainMetadata?.icon || undefined,
+                  }}
+                  // HACK: We cannot determine the transfer fee of an
+                  //       unknown resource.
+                  requestPaymentFeeProps={{
+                    feeAmount: 'Unknown',
+                    feeSymbol: '',
+                  }}
+                  walletSelectorButtonProps={
+                    maybeUnknownAssetWalletSelectorButtonProps
+                  }
+                />
+              </ScrollView>
               <BottomActionBar
                 alertType='error'
                 alertContent='The requested asset has not been found!'
