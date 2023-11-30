@@ -122,7 +122,12 @@ const batchModifyCustomNetworks = async ({
           (typeof result === 'boolean' && !result) ||
           (typeof result === 'object' && 'ok' in result && !result.ok)
         )
-          throw new Error('Failed to save custom network!')
+          throw new Error(
+            `Failed to save custom network! ${JSON.stringify({
+              maybeCustomBlockchainNetwork,
+              result,
+            })}`
+          )
       }
     )
   )
@@ -140,11 +145,13 @@ export const addCustomNetwork = createAppAsyncThunk(
     { rejectWithValue }
   ) => {
     try {
-      return batchModifyCustomNetworks({
+      const result = await batchModifyCustomNetworks({
         networksToAdd: addCustomNetworkParams,
         chainIdsToRemove: [],
         reset,
       })
+
+      return result
     } catch (error) {
       return rejectWithValue(`Failed to add custom network. ${String(error)}`)
     }

@@ -24,7 +24,10 @@ export function chainMetadataToMaybeCustomBlockchainNetwork({
     chainId: { namespace, reference },
     nativeCurrency: { decimals, label: nativeCurrencyName, symbol },
     isMainnet,
+
+    // TODO: This isn't supported by the JSONSchema... why?
     icon,
+
     blockExplorers,
   })
 
