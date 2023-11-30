@@ -1,5 +1,6 @@
 import { RouteProp } from '@react-navigation/native'
 import { BigNumber } from 'ethers'
+import { ChainMetadata } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
   getWalletAddressForChainId,
@@ -44,13 +45,9 @@ const ConfirmTransaction = () => {
 
   const navigation = useMainNavigation()
 
-  const { resource, decimals, symbol } = aggregateWalletBannerBalance
+  const { resource } = aggregateWalletBannerBalance
 
   const chainId = useChainIdForResourceParams({ resource })
-
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
-
-  //const maybeBlockchainNetwork = useMaybeBlockchainNetwork(chainId)
 
   // TODO: what to do about getWalletsData - is it needed any more?
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
@@ -60,30 +57,30 @@ const ConfirmTransaction = () => {
     selectedMinifiedAccounts
   )
 
-  // TODO: fix this, we can probably just introspect the token right
-  //const networkReference = getBlockchainNetworkLabel(maybeBlockchainNetwork)
-
   const { confirmTransaction, loading } = useLazyConfirmTransaction()
 
-  const renderFeeRow = React.useCallback(() => {
-    const { feeAmount, feeSymbol } = convertPredictedTransactionFeeToString({
-      chainId,
-      predictedMaxTransactionFee,
-      decimals,
-      symbol,
-    })
-    return (
-      <View style={styles.infoRow}>
-        <Text style={styles.infoLabel}>Fee</Text>
-        <View style={styles.infoValue}>
-          <Text
-            style={styles.valueText}
-            children={`${feeAmount} ${feeSymbol}`}
-          />
+  const renderFeeRow = React.useCallback(
+    (chainMetadata: ChainMetadata) => {
+      const { feeAmount, feeSymbol } = convertPredictedTransactionFeeToString({
+        chainMetadata,
+        predictedMaxTransactionFee,
+      })
+      return (
+        <View style={styles.infoRow}>
+          <Text style={styles.infoLabel}>Fee</Text>
+          <View style={styles.infoValue}>
+            <Text
+              style={styles.valueText}
+              children={`${feeAmount} ${feeSymbol}`}
+            />
+          </View>
         </View>
-      </View>
-    )
-  }, [chainId, predictedMaxTransactionFee, decimals, symbol])
+      )
+    },
+    [predictedMaxTransactionFee]
+  )
+
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   return (
     <Container>
@@ -99,82 +96,80 @@ const ConfirmTransaction = () => {
         title={`Send ${aggregateWalletBannerBalance.symbol}`}
       />
       <TestnetWarning networkReference={maybeChainMetadata?.name} />
-      {true && (
-        <View style={styles.container}>
-          <View style={styles.content}>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>From</Text>
-              <View style={styles.infoValue}>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode='middle'
-                  style={styles.valueText}>
-                  {accountAddress}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Token</Text>
-              <View style={styles.infoValue}>
-                <Text style={styles.valueText}>
-                  {aggregateWalletBannerBalance.label}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>Quantity</Text>
-              <View style={styles.infoValue}>
-                <Text style={styles.valueText}>
-                  {parseFloat(String(amount)).toFixed(3)}{' '}
-                  {aggregateWalletBannerBalance.symbol}
-                </Text>
-              </View>
-            </View>
-            <View style={styles.infoRow}>
-              <Text style={styles.infoLabel}>To</Text>
-              <View style={styles.infoValue}>
-                <Text
-                  numberOfLines={1}
-                  ellipsizeMode='middle'
-                  style={styles.valueText}
-                  children={toAddress}
-                />
-              </View>
-            </View>
-            {renderFeeRow()}
-          </View>
-          <View style={styles.footer}>
-            <Button
-              style={styles.nextButton}
-              color='primary'
-              loading={loading}
-              onPress={async () => {
-                try {
-                  await confirmTransaction({
-                    amount,
-                    toAddress,
-                    aggregateWalletBannerBalance,
-                  })
-
-                  navigation.navigate('TransactionSuccess', {
-                    amount,
-                    toAddress,
-                    aggregateWalletBannerBalance,
-                  })
-                } catch (error) {
-                  navigation.navigate('TransactionFailure', {
-                    errorMessage: String(error),
-                  })
-                }
-              }}>
-              {/* @ts-expect-error "color" is not a valid prop */}
-              <Text style={styles.nextButton} color='primary'>
-                Send {aggregateWalletBannerBalance.symbol}
+      <View style={styles.container}>
+        <View style={styles.content}>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>From</Text>
+            <View style={styles.infoValue}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode='middle'
+                style={styles.valueText}>
+                {accountAddress}
               </Text>
-            </Button>
+            </View>
           </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Token</Text>
+            <View style={styles.infoValue}>
+              <Text style={styles.valueText}>
+                {aggregateWalletBannerBalance.label}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>Quantity</Text>
+            <View style={styles.infoValue}>
+              <Text style={styles.valueText}>
+                {parseFloat(String(amount)).toFixed(3)}{' '}
+                {aggregateWalletBannerBalance.symbol}
+              </Text>
+            </View>
+          </View>
+          <View style={styles.infoRow}>
+            <Text style={styles.infoLabel}>To</Text>
+            <View style={styles.infoValue}>
+              <Text
+                numberOfLines={1}
+                ellipsizeMode='middle'
+                style={styles.valueText}
+                children={toAddress}
+              />
+            </View>
+          </View>
+          {!!maybeChainMetadata && renderFeeRow(maybeChainMetadata)}
         </View>
-      )}
+        <View style={styles.footer}>
+          <Button
+            style={styles.nextButton}
+            color='primary'
+            loading={loading}
+            onPress={async () => {
+              try {
+                await confirmTransaction({
+                  amount,
+                  toAddress,
+                  aggregateWalletBannerBalance,
+                })
+
+                navigation.navigate('TransactionSuccess', {
+                  amount,
+                  toAddress,
+                  aggregateWalletBannerBalance,
+                })
+              } catch (error) {
+                navigation.navigate('TransactionFailure', {
+                  errorMessage: String(error),
+                })
+              }
+            }}>
+            {/* @ts-expect-error "color" is not a valid prop */}
+            <Text style={styles.nextButton} color='primary'>
+              Send {aggregateWalletBannerBalance.symbol}
+            </Text>
+          </Button>
+        </View>
+      </View>
     </Container>
   )
 }

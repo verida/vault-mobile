@@ -133,12 +133,11 @@ export const PaymentRequestScreenContent = React.memo(
             chainLogo: maybeNativeAssetWalletBannerBalance?.icon || undefined,
           }}
           requestPaymentFeeProps={
-            maybeNativeAssetWalletBannerBalance
+            maybeNativeAssetWalletBannerBalance && maybeChainMetadata
               ? ((): Omit<RequestPaymentFeeProps, 'style'> => {
                   const { feeAmount, feeSymbol } =
                     convertPredictedTransactionFeeToString({
-                      ...maybeNativeAssetWalletBannerBalance,
-                      chainId,
+                      chainMetadata: maybeChainMetadata,
                       predictedMaxTransactionFee,
                     })
 

@@ -1,17 +1,13 @@
-import { ChainId } from 'caip'
 import { BigNumber } from 'ethers'
+import { ChainMetadata } from 'features/caip'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet'
 
 export function convertPredictedTransactionFeeToString({
-  decimals,
-  chainId: _chainId,
+  chainMetadata: { decimals, symbol },
   predictedMaxTransactionFee,
-  symbol,
 }: {
-  readonly decimals: number
-  readonly chainId: ChainId
   readonly predictedMaxTransactionFee: BigNumber
-  readonly symbol: string
+  readonly chainMetadata: ChainMetadata
 }): {
   readonly feeAmount: string
   readonly feeSymbol: string
@@ -32,11 +28,13 @@ export function convertPredictedTransactionFeeToString({
   //    feeSymbol: 'gwei',
   //  }
 
+  const feeAmount = `${fixedPointCryptoAsBigDecimal({
+    amount: predictedMaxTransactionFee.toString(),
+    decimals,
+  }).toString()}`
+
   return {
-    feeAmount: `${fixedPointCryptoAsBigDecimal({
-      amount: predictedMaxTransactionFee.toString(),
-      decimals,
-    }).toString()}`,
+    feeAmount,
     feeSymbol: symbol,
   }
 }
