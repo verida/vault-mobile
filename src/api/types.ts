@@ -146,15 +146,6 @@ export interface NFTMetadata {
   readonly image_data: string
 }
 
-export type ShoppingCoupon = {
-  readonly title: string
-  readonly description: string
-  readonly value: string
-  readonly valueType: string
-  readonly currency: string
-  readonly barcode: string
-}
-
 export interface NFTCollection {
   token_address: string
   contract_type: string
