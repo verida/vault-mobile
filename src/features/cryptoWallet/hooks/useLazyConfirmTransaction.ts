@@ -16,6 +16,7 @@ import {
   useChainMetadatas,
 } from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import {
@@ -30,6 +31,8 @@ import {
   getFromAddressForResourceOrThrow,
 } from '../utils'
 import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+
+const logger = new Logger('useLazyConfirmTransaction')
 
 type ConfirmTransactionCallbackParams<T extends AggregateWalletBannerBalance> =
   {
@@ -270,8 +273,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
           return result
         } catch (cause) {
-          // eslint-disable-next-line no-console
-          __DEV__ && console.error(cause)
+          logger.error(cause)
 
           setState({
             loading: false,
