@@ -79,7 +79,8 @@ export const AuthProvider: FC = ({ children }) => {
     try {
       const selectedAccount = AccountManager.getInstance().getSelectedAccount()
       if (selectedAccount) {
-        await AccountManager.getInstance().connect()
+        const network = getNetworkFromDID(selectedAccount.did)
+        await AccountManager.getInstance().connect(false, network)
       }
       setLoaded(true)
       setAuthenticated(!!selectedAccount)
