@@ -13,6 +13,7 @@ import {
   APP_PACKAGE,
   APP_VERSION_WITH_BUILD,
   VERIDA_VAULT_CONTEXT_NAME,
+  VERIDA_WALLET_USER_AGENT,
 } from 'constants/application'
 
 const logLevel: LogLevel =
@@ -88,7 +89,6 @@ const COMMON_CONFIG = {
   DATA_CONNECTOR_RETRY_LIMIT: 10,
   // --------------------
   VERIDA_DID_CLIENT_CONFIG: {
-    // TODO: As it's passed straight into some SDK functions, this should be strongly typed here
     // TODO: This will have to be specific per network, as the RPC and network endpoint will be different per network
     callType: 'gasless',
     web3Config: {
@@ -101,7 +101,7 @@ const COMMON_CONFIG = {
       },
       postConfig: {
         headers: {
-          'user-agent': 'Verida-Vault', // TODO: Move to a constant, don't know what to call it though
+          'user-agent': VERIDA_WALLET_USER_AGENT,
         },
       },
       endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
