@@ -11,7 +11,7 @@ import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 
 import { NearAccountBundle } from '../@types'
 
-export const sendBaseCurrencyNear = async ({
+export const sendNativeCurrencyNear = async ({
   chainId: caipChainId,
   to: receiverId,
   value,

@@ -6,7 +6,7 @@ import {
 import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
 import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
 
-export const sendBaseCurrencyEip155 = async ({
+export const sendNativeCurrencyEip155 = async ({
   value,
   to,
   eth_sendTransaction,

@@ -2,12 +2,12 @@ import { AssetId, ChainId } from 'caip'
 import { ethers } from 'ethers'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
-  sendBaseCurrencyEip155,
   sendErc20Eip155,
+  sendNativeCurrencyEip155,
   useBlockchainRequestHandlersEip155,
 } from 'features/blockchain/eip155'
 import {
-  sendBaseCurrencyNear,
+  sendNativeCurrencyNear,
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
 import {
@@ -130,7 +130,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
         case SupportedBlockchainNamespace.EIP_155:
           const { eth_sendTransaction } = blockchainRequestHandlersEip155
 
-          return sendBaseCurrencyEip155({
+          return sendNativeCurrencyEip155({
             rpc,
             value: amount,
             to: toAddress,
@@ -141,7 +141,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
         case SupportedBlockchainNamespace.NEAR:
           const { near_signAndSendTransaction } = blockchainRequestHandlersNear
 
-          return sendBaseCurrencyNear({
+          return sendNativeCurrencyNear({
             chainId,
             rpc,
             value: amount,
