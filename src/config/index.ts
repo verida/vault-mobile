@@ -104,8 +104,9 @@ const COMMON_CONFIG = {
     rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
   } as AccountNodeDIDClientConfig,
   NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
-  // --------------------
-  INFURA_API_KEY: Config.INFURA_API_KEY, // TODO: Move to specific network config, but will need to be for multiple networks
+  blockchain: {
+    infuraApiKey: Config.INFURA_API_KEY,
+  },
   walletConnect: {
     projectId: Config.WALLETCONNECT_PROJECT_ID,
     relayUrl: Config.WALLETCONNECT_RELAY_URL,

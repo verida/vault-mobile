@@ -37,7 +37,9 @@ function printConfig() {
       config.polygonId.testnet.rpcUrl ? 'set' : 'not set'
     }`
   )
-  logger.debug(`Infura API Key: ${config.INFURA_API_KEY ? 'set' : 'not set'}`)
+  logger.debug(
+    `Infura API Key: ${config.blockchain.infuraApiKey ? 'set' : 'not set'}`
+  )
   logger.debug(`IPFS Gateway URL: ${config.polygonId.common.ipfsGatewayUrl}`)
   logger.debug(` `)
   logger.debug(`WalletConnect Relay URL: ${config.walletConnect.relayUrl}`)
