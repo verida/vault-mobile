@@ -25,14 +25,14 @@ import NavigationHeader, {
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import { ChainMetadataListSeparatorComponent } from 'pages/Networks/components'
+import { ChainMetadataListSeparatorComponent } from 'pages/BlockchainNetworks/components'
 
 import { ChainsMetadataForm } from './components'
 import { useCreateChainMetadataFormFields } from './hooks'
 
 export type NetworksEditorRouteProp = RouteProp<
   MainStackParams,
-  'NetworksEditor'
+  'BlockchainNetworksEditor'
 >
 
 export type NetworksEditorScreenProps = {
@@ -46,8 +46,8 @@ const attemptedToModifyDisabledNetworkError = () =>
     'Attempted to modify a network that is not permitted for modification.'
   )
 
-export const NetworksEditor = React.memo(
-  function NetworksEditor(): JSX.Element {
+export const BlockchainNetworksEditor = React.memo(
+  function BlockchainNetworksEditor(): JSX.Element {
     const { initialValue, title, disabled } =
       useParams<NetworksEditorScreenProps>()
 

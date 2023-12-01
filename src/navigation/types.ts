@@ -10,13 +10,13 @@ import {
 } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
+import { NetworksEditorScreenProps } from 'pages/BlockchainNetworksEditor'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
-import { NetworksEditorScreenProps } from 'pages/NetworksEditor'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
@@ -119,8 +119,8 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
-  Networks: undefined
-  NetworksEditor: NetworksEditorScreenProps
+  BlockchainNetworks: undefined
+  BlockchainNetworksEditor: NetworksEditorScreenProps
   StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams

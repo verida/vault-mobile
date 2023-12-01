@@ -12,6 +12,8 @@ import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
+import BlockchainNetworks from 'pages/BlockchainNetworks/BlockchainNetworks'
+import { BlockchainNetworksEditor } from 'pages/BlockchainNetworksEditor'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import Inbox from 'pages/Inbox'
@@ -19,8 +21,6 @@ import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
-import Networks from 'pages/Networks/Networks'
-import { NetworksEditor } from 'pages/NetworksEditor'
 import AddCustomLink from 'pages/Profiles/AddCustomLink'
 import AddPlatformLink from 'pages/Profiles/AddPlatformLink'
 import ClaimUsername from 'pages/Profiles/ClaimUsername'
@@ -152,8 +152,14 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
           <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
           <Stack.Screen name={'ShareableData'} component={ShareableData} />
-          <Stack.Screen name={'Networks'} component={Networks} />
-          <Stack.Screen name={'NetworksEditor'} component={NetworksEditor} />
+          <Stack.Screen
+            name={'BlockchainNetworks'}
+            component={BlockchainNetworks}
+          />
+          <Stack.Screen
+            name={'BlockchainNetworksEditor'}
+            component={BlockchainNetworksEditor}
+          />
           <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
 
           <Stack.Screen

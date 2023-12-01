@@ -31,7 +31,7 @@ import {
 
 const keyExtractor = (e: ChainMetadata) => new ChainId(e).toString()
 
-function Networks(): JSX.Element {
+function BlockchainNetworks(): JSX.Element {
   const [searchText, setSearchText] = React.useState<string>('')
   const { theme } = useTheme()
 
@@ -47,7 +47,7 @@ function Networks(): JSX.Element {
         <TouchableOpacity
           onPress={() =>
             // HACK: Only allow custom networks to be edited.
-            navigation.navigate('NetworksEditor', {
+            navigation.navigate('BlockchainNetworksEditor', {
               title: isCustom ? 'Edit custom network' : 'Network settings',
               disabled: !isCustom,
               initialValue: chainMetadata,
@@ -73,7 +73,7 @@ function Networks(): JSX.Element {
 
   const onPressAddNetwork = React.useCallback(
     () =>
-      navigation.navigate('NetworksEditor', {
+      navigation.navigate('BlockchainNetworksEditor', {
         title: 'Create custom network',
         disabled: false,
         initialValue: null,
@@ -141,4 +141,4 @@ const styles = StyleSheet.create({
   flex: { flex: 1 },
 })
 
-export default Networks
+export default BlockchainNetworks

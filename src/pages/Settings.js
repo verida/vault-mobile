@@ -60,7 +60,7 @@ const BlockchainList = [
     label: 'Networks',
     action: 'arrow',
     optional: true,
-    onPress: (navigation) => navigation.navigate('Networks'),
+    onPress: (navigation) => navigation.navigate('BlockchainNetworks'),
     //value: 'Testnet',
   },
   {
