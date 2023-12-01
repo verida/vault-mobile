@@ -2,6 +2,7 @@ import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { isSupportedCaipNamespace } from 'features/caip'
+import { Logger } from 'features/telemetry'
 
 import { BlockchainAccount } from 'api/types'
 
@@ -10,6 +11,8 @@ import {
   MinifiedVeridaAccountEip155,
   MinifiedVeridaAccountNear,
 } from '../@types'
+
+const logger = new Logger('veridaAccountMaybeToMinifiedVeridaAccount')
 
 const veridaAccountToMinifiedVeridaAccountEip155 = (
   blockchainAccount: BlockchainAccount
@@ -66,12 +69,11 @@ export function veridaAccountMaybeToMinifiedVeridaAccount(
     return veridaAccountToMinifiedVeridaAccountNear(blockchainAccount)
   }
 
-  __DEV__ &&
-    // eslint-disable-next-line no-console
-    console.warn(
-      `[veridaAccountMaybeToMinifiedVeridaAccount]: Encountered unimplemented namespace, "${namespace}". (Supported?: ${isSupportedCaipNamespace(
-        namespace
-      )})`
-    )
+  logger.warn(
+    `[veridaAccountMaybeToMinifiedVeridaAccount]: Encountered unimplemented namespace, "${namespace}". (Supported?: ${isSupportedCaipNamespace(
+      namespace
+    )})`
+  )
+
   return undefined
 }
