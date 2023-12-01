@@ -5,106 +5,106 @@ import {
   DidMethod,
   NetworkId,
 } from 'features/polygonid/constants'
-import { LogLevel } from 'features/telemetry'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
 import { APP_PACKAGE, APP_VERSION_WITH_BUILD } from 'constants/application'
 
-const logLevel: LogLevel =
-  Config.LOG_LEVEL === 'error'
-    ? 'error'
-    : Config.LOG_LEVEL === 'warn'
-    ? 'warn'
-    : Config.LOG_LEVEL === 'debug'
-    ? 'debug'
-    : 'info'
+import { EnvVarsSchema } from './schema'
+
+// Validate the environment variables with the Zod schema
+const envVarsCheckResult = EnvVarsSchema.safeParse(Config)
+if (envVarsCheckResult.success === false) {
+  // eslint-disable-next-line no-console
+  console.error('Environment Variables Errors', envVarsCheckResult.error)
+  throw new Error('Environment Variables Errors')
+}
+const { data: envVars } = envVarsCheckResult
 
 export const config = {
+  logLevel: envVars.LOG_LEVEL,
   dev: {
     devMode: __DEV__,
-    disableLogBox: Config.DISABLE_LOG_BOX === 'true',
-    enableClipboardInQrCodeScanner:
-      Config.ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER === 'true',
+    disableLogBox: envVars.DISABLE_LOG_BOX,
+    enableClipboardInQrCodeScanner: envVars.ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER,
   },
-  logLevel,
   sentry: {
-    enabled: Config.ENABLE_SENTRY === 'true',
-    dsn: Config.SENTRY_DSN,
-    environment: Config.SENTRY_ENVIRONMENT || 'local',
+    enabled: envVars.ENABLE_SENTRY,
+    dsn: envVars.SENTRY_DSN,
+    environment: envVars.SENTRY_ENVIRONMENT,
     release: `${APP_PACKAGE}@${APP_VERSION_WITH_BUILD}`,
-    // tracesSampleRate: Number(Config.SENTRY_TRACE_SAMPLE_RATE || 0.1),
+    // tracesSampleRate: Number(envVars.SENTRY_TRACE_SAMPLE_RATE || 0.1),
     // replaysSessionSampleRate: Number(
-    //   Config.SENTRY_REPLAY_SESSION_SAMPLE_RATE || 0.1
+    //   envVars.SENTRY_REPLAY_SESSION_SAMPLE_RATE || 0.1
     // ),
     // replaysOnErrorSampleRate: Number(
-    //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
+    //   envVars.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
   },
   verida: {
     [EnvironmentType.LOCAL]: {
       // The local configuration use the same env var as devnet. When locally developping, the env var can be set to point the local Verida Network rather than the devnet
-      rpcUrl: Config.VERIDA_DEVNET_RPC_URL,
-      notificationServerUrls: [Config.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: Config.VERIDA_DEVNET_DATA_CONNECTOR_URL,
+      rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_DEVNET_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        Config.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
     [EnvironmentType.DEVNET]: {
-      rpcUrl: Config.VERIDA_DEVNET_RPC_URL,
-      notificationServerUrls: [Config.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: Config.VERIDA_DEVNET_DATA_CONNECTOR_URL,
+      rpcUrl: envVars.VERIDA_DEVNET_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_DEVNET_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        Config.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
     },
     [EnvironmentType.TESTNET]: {
-      rpcUrl: Config.VERIDA_TESTNET_RPC_URL,
-      notificationServerUrls: [Config.VERIDA_TESTNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: Config.VERIDA_TESTNET_DATA_CONNECTOR_URL,
+      rpcUrl: envVars.VERIDA_TESTNET_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_TESTNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_TESTNET_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
     },
     [EnvironmentType.MAINNET]: {
-      rpcUrl: Config.VERIDA_MAINNET_RPC_URL,
-      notificationServerUrls: [Config.VERIDA_MAINNET_NOTIFICATION_SERVER_URL],
-      dataConnectorServerUrl: Config.VERIDA_MAINNET_DATA_CONNECTOR_URL,
+      rpcUrl: envVars.VERIDA_MAINNET_RPC_URL,
+      notificationServerUrls: [envVars.VERIDA_MAINNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: envVars.VERIDA_MAINNET_DATA_CONNECTOR_URL,
       metaTransactionServerUrl:
-        Config.VERIDA_MAINNET_META_TRANSACTION_SERVER_URL,
+        envVars.VERIDA_MAINNET_META_TRANSACTION_SERVER_URL,
     },
   },
   walletProvider: {
-    url: Config.VERIDA_WALLET_PROVIDER_URL,
+    url: envVars.VERIDA_WALLET_PROVIDER_URL,
   },
   dataConnector: {
     retyInterval: 5000,
     retryLimit: 10,
+  },
+  blockchain: {
+    infuraApiKey: envVars.INFURA_API_KEY,
+  },
+  walletConnect: {
+    projectId: envVars.WALLETCONNECT_PROJECT_ID,
+    relayUrl: envVars.WALLETCONNECT_RELAY_URL,
   },
   polygonId: {
     common: {
       blockchain: Blockchain.Polygon,
       didMethod: DidMethod.PolygonId,
       revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
-      ipfsGatewayUrl: Config.IPFS_GATEWAY_URL,
+      ipfsGatewayUrl: envVars.IPFS_GATEWAY_URL,
     },
     testnet: {
       networkId: NetworkId.Mumbai,
-      revocationBaseUrl: Config.POLYGON_ID_REVOCATION_BASE_URL,
-      rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
+      revocationBaseUrl: envVars.POLYGON_ID_REVOCATION_BASE_URL,
+      rpcUrl: envVars.POLYGON_ID_TESTNET_RPC_URL,
       contractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4',
     },
     mainnet: {
       networkId: NetworkId.Main,
-      revocationBaseUrl: Config.POLYGON_ID_REVOCATION_BASE_URL,
-      rpcUrl: Config.POLYGON_MAINNET_RPC_URL,
+      revocationBaseUrl: envVars.POLYGON_ID_REVOCATION_BASE_URL,
+      rpcUrl: envVars.POLYGON_ID_MAINNET_RPC_URL,
       contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D',
     },
-  },
-  blockchain: {
-    infuraApiKey: Config.INFURA_API_KEY,
-  },
-  walletConnect: {
-    projectId: Config.WALLETCONNECT_PROJECT_ID,
-    relayUrl: Config.WALLETCONNECT_RELAY_URL,
   },
 }
 
