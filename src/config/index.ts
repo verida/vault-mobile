@@ -147,11 +147,6 @@ const COMMON_CONFIG = {
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
   VERIDA_ENVIRONMENT: T // TODO: Find a better name, it's not en environment, it's a network!
-
-  // TODO: WALLET_PROVIDER_CHAINS should probably have an EnvironmentType of T,
-  //       however DEVNET currently relies on TESTNET
-  // EDIT: Wallet Provider shouldn't care about the Verida network, as it's focused on the crypto addresses, which btw, should pass the full addresses with the chain namespace and reference, so Wallet Provider knowns enough
-  WALLET_PROVIDER_CHAINS: EnvironmentType
 }
 
 // TODO: All the specific configs will eventually need to be available through the config when the Wallet will have to support all the network types altogether.
@@ -164,11 +159,9 @@ const SPECIFIC_CONFIGS: {
   [EnvironmentType.LOCAL]: {},
   [EnvironmentType.DEVNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
-    WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
   },
   [EnvironmentType.TESTNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
-    WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
   },
   [EnvironmentType.MAINNET]: {},
 }

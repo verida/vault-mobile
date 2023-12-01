@@ -32,9 +32,7 @@ export const cryptoWalletApi = createApi({
       transformResponse: (response: {
         data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
-        const environmentType: EnvironmentType = config.WALLET_PROVIDER_CHAINS
-
-        const networkEntries = response.data[environmentType]
+        const networkEntries = response.data[EnvironmentType.TESTNET] // TODO: When enabling mainnets, remove this and flat out the response from Wallet Provider
 
         const allNetworks: Record<string, BlockchainNetwork> = {}
         for (const chainId in networkEntries) {
