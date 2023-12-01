@@ -42,6 +42,13 @@ import { IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { executeWithTimeout } from 'utils'
+import {
+  ACCOUNTS_STORAGE_KEY,
+  SELECTED_ACCOUNT_DID_STORAGE_KEY,
+  SELECTED_WALLET_STORAGE_KEY,
+  WALLETS_STORAGE_KEY,
+} from 'constants/storageKeys'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 const logger = new Logger('AccountManager')
 
@@ -67,8 +74,8 @@ class AccountManager extends EventEmitter {
 
     if (hasInvalidData) {
       this.accounts = {}
-      await SecureStore.deleteItemAsync(config.ACCOUNTS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(config.SELECTED_ACCOUNT_DID_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
 
       AccountManager.getInstance().emit('ForcedDeleteAccounts', null)
     }
@@ -78,8 +85,8 @@ class AccountManager extends EventEmitter {
     try {
       if (!this.selectedAccount) {
         const [storedAccounts, storedSelectedAccountDid] = await Promise.all([
-          SecureStore.getItemAsync(config.ACCOUNTS_STORAGE_KEY),
-          SecureStore.getItemAsync(config.SELECTED_ACCOUNT_DID_STORAGE_KEY),
+          SecureStore.getItemAsync(ACCOUNTS_STORAGE_KEY),
+          SecureStore.getItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY),
         ])
 
         if (storedAccounts) {
@@ -116,8 +123,8 @@ class AccountManager extends EventEmitter {
   private async initUserWallets() {
     try {
       const [walletsRaw, selectedWalletId] = await Promise.all([
-        SecureStore.getItemAsync(config.WALLETS_STORAGE_KEY),
-        SecureStore.getItemAsync(config.SELECTED_WALLET_STORAGE_KEY),
+        SecureStore.getItemAsync(WALLETS_STORAGE_KEY),
+        SecureStore.getItemAsync(SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
           cryptoWalletApi.endpoints.chainsList.initiate(
             {},
@@ -212,7 +219,7 @@ class AccountManager extends EventEmitter {
 
       // Open an application context
       const context = await this.client.openContext(
-        config.VERIDA_CONTEXT_NAME,
+        VERIDA_VAULT_CONTEXT_NAME,
         false
       )
 
@@ -341,10 +348,10 @@ class AccountManager extends EventEmitter {
       // save wallet state to secure storage
       await Promise.all([
         SecureStore.setItemAsync(
-          config.WALLETS_STORAGE_KEY,
+          WALLETS_STORAGE_KEY,
           JSON.stringify(walletData)
         ),
-        SecureStore.setItemAsync(config.SELECTED_WALLET_STORAGE_KEY, walletID),
+        SecureStore.setItemAsync(SELECTED_WALLET_STORAGE_KEY, walletID),
       ])
     } catch (error) {
       logger.error(error)
@@ -370,7 +377,7 @@ class AccountManager extends EventEmitter {
 
         // save to storage..
         await SecureStore.setItemAsync(
-          config.WALLETS_STORAGE_KEY,
+          WALLETS_STORAGE_KEY,
           JSON.stringify(wallets)
         )
 
@@ -382,7 +389,7 @@ class AccountManager extends EventEmitter {
           store.dispatch(setSelectedWallet(selectedWalletID))
 
           await SecureStore.setItemAsync(
-            config.SELECTED_WALLET_STORAGE_KEY,
+            SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         }
@@ -465,12 +472,12 @@ class AccountManager extends EventEmitter {
 
       // Open the Vault context, forcing its creation
       const context = await this.client.openContext(
-        config.VERIDA_CONTEXT_NAME,
+        VERIDA_VAULT_CONTEXT_NAME,
         true
       )
 
       if (context === undefined) {
-        throw new Error(`Failed to open context ${config.VERIDA_CONTEXT_NAME}`)
+        throw new Error(`Failed to open context ${VERIDA_VAULT_CONTEXT_NAME}`)
       }
       this.context = context
 
@@ -542,8 +549,8 @@ class AccountManager extends EventEmitter {
       selectedDids = Object.keys(this.accounts)
     }
     try {
-      await SecureStore.deleteItemAsync(config.WALLETS_STORAGE_KEY)
-      await SecureStore.deleteItemAsync(config.SELECTED_WALLET_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(WALLETS_STORAGE_KEY)
+      await SecureStore.deleteItemAsync(SELECTED_WALLET_STORAGE_KEY)
       await store.dispatch(removeUserWallets())
       DataConnectorsManager.emit('logout', null)
       selectedDids.forEach((did) => {
@@ -551,10 +558,10 @@ class AccountManager extends EventEmitter {
       })
 
       if (isEmpty(this.selectedAccount)) {
-        await SecureStore.deleteItemAsync(config.ACCOUNTS_STORAGE_KEY)
+        await SecureStore.deleteItemAsync(ACCOUNTS_STORAGE_KEY)
       } else {
         await SecureStore.setItemAsync(
-          config.ACCOUNTS_STORAGE_KEY,
+          ACCOUNTS_STORAGE_KEY,
           JSON.stringify(this.accounts)
         )
       }
@@ -564,9 +571,7 @@ class AccountManager extends EventEmitter {
         this.context = undefined
         this.client = undefined
         this.vault = undefined
-        await SecureStore.deleteItemAsync(
-          config.SELECTED_ACCOUNT_DID_STORAGE_KEY
-        )
+        await SecureStore.deleteItemAsync(SELECTED_ACCOUNT_DID_STORAGE_KEY)
         store.dispatch(setSelectedAccount(undefined))
       }
       store.dispatch(setAccounts(this.accounts))
@@ -590,7 +595,7 @@ class AccountManager extends EventEmitter {
         this.selectedAccount.seedPhraseReminder.lastTime = Date.now()
       }
       await SecureStore.setItemAsync(
-        config.SELECTED_ACCOUNT_DID_STORAGE_KEY,
+        SELECTED_ACCOUNT_DID_STORAGE_KEY,
         this.selectedAccount.did
       )
 
@@ -642,12 +647,12 @@ class AccountManager extends EventEmitter {
     this.accounts[this.selectedAccount.did] = this.selectedAccount
 
     await SecureStore.setItemAsync(
-      config.ACCOUNTS_STORAGE_KEY,
+      ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
     )
 
     await SecureStore.setItemAsync(
-      config.SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      SELECTED_ACCOUNT_DID_STORAGE_KEY,
       this.selectedAccount.did
     )
   }

@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { config } from 'config'
 import { setNewMessagesCount } from 'features/inbox'
 import { Logger } from 'features/telemetry'
 import { isValidVeridaDid } from 'features/verida'
@@ -7,6 +6,7 @@ import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 const logger = new Logger('Utils')
 
@@ -104,7 +104,7 @@ export async function getProfile(did: string) {
 // TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 export async function getPublicProfile(
   did: string,
-  contextName: string = config.VERIDA_CONTEXT_NAME
+  contextName: string = VERIDA_VAULT_CONTEXT_NAME
 ) {
   try {
     if (!isValidVeridaDid(did)) {
@@ -160,7 +160,7 @@ export const getInboxProfile = async (did: string, context: string) => {
 export async function getAxios() {
   const fetchConfig: any = {
     headers: {
-      'context-name': config.VERIDA_CONTEXT_NAME,
+      'context-name': VERIDA_VAULT_CONTEXT_NAME,
     },
   }
 
@@ -170,9 +170,9 @@ export async function getAxios() {
 
   const keyring = await AccountManager.getInstance()
     .context?.getAccount()
-    .keyring(config.VERIDA_CONTEXT_NAME)
+    .keyring(VERIDA_VAULT_CONTEXT_NAME)
   const axiosAuthPassword = await keyring?.sign(
-    `Access the notification service using context: "${config.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+    `Access the notification service using context: "${VERIDA_VAULT_CONTEXT_NAME}"?\n\n${currentDid}`
   )
 
   fetchConfig.auth = {
@@ -210,7 +210,7 @@ export async function registerRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: config.VERIDA_CONTEXT_NAME,
+        context: VERIDA_VAULT_CONTEXT_NAME,
         deviceId: token,
       },
     }
@@ -233,7 +233,7 @@ export async function unRegisterRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: config.VERIDA_CONTEXT_NAME,
+        context: VERIDA_VAULT_CONTEXT_NAME,
         deviceId: token,
       },
     }

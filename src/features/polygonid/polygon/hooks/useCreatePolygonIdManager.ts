@@ -4,6 +4,7 @@ import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import AccountManager from 'api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 import { Stateful } from '../../@types'
 import { PolygonIdConfig, PolygonIdManagerConfig } from '../@types'
@@ -75,7 +76,7 @@ export function useCreatePolygonIdManager(): Stateful<string> {
     const polygonIdManagerConfig: PolygonIdManagerConfig = {
       veridaPrivateKey: account.privateKey,
       veridaEnvironment: config.VERIDA_ENVIRONMENT,
-      veridaContextName: config.VERIDA_CONTEXT_NAME,
+      veridaContextName: VERIDA_VAULT_CONTEXT_NAME,
       veridaDidClientConfig: config.VERIDA_DID_CLIENT_CONFIG,
       veridaCredentialRecordSchema:
         'https://common.schemas.verida.io/credential/base/v0.2.0/schema.json',

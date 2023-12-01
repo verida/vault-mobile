@@ -79,13 +79,6 @@ const COMMON_CONFIG = {
     },
   },
   // --------------------
-  ACCOUNTS_STORAGE_KEY: 'accounts',
-  SELECTED_ACCOUNT_DID_STORAGE_KEY: 'selected-account-did',
-  WALLETS_STORAGE_KEY: 'wallets-v4',
-  SELECTED_WALLET_STORAGE_KEY: 'selected-wallet',
-  // --------------------
-  VERIDA_CONTEXT_NAME: VERIDA_VAULT_CONTEXT_NAME,
-  // --------------------
   MNEMONIC_LENGTH: 12,
   CONFIG_DB: 'vault-config',
   SEED_PHRASE_BACKED_UP_CONFIG: 'seedPhraseBackedUp',
@@ -150,7 +143,6 @@ const SPECIFIC_CONFIGS: {
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
     WALLET_PROVIDER_URL: Config.VERIDA_WALLET_PROVIDER_URL,
-    NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
   },
   [EnvironmentType.TESTNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
@@ -158,7 +150,6 @@ const SPECIFIC_CONFIGS: {
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
     DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
     WALLET_PROVIDER_URL: Config.VERIDA_WALLET_PROVIDER_URL,
-    NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
   },
   [EnvironmentType.MAINNET]: {},
 }

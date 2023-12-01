@@ -14,7 +14,7 @@ export function initApplication() {
 }
 
 function printConfig() {
-  logger.debug('===== Configuration =====')
+  logger.debug('====== Configuration ======')
   logger.debug(`Dev mode: ${config.dev.devMode}`)
   logger.debug(` `)
   logger.debug(
@@ -45,5 +45,5 @@ function printConfig() {
     `Wallet Project Id: ${config.walletConnect.projectId ? 'set' : 'not set'}`
   )
   // Complete logs of config here if needed
-  logger.debug('=========================')
+  logger.debug('========================')
 }
