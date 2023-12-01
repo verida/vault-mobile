@@ -61,9 +61,6 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
-  console.log(assetId)
-
-  //const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
@@ -73,14 +70,6 @@ const SingleCurrency = () => {
     chainId,
     selectedMinifiedAccounts
   )
-
-  // const {
-  //   symbol,
-  //   icon,
-  //   balance,
-  //   decimals,
-  //   valuation: maybeValuation,
-  // } = aggregateWalletBannerBalance
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
@@ -132,11 +121,6 @@ const SingleCurrency = () => {
         resetErrorBoundary={pullToRefresh}
       />
     )
-
-  console.log(
-    !isAssetSupportedByWalletProvider,
-    !maybeAggregateWalletBannerBalance
-  )
 
   return (
     <Container>
