@@ -39,7 +39,7 @@ import DataConnectorsManager from './DataConnectorsManager'
 import { config } from 'config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
-import { IContext } from '@verida/types'
+import { EnvironmentType, IContext } from '@verida/types'
 import { PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { executeWithTimeout } from 'utils'
@@ -414,14 +414,19 @@ class AccountManager extends EventEmitter {
     updateProgress?: (
       step: AddIdentityStepType,
       status: AddIdentityStepStatus
-    ) => void
+    ) => void,
+    veridaNetwork = EnvironmentType.TESTNET // TODO: Make required when enabling mainnet
   ): Promise<Account | undefined> {
     let connected = false
     updateProgress?.('StorageLocation', 'None')
     updateProgress?.('CreateProfile', 'None')
     updateProgress?.('ClaimUsername', 'None')
 
-    const environment = config.VERIDA_ENVIRONMENT
+    const network =
+      veridaNetwork || config.dev.devMode
+        ? EnvironmentType.DEVNET
+        : EnvironmentType.TESTNET
+    // TODO: Remove this when enabling mainnet
 
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
@@ -453,25 +458,28 @@ class AccountManager extends EventEmitter {
       })
 
       this.client = new Client({
-        environment,
+        environment: network,
         didClientConfig: {
           rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
-          network: environment,
+          network,
         },
       })
 
       const account = new AutoAccount({
         privateKey: this.selectedAccount!.mnemonic,
-        environment,
+        environment: network,
         didClientConfig,
       })
 
       // Load suitable node based on selected country
       const countryCode = getCountryCode(country)
 
+      const notificationEndpoints =
+        config.verida[network].notificationServerUrls
+
       await account.loadDefaultStorageNodes(countryCode, 3, {
-        network: environment,
-        notificationEndpoints: [...config.NOTIFICATION_ENDPOINTS],
+        network,
+        notificationEndpoints,
       })
 
       updateProgress?.('StorageLocation', 'Loading')

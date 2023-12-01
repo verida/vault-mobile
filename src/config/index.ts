@@ -147,7 +147,6 @@ const COMMON_CONFIG = {
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
   VERIDA_ENVIRONMENT: T // TODO: Find a better name, it's not en environment, it's a network!
-  NOTIFICATION_ENDPOINTS: readonly string[]
 
   // TODO: WALLET_PROVIDER_CHAINS should probably have an EnvironmentType of T,
   //       however DEVNET currently relies on TESTNET
@@ -166,12 +165,10 @@ const SPECIFIC_CONFIGS: {
   [EnvironmentType.DEVNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
-    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
   },
   [EnvironmentType.TESTNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
-    NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
   },
   [EnvironmentType.MAINNET]: {},
 }
