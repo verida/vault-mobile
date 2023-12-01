@@ -1,4 +1,4 @@
-import { AccountNodeDIDClientConfig, EnvironmentType } from '@verida/types'
+import { EnvironmentType } from '@verida/types'
 import {
   Blockchain,
   CredentialStatusType,
@@ -9,12 +9,7 @@ import { LogLevel } from 'features/telemetry'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
-import {
-  APP_PACKAGE,
-  APP_VERSION_WITH_BUILD,
-  VERIDA_VAULT_CONTEXT_NAME,
-  VERIDA_WALLET_USER_AGENT,
-} from 'constants/application'
+import { APP_PACKAGE, APP_VERSION_WITH_BUILD } from 'constants/application'
 
 const logLevel: LogLevel =
   Config.LOG_LEVEL === 'error'
@@ -24,16 +19,6 @@ const logLevel: LogLevel =
     : Config.LOG_LEVEL === 'debug'
     ? 'debug'
     : 'info'
-
-// TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether).
-const veridaNetwork: EnvironmentType =
-  Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.MAINNET
-    ? EnvironmentType.MAINNET
-    : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.DEVNET
-    ? EnvironmentType.DEVNET
-    : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.LOCAL
-    ? EnvironmentType.LOCAL
-    : EnvironmentType.TESTNET
 
 export const config = {
   dev: {
@@ -56,9 +41,7 @@ export const config = {
     //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
   },
-  VERIDA_ENVIRONMENT: veridaNetwork,
   verida: {
-    // Not used yet
     [EnvironmentType.LOCAL]: {
       // The local configuration use the same env var as devnet. When locally developping, the env var can be set to point the local Verida Network rather than the devnet
       rpcUrl: Config.VERIDA_DEVNET_RPC_URL,
@@ -89,26 +72,6 @@ export const config = {
         Config.VERIDA_MAINNET_META_TRANSACTION_SERVER_URL,
     },
   },
-  VERIDA_DID_CLIENT_CONFIG: {
-    // TODO: This will have to be specific per network, as the RPC and network endpoint will be different per network
-    callType: 'gasless',
-    web3Config: {
-      callType: 'gasless',
-      rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
-      serverConfig: {
-        headers: {
-          'context-name': VERIDA_VAULT_CONTEXT_NAME,
-        },
-      },
-      postConfig: {
-        headers: {
-          'user-agent': VERIDA_WALLET_USER_AGENT,
-        },
-      },
-      endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
-    },
-    rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
-  } as AccountNodeDIDClientConfig,
   walletProvider: {
     url: Config.VERIDA_WALLET_PROVIDER_URL,
   },

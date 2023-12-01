@@ -51,6 +51,7 @@ import {
 } from 'constants/storageKeys'
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
+import { getDidClientConfigForNetwork } from 'features/verida'
 
 const logger = new Logger('AccountManager')
 
@@ -142,7 +143,8 @@ class AccountManager extends EventEmitter {
       if (isEmpty(wallets?.[selectedWalletId!]?.accounts)) {
         const selectedAccount = this.getSelectedAccount()
         if (selectedAccount) {
-          await this.connect()
+          const network = getNetworkFromDID(selectedAccount.did)
+          await this.connect(false, network)
         }
         await this.restoreUserWallet(true)
       } else {
@@ -173,11 +175,11 @@ class AccountManager extends EventEmitter {
       : undefined
   }
 
-  public async connect(forced = false) {
+  public async connect(forced: boolean, network: EnvironmentType) {
     if (!forced && this.context) {
       return
     }
-    this.context = await this.getVeridaContext()
+    this.context = await this.getVeridaContext(network)
     this.vault = await this.getVault()
   }
 
@@ -189,29 +191,34 @@ class AccountManager extends EventEmitter {
     return AccountManager.instance
   }
 
-  public async getVeridaContext(): Promise<IContext | undefined> {
+  public async getVeridaContext(
+    veridaNetwork: EnvironmentType
+  ): Promise<IContext | undefined> {
     try {
       if (!this.selectedAccount) return undefined
 
-      const environment = config.VERIDA_ENVIRONMENT
+      let network = veridaNetwork
+
+      const selectAccountDid = this.selectedAccount.did
+      if (selectAccountDid) {
+        network = getNetworkFromDID(selectAccountDid)
+      }
+
+      const didClientConfig = getDidClientConfigForNetwork(network)
 
       this.client = new Client({
-        environment,
+        environment: network,
         didClientConfig: {
-          rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
-          network: environment,
+          rpcUrl: didClientConfig.rpcUrl,
+          network: network,
         },
       })
 
       const { mnemonic } = this.selectedAccount
 
-      // Use empty endpointUri's as they should already have been specified
-      // when the account was created
-      const didClientConfig = merge({}, config.VERIDA_DID_CLIENT_CONFIG)
-
       const account = new AutoAccount({
         privateKey: mnemonic,
-        environment,
+        environment: network,
         didClientConfig,
       })
 
@@ -453,14 +460,15 @@ class AccountManager extends EventEmitter {
     }
 
     try {
-      const didClientConfig = merge({}, config.VERIDA_DID_CLIENT_CONFIG, {
+      const defdaultDidConfig = getDidClientConfigForNetwork(network)
+      const didClientConfig = merge({}, defdaultDidConfig, {
         veridaKey: this.selectedAccount!.privateKey,
       })
 
       this.client = new Client({
         environment: network,
         didClientConfig: {
-          rpcUrl: config.VERIDA_DID_CLIENT_CONFIG.rpcUrl,
+          rpcUrl: didClientConfig.rpcUrl,
           network,
         },
       })
@@ -616,7 +624,8 @@ class AccountManager extends EventEmitter {
       )
 
       if (connect) {
-        await this.connect(true)
+        const network = getNetworkFromDID(did)
+        await this.connect(true, network)
       }
       await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
@@ -679,7 +688,16 @@ class AccountManager extends EventEmitter {
     )
   }
 
-  public async importAccount(mnemonic: string) {
+  public async importAccount(
+    mnemonic: string,
+    veridaNetwork = EnvironmentType.TESTNET // TODO: Make required when enabling mainnet
+  ) {
+    const network =
+      veridaNetwork || config.dev.devMode
+        ? EnvironmentType.DEVNET
+        : EnvironmentType.TESTNET
+    // TODO: Remove this when enabling mainnet
+
     try {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null
@@ -696,7 +714,7 @@ class AccountManager extends EventEmitter {
         },
       }
       DataConnectorsManager.emit('logout', null)
-      await this.connect(true)
+      await this.connect(true, network)
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
       await this.restoreUserWallet(true)

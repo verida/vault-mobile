@@ -12,8 +12,6 @@ declare module '*.svg' {
 
 declare module 'react-native-config' {
   export interface NativeConfig {
-    VERIDA_NETWORK_ENVIRONMENT?: 'local' | 'devnet' | 'testnet' | 'mainnet'
-
     VERIDA_DEVNET_RPC_URL: string
     VERIDA_DEVNET_NOTIFICATION_SERVER_URL: string
     VERIDA_DEVNET_DATA_CONNECTOR_URL: string

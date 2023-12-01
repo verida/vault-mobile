@@ -23,8 +23,6 @@ function printConfig() {
     }`
   )
   logger.debug(` `)
-  logger.debug(`Verida Network: ${config.VERIDA_ENVIRONMENT}`)
-  logger.debug(` `)
   logger.debug(`Verida Devnet RPC URL: ${config.verida.devnet.rpcUrl}`)
   logger.debug(
     `Verida Devnet Meta Transaction Server: ${config.verida.devnet.metaTransactionServerUrl}`
