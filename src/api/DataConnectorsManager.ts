@@ -2,6 +2,7 @@ import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
 import { config } from 'config'
 import EventEmitter from 'events'
+import { getNetworkFromDID } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import moment from 'moment'
 import { Linking } from 'react-native'
@@ -21,6 +22,11 @@ const DATA_SYNC_REQUEST_SCHEMA =
 
 const delay = async (ms: number) => {
   await new Promise((resolve: any) => setTimeout(() => resolve(), ms))
+}
+
+function getDataConnectorUrl(did: string) {
+  const network = getNetworkFromDID(did)
+  return config.verida[network].dataConnectorServerUrl
 }
 
 // possible states for status: syncing, disabled, active
@@ -225,10 +231,15 @@ class DataConnection extends EventEmitter {
 
     const account = context?.getAccount()
     const did = await account?.did()
+    if (!did) {
+      throw new Error('No Account found')
+    }
+
+    const dataConnectorUrl = getDataConnectorUrl(did)
 
     // logger.debug(`Initiating auth for ${this.source}`, { did })
     Linking.openURL(
-      `${config.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
+      `${dataConnectorUrl}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
     )
   }
 
@@ -318,12 +329,17 @@ class DataConnection extends EventEmitter {
       const context = await AccountManager.getInstance().context
       const account = context?.getAccount()
       const did = await account?.did()
+      if (!did) {
+        throw new Error('No Account found')
+      }
+
+      const dataConnectorUrl = getDataConnectorUrl(did)
 
       const axiosInstance = axios.create()
 
       // @todo: handle errors
       const syncRequestResult = await axiosInstance.get(
-        `${config.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
+        `${dataConnectorUrl}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
       )
       const { serverDid, contextName, syncRequestId, syncRequestDatabaseName } =
         syncRequestResult.data
@@ -433,6 +449,10 @@ class DataConnection extends EventEmitter {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
     const did = await account?.did()
+    if (!did) {
+      throw new Error('No Account found')
+    }
+
     const { schemas, newAuth } = syncRequest.syncInfo
 
     try {
@@ -492,10 +512,12 @@ class DataConnection extends EventEmitter {
         }
       }
 
+      const dataConnectorUrl = getDataConnectorUrl(did)
+
       // cleanup by calling sync done to the server so the temporary data can be deleted
       const axiosInstance = axios.create()
       await axiosInstance.get(
-        `${config.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
+        `${dataConnectorUrl}/syncDone/${this.name}?did=${did}`
       )
 
       this.syncLast = new Date().toISOString()

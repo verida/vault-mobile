@@ -59,6 +59,14 @@ const COMMON_CONFIG = {
   },
   verida: {
     // Not used yet
+    [EnvironmentType.LOCAL]: {
+      // The local configuration use the same env var as devnet. When locally developping, the env var can be set to point the local Verida Network rather than the devnet
+      rpcUrl: Config.VERIDA_DEVNET_RPC_URL,
+      notificationServerUrls: [Config.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: Config.VERIDA_DEVNET_DATA_CONNECTOR_URL,
+      metaTransactionServerUrl:
+        Config.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
+    },
     [EnvironmentType.DEVNET]: {
       rpcUrl: Config.VERIDA_DEVNET_RPC_URL,
       notificationServerUrls: [Config.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
@@ -140,7 +148,6 @@ const COMMON_CONFIG = {
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
   VERIDA_ENVIRONMENT: T // TODO: Find a better name, it's not en environment, it's a network!
   NOTIFICATION_ENDPOINTS: readonly string[]
-  DATA_CONNECTOR_URL: string
 
   // TODO: WALLET_PROVIDER_CHAINS should probably have an EnvironmentType of T,
   //       however DEVNET currently relies on TESTNET
@@ -160,13 +167,11 @@ const SPECIFIC_CONFIGS: {
     VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
   [EnvironmentType.TESTNET]: {
     VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
   },
   [EnvironmentType.MAINNET]: {},
 }
