@@ -1,28 +1,28 @@
 import { isSupportedCaipNamespace } from 'features/caip'
 import {
-  MinifiedVeridaAccount,
-  MinifiedVeridaAccounts,
+  MinifiedBlockchainAccount,
+  MinifiedBlockchainAccounts,
   VeridaWalletAccountOption,
 } from 'features/cryptoWallet/@types'
 import * as React from 'react'
 
 import {
-  getLabelForMinifiedVeridaAccount,
-  getMinifiedVeridaAccountId,
-} from './useSelectedMinifiedVeridaAccounts'
+  getLabelForMinifiedBlockchainAccount,
+  getMinifiedBlockchainAccountId,
+} from './useSelectedMinifiedBlockchainAccounts'
 
-export const veridaWalletAccountsToDropdownOptions = ({
-  selectedMinifiedVeridaAccounts,
+export const minifiedBlockchainAccountsToDropdownOptions = ({
+  selectedMinifiedBlockchainAccounts,
   onlyMatchingNamespaces,
 }: {
-  readonly selectedMinifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly selectedMinifiedBlockchainAccounts: MinifiedBlockchainAccounts
   readonly onlyMatchingNamespaces: readonly string[] | null
 }): readonly VeridaWalletAccountOption[] => {
-  return selectedMinifiedVeridaAccounts.flatMap(
+  return selectedMinifiedBlockchainAccounts.flatMap(
     (
-      minifiedVeridaAccount: MinifiedVeridaAccount
+      minifiedBlockchainAccount: MinifiedBlockchainAccount
     ): readonly VeridaWalletAccountOption[] => {
-      const { namespace } = minifiedVeridaAccount
+      const { namespace } = minifiedBlockchainAccount
 
       // Just to be sure. Note it is possible that there are some legacy
       // unsupported private keys in local storage that we wouldn't want
@@ -39,8 +39,8 @@ export const veridaWalletAccountsToDropdownOptions = ({
         return []
 
       const option: VeridaWalletAccountOption = {
-        label: getLabelForMinifiedVeridaAccount(minifiedVeridaAccount),
-        value: getMinifiedVeridaAccountId(minifiedVeridaAccount),
+        label: getLabelForMinifiedBlockchainAccount(minifiedBlockchainAccount),
+        value: getMinifiedBlockchainAccountId(minifiedBlockchainAccount),
         disabled: false,
       }
 
@@ -50,18 +50,18 @@ export const veridaWalletAccountsToDropdownOptions = ({
 }
 
 export function useVeridaWalletAccountDropdownOptions({
-  selectedMinifiedVeridaAccounts,
+  selectedMinifiedBlockchainAccounts,
   onlyMatchingNamespaces = null,
 }: {
-  readonly selectedMinifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly selectedMinifiedBlockchainAccounts: MinifiedBlockchainAccounts
   readonly onlyMatchingNamespaces?: readonly string[] | null
 }) {
   return React.useMemo<readonly VeridaWalletAccountOption[]>(
     () =>
-      veridaWalletAccountsToDropdownOptions({
-        selectedMinifiedVeridaAccounts,
+      minifiedBlockchainAccountsToDropdownOptions({
+        selectedMinifiedBlockchainAccounts,
         onlyMatchingNamespaces,
       }),
-    [selectedMinifiedVeridaAccounts, onlyMatchingNamespaces]
+    [selectedMinifiedBlockchainAccounts, onlyMatchingNamespaces]
   )
 }

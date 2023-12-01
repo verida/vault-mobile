@@ -1,21 +1,21 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { AccountId, ChainId } from 'caip'
 import {
-  MinifiedVeridaAccount,
-  MinifiedVeridaAccounts,
+  MinifiedBlockchainAccount,
+  MinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 
 import { ActiveSession } from '../@types'
 
-export function getMaybeMinifiedVeridaAccountForWalletConnectActiveSession({
+export function getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession({
   activeSession,
   request,
-  minifiedVeridaAccounts,
+  minifiedBlockchainAccounts,
 }: {
   readonly activeSession: ActiveSession | null | undefined
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
-}): MinifiedVeridaAccount | undefined {
+  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+}): MinifiedBlockchainAccount | undefined {
   if (!activeSession) return undefined
 
   const requiredCaip = new ChainId(request.params.chainId)
@@ -51,11 +51,11 @@ export function getMaybeMinifiedVeridaAccountForWalletConnectActiveSession({
       `Expected qualified address, encountered "${String(address)}".`
     )
 
-  const maybeMatchingVeridaWalletAccounts = minifiedVeridaAccounts.filter(
+  const maybeMatchingVeridaWalletAccounts = minifiedBlockchainAccounts.filter(
     ({
       address: maybeAddress,
       namespace: maybeNamespace,
-    }: MinifiedVeridaAccount): boolean =>
+    }: MinifiedBlockchainAccount): boolean =>
       maybeNamespace === requiredCaip.namespace && maybeAddress === address
   )
 

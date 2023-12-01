@@ -1,5 +1,5 @@
 import { throwIfInvalidNearRpcMethod } from 'features/blockchain/near'
-import { useSelectedMinifiedVeridaAccounts } from 'features/cryptoWallet'
+import { useSelectedMinifiedBlockchainAccounts } from 'features/cryptoWallet'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
@@ -9,7 +9,7 @@ import { useWalletConnectSessionRequestHandlersNear } from './useWalletConnectSe
 export const useWalletConnectSessionApproveCallbackNear = (): ((
   params: WalletConnectSessionRequestCallbackParams
 ) => Promise<unknown>) => {
-  const minifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
+  const minifiedBlockchainAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const nearSessionRequestHandlers =
     useWalletConnectSessionRequestHandlersNear()
@@ -23,7 +23,7 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
         {
           web3wallet,
           request,
-          minifiedVeridaAccounts,
+          minifiedBlockchainAccounts,
         }
       )
 
@@ -41,6 +41,6 @@ export const useWalletConnectSessionApproveCallbackNear = (): ((
 
       return handle({ web3wallet, request })
     },
-    [nearSessionRequestHandlers, minifiedVeridaAccounts]
+    [nearSessionRequestHandlers, minifiedBlockchainAccounts]
   )
 }

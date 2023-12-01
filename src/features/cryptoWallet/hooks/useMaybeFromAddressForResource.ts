@@ -2,14 +2,14 @@ import * as React from 'react'
 
 import { AggregateWalletBannerBalance } from '../@types'
 import { getFromAddressForResourceOrThrow } from '../utils'
-import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
 export function useMaybeFromAddressForResource({
   resource: maybeResource,
 }: {
   readonly resource: AggregateWalletBannerBalance['resource'] | null | undefined
 }) {
-  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
   return React.useMemo(() => {
     try {

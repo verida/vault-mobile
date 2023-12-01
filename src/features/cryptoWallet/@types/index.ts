@@ -165,29 +165,28 @@ export type ImportedSeedPhrase = {
   readonly inputSwitch: string
 }
 
-type AbstractMinifiedVeridaAccount<
+type AbstractMinifiedBlockchainAccount<
   Namespace extends SupportedBlockchainNamespace
 > = {
   readonly address: string
   readonly namespace: Namespace
 }
 
-export type MinifiedVeridaAccountEip155 =
-  AbstractMinifiedVeridaAccount<SupportedBlockchainNamespace.EIP_155> & {
-    // readonly address: string
+export type MinifiedBlockchainAccountEip155 =
+  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.EIP_155> & {
     readonly privateKey: string
   }
 
-export type MinifiedVeridaAccountNear =
-  AbstractMinifiedVeridaAccount<SupportedBlockchainNamespace.NEAR> & {
+export type MinifiedBlockchainAccountNear =
+  AbstractMinifiedBlockchainAccount<SupportedBlockchainNamespace.NEAR> & {
     readonly privateKey: string
   }
 
-export type MinifiedVeridaAccount =
-  | MinifiedVeridaAccountEip155
-  | MinifiedVeridaAccountNear
+export type MinifiedBlockchainAccount =
+  | MinifiedBlockchainAccountEip155
+  | MinifiedBlockchainAccountNear
 
-export type MinifiedVeridaAccounts = readonly MinifiedVeridaAccount[]
+export type MinifiedBlockchainAccounts = readonly MinifiedBlockchainAccount[]
 
 export enum Currency {
   USD = 'USD',

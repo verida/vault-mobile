@@ -1,21 +1,24 @@
 import { ethers } from 'ethers'
 import * as React from 'react'
 
-import { MinifiedVeridaAccount, MinifiedVeridaAccounts } from '../@types'
-import { veridaAccountMaybeToMinifiedVeridaAccount } from '../utils'
+import {
+  MinifiedBlockchainAccount,
+  MinifiedBlockchainAccounts,
+} from '../@types'
+import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
 import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
 
-export const getMinifiedVeridaAccountId = (
-  minifiedVeridaAccount: MinifiedVeridaAccount
+export const getMinifiedBlockchainAccountId = (
+  minifiedBlockchainAccount: MinifiedBlockchainAccount
 ): string =>
   ethers.utils.keccak256(
-    ethers.utils.toUtf8Bytes(JSON.stringify(minifiedVeridaAccount))
+    ethers.utils.toUtf8Bytes(JSON.stringify(minifiedBlockchainAccount))
   )
 
-export const getLabelForMinifiedVeridaAccount = (
-  minifiedVeridaAccount: MinifiedVeridaAccount
+export const getLabelForMinifiedBlockchainAccount = (
+  minifiedBlockchainAccount: MinifiedBlockchainAccount
 ) => {
-  const { address } = minifiedVeridaAccount
+  const { address } = minifiedBlockchainAccount
   return address
 }
 
@@ -28,15 +31,15 @@ export const getLabelForMinifiedVeridaAccount = (
 // namespace - this allows us to represent each private key uniquely,
 // and greatly increase the exposure - without actually having to migrate
 // the existing persistence model.
-export function useSelectedMinifiedVeridaAccounts(): MinifiedVeridaAccounts {
+export function useSelectedMinifiedBlockchainAccounts(): MinifiedBlockchainAccounts {
   const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
 
-  return React.useMemo<readonly MinifiedVeridaAccount[]>(() => {
+  return React.useMemo<readonly MinifiedBlockchainAccount[]>(() => {
     // First, minify the accounts so they just consist of raw signing information,
     // and have no presumptions about a specific chain.
     const minifiedAccounts = Object.entries(maybeVeridaWalletAccounts || {})
       .map(([, blockchainAccount]) =>
-        veridaAccountMaybeToMinifiedVeridaAccount(blockchainAccount)
+        veridaAccountMaybeToMinifiedBlockchainAccount(blockchainAccount)
       )
       .flatMap((maybeMinifiedAccount) =>
         maybeMinifiedAccount ? [maybeMinifiedAccount] : []
@@ -45,7 +48,7 @@ export function useSelectedMinifiedVeridaAccounts(): MinifiedVeridaAccounts {
     // Invariably, this list contains duplicates. Dedup.
     // TODO: This is slow.
     // TODO: This is unsafe!
-    const hashes = minifiedAccounts.map(getMinifiedVeridaAccountId)
+    const hashes = minifiedAccounts.map(getMinifiedBlockchainAccountId)
 
     // If we encounter a duplicate, the `indexOf` for position `i` will not be identical.
     return minifiedAccounts.filter((_, i) => hashes.indexOf(hashes[i]) === i)

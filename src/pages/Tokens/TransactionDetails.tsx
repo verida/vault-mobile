@@ -6,7 +6,7 @@ import {
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeChainMetadataForResource,
-  useSelectedMinifiedVeridaAccounts,
+  useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -36,7 +36,7 @@ const TransactionDetails = () => {
 
   const { resource } = aggregateWalletBannerBalance
 
-  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
   const chainId = useChainIdForResourceParams({ resource })
 
   const address = getWalletAddressForChainId(chainId, selectedMinifiedAccounts)

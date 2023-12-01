@@ -6,8 +6,8 @@ import {
 } from 'features/blockchain/eip155'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import {
-  MinifiedVeridaAccounts,
-  useSelectedMinifiedVeridaAccounts,
+  MinifiedBlockchainAccounts,
+  useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import * as React from 'react'
 import { $enum } from 'ts-enum-util'
@@ -18,29 +18,28 @@ import {
 } from '../@types'
 import {
   extractWalletConnectRpcOrThrow,
-  getMinifiedVeridaAccountForWalletConnectRequestOrThrow,
+  getMinifiedBlockchainAccountForWalletConnectRequestOrThrow,
 } from '../utils'
 
 const getEthereumWalletOrThrow = ({
   rpc,
   request,
-  minifiedVeridaAccounts,
+  minifiedBlockchainAccounts,
   web3wallet,
 }: {
   readonly rpc: string
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
   readonly web3wallet: IWeb3Wallet
 }) => {
   const provider = new ethers.providers.JsonRpcProvider(rpc)
 
-  const { privateKey } = getMinifiedVeridaAccountForWalletConnectRequestOrThrow(
-    {
+  const { privateKey } =
+    getMinifiedBlockchainAccountForWalletConnectRequestOrThrow({
       web3wallet,
       request,
-      minifiedVeridaAccounts,
-    }
-  )
+      minifiedBlockchainAccounts,
+    })
 
   // HACK: Private keys can be empty because the Vault permits the existence of
   //       watched wallets.
@@ -54,7 +53,7 @@ const getEthereumWalletOrThrow = ({
 
 // https://github.com/WalletConnect/web-examples/blob/d7c56a3beaaf75adb0aa481b2010454339361871/wallets/react-wallet-eip155/src/utils/EIP155RequestHandlerUtil.ts#L37
 export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionRequestHandlers {
-  const minifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
+  const minifiedBlockchainAccounts = useSelectedMinifiedBlockchainAccounts()
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const blockchainRequestHandlersEip155 = useBlockchainRequestHandlersEip155()
@@ -75,13 +74,17 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
                   request,
                 }),
                 request,
-                minifiedVeridaAccounts,
+                minifiedBlockchainAccounts,
                 web3wallet,
               }),
               params: request.params.request.params,
             }),
         ])
       ) as unknown as EthereumSessionRequestHandlers,
-    [minifiedVeridaAccounts, chainMetadatas, blockchainRequestHandlersEip155]
+    [
+      minifiedBlockchainAccounts,
+      chainMetadatas,
+      blockchainRequestHandlersEip155,
+    ]
   )
 }

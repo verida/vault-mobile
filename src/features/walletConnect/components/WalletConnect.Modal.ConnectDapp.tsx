@@ -4,8 +4,8 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { AccountId } from 'caip'
 import { Spacer } from 'components'
 import {
-  getMinifiedVeridaAccountId,
-  useSelectedMinifiedVeridaAccounts,
+  getMinifiedBlockchainAccountId,
+  useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
 } from 'features/cryptoWallet'
@@ -88,7 +88,8 @@ export const WalletConnectModalConnectDapp = React.memo(
 
     const metadata = proposal?.params?.proposer?.metadata
 
-    const selectedMinifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
+    const selectedMinifiedBlockchainAccounts =
+      useSelectedMinifiedBlockchainAccounts()
 
     const onlyMatchingCaipChainIds =
       useWalletConnectProposalRequiredCaipChainIds(proposal)
@@ -101,7 +102,7 @@ export const WalletConnectModalConnectDapp = React.memo(
     const wallets: readonly VeridaWalletAccountOption[] =
       useVeridaWalletAccountDropdownOptions({
         //includesWatchedWallets: false,
-        selectedMinifiedVeridaAccounts,
+        selectedMinifiedBlockchainAccounts,
 
         // HACK: Only show wallets which possess a caip identifier which supports the request.
         //       This prevents us from showing duplicate wallets for a single request, i.e. the
@@ -131,9 +132,9 @@ export const WalletConnectModalConnectDapp = React.memo(
         const { value: minifiedWalletId } = selectedWallet
 
         // Find the account for the given identifier.
-        const matchingAccount = selectedMinifiedVeridaAccounts.find(
-          (minifiedVeridaAccount) =>
-            getMinifiedVeridaAccountId(minifiedVeridaAccount) ===
+        const matchingAccount = selectedMinifiedBlockchainAccounts.find(
+          (minifiedBlockchainAccount) =>
+            getMinifiedBlockchainAccountId(minifiedBlockchainAccount) ===
             minifiedWalletId
         )
 
@@ -192,7 +193,7 @@ export const WalletConnectModalConnectDapp = React.memo(
       web3wallet,
       setActiveSessions,
       dismissModal,
-      selectedMinifiedVeridaAccounts,
+      selectedMinifiedBlockchainAccounts,
     ])
 
     return (

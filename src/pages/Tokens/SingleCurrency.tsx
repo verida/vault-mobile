@@ -11,7 +11,7 @@ import {
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
   useMaybeChainMetadataForResource,
-  useSelectedMinifiedVeridaAccounts,
+  useSelectedMinifiedBlockchainAccounts,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
@@ -63,7 +63,7 @@ const SingleCurrency = () => {
 
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
-  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
   // TODO: is this right? what about multiple competing private keys for the same network?
   const maybeAddress = getWalletAddressForChainId(

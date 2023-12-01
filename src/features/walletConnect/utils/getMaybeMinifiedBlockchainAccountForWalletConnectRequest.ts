@@ -1,47 +1,47 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import {
-  MinifiedVeridaAccount,
-  MinifiedVeridaAccounts,
+  MinifiedBlockchainAccount,
+  MinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 
 import { ActiveSession, ActiveSessions } from '../@types'
-import { getMaybeMinifiedVeridaAccountForWalletConnectActiveSession } from './getMaybeMinifiedVeridaAccountForWalletConnectActiveSession'
+import { getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession } from './getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession'
 
-export function getMaybeMinifiedVeridaAccountForWalletConnectRequest({
+export function getMaybeMinifiedBlockchainAccountForWalletConnectRequest({
   web3wallet,
   request,
-  minifiedVeridaAccounts,
+  minifiedBlockchainAccounts,
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
-}): MinifiedVeridaAccount | undefined {
+  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
+}): MinifiedBlockchainAccount | undefined {
   const activeSessions: ActiveSessions = web3wallet.getActiveSessions()
 
   const maybeActiveSession: ActiveSession = activeSessions?.[request.topic]
 
   if (!maybeActiveSession) return undefined
 
-  return getMaybeMinifiedVeridaAccountForWalletConnectActiveSession({
+  return getMaybeMinifiedBlockchainAccountForWalletConnectActiveSession({
     activeSession: maybeActiveSession,
     request,
-    minifiedVeridaAccounts,
+    minifiedBlockchainAccounts,
   })
 }
 
-export function getMinifiedVeridaAccountForWalletConnectRequestOrThrow({
+export function getMinifiedBlockchainAccountForWalletConnectRequestOrThrow({
   web3wallet,
   request,
-  minifiedVeridaAccounts,
+  minifiedBlockchainAccounts,
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
 }) {
-  const maybeWallet = getMaybeMinifiedVeridaAccountForWalletConnectRequest({
+  const maybeWallet = getMaybeMinifiedBlockchainAccountForWalletConnectRequest({
     web3wallet,
     request,
-    minifiedVeridaAccounts,
+    minifiedBlockchainAccounts,
   })
 
   if (!maybeWallet)

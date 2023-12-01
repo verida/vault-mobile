@@ -2,10 +2,10 @@ import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { NearAccount, throwIfNotNearTestnet } from 'features/blockchain/near'
-import { MinifiedVeridaAccounts } from 'features/cryptoWallet'
+import { MinifiedBlockchainAccounts } from 'features/cryptoWallet'
 import { keyStores, utils } from 'near-api-js'
 
-import { getMaybeMinifiedVeridaAccountForWalletConnectRequest } from './getMaybeMinifiedVeridaAccountForWalletConnectRequest'
+import { getMaybeMinifiedBlockchainAccountForWalletConnectRequest } from './getMaybeMinifiedBlockchainAccountForWalletConnectRequest'
 
 export async function getMaybeNearAccountForPrivateKey({
   privateKey,
@@ -47,11 +47,11 @@ export async function getMaybeNearAccountForPrivateKey({
 export async function getMaybeNearAccountForWalletConnectRequest({
   web3wallet,
   request,
-  minifiedVeridaAccounts,
+  minifiedBlockchainAccounts,
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
 }): Promise<NearAccount | undefined> {
   const { params } = request
 
@@ -62,16 +62,16 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 
   throwIfNotNearTestnet(caipChainId)
 
-  const maybeVeridaWalletAccount =
-    getMaybeMinifiedVeridaAccountForWalletConnectRequest({
+  const maybeBlockchainWalletAccount =
+    getMaybeMinifiedBlockchainAccountForWalletConnectRequest({
       web3wallet,
       request,
-      minifiedVeridaAccounts,
+      minifiedBlockchainAccounts,
     })
 
-  if (!maybeVeridaWalletAccount) return undefined
+  if (!maybeBlockchainWalletAccount) return undefined
 
-  let { privateKey, address: signerId } = maybeVeridaWalletAccount
+  let { privateKey, address: signerId } = maybeBlockchainWalletAccount
   privateKey = privateKey!
   signerId = signerId!
 
@@ -85,17 +85,17 @@ export async function getMaybeNearAccountForWalletConnectRequest({
 export async function getNearAccountForWalletConnectRequestOrThrow({
   web3wallet,
   request,
-  minifiedVeridaAccounts,
+  minifiedBlockchainAccounts,
 }: {
   readonly web3wallet: IWeb3Wallet
   readonly request: Web3WalletTypes.EventArguments['session_request']
-  readonly minifiedVeridaAccounts: MinifiedVeridaAccounts
+  readonly minifiedBlockchainAccounts: MinifiedBlockchainAccounts
 }): Promise<NearAccount> {
   const maybeNearAccount: NearAccount | undefined =
     await getMaybeNearAccountForWalletConnectRequest({
       web3wallet,
       request,
-      minifiedVeridaAccounts,
+      minifiedBlockchainAccounts,
     })
 
   if (!maybeNearAccount)

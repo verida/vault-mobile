@@ -6,14 +6,14 @@ import {
 } from 'features/blockchain'
 import { ChainMetadatas, getRpcUrlOrThrow } from 'features/caip'
 
-import { CryptoWalletBalances, MinifiedVeridaAccounts } from '../@types'
+import { CryptoWalletBalances, MinifiedBlockchainAccounts } from '../@types'
 
 export async function fetchCryptoWalletBalances({
   chainMetadatas,
   minifiedAccounts,
 }: {
   readonly chainMetadatas: ChainMetadatas
-  readonly minifiedAccounts: MinifiedVeridaAccounts
+  readonly minifiedAccounts: MinifiedBlockchainAccounts
 }): Promise<CryptoWalletBalances> {
   const eip155Addresses = [
     ...new Set(

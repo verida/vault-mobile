@@ -7,16 +7,16 @@ import { Logger } from 'features/telemetry'
 import { BlockchainAccount } from 'api/types'
 
 import {
-  MinifiedVeridaAccount,
-  MinifiedVeridaAccountEip155,
-  MinifiedVeridaAccountNear,
+  MinifiedBlockchainAccount,
+  MinifiedBlockchainAccountEip155,
+  MinifiedBlockchainAccountNear,
 } from '../@types'
 
 const logger = new Logger('veridaAccountMaybeToMinifiedVeridaAccount')
 
-const veridaAccountToMinifiedVeridaAccountEip155 = (
+const veridaAccountToMinifiedBlockchainAccountEip155 = (
   blockchainAccount: BlockchainAccount
-): MinifiedVeridaAccountEip155 => {
+): MinifiedBlockchainAccountEip155 => {
   const { address, privateKey } = blockchainAccount
 
   if (typeof address !== 'string' || !ethers.utils.isAddress(address))
@@ -32,10 +32,10 @@ const veridaAccountToMinifiedVeridaAccountEip155 = (
   }
 }
 
-const veridaAccountToMinifiedVeridaAccountNear = ({
+const veridaAccountToMinifiedBlockchainAccountNear = ({
   address: signerId,
   privateKey,
-}: BlockchainAccount): MinifiedVeridaAccountNear => {
+}: BlockchainAccount): MinifiedBlockchainAccountNear => {
   if (typeof signerId !== 'string' || !signerId.length)
     throw new Error(
       `Expected non-empty string signerId, encountered "${String(signerId)}".`
@@ -51,9 +51,9 @@ const veridaAccountToMinifiedVeridaAccountNear = ({
   }
 }
 
-export function veridaAccountMaybeToMinifiedVeridaAccount(
+export function veridaAccountMaybeToMinifiedBlockchainAccount(
   blockchainAccount: BlockchainAccount
-): MinifiedVeridaAccount | undefined {
+): MinifiedBlockchainAccount | undefined {
   const { chainId } = blockchainAccount
 
   if (typeof chainId !== 'string' || !chainId.length)
@@ -64,9 +64,9 @@ export function veridaAccountMaybeToMinifiedVeridaAccount(
   const { namespace } = new ChainId(chainId)
 
   if (namespace === SupportedBlockchainNamespace.EIP_155) {
-    return veridaAccountToMinifiedVeridaAccountEip155(blockchainAccount)
+    return veridaAccountToMinifiedBlockchainAccountEip155(blockchainAccount)
   } else if (namespace === SupportedBlockchainNamespace.NEAR) {
-    return veridaAccountToMinifiedVeridaAccountNear(blockchainAccount)
+    return veridaAccountToMinifiedBlockchainAccountNear(blockchainAccount)
   }
 
   logger.warn(

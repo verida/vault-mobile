@@ -5,7 +5,7 @@ import {
   SupportedBlockchainNamespace,
 } from 'features/blockchain/@types'
 import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
+import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
 import { getMaybeNearAccountForPrivateKey } from 'features/walletConnect/utils/getMaybeNearAccountForWalletConnectRequest'
 import { providers as nearProviders, utils as nearUtils } from 'near-api-js'
 
@@ -17,16 +17,16 @@ export const sendNativeCurrencyNear = async ({
   value,
   near_signAndSendTransaction,
   rpc,
-  minifiedVeridaAccount,
+  minifiedBlockchainAccount,
 }: {
   readonly chainId: ChainId
   readonly to: string
   readonly value: number
   readonly near_signAndSendTransaction: BlockchainRequestHandlerCallback<NearAccountBundle>
   readonly rpc: string
-  readonly minifiedVeridaAccount: MinifiedVeridaAccount
+  readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
 }): Promise<ConfirmTransactionCallbackResult> => {
-  const { namespace } = minifiedVeridaAccount
+  const { namespace } = minifiedBlockchainAccount
 
   if (namespace !== SupportedBlockchainNamespace.NEAR)
     throw new Error(
@@ -42,7 +42,7 @@ export const sendNativeCurrencyNear = async ({
       `Expected non-empty string amount, encountered "${amount}".`
     )
 
-  const { privateKey, address: signerId } = minifiedVeridaAccount
+  const { privateKey, address: signerId } = minifiedBlockchainAccount
 
   const maybeNearAccount = await getMaybeNearAccountForPrivateKey({
     caipChainId,

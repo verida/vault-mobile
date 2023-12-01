@@ -3,18 +3,18 @@ import * as React from 'react'
 
 import { useGetTransactionsForTokenQuery } from '../api'
 import { getWalletAddressForAsset } from '../utils'
-import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
 export function useTransactionsForMaybeAssetId({
   assetId: maybeAssetId,
 }: {
   readonly assetId: AssetId | null | undefined
 }) {
-  const minifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
+  const minifiedBlockchainAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const maybeAddress = getWalletAddressForAsset(
     maybeAssetId,
-    minifiedVeridaAccounts
+    minifiedBlockchainAccounts
   )
 
   const {

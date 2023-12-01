@@ -4,29 +4,29 @@ import {
   SupportedBlockchainNamespace,
 } from 'features/blockchain/@types'
 import { ConfirmTransactionCallbackResult } from 'features/cryptoWallet'
-import { MinifiedVeridaAccount } from 'features/cryptoWallet/@types'
+import { MinifiedBlockchainAccount } from 'features/cryptoWallet/@types'
 
 export const sendNativeCurrencyEip155 = async ({
   value,
   to,
   eth_sendTransaction,
-  minifiedVeridaAccount,
+  minifiedBlockchainAccount,
   rpc,
 }: {
   readonly to: string
   readonly value: number
   readonly eth_sendTransaction: BlockchainRequestHandlerCallback<ethers.Wallet>
-  readonly minifiedVeridaAccount: MinifiedVeridaAccount
+  readonly minifiedBlockchainAccount: MinifiedBlockchainAccount
   readonly rpc: string
 }): Promise<ConfirmTransactionCallbackResult> => {
-  const { namespace } = minifiedVeridaAccount
+  const { namespace } = minifiedBlockchainAccount
 
   if (namespace !== SupportedBlockchainNamespace.EIP_155)
     throw new Error(
       `Expected "${SupportedBlockchainNamespace.EIP_155}", encountered "${namespace}".`
     )
 
-  const { privateKey } = minifiedVeridaAccount
+  const { privateKey } = minifiedBlockchainAccount
 
   const provider = new ethers.providers.JsonRpcProvider(rpc)
 

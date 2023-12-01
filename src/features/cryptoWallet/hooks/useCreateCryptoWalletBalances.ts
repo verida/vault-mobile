@@ -8,7 +8,7 @@ import {
   UseCreateCryptoWalletBalancesState,
 } from '../@types'
 import { fetchCryptoWalletBalances } from '../utils'
-import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
 const logger = new Logger('useCreateCryptoWalletBalances')
 
@@ -27,9 +27,9 @@ export function useCreateCryptoWalletBalances(): UseCreateCryptoWalletBalancesRe
     loading: true,
   })
 
-  // minifed accounts plus networks
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
-  const minifiedAccounts = useSelectedMinifiedVeridaAccounts()
+
+  const minifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const shouldRefetch =
     React.useCallback(async (): Promise<CryptoWalletBalances> => {

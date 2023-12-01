@@ -3,7 +3,7 @@ import {
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
-import { useSelectedMinifiedVeridaAccounts } from 'features/cryptoWallet'
+import { useSelectedMinifiedBlockchainAccounts } from 'features/cryptoWallet'
 import {
   extractWalletConnectRpcOrThrow,
   getNearAccountForWalletConnectRequestOrThrow,
@@ -23,7 +23,7 @@ import {
 const getNearProvider = (rpc: string) => new providers.JsonRpcProvider(rpc)
 
 export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequestHandlers {
-  const minifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
+  const minifiedBlockchainAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -49,7 +49,7 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
               const nearAccount =
                 await getNearAccountForWalletConnectRequestOrThrow({
                   web3wallet,
-                  minifiedVeridaAccounts,
+                  minifiedBlockchainAccounts,
                   request,
                 })
 
@@ -64,6 +64,6 @@ export function useWalletConnectSessionRequestHandlersNear(): NearSessionRequest
           ]
         )
       ) as NearSessionRequestHandlers,
-    [chainMetadatas, blockchainRequestHandlersNear, minifiedVeridaAccounts]
+    [chainMetadatas, blockchainRequestHandlersNear, minifiedBlockchainAccounts]
   )
 }

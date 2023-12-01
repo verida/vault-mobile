@@ -7,7 +7,7 @@ import {
   useChainIdForResourceParams,
   useLazyConfirmTransaction,
   useMaybeChainMetadataForResource,
-  useSelectedMinifiedVeridaAccounts,
+  useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import { convertPredictedTransactionFeeToString } from 'features/token/utils/convertPredictedTransactionFeeToString'
 import { Container, Icon } from 'native-base'
@@ -50,7 +50,7 @@ const ConfirmTransaction = () => {
   const chainId = useChainIdForResourceParams({ resource })
 
   // TODO: what to do about getWalletsData - is it needed any more?
-  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const accountAddress = getWalletAddressForChainId(
     chainId,

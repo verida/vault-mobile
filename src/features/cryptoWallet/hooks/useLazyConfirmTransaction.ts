@@ -30,7 +30,7 @@ import {
   getChainIdParamsFromResourceParams,
   getFromAddressForResourceOrThrow,
 } from '../utils'
-import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
 const logger = new Logger('useLazyConfirmTransaction')
 
@@ -71,7 +71,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
-  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const { refetch } = useCryptoWalletBalanceContext()
 
@@ -108,7 +108,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       if (typeof rpc !== 'string' || !rpc.length)
         throw new Error(`Expected non-empty string rpc, encounterd "${rpc}".`)
 
-      return { rpc, minifiedVeridaAccount: maybeMatchingAccount, chainId }
+      return { rpc, minifiedBlockchainAccount: maybeMatchingAccount, chainId }
     },
     [chainMetadatas, selectedMinifiedAccounts]
   )
@@ -120,12 +120,11 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       toAddress,
       aggregateWalletBannerBalance,
     }: ExecuteLazyTransactionParams<AggregateWalletBannerBalanceNativeCurrency>): Promise<ConfirmTransactionCallbackResult> => {
-      const { minifiedVeridaAccount, rpc, chainId } = getTransferContextOrThrow(
-        {
+      const { minifiedBlockchainAccount, rpc, chainId } =
+        getTransferContextOrThrow({
           aggregateWalletBannerBalance,
           fromAddress,
-        }
-      )
+        })
 
       const { namespace } = chainId
 
@@ -137,7 +136,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             rpc,
             value: amount,
             to: toAddress,
-            minifiedVeridaAccount,
+            minifiedBlockchainAccount,
             eth_sendTransaction,
           })
 
@@ -149,7 +148,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             rpc,
             value: amount,
             to: toAddress,
-            minifiedVeridaAccount,
+            minifiedBlockchainAccount,
             near_signAndSendTransaction,
           })
 
@@ -175,12 +174,11 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       aggregateWalletBannerBalance,
     }: ExecuteLazyTransactionParams<AggregateWalletBannerBalanceErc20>): Promise<ConfirmTransactionCallbackResult> => {
       const { resource, decimals } = aggregateWalletBannerBalance
-      const { minifiedVeridaAccount, rpc, chainId } = getTransferContextOrThrow(
-        {
+      const { minifiedBlockchainAccount, rpc, chainId } =
+        getTransferContextOrThrow({
           aggregateWalletBannerBalance,
           fromAddress,
-        }
-      )
+        })
 
       const { namespace } = chainId
 
@@ -202,7 +200,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             to,
             value: amount,
             eth_sendTransaction,
-            minifiedVeridaAccount,
+            minifiedBlockchainAccount,
             rpc,
             decimals,
           })

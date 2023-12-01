@@ -4,7 +4,7 @@ import { isSupportedCaipNamespace } from 'features/caip'
 
 import { BlockchainNetwork } from 'api/types'
 
-import { MinifiedVeridaAccounts, SupportedTokenObject } from '../@types'
+import { MinifiedBlockchainAccounts, SupportedTokenObject } from '../@types'
 import { isNativeToken } from './isNativeToken'
 
 export const getTruncatedWalletAddress = (
@@ -23,8 +23,7 @@ export const getTokenAddress = (address: AssetId) => {
 
 export const getWalletAddressForChainId = (
   chainId: ChainId | null | undefined,
-  minifiedVeridaAccounts: MinifiedVeridaAccounts
-  //wallets: WalletsData
+  minifiedBlockchainAccounts: MinifiedBlockchainAccounts
 ) => {
   if (!chainId) return undefined
 
@@ -32,8 +31,7 @@ export const getWalletAddressForChainId = (
 
   if (!isSupportedCaipNamespace(namespace)) return undefined
 
-  // TODO: What happens if there are dupliate keys?
-  const maybeMatchingAccount = minifiedVeridaAccounts.find(
+  const maybeMatchingAccount = minifiedBlockchainAccounts.find(
     (e) => e.namespace === namespace
   )
 
@@ -46,11 +44,11 @@ export const getWalletAddressForChainId = (
 
 export const getWalletAddressForAsset = (
   asset: AssetId | null | undefined,
-  minifiedVeridaAccounts: MinifiedVeridaAccounts
+  minifiedBlockchainAccounts: MinifiedBlockchainAccounts
 ) => {
   if (!asset) return undefined
 
-  return getWalletAddressForChainId(asset.chainId, minifiedVeridaAccounts)
+  return getWalletAddressForChainId(asset.chainId, minifiedBlockchainAccounts)
 }
 
 export const handleTokenDecimals = (

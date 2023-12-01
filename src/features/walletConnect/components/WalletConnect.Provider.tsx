@@ -7,8 +7,8 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { ChainId } from 'caip'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import {
-  useSelectedMinifiedVeridaAccounts,
-  veridaWalletAccountsToDropdownOptions,
+  minifiedBlockchainAccountsToDropdownOptions,
+  useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import { Logger } from 'features/telemetry'
 import { useModal } from 'hooks'
@@ -64,7 +64,8 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
   const { authenticated } = useAuth()
   const { showModal } = useModal()
 
-  const selectedMinifiedVeridaAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedBlockchainAccounts =
+    useSelectedMinifiedBlockchainAccounts()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
@@ -98,8 +99,8 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
       )
 
       const { length: maybeHasCompatibleAccounts } =
-        veridaWalletAccountsToDropdownOptions({
-          selectedMinifiedVeridaAccounts,
+        minifiedBlockchainAccountsToDropdownOptions({
+          selectedMinifiedBlockchainAccounts,
           onlyMatchingNamespaces,
         })
 
@@ -170,7 +171,7 @@ export const WalletConnectProvider = React.memo(function WalletConnectProvider({
     },
     [
       chainMetadatas,
-      selectedMinifiedVeridaAccounts,
+      selectedMinifiedBlockchainAccounts,
       maybeAddCustomNetworksOrErrorAsync,
     ]
   )

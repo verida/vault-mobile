@@ -5,7 +5,7 @@ import {
   getWalletAddressForChainId,
   useChainIdForResourceParams,
   useMaybeChainMetadataForResource,
-  useSelectedMinifiedVeridaAccounts,
+  useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -45,15 +45,7 @@ const ReceiveToken = () => {
 
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
-  // TODO: remove getTokenUnitName
-  // TODO: What to do about maybeAsset?
-  //const maybeAsset: AssetId | undefined =
-  //  Boolean(token) && 'asset' in token ? token.asset : undefined
-
-  //const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
-  //const networkReference = getBlockchainNetworkLabel(blockchainNetwork)
-
-  const selectedMinifiedAccounts = useSelectedMinifiedVeridaAccounts()
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
   const maybeAddress = getWalletAddressForChainId(
     chainId,
