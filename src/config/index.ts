@@ -83,12 +83,6 @@ const COMMON_CONFIG = {
       contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D',
     },
   },
-  // --------------------
-  MNEMONIC_LENGTH: 12,
-  CONFIG_DB: 'vault-config',
-  SEED_PHRASE_BACKED_UP_CONFIG: 'seedPhraseBackedUp',
-  DEFAULT_REMOTE_REQUEST_TIMEOUT: 5000,
-  // --------------------
   VERIDA_DID_CLIENT_CONFIG: {
     // TODO: This will have to be specific per network, as the RPC and network endpoint will be different per network
     callType: 'gasless',

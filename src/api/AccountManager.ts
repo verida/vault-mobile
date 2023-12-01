@@ -50,6 +50,7 @@ import {
   WALLETS_STORAGE_KEY,
 } from 'constants/storageKeys'
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
+import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
 
 const logger = new Logger('AccountManager')
 
@@ -290,9 +291,9 @@ class AccountManager extends EventEmitter {
 
   public async setBackedupSeedPhraseConfig(backedup: boolean) {
     try {
-      const configDb = await this.context?.openDatabase(config.CONFIG_DB)
+      const configDb = await this.context?.openDatabase(CONFIG_DB_NAME)
       await configDb?.save(
-        { _id: config.SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
+        { _id: SEED_PHRASE_BACKED_UP_CONFIG, value: backedup },
         {}
       )
     } catch (error) {
@@ -303,8 +304,8 @@ class AccountManager extends EventEmitter {
 
   public async getBackedupSeedPhraseConfig() {
     try {
-      const configDb = await this.context?.openDatabase(config.CONFIG_DB)
-      return await configDb?.get(config.SEED_PHRASE_BACKED_UP_CONFIG, {})
+      const configDb = await this.context?.openDatabase(CONFIG_DB_NAME)
+      return await configDb?.get(SEED_PHRASE_BACKED_UP_CONFIG, {})
     } catch (error) {
       logger.error(error)
       throw error
