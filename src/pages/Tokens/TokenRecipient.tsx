@@ -7,6 +7,7 @@ import {
   isValidWalletAddressForChainId,
   useChainIdForResourceParams,
 } from 'features/cryptoWallet'
+import { Logger } from 'features/telemetry'
 import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import {
@@ -26,6 +27,8 @@ import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
 import InputStyles from 'styles/inputs'
+
+const logger = new Logger('TokenRecipient')
 
 export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
 
@@ -70,8 +73,7 @@ const TokenRecipient = () => {
           predictedMaxTransactionFee,
         })
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(e)
+        logger.error(e)
         showGenericFailure(String(e))
       }
     },
