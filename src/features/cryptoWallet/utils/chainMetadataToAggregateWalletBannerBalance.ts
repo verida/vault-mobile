@@ -3,7 +3,7 @@ import { BigNumber } from 'ethers'
 import { ChainMetadata } from 'features/caip'
 
 import {
-  AggregateWalletBannerBalanceBaseCurrency,
+  AggregateWalletBannerBalanceNativeCurrency,
   AggregateWalletBannerBalanceType,
   BalanceByChainResult,
   CryptoWalletBalance,
@@ -22,7 +22,7 @@ export function chainMetadataToAggregateWalletBannerBalance({
   readonly chainMetadata: ChainMetadata
   readonly balanceByChainResults: readonly BalanceByChainResult[]
   readonly cryptoWalletBalances: CryptoWalletBalances
-}): AggregateWalletBannerBalanceBaseCurrency {
+}): AggregateWalletBannerBalanceNativeCurrency {
   const { reference, namespace, decimals, nativeCurrencyName, symbol, icon } =
     chainMetadata
 
@@ -47,7 +47,7 @@ export function chainMetadataToAggregateWalletBannerBalance({
 
   return {
     resource: chainId,
-    type: AggregateWalletBannerBalanceType.BASE_CURRENCY,
+    type: AggregateWalletBannerBalanceType.NATIVE_CURRENCY,
     decimals,
     label: nativeCurrencyName,
     symbol,

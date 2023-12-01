@@ -228,7 +228,7 @@ export type ValuedAtWithAccuracy<T extends Valuation = Valuation> = T & {
 
 export enum AggregateWalletBannerBalanceType {
   // i.e. ETH
-  BASE_CURRENCY /* TODO: slip44? */,
+  NATIVE_CURRENCY,
   // i.e. USDC
   ERC_20,
 }
@@ -271,10 +271,10 @@ type AbstractAggregateWalletBannerBalance<
   readonly label: string
 }
 
-export type AggregateWalletBannerBalanceBaseCurrency =
+export type AggregateWalletBannerBalanceNativeCurrency =
   AbstractAggregateWalletBannerBalance<
     ChainIdParams,
-    AggregateWalletBannerBalanceType.BASE_CURRENCY
+    AggregateWalletBannerBalanceType.NATIVE_CURRENCY
   >
 
 export type AggregateWalletBannerBalanceErc20 =
@@ -286,7 +286,7 @@ export type AggregateWalletBannerBalanceErc20 =
 // A balance may be denoted in a blockchain's base currency or a fungible
 // asset expressed on top of the protocol.
 export type AggregateWalletBannerBalance =
-  | AggregateWalletBannerBalanceBaseCurrency
+  | AggregateWalletBannerBalanceNativeCurrency
   | AggregateWalletBannerBalanceErc20
 
 export type AggregateWalletBannerBalances =

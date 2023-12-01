@@ -20,8 +20,8 @@ import * as React from 'react'
 
 import {
   AggregateWalletBannerBalance,
-  AggregateWalletBannerBalanceBaseCurrency,
   AggregateWalletBannerBalanceErc20,
+  AggregateWalletBannerBalanceNativeCurrency,
   AggregateWalletBannerBalanceType,
 } from '../@types'
 import { useCryptoWalletBalanceContext } from '../contexts'
@@ -116,7 +116,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
       amount,
       toAddress,
       aggregateWalletBannerBalance,
-    }: ExecuteLazyTransactionParams<AggregateWalletBannerBalanceBaseCurrency>): Promise<ConfirmTransactionCallbackResult> => {
+    }: ExecuteLazyTransactionParams<AggregateWalletBannerBalanceNativeCurrency>): Promise<ConfirmTransactionCallbackResult> => {
       const { minifiedVeridaAccount, rpc, chainId } = getTransferContextOrThrow(
         {
           aggregateWalletBannerBalance,
@@ -247,7 +247,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
           }
 
           const result: ConfirmTransactionCallbackResult | null =
-            type === AggregateWalletBannerBalanceType.BASE_CURRENCY
+            type === AggregateWalletBannerBalanceType.NATIVE_CURRENCY
               ? await executeBlockchainSpecificNativeTransactionOrThrow({
                   ...params,
                   aggregateWalletBannerBalance,
