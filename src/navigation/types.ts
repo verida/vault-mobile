@@ -10,7 +10,7 @@ import {
 } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
-import { NetworksEditorScreenProps } from 'pages/BlockchainNetworksEditor'
+import { NetworksEditorScreenParams } from 'pages/BlockchainNetworksEditor'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
@@ -120,7 +120,7 @@ export type MainStackParams = {
     filter: any
   }
   BlockchainNetworks: undefined
-  BlockchainNetworksEditor: NetworksEditorScreenProps
+  BlockchainNetworksEditor: NetworksEditorScreenParams
   StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams

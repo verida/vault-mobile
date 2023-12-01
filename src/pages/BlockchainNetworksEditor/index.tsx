@@ -35,7 +35,7 @@ export type NetworksEditorRouteProp = RouteProp<
   'BlockchainNetworksEditor'
 >
 
-export type NetworksEditorScreenProps = {
+export type NetworksEditorScreenParams = {
   readonly title: string
   readonly initialValue: ChainMetadata | null
   readonly disabled: boolean
@@ -49,7 +49,7 @@ const attemptedToModifyDisabledNetworkError = () =>
 export const BlockchainNetworksEditor = React.memo(
   function BlockchainNetworksEditor(): JSX.Element {
     const { initialValue, title, disabled } =
-      useParams<NetworksEditorScreenProps>()
+      useParams<NetworksEditorScreenParams>()
 
     const navigation = useMainNavigation()
 
