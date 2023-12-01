@@ -1,4 +1,5 @@
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import { Logger } from 'features/telemetry'
 import * as React from 'react'
 
 import {
@@ -8,6 +9,8 @@ import {
 } from '../@types'
 import { fetchCryptoWalletBalances } from '../utils'
 import { useSelectedMinifiedVeridaAccounts } from './useSelectedMinifiedVeridaAccounts'
+
+const logger = new Logger('useCreateCryptoWalletBalances')
 
 const DEFAULT_CRYPTO_WALLET_BALANCES: CryptoWalletBalances = {}
 
@@ -63,8 +66,8 @@ export function useCreateCryptoWalletBalances(): UseCreateCryptoWalletBalancesRe
 
   // HACK: Whenever the refetch method is reallocated, we'll automatically
   //       refetch to remain up-to-date with the latest configuration.
-  // eslint-disable-next-line no-void, no-console
-  React.useEffect(() => void refetch().catch(console.error), [refetch])
+  // eslint-disable-next-line no-void
+  React.useEffect(() => void refetch().catch(logger.error), [refetch])
 
   return React.useMemo<UseCreateCryptoWalletBalancesResult>(
     () => ({ ...state, refetch }),
