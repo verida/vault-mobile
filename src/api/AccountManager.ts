@@ -16,6 +16,7 @@ import {
   NormalizedAccounts,
   addAccount,
   generateIdentityMnemonic,
+  getNetworkFromDID,
   getPrivateKeyFromMnemonic,
   setAccounts,
   setSelectedAccount,
@@ -163,6 +164,12 @@ class AccountManager extends EventEmitter {
 
   public getSelectedAccount() {
     return this.selectedAccount
+  }
+
+  public getSelectedAccountNetwork() {
+    return this.selectedAccount?.did
+      ? getNetworkFromDID(this.selectedAccount.did)
+      : undefined
   }
 
   public async connect(forced = false) {
