@@ -40,9 +40,9 @@ function printConfig() {
   logger.debug(`Infura API Key: ${config.INFURA_API_KEY ? 'set' : 'not set'}`)
   logger.debug(`IPFS Gateway URL: ${config.polygonId.common.ipfsGatewayUrl}`)
   logger.debug(` `)
-  logger.debug(`WalletConnect Relay URL: ${config.WALLETCONNECT_RELAY_URL}`)
+  logger.debug(`WalletConnect Relay URL: ${config.walletConnect.relayUrl}`)
   logger.debug(
-    `Wallet Project Id: ${config.WALLETCONNECT_PROJECT_ID ? 'set' : 'not set'}`
+    `Wallet Project Id: ${config.walletConnect.projectId ? 'set' : 'not set'}`
   )
   // Complete logs of config here if needed
   logger.debug('=========================')

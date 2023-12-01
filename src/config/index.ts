@@ -118,10 +118,10 @@ const COMMON_CONFIG = {
   NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
   // --------------------
   INFURA_API_KEY: Config.INFURA_API_KEY, // TODO: Move to specific network config, but will need to be for multiple networks
-  // --------------------
-  // TODO: Group WalletConnect config in its own sub property walletConnect: {projectId: '...', relayUrl: '...'}
-  WALLETCONNECT_PROJECT_ID: Config.WALLETCONNECT_PROJECT_ID,
-  WALLETCONNECT_RELAY_URL: Config.WALLETCONNECT_RELAY_URL,
+  walletConnect: {
+    projectId: Config.WALLETCONNECT_PROJECT_ID,
+    relayUrl: Config.WALLETCONNECT_RELAY_URL,
+  },
 }
 
 type VeridaEnvironmentConfig<T extends EnvironmentType> = {
