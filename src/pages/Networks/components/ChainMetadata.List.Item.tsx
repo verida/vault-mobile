@@ -1,9 +1,9 @@
+import { Logo } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
 import { ChainMetadata, useChainMetadataDetails } from 'features/caip'
 import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
-import FastImage from 'react-native-fast-image'
 
 import EditIcon from 'assets/edit_icon.svg'
 import HouseIcon from 'assets/icons/earth.svg'
@@ -25,7 +25,7 @@ export const ChainMetadataListItem = React.memo(function ChainMetadataListItem({
   return (
     <View style={[styles.row, styles.wrapper]}>
       <View style={styles.center}>
-        <FastImage style={styles.icon} source={{ uri: uri || '' }} />
+        <Logo style={styles.icon} uri={uri || ''} />
       </View>
       <View style={styles.row}>
         <View style={{ paddingLeft: 10 }}>
