@@ -58,7 +58,7 @@ function printConfig() {
     `Verida Mainnet Data Connector Server: ${config.verida.mainnet.dataConnectorServerUrl}`
   )
   logger.debug(` `)
-  logger.debug(`Verida Wallet Provider: ${config.WALLET_PROVIDER_URL}`)
+  logger.debug(`Verida Wallet Provider: ${config.walletProvider.url}`)
   logger.debug(` `)
   logger.debug(
     `Polygon Mainnet RPC URL: ${

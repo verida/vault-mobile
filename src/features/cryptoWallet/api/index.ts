@@ -12,7 +12,7 @@ import { RootState } from 'reduxStore/types'
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: config.WALLET_PROVIDER_URL,
+  baseUrl: config.walletProvider.url,
 })
 
 export const cryptoWalletApi = createApi({
