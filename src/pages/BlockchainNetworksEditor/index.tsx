@@ -5,6 +5,7 @@ import {
   useChainMetadataDetails,
   useChainMetadatasCustom,
 } from 'features/caip'
+import { Logger } from 'features/telemetry'
 import { Container } from 'native-base'
 import * as React from 'react'
 import {
@@ -45,6 +46,8 @@ const attemptedToModifyDisabledNetworkError = () =>
   new Error(
     'Attempted to modify a network that is not permitted for modification.'
   )
+
+const logger = new Logger('BlockchainNetworksEditor')
 
 export const BlockchainNetworksEditor = React.memo(
   function BlockchainNetworksEditor(): JSX.Element {
@@ -161,8 +164,7 @@ export const BlockchainNetworksEditor = React.memo(
 
         return navigation.goBack()
       } catch (e) {
-        // eslint-disable-next-line no-console
-        console.error(e)
+        logger.error(e)
       }
     }, [
       isReservedChainId,
