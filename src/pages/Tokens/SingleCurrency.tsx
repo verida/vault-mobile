@@ -61,6 +61,8 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
+  console.log(assetId)
+
   //const blockchainNetwork = useMaybeBlockchainNetwork(chainId)
   const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
@@ -130,6 +132,11 @@ const SingleCurrency = () => {
         resetErrorBoundary={pullToRefresh}
       />
     )
+
+  console.log(
+    !isAssetSupportedByWalletProvider,
+    !maybeAggregateWalletBannerBalance
+  )
 
   return (
     <Container>
