@@ -35,8 +35,7 @@ const veridaNetwork: EnvironmentType =
     ? EnvironmentType.LOCAL
     : EnvironmentType.TESTNET
 
-// TODO: Clean up the configuration, group in sub-object when relevant (for instance sentry), remove unnecessary properties, etc.
-const COMMON_CONFIG = {
+export const config = {
   dev: {
     devMode: __DEV__,
     disableLogBox: Config.DISABLE_LOG_BOX === 'true',
@@ -57,6 +56,7 @@ const COMMON_CONFIG = {
     //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
   },
+  VERIDA_ENVIRONMENT: veridaNetwork,
   verida: {
     // Not used yet
     [EnvironmentType.LOCAL]: {
@@ -145,45 +145,13 @@ const COMMON_CONFIG = {
   },
 }
 
-type VeridaEnvironmentConfig<T extends EnvironmentType> = {
-  VERIDA_ENVIRONMENT: T // TODO: Find a better name, it's not en environment, it's a network!
-}
-
-// TODO: All the specific configs will eventually need to be available through the config when the Wallet will have to support all the network types altogether.
-// TODO: VERIDA_WALLET_PROVIDER_URL is a single env var but we'll need to figure out how to support multiple networks. Wallet Provider should not be related to the Verida Network, so a single env var should be enough.
-const SPECIFIC_CONFIGS: {
-  readonly [key in EnvironmentType]: Partial<
-    typeof COMMON_CONFIG & VeridaEnvironmentConfig<key>
-  >
-} = {
-  [EnvironmentType.LOCAL]: {},
-  [EnvironmentType.DEVNET]: {
-    VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
-  },
-  [EnvironmentType.TESTNET]: {
-    VERIDA_ENVIRONMENT: EnvironmentType.TESTNET,
-  },
-  [EnvironmentType.MAINNET]: {},
-}
-
-// TODO: When supporting all the networks together, this won't bee needed anymore
-const RESOLVED_CONFIG = Object.assign(
-  {},
-  COMMON_CONFIG,
-  SPECIFIC_CONFIGS[veridaNetwork]
-)
-
-export const config = RESOLVED_CONFIG as Required<typeof RESOLVED_CONFIG>
-
 /*
  * Merge local app-config with remote-config
  *
  * @param remoteConfig
  * @returns
  */
-export function mergeWithRemoteConfig(
-  remoteConfig: Partial<typeof RESOLVED_CONFIG>
-) {
+export function mergeWithRemoteConfig(remoteConfig: Partial<typeof config>) {
   if (isEmpty(remoteConfig)) return false
 
   const originalConfig = cloneDeep(config)
