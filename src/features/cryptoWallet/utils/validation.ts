@@ -1,10 +1,13 @@
 import { AssetId, ChainId } from 'caip'
 import * as ethers from 'ethers'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import { Logger } from 'features/telemetry'
 
 import { ImportedSeedPhrase } from '../@types'
 
 const bip39 = require('bip39')
+
+const logger = new Logger('validation')
 
 const validateNearAddress = (address: string) => {
   if (address.includes('.') && address.length >= 2 && address.length <= 64) {
@@ -28,8 +31,7 @@ export const isValidWalletAddressForChainId = (
     case SupportedBlockchainNamespace.NEAR:
       return validateNearAddress(address)
     default:
-      // eslint-disable-next-line no-console
-      console.warn(
+      logger.warn(
         `[isValidWalletAddress]: Encountered unexpected namespace, "${namespace}".`
       )
   }
