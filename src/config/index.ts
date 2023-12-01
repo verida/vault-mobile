@@ -59,6 +59,10 @@ const COMMON_CONFIG = {
     //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
   },
+  dataConnector: {
+    retyInterval: 5000,
+    retryLimit: 10,
+  },
   polygonId: {
     common: {
       blockchain: Blockchain.Polygon,
@@ -84,9 +88,6 @@ const COMMON_CONFIG = {
   CONFIG_DB: 'vault-config',
   SEED_PHRASE_BACKED_UP_CONFIG: 'seedPhraseBackedUp',
   DEFAULT_REMOTE_REQUEST_TIMEOUT: 5000,
-  // --------------------
-  DATA_CONNECTOR_RETRY_INTERVAL: 5000,
-  DATA_CONNECTOR_RETRY_LIMIT: 10,
   // --------------------
   VERIDA_DID_CLIENT_CONFIG: {
     // TODO: This will have to be specific per network, as the RPC and network endpoint will be different per network

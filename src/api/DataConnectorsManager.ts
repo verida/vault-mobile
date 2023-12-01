@@ -348,7 +348,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequestId: string,
     syncRequestDatabaseName: string,
-    retryCount: number = config.DATA_CONNECTOR_RETRY_LIMIT
+    retryCount: number = config.dataConnector.retryLimit
   ) {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
@@ -398,7 +398,7 @@ class DataConnection extends EventEmitter {
         }
 
         // Delay for five seconds, then try again
-        await delay(config.DATA_CONNECTOR_RETRY_INTERVAL)
+        await delay(config.dataConnector.retyInterval)
         retryCount--
 
         this.checkSync(
