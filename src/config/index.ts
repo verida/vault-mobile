@@ -35,8 +35,6 @@ const veridaNetwork: EnvironmentType =
     ? EnvironmentType.LOCAL
     : EnvironmentType.TESTNET
 
-// TODO: Look at making this configuration, or part of it, updatable remotely
-
 // TODO: Clean up the configuration, group in sub-object when relevant (for instance sentry), remove unnecessary properties, etc.
 const COMMON_CONFIG = {
   dev: {
@@ -58,6 +56,53 @@ const COMMON_CONFIG = {
     // replaysOnErrorSampleRate: Number(
     //   Config.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
+  },
+  verida: {
+    // Not used yet
+    [EnvironmentType.DEVNET]: {
+      rpcUrl: Config.VERIDA_DEVNET_RPC_URL,
+      notificationServerUrls: [Config.VERIDA_DEVNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: Config.VERIDA_DEVNET_DATA_CONNECTOR_URL,
+      metaTransactionServerUrl:
+        Config.VERIDA_DEVNET_META_TRANSACTION_SERVER_URL,
+    },
+    [EnvironmentType.TESTNET]: {
+      rpcUrl: Config.VERIDA_TESTNET_RPC_URL,
+      notificationServerUrls: [Config.VERIDA_TESTNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: Config.VERIDA_TESTNET_DATA_CONNECTOR_URL,
+      metaTransactionServerUrl:
+        Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
+    },
+    [EnvironmentType.MAINNET]: {
+      rpcUrl: Config.VERIDA_MAINNET_RPC_URL,
+      notificationServerUrls: [Config.VERIDA_MAINNET_NOTIFICATION_SERVER_URL],
+      dataConnectorServerUrl: Config.VERIDA_MAINNET_DATA_CONNECTOR_URL,
+      metaTransactionServerUrl:
+        Config.VERIDA_MAINNET_META_TRANSACTION_SERVER_URL,
+    },
+  },
+  VERIDA_DID_CLIENT_CONFIG: {
+    // TODO: This will have to be specific per network, as the RPC and network endpoint will be different per network
+    callType: 'gasless',
+    web3Config: {
+      callType: 'gasless',
+      rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
+      serverConfig: {
+        headers: {
+          'context-name': VERIDA_VAULT_CONTEXT_NAME,
+        },
+      },
+      postConfig: {
+        headers: {
+          'user-agent': VERIDA_WALLET_USER_AGENT,
+        },
+      },
+      endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
+    },
+    rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
+  } as AccountNodeDIDClientConfig,
+  walletProvider: {
+    url: Config.VERIDA_WALLET_PROVIDER_URL,
   },
   dataConnector: {
     retyInterval: 5000,
@@ -83,27 +128,6 @@ const COMMON_CONFIG = {
       contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D',
     },
   },
-  VERIDA_DID_CLIENT_CONFIG: {
-    // TODO: This will have to be specific per network, as the RPC and network endpoint will be different per network
-    callType: 'gasless',
-    web3Config: {
-      callType: 'gasless',
-      rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
-      serverConfig: {
-        headers: {
-          'context-name': VERIDA_VAULT_CONTEXT_NAME,
-        },
-      },
-      postConfig: {
-        headers: {
-          'user-agent': VERIDA_WALLET_USER_AGENT,
-        },
-      },
-      endpointUrl: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
-    },
-    rpcUrl: Config.POLYGON_MUMBAI_RPC_URL,
-  } as AccountNodeDIDClientConfig,
-  NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL, // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether)
   blockchain: {
     infuraApiKey: Config.INFURA_API_KEY,
   },

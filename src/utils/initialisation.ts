@@ -24,7 +24,40 @@ function printConfig() {
   )
   logger.debug(` `)
   logger.debug(`Verida Network: ${config.VERIDA_ENVIRONMENT}`)
-  logger.debug(`Verida Meta Transaction Server: ${config.NETWORK_ENDPOINT_URL}`)
+  logger.debug(` `)
+  logger.debug(`Verida Devnet RPC URL: ${config.verida.devnet.rpcUrl}`)
+  logger.debug(
+    `Verida Devnet Meta Transaction Server: ${config.verida.devnet.metaTransactionServerUrl}`
+  )
+  logger.debug(
+    `Verida Devnet Notification Server: ${config.verida.devnet.notificationServerUrls}`
+  )
+  logger.debug(
+    `Verida Devnet Data Connector Server: ${config.verida.devnet.dataConnectorServerUrl}`
+  )
+  logger.debug(` `)
+  logger.debug(`Verida Testnet RPC URL: ${config.verida.testnet.rpcUrl}`)
+  logger.debug(
+    `Verida Testnet Meta Transaction Server: ${config.verida.testnet.metaTransactionServerUrl}`
+  )
+  logger.debug(
+    `Verida Testnet Notification Server: ${config.verida.testnet.notificationServerUrls}`
+  )
+  logger.debug(
+    `Verida Testnet Data Connector Server: ${config.verida.testnet.dataConnectorServerUrl}`
+  )
+  logger.debug(` `)
+  logger.debug(`Verida Mainnet RPC URL: ${config.verida.mainnet.rpcUrl}`)
+  logger.debug(
+    `Verida Mainnet Meta Transaction Server: ${config.verida.mainnet.metaTransactionServerUrl}`
+  )
+  logger.debug(
+    `Verida Mainnet Notification Server: ${config.verida.mainnet.notificationServerUrls}`
+  )
+  logger.debug(
+    `Verida Mainnet Data Connector Server: ${config.verida.mainnet.dataConnectorServerUrl}`
+  )
+  logger.debug(` `)
   logger.debug(`Verida Wallet Provider: ${config.WALLET_PROVIDER_URL}`)
   logger.debug(` `)
   logger.debug(
