@@ -145,6 +145,8 @@ export type MainStackParams = {
   AddPlatformLink: AddPlatformLinkScreenParams
   EditPlatformLink: EditPlatformLinkScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
+
+  __Storybook__: undefined
 }
 
 export type MainStackScreenProps<S extends keyof MainStackParams> =

@@ -191,6 +191,14 @@ export const MainNavigator: React.FunctionComponent = () => {
             }}
           />
 
+          {/* Internal Screens */}
+          {__DEV__ && (
+            <Stack.Screen
+              name='__Storybook__'
+              component={require('../../.storybook').default}
+            />
+          )}
+
           {/* Modal screens */}
           <Stack.Group
             screenOptions={{
