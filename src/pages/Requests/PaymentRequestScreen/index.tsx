@@ -9,7 +9,7 @@ import {
   getAggregateWalletBannerBalanceResult,
   getChainIdParamsFromResourceParams,
   useAggregateWalletBannerBalances,
-  useMaybeChainMetadataForResource,
+  useChainIdForResourceParams,
 } from 'features/cryptoWallet'
 import { Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
@@ -44,7 +44,9 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { navigation, route } = props
     const { params } = route
     const { data, name: senderName, logo } = params
-    const { resource } = data
+    const { resource, amount } = data
+
+    const integerCryptoAmount = String(amount) as `${number}`
 
     const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
 
@@ -53,7 +55,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       []
     )
 
-    const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+    //const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
     const [maybeAggregateWalletBannerBalanceThatVariesOnRefetch] =
       getAggregateWalletBannerBalanceResult(
@@ -99,8 +101,11 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       [logo, onToggleDetails, senderName]
     )
 
+    const chainId = useChainIdForResourceParams({ resource })
+
     const maybeUnknownAssetWalletSelectorButtonProps =
       useMaybeWalletSelectorButtonProps({
+        aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
         resource: getChainIdParamsFromResourceParams(resource),
       })
 
@@ -119,6 +124,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           {maybeAggregateWalletBannerBalance ? (
             <PaymentRequestScreenContainer
               {...params}
+              integerCryptoAmount={integerCryptoAmount}
               aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
               onRequestClose={handleClose}
               detailsOpen={detailsOpen}
@@ -134,15 +140,14 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                   detailsOpen={detailsOpen}
                   requestHeaderProps={requestHeaderProps}
                   requestPaymentValueProps={{
-                    chainLabel: maybeChainMetadata?.nativeCurrencyName,
-                    chainLogo: maybeChainMetadata?.icon || undefined,
+                    aggregateWalletBannerBalance:
+                      maybeAggregateWalletBannerBalance,
+                    integerCryptoAmount,
+                    chainId,
                   }}
                   // HACK: We cannot determine the transfer fee of an
                   //       unknown resource.
-                  requestPaymentFeeProps={{
-                    feeAmount: 'Unknown',
-                    feeSymbol: '',
-                  }}
+                  requestPaymentFeeProps={null}
                   walletSelectorButtonProps={
                     maybeUnknownAssetWalletSelectorButtonProps
                   }

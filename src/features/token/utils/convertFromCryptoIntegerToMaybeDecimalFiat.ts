@@ -1,28 +1,27 @@
-import {
-  AggregateWalletBannerBalance,
-  CURRENCY_SYMBOLS,
-} from 'features/cryptoWallet'
+import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 
+import { AmountWithMaybeCurrency } from '../@types'
 import { convertFromCryptoIntegerToDecimal } from './convertFromCryptoIntegerToDecimal'
 import { convertFromCryptoToFiat } from './convertFromCryptoToFiat'
 
+type ConvertFromCryptoIntegerToMaybeDecimalFiatProps = Partial<
+  Pick<AggregateWalletBannerBalance, 'valuation' | 'decimals'>
+> & {
+  readonly integerCryptoAmount: string
+}
+
 export function convertFromCryptoIntegerToMaybeDecimalFiat({
   integerCryptoAmount,
-  aggregateWalletBannerBalance,
-}: {
-  readonly integerCryptoAmount: string
-  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
-}) {
-  const { decimals, valuation: maybeValuation } = aggregateWalletBannerBalance
+  decimals,
+  valuation: maybeValuation,
+}: ConvertFromCryptoIntegerToMaybeDecimalFiatProps): AmountWithMaybeCurrency | null {
+  if (!maybeValuation || typeof decimals !== 'number') return null
 
-  if (!maybeValuation) return null
+  const { currency } = maybeValuation
 
-  const maybeFiatSymbol =
-    !!maybeValuation && CURRENCY_SYMBOLS[maybeValuation.currency]
+  if (!currency) return null
 
-  if (!maybeFiatSymbol) return null
-
-  const fiatAmount =
+  const amount =
     !!maybeValuation &&
     convertFromCryptoToFiat({
       valueInCrypto: convertFromCryptoIntegerToDecimal({
@@ -30,11 +29,7 @@ export function convertFromCryptoIntegerToMaybeDecimalFiat({
         decimals,
       }),
       valuation: maybeValuation,
-      decimalPlaces: 2,
     })
 
-  return {
-    fiatSymbol: maybeFiatSymbol,
-    fiatAmount,
-  }
+  return { units: currency, amount }
 }

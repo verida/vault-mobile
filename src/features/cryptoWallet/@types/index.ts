@@ -192,10 +192,6 @@ export enum Currency {
   USD = 'USD',
 }
 
-export type CurrencySymbols = {
-  readonly [key in Currency]: string
-}
-
 export enum Interval {
   DAILY = 'DAILY',
 }

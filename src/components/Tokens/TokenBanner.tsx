@@ -1,5 +1,4 @@
 import BigDecimal from 'bignumber.js'
-import { priceFormatter } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -7,11 +6,13 @@ import { BlockchainWalletWithAccounts } from 'api/types'
 import CopyIcon from 'assets/copy_icon.svg'
 import ReceiveIcon from 'assets/receive_icon.svg'
 import SendIcon from 'assets/send_icon.svg'
+import {
+  AggregateWalletBannerBalanceSpan,
+  PriceFormatterSpan,
+} from 'components/NumericSpan/Numeric.Span'
 import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-
-import { TokenListItemBalanceSpan } from './TokensList/TokenListItem.Balance.Span'
 
 const TokenBanner = React.memo(function TokenBanner({
   sendButtonAction: maybeSendButtonAction,
@@ -59,9 +60,9 @@ const TokenBanner = React.memo(function TokenBanner({
             {typeof tokenType === 'string' ? tokenType : 'Coin'}
           </Text>
           <View style={styles.coinPriceInfo}>
-            {typeof conversionRate === 'number' && (
+            {!!conversionRate && (
               <Text style={styles.coinPrice}>
-                {priceFormatter(conversionRate)}
+                <PriceFormatterSpan value={conversionRate.toNumber()} />
               </Text>
             )}
             {hasChange ? (
@@ -87,19 +88,25 @@ const TokenBanner = React.memo(function TokenBanner({
         <Text style={styles.amount}>
           {/* */}
           {!!tokenBalance && symbol && typeof maybeDecimals === 'number' ? (
-            <TokenListItemBalanceSpan
+            <AggregateWalletBannerBalanceSpan
               symbol={symbol}
               balance={tokenBalance}
               decimals={maybeDecimals}
             />
           ) : (
-            `${priceFormatter(totalBalance.toNumber())}`
+            <PriceFormatterSpan value={totalBalance.toNumber()} />
           )}
         </Text>
         <Text style={styles.amountLabel}>
-          {!isSumOfMultipleBalances
-            ? `≈ ${priceFormatter(totalBalance.toNumber())}`
-            : `Total Balance`}
+          {!isSumOfMultipleBalances ? (
+            <React.Fragment>
+              {/* TODO: equivalency prop */}
+              <Text children='≈ ' />
+              <PriceFormatterSpan value={totalBalance.toNumber()} />
+            </React.Fragment>
+          ) : (
+            `Total Balance`
+          )}
         </Text>
       </View>
       {showControls && (

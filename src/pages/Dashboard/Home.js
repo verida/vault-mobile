@@ -134,7 +134,7 @@ export const HomeTabScreen = (props) => {
   }, [processDeepLink])
 
   useEffect(() => {
-    // TODO: Find out what's going on here :-/
+    // TODO: Find out what's going on here CONFUSED_FACE
     dynamicLinks()
       .getInitialLink()
       .then(async (link) => {

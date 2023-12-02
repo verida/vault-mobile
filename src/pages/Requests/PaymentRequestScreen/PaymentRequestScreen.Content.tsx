@@ -1,7 +1,5 @@
-import BigDecimal from 'bignumber.js'
 import {
   RequestHeaderProps,
-  RequestPaymentFeeProps,
   StatusInfo,
   useMaybeWalletSelectorButtonProps,
 } from 'components'
@@ -9,20 +7,11 @@ import { ethers } from 'ethers'
 import {
   AggregateWalletBannerBalance,
   ConfirmTransactionCallbackResult,
-  CryptoWalletRequest,
-  CURRENCY_SYMBOLS,
-  getAggregateWalletBannerBalanceResult,
-  useAggregateWalletBannerBalances,
   useChainIdForResourceParams,
   useMaybeChainMetadataExplorerUrl,
   useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
-import {
-  convertFromCryptoIntegerToDecimal,
-  convertFromCryptoIntegerToMaybeDecimalFiat,
-  convertPredictedTransactionFeeToString,
-  useTokenCalculator,
-} from 'features/token'
+import { useTokenCalculator } from 'features/token'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import { Linking, StyleSheet, View } from 'react-native'
@@ -35,11 +24,10 @@ import { PaymentRequestScreenContentBody } from './PaymentRequestScreen.Content.
 
 export const PaymentRequestScreenContent = React.memo(
   function PaymentRequestScreenContent({
+    integerCryptoAmount,
     details,
-    tokenCalculator: { getCurrentValueStringAsCryptoOrZero },
     loading,
     predictedMaxTransactionFee,
-    data,
     maybeConfirmTransactionError,
     aggregateWalletBannerBalance,
     transactionConfirmation,
@@ -47,11 +35,11 @@ export const PaymentRequestScreenContent = React.memo(
     detailsOpen,
     requestHeaderProps,
   }: {
+    readonly integerCryptoAmount: `${number}`
     readonly details: PaymentRequestScreenParams['details']
     readonly tokenCalculator: ReturnType<typeof useTokenCalculator>
     readonly loading: boolean
     readonly predictedMaxTransactionFee: ethers.BigNumber
-    readonly data: CryptoWalletRequest<'pay'>
     readonly maybeConfirmTransactionError: Error | undefined
     readonly transactionConfirmation: ConfirmTransactionCallbackResult | null
     readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
@@ -83,80 +71,34 @@ export const PaymentRequestScreenContent = React.memo(
       Linking.openURL(maybeBlockchainExplorerUrl)
     }, [maybeBlockchainExplorerUrl])
 
-    // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
-    // and the base currency.
-    const { valuation: maybeValuation } = aggregateWalletBannerBalance
-
-    const maybeFiatPaymentAmount = convertFromCryptoIntegerToMaybeDecimalFiat({
-      integerCryptoAmount: String(data.amount),
-      aggregateWalletBannerBalance,
-    })
-
-    const maybeFormattedFiatValue = maybeFiatPaymentAmount
-      ? `${maybeFiatPaymentAmount.fiatSymbol}${maybeFiatPaymentAmount.fiatAmount}`
-      : undefined
-
-    const [maybeNativeAssetWalletBannerBalance] =
-      getAggregateWalletBannerBalanceResult(
-        useAggregateWalletBannerBalances({
-          resource: chainId,
-        })
-      )
-
+    // TODO: embed this in wallet selector
     const maybeWalletSelectorButtonProps = useMaybeWalletSelectorButtonProps({
+      aggregateWalletBannerBalance,
       resource: chainId,
-      formattedBalance: `${convertFromCryptoIntegerToDecimal({
-        integerCryptoAmount: String(aggregateWalletBannerBalance.balance),
-        decimals: aggregateWalletBannerBalance.decimals,
-        decimalPlaces: 3,
-      })} ${aggregateWalletBannerBalance.symbol}`,
     })
 
     if (isNotStarted) {
+      // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
+      // and the base currency.
+      const { valuation: maybeValuation } = aggregateWalletBannerBalance
+
       return (
         <PaymentRequestScreenContentBody
           details={details}
           detailsOpen={detailsOpen}
           requestHeaderProps={requestHeaderProps}
           requestPaymentValueProps={{
-            assetAmount: getCurrentValueStringAsCryptoOrZero(),
-            assetSymbol: aggregateWalletBannerBalance.symbol,
-            assetLogo: aggregateWalletBannerBalance.icon || undefined,
-            formattedAssetPrice: `${
-              maybeValuation
-                ? `${CURRENCY_SYMBOLS[maybeValuation.currency]}${new BigDecimal(
-                    maybeValuation.conversionRate
-                  ).decimalPlaces(2)}`
-                : ''
-            }`,
-            formattedFiatValue: maybeFormattedFiatValue,
-            chainLabel: maybeNativeAssetWalletBannerBalance?.label,
-            chainLogo: maybeNativeAssetWalletBannerBalance?.icon || undefined,
+            aggregateWalletBannerBalance,
+            chainId,
+            integerCryptoAmount,
           }}
           requestPaymentFeeProps={
-            maybeNativeAssetWalletBannerBalance && maybeChainMetadata
-              ? ((): Omit<RequestPaymentFeeProps, 'style'> => {
-                  const { feeAmount, feeSymbol } =
-                    convertPredictedTransactionFeeToString({
-                      chainMetadata: maybeChainMetadata,
-                      predictedMaxTransactionFee,
-                    })
-
-                  const maybeFiatTransactionFee =
-                    convertFromCryptoIntegerToMaybeDecimalFiat({
-                      integerCryptoAmount: String(predictedMaxTransactionFee),
-                      aggregateWalletBannerBalance:
-                        maybeNativeAssetWalletBannerBalance,
-                    })
-
-                  return {
-                    feeAmount,
-                    feeSymbol,
-                    formattedFiatSymbol: maybeFiatTransactionFee?.fiatSymbol,
-                    formattedFiatValue:
-                      maybeFiatTransactionFee?.fiatAmount || '',
-                  }
-                })()
+            maybeChainMetadata
+              ? {
+                  chainMetadata: maybeChainMetadata,
+                  predictedMaxTransactionFee,
+                  detailedValuation: maybeValuation,
+                }
               : null
           }
           walletSelectorButtonProps={maybeWalletSelectorButtonProps}
@@ -188,9 +130,12 @@ export const PaymentRequestScreenContent = React.memo(
                 : loading || !transactionConfirmation
                 ? 'Please wait a moment, we are transferring your payment.'
                 : `${
-                    maybeFormattedFiatValue
-                      ? maybeFormattedFiatValue
-                      : 'Payment'
+                    // TODO: This prop needs to be refactored to accept a JSX.Element
+                    //       instead of a string:
+                    'Payment'
+                    //maybeFormattedFiatValue
+                    //  ? maybeFormattedFiatValue
+                    //  : 'Payment'
                   } sent to ${senderName}!`
             }
           />

@@ -1,35 +1,66 @@
+import BigDecimal from 'bignumber.js'
+import { ChainId } from 'caip'
 import { Logo } from 'components'
+import {
+  AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceResult,
+  useAggregateWalletBannerBalances,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
+import {
+  AggregateWalletBannerBalanceSpan,
+  RequestPaymentValueSpan,
+  WalletBannerBalanceSpan,
+} from 'components/NumericSpan/Numeric.Span'
+import { CONFUSED_FACE } from 'constants/strings'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
 export type RequestPaymentValueProps = {
-  assetAmount?: string
-  assetSymbol?: string
-  assetLogo?: string
-  formattedAssetPrice?: string
-  chainLabel?: string
-  chainLogo?: string
-  formattedFiatValue?: string
+  readonly integerCryptoAmount: `${number}`
+  readonly aggregateWalletBannerBalance:
+    | AggregateWalletBannerBalance
+    | null
+    | undefined
+  readonly chainId: ChainId
 } & ViewProps
 
 export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValueProps> =
   (props) => {
     const {
-      assetAmount,
-      assetSymbol,
-      assetLogo,
-      formattedAssetPrice,
-      chainLabel,
-      chainLogo,
-      formattedFiatValue,
+      integerCryptoAmount,
+      aggregateWalletBannerBalance,
+      chainId,
       ...viewProps
     } = props
 
+    // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
+    // and the base currency.
+    const maybeValuation = aggregateWalletBannerBalance?.valuation
+
     const styles = useThemeAwareStyle(createStyles)
+
+    //const assetAmount = getCurrentValueStringAsCryptoOrZero()
+
+    const assetSymbol = aggregateWalletBannerBalance?.symbol
+    const assetLogo = aggregateWalletBannerBalance?.icon || undefined
+
+    const [maybeNativeAssetWalletBannerBalance] =
+      getAggregateWalletBannerBalanceResult(
+        useAggregateWalletBannerBalances({
+          resource: chainId,
+        })
+      )
+
+    const chainLabel = maybeNativeAssetWalletBannerBalance?.label
+    const chainLogo = maybeNativeAssetWalletBannerBalance?.icon || undefined
+
+    const hasCurrencyAndConversionRate = !!(
+      maybeValuation?.currency && maybeValuation?.conversionRate
+    )
 
     return (
       <View {...viewProps}>
@@ -39,17 +70,27 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
           </View>
           <View style={styles.valueContainer}>
             <Text style={styles.primaryValue}>
-              {assetAmount && assetSymbol
-                ? `${assetAmount} ${assetSymbol}`
-                : ':-/'}
+              {integerCryptoAmount && assetSymbol ? (
+                <AggregateWalletBannerBalanceSpan
+                  decimals={aggregateWalletBannerBalance?.decimals}
+                  balance={integerCryptoAmount}
+                  symbol={assetSymbol}
+                />
+              ) : (
+                CONFUSED_FACE
+              )}
             </Text>
             <Text style={styles.secondaryValue}>
-              {formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
+              <RequestPaymentValueSpan
+                integerCryptoAmount={integerCryptoAmount}
+                valuation={maybeValuation}
+                decimals={aggregateWalletBannerBalance?.decimals}
+              />
             </Text>
           </View>
-          {Boolean(formattedAssetPrice || chainLabel || chainLogo) && (
+          {Boolean(hasCurrencyAndConversionRate || chainLabel || chainLogo) && (
             <View style={styles.footer}>
-              {formattedAssetPrice ? (
+              {hasCurrencyAndConversionRate ? (
                 <View>
                   <Text
                     style={[
@@ -65,7 +106,12 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
                       styles.footerLeftText,
                       styles.footerValueText,
                     ]}>
-                    {formattedAssetPrice}
+                    <WalletBannerBalanceSpan
+                      currency={maybeValuation?.currency}
+                      isAccurate
+                      // TODO: needs memo
+                      value={new BigDecimal(maybeValuation.conversionRate)}
+                    />
                   </Text>
                 </View>
               ) : (

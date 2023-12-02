@@ -21,6 +21,7 @@ import { PaymentRequestScreenContent } from './PaymentRequestScreen.Content'
 
 export const PaymentRequestScreenContainer = React.memo(
   function PaymentRequestScreenContainer({
+    integerCryptoAmount,
     details,
     data,
     aggregateWalletBannerBalance,
@@ -28,6 +29,7 @@ export const PaymentRequestScreenContainer = React.memo(
     detailsOpen,
     requestHeaderProps,
   }: PaymentRequestScreenParams & {
+    readonly integerCryptoAmount: `${number}`
     readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
     readonly onRequestClose: () => void
     readonly detailsOpen: boolean
@@ -36,7 +38,8 @@ export const PaymentRequestScreenContainer = React.memo(
       'timestamp' | 'isDetailsOpen'
     >
   }): JSX.Element {
-    const { resource, amount: integerAmount, recipientAccount } = data
+    // TODO: Remove dependence on data, not necessary this deep.
+    const { resource, recipientAccount } = data
 
     const { address: toAddress } = recipientAccount
 
@@ -67,7 +70,7 @@ export const PaymentRequestScreenContainer = React.memo(
     // HACK: The value passed to us is in an integer unit, i.e. wei, but
     //       TokenCalculator works using decimal representation, i.e. in ETH.
     const initialValue = convertFromCryptoIntegerToDecimal({
-      integerCryptoAmount: String(integerAmount),
+      integerCryptoAmount,
       decimals,
     })
 
@@ -77,12 +80,10 @@ export const PaymentRequestScreenContainer = React.memo(
       predictedMaxTransactionFee,
     })
 
-    const {
-      getCurrentValueStringAsCryptoOrZero,
-      isNotMalformed,
-      hasSufficientBalance,
-      canExecutePayment,
-    } = tokenCalculator
+    const { getCurrentValueStringAsCryptoOrZero } = tokenCalculator
+
+    const { isNotMalformed, hasSufficientBalance, canExecutePayment } =
+      tokenCalculator
 
     const processPaymentAsync = React.useCallback(async () => {
       if (!aggregateWalletBannerBalance)
@@ -150,7 +151,7 @@ export const PaymentRequestScreenContainer = React.memo(
             detailsOpen={detailsOpen}
             tokenCalculator={tokenCalculator}
             loading={loading}
-            data={data}
+            integerCryptoAmount={integerCryptoAmount}
             predictedMaxTransactionFee={predictedMaxTransactionFee}
             maybeConfirmTransactionError={maybeConfirmTransactionError}
             aggregateWalletBannerBalance={aggregateWalletBannerBalance}

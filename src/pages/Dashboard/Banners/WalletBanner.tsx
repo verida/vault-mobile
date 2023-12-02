@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
 import {
-  CURRENCY_SYMBOLS,
   getAggregateWalletBannerBalanceResult,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
@@ -10,6 +9,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
+import { WalletBannerBalanceSpan } from 'components/NumericSpan/Numeric.Span'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 import {
@@ -42,8 +42,11 @@ const WalletSummary = () => {
         <View>
           <Text style={styles.walletLabel}>All wallets</Text>
           <Text style={styles.walletAmount}>
-            {CURRENCY_SYMBOLS[currency]} {price?.toFixed(2) ?? 0}
-            {!isAccurate && '*'}
+            <WalletBannerBalanceSpan
+              currency={currency}
+              value={price}
+              isAccurate={isAccurate}
+            />
           </Text>
         </View>
       </View>

@@ -3,6 +3,7 @@ import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 import SwapIcon from 'assets/swap_icon.svg'
+import { TokenCalculatorSpan } from 'components/NumericSpan/Numeric.Span'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
@@ -17,7 +18,7 @@ const TokenCalculator = React.memo(function TokenCalculator({
   selectMaxValue,
   getCurrentValueStringAsCryptoOrZero,
   getCurrentValueStringAsFiatOrZero,
-  maybeCurrencySymbol,
+  maybeCurrency,
 }: ReturnType<typeof useTokenCalculator> & {
   readonly autoFocus?: boolean
 }): JSX.Element {
@@ -55,14 +56,17 @@ const TokenCalculator = React.memo(function TokenCalculator({
         </View>
         {canConvertBetweenFiatAndCrypto && (
           <Text style={styles.convertedAmount}>
-            {`≈ ${
-              format === CurrencyFormat.CRYPTO
-                ? `${
-                    maybeCurrencySymbol || ''
-                  }${getCurrentValueStringAsFiatOrZero()}`
-                : `${getCurrentValueStringAsCryptoOrZero()} ${symbol}`
-            }`}
-            {}
+            <TokenCalculatorSpan
+              getCurrentValueStringAsFiatOrZero={
+                getCurrentValueStringAsFiatOrZero
+              }
+              format={format}
+              symbol={symbol}
+              maybeCurrency={maybeCurrency}
+              getCurrentValueStringAsCryptoOrZero={
+                getCurrentValueStringAsCryptoOrZero
+              }
+            />
           </Text>
         )}
       </View>

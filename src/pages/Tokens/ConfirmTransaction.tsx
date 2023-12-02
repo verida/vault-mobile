@@ -9,13 +9,13 @@ import {
   useMaybeChainMetadataForResource,
   useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
-import { convertPredictedTransactionFeeToString } from 'features/token/utils/convertPredictedTransactionFeeToString'
 import { Container, Icon } from 'native-base'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { PredictedMaxTransactionFeeSpan } from 'components/NumericSpan/Numeric.Span'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -61,18 +61,22 @@ const ConfirmTransaction = () => {
 
   const renderFeeRow = React.useCallback(
     (chainMetadata: ChainMetadata) => {
-      const { feeAmount, feeSymbol } = convertPredictedTransactionFeeToString({
-        chainMetadata,
-        predictedMaxTransactionFee,
-      })
       return (
         <View style={styles.infoRow}>
           <Text style={styles.infoLabel}>Fee</Text>
           <View style={styles.infoValue}>
-            <Text
-              style={styles.valueText}
-              children={`${feeAmount} ${feeSymbol}`}
-            />
+            <Text style={styles.valueText}>
+              <PredictedMaxTransactionFeeSpan
+                chainMetadata={chainMetadata}
+                predictedMaxTransactionFee={predictedMaxTransactionFee}
+                // TODO: When the codebase has settled, let this prop become
+                //       optional and internally default to null. It isn't nice
+                //       to force callers to explicitly pass falsey values, but
+                //       it is helpful to be explicit when performing large
+                //       migrations.
+                detailedValuation={null}
+              />
+            </Text>
           </View>
         </View>
       )

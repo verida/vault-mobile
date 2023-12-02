@@ -82,7 +82,7 @@ export const PaymentRequestScreenContentBody = React.memo(
             {...requestPaymentValueProps}
             style={styles.valueContainer}
           />
-          {Boolean(requestPaymentFeeProps) && (
+          {!!requestPaymentFeeProps && (
             <RequestPaymentFee
               {...requestPaymentFeeProps}
               style={styles.feeContainer}

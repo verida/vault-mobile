@@ -1,9 +1,9 @@
 import { DetailedValuation, Interval } from 'features/cryptoWallet'
-import { priceFormatter } from 'features/cryptoWallet/utils/formatter'
 import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
+import { PriceFormatterSpan } from 'components/NumericSpan/Numeric.Span'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export const TokensListItemPrice = React.memo(function TokensListItemPrice({
@@ -21,7 +21,7 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
       <View style={styles.priceAmount}>
         <View style={styles.priceChange}>
           <Text style={styles.amount}>
-            {priceFormatter(conversionRate.toNumber())}
+            <PriceFormatterSpan value={conversionRate.toNumber()} />
           </Text>
           {dailyRateChange !== 0 && (
             <Text
@@ -33,7 +33,9 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
             />
           )}
         </View>
-        <Text style={styles.amount}>{priceFormatter(price.toNumber())}</Text>
+        <Text style={styles.amount}>
+          <PriceFormatterSpan value={price.toNumber()} />
+        </Text>
       </View>
     </>
   )

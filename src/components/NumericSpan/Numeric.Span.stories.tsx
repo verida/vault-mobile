@@ -1,14 +1,14 @@
 import React from 'react'
 import { View } from 'react-native'
 
-import { NumericSpan } from './NumericSpan'
+import { NumericSpan } from './Numeric.Span'
 
 export default {
   title: 'NumericSpan',
   component: NumericSpan,
-  argTypes: {
-    onPress: { action: 'pressed the button' },
-  },
+  //argTypes: {
+  //  onPress: { action: 'pressed the button' },
+  //},
   args: {
     text: 'Hello world',
   },

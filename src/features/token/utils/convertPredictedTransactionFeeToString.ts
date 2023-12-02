@@ -2,23 +2,19 @@ import { BigNumber } from 'ethers'
 import { ChainMetadata } from 'features/caip'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet'
 
+import { AmountWithSymbol } from '../@types'
+
 export function convertPredictedTransactionFeeToString({
   chainMetadata: { decimals, symbol },
   predictedMaxTransactionFee,
 }: {
   readonly predictedMaxTransactionFee: BigNumber
   readonly chainMetadata: ChainMetadata
-}): {
-  readonly feeAmount: string
-  readonly feeSymbol: string
-} {
+}): AmountWithSymbol | null {
   const feeIsUnknown = predictedMaxTransactionFee.lte(BigNumber.from('0'))
 
-  if (feeIsUnknown)
-    return {
-      feeAmount: 'Unknown',
-      feeSymbol: '',
-    }
+  // TODO: This logic sucks. Fix it.
+  if (feeIsUnknown) return null
 
   //if (chainId.namespace === SupportedBlockchainNamespace.EIP_155)
   //  return {
@@ -28,13 +24,10 @@ export function convertPredictedTransactionFeeToString({
   //    feeSymbol: 'gwei',
   //  }
 
-  const feeAmount = `${fixedPointCryptoAsBigDecimal({
+  const amount = `${fixedPointCryptoAsBigDecimal({
     amount: predictedMaxTransactionFee.toString(),
     decimals,
-  }).toString()}`
+  }).toString()}` as `${number}`
 
-  return {
-    feeAmount,
-    feeSymbol: symbol,
-  }
+  return { amount, units: symbol }
 }

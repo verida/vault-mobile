@@ -1,9 +1,6 @@
 import BigDecimal from 'bignumber.js'
 import { BigNumber } from 'ethers'
-import {
-  AggregateWalletBannerBalanceType,
-  CURRENCY_SYMBOLS,
-} from 'features/cryptoWallet'
+import { AggregateWalletBannerBalanceType } from 'features/cryptoWallet'
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet/@types'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet/utils'
 import * as React from 'react'
@@ -60,9 +57,9 @@ export function useTokenCalculator({
 
   const maybeCurrency = maybeValuation?.currency
 
-  const maybeCurrencySymbol: string | null = maybeCurrency
-    ? CURRENCY_SYMBOLS[maybeCurrency]
-    : null
+  //const maybeCurrencySymbol: string | null = maybeCurrency
+  //  ? CURRENCY_SYMBOLS[maybeCurrency]
+  //  : null
 
   // Used to "forget" cached results which are used when toggling back-and-forth
   // between currencies. Call where needed - usually when the entered value has
@@ -370,7 +367,7 @@ export function useTokenCalculator({
       selectMaxValue,
       getCurrentValueStringAsCryptoOrZero,
       getCurrentValueStringAsFiatOrZero,
-      maybeCurrencySymbol,
+      maybeCurrency,
       hasSufficientBalance,
       isNotMalformed,
       canExecutePayment,
@@ -380,7 +377,7 @@ export function useTokenCalculator({
       getCurrentValueStringAsCryptoOrZero,
       getCurrentValueStringAsFiatOrZero,
       getNormalizedValue,
-      maybeCurrencySymbol,
+      maybeCurrency,
       onUpdateCalculatedValue,
       selectMaxValue,
       state,
