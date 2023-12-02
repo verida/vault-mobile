@@ -17,24 +17,6 @@ import {
 import * as React from 'react'
 import { ActivityIndicator, StyleProp, Text, ViewStyle } from 'react-native'
 
-/**
- * Return the number of decimals (zeros)
- * @param {*} value
- * @param {*} min
- * @param {*} max
- * @param {*} offset
- * @returns
- */
-export const getSignificantDigits = (
-  value: number, //: number,
-  min = 0, //: number,
-  max = 6, //: number,
-  offset = 2
-) => {
-  const nbZero = -Math.floor(Math.log10(value) + 1)
-  return Math.min(Math.max(nbZero + offset, min), max)
-}
-
 const InternalCryptoSpan = React.memo(function LowLevelCryptoSpan({
   floatingCryptoAmount,
   symbol,
@@ -42,7 +24,13 @@ const InternalCryptoSpan = React.memo(function LowLevelCryptoSpan({
   readonly floatingCryptoAmount: `${number}`
   readonly symbol: string
 }): JSX.Element {
-  return <Text children={`${floatingCryptoAmount} ${symbol}`} />
+  return (
+    <Text
+      children={`${new BigDecimal(floatingCryptoAmount).decimalPlaces(
+        6
+      )} ${symbol}`}
+    />
+  )
 })
 
 export const AggregateWalletBannerBalanceSpan = React.memo(
@@ -54,17 +42,17 @@ export const AggregateWalletBannerBalanceSpan = React.memo(
     AggregateWalletBannerBalance,
     'decimals' | 'balance' | 'symbol'
   >): JSX.Element {
-    const n = fixedPointCryptoAsBigDecimal({
-      amount,
-      decimals,
-    })
-
     return (
       <Text>
-        {/* HACK: Using toFixed(3) would signal a full integer balance even if it is were less. */}
-        {/*       It is more correct to show that the amount has reduced, than to show a full balance. */}
         <InternalCryptoSpan
-          floatingCryptoAmount={String(n) as `${number}`}
+          floatingCryptoAmount={
+            String(
+              fixedPointCryptoAsBigDecimal({
+                amount,
+                decimals,
+              })
+            ) as `${number}`
+          }
           symbol={symbol}
         />
       </Text>

@@ -182,7 +182,6 @@ const SingleCurrency = () => {
           aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
           refreshing={isLoading}
-          // errorType={errorType}
           list={transactions}
         />
       )}

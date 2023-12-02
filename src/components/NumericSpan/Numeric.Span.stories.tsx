@@ -1,11 +1,11 @@
 import React from 'react'
 import { View } from 'react-native'
 
-import { NumericSpan } from './Numeric.Span'
+//import { NumericSpan } from './Numeric.Span'
 
 export default {
   title: 'NumericSpan',
-  component: NumericSpan,
+  component: React.Fragment,
   //argTypes: {
   //  onPress: { action: 'pressed the button' },
   //},

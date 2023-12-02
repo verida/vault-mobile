@@ -1,7 +1,5 @@
-// TODO: what to do with SupportedTokenObject?
 import {
   AggregateWalletBannerBalance,
-  formatTokenQuantity,
   Transaction,
   TransactionType,
 } from 'features/cryptoWallet'
@@ -11,6 +9,7 @@ import { StyleSheet, View } from 'react-native'
 
 import ReceivedIcon from 'assets/received_icon.svg'
 import SentIcon from 'assets/sent_icon.svg'
+import { AggregateWalletBannerBalanceSpan } from 'components/NumericSpan/Numeric.Span'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useMainNavigation } from 'navigation/hooks'
 
@@ -20,18 +19,13 @@ const icons: { readonly [key in TransactionType]: JSX.Element } = {
 }
 
 export default ({
-  //symbol,
-  //decimal,
   aggregateWalletBannerBalance,
   item,
 }: {
-  //readonly symbol: unknown
-  //readonly decimal: number
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly item: Transaction
 }) => {
   const navigation = useMainNavigation()
-  const { symbol, decimals } = aggregateWalletBannerBalance
   const { type, quantity, address, id, pending } = item
 
   return (
@@ -56,8 +50,10 @@ export default ({
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            {/* HACK: formatTokenQuantity expects a number, but quantity from transactions is a BigInt.*/}
-            {formatTokenQuantity(Number(quantity), decimals)} {symbol}
+            <AggregateWalletBannerBalanceSpan
+              {...aggregateWalletBannerBalance}
+              balance={String(Number(quantity))}
+            />
           </Text>
         </View>
         <View style={styles.priceAmount}>
