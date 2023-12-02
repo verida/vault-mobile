@@ -17,7 +17,8 @@ import {
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import AccountsList from 'pages/Dashboard/AccountsList/AccountsList'
+
+import { AccountsList } from './AccountsList/AccountsList'
 
 export type AddAccountsModalProps = Omit<
   BottomActionsModalProps,
@@ -43,9 +44,9 @@ function getTileFromStep(step: Step) {
   switch (step) {
     case Step.INITIAL:
     case Step.ADD_IMPORT:
-      return 'Accounts'
+      return 'Identities'
     default:
-      return 'Log out of selected accounts'
+      return 'Log out of selected identities'
   }
 }
 
