@@ -15,53 +15,7 @@ import {
   useTokenCalculator,
 } from 'features/token'
 import * as React from 'react'
-import { StyleProp, Text, ViewStyle } from 'react-native'
-
-// TODO: Support more locales, get the default locale from the device
-export const SUPPORTED_LOCALES = ['en-US']
-export const DEFAULT_LOCALE = SUPPORTED_LOCALES[0]
-
-export const SUPPORTED_FIAT_CURRENCIES = ['USD']
-
-export const DEFAULT_FIAT_CURRENCY = SUPPORTED_FIAT_CURRENCIES[0]
-
-//const defaultCurrencyFormatterOptions: Intl.NumberFormatOptions = {
-//  style: 'currency',
-//  currency: DEFAULT_FIAT_CURRENCY,
-//  currencyDisplay: 'code',
-//}
-
-//function formatFiatCurrency(
-//  amount: number,
-//  options?: Intl.NumberFormatOptions,
-//  locale = DEFAULT_LOCALE
-//) {
-//  const opts = Object.assign({}, defaultCurrencyFormatterOptions, options)
-//  const formatter = new Intl.NumberFormat(locale, opts)
-//  return formatter.format(amount)
-//}
-
-const priceFormatter = new Intl.NumberFormat('en-US', {
-  style: 'currency',
-  currency: 'USD',
-
-  // These options are needed to round to whole numbers if that's what you want.
-  //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
-  //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
-}).format
-
-export const NumericSpan = React.memo(function NumericSpan({
-  text,
-}: {
-  readonly text: string
-}): JSX.Element {
-  return <Text children={`huuuuh ${text}`} />
-})
-
-//formattedBalance: `${convertFromCryptoIntegerToDecimal({
-//  integerCryptoAmount: String(aggregateWalletBannerBalance.balance),
-//  decimals: aggregateWalletBannerBalance.decimals,
-//})} ${aggregateWalletBannerBalance.symbol}`,
+import { ActivityIndicator, StyleProp, Text, ViewStyle } from 'react-native'
 
 export const AggregateWalletBannerBalanceSpan = React.memo(
   function AggregateWalletBannerBalanceSpan({
@@ -89,20 +43,36 @@ export const AggregateWalletBannerBalanceSpan = React.memo(
   }
 )
 
+// TODO: Add CryptoFormatterSpan then commonalize
+// TODO: Rename to FiatFormatterSpan
 // TODO: equivalency prop (search this term)
 // TODO: look for coupling with `hasChange`
-export const PriceFormatterSpan = React.memo(function PriceFormattterSpan({
+export const FiatCurrencySpan = React.memo(function PriceFormatterSpan({
   style,
   value,
+  currency: maybeCurrency,
 }: {
   readonly style?: StyleProp<ViewStyle>
   // TODO: make BigDecimal
   readonly value: number
+  readonly currency?: Currency | null
 }): JSX.Element {
+  const { format: priceFormatter } = React.useMemo(
+    () =>
+      new Intl.NumberFormat('en-US', {
+        style: 'currency',
+        currency: maybeCurrency || Currency.USD,
+
+        // These options are needed to round to whole numbers if that's what you want.
+        //minimumFractionDigits: 0, // (this suffices for whole numbers, but will print 2500.10 as $2,500.1)
+        //maximumFractionDigits: 0, // (causes 2500.99 to be printed as $2,501)
+      }),
+    [maybeCurrency]
+  )
+
   return <Text style={style}>{priceFormatter(value)}</Text>
 })
 
-// TODO: equivalency too
 export const TokenCalculatorSpan = React.memo(function TokenCalculatorSpan({
   getCurrentValueStringAsCryptoOrZero,
   getCurrentValueStringAsFiatOrZero,
@@ -119,12 +89,15 @@ export const TokenCalculatorSpan = React.memo(function TokenCalculatorSpan({
 >): JSX.Element {
   return (
     <Text>
-      {`≈ ${
-        format === CurrencyFormat.CRYPTO
-          ? // TODO: this used to be currency symbol
-            `${maybeCurrency || ''}${getCurrentValueStringAsFiatOrZero()}`
-          : `${getCurrentValueStringAsCryptoOrZero()} ${symbol}`
-      }`}
+      {'≈ '}
+      {format === CurrencyFormat.CRYPTO ? (
+        <FiatCurrencySpan
+          value={Number(getCurrentValueStringAsFiatOrZero())}
+          currency={maybeCurrency}
+        />
+      ) : (
+        `${getCurrentValueStringAsCryptoOrZero()} ${symbol}`
+      )}
     </Text>
   )
 })
@@ -168,8 +141,8 @@ export const PredictedMaxTransactionFeeSpan = React.memo(
       }
     )
 
-    // TODO: make this prettier
-    if (!maybePredictedTransactionFee) return <Text children='Unknown' />
+    // TODO: We could use the real loading state.
+    if (!maybePredictedTransactionFee) return <ActivityIndicator />
 
     if (detailedValuation) {
       const { decimals } = chainMetadata
@@ -183,7 +156,7 @@ export const PredictedMaxTransactionFeeSpan = React.memo(
 
       if (maybeFiatTransactionFee) {
         const { amount, units } = maybeFiatTransactionFee
-        return <Text children={`${amount} in ${units}`} />
+        return <FiatCurrencySpan value={Number(amount)} currency={units} />
       }
     }
 
@@ -193,7 +166,6 @@ export const PredictedMaxTransactionFeeSpan = React.memo(
   }
 )
 
-// TODO: custom equivalent
 export const RequestPaymentValueSpan = React.memo(
   function RequestPaymentValueSpan({
     ...props
@@ -202,30 +174,19 @@ export const RequestPaymentValueSpan = React.memo(
   >[0]): JSX.Element {
     const maybeFiatPaymentAmount = convertFromCryptoIntegerToMaybeDecimalFiat({
       ...props,
-      //...aggregateWalletBannerBalance,
-      //integerCryptoAmount: String(amount),
-      //valuation: maybeValuation,
     })
+    props?.valuation?.currency
 
-    const maybeFormattedFiatValue = maybeFiatPaymentAmount
-      ? `${maybeFiatPaymentAmount.units}${maybeFiatPaymentAmount.amount}`
-      : undefined
-
-    const formattedFiatValue = maybeFormattedFiatValue
+    if (!maybeFiatPaymentAmount) return <React.Fragment />
 
     return (
-      <Text
-        children={formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
-      />
+      <Text>
+        <Text children='≈ ' />
+        <FiatCurrencySpan
+          value={Number(maybeFiatPaymentAmount.amount)}
+          currency={maybeFiatPaymentAmount.units}
+        />
+      </Text>
     )
   }
 )
-
-//export const RequestPaymentValueHeadlineSpan = React.memo(
-//  function RequestPaymentValueHeadlineSpan({
-//    amount,
-//    units,
-//  }: AmountWithSymbol): JSX.Element {
-//    return <Text>{`${amount} ${units}`}</Text>
-//  }
-//)

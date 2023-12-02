@@ -3,11 +3,12 @@ import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { PriceFormatterSpan } from 'components/NumericSpan/Numeric.Span'
+import { FiatCurrencySpan } from 'components/NumericSpan/Numeric.Span'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export const TokensListItemPrice = React.memo(function TokensListItemPrice({
   valuation: {
+    currency,
     price,
     conversionRate,
     rates: { [Interval.DAILY]: dailyRateChange },
@@ -21,7 +22,10 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
       <View style={styles.priceAmount}>
         <View style={styles.priceChange}>
           <Text style={styles.amount}>
-            <PriceFormatterSpan value={conversionRate.toNumber()} />
+            <FiatCurrencySpan
+              value={conversionRate.toNumber()}
+              currency={currency}
+            />
           </Text>
           {dailyRateChange !== 0 && (
             <Text
@@ -34,7 +38,7 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
           )}
         </View>
         <Text style={styles.amount}>
-          <PriceFormatterSpan value={price.toNumber()} />
+          <FiatCurrencySpan value={price.toNumber()} currency={currency} />
         </Text>
       </View>
     </>

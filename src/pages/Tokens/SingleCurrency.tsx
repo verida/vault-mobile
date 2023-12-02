@@ -138,12 +138,7 @@ const SingleCurrency = () => {
         tokenType={isAssetSupportedByWalletProvider ? null : ''}
         totalBalance={price}
         tokenBalance={maybeAggregateWalletBannerBalance?.balance}
-        conversionRate={
-          maybeAggregateWalletBannerBalance?.valuation?.conversionRate || null
-        }
-        change={
-          maybeAggregateWalletBannerBalance?.valuation?.rates?.DAILY || null
-        }
+        valuation={maybeAggregateWalletBannerBalance?.valuation}
         showControls
         selectedWallet={selectedWallet}
         symbol={maybeAggregateWalletBannerBalance?.symbol}

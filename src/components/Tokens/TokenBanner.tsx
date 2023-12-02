@@ -1,4 +1,5 @@
 import BigDecimal from 'bignumber.js'
+import { DetailedValuation } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
@@ -8,7 +9,7 @@ import ReceiveIcon from 'assets/receive_icon.svg'
 import SendIcon from 'assets/send_icon.svg'
 import {
   AggregateWalletBannerBalanceSpan,
-  PriceFormatterSpan,
+  FiatCurrencySpan,
 } from 'components/NumericSpan/Numeric.Span'
 import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
@@ -26,8 +27,7 @@ const TokenBanner = React.memo(function TokenBanner({
   symbol,
   icon,
   decimals: maybeDecimals,
-  change: maybeChange,
-  conversionRate,
+  valuation: maybeValution,
   isSumOfMultipleBalances,
 }: {
   readonly selectedWallet?: BlockchainWalletWithAccounts
@@ -36,18 +36,18 @@ const TokenBanner = React.memo(function TokenBanner({
   readonly copyButtonAction?: () => void
   // TODO: How to determine tokenType using updated model?
   readonly tokenType: string | null
-  // TODO: should be "currencyBalance" or something
   readonly totalBalance: BigDecimal
   readonly symbol: string | null
   readonly icon: string | null
   readonly tokenBalance: string | null
   readonly decimals: number | null
-  readonly change: number | null
-  readonly conversionRate: BigDecimal | null
-  // NOTE: This used to be the presence of "symbol" or not.
+  readonly valuation: DetailedValuation | null | undefined
   readonly showControls: boolean
   readonly isSumOfMultipleBalances: boolean
 }): JSX.Element {
+  const maybeConversionRate = maybeValution?.conversionRate || null
+  const maybeChange = maybeValution?.rates?.DAILY || null
+
   const hasChange = typeof maybeChange === 'number'
 
   const positive = hasChange && maybeChange > 0
@@ -60,9 +60,9 @@ const TokenBanner = React.memo(function TokenBanner({
             {typeof tokenType === 'string' ? tokenType : 'Coin'}
           </Text>
           <View style={styles.coinPriceInfo}>
-            {!!conversionRate && (
+            {!!maybeConversionRate && (
               <Text style={styles.coinPrice}>
-                <PriceFormatterSpan value={conversionRate.toNumber()} />
+                <FiatCurrencySpan value={maybeConversionRate.toNumber()} />
               </Text>
             )}
             {hasChange ? (
@@ -94,7 +94,7 @@ const TokenBanner = React.memo(function TokenBanner({
               decimals={maybeDecimals}
             />
           ) : (
-            <PriceFormatterSpan value={totalBalance.toNumber()} />
+            <FiatCurrencySpan value={totalBalance.toNumber()} />
           )}
         </Text>
         <Text style={styles.amountLabel}>
@@ -102,7 +102,7 @@ const TokenBanner = React.memo(function TokenBanner({
             <React.Fragment>
               {/* TODO: equivalency prop */}
               <Text children='≈ ' />
-              <PriceFormatterSpan value={totalBalance.toNumber()} />
+              <FiatCurrencySpan value={totalBalance.toNumber()} />
             </React.Fragment>
           ) : (
             `Total Balance`
@@ -133,12 +133,6 @@ const TokenBanner = React.memo(function TokenBanner({
             <ReceiveIcon />
             <Text style={styles.actionIconText}>Receive</Text>
           </TouchableOpacity>
-          {/* <TouchableOpacity
-            onPress={buyButtonAction}
-            style={styles.singleActionIcon}>
-            <BuyIcon />
-            <Text style={styles.actionIconText}>Buy</Text>
-          </TouchableOpacity> */}
           <TouchableOpacity
             disabled={!maybeCopyButtonAction}
             onPress={maybeCopyButtonAction}

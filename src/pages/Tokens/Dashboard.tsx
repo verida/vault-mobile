@@ -48,9 +48,7 @@ const TokenDashboard = React.memo(function TokenDashboard() {
           <View style={styles.contentContainer}>
             <TestnetWarning networkReference={null} />
             <TokenBanner
-              // TODO: Implement me (is this supposed to be the user's sum balance change???)
-              conversionRate={null}
-              // TODO: Implement me
+              valuation={null}
               tokenType={null}
               totalBalance={price}
               showControls={false}
@@ -59,7 +57,6 @@ const TokenDashboard = React.memo(function TokenDashboard() {
               icon={null}
               tokenBalance={null}
               decimals={null}
-              change={null}
             />
             <TokensList
               aggregateWalletBannerBalances={aggregateWalletBannerBalances}
