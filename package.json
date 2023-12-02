@@ -24,7 +24,7 @@
     "release:android": "yarn build:webapp && yarn android --variant=stagingRelease",
     "wc": "npx ts-node scripts/wc",
     "pay": "npx ts-node scripts/pay",
-    "storybook": "yarn storybook:generate && npx ts-node scripts/storybook && sb-rn-watcher",
+    "storybook": "yarn storybook:generate && npx ts-node scripts/storybook",
     "storybook:generate": "sb-rn-get-stories"
   },
   "dependencies": {
