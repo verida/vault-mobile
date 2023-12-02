@@ -5,6 +5,7 @@ import FastImage, { Source } from 'react-native-fast-image'
 
 import { Theme } from 'styles/types'
 
+// TODO: Refactor the location of the default avatars inside 'assets'
 const UserAvatar = require('assets/stubs/avatar.png')
 const AppAvatar = require('assets/placeholder-app-logo.png')
 // TODO: Get a avatar image for entity
