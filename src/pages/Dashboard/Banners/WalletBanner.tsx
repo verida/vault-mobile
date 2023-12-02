@@ -9,7 +9,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
-import { WalletBannerBalanceSpan } from 'components/NumericSpan/Numeric.Span'
+import { FiatCurrencySpanWithAccuracy } from 'components/NumericSpan/Numeric.Span'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 import {
@@ -29,9 +29,10 @@ const WalletSummary = () => {
 
   const navigation = useNavigation()
 
-  const handlePress = () => {
-    navigation.navigate('Assets' as never)
-  }
+  const handlePress = React.useCallback(
+    () => navigation.navigate('Assets'),
+    [navigation]
+  )
 
   return (
     <Pressable style={styles.container} onPress={handlePress}>
@@ -42,7 +43,7 @@ const WalletSummary = () => {
         <View>
           <Text style={styles.walletLabel}>All wallets</Text>
           <Text style={styles.walletAmount}>
-            <WalletBannerBalanceSpan
+            <FiatCurrencySpanWithAccuracy
               currency={currency}
               value={price}
               isAccurate={isAccurate}

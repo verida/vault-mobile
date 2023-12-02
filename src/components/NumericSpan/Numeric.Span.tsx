@@ -7,8 +7,8 @@ import {
   DetailedValuation,
 } from 'features/cryptoWallet/@types'
 import { fixedPointCryptoAsBigDecimal } from 'features/cryptoWallet/utils/fixedPointCryptoAsBigDecimal'
-// TODO: Needs to be typed props
 import {
+  convertFromCryptoIntegerToDecimal,
   convertFromCryptoIntegerToMaybeDecimalFiat,
   convertPredictedTransactionFeeToString,
   CurrencyFormat,
@@ -16,6 +16,34 @@ import {
 } from 'features/token'
 import * as React from 'react'
 import { ActivityIndicator, StyleProp, Text, ViewStyle } from 'react-native'
+
+/**
+ * Return the number of decimals (zeros)
+ * @param {*} value
+ * @param {*} min
+ * @param {*} max
+ * @param {*} offset
+ * @returns
+ */
+export const getSignificantDigits = (
+  value: number, //: number,
+  min = 0, //: number,
+  max = 6, //: number,
+  offset = 2
+) => {
+  const nbZero = -Math.floor(Math.log10(value) + 1)
+  return Math.min(Math.max(nbZero + offset, min), max)
+}
+
+const InternalCryptoSpan = React.memo(function LowLevelCryptoSpan({
+  floatingCryptoAmount,
+  symbol,
+}: {
+  readonly floatingCryptoAmount: `${number}`
+  readonly symbol: string
+}): JSX.Element {
+  return <Text children={`${floatingCryptoAmount} ${symbol}`} />
+})
 
 export const AggregateWalletBannerBalanceSpan = React.memo(
   function AggregateWalletBannerBalanceSpan({
@@ -31,20 +59,19 @@ export const AggregateWalletBannerBalanceSpan = React.memo(
       decimals,
     })
 
-    const toFixed_4 = n.toFixed(4)
-
     return (
       <Text>
         {/* HACK: Using toFixed(3) would signal a full integer balance even if it is were less. */}
         {/*       It is more correct to show that the amount has reduced, than to show a full balance. */}
-        {toFixed_4.substring(0, toFixed_4.length - 1)} {symbol}
+        <InternalCryptoSpan
+          floatingCryptoAmount={String(n) as `${number}`}
+          symbol={symbol}
+        />
       </Text>
     )
   }
 )
 
-// TODO: Add CryptoFormatterSpan then commonalize
-// TODO: Rename to FiatFormatterSpan
 // TODO: equivalency prop (search this term)
 // TODO: look for coupling with `hasChange`
 export const FiatCurrencySpan = React.memo(function PriceFormatterSpan({
@@ -74,8 +101,8 @@ export const FiatCurrencySpan = React.memo(function PriceFormatterSpan({
 })
 
 export const TokenCalculatorSpan = React.memo(function TokenCalculatorSpan({
-  getCurrentValueStringAsCryptoOrZero,
   getCurrentValueStringAsFiatOrZero,
+  getCurrentValueStringAsCryptoOrZero,
   format,
   symbol,
   maybeCurrency,
@@ -96,15 +123,17 @@ export const TokenCalculatorSpan = React.memo(function TokenCalculatorSpan({
           currency={maybeCurrency}
         />
       ) : (
-        `${getCurrentValueStringAsCryptoOrZero()} ${symbol}`
+        <InternalCryptoSpan
+          floatingCryptoAmount={getCurrentValueStringAsCryptoOrZero()}
+          symbol={symbol}
+        />
       )}
     </Text>
   )
 })
 
-// TODO: rename because this gets used on PaymentRequestScreen too
-export const WalletBannerBalanceSpan = React.memo(
-  function WalletBannerBalanceSpan({
+export const FiatCurrencySpanWithAccuracy = React.memo(
+  function FiatCurrencySpanWithAccuracy({
     currency,
     isAccurate,
     value,
@@ -115,8 +144,7 @@ export const WalletBannerBalanceSpan = React.memo(
   }): JSX.Element {
     return (
       <Text>
-        {/* TODO: used to be currency symbols */}
-        {currency} {value?.toFixed(2) ?? 0}
+        <FiatCurrencySpan value={value.toNumber()} currency={currency} />
         {!isAccurate && '*'}
       </Text>
     )
@@ -141,12 +169,12 @@ export const PredictedMaxTransactionFeeSpan = React.memo(
       }
     )
 
-    // TODO: We could use the real loading state.
+    // TODO: use the real loading state from `usePredictMaxTransactionFee`
     if (!maybePredictedTransactionFee) return <ActivityIndicator />
 
-    if (detailedValuation) {
-      const { decimals } = chainMetadata
+    const { decimals } = chainMetadata
 
+    if (detailedValuation) {
       const maybeFiatTransactionFee =
         convertFromCryptoIntegerToMaybeDecimalFiat({
           integerCryptoAmount: String(predictedMaxTransactionFee),
@@ -162,7 +190,15 @@ export const PredictedMaxTransactionFeeSpan = React.memo(
 
     const { amount, units } = maybePredictedTransactionFee
 
-    return <Text children={`${amount} ${units}`} />
+    return (
+      <InternalCryptoSpan
+        floatingCryptoAmount={convertFromCryptoIntegerToDecimal({
+          integerCryptoAmount: amount,
+          decimals,
+        })}
+        symbol={units}
+      />
+    )
   }
 )
 
@@ -175,7 +211,6 @@ export const RequestPaymentValueSpan = React.memo(
     const maybeFiatPaymentAmount = convertFromCryptoIntegerToMaybeDecimalFiat({
       ...props,
     })
-    props?.valuation?.currency
 
     if (!maybeFiatPaymentAmount) return <React.Fragment />
 

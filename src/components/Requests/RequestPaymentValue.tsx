@@ -12,8 +12,8 @@ import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
 import {
   AggregateWalletBannerBalanceSpan,
+  FiatCurrencySpanWithAccuracy,
   RequestPaymentValueSpan,
-  WalletBannerBalanceSpan,
 } from 'components/NumericSpan/Numeric.Span'
 import { CONFUSED_FACE } from 'constants/strings'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -43,8 +43,6 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
 
     const styles = useThemeAwareStyle(createStyles)
 
-    //const assetAmount = getCurrentValueStringAsCryptoOrZero()
-
     const assetSymbol = aggregateWalletBannerBalance?.symbol
     const assetLogo = aggregateWalletBannerBalance?.icon || undefined
 
@@ -60,6 +58,11 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
 
     const hasCurrencyAndConversionRate = !!(
       maybeValuation?.currency && maybeValuation?.conversionRate
+    )
+
+    const maybeConversionRate = React.useMemo(
+      () => new BigDecimal(maybeValuation?.conversionRate || 0),
+      [maybeValuation?.conversionRate]
     )
 
     return (
@@ -106,16 +109,15 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
                       styles.footerLeftText,
                       styles.footerValueText,
                     ]}>
-                    <WalletBannerBalanceSpan
+                    <FiatCurrencySpanWithAccuracy
                       currency={maybeValuation?.currency}
                       isAccurate
-                      // TODO: needs memo
-                      value={new BigDecimal(maybeValuation.conversionRate)}
+                      value={maybeConversionRate}
                     />
                   </Text>
                 </View>
               ) : (
-                <View style={{ flex: 1 }} />
+                <View style={styles.flex} />
               )}
 
               {Boolean(chainLabel || chainLogo) && (
@@ -160,6 +162,7 @@ const createStyles = (theme: Theme) =>
       backgroundColor: '#F5F4FF', // TODO: Add to theme
       borderRadius: theme.roundness.xs,
     },
+    flex: { flex: 1 },
     logoContainer: {
       alignItems: 'center',
     },

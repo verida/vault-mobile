@@ -371,6 +371,7 @@ export function useTokenCalculator({
       hasSufficientBalance,
       isNotMalformed,
       canExecutePayment,
+      //decimals,
     }),
     [
       canConvertBetweenFiatAndCrypto,
@@ -386,6 +387,7 @@ export function useTokenCalculator({
       hasSufficientBalance,
       isNotMalformed,
       canExecutePayment,
+      //decimals,
     ]
   )
 }
