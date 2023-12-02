@@ -1,6 +1,15 @@
 import React from 'react'
 import { View } from 'react-native'
 
+//import {
+//  AggregateWalletBannerBalanceSpan,
+//  FiatCurrencySpan,
+//  FiatCurrencySpanWithAccuracy,
+//  PredictedMaxTransactionFeeSpan,
+//  RequestPaymentValueSpan,
+//  TokenCalculatorSpan,
+//} from '.'
+
 //import { NumericSpan } from './Numeric.Span'
 
 export default {

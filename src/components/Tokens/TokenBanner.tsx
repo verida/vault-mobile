@@ -1,16 +1,19 @@
 import BigDecimal from 'bignumber.js'
 import { DetailedValuation } from 'features/cryptoWallet'
 import React from 'react'
-import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+import {
+  Image,
+  StyleSheet,
+  Text as RNText,
+  TouchableOpacity,
+  View,
+} from 'react-native'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
 import CopyIcon from 'assets/copy_icon.svg'
 import ReceiveIcon from 'assets/receive_icon.svg'
 import SendIcon from 'assets/send_icon.svg'
-import {
-  AggregateWalletBannerBalanceSpan,
-  FiatCurrencySpan,
-} from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoBalance, NumericFiat } from 'components/Span'
 import Text from 'components/Text'
 import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -62,7 +65,7 @@ const TokenBanner = React.memo(function TokenBanner({
           <View style={styles.coinPriceInfo}>
             {!!maybeConversionRate && (
               <Text style={styles.coinPrice}>
-                <FiatCurrencySpan value={maybeConversionRate.toNumber()} />
+                <NumericFiat value={maybeConversionRate.toNumber()} />
               </Text>
             )}
             {hasChange ? (
@@ -88,21 +91,20 @@ const TokenBanner = React.memo(function TokenBanner({
         <Text style={styles.amount}>
           {/* */}
           {!!tokenBalance && symbol && typeof maybeDecimals === 'number' ? (
-            <AggregateWalletBannerBalanceSpan
+            <NumericCryptoBalance
               symbol={symbol}
               balance={tokenBalance}
               decimals={maybeDecimals}
             />
           ) : (
-            <FiatCurrencySpan value={totalBalance.toNumber()} />
+            <NumericFiat value={totalBalance.toNumber()} />
           )}
         </Text>
         <Text style={styles.amountLabel}>
           {!isSumOfMultipleBalances ? (
             <React.Fragment>
-              {/* TODO: equivalency prop */}
-              <Text children='≈ ' />
-              <FiatCurrencySpan value={totalBalance.toNumber()} />
+              <RNText children='≈ ' />
+              <NumericFiat value={totalBalance.toNumber()} />
             </React.Fragment>
           ) : (
             `Total Balance`

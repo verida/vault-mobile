@@ -15,7 +15,7 @@ import { StyleSheet, View } from 'react-native'
 
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { PredictedMaxTransactionFeeSpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoMaxTransactionFee } from 'components/Span'
 import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -66,7 +66,7 @@ const ConfirmTransaction = () => {
           <Text style={styles.infoLabel}>Fee</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
-              <PredictedMaxTransactionFeeSpan
+              <NumericCryptoMaxTransactionFee
                 chainMetadata={chainMetadata}
                 predictedMaxTransactionFee={predictedMaxTransactionFee}
                 // TODO: When the codebase has settled, let this prop become

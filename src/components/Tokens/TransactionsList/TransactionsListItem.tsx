@@ -9,7 +9,7 @@ import { StyleSheet, View } from 'react-native'
 
 import ReceivedIcon from 'assets/received_icon.svg'
 import SentIcon from 'assets/sent_icon.svg'
-import { AggregateWalletBannerBalanceSpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoBalance } from 'components/Span'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { useMainNavigation } from 'navigation/hooks'
 
@@ -50,7 +50,7 @@ export default ({
               styles.quantity,
               type === 'sent' ? styles.negative : styles.positive,
             ]}>
-            <AggregateWalletBannerBalanceSpan
+            <NumericCryptoBalance
               {...aggregateWalletBannerBalance}
               balance={String(Number(quantity))}
             />

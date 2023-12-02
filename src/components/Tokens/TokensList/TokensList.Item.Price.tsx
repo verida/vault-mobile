@@ -3,7 +3,7 @@ import { Text } from 'native-base'
 import * as React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import { FiatCurrencySpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericFiat } from 'components/Span'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export const TokensListItemPrice = React.memo(function TokensListItemPrice({
@@ -22,7 +22,7 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
       <View style={styles.priceAmount}>
         <View style={styles.priceChange}>
           <Text style={styles.amount}>
-            <FiatCurrencySpan
+            <NumericFiat
               value={conversionRate.toNumber()}
               currency={currency}
             />
@@ -38,7 +38,7 @@ export const TokensListItemPrice = React.memo(function TokensListItemPrice({
           )}
         </View>
         <Text style={styles.amount}>
-          <FiatCurrencySpan value={price.toNumber()} currency={currency} />
+          <NumericFiat value={price.toNumber()} currency={currency} />
         </Text>
       </View>
     </>

@@ -11,10 +11,10 @@ import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
 import {
-  AggregateWalletBannerBalanceSpan,
-  FiatCurrencySpanWithAccuracy,
-  RequestPaymentValueSpan,
-} from 'components/NumericSpan/Numeric.Span'
+  NumericCryptoBalance,
+  NumericFiatPaymentRequest,
+  NumericFiatWithAccuracy,
+} from 'components/Span'
 import { CONFUSED_FACE } from 'constants/strings'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
@@ -74,7 +74,7 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
           <View style={styles.valueContainer}>
             <Text style={styles.primaryValue}>
               {integerCryptoAmount && assetSymbol ? (
-                <AggregateWalletBannerBalanceSpan
+                <NumericCryptoBalance
                   decimals={aggregateWalletBannerBalance?.decimals}
                   balance={integerCryptoAmount}
                   symbol={assetSymbol}
@@ -84,7 +84,7 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
               )}
             </Text>
             <Text style={styles.secondaryValue}>
-              <RequestPaymentValueSpan
+              <NumericFiatPaymentRequest
                 integerCryptoAmount={integerCryptoAmount}
                 valuation={maybeValuation}
                 decimals={aggregateWalletBannerBalance?.decimals}
@@ -109,7 +109,7 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
                       styles.footerLeftText,
                       styles.footerValueText,
                     ]}>
-                    <FiatCurrencySpanWithAccuracy
+                    <NumericFiatWithAccuracy
                       currency={maybeValuation?.currency}
                       isAccurate
                       value={maybeConversionRate}

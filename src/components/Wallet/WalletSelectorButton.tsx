@@ -11,7 +11,7 @@ import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
 import { Alert, AlertType } from 'components/Alert'
 import { Logo } from 'components/Images'
-import { AggregateWalletBannerBalanceSpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoBalance } from 'components/Span'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
@@ -109,9 +109,7 @@ export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonP
               </Text>
               <Text style={styles.walletFormattedBalance}>
                 {!!aggregateWalletBannerBalance && (
-                  <AggregateWalletBannerBalanceSpan
-                    {...aggregateWalletBannerBalance}
-                  />
+                  <NumericCryptoBalance {...aggregateWalletBannerBalance} />
                 )}
               </Text>
             </View>

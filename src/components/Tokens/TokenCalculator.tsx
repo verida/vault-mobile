@@ -3,7 +3,7 @@ import * as React from 'react'
 import { StyleSheet, TextInput, TouchableOpacity, View } from 'react-native'
 
 import SwapIcon from 'assets/swap_icon.svg'
-import { TokenCalculatorSpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoFiatConversion } from 'components/Span'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
@@ -56,7 +56,7 @@ const TokenCalculator = React.memo(function TokenCalculator({
         </View>
         {canConvertBetweenFiatAndCrypto && (
           <Text style={styles.convertedAmount}>
-            <TokenCalculatorSpan
+            <NumericCryptoFiatConversion
               getCurrentValueStringAsFiatOrZero={
                 getCurrentValueStringAsFiatOrZero
               }

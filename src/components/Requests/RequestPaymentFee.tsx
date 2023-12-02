@@ -2,12 +2,12 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
-import { PredictedMaxTransactionFeeSpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoMaxTransactionFee } from 'components/Span'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
 export type RequestPaymentFeeProps = Parameters<
-  typeof PredictedMaxTransactionFeeSpan
+  typeof NumericCryptoMaxTransactionFee
 >[0] &
   ViewProps
 
@@ -24,7 +24,7 @@ export const RequestPaymentFee = React.memo(function RequestPaymentFee({
       <View style={styles.container}>
         <Text style={styles.text}>
           <Text children='Estimated fee ≈ ' />
-          <PredictedMaxTransactionFeeSpan
+          <NumericCryptoMaxTransactionFee
             chainMetadata={chainMetadata}
             predictedMaxTransactionFee={predictedMaxTransactionFee}
             detailedValuation={detailedValuation}

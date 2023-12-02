@@ -4,7 +4,7 @@ import { ListItem, Text } from 'native-base'
 import React from 'react'
 import { GestureResponderEvent, StyleSheet, View } from 'react-native'
 
-import { AggregateWalletBannerBalanceSpan } from 'components/NumericSpan/Numeric.Span'
+import { NumericCryptoBalance } from 'components/Span'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'
@@ -25,9 +25,7 @@ export const TokensListItem = React.memo(function TokensListItem({
         <View style={styles.nameQuantity}>
           <Text style={styles.currencyName}>{label}</Text>
           <Text>
-            <AggregateWalletBannerBalanceSpan
-              {...aggregateWalletBannerBalance}
-            />
+            <NumericCryptoBalance {...aggregateWalletBannerBalance} />
           </Text>
         </View>
         {!!valuation && <TokensListItemPrice valuation={valuation} />}

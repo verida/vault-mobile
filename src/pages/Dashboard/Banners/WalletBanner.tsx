@@ -9,7 +9,7 @@ import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import ChevronRightPrimaryIcon from 'assets/icons/chevron_right_primary.svg'
 import MainWallet from 'assets/icons/main_wallet.svg'
-import { FiatCurrencySpanWithAccuracy } from 'components/NumericSpan/Numeric.Span'
+import { NumericFiatWithAccuracy } from 'components/Span'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 import {
@@ -43,7 +43,7 @@ const WalletSummary = () => {
         <View>
           <Text style={styles.walletLabel}>All wallets</Text>
           <Text style={styles.walletAmount}>
-            <FiatCurrencySpanWithAccuracy
+            <NumericFiatWithAccuracy
               currency={currency}
               value={price}
               isAccurate={isAccurate}
