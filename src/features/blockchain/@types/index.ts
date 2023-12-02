@@ -1,4 +1,5 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import { ChainMetadata } from 'features/caip'
 import { z } from 'zod'
 
 export * from './enums'
@@ -62,3 +63,11 @@ export const CustomBlockchainNetwork = z.object({
 })
 
 export type CustomBlockchainNetwork = z.infer<typeof CustomBlockchainNetwork>
+
+export const BLOCKCHAIN_SLICE_NAME = 'blockchain'
+
+export type CustomChains = {
+  readonly loading: boolean
+  readonly result: ChainMetadata[]
+  readonly error?: Error
+}

@@ -1,7 +1,7 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
-import { CAIP_SLICE_NAME, caipSlice } from 'features/caip'
+import { BLOCKCHAIN_SLICE_NAME, blockchainSlice } from 'features/blockchain'
 import { cryptoWalletApi, cryptoWalletSlice } from 'features/cryptoWallet'
 import { identitiesSlice } from 'features/identities'
 import { inboxSlice } from 'features/inbox'
@@ -30,7 +30,7 @@ const persistConfig = {
   storage: reduxPersistMmkvStorage,
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
-    CAIP_SLICE_NAME,
+    BLOCKCHAIN_SLICE_NAME,
 
     'settings',
     'profiles',
@@ -44,7 +44,7 @@ const persistConfig = {
 
 export const rootReducer = combineReducers({
   auth: authSlice.reducer,
-  [CAIP_SLICE_NAME]: caipSlice.reducer,
+  [BLOCKCHAIN_SLICE_NAME]: blockchainSlice.reducer,
   identities: identitiesSlice.reducer,
   cryptoWallets: cryptoWalletSlice.reducer,
   settings: settingsSlice.reducer,

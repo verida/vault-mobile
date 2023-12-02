@@ -1,9 +1,6 @@
 import { ChainId } from 'caip'
-import {
-  getMaybeChainMetadatas,
-  getSupportedCaipProtocolFriendlyName,
-  useChainMetadatas,
-} from 'features/caip'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
+import { getSupportedCaipProtocolFriendlyName } from 'features/caip'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 

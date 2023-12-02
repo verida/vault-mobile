@@ -1,15 +1,15 @@
 import { IDatastore } from '@verida/types'
 import { ChainId } from 'caip'
 import {
+  BLOCKCHAIN_SLICE_NAME,
   chainMetadataToMaybeCustomBlockchainNetwork,
   CustomBlockchainNetwork,
   customBlockchainNetworkToMaybeChainMetadata,
 } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 
 import AccountManager from 'api/AccountManager'
 import { createAppAsyncThunk } from 'reduxStore/types'
-
-import { CAIP_SLICE_NAME, ChainMetadata } from '../@types'
 
 // HACK: For now, we'll save networks as shopping coupons. 🤡
 const CUSTOM_BLOCKCHAIN_DATASTORE =
@@ -139,7 +139,7 @@ const batchModifyCustomNetworks = async ({
 }
 
 export const addCustomNetwork = createAppAsyncThunk(
-  `${CAIP_SLICE_NAME}/addCustomNetwork`,
+  `${BLOCKCHAIN_SLICE_NAME}/addCustomNetwork`,
   async (
     { addCustomNetworkParams, reset = false }: AddCustomNetworkParams,
     { rejectWithValue }
@@ -163,7 +163,7 @@ type RemoveCustomNetworkParams = {
 }
 
 export const removeCustomNetwork = createAppAsyncThunk(
-  `${CAIP_SLICE_NAME}/removeCustomNetwork`,
+  `${BLOCKCHAIN_SLICE_NAME}/removeCustomNetwork`,
   async ({ chainIds }: RemoveCustomNetworkParams, { rejectWithValue }) => {
     try {
       return batchModifyCustomNetworks({

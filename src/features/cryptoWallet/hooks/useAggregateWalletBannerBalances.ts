@@ -1,5 +1,5 @@
 import BigDecimal from 'bignumber.js'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import * as React from 'react'
 
 import {

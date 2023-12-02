@@ -1,6 +1,6 @@
 import { createSlice } from '@reduxjs/toolkit'
 
-import { CAIP_SLICE_NAME, CustomChains } from '../@types'
+import { BLOCKCHAIN_SLICE_NAME, CustomChains } from '../@types'
 import { addCustomNetwork, removeCustomNetwork } from './actions'
 
 export type CaipSliceState = {
@@ -11,8 +11,8 @@ const initialState: CaipSliceState = {
   customNetworks: { loading: false, result: [] },
 }
 
-export const caipSlice = createSlice({
-  name: CAIP_SLICE_NAME,
+export const blockchainSlice = createSlice({
+  name: BLOCKCHAIN_SLICE_NAME,
   initialState,
   reducers: {},
   extraReducers(builder) {

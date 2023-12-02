@@ -1,8 +1,8 @@
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   NearRpcMethod,
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { useSelectedMinifiedBlockchainAccounts } from 'features/cryptoWallet'
 import {
   extractWalletConnectRpcOrThrow,

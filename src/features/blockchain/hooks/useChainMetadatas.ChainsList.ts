@@ -4,13 +4,14 @@ import * as React from 'react'
 
 import { BlockchainNetwork } from '../../../api/types'
 import { config } from '../../../config'
-import { ChainMetadatas, isSupportedCaipNamespace } from '../../caip'
 import {
   ChainMetadata,
   ChainMetadataBlockExplorers,
   ChainMetadataBlockExplorerUrl,
+  ChainMetadatas,
+  isSupportedCaipNamespace,
   UseChainMetadataState,
-} from '../@types'
+} from '../../caip'
 
 const { useChainsListQuery } = cryptoWalletApi
 

@@ -1,11 +1,11 @@
 import { ChainId } from 'caip'
 import { useTheme } from 'contexts/ThemeContext'
 import {
-  ChainMetadata,
   getMaybeChainMetadatas,
   useChainMetadataDetails,
   useChainMetadatas,
-} from 'features/caip'
+} from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 import { Container } from 'native-base'
 import * as React from 'react'
 import {

@@ -5,7 +5,7 @@ import { getSdkError } from '@walletconnect/utils'
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   minifiedBlockchainAccountsToDropdownOptions,
   useSelectedMinifiedBlockchainAccounts,

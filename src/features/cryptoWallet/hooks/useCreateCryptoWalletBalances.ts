@@ -1,4 +1,4 @@
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import { Logger } from 'features/telemetry'
 import * as React from 'react'
 

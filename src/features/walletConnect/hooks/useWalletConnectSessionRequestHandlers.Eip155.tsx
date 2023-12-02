@@ -1,10 +1,10 @@
 import { IWeb3Wallet, Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ethers } from 'ethers'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   Eip155RpcMethod,
   useBlockchainRequestHandlersEip155,
 } from 'features/blockchain/eip155'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import {
   MinifiedBlockchainAccounts,
   useSelectedMinifiedBlockchainAccounts,

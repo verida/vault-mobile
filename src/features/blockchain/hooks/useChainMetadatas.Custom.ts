@@ -1,15 +1,15 @@
 import { ChainId } from 'caip'
+import {
+  ChainMetadata,
+  ChainMetadatas,
+  UseChainMetadataState,
+} from 'features/caip'
 import * as React from 'react'
 import { useDispatch, useStore } from 'react-redux'
 
 import { RootState, useAppSelector } from 'reduxStore/types'
 
-import {
-  CAIP_SLICE_NAME,
-  ChainMetadata,
-  ChainMetadatas,
-  UseChainMetadataState,
-} from '../@types'
+import { BLOCKCHAIN_SLICE_NAME } from '../@types'
 import { addCustomNetwork, removeCustomNetwork } from '../slice'
 
 type UseChainMetadatasCustomResult = UseChainMetadataState & {
@@ -41,7 +41,7 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
       // HACK: Although we can receive the result from the call to `dispatch()` above,
       //       the returned types are unsatisfactory, so we request them explicitly
       //       here.
-      const { result } = getState()[CAIP_SLICE_NAME].customNetworks
+      const { result } = getState()[BLOCKCHAIN_SLICE_NAME].customNetworks
 
       return result
     },
@@ -55,7 +55,7 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
       // HACK: Although we can receive the result from the call to `dispatch()` above,
       //       the returned types are unsatisfactory, so we request them explicitly
       //       here.
-      const { result } = getState()[CAIP_SLICE_NAME].customNetworks
+      const { result } = getState()[BLOCKCHAIN_SLICE_NAME].customNetworks
 
       return result
     },
@@ -63,7 +63,7 @@ export function useChainMetadatasCustom(): UseChainMetadatasCustomResult {
   )
 
   const { result, loading, error } = useAppSelector(
-    (state) => state[CAIP_SLICE_NAME].customNetworks
+    (state) => state[BLOCKCHAIN_SLICE_NAME].customNetworks
   )
 
   return { addCustomNetworks, removeCustomNetworks, result, loading, error }

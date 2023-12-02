@@ -1,10 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
 import {
-  ChainMetadata,
   useChainMetadataDetails,
   useChainMetadatasCustom,
-} from 'features/caip'
+} from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 import { Logger } from 'features/telemetry'
 import { Container } from 'native-base'
 import * as React from 'react'

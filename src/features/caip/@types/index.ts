@@ -50,14 +50,6 @@ export type ChainMetadata = z.infer<typeof ChainMetadata>
 // configuration.
 export type ChainMetadatas = readonly ChainMetadata[]
 
-export type CustomChains = {
-  readonly loading: boolean
-  readonly result: ChainMetadata[]
-  readonly error?: Error
-}
-
-export const CAIP_SLICE_NAME = 'caip'
-
 export type UseChainMetadataState = {
   readonly loading: boolean
   readonly result?: ChainMetadatas

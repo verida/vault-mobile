@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import { CryptoWalletRawRequest } from 'features/cryptoWallet/@types'
 import {
   parseCryptoRequestDeepLink,
