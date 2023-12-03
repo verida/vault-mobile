@@ -47,3 +47,29 @@ export function getDidClientConfigForNetwork(
     rpcUrl,
   }
 }
+
+/**
+ * Returns the list of supported Verida networks. Takes into account the dev mode and feature flags.
+ *
+ * @returns An array of supported Verida networks.
+ */
+export function getSupportedVeridaNetworks(): EnvironmentType[] {
+  const networks: EnvironmentType[] = []
+  if (config.features.veridaMainnetEnabled) {
+    networks.push(EnvironmentType.MAINNET)
+  }
+  networks.push(EnvironmentType.TESTNET)
+  if (config.dev.devMode) {
+    networks.push(EnvironmentType.DEVNET)
+    networks.push(EnvironmentType.LOCAL)
+  }
+  return networks
+}
+
+export function getDefaultVeridaNetwork(): EnvironmentType {
+  return config.dev.devMode
+    ? EnvironmentType.DEVNET
+    : config.features.veridaMainnetEnabled
+    ? EnvironmentType.MAINNET
+    : EnvironmentType.TESTNET
+}

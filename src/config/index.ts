@@ -41,6 +41,9 @@ export const config = {
     //   envVars.SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE || 1.0
     // ),
   },
+  features: {
+    veridaMainnetEnabled: false,
+  },
   verida: {
     [EnvironmentType.LOCAL]: {
       // The local configuration use the same env var as devnet. When locally developping, the env var can be set to point the local Verida Network rather than the devnet
