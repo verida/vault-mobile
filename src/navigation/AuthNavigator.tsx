@@ -2,13 +2,13 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
 import { AuthStackParams } from 'navigation/types'
-import Start from 'pages/Account/Start'
 import { CreatePin } from 'pages/Authentication/CreatePin'
 import {
   AddIdentityScreen,
   CreateIdentityScreen,
   ImportIdentityScreen,
 } from 'pages/Identity'
+import { OnboardingScreen } from 'pages/Onboarding'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
@@ -17,8 +17,10 @@ const Stack = createNativeStackNavigator<AuthStackParams>()
 
 function AuthNavigator() {
   return (
-    <Stack.Navigator screenOptions={{ headerShown: false }}>
-      <Stack.Screen name={'Start'} component={Start} />
+    <Stack.Navigator
+      initialRouteName='Onboarding'
+      screenOptions={{ headerShown: false }}>
+      <Stack.Screen name={'Onboarding'} component={OnboardingScreen} />
 
       <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
       <Stack.Screen name='CreateIdentity' component={CreateIdentityScreen} />

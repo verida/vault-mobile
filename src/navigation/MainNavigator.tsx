@@ -71,8 +71,10 @@ export const MainNavigator: React.FunctionComponent = () => {
       <BehindAuthContextProviders>
         {/* An empty component, just to register all of the main app events after the user has authenticated. */}
         <BehindAuthHandlers />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={'Dashboard'} component={TabsNavigator} />
+        <Stack.Navigator
+          initialRouteName='Tabs'
+          screenOptions={{ headerShown: false }}>
+          <Stack.Screen name={'Tabs'} component={TabsNavigator} />
           <Stack.Screen name={'Inbox'} component={Inbox} />
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />

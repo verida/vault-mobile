@@ -21,6 +21,7 @@ import {
   ImportIdentityScreenParams,
 } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { OnboardingScreenParams } from 'pages/Onboarding'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
@@ -41,7 +42,7 @@ export type RootStackParams = {
 }
 
 export type AuthStackParams = {
-  Start: undefined
+  Onboarding: OnboardingScreenParams
   AddIdentity: AddIdentityScreenParams
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
@@ -69,8 +70,8 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
   >
 
 export type MainStackParams = {
+  Tabs: undefined
   Inbox: undefined
-  Dashboard: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined

@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { LinearGradient } from 'expo-linear-gradient'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -8,16 +7,22 @@ import Logo from 'assets/logo.svg'
 import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { AuthStackParams } from 'navigation/types'
+import { AuthStackScreenProps } from 'navigation/types'
 import { AddIdentityMode } from 'pages/Identity'
 
 import Button from '../../components/Button'
 
-function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
+export type OnboardingScreenParams = undefined
+
+type OnboardingScreenProps = AuthStackScreenProps<'Onboarding'>
+
+export const OnboardingScreen: React.FC<OnboardingScreenProps> = (props) => {
+  const { navigation } = props
+
   const title = "Welcome!\nIt's time to own your personal data."
 
   const createAcc = () =>
-    props.navigation.navigate('AddIdentity', {
+    navigation.navigate('AddIdentity', {
       mode: AddIdentityMode.CreateNew,
     })
 
@@ -73,5 +78,3 @@ const style = StyleSheet.create({
     borderRadius: 5,
   },
 })
-
-export default Start
