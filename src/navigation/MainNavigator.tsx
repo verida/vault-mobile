@@ -5,7 +5,6 @@ import React from 'react'
 import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
 import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
-import DeleteAccount from 'pages/Account/DeleteAccount'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
@@ -15,6 +14,7 @@ import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import {
   AddIdentityScreen,
   CreateIdentityScreen,
+  DeleteIdentityScreen,
   ImportIdentityScreen,
 } from 'pages/Identity'
 import Inbox from 'pages/Inbox'
@@ -148,7 +148,10 @@ export const MainNavigator: React.FunctionComponent = () => {
             name={'ImportIdentity'}
             component={ImportIdentityScreen}
           />
-          <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
+          <Stack.Screen
+            name={'DeleteIdentity'}
+            component={DeleteIdentityScreen}
+          />
 
           <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
           <Stack.Screen

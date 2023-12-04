@@ -40,9 +40,9 @@ enum Step {
 function getTileFromStep(step: Step) {
   switch (step) {
     case Step.INITIAL:
-      return 'Accounts'
+      return 'Identities'
     default:
-      return 'Log out of selected accounts'
+      return 'Log out of selected identities'
   }
 }
 
