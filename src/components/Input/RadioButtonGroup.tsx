@@ -54,6 +54,6 @@ export const RadioButtonGroup: React.FunctionComponent<RadioButtonGroupProps> =
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     item: {
-      marginTop: theme.spacing.l,
+      marginTop: theme.spacing.m,
     },
   })
