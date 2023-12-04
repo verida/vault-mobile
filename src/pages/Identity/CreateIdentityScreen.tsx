@@ -43,8 +43,6 @@ import { MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
 
-import { AddIdentityMode } from './AddIdentityScreen'
-
 const pageData = [
   {
     key: 'name',
@@ -77,7 +75,9 @@ enum PageType {
   Confirmation,
 }
 
-export type CreateIdentityScreenParams = { mode: AddIdentityMode }
+export type CreateIdentityScreenParams = {
+  firstIdentity: boolean
+}
 
 type CreateIdentityScreenProps = MainStackScreenProps<'CreateIdentity'>
 
@@ -367,9 +367,11 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
               <Button
                 style={styles.button}
                 onPress={() => {
-                  params.mode === AddIdentityMode.Add
-                    ? navigation.goBack()
-                    : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+                  if (params.firstIdentity) {
+                    navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
+                  } else {
+                    navigation.goBack()
+                  }
                 }}>
                 Done
               </Button>

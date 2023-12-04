@@ -45,7 +45,6 @@ import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
-import { AddIdentityMode } from 'pages/Identity'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 const logger = new Logger('Pages/Dashboard/Home')
@@ -182,7 +181,7 @@ export const HomeTabScreen = (props) => {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
       navigation.navigate('AddIdentity', {
-        mode: AddIdentityMode.Add,
+        firstIdentity: false,
       })
     })
   }

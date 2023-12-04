@@ -20,13 +20,9 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-export enum AddIdentityMode {
-  CreateNew,
-  Add,
-}
-
 export type AddIdentityScreenParams = {
-  mode: AddIdentityMode
+  /* If there is no other identity */
+  firstIdentity: boolean
 }
 
 type AddIdentityScreenProps = MainStackScreenProps<'AddIdentity'>
@@ -83,7 +79,9 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
           disabled={!agreedTC}
           style={styles.actionButton}
           onPress={() => {
-            navigation.replace('CreateIdentity', { mode: params.mode })
+            navigation.replace('CreateIdentity', {
+              firstIdentity: params.firstIdentity,
+            })
           }}>
           Create Identity
         </Button>
@@ -98,7 +96,7 @@ export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
           ]}
           onPress={() => {
             navigation.replace('ImportIdentity', {
-              mode: params.mode,
+              firstIdentity: params.firstIdentity,
             })
           }}>
           <Text

@@ -21,7 +21,6 @@ import { Theme } from 'styles/types'
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import ModifierStyles from '../../styles/modifier'
-import { AddIdentityMode } from './AddIdentityScreen'
 
 const cleanSeedPhrase = (phrase: string): string => {
   return phrase.trim().replace(/\s\s+/g, ' ')
@@ -39,7 +38,7 @@ const verifySeedPhrase = (splitted: string[]): boolean => {
 }
 
 export type ImportIdentityScreenParams = {
-  mode: AddIdentityMode
+  firstIdentity: boolean
 }
 
 type ImportIdentityScreenProps = NativeStackScreenProps<
@@ -98,10 +97,10 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
         Alert.alert('Failed', 'Account already exist')
       }
 
-      if (params.mode === AddIdentityMode.Add) {
-        navigation.goBack()
+      if (params.firstIdentity) {
+        navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
       } else {
-        navigation.navigate('CreatePin')
+        navigation.goBack()
       }
     } catch (cause) {
       showError(true)

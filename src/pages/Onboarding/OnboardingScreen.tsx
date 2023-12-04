@@ -8,7 +8,6 @@ import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackScreenProps } from 'navigation/types'
-import { AddIdentityMode } from 'pages/Identity'
 
 import Button from '../../components/Button'
 
@@ -23,7 +22,7 @@ export const OnboardingScreen: React.FC<OnboardingScreenProps> = (props) => {
 
   const createAcc = () =>
     navigation.navigate('AddIdentity', {
-      mode: AddIdentityMode.CreateNew,
+      firstIdentity: true,
     })
 
   return (
