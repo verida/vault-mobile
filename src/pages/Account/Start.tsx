@@ -9,13 +9,17 @@ import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { AuthStackParams } from 'navigation/types'
+import { AddIdentityMode } from 'pages/Identity'
 
 import Button from '../../components/Button'
 
 function Start(props: NativeStackScreenProps<AuthStackParams, 'Start'>) {
   const title = "Welcome!\nIt's time to own your personal data."
 
-  const createAcc = () => props.navigation.navigate('Identity', undefined)
+  const createAcc = () =>
+    props.navigation.navigate('AddIdentity', {
+      mode: AddIdentityMode.CreateNew,
+    })
 
   return (
     <LinearGradient

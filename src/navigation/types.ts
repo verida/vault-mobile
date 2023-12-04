@@ -8,13 +8,17 @@ import {
   NFT,
   NFTCollection,
 } from 'api/types'
-import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
+import {
+  AddIdentityScreenParams,
+  CreateIdentityScreenParams,
+  ImportIdentityScreenParams,
+} from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
@@ -37,15 +41,13 @@ export type RootStackParams = {
 
 export type AuthStackParams = {
   Start: undefined
-  Identity: undefined
-  AddIdentity: { mode?: AddIdentityMode }
+  AddIdentity: AddIdentityScreenParams
+  CreateIdentity: CreateIdentityScreenParams
+  ImportIdentity: ImportIdentityScreenParams
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
-  SeedPhraseEntered: undefined
   VerifyPhrase: { shuffled: string[] }
   CreatePin: undefined
-  Success: undefined
-  SelectNetwork: undefined
 }
 
 export type AuthStackScreenProps<S extends keyof AuthStackParams> =
@@ -95,13 +97,13 @@ export type MainStackParams = {
   Settings: undefined
   ChangePin: undefined
   ScanQrCode: QrCodeScannerScreenParams
+
+  // Identity
+  AddIdentity: AddIdentityScreenParams
+  CreateIdentity: CreateIdentityScreenParams
+  ImportIdentity: ImportIdentityScreenParams
   DeleteAccount: undefined
-  Identity: undefined
-  AddIdentity: { mode?: AddIdentityMode }
-  SeedPhraseEntered: {
-    usePrivateKey: boolean
-    previousScreen?: string
-  }
+
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
@@ -115,7 +117,6 @@ export type MainStackParams = {
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
-  Success: undefined
 
   NFTCollectionDetail: { collection: NFTCollection }
   NFTDetail: { nft: NFT }

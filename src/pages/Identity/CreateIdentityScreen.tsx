@@ -38,12 +38,12 @@ import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Text } from 'components/Typography/Text'
 import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from 'constants/profile'
-import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
 
-import { AddIdentityMode } from './Identity'
+import { AddIdentityMode } from './AddIdentityScreen'
 
 const pageData = [
   {
@@ -77,11 +77,20 @@ enum PageType {
   Confirmation,
 }
 
-const AddIdentity = () => {
+export type CreateIdentityScreenParams = { mode: AddIdentityMode }
+
+type CreateIdentityScreenProps = MainStackScreenProps<'CreateIdentity'>
+
+export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
+  props
+) => {
+  const {
+    route: { params },
+  } = props
+  const navigation = useNavigation() // TODO: Take it from the props once we have combined the MainStackNavigator and the AuthStackNavigator
+
   const defaultNetwork = getDefaultVeridaNetwork()
 
-  const navigation = useNavigation()
-  const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const { top } = useSafeAreaInsets()
@@ -716,5 +725,3 @@ const creatStyles = (theme: Theme) => {
     },
   })
 }
-
-export default AddIdentity

@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
 import { MNEMONIC_LENGTH } from 'features/seedphrases'
@@ -20,6 +21,7 @@ import { Theme } from 'styles/types'
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
 import ModifierStyles from '../../styles/modifier'
+import { AddIdentityMode } from './AddIdentityScreen'
 
 const cleanSeedPhrase = (phrase: string): string => {
   return phrase.trim().replace(/\s\s+/g, ' ')
@@ -36,15 +38,27 @@ const verifySeedPhrase = (splitted: string[]): boolean => {
   }
 }
 
-const SeedPhraseEntered = (
-  props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered'>
+export type ImportIdentityScreenParams = {
+  mode: AddIdentityMode
+}
+
+type ImportIdentityScreenProps = NativeStackScreenProps<
+  MainStackParams,
+  'ImportIdentity'
+>
+
+export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
+  props
 ) => {
-  const { route, navigation } = props
+  const {
+    route: { params },
+  } = props
+  const navigation = useNavigation() // TODO: Take it from the props once we have combined the MainStackNavigator and the AuthStackNavigator
+
   const defaultNetwork = getDefaultVeridaNetwork()
 
   const styles = useThemeAwareStyle(createStyles)
 
-  const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
@@ -54,11 +68,6 @@ const SeedPhraseEntered = (
   useEffect(() => {
     const verify = () => {
       showError(false)
-      if (usePrivateKey) {
-        // We don't verify private key yet.
-        setVerified(true)
-        return
-      }
 
       const cleanedPhrase = cleanSeedPhrase(phrase)
       const splitted = !isEmpty(cleanedPhrase)
@@ -70,7 +79,7 @@ const SeedPhraseEntered = (
     }
 
     verify()
-  }, [phrase, usePrivateKey])
+  }, [phrase])
 
   const onContinue = async () => {
     try {
@@ -89,10 +98,10 @@ const SeedPhraseEntered = (
         Alert.alert('Failed', 'Account already exist')
       }
 
-      if (route?.params?.previousScreen === 'Dashboard') {
-        navigation.navigate('Dashboard')
+      if (params.mode === AddIdentityMode.Add) {
+        navigation.goBack()
       } else {
-        navigation.navigate('Success')
+        navigation.navigate('CreatePin')
       }
     } catch (cause) {
       showError(true)
@@ -101,10 +110,8 @@ const SeedPhraseEntered = (
     }
   }
 
-  const title = usePrivateKey ? 'Seed Phrase or Private Key' : 'Seed Phrase'
-  const label = usePrivateKey
-    ? 'Enter seed phrase or private key'
-    : 'Enter seed phrase'
+  const title = 'Seed Phrase'
+  const label = 'Enter seed phrase'
 
   return (
     <Screen
@@ -123,7 +130,7 @@ const SeedPhraseEntered = (
             errorMessage={
               !error
                 ? undefined
-                : 'That does not appear to be a valid seed phrase that was exported from the Verida Vault, please try again'
+                : 'That does not appear to be a valid seed phrase that was exported from the Verida Wallet, please try again'
             }
             onChangeText={setPhrase}
             style={[error && ModifierStyles.error]}
@@ -156,5 +163,3 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.l,
     },
   })
-
-export default SeedPhraseEntered

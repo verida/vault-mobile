@@ -1,4 +1,3 @@
-import { StackActions, useNavigation } from '@react-navigation/native'
 import React, { useState } from 'react'
 import {
   Image,
@@ -17,8 +16,8 @@ import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { DISABLED_COLOR, LIGHTGREY_COLOR, TEXT_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 export enum AddIdentityMode {
@@ -26,10 +25,17 @@ export enum AddIdentityMode {
   Add,
 }
 
-const Identity = () => {
-  const navigation = useNavigation()
-  const params =
-    useParams<{ mode?: AddIdentityMode; recoverFromError?: boolean }>()
+export type AddIdentityScreenParams = {
+  mode: AddIdentityMode
+}
+
+type AddIdentityScreenProps = MainStackScreenProps<'AddIdentity'>
+
+export const AddIdentityScreen: React.FC<AddIdentityScreenProps> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
   const styles = useThemeAwareStyle(creatStyles)
 
   const [agreedTC, setAgreedTC] = useState(false)
@@ -77,8 +83,7 @@ const Identity = () => {
           disabled={!agreedTC}
           style={styles.actionButton}
           onPress={() => {
-            navigation.dispatch(StackActions.pop(1))
-            navigation.navigate('AddIdentity', { ...params })
+            navigation.replace('CreateIdentity', { mode: params.mode })
           }}>
           Create Identity
         </Button>
@@ -92,7 +97,9 @@ const Identity = () => {
             agreedTC ? {} : styles.importButtonDisabled,
           ]}
           onPress={() => {
-            navigation.navigate('SeedPhraseEntered', { ...params } as any)
+            navigation.replace('ImportIdentity', {
+              mode: params.mode,
+            })
           }}>
           <Text
             style={[
@@ -180,5 +187,3 @@ const creatStyles = (theme: Theme) => {
     },
   })
 }
-
-export default Identity
