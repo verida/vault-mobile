@@ -1,17 +1,20 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
 import { MNEMONIC_LENGTH } from 'features/seedphrases'
+import { useThemeAwareStyle } from 'hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, Keyboard } from 'react-native'
+import { Alert, Keyboard, StyleSheet } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { NetworkSelectorRadioButtonGroup } from 'components/Network'
 import Screen from 'components/Screen'
 import { MainStackParams } from 'navigation/types'
+import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
@@ -36,6 +39,9 @@ const SeedPhraseEntered = (
   props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered'>
 ) => {
   const { route, navigation } = props
+
+  const styles = useThemeAwareStyle(createStyles)
+
   const usePrivateKey = route.params?.usePrivateKey || false
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
@@ -99,7 +105,7 @@ const SeedPhraseEntered = (
   return (
     <Screen
       withKeyboardAvoidingView
-      navBar={<NavigationHeader title='Import An Account' />}>
+      navBar={<NavigationHeader title='Import an Identity' />}>
       <Content>
         <Layout title={title}>
           <FormInput
@@ -120,6 +126,7 @@ const SeedPhraseEntered = (
             inputStyle={{ minHeight: 68 }}
             placeholder={'eg. Open despair creek road again ice least'}
           />
+          <NetworkSelectorRadioButtonGroup style={styles.networkSelector} />
         </Layout>
       </Content>
       <CustomFooter>
@@ -134,5 +141,12 @@ const SeedPhraseEntered = (
     </Screen>
   )
 }
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    networkSelector: {
+      marginTop: theme.spacing.l,
+    },
+  })
 
 export default SeedPhraseEntered

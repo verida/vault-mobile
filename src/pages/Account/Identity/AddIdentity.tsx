@@ -24,11 +24,11 @@ import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import Button from 'components/Button'
-import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import Container from 'components/Container'
 import { StepsIndicator } from 'components/Indicators'
-import { FormInput } from 'components/Input/FormInput'
+import { AnimatedCheckbox, FormInput } from 'components/Input'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { NetworkSelectorRadioButtonGroup } from 'components/Network'
 import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
@@ -513,13 +513,9 @@ const AddIdentity = () => {
               checked={showCountryInPublicProfile}
               onToggle={toggleCountryCheckbox}
               label='Show country in my public profile'
-              highlightColor={theme.color.success}
-              checkmarkColor={theme.color.onSuccess}
-              boxOutlineColor={theme.color.grey400}
               textStyle={{ fontSize: theme.fontSize.m }}
             />
-            {/* Add more space to alow scroll on showing the dropdown list */}
-            <Spacer height={320} />
+            <NetworkSelectorRadioButtonGroup style={styles.networkSelection} />
           </ScrollView>
           {renderBottomButtons()}
         </Container>
@@ -589,13 +585,10 @@ const AddIdentity = () => {
                 failed={
                   confirmationState?.state?.CreateIdentifier === 'Failure'
                 }
-                showLoading={
+                loading={
                   confirmationState?.state?.CreateIdentifier === 'Loading'
                 }
                 label='Creating your decentralized identity'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
               />
               {enabledClaimUsername && (
                 <>
@@ -607,13 +600,10 @@ const AddIdentity = () => {
                     failed={
                       confirmationState?.state?.ClaimUsername === 'Failure'
                     }
-                    showLoading={
+                    loading={
                       confirmationState?.state?.ClaimUsername === 'Loading'
                     }
                     label='Claim username'
-                    highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.onSuccess}
-                    boxOutlineColor={theme.color.grey400}
                   />
                 </>
               )}
@@ -623,25 +613,17 @@ const AddIdentity = () => {
                   confirmationState?.state?.StorageLocation === 'Success'
                 }
                 failed={confirmationState?.state?.StorageLocation === 'Failure'}
-                showLoading={
+                loading={
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
                 label='Connecting to your storage nodes'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
               />
               <Spacer vertical='m' />
               <AnimatedCheckbox
                 checked={confirmationState?.state?.CreateProfile === 'Success'}
                 failed={confirmationState?.state?.CreateProfile === 'Failure'}
-                showLoading={
-                  confirmationState?.state?.CreateProfile === 'Loading'
-                }
+                loading={confirmationState?.state?.CreateProfile === 'Loading'}
                 label='Creating your public profile'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
               />
             </ScrollView>
           </View>
@@ -719,6 +701,9 @@ const creatStyles = (theme: Theme) => {
       paddingVertical: theme.spacing.s,
       paddingHorizontal: theme.spacing.m,
       marginHorizontal: theme.spacing.m,
+    },
+    networkSelection: {
+      marginTop: theme.spacing.l,
     },
   })
 }
