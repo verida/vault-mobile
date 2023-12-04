@@ -418,22 +418,16 @@ class AccountManager extends EventEmitter {
   public async createAccount(
     userData: PublicProfile,
     country: string,
+    network: EnvironmentType,
     updateProgress?: (
       step: AddIdentityStepType,
       status: AddIdentityStepStatus
-    ) => void,
-    veridaNetwork = EnvironmentType.TESTNET // TODO: Make required when enabling mainnet
+    ) => void
   ): Promise<Account | undefined> {
     let connected = false
     updateProgress?.('StorageLocation', 'None')
     updateProgress?.('CreateProfile', 'None')
     updateProgress?.('ClaimUsername', 'None')
-
-    const network =
-      veridaNetwork || config.dev.devMode
-        ? EnvironmentType.DEVNET
-        : EnvironmentType.TESTNET
-    // TODO: Remove this when enabling mainnet
 
     try {
       updateProgress?.('CreateIdentifier', 'Loading')
@@ -688,16 +682,7 @@ class AccountManager extends EventEmitter {
     )
   }
 
-  public async importAccount(
-    mnemonic: string,
-    veridaNetwork = EnvironmentType.TESTNET // TODO: Make required when enabling mainnet
-  ) {
-    const network =
-      veridaNetwork || config.dev.devMode
-        ? EnvironmentType.DEVNET
-        : EnvironmentType.TESTNET
-    // TODO: Remove this when enabling mainnet
-
+  public async importAccount(mnemonic: string, network: EnvironmentType) {
     try {
       if (this.findIfMnemonicExists(mnemonic)) {
         return null

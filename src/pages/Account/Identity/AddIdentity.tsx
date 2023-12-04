@@ -1,6 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
+import { getDefaultVeridaNetwork } from 'features/verida'
 import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
@@ -77,6 +78,8 @@ enum PageType {
 }
 
 const AddIdentity = () => {
+  const defaultNetwork = getDefaultVeridaNetwork()
+
   const navigation = useNavigation()
   const params = useParams<{ mode?: AddIdentityMode }>()
   const { theme } = useTheme()
@@ -86,6 +89,7 @@ const AddIdentity = () => {
   const [currentPage, setCurrentPage] = useState(PageType.Name)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
+  const [network, setNetwork] = useState(defaultNetwork)
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
@@ -143,6 +147,7 @@ const AddIdentity = () => {
           description: '',
         },
         profile?.country,
+        network,
         (step, status) => {
           setConfirmationState((cstate) => ({
             state: {
@@ -172,7 +177,7 @@ const AddIdentity = () => {
       setShowRetry(true)
     }
     setProcessing(false)
-  }, [profile, showCountryInPublicProfile])
+  }, [profile, network, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -515,7 +520,11 @@ const AddIdentity = () => {
               label='Show country in my public profile'
               textStyle={{ fontSize: theme.fontSize.m }}
             />
-            <NetworkSelectorRadioButtonGroup style={styles.networkSelection} />
+            <NetworkSelectorRadioButtonGroup
+              selectedNetwork={network}
+              onSelectionChange={setNetwork}
+              style={styles.networkSelection}
+            />
           </ScrollView>
           {renderBottomButtons()}
         </Container>

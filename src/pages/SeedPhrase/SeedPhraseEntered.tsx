@@ -1,6 +1,7 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
 import { MNEMONIC_LENGTH } from 'features/seedphrases'
+import { getDefaultVeridaNetwork } from 'features/verida'
 import { useThemeAwareStyle } from 'hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
@@ -39,6 +40,7 @@ const SeedPhraseEntered = (
   props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered'>
 ) => {
   const { route, navigation } = props
+  const defaultNetwork = getDefaultVeridaNetwork()
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -47,6 +49,7 @@ const SeedPhraseEntered = (
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const [network, setNetwork] = useState(defaultNetwork)
 
   useEffect(() => {
     const verify = () => {
@@ -79,7 +82,8 @@ const SeedPhraseEntered = (
         throw new Error('Invalid seed phrase')
       }
       const result = await AccountManager.getInstance().importAccount(
-        cleanedPhrase
+        cleanedPhrase,
+        network
       )
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
@@ -126,7 +130,11 @@ const SeedPhraseEntered = (
             inputStyle={{ minHeight: 68 }}
             placeholder={'eg. Open despair creek road again ice least'}
           />
-          <NetworkSelectorRadioButtonGroup style={styles.networkSelector} />
+          <NetworkSelectorRadioButtonGroup
+            selectedNetwork={network}
+            onSelectionChange={setNetwork}
+            style={styles.networkSelector}
+          />
         </Layout>
       </Content>
       <CustomFooter>
