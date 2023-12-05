@@ -1,6 +1,4 @@
 package io.verida.vault;
-import expo.modules.ReactActivityDelegateWrapper;
-
 import android.os.Build;
 import android.os.Bundle;
 

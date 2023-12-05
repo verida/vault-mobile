@@ -1,27 +1,19 @@
 package io.verida.vault;
 
 import android.app.Application;
-import android.content.Context;
 import android.content.res.Configuration;
 
 import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
-import com.facebook.react.ReactInstanceManager;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
 import com.facebook.react.defaults.DefaultNewArchitectureEntryPoint;
 import com.facebook.react.defaults.DefaultReactNativeHost;
-import com.facebook.react.config.ReactFeatureFlags;
 import com.facebook.react.modules.network.OkHttpClientProvider;
 import com.facebook.soloader.SoLoader;
-import com.microsoft.codepush.react.CodePush;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import expo.modules.ApplicationLifecycleDispatcher;
-import expo.modules.ReactNativeHostWrapper;
-import io.verida.vault.newarchitecture.MainApplicationReactNativeHost;
 
 public class MainApplication extends Application implements ReactApplication {
 

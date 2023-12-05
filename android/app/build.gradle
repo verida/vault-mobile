@@ -1,6 +1,7 @@
 apply plugin: "com.android.application"
 apply plugin: 'kotlin-android'
 apply plugin: 'com.google.gms.google-services'
+apply plugin: "com.facebook.react"
 
 project.ext.envConfigFiles = [
     developmentdebug: ".env.development",
@@ -16,7 +17,6 @@ project.ext.react = [
     nodeExecutableAndArgs: ["node", "--max_old_space_size=8192"], // Fix for dev-mode: Increase the node max old space size to handle heavy JS dependencies cache.
 ]
 
-apply plugin: "com.facebook.react"
 apply from: "../../node_modules/react-native-code-push/android/codepush.gradle"
 apply from: "../../node_modules/@sentry/react-native/sentry.gradle"
 
@@ -112,6 +112,8 @@ android {
 
     compileSdkVersion rootProject.ext.compileSdkVersion
 
+    namespace "io.verida.vault"
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
@@ -190,8 +192,9 @@ android {
 
 dependencies {
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    //noinspection GradleDynamicVersion
-    implementation "com.facebook.react:react-native:+"  // From node_modules
+    // The version of react-native is set by the React Native Gradle Plugin
+    implementation("com.facebook.react:react-android")
+
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
 
