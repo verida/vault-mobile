@@ -136,7 +136,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
       return {
         ...item,
         value: (publicProfileData[item.key as keyof IPublicProfile] ??
-          undefined) as string | undefined, // HACK: EditProfilePropertyOption doesn't like the type of avatar, but as we don't use it in the list, the value should not be of this type
+          '') as string, // HACK: EditProfilePropertyOption doesn't like the type of avatar, but as we don't use it in the list, the value should not be of this type
       }
     })
   }, [publicProfileData])

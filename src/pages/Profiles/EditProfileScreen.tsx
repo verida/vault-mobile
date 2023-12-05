@@ -34,7 +34,7 @@ const MAX_INPUT_LENGTH = 140
 export type EditProfilePropertyOption = {
   label: string
   key: keyof PublicProfile
-  value?: string
+  value: string
   action: 'arrow' | 'copy'
   type: 'input' | 'textarea' | 'select'
 }
@@ -72,15 +72,12 @@ export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
     Keyboard.dismiss()
     try {
       const key = option.key
-      const val = edited?.trim()
+      const val = edited.trim()
 
       if (publicProfileData[key] !== val) {
         setDisabled(true)
         const vault = AccountManager.getInstance().vault as any
-        await vault.profiles.public.set(
-          key,
-          val && val.length === 0 ? undefined : val
-        ) // Must be undefined to clear out the field
+        await vault.profiles.public.set(key, val.length === 0 ? undefined : val) // Must be undefined to clear out the field
 
         dispach(
           setPublicProfileByDid({
