@@ -10,7 +10,7 @@ import Assets from 'pages/AssetsCollections'
 // import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
 import { HomeTabScreen } from 'pages/Dashboard/Home'
 import { DataTabScreen } from 'pages/Data'
-import { PublicProfile } from 'pages/Profiles/PublicProfile'
+import { PublicProfileScreen } from 'pages/Profiles'
 
 const tabIcons: Record<
   keyof TabsScreenParams,
@@ -57,7 +57,11 @@ export const TabsNavigator: React.FunctionComponent = () => {
           },
         })}
       />
-      <Tabs.Screen name='Profile' component={PublicProfile} />
+      <Tabs.Screen name='Profile' component={PublicProfileScreen as any} />
+      {/*
+      HACK: PublicProfileScreen as any because this screen is also define in the Main navigator and define its params from there.
+      TODO: We should delete the screen from the Main navigator and only use it from the Tabs navigator, but there are some sketchy access to it right now
+       */}
       <Tabs.Screen name='Data' component={DataTabScreen} />
       {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
        TODO: uncomment when ready */}

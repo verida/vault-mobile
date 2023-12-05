@@ -20,14 +20,12 @@ import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
+import { EditProfileScreen, PublicProfileScreen } from 'pages/Profiles'
 import AddCustomLink from 'pages/Profiles/AddCustomLink'
 import AddPlatformLink from 'pages/Profiles/AddPlatformLink'
 import ClaimUsername from 'pages/Profiles/ClaimUsername'
 import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
 import EditPlatformLink from 'pages/Profiles/EditPlatformLink'
-import EditProfile from 'pages/Profiles/EditProfile'
-import PrivateProfile from 'pages/Profiles/PrivateProfile'
-import { PublicProfile } from 'pages/Profiles/PublicProfile'
 import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
 import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
@@ -75,15 +73,17 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
           <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
-          <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
-          <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
+          <Stack.Screen
+            name={'PublicProfile'}
+            component={PublicProfileScreen}
+          />
 
           {/* Public profile modal screens */}
           <Stack.Group
             screenOptions={{
               presentation: 'modal',
             }}>
-            <Stack.Screen name={'EditProfile'} component={EditProfile} />
+            <Stack.Screen name={'EditProfile'} component={EditProfileScreen} />
             <Stack.Screen
               name={'EditGenericProperty'}
               component={EditGenericProperty}

@@ -1,5 +1,4 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
@@ -23,7 +22,6 @@ import {
   VeridaOneProfile,
   VeridaOneWalletAddress,
 } from 'features/veridaOne'
-import { editable } from 'helpers/profile'
 import { cloneDeep, debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
@@ -73,6 +71,8 @@ import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
+import { EditProfilePropertyOption } from 'pages/Profiles/EditProfileScreen'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
@@ -91,7 +91,7 @@ export enum PublicProfileEditMode {
 
 const SCREEN_NAME = 'PublicProfile'
 
-const EMPTY_PROFILE_EDITABLE_PROPS = [
+const EMPTY_PROFILE_EDITABLE_PROPS: EditProfilePropertyOption[] = [
   { label: 'Name', key: 'name', value: '', action: 'arrow', type: 'input' },
   {
     label: 'Country',
@@ -120,14 +120,23 @@ const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
 
-export const PublicProfile: React.FunctionComponent = () => {
+export type PublicProfileScreenParams = undefined
+
+type PublicProfileScreenProps = MainStackScreenProps<'PublicProfile'>
+
+export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
   const profileEditableProps = useMemo(() => {
     return EMPTY_PROFILE_EDITABLE_PROPS.map((item) => {
       return {
         ...item,
-        value: publicProfileData[item.key as keyof IPublicProfile] ?? undefined,
+        value: (publicProfileData[item.key as keyof IPublicProfile] ??
+          undefined) as string | undefined, // HACK: EditProfilePropertyOption doesn't like the type of avatar, but as we don't use it in the list, the value should not be of this type
       }
     })
   }, [publicProfileData])
@@ -136,7 +145,7 @@ export const PublicProfile: React.FunctionComponent = () => {
   )
 
   const { theme } = useTheme()
-  const navigation = useNavigation()
+
   const { showActionSheetWithOptions } = useActionSheet()
   const [loading, setLoading] = useState(false)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
@@ -1160,7 +1169,14 @@ export const PublicProfile: React.FunctionComponent = () => {
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList
               list={[
-                ...editable(profileEditableProps),
+                ...profileEditableProps.map((item) => ({
+                  ...item,
+                  onPress: () =>
+                    navigation.navigate('EditProfile', {
+                      title: item.label,
+                      option: item,
+                    }),
+                })),
                 ...profileReadonlyProps,
               ]}
             />

@@ -20,7 +20,7 @@ import { Theme } from 'styles/types'
 import Button from '../../components/Button'
 import { DECLINE_COLOR } from '../../constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from '../../constants/text'
-import { PublicProfileEditMode } from './PublicProfile'
+import { PublicProfileEditMode } from './PublicProfileScreen'
 
 const logger = new Logger('Pages/AddCustomLink')
 

@@ -1,5 +1,6 @@
 import { selectSelectedAccount } from 'features/identities'
 import {
+  PublicProfile,
   selectSelectedPublicProfile,
   setPublicProfileByDid,
 } from 'features/profiles'
@@ -9,12 +10,12 @@ import { emitter } from 'helpers/emitter'
 import { Container, Content } from 'native-base'
 import React, { useState } from 'react'
 import { Keyboard, KeyboardAvoidingView, Platform, View } from 'react-native'
-import { connect } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import { RootState, useAppDispatch, useAppSelector } from 'reduxStore/types'
+import { MainStackScreenProps } from 'navigation/types'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 import Button from '../../components/Button'
 import Label from '../../components/Label'
@@ -30,12 +31,31 @@ const logger = new Logger('Pages/Profiles/EditProfile')
 const MAX_TEXTAREA_LENGTH = 140
 const MAX_INPUT_LENGTH = 140
 
-// TODO: Refactor this component
-const EditProfile = (props: any) => {
-  const { navigation, route, publicProfileData } = props
-  const { title, option } = route.params
+export type EditProfilePropertyOption = {
+  label: string
+  key: keyof PublicProfile
+  value?: string
+  action: 'arrow' | 'copy'
+  type: 'input' | 'textarea' | 'select'
+}
+
+export type EditProfileScreenParams = {
+  title: string
+  option: EditProfilePropertyOption
+}
+
+type EditProfileScreenProps = MainStackScreenProps<'EditProfile'>
+
+export const EditProfileScreen: React.FC<EditProfileScreenProps> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { title, option } = params
+
   const dispach = useAppDispatch()
   const selectedAccount = useAppSelector(selectSelectedAccount)
+  const publicProfileData = useAppSelector(selectSelectedPublicProfile)
 
   const [disabled, setDisabled] = useState(false)
   const [edited, setEdited] = useState(option.value)
@@ -51,13 +71,16 @@ const EditProfile = (props: any) => {
   const saveValue = async () => {
     Keyboard.dismiss()
     try {
-      const key = title.toLowerCase()
-      const val = (edited.value || edited).trim()
+      const key = option.key
+      const val = edited?.trim()
 
       if (publicProfileData[key] !== val) {
         setDisabled(true)
         const vault = AccountManager.getInstance().vault as any
-        await vault.profiles.public.set(key, val.length === 0 ? undefined : val) // Must be undefined to clear out the field
+        await vault.profiles.public.set(
+          key,
+          val && val.length === 0 ? undefined : val
+        ) // Must be undefined to clear out the field
 
         dispach(
           setPublicProfileByDid({
@@ -178,9 +201,3 @@ const EditProfile = (props: any) => {
     </Container>
   )
 }
-
-const mapStateToProps = (state: RootState) => {
-  return { publicProfileData: selectSelectedPublicProfile(state) }
-}
-
-export default connect(mapStateToProps)(EditProfile)

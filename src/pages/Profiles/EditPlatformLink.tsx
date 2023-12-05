@@ -20,7 +20,7 @@ import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-import { PublicProfileEditMode } from './PublicProfile'
+import { PublicProfileEditMode } from './PublicProfileScreen'
 
 const logger = new Logger('Pages/Profiles/EditPlatformLink')
 

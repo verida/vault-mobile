@@ -16,10 +16,12 @@ import {
   DataTabScreenParams,
 } from 'pages/Data'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { PublicProfileScreenParams } from 'pages/Profiles'
 import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
 import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
 import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
 import { EditPlatformLinkScreenParams } from 'pages/Profiles/EditPlatformLink'
+import { EditProfileScreenParams } from 'pages/Profiles/EditProfileScreen'
 import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreenParams,
@@ -53,7 +55,7 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
 
 export type TabsScreenParams = {
   Home: undefined
-  Profile: undefined
+  Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready
   Assets: undefined
@@ -71,9 +73,8 @@ export type MainStackParams = {
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
-  PublicProfile: undefined
-  PrivateProfile: undefined
-  EditProfile: undefined
+  PublicProfile: PublicProfileScreenParams
+  EditProfile: EditProfileScreenParams
   EditGenericProperty: GenericEditPropertyScreenProps
   AddCustomLink: AddCustomLinkScreenProps
   SeedPhraseView: undefined
