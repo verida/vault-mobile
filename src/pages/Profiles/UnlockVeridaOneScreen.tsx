@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { Logger } from 'features/telemetry'
 import {
@@ -27,6 +26,7 @@ import Screen from 'components/Screen'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
@@ -41,8 +41,17 @@ enum PageType {
   ClaimUsername,
 }
 
-const UnlockVeridaOne = () => {
-  const navigation = useNavigation()
+export type UnlockVeridaOneScreenParams = {
+  initialPage?: number
+}
+
+type UnlockVeridaOneScreenProps = MainStackScreenProps<'UnlockVeridaOne'>
+
+export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
   const { bottom, top } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
@@ -291,8 +300,6 @@ const UnlockVeridaOne = () => {
     </Screen>
   )
 }
-
-export default UnlockVeridaOne
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

@@ -16,12 +16,16 @@ import {
   DataTabScreenParams,
 } from 'pages/Data'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
-import { PublicProfileScreenParams } from 'pages/Profiles'
-import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
-import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
-import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
-import { EditPlatformLinkScreenParams } from 'pages/Profiles/EditPlatformLink'
-import { EditProfileScreenParams } from 'pages/Profiles/EditProfileScreen'
+import {
+  AddVeridaOneCustomLinkScreenParams,
+  AddVeridaOnePlatformLinkScreenParams,
+  ClaimUsernameScreenParams,
+  EditProfileScreenParams,
+  EditVeridaOnePlatformLinkScreenParams,
+  GenericEditPropertyScreenParams,
+  PublicProfileScreenParams,
+  UnlockVeridaOneScreenParams,
+} from 'pages/Profiles'
 import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreenParams,
@@ -73,10 +77,15 @@ export type MainStackParams = {
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
+
   PublicProfile: PublicProfileScreenParams
   EditProfile: EditProfileScreenParams
-  EditGenericProperty: GenericEditPropertyScreenProps
-  AddCustomLink: AddCustomLinkScreenProps
+  ClaimUsername: ClaimUsernameScreenParams
+  EditGenericProperty: GenericEditPropertyScreenParams
+  AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
+  AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
+  EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
+
   SeedPhraseView: undefined
   ManageWallets: undefined
   SingleCurrency: undefined
@@ -122,19 +131,14 @@ export type MainStackParams = {
   NFTDetail: { nft: NFT }
   SelectAsset: SelectAssetScreenProps
 
-  ClaimUsername: undefined
   VeridaOneInvitationSuccess: undefined
-  UnlockVeridaOne: {
-    initialPage?: number
-  }
+  UnlockVeridaOne: UnlockVeridaOneScreenParams
 
   ConnectionRequest: ConnectionRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
 
-  AddPlatformLink: AddPlatformLinkScreenParams
-  EditPlatformLink: EditPlatformLinkScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 

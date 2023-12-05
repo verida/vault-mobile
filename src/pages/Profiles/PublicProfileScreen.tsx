@@ -1025,7 +1025,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
           drag={drag}
           isActive={isActive}
           onEditPlatformInfo={() => {
-            navigation.navigate('EditPlatformLink', {
+            navigation.navigate('EditVeridaOnePlatformLink', {
               screenName: SCREEN_NAME,
               mode: PublicProfileEditMode.AddPlatformLink,
               platform: item.platform,
@@ -1047,7 +1047,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
           drag={drag}
           isActive={isActive}
           onEdit={() => {
-            navigation.navigate('AddCustomLink', {
+            navigation.navigate('AddVeridaOneCustomLink', {
               screenName: SCREEN_NAME,
               title: 'Public Label',
               label: link.label,
@@ -1258,7 +1258,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
                       color='transparent-link'
                       disabled={!enabledVeridaOne}
                       onPress={() =>
-                        navigation.navigate('AddPlatformLink', {
+                        navigation.navigate('AddVeridaOnePlatformLink', {
                           screenName: SCREEN_NAME,
                           mode: PublicProfileEditMode.AddPlatformLink,
                           supportedConnectPlatforms,
@@ -1345,7 +1345,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
                       color='transparent-link'
                       disabled={!enabledVeridaOne}
                       onPress={() =>
-                        navigation.navigate('AddCustomLink', {
+                        navigation.navigate('AddVeridaOneCustomLink', {
                           screenName: SCREEN_NAME,
                           mode: PublicProfileEditMode.AddCustomURL,
                           title: 'Add Custom Link',
