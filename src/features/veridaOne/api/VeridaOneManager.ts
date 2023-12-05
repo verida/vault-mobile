@@ -2,22 +2,24 @@ import { Context } from '@verida/client-rn'
 import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import { Logger } from 'features/telemetry'
 
-import AccountManager from './AccountManager'
+import AccountManager from 'api/AccountManager'
+
 import {
   VeridaOneCustomLink,
   VeridaOneFeaturedAsset,
   VeridaOnePlatformLink,
   VeridaOneProfile,
   VeridaOneWalletAddress,
-} from './types'
+} from '../@types'
+import {
+  VERIDA_ONE_CONTEXT_NAME,
+  VERIDA_ONE_PROFILE_SCHEMA_URL,
+} from '../constants'
 
-const logger = new Logger('VeridaOneManager')
+const logger = new Logger('VeridaOne')
 
-const VERIDA_ONE_CONTEXT = 'Verida: One'
-const PROFILE_SCHEMA_URL =
-  'https://common.schemas.verida.io/veridaOne/profile/v0.1.0/schema.json'
-
-export default class VeridaOneManager {
+// TODO: Replace this with a cached redux trunk with actions and selectors to update and get the profile data
+export class VeridaOneManager {
   static context: Context
   static datastore: Promise<IDatastore>
   static did: string
@@ -96,11 +98,11 @@ export default class VeridaOneManager {
     VeridaOneManager.datastore = new Promise(async (resolve) => {
       const client = AccountManager.getInstance().client
       VeridaOneManager.context = <Context>(
-        await client!.openContext(VERIDA_ONE_CONTEXT, true)
+        await client!.openContext(VERIDA_ONE_CONTEXT_NAME, true)
       )
 
       VeridaOneManager.datastore = VeridaOneManager.context.openDatastore(
-        PROFILE_SCHEMA_URL,
+        VERIDA_ONE_PROFILE_SCHEMA_URL,
         {
           permissions: {
             read: DatabasePermissionOptionsEnum.PUBLIC,

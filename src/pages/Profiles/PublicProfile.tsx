@@ -10,7 +10,20 @@ import {
   setPublicProfileByDid,
 } from 'features/profiles'
 import { Logger } from 'features/telemetry'
-import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
+import {
+  isVeridaOneEnabled,
+  VERIDA_ONE_MAX_FEATURED_ASSETS,
+  VERIDA_ONE_MAX_FEATURED_CUSTOM_LINKS,
+  VERIDA_ONE_PLATFORM_METADATA,
+  VeridaOneCustomLink,
+  VeridaOneFeaturedAsset,
+  VeridaOneManager,
+  VeridaOnePlatformLink,
+  VeridaOnePlatformLinkCategory,
+  VeridaOneProfile,
+  VeridaOneWalletAddress,
+} from 'features/veridaOne'
+import { editable } from 'helpers/profile'
 import { cloneDeep, isEqual } from 'lodash'
 import debounce from 'lodash/debounce'
 import React, {
@@ -40,18 +53,8 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
-import {
-  BlockchainNetwork,
-  BlockchainWalletWithAccounts,
-  VeridaOneCustomLink,
-  VeridaOneFeaturedAsset,
-  VeridaOnePlatformLink,
-  VeridaOnePlatformLinkCategory,
-  VeridaOneProfile,
-  VeridaOneWalletAddress,
-} from 'api/types'
+import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
-import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -69,7 +72,6 @@ import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
-import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
@@ -89,8 +91,6 @@ export enum PublicProfileEditMode {
 }
 
 const SCREEN_NAME = 'PublicProfile'
-const MAX_NUMBER_OF_FEATURED_CUSTOM_LINK = 2
-const NUMBER_FEATURED_ASSETS = 4
 
 const EMPTY_PROFILE_EDITABLE_PROPS = [
   { label: 'Name', key: 'name', value: '', action: 'arrow', type: 'input' },
@@ -109,6 +109,7 @@ const EMPTY_PROFILE_EDITABLE_PROPS = [
     type: 'textarea',
   },
 ]
+
 const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
@@ -445,7 +446,7 @@ export const PublicProfile: React.FunctionComponent = () => {
       if (
         !customLink.featured &&
         featured &&
-        totalNumberFeaturedLink >= MAX_NUMBER_OF_FEATURED_CUSTOM_LINK
+        totalNumberFeaturedLink >= VERIDA_ONE_MAX_FEATURED_CUSTOM_LINKS
       ) {
         Snackbar.show({
           text: 'You already have two featured links',
@@ -822,7 +823,7 @@ export const PublicProfile: React.FunctionComponent = () => {
 
       // Check Verida One enabbled status
       ;(async () => {
-        setEnabledVeridaOne(await isEnabledVeridaOneProfile())
+        setEnabledVeridaOne(await isVeridaOneEnabled())
       })()
 
       Promise.all([fetchVeridaOneProfle(), fetchUsername()]).finally(() => {
@@ -1014,7 +1015,7 @@ export const PublicProfile: React.FunctionComponent = () => {
               screenName: SCREEN_NAME,
               mode: PublicProfileEditMode.AddPlatformLink,
               platform: item.platform,
-              selectedPlatform: PLATFORM_LINKS[item.platform],
+              selectedPlatform: VERIDA_ONE_PLATFORM_METADATA[item.platform],
               originalValue: item,
             })
           }}
@@ -1241,7 +1242,7 @@ export const PublicProfile: React.FunctionComponent = () => {
                           mode: PublicProfileEditMode.AddPlatformLink,
                           supportedConnectPlatforms,
                           availablePlatformLinks: Object.values(
-                            PLATFORM_LINKS
+                            VERIDA_ONE_PLATFORM_METADATA
                           ).filter(
                             (network) =>
                               !supportedConnectPlatforms.some(
@@ -1289,7 +1290,7 @@ export const PublicProfile: React.FunctionComponent = () => {
                     }}
                     showsHorizontalScrollIndicator={false}
                     horizontal>
-                    {Array(NUMBER_FEATURED_ASSETS)
+                    {Array(VERIDA_ONE_MAX_FEATURED_ASSETS)
                       .fill(1)
                       .map((_, index) => {
                         const assetItem = featuredAssets.find(

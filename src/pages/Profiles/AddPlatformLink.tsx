@@ -2,6 +2,11 @@ import { StackActions } from '@react-navigation/native'
 import Color from 'color'
 import { useTheme } from 'contexts'
 import { Logger } from 'features/telemetry'
+import {
+  VeridaOnePlatformLink,
+  VeridaOnePlatformLinkCategory,
+  VeridaOnePlatformMetadata,
+} from 'features/veridaOne'
 import { emitter } from 'helpers/emitter'
 import React, { useRef, useState } from 'react'
 import {
@@ -15,7 +20,6 @@ import {
 import PagerView from 'react-native-pager-view'
 import Icon from 'react-native-vector-icons/MaterialIcons'
 
-import { VeridaOnePlatformLink, VeridaOnePlatformLinkCategory } from 'api/types'
 import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
@@ -24,7 +28,6 @@ import {
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { Text } from 'components/Typography/Text'
-import { PlatformLinkData } from 'constants/profile'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
@@ -43,7 +46,7 @@ export interface AddPlatformLinkScreenParams {
   mode: string | number
   originalValue?: any
   supportedConnectPlatforms: any[] // Type
-  availablePlatformLinks: PlatformLinkData[]
+  availablePlatformLinks: VeridaOnePlatformMetadata[]
 }
 
 type AddPlatformLinkScreenProps = MainStackScreenProps<'AddPlatformLink'>

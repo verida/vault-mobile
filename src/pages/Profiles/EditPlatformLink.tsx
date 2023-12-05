@@ -1,13 +1,14 @@
 import { Logger } from 'features/telemetry'
+import {
+  VeridaOnePlatformLink,
+  VeridaOnePlatformLinkCategory,
+  VeridaOnePlatformMetadata,
+  VeridaOnePlatforms,
+} from 'features/veridaOne'
 import { emitter } from 'helpers/emitter'
 import React, { useRef } from 'react'
 import { Alert, Keyboard, StyleSheet, View } from 'react-native'
 
-import {
-  VeridaOnePlatformLink,
-  VeridaOnePlatformLinkCategory,
-  VeridaOnePlatforms,
-} from 'api/types'
 import TrashBinIcon from 'assets/trash_bin_icon.svg'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import {
@@ -15,7 +16,6 @@ import {
   EnterPlatformLinkViewRefProps,
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
-import { PlatformLinkData } from 'constants/profile'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -28,7 +28,7 @@ export interface EditPlatformLinkScreenParams {
   screenName: string
   mode: string | number
   originalValue?: any
-  selectedPlatform: PlatformLinkData
+  selectedPlatform: VeridaOnePlatformMetadata
   platform: VeridaOnePlatforms
 }
 
