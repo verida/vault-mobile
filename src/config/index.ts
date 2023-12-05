@@ -148,7 +148,7 @@ const SPECIFIC_CONFIGS: {
     VERIDA_ENVIRONMENT: EnvironmentType.DEVNET,
     WALLET_PROVIDER_CHAINS: EnvironmentType.TESTNET,
     NOTIFICATION_ENDPOINTS: ['https://notifications.acacia.verida.tech/'],
-    DATA_CONNECTOR_URL: 'https://dataconnector.tn.verida.tech',
+    DATA_CONNECTOR_URL: 'https://dataconnector-staging.tn.verida.tech',
     WALLET_PROVIDER_URL: Config.VERIDA_WALLET_PROVIDER_URL,
     NETWORK_ENDPOINT_URL: Config.VERIDA_TESTNET_META_TRANSACTION_SERVER_URL,
   },

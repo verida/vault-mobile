@@ -7,7 +7,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 import { PRIMARY_COLOR } from 'constants/color'
 import { TabsScreenParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
-import { ConnectionsTabScreen } from 'pages/Connections/DataConnector'
+import { ConnectionsScreen } from 'pages/Connections/ConnectionsScreen'
 import { HomeTabScreen } from 'pages/Dashboard/Home'
 import { DataTabScreen } from 'pages/Data'
 import { PublicProfile } from 'pages/Profiles/PublicProfile'
@@ -59,7 +59,7 @@ export const TabsNavigator: React.FunctionComponent = () => {
       />
       <Tabs.Screen name='Profile' component={PublicProfile} />
       <Tabs.Screen name='Data' component={DataTabScreen} />
-      <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
+      <Tabs.Screen name='Connections' component={ConnectionsScreen} />
       <Tabs.Screen name='Assets' component={Assets} />
     </Tabs.Navigator>
   )

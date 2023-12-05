@@ -7,6 +7,7 @@ import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { SUCCESS_COLOR } from 'constants/color'
+import FastImage from 'react-native-fast-image'
 
 const calculateNextSync = function (conn) {
   if (!conn.syncNext) return
@@ -18,7 +19,7 @@ const calculateNextSync = function (conn) {
   return duration.humanize()
 }
 
-export default ({ route, navigation }) => {
+export const SingleConnectionScreen = ({ route, navigation }) => {
   //const connectNow = route.params.connectNow
 
   const [syncStatus, setSyncStatus] = useState('')
@@ -68,15 +69,6 @@ export default ({ route, navigation }) => {
   }, [route.params.accessToken])
 
   useEffect(() => {
-    const fetchConnectionInfo = async () => {
-      const connectionMeta = await DataConnectorsManager.getConnectionInfo(
-        route.params.provider.name
-      )
-
-      setConnectionInfo(connectionMeta)
-    }
-    fetchConnectionInfo()
-
     if (route.params.connectNow) {
       // eslint-disable-next-line no-void
       void (async () => {
@@ -87,6 +79,21 @@ export default ({ route, navigation }) => {
       })()
     }
   }, [route.params.connectNow, route.params.provider])
+
+  useEffect(() => {
+    const fetchConnectionInfo = async () => {
+      const connectionMeta = await DataConnectorsManager.getConnectionInfo(
+        route.params.provider.name
+      )
+      setConnectionInfo(connectionMeta)
+    }
+
+    if (route.params.provider?.name) {
+      fetchConnectionInfo()
+    }
+
+  }, [route.params.provider?.name])
+
 
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
@@ -127,7 +134,7 @@ export default ({ route, navigation }) => {
           </View>
         )}
         <View style={styles.connectHeader}>
-          <Image
+          <FastImage
             style={styles.itemIcon}
             source={{ uri: connectionInfo.icon }}
           />

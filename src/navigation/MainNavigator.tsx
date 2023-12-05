@@ -12,7 +12,7 @@ import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
-import SingleConnection from 'pages/Connections/SingleConnection'
+import { SingleConnectionScreen } from 'pages/Connections/SingleConnectionScreen'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import Inbox from 'pages/Inbox'
 import ShareableData from 'pages/Inbox/ShareableData'
@@ -165,7 +165,7 @@ export const MainNavigator: React.FunctionComponent = () => {
 
           <Stack.Screen
             name={'SingleConnection'}
-            component={SingleConnection}
+            component={SingleConnectionScreen}
           />
 
           <Stack.Screen

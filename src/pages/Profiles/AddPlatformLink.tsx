@@ -197,7 +197,7 @@ const AddPlatformLink: React.FunctionComponent<AddPlatformLinkScreenProps> = (
                 onPress={() => {
                   navigation.dispatch(
                     StackActions.replace('SingleConnection', {
-                      provider: selectedNetwork.name,
+                      provider: selectedNetwork, // TODO: check type
                       connectNow: true,
                     })
                   )
