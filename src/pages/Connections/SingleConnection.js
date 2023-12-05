@@ -20,9 +20,6 @@ const calculateNextSync = function (conn) {
 
 export default ({ route, navigation }) => {
   //const connectNow = route.params.connectNow
-  const connectionInfo = DataConnectorsManager.getConnectionInfo(
-    route.params.provider
-  )
 
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
@@ -31,6 +28,7 @@ export default ({ route, navigation }) => {
   const [showSuccess, setShowSuccess] = useState(
     route.params && route.params.provider && route.params.accessToken
   )
+  const [connectionInfo, setConnectionInfo] = useState({})
 
   useEffect(() => {
     const setState = (connection) => {
@@ -53,7 +51,7 @@ export default ({ route, navigation }) => {
       // upgrade our connection object to be a real connection instance from
       // the DataConnectorsManager so we can call sync() etc.
       const connectionInstance = await DataConnectorsManager.getConnection(
-        route.params.provider
+        route.params.provider.name
       )
       setState(connectionInstance)
     }
@@ -70,6 +68,15 @@ export default ({ route, navigation }) => {
   }, [route.params.accessToken])
 
   useEffect(() => {
+    const fetchConnectionInfo = async () => {
+      const connectionMeta = await DataConnectorsManager.getConnectionInfo(
+        route.params.provider.name
+      )
+
+      setConnectionInfo(connectionMeta)
+    }
+    fetchConnectionInfo()
+
     if (route.params.connectNow) {
       // eslint-disable-next-line no-void
       void (async () => {
@@ -84,19 +91,19 @@ export default ({ route, navigation }) => {
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      route.params.provider.name
     )
     return connectionInstance.initiateAuth()
   }
   const onPressSync = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      route.params.provider.name
     )
     connectionInstance.sync()
   }
   const onPressDisconnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      route.params.provider.name
     )
     connectionInstance.disconnect()
   }
@@ -104,7 +111,7 @@ export default ({ route, navigation }) => {
   return (
     <Container>
       <NavigationHeader
-        title={'Connect ' + connectionInfo.label}
+        title={'Connect ' + connectionInfo ? connectionInfo.label : ''}
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
