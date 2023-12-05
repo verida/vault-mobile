@@ -17,6 +17,14 @@ const VERIDA_ONE_CONTEXT = 'Verida: One'
 const PROFILE_SCHEMA_URL =
   'https://common.schemas.verida.io/veridaOne/profile/v0.1.0/schema.json'
 
+const emptyVeridaOneProfile: VeridaOneProfile = {
+  _id: 'public',
+  customLinks: [],
+  platformLinks: [],
+  walletAddresses: [],
+  featuredAssets: [],
+}
+
 export default class VeridaOneManager {
   static context: Context
   static datastore: Promise<IDatastore>
@@ -48,24 +56,14 @@ export default class VeridaOneManager {
 
   static async getProfile(): Promise<VeridaOneProfile> {
     const datastore = await VeridaOneManager.getDatastore()
-    let profile
+    let profile = emptyVeridaOneProfile
     try {
       profile = await datastore.get('public', undefined)
-    } catch (err: any) {
-      logger.error(err)
-
-      // @todo: test this
-      if (err.error === 'not_found') {
-        profile = <VeridaOneProfile>{
-          _id: 'public',
-          customLinks: [],
-          platformLinks: [],
-          walletAddresses: [],
-          featuredAssets: [],
-        }
+    } catch (error: any) {
+      if (error.error !== 'not_found') {
+        logger.error(error)
       }
     }
-
     return profile
   }
 
