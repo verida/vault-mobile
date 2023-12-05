@@ -525,7 +525,7 @@ export const PublicProfile: React.FunctionComponent = () => {
   const fetchUsername = async () => {
     try {
       const accountUsernames = await UsernameManager.get()
-      if (accountUsernames && accountUsernames?.length > 0) {
+      if (accountUsernames.length > 0) {
         setUsername(accountUsernames[0])
         setProfileReadonlyProps((currentValues) => {
           const updateValues = [...currentValues]

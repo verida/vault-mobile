@@ -42,15 +42,15 @@ export default class UsernameManager {
    *
    * @returns string[] Array of usernames
    */
-  public static async get(): Promise<string[] | undefined> {
+  public static async get(): Promise<string[]> {
     try {
       const client = await UsernameManager.getClient()
 
       const account = AccountManager.getInstance().getSelectedAccount()
-      if (!account?.did) return undefined
+      if (!account?.did) return []
 
       const match = account.did.match(/(0x.*)/)?.[0]
-      if (!match) return undefined
+      if (!match) return []
 
       return await client.getUsernames(match)
     } catch (error: unknown) {
@@ -60,7 +60,7 @@ export default class UsernameManager {
       ) {
         logger.error(error)
       }
-      return
+      return []
     }
   }
 
