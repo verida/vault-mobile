@@ -24,8 +24,7 @@ import {
   VeridaOneWalletAddress,
 } from 'features/veridaOne'
 import { editable } from 'helpers/profile'
-import { cloneDeep, isEqual } from 'lodash'
-import debounce from 'lodash/debounce'
+import { cloneDeep, debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
   useCallback,
@@ -108,6 +107,13 @@ const EMPTY_PROFILE_EDITABLE_PROPS = [
     action: 'arrow',
     type: 'textarea',
   },
+  {
+    label: 'Website',
+    key: 'website',
+    value: '',
+    action: 'arrow',
+    type: 'input',
+  },
 ]
 
 const EMPTY_PROFILE_READONLY_PROPS = [
@@ -118,13 +124,12 @@ export const PublicProfile: React.FunctionComponent = () => {
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
   const profileEditableProps = useMemo(() => {
-    const updatedList = EMPTY_PROFILE_EDITABLE_PROPS.map((item) => {
+    return EMPTY_PROFILE_EDITABLE_PROPS.map((item) => {
       return {
         ...item,
         value: publicProfileData[item.key as keyof IPublicProfile] ?? undefined,
       }
     })
-    return updatedList
   }, [publicProfileData])
   const [profileReadonlyProps, setProfileReadonlyProps] = useState(
     EMPTY_PROFILE_READONLY_PROPS

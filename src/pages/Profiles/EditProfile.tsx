@@ -121,6 +121,7 @@ const EditProfile = (props: any) => {
                 onChangeText={(text) => {
                   handleInput(text, MAX_INPUT_LENGTH)
                 }}
+                autoCapitalize='none'
               />
             )}
             {option.type === 'select' && (

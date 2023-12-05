@@ -13,8 +13,6 @@ const logger = new Logger('Profiles')
 
 const publicProfileEmptyState: PublicProfile = {
   name: '',
-  country: undefined,
-  description: undefined,
 }
 
 const loadingDefaultState = {
@@ -120,21 +118,23 @@ export const fetchPublicProfileData = createAppAsyncThunk(
       const state = getState()
       let publicProfile = { ...selectPublicProfileByDid(state, did) }
 
-      const externalProfile =
+      const fetchedProfile =
         await AccountManager.getInstance().context?.openProfile(
           'basicProfile',
           did
         )
 
-      const avatar = await externalProfile?.get('avatar')
-      const name = await externalProfile?.get('name')
-      const country = await externalProfile?.get('country')
+      const avatar = await fetchedProfile?.get('avatar')
+      const name = await fetchedProfile?.get('name')
+      const country = await fetchedProfile?.get('country')
+      const website = await fetchedProfile?.get('website')
 
       publicProfile = {
         ...publicProfile,
         avatar: avatar,
         name,
         country,
+        website,
       }
 
       return publicProfile as PublicProfile
@@ -153,7 +153,7 @@ export const fetchAllPublicProfilesData = createAppAsyncThunk(
   'profiles/fetchAllPublicProfileData',
   async (_, { getState, dispatch, signal, rejectWithValue }) => {
     if (signal.aborted) {
-      return rejectWithValue('Cancel requuest')
+      return rejectWithValue('Cancel request')
     }
     const accounts = selectAccounts(getState())
     Object.values(accounts).forEach((account) => {

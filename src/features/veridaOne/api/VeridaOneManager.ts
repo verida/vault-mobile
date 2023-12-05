@@ -18,7 +18,7 @@ import {
 
 const logger = new Logger('VeridaOne')
 
-// TODO: Replace this with a cached redux trunk with actions and selectors to update and get the profile data
+// TODO: Replace this with a cached redux thunk with actions and selectors to update and get the profile data
 export class VeridaOneManager {
   static context: Context
   static datastore: Promise<IDatastore>

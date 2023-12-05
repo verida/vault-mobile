@@ -74,6 +74,7 @@ export type VeridaOneFeaturedAsset = {
   uri?: string
 }
 
+// TODO: Use the type VeridaRecord to wrap the Verida One profile specific type
 export type VeridaOneProfile = {
   _id: string
   _rev?: string
