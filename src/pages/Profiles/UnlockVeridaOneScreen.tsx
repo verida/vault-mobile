@@ -1,11 +1,9 @@
-import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers/emitter'
 import {
-  checkVeridaOneInviteCode,
-  saveStatusEnabledVeridaOneProfile,
-} from 'helpers/profile'
+  saveVeridaOneStatus,
+  verifyVeridaOneInviteCode,
+} from 'features/veridaOne'
+import { emitter } from 'helpers/emitter'
 import React, { useEffect, useRef, useState } from 'react'
 import { Image, Keyboard, ScrollView, StyleSheet, View } from 'react-native'
 import PagerView from 'react-native-pager-view'
@@ -27,11 +25,10 @@ import Screen from 'components/Screen'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
-
-const logger = new Logger('Pages/UnlockVeridaOne')
 
 enum PageType {
   UnlockVeridaOne,
@@ -41,8 +38,17 @@ enum PageType {
   ClaimUsername,
 }
 
-const UnlockVeridaOne = () => {
-  const navigation = useNavigation()
+export type UnlockVeridaOneScreenParams = {
+  initialPage?: number
+}
+
+type UnlockVeridaOneScreenProps = MainStackScreenProps<'UnlockVeridaOne'>
+
+export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
   const { bottom, top } = useSafeAreaInsets()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
@@ -55,13 +61,9 @@ const UnlockVeridaOne = () => {
   const [username, setUsername] = useState<string | undefined>(undefined)
 
   const fetchUsername = async () => {
-    try {
-      const accountUsernames = await UsernameManager.get()
-      if (accountUsernames && accountUsernames?.length > 0) {
-        setUsername(accountUsernames[0])
-      }
-    } catch (error) {
-      logger.error(error)
+    const accountUsernames = await UsernameManager.get()
+    if (accountUsernames?.length > 0) {
+      setUsername(accountUsernames[0])
     }
   }
 
@@ -80,8 +82,8 @@ const UnlockVeridaOne = () => {
 
   const submitVeridaOneInvitationCode = () => {
     Keyboard.dismiss()
-    if (checkVeridaOneInviteCode(invitationCode!)) {
-      saveStatusEnabledVeridaOneProfile(true)
+    if (verifyVeridaOneInviteCode(invitationCode!)) {
+      saveVeridaOneStatus(true)
       emitter.emit('UNLOCK_VERIDA_ONE', undefined)
       pagerRef.current?.setPage(PageType.InvitationSuccess)
     } else {
@@ -291,8 +293,6 @@ const UnlockVeridaOne = () => {
     </Screen>
   )
 }
-
-export default UnlockVeridaOne
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

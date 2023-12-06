@@ -1,16 +1,18 @@
 import Clipboard from '@react-native-community/clipboard'
 import { useTheme } from 'contexts/ThemeContext'
+import {
+  VeridaOnePlatformLink,
+  VeridaOnePlatformMetadata,
+} from 'features/veridaOne'
 import React, { useEffect, useImperativeHandle, useRef, useState } from 'react'
 import { ScrollView, StyleSheet, TextInput, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { VeridaOnePlatformLink } from 'api/types'
 import ClipboardIcon from 'assets/clipboard_icon.svg'
 import Button from 'components/Button'
 import Container from 'components/Container'
 import { FormInput } from 'components/Input/FormInput'
 import { Caption } from 'components/Typography/Caption'
-import { PlatformLinkData } from 'constants/profile'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
@@ -20,7 +22,7 @@ const USERNAME_PLACEHOLDER = 'username'
 
 interface PageProps {
   onSaveSocialNetworkHandle: (url: string) => void
-  platformLink: PlatformLinkData
+  platformLink: VeridaOnePlatformMetadata
   originalValue?: VeridaOnePlatformLink
 }
 
