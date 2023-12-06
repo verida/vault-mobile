@@ -22,10 +22,16 @@ import {
 } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { OnboardingScreenParams } from 'pages/Onboarding'
-import { AddCustomLinkScreenProps } from 'pages/Profiles/AddCustomLink'
-import { AddPlatformLinkScreenParams } from 'pages/Profiles/AddPlatformLink'
-import { GenericEditPropertyScreenProps } from 'pages/Profiles/EditGenericProperty'
-import { EditPlatformLinkScreenParams } from 'pages/Profiles/EditPlatformLink'
+import {
+  AddVeridaOneCustomLinkScreenParams,
+  AddVeridaOnePlatformLinkScreenParams,
+  ClaimUsernameScreenParams,
+  EditProfileScreenParams,
+  EditVeridaOnePlatformLinkScreenParams,
+  GenericEditPropertyScreenParams,
+  PublicProfileScreenParams,
+  UnlockVeridaOneScreenParams,
+} from 'pages/Profiles'
 import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreenParams,
@@ -57,7 +63,7 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
 
 export type TabsScreenParams = {
   Home: undefined
-  Profile: undefined
+  Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready
   Assets: undefined
@@ -75,11 +81,15 @@ export type MainStackParams = {
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
-  PublicProfile: undefined
-  PrivateProfile: undefined
-  EditProfile: undefined
-  EditGenericProperty: GenericEditPropertyScreenProps
-  AddCustomLink: AddCustomLinkScreenProps
+
+  PublicProfile: PublicProfileScreenParams
+  EditProfile: EditProfileScreenParams
+  ClaimUsername: ClaimUsernameScreenParams
+  EditGenericProperty: GenericEditPropertyScreenParams
+  AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
+  AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
+  EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
+
   SeedPhraseView: undefined
   ManageWallets: undefined
   SingleCurrency: undefined
@@ -124,19 +134,14 @@ export type MainStackParams = {
   NFTDetail: { nft: NFT }
   SelectAsset: SelectAssetScreenProps
 
-  ClaimUsername: undefined
   VeridaOneInvitationSuccess: undefined
-  UnlockVeridaOne: {
-    initialPage?: number
-  }
+  UnlockVeridaOne: UnlockVeridaOneScreenParams
 
   ConnectionRequest: ConnectionRequestScreenParams
   IncomingDataRequest: IncomingDataRequestScreenParams
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
 
-  AddPlatformLink: AddPlatformLinkScreenParams
-  EditPlatformLink: EditPlatformLinkScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 

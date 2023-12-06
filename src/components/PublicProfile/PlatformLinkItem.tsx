@@ -1,9 +1,12 @@
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
+import {
+  VERIDA_ONE_PLATFORM_METADATA,
+  VeridaOnePlatformLink,
+} from 'features/veridaOne'
 import React from 'react'
 import { Image, StyleSheet, Switch, TouchableOpacity, View } from 'react-native'
 
-import { VeridaOnePlatformLink } from 'api/types'
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
 import VeridaTick from 'assets/icons/verida_tick.svg'
@@ -11,7 +14,6 @@ import Button from 'components/Button'
 import { Label } from 'components/Typography/Label'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { Text } from 'components/Typography/Text'
-import { PLATFORM_LINKS } from 'constants/profile'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { smallButtonHitSlop } from 'styles/button'
 import { Theme } from 'styles/types'
@@ -39,7 +41,7 @@ export const PlatformLinkItem = ({
   const showOnVeridaOne = platformLink.showOnVeridaOne
   const connectedPlatform = platformLink.connectedPlatform
 
-  const platformMeta = PLATFORM_LINKS[platformLink.platform] ?? {}
+  const platformMeta = VERIDA_ONE_PLATFORM_METADATA[platformLink.platform] ?? {}
 
   return (
     <View

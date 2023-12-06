@@ -23,15 +23,16 @@ import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
 import Networks from 'pages/Networks/Networks'
-import AddCustomLink from 'pages/Profiles/AddCustomLink'
-import AddPlatformLink from 'pages/Profiles/AddPlatformLink'
-import ClaimUsername from 'pages/Profiles/ClaimUsername'
-import EditGenericProperty from 'pages/Profiles/EditGenericProperty'
-import EditPlatformLink from 'pages/Profiles/EditPlatformLink'
-import EditProfile from 'pages/Profiles/EditProfile'
-import PrivateProfile from 'pages/Profiles/PrivateProfile'
-import { PublicProfile } from 'pages/Profiles/PublicProfile'
-import UnlockVeridaOne from 'pages/Profiles/UnlockVeridaOne'
+import {
+  AddVeridaOneCustomLinkScreen,
+  AddVeridaOnePlatformLinkScreen,
+  ClaimUsernameScreen,
+  EditGenericPropertyScreen,
+  EditProfileScreen,
+  EditVeridaOnePlatformLinkScreen,
+  PublicProfileScreen,
+  UnlockVeridaOneScreen,
+} from 'pages/Profiles'
 import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
   ConnectionRequestScreen,
@@ -79,33 +80,38 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
           <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
-          <Stack.Screen name={'PublicProfile'} component={PublicProfile} />
-          <Stack.Screen name={'PrivateProfile'} component={PrivateProfile} />
+          <Stack.Screen name='PublicProfile' component={PublicProfileScreen} />
 
           {/* Public profile modal screens */}
           <Stack.Group
             screenOptions={{
               presentation: 'modal',
             }}>
-            <Stack.Screen name={'EditProfile'} component={EditProfile} />
+            <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
-              name={'EditGenericProperty'}
-              component={EditGenericProperty}
+              name='EditGenericProperty'
+              component={EditGenericPropertyScreen}
             />
-            <Stack.Screen name={'AddCustomLink'} component={AddCustomLink} />
+            <Stack.Screen
+              name='AddVeridaOneCustomLink'
+              component={AddVeridaOneCustomLinkScreen}
+            />
             <Stack.Screen name={'SelectAsset'} component={SelectAsset} />
-            <Stack.Screen name={'ClaimUsername'} component={ClaimUsername} />
             <Stack.Screen
-              name={'UnlockVeridaOne'}
-              component={UnlockVeridaOne}
+              name='ClaimUsername'
+              component={ClaimUsernameScreen}
             />
             <Stack.Screen
-              name={'AddPlatformLink'}
-              component={AddPlatformLink}
+              name='UnlockVeridaOne'
+              component={UnlockVeridaOneScreen}
             />
             <Stack.Screen
-              name={'EditPlatformLink'}
-              component={EditPlatformLink}
+              name='AddVeridaOnePlatformLink'
+              component={AddVeridaOnePlatformLinkScreen}
+            />
+            <Stack.Screen
+              name='EditVeridaOnePlatformLink'
+              component={EditVeridaOnePlatformLinkScreen}
             />
           </Stack.Group>
 
@@ -186,7 +192,7 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
 
           <Stack.Screen
-            name={'PolygonIdCircuitsSettings'}
+            name='PolygonIdCircuitsSettings'
             component={PolygonIdCircuitsSettingsScreen}
             options={{
               // TODO: Refactor the whole Navigation to leverage the header customisation
@@ -202,21 +208,18 @@ export const MainNavigator: React.FunctionComponent = () => {
               // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
             }}>
             <Stack.Screen
-              name={'ConnectionRequest'}
+              name='ConnectionRequest'
               component={ConnectionRequestScreen}
             />
             <Stack.Screen
-              name={'IncomingDataRequest'}
+              name='IncomingDataRequest'
               component={IncomingDataRequestScreen}
             />
             <Stack.Screen
-              name={'PaymentRequest'}
+              name='PaymentRequest'
               component={PaymentRequestScreen}
             />
-            <Stack.Screen
-              name={'ProofRequest'}
-              component={ProofRequestScreen}
-            />
+            <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
           </Stack.Group>
         </Stack.Navigator>
       </BehindAuthContextProviders>
