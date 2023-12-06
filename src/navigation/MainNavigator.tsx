@@ -85,7 +85,7 @@ export const MainNavigator: React.FunctionComponent = () => {
             }}>
             <Stack.Screen name='EditProfile' component={EditProfileScreen} />
             <Stack.Screen
-              name={'EditGenericProperty'}
+              name='EditGenericProperty'
               component={EditGenericPropertyScreen}
             />
             <Stack.Screen
@@ -181,7 +181,7 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
 
           <Stack.Screen
-            name={'PolygonIdCircuitsSettings'}
+            name='PolygonIdCircuitsSettings'
             component={PolygonIdCircuitsSettingsScreen}
             options={{
               // TODO: Refactor the whole Navigation to leverage the header customisation
@@ -197,21 +197,18 @@ export const MainNavigator: React.FunctionComponent = () => {
               // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
             }}>
             <Stack.Screen
-              name={'ConnectionRequest'}
+              name='ConnectionRequest'
               component={ConnectionRequestScreen}
             />
             <Stack.Screen
-              name={'IncomingDataRequest'}
+              name='IncomingDataRequest'
               component={IncomingDataRequestScreen}
             />
             <Stack.Screen
-              name={'PaymentRequest'}
+              name='PaymentRequest'
               component={PaymentRequestScreen}
             />
-            <Stack.Screen
-              name={'ProofRequest'}
-              component={ProofRequestScreen}
-            />
+            <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
           </Stack.Group>
         </Stack.Navigator>
       </BehindAuthContextProviders>
