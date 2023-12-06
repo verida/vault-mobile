@@ -1,6 +1,5 @@
 import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import {
   checkVeridaOneInviteCode,
@@ -31,8 +30,6 @@ import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
 
-const logger = new Logger('Pages/UnlockVeridaOne')
-
 enum PageType {
   UnlockVeridaOne,
   InvitationSuccess,
@@ -55,13 +52,9 @@ const UnlockVeridaOne = () => {
   const [username, setUsername] = useState<string | undefined>(undefined)
 
   const fetchUsername = async () => {
-    try {
-      const accountUsernames = await UsernameManager.get()
-      if (accountUsernames && accountUsernames?.length > 0) {
-        setUsername(accountUsernames[0])
-      }
-    } catch (error) {
-      logger.error(error)
+    const accountUsernames = await UsernameManager.get()
+    if (accountUsernames.length > 0) {
+      setUsername(accountUsernames[0])
     }
   }
 
