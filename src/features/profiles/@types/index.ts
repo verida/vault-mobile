@@ -1,10 +1,11 @@
-export interface PublicProfile {
+export type PublicProfile = {
+  name: string
+  description?: string
   avatar?: {
     uri?: string
   }
   country?: string
-  description?: string
+  website?: string
   username?: string
-  name: string
   modifiedAt?: string // '2023-07-05T06:25:22.401Z'
 }
