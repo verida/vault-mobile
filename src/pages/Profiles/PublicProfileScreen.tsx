@@ -540,7 +540,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   const fetchUsername = async () => {
     try {
       const accountUsernames = await UsernameManager.get()
-      if (accountUsernames && accountUsernames?.length > 0) {
+      if (accountUsernames.length > 0) {
         setUsername(accountUsernames[0])
         setProfileReadonlyProps((currentValues) => {
           const updateValues = [...currentValues]

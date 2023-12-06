@@ -8,7 +8,7 @@ import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
-import { isPolygonIdDeepLink } from 'features/polygonid'
+import { isPolygonIdMessage } from 'features/polygonid'
 import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -85,7 +85,7 @@ export const HomeTabScreen = (props) => {
 
       // Ignore PolygonID deeplink here, as it's handled in features/protocolHandlers
       if (
-        isPolygonIdDeepLink(initialUrl) ||
+        isPolygonIdMessage(initialUrl) ||
         isCryptoRequestDeepLink(initialUrl)
       ) {
         return

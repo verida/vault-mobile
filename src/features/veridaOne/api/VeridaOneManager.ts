@@ -18,6 +18,14 @@ import {
 
 const logger = new Logger('VeridaOne')
 
+const emptyVeridaOneProfile: VeridaOneProfile = {
+  _id: 'public',
+  customLinks: [],
+  platformLinks: [],
+  walletAddresses: [],
+  featuredAssets: [],
+}
+
 // TODO: Replace this with a cached redux thunk with actions and selectors to update and get the profile data
 export class VeridaOneManager {
   static context: Context
@@ -50,21 +58,12 @@ export class VeridaOneManager {
 
   static async getProfile(): Promise<VeridaOneProfile> {
     const datastore = await VeridaOneManager.getDatastore()
-    let profile
+    let profile = emptyVeridaOneProfile
     try {
       profile = await datastore.get('public', undefined)
-    } catch (err: any) {
-      logger.error(err)
-
-      // @todo: test this
-      if (err.error === 'not_found') {
-        profile = <VeridaOneProfile>{
-          _id: 'public',
-          customLinks: [],
-          platformLinks: [],
-          walletAddresses: [],
-          featuredAssets: [],
-        }
+    } catch (error: any) {
+      if (error.error !== 'not_found') {
+        logger.error(error)
       }
     }
 
@@ -82,8 +81,7 @@ export class VeridaOneManager {
   }
 
   static async getDatastore(): Promise<IDatastore> {
-    const selectedDID = await AccountManager.getInstance().getSelectedAccount()
-      ?.did
+    const selectedDID = AccountManager.getInstance().getSelectedAccount()?.did
     if (!selectedDID) {
       throw new Error('Account not found')
     }

@@ -1,5 +1,4 @@
 import { useTheme } from 'contexts/ThemeContext'
-import { Logger } from 'features/telemetry'
 import {
   saveVeridaOneStatus,
   verifyVeridaOneInviteCode,
@@ -30,8 +29,6 @@ import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
-
-const logger = new Logger('Pages/UnlockVeridaOne')
 
 enum PageType {
   UnlockVeridaOne,
@@ -64,13 +61,9 @@ export const UnlockVeridaOneScreen: React.FC<UnlockVeridaOneScreenProps> = (
   const [username, setUsername] = useState<string | undefined>(undefined)
 
   const fetchUsername = async () => {
-    try {
-      const accountUsernames = await UsernameManager.get()
-      if (accountUsernames && accountUsernames?.length > 0) {
-        setUsername(accountUsernames[0])
-      }
-    } catch (error) {
-      logger.error(error)
+    const accountUsernames = await UsernameManager.get()
+    if (accountUsernames?.length > 0) {
+      setUsername(accountUsernames[0])
     }
   }
 
