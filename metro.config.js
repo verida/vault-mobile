@@ -50,7 +50,7 @@ const config = {
     assetExts: assetExts.filter((ext) => ext !== 'svg'),
     sourceExts: [...sourceExts, 'svg', 'cjs'],
   },
-  watchFolders: [path.resolve(__dirname, "../")],
+  watchFolders: [path.resolve(__dirname, "./")],
 };
 
 module.exports = mergeConfig(defaultConfig, config);
