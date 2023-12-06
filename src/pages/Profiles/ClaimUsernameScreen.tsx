@@ -11,13 +11,20 @@ import {
 } from 'components/PublicProfile'
 import Screen from 'components/Screen'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 
 enum PageType {
   InputUsername,
   ClaimUsername,
 }
 
-const ClaimUsername = () => {
+export type ClaimUsernameScreenParams = undefined
+
+type ClaimUsernameScreenProps = MainStackScreenProps<'ClaimUsername'>
+
+export const ClaimUsernameScreen: React.FC<ClaimUsernameScreenProps> = (
+  _props
+) => {
   const styles = useThemeAwareStyle(createStyles)
   const [currentPage] = useState(PageType.InputUsername)
   const pagerRef = useRef<PagerView>(null)
@@ -51,8 +58,6 @@ const ClaimUsername = () => {
     </Screen>
   )
 }
-
-export default ClaimUsername
 
 const createStyles = () =>
   StyleSheet.create({
