@@ -1,5 +1,4 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
 import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
@@ -10,9 +9,20 @@ import {
   setPublicProfileByDid,
 } from 'features/profiles'
 import { Logger } from 'features/telemetry'
-import { editable, isEnabledVeridaOneProfile } from 'helpers/profile'
-import { cloneDeep, isEqual } from 'lodash'
-import debounce from 'lodash/debounce'
+import {
+  isVeridaOneEnabled,
+  VERIDA_ONE_MAX_FEATURED_ASSETS,
+  VERIDA_ONE_MAX_FEATURED_CUSTOM_LINKS,
+  VERIDA_ONE_PLATFORM_METADATA,
+  VeridaOneCustomLink,
+  VeridaOneFeaturedAsset,
+  VeridaOneManager,
+  VeridaOnePlatformLink,
+  VeridaOnePlatformLinkCategory,
+  VeridaOneProfile,
+  VeridaOneWalletAddress,
+} from 'features/veridaOne'
+import { cloneDeep, debounce, isEqual } from 'lodash'
 import React, {
   Fragment,
   useCallback,
@@ -40,18 +50,8 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
-import {
-  BlockchainNetwork,
-  BlockchainWalletWithAccounts,
-  VeridaOneCustomLink,
-  VeridaOneFeaturedAsset,
-  VeridaOnePlatformLink,
-  VeridaOnePlatformLinkCategory,
-  VeridaOneProfile,
-  VeridaOneWalletAddress,
-} from 'api/types'
+import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
-import VeridaOneManager from 'api/VeridaOneManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
@@ -69,9 +69,10 @@ import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { Spacer } from 'components/Spacer'
 import { Headline } from 'components/Typography/Headline'
 import { Text } from 'components/Typography/Text'
-import { PLATFORM_LINKS } from 'constants/profile'
 import { useEmitter } from 'hooks/useEmitter'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
+import { EditProfilePropertyOption } from 'pages/Profiles/EditProfileScreen'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
@@ -89,10 +90,8 @@ export enum PublicProfileEditMode {
 }
 
 const SCREEN_NAME = 'PublicProfile'
-const MAX_NUMBER_OF_FEATURED_CUSTOM_LINK = 2
-const NUMBER_FEATURED_ASSETS = 4
 
-const EMPTY_PROFILE_EDITABLE_PROPS = [
+const EMPTY_PROFILE_EDITABLE_PROPS: EditProfilePropertyOption[] = [
   { label: 'Name', key: 'name', value: '', action: 'arrow', type: 'input' },
   {
     label: 'Country',
@@ -108,29 +107,45 @@ const EMPTY_PROFILE_EDITABLE_PROPS = [
     action: 'arrow',
     type: 'textarea',
   },
+  {
+    label: 'Website',
+    key: 'website',
+    value: '',
+    action: 'arrow',
+    type: 'input',
+  },
 ]
+
 const EMPTY_PROFILE_READONLY_PROPS = [
   { label: 'DID', value: '', action: 'copy' },
 ]
 
-export const PublicProfile: React.FunctionComponent = () => {
+export type PublicProfileScreenParams = undefined
+
+type PublicProfileScreenProps = MainStackScreenProps<'PublicProfile'>
+
+export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
   const profileEditableProps = useMemo(() => {
-    const updatedList = EMPTY_PROFILE_EDITABLE_PROPS.map((item) => {
+    return EMPTY_PROFILE_EDITABLE_PROPS.map((item) => {
       return {
         ...item,
-        value: publicProfileData[item.key as keyof IPublicProfile] ?? undefined,
+        value: (publicProfileData[item.key as keyof IPublicProfile] ??
+          '') as string, // HACK: EditProfilePropertyOption doesn't like the type of avatar, but as we don't use it in the list, the value should not be of this type
       }
     })
-    return updatedList
   }, [publicProfileData])
   const [profileReadonlyProps, setProfileReadonlyProps] = useState(
     EMPTY_PROFILE_READONLY_PROPS
   )
 
   const { theme } = useTheme()
-  const navigation = useNavigation()
+
   const { showActionSheetWithOptions } = useActionSheet()
   const [loading, setLoading] = useState(false)
   const [quickFetching, setQuickFetching] = useState(false) // Manage a lighter loading indicator for a better UX
@@ -445,7 +460,7 @@ export const PublicProfile: React.FunctionComponent = () => {
       if (
         !customLink.featured &&
         featured &&
-        totalNumberFeaturedLink >= MAX_NUMBER_OF_FEATURED_CUSTOM_LINK
+        totalNumberFeaturedLink >= VERIDA_ONE_MAX_FEATURED_CUSTOM_LINKS
       ) {
         Snackbar.show({
           text: 'You already have two featured links',
@@ -525,7 +540,7 @@ export const PublicProfile: React.FunctionComponent = () => {
   const fetchUsername = async () => {
     try {
       const accountUsernames = await UsernameManager.get()
-      if (accountUsernames && accountUsernames?.length > 0) {
+      if (accountUsernames.length > 0) {
         setUsername(accountUsernames[0])
         setProfileReadonlyProps((currentValues) => {
           const updateValues = [...currentValues]
@@ -822,7 +837,7 @@ export const PublicProfile: React.FunctionComponent = () => {
 
       // Check Verida One enabbled status
       ;(async () => {
-        setEnabledVeridaOne(await isEnabledVeridaOneProfile())
+        setEnabledVeridaOne(await isVeridaOneEnabled())
       })()
 
       Promise.all([fetchVeridaOneProfle(), fetchUsername()]).finally(() => {
@@ -1010,11 +1025,11 @@ export const PublicProfile: React.FunctionComponent = () => {
           drag={drag}
           isActive={isActive}
           onEditPlatformInfo={() => {
-            navigation.navigate('EditPlatformLink', {
+            navigation.navigate('EditVeridaOnePlatformLink', {
               screenName: SCREEN_NAME,
               mode: PublicProfileEditMode.AddPlatformLink,
               platform: item.platform,
-              selectedPlatform: PLATFORM_LINKS[item.platform],
+              selectedPlatform: VERIDA_ONE_PLATFORM_METADATA[item.platform],
               originalValue: item,
             })
           }}
@@ -1032,7 +1047,7 @@ export const PublicProfile: React.FunctionComponent = () => {
           drag={drag}
           isActive={isActive}
           onEdit={() => {
-            navigation.navigate('AddCustomLink', {
+            navigation.navigate('AddVeridaOneCustomLink', {
               screenName: SCREEN_NAME,
               title: 'Public Label',
               label: link.label,
@@ -1154,7 +1169,14 @@ export const PublicProfile: React.FunctionComponent = () => {
             <Text style={styles.sectionHeader}>PUBLIC INFORMATION</Text>
             <PropertyList
               list={[
-                ...editable(profileEditableProps),
+                ...profileEditableProps.map((item) => ({
+                  ...item,
+                  onPress: () =>
+                    navigation.navigate('EditProfile', {
+                      title: item.label,
+                      option: item,
+                    }),
+                })),
                 ...profileReadonlyProps,
               ]}
             />
@@ -1236,12 +1258,12 @@ export const PublicProfile: React.FunctionComponent = () => {
                       color='transparent-link'
                       disabled={!enabledVeridaOne}
                       onPress={() =>
-                        navigation.navigate('AddPlatformLink', {
+                        navigation.navigate('AddVeridaOnePlatformLink', {
                           screenName: SCREEN_NAME,
                           mode: PublicProfileEditMode.AddPlatformLink,
                           supportedConnectPlatforms,
                           availablePlatformLinks: Object.values(
-                            PLATFORM_LINKS
+                            VERIDA_ONE_PLATFORM_METADATA
                           ).filter(
                             (network) =>
                               !supportedConnectPlatforms.some(
@@ -1289,7 +1311,7 @@ export const PublicProfile: React.FunctionComponent = () => {
                     }}
                     showsHorizontalScrollIndicator={false}
                     horizontal>
-                    {Array(NUMBER_FEATURED_ASSETS)
+                    {Array(VERIDA_ONE_MAX_FEATURED_ASSETS)
                       .fill(1)
                       .map((_, index) => {
                         const assetItem = featuredAssets.find(
@@ -1323,7 +1345,7 @@ export const PublicProfile: React.FunctionComponent = () => {
                       color='transparent-link'
                       disabled={!enabledVeridaOne}
                       onPress={() =>
-                        navigation.navigate('AddCustomLink', {
+                        navigation.navigate('AddVeridaOneCustomLink', {
                           screenName: SCREEN_NAME,
                           mode: PublicProfileEditMode.AddCustomURL,
                           title: 'Add Custom Link',
