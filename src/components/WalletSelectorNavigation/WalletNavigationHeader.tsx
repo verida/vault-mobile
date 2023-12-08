@@ -2,14 +2,14 @@ import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, Pressable, StyleSheet, Text, View } from 'react-native'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import ChevronDownIcon from 'assets/chevron_down_icon.svg'
 import MultichainWalletIcon from 'assets/wallet_icon_32.svg'
-import { WalletItem } from 'components/WalletList/types'
 import { BLACK_COLOR } from 'constants/color'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: WalletItem
+  selectedWallet: BlockchainWalletWithAccounts
   openWalletModal: () => void
 }
 
