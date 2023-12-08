@@ -1,26 +1,18 @@
 import 'react-native-url-polyfill/auto'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { ConfigProvider } from 'features/config'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
-import {
-  DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
-  DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
-  MESSAGE_NOTIFICATION_CHANNEL_ID,
-} from 'features/notifications'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
-import { configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import {
   initialWindowMetrics,
@@ -44,19 +36,6 @@ import { ModalProvider } from './contexts/ModalContext'
 initApplication()
 
 // TODO: Move other initialisations into the 'initApplication'
-
-configureNotifications()
-
-messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
-  PushNotification.localNotification({
-    title: DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
-    message: DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
-    channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
-    userInfo: {
-      category: 'Inbox',
-    },
-  })
-})
 
 const logger = new Logger('App')
 

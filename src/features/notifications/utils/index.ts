@@ -1,10 +1,6 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
+import messaging from '@react-native-firebase/messaging'
 import { setNavigationLink } from 'features/links'
-import {
-  MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION,
-  MESSAGE_NOTIFICATION_CHANNEL_ID,
-  MESSAGE_NOTIFICATION_CHANNEL_NAME,
-} from 'features/notifications'
 import { Logger } from 'features/telemetry'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
@@ -12,10 +8,17 @@ import { store } from 'reduxStore'
 
 import { navigate } from 'navigation/RootNavigator'
 
-const logger = new Logger('Notification')
+import {
+  DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+  DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+  MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION,
+  MESSAGE_NOTIFICATION_CHANNEL_ID,
+  MESSAGE_NOTIFICATION_CHANNEL_NAME,
+} from '../constants'
 
-// Must be outside of any component LifeCycle (such as `componentDidMount`).
-export function configureNotifications() {
+const logger = new Logger('Notifications')
+
+export function initNotifications() {
   if (Platform.OS === 'android') {
     PushNotification.createChannel(
       {
@@ -90,5 +93,16 @@ export function configureNotifications() {
      *     requestPermissions: Platform.OS === 'ios'
      */
     requestPermissions: Platform.OS === 'ios',
+  })
+
+  messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
+    PushNotification.localNotification({
+      title: DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+      message: DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+      channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
+      userInfo: {
+        category: 'Inbox',
+      },
+    })
   })
 }
