@@ -8,7 +8,6 @@ import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
-import { useRemoteNotifications } from 'features/notifications'
 import { isPolygonIdMessage } from 'features/polygonid'
 import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
@@ -73,8 +72,6 @@ export const HomeTabScreen = (props) => {
   const qrAddress = selectedAccount?.did
     ? PROFILE_URL + selectedAccount?.did
     : ''
-
-  useRemoteNotifications()
 
   // TODO: Clean up and migrate all the deeplink handlers here to their respective features/protocols
   const processDeepLink = React.useCallback(
