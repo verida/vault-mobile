@@ -3,7 +3,7 @@ import { selectSelectedAccount } from 'features/identities'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
-import { registerRemoteNotification } from 'api/utils'
+import { registerRemoteNotification } from '../api'
 
 export function useRemoteNotifications() {
   const selectedAccount = useSelector(selectSelectedAccount)
