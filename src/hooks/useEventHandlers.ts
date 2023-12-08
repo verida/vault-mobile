@@ -40,7 +40,7 @@ export const useEventHandlers = () => {
 
       latestNotificationRef.current = newMessage
       PushNotification.localNotification({
-        title: get(newMessage, 'sendBy.app') || 'New Message',
+        title: get(newMessage, 'sendBy.app') || 'New encrypted message',
         message: newMessage.message,
         channelId: CHANNEL_ID,
         userInfo: {

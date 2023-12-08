@@ -44,8 +44,8 @@ configureNotifications()
 
 messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
   PushNotification.localNotification({
-    title: 'New inbox message',
-    message: 'Please refresh your inbox',
+    title: 'New encrypted message',
+    message: 'Open the Verida Wallet to check your inbox',
     channelId: CHANNEL_ID,
     userInfo: {
       category: 'Inbox',

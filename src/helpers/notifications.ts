@@ -9,7 +9,7 @@ import { navigate } from 'navigation/RootNavigator'
 
 const logger = new Logger('Notification')
 
-export const CHANNEL_ID = 'verida-vault'
+export const CHANNEL_ID = 'verida_messages'
 
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 export function configureNotifications() {
@@ -17,8 +17,8 @@ export function configureNotifications() {
     PushNotification.createChannel(
       {
         channelId: CHANNEL_ID, // (required)
-        channelName: 'verida-vault', // (required)
-        channelDescription: 'Verida Vault notifications channel', // (optional) default: undefined.
+        channelName: 'Verida Messages', // (required)
+        channelDescription: 'Notification when receiving a new Verida message', // (optional) default: undefined.
         playSound: true, // (optional) default: true
         soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
         importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
