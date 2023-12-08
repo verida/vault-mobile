@@ -6,3 +6,8 @@ export const MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION =
 export const DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE = 'New encrypted message'
 export const DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE =
   'Open the Verida Wallet to check your inbox'
+
+export enum NOTIFICATION_CATEGORY {
+  NEW_INBOX_MESSAGE = 'NewInboxMessage',
+  REFRESH_INBOX = 'RefreshInbox',
+}

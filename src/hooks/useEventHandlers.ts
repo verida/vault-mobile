@@ -5,6 +5,7 @@ import {
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
   MESSAGE_NOTIFICATION_CHANNEL_ID,
+  NOTIFICATION_CATEGORY,
 } from 'features/notifications'
 import { Logger } from 'features/telemetry'
 import { get } from 'lodash'
@@ -51,7 +52,7 @@ export const useEventHandlers = () => {
           newMessage.message || DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
         channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
         userInfo: {
-          category: 'InboxItem',
+          category: NOTIFICATION_CATEGORY.NEW_INBOX_MESSAGE,
           data: newMessage.message,
         },
       })

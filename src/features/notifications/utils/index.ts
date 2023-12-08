@@ -14,6 +14,7 @@ import {
   MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION,
   MESSAGE_NOTIFICATION_CHANNEL_ID,
   MESSAGE_NOTIFICATION_CHANNEL_NAME,
+  NOTIFICATION_CATEGORY,
 } from '../constants'
 
 const logger = new Logger('Notifications')
@@ -45,14 +46,13 @@ export function initNotifications() {
 
         // process the notification
         switch (data.category) {
-          // TODO: handle other categories
-          case 'InboxItem':
+          case NOTIFICATION_CATEGORY.NEW_INBOX_MESSAGE:
             navigate('InboxItem', {
               inboxItemId: data.data._id,
             })
             break
 
-          case 'Inbox':
+          case NOTIFICATION_CATEGORY.REFRESH_INBOX:
             store.dispatch(setNavigationLink('/inbox'))
             break
         }
@@ -101,7 +101,7 @@ export function initNotifications() {
       message: DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
       channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
       userInfo: {
-        category: 'Inbox',
+        category: NOTIFICATION_CATEGORY.REFRESH_INBOX,
       },
     })
   })
