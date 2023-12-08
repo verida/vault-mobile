@@ -8,6 +8,7 @@ import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
 } from 'features/links'
+import { useRemoteNotifications } from 'features/notifications'
 import { isPolygonIdMessage } from 'features/polygonid'
 import { Logger } from 'features/telemetry'
 import { Content } from 'native-base'
@@ -40,7 +41,6 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
