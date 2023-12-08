@@ -8,9 +8,14 @@ import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { ConfigProvider } from 'features/config'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
+import {
+  DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+  DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+  MESSAGE_NOTIFICATION_CHANNEL_ID,
+} from 'features/notifications'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
-import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
+import { configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
@@ -44,9 +49,9 @@ configureNotifications()
 
 messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
   PushNotification.localNotification({
-    title: 'New encrypted message',
-    message: 'Open the Verida Wallet to check your inbox',
-    channelId: CHANNEL_ID,
+    title: DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+    message: DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+    channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
     userInfo: {
       category: 'Inbox',
     },

@@ -1,8 +1,12 @@
 import NetInfo from '@react-native-community/netinfo'
 import fbMessaging from '@react-native-firebase/messaging'
 import { selectSelectedAccount } from 'features/identities'
+import {
+  DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+  DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+  MESSAGE_NOTIFICATION_CHANNEL_ID,
+} from 'features/notifications'
 import { Logger } from 'features/telemetry'
-import { CHANNEL_ID } from 'helpers/notifications'
 import { get } from 'lodash'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
@@ -40,9 +44,12 @@ export const useEventHandlers = () => {
 
       latestNotificationRef.current = newMessage
       PushNotification.localNotification({
-        title: get(newMessage, 'sendBy.app') || 'New encrypted message',
-        message: newMessage.message,
-        channelId: CHANNEL_ID,
+        title:
+          get(newMessage, 'sendBy.app') ||
+          DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+        message:
+          newMessage.message || DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+        channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
         userInfo: {
           category: 'InboxItem',
           data: newMessage.message,

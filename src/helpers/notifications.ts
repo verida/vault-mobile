@@ -1,5 +1,10 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import { setNavigationLink } from 'features/links'
+import {
+  MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION,
+  MESSAGE_NOTIFICATION_CHANNEL_ID,
+  MESSAGE_NOTIFICATION_CHANNEL_NAME,
+} from 'features/notifications'
 import { Logger } from 'features/telemetry'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
@@ -9,20 +14,15 @@ import { navigate } from 'navigation/RootNavigator'
 
 const logger = new Logger('Notification')
 
-export const CHANNEL_ID = 'verida_messages'
-
 // Must be outside of any component LifeCycle (such as `componentDidMount`).
 export function configureNotifications() {
   if (Platform.OS === 'android') {
     PushNotification.createChannel(
       {
-        channelId: CHANNEL_ID, // (required)
-        channelName: 'Verida Messages', // (required)
-        channelDescription: 'Notification when receiving a new Verida message', // (optional) default: undefined.
-        playSound: true, // (optional) default: true
-        soundName: 'default', // (optional) See `soundName` parameter of `localNotification` function
+        channelId: MESSAGE_NOTIFICATION_CHANNEL_ID, // (required)
+        channelName: MESSAGE_NOTIFICATION_CHANNEL_NAME, // (required)
+        channelDescription: MESSAGE_NOTIFICATION_CHANNEL_DESCRIPTION,
         importance: Importance.HIGH, // (optional) default: Importance.HIGH. Int value of the Android notification importance
-        vibrate: true, // (optional) default: true. Creates the default vibration pattern if true.
       },
       (_created) => ({}) // (optional) callback returns whether the channel was created, false means it already existed.
     )
