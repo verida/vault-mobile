@@ -1,41 +1,62 @@
 import { ChainId } from 'caip'
-import { useTheme } from 'contexts/ThemeContext'
 import {
   getMaybeChainMetadatas,
   useChainMetadataDetails,
   useChainMetadatas,
 } from 'features/blockchain'
 import { ChainMetadata } from 'features/caip'
+import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
 import * as React from 'react'
 import {
   ListRenderItem,
   StyleSheet,
   TouchableOpacity,
+  useWindowDimensions,
   View,
 } from 'react-native'
 import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import { TabView } from 'react-native-tab-view'
 import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
 import PlusIcon from 'assets/plus_icon.svg'
+import { Line } from 'components/Line'
 import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
+import { SegmentData, SegmentsControl } from 'components/SegmentControl'
+import { Title } from 'components/Typography/Title'
 import { useMainNavigation } from 'navigation/hooks'
+import { Theme } from 'styles/types'
 
-import {
-  ChainMetadataListItem,
-  ChainMetadataListSeparatorComponent,
-} from './components'
+import { ChainMetadataListItem } from './components'
+
+const tabs: SegmentData[] = [
+  {
+    key: 'mainnets',
+    title: 'Mainnets',
+  },
+  {
+    key: 'testnets',
+    title: 'Testnets',
+  },
+]
 
 const keyExtractor = (e: ChainMetadata) => new ChainId(e).toString()
 
 function BlockchainNetworks(): JSX.Element {
-  const [searchText, setSearchText] = React.useState<string>('')
-  const { theme } = useTheme()
-
   const navigation = useMainNavigation()
+  const layout = useWindowDimensions()
+  const [searchText, setSearchText] = React.useState<string>('')
+  const [activeTabIndex, setActiveTabIndex] = React.useState(0)
+
+  const styles = useThemeAwareStyle(createStyles)
+
+  const handleActiveTabIndexChange = React.useCallback((index: number) => {
+    setActiveTabIndex(index)
+  }, [])
+
   const { getChainMetadataDetails } = useChainMetadataDetails()
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
@@ -54,21 +75,26 @@ function BlockchainNetworks(): JSX.Element {
             })
           }>
           <ChainMetadataListItem chainMetadata={chainMetadata} />
+          <Line />
         </TouchableOpacity>
       )
     },
     [navigation, getChainMetadataDetails]
   )
 
-  const chainMetadatasToRender = React.useMemo(() => {
-    if (typeof searchText !== 'string' || !searchText.length)
-      return chainMetadatas
-
-    return chainMetadatas.filter((e) =>
-      `${e.name} ${e.nativeCurrencyName} ${e.namespace} ${e.reference}`
-        .toLocaleLowerCase()
-        .includes(searchText.toLocaleLowerCase())
-    )
+  const { mainnets, testnets } = React.useMemo(() => {
+    const filteredNetworks =
+      typeof searchText !== 'string' || !searchText.length
+        ? chainMetadatas
+        : chainMetadatas.filter((e) =>
+            `${e.name} ${e.nativeCurrencyName} ${e.namespace} ${e.reference}`
+              .toLocaleLowerCase()
+              .includes(searchText.toLocaleLowerCase())
+          )
+    return {
+      mainnets: filteredNetworks.filter((e) => e.isMainnet),
+      testnets: filteredNetworks.filter((e) => !e.isMainnet),
+    }
   }, [chainMetadatas, searchText])
 
   const onPressAddNetwork = React.useCallback(
@@ -95,20 +121,14 @@ function BlockchainNetworks(): JSX.Element {
     <Container>
       <NavigationHeader
         bottomBorder={false}
-        title='Networks'
+        title='Blockchain Networks'
         renderNetInfo={false}
         right={headerSideButton}
       />
-      <View style={styles.content}>
+      <View style={styles.searchAndTabsContainer}>
         <SearchBar
           showSortButton={false}
           showFilterButton={false}
-          style={{
-            paddingHorizontal: theme.spacing.m,
-            // HACK: Where does this value come from?
-            marginTop: -10,
-            paddingBottom: 22,
-          }}
           inputProps={{
             autoFocus: false,
             onChangeText: setSearchText,
@@ -117,28 +137,62 @@ function BlockchainNetworks(): JSX.Element {
             spellCheck: false,
           }}
         />
-        <ScrollView>
-          <ChainMetadataListSeparatorComponent />
-          <FlatList
-            data={chainMetadatasToRender}
-            renderItem={renderItem}
-            keyExtractor={keyExtractor}
-            ItemSeparatorComponent={ChainMetadataListSeparatorComponent}
-          />
-          <ChainMetadataListSeparatorComponent />
-        </ScrollView>
+        <SegmentsControl
+          segments={tabs}
+          activeSegmentIndex={activeTabIndex}
+          onSegmentPress={handleActiveTabIndexChange}
+          style={styles.tabs}
+        />
       </View>
+      <TabView
+        navigationState={{ index: activeTabIndex, routes: tabs }}
+        renderScene={({ route }) => (
+          <ScrollView>
+            <FlatList
+              data={route.key === 'mainnets' ? mainnets : testnets}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              ListEmptyComponent={() => (
+                <View style={styles.emptyListContainer}>
+                  <Title style={styles.emptyListTitle}>
+                    {`There is no ${route.title}`}
+                  </Title>
+                </View>
+              )}
+            />
+          </ScrollView>
+        )}
+        renderTabBar={() => null}
+        onIndexChange={handleActiveTabIndexChange}
+        initialLayout={{ width: layout.width }}
+      />
     </Container>
   )
 }
 
-const styles = StyleSheet.create({
-  content: {
-    backgroundColor: '#fff',
-    flex: 1,
-    paddingVertical: 24,
-  },
-  flex: { flex: 1 },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    searchAndTabsContainer: {
+      paddingTop: 0, // TODO: May have to adjust when the header has been properly reworked
+      paddingBottom: theme.spacing.m,
+      paddingHorizontal: theme.spacing.m,
+      borderBottomWidth: 1,
+      borderBottomColor: theme.color.separatorLight,
+    },
+    tabs: {
+      marginTop: theme.spacing.m,
+    },
+    emptyListContainer: {
+      flexDirection: 'column',
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginHorizontal: theme.spacing.xxxxl,
+    },
+    emptyListTitle: {
+      fontSize: theme.fontSize.xxl,
+      marginTop: theme.spacing.m,
+      textAlign: 'center',
+    },
+  })
 
 export default BlockchainNetworks
