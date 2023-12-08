@@ -2,6 +2,8 @@ import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import messaging from '@react-native-firebase/messaging'
 import { setNavigationLink } from 'features/links'
 import { Logger } from 'features/telemetry'
+import { VeridaReceivedMessage } from 'features/verida'
+import { get } from 'lodash'
 import { Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 import { store } from 'reduxStore'
@@ -17,7 +19,34 @@ import {
   NOTIFICATION_CATEGORY,
 } from '../constants'
 
-const logger = new Logger('Notifications')
+const logger = new Logger('Notification')
+
+export function pushNewMessageNotification(message: VeridaReceivedMessage) {
+  logger.debug('New message to push notification', { message })
+  PushNotification.localNotification({
+    channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
+    title: message.sentBy.context
+      ? `New message from ${get(message, 'sentBy.context')}`
+      : DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+    message: message.message || DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+    userInfo: {
+      category: NOTIFICATION_CATEGORY.NEW_INBOX_MESSAGE,
+      data: message.message,
+    },
+  })
+}
+
+export function pushRefreshInboxNotification() {
+  logger.debug('New refresh inbox notification')
+  PushNotification.localNotification({
+    channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
+    title: DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+    message: DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
+    userInfo: {
+      category: NOTIFICATION_CATEGORY.REFRESH_INBOX,
+    },
+  })
+}
 
 export function initNotifications() {
   if (Platform.OS === 'android') {
@@ -53,7 +82,7 @@ export function initNotifications() {
             break
 
           case NOTIFICATION_CATEGORY.REFRESH_INBOX:
-            store.dispatch(setNavigationLink('/inbox'))
+            store.dispatch(setNavigationLink('/inbox')) // TODO: Find another way
             break
         }
 
@@ -95,14 +124,12 @@ export function initNotifications() {
     requestPermissions: Platform.OS === 'ios',
   })
 
-  messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
-    PushNotification.localNotification({
-      title: DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
-      message: DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
-      channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
-      userInfo: {
-        category: NOTIFICATION_CATEGORY.REFRESH_INBOX,
-      },
-    })
+  messaging().setBackgroundMessageHandler(async (remoteMessage) => {
+    logger.debug('New remote notification', { message: remoteMessage })
+    // The notification server, via Firebase, only sends ping signaling a new message but doesn't pass the message, for security reasons.
+    // The remote message provides the DID of the recipient: remoteMessage.data.did
+    // TODO: This handler should not display a generic notification, it should refresh the inbox and the new message listener on the inbox would display a contextual notification.
+    // There's an issue with the multi-identity feature, only one is active at a time, so refreshing the inbox would only work for the active identity, which may not be the one of the notification.
+    pushRefreshInboxNotification()
   })
 }
