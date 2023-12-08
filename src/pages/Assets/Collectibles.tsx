@@ -1,6 +1,4 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 import { useNavigation } from '@react-navigation/native'
-import * as sentry from '@sentry/react-native'
 import { useTheme } from 'contexts/ThemeContext'
 import { useGetNFTsQuery } from 'features/assets'
 import {
@@ -8,7 +6,7 @@ import {
   getUniqueWalletAddresses,
 } from 'features/cryptoWallet'
 import { Logger } from 'features/telemetry'
-import { getNFTImageUri } from 'helpers/nft'
+// import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
 import {
   ListRenderItem,
@@ -17,17 +15,17 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
-import { useDispatch, useSelector } from 'react-redux'
+// import FastImage from 'react-native-fast-image'
+import { useSelector } from 'react-redux'
 
-import { NFT, NFTCollection, NFTMetadata } from 'api/types'
+// import { NFT, NFTCollection, NFTMetadata } from 'api/types'
+import { NFT } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import { NftItem } from 'components/Assets/NftItem'
 import Container from 'components/Container'
 import GridView from 'components/Grids/GridView'
-import { Line } from 'components/Line'
 import LoadingIndicator from 'components/LoadingIndicator'
-import { Tag } from 'components/Tag'
+// import { Tag } from 'components/Tag'
 import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
@@ -37,7 +35,6 @@ import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 const logger = new Logger('Pages/Collectibles')
 
 const Collectibles = () => {
-  const dispatch = useDispatch()
   const navigation = useNavigation()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
@@ -58,48 +55,48 @@ const Collectibles = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const renderCollection = useCallback<ListRenderItem<NFTCollection>>(
-    ({ item }) => {
-      try {
-        const imageMeta = (item.nfts?.data?.[0]
-          ?.metadata as unknown as NFTMetadata) ?? {
-          image: null,
-        }
-        const uri = getNFTImageUri(imageMeta.image)
-        return (
-          <TouchableOpacity
-            onPress={() => {
-              navigation.navigate('NFTCollectionDetail', { collection: item })
-            }}>
-            <View style={styles.column}>
-              <FastImage
-                style={styles.image}
-                defaultSource={require('assets/picture.png')}
-                source={{
-                  uri,
-                  priority: FastImage.priority.high,
-                }}
-                resizeMode={FastImage.resizeMode.cover}
-              />
-              <Tag withBlur style={styles.itemTag}>
-                <Tag.Label numberOfLines={1} style={styles.tagLabel}>
-                  {item.name}
-                </Tag.Label>
-                <Tag.Label bold style={styles.tagLabelNumber}>
-                  {item.nfts?.total ?? 0}
-                </Tag.Label>
-              </Tag>
-            </View>
-          </TouchableOpacity>
-        )
-      } catch (error) {
-        logger.error(error)
-      }
+  // const renderCollection = useCallback<ListRenderItem<NFTCollection>>(
+  //   ({ item }) => {
+  //     try {
+  //       const imageMeta = (item.nfts?.data?.[0]
+  //         ?.metadata as unknown as NFTMetadata) ?? {
+  //         image: null,
+  //       }
+  //       const uri = getNFTImageUri(imageMeta.image)
+  //       return (
+  //         <TouchableOpacity
+  //           onPress={() => {
+  //             navigation.navigate('NFTCollectionDetail', { collection: item })
+  //           }}>
+  //           <View style={styles.column}>
+  //             <FastImage
+  //               style={styles.image}
+  //               defaultSource={require('assets/picture.png')}
+  //               source={{
+  //                 uri,
+  //                 priority: FastImage.priority.high,
+  //               }}
+  //               resizeMode={FastImage.resizeMode.cover}
+  //             />
+  //             <Tag withBlur style={styles.itemTag}>
+  //               <Tag.Label numberOfLines={1} style={styles.tagLabel}>
+  //                 {item.name}
+  //               </Tag.Label>
+  //               <Tag.Label bold style={styles.tagLabelNumber}>
+  //                 {item.nfts?.total ?? 0}
+  //               </Tag.Label>
+  //             </Tag>
+  //           </View>
+  //         </TouchableOpacity>
+  //       )
+  //     } catch (error) {
+  //       logger.error(error)
+  //     }
 
-      return null
-    },
-    [navigation, styles]
-  )
+  //     return null
+  //   },
+  //   [navigation, styles]
+  // )
 
   // Temp code
   const renderNft = useCallback<ListRenderItem<NFT>>(
@@ -148,7 +145,6 @@ const Collectibles = () => {
         //   />
         // )
       }
-      <Line style={{ marginTop: theme.spacing.s }} />
       {/* <GridView
         style={styles.grid}
         numColumns={NUMBER_OF_COLUMNS}

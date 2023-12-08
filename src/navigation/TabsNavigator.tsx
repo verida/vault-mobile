@@ -6,7 +6,7 @@ import MaterialIcons from 'react-native-vector-icons/MaterialIcons'
 
 import { PRIMARY_COLOR } from 'constants/color'
 import { TabsScreenParams } from 'navigation/types'
-import Assets from 'pages/AssetsCollections'
+import { AssetsScreen } from 'pages/Assets'
 // import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
 import { HomeTabScreen } from 'pages/Dashboard/Home'
 import { DataTabScreen } from 'pages/Data'
@@ -61,7 +61,7 @@ export const TabsNavigator: React.FunctionComponent = () => {
       <Tabs.Screen name='Data' component={DataTabScreen} />
       {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
        TODO: uncomment when ready */}
-      <Tabs.Screen name='Assets' component={Assets} />
+      <Tabs.Screen name='Assets' component={AssetsScreen} />
     </Tabs.Navigator>
   )
 }

@@ -9,6 +9,7 @@ import {
   NFTCollection,
 } from 'api/types'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
+import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import { NetworksEditorScreenParams } from 'pages/BlockchainNetworksEditor'
 import {
@@ -65,7 +66,7 @@ export type TabsScreenParams = {
   Profile: undefined
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready
-  Assets: undefined
+  Assets: AssetsScreenParams
 }
 
 export type TabsScreenProps<S extends keyof TabsScreenParams> =
