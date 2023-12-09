@@ -28,7 +28,8 @@
       "reduxStore/*": ["src/reduxStore/*"],
       "styles/*": ["src/styles/*"],
       "hooks/*": ["src/hooks/*"],
-      "utils/*": ["src/utils/*"]
+      "utils/*": ["src/utils/*"],
+      "react": [ "./node_modules/@types/react"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "src/declarations.d.ts"],
