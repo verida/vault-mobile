@@ -13,10 +13,6 @@
 #import <CodePush/CodePush.h>
 #import <Firebase.h>
 
-//@interface AppDelegate () <RCTBridgeDelegate>
-//
-//@end
-
 @implementation AppDelegate
 
 - (BOOL)application:(UIApplication *)application
@@ -49,31 +45,6 @@
 
   
   return [super application:application didFinishLaunchingWithOptions:launchOptions];
-
-//  RCTAppSetupPrepareApp(application);
-//  RCTBridge *bridge = [self.reactDelegate createBridgeWithDelegate:self launchOptions:launchOptions];
-//#if RCT_NEW_ARCH_ENABLED
-//  _contextContainer = std::make_shared<facebook::react::ContextContainer const>();
-//  _reactNativeConfig = std::make_shared<facebook::react::EmptyReactNativeConfig const>();
-//  _contextContainer->insert("ReactNativeConfig", _reactNativeConfig);
-//  _bridgeAdapter = [[RCTSurfacePresenterBridgeAdapter alloc] initWithBridge:bridge contextContainer:_contextContainer];
-//  bridge.surfacePresenter = _bridgeAdapter.surfacePresenter;
-//#endif
-//  UIView *rootView = RCTAppSetupDefaultRootView(bridge, @"main", nil);
-//  if (@available(iOS 13.0, *)) {
-//    rootView.backgroundColor = [UIColor systemBackgroundColor];
-//  } else {
-//    rootView.backgroundColor = [UIColor whiteColor];
-//  }
-//  self.window = [[UIWindow alloc] initWithFrame:[UIScreen mainScreen].bounds];
-//  UIViewController *rootViewController = [self.reactDelegate createRootViewController];
-//  rootViewController.view = rootView;
-//  self.window.rootViewController = rootViewController;
-//  [self.window makeKeyAndVisible];
-//  
-//  [super application:application didFinishLaunchingWithOptions:launchOptions];
-//  
-//  return YES;
  }
 
 - (NSArray<id<RCTBridgeModule>> *)extraModulesForBridge:(RCTBridge *)bridge
@@ -81,7 +52,6 @@
   // If you'd like to export some custom RCTBridgeModules, add them here!
   return @[];
 }
-
 
 - (BOOL)application:(UIApplication *)application continueUserActivity:(nonnull NSUserActivity *)userActivity
  restorationHandler:(nonnull void (^)(NSArray<id<UIUserActivityRestoring>> * _Nullable))restorationHandler
@@ -124,7 +94,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   completionHandler(UNNotificationPresentationOptionSound | UNNotificationPresentationOptionAlert | UNNotificationPresentationOptionBadge);
 }
 
-
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
 {
 #if DEBUG
@@ -133,15 +102,6 @@ didReceiveNotificationResponse:(UNNotificationResponse *)response
   return [CodePush bundleURL];
 #endif
 }
-
-//- (NSURL *)sourceURLForBridge:(RCTBridge *)bridge
-//{
-//#if DEBUG
-//  return [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index"];
-//#else
-//  return [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
-//#endif
-//}
 
 
 @end
