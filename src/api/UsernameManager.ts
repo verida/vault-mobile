@@ -88,8 +88,8 @@ export default class UsernameManager {
   }
 
   private static async getClient() {
-    const currentDID = await AccountManager.getInstance().getSelectedAccount()
-      ?.did
+    const currentDID =
+      await AccountManager.getInstance().getSelectedAccount()?.did
     if (!currentDID) {
       throw new Error('Account not found')
     }

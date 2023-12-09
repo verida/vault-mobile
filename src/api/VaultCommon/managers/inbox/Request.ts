@@ -25,7 +25,6 @@ export class Request extends DataAction {
     })
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   decline() {}
 
   async metadata() {

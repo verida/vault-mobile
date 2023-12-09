@@ -29,7 +29,7 @@ export const veridaWalletAccountsToDropdownOptions = ({
   return Object.entries(maybeVeridaWalletAccounts).flatMap(
     ([key, veridaWalletAccount]: [
       string,
-      BlockchainAccount
+      BlockchainAccount,
     ]): readonly VeridaWalletAccountOption[] => {
       const caipChainId = new ChainId(key)
 

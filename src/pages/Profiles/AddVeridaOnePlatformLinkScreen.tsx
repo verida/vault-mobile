@@ -52,182 +52,183 @@ export type AddVeridaOnePlatformLinkScreenParams = {
 type AddVeridaOnePlatformLinkScreenProps =
   MainStackScreenProps<'AddVeridaOnePlatformLink'>
 
-export const AddVeridaOnePlatformLinkScreen: React.FunctionComponent<AddVeridaOnePlatformLinkScreenProps> =
-  (props) => {
-    const { navigation, route } = props
-    const {
-      screenName,
-      mode,
-      originalValue,
-      supportedConnectPlatforms,
-      availablePlatformLinks,
-    } = route.params
+export const AddVeridaOnePlatformLinkScreen: React.FunctionComponent<
+  AddVeridaOnePlatformLinkScreenProps
+> = (props) => {
+  const { navigation, route } = props
+  const {
+    screenName,
+    mode,
+    originalValue,
+    supportedConnectPlatforms,
+    availablePlatformLinks,
+  } = route.params
 
-    const styles = useThemeAwareStyle(createStyles)
-    const { theme } = useTheme()
-    const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
-    const pagerRef = useRef<PagerView>(null)
-    const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
-    const enterPlatformLinkPageRef = useRef<EnterPlatformLinkViewRefProps>(null)
+  const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
+  const [currentPage, setCurrentPage] = useState(PageType.ListSocialNetworks)
+  const pagerRef = useRef<PagerView>(null)
+  const [selectedNetwork, setSelectedNetwork] = useState<any>({}) // TODO: add type
+  const enterPlatformLinkPageRef = useRef<EnterPlatformLinkViewRefProps>(null)
 
-    const getPageName = () => {
-      switch (currentPage) {
-        case PageType.ListSocialNetworks:
-          return 'Add new social'
-        case PageType.AddSocialNetwork:
-          return selectedNetwork.label
-        case PageType.AddSocialNetworkManually:
-          return `Add ${selectedNetwork.label}`
-      }
+  const getPageName = () => {
+    switch (currentPage) {
+      case PageType.ListSocialNetworks:
+        return 'Add new social'
+      case PageType.AddSocialNetwork:
+        return selectedNetwork.label
+      case PageType.AddSocialNetworkManually:
+        return `Add ${selectedNetwork.label}`
     }
-
-    const goBack = () => {
-      if (currentPage > 0) {
-        if (isSupportedNetwork(selectedNetwork)) {
-          pagerRef.current?.setPage(currentPage - 1)
-        } else {
-          pagerRef.current?.setPage(PageType.ListSocialNetworks)
-        }
-      } else {
-        navigation.goBack()
-      }
-    }
-
-    const isSupportedNetwork = (network: any) => {
-      return supportedConnectPlatforms.some((cn) => cn.name === network.name)
-    }
-
-    const onSaveSocialNetworkHandle = (url: string) => {
-      try {
-        Keyboard.dismiss()
-        if (!url?.length) {
-          Alert.alert('Error', 'The URL must not be empty')
-        }
-
-        const cleanUrl = url.replace(/(\s)|(\/+$)/, '')
-        const cleanUsername = cleanUrl.split('/').pop()
-
-        const val: VeridaOnePlatformLink = {
-          category: VeridaOnePlatformLinkCategory.SOCIAL,
-          url: cleanUrl,
-          platform: selectedNetwork.name,
-          accountId: cleanUsername!,
-          order: 0,
-        }
-
-        emitter.emit('SAVE_GENERIC_PROPERTY', {
-          screenName,
-          value: val,
-          mode,
-          originalValue,
-        })
-
-        navigation.goBack()
-      } catch (error) {
-        logger.error(error)
-      }
-    }
-
-    return (
-      <Screen
-        navBar={
-          <NavigationHeader
-            title={getPageName()}
-            left={{
-              icon:
-                currentPage === PageType.ListSocialNetworks ? 'close' : 'back',
-              action: () => {
-                goBack()
-              },
-            }}
-          />
-        }>
-        <PagerView
-          style={styles.pagerView}
-          initialPage={currentPage}
-          scrollEnabled={false}
-          onPageSelected={(e) => {
-            setCurrentPage(e.nativeEvent.position)
-            if (e.nativeEvent.position === PageType.AddSocialNetworkManually) {
-              enterPlatformLinkPageRef.current?.focusInput()
-            }
-          }}
-          ref={pagerRef}>
-          <View key={'ListSocialNetworks'}>
-            <View style={styles.container}>
-              {availablePlatformLinks.map((item) => {
-                return (
-                  <TouchableOpacity
-                    key={item.name}
-                    onPress={() => {
-                      setSelectedNetwork(item)
-                      pagerRef.current?.setPage(
-                        isSupportedNetwork(item)
-                          ? PageType.AddSocialNetwork
-                          : PageType.AddSocialNetworkManually
-                      )
-                    }}
-                    style={styles.connectionItem}>
-                    <View style={styles.connectionItemIconLabel}>
-                      <Image style={styles.iconSmall} source={item.icon} />
-                      <Text style={styles.itemText}>{item.label}</Text>
-                    </View>
-                    <Icon
-                      size={22}
-                      name='keyboard-arrow-right'
-                      color={Color(theme.color.onBackground)
-                        .alpha(0.45)
-                        .toString()}
-                    />
-                  </TouchableOpacity>
-                )
-              })}
-            </View>
-          </View>
-          <View key={'AddSocialNetwork'}>
-            {isSupportedNetwork(selectedNetwork) ? (
-              <View style={styles.container}>
-                <View
-                  style={{
-                    alignSelf: 'center',
-                    alignItems: 'center',
-                    marginBottom: theme.spacing.xl,
-                  }}>
-                  <Image style={styles.iconBig} source={selectedNetwork.icon} />
-                  <Text style={styles.itemText}>{selectedNetwork.label}</Text>
-                </View>
-                <Button
-                  onPress={() => {
-                    navigation.dispatch(
-                      StackActions.replace('SingleConnection', {
-                        provider: selectedNetwork.name,
-                        connectNow: true,
-                      })
-                    )
-                  }}>
-                  Connect
-                </Button>
-                <Button
-                  onPress={() => {
-                    pagerRef.current?.setPage(PageType.AddSocialNetworkManually)
-                  }}
-                  color={'transparent-border'}>
-                  Enter URL manually
-                </Button>
-              </View>
-            ) : null}
-          </View>
-          <View key={'AddSocialNetworkManually'}>
-            <EnterPlatformLinkView
-              ref={enterPlatformLinkPageRef}
-              platformLink={selectedNetwork}
-              onSaveSocialNetworkHandle={onSaveSocialNetworkHandle}
-            />
-          </View>
-        </PagerView>
-      </Screen>
-    )
   }
+
+  const goBack = () => {
+    if (currentPage > 0) {
+      if (isSupportedNetwork(selectedNetwork)) {
+        pagerRef.current?.setPage(currentPage - 1)
+      } else {
+        pagerRef.current?.setPage(PageType.ListSocialNetworks)
+      }
+    } else {
+      navigation.goBack()
+    }
+  }
+
+  const isSupportedNetwork = (network: any) => {
+    return supportedConnectPlatforms.some((cn) => cn.name === network.name)
+  }
+
+  const onSaveSocialNetworkHandle = (url: string) => {
+    try {
+      Keyboard.dismiss()
+      if (!url?.length) {
+        Alert.alert('Error', 'The URL must not be empty')
+      }
+
+      const cleanUrl = url.replace(/(\s)|(\/+$)/, '')
+      const cleanUsername = cleanUrl.split('/').pop()
+
+      const val: VeridaOnePlatformLink = {
+        category: VeridaOnePlatformLinkCategory.SOCIAL,
+        url: cleanUrl,
+        platform: selectedNetwork.name,
+        accountId: cleanUsername!,
+        order: 0,
+      }
+
+      emitter.emit('SAVE_GENERIC_PROPERTY', {
+        screenName,
+        value: val,
+        mode,
+        originalValue,
+      })
+
+      navigation.goBack()
+    } catch (error) {
+      logger.error(error)
+    }
+  }
+
+  return (
+    <Screen
+      navBar={
+        <NavigationHeader
+          title={getPageName()}
+          left={{
+            icon:
+              currentPage === PageType.ListSocialNetworks ? 'close' : 'back',
+            action: () => {
+              goBack()
+            },
+          }}
+        />
+      }>
+      <PagerView
+        style={styles.pagerView}
+        initialPage={currentPage}
+        scrollEnabled={false}
+        onPageSelected={(e) => {
+          setCurrentPage(e.nativeEvent.position)
+          if (e.nativeEvent.position === PageType.AddSocialNetworkManually) {
+            enterPlatformLinkPageRef.current?.focusInput()
+          }
+        }}
+        ref={pagerRef}>
+        <View key={'ListSocialNetworks'}>
+          <View style={styles.container}>
+            {availablePlatformLinks.map((item) => {
+              return (
+                <TouchableOpacity
+                  key={item.name}
+                  onPress={() => {
+                    setSelectedNetwork(item)
+                    pagerRef.current?.setPage(
+                      isSupportedNetwork(item)
+                        ? PageType.AddSocialNetwork
+                        : PageType.AddSocialNetworkManually
+                    )
+                  }}
+                  style={styles.connectionItem}>
+                  <View style={styles.connectionItemIconLabel}>
+                    <Image style={styles.iconSmall} source={item.icon} />
+                    <Text style={styles.itemText}>{item.label}</Text>
+                  </View>
+                  <Icon
+                    size={22}
+                    name='keyboard-arrow-right'
+                    color={Color(theme.color.onBackground)
+                      .alpha(0.45)
+                      .toString()}
+                  />
+                </TouchableOpacity>
+              )
+            })}
+          </View>
+        </View>
+        <View key={'AddSocialNetwork'}>
+          {isSupportedNetwork(selectedNetwork) ? (
+            <View style={styles.container}>
+              <View
+                style={{
+                  alignSelf: 'center',
+                  alignItems: 'center',
+                  marginBottom: theme.spacing.xl,
+                }}>
+                <Image style={styles.iconBig} source={selectedNetwork.icon} />
+                <Text style={styles.itemText}>{selectedNetwork.label}</Text>
+              </View>
+              <Button
+                onPress={() => {
+                  navigation.dispatch(
+                    StackActions.replace('SingleConnection', {
+                      provider: selectedNetwork.name,
+                      connectNow: true,
+                    })
+                  )
+                }}>
+                Connect
+              </Button>
+              <Button
+                onPress={() => {
+                  pagerRef.current?.setPage(PageType.AddSocialNetworkManually)
+                }}
+                color={'transparent-border'}>
+                Enter URL manually
+              </Button>
+            </View>
+          ) : null}
+        </View>
+        <View key={'AddSocialNetworkManually'}>
+          <EnterPlatformLinkView
+            ref={enterPlatformLinkPageRef}
+            platformLink={selectedNetwork}
+            onSaveSocialNetworkHandle={onSaveSocialNetworkHandle}
+          />
+        </View>
+      </PagerView>
+    </Screen>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

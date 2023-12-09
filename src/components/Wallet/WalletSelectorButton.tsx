@@ -17,51 +17,52 @@ export type WalletSelectorButtonProps = {
   alertContent?: React.ReactNode | string // FIXME: Tried with Pick<AlertProps, 'children'> but got ts errors
 } & ViewProps
 
-export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonProps> =
-  (props) => {
-    const {
-      label,
-      logo,
-      address,
-      formattedBalance,
-      alertType,
-      alertContent,
-      ...viewProps
-    } = props
+export const WalletSelectorButton: React.FunctionComponent<
+  WalletSelectorButtonProps
+> = (props) => {
+  const {
+    label,
+    logo,
+    address,
+    formattedBalance,
+    alertType,
+    alertContent,
+    ...viewProps
+  } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    // TODO: Add the button when the wallet selector modal is ready
+  // TODO: Add the button when the wallet selector modal is ready
 
-    return (
-      <View {...viewProps}>
-        <View style={styles.container}>
-          <View style={styles.walletContainer}>
-            <Logo uri={logo} alt={label} style={styles.walletLogo} />
-            <View style={styles.walletInfoContainer}>
-              <Text style={styles.walletLabel}>{label}</Text>
-              <Text
-                style={styles.walletAddress}
-                numberOfLines={1}
-                ellipsizeMode='middle'>
-                {address}
+  return (
+    <View {...viewProps}>
+      <View style={styles.container}>
+        <View style={styles.walletContainer}>
+          <Logo uri={logo} alt={label} style={styles.walletLogo} />
+          <View style={styles.walletInfoContainer}>
+            <Text style={styles.walletLabel}>{label}</Text>
+            <Text
+              style={styles.walletAddress}
+              numberOfLines={1}
+              ellipsizeMode='middle'>
+              {address}
+            </Text>
+            {formattedBalance ? (
+              <Text style={styles.walletFormattedBalance}>
+                {formattedBalance}
               </Text>
-              {formattedBalance ? (
-                <Text style={styles.walletFormattedBalance}>
-                  {formattedBalance}
-                </Text>
-              ) : null}
-            </View>
+            ) : null}
           </View>
-          {alertContent ? (
-            <Alert type={alertType} style={styles.alertContainer}>
-              {alertContent}
-            </Alert>
-          ) : null}
         </View>
+        {alertContent ? (
+          <Alert type={alertType} style={styles.alertContainer}>
+            {alertContent}
+          </Alert>
+        ) : null}
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

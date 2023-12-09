@@ -564,8 +564,8 @@ const AddIdentity = () => {
                 {isDoneCreateAccount
                   ? 'Success!'
                   : showRetry
-                  ? 'Something went wrong'
-                  : 'Building your Identity'}
+                    ? 'Something went wrong'
+                    : 'Building your Identity'}
               </Headline>
               <Text
                 style={[
@@ -578,8 +578,8 @@ const AddIdentity = () => {
                 {isDoneCreateAccount
                   ? 'Your Identity has been successfully created'
                   : showRetry
-                  ? createAccountErrorMessage
-                  : 'Please wait...'}
+                    ? createAccountErrorMessage
+                    : 'Please wait...'}
               </Text>
               <Spacer vertical='xxl' />
               <AnimatedCheckbox

@@ -10,19 +10,20 @@ type QrCodeScannerButtonProps = {
   onPress: () => void
 }
 
-export const QrCodeScannerButton: React.FunctionComponent<QrCodeScannerButtonProps> =
-  (props) => {
-    const { onPress } = props
+export const QrCodeScannerButton: React.FunctionComponent<
+  QrCodeScannerButtonProps
+> = (props) => {
+  const { onPress } = props
 
-    const { theme } = useTheme()
+  const { theme } = useTheme()
 
-    return (
-      <Pressable style={styles.container} onPress={onPress}>
-        <QrScannerIcon fill={theme.color.iconDefault} />
-        <Text style={styles.label}>Scan QR Code</Text>
-      </Pressable>
-    )
-  }
+  return (
+    <Pressable style={styles.container} onPress={onPress}>
+      <QrScannerIcon fill={theme.color.iconDefault} />
+      <Text style={styles.label}>Scan QR Code</Text>
+    </Pressable>
+  )
+}
 
 const styles = StyleSheet.create({
   container: {

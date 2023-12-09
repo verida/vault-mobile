@@ -15,6 +15,7 @@
     "types": ["jest", "node"],
     "baseUrl": ".",
     "paths": {
+      "~/*": ["src/*"],
       "*": ["src/*"],
       "api/*": ["src/api/*"],
       "assets/*": ["src/assets/*"],

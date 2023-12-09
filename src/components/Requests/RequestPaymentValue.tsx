@@ -16,86 +16,83 @@ export type RequestPaymentValueProps = {
   formattedFiatValue?: string
 } & ViewProps
 
-export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValueProps> =
-  (props) => {
-    const {
-      assetAmount,
-      assetSymbol,
-      assetLogo,
-      formattedAssetPrice,
-      chainLabel,
-      chainLogo,
-      formattedFiatValue,
-      ...viewProps
-    } = props
+export const RequestPaymentValue: React.FunctionComponent<
+  RequestPaymentValueProps
+> = (props) => {
+  const {
+    assetAmount,
+    assetSymbol,
+    assetLogo,
+    formattedAssetPrice,
+    chainLabel,
+    chainLogo,
+    formattedFiatValue,
+    ...viewProps
+  } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    return (
-      <View {...viewProps}>
-        <View style={styles.container}>
-          <View style={styles.logoContainer}>
-            <Logo uri={assetLogo} alt={assetSymbol} style={styles.assetLogo} />
-          </View>
-          <View style={styles.valueContainer}>
-            <Text style={styles.primaryValue}>
-              {assetAmount && assetSymbol
-                ? `${assetAmount} ${assetSymbol}`
-                : ':-/'}
+  return (
+    <View {...viewProps}>
+      <View style={styles.container}>
+        <View style={styles.logoContainer}>
+          <Logo uri={assetLogo} alt={assetSymbol} style={styles.assetLogo} />
+        </View>
+        <View style={styles.valueContainer}>
+          <Text style={styles.primaryValue}>
+            {assetAmount && assetSymbol
+              ? `${assetAmount} ${assetSymbol}`
+              : ':-/'}
+          </Text>
+          <Text style={styles.secondaryValue}>
+            {formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
+          </Text>
+        </View>
+        <View style={styles.footer}>
+          <View>
+            <Text
+              style={[
+                styles.footerText,
+                styles.footerLeftText,
+                styles.footerLabelText,
+              ]}>
+              {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
             </Text>
-            <Text style={styles.secondaryValue}>
-              {formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
+            <Text
+              style={[
+                styles.footerText,
+                styles.footerLeftText,
+                styles.footerValueText,
+              ]}>
+              {formattedAssetPrice}
             </Text>
           </View>
-          <View style={styles.footer}>
-            <View>
-              <Text
-                style={[
-                  styles.footerText,
-                  styles.footerLeftText,
-                  styles.footerLabelText,
-                ]}>
-                {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
-              </Text>
-              <Text
-                style={[
-                  styles.footerText,
-                  styles.footerLeftText,
-                  styles.footerValueText,
-                ]}>
-                {formattedAssetPrice}
-              </Text>
-            </View>
-            <View>
+          <View>
+            <Text
+              style={[
+                styles.footerText,
+                styles.footerRightText,
+                styles.footerLabelText,
+              ]}>
+              Network
+            </Text>
+            <View style={styles.chainContainer}>
+              <Logo uri={chainLogo} alt={chainLabel} style={styles.chainLogo} />
               <Text
                 style={[
                   styles.footerText,
                   styles.footerRightText,
-                  styles.footerLabelText,
+                  styles.footerValueText,
                 ]}>
-                Network
+                {chainLabel}
               </Text>
-              <View style={styles.chainContainer}>
-                <Logo
-                  uri={chainLogo}
-                  alt={chainLabel}
-                  style={styles.chainLogo}
-                />
-                <Text
-                  style={[
-                    styles.footerText,
-                    styles.footerRightText,
-                    styles.footerValueText,
-                  ]}>
-                  {chainLabel}
-                </Text>
-              </View>
             </View>
           </View>
         </View>
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

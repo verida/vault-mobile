@@ -392,7 +392,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const updateWalletAddressesOrder = useCallback(
-    (walletAddressesOrder) => {
+    (walletAddressesOrder: VeridaOneWalletAddress[]) => {
       let orderNumber = 0
 
       const newPublicAddresses = [...publicWalletAddresses]
@@ -414,7 +414,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const updatePlatformLinksOrder = useCallback(
-    (updatedOderPlatformLinks) => {
+    (updatedOderPlatformLinks: VeridaOnePlatformLink[]) => {
       let orderNumber = 0
 
       const updatedPlatformLinks = [...platformLinks]
@@ -434,10 +434,10 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   )
 
   const updateCustomLinksOrder = useCallback(
-    (customLinksNewOrder) => {
+    (customLinksWithNewOrder: VeridaOneCustomLink[]) => {
       let orderNumber = 0
 
-      const newCustomLinks = customLinksNewOrder.map(
+      const newCustomLinks = customLinksWithNewOrder.map(
         (link: VeridaOneCustomLink) => {
           link.order = orderNumber++
           return link
@@ -568,7 +568,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   }
 
   const removeFeaturedAsset = useCallback(
-    (index, featuredAsset: VeridaOneFeaturedAsset) => {
+    (featuredAsset: VeridaOneFeaturedAsset) => {
       let updatedFeaturedAssets = [...featuredAssets]
       const itemIndex = featuredAssets.findIndex(
         (it) =>
@@ -1103,7 +1103,7 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
                         break
 
                       case 1:
-                        removeFeaturedAsset(index, featuredAsset)
+                        removeFeaturedAsset(featuredAsset)
                         break
 
                       case cancelButtonIndex:

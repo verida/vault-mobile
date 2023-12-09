@@ -17,8 +17,9 @@
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
+    "lint:fix": "yarn lint --fix",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
-    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn",
+    "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx pod-install && yarn build:webapp",
     "build:webapp": "rm -rf www && cd web && yarn && CI=false yarn build && cd .. && rm -Rf www && mkdir -p www && cp -rf web/build/* www && yarn copy:webapp:android",
     "copy:webapp:android": "rm -rf android/app/src/main/assets/www && mkdir -p android/app/src/main/assets/www && cp -rf web/build/* android/app/src/main/assets/www",
     "release:android": "yarn build:webapp && yarn android --variant=stagingRelease"
@@ -195,7 +196,7 @@
     "util": "^0.10.4",
     "vm-browserify": "0.0.4",
     "web3": "^1.8.1",
-    "zod": "^3.22.3"
+    "zod": "^3.22.4"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -239,7 +240,7 @@
     "react-test-renderer": "18.2.0",
     "ts-jest": "^29.1.1",
     "ts-node": "^10.9.1",
-    "typescript": "4.8.4"
+    "typescript": "^5.3.3"
   },
   "resolutions": {
     "react-native-svg": "^13.7.0",

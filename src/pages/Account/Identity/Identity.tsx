@@ -28,8 +28,10 @@ export enum AddIdentityMode {
 
 const Identity = () => {
   const navigation = useNavigation()
-  const params =
-    useParams<{ mode?: AddIdentityMode; recoverFromError?: boolean }>()
+  const params = useParams<{
+    mode?: AddIdentityMode
+    recoverFromError?: boolean
+  }>()
   const styles = useThemeAwareStyle(creatStyles)
 
   const [agreedTC, setAgreedTC] = useState(false)

@@ -26,7 +26,7 @@ export type VeridaVerifiableCredentialBase<T = Record<string, unknown>> = {
 }
 
 export type VeridaVerifiableCredentialUnsavedRecord<
-  T = Record<string, unknown>
+  T = Record<string, unknown>,
 > = VeridaUnsavedRecord<VeridaVerifiableCredentialBase<T>>
 
 export type VeridaVerifiableCredentialRecord<T = Record<string, unknown>> =

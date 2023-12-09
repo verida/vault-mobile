@@ -19,20 +19,20 @@ const logLevel: LogLevel =
   Config.LOG_LEVEL === 'error'
     ? 'error'
     : Config.LOG_LEVEL === 'warn'
-    ? 'warn'
-    : Config.LOG_LEVEL === 'debug'
-    ? 'debug'
-    : 'info'
+      ? 'warn'
+      : Config.LOG_LEVEL === 'debug'
+        ? 'debug'
+        : 'info'
 
 // TODO: This should eventually disappear when the Wallet will have to support all the networks (devnet, testnet, mainnet altogether).
 const veridaNetwork: EnvironmentType =
   Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.MAINNET
     ? EnvironmentType.MAINNET
     : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.DEVNET
-    ? EnvironmentType.DEVNET
-    : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.LOCAL
-    ? EnvironmentType.LOCAL
-    : EnvironmentType.TESTNET
+      ? EnvironmentType.DEVNET
+      : Config.VERIDA_NETWORK_ENVIRONMENT === EnvironmentType.LOCAL
+        ? EnvironmentType.LOCAL
+        : EnvironmentType.TESTNET
 
 // TODO: Look at making this configuration, or part of it, updatable remotely
 

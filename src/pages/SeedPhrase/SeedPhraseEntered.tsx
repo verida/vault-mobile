@@ -72,9 +72,8 @@ const SeedPhraseEntered = (
       if (!isValid) {
         throw new Error('Invalid seed phrase')
       }
-      const result = await AccountManager.getInstance().importAccount(
-        cleanedPhrase
-      )
+      const result =
+        await AccountManager.getInstance().importAccount(cleanedPhrase)
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
       }

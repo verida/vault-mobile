@@ -5,7 +5,6 @@ export class DatastoreSync extends DataAction {
     await this.vaultCommon.sync.datastore(this.inboxEntry.data)
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   decline() {}
 
   async metadata() {

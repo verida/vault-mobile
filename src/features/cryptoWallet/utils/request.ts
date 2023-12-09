@@ -64,8 +64,8 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
   const chainReference = chainId
     ? chainId
     : namespace === 'ethereum'
-    ? '1'
-    : undefined
+      ? '1'
+      : undefined
 
   if (!chainReference) {
     throw new Error('Crypto request is missing the chain reference')
@@ -127,8 +127,8 @@ export function processCryptoRequest(
     amount: request.params.value
       ? Number(request.params.value)
       : request.params.uint256
-      ? Number(request.params.uint256)
-      : 0,
+        ? Number(request.params.uint256)
+        : 0,
     // FIXME: using Number may not be the best, as amount is in the smallest atomic unit and noted like 1e18, so big numbers
   }
 }
