@@ -1,4 +1,9 @@
-import { BottomActionBar, CopyToClipboardButton, ShareButton } from 'components'
+import {
+  BottomActionBar,
+  CopyToClipboardButton,
+  ScreenWrapper,
+  ShareButton,
+} from 'components'
 import { selectSelectedAccount } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
@@ -7,7 +12,6 @@ import { Dimensions, StatusBar, StyleSheet, Text, View } from 'react-native'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore no-implicit-any
 import { QRCode } from 'react-native-custom-qr-codes-expo'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
@@ -33,7 +37,6 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
     const { navigation } = props
 
     const styles = useThemeAwareStyle(createStyles)
-    const insets = useSafeAreaInsets()
 
     const handleClose = useCallback(() => {
       navigation.goBack()
@@ -60,15 +63,7 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
     return (
       <>
         <StatusBar barStyle='light-content' />
-        <View
-          style={[
-            styles.wrapper,
-            {
-              paddingBottom: insets.bottom,
-              paddingRight: insets.right,
-              paddingLeft: insets.left,
-            },
-          ]}>
+        <ScreenWrapper>
           <View style={styles.container}>
             <View style={styles.contentContainer}>
               <View style={styles.qrContainer}>
@@ -111,17 +106,13 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
               },
             ]}
           />
-        </View>
+        </ScreenWrapper>
       </>
     )
   }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
-    wrapper: {
-      flex: 1,
-      backgroundColor: theme.color.background,
-    },
     container: {
       flex: 1,
       alignItems: 'center',
