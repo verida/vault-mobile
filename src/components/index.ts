@@ -1,4 +1,5 @@
 export * from './Alert'
+export * from './Buttons'
 export * from './Images'
 export * from './Status'
 export * from './Spacer'
