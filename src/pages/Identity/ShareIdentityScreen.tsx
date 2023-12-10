@@ -1,14 +1,15 @@
-import { BottomActionBar } from 'components'
+import { BottomActionBar, CopyToClipboardButton, ShareButton } from 'components'
 import { selectSelectedAccount } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
-import { Dimensions, StatusBar, StyleSheet, View } from 'react-native'
+import { Dimensions, StatusBar, StyleSheet, Text, View } from 'react-native'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore no-implicit-any
 import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
@@ -58,6 +59,7 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
       ? PROFILE_URL + selectedAccount?.did
       : ''
     // TODO: Handle when there is no content to share
+    const displayedSharedContent = shareContent?.replace('https://', '')
 
     return (
       <>
@@ -72,8 +74,8 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
             },
           ]}>
           <View style={styles.container}>
-            <View>
-              <View style={styles.qr}>
+            <View style={styles.contentContainer}>
+              <View style={styles.qrContainer}>
                 {Boolean(shareContent) && (
                   <QRCode
                     content={shareContent}
@@ -84,6 +86,24 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
                     innerEyeStyle='circle'
                   />
                 )}
+              </View>
+              <View style={styles.sharedContentContainer}>
+                <Text
+                  style={styles.sharedContentText}
+                  numberOfLines={1}
+                  lineBreakMode='tail'>
+                  {displayedSharedContent}
+                </Text>
+              </View>
+              <View style={styles.buttonsContainer}>
+                <View style={styles.buttonWrapper}>
+                  <CopyToClipboardButton content={shareContent} />
+                  <Text style={styles.buttonLabel}>Copy</Text>
+                </View>
+                <View style={styles.buttonWrapper}>
+                  <ShareButton content={shareContent} />
+                  <Text style={styles.buttonLabel}>Share</Text>
+                </View>
               </View>
             </View>
           </View>
@@ -111,7 +131,10 @@ const createStyles = (theme: Theme) =>
       alignItems: 'center',
       justifyContent: 'center',
     },
-    qr: {
+    contentContainer: {
+      width: qrCodeContainerSize,
+    },
+    qrContainer: {
       width: qrCodeContainerSize,
       height: qrCodeContainerSize,
       borderRadius: theme.roundness.l,
@@ -125,5 +148,34 @@ const createStyles = (theme: Theme) =>
       },
       shadowOpacity: 0.22,
       elevation: 3,
+    },
+    sharedContentContainer: {
+      marginTop: theme.spacing.l,
+      paddingVertical: theme.spacing.sm,
+      paddingHorizontal: theme.spacing.m,
+      borderRadius: theme.roundness.l,
+      backgroundColor: theme.color.primary5,
+    },
+    sharedContentText: {
+      fontSize: theme.fontSize.m,
+      fontFamily: NUNITO_SANS_SEMIBOLD,
+      lineHeight: 20,
+    },
+    buttonsContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginTop: theme.spacing.l,
+      paddingHorizontal: theme.spacing.xxl,
+    },
+    buttonWrapper: {
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    buttonLabel: {
+      marginTop: theme.spacing.xs,
+      fontSize: theme.fontSize.m,
+      fontFamily: NUNITO_SANS_SEMIBOLD,
+      lineHeight: 20,
     },
   })
