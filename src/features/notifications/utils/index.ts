@@ -4,10 +4,11 @@ import { setNavigationLink } from 'features/links'
 import { Logger } from 'features/telemetry'
 import { VeridaReceivedMessage } from 'features/verida'
 import { get } from 'lodash'
-import { Platform } from 'react-native'
+import { PermissionsAndroid, Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 import { store } from 'reduxStore'
 
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { navigate } from 'navigation/RootNavigator'
 
 import {
@@ -25,9 +26,11 @@ export function pushNewMessageNotification(message: VeridaReceivedMessage) {
   logger.debug('New message to push notification', { message })
   PushNotification.localNotification({
     channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
-    title: message.sentBy.context
-      ? `New message from ${get(message, 'sentBy.context')}`
-      : DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
+    title:
+      message.sentBy.context &&
+      message.sentBy.context !== VERIDA_VAULT_CONTEXT_NAME
+        ? `New message from ${get(message, 'sentBy.context')}`
+        : DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
     message: message.message || DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
     userInfo: {
       category: NOTIFICATION_CATEGORY.NEW_INBOX_MESSAGE,
@@ -48,7 +51,7 @@ export function pushRefreshInboxNotification() {
   })
 }
 
-export function initNotifications() {
+export async function initNotifications() {
   if (Platform.OS === 'android') {
     PushNotification.createChannel(
       {
@@ -62,9 +65,9 @@ export function initNotifications() {
   }
 
   PushNotification.configure({
-    // (optional) Called when Token is generated (iOS and Android)
-    onRegister: function (_token) {
-      // TODO
+    onRegister: function (token) {
+      logger.info('Notification successfully registered')
+      logger.debug('New notification token', { token })
     },
 
     // (required) Called when a remote is received or opened, or local notification is opened
@@ -98,9 +101,10 @@ export function initNotifications() {
       // process the action
     },
 
-    // (optional) Called when the user fails to register for remote notifications. Typically occurs when APNS is having issues, or the device is a simulator. (iOS)
-    onRegistrationError: function (_err) {
-      // TODO
+    onRegistrationError: function (error) {
+      logger.error(
+        new Error('Failed to register Notifications', { cause: error })
+      )
     },
 
     // IOS ONLY (optional): default: all - Permissions to register.
@@ -110,18 +114,9 @@ export function initNotifications() {
       sound: true,
     },
 
-    // Should the initial notification be popped automatically
-    // default: true
     popInitialNotification: true,
 
-    /**
-     * (optional) default: true
-     * - Specified if permissions (ios) and token (android and ios) will requested or not,
-     * - if not, you must call PushNotificationsHandler.requestPermissions() later
-     * - if you are not using remote notification or do not have Firebase installed, use this:
-     *     requestPermissions: Platform.OS === 'ios'
-     */
-    requestPermissions: Platform.OS === 'ios',
+    requestPermissions: true,
   })
 
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
@@ -132,4 +127,20 @@ export function initNotifications() {
     // There's an issue with the multi-identity feature, only one is active at a time, so refreshing the inbox would only work for the active identity, which may not be the one of the notification.
     pushRefreshInboxNotification()
   })
+
+  try {
+    // Request permission to send notifications
+    // iOS has always required asking for permissions, but Android used to not require it, so react-native-push-notification is only requesting for iOS.
+    // However, since Android 13, it is required to ask for permission, and as react-native-push-notification is not maintained it still doesn't, so we need to do it ourselves.
+    const permissionStatus = await PermissionsAndroid.request(
+      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+    )
+    if (permissionStatus === PermissionsAndroid.RESULTS.GRANTED) {
+      logger.info('Notification permission granted')
+    } else {
+      logger.warn('Notification permission denied')
+    }
+  } catch (error: unknown) {
+    logger.error(error)
+  }
 }
