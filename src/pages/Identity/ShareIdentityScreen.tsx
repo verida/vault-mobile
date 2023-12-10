@@ -10,7 +10,6 @@ import { QRCode } from 'react-native-custom-qr-codes-expo'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { PROFILE_URL } from 'constants/url'
 import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
@@ -55,11 +54,8 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
 
     const selectedAccount = useAppSelector(selectSelectedAccount)
 
-    const shareContent = selectedAccount?.did
-      ? PROFILE_URL + selectedAccount?.did
-      : ''
+    const sharedContent = selectedAccount?.did ? selectedAccount?.did : ''
     // TODO: Handle when there is no content to share
-    const displayedSharedContent = shareContent?.replace('https://', '')
 
     return (
       <>
@@ -76,9 +72,9 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
           <View style={styles.container}>
             <View style={styles.contentContainer}>
               <View style={styles.qrContainer}>
-                {Boolean(shareContent) && (
+                {Boolean(sharedContent) && (
                   <QRCode
-                    content={shareContent}
+                    content={sharedContent}
                     size={qrCodeSize}
                     logo={VeridaLogo}
                     logoSize={qrCodeSize * 0.3}
@@ -92,16 +88,16 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
                   style={styles.sharedContentText}
                   numberOfLines={1}
                   lineBreakMode='tail'>
-                  {displayedSharedContent}
+                  {sharedContent}
                 </Text>
               </View>
               <View style={styles.buttonsContainer}>
                 <View style={styles.buttonWrapper}>
-                  <CopyToClipboardButton content={shareContent} />
+                  <CopyToClipboardButton content={sharedContent} />
                   <Text style={styles.buttonLabel}>Copy</Text>
                 </View>
                 <View style={styles.buttonWrapper}>
-                  <ShareButton content={shareContent} />
+                  <ShareButton content={sharedContent} />
                   <Text style={styles.buttonLabel}>Share</Text>
                 </View>
               </View>
@@ -163,10 +159,8 @@ const createStyles = (theme: Theme) =>
     },
     buttonsContainer: {
       flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'space-between',
+      justifyContent: 'space-evenly',
       marginTop: theme.spacing.l,
-      paddingHorizontal: theme.spacing.xxl,
     },
     buttonWrapper: {
       alignItems: 'center',
