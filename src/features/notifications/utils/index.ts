@@ -11,6 +11,7 @@ import { store } from 'reduxStore'
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { navigate } from 'navigation/RootNavigator'
 
+import { VERIDA_COLOR } from '../../../constants/color'
 import {
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
@@ -21,6 +22,12 @@ import {
 } from '../constants'
 
 const logger = new Logger('Notification')
+
+const androidNotificationIconStyle = {
+  largeIcon: 'ic_launcher',
+  color: VERIDA_COLOR,
+  smallIcon: 'ic_notification',
+}
 
 export function pushNewMessageNotification(message: VeridaReceivedMessage) {
   logger.debug('New message to push notification', { message })
@@ -36,6 +43,8 @@ export function pushNewMessageNotification(message: VeridaReceivedMessage) {
       category: NOTIFICATION_CATEGORY.NEW_INBOX_MESSAGE,
       data: message.message,
     },
+
+    ...androidNotificationIconStyle,
   })
 }
 
@@ -48,6 +57,8 @@ export function pushRefreshInboxNotification() {
     userInfo: {
       category: NOTIFICATION_CATEGORY.REFRESH_INBOX,
     },
+
+    ...androidNotificationIconStyle,
   })
 }
 

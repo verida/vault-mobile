@@ -60,6 +60,15 @@
         <data android:scheme="near"/>
       </intent-filter>
     </activity>
+
+    <!-- Default notification icon and color-->
+    <meta-data
+        android:name="com.google.firebase.messaging.default_notification_icon"
+        android:resource="@drawable/ic_notification" />
+    <meta-data android:name="com.google.firebase.messaging.default_notification_color"
+        tools:replace="android:resource"
+        android:resource="@color/verida_brand" />
+
     <activity android:name="com.facebook.react.devsupport.DevSettingsActivity" android:exported="false"/>
   </application>
   <queries>
