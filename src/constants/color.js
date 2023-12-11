@@ -21,6 +21,7 @@ export const LIGHT_ORANGE_COLOR = '#FDF4EA'
 export const TEXT_COLOR = '#041133'
 export const DISABLED_COLOR = 'rgba(51, 51, 51, 1)'
 
+export const PRIMARY_COLOR_5 = '#F5F4FF'
 export const PRIMARY_COLOR_50 = 'rgba(66, 59, 206, 0.5)'
 export const PRIMARY_COLOR_100 = 'rgba(66, 59, 206, 0.1)'
 export const PRIMARY_COLOR_200 = '#E7E5FF'
