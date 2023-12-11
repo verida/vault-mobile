@@ -40,7 +40,6 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
@@ -73,8 +72,6 @@ export const HomeTabScreen = (props) => {
   const qrAddress = selectedAccount?.did
     ? PROFILE_URL + selectedAccount?.did
     : ''
-
-  useRemoteNotifications()
 
   // TODO: Clean up and migrate all the deeplink handlers here to their respective features/protocols
   const processDeepLink = React.useCallback(
