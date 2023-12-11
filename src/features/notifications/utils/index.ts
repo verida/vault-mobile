@@ -9,9 +9,9 @@ import PushNotification, { Importance } from 'react-native-push-notification'
 import { store } from 'reduxStore'
 
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
+import { VERIDA_COLOR } from 'constants/color'
 import { navigate } from 'navigation/RootNavigator'
 
-import { VERIDA_COLOR } from '../../../constants/color'
 import {
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
@@ -21,7 +21,7 @@ import {
   NOTIFICATION_CATEGORY,
 } from '../constants'
 
-const logger = new Logger('Notification')
+const logger = new Logger('Notifications')
 
 const androidNotificationIconStyle = {
   largeIcon: 'ic_launcher',
