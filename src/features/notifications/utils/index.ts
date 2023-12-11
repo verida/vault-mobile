@@ -139,19 +139,21 @@ export async function initNotifications() {
     pushRefreshInboxNotification()
   })
 
-  try {
-    // Request permission to send notifications
-    // iOS has always required asking for permissions, but Android used to not require it, so react-native-push-notification is only requesting for iOS.
-    // However, since Android 13, it is required to ask for permission, and as react-native-push-notification is not maintained it still doesn't, so we need to do it ourselves.
-    const permissionStatus = await PermissionsAndroid.request(
-      PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
-    )
-    if (permissionStatus === PermissionsAndroid.RESULTS.GRANTED) {
-      logger.info('Notification permission granted')
-    } else {
-      logger.warn('Notification permission denied')
+  if (Platform.OS === 'android') {
+    try {
+      // Request permission to send notifications
+      // iOS has always required asking for permissions, but Android used to not require it, so react-native-push-notification is only requesting for iOS.
+      // However, since Android 13, it is required to ask for permission, and as react-native-push-notification is not maintained it still doesn't, so we need to do it ourselves.
+      const permissionStatus = await PermissionsAndroid.request(
+        PermissionsAndroid.PERMISSIONS.POST_NOTIFICATIONS
+      )
+      if (permissionStatus === PermissionsAndroid.RESULTS.GRANTED) {
+        logger.info('Notification permission granted')
+      } else {
+        logger.warn('Notification permission denied')
+      }
+    } catch (error: unknown) {
+      logger.error(error)
     }
-  } catch (error: unknown) {
-    logger.error(error)
   }
 }
