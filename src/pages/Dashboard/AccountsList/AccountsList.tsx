@@ -12,8 +12,9 @@ import {
   ViewStyle,
 } from 'react-native'
 
-import AccountItem from 'pages/Dashboard/AccountsList/AccountItem'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
+
+import { AccountItem } from './AccountItem'
 
 export type AccountsListProps = {
   containerStyle: ViewStyle
@@ -23,7 +24,7 @@ export type AccountsListProps = {
   showSelectedOnly?: boolean
 }
 
-function AccountsList(props: AccountsListProps) {
+export function AccountsList(props: AccountsListProps) {
   const {
     onSelectAccount,
     containerStyle,
@@ -94,5 +95,3 @@ const styles = StyleSheet.create({
     paddingVertical: 40,
   },
 })
-
-export default AccountsList

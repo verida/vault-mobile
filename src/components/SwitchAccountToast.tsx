@@ -1,9 +1,9 @@
 import { selectSwitchAccountToast } from 'features/identities'
 import React from 'react'
-import { Dimensions, Image, StyleSheet, View, ViewProps } from 'react-native'
+import { Dimensions, StyleSheet, View, ViewProps } from 'react-native'
 import { useSelector } from 'react-redux'
 
-import { convertAvatar } from 'api/utils'
+import { Avatar } from 'components/Images'
 import Text from 'components/Text'
 import { GREY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
@@ -21,7 +21,11 @@ function SwitchAccountToast(props: Omit<ViewProps, 'children'>) {
 
   return (
     <View style={[styles.container, style]} {...rest}>
-      <Image style={styles.avatar} source={convertAvatar(data.avatar)} />
+      <Avatar
+        source={data.avatar}
+        style={styles.avatar}
+        fallbackType='person'
+      />
       <Text style={styles.text}>
         Switched to <Text style={styles.name}>{data.name}</Text>
       </Text>
@@ -46,8 +50,6 @@ const styles = StyleSheet.create({
   avatar: {
     width: 24,
     height: 24,
-    borderRadius: 12,
-    resizeMode: 'cover',
     marginRight: 10,
   },
   text: {

@@ -1,15 +1,15 @@
+import { EnvironmentType } from '@verida/types'
+import { IdentityAvatar, IdentityAvatarProps } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
 import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import React from 'react'
 import {
-  ImageSourcePropType,
   Pressable,
   StyleSheet,
   TouchableOpacity,
   View,
   ViewProps,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { SafeAreaView } from 'react-native-safe-area-context'
 
 import ChevronRightIcon from 'assets/icons/chevron_right_dark.svg'
@@ -27,9 +27,10 @@ import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { ORANGE_COLOR } from '../../constants/color'
 
 export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
-  avatar: ImageSourcePropType
+  avatar?: Pick<IdentityAvatarProps, 'source'>
   name: string
   did: string
+  network: EnvironmentType
   inboxCount: number
   onAvatarPress: () => void
   onNamePress: () => void
@@ -40,9 +41,10 @@ export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
 const MAX_MESSAGE_COUNT = 21
 const HIT_SLOP = { top: 10, right: 10, bottom: 10, left: 10 }
 
-function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
+export function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   const {
     did,
+    network,
     avatar,
     name,
     inboxCount,
@@ -61,10 +63,11 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
         <View style={styles.leftContainer}>
           <View style={styles.left}>
             <Pressable style={styles.avatarButton} onPress={onAvatarPress}>
-              <FastImage
-                source={avatar as any}
-                resizeMode={FastImage.resizeMode.cover}
+              <IdentityAvatar
                 style={styles.avatar}
+                network={network}
+                source={avatar as any}
+                size='compact'
               />
             </Pressable>
             <View style={styles.titleContainer}>
@@ -142,9 +145,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatar: {
-    width: 48,
-    height: 48,
-    borderRadius: 1000,
+    width: 52,
+    height: 52,
   },
   name: {
     fontSize: 20,
@@ -214,5 +216,3 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
 })
-
-export default HomeNavigationHeader
