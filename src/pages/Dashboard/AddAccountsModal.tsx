@@ -25,7 +25,6 @@ export type AddAccountsModalProps = Omit<
   'children' | 'title' | 'message' | 'footer'
 > & {
   onAddNew?: () => void
-  onImport?: () => void
   onSelectAccount?: (did: string) => void
   onLogoutAccounts?: (dids: string[]) => void
   showLogout?: boolean
@@ -37,13 +36,11 @@ enum Step {
   MANAGE_ACCOUNT,
   CONFIRM_LOGOUT,
   REMIND_SEED_PHRASE,
-  ADD_IMPORT, // @Deprecated  instead go directly to the new account creation screen
 }
 
 function getTileFromStep(step: Step) {
   switch (step) {
     case Step.INITIAL:
-    case Step.ADD_IMPORT:
       return 'Identities'
     default:
       return 'Log out of selected identities'
@@ -53,7 +50,6 @@ function getTileFromStep(step: Step) {
 function getTitleIconFromStep(step: Step) {
   switch (step) {
     case Step.INITIAL:
-    case Step.ADD_IMPORT:
       return (
         <View style={styles.titleIconContainer}>
           <MaterialCommunityIcons
@@ -80,7 +76,6 @@ function getTitleIconFromStep(step: Step) {
 function AddAccountsModal(props: AddAccountsModalProps) {
   const {
     onAddNew,
-    onImport,
     onSelectAccount,
     onClose,
     onLogoutAccounts,
@@ -101,11 +96,6 @@ function AddAccountsModal(props: AddAccountsModalProps) {
     else setStep(0)
     setSelectedDids([])
     onClose!()
-  }
-
-  function onImportPress() {
-    setStep(0)
-    onImport?.()
   }
 
   function onSelectAccountPress(did: string) {
@@ -162,21 +152,6 @@ function AddAccountsModal(props: AddAccountsModalProps) {
               onPress={onAddNewPress}>
               <AntDesign name='plus' size={17} color='white' />
               <Text style={styles.addAccountButtonText}>Add</Text>
-            </TouchableOpacity>
-          </View>
-        )
-      case Step.ADD_IMPORT:
-        return (
-          <View style={styles.buttonsContainer}>
-            <TouchableOpacity
-              style={[styles.button, styles.addNewButton]}
-              onPress={onImportPress}>
-              <Text style={styles.addNewButtonText}>Import</Text>
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.importButton}
-              onPress={onAddNewPress}>
-              <Text style={styles.importButtonText}>New Account</Text>
             </TouchableOpacity>
           </View>
         )

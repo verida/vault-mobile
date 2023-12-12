@@ -8,15 +8,21 @@ import {
   NFT,
   NFTCollection,
 } from 'api/types'
-import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
-import { ShareIdentityScreenParams } from 'pages/Identity'
+import {
+  AddIdentityScreenParams,
+  CreateIdentityScreenParams,
+  DeleteIdentityScreenParams,
+  ImportIdentityScreenParams,
+  ShareIdentityScreenParams,
+} from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { OnboardingScreenParams } from 'pages/Onboarding'
 import {
   AddVeridaOneCustomLinkScreenParams,
   AddVeridaOnePlatformLinkScreenParams,
@@ -43,16 +49,14 @@ export type RootStackParams = {
 }
 
 export type AuthStackParams = {
-  Start: undefined
-  Identity: undefined
-  AddIdentity: { mode?: AddIdentityMode }
+  Onboarding: OnboardingScreenParams
+  AddIdentity: AddIdentityScreenParams
+  CreateIdentity: CreateIdentityScreenParams
+  ImportIdentity: ImportIdentityScreenParams
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
-  SeedPhraseEntered: undefined
   VerifyPhrase: { shuffled: string[] }
   CreatePin: undefined
-  Success: undefined
-  SelectNetwork: undefined
 }
 
 export type AuthStackScreenProps<S extends keyof AuthStackParams> =
@@ -73,8 +77,8 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
   >
 
 export type MainStackParams = {
+  Tabs: undefined
   Inbox: undefined
-  Dashboard: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
@@ -107,13 +111,13 @@ export type MainStackParams = {
   Settings: undefined
   ChangePin: undefined
   ScanQrCode: QrCodeScannerScreenParams
-  DeleteAccount: undefined
-  Identity: undefined
-  AddIdentity: { mode?: AddIdentityMode }
-  SeedPhraseEntered: {
-    usePrivateKey: boolean
-    previousScreen?: string
-  }
+
+  // Identity
+  AddIdentity: AddIdentityScreenParams
+  CreateIdentity: CreateIdentityScreenParams
+  ImportIdentity: ImportIdentityScreenParams
+  DeleteIdentity: DeleteIdentityScreenParams
+
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
@@ -127,7 +131,6 @@ export type MainStackParams = {
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
-  Success: undefined
 
   NFTCollectionDetail: { collection: NFTCollection }
   NFTDetail: { nft: NFT }

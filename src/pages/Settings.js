@@ -118,11 +118,11 @@ export default (props) => {
       onPress: () => logout(),
     },
     {
-      label: 'Delete Account',
+      label: 'Delete Identity',
       text: style.logoutText,
       optional: true,
       onPress: (navigation) =>
-        navigation.navigate('DeleteAccount', {
+        navigation.navigate('DeleteIdentity', {
           onSelectAccount: props.route.params.onSelectAccount,
           onLogoutAccounts: props.route.params.onLogoutAccounts,
         }),

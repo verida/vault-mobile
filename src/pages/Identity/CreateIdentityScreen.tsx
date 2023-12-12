@@ -1,6 +1,7 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
+import { getDefaultVeridaNetwork } from 'features/verida'
 import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
 import LottieView from 'lottie-react-native'
@@ -24,11 +25,11 @@ import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
 import Button from 'components/Button'
-import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import Container from 'components/Container'
 import { StepsIndicator } from 'components/Indicators'
-import { FormInput } from 'components/Input/FormInput'
+import { AnimatedCheckbox, FormInput } from 'components/Input'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { NetworkSelectorRadioButtonGroup } from 'components/Network'
 import Screen from 'components/Screen'
 import DropDownPicker, { Option } from 'components/Select'
 import { Spacer } from 'components/Spacer'
@@ -37,12 +38,10 @@ import { Label } from 'components/Typography/Label'
 import { Paragraph } from 'components/Typography/Paragraph'
 import { Text } from 'components/Typography/Text'
 import { PUBLIC_PROFILE_NAME_MAX_LENGTH } from 'constants/profile'
-import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 import { Theme } from 'styles/types'
-
-import { AddIdentityMode } from './Identity'
 
 const pageData = [
   {
@@ -76,9 +75,22 @@ enum PageType {
   Confirmation,
 }
 
-const AddIdentity = () => {
-  const navigation = useNavigation()
-  const params = useParams<{ mode?: AddIdentityMode }>()
+export type CreateIdentityScreenParams = {
+  firstIdentity: boolean
+}
+
+type CreateIdentityScreenProps = MainStackScreenProps<'CreateIdentity'>
+
+export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
+  props
+) => {
+  const {
+    route: { params },
+  } = props
+  const navigation = useNavigation() // TODO: Take it from the props once we have combined the MainStackNavigator and the AuthStackNavigator
+
+  const defaultNetwork = getDefaultVeridaNetwork()
+
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(creatStyles)
   const { top } = useSafeAreaInsets()
@@ -86,6 +98,7 @@ const AddIdentity = () => {
   const [currentPage, setCurrentPage] = useState(PageType.Name)
   const [enabledClaimUsername] = useState(false) // FIXME: disable input username
   const [processing, setProcessing] = useState(false)
+  const [network, setNetwork] = useState(defaultNetwork)
 
   const [showCountryInPublicProfile, setShowCountryOnPublicProfile] =
     useState(true)
@@ -143,6 +156,7 @@ const AddIdentity = () => {
           description: '',
         },
         profile?.country,
+        network,
         (step, status) => {
           setConfirmationState((cstate) => ({
             state: {
@@ -172,7 +186,7 @@ const AddIdentity = () => {
       setShowRetry(true)
     }
     setProcessing(false)
-  }, [profile, showCountryInPublicProfile])
+  }, [profile, network, showCountryInPublicProfile])
 
   const { formValidated } = useMemo(() => {
     switch (currentPage) {
@@ -353,9 +367,11 @@ const AddIdentity = () => {
               <Button
                 style={styles.button}
                 onPress={() => {
-                  params.mode === AddIdentityMode.Add
-                    ? navigation.goBack()
-                    : navigation.navigate('CreatePin') // Create a pin for the first time create an account
+                  if (params.firstIdentity) {
+                    navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
+                  } else {
+                    navigation.goBack()
+                  }
                 }}>
                 Done
               </Button>
@@ -513,13 +529,13 @@ const AddIdentity = () => {
               checked={showCountryInPublicProfile}
               onToggle={toggleCountryCheckbox}
               label='Show country in my public profile'
-              highlightColor={theme.color.success}
-              checkmarkColor={theme.color.onSuccess}
-              boxOutlineColor={theme.color.grey400}
               textStyle={{ fontSize: theme.fontSize.m }}
             />
-            {/* Add more space to alow scroll on showing the dropdown list */}
-            <Spacer height={320} />
+            <NetworkSelectorRadioButtonGroup
+              selectedNetwork={network}
+              onSelectionChange={setNetwork}
+              style={styles.networkSelection}
+            />
           </ScrollView>
           {renderBottomButtons()}
         </Container>
@@ -589,13 +605,10 @@ const AddIdentity = () => {
                 failed={
                   confirmationState?.state?.CreateIdentifier === 'Failure'
                 }
-                showLoading={
+                loading={
                   confirmationState?.state?.CreateIdentifier === 'Loading'
                 }
                 label='Creating your decentralized identity'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
               />
               {enabledClaimUsername && (
                 <>
@@ -607,13 +620,10 @@ const AddIdentity = () => {
                     failed={
                       confirmationState?.state?.ClaimUsername === 'Failure'
                     }
-                    showLoading={
+                    loading={
                       confirmationState?.state?.ClaimUsername === 'Loading'
                     }
                     label='Claim username'
-                    highlightColor={theme.color.success}
-                    checkmarkColor={theme.color.onSuccess}
-                    boxOutlineColor={theme.color.grey400}
                   />
                 </>
               )}
@@ -623,25 +633,17 @@ const AddIdentity = () => {
                   confirmationState?.state?.StorageLocation === 'Success'
                 }
                 failed={confirmationState?.state?.StorageLocation === 'Failure'}
-                showLoading={
+                loading={
                   confirmationState?.state?.StorageLocation === 'Loading'
                 }
                 label='Connecting to your storage nodes'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
               />
               <Spacer vertical='m' />
               <AnimatedCheckbox
                 checked={confirmationState?.state?.CreateProfile === 'Success'}
                 failed={confirmationState?.state?.CreateProfile === 'Failure'}
-                showLoading={
-                  confirmationState?.state?.CreateProfile === 'Loading'
-                }
+                loading={confirmationState?.state?.CreateProfile === 'Loading'}
                 label='Creating your public profile'
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey400}
               />
             </ScrollView>
           </View>
@@ -720,7 +722,8 @@ const creatStyles = (theme: Theme) => {
       paddingHorizontal: theme.spacing.m,
       marginHorizontal: theme.spacing.m,
     },
+    networkSelection: {
+      marginTop: theme.spacing.l,
+    },
   })
 }
-
-export default AddIdentity

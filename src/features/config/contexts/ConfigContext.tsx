@@ -15,7 +15,7 @@ import { Alert, AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 
 import { APP_REMOTE_CONFIG_STORAGE_KEY } from 'constants/storageKeys'
-import { MaintenanceScreen } from 'pages/Account/MaintenanceScreen'
+import { MaintenanceScreen } from 'pages/Maintenance'
 
 import {
   ConfigContextType,

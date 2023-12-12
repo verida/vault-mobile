@@ -27,6 +27,11 @@ import {
   WARNING_LIGHT_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
+import {
+  NUNITO_SANS,
+  NUNITO_SANS_BOLD,
+  NUNITO_SANS_SEMIBOLD,
+} from 'constants/text'
 
 export const defaultTheme = {
   color: {
@@ -127,5 +132,10 @@ export const defaultTheme = {
   iconSize: {
     s: 16,
     m: 24,
+  },
+  fontFamily: {
+    regular: NUNITO_SANS,
+    semibold: NUNITO_SANS_SEMIBOLD,
+    bold: NUNITO_SANS_BOLD,
   },
 }

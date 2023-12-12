@@ -15,12 +15,13 @@ import {
 } from 'react-native'
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler'
 
-import AnimatedCheckbox from 'components/Checkbox/AnimatedCheckbox'
 import { Icon } from 'components/Icon'
 import { Label } from 'components/Typography/Label'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import inputs from 'styles/inputs'
 import { Theme } from 'styles/types'
+
+import { AnimatedCheckbox } from './AnimatedCheckbox'
 
 export enum FormInputType {
   Text,
@@ -165,10 +166,7 @@ export const FormInput = React.forwardRef(
               <AnimatedCheckbox
                 checked={!loading && checked}
                 failed={!loading && !checked}
-                showLoading={loading}
-                highlightColor={theme.color.success}
-                checkmarkColor={theme.color.onSuccess}
-                boxOutlineColor={theme.color.grey500}
+                loading={loading}
                 failedIcon={
                   <Icon name='warning' color={theme.color.error} size={20} />
                 }

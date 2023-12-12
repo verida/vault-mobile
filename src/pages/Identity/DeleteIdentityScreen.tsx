@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import { LinearGradient } from 'expo-linear-gradient'
 import React, { useState } from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -9,22 +8,31 @@ import { Spacer } from 'components/Spacer'
 import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
-import useParams from 'hooks/useParams'
+import { MainStackScreenProps } from 'navigation/types'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 
 import Button from '../../components/Button'
 
-const title = 'Delete Account'
+const title = 'Delete Identity'
 const info =
-  'To delete your account, please remove any record of your recovery passphrase then logout of this application. \n\n' +
-  'Please note that this operation is final - Verida has no access to your data and cannot recover your account without that passphrase.'
+  'To delete your identity, please remove any record of your recovery passphrase then logout of this application or click the "Delete" button below. \n\n' +
+  'Please note that this operation is final - Verida has no access to your data and cannot recover your identity without that passphrase.'
 
-const DeleteAccount = () => {
-  const navigation = useNavigation()
-  const params = useParams<{
-    onSelectAccount?: (did: string) => void
-    onLogoutAccounts?: (dids: string[]) => void
-  }>()
+export type DeleteIdentityScreenParams = {
+  onSelectAccount?: (did: string) => void
+  onLogoutAccounts?: (dids: string[]) => void
+}
+
+type DeleteIdentityScreenProps = MainStackScreenProps<'DeleteIdentity'>
+
+export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
+  props
+) => {
+  const {
+    route: { params },
+    navigation,
+  } = props
+
   const [showLogout, setShowLogout] = useState(false)
 
   return (
@@ -45,7 +53,7 @@ const DeleteAccount = () => {
             onPress={() => {
               setShowLogout(true)
             }}>
-            Log Out
+            Delete
           </Button>
 
           <Button
@@ -53,7 +61,7 @@ const DeleteAccount = () => {
             onPress={() => {
               navigation.goBack()
             }}>
-            Go Back
+            Cancel
           </Button>
         </View>
       </View>
@@ -96,5 +104,3 @@ const style = StyleSheet.create({
     marginTop: '15%',
   },
 })
-
-export default DeleteAccount
