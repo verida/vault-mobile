@@ -73,6 +73,7 @@ export const defaultTheme = {
     black500: BLACK_COLOR_OPACITY(0.5),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,
+    text: TEXT_COLOR,
     textGrey100: TEXT_GREY_100,
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
@@ -117,6 +118,7 @@ export const defaultTheme = {
     xl: 18,
     xxl: 22,
     xxxl: 24,
+    s28: 28, // TODO: Find a better name or refactor the list
     xxxxl: 36,
   },
   roundness: {
