@@ -17,7 +17,8 @@ import {
   WHITE_COLOR,
 } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import AccountsList from 'pages/Dashboard/AccountsList/AccountsList'
+
+import { AccountsList } from './AccountsList/AccountsList'
 
 export type AddAccountsModalProps = Omit<
   BottomActionsModalProps,

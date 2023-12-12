@@ -1,5 +1,7 @@
+import { EnvironmentType } from '@verida/types'
+import { IdentityAvatar } from 'components'
 import { LinearGradient } from 'expo-linear-gradient'
-import { selectSelectedAccount } from 'features/identities'
+import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
 import {
   selectPublicProfileByDid,
   selectPublicProfilesLoadingState,
@@ -14,11 +16,9 @@ import {
   View,
   ViewProps,
 } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import Entypo from 'react-native-vector-icons/Entypo'
 
-import { DefaultAvatar } from 'api/utils'
 import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { SNOW_COLOR, SUCCESS_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
@@ -33,7 +33,7 @@ export type AccountItemProps = Omit<ViewProps, 'children'> & {
   multipleSelect?: boolean
 }
 
-function AccountItem(props: AccountItemProps) {
+export function AccountItem(props: AccountItemProps) {
   const { did, selected, onSelect, multipleSelect } = props
   const selectedAccount = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector((state) =>
@@ -48,6 +48,8 @@ function AccountItem(props: AccountItemProps) {
   function onPress() {
     onSelect(did)
   }
+
+  const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
 
   const isCurrentAccount = selectedAccount?.did === did
 
@@ -70,18 +72,13 @@ function AccountItem(props: AccountItemProps) {
         isCurrentAccount && styles.currentAccountContainer,
       ]}
       onPress={onPress}>
-      <ShimmerPlaceholder
-        LinearGradient={LinearGradient}
-        visible={!loadingState.loading}
-        width={45}
-        height={45}
-        shimmerStyle={{ borderRadius: 22.5 }}>
-        <FastImage
-          style={styles.avatar}
-          source={avatar || DefaultAvatar}
-          resizeMode='cover'
-        />
-      </ShimmerPlaceholder>
+      <IdentityAvatar
+        style={styles.avatar}
+        source={avatar}
+        network={network}
+        size='compact'
+        loading={!loadingState.loading}
+      />
       <View style={styles.info}>
         <ShimmerPlaceholder
           LinearGradient={LinearGradient}
@@ -108,8 +105,6 @@ const styles = StyleSheet.create({
   avatar: {
     width: 45,
     height: 45,
-    borderRadius: 22.5,
-    resizeMode: 'contain',
   },
   info: {
     flex: 1,
@@ -128,5 +123,3 @@ const styles = StyleSheet.create({
     backgroundColor: SNOW_COLOR,
   },
 })
-
-export default AccountItem

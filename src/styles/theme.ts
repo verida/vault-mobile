@@ -99,6 +99,7 @@ export const defaultTheme = {
     grey900: '#0F1011',
   },
   spacing: {
+    xxs: 2,
     xs: 4,
     s: 8,
     sm: 12,

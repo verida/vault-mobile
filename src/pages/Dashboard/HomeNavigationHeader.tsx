@@ -1,5 +1,7 @@
+import { EnvironmentType } from '@verida/types'
+import { IdentityAvatar } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
-import { selectSelectedAccount } from 'features/identities'
+import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
 import {
   fetchPublicProfileData,
   selectPublicProfilesLoadingState,
@@ -7,14 +9,7 @@ import {
 } from 'features/profiles'
 import { Left, Right } from 'native-base'
 import React, { useEffect } from 'react'
-import {
-  Image,
-  StyleSheet,
-  TouchableOpacity,
-  View,
-  ViewProps,
-} from 'react-native'
-import FastImage from 'react-native-fast-image'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useDispatch } from 'react-redux'
@@ -33,8 +28,6 @@ export type HomeNavigationHeaderProps = Omit<ViewProps, 'children'> & {
   onInboxPress: () => void
   onSettingsPress: () => void
 }
-
-const userImg = require('assets/stubs/avatar.png')
 
 const MAX_MESSAGE_COUNT = 21
 const HITSLOP = { top: 10, right: 10, bottom: 10, left: 10 }
@@ -57,6 +50,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
   const loadingState = useAppSelector((state) =>
     selectPublicProfilesLoadingState(state, did!)
   )
+  const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
 
   useEffect(() => {
     if (did) dispatch(fetchPublicProfileData(did!))
@@ -73,21 +67,15 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
       {...rest}>
       <Left style={styles.leftContainer}>
         <View style={styles.left}>
-          <ShimmerPlaceholder
-            visible={!loadingState.loading}
-            width={40}
-            height={40}
-            shimmerStyle={{ borderRadius: 20 }}>
-            <TouchableOpacity
-              style={styles.avatarButton}
-              onPress={onAvatarPress}>
-              <FastImage
-                source={avatar || userImg}
-                resizeMode={FastImage.resizeMode.cover}
-                style={styles.avatar}
-              />
-            </TouchableOpacity>
-          </ShimmerPlaceholder>
+          <TouchableOpacity style={styles.avatarButton} onPress={onAvatarPress}>
+            <IdentityAvatar
+              style={styles.avatar}
+              source={avatar}
+              network={network}
+              size='compact'
+              loading={!loadingState.loading}
+            />
+          </TouchableOpacity>
 
           <View style={styles.titleContainer}>
             <ShimmerPlaceholder
@@ -105,14 +93,6 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
                 </Text>
                 <AntDesign name={'caretdown'} size={10} color={'#041133'} />
               </TouchableOpacity>
-
-              <View style={styles.network}>
-                <Image
-                  source={require('assets/icons/wifi.png')}
-                  style={styles.networkIcon}
-                />
-                <Text style={styles.networkText}>Testnet</Text>
-              </View>
             </ShimmerPlaceholder>
           </View>
         </View>
@@ -167,9 +147,8 @@ const styles = StyleSheet.create({
     marginRight: 12,
   },
   avatar: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
+    width: 52,
+    height: 52,
   },
   name: {
     fontSize: 18,
@@ -202,20 +181,6 @@ const styles = StyleSheet.create({
   },
   settingsButton: {
     marginHorizontal: 10,
-  },
-  network: {
-    flexDirection: 'row',
-    alignItems: 'center',
-  },
-  networkText: {
-    fontSize: 12,
-    color: '#687085',
-  },
-  networkIcon: {
-    width: 12,
-    height: 12,
-    resizeMode: 'contain',
-    marginRight: 5,
   },
 })
 
