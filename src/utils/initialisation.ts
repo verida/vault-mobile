@@ -1,4 +1,5 @@
 import { config } from 'config'
+import { initNotifications } from 'features/notifications'
 import { initSentry, Logger } from 'features/telemetry'
 
 const logger = new Logger('Initialisation')
@@ -8,6 +9,7 @@ const logger = new Logger('Initialisation')
  */
 export function initApplication() {
   initSentry()
+  initNotifications()
   printConfig()
 
   // TODO: Add other feature initialisation (notification, ...)

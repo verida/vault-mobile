@@ -40,7 +40,6 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
 import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
@@ -73,8 +72,6 @@ export const HomeTabScreen = (props) => {
   const qrAddress = selectedAccount?.did
     ? PROFILE_URL + selectedAccount?.did
     : ''
-
-  useRemoteNotifications()
 
   // TODO: Clean up and migrate all the deeplink handlers here to their respective features/protocols
   const processDeepLink = React.useCallback(
@@ -239,6 +236,10 @@ export const HomeTabScreen = (props) => {
     navigation.navigate('SeedPhrase')
   }
 
+  const handleQrCodePress = useCallback(() => {
+    navigation.navigate('ShareIdentity')
+  }, [navigation])
+
   return (
     <Container>
       <HomeNavigationHeader
@@ -260,15 +261,17 @@ export const HomeTabScreen = (props) => {
           <>
             <View style={style.qr}>
               {Boolean(qrAddress) && (
-                <QRCode
-                  logo={LogoImg}
-                  logoSize={60}
-                  size={207}
-                  codeStyle='dot'
-                  innerEyeStyle='circle'
-                  padding={0.5}
-                  content={qrAddress}
-                />
+                <TouchableOpacity onPress={handleQrCodePress} activeOpacity={1}>
+                  <QRCode
+                    logo={LogoImg}
+                    logoSize={60}
+                    size={207}
+                    codeStyle='dot'
+                    innerEyeStyle='circle'
+                    padding={0.5}
+                    content={qrAddress}
+                  />
+                </TouchableOpacity>
               )}
             </View>
             <Text style={style.notes}>
