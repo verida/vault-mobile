@@ -5,5 +5,6 @@ export * from './Status'
 export * from './Spacer'
 export * from './ScreenLayouts'
 export * from './Requests'
+export * from './Typography'
 export * from './Wallet'
 // TODO: Re-export all components from here

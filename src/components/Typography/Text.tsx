@@ -8,6 +8,9 @@ type TextProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>
 }
 
+/**
+ * @deprecated Use Typography instead
+ */
 export const Text = (props: TextProps) => {
   const { style, ...rest } = props
   const { theme } = useTheme()
