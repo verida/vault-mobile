@@ -166,6 +166,9 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen
             name={'MigrateIdentityConfirmation'}
             component={MigrateIdentityConfirmationScreen}
+            options={{
+              headerShown: true,
+            }}
           />
           <Stack.Screen
             name={'MigrateIdentityExecution'}
