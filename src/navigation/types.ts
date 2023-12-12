@@ -15,6 +15,7 @@ import {
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
+import { ShareIdentityScreenParams } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import {
   AddVeridaOneCustomLinkScreenParams,
@@ -85,6 +86,7 @@ export type MainStackParams = {
   AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
+  ShareIdentity: ShareIdentityScreenParams
 
   SeedPhraseView: undefined
   ManageWallets: undefined

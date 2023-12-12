@@ -4,6 +4,8 @@ import {
 } from 'features/verida/schemas'
 import { z } from 'zod'
 
+import { VeridaMessageType } from '../constants'
+
 export type VeridaBaseUnsavedRecord = z.infer<
   typeof VeridaBaseUnsavedRecordSchema
 >
@@ -15,10 +17,7 @@ export type VeridaBaseRecord = z.infer<typeof VeridaBaseRecordSchema>
 
 export type VeridaRecord<T = Record<string, unknown>> = VeridaBaseRecord & T
 
-export enum VeridaMessageType {
-  SIMPLE_MESSAGE = 'inbox/type/message',
-  DATA_REQUEST = 'inbox/type/dataRequest',
-}
+// TODO: Rework all the message types, create schemas for the different types of message and infer the Types from
 
 export type SimpleMessage = {
   subject: string
@@ -58,7 +57,7 @@ export type SentMessage = {
   rev: string
 }
 
-export type ReceivedMessage<D> = {
+export type VeridaReceivedMessage<D = Record<string, unknown>> = {
   type: VeridaMessageType
   read: boolean
   sentAt: string
@@ -67,7 +66,7 @@ export type ReceivedMessage<D> = {
     context: string
     did: string
   }
-  data: {
+  data?: {
     data: D[]
     replyId?: string
   }

@@ -1,13 +1,11 @@
 import NetInfo from '@react-native-community/netinfo'
 import fbMessaging from '@react-native-firebase/messaging'
 import { selectSelectedAccount } from 'features/identities'
+import { pushNewMessageNotification } from 'features/notifications'
 import { Logger } from 'features/telemetry'
-import { CHANNEL_ID } from 'helpers/notifications'
-import { get } from 'lodash'
 import * as React from 'react'
 import { useEffect, useRef, useState } from 'react'
 import { AppState, AppStateStatus } from 'react-native'
-import PushNotification from 'react-native-push-notification'
 import { useDispatch, useSelector } from 'react-redux'
 import { useThrottledCallback } from 'use-debounce'
 
@@ -29,6 +27,7 @@ export const useEventHandlers = () => {
 
   const onMessage = useThrottledCallback(
     React.useCallback(async function onMessage(newMessage: any) {
+      // TODO: Validate the message with zod, so it is properly typed
       await fetchInboxCount()
       if (
         !newMessage ||
@@ -39,15 +38,7 @@ export const useEventHandlers = () => {
       }
 
       latestNotificationRef.current = newMessage
-      PushNotification.localNotification({
-        title: get(newMessage, 'sendBy.app') || 'New Message',
-        message: newMessage.message,
-        channelId: CHANNEL_ID,
-        userInfo: {
-          category: 'InboxItem',
-          data: newMessage.message,
-        },
-      })
+      pushNewMessageNotification(newMessage)
     }, []),
     500
   )
