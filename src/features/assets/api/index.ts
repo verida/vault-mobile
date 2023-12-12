@@ -4,7 +4,7 @@ import { config } from 'config'
 import { NFT } from 'api/types'
 
 const baseQuery = fetchBaseQuery({
-  baseUrl: config.WALLET_PROVIDER_URL,
+  baseUrl: config.walletProvider.url,
 })
 
 export const assetsApi = createApi({

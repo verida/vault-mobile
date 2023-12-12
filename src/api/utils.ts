@@ -1,4 +1,3 @@
-import { config } from 'config'
 import { setNewMessagesCount } from 'features/inbox'
 import { Logger } from 'features/telemetry'
 import { isValidVeridaDid } from 'features/verida'
@@ -6,6 +5,7 @@ import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 const logger = new Logger('Utils')
 
@@ -103,7 +103,7 @@ export async function getProfile(did: string) {
 // TODO: De-duplicate all the get profile functions and move to features/profiles/utils
 export async function getPublicProfile(
   did: string,
-  contextName: string = config.VERIDA_CONTEXT_NAME
+  contextName: string = VERIDA_VAULT_CONTEXT_NAME
 ) {
   try {
     if (!isValidVeridaDid(did)) {

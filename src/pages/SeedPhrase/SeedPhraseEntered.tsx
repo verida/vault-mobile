@@ -1,6 +1,6 @@
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
-import { config } from 'config'
 import { utils } from 'ethers'
+import { MNEMONIC_LENGTH } from 'features/seedphrases'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
@@ -24,7 +24,7 @@ const cleanSeedPhrase = (phrase: string): string => {
 const verifySeedPhrase = (splitted: string[]): boolean => {
   if (!isEmpty(splitted)) {
     return (
-      splitted.length === config.MNEMONIC_LENGTH &&
+      splitted.length === MNEMONIC_LENGTH &&
       splitted[splitted.length - 1].length > 0
     )
   } else {

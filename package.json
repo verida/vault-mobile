@@ -63,6 +63,7 @@
     "@verida/client-rn": "^2.3.4-rc2",
     "@verida/did-client": "^2.3.5",
     "@verida/encryption-utils": "^2.2.1",
+    "@verida/helpers": "^2.3.3",
     "@verida/types": "^2.3.1",
     "@verida/vda-did-resolver": "^2.3.5",
     "@verida/vda-name-client": "^2.3.4",

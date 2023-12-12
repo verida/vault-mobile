@@ -1,5 +1,5 @@
 import { DIDClient } from '@verida/did-client'
-import { config } from 'config'
+import { getNetworkFromDID } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, {
@@ -57,8 +57,9 @@ export const AuthProvider: FC = ({ children }) => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
     // try to fetch the DID
     const did = selectedAccount!.did
+    const veridaNetwork = getNetworkFromDID(did)
     const didClient = new DIDClient({
-      network: config.VERIDA_ENVIRONMENT,
+      network: veridaNetwork,
     })
 
     try {
@@ -78,7 +79,8 @@ export const AuthProvider: FC = ({ children }) => {
     try {
       const selectedAccount = AccountManager.getInstance().getSelectedAccount()
       if (selectedAccount) {
-        await AccountManager.getInstance().connect()
+        const network = getNetworkFromDID(selectedAccount.did)
+        await AccountManager.getInstance().connect(false, network)
       }
       setLoaded(true)
       setAuthenticated(!!selectedAccount)

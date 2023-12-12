@@ -1,8 +1,8 @@
 import axios from 'axios'
-import { config } from 'config'
 import { Logger } from 'features/telemetry'
 
 import AccountManager from 'api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 const logger = new Logger('Motifications')
 
@@ -11,7 +11,7 @@ const logger = new Logger('Motifications')
 async function getAxios() {
   const fetchConfig: any = {
     headers: {
-      'context-name': config.VERIDA_CONTEXT_NAME,
+      'context-name': VERIDA_VAULT_CONTEXT_NAME,
     },
   }
 
@@ -21,9 +21,9 @@ async function getAxios() {
 
   const keyring = await AccountManager.getInstance()
     .context?.getAccount()
-    .keyring(config.VERIDA_CONTEXT_NAME)
+    .keyring(VERIDA_VAULT_CONTEXT_NAME)
   const axiosAuthPassword = await keyring?.sign(
-    `Access the notification service using context: "${config.VERIDA_CONTEXT_NAME}"?\n\n${currentDid}`
+    `Access the notification service using context: "${VERIDA_VAULT_CONTEXT_NAME}"?\n\n${currentDid}`
   )
 
   fetchConfig.auth = {
@@ -61,7 +61,7 @@ export async function registerRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: config.VERIDA_CONTEXT_NAME,
+        context: VERIDA_VAULT_CONTEXT_NAME,
         deviceId: token,
       },
     }
@@ -84,7 +84,7 @@ export async function unRegisterRemoteNotification(token: string) {
     const body = {
       data: {
         did: currentDid,
-        context: config.VERIDA_CONTEXT_NAME,
+        context: VERIDA_VAULT_CONTEXT_NAME,
         deviceId: token,
       },
     }
