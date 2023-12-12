@@ -5,16 +5,19 @@ import React from 'react'
 import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
 import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
-import DeleteAccount from 'pages/Account/DeleteAccount'
-import AddIdentity from 'pages/Account/Identity/AddIdentity'
-import Identity from 'pages/Account/Identity/Identity'
 import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
-import { ShareIdentityScreen } from 'pages/Identity'
+import {
+  AddIdentityScreen,
+  CreateIdentityScreen,
+  DeleteIdentityScreen,
+  ImportIdentityScreen,
+  ShareIdentityScreen,
+} from 'pages/Identity'
 import Inbox from 'pages/Inbox'
 import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
@@ -39,7 +42,6 @@ import {
   ProofRequestScreen,
 } from 'pages/Requests'
 import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
-import SeedPhraseEntered from 'pages/SeedPhrase/SeedPhraseEntered'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
@@ -71,8 +73,10 @@ export const MainNavigator: React.FunctionComponent = () => {
       <BehindAuthContextProviders>
         {/* An empty component, just to register all of the main app events after the user has authenticated. */}
         <BehindAuthHandlers />
-        <Stack.Navigator screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={'Dashboard'} component={TabsNavigator} />
+        <Stack.Navigator
+          initialRouteName='Tabs'
+          screenOptions={{ headerShown: false }}>
+          <Stack.Screen name={'Tabs'} component={TabsNavigator} />
           <Stack.Screen name={'Inbox'} component={Inbox} />
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
@@ -143,13 +147,20 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'Settings'} component={Settings} />
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
           <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
+
+          <Stack.Screen name={'AddIdentity'} component={AddIdentityScreen} />
           <Stack.Screen
-            name={'SeedPhraseEntered'}
-            component={SeedPhraseEntered}
+            name='CreateIdentity'
+            component={CreateIdentityScreen}
           />
-          <Stack.Screen name={'DeleteAccount'} component={DeleteAccount} />
-          <Stack.Screen name={'Identity'} component={Identity} />
-          <Stack.Screen name={'AddIdentity'} component={AddIdentity} />
+          <Stack.Screen
+            name={'ImportIdentity'}
+            component={ImportIdentityScreen}
+          />
+          <Stack.Screen
+            name={'DeleteIdentity'}
+            component={DeleteIdentityScreen}
+          />
 
           <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
           <Stack.Screen

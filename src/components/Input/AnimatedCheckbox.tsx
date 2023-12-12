@@ -11,13 +11,9 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 
 import { Text } from 'components/Typography/Text'
 
-interface Props {
+export type AnimatedCheckboxProps = {
   checked?: boolean
   onToggle?: () => void
-  highlightColor: string
-  checkmarkColor: string
-  boxOutlineColor: string
-  showLoading?: boolean
   loading?: boolean
   failed?: boolean
   label?: string
@@ -27,13 +23,13 @@ interface Props {
   successIcon?: ReactNode
 }
 
-const AnimatedCheckbox = (props: Props) => {
+export const AnimatedCheckbox: React.FC<AnimatedCheckboxProps> = (props) => {
   const {
-    showLoading,
     label,
-    checked,
     onToggle,
-    failed,
+    checked = false,
+    loading = false,
+    failed = false,
     textStyle,
     containerStyle,
     failedIcon,
@@ -61,7 +57,7 @@ const AnimatedCheckbox = (props: Props) => {
             justifyContent: 'center',
             marginRight: theme.spacing.s,
           }}>
-          {showLoading ? (
+          {loading ? (
             <ActivityIndicator size='small' />
           ) : failed ? (
             failedIcon || (
@@ -103,11 +99,3 @@ const AnimatedCheckbox = (props: Props) => {
     </View>
   )
 }
-
-AnimatedCheckbox.defaultProps = {
-  showLoading: false,
-  checked: undefined,
-  failed: undefined,
-}
-
-export default AnimatedCheckbox

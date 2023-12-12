@@ -1,17 +1,22 @@
+import { useNavigation } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { utils } from 'ethers'
 import { MNEMONIC_LENGTH } from 'features/seedphrases'
+import { getDefaultVeridaNetwork } from 'features/verida'
+import { useThemeAwareStyle } from 'hooks'
 import isEmpty from 'lodash/isEmpty'
 import { Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
-import { Alert, Keyboard } from 'react-native'
+import { Alert, Keyboard, StyleSheet } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import { FormInput } from 'components/Input/FormInput'
 import CustomFooter from 'components/Layouts/CustomFooter'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { NetworkSelectorRadioButtonGroup } from 'components/Network'
 import Screen from 'components/Screen'
 import { MainStackParams } from 'navigation/types'
+import { Theme } from 'styles/types'
 
 import Button from '../../components/Button'
 import Layout from '../../components/Layouts/Layout'
@@ -32,24 +37,36 @@ const verifySeedPhrase = (splitted: string[]): boolean => {
   }
 }
 
-const SeedPhraseEntered = (
-  props: NativeStackScreenProps<MainStackParams, 'SeedPhraseEntered'>
+export type ImportIdentityScreenParams = {
+  firstIdentity: boolean
+}
+
+type ImportIdentityScreenProps = NativeStackScreenProps<
+  MainStackParams,
+  'ImportIdentity'
+>
+
+export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
+  props
 ) => {
-  const { route, navigation } = props
-  const usePrivateKey = route.params?.usePrivateKey || false
+  const {
+    route: { params },
+  } = props
+  const navigation = useNavigation() // TODO: Take it from the props once we have combined the MainStackNavigator and the AuthStackNavigator
+
+  const defaultNetwork = getDefaultVeridaNetwork()
+
+  const styles = useThemeAwareStyle(createStyles)
+
   const [phrase, setPhrase] = useState('')
   const [verified, setVerified] = useState(false)
   const [error, showError] = useState(false)
   const [processing, setProcessing] = useState(false)
+  const [network, setNetwork] = useState(defaultNetwork)
 
   useEffect(() => {
     const verify = () => {
       showError(false)
-      if (usePrivateKey) {
-        // We don't verify private key yet.
-        setVerified(true)
-        return
-      }
 
       const cleanedPhrase = cleanSeedPhrase(phrase)
       const splitted = !isEmpty(cleanedPhrase)
@@ -61,7 +78,7 @@ const SeedPhraseEntered = (
     }
 
     verify()
-  }, [phrase, usePrivateKey])
+  }, [phrase])
 
   const onContinue = async () => {
     try {
@@ -73,16 +90,17 @@ const SeedPhraseEntered = (
         throw new Error('Invalid seed phrase')
       }
       const result = await AccountManager.getInstance().importAccount(
-        cleanedPhrase
+        cleanedPhrase,
+        network
       )
       if (!result) {
         Alert.alert('Failed', 'Account already exist')
       }
 
-      if (route?.params?.previousScreen === 'Dashboard') {
-        navigation.navigate('Dashboard')
+      if (params.firstIdentity) {
+        navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
       } else {
-        navigation.navigate('Success')
+        navigation.goBack()
       }
     } catch (cause) {
       showError(true)
@@ -91,15 +109,13 @@ const SeedPhraseEntered = (
     }
   }
 
-  const title = usePrivateKey ? 'Seed Phrase or Private Key' : 'Seed Phrase'
-  const label = usePrivateKey
-    ? 'Enter seed phrase or private key'
-    : 'Enter seed phrase'
+  const title = 'Seed Phrase'
+  const label = 'Enter seed phrase'
 
   return (
     <Screen
       withKeyboardAvoidingView
-      navBar={<NavigationHeader title='Import An Account' />}>
+      navBar={<NavigationHeader title='Import an Identity' />}>
       <Content>
         <Layout title={title}>
           <FormInput
@@ -113,12 +129,17 @@ const SeedPhraseEntered = (
             errorMessage={
               !error
                 ? undefined
-                : 'That does not appear to be a valid seed phrase that was exported from the Verida Vault, please try again'
+                : 'That does not appear to be a valid seed phrase that was exported from the Verida Wallet, please try again'
             }
             onChangeText={setPhrase}
             style={[error && ModifierStyles.error]}
             inputStyle={{ minHeight: 68 }}
             placeholder={'eg. Open despair creek road again ice least'}
+          />
+          <NetworkSelectorRadioButtonGroup
+            selectedNetwork={network}
+            onSelectionChange={setNetwork}
+            style={styles.networkSelector}
           />
         </Layout>
       </Content>
@@ -135,4 +156,9 @@ const SeedPhraseEntered = (
   )
 }
 
-export default SeedPhraseEntered
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    networkSelector: {
+      marginTop: theme.spacing.l,
+    },
+  })

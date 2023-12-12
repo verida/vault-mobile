@@ -37,7 +37,6 @@ import {
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
 import { useRemoteNotifications } from 'hooks/useRemoteNotifications'
-import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 
@@ -207,16 +206,10 @@ const Home = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('Identity', {
-        mode: AddIdentityMode.Add,
-        previousScreen: 'Dashboard',
+      navigation.navigate('AddIdentity', {
+        firstIdentity: false,
       })
     })
-  }
-
-  function onImportAccount() {
-    toggleAddAccountsModal()
-    navigation.navigate('SeedPhraseEntered', { previousScreen: 'Dashboard' })
   }
 
   async function onSelectAccount(did) {
@@ -305,7 +298,6 @@ const Home = (props) => {
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
         onAddNew={onAddAccount}
-        onImport={onImportAccount}
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />

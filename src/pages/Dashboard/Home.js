@@ -40,7 +40,6 @@ import {
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { PROFILE_URL } from 'constants/url'
 import { useAuth } from 'hooks/useAuth'
-import { AddIdentityMode } from 'pages/Account/Identity/Identity'
 import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
 import DidView from 'pages/Dashboard/DidView'
 import HomeNavigationHeader from 'pages/Dashboard/HomeNavigationHeader'
@@ -178,16 +177,10 @@ export const HomeTabScreen = (props) => {
   function onAddAccount() {
     toggleAddAccountsModal()
     InteractionManager.runAfterInteractions(() => {
-      navigation.navigate('Identity', {
-        mode: AddIdentityMode.Add,
-        previousScreen: 'Dashboard',
+      navigation.navigate('AddIdentity', {
+        firstIdentity: false,
       })
     })
-  }
-
-  function onImportAccount() {
-    toggleAddAccountsModal()
-    navigation.navigate('SeedPhraseEntered', { previousScreen: 'Dashboard' })
   }
 
   async function onSelectAccount(did) {
@@ -292,7 +285,6 @@ export const HomeTabScreen = (props) => {
         visible={showAddAccounts}
         onClose={toggleAddAccountsModal}
         onAddNew={onAddAccount}
-        onImport={onImportAccount}
         onSelectAccount={onSelectAccount}
         onLogoutAccounts={onLogoutAccounts}
       />
