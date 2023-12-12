@@ -10,6 +10,7 @@ import {
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
+  PRIMARY_COLOR_5,
   PRIMARY_COLOR_50,
   PRIMARY_COLOR_100,
   SEPARATOR,
@@ -60,6 +61,7 @@ export const defaultTheme = {
     veridaGreen: VERIDA_COLOR,
     orange: ORANGE_COLOR,
 
+    primary5: PRIMARY_COLOR_5,
     primary50: PRIMARY_COLOR_50,
     primary100: PRIMARY_COLOR_100,
 

@@ -16,6 +16,7 @@ import {
   CreateIdentityScreen,
   DeleteIdentityScreen,
   ImportIdentityScreen,
+  ShareIdentityScreen,
 } from 'pages/Identity'
 import Inbox from 'pages/Inbox'
 import ShareableData from 'pages/Inbox/ShareableData'
@@ -220,6 +221,17 @@ export const MainNavigator: React.FunctionComponent = () => {
               component={PaymentRequestScreen}
             />
             <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
+          </Stack.Group>
+          <Stack.Group
+            screenOptions={{
+              presentation: 'modal',
+              headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
+              // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
+            }}>
+            <Stack.Screen
+              name='ShareIdentity'
+              component={ShareIdentityScreen}
+            />
           </Stack.Group>
         </Stack.Navigator>
       </BehindAuthContextProviders>

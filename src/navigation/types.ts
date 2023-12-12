@@ -19,6 +19,7 @@ import {
   CreateIdentityScreenParams,
   DeleteIdentityScreenParams,
   ImportIdentityScreenParams,
+  ShareIdentityScreenParams,
 } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
 import { OnboardingScreenParams } from 'pages/Onboarding'
@@ -89,6 +90,7 @@ export type MainStackParams = {
   AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
+  ShareIdentity: ShareIdentityScreenParams
 
   SeedPhraseView: undefined
   ManageWallets: undefined
