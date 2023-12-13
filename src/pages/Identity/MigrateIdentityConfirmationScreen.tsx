@@ -36,7 +36,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
     }, [navigation])
 
     const handleMigrate = useCallback(() => {
-      navigation.navigate('MigrateIdentityExecution')
+      navigation.replace('MigrateIdentityExecution')
     }, [navigation])
 
     return (

@@ -5,14 +5,43 @@ import {
   StatusList,
   StatusListItem,
 } from 'components'
-import { useTheme } from 'contexts'
+import {
+  MigrateIdentityStep,
+  MigrateIdentityStepStatus,
+  useCurrentIdentity,
+  useMigrateIdentity,
+} from 'features/identities'
+import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
+
+const logger = new Logger('MigrateIdentityExecutionScreen')
+
+const defaultMigrationStepStatus: Array<
+  StatusListItem & { key: MigrateIdentityStep }
+> = [
+  {
+    key: 'createDID',
+    label: 'Creating your Mainnet Identity',
+    status: 'idle',
+  },
+  {
+    key: 'connectIdentity',
+    label: 'Connecting to your storage nodes',
+    status: 'idle',
+  },
+  {
+    key: 'migrateData',
+    label: 'Migrating your data',
+    status: 'idle',
+  },
+]
+
+type MigrationStatus = 'processing' | 'success' | 'error'
 
 export type MigrateIdentityExecutionScreenParams = undefined
 
@@ -23,10 +52,6 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
   (props) => {
     const { navigation } = props
 
-    const insets = useSafeAreaInsets()
-    const { theme } = useTheme()
-    const styles = useThemeAwareStyle(createStyles)
-
     useEffect(() => {
       navigation.setOptions({
         title: 'Migrate Identity',
@@ -34,43 +59,122 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       })
     }, [navigation])
 
-    const title = 'Migrating your Identity'
-    const subtitle = 'Please wait, it can take a few minutes.'
+    const styles = useThemeAwareStyle(createStyles)
 
-    const statusItems: StatusListItem[] = [
-      {
-        label: 'Creating your Mainnet Identity',
-        status: 'success',
+    const [status, setStatus] = useState<MigrationStatus>('processing')
+    const [statusItems, setStatusItems] = useState(defaultMigrationStepStatus)
+
+    const updateStepStatus = useCallback(
+      (step: MigrateIdentityStep, stepStatus: MigrateIdentityStepStatus) => {
+        setStatusItems((prevItems) =>
+          prevItems.map((item) =>
+            item.key === step ? { ...item, status: stepStatus } : item
+          )
+        )
       },
-      {
-        label: 'Connecting to your storage nodes',
-        status: 'processing',
+      []
+    )
+
+    const identity = useCurrentIdentity()
+    const { migrate } = useMigrateIdentity()
+
+    const executeMigration = useCallback(
+      async (did: string) => {
+        try {
+          setStatus('processing')
+          await migrate(did, updateStepStatus)
+          setStatus('success')
+        } catch (error: unknown) {
+          logger.error(error)
+          setStatus('error')
+        }
       },
-      {
-        label: 'Migrating your data',
-        status: 'idle',
-      },
-    ]
+      [migrate, updateStepStatus]
+    )
+
+    useEffect(() => {
+      if (identity) {
+        executeMigration(identity.did)
+      }
+    }, [identity, executeMigration])
+
+    const handleClose = useCallback(() => {
+      navigation.goBack()
+    }, [navigation])
+
+    const handleSwitchToNewIdentity = useCallback(() => {
+      // TODO: Ensure to connect with the new Identity
+      navigation.goBack()
+    }, [navigation])
+
+    const handleRetry = useCallback(() => {
+      //
+    }, [])
+
+    const title =
+      status === 'success'
+        ? 'Success!'
+        : status === 'error'
+        ? 'Something went wrong!'
+        : 'Migrating your Identity'
+    const subtitle =
+      status === 'success'
+        ? 'Your Identity has been successfully migrated'
+        : status === 'error'
+        ? 'Please retry'
+        : 'Please wait, it can take a few minutes.'
 
     return (
-      <ScreenWrapper>
-        <View
-          style={[
-            styles.container,
-            { paddingTop: insets.top + theme.spacing.l }, // TODO: allow fine-tuning insets in ScreenWrapper
-          ]}>
+      <ScreenWrapper allSafeAreaEdges>
+        <View style={[styles.container]}>
           <StatusInfo
-            statusType='processsing'
+            statusType={
+              status === 'success'
+                ? 'success'
+                : status === 'error'
+                ? 'error'
+                : 'processsing'
+            }
             title={title}
             subtitle={subtitle}
           />
           <StatusList statusItems={statusItems} style={styles.statusList} />
+          {/* TODO: Implement data migration progress */}
         </View>
         <BottomActionBar
-          actions={[]}
+          hideBorder
           alertType='warning'
-          alertContent={`Do not close the application`}
-          // TODO: Allow fine-tunning BottomActionBar with optional actions, optional top border and action orientation configuration
+          alertContent={
+            status === 'processing' ? `Do not close the application` : undefined
+          }
+          actions={
+            status === 'success'
+              ? [
+                  {
+                    label: 'Close',
+                    onPress: handleClose,
+                    color: 'grey',
+                  },
+                  {
+                    label: 'Switch to new Identity',
+                    onPress: handleSwitchToNewIdentity,
+                  },
+                ]
+              : status === 'error'
+              ? [
+                  {
+                    label: 'Close',
+                    onPress: handleClose,
+                    color: 'grey',
+                  },
+                  {
+                    label: 'Retry',
+                    onPress: handleRetry,
+                  },
+                ]
+              : []
+          }
+          // TODO: Allow fine-tunning BottomActionBar with optional actions and action orientation configuration
         />
       </ScreenWrapper>
     )
