@@ -1,4 +1,5 @@
 import { config } from 'config'
+import { canMigrateToMainnet, useCurrentIdentity } from 'features/identities'
 import { capitalize, isEmpty } from 'lodash'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
@@ -86,6 +87,11 @@ export default (props) => {
   const [loading, setLoading] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
 
+  const currentIdentity = useCurrentIdentity()
+  const displayMigrateToMainnet = currentIdentity?.did
+    ? canMigrateToMainnet(currentIdentity.did)
+    : false
+
   const networks = useSelector((state) => state.settings.networks)
   const modifiedGeneralList = [...generalList]
   const versionText = `${APP_NAME} ${capitalize(
@@ -108,6 +114,16 @@ export default (props) => {
   }
 
   const list = isVeridaTeamMember ? teamList : publicList
+
+  if (displayMigrateToMainnet) {
+    list.push({
+      label: 'Migrate Identity to Mainnet',
+      action: 'arrow',
+      optional: true,
+      onPress: (navigation) =>
+        navigation.navigate('MigrateIdentityConfirmation'),
+    })
+  }
 
   const mergedList = [
     ...list,
