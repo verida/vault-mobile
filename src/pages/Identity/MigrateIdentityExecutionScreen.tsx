@@ -1,10 +1,12 @@
 import {
   BottomActionBar,
+  ProgressBar,
   ScreenWrapper,
   StatusInfo,
   StatusList,
   StatusListItem,
 } from 'components'
+import { useTheme } from 'contexts'
 import {
   MigrateIdentityStep,
   MigrateIdentityStepStatus,
@@ -15,6 +17,7 @@ import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
+import { formatPercentage } from 'utils'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -60,9 +63,11 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     }, [navigation])
 
     const styles = useThemeAwareStyle(createStyles)
+    const { theme } = useTheme()
 
     const [status, setStatus] = useState<MigrationStatus>('processing')
     const [statusItems, setStatusItems] = useState(defaultMigrationStepStatus)
+    const [migrationProgress, setMigrationprogress] = useState(0)
 
     const updateStepStatus = useCallback(
       (step: MigrateIdentityStep, stepStatus: MigrateIdentityStepStatus) => {
@@ -75,6 +80,20 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       []
     )
 
+    const updateMigrationProgress = useCallback((newProgress) => {
+      setMigrationprogress(newProgress)
+      setStatusItems((prevItems) =>
+        prevItems.map((item) =>
+          item.key === 'migrateData'
+            ? {
+                ...item,
+                label: `Migrating your data (${formatPercentage(newProgress)})`,
+              }
+            : item
+        )
+      )
+    }, [])
+
     const identity = useCurrentIdentity()
     const { migrate } = useMigrateIdentity()
 
@@ -82,14 +101,14 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       async (did: string) => {
         try {
           setStatus('processing')
-          await migrate(did, updateStepStatus)
+          await migrate(did, updateStepStatus, updateMigrationProgress)
           setStatus('success')
         } catch (error: unknown) {
           logger.error(error)
           setStatus('error')
         }
       },
-      [migrate, updateStepStatus]
+      [migrate, updateStepStatus, updateMigrationProgress]
     )
 
     useEffect(() => {
@@ -103,7 +122,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     }, [navigation])
 
     const handleSwitchToNewIdentity = useCallback(() => {
-      // TODO: Ensure to connect with the new Identity
+      // TODO: Connect with the new Identity
       navigation.goBack()
     }, [navigation])
 
@@ -111,9 +130,14 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       if (identity) {
         setStatus('processing')
         setStatusItems(defaultMigrationStepStatus)
+        setMigrationprogress(0)
         executeMigration(identity.did)
       }
     }, [identity, executeMigration])
+
+    const isMigratingData = statusItems.some(
+      (item) => item.key === 'migrateData' && item.status === 'processing'
+    )
 
     const title =
       status === 'success'
@@ -143,13 +167,22 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
             subtitle={subtitle}
           />
           <StatusList statusItems={statusItems} style={styles.statusList} />
-          {/* TODO: Implement data migration progress */}
+          {isMigratingData ? (
+            <View style={styles.progressBarContainer}>
+              <ProgressBar
+                progress={migrationProgress}
+                color={theme.color.success}
+              />
+            </View>
+          ) : null}
         </View>
         <BottomActionBar
           hideBorder
           alertType='warning'
           alertContent={
-            status === 'processing' ? `Do not close the application` : undefined
+            status === 'processing'
+              ? `Please do not close the app! As a decentralized network, your Verida Wallet is performing the operation.`
+              : undefined
           }
           actionsOrientation='column'
           actions={
@@ -179,7 +212,6 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
                 ]
               : []
           }
-          // TODO: Allow fine-tunning BottomActionBar with optional actions and action orientation configuration
         />
       </ScreenWrapper>
     )
@@ -194,5 +226,9 @@ const createStyles = (theme: Theme) =>
     },
     statusList: {
       marginTop: theme.spacing.xxl,
+    },
+    progressBarContainer: {
+      marginTop: theme.spacing.m,
+      marginLeft: theme.spacing.s + 20,
     },
   })

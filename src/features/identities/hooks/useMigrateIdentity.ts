@@ -2,13 +2,20 @@ import { Logger } from 'features/telemetry'
 import { useCallback } from 'react'
 import { wait } from 'utils'
 
-import { UpdateMigrateStepStatusFunction } from '../types'
+import {
+  UpdateMigrateStepStatusFunction,
+  UpdateMigrationProgressFunction,
+} from '../types'
 
 const logger = new Logger('Identity')
 
 export function useMigrateIdentity() {
   const migrate = useCallback(
-    async (did: string, updateStatus: UpdateMigrateStepStatusFunction) => {
+    async (
+      did: string,
+      updateStatus: UpdateMigrateStepStatusFunction,
+      updateMigrationProgress: UpdateMigrationProgressFunction
+    ) => {
       logger.info('Starting migrating identity', { did })
       await wait(500)
       updateStatus('createDID', 'processing')
@@ -23,7 +30,11 @@ export function useMigrateIdentity() {
       await wait(500)
       updateStatus('migrateData', 'processing')
       logger.debug('Starting migrating data', { did })
-      await wait(10 * 1000)
+      // create a loop for 10 seconds and update the progress
+      for (let i = 0; i <= 100; i++) {
+        await wait(100)
+        updateMigrationProgress(i / 100)
+      }
       updateStatus('migrateData', 'success')
       logger.info('Data migrated successfully', { did })
       // updateStatus('migrateData', 'error')

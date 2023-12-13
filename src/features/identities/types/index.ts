@@ -30,3 +30,5 @@ export type UpdateMigrateStepStatusFunction = (
   step: MigrateIdentityStep,
   status: MigrateIdentityStepStatus
 ) => void
+
+export type UpdateMigrationProgressFunction = (progress: number) => void
