@@ -14,6 +14,7 @@ import { Theme } from 'styles/types'
 
 export type ScreenWrapperProps = {
   children: React.ReactNode
+  backgroundColor?: string
   withoutSafeArea?: boolean
   keyboardAvoiding?: boolean
   keyboardAvoidingBehavior?: KeyboardAvoidingViewProps['behavior']
@@ -29,6 +30,7 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
 ) => {
   const {
     children,
+    backgroundColor,
     withoutSafeArea = false,
     keyboardAvoiding = false,
     keyboardAvoidingBehavior,
@@ -50,6 +52,9 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
               paddingRight: insets.right,
               paddingLeft: insets.left,
             },
+        {
+          backgroundColor: backgroundColor,
+        },
       ]}>
       {/* TODO: Keyboard avoiding to be properly tested on screens with inputs */}
       <KeyboardAvoidingView

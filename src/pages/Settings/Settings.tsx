@@ -1,16 +1,19 @@
+import { ScreenWrapper } from 'components'
+import { useTheme } from 'contexts'
+import { selectSelectedAccount } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
-import { Icon } from 'native-base'
-import React, { useCallback, useState } from 'react'
+import { Icon as IconNativeBase } from 'native-base'
+import React, { useCallback, useEffect, useState } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import PropertyList from 'components/PropertyList'
 import Text from 'components/Text'
 import { APP_NAME, APP_VERSION_FORMATTED } from 'constants/application'
-import { NUNITO_SANS_BOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
-import LayoutStyle from 'styles/layouts'
+import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 import AddAccountsModal from '../Dashboard/AddAccountsModal'
@@ -26,6 +29,7 @@ type SettingsItem = {
 
 type SettingsCategory = {
   label: string
+  subtext?: string
   items: SettingsItem[]
 }
 
@@ -42,10 +46,23 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   } = props
 
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
+  const insets = useSafeAreaInsets()
+
+  const handleBack = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Settings',
+    })
+  }, [navigation, handleBack])
+
+  const currentIdentity = useAppSelector(selectSelectedAccount) // TODO: Use useCurrentIdentity when available
 
   const [loading, setLoading] = useState(false)
   const [showLogout, setShowLogout] = useState(false)
-
   const handleDisplayLogoutModal = useCallback(() => {
     setShowLogout(true)
   }, [])
@@ -64,6 +81,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     },
     {
       label: 'Identity',
+      subtext: currentIdentity?.did,
       items: [
         {
           label: 'Seed Phrase',
@@ -118,30 +136,46 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     },
   ]
 
-  const versionText = `${APP_NAME} ${APP_VERSION_FORMATTED}`
+  const walletAppVersion = `${APP_NAME} ${APP_VERSION_FORMATTED}`
 
   if (loading) return <LoadingView />
 
   return (
-    <View style={styles.container}>
-      <NavigationHeader
+    <ScreenWrapper
+      backgroundColor={theme.color.snow}
+      // TODO: Disable the bottom safe area (props added in another branch, need merge to get it)
+    >
+      <NavigationHeader // TODO: Get rid of the following when properly handling a common header in the navigator
         title='Settings'
         left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          icon: <IconNativeBase name='arrow-back' style={{ color: '#000' }} />,
           action: () => props.navigation.goBack(),
         }}
       />
-      <ScrollView>
-        <View style={LayoutStyle.layout}>
-          {settingsItems.map((category) => (
-            <View key={category.label}>
-              <Text style={styles.title}>{category.label}</Text>
-              <PropertyList list={category.items} />
-            </View>
-          ))}
+      <ScrollView
+        contentContainerStyle={[
+          styles.container,
+          {
+            paddingBottom: insets.bottom,
+          },
+        ]}>
+        {settingsItems.map((category) => (
+          <View key={category.label} style={styles.categoryContainer}>
+            <Text style={styles.categoryLabel}>{category.label}</Text>
+            {category.subtext ? (
+              <Text
+                style={styles.categorySubtext}
+                numberOfLines={1}
+                ellipsizeMode='middle'>
+                {category.subtext}
+              </Text>
+            ) : null}
+            <PropertyList list={category.items} />
+          </View>
+        ))}
 
-          <Text style={styles.versionText}>{versionText}</Text>
-        </View>
+        <Text style={styles.appVersion}>{walletAppVersion}</Text>
+
         <AddAccountsModal
           visible={showLogout}
           onClose={() => {
@@ -152,28 +186,37 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           setLoading={setLoading}
         />
       </ScrollView>
-    </View>
+    </ScreenWrapper>
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
-      flex: 1,
+      paddingHorizontal: theme.spacing.m,
     },
-    title: {
-      fontSize: 12,
-      fontFamily: NUNITO_SANS_BOLD,
+    categoryContainer: {
+      marginTop: theme.spacing.l,
+    },
+    categoryLabel: {
+      fontSize: theme.fontSize.s,
+      fontFamily: theme.fontFamily.bold,
       color: theme.color.black600,
       textTransform: 'uppercase',
-      marginTop: theme.spacing.l,
+      marginBottom: theme.spacing.s,
+    },
+    categorySubtext: {
+      fontSize: theme.fontSize.s,
+      fontFamily: theme.fontFamily.bold,
+      color: theme.color.black600,
       marginBottom: theme.spacing.s,
     },
     logoutText: {
       color: theme.color.orange,
     },
-    versionText: {
+    appVersion: {
+      textAlign: 'center',
       color: theme.color.black,
-      marginTop: theme.spacing.m,
+      marginTop: theme.spacing.l,
     },
   })
