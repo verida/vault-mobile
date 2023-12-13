@@ -41,7 +41,6 @@ export const AnimatedCheckbox: React.FC<AnimatedCheckboxProps> = (props) => {
     <View
       style={[
         {
-          flex: 1,
           flexDirection: 'row',
           alignItems: 'center',
         },
@@ -55,7 +54,6 @@ export const AnimatedCheckbox: React.FC<AnimatedCheckboxProps> = (props) => {
           style={{
             alignItems: 'center',
             justifyContent: 'center',
-            marginRight: theme.spacing.s,
           }}>
           {loading ? (
             <ActivityIndicator size='small' />
@@ -91,7 +89,14 @@ export const AnimatedCheckbox: React.FC<AnimatedCheckboxProps> = (props) => {
       </TouchableOpacity>
       {label && (
         <>
-          <Text style={[{ fontSize: theme.fontSize.l }, textStyle]}>
+          <Text
+            style={[
+              {
+                fontSize: theme.fontSize.l,
+                marginLeft: theme.spacing.s,
+              },
+              textStyle,
+            ]}>
             {label}
           </Text>
         </>

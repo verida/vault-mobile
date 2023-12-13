@@ -50,9 +50,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
                   Do you want to migrate your Identity to Mainnet?
                 </Typography>
                 <View style={styles.didWrapper}>
-                  <Typography variant='h5' style={styles.did}>
-                    {did}
-                  </Typography>
+                  <Typography variant='h5'>{did}</Typography>
                 </View>
                 <Typography variant='h5' style={styles.subtitle}>
                   This process will create a corresponding Mainnet Identity and
@@ -67,9 +65,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
                   {`You can't migrate this Identity`}
                 </Typography>
                 <View style={styles.didWrapper}>
-                  <Typography variant='h5' style={styles.did}>
-                    {did}
-                  </Typography>
+                  <Typography variant='h5'>{did}</Typography>
                 </View>
                 <Typography variant='h5' style={styles.subtitle}>
                   Only Testnet Identities can be migrated to Mainnet.
@@ -123,10 +119,8 @@ const createStyles = (theme: Theme) =>
       borderRadius: theme.roundness.l,
       backgroundColor: theme.color.primary5,
     },
-    did: {},
     subtitle: {
       marginTop: theme.spacing.m,
-      // paddingHorizontal: theme.spacing.m,
       opacity: 0.6,
     },
   })
