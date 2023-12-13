@@ -14,3 +14,19 @@ export type Account = {
 export type NormalizedAccounts = {
   [k: string]: Account
 }
+
+export type MigrateIdentityStep =
+  | 'createDID'
+  | 'connectIdentity'
+  | 'migrateData'
+
+export type MigrateIdentityStepStatus =
+  | 'idle'
+  | 'processing'
+  | 'success'
+  | 'error'
+
+export type UpdateMigrateStepStatusFunction = (
+  step: MigrateIdentityStep,
+  status: MigrateIdentityStepStatus
+) => void
