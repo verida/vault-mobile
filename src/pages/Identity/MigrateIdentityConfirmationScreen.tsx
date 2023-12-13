@@ -81,6 +81,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
               ? 'The migration can take several minutes and you must keep the app open'
               : undefined
           }
+          actionsOrientation='row'
           actions={[
             {
               label: 'Cancel',

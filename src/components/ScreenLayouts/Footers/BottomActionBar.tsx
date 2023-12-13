@@ -16,6 +16,7 @@ type Action = {
 
 export type BottomActionBarProps = {
   actions?: Action[]
+  actionsOrientation?: 'row' | 'column'
   alertType?: AlertType
   alertContent?: React.ReactNode | string
   hideBorder?: boolean
@@ -26,8 +27,9 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
 ) => {
   const {
     actions,
-    alertContent,
+    actionsOrientation = 'row',
     alertType,
+    alertContent,
     hideBorder = false,
     ...viewProps
   } = props
@@ -57,15 +59,28 @@ export const BottomActionBar: React.FunctionComponent<BottomActionBarProps> = (
           </Alert>
         ) : null}
         {actions && actions.length > 0 ? (
-          <View style={styles.actionsContainer}>
+          <View
+            style={[
+              styles.actionsContainer,
+              { flexDirection: actionsOrientation },
+            ]}>
             {/* TODO: Ensure the buttons have a background */}
-            {actions.map((action) => (
+            {actions.map((action, index) => (
               <Button
                 key={action.label}
                 onPress={action.onPress}
                 disabled={action.disabled}
                 color={action.color}
-                style={styles.actionButton}>
+                style={[
+                  styles.actionButton,
+                  {
+                    flex: actionsOrientation === 'row' ? 1 : undefined,
+                    marginTop:
+                      actionsOrientation === 'column' && index !== 0
+                        ? theme.spacing.s
+                        : 0,
+                  },
+                ]}>
                 {action.label}
               </Button>
             ))}
@@ -87,11 +102,10 @@ const createStyles = (theme: Theme) =>
       borderTopWidth: 1,
     },
     actionsContainer: {
-      flexDirection: 'row',
       paddingHorizontal: theme.spacing.s, // Trick as React Native 0.68 doesn't support gap
+      // TODO: change spacing after upgrading to a React native supporting gap in flex
     },
     actionButton: {
-      flex: 1,
       marginBottom: 0,
       marginHorizontal: theme.spacing.s,
     },

@@ -147,6 +147,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
           alertContent={
             status === 'processing' ? `Do not close the application` : undefined
           }
+          actionsOrientation='column'
           actions={
             status === 'success'
               ? [
