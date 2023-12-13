@@ -23,7 +23,6 @@ import ShareableData from 'pages/Inbox/ShareableData'
 import InboxItem from 'pages/InboxItem'
 import LoginHistory from 'pages/Login/LoginHistory'
 import LoginRequest from 'pages/Login/LoginRequest'
-import Networks from 'pages/Networks/Networks'
 import {
   AddVeridaOneCustomLinkScreen,
   AddVeridaOnePlatformLinkScreen,
@@ -45,9 +44,7 @@ import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
 import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
 import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
 import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
-import Settings from 'pages/Settings'
-import { PolygonIdCircuitsSettingsScreen } from 'pages/Settings/PolygonID'
-import StorageNodes from 'pages/StorageNodes/StorageNodes'
+import { PolygonIdCircuitsSettingsScreen, SettingsScreen } from 'pages/Settings'
 import BuyToken from 'pages/Tokens/BuyToken'
 import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
 import ReceiveToken from 'pages/Tokens/ReceiveToken'
@@ -144,7 +141,7 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
           <Stack.Screen name={'DataFolder'} component={DataFolderScreen} />
           <Stack.Screen name={'DataItem'} component={DataItemScreen} />
-          <Stack.Screen name={'Settings'} component={Settings} />
+          <Stack.Screen name={'Settings'} component={SettingsScreen} />
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
           <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
 
@@ -169,8 +166,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
           <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
           <Stack.Screen name={'ShareableData'} component={ShareableData} />
-          <Stack.Screen name={'Networks'} component={Networks} />
-          <Stack.Screen name={'StorageNodes'} component={StorageNodes} />
 
           <Stack.Screen
             name='WalletConnectActiveSessions'
