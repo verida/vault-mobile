@@ -108,8 +108,12 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     }, [navigation])
 
     const handleRetry = useCallback(() => {
-      //
-    }, [])
+      if (identity) {
+        setStatus('processing')
+        setStatusItems(defaultMigrationStepStatus)
+        executeMigration(identity.did)
+      }
+    }, [identity, executeMigration])
 
     const title =
       status === 'success'

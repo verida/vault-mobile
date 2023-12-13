@@ -26,6 +26,8 @@ export function useMigrateIdentity() {
       await wait(10 * 1000)
       updateStatus('migrateData', 'success')
       logger.info('Data migrated successfully', { did })
+      // updateStatus('migrateData', 'error')
+      // throw new Error('Error migrating data')
     },
     []
   )
