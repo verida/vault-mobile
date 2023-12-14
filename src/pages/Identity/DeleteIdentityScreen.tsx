@@ -1,106 +1,132 @@
-import { LinearGradient } from 'expo-linear-gradient'
-import React, { useState } from 'react'
+import { BottomActionBar, ScreenWrapper } from 'components'
+import { selectSelectedAccount, useIdentities } from 'features/identities'
+import { useThemeAwareStyle } from 'hooks'
+import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import Texture from 'assets/landing-bg.svg'
-import Logo from 'assets/logo.svg'
-import { Spacer } from 'components/Spacer'
+import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
-import { WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
-import AddAccountsModal from 'pages/Dashboard/AddAccountsModal'
+import { useAppSelector } from 'reduxStore/types'
+import { Theme } from 'styles/types'
 
-import Button from '../../components/Button'
-
-const title = 'Delete Identity'
+const title = 'Do you want to delete your Identity?'
 const info =
-  'To delete your identity, please remove any record of your recovery passphrase then logout of this application or click the "Delete" button below. \n\n' +
-  'Please note that this operation is final - Verida has no access to your data and cannot recover your identity without that passphrase.'
+  'To delete your identity, please remove any record of your recovery phrase then logout of this application or click the "Delete" button below.'
 
-export type DeleteIdentityScreenParams = {
-  onSelectAccount?: (did: string) => void
-  onLogoutAccounts?: (dids: string[]) => void
-}
+export type DeleteIdentityScreenParams = undefined
 
 type DeleteIdentityScreenProps = MainStackScreenProps<'DeleteIdentity'>
 
 export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
   props
 ) => {
-  const {
-    route: { params },
-    navigation,
-  } = props
+  const { navigation } = props
 
-  const [showLogout, setShowLogout] = useState(false)
+  const [processing, setProcessing] = useState(false)
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Delete your Identity',
+      headerShown: !processing,
+      headerBackVisible: false, // TODO: Update when reworking headers
+    })
+  }, [navigation, processing])
 
+  const styles = useThemeAwareStyle(createStyles)
+
+  const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
+
+  const [canDelete] = useState(!!selectedAccount?.did)
+
+  const { removeIdentities } = useIdentities()
+
+  const handleDelete = useCallback(async () => {
+    if (!selectedAccount?.did) {
+      return
+    }
+    setProcessing(true)
+    try {
+      await removeIdentities([selectedAccount.did])
+      navigation.navigate('Tabs', {
+        screen: 'Home',
+      })
+    } finally {
+      setProcessing(false)
+    }
+  }, [removeIdentities, navigation, selectedAccount?.did])
+
+  const handleCancel = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
+
+  if (processing) {
+    return <LoadingView />
+  }
+
+  // TODO: This screen was quickly reworked without a proper design for our designers. We should ask for a design and update it again.
   return (
-    <LinearGradient
-      colors={['#0E1572', '#1467CB', '#1995CB']}
-      style={style.landing}>
-      <Texture width={425} height={428} />
-      <View style={style.positionAbsolute}>
+    <ScreenWrapper>
+      <View style={styles.container}>
         <View>
-          <Logo width={156} height={52} />
-          <Text style={style.title}>{title}</Text>
-          <Text style={style.subTitle}>{info}</Text>
-        </View>
-        <Spacer height={48} />
-        <View>
-          <Button
-            color='warning'
-            onPress={() => {
-              setShowLogout(true)
-            }}>
-            Delete
-          </Button>
-
-          <Button
-            color='secondary'
-            onPress={() => {
-              navigation.goBack()
-            }}>
-            Cancel
-          </Button>
+          <Text style={styles.title}>{title}</Text>
+          {selectedAccount?.did ? (
+            <View style={styles.didWrapper}>
+              <Text style={styles.did}>{selectedAccount.did}</Text>
+            </View>
+          ) : null}
+          <Text style={styles.subTitle}>{info}</Text>
         </View>
       </View>
-      <AddAccountsModal
-        visible={showLogout}
-        onClose={() => {
-          setShowLogout(false)
-        }}
-        showLogout
-        onSelectAccount={params.onSelectAccount}
-        onLogoutAccounts={params.onLogoutAccounts}
+      <BottomActionBar
+        alertType='warning'
+        alertContent='This operation is final. Verida has no access to your data and cannot recover your identity without your recovery phrase.'
+        actions={[
+          {
+            label: 'Cancel',
+            onPress: handleCancel,
+            color: 'grey',
+          },
+          {
+            label: 'Delete',
+            onPress: handleDelete,
+            disabled: !canDelete,
+            color: 'danger',
+          },
+        ]}
       />
-    </LinearGradient>
+    </ScreenWrapper>
   )
 }
 
-const style = StyleSheet.create({
-  positionAbsolute: {
-    position: 'absolute',
-    paddingHorizontal: 24,
-    paddingVertical: 77,
-    height: '100%',
-    width: '100%',
-    justifyContent: 'space-between',
-  },
-  landing: {
-    flex: 1,
-  },
-  title: {
-    color: WHITE_COLOR,
-    fontFamily: NUNITO_SANS_BOLD,
-    fontSize: 36,
-    marginTop: '25%',
-  },
-  subTitle: {
-    color: WHITE_COLOR,
-    fontFamily: NUNITO_SANS_BOLD,
-    fontSize: 18,
-    textAlign: 'justify',
-    marginTop: '15%',
-  },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      flex: 1,
+      padding: theme.spacing.m,
+    },
+    title: {
+      marginTop: theme.spacing.xxl,
+      fontFamily: theme.fontFamily.bold,
+      fontSize: 28,
+      lineHeight: 28 * 1.3,
+    },
+    didWrapper: {
+      marginTop: theme.spacing.xxl,
+      paddingVertical: theme.spacing.s,
+      paddingHorizontal: theme.spacing.m,
+      borderRadius: theme.roundness.l,
+      backgroundColor: theme.color.primary5,
+    },
+    did: {
+      fontFamily: theme.fontFamily.semibold,
+      fontSize: theme.fontSize.l,
+      lineHeight: theme.fontSize.l * 1.5,
+    },
+    subTitle: {
+      marginTop: theme.spacing.xxl,
+      paddingHorizontal: 2, // Adjustment for a weird look with the rounded box above
+      fontFamily: theme.fontFamily.regular,
+      fontSize: theme.fontSize.l,
+      lineHeight: theme.fontSize.l * 1.5,
+    },
+  })

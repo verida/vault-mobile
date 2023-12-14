@@ -105,10 +105,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           label: 'Delete Identity',
           text: styles.logoutText,
           optional: true,
-          onPress: () =>
-            navigation.navigate('DeleteIdentity', {
-              onLogoutAccounts: params.onLogoutAccounts,
-            }),
+          onPress: () => navigation.navigate('DeleteIdentity'),
         },
       ],
     },
@@ -161,15 +158,17 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
         ]}>
         {settingsItems.map((category) => (
           <View key={category.label} style={styles.categoryContainer}>
-            <Text style={styles.categoryLabel}>{category.label}</Text>
-            {category.subtext ? (
-              <Text
-                style={styles.categorySubtext}
-                numberOfLines={1}
-                ellipsizeMode='middle'>
-                {category.subtext}
-              </Text>
-            ) : null}
+            <View style={styles.categoryLabelContainer}>
+              <Text style={styles.categoryLabel}>{category.label}</Text>
+              {category.subtext ? (
+                <Text
+                  style={styles.categorySubtext}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {category.subtext}
+                </Text>
+              ) : null}
+            </View>
             <PropertyList list={category.items} />
           </View>
         ))}
@@ -198,18 +197,22 @@ const createStyles = (theme: Theme) =>
     categoryContainer: {
       marginTop: theme.spacing.l,
     },
+    categoryLabelContainer: {
+      flexDirection: 'row',
+      marginBottom: theme.spacing.s,
+    },
     categoryLabel: {
       fontSize: theme.fontSize.s,
       fontFamily: theme.fontFamily.bold,
       color: theme.color.black600,
       textTransform: 'uppercase',
-      marginBottom: theme.spacing.s,
     },
     categorySubtext: {
+      flex: 1,
+      marginLeft: theme.spacing.s,
       fontSize: theme.fontSize.s,
       fontFamily: theme.fontFamily.bold,
       color: theme.color.black600,
-      marginBottom: theme.spacing.s,
     },
     logoutText: {
       color: theme.color.orange,
