@@ -52,9 +52,11 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
               paddingRight: insets.right,
               paddingLeft: insets.left,
             },
-        {
-          backgroundColor: backgroundColor,
-        },
+        backgroundColor
+          ? {
+              backgroundColor: backgroundColor,
+            }
+          : {},
       ]}>
       {/* TODO: Keyboard avoiding to be properly tested on screens with inputs */}
       <KeyboardAvoidingView
