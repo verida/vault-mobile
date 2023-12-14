@@ -1,8 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
-import React from 'react'
+import { get } from 'lodash'
+import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { DefaultAvatar } from 'api/utils'
+import { DefaultAvatar, getProfile } from 'api/utils'
 
 import {
   BLACK_COLOR_OPACITY,
@@ -13,18 +14,45 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import { findTypeById } from '../../helpers/inbox'
 import Text from '../Text'
 
+const defaultSender = {
+  name: 'Unknown',
+  avatar: null,
+}
+
 export default ({ options }) => {
   const navigation = useNavigation()
   const inboxType = findTypeById(options.type)
+  const inboxItem = options.item
+  const [sender, setSender] = useState(defaultSender)
 
   const onPress = () =>
     navigation.navigate('InboxItem', { inboxItemId: options.id })
+
+  useEffect(() => {
+    async function fetchSenderData() {
+      try {
+        const senderDid = get(inboxItem, 'sentBy.did')
+        if (!senderDid) {
+          return
+        }
+        const { name, avatar } = await getProfile(senderDid)
+        setSender({
+          name,
+          avatar,
+        })
+      } catch (error) {
+        logger.error(error)
+      }
+    }
+
+    fetchSenderData()
+  }, [inboxItem])
 
   return (
     <TouchableOpacity
       style={[style.card, !options.read ? style.unread : '']}
       onPress={onPress}>
-      <Image source={options.logo || DefaultAvatar} style={style.logo} />
+      <Image source={sender.avatar || DefaultAvatar} style={style.logo} />
       <View style={style.details}>
         <View style={style.tile}>
           <View>
@@ -36,7 +64,9 @@ export default ({ options }) => {
         </View>
         <View>
           {Boolean(options.from) && (
-            <Text style={style.from}>{options.from} </Text>
+            <Text style={style.from}>
+              {sender.name} {options.from}
+            </Text>
           )}
         </View>
         <View style={{ ...style.tile, ...style.footer }}>
