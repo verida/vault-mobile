@@ -17,6 +17,7 @@ import {
   CreateIdentityScreenParams,
   DeleteIdentityScreenParams,
   ImportIdentityScreenParams,
+  RemoveIdentityScreenParams,
   ShareIdentityScreenParams,
 } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -117,6 +118,7 @@ export type MainStackParams = {
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
   DeleteIdentity: DeleteIdentityScreenParams
+  RemoveIdentity: RemoveIdentityScreenParams
 
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined

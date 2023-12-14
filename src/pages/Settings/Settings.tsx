@@ -3,11 +3,10 @@ import { useTheme } from 'contexts'
 import { selectSelectedAccount } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
 import { Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import PropertyList from 'components/PropertyList'
 import Text from 'components/Text'
@@ -15,8 +14,6 @@ import { APP_NAME, APP_VERSION_FORMATTED } from 'constants/application'
 import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
-
-import AddAccountsModal from '../Dashboard/AddAccountsModal'
 
 type SettingsItem = {
   // TODO: Get it from the props of the component
@@ -33,17 +30,12 @@ type SettingsCategory = {
   items: SettingsItem[]
 }
 
-export type SettingsScreenParams = {
-  onLogoutAccounts?: (dids: string[]) => void // TODO: To remove once the log out is performed directly rather than through a function in the HomeScreen
-}
+export type SettingsScreenParams = undefined
 
 type SettingsScreenProps = MainStackScreenProps<'Settings'>
 
 export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
-  const {
-    navigation,
-    route: { params },
-  } = props
+  const { navigation } = props
 
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
@@ -61,16 +53,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
 
   const currentIdentity = useAppSelector(selectSelectedAccount) // TODO: Use useCurrentIdentity when available
 
-  const [loading, setLoading] = useState(false)
-  const [showLogout, setShowLogout] = useState(false)
-  const handleDisplayLogoutModal = useCallback(() => {
-    setShowLogout(true)
-  }, [])
-
   const settingsItems: SettingsCategory[] = [
     {
       label: 'General',
       items: [
+        // General items not related to a given Identity
         {
           label: 'Change PIN',
           action: 'arrow',
@@ -83,6 +70,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
       label: 'Identity',
       subtext: currentIdentity?.did,
       items: [
+        // Only add items that are related to the current Identity
         {
           label: 'Seed Phrase',
           action: 'arrow',
@@ -97,12 +85,14 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
         },
         {
           label: 'Log Out',
+          action: 'arrow',
           text: styles.logoutText,
           optional: true,
-          onPress: () => handleDisplayLogoutModal(),
+          onPress: () => navigation.navigate('RemoveIdentity'),
         },
         {
           label: 'Delete Identity',
+          action: 'arrow',
           text: styles.logoutText,
           optional: true,
           onPress: () => navigation.navigate('DeleteIdentity'),
@@ -134,8 +124,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   ]
 
   const walletAppVersion = `${APP_NAME} ${APP_VERSION_FORMATTED}`
-
-  if (loading) return <LoadingView />
 
   return (
     <ScreenWrapper
@@ -174,16 +162,6 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
         ))}
 
         <Text style={styles.appVersion}>{walletAppVersion}</Text>
-
-        <AddAccountsModal
-          visible={showLogout}
-          onClose={() => {
-            setShowLogout(false)
-          }}
-          showLogout
-          onLogoutAccounts={params.onLogoutAccounts}
-          setLoading={setLoading}
-        />
       </ScrollView>
     </ScreenWrapper>
   )

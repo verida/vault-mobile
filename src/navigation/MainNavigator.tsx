@@ -16,6 +16,7 @@ import {
   CreateIdentityScreen,
   DeleteIdentityScreen,
   ImportIdentityScreen,
+  RemoveIdentityScreen,
   ShareIdentityScreen,
 } from 'pages/Identity'
 import Inbox from 'pages/Inbox'
@@ -153,6 +154,10 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen
             name={'ImportIdentity'}
             component={ImportIdentityScreen}
+          />
+          <Stack.Screen
+            name={'RemoveIdentity'}
+            component={RemoveIdentityScreen}
           />
           <Stack.Screen
             name={'DeleteIdentity'}

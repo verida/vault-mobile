@@ -11,17 +11,18 @@ import { MainStackScreenProps } from 'navigation/types'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('DeleteIdentityScreen')
+const logger = new Logger('RemoveIdentityScreen')
 
-const title = 'Do you want to delete your Identity?'
-const info = `To delete your identity, please remove any record of your recovery phrase then logout of this application or click the "Delete" button below. \n\nVerida has no access to your data and cannot recover your identity.`
+const title = 'Do you want to log out?'
+const info = `Logging out will remove this Identity from your wallet, but you can always add it back by importing your recovery phrase. \n\nVerida has no access to your data and cannnot recover your Identity. \n\nMake sure to backup your recovery phrase or you won't be able to import and recover your Identity.`
 
-export type DeleteIdentityScreenParams = undefined
+export type RemoveIdentityScreenParams = undefined
 
-type DeleteIdentityScreenProps = MainStackScreenProps<'DeleteIdentity'>
+type RemoveIdentityScreenProps = MainStackScreenProps<'RemoveIdentity'>
 
-// This screen is doing exactly the same as the RemoveIdentity, this is for the app stores that are expecting ways to "log out" and "delete an account" even though it's not relevant for a decentralised identity with a seed phrase.
-export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
+// This screen is called RemoveIdentity as technically it simply remove it from the Wallet but to avoid trouble with the app stores, we say "Log out" in the UI.
+// Also, this screen is doing exactly the same as the DeleteIdentity, again this is for the app stores that are expecting ways to "log out" and "delete an account" even though it's not relevant for a decentralised identity with a seed phrase.
+export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
   props
 ) => {
   const { navigation } = props
@@ -29,7 +30,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
   const [processing, setProcessing] = useState(false)
   useEffect(() => {
     navigation.setOptions({
-      title: 'Delete your Identity',
+      title: 'Log out',
       headerShown: !processing,
       headerBackVisible: false, // TODO: Update when reworking headers
     })
@@ -39,11 +40,11 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 
   const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
 
-  const [canDelete] = useState(!!selectedAccount?.did)
+  const [canRemove] = useState(!!selectedAccount?.did)
 
   const { removeIdentities } = useIdentities()
 
-  const handleDelete = useCallback(async () => {
+  const handleLogout = useCallback(async () => {
     if (!selectedAccount?.did) {
       return
     }
@@ -84,7 +85,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
       </View>
       <BottomActionBar
         alertType='warning'
-        alertContent='This operation is final, your Identity cannot be recovered without your recovery phrase.'
+        alertContent='Backup your recovery phrase before logging out'
         actions={[
           {
             label: 'Cancel',
@@ -92,9 +93,9 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
             color: 'grey',
           },
           {
-            label: 'Delete',
-            onPress: handleDelete,
-            disabled: !canDelete,
+            label: 'Log out',
+            onPress: handleLogout,
+            disabled: !canRemove,
             color: 'danger',
           },
         ]}
