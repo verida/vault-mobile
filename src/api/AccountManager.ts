@@ -720,18 +720,6 @@ class AccountManager extends EventEmitter {
       },
     })
   }
-
-  public async checkIfVeridaTeamMember() {
-    try {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const name = await this.vault?.profiles.public.get('name')
-      return name?.includes('_vda') ?? false
-    } catch (error) {
-      logger.error(error)
-      return false
-    }
-  }
 }
 
 export default AccountManager
