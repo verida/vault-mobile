@@ -221,7 +221,9 @@ export const HomeTabScreen = (props) => {
     }
     await AccountManager.getInstance().logout(dids)
     await refresh()
-    props.navigation.navigate('Home')
+    props.navigation.navigate('Tabs', {
+      screen: 'Home',
+    })
     setLoading(false)
   }
 
