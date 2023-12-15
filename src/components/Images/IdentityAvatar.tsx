@@ -4,7 +4,7 @@ import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
 import { NetworkIndicator, NetworkIndicatorProps } from 'components/Network'
-import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
+// import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { Theme } from 'styles/types'
 
 import { Avatar, AvatarProps } from './Avatar'
@@ -20,16 +20,16 @@ export type IdentityAvatarProps = Pick<
 export const IdentityAvatar: React.FunctionComponent<IdentityAvatarProps> = (
   props
 ) => {
-  const { loading, network, size, source, ...viewProps } = props
+  const { network, size, source, ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
 
   return (
     <View {...viewProps}>
       <View style={styles.container}>
-        <ShimmerPlaceholder visible={loading} shimmerStyle={styles.shimmer}>
-          <Avatar source={source} fallbackType='person' />
-        </ShimmerPlaceholder>
+        {/* <ShimmerPlaceholder visible={loading} shimmerStyle={styles.shimmer}> */}
+        <Avatar source={source} fallbackType='person' />
+        {/* </ShimmerPlaceholder> */}
         {network === EnvironmentType.MAINNET ? null : (
           <NetworkIndicator
             network={network}
@@ -47,6 +47,8 @@ export const IdentityAvatar: React.FunctionComponent<IdentityAvatarProps> = (
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
+      width: '100%',
+      aspectRatio: 1,
       flexDirection: 'column',
     },
     shimmer: {
