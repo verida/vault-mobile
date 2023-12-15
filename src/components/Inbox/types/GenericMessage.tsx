@@ -7,7 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { Alert, Image, Linking, StyleSheet, View } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
-import { DefaultAvatar, getProfile } from 'api/utils'
+import { DefaultAvatar, getPublicProfile } from 'api/utils'
 import MailSvg from 'assets/icons/mail.svg'
 import Button from 'components/Button'
 import { NUNITO_SANS_BOLD } from 'constants/text'
@@ -24,12 +24,12 @@ type GenericMessageProps = {
 
 type Sender = {
   name: string
-  avatar: string | null
+  avatar: any // what should this be?
 }
 
 const defaultSender: Sender = {
   name: 'Unknown',
-  avatar: null,
+  avatar: DefaultAvatar,
 }
 
 function GenericMessage(props: GenericMessageProps) {
@@ -46,7 +46,7 @@ function GenericMessage(props: GenericMessageProps) {
         if (!senderDid) {
           return
         }
-        const { name, avatar } = await getProfile(senderDid)
+        const { name, avatar } = await getPublicProfile(senderDid)
         setSender({
           name,
           avatar,
@@ -120,12 +120,7 @@ function GenericMessage(props: GenericMessageProps) {
         </View>
       </View>
       <View style={styles.senderContainer}>
-        <Image
-          source={
-            typeof sender.avatar === 'object' ? sender.avatar : DefaultAvatar
-          }
-          style={styles.senderAvatar}
-        />
+        <Image source={sender.avatar} style={styles.senderAvatar} />
         <View>
           <Text style={styles.senderName}>{sender.name}</Text>
           <Text style={styles.sentAt}>{formattedSentAt}</Text>

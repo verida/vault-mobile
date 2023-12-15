@@ -3,7 +3,7 @@ import { get } from 'lodash'
 import React, { useEffect, useState } from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { DefaultAvatar, getProfile } from 'api/utils'
+import { getPublicProfile } from 'api/utils'
 
 import {
   BLACK_COLOR_OPACITY,
@@ -35,7 +35,7 @@ export default ({ options }) => {
         if (!senderDid) {
           return
         }
-        const { name, avatar } = await getProfile(senderDid)
+        const { name, avatar } = await getPublicProfile(senderDid)
         setSender({
           name,
           avatar,
@@ -52,7 +52,7 @@ export default ({ options }) => {
     <TouchableOpacity
       style={[style.card, !options.read ? style.unread : '']}
       onPress={onPress}>
-      <Image source={sender.avatar || DefaultAvatar} style={style.logo} />
+      <Image source={sender.avatar} style={style.logo} />
       <View style={style.details}>
         <View style={style.tile}>
           <View>
@@ -64,9 +64,7 @@ export default ({ options }) => {
         </View>
         <View>
           {Boolean(options.from) && (
-            <Text style={style.from}>
-              {sender.name} {options.from}
-            </Text>
+            <Text style={style.from}>{options.from}</Text>
           )}
         </View>
         <View style={{ ...style.tile, ...style.footer }}>

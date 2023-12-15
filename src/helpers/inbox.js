@@ -2,7 +2,7 @@ import { get } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import { getInboxProfile } from '../api/utils'
+import { getPublicProfile } from '../api/utils'
 import DataSnapshot from '../assets/inbox/snapshot.svg'
 import DataSynchronization from '../assets/inbox/synchronization.svg'
 
@@ -64,14 +64,16 @@ export const buildItem = async (inboxItem) => {
     item: inboxItem,
   }
 
-  const profile = await getInboxProfile(
+  let profile = await getPublicProfile(
     inboxItem.sentBy.did,
-    inboxItem.sentBy.context
+    inboxItem.sentBy.context,
+    true
   )
+
   const name = get(profile, 'name', '')
   const avatar = get(profile, 'avatar')
-  item.from = name ? `Sent by ${name}\n` : ''
-  item.from += `via ${inboxItem.sentBy.context}`
+  item.from = name ? `From ${name}\n` : ''
+  item.from += `(via ${inboxItem.sentBy.context})`
   if (avatar) {
     item.logo = avatar
   }
