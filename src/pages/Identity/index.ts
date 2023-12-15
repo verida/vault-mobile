@@ -1,5 +1,6 @@
 export * from './AddIdentityScreen'
 export * from './CreateIdentityScreen'
 export * from './DeleteIdentityScreen'
+export * from './IdentityDrawer'
 export * from './ImportIdentityScreen'
 export * from './ShareIdentityScreen'
