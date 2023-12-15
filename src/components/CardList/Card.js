@@ -14,45 +14,18 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import { findTypeById } from '../../helpers/inbox'
 import Text from '../Text'
 
-const defaultSender = {
-  name: 'Unknown',
-  avatar: null,
-}
-
 export default ({ options }) => {
   const navigation = useNavigation()
   const inboxType = findTypeById(options.type)
-  const inboxItem = options.item
-  const [sender, setSender] = useState(defaultSender)
 
   const onPress = () =>
     navigation.navigate('InboxItem', { inboxItemId: options.id })
-
-  useEffect(() => {
-    async function fetchSenderData() {
-      try {
-        const senderDid = get(inboxItem, 'sentBy.did')
-        if (!senderDid) {
-          return
-        }
-        const { name, avatar } = await getPublicProfile(senderDid)
-        setSender({
-          name,
-          avatar,
-        })
-      } catch (error) {
-        logger.error(error)
-      }
-    }
-
-    fetchSenderData()
-  }, [inboxItem])
 
   return (
     <TouchableOpacity
       style={[style.card, !options.read ? style.unread : '']}
       onPress={onPress}>
-      <Image source={sender.avatar} style={style.logo} />
+      <Image source={options.avatar} style={style.logo} />
       <View style={style.details}>
         <View style={style.tile}>
           <View>

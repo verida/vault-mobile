@@ -2,7 +2,7 @@ import { get } from 'lodash'
 import moment from 'moment'
 import React from 'react'
 
-import { getPublicProfile } from '../api/utils'
+import { DefaultAvatar, getPublicProfile } from '../api/utils'
 import DataSnapshot from '../assets/inbox/snapshot.svg'
 import DataSynchronization from '../assets/inbox/synchronization.svg'
 
@@ -56,7 +56,7 @@ export const findTypeById = (id) =>
 export const buildItem = async (inboxItem) => {
   const item = {
     id: inboxItem._id,
-    logo: null,
+    avatar: DefaultAvatar,
     title: inboxItem.message,
     createdAt: moment(inboxItem.sentAt).format('MMM DD'),
     type: inboxItem.type,
@@ -75,7 +75,7 @@ export const buildItem = async (inboxItem) => {
   item.from = name ? `From ${name}\n` : ''
   item.from += `(via ${inboxItem.sentBy.context})`
   if (avatar) {
-    item.logo = avatar
+    item.avatar = avatar
   }
 
   return item
