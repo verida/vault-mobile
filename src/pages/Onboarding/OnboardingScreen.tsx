@@ -7,13 +7,13 @@ import Logo from 'assets/logo.svg'
 import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { AuthStackScreenProps } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
 import Button from '../../components/Button'
 
 export type OnboardingScreenParams = undefined
 
-type OnboardingScreenProps = AuthStackScreenProps<'Onboarding'>
+type OnboardingScreenProps = MainStackScreenProps<'Onboarding'>
 
 export const OnboardingScreen: React.FC<OnboardingScreenProps> = (props) => {
   const { navigation } = props

@@ -6,9 +6,13 @@ import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { ConfigProvider } from 'features/config'
-import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
+import {
+  MainNavigator,
+  navigationLinkingConfiguration,
+  navigationRef,
+} from 'navigation'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
@@ -27,7 +31,6 @@ import { initApplication } from 'utils'
 import { MetaServerChecks } from 'components/MetaServerChecks'
 import SwitchAccountToast from 'components/SwitchAccountToast'
 import { AuthProvider } from 'hooks/useAuth'
-import { navigationRef, RootNavigator } from 'navigation/RootNavigator'
 import { Authenticate } from 'pages/Authentication/Authenticate'
 import { defaultTheme } from 'styles/theme'
 
@@ -92,7 +95,7 @@ function App() {
                         <ActionSheetProvider>
                           <WalletConnectProvider>
                             <GestureHandlerRootView style={styles.flex}>
-                              <RootNavigator />
+                              <MainNavigator />
                             </GestureHandlerRootView>
                             <MetaServerChecks />
                           </WalletConnectProvider>

@@ -6,6 +6,7 @@ import {
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
+import { navigate } from 'navigation'
 
 import AccountManager from 'api/AccountManager'
 import { BlockchainWallet } from 'api/types'
@@ -14,7 +15,6 @@ import {
   SELECTED_WALLET_STORAGE_KEY,
   WALLETS_STORAGE_KEY,
 } from 'constants/storageKeys'
-import { navigate } from 'navigation/RootNavigator'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
 import dataHelper from '../utils/data'
@@ -31,7 +31,7 @@ export const getTransactionParams = createAppAsyncThunk(
       )
       if (params) {
         if (!transactionData.disableNavigate) {
-          navigate('ConfirmTransaction', transactionData)
+          navigate('ConfirmTransaction', transactionData as any) // TODO: Type the params of the screen properly
         }
         return params
       }

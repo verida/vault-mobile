@@ -4,13 +4,13 @@ import { setNavigationLink } from 'features/links'
 import { Logger } from 'features/telemetry'
 import { VeridaReceivedMessage } from 'features/verida'
 import { get } from 'lodash'
+import { navigate } from 'navigation'
 import { PermissionsAndroid, Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
 import { store } from 'reduxStore'
 
 import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { VERIDA_COLOR } from 'constants/color'
-import { navigate } from 'navigation/RootNavigator'
 
 import {
   DEFAULT_INBOX_MESSAGE_NOTIFICATION_MESSAGE,
