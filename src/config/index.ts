@@ -42,7 +42,7 @@ export const config = {
     // ),
   },
   features: {
-    veridaMainnetEnabled: false,
+    veridaMainnetEnabled: true,
   },
   verida: {
     [EnvironmentType.LOCAL]: {
