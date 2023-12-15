@@ -1,9 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
-import { get } from 'lodash'
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
-
-import { getPublicProfile } from 'api/utils'
 
 import {
   BLACK_COLOR_OPACITY,
