@@ -1,9 +1,10 @@
 import { EnvironmentType } from '@verida/types'
+import { useTheme } from 'contexts'
 import { getAddressFromDID, getNetworkFromDID } from 'features/identities'
 import { PublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableHighlight, View } from 'react-native'
 
 import { IdentityAvatar } from 'components/Images'
 import { Checkmark } from 'components/Indicators'
@@ -23,36 +24,39 @@ export const DrawerIdentityListItem: React.FunctionComponent<DrawerIdentityListI
     const displayedDid = getAddressFromDID(did)
 
     const styles = useThemeAwareStyle(createStyles)
+    const { theme } = useTheme()
 
     const handlePress = useCallback(() => {
       onPress?.(did)
     }, [onPress, did])
 
     return (
-      <TouchableOpacity
+      <TouchableHighlight
         disabled={isCurrent}
         onPress={handlePress}
-        style={[styles.container, isCurrent && styles.current]}>
-        <IdentityAvatar
-          source={profile.avatar?.uri}
-          network={network}
-          size='compact'
-          style={styles.avatar}
-        />
-        <View style={styles.nameContainer}>
-          <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
-            {profile.name}
-          </Text>
-          <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
-            {displayedDid}
-          </Text>
-        </View>
-        {isCurrent ? (
-          <View style={styles.checkmark}>
-            <Checkmark />
+        underlayColor={theme.color.snow}>
+        <View style={[styles.container, isCurrent && styles.current]}>
+          <IdentityAvatar
+            source={profile.avatar?.uri}
+            network={network}
+            size='compact'
+            style={styles.avatar}
+          />
+          <View style={styles.nameContainer}>
+            <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
+              {profile.name}
+            </Text>
+            <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
+              {displayedDid}
+            </Text>
           </View>
-        ) : null}
-      </TouchableOpacity>
+          {isCurrent ? (
+            <View style={styles.checkmark}>
+              <Checkmark />
+            </View>
+          ) : null}
+        </View>
+      </TouchableHighlight>
     )
   }
 

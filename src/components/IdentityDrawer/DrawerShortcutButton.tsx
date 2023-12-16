@@ -17,12 +17,21 @@ export type DrawerShortcutButtonProps = {
 
 export const DrawerShortcutButton: React.FunctionComponent<DrawerShortcutButtonProps> =
   (props) => {
-    const { icon, label, onPress, ...touchableProps } = props
+    const {
+      icon,
+      label,
+      onPress,
+      activeOpacity = 0.4,
+      ...touchableProps
+    } = props
 
     const styles = useThemeAwareStyle(createStyles)
 
     return (
-      <TouchableOpacity onPress={onPress} {...touchableProps}>
+      <TouchableOpacity
+        onPress={onPress}
+        activeOpacity={activeOpacity}
+        {...touchableProps}>
         <View style={styles.container}>
           {icon}
           <Text style={styles.label} numberOfLines={1} ellipsizeMode='tail'>
