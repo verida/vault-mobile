@@ -93,56 +93,64 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
             },
           ]}>
           <View style={styles.contentContainer}>
-            <View style={styles.infoContainer}>
-              <IdentityAvatar
-                source={avatar}
-                network={network}
-                style={styles.avatar}
-              />
-              <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
-                {name}
-              </Text>
-              <Text style={styles.did} numberOfLines={2} ellipsizeMode='middle'>
-                {identity?.did}
-              </Text>
-            </View>
-            <View style={styles.shortcutsContainer}>
-              <DrawerShortcutButton
-                label='Share my Identity'
-                icon={
-                  <Ionicons
-                    name='qr-code-outline'
-                    size={24}
-                    color={theme.color.iconDefault}
-                  />
-                }
-                onPress={handleShareIdentityPress}
-                style={styles.shortcutButton}
-              />
-              <DrawerShortcutButton
-                label='View my Profile'
-                icon={
-                  <Ionicons
-                    name='person'
-                    size={24}
-                    color={theme.color.iconDefault}
-                  />
-                }
-                onPress={handleViewProfilePress}
-                style={styles.shortcutButton}
-              />
-              <DrawerShortcutButton
-                label='Settings'
-                icon={
-                  <Ionicons
-                    name='settings-sharp'
-                    size={24}
-                    color={theme.color.iconDefault}
-                  />
-                }
-                onPress={handleSettingsPress}
-                style={styles.shortcutButton}
-              />
+            <View>
+              <View style={styles.infoContainer}>
+                <IdentityAvatar
+                  source={avatar}
+                  network={network}
+                  style={styles.avatar}
+                />
+                <Text
+                  style={styles.name}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {name}
+                </Text>
+                <Text
+                  style={styles.did}
+                  numberOfLines={2}
+                  ellipsizeMode='middle'>
+                  {identity?.did}
+                </Text>
+              </View>
+              <View style={styles.shortcutsContainer}>
+                <DrawerShortcutButton
+                  label='Share my Identity'
+                  icon={
+                    <Ionicons
+                      name='qr-code-outline'
+                      size={24}
+                      color={theme.color.iconDefault}
+                    />
+                  }
+                  onPress={handleShareIdentityPress}
+                  style={styles.shortcutButton}
+                />
+                <DrawerShortcutButton
+                  label='View my Profile'
+                  icon={
+                    <Ionicons
+                      name='person'
+                      size={24}
+                      color={theme.color.iconDefault}
+                    />
+                  }
+                  onPress={handleViewProfilePress}
+                  style={styles.shortcutButton}
+                />
+                <DrawerShortcutButton
+                  label='Settings'
+                  icon={
+                    <Ionicons
+                      name='settings-sharp'
+                      size={24}
+                      color={theme.color.iconDefault}
+                    />
+                  }
+                  onPress={handleSettingsPress}
+                  style={styles.shortcutButton}
+                />
+              </View>
             </View>
             <View style={styles.identitiesContainer}>
               <View style={styles.identitiesLabelContainer}>
@@ -178,10 +186,10 @@ const createStyles = (theme: Theme) =>
     },
     container: {
       flex: 1,
-      // padding: theme.spacing.m,
     },
     contentContainer: {
       flex: 1,
+      justifyContent: 'space-between',
     },
     infoContainer: {
       paddingTop: theme.spacing.s,
@@ -212,13 +220,14 @@ const createStyles = (theme: Theme) =>
       color: theme.color.textLightGrey,
     },
     shortcutsContainer: {
-      flex: 1,
       padding: theme.spacing.m,
     },
     shortcutButton: {
       marginBottom: theme.spacing.m,
     },
-    identitiesContainer: {},
+    identitiesContainer: {
+      flexShrink: 1,
+    },
     identitiesLabelContainer: {
       paddingTop: theme.spacing.m,
       paddingHorizontal: theme.spacing.m,
@@ -231,6 +240,7 @@ const createStyles = (theme: Theme) =>
       color: theme.color.black700,
     },
     identityList: {
+      flexShrink: 1,
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
     },
