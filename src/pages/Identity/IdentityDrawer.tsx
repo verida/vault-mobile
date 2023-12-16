@@ -2,6 +2,7 @@ import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
 import {
   BottomActionBar,
+  DrawerIdentityList,
   DrawerShortcutButton,
   IdentityAvatar,
 } from 'components'
@@ -143,6 +144,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
               <View style={styles.identitiesLabelContainer}>
                 <Text style={styles.switchIdentityLabel}>Switch Identity</Text>
               </View>
+              <DrawerIdentityList style={styles.identityList} />
             </View>
           </View>
           <BottomActionBar
@@ -220,5 +222,9 @@ const createStyles = (theme: Theme) =>
       fontSize: theme.fontSize.sl,
       lineHeight: theme.fontSize.sl * 1.3,
       color: theme.color.black700,
+    },
+    identityList: {
+      borderTopColor: theme.color.lightGrey,
+      borderTopWidth: 1,
     },
   })
