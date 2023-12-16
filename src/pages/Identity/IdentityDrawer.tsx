@@ -1,14 +1,20 @@
 import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
-import { BottomActionBar, IdentityAvatar } from 'components'
+import {
+  BottomActionBar,
+  DrawerShortcutButton,
+  IdentityAvatar,
+} from 'components'
+import { useTheme } from 'contexts'
 import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import Ionicons from 'react-native-vector-icons/Ionicons'
 
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
@@ -23,11 +29,13 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   const { children } = props
 
   const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
   const insets = useSafeAreaInsets()
   const { isOpen, open, close } = useIdentityDrawer()
   const navigation = useNavigation()
   const identity = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
+  // TODO: Why do we have to call selectSelectedPublicProfile, why the profile is not in selectSelectedAccount?!
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)
@@ -80,28 +88,61 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
             },
           ]}>
           <View style={styles.contentContainer}>
-            <View style={styles.identityInfoContainer}>
+            <View style={styles.infoContainer}>
               <IdentityAvatar
                 source={avatar}
                 network={network}
-                style={styles.identityAvatar}
+                style={styles.avatar}
               />
-              <Text style={styles.identityName}>{name}</Text>
-              <Text style={styles.identityDid}>{identity?.did}</Text>
+              <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
+                {name}
+              </Text>
+              <Text style={styles.did} numberOfLines={2} ellipsizeMode='middle'>
+                {identity?.did}
+              </Text>
             </View>
-            <View style={styles.identityShortcutsContainer}>
-              <TouchableOpacity onPress={handleShareIdentityPress}>
-                <Text>Share my Identity</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleViewProfilePress}>
-                <Text>View my Profile</Text>
-              </TouchableOpacity>
-              <TouchableOpacity onPress={handleSettingsPress}>
-                <Text>Settings</Text>
-              </TouchableOpacity>
+            <View style={styles.shortcutsContainer}>
+              <DrawerShortcutButton
+                label='Share my Identity'
+                icon={
+                  <Ionicons
+                    name='qr-code-outline'
+                    size={24}
+                    color={theme.color.iconDefault}
+                  />
+                }
+                onPress={handleShareIdentityPress}
+                style={styles.shortcutButton}
+              />
+              <DrawerShortcutButton
+                label='View my Profile'
+                icon={
+                  <Ionicons
+                    name='person'
+                    size={24}
+                    color={theme.color.iconDefault}
+                  />
+                }
+                onPress={handleViewProfilePress}
+                style={styles.shortcutButton}
+              />
+              <DrawerShortcutButton
+                label='Settings'
+                icon={
+                  <Ionicons
+                    name='settings-sharp'
+                    size={24}
+                    color={theme.color.iconDefault}
+                  />
+                }
+                onPress={handleSettingsPress}
+                style={styles.shortcutButton}
+              />
             </View>
             <View style={styles.identitiesContainer}>
-              <Text>Switch Identity</Text>
+              <View style={styles.identitiesLabelContainer}>
+                <Text style={styles.switchIdentityLabel}>Switch Identity</Text>
+              </View>
             </View>
           </View>
           <BottomActionBar
@@ -133,7 +174,7 @@ const createStyles = (theme: Theme) =>
     contentContainer: {
       flex: 1,
     },
-    identityInfoContainer: {
+    infoContainer: {
       paddingTop: theme.spacing.s,
       paddingHorizontal: theme.spacing.m,
       paddingBottom: theme.spacing.m,
@@ -141,18 +182,43 @@ const createStyles = (theme: Theme) =>
       borderBottomColor: theme.color.lightGrey,
       alignItems: 'center',
     },
-    identityAvatar: {
+    avatar: {
       width: 80,
       aspectRatio: 1,
     },
-    identityName: {
+    name: {
       marginTop: theme.spacing.s,
+      textAlign: 'center',
+      fontFamily: theme.fontFamily.bold,
+      fontSize: theme.fontSize.xxl,
+      lineHeight: theme.fontSize.xxl * 1.35,
     },
-    identityDid: {
+    did: {
       marginTop: theme.spacing.s,
+      paddingHorizontal: theme.spacing.xxl,
+      textAlign: 'center',
+      fontFamily: theme.fontFamily.semibold,
+      fontSize: theme.fontSize.s,
+      lineHeight: theme.fontSize.s * 1.5,
+      color: theme.color.textLightGrey,
     },
-    identityShortcutsContainer: {
+    shortcutsContainer: {
       flex: 1,
+      padding: theme.spacing.m,
+    },
+    shortcutButton: {
+      marginBottom: theme.spacing.m,
     },
     identitiesContainer: {},
+    identitiesLabelContainer: {
+      paddingTop: theme.spacing.m,
+      paddingHorizontal: theme.spacing.m,
+      paddingBottom: theme.spacing.s,
+    },
+    switchIdentityLabel: {
+      fontFamily: theme.fontFamily.bold,
+      fontSize: theme.fontSize.sl,
+      lineHeight: theme.fontSize.sl * 1.3,
+      color: theme.color.black700,
+    },
   })
