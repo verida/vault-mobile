@@ -22,8 +22,8 @@ import ChevronRightIcon from 'assets/icons/chevron_right.svg'
 import { WHITE_COLOR, WHITE_COLOR_OPACITY } from 'constants/color'
 import { MainStackParams } from 'navigation/types'
 
-import { BLACK_COLOR_OPACITY } from '../../../constants/color'
-import { NUNITO_SANS } from '../../../constants/text'
+import { BLACK_COLOR_OPACITY } from '../../constants/color'
+import { NUNITO_SANS } from '../../constants/text'
 
 const claimBadgesBannerImage = require('assets/home_promo_banners/claim_badges.png')
 const veridaOneBannerImage = require('assets/home_promo_banners/verida_one.png')
@@ -51,7 +51,7 @@ const bannerDefinitions: TBanner[] = [
 
 const WIDTH = Dimensions.get('window').width
 
-export default function PromotionalBannersCarousel() {
+export const PromotionalBannersCarousel = () => {
   const { theme } = useTheme()
   const [bannerList] = useState<TBanner[]>(bannerDefinitions)
   const ref = React.useRef<PagerView>(null)

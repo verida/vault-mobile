@@ -29,7 +29,7 @@ const items: GettingStartedItemProps[] = [
   },
 ]
 
-const GettingStarted = () => {
+export const GettingStarted = () => {
   return (
     <View>
       <Text style={styles.label}>What you could do next</Text>
@@ -41,8 +41,6 @@ const GettingStarted = () => {
     </View>
   )
 }
-
-export default GettingStarted
 
 const styles = StyleSheet.create({
   itemContainer: {

@@ -17,9 +17,9 @@ import {
   PRIMARY_COLOR_200,
   PRIMARY_COLOR_300,
   PRIMARY_COLOR_500,
-} from '../../../constants/color'
+} from '../../constants/color'
 
-const WalletSummary = () => {
+export const WalletSummary = () => {
   const wallets = useSelector(getWallets)
   const addresses = getUniqueWalletAddresses(wallets)
 
@@ -49,8 +49,6 @@ const WalletSummary = () => {
     </Pressable>
   )
 }
-
-export default WalletSummary
 
 const styles = StyleSheet.create({
   container: {
