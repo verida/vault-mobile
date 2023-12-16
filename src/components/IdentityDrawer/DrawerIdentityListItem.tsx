@@ -13,19 +13,20 @@ export type DrawerIdentityListItemProps = {
   did: string
   profile: PublicProfile
   isCurrent: boolean
+  onPress?: (did: string) => void
 }
 
 export const DrawerIdentityListItem: React.FunctionComponent<DrawerIdentityListItemProps> =
   (props) => {
-    const { did, profile, isCurrent } = props
+    const { did, profile, isCurrent, onPress } = props
     const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
     const displayedDid = getAddressFromDID(did)
 
     const styles = useThemeAwareStyle(createStyles)
 
     const handlePress = useCallback(() => {
-      // TODO: Switch to identity
-    }, [])
+      onPress?.(did)
+    }, [onPress, did])
 
     return (
       <TouchableOpacity

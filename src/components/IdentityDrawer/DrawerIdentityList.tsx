@@ -4,34 +4,43 @@ import {
   PublicProfile,
   selectPublicProfiles,
 } from 'features/profiles'
+import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
 import {
+  Alert,
   FlatList,
+  InteractionManager,
   ListRenderItemInfo,
   StyleSheet,
   View,
   ViewProps,
 } from 'react-native'
 
+import { useAuth } from 'hooks/useAuth'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 import { DrawerIdentityListItem } from './DrawerIdentityListItem'
+
+const logger = new Logger('IdentityDrawer')
 
 type IdentityItem = {
   did: string
   profile: PublicProfile
 }
 
-export type DrawerIdentityListProps = ViewProps
+export type DrawerIdentityListProps = {
+  onIdentitySwitch?: () => void
+} & ViewProps
 
 export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps> =
   (props) => {
-    const { ...viewProps } = props
+    const { onIdentitySwitch, ...viewProps } = props
 
     const styles = useThemeAwareStyle(createStyles)
 
+    const { switchToAccount, refresh } = useAuth()
     const dispatch = useAppDispatch()
     useEffect(() => {
       const promise = dispatch(fetchAllPublicProfilesData())
@@ -52,6 +61,45 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
         profile,
       }))
 
+    const handleItemPress = useCallback(
+      (did: string) => {
+        onIdentitySwitch?.()
+        InteractionManager.runAfterInteractions(async () => {
+          try {
+            await switchToAccount(did)
+          } catch (error: unknown) {
+            logger.error(
+              new Error('Error when switching identity in the drawer', {
+                cause: error,
+              })
+            )
+            Alert.alert(
+              'Error',
+              `Unable to switch to the Identity, please try again later.`
+            )
+
+            // Switch back to the current account
+            if (currentIdentity?.did) {
+              try {
+                await switchToAccount(currentIdentity.did)
+                await refresh()
+              } catch (anotherError: unknown) {
+                logger.error(
+                  new Error(
+                    'Error when switching and refreshing identity back to current one in the drawer',
+                    {
+                      cause: anotherError,
+                    }
+                  )
+                )
+              }
+            }
+          }
+        })
+      },
+      [onIdentitySwitch, refresh, switchToAccount, currentIdentity]
+    )
+
     const renderItem = useCallback(
       ({ item: identity }: ListRenderItemInfo<IdentityItem>) => {
         const current = identity.did === currentIdentity?.did
@@ -60,10 +108,11 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
             did={identity.did}
             profile={identity.profile}
             isCurrent={current}
+            onPress={handleItemPress}
           />
         )
       },
-      [currentIdentity]
+      [currentIdentity, handleItemPress]
     )
 
     const renderSeparator = () => <View style={styles.separator} />

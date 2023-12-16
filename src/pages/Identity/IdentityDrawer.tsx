@@ -71,6 +71,10 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
     close()
   }, [navigation, close])
 
+  const handleIdentitySwitch = useCallback(() => {
+    close()
+  }, [close])
+
   return (
     <Drawer
       open={isOpen}
@@ -144,7 +148,10 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
               <View style={styles.identitiesLabelContainer}>
                 <Text style={styles.switchIdentityLabel}>Switch Identity</Text>
               </View>
-              <DrawerIdentityList style={styles.identityList} />
+              <DrawerIdentityList
+                onIdentitySwitch={handleIdentitySwitch}
+                style={styles.identityList}
+              />
             </View>
           </View>
           <BottomActionBar
