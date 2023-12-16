@@ -76,7 +76,7 @@ export function AccountItem(props: AccountItemProps) {
         style={styles.avatar}
         source={avatar}
         network={network}
-        size='compact'
+        networkIndicatorSize='compact'
         loading={!loadingState.loading}
       />
       <View style={styles.info}>

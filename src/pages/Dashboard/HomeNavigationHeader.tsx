@@ -72,7 +72,7 @@ function HomeNavigationHeader(props: HomeNavigationHeaderProps) {
               style={styles.avatar}
               source={avatar}
               network={network}
-              size='compact'
+              networkIndicatorSize='compact'
               loading={!loadingState.loading}
             />
           </TouchableOpacity>
