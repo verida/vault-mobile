@@ -1,5 +1,5 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import { HomeScreenHeader, Icon, IconName } from 'components'
+import { HomeScreenHeader, Icon, IconName, TabScreenHeader } from 'components'
 import { useTheme } from 'contexts'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
@@ -34,7 +34,8 @@ export const TabsNavigator: React.FunctionComponent = () => {
     <Tabs.Navigator
       initialRouteName='Home'
       screenOptions={({ route }) => ({
-        headerShown: false,
+        headerShown: true,
+        header: (props) => <TabScreenHeader {...props} />,
         tabBarActiveTintColor: theme.color.primary,
         tabBarStyle: {
           height: 40 + 10 + (insets.bottom === 0 ? 6 : insets.bottom), // 40 (icon and label) + 10 (padding top) + 6 or insets.bottom (padding bottom)
@@ -48,7 +49,13 @@ export const TabsNavigator: React.FunctionComponent = () => {
           return <Icon name={iconName} size={size} color={color} />
         },
       })}>
-      <Tabs.Screen name='Home' component={HomeTabScreen} />
+      <Tabs.Screen
+        name='Home'
+        component={HomeTabScreen}
+        options={{
+          headerShown: false,
+        }}
+      />
       <Tabs.Screen
         name='NewHome'
         component={HomeScreen}
