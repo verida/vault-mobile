@@ -1,6 +1,6 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { EnvironmentType } from '@verida/types'
-import { IdentityAvatar } from 'components'
+import { Icon, IdentityAvatar } from 'components'
 import { useTheme } from 'contexts'
 import {
   getAddressFromDID,
@@ -19,7 +19,6 @@ import {
   View,
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
-import MaterialIcon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
@@ -98,18 +97,14 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
             <TouchableOpacity
               onPress={handleScanQrCodePress}
               hitSlop={HIT_SLOP}>
-              <MaterialIcon
-                name='qrcode-scan'
-                size={24}
-                style={styles.actionIcon}
-              />
+              <Icon name='scan-qr' size={theme.iconSize.m} />
             </TouchableOpacity>
             <TouchableOpacity
               onPress={handleInboxPress}
               hitSlop={HIT_SLOP}
               style={styles.firstActionIcon}>
               {/* TODO: Factorise an Inbox icon button with its badge for unread messages */}
-              <MaterialIcon name='email' size={24} style={styles.actionIcon} />
+              <Icon name='inbox' size={theme.iconSize.m} />
               {/* TODO: Factorise a Badge component */}
               {unreadMessagesCount ? (
                 <View style={styles.badge}>
@@ -162,9 +157,6 @@ const createStyles = (theme: Theme) =>
     },
     firstActionIcon: {
       marginLeft: theme.spacing.m,
-    },
-    actionIcon: {
-      color: theme.color.iconDefault,
     },
     badge: {
       alignItems: 'center',
