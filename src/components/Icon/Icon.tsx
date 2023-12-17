@@ -11,7 +11,6 @@ import CopyIcon from 'assets/icons/copy.svg'
 import GoToIcon from 'assets/icons/goto_icon.svg'
 import ShareIcon from 'assets/icons/share_icon.svg'
 import TickIcon from 'assets/icons/tick_icon.svg'
-import WalletIcon from 'assets/icons/wallet.svg'
 import WarningIcon from 'assets/icons/warning_icon.svg'
 import PlusIcon from 'assets/plus_icon.svg' // TODO: The icon should not have a color
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
@@ -81,7 +80,7 @@ export const Icon = (props: {
 
   switch (name) {
     case 'wallet':
-      return <WalletIcon width={size} height={size} fill={color} />
+      return <Ionicon name='wallet' size={size} color={color} />
     case 'ethereum':
       return <EthereumIcon width={size} height={size} fill={color} />
     case 'copy':
