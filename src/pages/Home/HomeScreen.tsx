@@ -2,6 +2,7 @@ import {
   HomeCryptoWalletOverview,
   HomeGettingStarted,
   HomePromoBanners,
+  RecoveryPhraseReminder,
   ScreenWrapper,
 } from 'components'
 import { useTheme } from 'contexts'
@@ -12,7 +13,6 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import { TabsScreenProps } from 'navigation/types'
-import SeedPhraseRemindView from 'pages/Dashboard/SeedPhraseRemindView'
 import { Theme } from 'styles/types'
 
 export type HomeScreenParams = undefined
@@ -55,7 +55,7 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
             />
           )}
         </View>
-        <SeedPhraseRemindView style={styles.seedPhraseRemindView} />
+        <RecoveryPhraseReminder style={styles.recoveryPhraseReminder} />
       </ScreenWrapper>
     </>
   )
@@ -77,14 +77,10 @@ const createStyle = (theme: Theme) =>
     gettingStartedSection: {
       flex: 1,
     },
-    seedPhraseRemindView: {
+    recoveryPhraseReminder: {
       position: 'absolute',
       bottom: theme.spacing.m,
       left: theme.spacing.m,
       right: theme.spacing.m,
-      backgroundColor: theme.color.lightOrange,
-      borderRadius: theme.roundness.xs,
-      borderWidth: 1,
-      borderColor: theme.color.orange,
     },
   })
