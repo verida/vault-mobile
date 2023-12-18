@@ -20,6 +20,8 @@ type HomeScreenProps = TabsScreenProps<'NewHome'>
 export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
   _props
 ) => {
+  // useHomeScreenHandlers() // TODO: To uncomment after removing the previous Home screen
+
   const styles = useThemeAwareStyle(createStyle)
   const { theme } = useTheme()
 

@@ -65,7 +65,7 @@ export const HomeTabScreen = (props) => {
   )
   const logout = () => dispatch(logoutAction({ did: selectedAccount?.did }))
 
-  const handleDeeplink = useDeeplink(navigation)
+  const handleDeeplink = useDeeplink()
   const { switchToAccount, refresh } = useAuth()
   const linkTo = useLinkTo()
   const qrAddress = selectedAccount?.did
