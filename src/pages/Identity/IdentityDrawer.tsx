@@ -60,14 +60,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   }, [navigation, close])
 
   const handleSettingsPress = useCallback(() => {
-    navigation.navigate('Settings', {
-      onSelectAccount: () => {
-        // TODO: To remove when Settings go rid of its params
-      },
-      onLogoutAccounts: () => {
-        // TODO: To remove when Settings go rid of its params
-      },
-    } as any)
+    navigation.navigate('Settings')
     close()
   }, [navigation, close])
 
