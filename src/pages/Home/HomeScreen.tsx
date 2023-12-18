@@ -1,6 +1,6 @@
 import {
-  GettingStarted,
   HomeCryptoWalletOverview,
+  HomeGettingStarted,
   HomePromoBanners,
   ScreenWrapper,
 } from 'components'
@@ -27,6 +27,7 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
 
   const hideCryptoWalletOverview = config.features.home.hideCryptoWalletOverview
   const hidePromoBanners = config.features.home.hidePromoBanners
+  const hideGettingStarted = config.features.home.hideGettingStarted
 
   return (
     <ScreenWrapper
@@ -41,9 +42,11 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
             style={[styles.section, styles.promoBannersSection]}
           />
         )}
-        <View style={styles.section}>
-          <GettingStarted />
-        </View>
+        {hideGettingStarted ? null : (
+          <HomeGettingStarted
+            style={[styles.section, styles.gettingStartedSection]}
+          />
+        )}
       </View>
     </ScreenWrapper>
   )
@@ -61,5 +64,8 @@ const createStyle = (theme: Theme) =>
     promoBannersSection: {
       marginLeft: -theme.spacing.m,
       marginRight: -theme.spacing.m,
+    },
+    gettingStartedSection: {
+      flex: 1,
     },
   })

@@ -1,4 +1,4 @@
-export * from './GettingStartedItem'
-export * from './GettingStartedSection'
 export * from './HomeCryptoWalletOverview'
+export * from './HomeGettingStarted'
+export * from './HomeGettingStartedItem'
 export * from './HomePromoBanners'

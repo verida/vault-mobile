@@ -44,8 +44,9 @@ export const config = {
   features: {
     veridaMainnetEnabled: true,
     home: {
-      hidePromoBanners: false,
       hideCryptoWalletOverview: false,
+      hidePromoBanners: false,
+      hideGettingStarted: false,
     },
   },
   verida: {

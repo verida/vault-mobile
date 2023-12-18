@@ -16,3 +16,10 @@ export type HomeScreenPromotionalBanner = {
       actionValue: string
     }
 )
+
+export type HomeScreenGettingStartedItem = {
+  key: string
+  label: string
+  icon: React.ReactElement
+  screen: keyof MainStackParams | keyof TabsScreenParams
+}
