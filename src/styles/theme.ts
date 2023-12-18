@@ -7,6 +7,7 @@ import {
   DEFAULT_ICON_COLOR,
   GREY_120,
   LIGHT_GREY_600,
+  LIGHT_ORANGE_COLOR,
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
@@ -62,6 +63,7 @@ export const defaultTheme = {
 
     veridaGreen: VERIDA_COLOR,
     orange: ORANGE_COLOR,
+    lightOrange: LIGHT_ORANGE_COLOR,
 
     primary5: PRIMARY_COLOR_5,
     primary50: PRIMARY_COLOR_50,

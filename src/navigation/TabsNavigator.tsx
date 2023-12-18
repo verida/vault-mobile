@@ -7,7 +7,6 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TabsScreenParams } from 'navigation/types'
 import Assets from 'pages/AssetsCollections'
 // import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
-import { HomeTabScreen } from 'pages/Dashboard/Home'
 import { DataTabScreen } from 'pages/Data'
 import { HomeScreen } from 'pages/Home'
 import { IdentityDrawer } from 'pages/Identity'
@@ -18,7 +17,6 @@ const tabIcons: Record<
   { default: IconName; focused: IconName }
 > = {
   Home: { default: 'home', focused: 'home' },
-  NewHome: { default: 'home', focused: 'home' },
   Profile: { default: 'user', focused: 'user' },
   Data: { default: 'data', focused: 'data' },
   // Connections: { default: 'connections', focused: 'connections' }, // TODO: uncomment when ready
@@ -53,13 +51,6 @@ export const TabsNavigator: React.FunctionComponent = () => {
         })}>
         <Tabs.Screen
           name='Home'
-          component={HomeTabScreen}
-          options={{
-            headerShown: false,
-          }}
-        />
-        <Tabs.Screen
-          name='NewHome'
           component={HomeScreen}
           options={{
             header: (props) => <HomeScreenHeader {...props} />,

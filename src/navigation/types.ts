@@ -66,8 +66,7 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
   NativeStackScreenProps<AuthStackParams, S>
 
 export type TabsScreenParams = {
-  Home: undefined
-  NewHome: HomeScreenParams
+  Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready

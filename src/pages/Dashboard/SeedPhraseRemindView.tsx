@@ -1,9 +1,10 @@
+import { useNavigation } from '@react-navigation/native'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectShowSeedPhraseReminder,
   setShowSeedPhraseReminder,
 } from 'features/settings'
-import React, { useEffect } from 'react'
+import React, { useCallback, useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useDispatch, useSelector } from 'react-redux'
@@ -13,17 +14,22 @@ import Text from 'components/Text'
 import { ORANGE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-export type SeedPhraseRemindViewProps = Omit<ViewProps, 'children'> & {
-  onRecordPress: () => void
-}
+export type SeedPhraseRemindViewProps = Omit<ViewProps, 'children'>
+
 const REMIND_EXPIRATION_TIME = 24 * 60 * 60 * 1000 // 24 hours
 
 function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
-  const { onRecordPress, style, ...rest } = props
+  const { style, ...rest } = props
+
+  const navigation = useNavigation()
 
   const dispatch = useDispatch()
   const selectedAccount = useSelector(selectSelectedAccount)
   const showSeedPhraseReminder = useSelector(selectShowSeedPhraseReminder)
+
+  const handleSeedPhraseReminderPress = useCallback(() => {
+    navigation.navigate('SeedPhrase')
+  }, [navigation])
 
   useEffect(() => {
     async function checkReminder() {
@@ -75,7 +81,7 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
         <TouchableOpacity
           style={styles.recordButton}
           hitSlop={{ top: 10, left: 0, right: 0, bottom: 10 }}
-          onPress={onRecordPress}>
+          onPress={handleSeedPhraseReminderPress}>
           <Text style={styles.recordButtonText}>Record Now</Text>
         </TouchableOpacity>
       </Text>
