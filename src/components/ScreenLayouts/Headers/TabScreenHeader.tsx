@@ -114,7 +114,7 @@ const createStyles = (theme: Theme) =>
       borderBottomColor: theme.color.lightGrey,
     },
     avatarContainer: {
-      marginVertical: 6,
+      marginVertical: theme.spacing.sm,
       marginRight: theme.spacing.m,
     },
     avatar: {
@@ -125,14 +125,14 @@ const createStyles = (theme: Theme) =>
       flex: 1,
     },
     title: {
-      marginVertical: 6,
+      marginVertical: theme.spacing.sm,
       fontFamily: theme.fontFamily.bold,
       fontSize: theme.fontSize.sl,
       lineHeight: 32,
       textAlign: 'center',
     },
     actionsContainer: {
-      marginVertical: 6,
+      marginVertical: theme.spacing.sm,
       marginLeft: theme.spacing.m,
       flexDirection: 'row',
       alignItems: 'center',
