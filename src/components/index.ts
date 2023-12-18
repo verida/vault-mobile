@@ -1,5 +1,6 @@
 export * from './Alert'
 export * from './Buttons'
+export * from './Home'
 export * from './Icon'
 export * from './Images'
 export * from './Network'

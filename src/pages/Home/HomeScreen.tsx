@@ -1,15 +1,15 @@
-import { ScreenWrapper } from 'components'
+import {
+  GettingStarted,
+  HomeCryptoWalletOverview,
+  HomePromoBanners,
+  ScreenWrapper,
+} from 'components'
 import { useTheme } from 'contexts'
 import { useConfig } from 'features/config'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
-import {
-  CryptoWalletOverview,
-  GettingStarted,
-  PromotionalBannersCarousel,
-} from 'components/Home'
 import { TabsScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
@@ -34,11 +34,11 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
       backgroundColor={theme.color.snow}>
       <View style={styles.container}>
         {hideCryptoWalletOverview ? null : (
-          <CryptoWalletOverview style={styles.section} />
+          <HomeCryptoWalletOverview style={styles.section} />
         )}
         {hidePromoBanners ? null : (
-          <PromotionalBannersCarousel
-            style={[styles.section, styles.promoBannersCarouselSection]}
+          <HomePromoBanners
+            style={[styles.section, styles.promoBannersSection]}
           />
         )}
         <View style={styles.section}>
@@ -58,7 +58,7 @@ const createStyle = (theme: Theme) =>
     section: {
       marginBottom: theme.spacing.m,
     },
-    promoBannersCarouselSection: {
+    promoBannersSection: {
       marginLeft: -theme.spacing.m,
       marginRight: -theme.spacing.m,
     },

@@ -16,7 +16,7 @@ import { Theme } from 'styles/types'
 
 type CryptoWalletOverviewProps = ViewProps
 
-export const CryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
+export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
   props
 ) => {
   const { ...viewProps } = props
