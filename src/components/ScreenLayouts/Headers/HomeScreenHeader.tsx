@@ -7,6 +7,7 @@ import {
   getNetworkFromDID,
   selectSelectedAccount,
 } from 'features/identities'
+import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectNewMessagesCount } from 'features/inbox'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
@@ -45,6 +46,8 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
       : EnvironmentType.MAINNET
     const displayedDid = identity?.did ? getAddressFromDID(identity?.did) : ''
 
+    const { toggle: toggleDrawer } = useIdentityDrawer()
+
     const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
     const displayedInboxCount =
       unreadMessagesCount >= MAX_INBOX_COUNT
@@ -77,21 +80,32 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
               paddingRight: insets.right + theme.spacing.m,
             },
           ]}>
-          {/* TODO: Surround the avatar and name with a touchable to open the drawer */}
-          <IdentityAvatar
-            source={avatar?.uri}
-            network={network}
-            networkIndicatorSize='compact'
-            style={styles.avatar}
-          />
-          <View style={styles.nameContainer}>
-            <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
-              {name}
-            </Text>
-            <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
-              {displayedDid}
-            </Text>
-          </View>
+          <TouchableOpacity
+            onPress={toggleDrawer}
+            activeOpacity={0.4}
+            hitSlop={HIT_SLOP}
+            style={styles.identityContainer}>
+            <IdentityAvatar
+              source={avatar?.uri}
+              network={network}
+              networkIndicatorSize='compact'
+              style={styles.avatar}
+            />
+            <View style={styles.nameAndDidContainer}>
+              <View style={styles.nameContainer}>
+                <Text
+                  style={styles.name}
+                  numberOfLines={1}
+                  ellipsizeMode='tail'>
+                  {name}
+                </Text>
+                <Icon name='chevron-forward' size={16} />
+              </View>
+              <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
+                {displayedDid}
+              </Text>
+            </View>
+          </TouchableOpacity>
           <View style={styles.actionsContainer}>
             {/* TODO: Factorise the icon buttons */}
             <TouchableOpacity
@@ -130,13 +144,21 @@ const createStyles = (theme: Theme) =>
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
     },
+    identityContainer: {
+      flex: 1,
+      flexDirection: 'row',
+    },
     avatar: {
       width: 48,
       aspectRatio: 1,
     },
-    nameContainer: {
+    nameAndDidContainer: {
       flex: 1,
       marginLeft: theme.spacing.m,
+    },
+    nameContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     name: {
       fontFamily: theme.fontFamily.bold,

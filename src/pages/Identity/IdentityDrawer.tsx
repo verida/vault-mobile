@@ -98,6 +98,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                 <IdentityAvatar
                   source={avatar}
                   network={network}
+                  networkIndicatorSize='default'
                   style={styles.avatar}
                 />
                 <Text
@@ -212,7 +213,7 @@ const createStyles = (theme: Theme) =>
     },
     did: {
       marginTop: theme.spacing.s,
-      paddingHorizontal: theme.spacing.xxl,
+      paddingHorizontal: theme.spacing.l,
       textAlign: 'center',
       fontFamily: theme.fontFamily.semibold,
       fontSize: theme.fontSize.s,

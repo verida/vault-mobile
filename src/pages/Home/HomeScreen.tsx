@@ -20,6 +20,8 @@ type HomeScreenProps = TabsScreenProps<'NewHome'>
 export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
   _props
 ) => {
+  // TODO: Do we display the seed phrase reminder here, like in the previous Home screen?
+
   // useHomeScreenHandlers() // TODO: To uncomment after removing the previous Home screen
 
   const styles = useThemeAwareStyle(createStyle)

@@ -39,7 +39,7 @@ export const DrawerIdentityListItem: React.FunctionComponent<DrawerIdentityListI
           <IdentityAvatar
             source={profile.avatar?.uri}
             network={network}
-            size='compact'
+            networkIndicatorSize='compact'
             style={styles.avatar}
           />
           <View style={styles.nameContainer}>

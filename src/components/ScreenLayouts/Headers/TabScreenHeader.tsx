@@ -1,6 +1,7 @@
 import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
 import { Icon, IdentityAvatar } from 'components'
 import { useTheme } from 'contexts'
+import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectNewMessagesCount } from 'features/inbox'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
@@ -37,6 +38,8 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
 
   const { avatar } = useAppSelector(selectSelectedPublicProfile)
 
+  const { toggle: toggleDrawer } = useIdentityDrawer()
+
   const unreadMessagesCount = useAppSelector(selectNewMessagesCount)
   const displayedInboxCount =
     unreadMessagesCount >= MAX_INBOX_COUNT
@@ -64,8 +67,11 @@ export const TabScreenHeader: React.FunctionComponent<TabScreenHeaderProps> = (
             paddingRight: insets.right + theme.spacing.m,
           },
         ]}>
-        {/* TODO: Surround the avatar with a touchable to open the drawer */}
-        <IdentityAvatar source={avatar?.uri} style={styles.avatar} />
+        <View style={styles.avatarContainer}>
+          <TouchableOpacity onPress={toggleDrawer} hitSlop={HIT_SLOP}>
+            <IdentityAvatar source={avatar?.uri} style={styles.avatar} />
+          </TouchableOpacity>
+        </View>
         <View style={styles.titleContainer}>
           {headerTitle ? (
             headerTitle
@@ -107,9 +113,11 @@ const createStyles = (theme: Theme) =>
       borderBottomWidth: 1,
       borderBottomColor: theme.color.lightGrey,
     },
-    avatar: {
+    avatarContainer: {
       marginVertical: 6,
       marginRight: theme.spacing.m,
+    },
+    avatar: {
       width: 32,
       aspectRatio: 1,
     },
