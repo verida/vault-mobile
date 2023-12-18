@@ -3,7 +3,7 @@ import { selectSelectedAccount, useIdentities } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { ScrollView, StyleSheet, View } from 'react-native'
 
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
@@ -71,7 +71,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
   // TODO: This screen was quickly reworked without a proper design for our designers. We should ask for a design and update it again.
   return (
     <ScreenWrapper>
-      <View style={styles.container}>
+      <ScrollView style={styles.container}>
         <View>
           <Text style={styles.title}>{title}</Text>
           {selectedAccount?.did ? (
@@ -81,7 +81,7 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
           ) : null}
           <Text style={styles.subTitle}>{info}</Text>
         </View>
-      </View>
+      </ScrollView>
       <BottomActionBar
         alertType='warning'
         alertContent='This operation is final, your Identity cannot be recovered without your recovery phrase.'
