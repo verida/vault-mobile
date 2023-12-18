@@ -4,6 +4,7 @@ import { logout as logoutAction } from 'features/auth'
 import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
+import { useIdentityDrawer } from 'features/identityDrawer'
 import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
@@ -233,12 +234,14 @@ export const HomeTabScreen = (props) => {
     navigation.navigate('ShareIdentity')
   }, [navigation])
 
+  const { open: openIdentityDrawer } = useIdentityDrawer()
+
   return (
     <Container>
       <HomeNavigationHeader
         inboxCount={props.newMessagesCount}
         onNamePress={toggleAddAccountsModal}
-        onAvatarPress={() => props.navigation.navigate('Profile')}
+        onAvatarPress={openIdentityDrawer}
         onInboxPress={() => props.navigation.navigate('Inbox')}
         onSettingsPress={() =>
           props.navigation.navigate('Settings', {

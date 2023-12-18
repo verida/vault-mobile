@@ -40,3 +40,8 @@ export async function getNetworkFromAccount(account: Account) {
   const did = await account.did()
   return getNetworkFromDID(did)
 }
+
+export function getAddressFromDID(did: string): string {
+  const { address } = explodeDID(did)
+  return address
+}

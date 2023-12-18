@@ -1,5 +1,8 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
-import { CompositeScreenProps } from '@react-navigation/native'
+import {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
 import {
@@ -77,7 +80,7 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
   >
 
 export type MainStackParams = {
-  Tabs: undefined
+  Tabs: NavigatorScreenParams<TabsScreenParams>
   Inbox: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined

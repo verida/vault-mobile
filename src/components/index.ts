@@ -1,5 +1,7 @@
 export * from './Alert'
 export * from './Buttons'
+export * from './IdentityDrawer'
+export * from './Indicators'
 export * from './Images'
 export * from './Network'
 export * from './Status'
