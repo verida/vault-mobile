@@ -56,8 +56,12 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
     justifyContent: 'center',
   },
-  textWrapper: { flexDirection: 'row' },
-  navigationContent: { marginHorizontal: 10 },
+  textWrapper: {
+    flexDirection: 'row',
+  },
+  navigationContent: {
+    marginHorizontal: 10,
+  },
   textTitle: {
     fontSize: 14,
     fontFamily: NUNITO_SANS_BOLD,

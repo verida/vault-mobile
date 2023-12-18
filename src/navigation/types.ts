@@ -12,6 +12,7 @@ import {
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
+import { HomeScreenParams } from 'pages/Home'
 import {
   AddIdentityScreenParams,
   CreateIdentityScreenParams,
@@ -65,7 +66,7 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
   NativeStackScreenProps<AuthStackParams, S>
 
 export type TabsScreenParams = {
-  Home: undefined
+  Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready

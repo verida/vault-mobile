@@ -60,14 +60,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   }, [navigation, close])
 
   const handleSettingsPress = useCallback(() => {
-    navigation.navigate('Settings', {
-      onSelectAccount: () => {
-        // TODO: To remove when Settings go rid of its params
-      },
-      onLogoutAccounts: () => {
-        // TODO: To remove when Settings go rid of its params
-      },
-    } as any)
+    navigation.navigate('Settings')
     close()
   }, [navigation, close])
 
@@ -98,6 +91,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                 <IdentityAvatar
                   source={avatar}
                   network={network}
+                  networkIndicatorSize='default'
                   style={styles.avatar}
                 />
                 <Text
@@ -212,7 +206,7 @@ const createStyles = (theme: Theme) =>
     },
     did: {
       marginTop: theme.spacing.s,
-      paddingHorizontal: theme.spacing.xxl,
+      paddingHorizontal: theme.spacing.l,
       textAlign: 'center',
       fontFamily: theme.fontFamily.semibold,
       fontSize: theme.fontSize.s,

@@ -43,6 +43,11 @@ export const config = {
   },
   features: {
     veridaMainnetEnabled: true,
+    home: {
+      hideCryptoWalletOverview: false,
+      hidePromoBanners: false,
+      hideGettingStarted: false,
+    },
   },
   verida: {
     [EnvironmentType.LOCAL]: {

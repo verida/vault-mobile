@@ -128,8 +128,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   return (
     <ScreenWrapper
       backgroundColor={theme.color.snow}
-      // TODO: Disable the bottom safe area (props added in another branch, need merge to get it)
-    >
+      safeAreaEdges={['left', 'right']}>
       <NavigationHeader // TODO: Get rid of the following when properly handling a common header in the navigator
         title='Settings'
         left={{

@@ -1,9 +1,11 @@
+import { useNavigation } from '@react-navigation/native'
 import { selectSelectedAccount } from 'features/identities'
 import {
   selectShowSeedPhraseReminder,
   setShowSeedPhraseReminder,
 } from 'features/settings'
-import React, { useEffect } from 'react'
+import { useThemeAwareStyle } from 'hooks'
+import React, { useCallback, useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { useDispatch, useSelector } from 'react-redux'
@@ -12,18 +14,25 @@ import AccountManager from 'api/AccountManager'
 import Text from 'components/Text'
 import { ORANGE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { Theme } from 'styles/types'
 
-export type SeedPhraseRemindViewProps = Omit<ViewProps, 'children'> & {
-  onRecordPress: () => void
-}
+export type RecoveryPhraseReminderProps = Omit<ViewProps, 'children'>
+
 const REMIND_EXPIRATION_TIME = 24 * 60 * 60 * 1000 // 24 hours
 
-function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
-  const { onRecordPress, style, ...rest } = props
+export const RecoveryPhraseReminder = (props: RecoveryPhraseReminderProps) => {
+  const { style, ...rest } = props
+
+  const styles = useThemeAwareStyle(createStyles)
+  const navigation = useNavigation()
 
   const dispatch = useDispatch()
   const selectedAccount = useSelector(selectSelectedAccount)
   const showSeedPhraseReminder = useSelector(selectShowSeedPhraseReminder)
+
+  const handleSeedPhraseReminderPress = useCallback(() => {
+    navigation.navigate('SeedPhrase')
+  }, [navigation])
 
   useEffect(() => {
     async function checkReminder() {
@@ -73,9 +82,8 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
         You have not recorded your seed phrase. Record it now to create a backup
         for your account.{' '}
         <TouchableOpacity
-          style={styles.recordButton}
           hitSlop={{ top: 10, left: 0, right: 0, bottom: 10 }}
-          onPress={onRecordPress}>
+          onPress={handleSeedPhraseReminderPress}>
           <Text style={styles.recordButtonText}>Record Now</Text>
         </TouchableOpacity>
       </Text>
@@ -83,34 +91,36 @@ function SeedPhraseRemindView(props: SeedPhraseRemindViewProps) {
   )
 }
 
-const styles = StyleSheet.create({
-  container: {
-    paddingVertical: 16,
-    paddingHorizontal: 15,
-    alignItems: 'stretch',
-  },
-  header: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: 8,
-  },
-  title: {
-    color: ORANGE_COLOR,
-    fontFamily: NUNITO_SANS_BOLD,
-    flex: 1,
-    marginLeft: 10,
-    fontSize: 13,
-  },
-  message: {
-    fontSize: 12,
-  },
-  recordButtonText: {
-    fontFamily: NUNITO_SANS_BOLD,
-    fontSize: 12,
-    includeFontPadding: false,
-    textDecorationLine: 'underline',
-  },
-  recordButton: {},
-})
-
-export default SeedPhraseRemindView
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      paddingVertical: 16,
+      paddingHorizontal: 15,
+      alignItems: 'stretch',
+      backgroundColor: theme.color.lightOrange,
+      borderRadius: theme.roundness.xs,
+      borderWidth: 1,
+      borderColor: theme.color.orange,
+    },
+    header: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: 8,
+    },
+    title: {
+      color: ORANGE_COLOR,
+      fontFamily: NUNITO_SANS_BOLD,
+      flex: 1,
+      marginLeft: 10,
+      fontSize: 13,
+    },
+    message: {
+      fontSize: 12,
+    },
+    recordButtonText: {
+      fontFamily: NUNITO_SANS_BOLD,
+      fontSize: 12,
+      includeFontPadding: false,
+      textDecorationLine: 'underline',
+    },
+  })

@@ -9,18 +9,16 @@ import { Theme } from 'styles/types'
 
 import { Avatar, AvatarProps } from './Avatar'
 
-export type IdentityAvatarProps = Pick<
-  NetworkIndicatorProps,
-  'network' | 'size'
-> &
-  Pick<AvatarProps, 'source'> & {
-    loading?: boolean
-  } & ViewProps
+export type IdentityAvatarProps = Pick<AvatarProps, 'source'> & {
+  network?: EnvironmentType
+  networkIndicatorSize?: NetworkIndicatorProps['size']
+  loading?: boolean
+} & ViewProps
 
 export const IdentityAvatar: React.FunctionComponent<IdentityAvatarProps> = (
   props
 ) => {
-  const { network, size, source, ...viewProps } = props
+  const { network, networkIndicatorSize, source, ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -30,15 +28,17 @@ export const IdentityAvatar: React.FunctionComponent<IdentityAvatarProps> = (
         {/* <ShimmerPlaceholder visible={loading} shimmerStyle={styles.shimmer}> */}
         <Avatar source={source} fallbackType='person' />
         {/* </ShimmerPlaceholder> */}
-        {network === EnvironmentType.MAINNET ? null : (
+        {network && network !== EnvironmentType.MAINNET ? (
           <NetworkIndicator
             network={network}
-            size={size}
+            size={networkIndicatorSize}
             style={{
-              transform: [{ translateY: size === 'compact' ? -16 : -20 }],
+              transform: [
+                { translateY: networkIndicatorSize === 'compact' ? -16 : -20 },
+              ],
             }}
           />
-        )}
+        ) : null}
       </View>
     </View>
   )

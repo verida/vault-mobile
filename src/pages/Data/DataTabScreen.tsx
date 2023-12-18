@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 
 import { DataList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { TabsScreenProps } from 'navigation/types'
 
 const logger = new Logger('Pages/Data/DataTabScreen')
@@ -18,6 +17,12 @@ export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
   props
 ) => {
   const { navigation } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Data',
+    })
+  }, [navigation])
 
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
@@ -57,7 +62,6 @@ export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
 
   return (
     <Container>
-      <NavigationHeader left={{ icon: 'skip' }} title='Data' />
       {loading ? (
         <LoadingView />
       ) : (

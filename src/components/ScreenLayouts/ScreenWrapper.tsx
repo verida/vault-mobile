@@ -8,14 +8,19 @@ import {
   StyleSheet,
   View,
 } from 'react-native'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { Edge, useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { Theme } from 'styles/types'
 
 export type ScreenWrapperProps = {
   children: React.ReactNode
   backgroundColor?: string
-  withoutSafeArea?: boolean
+  /** Takes priority over allSafeAreaEdges */
+  noSafeArea?: boolean
+  /** Takes priority over safeAreaEdges */
+  allSafeAreaEdges?: boolean
+  /** Default to ['bottom', 'left', 'right'], ie. assume there's a header */
+  safeAreaEdges?: Edge[]
   keyboardAvoiding?: boolean
   keyboardAvoidingBehavior?: KeyboardAvoidingViewProps['behavior']
   keyboardVerticalOffset?: KeyboardAvoidingViewProps['keyboardVerticalOffset']
@@ -31,7 +36,9 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
   const {
     children,
     backgroundColor,
-    withoutSafeArea = false,
+    noSafeArea = false,
+    allSafeAreaEdges = false,
+    safeAreaEdges = ['bottom', 'left', 'right'],
     keyboardAvoiding = false,
     keyboardAvoidingBehavior,
     keyboardVerticalOffset,
@@ -41,17 +48,30 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
   const headerHeight = useHeaderHeight()
   const styles = useThemeAwareStyle(createStyles)
 
+  const resolvedSafeAreaEdges = noSafeArea
+    ? []
+    : allSafeAreaEdges
+    ? ['top', 'bottom', 'left', 'right']
+    : safeAreaEdges
+
   return (
     <View
       style={[
         styles.wrapper,
-        withoutSafeArea
-          ? {}
-          : {
-              paddingBottom: insets.bottom,
-              paddingRight: insets.right,
-              paddingLeft: insets.left,
-            },
+        {
+          paddingTop: resolvedSafeAreaEdges.includes('top')
+            ? insets.top
+            : undefined,
+          paddingBottom: resolvedSafeAreaEdges.includes('bottom')
+            ? insets.bottom
+            : undefined,
+          paddingLeft: resolvedSafeAreaEdges.includes('left')
+            ? insets.left
+            : undefined,
+          paddingRight: resolvedSafeAreaEdges.includes('right')
+            ? insets.right
+            : undefined,
+        },
         backgroundColor
           ? {
               backgroundColor: backgroundColor,
