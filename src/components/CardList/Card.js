@@ -2,8 +2,6 @@ import { useNavigation } from '@react-navigation/native'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { DefaultAvatar } from 'api/utils'
-
 import {
   BLACK_COLOR_OPACITY,
   LIGHTGREY_COLOR,
@@ -24,7 +22,7 @@ export default ({ options }) => {
     <TouchableOpacity
       style={[style.card, !options.read ? style.unread : '']}
       onPress={onPress}>
-      <Image source={options.logo || DefaultAvatar} style={style.logo} />
+      <Image source={options.avatar} style={style.logo} />
       <View style={style.details}>
         <View style={style.tile}>
           <View>
@@ -36,7 +34,7 @@ export default ({ options }) => {
         </View>
         <View>
           {Boolean(options.from) && (
-            <Text style={style.from}>{options.from} </Text>
+            <Text style={style.from}>{options.from}</Text>
           )}
         </View>
         <View style={{ ...style.tile, ...style.footer }}>
