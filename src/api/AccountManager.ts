@@ -454,8 +454,8 @@ class AccountManager extends EventEmitter {
     }
 
     try {
-      const defdaultDidConfig = getDidClientConfigForNetwork(network)
-      const didClientConfig = merge({}, defdaultDidConfig, {
+      const defaultDidConfig = getDidClientConfigForNetwork(network)
+      const didClientConfig = merge({}, defaultDidConfig, {
         veridaKey: this.selectedAccount!.privateKey,
       })
 

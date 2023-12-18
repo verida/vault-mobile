@@ -59,7 +59,7 @@
     "@veramo/did-resolver": "^5.2.0",
     "@veramo/utils": "^5.4.1",
     "@verida/account": "^2.4.0-rc2",
-    "@verida/account-node": "^2.4.0-rc2",
+    "@verida/account-node": "^2.4.0-rc3",
     "@verida/client-rn": "^2.4.0-rc2",
     "@verida/did-client": "^2.4.0-rc2",
     "@verida/encryption-utils": "^2.2.2",
