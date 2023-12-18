@@ -1,6 +1,6 @@
 import { MainStackParams, TabsScreenParams } from 'navigation/types'
 
-export type HomeScreenPromotionalBanner = {
+export type HomeScreenPromoBanner = {
   key: string
   buttonLabel: string
   image: any

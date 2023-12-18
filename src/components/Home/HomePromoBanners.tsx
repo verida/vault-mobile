@@ -1,10 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
 import { useTheme } from 'contexts/ThemeContext'
-import {
-  HomeScreenPromotionalBanner,
-  promotionalBanners,
-} from 'features/homeScreen'
+import { HomeScreenPromoBanner, promoBanners } from 'features/homeScreen'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
@@ -28,33 +25,30 @@ import { Icon } from 'components/Icon'
 import { BLACK_COLOR_OPACITY, WHITE_COLOR_OPACITY } from 'constants/color'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('PromotionalBannersCarousel')
+const logger = new Logger('HomePromoBanners')
 
 const AnimatedBannersView = Animated.createAnimatedComponent(PagerView)
 
 const windowWidth = Dimensions.get('window').width
 
-type PromotionalBannersCarouselProps = ViewProps
+type HomePromoBannersProps = ViewProps
 
-export const HomePromoBanners: React.FC<PromotionalBannersCarouselProps> = (
-  props
-) => {
+export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
   const { ...viewProps } = props
 
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
-  // const { width: windowWidth } = useWindowDimensions()
 
   const animatedBannerViewRef = React.useRef<PagerView>(null)
   const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current
   const positionAnimatedValue = React.useRef(new Animated.Value(0)).current
-  const inputRange = [0, promotionalBanners.length]
+  const inputRange = [0, promoBanners.length]
   const scrollX = Animated.add(
     scrollOffsetAnimatedValue,
     positionAnimatedValue
   ).interpolate({
     inputRange,
-    outputRange: [0, promotionalBanners.length * windowWidth],
+    outputRange: [0, promoBanners.length * windowWidth],
   })
 
   const handleBannerScroll = React.useMemo(
@@ -76,7 +70,7 @@ export const HomePromoBanners: React.FC<PromotionalBannersCarouselProps> = (
   )
 
   const handleBannerPress = useCallback(
-    async (banner: HomeScreenPromotionalBanner) => {
+    async (banner: HomeScreenPromoBanner) => {
       try {
         switch (banner.actionType) {
           case 'link': {
@@ -95,11 +89,11 @@ export const HomePromoBanners: React.FC<PromotionalBannersCarouselProps> = (
     []
   )
 
-  if (promotionalBanners.length === 0) {
+  if (promoBanners.length === 0) {
     return null
   }
 
-  const banners = promotionalBanners.map((banner) => (
+  const banners = promoBanners.map((banner) => (
     <View key={banner.key} style={styles.bannerContainer}>
       <ImageBackground
         source={banner.image}
@@ -117,7 +111,7 @@ export const HomePromoBanners: React.FC<PromotionalBannersCarouselProps> = (
   ))
 
   // When one banner returns a simple version without the animation and dots
-  if (promotionalBanners.length === 1) {
+  if (promoBanners.length === 1) {
     return <View {...viewProps}>{banners}</View>
   }
 
@@ -138,7 +132,7 @@ export const HomePromoBanners: React.FC<PromotionalBannersCarouselProps> = (
             containerStyle={styles.dotsContainer}
             dotStyle={styles.inactiveDot}
             slidingIndicatorStyle={styles.slidingDot}
-            data={promotionalBanners}
+            data={promoBanners}
             //@ts-ignore
             scrollX={scrollX}
             dotSize={8}

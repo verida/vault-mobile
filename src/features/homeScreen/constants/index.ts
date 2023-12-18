@@ -1,2 +1,2 @@
 export * from './gettingStarted'
-export * from './promotionalBanners'
+export * from './promoBanners'

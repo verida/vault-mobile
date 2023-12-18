@@ -1,21 +1,21 @@
-import { HomeScreenPromotionalBanner } from '../types'
+import { HomeScreenPromoBanner } from '../types'
 
 const veridaMainnetBannerImage = require('assets/home_promo_banners/verida_mainnet_banner_3x.png')
 const veridaMissionsBannerImage = require('assets/home_promo_banners/verida_missions_banner_3x.png')
 const veridaOneBannerImage = require('assets/home_promo_banners/verida_one_banner_3x.png')
 // const veridaBadgesBannerImage = require('assets/home_promo_banners/verida_badges_banner_3x.png')
 
-export const promotionalBanners: HomeScreenPromotionalBanner[] = [
+export const promoBanners: HomeScreenPromoBanner[] = [
   {
     key: 'veridaMainnet',
-    buttonLabel: 'Read our announcement',
+    buttonLabel: 'Learn more',
     image: veridaMainnetBannerImage,
     actionType: 'link',
     actionValue: 'https://www.verida.network/',
   },
   {
     key: 'veridaMissions',
-    buttonLabel: 'Go contribute',
+    buttonLabel: 'Learn more',
     image: veridaMissionsBannerImage,
     actionType: 'link',
     actionValue: 'https://missions.verida.network/',
