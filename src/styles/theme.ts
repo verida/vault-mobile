@@ -13,6 +13,8 @@ import {
   PRIMARY_COLOR_5,
   PRIMARY_COLOR_50,
   PRIMARY_COLOR_100,
+  PRIMARY_COLOR_200,
+  PRIMARY_COLOR_300,
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SHADOW_LIGHT_GREY,
@@ -64,6 +66,8 @@ export const defaultTheme = {
     primary5: PRIMARY_COLOR_5,
     primary50: PRIMARY_COLOR_50,
     primary100: PRIMARY_COLOR_100,
+    primary200: PRIMARY_COLOR_200,
+    primary300: PRIMARY_COLOR_300,
 
     transparent: 'transparent',
     black: BLACK_COLOR_OPACITY(1),

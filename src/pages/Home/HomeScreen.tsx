@@ -6,9 +6,9 @@ import React from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import {
+  CryptoWalletOverview,
   GettingStarted,
   PromotionalBannersCarousel,
-  WalletSummary,
 } from 'components/Home'
 import { TabsScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -25,6 +25,7 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
 
   const { config } = useConfig()
 
+  const hideCryptoWalletOverview = config.features.home.hideCryptoWalletOverview
   const hidePromoBanners = config.features.home.hidePromoBanners
 
   return (
@@ -32,9 +33,9 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
       safeAreaEdges={['left', 'right']}
       backgroundColor={theme.color.snow}>
       <View style={styles.container}>
-        <View style={styles.section}>
-          <WalletSummary />
-        </View>
+        {hideCryptoWalletOverview ? null : (
+          <CryptoWalletOverview style={styles.section} />
+        )}
         {hidePromoBanners ? null : (
           <PromotionalBannersCarousel
             style={[styles.section, styles.promoBannersCarouselSection]}

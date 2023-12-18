@@ -45,6 +45,7 @@ export const config = {
     veridaMainnetEnabled: true,
     home: {
       hidePromoBanners: false,
+      hideCryptoWalletOverview: false,
     },
   },
   verida: {
