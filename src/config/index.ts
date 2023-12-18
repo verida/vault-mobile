@@ -43,6 +43,9 @@ export const config = {
   },
   features: {
     veridaMainnetEnabled: true,
+    home: {
+      hidePromoBanners: false,
+    },
   },
   verida: {
     [EnvironmentType.LOCAL]: {

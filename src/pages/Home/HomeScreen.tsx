@@ -1,5 +1,6 @@
 import { ScreenWrapper } from 'components'
 import { useTheme } from 'contexts'
+import { useConfig } from 'features/config'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View } from 'react-native'
@@ -22,6 +23,10 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
   const styles = useThemeAwareStyle(createStyle)
   const { theme } = useTheme()
 
+  const { config } = useConfig()
+
+  const hidePromoBanners = config.features.home.hidePromoBanners
+
   return (
     <ScreenWrapper
       safeAreaEdges={['left', 'right']}
@@ -30,9 +35,11 @@ export const HomeScreen: React.FunctionComponent<HomeScreenProps> = (
         <View style={styles.section}>
           <WalletSummary />
         </View>
-        <View style={[styles.section, styles.promoBannersCarouselSection]}>
-          <PromotionalBannersCarousel />
-        </View>
+        {hidePromoBanners ? null : (
+          <PromotionalBannersCarousel
+            style={[styles.section, styles.promoBannersCarouselSection]}
+          />
+        )}
         <View style={styles.section}>
           <GettingStarted />
         </View>

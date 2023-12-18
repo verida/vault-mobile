@@ -1,194 +1,209 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 /* eslint-disable @typescript-eslint/ban-ts-comment */
-import { useNavigation } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { useTheme } from 'contexts/ThemeContext'
-import React, { useState } from 'react'
+import {
+  HomeScreenPromotionalBanner,
+  promotionalBanners,
+} from 'features/homeScreen'
+import { Logger } from 'features/telemetry'
+import { useThemeAwareStyle } from 'hooks'
+import React, { useCallback } from 'react'
 import {
   Animated,
   Dimensions,
   ImageBackground,
+  Linking,
   Pressable,
   StyleSheet,
   Text,
   View,
+  ViewProps,
 } from 'react-native'
 import { SlidingDot } from 'react-native-animated-pagination-dots'
 import PagerView, {
   PagerViewOnPageScrollEventData,
 } from 'react-native-pager-view'
 
-import ChevronRightIcon from 'assets/icons/chevron_right.svg'
-import { WHITE_COLOR, WHITE_COLOR_OPACITY } from 'constants/color'
-import { MainStackParams } from 'navigation/types'
+import { Icon } from 'components/Icon'
+import { BLACK_COLOR_OPACITY, WHITE_COLOR_OPACITY } from 'constants/color'
+import { Theme } from 'styles/types'
 
-import { BLACK_COLOR_OPACITY } from '../../constants/color'
-import { NUNITO_SANS } from '../../constants/text'
-
-const claimBadgesBannerImage = require('assets/home_promo_banners/claim_badges.png')
-const veridaOneBannerImage = require('assets/home_promo_banners/verida_one.png')
+const logger = new Logger('PromotionalBannersCarousel')
 
 const AnimatedBannersView = Animated.createAnimatedComponent(PagerView)
 
-type TBanner = {
-  label: string
-  image: any
-  screen: string
-}
+const windowWidth = Dimensions.get('window').width
 
-const bannerDefinitions: TBanner[] = [
-  {
-    label: 'Claim Your Verida Badges',
-    image: claimBadgesBannerImage,
-    screen: 'PublicProfile',
-  },
-  {
-    label: 'Join The Waitlist',
-    image: veridaOneBannerImage,
-    screen: 'PublicProfile',
-  },
-]
+type PromotionalBannersCarouselProps = ViewProps
 
-const WIDTH = Dimensions.get('window').width
+export const PromotionalBannersCarousel: React.FC<PromotionalBannersCarouselProps> =
+  (props) => {
+    const { ...viewProps } = props
 
-export const PromotionalBannersCarousel = () => {
-  const { theme } = useTheme()
-  const [bannerList] = useState<TBanner[]>(bannerDefinitions)
-  const ref = React.useRef<PagerView>(null)
-  const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
-  const scrollOffsetAnimatedValue = React.useRef(new Animated.Value(0)).current
-  const positionAnimatedValue = React.useRef(new Animated.Value(0)).current
-  const inputRange = [0, bannerList.length]
-  const scrollX = Animated.add(
-    scrollOffsetAnimatedValue,
-    positionAnimatedValue
-  ).interpolate({
-    inputRange,
-    outputRange: [0, bannerList.length * WIDTH],
-  })
+    const { theme } = useTheme()
+    const styles = useThemeAwareStyle(createStyles)
+    // const { width: windowWidth } = useWindowDimensions()
 
-  const handleBannerScroll = React.useMemo(
-    () =>
-      Animated.event<PagerViewOnPageScrollEventData>(
-        [
-          {
-            nativeEvent: {
-              offset: scrollOffsetAnimatedValue,
-              position: positionAnimatedValue,
+    const animatedBannerViewRef = React.useRef<PagerView>(null)
+    const scrollOffsetAnimatedValue = React.useRef(
+      new Animated.Value(0)
+    ).current
+    const positionAnimatedValue = React.useRef(new Animated.Value(0)).current
+    const inputRange = [0, promotionalBanners.length]
+    const scrollX = Animated.add(
+      scrollOffsetAnimatedValue,
+      positionAnimatedValue
+    ).interpolate({
+      inputRange,
+      outputRange: [0, promotionalBanners.length * windowWidth],
+    })
+
+    const handleBannerScroll = React.useMemo(
+      () =>
+        Animated.event<PagerViewOnPageScrollEventData>(
+          [
+            {
+              nativeEvent: {
+                offset: scrollOffsetAnimatedValue,
+                position: positionAnimatedValue,
+              },
             },
-          },
-        ],
-        {
-          useNativeDriver: true,
+          ],
+          {
+            useNativeDriver: true,
+          }
+        ),
+      []
+    )
+
+    const handleBannerPress = useCallback(
+      async (banner: HomeScreenPromotionalBanner) => {
+        try {
+          switch (banner.actionType) {
+            case 'link': {
+              Linking.openURL(banner.actionValue)
+              break
+            }
+            // TODO: Handle opening screen from banner
+            // case 'screen':
+            //   navigation.navigate(banner.actionValue)
+            //   break
+          }
+        } catch (error: unknown) {
+          logger.error(error)
         }
-      ),
-    []
-  )
+      },
+      []
+    )
 
-  const handleBannerPress = (screen: any) => {
-    navigation.navigate(screen)
-  }
+    if (promotionalBanners.length === 0) {
+      return null
+    }
 
-  const banners = bannerList.map((banner) => (
-    <View key={banner.label} style={styles.bannerContainer}>
-      <ImageBackground
-        source={banner.image}
-        resizeMode='cover'
-        borderRadius={4}
-        style={styles.bannerBgImage}>
-        <Pressable
-          style={styles.bannerButton}
-          onPress={() => handleBannerPress(banner.screen)}>
-          <Text style={styles.bannerButtonLabel}>{banner.label}</Text>
-          <View>
-            <ChevronRightIcon fill={theme.color.icon} />
+    const banners = promotionalBanners.map((banner) => (
+      <View key={banner.key} style={styles.bannerContainer}>
+        <ImageBackground
+          source={banner.image}
+          resizeMode='cover'
+          borderRadius={theme.roundness.xs}
+          style={styles.bannerContent}>
+          <Pressable
+            style={styles.bannerButton}
+            onPress={() => handleBannerPress(banner)}>
+            <Text style={styles.bannerButtonLabel}>{banner.buttonLabel}</Text>
+            <Icon name='chevron-forward' color={theme.color.onPrimary} />
+          </Pressable>
+        </ImageBackground>
+      </View>
+    ))
+
+    // When one banner returns a simple version without the animation and dots
+    if (promotionalBanners.length === 1) {
+      return <View {...viewProps}>{banners}</View>
+    }
+
+    // When there is more than one banners, returned the animated version with the dot indicator
+    return (
+      <View {...viewProps}>
+        <View>
+          <AnimatedBannersView
+            initialPage={0}
+            ref={animatedBannerViewRef}
+            style={styles.bannersView}
+            onPageScroll={handleBannerScroll}>
+            {banners}
+          </AnimatedBannersView>
+          <View style={styles.dotsWrapper}>
+            <SlidingDot
+              marginHorizontal={3}
+              containerStyle={styles.dotsContainer}
+              dotStyle={styles.inactiveDot}
+              slidingIndicatorStyle={styles.slidingDot}
+              data={promotionalBanners}
+              //@ts-ignore
+              scrollX={scrollX}
+              dotSize={8}
+            />
           </View>
-        </Pressable>
-      </ImageBackground>
-    </View>
-  ))
-
-  // When no banner returns an empty View (will be stylised in Home)
-  // When one banner returns a simple version without the animation and dots
-  if (bannerList.length <= 1) {
-    return <View>{banners}</View>
+        </View>
+      </View>
+    )
   }
 
-  return (
-    <View>
-      <AnimatedBannersView
-        initialPage={0}
-        ref={ref}
-        style={styles.bannersView}
-        onPageScroll={handleBannerScroll}>
-        {banners}
-      </AnimatedBannersView>
-      {bannerList.length > 1 && (
-        <View style={styles.dotsContainer}>
-          <SlidingDot
-            marginHorizontal={3}
-            containerStyle={{ position: 'relative', top: 0 }}
-            data={bannerList}
-            //@ts-ignore
-            scrollX={scrollX}
-            dotSize={8}
-          />
-        </View>
-      )}
-    </View>
-  )
-}
+const bannerAspectRation = 328 / 152
 
-const styles = StyleSheet.create({
-  bannerContainer: {
-    paddingHorizontal: 16,
-  },
-  bannerBgImage: {
-    position: 'relative',
-    height: 152, // Have to set the height of the image
-    justifyContent: 'center',
-    alignItems: 'center',
-    paddingHorizontal: 16,
-    borderRadius: 4,
-  },
-  bannerButtonLabel: {
-    fontFamily: NUNITO_SANS,
-    fontWeight: '700',
-    fontSize: 17,
-    lineHeight: 22,
-    color: WHITE_COLOR,
-  },
-  bannerButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    position: 'absolute',
-    bottom: 0,
-    width: '100%',
-    backgroundColor: WHITE_COLOR_OPACITY(0.3),
-    paddingVertical: 8,
-    paddingLeft: 16,
-    paddingRight: 8,
-    borderRadius: 4,
-    borderColor: 'white',
-    borderWidth: 1,
-    marginBottom: 16,
-    marginHorizontal: 16,
-    shadowColor: BLACK_COLOR_OPACITY(0.4),
-    shadowOffset: {
-      height: 4,
-      width: 0,
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    bannersView: {
+      height: (windowWidth - 2 * theme.spacing.m) / bannerAspectRation, // Gives a necessary height to the banner view, the same we want for the banners, so have to take into account the spacing
     },
-    shadowOpacity: 1,
-    shadowRadius: 4,
-    elevation: 8,
-  },
-  bannersView: {
-    height: 152, // Give the same height as the background image
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  dotsContainer: {
-    paddingTop: 9,
-  },
-})
+    bannerContainer: {
+      paddingHorizontal: theme.spacing.m,
+    },
+    bannerContent: {
+      aspectRatio: bannerAspectRation,
+      justifyContent: 'flex-end',
+      padding: theme.spacing.m,
+    },
+    bannerButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      paddingVertical: theme.spacing.s,
+      paddingLeft: theme.spacing.m,
+      paddingRight: theme.spacing.s,
+      borderWidth: 1,
+      borderRadius: theme.roundness.xs,
+      borderColor: theme.color.onPrimary,
+      backgroundColor: WHITE_COLOR_OPACITY(0.3),
+      shadowColor: BLACK_COLOR_OPACITY(0.4),
+      shadowOffset: {
+        height: 4,
+        width: 0,
+      },
+      shadowOpacity: 1,
+      shadowRadius: theme.roundness.xs,
+      elevation: 8,
+    },
+    bannerButtonLabel: {
+      fontFamily: theme.fontFamily.bold,
+      fontSize: theme.fontSize.l,
+      lineHeight: theme.fontSize.l * 1.375,
+      color: theme.color.onPrimary,
+    },
+    dotsWrapper: {
+      paddingTop: theme.spacing.s,
+    },
+    dotsContainer: {
+      // reseting the default style
+      position: 'relative',
+      bottom: 0,
+    },
+    inactiveDot: {
+      backgroundColor: theme.color.lightGrey,
+      opacity: 1,
+    },
+    slidingDot: {
+      backgroundColor: theme.color.primary,
+    },
+  })
