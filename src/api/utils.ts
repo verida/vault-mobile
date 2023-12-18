@@ -73,59 +73,45 @@ export const fetchInboxCount = throttle(
   { leading: true, trailing: false }
 )
 
-// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
-export async function getProfile(did: string) {
-  try {
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const publicProfile =
-      await AccountManager.getInstance().context?.openProfile(
-        'basicProfile',
-        did
-      )
-    const name = await publicProfile?.get('name')
-    const avatar = await publicProfile?.get('avatar')
-
-    return {
-      name: name || 'Unknown',
-      avatar: avatar || DefaultAvatar,
-    }
-  } catch (error) {
-    logger.error(error)
-
-    return {
-      name: 'Unknown',
-      avatar: DefaultAvatar,
-    }
-  }
-}
-
-// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
+// TODO: Cache external profiles so they don't need to be re-fetched?
 export async function getPublicProfile(
   did: string,
-  contextName: string = config.VERIDA_CONTEXT_NAME
+  contextName: string = config.VERIDA_CONTEXT_NAME,
+  fallbackToVeridaContext = true
 ) {
   try {
     if (!isValidVeridaDid(did)) {
       // No need to try get the public profile of a non-Verida DID.
 
       // TODO: Report the DID to the telemetry so that we can plan on supporting the DID method but for the moment our telemetry quota is limited
-
       return {
         name: 'Unknown',
         avatar: DefaultAvatar,
       }
     }
 
-    const publicProfile = await AccountManager.getInstance()
+    let publicProfile = await AccountManager.getInstance()
       .getClient()
       ?.openPublicProfile(did, contextName, 'basicProfile')
+    let profileData: any = await publicProfile?.getMany({}, {})
+
+    if ((!profileData || !profileData.name) && fallbackToVeridaContext) {
+      // No valid profile found for the requested context, so fallback to default for the user
+      publicProfile = await AccountManager.getInstance().context?.openProfile(
+        'basicProfile',
+        did
+      )
+
+      profileData = await publicProfile?.getMany({}, {})
+    }
+
     const name = await publicProfile?.get('name')
     const avatar = await publicProfile?.get('avatar')
 
     return {
       name: name || 'Unknown',
       avatar: avatar || DefaultAvatar,
+      ...profileData,
     }
   } catch (error) {
     logger.error(error)
@@ -134,25 +120,6 @@ export async function getPublicProfile(
       name: 'Unknown',
       avatar: DefaultAvatar,
     }
-  }
-}
-
-// TODO: De-duplicate all the get profile functions and move to features/profiles/utils
-// @todo: Add to vault common
-export const getInboxProfile = async (did: string, context: string) => {
-  const client = AccountManager.getInstance().client
-  try {
-    const profile = await client!.openPublicProfile(
-      did,
-      context,
-      'basicProfile'
-    )
-    const profileData = await profile!.getMany({}, {})
-    return profileData
-  } catch (error) {
-    // User may not have created a profile
-    logger.warn('Failed to get profile, or no profile found', { did })
-    return {}
   }
 }
 
