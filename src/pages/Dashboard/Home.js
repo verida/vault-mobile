@@ -5,6 +5,7 @@ import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
 import { selectSelectedAccount } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
+import { selectNewMessagesCount } from 'features/inbox'
 import {
   selectNavigationLink,
   setNavigationLink as setNavigationLinkAction,
@@ -60,6 +61,8 @@ export const HomeTabScreen = (props) => {
   const dispatch = useAppDispatch()
   const selectedAccount = useAppSelector(selectSelectedAccount)
   const navigationLink = useAppSelector(selectNavigationLink)
+  const newMessagesCount = useAppSelector(selectNewMessagesCount)
+
   const setNavigationLink = useCallback(
     (link) => dispatch(setNavigationLinkAction(link)),
     [dispatch]
@@ -241,7 +244,7 @@ export const HomeTabScreen = (props) => {
   return (
     <Container>
       <HomeNavigationHeader
-        inboxCount={props.newMessagesCount}
+        inboxCount={newMessagesCount}
         onNamePress={toggleAddAccountsModal}
         onAvatarPress={openIdentityDrawer}
         onInboxPress={() => props.navigation.navigate('Inbox')}

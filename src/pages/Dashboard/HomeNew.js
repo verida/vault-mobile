@@ -27,7 +27,7 @@ import { connect } from 'react-redux'
 import parse from 'url-parse'
 
 import AccountManager from 'api/AccountManager'
-import { fetchInboxCount, getProfile } from 'api/utils'
+import { fetchInboxCount, getPublicProfile } from 'api/utils'
 import LoadingView from 'components/LoadingView'
 import {
   BACKGROUND_GREY_COLOR,
@@ -158,7 +158,7 @@ const Home = (props) => {
         setLoading(true)
         const _selectedAccount =
           AccountManager.getInstance().getSelectedAccount()
-        const { name, avatar } = await getProfile(_selectedAccount.did)
+        const { name, avatar } = await getPublicProfile(_selectedAccount.did)
         setAvatarSource(avatar)
 
         setInfo({
