@@ -9,7 +9,10 @@ import {
 } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectNewMessagesCount } from 'features/inbox'
-import { selectSelectedPublicProfile } from 'features/profiles'
+import {
+  selectPublicProfilesLoadingState,
+  selectSelectedPublicProfile,
+} from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import {
@@ -21,6 +24,7 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
@@ -39,6 +43,9 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
 
     const identity = useAppSelector(selectSelectedAccount)
     const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
+    const loadingState = useAppSelector((state) =>
+      selectPublicProfilesLoadingState(state, identity?.did)
+    )
     // TODO: Why do we have to call selectSelectedPublicProfile, why the profile is not in selectSelectedAccount?!
 
     const network = identity?.did
@@ -93,12 +100,18 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
             />
             <View style={styles.nameAndDidContainer}>
               <View style={styles.nameContainer}>
-                <Text
-                  style={styles.name}
-                  numberOfLines={1}
-                  ellipsizeMode='tail'>
-                  {name}
-                </Text>
+                <ShimmerPlaceholder
+                  visible={!loadingState.loading}
+                  shimmerStyle={{ borderRadius: 4 }}
+                  width={140}
+                  height={27}>
+                  <Text
+                    style={styles.name}
+                    numberOfLines={1}
+                    ellipsizeMode='tail'>
+                    {name}
+                  </Text>
+                </ShimmerPlaceholder>
                 <Icon name='chevron-forward' size={16} />
               </View>
               <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>

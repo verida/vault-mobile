@@ -101,11 +101,15 @@ export const selectPublicProfileByDid = (state: RootState, did?: string) =>
 
 export const selectPublicProfilesLoadingState = (
   state: RootState,
-  did: string
-) =>
-  state.profiles.publicProfiles[did]?.name // Old data exists so just render it
+  did?: string
+) => {
+  if (!did) {
+    return loadingDefaultState
+  }
+  return state.profiles.publicProfiles[did]?.name // Old data exists so just render it
     ? loadingDefaultState
     : state.profiles.profilesProcessing[did] || loadingDefaultState
+}
 
 // Actions
 export const { setPublicProfileByDid } = profilesSlice.actions
