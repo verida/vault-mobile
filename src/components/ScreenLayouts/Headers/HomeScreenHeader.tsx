@@ -168,6 +168,7 @@ const createStyles = (theme: Theme) =>
     nameAndDidContainer: {
       flex: 1,
       marginLeft: theme.spacing.m,
+      justifyContent: 'flex-end',
     },
     nameContainer: {
       flexDirection: 'row',
@@ -176,13 +177,12 @@ const createStyles = (theme: Theme) =>
     name: {
       fontFamily: theme.fontFamily.bold,
       fontSize: 20, // TODO: Add missing font size in the theme
-      lineHeight: 20 * 1.35,
+      lineHeight: 20 * 1.35, // 20 * 1.35 = 27
     },
     did: {
-      marginTop: 1,
       fontFamily: theme.fontFamily.semibold,
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.s * 1.5,
+      fontSize: theme.fontSize.s, // 12
+      lineHeight: theme.fontSize.s * 1.5, // 12 * 1.5 = 18
       color: theme.color.textLightGrey,
     },
     actionsContainer: {
