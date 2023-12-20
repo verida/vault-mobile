@@ -35,7 +35,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
     const [processing, setProcessing] = useState(false)
     const [isFlashOn, setIsFlashOn] = useState(false)
     const { processQrCode: processQrCodeByProtocolHandlers } = useProtocols()
-    const handleDeeplink = useDeeplink(navigation as any)
+    const handleDeeplink = useDeeplink()
 
     const handleToggleFlash = useCallback(() => {
       setIsFlashOn((prevState) => !prevState)

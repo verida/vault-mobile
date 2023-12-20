@@ -14,6 +14,7 @@ import { Theme } from 'styles/types'
 
 export type ScreenWrapperProps = {
   children: React.ReactNode
+  backgroundColor?: string
   /** Takes priority over allSafeAreaEdges */
   noSafeArea?: boolean
   /** Takes priority over safeAreaEdges */
@@ -34,6 +35,7 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
 ) => {
   const {
     children,
+    backgroundColor,
     noSafeArea = false,
     allSafeAreaEdges = false,
     safeAreaEdges = ['bottom', 'left', 'right'],
@@ -70,6 +72,11 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
             ? insets.right
             : undefined,
         },
+        backgroundColor
+          ? {
+              backgroundColor: backgroundColor,
+            }
+          : {},
       ]}>
       {/* TODO: Keyboard avoiding to be properly tested on screens with inputs */}
       <KeyboardAvoidingView

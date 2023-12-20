@@ -199,7 +199,7 @@ const NFTDetail = () => {
             left={<Text style={styles.rowLabel}>Owner</Text>}
             right={
               <IconWithText
-                icon={<Icon size={theme.iconSize.s} name='Wallet' />}
+                icon={<Icon size={theme.iconSize.s} name='wallet' />}
                 text={wallet.label}
               />
             }

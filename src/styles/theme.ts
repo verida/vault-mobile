@@ -7,12 +7,15 @@ import {
   DEFAULT_ICON_COLOR,
   GREY_120,
   LIGHT_GREY_600,
+  LIGHT_ORANGE_COLOR,
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
   PRIMARY_COLOR_5,
   PRIMARY_COLOR_50,
   PRIMARY_COLOR_100,
+  PRIMARY_COLOR_200,
+  PRIMARY_COLOR_300,
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SHADOW_LIGHT_GREY,
@@ -60,10 +63,13 @@ export const defaultTheme = {
 
     veridaGreen: VERIDA_COLOR,
     orange: ORANGE_COLOR,
+    lightOrange: LIGHT_ORANGE_COLOR,
 
     primary5: PRIMARY_COLOR_5,
     primary50: PRIMARY_COLOR_50,
     primary100: PRIMARY_COLOR_100,
+    primary200: PRIMARY_COLOR_200,
+    primary300: PRIMARY_COLOR_300,
 
     transparent: 'transparent',
     black: BLACK_COLOR_OPACITY(1),
@@ -80,6 +86,7 @@ export const defaultTheme = {
     textLightGrey: TEXT_LIGHT_GREY,
     textLightGrey30: Color(TEXT_COLOR).alpha(0.3).toString(),
     textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
+    text70: Color(TEXT_COLOR).alpha(0.7).toString(),
     grey120: GREY_120,
 
     shadowLightGrey: SHADOW_LIGHT_GREY,

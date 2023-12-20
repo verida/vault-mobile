@@ -1,3 +1,4 @@
+import { explodeDID } from '@verida/helpers'
 import { ethers, utils } from 'ethers'
 
 export function generateIdentityMnemonic() {
@@ -13,4 +14,9 @@ export function generateIdentityMnemonic() {
 export function getPrivateKeyFromMnemonic(mnemonic: string) {
   const wallet = ethers.Wallet.fromMnemonic(mnemonic)
   return wallet.privateKey
+}
+
+export function getAddressFromDID(did: string): string {
+  const { address } = explodeDID(did)
+  return address
 }

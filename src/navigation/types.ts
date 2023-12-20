@@ -1,19 +1,18 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
-import { CompositeScreenProps } from '@react-navigation/native'
+import {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import {
-  BlockchainWalletWithAccounts,
-  Network,
-  NFT,
-  NFTCollection,
-} from 'api/types'
+import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
+import { HomeScreenParams } from 'pages/Home'
 import {
   AddIdentityScreenParams,
   CreateIdentityScreenParams,
@@ -21,6 +20,7 @@ import {
   ImportIdentityScreenParams,
   MigrateIdentityConfirmationScreenParams,
   MigrateIdentityExecutionScreenParams,
+  RemoveIdentityScreenParams,
   ShareIdentityScreenParams,
 } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -42,7 +42,10 @@ import {
   PaymentRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
-import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import {
+  PolygonIdCircuitsSettingsScreenParams,
+  SettingsScreenParams,
+} from 'pages/Settings'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
@@ -65,7 +68,7 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
   NativeStackScreenProps<AuthStackParams, S>
 
 export type TabsScreenParams = {
-  Home: undefined
+  Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready
@@ -79,7 +82,7 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
   >
 
 export type MainStackParams = {
-  Tabs: undefined
+  Tabs: NavigatorScreenParams<TabsScreenParams>
   Inbox: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
@@ -112,7 +115,6 @@ export type MainStackParams = {
   SuccessFailure: undefined
   DataFolder: DataFolderScreenParams
   DataItem: DataItemScreenParams
-  Settings: undefined
   ChangePin: undefined
   ScanQrCode: QrCodeScannerScreenParams
 
@@ -121,6 +123,7 @@ export type MainStackParams = {
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
   DeleteIdentity: DeleteIdentityScreenParams
+  RemoveIdentity: RemoveIdentityScreenParams
 
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
@@ -130,8 +133,6 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
-  Networks: undefined
-  StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
@@ -148,6 +149,7 @@ export type MainStackParams = {
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
 
+  Settings: SettingsScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 
