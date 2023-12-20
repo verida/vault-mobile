@@ -152,6 +152,7 @@ export function useMigrateIdentity() {
           throw new Error('No current client')
         }
 
+        // Get storage links (aka contexts) from the current DID document
         const links = await StorageLink.getLinks(
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore
@@ -160,10 +161,11 @@ export function useMigrateIdentity() {
         )
         logger.debug('links', { links })
 
+        // Get the hashes of the contexts
         const contextHashes: string[] = links.map((link) => link.id)
 
-        const nbContextToMigrate = links.length
-        logger.debug(`Number of contexts to migrate ${nbContextToMigrate}`)
+        const nbContextsToMigrate = links.length
+        logger.debug(`Number of contexts to migrate ${nbContextsToMigrate}`)
 
         // TODO: Try optimise by running them in parallel, test if supported by the PouchDB replication
         for (let i = 0; i < contextHashes.length; i++) {
@@ -186,7 +188,7 @@ export function useMigrateIdentity() {
 
             logger.debug('Migrating context', { contextHash })
             await migrateContext(sourceContext, targetContext, (progress) => {
-              updateMigrationProgress((i + progress) / nbContextToMigrate)
+              updateMigrationProgress((i + progress) / nbContextsToMigrate)
             })
             logger.debug('Context migrated', { contextHash })
           } catch (error: unknown) {
