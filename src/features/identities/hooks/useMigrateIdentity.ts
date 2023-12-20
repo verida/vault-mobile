@@ -110,7 +110,7 @@ export function useMigrateIdentity() {
         })
       }
 
-      // App new Identity to App state
+      // Add new Identity to App state
 
       try {
         const mainnetDid = await mainnetVeridaAccount.did()
