@@ -53,10 +53,19 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
 
   const currentIdentity = useCurrentIdentity()
 
-  // TODO: Hiden migration when not applicable
   const displayMigrateToMainnet = currentIdentity?.did
     ? canMigrateToMainnet(currentIdentity.did)
     : false
+  const migrateIdentityItem: SettingsItem[] = displayMigrateToMainnet
+    ? [
+        {
+          label: 'Migrate Identity to Mainnet',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
+        },
+      ]
+    : []
 
   const settingsItems: SettingsCategory[] = [
     {
@@ -88,12 +97,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           optional: true,
           onPress: () => navigation.navigate('LoginHistory'),
         },
-        {
-          label: 'Migrate Identity to Mainnet',
-          action: 'arrow',
-          optional: true,
-          onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
-        },
+        ...migrateIdentityItem,
         {
           label: 'Log Out',
           action: 'arrow',

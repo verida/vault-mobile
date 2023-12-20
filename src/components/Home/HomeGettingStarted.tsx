@@ -1,4 +1,5 @@
-import { homeGettingStartedItems } from 'features/homeScreen'
+import { getHomeGettingStartedItems } from 'features/homeScreen'
+import { useCurrentIdentity } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { ScrollView, StyleSheet, Text, View, ViewProps } from 'react-native'
@@ -15,6 +16,11 @@ export const HomeGettingStarted: React.FC<HomeGettingStartedProps> = (
   const { ...viewProps } = props
 
   const styles = useThemeAwareStyle(createStyles)
+
+  const currentIdentity = useCurrentIdentity()
+  const homeGettingStartedItems = getHomeGettingStartedItems(
+    currentIdentity?.did
+  )
 
   if (homeGettingStartedItems.length === 0) {
     return null
