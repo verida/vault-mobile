@@ -170,8 +170,8 @@ export function useMigrateIdentity() {
         // TODO: Try optimise by running them in parallel, test if supported by the PouchDB replication
         for (let i = 0; i < contextHashes.length; i++) {
           const contextHash = contextHashes[i]
-          logger.debug('Migrating context', { contextHash })
           try {
+            logger.debug('Opening contexts', { contextHash })
             const [sourceContext, targetContext] = await Promise.all([
               currentClient.openContext(contextHash, false),
               mainnetClient.openContext(contextHash, true),
