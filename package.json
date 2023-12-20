@@ -64,6 +64,7 @@
     "@verida/did-client": "^2.4.0-rc3",
     "@verida/encryption-utils": "^2.2.2",
     "@verida/helpers": "^2.4.0-rc2",
+    "@verida/storage-link": "^2.3.9",
     "@verida/types": "^2.4.0-rc1",
     "@verida/vda-did-resolver": "^2.4.0-rc3",
     "@verida/vda-name-client": "^2.4.0-rc2",

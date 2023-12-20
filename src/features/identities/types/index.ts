@@ -32,3 +32,4 @@ export type UpdateMigrateStepStatusFunction = (
 ) => void
 
 export type UpdateMigrationProgressFunction = (progress: number) => void
+export type UpdateContextMigrationProgressFunction = (progress: number) => void

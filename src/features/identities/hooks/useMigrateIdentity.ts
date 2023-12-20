@@ -1,27 +1,28 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
+import { StorageLink } from '@verida/storage-link'
 import { EnvironmentType } from '@verida/types'
 import { config } from 'config'
-import { Account, addAccount } from 'features/identities'
-import { useCurrentIdentity } from 'features/identities/hooks/useCurrentIdentity'
-import { canMigrateToMainnet } from 'features/identities/utils'
 import { useCurrentProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { getDidClientConfigForNetwork } from 'features/verida'
 import { getCountryCode } from 'helpers'
 import { merge } from 'lodash'
 import { useCallback } from 'react'
-import { wait } from 'utils'
 
 import AccountManager from 'api/AccountManager'
 import { useAppDispatch } from 'reduxStore/types'
 
+import { addAccount } from '../slice'
 import {
+  Account,
   UpdateMigrateStepStatusFunction,
   UpdateMigrationProgressFunction,
 } from '../types'
+import { canMigrateToMainnet, migrateContext } from '../utils'
+import { useCurrentIdentity } from './useCurrentIdentity'
 
-const logger = new Logger('Identity')
+const logger = new Logger('IdentityMigration')
 
 const mainnetNetwork = EnvironmentType.MAINNET
 
@@ -30,6 +31,7 @@ export function useMigrateIdentity() {
   const currentIdentity = useCurrentIdentity()
   const { country: currentIdentityCountry } = useCurrentProfile()
 
+  // TODO: Once working, break down the big functions in smaller ones
   const migrate = useCallback(
     async (
       updateStatus: UpdateMigrateStepStatusFunction,
@@ -43,6 +45,10 @@ export function useMigrateIdentity() {
         throw new Error('Identity cannnot be migrated')
       }
 
+      // Prepare Mainnet Identity
+
+      let mainnetClient: Client
+      let mainnetVeridaAccount: AutoAccount
       try {
         logger.info('Starting migrating identity', { did: currentIdentity.did })
         updateStatus('createDID', 'processing')
@@ -52,7 +58,7 @@ export function useMigrateIdentity() {
           veridaKey: currentIdentity.privateKey,
         })
 
-        const mainnetClient = new Client({
+        mainnetClient = new Client({
           environment: mainnetNetwork,
           didClientConfig: {
             rpcUrl: didClientConfig.rpcUrl,
@@ -61,7 +67,7 @@ export function useMigrateIdentity() {
         })
         logger.debug('Created Mainnet client')
 
-        const mainnetVeridaAccount = new AutoAccount({
+        mainnetVeridaAccount = new AutoAccount({
           privateKey: currentIdentity.privateKey,
           environment: mainnetNetwork,
           didClientConfig,
@@ -81,15 +87,33 @@ export function useMigrateIdentity() {
           network: mainnetNetwork,
           notificationEndpoints,
         })
+      } catch (error: unknown) {
+        updateStatus('createDID', 'error')
+        throw new Error('Could not prepare the mainnet identity', {
+          cause: error,
+        })
+      }
 
+      // Connect Mainnet Identity
+
+      try {
         updateStatus('connectIdentity', 'processing')
         logger.debug('Connecting mainnet identity')
 
-        // Connect the Verida account to the Verida client
         await mainnetClient.connect(mainnetVeridaAccount)
+        logger.debug('Mainnet identity connected')
+      } catch (error: unknown) {
+        updateStatus('createDID', 'error')
+        updateStatus('connectIdentity', 'error')
+        throw new Error('Could not connect the mainnet identity', {
+          cause: error,
+        })
+      }
 
+      // App new Identity to App state
+
+      try {
         const mainnetDid = await mainnetVeridaAccount.did()
-        logger.debug('Mainnet identity connected', { did: mainnetDid })
 
         const mainnetIdentity: Account = {
           did: mainnetDid,
@@ -100,30 +124,85 @@ export function useMigrateIdentity() {
           },
         }
 
-        logger.debug('Mainnet identity created', { mainnetIdentity })
+        logger.debug(
+          'Adding mainnet identity to list of accounts in AccountManager'
+        )
+        await AccountManager.getInstance().addAccount(mainnetIdentity)
 
         logger.debug('Adding mainnet identity to redux store')
-        await AccountManager.getInstance().addAccount(mainnetIdentity)
         dispatch(addAccount(mainnetIdentity))
-
-        updateStatus('createDID', 'success')
-        updateStatus('connectIdentity', 'success')
-        logger.info('Mainnet Identity created successfully')
       } catch (error: unknown) {
-        logger.error(error)
+        updateStatus('createDID', 'error')
+        updateStatus('connectIdentity', 'error')
+        throw new Error('Could not create mainnet identity', { cause: error })
       }
 
-      updateStatus('migrateData', 'processing')
-      logger.debug('Starting migrating data')
-      // create a loop for 10 seconds and update the progress
-      for (let i = 0; i <= 100; i++) {
-        await wait(100)
-        updateMigrationProgress(i / 100)
+      updateStatus('createDID', 'success')
+      updateStatus('connectIdentity', 'success')
+      logger.info('Mainnet Identity created successfully')
+
+      // Migrate Contexts
+
+      try {
+        updateStatus('migrateData', 'processing')
+        logger.debug('Starting migrating data')
+
+        const currentClient = AccountManager.getInstance().getClient()
+        if (!currentClient) {
+          throw new Error('No current client')
+        }
+
+        const links = await StorageLink.getLinks(
+          // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+          // @ts-ignore
+          currentClient.didClient,
+          currentIdentity.did
+        )
+        logger.debug('links', { links })
+
+        const contextHashes: string[] = links.map((link) => link.id)
+
+        const nbContextToMigrate = links.length
+        logger.debug(`Number of contexts to migrate ${nbContextToMigrate}`)
+
+        // TODO: Try optimise by running them in parallel, test if supported by the PouchDB replication
+        for (let i = 0; i < contextHashes.length; i++) {
+          const contextHash = contextHashes[i]
+          logger.debug('Migrating context', { contextHash })
+          try {
+            const [sourceContext, targetContext] = await Promise.all([
+              currentClient.openContext(contextHash, false),
+              mainnetClient.openContext(contextHash, true),
+            ])
+
+            if (!sourceContext) {
+              throw new Error('Could not open source context')
+            }
+            if (!targetContext) {
+              throw new Error('Could not open target context')
+            }
+
+            logger.debug('Contexts opened', { contextHash })
+
+            logger.debug('Migrating context', { contextHash })
+            await migrateContext(sourceContext, targetContext, (progress) => {
+              updateMigrationProgress((i + progress) / nbContextToMigrate)
+            })
+            logger.debug('Context migrated', { contextHash })
+          } catch (error: unknown) {
+            logger.error(error) // TODO: After debugging, remove it and let it be reported at a upper level
+            throw new Error('Could not migrate context', { cause: error })
+          }
+        }
+
+        logger.debug('All contexts migrated')
+      } catch (error: unknown) {
+        updateStatus('migrateData', 'error')
+        throw new Error('Could not migrate data', { cause: error })
       }
+
       updateStatus('migrateData', 'success')
       logger.info('Data migrated successfully')
-      // updateStatus('migrateData', 'error')
-      // throw new Error('Error migrating data')
     },
     [dispatch, currentIdentity, currentIdentityCountry]
   )
