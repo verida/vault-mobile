@@ -97,23 +97,20 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     const identity = useCurrentIdentity()
     const { migrate } = useMigrateIdentity()
 
-    const executeMigration = useCallback(
-      async (did: string) => {
-        try {
-          setStatus('processing')
-          await migrate(did, updateStepStatus, updateMigrationProgress)
-          setStatus('success')
-        } catch (error: unknown) {
-          logger.error(error)
-          setStatus('error')
-        }
-      },
-      [migrate, updateStepStatus, updateMigrationProgress]
-    )
+    const executeMigration = useCallback(async () => {
+      try {
+        setStatus('processing')
+        await migrate(updateStepStatus, updateMigrationProgress)
+        setStatus('success')
+      } catch (error: unknown) {
+        logger.error(error)
+        setStatus('error')
+      }
+    }, [migrate, updateStepStatus, updateMigrationProgress])
 
     useEffect(() => {
       if (identity) {
-        executeMigration(identity.did)
+        executeMigration()
       }
     }, [identity, executeMigration])
 
@@ -131,7 +128,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
         setStatus('processing')
         setStatusItems(defaultMigrationStepStatus)
         setMigrationprogress(0)
-        executeMigration(identity.did)
+        executeMigration()
       }
     }, [identity, executeMigration])
 

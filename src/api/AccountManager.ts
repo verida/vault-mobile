@@ -663,16 +663,26 @@ class AccountManager extends EventEmitter {
 
     this.selectedAccount = { ...nextSelectedAccount, ...data }
 
-    this.accounts[this.selectedAccount.did] = this.selectedAccount
+    // That doesn't make sense to be here
+    this.addAccount(this.selectedAccount)
+
+    // That doesn't make sense to be here
+    await SecureStore.setItemAsync(
+      SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      this.selectedAccount.did
+    )
+  }
+
+  public async addAccount(account: Account) {
+    if (!account?.did) {
+      return // TODO: Throw error?
+    }
+
+    this.accounts[account.did] = account
 
     await SecureStore.setItemAsync(
       ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
-    )
-
-    await SecureStore.setItemAsync(
-      SELECTED_ACCOUNT_DID_STORAGE_KEY,
-      this.selectedAccount.did
     )
   }
 
