@@ -11,7 +11,7 @@ import { HomeScreenGettingStartedItem } from '../types'
 const migrateIdentityItem: HomeScreenGettingStartedItem[] = [
   {
     key: 'migrate_identity',
-    label: 'Migrate your profile to Mainnet',
+    label: 'Migrate your Identity to Mainnet',
     icon: <MigrateIdentityIcon />,
     screen: 'MigrateIdentityConfirmation',
   },

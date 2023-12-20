@@ -5,13 +5,13 @@ import { useTheme } from 'contexts'
 import {
   getAddressFromDID,
   getNetworkFromDID,
-  selectSelectedAccount,
+  useCurrentIdentity,
 } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectNewMessagesCount } from 'features/inbox'
 import {
   selectPublicProfilesLoadingState,
-  selectSelectedPublicProfile,
+  useCurrentProfile,
 } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
@@ -41,8 +41,8 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
 
-    const identity = useAppSelector(selectSelectedAccount)
-    const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
+    const identity = useCurrentIdentity()
+    const { avatar, name } = useCurrentProfile()
     const loadingState = useAppSelector((state) =>
       selectPublicProfilesLoadingState(state, identity?.did)
     )
