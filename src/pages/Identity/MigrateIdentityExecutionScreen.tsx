@@ -16,9 +16,10 @@ import {
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, InteractionManager, StyleSheet, View } from 'react-native'
 import { formatPercentage } from 'utils'
 
+import { useAuth } from 'hooks/useAuth'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
@@ -94,13 +95,19 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       )
     }, [])
 
-    const identity = useCurrentIdentity()
+    const { switchToAccount, refresh } = useAuth()
+    const currentIdentity = useCurrentIdentity()
     const { migrate } = useMigrateIdentity()
+    const [newDid, setNewDid] = useState<string | undefined>(undefined)
 
     const executeMigration = useCallback(async () => {
       try {
         setStatus('processing')
-        await migrate(updateStepStatus, updateMigrationProgress)
+        const migratedDid = await migrate(
+          updateStepStatus,
+          updateMigrationProgress
+        )
+        setNewDid(migratedDid)
         setStatus('success')
       } catch (error: unknown) {
         logger.error(error)
@@ -109,28 +116,64 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     }, [migrate, updateStepStatus, updateMigrationProgress])
 
     useEffect(() => {
-      if (identity) {
+      if (currentIdentity) {
         executeMigration()
       }
-    }, [identity, executeMigration])
+    }, [currentIdentity, executeMigration])
 
     const handleClose = useCallback(() => {
       navigation.goBack()
     }, [navigation])
 
     const handleSwitchToNewIdentity = useCallback(() => {
-      // TODO: Connect with the new Identity
-      navigation.goBack()
-    }, [navigation])
+      if (!newDid) {
+        return
+      }
+      navigation.navigate('Tabs', { screen: 'Home' })
+
+      // TODO: Use switchIdentity from useIdentities
+      InteractionManager.runAfterInteractions(async () => {
+        try {
+          await switchToAccount(newDid)
+        } catch (error: unknown) {
+          logger.error(
+            new Error('Error when switching identity in the drawer', {
+              cause: error,
+            })
+          )
+          Alert.alert(
+            'Error',
+            `Unable to switch to the Identity, please try again later.`
+          )
+
+          // Switch back to the current account
+          if (currentIdentity?.did) {
+            try {
+              await switchToAccount(currentIdentity.did)
+              await refresh()
+            } catch (anotherError: unknown) {
+              logger.error(
+                new Error(
+                  'Error when switching and refreshing identity back to current one in the drawer',
+                  {
+                    cause: anotherError,
+                  }
+                )
+              )
+            }
+          }
+        }
+      })
+    }, [newDid, currentIdentity?.did, navigation, refresh, switchToAccount])
 
     const handleRetry = useCallback(() => {
-      if (identity) {
+      if (currentIdentity) {
         setStatus('processing')
         setStatusItems(defaultMigrationStepStatus)
         setMigrationprogress(0)
         executeMigration()
       }
-    }, [identity, executeMigration])
+    }, [currentIdentity, executeMigration])
 
     const isMigratingData = statusItems.some(
       (item) => item.key === 'migrateData' && item.status === 'processing'

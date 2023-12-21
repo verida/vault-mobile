@@ -64,6 +64,8 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
     const handleItemPress = useCallback(
       (did: string) => {
         onIdentitySwitch?.()
+
+        // TODO: Use switchIdentity from useIdentities
         InteractionManager.runAfterInteractions(async () => {
           try {
             await switchToAccount(did)
