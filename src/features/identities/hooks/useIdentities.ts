@@ -1,27 +1,29 @@
 import { logout as logoutAction } from 'features/auth'
-import { selectSelectedAccount } from 'features/identities/slice'
 import { Logger } from 'features/telemetry'
 import { useCallback } from 'react'
+import { Alert } from 'react-native'
 
 import AccountManager from 'api/AccountManager'
 import { useAuth } from 'hooks/useAuth'
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
+import { useAppDispatch } from 'reduxStore/types'
+
+import { useCurrentIdentity } from './useCurrentIdentity'
 
 const logger = new Logger('Identities')
 
 export function useIdentities() {
-  const { refresh } = useAuth()
+  const { switchToAccount, refresh } = useAuth()
   const dispatch = useAppDispatch()
-  const selectedAccount = useAppSelector(selectSelectedAccount) // TODO: Use the dedicated hook when available
+  const currentIdentity = useCurrentIdentity()
 
   const removeIdentities = useCallback(
     async (dids: string[]) => {
       logger.info('Removing identities')
-      if (selectedAccount?.did && dids.includes(selectedAccount.did)) {
+      if (currentIdentity?.did && dids.includes(currentIdentity.did)) {
         logger.debug('Current Identity about to be removed', {
-          did: selectedAccount.did,
+          did: currentIdentity.did,
         })
-        dispatch(logoutAction({ did: selectedAccount?.did }))
+        dispatch(logoutAction({ did: currentIdentity?.did }))
       }
       logger.debug('Loging out multiple Identities', { dids })
       await AccountManager.getInstance().logout(dids)
@@ -29,10 +31,47 @@ export function useIdentities() {
       await refresh()
       logger.info('Identities removed')
     },
-    [dispatch, refresh, selectedAccount?.did]
+    [dispatch, refresh, currentIdentity?.did]
+  )
+
+  const switchIdentity = useCallback(
+    async (did: string) => {
+      try {
+        await switchToAccount(did)
+      } catch (error: unknown) {
+        logger.error(
+          new Error('Error when switching identity in the drawer', {
+            cause: error,
+          })
+        )
+        Alert.alert(
+          'Error',
+          `Unable to switch to the Identity, please try again later.`
+        )
+
+        // Switch back to the current account
+        if (currentIdentity?.did) {
+          try {
+            await switchToAccount(currentIdentity.did)
+            await refresh()
+          } catch (anotherError: unknown) {
+            logger.error(
+              new Error(
+                'Error when switching and refreshing identity back to current one in the drawer',
+                {
+                  cause: anotherError,
+                }
+              )
+            )
+          }
+        }
+      }
+    },
+    [currentIdentity?.did, refresh, switchToAccount]
   )
 
   return {
     removeIdentities,
+    switchIdentity,
   }
 }
