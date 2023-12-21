@@ -40,7 +40,7 @@ import { config } from 'config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { EnvironmentType, IContext } from '@verida/types'
-import { PublicProfile } from 'features/profiles'
+import { fetchAllPublicProfilesData, PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { executeWithTimeout } from 'utils'
 import {
@@ -533,6 +533,7 @@ class AccountManager extends EventEmitter {
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      store.dispatch(fetchAllPublicProfilesData())
 
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
@@ -712,6 +713,7 @@ class AccountManager extends EventEmitter {
       await this.connect(true, network)
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      store.dispatch(fetchAllPublicProfilesData())
       await this.restoreUserWallet(true)
 
       return this.selectedAccount
