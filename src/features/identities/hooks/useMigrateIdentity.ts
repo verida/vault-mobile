@@ -56,6 +56,7 @@ export function useMigrateIdentity() {
 
       let mainnetClient: Client
       let mainnetVeridaAccount: AutoAccount
+      let mainnetDid: string
       try {
         logger.info('Starting migrating identity', { did: currentIdentity.did })
         updateStatus('createDID', 'processing')
@@ -120,7 +121,7 @@ export function useMigrateIdentity() {
       // Add new Identity to App state
 
       try {
-        const mainnetDid = await mainnetVeridaAccount.did()
+        mainnetDid = await mainnetVeridaAccount.did()
 
         const mainnetIdentity: Account = {
           did: mainnetDid,
@@ -202,6 +203,13 @@ export function useMigrateIdentity() {
             })
             logger.debug('Context migrated', { contextHash })
           } catch (error: unknown) {
+            if (
+              error instanceof Error &&
+              error.message.match('Unable to locate requested storage context')
+            ) {
+              updateMigrationProgress((i + 1) / nbContextsToMigrate)
+              continue
+            }
             logger.error(error) // TODO: After debugging, remove it and let it be reported at a upper level
             throw new Error('Could not migrate context', { cause: error })
           }
@@ -216,6 +224,8 @@ export function useMigrateIdentity() {
       updateStatus('migrateData', 'success')
       logger.info('Data migrated successfully')
       dispatch(fetchAllPublicProfilesData())
+
+      return mainnetDid
     },
     [dispatch, currentIdentity, currentIdentityCountry]
   )
