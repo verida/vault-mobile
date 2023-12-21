@@ -9,7 +9,10 @@ import {
 import { useTheme } from 'contexts'
 import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
-import { selectSelectedPublicProfile } from 'features/profiles'
+import {
+  PROFILE_EMPTY_NAME_VALUE,
+  selectSelectedPublicProfile,
+} from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, Text, View } from 'react-native'
@@ -37,6 +40,8 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
   const identity = useAppSelector(selectSelectedAccount)
   const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
   // TODO: Why do we have to call selectSelectedPublicProfile, why the profile is not in selectSelectedAccount?!
+  const isNameEmpty = !name
+  const displayedName = name || PROFILE_EMPTY_NAME_VALUE
 
   const network = identity?.did
     ? getNetworkFromDID(identity.did)
@@ -95,10 +100,12 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   style={styles.avatar}
                 />
                 <Text
-                  style={styles.name}
+                  style={
+                    isNameEmpty ? [styles.name, styles.emptyName] : styles.name
+                  }
                   numberOfLines={1}
                   ellipsizeMode='tail'>
-                  {name}
+                  {displayedName}
                 </Text>
                 <Text
                   style={styles.did}
@@ -203,6 +210,10 @@ const createStyles = (theme: Theme) =>
       fontFamily: theme.fontFamily.bold,
       fontSize: theme.fontSize.xxl,
       lineHeight: theme.fontSize.xxl * 1.35,
+    },
+    emptyName: {
+      color: theme.color.textLightGrey,
+      fontStyle: 'italic', // FIXME: Italic not applied
     },
     did: {
       marginTop: theme.spacing.s,

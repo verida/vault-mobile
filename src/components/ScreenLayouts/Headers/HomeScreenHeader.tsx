@@ -10,6 +10,7 @@ import {
 import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectNewMessagesCount } from 'features/inbox'
 import {
+  PROFILE_EMPTY_NAME_VALUE,
   selectPublicProfilesLoadingState,
   useCurrentProfile,
 } from 'features/profiles'
@@ -43,6 +44,9 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
 
     const identity = useCurrentIdentity()
     const { avatar, name } = useCurrentProfile()
+    const isNameEmpty = !name
+    const displayedName = name || PROFILE_EMPTY_NAME_VALUE
+
     const loadingState = useAppSelector((state) =>
       selectPublicProfilesLoadingState(state, identity?.did)
     )
@@ -106,10 +110,14 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
                   width={140}
                   height={27}>
                   <Text
-                    style={styles.name}
+                    style={
+                      isNameEmpty
+                        ? [styles.name, styles.emptyName]
+                        : styles.name
+                    }
                     numberOfLines={1}
                     ellipsizeMode='tail'>
-                    {name}
+                    {displayedName}
                   </Text>
                 </ShimmerPlaceholder>
                 <Icon name='chevron-forward' size={16} />
@@ -177,6 +185,10 @@ const createStyles = (theme: Theme) =>
       fontFamily: theme.fontFamily.bold,
       fontSize: 20, // TODO: Add missing font size in the theme
       lineHeight: 20 * 1.35,
+    },
+    emptyName: {
+      color: theme.color.textLightGrey,
+      fontStyle: 'italic', // FIXME: Italic not applied
     },
     did: {
       marginTop: 1,
