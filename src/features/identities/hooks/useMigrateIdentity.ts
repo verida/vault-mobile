@@ -3,7 +3,10 @@ import { Client } from '@verida/client-rn'
 import { StorageLink } from '@verida/storage-link'
 import { EnvironmentType } from '@verida/types'
 import { config } from 'config'
-import { useCurrentProfile } from 'features/profiles'
+import {
+  fetchAllPublicProfilesData,
+  useCurrentProfile,
+} from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { getDidClientConfigForNetwork } from 'features/verida'
 import { getCountryCode } from 'helpers'
@@ -13,6 +16,10 @@ import { useCallback } from 'react'
 import AccountManager from 'api/AccountManager'
 import { useAppDispatch } from 'reduxStore/types'
 
+import {
+  IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES,
+  IDENTITY_MIGRATION_USE_PREDEFINED_CONTEXTS,
+} from '../constants'
 import { addAccount } from '../slice'
 import {
   Account,
@@ -162,16 +169,18 @@ export function useMigrateIdentity() {
         logger.debug('links', { links })
 
         // Get the hashes of the contexts
-        const contextHashes: string[] = links.map((link) => link.id)
+        const contextHashes: string[] =
+          IDENTITY_MIGRATION_USE_PREDEFINED_CONTEXTS
+            ? IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES
+            : links.map((link) => link.id)
 
-        const nbContextsToMigrate = links.length
+        const nbContextsToMigrate = contextHashes.length
         logger.debug(`Number of contexts to migrate ${nbContextsToMigrate}`)
 
         // TODO: Try optimise by running them in parallel, test if supported by the PouchDB replication
         for (let i = 0; i < contextHashes.length; i++) {
           const contextHash = contextHashes[i]
           try {
-            logger.debug('Opening contexts', { contextHash })
             const [sourceContext, targetContext] = await Promise.all([
               currentClient.openContext(contextHash, false),
               mainnetClient.openContext(contextHash, true),
@@ -180,11 +189,12 @@ export function useMigrateIdentity() {
             if (!sourceContext) {
               throw new Error('Could not open source context')
             }
+            logger.debug('Source context opened', { contextHash })
+
             if (!targetContext) {
               throw new Error('Could not open target context')
             }
-
-            logger.debug('Contexts opened', { contextHash })
+            logger.debug('Source target opened', { contextHash })
 
             logger.debug('Migrating context', { contextHash })
             await migrateContext(sourceContext, targetContext, (progress) => {
@@ -205,6 +215,7 @@ export function useMigrateIdentity() {
 
       updateStatus('migrateData', 'success')
       logger.info('Data migrated successfully')
+      dispatch(fetchAllPublicProfilesData())
     },
     [dispatch, currentIdentity, currentIdentityCountry]
   )

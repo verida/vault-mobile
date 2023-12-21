@@ -14,6 +14,13 @@ export function canMigrateToMainnet(did: string) {
   // TODO: Check if the DID already exists on Mainnet, if so we should not allow the migration either
 }
 
+type Database = {
+  did: string
+  contextName: string
+  databaseHash: string
+  databaseName: string
+}
+
 export function migrateContext(
   sourceContext: IContext,
   targetContext: IContext,
@@ -22,14 +29,19 @@ export function migrateContext(
   return new Promise<void>((resolve, reject) => {
     const migrationListener = migrateVeridaContext(sourceContext, targetContext)
 
-    migrationListener.on('start', (databases: any) => {
-      logger.debug('Starting context migration', { databases })
+    migrationListener.on('start', (databases: Database[]) => {
+      logger.debug('Starting context migration')
+      logger.debug(`Migrating ${databases.length} databases`)
     })
 
-    migrationListener.on('migrated', (_, dbIndex, totalDbs) => {
-      logger.debug(`Migrated ${dbIndex} of ${totalDbs} databases`)
-      update?.(dbIndex / totalDbs)
-    })
+    migrationListener.on(
+      'migrated',
+      (dbInfo: Database, dbIndex: number, totalDbs: number) => {
+        logger.debug(`Migrated ${dbInfo.databaseName} database`)
+        logger.debug(`Migrated ${dbIndex} of ${totalDbs} databases`)
+        update?.(dbIndex / totalDbs)
+      }
+    )
 
     migrationListener.on('complete', () => {
       logger.debug('Context migration complete')
