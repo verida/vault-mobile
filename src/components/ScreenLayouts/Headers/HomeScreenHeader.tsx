@@ -106,9 +106,7 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
               <View style={styles.nameContainer}>
                 <ShimmerPlaceholder
                   visible={!loadingState.loading}
-                  shimmerStyle={{ borderRadius: 4 }}
-                  width={140}
-                  height={27}>
+                  style={styles.nameShimmer}>
                   <Text
                     style={
                       isNameEmpty
@@ -180,6 +178,11 @@ const createStyles = (theme: Theme) =>
     nameContainer: {
       flexDirection: 'row',
       alignItems: 'center',
+    },
+    nameShimmer: {
+      flex: 1,
+      height: 20 * 1.35,
+      borderRadius: theme.roundness.s,
     },
     name: {
       fontFamily: theme.fontFamily.bold,
