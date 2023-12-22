@@ -2,7 +2,7 @@ import remoteConfig from '@react-native-firebase/remote-config'
 import { config as appConfig, mergeWithRemoteConfig } from 'config'
 import { Logger } from 'features/telemetry'
 import * as SecureStore from 'helpers/VeridaSecureStore'
-import { isEqual } from 'lodash'
+import { isEmpty, isEqual } from 'lodash'
 import React, {
   createContext,
   useCallback,
@@ -130,7 +130,10 @@ export const ConfigProvider: React.FC = ({ children }) => {
           }
 
           // Update app config for the active environment in case having config change
-          if (!isEqual(remoteAppConfig, savedRemoteConfig)) {
+          if (
+            !isEmpty(savedRemoteConfig) &&
+            !isEqual(remoteAppConfig, savedRemoteConfig)
+          ) {
             // Handle runtime app config updated, need to reload the app
             const appNeedsReload = mergeWithRemoteConfig(remoteAppConfig)
             if (appNeedsReload) {
