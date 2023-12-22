@@ -58,9 +58,11 @@ export function getSupportedVeridaNetworks(): EnvironmentType[] {
   if (config.features.veridaMainnet.enabled) {
     networks.push(EnvironmentType.MAINNET)
   }
+
   networks.push(EnvironmentType.TESTNET)
+  networks.push(EnvironmentType.DEVNET) // TODO: Move devnet under devMode after Internal testing
+
   if (config.dev.devMode) {
-    networks.push(EnvironmentType.DEVNET)
     networks.push(EnvironmentType.LOCAL)
   }
   return networks
