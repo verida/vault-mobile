@@ -1,12 +1,10 @@
 import {
   BottomActionBar,
-  ProgressBar,
   ScreenWrapper,
   StatusInfo,
   StatusList,
   StatusListItem,
 } from 'components'
-import { useTheme } from 'contexts'
 import {
   MigrateIdentityStep,
   MigrateIdentityStepStatus,
@@ -40,8 +38,9 @@ const defaultMigrationStepStatus: Array<
   },
   {
     key: 'migrateData',
-    label: 'Migrating your data',
+    label: 'Migrating your data (0%)',
     status: 'idle',
+    displayProgressBar: true,
   },
 ]
 
@@ -64,11 +63,9 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     }, [navigation])
 
     const styles = useThemeAwareStyle(createStyles)
-    const { theme } = useTheme()
 
     const [status, setStatus] = useState<MigrationStatus>('processing')
     const [statusItems, setStatusItems] = useState(defaultMigrationStepStatus)
-    const [migrationProgress, setMigrationprogress] = useState(0)
 
     const updateStepStatus = useCallback(
       (step: MigrateIdentityStep, stepStatus: MigrateIdentityStepStatus) => {
@@ -82,13 +79,13 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     )
 
     const updateMigrationProgress = useCallback((newProgress) => {
-      setMigrationprogress(newProgress)
       setStatusItems((prevItems) =>
         prevItems.map((item) =>
           item.key === 'migrateData'
             ? {
                 ...item,
                 label: `Migrating your data (${formatPercentage(newProgress)})`,
+                progress: newProgress,
               }
             : item
         )
@@ -170,14 +167,9 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       if (currentIdentity) {
         setStatus('processing')
         setStatusItems(defaultMigrationStepStatus)
-        setMigrationprogress(0)
         executeMigration()
       }
     }, [currentIdentity, executeMigration])
-
-    const isMigratingData = statusItems.some(
-      (item) => item.key === 'migrateData' && item.status === 'processing'
-    )
 
     const title =
       status === 'success'
@@ -207,14 +199,6 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
             subtitle={subtitle}
           />
           <StatusList statusItems={statusItems} style={styles.statusList} />
-          {isMigratingData ? (
-            <View style={styles.progressBarContainer}>
-              <ProgressBar
-                progress={migrationProgress}
-                color={theme.color.success}
-              />
-            </View>
-          ) : null}
         </View>
         <BottomActionBar
           hideBorder

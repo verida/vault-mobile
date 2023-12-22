@@ -1,3 +1,4 @@
+import { ProgressBar } from 'components'
 import { useTheme } from 'contexts'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
@@ -9,6 +10,8 @@ import { Theme } from 'styles/types'
 export type StatusListItem = {
   status: 'idle' | 'success' | 'error' | 'processing'
   label: string
+  displayProgressBar?: boolean
+  progress?: number
 }
 
 export type StatusListProps = {
@@ -25,26 +28,40 @@ export const StatusList: React.FunctionComponent<StatusListProps> = (props) => {
     <View {...viewProps}>
       <View style={styles.container}>
         {statusItems.map((item, index) => (
-          <AnimatedCheckbox
-            key={item.label}
-            checked={item.status === 'success'}
-            failed={item.status === 'error'}
-            loading={item.status === 'processing'}
-            label={item.label}
-            containerStyle={{
-              marginTop: index === 0 ? 0 : theme.spacing.m,
-            }}
-          />
+          <React.Fragment key={item.label}>
+            <AnimatedCheckbox
+              key={item.label}
+              checked={item.status === 'success'}
+              failed={item.status === 'error'}
+              loading={item.status === 'processing'}
+              label={item.label}
+              containerStyle={{
+                marginTop: index === 0 ? 0 : theme.spacing.m,
+              }}
+            />
+            {item.displayProgressBar ? (
+              <View style={styles.progressBarContainer}>
+                <ProgressBar
+                  progress={item.progress || 0}
+                  color={theme.color.success}
+                />
+              </View>
+            ) : null}
+          </React.Fragment>
         ))}
       </View>
     </View>
   )
 }
 
-const createStyles = (_theme: Theme) =>
+const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
       flexDirection: 'column',
       justifyContent: 'flex-start',
+    },
+    progressBarContainer: {
+      marginTop: theme.spacing.m,
+      marginLeft: theme.spacing.s + 20,
     },
   })
