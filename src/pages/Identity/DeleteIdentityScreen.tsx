@@ -3,7 +3,7 @@ import { selectSelectedAccount, useIdentities } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
@@ -43,10 +43,11 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 
   const { removeIdentity } = useIdentities()
 
-  const handleDelete = useCallback(async () => {
+  const handleDeleteConfirmed = useCallback(async () => {
     if (!selectedAccount?.did) {
       return
     }
+
     setProcessing(true)
     try {
       await removeIdentity(selectedAccount.did)
@@ -55,10 +56,27 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
       })
     } catch (error: unknown) {
       logger.error(error)
-    } finally {
       setProcessing(false)
     }
   }, [removeIdentity, navigation, selectedAccount?.did])
+
+  const handleDelete = useCallback(async () => {
+    Alert.alert(
+      'Delete Identity',
+      'This operation is final! Do you want to proceed?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: handleDeleteConfirmed,
+        },
+      ]
+    )
+  }, [handleDeleteConfirmed])
 
   const handleCancel = useCallback(() => {
     navigation.goBack()

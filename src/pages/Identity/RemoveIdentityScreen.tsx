@@ -3,7 +3,7 @@ import { selectSelectedAccount, useIdentities } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
@@ -44,7 +44,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
 
   const { removeIdentity } = useIdentities()
 
-  const handleLogout = useCallback(async () => {
+  const handleLogoutConfirmed = useCallback(async () => {
     if (!selectedAccount?.did) {
       return
     }
@@ -56,10 +56,27 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
       })
     } catch (error: unknown) {
       logger.error(error)
-    } finally {
       setProcessing(false)
     }
   }, [removeIdentity, navigation, selectedAccount?.did])
+
+  const handleLogout = useCallback(async () => {
+    Alert.alert(
+      'Log out',
+      `You can't recover your Identity without your recovery phrase. Do you want to log out?`,
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Log out',
+          style: 'destructive',
+          onPress: handleLogoutConfirmed,
+        },
+      ]
+    )
+  }, [handleLogoutConfirmed])
 
   const handleCancel = useCallback(() => {
     navigation.goBack()
