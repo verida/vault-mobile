@@ -12,6 +12,7 @@ export type StatusListItem = {
   label: string
   displayProgressBar?: boolean
   progress?: number
+  disabled?: boolean
 }
 
 export type StatusListProps = {
@@ -38,6 +39,9 @@ export const StatusList: React.FunctionComponent<StatusListProps> = (props) => {
               containerStyle={{
                 marginTop: index === 0 ? 0 : theme.spacing.m,
               }}
+              textStyle={
+                item.disabled ? { color: theme.color.textLightGrey } : {}
+              }
             />
             {item.displayProgressBar ? (
               <View style={styles.progressBarContainer}>
