@@ -36,7 +36,7 @@ const logger = new Logger('InboxItem')
 
 // TODO: refactor and convert to Typescript
 const InboxItem = (props) => {
-  const { inboxItemId = 'unknown' } = props.route.params
+  const { inboxItemId } = props.route.params
   const [item, setItem] = useState(null)
   const [inboxItem, setInboxItem] = useState(null)
   const [inboxType, setInboxType] = useState(null)
