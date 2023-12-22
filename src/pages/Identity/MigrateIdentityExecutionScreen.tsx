@@ -5,10 +5,12 @@ import {
   StatusList,
   StatusListItem,
 } from 'components'
+import { config } from 'config'
 import {
   MigrateIdentityStep,
   MigrateIdentityStepStatus,
   useCurrentIdentity,
+  useIdentities,
   useMigrateIdentity,
 } from 'features/identities'
 import { Logger } from 'features/telemetry'
@@ -17,6 +19,7 @@ import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, InteractionManager, StyleSheet, View } from 'react-native'
 import { formatPercentage } from 'utils'
 
+import LoadingView from 'components/LoadingView'
 import { useAuth } from 'hooks/useAuth'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -42,6 +45,14 @@ const defaultMigrationStepStatus: Array<
     status: 'idle',
     displayProgressBar: true,
   },
+  {
+    key: 'deleteIdentity',
+    label: config.features.veridaMainnet.enableDeletionAfterMigration
+      ? 'Deleting your current Identity'
+      : 'Deleting your current Identity (skipped)',
+    status: 'idle',
+    disabled: !config.features.veridaMainnet.enableDeletionAfterMigration,
+  },
 ]
 
 type MigrationStatus = 'processing' | 'success' | 'error'
@@ -55,16 +66,21 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
   (props) => {
     const { navigation } = props
 
+    const [switchingIdentity, setSwitchingIdentity] = useState(false)
+    const [status, setStatus] = useState<MigrationStatus>('processing')
+
+    const { removeIdentity } = useIdentities()
+
     useEffect(() => {
       navigation.setOptions({
         title: 'Migrate Identity',
         headerShown: false,
+        gestureEnabled: false,
       })
     }, [navigation])
 
     const styles = useThemeAwareStyle(createStyles)
 
-    const [status, setStatus] = useState<MigrationStatus>('processing')
     const [statusItems, setStatusItems] = useState(defaultMigrationStepStatus)
 
     const updateStepStatus = useCallback(
@@ -98,6 +114,9 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     const [newDid, setNewDid] = useState<string | undefined>(undefined)
 
     const executeMigration = useCallback(async () => {
+      if (switchingIdentity) {
+        return
+      }
       try {
         setStatus('processing')
         const migratedDid = await migrate(
@@ -110,7 +129,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
         logger.error(error)
         setStatus('error')
       }
-    }, [migrate, updateStepStatus, updateMigrationProgress])
+    }, [switchingIdentity, migrate, updateStepStatus, updateMigrationProgress])
 
     useEffect(() => {
       if (currentIdentity) {
@@ -171,6 +190,26 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       }
     }, [currentIdentity, executeMigration])
 
+    const handleUseNewIdentity = useCallback(async () => {
+      try {
+        if (currentIdentity?.did) {
+          setSwitchingIdentity(true)
+          await removeIdentity(currentIdentity.did, newDid)
+          navigation.navigate('Tabs', { screen: 'Home' })
+        } else {
+          handleSwitchToNewIdentity()
+        }
+      } catch (error: unknown) {
+        logger.error(error)
+      }
+    }, [
+      removeIdentity,
+      navigation,
+      currentIdentity?.did,
+      newDid,
+      handleSwitchToNewIdentity,
+    ])
+
     const title =
       status === 'success'
         ? 'Success!'
@@ -183,6 +222,10 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
         : status === 'error'
         ? 'Please retry'
         : 'Please wait, it can take a few minutes.'
+
+    if (switchingIdentity) {
+      return <LoadingView />
+    }
 
     return (
       <ScreenWrapper allSafeAreaEdges>
@@ -202,26 +245,33 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
         </View>
         <BottomActionBar
           hideBorder
-          alertType='warning'
+          alertType='error'
           alertContent={
             status === 'processing'
-              ? `Please do not close the app! As a decentralized network, your Verida Wallet is performing the operation.`
+              ? `Please do not close the app!\nAs a decentralized network, your Verida Wallet is performing the migration.`
               : undefined
           }
           actionsOrientation='column'
           actions={
             status === 'success'
-              ? [
-                  {
-                    label: 'Close',
-                    onPress: handleClose,
-                    color: 'grey',
-                  },
-                  {
-                    label: 'Switch to new Identity',
-                    onPress: handleSwitchToNewIdentity,
-                  },
-                ]
+              ? config.features.veridaMainnet.enableDeletionAfterMigration
+                ? [
+                    {
+                      label: 'Use new Identity',
+                      onPress: handleUseNewIdentity,
+                    },
+                  ]
+                : [
+                    {
+                      label: 'Close',
+                      onPress: handleClose,
+                      color: 'grey',
+                    },
+                    {
+                      label: 'Switch to new Identity',
+                      onPress: handleSwitchToNewIdentity,
+                    },
+                  ]
               : status === 'error'
               ? [
                   {

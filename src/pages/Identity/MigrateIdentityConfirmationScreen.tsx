@@ -1,8 +1,9 @@
 import { BottomActionBar, ScreenWrapper, Typography } from 'components'
+import { config } from 'config'
 import { canMigrateToMainnet, useCurrentIdentity } from 'features/identities'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
-import { StyleSheet, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
 import IdentityMigrationIcon from 'assets/icons/identity_migration_icon.svg'
 import { MainStackScreenProps } from 'navigation/types'
@@ -36,13 +37,34 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
     }, [navigation])
 
     const handleMigrate = useCallback(() => {
-      navigation.replace('MigrateIdentityExecution')
+      Alert.alert(
+        'Execute migration',
+        config.features.veridaMainnet.enableDeletionAfterMigration
+          ? 'Your current Identity will be deleted. Do you want to proceed?'
+          : 'Do you want to proceed?',
+        [
+          {
+            text: 'Cancel',
+            style: 'cancel',
+            onPress: () => {
+              // Do nothing
+            },
+          },
+          {
+            text: 'Migrate',
+            style: 'destructive',
+            onPress: () => {
+              navigation.replace('MigrateIdentityExecution')
+            },
+          },
+        ]
+      )
     }, [navigation])
 
     return (
       <ScreenWrapper>
         <View style={styles.container}>
-          <View style={styles.content}>
+          <ScrollView contentContainerStyle={styles.content}>
             <IdentityMigrationIcon />
             {canMigrate ? (
               <>
@@ -53,10 +75,9 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
                   <Typography variant='h5'>{did}</Typography>
                 </View>
                 <Typography variant='h5' style={styles.subtitle}>
-                  This process will create a corresponding Mainnet Identity and
-                  securely transfer your data to the new network. Please ensure
-                  that you have backed up any critical information before
-                  proceeding.
+                  {config.features.veridaMainnet.enableDeletionAfterMigration
+                    ? `This process will create a corresponding Mainnet Identity and securely transfer your data to the new network.\n\nNote that your currrent Identity will be deleted!\n\nPlease ensure that you have backed up any critical information before proceeding.`
+                    : `This process will create a corresponding Mainnet Identity and securely transfer your data to the new network.\n\nPlease ensure that you have backed up any critical information before proceeding.`}
                 </Typography>
               </>
             ) : (
@@ -72,13 +93,15 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
                 </Typography>
               </>
             )}
-          </View>
+          </ScrollView>
         </View>
         <BottomActionBar
-          alertType='warning'
+          alertType='error'
           alertContent={
             canMigrate
-              ? 'The migration can take several minutes and you must keep the app open'
+              ? config.features.veridaMainnet.enableDeletionAfterMigration
+                ? 'The migration can take several minutes and the app must stay open.\nYour current Identity will be deleted.'
+                : 'The migration can take several minutes and the app must stay open.'
               : undefined
           }
           actionsOrientation='row'
@@ -92,6 +115,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
               label: 'Migrate',
               onPress: handleMigrate,
               disabled: !canMigrate,
+              color: 'danger',
             },
           ]}
         />

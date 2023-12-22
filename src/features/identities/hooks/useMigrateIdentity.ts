@@ -151,11 +151,12 @@ export function useMigrateIdentity() {
 
       // Migrate Contexts
 
+      let currentClient: Client | undefined
       try {
         updateStatus('migrateData', 'processing')
         logger.debug('Starting migrating data')
 
-        const currentClient = AccountManager.getInstance().getClient()
+        currentClient = AccountManager.getInstance().getClient()
         if (!currentClient) {
           throw new Error('No current client')
         }
@@ -171,7 +172,7 @@ export function useMigrateIdentity() {
           ? IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES
           : await Promise.all(
               links.map(async (link) => {
-                return currentClient.getContextNameFromHash(link.id)
+                return currentClient!.getContextNameFromHash(link.id)
               })
             )
         logger.debug('Context names', { contextNames })
@@ -225,6 +226,25 @@ export function useMigrateIdentity() {
       updateStatus('migrateData', 'success')
       logger.info('Data migrated successfully')
       dispatch(fetchAllPublicProfilesData())
+
+      if (config.features.veridaMainnet.enableDeletionAfterMigration) {
+        try {
+          updateStatus('deleteIdentity', 'processing')
+          logger.info('Deleting current Identity')
+
+          await currentClient.destroyAccount()
+
+          updateStatus('deleteIdentity', 'success')
+          logger.info('Current Identity deleted successfully')
+        } catch (error: unknown) {
+          updateStatus('deleteIdentity', 'error')
+          throw new Error('Could not delete migrated identity', {
+            cause: error,
+          })
+        }
+      } else {
+        logger.info('Skipping current Identity deletion')
+      }
 
       return mainnetDid
     },

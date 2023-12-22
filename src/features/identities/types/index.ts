@@ -19,6 +19,7 @@ export type MigrateIdentityStep =
   | 'createDID'
   | 'connectIdentity'
   | 'migrateData'
+  | 'deleteIdentity'
 
 export type MigrateIdentityStepStatus =
   | 'idle'
