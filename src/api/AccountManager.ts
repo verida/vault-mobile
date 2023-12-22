@@ -594,6 +594,7 @@ class AccountManager extends EventEmitter {
         store.dispatch(setSelectedAccount(undefined))
       }
       store.dispatch(setAccounts(this.accounts))
+      store.dispatch(fetchAllPublicProfilesData())
 
       // Switch to next account if the current account logged out
       if (!this.selectedAccount && Object.values(this.accounts).length > 0) {

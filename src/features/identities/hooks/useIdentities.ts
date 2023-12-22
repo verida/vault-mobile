@@ -16,24 +16,6 @@ export function useIdentities() {
   const dispatch = useAppDispatch()
   const currentIdentity = useCurrentIdentity()
 
-  const removeIdentities = useCallback(
-    async (dids: string[]) => {
-      logger.info('Removing identities')
-      if (currentIdentity?.did && dids.includes(currentIdentity.did)) {
-        logger.debug('Current Identity about to be removed', {
-          did: currentIdentity.did,
-        })
-        dispatch(logoutAction({ did: currentIdentity?.did }))
-      }
-      logger.debug('Loging out multiple Identities', { dids })
-      await AccountManager.getInstance().logout(dids)
-      logger.debug('Refreshing following logout')
-      await refresh()
-      logger.info('Identities removed')
-    },
-    [dispatch, refresh, currentIdentity?.did]
-  )
-
   const switchIdentity = useCallback(
     async (did: string) => {
       try {
@@ -70,8 +52,36 @@ export function useIdentities() {
     [currentIdentity?.did, refresh, switchToAccount]
   )
 
+  const removeIdentity = useCallback(
+    async (did: string) => {
+      logger.info('Removing identity')
+      if (did === currentIdentity?.did) {
+        logger.debug('Current Identity about to be removed', {
+          did: currentIdentity.did,
+        })
+        dispatch(logoutAction({ did: currentIdentity?.did }))
+      }
+      logger.debug('Loging out Identity', { did })
+      await AccountManager.getInstance().logout([did])
+      logger.debug('Refreshing following logout')
+      await refresh()
+      logger.info('Identity removed', { did })
+    },
+    [dispatch, refresh, currentIdentity?.did]
+  )
+
+  const destroyIdentity = useCallback(
+    async (did: string) => {
+      // TODO: Use the destroyAccount from Verida SDK
+
+      await removeIdentity(did)
+    },
+    [removeIdentity]
+  )
+
   return {
-    removeIdentities,
     switchIdentity,
+    removeIdentity,
+    destroyIdentity,
   }
 }

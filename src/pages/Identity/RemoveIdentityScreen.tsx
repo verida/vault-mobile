@@ -42,7 +42,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
 
   const [canRemove] = useState(!!selectedAccount?.did)
 
-  const { removeIdentities } = useIdentities()
+  const { removeIdentity } = useIdentities()
 
   const handleLogout = useCallback(async () => {
     if (!selectedAccount?.did) {
@@ -50,7 +50,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
     }
     setProcessing(true)
     try {
-      await removeIdentities([selectedAccount.did])
+      await removeIdentity(selectedAccount.did)
       navigation.navigate('Tabs', {
         screen: 'Home',
       })
@@ -59,7 +59,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
     } finally {
       setProcessing(false)
     }
-  }, [removeIdentities, navigation, selectedAccount?.did])
+  }, [removeIdentity, navigation, selectedAccount?.did])
 
   const handleCancel = useCallback(() => {
     navigation.goBack()
