@@ -1,5 +1,6 @@
 import { migrateContext as migrateVeridaContext } from '@verida/client-rn'
 import { EnvironmentType, IContext } from '@verida/types'
+import { config } from 'config'
 import { Logger } from 'features/telemetry'
 
 import { UpdateContextMigrationProgressFunction } from '../types'
@@ -11,7 +12,8 @@ export function canMigrateToMainnet(did: string) {
   const network = did ? getNetworkFromDID(did) : undefined
 
   return (
-    network === EnvironmentType.TESTNET || network === EnvironmentType.DEVNET
+    config.features.veridaMainnet.enableMigration &&
+    (network === EnvironmentType.TESTNET || network === EnvironmentType.DEVNET)
   )
   // TODO: Check if the DID already exists on Mainnet, if so we should not allow the migration either
 }

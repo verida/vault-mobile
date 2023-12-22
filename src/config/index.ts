@@ -42,7 +42,10 @@ export const config = {
     // ),
   },
   features: {
-    veridaMainnetEnabled: true,
+    veridaMainnet: {
+      enabled: true,
+      enableMigration: true,
+    },
     home: {
       hideCryptoWalletOverview: false,
       hidePromoBanners: false,
