@@ -5,13 +5,14 @@ import { useTheme } from 'contexts'
 import {
   getAddressFromDID,
   getNetworkFromDID,
-  selectSelectedAccount,
+  useCurrentIdentity,
 } from 'features/identities'
 import { useIdentityDrawer } from 'features/identityDrawer'
 import { selectNewMessagesCount } from 'features/inbox'
 import {
+  PROFILE_EMPTY_NAME_VALUE,
   selectPublicProfilesLoadingState,
-  selectSelectedPublicProfile,
+  useCurrentProfile,
 } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
@@ -41,8 +42,11 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
 
-    const identity = useAppSelector(selectSelectedAccount)
-    const { avatar, name } = useAppSelector(selectSelectedPublicProfile)
+    const identity = useCurrentIdentity()
+    const { avatar, name } = useCurrentProfile()
+    const isNameEmpty = !name
+    const displayedName = name || PROFILE_EMPTY_NAME_VALUE
+
     const loadingState = useAppSelector((state) =>
       selectPublicProfilesLoadingState(state, identity?.did)
     )
@@ -104,10 +108,14 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
                   visible={!loadingState.loading}
                   style={styles.nameShimmer}>
                   <Text
-                    style={styles.name}
+                    style={
+                      isNameEmpty
+                        ? [styles.name, styles.emptyName]
+                        : styles.name
+                    }
                     numberOfLines={1}
                     ellipsizeMode='tail'>
-                    {name}
+                    {displayedName}
                   </Text>
                 </ShimmerPlaceholder>
                 <Icon name='chevron-forward' size={16} />
@@ -180,7 +188,11 @@ const createStyles = (theme: Theme) =>
     name: {
       fontFamily: theme.fontFamily.bold,
       fontSize: 20, // TODO: Add missing font size in the theme
-      lineHeight: 20 * 1.35, // 20 * 1.35 = 27
+      lineHeight: 20 * 1.35,
+    },
+    emptyName: {
+      color: theme.color.textLightGrey,
+      fontStyle: 'italic', // FIXME: Italic not applied
     },
     did: {
       fontFamily: theme.fontFamily.semibold,

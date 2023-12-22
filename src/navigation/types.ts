@@ -18,6 +18,8 @@ import {
   CreateIdentityScreenParams,
   DeleteIdentityScreenParams,
   ImportIdentityScreenParams,
+  MigrateIdentityConfirmationScreenParams,
+  MigrateIdentityExecutionScreenParams,
   RemoveIdentityScreenParams,
   ShareIdentityScreenParams,
 } from 'pages/Identity'
@@ -94,6 +96,8 @@ export type MainStackParams = {
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
   ShareIdentity: ShareIdentityScreenParams
+  MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
+  MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
 
   SeedPhraseView: undefined
   ManageWallets: undefined

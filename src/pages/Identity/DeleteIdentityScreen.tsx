@@ -3,8 +3,9 @@ import { selectSelectedAccount, useIdentities } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { ScrollView, StyleSheet, View } from 'react-native'
+import { Alert, ScrollView, StyleSheet, View } from 'react-native'
 
+import AccountManager from 'api/AccountManager'
 import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { MainStackScreenProps } from 'navigation/types'
@@ -14,7 +15,7 @@ import { Theme } from 'styles/types'
 const logger = new Logger('DeleteIdentityScreen')
 
 const title = 'Do you want to delete your Identity?'
-const info = `To delete your identity, please remove any record of your recovery phrase then logout of this application or click the "Delete" button below. \n\nVerida has no access to your data and cannot recover your identity.`
+const info = `This operation is final!\n\nYour data will be deleted from the Verida Network and your decentralized Identifier will be disabled.\n\nThere is no recovery possible after this operation`
 
 export type DeleteIdentityScreenParams = undefined
 
@@ -41,24 +42,47 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
 
   const [canDelete] = useState(!!selectedAccount?.did)
 
-  const { removeIdentities } = useIdentities()
+  const { destroyIdentity } = useIdentities()
 
-  const handleDelete = useCallback(async () => {
+  const handleDeleteConfirmed = useCallback(async () => {
     if (!selectedAccount?.did) {
       return
     }
+
     setProcessing(true)
     try {
-      await removeIdentities([selectedAccount.did])
+      const currentClient = AccountManager.getInstance().getClient()
+      if (!currentClient) {
+        throw new Error('No current client')
+      }
+      await destroyIdentity(currentClient, selectedAccount.did)
+      // The destroy will trigger the remove of the current Identity which will trigger the switch to a different Identity
       navigation.navigate('Tabs', {
         screen: 'Home',
       })
     } catch (error: unknown) {
       logger.error(error)
-    } finally {
       setProcessing(false)
     }
-  }, [removeIdentities, navigation, selectedAccount?.did])
+  }, [destroyIdentity, selectedAccount?.did, navigation])
+
+  const handleDelete = useCallback(async () => {
+    Alert.alert(
+      'Delete Identity',
+      'This operation is final! Do you want to proceed?',
+      [
+        {
+          text: 'Cancel',
+          style: 'cancel',
+        },
+        {
+          text: 'Delete',
+          style: 'destructive',
+          onPress: handleDeleteConfirmed,
+        },
+      ]
+    )
+  }, [handleDeleteConfirmed])
 
   const handleCancel = useCallback(() => {
     navigation.goBack()
@@ -83,8 +107,8 @@ export const DeleteIdentityScreen: React.FC<DeleteIdentityScreenProps> = (
         </View>
       </ScrollView>
       <BottomActionBar
-        alertType='warning'
-        alertContent='This operation is final, your Identity cannot be recovered without your recovery phrase.'
+        alertType='error'
+        alertContent={`This operation is final!\nYour Identity and data cannot be recovered after.`}
         actions={[
           {
             label: 'Cancel',

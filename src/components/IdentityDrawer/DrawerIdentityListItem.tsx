@@ -1,7 +1,7 @@
 import { EnvironmentType } from '@verida/types'
 import { useTheme } from 'contexts'
 import { getAddressFromDID, getNetworkFromDID } from 'features/identities'
-import { PublicProfile } from 'features/profiles'
+import { PROFILE_EMPTY_NAME_VALUE, PublicProfile } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
 import { StyleSheet, Text, TouchableHighlight, View } from 'react-native'
@@ -23,6 +23,9 @@ export const DrawerIdentityListItem: React.FunctionComponent<DrawerIdentityListI
     const network = did ? getNetworkFromDID(did) : EnvironmentType.MAINNET
     const displayedDid = getAddressFromDID(did)
 
+    const isNameEmpty = !profile.name
+    const displayedName = profile.name || PROFILE_EMPTY_NAME_VALUE
+
     const styles = useThemeAwareStyle(createStyles)
     const { theme } = useTheme()
 
@@ -43,8 +46,13 @@ export const DrawerIdentityListItem: React.FunctionComponent<DrawerIdentityListI
             style={styles.avatar}
           />
           <View style={styles.nameContainer}>
-            <Text style={styles.name} numberOfLines={1} ellipsizeMode='tail'>
-              {profile.name}
+            <Text
+              style={
+                isNameEmpty ? [styles.name, styles.emptyName] : styles.name
+              }
+              numberOfLines={1}
+              ellipsizeMode='tail'>
+              {displayedName}
             </Text>
             <Text style={styles.did} numberOfLines={1} ellipsizeMode='middle'>
               {displayedDid}
@@ -84,6 +92,10 @@ const createStyles = (theme: Theme) =>
       fontFamily: theme.fontFamily.semibold,
       fontSize: theme.fontSize.l,
       lineHeight: theme.fontSize.l * 1.5,
+    },
+    emptyName: {
+      color: theme.color.textLightGrey,
+      fontStyle: 'italic', // FIXME: Italic not applied
     },
     did: {
       fontFamily: theme.fontFamily.semibold,

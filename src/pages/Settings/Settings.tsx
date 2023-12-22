@@ -1,6 +1,7 @@
 import { ScreenWrapper } from 'components'
 import { useTheme } from 'contexts'
-import { selectSelectedAccount } from 'features/identities'
+import { useCurrentIdentity } from 'features/identities'
+import { canMigrateToMainnet } from 'features/identities/utils/migration'
 import { useThemeAwareStyle } from 'hooks'
 import { Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
@@ -12,7 +13,6 @@ import PropertyList from 'components/PropertyList'
 import Text from 'components/Text'
 import { APP_NAME, APP_VERSION_FORMATTED } from 'constants/application'
 import { MainStackScreenProps } from 'navigation/types'
-import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 type SettingsItem = {
@@ -51,7 +51,21 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
     })
   }, [navigation, handleBack])
 
-  const currentIdentity = useAppSelector(selectSelectedAccount) // TODO: Use useCurrentIdentity when available
+  const currentIdentity = useCurrentIdentity()
+
+  const displayMigrateToMainnet = currentIdentity?.did
+    ? canMigrateToMainnet(currentIdentity.did)
+    : false
+  const migrateIdentityItem: SettingsItem[] = displayMigrateToMainnet
+    ? [
+        {
+          label: 'Migrate Identity to Mainnet',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('MigrateIdentityConfirmation'),
+        },
+      ]
+    : []
 
   const settingsItems: SettingsCategory[] = [
     {
@@ -83,6 +97,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
           optional: true,
           onPress: () => navigation.navigate('LoginHistory'),
         },
+        ...migrateIdentityItem,
         {
           label: 'Log Out',
           action: 'arrow',

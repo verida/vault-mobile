@@ -1,4 +1,4 @@
-import { selectAccounts, selectSelectedAccount } from 'features/identities'
+import { selectAccounts, useCurrentIdentity } from 'features/identities'
 import {
   fetchAllPublicProfilesData,
   PublicProfile,
@@ -52,7 +52,7 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
     const identities = useAppSelector(selectAccounts)
     const identityDids = Object.keys(identities)
 
-    const currentIdentity = useAppSelector(selectSelectedAccount)
+    const currentIdentity = useCurrentIdentity()
     const publicProfiles = useAppSelector(selectPublicProfiles)
     const identityProfiles: IdentityItem[] = Object.entries(publicProfiles)
       .filter(([did]) => identityDids.includes(did)) // Cache issue in selectPublicProfiles after removing identities, the profiles stays. Have to get the list of identities with selectAccounts and keep only the profile from DID still here
@@ -64,6 +64,8 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
     const handleItemPress = useCallback(
       (did: string) => {
         onIdentitySwitch?.()
+
+        // TODO: Use switchIdentity from useIdentities
         InteractionManager.runAfterInteractions(async () => {
           try {
             await switchToAccount(did)

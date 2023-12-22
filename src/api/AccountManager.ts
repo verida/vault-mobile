@@ -40,7 +40,7 @@ import { config } from 'config'
 import EventEmitter from 'events'
 import { WalletManager } from './Wallet/WalletManager'
 import { EnvironmentType, IContext } from '@verida/types'
-import { PublicProfile } from 'features/profiles'
+import { fetchAllPublicProfilesData, PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { executeWithTimeout } from 'utils'
 import {
@@ -533,6 +533,7 @@ class AccountManager extends EventEmitter {
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      store.dispatch(fetchAllPublicProfilesData())
 
       // At this point can consider DID and Profile are created successfully
       // so we just finish this function and do these heavy tasks below asynchronously
@@ -557,7 +558,7 @@ class AccountManager extends EventEmitter {
     return this.selectedAccount
   }
 
-  public async logout(dids: string[] = []) {
+  public async logout(dids: string[] = [], nextDidToSwitchTo?: string) {
     if (!this.selectedAccount) {
       return
     }
@@ -593,11 +594,17 @@ class AccountManager extends EventEmitter {
         store.dispatch(setSelectedAccount(undefined))
       }
       store.dispatch(setAccounts(this.accounts))
+      store.dispatch(fetchAllPublicProfilesData())
 
       // Switch to next account if the current account logged out
       if (!this.selectedAccount && Object.values(this.accounts).length > 0) {
-        const nextAccount = Object.values(this.accounts)[0]
-        await this.switchToAccount(nextAccount.did)
+        const nextDidExist = Object.values(this.accounts).some(
+          (account) => account.did === nextDidToSwitchTo
+        )
+        const nextAccountDid = nextDidExist
+          ? nextDidToSwitchTo
+          : Object.values(this.accounts)[0].did
+        await this.switchToAccount(nextAccountDid!)
       }
     } catch (error) {
       logger.error(error)
@@ -663,16 +670,26 @@ class AccountManager extends EventEmitter {
 
     this.selectedAccount = { ...nextSelectedAccount, ...data }
 
-    this.accounts[this.selectedAccount.did] = this.selectedAccount
+    // That doesn't make sense to be here
+    this.addAccount(this.selectedAccount)
+
+    // That doesn't make sense to be here
+    await SecureStore.setItemAsync(
+      SELECTED_ACCOUNT_DID_STORAGE_KEY,
+      this.selectedAccount.did
+    )
+  }
+
+  public async addAccount(account: Account) {
+    if (!account?.did) {
+      return // TODO: Throw error?
+    }
+
+    this.accounts[account.did] = account
 
     await SecureStore.setItemAsync(
       ACCOUNTS_STORAGE_KEY,
       JSON.stringify(this.accounts)
-    )
-
-    await SecureStore.setItemAsync(
-      SELECTED_ACCOUNT_DID_STORAGE_KEY,
-      this.selectedAccount.did
     )
   }
 
@@ -702,6 +719,7 @@ class AccountManager extends EventEmitter {
       await this.connect(true, network)
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
+      store.dispatch(fetchAllPublicProfilesData())
       await this.restoreUserWallet(true)
 
       return this.selectedAccount
