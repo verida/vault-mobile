@@ -104,7 +104,11 @@ export const HomePromoBanners: React.FC<HomePromoBannersProps> = (props) => {
           style={styles.bannerButton}
           onPress={() => handleBannerPress(banner)}>
           <Text style={styles.bannerButtonLabel}>{banner.buttonLabel}</Text>
-          <Icon name='chevron-forward' color={theme.color.onPrimary} />
+          <Icon
+            name='chevron-forward'
+            color={theme.color.onPrimary}
+            size={24}
+          />
         </Pressable>
       </ImageBackground>
     </View>

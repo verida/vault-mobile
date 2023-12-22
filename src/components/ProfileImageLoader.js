@@ -9,17 +9,15 @@ import {
 import { Logger } from 'features/telemetry'
 import React, { useEffect } from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
-import FastImage from 'react-native-fast-image'
 import { connect, useDispatch, useSelector } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
+import { IdentityAvatar } from 'components/Images'
 
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 import { ShimmerPlaceholder } from './ShimmerPlaceholder'
 
 const logger = new Logger('Components/ProfileImageLoader')
-
-const userImg = require('assets/stubs/avatar.png')
 
 function ProfileImageLoader(props) {
   const { publicProfileData } = props
@@ -30,7 +28,6 @@ function ProfileImageLoader(props) {
   const loadingState = useSelector((state) =>
     selectPublicProfilesLoadingState(state, did)
   )
-  const image = publicProfile?.avatar ?? userImg
 
   useEffect(() => {
     if (did) dispatch(fetchPublicProfileData(did))
@@ -75,11 +72,9 @@ function ProfileImageLoader(props) {
         height={120}
         shimmerStyle={[{ borderRadius: 60 }]}>
         <TouchableOpacity style={style.loader} onPress={loadPhoto}>
-          <FastImage
+          <IdentityAvatar
+            source={publicProfile?.avatar}
             style={style.imgContainer}
-            source={image}
-            resizeMode={FastImage.resizeMode.cover}
-            defaultSource={userImg}
           />
           <PhotoCameraSvg style={style.svg} />
         </TouchableOpacity>

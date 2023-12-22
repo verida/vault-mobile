@@ -25,10 +25,11 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
   const styles = useThemeAwareStyle(createStyles)
 
   const navigation = useNavigation()
-  const wallets = useSelector(getWallets)
-  const addresses = getUniqueWalletAddresses(wallets)
+  const currentWallet = useSelector(getWallets)
+  const addresses = getUniqueWalletAddresses(currentWallet)
   const { data } = useGetBalancesQuery(addresses)
   const { total } = data || {}
+  const displayedLabel = currentWallet?.label || 'Crypto Wallet'
   const displayedTotal = formatFiatCurrency(total || 0)
 
   const handlePress = () => {
@@ -43,7 +44,7 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
             <Icon name='wallet' size={24} color={theme.color.primary} />
           </View>
           <View>
-            <Text style={styles.walletLabel}>All Crypto Wallets</Text>
+            <Text style={styles.walletLabel}>{displayedLabel}</Text>
             <Text style={styles.walletAmount}>{displayedTotal}</Text>
           </View>
         </View>

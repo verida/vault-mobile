@@ -155,7 +155,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
         contentContainerStyle={[
           styles.container,
           {
-            paddingBottom: insets.bottom,
+            paddingBottom: insets.bottom + theme.spacing.s,
           },
         ]}>
         {settingsItems.map((category) => (

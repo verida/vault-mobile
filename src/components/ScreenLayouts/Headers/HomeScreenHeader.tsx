@@ -107,6 +107,7 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
                 <ShimmerPlaceholder
                   visible={!loadingState.loading}
                   style={styles.nameShimmer}>
+                  style={styles.nameShimmer}>
                   <Text
                     style={
                       isNameEmpty
@@ -174,13 +175,14 @@ const createStyles = (theme: Theme) =>
     nameAndDidContainer: {
       flex: 1,
       marginLeft: theme.spacing.m,
+      justifyContent: 'flex-end',
     },
     nameContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     },
     nameShimmer: {
-      flex: 1,
+      flexShrink: 1,
       height: 20 * 1.35,
       borderRadius: theme.roundness.s,
     },
@@ -194,10 +196,9 @@ const createStyles = (theme: Theme) =>
       fontStyle: 'italic', // FIXME: Italic not applied
     },
     did: {
-      marginTop: 1,
       fontFamily: theme.fontFamily.semibold,
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.s * 1.5,
+      fontSize: theme.fontSize.s, // 12
+      lineHeight: theme.fontSize.s * 1.5, // 12 * 1.5 = 18
       color: theme.color.textLightGrey,
     },
     actionsContainer: {
