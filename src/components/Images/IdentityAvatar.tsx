@@ -4,7 +4,6 @@ import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
 import { NetworkIndicator, NetworkIndicatorProps } from 'components/Network'
-// import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { Theme } from 'styles/types'
 
 import { Avatar, AvatarProps } from './Avatar'
@@ -25,9 +24,7 @@ export const IdentityAvatar: React.FunctionComponent<IdentityAvatarProps> = (
   return (
     <View {...viewProps}>
       <View style={styles.container}>
-        {/* <ShimmerPlaceholder visible={loading} shimmerStyle={styles.shimmer}> */}
         <Avatar source={source} fallbackType='person' />
-        {/* </ShimmerPlaceholder> */}
         {network && network !== EnvironmentType.MAINNET ? (
           <NetworkIndicator
             network={network}

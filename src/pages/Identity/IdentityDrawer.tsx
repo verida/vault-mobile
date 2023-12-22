@@ -121,7 +121,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
-                  label='View my Profile'
+                  label='View my profile'
                   icon={
                     <Ionicons
                       name='person'

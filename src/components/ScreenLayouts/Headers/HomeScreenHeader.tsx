@@ -102,9 +102,7 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
               <View style={styles.nameContainer}>
                 <ShimmerPlaceholder
                   visible={!loadingState.loading}
-                  shimmerStyle={{ borderRadius: 4 }}
-                  width={140}
-                  height={27}>
+                  style={styles.nameShimmer}>
                   <Text
                     style={styles.name}
                     numberOfLines={1}
@@ -168,21 +166,26 @@ const createStyles = (theme: Theme) =>
     nameAndDidContainer: {
       flex: 1,
       marginLeft: theme.spacing.m,
+      justifyContent: 'flex-end',
     },
     nameContainer: {
       flexDirection: 'row',
       alignItems: 'center',
     },
+    nameShimmer: {
+      flexShrink: 1,
+      height: 20 * 1.35,
+      borderRadius: theme.roundness.s,
+    },
     name: {
       fontFamily: theme.fontFamily.bold,
       fontSize: 20, // TODO: Add missing font size in the theme
-      lineHeight: 20 * 1.35,
+      lineHeight: 20 * 1.35, // 20 * 1.35 = 27
     },
     did: {
-      marginTop: 1,
       fontFamily: theme.fontFamily.semibold,
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.s * 1.5,
+      fontSize: theme.fontSize.s, // 12
+      lineHeight: theme.fontSize.s * 1.5, // 12 * 1.5 = 18
       color: theme.color.textLightGrey,
     },
     actionsContainer: {

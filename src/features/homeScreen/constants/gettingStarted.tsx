@@ -9,19 +9,19 @@ import { HomeScreenGettingStartedItem } from '../types'
 export const homeGettingStartedItems: HomeScreenGettingStartedItem[] = [
   {
     key: 'update_profile',
-    label: 'Update your Profile',
+    label: 'Update your profile',
     icon: <UpdateProfileIcon />,
     screen: 'Profile',
   },
   // {
   //   key: 'connect_accounts',
-  //   label: 'Connect Accounts',
+  //   label: 'Connect social accounts',
   //   icon: <ConnectIcon />,
   //   screen: 'Connections',
   // },
   {
     key: 'manage_crypto_wallet',
-    label: 'Manage your Crypto Wallets',
+    label: 'Manage your crypto wallets',
     icon: <MainWalletIcon />,
     screen: 'ManageWallets',
   },

@@ -9,7 +9,14 @@ import { useProtocols } from 'features/protocols'
 import { Logger } from 'features/telemetry'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useState } from 'react'
-import { Alert, Linking, Platform, StyleSheet, View } from 'react-native'
+import {
+  Alert,
+  Linking,
+  Platform,
+  StatusBar,
+  StyleSheet,
+  View,
+} from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 import { useDebouncedCallback } from 'use-debounce'
@@ -114,8 +121,10 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
     // HACK: In development mode, we'll also read the content of the clipboard
     //       for a connection string.
     const [maybeClipboardContent] =
-      // eslint-disable-next-line react-hooks/rules-of-hooks
-      __DEV__ && config.dev.enableClipboardInQrCodeScanner ? useClipboard() : []
+      config.dev.devMode && config.dev.enableClipboardInQrCodeScanner
+        ? // eslint-disable-next-line react-hooks/rules-of-hooks
+          useClipboard()
+        : []
 
     React.useEffect(() => {
       ;(async () => {
@@ -127,6 +136,7 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
 
     return (
       <View style={styles.container}>
+        <StatusBar barStyle='light-content' />
         <RNCamera
           style={styles.camera}
           type={RNCamera.Constants.Type.back}
