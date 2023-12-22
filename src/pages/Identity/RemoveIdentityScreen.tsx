@@ -51,6 +51,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
     setProcessing(true)
     try {
       await removeIdentity(selectedAccount.did)
+      // The remove of the current Identity will trigger the switch to a different Identity
       navigation.navigate('Tabs', {
         screen: 'Home',
       })
@@ -58,7 +59,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
       logger.error(error)
       setProcessing(false)
     }
-  }, [removeIdentity, navigation, selectedAccount?.did])
+  }, [removeIdentity, selectedAccount?.did, navigation])
 
   const handleLogout = useCallback(async () => {
     Alert.alert(

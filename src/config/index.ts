@@ -45,6 +45,7 @@ export const config = {
     veridaMainnet: {
       enabled: true,
       enableMigration: true,
+      enableDeletionAfterMigration: true,
     },
     home: {
       hideCryptoWalletOverview: false,

@@ -1,3 +1,4 @@
+import { Client } from '@verida/client-rn'
 import { logout as logoutAction } from 'features/auth'
 import { Logger } from 'features/telemetry'
 import { useCallback } from 'react'
@@ -70,10 +71,14 @@ export function useIdentities() {
     [dispatch, refresh, currentIdentity?.did]
   )
 
+  /**
+   * Due to the structure of the Verida SDK, we have to pass a client coinnected with an account and but as we don't have access to the connected account from the client, we need the corresponding DID in argument.
+   *
+   * This method will trigger the log out of the DID and potentially the switch to a different Identity if the DID is the current Identity.
+   */
   const destroyIdentity = useCallback(
-    async (did: string) => {
-      // TODO: Use the destroyAccount from Verida SDK
-
+    async (client: Client, did: string) => {
+      await client.destroyAccount()
       await removeIdentity(did)
     },
     [removeIdentity]
