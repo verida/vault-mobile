@@ -2,7 +2,7 @@ import remoteConfig from '@react-native-firebase/remote-config'
 import { config as appConfig, mergeWithRemoteConfig } from 'config'
 import { Logger } from 'features/telemetry'
 import * as SecureStore from 'helpers/VeridaSecureStore'
-import { isEqual } from 'lodash'
+import { isEmpty, isEqual } from 'lodash'
 import React, {
   createContext,
   useCallback,
@@ -14,7 +14,8 @@ import React, {
 import { Alert, AppState, AppStateStatus } from 'react-native'
 import RNRestart from 'react-native-restart'
 
-import { MaintenanceScreen } from 'pages/Account/MaintenanceScreen'
+import { APP_REMOTE_CONFIG_STORAGE_KEY } from 'constants/storageKeys'
+import { MaintenanceScreen } from 'pages/Maintenance'
 
 import {
   ConfigContextType,
@@ -51,30 +52,12 @@ export const ConfigProvider: React.FC = ({ children }) => {
   const appState = useRef(AppState.currentState)
 
   const fetchRemoteConfig = useCallback(async () => {
-    /*
-     * Handle remote app config based on environment
-     * Remote config contain configurations for all the network environments:
-     * {
-     *   "devnet": {
-     *      ...
-     *   }
-     *   "testnet": {
-     *      ...
-     *   }
-     *   "mainnet": {
-     *      ...
-     *   }
-     * }
-     */
-    const veridaEnvironment = appConfig.VERIDA_ENVIRONMENT
-
-    const APP_REMOTE_CONFIG_STORAGE_KEY = 'SAVED_REMOTE_CONFIG'
     const savedRemoteConfig = JSON.parse(
       (await SecureStore.getItemAsync(APP_REMOTE_CONFIG_STORAGE_KEY)) || '{}'
     )
     // Merge the last update from remote config on initial load
-    if (initialLoadRef.current && savedRemoteConfig?.[veridaEnvironment]) {
-      mergeWithRemoteConfig(savedRemoteConfig[veridaEnvironment])
+    if (initialLoadRef.current && savedRemoteConfig) {
+      mergeWithRemoteConfig(savedRemoteConfig)
       initialLoadRef.current = false
     }
 
@@ -148,15 +131,11 @@ export const ConfigProvider: React.FC = ({ children }) => {
 
           // Update app config for the active environment in case having config change
           if (
-            !isEqual(
-              remoteAppConfig?.[veridaEnvironment],
-              savedRemoteConfig?.[veridaEnvironment]
-            )
+            !isEmpty(savedRemoteConfig) &&
+            !isEqual(remoteAppConfig, savedRemoteConfig)
           ) {
             // Handle runtime app config updated, need to reload the app
-            const appNeedsReload = mergeWithRemoteConfig(
-              remoteAppConfig[veridaEnvironment]
-            )
+            const appNeedsReload = mergeWithRemoteConfig(remoteAppConfig)
             if (appNeedsReload) {
               Alert.alert(
                 'Application Configuration Updated',

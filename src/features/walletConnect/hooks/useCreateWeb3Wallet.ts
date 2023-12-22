@@ -50,8 +50,8 @@ export function useCreateWeb3Wallet({
         setState(loadingState)
 
         const core = new Core({
-          projectId: config.WALLETCONNECT_PROJECT_ID,
-          relayUrl: config.WALLETCONNECT_RELAY_URL,
+          projectId: config.walletConnect.projectId,
+          relayUrl: config.walletConnect.relayUrl,
         })
 
         const web3wallet = await Web3Wallet.init({

@@ -1,4 +1,3 @@
-import { config } from 'config'
 import { setNewMessagesCount } from 'features/inbox'
 import { Logger } from 'features/telemetry'
 import { isValidVeridaDid } from 'features/verida'
@@ -6,50 +5,12 @@ import { throttle } from 'lodash'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 const logger = new Logger('Utils')
 
 const MAX_MESSAGE_COUNT = 21
 export const DefaultAvatar = require('../assets/stubs/avatar.png')
-
-export const convertAvatar = (avatar: any) => {
-  if (!avatar) {
-    return DefaultAvatar
-  }
-
-  if (avatar) {
-    let image
-    switch (avatar.encoding) {
-      case 'base64':
-        image = {
-          uri: `data:image/${avatar.format};base64,` + avatar.base64,
-        }
-
-        break
-      default:
-        return DefaultAvatar
-    }
-
-    return image
-  }
-}
-
-export const loadAvatarSource = async () => {
-  try {
-    const vault = await AccountManager.getInstance().vault
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const avatar = await vault?.profiles.public.get('avatar')
-
-    if (avatar) {
-      return avatar
-    }
-
-    return DefaultAvatar
-  } catch (error) {
-    logger.error(error)
-  }
-}
 
 /**
  * This function can be triggered in many situations(app state changes, the home screen got focus, got inbox notifications)
@@ -76,7 +37,7 @@ export const fetchInboxCount = throttle(
 // TODO: Cache external profiles so they don't need to be re-fetched?
 export async function getPublicProfile(
   did: string,
-  contextName: string = config.VERIDA_CONTEXT_NAME,
+  contextName: string = VERIDA_VAULT_CONTEXT_NAME,
   fallbackToVeridaContext = true
 ) {
   try {

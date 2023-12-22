@@ -1,6 +1,5 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { config } from 'config'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -23,6 +22,7 @@ import { BlockchainWalletWithAccounts } from 'api/types'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
+import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
 import { MainStackParams } from 'navigation/types'
 
 import PlusIcon from '../../assets/plus_icon.svg'
@@ -180,7 +180,7 @@ const ManageWallets = (props: Props) => {
           const selectedWalletID = item._id
           onSetSelectedWalletId(selectedWalletID)
           SecureStore.setItemAsync(
-            config.SELECTED_WALLET_STORAGE_KEY,
+            SELECTED_WALLET_STORAGE_KEY,
             selectedWalletID
           )
         } else if (buttonIndex === 2) {

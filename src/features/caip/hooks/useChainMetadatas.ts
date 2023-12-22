@@ -32,7 +32,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
 
   const { label: name, rpcUrl } = blockchainNetwork
 
-  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.INFURA_API_KEY)
+  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.blockchain.infuraApiKey)
 
   return {
     namespace,
