@@ -107,7 +107,6 @@ export const HomeScreenHeader: React.FunctionComponent<HomeScreenHeaderProps> =
                 <ShimmerPlaceholder
                   visible={!loadingState.loading}
                   style={styles.nameShimmer}>
-                  style={styles.nameShimmer}>
                   <Text
                     style={
                       isNameEmpty
