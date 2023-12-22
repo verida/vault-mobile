@@ -54,7 +54,7 @@ export function useIdentities() {
   )
 
   const removeIdentity = useCallback(
-    async (did: string) => {
+    async (did: string, nextDidToSwitchTo?: string) => {
       logger.info('Removing identity')
       if (did === currentIdentity?.did) {
         logger.debug('Current Identity about to be removed', {
@@ -63,7 +63,7 @@ export function useIdentities() {
         dispatch(logoutAction({ did: currentIdentity?.did }))
       }
       logger.debug('Loging out Identity', { did })
-      await AccountManager.getInstance().logout([did])
+      await AccountManager.getInstance().logout([did], nextDidToSwitchTo)
       logger.debug('Refreshing following logout')
       await refresh()
       logger.info('Identity removed', { did })
@@ -77,9 +77,9 @@ export function useIdentities() {
    * This method will trigger the log out of the DID and potentially the switch to a different Identity if the DID is the current Identity.
    */
   const destroyIdentity = useCallback(
-    async (client: Client, did: string) => {
+    async (client: Client, did: string, nextDidToSwitchTo?: string) => {
       await client.destroyAccount()
-      await removeIdentity(did)
+      await removeIdentity(did, nextDidToSwitchTo)
     },
     [removeIdentity]
   )

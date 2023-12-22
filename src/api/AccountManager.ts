@@ -558,7 +558,7 @@ class AccountManager extends EventEmitter {
     return this.selectedAccount
   }
 
-  public async logout(dids: string[] = []) {
+  public async logout(dids: string[] = [], nextDidToSwitchTo?: string) {
     if (!this.selectedAccount) {
       return
     }
@@ -598,8 +598,13 @@ class AccountManager extends EventEmitter {
 
       // Switch to next account if the current account logged out
       if (!this.selectedAccount && Object.values(this.accounts).length > 0) {
-        const nextAccount = Object.values(this.accounts)[0]
-        await this.switchToAccount(nextAccount.did)
+        const nextDidExist = Object.values(this.accounts).some(
+          (account) => account.did === nextDidToSwitchTo
+        )
+        const nextAccountDid = nextDidExist
+          ? nextDidToSwitchTo
+          : Object.values(this.accounts)[0].did
+        await this.switchToAccount(nextAccountDid!)
       }
     } catch (error) {
       logger.error(error)
