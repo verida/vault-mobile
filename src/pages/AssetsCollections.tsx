@@ -1,17 +1,16 @@
-import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
-import { useNavigation } from '@react-navigation/native'
-import { TabScreenHeader } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
 import { getSelectedWalletById } from 'features/cryptoWallet'
 import { Container } from 'native-base'
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 import { connect } from 'react-redux'
 
 import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
+import { WalletItem } from 'components/WalletList/types'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
+import { TabsScreenProps } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
 
 import Collectibles from './Assets/Collectibles'
@@ -44,10 +43,12 @@ enum Assets {
   BADGES,
 }
 
-const AssetsCollections = (props: any) => {
-  const { selectedWallet } = props
+type AssetsCollectionsProps = {
+  selectedWallet: WalletItem
+} & TabsScreenProps<'Assets'>
 
-  const navigation = useNavigation()
+const AssetsCollections = (props: AssetsCollectionsProps) => {
+  const { selectedWallet, navigation } = props
 
   const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
@@ -74,7 +75,7 @@ const AssetsCollections = (props: any) => {
     setModalVisible((prevModalVisible) => !prevModalVisible)
   }, [])
 
-  const walletSelect = useMemo(
+  const walletSelect = useCallback(
     () => (
       <WalletNavigationHeader
         selectedWallet={selectedWallet}
@@ -86,9 +87,7 @@ const AssetsCollections = (props: any) => {
 
   useEffect(() => {
     navigation.setOptions({
-      header: (headerProps: BottomTabHeaderProps) => (
-        <TabScreenHeader hideSeparator {...headerProps} />
-      ),
+      headerShadowVisible: false,
       headerTitle: walletSelect,
     })
   }, [navigation, walletSelect])
