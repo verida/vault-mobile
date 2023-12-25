@@ -66,6 +66,7 @@ const createStyle = (theme: Theme) =>
     container: {
       flex: 1,
       padding: theme.spacing.m,
+      paddingBottom: 0,
     },
     section: {
       marginBottom: theme.spacing.m,
@@ -76,6 +77,7 @@ const createStyle = (theme: Theme) =>
     },
     gettingStartedSection: {
       flex: 1,
+      marginBottom: 0,
     },
     recoveryPhraseReminder: {
       position: 'absolute',
