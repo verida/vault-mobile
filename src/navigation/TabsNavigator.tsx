@@ -1,5 +1,6 @@
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 import { HomeScreenHeader, Icon, IconName, TabScreenHeader } from 'components'
+import { useTheme } from 'contexts'
 import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
@@ -27,6 +28,8 @@ const Tabs = createBottomTabNavigator<TabsScreenParams>()
 export const TabsNavigator: React.FunctionComponent = () => {
   const insets = useSafeAreaInsets()
 
+  const { theme } = useTheme()
+
   return (
     <IdentityDrawer>
       <Tabs.Navigator
@@ -48,6 +51,7 @@ export const TabsNavigator: React.FunctionComponent = () => {
             return <Icon name={iconName} size={size} color={color} />
           },
           tabBarAllowFontScaling: false,
+          tabBarInactiveTintColor: theme.color.textLightGrey,
         })}>
         <Tabs.Screen
           name='Home'

@@ -1,4 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
+import { ModalScreenHeader } from 'components'
 import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
@@ -238,8 +239,9 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Group
             screenOptions={{
               presentation: 'modal',
-              headerShown: true, // Set as shown to use the default header from react-navigation as our custom one was not appropriate.
-              // TODO: Refactor the whole Navigation to leverage the header customisation from here instead of in each screen.
+              headerShown: true,
+              header: (props) => <ModalScreenHeader {...props} />,
+              headerShadowVisible: true,
             }}>
             <Stack.Screen
               name='ShareIdentity'
