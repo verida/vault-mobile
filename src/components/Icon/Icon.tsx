@@ -115,7 +115,7 @@ export const Icon = (props: {
     case 'back':
       return (
         <IconWrapper size={size}>
-          <Ionicon name='arrow-back' {...iconProps} />
+          <AntIcon name='arrowleft' {...iconProps} />
         </IconWrapper>
       )
     case 'business':

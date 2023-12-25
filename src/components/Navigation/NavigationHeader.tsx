@@ -25,6 +25,9 @@ export type HeaderProps = {
   bottomBorder?: boolean
 }
 
+/**
+ * @deprecated use the custom header set in the navigators directly
+ */
 function NavigationHeader({
   left = { icon: 'back' },
   title,
