@@ -83,14 +83,3 @@ export async function getPublicProfile(
     }
   }
 }
-
-export async function fetchConfigJson<T>(url: string): Promise<T[]> {
-  try {
-    const res = await fetch(url + `?t=${Date.now()}`)
-    const json = await res.json()
-    return json
-  } catch (error) {
-    logger.error(error)
-    return []
-  }
-}
