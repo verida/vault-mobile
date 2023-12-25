@@ -1,6 +1,10 @@
 import { useFocusEffect, useNavigation } from '@react-navigation/native'
 import color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
+import {
+  CreateIdentityStep,
+  CreateIdentityStepStatus,
+} from 'features/identities'
 import { getDefaultVeridaNetwork } from 'features/verida'
 import { COUNTRIES } from 'helpers/countries'
 import isEmpty from 'lodash/isEmpty'
@@ -19,7 +23,6 @@ import PagerView from 'react-native-pager-view'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import AccountManager from 'api/AccountManager'
-import { AddIdentityStepStatus, AddIdentityStepType } from 'api/types'
 import AlertIcon from 'assets/alert_icon_2.svg'
 import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
@@ -128,8 +131,8 @@ export const CreateIdentityScreen: React.FC<CreateIdentityScreenProps> = (
   // }, [])
 
   const [confirmationState, setConfirmationState] = useState<{
-    state?: Partial<Record<AddIdentityStepType, AddIdentityStepStatus>> & {
-      currentStep?: AddIdentityStepType
+    state?: Partial<Record<CreateIdentityStep, CreateIdentityStepStatus>> & {
+      currentStep?: CreateIdentityStep
     }
   }>()
 
