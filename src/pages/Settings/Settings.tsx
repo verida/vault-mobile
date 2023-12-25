@@ -3,12 +3,10 @@ import { useTheme } from 'contexts'
 import { useCurrentIdentity } from 'features/identities'
 import { canMigrateToMainnet } from 'features/identities/utils/migration'
 import { useThemeAwareStyle } from 'hooks'
-import { Icon as IconNativeBase } from 'native-base'
-import React, { useCallback, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, TextStyle, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import PropertyList from 'components/PropertyList'
 import Text from 'components/Text'
 import { APP_NAME, APP_VERSION_FORMATTED } from 'constants/application'
@@ -41,15 +39,11 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   const { theme } = useTheme()
   const insets = useSafeAreaInsets()
 
-  const handleBack = useCallback(() => {
-    navigation.goBack()
-  }, [navigation])
-
   useEffect(() => {
     navigation.setOptions({
       title: 'Settings',
     })
-  }, [navigation, handleBack])
+  }, [navigation])
 
   const currentIdentity = useCurrentIdentity()
 
@@ -141,16 +135,7 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
   const walletAppVersion = `${APP_NAME} ${APP_VERSION_FORMATTED}`
 
   return (
-    <ScreenWrapper
-      backgroundColor={theme.color.snow}
-      safeAreaEdges={['left', 'right']}>
-      <NavigationHeader // TODO: Get rid of the following when properly handling a common header in the navigator
-        title='Settings'
-        left={{
-          icon: <IconNativeBase name='arrow-back' style={{ color: '#000' }} />,
-          action: () => props.navigation.goBack(),
-        }}
-      />
+    <ScreenWrapper backgroundColor={theme.color.snow}>
       <ScrollView
         contentContainerStyle={[
           styles.container,

@@ -1,5 +1,5 @@
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
-import { ModalScreenHeader } from 'components'
+import { BaseScreenHeader, ModalScreenHeader } from 'components'
 import { BehindAuthContextProviders } from 'contexts'
 import React from 'react'
 
@@ -76,8 +76,14 @@ export const MainNavigator: React.FunctionComponent = () => {
         <BehindAuthHandlers />
         <Stack.Navigator
           initialRouteName='Tabs'
-          screenOptions={{ headerShown: false }}>
-          <Stack.Screen name={'Tabs'} component={TabsNavigator} />
+          screenOptions={{
+            headerShown: false,
+          }}>
+          <Stack.Screen
+            name={'Tabs'}
+            component={TabsNavigator}
+            options={{ headerShown: false }}
+          />
           <Stack.Screen name={'Inbox'} component={Inbox} />
           <Stack.Screen name={'InboxItem'} component={InboxItem} />
           <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
@@ -145,7 +151,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
           <Stack.Screen name={'DataFolder'} component={DataFolderScreen} />
           <Stack.Screen name={'DataItem'} component={DataItemScreen} />
-          <Stack.Screen name={'Settings'} component={SettingsScreen} />
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
           <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
 
@@ -206,15 +211,6 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
           <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
 
-          <Stack.Screen
-            name='PolygonIdCircuitsSettings'
-            component={PolygonIdCircuitsSettingsScreen}
-            options={{
-              // TODO: Refactor the whole Navigation to leverage the header customisation
-              headerShown: true,
-            }}
-          />
-
           {/* Modal screens */}
           <Stack.Group
             screenOptions={{
@@ -235,6 +231,23 @@ export const MainNavigator: React.FunctionComponent = () => {
               component={PaymentRequestScreen}
             />
             <Stack.Screen name='ProofRequest' component={ProofRequestScreen} />
+          </Stack.Group>
+
+          {/* Groups with the new BaseScreenHeader
+          TODO: Progressively move other screens here to migrate from old header
+          Eventually apply it at the very top and remove the group
+           */}
+          <Stack.Group
+            screenOptions={{
+              headerShown: true,
+              headerShadowVisible: true,
+              header: (props) => <BaseScreenHeader {...props} />,
+            }}>
+            <Stack.Screen name={'Settings'} component={SettingsScreen} />
+            <Stack.Screen
+              name='PolygonIdCircuitsSettings'
+              component={PolygonIdCircuitsSettingsScreen}
+            />
           </Stack.Group>
           <Stack.Group
             screenOptions={{
