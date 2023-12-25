@@ -1,20 +1,20 @@
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { useNavigation } from '@react-navigation/native'
+import { TabScreenHeader } from 'components'
 import { useTheme } from 'contexts/ThemeContext'
 import { getSelectedWalletById } from 'features/cryptoWallet'
 import { Container } from 'native-base'
-import React, { useRef, useState } from 'react'
-import { Image, StyleSheet, useWindowDimensions } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { useWindowDimensions } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 import { connect } from 'react-redux'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import Tokens from 'pages/Tokens/Dashboard'
 
 import Collectibles from './Assets/Collectibles'
-
-const DefaultAvatar = require('assets/stubs/avatar.png')
 
 const segmentLists = [
   {
@@ -46,6 +46,9 @@ enum Assets {
 
 const AssetsCollections = (props: any) => {
   const { selectedWallet } = props
+
+  const navigation = useNavigation()
+
   const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
   const [collection, setCollection] = useState<Assets>(Assets.COINS)
@@ -67,27 +70,31 @@ const AssetsCollections = (props: any) => {
     setModalVisible(!modalVisible)
   }
 
-  const openWalletModal = () => {
-    setModalVisible(!modalVisible)
-  }
+  const openWalletModal = useCallback(() => {
+    setModalVisible((prevModalVisible) => !prevModalVisible)
+  }, [])
 
-  const walletSelect = (
-    <WalletNavigationHeader
-      selectedWallet={selectedWallet}
-      openWalletModal={openWalletModal}
-    />
+  const walletSelect = useMemo(
+    () => (
+      <WalletNavigationHeader
+        selectedWallet={selectedWallet}
+        openWalletModal={openWalletModal}
+      />
+    ),
+    [openWalletModal, selectedWallet]
   )
+
+  useEffect(() => {
+    navigation.setOptions({
+      header: (headerProps: BottomTabHeaderProps) => (
+        <TabScreenHeader hideSeparator {...headerProps} />
+      ),
+      headerTitle: walletSelect,
+    })
+  }, [navigation, walletSelect])
 
   return (
     <Container>
-      <NavigationHeader
-        left={{ icon: 'skip' }}
-        avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
-        // @TODO: develop a separate component to handle walletSelect navigation
-        titleIcon={walletSelect}
-        bottomBorder={false}
-      />
-
       <TabView
         lazy
         navigationState={{ index: collection, routes }}
@@ -122,19 +129,3 @@ const mapStateToProps = (state: any) => {
 }
 
 export default connect(mapStateToProps)(AssetsCollections)
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    textAlign: 'center',
-    fontSize: 20,
-    marginVertical: 10,
-  },
-  avatarIcon: {
-    width: 32,
-    height: 32,
-    marginBottom: 3,
-  },
-})

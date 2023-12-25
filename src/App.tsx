@@ -6,6 +6,7 @@ import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
 import { ConfigProvider } from 'features/config'
+import { IdentityDrawerProvider } from 'features/identityDrawer'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import {
@@ -89,21 +90,23 @@ function App() {
                 <NavigationContainer
                   linking={navigationLinkingConfiguration}
                   ref={navigationRef}>
-                  <ModalProvider>
-                    <Authenticate>
-                      <RootSiblingParent>
-                        <ActionSheetProvider>
-                          <WalletConnectProvider>
-                            <GestureHandlerRootView style={styles.flex}>
-                              <MainNavigator />
-                            </GestureHandlerRootView>
-                            <MetaServerChecks />
-                          </WalletConnectProvider>
-                        </ActionSheetProvider>
-                      </RootSiblingParent>
-                    </Authenticate>
-                    <SwitchAccountToast />
-                  </ModalProvider>
+                  <IdentityDrawerProvider>
+                    <ModalProvider>
+                      <Authenticate>
+                        <RootSiblingParent>
+                          <ActionSheetProvider>
+                            <WalletConnectProvider>
+                              <GestureHandlerRootView style={styles.flex}>
+                                <MainNavigator />
+                              </GestureHandlerRootView>
+                              <MetaServerChecks />
+                            </WalletConnectProvider>
+                          </ActionSheetProvider>
+                        </RootSiblingParent>
+                      </Authenticate>
+                      <SwitchAccountToast />
+                    </ModalProvider>
+                  </IdentityDrawerProvider>
                 </NavigationContainer>
               </AuthProvider>
             </ThemeProvider>

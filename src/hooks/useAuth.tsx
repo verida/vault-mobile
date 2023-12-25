@@ -23,7 +23,6 @@ type AuthContextState = {
   authenticated: boolean
   loaded: boolean
   switchToAccount: (did: string) => Promise<void>
-  isVeridaTeamMember: boolean
   forcedSignOut: () => Promise<boolean>
 }
 
@@ -34,24 +33,12 @@ const AuthContext = createContext<AuthContextState>({
   loaded: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   switchToAccount: async () => {},
-  isVeridaTeamMember: false,
   forcedSignOut: async () => false,
 })
 
 export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
-  const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
-
-  useEffect(() => {
-    const checkTeamMember = async () => {
-      const isTeamMember =
-        await AccountManager.getInstance().checkIfVeridaTeamMember()
-      setVeridaTeamMember(isTeamMember)
-    }
-
-    checkTeamMember()
-  }, [loaded])
 
   const findDID = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
@@ -128,17 +115,9 @@ export const AuthProvider: FC = ({ children }) => {
       authenticated,
       loaded,
       switchToAccount,
-      isVeridaTeamMember,
       forcedSignOut,
     }),
-    [
-      refresh,
-      authenticated,
-      loaded,
-      switchToAccount,
-      isVeridaTeamMember,
-      forcedSignOut,
-    ]
+    [refresh, authenticated, loaded, switchToAccount, forcedSignOut]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>

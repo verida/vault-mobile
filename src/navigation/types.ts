@@ -5,23 +5,22 @@ import {
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import {
-  BlockchainWalletWithAccounts,
-  Network,
-  NFT,
-  NFTCollection,
-} from 'api/types'
+import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
+import { HomeScreenParams } from 'pages/Home'
 import {
   AddIdentityScreenParams,
   CreateIdentityScreenParams,
   DeleteIdentityScreenParams,
   ImportIdentityScreenParams,
+  MigrateIdentityConfirmationScreenParams,
+  MigrateIdentityExecutionScreenParams,
+  RemoveIdentityScreenParams,
   ShareIdentityScreenParams,
 } from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
@@ -43,11 +42,14 @@ import {
   PaymentRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
-import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import {
+  PolygonIdCircuitsSettingsScreenParams,
+  SettingsScreenParams,
+} from 'pages/Settings'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type TabsScreenParams = {
-  Home: undefined
+  Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready
@@ -78,6 +80,8 @@ export type MainStackParams = {
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
   ShareIdentity: ShareIdentityScreenParams
+  MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
+  MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
 
   SeedPhraseView: undefined
   ManageWallets: undefined
@@ -95,7 +99,6 @@ export type MainStackParams = {
   SuccessFailure: undefined
   DataFolder: DataFolderScreenParams
   DataItem: DataItemScreenParams
-  Settings: undefined
   ChangePin: undefined
   ScanQrCode: QrCodeScannerScreenParams
 
@@ -104,6 +107,7 @@ export type MainStackParams = {
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
   DeleteIdentity: DeleteIdentityScreenParams
+  RemoveIdentity: RemoveIdentityScreenParams
 
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
@@ -113,8 +117,6 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
-  Networks: undefined
-  StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
@@ -131,6 +133,7 @@ export type MainStackParams = {
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
 
+  Settings: SettingsScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 

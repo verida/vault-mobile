@@ -1,19 +1,11 @@
+import { Icon, IconName } from 'components'
+import { useTheme } from 'contexts'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 import FastImage, { Source } from 'react-native-fast-image'
 
 import { Theme } from 'styles/types'
-
-// TODO: Refactor the location of the default avatars inside 'assets'
-const UserAvatar = require('assets/stubs/avatar.png')
-const AppAvatar = require('assets/placeholder-app-logo.png')
-// TODO: Get a avatar image for entity
-// TODO: Get a avatar image for wallet
-// TODO: Get a generic avatar image
-
-// TODO: Allow a text as fallback
-// With a text as fallback, we'll need to handle the size differently as we can't adapt the font size based on the container size (apparently)
 
 export type AvatarFallbackType =
   | 'person'
@@ -22,41 +14,100 @@ export type AvatarFallbackType =
   | 'wallet'
   | 'generic'
 
+// TODO: Allow a text as fallback
 export type AvatarProps = {
   source?: string | Source
+  hideBorder?: boolean
   fallbackType?: AvatarFallbackType
+  fallbackColor?: string
+  fallbackBackgroundColor?: string
+  borderColor?: string
 } & ViewProps
 
 export const Avatar: React.FunctionComponent<AvatarProps> = (props) => {
-  const { source, fallbackType = 'generic', ...viewProps } = props
+  const { theme } = useTheme()
 
-  const defaultSource = fallbackType === 'person' ? UserAvatar : AppAvatar
+  const {
+    source,
+    fallbackType = 'generic',
+    hideBorder = false,
+    borderColor = theme.color.lightGrey,
+    fallbackColor = theme.color.grey300,
+    fallbackBackgroundColor = theme.color.veryLightGrey,
+    ...viewProps
+  } = props
+
+  const fallbackName: IconName =
+    fallbackType === 'person'
+      ? 'user'
+      : fallbackType === 'entity'
+      ? 'business'
+      : fallbackType === 'app'
+      ? 'calculator'
+      : fallbackType === 'wallet'
+      ? 'wallet'
+      : 'user'
+
   const imageSource = source
     ? typeof source === 'string'
       ? { uri: source }
       : source
-    : defaultSource
+    : undefined
 
   const styles = useThemeAwareStyle(createStyles)
 
   return (
     <View {...viewProps}>
-      <FastImage
-        style={styles.image}
-        source={imageSource}
-        resizeMode={FastImage.resizeMode.cover}
-        defaultSource={defaultSource}
-      />
+      {!imageSource ? (
+        <View
+          style={[
+            styles.fallbackContainer,
+            {
+              backgroundColor: fallbackBackgroundColor,
+              borderColor: borderColor,
+            },
+            !hideBorder && styles.border,
+          ]}>
+          <Icon name={fallbackName} size={'100%'} color={fallbackColor} />
+        </View>
+      ) : (
+        <FastImage
+          style={[
+            styles.image,
+            {
+              borderColor: borderColor,
+            },
+            !hideBorder && styles.border,
+          ]}
+          source={imageSource}
+          resizeMode={FastImage.resizeMode.cover}
+        />
+      )}
     </View>
   )
 }
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
+    fallbackContainer: {
+      justifyContent: 'center',
+      alignItems: 'center',
+      width: '100%',
+      aspectRatio: 1,
+      padding: '15%',
+      borderRadius: theme.roundness.full,
+    },
     image: {
       width: '100%',
       aspectRatio: 1,
       borderRadius: theme.roundness.full,
-      backgroundColor: theme.color.lightGrey,
+      backgroundColor: theme.color.veryLightGrey,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      // borderColor: theme.color.background,
+    },
+    border: {
+      borderWidth: 1,
+      borderStyle: 'solid',
     },
   })

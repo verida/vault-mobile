@@ -1,6 +1,7 @@
 import { config } from 'config'
 import { initNotifications } from 'features/notifications'
 import { initSentry, Logger } from 'features/telemetry'
+import { Text } from 'react-native'
 
 const logger = new Logger('Initialisation')
 
@@ -8,11 +9,17 @@ const logger = new Logger('Initialisation')
  * Global initialisation of the application
  */
 export function initApplication() {
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  /* @ts-ignore because defaultProps is hidden and modifying it is a hack*/
+  if (!Text.defaultProps) Text.defaultProps = {}
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+  /* @ts-ignore because defaultProps is hidden and modifying it is a hack*/
+  Text.defaultProps.allowFontScaling = false
+
   initSentry()
   initNotifications()
-  printConfig()
 
-  // TODO: Add other feature initialisation (notification, ...)
+  printConfig()
 }
 
 function printConfig() {
