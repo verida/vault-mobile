@@ -32,6 +32,7 @@ type CustomIconName =
   | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
 type LibIconName =
+  | 'back'
   | 'business'
   | 'calculator'
   | 'wallet'
@@ -111,6 +112,12 @@ export const Icon = (props: {
       return <WarningIcon {...svgProps} />
     case 'tick':
       return <TickIcon {...svgProps} />
+    case 'back':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='arrow-back' {...iconProps} />
+        </IconWrapper>
+      )
     case 'business':
       return (
         <IconWrapper size={size}>
