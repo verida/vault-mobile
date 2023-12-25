@@ -1,10 +1,10 @@
 import { useNavigation } from '@react-navigation/native'
 import { EnvironmentType } from '@verida/types'
 import {
-  BottomActionBar,
   DrawerIdentityList,
   DrawerShortcutButton,
   IdentityAvatar,
+  Typography,
 } from 'components'
 import { useTheme } from 'contexts'
 import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
@@ -15,7 +15,7 @@ import {
 } from 'features/profiles'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback } from 'react'
-import { StyleSheet, Text, View } from 'react-native'
+import { StyleSheet, TouchableOpacity, View } from 'react-native'
 import { Drawer } from 'react-native-drawer-layout'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import Ionicons from 'react-native-vector-icons/Ionicons'
@@ -99,20 +99,22 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   networkIndicatorSize='default'
                   style={styles.avatar}
                 />
-                <Text
+                <Typography
+                  variant='h3'
                   style={
                     isNameEmpty ? [styles.name, styles.emptyName] : styles.name
                   }
                   numberOfLines={1}
                   ellipsizeMode='tail'>
                   {displayedName}
-                </Text>
-                <Text
+                </Typography>
+                <Typography
+                  variant='label'
                   style={styles.did}
                   numberOfLines={2}
                   ellipsizeMode='middle'>
                   {identity?.did}
-                </Text>
+                </Typography>
               </View>
               <View style={styles.shortcutsContainer}>
                 <DrawerShortcutButton
@@ -155,7 +157,16 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
             </View>
             <View style={styles.identitiesContainer}>
               <View style={styles.identitiesLabelContainer}>
-                <Text style={styles.switchIdentityLabel}>Switch Identity</Text>
+                <Typography variant='h4' style={styles.identityListLabel}>
+                  Identities
+                </Typography>
+                <TouchableOpacity onPress={handleAddIdentity}>
+                  <Typography
+                    variant='h4'
+                    style={styles.addIdentityButtonLabel}>
+                    Add New
+                  </Typography>
+                </TouchableOpacity>
               </View>
               <DrawerIdentityList
                 onIdentitySwitch={handleIdentitySwitch}
@@ -163,15 +174,6 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
               />
             </View>
           </View>
-          <BottomActionBar
-            actions={[
-              {
-                label: 'Add Identity',
-                onPress: handleAddIdentity,
-                color: 'grey',
-              },
-            ]}
-          />
         </View>
       )}>
       {children}
@@ -207,9 +209,6 @@ const createStyles = (theme: Theme) =>
     name: {
       marginTop: theme.spacing.s,
       textAlign: 'center',
-      fontFamily: theme.fontFamily.bold,
-      fontSize: theme.fontSize.xxl,
-      lineHeight: theme.fontSize.xxl * 1.35,
     },
     emptyName: {
       color: theme.color.textLightGrey,
@@ -219,9 +218,6 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.s,
       paddingHorizontal: theme.spacing.l,
       textAlign: 'center',
-      fontFamily: theme.fontFamily.semibold,
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.s * 1.5,
       color: theme.color.textLightGrey,
     },
     shortcutsContainer: {
@@ -232,21 +228,26 @@ const createStyles = (theme: Theme) =>
     },
     identitiesContainer: {
       flexShrink: 1,
+      paddingBottom: theme.spacing.s,
     },
     identitiesLabelContainer: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       paddingTop: theme.spacing.m,
       paddingHorizontal: theme.spacing.m,
       paddingBottom: theme.spacing.s,
     },
-    switchIdentityLabel: {
-      fontFamily: theme.fontFamily.bold,
-      fontSize: theme.fontSize.sl,
-      lineHeight: theme.fontSize.sl * 1.3,
+    identityListLabel: {
       color: theme.color.black700,
+    },
+    addIdentityButtonLabel: {
+      color: theme.color.primary,
     },
     identityList: {
       flexShrink: 1,
       borderTopColor: theme.color.lightGrey,
       borderTopWidth: 1,
+      borderBottomColor: theme.color.lightGrey,
+      borderBottomWidth: 1,
     },
   })
