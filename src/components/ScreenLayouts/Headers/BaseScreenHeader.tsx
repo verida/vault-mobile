@@ -53,15 +53,17 @@ export const BaseScreenHeader: React.FunctionComponent<BaseScreenHeaderProps> =
         <StatusBar
           barStyle={
             isModal && Platform.OS === 'ios'
-              ? 'light-content' // iOS stacked modals add a black background
+              ? 'light-content' // iOS stacked modal adds a black background
               : theme.statusBar.defaultStyle
           }
-          backgroundColor={theme.color.background}
+          backgroundColor='transparent'
         />
         <Header
           title={getHeaderTitle(options, route.name)}
           modal={isModal}
-          headerStatusBarHeight={isModal ? 0 : statusBarHeight}
+          headerStatusBarHeight={
+            isModal && Platform.OS === 'ios' ? 0 : statusBarHeight
+          }
           headerTransparent={headerTransparent}
           headerShadowVisible={false}
           headerStyle={[styles.header, headerStyle]}
