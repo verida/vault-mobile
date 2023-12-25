@@ -116,7 +116,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
               </View>
               <View style={styles.shortcutsContainer}>
                 <DrawerShortcutButton
-                  label='Share my Identity'
+                  label='Share Identity'
                   icon={
                     <Ionicons
                       name='qr-code-outline'
@@ -128,7 +128,7 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                   style={styles.shortcutButton}
                 />
                 <DrawerShortcutButton
-                  label='View my profile'
+                  label='View Profile'
                   icon={
                     <Ionicons
                       name='person'
