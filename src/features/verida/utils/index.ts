@@ -60,9 +60,9 @@ export function getSupportedVeridaNetworks(): EnvironmentType[] {
   }
 
   networks.push(EnvironmentType.TESTNET)
-  networks.push(EnvironmentType.DEVNET) // TODO: Move devnet under devMode after Internal testing
 
   if (config.dev.devMode) {
+    networks.push(EnvironmentType.DEVNET)
     networks.push(EnvironmentType.LOCAL)
   }
   return networks
