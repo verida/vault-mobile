@@ -18,11 +18,7 @@ import type {
 } from 'pages/Requests'
 
 import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
-import {
-  getEntityMetadata,
-  parseDeepLinkUrl,
-  parseQrCodeMessage,
-} from '../utils'
+import { getEntityMetadata, parsePolygonIdMessage } from '../utils'
 
 const logger = new Logger('Polygon ID')
 
@@ -187,21 +183,29 @@ export const PolygonIdManagerProvider: React.FunctionComponent = (props) => {
   )
 
   const handleDeepLinkUrl = useCallback(
-    (url: string) => {
-      // No try/cath needed, as handled by the consumer
-      const message = parseDeepLinkUrl(url)
-      handleMessage(message, false)
-      // Assuming the deep link doesn't come from a particular screen so we don't replace it.
+    async (url: string) => {
+      try {
+        const message = await parsePolygonIdMessage(url)
+        handleMessage(message, false)
+        // Assuming the deep link doesn't come from a particular screen so we don't replace it.
+      } catch (error: unknown) {
+        // TODO: Display an Alert to the user as there are no other feedback
+        logger.error(error)
+      }
     },
     [handleMessage]
   )
 
   const handleQRCodeMessage = useCallback(
-    (qrCodeMessage: string) => {
-      // No try/cath needed, as handled by the consumer
-      const message = parseQrCodeMessage(qrCodeMessage)
-      handleMessage(message, true)
-      // Assuming the QR Code comes from the scanner screen, we replace this screen, so when the user is finished with the Polygon ID screen, they go back to the previous screen, not the QR Code scanner screen
+    async (qrCodeMessage: string) => {
+      try {
+        const message = await parsePolygonIdMessage(qrCodeMessage)
+        handleMessage(message, true)
+        // Assuming the QR Code comes from the scanner screen, we replace this screen, so when the user is finished with the Polygon ID screen, they go back to the previous screen, not the QR Code scanner screen
+      } catch (error: unknown) {
+        // TODO: Display an Alert to the user as there are no other feedback
+        logger.error(error)
+      }
     },
     [handleMessage]
   )

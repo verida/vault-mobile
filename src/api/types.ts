@@ -8,17 +8,6 @@
  */
 import { AssetId } from 'caip'
 
-export type NetworkNode = {
-  node_code: string
-  name: string
-  description: string
-  ISO2_CC: string
-  icon?: string
-  db_address: string
-  messaging_address: string
-  notification_address: string
-}
-
 /**
  * A blockchain network (ie: goerli)
  */
@@ -86,14 +75,6 @@ export interface BlockchainWalletWithAccounts extends BlockchainWallet {
   // Transient fields for displaying
   icon?: string
   count?: number
-}
-
-// What network is this?
-export type Network = {
-  name: string
-  default_node_code: string
-  nodes: NetworkNode[]
-  selected_node?: number
 }
 
 export interface PagingInfo {
@@ -171,91 +152,4 @@ export interface Badge {
 export interface ClaimBadgeResponse {
   badge?: Badge | null
   success?: boolean
-}
-
-export type AddIdentityStepType =
-  | 'CreateIdentifier'
-  | 'ClaimUsername'
-  | 'StorageLocation'
-  | 'CreateProfile'
-
-export type AddIdentityStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'
-
-/**
- * Verida One interfaces and enums
- */
-
-export interface VeridaOneVerificationProof {
-  type: string
-  proof: string
-}
-
-export enum VeridaOnePlatformLinkCategory {
-  SOCIAL = 'social',
-}
-
-export enum VeridaOnePlatforms {
-  // DISCORD = 'discord',
-  FACEBOOK = 'facebook',
-  GITHUB = 'github',
-  LINKEDIN = 'linkedin',
-  INSTAGRAM = 'instagram',
-  TELEGRAM = 'telegram',
-  TWITTER = 'twitter',
-  // WHATSAPP = 'whatsapp',
-  // YOUTUBE = 'youtube',
-}
-
-export interface VeridaOnePlatformLink {
-  category: VeridaOnePlatformLinkCategory
-  platform: VeridaOnePlatforms
-  accountId: string
-  url: string
-  order: number
-  verificationProof?: VeridaOneVerificationProof
-  avatarUrl?: string
-
-  // Transient fields
-  showOnVeridaOne?: boolean
-  connectedPlatform?: boolean
-}
-
-export interface VeridaOneCustomLink {
-  label: string
-  url: string
-  order: number
-  featured?: boolean
-}
-
-export interface VeridaOneWalletAddress {
-  chainId: string
-  address: string
-  order: number
-  label?: string
-  verificationProof?: string
-
-  // Transient fields
-  isPublic?: boolean
-  veridaWalletName?: string
-  icon?: string
-}
-
-export interface VeridaOneFeaturedAsset {
-  chainId: string
-  contractAddress: string
-  tokenId: string
-  ownerAddress: string
-  order: number
-
-  // Transient fields
-  uri?: string
-}
-
-export interface VeridaOneProfile {
-  _id: string
-  _rev?: string
-  customLinks: VeridaOneCustomLink[]
-  platformLinks: VeridaOnePlatformLink[]
-  walletAddresses: VeridaOneWalletAddress[]
-  featuredAssets: VeridaOneFeaturedAsset[]
 }

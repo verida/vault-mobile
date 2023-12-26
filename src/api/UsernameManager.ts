@@ -1,8 +1,7 @@
-import { EnvironmentType, Web3CallType } from '@verida/types'
 import { VeridaNameClient } from '@verida/vda-name-client'
-import { config } from 'config'
-import { Account } from 'features/identities'
+import { getNetworkFromDID } from 'features/identities'
 import { Logger } from 'features/telemetry'
+import { getDidClientConfigForNetwork } from 'features/verida'
 
 import AccountManager from './AccountManager'
 
@@ -42,23 +41,25 @@ export default class UsernameManager {
    *
    * @returns string[] Array of usernames
    */
-  public static async get(): Promise<string[] | undefined> {
+  public static async get(): Promise<string[]> {
     try {
       const client = await UsernameManager.getClient()
-      const account = await AccountManager.getInstance().getSelectedAccount()
 
-      const did: string | undefined = account?.did
+      const account = AccountManager.getInstance().getSelectedAccount()
+      if (!account?.did) return []
 
-      if (!did) return undefined
-
-      const match = did.match(/(0x.*)/)?.[0]
-
-      if (!match) return undefined
+      const match = account.did.match(/(0x.*)/)?.[0]
+      if (!match) return []
 
       return await client.getUsernames(match)
-    } catch (error) {
-      logger.error(error)
-      return
+    } catch (error: unknown) {
+      if (
+        error instanceof Error &&
+        !error.message.match('Failed to get usernames for DID')
+      ) {
+        logger.error(error)
+      }
+      return []
     }
   }
 
@@ -86,28 +87,26 @@ export default class UsernameManager {
   }
 
   private static async getClient() {
-    const currentDID = await AccountManager.getInstance().getSelectedAccount()
-      ?.did
-    if (!currentDID) {
+    const account = AccountManager.getInstance().getSelectedAccount()
+    if (!account) {
       throw new Error('Account not found')
     }
 
     // This's so the client will be reinitialized on DID change
-    if (UsernameManager.client && currentDID === UsernameManager.did) {
+    if (UsernameManager.client && account.did === UsernameManager.did) {
       return UsernameManager.client
     }
-    UsernameManager.did = currentDID
+    UsernameManager.did = account.did
 
-    const didClientConfig = config.VERIDA_DID_CLIENT_CONFIG
-    const account = <Account>(
-      await AccountManager.getInstance().getSelectedAccount()
-    )
+    const currentNetwork = getNetworkFromDID(account.did)
+
+    const didClientConfig = getDidClientConfigForNetwork(currentNetwork)
 
     const nameClient = new VeridaNameClient({
-      callType: <Web3CallType>didClientConfig.callType,
+      callType: didClientConfig.callType,
       did: account.did,
       signKey: account.privateKey,
-      network: <EnvironmentType>config.VERIDA_ENVIRONMENT,
+      network: currentNetwork,
       web3Options: didClientConfig.web3Config,
     })
 

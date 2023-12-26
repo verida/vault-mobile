@@ -12,6 +12,9 @@ type Props = React.ComponentProps<typeof Text> & {
   children: React.ReactNode
 }
 
+/**
+ * @deprecated Use Typography instead
+ */
 export const SubHeadline = (props: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />

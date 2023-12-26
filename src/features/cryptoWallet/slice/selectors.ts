@@ -112,6 +112,7 @@ export const getWalletsData = createSelector(
   (selectedWalletId, wallets) => wallets?.[selectedWalletId!]?.accounts || {}
 )
 
+// TODO: Rename more appropriately, disturbing to be called getWallets when it only returns the selected one.
 export const getWallets = createSelector(
   getSelectedWalletId,
   getAllWallets,

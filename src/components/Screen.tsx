@@ -34,6 +34,15 @@ interface ScreenProps {
   keyboadAvoidingViewProps?: KeyboardAvoidingViewProps
 }
 
+// TODO: Remove this component and use ScreenWrapper instead
+// Made ScreenWrapper as a simpler version of rthis Screen component
+// - Safe areas are enabled by default and use the hook rather than the Component for more stability
+// - KeyboardAvoidingView is included but controlled via the `enabled` property
+// - Didn't include loading to force the screen to handle it better inside the component rather than with a generic loading component
+// - Didn't include the backgroundGrey and loadingOverlayColorLight so it's the responsibility of the screen itself
+/**
+ * @deprecated Use ScreenWrapper instead
+ */
 const Screen = (props: ScreenProps) => {
   const {
     withSafeAreaView,

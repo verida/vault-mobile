@@ -1,5 +1,5 @@
 import { DIDClient } from '@verida/did-client'
-import { config } from 'config'
+import { getNetworkFromDID } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, {
@@ -23,7 +23,6 @@ type AuthContextState = {
   authenticated: boolean
   loaded: boolean
   switchToAccount: (did: string) => Promise<void>
-  isVeridaTeamMember: boolean
   forcedSignOut: () => Promise<boolean>
 }
 
@@ -34,31 +33,20 @@ const AuthContext = createContext<AuthContextState>({
   loaded: false,
   // eslint-disable-next-line @typescript-eslint/no-empty-function
   switchToAccount: async () => {},
-  isVeridaTeamMember: false,
   forcedSignOut: async () => false,
 })
 
 export const AuthProvider: FC = ({ children }) => {
   const [authenticated, setAuthenticated] = useState(false)
   const [loaded, setLoaded] = useState(false)
-  const [isVeridaTeamMember, setVeridaTeamMember] = useState(false)
-
-  useEffect(() => {
-    const checkTeamMember = async () => {
-      const isTeamMember =
-        await AccountManager.getInstance().checkIfVeridaTeamMember()
-      setVeridaTeamMember(isTeamMember)
-    }
-
-    checkTeamMember()
-  }, [loaded])
 
   const findDID = useCallback(async () => {
     const selectedAccount = AccountManager.getInstance().getSelectedAccount()
     // try to fetch the DID
     const did = selectedAccount!.did
+    const veridaNetwork = getNetworkFromDID(did)
     const didClient = new DIDClient({
-      network: config.VERIDA_ENVIRONMENT,
+      network: veridaNetwork,
     })
 
     try {
@@ -78,7 +66,8 @@ export const AuthProvider: FC = ({ children }) => {
     try {
       const selectedAccount = AccountManager.getInstance().getSelectedAccount()
       if (selectedAccount) {
-        await AccountManager.getInstance().connect()
+        const network = getNetworkFromDID(selectedAccount.did)
+        await AccountManager.getInstance().connect(false, network)
       }
       setLoaded(true)
       setAuthenticated(!!selectedAccount)
@@ -126,17 +115,9 @@ export const AuthProvider: FC = ({ children }) => {
       authenticated,
       loaded,
       switchToAccount,
-      isVeridaTeamMember,
       forcedSignOut,
     }),
-    [
-      refresh,
-      authenticated,
-      loaded,
-      switchToAccount,
-      isVeridaTeamMember,
-      forcedSignOut,
-    ]
+    [refresh, authenticated, loaded, switchToAccount, forcedSignOut]
   )
 
   return <AuthContext.Provider value={context}>{children}</AuthContext.Provider>

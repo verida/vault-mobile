@@ -2,6 +2,7 @@ import Clipboard from '@react-native-community/clipboard'
 import { useNavigation } from '@react-navigation/native'
 import Color from 'color'
 import { useTheme } from 'contexts/ThemeContext'
+import { getVeridaOneProfileUrl } from 'features/veridaOne'
 import React from 'react'
 import {
   Image,
@@ -20,7 +21,6 @@ import Button from 'components/Button'
 import { Icon } from 'components/Icon'
 import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { SubHeadline } from 'components/Typography/SubHeadline'
-import { VERIDA_ONE_WEBSITE } from 'constants/url'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
@@ -35,7 +35,7 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   const navigation = useNavigation()
   const { width } = useWindowDimensions()
-  const buildUrl = () => `${VERIDA_ONE_WEBSITE}${username || did}`
+  const veridaOneUrl = getVeridaOneProfileUrl(username || did)
 
   return (
     <ShimmerPlaceholder
@@ -50,7 +50,7 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
           style={styles.background}>
           <TouchableOpacity
             onPress={() => {
-              Clipboard.setString(buildUrl())
+              Clipboard.setString(veridaOneUrl)
               Snackbar.show({
                 text: 'Copied to clipboard',
                 duration: Snackbar.LENGTH_SHORT,
@@ -89,7 +89,7 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
               style={styles.roundedButton}
               color='transparent'
               onPress={() => {
-                Linking.openURL(buildUrl())
+                Linking.openURL(veridaOneUrl)
               }}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                 <Text
@@ -114,8 +114,8 @@ export const ProfileUsernameSection = ({ did, username, loading }: Props) => {
               onPress={() => {
                 Share.share({
                   title: 'Verida One',
-                  message: `My profile ${buildUrl()}`,
-                  url: buildUrl(),
+                  message: `My profile ${veridaOneUrl}`,
+                  url: veridaOneUrl,
                 })
               }}>
               <View style={{ flexDirection: 'row', alignItems: 'center' }}>

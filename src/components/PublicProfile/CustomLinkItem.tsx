@@ -1,8 +1,8 @@
 import { useTheme } from 'contexts/ThemeContext'
+import { VeridaOneCustomLink } from 'features/veridaOne'
 import React from 'react'
 import { StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { VeridaOneCustomLink } from 'api/types'
 import DragIcon from 'assets/drag_icon.svg'
 import EditIcon from 'assets/edit_icon.svg'
 import StarOutlineIcon from 'assets/star_outline.svg'
