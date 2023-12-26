@@ -29,7 +29,9 @@ export const HomeGettingStarted: React.FC<HomeGettingStartedProps> = (
   return (
     <View {...viewProps}>
       <Text style={styles.headerLlabel}>What you could do next</Text>
-      <ScrollView style={styles.itemsContainer}>
+      <ScrollView
+        style={styles.scrollContainer}
+        contentContainerStyle={styles.scrollContentContainer}>
         {homeGettingStartedItems.map((item, index) => (
           <HomeGettingStartedItem
             key={item.key}
@@ -50,8 +52,11 @@ const createStyles = (theme: Theme) =>
       lineHeight: theme.fontSize.m * 1.5,
       color: theme.color.text70,
     },
-    itemsContainer: {
+    scrollContainer: {
       marginTop: theme.spacing.s,
+    },
+    scrollContentContainer: {
+      paddingBottom: theme.spacing.s,
     },
     gap: {
       marginTop: theme.spacing.s,
