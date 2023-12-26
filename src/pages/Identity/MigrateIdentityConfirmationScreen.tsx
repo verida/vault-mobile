@@ -22,7 +22,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
 
     useEffect(() => {
       navigation.setOptions({
-        title: 'Migrate your Identity',
+        title: 'Migrate Identity',
         headerBackVisible: false, // TODO: Update when reworking headers
       })
     }, [navigation])
@@ -40,7 +40,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
       Alert.alert(
         'Execute migration',
         config.features.veridaMainnet.enableDeletionAfterMigration
-          ? 'Your current Identity will be deleted. Do you want to proceed?'
+          ? 'Your current identity will be deleted. Do you want to proceed?'
           : 'Do you want to proceed?',
         [
           {
@@ -76,14 +76,14 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
                 </View>
                 <Typography variant='h5' style={styles.subtitle}>
                   {config.features.veridaMainnet.enableDeletionAfterMigration
-                    ? `This process will create a corresponding Mainnet Identity and securely transfer your data to the new network.\n\nNote that your currrent Identity will be deleted!\n\nPlease ensure that you have backed up any critical information before proceeding.`
-                    : `This process will create a corresponding Mainnet Identity and securely transfer your data to the new network.\n\nPlease ensure that you have backed up any critical information before proceeding.`}
+                    ? `This process will create a corresponding Mainnet Verida Identity and securely transfer your data to the new network.\n\nNote that your currrent identity will be deleted!\n\nPlease ensure that you have backed up any critical information before proceeding.`
+                    : `This process will create a corresponding Mainnet Verida Identity and securely transfer your data to the new network.\n\nPlease ensure that you have backed up any critical information before proceeding.`}
                 </Typography>
               </>
             ) : (
               <>
                 <Typography variant='h2' style={styles.title}>
-                  {`You can't migrate this Identity`}
+                  {`You can't migrate this identity`}
                 </Typography>
                 <View style={styles.didWrapper}>
                   <Typography variant='h5'>{did}</Typography>
@@ -100,7 +100,7 @@ export const MigrateIdentityConfirmationScreen: React.FunctionComponent<MigrateI
           alertContent={
             canMigrate
               ? config.features.veridaMainnet.enableDeletionAfterMigration
-                ? 'The migration can take several minutes and the app must stay open.\nYour current Identity will be deleted.'
+                ? 'The migration can take several minutes and the app must stay open.\nYour current identity will be deleted.'
                 : 'The migration can take several minutes and the app must stay open.'
               : undefined
           }

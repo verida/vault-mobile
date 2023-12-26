@@ -7,7 +7,7 @@ export const VERIDA_ONE_PROFILE_SCHEMA_URL =
 
 export const VERIDA_ONE_WEBSITE = 'https://demo.verida.one'
 
-export const VERIDA_ONE_INVITE_CODE = 'veridaonealpha'
+export const VERIDA_ONE_INVITE_CODE = 'iamveridian2024'
 
 export const VERIDA_ONE_INVITE_STATUS_STORAGE_KEY = 'veridaOneInviteStatus'
 export const VERIDA_ONE_INVITE_STATUS_ENABLED_VALUE = 'veridaOneEnabled'

@@ -147,7 +147,7 @@ function GenericMessage(props: GenericMessageProps) {
           style={styles.okayButton}
           onPress={onSubmit}
           loading={submitting}>
-          Cancel
+          Mark as read
         </Button>
       </View>
     </Content>

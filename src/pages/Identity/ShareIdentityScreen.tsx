@@ -44,7 +44,7 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
 
     useEffect(() => {
       navigation.setOptions({
-        title: 'Share your Identity',
+        title: 'Share Identity',
         // TODO: Get rid of the following when properly handling a common header in the navigator
         headerRight: () => (
           // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)

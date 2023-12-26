@@ -40,7 +40,7 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
 
     const styles = useThemeAwareStyle(createStyles)
 
-    const { switchToAccount, refresh } = useAuth()
+    const { switchToAccount } = useAuth()
     const dispatch = useAppDispatch()
     useEffect(() => {
       const promise = dispatch(fetchAllPublicProfilesData())
@@ -84,7 +84,6 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
             if (currentIdentity?.did) {
               try {
                 await switchToAccount(currentIdentity.did)
-                await refresh()
               } catch (anotherError: unknown) {
                 logger.error(
                   new Error(
@@ -99,7 +98,7 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
           }
         })
       },
-      [onIdentitySwitch, refresh, switchToAccount, currentIdentity]
+      [onIdentitySwitch, switchToAccount, currentIdentity]
     )
 
     const renderItem = useCallback(
