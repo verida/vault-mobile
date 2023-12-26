@@ -6196,23 +6196,10 @@
     did-resolver "^4.0.0"
     url-parse "^1.5.3"
 
-"@verida/types@^2.4.0-rc1":
+"@verida/types@2.4.0-rc1", "@verida/types@^2.4.0-rc1":
   version "2.4.0-rc1"
   resolved "https://registry.yarnpkg.com/@verida/types/-/types-2.4.0-rc1.tgz#15818be0f857b5916bace7ee3fa586dc3b9dadc2"
   integrity sha512-IFD+nw9ZlKsLV9AFoAXuyJk5UHNIBAyB2P3oxqW+TM1vx3zJUWnl4MYSJASzHbaz9laqk4fblxVS4kdgGiOifg==
-  dependencies:
-    "@ethersproject/abstract-signer" "^5.7.0"
-    "@ethersproject/bignumber" "^5.7.0"
-    "@ethersproject/providers" "^5.7.2"
-    "@types/node" "^18.15.11"
-    "@types/pouchdb-core" "^7.0.11"
-    did-resolver "^4.0.1"
-    tweetnacl "^1.0.3"
-
-"@verida/types@^3.0.0":
-  version "3.0.0"
-  resolved "https://registry.yarnpkg.com/@verida/types/-/types-3.0.0.tgz#1ffb64eea5d2c1fcb66c386f979d88918c943dcf"
-  integrity sha512-J5psSf9ayqvUVyRBwYWjZ3Zeiomnl/GsHpvn2GA6zwH39QS8bPAvVGHaaq7na+0M1VUysrDEvHFrQ9fSmGAbHw==
   dependencies:
     "@ethersproject/abstract-signer" "^5.7.0"
     "@ethersproject/bignumber" "^5.7.0"
