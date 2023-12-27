@@ -6,12 +6,10 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
+import { BlockchainWallet } from 'api/types'
 import {
-  AddIdentityStepStatus,
-  AddIdentityStepType,
-  BlockchainWallet,
-} from 'api/types'
-import {
+  CreateIdentityStepStatus,
+  CreateIdentityStep,
   Account,
   NormalizedAccounts,
   addAccount,
@@ -420,8 +418,8 @@ class AccountManager extends EventEmitter {
     country: string,
     network: EnvironmentType,
     updateProgress?: (
-      step: AddIdentityStepType,
-      status: AddIdentityStepStatus
+      step: CreateIdentityStep,
+      status: CreateIdentityStepStatus
     ) => void
   ): Promise<Account | undefined> {
     let connected = false

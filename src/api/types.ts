@@ -153,11 +153,3 @@ export interface ClaimBadgeResponse {
   badge?: Badge | null
   success?: boolean
 }
-
-export type AddIdentityStepType =
-  | 'CreateIdentifier'
-  | 'ClaimUsername'
-  | 'StorageLocation'
-  | 'CreateProfile'
-
-export type AddIdentityStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'

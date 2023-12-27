@@ -31,7 +31,7 @@ const defaultMigrationStepStatus: Array<
 > = [
   {
     key: 'createDID',
-    label: 'Creating your Mainnet Identity',
+    label: 'Creating your Mainnet identity',
     status: 'idle',
   },
   {
@@ -48,8 +48,8 @@ const defaultMigrationStepStatus: Array<
   {
     key: 'deleteIdentity',
     label: config.features.veridaMainnet.enableDeletionAfterMigration
-      ? 'Deleting your current Identity'
-      : 'Deleting your current Identity (skipped)',
+      ? 'Deleting your current identity'
+      : 'Deleting your current identity (skipped)',
     status: 'idle',
     disabled: !config.features.veridaMainnet.enableDeletionAfterMigration,
   },
@@ -159,7 +159,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
           )
           Alert.alert(
             'Error',
-            `Unable to switch to the Identity, please try again later.`
+            `Unable to switch to the identity, please try again later.`
           )
 
           // Switch back to the current account
@@ -215,7 +215,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
         ? 'Success!'
         : status === 'error'
         ? 'Something went wrong!'
-        : 'Migrating your Identity'
+        : 'Migrating your identity'
     const subtitle =
       status === 'success'
         ? 'Your Identity has been successfully migrated'
@@ -257,7 +257,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
               ? config.features.veridaMainnet.enableDeletionAfterMigration
                 ? [
                     {
-                      label: 'Use new Identity',
+                      label: 'Use new identity',
                       onPress: handleUseNewIdentity,
                     },
                   ]
@@ -268,7 +268,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
                       color: 'grey',
                     },
                     {
-                      label: 'Switch to new Identity',
+                      label: 'Switch to new identity',
                       onPress: handleSwitchToNewIdentity,
                     },
                   ]

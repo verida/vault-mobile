@@ -102,7 +102,7 @@ export const RemoveIdentityScreen: React.FC<RemoveIdentityScreenProps> = (
         </View>
       </ScrollView>
       <BottomActionBar
-        alertType='warning'
+        alertType='error'
         alertContent='Backup your recovery phrase before logging out'
         actions={[
           {

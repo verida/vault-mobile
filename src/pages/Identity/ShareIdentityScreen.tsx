@@ -37,7 +37,7 @@ export const ShareIdentityScreen: React.FunctionComponent<ShareIdentityScreenPro
 
     useEffect(() => {
       navigation.setOptions({
-        title: 'Share your Identity',
+        title: 'Share Identity',
       })
     }, [navigation])
 

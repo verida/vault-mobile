@@ -15,6 +15,18 @@ export type NormalizedAccounts = {
   [k: string]: Account
 }
 
+export type CreateIdentityStep =
+  | 'CreateIdentifier'
+  | 'ClaimUsername'
+  | 'StorageLocation'
+  | 'CreateProfile'
+
+export type CreateIdentityStepStatus =
+  | 'None'
+  | 'Loading'
+  | 'Success'
+  | 'Failure'
+
 export type MigrateIdentityStep =
   | 'createDID'
   | 'connectIdentity'
