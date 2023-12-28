@@ -55,18 +55,12 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       []
     )
 
-    //const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
-
-    const [maybeAggregateWalletBannerBalanceThatVariesOnRefetch] =
+    const [maybeAggregateWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(
         useAggregateWalletBannerBalances({
           resource,
         })
       )
-
-    const [maybeAggregateWalletBannerBalance] = React.useState<
-      AggregateWalletBannerBalance | undefined
-    >(maybeAggregateWalletBannerBalanceThatVariesOnRefetch)
 
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
