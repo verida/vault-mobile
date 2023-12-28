@@ -1,3 +1,4 @@
+import { nanoid } from '@reduxjs/toolkit'
 import {
   BottomActionBar,
   RequestHeaderProps,
@@ -17,6 +18,7 @@ import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -49,6 +51,11 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const integerCryptoAmount = String(amount) as `${number}`
 
     const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
+
+    // Uniquely identifies a payment request. Can be used to manage
+    // synchronization between the display and an incoming payment
+    // request, and takes priority over the currently rendered content.
+    const paymentRequestId = React.useMemo(nanoid, [params])
 
     const onToggleDetails = React.useCallback(
       () => setDetailsOpen((prevValue) => !prevValue),
@@ -97,6 +104,8 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
 
     const chainId = useChainIdForResourceParams({ resource })
 
+    useImmediateLayoutAnimation([paymentRequestId])
+
     const maybeUnknownAssetWalletSelectorButtonProps =
       useMaybeWalletSelectorButtonProps({
         aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
@@ -118,6 +127,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           {maybeAggregateWalletBannerBalance ? (
             <PaymentRequestScreenContainer
               {...params}
+              key={paymentRequestId}
               integerCryptoAmount={integerCryptoAmount}
               aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
               onRequestClose={handleClose}
