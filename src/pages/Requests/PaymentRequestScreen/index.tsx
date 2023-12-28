@@ -5,7 +5,6 @@ import {
   useMaybeWalletSelectorButtonProps,
 } from 'components'
 import {
-  AggregateWalletBannerBalance,
   CryptoWalletRequest,
   getAggregateWalletBannerBalanceResult,
   getChainIdParamsFromResourceParams,
@@ -46,7 +45,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { navigation, route } = props
     const { params } = route
     const { data, name: senderName, logo } = params
-    const { resource, amount } = data
+    const { resource, amount = NaN } = data
 
     const integerCryptoAmount = String(amount) as `${number}`
 

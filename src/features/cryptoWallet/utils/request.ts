@@ -78,12 +78,10 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
 
 export function processCryptoRequest({
   request,
-  //blockchainNetworks,
   chainMetadatas,
 }: {
   readonly request: CryptoWalletRawRequest
   readonly chainMetadatas: ChainMetadatas
-  //readonly blockchainNetworks: Record<string, BlockchainNetwork>
 }): CryptoWalletRequest {
   const chain = new ChainId({
     namespace: request.chainNamespace,
@@ -126,7 +124,12 @@ export function processCryptoRequest({
       ? Number(request.params.value)
       : request.params.uint256
       ? Number(request.params.uint256)
-      : 0,
+      : // HACK: It is technically invalid not to specify an amount to send.
+        //       We expect such declarations to be processed by downstream
+        //       handlers - it is subjective whether the reciever decides
+        //       whether to fall back to a zero amount, or to regard the
+        //       amount supplied as invalid.
+        undefined,
     // FIXME: using Number may not be the best, as amount is in the smallest atomic unit and noted like 1e18, so big numbers
   }
 }
