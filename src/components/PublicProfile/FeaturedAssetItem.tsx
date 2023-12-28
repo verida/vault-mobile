@@ -1,8 +1,8 @@
 import { useTheme } from 'contexts/ThemeContext'
+import { VeridaOneFeaturedAsset } from 'features/veridaOne'
 import React from 'react'
 import { Dimensions, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { VeridaOneFeaturedAsset } from 'api/types'
 import EditIcon from 'assets/edit_icon.svg'
 import PlusIcon from 'assets/plus_icon.svg'
 import { NftItem } from 'components/Assets/NftItem'

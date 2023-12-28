@@ -1,7 +1,9 @@
 import * as React from 'react'
 import { Text } from 'react-native'
 
-const CRYPTO_NUMBER_FORMAT = new Intl.NumberFormat('en-US', {
+import { DEFAULT_LOCALE } from 'constants/locale'
+
+const CRYPTO_NUMBER_FORMAT = new Intl.NumberFormat(DEFAULT_LOCALE, {
   minimumFractionDigits: 2,
   maximumFractionDigits: 6,
 })

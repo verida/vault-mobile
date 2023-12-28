@@ -15,6 +15,9 @@ type CaptionProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>
 }
 
+/**
+ * @deprecated Use Typography instead
+ */
 export const Caption = (props: CaptionProps) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />

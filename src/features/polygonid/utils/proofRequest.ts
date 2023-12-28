@@ -29,7 +29,7 @@ export function getUserFriendlyProofRequestRequirements(query: JSONObject) {
       | undefined
 
     if (credentialSubject === undefined) {
-      throw new Error('No credentialSubject proeprty in proof request')
+      return ['No requirements']
     }
 
     const result: string[] = []

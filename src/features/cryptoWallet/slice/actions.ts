@@ -1,4 +1,3 @@
-import { config } from 'config'
 import {
   getAllWallets,
   getSelectedWalletId,
@@ -9,6 +8,10 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import AccountManager from 'api/AccountManager'
 import { BlockchainWallet } from 'api/types'
 import { WalletManager } from 'api/Wallet/WalletManager'
+import {
+  SELECTED_WALLET_STORAGE_KEY,
+  WALLETS_STORAGE_KEY,
+} from 'constants/storageKeys'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
 import { saveUserWallets, setSelectedWallet } from './'
@@ -32,11 +35,11 @@ export const createNewWallet = createAppAsyncThunk(
         // save to the secure storage..
         await Promise.all([
           SecureStore.setItemAsync(
-            config.WALLETS_STORAGE_KEY,
+            WALLETS_STORAGE_KEY,
             JSON.stringify(wallets)
           ),
           SecureStore.setItemAsync(
-            config.SELECTED_WALLET_STORAGE_KEY,
+            SELECTED_WALLET_STORAGE_KEY,
             selectedWallet._id
           ),
         ])

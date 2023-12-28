@@ -2,9 +2,6 @@ import { DataManager } from './managers/data'
 import { InboxManager } from './managers/inbox'
 import { SyncManager } from './managers/sync'
 
-// Needs work
-//import { CredentialsManager } from './managers/credentials'
-
 export default class VaultCommon {
   // client-ts/Client
   public client: any
@@ -12,7 +9,6 @@ export default class VaultCommon {
   public vault: any
 
   public inbox: InboxManager
-  //public credentials: CredentialsManager
   public sync: SyncManager
   public data: DataManager
 

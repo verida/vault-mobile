@@ -37,7 +37,7 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
     isMainnet,
   } = blockchainNetwork
 
-  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.INFURA_API_KEY)
+  const rpc = rpcUrl.replace(/%INFURA_KEY%/g, config.blockchain.infuraApiKey)
 
   const explorerURLResult =
     ChainMetadataBlockExplorerUrl.safeParse(maybeExplorerUrl)

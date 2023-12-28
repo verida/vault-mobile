@@ -1,7 +1,6 @@
 import 'react-native-url-polyfill/auto'
 
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
-import messaging from '@react-native-firebase/messaging'
 import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
@@ -13,14 +12,13 @@ import {
   CryptoWalletProvider,
 } from 'features/cryptoWallet'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
+import { IdentityDrawerProvider } from 'features/identityDrawer'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
-import { CHANNEL_ID, configureNotifications } from 'helpers/notifications'
 import React, { useEffect, useState } from 'react'
 import { Alert, StyleSheet } from 'react-native'
 import codePush, { CodePushOptions } from 'react-native-code-push'
 import { GestureHandlerRootView } from 'react-native-gesture-handler'
-import PushNotification from 'react-native-push-notification'
 import { RootSiblingParent } from 'react-native-root-siblings'
 import {
   initialWindowMetrics,
@@ -45,18 +43,9 @@ initApplication()
 
 // TODO: Move other initialisations into the 'initApplication'
 
-configureNotifications()
-
-messaging().setBackgroundMessageHandler(async (_remoteMessage) => {
-  PushNotification.localNotification({
-    title: 'New inbox message',
-    message: 'Please refresh your inbox',
-    channelId: CHANNEL_ID,
-    userInfo: {
-      category: 'Inbox',
-    },
-  })
-})
+//<BlockchainProvider>
+//<CryptoWalletBalanceProvider>
+//  <CryptoWalletProvider>
 
 const logger = new Logger('App')
 
@@ -107,27 +96,29 @@ function App() {
                 <NavigationContainer
                   linking={navigationLinkingConfiguration}
                   ref={navigationRef}>
-                  <ModalProvider>
-                    <Authenticate>
-                      <RootSiblingParent>
-                        <ActionSheetProvider>
-                          <BlockchainProvider>
-                            <CryptoWalletBalanceProvider>
-                              <CryptoWalletProvider>
-                                <WalletConnectProvider>
-                                  <GestureHandlerRootView style={styles.flex}>
-                                    <RootNavigator />
-                                  </GestureHandlerRootView>
-                                  <MetaServerChecks />
-                                </WalletConnectProvider>
-                              </CryptoWalletProvider>
-                            </CryptoWalletBalanceProvider>
-                          </BlockchainProvider>
-                        </ActionSheetProvider>
-                      </RootSiblingParent>
-                    </Authenticate>
-                    <SwitchAccountToast />
-                  </ModalProvider>
+                  <IdentityDrawerProvider>
+                    <ModalProvider>
+                      <Authenticate>
+                        <RootSiblingParent>
+                          <ActionSheetProvider>
+                            <BlockchainProvider>
+                              <CryptoWalletBalanceProvider>
+                                <CryptoWalletProvider>
+                                  <WalletConnectProvider>
+                                    <GestureHandlerRootView style={styles.flex}>
+                                      <RootNavigator />
+                                    </GestureHandlerRootView>
+                                    <MetaServerChecks />
+                                  </WalletConnectProvider>
+                                </CryptoWalletProvider>
+                              </CryptoWalletBalanceProvider>
+                            </BlockchainProvider>
+                          </ActionSheetProvider>
+                        </RootSiblingParent>
+                      </Authenticate>
+                      <SwitchAccountToast />
+                    </ModalProvider>
+                  </IdentityDrawerProvider>
                 </NavigationContainer>
               </AuthProvider>
             </ThemeProvider>
