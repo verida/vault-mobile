@@ -5,6 +5,7 @@ import { Theme } from 'styles/types'
 
 type Generator<T extends Record<string, unknown>> = (theme: Theme) => T
 
+// TODO: Move this useThemeAwareStyle in the styles/hooks folder
 const useThemeAwareStyle = <T extends Record<string, unknown>>(
   fn: Generator<T>
 ) => {

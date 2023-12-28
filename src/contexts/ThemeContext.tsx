@@ -3,6 +3,8 @@ import React from 'react'
 import { defaultTheme } from 'styles/theme'
 import { Theme } from 'styles/types'
 
+// TODO: Move this ThemeContext in the styles/contexts folder
+
 interface ProvidedValue {
   theme: Theme
 }
@@ -22,4 +24,5 @@ export const ThemeProvider = React.memo<Props>((props) => {
   return <Context.Provider value={{ theme }}>{props.children}</Context.Provider>
 })
 
+// TODO: Move this useTheme in the styles/hooks folder
 export const useTheme = () => React.useContext(Context)

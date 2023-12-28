@@ -4,6 +4,7 @@ export const ModalContext = createContext<ReturnType<typeof useModal>>(
   null as any
 )
 
+// TODO: Move this inside the Provider. For the size of it, it's no big deal, but its name is confusing with the other useModal
 function useModal() {
   const [modal, setModal] = React.useState<ReactNode>(null)
   const dismissModal = useCallback(() => {
