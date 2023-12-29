@@ -171,18 +171,24 @@ export function useMigrateIdentity() {
         const contextNames = IDENTITY_MIGRATION_USE_PREDEFINED_CONTEXTS
           ? IDENTITY_MIGRATION_PREDEFINED_CONTEXT_NAMES
           : await Promise.all(
-              links.map(async (link) => {
-                return currentClient!.getContextNameFromHash(link.id)
-              })
+              links
+                .filter((link) => !!link)
+                .map(async (link) => {
+                  return currentClient!.getContextNameFromHash(link.id)
+                })
             )
-        logger.debug('Context names', { contextNames })
 
-        const nbContextsToMigrate = contextNames.length
+        const cleanedContextNames = contextNames.filter(
+          (contextName) => !!contextName
+        )
+        logger.debug('Context names', { contextNames: cleanedContextNames })
+
+        const nbContextsToMigrate = cleanedContextNames.length
         logger.debug(`Number of contexts to migrate ${nbContextsToMigrate}`)
 
         // TODO: Try optimise by running them in parallel, test if supported by the migration. Sequential is actual easier for the progress.
-        for (let i = 0; i < contextNames.length; i++) {
-          const contextHash = contextNames[i]
+        for (let i = 0; i < cleanedContextNames.length; i++) {
+          const contextHash = cleanedContextNames[i]
           try {
             const [sourceContext, targetContext] = await Promise.all([
               currentClient.openContext(contextHash, false),
