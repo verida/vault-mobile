@@ -8,12 +8,25 @@ import { DidMetadata, getDidMetadata, saveDidMetadata } from 'features/did'
 import {
   IDEN3_PROTOCOL,
   IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM,
+  IDEN3_PROTOCOL_DEEPLINK_REQUEST_PARAM,
   IDEN3_PROTOCOL_DEEPLINK_SCHEME,
   PROTOCOL_MESSAGE_TYPE,
 } from 'features/polygonid/constants'
 import { Logger } from 'features/telemetry'
 
 const logger = new Logger('Polygon ID')
+
+export function isPolygonIdMessage(message: string) {
+  return (
+    message.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME) ||
+    !!message?.match(IDEN3_PROTOCOL)?.length
+  )
+}
+
+function isUriMessage(message: string) {
+  // URI message starts with the iden3 scheme: iden3comm://?...
+  return message.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME)
+}
 
 function checkParsedMessage(
   parsedMessage: Record<string, unknown>,
@@ -35,7 +48,56 @@ function checkParsedMessage(
   throw error
 }
 
-export function parseMessage(
+async function fetchMessageFromUri(
+  url: string
+): Promise<Record<string, unknown>> {
+  logger.debug('Fetching Polygon ID message from request_uri')
+  try {
+    const response = await axios.get(url)
+    logger.debug('Fetching Polygon ID message from request_uri successful')
+    return response.data
+  } catch (error) {
+    logger.error(
+      new Error(`Failed to fetch Polygon ID message from request_uri`, {
+        cause: error,
+      })
+    )
+    throw error
+  }
+}
+
+function decodeMessage(base64Message: string): Record<string, unknown> {
+  const unint8Message = base64.decode(base64Message)
+  const decodedString = new TextDecoder().decode(unint8Message)
+  return JSON.parse(decodedString)
+}
+
+function parseUriMessage(message: string) {
+  const urlObj = new URL(message)
+
+  const base64Message = urlObj.searchParams.get(
+    IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM
+  )
+
+  if (base64Message) {
+    logger.debug('Polygon ID message is an embedded encoded message')
+    return decodeMessage(base64Message)
+  }
+
+  const requestUri = urlObj.searchParams.get(
+    IDEN3_PROTOCOL_DEEPLINK_REQUEST_PARAM
+  )
+
+  if (requestUri) {
+    logger.debug('Polygon ID message is a request URI to fetch')
+    return fetchMessageFromUri(requestUri)
+  }
+
+  logger.warn('The Polygon ID message is invalid')
+  throw new Error('Invalid PolygonID message')
+}
+
+function parseMessage(
   message: Record<string, unknown>
 ): AuthorizationRequestMessage | CredentialsOfferMessage {
   switch (message.type) {
@@ -50,35 +112,17 @@ export function parseMessage(
   }
 }
 
-export function isPolygonIdDeepLink(url: string) {
-  return url.toLowerCase().startsWith(IDEN3_PROTOCOL_DEEPLINK_SCHEME)
-}
+export async function parsePolygonIdMessage(message: string) {
+  let jsonMessage: Record<string, unknown>
 
-export function parseDeepLinkUrl(url: string) {
-  const urlObj = new URL(url)
-  const base64Message = urlObj.searchParams.get(
-    IDEN3_PROTOCOL_DEEPLINK_DATA_PARAM
-  )
-  if (!base64Message) {
-    throw new Error('Invalid PolygonID deeplink')
+  if (isUriMessage(message)) {
+    jsonMessage = await parseUriMessage(message)
+  } else {
+    logger.debug('Polygon ID message is a raw JSON message')
+    jsonMessage = JSON.parse(message)
   }
 
-  const unint8Message = base64.decode(base64Message)
-  const decodedString = new TextDecoder().decode(unint8Message)
-  const jsonMessage = JSON.parse(decodedString)
-  checkParsedMessage(jsonMessage, url)
-  return parseMessage(jsonMessage)
-}
-
-export function isPolygonIdQrCodeMessage(qrCodeMessage: string) {
-  return !!qrCodeMessage?.match(IDEN3_PROTOCOL)?.length
-}
-
-export function parseQrCodeMessage(
-  qrCodeMessage: string
-): AuthorizationRequestMessage | CredentialsOfferMessage {
-  const jsonMessage = JSON.parse(qrCodeMessage)
-  checkParsedMessage(jsonMessage, qrCodeMessage)
+  checkParsedMessage(jsonMessage, message)
   return parseMessage(jsonMessage)
 }
 

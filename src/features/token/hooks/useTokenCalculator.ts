@@ -329,20 +329,22 @@ export function useTokenCalculator({
 
   const { value: currentCryptoValue } = getStateAsCrypto(state)
 
+  const currentCryptoValueFloat = parseFloat(currentCryptoValue || '0')
+
   const hasSufficientBalance =
-    typeof currentCryptoValue === 'string' &&
-    parseFloat(currentCryptoValue) <=
-      maximumCryptoAmount.toNumber() /* has balance */
+    currentCryptoValueFloat <= maximumCryptoAmount.toNumber() /* has balance */
+
+  const isBadInitialValue =
+    state.value === initialValue && isNaN(parseFloat(initialValue || '0'))
 
   // A "valid" value in this case is one that is truthy (`getStateAsCrypto`) ensures
   // that `currentCryptoValue` has been normalized, and therefore a string will be
   // a valid numeric string and the parsed value of that string is within the operating
   // balance of the asset.
   const isNotMalformed =
-    typeof state.value === 'string' /* has interacted */ &&
-    state.value.length > 0 /* has typed */ &&
+    !isBadInitialValue &&
     hasSufficientBalance &&
-    parseFloat(currentCryptoValue) > 0 /* is non-zero */
+    currentCryptoValueFloat >= 0 /* is non-zero */
 
   const canExecutePayment = isNotMalformed && hasSufficientBalance
 
@@ -371,7 +373,6 @@ export function useTokenCalculator({
       hasSufficientBalance,
       isNotMalformed,
       canExecutePayment,
-      //decimals,
     }),
     [
       canConvertBetweenFiatAndCrypto,
@@ -387,7 +388,6 @@ export function useTokenCalculator({
       hasSufficientBalance,
       isNotMalformed,
       canExecutePayment,
-      //decimals,
     ]
   )
 }

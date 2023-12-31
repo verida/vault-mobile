@@ -1,11 +1,12 @@
+import { BottomTabHeaderProps } from '@react-navigation/bottom-tabs'
+import { TabScreenHeader } from 'components'
 import { getSelectedWalletById } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import { Container } from 'native-base'
-import React, { useState } from 'react'
-import { Image, StyleSheet, useWindowDimensions, View } from 'react-native'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
+import { StyleSheet, useWindowDimensions, View } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { SegmentData, SegmentsControl } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
@@ -15,8 +16,6 @@ import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 import Collectibles from './Collectibles'
-
-const DefaultAvatar = require('assets/stubs/avatar.png')
 
 const segments: SegmentData[] = [
   {
@@ -47,7 +46,9 @@ export type AssetsScreenParams = undefined
 
 type AssetsScreenProps = TabsScreenProps<'Assets'>
 
-export const AssetsScreen: React.FC<AssetsScreenProps> = () => {
+export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
+  const { navigation } = props
+
   const selectedWallet = useAppSelector(getSelectedWalletById)
   const [modalVisible, setModalVisible] = useState(false)
   const [activeTabIndex, setActiveTabIndex] = useState(0)
@@ -59,26 +60,35 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = () => {
     setModalVisible(!modalVisible)
   }
 
-  const openWalletModal = () => {
-    setModalVisible(!modalVisible)
-  }
+  const openWalletModal = useCallback(() => {
+    setModalVisible((prevModalVisible) => !prevModalVisible)
+  }, [])
 
-  const walletSelect = (
-    <WalletNavigationHeader
-      selectedWallet={selectedWallet}
-      openWalletModal={openWalletModal}
-    />
+  const walletSelect = useMemo(
+    () => (
+      <WalletNavigationHeader
+        selectedWallet={selectedWallet}
+        openWalletModal={openWalletModal}
+      />
+    ),
+    [openWalletModal, selectedWallet]
   )
+
+  useEffect(() => {
+    navigation.setOptions({
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore until the branch reworking the header is merged
+      header: (headerProps: BottomTabHeaderProps) => (
+        <TabScreenHeader hideSeparator {...headerProps} />
+      ),
+      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      // @ts-ignore until the branch reworking the header is merged
+      headerTitle: walletSelect,
+    })
+  }, [navigation, walletSelect])
 
   return (
     <Container>
-      <NavigationHeader
-        left={{ icon: 'skip' }}
-        avatarIcon={<Image style={styles.avatarIcon} source={DefaultAvatar} />}
-        // @TODO: develop a separate component to handle walletSelect navigation
-        titleIcon={walletSelect}
-        bottomBorder={false}
-      />
       <View style={styles.tabsContainer}>
         <SegmentsControl
           segments={segments}
@@ -86,7 +96,6 @@ export const AssetsScreen: React.FC<AssetsScreenProps> = () => {
           onSegmentPress={setActiveTabIndex}
         />
       </View>
-      {/* <Line /> */}
       <TabView
         lazy
         navigationState={{ index: activeTabIndex, routes: segments }}

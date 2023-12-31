@@ -12,6 +12,7 @@ import { Linking, StyleSheet, TouchableOpacity, View } from 'react-native'
 
 import CompleteSVG from 'assets/complete.svg'
 import Text from 'components/Text'
+import { DEFAULT_LOCALE } from 'constants/locale'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 export default ({
@@ -95,7 +96,7 @@ export default ({
           <Text style={styles.infoLabel}>Time</Text>
           <View style={styles.infoValue}>
             <Text style={styles.valueText}>
-              {new Date(transaction.time).toLocaleString('en-US')}
+              {new Date(transaction.time).toLocaleString(DEFAULT_LOCALE)}
             </Text>
           </View>
         </View>

@@ -29,14 +29,12 @@ export type RequestPaymentValueProps = {
 } & ViewProps
 
 export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValueProps> =
-  (props) => {
-    const {
-      integerCryptoAmount,
-      aggregateWalletBannerBalance,
-      chainId,
-      ...viewProps
-    } = props
-
+  ({
+    integerCryptoAmount,
+    aggregateWalletBannerBalance,
+    chainId,
+    ...viewProps
+  }) => {
     // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
     // and the base currency.
     const maybeValuation = aggregateWalletBannerBalance?.valuation
@@ -45,6 +43,8 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
 
     const assetSymbol = aggregateWalletBannerBalance?.symbol
     const assetLogo = aggregateWalletBannerBalance?.icon || undefined
+
+    const isInvalidAmount = isNaN(parseInt(integerCryptoAmount))
 
     const [maybeNativeAssetWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(
@@ -73,7 +73,7 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
           </View>
           <View style={styles.valueContainer}>
             <Text style={styles.primaryValue}>
-              {integerCryptoAmount && assetSymbol ? (
+              {integerCryptoAmount && assetSymbol && !isInvalidAmount ? (
                 <NumericCryptoBalance
                   decimals={aggregateWalletBannerBalance?.decimals}
                   balance={integerCryptoAmount}
@@ -83,13 +83,15 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
                 CONFUSED_FACE
               )}
             </Text>
-            <Text style={styles.secondaryValue}>
-              <NumericFiatPaymentRequest
-                integerCryptoAmount={integerCryptoAmount}
-                valuation={maybeValuation}
-                decimals={aggregateWalletBannerBalance?.decimals}
-              />
-            </Text>
+            {!isInvalidAmount && (
+              <Text style={styles.secondaryValue}>
+                <NumericFiatPaymentRequest
+                  integerCryptoAmount={integerCryptoAmount}
+                  valuation={maybeValuation}
+                  decimals={aggregateWalletBannerBalance?.decimals}
+                />
+              </Text>
+            )}
           </View>
           {Boolean(hasCurrencyAndConversionRate || chainLabel || chainLogo) && (
             <View style={styles.footer}>

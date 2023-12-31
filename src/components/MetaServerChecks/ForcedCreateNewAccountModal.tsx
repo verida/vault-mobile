@@ -47,7 +47,7 @@ export const ForcedCreateNewAccountModal = ({
     setLoading(false)
     dismissModal()
 
-    navigate('Start', undefined)
+    navigate('Onboarding', undefined)
   }
 
   const onFurtherInfoPress = () => {

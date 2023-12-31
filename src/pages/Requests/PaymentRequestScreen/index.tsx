@@ -1,10 +1,10 @@
+import { nanoid } from '@reduxjs/toolkit'
 import {
   BottomActionBar,
   RequestHeaderProps,
   useMaybeWalletSelectorButtonProps,
 } from 'components'
 import {
-  AggregateWalletBannerBalance,
   CryptoWalletRequest,
   getAggregateWalletBannerBalanceResult,
   getChainIdParamsFromResourceParams,
@@ -17,6 +17,7 @@ import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
 import React, { useCallback, useEffect } from 'react'
 import { ScrollView, StatusBar, StyleSheet, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
+import { useImmediateLayoutAnimation } from 'use-layout-animation'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
@@ -44,29 +45,28 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
     const { navigation, route } = props
     const { params } = route
     const { data, name: senderName, logo } = params
-    const { resource, amount } = data
+    const { resource, amount = NaN } = data
 
     const integerCryptoAmount = String(amount) as `${number}`
 
     const [detailsOpen, setDetailsOpen] = React.useState<boolean>(false)
+
+    // Uniquely identifies a payment request. Can be used to manage
+    // synchronization between the display and an incoming payment
+    // request, and takes priority over the currently rendered content.
+    const paymentRequestId = React.useMemo(nanoid, [params])
 
     const onToggleDetails = React.useCallback(
       () => setDetailsOpen((prevValue) => !prevValue),
       []
     )
 
-    //const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
-
-    const [maybeAggregateWalletBannerBalanceThatVariesOnRefetch] =
+    const [maybeAggregateWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(
         useAggregateWalletBannerBalances({
           resource,
         })
       )
-
-    const [maybeAggregateWalletBannerBalance] = React.useState<
-      AggregateWalletBannerBalance | undefined
-    >(maybeAggregateWalletBannerBalanceThatVariesOnRefetch)
 
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
@@ -103,6 +103,8 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
 
     const chainId = useChainIdForResourceParams({ resource })
 
+    useImmediateLayoutAnimation([paymentRequestId])
+
     const maybeUnknownAssetWalletSelectorButtonProps =
       useMaybeWalletSelectorButtonProps({
         aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
@@ -124,6 +126,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
           {maybeAggregateWalletBannerBalance ? (
             <PaymentRequestScreenContainer
               {...params}
+              key={paymentRequestId}
               integerCryptoAmount={integerCryptoAmount}
               aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
               onRequestClose={handleClose}

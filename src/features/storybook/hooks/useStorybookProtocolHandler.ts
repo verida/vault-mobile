@@ -9,8 +9,13 @@ export function useStorybookProtocolHandler(): ProtocolHandler {
   const navigation = useMainNavigation()
   return React.useMemo<ProtocolHandler>(
     () => ({
-      handleDeepLink: () => {
-        if (!__DEV__) return false
+      handleDeepLink: (url: string) => {
+        if (
+          !__DEV__ ||
+          typeof url !== 'string' ||
+          !url.startsWith('storybook://')
+        )
+          return false
 
         const key = `${nanoid()}`
 

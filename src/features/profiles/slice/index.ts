@@ -4,17 +4,15 @@ import { logout } from 'features/auth'
 import { selectAccounts } from 'features/identities'
 import { Logger } from 'features/telemetry'
 
-import AccountManager from 'api/AccountManager'
 import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 
 import { PublicProfile } from '../@types'
+import { fetchPublicProfile } from '../utils'
 
 const logger = new Logger('Profiles')
 
 const publicProfileEmptyState: PublicProfile = {
   name: '',
-  country: undefined,
-  description: undefined,
 }
 
 const loadingDefaultState = {
@@ -103,11 +101,15 @@ export const selectPublicProfileByDid = (state: RootState, did?: string) =>
 
 export const selectPublicProfilesLoadingState = (
   state: RootState,
-  did: string
-) =>
-  state.profiles.publicProfiles[did]?.name // Old data exists so just render it
+  did?: string
+) => {
+  if (!did) {
+    return loadingDefaultState
+  }
+  return state.profiles.publicProfiles[did]?.name // Old data exists so just render it
     ? loadingDefaultState
     : state.profiles.profilesProcessing[did] || loadingDefaultState
+}
 
 // Actions
 export const { setPublicProfileByDid } = profilesSlice.actions
@@ -118,26 +120,30 @@ export const fetchPublicProfileData = createAppAsyncThunk(
   async (did: string, { getState, rejectWithValue }) => {
     try {
       const state = getState()
-      let publicProfile = { ...selectPublicProfileByDid(state, did) }
+      const existingProfile = selectPublicProfileByDid(state, did)
 
-      const externalProfile =
-        await AccountManager.getInstance().context?.openProfile(
-          'basicProfile',
-          did
-        )
+      const fetchedProfile = await fetchPublicProfile(did)
 
-      const avatar = await externalProfile?.get('avatar')
-      const name = await externalProfile?.get('name')
-      const country = await externalProfile?.get('country')
-
-      publicProfile = {
-        ...publicProfile,
-        avatar: avatar,
-        name,
-        country,
+      if (!fetchedProfile) {
+        return existingProfile
       }
 
-      return publicProfile as PublicProfile
+      const avatar = await fetchedProfile.get('avatar')
+      const name = await fetchedProfile.get('name')
+      const description = await fetchedProfile.get('description')
+      const country = await fetchedProfile.get('country')
+      const website = await fetchedProfile.get('website')
+
+      const newProfile: PublicProfile = {
+        ...existingProfile,
+        avatar,
+        name,
+        description,
+        country,
+        website,
+      }
+
+      return newProfile
     } catch (error) {
       logger.error(error)
       return rejectWithValue(
@@ -153,7 +159,7 @@ export const fetchAllPublicProfilesData = createAppAsyncThunk(
   'profiles/fetchAllPublicProfileData',
   async (_, { getState, dispatch, signal, rejectWithValue }) => {
     if (signal.aborted) {
-      return rejectWithValue('Cancel requuest')
+      return rejectWithValue('Cancel request')
     }
     const accounts = selectAccounts(getState())
     Object.values(accounts).forEach((account) => {

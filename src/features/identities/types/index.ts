@@ -14,3 +14,35 @@ export type Account = {
 export type NormalizedAccounts = {
   [k: string]: Account
 }
+
+export type CreateIdentityStep =
+  | 'CreateIdentifier'
+  | 'ClaimUsername'
+  | 'StorageLocation'
+  | 'CreateProfile'
+
+export type CreateIdentityStepStatus =
+  | 'None'
+  | 'Loading'
+  | 'Success'
+  | 'Failure'
+
+export type MigrateIdentityStep =
+  | 'createDID'
+  | 'connectIdentity'
+  | 'migrateData'
+  | 'deleteIdentity'
+
+export type MigrateIdentityStepStatus =
+  | 'idle'
+  | 'processing'
+  | 'success'
+  | 'error'
+
+export type UpdateMigrateStepStatusFunction = (
+  step: MigrateIdentityStep,
+  status: MigrateIdentityStepStatus
+) => void
+
+export type UpdateMigrationProgressFunction = (progress: number) => void
+export type UpdateContextMigrationProgressFunction = (progress: number) => void

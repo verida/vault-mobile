@@ -17,15 +17,25 @@ export function useTransactionsForMaybeAssetId({
     minifiedBlockchainAccounts
   )
 
+  const userAddress = maybeAddress || null
+  const asset = maybeAssetId || null
+
+  const skip = !userAddress || !asset
+
   const {
     data,
     isLoading: loading,
     error: error,
     refetch,
-  } = useGetTransactionsForTokenQuery({
-    userAddress: maybeAddress || null,
-    asset: maybeAssetId || null,
-  })
+  } = useGetTransactionsForTokenQuery(
+    {
+      userAddress,
+      asset,
+    },
+    {
+      skip,
+    }
+  )
 
   return React.useMemo(
     () => ({

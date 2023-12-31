@@ -22,6 +22,7 @@ export const ProtocolsProvider: React.FunctionComponent = (props) => {
       logger.info('Processing deep link')
       logger.debug('Deep link', { uri })
       // Iterate over the handlers, return true if one of them handled the deep link, false otherwise
+      // TODO: Change the handler to async and refactor this code as some protocol handlers might be async
       const wasHandled = protocolHandlers.current.some((handler) => {
         try {
           // The handler will return true if it handled the deep link, false otherwise

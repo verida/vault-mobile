@@ -7,11 +7,15 @@ import {
   DEFAULT_ICON_COLOR,
   GREY_120,
   LIGHT_GREY_600,
+  LIGHT_ORANGE_COLOR,
   LIGHTGREY_COLOR,
   ORANGE_COLOR,
   PRIMARY_COLOR,
+  PRIMARY_COLOR_5,
   PRIMARY_COLOR_50,
   PRIMARY_COLOR_100,
+  PRIMARY_COLOR_200,
+  PRIMARY_COLOR_300,
   SEPARATOR,
   SEPARATOR_EXTRA_LIGHT,
   SEPARATOR_LIGHT,
@@ -27,6 +31,11 @@ import {
   WARNING_LIGHT_COLOR,
   WHITE_COLOR,
 } from 'constants/color'
+import {
+  NUNITO_SANS,
+  NUNITO_SANS_BOLD,
+  NUNITO_SANS_SEMIBOLD,
+} from 'constants/text'
 
 export const defaultTheme = {
   color: {
@@ -56,9 +65,13 @@ export const defaultTheme = {
 
     veridaGreen: VERIDA_COLOR,
     orange: ORANGE_COLOR,
+    lightOrange: LIGHT_ORANGE_COLOR,
 
+    primary5: PRIMARY_COLOR_5,
     primary50: PRIMARY_COLOR_50,
     primary100: PRIMARY_COLOR_100,
+    primary200: PRIMARY_COLOR_200,
+    primary300: PRIMARY_COLOR_300,
 
     transparent: 'transparent',
     black: BLACK_COLOR_OPACITY(1),
@@ -68,12 +81,14 @@ export const defaultTheme = {
     black500: BLACK_COLOR_OPACITY(0.5),
     lightGrey: LIGHTGREY_COLOR,
     veryLightGrey: VERY_LIGHTGREY_COLOR,
+    text: TEXT_COLOR,
     textGrey100: TEXT_GREY_100,
     textGrey500: TEXT_GREY_500,
     textGrey600: LIGHT_GREY_600,
     textLightGrey: TEXT_LIGHT_GREY,
     textLightGrey30: Color(TEXT_COLOR).alpha(0.3).toString(),
     textLightGrey50: Color(TEXT_COLOR).alpha(0.5).toString(),
+    text70: Color(TEXT_COLOR).alpha(0.7).toString(),
     grey120: GREY_120,
 
     shadowLightGrey: SHADOW_LIGHT_GREY,
@@ -93,6 +108,7 @@ export const defaultTheme = {
     grey900: '#0F1011',
   },
   spacing: {
+    xxs: 2,
     xs: 4,
     s: 8,
     sm: 12,
@@ -112,6 +128,7 @@ export const defaultTheme = {
     xl: 18,
     xxl: 22,
     xxxl: 24,
+    s28: 28, // TODO: Find a better name or refactor the list
     xxxxl: 36,
   },
   roundness: {
@@ -126,5 +143,10 @@ export const defaultTheme = {
   iconSize: {
     s: 16,
     m: 24,
+  },
+  fontFamily: {
+    regular: NUNITO_SANS,
+    semibold: NUNITO_SANS_SEMIBOLD,
+    bold: NUNITO_SANS_BOLD,
   },
 }

@@ -16,14 +16,14 @@ const logger = new Logger('veridaAccountMaybeToMinifiedVeridaAccount')
 
 const veridaAccountToMinifiedBlockchainAccountEip155 = (
   blockchainAccount: BlockchainAccount
-): MinifiedBlockchainAccountEip155 => {
+): MinifiedBlockchainAccountEip155 | undefined => {
   const { address, privateKey } = blockchainAccount
 
   if (typeof address !== 'string' || !ethers.utils.isAddress(address))
     throw new Error(`Expected Ethereum address, encountered "${address}".`)
 
-  if (typeof privateKey !== 'string' || !privateKey.length)
-    throw new Error('Expected non-empty string privateKey.')
+  // Ignore watched wallets.
+  if (typeof privateKey !== 'string' || !privateKey.length) return undefined
 
   return {
     namespace: SupportedBlockchainNamespace.EIP_155,
@@ -35,14 +35,14 @@ const veridaAccountToMinifiedBlockchainAccountEip155 = (
 const veridaAccountToMinifiedBlockchainAccountNear = ({
   address: signerId,
   privateKey,
-}: BlockchainAccount): MinifiedBlockchainAccountNear => {
+}: BlockchainAccount): MinifiedBlockchainAccountNear | undefined => {
   if (typeof signerId !== 'string' || !signerId.length)
     throw new Error(
       `Expected non-empty string signerId, encountered "${String(signerId)}".`
     )
 
-  if (typeof privateKey !== 'string' || !privateKey.length)
-    throw new Error('Expected non-empty string privateKey.')
+  // Ignore watched wallets.
+  if (typeof privateKey !== 'string' || !privateKey.length) return undefined
 
   return {
     namespace: SupportedBlockchainNamespace.NEAR,
