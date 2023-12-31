@@ -1,7 +1,7 @@
 import { AutoAccount } from '@verida/account-node'
 import { Client } from '@verida/client-rn'
 import { StorageLink } from '@verida/storage-link'
-import { EnvironmentType } from '@verida/types'
+import { EnvironmentType, IContext } from '@verida/types'
 import { config } from 'config'
 import {
   fetchAllPublicProfilesData,
@@ -24,7 +24,7 @@ import { addAccount } from '../slice'
 import {
   Account,
   UpdateMigrateStepStatusFunction,
-  UpdateMigrationProgressFunction,
+  // UpdateMigrationProgressFunction,
 } from '../types'
 import { canMigrateToMainnet, migrateContext } from '../utils'
 import { useCurrentIdentity } from './useCurrentIdentity'
@@ -41,8 +41,8 @@ export function useMigrateIdentity() {
   // TODO: Once working, break down the big functions in smaller ones
   const migrate = useCallback(
     async (
-      updateStatus: UpdateMigrateStepStatusFunction,
-      updateMigrationProgress: UpdateMigrationProgressFunction
+      updateStatus: UpdateMigrateStepStatusFunction
+      // updateMigrationProgress: UpdateMigrationProgressFunction
     ) => {
       if (!currentIdentity) {
         throw new Error('No current identity')
@@ -186,42 +186,60 @@ export function useMigrateIdentity() {
         const nbContextsToMigrate = cleanedContextNames.length
         logger.debug(`Number of contexts to migrate ${nbContextsToMigrate}`)
 
-        // TODO: Try optimise by running them in parallel, test if supported by the migration. Sequential is actual easier for the progress.
+        const contexts: {
+          name: string
+          source: IContext
+          target: IContext
+        }[] = []
+
+        // Have to open the context in sequence to avoid conflict when writing them in the DID Document.
         for (let i = 0; i < cleanedContextNames.length; i++) {
-          const contextHash = cleanedContextNames[i]
-          try {
-            const [sourceContext, targetContext] = await Promise.all([
-              currentClient.openContext(contextHash, false),
-              mainnetClient.openContext(contextHash, true),
-            ])
+          const contextName = cleanedContextNames[i]
+          const [sourceContext, targetContext] = await Promise.all([
+            currentClient!.openContext(contextName, false),
+            mainnetClient.openContext(contextName, true),
+          ])
 
-            if (!sourceContext) {
-              throw new Error('Could not open source context')
-            }
-            logger.debug('Source context opened', { contextHash })
-
-            if (!targetContext) {
-              throw new Error('Could not open target context')
-            }
-            logger.debug('Target context opened', { contextHash })
-
-            logger.debug('Migrating context', { contextHash })
-            await migrateContext(sourceContext, targetContext, (progress) => {
-              updateMigrationProgress((i + progress) / nbContextsToMigrate)
-            })
-            logger.debug('Context migrated', { contextHash })
-          } catch (error: unknown) {
-            if (
-              error instanceof Error &&
-              error.message.match('Unable to locate requested storage context')
-            ) {
-              updateMigrationProgress((i + 1) / nbContextsToMigrate)
-              continue
-            }
-            logger.error(error) // TODO: After debugging, remove it and let it be reported at a upper level
-            throw new Error('Could not migrate context', { cause: error })
+          if (!sourceContext) {
+            throw new Error('Could not open source context')
           }
+          logger.debug('Source context opened', { contextName })
+
+          if (!targetContext) {
+            throw new Error('Could not open target context')
+          }
+          logger.debug('Target context opened', { contextName })
+
+          contexts.push({
+            name: contextName,
+            source: sourceContext,
+            target: targetContext,
+          })
         }
+
+        // Run the actual migration of databases in parallel
+        await Promise.allSettled(
+          contexts.map(async ({ name: contextName, source, target }) => {
+            try {
+              logger.debug('Migrating context', { contextName })
+              await migrateContext(source, target, (_progress) => {
+                // TODO: Handle the progress
+              })
+              logger.debug('Context migrated', { contextName })
+            } catch (error: unknown) {
+              if (
+                error instanceof Error &&
+                error.message.match(
+                  'Unable to locate requested storage context'
+                )
+              ) {
+                return
+              }
+              logger.error(error) // TODO: After debugging, remove it and let it be reported at a upper level
+              throw new Error('Could not migrate context', { cause: error })
+            }
+          })
+        )
 
         logger.debug('All contexts migrated')
       } catch (error: unknown) {
