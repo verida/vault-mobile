@@ -34,7 +34,9 @@ export const fetchInboxCount = throttle(
   { leading: true, trailing: false }
 )
 
-// TODO: Cache external profiles so they don't need to be re-fetched?
+/**
+ * @deprecated use `getPublicProfile` from features/profiles
+ */
 export async function getPublicProfile(
   did: string,
   contextName: string = VERIDA_VAULT_CONTEXT_NAME,
