@@ -31,6 +31,7 @@ import { useMainNavigation } from 'navigation/hooks'
 import { Theme } from 'styles/types'
 
 import { ChainMetadataListItem } from './components'
+import { Typography } from 'components'
 
 const tabs: SegmentData[] = [
   {
@@ -154,9 +155,9 @@ function BlockchainNetworks(): JSX.Element {
               keyExtractor={keyExtractor}
               ListEmptyComponent={() => (
                 <View style={styles.emptyListContainer}>
-                  <Title style={styles.emptyListTitle}>
+                  <Typography style={styles.emptyListTitle}>
                     {`There is no ${route.title}`}
-                  </Title>
+                  </Typography>
                 </View>
               )}
             />
@@ -189,7 +190,6 @@ const createStyles = (theme: Theme) =>
       marginHorizontal: theme.spacing.xxxxl,
     },
     emptyListTitle: {
-      fontSize: theme.fontSize.xxl,
       marginTop: theme.spacing.m,
       textAlign: 'center',
     },
