@@ -2,6 +2,7 @@ import { DatabasePermissionOptionsEnum, IDatastore } from '@verida/types'
 import axios from 'axios'
 import { config } from 'config'
 import EventEmitter from 'events'
+import { getNetworkFromDID } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import moment from 'moment'
 import { Linking } from 'react-native'
@@ -25,6 +26,23 @@ const delay = async (ms: number) => {
 }
 
 let CONNECTION_CACHE: any
+
+async function getCurrentDID(): Promise<string | never> {
+  const context = await AccountManager.getInstance().context
+
+  const account = context?.getAccount()
+  const did = await account?.did()
+  if (!did) {
+    throw new Error('No Account found')
+  }
+
+  return did
+}
+
+function getDataConnectorUrl(did: string) {
+  const network = getNetworkFromDID(did)
+  return config.verida[network].dataConnectorServerUrl
+}
 
 // possible states for status: syncing, disabled, active
 
@@ -83,8 +101,12 @@ export default class DataConnectorsManager {
       return CONNECTION_CACHE
     }
 
+    const did = await getCurrentDID()
+
+    const dataConnectorUrl = getDataConnectorUrl(did)
+
     // @todo cache
-    const response = await axios.get(`${config.DATA_CONNECTOR_URL}/providers`)
+    const response = await axios.get(`${dataConnectorUrl}/providers`)
     CONNECTION_CACHE = response.data
     return CONNECTION_CACHE
   }
@@ -231,14 +253,12 @@ class DataConnection extends EventEmitter {
   }
 
   public async initiateAuth() {
-    const context = await AccountManager.getInstance().context
-
-    const account = context?.getAccount()
-    const did = await account?.did()
+    const did = await getCurrentDID()
+    const dataConnectorUrl = getDataConnectorUrl(did)
 
     // logger.debug(`Initiating auth for ${this.source}`, { did })
     Linking.openURL(
-      `${config.DATA_CONNECTOR_URL}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
+      `${dataConnectorUrl}/connect/${this.source}?did=${did}&key=${this.encryptionKey}`
     )
   }
 
@@ -328,12 +348,17 @@ class DataConnection extends EventEmitter {
       const context = await AccountManager.getInstance().context
       const account = context?.getAccount()
       const did = await account?.did()
+      if (!did) {
+        throw new Error('No Account found')
+      }
+
+      const dataConnectorUrl = getDataConnectorUrl(did)
 
       const axiosInstance = axios.create()
 
       // @todo: handle errors
       const syncRequestResult = await axiosInstance.get(
-        `${config.DATA_CONNECTOR_URL}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
+        `${dataConnectorUrl}/sync/${this.name}?accessToken=${accessToken}&refreshToken=${refreshToken}&did=${did}&key=${this.encryptionKey}`
       )
       const { serverDid, contextName, syncRequestId, syncRequestDatabaseName } =
         syncRequestResult.data
@@ -358,7 +383,7 @@ class DataConnection extends EventEmitter {
     contextName: string,
     syncRequestId: string,
     syncRequestDatabaseName: string,
-    retryCount: number = config.DATA_CONNECTOR_RETRY_LIMIT
+    retryCount: number = config.dataConnector.retryLimit
   ) {
     const context = await AccountManager.getInstance().context
     const account = context?.getAccount()
@@ -419,7 +444,7 @@ class DataConnection extends EventEmitter {
         }
 
         // Delay for five seconds, then try again
-        await delay(config.DATA_CONNECTOR_RETRY_INTERVAL)
+        await delay(config.dataConnector.retyInterval)
         retryCount--
 
         this.checkSync(
@@ -452,8 +477,8 @@ class DataConnection extends EventEmitter {
     syncRequest: any
   ) {
     const context = await AccountManager.getInstance().context
-    const account = context?.getAccount()
-    const did = await account?.did()
+    const did = await getCurrentDID()
+
     const { schemas, newAuth } = syncRequest.syncInfo
 
     try {
@@ -513,10 +538,12 @@ class DataConnection extends EventEmitter {
         }
       }
 
+      const dataConnectorUrl = getDataConnectorUrl(did)
+
       // cleanup by calling sync done to the server so the temporary data can be deleted
       const axiosInstance = axios.create()
       await axiosInstance.get(
-        `${config.DATA_CONNECTOR_URL}/syncDone/${this.name}?did=${did}`
+        `${dataConnectorUrl}/syncDone/${this.name}?did=${did}`
       )
 
       this.syncLast = new Date().toISOString()

@@ -1,7 +1,12 @@
 import EncryptionUtils from '@verida/encryption-utils'
+import { EnvironmentType } from '@verida/types'
+import { Alert as AlertBanner } from 'components'
 import didJWT from 'did-jwt'
+import { getNetworkFromDID, selectSelectedAccount } from 'features/identities'
 import { Logger } from 'features/telemetry'
+import { isNetworkCompatibleForConnect } from 'features/veridaConnect'
 import { useWalletConnectContext } from 'features/walletConnect'
+import { capitalize } from 'lodash'
 import moment from 'moment'
 import { Container, Content, Icon } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
@@ -14,6 +19,7 @@ import CustomFooter from 'components/Layouts/CustomFooter'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import { useAppSelector } from 'reduxStore/types'
 
 import MobileSvg from '../../assets/mobile.svg'
 import Button from '../../components/Button'
@@ -34,9 +40,23 @@ export default (props) => {
   const [status, setStatus] = useState('loading')
   const [info, setInfo] = useState({})
   const [expiry, setExpiry] = useState(null)
+  const [expired, setExpired] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [ws, setWebsocket] = useState(null)
-  const [expired, setExpired] = useState(false)
+
+  const currentIdentity = useAppSelector(selectSelectedAccount)
+  const currentIdentityNetwork = currentIdentity?.did
+    ? getNetworkFromDID(currentIdentity.did)
+    : null
+
+  const hasNetworkInRequest = !!info.network
+
+  const compatibleNetwork =
+    !currentIdentityNetwork || !hasNetworkInRequest
+      ? 'unknown'
+      : isNetworkCompatibleForConnect(currentIdentityNetwork, info.network)
+      ? 'compatible'
+      : 'incompatible'
 
   const { onRequestConnect } = useWalletConnectContext()
 
@@ -95,12 +115,23 @@ export default (props) => {
                 keyBytes
               )
               const parsed = JSON.parse(decrypted)
+
               setInfo({
                 request,
                 payload,
                 params: parsed,
                 _expiry,
                 key,
+                network:
+                  parsed.environment === EnvironmentType.MAINNET
+                    ? EnvironmentType.MAINNET
+                    : parsed.environment === EnvironmentType.TESTNET
+                    ? EnvironmentType.TESTNET
+                    : parsed.environment === EnvironmentType.DEVNET
+                    ? EnvironmentType.DEVNET
+                    : parsed.environment === EnvironmentType.LOCAL
+                    ? EnvironmentType.LOCAL
+                    : null,
                 logoUrl: parsed.logoUrl,
                 openUrl: parsed.openUrl ? parsed.openUrl : null,
                 walletConnect: parsed.walletConnect,
@@ -303,32 +334,34 @@ export default (props) => {
           <View style={style.content}>
             {!errorMessage && (
               <>
-                <AppLogo url={logoUrl} style={style.img} />
+                {logoUrl ? (
+                  <AppLogo url={logoUrl} style={style.img} />
+                ) : (
+                  <MobileSvg style={style.img} />
+                )}
                 <Text style={style.appName}>{appName}</Text>
               </>
             )}
-            <View style={style.verified}>
-              {/* TODO: render verified status */}
-              {/*{!errorMessage ? (*/}
-              {/*  <>*/}
-              {/*    <AntDesign name='check' size={15} color={SUCCESS_COLOR} />*/}
-              {/*    <Text style={style.verifiedText}> Verified</Text>*/}
-              {/*  </>*/}
-              {/*) : (*/}
-              {/*  <>*/}
-              {/*    <AntDesign*/}
-              {/*      name='exclamationcircleo'*/}
-              {/*      size={15}*/}
-              {/*      color={WARNING_COLOR}*/}
-              {/*    />*/}
-              {/*    <Text style={[style.verifiedText, style.warningText]}>*/}
-              {/*      {' '}*/}
-              {/*      Not Verified*/}
-              {/*    </Text>*/}
-              {/*  </>*/}
-              {/*)}*/}
-            </View>
-            <MobileSvg style={style.img} />
+            {/* <View style={style.verified}>
+              {!errorMessage ? (
+                <>
+                  <AntDesign name='check' size={15} color={SUCCESS_COLOR} />
+                  <Text style={style.verifiedText}> Verified</Text>
+                </>
+              ) : (
+                <>
+                  <AntDesign
+                    name='exclamationcircleo'
+                    size={15}
+                    color={WARNING_COLOR}
+                  />
+                  <Text style={[style.verifiedText, style.warningText]}>
+                    {' '}
+                    Not Verified
+                  </Text>
+                </>
+              )}
+            </View> */}
             <Text style={style.title}>New Login Request</Text>
             <View>
               <Text style={style.text}>
@@ -347,7 +380,7 @@ export default (props) => {
                   'DD MMM, YYYY [at] h:mm a'
                 )}
               </Text>
-              {!expired && (
+              {compatibleNetwork !== 'incompatible' && !expired && (
                 <Text style={style.expiresTime}>
                   Expires:{' '}
                   <CountDownText
@@ -359,7 +392,23 @@ export default (props) => {
                 </Text>
               )}
             </View>
-            {(expired || errorMessage) && (
+            {compatibleNetwork === 'incompatible' ? (
+              <View style={style.alertBannerContainer}>
+                <AlertBanner type='error'>{`The application requests a ${capitalize(
+                  info.network
+                )} Identity, switch to a compatible one.`}</AlertBanner>
+              </View>
+            ) : null}
+            {compatibleNetwork === 'unknown' && !hasNetworkInRequest ? (
+              <View style={style.alertBannerContainer}>
+                <AlertBanner type='warning'>
+                  {`The application doesn't specify a network, compatibility issue may occur with your ${capitalize(
+                    currentIdentityNetwork
+                  )} Identity`}
+                </AlertBanner>
+              </View>
+            ) : null}
+            {compatibleNetwork !== 'incompatible' && (expired || errorMessage) && (
               <View style={style.modal}>
                 {errorMessage && (
                   <>
@@ -408,36 +457,38 @@ export default (props) => {
           </View>
         ) : null}
       </Content>
-      <CustomFooter>
-        <View style={style.actions}>
-          {expired || errorMessage ? (
-            <Button style={style.btn} onPress={tryAgainOnPress}>
-              Try Again
-            </Button>
-          ) : (
-            <Button
-              style={[style.btn, style.mr]}
-              color='grey'
-              onPress={deny}
-              disabled={status !== 'loaded' && status !== 'error'}>
-              Ignore
-            </Button>
-          )}
-          {!errorMessage && !expired ? (
-            <Button
-              style={style.btn}
-              onPress={approve}
-              disabled={status !== 'loaded'}>
-              Login
-            </Button>
-          ) : null}
-        </View>
-        {status === 'approving' || status === 'denying' ? (
-          <View>
-            <Text style={style.text}>Sending response...</Text>
+      {compatibleNetwork !== 'incompatible' ? (
+        <CustomFooter>
+          <View style={style.actions}>
+            {expired || errorMessage ? (
+              <Button style={style.btn} onPress={tryAgainOnPress}>
+                Try Again
+              </Button>
+            ) : (
+              <Button
+                style={[style.btn, style.mr]}
+                color='grey'
+                onPress={deny}
+                disabled={status !== 'loaded' && status !== 'error'}>
+                Ignore
+              </Button>
+            )}
+            {!errorMessage && !expired ? (
+              <Button
+                style={style.btn}
+                onPress={approve}
+                disabled={status !== 'loaded'}>
+                Login
+              </Button>
+            ) : null}
           </View>
-        ) : null}
-      </CustomFooter>
+          {status === 'approving' || status === 'denying' ? (
+            <View>
+              <Text style={style.text}>Sending response...</Text>
+            </View>
+          ) : null}
+        </CustomFooter>
+      ) : null}
     </Container>
   )
 }
@@ -448,6 +499,7 @@ const style = StyleSheet.create({
   },
   content: {
     flex: 1,
+    padding: 16,
     alignItems: 'center',
   },
   img: {
@@ -458,12 +510,16 @@ const style = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
     fontSize: 22,
     textAlign: 'center',
+    marginTop: 12,
     marginBottom: 12,
   },
   text: {
     fontFamily: NUNITO_SANS_SEMIBOLD,
     fontSize: 14,
     textAlign: 'center',
+  },
+  alertBannerContainer: {
+    alignSelf: 'stretch',
   },
   timeout: {
     fontSize: 12,

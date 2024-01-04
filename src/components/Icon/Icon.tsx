@@ -1,75 +1,332 @@
 import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
+// @ts-ignore as it comes from our own declaration extension
+import { SvgProps, View } from 'react-native'
+import AntIcon from 'react-native-vector-icons/AntDesign'
+import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
+import { IconProps } from 'react-native-vector-icons/Icon'
+import Ionicon from 'react-native-vector-icons/Ionicons'
+import MaterialCommunityIcon from 'react-native-vector-icons/MaterialCommunityIcons'
+import MaterialIcon from 'react-native-vector-icons/MaterialIcons'
 
 import EditIcon from 'assets/edit_icon.svg'
 import CopyIcon from 'assets/icons/copy.svg'
 import GoToIcon from 'assets/icons/goto_icon.svg'
 import ShareIcon from 'assets/icons/share_icon.svg'
 import TickIcon from 'assets/icons/tick_icon.svg'
-import WalletIcon from 'assets/icons/wallet.svg'
 import WarningIcon from 'assets/icons/warning_icon.svg'
-import PlusIcon from 'assets/plus_icon.svg'
+import PlusIcon from 'assets/plus_icon.svg' // TODO: The icon should not have a color
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
 
-export type IconName =
-  | 'Wallet'
-  | 'ethereum'
-  | 'copy'
+// TODO: Check with the designers on whether to use custom icons or from a library and if so, pick a single library rather than the mix of different icons styles with currently have.
+
+type CustomIconName =
   | 'edit'
-  | 'plus'
+  | 'copy'
   | 'goto'
   | 'share'
-  | 'warning'
   | 'tick'
+  | 'warning'
+  | 'plus'
+  | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
-/**
- *  NOTE: to apply color correctly, need to modify the SVG by replacing color value with a generic name "currentColor"
- * Ex: asssets/icons/copy.svg
- *
- * <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
- *  <path fill-rule="evenodd" clip-rule="evenodd"
- *   d="M15.5 1H4.5C3.4 1 2.5 1.9 2.5 3V16C2.5 16.55 2.95 17 3.5 17C4.05 17 4.5 16.55 4.5 16V4C4.5 3.45 4.95 3 5.5 3H15.5C16.05 3 16.5 2.55 16.5 2C16.5 1.45 16.05 1 15.5 1ZM19.5 5H8.5C7.4 5 6.5 5.9 6.5 7V21C6.5 22.1 7.4 23 8.5 23H19.5C20.6 23 21.5 22.1 21.5 21V7C21.5 5.9 20.6 5 19.5 5ZM9.5 21H18.5C19.05 21 19.5 20.55 19.5 20V8C19.5 7.45 19.05 7 18.5 7H9.5C8.95 7 8.5 7.45 8.5 8V20C8.5 20.55 8.95 21 9.5 21Z"
- *  fill="currentColor" />
- * </svg>
- *
- */
+type LibIconName =
+  | 'business'
+  | 'calculator'
+  | 'wallet'
+  | 'clipboard' // TODO: replace the clipboard by copy?
+  | 'inbox'
+  | 'question-circle'
+  | 'exclamation-circle'
+  | 'check-circle'
+  | 'error-circle'
+  | 'chevron-back'
+  | 'chevron-forward'
+  | 'chevron-up'
+  | 'chevron-down'
+  | 'caret-back'
+  | 'caret-forward'
+  | 'caret-up'
+  | 'caret-down'
+  | 'scan-qr'
+  | 'close'
+  | 'flash-on'
+  | 'flash-off'
+  | 'search'
+  | 'add'
+  | 'settings'
+  | 'log-in'
+  | 'log-out'
+  | 'user'
+  | 'user-multiple'
+  | 'profile'
+  | 'home'
+  | 'data'
+  | 'connections'
+  | 'blockchain'
+  | 'radio-button-unchecked'
+  | 'radio-button-checked'
+
+export type IconName = CustomIconName | LibIconName
+
 export const Icon = (props: {
   name: IconName
-  size?: number
+  size?: number | string
   color?: string
 }) => {
   const { theme } = useTheme()
-  const { name, size = 24, color = theme.color.icon } = props
-  let ic = null
-  switch (name) {
-    case 'Wallet':
-      ic = <WalletIcon width={size} height={size} fill={color} />
-      break
-    case 'ethereum':
-      ic = <EthereumIcon width={size} height={size} fill={color} />
-      break
-    case 'copy':
-      ic = <CopyIcon width={size} height={size} fill={color} />
-      break
-    case 'edit':
-      ic = <EditIcon width={size} height={size} fill={color} />
-      break
-    case 'plus':
-      ic = <PlusIcon width={size} height={size} fill={color} />
-      break
-    case 'goto':
-      ic = <GoToIcon width={size} height={size} fill={color} />
-      break
-    case 'share':
-      ic = <ShareIcon width={size} height={size} fill={color} />
-      break
-    case 'warning':
-      ic = <WarningIcon width={size} height={size} fill={color} />
-      break
-    case 'tick':
-      ic = <TickIcon width={size} height={size} fill={color} />
-      break
+  const { name, size = '100%', color = theme.color.iconDefault } = props
+
+  const iconProps: Partial<IconProps> = {
+    style: {
+      fontSize: 90,
+      color,
+    },
+    adjustsFontSizeToFit: true,
   }
 
-  return ic
+  const svgProps: SvgProps = {
+    width: size,
+    height: size,
+    fill: color,
+  }
+
+  switch (name) {
+    case 'ethereum':
+      return <EthereumIcon {...svgProps} />
+    case 'copy':
+      return <CopyIcon {...svgProps} />
+    case 'clipboard':
+      return <Ionicon name='copy-outline' {...iconProps} />
+    case 'edit':
+      return <EditIcon {...svgProps} />
+    case 'plus':
+      return <PlusIcon {...svgProps} />
+    case 'goto':
+      return <GoToIcon {...svgProps} />
+    case 'share':
+      return <ShareIcon {...svgProps} />
+    case 'warning':
+      return <WarningIcon {...svgProps} />
+    case 'tick':
+      return <TickIcon {...svgProps} />
+    case 'business':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='business' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'calculator':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='calculator' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'wallet':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='wallet' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'inbox':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='email' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'question-circle':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='questioncircleo' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'exclamation-circle':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='exclamationcircle' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'check-circle':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='checkcircleo' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'error-circle':
+      return (
+        <IconWrapper size={size}>
+          <AntIcon name='closecircle' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'chevron-back':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='chevron-back' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'chevron-down':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='chevron-down' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'chevron-forward':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='chevron-forward' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'chevron-up':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='chevron-up' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'caret-back':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='caret-back' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'caret-down':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='caret-down' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'caret-forward':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='caret-forward' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'caret-up':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='caret-up' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'scan-qr':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='qrcode-scan' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'close':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='close' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'flash-on':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='flash' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'flash-off':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='flash-off' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'search':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='search' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'add':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='add' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'settings':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='settings-sharp' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'log-in':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='log-in-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'log-out':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='log-out-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'user':
+    case 'profile':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='person' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'user-multiple':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='people' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'home':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='home' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'data':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='server' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'connections':
+      return (
+        <IconWrapper size={size}>
+          <Ionicon name='share-social' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'blockchain':
+      return (
+        <IconWrapper size={size}>
+          <FontAwesomeIcon name='chain' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'radio-button-checked':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='circle-slice-8' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'radio-button-unchecked':
+      return (
+        <IconWrapper size={size}>
+          <MaterialCommunityIcon name='circle-outline' {...iconProps} />
+        </IconWrapper>
+      )
+  }
+}
+
+type IconWrapperProps = {
+  size?: number | string
+  children: React.ReactNode
+}
+function IconWrapper(props: IconWrapperProps) {
+  return (
+    <View
+      style={{
+        width: props.size,
+        aspectRatio: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+      }}>
+      {props.children}
+    </View>
+  )
 }

@@ -1,16 +1,3 @@
-import { ethers, utils } from 'ethers'
-
-export function generateIdentityMnemonic() {
-  const node = utils.entropyToMnemonic(utils.randomBytes(16))
-  const wallet = ethers.Wallet.fromMnemonic(node)
-
-  return {
-    mnemonic: node,
-    privateKey: wallet.privateKey,
-  }
-}
-
-export function getPrivateKeyFromMnemonic(mnemonic: string) {
-  const wallet = ethers.Wallet.fromMnemonic(mnemonic)
-  return wallet.privateKey
-}
+export * from './identity'
+export * from './migration'
+export * from './network'

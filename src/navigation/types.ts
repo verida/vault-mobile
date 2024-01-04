@@ -1,21 +1,30 @@
 import { BottomTabScreenProps } from '@react-navigation/bottom-tabs'
-import { CompositeScreenProps } from '@react-navigation/native'
+import {
+  CompositeScreenProps,
+  NavigatorScreenParams,
+} from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 
-import {
-  BlockchainWalletWithAccounts,
-  Network,
-  NFT,
-  NFTCollection,
-} from 'api/types'
-import { AddIdentityMode } from 'pages/Account/Identity/Identity'
+import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
   DataTabScreenParams,
 } from 'pages/Data'
+import { HomeScreenParams } from 'pages/Home'
+import {
+  AddIdentityScreenParams,
+  CreateIdentityScreenParams,
+  DeleteIdentityScreenParams,
+  ImportIdentityScreenParams,
+  MigrateIdentityConfirmationScreenParams,
+  MigrateIdentityExecutionScreenParams,
+  RemoveIdentityScreenParams,
+  ShareIdentityScreenParams,
+} from 'pages/Identity'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { OnboardingScreenParams } from 'pages/Onboarding'
 import {
   AddVeridaOneCustomLinkScreenParams,
   AddVeridaOnePlatformLinkScreenParams,
@@ -33,7 +42,10 @@ import {
   PaymentRequestScreenParams,
   ProofRequestScreenParams,
 } from 'pages/Requests'
-import { PolygonIdCircuitsSettingsScreenParams } from 'pages/Settings/PolygonID'
+import {
+  PolygonIdCircuitsSettingsScreenParams,
+  SettingsScreenParams,
+} from 'pages/Settings'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
@@ -42,23 +54,21 @@ export type RootStackParams = {
 }
 
 export type AuthStackParams = {
-  Start: undefined
-  Identity: undefined
-  AddIdentity: { mode?: AddIdentityMode }
+  Onboarding: OnboardingScreenParams
+  AddIdentity: AddIdentityScreenParams
+  CreateIdentity: CreateIdentityScreenParams
+  ImportIdentity: ImportIdentityScreenParams
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
-  SeedPhraseEntered: undefined
   VerifyPhrase: { shuffled: string[] }
   CreatePin: undefined
-  Success: undefined
-  SelectNetwork: undefined
 }
 
 export type AuthStackScreenProps<S extends keyof AuthStackParams> =
   NativeStackScreenProps<AuthStackParams, S>
 
 export type TabsScreenParams = {
-  Home: undefined
+  Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   Connections: undefined
@@ -72,8 +82,8 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
   >
 
 export type MainStackParams = {
+  Tabs: NavigatorScreenParams<TabsScreenParams>
   Inbox: undefined
-  Dashboard: undefined
   InboxItem: { inboxItemId: string }
   LoginHistory: undefined
   LoginRequest: undefined
@@ -85,6 +95,9 @@ export type MainStackParams = {
   AddVeridaOneCustomLink: AddVeridaOneCustomLinkScreenParams
   AddVeridaOnePlatformLink: AddVeridaOnePlatformLinkScreenParams
   EditVeridaOnePlatformLink: EditVeridaOnePlatformLinkScreenParams
+  ShareIdentity: ShareIdentityScreenParams
+  MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
+  MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
 
   SeedPhraseView: undefined
   ManageWallets: undefined
@@ -102,16 +115,16 @@ export type MainStackParams = {
   SuccessFailure: undefined
   DataFolder: DataFolderScreenParams
   DataItem: DataItemScreenParams
-  Settings: undefined
   ChangePin: undefined
   ScanQrCode: QrCodeScannerScreenParams
-  DeleteAccount: undefined
-  Identity: undefined
-  AddIdentity: { mode?: AddIdentityMode }
-  SeedPhraseEntered: {
-    usePrivateKey: boolean
-    previousScreen?: string
-  }
+
+  // Identity
+  AddIdentity: AddIdentityScreenParams
+  CreateIdentity: CreateIdentityScreenParams
+  ImportIdentity: ImportIdentityScreenParams
+  DeleteIdentity: DeleteIdentityScreenParams
+  RemoveIdentity: RemoveIdentityScreenParams
+
   SeedPhrase: undefined
   SeedPhraseGenerated: undefined
   VerifyPhrase: undefined
@@ -120,12 +133,9 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
-  Networks: undefined
-  StorageNodes: { data: Network[] }
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
-  Success: undefined
 
   NFTCollectionDetail: { collection: NFTCollection }
   NFTDetail: { nft: NFT }
@@ -139,6 +149,7 @@ export type MainStackParams = {
   PaymentRequest: PaymentRequestScreenParams
   ProofRequest: ProofRequestScreenParams
 
+  Settings: SettingsScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
 }
 

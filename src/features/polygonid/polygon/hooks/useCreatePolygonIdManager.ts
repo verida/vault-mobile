@@ -1,9 +1,12 @@
 import { config } from 'config'
+import { getNetworkFromDID } from 'features/identities'
 import { getPolygonIdPrivateKey } from 'features/polygonid/utils'
 import { Logger } from 'features/telemetry'
+import { getDidClientConfigForNetwork } from 'features/verida'
 import * as React from 'react'
 
 import AccountManager from 'api/AccountManager'
+import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 
 import { Stateful } from '../../@types'
 import { PolygonIdConfig, PolygonIdManagerConfig } from '../@types'
@@ -64,19 +67,22 @@ export function useCreatePolygonIdManager(): Stateful<string> {
       )
       return
     }
-    if (!account || !account.privateKey) {
+    if (!account || !account.did || !account.privateKey) {
       logger.warn('No Verida account, cannot create Polygon ID Manager yet')
       return
     }
+
+    const network = getNetworkFromDID(account.did)
+    const didConfig = getDidClientConfigForNetwork(network)
 
     logger.info('Polygon ID is ready and Verida account is available')
 
     // TODO: Find a better way to pass the sensitive information to the manager.
     const polygonIdManagerConfig: PolygonIdManagerConfig = {
       veridaPrivateKey: account.privateKey,
-      veridaEnvironment: config.VERIDA_ENVIRONMENT,
-      veridaContextName: config.VERIDA_CONTEXT_NAME,
-      veridaDidClientConfig: config.VERIDA_DID_CLIENT_CONFIG,
+      veridaEnvironment: network,
+      veridaContextName: VERIDA_VAULT_CONTEXT_NAME,
+      veridaDidClientConfig: didConfig,
       veridaCredentialRecordSchema:
         'https://common.schemas.verida.io/credential/base/v0.2.0/schema.json',
       // PolygonID Private Key is a 32 char hex

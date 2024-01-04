@@ -10,6 +10,9 @@ type Props = TextProps & {
   children: React.ReactNode
 }
 
+/**
+ * @deprecated Use Typography instead
+ */
 export const Paragraph = (props: Props) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />

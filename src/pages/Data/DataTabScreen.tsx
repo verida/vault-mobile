@@ -5,7 +5,6 @@ import React, { useEffect, useState } from 'react'
 
 import { DataList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { TabsScreenProps } from 'navigation/types'
 
 const logger = new Logger('Pages/Data/DataTabScreen')
@@ -57,7 +56,6 @@ export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
 
   return (
     <Container>
-      <NavigationHeader left={{ icon: 'skip' }} title='Data' />
       {loading ? (
         <LoadingView />
       ) : (

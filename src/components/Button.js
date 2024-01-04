@@ -19,6 +19,7 @@ export default function Button(props) {
       case 'grey':
         return 'primary'
       case 'transparent-white':
+      case 'danger':
         return 'white'
       case 'transparent-grey':
         return 'grey'

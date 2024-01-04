@@ -1,22 +1,17 @@
-import { BottomTabNavigationProp } from '@react-navigation/bottom-tabs'
-import { CompositeNavigationProp } from '@react-navigation/native'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { useNavigation } from '@react-navigation/native'
 import { Logger } from 'features/telemetry'
 import { useCallback } from 'react'
 import parse from 'url-parse'
 
-import { MainStackParams, TabsScreenParams } from 'navigation/types'
+import { MainStackParams } from 'navigation/types'
 
 const logger = new Logger('DeepLinks')
 
-type NavProp = CompositeNavigationProp<
-  BottomTabNavigationProp<TabsScreenParams, keyof TabsScreenParams>,
-  NativeStackNavigationProp<MainStackParams, keyof MainStackParams>
->
-
 // TODO: To be handled as a protocol handler (for the Verida Connect part) or in Navigation linking configuration for pure screens navigation
 
-export function useDeeplink(navigation: NavProp) {
+export function useDeeplink() {
+  const navigation = useNavigation()
+
   return useCallback(
     (url: string) => {
       try {
@@ -32,6 +27,7 @@ export function useDeeplink(navigation: NavProp) {
         }
 
         if (screenName === 'SingleConnection') {
+          // TODO: Remove the ts-ignore and try to fix the issue
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment
           // @ts-ignore need to better typing here
           navigation.jumpTo('Connections')
