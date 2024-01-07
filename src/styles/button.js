@@ -3,6 +3,7 @@ import { StyleSheet } from 'react-native'
 import {
   DISABLED_COLOR,
   LIGHTGREY_COLOR,
+  ORANGE_COLOR,
   PRIMARY_COLOR,
   WHITE_COLOR,
 } from '../constants/color'
@@ -42,6 +43,10 @@ export default StyleSheet.create({
   warning: {
     backgroundColor: WHITE_COLOR,
     borderColor: WHITE_COLOR,
+  },
+  danger: {
+    backgroundColor: ORANGE_COLOR,
+    borderColor: ORANGE_COLOR,
   },
   transparent: {
     ...transparent,

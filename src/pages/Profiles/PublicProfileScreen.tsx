@@ -54,7 +54,6 @@ import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import ProfileImageLoader from 'components/ProfileImageLoader'
 import PropertyList from 'components/PropertyList'
 import {
@@ -128,6 +127,12 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
   props
 ) => {
   const { navigation } = props
+
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Profile',
+    })
+  }, [navigation])
 
   const { width } = useWindowDimensions()
   const publicProfileData = useAppSelector(selectSelectedPublicProfile)
@@ -1145,7 +1150,6 @@ export const PublicProfileScreen: React.FC<PublicProfileScreenProps> = (
       loadingOverlayColorLight
       withLoadingView
       showLoading={!loading && quickFetching}>
-      <NavigationHeader title='Profile' left={{ icon: null } as any} />
       {!currentAccountDID ? (
         <LoadingView />
       ) : (

@@ -8,17 +8,6 @@
  */
 import { AssetId } from 'caip'
 
-export type NetworkNode = {
-  node_code: string
-  name: string
-  description: string
-  ISO2_CC: string
-  icon?: string
-  db_address: string
-  messaging_address: string
-  notification_address: string
-}
-
 /**
  * A blockchain network (ie: goerli)
  */
@@ -86,14 +75,6 @@ export interface BlockchainWalletWithAccounts extends BlockchainWallet {
   // Transient fields for displaying
   icon?: string
   count?: number
-}
-
-// What network is this?
-export type Network = {
-  name: string
-  default_node_code: string
-  nodes: NetworkNode[]
-  selected_node?: number
 }
 
 export interface PagingInfo {
@@ -172,11 +153,3 @@ export interface ClaimBadgeResponse {
   badge?: Badge | null
   success?: boolean
 }
-
-export type AddIdentityStepType =
-  | 'CreateIdentifier'
-  | 'ClaimUsername'
-  | 'StorageLocation'
-  | 'CreateProfile'
-
-export type AddIdentityStepStatus = 'None' | 'Loading' | 'Success' | 'Failure'

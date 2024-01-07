@@ -1,12 +1,12 @@
 import { useThemeAwareStyle } from 'hooks'
 import LottieView from 'lottie-react-native'
 import React from 'react'
-import { StyleSheet, Text, View, ViewProps } from 'react-native'
+import { StyleSheet, View, ViewProps } from 'react-native'
 
 import BlurCircle from 'assets/blur_circle.svg'
 import FailureCross from 'assets/failure_cross.svg'
 import SuccessTick from 'assets/success_tick.svg'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import { Typography } from 'components/Typography'
 import { Theme } from 'styles/types'
 
 type StatusInfoProps = {
@@ -69,28 +69,25 @@ export const StatusInfo: React.FunctionComponent<StatusInfoProps> = (props) => {
           }}>
           {icon}
         </View>
-        <Text style={styles.statusTitle}>{statusTitle}</Text>
-        <Text style={styles.statusSubtitle}>{statusSubtitle}</Text>
+        <Typography variant='h2' style={styles.statusTitle}>
+          {statusTitle}
+        </Typography>
+        <Typography variant='h5' style={styles.statusSubtitle}>
+          {statusSubtitle}
+        </Typography>
       </View>
     </View>
   )
 }
 
-// TODO: Use the theme when proper typography is available
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     statusTitle: {
       marginTop: theme.spacing.l,
-      fontSize: 28,
-      lineHeight: 36,
-      fontFamily: NUNITO_SANS_BOLD,
     },
     statusSubtitle: {
-      marginTop: theme.spacing.m,
-      paddingHorizontal: theme.spacing.l,
-      fontSize: 16,
-      lineHeight: 24,
-      color: theme.color.textLightGrey,
+      opacity: 0.6,
+      marginTop: theme.spacing.sm,
     },
     dotsLoader: {
       width: 48,

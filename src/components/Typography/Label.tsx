@@ -15,6 +15,9 @@ type LabelProps = React.ComponentProps<typeof NativeText> & {
   style?: StyleProp<TextStyle>
 }
 
+/**
+ * @deprecated Use Typography instead
+ */
 export const Label = (props: LabelProps) => {
   const styles = useThemeAwareStyle(createStyles)
   return <Text {...props} style={[styles.text, props.style]} />
