@@ -1,6 +1,9 @@
 import { useNavigation } from '@react-navigation/native'
+import { useEmitter } from 'hooks'
 import React from 'react'
 import { Image, StyleSheet, TouchableOpacity, View } from 'react-native'
+
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 
 import {
   BLACK_COLOR_OPACITY,
@@ -11,30 +14,51 @@ import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from '../../constants/text'
 import { findTypeById } from '../../helpers/inbox'
 import Text from '../Text'
 
-export default ({ options }) => {
+/**
+ * TODO: refactor + this component should be named sth likes InboxItem
+ */
+export default ({ options: data }) => {
   const navigation = useNavigation()
-  const inboxType = findTypeById(options.type)
+  const inboxType = findTypeById(data.type)
+  const [inboxItem, setInboxItem] = React.useState(data)
 
   const onPress = () =>
-    navigation.navigate('InboxItem', { inboxItemId: options.id })
+    navigation.navigate('InboxItem', { inboxItemId: inboxItem.id })
+
+  useEmitter('PUBLIC_PROFILE_LOADED', async (event) => {
+    if (event.profileId.indexOf(inboxItem?.item?.sentBy?.did ?? '') >= 0) {
+      // FIXME: this is a hack at the moment to force the item update itself when the required public profile is loaded
+      const response = await inboxItem.fetchMe?.()
+      setInboxItem(response)
+    }
+  })
 
   return (
     <TouchableOpacity
-      style={[style.card, !options.read ? style.unread : '']}
+      style={[style.card, !inboxItem.read ? style.unread : '']}
       onPress={onPress}>
-      <Image source={options.avatar} style={style.logo} />
+      <ShimmerPlaceholder
+        visible={!inboxItem.isProfileLoading}
+        style={style.logo}>
+        <Image source={inboxItem.avatar} style={style.logo} />
+      </ShimmerPlaceholder>
+
       <View style={style.details}>
         <View style={style.tile}>
           <View>
             <View style={{ flexDirection: 'row' }}>
-              <Text style={style.title}>{options.title} </Text>
+              <Text style={style.title}>{inboxItem.title} </Text>
             </View>
           </View>
-          <Text style={style.date}>{options.createdAt}</Text>
+          <Text style={style.date}>{inboxItem.createdAt}</Text>
         </View>
         <View>
-          {Boolean(options.from) && (
-            <Text style={style.from}>{options.from}</Text>
+          {Boolean(inboxItem.from) && (
+            <ShimmerPlaceholder
+              visible={!inboxItem.isProfileLoading}
+              style={style.from}>
+              <Text style={style.from}>{inboxItem.from}</Text>
+            </ShimmerPlaceholder>
           )}
         </View>
         <View style={{ ...style.tile, ...style.footer }}>

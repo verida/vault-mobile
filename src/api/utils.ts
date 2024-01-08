@@ -1,7 +1,10 @@
 import { setNewMessagesCount } from 'features/inbox'
+import { getProfilesCache } from 'features/profiles'
 import { Logger } from 'features/telemetry'
 import { isValidVeridaDid } from 'features/verida'
+import { emitter } from 'helpers'
 import { throttle } from 'lodash'
+import { ImageSourcePropType } from 'react-native'
 import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
@@ -34,12 +37,17 @@ export const fetchInboxCount = throttle(
   { leading: true, trailing: false }
 )
 
-// TODO: Cache external profiles so they don't need to be re-fetched?
 export async function getPublicProfile(
   did: string,
   contextName: string = VERIDA_VAULT_CONTEXT_NAME,
   fallbackToVeridaContext = true
-) {
+): Promise<{
+  name: string
+  avatar: ImageSourcePropType
+  isLoading?: boolean // For showing loading shimmers on the profile components
+}> {
+  const profileCache = getProfilesCache()
+
   try {
     if (!isValidVeridaDid(did)) {
       // No need to try get the public profile of a non-Verida DID.
@@ -51,28 +59,61 @@ export async function getPublicProfile(
       }
     }
 
-    let publicProfile = await AccountManager.getInstance()
-      .getClient()
-      ?.openPublicProfile(did, contextName, 'basicProfile')
-    let profileData: any = await publicProfile?.getMany({}, {})
+    const profileId = `${contextName}-${did}`
+    const loadedProfile = profileCache.get(profileId)?.value
 
-    if ((!profileData || !profileData.name) && fallbackToVeridaContext) {
-      // No valid profile found for the requested context, so fallback to default for the user
-      publicProfile = await AccountManager.getInstance().context?.openProfile(
-        'basicProfile',
-        did
-      )
+    const shouldRefetchProfile =
+      Date.now() - (profileCache.get(profileId)?.timestamp ?? Date.now()) >
+      10 * 60 * 1000 // 10 minutes
 
-      profileData = await publicProfile?.getMany({}, {})
+    async function fetchPublicProfileAndUpdateCache() {
+      let publicProfile = await AccountManager.getInstance()
+        .getClient()
+        ?.openPublicProfile(did, contextName, 'basicProfile')
+      let profileData: any = await publicProfile?.getMany({}, {})
+
+      if ((!profileData || !profileData.name) && fallbackToVeridaContext) {
+        // No valid profile found for the requested context, so fallback to default for the user
+        publicProfile = await AccountManager.getInstance().context?.openProfile(
+          'basicProfile',
+          did
+        )
+
+        profileData = await publicProfile?.getMany({}, {})
+      }
+
+      const name = await publicProfile?.get('name')
+      const avatar = await publicProfile?.get('avatar')
+
+      profileCache.set(profileId, {
+        name: name || 'Unknown',
+        avatar: avatar || DefaultAvatar,
+        ...profileData,
+      })
+
+      if (loadedProfile?.avatar !== avatar || loadedProfile?.name !== name) {
+        emitter.emit('PUBLIC_PROFILE_LOADED', {
+          profileId,
+        })
+      }
+
+      return {
+        name: name || 'Unknown',
+        avatar: avatar || DefaultAvatar,
+        ...profileData,
+      }
     }
 
-    const name = await publicProfile?.get('name')
-    const avatar = await publicProfile?.get('avatar')
-
-    return {
-      name: name || 'Unknown',
-      avatar: avatar || DefaultAvatar,
-      ...profileData,
+    if (loadedProfile) {
+      shouldRefetchProfile && fetchPublicProfileAndUpdateCache()
+      return loadedProfile as any
+    } else {
+      fetchPublicProfileAndUpdateCache()
+      return {
+        isLoading: true,
+        name: 'Unknown',
+        avatar: DefaultAvatar,
+      }
     }
   } catch (error) {
     logger.error(error)
