@@ -135,5 +135,3 @@ export function mergeWithRemoteConfig(remoteConfig: Partial<typeof config>) {
 
   return !isEqual(config, originalConfig)
 }
-
-console.log(JSON.stringify(config, null, 2))
