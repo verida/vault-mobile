@@ -10,7 +10,6 @@ The remote configuration must have the same structure as the built-in one. It sh
 
 ```json
 {
-  ...
   "features": {
     "veridaMainnet": {},
     "home": {}
@@ -33,7 +32,7 @@ The remote configuration must have the same structure as the built-in one. It sh
 }
 ```
 
-All values in the remote configuration are optional, only define the ones needing to be overriden. For instance:
+All values in the remote configuration are optional, **only define the ones needing to be overriden**. For instance:
 
 ```json
 {
@@ -50,15 +49,19 @@ All values in the remote configuration are optional, only define the ones needin
 Once you have defined the subset of configuration to push remotely, go to the [Firebase console](https://console.firebase.google.com/project/verida-vault/config)
 
 - Select `wallet_app_config` item and edit it
-  ![Select wallet_app_config](../../images/firebase-remote-config-1.png)
+
+![Select wallet_app_config](../../images/firebase-remote-config-1.png)
 
 - Expand the JSON editor
-  ![Config JSON editor](../../images/firebase-remote-config-2.png)
+
+![Config JSON editor](../../images/firebase-remote-config-2.png)
 
 - Add the value for the updated configuration
-  ![Config JSON editor](../../images/firebase-remote-config-3.png)
+
+![Config JSON editor](../../images/firebase-remote-config-3.png)
 
 - Save and publish changes
-  ![Config JSON editor](../../images/firebase-remote-config-4.png)
+
+![Config JSON editor](../../images/firebase-remote-config-4.png)
 
 Done, now the clients will receive the config update OTA and merge it with the built-in one. Users will be asked to restart the application to take the merged configuration into account.
