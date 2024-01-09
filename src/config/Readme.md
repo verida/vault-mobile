@@ -1,100 +1,64 @@
 # Remote Config
 
-# Usage
+A built-in configuration of the Verida Wallet is define when building the application. If we need to update some of the values in the configuration, we can do use the Firebase remote config instead of/before release and deploying a new app version.
 
-## Step 1
+## Configuration structure
 
-Get the shape of the current config object
+The remote configuration coming from Firebase is merged with the built-in configuration. The remote values taking priority over the built-in ones.
 
-```ts
-console.log(JSON.stringify(config, null, 2))
-```
-
-Something like this log will be output to the console. Based on this we can update the properties of the configuration. Let's move to step 2.
+The remote configuration must have the same structure as the built-in one. It should look like as below, but check `src/config/index.ts` to get the up-to-date structure.
 
 ```json
 {
   ...
   "features": {
-    "veridaMainnet": {
-      ...
-    },
-    "home": {
-      ...
-    }
+    "veridaMainnet": {},
+    "home": {}
   },
   "verida": {
-    "local": {
-      ...
-    },
-    "devnet": {
-      ...
-    },
-    "testnet": {
-      ...
-    },
-    "mainnet": {
-      ...
-    }
+    "local": {},
+    "devnet": {},
+    "testnet": {},
+    "mainnet": {}
   },
-  "walletProvider": {
-    ...
-  },
-  "dataConnector": {
-    ...
-  },
-  "blockchain": {
-    ...
-  },
-  "walletConnect": {
-    ...
-  },
+  "walletProvider": {},
+  "dataConnector": {},
+  "blockchain": {},
+  "walletConnect": {},
   "polygonId": {
-    "common": {
-      ...
-    },
-    "testnet": {
-      ...
-    },
-    "mainnet": {
-      ...
-    }
+    "common": {},
+    "testnet": {},
+    "mainnet": {}
   }
 }
 ```
 
-## Step 2
-
-Update Firebase remote config base on the shape of the config object at step 1
-For example, if we need to update the Verida Testnet RPC we will need to update the Firebase remote config with these steps
-
-> The change to be added
+All values in the remote configuration are optional, only define the ones needing to be overriden. For instance:
 
 ```json
 {
-  ...// Other configs
   "verida": {
-    ...// Others configs for Verida
     "testnet": {
-      "rpcUrl": "the-updated-rpc-url",
+      "rpcUrl": "https://the-updated-rpc-url"
     }
   }
 }
 ```
 
-**Edit the app remote config on Firebase**
+## Set up in Firebase
 
-Firebase Remote Config https://console.firebase.google.com/project/verida-vault/config
+Once you have defined the subset of configuration to push remotely, go to the [Firebase console](https://console.firebase.google.com/project/verida-vault/config)
 
-> Select `wallet_app_config` item and edit it
-> ![Select wallet_app_config](../../images/firebase-remote-config-1.png)
+- Select `wallet_app_config` item and edit it
+  ![Select wallet_app_config](../../images/firebase-remote-config-1.png)
 
-> Expand the JSON editor
-> ![Config JSON editor](../../images/firebase-remote-config-2.png)'
+- Expand the JSON editor
+  ![Config JSON editor](../../images/firebase-remote-config-2.png)
 
-> Add the value for the updated Verida Testnet `rpcUrl` > ![Config JSON editor](../../images/firebase-remote-config-3.png)
+- Add the value for the updated configuration
+  ![Config JSON editor](../../images/firebase-remote-config-3.png)
 
-> Save and publish changes
-> ![Config JSON editor](../../images/firebase-remote-config-4.png)
+- Save and publish changes
+  ![Config JSON editor](../../images/firebase-remote-config-4.png)
 
-Done, now the clients will get the config update for Verida Testnet `rpcURL` OTA
+Done, now the clients will receive the config update OTA and merge it with the built-in one. Users will be asked to restart the application to take the merged configuration into account.
