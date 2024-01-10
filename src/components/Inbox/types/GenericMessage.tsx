@@ -60,7 +60,7 @@ function GenericMessage(props: GenericMessageProps) {
   }, [inboxItem])
 
   useEmitter('PUBLIC_PROFILE_LOADED', async (event) => {
-    if (event.profileId.indexOf(inboxItem?.item?.sentBy?.did ?? '') >= 0) {
+    if (event.profileId.indexOf(inboxItem?.item?.sentBy?.did) >= 0) {
       fetchSenderData()
     }
   })
