@@ -89,17 +89,17 @@ export async function getPublicProfile(
         avatar: avatar || DefaultAvatar,
         ...profileData,
       })
-
-      emitter.emit('PUBLIC_PROFILE_LOADED', {
-        profileId,
-      })
     } catch (error) {
       logger.error(error)
-      return {
+
+      profileCache.set(profileId, {
         name: 'Unknown',
         avatar: DefaultAvatar,
-      }
+      })
     }
+    emitter.emit('PUBLIC_PROFILE_LOADED', {
+      profileId,
+    })
   }
 
   if (loadedProfile) {
