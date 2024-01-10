@@ -58,7 +58,7 @@ export async function getPublicProfile(
     }
   }
 
-  const profileId = `${contextName}-${did}-20`
+  const profileId = `${contextName}-${did}`
   const loadedProfile = profileCache.get(profileId)?.value
 
   const shouldRefetchProfile =
