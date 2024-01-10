@@ -48,25 +48,24 @@ export async function getPublicProfile(
 }> {
   const profileCache = getProfilesCache()
 
-  try {
-    if (!isValidVeridaDid(did)) {
-      // No need to try get the public profile of a non-Verida DID.
+  if (!isValidVeridaDid(did)) {
+    // No need to try get the public profile of a non-Verida DID.
 
-      // TODO: Report the DID to the telemetry so that we can plan on supporting the DID method but for the moment our telemetry quota is limited
-      return {
-        name: 'Unknown',
-        avatar: DefaultAvatar,
-      }
+    // TODO: Report the DID to the telemetry so that we can plan on supporting the DID method but for the moment our telemetry quota is limited
+    return {
+      name: 'Unknown',
+      avatar: DefaultAvatar,
     }
+  }
 
-    const profileId = `${contextName}-${did}`
-    const loadedProfile = profileCache.get(profileId)?.value
+  const profileId = `${contextName}-${did}-20`
+  const loadedProfile = profileCache.get(profileId)?.value
 
-    const shouldRefetchProfile =
-      Date.now() - (profileCache.get(profileId)?.timestamp ?? Date.now()) >
-      10 * 60 * 1000 // 10 minutes
+  const shouldRefetchProfile =
+    Date.now() - (profileCache.get(profileId)?.timestamp ?? 0) > 10 * 60 * 1000 // 10 minutes
 
-    async function fetchPublicProfileAndUpdateCache() {
+  async function fetchPublicProfileAndUpdateCache() {
+    try {
       let publicProfile = await AccountManager.getInstance()
         .getClient()
         ?.openPublicProfile(did, contextName, 'basicProfile')
@@ -91,34 +90,25 @@ export async function getPublicProfile(
         ...profileData,
       })
 
-      if (loadedProfile?.avatar !== avatar || loadedProfile?.name !== name) {
-        emitter.emit('PUBLIC_PROFILE_LOADED', {
-          profileId,
-        })
-      }
-
+      emitter.emit('PUBLIC_PROFILE_LOADED', {
+        profileId,
+      })
+    } catch (error) {
+      logger.error(error)
       return {
-        name: name || 'Unknown',
-        avatar: avatar || DefaultAvatar,
-        ...profileData,
-      }
-    }
-
-    if (loadedProfile) {
-      shouldRefetchProfile && fetchPublicProfileAndUpdateCache()
-      return loadedProfile as any
-    } else {
-      fetchPublicProfileAndUpdateCache()
-      return {
-        isLoading: true,
         name: 'Unknown',
         avatar: DefaultAvatar,
       }
     }
-  } catch (error) {
-    logger.error(error)
+  }
 
+  if (loadedProfile) {
+    shouldRefetchProfile && fetchPublicProfileAndUpdateCache()
+    return loadedProfile as any
+  } else {
+    fetchPublicProfileAndUpdateCache()
     return {
+      isLoading: true,
       name: 'Unknown',
       avatar: DefaultAvatar,
     }
