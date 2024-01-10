@@ -15,6 +15,8 @@ export type EmitterTypes = {
   UPDATE_PROFILE_USERNAME: Record<string, unknown>
   UPDATE_PUBLIC_PROFILE: undefined
 
+  PUBLIC_PROFILE_LOADED: { profileId: string }
+
   // Identity status
   IDENTITY_NOT_EXIST: {
     retry?: () => void
