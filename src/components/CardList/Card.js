@@ -26,7 +26,7 @@ export default ({ options: data }) => {
     navigation.navigate('InboxItem', { inboxItemId: inboxItem.id })
 
   useEmitter('PUBLIC_PROFILE_LOADED', async (event) => {
-    if (event.profileId.indexOf(inboxItem?.item?.sentBy?.did ?? '') >= 0) {
+    if (event.profileId.indexOf(inboxItem?.item?.sentBy?.did) >= 0) {
       // FIXME: this is a hack at the moment to force the item update itself when the required public profile is loaded
       const response = await inboxItem.fetchMe?.()
       setInboxItem(response)
