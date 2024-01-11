@@ -1,4 +1,3 @@
-import dynamicLinks from '@react-native-firebase/dynamic-links'
 import { useFocusEffect } from '@react-navigation/native'
 import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
@@ -6,7 +5,6 @@ import { isPolygonIdMessage } from 'features/polygonid'
 import { Logger } from 'features/telemetry'
 import { useCallback, useEffect } from 'react'
 import { Linking } from 'react-native'
-import parse from 'url-parse'
 
 import { fetchInboxCount } from 'api/utils'
 
@@ -77,27 +75,6 @@ export function useHomeScreenHandlers() {
       subscriber?.remove()
     }
   }, [processDeepLink])
-
-  // ##### Dynamic Links? #####
-
-  useEffect(() => {
-    // TODO: Find out what's going on here :-/
-    dynamicLinks()
-      .getInitialLink()
-      .then(async (link) => {
-        if (link?.url?.includes('redirect')) {
-          try {
-            const parsedUrl = parse(link.url, true)
-            const { query } = parsedUrl
-            await Linking.openURL(
-              'https://www.google.com/search?q=' + query.keyword
-            )
-          } catch (error) {
-            logger.error(error)
-          }
-        }
-      })
-  }, [])
 
   // ##### Inbox #####
 
