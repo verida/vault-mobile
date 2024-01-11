@@ -11,7 +11,7 @@ import { isEmpty } from 'lodash'
 import moment from 'moment'
 import { Body, Card, CardItem, Left, Right, Text } from 'native-base'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Image, StyleSheet } from 'react-native'
+import { Image, ImageSourcePropType, StyleSheet } from 'react-native'
 
 import { DefaultAvatar, getPublicProfile } from 'api/utils'
 import Folder from 'api/VaultCommon/managers/data/folder'
@@ -70,7 +70,7 @@ export const DataGridListItem: React.FunctionComponent<DataGridListItemProps> =
         try {
           let issuerProfile: {
             name?: string
-            avatar?: string
+            avatar?: ImageSourcePropType | string
           }
           // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
           if (isValidVeridaDid(issuerDid)) {
