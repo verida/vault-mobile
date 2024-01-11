@@ -24,7 +24,7 @@ import { addAccount } from '../slice'
 import {
   Account,
   UpdateMigrateStepStatusFunction,
-  // UpdateMigrationProgressFunction,
+  UpdateMigrationProgressFunction,
 } from '../types'
 import { canMigrateToMainnet, migrateContext } from '../utils'
 import { useCurrentIdentity } from './useCurrentIdentity'
@@ -38,11 +38,10 @@ export function useMigrateIdentity() {
   const currentIdentity = useCurrentIdentity()
   const { country: currentIdentityCountry } = useCurrentProfile()
 
-  // TODO: Once working, break down the big functions in smaller ones
   const migrate = useCallback(
     async (
-      updateStatus: UpdateMigrateStepStatusFunction
-      // updateMigrationProgress: UpdateMigrationProgressFunction
+      updateStatus: UpdateMigrateStepStatusFunction,
+      updateMigrationProgress: UpdateMigrationProgressFunction
     ) => {
       if (!currentIdentity) {
         throw new Error('No current identity')
@@ -183,9 +182,6 @@ export function useMigrateIdentity() {
         )
         logger.debug('Context names', { contextNames: cleanedContextNames })
 
-        const nbContextsToMigrate = cleanedContextNames.length
-        logger.debug(`Number of contexts to migrate ${nbContextsToMigrate}`)
-
         const contexts: {
           name: string
           source: IContext
@@ -217,13 +213,35 @@ export function useMigrateIdentity() {
           })
         }
 
+        const nbContextsToMigrate = contexts.length
+        logger.debug(`Number of contexts to migrate ${nbContextsToMigrate}`)
+
+        const progressByContext = new Map<string, number>()
+
+        const updateProgressByContext = (context: string, progress: number) => {
+          logger.debug(`progress for ${context}: ${progress}`)
+          // Update the progress map
+          progressByContext.set(context, progress)
+
+          // Calculate the aggregated progress
+          let totalProgress = 0
+          for (const progressForContext of progressByContext.values()) {
+            totalProgress += progressForContext
+          }
+          const aggregatedProgress = totalProgress / nbContextsToMigrate
+
+          // Log the aggregated progress
+          logger.debug(`Aggregated progress: ${aggregatedProgress}`)
+          updateMigrationProgress(aggregatedProgress)
+        }
+
         // Run the actual migration of databases in parallel
         await Promise.allSettled(
           contexts.map(async ({ name: contextName, source, target }) => {
             try {
               logger.debug('Migrating context', { contextName })
-              await migrateContext(source, target, (_progress) => {
-                // TODO: Handle the progress
+              await migrateContext(source, target, (progress) => {
+                updateProgressByContext(contextName, progress)
               })
               logger.debug('Context migrated', { contextName })
             } catch (error: unknown) {
@@ -233,6 +251,7 @@ export function useMigrateIdentity() {
                   'Unable to locate requested storage context'
                 )
               ) {
+                updateProgressByContext(contextName, 1)
                 return
               }
               logger.error(error) // TODO: After debugging, remove it and let it be reported at a upper level

@@ -17,8 +17,8 @@ import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, InteractionManager, StyleSheet, View } from 'react-native'
+import { formatPercentage } from 'utils'
 
-// import { formatPercentage } from 'utils'
 import LoadingView from 'components/LoadingView'
 import { useAuth } from 'hooks/useAuth'
 import { MainStackScreenProps } from 'navigation/types'
@@ -94,19 +94,19 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       []
     )
 
-    // const updateMigrationProgress = useCallback((newProgress) => {
-    //   setStatusItems((prevItems) =>
-    //     prevItems.map((item) =>
-    //       item.key === 'migrateData'
-    //         ? {
-    //             ...item,
-    //             label: `Migrating your data (${formatPercentage(newProgress)})`,
-    //             progress: newProgress,
-    //           }
-    //         : item
-    //     )
-    //   )
-    // }, [])
+    const updateMigrationProgress = useCallback((newProgress) => {
+      setStatusItems((prevItems) =>
+        prevItems.map((item) =>
+          item.key === 'migrateData'
+            ? {
+                ...item,
+                label: `Migrating your data (${formatPercentage(newProgress)})`,
+                progress: newProgress,
+              }
+            : item
+        )
+      )
+    }, [])
 
     const { switchToAccount, refresh } = useAuth()
     const currentIdentity = useCurrentIdentity()
@@ -120,8 +120,8 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       try {
         setStatus('processing')
         const migratedDid = await migrate(
-          updateStepStatus
-          // updateMigrationProgress
+          updateStepStatus,
+          updateMigrationProgress
         )
         setNewDid(migratedDid)
         setStatus('success')
@@ -129,8 +129,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
         logger.error(error)
         setStatus('error')
       }
-    }, [switchingIdentity, migrate, updateStepStatus])
-    // }, [switchingIdentity, migrate, updateStepStatus, updateMigrationProgress])
+    }, [switchingIdentity, migrate, updateStepStatus, updateMigrationProgress])
 
     useEffect(() => {
       if (currentIdentity) {
