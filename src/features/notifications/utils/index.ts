@@ -30,7 +30,7 @@ const androidNotificationIconStyle = {
 }
 
 export function pushNewMessageNotification(message: VeridaReceivedMessage) {
-  logger.debug('New message to push notification', { message })
+  logger.debug('Display notification for new inbox message', { message })
   PushNotification.localNotification({
     channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
     title:
@@ -49,7 +49,7 @@ export function pushNewMessageNotification(message: VeridaReceivedMessage) {
 }
 
 export function pushRefreshInboxNotification() {
-  logger.debug('New refresh inbox notification')
+  logger.debug('Display notification for refresh inbox')
   PushNotification.localNotification({
     channelId: MESSAGE_NOTIFICATION_CHANNEL_ID,
     title: DEFAULT_INBOX_MESSAGE_NOTIFICATION_TITLE,
@@ -78,11 +78,12 @@ export async function initNotifications() {
   PushNotification.configure({
     onRegister: function (token) {
       logger.info('Notification successfully registered')
-      logger.debug('New notification token', { token })
+      logger.debug('Push Notification token', { token })
     },
 
     // (required) Called when a remote is received or opened, or local notification is opened
     onNotification: function (notification) {
+      logger.debug('Handling notification opened', { notification })
       try {
         const { data } = notification
         // TODO: handle remote notification
@@ -110,6 +111,7 @@ export async function initNotifications() {
     // (optional) Called when Registered Action is pressed and invokeApp is false, if true onNotification will be called (Android)
     onAction: function (_notification) {
       // process the action
+      logger.debug('Notification action', { notification: _notification })
     },
 
     onRegistrationError: function (error) {
@@ -131,7 +133,9 @@ export async function initNotifications() {
   })
 
   messaging().setBackgroundMessageHandler(async (remoteMessage) => {
-    logger.debug('New remote notification', { message: remoteMessage })
+    logger.debug('New background message from Firebase', {
+      message: remoteMessage,
+    })
     // The notification server, via Firebase, only sends ping signaling a new message but doesn't pass the message, for security reasons.
     // The remote message provides the DID of the recipient: remoteMessage.data.did
     // TODO: This handler should not display a generic notification, it should refresh the inbox and the new message listener on the inbox would display a contextual notification.
