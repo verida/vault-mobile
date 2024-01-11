@@ -87,7 +87,14 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       (step: MigrateIdentityStep, stepStatus: MigrateIdentityStepStatus) => {
         setStatusItems((prevItems) =>
           prevItems.map((item) =>
-            item.key === step ? { ...item, status: stepStatus } : item
+            item.key === step
+              ? {
+                  ...item,
+                  status: stepStatus,
+                  progressIndeterminate:
+                    item.key === 'migrateData' && stepStatus === 'processing',
+                }
+              : item
           )
         )
       },
@@ -102,6 +109,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
                 ...item,
                 label: `Migrating your data (${formatPercentage(newProgress)})`,
                 progress: newProgress,
+                progressIndeterminate: false,
               }
             : item
         )
