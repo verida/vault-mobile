@@ -28,6 +28,10 @@ export async function initNotifications() {
       (_created) => ({}) // (optional) callback returns whether the channel was created, false means it already existed.
     )
   }
+  if (Platform.OS === 'ios') {
+    // Ensure the badge is not display until we define what to do with it.
+    PushNotificationIOS.setApplicationIconBadgeNumber(0)
+  }
 
   PushNotification.configure({
     onRegister: function (token) {
@@ -57,6 +61,9 @@ export async function initNotifications() {
 
         // (required) Called when a remote is received or opened, or local notification is opened
         notification.finish(PushNotificationIOS.FetchResult.NoData)
+
+        // Ensure the badge is not display until we define what to do with it.
+        PushNotificationIOS.setApplicationIconBadgeNumber(0)
       } catch (error) {
         logger.error(error)
       }
