@@ -4,7 +4,6 @@ import { authSlice } from 'features/auth'
 import { cryptoWalletApi, cryptoWalletSlice } from 'features/cryptoWallet'
 import { identitiesSlice } from 'features/identities'
 import { inboxSlice } from 'features/inbox'
-import { linksSlice } from 'features/links'
 import { profilesSlice } from 'features/profiles'
 import { seedphrasesSlice } from 'features/seedphrases'
 import { settingsSlice } from 'features/settings'
@@ -47,7 +46,6 @@ export const rootReducer = combineReducers({
   seedPhrases: seedphrasesSlice.reducer,
   inbox: inboxSlice.reducer,
   profiles: profilesSlice.reducer,
-  links: linksSlice.reducer,
 
   // API reducers
   [cryptoWalletApi.reducerPath]: cryptoWalletApi.reducer,

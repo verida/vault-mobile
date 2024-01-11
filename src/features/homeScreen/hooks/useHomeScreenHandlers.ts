@@ -1,19 +1,14 @@
 import dynamicLinks from '@react-native-firebase/dynamic-links'
-import { useFocusEffect, useLinkTo } from '@react-navigation/native'
+import { useFocusEffect } from '@react-navigation/native'
 import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
-import {
-  selectNavigationLink,
-  setNavigationLink as setNavigationLinkAction,
-} from 'features/links'
 import { isPolygonIdMessage } from 'features/polygonid'
 import { Logger } from 'features/telemetry'
 import { useCallback, useEffect } from 'react'
-import { InteractionManager, Linking } from 'react-native'
+import { Linking } from 'react-native'
 import parse from 'url-parse'
 
 import { fetchInboxCount } from 'api/utils'
-import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 const logger = new Logger('HomeScreen')
 
@@ -82,28 +77,6 @@ export function useHomeScreenHandlers() {
       subscriber?.remove()
     }
   }, [processDeepLink])
-
-  // ##### Navigation Links #####
-
-  const dispatch = useAppDispatch()
-
-  const navigationLink = useAppSelector(selectNavigationLink)
-
-  const setNavigationLink = useCallback(
-    (link) => dispatch(setNavigationLinkAction(link)),
-    [dispatch]
-  )
-
-  const linkTo = useLinkTo()
-
-  useEffect(() => {
-    if (navigationLink) {
-      InteractionManager.runAfterInteractions(() => {
-        linkTo(navigationLink)
-        setNavigationLink(null)
-      })
-    }
-  }, [navigationLink, linkTo, setNavigationLink])
 
   // ##### Dynamic Links? #####
 

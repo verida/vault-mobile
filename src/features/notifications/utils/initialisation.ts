@@ -1,10 +1,8 @@
 import PushNotificationIOS from '@react-native-community/push-notification-ios'
 import messaging from '@react-native-firebase/messaging'
-import { setNavigationLink } from 'features/links'
 import { Logger } from 'features/telemetry'
 import { PermissionsAndroid, Platform } from 'react-native'
 import PushNotification, { Importance } from 'react-native-push-notification'
-import { store } from 'reduxStore'
 
 import { navigate } from 'navigation/RootNavigator'
 
@@ -53,7 +51,7 @@ export async function initNotifications() {
             break
 
           case NOTIFICATION_CATEGORY.REFRESH_INBOX:
-            store.dispatch(setNavigationLink('/inbox')) // TODO: Find another way
+            navigate('Inbox', undefined)
             break
         }
 
