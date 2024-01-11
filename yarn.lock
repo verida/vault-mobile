@@ -6055,10 +6055,10 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/client-rn@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-3.0.1.tgz#f21d5f1cc400ff16927f3432d4ff7417226b0480"
-  integrity sha512-5WHac1XIo3TOfIlp/gcTt85u0IZU2IPZ1jJ3/TJNwpilgUL6t1T1k/YXvde7auwkO2Fv+deQ8rIUQigHtSOeDw==
+"@verida/client-rn@3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@verida/client-rn/-/client-rn-3.0.2.tgz#e73a0acfe3b67e48e4be32d8c4cdc6fe7e4bf480"
+  integrity sha512-5CScnJi6V1duhp4c5iCeCSuIxv6LKTEe+Aupd952jYaXb/dSbSfumDEKJVksv9tSNgzeKrsloKNJKig1Il77gQ==
   dependencies:
     "@craftzdog/pouchdb-core-react-native" "^7.2.2"
     "@tradle/react-native-http" "^2.0.0"
@@ -6257,10 +6257,10 @@
     axios "^0.27.2"
     ethers "^5.7.0"
 
-"@verida/verifiable-credentials@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-3.0.1.tgz#e905ae82f28891d335f9e33ed73dbd1b36ab4f01"
-  integrity sha512-Cppzn9wDp1zr2He6u5XrCtMbJuvhv7AZk/P2LU9mc37lBnMltV5aP0HLFO3AcjDOSP5WsDsi5OeOeu0ksXpfpw==
+"@verida/verifiable-credentials@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@verida/verifiable-credentials/-/verifiable-credentials-3.0.2.tgz#1b84d334b23a2b6a6e658a2a077d2718dde0b373"
+  integrity sha512-M68/JDtsw6Se4fvL5NIFUYZDoEC4t2D2AC7SUnh4ENRPMnVaKNFlthfZ8hBcUOg5H8RzYaeeGY8Fc0IBPeBuwQ==
   dependencies:
     "@verida/encryption-utils" "^3.0.0"
     "@verida/helpers" "^3.0.1"

@@ -3365,10 +3365,10 @@
     lodash "^4.17.21"
     tweetnacl-util "^0.15.1"
 
-"@verida/client-ts@^3.0.1":
-  version "3.0.1"
-  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-3.0.1.tgz#7368bd97a0ff2009003d3f4eaf5db667a61d9bf0"
-  integrity sha512-xlxDeK7BOlxF22EwdyUOIWSKzo5NShBFDkXo1lDt6lfuy1l36voKwZRDQVX9gHeLtfrC54j8EZX3DW32kqhRiQ==
+"@verida/client-ts@^3.0.2":
+  version "3.0.2"
+  resolved "https://registry.yarnpkg.com/@verida/client-ts/-/client-ts-3.0.2.tgz#e626728ca8ab3f21f94483670b0e822b5bc8e250"
+  integrity sha512-nk+hzmis1kMmAUfr8ZwNA4raxOMPrrLxhWqHrwHBvpjtgA8luVV67x2rU6USzNCcJCLEFdjUlFEVJjms5Mahow==
   dependencies:
     "@verida/account" "^3.0.1"
     "@verida/did-client" "^3.0.1"

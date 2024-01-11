@@ -14,7 +14,7 @@
     "@types/react": "^18.0.33",
     "@types/react-dom": "^18.0.11",
     "@verida/account-node": "^3.0.1",
-    "@verida/client-ts": "^3.0.1",
+    "@verida/client-ts": "^3.0.2",
     "@verida/types": "^3.0.0",
     "assert": "^2.0.0",
     "axios": "^1.6.0",
