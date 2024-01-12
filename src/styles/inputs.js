@@ -4,12 +4,16 @@ import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import { LIGHTGREY_COLOR, WHITE_COLOR } from '../constants/color'
 
-const input = {
+const input_font = {
   fontFamily: NUNITO_SANS_SEMIBOLD,
   fontWeight: '600',
   fontSize: 14,
   alignItems: 'center',
   textAlign: 'left',
+}
+
+const input = {
+  ...input_font,
 
   borderWidth: 1,
   borderColor: LIGHTGREY_COLOR,
@@ -21,6 +25,7 @@ const input = {
 }
 
 export default StyleSheet.create({
+  input_font,
   input,
   select: {
     height: 48,

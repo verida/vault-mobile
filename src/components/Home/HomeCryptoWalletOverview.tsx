@@ -10,8 +10,8 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native'
 import { useSelector } from 'react-redux'
-import { formatFiatCurrency } from 'utils'
 
+import { NumericFiat } from 'components/Span'
 import { Theme } from 'styles/types'
 
 type CryptoWalletOverviewProps = ViewProps
@@ -30,7 +30,6 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
   const { data } = useGetBalancesQuery(addresses)
   const { total } = data || {}
   const displayedLabel = currentWallet?.label || 'Crypto Wallet'
-  const displayedTotal = formatFiatCurrency(total || 0)
 
   const handlePress = () => {
     navigation.navigate('Assets' as never)
@@ -45,7 +44,9 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
           </View>
           <View>
             <Text style={styles.walletLabel}>{displayedLabel}</Text>
-            <Text style={styles.walletAmount}>{displayedTotal}</Text>
+            <Text style={styles.walletAmount}>
+              <NumericFiat value={total || 0} />
+            </Text>
           </View>
         </View>
         <Icon name='chevron-forward' size={24} color={theme.color.primary} />

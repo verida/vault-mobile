@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`blockchain/utils/customBlockchainNetworkToMaybeChainMetadata customBlockchainNetworkToMaybeChainMetadata 1`] = `
+{
+  "blockExplorers": [
+    {
+      "url": "https://my-block-explorer.net",
+    },
+  ],
+  "decimals": 99,
+  "icon": "https://my-icon.com/graphics.png",
+  "isMainnet": true,
+  "name": "My custom blockchain network",
+  "namespace": "eip155",
+  "nativeCurrencyName": "Native currency label",
+  "reference": "4",
+  "rpcUrls": [
+    "https://mycustomrpc.com/",
+  ],
+  "symbol": "N",
+}
+`;

@@ -1,3 +1,4 @@
+import { CoreTypes } from '@walletconnect/types'
 import * as React from 'react'
 import { Image, StyleSheet, Text, View } from 'react-native'
 
@@ -5,16 +6,12 @@ import { Spacer } from 'components/Spacer'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import iconStyle from 'styles/icon'
 
-import { MaybeActiveSession } from '../@types'
-
 export const WalletConnectSessionInfoCard = React.memo(
   function WalletConnectSessionInfoCard({
-    maybeActiveSession,
+    peerMetadata: maybePeerMetadata,
   }: {
-    readonly maybeActiveSession: MaybeActiveSession
+    readonly peerMetadata: CoreTypes.Metadata | null | undefined
   }): JSX.Element {
-    const maybePeerMetadata = maybeActiveSession?.peer?.metadata
-
     return (
       <View style={styles.container}>
         {/* TODO: We are doing this in different places, should be a common component */}
