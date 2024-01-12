@@ -1,5 +1,4 @@
 import NetInfo from '@react-native-community/netinfo'
-import fbMessaging from '@react-native-firebase/messaging'
 import { selectSelectedAccount } from 'features/identities'
 import { pushNewMessageNotification } from 'features/notifications'
 import { Logger } from 'features/telemetry'
@@ -73,23 +72,6 @@ export const useEventHandlers = () => {
     async function init() {
       DataConnectorsManager.triggerSync()
 
-      // Enhance the inbox messaging with Firebase Push Notification event
-      // So in case the inbox is slow to receive events we have a backoff
-      const fbUnsubscribe = fbMessaging().onMessage(async () => {
-        try {
-          const msgs =
-            await AccountManager.getInstance().vault?.inbox.fetchLatest(
-              { read: false },
-              { limit: 1 }
-            )
-          const latestMessage = msgs?.[0]
-
-          onMessage(latestMessage)
-        } catch (error) {
-          logger.error(error)
-        }
-      })
-
       initInboxMessaging()
       async function onAppStateChanged(nextAppState: AppStateStatus) {
         if (
@@ -120,7 +102,6 @@ export const useEventHandlers = () => {
       return async () => {
         appStateSubscriber?.remove()
         unsubscribeNetInfo?.()
-        fbUnsubscribe?.()
 
         await disconnect()
       }
