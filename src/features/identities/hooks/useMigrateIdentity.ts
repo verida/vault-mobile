@@ -230,7 +230,6 @@ export function useMigrateIdentity() {
           }
           const aggregatedProgress = totalProgress / nbContextsToMigrate
 
-          // Log the aggregated progress
           logger.debug(`Aggregated progress: ${aggregatedProgress}`)
           updateMigrationProgress(aggregatedProgress)
         }
@@ -254,7 +253,6 @@ export function useMigrateIdentity() {
                 updateProgressByContext(contextName, 1)
                 return
               }
-              logger.error(error) // TODO: After debugging, remove it and let it be reported at a upper level
               throw new Error('Could not migrate context', { cause: error })
             }
           })
