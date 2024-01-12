@@ -37,6 +37,9 @@ export const fetchInboxCount = throttle(
   { leading: true, trailing: false }
 )
 
+/**
+ * @deprecated use `getPublicProfile` from features/profiles
+ */
 export async function getPublicProfile(
   did: string,
   contextName: string = VERIDA_VAULT_CONTEXT_NAME,

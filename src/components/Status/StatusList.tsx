@@ -11,6 +11,7 @@ export type StatusListItem = {
   status: 'idle' | 'success' | 'error' | 'processing'
   label: string
   displayProgressBar?: boolean
+  progressIndeterminate?: boolean
   progress?: number
   disabled?: boolean
 }
@@ -48,6 +49,7 @@ export const StatusList: React.FunctionComponent<StatusListProps> = (props) => {
                 <ProgressBar
                   progress={item.progress || 0}
                   color={theme.color.success}
+                  indeterminate={item.progressIndeterminate && !item.progress}
                 />
               </View>
             ) : null}
