@@ -7,7 +7,7 @@ import { Logger } from 'features/telemetry'
 import { createAppAsyncThunk, RootState } from 'reduxStore/types'
 
 import { PublicProfile } from '../@types'
-import { fetchPublicProfile } from '../utils'
+import { getPublicProfile } from '../utils'
 
 const logger = new Logger('Profiles')
 
@@ -117,40 +117,24 @@ export const { setPublicProfileByDid } = profilesSlice.actions
 // Async actions
 export const fetchPublicProfileData = createAppAsyncThunk(
   'profiles/fetchPublicProfileData',
-  async (did: string, { getState, rejectWithValue }) => {
+  async (did: string, { getState }) => {
     try {
       const state = getState()
       const existingProfile = selectPublicProfileByDid(state, did)
 
-      const fetchedProfile = await fetchPublicProfile(did)
+      const fetchedProfile = await getPublicProfile(did)
 
-      if (!fetchedProfile) {
-        return existingProfile
-      }
-
-      const avatar = await fetchedProfile.get('avatar')
-      const name = await fetchedProfile.get('name')
-      const description = await fetchedProfile.get('description')
-      const country = await fetchedProfile.get('country')
-      const website = await fetchedProfile.get('website')
-
-      const newProfile: PublicProfile = {
+      return {
         ...existingProfile,
-        avatar,
-        name,
-        description,
-        country,
-        website,
+        ...fetchedProfile,
       }
-
-      return newProfile
     } catch (error) {
-      logger.error(error)
-      return rejectWithValue(
-        `Failed to load public profile for DID ${did}: ${
-          error instanceof Error ? error.message : ''
-        }`
-      )
+      // Failing to fetch the profile is not uncommon as some identity may not have any
+      logger.warn('Error while getting public profile', { error })
+
+      return {
+        name: '',
+      }
     }
   }
 )
