@@ -15,14 +15,12 @@ import {
   useMigrateIdentity,
 } from 'features/identities'
 import { Logger } from 'features/telemetry'
-import { emitter } from 'helpers'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { InteractionManager, StyleSheet, View } from 'react-native'
 import { formatPercentage } from 'utils'
 
 import LoadingView from 'components/LoadingView'
-import { useAuth } from 'hooks/useAuth'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
@@ -71,7 +69,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     const [switchingIdentity, setSwitchingIdentity] = useState(false)
     const [status, setStatus] = useState<MigrationStatus>('processing')
 
-    const { removeIdentity } = useIdentities()
+    const { removeIdentity, switchIdentity } = useIdentities()
 
     useEffect(() => {
       navigation.setOptions({
@@ -110,7 +108,6 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       )
     }, [])
 
-    const { switchToAccount } = useAuth()
     const currentIdentity = useCurrentIdentity()
     const { migrate } = useMigrateIdentity()
     const [newDid, setNewDid] = useState<string | undefined>(undefined)
@@ -153,21 +150,10 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       }
       navigation.navigate('Tabs', { screen: 'Home' })
 
-      // TODO: Use switchIdentity from useIdentities
       InteractionManager.runAfterInteractions(async () => {
-        try {
-          await switchToAccount(newDid)
-        } catch (error: unknown) {
-          logger.error(
-            new Error('Error when switching identity in the drawer', {
-              cause: error,
-            })
-          )
-
-          emitter.emit('IDENTITY_NOT_EXIST', {})
-        }
+        await switchIdentity(newDid)
       })
-    }, [newDid, navigation, switchToAccount])
+    }, [newDid, navigation, switchIdentity])
 
     const handleRetry = useCallback(() => {
       if (currentIdentity) {
