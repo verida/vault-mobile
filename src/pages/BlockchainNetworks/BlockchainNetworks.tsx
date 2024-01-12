@@ -1,4 +1,5 @@
 import { ChainId } from 'caip'
+import { Typography } from 'components'
 import {
   getMaybeChainMetadatas,
   useChainMetadataDetails,
@@ -26,12 +27,10 @@ import NavigationHeader, {
 } from 'components/Navigation/NavigationHeader'
 import { SearchBar } from 'components/SearchBar/SearchBar'
 import { SegmentData, SegmentsControl } from 'components/SegmentControl'
-import { Title } from 'components/Typography/Title'
 import { useMainNavigation } from 'navigation/hooks'
 import { Theme } from 'styles/types'
 
 import { ChainMetadataListItem } from './components'
-import { Typography } from 'components'
 
 const tabs: SegmentData[] = [
   {
