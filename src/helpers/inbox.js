@@ -79,7 +79,7 @@ export const buildItem = async (inboxItem) => {
   }
 
   item.isProfileLoading = profile.isLoading
-  item.fetchMe = async () => buildItem(inboxItem)
+  item.fetchMe = async () => await buildItem(inboxItem)
 
   return item
 }
