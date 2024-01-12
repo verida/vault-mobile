@@ -15,9 +15,10 @@ import {
   useMigrateIdentity,
 } from 'features/identities'
 import { Logger } from 'features/telemetry'
+import { emitter } from 'helpers'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, InteractionManager, StyleSheet, View } from 'react-native'
+import { InteractionManager, StyleSheet, View } from 'react-native'
 import { formatPercentage } from 'utils'
 
 import LoadingView from 'components/LoadingView'
@@ -109,7 +110,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       )
     }, [])
 
-    const { switchToAccount, refresh } = useAuth()
+    const { switchToAccount } = useAuth()
     const currentIdentity = useCurrentIdentity()
     const { migrate } = useMigrateIdentity()
     const [newDid, setNewDid] = useState<string | undefined>(undefined)
@@ -162,30 +163,11 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
               cause: error,
             })
           )
-          Alert.alert(
-            'Error',
-            `Unable to switch to the identity, please try again later.`
-          )
 
-          // Switch back to the current account
-          if (currentIdentity?.did) {
-            try {
-              await switchToAccount(currentIdentity.did)
-              await refresh()
-            } catch (anotherError: unknown) {
-              logger.error(
-                new Error(
-                  'Error when switching and refreshing identity back to current one in the drawer',
-                  {
-                    cause: anotherError,
-                  }
-                )
-              )
-            }
-          }
+          emitter.emit('IDENTITY_NOT_EXIST', {})
         }
       })
-    }, [newDid, currentIdentity?.did, navigation, refresh, switchToAccount])
+    }, [newDid, navigation, switchToAccount])
 
     const handleRetry = useCallback(() => {
       if (currentIdentity) {

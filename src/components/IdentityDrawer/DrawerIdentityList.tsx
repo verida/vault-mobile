@@ -5,10 +5,10 @@ import {
   selectPublicProfiles,
 } from 'features/profiles'
 import { Logger } from 'features/telemetry'
+import { emitter } from 'helpers'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
 import {
-  Alert,
   FlatList,
   InteractionManager,
   ListRenderItemInfo,
@@ -75,30 +75,11 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
                 cause: error,
               })
             )
-            Alert.alert(
-              'Error',
-              `Unable to switch to the Identity, please try again later.`
-            )
-
-            // Switch back to the current account
-            if (currentIdentity?.did) {
-              try {
-                await switchToAccount(currentIdentity.did)
-              } catch (anotherError: unknown) {
-                logger.error(
-                  new Error(
-                    'Error when switching and refreshing identity back to current one in the drawer',
-                    {
-                      cause: anotherError,
-                    }
-                  )
-                )
-              }
-            }
+            emitter.emit('IDENTITY_NOT_EXIST', {})
           }
         })
       },
-      [onIdentitySwitch, switchToAccount, currentIdentity]
+      [onIdentitySwitch, switchToAccount]
     )
 
     const renderItem = useCallback(
