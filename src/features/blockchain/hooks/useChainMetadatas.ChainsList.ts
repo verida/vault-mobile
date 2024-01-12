@@ -27,7 +27,6 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   if (!isSupportedCaipNamespace(namespace)) return undefined
 
   const {
-    chainName,
     rpcUrl,
     symbol,
     decimal: decimals,
@@ -49,11 +48,11 @@ const maybeBlockchainNetworkEntryToChainMetadata = ({
   return {
     namespace,
     reference,
-    name: chainName,
+    name: label,
     rpcUrls: [rpc],
     symbol,
     decimals,
-    nativeCurrencyName: label,
+    nativeCurrencyName: symbol,
     icon,
     blockExplorers,
     isMainnet,
