@@ -6,6 +6,7 @@ import {
   StatusListItem,
 } from 'components'
 import { config } from 'config'
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
 import {
   MigrateIdentityStep,
   MigrateIdentityStepStatus,
@@ -117,8 +118,10 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       if (switchingIdentity) {
         return
       }
+
       try {
         setStatus('processing')
+        activateKeepAwake()
         const migratedDid = await migrate(
           updateStepStatus,
           updateMigrationProgress
@@ -128,6 +131,8 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       } catch (error: unknown) {
         logger.error(error)
         setStatus('error')
+      } finally {
+        deactivateKeepAwake()
       }
     }, [switchingIdentity, migrate, updateStepStatus, updateMigrationProgress])
 
