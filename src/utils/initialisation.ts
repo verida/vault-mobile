@@ -1,7 +1,11 @@
 import { config } from 'config'
 import { initNotifications } from 'features/notifications'
+import { publicProfileStorage } from 'features/profiles'
 import { initSentry, Logger } from 'features/telemetry'
 import { Text } from 'react-native'
+import { initializeMMKVFlipper } from 'react-native-mmkv-flipper-plugin'
+
+import { reduxStorage } from 'reduxStore/utils/mmkvPersistStorage'
 
 const logger = new Logger('Initialisation')
 
@@ -20,6 +24,14 @@ export function initApplication() {
   initNotifications()
 
   printConfig()
+
+  if (__DEV__) {
+    // Allow to debug MKKV in Flipper, install the plugin https://github.com/muchobien/flipper-plugin-react-native-mmkv
+    initializeMMKVFlipper({
+      reduxStorage,
+      publicProfileStorage,
+    })
+  }
 }
 
 function printConfig() {

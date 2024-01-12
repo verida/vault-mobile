@@ -29,7 +29,7 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       onPress={openWalletModal}>
       <View style={styles.logoContainer}>
         <Avatar
-          source={selectedWallet.icon}
+          source={selectedWallet?.icon}
           fallbackType='wallet'
           style={styles.icon}
           borderColor={theme.color.primary100}

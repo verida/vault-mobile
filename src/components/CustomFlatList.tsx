@@ -23,8 +23,11 @@ export interface CustomFlatListProps<ItemT> extends FlatListProps<ItemT> {
   loadData?: (skip: number) => Promise<ItemT[]>
 }
 
-export const ITEM_PER_PAGE = 5
+export const ITEM_PER_PAGE = 7
 
+/**
+ * TODO: refactor + this component should be named sth likes InboxMessageList
+ */
 const CustomFlatList = <ItemT,>(
   props: CustomFlatListProps<ItemT>,
   ref: ForwardedRef<unknown>
@@ -120,6 +123,7 @@ const CustomFlatList = <ItemT,>(
     <FlatList<ItemT>
       {...rest}
       data={data}
+      contentContainerStyle={{ padding: 16 }}
       onEndReachedThreshold={0.7}
       onEndReached={onEndReached}
       refreshing={refreshing}
