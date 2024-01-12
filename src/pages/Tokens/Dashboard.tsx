@@ -9,7 +9,6 @@ import { StyleSheet, View } from 'react-native'
 import Container from 'components/Container'
 import { ErrorBoundary } from 'components/ErrorBoundary'
 import LoadingIndicator from 'components/LoadingIndicator'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
 import { useMainNavigation } from 'navigation/hooks'
@@ -46,7 +45,6 @@ const TokenDashboard = React.memo(function TokenDashboard() {
           <LoadingIndicator />
         ) : (
           <View style={styles.contentContainer}>
-            <TestnetWarning networkReference={null} />
             <TokenBanner
               valuation={null}
               tokenType={null}

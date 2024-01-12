@@ -10,7 +10,6 @@ import {
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeChainMetadataForResource,
   useSelectedMinifiedBlockchainAccounts,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
@@ -22,7 +21,6 @@ import { useSelector } from 'react-redux'
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import useParams from 'hooks/useParams'
@@ -60,8 +58,6 @@ const SingleCurrency = () => {
   const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
-
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
@@ -131,7 +127,6 @@ const SingleCurrency = () => {
         }}
         title={title}
       />
-      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <TokenBanner
         isSumOfMultipleBalances={false}
         decimals={maybeAggregateWalletBannerBalance?.decimals}
