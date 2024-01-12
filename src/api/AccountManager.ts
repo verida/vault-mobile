@@ -18,7 +18,6 @@ import {
   getPrivateKeyFromMnemonic,
   setAccounts,
   setSelectedAccount,
-  setSwitchAccountToast,
 } from 'features/identities'
 import {
   removeUserWallets,
@@ -613,6 +612,7 @@ class AccountManager extends EventEmitter {
   public async switchToAccount(did: string, connect = true) {
     try {
       this.selectedAccount = this.accounts[did]
+
       const { backedup } = this.selectedAccount.seedPhraseReminder
       if (!backedup) {
         this.selectedAccount.seedPhraseReminder.lastTime = Date.now()
@@ -631,26 +631,29 @@ class AccountManager extends EventEmitter {
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
 
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const name = await this.vault?.profiles.public.get('name')
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const avatar = await this.vault?.profiles.public.get('avatar')
-      setTimeout(() => {
-        store.dispatch(
-          setSwitchAccountToast({
-            name,
-            avatar,
-          })
-        )
+      // FIXME: refactor this function, remove nested timers
+      // Comment as it doesn't work now
+      // async function showSwitchNewAccountToast() {
+      //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //   // @ts-ignore
+      //   const name = await this.vault?.profiles.public.get('name')
+      //   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+      //   // @ts-ignore
+      //   const avatar = await this.vault?.profiles.public.get('avatar')
+      //   console.log('====>>>>>>>>>>>>>>> Name', name)
 
-        setTimeout(() => {
-          store.dispatch(setSwitchAccountToast(undefined))
-        }, 5000)
-      }, 100)
+      //   store.dispatch(setSwitchAccountToast({ name, avatar }))
+
+      //   setTimeout(() => {
+      //     store.dispatch(setSwitchAccountToast(undefined))
+      //   }, 5000)
+      // }
+
+      // // Show the toast asynchronously
+      // showSwitchNewAccountToast()
     } catch (error) {
       logger.error(error)
+
       throw error
     }
   }

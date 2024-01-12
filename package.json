@@ -260,7 +260,6 @@
   "expo": {
     "autolinking": {
       "exclude": [
-        "expo-keep-awake",
         "expo-error-recovery"
       ]
     }
