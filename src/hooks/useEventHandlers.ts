@@ -79,6 +79,11 @@ export const useEventHandlers = () => {
           nextAppState === 'active'
         ) {
           await initInboxMessaging()
+        } else if (
+          appState.current === 'active' &&
+          nextAppState.match(/inactive|background/)
+        ) {
+          await disconnect()
         }
 
         DataConnectorsManager.triggerSync()
