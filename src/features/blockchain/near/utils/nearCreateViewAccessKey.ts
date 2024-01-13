@@ -5,7 +5,7 @@ import { NearAccountPointer } from '../@types'
 
 export function nearCreateViewAccessKey({
   provider,
-  nearAccountPointer: { accountId: account_id, publicKey: public_key },
+  nearAccountPointer: { publicKey: public_key, signerId },
 }: {
   readonly provider: providers.Provider
   readonly nearAccountPointer: NearAccountPointer
@@ -13,7 +13,7 @@ export function nearCreateViewAccessKey({
   return provider.query<AccessKeyView>({
     request_type: 'view_access_key',
     finality: 'final',
-    account_id,
+    account_id: signerId,
     public_key,
   })
 }

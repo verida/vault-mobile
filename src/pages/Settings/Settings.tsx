@@ -112,6 +112,12 @@ export const SettingsScreen: React.FC<SettingsScreenProps> = (props) => {
       label: 'Blockchains',
       items: [
         {
+          label: 'Networks',
+          action: 'arrow',
+          optional: true,
+          onPress: () => navigation.navigate('BlockchainNetworks'),
+        },
+        {
           label: 'DApp Connections',
           action: 'arrow',
           optional: true,

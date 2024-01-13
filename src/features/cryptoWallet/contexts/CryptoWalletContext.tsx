@@ -1,7 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import { CryptoWalletRawRequest } from 'features/cryptoWallet/@types'
-import { getBlockchainNetworks } from 'features/cryptoWallet/api'
 import {
   parseCryptoRequestDeepLink,
   parseCryptoRequestQrCode,
@@ -11,7 +11,6 @@ import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
 import { PaymentRequestScreenParams } from 'pages/Requests'
-import { useAppSelector } from 'reduxStore/types'
 
 export type CryptoWalletContextType = {
   handleDeepLinkUrl: (url: string) => void
@@ -29,13 +28,11 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
 
   const navigation = useNavigation<NativeStackNavigationProp<MainStackParams>>()
 
-  const blockchainNetworks = useAppSelector((state) =>
-    getBlockchainNetworks(state)
-  )
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   const handleRequest = useCallback(
     (request: CryptoWalletRawRequest, replaceNavigationScreen?: boolean) => {
-      const processedRequest = processCryptoRequest(request, blockchainNetworks)
+      const processedRequest = processCryptoRequest({ request, chainMetadatas })
 
       switch (request.action) {
         case 'pay':
@@ -65,7 +62,7 @@ export const CryptoWalletProvider: React.FunctionComponent = (props) => {
           )
       }
     },
-    [navigation, blockchainNetworks]
+    [navigation, chainMetadatas]
   )
 
   const handleDeepLinkUrl = useCallback(

@@ -18,7 +18,7 @@ export async function nearGetAccounts({
       ).map(async (accountId: string): Promise<NearAccountPointer> => {
         const keypair = await keystore.getKey(networkId, accountId)
         const publicKey = keypair.getPublicKey().toString()
-        return { publicKey, accountId }
+        return { publicKey, signerId: accountId }
       })
     )
   ).flatMap((e) => (e.status === 'fulfilled' ? [e.value] : []))

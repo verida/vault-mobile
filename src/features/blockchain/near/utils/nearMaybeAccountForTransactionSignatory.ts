@@ -1,5 +1,4 @@
 import { NearAccountPointer, NearTransaction } from '../@types'
-import { getNearAccountId } from './getNearAccountId'
 
 export function nearMaybeAccountForTransactionSignatory({
   nearAccountPointers,
@@ -8,7 +7,5 @@ export function nearMaybeAccountForTransactionSignatory({
   readonly nearAccountPointers: readonly NearAccountPointer[]
   readonly transaction: NearTransaction
 }): NearAccountPointer | undefined {
-  return nearAccountPointers.find(
-    ({ accountId }) => accountId === getNearAccountId({ signerId })
-  )
+  return nearAccountPointers.find(({ signerId: sid }) => signerId === sid)
 }
