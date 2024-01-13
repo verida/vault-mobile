@@ -9,13 +9,11 @@ import { TabsScreenProps } from 'navigation/types'
 
 const logger = new Logger('Pages/Data/DataTabScreen')
 
-export type DataTabScreenParams = undefined
+export type DataScreenParams = undefined
 
-type DataTabScreenProps = TabsScreenProps<'Data'>
+type DataScreenProps = TabsScreenProps<'Data'>
 
-export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
-  props
-) => {
+export const DataScreen: React.FunctionComponent<DataScreenProps> = (props) => {
   const { navigation } = props
 
   useEffect(() => {

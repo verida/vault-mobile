@@ -7,7 +7,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { TabsScreenParams } from 'navigation/types'
 import { AssetsScreen } from 'pages/Assets'
 // import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
-import { DataTabScreen } from 'pages/Data'
+import { DataScreen } from 'pages/Data'
 import { HomeScreen } from 'pages/Home'
 import { IdentityDrawer } from 'pages/Identity'
 import { PublicProfileScreen } from 'pages/Profiles'
@@ -65,7 +65,7 @@ export const TabsNavigator: React.FunctionComponent = () => {
       HACK: PublicProfileScreen as any because this screen is also define in the Main navigator and define its params from there and so was getting an error in Tabs navigator.
       TODO: We should delete the screen from the Main navigator and only use it from the Tabs navigator, but there are some sketchy access to it from the Main right now, so have to refactopr that first.
        */}
-        <Tabs.Screen name='Data' component={DataTabScreen} />
+        <Tabs.Screen name='Data' component={DataScreen} />
         {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
        TODO: uncomment when ready */}
         <Tabs.Screen name='Assets' component={AssetsScreen} />

@@ -12,7 +12,7 @@ import { NetworksEditorScreenParams } from 'pages/BlockchainNetworksEditor'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
-  DataTabScreenParams,
+  DataScreenParams,
 } from 'pages/Data'
 import { HomeScreenParams } from 'pages/Home'
 import {
@@ -80,7 +80,7 @@ export type AuthStackScreenProps<S extends keyof AuthStackParams> =
 export type TabsScreenParams = {
   Home: HomeScreenParams
   Profile: PublicProfileScreenParams
-  Data: DataTabScreenParams
+  Data: DataScreenParams
   // Connections: undefined // TODO: uncomment when ready
   Assets: AssetsScreenParams
 }
