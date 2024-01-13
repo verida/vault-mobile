@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
   useAggregateWalletBannerBalancesValuation,
@@ -12,14 +13,13 @@ import LoadingIndicator from 'components/LoadingIndicator'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TokensList from 'components/Tokens/TokensList'
-import { useMainNavigation } from 'navigation/hooks'
 
 import SendListModal from './SendListModal'
 
 const TokenDashboard = React.memo(function TokenDashboard() {
   const [sendModalVisible, setSendModalVisible] = useState(false)
 
-  const navigation = useMainNavigation()
+  const navigation = useNavigation()
 
   const cachedAggregateWalletBannerBalances =
     useAggregateWalletBannerBalancesWithResultCaching()

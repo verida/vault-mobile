@@ -1,3 +1,4 @@
+import { useNavigation } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
   Transaction,
@@ -11,7 +12,6 @@ import ReceivedIcon from 'assets/received_icon.svg'
 import SentIcon from 'assets/sent_icon.svg'
 import { NumericCryptoBalance } from 'components/Span'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import { useMainNavigation } from 'navigation/hooks'
 
 const icons: { readonly [key in TransactionType]: JSX.Element } = {
   sent: <SentIcon />,
@@ -25,8 +25,9 @@ export default ({
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly item: Transaction
 }) => {
-  const navigation = useMainNavigation()
   const { type, quantity, address, id, pending } = item
+
+  const navigation = useNavigation()
 
   return (
     <ListItem

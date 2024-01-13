@@ -24,9 +24,9 @@ import { Headline } from 'components/Typography/Headline'
 import { Label } from 'components/Typography/Label'
 import { SubHeadline } from 'components/Typography/SubHeadline'
 import { Text } from 'components/Typography/Text'
-import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { MainStackScreenProps } from 'navigation/types'
+import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 const Row: FC<
@@ -129,7 +129,7 @@ export const NFTDetailScreen: React.FC<NFTDetailScreenProps> = (props) => {
   //const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const wallet = useReduxState(getWallets)
+  const wallet = useAppSelector(getWallets)
 
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,

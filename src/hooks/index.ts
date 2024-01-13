@@ -1,7 +1,6 @@
 export * from './useEmitter'
 export * from './useEventHandlers'
 export * from './useModal'
-export * from './useParams'
 export * from './usePrevious'
 export * from './useReduxState'
 export * from './useThemeAwareStyle'
