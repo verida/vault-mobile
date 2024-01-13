@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import { RouteProp } from '@react-navigation/native'
 import { BigNumber, ethers } from 'ethers'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
@@ -23,28 +22,28 @@ import Label from 'components/Label'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 
 const logger = new Logger('TokenRecipient')
 
-export type TokenRecipientRouteProp = RouteProp<MainStackParams, 'SendToken'>
-
-export type TokenRecipientScreenProps = {
+export type TokenRecipientScreenParams = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
   readonly amount: number
   readonly predictedMaxTransactionFee: BigNumber
 }
 
-const TokenRecipient = () => {
-  const navigation = useMainNavigation()
+type TokenRecipientScreenProps = MainStackScreenProps<'TokenRecipient'>
+
+export const TokenRecipientScreen: React.FC<TokenRecipientScreenProps> = (
+  props
+) => {
   const {
-    aggregateWalletBannerBalance,
-    amount: amount,
-    predictedMaxTransactionFee,
-  } = useParams<TokenRecipientScreenProps>()
+    navigation,
+    route: { params },
+  } = props
+  const { aggregateWalletBannerBalance, amount, predictedMaxTransactionFee } =
+    params
 
   const fetchCopiedText = async () => {
     const clipboardData = await Clipboard.getString()
@@ -261,5 +260,3 @@ const styles = StyleSheet.create({
     fontFamily: NUNITO_SANS_BOLD,
   },
 })
-
-export default TokenRecipient

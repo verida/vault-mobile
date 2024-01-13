@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import { RouteProp } from '@react-navigation/native'
 import {
   getAggregateWalletBannerBalanceResult,
   getSelectedWalletById,
@@ -25,29 +24,27 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TokenBanner from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
-export type SingleCurrencyRouteProp = RouteProp<
-  MainStackParams,
-  'SingleCurrency'
->
-
-export type SingleCurrencyScreenProps = {
+export type SingleCurrencyScreenParams = {
   readonly title: string
   readonly resource: ResourceParams
-  //readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-const SingleCurrency = () => {
-  const navigation = useMainNavigation()
+type SingleCurrencyScreenProps = MainStackScreenProps<'SingleCurrency'>
+
+export const SingleCurrencyScreen: React.FC<SingleCurrencyScreenProps> = (
+  props
+) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  // TODO: we should fetch here instead, not pass the route params
+  const { resource, title } = params
 
   // TODO: idk what to do about this yet
   const selectedWallet = useSelector(getSelectedWalletById)
-
-  // TODO: we should fetch here instead, not pass the route params
-  const { resource, title } = useParams<SingleCurrencyScreenProps>()
 
   const chainId = useChainIdForResourceParams({ resource })
 
@@ -188,5 +185,3 @@ const SingleCurrency = () => {
     </Container>
   )
 }
-
-export default SingleCurrency

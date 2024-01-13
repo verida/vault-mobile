@@ -1,4 +1,3 @@
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { IDatastore } from '@verida/types'
 import { Logger } from 'features/telemetry'
 import update from 'immutability-helper'
@@ -21,17 +20,26 @@ import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { Text } from 'components/Typography/Text'
 import { GREY_COLOR, LIGHTGREY_COLOR } from 'constants/color'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 import ShareableDataItem, {
   ShareableDataItemType,
 } from 'pages/Inbox/ShareableDataItem'
 
 const logger = new Logger('Pages/Inbox/ShareableData')
 
-function ShareableData(
-  props: NativeStackScreenProps<MainStackParams, 'ShareableData'>
-) {
+export type ShareableDataScreenParams = {
+  schemaUrl: string
+  onConfirm: (selectedItems: ShareableDataItemType[]) => void
+  filter: any
+}
+
+type ShareableDataScreenProps = MainStackScreenProps<'ShareableData'>
+
+export const ShareableDataScreen: React.FC<ShareableDataScreenProps> = (
+  props
+) => {
   const { navigation, route } = props
+
   const [data, setData] = useState<ShareableDataItemType[]>([])
   const [loading, setLoading] = useState(true)
   const [searchText, setSearchText] = useState('')
@@ -194,5 +202,3 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
 })
-
-export default ShareableData

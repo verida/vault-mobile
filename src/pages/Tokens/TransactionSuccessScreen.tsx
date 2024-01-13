@@ -1,29 +1,24 @@
-import { RouteProp } from '@react-navigation/native'
 import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
 import React from 'react'
 
 import SuccessFailure from 'components/SuccessFailure'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
-export type TransactionSuccessRouteProp = RouteProp<
-  MainStackParams,
-  'TransactionSuccess'
->
-
-export type TransactionSuccessScreenProps = {
+export type TransactionSuccessScreenParams = {
   readonly amount: number
   readonly toAddress: string
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-const TransactionSuccess = React.memo(
-  function TransactionSuccess(): JSX.Element {
-    const navigation = useMainNavigation()
+type TransactionSuccessScreenProps = MainStackScreenProps<'TransactionSuccess'>
 
-    const { amount, toAddress, aggregateWalletBannerBalance } =
-      useParams<TransactionSuccessScreenProps>()
+export const TransactionSuccessScreen: React.FC<TransactionSuccessScreenProps> =
+  (props) => {
+    const {
+      navigation,
+      route: { params },
+    } = props
+    const { amount, toAddress, aggregateWalletBannerBalance } = params
 
     const { resource, label: title } = aggregateWalletBannerBalance
 
@@ -47,6 +42,3 @@ const TransactionSuccess = React.memo(
       />
     )
   }
-)
-
-export default TransactionSuccess

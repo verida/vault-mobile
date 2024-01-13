@@ -24,8 +24,7 @@ import {
   RemoveIdentityScreen,
   ShareIdentityScreen,
 } from 'pages/Identity'
-import { InboxItemScreen, InboxScreen } from 'pages/Inbox'
-import ShareableData from 'pages/Inbox/ShareableData'
+import { InboxItemScreen, InboxScreen, ShareableDataScreen } from 'pages/Inbox'
 import { LoginHistoryScreen } from 'pages/Login'
 import LoginRequest from 'pages/Login/LoginRequest'
 import {
@@ -52,15 +51,17 @@ import {
   ProofRequestScreen,
 } from 'pages/Requests'
 import { PolygonIdCircuitsSettingsScreen, SettingsScreen } from 'pages/Settings'
-import BuyToken from 'pages/Tokens/BuyToken'
-import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
-import ReceiveToken from 'pages/Tokens/ReceiveToken'
-import SendToken from 'pages/Tokens/SendToken'
-import SingleCurrency from 'pages/Tokens/SingleCurrency'
-import TokenRecipient from 'pages/Tokens/TokenRecipient'
-import TransactionDetails from 'pages/Tokens/TransactionDetails'
-import TransactionFailure from 'pages/Tokens/TransactionFailure'
-import TransactionSuccess from 'pages/Tokens/TransactionSuccess'
+import {
+  BuyTokenScreen,
+  ConfirmTransactionScreen,
+  ReceiveTokenScreen,
+  SendTokenScreen,
+  SingleCurrencyScreen,
+  TokenRecipientScreen,
+  TransactionDetailsScreen,
+  TransactionFailureScreen,
+  TransactionSuccessScreen,
+} from 'pages/Tokens'
 import { WalletConnectActiveSessionDetails } from 'pages/WalletConnectActiveSessionDetails'
 import { WalletConnectActiveSessions } from 'pages/WalletConnectActiveSessions'
 import ManageWallets from 'pages/Wallets/ManageWallets'
@@ -137,27 +138,34 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
           <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
           <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
-          <Stack.Screen name={'SingleCurrency'} component={SingleCurrency} />
-          <Stack.Screen name={'SendToken'} component={SendToken} />
           <Stack.Screen
-            name={'ConfirmTransaction'}
-            component={ConfirmTransaction}
+            name='SingleCurrency'
+            component={SingleCurrencyScreen}
+          />
+          <Stack.Screen name='SendToken' component={SendTokenScreen} />
+          <Stack.Screen
+            name='ConfirmTransaction'
+            component={ConfirmTransactionScreen}
           />
           <Stack.Screen
-            name={'TransactionSuccess'}
-            component={TransactionSuccess}
+            name='TransactionSuccess'
+            component={TransactionSuccessScreen}
           />
           <Stack.Screen
-            name={'TransactionFailure'}
-            component={TransactionFailure}
+            name='TransactionFailure'
+            component={TransactionFailureScreen}
           />
           <Stack.Screen
-            name={'TransactionDetails'}
-            component={TransactionDetails}
+            name='TransactionDetails'
+            component={TransactionDetailsScreen}
           />
-          <Stack.Screen name={'TokenRecipient'} component={TokenRecipient} />
-          <Stack.Screen name={'BuyToken'} component={BuyToken} />
-          <Stack.Screen name={'ReceiveToken'} component={ReceiveToken} />
+          <Stack.Screen
+            name='TokenRecipient'
+            component={TokenRecipientScreen}
+          />
+          <Stack.Screen name='BuyToken' component={BuyTokenScreen} />
+          <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
+
           <Stack.Screen name={'DataFolder'} component={DataFolderScreen} />
           <Stack.Screen name={'DataItem'} component={DataItemScreen} />
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
@@ -198,7 +206,7 @@ export const MainNavigator: React.FunctionComponent = () => {
             component={SeedPhraseGeneratedScreen}
           />
           <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
-          <Stack.Screen name={'ShareableData'} component={ShareableData} />
+          <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
           <Stack.Screen
             name={'BlockchainNetworks'}
             component={BlockchainNetworks}

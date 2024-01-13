@@ -1,4 +1,3 @@
-import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
   useChainIdForResourceParams,
@@ -16,22 +15,23 @@ import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import TokenCalculator from 'components/Tokens/TokenCalculator'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
 const showAlert = () =>
   Alert.alert('Invalid quantity', 'Quantity is higher than wallet balance')
 
-export type SendTokenRouteProp = RouteProp<MainStackParams, 'SendToken'>
-
-export type SendTokenScreenProps = {
+export type SendTokenScreenParams = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-const SendToken = React.memo(function SendToken() {
-  const navigation = useMainNavigation()
-  const { aggregateWalletBannerBalance } = useParams<SendTokenScreenProps>()
+type SendTokenScreenProps = MainStackScreenProps<'SendToken'>
+
+export const SendTokenScreen: React.FC<SendTokenScreenProps> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { aggregateWalletBannerBalance } = params
 
   const { resource } = aggregateWalletBannerBalance
 
@@ -91,9 +91,7 @@ const SendToken = React.memo(function SendToken() {
       </ScrollView>
     </Container>
   )
-})
-
-export default SendToken
+}
 
 const styles = StyleSheet.create({
   container: {

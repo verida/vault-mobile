@@ -18,9 +18,15 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { PRIMARY_COLOR } from 'constants/color'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { MainStackScreenProps } from 'navigation/types'
 import InputStyles from 'styles/inputs'
 
-export default ({ navigation }) => {
+export type BuyTokenScreenParams = undefined
+
+type BuyTokenScreenProps = MainStackScreenProps<'BuyToken'>
+
+export const BuyTokenScreen: React.FC<BuyTokenScreenProps> = (props) => {
+  const { navigation } = props
   const [cardNumber, setCardNumber] = useState('')
 
   return (
@@ -100,9 +106,8 @@ export default ({ navigation }) => {
             </View>
           </View>
         </View>
-        <View style={styles.footer}>
+        <View>
           <Button
-            style={styles.saveButton}
             color='primary'
             // disabled={!name}
             onPress={() => ({})}>

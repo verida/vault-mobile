@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
   getWalletAddressForChainId,
@@ -23,21 +22,25 @@ import Text from 'components/Text'
 import TestnetWarning from 'components/Tokens/TestnetWarning'
 import { BLACK_ORIGIN_COLOR, PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
 const LogoImg = require('assets/vault-logo.png')
 
-export type ReceiveTokenRouteProp = RouteProp<MainStackParams, 'ReceiveToken'>
-
-export type ReceiveTokenScreenProps = {
+export type ReceiveTokenScreenParams = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
 }
 
-const ReceiveToken = () => {
-  const navigation = useMainNavigation()
-  const { aggregateWalletBannerBalance } = useParams<ReceiveTokenScreenProps>()
+type ReceiveTokenScreenProps = MainStackScreenProps<'ReceiveToken'>
+
+export const ReceiveTokenScreen: React.FC<ReceiveTokenScreenProps> = (
+  props
+) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+
+  const { aggregateWalletBannerBalance } = params
 
   const { resource } = aggregateWalletBannerBalance
 
@@ -208,5 +211,3 @@ const styles = StyleSheet.create({
   footer: {},
   saveButton: {},
 })
-
-export default ReceiveToken
