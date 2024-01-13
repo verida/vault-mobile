@@ -2,17 +2,26 @@ import { Container, Icon } from 'native-base'
 import React, { useState } from 'react'
 import { SceneMap, TabView } from 'react-native-tab-view'
 
+import HistoryLayout from 'components/Layouts/HistoryLayout'
+import LoginTabs from 'components/Navigation/LoginTabs'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import { MainStackScreenProps } from 'navigation/types'
 
-import HistoryLayout from '../../components/Layouts/HistoryLayout'
-import LoginTabs from '../../components/Navigation/LoginTabs'
+const tabs = [
+  { key: 'approved', title: 'Approved' },
+  { key: 'denied', title: 'Denied' },
+]
 
-export default (props) => {
+export type LoginHistoryScreenParams = undefined
+
+type LoginHistoryScreenProps = MainStackScreenProps<'LoginHistory'>
+
+export const LoginHistoryScreen: React.FC<LoginHistoryScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
   const [index, setIndex] = useState(0)
-  const [routes] = useState([
-    { key: 'approved', title: 'Approved' },
-    { key: 'denied', title: 'Denied' },
-  ])
 
   const renderScene = SceneMap({
     approved: HistoryLayout,
@@ -25,14 +34,14 @@ export default (props) => {
         title='Login History'
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => props.navigation.goBack(),
+          action: () => navigation.goBack(),
         }}
       />
       <TabView
         renderTabBar={(_props) => (
           <LoginTabs {..._props} onIndexChange={setIndex} />
         )}
-        navigationState={{ index, routes }}
+        navigationState={{ index, routes: tabs }}
         renderScene={renderScene}
         onIndexChange={setIndex}
       />

@@ -1,36 +1,53 @@
-import { useNavigation } from '@react-navigation/native'
 import {
   resetPhrase as resetPhraseAction,
   selectSeedPhraseTemplate,
 } from 'features/seedphrases'
 import { setShowSeedPhraseReminder } from 'features/settings'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
-import { connect, useDispatch } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
+import Button from 'components/Button'
+import ErrorPhrase from 'components/ErrorPhrase'
+import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
+import Words from 'components/Words'
+import { MainStackScreenProps } from 'navigation/types'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
-import Button from '../../components/Button'
-import ErrorPhrase from '../../components/ErrorPhrase'
-import Layout from '../../components/Layouts/Layout'
-import Words from '../../components/Words'
+export type VerifyPhraseScreenParams = {
+  shuffled: string[]
+}
 
-const VerifyPhrase = (props) => {
-  const { selected = [], resetPhrase, route } = props
-  const [error, showError] = useState(null)
-  const [verified, setVerified] = useState(null)
-  const dispatch = useDispatch()
-  const navigation = useNavigation()
+type VerifyPhraseScreenProps = MainStackScreenProps<'VerifyPhrase'>
+
+export const VerifyPhraseScreen: React.FC<VerifyPhraseScreenProps> = (
+  props
+) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+
+  const dispatch = useAppDispatch()
+  const selected = useAppSelector(selectSeedPhraseTemplate)
+
+  const resetPhrase = useCallback(
+    () => dispatch(resetPhraseAction()),
+    [dispatch]
+  )
+
+  const [error, showError] = useState(false)
+  const [verified, setVerified] = useState(false)
 
   useEffect(() => {
     showError(false)
 
-    const selectedWords = selected.map((item) => route.params.shuffled[item])
+    const selectedWords = selected.map((item) => params.shuffled[item])
 
     setVerified(
       selectedWords.join(' ') ===
-        AccountManager.getInstance().getSelectedAccount().mnemonic
+        AccountManager.getInstance().getSelectedAccount()!.mnemonic
     )
 
     // TODO: We are not sensitive to route.params.shuffled here, but we should be.
@@ -58,9 +75,9 @@ const VerifyPhrase = (props) => {
   return (
     <View>
       <NavigationHeader title='Record Your Seed Phrase' />
-      <Layout title='Verify Your Phrase' style={style.layout}>
+      <Layout title='Verify Your Phrase'>
         <View>
-          <Words words={route.params.shuffled} />
+          <Words words={params.shuffled} />
           <ErrorPhrase shown={error} style={style.error} />
         </View>
         <View>
@@ -95,20 +112,6 @@ const VerifyPhrase = (props) => {
     </View>
   )
 }
-
-const mapStateToProps = (state) => {
-  return {
-    selected: selectSeedPhraseTemplate(state),
-  }
-}
-
-const mapDispatchToProps = (dispatch) => {
-  return {
-    resetPhrase: () => dispatch(resetPhraseAction()),
-  }
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(VerifyPhrase)
 
 const style = StyleSheet.create({
   error: {

@@ -8,6 +8,7 @@ import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
 import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
+import { CreatePinScreenParams } from 'pages/Authentication'
 import { NetworksEditorScreenParams } from 'pages/BlockchainNetworksEditor'
 import {
   DataFolderScreenParams,
@@ -25,7 +26,9 @@ import {
   RemoveIdentityScreenParams,
   ShareIdentityScreenParams,
 } from 'pages/Identity'
+import { InboxItemScreenParams, InboxScreenParams } from 'pages/Inbox'
 import { ShareableDataItemType } from 'pages/Inbox/ShareableDataItem'
+import { LoginHistoryScreenParams } from 'pages/Login'
 import { OnboardingScreenParams } from 'pages/Onboarding'
 import {
   AddVeridaOneCustomLinkScreenParams,
@@ -38,6 +41,12 @@ import {
   UnlockVeridaOneScreenParams,
 } from 'pages/Profiles'
 import { QrCodeScannerScreenParams } from 'pages/QrCodeScanner'
+import {
+  SeedPhraseGeneratedScreenParams,
+  SeedPhraseScreenParams,
+  SeedPhraseViewScreenParams,
+  VerifyPhraseScreenParams,
+} from 'pages/RecoveryPhrase'
 import {
   ConnectionRequestScreenParams,
   IncomingDataRequestScreenParams,
@@ -68,10 +77,10 @@ export type AuthStackParams = {
   AddIdentity: AddIdentityScreenParams
   CreateIdentity: CreateIdentityScreenParams
   ImportIdentity: ImportIdentityScreenParams
-  SeedPhrase: undefined
-  SeedPhraseGenerated: undefined
-  VerifyPhrase: { shuffled: string[] }
-  CreatePin: undefined
+  SeedPhrase: SeedPhraseScreenParams
+  SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
+  VerifyPhrase: VerifyPhraseScreenParams
+  CreatePin: CreatePinScreenParams
 }
 
 export type AuthStackScreenProps<S extends keyof AuthStackParams> =
@@ -93,9 +102,11 @@ export type TabsScreenProps<S extends keyof TabsScreenParams> =
 
 export type MainStackParams = {
   Tabs: NavigatorScreenParams<TabsScreenParams>
-  Inbox: undefined
-  InboxItem: { inboxItemId: string }
-  LoginHistory: undefined
+
+  Inbox: InboxScreenParams
+  InboxItem: InboxItemScreenParams
+
+  LoginHistory: LoginHistoryScreenParams
   LoginRequest: undefined
 
   PublicProfile: PublicProfileScreenParams
@@ -109,7 +120,7 @@ export type MainStackParams = {
   MigrateIdentityConfirmation: MigrateIdentityConfirmationScreenParams
   MigrateIdentityExecution: MigrateIdentityExecutionScreenParams
 
-  SeedPhraseView: undefined
+  SeedPhraseView: SeedPhraseViewScreenParams
   ManageWallets: undefined
   SingleCurrency: SingleCurrencyScreenProps
   SendToken: SendTokenScreenProps
@@ -135,9 +146,10 @@ export type MainStackParams = {
   DeleteIdentity: DeleteIdentityScreenParams
   RemoveIdentity: RemoveIdentityScreenParams
 
-  SeedPhrase: undefined
-  SeedPhraseGenerated: undefined
-  VerifyPhrase: undefined
+  SeedPhrase: SeedPhraseScreenParams
+  SeedPhraseGenerated: SeedPhraseGeneratedScreenParams
+  VerifyPhrase: VerifyPhraseScreenParams
+
   ShareableData: {
     schemaUrl: string
     onConfirm: (selectedItems: ShareableDataItemType[]) => void

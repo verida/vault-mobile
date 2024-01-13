@@ -24,10 +24,9 @@ import {
   RemoveIdentityScreen,
   ShareIdentityScreen,
 } from 'pages/Identity'
-import Inbox from 'pages/Inbox'
+import { InboxItemScreen, InboxScreen } from 'pages/Inbox'
 import ShareableData from 'pages/Inbox/ShareableData'
-import InboxItem from 'pages/InboxItem'
-import LoginHistory from 'pages/Login/LoginHistory'
+import { LoginHistoryScreen } from 'pages/Login'
 import LoginRequest from 'pages/Login/LoginRequest'
 import {
   AddVeridaOneCustomLinkScreen,
@@ -41,15 +40,17 @@ import {
 } from 'pages/Profiles'
 import { QrCodeScannerScreen } from 'pages/QrCodeScanner'
 import {
+  SeedPhraseGeneratedScreen,
+  SeedPhraseScreen,
+  SeedPhraseViewScreen,
+  VerifyPhraseScreen,
+} from 'pages/RecoveryPhrase'
+import {
   ConnectionRequestScreen,
   IncomingDataRequestScreen,
   PaymentRequestScreen,
   ProofRequestScreen,
 } from 'pages/Requests'
-import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
-import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
-import SeedPhraseView from 'pages/SeedPhrase/SeedPhraseView'
-import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
 import { PolygonIdCircuitsSettingsScreen, SettingsScreen } from 'pages/Settings'
 import BuyToken from 'pages/Tokens/BuyToken'
 import ConfirmTransaction from 'pages/Tokens/ConfirmTransaction'
@@ -82,14 +83,17 @@ export const MainNavigator: React.FunctionComponent = () => {
             headerShown: false,
           }}>
           <Stack.Screen
-            name={'Tabs'}
+            name='Tabs'
             component={TabsNavigator}
             options={{ headerShown: false }}
           />
-          <Stack.Screen name={'Inbox'} component={Inbox} />
-          <Stack.Screen name={'InboxItem'} component={InboxItem} />
-          <Stack.Screen name={'LoginHistory'} component={LoginHistory} />
+
+          <Stack.Screen name='Inbox' component={InboxScreen} />
+          <Stack.Screen name='InboxItem' component={InboxItemScreen} />
+
+          <Stack.Screen name={'LoginHistory'} component={LoginHistoryScreen} />
           <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
+
           <Stack.Screen name='PublicProfile' component={PublicProfileScreen} />
 
           {/* Public profile modal screens */}
@@ -125,7 +129,10 @@ export const MainNavigator: React.FunctionComponent = () => {
             />
           </Stack.Group>
 
-          <Stack.Screen name={'SeedPhraseView'} component={SeedPhraseView} />
+          <Stack.Screen
+            name='SeedPhraseView'
+            component={SeedPhraseViewScreen}
+          />
           <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
           <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
           <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
@@ -156,41 +163,41 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'ChangePin'} component={ChangePin} />
           <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
 
-          <Stack.Screen name={'AddIdentity'} component={AddIdentityScreen} />
+          <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
           <Stack.Screen
             name='CreateIdentity'
             component={CreateIdentityScreen}
           />
           <Stack.Screen
-            name={'ImportIdentity'}
+            name='ImportIdentity'
             component={ImportIdentityScreen}
           />
           <Stack.Screen
-            name={'RemoveIdentity'}
+            name='RemoveIdentity'
             component={RemoveIdentityScreen}
           />
           <Stack.Screen
-            name={'DeleteIdentity'}
+            name='DeleteIdentity'
             component={DeleteIdentityScreen}
           />
           <Stack.Screen
-            name={'MigrateIdentityConfirmation'}
+            name='MigrateIdentityConfirmation'
             component={MigrateIdentityConfirmationScreen}
             options={{
               headerShown: true,
             }}
           />
           <Stack.Screen
-            name={'MigrateIdentityExecution'}
+            name='MigrateIdentityExecution'
             component={MigrateIdentityExecutionScreen}
           />
 
-          <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
+          <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
           <Stack.Screen
-            name={'SeedPhraseGenerated'}
-            component={SeedPhraseGenerated}
+            name='SeedPhraseGenerated'
+            component={SeedPhraseGeneratedScreen}
           />
-          <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
+          <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
           <Stack.Screen name={'ShareableData'} component={ShareableData} />
           <Stack.Screen
             name={'BlockchainNetworks'}
@@ -260,7 +267,7 @@ export const MainNavigator: React.FunctionComponent = () => {
               headerShadowVisible: true,
               header: (props) => <BaseScreenHeader {...props} />,
             }}>
-            <Stack.Screen name={'Settings'} component={SettingsScreen} />
+            <Stack.Screen name='Settings' component={SettingsScreen} />
             <Stack.Screen
               name='PolygonIdCircuitsSettings'
               component={PolygonIdCircuitsSettingsScreen}

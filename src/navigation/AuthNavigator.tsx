@@ -2,16 +2,18 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import React from 'react'
 
 import { AuthStackParams } from 'navigation/types'
-import { CreatePin } from 'pages/Authentication/CreatePin'
+import { CreatePinScreen } from 'pages/Authentication'
 import {
   AddIdentityScreen,
   CreateIdentityScreen,
   ImportIdentityScreen,
 } from 'pages/Identity'
 import { OnboardingScreen } from 'pages/Onboarding'
-import SeedPhrase from 'pages/SeedPhrase/SeedPhrase'
-import SeedPhraseGenerated from 'pages/SeedPhrase/SeedPhraseGenerated'
-import VerifyPhrase from 'pages/SeedPhrase/VerifyPhrase'
+import {
+  SeedPhraseGeneratedScreen,
+  SeedPhraseScreen,
+  VerifyPhraseScreen,
+} from 'pages/RecoveryPhrase'
 
 const Stack = createNativeStackNavigator<AuthStackParams>()
 
@@ -20,19 +22,19 @@ function AuthNavigator() {
     <Stack.Navigator
       initialRouteName='Onboarding'
       screenOptions={{ headerShown: false }}>
-      <Stack.Screen name={'Onboarding'} component={OnboardingScreen} />
+      <Stack.Screen name='Onboarding' component={OnboardingScreen} />
 
       <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
       <Stack.Screen name='CreateIdentity' component={CreateIdentityScreen} />
       <Stack.Screen name='ImportIdentity' component={ImportIdentityScreen} />
 
-      <Stack.Screen name={'SeedPhrase'} component={SeedPhrase} />
+      <Stack.Screen name='SeedPhrase' component={SeedPhraseScreen} />
       <Stack.Screen
-        name={'SeedPhraseGenerated'}
-        component={SeedPhraseGenerated}
+        name='SeedPhraseGenerated'
+        component={SeedPhraseGeneratedScreen}
       />
-      <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
-      <Stack.Screen name={'CreatePin'} component={CreatePin} />
+      <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
+      <Stack.Screen name='CreatePin' component={CreatePinScreen} />
     </Stack.Navigator>
   )
 }

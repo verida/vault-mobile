@@ -12,14 +12,20 @@ import {
 import AccountManager from 'api/AccountManager'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import AlertNotification from 'components/AlertNotification'
+import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import CopySeedPhraseModal from 'components/SeedPhraseModal/CopySeedPhraseModal'
 import SeedPhraseWarningModal from 'components/SeedPhraseModal/SeedPhraseWarningModal'
 import { BLACK_ORIGIN_COLOR } from 'constants/color'
+import { MainStackScreenProps } from 'navigation/types'
 
-import Layout from '../../components/Layouts/Layout'
+export type SeedPhraseViewScreenParams = undefined
 
-export default () => {
+type SeedPhraseViewScreenProps = MainStackScreenProps<'SeedPhraseView'>
+
+export const SeedPhraseViewScreen: React.FC<SeedPhraseViewScreenProps> = (
+  _props
+) => {
   const [loading, setLoading] = useState(true)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [isSeedPhraseCopied, setIsSeedPhraseCopied] = useState(false)
@@ -39,8 +45,8 @@ export default () => {
     initUserPin()
 
     const init = async () => {
-      const { mnemonic } = AccountManager.getInstance().selectedAccount
-      setSeedPhraseData(mnemonic)
+      const account = AccountManager.getInstance().getSelectedAccount()
+      setSeedPhraseData(account?.mnemonic || '')
     }
     init()
   }, [])
@@ -56,7 +62,7 @@ export default () => {
 
   if (loading) {
     return (
-      <View style={styles.container}>
+      <View>
         <Text>Loading </Text>
         <ActivityIndicator size='large' />
       </View>
@@ -67,7 +73,7 @@ export default () => {
     return (
       <PINCode
         status={'enter'}
-        titleEnter={'Enter your  PIN'}
+        titleEnter={'Enter your PIN'}
         onClickButtonLockedPage={() => BackHandler.exitApp()}
         finishProcess={() => setPinCorrectStatus(true)}
         colorCircleButtons='#dfe1e8'

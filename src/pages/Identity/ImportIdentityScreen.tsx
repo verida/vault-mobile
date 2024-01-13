@@ -98,6 +98,7 @@ export const ImportIdentityScreen: React.FC<ImportIdentityScreenProps> = (
       }
 
       if (params.firstIdentity) {
+        // FIXME: CreateidentityScreen is in both AuthNavigator and MainNavigator but here it's calling 'CreatePin' which is only in AuthNavigator. Even if it's controlled by 'firstIdentity' param, it's still a risk of bug.
         navigation.navigate('CreatePin') // Create a pin for the first time creating an identity
       } else {
         navigation.goBack()

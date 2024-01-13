@@ -1,26 +1,31 @@
 import { Container, Content } from 'native-base'
-import React, { useState } from 'react'
+import React, { useCallback, useState } from 'react'
 import { StyleSheet } from 'react-native'
 
+import SafeImg from 'assets/safe.svg'
+import Button from 'components/Button'
+import Layout from 'components/Layouts/Layout'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
+import { MainStackScreenProps } from 'navigation/types'
 
-import SafeImg from '../../assets/safe.svg'
-import Button from '../../components/Button'
-import Layout from '../../components/Layouts/Layout'
+export type SeedPhraseScreenParams = undefined
 
-const SeedPhrase = (props) => {
+type SeedPhraseScreenProps = MainStackScreenProps<'SeedPhrase'>
+
+export const SeedPhraseScreen: React.FC<SeedPhraseScreenProps> = (props) => {
+  const { navigation } = props
+
   const [disabled, setDisabled] = useState(false)
 
-  const onRemindLatter = () => {
+  const onRemindLatter = useCallback(() => {
     setDisabled(true)
-    props.navigation.goBack()
-  }
+    navigation.goBack()
+  }, [navigation])
 
-  function onShow() {
-    props.navigation.pop(1)
-    props.navigation.navigate('SeedPhraseGenerated')
-  }
+  const onShow = useCallback(() => {
+    navigation.replace('SeedPhraseGenerated')
+  }, [navigation])
 
   return (
     <Container>
@@ -57,8 +62,6 @@ const SeedPhrase = (props) => {
     </Container>
   )
 }
-
-export default SeedPhrase
 
 const style = StyleSheet.create({
   description: {
