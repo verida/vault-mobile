@@ -4,16 +4,15 @@ import { Container } from 'native-base'
 import React, { useCallback, useEffect, useRef, useState } from 'react'
 import { useWindowDimensions } from 'react-native'
 import { SceneMap, TabView } from 'react-native-tab-view'
-import { connect } from 'react-redux'
 
 import SegmentControl, { SegmentControlRef } from 'components/SegmentControl'
-import { WalletItem } from 'components/WalletList/types'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { TabsScreenProps } from 'navigation/types'
 import Tokens from 'pages/Tokens/Dashboard'
+import { useAppSelector } from 'reduxStore/types'
 
-import Collectibles from './Assets/Collectibles'
+import Collectibles from './Collectibles'
 
 const segmentLists = [
   {
@@ -43,13 +42,14 @@ enum Assets {
   BADGES,
 }
 
-type AssetsCollectionsProps = {
-  selectedWallet: WalletItem
-} & TabsScreenProps<'Assets'>
+export type AssetsScreenParams = undefined
 
-const AssetsCollections = (props: AssetsCollectionsProps) => {
-  const { selectedWallet, navigation } = props
+type AssetsScreenProps = TabsScreenProps<'Assets'>
 
+export const AssetsScreen: React.FC<AssetsScreenProps> = (props) => {
+  const { navigation } = props
+
+  const selectedWallet = useAppSelector(getSelectedWalletById)
   const [segments] = useState(segmentLists)
   const [modalVisible, setModalVisible] = useState(false)
   const [collection, setCollection] = useState<Assets>(Assets.COINS)
@@ -120,11 +120,3 @@ const AssetsCollections = (props: AssetsCollectionsProps) => {
     </Container>
   )
 }
-
-const mapStateToProps = (state: any) => {
-  return {
-    selectedWallet: getSelectedWalletById(state),
-  }
-}
-
-export default connect(mapStateToProps)(AssetsCollections)

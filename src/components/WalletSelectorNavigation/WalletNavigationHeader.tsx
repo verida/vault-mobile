@@ -5,12 +5,12 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
+import { BlockchainWalletWithAccounts } from 'api/types'
 import { Avatar } from 'components/Images'
-import { WalletItem } from 'components/WalletList/types'
 import { Theme } from 'styles/types'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: WalletItem
+  selectedWallet: BlockchainWalletWithAccounts
   openWalletModal: () => void
 }
 
