@@ -19,7 +19,10 @@ import {
   BlockchainNetworksEditorScreenParams,
   BlockchainNetworksScreenParams,
 } from 'pages/Blockchains'
-import { SingleConnectionScreenParams } from 'pages/Connections'
+import {
+  // ConnectionsScreenParams,
+  SingleConnectionScreenParams,
+} from 'pages/Connections'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
@@ -112,7 +115,7 @@ export type TabsScreenParams = {
   Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataScreenParams
-  // Connections: undefined // TODO: uncomment when ready
+  // Connections: ConnectionsScreenParams // TODO: uncomment when ready
   Assets: AssetsScreenParams
 }
 

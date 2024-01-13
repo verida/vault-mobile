@@ -1,4 +1,4 @@
-import { Container, Content, Icon } from 'native-base'
+import { Container, Content } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import {
   FlatList,
@@ -9,21 +9,28 @@ import {
 } from 'react-native'
 
 import DataConnectorsManager from 'api/DataConnectorsManager'
-import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { TabsScreenProps } from 'navigation/types'
 
-function buildConnections(allConnectors) {
+function buildConnections(allConnectors: any) {
+  // TODO: Better typing
   const finalConnectors = []
-  for (let connectorName in allConnectors) {
+  for (const connectorName in allConnectors) {
     finalConnectors.push(allConnectors[connectorName].render())
   }
 
   return finalConnectors
 }
 
-export const ConnectionsTabScreen = (props) => {
-  const [connectors, setConnectors] = useState([])
+export type ConnectionsScreenParams = undefined
+
+type ConnectionsScreenProps = TabsScreenProps<'Connections'>
+
+export const ConnectionsScreen: React.FC<ConnectionsScreenProps> = (props) => {
+  const { navigation } = props
+
+  const [connectors, setConnectors] = useState<any[]>([])
 
   useEffect(() => {
     const load = async () => {
@@ -48,13 +55,6 @@ export const ConnectionsTabScreen = (props) => {
 
   return (
     <Container>
-      <NavigationHeader
-        title='Connections'
-        left={{
-          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
-          action: () => props.navigation.goBack(),
-        }}
-      />
       <Content contentContainerStyle={styles.contentContainer}>
         <FlatList
           data={connectors}
@@ -63,7 +63,7 @@ export const ConnectionsTabScreen = (props) => {
             return (
               <TouchableOpacity
                 onPress={() => {
-                  props.navigation.navigate('SingleConnection', {
+                  navigation.navigate('SingleConnection', {
                     provider: item.name,
                   })
                 }}

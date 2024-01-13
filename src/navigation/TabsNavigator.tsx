@@ -6,7 +6,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { TabsScreenParams } from 'navigation/types'
 import { AssetsScreen } from 'pages/Assets'
-// import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
+// import { ConnectionsScreen } from 'pages/Connections' // TODO: uncomment when ready
 import { DataScreen } from 'pages/Data'
 import { HomeScreen } from 'pages/Home'
 import { IdentityDrawer } from 'pages/Identity'
@@ -66,8 +66,8 @@ export const TabsNavigator: React.FunctionComponent = () => {
       TODO: We should delete the screen from the Main navigator and only use it from the Tabs navigator, but there are some sketchy access to it from the Main right now, so have to refactopr that first.
        */}
         <Tabs.Screen name='Data' component={DataScreen} />
-        {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
-       TODO: uncomment when ready */}
+        {/* <Tabs.Screen name='Connections' component={ConnectionsScreen} /> */}
+        {/* TODO: uncomment when ready */}
         <Tabs.Screen name='Assets' component={AssetsScreen} />
       </Tabs.Navigator>
     </IdentityDrawer>
