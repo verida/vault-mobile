@@ -8,17 +8,21 @@ import { LAYOUT_BASE } from 'styles'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import { MainStackScreenProps } from 'navigation/types'
 
-export type WalletConnectActiveSessionDetailsParams = {
+export type WalletConnectActiveSessionDetailsScreenParams = {
   walletConnectSessionKey: string
 }
 
-export const WalletConnectActiveSessionDetails = React.memo(
-  function WalletConnectActiveSessionDetails({
-    navigation,
-    route: {
-      params: { walletConnectSessionKey },
-    },
-  }: MainStackScreenProps<'WalletConnectActiveSessionDetails'>): JSX.Element {
+type WalletConnectActiveSessionDetailsScreenProps =
+  MainStackScreenProps<'WalletConnectActiveSessionDetails'>
+
+export const WalletConnectActiveSessionDetailsScreen: React.FC<WalletConnectActiveSessionDetailsScreenProps> =
+  (props) => {
+    const {
+      navigation,
+      route: { params },
+    } = props
+    const { walletConnectSessionKey } = params
+
     return (
       <View>
         <NavigationHeader
@@ -43,4 +47,3 @@ export const WalletConnectActiveSessionDetails = React.memo(
       </View>
     )
   }
-)

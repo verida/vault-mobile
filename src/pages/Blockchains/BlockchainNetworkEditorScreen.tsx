@@ -1,4 +1,3 @@
-import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
 import {
   useChainMetadataDetails,
@@ -23,38 +22,35 @@ import Button from 'components/Button'
 import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
-import { ChainMetadataListSeparatorComponent } from 'pages/BlockchainNetworks/components'
+import { MainStackScreenProps } from 'navigation/types'
+import { ChainMetadataListSeparatorComponent } from 'pages/Blockchains/components'
 
 import { ChainsMetadataForm } from './components'
 import { useCreateChainMetadataFormFields } from './hooks'
-
-export type NetworksEditorRouteProp = RouteProp<
-  MainStackParams,
-  'BlockchainNetworksEditor'
->
-
-export type NetworksEditorScreenParams = {
-  readonly title: string
-  readonly initialValue: ChainMetadata | null
-  readonly disabled: boolean
-}
 
 const attemptedToModifyDisabledNetworkError = () =>
   new Error(
     'Attempted to modify a network that is not permitted for modification.'
   )
 
-const logger = new Logger('BlockchainNetworksEditor')
+const logger = new Logger('BlockchainNetworkEditorScreen')
 
-export const BlockchainNetworksEditor = React.memo(
-  function BlockchainNetworksEditor(): JSX.Element {
-    const { initialValue, title, disabled } =
-      useParams<NetworksEditorScreenParams>()
+export type BlockchainNetworksEditorScreenParams = {
+  readonly title: string
+  readonly initialValue: ChainMetadata | null
+  readonly disabled: boolean
+}
 
-    const navigation = useMainNavigation()
+type BlockchainNetworkEditorScreenProps =
+  MainStackScreenProps<'BlockchainNetworkEditor'>
+
+export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScreenProps> =
+  (props) => {
+    const {
+      navigation,
+      route: { params },
+    } = props
+    const { initialValue, title, disabled } = params
 
     const { removeCustomNetworks, addCustomNetworks } =
       useChainMetadatasCustom()
@@ -211,7 +207,6 @@ export const BlockchainNetworksEditor = React.memo(
       </Container>
     )
   }
-)
 
 const styles = StyleSheet.create({
   actionButton: {

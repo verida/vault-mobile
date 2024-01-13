@@ -8,7 +8,7 @@ import { SEPARATOR_LIGHT, WHITE_COLOR } from 'constants/color'
 
 interface WalletListProps {
   list: BlockchainWalletWithAccounts[]
-  selectedWalletId: string | number
+  selectedWalletId?: string | number
   onPressItem?: (item: BlockchainWalletWithAccounts) => void
   leftIconType?: 'checked' | 'dots'
 }

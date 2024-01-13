@@ -5,7 +5,7 @@ import { Icon } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { BackHandler, StyleSheet, TouchableOpacity, View } from 'react-native'
 
-import { BlockchainAccount } from 'api/types'
+import { BlockchainAccount, BlockchainWalletWithAccounts } from 'api/types'
 import CopyIcon from 'assets/copy_icon_dark.svg'
 import ExportSeedphraseSvg from 'assets/export_seedphrase.svg'
 import ChainsAddressesList from 'components/ChainsAddressesList'
@@ -22,11 +22,19 @@ import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import PrivateKeyModal from './PrivateKeyModal'
 import RenameWalletModal from './RenameWalletModal'
 
+export type SingleWalletScreenParams = { item: BlockchainWalletWithAccounts }
+
 type SingleWalletScreenProps = MainStackScreenProps<'SingleWallet'>
 
-const SingleWallet = (props: SingleWalletScreenProps) => {
-  const { navigation, route } = props
-  const { item } = route.params
+export const SingleWalletScreen: React.FC<SingleWalletScreenProps> = (
+  props
+) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { item } = params
+
   const dispatch = useAppDispatch()
   const [loading, setLoading] = useState(true)
   const [renameModalVisible, setRenameModalVisible] = useState(false)
@@ -229,5 +237,3 @@ const styles = StyleSheet.create({
   },
   actionButtonText: { marginTop: 5, fontSize: 14 },
 })
-
-export default SingleWallet

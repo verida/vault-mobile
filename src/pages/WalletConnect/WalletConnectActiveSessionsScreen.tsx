@@ -16,10 +16,15 @@ import { MainStackScreenProps } from 'navigation/types'
 
 const leftIcon: HeaderProps['left'] = { icon: 'back' }
 
-export const WalletConnectActiveSessions = React.memo(
-  function WalletConnectActiveSessions({
-    navigation,
-  }: MainStackScreenProps<'WalletConnectActiveSessions'>): JSX.Element {
+export type WalletConnectActiveSessionsScreenParams = undefined
+
+type WalletConnectActiveSessionsScreenProps =
+  MainStackScreenProps<'WalletConnectActiveSessions'>
+
+export const WalletConnectActiveSessionsScreen: React.FC<WalletConnectActiveSessionsScreenProps> =
+  (props) => {
+    const { navigation } = props
+
     const { activeSessions: defaultActiveSessions } = useWalletConnectContext()
 
     const activeSessions = Object.keys(defaultActiveSessions)
@@ -63,7 +68,6 @@ export const WalletConnectActiveSessions = React.memo(
       </View>
     )
   }
-)
 
 const styles = StyleSheet.create({
   flex: { flex: 1 },

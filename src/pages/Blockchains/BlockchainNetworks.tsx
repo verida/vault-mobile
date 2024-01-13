@@ -1,0 +1,148 @@
+import { ChainId } from 'caip'
+import { useTheme } from 'contexts/ThemeContext'
+import {
+  getMaybeChainMetadatas,
+  useChainMetadataDetails,
+  useChainMetadatas,
+} from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
+import { Container } from 'native-base'
+import * as React from 'react'
+import {
+  ListRenderItem,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+} from 'react-native'
+import { FlatList, ScrollView } from 'react-native-gesture-handler'
+import { useImmediateLayoutAnimation } from 'use-layout-animation'
+
+import PlusIcon from 'assets/plus_icon.svg'
+import NavigationHeader, {
+  HeaderSideButton,
+} from 'components/Navigation/NavigationHeader'
+import { SearchBar } from 'components/SearchBar/SearchBar'
+import { MainStackScreenProps } from 'navigation/types'
+
+import {
+  ChainMetadataListItem,
+  ChainMetadataListSeparatorComponent,
+} from './components'
+
+const keyExtractor = (e: ChainMetadata) => new ChainId(e).toString()
+
+export type BlockchainNetworksScreenParams = undefined
+
+type BlockchainNetworksScreenProps = MainStackScreenProps<'BlockchainNetworks'>
+
+export const BlockchainNetworksScreen: React.FC<BlockchainNetworksScreenProps> =
+  (props) => {
+    const { navigation } = props
+
+    const [searchText, setSearchText] = React.useState<string>('')
+    const { theme } = useTheme()
+
+    const { getChainMetadataDetails } = useChainMetadataDetails()
+
+    const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
+    const renderItem: ListRenderItem<ChainMetadata> = React.useCallback(
+      ({ item: chainMetadata }) => {
+        const { isCustom } = getChainMetadataDetails(chainMetadata)
+        return (
+          <TouchableOpacity
+            onPress={() =>
+              // HACK: Only allow custom networks to be edited.
+              navigation.navigate('BlockchainNetworkEditor', {
+                title: isCustom ? 'Edit custom network' : 'Network settings',
+                disabled: !isCustom,
+                initialValue: chainMetadata,
+              })
+            }>
+            <ChainMetadataListItem chainMetadata={chainMetadata} />
+          </TouchableOpacity>
+        )
+      },
+      [navigation, getChainMetadataDetails]
+    )
+
+    const chainMetadatasToRender = React.useMemo(() => {
+      if (typeof searchText !== 'string' || !searchText.length)
+        return chainMetadatas
+
+      return chainMetadatas.filter((e) =>
+        `${e.name} ${e.nativeCurrencyName} ${e.namespace} ${e.reference}`
+          .toLocaleLowerCase()
+          .includes(searchText.toLocaleLowerCase())
+      )
+    }, [chainMetadatas, searchText])
+
+    const onPressAddNetwork = React.useCallback(
+      () =>
+        navigation.navigate('BlockchainNetworkEditor', {
+          title: 'Create custom network',
+          disabled: false,
+          initialValue: null,
+        }),
+      [navigation]
+    )
+
+    const headerSideButton: HeaderSideButton = React.useMemo(
+      () => ({
+        icon: <PlusIcon />,
+        action: onPressAddNetwork,
+      }),
+      [onPressAddNetwork]
+    )
+
+    useImmediateLayoutAnimation([searchText])
+
+    return (
+      <Container>
+        <NavigationHeader
+          bottomBorder={false}
+          title='Networks'
+          renderNetInfo={false}
+          right={headerSideButton}
+        />
+        <View style={styles.content}>
+          <SearchBar
+            showSortButton={false}
+            showFilterButton={false}
+            style={{
+              paddingHorizontal: theme.spacing.m,
+              // HACK: Where does this value come from?
+              marginTop: -10,
+              paddingBottom: 22,
+            }}
+            inputProps={{
+              autoFocus: false,
+              onChangeText: setSearchText,
+              value: searchText,
+              placeholder: 'Search networks',
+              spellCheck: false,
+            }}
+          />
+          <ScrollView>
+            <ChainMetadataListSeparatorComponent />
+            <FlatList
+              data={chainMetadatasToRender}
+              renderItem={renderItem}
+              keyExtractor={keyExtractor}
+              ItemSeparatorComponent={ChainMetadataListSeparatorComponent}
+            />
+            <ChainMetadataListSeparatorComponent />
+          </ScrollView>
+        </View>
+      </Container>
+    )
+  }
+
+const styles = StyleSheet.create({
+  content: {
+    backgroundColor: '#fff',
+    flex: 1,
+    paddingVertical: 24,
+  },
+  flex: { flex: 1 },
+})

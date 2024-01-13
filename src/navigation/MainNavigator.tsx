@@ -6,13 +6,17 @@ import React from 'react'
 import { BehindAuthHandlers } from 'components/BehindAuthHandlers'
 import { TabsNavigator } from 'navigation/TabsNavigator'
 import { MainStackParams } from 'navigation/types'
-import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
-import NFTDetail from 'pages/Assets/NFTDetail'
-import SelectAsset from 'pages/Assets/SelectAsset'
-import { ChangePin } from 'pages/Authentication/ChangePin'
-import BlockchainNetworks from 'pages/BlockchainNetworks/BlockchainNetworks'
-import { BlockchainNetworksEditor } from 'pages/BlockchainNetworksEditor'
-import SingleConnection from 'pages/Connections/SingleConnection'
+import {
+  NFTCollectionDetailScreen,
+  NFTDetailScreen,
+  SelectAssetScreen,
+} from 'pages/Assets'
+import { ChangePinScreen } from 'pages/Authentication'
+import {
+  BlockchainNetworkEditorScreen,
+  BlockchainNetworksScreen,
+} from 'pages/Blockchains'
+import { SingleConnectionScreen } from 'pages/Connections'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import {
   AddIdentityScreen,
@@ -27,6 +31,7 @@ import {
 import { InboxItemScreen, InboxScreen, ShareableDataScreen } from 'pages/Inbox'
 import { LoginHistoryScreen } from 'pages/Login'
 import LoginRequest from 'pages/Login/LoginRequest'
+import { PolygonIdCircuitsSettingsScreen } from 'pages/PolygonID'
 import {
   AddVeridaOneCustomLinkScreen,
   AddVeridaOnePlatformLinkScreen,
@@ -50,7 +55,7 @@ import {
   PaymentRequestScreen,
   ProofRequestScreen,
 } from 'pages/Requests'
-import { PolygonIdCircuitsSettingsScreen, SettingsScreen } from 'pages/Settings'
+import { SettingsScreen } from 'pages/Settings'
 import {
   BuyTokenScreen,
   ConfirmTransactionScreen,
@@ -62,12 +67,15 @@ import {
   TransactionFailureScreen,
   TransactionSuccessScreen,
 } from 'pages/Tokens'
-import { WalletConnectActiveSessionDetails } from 'pages/WalletConnectActiveSessionDetails'
-import { WalletConnectActiveSessions } from 'pages/WalletConnectActiveSessions'
-import ManageWallets from 'pages/Wallets/ManageWallets'
-import OtherAddresses from 'pages/Wallets/OtherAddresses'
-import SingleWallet from 'pages/Wallets/SingleWallet'
-import SuccessFailure from 'pages/Wallets/SuccessFailure'
+import {
+  WalletConnectActiveSessionDetailsScreen,
+  WalletConnectActiveSessionsScreen,
+} from 'pages/WalletConnect'
+import {
+  ManageWalletsScreen,
+  SingleWalletScreen,
+  SuccessFailureScreen,
+} from 'pages/Wallets'
 
 const Stack = createNativeStackNavigator<MainStackParams>()
 
@@ -91,9 +99,10 @@ export const MainNavigator: React.FunctionComponent = () => {
 
           <Stack.Screen name='Inbox' component={InboxScreen} />
           <Stack.Screen name='InboxItem' component={InboxItemScreen} />
+          <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
 
-          <Stack.Screen name={'LoginHistory'} component={LoginHistoryScreen} />
-          <Stack.Screen name={'LoginRequest'} component={LoginRequest} />
+          <Stack.Screen name='LoginHistory' component={LoginHistoryScreen} />
+          <Stack.Screen name='LoginRequest' component={LoginRequest} />
 
           <Stack.Screen name='PublicProfile' component={PublicProfileScreen} />
 
@@ -111,7 +120,7 @@ export const MainNavigator: React.FunctionComponent = () => {
               name='AddVeridaOneCustomLink'
               component={AddVeridaOneCustomLinkScreen}
             />
-            <Stack.Screen name={'SelectAsset'} component={SelectAsset} />
+            <Stack.Screen name='SelectAsset' component={SelectAssetScreen} />
             <Stack.Screen
               name='ClaimUsername'
               component={ClaimUsernameScreen}
@@ -134,10 +143,12 @@ export const MainNavigator: React.FunctionComponent = () => {
             name='SeedPhraseView'
             component={SeedPhraseViewScreen}
           />
-          <Stack.Screen name={'ManageWallets'} component={ManageWallets} />
-          <Stack.Screen name={'SingleWallet'} component={SingleWallet} />
-          <Stack.Screen name={'OtherAddresses'} component={OtherAddresses} />
-          <Stack.Screen name={'SuccessFailure'} component={SuccessFailure} />
+          <Stack.Screen name='ManageWallets' component={ManageWalletsScreen} />
+          <Stack.Screen name='SingleWallet' component={SingleWalletScreen} />
+          <Stack.Screen
+            name='SuccessFailure'
+            component={SuccessFailureScreen}
+          />
           <Stack.Screen
             name='SingleCurrency'
             component={SingleCurrencyScreen}
@@ -166,10 +177,10 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name='BuyToken' component={BuyTokenScreen} />
           <Stack.Screen name='ReceiveToken' component={ReceiveTokenScreen} />
 
-          <Stack.Screen name={'DataFolder'} component={DataFolderScreen} />
-          <Stack.Screen name={'DataItem'} component={DataItemScreen} />
-          <Stack.Screen name={'ChangePin'} component={ChangePin} />
-          <Stack.Screen name={'ScanQrCode'} component={QrCodeScannerScreen} />
+          <Stack.Screen name='DataFolder' component={DataFolderScreen} />
+          <Stack.Screen name='DataItem' component={DataItemScreen} />
+          <Stack.Screen name='ChangePin' component={ChangePinScreen} />
+          <Stack.Screen name='ScanQrCode' component={QrCodeScannerScreen} />
 
           <Stack.Screen name='AddIdentity' component={AddIdentityScreen} />
           <Stack.Screen
@@ -206,34 +217,34 @@ export const MainNavigator: React.FunctionComponent = () => {
             component={SeedPhraseGeneratedScreen}
           />
           <Stack.Screen name='VerifyPhrase' component={VerifyPhraseScreen} />
-          <Stack.Screen name='ShareableData' component={ShareableDataScreen} />
+
           <Stack.Screen
-            name={'BlockchainNetworks'}
-            component={BlockchainNetworks}
+            name='BlockchainNetworks'
+            component={BlockchainNetworksScreen}
           />
           <Stack.Screen
-            name={'BlockchainNetworksEditor'}
-            component={BlockchainNetworksEditor}
+            name='BlockchainNetworkEditor'
+            component={BlockchainNetworkEditorScreen}
           />
           <Stack.Screen
             name='WalletConnectActiveSessions'
-            component={WalletConnectActiveSessions}
+            component={WalletConnectActiveSessionsScreen}
           />
           <Stack.Screen
             name='WalletConnectActiveSessionDetails'
-            component={WalletConnectActiveSessionDetails}
+            component={WalletConnectActiveSessionDetailsScreen}
           />
 
           <Stack.Screen
-            name={'SingleConnection'}
-            component={SingleConnection}
+            name='SingleConnection'
+            component={SingleConnectionScreen}
           />
 
           <Stack.Screen
-            name={'NFTCollectionDetail'}
-            component={NFTCollectionDetail}
+            name='NFTCollectionDetail'
+            component={NFTCollectionDetailScreen}
           />
-          <Stack.Screen name={'NFTDetail'} component={NFTDetail} />
+          <Stack.Screen name='NFTDetail' component={NFTDetailScreen} />
 
           {/* Internal Screens */}
           {__DEV__ && (

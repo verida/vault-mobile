@@ -1,5 +1,4 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
-import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import React, { useEffect, useState } from 'react'
 import {
   ActivityIndicator,
@@ -9,13 +8,17 @@ import {
   View,
 } from 'react-native'
 
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 
 import { BLACK_ORIGIN_COLOR } from '../../constants/color'
 
-export const ChangePin: React.FC<
-  NativeStackScreenProps<MainStackParams, 'ChangePin'>
-> = (props) => {
+export type ChangePinScreenParams = undefined
+
+type ChangePinScreenProps = MainStackScreenProps<'ChangePin'>
+
+export const ChangePinScreen: React.FC<ChangePinScreenProps> = (props) => {
+  const { navigation } = props
+
   const [loading, setLoading] = useState(true)
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
@@ -61,7 +64,7 @@ export const ChangePin: React.FC<
       status={'choose'}
       titleChoose={'Enter a New PIN Code'}
       titleConfirm={'Confirm your New PIN Code'}
-      finishProcess={() => props.navigation.goBack()}
+      finishProcess={() => navigation.goBack()}
       colorCircleButtons='#dfe1e8'
       stylePinCodeColorTitle={BLACK_ORIGIN_COLOR}
       stylePinCodeColorSubtitle={BLACK_ORIGIN_COLOR}

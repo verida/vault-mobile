@@ -7,33 +7,47 @@ import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { SUCCESS_COLOR } from 'constants/color'
+import { MainStackScreenProps } from 'navigation/types'
 
-const calculateNextSync = function (conn) {
-  if (!conn.syncNext) return
+const calculateNextSync = function (connection: any) {
+  // TODO: Better typing
+  if (!connection.syncNext) return
 
-  const duration = conn.duration(conn.syncNext)
+  const duration = connection.duration(connection.syncNext)
 
   if (duration > 0) return 'now'
 
   return duration.humanize()
 }
 
-export default ({ route, navigation }) => {
-  //const connectNow = route.params.connectNow
-  const connectionInfo = DataConnectorsManager.getConnectionInfo(
-    route.params.provider
-  )
+export type SingleConnectionScreenParams = {
+  provider: string
+  connectNow?: boolean
+  accessToken?: string // TODO: Check this params that was never defined, so I put a likely string type but not sure
+}
+
+type SingleConnectionScreenProps = MainStackScreenProps<'SingleConnection'>
+
+export const SingleConnectionScreen: React.FC<SingleConnectionScreenProps> = (
+  props
+) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const { provider, connectNow, accessToken } = params
+
+  const connectionInfo = DataConnectorsManager.getConnectionInfo(provider)
 
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
   const [lastSync, setLastSync] = useState('')
   const [syncError, setSyncError] = useState('')
-  const [showSuccess, setShowSuccess] = useState(
-    route.params && route.params.provider && route.params.accessToken
-  )
+  const [showSuccess, setShowSuccess] = useState(!!provider && !!accessToken)
 
   useEffect(() => {
-    const setState = (connection) => {
+    const setState = (connection: any) => {
+      // TODO: Better typing
       setSyncStatus(connection.syncStatus)
       setNextSync(calculateNextSync(connection))
       setLastSync(connection.duration(connection.syncLast).humanize())
@@ -41,62 +55,61 @@ export default ({ route, navigation }) => {
     }
 
     const load = async () => {
-      setShowSuccess(
-        route.params && route.params.provider && route.params.accessToken
-      )
+      setShowSuccess(!!provider && !!accessToken)
 
-      if (route.params && route.params.accessToken) {
+      if (accessToken) {
         // @todo: hide this after a while
-        DataConnectorsManager.authComplete(route.params.provider, route.params)
+        DataConnectorsManager.authComplete(provider, params)
       }
 
       // upgrade our connection object to be a real connection instance from
       // the DataConnectorsManager so we can call sync() etc.
       const connectionInstance = await DataConnectorsManager.getConnection(
-        route.params.provider
+        provider
       )
       setState(connectionInstance)
     }
     load()
 
-    DataConnectorsManager.on('connectionUpdated', (conn) => {
-      setState(conn)
+    DataConnectorsManager.on('connectionUpdated', (connection: any) => {
+      // TODO: Better typing
+      setState(connection)
       setShowSuccess(false)
     })
     // TODO: We should be sensitive to more than just accessToken here.
     //       We're disabling this error for backwards compatibility until this
     //       can be tested properly.
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [route.params.accessToken])
+  }, [accessToken])
 
   useEffect(() => {
-    if (route.params.connectNow) {
+    if (connectNow) {
       // eslint-disable-next-line no-void
       void (async () => {
         const connectionInstance = await DataConnectorsManager.getConnection(
-          route.params.provider
+          provider
         )
         await connectionInstance.initiateAuth()
       })()
     }
-  }, [route.params.connectNow, route.params.provider])
+  }, [connectNow, provider])
 
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      provider
     )
     return connectionInstance.initiateAuth()
   }
   const onPressSync = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      provider
     )
     connectionInstance.sync()
   }
   const onPressDisconnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      provider
     )
     connectionInstance.disconnect()
   }

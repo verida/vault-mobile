@@ -1,5 +1,4 @@
 import Clipboard from '@react-native-community/clipboard'
-import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { getWallets } from 'features/cryptoWallet'
 import React, { FC, ReactNode } from 'react'
@@ -14,7 +13,7 @@ import {
   ViewProps,
 } from 'react-native'
 
-import { NFTMetadata } from 'api/types'
+import { NFT, NFTMetadata } from 'api/types'
 import { NftItem } from 'components/Assets/NftItem'
 import { Icon } from 'components/Icon'
 import LoadingIndicator from 'components/LoadingIndicator'
@@ -27,10 +26,8 @@ import { SubHeadline } from 'components/Typography/SubHeadline'
 import { Text } from 'components/Typography/Text'
 import { useReduxState } from 'hooks/useReduxState'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
-
-type NFTDetailRouteProp = RouteProp<MainStackParams, 'NFTDetail'>
 
 const Row: FC<
   {
@@ -119,14 +116,21 @@ const Property = ({
   )
 }
 
-const NFTDetail = () => {
+export type NFTDetailScreenParams = { nft: NFT }
+
+type NFTDetailScreenProps = MainStackScreenProps<'NFTDetail'>
+
+export const NFTDetailScreen: React.FC<NFTDetailScreenProps> = (props) => {
+  const {
+    route: { params },
+  } = props
+  const { nft } = params
+
   //const { showActionSheetWithOptions } = useActionSheet()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
-  const route = useRoute<NFTDetailRouteProp>()
   const wallet = useReduxState(getWallets)
 
-  const nft = route.params.nft
   const metadata = (nft?.metadata as unknown as NFTMetadata) ?? {
     image: null,
   }
@@ -316,5 +320,3 @@ const createStyles = (theme: Theme) =>
       paddingTop: theme.spacing.sm,
     },
   })
-
-export default NFTDetail

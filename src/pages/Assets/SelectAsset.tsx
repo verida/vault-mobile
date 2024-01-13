@@ -1,4 +1,3 @@
-import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
 import { useGetNFTsQuery } from 'features/assets'
 import { Logger } from 'features/telemetry'
@@ -21,23 +20,27 @@ import GridView from 'components/Grids/GridView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'
 import { Title } from 'components/Typography/Title'
-import useParams from 'hooks/useParams'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
+import { MainStackScreenProps } from 'navigation/types'
 import { NUMBER_OF_COLUMNS } from 'pages/Assets/constants'
 import { Theme } from 'styles/types'
 
 const logger = new Logger('Pages/SelectAsset')
 
-export interface SelectAssetScreenProps {
+export type SelectAssetScreenParams = {
   searchableAddresses: string[]
   screenName: string
   mode: string | number
   originalValue: any
 }
 
-const SelectAsset = () => {
-  const navigation = useNavigation()
-  const params = useParams<SelectAssetScreenProps>()
+type SelectAssetScreenProps = MainStackScreenProps<'SelectAsset'>
+
+export const SelectAssetScreen: React.FC<SelectAssetScreenProps> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
   const { screenName, mode, originalValue, searchableAddresses } = params
 
   const { data, isLoading, refetch } = useGetNFTsQuery(searchableAddresses)
@@ -140,8 +143,6 @@ const SelectAsset = () => {
     </Screen>
   )
 }
-
-export default SelectAsset
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

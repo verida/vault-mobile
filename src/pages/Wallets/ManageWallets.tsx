@@ -1,5 +1,4 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
-import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -13,17 +12,16 @@ import {
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 import { Container, Content, List } from 'native-base'
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Alert, StyleSheet, View } from 'react-native'
-import { connect } from 'react-redux'
-import { Dispatch } from 'redux'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'
 import { SELECTED_WALLET_STORAGE_KEY } from 'constants/storageKeys'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
+import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 
 import PlusIcon from '../../assets/plus_icon.svg'
 import UnionIcon from '../../assets/union_icon.svg'
@@ -32,32 +30,45 @@ import CreateWalletModal from './AddWalletModal'
 import { AddWatchedWalletModal } from './AddWatchedWalletModal'
 import ImportWalletModal from './ImportWalletModal'
 
-type Props = {
-  wallets: BlockchainWalletWithAccounts[]
-  walletCount: number
-  navigation: NativeStackNavigationProp<MainStackParams, any>
-  selectedWalletId: number | string
-  loading: boolean
-  onSetSelectedWalletId: (selectedWalletID: string) => Promise<void>
-  onCreateWallet: () => Promise<void>
-  onImportWallet: () => Promise<void>
-  onAddWatchedWallet: () => Promise<void>
-  onDeleteWallet: (selectedWalletID: string) => Promise<void>
-}
+export type ManageWalletsScreenParams = undefined
 
-const ManageWallets = (props: Props) => {
-  const {
-    wallets,
-    walletCount,
-    navigation,
-    selectedWalletId,
-    loading,
-    onSetSelectedWalletId,
-    onCreateWallet,
-    onImportWallet,
-    onAddWatchedWallet,
-    onDeleteWallet,
-  } = props
+type ManageWalletsScreenProps = MainStackScreenProps<'ManageWallets'>
+
+export const ManageWalletsScreen: React.FC<ManageWalletsScreenProps> = (
+  props
+) => {
+  const { navigation } = props
+
+  const wallets = useAppSelector(getWalletList)
+  const walletCount = useAppSelector(getWalletCount)
+  const selectedWalletId = useAppSelector(getSelectedWalletId)
+  const loading = useAppSelector(getWalletProcessingState)
+
+  const dispatch = useAppDispatch()
+  const onSetSelectedWalletId = useCallback(
+    (walletID: string) => dispatch(setSelectedWallet(walletID) as any),
+    [dispatch]
+  )
+
+  const onCreateWallet = useCallback(
+    (args: unknown) => dispatch(createNewWallet(args as any) as any),
+    [dispatch]
+  )
+
+  const onImportWallet = useCallback(
+    (args: any) => dispatch(importWallet(args) as any),
+    [dispatch]
+  )
+
+  const onAddWatchedWallet = useCallback(
+    (args: any) => dispatch(addWatchedWallet(args) as any),
+    [dispatch]
+  )
+
+  const onDeleteWallet = useCallback(
+    (walletId: string) => dispatch(deleteWallet(walletId) as any),
+    [dispatch]
+  )
 
   const [createWalletModalVisible, setCreateWalletModalVisible] =
     useState(false)
@@ -240,30 +251,3 @@ const ManageWallets = (props: Props) => {
 const styles = StyleSheet.create({
   content: { backgroundColor: SNOW_COLOR, paddingVertical: 25 },
 })
-
-const mapStateToProps = (state: any) => {
-  return {
-    wallets: getWalletList(state),
-    walletCount: getWalletCount(state),
-    selectedWalletId: getSelectedWalletId(state),
-    loading: getWalletProcessingState(state),
-  }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch) => {
-  return {
-    onSetSelectedWalletId: (walletID: string) =>
-      dispatch(setSelectedWallet(walletID) as any),
-    onCreateWallet: (args: unknown) =>
-      dispatch(createNewWallet(args as any) as any),
-    onImportWallet: (args: any) => dispatch(importWallet(args) as any),
-    onAddWatchedWallet: (args: any) => dispatch(addWatchedWallet(args) as any),
-    onDeleteWallet: (walletId: string) =>
-      dispatch(deleteWallet(walletId) as any),
-  }
-}
-
-export default connect(
-  mapStateToProps,
-  mapDispatchToProps
-)(ManageWallets as any)
