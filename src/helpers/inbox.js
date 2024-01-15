@@ -78,5 +78,8 @@ export const buildItem = async (inboxItem) => {
     item.avatar = avatar
   }
 
+  item.isProfileLoading = profile.isLoading
+  item.fetchMe = async () => await buildItem(inboxItem)
+
   return item
 }

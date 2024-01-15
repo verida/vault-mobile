@@ -1,39 +1,30 @@
-import {
-  getMaybeChainMetadatas,
-  SupportedCaipNamespace,
-  useChainMetadatas,
-} from 'features/caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import * as React from 'react'
 
 import { WalletConnectSessionRequestCallbackParams } from '../@types'
-import { extractWalletConnectRpcOrThrow } from '../utils'
+import { extractWalletConnectChainIdOrThrow } from '../utils'
 import { useWalletConnectDataFormattingNearLike } from './useWalletConnectDataFormatting.NearLike'
 
 export function useWalletConnectDataFormatting() {
-  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
-
   const formatTransactionDataNearLike = useWalletConnectDataFormattingNearLike()
 
   const formatTransactionData = React.useCallback(
     ({
       request,
-    }: Pick<
-      WalletConnectSessionRequestCallbackParams,
-      'web3wallet' | 'request'
-    >): Record<string, unknown> => {
-      const { chainId } = extractWalletConnectRpcOrThrow({
-        chainMetadatas,
-        request,
-      })
+    }: Pick<WalletConnectSessionRequestCallbackParams, 'request'>): Record<
+      string,
+      unknown
+    > => {
+      const chainId = extractWalletConnectChainIdOrThrow({ request })
 
       const { namespace } = chainId
 
-      if (namespace === SupportedCaipNamespace.NEAR)
+      if (namespace === SupportedBlockchainNamespace.NEAR)
         return formatTransactionDataNearLike(request.params)
 
       return request.params.request.params
     },
-    [chainMetadatas, formatTransactionDataNearLike]
+    [formatTransactionDataNearLike]
   )
 
   return { formatTransactionData }

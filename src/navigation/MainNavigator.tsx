@@ -9,6 +9,8 @@ import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
+import BlockchainNetworks from 'pages/BlockchainNetworks/BlockchainNetworks'
+import { BlockchainNetworksEditor } from 'pages/BlockchainNetworksEditor'
 import { SingleConnectionScreen } from 'pages/Connections/SingleConnectionScreen'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import {
@@ -184,7 +186,14 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
           <Stack.Screen name={'VerifyPhrase'} component={VerifyPhrase} />
           <Stack.Screen name={'ShareableData'} component={ShareableData} />
-
+          <Stack.Screen
+            name={'BlockchainNetworks'}
+            component={BlockchainNetworks}
+          />
+          <Stack.Screen
+            name={'BlockchainNetworksEditor'}
+            component={BlockchainNetworksEditor}
+          />
           <Stack.Screen
             name='WalletConnectActiveSessions'
             component={WalletConnectActiveSessions}
@@ -213,6 +222,14 @@ export const MainNavigator: React.FunctionComponent = () => {
               headerShown: true,
             }}
           />
+
+          {/* Internal Screens */}
+          {__DEV__ && (
+            <Stack.Screen
+              name='__Storybook__'
+              component={require('../../.storybook').default}
+            />
+          )}
 
           {/* Modal screens */}
           <Stack.Group

@@ -4,7 +4,8 @@ import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/clie
 import { AccountId } from 'caip'
 import { Spacer } from 'components'
 import {
-  useMaybeSelectedWallet,
+  getMinifiedBlockchainAccountId,
+  useSelectedMinifiedBlockchainAccounts,
   useVeridaWalletAccountDropdownOptions,
   VeridaWalletAccountOption,
 } from 'features/cryptoWallet'
@@ -32,7 +33,10 @@ import DropDownPicker from 'components/Select'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import { WALLETCONNECT_LABEL } from '../constants'
-import { useWalletConnectProposalRequiredCaipChainIds } from '../hooks'
+import {
+  getWalletConnectProposalRequiredCaipChainIds,
+  useWalletConnectProposalRequiredCaipChainIds,
+} from '../hooks'
 import { createWalletConnectSessionApprovalConfiguration } from '../utils'
 
 const logger = new Logger('WalletConnect')
@@ -84,15 +88,21 @@ export const WalletConnectModalConnectDapp = React.memo(
 
     const metadata = proposal?.params?.proposer?.metadata
 
-    const maybeVeridaWalletAccounts = useMaybeSelectedWallet()?.accounts
+    const selectedMinifiedBlockchainAccounts =
+      useSelectedMinifiedBlockchainAccounts()
 
     const onlyMatchingCaipChainIds =
       useWalletConnectProposalRequiredCaipChainIds(proposal)
 
+    const onlyMatchingNamespaces = React.useMemo(
+      () => onlyMatchingCaipChainIds.map((e) => e.namespace),
+      [onlyMatchingCaipChainIds]
+    )
+
     const wallets: readonly VeridaWalletAccountOption[] =
       useVeridaWalletAccountDropdownOptions({
-        includesWatchedWallets: false,
-        maybeVeridaWalletAccounts,
+        //includesWatchedWallets: false,
+        selectedMinifiedBlockchainAccounts,
 
         // HACK: Only show wallets which possess a caip identifier which supports the request.
         //       This prevents us from showing duplicate wallets for a single request, i.e. the
@@ -100,12 +110,15 @@ export const WalletConnectModalConnectDapp = React.memo(
         //       address component, however semantically this could result in a user selecting
         //       the incorrect account for the requested network, which may have consequences
         //       downstream.
-        onlyMatchingCaipChainIds,
+        onlyMatchingNamespaces,
       })
+
+    // If there is only a single wallet to choose from, select this by default.
+    const defaultValue = wallets?.length === 1 ? wallets[0] : undefined
 
     const [selectedWallet, setSelectedWallet] = React.useState<
       VeridaWalletAccountOption | undefined
-    >()
+    >(defaultValue)
 
     const onApprove = React.useCallback(async () => {
       if (!selectedWallet)
@@ -116,12 +129,46 @@ export const WalletConnectModalConnectDapp = React.memo(
 
         setLoading(true)
 
-        const { value: address, caipChainId: chainId } = selectedWallet
+        const { value: minifiedWalletId } = selectedWallet
+
+        // Find the account for the given identifier.
+        const matchingAccount = selectedMinifiedBlockchainAccounts.find(
+          (minifiedBlockchainAccount) =>
+            getMinifiedBlockchainAccountId(minifiedBlockchainAccount) ===
+            minifiedWalletId
+        )
+
+        if (!matchingAccount)
+          throw new Error(
+            `Failed to find a matching account for id "${minifiedWalletId}".`
+          )
+
+        /// @custom:implicit WalletConnectOnlyAcceptsRequiredChains
+        /// @note When we receive a selectedWallet, the returned wallet is abstract in the sense
+        //        that it does not relate to a specific chainId. Since we know when we connect using
+        //        WalletConnect, we accept *all* required chains only, which is sufficient information
+        //        to reconstruct the approvedAccounts property below.
+        //  @warn This assumption becomes invalidated if the connection acceptance logic changes.
+
+        const requestedNamespaces =
+          getWalletConnectProposalRequiredCaipChainIds(proposal).map((e) =>
+            e.toString()
+          ) // i.e. ["eip155:5"]
+
+        const { address } = matchingAccount
+
+        const approvedAccounts = requestedNamespaces.map(
+          (chainId) =>
+            new AccountId({
+              chainId,
+              address,
+            })
+        )
 
         await web3wallet.approveSession(
           createWalletConnectSessionApprovalConfiguration({
             // TODO: We can enable address multiselect in future
-            approvedAccounts: [new AccountId({ chainId, address })],
+            approvedAccounts,
             proposal,
           })
         )
@@ -140,7 +187,14 @@ export const WalletConnectModalConnectDapp = React.memo(
 
         InteractionManager.runAfterInteractions(dismissModal)
       }
-    }, [selectedWallet, proposal, web3wallet, setActiveSessions, dismissModal])
+    }, [
+      selectedWallet,
+      proposal,
+      web3wallet,
+      setActiveSessions,
+      dismissModal,
+      selectedMinifiedBlockchainAccounts,
+    ])
 
     return (
       <BottomActionsModal
@@ -163,6 +217,7 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={24} />
           <DropDownPicker<VeridaWalletAccountOption>
             showArrow
+            defaultValue={defaultValue?.value}
             searchableError='No supported wallet'
             placeholder='Select wallet'
             items={wallets}
@@ -181,7 +236,6 @@ export const WalletConnectModalConnectDapp = React.memo(
           <Spacer height={48} />
           <View style={styles.footer}>
             <Button
-              // eslint-disable-next-line react/no-children-prop
               children='Connect'
               style={styles.connectButton}
               color='primary'
