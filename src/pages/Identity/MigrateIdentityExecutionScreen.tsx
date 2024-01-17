@@ -6,6 +6,7 @@ import {
   StatusListItem,
 } from 'components'
 import { config } from 'config'
+import { activateKeepAwake, deactivateKeepAwake } from 'expo-keep-awake'
 import {
   MigrateIdentityStep,
   MigrateIdentityStepStatus,
@@ -16,11 +17,10 @@ import {
 import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
-import { Alert, InteractionManager, StyleSheet, View } from 'react-native'
+import { InteractionManager, StyleSheet, View } from 'react-native'
 import { formatPercentage } from 'utils'
 
 import LoadingView from 'components/LoadingView'
-import { useAuth } from 'hooks/useAuth'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
@@ -69,7 +69,7 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
     const [switchingIdentity, setSwitchingIdentity] = useState(false)
     const [status, setStatus] = useState<MigrationStatus>('processing')
 
-    const { removeIdentity } = useIdentities()
+    const { removeIdentity, switchIdentity } = useIdentities()
 
     useEffect(() => {
       navigation.setOptions({
@@ -87,7 +87,14 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       (step: MigrateIdentityStep, stepStatus: MigrateIdentityStepStatus) => {
         setStatusItems((prevItems) =>
           prevItems.map((item) =>
-            item.key === step ? { ...item, status: stepStatus } : item
+            item.key === step
+              ? {
+                  ...item,
+                  status: stepStatus,
+                  progressIndeterminate:
+                    item.key === 'migrateData' && stepStatus === 'processing',
+                }
+              : item
           )
         )
       },
@@ -102,13 +109,13 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
                 ...item,
                 label: `Migrating your data (${formatPercentage(newProgress)})`,
                 progress: newProgress,
+                progressIndeterminate: false,
               }
             : item
         )
       )
     }, [])
 
-    const { switchToAccount, refresh } = useAuth()
     const currentIdentity = useCurrentIdentity()
     const { migrate } = useMigrateIdentity()
     const [newDid, setNewDid] = useState<string | undefined>(undefined)
@@ -117,8 +124,10 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       if (switchingIdentity) {
         return
       }
+
       try {
         setStatus('processing')
+        activateKeepAwake()
         const migratedDid = await migrate(
           updateStepStatus,
           updateMigrationProgress
@@ -128,6 +137,8 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       } catch (error: unknown) {
         logger.error(error)
         setStatus('error')
+      } finally {
+        deactivateKeepAwake()
       }
     }, [switchingIdentity, migrate, updateStepStatus, updateMigrationProgress])
 
@@ -147,40 +158,10 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
       }
       navigation.navigate('Tabs', { screen: 'Home' })
 
-      // TODO: Use switchIdentity from useIdentities
       InteractionManager.runAfterInteractions(async () => {
-        try {
-          await switchToAccount(newDid)
-        } catch (error: unknown) {
-          logger.error(
-            new Error('Error when switching identity in the drawer', {
-              cause: error,
-            })
-          )
-          Alert.alert(
-            'Error',
-            `Unable to switch to the identity, please try again later.`
-          )
-
-          // Switch back to the current account
-          if (currentIdentity?.did) {
-            try {
-              await switchToAccount(currentIdentity.did)
-              await refresh()
-            } catch (anotherError: unknown) {
-              logger.error(
-                new Error(
-                  'Error when switching and refreshing identity back to current one in the drawer',
-                  {
-                    cause: anotherError,
-                  }
-                )
-              )
-            }
-          }
-        }
+        await switchIdentity(newDid)
       })
-    }, [newDid, currentIdentity?.did, navigation, refresh, switchToAccount])
+    }, [newDid, navigation, switchIdentity])
 
     const handleRetry = useCallback(() => {
       if (currentIdentity) {

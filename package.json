@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -42,7 +42,6 @@
     "@react-native-community/push-notification-ios": "^1.10.1",
     "@react-native-firebase/analytics": "14.12.0",
     "@react-native-firebase/app": "14.12.0",
-    "@react-native-firebase/dynamic-links": "14.12.0",
     "@react-native-firebase/messaging": "14.12.0",
     "@react-native-firebase/remote-config": "14.12.0",
     "@react-navigation/bottom-tabs": "^6.2.16",
@@ -58,17 +57,17 @@
     "@veramo/credential-w3c": "^5.2.0",
     "@veramo/did-resolver": "^5.2.0",
     "@veramo/utils": "^5.4.1",
-    "@verida/account": "^3.0.0",
-    "@verida/account-node": "^3.0.0",
-    "@verida/client-rn": "^3.0.0",
-    "@verida/did-client": "^3.0.0",
+    "@verida/account": "^3.0.1",
+    "@verida/account-node": "^3.0.1",
+    "@verida/client-rn": "3.0.2",
+    "@verida/did-client": "^3.0.1",
     "@verida/encryption-utils": "^3.0.0",
-    "@verida/helpers": "^3.0.0",
-    "@verida/storage-link": "^3.0.0",
-    "@verida/types": "2.4.0-rc1",
-    "@verida/vda-did-resolver": "^3.0.0",
-    "@verida/vda-name-client": "^3.0.0",
-    "@verida/verifiable-credentials": "^3.0.0",
+    "@verida/helpers": "^3.0.1",
+    "@verida/storage-link": "^3.0.1",
+    "@verida/types": "^3.0.0",
+    "@verida/vda-did-resolver": "^3.0.1",
+    "@verida/vda-name-client": "^3.0.1",
+    "@verida/verifiable-credentials": "^3.0.2",
     "@verida/wallet-utils": "^1.7.4",
     "@walletconnect/react-native-compat": "^2.8.1",
     "@walletconnect/sign-client": "^2.8.1",
@@ -261,7 +260,6 @@
   "expo": {
     "autolinking": {
       "exclude": [
-        "expo-keep-awake",
         "expo-error-recovery"
       ]
     }

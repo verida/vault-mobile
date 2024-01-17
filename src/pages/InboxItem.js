@@ -41,30 +41,29 @@ const InboxItem = (props) => {
   const [inboxItem, setInboxItem] = useState(null)
   const [inboxType, setInboxType] = useState(null)
 
-  // Initialise component
-  useEffect(() => {
-    const init = async () => {
-      try {
-        const vault = AccountManager.getInstance().vault
-        const inboxItems = await vault.inbox.fetchLatest({ _id: inboxItemId })
-        const _inboxItem = inboxItems[0]
-        const _item = await buildItem(_inboxItem)
-        const _inboxType = findTypeById(_item.type)
+  const loadMessage = React.useCallback(async () => {
+    try {
+      const vault = AccountManager.getInstance().vault
+      const inboxItems = await vault.inbox.fetchLatest({ _id: inboxItemId })
+      const _inboxItem = inboxItems[0]
+      const _item = await buildItem(_inboxItem)
+      const _inboxType = findTypeById(_item.type)
 
-        setItem(_item)
-        setInboxItem(_inboxItem)
-        setInboxType(_inboxType)
-      } catch (error) {
-        Alert.alert('Info', 'Failed to load message', [
-          { onPress: () => props.navigation.goBack() },
-        ])
-        logger.debug('Failed to load inbox item', { cause: error, inboxItemId })
-      }
+      setItem(_item)
+      setInboxItem(_inboxItem)
+      setInboxType(_inboxType)
+    } catch (error) {
+      Alert.alert('Info', 'Failed to load message', [
+        { onPress: () => props.navigation.goBack() },
+      ])
+      logger.debug('Failed to load inbox item', { cause: error, inboxItemId })
     }
-
-    setInboxType(findTypeById('inbox/type/dataSend'))
-    init()
   }, [inboxItemId, props.navigation])
+
+  useEffect(() => {
+    setInboxType(findTypeById('inbox/type/dataSend'))
+    loadMessage()
+  }, [loadMessage])
 
   return (
     <Container>

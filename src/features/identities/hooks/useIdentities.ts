@@ -1,6 +1,7 @@
 import { Client } from '@verida/client-rn'
 import { logout as logoutAction } from 'features/auth'
 import { Logger } from 'features/telemetry'
+import { emitter } from 'helpers'
 import { useCallback } from 'react'
 import { Alert } from 'react-native'
 
@@ -18,18 +19,24 @@ export function useIdentities() {
   const currentIdentity = useCurrentIdentity()
 
   const switchIdentity = useCallback(
-    async (did: string) => {
+    async (did: string, revertToCurrentIfFailed = false) => {
       try {
         await switchToAccount(did)
-      } catch (error: unknown) {
+      } catch (error) {
         logger.error(
-          new Error('Error when switching identity in the drawer', {
+          new Error('Error when switching identity', {
             cause: error,
           })
         )
+
+        if (!revertToCurrentIfFailed) {
+          emitter.emit('IDENTITY_NOT_EXIST', {})
+          return
+        }
+
         Alert.alert(
           'Error',
-          `Unable to switch to the Identity, please try again later.`
+          `Unable to switch to this identity, please try again later.`
         )
 
         // Switch back to the current account
@@ -40,7 +47,7 @@ export function useIdentities() {
           } catch (anotherError: unknown) {
             logger.error(
               new Error(
-                'Error when switching and refreshing identity back to current one in the drawer',
+                'Error when switching and refreshing identity back to current one',
                 {
                   cause: anotherError,
                 }
@@ -72,7 +79,7 @@ export function useIdentities() {
   )
 
   /**
-   * Due to the structure of the Verida SDK, we have to pass a client coinnected with an account and but as we don't have access to the connected account from the client, we need the corresponding DID in argument.
+   * Due to the structure of the Verida SDK, we have to pass a client connected with an account and but as we don't have access to the connected account from the client, we also need the corresponding DID in argument to go one with the destroy flow.
    *
    * This method will trigger the log out of the DID and potentially the switch to a different Identity if the DID is the current Identity.
    */
