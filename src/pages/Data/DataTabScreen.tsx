@@ -18,12 +18,6 @@ export const DataTabScreen: React.FunctionComponent<DataTabScreenProps> = (
 ) => {
   const { navigation } = props
 
-  useEffect(() => {
-    navigation.setOptions({
-      title: 'Data',
-    })
-  }, [navigation])
-
   const [items, setItems] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
 

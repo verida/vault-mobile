@@ -73,6 +73,7 @@
     "@verida/vda-name-client": "^3.0.1",
     "@verida/verifiable-credentials": "^3.0.2",
     "@verida/wallet-utils": "^1.7.4",
+    "@verida/vda-sbt-client": "^2.2.1",
     "@walletconnect/react-native-compat": "^2.8.1",
     "@walletconnect/sign-client": "^2.8.1",
     "@walletconnect/web3wallet": "^1.8.0",

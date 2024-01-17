@@ -7,6 +7,7 @@ import Button from 'components/Button'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Text from 'components/Text'
 import { SUCCESS_COLOR } from 'constants/color'
+import FastImage from 'react-native-fast-image'
 
 const calculateNextSync = function (conn) {
   if (!conn.syncNext) return
@@ -18,11 +19,8 @@ const calculateNextSync = function (conn) {
   return duration.humanize()
 }
 
-export default ({ route, navigation }) => {
+export const SingleConnectionScreen = ({ route, navigation }) => {
   //const connectNow = route.params.connectNow
-  const connectionInfo = DataConnectorsManager.getConnectionInfo(
-    route.params.provider
-  )
 
   const [syncStatus, setSyncStatus] = useState('')
   const [nextSync, setNextSync] = useState('')
@@ -31,6 +29,7 @@ export default ({ route, navigation }) => {
   const [showSuccess, setShowSuccess] = useState(
     route.params && route.params.provider && route.params.accessToken
   )
+  const [connectionInfo, setConnectionInfo] = useState({})
 
   useEffect(() => {
     const setState = (connection) => {
@@ -53,7 +52,7 @@ export default ({ route, navigation }) => {
       // upgrade our connection object to be a real connection instance from
       // the DataConnectorsManager so we can call sync() etc.
       const connectionInstance = await DataConnectorsManager.getConnection(
-        route.params.provider
+        route.params.provider.name
       )
       setState(connectionInstance)
     }
@@ -81,22 +80,37 @@ export default ({ route, navigation }) => {
     }
   }, [route.params.connectNow, route.params.provider])
 
+  useEffect(() => {
+    const fetchConnectionInfo = async () => {
+      const connectionMeta = await DataConnectorsManager.getConnectionInfo(
+        route.params.provider.name
+      )
+      setConnectionInfo(connectionMeta)
+    }
+
+    if (route.params.provider?.name) {
+      fetchConnectionInfo()
+    }
+
+  }, [route.params.provider?.name])
+
+
   // @todo: can we store connectionInstance somewhere and reuse it?
   const onPressConnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      route.params.provider.name
     )
     return connectionInstance.initiateAuth()
   }
   const onPressSync = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      route.params.provider.name
     )
     connectionInstance.sync()
   }
   const onPressDisconnect = async () => {
     const connectionInstance = await DataConnectorsManager.getConnection(
-      route.params.provider
+      route.params.provider.name
     )
     connectionInstance.disconnect()
   }
@@ -104,7 +118,7 @@ export default ({ route, navigation }) => {
   return (
     <Container>
       <NavigationHeader
-        title={'Connect ' + connectionInfo.label}
+        title={'Connect ' + connectionInfo ? connectionInfo.label : ''}
         left={{
           icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
           action: () => navigation.goBack(),
@@ -120,7 +134,10 @@ export default ({ route, navigation }) => {
           </View>
         )}
         <View style={styles.connectHeader}>
-          <Image style={styles.itemIcon} source={connectionInfo.icon} />
+          <FastImage
+            style={styles.itemIcon}
+            source={{ uri: connectionInfo.icon }}
+          />
           <View style={styles.actionButtons}>
             {syncStatus === 'disabled' ? (
               <Button

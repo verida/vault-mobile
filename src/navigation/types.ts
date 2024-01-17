@@ -80,7 +80,7 @@ export type TabsScreenParams = {
   Home: HomeScreenParams
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
-  // Connections: undefined // TODO: uncomment when ready
+  Connections: undefined
   Assets: undefined
 }
 

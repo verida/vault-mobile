@@ -11,7 +11,7 @@ import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
 import BlockchainNetworks from 'pages/BlockchainNetworks/BlockchainNetworks'
 import { BlockchainNetworksEditor } from 'pages/BlockchainNetworksEditor'
-import SingleConnection from 'pages/Connections/SingleConnection'
+import { SingleConnectionScreen } from 'pages/Connections/SingleConnectionScreen'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import {
   AddIdentityScreen,
@@ -205,7 +205,7 @@ export const MainNavigator: React.FunctionComponent = () => {
 
           <Stack.Screen
             name={'SingleConnection'}
-            component={SingleConnection}
+            component={SingleConnectionScreen}
           />
 
           <Stack.Screen
