@@ -21,7 +21,6 @@ export const WalletConnectSessionChainCard = React.memo(
 
     return (
       <React.Fragment
-        // eslint-disable-next-line react/no-children-prop
         children={caipChainIds.map((caipChainId: ChainId) => (
           <WalletConnectSessionNamespacesChainId
             key={caipChainId.toString()}

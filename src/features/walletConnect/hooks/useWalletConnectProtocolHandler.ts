@@ -8,16 +8,19 @@ import { useCallback } from 'react'
 export function useWalletConnectProtocolHandler(): ProtocolHandler {
   const { handleQrCodeMessage } = useWalletConnectContext()
 
-  const handleDeepLink = useCallback((_url: string) => {
-    // No try/cath needed, as handled by the consumer
-    // TODO: The deep link structure may be different than the QR code one
-    // if (isWalletConnectConnection(url)) {
-    //   // TODO: The deep link structure may be different than the QR code one
-    //   handleDeepLink(url)
-    //   return true
-    // }
-    return false
-  }, [])
+  const handleDeepLink = useCallback(
+    (url: string) => {
+      // No try/cath needed, as handled by the consumer
+      // TODO: The deep link structure may be different than the QR code one
+      if (!isWalletConnectConnection(url)) return false
+
+      // TODO: This is a misnomer. Why do we have different handlers for QR codes and URLs?
+      handleQrCodeMessage(url)
+
+      return true
+    },
+    [handleQrCodeMessage]
+  )
 
   const handleQrCode = useCallback(
     (qrCodeMessage: string) => {

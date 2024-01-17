@@ -1,7 +1,9 @@
-import { ChainMetadata, SupportedCaipNamespace } from '../@types'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+
+import { ChainMetadata } from '../@types'
 
 export function isChainMetadataMatchingNamespace<
-  T extends SupportedCaipNamespace
+  T extends SupportedBlockchainNamespace
 >(chainMetadata: ChainMetadata, namespace: T): chainMetadata is ChainMetadata {
   const { namespace: maybeMatchingNamespace } = chainMetadata
 

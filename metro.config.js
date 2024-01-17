@@ -16,6 +16,7 @@ module.exports = (async () => {
       }),
     },
     resolver: {
+      resolverMainFields: ['sbmodern', 'react-native', 'browser', 'main'],
       assetExts: assetExts.filter((ext) => ext !== 'svg'),
       sourceExts: [...sourceExts, 'svg', 'cjs'],
     },
