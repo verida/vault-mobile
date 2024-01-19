@@ -1,8 +1,7 @@
 import PINCode, { hasUserSetPinCode } from '@haskkor/react-native-pincode'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import { logout as logoutAction } from 'features/auth'
-import { selectSelectedAccount } from 'features/identities'
+import { useIdentities } from 'features/identities'
 import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import React, { useEffect, useState } from 'react'
@@ -16,7 +15,6 @@ import {
   View,
 } from 'react-native'
 import { SafeAreaView } from 'react-native-safe-area-context'
-import { useDispatch } from 'react-redux'
 
 import AccountManager from 'api/AccountManager'
 import Texture from 'assets/landing-bg.svg'
@@ -34,7 +32,6 @@ import {
 } from 'constants/color'
 import { useAuth } from 'hooks/useAuth'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
-import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 const logger = new Logger('Component/DIDNonExistentModal')
@@ -45,7 +42,6 @@ type Props = {
 
 export const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [loading, setLoading] = useState(true)
-  const dispatch = useDispatch()
   const styles = useThemeAwareStyle(createStyles)
   const { theme } = useTheme()
   const [showSeedPhraseModal, setShowSeedPhraseModal] = useState(false)
@@ -54,16 +50,13 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
   const [pinCodeStatus, setPinCodeStatus] = useState(true)
   const [seedPhraseData, setSeedPhraseData] = useState('')
   const [isPinCorrect, setPinCorrectStatus] = useState(false)
-  const selectedAccount = useAppSelector(selectSelectedAccount)
 
-  async function onLogoutAccounts(dids: string[]) {
+  const { removeIdentity } = useIdentities()
+
+  async function onLogoutAccount(did: string) {
     try {
       dismissModal()
-      // Only flush Redux store if the current account is logged out
-      if (dids.includes(selectedAccount?.did ?? '')) {
-        dispatch(logoutAction({ did: selectedAccount?.did }))
-      }
-      await AccountManager.getInstance().logout(dids)
+      await removeIdentity(did)
     } catch (error) {
       logger.error(error)
     } finally {
@@ -186,7 +179,7 @@ export const DIDNonExistentModal = ({ dismissModal }: Props) => {
                         text: 'Remove',
                         style: 'destructive',
                         onPress: () => {
-                          onLogoutAccounts([currentDID!])
+                          onLogoutAccount(currentDID!)
                         },
                       },
                     ]

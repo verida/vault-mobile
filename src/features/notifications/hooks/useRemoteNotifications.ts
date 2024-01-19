@@ -1,9 +1,12 @@
 import messaging from '@react-native-firebase/messaging'
 import { selectSelectedAccount } from 'features/identities'
+import { Logger } from 'features/telemetry'
 import { useEffect } from 'react'
 import { useSelector } from 'react-redux'
 
 import { registerRemoteNotification } from '../api'
+
+const logger = new Logger('Notifications')
 
 export function useRemoteNotifications() {
   const selectedAccount = useSelector(selectSelectedAccount)
@@ -19,6 +22,7 @@ export function useRemoteNotifications() {
         await messaging().registerDeviceForRemoteMessages()
       }
       const token = await messaging().getToken()
+      logger.debug('Firebase token', { token })
       await registerRemoteNotification(token)
     }
 
@@ -30,4 +34,16 @@ export function useRemoteNotifications() {
 
     return () => clearTimeout(tid)
   }, [selectedAccount])
+
+  useEffect(() => {
+    const unsubscribe = messaging().onMessage(async (remoteMessage) => {
+      logger.debug('New foreground message from Firebase', {
+        message: remoteMessage,
+      })
+    })
+
+    return () => {
+      unsubscribe()
+    }
+  }, [])
 }

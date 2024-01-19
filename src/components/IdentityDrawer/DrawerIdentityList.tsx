@@ -1,14 +1,16 @@
-import { selectAccounts, useCurrentIdentity } from 'features/identities'
+import {
+  selectAccounts,
+  useCurrentIdentity,
+  useIdentities,
+} from 'features/identities'
 import {
   fetchAllPublicProfilesData,
   PublicProfile,
   selectPublicProfiles,
 } from 'features/profiles'
-import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect } from 'react'
 import {
-  Alert,
   FlatList,
   InteractionManager,
   ListRenderItemInfo,
@@ -17,13 +19,10 @@ import {
   ViewProps,
 } from 'react-native'
 
-import { useAuth } from 'hooks/useAuth'
 import { useAppDispatch, useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
 import { DrawerIdentityListItem } from './DrawerIdentityListItem'
-
-const logger = new Logger('IdentityDrawer')
 
 type IdentityItem = {
   did: string
@@ -40,7 +39,7 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
 
     const styles = useThemeAwareStyle(createStyles)
 
-    const { switchToAccount } = useAuth()
+    const { switchIdentity } = useIdentities()
     const dispatch = useAppDispatch()
     useEffect(() => {
       const promise = dispatch(fetchAllPublicProfilesData())
@@ -67,38 +66,10 @@ export const DrawerIdentityList: React.FunctionComponent<DrawerIdentityListProps
 
         // TODO: Use switchIdentity from useIdentities
         InteractionManager.runAfterInteractions(async () => {
-          try {
-            await switchToAccount(did)
-          } catch (error: unknown) {
-            logger.error(
-              new Error('Error when switching identity in the drawer', {
-                cause: error,
-              })
-            )
-            Alert.alert(
-              'Error',
-              `Unable to switch to the Identity, please try again later.`
-            )
-
-            // Switch back to the current account
-            if (currentIdentity?.did) {
-              try {
-                await switchToAccount(currentIdentity.did)
-              } catch (anotherError: unknown) {
-                logger.error(
-                  new Error(
-                    'Error when switching and refreshing identity back to current one in the drawer',
-                    {
-                      cause: anotherError,
-                    }
-                  )
-                )
-              }
-            }
-          }
+          await switchIdentity(did)
         })
       },
-      [onIdentitySwitch, switchToAccount, currentIdentity]
+      [onIdentitySwitch, switchIdentity]
     )
 
     const renderItem = useCallback(
