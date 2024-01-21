@@ -1,12 +1,11 @@
 import { AccountId, AssetId, ChainId } from 'caip'
-import { isSupportedCaipNamespace } from 'features/caip'
+import { ChainMetadatas, isSupportedCaipNamespace } from 'features/caip'
 import {
   CryptoWalletRawRequest,
   CryptoWalletRequest,
+  ResourceParams,
 } from 'features/cryptoWallet/@types'
 import { SUPPORTED_BLOCKCHAIN_REQUEST_URL_SCHEMES } from 'features/cryptoWallet/constants'
-
-import { BlockchainNetwork } from 'api/types'
 
 export function isCryptoRequestDeepLink(url: string) {
   return isCryptoRequestUrl(url)
@@ -38,9 +37,7 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
 
   const match = url.match(regex)
 
-  if (!match) {
-    throw new Error('Invalid crypto request')
-  }
+  if (!match) throw new Error('Invalid crypto request')
 
   // Not extracting the prefix yet as it's only 'pay' for the now
   const { namespace, address, chainId, functionName, params } = match.groups!
@@ -52,13 +49,10 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
   // EIP-681 uses ethereum as namespace, but we use eip155 instead
   const chainNamespace = namespace === 'ethereum' ? 'eip155' : namespace
 
-  if (!isSupportedCaipNamespace(chainNamespace)) {
+  if (!isSupportedCaipNamespace(chainNamespace))
     throw new Error('Crypto request has unsupported blockchain namespace')
-  }
 
-  if (!address) {
-    throw new Error('Crypto request is missing the address')
-  }
+  if (!address) throw new Error('Crypto request is missing the address')
 
   // chainId can be omited for ethereum mainnet in EIP-681, it should be present in other cases
   const chainReference = chainId
@@ -67,9 +61,8 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
       ? '1'
       : undefined
 
-  if (!chainReference) {
+  if (!chainReference)
     throw new Error('Crypto request is missing the chain reference')
-  }
 
   const request: CryptoWalletRawRequest = {
     chainNamespace,
@@ -83,33 +76,36 @@ function parseCryptoRequest(url: string): CryptoWalletRawRequest {
   return request
 }
 
-export function processCryptoRequest(
-  request: CryptoWalletRawRequest,
-  blockchainNetworks: Record<string, BlockchainNetwork>
-): CryptoWalletRequest {
+export function processCryptoRequest({
+  request,
+  chainMetadatas,
+}: {
+  readonly request: CryptoWalletRawRequest
+  readonly chainMetadatas: ChainMetadatas
+}): CryptoWalletRequest {
   const chain = new ChainId({
     namespace: request.chainNamespace,
     reference: request.chainReference,
   })
 
-  const blockchainNetwork = Object.values(blockchainNetworks).find(
-    (network) => network.chainId === chain.toString()
+  const maybeChainMetadata = chainMetadatas.find(
+    (e) =>
+      e.namespace === request.chainNamespace &&
+      e.reference === request.chainReference
   )
 
-  if (!blockchainNetwork) {
-    throw new Error('Unknown blockchain network')
-  }
+  if (!maybeChainMetadata) throw new Error('Unknown blockchain network')
 
   const recipientAccount = new AccountId({
     chainId: chain,
     address: request.address,
   })
 
-  const nativeAsset = blockchainNetwork.asset
-
-  const asset =
+  const resource: ResourceParams =
     request.function === 'transfer' && request.params.address
-      ? new AssetId({
+      ? // TODO: NEP141
+        // TODO: extract this
+        new AssetId({
           chainId: chain,
           assetName: {
             namespace: chain.namespace === 'eip155' ? 'ERC20' : 'NEP141', // TODO: Find a better way to determine the asset namespace based on the blockchain. Note that EIP-681 doesn't provide the information, so have to assume that it's ERC-20 or NEP-141
@@ -117,18 +113,23 @@ export function processCryptoRequest(
           },
           tokenId: '1',
         })
-      : nativeAsset
+      : chain
 
   return {
     action: request.action,
-    blockchainNetwork,
-    asset,
+    //chainMetadata: maybeChainMetadata,
+    resource,
     recipientAccount,
     amount: request.params.value
       ? Number(request.params.value)
       : request.params.uint256
-        ? Number(request.params.uint256)
-        : 0,
+      ? Number(request.params.uint256)
+      : // HACK: It is technically invalid not to specify an amount to send.
+        //       We expect such declarations to be processed by downstream
+        //       handlers - it is subjective whether the reciever decides
+        //       whether to fall back to a zero amount, or to regard the
+        //       amount supplied as invalid.
+        undefined,
     // FIXME: using Number may not be the best, as amount is in the smallest atomic unit and noted like 1e18, so big numbers
   }
 }

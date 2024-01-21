@@ -1,9 +1,6 @@
 import { ChainId } from 'caip'
-import {
-  getMaybeChainMetadatas,
-  getSupportedCaipProtocolFriendlyName,
-  useChainMetadatas,
-} from 'features/caip'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
+import { getSupportedCaipProtocolFriendlyName } from 'features/caip'
 import * as React from 'react'
 import { StyleSheet, Text, View } from 'react-native'
 
@@ -50,7 +47,6 @@ export const WalletConnectSessionNamespacesChainId = React.memo(
     return (
       <View style={styles.container}>
         <View style={styles.row}>
-          {/* eslint-disable-next-line react/no-children-prop */}
           <Text children={maybeChainName} style={styles.label} />
         </View>
         <View style={styles.row}>

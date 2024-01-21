@@ -23,6 +23,7 @@ export type HeaderProps = {
   avatarIcon?: React.ReactNode
   rightComponent?: React.ReactNode
   bottomBorder?: boolean
+  renderNetInfo?: boolean
 }
 
 function NavigationHeader({
@@ -33,6 +34,7 @@ function NavigationHeader({
   avatarIcon,
   rightComponent,
   bottomBorder = true,
+  renderNetInfo = true,
 }: HeaderProps) {
   const navigation = useNavigation()
   const netInfo = useNetInfo()
@@ -96,7 +98,7 @@ function NavigationHeader({
           ) : null}
         </Right>
       </Header>
-      {netInfo.isConnected === false && (
+      {netInfo.isConnected === false && !!renderNetInfo && (
         <View style={styles.netInfoBar}>
           <Text style={styles.netInfoText}>No network connection</Text>
         </View>

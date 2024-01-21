@@ -1,98 +1,161 @@
+import BigDecimal from 'bignumber.js'
+import { ChainId } from 'caip'
 import { Logo } from 'components'
+import {
+  AggregateWalletBannerBalance,
+  getAggregateWalletBannerBalanceResult,
+  useAggregateWalletBannerBalances,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
+import {
+  NumericCryptoBalance,
+  NumericFiatPaymentRequest,
+  NumericFiatWithAccuracy,
+} from 'components/Span'
+import { CONFUSED_FACE } from 'constants/strings'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
 export type RequestPaymentValueProps = {
-  assetAmount?: string
-  assetSymbol?: string
-  assetLogo?: string
-  formattedAssetPrice?: string
-  chainLabel?: string
-  chainLogo?: string
-  formattedFiatValue?: string
+  readonly integerCryptoAmount: `${number}`
+  readonly aggregateWalletBannerBalance:
+    | AggregateWalletBannerBalance
+    | null
+    | undefined
+  readonly chainId: ChainId
 } & ViewProps
 
-export const RequestPaymentValue: React.FunctionComponent<
-  RequestPaymentValueProps
-> = (props) => {
-  const {
-    assetAmount,
-    assetSymbol,
-    assetLogo,
-    formattedAssetPrice,
-    chainLabel,
-    chainLogo,
-    formattedFiatValue,
+export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValueProps> =
+  ({
+    integerCryptoAmount,
+    aggregateWalletBannerBalance,
+    chainId,
     ...viewProps
-  } = props
+  }) => {
+    // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
+    // and the base currency.
+    const maybeValuation = aggregateWalletBannerBalance?.valuation
 
   const styles = useThemeAwareStyle(createStyles)
 
-  return (
-    <View {...viewProps}>
-      <View style={styles.container}>
-        <View style={styles.logoContainer}>
-          <Logo uri={assetLogo} alt={assetSymbol} style={styles.assetLogo} />
-        </View>
-        <View style={styles.valueContainer}>
-          <Text style={styles.primaryValue}>
-            {assetAmount && assetSymbol
-              ? `${assetAmount} ${assetSymbol}`
-              : ':-/'}
-          </Text>
-          <Text style={styles.secondaryValue}>
-            {formattedFiatValue ? `≈ ${formattedFiatValue}` : undefined}
-          </Text>
-        </View>
-        <View style={styles.footer}>
-          <View>
-            <Text
-              style={[
-                styles.footerText,
-                styles.footerLeftText,
-                styles.footerLabelText,
-              ]}>
-              {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
-            </Text>
-            <Text
-              style={[
-                styles.footerText,
-                styles.footerLeftText,
-                styles.footerValueText,
-              ]}>
-              {formattedAssetPrice}
-            </Text>
+    const assetSymbol = aggregateWalletBannerBalance?.symbol
+    const assetLogo = aggregateWalletBannerBalance?.icon || undefined
+
+    const isInvalidAmount = isNaN(parseInt(integerCryptoAmount))
+
+    const [maybeNativeAssetWalletBannerBalance] =
+      getAggregateWalletBannerBalanceResult(
+        useAggregateWalletBannerBalances({
+          resource: chainId,
+        })
+      )
+
+    const chainLabel = maybeNativeAssetWalletBannerBalance?.label
+    const chainLogo = maybeNativeAssetWalletBannerBalance?.icon || undefined
+
+    const hasCurrencyAndConversionRate = !!(
+      maybeValuation?.currency && maybeValuation?.conversionRate
+    )
+
+    const maybeConversionRate = React.useMemo(
+      () => new BigDecimal(maybeValuation?.conversionRate || 0),
+      [maybeValuation?.conversionRate]
+    )
+
+    return (
+      <View {...viewProps}>
+        <View style={styles.container}>
+          <View style={styles.logoContainer}>
+            <Logo uri={assetLogo} alt={assetSymbol} style={styles.assetLogo} />
           </View>
-          <View>
-            <Text
-              style={[
-                styles.footerText,
-                styles.footerRightText,
-                styles.footerLabelText,
-              ]}>
-              Network
+          <View style={styles.valueContainer}>
+            <Text style={styles.primaryValue}>
+              {integerCryptoAmount && assetSymbol && !isInvalidAmount ? (
+                <NumericCryptoBalance
+                  decimals={aggregateWalletBannerBalance?.decimals}
+                  balance={integerCryptoAmount}
+                  symbol={assetSymbol}
+                />
+              ) : (
+                CONFUSED_FACE
+              )}
             </Text>
-            <View style={styles.chainContainer}>
-              <Logo uri={chainLogo} alt={chainLabel} style={styles.chainLogo} />
-              <Text
-                style={[
-                  styles.footerText,
-                  styles.footerRightText,
-                  styles.footerValueText,
-                ]}>
-                {chainLabel}
+            {!isInvalidAmount && (
+              <Text style={styles.secondaryValue}>
+                <NumericFiatPaymentRequest
+                  integerCryptoAmount={integerCryptoAmount}
+                  valuation={maybeValuation}
+                  decimals={aggregateWalletBannerBalance?.decimals}
+                />
               </Text>
-            </View>
+            )}
           </View>
+          {Boolean(hasCurrencyAndConversionRate || chainLabel || chainLogo) && (
+            <View style={styles.footer}>
+              {hasCurrencyAndConversionRate ? (
+                <View>
+                  <Text
+                    style={[
+                      styles.footerText,
+                      styles.footerLeftText,
+                      styles.footerLabelText,
+                    ]}>
+                    {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
+                  </Text>
+                  <Text
+                    style={[
+                      styles.footerText,
+                      styles.footerLeftText,
+                      styles.footerValueText,
+                    ]}>
+                    <NumericFiatWithAccuracy
+                      currency={maybeValuation?.currency}
+                      isAccurate
+                      value={maybeConversionRate}
+                    />
+                  </Text>
+                </View>
+              ) : (
+                <View style={styles.flex} />
+              )}
+
+              {Boolean(chainLabel || chainLogo) && (
+                <View>
+                  <Text
+                    style={[
+                      styles.footerText,
+                      styles.footerRightText,
+                      styles.footerLabelText,
+                    ]}>
+                    Network
+                  </Text>
+                  <View style={styles.chainContainer}>
+                    <Logo
+                      uri={chainLogo}
+                      alt={chainLabel}
+                      style={styles.chainLogo}
+                    />
+                    <Text
+                      style={[
+                        styles.footerText,
+                        styles.footerRightText,
+                        styles.footerValueText,
+                      ]}>
+                      {chainLabel}
+                    </Text>
+                  </View>
+                </View>
+              )}
+            </View>
+          )}
         </View>
       </View>
-    </View>
-  )
+    )
 }
+
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
@@ -102,6 +165,7 @@ const createStyles = (theme: Theme) =>
       backgroundColor: '#F5F4FF', // TODO: Add to theme
       borderRadius: theme.roundness.xs,
     },
+    flex: { flex: 1 },
     logoContainer: {
       alignItems: 'center',
     },

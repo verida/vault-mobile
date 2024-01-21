@@ -1,5 +1,10 @@
 {
   "extends": "@tsconfig/react-native/tsconfig.json",
+  "ts-node": {
+    "compilerOptions": {
+      "module": "commonjs"
+    }
+  },
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
@@ -30,7 +35,7 @@
       "styles/*": ["src/styles/*"],
       "hooks/*": ["src/hooks/*"],
       "utils/*": ["src/utils/*"],
-      "react": [ "./node_modules/@types/react"]
+      "react": ["./node_modules/@types/react"]
     }
   },
   "include": ["**/*.ts", "**/*.tsx", "src/declarations.d.ts"],

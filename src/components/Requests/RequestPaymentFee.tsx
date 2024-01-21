@@ -2,34 +2,38 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
+import { NumericCryptoMaxTransactionFee } from 'components/Span'
 import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
-export type RequestPaymentFeeProps = {
-  feeAmount?: string
-  feeSymbol?: string
-  formattedFiatValue?: string
-} & ViewProps
+export type RequestPaymentFeeProps = Parameters<
+  typeof NumericCryptoMaxTransactionFee
+>[0] &
+  ViewProps
 
-export const RequestPaymentFee: React.FunctionComponent<
-  RequestPaymentFeeProps
-> = (props) => {
-  const { feeAmount, feeSymbol, formattedFiatValue, ...viewProps } = props
-
+export const RequestPaymentFee = React.memo(function RequestPaymentFee({
+  chainMetadata,
+  predictedMaxTransactionFee,
+  detailedValuation,
+  ...extras
+}: RequestPaymentFeeProps): JSX.Element {
   const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <View {...viewProps}>
+    <View {...extras}>
       <View style={styles.container}>
-        <Text style={styles.text}>{`Estimated fee ≈ ${
-          feeAmount ? feeAmount : '-'
-        } ${feeSymbol}${
-          formattedFiatValue ? ` (${formattedFiatValue})` : ''
-        }`}</Text>
+        <Text style={styles.text}>
+          <Text children='Estimated fee ≈ ' />
+          <NumericCryptoMaxTransactionFee
+            chainMetadata={chainMetadata}
+            predictedMaxTransactionFee={predictedMaxTransactionFee}
+            detailedValuation={detailedValuation}
+          />
+        </Text>
       </View>
     </View>
   )
-}
+})
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

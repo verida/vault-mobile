@@ -1,34 +1,94 @@
+import { ChainIdParams } from 'caip'
+import {
+  AggregateWalletBannerBalance,
+  useMaybeBlockchainAccountForResource,
+  useMaybeChainMetadataForResource,
+  useMaybeFromAddressForResource,
+} from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, Text, View, ViewProps } from 'react-native'
 
 import { Alert, AlertType } from 'components/Alert'
 import { Logo } from 'components/Images'
+import { NumericCryptoBalance } from 'components/Span'
 import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
 export type WalletSelectorButtonProps = {
+  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance | null
+
   label: string
   logo?: string
+
+  // TODO: This should be useAddressForBalance or something - based on `resource`?
   address?: string
-  formattedBalance?: string
-  //onPress: () => void
+
   alertType?: AlertType // FIXME: Tried with Pick<AlertProps, 'type'> but got ts errors
   alertContent?: React.ReactNode | string // FIXME: Tried with Pick<AlertProps, 'children'> but got ts errors
 } & ViewProps
 
-export const WalletSelectorButton: React.FunctionComponent<
-  WalletSelectorButtonProps
-> = (props) => {
-  const {
-    label,
-    logo,
-    address,
-    formattedBalance,
-    alertType,
+export function useMaybeWalletSelectorButtonProps({
+  aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+  resource,
+  alertContent,
+  alertType,
+}: {
+  readonly aggregateWalletBannerBalance:
+    | AggregateWalletBannerBalance
+    | null
+    | undefined
+  readonly resource: ChainIdParams
+  readonly alertContent?: string
+  readonly alertType?: AlertType
+}): WalletSelectorButtonProps | null {
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+
+  const maybeBlockchainWallet = useMaybeBlockchainAccountForResource({
+    resource,
+  })
+
+  const maybeFromAddressForResource = useMaybeFromAddressForResource({
+    resource,
+  })
+
+  return React.useMemo(() => {
+    if (!maybeBlockchainWallet || !maybeAggregateWalletBannerBalance)
+      return null
+
+    const { icon, label } = maybeBlockchainWallet
+
+    return {
+      aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+      logo: icon || maybeChainMetadata?.icon || undefined,
+      label: label,
+      address: maybeFromAddressForResource?.fromAddress,
+      alertType,
+      alertContent,
+    }
+  }, [
     alertContent,
-    ...viewProps
-  } = props
+    alertType,
+    maybeAggregateWalletBannerBalance,
+    maybeBlockchainWallet,
+    maybeFromAddressForResource,
+    maybeChainMetadata,
+  ])
+}
+
+export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonProps> =
+  (props) => {
+    const {
+      aggregateWalletBannerBalance,
+
+      label,
+      logo,
+      address,
+      //formattedBalance,
+      alertType,
+      alertContent,
+      ...viewProps
+    } = props
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -47,11 +107,11 @@ export const WalletSelectorButton: React.FunctionComponent<
               ellipsizeMode='middle'>
               {address}
             </Text>
-            {formattedBalance ? (
               <Text style={styles.walletFormattedBalance}>
-                {formattedBalance}
+                {!!aggregateWalletBannerBalance && (
+                  <NumericCryptoBalance {...aggregateWalletBannerBalance} />
+                )}
               </Text>
-            ) : null}
           </View>
         </View>
         {alertContent ? (
