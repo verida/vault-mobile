@@ -56,7 +56,12 @@ export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
     <View {...viewProps}>
       <TouchableOpacity onPress={onPress}>
         <View style={styles.container}>
-          <Logo uri={logoUri || undefined} alt={symbol} style={styles.logo} />
+          <View>
+            <Logo uri={logoUri || undefined} alt={symbol} style={styles.logo} />
+            {itemChain?.icon ? (
+              <Logo uri={itemChain.icon} style={styles.chainLogo} />
+            ) : null}
+          </View>
           <View style={styles.tokenDetails}>
             <View style={styles.tokenNameAndBalance}>
               <Typography variant='h4'>{label}</Typography>
@@ -105,6 +110,13 @@ const createStyles = (theme: Theme) =>
     logo: {
       width: 45,
       height: 45,
+    },
+    chainLogo: {
+      width: 20,
+      height: 20,
+      position: 'absolute',
+      right: -4,
+      bottom: -4,
     },
     tokenDetails: {
       flex: 1,

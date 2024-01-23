@@ -13,9 +13,9 @@ export type LogoProps = {
   alt?: string
 } & ViewProps
 
-// TODO: Rework the text as fallback
-// With a text as fallback, we need to handle the size differently as we can't adapt the font size based on the container size (apparently)
-
+/**
+ * @deprecated Use `Avatar` instead
+ */
 export const Logo: React.FunctionComponent<LogoProps> = (props) => {
   const { uri, alt, ...viewProps } = props
 
