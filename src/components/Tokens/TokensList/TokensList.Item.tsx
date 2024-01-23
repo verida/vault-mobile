@@ -1,4 +1,6 @@
+import { ChainId } from 'caip'
 import { Logo, Typography } from 'components'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   AggregateWalletBannerBalance,
   fixedPointCryptoAsBigDecimal,
@@ -31,7 +33,22 @@ export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
     balance,
     decimals,
     valuation,
+    resource,
   } = aggregateWalletBannerBalance
+
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
+  const itemChainId = new ChainId(
+    'chainId' in resource ? resource.chainId : resource
+  )
+
+  const itemChain = chainMetadatas.find(
+    (chain) =>
+      chain.namespace === itemChainId.namespace &&
+      chain.reference === itemChainId.reference
+  )
+
+  const isMainnet = itemChain?.isMainnet
 
   const styles = useThemeAwareStyle(createStyles)
 
@@ -56,7 +73,21 @@ export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
                 }
               </Typography>
             </View>
-            {valuation ? <TokensListItemPrice valuation={valuation} /> : null}
+            {isMainnet ? (
+              <>
+                {valuation ? (
+                  <TokensListItemPrice valuation={valuation} />
+                ) : null}
+              </>
+            ) : (
+              <View style={styles.testnetTag}>
+                <Typography
+                  variant='bodySemiBold'
+                  style={styles.testnetTagText}>
+                  Testnet
+                </Typography>
+              </View>
+            )}
           </View>
         </View>
       </TouchableOpacity>
@@ -83,5 +114,15 @@ const createStyles = (theme: Theme) =>
     tokenNameAndBalance: {
       flexDirection: 'row',
       justifyContent: 'space-between',
+    },
+    testnetTag: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.s,
+      paddingVertical: theme.spacing.xxs,
+      borderRadius: theme.roundness.xs,
+      backgroundColor: theme.color.snow,
+    },
+    testnetTagText: {
+      color: theme.color.textLightGrey,
     },
   })

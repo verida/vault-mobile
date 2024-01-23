@@ -32,7 +32,7 @@ export const TokenDashboard: React.FC = () => {
 
   const shouldShowLoadingIndicator = wasInitiallyLoading && loading
 
-  const { price } = useAggregateWalletBannerBalancesValuation({
+  const { price: walletValue } = useAggregateWalletBannerBalancesValuation({
     aggregateWalletBannerBalances,
   })
 
@@ -43,7 +43,7 @@ export const TokenDashboard: React.FC = () => {
       ) : (
         <View style={styles.contentContainer}>
           <View style={styles.walletValueBannerWrapper}>
-            <CryptoWalletValueBanner value={price} />
+            <CryptoWalletValueBanner value={walletValue} />
           </View>
           <TokensList
             aggregateWalletBannerBalances={aggregateWalletBannerBalances}
