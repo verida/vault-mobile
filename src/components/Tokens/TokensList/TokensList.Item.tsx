@@ -1,55 +1,87 @@
-import { Logo } from 'components'
-import { AggregateWalletBannerBalance } from 'features/cryptoWallet'
-import { ListItem, Text } from 'native-base'
+import { Logo, Typography } from 'components'
+import {
+  AggregateWalletBannerBalance,
+  fixedPointCryptoAsBigDecimal,
+} from 'features/cryptoWallet'
+import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import { GestureResponderEvent, StyleSheet, View } from 'react-native'
+import {
+  GestureResponderEvent,
+  StyleSheet,
+  TouchableOpacity,
+  View,
+  ViewProps,
+} from 'react-native'
 
-import { NumericCryptoBalance } from 'components/Span'
-import { NUNITO_SANS_BOLD } from 'constants/text'
+import { Theme } from 'styles/types'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'
 
-export const TokensListItem = React.memo(function TokensListItem({
-  aggregateWalletBannerBalance,
-  onPress,
-}: {
+export type TokensListItemProps = {
   readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
-  readonly onPress: (e: GestureResponderEvent) => void
-}): JSX.Element {
-  const { icon: uri, label, symbol, valuation } = aggregateWalletBannerBalance
+  readonly onPress: (event: GestureResponderEvent) => void
+} & ViewProps
+
+export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
+  const { aggregateWalletBannerBalance, onPress, ...viewProps } = props
+  const {
+    icon: logoUri,
+    label,
+    symbol,
+    balance,
+    decimals,
+    valuation,
+  } = aggregateWalletBannerBalance
+
+  const styles = useThemeAwareStyle(createStyles)
 
   return (
-    <ListItem button onPress={onPress} style={styles.listItem}>
-      <Logo uri={uri || undefined} alt={symbol} style={styles.icon} />
-      <View style={styles.listItemDetail}>
-        <View style={styles.nameQuantity}>
-          <Text style={styles.currencyName}>{label}</Text>
-          <Text>
-            <NumericCryptoBalance {...aggregateWalletBannerBalance} />
-          </Text>
+    <View {...viewProps}>
+      <TouchableOpacity onPress={onPress}>
+        <View style={styles.container}>
+          <Logo uri={logoUri || undefined} alt={symbol} style={styles.logo} />
+          <View style={styles.tokenDetails}>
+            <View style={styles.tokenNameAndBalance}>
+              <Typography variant='h4'>{label}</Typography>
+              <Typography variant='h4'>
+                {
+                  String(
+                    fixedPointCryptoAsBigDecimal({
+                      amount: balance,
+                      decimals,
+                    })
+                      .toNumber()
+                      .toFixed(3)
+                  ) as `${number}`
+                }
+              </Typography>
+            </View>
+            {valuation ? <TokensListItemPrice valuation={valuation} /> : null}
+          </View>
         </View>
-        {!!valuation && <TokensListItemPrice valuation={valuation} />}
-      </View>
-    </ListItem>
+      </TouchableOpacity>
+    </View>
   )
-})
+}
 
-const styles = StyleSheet.create({
-  listItem: {
-    backgroundColor: '#fff',
-    borderRadius: 0,
-    marginLeft: 0,
-    paddingLeft: 16,
-  },
-  listItemDetail: { flex: 1, marginLeft: 15 },
-  nameQuantity: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    marginBottom: 4,
-  },
-  currencyName: { fontSize: 17, fontFamily: NUNITO_SANS_BOLD },
-  icon: {
-    width: 45,
-    height: 45,
-  },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      paddingHorizontal: 20,
+      paddingVertical: 17,
+      flexDirection: 'row',
+    },
+    logo: {
+      width: 45,
+      height: 45,
+    },
+    tokenDetails: {
+      flex: 1,
+      flexDirection: 'column',
+      marginLeft: theme.spacing.m,
+    },
+    tokenNameAndBalance: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+  })

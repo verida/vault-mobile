@@ -9,6 +9,8 @@ export function formatPercentage(
     {},
     {
       style: 'percent',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2,
     },
     options
   )

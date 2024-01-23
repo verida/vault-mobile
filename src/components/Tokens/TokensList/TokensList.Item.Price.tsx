@@ -1,72 +1,93 @@
 import { DetailedValuation, Interval } from 'features/cryptoWallet'
-import { Text } from 'native-base'
+import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
-import { StyleSheet, View } from 'react-native'
+import { StyleSheet, View, ViewProps } from 'react-native'
+import { formatPercentage } from 'utils'
 
 import { NumericFiat } from 'components/Span'
-import { NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { Typography } from 'components/Typography'
+import { Theme } from 'styles/types'
 
-export const TokensListItemPrice = React.memo(function TokensListItemPrice({
-  valuation: {
-    currency,
-    price,
-    conversionRate,
-    rates: { [Interval.DAILY]: dailyRateChange },
-  },
-}: {
+type TokensListItemPriceProps = {
   readonly valuation: DetailedValuation
-}): JSX.Element {
-  const positive = dailyRateChange >= 0
+} & ViewProps
+
+export const TokensListItemPrice: React.FC<TokensListItemPriceProps> = (
+  props
+) => {
+  const {
+    valuation: {
+      currency,
+      price,
+      conversionRate,
+      rates: { [Interval.DAILY]: dailyRateChange },
+    },
+    ...viewProps
+  } = props
+
+  const styles = useThemeAwareStyle(createStyles)
+
+  const priceChange = dailyRateChange
+    ? formatPercentage(dailyRateChange / 100, {
+        signDisplay: 'always',
+      })
+    : undefined
+  const priceChangeDirection =
+    dailyRateChange && dailyRateChange > 0 ? 'positive' : 'negative'
+
   return (
-    <>
-      <View style={styles.priceAmount}>
-        <View style={styles.priceChange}>
-          <Text style={styles.amount}>
+    <View {...viewProps}>
+      <View style={styles.tokenValuation}>
+        <View style={styles.tokenPriceDetails}>
+          <Typography variant='bodySemiBold' style={styles.tokenPrice}>
             <NumericFiat
               value={conversionRate.toNumber()}
               currency={currency}
             />
-          </Text>
-          {dailyRateChange !== 0 && (
-            <Text
+          </Typography>
+          {priceChange ? (
+            <Typography
+              variant='bodySemiBold'
               style={[
-                styles.coinPriceChange,
-                positive ? styles.positive : styles.negative,
-              ]}
-              children={`${positive ? '+' : ''}${dailyRateChange.toFixed(2)}%`}
-            />
-          )}
+                styles.tokenPriceChange,
+                priceChangeDirection === 'positive'
+                  ? styles.tokenPriceChangePositive
+                  : styles.tokenPriceChangeNegative,
+              ]}>
+              {priceChange}
+            </Typography>
+          ) : null}
         </View>
-        <Text style={styles.amount}>
+        <Typography variant='bodySemiBold' style={styles.balanceValue}>
           <NumericFiat value={price.toNumber()} currency={currency} />
-        </Text>
+        </Typography>
       </View>
-    </>
+    </View>
   )
-})
+}
 
-const styles = StyleSheet.create({
-  priceAmount: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-  },
-  priceChange: {
-    flexDirection: 'row',
-  },
-  amount: {
-    color: 'rgba(4, 17, 51, 0.5)',
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontSize: 14,
-  },
-  coinPriceChange: {
-    marginLeft: 10,
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontSize: 14,
-  },
-  positive: {
-    color: '#5ECEA5',
-  },
-  negative: {
-    color: '#FD4F64',
-  },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    tokenValuation: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+    },
+    tokenPriceDetails: {
+      flexDirection: 'row',
+    },
+    tokenPrice: {
+      color: theme.color.textLightGrey,
+    },
+    tokenPriceChange: {
+      marginLeft: theme.spacing.sm,
+    },
+    tokenPriceChangePositive: {
+      color: theme.color.success,
+    },
+    tokenPriceChangeNegative: {
+      color: theme.color.error,
+    },
+    balanceValue: {
+      color: theme.color.textLightGrey,
+    },
+  })
