@@ -329,7 +329,7 @@ class AccountManager extends EventEmitter {
       const wallet = {
         mnemonic: userHDWalletMnemonic,
         walletType: 'multi',
-        label: 'Multi Coin Wallet',
+        label: 'Multi-chain Wallet',
         multiChain: true, // Set this's a multi-chain wallet
       }
 
