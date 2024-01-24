@@ -1,22 +1,17 @@
 import BigDecimal from 'bignumber.js'
-import { ChainId } from 'caip'
-import { Logo } from 'components'
+import { Logo, Typography } from 'components'
+import { ChainMetadata } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
-  getAggregateWalletBannerBalanceResult,
-  useAggregateWalletBannerBalances,
+  fixedPointCryptoAsBigDecimal,
 } from 'features/cryptoWallet'
+import { convertFromCryptoIntegerToMaybeDecimalFiat } from 'features/token'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import { StyleSheet, Text, View, ViewProps } from 'react-native'
+import { StyleSheet, View, ViewProps } from 'react-native'
 
-import {
-  NumericCryptoBalance,
-  NumericFiatPaymentRequest,
-  NumericFiatWithAccuracy,
-} from 'components/Span'
+import { NumberCrypto, NumberFiat } from 'components/Numbers'
 import { CONFUSED_FACE } from 'constants/strings'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 import { Theme } from 'styles/types'
 
 export type RequestPaymentValueProps = {
@@ -25,14 +20,14 @@ export type RequestPaymentValueProps = {
     | AggregateWalletBannerBalance
     | null
     | undefined
-  readonly chainId: ChainId
+  readonly chainMetadata?: ChainMetadata
 } & ViewProps
 
 export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValueProps> =
   ({
     integerCryptoAmount,
     aggregateWalletBannerBalance,
-    chainId,
+    chainMetadata,
     ...viewProps
   }) => {
     // Describes how to convert between a whole unit of an asset, i.e. 1 ETH,
@@ -46,15 +41,8 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
 
     const isInvalidAmount = isNaN(parseInt(integerCryptoAmount, 10))
 
-    const [maybeNativeAssetWalletBannerBalance] =
-      getAggregateWalletBannerBalanceResult(
-        useAggregateWalletBannerBalances({
-          resource: chainId,
-        })
-      )
-
-    const chainLabel = maybeNativeAssetWalletBannerBalance?.label
-    const chainLogo = maybeNativeAssetWalletBannerBalance?.icon || undefined
+    const chainLabel = chainMetadata?.name
+    const chainLogo = chainMetadata?.icon || undefined
 
     const hasCurrencyAndConversionRate = !!(
       maybeValuation?.currency && maybeValuation?.conversionRate
@@ -65,6 +53,12 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
       [maybeValuation?.conversionRate]
     )
 
+    const maybeFiatPaymentAmount = convertFromCryptoIntegerToMaybeDecimalFiat({
+      integerCryptoAmount,
+      valuation: maybeValuation,
+      decimals: aggregateWalletBannerBalance?.decimals,
+    })
+
     return (
       <View {...viewProps}>
         <View style={styles.container}>
@@ -72,51 +66,56 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
             <Logo uri={assetLogo} alt={assetSymbol} style={styles.assetLogo} />
           </View>
           <View style={styles.valueContainer}>
-            <Text style={styles.primaryValue}>
-              {integerCryptoAmount && assetSymbol && !isInvalidAmount ? (
-                <NumericCryptoBalance
-                  decimals={aggregateWalletBannerBalance?.decimals}
-                  balance={integerCryptoAmount}
-                  symbol={assetSymbol}
-                />
-              ) : (
-                CONFUSED_FACE
-              )}
-            </Text>
-            {!isInvalidAmount && (
-              <Text style={styles.secondaryValue}>
-                <NumericFiatPaymentRequest
-                  integerCryptoAmount={integerCryptoAmount}
-                  valuation={maybeValuation}
-                  decimals={aggregateWalletBannerBalance?.decimals}
-                />
-              </Text>
+            {integerCryptoAmount && assetSymbol && !isInvalidAmount ? (
+              <NumberCrypto
+                value={fixedPointCryptoAsBigDecimal({
+                  amount: integerCryptoAmount,
+                  decimals: aggregateWalletBannerBalance.decimals,
+                }).toNumber()}
+                unit={assetSymbol}
+                variant='h1'
+                style={styles.primaryValue}
+                numberOfLines={1}
+                ellipsizeMode='tail'
+              />
+            ) : (
+              <Typography variant='h1' style={styles.primaryValue}>
+                {CONFUSED_FACE}
+              </Typography>
             )}
+            {!isInvalidAmount && maybeFiatPaymentAmount ? (
+              <Typography variant='label' style={styles.secondaryValue}>
+                {`≈ `}
+                <NumberFiat
+                  value={new BigDecimal(
+                    maybeFiatPaymentAmount.amount
+                  ).toNumber()}
+                  unit={maybeFiatPaymentAmount.units || undefined}
+                  variant='label'
+                  style={styles.secondaryValue}
+                />
+              </Typography>
+            ) : null}
           </View>
           {Boolean(hasCurrencyAndConversionRate || chainLabel || chainLogo) && (
             <View style={styles.footer}>
               {hasCurrencyAndConversionRate ? (
                 <View>
-                  <Text
-                    style={[
-                      styles.footerText,
-                      styles.footerLeftText,
-                      styles.footerLabelText,
-                    ]}>
+                  <Typography
+                    variant='label'
+                    style={[styles.footerLeftText, styles.footerLabelText]}>
                     {assetSymbol ? `1 ${assetSymbol} ≈` : undefined}
-                  </Text>
-                  <Text
-                    style={[
-                      styles.footerText,
-                      styles.footerLeftText,
-                      styles.footerValueText,
-                    ]}>
-                    <NumericFiatWithAccuracy
-                      currency={maybeValuation?.currency}
-                      isAccurate
-                      value={maybeConversionRate}
-                    />
-                  </Text>
+                  </Typography>
+                  <NumberFiat
+                    value={maybeConversionRate.toNumber()}
+                    unit={maybeValuation.currency}
+                    options={{
+                      minimumSignificantDigits: 2,
+                      maximumSignificantDigits: 6,
+                    }}
+                    variant='label'
+                    style={[styles.footerLeftText, styles.footerValueText]}
+                  />
                 </View>
               ) : (
                 <View style={styles.flex} />
@@ -124,28 +123,22 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
 
               {Boolean(chainLabel || chainLogo) && (
                 <View>
-                  <Text
-                    style={[
-                      styles.footerText,
-                      styles.footerRightText,
-                      styles.footerLabelText,
-                    ]}>
+                  <Typography
+                    variant='label'
+                    style={[styles.footerRightText, styles.footerLabelText]}>
                     Network
-                  </Text>
+                  </Typography>
                   <View style={styles.chainContainer}>
                     <Logo
                       uri={chainLogo}
                       alt={chainLabel}
                       style={styles.chainLogo}
                     />
-                    <Text
-                      style={[
-                        styles.footerText,
-                        styles.footerRightText,
-                        styles.footerValueText,
-                      ]}>
+                    <Typography
+                      variant='label'
+                      style={[styles.footerRightText, styles.footerValueText]}>
                       {chainLabel}
-                    </Text>
+                    </Typography>
                   </View>
                 </View>
               )}
@@ -161,7 +154,7 @@ const createStyles = (theme: Theme) =>
     container: {
       padding: theme.spacing.s,
       paddingTop: theme.spacing.m,
-      backgroundColor: '#F5F4FF', // TODO: Add to theme
+      backgroundColor: theme.color.primary5,
       borderRadius: theme.roundness.xs,
     },
     flex: { flex: 1 },
@@ -173,17 +166,10 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.s,
     },
     primaryValue: {
-      fontSize: 36,
-      lineHeight: 46.8,
-      letterSpacing: -0.41,
-      fontFamily: NUNITO_SANS_BOLD, // TODO: Add to theme
-      color: 'rgba(4, 17, 51, 0.8)', // TODO: Add to theme
+      color: theme.color.black800,
     },
     secondaryValue: {
-      fontSize: 12,
-      lineHeight: 18,
-      fontFamily: NUNITO_SANS_SEMIBOLD, // TODO: Add to theme
-      color: 'rgba(4, 17, 51, 0.6)', // TODO: Add to theme
+      color: theme.color.black600,
     },
     assetLogo: {
       width: 32,
@@ -193,11 +179,6 @@ const createStyles = (theme: Theme) =>
       justifyContent: 'space-between',
       marginTop: theme.spacing.l,
     },
-    footerText: {
-      fontFamily: NUNITO_SANS_SEMIBOLD,
-      fontSize: 12,
-      lineHeight: 18,
-    },
     footerLeftText: {
       textAlign: 'left',
     },
@@ -205,10 +186,10 @@ const createStyles = (theme: Theme) =>
       textAlign: 'right',
     },
     footerLabelText: {
-      color: 'rgba(4, 17, 51, 0.4)', // TODO: Add to theme
+      color: theme.color.black400,
     },
     footerValueText: {
-      color: 'rgba(4, 17, 51, 0.7)', // TODO: Add to theme
+      color: theme.color.black700,
     },
     chainContainer: {
       flexDirection: 'row',
