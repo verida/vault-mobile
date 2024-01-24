@@ -31,6 +31,7 @@ export type TokenBannerProps = {
   readonly valuation: DetailedValuation | null | undefined
   readonly chainLabel?: string
   readonly chainLogo?: string
+  readonly isChainMainnet: boolean
 } & ViewProps
 
 export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
@@ -48,6 +49,7 @@ export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
     valuation: maybeValuation,
     chainLabel,
     chainLogo,
+    isChainMainnet,
     ...viewProps
   } = props
 
@@ -93,30 +95,42 @@ export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
         </View>
         <View style={styles.coinInfo}>
           <View style={styles.coinPriceInfo}>
-            {!!maybeConversionRate && (
-              <NumberFiat
-                value={maybeConversionRate.toNumber()}
-                unit={maybeValuation?.currency}
-                options={{
-                  minimumSignificantDigits: 2,
-                  maximumSignificantDigits: 6,
-                }}
-                style={styles.coinPrice}
-              />
+            {isChainMainnet ? (
+              <>
+                {!!maybeConversionRate && (
+                  <NumberFiat
+                    value={maybeConversionRate.toNumber()}
+                    unit={maybeValuation?.currency}
+                    options={{
+                      minimumSignificantDigits: 2,
+                      maximumSignificantDigits: 6,
+                    }}
+                    style={styles.coinPrice}
+                  />
+                )}
+                {hasChange ? (
+                  <NumberPercent
+                    value={maybeChange / 100}
+                    options={{
+                      signDisplay: 'always',
+                    }}
+                    style={[
+                      positive
+                        ? styles.priceChangePositive
+                        : styles.priceChangeNegative,
+                    ]}
+                  />
+                ) : null}
+              </>
+            ) : (
+              <View style={styles.testnetTag}>
+                <Typography
+                  variant='bodySemiBold'
+                  style={styles.testnetTagText}>
+                  Testnet
+                </Typography>
+              </View>
             )}
-            {hasChange ? (
-              <NumberPercent
-                value={maybeChange / 100}
-                options={{
-                  signDisplay: 'always',
-                }}
-                style={[
-                  positive
-                    ? styles.priceChangePositive
-                    : styles.priceChangeNegative,
-                ]}
-              />
-            ) : null}
           </View>
           <View style={styles.tokenNetworkInfo}>
             <Typography style={styles.tokenNetworkLabel}>Network</Typography>
@@ -195,6 +209,7 @@ const createStyles = (theme: Theme) =>
       marginBottom: theme.spacing.s,
       flexDirection: 'row',
       justifyContent: 'space-between',
+      alignItems: 'flex-end',
     },
     coinPriceInfo: {
       flexDirection: 'column',
@@ -268,5 +283,18 @@ const createStyles = (theme: Theme) =>
     separator: {
       height: 1,
       backgroundColor: theme.color.lightGrey,
+    },
+    testnetTag: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.s,
+      paddingVertical: theme.spacing.xxs,
+      borderRadius: theme.roundness.xs,
+      backgroundColor: theme.color.snow,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: theme.color.lightGrey,
+    },
+    testnetTagText: {
+      color: theme.color.textLightGrey,
     },
   })

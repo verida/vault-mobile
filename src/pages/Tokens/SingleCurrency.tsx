@@ -153,6 +153,7 @@ const SingleCurrency = () => {
           icon={maybeAggregateWalletBannerBalance.icon || undefined}
           chainLabel={chain?.name}
           chainLogo={chain?.icon || undefined}
+          isChainMainnet={!!chain?.isMainnet}
           receiveButtonAction={() => {
             return navigation.navigate('ReceiveToken', {
               aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
