@@ -93,7 +93,7 @@ const TokenDashboard = React.memo(function TokenDashboard() {
 })
 
 const styles = StyleSheet.create({
-  contentContainer: { flex: 1, marginTop: 10 },
+  contentContainer: { flex: 1 },
 })
 
 export default TokenDashboard

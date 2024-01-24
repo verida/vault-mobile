@@ -44,7 +44,7 @@ export const RequestPaymentValue: React.FunctionComponent<RequestPaymentValuePro
     const assetSymbol = aggregateWalletBannerBalance?.symbol
     const assetLogo = aggregateWalletBannerBalance?.icon || undefined
 
-    const isInvalidAmount = isNaN(parseInt(integerCryptoAmount))
+    const isInvalidAmount = isNaN(parseInt(integerCryptoAmount, 10))
 
     const [maybeNativeAssetWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(

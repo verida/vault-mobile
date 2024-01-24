@@ -20,13 +20,13 @@ import { SafeAreaView } from 'react-native-safe-area-context'
 
 import TrashBinIcon from 'assets/trash_bin_icon.svg'
 import Button from 'components/Button'
+import { Line } from 'components/Line'
 import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
-import { ChainMetadataListSeparatorComponent } from 'pages/BlockchainNetworks/components'
 
 import { ChainsMetadataForm } from './components'
 import { useCreateChainMetadataFormFields } from './hooks'
@@ -197,7 +197,7 @@ export const BlockchainNetworksEditor = React.memo(
             </KeyboardAvoidingView>
           </ScrollView>
           <View>
-            <ChainMetadataListSeparatorComponent />
+            <Line />
             <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
               <Button
                 onPress={onPressSave}

@@ -12,35 +12,36 @@ import { NUNITO_SANS_BOLD } from 'constants/text'
 
 import { ChainMetadataListItemTag } from './ChainMetadata.List.Item.Tag'
 
-export const ChainMetadataListItem = React.memo(function ChainMetadataListItem({
-  chainMetadata,
-}: {
+type ChainMetadataListItemProps = {
   readonly chainMetadata: ChainMetadata
-}): JSX.Element {
-  const { theme } = useTheme()
-  const { icon: uri, name: label } = chainMetadata
-  const { getChainMetadataDetails } = useChainMetadataDetails()
+}
 
-  const { isCustom, isRegional } = getChainMetadataDetails(chainMetadata)
+export const ChainMetadataListItem: React.FunctionComponent<ChainMetadataListItemProps> =
+  ({ chainMetadata }) => {
+    const { theme } = useTheme()
+    const { icon: uri, name: label } = chainMetadata
+    const { getChainMetadataDetails } = useChainMetadataDetails()
 
-  return (
-    <View style={[styles.row, styles.wrapper]}>
-      <View style={styles.center}>
-        <Logo style={styles.icon} uri={uri || ''} />
-      </View>
-      <View style={styles.row}>
-        <View style={{ paddingLeft: 10 }}>
-          <Text children={label} style={styles.label} />
-          <ChainMetadataListItemTag chainMetadata={chainMetadata} />
+    const { isCustom, isRegional } = getChainMetadataDetails(chainMetadata)
+
+    return (
+      <View style={[styles.row, styles.wrapper]}>
+        <View style={styles.center}>
+          <Logo style={styles.icon} uri={uri || ''} />
+        </View>
+        <View style={styles.row}>
+          <View style={{ paddingLeft: 10 }}>
+            <Text children={label} style={styles.label} />
+            <ChainMetadataListItemTag chainMetadata={chainMetadata} />
+          </View>
+        </View>
+        <View style={[styles.center, { width: 20 }]}>
+          {isCustom && <EditIcon fill={theme.color.iconDefault} />}
+          {isRegional && <HouseIcon fill={theme.color.iconDefault} />}
         </View>
       </View>
-      <View style={[styles.center, { width: 20 }]}>
-        {isCustom && <EditIcon fill={theme.color.iconDefault} />}
-        {isRegional && <HouseIcon fill={theme.color.iconDefault} />}
-      </View>
-    </View>
-  )
-})
+    )
+  }
 
 const styles = StyleSheet.create({
   center: { alignItems: 'center', justifyContent: 'center' },
