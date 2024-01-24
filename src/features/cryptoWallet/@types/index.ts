@@ -200,7 +200,7 @@ export type PriceIntervals = {
 
 export type Valuation = {
   readonly currency: Currency
-  readonly price: BigDecimal
+  readonly price: BigDecimal // TODO: Should not be price but value
 }
 
 export type DetailedValuation = Valuation & {
