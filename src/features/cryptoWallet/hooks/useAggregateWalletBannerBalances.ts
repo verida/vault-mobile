@@ -86,6 +86,7 @@ export function useAggregateWalletBannerBalances(
     const erc20Balances =
       balanceByChainResultsToErc20AggregateWalletBannerBalance({
         balanceByChainResults,
+        chainMetadatas,
       })
 
     const aggregateWalletBannerBalances: AggregateWalletBannerBalances = [

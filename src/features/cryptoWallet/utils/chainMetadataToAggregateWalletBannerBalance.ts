@@ -23,8 +23,15 @@ export function chainMetadataToAggregateWalletBannerBalance({
   readonly balanceByChainResults: readonly BalanceByChainResult[]
   readonly cryptoWalletBalances: CryptoWalletBalances
 }): AggregateWalletBannerBalanceNativeCurrency {
-  const { reference, namespace, decimals, nativeCurrencyName, symbol, icon } =
-    chainMetadata
+  const {
+    reference,
+    namespace,
+    decimals,
+    nativeCurrencyName,
+    symbol,
+    icon,
+    isMainnet,
+  } = chainMetadata
 
   const chainId: ChainIdParams = {
     namespace,
@@ -53,11 +60,13 @@ export function chainMetadataToAggregateWalletBannerBalance({
     symbol,
     icon,
     balance,
-    valuation: chainMetadataToMaybeValuation({
-      balance,
-      decimals,
-      chainMetadata,
-      balanceByChainResults,
-    }),
+    valuation: isMainnet
+      ? chainMetadataToMaybeValuation({
+          balance,
+          decimals,
+          chainMetadata,
+          balanceByChainResults,
+        })
+      : null,
   }
 }

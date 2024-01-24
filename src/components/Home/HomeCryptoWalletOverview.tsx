@@ -2,9 +2,9 @@ import { useNavigation } from '@react-navigation/native'
 import { Icon, Typography } from 'components'
 import { useTheme } from 'contexts'
 import {
-  getUniqueWalletAddresses,
   getWallets,
-  useGetBalancesQuery,
+  useAggregateWalletBannerBalancesValuation,
+  useAggregateWalletBannerBalancesWithResultCaching,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
@@ -26,9 +26,14 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
 
   const navigation = useNavigation()
   const currentWallet = useSelector(getWallets)
-  const addresses = getUniqueWalletAddresses(currentWallet)
-  const { data } = useGetBalancesQuery(addresses)
-  const { total } = data || {}
+  const cachedAggregateWalletBannerBalances =
+    useAggregateWalletBannerBalancesWithResultCaching()
+  const { result: aggregateWalletBannerBalances } =
+    cachedAggregateWalletBannerBalances
+  const { price: walletValue } = useAggregateWalletBannerBalancesValuation({
+    aggregateWalletBannerBalances,
+  })
+
   const displayedLabel = currentWallet?.label || 'Crypto Wallet'
 
   const handlePress = () => {
@@ -47,7 +52,7 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
               {displayedLabel}
             </Typography>
             <Typography variant='h4' style={styles.walletValue}>
-              <NumericFiat value={total || 0} />
+              <NumericFiat value={walletValue.toNumber()} />
             </Typography>
           </View>
         </View>
