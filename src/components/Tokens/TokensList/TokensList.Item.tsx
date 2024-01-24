@@ -14,7 +14,9 @@ import {
   View,
   ViewProps,
 } from 'react-native'
+import { getSignificantDecimalsFromPrice } from 'utils'
 
+import { NumberCrypto } from 'components/Numbers'
 import { Theme } from 'styles/types'
 
 import { TokensListItemPrice } from './TokensList.Item.Price'
@@ -52,6 +54,10 @@ export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
 
   const styles = useThemeAwareStyle(createStyles)
 
+  const nbDecimals = valuation?.conversionRate
+    ? getSignificantDecimalsFromPrice(valuation.conversionRate.toNumber())
+    : undefined
+
   return (
     <View {...viewProps}>
       <TouchableOpacity onPress={onPress}>
@@ -65,18 +71,14 @@ export const TokensListItem: React.FC<TokensListItemProps> = (props) => {
           <View style={styles.tokenDetails}>
             <View style={styles.tokenNameAndBalance}>
               <Typography variant='h4'>{label}</Typography>
-              <Typography variant='h4'>
-                {
-                  String(
-                    fixedPointCryptoAsBigDecimal({
-                      amount: balance,
-                      decimals,
-                    })
-                      .toNumber()
-                      .toFixed(3)
-                  ) as `${number}`
-                }
-              </Typography>
+              <NumberCrypto
+                value={fixedPointCryptoAsBigDecimal({
+                  amount: balance,
+                  decimals,
+                }).toNumber()}
+                nbDecimals={nbDecimals}
+                variant='h4'
+              />
             </View>
             {isMainnet ? (
               <>

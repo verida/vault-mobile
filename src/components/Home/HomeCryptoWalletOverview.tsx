@@ -11,7 +11,7 @@ import React from 'react'
 import { Pressable, StyleSheet, View, ViewProps } from 'react-native'
 import { useSelector } from 'react-redux'
 
-import { NumericFiat } from 'components/Span'
+import { NumberFiat } from 'components/Numbers'
 import { Theme } from 'styles/types'
 
 type CryptoWalletOverviewProps = ViewProps
@@ -30,9 +30,10 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
     useAggregateWalletBannerBalancesWithResultCaching()
   const { result: aggregateWalletBannerBalances } =
     cachedAggregateWalletBannerBalances
-  const { price: walletValue } = useAggregateWalletBannerBalancesValuation({
-    aggregateWalletBannerBalances,
-  })
+  const { price: walletValue, currency } =
+    useAggregateWalletBannerBalancesValuation({
+      aggregateWalletBannerBalances,
+    })
 
   const displayedLabel = currentWallet?.label || 'Crypto Wallet'
 
@@ -51,9 +52,12 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
             <Typography variant='label' style={styles.walletLabel}>
               {displayedLabel}
             </Typography>
-            <Typography variant='h4' style={styles.walletValue}>
-              <NumericFiat value={walletValue.toNumber()} />
-            </Typography>
+            <NumberFiat
+              value={walletValue.toNumber()}
+              unit={currency}
+              variant='h4'
+              style={styles.walletValue}
+            />
           </View>
         </View>
         <Icon name='chevron-forward' size={24} color={theme.color.primary} />

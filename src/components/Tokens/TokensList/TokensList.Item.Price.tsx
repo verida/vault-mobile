@@ -2,10 +2,8 @@ import { DetailedValuation, Interval } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
-import { formatPercentage } from 'utils'
 
-import { NumericFiat } from 'components/Span'
-import { Typography } from 'components/Typography'
+import { NumberFiat, NumberPercent } from 'components/Numbers'
 import { Theme } from 'styles/types'
 
 type TokensListItemPriceProps = {
@@ -27,11 +25,6 @@ export const TokensListItemPrice: React.FC<TokensListItemPriceProps> = (
 
   const styles = useThemeAwareStyle(createStyles)
 
-  const priceChange = dailyRateChange
-    ? formatPercentage(dailyRateChange / 100, {
-        signDisplay: 'always',
-      })
-    : undefined
   const priceChangeDirection =
     dailyRateChange && dailyRateChange > 0 ? 'positive' : 'negative'
 
@@ -39,28 +32,38 @@ export const TokensListItemPrice: React.FC<TokensListItemPriceProps> = (
     <View {...viewProps}>
       <View style={styles.tokenValuation}>
         <View style={styles.tokenPriceDetails}>
-          <Typography variant='bodySemiBold' style={styles.tokenPrice}>
-            <NumericFiat
-              value={conversionRate.toNumber()}
-              currency={currency}
-            />
-          </Typography>
-          {priceChange ? (
-            <Typography
+          <NumberFiat
+            value={conversionRate.toNumber()}
+            unit={currency}
+            options={{
+              minimumSignificantDigits: 2,
+              maximumSignificantDigits: 6,
+            }}
+            variant='bodySemiBold'
+            style={styles.tokenPrice}
+          />
+          {dailyRateChange ? (
+            <NumberPercent
+              value={dailyRateChange / 100}
+              options={{
+                signDisplay: 'always',
+              }}
               variant='bodySemiBold'
               style={[
                 styles.tokenPriceChange,
                 priceChangeDirection === 'positive'
                   ? styles.tokenPriceChangePositive
                   : styles.tokenPriceChangeNegative,
-              ]}>
-              {priceChange}
-            </Typography>
+              ]}
+            />
           ) : null}
         </View>
-        <Typography variant='bodySemiBold' style={styles.balanceValue}>
-          <NumericFiat value={price.toNumber()} currency={currency} />
-        </Typography>
+        <NumberFiat
+          value={price.toNumber()}
+          unit={currency}
+          variant='bodySemiBold'
+          style={styles.balanceValue}
+        />
       </View>
     </View>
   )

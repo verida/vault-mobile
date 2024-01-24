@@ -3,17 +3,18 @@ import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { StyleSheet, View, ViewProps } from 'react-native'
 
-import { NumericFiat } from 'components/Span'
+import { NumberFiat } from 'components/Numbers'
 import { Typography } from 'components/Typography'
 import { Theme } from 'styles/types'
 
 export type CryptoWalletValueBannerProps = {
   value: BigDecimal
+  unit?: string
 } & ViewProps
 
 export const CryptoWalletValueBanner: React.FunctionComponent<CryptoWalletValueBannerProps> =
   (props) => {
-    const { value, ...viewProps } = props
+    const { value, unit, ...viewProps } = props
 
     const styles = useThemeAwareStyle(createStyles)
 
@@ -23,9 +24,12 @@ export const CryptoWalletValueBanner: React.FunctionComponent<CryptoWalletValueB
           <Typography variant='label' style={styles.label}>
             Total Value
           </Typography>
-          <Typography variant='h3' style={styles.value}>
-            <NumericFiat value={value ? value.toNumber() : 0} />
-          </Typography>
+          <NumberFiat
+            value={value ? value.toNumber() : 0}
+            unit={unit}
+            variant='h3'
+            style={styles.value}
+          />
         </View>
       </View>
     )
