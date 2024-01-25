@@ -1,59 +1,49 @@
-import { RouteProp } from '@react-navigation/native'
 import { ChainId } from 'caip'
+import { BottomActionBar, ScreenWrapper } from 'components'
 import {
   useChainMetadataDetails,
   useChainMetadatasCustom,
 } from 'features/blockchain'
 import { ChainMetadata } from 'features/caip'
 import { Logger } from 'features/telemetry'
-import { Container } from 'native-base'
+import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
-import {
-  Alert,
-  KeyboardAvoidingView,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Alert, StyleSheet } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
 
 import TrashBinIcon from 'assets/trash_bin_icon.svg'
-import Button from 'components/Button'
-import { Line } from 'components/Line'
 import NavigationHeader, {
   HeaderSideButton,
 } from 'components/Navigation/NavigationHeader'
-import useParams from 'hooks/useParams'
-import { useMainNavigation } from 'navigation/hooks'
-import { MainStackParams } from 'navigation/types'
+import { MainStackScreenProps } from 'navigation/types'
+import { Theme } from 'styles/types'
 
 import { ChainsMetadataForm } from './components'
 import { useCreateChainMetadataFormFields } from './hooks'
-
-export type NetworksEditorRouteProp = RouteProp<
-  MainStackParams,
-  'BlockchainNetworksEditor'
->
-
-export type NetworksEditorScreenParams = {
-  readonly title: string
-  readonly initialValue: ChainMetadata | null
-  readonly disabled: boolean
-}
 
 const attemptedToModifyDisabledNetworkError = () =>
   new Error(
     'Attempted to modify a network that is not permitted for modification.'
   )
 
-const logger = new Logger('BlockchainNetworksEditor')
+const logger = new Logger('BlockchainNetworkEditorScreen')
 
-export const BlockchainNetworksEditor = React.memo(
-  function BlockchainNetworksEditor(): JSX.Element {
-    const { initialValue, title, disabled } =
-      useParams<NetworksEditorScreenParams>()
+export type BlockchainNetworkEditorScreenParams = {
+  readonly title: string
+  readonly initialValue: ChainMetadata | null
+  readonly disabled: boolean
+}
 
-    const navigation = useMainNavigation()
+type BlockchainNetworkEditorScreenProps =
+  MainStackScreenProps<'BlockchainNetworkEditor'>
+
+export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScreenProps> =
+  (props) => {
+    const {
+      navigation,
+      route: { params },
+    } = props
+    const { initialValue, title, disabled } = params
 
     const { removeCustomNetworks, addCustomNetworks } =
       useChainMetadatasCustom()
@@ -173,51 +163,38 @@ export const BlockchainNetworksEditor = React.memo(
       addCustomNetworks,
     ])
 
+    const styles = useThemeAwareStyle(createStyles)
+
     return (
-      <Container>
+      <ScreenWrapper keyboardAvoiding>
         <NavigationHeader
           title={title}
           renderNetInfo={false}
           right={deleteControlsEnabled ? headerSideButton : undefined}
         />
-        <ScrollView
-          style={[styles.flex]}
-          keyboardShouldPersistTaps='always'
-          keyboardDismissMode='on-drag'>
-          {/* TODO: Needs KeyboardAwareScrollView, the component specified in package.json causes crashes? */}
-          <KeyboardAvoidingView
-            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-            <ChainsMetadataForm
-              {...chainMetadataFormFields}
-              disabled={disabled}
-            />
-            <View style={{ height: 24 }} />
-          </KeyboardAvoidingView>
+        <ScrollView style={styles.flex} contentContainerStyle={styles.content}>
+          <ChainsMetadataForm
+            {...chainMetadataFormFields}
+            disabled={disabled}
+          />
         </ScrollView>
-        <View>
-          <Line />
-          <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
-            <Button
-              onPress={onPressSave}
-              style={[styles.actionButton]}
-              disabled={!saveControlsEnabled}>
-              {isMalformed ? 'Invalid' : 'Save'}
-            </Button>
-          </View>
-        </View>
-      </Container>
+        <BottomActionBar
+          actions={[
+            {
+              label: 'Save',
+              onPress: onPressSave,
+              disabled: !saveControlsEnabled,
+            },
+          ]}
+        />
+      </ScreenWrapper>
     )
   }
-)
 
-const styles = StyleSheet.create({
-  actionButton: {
-    marginBottom: 0,
-  },
-  content: {
-    backgroundColor: '#fff',
-    flex: 1,
-    paddingVertical: 24,
-  },
-  flex: { flex: 1 },
-})
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    flex: { flex: 1 },
+    content: {
+      padding: theme.spacing.m,
+    },
+  })

@@ -9,8 +9,10 @@ import NFTCollectionDetail from 'pages/Assets/NFTCollectionDetail'
 import NFTDetail from 'pages/Assets/NFTDetail'
 import SelectAsset from 'pages/Assets/SelectAsset'
 import { ChangePin } from 'pages/Authentication/ChangePin'
-import BlockchainNetworks from 'pages/BlockchainNetworks/BlockchainNetworks'
-import { BlockchainNetworksEditor } from 'pages/BlockchainNetworksEditor'
+import {
+  BlockchainNetworkEditorScreen,
+  BlockchainNetworksScreen,
+} from 'pages/Blockchains'
 import SingleConnection from 'pages/Connections/SingleConnection'
 import { DataFolderScreen, DataItemScreen } from 'pages/Data'
 import {
@@ -188,11 +190,11 @@ export const MainNavigator: React.FunctionComponent = () => {
           <Stack.Screen name={'ShareableData'} component={ShareableData} />
           <Stack.Screen
             name={'BlockchainNetworks'}
-            component={BlockchainNetworks}
+            component={BlockchainNetworksScreen}
           />
           <Stack.Screen
-            name={'BlockchainNetworksEditor'}
-            component={BlockchainNetworksEditor}
+            name={'BlockchainNetworkEditor'}
+            component={BlockchainNetworkEditorScreen}
           />
           <Stack.Screen
             name='WalletConnectActiveSessions'
