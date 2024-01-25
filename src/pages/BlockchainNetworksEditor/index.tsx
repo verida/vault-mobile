@@ -16,7 +16,6 @@ import {
   View,
 } from 'react-native'
 import { ScrollView } from 'react-native-gesture-handler'
-import { SafeAreaView } from 'react-native-safe-area-context'
 
 import TrashBinIcon from 'assets/trash_bin_icon.svg'
 import Button from 'components/Button'
@@ -181,33 +180,31 @@ export const BlockchainNetworksEditor = React.memo(
           renderNetInfo={false}
           right={deleteControlsEnabled ? headerSideButton : undefined}
         />
-        <SafeAreaView style={[styles.flex, { marginTop: -35 }]}>
-          <ScrollView
-            style={[styles.flex]}
-            keyboardShouldPersistTaps='always'
-            keyboardDismissMode='on-drag'>
-            {/* TODO: Needs KeyboardAwareScrollView, the component specified in package.json causes crashes? */}
-            <KeyboardAvoidingView
-              behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
-              <ChainsMetadataForm
-                {...chainMetadataFormFields}
-                disabled={disabled}
-              />
-              <View style={{ height: 24 }} />
-            </KeyboardAvoidingView>
-          </ScrollView>
-          <View>
-            <Line />
-            <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
-              <Button
-                onPress={onPressSave}
-                style={[styles.actionButton]}
-                disabled={!saveControlsEnabled}>
-                {isMalformed ? 'Invalid' : 'Save'}
-              </Button>
-            </View>
+        <ScrollView
+          style={[styles.flex]}
+          keyboardShouldPersistTaps='always'
+          keyboardDismissMode='on-drag'>
+          {/* TODO: Needs KeyboardAwareScrollView, the component specified in package.json causes crashes? */}
+          <KeyboardAvoidingView
+            behavior={Platform.OS === 'ios' ? 'padding' : 'height'}>
+            <ChainsMetadataForm
+              {...chainMetadataFormFields}
+              disabled={disabled}
+            />
+            <View style={{ height: 24 }} />
+          </KeyboardAvoidingView>
+        </ScrollView>
+        <View>
+          <Line />
+          <View style={{ paddingHorizontal: 24, paddingTop: 12 }}>
+            <Button
+              onPress={onPressSave}
+              style={[styles.actionButton]}
+              disabled={!saveControlsEnabled}>
+              {isMalformed ? 'Invalid' : 'Save'}
+            </Button>
           </View>
-        </SafeAreaView>
+        </View>
       </Container>
     )
   }
