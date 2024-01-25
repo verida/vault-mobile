@@ -28,7 +28,7 @@ export const ChainMetadataRpcs = z.array(ChainMetadataRpc).nonempty()
 
 export type ChainMetadataRpcs = z.infer<typeof ChainMetadataRpcs>
 
-export const ChainMetadata = z
+export const ChainMetadataSchema = z
   .object({
     name: z.string().nonempty(),
     rpcUrls: ChainMetadataRpcs,
@@ -38,12 +38,12 @@ export const ChainMetadata = z
     isMainnet: z.boolean().or(z.null()),
     nativeCurrencyName: z.string().nonempty(),
     symbol: z.string().nonempty(),
-    icon: z.string().or(z.null()),
+    icon: z.string().url().or(z.null()),
     blockExplorers: ChainMetadataBlockExplorers,
   })
   .passthrough()
 
-export type ChainMetadata = z.infer<typeof ChainMetadata>
+export type ChainMetadata = z.infer<typeof ChainMetadataSchema>
 
 // A list of ChainMetadata. Note - this may contain duplicate configuration settings,
 // for example, a custom Ethereum Mainnet configuration and the default Ethereum Mainnet

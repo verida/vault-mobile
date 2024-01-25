@@ -1,6 +1,7 @@
 import { SupportedBlockchainNamespace } from 'features/blockchain'
 import {
   ChainMetadata,
+  ChainMetadataSchema,
   HACK__getFirstRpcUrl,
   isSupportedCaipNamespace,
 } from 'features/caip'
@@ -80,11 +81,11 @@ export function useCreateChainMetadataFormFields({
         symbol,
         decimals,
         nativeCurrencyName,
-        icon,
+        icon: icon.length ? icon : null,
         blockExplorers,
         isMainnet,
       }
-      const result = ChainMetadata.safeParse(maybeChainMetadata)
+      const result = ChainMetadataSchema.safeParse(maybeChainMetadata)
 
       if (!result.success) return { data: null, error: result.error }
 
