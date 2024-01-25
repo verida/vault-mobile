@@ -1,5 +1,6 @@
 import { ChainId } from 'caip'
 import { Typography } from 'components'
+import { config } from 'config'
 import {
   getMaybeChainMetadatas,
   useChainMetadataDetails,
@@ -107,13 +108,14 @@ function BlockchainNetworks(): JSX.Element {
     [navigation]
   )
 
-  const headerSideButton: HeaderSideButton = React.useMemo(
-    () => ({
-      icon: <PlusIcon />,
-      action: onPressAddNetwork,
-    }),
-    [onPressAddNetwork]
-  )
+  const headerSideButton: HeaderSideButton | undefined = React.useMemo(() => {
+    return config.features.blockchain.enableCustomNetwork
+      ? {
+          icon: <PlusIcon />,
+          action: onPressAddNetwork,
+        }
+      : undefined
+  }, [onPressAddNetwork])
 
   useImmediateLayoutAnimation([searchText])
 
