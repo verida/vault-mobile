@@ -31,7 +31,7 @@ const logger = new Logger('BlockchainNetworkEditorScreen')
 export type BlockchainNetworkEditorScreenParams = {
   readonly title: string
   readonly initialValue: ChainMetadata | null
-  readonly disabled: boolean
+  readonly isEditable: boolean
 }
 
 type BlockchainNetworkEditorScreenProps =
@@ -43,7 +43,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
       navigation,
       route: { params },
     } = props
-    const { initialValue, title, disabled } = params
+    const { initialValue, title, isEditable } = params
 
     const { removeCustomNetworks, addCustomNetworks } =
       useChainMetadatasCustom()
@@ -66,7 +66,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
     )
 
     const onPressDeleteNetwork = React.useCallback(async () => {
-      if (disabled) throw attemptedToModifyDisabledNetworkError()
+      if (!isEditable) throw attemptedToModifyDisabledNetworkError()
 
       if (!maybeChainIdToDelete) return
 
@@ -95,7 +95,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
       await removeCustomNetworks([maybeChainIdToDelete])
 
       return navigation.goBack()
-    }, [disabled, maybeChainIdToDelete, removeCustomNetworks, navigation])
+    }, [isEditable, maybeChainIdToDelete, removeCustomNetworks, navigation])
 
     const headerSideButton: HeaderSideButton = React.useMemo(
       () => ({
@@ -105,7 +105,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
       [onPressDeleteNetwork]
     )
 
-    const deleteControlsEnabled = Boolean(!disabled && maybeChainIdToDelete)
+    const deleteControlsEnabled = Boolean(isEditable && maybeChainIdToDelete)
 
     const chainMetadataFormFields = useCreateChainMetadataFormFields({
       initialValue,
@@ -116,7 +116,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
 
     const isMalformed = Boolean(evaluationResult.error)
 
-    const saveControlsEnabled = !isMalformed && !disabled
+    const saveControlsEnabled = !isMalformed
 
     const { isReservedChainId } = useChainMetadataDetails()
 
@@ -175,17 +175,25 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
         <ScrollView style={styles.flex} contentContainerStyle={styles.content}>
           <ChainsMetadataForm
             {...chainMetadataFormFields}
-            disabled={disabled}
+            disabled={!isEditable}
           />
         </ScrollView>
         <BottomActionBar
-          actions={[
-            {
-              label: 'Save',
-              onPress: onPressSave,
-              disabled: !saveControlsEnabled,
-            },
-          ]}
+          alertType={isEditable ? undefined : 'info'}
+          alertContent={
+            isEditable ? undefined : 'This network is built-in and non-editable'
+          }
+          actions={
+            isEditable
+              ? [
+                  {
+                    label: 'Save',
+                    onPress: onPressSave,
+                    disabled: !saveControlsEnabled,
+                  },
+                ]
+              : []
+          }
         />
       </ScreenWrapper>
     )

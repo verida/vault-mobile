@@ -76,7 +76,7 @@ export const BlockchainNetworksScreen: React.FC<BlockchainNetworksScreenProps> =
               // HACK: Only allow custom networks to be edited.
               navigation.navigate('BlockchainNetworkEditor', {
                 title: isCustom ? 'Edit custom network' : 'Network settings',
-                disabled: !isCustom,
+                isEditable: !!isCustom,
                 initialValue: chainMetadata,
               })
             }>
@@ -107,7 +107,7 @@ export const BlockchainNetworksScreen: React.FC<BlockchainNetworksScreenProps> =
       () =>
         navigation.navigate('BlockchainNetworkEditor', {
           title: 'Create custom network',
-          disabled: false,
+          isEditable: true,
           initialValue: null,
         }),
       [navigation]
