@@ -1,6 +1,7 @@
 import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import { useGetNFTsQuery } from 'features/assets'
+// import { NFT, NFTCollection, NFTMetadata } from 'features/assets'
+import { NFT, useGetNFTsQuery } from 'features/assets'
 import {
   getSelectedWalletById,
   getUniqueWalletAddresses,
@@ -18,8 +19,6 @@ import {
 // import FastImage from 'react-native-fast-image'
 import { useSelector } from 'react-redux'
 
-// import { NFT, NFTCollection, NFTMetadata } from 'api/types'
-import { NFT } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import { NftItem } from 'components/Assets/NftItem'
 import Container from 'components/Container'

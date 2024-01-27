@@ -1,11 +1,11 @@
 import { RouteProp, useNavigation, useRoute } from '@react-navigation/native'
+import { NFT, NFTMetadata } from 'features/assets'
 import { Logger } from 'features/telemetry'
 import { getNFTImageUri } from 'helpers/nft'
 import React, { useCallback } from 'react'
 import { ListRenderItem, Pressable, StyleSheet, View } from 'react-native'
 import FastImage from 'react-native-fast-image'
 
-import { NFT, NFTMetadata } from 'api/types'
 import GridView from 'components/Grids/GridView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import Screen from 'components/Screen'

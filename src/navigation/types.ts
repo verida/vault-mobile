@@ -4,8 +4,9 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NFT, NFTCollection } from 'features/assets'
 
-import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
+import { BlockchainWalletWithAccounts } from 'api/types'
 import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {
