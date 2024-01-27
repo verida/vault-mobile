@@ -6,7 +6,7 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { BlockchainWallet } from 'api/types'
+import { BlockchainWallet } from 'features/blockchain'
 import {
   CreateIdentityStepStatus,
   CreateIdentityStep,
@@ -35,7 +35,7 @@ import DataConnectorsManager from './DataConnectorsManager'
 
 import { config } from 'config'
 import EventEmitter from 'events'
-import { WalletManager } from './Wallet/WalletManager'
+import { WalletManager } from '../features/cryptoWallet/utils/WalletManager'
 import { EnvironmentType, IContext } from '@verida/types'
 import { fetchAllPublicProfilesData, PublicProfile } from 'features/profiles'
 import { Logger } from 'features/telemetry'

@@ -1,4 +1,5 @@
 import Clipboard from '@react-native-community/clipboard'
+import { BlockchainNetwork } from 'features/blockchain'
 import {
   getBlockchainNetworkLabel,
   getBlockchainNetworks,
@@ -16,7 +17,6 @@ import {
 } from 'react-native'
 import { connect } from 'react-redux'
 
-import { BlockchainNetwork } from 'api/types'
 import Button from 'components/Button'
 import Label from 'components/Label'
 import Layout from 'components/Layouts/Layout'

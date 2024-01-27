@@ -1,9 +1,9 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as ethers from 'ethers'
 
-import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
+import { IBlockchain, WalletUtilsWallet } from '../../@types'
 
-class eip1558Blockchain implements IBlockchain {
+class EIP155Blockchain implements IBlockchain {
   public buildAccountFromMnemonic(
     mnemonic: string,
     derivationPath: string,
@@ -19,4 +19,4 @@ class eip1558Blockchain implements IBlockchain {
   }
 }
 
-export const Blockchain = new eip1558Blockchain()
+export const eip155Blockchain = new EIP155Blockchain()

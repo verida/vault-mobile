@@ -1,6 +1,5 @@
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import * as React from 'react'
-
-import { BlockchainWalletWithAccounts } from 'api/types'
 
 import { veridaAccountMaybeToMinifiedBlockchainAccount } from '../utils'
 import { useMaybeFromAddressForResource } from './useMaybeFromAddressForResource'

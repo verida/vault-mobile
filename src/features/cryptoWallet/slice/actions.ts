@@ -1,3 +1,4 @@
+import { BlockchainWallet } from 'features/blockchain'
 import {
   getAllWallets,
   getSelectedWalletId,
@@ -6,14 +7,13 @@ import {
 import * as SecureStore from 'helpers/VeridaSecureStore'
 
 import AccountManager from 'api/AccountManager'
-import { BlockchainWallet } from 'api/types'
-import { WalletManager } from 'api/Wallet/WalletManager'
 import {
   SELECTED_WALLET_STORAGE_KEY,
   WALLETS_STORAGE_KEY,
 } from 'constants/storageKeys'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
+import { WalletManager } from '../utils'
 import { saveUserWallets, setSelectedWallet } from './'
 
 export const createNewWallet = createAppAsyncThunk(

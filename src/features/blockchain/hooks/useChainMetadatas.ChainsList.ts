@@ -1,9 +1,8 @@
 import { ChainId } from 'caip'
+import { config } from 'config'
 import { cryptoWalletApi } from 'features/cryptoWallet'
 import * as React from 'react'
 
-import { BlockchainNetwork } from '../../../api/types'
-import { config } from '../../../config'
 import {
   ChainMetadata,
   ChainMetadataBlockExplorers,
@@ -12,6 +11,7 @@ import {
   isSupportedCaipNamespace,
   UseChainMetadataState,
 } from '../../caip'
+import { BlockchainNetwork } from '../@types'
 
 const { useChainsListQuery } = cryptoWalletApi
 

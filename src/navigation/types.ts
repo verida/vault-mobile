@@ -5,8 +5,8 @@ import {
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
 import { NFT, NFTCollection } from 'features/assets'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
 import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
 import {

@@ -1,9 +1,9 @@
 import { useTheme } from 'contexts/ThemeContext'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import React from 'react'
 import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
 import CheckBoxIcon from 'assets/checkbox_icon.svg'
 import MoreIcon from 'assets/more_icon.svg'
 import MultichainWalletIcon from 'assets/multichain_wallet_icon.svg'
