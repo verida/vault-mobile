@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { walletProviderApi } from 'api/Wallet/WalletProvider'
+import { walletProviderApi } from 'features/walletProvider'
 
 import { Badge, ClaimBadgeResponse, WalletNFTsResponse } from '../@types'
 import { walletBadges, walletNFTs } from '../mocks'
