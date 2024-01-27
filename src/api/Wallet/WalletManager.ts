@@ -199,7 +199,7 @@ export class WalletManager {
     }
 
     const wallets = await WalletManager.getBlockchainAccounts(
-      await walletDb!.getMany<BlockchainWallet>(undefined, undefined)
+      (await walletDb!.getMany(undefined, undefined)) as BlockchainWallet[]
     )
 
     return {
