@@ -24,6 +24,19 @@ export function initSentry() {
     // replaysOnErrorSampleRate: config.sentry.replaysOnErrorSampleRate,
     ignoreErrors: [
       // TODO: Add errors to ignore in Sentry
+      'Expired refresh token',
     ],
+    beforeSend(event, hint) {
+      if (
+        hint?.originalException &&
+        !(hint.originalException instanceof Error)
+      ) {
+        // Not reporting event that are not instances of Error
+        // We may be missing on some issues though
+        return null
+      }
+
+      return event
+    },
   })
 }
