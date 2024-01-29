@@ -25,5 +25,17 @@ export function initSentry() {
     ignoreErrors: [
       // TODO: Add errors to ignore in Sentry
     ],
+    beforeSend(event, hint) {
+      if (
+        hint?.originalException &&
+        !(hint.originalException instanceof Error)
+      ) {
+        // Not reporting event that are not instances of Error
+        // We may be missing on some issues though
+        return null
+      }
+
+      return event
+    },
   })
 }
