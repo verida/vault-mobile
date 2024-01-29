@@ -1,4 +1,9 @@
 import Clipboard from '@react-native-community/clipboard'
+import { BlockchainNetwork } from 'features/blockchain'
+import {
+  getBlockchainNetworkLabel,
+  getBlockchainNetworks,
+} from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useCallback, useState } from 'react'
 import {
@@ -16,6 +21,7 @@ import NavigationHeader from 'components/Navigation/NavigationHeader'
 import DropDownPicker from 'components/Select'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
+import { useAppSelector } from 'reduxStore/types'
 import InputStyles from 'styles/inputs'
 
 type Props = {
@@ -24,23 +30,32 @@ type Props = {
   hideModal: () => void
 }
 
-// TODO: Use a single source of truth for supported blockchains.
-const BLOCKCHAINS = Object.freeze([
-  { label: 'Ethereum', value: 'ethereum' },
-  { label: 'Near', value: 'near' },
-  { label: 'Polygon', value: 'polygon' },
-])
+const defaultBlockchainNetworks: Record<string, BlockchainNetwork> =
+  Object.freeze({})
 
 export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
   props
 ) => {
   const { visible, hideModal, onAddWatchedWallet } = props
 
-  const defaultBlockchain = 'ethereum'
+  // const defaultBlockchain = 'eip155:1'
 
   const [label, setLabel] = useState('')
-  const [blockchain, setBlockchain] = useState(defaultBlockchain)
+  const [blockchain, setBlockchain] = useState('')
+  // const [blockchain, setBlockchain] = useState(defaultBlockchain)
   const [publicAddress, setPublicAddress] = useState('')
+
+  const maybeBlockchainNetworks = useAppSelector(getBlockchainNetworks)
+  const blockchainNetworks =
+    maybeBlockchainNetworks || defaultBlockchainNetworks
+  const blockchainItems = Object.values(blockchainNetworks).map(
+    (network: BlockchainNetwork) => {
+      return {
+        label: getBlockchainNetworkLabel(network),
+        value: network.chainId,
+      }
+    }
+  )
 
   const isSubmitButtonDisabled = !label || !publicAddress || !blockchain
 
@@ -69,7 +84,7 @@ export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
           icon: <Icon name='close' style={{ color: '#000' }} />,
           action: () => hideModal(),
         }}
-        title='Import wallet'
+        title='Add watched wallet'
       />
       <Layout style={styles.container}>
         <View style={styles.content}>
@@ -89,8 +104,8 @@ export const AddWatchedWalletModal: React.FunctionComponent<Props> = (
           <DropDownPicker
             showArrow={true}
             placeholder=''
-            defaultValue={defaultBlockchain}
-            items={BLOCKCHAINS}
+            // defaultValue={defaultBlockchain}
+            items={blockchainItems}
             containerStyle={InputStyles.select}
             onChangeItem={handleBlockchainChange}
             zIndex={6000}

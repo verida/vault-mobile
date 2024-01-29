@@ -166,8 +166,7 @@ export class WalletManager {
 
   public static generateMnemonic(): string {
     // generates random mnemonic
-    const mnemonic = bip39.generateMnemonic()
-    return mnemonic
+    return bip39.generateMnemonic()
   }
 
   public static async createNewWallet(
@@ -187,7 +186,7 @@ export class WalletManager {
     const wallet = {
       mnemonic,
       multiChain: true,
-      label: name ? name : 'Multi Chain Wallet',
+      label: name ? name : 'Multi-chain Wallet',
       walletType: 'multi',
       viewOnly: false,
     }
