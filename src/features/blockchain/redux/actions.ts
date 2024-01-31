@@ -3,6 +3,7 @@ import { ChainId } from 'caip'
 import {
   BLOCKCHAIN_SLICE_NAME,
   chainMetadataToMaybeCustomBlockchainNetwork,
+  CUSTOM_BLOCKCHAIN_SCHEMA_URL,
   CustomBlockchainNetwork,
   customBlockchainNetworkToMaybeChainMetadata,
 } from 'features/blockchain'
@@ -11,22 +12,17 @@ import { ChainMetadata } from 'features/caip'
 import AccountManager from 'api/AccountManager'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
-// HACK: For now, we'll save networks as shopping coupons. 🤡
-const CUSTOM_BLOCKCHAIN_DATASTORE =
-  'https://vault.schemas.verida.io/blockchain/custom-networks/v0.1.0/schema.json'
-
 type AddCustomNetworkParams = {
   readonly addCustomNetworkParams: readonly ChainMetadata[]
   readonly reset?: boolean
 }
 
 const getCustomNetworkDatastore = (): Promise<IDatastore> => {
-  // TODO: @cawfree idk if this is correct
   const vault = AccountManager.getInstance().context
 
   if (!vault) throw new Error('Unable to allocate vault for custom networks.')
 
-  return vault.openDatastore(CUSTOM_BLOCKCHAIN_DATASTORE)
+  return vault.openDatastore(CUSTOM_BLOCKCHAIN_SCHEMA_URL)
 }
 
 const loadAllCustomNetworksFromDatastore = async ({

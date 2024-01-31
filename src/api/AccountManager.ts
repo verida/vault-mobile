@@ -6,7 +6,11 @@ import * as SecureStore from 'helpers/VeridaSecureStore'
 import { isEmpty, merge } from 'lodash'
 import { store } from 'reduxStore'
 
-import { BlockchainWallet } from 'features/blockchain'
+import {
+  BlockchainWallet,
+  blockchainApi,
+  getBlockchainNetworks,
+} from 'features/blockchain'
 import {
   CreateIdentityStepStatus,
   CreateIdentityStep,
@@ -25,7 +29,6 @@ import {
   setSelectedWallet,
   getSelectedWalletId,
   cryptoWalletApi,
-  getBlockchainNetworks,
   WALLET_SCHEMA_0_2_0_URI,
   getUniqueWalletAddresses,
   getWallets,
@@ -126,7 +129,7 @@ class AccountManager extends EventEmitter {
         SecureStore.getItemAsync(WALLETS_STORAGE_KEY),
         SecureStore.getItemAsync(SELECTED_WALLET_STORAGE_KEY),
         store.dispatch(
-          cryptoWalletApi.endpoints.chainsList.initiate(
+          blockchainApi.endpoints.getBlockchainNetworks.initiate(
             {},
             {
               forceRefetch: false,

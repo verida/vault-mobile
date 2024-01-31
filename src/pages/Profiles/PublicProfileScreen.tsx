@@ -4,8 +4,9 @@ import { LinearGradient } from 'expo-linear-gradient'
 import {
   BlockchainNetwork,
   BlockchainWalletWithAccounts,
+  getBlockchainNetworks,
 } from 'features/blockchain'
-import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
+import { getAllWallets } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,

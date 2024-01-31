@@ -3,6 +3,7 @@ import {
   BlockchainNetwork,
   BlockchainWallet,
   BlockchainWalletWithAccounts,
+  getBlockchainNetworks,
   IBlockchain,
   WalletUtilsWallet,
 } from 'features/blockchain'
@@ -14,7 +15,6 @@ import { store } from 'reduxStore'
 
 import AccountManager from 'api/AccountManager'
 
-import { getBlockchainNetworks } from '../api'
 import { WALLET_SCHEMA_0_2_0_URI } from '../constants'
 
 const logger = new Logger('WalletManager')

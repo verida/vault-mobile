@@ -1,10 +1,10 @@
 import Clipboard from '@react-native-community/clipboard'
-import { BlockchainNetwork } from 'features/blockchain'
 import {
+  BlockchainNetwork,
   getBlockchainNetworkLabel,
   getBlockchainNetworks,
-  isValidSeedPhrase,
-} from 'features/cryptoWallet'
+} from 'features/blockchain'
+import { isValidSeedPhrase } from 'features/cryptoWallet'
 import { Icon } from 'native-base'
 import React, { useState } from 'react'
 import {

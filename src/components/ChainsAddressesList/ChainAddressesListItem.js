@@ -3,7 +3,7 @@ import Clipboard from '@react-native-community/clipboard'
 import {
   getBlockchainNetworkLabel,
   getBlockchainNetworks,
-} from 'features/cryptoWallet'
+} from 'features/blockchain'
 import { Body, Left, ListItem, Right, Text } from 'native-base'
 import React from 'react'
 import { StyleSheet } from 'react-native'
