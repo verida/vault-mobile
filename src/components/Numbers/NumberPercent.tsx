@@ -1,20 +1,22 @@
 import React from 'react'
-import { formatNumberPercentage } from 'utils'
+import { DEFAULT_PERCENTAGE_FORMAT_OPTIONS } from 'utils'
 
-import { Typography, TypographyProps } from 'components/Typography'
+import { Number, NumberProps } from './Number'
 
-export type NumberPercentProps = {
-  value: number
-  options?: Intl.NumberFormatOptions
-  locale?: string
-} & TypographyProps
+export type NumberPercentProps = Omit<NumberProps, 'unit'>
 
+/**
+ * Component to format a number in percentage using the locale and the Intl.NumberFormat API.
+ * It can take an optional instance of Intl.NumberFormatOptions with the `options` prop.
+ *
+ * The underlying component itself is a Typography, allowing to easily set the predefined font styles from the design system.
+ */
 export const NumberPercent: React.FunctionComponent<NumberPercentProps> = (
   props
 ) => {
-  const { value, options, locale, ...typographyProps } = props
+  const { options = {}, ...numberProps } = props
 
-  const formatedValue = formatNumberPercentage(value, options, locale)
+  const opts = Object.assign({}, DEFAULT_PERCENTAGE_FORMAT_OPTIONS, options)
 
-  return <Typography {...typographyProps}>{formatedValue}</Typography>
+  return <Number {...numberProps} unit={undefined} options={opts} />
 }

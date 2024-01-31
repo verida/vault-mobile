@@ -1,12 +1,22 @@
 import { DEFAULT_LOCALE } from 'constants/locale'
 
-const DEFAULT_NUMBER_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
+export const DEFAULT_NUMBER_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
   style: 'decimal',
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
 }
 
-const DEFAULT_PERCENTAGE_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
+export const DEFAULT_NUMBER_CRYPTO_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 6,
+}
+
+export const DEFAULT_NUMBER_FIAT_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
+  minimumFractionDigits: 2,
+  maximumFractionDigits: 2,
+}
+
+export const DEFAULT_PERCENTAGE_FORMAT_OPTIONS: Intl.NumberFormatOptions = {
   style: 'percent',
   minimumFractionDigits: 2,
   maximumFractionDigits: 2,
@@ -29,8 +39,7 @@ export function formatNumberPercentage(
   locale = DEFAULT_LOCALE
 ) {
   const opts = Object.assign({}, DEFAULT_PERCENTAGE_FORMAT_OPTIONS, options)
-  const formatter = new Intl.NumberFormat(locale, opts)
-  return formatter.format(value)
+  return formatNumber(value, undefined, opts, locale)
 }
 
 /**
