@@ -1,7 +1,8 @@
 import { ChainId } from 'caip'
-import { config } from 'config'
 import * as React from 'react'
 
+// FIXME: Should be able to import from 'config' but jest has a hard time finding config, so importing it in relative fashion for now. To find a way to fix it in Jest.
+import { config } from '../../../config'
 import {
   BlockchainNetwork,
   ChainMetadata,
