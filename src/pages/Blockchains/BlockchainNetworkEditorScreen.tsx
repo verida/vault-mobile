@@ -114,15 +114,13 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
     const { evaluationResult, getMaybeEvaluatedChainMetadata } =
       chainMetadataFormFields
 
-    const isMalformed = Boolean(evaluationResult.error)
-
-    const saveControlsEnabled = !isMalformed
+    const hasErrors = Boolean(evaluationResult.error)
 
     const { isReservedChainId } = useChainMetadataDetails()
 
     const onPressSave = React.useCallback(async () => {
       try {
-        if (!saveControlsEnabled) throw attemptedToModifyDisabledNetworkError()
+        if (!isEditable) throw attemptedToModifyDisabledNetworkError()
 
         const { data } = getMaybeEvaluatedChainMetadata()
 
@@ -157,7 +155,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
       }
     }, [
       isReservedChainId,
-      saveControlsEnabled,
+      isEditable,
       navigation,
       getMaybeEvaluatedChainMetadata,
       addCustomNetworks,
@@ -179,9 +177,13 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
           />
         </ScrollView>
         <BottomActionBar
-          alertType={isEditable ? undefined : 'info'}
+          alertType={isEditable ? (hasErrors ? 'error' : undefined) : 'info'}
           alertContent={
-            isEditable ? undefined : 'This network is built-in and non-editable'
+            isEditable
+              ? hasErrors
+                ? 'Some fields are invalid'
+                : undefined
+              : 'This network is built-in and non-editable'
           }
           actions={
             isEditable
@@ -189,7 +191,7 @@ export const BlockchainNetworkEditorScreen: React.FC<BlockchainNetworkEditorScre
                   {
                     label: 'Save',
                     onPress: onPressSave,
-                    disabled: !saveControlsEnabled,
+                    disabled: hasErrors,
                   },
                 ]
               : []
