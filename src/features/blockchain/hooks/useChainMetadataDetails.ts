@@ -1,7 +1,7 @@
 import { ChainId } from 'caip'
-import { ChainMetadata } from 'features/caip'
 import * as React from 'react'
 
+import { ChainMetadata } from '../@types'
 import {
   getMaybeChainMetadatas,
   useChainMetadatasChainsList,

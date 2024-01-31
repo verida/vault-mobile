@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { isSupportedCaipNamespace } from 'features/caip'
+import { isSupportedCaipNamespace } from 'features/blockchain'
 
 import {
   AggregateWalletBannerBalance,

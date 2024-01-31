@@ -1,9 +1,12 @@
 import { CoreTypes } from '@walletconnect/types'
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
 import { ChainId } from 'caip'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
+import {
+  getMaybeChainMetadataByCaipChainId,
+  getMaybeChainMetadatas,
+  useChainMetadatas,
+} from 'features/blockchain'
 import { Eip155RpcMethod } from 'features/blockchain/eip155'
-import { getMaybeChainMetadataByCaipChainId } from 'features/caip'
 import { Logger } from 'features/telemetry'
 import { useModal } from 'hooks'
 import * as React from 'react'

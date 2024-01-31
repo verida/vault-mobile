@@ -3,10 +3,11 @@ import { BigNumber, ethers } from 'ethers'
 import {
   calculateTransactionFeeEip155,
   getMaybeChainMetadatas,
+  getRpcUrlOrThrow,
+  isSupportedCaipNamespace,
   SupportedBlockchainNamespace,
   useChainMetadatas,
 } from 'features/blockchain'
-import { getRpcUrlOrThrow, isSupportedCaipNamespace } from 'features/caip'
 import * as React from 'react'
 
 import { GAS_TO_TRANSFER_NATIVE_CURRENCY } from '../constants'

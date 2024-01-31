@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import { ChainMetadata } from 'features/caip'
+import { ChainMetadata } from 'features/blockchain'
 import { DetailedValuation } from 'features/cryptoWallet'
 import {
   convertFromCryptoIntegerToMaybeDecimalFiat,

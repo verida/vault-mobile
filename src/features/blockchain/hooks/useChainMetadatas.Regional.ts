@@ -1,8 +1,9 @@
-import { UseChainMetadataState } from 'features/caip'
 import { selectSelectedPublicProfile } from 'features/profiles'
 import * as React from 'react'
 
 import { useAppSelector } from 'reduxStore/types'
+
+import { UseChainMetadataState } from '../@types'
 
 const EMPTY_RESULT: UseChainMetadataState = { loading: false, result: [] }
 

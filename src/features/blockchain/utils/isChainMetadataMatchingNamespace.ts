@@ -1,6 +1,4 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
-
-import { ChainMetadata } from '../@types'
+import { ChainMetadata, SupportedBlockchainNamespace } from '../@types'
 
 export function isChainMetadataMatchingNamespace<
   T extends SupportedBlockchainNamespace

@@ -1,10 +1,10 @@
-import { SupportedBlockchainNamespace } from 'features/blockchain'
 import {
   ChainMetadata,
   ChainMetadataSchema,
   HACK__getFirstRpcUrl,
   isSupportedCaipNamespace,
-} from 'features/caip'
+  SupportedBlockchainNamespace,
+} from 'features/blockchain'
 import * as React from 'react'
 import { ZodError } from 'zod-validation-error'
 

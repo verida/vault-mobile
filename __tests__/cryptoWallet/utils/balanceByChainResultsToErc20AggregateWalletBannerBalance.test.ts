@@ -1,6 +1,6 @@
 import 'jest'
 
-import { ChainMetadata } from '../../../src/features/caip'
+import { ChainMetadata } from '../../../src/features/blockchain/@types'
 import { BalanceByChainResult } from '../../../src/features/cryptoWallet/@types'
 import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../../../src/features/cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance'
 

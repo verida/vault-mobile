@@ -1,9 +1,6 @@
 import { ChainId } from 'caip'
-import {
-  ChainMetadatas,
-  getRpcUrlOrThrow,
-  NEAR_TESTNET_CAIP,
-} from 'features/caip'
+import { ChainMetadatas, getRpcUrlOrThrow } from 'features/blockchain'
+import { throwIfNotNearTestnet } from 'features/blockchain/near/utils'
 import { connect, keyStores } from 'near-api-js'
 
 export async function getNearNetworkConfig({
@@ -20,14 +17,7 @@ export async function getNearNetworkConfig({
     readonly explorerUrl: string
   }
 > {
-  // TODO: If near mainnet URLs are simply "mainnet" we should be okay to remove this
-  //       and evaluate the URLs below dynamically.
-  // HACK: We must to explicitly code for a NEAR CAIP identifier because
-  //       we're forced to hardcode different URLs below.
-  if (caipChainId.toString() !== ChainId.format(NEAR_TESTNET_CAIP))
-    throw new Error(
-      `Encountered unsupported network, "${caipChainId.toString()}".`
-    )
+  throwIfNotNearTestnet(caipChainId)
 
   const { reference: networkId } = caipChainId
 

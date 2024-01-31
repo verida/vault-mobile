@@ -2,7 +2,7 @@
 import 'jest'
 
 import { SUPPORTED_BLOCKCHAIN_NAMESPACES } from 'features/blockchain/constants'
-import { isSupportedCaipNamespace } from 'features/caip/utils/isSupportedCaipNamespace'
+import { isSupportedCaipNamespace } from 'features/blockchain/utils/isSupportedCaipNamespace'
 
 // Required as request.ts imports a simple function from features/caip but the whole internal module is loaded even though it's unnecessary for these unit tests
 jest.mock('features/caip', () => ({
