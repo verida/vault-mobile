@@ -83,21 +83,15 @@ function GenericMessage(props: GenericMessageProps) {
       setSubmitting(true)
 
       const vault = AccountManager.getInstance().vault
-      const handleResult = await vault?.inbox.handleAction(
-        inboxItem,
-        'accept',
-        {}
-      )
+      await vault?.inbox.handleAction(inboxItem, 'accept', {})
       setSubmitting(false)
-      if (!handleResult?.success) {
-        Alert.alert('Error', 'Invalid schema, part of data maybe missing')
-      } else {
-        navigation.goBack()
-      }
-      setSubmitting(false)
+      navigation.goBack()
     } catch (error) {
       setSubmitting(false)
-      Alert.alert('Error', 'Can not set message as read')
+      Alert.alert(
+        'Error',
+        'Something went wrong when marking the message as read'
+      )
       logger.error(error)
     }
   }
