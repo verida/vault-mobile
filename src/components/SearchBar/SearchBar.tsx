@@ -18,10 +18,18 @@ import { Theme } from 'styles/types'
 
 interface SearchBarProps extends ViewProps {
   inputProps: TextInputProps
+  showSortButton?: boolean
+  showFilterButton?: boolean
 }
 
 export function SearchBar(props: SearchBarProps) {
-  const { style, inputProps, ...rest } = props
+  const {
+    style,
+    inputProps,
+    showSortButton = true,
+    showFilterButton = true,
+    ...rest
+  } = props
   const { theme } = useTheme()
   const styles = useThemeAwareStyle(createStyles)
   return (
@@ -37,16 +45,20 @@ export function SearchBar(props: SearchBarProps) {
           {...inputProps}
         />
       </View>
-      <Pressable
-        style={styles.buttonIccon}
-        onPress={() => Alert.alert('Manage sorts')}>
-        <SortIcon fill={theme.color.iconDefault} />
-      </Pressable>
-      <Pressable
-        style={styles.buttonIccon}
-        onPress={() => Alert.alert('Manger filters')}>
-        <FilterIcon fill={theme.color.iconDefault} />
-      </Pressable>
+      {Boolean(showSortButton) && (
+        <Pressable
+          style={styles.buttonIccon}
+          onPress={() => Alert.alert('Manage sorts')}>
+          <SortIcon fill={theme.color.iconDefault} />
+        </Pressable>
+      )}
+      {Boolean(showFilterButton) && (
+        <Pressable
+          style={styles.buttonIccon}
+          onPress={() => Alert.alert('Manger filters')}>
+          <FilterIcon fill={theme.color.iconDefault} />
+        </Pressable>
+      )}
     </View>
   )
 }

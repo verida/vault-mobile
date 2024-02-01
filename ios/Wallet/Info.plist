@@ -45,6 +45,14 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
+				<string>wc</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
 				<string>ethereum</string>
 			</array>
 		</dict>
@@ -62,6 +70,14 @@
 			<key>CFBundleURLSchemes</key>
 			<array>
 				<string>near</string>
+			</array>
+		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>storybook</string>
 			</array>
 		</dict>
 	</array>

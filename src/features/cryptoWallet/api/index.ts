@@ -32,7 +32,10 @@ export const cryptoWalletApi = createApi({
       transformResponse: (response: {
         data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
       }): Record<string, BlockchainNetwork> => {
-        const networkEntries = response.data[EnvironmentType.TESTNET] // TODO: When enabling mainnets, remove this and flat out the response from Wallet Provider
+        const mainnets = response.data.mainnet
+        const testnets = response.data.testnet
+
+        const networkEntries = { ...mainnets, ...testnets }
 
         const allNetworks: Record<string, BlockchainNetwork> = {}
         for (const chainId in networkEntries) {
@@ -40,6 +43,7 @@ export const cryptoWalletApi = createApi({
           item.chainId = chainId
           allNetworks[item.chainId] = item
         }
+
         return allNetworks
       },
     }),
@@ -78,8 +82,11 @@ export const cryptoWalletApi = createApi({
         }
       },
     }),
+    // HACK: It is invalid to getTransactionsForToken without specifying a userAddress or asset.
+    //       However, the application can technically enter a state where these values are not
+    //       defined.
     getTransactionsForToken: build.query({
-      query: (body: { userAddress: string; asset: AssetId }) => ({
+      query: (body: { userAddress: string | null; asset: AssetId | null }) => ({
         url: 'transaction/list',
         method: 'POST',
         body,
@@ -92,8 +99,8 @@ export const cryptoWalletApi = createApi({
     getTransactionDetails: build.query({
       query: (body: {
         transactionId: string
-        userAddress: string
-        asset: AssetId
+        userAddress: string | null | undefined
+        asset: AssetId | null | undefined
       }) => ({
         url: 'transaction/get',
         method: 'POST',
@@ -122,23 +129,23 @@ export const {
 // Selectors
 export const getBlockchainNetworks = createSelector(
   cryptoWalletApi.endpoints.chainsList.select({}),
-  (data) => {
-    return data.data || {}
-  }
+  (data) => data.data || {}
 )
 
-export const getBlockchainNetwork = (state: RootState, chainIdObj: ChainId) => {
+export const getMaybeBlockchainNetwork = (
+  state: RootState,
+  chainIdObj: ChainId | null | undefined
+): BlockchainNetwork | undefined => {
+  if (!chainIdObj) return undefined
+
   const networks = getBlockchainNetworks(state)
-  const chainId = new ChainId(chainIdObj).toString()
 
-  if (networks?.[chainId]) return networks[chainId]
-
-  throw new Error(`Unknown blockchain network: ${chainId}`)
+  return networks?.[new ChainId(chainIdObj).toString()]
 }
 
-export const getBlockchainNetworkLabel = (network: BlockchainNetwork) => {
-  return `${network.label}`
-}
+export const getBlockchainNetworkLabel = (
+  network: BlockchainNetwork | undefined
+) => `${network?.label || 'Unknown Network'}`
 
 export const getBalancesData = (state: RootState, walletAddresses: string[]) =>
   cryptoWalletApi.endpoints.getBalances.select(walletAddresses)(state)

@@ -5,7 +5,7 @@ import React from 'react'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
 import { TabsScreenParams } from 'navigation/types'
-import Assets from 'pages/AssetsCollections'
+import { AssetsScreen } from 'pages/Assets'
 // import { ConnectionsTabScreen } from 'pages/Connections/DataConnector' // TODO: uncomment when ready
 import { DataTabScreen } from 'pages/Data'
 import { HomeScreen } from 'pages/Home'
@@ -64,7 +64,7 @@ export const TabsNavigator: React.FunctionComponent = () => {
         <Tabs.Screen name='Data' component={DataTabScreen} />
         {/* <Tabs.Screen name='Connections' component={ConnectionsTabScreen} />
        TODO: uncomment when ready */}
-        <Tabs.Screen name='Assets' component={Assets} />
+        <Tabs.Screen name='Assets' component={AssetsScreen} />
       </Tabs.Navigator>
     </IdentityDrawer>
   )

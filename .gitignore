@@ -78,3 +78,6 @@ ios/tmp.xcconfig
 
 # Dead code
 .graveyard
+
+# Storybook
+.storybook/storybook.requires.js

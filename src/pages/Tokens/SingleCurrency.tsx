@@ -1,0 +1,192 @@
+import Clipboard from '@react-native-community/clipboard'
+import { RouteProp } from '@react-navigation/native'
+import {
+  getAggregateWalletBannerBalanceResult,
+  getSelectedWalletById,
+  getWalletAddressForChainId,
+  ResourceParams,
+  useAggregateWalletBannerBalances,
+  useAggregateWalletBannerBalancesValuation,
+  useAggregateWalletBannerBalancesWithResultCaching,
+  useChainIdForResourceParams,
+  useMaybeAssetIdForAggregateWalletBannerBalance,
+  useMaybeChainMetadataForResource,
+  useSelectedMinifiedBlockchainAccounts,
+  useTransactionsForMaybeAssetId,
+} from 'features/cryptoWallet'
+import { Icon } from 'native-base'
+import * as React from 'react'
+import Toast from 'react-native-root-toast'
+import { useSelector } from 'react-redux'
+
+import Container from 'components/Container'
+import { ErrorFallbackCard } from 'components/Errors'
+import NavigationHeader from 'components/Navigation/NavigationHeader'
+import TestnetWarning from 'components/Tokens/TestnetWarning'
+import TokenBanner from 'components/Tokens/TokenBanner'
+import TransactionsList from 'components/Tokens/TransactionsList'
+import useParams from 'hooks/useParams'
+import { useMainNavigation } from 'navigation/hooks'
+import { MainStackParams } from 'navigation/types'
+
+export type SingleCurrencyRouteProp = RouteProp<
+  MainStackParams,
+  'SingleCurrency'
+>
+
+export type SingleCurrencyScreenProps = {
+  readonly title: string
+  readonly resource: ResourceParams
+  //readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+}
+
+const SingleCurrency = () => {
+  const navigation = useMainNavigation()
+
+  // TODO: idk what to do about this yet
+  const selectedWallet = useSelector(getSelectedWalletById)
+
+  // TODO: we should fetch here instead, not pass the route params
+  const { resource, title } = useParams<SingleCurrencyScreenProps>()
+
+  const chainId = useChainIdForResourceParams({ resource })
+
+  const [maybeAggregateWalletBannerBalance] =
+    getAggregateWalletBannerBalanceResult(
+      useAggregateWalletBannerBalances({
+        resource,
+      })
+    )
+  const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
+    aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+  })
+
+  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+
+  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
+
+  // TODO: is this right? what about multiple competing private keys for the same network?
+  const maybeAddress = getWalletAddressForChainId(
+    chainId,
+    selectedMinifiedAccounts
+  )
+
+  // Here we fetch the balance for the specific selected asset, which returns
+  // all assets which match the specified `resource`. Note, we could have just
+  // created aggregateWalletBannerBalances simply using [aggregateWalletBannerBalance]
+  // which was passed as a parameter to achieve the same effect, however, below
+  // we depend on the ability fo `refetch` balances, so we'd depend on this stateful
+  // hook regardless.
+  const {
+    result: aggregateWalletBannerBalances,
+    loading: isLoadingBalance,
+    refetch: refetchBalance,
+    error: maybeErrorBalance,
+  } = useAggregateWalletBannerBalancesWithResultCaching({
+    resource,
+  })
+
+  const { price } = useAggregateWalletBannerBalancesValuation({
+    aggregateWalletBannerBalances,
+  })
+
+  // HACK: We'll only be returning assetIds for resources which the
+  //       WalletProvider has an a-priori awareness of.
+  const isAssetSupportedByWalletProvider = Boolean(assetId)
+
+  const {
+    loading: isLoadingTransactions,
+    refetch: refetchTransactions,
+    transactions,
+    error: errorTransactions,
+  } = useTransactionsForMaybeAssetId({
+    assetId,
+  })
+
+  const isLoading = isLoadingTransactions || isLoadingBalance
+
+  const error =
+    (isAssetSupportedByWalletProvider && errorTransactions) || maybeErrorBalance
+
+  const pullToRefresh = React.useCallback(
+    // eslint-disable-next-line no-void
+    () => void Promise.all([refetchTransactions(), refetchBalance()]),
+    [refetchTransactions, refetchBalance]
+  )
+
+  if (error)
+    return (
+      <ErrorFallbackCard
+        error={new Error('Failed to load transactions')}
+        resetErrorBoundary={pullToRefresh}
+      />
+    )
+
+  return (
+    <Container>
+      <NavigationHeader
+        left={{
+          icon: <Icon name='arrow-back' style={{ color: '#000' }} />,
+          action: () => navigation.goBack(),
+        }}
+        title={title}
+      />
+      <TestnetWarning networkReference={maybeChainMetadata?.name} />
+      <TokenBanner
+        isSumOfMultipleBalances={false}
+        decimals={maybeAggregateWalletBannerBalance?.decimals}
+        tokenType={isAssetSupportedByWalletProvider ? null : ''}
+        totalBalance={price}
+        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
+        valuation={maybeAggregateWalletBannerBalance?.valuation}
+        showControls
+        selectedWallet={selectedWallet}
+        symbol={maybeAggregateWalletBannerBalance?.symbol}
+        icon={maybeAggregateWalletBannerBalance?.icon}
+        receiveButtonAction={() => {
+          if (!maybeAggregateWalletBannerBalance) return
+
+          return navigation.navigate('ReceiveToken', {
+            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+          })
+        }}
+        sendButtonAction={() => {
+          if (!maybeAggregateWalletBannerBalance) return
+
+          return navigation.navigate('SendToken', {
+            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+          })
+        }}
+        copyButtonAction={() => {
+          if (!maybeAddress) return
+
+          Clipboard.setString(maybeAddress)
+
+          Toast.show('Address copied', {
+            duration: Toast.durations.LONG,
+            position: -130,
+            shadow: false,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+            backgroundColor: 'rgba(4, 17, 51, 1)',
+          })
+        }}
+      />
+      {!isAssetSupportedByWalletProvider ||
+      !maybeAggregateWalletBannerBalance ? (
+        // Here, we're handling a custom asset. We could render something accordingly.
+        <React.Fragment />
+      ) : (
+        <TransactionsList
+          aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
+          onPullToRefresh={pullToRefresh}
+          refreshing={isLoading}
+          list={transactions}
+        />
+      )}
+    </Container>
+  )
+}
+
+export default SingleCurrency

@@ -14,7 +14,6 @@ export const CaipSupportedProtocolSpan = React.memo(
   }): JSX.Element {
     return (
       <React.Fragment
-        // eslint-disable-next-line react/no-children-prop
         children={getSupportedCaipProtocolFriendlyName(
           chainMetadatas,
           caipChainId
