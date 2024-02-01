@@ -22,16 +22,16 @@ export type TokenBannerProps = {
   readonly sendButtonAction?: () => void
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void
-  readonly tokenBalanceValue: BigDecimal
+  readonly tokenBalanceValue?: BigDecimal
   readonly tokenBalanceValueCurrency?: Currency
   readonly symbol: string
   readonly icon?: string
-  readonly tokenBalance: string
-  readonly decimals: number
+  readonly tokenBalance?: string
+  readonly decimals?: number
   readonly valuation: DetailedValuation | null | undefined
   readonly chainLabel?: string
   readonly chainLogo?: string
-  readonly isChainMainnet: boolean
+  readonly isChainMainnet?: boolean
 } & ViewProps
 
 export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
@@ -72,25 +72,35 @@ export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
       <View style={styles.container}>
         <View style={styles.amounts}>
           {icon && <Logo uri={icon} alt={symbol} style={styles.icon} />}
-          <NumberCrypto
-            value={fixedPointCryptoAsBigDecimal({
-              amount: tokenBalance,
-              decimals,
-            }).toNumber()}
-            nbDecimals={nbDecimals}
-            unit={symbol}
-            variant='h2'
-          />
+          {tokenBalance && decimals ? (
+            <NumberCrypto
+              value={fixedPointCryptoAsBigDecimal({
+                amount: tokenBalance,
+                decimals,
+              }).toNumber()}
+              nbDecimals={nbDecimals}
+              unit={symbol}
+              variant='h2'
+            />
+          ) : (
+            <Typography variant='h2'>...</Typography>
+          )}
           <View style={styles.value}>
             <Typography
               variant='label'
               style={styles.valueText}>{`≈ `}</Typography>
-            <NumberFiat
-              value={tokenBalanceValue.toNumber()}
-              unit={tokenBalanceValueCurrency}
-              variant='label'
-              style={styles.valueText}
-            />
+            {tokenBalanceValue ? (
+              <NumberFiat
+                value={tokenBalanceValue.toNumber()}
+                unit={tokenBalanceValueCurrency}
+                variant='label'
+                style={styles.valueText}
+              />
+            ) : (
+              <Typography variant='label' style={styles.valueText}>
+                ...
+              </Typography>
+            )}
           </View>
         </View>
         <View style={styles.coinInfo}>
