@@ -11,7 +11,7 @@ import { SegmentData, SegmentsControl } from 'components/SegmentControl'
 import WalletNavigationHeader from 'components/WalletSelectorNavigation/WalletNavigationHeader'
 import WalletSelectorModal from 'components/WalletSelectorNavigation/WalletSelectorModal'
 import { TabsScreenProps } from 'navigation/types'
-import Tokens from 'pages/Tokens/Dashboard'
+import { TokenDashboard } from 'pages/Tokens/TokenDashboard'
 import { useAppSelector } from 'reduxStore/types'
 import { Theme } from 'styles/types'
 
@@ -32,7 +32,7 @@ const segments: SegmentData[] = [
   // },
 ]
 
-const TokensRoute = () => <Tokens />
+const TokensRoute = () => <TokenDashboard />
 const CollectiblesRoute = () => <Collectibles />
 // const BadgesRoute = () => <Text style={styles.container}>Badges</Text>
 
@@ -131,7 +131,5 @@ const createStyles = (theme: Theme) =>
       marginTop: theme.spacing.s,
       paddingHorizontal: theme.spacing.m,
       paddingBottom: theme.spacing.sm,
-      borderBottomWidth: 1,
-      borderBottomColor: theme.color.separatorLight,
     },
   })

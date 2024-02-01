@@ -67,6 +67,8 @@ type LibIconName =
   | 'blockchain'
   | 'radio-button-unchecked'
   | 'radio-button-checked'
+  | 'send'
+  | 'receive'
 
 export type IconName = CustomIconName | LibIconName
 
@@ -308,6 +310,18 @@ export const Icon = (props: {
       return (
         <IconWrapper size={size}>
           <MaterialCommunityIcon name='circle-outline' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'send':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='vertical-align-top' {...iconProps} />
+        </IconWrapper>
+      )
+    case 'receive':
+      return (
+        <IconWrapper size={size}>
+          <MaterialIcon name='vertical-align-bottom' {...iconProps} />
         </IconWrapper>
       )
   }

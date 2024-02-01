@@ -1,6 +1,9 @@
 import BigDecimal from 'bignumber.js'
+import { ChainId } from 'caip'
 import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import * as React from 'react'
+
+import { useAppSelector } from 'reduxStore/types'
 
 import {
   AggregateWalletBannerBalances,
@@ -9,6 +12,7 @@ import {
 } from '../@types'
 import { DEFAULT_AGGREGATE_WALLET_BANNER_BALANCES_RESULT } from '../constants'
 import { useCryptoWalletBalanceContext } from '../contexts'
+import { getWallets } from '../slice'
 import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../utils'
 import { chainMetadataToAggregateWalletBannerBalance } from '../utils/chainMetadataToAggregateWalletBannerBalance'
 import { isAggregateWalletBannerBalanceMatchesResource } from '../utils/isAggregateWalletBannerBalanceMatchesResource'
@@ -49,6 +53,14 @@ export function useAggregateWalletBannerBalances(
 
   const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
+  const currentWallet = useAppSelector(getWallets)
+
+  const currentChainIds = React.useMemo(() => {
+    return Object.entries(currentWallet?.accounts ?? {}).map(
+      ([key, account]) => new ChainId(account.chainId || key)
+    )
+  }, [currentWallet])
+
   const { resource: maybeResource } = params
 
   // Note: We need a way to distinguish between when the caller
@@ -86,6 +98,7 @@ export function useAggregateWalletBannerBalances(
     const erc20Balances =
       balanceByChainResultsToErc20AggregateWalletBannerBalance({
         balanceByChainResults,
+        chainMetadatas,
       })
 
     const aggregateWalletBannerBalances: AggregateWalletBannerBalances = [
@@ -106,6 +119,19 @@ export function useAggregateWalletBannerBalances(
 
     const resultForOnlyMatchingChains: AggregateWalletBannerBalances =
       aggregateWalletBannerBalances.filter((aggregateWalletBannerBalance) => {
+        // Check the chain id of the item against the chain ids of the currently selected wallet. Exclude items that don't match.
+        const itemChainId = new ChainId(
+          'chainId' in aggregateWalletBannerBalance.resource
+            ? aggregateWalletBannerBalance.resource.chainId
+            : aggregateWalletBannerBalance.resource
+        )
+        const isOnCurrentlySelectedChain = currentChainIds.find(
+          (chainId) =>
+            itemChainId.namespace === chainId.namespace &&
+            itemChainId.reference === chainId.reference
+        )
+        if (!isOnCurrentlySelectedChain) return false
+
         // If we didn't define a resource to filter against, then assume all match.
         if (!didDefineResource) return true
 
@@ -126,6 +152,7 @@ export function useAggregateWalletBannerBalances(
       result: resultForOnlyMatchingChains,
     }
   }, [
+    currentChainIds,
     errorWalletProvider,
     isLoadingWalletProvider,
     chainMetadatas,

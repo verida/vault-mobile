@@ -20,14 +20,7 @@ exports[`cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBal
     },
     "symbol": "USDC",
     "type": 1,
-    "valuation": {
-      "conversionRate": "1.0001251817930348",
-      "currency": "USD",
-      "price": "500.0625908965174",
-      "rates": {
-        "DAILY": -0.01795587,
-      },
-    },
+    "valuation": null,
   },
 ]
 `;

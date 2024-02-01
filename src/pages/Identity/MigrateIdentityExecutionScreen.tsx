@@ -18,7 +18,7 @@ import { Logger } from 'features/telemetry'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useCallback, useEffect, useState } from 'react'
 import { InteractionManager, StyleSheet, View } from 'react-native'
-import { formatPercentage } from 'utils'
+import { formatNumberPercentage } from 'utils'
 
 import LoadingView from 'components/LoadingView'
 import { MainStackScreenProps } from 'navigation/types'
@@ -107,7 +107,9 @@ export const MigrateIdentityExecutionScreen: React.FunctionComponent<MigrateIden
           item.key === 'migrateData'
             ? {
                 ...item,
-                label: `Migrating your data (${formatPercentage(newProgress)})`,
+                label: `Migrating your data (${formatNumberPercentage(
+                  newProgress
+                )})`,
                 progress: newProgress,
                 progressIndeterminate: false,
               }

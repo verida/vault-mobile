@@ -1,5 +1,6 @@
 import 'jest'
 
+import { ChainMetadata } from '../../../src/features/caip'
 import { BalanceByChainResult } from '../../../src/features/cryptoWallet/@types'
 import { balanceByChainResultsToErc20AggregateWalletBannerBalance } from '../../../src/features/cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance'
 
@@ -202,11 +203,74 @@ const BALANCE_BY_CHAIN_RESULTS = [
   },
 ] as unknown as readonly BalanceByChainResult[]
 
+const CHAIN_METADATAS = [
+  {
+    decimals: 18,
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    isMainnet: true,
+    name: 'Ethereum',
+    namespace: 'eip155',
+    nativeCurrencyName: 'ETH',
+    reference: '1',
+    rpcUrls: ['https://mainnet.infura.io/v3/6e4bf0201647493e93c9eea13b70bd4d'],
+    symbol: 'ETH',
+  },
+  {
+    decimals: 18,
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+    isMainnet: true,
+    name: 'Polygon',
+    namespace: 'eip155',
+    nativeCurrencyName: 'MATIC',
+    reference: '137',
+    rpcUrls: [
+      'https://polygon-mainnet.infura.io.infura.io/v3/6e4bf0201647493e93c9eea13b70bd4d',
+    ],
+    symbol: 'MATIC',
+  },
+  {
+    decimals: 18,
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/1027.png',
+    isMainnet: false,
+    name: 'Ethereum (goerli)',
+    namespace: 'eip155',
+    nativeCurrencyName: 'ETH',
+    reference: '5',
+    rpcUrls: ['https://goerli.infura.io/v3/6e4bf0201647493e93c9eea13b70bd4d'],
+    symbol: 'ETH',
+  },
+  {
+    decimals: 18,
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/3890.png',
+    isMainnet: false,
+    name: 'Polygon (Mumbai)',
+    namespace: 'eip155',
+    nativeCurrencyName: 'MATIC',
+    reference: '80001',
+    rpcUrls: [
+      'https://polygon-mumbai.infura.io/v3/6e4bf0201647493e93c9eea13b70bd4d',
+    ],
+    symbol: 'MATIC',
+  },
+  {
+    decimals: 24,
+    icon: 'https://s2.coinmarketcap.com/static/img/coins/64x64/6535.png',
+    isMainnet: false,
+    name: 'NEAR (testnet)',
+    namespace: 'near',
+    nativeCurrencyName: 'NEAR',
+    reference: 'testnet',
+    rpcUrls: ['https://rpc.testnet.near.org/'],
+    symbol: 'NEAR',
+  },
+] as unknown as readonly ChainMetadata[]
+
 describe('cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance', () => {
   it('mock', () => {
     expect(
       balanceByChainResultsToErc20AggregateWalletBannerBalance({
         balanceByChainResults: BALANCE_BY_CHAIN_RESULTS,
+        chainMetadatas: CHAIN_METADATAS,
       })
     ).toMatchSnapshot()
   })

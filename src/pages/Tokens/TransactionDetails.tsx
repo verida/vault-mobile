@@ -5,7 +5,6 @@ import {
   useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeChainMetadataForResource,
   useSelectedMinifiedBlockchainAccounts,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
@@ -13,7 +12,6 @@ import React from 'react'
 
 import LoadingIndicator from 'components/LoadingIndicator'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
 import TransactionInfo from 'components/Tokens/TransactionInfo'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
@@ -51,8 +49,6 @@ const TransactionDetails = () => {
     asset: maybeAsset || null,
   })
 
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
-
   return (
     <Container>
       <NavigationHeader
@@ -62,7 +58,6 @@ const TransactionDetails = () => {
         }}
         title={'Transaction Details'}
       />
-      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       {isLoading || !transaction || !aggregateWalletBannerBalance ? (
         <LoadingIndicator />
       ) : (

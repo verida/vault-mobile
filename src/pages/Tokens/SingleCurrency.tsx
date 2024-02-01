@@ -1,5 +1,6 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   getAggregateWalletBannerBalanceResult,
   getSelectedWalletById,
@@ -10,24 +11,25 @@ import {
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useMaybeChainMetadataForResource,
   useSelectedMinifiedBlockchainAccounts,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
+import { useThemeAwareStyle } from 'hooks'
 import { Icon } from 'native-base'
 import * as React from 'react'
+import { StyleSheet } from 'react-native'
 import Toast from 'react-native-root-toast'
 import { useSelector } from 'react-redux'
 
 import Container from 'components/Container'
 import { ErrorFallbackCard } from 'components/Errors'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
-import TestnetWarning from 'components/Tokens/TestnetWarning'
-import TokenBanner from 'components/Tokens/TokenBanner'
+import { TokenBanner } from 'components/Tokens/TokenBanner'
 import TransactionsList from 'components/Tokens/TransactionsList'
 import useParams from 'hooks/useParams'
 import { useMainNavigation } from 'navigation/hooks'
 import { MainStackParams } from 'navigation/types'
+import { Theme } from 'styles/types'
 
 export type SingleCurrencyRouteProp = RouteProp<
   MainStackParams,
@@ -49,7 +51,15 @@ const SingleCurrency = () => {
   // TODO: we should fetch here instead, not pass the route params
   const { resource, title } = useParams<SingleCurrencyScreenProps>()
 
+  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
+
   const chainId = useChainIdForResourceParams({ resource })
+
+  const chain = chainMetadatas.find(
+    (chainMetadata) =>
+      chainMetadata.namespace === chainId.namespace &&
+      chainMetadata.reference === chainId.reference
+  )
 
   const [maybeAggregateWalletBannerBalance] =
     getAggregateWalletBannerBalanceResult(
@@ -60,8 +70,6 @@ const SingleCurrency = () => {
   const assetId = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
-
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
   const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
 
@@ -79,14 +87,13 @@ const SingleCurrency = () => {
   // hook regardless.
   const {
     result: aggregateWalletBannerBalances,
-    loading: isLoadingBalance,
     refetch: refetchBalance,
     error: maybeErrorBalance,
   } = useAggregateWalletBannerBalancesWithResultCaching({
     resource,
   })
 
-  const { price } = useAggregateWalletBannerBalancesValuation({
+  const { price: value, currency } = useAggregateWalletBannerBalancesValuation({
     aggregateWalletBannerBalances,
   })
 
@@ -103,8 +110,6 @@ const SingleCurrency = () => {
     assetId,
   })
 
-  const isLoading = isLoadingTransactions || isLoadingBalance
-
   const error =
     (isAssetSupportedByWalletProvider && errorTransactions) || maybeErrorBalance
 
@@ -113,6 +118,8 @@ const SingleCurrency = () => {
     () => void Promise.all([refetchTransactions(), refetchBalance()]),
     [refetchTransactions, refetchBalance]
   )
+
+  const styles = useThemeAwareStyle(createStyles)
 
   if (error)
     return (
@@ -131,28 +138,24 @@ const SingleCurrency = () => {
         }}
         title={title}
       />
-      <TestnetWarning networkReference={maybeChainMetadata?.name} />
       <TokenBanner
-        isSumOfMultipleBalances={false}
-        decimals={maybeAggregateWalletBannerBalance?.decimals}
-        tokenType={isAssetSupportedByWalletProvider ? null : ''}
-        totalBalance={price}
-        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
-        valuation={maybeAggregateWalletBannerBalance?.valuation}
-        showControls
         selectedWallet={selectedWallet}
+        decimals={maybeAggregateWalletBannerBalance?.decimals}
+        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
+        tokenBalanceValue={value}
+        tokenBalanceValueCurrency={currency}
+        valuation={maybeAggregateWalletBannerBalance?.valuation}
         symbol={maybeAggregateWalletBannerBalance?.symbol}
-        icon={maybeAggregateWalletBannerBalance?.icon}
+        icon={maybeAggregateWalletBannerBalance?.icon || undefined}
+        chainLabel={chain?.name}
+        chainLogo={chain?.icon || undefined}
+        isChainMainnet={!!chain?.isMainnet}
         receiveButtonAction={() => {
-          if (!maybeAggregateWalletBannerBalance) return
-
           return navigation.navigate('ReceiveToken', {
             aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
           })
         }}
         sendButtonAction={() => {
-          if (!maybeAggregateWalletBannerBalance) return
-
           return navigation.navigate('SendToken', {
             aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
           })
@@ -172,16 +175,16 @@ const SingleCurrency = () => {
             backgroundColor: 'rgba(4, 17, 51, 1)',
           })
         }}
+        style={styles.tokenBanner}
       />
-      {!isAssetSupportedByWalletProvider ||
-      !maybeAggregateWalletBannerBalance ? (
+      {!isAssetSupportedByWalletProvider ? (
         // Here, we're handling a custom asset. We could render something accordingly.
         <React.Fragment />
       ) : (
         <TransactionsList
           aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
-          refreshing={isLoading}
+          refreshing={isLoadingTransactions}
           list={transactions}
         />
       )}
@@ -190,3 +193,10 @@ const SingleCurrency = () => {
 }
 
 export default SingleCurrency
+
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    tokenBanner: {
+      margin: theme.spacing.m,
+    },
+  })

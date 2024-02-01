@@ -1,18 +1,20 @@
 import { ChainIdParams } from 'caip'
 import {
   AggregateWalletBannerBalance,
+  fixedPointCryptoAsBigDecimal,
   useMaybeBlockchainAccountForResource,
   useMaybeChainMetadataForResource,
   useMaybeFromAddressForResource,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import { StyleSheet, Text, View, ViewProps } from 'react-native'
+import { StyleSheet, View, ViewProps } from 'react-native'
+import { getSignificantDecimalsFromPrice } from 'utils'
 
 import { Alert, AlertType } from 'components/Alert'
 import { Logo } from 'components/Images'
-import { NumericCryptoBalance } from 'components/Span'
-import { NUNITO_SANS, NUNITO_SANS_BOLD } from 'constants/text'
+import { NumberCrypto } from 'components/Numbers'
+import { Typography } from 'components/Typography'
 import { Theme } from 'styles/types'
 
 export type WalletSelectorButtonProps = {
@@ -80,11 +82,9 @@ export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonP
   (props) => {
     const {
       aggregateWalletBannerBalance,
-
       label,
       logo,
       address,
-      //formattedBalance,
       alertType,
       alertContent,
       ...viewProps
@@ -94,24 +94,41 @@ export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonP
 
     // TODO: Add the button when the wallet selector modal is ready
 
+    const nbDecimals = aggregateWalletBannerBalance?.valuation?.conversionRate
+      ? getSignificantDecimalsFromPrice(
+          aggregateWalletBannerBalance.valuation.conversionRate.toNumber()
+        )
+      : undefined
+
     return (
       <View {...viewProps}>
         <View style={styles.container}>
           <View style={styles.walletContainer}>
             <Logo uri={logo} alt={label} style={styles.walletLogo} />
             <View style={styles.walletInfoContainer}>
-              <Text style={styles.walletLabel}>{label}</Text>
-              <Text
+              <Typography variant='h4' numberOfLines={1} ellipsizeMode='tail'>
+                {label}
+              </Typography>
+              <Typography
+                variant='body'
                 style={styles.walletAddress}
                 numberOfLines={1}
                 ellipsizeMode='middle'>
                 {address}
-              </Text>
-              <Text style={styles.walletFormattedBalance}>
-                {!!aggregateWalletBannerBalance && (
-                  <NumericCryptoBalance {...aggregateWalletBannerBalance} />
-                )}
-              </Text>
+              </Typography>
+              {aggregateWalletBannerBalance ? (
+                <NumberCrypto
+                  value={fixedPointCryptoAsBigDecimal({
+                    amount: aggregateWalletBannerBalance.balance,
+                    decimals: aggregateWalletBannerBalance.decimals,
+                  }).toNumber()}
+                  unit={aggregateWalletBannerBalance.symbol}
+                  nbDecimals={nbDecimals}
+                  variant='bodySemiBold'
+                  numberOfLines={1}
+                  ellipsizeMode='tail'
+                />
+              ) : null}
             </View>
           </View>
           {alertContent ? (
@@ -149,23 +166,8 @@ const createStyles = (theme: Theme) =>
       alignItems: 'flex-start',
       justifyContent: 'center',
     },
-    walletLabel: {
-      color: theme.color.black,
-      fontSize: theme.fontSize.sl,
-      lineHeight: 22,
-      fontFamily: NUNITO_SANS_BOLD,
-    },
     walletAddress: {
       color: theme.color.black500,
-      fontSize: theme.fontSize.m,
-      lineHeight: 21,
-      fontFamily: NUNITO_SANS,
-    },
-    walletFormattedBalance: {
-      color: theme.color.black,
-      fontSize: theme.fontSize.m,
-      lineHeight: 21,
-      fontFamily: NUNITO_SANS,
     },
     alertContainer: {
       marginTop: theme.spacing.s,

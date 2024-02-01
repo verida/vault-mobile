@@ -1,217 +1,310 @@
 import BigDecimal from 'bignumber.js'
-import { DetailedValuation } from 'features/cryptoWallet'
-import React from 'react'
+import { useTheme } from 'contexts'
 import {
-  Image,
-  StyleSheet,
-  Text as RNText,
-  TouchableOpacity,
-  View,
-} from 'react-native'
+  Currency,
+  DetailedValuation,
+  fixedPointCryptoAsBigDecimal,
+} from 'features/cryptoWallet'
+import { useThemeAwareStyle } from 'hooks'
+import React from 'react'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
+import { getSignificantDecimalsFromPrice } from 'utils'
 
 import { BlockchainWalletWithAccounts } from 'api/types'
-import CopyIcon from 'assets/copy_icon.svg'
-import ReceiveIcon from 'assets/receive_icon.svg'
-import SendIcon from 'assets/send_icon.svg'
-import { NumericCryptoBalance, NumericFiat } from 'components/Span'
-import Text from 'components/Text'
-import { PRIMARY_COLOR, WHITE_COLOR } from 'constants/color'
-import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
+import { Icon } from 'components/Icon'
+import { Logo } from 'components/Images'
+import { NumberCrypto, NumberFiat, NumberPercent } from 'components/Numbers'
+import { Typography } from 'components/Typography'
+import { Theme } from 'styles/types'
 
-const TokenBanner = React.memo(function TokenBanner({
-  sendButtonAction: maybeSendButtonAction,
-  selectedWallet,
-  receiveButtonAction: maybeReceiveButtonAction,
-  copyButtonAction: maybeCopyButtonAction,
-  tokenType,
-  totalBalance,
-  tokenBalance,
-  showControls,
-  symbol,
-  icon,
-  decimals: maybeDecimals,
-  valuation: maybeValution,
-  isSumOfMultipleBalances,
-}: {
+export type TokenBannerProps = {
   readonly selectedWallet?: BlockchainWalletWithAccounts
   readonly sendButtonAction?: () => void
   readonly receiveButtonAction?: () => void
   readonly copyButtonAction?: () => void
-  // TODO: How to determine tokenType using updated model?
-  readonly tokenType: string | null
-  readonly totalBalance: BigDecimal
-  readonly symbol: string | null
-  readonly icon: string | null
-  readonly tokenBalance: string | null
-  readonly decimals: number | null
+  readonly tokenBalanceValue?: BigDecimal
+  readonly tokenBalanceValueCurrency?: Currency
+  readonly symbol: string
+  readonly icon?: string
+  readonly tokenBalance?: string
+  readonly decimals?: number
   readonly valuation: DetailedValuation | null | undefined
-  readonly showControls: boolean
-  readonly isSumOfMultipleBalances: boolean
-}): JSX.Element {
-  const maybeConversionRate = maybeValution?.conversionRate || null
-  const maybeChange = maybeValution?.rates?.DAILY || null
+  readonly chainLabel?: string
+  readonly chainLogo?: string
+  readonly isChainMainnet?: boolean
+} & ViewProps
+
+export const TokenBanner: React.FC<TokenBannerProps> = (props) => {
+  const {
+    selectedWallet,
+    sendButtonAction: maybeSendButtonAction,
+    receiveButtonAction: maybeReceiveButtonAction,
+    copyButtonAction: maybeCopyButtonAction,
+    tokenBalance,
+    tokenBalanceValue,
+    tokenBalanceValueCurrency,
+    symbol,
+    icon,
+    decimals,
+    valuation: maybeValuation,
+    chainLabel,
+    chainLogo,
+    isChainMainnet,
+    ...viewProps
+  } = props
+
+  const maybeConversionRate = maybeValuation?.conversionRate || null
+  const maybeChange = maybeValuation?.rates?.DAILY || null
 
   const hasChange = typeof maybeChange === 'number'
 
   const positive = hasChange && maybeChange > 0
 
+  const nbDecimals = maybeValuation?.conversionRate
+    ? getSignificantDecimalsFromPrice(maybeValuation.conversionRate.toNumber())
+    : undefined
+
+  const styles = useThemeAwareStyle(createStyles)
+  const { theme } = useTheme()
+
   return (
-    <View style={styles.bannerWrapper}>
-      {showControls && (
-        <View style={styles.coinInfo}>
-          <Text style={styles.coinText}>
-            {typeof tokenType === 'string' ? tokenType : 'Coin'}
-          </Text>
-          <View style={styles.coinPriceInfo}>
-            {!!maybeConversionRate && (
-              <Text style={styles.coinPrice}>
-                <NumericFiat value={maybeConversionRate.toNumber()} />
-              </Text>
-            )}
-            {hasChange ? (
-              <Text
-                style={[
-                  styles.coinPriceChange,
-                  positive ? styles.positive : styles.negative,
-                ]}>
-                {positive
-                  ? `+ ${maybeChange.toFixed(2)}%`
-                  : `${maybeChange.toFixed(2)}%`}
-              </Text>
-            ) : undefined}
-          </View>
-        </View>
-      )}
-      <View style={styles.totals}>
-        {icon && (
-          <View style={styles.coinIcon}>
-            <Image source={{ uri: icon }} style={styles.icon} />
-          </View>
-        )}
-        <Text style={styles.amount}>
-          {/* */}
-          {!!tokenBalance && symbol && typeof maybeDecimals === 'number' ? (
-            <NumericCryptoBalance
-              symbol={symbol}
-              balance={tokenBalance}
-              decimals={maybeDecimals}
+    <View {...viewProps}>
+      <View style={styles.container}>
+        <View style={styles.amounts}>
+          {icon && <Logo uri={icon} alt={symbol} style={styles.icon} />}
+          {tokenBalance && decimals ? (
+            <NumberCrypto
+              value={fixedPointCryptoAsBigDecimal({
+                amount: tokenBalance,
+                decimals,
+              }).toNumber()}
+              nbDecimals={nbDecimals}
+              unit={symbol}
+              variant='h2'
             />
           ) : (
-            <NumericFiat value={totalBalance.toNumber()} />
+            <Typography variant='h2'>...</Typography>
           )}
-        </Text>
-        <Text style={styles.amountLabel}>
-          {!isSumOfMultipleBalances ? (
-            <React.Fragment>
-              <RNText children='≈ ' />
-              <NumericFiat value={totalBalance.toNumber()} />
-            </React.Fragment>
-          ) : (
-            `Total Balance`
-          )}
-        </Text>
-      </View>
-      {showControls && (
-        <View style={styles.actionIcons}>
+          <View style={styles.value}>
+            <Typography
+              variant='label'
+              style={styles.valueText}>{`≈ `}</Typography>
+            {tokenBalanceValue ? (
+              <NumberFiat
+                value={tokenBalanceValue.toNumber()}
+                unit={tokenBalanceValueCurrency}
+                variant='label'
+                style={styles.valueText}
+              />
+            ) : (
+              <Typography variant='label' style={styles.valueText}>
+                ...
+              </Typography>
+            )}
+          </View>
+        </View>
+        <View style={styles.coinInfo}>
+          <View style={styles.coinPriceInfo}>
+            {isChainMainnet ? (
+              <>
+                {!!maybeConversionRate && (
+                  <NumberFiat
+                    value={maybeConversionRate.toNumber()}
+                    unit={maybeValuation?.currency}
+                    options={{
+                      minimumSignificantDigits: 2,
+                      maximumSignificantDigits: 6,
+                    }}
+                    style={styles.coinPrice}
+                  />
+                )}
+                {hasChange ? (
+                  <NumberPercent
+                    value={maybeChange / 100}
+                    options={{
+                      signDisplay: 'always',
+                    }}
+                    style={[
+                      positive
+                        ? styles.priceChangePositive
+                        : styles.priceChangeNegative,
+                    ]}
+                  />
+                ) : null}
+              </>
+            ) : (
+              <View style={styles.testnetTag}>
+                <Typography
+                  variant='bodySemiBold'
+                  style={styles.testnetTagText}>
+                  Testnet
+                </Typography>
+              </View>
+            )}
+          </View>
+          <View style={styles.tokenNetworkInfo}>
+            <Typography style={styles.tokenNetworkLabel}>Network</Typography>
+            <View style={styles.tokenNetworkContainer}>
+              <Logo
+                uri={chainLogo}
+                alt={chainLabel}
+                style={styles.tokenNetworkLogo}
+              />
+              <Typography style={styles.tokenNetworkText}>
+                {chainLabel}
+              </Typography>
+            </View>
+          </View>
+        </View>
+        <View style={styles.separator} />
+        <View style={styles.actions}>
           {Boolean(selectedWallet && !selectedWallet.viewOnly) && (
             <TouchableOpacity
               disabled={!maybeSendButtonAction}
               onPress={maybeSendButtonAction}
               style={[
-                styles.singleActionIcon,
+                styles.actionButton,
                 !maybeSendButtonAction && styles.disabled,
               ]}>
-              <SendIcon />
-              <Text style={styles.actionIconText}>Send</Text>
+              <View style={styles.actionIconWrapper}>
+                <Icon name='send' size={24} color={theme.color.primary} />
+              </View>
+              <Typography variant='bodySemiBold' style={styles.actionIconText}>
+                Send
+              </Typography>
             </TouchableOpacity>
           )}
           <TouchableOpacity
             disabled={!maybeReceiveButtonAction}
             onPress={maybeReceiveButtonAction}
             style={[
-              styles.singleActionIcon,
+              styles.actionButton,
               !maybeReceiveButtonAction && styles.disabled,
             ]}>
-            <ReceiveIcon />
-            <Text style={styles.actionIconText}>Receive</Text>
+            <View style={styles.actionIconWrapper}>
+              <Icon name='receive' size={24} color={theme.color.primary} />
+            </View>
+            <Typography variant='bodySemiBold' style={styles.actionIconText}>
+              Receive
+            </Typography>
           </TouchableOpacity>
           <TouchableOpacity
             disabled={!maybeCopyButtonAction}
             onPress={maybeCopyButtonAction}
             style={[
-              styles.singleActionIcon,
+              styles.actionButton,
               !maybeCopyButtonAction && styles.disabled,
             ]}>
-            <CopyIcon />
-            <Text style={styles.actionIconText}>Copy</Text>
+            <View style={styles.actionIconWrapper}>
+              <Icon name='copy' size={24} color={theme.color.primary} />
+            </View>
+            <Typography variant='bodySemiBold' style={styles.actionIconText}>
+              Copy
+            </Typography>
           </TouchableOpacity>
         </View>
-      )}
+      </View>
     </View>
   )
-})
+}
 
-const styles = StyleSheet.create({
-  bannerWrapper: {
-    margin: 15,
-    backgroundColor: PRIMARY_COLOR,
-    padding: 20,
-    borderRadius: 12,
-  },
-  coinInfo: { flexDirection: 'row', justifyContent: 'space-between' },
-  coinText: {
-    textTransform: 'uppercase',
-    color: 'rgba(255, 255, 255, 0.6)',
-  },
-  coinPriceInfo: {
-    flexDirection: 'row',
-  },
-  coinPrice: {
-    color: 'rgba(255, 255, 255, 0.6)',
-  },
-  coinPriceChange: {
-    marginLeft: 10,
-  },
-  disabled: {
-    opacity: 0.5,
-  },
-  positive: {
-    color: '#5ECEA5',
-  },
-  negative: {
-    color: '#FD4F64',
-  },
-  totals: {
-    alignItems: 'center',
-  },
-  coinIcon: {
-    marginTop: 12,
-    marginBottom: 10,
-  },
-  amount: {
-    color: WHITE_COLOR,
-    fontSize: 28,
-    fontFamily: NUNITO_SANS_BOLD,
-  },
-  amountLabel: {
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontSize: 12,
-    color: 'rgba(255, 255, 255, 0.6)',
-  },
-  actionIcons: {
-    flexDirection: 'row',
-    justifyContent: 'space-evenly',
-    marginTop: 24,
-  },
-  actionIconText: {
-    fontFamily: NUNITO_SANS_SEMIBOLD,
-    fontSize: 14,
-    color: WHITE_COLOR,
-    textAlign: 'center',
-    marginTop: 4,
-  },
-  icon: { width: 45, height: 45 },
-  singleActionIcon: {},
-})
-
-export default TokenBanner
+const createStyles = (theme: Theme) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: theme.color.primary5,
+      padding: theme.spacing.m,
+      borderRadius: theme.roundness.l,
+    },
+    coinInfo: {
+      marginBottom: theme.spacing.s,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'flex-end',
+    },
+    coinPriceInfo: {
+      flexDirection: 'column',
+      alignItems: 'flex-start',
+    },
+    coinPrice: {
+      color: theme.color.textLightGrey,
+    },
+    tokenNetworkInfo: {
+      flexDirection: 'column',
+      alignItems: 'flex-end',
+    },
+    tokenNetworkLabel: {
+      color: theme.color.textLightGrey,
+    },
+    tokenNetworkContainer: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    tokenNetworkText: {
+      // color: theme.color.textLightGrey,
+    },
+    tokenNetworkLogo: {
+      width: 12,
+      marginRight: theme.spacing.xs,
+    },
+    disabled: {
+      opacity: 0.5,
+    },
+    priceChangePositive: {
+      color: theme.color.success,
+    },
+    priceChangeNegative: {
+      color: theme.color.error,
+    },
+    amounts: {
+      alignItems: 'center',
+      marginBottom: theme.spacing.m,
+    },
+    value: {
+      flexDirection: 'row',
+      alignItems: 'center',
+    },
+    valueText: {
+      color: theme.color.textLightGrey,
+    },
+    actions: {
+      flexDirection: 'row',
+      justifyContent: 'space-evenly',
+      marginTop: theme.spacing.m,
+    },
+    actionButton: {
+      flexDirection: 'column',
+      alignItems: 'center',
+    },
+    actionIconWrapper: {
+      padding: theme.spacing.sm,
+      backgroundColor: theme.color.primary100,
+      borderRadius: theme.roundness.l,
+    },
+    actionIconText: {
+      textAlign: 'center',
+      marginTop: 4,
+      color: theme.color.textLightGrey,
+    },
+    icon: {
+      marginBottom: 10,
+      width: 45,
+      height: 45,
+    },
+    separator: {
+      height: 1,
+      backgroundColor: theme.color.lightGrey,
+    },
+    testnetTag: {
+      alignSelf: 'flex-start',
+      paddingHorizontal: theme.spacing.s,
+      paddingVertical: theme.spacing.xxs,
+      borderRadius: theme.roundness.xs,
+      backgroundColor: theme.color.snow,
+      borderWidth: 1,
+      borderStyle: 'solid',
+      borderColor: theme.color.lightGrey,
+    },
+    testnetTagText: {
+      color: theme.color.textLightGrey,
+    },
+  })
