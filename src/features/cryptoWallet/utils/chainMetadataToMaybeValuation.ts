@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { ChainMetadata } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 
 import { BalanceByChainResult, DetailedValuation } from '../@types'
 import { balanceByChainResultToValuation } from './balanceByChainResultToValuation'

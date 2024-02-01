@@ -1,4 +1,4 @@
-import { isSupportedCaipNamespace } from 'features/blockchain'
+import { isSupportedCaipNamespace } from 'features/caip'
 import {
   MinifiedBlockchainAccount,
   MinifiedBlockchainAccounts,

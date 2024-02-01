@@ -1,10 +1,6 @@
 import { AssetId, ChainId } from 'caip'
 import { ethers } from 'ethers'
-import {
-  getMaybeChainMetadatas,
-  getRpcUrlOrThrow,
-  useChainMetadatas,
-} from 'features/blockchain'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import {
   sendErc20Eip155,
@@ -15,6 +11,7 @@ import {
   sendNativeCurrencyNear,
   useBlockchainRequestHandlersNear,
 } from 'features/blockchain/near'
+import { getRpcUrlOrThrow } from 'features/caip'
 import { Stateful } from 'features/polygonid/@types'
 import { Logger } from 'features/telemetry'
 import * as React from 'react'

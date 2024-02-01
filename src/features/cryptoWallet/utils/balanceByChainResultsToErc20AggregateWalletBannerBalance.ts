@@ -1,5 +1,5 @@
 import BigDecimal from 'bignumber.js'
-import { ChainMetadata } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 
 import {
   AggregateWalletBannerBalanceErc20,

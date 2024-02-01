@@ -1,14 +1,14 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/index'
 import { ChainId, ChainIdParams } from 'caip'
+import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import { ChainsList, ChainsListItem } from 'features/blockchain/eip155'
 import {
   ChainMetadata,
   ChainMetadataBlockExplorers,
   ChainMetadataRpcs,
   ChainMetadatas,
-  isSupportedCaipNamespace,
-  SupportedBlockchainNamespace,
-} from 'features/blockchain'
-import { ChainsList, ChainsListItem } from 'features/blockchain/eip155'
+} from 'features/caip/@types'
+import { isSupportedCaipNamespace } from 'features/caip/utils/isSupportedCaipNamespace'
 
 // WalletConnect proposals may optionally define rpcUrls for the connecting
 // DApp, which may be used if the DApp has never encountered the chain before.

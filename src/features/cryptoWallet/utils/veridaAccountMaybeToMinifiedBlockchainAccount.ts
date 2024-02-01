@@ -2,9 +2,9 @@ import { ChainId } from 'caip'
 import { ethers } from 'ethers'
 import {
   BlockchainAccount,
-  isSupportedCaipNamespace,
   SupportedBlockchainNamespace,
 } from 'features/blockchain'
+import { isSupportedCaipNamespace } from 'features/caip'
 import { Logger } from 'features/telemetry'
 
 import {

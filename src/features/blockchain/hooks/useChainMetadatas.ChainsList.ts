@@ -3,15 +3,15 @@ import { config } from 'config'
 import * as React from 'react'
 
 import {
-  BlockchainNetwork,
   ChainMetadata,
   ChainMetadataBlockExplorers,
   ChainMetadataBlockExplorerUrl,
   ChainMetadatas,
+  isSupportedCaipNamespace,
   UseChainMetadataState,
-} from '../@types'
+} from '../../caip'
+import { BlockchainNetwork } from '../@types'
 import { useGetBlockchainNetworksQuery } from '../redux'
-import { isSupportedCaipNamespace } from '../utils'
 
 const maybeBlockchainNetworkEntryToChainMetadata = ({
   blockchainNetwork,

@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/blockchain'
+import { ChainMetadatas } from 'features/caip'
 import * as React from 'react'
 
 import { getSupportedCaipProtocolFriendlyName } from '../utils'

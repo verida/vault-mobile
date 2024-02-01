@@ -1,6 +1,5 @@
 import { ChainId } from 'caip'
-
-import { NEAR_TESTNET_CAIP } from '../@types'
+import { NEAR_TESTNET_CAIP } from 'features/caip'
 
 export function throwIfNotNearTestnet(caipChainId: ChainId) {
   // TODO: If near mainnet URLs are simply "mainnet" we should be okay to remove this

@@ -1,6 +1,6 @@
 import { ChainId, ChainIdParams } from 'caip'
 import { BigNumber } from 'ethers'
-import { ChainMetadata } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 
 import {
   AggregateWalletBannerBalanceNativeCurrency,

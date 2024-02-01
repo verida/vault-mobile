@@ -1,5 +1,5 @@
 import { ChainId } from 'caip'
-import { ChainMetadatas } from 'features/blockchain'
+import { ChainMetadatas } from 'features/caip'
 import { keyStores } from 'near-api-js'
 
 import { nearCreateConnection } from './nearCreateConnection'

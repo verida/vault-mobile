@@ -1,4 +1,4 @@
-import { ChainMetadata } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 import * as React from 'react'
 
 export function useMaybeChainMetadataExplorerUrl({

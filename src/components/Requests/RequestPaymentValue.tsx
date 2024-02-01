@@ -1,6 +1,6 @@
 import BigDecimal from 'bignumber.js'
 import { Logo, Typography } from 'components'
-import { ChainMetadata } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 import {
   AggregateWalletBannerBalance,
   fixedPointCryptoAsBigDecimal,

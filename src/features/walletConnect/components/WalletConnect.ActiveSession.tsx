@@ -1,10 +1,7 @@
 import { AccountId, ChainId } from 'caip'
 import { Spacer } from 'components'
-import {
-  CaipSupportedProtocolSpan,
-  getMaybeChainMetadatas,
-  useChainMetadatas,
-} from 'features/blockchain'
+import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
+import { CaipSupportedProtocolSpan } from 'features/caip'
 import {
   WalletConnectButtonDisconnectSession,
   WalletConnectSessionInfoCard,

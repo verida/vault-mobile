@@ -2,11 +2,11 @@ import { ChainId } from 'caip'
 import { ScreenWrapper, Typography } from 'components'
 import { config } from 'config'
 import {
-  ChainMetadata,
   getMaybeChainMetadatas,
   useChainMetadataDetails,
   useChainMetadatas,
 } from 'features/blockchain'
+import { ChainMetadata } from 'features/caip'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import {
