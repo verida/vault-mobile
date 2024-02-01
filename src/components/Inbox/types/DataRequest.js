@@ -32,7 +32,7 @@ export default (props) => {
       setCurrentAction(null)
       navigation.goBack()
     } catch (error) {
-      Alert.alert('Error', 'Cannot sync data now')
+      Alert.alert('Error', 'Something went wrong when sending the data')
       logger.error(error)
       setCurrentAction(null)
     }

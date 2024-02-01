@@ -87,7 +87,6 @@ const SingleCurrency = () => {
   // hook regardless.
   const {
     result: aggregateWalletBannerBalances,
-    loading: isLoadingBalance,
     refetch: refetchBalance,
     error: maybeErrorBalance,
   } = useAggregateWalletBannerBalancesWithResultCaching({
@@ -110,8 +109,6 @@ const SingleCurrency = () => {
   } = useTransactionsForMaybeAssetId({
     assetId,
   })
-
-  const isLoading = isLoadingTransactions || isLoadingBalance
 
   const error =
     (isAssetSupportedByWalletProvider && errorTransactions) || maybeErrorBalance
@@ -141,56 +138,53 @@ const SingleCurrency = () => {
         }}
         title={title}
       />
-      {maybeAggregateWalletBannerBalance ? (
-        <TokenBanner
-          selectedWallet={selectedWallet}
-          decimals={maybeAggregateWalletBannerBalance.decimals}
-          tokenBalance={maybeAggregateWalletBannerBalance.balance}
-          tokenBalanceValue={value}
-          tokenBalanceValueCurrency={currency}
-          valuation={maybeAggregateWalletBannerBalance.valuation}
-          symbol={maybeAggregateWalletBannerBalance.symbol}
-          icon={maybeAggregateWalletBannerBalance.icon || undefined}
-          chainLabel={chain?.name}
-          chainLogo={chain?.icon || undefined}
-          isChainMainnet={!!chain?.isMainnet}
-          receiveButtonAction={() => {
-            return navigation.navigate('ReceiveToken', {
-              aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
-            })
-          }}
-          sendButtonAction={() => {
-            return navigation.navigate('SendToken', {
-              aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
-            })
-          }}
-          copyButtonAction={() => {
-            if (!maybeAddress) return
+      <TokenBanner
+        selectedWallet={selectedWallet}
+        decimals={maybeAggregateWalletBannerBalance?.decimals}
+        tokenBalance={maybeAggregateWalletBannerBalance?.balance}
+        tokenBalanceValue={value}
+        tokenBalanceValueCurrency={currency}
+        valuation={maybeAggregateWalletBannerBalance?.valuation}
+        symbol={maybeAggregateWalletBannerBalance?.symbol}
+        icon={maybeAggregateWalletBannerBalance?.icon || undefined}
+        chainLabel={chain?.name}
+        chainLogo={chain?.icon || undefined}
+        isChainMainnet={!!chain?.isMainnet}
+        receiveButtonAction={() => {
+          return navigation.navigate('ReceiveToken', {
+            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+          })
+        }}
+        sendButtonAction={() => {
+          return navigation.navigate('SendToken', {
+            aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
+          })
+        }}
+        copyButtonAction={() => {
+          if (!maybeAddress) return
 
-            Clipboard.setString(maybeAddress)
+          Clipboard.setString(maybeAddress)
 
-            Toast.show('Address copied', {
-              duration: Toast.durations.LONG,
-              position: -130,
-              shadow: false,
-              animation: true,
-              hideOnPress: true,
-              delay: 0,
-              backgroundColor: 'rgba(4, 17, 51, 1)',
-            })
-          }}
-          style={styles.tokenBanner}
-        />
-      ) : null}
-      {!isAssetSupportedByWalletProvider ||
-      !maybeAggregateWalletBannerBalance ? (
+          Toast.show('Address copied', {
+            duration: Toast.durations.LONG,
+            position: -130,
+            shadow: false,
+            animation: true,
+            hideOnPress: true,
+            delay: 0,
+            backgroundColor: 'rgba(4, 17, 51, 1)',
+          })
+        }}
+        style={styles.tokenBanner}
+      />
+      {!isAssetSupportedByWalletProvider ? (
         // Here, we're handling a custom asset. We could render something accordingly.
         <React.Fragment />
       ) : (
         <TransactionsList
           aggregateWalletBannerBalance={maybeAggregateWalletBannerBalance}
           onPullToRefresh={pullToRefresh}
-          refreshing={isLoading}
+          refreshing={isLoadingTransactions}
           list={transactions}
         />
       )}
