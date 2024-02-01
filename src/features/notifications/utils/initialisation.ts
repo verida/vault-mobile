@@ -59,11 +59,13 @@ export async function initNotifications() {
             break
         }
 
-        // (required) Called when a remote is received or opened, or local notification is opened
-        notification.finish(PushNotificationIOS.FetchResult.NoData)
+        if (Platform.OS === 'ios') {
+          // (required) Called when a remote is received or opened, or local notification is opened
+          notification.finish(PushNotificationIOS.FetchResult.NoData)
 
-        // Ensure the badge is not display until we define what to do with it.
-        PushNotificationIOS.setApplicationIconBadgeNumber(0)
+          // Ensure the badge is not display until we define what to do with it.
+          PushNotificationIOS.setApplicationIconBadgeNumber(0)
+        }
       } catch (error) {
         logger.error(error)
       }
