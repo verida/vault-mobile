@@ -1,3 +1,7 @@
+import { assetsApi } from 'features/assets'
+import { blockchainApi } from 'features/blockchain'
+import { cryptoWalletApi } from 'features/cryptoWallet'
+
 import { RootState } from './types'
 
 // FIXME: can't use RootState as type here because of circularly references itself
@@ -10,9 +14,9 @@ export const reduxPersistMigrations: Record<number, MigrationFunction> = {
     // This migration clears out the blockchain API cache cause of introducing blockchain Mainnet support
     return {
       ...state,
-      blockchainApi: undefined,
-      assetsApi: undefined,
-      cryptoWalletApi: undefined,
+      [blockchainApi.reducerPath]: undefined,
+      [cryptoWalletApi.reducerPath]: undefined,
+      [assetsApi.reducerPath]: undefined,
     }
   },
 }
