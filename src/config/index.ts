@@ -53,7 +53,7 @@ export const config = {
       hideGettingStarted: false,
     },
     blockchain: {
-      enableCustomNetwork: true,
+      enableCustomNetwork: false,
     },
   },
   verida: {
