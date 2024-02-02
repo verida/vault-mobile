@@ -7,7 +7,7 @@ export const REDUX_PERSIST_CURRENT_VERSION = 1
 
 export const reduxPersistMigrations: Record<number, MigrationFunction> = {
   1: (state: RootState) => {
-    // This migration clear out API cache as introduce blockchain Mainnet support
+    // This migration clears out the blockchain API cache cause of introducing blockchain Mainnet support
     return {
       ...state,
       blockchainApi: undefined,
