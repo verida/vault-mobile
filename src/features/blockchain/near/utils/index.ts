@@ -1,4 +1,5 @@
 export * from './getBalance.Near'
+export * from './nearBlockchain'
 export * from './nearCreateAction'
 export * from './nearCreateConnection'
 export * from './nearCreateViewAccessKey'

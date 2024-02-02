@@ -1,5 +1,6 @@
 import BigDecimal from 'bignumber.js'
 import { useTheme } from 'contexts'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
   Currency,
   DetailedValuation,
@@ -10,7 +11,6 @@ import React from 'react'
 import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import { getSignificantDecimalsFromPrice } from 'utils'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
 import { Icon } from 'components/Icon'
 import { Logo } from 'components/Images'
 import { NumberCrypto, NumberFiat, NumberPercent } from 'components/Numbers'

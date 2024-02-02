@@ -1,22 +1,21 @@
-import { isSupportedCaipNamespace } from 'features/caip'
-import {
-  getBlockchainNetworks,
-  WALLET_SCHEMA_0_2_0_URI,
-} from 'features/cryptoWallet'
-import { Logger } from 'features/telemetry'
-import { store } from 'reduxStore'
-
-import AccountManager from 'api/AccountManager'
-
 import {
   BlockchainAccount,
   BlockchainNetwork,
   BlockchainWallet,
   BlockchainWalletWithAccounts,
-} from '../types'
-import { Blockchain as eip1558Blockchain } from './eip1558Blockchain'
-import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
-import { Blockchain as nearBlockchain } from './nearBlockchain'
+  getBlockchainNetworks,
+  IBlockchain,
+  WalletUtilsWallet,
+} from 'features/blockchain'
+import { eip155Blockchain } from 'features/blockchain/eip155'
+import { nearBlockchain } from 'features/blockchain/near'
+import { isSupportedCaipNamespace } from 'features/caip'
+import { Logger } from 'features/telemetry'
+import { store } from 'reduxStore'
+
+import AccountManager from 'api/AccountManager'
+
+import { WALLET_SCHEMA_0_2_0_URI } from '../constants'
 
 const logger = new Logger('WalletManager')
 
@@ -24,7 +23,7 @@ const bip39 = require('bip39')
 
 // TODO: @cawfree extend support
 const NAMESPACES: Record<string, IBlockchain> = {
-  eip155: eip1558Blockchain,
+  eip155: eip155Blockchain,
   near: nearBlockchain,
 }
 
@@ -167,8 +166,7 @@ export class WalletManager {
 
   public static generateMnemonic(): string {
     // generates random mnemonic
-    const mnemonic = bip39.generateMnemonic()
-    return mnemonic
+    return bip39.generateMnemonic()
   }
 
   public static async createNewWallet(
@@ -188,7 +186,7 @@ export class WalletManager {
     const wallet = {
       mnemonic,
       multiChain: true,
-      label: name ? name : 'Multi Chain Wallet',
+      label: name ? name : 'Multi-chain Wallet',
       walletType: 'multi',
       viewOnly: false,
     }
@@ -199,7 +197,7 @@ export class WalletManager {
     }
 
     const wallets = await WalletManager.getBlockchainAccounts(
-      await walletDb!.getMany<BlockchainWallet>(undefined, undefined)
+      (await walletDb!.getMany(undefined, undefined)) as BlockchainWallet[]
     )
 
     return {

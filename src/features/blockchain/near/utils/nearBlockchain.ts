@@ -1,9 +1,9 @@
 import WalletUtils from '@verida/wallet-utils'
 import * as ethers from 'ethers'
 
-import { IBlockchain, WalletUtilsWallet } from './IBlockchain'
+import { IBlockchain, WalletUtilsWallet } from '../../@types'
 
-class nearBlockchain implements IBlockchain {
+class NearBlockchain implements IBlockchain {
   public buildAccountFromMnemonic(
     mnemonic: string,
     derivationPath: string,
@@ -23,4 +23,4 @@ class nearBlockchain implements IBlockchain {
   }
 }
 
-export const Blockchain = new nearBlockchain()
+export const nearBlockchain = new NearBlockchain()

@@ -4,11 +4,15 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NFT, NFTCollection } from 'features/assets'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 
-import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
 import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
-import { NetworksEditorScreenParams } from 'pages/BlockchainNetworksEditor'
+import {
+  BlockchainNetworkEditorScreenParams,
+  BlockchainNetworksScreenParams,
+} from 'pages/Blockchains'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
@@ -143,8 +147,8 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
-  BlockchainNetworks: undefined
-  BlockchainNetworksEditor: NetworksEditorScreenParams
+  BlockchainNetworks: BlockchainNetworksScreenParams
+  BlockchainNetworkEditor: BlockchainNetworkEditorScreenParams
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }

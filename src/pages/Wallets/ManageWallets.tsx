@@ -1,5 +1,6 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
   addWatchedWallet,
   createNewWallet,
@@ -18,7 +19,6 @@ import { Alert, StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
 import LoadingView from 'components/LoadingView'
 import NavigationHeader from 'components/Navigation/NavigationHeader'
 import WalletList from 'components/WalletList'

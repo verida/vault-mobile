@@ -1,12 +1,9 @@
-import { createSelector } from '@reduxjs/toolkit'
 import { createApi, fetchBaseQuery } from '@reduxjs/toolkit/query/react'
-import { EnvironmentType } from '@verida/types/dist/NetworkInterfaces'
-import { AssetId, ChainId } from 'caip'
+import { AssetId } from 'caip'
 import { config } from 'config'
 import { isEmpty } from 'lodash'
 import { REHYDRATE } from 'redux-persist'
 
-import { BlockchainNetwork } from 'api/types'
 import { RootState } from 'reduxStore/types'
 
 import { BalanceByChain, DetailedTransaction, Transaction } from '../@types'
@@ -25,28 +22,6 @@ export const cryptoWalletApi = createApi({
     }
   },
   endpoints: (build) => ({
-    chainsList: build.query({
-      keepUnusedDataFor: 60 * 60 * 24, // 24 hours
-      // enforced empty object {} as this query params to have a unique cache key
-      query: (_: Record<string, never> = {}) => 'chains/list',
-      transformResponse: (response: {
-        data: Record<EnvironmentType, Record<string, BlockchainNetwork>>
-      }): Record<string, BlockchainNetwork> => {
-        const mainnets = response.data.mainnet
-        const testnets = response.data.testnet
-
-        const networkEntries = { ...mainnets, ...testnets }
-
-        const allNetworks: Record<string, BlockchainNetwork> = {}
-        for (const chainId in networkEntries) {
-          const item = <BlockchainNetwork>networkEntries[chainId]
-          item.chainId = chainId
-          allNetworks[item.chainId] = item
-        }
-
-        return allNetworks
-      },
-    }),
     getBalances: build.query({
       keepUnusedDataFor: 60 * 15, // 15 mins
       query: (walletAddresses: string[]) =>
@@ -120,32 +95,12 @@ export const cryptoWalletApi = createApi({
 // Query hooks
 
 export const {
-  useChainsListQuery,
   useGetBalancesQuery,
   useGetTransactionsForTokenQuery,
   useGetTransactionDetailsQuery,
 } = cryptoWalletApi
 
 // Selectors
-export const getBlockchainNetworks = createSelector(
-  cryptoWalletApi.endpoints.chainsList.select({}),
-  (data) => data.data || {}
-)
-
-export const getMaybeBlockchainNetwork = (
-  state: RootState,
-  chainIdObj: ChainId | null | undefined
-): BlockchainNetwork | undefined => {
-  if (!chainIdObj) return undefined
-
-  const networks = getBlockchainNetworks(state)
-
-  return networks?.[new ChainId(chainIdObj).toString()]
-}
-
-export const getBlockchainNetworkLabel = (
-  network: BlockchainNetwork | undefined
-) => `${network?.label || 'Unknown Network'}`
 
 export const getBalancesData = (state: RootState, walletAddresses: string[]) =>
   cryptoWalletApi.endpoints.getBalances.select(walletAddresses)(state)

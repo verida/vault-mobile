@@ -1,5 +1,9 @@
 import { AssetId } from 'caip'
 import {
+  BlockchainNetwork,
+  BlockchainWalletWithAccounts,
+} from 'features/blockchain'
+import {
   getBalancesData,
   SelectSingleTokenData,
   SelectSingleTokenDataFailureCase,
@@ -8,7 +12,6 @@ import {
 import { isEmpty } from 'lodash'
 import { createSelector } from 'reselect'
 
-import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import { RootState } from 'reduxStore/types'
 
 const createDefaultErrorResponse = (): SelectSingleTokenDataFailureCase => ({
