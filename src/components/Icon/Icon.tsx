@@ -16,7 +16,6 @@ import GoToIcon from 'assets/icons/goto_icon.svg'
 import ShareIcon from 'assets/icons/share_icon.svg'
 import TickIcon from 'assets/icons/tick_icon.svg'
 import WarningIcon from 'assets/icons/warning_icon.svg'
-import PlusIcon from 'assets/plus_icon.svg' // TODO: The icon should not have a color
 import EthereumIcon from 'assets/wallets/Ethereum.svg'
 
 // TODO: Check with the designers on whether to use custom icons or from a library and if so, pick a single library rather than the mix of different icons styles with currently have.
@@ -28,7 +27,6 @@ type CustomIconName =
   | 'share'
   | 'tick'
   | 'warning'
-  | 'plus'
   | 'ethereum' // TODO: Remove the ethereum icon, wherever it's used, it should be coming from the blockchain network feature
 
 type LibIconName =
@@ -103,8 +101,6 @@ export const Icon = (props: {
       return <Ionicon name='copy-outline' {...iconProps} />
     case 'edit':
       return <EditIcon {...svgProps} />
-    case 'plus':
-      return <PlusIcon {...svgProps} />
     case 'goto':
       return <GoToIcon {...svgProps} />
     case 'share':
