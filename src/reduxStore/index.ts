@@ -16,6 +16,7 @@ import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
 import {
+  createMigrate,
   FLUSH,
   PAUSE,
   PERSIST,
@@ -26,11 +27,17 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
+import {
+  REDUX_PERSIST_CURRENT_VERSION,
+  reduxPersistMigrations,
+} from './migrations'
 import { reduxPersistMmkvStorage } from './utils/mmkvPersistStorage'
 
 const persistConfig = {
   key: 'root',
   storage: reduxPersistMmkvStorage,
+  version: REDUX_PERSIST_CURRENT_VERSION,
+  migrate: createMigrate(reduxPersistMigrations, { debug: false }),
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
     BLOCKCHAIN_SLICE_NAME,
