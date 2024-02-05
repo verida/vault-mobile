@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { config } from 'config'
 import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
 import {
@@ -16,6 +17,7 @@ import debounce from 'lodash/debounce'
 import { combineReducers } from 'redux'
 import { batchedSubscribe } from 'redux-batched-subscribe'
 import {
+  createMigrate,
   FLUSH,
   PAUSE,
   PERSIST,
@@ -26,11 +28,17 @@ import {
   REHYDRATE,
 } from 'redux-persist'
 
+import {
+  REDUX_PERSIST_CURRENT_VERSION,
+  reduxPersistMigrations,
+} from './migrations'
 import { reduxPersistMmkvStorage } from './utils/mmkvPersistStorage'
 
 const persistConfig = {
   key: 'root',
   storage: reduxPersistMmkvStorage,
+  version: REDUX_PERSIST_CURRENT_VERSION,
+  migrate: createMigrate(reduxPersistMigrations, { debug: config.dev.devMode }),
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
     BLOCKCHAIN_SLICE_NAME,
