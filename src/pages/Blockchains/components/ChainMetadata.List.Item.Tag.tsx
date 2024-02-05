@@ -36,8 +36,7 @@ export const ChainMetadataListItemTag = React.memo(
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
     container: {
-      // @ts-expect-error truthy
-      flexWrap: 1,
+      flexWrap: 'wrap',
     },
     wrapper: {
       fontSize: 13,
