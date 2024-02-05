@@ -1,4 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
+import { config } from 'config'
 import { assetsApi } from 'features/assets'
 import { authSlice } from 'features/auth'
 import {
@@ -37,7 +38,7 @@ const persistConfig = {
   key: 'root',
   storage: reduxPersistMmkvStorage,
   version: REDUX_PERSIST_CURRENT_VERSION,
-  migrate: createMigrate(reduxPersistMigrations, { debug: false }),
+  migrate: createMigrate(reduxPersistMigrations, { debug: config.dev.devMode }),
   // Whitelisted nonsensitive data slides to store inside redux-persist
   whitelist: [
     BLOCKCHAIN_SLICE_NAME,
