@@ -113,10 +113,10 @@ class AccountManager extends EventEmitter {
         if (!isEmpty(this.accounts) && selectedAccountDid) {
           this.selectedAccount = this.accounts[selectedAccountDid]
           store.dispatch(setSelectedAccount(this.selectedAccount))
-        }
 
-        // Load or restore user wallets from the mnemonic
-        this.initUserWallets()
+          // Load or restore user wallets from the mnemonic
+          this.initUserWallets()
+        }
       }
     } catch (error) {
       logger.error(error)
@@ -139,7 +139,7 @@ class AccountManager extends EventEmitter {
       ])
 
       const wallets = JSON.parse(walletsRaw || '{}')
-      // No accounts available so needs to restore the wallets
+
       if (isEmpty(wallets?.[selectedWalletId!]?.accounts)) {
         const selectedAccount = this.getSelectedAccount()
         if (selectedAccount) {
@@ -148,7 +148,13 @@ class AccountManager extends EventEmitter {
         }
         await this.restoreUserWallet(true)
       } else {
-        store.dispatch(saveUserWallets(wallets))
+        const walletList = Object.values(wallets)
+        // Re-generating the blockchain accounts to sync with the current blockchains
+        const updatedWallets = await WalletManager.getBlockchainAccounts(
+          walletList as any
+        )
+
+        store.dispatch(saveUserWallets(updatedWallets))
         store.dispatch(setSelectedWallet(selectedWalletId!))
       }
 
