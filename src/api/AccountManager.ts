@@ -146,7 +146,6 @@ class AccountManager extends EventEmitter {
           const network = getNetworkFromDID(selectedAccount.did)
           await this.connect(false, network)
         }
-        await this.restoreUserWallet(true)
       } else {
         store.dispatch(saveUserWallets(wallets))
         store.dispatch(setSelectedWallet(selectedWalletId!))
@@ -633,7 +632,6 @@ class AccountManager extends EventEmitter {
         const network = getNetworkFromDID(did)
         await this.connect(true, network)
       }
-      await this.restoreUserWallet(true)
       DataConnectorsManager.emit('logout', null)
 
       store.dispatch(setSelectedAccount(this.selectedAccount))
@@ -728,7 +726,6 @@ class AccountManager extends EventEmitter {
       store.dispatch(setSelectedAccount(this.selectedAccount))
       store.dispatch(addAccount(this.selectedAccount))
       store.dispatch(fetchAllPublicProfilesData())
-      await this.restoreUserWallet(true)
 
       return this.selectedAccount
     } catch (error) {
