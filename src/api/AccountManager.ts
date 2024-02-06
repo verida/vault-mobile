@@ -148,13 +148,7 @@ class AccountManager extends EventEmitter {
         }
         await this.restoreUserWallet(true)
       } else {
-        const walletList = Object.values(wallets)
-        // Re-generating the blockchain accounts to sync with the current blockchains
-        const updatedWallets = await WalletManager.getBlockchainAccounts(
-          walletList as any
-        )
-
-        store.dispatch(saveUserWallets(updatedWallets))
+        store.dispatch(saveUserWallets(wallets))
         store.dispatch(setSelectedWallet(selectedWalletId!))
       }
 
@@ -187,6 +181,7 @@ class AccountManager extends EventEmitter {
     }
     this.context = await this.getVeridaContext(network)
     this.vault = await this.getVault()
+    await this.restoreUserWallet(true)
   }
 
   public static getInstance(): AccountManager {
@@ -382,8 +377,9 @@ class AccountManager extends EventEmitter {
 
   public async restoreUserWallet(clearWallets: boolean) {
     try {
+      const previouslySelectedWalletId = getSelectedWalletId(store.getState())
       if (clearWallets) {
-        await store.dispatch(removeUserWallets())
+        store.dispatch(removeUserWallets())
       }
 
       const datastore = await this.context?.openDatastore(
@@ -402,18 +398,20 @@ class AccountManager extends EventEmitter {
           JSON.stringify(wallets)
         )
 
-        const currentlySelectedWallet = getSelectedWalletId(store.getState())
+        const previouslySelectedWallet = previouslySelectedWalletId
+          ? wallets[previouslySelectedWalletId!]
+          : undefined
 
-        if (clearWallets || (!currentlySelectedWallet && hdWallets[0])) {
-          const selectedWalletID = hdWallets[0]._id
+        const selectedWalletId = previouslySelectedWallet
+          ? previouslySelectedWalletId
+          : hdWallets[0]._id
 
-          store.dispatch(setSelectedWallet(selectedWalletID))
+        store.dispatch(setSelectedWallet(selectedWalletId))
 
-          await SecureStore.setItemAsync(
-            SELECTED_WALLET_STORAGE_KEY,
-            selectedWalletID
-          )
-        }
+        await SecureStore.setItemAsync(
+          SELECTED_WALLET_STORAGE_KEY,
+          selectedWalletId
+        )
       }
     } catch (error) {
       logger.error(error)
