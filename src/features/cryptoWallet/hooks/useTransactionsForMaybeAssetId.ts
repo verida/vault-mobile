@@ -1,23 +1,25 @@
-import { AssetId } from 'caip'
+import { AssetId, ChainId } from 'caip'
 import * as React from 'react'
 
 import { useGetTransactionsForTokenQuery } from '../api'
-import { getWalletAddressForAsset } from '../utils'
-import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
+import { useMaybeSelectedWallet } from './useMaybeSelectedWallet'
 
 export function useTransactionsForMaybeAssetId({
   assetId: maybeAssetId,
 }: {
   readonly assetId: AssetId | null | undefined
 }) {
-  const minifiedBlockchainAccounts = useSelectedMinifiedBlockchainAccounts()
+  const chainId = maybeAssetId?.chainId
+    ? new ChainId(maybeAssetId.chainId).toString()
+    : null
 
-  const maybeAddress = getWalletAddressForAsset(
-    maybeAssetId,
-    minifiedBlockchainAccounts
-  )
+  const selectedWallet = useMaybeSelectedWallet()
+  const accounts = Object.values(selectedWallet?.accounts || {})
+  const account = chainId
+    ? accounts.find((accountItem) => accountItem.chainId === chainId)
+    : undefined
 
-  const userAddress = maybeAddress || null
+  const userAddress = account?.address || null
   const asset = maybeAssetId || null
 
   const skip = !userAddress || !asset
