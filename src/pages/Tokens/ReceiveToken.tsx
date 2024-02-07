@@ -2,9 +2,8 @@ import Clipboard from '@react-native-community/clipboard'
 import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
-  getWalletAddressForChainId,
   useChainIdForResourceParams,
-  useSelectedMinifiedBlockchainAccounts,
+  useMaybeSelectedWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -41,12 +40,13 @@ const ReceiveToken = () => {
 
   const chainId = useChainIdForResourceParams({ resource })
 
-  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
+  const selectedWallet = useMaybeSelectedWallet()
+  const accounts = Object.values(selectedWallet?.accounts || {})
+  const account = chainId
+    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+    : undefined
 
-  const maybeAddress = getWalletAddressForChainId(
-    chainId,
-    selectedMinifiedAccounts
-  )
+  const maybeAddress = account?.address || null
 
   const hasAddress = typeof maybeAddress === 'string' && Boolean(maybeAddress)
 

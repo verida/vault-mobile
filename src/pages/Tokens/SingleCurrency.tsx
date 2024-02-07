@@ -4,14 +4,12 @@ import { getMaybeChainMetadatas, useChainMetadatas } from 'features/blockchain'
 import {
   getAggregateWalletBannerBalanceResult,
   getSelectedWalletById,
-  getWalletAddressForChainId,
   ResourceParams,
   useAggregateWalletBannerBalances,
   useAggregateWalletBannerBalancesValuation,
   useAggregateWalletBannerBalancesWithResultCaching,
   useChainIdForResourceParams,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useSelectedMinifiedBlockchainAccounts,
   useTransactionsForMaybeAssetId,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
@@ -71,13 +69,12 @@ const SingleCurrency = () => {
     aggregateWalletBannerBalance: maybeAggregateWalletBannerBalance,
   })
 
-  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
+  const accounts = Object.values(selectedWallet?.accounts || {})
+  const account = chainId
+    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+    : undefined
 
-  // TODO: is this right? what about multiple competing private keys for the same network?
-  const maybeAddress = getWalletAddressForChainId(
-    chainId,
-    selectedMinifiedAccounts
-  )
+  const maybeAddress = account?.address || null
 
   // Here we fetch the balance for the specific selected asset, which returns
   // all assets which match the specified `resource`. Note, we could have just
