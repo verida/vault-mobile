@@ -2,7 +2,7 @@ import { useTheme } from 'contexts/ThemeContext'
 import React from 'react'
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore as it comes from our own declaration extension
-import { SvgProps, View } from 'react-native'
+import { DimensionValue, SvgProps, View } from 'react-native'
 import AntIcon from 'react-native-vector-icons/AntDesign'
 import FontAwesomeIcon from 'react-native-vector-icons/FontAwesome'
 import { IconProps } from 'react-native-vector-icons/Icon'
@@ -72,7 +72,7 @@ export type IconName = CustomIconName | LibIconName
 
 export const Icon = (props: {
   name: IconName
-  size?: number | string
+  size?: DimensionValue | undefined;
   color?: string
 }) => {
   const { theme } = useTheme()
@@ -324,7 +324,7 @@ export const Icon = (props: {
 }
 
 type IconWrapperProps = {
-  size?: number | string
+  size?: DimensionValue | undefined;
   children: React.ReactNode
 }
 function IconWrapper(props: IconWrapperProps) {

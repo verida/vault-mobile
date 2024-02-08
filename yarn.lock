@@ -21180,10 +21180,10 @@ react-native-camera@^4.0.2:
   dependencies:
     prop-types "^15.6.2"
 
-react-native-code-push@^8.1.0:
-  version "8.2.0"
-  resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-8.2.0.tgz#1bfc5c31f69bf0f9c93f8ecb1a25fb349c12e184"
-  integrity sha512-YjEpfQx8XuXhkZfRvhCglXxBYV9Z180BuIYvCl7BhxzsFq8DurBm+bPGlYgSuxlu2aqCqQ4WRSQGODuhEqgRsg==
+react-native-code-push@^8.2.1:
+  version "8.2.1"
+  resolved "https://registry.yarnpkg.com/react-native-code-push/-/react-native-code-push-8.2.1.tgz#25b2f1d2e6e30065d85f1707365462b2fbc22833"
+  integrity sha512-YCNDRTcVoK7pBMmm/CqOr+J3Pb7HjjHsWoke/xizv7Xx1NTN90k6jDykzAItiBMxJ0bc+zdFP1qNsZRT1NKHOg==
   dependencies:
     code-push "^4.2.0"
     glob "^7.1.7"
@@ -21371,10 +21371,10 @@ react-native-mmkv-flipper-plugin@^1.0.0:
   resolved "https://registry.yarnpkg.com/react-native-mmkv-flipper-plugin/-/react-native-mmkv-flipper-plugin-1.0.0.tgz#f87f747d8cea51d2b12a1e711287feff5f212788"
   integrity sha512-e3owMIBzXez45Wz8Ac84Vf1FmfwMXFVUpf/gCDWDLq19w7iCipVezQjlZo8ISVza8aQf1G4ggaK/r+qqtGmRlg==
 
-react-native-mmkv@2.5.1:
-  version "2.5.1"
-  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-2.5.1.tgz#29fc462077fab16a5e1b79570fbf8acaac9d87b4"
-  integrity sha512-5eQu25z3H6zf6w0NkJoTuFEFrbOu6luZxZ6+rK1W+XwY/rjPSFZFQPVtMaz3im90RbILFXXM/KrFGZrpaJJRoQ==
+react-native-mmkv@2.11.0:
+  version "2.11.0"
+  resolved "https://registry.yarnpkg.com/react-native-mmkv/-/react-native-mmkv-2.11.0.tgz#51b9985f6a5c09fe9c16d8c1861cc2901856ace1"
+  integrity sha512-28PdUHjZJmAw3q+8zJDAAdohnZMpDC7WgRUJxACOMkcmJeqS3u5cKS/lSq2bhf1CvaeIiHYHUWiyatUjMRCDQQ==
 
 react-native-modal-datetime-picker@^14.0.0:
   version "14.0.1"
