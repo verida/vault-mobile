@@ -17,48 +17,49 @@ export type CollapsibleContentProps = {
   expandedByDefault?: boolean
 } & ViewProps
 
-export const CollapsibleContent: React.FunctionComponent<CollapsibleContentProps> =
-  (props) => {
-    const { title, expandedByDefault, value, children, ...viewProps } = props
+export const CollapsibleContent: React.FunctionComponent<
+  CollapsibleContentProps
+> = (props) => {
+  const { title, expandedByDefault, value, children, ...viewProps } = props
 
-    const [isExpanded, setIsExpanded] = useState(expandedByDefault)
-    const styles = useThemeAwareStyle(createStyles)
+  const [isExpanded, setIsExpanded] = useState(expandedByDefault)
+  const styles = useThemeAwareStyle(createStyles)
 
-    const handleToggleCollapse = useCallback(() => {
-      setIsExpanded((prev) => !prev)
-    }, [])
+  const handleToggleCollapse = useCallback(() => {
+    setIsExpanded((prev) => !prev)
+  }, [])
 
-    return (
-      <View {...viewProps}>
-        <View style={styles.header}>
-          <Text style={styles.title}>{title}</Text>
-          <TouchableOpacity onPress={handleToggleCollapse} activeOpacity={0.8}>
-            <View style={styles.collapsibleButtonContent}>
-              {isExpanded ? (
-                <>
-                  <Icon
-                    name='chevron-up'
-                    size={24}
-                    style={styles.collapsibleButtonIcon}
-                  />
-                </>
-              ) : (
-                <>
-                  {value ? <Text style={styles.value}>{value}</Text> : null}
-                  <Icon
-                    name='chevron-down'
-                    size={24}
-                    style={styles.collapsibleButtonIcon}
-                  />
-                </>
-              )}
-            </View>
-          </TouchableOpacity>
-        </View>
-        {!isExpanded ? null : <View>{children}</View>}
+  return (
+    <View {...viewProps}>
+      <View style={styles.header}>
+        <Text style={styles.title}>{title}</Text>
+        <TouchableOpacity onPress={handleToggleCollapse} activeOpacity={0.8}>
+          <View style={styles.collapsibleButtonContent}>
+            {isExpanded ? (
+              <>
+                <Icon
+                  name='chevron-up'
+                  size={24}
+                  style={styles.collapsibleButtonIcon}
+                />
+              </>
+            ) : (
+              <>
+                {value ? <Text style={styles.value}>{value}</Text> : null}
+                <Icon
+                  name='chevron-down'
+                  size={24}
+                  style={styles.collapsibleButtonIcon}
+                />
+              </>
+            )}
+          </View>
+        </TouchableOpacity>
       </View>
-    )
-  }
+      {!isExpanded ? null : <View>{children}</View>}
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

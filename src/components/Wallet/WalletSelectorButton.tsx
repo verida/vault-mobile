@@ -78,68 +78,69 @@ export function useMaybeWalletSelectorButtonProps({
   ])
 }
 
-export const WalletSelectorButton: React.FunctionComponent<WalletSelectorButtonProps> =
-  (props) => {
-    const {
-      aggregateWalletBannerBalance,
-      label,
-      logo,
-      address,
-      alertType,
-      alertContent,
-      ...viewProps
-    } = props
+export const WalletSelectorButton: React.FunctionComponent<
+  WalletSelectorButtonProps
+> = (props) => {
+  const {
+    aggregateWalletBannerBalance,
+    label,
+    logo,
+    address,
+    alertType,
+    alertContent,
+    ...viewProps
+  } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    // TODO: Add the button when the wallet selector modal is ready
+  // TODO: Add the button when the wallet selector modal is ready
 
-    const nbDecimals = aggregateWalletBannerBalance?.valuation?.conversionRate
-      ? getSignificantDecimalsFromPrice(
-          aggregateWalletBannerBalance.valuation.conversionRate.toNumber()
-        )
-      : undefined
+  const nbDecimals = aggregateWalletBannerBalance?.valuation?.conversionRate
+    ? getSignificantDecimalsFromPrice(
+        aggregateWalletBannerBalance.valuation.conversionRate.toNumber()
+      )
+    : undefined
 
-    return (
-      <View {...viewProps}>
-        <View style={styles.container}>
-          <View style={styles.walletContainer}>
-            <Logo uri={logo} alt={label} style={styles.walletLogo} />
-            <View style={styles.walletInfoContainer}>
-              <Typography variant='h4' numberOfLines={1} ellipsizeMode='tail'>
-                {label}
-              </Typography>
-              <Typography
-                variant='body'
-                style={styles.walletAddress}
+  return (
+    <View {...viewProps}>
+      <View style={styles.container}>
+        <View style={styles.walletContainer}>
+          <Logo uri={logo} alt={label} style={styles.walletLogo} />
+          <View style={styles.walletInfoContainer}>
+            <Typography variant='h4' numberOfLines={1} ellipsizeMode='tail'>
+              {label}
+            </Typography>
+            <Typography
+              variant='body'
+              style={styles.walletAddress}
+              numberOfLines={1}
+              ellipsizeMode='middle'>
+              {address}
+            </Typography>
+            {aggregateWalletBannerBalance ? (
+              <NumberCrypto
+                value={fixedPointCryptoAsBigDecimal({
+                  amount: aggregateWalletBannerBalance.balance,
+                  decimals: aggregateWalletBannerBalance.decimals,
+                }).toNumber()}
+                unit={aggregateWalletBannerBalance.symbol}
+                nbDecimals={nbDecimals}
+                variant='bodySemiBold'
                 numberOfLines={1}
-                ellipsizeMode='middle'>
-                {address}
-              </Typography>
-              {aggregateWalletBannerBalance ? (
-                <NumberCrypto
-                  value={fixedPointCryptoAsBigDecimal({
-                    amount: aggregateWalletBannerBalance.balance,
-                    decimals: aggregateWalletBannerBalance.decimals,
-                  }).toNumber()}
-                  unit={aggregateWalletBannerBalance.symbol}
-                  nbDecimals={nbDecimals}
-                  variant='bodySemiBold'
-                  numberOfLines={1}
-                  ellipsizeMode='tail'
-                />
-              ) : null}
-            </View>
+                ellipsizeMode='tail'
+              />
+            ) : null}
           </View>
-          {alertContent ? (
-            <Alert type={alertType} style={styles.alertContainer}>
-              {alertContent}
-            </Alert>
-          ) : null}
         </View>
+        {alertContent ? (
+          <Alert type={alertType} style={styles.alertContainer}>
+            {alertContent}
+          </Alert>
+        ) : null}
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

@@ -12,35 +12,36 @@ export type NetworkIndicatorProps = ViewProps & {
   size?: NetworkIndicatorSize
 }
 
-export const NetworkIndicator: React.FunctionComponent<NetworkIndicatorProps> =
-  (props) => {
-    const { network, size = 'default', ...viewProps } = props
+export const NetworkIndicator: React.FunctionComponent<
+  NetworkIndicatorProps
+> = (props) => {
+  const { network, size = 'default', ...viewProps } = props
 
-    const styles = useThemeAwareStyle(createStyles)
-    const networkStyle = styles[network]
+  const styles = useThemeAwareStyle(createStyles)
+  const networkStyle = styles[network]
 
-    return (
-      <View {...viewProps}>
-        <View
+  return (
+    <View {...viewProps}>
+      <View
+        style={[
+          styles.container,
+          size === 'compact'
+            ? styles.containerCompact
+            : styles.containerDefault,
+          networkStyle,
+        ]}>
+        <Text
           style={[
-            styles.container,
-            size === 'compact'
-              ? styles.containerCompact
-              : styles.containerDefault,
-            networkStyle,
-          ]}>
-          <Text
-            style={[
-              styles.label,
-              size === 'compact' ? styles.labelCompact : styles.labelDefault,
-            ]}
-            numberOfLines={1}>
-            {network}
-          </Text>
-        </View>
+            styles.label,
+            size === 'compact' ? styles.labelCompact : styles.labelDefault,
+          ]}
+          numberOfLines={1}>
+          {network}
+        </Text>
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({
