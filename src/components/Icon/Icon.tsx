@@ -72,7 +72,7 @@ export type IconName = CustomIconName | LibIconName
 
 export const Icon = (props: {
   name: IconName
-  size?: DimensionValue | undefined;
+  size?: DimensionValue | undefined
   color?: string
 }) => {
   const { theme } = useTheme()
@@ -324,7 +324,7 @@ export const Icon = (props: {
 }
 
 type IconWrapperProps = {
-  size?: DimensionValue | undefined;
+  size?: DimensionValue | undefined
   children: React.ReactNode
 }
 function IconWrapper(props: IconWrapperProps) {
