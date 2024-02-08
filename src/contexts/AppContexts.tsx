@@ -1,8 +1,12 @@
 import { ActionSheetProvider } from '@expo/react-native-action-sheet'
 import { NavigationContainer } from '@react-navigation/native'
 import { AppHandlers } from 'contexts/AppHandlers'
+import { BlockchainProvider } from 'features/blockchain'
 import { ConfigProvider } from 'features/config'
-import { CryptoWalletProvider } from 'features/cryptoWallet'
+import {
+  CryptoWalletBalanceProvider,
+  CryptoWalletProvider,
+} from 'features/cryptoWallet'
 import { IdentityDrawerProvider } from 'features/identityDrawer'
 import { PolygonIdProvider } from 'features/polygonid'
 import { ProtocolsProvider } from 'features/protocols'
@@ -56,23 +60,27 @@ export const AppContexts: React.FunctionComponent<AppContextsProps> = (
                       <Authenticate>
                         <RootSiblingParent>
                           <ActionSheetProvider>
-                            <WalletConnectProvider>
-                              <GestureHandlerRootView style={{ flex: 1 }}>
+                            <BlockchainProvider>
+                              <CryptoWalletBalanceProvider>
                                 <CryptoWalletProvider>
-                                  <VeramoProvider>
-                                    <PolygonIdProvider>
-                                      <ProtocolsProvider>
-                                        {/* Keep the AppHandlers last */}
-                                        <AppHandlers />
-                                        {children}
-                                        {/*  */}
-                                      </ProtocolsProvider>
-                                    </PolygonIdProvider>
-                                  </VeramoProvider>
+                                  <WalletConnectProvider>
+                                    <GestureHandlerRootView style={{ flex: 1 }}>
+                                      <VeramoProvider>
+                                        <PolygonIdProvider>
+                                          <ProtocolsProvider>
+                                            {/* Keep the AppHandlers last */}
+                                            <AppHandlers />
+                                            {children}
+                                            {/*  */}
+                                          </ProtocolsProvider>
+                                        </PolygonIdProvider>
+                                      </VeramoProvider>
+                                    </GestureHandlerRootView>
+                                    <MetaServerChecks />
+                                  </WalletConnectProvider>
                                 </CryptoWalletProvider>
-                              </GestureHandlerRootView>
-                              <MetaServerChecks />
-                            </WalletConnectProvider>
+                              </CryptoWalletBalanceProvider>
+                            </BlockchainProvider>
                           </ActionSheetProvider>
                         </RootSiblingParent>
                       </Authenticate>

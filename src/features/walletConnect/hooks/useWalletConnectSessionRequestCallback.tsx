@@ -1,6 +1,5 @@
 import { IWeb3Wallet } from '@walletconnect/web3wallet'
 import { Web3WalletTypes } from '@walletconnect/web3wallet/dist/types/types/client'
-import { getMaybeChainMetadatas, useChainMetadatas } from 'features/caip'
 import { ActiveSessions } from 'features/walletConnect'
 import { useModal } from 'hooks'
 import * as React from 'react'
@@ -8,7 +7,6 @@ import * as React from 'react'
 import { useAuth } from 'hooks/useAuth'
 
 import { WalletConnectTransactionRequestModal } from '../components/WalletConnect.Transaction.Request.Modal'
-import { extractWalletConnectRpcOrThrow } from '../utils'
 import { useWalletConnectSessionRejectCallback } from './useWalletConnectSessionRejectCallback'
 
 // Acts as a multiplexer for WalletConnect session requests. It determines which
@@ -19,8 +17,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
 ) => void) => {
   const { showModal } = useModal()
   const { authenticated } = useAuth()
-
-  const chainMetadatas = getMaybeChainMetadatas(useChainMetadatas())
 
   // We could also optionally automatically approve calls here if needed:
   //const approve = useWalletConnectSessionApproveCallback()
@@ -41,11 +37,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
             false
           )
 
-        const { rpc } = extractWalletConnectRpcOrThrow({
-          request,
-          chainMetadatas,
-        })
-
         const { topic } = request
 
         const activeSessions: ActiveSessions =
@@ -60,7 +51,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
           <WalletConnectTransactionRequestModal
             web3wallet={web3wallet}
             request={request}
-            rpc={rpc}
             activeSession={maybeActiveSession}
           />
         )
@@ -68,6 +58,6 @@ export const useWalletConnectSessionRequestCallback = (): ((
         return reject(web3wallet, request, error)
       }
     },
-    [chainMetadatas, reject, showModal, authenticated]
+    [reject, showModal, authenticated]
   )
 }

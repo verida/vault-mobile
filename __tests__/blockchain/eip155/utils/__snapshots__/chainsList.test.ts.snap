@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`blockchain/eip155/utils/chainsList chainMetadatasToAddEthereumChainRequestParamsOrThrow::Mainnet 1`] = `
+[
+  {
+    "blockExplorerUrls": [
+      "https://etherscan.io",
+      "https://eth.blockscout.com",
+      "https://ethereum.dex.guru",
+    ],
+    "chainId": "0x1",
+    "chainName": "My Ethereum :)",
+    "nativeCurrency": {
+      "decimals": 18,
+      "name": "Ether",
+      "symbol": "ETH",
+    },
+    "rpcUrls": [
+      "$TEST_RPC_URL",
+    ],
+  },
+]
+`;
+
+exports[`blockchain/eip155/utils/chainsList chainsListMiniItemToAddEthereumRequestParam:xDai 1`] = `
+{
+  "blockExplorerUrls": [
+    "https://gnosisscan.io",
+    "https://gnosis.blockscout.com",
+    "https://gnosis.dex.guru",
+  ],
+  "chainId": "0x64",
+  "chainName": "Gnosis",
+  "nativeCurrency": {
+    "decimals": 18,
+    "name": "xDAI",
+    "symbol": "XDAI",
+  },
+  "rpcUrls": [
+    "https://rpc.gnosischain.com",
+    "https://rpc.gnosis.gateway.fm",
+    "https://rpc.ankr.com/gnosis",
+    "https://gnosischain-rpc.gateway.pokt.network",
+    "https://gnosis-mainnet.public.blastapi.io",
+    "https://gnosis.api.onfinality.io/public",
+    "https://gnosis.blockpi.network/v1/rpc/public",
+    "https://web3endpoints.com/gnosischain-mainnet",
+    "https://gnosis.oat.farm",
+    "wss://rpc.gnosischain.com/wss",
+    "https://gnosis.publicnode.com",
+    "wss://gnosis.publicnode.com",
+  ],
+}
+`;

@@ -1,16 +1,16 @@
 import { Icon } from 'components'
 import { useTheme } from 'contexts'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import { getTruncatedWalletAddress } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
 import { Pressable, StyleSheet, Text, View } from 'react-native'
 
 import { Avatar } from 'components/Images'
-import { WalletItem } from 'components/WalletList/types'
 import { Theme } from 'styles/types'
 
 interface WalletNavigationHeaderProps {
-  selectedWallet: WalletItem
+  selectedWallet: BlockchainWalletWithAccounts
   openWalletModal: () => void
 }
 
@@ -29,7 +29,7 @@ const WalletNavigationHeader = (props: WalletNavigationHeaderProps) => {
       onPress={openWalletModal}>
       <View style={styles.logoContainer}>
         <Avatar
-          source={selectedWallet.icon}
+          source={selectedWallet?.icon}
           fallbackType='wallet'
           style={styles.icon}
           borderColor={theme.color.primary100}

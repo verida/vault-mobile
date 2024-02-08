@@ -1,17 +1,17 @@
 import { useNavigation } from '@react-navigation/native'
-import { Icon } from 'components'
+import { Icon, Typography } from 'components'
 import { useTheme } from 'contexts'
 import {
-  getUniqueWalletAddresses,
   getWallets,
-  useGetBalancesQuery,
+  useAggregateWalletBannerBalancesValuation,
+  useAggregateWalletBannerBalancesWithResultCaching,
 } from 'features/cryptoWallet'
 import { useThemeAwareStyle } from 'hooks'
 import React from 'react'
-import { Pressable, StyleSheet, Text, View, ViewProps } from 'react-native'
+import { Pressable, StyleSheet, View, ViewProps } from 'react-native'
 import { useSelector } from 'react-redux'
-import { formatFiatCurrency } from 'utils'
 
+import { NumberFiat } from 'components/Numbers'
 import { Theme } from 'styles/types'
 
 type CryptoWalletOverviewProps = ViewProps
@@ -26,11 +26,16 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
 
   const navigation = useNavigation()
   const currentWallet = useSelector(getWallets)
-  const addresses = getUniqueWalletAddresses(currentWallet)
-  const { data } = useGetBalancesQuery(addresses)
-  const { total } = data || {}
+  const cachedAggregateWalletBannerBalances =
+    useAggregateWalletBannerBalancesWithResultCaching()
+  const { result: aggregateWalletBannerBalances } =
+    cachedAggregateWalletBannerBalances
+  const { price: walletValue, currency } =
+    useAggregateWalletBannerBalancesValuation({
+      aggregateWalletBannerBalances,
+    })
+
   const displayedLabel = currentWallet?.label || 'Crypto Wallet'
-  const displayedTotal = formatFiatCurrency(total || 0)
 
   const handlePress = () => {
     navigation.navigate('Assets' as never)
@@ -44,8 +49,15 @@ export const HomeCryptoWalletOverview: React.FC<CryptoWalletOverviewProps> = (
             <Icon name='wallet' size={24} color={theme.color.primary} />
           </View>
           <View>
-            <Text style={styles.walletLabel}>{displayedLabel}</Text>
-            <Text style={styles.walletAmount}>{displayedTotal}</Text>
+            <Typography variant='label' style={styles.walletLabel}>
+              {displayedLabel}
+            </Typography>
+            <NumberFiat
+              value={walletValue.toNumber()}
+              unit={currency}
+              variant='h4'
+              style={styles.walletValue}
+            />
           </View>
         </View>
         <Icon name='chevron-forward' size={24} color={theme.color.primary} />
@@ -74,15 +86,9 @@ const createStyles = (theme: Theme) =>
       marginRight: theme.spacing.sm,
     },
     walletLabel: {
-      fontFamily: theme.fontFamily.semibold,
       color: theme.color.primary300,
-      fontSize: theme.fontSize.s,
-      lineHeight: theme.fontSize.s * 1.5,
     },
-    walletAmount: {
-      fontFamily: theme.fontFamily.bold,
+    walletValue: {
       color: theme.color.primary,
-      fontSize: theme.fontSize.sl,
-      lineHeight: theme.fontSize.sl * 1.3,
     },
   })

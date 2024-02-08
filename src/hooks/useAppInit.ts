@@ -1,4 +1,5 @@
 import * as SplashScreen from 'expo-splash-screen'
+import { requestNotificationPermission } from 'features/notifications'
 import { Logger } from 'features/telemetry'
 import { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -35,6 +36,16 @@ export function useAppInit() {
 
     init()
   }, [loadFonts])
+
+  useEffect(() => {
+    const tid = setTimeout(() => {
+      requestNotificationPermission()
+    }, 1000)
+
+    return () => {
+      clearTimeout(tid)
+    }
+  }, [])
 
   return {
     initialised,

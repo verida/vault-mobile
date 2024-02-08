@@ -7,6 +7,7 @@ import Texture from 'assets/landing-bg.svg'
 import Logo from 'assets/logo.svg'
 import Text from 'components/Text'
 import { WHITE_COLOR } from 'constants/color'
+import { CONFUSED_FACE } from 'constants/strings'
 import { NUNITO_SANS_BOLD, NUNITO_SANS_SEMIBOLD } from 'constants/text'
 
 import Button from '../../components/Button'
@@ -16,7 +17,7 @@ interface Props {
 }
 
 export const MaintenanceScreen: React.FC<Props> = ({ maintenanceMode }) => {
-  const title = ':-/'
+  const title = CONFUSED_FACE
   const shutDownTitle =
     'The Verida Wallet is currently in maintenance. Sorry for the inconvenience.'
   const furtherInfoLink = maintenanceMode.link || 'https://news.verida.io/'

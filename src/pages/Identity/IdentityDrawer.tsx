@@ -3,6 +3,7 @@ import { EnvironmentType } from '@verida/types'
 import {
   DrawerIdentityList,
   DrawerShortcutButton,
+  Icon,
   IdentityAvatar,
   Typography,
 } from 'components'
@@ -160,11 +161,14 @@ export const IdentityDrawer: React.FunctionComponent<IdentityDrawerProps> = (
                 <Typography variant='h4' style={styles.identityListLabel}>
                   Identities
                 </Typography>
-                <TouchableOpacity onPress={handleAddIdentity}>
+                <TouchableOpacity
+                  onPress={handleAddIdentity}
+                  style={styles.addIdentityButton}>
+                  <Icon name='add' size={24} color={theme.color.primary} />
                   <Typography
                     variant='h4'
                     style={styles.addIdentityButtonLabel}>
-                    Add New
+                    Add
                   </Typography>
                 </TouchableOpacity>
               </View>
@@ -239,6 +243,10 @@ const createStyles = (theme: Theme) =>
     },
     identityListLabel: {
       color: theme.color.black700,
+    },
+    addIdentityButton: {
+      flexDirection: 'row',
+      alignItems: 'center',
     },
     addIdentityButtonLabel: {
       color: theme.color.primary,

@@ -6,25 +6,15 @@ import {
   useDeeplink,
 } from 'features/deepLinks'
 import { useProtocols } from 'features/protocols'
-import { Logger } from 'features/telemetry'
 import { isEmpty } from 'lodash'
 import React, { useCallback, useState } from 'react'
-import {
-  Alert,
-  Linking,
-  Platform,
-  StatusBar,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { Alert, Platform, StatusBar, StyleSheet, View } from 'react-native'
 import { BarCodeReadEvent, RNCamera } from 'react-native-camera'
 import parse from 'url-parse'
 import { useDebouncedCallback } from 'use-debounce'
 
 import { MainStackScreenProps } from 'navigation/types'
 import { QrCodeScannerOverlay } from 'pages/QrCodeScanner/QrCodeScannerOverlay'
-
-const logger = new Logger('Pages/QrCodeScanner/QrCodeScannerScreen')
 
 const WAIT_TIME = 3000
 
@@ -53,8 +43,14 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
     }, [navigation])
 
     const processQrCodeMessage = useCallback(
-      async (data: string) => {
+      async (data?: string) => {
         setProcessing(true)
+
+        if (!data) {
+          setProcessing(false)
+          Alert.alert('Error', 'QR Code invalid')
+          return
+        }
 
         if (route.params.onReadQRCode) {
           route.params.onReadQRCode(data)
@@ -83,19 +79,8 @@ export const QrCodeScannerScreen: React.FunctionComponent<QrCodeScannerScreenPro
           return
         }
 
-        // Check if can be opened by device
-        try {
-          if (await Linking.canOpenURL(data)) {
-            // TODO: Do we really want to continue opening any data non-supported by the Verida Wallet?
-            await Linking.openURL(data)
-            return
-          }
-        } catch (error) {
-          logger.error(error)
-        }
-
         setProcessing(false)
-        Alert.alert('Error', 'QR Code not supported')
+        Alert.alert('Error', 'QR Code not supported by the Verida Wallet')
       },
       [
         processQrCodeByProtocolHandlers,

@@ -3,6 +3,7 @@ import expo.modules.ReactActivityDelegateWrapper;
 
 import android.os.Build;
 import android.os.Bundle;
+import android.view.View;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;
@@ -15,7 +16,12 @@ public class MainActivity extends ReactActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         setTheme(R.style.AppTheme);
-        super.onCreate(savedInstanceState);
+        super.onCreate(null);
+
+        // get the root view and activate touch filtering to prevent tap jacking
+        View v = findViewById(android.R.id.content);
+        v.setFilterTouchesWhenObscured(true);
+        
         SplashScreen.show(this, SplashScreenImageResizeMode.COVER, ReactRootView.class, false);
     }
 

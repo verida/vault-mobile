@@ -38,6 +38,9 @@ export const ProtocolsProvider: React.FunctionComponent = (props) => {
         }
       })
 
+      // TODO: This should be a dedicated protocol handler
+      //       For now, we just migrate existing usage.
+
       if (wasHandled) {
         logger.info('The deep link was processed')
       } else {

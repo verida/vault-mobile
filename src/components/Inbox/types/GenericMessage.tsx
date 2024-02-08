@@ -1,5 +1,6 @@
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
 import { Logger } from 'features/telemetry'
+import { useEmitter } from 'hooks'
 import { get, isEmpty } from 'lodash'
 import moment from 'moment'
 import { Content } from 'native-base'
@@ -10,6 +11,7 @@ import AccountManager from 'api/AccountManager'
 import { DefaultAvatar, getPublicProfile } from 'api/utils'
 import MailSvg from 'assets/icons/mail.svg'
 import Button from 'components/Button'
+import { ShimmerPlaceholder } from 'components/ShimmerPlaceholder'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 import { MainStackParams } from 'navigation/types'
 
@@ -25,6 +27,9 @@ type GenericMessageProps = {
 type Sender = {
   name: string
   avatar: any // what should this be?
+
+  // transient prop
+  isLoading?: boolean
 }
 
 const defaultSender: Sender = {
@@ -34,30 +39,35 @@ const defaultSender: Sender = {
 
 function GenericMessage(props: GenericMessageProps) {
   const { inboxItem, navigation } = props
-
   const [sender, setSender] = useState<Sender>(defaultSender)
-
   const [submitting, setSubmitting] = useState(false)
 
-  useEffect(() => {
-    async function fetchSenderData() {
-      try {
-        const senderDid: string | undefined = get(inboxItem, 'sentBy.did')
-        if (!senderDid) {
-          return
-        }
-        const { name, avatar } = await getPublicProfile(senderDid)
-        setSender({
-          name,
-          avatar,
-        })
-      } catch (error) {
-        logger.error(error)
+  const fetchSenderData = React.useCallback(async () => {
+    try {
+      const senderDid: string | undefined = get(inboxItem, 'sentBy.did')
+      if (!senderDid) {
+        return
       }
+      const { name, avatar, isLoading } = await getPublicProfile(senderDid)
+      setSender({
+        isLoading,
+        name,
+        avatar,
+      })
+    } catch (error) {
+      logger.error(error)
     }
-
-    fetchSenderData()
   }, [inboxItem])
+
+  useEmitter('PUBLIC_PROFILE_LOADED', async (event) => {
+    if (event.profileId.indexOf(inboxItem?.item?.sentBy?.did) >= 0) {
+      fetchSenderData()
+    }
+  })
+
+  useEffect(() => {
+    fetchSenderData()
+  }, [fetchSenderData])
 
   const openLink = async (url: string) => {
     onSubmit()
@@ -73,21 +83,15 @@ function GenericMessage(props: GenericMessageProps) {
       setSubmitting(true)
 
       const vault = AccountManager.getInstance().vault
-      const handleResult = await vault?.inbox.handleAction(
-        inboxItem,
-        'accept',
-        {}
-      )
+      await vault?.inbox.handleAction(inboxItem, 'accept', {})
       setSubmitting(false)
-      if (!handleResult?.success) {
-        Alert.alert('Error', 'Invalid schema, part of data maybe missing')
-      } else {
-        navigation.goBack()
-      }
-      setSubmitting(false)
+      navigation.goBack()
     } catch (error) {
       setSubmitting(false)
-      Alert.alert('Error', 'Can not set message as read')
+      Alert.alert(
+        'Error',
+        'Something went wrong when marking the message as read'
+      )
       logger.error(error)
     }
   }
@@ -120,9 +124,17 @@ function GenericMessage(props: GenericMessageProps) {
         </View>
       </View>
       <View style={styles.senderContainer}>
-        <Image source={sender.avatar} style={styles.senderAvatar} />
+        <ShimmerPlaceholder
+          visible={!sender.isLoading}
+          style={styles.senderAvatar}>
+          <Image source={sender.avatar} style={styles.senderAvatar} />
+        </ShimmerPlaceholder>
         <View>
-          <Text style={styles.senderName}>{sender.name}</Text>
+          <ShimmerPlaceholder
+            visible={!sender.isLoading}
+            style={styles.senderName}>
+            <Text style={styles.senderName}>{sender.name}</Text>
+          </ShimmerPlaceholder>
           <Text style={styles.sentAt}>{formattedSentAt}</Text>
         </View>
       </View>

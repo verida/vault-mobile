@@ -36,28 +36,24 @@ export class InboxManager {
   public async handleAction(
     inboxEntry: InboxEntry,
     action: keyof DataAction,
-    payload: any
+    payload: unknown
   ) {
+    logger.debug('Handling inbox item action', { inboxEntry, action, payload })
+    logger.debug('Initializing messaging')
     await this.init()
+    logger.debug('Messaging initialized')
     const inbox = await this.messaging.getInbox()
 
+    logger.debug('Inbox entry status', { status: inboxEntry.data.status })
     if (inboxEntry.data.status) {
       throw new Error('Data has already been set to ' + inboxEntry.data.status)
     }
 
     inboxEntry.data.status = action
-    inboxEntry.read = true
-
-    await inbox.privateInbox.save(inboxEntry)
 
     const Middleware = DataHandler[inboxEntry.type]
     if (!Middleware) {
-      const error = new Error('Unknown inbox type!: ' + inboxEntry.type)
-      logger.error(error)
-      return {
-        success: false,
-        errors: [error],
-      }
+      throw new Error('Unknown inbox type!: ' + inboxEntry.type)
     }
 
     const MiddlewareInstance = new Middleware(
@@ -66,7 +62,13 @@ export class InboxManager {
       inboxEntry,
       payload
     )
-    return MiddlewareInstance[action]()
+
+    logger.debug('Executing action')
+    await MiddlewareInstance[action]()
+
+    inboxEntry.read = true
+    logger.debug('Saving inbox entry', { inboxEntry })
+    await inbox.privateInbox.save(inboxEntry)
   }
 
   public async fetchLatest(filter = {}, options = {}) {

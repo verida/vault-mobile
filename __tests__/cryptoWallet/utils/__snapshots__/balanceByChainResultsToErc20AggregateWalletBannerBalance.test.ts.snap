@@ -1,0 +1,26 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`cryptoWallet/utils/balanceByChainResultsToErc20AggregateWalletBannerBalance mock 1`] = `
+[
+  {
+    "balance": "500000000",
+    "decimals": 6,
+    "icon": "https://s2.coinmarketcap.com/static/img/coins/64x64/3408.png",
+    "label": "USDC",
+    "resource": {
+      "assetName": {
+        "namespace": "ERC20",
+        "reference": "0x07865c6e87b9f70255377e024ace6630c1eaa37f",
+      },
+      "chainId": {
+        "namespace": "eip155",
+        "reference": "5",
+      },
+      "tokenId": "1",
+    },
+    "symbol": "USDC",
+    "type": 1,
+    "valuation": null,
+  },
+]
+`;
