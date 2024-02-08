@@ -1,6 +1,7 @@
 import Clipboard from '@react-native-community/clipboard'
 import { RouteProp, useRoute } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
+import { NFTMetadata } from 'features/assets'
 import { getWallets } from 'features/cryptoWallet'
 import React, { FC, ReactNode } from 'react'
 import {
@@ -14,7 +15,6 @@ import {
   ViewProps,
 } from 'react-native'
 
-import { NFTMetadata } from 'api/types'
 import { NftItem } from 'components/Assets/NftItem'
 import { Icon } from 'components/Icon'
 import LoadingIndicator from 'components/LoadingIndicator'

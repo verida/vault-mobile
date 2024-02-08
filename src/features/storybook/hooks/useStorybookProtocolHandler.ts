@@ -19,7 +19,7 @@ export function useStorybookProtocolHandler(): ProtocolHandler {
 
         const key = `${nanoid()}`
 
-        void InteractionManager.runAfterInteractions(() =>
+        InteractionManager.runAfterInteractions(() =>
           navigation.reset({
             key,
             routes: [{ key, name: '__Storybook__' }],

@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -154,7 +154,7 @@
     "react-native-keychain": "^6.2.0",
     "react-native-level-fs": "^3.0.1",
     "react-native-localhost": "^1.0.0",
-    "react-native-mmkv": "2.11.0",
+    "react-native-mmkv": "2.5.1",
     "react-native-mmkv-flipper-plugin": "^1.0.0",
     "react-native-os": "^1.2.6",
     "react-native-pager-view": "6.0.2",

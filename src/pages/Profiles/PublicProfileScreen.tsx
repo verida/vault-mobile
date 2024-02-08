@@ -1,7 +1,12 @@
 import { useActionSheet } from '@expo/react-native-action-sheet'
 import { useTheme } from 'contexts/ThemeContext'
 import { LinearGradient } from 'expo-linear-gradient'
-import { getAllWallets, getBlockchainNetworks } from 'features/cryptoWallet'
+import {
+  BlockchainNetwork,
+  BlockchainWalletWithAccounts,
+  getBlockchainNetworks,
+} from 'features/blockchain'
+import { getAllWallets } from 'features/cryptoWallet'
 import { selectSelectedAccount } from 'features/identities'
 import {
   PublicProfile as IPublicProfile,
@@ -50,7 +55,6 @@ import useDeepCompareEffect from 'use-deep-compare-effect'
 
 import AccountManager from 'api/AccountManager'
 import DataConnectorsManager from 'api/DataConnectorsManager'
-import { BlockchainNetwork, BlockchainWalletWithAccounts } from 'api/types'
 import UsernameManager from 'api/UsernameManager'
 import Button from 'components/Button'
 import LoadingView from 'components/LoadingView'

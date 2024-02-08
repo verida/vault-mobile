@@ -1,5 +1,6 @@
 export * from './calculateTransactionFee.Eip155'
 export * from './chainsList'
+export * from './eip155Blockchain'
 export * from './getBalance.Eip155'
 export * from './sendNativeCurrency.Eip155'
 export * from './sendErc20.Eip155'

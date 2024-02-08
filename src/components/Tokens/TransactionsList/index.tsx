@@ -15,24 +15,32 @@ export default ({
   onPullToRefresh,
   refreshing,
 }: {
-  readonly aggregateWalletBannerBalance: AggregateWalletBannerBalance
+  readonly aggregateWalletBannerBalance?: AggregateWalletBannerBalance
   readonly list: readonly Transaction[]
   readonly errorType?: unknown
   readonly onPullToRefresh: () => void
   readonly refreshing: boolean
 }) => {
   const renderItem = React.useCallback(
-    ({ item }) => (
-      <TransactionsListItem
-        aggregateWalletBannerBalance={aggregateWalletBannerBalance}
-        item={item}
-      />
-    ),
+    ({ item }) => {
+      if (!aggregateWalletBannerBalance) {
+        return null
+      }
+      return (
+        <TransactionsListItem
+          aggregateWalletBannerBalance={aggregateWalletBannerBalance}
+          item={item}
+        />
+      )
+    },
     [aggregateWalletBannerBalance]
   )
-  const { resource } = aggregateWalletBannerBalance
 
-  const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
+  const maybeChainMetadata = aggregateWalletBannerBalance?.resource
+    ? useMaybeChainMetadataForResource({
+        resource: aggregateWalletBannerBalance.resource,
+      })
+    : null
 
   let errorMessage = 'No transactions found'
   switch (errorType) {

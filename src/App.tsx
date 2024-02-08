@@ -13,6 +13,7 @@ import {
 } from 'features/cryptoWallet'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { IdentityDrawerProvider } from 'features/identityDrawer'
+import { requestNotificationPermission } from 'features/notifications'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import React, { useEffect, useState } from 'react'
@@ -84,6 +85,16 @@ function App() {
     }
 
     init()
+  }, [])
+
+  useEffect(() => {
+    const tid = setTimeout(() => {
+      requestNotificationPermission()
+    }, 1000)
+
+    return () => {
+      clearTimeout(tid)
+    }
   }, [])
 
   const AppContent = (

@@ -1,4 +1,5 @@
 import BigDecimal from 'bignumber.js'
+import { ChainMetadata } from 'features/caip'
 
 import {
   AggregateWalletBannerBalanceErc20,
@@ -11,8 +12,10 @@ import { isNativeToken } from './isNativeToken'
 // Interrogates BalanceByChainResults in search specigically for ERC20s.
 export function balanceByChainResultsToErc20AggregateWalletBannerBalance({
   balanceByChainResults,
+  chainMetadatas,
 }: {
   readonly balanceByChainResults: readonly BalanceByChainResult[]
+  readonly chainMetadatas: readonly ChainMetadata[]
 }): readonly AggregateWalletBannerBalanceErc20[] {
   return balanceByChainResults
     .filter((e) => !isNativeToken(e.asset))
@@ -29,6 +32,12 @@ export function balanceByChainResultsToErc20AggregateWalletBannerBalance({
           symbol,
         } = balanceByChainResult
 
+        const assetChain = chainMetadatas.find(
+          (chain) =>
+            chain.namespace === resource.chainId.namespace &&
+            chain.reference === resource.chainId.reference
+        )
+
         const balance = `${new BigDecimal(balanceInCurrencyUnits).multipliedBy(
           new BigDecimal(10).pow(decimals)
         )}` as `${number}`
@@ -42,11 +51,13 @@ export function balanceByChainResultsToErc20AggregateWalletBannerBalance({
             symbol,
             icon,
             label,
-            valuation: balanceByChainResultToValuation({
-              balanceByChainResult,
-              balance,
-              decimals,
-            }),
+            valuation: assetChain?.isMainnet
+              ? balanceByChainResultToValuation({
+                  balanceByChainResult,
+                  balance,
+                  decimals,
+                })
+              : null,
           },
         ]
       }

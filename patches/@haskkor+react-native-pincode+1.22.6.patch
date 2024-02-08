@@ -1,0 +1,99 @@
+diff --git a/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeChoose.js b/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeChoose.js
+index 86cedfb..6258739 100644
+--- a/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeChoose.js
++++ b/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeChoose.js
+@@ -5,6 +5,9 @@ const utils_1 = require("./utils");
+ const React = require("react");
+ const react_native_1 = require("react-native");
+ const Keychain = require("react-native-keychain");
++
++import * as SecureStore from 'helpers/VeridaSecureStore'
++
+ class PinCodeChoose extends React.PureComponent {
+     constructor(props) {
+         super(props);
+@@ -20,7 +23,7 @@ class PinCodeChoose extends React.PureComponent {
+                     this.props.storePin(pinCode);
+                 }
+                 else {
+-                    await Keychain.setInternetCredentials(this.props.pinCodeKeychainName, this.props.pinCodeKeychainName, pinCode, utils_1.noBiometricsConfig);
++                    await SecureStore.setItemAsync(this.props.pinCodeKeychainName, pinCode);
+                 }
+                 if (!!this.props.finishProcess)
+                     this.props.finishProcess(pinCode);
+diff --git a/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeEnter.js b/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeEnter.js
+index 23baa84..388c43c 100644
+--- a/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeEnter.js
++++ b/node_modules/@haskkor/react-native-pincode/dist/src/PinCodeEnter.js
+@@ -8,6 +8,9 @@ const React = require("react");
+ const react_native_1 = require("react-native");
+ const Keychain = require("react-native-keychain");
+ const react_native_touch_id_1 = require("react-native-touch-id");
++
++import * as SecureStore from 'helpers/VeridaSecureStore'
++
+ class PinCodeEnter extends React.PureComponent {
+     constructor(props) {
+         super(props);
+@@ -60,11 +63,16 @@ class PinCodeEnter extends React.PureComponent {
+         this.endProcess = this.endProcess.bind(this);
+         this.launchTouchID = this.launchTouchID.bind(this);
+         if (!this.props.storedPin) {
+-            Keychain.getInternetCredentials(this.props.pinCodeKeychainName, utils_1.noBiometricsConfig).then(result => {
+-                this.keyChainResult = result && result.password || undefined;
++            SecureStore.getItemAsync(this.props.pinCodeKeychainName).then(code => {
++                this.keyChainResult = code;
+             }).catch(error => {
+                 console.log('PinCodeEnter: ', error);
+             });
++            // Keychain.getInternetCredentials(this.props.pinCodeKeychainName, utils_1.noBiometricsConfig).then(result => {
++            //     this.keyChainResult = result && result.password || undefined;
++            // }).catch(error => {
++            //     console.log('PinCodeEnter: ', error);
++            // });
+         }
+     }
+     componentDidMount() {
+diff --git a/node_modules/@haskkor/react-native-pincode/dist/src/utils.js b/node_modules/@haskkor/react-native-pincode/dist/src/utils.js
+index c509f91..9388a1a 100644
+--- a/node_modules/@haskkor/react-native-pincode/dist/src/utils.js
++++ b/node_modules/@haskkor/react-native-pincode/dist/src/utils.js
+@@ -3,6 +3,9 @@ Object.defineProperty(exports, "__esModule", { value: true });
+ const react_native_1 = require("react-native");
+ const async_storage_1 = require("@react-native-community/async-storage");
+ const Keychain = require("react-native-keychain");
++
++import * as SecureStore from 'helpers/VeridaSecureStore'
++
+ var PinResultStatus;
+ (function (PinResultStatus) {
+     PinResultStatus["initial"] = "initial";
+@@ -11,12 +14,24 @@ var PinResultStatus;
+     PinResultStatus["locked"] = "locked";
+ })(PinResultStatus = exports.PinResultStatus || (exports.PinResultStatus = {}));
+ exports.hasPinCode = async (serviceName) => {
+-    return await Keychain.getInternetCredentials(serviceName).then(res => {
+-        return !!res && !!res.password;
+-    });
++    
++    // Get the plain pincode in the keychain
++    const currentCode = await Keychain.getInternetCredentials(serviceName)
++    if (!!currentCode && !!currentCode.password) {
++        SecureStore.setItemAsync(serviceName, currentCode.password)
++
++        // clear old storage
++        Keychain.resetInternetCredentials(serviceName)
++        return true
++    }
++
++    return await SecureStore.getItemAsync(serviceName).then(code => {
++        return !!code
++    })
++
+ };
+ exports.deletePinCode = async (serviceName) => {
+-    return await Keychain.resetInternetCredentials(serviceName);
++    return await SecureStore.deleteItemAsync(serviceName);
+ };
+ exports.resetInternalStates = async (asyncStorageKeys) => {
+     return await async_storage_1.default.multiRemove(asyncStorageKeys);

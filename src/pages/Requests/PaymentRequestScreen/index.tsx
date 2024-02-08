@@ -9,7 +9,7 @@ import {
   getAggregateWalletBannerBalanceResult,
   getChainIdParamsFromResourceParams,
   useAggregateWalletBannerBalances,
-  useChainIdForResourceParams,
+  useMaybeChainMetadataForResource,
 } from 'features/cryptoWallet'
 import { Protocol } from 'features/protocols'
 import { useThemeAwareStyle } from 'hooks'
@@ -61,6 +61,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       []
     )
 
+    // TODO: This useAggregateWalletBannerBalances used everywhere doesn't make any sense!
     const [maybeAggregateWalletBannerBalance] =
       getAggregateWalletBannerBalanceResult(
         useAggregateWalletBannerBalances({
@@ -101,7 +102,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
       [logo, onToggleDetails, senderName]
     )
 
-    const chainId = useChainIdForResourceParams({ resource })
+    const maybeChainMetadata = useMaybeChainMetadataForResource({ resource })
 
     useImmediateLayoutAnimation([paymentRequestId])
 
@@ -146,7 +147,7 @@ export const PaymentRequestScreen: React.FunctionComponent<PaymentRequestScreenP
                     aggregateWalletBannerBalance:
                       maybeAggregateWalletBannerBalance,
                     integerCryptoAmount,
-                    chainId,
+                    chainMetadata: maybeChainMetadata || undefined,
                   }}
                   // HACK: We cannot determine the transfer fee of an
                   //       unknown resource.

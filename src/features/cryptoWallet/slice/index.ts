@@ -1,8 +1,7 @@
 import type { PayloadAction } from '@reduxjs/toolkit'
 import { createSlice } from '@reduxjs/toolkit'
 import { logout } from 'features/auth'
-
-import { BlockchainWalletWithAccounts } from 'api/types'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 
 import {
   addWatchedWallet,

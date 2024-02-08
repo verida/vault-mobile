@@ -1,8 +1,11 @@
 import BigDecimal from 'bignumber.js'
 import { AccountId, AssetId, AssetIdParams, ChainIdParams } from 'caip'
-import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
+import {
+  BlockchainAccount,
+  BlockchainNetwork,
+  SupportedBlockchainNamespace,
+} from 'features/blockchain'
 
-import { BlockchainAccount, BlockchainNetwork } from 'api/types'
 import { Option } from 'components/Select'
 
 // Types copied from the Wallet-Provider
@@ -200,7 +203,7 @@ export type PriceIntervals = {
 
 export type Valuation = {
   readonly currency: Currency
-  readonly price: BigDecimal
+  readonly price: BigDecimal // TODO: Should not be price but value
 }
 
 export type DetailedValuation = Valuation & {

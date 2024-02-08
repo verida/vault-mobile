@@ -89,8 +89,8 @@ export const PaymentRequestScreenContent = React.memo(
           requestHeaderProps={requestHeaderProps}
           requestPaymentValueProps={{
             aggregateWalletBannerBalance,
-            chainId,
             integerCryptoAmount,
+            chainMetadata: maybeChainMetadata || undefined,
           }}
           requestPaymentFeeProps={
             maybeChainMetadata

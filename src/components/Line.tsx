@@ -11,9 +11,9 @@ interface LineProps extends ViewProps {
 export function Line(props: LineProps) {
   const { theme } = useTheme()
   const {
-    vertical,
+    vertical = false,
     size = 1,
-    color = theme.color.separatorExtraLight,
+    color = theme.color.separatorLight,
     style,
     ...rest
   } = props
@@ -31,7 +31,3 @@ export function Line(props: LineProps) {
     />
   )
 }
-
-Line.defaultProps = {
-  vertical: false,
-} as LineProps

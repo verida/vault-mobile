@@ -59,11 +59,13 @@ export async function initNotifications() {
             break
         }
 
-        // (required) Called when a remote is received or opened, or local notification is opened
-        notification.finish(PushNotificationIOS.FetchResult.NoData)
+        if (Platform.OS === 'ios') {
+          // (required) Called when a remote is received or opened, or local notification is opened
+          notification.finish(PushNotificationIOS.FetchResult.NoData)
 
-        // Ensure the badge is not display until we define what to do with it.
-        PushNotificationIOS.setApplicationIconBadgeNumber(0)
+          // Ensure the badge is not display until we define what to do with it.
+          PushNotificationIOS.setApplicationIconBadgeNumber(0)
+        }
       } catch (error) {
         logger.error(error)
       }
@@ -103,7 +105,9 @@ export async function initNotifications() {
     // There's an issue with the multi-identity feature, only one is active at a time, so refreshing the inbox would only work for the active identity, which may not be the one of the notification.
     pushRefreshInboxNotification()
   })
+}
 
+export async function requestNotificationPermission() {
   if (Platform.OS === 'android') {
     try {
       // Request permission to send notifications
