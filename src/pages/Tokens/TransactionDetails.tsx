@@ -1,11 +1,10 @@
 import { RouteProp } from '@react-navigation/native'
 import {
   AggregateWalletBannerBalance,
-  getWalletAddressForChainId,
   useChainIdForResourceParams,
   useGetTransactionDetailsQuery,
   useMaybeAssetIdForAggregateWalletBannerBalance,
-  useSelectedMinifiedBlockchainAccounts,
+  useMaybeSelectedWallet,
 } from 'features/cryptoWallet'
 import { Container, Icon } from 'native-base'
 import React from 'react'
@@ -33,11 +32,15 @@ const TransactionDetails = () => {
     useParams<TransactionDetailsScreenProps>()
 
   const { resource } = aggregateWalletBannerBalance
-
-  const selectedMinifiedAccounts = useSelectedMinifiedBlockchainAccounts()
   const chainId = useChainIdForResourceParams({ resource })
 
-  const address = getWalletAddressForChainId(chainId, selectedMinifiedAccounts)
+  const selectedWallet = useMaybeSelectedWallet()
+  const accounts = Object.values(selectedWallet?.accounts || {})
+  const account = chainId
+    ? accounts.find((accountItem) => accountItem.chainId === chainId.toString())
+    : undefined
+
+  const address = account?.address || null
 
   const maybeAsset = useMaybeAssetIdForAggregateWalletBannerBalance({
     aggregateWalletBannerBalance,
