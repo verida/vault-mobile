@@ -52,6 +52,9 @@ export const config = {
       hidePromoBanners: false,
       hideGettingStarted: false,
     },
+    blockchain: {
+      enableCustomNetwork: false,
+    },
   },
   verida: {
     [EnvironmentType.LOCAL]: {

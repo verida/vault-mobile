@@ -4,9 +4,15 @@ import {
   NavigatorScreenParams,
 } from '@react-navigation/native'
 import { NativeStackScreenProps } from '@react-navigation/native-stack'
+import { NFT, NFTCollection } from 'features/assets'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 
-import { BlockchainWalletWithAccounts, NFT, NFTCollection } from 'api/types'
+import { AssetsScreenParams } from 'pages/Assets'
 import { SelectAssetScreenProps } from 'pages/Assets/SelectAsset'
+import {
+  BlockchainNetworkEditorScreenParams,
+  BlockchainNetworksScreenParams,
+} from 'pages/Blockchains'
 import {
   DataFolderScreenParams,
   DataItemScreenParams,
@@ -46,6 +52,14 @@ import {
   PolygonIdCircuitsSettingsScreenParams,
   SettingsScreenParams,
 } from 'pages/Settings'
+import { ConfirmTransactionScreenProps } from 'pages/Tokens/ConfirmTransaction'
+import { ReceiveTokenScreenProps } from 'pages/Tokens/ReceiveToken'
+import { SendTokenScreenProps } from 'pages/Tokens/SendToken'
+import { SingleCurrencyScreenProps } from 'pages/Tokens/SingleCurrency'
+import { TokenRecipientScreenProps } from 'pages/Tokens/TokenRecipient'
+import { TransactionDetailsScreenProps } from 'pages/Tokens/TransactionDetails'
+import { TransactionFailureScreenProps } from 'pages/Tokens/TransactionFailure'
+import { TransactionSuccessScreenProps } from 'pages/Tokens/TransactionSuccess'
 import type { WalletConnectActiveSessionDetailsParams } from 'pages/WalletConnectActiveSessionDetails'
 
 export type RootStackParams = {
@@ -72,7 +86,7 @@ export type TabsScreenParams = {
   Profile: PublicProfileScreenParams
   Data: DataTabScreenParams
   // Connections: undefined // TODO: uncomment when ready
-  Assets: undefined
+  Assets: AssetsScreenParams
 }
 
 export type TabsScreenProps<S extends keyof TabsScreenParams> =
@@ -101,15 +115,15 @@ export type MainStackParams = {
 
   SeedPhraseView: undefined
   ManageWallets: undefined
-  SingleCurrency: undefined
-  SendToken: undefined
-  TokenRecipient: undefined
-  ConfirmTransaction: undefined
-  TransactionSuccess: undefined
-  TransactionFailure: undefined
-  TransactionDetails: undefined
+  SingleCurrency: SingleCurrencyScreenProps
+  SendToken: SendTokenScreenProps
+  TokenRecipient: TokenRecipientScreenProps
+  ConfirmTransaction: ConfirmTransactionScreenProps
+  TransactionSuccess: TransactionSuccessScreenProps
+  TransactionFailure: TransactionFailureScreenProps
+  TransactionDetails: TransactionDetailsScreenProps
   BuyToken: undefined
-  ReceiveToken: undefined
+  ReceiveToken: ReceiveTokenScreenProps
   SingleWallet: { item: BlockchainWalletWithAccounts }
   OtherAddresses: undefined
   SuccessFailure: undefined
@@ -133,6 +147,8 @@ export type MainStackParams = {
     onConfirm: (selectedItems: ShareableDataItemType[]) => void
     filter: any
   }
+  BlockchainNetworks: BlockchainNetworksScreenParams
+  BlockchainNetworkEditor: BlockchainNetworkEditorScreenParams
   WalletConnectActiveSessions: undefined
   WalletConnectActiveSessionDetails: WalletConnectActiveSessionDetailsParams
   SingleConnection: { provider: string; connectNow?: boolean }
@@ -151,6 +167,8 @@ export type MainStackParams = {
 
   Settings: SettingsScreenParams
   PolygonIdCircuitsSettings: PolygonIdCircuitsSettingsScreenParams
+
+  __Storybook__: undefined
 }
 
 export type MainStackScreenProps<S extends keyof MainStackParams> =

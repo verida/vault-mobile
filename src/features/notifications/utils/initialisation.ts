@@ -105,7 +105,9 @@ export async function initNotifications() {
     // There's an issue with the multi-identity feature, only one is active at a time, so refreshing the inbox would only work for the active identity, which may not be the one of the notification.
     pushRefreshInboxNotification()
   })
+}
 
+export async function requestNotificationPermission() {
   if (Platform.OS === 'android') {
     try {
       // Request permission to send notifications

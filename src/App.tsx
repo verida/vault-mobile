@@ -5,9 +5,15 @@ import { NavigationContainer } from '@react-navigation/native'
 import { ThemeProvider } from 'contexts/ThemeContext'
 import * as Font from 'expo-font'
 import * as SplashScreen from 'expo-splash-screen'
+import { BlockchainProvider } from 'features/blockchain'
 import { ConfigProvider } from 'features/config'
+import {
+  CryptoWalletBalanceProvider,
+  CryptoWalletProvider,
+} from 'features/cryptoWallet'
 import { navigationLinkingConfiguration } from 'features/deepLinks'
 import { IdentityDrawerProvider } from 'features/identityDrawer'
+import { requestNotificationPermission } from 'features/notifications'
 import { Logger, Sentry } from 'features/telemetry'
 import { WalletConnectProvider } from 'features/walletConnect'
 import React, { useEffect, useState } from 'react'
@@ -37,6 +43,10 @@ import { ModalProvider } from './contexts/ModalContext'
 initApplication()
 
 // TODO: Move other initialisations into the 'initApplication'
+
+//<BlockchainProvider>
+//<CryptoWalletBalanceProvider>
+//  <CryptoWalletProvider>
 
 const logger = new Logger('App')
 
@@ -77,6 +87,16 @@ function App() {
     init()
   }, [])
 
+  useEffect(() => {
+    const tid = setTimeout(() => {
+      requestNotificationPermission()
+    }, 1000)
+
+    return () => {
+      clearTimeout(tid)
+    }
+  }, [])
+
   const AppContent = (
     <ConfigProvider>
       <Provider store={store}>
@@ -92,12 +112,18 @@ function App() {
                       <Authenticate>
                         <RootSiblingParent>
                           <ActionSheetProvider>
-                            <WalletConnectProvider>
-                              <GestureHandlerRootView style={styles.flex}>
-                                <RootNavigator />
-                              </GestureHandlerRootView>
-                              <MetaServerChecks />
-                            </WalletConnectProvider>
+                            <BlockchainProvider>
+                              <CryptoWalletBalanceProvider>
+                                <CryptoWalletProvider>
+                                  <WalletConnectProvider>
+                                    <GestureHandlerRootView style={styles.flex}>
+                                      <RootNavigator />
+                                    </GestureHandlerRootView>
+                                    <MetaServerChecks />
+                                  </WalletConnectProvider>
+                                </CryptoWalletProvider>
+                              </CryptoWalletBalanceProvider>
+                            </BlockchainProvider>
                           </ActionSheetProvider>
                         </RootSiblingParent>
                       </Authenticate>

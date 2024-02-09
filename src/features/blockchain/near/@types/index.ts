@@ -1,21 +1,23 @@
 import { ChainId } from 'caip'
-import { keyStores, transactions } from 'near-api-js'
+import { BlockchainRequestHandlers } from 'features/blockchain/@types'
+import { keyStores, providers, transactions } from 'near-api-js'
 
 export type NearAccountPointer = {
   readonly publicKey: string
-  readonly accountId: string
+  // TODO: likely rename to accountId
+  readonly signerId: string
+  //readonly accountId: string
 }
 
 export type NearAccount = NearAccountPointer & {
-  readonly signerId: string
   readonly caipChainId: ChainId
   readonly privateKey: string
   readonly keystore: keyStores.KeyStore
 }
 
 export enum NearRpcMethod {
-  NEAR_SIGN_IN = 'near_signIn',
-  NEAR_SIGN_OUT = 'near_signOut',
+  //NEAR_SIGN_IN = 'near_signIn',
+  //NEAR_SIGN_OUT = 'near_signOut',
   NEAR_GET_ACCOUNTS = 'near_getAccounts',
   NEAR_SIGN_TRANSACTION = 'near_signTransaction',
   NEAR_SIGN_AND_SEND_TRANSACTION = 'near_signAndSendTransaction',
@@ -30,3 +32,13 @@ export interface NearTransaction {
   receiverId: string
   actions: NearTransactionActions
 }
+
+export type NearAccountBundle = {
+  readonly nearAccount: NearAccount
+  readonly nearProvider: providers.JsonRpcProvider
+}
+
+export type BlockchainRequestHandlersNear = BlockchainRequestHandlers<
+  NearRpcMethod,
+  NearAccountBundle
+>

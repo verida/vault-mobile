@@ -1,83 +1,20 @@
+import { BlockchainWallet } from 'features/blockchain'
 import {
   getAllWallets,
   getSelectedWalletId,
-  getWalletsData,
-  TransactionData,
   WALLET_SCHEMA_0_2_0_URI,
 } from 'features/cryptoWallet'
 import * as SecureStore from 'helpers/VeridaSecureStore'
 
 import AccountManager from 'api/AccountManager'
-import { BlockchainWallet } from 'api/types'
-import { WalletManager } from 'api/Wallet/WalletManager'
 import {
   SELECTED_WALLET_STORAGE_KEY,
   WALLETS_STORAGE_KEY,
 } from 'constants/storageKeys'
-import { navigate } from 'navigation/RootNavigator'
 import { createAppAsyncThunk } from 'reduxStore/types'
 
-import dataHelper from '../utils/data'
+import { WalletManager } from '../utils'
 import { saveUserWallets, setSelectedWallet } from './'
-
-export const getTransactionParams = createAppAsyncThunk(
-  'wallets/getTransactionParams',
-  async (transactionData: TransactionData, { getState, rejectWithValue }) => {
-    const wallets = getWalletsData(getState())
-    try {
-      const params = await dataHelper.getTransactionParams(
-        transactionData,
-        wallets
-      )
-      if (params) {
-        if (!transactionData.disableNavigate) {
-          navigate('ConfirmTransaction', transactionData)
-        }
-        return params
-      }
-    } catch (error) {
-      return rejectWithValue(
-        `Couldn't load params${
-          error instanceof Error ? `: ${error.message}` : ''
-        }`
-      )
-    }
-  }
-)
-
-export const sendTransaction = createAppAsyncThunk(
-  'wallets/sendTransaction',
-  async (
-    {
-      transactionData,
-      isAssetEnablingTransaction,
-    }: {
-      transactionData: TransactionData
-      isAssetEnablingTransaction?: boolean
-    },
-    { getState, rejectWithValue }
-  ) => {
-    const state = getState()
-    try {
-      const txData = await dataHelper.sendTransaction(
-        transactionData,
-        isAssetEnablingTransaction,
-        state
-      )
-
-      return {
-        ...txData,
-        amount: txData?.amount.toHexString(),
-      }
-    } catch (error) {
-      return rejectWithValue(
-        `Could not send token${
-          error instanceof Error ? `:${error.message}` : ''
-        }`
-      )
-    }
-  }
-)
 
 export const createNewWallet = createAppAsyncThunk(
   'wallets/createNewWallet',

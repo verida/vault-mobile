@@ -1,5 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { BlockchainWalletWithAccounts } from 'features/blockchain'
 import {
   getSelectedWalletId,
   getWalletList,
@@ -11,7 +12,6 @@ import { StyleSheet, View } from 'react-native'
 import { connect } from 'react-redux'
 import { Dispatch } from 'redux'
 
-import { BlockchainWalletWithAccounts } from 'api/types'
 import SettingsIcon from 'assets/settings_icon.svg'
 import Button from 'components/Button'
 import AppModal from 'components/modal/AppModal'

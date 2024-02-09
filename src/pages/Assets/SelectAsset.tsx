@@ -1,6 +1,6 @@
 import { useNavigation } from '@react-navigation/native'
 import { useTheme } from 'contexts/ThemeContext'
-import { useGetNFTsQuery } from 'features/assets'
+import { NFT, NFTMetadata, useGetNFTsQuery } from 'features/assets'
 import { Logger } from 'features/telemetry'
 import { emitter } from 'helpers/emitter'
 import { getNFTImageUri } from 'helpers/nft'
@@ -14,7 +14,6 @@ import {
 } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
-import { NFT, NFTMetadata } from 'api/types'
 import NFTPlaceholder from 'assets/stubs/nft_placeholder.svg'
 import { NftItem } from 'components/Assets/NftItem'
 import GridView from 'components/Grids/GridView'
