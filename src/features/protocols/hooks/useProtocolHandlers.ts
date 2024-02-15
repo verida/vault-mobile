@@ -1,5 +1,5 @@
 import { useCryptoWalletProtocolHandler } from 'features/cryptoWallet'
-import { usePolygonIdProtocolHandler } from 'features/polygonid'
+import { useNewPolygonIdProtocolHandler } from 'features/polygonid_new'
 import type { ProtocolHandler } from 'features/protocols'
 import { useStorybookProtocolHandler } from 'features/storybook'
 import { useWalletConnectProtocolHandler } from 'features/walletConnect'
@@ -10,7 +10,7 @@ export function useProtocolHandlers() {
 
   // Get handlers from their feature folders
   // A handler is considered synchronous, refactor if needed
-  const polygonIdProtocolHandler = usePolygonIdProtocolHandler()
+  const polygonIdProtocolHandler = useNewPolygonIdProtocolHandler()
   const cryptoWalletProtocolHandler = useCryptoWalletProtocolHandler()
   const walletConnectProtocolHandler = useWalletConnectProtocolHandler()
   const storybookProtocolHandler = useStorybookProtocolHandler()

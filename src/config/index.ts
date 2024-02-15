@@ -1,10 +1,5 @@
+import { core as PolygonId, CredentialStatusType } from '@0xpolygonid/js-sdk'
 import { EnvironmentType } from '@verida/types'
-import {
-  Blockchain,
-  CredentialStatusType,
-  DidMethod,
-  NetworkId,
-} from 'features/polygonid/constants'
 import { cloneDeep, isEmpty, isEqual, merge } from 'lodash'
 import Config from 'react-native-config'
 
@@ -103,19 +98,19 @@ export const config = {
   },
   polygonId: {
     common: {
-      blockchain: Blockchain.Polygon,
-      didMethod: DidMethod.PolygonId,
+      blockchain: PolygonId.Blockchain.Polygon,
+      didMethod: PolygonId.DidMethod.PolygonId,
       revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,
       ipfsGatewayUrl: envVars.IPFS_GATEWAY_URL,
     },
     testnet: {
-      networkId: NetworkId.Mumbai,
+      networkId: PolygonId.NetworkId.Mumbai,
       revocationBaseUrl: envVars.POLYGON_ID_REVOCATION_BASE_URL,
       rpcUrl: envVars.POLYGON_ID_TESTNET_RPC_URL,
       contractAddress: '0x134B1BE34911E39A8397ec6289782989729807a4',
     },
     mainnet: {
-      networkId: NetworkId.Main,
+      networkId: PolygonId.NetworkId.Main,
       revocationBaseUrl: envVars.POLYGON_ID_REVOCATION_BASE_URL,
       rpcUrl: envVars.POLYGON_ID_MAINNET_RPC_URL,
       contractAddress: '0x624ce98D2d27b20b8f8d521723Df8fC4db71D79D',
