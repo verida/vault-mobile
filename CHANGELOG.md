@@ -1,3 +1,10 @@
+# 1.1.1 (2024-02-15)
+
+## Bug Fixes
+
+- Fix incorret price of coins in some circonstances
+- Fix navigating back between data folder screens
+
 # 1.1.0 (2024-02-09)
 
 ## Enhancements
