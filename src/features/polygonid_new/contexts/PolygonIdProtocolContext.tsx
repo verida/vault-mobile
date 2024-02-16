@@ -1,10 +1,10 @@
-import type {
+import {
   AuthorizationRequestMessage,
   CredentialsOfferMessage,
+  PROTOCOL_CONSTANTS,
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
-import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
@@ -14,10 +14,11 @@ import type {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 
-import { PROTOCOL_MESSAGE_TYPE } from '../constants'
-import { getEntityMetadata, parsePolygonIdMessage } from '../utils'
-
-const logger = new Logger('Polygon ID')
+import {
+  getEntityMetadata,
+  parsePolygonIdMessage,
+  polygonIdLogger as logger,
+} from '../utils'
 
 type PolygonIdProtocolContextType = {
   handleDeepLinkUrl: (url: string) => void
@@ -40,14 +41,16 @@ export const PolygonIdProtocolProvider: React.FunctionComponent = (props) => {
       const entityMetadata = await getEntityMetadata(
         message.from,
         message.type ===
-          PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE
+          PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
+            .AUTHORIZATION_REQUEST_MESSAGE_TYPE
           ? (message as AuthorizationRequestMessage).body.callbackUrl
           : undefined
       )
 
       // TODO: factorise this function that's becoming too big
       switch (message.type) {
-        case PROTOCOL_MESSAGE_TYPE.AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
+        case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
+          .AUTHORIZATION_REQUEST_MESSAGE_TYPE: {
           const requestData = message as AuthorizationRequestMessage
 
           const url = new URL(requestData.body.callbackUrl) // TODO: Handle error
@@ -93,7 +96,8 @@ export const PolygonIdProtocolProvider: React.FunctionComponent = (props) => {
           }
           return
         }
-        case PROTOCOL_MESSAGE_TYPE.CREDENTIAL_OFFER_MESSAGE_TYPE: {
+        case PROTOCOL_CONSTANTS.PROTOCOL_MESSAGE_TYPE
+          .CREDENTIAL_OFFER_MESSAGE_TYPE: {
           const offerData = message as CredentialsOfferMessage
 
           const screenParams: IncomingDataRequestScreenParams = {

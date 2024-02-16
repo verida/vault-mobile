@@ -6,7 +6,6 @@ import {
 import axios from 'axios'
 import { base64 } from 'ethers/lib/utils' // TODO: Is it ok to use the base64 from the ethers package?
 import { DidMetadata, getDidMetadata, saveDidMetadata } from 'features/did'
-import { Logger } from 'features/telemetry'
 
 import {
   IDEN3_PROTOCOL,
@@ -14,8 +13,7 @@ import {
   IDEN3_PROTOCOL_DEEPLINK_REQUEST_PARAM,
   IDEN3_PROTOCOL_DEEPLINK_SCHEME,
 } from '../constants'
-
-const logger = new Logger('Polygon ID')
+import { polygonIdLogger as logger } from './logger'
 
 export function isPolygonIdMessage(message: string) {
   return (

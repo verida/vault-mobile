@@ -1,13 +1,10 @@
-import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo, useRef } from 'react'
 import { StyleSheet } from 'react-native'
 import { fromByteArray } from 'react-native-quick-base64'
 import WebView, { WebViewMessageEvent } from 'react-native-webview'
 
 import { WitnessCalculatorFunction } from '../types'
-import { witnessCode } from '../utils'
-
-const logger = new Logger('PolygonId')
+import { polygonIdLogger as logger, witnessCode } from '../utils'
 
 export type PolygonIdWitnessContextType = {
   isLoading: boolean
