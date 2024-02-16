@@ -1,6 +1,6 @@
 import type { AuthorizationRequestMessage } from '@0xpolygonid/js-sdk'
 import { Alert, StatusInfo } from 'components'
-import { usePolygonId } from 'features/polygonid'
+import { useNewPolygonId } from 'features/polygonid_new'
 import type { Protocol } from 'features/protocols'
 import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
@@ -51,13 +51,14 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
     const [erroMessage, setErrorMessage] = useState<string | undefined>()
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
-    const { handleAcceptConnectionRequest, isReady: isPolygonIdReady } =
-      usePolygonId()
+    const { manager: polygonIdManager, isReady: isPolygonIdReady } =
+      useNewPolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 
     const polygonIdNotReady =
-      details.protocols.includes('polygonid') && !isPolygonIdReady
+      details.protocols.includes('polygonid') &&
+      (!isPolygonIdReady || !polygonIdManager)
 
     const processButtonDisabled = processing || polygonIdNotReady
 
@@ -66,12 +67,16 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
     }, [navigation])
 
     const handleConnect = useCallback(async () => {
+      if (!polygonIdManager) {
+        return
+      }
+
       setProcessing(true)
       // TODO: Handle different actions depending on the type of request
 
       // Doesn't need a try/catch as handled in the function itself
       const { result, error: requestError } =
-        await handleAcceptConnectionRequest(data)
+        await polygonIdManager.acceptConnectionRequest(data)
       if (result) {
         setSuccess(true)
       } else {
@@ -80,7 +85,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
       }
       setProcessing(false)
       // TODO: Handle the case where the user closes the screen before the request is processed
-    }, [handleAcceptConnectionRequest, data])
+    }, [polygonIdManager, data])
 
     const handleToggleDetails = useCallback(() => {
       setDetailsOpen((prevValue) => !prevValue)

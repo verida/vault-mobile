@@ -1,7 +1,7 @@
 import { useFocusEffect } from '@react-navigation/native'
 import { isCryptoRequestDeepLink } from 'features/cryptoWallet'
 import { useDeeplink } from 'features/deepLinks'
-import { isPolygonIdMessage } from 'features/polygonid'
+import { isPolygonIdMessage } from 'features/polygonid_new'
 import { Logger } from 'features/telemetry'
 import { useCallback, useEffect } from 'react'
 import { Linking } from 'react-native'
