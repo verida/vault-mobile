@@ -1,10 +1,10 @@
-import { CircuitDownloadStateDebug } from 'features/polygonid/circuit'
-import { ALL_CIRCUIT_IDS } from 'features/polygonid/circuit/constants'
+import { ALL_CIRCUIT_IDS } from 'features/polygonid_new'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 
+import { CircuitDownloadStateDebug } from 'components/PolygonId'
 import { NUNITO_SANS } from 'constants/text'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
