@@ -98,6 +98,8 @@ export const config = {
   },
   polygonId: {
     common: {
+      circuitsDownloadUrl:
+        'https://verida-static-resources.s3.amazonaws.com/polygonid', // TODO: Move as an environment variable
       blockchain: PolygonId.Blockchain.Polygon,
       didMethod: PolygonId.DidMethod.PolygonId,
       revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,

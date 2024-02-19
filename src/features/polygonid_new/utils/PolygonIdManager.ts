@@ -18,6 +18,7 @@ import Axios, { AxiosRequestConfig } from 'axios'
 import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
 import { PolygonIdConfig, WitnessCalculatorFunction } from '../types'
+import { createCircuitStorage, initCircuitStorage } from './circuits'
 import { polygonIdLogger as logger } from './logger'
 import {
   buildCredentialWallet,
@@ -25,9 +26,7 @@ import {
   buildIdentityWallet,
   buildPackageManager,
   buildProofService,
-  createCircuitStorage,
   createPolygonIdIdentity,
-  initCircuitStorage,
 } from './polygonid'
 import { getVeridaDatastore } from './storage'
 

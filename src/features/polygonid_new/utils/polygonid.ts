@@ -3,7 +3,6 @@ import {
   AuthDataPrepareFunc,
   BjjProvider,
   CircuitData,
-  CircuitId,
   CircuitStorage,
   CredentialStatusResolverRegistry,
   CredentialStatusType,
@@ -16,7 +15,6 @@ import {
   Identity,
   IdentityStorage,
   IdentityWallet,
-  InMemoryDataSource,
   InMemoryMerkleTreeStorage,
   IssuerResolver,
   IStateStorage,
@@ -45,7 +43,6 @@ import {
   POLYGON_ID_PROFILE_DATABASE_NAME,
 } from '../constants'
 import { PolygonIdConfig, WitnessCalculatorFunction } from '../types'
-import { fetchAndDecodeBase64EncodedFile } from './file'
 import { Groth16ProvingMethod, ZkProver } from './prover'
 import {
   buildVeridaDataSource,
@@ -125,48 +122,6 @@ export async function buildIdentityWallet(
   kms.registerKeyProvider(KmsKeyType.BabyJubJub, bjjProvider)
 
   return new IdentityWallet(kms, dataStorage, credentialWallet)
-}
-
-export function createCircuitStorage() {
-  return new CircuitStorage(new InMemoryDataSource<CircuitData>())
-}
-
-export async function initCircuitStorage(circuitStorage: CircuitStorage) {
-  Promise.all([
-    circuitStorage.saveCircuitData(
-      CircuitId.AuthV2,
-      await getCircuitData(CircuitId.AuthV2)
-    ),
-    circuitStorage.saveCircuitData(
-      CircuitId.AtomicQuerySigV2,
-      await getCircuitData(CircuitId.AtomicQuerySigV2)
-    ),
-    circuitStorage.saveCircuitData(
-      CircuitId.AtomicQueryMTPV2,
-      await getCircuitData(CircuitId.AtomicQueryMTPV2)
-    ),
-  ])
-  // TODO: Consider using Promise.allSettled, capturing errors gracefully and accepting to go forward if the bare minimum of circuits (to define) are a success
-}
-
-export async function getCircuitData(
-  circuitId: CircuitId
-): Promise<CircuitData> {
-  // Our expectation is that the relevant files have been stored at the root directory by the React Native runtime. These should be saved at the server directory as: <server-dir>/public/circuits/<circuit-id>/<circuit-name>.<type>
-  // TODO: Update the location (don't need the 'public' part)
-  const [verificationKey, provingKey, wasm] = await Promise.all([
-    fetchAndDecodeBase64EncodedFile(
-      `/public/circuits/${circuitId}/verification_key.base64`
-    ),
-    fetchAndDecodeBase64EncodedFile(
-      `/public/circuits/${circuitId}/circuit_final.base64`
-    ),
-    fetchAndDecodeBase64EncodedFile(
-      `/public/circuits/${circuitId}/wasm.base64`
-    ),
-  ])
-
-  return { circuitId: String(circuitId), verificationKey, provingKey, wasm }
 }
 
 export function buildProofService(
