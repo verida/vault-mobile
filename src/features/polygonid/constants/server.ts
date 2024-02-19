@@ -1,1 +1,0 @@
-export const POLYGON_ID_WEB_APP_SERVER_PORT = 6002
