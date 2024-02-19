@@ -2,7 +2,7 @@
 
 ## Bug Fixes
 
-- Fix incorret price of coins in some circonstances
+- Fix incorrect price of coins in some circumstances
 - Fix navigating back between data folder screens
 
 # 1.1.0 (2024-02-09)
