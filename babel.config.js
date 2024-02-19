@@ -33,6 +33,7 @@ module.exports = function (api) {
       '@babel/plugin-syntax-import-assertions',
       '@babel/plugin-proposal-numeric-separator',
       '@babel/plugin-proposal-logical-assignment-operators',
+      ['@babel/plugin-transform-private-methods', { loose: false }],
     ],
   }
 }
