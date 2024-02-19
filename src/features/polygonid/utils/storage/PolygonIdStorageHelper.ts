@@ -1,7 +1,7 @@
 import { Context } from '@verida/client-rn'
 import { DatabaseOpenConfig, DatastoreOpenConfig } from '@verida/types'
 
-import { VeridaPolygonIdDataSource } from './VeridaPolygonIdDataSource'
+import { PolygonIdVeridaDataSource } from './PolygonIdVeridaDataSource'
 
 /**
  * Open a Verida datastore.
@@ -42,10 +42,10 @@ export function getVeridaDatabase(
  * @param databaseName the name of the database for the datasource
  * @returns the datasource
  */
-export async function buildVeridaDataSource<T>(
+export async function buildPolygonIdVeridaDataSource<T>(
   context: Context,
   databaseName: string
 ) {
   const db = await getVeridaDatabase(context, databaseName)
-  return new VeridaPolygonIdDataSource<T>(db)
+  return new PolygonIdVeridaDataSource<T>(db)
 }

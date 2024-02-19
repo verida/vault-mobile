@@ -2,13 +2,13 @@ import { IDataSource } from '@0xpolygonid/js-sdk'
 import { IDatabase } from '@verida/types'
 import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
 
-type VeridaPolygonIdUnsavedRecord<Type> = VeridaUnsavedRecord<{ data: Type }>
-type VeridaPolygonIdRecord<Type> = VeridaRecord<{ data: Type }>
+type PolygonIdVeridaUnsavedRecord<Type> = VeridaUnsavedRecord<{ data: Type }>
+type PolygonIdVeridaRecord<Type> = VeridaRecord<{ data: Type }>
 
 /**
  * Generic Verida data source
  */
-export class VeridaPolygonIdDataSource<T = unknown> implements IDataSource<T> {
+export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
   private database: IDatabase
 
   public constructor(database: IDatabase) {
@@ -17,7 +17,7 @@ export class VeridaPolygonIdDataSource<T = unknown> implements IDataSource<T> {
 
   /** saves in the memory */
   public async save(key: string, value: T, keyName = 'id'): Promise<void> {
-    let record: Omit<VeridaPolygonIdUnsavedRecord<T>, 'schema'> = {
+    let record: Omit<PolygonIdVeridaUnsavedRecord<T>, 'schema'> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore as the value and keyName as coming from a suposedly trusted third-party (Polygon ID)
       _id: value[keyName],
@@ -26,7 +26,7 @@ export class VeridaPolygonIdDataSource<T = unknown> implements IDataSource<T> {
 
     try {
       const existingRecord = (await this.database.get(key)) as
-        | VeridaPolygonIdRecord<T>
+        | PolygonIdVeridaRecord<T>
         | undefined
       if (existingRecord) {
         record = existingRecord // Overwrite the meta properties from the existing record
@@ -49,7 +49,7 @@ export class VeridaPolygonIdDataSource<T = unknown> implements IDataSource<T> {
   /** gets value from the memory */
   public async get(key: string, _keyName = 'id'): Promise<T | undefined> {
     const result = (await this.database.get(key)) as
-      | VeridaPolygonIdRecord<T>
+      | PolygonIdVeridaRecord<T>
       | undefined
     return result?.data
   }
@@ -61,7 +61,7 @@ export class VeridaPolygonIdDataSource<T = unknown> implements IDataSource<T> {
       {
         limit: 1000,
       }
-    )) as VeridaPolygonIdRecord<T>[]
+    )) as PolygonIdVeridaRecord<T>[]
 
     return data.map((item) => item.data)
   }

@@ -45,9 +45,9 @@ import {
 import { PolygonIdConfig, WitnessCalculatorFunction } from '../types'
 import { Groth16ProvingMethod, ZkProver } from './prover'
 import {
-  buildVeridaDataSource,
+  buildPolygonIdVeridaDataSource,
   getVeridaDatabase,
-  VeridaPolygonIdPrivateKeyStore,
+  PolygonIdVeridaPrivateKeyStore,
 } from './storage'
 
 export async function buildDataStorage(
@@ -56,17 +56,17 @@ export async function buildDataStorage(
 ): Promise<IDataStorage> {
   const dataStorage: IDataStorage = {
     credential: new CredentialStorage(
-      await buildVeridaDataSource<W3CCredential>(
+      await buildPolygonIdVeridaDataSource<W3CCredential>(
         veridaContext,
         POLYGON_ID_CREDENTIALS_DATABASE_NAME
       )
     ),
     identity: new IdentityStorage(
-      await buildVeridaDataSource<Identity>(
+      await buildPolygonIdVeridaDataSource<Identity>(
         veridaContext,
         POLYGON_ID_IDENTITY_DATABASE_NAME
       ),
-      await buildVeridaDataSource<Profile>(
+      await buildPolygonIdVeridaDataSource<Profile>(
         veridaContext,
         POLYGON_ID_PROFILE_DATABASE_NAME
       )
@@ -116,7 +116,7 @@ export async function buildIdentityWallet(
     veridaContext,
     POLYGON_ID_KEYSTORE_DATABASE_NAME
   )
-  const keyStore = new VeridaPolygonIdPrivateKeyStore(privateKeyStoreDatabase)
+  const keyStore = new PolygonIdVeridaPrivateKeyStore(privateKeyStoreDatabase)
   const bjjProvider = new BjjProvider(KmsKeyType.BabyJubJub, keyStore)
   const kms = new KMS()
   kms.registerKeyProvider(KmsKeyType.BabyJubJub, bjjProvider)

@@ -2,13 +2,13 @@ import { AbstractPrivateKeyStore } from '@0xpolygonid/js-sdk'
 import { IDatabase } from '@verida/types'
 import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
 
-type VeridaPolygonIdUnsavedRecord = VeridaUnsavedRecord<{ value: string }>
-type VeridaPolygonIdRecord = VeridaRecord<{ value: string }>
+type PolygonIdVeridaUnsavedRecord = VeridaUnsavedRecord<{ value: string }>
+type PolygonIdVeridaRecord = VeridaRecord<{ value: string }>
 
 /**
  * Verida KeyStore that allows to import and get keys by alias.
  */
-export class VeridaPolygonIdPrivateKeyStore implements AbstractPrivateKeyStore {
+export class PolygonIdVeridaPrivateKeyStore implements AbstractPrivateKeyStore {
   private database: IDatabase
 
   public constructor(database: IDatabase) {
@@ -16,14 +16,14 @@ export class VeridaPolygonIdPrivateKeyStore implements AbstractPrivateKeyStore {
   }
 
   public async importKey(args: { alias: string; key: string }): Promise<void> {
-    const record: Omit<VeridaPolygonIdUnsavedRecord, 'schema'> = {
+    const record: Omit<PolygonIdVeridaUnsavedRecord, 'schema'> = {
       _id: args.alias,
       value: args.key,
     }
 
     try {
       const existingRecord = (await this.database.get(args.alias)) as
-        | VeridaPolygonIdRecord
+        | PolygonIdVeridaRecord
         | undefined
       if (existingRecord) {
         record._rev = existingRecord._rev
@@ -41,7 +41,7 @@ export class VeridaPolygonIdPrivateKeyStore implements AbstractPrivateKeyStore {
     try {
       const result = (await this.database.get(
         args.alias
-      )) as VeridaPolygonIdRecord
+      )) as PolygonIdVeridaRecord
       if (!result) {
         throw new Error('No key under given alias')
       }
