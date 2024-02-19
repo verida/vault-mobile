@@ -97,21 +97,20 @@ export async function initCircuitStorage(circuitStorage: CircuitStorage) {
 export async function getCircuitData(
   circuitId: CircuitId
 ): Promise<CircuitData> {
-  // Our expectation is that the relevant files have been stored at the root directory by the React Native runtime. These should be saved at the server directory as: <server-dir>/public/circuits/<circuit-id>/<circuit-name>.<type>
-  // TODO: Update the location (don't need the 'public' part)
-  const [verificationKey, provingKey, wasm] = await Promise.all([
-    fetchAndDecodeBase64EncodedFile(
-      `/public/circuits/${circuitId}/verification_key.base64`
-    ),
-    fetchAndDecodeBase64EncodedFile(
-      `/public/circuits/${circuitId}/circuit_final.base64`
-    ),
-    fetchAndDecodeBase64EncodedFile(
-      `/public/circuits/${circuitId}/wasm.base64`
-    ),
-  ])
+  const filePaths = getCircuitFilePaths(circuitId)
 
-  return { circuitId: String(circuitId), verificationKey, provingKey, wasm }
+  const [verificationKey, provingKey, wasm] = await Promise.all(
+    Object.values(filePaths).map((filePath) =>
+      fetchAndDecodeBase64EncodedFile(filePath)
+    )
+  )
+
+  return {
+    circuitId: String(circuitId),
+    verificationKey,
+    provingKey,
+    wasm,
+  }
 }
 
 export function base64StringToUint8Array(value: string) {
@@ -119,26 +118,16 @@ export function base64StringToUint8Array(value: string) {
 }
 
 export async function fetchAndDecodeBase64EncodedFile(url: string) {
-  return new Promise<Uint8Array>((resolve, reject) => {
-    fetch(url)
-      .then((response) => {
-        if (!response.ok) {
-          reject(new Error(`Error fetching the circuit ${url}`))
-        }
-        return response.text()
-      })
-      .then((fileContent) => {
-        if (typeof fileContent !== 'string' || !fileContent.length)
-          reject(
-            new Error(
-              `Error with the circuit file, expected a non-empty string, encountered "${String(
-                fileContent
-              )}".`
-            )
-          )
-        resolve(base64StringToUint8Array(fileContent))
-      })
-  })
+  try {
+    const exists = await RNBlobUtil.fs.exists(url)
+    if (!exists) {
+      throw new Error(`Circuit does not exist at ${url}`)
+    }
+    const file = await RNBlobUtil.fs.readFile(url, 'base64')
+    return base64StringToUint8Array(file)
+  } catch (error) {
+    throw new Error(`Error fetching the circuit ${url}`)
+  }
 }
 
 export async function downloadCircuit(

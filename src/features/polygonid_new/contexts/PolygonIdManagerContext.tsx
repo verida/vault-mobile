@@ -73,7 +73,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const { witnessCalculator, isReady: isWitnessReady } = usePolygonIdWitness()
 
   useEffect(() => {
-    if (!isWitnessReady) {
+    if (!isWitnessReady || !areCircuitsDownloaded) {
       return
     }
     const execute = async () => {
@@ -102,7 +102,13 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
     }
 
     execute()
-  }, [isWitnessReady, account, veridaVaultContext, witnessCalculator])
+  }, [
+    isWitnessReady,
+    areCircuitsDownloaded,
+    account,
+    veridaVaultContext,
+    witnessCalculator,
+  ])
 
   const contextValue: PolygonIdManagerContextType = useMemo(
     () => ({
