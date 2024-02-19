@@ -1,6 +1,6 @@
 import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
 import { Alert, StatusInfo } from 'components'
-import { useNewPolygonId } from 'features/polygonid_new'
+import { usePolygonId } from 'features/polygonid_new'
 import type { Protocol } from 'features/protocols'
 import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'
@@ -51,8 +51,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
     const [erroMessage, setErrorMessage] = useState<string | undefined>()
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
-    const { manager: polygonIdManager, isReady: isPolygonIdReady } =
-      useNewPolygonId()
+    const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 

@@ -1,3 +1,5 @@
-export * from './useNewPolygonId'
-export * from './useNewPolygonIdProtocolHandler'
+export * from './usePolygonIdCircuitDownloadStates'
+export * from './usePolygonId'
+export * from './usePolygonIdProtocolHandler'
+export * from './usePolygonIdCircuits'
 export * from './usePolygonIdWitness'

@@ -3,7 +3,7 @@ import { Alert, StatusInfo } from 'components'
 import {
   getUserFriendlyAllowedIssuers,
   getUserFriendlyProofRequestRequirements,
-  useNewPolygonId,
+  usePolygonId,
 } from 'features/polygonid_new'
 import type { Protocol } from 'features/protocols'
 import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
@@ -54,8 +54,7 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
     const [erroMessage, setErrorMessage] = useState<string | undefined>()
     const [success, setSuccess] = useState(false)
     const [detailsOpen, setDetailsOpen] = useState(false)
-    const { manager: polygonIdManager, isReady: isPolygonIdReady } =
-      useNewPolygonId()
+    const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
     const styles = useThemeAwareStyle(createStyles)
     const insets = useSafeAreaInsets()
 

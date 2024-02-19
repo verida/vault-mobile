@@ -1,4 +1,5 @@
-export * from './NewPolygonIdManagerContext'
-export * from './NewPolygonIdProvider'
+export * from './PolygonIdManagerContext'
+export * from './PolygonIdProvider'
+export * from './PolygonIdCircuitsContext'
 export * from './PolygonIdProtocolContext'
 export * from './PolygonIdWitnessContext'

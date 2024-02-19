@@ -6,7 +6,7 @@ export function usePolygonIdWitness() {
   const contextValue = useContext(PolygonIdWitnessContext)
   if (!contextValue) {
     throw new Error(
-      'usePolygonIdWitness must be used within a NewPolygonIdProvider'
+      'usePolygonIdWitness must be used within a PolygonIdProvider'
     )
   }
   return contextValue

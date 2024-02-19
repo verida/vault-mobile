@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 
 import AccountManager from 'api/AccountManager'
 
-import { usePolygonIdWitness } from '../hooks'
+import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'
 import { PolygonIdConfig } from '../types'
 import {
   getPolygonIdPrivateKey,
@@ -42,23 +42,22 @@ const polygonIdConfig =
     ? polygonIdMainnetConfig
     : polygonIdTestnetConfig
 
-export type NewPolygonIdManagerContextType =
-  | {
-      isReady: true
-      manager: PolygonIdManager
-    }
-  | {
-      isReady: false
-      manager: null
-    }
+export type PolygonIdManagerContextType = {
+  isPolygonIdReady: boolean
+  areCircuitsReady: boolean
+  isWitnessReady: boolean
+  manager: PolygonIdManager | null
+}
 
-export const NewPolygonIdManagerContext =
-  React.createContext<NewPolygonIdManagerContextType>({
-    isReady: false,
+export const PolygonIdManagerContext =
+  React.createContext<PolygonIdManagerContextType>({
+    isPolygonIdReady: false,
+    areCircuitsReady: false,
+    isWitnessReady: false,
     manager: null,
   })
 
-export const NewPolygonIdManagerProvider: React.FC = (props) => {
+export const PolygonIdManagerProvider: React.FC = (props) => {
   const { children } = props
 
   // TODO: Handle account switching
@@ -69,11 +68,12 @@ export const NewPolygonIdManagerProvider: React.FC = (props) => {
   const [polygonIdManager, setPolygonIdManager] =
     useState<PolygonIdManager | null>(null)
 
-  const { witnessCalculator, isReady: isPolygonIdWitnessReady } =
-    usePolygonIdWitness()
+  const { areCircuitsDownloaded } = usePolygonIdCircuits()
+
+  const { witnessCalculator, isReady: isWitnessReady } = usePolygonIdWitness()
 
   useEffect(() => {
-    if (!isPolygonIdWitnessReady) {
+    if (!isWitnessReady) {
       return
     }
     const execute = async () => {
@@ -102,24 +102,22 @@ export const NewPolygonIdManagerProvider: React.FC = (props) => {
     }
 
     execute()
-  }, [isPolygonIdWitnessReady, account, veridaVaultContext, witnessCalculator])
+  }, [isWitnessReady, account, veridaVaultContext, witnessCalculator])
 
-  const contextValue: NewPolygonIdManagerContextType = useMemo(() => {
-    if (!polygonIdManager) {
-      return {
-        isReady: false,
-        manager: null,
-      }
-    }
-    return {
-      isReady: true,
+  const contextValue: PolygonIdManagerContextType = useMemo(
+    () => ({
+      isPolygonIdReady:
+        areCircuitsDownloaded && isWitnessReady && !!polygonIdManager,
+      areCircuitsReady: areCircuitsDownloaded,
+      isWitnessReady: isWitnessReady,
       manager: polygonIdManager,
-    }
-  }, [polygonIdManager])
+    }),
+    [areCircuitsDownloaded, isWitnessReady, polygonIdManager]
+  )
 
   return (
-    <NewPolygonIdManagerContext.Provider value={contextValue}>
+    <PolygonIdManagerContext.Provider value={contextValue}>
       {children}
-    </NewPolygonIdManagerContext.Provider>
+    </PolygonIdManagerContext.Provider>
   )
 }

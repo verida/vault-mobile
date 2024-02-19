@@ -2,10 +2,10 @@ import type { ProtocolHandler } from 'features/protocols'
 import { useCallback } from 'react'
 
 import { isPolygonIdMessage } from '../utils'
-import { useNewPolygonId } from './useNewPolygonId'
+import { usePolygonId } from './usePolygonId'
 
-export function useNewPolygonIdProtocolHandler(): ProtocolHandler {
-  const { handleDeepLinkUrl, handleQRCodeMessage } = useNewPolygonId()
+export function usePolygonIdProtocolHandler(): ProtocolHandler {
+  const { handleDeepLinkUrl, handleQRCodeMessage } = usePolygonId()
 
   const handleDeepLink = useCallback(
     (url: string) => {
