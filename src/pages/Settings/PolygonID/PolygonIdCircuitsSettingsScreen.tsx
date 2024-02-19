@@ -1,4 +1,4 @@
-import { ALL_CIRCUIT_IDS } from 'features/polygonid_new'
+import { ALL_CIRCUIT_IDS } from 'features/polygonid'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'

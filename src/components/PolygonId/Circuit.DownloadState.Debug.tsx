@@ -5,7 +5,7 @@ import {
   getCircuitDownloadState,
   isCircuitDownloaded,
   usePolygonIdCircuits,
-} from 'features/polygonid_new'
+} from 'features/polygonid'
 import { useThemeAwareStyle } from 'hooks'
 import * as React from 'react'
 import {

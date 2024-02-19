@@ -4,7 +4,7 @@ import {
   getUserFriendlyAllowedIssuers,
   getUserFriendlyProofRequestRequirements,
   usePolygonId,
-} from 'features/polygonid_new'
+} from 'features/polygonid'
 import type { Protocol } from 'features/protocols'
 import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'

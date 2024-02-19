@@ -1,6 +1,6 @@
 import type { CredentialsOfferMessage } from '@0xpolygonid/js-sdk'
 import { Alert, StatusInfo } from 'components'
-import { usePolygonId } from 'features/polygonid_new'
+import { usePolygonId } from 'features/polygonid'
 import type { Protocol } from 'features/protocols'
 import { getProtocolLabel, getProtocolLogo } from 'features/protocols'
 import { Button as ButtonNativeBase, Icon as IconNativeBase } from 'native-base'

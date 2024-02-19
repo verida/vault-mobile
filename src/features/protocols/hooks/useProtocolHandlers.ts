@@ -1,5 +1,5 @@
 import { useCryptoWalletProtocolHandler } from 'features/cryptoWallet'
-import { usePolygonIdProtocolHandler } from 'features/polygonid_new'
+import { usePolygonIdProtocolHandler } from 'features/polygonid'
 import type { ProtocolHandler } from 'features/protocols'
 import { useStorybookProtocolHandler } from 'features/storybook'
 import { useWalletConnectProtocolHandler } from 'features/walletConnect'
