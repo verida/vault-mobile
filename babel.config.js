@@ -33,7 +33,16 @@ module.exports = function (api) {
       '@babel/plugin-syntax-import-assertions',
       '@babel/plugin-proposal-numeric-separator',
       '@babel/plugin-proposal-logical-assignment-operators',
-      ['@babel/plugin-transform-private-methods', { loose: false }],
+    ],
+    overrides: [
+      {
+        test: './node_modules/@0xpolygonid/js-sdk/node_modules/ethers',
+        plugins: [
+          '@babel/plugin-proposal-private-property-in-object',
+          '@babel/plugin-proposal-class-properties',
+          '@babel/plugin-proposal-private-methods',
+        ],
+      },
     ],
   }
 }
