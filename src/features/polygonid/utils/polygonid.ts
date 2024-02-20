@@ -54,6 +54,7 @@ export async function buildDataStorage(
   veridaContext: Context,
   ethConnectionConfig: EthConnectionConfig
 ): Promise<IDataStorage> {
+  // TODO: Build the data source in parallel
   const dataStorage: IDataStorage = {
     credential: new CredentialStorage(
       await buildPolygonIdVeridaDataSource<W3CCredential>(

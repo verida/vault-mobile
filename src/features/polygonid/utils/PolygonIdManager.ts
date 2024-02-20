@@ -72,14 +72,12 @@ export class PolygonIdManager {
       this.veridaContext,
       ethConnectionConfig
     )
-
     logger.info('Data storage built successfully')
 
     this.credentialWallet = buildCredentialWallet(
       this.dataStorage,
       ethConnectionConfig
     )
-
     logger.info('Credential Wallet built successfully')
 
     this.identityWallet = await buildIdentityWallet(
@@ -87,20 +85,9 @@ export class PolygonIdManager {
       this.dataStorage,
       this.credentialWallet
     )
-
     logger.info('Identity Wallet built successfully')
 
-    const { did } = await createPolygonIdIdentity(
-      this.identityWallet,
-      this.config,
-      identityPrivatekey
-    )
-    this.did = did
-
-    logger.info('Polygon ID identity created successfully')
-
     const circuitStorage = createCircuitStorage()
-
     logger.info('Circuit storage created successfully')
 
     this.proofService = buildProofService(
@@ -111,11 +98,9 @@ export class PolygonIdManager {
       witnessCalculator,
       this.config
     )
-
     logger.info('Proof service built successfully')
 
     await initCircuitStorage(circuitStorage)
-
     logger.info('Circuit storage initialised successfully')
 
     this.packageManager = await buildPackageManager(
@@ -124,7 +109,6 @@ export class PolygonIdManager {
       this.proofService.verifyState.bind(this.proofService),
       witnessCalculator
     )
-
     logger.info('Package Manager built successfully')
 
     this.authHandler = new AuthHandler(this.packageManager, this.proofService)
@@ -132,6 +116,14 @@ export class PolygonIdManager {
 
     this.fetchHandler = new FetchHandler(this.packageManager)
     logger.info('FetchHandler created successfully')
+
+    const { did } = await createPolygonIdIdentity(
+      this.identityWallet,
+      this.config,
+      identityPrivatekey
+    )
+    this.did = did
+    logger.info('Polygon ID identity created successfully')
   }
 
   /**
