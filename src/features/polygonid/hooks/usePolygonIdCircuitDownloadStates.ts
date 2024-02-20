@@ -9,11 +9,11 @@ import {
   areCircuitsDownloaded as areAllCircuitsDownloaded,
   areCircuitsDownloading as areAnyCircuitsDownloading,
   getCircuitDownloadStates,
-  getUninitionalizedCircuitDownloadStates,
+  getUninitializedCircuitDownloadStates,
   polygonIdLogger as logger,
 } from '../utils'
 
-const uninitializedState = getUninitionalizedCircuitDownloadStates()
+const uninitializedState = getUninitializedCircuitDownloadStates()
 
 export function usePolygonIdCircuitDownloadStates() {
   const [initialCircuitDownloadStates, setInitialCircuitDownloadStates] =

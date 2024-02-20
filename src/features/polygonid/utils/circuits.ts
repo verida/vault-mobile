@@ -197,7 +197,7 @@ export async function downloadCircuit(
   )
 }
 
-export function getUninitionalizedCircuitDownloadStates() {
+export function getUninitializedCircuitDownloadStates() {
   return Object.fromEntries(
     ALL_CIRCUIT_IDS.map((circuitId) => {
       return [
