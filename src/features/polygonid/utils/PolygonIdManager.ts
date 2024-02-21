@@ -26,7 +26,7 @@ import {
   buildIdentityWallet,
   buildPackageManager,
   buildProofService,
-  createPolygonIdIdentity,
+  getOrCreatePolygonIdIdentity,
 } from './polygonid'
 import { getVeridaDatastore } from './storage'
 
@@ -117,12 +117,12 @@ export class PolygonIdManager {
     this.fetchHandler = new FetchHandler(this.packageManager)
     logger.info('FetchHandler created successfully')
 
-    const { did } = await createPolygonIdIdentity(
+    this.did = await getOrCreatePolygonIdIdentity(
       this.identityWallet,
+      this.dataStorage,
       this.config,
       identityPrivatekey
     )
-    this.did = did
     logger.info('Polygon ID identity created successfully')
   }
 

@@ -4,6 +4,7 @@ import {
   BjjProvider,
   CircuitData,
   CircuitStorage,
+  core,
   CredentialStatusResolverRegistry,
   CredentialStatusType,
   CredentialStorage,
@@ -195,12 +196,20 @@ export async function buildPackageManager(
   return packageManager
 }
 
-export function createPolygonIdIdentity(
+export async function getOrCreatePolygonIdIdentity(
   identityWallet: IdentityWallet,
+  dataStorage: IDataStorage,
   config: PolygonIdConfig,
   privateKey: string
-) {
-  return identityWallet.createIdentity({
+): Promise<core.DID> {
+  const allIdentities = await dataStorage.identity.getAllIdentities()
+  if (allIdentities.length > 0) {
+    return core.DID.parse(allIdentities[0].did)
+
+    // TODO: What to do if multiple ones exist?
+  }
+
+  const result = await identityWallet.createIdentity({
     method: config.polygonIdDidMethod,
     blockchain: config.polygonIdBlockchain,
     networkId: config.polygonIdNetworkId,
@@ -210,4 +219,5 @@ export function createPolygonIdIdentity(
       type: config.polygonIdRevocationType,
     },
   })
+  return result.did
 }
