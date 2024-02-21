@@ -55,15 +55,12 @@ export async function buildDataStorage(
   veridaContext: Context,
   ethConnectionConfig: EthConnectionConfig
 ): Promise<IDataStorage> {
-  // TODO: Build the data source in parallel
-  const dataStorage: IDataStorage = {
-    credential: new CredentialStorage(
+  const [credentialsDataSource, identitiesDataSource, profilesDataSource] =
+    await Promise.all([
       await buildPolygonIdVeridaDataSource<W3CCredential>(
         veridaContext,
         POLYGON_ID_CREDENTIALS_DATABASE_NAME
-      )
-    ),
-    identity: new IdentityStorage(
+      ),
       await buildPolygonIdVeridaDataSource<Identity>(
         veridaContext,
         POLYGON_ID_IDENTITY_DATABASE_NAME
@@ -71,8 +68,12 @@ export async function buildDataStorage(
       await buildPolygonIdVeridaDataSource<Profile>(
         veridaContext,
         POLYGON_ID_PROFILE_DATABASE_NAME
-      )
-    ),
+      ),
+    ])
+
+  const dataStorage: IDataStorage = {
+    credential: new CredentialStorage(credentialsDataSource),
+    identity: new IdentityStorage(identitiesDataSource, profilesDataSource),
     mt: new InMemoryMerkleTreeStorage(40),
     states: new EthStateStorage(ethConnectionConfig),
   }
