@@ -78,7 +78,7 @@ export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps
 
       // Doesn't need a try/catch as handled in the function itself
       const { result, error: requestError } =
-        await polygonIdManager.acceptProofRequest(data)
+        await polygonIdManager.processProofRequest(data)
       if (result) {
         setSuccess(true)
       } else {

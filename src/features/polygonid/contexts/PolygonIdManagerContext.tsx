@@ -69,26 +69,37 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
     useState<PolygonIdManager | null>(null)
 
   const { circuitStorage, areAllCircuitsAvailable } = usePolygonIdCircuits()
-
   const { witnessCalculator, isReady: isWitnessReady } = usePolygonIdWitness()
 
   useEffect(() => {
-    if (!isWitnessReady || !areAllCircuitsAvailable) {
+    logger.debug('In PolygonIdManagerProvider useEffect')
+
+    if (!areAllCircuitsAvailable) {
+      logger.debug(
+        'Circuits not available, cannot create Polygon ID Manager yet'
+      )
       return
     }
+
+    if (!isWitnessReady) {
+      logger.debug('Witness not ready, cannot create Polygon ID Manager yet')
+      return
+    }
+
+    if (
+      !account ||
+      !account.did ||
+      !account.privateKey ||
+      !veridaVaultContext
+    ) {
+      logger.debug('No Verida account, cannot create Polygon ID Manager yet')
+      return
+    }
+
     const execute = async () => {
       try {
-        if (
-          !account ||
-          !account.did ||
-          !account.privateKey ||
-          !veridaVaultContext
-        ) {
-          logger.warn('No Verida account, cannot create Polygon ID Manager yet')
-          return
-        }
-
         const polygonIdPrivateKey = getPolygonIdPrivateKey(account.privateKey)
+
         const manager = await PolygonIdManager.createManager(
           polygonIdConfig,
           polygonIdPrivateKey,

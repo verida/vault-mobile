@@ -75,7 +75,7 @@ export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestS
 
       // Doesn't need a try/catch as handled in the function itself
       const { result, error: requestError } =
-        await polygonIdManager.acceptConnectionRequest(data)
+        await polygonIdManager.processConnectionRequest(data)
       if (result) {
         setSuccess(true)
       } else {

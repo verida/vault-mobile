@@ -1,6 +1,7 @@
 import { Context } from '@verida/client-rn'
 import { DatabaseOpenConfig, DatastoreOpenConfig } from '@verida/types'
 
+import { polygonIdLogger as logger } from '../logger'
 import { PolygonIdVeridaDataSource } from './PolygonIdVeridaDataSource'
 
 /**
@@ -46,6 +47,7 @@ export async function buildPolygonIdVeridaDataSource<T>(
   context: Context,
   databaseName: string
 ) {
+  logger.debug(`Building Verida data source for ${databaseName}...`)
   const db = await getVeridaDatabase(context, databaseName)
   return new PolygonIdVeridaDataSource<T>(db)
 }

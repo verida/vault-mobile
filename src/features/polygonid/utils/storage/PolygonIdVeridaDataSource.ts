@@ -15,7 +15,6 @@ export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
     this.database = database
   }
 
-  /** saves in the memory */
   public async save(key: string, value: T, keyName = 'id'): Promise<void> {
     let record: Omit<PolygonIdVeridaUnsavedRecord<T>, 'schema'> = {
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -41,12 +40,10 @@ export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
     await this.database.save(record)
   }
 
-  /** updates in the memory */
   patchData(_value: T[]): void {
     throw new Error('Not implemented')
   }
 
-  /** gets value from the memory */
   public async get(key: string, _keyName = 'id'): Promise<T | undefined> {
     const result = (await this.database.get(key)) as
       | PolygonIdVeridaRecord<T>
@@ -54,7 +51,6 @@ export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
     return result?.data
   }
 
-  /** loads from value from the memory */
   public async load(): Promise<T[]> {
     const data = (await this.database.getMany(
       {},
@@ -66,9 +62,8 @@ export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
     return data.map((item) => item.data)
   }
 
-  /** deletes from value from the memory */
   public async delete(key: string, _keyName = 'id'): Promise<void> {
-    const record: any = await this.database.get(key)
+    const record = await this.database.get(key)
     await this.database.delete(record)
   }
 }

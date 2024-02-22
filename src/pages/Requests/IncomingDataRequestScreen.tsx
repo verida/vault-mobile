@@ -75,7 +75,7 @@ export const IncomingDataRequestScreen: React.FunctionComponent<IncomingDataRequ
 
       // Doesn't need a try/catch as handled in the function itself
       const { result, error: requestError } =
-        await polygonIdManager.acceptCredentialsOffer(data)
+        await polygonIdManager.processCredentialsOffer(data)
       if (result) {
         setSuccess(true)
       } else {

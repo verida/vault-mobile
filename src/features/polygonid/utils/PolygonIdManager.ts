@@ -54,9 +54,22 @@ export class PolygonIdManager {
     circuitStorage: CircuitStorage,
     witnessCalculator: WitnessCalculatorFunction
   ): Promise<PolygonIdManager> {
-    const instance = new PolygonIdManager(config, veridaVaultContext)
-    await instance.init(identityPrivatekey, circuitStorage, witnessCalculator)
-    return instance
+    logger.info('Creating a Polygon Id Manager')
+    try {
+      // Pass the private key as needed, do not keep it as a class property
+      const instance = new PolygonIdManager(config, veridaVaultContext)
+      await instance.init(identityPrivatekey, circuitStorage, witnessCalculator)
+      logger.info('Polygon Id Manager created successfully')
+
+      return instance
+    } catch (error) {
+      throw new Error(
+        'Something went wrong when creating a Polygon ID Manager',
+        {
+          cause: error,
+        }
+      )
+    }
   }
 
   private async init(
@@ -74,20 +87,17 @@ export class PolygonIdManager {
       this.veridaContext,
       ethConnectionConfig
     )
-    logger.info('Data storage built successfully')
 
     this.credentialWallet = buildCredentialWallet(
       this.dataStorage,
       ethConnectionConfig
     )
-    logger.info('Credential Wallet built successfully')
 
     this.identityWallet = await buildIdentityWallet(
       this.veridaContext,
       this.dataStorage,
       this.credentialWallet
     )
-    logger.info('Identity Wallet built successfully')
 
     this.proofService = buildProofService(
       this.identityWallet,
@@ -97,7 +107,6 @@ export class PolygonIdManager {
       witnessCalculator,
       this.config
     )
-    logger.info('Proof service built successfully')
 
     this.packageManager = await buildPackageManager(
       await circuitStorage.loadCircuitData(CircuitId.AuthV2),
@@ -105,11 +114,12 @@ export class PolygonIdManager {
       this.proofService.verifyState.bind(this.proofService),
       witnessCalculator
     )
-    logger.info('Package Manager built successfully')
 
+    logger.debug('Creating AuthHandler...')
     this.authHandler = new AuthHandler(this.packageManager, this.proofService)
     logger.info('AuthHandler created successfully')
 
+    logger.debug('Creating FetchHandler...')
     this.fetchHandler = new FetchHandler(this.packageManager)
     logger.info('FetchHandler created successfully')
 
@@ -119,173 +129,165 @@ export class PolygonIdManager {
       this.config,
       identityPrivatekey
     )
-    logger.info('Polygon ID identity created successfully')
 
     logger.info('Polygon Id Manager initialised')
   }
 
-  /**
-   * Process an authorization request
-   *
-   * @param message
-   * @returns
-   */
-  public async handleAuthorizationRequest(
+  private async handleAuthorizationRequest(
     message: AuthorizationRequestMessage
   ) {
-    logger.info('Receive an authorization request')
-
-    const encodedMessage = new TextEncoder().encode(JSON.stringify(message))
-
-    logger.info('Handling the authorization request with Polygon ID SDK')
-
-    if (!this.authHandler) {
-      throw new Error('Cannot handle request as AuthHandler is undefined')
-    }
-
-    if (!this.did) {
-      throw new Error('Cannot handle request as user DID is undefined')
-    }
-
-    const result = await this.authHandler.handleAuthorizationRequest(
-      this.did,
-      encodedMessage
-    )
+    logger.info('Handling authorization request...')
 
     try {
-      let response
-      if (result.authRequest.body?.callbackUrl) {
-        logger.info('Calling authorization request callback')
+      if (!this.authHandler) {
+        throw new Error('Cannot handle request as AuthHandler is not ready')
+      }
 
-        const config: AxiosRequestConfig = {
-          headers: {
-            'Content-Type': 'text/plain',
-          },
-          responseType: 'json',
+      if (!this.did) {
+        throw new Error(
+          'Cannot handle request as user Polygon ID identity is not ready'
+        )
+      }
+
+      const encodedMessage = new TextEncoder().encode(JSON.stringify(message))
+
+      const result = await this.authHandler.handleAuthorizationRequest(
+        this.did,
+        encodedMessage
+      )
+
+      try {
+        let response
+        if (result.authRequest.body?.callbackUrl) {
+          logger.info('Calling authorization request callback')
+
+          const config: AxiosRequestConfig = {
+            headers: {
+              'Content-Type': 'text/plain',
+            },
+            responseType: 'json',
+          }
+
+          // TODO: Add a type to the axios response
+          response = await Axios.post(
+            result.authRequest.body.callbackUrl,
+            result.token,
+            config
+          )
+
+          logger.info('Authorization request callback called successfully')
+        } else {
+          logger.warn('No callback to call in the authorization request')
         }
 
-        // TODO: Add a type to the axios response
-        response = await Axios.post(
-          result.authRequest.body.callbackUrl,
-          result.token,
-          config
-        )
-
-        logger.info('Authorization request callback called successfully')
-      } else {
-        logger.warn('No callback to call in the authorization request')
-      }
-
-      return {
-        callbackResponse: response?.data,
-        authResponse: result.authResponse,
+        return {
+          callbackResponse: response?.data,
+          authResponse: result.authResponse,
+        }
+      } catch (error) {
+        throw new Error('Error calling authorization request callback', {
+          cause: error,
+        })
       }
     } catch (error) {
-      logger.warn('Error calling authorization request callback')
-      // Rethrow the error so the UI actually shows something went wrong
+      logger.error(
+        new Error('Failed to handle Polygon ID connection request', {
+          cause: error,
+        })
+      )
+
       throw error
     }
   }
 
-  /**
-   * Process a credential offer.
-   *
-   * @param message the offer message.
-   * @returns The credentials
-   */
-  public async handleCredentialsOffer(message: CredentialsOfferMessage) {
-    logger.info('Receive a credentials offer')
+  private async handleCredentialsOffer(message: CredentialsOfferMessage) {
+    logger.info('Handling credentials offer...')
 
-    const encodedData = new TextEncoder().encode(JSON.stringify(message))
+    try {
+      if (!this.fetchHandler) {
+        throw new Error('Cannot handle offer as FetchHandler is not ready')
+      }
 
-    if (!this.fetchHandler) {
-      throw new Error('Cannot handle offer as FetchHandler is undefined')
+      if (!this.credentialWallet) {
+        throw new Error('Cannot handle offer as CredentialWallet is not ready')
+      }
+
+      const encodedData = new TextEncoder().encode(JSON.stringify(message))
+
+      const credentials = await this.fetchHandler.handleCredentialOffer(
+        encodedData
+      )
+
+      // TODO: Consider splitting this function in two, one to get the credentials from the offer, and another to save them. So the UI could see the credentials before they are saved
+
+      logger.info('Saving the credentials in the Polygon ID credential wallet')
+      await this.credentialWallet.saveAll(credentials)
+
+      logger.info('Saving the credentials in the Verida Vault of the account')
+      await this.saveCredentials(credentials)
+
+      return credentials
+    } catch (error) {
+      logger.error(
+        new Error('Failed to handle Polygon ID credential offer.', {
+          cause: error,
+        })
+      )
+
+      throw error
     }
-
-    if (!this.credentialWallet) {
-      throw new Error('Cannot handle offer as CredentialWallet is undefined')
-    }
-
-    logger.info('Handling the credentials offer with Polygon ID SDK')
-
-    const credentials = await this.fetchHandler.handleCredentialOffer(
-      encodedData
-    )
-
-    logger.info('Saving the credentials in the Polygon ID credential wallet')
-    await this.credentialWallet.saveAll(credentials)
-
-    logger.info('Saving the credentials in the Verida Vault of the account')
-    await this.saveCredentials(credentials)
-
-    return credentials
   }
 
-  public async acceptConnectionRequest(message: AuthorizationRequestMessage) {
-    logger.info('Accepting connection request')
+  public async processConnectionRequest(message: AuthorizationRequestMessage) {
+    logger.info('Processing connection request...')
     try {
       const result = await this.handleAuthorizationRequest(message)
       return { result }
     } catch (cause) {
-      const error = new Error(
-        // TODO: Adapt the error message to the type of error
-        // The error message must be user-friendly, as it will be displayed in the UI
-        'Something went wrong when accepting the Polygon ID connection request',
-        { cause }
-      )
-      logger.error(error)
       return {
-        error,
+        error: new Error(
+          // TODO: Adapt the error message to the type of error
+          // The error message must be user-friendly, as it will be displayed in the UI
+          'Something went wrong processing the Polygon ID connection request'
+        ),
       }
     }
   }
 
-  public async acceptProofRequest(message: AuthorizationRequestMessage) {
-    logger.info('Accepting proof request')
+  public async processProofRequest(message: AuthorizationRequestMessage) {
+    logger.info('Processing proof request...')
 
     try {
       const result = await this.handleAuthorizationRequest(message)
       return { result }
-    } catch (cause: unknown) {
-      const error = new Error(
-        // TODO: Adapt the error message to the type of error
-        // The error message must be user-friendly, as it will be displayed in the UI
-        'Something went wrong when answering the Polygon ID proof request',
-        { cause }
-      )
-      logger.error(error)
+    } catch (cause) {
       return {
-        error,
+        error: new Error(
+          // TODO: Adapt the error message to the type of error
+          // The error message must be user-friendly, as it will be displayed in the UI
+          'Something went wrong processing the Polygon ID proof request'
+        ),
       }
     }
   }
 
-  public async acceptCredentialsOffer(message: CredentialsOfferMessage) {
-    logger.info('Accepting credential offer')
+  public async processCredentialsOffer(message: CredentialsOfferMessage) {
+    logger.info('Processing credential offer')
 
     try {
       const result = await this.handleCredentialsOffer(message)
       return { result }
-    } catch (cause: unknown) {
-      const error = new Error(
-        // TODO: Adapt the error message to the type of error
-        // The error message must be user-friendly, as it will be displayed in the UI
-        'Something went wrong when accepting the Polygon ID credential offer.',
-        { cause }
-      )
-      logger.error(error)
+    } catch (cause) {
       return {
-        error,
+        error: new Error(
+          // TODO: Adapt the error message to the type of error
+          // The error message must be user-friendly, as it will be displayed in the UI
+          'Something went wrong processing the Polygon ID credential offer.'
+        ),
       }
     }
   }
 
-  /**
-   * Save a credential to the Verida credential datastore.
-   * This record will then appear in the `Credential` section of the mobile app
-   *
-   * @param credentials
-   */
   private async saveCredentials(credentials: W3CCredential[]): Promise<void> {
     logger.info(
       "Saving credentials to the account's Vault credentials datastore"
