@@ -55,12 +55,32 @@ export async function buildDataStorage(
   veridaContext: Context,
   ethConnectionConfig: EthConnectionConfig
 ): Promise<IDataStorage> {
-  const [credentialsDataSource, identitiesDataSource, profilesDataSource] =
-    await Promise.all([
+  // TODO: Build the data sources in parallel
+  // This is commented out because it seems more stable at startup, used to have many issues such as 'database does not exist', etc.
+  // const [credentialsDataSource, identitiesDataSource, profilesDataSource] =
+  //   await Promise.all([
+  //     await buildPolygonIdVeridaDataSource<W3CCredential>(
+  //       veridaContext,
+  //       POLYGON_ID_CREDENTIALS_DATABASE_NAME
+  //     ),
+  //     await buildPolygonIdVeridaDataSource<Identity>(
+  //       veridaContext,
+  //       POLYGON_ID_IDENTITY_DATABASE_NAME
+  //     ),
+  //     await buildPolygonIdVeridaDataSource<Profile>(
+  //       veridaContext,
+  //       POLYGON_ID_PROFILE_DATABASE_NAME
+  //     ),
+  //   ])
+
+  const dataStorage: IDataStorage = {
+    credential: new CredentialStorage(
       await buildPolygonIdVeridaDataSource<W3CCredential>(
         veridaContext,
         POLYGON_ID_CREDENTIALS_DATABASE_NAME
-      ),
+      )
+    ),
+    identity: new IdentityStorage(
       await buildPolygonIdVeridaDataSource<Identity>(
         veridaContext,
         POLYGON_ID_IDENTITY_DATABASE_NAME
@@ -68,12 +88,8 @@ export async function buildDataStorage(
       await buildPolygonIdVeridaDataSource<Profile>(
         veridaContext,
         POLYGON_ID_PROFILE_DATABASE_NAME
-      ),
-    ])
-
-  const dataStorage: IDataStorage = {
-    credential: new CredentialStorage(credentialsDataSource),
-    identity: new IdentityStorage(identitiesDataSource, profilesDataSource),
+      )
+    ),
     mt: new InMemoryMerkleTreeStorage(40),
     states: new EthStateStorage(ethConnectionConfig),
   }
