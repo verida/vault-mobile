@@ -3,13 +3,14 @@ import { StyleSheet } from 'react-native'
 import { fromByteArray } from 'react-native-quick-base64'
 import WebView, { WebViewMessageEvent } from 'react-native-webview'
 
-import { WitnessCalculatorFunction } from '../types'
+import { WitnessEvent } from '../constants'
+import { CalculateWitnessFunction } from '../types'
 import { polygonIdLogger as logger, witnessCode } from '../utils'
 
 export type PolygonIdWitnessContextType = {
   isLoading: boolean
   isReady: boolean
-  witnessCalculator: WitnessCalculatorFunction
+  calculateWitness: CalculateWitnessFunction
 }
 
 export const PolygonIdWitnessContext =
@@ -18,6 +19,14 @@ export const PolygonIdWitnessContext =
 export const PolygonIdWitnessProvider: React.FC = (props) => {
   const { children } = props
 
+  // TODO: Optimise communication between the witness and the app
+  // - Create a logger for the communication between the webview and the app
+  // - Create a ref to store a map for the promises
+  // - Create a random id for every execution
+  // - Create a Promise for every execution
+  // - Store the Promise in the ref map with the id as the key
+  // - When receiving the result, resolve the promise with the id
+
   const webViewRef = useRef<WebView | null>(null)
   const resolveMethodRef = useRef<(result: string) => void>()
 
@@ -25,7 +34,7 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
   const handleLoadStart = useCallback(() => {
-    logger.info('Polygon ID WebView loading...')
+    logger.debug('Polygon ID WebView loading...')
     setIsLoading(true)
   }, [])
 
@@ -44,29 +53,43 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
 
   const handleMessage = useCallback(
     ({ nativeEvent: { data: maybeData } }: WebViewMessageEvent) => {
-      const data = JSON.parse(maybeData)
-      if (!resolveMethodRef.current) {
-        return
-      }
-      if (data.event === '@EXECUTION_RESULT') {
-        // TODO: Move to constants
-        resolveMethodRef.current(data.witnessCalculationResult)
+      logger.debug('Received message from the witness WebView')
+
+      const data = JSON.parse(maybeData) // TODO: Have strong types
+
+      switch (data.event) {
+        case WitnessEvent.EXECUTION_RESULT: {
+          logger.debug('Received witness execution result')
+          if (!resolveMethodRef.current) {
+            logger.warn('No resolve method found for the witness result')
+            return
+          }
+
+          resolveMethodRef.current(data.witnessCalculationResult)
+          break
+        }
+        default: {
+          logger.warn('Unhandled message from the witness WebView', data)
+        }
       }
     },
     []
   )
 
-  const witnessCalculator = useCallback(
-    async (wasm: Uint8Array, data: JSON) => {
+  const calculateWitness: CalculateWitnessFunction = useCallback(
+    async (wasm: Uint8Array, inputs: JSON) => {
+      logger.info('Calculating witness...')
+
       if (!webViewRef.current || !isReady) {
         throw new Error('Polygon Id witness not ready')
       }
 
-      webViewRef.current?.postMessage(
+      logger.debug('Sending message to the witness WebView')
+      webViewRef.current.postMessage(
         JSON.stringify({
-          event: '@EXECUTE_WASM', // TODO: Move to constants
+          event: WitnessEvent.EXECUTE_WASM,
           binary: fromByteArray(wasm),
-          data,
+          inputs,
         })
       )
 
@@ -81,9 +104,9 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
     () => ({
       isReady,
       isLoading,
-      witnessCalculator,
+      calculateWitness,
     }),
-    [isReady, isLoading, witnessCalculator]
+    [isReady, isLoading, calculateWitness]
   )
 
   return (

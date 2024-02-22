@@ -18,7 +18,7 @@ import { Context } from '@verida/client-rn'
 import Axios, { AxiosRequestConfig } from 'axios'
 import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
-import { PolygonIdConfig, WitnessCalculatorFunction } from '../types'
+import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
 import { polygonIdLogger as logger } from './logger'
 import {
   buildCredentialWallet,
@@ -52,15 +52,15 @@ export class PolygonIdManager {
     identityPrivatekey: string,
     veridaVaultContext: Context,
     circuitStorage: CircuitStorage,
-    witnessCalculator: WitnessCalculatorFunction
+    calculateWitness: CalculateWitnessFunction
   ): Promise<PolygonIdManager> {
     logger.info('Creating a Polygon Id Manager')
     try {
       // Pass the private key as needed, do not keep it as a class property
       const instance = new PolygonIdManager(config, veridaVaultContext)
-      await instance.init(identityPrivatekey, circuitStorage, witnessCalculator)
-      logger.info('Polygon Id Manager created successfully')
+      await instance.init(identityPrivatekey, circuitStorage, calculateWitness)
 
+      logger.info('Polygon Id Manager created successfully')
       return instance
     } catch (error) {
       throw new Error(
@@ -75,7 +75,7 @@ export class PolygonIdManager {
   private async init(
     identityPrivatekey: string,
     circuitStorage: CircuitStorage,
-    witnessCalculator: WitnessCalculatorFunction
+    calculateWitness: CalculateWitnessFunction
   ) {
     logger.info('Initialising a Polygon Id Manager')
 
@@ -104,7 +104,7 @@ export class PolygonIdManager {
       this.credentialWallet,
       circuitStorage,
       this.dataStorage.states,
-      witnessCalculator,
+      calculateWitness,
       this.config
     )
 
@@ -112,7 +112,7 @@ export class PolygonIdManager {
       await circuitStorage.loadCircuitData(CircuitId.AuthV2),
       this.proofService.generateAuthV2Inputs.bind(this.proofService),
       this.proofService.verifyState.bind(this.proofService),
-      witnessCalculator
+      calculateWitness
     )
 
     logger.debug('Creating AuthHandler...')

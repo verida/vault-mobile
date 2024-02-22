@@ -1,0 +1,4 @@
+export enum WitnessEvent {
+  EXECUTION_RESULT = '@EXECUTION_RESULT',
+  EXECUTE_WASM = '@EXECUTE_WASM',
+}

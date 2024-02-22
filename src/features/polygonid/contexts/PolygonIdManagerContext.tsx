@@ -55,6 +55,7 @@ export const PolygonIdManagerContext =
     areCircuitsReady: false,
     isWitnessReady: false,
     manager: null,
+    // TODO: Provide a function reset the manager if anything wrong
   })
 
 export const PolygonIdManagerProvider: React.FC = (props) => {
@@ -69,11 +70,9 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
     useState<PolygonIdManager | null>(null)
 
   const { circuitStorage, areAllCircuitsAvailable } = usePolygonIdCircuits()
-  const { witnessCalculator, isReady: isWitnessReady } = usePolygonIdWitness()
+  const { calculateWitness, isReady: isWitnessReady } = usePolygonIdWitness()
 
   useEffect(() => {
-    logger.debug('In PolygonIdManagerProvider useEffect')
-
     if (!areAllCircuitsAvailable) {
       logger.debug(
         'Circuits not available, cannot create Polygon ID Manager yet'
@@ -105,7 +104,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
           polygonIdPrivateKey,
           veridaVaultContext,
           circuitStorage,
-          witnessCalculator
+          calculateWitness
         )
         setPolygonIdManager(manager)
       } catch (error) {
@@ -120,7 +119,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
     account,
     veridaVaultContext,
     circuitStorage,
-    witnessCalculator,
+    calculateWitness,
   ])
 
   const contextValue: PolygonIdManagerContextType = useMemo(

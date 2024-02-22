@@ -43,7 +43,7 @@ import {
   POLYGON_ID_KEYSTORE_DATABASE_NAME,
   POLYGON_ID_PROFILE_DATABASE_NAME,
 } from '../constants'
-import { PolygonIdConfig, WitnessCalculatorFunction } from '../types'
+import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
 import { polygonIdLogger as logger } from './logger'
 import { Groth16ProvingMethod, ZkProver } from './prover'
 import {
@@ -184,7 +184,7 @@ export function buildProofService(
   credentialWallet: CredentialWallet,
   circuitStorage: CircuitStorage,
   stateStorage: IStateStorage,
-  witnessCalculator: WitnessCalculatorFunction,
+  calculateWitness: CalculateWitnessFunction,
   config: PolygonIdConfig
 ) {
   logger.debug('Building proof service...')
@@ -197,7 +197,7 @@ export function buildProofService(
       stateStorage,
       {
         ipfsGatewayURL: config.polygonIdIpfsGatewayUrl,
-        prover: new ZkProver(circuitStorage, witnessCalculator),
+        prover: new ZkProver(circuitStorage, calculateWitness),
       }
     )
 
@@ -214,7 +214,7 @@ export async function buildPackageManager(
   circuitData: CircuitData,
   prepareFn: AuthDataPrepareFunc,
   stateVerificationFn: StateVerificationFunc,
-  witnessCalculator: WitnessCalculatorFunction
+  calculateWitness: CalculateWitnessFunction
 ): Promise<PackageManager> {
   logger.debug('Building package manager...')
 
@@ -225,7 +225,7 @@ export async function buildPackageManager(
           proving.provingMethodGroth16AuthV2Instance.alg,
           proving.provingMethodGroth16AuthV2Instance.circuitId
         ),
-        witnessCalculator
+        calculateWitness
       )
 
     await proving.registerProvingMethod(

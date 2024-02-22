@@ -1,8 +1,8 @@
 import { CircuitId, CredentialStatusType } from '@0xpolygonid/js-sdk'
 
-export type WitnessCalculatorFunction = (
+export type CalculateWitnessFunction = (
   wasm: Uint8Array,
-  data: JSON
+  inputs: JSON
 ) => Promise<string>
 
 export type PolygonIdConfig = {

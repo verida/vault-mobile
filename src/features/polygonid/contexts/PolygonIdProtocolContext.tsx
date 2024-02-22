@@ -20,7 +20,7 @@ import {
   polygonIdLogger as logger,
 } from '../utils'
 
-type PolygonIdProtocolContextType = {
+export type PolygonIdProtocolContextType = {
   handleDeepLinkUrl: (url: string) => void
   handleQRCodeMessage: (data: string) => void
 }
