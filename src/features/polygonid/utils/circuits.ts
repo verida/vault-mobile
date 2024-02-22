@@ -1,110 +1,88 @@
-import {
-  CircuitData,
-  CircuitId,
-  CircuitStorage,
-  InMemoryDataSource,
-} from '@0xpolygonid/js-sdk'
-import RNBlobUtil from 'react-native-blob-util'
+import { CircuitData, CircuitId, CircuitStorage } from '@0xpolygonid/js-sdk'
 
-import { ALL_CIRCUIT_IDS, POLYGONID_CIRCUITS_DIR } from '../constants'
 import {
-  CircuitComponentDownloadState,
-  CircuitComponentDownloadStatus,
   CircuitComponentPaths,
   CircuitComponentType,
-  CircuitDownloadState,
-  CircuitDownloadStates,
-  UpdateDownloadStateCallback,
+  CircuitState,
+  CircuitStates,
+  CircuitStatus,
+  UpdateStateCallback,
 } from '../types'
 import { polygonIdLogger as logger } from './logger'
-
-export async function createCircuitsDir() {
-  if (!(await RNBlobUtil.fs.exists(POLYGONID_CIRCUITS_DIR))) {
-    logger.info(`Creating the circuits directory`)
-    await RNBlobUtil.fs.mkdir(POLYGONID_CIRCUITS_DIR).catch(() => {
-      // race condition
-    })
-  }
-}
-
-export async function createCircuitDir(circuitId: `${CircuitId}`) {
-  const targetDir = getCircuitDir(circuitId)
-
-  if (!(await RNBlobUtil.fs.exists(targetDir))) {
-    logger.info(`Creating the circuit directory for ${circuitId}`)
-    await RNBlobUtil.fs.mkdir(targetDir).catch(() => {
-      // race condition
-    })
-  }
-}
-
-export function getCircuitDir(circuitId: `${CircuitId}`) {
-  return `${POLYGONID_CIRCUITS_DIR}/${circuitId}`
-}
-
-export function getCircuitFilePaths(
-  circuitId: `${CircuitId}`
-): CircuitComponentPaths {
-  const parent = getCircuitDir(circuitId)
-
-  const verificationKeyPath = `${parent}/verification_key.base64`
-  const provingKeyPath = `${parent}/circuit_final.base64`
-  const wasmPath = `${parent}/wasm.base64`
-
-  return {
-    [CircuitComponentType.VERIFICATION_KEY]: verificationKeyPath,
-    [CircuitComponentType.PROVING_KEY]: provingKeyPath,
-    [CircuitComponentType.WASM]: wasmPath,
-  }
-}
-
-export function getCircuitRemoteUri({
-  circuitId,
-  veridaBaseUri,
-}: {
-  readonly circuitId: `${CircuitId}`
-  readonly veridaBaseUri: string
-}): CircuitComponentPaths {
-  return {
-    [CircuitComponentType.VERIFICATION_KEY]: `${veridaBaseUri}/${circuitId}/verification_key.json`,
-    [CircuitComponentType.PROVING_KEY]: `${veridaBaseUri}/${circuitId}/circuit_final.zkey`,
-    [CircuitComponentType.WASM]: `${veridaBaseUri}/${circuitId}/circuit.wasm`,
-  }
-}
+import { PolygonIdCircuitDataSource } from './storage'
 
 export function createCircuitStorage() {
-  return new CircuitStorage(new InMemoryDataSource<CircuitData>())
+  logger.info('Creating circuit storage')
+  return new CircuitStorage(new PolygonIdCircuitDataSource())
 }
 
-export async function initCircuitStorage(circuitStorage: CircuitStorage) {
-  Promise.all([
-    circuitStorage.saveCircuitData(
-      CircuitId.AuthV2,
-      await getCircuitData(CircuitId.AuthV2)
-    ),
-    circuitStorage.saveCircuitData(
-      CircuitId.AtomicQuerySigV2,
-      await getCircuitData(CircuitId.AtomicQuerySigV2)
-    ),
-    circuitStorage.saveCircuitData(
-      CircuitId.AtomicQueryMTPV2,
-      await getCircuitData(CircuitId.AtomicQueryMTPV2)
-    ),
-  ])
-  // TODO: Consider using Promise.allSettled, capturing errors gracefully and accepting to go forward if the bare minimum of circuits (to define) are a success
-}
-
-export async function getCircuitData(
-  circuitId: CircuitId
-): Promise<CircuitData> {
-  const filePaths = getCircuitFilePaths(circuitId)
-
-  const [verificationKey, provingKey, wasm] = await Promise.all(
-    Object.values(filePaths).map((filePath) =>
-      fetchAndDecodeBase64EncodedFile(filePath)
+export async function initCircuitStorage(
+  circuitStates: CircuitStates,
+  circuitStorage: CircuitStorage,
+  circuitsRemoteBaseUrl: string,
+  updateState: UpdateStateCallback
+) {
+  logger.info('Initialising the circuit storage')
+  const unavailableCircuits = Object.entries(circuitStates)
+    .filter(
+      ([, circuitState]) => circuitState.status === CircuitStatus.UNAVAILABLE
     )
+    .map(([circuitId]) => circuitId as CircuitId)
+
+  logger.debug('Circuits to download:', { unavailableCircuits })
+
+  await Promise.all(
+    unavailableCircuits.map(async (circuitId) => {
+      await saveCircuitData(
+        circuitId,
+        circuitStorage,
+        circuitsRemoteBaseUrl,
+        updateState
+      )
+    })
   )
 
+  logger.info('Circuit storage initialised')
+}
+
+export async function saveCircuitData(
+  circuitId: CircuitId,
+  circuitStorage: CircuitStorage,
+  circuitsRemoteBaseUrl: string,
+  updateState: UpdateStateCallback
+) {
+  try {
+    updateState(circuitId, CircuitStatus.DOWNLOADING)
+
+    const circuitData = await fetchCircuitData(circuitId, circuitsRemoteBaseUrl)
+
+    logger.debug(`Saving the circuit data for ${circuitId}`)
+    await circuitStorage.saveCircuitData(circuitId, circuitData)
+    updateState(circuitId, CircuitStatus.AVAILABLE)
+    logger.debug(
+      `Circuit data for ${circuitId} successfully saved to circuit storage`
+    )
+  } catch (error) {
+    updateState(circuitId, CircuitStatus.UNAVAILABLE)
+    logger.error(
+      new Error('Failed to save Polygon ID circuit data', { cause: error })
+    )
+  }
+}
+
+async function fetchCircuitData(
+  circuitId: CircuitId,
+  circuitsRemoteBaseUrl: string
+): Promise<CircuitData> {
+  logger.debug(`Getting circuit data for ${circuitId}`)
+
+  const fileUrls = getCircuitFileUrls(circuitId, circuitsRemoteBaseUrl)
+
+  const [verificationKey, provingKey, wasm] = await Promise.all(
+    Object.values(fileUrls).map((url) => fetchCircuitFile(url))
+  )
+
+  logger.debug(`Circuit data for ${circuitId} successfully fetched`)
   return {
     circuitId: String(circuitId),
     verificationKey,
@@ -113,190 +91,102 @@ export async function getCircuitData(
   }
 }
 
-export function base64StringToUint8Array(value: string) {
-  return Uint8Array.from(window.atob(value), (c) => c.charCodeAt(0))
+function getCircuitFileUrls(
+  circuitId: CircuitId,
+  circuitsRemoteBaseUrl: string
+): CircuitComponentPaths {
+  return {
+    [CircuitComponentType.VERIFICATION_KEY]: `${circuitsRemoteBaseUrl}/${circuitId}/verification_key.json`,
+    [CircuitComponentType.PROVING_KEY]: `${circuitsRemoteBaseUrl}/${circuitId}/circuit_final.zkey`,
+    [CircuitComponentType.WASM]: `${circuitsRemoteBaseUrl}/${circuitId}/circuit.wasm`,
+  }
 }
 
-export async function fetchAndDecodeBase64EncodedFile(url: string) {
+async function fetchCircuitFile(url: string) {
+  logger.debug('Fetching circuit file:', { url })
+
+  const response = await fetch(url)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch circuit ${url}`)
+  }
+
+  const buffer = await response.arrayBuffer()
+  return new Uint8Array(buffer)
+}
+
+export async function getCircuitState(
+  circuitId: CircuitId,
+  circuitStorage: CircuitStorage
+): Promise<CircuitState> {
+  logger.debug(`Getting circuit state for ${circuitId}`)
   try {
-    const exists = await RNBlobUtil.fs.exists(url)
-    if (!exists) {
-      throw new Error(`Circuit does not exist at ${url}`)
+    await circuitStorage.loadCircuitData(circuitId as CircuitId)
+    logger.debug(`Circuit ${circuitId} is available`)
+    return {
+      status: CircuitStatus.AVAILABLE,
     }
-    const file = await RNBlobUtil.fs.readFile(url, 'base64')
-    return base64StringToUint8Array(file)
   } catch (error) {
-    throw new Error(`Error fetching the circuit ${url}`)
+    logger.debug(`Circuit ${circuitId} is not available`)
+    return {
+      status: CircuitStatus.UNAVAILABLE,
+    }
   }
 }
 
-export async function downloadCircuit(
-  circuitId: `${CircuitId}`,
-  veridaBaseUri: string,
-  updateDownloadState: UpdateDownloadStateCallback
+export async function getCircuitStates(
+  circuitIds: CircuitId[],
+  circuitStorage: CircuitStorage
 ) {
-  if (veridaBaseUri.endsWith('/')) {
-    throw new Error('Do not include a trailing slash in the veridaBaseUri!')
-  }
-
-  // If the circuits dir doesn't exist, create it.
-  await createCircuitsDir() // TODO: To remove once done above
-
-  // Create the circuitId-specific directory within the circuits dir where
-  // we'll store these files.
-  await createCircuitDir(circuitId)
-
-  const circuitFilePaths = getCircuitFilePaths(circuitId)
-
-  const circuitRemoteUris = getCircuitRemoteUri({
-    veridaBaseUri,
-    circuitId,
-  })
-
-  await Promise.all(
-    Object.entries(circuitRemoteUris).map(([circuitType, uri]) =>
-      RNBlobUtil.fetch('GET', uri, {})
-        .progress((receivedBytes, totalBytes) =>
-          updateDownloadState({
-            circuitId: circuitId as CircuitId,
-            circuitType: circuitType as CircuitComponentType,
-            circuitComponentDownloadState: {
-              status: CircuitComponentDownloadStatus.DOWNLOADING,
-              receivedBytes,
-              totalBytes,
-            },
-          })
-        )
-        .then((result) => result.base64())
-        .then((base64) => {
-          const maybePath =
-            circuitFilePaths[circuitType as CircuitComponentType]
-
-          if (!maybePath)
-            throw new Error(
-              `Unable to determine circuitFilePath for "${circuitType}".`
-            )
-
-          return RNBlobUtil.fs.writeFile(maybePath, base64)
-        })
-    )
-  )
-  // No catch here, error will bubble to the upper level
-
-  // Upon completion, ensure we mark that all downloads have completed.
-  // The top level provider may have only initialized against the empty/partial
-  // download filesystem.
-  Object.keys(CircuitComponentType).forEach((circuitType) =>
-    updateDownloadState({
-      circuitId: circuitId as CircuitId,
-      circuitType: circuitType as CircuitComponentType,
-      circuitComponentDownloadState: {
-        status: CircuitComponentDownloadStatus.DOWNLOADED,
-      },
-    })
-  )
-}
-
-export function getUninitializedCircuitDownloadStates() {
-  return Object.fromEntries(
-    ALL_CIRCUIT_IDS.map((circuitId) => {
-      return [
-        circuitId,
-        Object.fromEntries(
-          Object.keys(CircuitComponentType).map((circuitType) => {
-            return [
-              circuitType as CircuitComponentType,
-              {
-                status: CircuitComponentDownloadStatus.UNINITIALIZED,
-              },
-            ]
-          })
-        ),
-      ]
-    })
-  ) as CircuitDownloadStates
-}
-
-export async function getCircuitDownloadStates() {
+  logger.debug('Getting circuit states')
   return Object.fromEntries(
     await Promise.all(
-      ALL_CIRCUIT_IDS.map(async (circuitId) => {
-        const circuitFilePaths = getCircuitFilePaths(circuitId)
-
-        return [
-          circuitId,
-          Object.fromEntries(
-            await Promise.all(
-              Object.keys(CircuitComponentType).map((circuitType) =>
-                RNBlobUtil.fs
-                  .exists(circuitFilePaths[circuitType as CircuitComponentType])
-                  .then(
-                    (exists): CircuitComponentDownloadState =>
-                      exists
-                        ? { status: CircuitComponentDownloadStatus.DOWNLOADED }
-                        : {
-                            status:
-                              CircuitComponentDownloadStatus.UNINITIALIZED,
-                          }
-                  )
-                  .then((circuitDownloadState) => [
-                    circuitType as CircuitComponentType,
-                    circuitDownloadState,
-                  ])
-              )
-            )
-          ),
-        ]
-      })
+      circuitIds.map(async (circuitId) => [
+        circuitId,
+        await getCircuitState(circuitId, circuitStorage),
+      ])
     )
-  ) as CircuitDownloadStates
+  ) as CircuitStates
 }
 
-export function getCircuitDownloadState(
-  circuitId: `${CircuitId}`,
-  circuitDownloadStates: CircuitDownloadStates
-): CircuitDownloadState {
-  const { [circuitId]: circuitDownloadState } = circuitDownloadStates
-
-  return circuitDownloadState
+export function getInitialCircuitStates(circuitIds: CircuitId[]) {
+  return Object.fromEntries(
+    circuitIds.map((circuitId) => {
+      return [
+        circuitId,
+        {
+          status: CircuitStatus.UNKNOWN,
+        },
+      ]
+    })
+  ) as CircuitStates
 }
 
-export function isCircuitDownloaded(
-  circuitDownloadState: CircuitDownloadState
-) {
-  const componentStates = Object.entries(circuitDownloadState).map(
-    ([, { status }]) => status
-  )
-
-  return componentStates.every(
-    (state) => state === CircuitComponentDownloadStatus.DOWNLOADED
-  )
+export function isCircuitAvailable(circuitState: CircuitState) {
+  return circuitState.status === CircuitStatus.AVAILABLE
 }
 
-export function isCircuitDownloading(
-  circuitDownloadState: CircuitDownloadState
-) {
-  const componentStates = Object.entries(circuitDownloadState).map(
-    ([, { status }]) => status
-  )
+export function isCircuitUnavailable(circuitState: CircuitState) {
+  return circuitState.status === CircuitStatus.UNAVAILABLE
+}
 
-  return !!componentStates.find(
-    (state) => state === CircuitComponentDownloadStatus.DOWNLOADING
+export function isCircuitDownloading(circuitState: CircuitState) {
+  return circuitState.status === CircuitStatus.DOWNLOADING
+}
+
+export function areCircuitsAvailable(circuitStates: CircuitStates) {
+  return Object.values(circuitStates).every((circuitState) =>
+    isCircuitAvailable(circuitState)
   )
 }
 
-export function areCircuitsDownloaded(
-  circuitDownloadStates: CircuitDownloadStates
-) {
-  return Object.values(circuitDownloadStates).every((circuitDownloadState) =>
-    isCircuitDownloaded(circuitDownloadState)
+export function areCircuitsUnavailable(circuitStates: CircuitStates) {
+  return Object.values(circuitStates).every((circuitState) =>
+    isCircuitUnavailable(circuitState)
   )
 }
 
-export function areCircuitsDownloading(
-  circuitDownloadStates: CircuitDownloadStates
-) {
-  return !!Object.values(circuitDownloadStates).find((circuitDownloadState) =>
-    isCircuitDownloading(circuitDownloadState)
+export function areCircuitsDownloading(circuitStates: CircuitStates) {
+  return !!Object.values(circuitStates).find((circuitState) =>
+    isCircuitDownloading(circuitState)
   )
 }

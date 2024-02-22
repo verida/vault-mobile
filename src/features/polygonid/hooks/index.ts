@@ -1,4 +1,4 @@
-export * from './usePolygonIdCircuitDownloadStates'
+export * from './usePolygonIdCircuitStates'
 export * from './usePolygonId'
 export * from './usePolygonIdProtocolHandler'
 export * from './usePolygonIdCircuits'

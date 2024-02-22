@@ -68,12 +68,12 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
   const [polygonIdManager, setPolygonIdManager] =
     useState<PolygonIdManager | null>(null)
 
-  const { areCircuitsDownloaded } = usePolygonIdCircuits()
+  const { circuitStorage, areAllCircuitsAvailable } = usePolygonIdCircuits()
 
   const { witnessCalculator, isReady: isWitnessReady } = usePolygonIdWitness()
 
   useEffect(() => {
-    if (!isWitnessReady || !areCircuitsDownloaded) {
+    if (!isWitnessReady || !areAllCircuitsAvailable) {
       return
     }
     const execute = async () => {
@@ -93,6 +93,7 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
           polygonIdConfig,
           polygonIdPrivateKey,
           veridaVaultContext,
+          circuitStorage,
           witnessCalculator
         )
         setPolygonIdManager(manager)
@@ -104,21 +105,22 @@ export const PolygonIdManagerProvider: React.FC = (props) => {
     execute()
   }, [
     isWitnessReady,
-    areCircuitsDownloaded,
+    areAllCircuitsAvailable,
     account,
     veridaVaultContext,
+    circuitStorage,
     witnessCalculator,
   ])
 
   const contextValue: PolygonIdManagerContextType = useMemo(
     () => ({
       isPolygonIdReady:
-        areCircuitsDownloaded && isWitnessReady && !!polygonIdManager,
-      areCircuitsReady: areCircuitsDownloaded,
+        areAllCircuitsAvailable && isWitnessReady && !!polygonIdManager,
+      areCircuitsReady: areAllCircuitsAvailable,
       isWitnessReady: isWitnessReady,
       manager: polygonIdManager,
     }),
-    [areCircuitsDownloaded, isWitnessReady, polygonIdManager]
+    [areAllCircuitsAvailable, isWitnessReady, polygonIdManager]
   )
 
   return (

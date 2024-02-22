@@ -1,21 +1,25 @@
-import { CircuitId } from '@0xpolygonid/js-sdk'
+import { CircuitStorage } from '@0xpolygonid/js-sdk'
 import { config } from 'config'
-import React, { createContext, useCallback, useEffect, useMemo } from 'react'
+import React, { createContext, useEffect, useMemo } from 'react'
 
-import { ALL_CIRCUIT_IDS } from '../constants'
-import { usePolygonIdCircuitDownloadStates } from '../hooks'
-import { CircuitDownloadStates } from '../types'
+import { REQUIRED_CIRCUIT_IDS } from '../constants'
+import { usePolygonIdCircuitStates } from '../hooks'
+import { CircuitStates } from '../types'
 import {
-  downloadCircuit as downloadOneCircuit,
+  createCircuitStorage,
+  initCircuitStorage,
   polygonIdLogger as logger,
 } from '../utils'
 
+const circuitStorage = createCircuitStorage()
+
 export type PolygonIdCircuitsContextType = {
-  readonly areCircuitsDownloaded: boolean
-  readonly areCircuitsDownloading: boolean
-  readonly circuitDownloadStates: CircuitDownloadStates
-  readonly downloadCircuit: (circuitId: CircuitId) => Promise<void>
-  readonly downloadAllCircuits: () => Promise<void>
+  readonly circuitStorage: CircuitStorage
+  readonly areAllCircuitsAvailable: boolean
+  readonly areAnyCircuitsDownloading: boolean
+  readonly areAnyCircuitsUnavailable: boolean
+  readonly circuitStates: CircuitStates
+  // TODO: Add a function to download a circuit
 }
 
 export const PolygonIdCircuitsContext =
@@ -25,68 +29,53 @@ export const PolygonIdCircuitsProvider: React.FC = (props) => {
   const { children } = props
 
   const {
-    areCircuitsDownloading,
-    areCircuitsDownloaded,
-    circuitDownloadStates,
-    updateDownloadState,
-  } = usePolygonIdCircuitDownloadStates()
-
-  const downloadCircuit = useCallback(
-    async (circuitId: CircuitId) => {
-      await downloadOneCircuit(
-        circuitId,
-        config.polygonId.common.circuitsDownloadUrl,
-        updateDownloadState
-      )
-    },
-    [updateDownloadState]
-  )
-
-  const downloadAllCircuits = useCallback(async () => {
-    await Promise.all(
-      ALL_CIRCUIT_IDS.map((circuitId) =>
-        downloadCircuit(circuitId as CircuitId)
-      )
-    )
-  }, [downloadCircuit])
+    areAllCircuitsAvailable,
+    areAnyCircuitsDownloading,
+    areAnyCircuitsUnavailable,
+    circuitStates,
+    updateState,
+  } = usePolygonIdCircuitStates(circuitStorage, REQUIRED_CIRCUIT_IDS)
 
   // Ensure all circuits are downloaded at startup
   useEffect(() => {
-    if (areCircuitsDownloading) {
-      logger.debug('Circuits currently downloading')
+    if (!areAnyCircuitsUnavailable) {
       return
     }
+    // FIXME: If there's an error downloading a circuit, for any reason, the circuit state will be switch back to UNAVAILABLE, meaning this init will be triggered again, and again, and again...
 
-    if (areCircuitsDownloaded) {
-      // FIXME: Check 'useIsCircuitsDownloaded' as this can also happen at the start when the download hasn't started yet
-      logger.debug('All the circuits are downloaded')
-      return
-    }
-
-    logger.info('Trying to download all the circuits')
-    downloadAllCircuits().catch((error: unknown) => {
+    initCircuitStorage(
+      circuitStates,
+      circuitStorage,
+      config.polygonId.common.circuitsDownloadUrl,
+      updateState
+    ).catch((error: unknown) => {
       logger.error(
-        new Error('There was an error downloading the circuits', {
+        new Error('There was an error initialising the circuit storage', {
           cause: error,
         })
       )
     })
-  }, [areCircuitsDownloading, areCircuitsDownloaded, downloadAllCircuits])
+  }, [
+    circuitStates,
+    areAllCircuitsAvailable,
+    areAnyCircuitsDownloading,
+    areAnyCircuitsUnavailable,
+    updateState,
+  ])
 
   const contextValue: PolygonIdCircuitsContextType = useMemo(
     () => ({
-      areCircuitsDownloaded,
-      areCircuitsDownloading,
-      circuitDownloadStates,
-      downloadCircuit,
-      downloadAllCircuits,
+      circuitStorage,
+      areAllCircuitsAvailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsUnavailable,
+      circuitStates,
     }),
     [
-      areCircuitsDownloaded,
-      areCircuitsDownloading,
-      circuitDownloadStates,
-      downloadCircuit,
-      downloadAllCircuits,
+      areAllCircuitsAvailable,
+      areAnyCircuitsDownloading,
+      areAnyCircuitsUnavailable,
+      circuitStates,
     ]
   )
 

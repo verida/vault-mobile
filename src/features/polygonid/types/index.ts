@@ -22,44 +22,26 @@ export enum CircuitComponentType {
   PROVING_KEY = 'PROVING_KEY',
 }
 
-export enum CircuitComponentDownloadStatus {
-  UNINITIALIZED = 'UNINITIALIZED',
+export enum CircuitStatus {
+  UNKNOWN = 'UNKNOWN',
+  UNAVAILABLE = 'UNAVAILABLE',
   DOWNLOADING = 'DOWNLOADING',
-  DOWNLOADED = 'DOWNLOADED',
+  AVAILABLE = 'AVAILABLE',
 }
 
 export type CircuitComponentPaths = {
   readonly [key in CircuitComponentType]: string
 }
 
-type AbstractCircuitComponentDownloadState<
-  Status extends CircuitComponentDownloadStatus
-> = {
-  readonly status: Status
+export type CircuitState = {
+  readonly status: CircuitStatus
 }
 
-export type CircuitComponentDownloadState =
-  | AbstractCircuitComponentDownloadState<CircuitComponentDownloadStatus.UNINITIALIZED>
-  | (AbstractCircuitComponentDownloadState<CircuitComponentDownloadStatus.DOWNLOADING> & {
-      readonly receivedBytes: number
-      readonly totalBytes: number
-    })
-  | AbstractCircuitComponentDownloadState<CircuitComponentDownloadStatus.DOWNLOADED>
-
-export type CircuitDownloadState = {
-  readonly [key in CircuitComponentType]: CircuitComponentDownloadState
+export type CircuitStates = {
+  readonly [key in CircuitId]: CircuitState
 }
 
-export type CircuitDownloadStates = {
-  readonly [key in CircuitId]: CircuitDownloadState
-}
-
-export type UpdateDownloadStateCallbackProps = {
-  circuitId: CircuitId
-  circuitType: CircuitComponentType
-  circuitComponentDownloadState: CircuitComponentDownloadState
-}
-
-export type UpdateDownloadStateCallback = (
-  props: UpdateDownloadStateCallbackProps
+export type UpdateStateCallback = (
+  circuitId: CircuitId,
+  status: CircuitStatus
 ) => void

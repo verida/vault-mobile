@@ -2,6 +2,7 @@ import {
   AuthHandler,
   AuthorizationRequestMessage,
   CircuitId,
+  CircuitStorage,
   core,
   CredentialsOfferMessage,
   CredentialWallet,
@@ -18,7 +19,6 @@ import Axios, { AxiosRequestConfig } from 'axios'
 import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
 import { PolygonIdConfig, WitnessCalculatorFunction } from '../types'
-import { createCircuitStorage, initCircuitStorage } from './circuits'
 import { polygonIdLogger as logger } from './logger'
 import {
   buildCredentialWallet,
@@ -51,15 +51,17 @@ export class PolygonIdManager {
     config: PolygonIdConfig,
     identityPrivatekey: string,
     veridaVaultContext: Context,
+    circuitStorage: CircuitStorage,
     witnessCalculator: WitnessCalculatorFunction
   ): Promise<PolygonIdManager> {
     const instance = new PolygonIdManager(config, veridaVaultContext)
-    await instance.init(identityPrivatekey, witnessCalculator)
+    await instance.init(identityPrivatekey, circuitStorage, witnessCalculator)
     return instance
   }
 
   private async init(
     identityPrivatekey: string,
+    circuitStorage: CircuitStorage,
     witnessCalculator: WitnessCalculatorFunction
   ) {
     logger.info('Initialising a Polygon Id Manager')
@@ -87,9 +89,6 @@ export class PolygonIdManager {
     )
     logger.info('Identity Wallet built successfully')
 
-    const circuitStorage = createCircuitStorage()
-    logger.info('Circuit storage created successfully')
-
     this.proofService = buildProofService(
       this.identityWallet,
       this.credentialWallet,
@@ -99,9 +98,6 @@ export class PolygonIdManager {
       this.config
     )
     logger.info('Proof service built successfully')
-
-    await initCircuitStorage(circuitStorage)
-    logger.info('Circuit storage initialised successfully')
 
     this.packageManager = await buildPackageManager(
       await circuitStorage.loadCircuitData(CircuitId.AuthV2),
@@ -124,6 +120,8 @@ export class PolygonIdManager {
       identityPrivatekey
     )
     logger.info('Polygon ID identity created successfully')
+
+    logger.info('Polygon Id Manager initialised')
   }
 
   /**

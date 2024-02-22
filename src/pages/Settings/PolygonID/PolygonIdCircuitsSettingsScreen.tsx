@@ -1,4 +1,4 @@
-import { ALL_CIRCUIT_IDS } from 'features/polygonid'
+import { usePolygonIdCircuits } from 'features/polygonid'
 import { useThemeAwareStyle } from 'hooks'
 import React, { useEffect } from 'react'
 import { ScrollView, StyleSheet, Text, View } from 'react-native'
@@ -28,6 +28,8 @@ export const PolygonIdCircuitsSettingsScreen: React.FunctionComponent<PolygonIdC
       })
     }, [navigation])
 
+    const { circuitStates } = usePolygonIdCircuits()
+
     return (
       <View
         style={[
@@ -47,10 +49,11 @@ export const PolygonIdCircuitsSettingsScreen: React.FunctionComponent<PolygonIdC
             </Text>
           </View>
           <View>
-            {ALL_CIRCUIT_IDS.map((circuitId) => (
+            {Object.entries(circuitStates).map(([circuitId, circuitState]) => (
               <CircuitDownloadStateDebug
                 key={circuitId}
-                circuitId={circuitId}
+                label={circuitId}
+                status={circuitState.status}
                 style={styles.circuitWrapper}
               />
             ))}
