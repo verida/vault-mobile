@@ -1,15 +1,19 @@
-import { CircuitData, IDataSource } from '@0xpolygonid/js-sdk'
+import { CircuitData, CircuitId, IDataSource } from '@0xpolygonid/js-sdk'
 import { MMKV } from 'react-native-mmkv'
+
+const polygonIdCircuitStorage = new MMKV({
+  id: 'circuit_data_storage',
+})
 
 const CIRCUIT_DATA_KEY_PREFIX = 'circuit'
 
-export class PolygonIdCircuitDataSource implements IDataSource<CircuitData> {
-  private storage: MMKV
+function buildKey(key: string, circuitComponentKey: string) {
+  return [CIRCUIT_DATA_KEY_PREFIX, key, circuitComponentKey].join('_')
+}
 
+export class PolygonIdCircuitDataSource implements IDataSource<CircuitData> {
   constructor() {
-    this.storage = new MMKV({
-      id: 'circuit_data_storage',
-    })
+    // nothing
   }
 
   load(): Promise<CircuitData[]> {
@@ -18,21 +22,19 @@ export class PolygonIdCircuitDataSource implements IDataSource<CircuitData> {
 
   save(key: string, value: CircuitData, _keyName = 'id'): Promise<void> {
     Object.keys(value).map((circuitComponentKey) => {
-      const storeKey = [CIRCUIT_DATA_KEY_PREFIX, key, circuitComponentKey].join(
-        '_'
-      )
+      const storeKey = buildKey(key, circuitComponentKey)
       // eslint-disable-next-line @typescript-eslint/ban-ts-comment
       // @ts-ignore because the key comes from the value object
       const data = value[circuitComponentKey] as Uint8Array | string | null
       if (data) {
-        this.storage.set(storeKey, data)
+        polygonIdCircuitStorage.set(storeKey, data)
       }
     })
     return Promise.resolve()
   }
 
   get(circuitKey: string, _keyName = 'id'): Promise<CircuitData | undefined> {
-    const allKeys = this.storage.getAllKeys()
+    const allKeys = polygonIdCircuitStorage.getAllKeys()
 
     const keys = allKeys.filter((key) => key.includes(circuitKey))
     if (keys.length === 0) {
@@ -43,9 +45,9 @@ export class PolygonIdCircuitDataSource implements IDataSource<CircuitData> {
       const [keyName] = key.split('_').reverse()
       let data = null
       if (keyName === 'circuitId') {
-        data = this.storage.getString(key)
+        data = polygonIdCircuitStorage.getString(key)
       } else {
-        data = this.storage.getBuffer(key) ?? null
+        data = polygonIdCircuitStorage.getBuffer(key) ?? null
       }
 
       return {
@@ -64,5 +66,19 @@ export class PolygonIdCircuitDataSource implements IDataSource<CircuitData> {
 
   delete(_key: string, _keyName = 'id'): Promise<void> {
     throw new Error('Method not implemented')
+  }
+
+  exists(circuitId: CircuitId): boolean {
+    const dumbCircuitData: CircuitData = {
+      circuitId: '',
+      provingKey: null,
+      verificationKey: null,
+      wasm: null,
+    }
+
+    const circuitKeys = Object.keys(dumbCircuitData).map(
+      (circuitComponentKey) => buildKey(circuitId, circuitComponentKey)
+    )
+    return circuitKeys.every((key) => polygonIdCircuitStorage.contains(key))
   }
 }

@@ -1,4 +1,4 @@
-import { CircuitId, CircuitStorage } from '@0xpolygonid/js-sdk'
+import { CircuitId } from '@0xpolygonid/js-sdk'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { CircuitStatus, UpdateStateCallback } from '../types'
@@ -8,11 +8,12 @@ import {
   areCircuitsUnavailable,
   getCircuitStates,
   getInitialCircuitStates,
+  PolygonIdCircuitStorage,
   polygonIdLogger as logger,
 } from '../utils'
 
 export function usePolygonIdCircuitStates(
-  circuitStorage: CircuitStorage,
+  circuitStorage: PolygonIdCircuitStorage,
   requiredCircuitIds: CircuitId[]
 ) {
   const [circuitStates, setCircuitStates] = useState(
@@ -23,7 +24,7 @@ export function usePolygonIdCircuitStates(
     const init = async () => {
       logger.debug('Initialising circuit states')
       try {
-        const currentCircuitStates = await getCircuitStates(
+        const currentCircuitStates = getCircuitStates(
           requiredCircuitIds,
           circuitStorage
         )

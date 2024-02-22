@@ -9,11 +9,11 @@ import {
   UpdateStateCallback,
 } from '../types'
 import { polygonIdLogger as logger } from './logger'
-import { PolygonIdCircuitDataSource } from './storage'
+import { PolygonIdCircuitDataSource, PolygonIdCircuitStorage } from './storage'
 
 export function createCircuitStorage() {
   logger.info('Creating circuit storage')
-  return new CircuitStorage(new PolygonIdCircuitDataSource())
+  return new PolygonIdCircuitStorage(new PolygonIdCircuitDataSource())
 }
 
 export async function initCircuitStorage(
@@ -114,18 +114,19 @@ async function fetchCircuitFile(url: string) {
   return new Uint8Array(buffer)
 }
 
-export async function getCircuitState(
+export function getCircuitState(
   circuitId: CircuitId,
-  circuitStorage: CircuitStorage
-): Promise<CircuitState> {
+  circuitStorage: PolygonIdCircuitStorage
+): CircuitState {
   logger.debug(`Getting circuit state for ${circuitId}`)
-  try {
-    await circuitStorage.loadCircuitData(circuitId as CircuitId)
+
+  const exists = circuitStorage.checkCircuitDataExists(circuitId)
+  if (exists) {
     logger.debug(`Circuit ${circuitId} is available`)
     return {
       status: CircuitStatus.AVAILABLE,
     }
-  } catch (error) {
+  } else {
     logger.debug(`Circuit ${circuitId} is not available`)
     return {
       status: CircuitStatus.UNAVAILABLE,
@@ -133,18 +134,16 @@ export async function getCircuitState(
   }
 }
 
-export async function getCircuitStates(
+export function getCircuitStates(
   circuitIds: CircuitId[],
-  circuitStorage: CircuitStorage
+  circuitStorage: PolygonIdCircuitStorage
 ) {
   logger.debug('Getting circuit states')
   return Object.fromEntries(
-    await Promise.all(
-      circuitIds.map(async (circuitId) => [
-        circuitId,
-        await getCircuitState(circuitId, circuitStorage),
-      ])
-    )
+    circuitIds.map((circuitId) => [
+      circuitId,
+      getCircuitState(circuitId, circuitStorage),
+    ])
   ) as CircuitStates
 }
 
