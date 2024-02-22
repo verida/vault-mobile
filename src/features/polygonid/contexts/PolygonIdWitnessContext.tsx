@@ -3,8 +3,13 @@ import { StyleSheet } from 'react-native'
 import { fromByteArray } from 'react-native-quick-base64'
 import WebView, { WebViewMessageEvent } from 'react-native-webview'
 
-import { WitnessEvent } from '../constants'
-import { CalculateWitnessFunction } from '../types'
+import { WitnessIncomingEvent, WitnessOutgoingEvent } from '../constants'
+import {
+  CalculateWitnessFunction,
+  WitnessLogMessage,
+  WitnessOutgoingMessageSchema,
+  WitnessRequestMessage,
+} from '../types'
 import { polygonIdLogger as logger, witnessCode } from '../utils'
 
 export type PolygonIdWitnessContextType = {
@@ -52,24 +57,50 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
   }, [])
 
   const handleMessage = useCallback(
-    ({ nativeEvent: { data: maybeData } }: WebViewMessageEvent) => {
+    ({ nativeEvent: { data } }: WebViewMessageEvent) => {
       logger.debug('Received message from the witness WebView')
 
-      const data = JSON.parse(maybeData) // TODO: Have strong types
+      const parsedData = JSON.parse(data)
+      const validationResult =
+        WitnessOutgoingMessageSchema.safeParse(parsedData)
+      if (!validationResult.success) {
+        logger.error(
+          new Error('Invalid message received from the witness WebView')
+        )
+        return
+      }
+      const message = validationResult.data
 
-      switch (data.event) {
-        case WitnessEvent.EXECUTION_RESULT: {
+      switch (message.event) {
+        case WitnessOutgoingEvent.RESULT: {
           logger.debug('Received witness execution result')
           if (!resolveMethodRef.current) {
             logger.warn('No resolve method found for the witness result')
             return
           }
 
-          resolveMethodRef.current(data.witnessCalculationResult)
+          resolveMethodRef.current(message.result)
+          break
+        }
+        case WitnessOutgoingEvent.LOG: {
+          logWitnessMessage(message)
+          break
+        }
+        case WitnessOutgoingEvent.ERROR: {
+          const cause =
+            typeof message.error.message === 'string'
+              ? new Error(message.error.message)
+              : undefined
+          logger.error(
+            new Error('Error while executing the witness', { cause })
+          )
           break
         }
         default: {
-          logger.warn('Unhandled message from the witness WebView', data)
+          // Should only happen if the message is valid but handled in the switch cases, hence the 'any' on message as typescript thinks it's never otherwise
+          logger.warn('Unhandled message from the witness WebView', {
+            event: (message as any).event,
+          })
         }
       }
     },
@@ -84,14 +115,14 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
         throw new Error('Polygon Id witness not ready')
       }
 
+      const request: WitnessRequestMessage = {
+        event: WitnessIncomingEvent.REQUEST,
+        binary: fromByteArray(wasm),
+        inputs,
+      }
+
       logger.debug('Sending message to the witness WebView')
-      webViewRef.current.postMessage(
-        JSON.stringify({
-          event: WitnessEvent.EXECUTE_WASM,
-          binary: fromByteArray(wasm),
-          inputs,
-        })
-      )
+      webViewRef.current.postMessage(JSON.stringify(request))
 
       return new Promise<string>((resolve) => {
         resolveMethodRef.current = resolve
@@ -140,6 +171,22 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
       {children}
     </PolygonIdWitnessContext.Provider>
   )
+}
+
+function logWitnessMessage(log: WitnessLogMessage) {
+  switch (log.level) {
+    case 'debug':
+      logger.debug(`Witness: ${log.message}`, log.data)
+      break
+    case 'info':
+      logger.info(`Witness: ${log.message}`, log.data)
+      break
+    case 'warn':
+      logger.warn(`Witness: ${log.message}`, log.data)
+      break
+    default:
+    // Nothing
+  }
 }
 
 const styles = StyleSheet.create({

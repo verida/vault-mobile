@@ -1,4 +1,6 @@
-export const witnessCode = `
+// This file is used to code the witness code to be used in the WebView.
+// Copy this code and paste it in the literal string in witness.ts
+
 async function builder(code, options) {
   options = options || {}
 
@@ -364,4 +366,3 @@ window.addEventListener('message', async (message) => {
     )
   }
 })
-`

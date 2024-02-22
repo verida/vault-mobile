@@ -1,4 +1,9 @@
-export enum WitnessEvent {
-  EXECUTION_RESULT = '@EXECUTION_RESULT',
-  EXECUTE_WASM = '@EXECUTE_WASM',
+export enum WitnessIncomingEvent {
+  REQUEST = 'REQUEST',
+}
+
+export enum WitnessOutgoingEvent {
+  LOG = 'LOG',
+  ERROR = 'ERROR',
+  RESULT = 'RESULT',
 }
