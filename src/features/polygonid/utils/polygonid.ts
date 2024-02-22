@@ -277,13 +277,14 @@ export async function getOrCreatePolygonIdIdentity(
   privateKey: string
 ): Promise<core.DID> {
   try {
-    logger.debug('Getting existing Polygon ID identities')
-    const allIdentities = await dataStorage.identity.getAllIdentities()
-    if (allIdentities.length > 0) {
-      logger.info('Using existing Polygon ID identity')
-      return core.DID.parse(allIdentities[0].did)
-      // Should not have multiple ones
-    }
+    // TODO: Re-enable checking for and using existing identities, have to fix the persistence of MerkleTree though
+    // logger.debug('Getting existing Polygon ID identities')
+    // const allIdentities = await dataStorage.identity.getAllIdentities()
+    // if (allIdentities.length > 0) {
+    //   logger.info('Using existing Polygon ID identity')
+    //   return core.DID.parse(allIdentities[0].did)
+    //   // Should not have multiple ones
+    // }
 
     logger.debug('Creating Polygon ID identity')
     const result = await identityWallet.createIdentity({
