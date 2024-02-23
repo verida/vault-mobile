@@ -220,11 +220,13 @@ export class PolygonIdManager {
 
       // TODO: Consider splitting this function in two, one to get the credentials from the offer, and another to save them. So the UI could see the credentials before they are saved
 
-      logger.info('Saving the credentials in the Polygon ID credential wallet')
+      logger.debug('Saving credentials in credential wallet...')
       await this.credentialWallet.saveAll(credentials)
+      logger.info('Credentials saved in credential wallet')
 
-      logger.info('Saving the credentials in the Verida Vault of the account')
+      logger.debug('Saving credentials in account Vault...')
       await this.saveCredentials(credentials)
+      logger.info('Credentials saved in account Vault')
 
       return credentials
     } catch (error) {
@@ -242,6 +244,7 @@ export class PolygonIdManager {
     logger.info('Processing connection request...')
     try {
       const result = await this.handleAuthorizationRequest(message)
+      logger.info('Connection request processed successfully')
       return { result }
     } catch (cause) {
       return {
@@ -259,6 +262,7 @@ export class PolygonIdManager {
 
     try {
       const result = await this.handleAuthorizationRequest(message)
+      logger.info('Proof request processed successfully')
       return { result }
     } catch (cause) {
       return {
@@ -272,10 +276,11 @@ export class PolygonIdManager {
   }
 
   public async processCredentialsOffer(message: CredentialsOfferMessage) {
-    logger.info('Processing credential offer')
+    logger.info('Processing credential offer...')
 
     try {
       const result = await this.handleCredentialsOffer(message)
+      logger.info('Credential offer processed successfully')
       return { result }
     } catch (cause) {
       return {
@@ -289,10 +294,6 @@ export class PolygonIdManager {
   }
 
   private async saveCredentials(credentials: W3CCredential[]): Promise<void> {
-    logger.info(
-      "Saving credentials to the account's Vault credentials datastore"
-    )
-
     if (!this.veridaContext) {
       throw new Error(
         "Cannot save credentials to account's Vault as Verida Context is undefined"
