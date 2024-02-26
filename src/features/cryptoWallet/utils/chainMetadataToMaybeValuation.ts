@@ -19,7 +19,8 @@ export function chainMetadataToMaybeValuation({
   const maybeBalanceByChainResult = balanceByChainResults.find(
     (e) =>
       new ChainId(e.asset.chainId).toString() ===
-      new ChainId(chainMetadata).toString()
+        new ChainId(chainMetadata).toString() &&
+      e.asset.assetName.namespace === 'slip44'
   )
 
   if (!maybeBalanceByChainResult) return null
