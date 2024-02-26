@@ -32,13 +32,13 @@ async function builder(code, options) {
       },
       printErrorMessage: function () {
         errStr += getMessage() + '\\n'
-        // console.error(getMessage());
+        log('warn', getMessage()) // TODO: Check the right way to log this
       },
       writeBufferMessage: function () {
         const msg = getMessage()
         // Any calls to \`log()\` will always end with a \`\\n\`, so that's when we print and reset
         if (msg === '\\n') {
-          console.log(msgStr)
+          log('debug', msgStr) // TODO: Check the right way to log this
           msgStr = ''
         } else {
           // If we've buffered other content, put a space in between the items
@@ -306,6 +306,7 @@ function fnvHash(str) {
   const uint64_max = BigInt(2) ** BigInt(64)
   let hash = BigInt('0xCBF29CE484222325')
   for (var i = 0; i < str.length; i++) {
+    // eslint-disable-next-line no-bitwise
     hash ^= BigInt(str[i].charCodeAt())
     hash *= BigInt(0x100000001b3)
     hash %= uint64_max
