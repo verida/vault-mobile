@@ -1,10 +1,10 @@
-import { useNavigation } from '@react-navigation/native'
 import { DataFolderDefinition, dataFolders } from 'features/data'
 import { Logger } from 'features/telemetry'
 import React, { useEffect, useState } from 'react'
 import { StyleSheet, View } from 'react-native'
 
 import Folder from 'api/VaultCommon/managers/data/folder'
+import { useMainNavigation } from 'navigation/hooks'
 
 import { DataCardList } from './DataCardList'
 
@@ -20,7 +20,7 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
   const { folder } = props
 
   const [items, setItems] = useState<any[]>([])
-  const navigation = useNavigation()
+  const navigation = useMainNavigation()
 
   useEffect(() => {
     const init = () => {
@@ -42,7 +42,7 @@ export const DataCardView: React.FunctionComponent<DataCardViewProps> = (
                 icon: icon,
                 color: color,
                 onPress: () =>
-                  navigation.navigate('DataFolder', { folderName: name }),
+                  navigation.push('DataFolder', { folderName: name }),
               }
             }) ?? []
 

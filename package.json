@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -241,6 +241,7 @@
     "@types/url-parse": "^1.4.4",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
+    "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.3.0",
     "eslint": "^7.32.0",
