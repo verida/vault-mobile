@@ -67,10 +67,23 @@ export class Logger {
 
     const extra = []
     if (data) extra.push(data)
-    if (error) extra.push(error)
 
     // eslint-disable-next-line no-console
     console[level](formattedMessage, ...extra)
+
+    if (error instanceof Error && error.stack) {
+      // eslint-disable-next-line no-console
+      console[level](error.stack)
+    }
+
+    if (error instanceof Error && error.cause) {
+      this.log(
+        level,
+        `Caused by: ${error.cause instanceof Error ? error.cause.message : ''}`,
+        undefined,
+        error.cause
+      )
+    }
   }
 
   public error(error: Error | unknown, sentryCaptureContext?: CaptureContext) {
