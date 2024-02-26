@@ -112,7 +112,7 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
       logger.info('Calculating witness...')
 
       if (!webViewRef.current || !isReady) {
-        throw new Error('Polygon Id witness not ready')
+        throw new Error('Polygon ID witness not ready')
       }
 
       const request: WitnessRequestMessage = {

@@ -93,7 +93,7 @@ function parseUriMessage(message: string) {
   }
 
   logger.warn('The Polygon ID message is invalid')
-  throw new Error('Invalid PolygonID message')
+  throw new Error('Invalid Polygon ID message')
 }
 
 function parseMessage(
