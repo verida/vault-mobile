@@ -3,6 +3,7 @@ import { DatabaseOpenConfig, DatastoreOpenConfig } from '@verida/types'
 
 import { polygonIdLogger as logger } from '../logger'
 import { PolygonIdVeridaDataSource } from './PolygonIdVeridaDataSource'
+import { PolygonIdVeridaMerkleTreeDataSource } from './PolygonIdVeridaMerkleTreeDataSource'
 
 /**
  * Open a Verida datastore.
@@ -50,4 +51,20 @@ export async function buildPolygonIdVeridaDataSource<T>(
   logger.debug(`Building Verida data source for ${databaseName}...`)
   const db = await getVeridaDatabase(context, databaseName)
   return new PolygonIdVeridaDataSource<T>(db)
+}
+
+/**
+ * Creates a new data source based on a Verida database.
+ *
+ * @param context The Verida Context
+ * @param databaseName the name of the database for the datasource
+ * @returns the datasource
+ */
+export async function buildPolygonIdVeridaMerkleTreeDataSource(
+  context: Context,
+  databaseName: string
+) {
+  logger.debug(`Building Verida data source for ${databaseName}...`)
+  const db = await getVeridaDatabase(context, databaseName)
+  return new PolygonIdVeridaMerkleTreeDataSource(db)
 }

@@ -16,7 +16,6 @@ import {
   Identity,
   IdentityStorage,
   IdentityWallet,
-  InMemoryMerkleTreeStorage,
   IssuerResolver,
   IStateStorage,
   KMS,
@@ -36,11 +35,13 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { proving, ProvingMethod, ProvingMethodAlg } from '@iden3/js-jwz'
 import { Context } from '@verida/client-rn'
+import { VeridaRecord } from 'features/verida'
 
 import {
   POLYGON_ID_CREDENTIALS_DATABASE_NAME,
   POLYGON_ID_IDENTITY_DATABASE_NAME,
   POLYGON_ID_KEYSTORE_DATABASE_NAME,
+  POLYGON_ID_MERKLE_TREE_DATABASE_NAME,
   POLYGON_ID_PROFILE_DATABASE_NAME,
 } from '../constants'
 import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
@@ -48,7 +49,9 @@ import { polygonIdLogger as logger } from './logger'
 import { Groth16ProvingMethod, ZkProver } from './prover'
 import {
   buildPolygonIdVeridaDataSource,
+  buildPolygonIdVeridaMerkleTreeDataSource,
   getVeridaDatabase,
+  PolygonIdVeridaMerkleTreeStorage,
   PolygonIdVeridaPrivateKeyStore,
 } from './storage'
 
@@ -94,7 +97,13 @@ export async function buildDataStorage(
           POLYGON_ID_PROFILE_DATABASE_NAME
         )
       ),
-      mt: new InMemoryMerkleTreeStorage(40),
+      mt: new PolygonIdVeridaMerkleTreeStorage(
+        await buildPolygonIdVeridaMerkleTreeDataSource(
+          veridaContext,
+          POLYGON_ID_MERKLE_TREE_DATABASE_NAME
+        ),
+        40
+      ),
       states: new EthStateStorage(ethConnectionConfig),
     }
 
@@ -277,14 +286,13 @@ export async function getOrCreatePolygonIdIdentity(
   privateKey: string
 ): Promise<core.DID> {
   try {
-    // TODO: Re-enable checking for and using existing identities, have to fix the persistence of MerkleTree though
-    // logger.debug('Getting existing Polygon ID identities')
-    // const allIdentities = await dataStorage.identity.getAllIdentities()
-    // if (allIdentities.length > 0) {
-    //   logger.info('Using existing Polygon ID identity')
-    //   return core.DID.parse(allIdentities[0].did)
-    //   // Should not have multiple ones
-    // }
+    logger.debug('Getting existing Polygon ID identities')
+    const allIdentities = await dataStorage.identity.getAllIdentities()
+    if (allIdentities.length > 0) {
+      logger.info('Using existing Polygon ID identity')
+      return core.DID.parse(allIdentities[0].did)
+      // Should not have multiple ones
+    }
 
     logger.debug('Creating Polygon ID identity')
     const result = await identityWallet.createIdentity({
@@ -297,7 +305,6 @@ export async function getOrCreatePolygonIdIdentity(
         type: config.polygonIdRevocationType,
       },
     })
-    // FIXME: What about in memory the merkle tree which is not persisted?
 
     logger.info('Polygon ID identity created successfully')
     return result.did
@@ -306,4 +313,104 @@ export async function getOrCreatePolygonIdIdentity(
       cause: error,
     })
   }
+}
+
+export async function migratePolygonIdData(veridaContext: Context) {
+  logger.info('Checking Polygon ID data for migration...')
+
+  type PolygonIdVeridaRecord<Type> = VeridaRecord<{ data: Type }>
+
+  // Checking Merkle Trees
+
+  logger.debug('Opening merkle tree database')
+  const merkleTreeDatabase = await getVeridaDatabase(
+    veridaContext,
+    POLYGON_ID_MERKLE_TREE_DATABASE_NAME
+  )
+
+  logger.debug('Fetching merkle tree records')
+  const mts = await merkleTreeDatabase.getMany(
+    {},
+    {
+      limit: 1,
+    }
+  )
+  if (mts.length > 0) {
+    logger.info('Merkle trees found, no migration needed')
+    return
+  }
+  logger.info('No merkle trees found, migration needed')
+
+  // Identities
+
+  logger.debug('Opening identity database')
+  const identityDatabase = await getVeridaDatabase(
+    veridaContext,
+    POLYGON_ID_IDENTITY_DATABASE_NAME
+  )
+
+  logger.debug('Deleting all identities from database')
+  await identityDatabase.deleteAll()
+  logger.info('All identities deleted from database')
+
+  // Profiles
+
+  logger.debug('Opening profile database')
+  const profileDatabase = await getVeridaDatabase(
+    veridaContext,
+    POLYGON_ID_PROFILE_DATABASE_NAME
+  )
+
+  logger.debug('Deleting all profiles from database')
+  await profileDatabase.deleteAll()
+  logger.info('All profiles deleted from database')
+
+  // Identity credentials
+
+  logger.debug('Opening credential database')
+  const credentialDatabase = await getVeridaDatabase(
+    veridaContext,
+    POLYGON_ID_CREDENTIALS_DATABASE_NAME
+  )
+
+  // We only want to delete the identity credentials (see filter below)
+  // Expecting a large number of credentials
+  // But not expecting a large number of non-identity credentials
+  let recordsLeft = true
+  do {
+    logger.debug('Fetching identity credentials from database')
+    const credentials = (await credentialDatabase.getMany(
+      {},
+      {
+        limit: 1000,
+      }
+    )) as PolygonIdVeridaRecord<W3CCredential>[]
+
+    const credentialsToDelete = credentials.filter((credential) => {
+      // TODO: Move this filter to the query filter
+      return (
+        credential.data.type.includes('AuthBJJCredential') &&
+        credential.data.credentialSubject?.type === 'AuthBJJCredential' &&
+        credential.data.credentialSubject?.x &&
+        credential.data.credentialSubject?.y
+      )
+    })
+
+    if (credentialsToDelete.length === 0) {
+      // If there are no credentialsToDelete in a batch, we can consider there are non left, we can stop the loop
+      recordsLeft = false
+      logger.debug('No more identity credentials in database')
+    } else {
+      recordsLeft = true
+      logger.debug('Deleting identity credentials from database')
+      credentialsToDelete.forEach((credential) => {
+        credentialDatabase.delete(credential)
+      })
+    }
+
+    // Iterate as long as there are credentialsToDelete left
+  } while (recordsLeft)
+  logger.info('All identity credentials deleted from database')
+
+  logger.info('Polygon ID data migration complete')
 }

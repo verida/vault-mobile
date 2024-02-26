@@ -27,6 +27,7 @@ import {
   buildPackageManager,
   buildProofService,
   getOrCreatePolygonIdIdentity,
+  migratePolygonIdData,
 } from './polygonid'
 import { getVeridaDatastore } from './storage'
 
@@ -54,13 +55,13 @@ export class PolygonIdManager {
     circuitStorage: CircuitStorage,
     calculateWitness: CalculateWitnessFunction
   ): Promise<PolygonIdManager> {
-    logger.info('Creating a Polygon Id Manager')
+    logger.info('Creating a Polygon ID Manager')
     try {
       // Pass the private key as needed, do not keep it as a class property
       const instance = new PolygonIdManager(config, veridaVaultContext)
       await instance.init(identityPrivatekey, circuitStorage, calculateWitness)
 
-      logger.info('Polygon Id Manager created successfully')
+      logger.info('Polygon ID Manager created successfully')
       return instance
     } catch (error) {
       throw new Error(
@@ -77,7 +78,7 @@ export class PolygonIdManager {
     circuitStorage: CircuitStorage,
     calculateWitness: CalculateWitnessFunction
   ) {
-    logger.info('Initialising a Polygon Id Manager')
+    logger.info('Initialising a Polygon ID Manager')
 
     const ethConnectionConfig = defaultEthConnectionConfig
     ethConnectionConfig.contractAddress = this.config.polygonIdContractAddress
@@ -123,6 +124,8 @@ export class PolygonIdManager {
     this.fetchHandler = new FetchHandler(this.packageManager)
     logger.info('FetchHandler created successfully')
 
+    await migratePolygonIdData(this.veridaContext)
+
     this.did = await getOrCreatePolygonIdIdentity(
       this.identityWallet,
       this.dataStorage,
@@ -130,7 +133,7 @@ export class PolygonIdManager {
       identityPrivatekey
     )
 
-    logger.info('Polygon Id Manager initialised')
+    logger.info('Polygon ID Manager initialised')
   }
 
   private async handleAuthorizationRequest(

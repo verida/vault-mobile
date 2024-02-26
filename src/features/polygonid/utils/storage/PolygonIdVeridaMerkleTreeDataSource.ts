@@ -1,31 +1,27 @@
-import { IDataSource } from '@0xpolygonid/js-sdk'
 import { IDatabase } from '@verida/types'
 import { VeridaRecord, VeridaUnsavedRecord } from 'features/verida'
 
-type PolygonIdVeridaUnsavedRecord<Type> = VeridaUnsavedRecord<{ data: Type }>
-type PolygonIdVeridaRecord<Type> = VeridaRecord<{ data: Type }>
+type PolygonIdVeridaMerkleTreeUnsavedRecord = VeridaUnsavedRecord<{
+  data: string
+}>
+type PolygonIdVeridaMerkleTreeRecord = VeridaRecord<{ data: string }>
 
-/**
- * Generic Verida data source
- */
-export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
+export class PolygonIdVeridaMerkleTreeDataSource {
   private database: IDatabase
 
   public constructor(database: IDatabase) {
     this.database = database
   }
 
-  public async save(key: string, value: T, keyName = 'id'): Promise<void> {
-    let record: Omit<PolygonIdVeridaUnsavedRecord<T>, 'schema'> = {
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore as the value and keyName as coming from a suposedly trusted third-party (Polygon ID)
-      _id: value[keyName],
+  public async save(key: string, value: string): Promise<void> {
+    let record: Omit<PolygonIdVeridaMerkleTreeUnsavedRecord, 'schema'> = {
+      _id: key,
       data: value,
     }
 
     try {
       const existingRecord = (await this.database.get(key)) as
-        | PolygonIdVeridaRecord<T>
+        | PolygonIdVeridaMerkleTreeRecord
         | undefined
       if (existingRecord) {
         record = existingRecord // Overwrite the meta properties from the existing record
@@ -40,14 +36,10 @@ export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
     await this.database.save(record)
   }
 
-  patchData(_value: T[]): void {
-    throw new Error('Not implemented')
-  }
-
-  public async get(key: string, _keyName = 'id'): Promise<T | undefined> {
+  public async get(key: string) {
     try {
       const result = (await this.database.get(key)) as
-        | PolygonIdVeridaRecord<T>
+        | PolygonIdVeridaMerkleTreeRecord
         | undefined
       return result?.data
     } catch (_error) {
@@ -56,18 +48,18 @@ export class PolygonIdVeridaDataSource<T = unknown> implements IDataSource<T> {
     }
   }
 
-  public async load(): Promise<T[]> {
+  public async load() {
     const data = (await this.database.getMany(
       {},
       {
         limit: 1000,
       }
-    )) as PolygonIdVeridaRecord<T>[]
+    )) as PolygonIdVeridaMerkleTreeRecord[]
 
     return data.map((item) => item.data)
   }
 
-  public async delete(key: string, _keyName = 'id'): Promise<void> {
+  public async delete(key: string): Promise<void> {
     const record = await this.database.get(key)
     await this.database.delete(record)
   }
