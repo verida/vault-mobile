@@ -379,22 +379,16 @@ export async function migratePolygonIdData(veridaContext: Context) {
   let recordsLeft = true
   do {
     logger.debug('Fetching identity credentials from database')
-    const credentials = (await credentialDatabase.getMany(
-      {},
+    const credentialsToDelete = (await credentialDatabase.getMany(
+      {
+        'data.credentialSubject.type': 'AuthBJJCredential',
+        'data.credentialSubject.x': { $exists: true },
+        'data.credentialSubject.y': { $exists: true },
+      },
       {
         limit: 1000,
       }
     )) as PolygonIdVeridaRecord<W3CCredential>[]
-
-    const credentialsToDelete = credentials.filter((credential) => {
-      // TODO: Move this filter to the query filter
-      return (
-        credential.data.type.includes('AuthBJJCredential') &&
-        credential.data.credentialSubject?.type === 'AuthBJJCredential' &&
-        credential.data.credentialSubject?.x &&
-        credential.data.credentialSubject?.y
-      )
-    })
 
     if (credentialsToDelete.length === 0) {
       // If there are no credentialsToDelete in a batch, we can consider there are non left, we can stop the loop
