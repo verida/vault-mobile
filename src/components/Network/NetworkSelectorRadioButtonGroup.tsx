@@ -16,30 +16,31 @@ export type NetworkSelectorRadioButtonGroupProps = Omit<
   onSelectionChange?: (newNetwork: EnvironmentType) => void
 }
 
-export const NetworkSelectorRadioButtonGroup: React.FunctionComponent<NetworkSelectorRadioButtonGroupProps> =
-  (props) => {
-    const { selectedNetwork, onSelectionChange, ...otherProps } = props
+export const NetworkSelectorRadioButtonGroup: React.FunctionComponent<
+  NetworkSelectorRadioButtonGroupProps
+> = (props) => {
+  const { selectedNetwork, onSelectionChange, ...otherProps } = props
 
-    const handleValueChange = useCallback(
-      (newNetwork: string) => {
-        onSelectionChange && onSelectionChange(newNetwork as EnvironmentType)
-      },
-      [onSelectionChange]
-    )
+  const handleValueChange = useCallback(
+    (newNetwork: string) => {
+      onSelectionChange && onSelectionChange(newNetwork as EnvironmentType)
+    },
+    [onSelectionChange]
+  )
 
-    const networks = getSupportedVeridaNetworks()
-    const networkItems: RadioButtonItem[] = networks.map((network) => ({
-      label: network,
-      value: network,
-    }))
+  const networks = getSupportedVeridaNetworks()
+  const networkItems: RadioButtonItem[] = networks.map((network) => ({
+    label: network,
+    value: network,
+  }))
 
-    return (
-      <CollapsibleRadioButtonGroup
-        title='Network'
-        items={networkItems}
-        selectedItem={selectedNetwork}
-        onValueChange={handleValueChange}
-        {...otherProps}
-      />
-    )
-  }
+  return (
+    <CollapsibleRadioButtonGroup
+      title='Network'
+      items={networkItems}
+      selectedItem={selectedNetwork}
+      onValueChange={handleValueChange}
+      {...otherProps}
+    />
+  )
+}

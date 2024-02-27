@@ -12,28 +12,29 @@ export type CollapsibleRadioButtonGroupProps = {
   expandedByDefault?: boolean
 } & ViewProps
 
-export const CollapsibleRadioButtonGroup: React.FunctionComponent<CollapsibleRadioButtonGroupProps> =
-  (props) => {
-    const {
-      items,
-      selectedItem,
-      onValueChange,
-      title,
-      expandedByDefault,
-      ...viewProps
-    } = props
+export const CollapsibleRadioButtonGroup: React.FunctionComponent<
+  CollapsibleRadioButtonGroupProps
+> = (props) => {
+  const {
+    items,
+    selectedItem,
+    onValueChange,
+    title,
+    expandedByDefault,
+    ...viewProps
+  } = props
 
-    return (
-      <CollapsibleContent
-        title={title}
-        value={selectedItem}
-        expandedByDefault={expandedByDefault}
-        {...viewProps}>
-        <RadioButtonGroup
-          items={items}
-          selectedItem={selectedItem}
-          onValueChange={onValueChange}
-        />
-      </CollapsibleContent>
-    )
-  }
+  return (
+    <CollapsibleContent
+      title={title}
+      value={selectedItem}
+      expandedByDefault={expandedByDefault}
+      {...viewProps}>
+      <RadioButtonGroup
+        items={items}
+        selectedItem={selectedItem}
+        onValueChange={onValueChange}
+      />
+    </CollapsibleContent>
+  )
+}

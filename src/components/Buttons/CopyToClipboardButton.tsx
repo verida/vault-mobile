@@ -15,37 +15,38 @@ export type CopyToClipboardButtonProps = {
 } & ViewProps
 
 // TODO: Factorise the base of this component into a IconButton
-export const CopyToClipboardButton: React.FunctionComponent<CopyToClipboardButtonProps> =
-  (props) => {
-    const { content, ...viewProps } = props
+export const CopyToClipboardButton: React.FunctionComponent<
+  CopyToClipboardButtonProps
+> = (props) => {
+  const { content, ...viewProps } = props
 
-    const styles = useThemeAwareStyle(createStyles)
+  const styles = useThemeAwareStyle(createStyles)
 
-    const handleButtonPress = useCallback(async () => {
-      try {
-        Clipboard.setString(content)
-        Snackbar.show({
-          text: 'Copied',
-          duration: Snackbar.LENGTH_SHORT,
-        })
-      } catch (error: unknown) {
-        logger.error(error)
-      }
-    }, [content])
+  const handleButtonPress = useCallback(async () => {
+    try {
+      Clipboard.setString(content)
+      Snackbar.show({
+        text: 'Copied',
+        duration: Snackbar.LENGTH_SHORT,
+      })
+    } catch (error: unknown) {
+      logger.error(error)
+    }
+  }, [content])
 
-    return (
-      <View {...viewProps}>
-        <View style={styles.container}>
-          <TouchableOpacity
-            onPress={handleButtonPress}
-            hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
-            style={styles.button}>
-            <Icon name='copy-outline' size={24} />
-          </TouchableOpacity>
-        </View>
+  return (
+    <View {...viewProps}>
+      <View style={styles.container}>
+        <TouchableOpacity
+          onPress={handleButtonPress}
+          hitSlop={{ top: 10, right: 10, bottom: 10, left: 10 }}
+          style={styles.button}>
+          <Icon name='copy-outline' size={24} />
+        </TouchableOpacity>
       </View>
-    )
-  }
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

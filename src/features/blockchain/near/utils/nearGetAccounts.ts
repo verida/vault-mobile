@@ -13,13 +13,13 @@ export async function nearGetAccounts({
   const { reference: networkId } = caipChainId
   return (
     await Promise.allSettled(
-      (
-        await keystore.getAccounts(networkId)
-      ).map(async (accountId: string): Promise<NearAccountPointer> => {
-        const keypair = await keystore.getKey(networkId, accountId)
-        const publicKey = keypair.getPublicKey().toString()
-        return { publicKey, signerId: accountId }
-      })
+      (await keystore.getAccounts(networkId)).map(
+        async (accountId: string): Promise<NearAccountPointer> => {
+          const keypair = await keystore.getKey(networkId, accountId)
+          const publicKey = keypair.getPublicKey().toString()
+          return { publicKey, signerId: accountId }
+        }
+      )
     )
   ).flatMap((e) => (e.status === 'fulfilled' ? [e.value] : []))
 }

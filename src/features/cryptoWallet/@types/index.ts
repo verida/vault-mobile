@@ -166,7 +166,7 @@ export type ImportedSeedPhrase = {
 }
 
 type AbstractMinifiedBlockchainAccount<
-  Namespace extends SupportedBlockchainNamespace
+  Namespace extends SupportedBlockchainNamespace,
 > = {
   readonly address: string
   readonly namespace: Namespace
@@ -245,7 +245,7 @@ export function isChainIdResourceParams(
 
 type AbstractAggregateWalletBannerBalance<
   Resource extends ResourceParams,
-  Type extends AggregateWalletBannerBalanceType
+  Type extends AggregateWalletBannerBalanceType,
 > = {
   /* required */
   readonly resource: Resource

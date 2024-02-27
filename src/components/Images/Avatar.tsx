@@ -41,12 +41,12 @@ export const Avatar: React.FunctionComponent<AvatarProps> = (props) => {
     fallbackType === 'person'
       ? 'user'
       : fallbackType === 'entity'
-      ? 'business'
-      : fallbackType === 'app'
-      ? 'calculator'
-      : fallbackType === 'wallet'
-      ? 'wallet'
-      : 'user'
+        ? 'business'
+        : fallbackType === 'app'
+          ? 'calculator'
+          : fallbackType === 'wallet'
+            ? 'wallet'
+            : 'user'
 
   const imageSource = source
     ? typeof source === 'string'

@@ -47,7 +47,7 @@ type ConfirmTransactionCallback<T extends AggregateWalletBannerBalance> = (
 ) => Promise<ConfirmTransactionCallbackResult>
 
 type ExecuteLazyTransactionParams<
-  T extends AggregateWalletBannerBalance = AggregateWalletBannerBalance
+  T extends AggregateWalletBannerBalance = AggregateWalletBannerBalance,
 > = ConfirmTransactionCallbackParams<T> & {
   readonly fromAddress: string
 }
@@ -251,11 +251,11 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
                   aggregateWalletBannerBalance,
                 })
               : type === AggregateWalletBannerBalanceType.ERC_20
-              ? await executeBlockchainSpecificErc20TransactionOrThrow({
-                  ...params,
-                  aggregateWalletBannerBalance,
-                })
-              : null
+                ? await executeBlockchainSpecificErc20TransactionOrThrow({
+                    ...params,
+                    aggregateWalletBannerBalance,
+                  })
+                : null
 
           if (!result)
             throw new Error(

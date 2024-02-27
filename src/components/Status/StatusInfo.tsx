@@ -23,18 +23,18 @@ export const StatusInfo: React.FunctionComponent<StatusInfoProps> = (props) => {
   const statusTitle = title
     ? title
     : statusType === 'processsing'
-    ? 'Processing'
-    : statusType === 'success'
-    ? 'Success'
-    : 'Error'
+      ? 'Processing'
+      : statusType === 'success'
+        ? 'Success'
+        : 'Error'
 
   const statusSubtitle = subtitle
     ? subtitle
     : statusType === 'processsing'
-    ? 'Please wait'
-    : statusType === 'success'
-    ? 'Congratulations!'
-    : 'Something went wrong!'
+      ? 'Please wait'
+      : statusType === 'success'
+        ? 'Congratulations!'
+        : 'Something went wrong!'
 
   const icon =
     statusType === 'processsing' ? (
