@@ -15,53 +15,54 @@ export type PolygonIdCircuitsSettingsScreenParams = undefined
 type PolygonIdCircuitsSettingsScreenProps =
   MainStackScreenProps<'PolygonIdCircuitsSettings'>
 
-export const PolygonIdCircuitsSettingsScreen: React.FunctionComponent<PolygonIdCircuitsSettingsScreenProps> =
-  (props) => {
-    const { navigation } = props
+export const PolygonIdCircuitsSettingsScreen: React.FunctionComponent<
+  PolygonIdCircuitsSettingsScreenProps
+> = (props) => {
+  const { navigation } = props
 
-    const styles = useThemeAwareStyle(createStyles)
-    const insets = useSafeAreaInsets()
+  const styles = useThemeAwareStyle(createStyles)
+  const insets = useSafeAreaInsets()
 
-    useEffect(() => {
-      navigation.setOptions({
-        title: 'Polygon ID Circuits',
-      })
-    }, [navigation])
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Polygon ID Circuits',
+    })
+  }, [navigation])
 
-    const { circuitStates } = usePolygonIdCircuits()
+  const { circuitStates } = usePolygonIdCircuits()
 
-    return (
-      <View
-        style={[
-          styles.wrapper,
-          {
-            paddingBottom: insets.bottom,
-            paddingRight: insets.right,
-            paddingLeft: insets.left,
-          },
-        ]}>
-        <ScrollView
-          style={styles.container}
-          contentContainerStyle={styles.containerContent}>
-          <View style={styles.messageWrapper}>
-            <Text style={styles.message}>
-              Polygon ID requires these circuits to be available
-            </Text>
-          </View>
-          <View>
-            {Object.entries(circuitStates).map(([circuitId, circuitState]) => (
-              <CircuitDownloadStateDebug
-                key={circuitId}
-                label={circuitId}
-                status={circuitState.status}
-                style={styles.circuitWrapper}
-              />
-            ))}
-          </View>
-        </ScrollView>
-      </View>
-    )
-  }
+  return (
+    <View
+      style={[
+        styles.wrapper,
+        {
+          paddingBottom: insets.bottom,
+          paddingRight: insets.right,
+          paddingLeft: insets.left,
+        },
+      ]}>
+      <ScrollView
+        style={styles.container}
+        contentContainerStyle={styles.containerContent}>
+        <View style={styles.messageWrapper}>
+          <Text style={styles.message}>
+            Polygon ID requires these circuits to be available
+          </Text>
+        </View>
+        <View>
+          {Object.entries(circuitStates).map(([circuitId, circuitState]) => (
+            <CircuitDownloadStateDebug
+              key={circuitId}
+              label={circuitId}
+              status={circuitState.status}
+              style={styles.circuitWrapper}
+            />
+          ))}
+        </View>
+      </ScrollView>
+    </View>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

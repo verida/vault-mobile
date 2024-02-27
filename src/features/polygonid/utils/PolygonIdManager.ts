@@ -217,9 +217,8 @@ export class PolygonIdManager {
 
       const encodedData = new TextEncoder().encode(JSON.stringify(message))
 
-      const credentials = await this.fetchHandler.handleCredentialOffer(
-        encodedData
-      )
+      const credentials =
+        await this.fetchHandler.handleCredentialOffer(encodedData)
 
       // TODO: Consider splitting this function in two, one to get the credentials from the offer, and another to save them. So the UI could see the credentials before they are saved
 

@@ -22,10 +22,10 @@ export const CircuitDownloadStateDebug = React.memo(
       status === CircuitStatus.AVAILABLE
         ? 'Available'
         : status === CircuitStatus.DOWNLOADING
-        ? 'Downloading...'
-        : status === CircuitStatus.UNAVAILABLE
-        ? 'Not Available'
-        : 'Unknown'
+          ? 'Downloading...'
+          : status === CircuitStatus.UNAVAILABLE
+            ? 'Not Available'
+            : 'Unknown'
 
     return (
       <View style={style}>

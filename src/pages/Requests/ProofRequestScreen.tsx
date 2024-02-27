@@ -44,266 +44,267 @@ export interface ProofRequestScreenParams {
 type ProofRequestScreenProps = MainStackScreenProps<'ProofRequest'>
 
 /** Screen representing a request for a Zero Knowledge Proof */
-export const ProofRequestScreen: React.FunctionComponent<ProofRequestScreenProps> =
-  (props) => {
-    const { navigation, route } = props
-    const { name, logo, details, data } = route.params
+export const ProofRequestScreen: React.FunctionComponent<
+  ProofRequestScreenProps
+> = (props) => {
+  const { navigation, route } = props
+  const { name, logo, details, data } = route.params
 
-    const [processing, setProcessing] = useState(false)
-    const [error, setError] = useState(false)
-    const [erroMessage, setErrorMessage] = useState<string | undefined>()
-    const [success, setSuccess] = useState(false)
-    const [detailsOpen, setDetailsOpen] = useState(false)
-    const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
-    const styles = useThemeAwareStyle(createStyles)
-    const insets = useSafeAreaInsets()
+  const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState(false)
+  const [erroMessage, setErrorMessage] = useState<string | undefined>()
+  const [success, setSuccess] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const { manager: polygonIdManager, isPolygonIdReady } = usePolygonId()
+  const styles = useThemeAwareStyle(createStyles)
+  const insets = useSafeAreaInsets()
 
-    const polygonIdNotReady =
-      details.protocols.includes('polygonid') &&
-      (!isPolygonIdReady || !polygonIdManager)
+  const polygonIdNotReady =
+    details.protocols.includes('polygonid') &&
+    (!isPolygonIdReady || !polygonIdManager)
 
-    const processButtonDisabled = processing || polygonIdNotReady
+  const processButtonDisabled = processing || polygonIdNotReady
 
-    const handleClose = useCallback(() => {
-      navigation.goBack()
-    }, [navigation])
+  const handleClose = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
 
-    const handleSendProof = useCallback(async () => {
-      if (!polygonIdManager) {
-        return
-      }
+  const handleSendProof = useCallback(async () => {
+    if (!polygonIdManager) {
+      return
+    }
 
-      setProcessing(true)
-      // TODO: Handle different actions depending on the type of request
+    setProcessing(true)
+    // TODO: Handle different actions depending on the type of request
 
-      // Doesn't need a try/catch as handled in the function itself
-      const { result, error: requestError } =
-        await polygonIdManager.processProofRequest(data)
-      if (result) {
-        setSuccess(true)
-      } else {
-        setError(true)
-        setErrorMessage(requestError?.message)
-      }
-      setProcessing(false)
-      // TODO: Handle the case where the user closes the screen before the request is processed
-    }, [polygonIdManager, data])
+    // Doesn't need a try/catch as handled in the function itself
+    const { result, error: requestError } =
+      await polygonIdManager.processProofRequest(data)
+    if (result) {
+      setSuccess(true)
+    } else {
+      setError(true)
+      setErrorMessage(requestError?.message)
+    }
+    setProcessing(false)
+    // TODO: Handle the case where the user closes the screen before the request is processed
+  }, [polygonIdManager, data])
 
-    const handleToggleDetails = useCallback(() => {
-      setDetailsOpen((prevValue) => !prevValue)
-    }, [])
+  const handleToggleDetails = useCallback(() => {
+    setDetailsOpen((prevValue) => !prevValue)
+  }, [])
 
-    useEffect(() => {
-      navigation.setOptions({
-        title: 'Proof Request',
-        // TODO: Get rid of the following when properly handling a common header in the navigator
-        headerRight: () => (
-          // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-          <ButtonNativeBase transparent onPress={handleClose}>
-            <IconNativeBase name='close' style={{ color: '#000' }} />
-          </ButtonNativeBase>
-        ),
-      })
-    }, [navigation, handleClose])
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Proof Request',
+      // TODO: Get rid of the following when properly handling a common header in the navigator
+      headerRight: () => (
+        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
+        <ButtonNativeBase transparent onPress={handleClose}>
+          <IconNativeBase name='close' style={{ color: '#000' }} />
+        </ButtonNativeBase>
+      ),
+    })
+  }, [navigation, handleClose])
 
-    const protocols = details.protocols
-      .map((protocol) => {
-        const protocolLogo = getProtocolLogo(protocol, 16)
-        const protocolLabel = getProtocolLabel(protocol)
-        return (
-          <>
-            {protocolLogo} {protocolLabel}
-          </>
-        )
-      })
-      .reduce((prev, curr) => (
+  const protocols = details.protocols
+    .map((protocol) => {
+      const protocolLogo = getProtocolLogo(protocol, 16)
+      const protocolLabel = getProtocolLabel(protocol)
+      return (
         <>
-          {prev}
-          {', '}
-          {curr}
+          {protocolLogo} {protocolLabel}
         </>
-      ))
-
-    const detailsView = (
-      <View style={styles.detailsContainer}>
-        <View>
-          <Text style={styles.detailsPropertyLabel}>{`From`}</Text>
-          <Text style={styles.detailsPropertyValue}>
-            {details.requesterId || ' '}
-          </Text>
-        </View>
-        {details.url ? (
-          <View style={styles.detailsPropertySpacing}>
-            <Text style={styles.detailsPropertyLabel}>{`URL`}</Text>
-            <Text style={styles.detailsPropertyValue}>{details.url}</Text>
-          </View>
-        ) : null}
-        <View style={styles.detailsPropertySpacing}>
-          <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
-          <Text style={styles.detailsPropertyValue}>{protocols}</Text>
-        </View>
-      </View>
-    )
-
-    return (
+      )
+    })
+    .reduce((prev, curr) => (
       <>
-        <StatusBar barStyle='light-content' />
-        <View
-          style={[
-            styles.wrapper,
-            {
-              paddingBottom: insets.bottom,
-              paddingRight: insets.right,
-              paddingLeft: insets.left,
-            },
-          ]}>
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.containerContent}>
-            {!processing && !error && !success ? (
-              <>
-                <View style={styles.header}>
-                  <AppLogo // TODO: Define the best logo placeholder
-                    url={logo || null}
-                    style={styles.logo}
-                  />
-                  <View>
-                    <Text style={styles.name}>{name}</Text>
-                    <TouchableOpacity
-                      onPress={handleToggleDetails}
-                      style={styles.detailsButton}>
-                      <Text style={styles.detailsButtonLabel}>
-                        {(details.timestamp
-                          ? new Date(details.timestamp)
-                          : new Date()
-                        ).toLocaleString()}
-                      </Text>
-                      <Feather
-                        name={detailsOpen ? 'chevron-up' : 'chevron-down'}
-                        size={16}
-                        style={styles.detailsButtonLabelIcon}
-                      />
-                    </TouchableOpacity>
-                  </View>
+        {prev}
+        {', '}
+        {curr}
+      </>
+    ))
+
+  const detailsView = (
+    <View style={styles.detailsContainer}>
+      <View>
+        <Text style={styles.detailsPropertyLabel}>{`From`}</Text>
+        <Text style={styles.detailsPropertyValue}>
+          {details.requesterId || ' '}
+        </Text>
+      </View>
+      {details.url ? (
+        <View style={styles.detailsPropertySpacing}>
+          <Text style={styles.detailsPropertyLabel}>{`URL`}</Text>
+          <Text style={styles.detailsPropertyValue}>{details.url}</Text>
+        </View>
+      ) : null}
+      <View style={styles.detailsPropertySpacing}>
+        <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
+        <Text style={styles.detailsPropertyValue}>{protocols}</Text>
+      </View>
+    </View>
+  )
+
+  return (
+    <>
+      <StatusBar barStyle='light-content' />
+      <View
+        style={[
+          styles.wrapper,
+          {
+            paddingBottom: insets.bottom,
+            paddingRight: insets.right,
+            paddingLeft: insets.left,
+          },
+        ]}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.containerContent}>
+          {!processing && !error && !success ? (
+            <>
+              <View style={styles.header}>
+                <AppLogo // TODO: Define the best logo placeholder
+                  url={logo || null}
+                  style={styles.logo}
+                />
+                <View>
+                  <Text style={styles.name}>{name}</Text>
+                  <TouchableOpacity
+                    onPress={handleToggleDetails}
+                    style={styles.detailsButton}>
+                    <Text style={styles.detailsButtonLabel}>
+                      {(details.timestamp
+                        ? new Date(details.timestamp)
+                        : new Date()
+                      ).toLocaleString()}
+                    </Text>
+                    <Feather
+                      name={detailsOpen ? 'chevron-up' : 'chevron-down'}
+                      size={16}
+                      style={styles.detailsButtonLabelIcon}
+                    />
+                  </TouchableOpacity>
                 </View>
-                {detailsOpen ? detailsView : null}
-                {details.message ? (
-                  <View style={styles.message}>
-                    <Text>{`"${details.message}"`}</Text>
-                  </View>
-                ) : null}
-                <View style={styles.proofContainer}>
-                  <Text style={styles.proofMessage}>
-                    The following proof is requested
-                  </Text>
-                  {data.body?.scope?.map((item) => (
-                    <View style={styles.proofItemContainer} key={item.id}>
-                      <Text style={styles.proofItemTypeLabel}>
-                        {item.query.type || 'Credential'}
+              </View>
+              {detailsOpen ? detailsView : null}
+              {details.message ? (
+                <View style={styles.message}>
+                  <Text>{`"${details.message}"`}</Text>
+                </View>
+              ) : null}
+              <View style={styles.proofContainer}>
+                <Text style={styles.proofMessage}>
+                  The following proof is requested
+                </Text>
+                {data.body?.scope?.map((item) => (
+                  <View style={styles.proofItemContainer} key={item.id}>
+                    <Text style={styles.proofItemTypeLabel}>
+                      {item.query.type || 'Credential'}
+                    </Text>
+                    <View style={styles.proofItemPropertySpacing}>
+                      <Text style={styles.proofItemPropertyLabel}>
+                        Requirements
                       </Text>
-                      <View style={styles.proofItemPropertySpacing}>
-                        <Text style={styles.proofItemPropertyLabel}>
-                          Requirements
-                        </Text>
-                        <Text style={styles.proofItemPropertyValue}>
-                          {getUserFriendlyProofRequestRequirements(
-                            item.query
-                          ).map((requirement) => (
-                            <Text key={requirement}>{requirement}</Text>
-                          ))}
-                        </Text>
-                      </View>
-                      <View style={styles.proofItemPropertySpacing}>
-                        <Text style={styles.proofItemPropertyLabel}>
-                          Allowed issuers
-                        </Text>
-                        <Text style={styles.proofItemPropertyValue}>
-                          {getUserFriendlyAllowedIssuers(
-                            item.query.allowedIssuers as string[]
-                          ).map((issuer) => (
-                            <Text key={issuer}>{issuer}</Text>
-                          ))}
-                        </Text>
-                      </View>
+                      <Text style={styles.proofItemPropertyValue}>
+                        {getUserFriendlyProofRequestRequirements(
+                          item.query
+                        ).map((requirement) => (
+                          <Text key={requirement}>{requirement}</Text>
+                        ))}
+                      </Text>
                     </View>
-                  ))}
-                  {/* TODO: Handle if there is no proof */}
-                </View>
-                <View style={styles.infoMessageContainer}>
-                  <Text style={styles.infoMessage}>
-                    {/* TODO: Check whether the selective disclosure feature disclose value in clear. If so, identify if the request has selective disclosure and adapt the messages for the user */}
-                    No private data will be sent. A zero knowledge proof will be
-                    generated by {protocols}
-                  </Text>
-                </View>
-              </>
-            ) : (
-              <StatusInfo
-                style={styles.statusContainer}
-                statusType={
-                  processing ? 'processsing' : success ? 'success' : 'error'
-                }
-                title={
-                  processing
-                    ? 'Generating proof...'
-                    : success
+                    <View style={styles.proofItemPropertySpacing}>
+                      <Text style={styles.proofItemPropertyLabel}>
+                        Allowed issuers
+                      </Text>
+                      <Text style={styles.proofItemPropertyValue}>
+                        {getUserFriendlyAllowedIssuers(
+                          item.query.allowedIssuers as string[]
+                        ).map((issuer) => (
+                          <Text key={issuer}>{issuer}</Text>
+                        ))}
+                      </Text>
+                    </View>
+                  </View>
+                ))}
+                {/* TODO: Handle if there is no proof */}
+              </View>
+              <View style={styles.infoMessageContainer}>
+                <Text style={styles.infoMessage}>
+                  {/* TODO: Check whether the selective disclosure feature disclose value in clear. If so, identify if the request has selective disclosure and adapt the messages for the user */}
+                  No private data will be sent. A zero knowledge proof will be
+                  generated by {protocols}
+                </Text>
+              </View>
+            </>
+          ) : (
+            <StatusInfo
+              style={styles.statusContainer}
+              statusType={
+                processing ? 'processsing' : success ? 'success' : 'error'
+              }
+              title={
+                processing
+                  ? 'Generating proof...'
+                  : success
                     ? 'Success!'
                     : 'Error!'
-                }
-                subtitle={
-                  // TODO: Find better messages
-                  processing
-                    ? 'Please wait a moment, we are generating a zero knowledge proof to share. No private data will be sent.'
-                    : success
+              }
+              subtitle={
+                // TODO: Find better messages
+                processing
+                  ? 'Please wait a moment, we are generating a zero knowledge proof to share. No private data will be sent.'
+                  : success
                     ? `Your proof has been generated and sent successfully.`
                     : erroMessage || 'Something went wrong. Try again later.'
-                }
-              />
-            )}
-          </ScrollView>
+              }
+            />
+          )}
+        </ScrollView>
 
-          <View style={styles.footer}>
-            {polygonIdNotReady ? (
-              <Alert type='warning' style={styles.footerAlert}>
-                <Text style={styles.footerAlertContent}>
-                  The Polygon ID engine is not ready yet. Please wait a moment
-                </Text>
-              </Alert>
-            ) : null}
-            <View style={styles.footerActionsContainer}>
-              {/* TODO: Ensure the buttons have a background */}
-              {processing || error || success ? (
-                <>
-                  <Button
-                    onPress={handleClose}
-                    style={styles.actionButton}
-                    disabled={processing}>
-                    Close
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onPress={handleClose}
-                    color='grey'
-                    disabled={processing}
-                    style={[styles.actionButton, styles.mr]}>
-                    Decline
-                  </Button>
-                  <Button
-                    onPress={handleSendProof}
-                    disabled={processButtonDisabled}
-                    style={[styles.actionButton, styles.ml]}>
-                    Send Proof
-                  </Button>
-                </>
-              )}
-            </View>
+        <View style={styles.footer}>
+          {polygonIdNotReady ? (
+            <Alert type='warning' style={styles.footerAlert}>
+              <Text style={styles.footerAlertContent}>
+                The Polygon ID engine is not ready yet. Please wait a moment
+              </Text>
+            </Alert>
+          ) : null}
+          <View style={styles.footerActionsContainer}>
+            {/* TODO: Ensure the buttons have a background */}
+            {processing || error || success ? (
+              <>
+                <Button
+                  onPress={handleClose}
+                  style={styles.actionButton}
+                  disabled={processing}>
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onPress={handleClose}
+                  color='grey'
+                  disabled={processing}
+                  style={[styles.actionButton, styles.mr]}>
+                  Decline
+                </Button>
+                <Button
+                  onPress={handleSendProof}
+                  disabled={processButtonDisabled}
+                  style={[styles.actionButton, styles.ml]}>
+                  Send Proof
+                </Button>
+              </>
+            )}
           </View>
         </View>
-      </>
-    )
-  }
+      </View>
+    </>
+  )
+}
 
 // TODO: Use the theme when proper typography is available
 const createStyles = (theme: Theme) =>
