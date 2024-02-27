@@ -282,7 +282,7 @@
     "pouchdb-find": "7.2.2",
     "pbkdf2": "3.1.2",
     "@ethersproject/pbkdf2": "5.7.0",
-    "string-width": "4.2.3"
+    "jackspeak": "2.1.1"
   },
   "engines": {
     "node": ">=18"
