@@ -7,23 +7,24 @@ export type DataFieldListItemProps = {
   field: DataField
 }
 
-export const DataFieldListItem: React.FunctionComponent<DataFieldListItemProps> =
-  (props) => {
-    const { field } = props
+export const DataFieldListItem: React.FunctionComponent<
+  DataFieldListItemProps
+> = (props) => {
+  const { field } = props
 
-    return (
-      <Card transparent style={style.card}>
-        <CardItem>
-          <Body>
-            <Text note>{field.field}</Text>
-            <Text style={style.value}>
-              {field.value === undefined ? '-' : String(field.value)}
-            </Text>
-          </Body>
-        </CardItem>
-      </Card>
-    )
-  }
+  return (
+    <Card transparent style={style.card}>
+      <CardItem>
+        <Body>
+          <Text note>{field.field}</Text>
+          <Text style={style.value}>
+            {field.value === undefined ? '-' : String(field.value)}
+          </Text>
+        </Body>
+      </CardItem>
+    </Card>
+  )
+}
 
 const style = StyleSheet.create({
   card: {

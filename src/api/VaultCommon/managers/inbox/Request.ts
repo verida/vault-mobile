@@ -32,7 +32,6 @@ export class Request extends DataAction {
     logger.debug('Data response sent')
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
   decline() {}
 
   async metadata() {

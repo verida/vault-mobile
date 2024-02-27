@@ -43,9 +43,8 @@ function SchemasList(props: SchemasListProps) {
         const _dataList: RequestedData[] = []
         await Promise.all(
           schemas.map(async (schemaUrl) => {
-            const schema = await AccountManager.getInstance().client?.getSchema(
-              schemaUrl
-            )
+            const schema =
+              await AccountManager.getInstance().client?.getSchema(schemaUrl)
             const schemaJson = (await schema?.getSchemaJson()) as any
             if (!schemaJson) {
               return

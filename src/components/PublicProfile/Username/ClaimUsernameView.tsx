@@ -114,8 +114,8 @@ export const ClaimUsernameView = React.forwardRef(
             {isDoneCreateUsername
               ? 'Perfect'
               : showRetry
-              ? 'Something went wrong'
-              : 'Creating your username'}
+                ? 'Something went wrong'
+                : 'Creating your username'}
           </Headline>
           <Text
             style={[
@@ -128,8 +128,8 @@ export const ClaimUsernameView = React.forwardRef(
             {isDoneCreateUsername
               ? `You successfully claimed username`
               : showRetry
-              ? createUsernameErrorMessage
-              : 'Please wait...'}
+                ? createUsernameErrorMessage
+                : 'Please wait...'}
           </Text>
           {isDoneCreateUsername && (
             <Title

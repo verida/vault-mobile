@@ -226,12 +226,13 @@ export const MainNavigator: React.FunctionComponent = () => {
           />
 
           {/* Internal Screens */}
-          {__DEV__ && (
+          {/* FIXME: temporary comment as this causes an infinite loop on the current Tab navigator setup which did not happen in the previous version. */}
+          {/* {__DEV__ && (
             <Stack.Screen
               name='__Storybook__'
               component={require('../../.storybook').default}
             />
-          )}
+          )} */}
 
           {/* Modal screens */}
           <Stack.Group

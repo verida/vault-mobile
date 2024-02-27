@@ -6,19 +6,20 @@ export type DataCardListItemProps = {
   item: any
 }
 
-export const DataCardListItem: React.FunctionComponent<DataCardListItemProps> =
-  (props) => {
-    const { item } = props
+export const DataCardListItem: React.FunctionComponent<
+  DataCardListItemProps
+> = (props) => {
+  const { item } = props
 
-    return (
-      <TouchableWithoutFeedback onPress={item.onPress}>
-        <View style={[style.cardItem, { backgroundColor: item.color }]}>
-          <View>{item.icon}</View>
-          <Text style={{ paddingTop: 10, color: '#fff' }}>{item.label}</Text>
-        </View>
-      </TouchableWithoutFeedback>
-    )
-  }
+  return (
+    <TouchableWithoutFeedback onPress={item.onPress}>
+      <View style={[style.cardItem, { backgroundColor: item.color }]}>
+        <View>{item.icon}</View>
+        <Text style={{ paddingTop: 10, color: '#fff' }}>{item.label}</Text>
+      </View>
+    </TouchableWithoutFeedback>
+  )
+}
 
 const style = StyleSheet.create({
   cardItem: {

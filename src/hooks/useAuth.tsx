@@ -31,7 +31,7 @@ const AuthContext = createContext<AuthContextState>({
   refresh: async () => false,
   authenticated: false,
   loaded: false,
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
+
   switchToAccount: async () => {},
   forcedSignOut: async () => false,
 })

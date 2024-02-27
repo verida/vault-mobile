@@ -1,4 +1,5 @@
 {
+  "extends": "@tsconfig/react-native/tsconfig.json",
   "ts-node": {
     "compilerOptions": {
       "module": "commonjs"
@@ -19,54 +20,25 @@
     "types": ["jest", "node"],
     "baseUrl": ".",
     "paths": {
-      "*": [
-        "src/*"
-      ],
-      "api/*": [
-        "src/api/*"
-      ],
-      "assets/*": [
-        "src/assets/*"
-      ],
-      "components/*": [
-        "src/components/*"
-      ],
-      "config/*": [
-        "src/config/*"
-      ],
-      "constants/*": [
-        "src/constants/*"
-      ],
-      "features/*": [
-        "src/features/*"
-      ],
-      "helpers/*": [
-        "src/helpers/*"
-      ],
-      "pages/*": [
-        "src/pages/*"
-      ],
-      "routes/*": [
-        "src/routes/*"
-      ],
-      "reduxStore/*": [
-        "src/reduxStore/*"
-      ],
-      "styles/*": [
-        "src/styles/*"
-      ],
-      "hooks/*": [
-        "src/hooks/*"
-      ],
-      "utils/*": [
-        "src/utils/*"
-      ]
+      "~/*": ["src/*"],
+      "*": ["src/*"],
+      "api/*": ["src/api/*"],
+      "assets/*": ["src/assets/*"],
+      "components/*": ["src/components/*"],
+      "config/*": ["src/config/*"],
+      "constants/*": ["src/constants/*"],
+      "features/*": ["src/features/*"],
+      "helpers/*": ["src/helpers/*"],
+      "pages/*": ["src/pages/*"],
+      "routes/*": ["src/routes/*"],
+      "reduxStore/*": ["src/reduxStore/*"],
+      "styles/*": ["src/styles/*"],
+      "hooks/*": ["src/hooks/*"],
+      "utils/*": ["src/utils/*"],
+      "react": ["./node_modules/@types/react"]
     }
   },
-  "include": [
-    "**/*.ts", "**/*.tsx",
-    "src/declarations.d.ts"
-  ],
+  "include": ["**/*.ts", "**/*.tsx", "src/declarations.d.ts"],
   "exclude": [
     "node_modules",
     "babel.config.js",
@@ -74,5 +46,5 @@
     "jest.config.js",
     "web",
     ".graveyard"
-  ],
+  ]
 }
