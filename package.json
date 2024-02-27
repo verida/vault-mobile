@@ -3,8 +3,7 @@
   "name": "@verida/vault-mobile",
   "version": "1.1.1",
   "scripts": {
-    "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
-    "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
+    "clean": "rm -rf $TMPDIR/react-* && rm -rf node_modules ios/pods ios/build android/app/build && watchman watch-del-all && yarn",
     "pod:install": "cd ios && pod install && cd ..",
     "pod:install:clean": "cd ios && rm -rf Podfile.lock && pod install --repo-update --verbose && cd ..",
     "pod:install:arm64": "cd ios && arch -x86_64 pod install && cd ..",
@@ -282,7 +281,8 @@
     "isomorphic-webcrypto": "https://github.com/verida/isomorphic-webcrypto.git",
     "pouchdb-find": "7.2.2",
     "pbkdf2": "3.1.2",
-    "@ethersproject/pbkdf2": "5.7.0"
+    "@ethersproject/pbkdf2": "5.7.0",
+    "string-width": "4.2.3"
   },
   "engines": {
     "node": ">=18"
