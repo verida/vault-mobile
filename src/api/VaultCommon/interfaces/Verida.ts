@@ -33,14 +33,13 @@ export interface Messaging {
   send(
     did: string,
     type: string,
-    // eslint-disable-next-line @typescript-eslint/ban-types
+
     data: object,
     message: string,
     config?: MessageSendConfig
-    // eslint-disable-next-line @typescript-eslint/ban-types
   ): Promise<object | null>
   onMessage(callback: any): void
-  // eslint-disable-next-line @typescript-eslint/ban-types
+
   getMessages(filter: object, options: any): Promise<any>
   getInbox(): Promise<any>
 }

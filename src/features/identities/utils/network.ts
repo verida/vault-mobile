@@ -8,12 +8,12 @@ export function getNetworkFromDID(did: string): EnvironmentType {
     networkAsString === EnvironmentType.MAINNET
       ? EnvironmentType.MAINNET
       : networkAsString === EnvironmentType.TESTNET
-      ? EnvironmentType.TESTNET
-      : networkAsString === EnvironmentType.DEVNET
-      ? EnvironmentType.DEVNET
-      : networkAsString === EnvironmentType.LOCAL
-      ? EnvironmentType.LOCAL
-      : null
+        ? EnvironmentType.TESTNET
+        : networkAsString === EnvironmentType.DEVNET
+          ? EnvironmentType.DEVNET
+          : networkAsString === EnvironmentType.LOCAL
+            ? EnvironmentType.LOCAL
+            : null
 
   if (!network) throw new Error(`Invalid Verida Network: ${networkAsString}`)
 

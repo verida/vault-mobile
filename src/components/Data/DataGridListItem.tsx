@@ -26,117 +26,118 @@ export type DataGridListItemProps = {
   folder: Folder
 }
 
-export const DataGridListItem: React.FunctionComponent<DataGridListItemProps> =
-  (props) => {
-    const { folder, item } = props
+export const DataGridListItem: React.FunctionComponent<
+  DataGridListItemProps
+> = (props) => {
+  const { folder, item } = props
 
-    const isCredential = isCredentialsDatabase(folder)
+  const isCredential = isCredentialsDatabase(folder)
 
-    const navigation = useNavigation()
+  const navigation = useNavigation()
 
-    // TODO: Not pretty, to refactor
+  // TODO: Not pretty, to refactor
 
-    const cardDetail = folder.getCardDetail(item)
-    const logoSource = item.icon
-      ? typeof item.icon === 'string' && item.icon.startsWith('http')
-        ? { uri: item.icon }
-        : item.icon
-      : isCredential
+  const cardDetail = folder.getCardDetail(item)
+  const logoSource = item.icon
+    ? typeof item.icon === 'string' && item.icon.startsWith('http')
+      ? { uri: item.icon }
+      : item.icon
+    : isCredential
       ? DefaultAvatar
       : undefined
 
-    const [cardInfo, setCardInfo] = useState({
-      logo: logoSource,
-      title: cardDetail.name,
-      subtitle: cardDetail.summary,
-      date: moment(item.insertedAt).format('DD MMM YYYY'),
-    })
+  const [cardInfo, setCardInfo] = useState({
+    logo: logoSource,
+    title: cardDetail.name,
+    subtitle: cardDetail.summary,
+    date: moment(item.insertedAt).format('DD MMM YYYY'),
+  })
 
-    const handlePress = useCallback(
-      () => navigation.navigate('DataItem', { folder, item }),
-      [folder, item, navigation]
-    )
+  const handlePress = useCallback(
+    () => navigation.navigate('DataItem', { folder, item }),
+    [folder, item, navigation]
+  )
 
-    useEffect(() => {
-      if (!isCredential || isEmpty(item)) {
-        return
-      }
+  useEffect(() => {
+    if (!isCredential || isEmpty(item)) {
+      return
+    }
 
-      const credentialRecord = item as VeridaVerifiableCredentialRecord
-      const extractedIssuer = extractIssuer(credentialRecord.credentialData)
+    const credentialRecord = item as VeridaVerifiableCredentialRecord
+    const extractedIssuer = extractIssuer(credentialRecord.credentialData)
 
-      // TODO: Factorise this (or part of it) as it's also used in CredentialDataItem
-      async function getIssuerProfile(issuerDid: string, contextName?: string) {
-        try {
-          let issuerProfile: {
-            name?: string
-            avatar?: ImageSourcePropType | string
-          }
-          // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
-          if (isValidVeridaDid(issuerDid)) {
-            const publicProfile = await getPublicProfile(issuerDid, contextName)
-            issuerProfile = {
-              name: publicProfile?.name,
-              avatar: publicProfile?.avatar,
-            }
-          } else {
-            const didMetadata = await getDidMetadata(issuerDid)
-            issuerProfile = {
-              name: didMetadata?.name,
-              avatar: didMetadata?.icon,
-            }
-          }
-          setCardInfo((prevInfo) => ({
-            ...prevInfo,
-            subtitle: issuerProfile.name || issuerDid,
-            logo: issuerProfile.avatar
-              ? typeof issuerProfile.avatar === 'string' &&
-                issuerProfile.avatar.startsWith('http')
-                ? { uri: issuerProfile.avatar }
-                : issuerProfile.avatar
-              : DefaultAvatar,
-          }))
-        } catch (error) {
-          logger.error(
-            new Error('Failed to get the issuer profile', { cause: error })
-          )
+    // TODO: Factorise this (or part of it) as it's also used in CredentialDataItem
+    async function getIssuerProfile(issuerDid: string, contextName?: string) {
+      try {
+        let issuerProfile: {
+          name?: string
+          avatar?: ImageSourcePropType | string
         }
+        // TODO: Move the logic to get the profile of a DID (verida or not) into features/did or features/profile
+        if (isValidVeridaDid(issuerDid)) {
+          const publicProfile = await getPublicProfile(issuerDid, contextName)
+          issuerProfile = {
+            name: publicProfile?.name,
+            avatar: publicProfile?.avatar,
+          }
+        } else {
+          const didMetadata = await getDidMetadata(issuerDid)
+          issuerProfile = {
+            name: didMetadata?.name,
+            avatar: didMetadata?.icon,
+          }
+        }
+        setCardInfo((prevInfo) => ({
+          ...prevInfo,
+          subtitle: issuerProfile.name || issuerDid,
+          logo: issuerProfile.avatar
+            ? typeof issuerProfile.avatar === 'string' &&
+              issuerProfile.avatar.startsWith('http')
+              ? { uri: issuerProfile.avatar }
+              : issuerProfile.avatar
+            : DefaultAvatar,
+        }))
+      } catch (error) {
+        logger.error(
+          new Error('Failed to get the issuer profile', { cause: error })
+        )
       }
+    }
 
-      getIssuerProfile(extractedIssuer)
-    }, [isCredential, folder, item])
+    getIssuerProfile(extractedIssuer)
+  }, [isCredential, folder, item])
 
-    return (
-      <Card style={styles.card}>
-        <CardItem button style={styles.cardItem} onPress={handlePress}>
-          <Left style={styles.left}>
-            {cardInfo.logo ? (
-              <Image source={cardInfo.logo} style={styles.avatar} />
-            ) : (
-              <VeridaSvg />
-            )}
-            <Body style={styles.body}>
-              <Text numberOfLines={1} lineBreakMode='middle'>
-                {cardInfo.title}
-              </Text>
-              <Text
-                note
-                style={styles.subText}
-                numberOfLines={1}
-                lineBreakMode='tail'>
-                {cardInfo.subtitle}
-              </Text>
-            </Body>
-          </Left>
-          <Right style={styles.right}>
-            <Text note style={styles.date}>
-              {cardInfo.date}
+  return (
+    <Card style={styles.card}>
+      <CardItem button style={styles.cardItem} onPress={handlePress}>
+        <Left style={styles.left}>
+          {cardInfo.logo ? (
+            <Image source={cardInfo.logo} style={styles.avatar} />
+          ) : (
+            <VeridaSvg />
+          )}
+          <Body style={styles.body}>
+            <Text numberOfLines={1} lineBreakMode='middle'>
+              {cardInfo.title}
             </Text>
-          </Right>
-        </CardItem>
-      </Card>
-    )
-  }
+            <Text
+              note
+              style={styles.subText}
+              numberOfLines={1}
+              lineBreakMode='tail'>
+              {cardInfo.subtitle}
+            </Text>
+          </Body>
+        </Left>
+        <Right style={styles.right}>
+          <Text note style={styles.date}>
+            {cardInfo.date}
+          </Text>
+        </Right>
+      </CardItem>
+    </Card>
+  )
+}
 
 const styles = StyleSheet.create({
   card: {

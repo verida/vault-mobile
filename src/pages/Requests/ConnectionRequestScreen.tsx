@@ -41,213 +41,211 @@ export interface ConnectionRequestScreenParams {
 
 type ConnectionRequestScreenProps = MainStackScreenProps<'ConnectionRequest'>
 
-export const ConnectionRequestScreen: React.FunctionComponent<ConnectionRequestScreenProps> =
-  (props) => {
-    const { navigation, route } = props
-    const { name, logo, details, data } = route.params
+export const ConnectionRequestScreen: React.FunctionComponent<
+  ConnectionRequestScreenProps
+> = (props) => {
+  const { navigation, route } = props
+  const { name, logo, details, data } = route.params
 
-    const [processing, setProcessing] = useState(false)
-    const [error, setError] = useState(false)
-    const [erroMessage, setErrorMessage] = useState<string | undefined>()
-    const [success, setSuccess] = useState(false)
-    const [detailsOpen, setDetailsOpen] = useState(false)
-    const { handleAcceptConnectionRequest, isReady: isPolygonIdReady } =
-      usePolygonId()
-    const styles = useThemeAwareStyle(createStyles)
-    const insets = useSafeAreaInsets()
+  const [processing, setProcessing] = useState(false)
+  const [error, setError] = useState(false)
+  const [erroMessage, setErrorMessage] = useState<string | undefined>()
+  const [success, setSuccess] = useState(false)
+  const [detailsOpen, setDetailsOpen] = useState(false)
+  const { handleAcceptConnectionRequest, isReady: isPolygonIdReady } =
+    usePolygonId()
+  const styles = useThemeAwareStyle(createStyles)
+  const insets = useSafeAreaInsets()
 
-    const polygonIdNotReady =
-      details.protocols.includes('polygonid') && !isPolygonIdReady
+  const polygonIdNotReady =
+    details.protocols.includes('polygonid') && !isPolygonIdReady
 
-    const processButtonDisabled = processing || polygonIdNotReady
+  const processButtonDisabled = processing || polygonIdNotReady
 
-    const handleClose = useCallback(() => {
-      navigation.goBack()
-    }, [navigation])
+  const handleClose = useCallback(() => {
+    navigation.goBack()
+  }, [navigation])
 
-    const handleConnect = useCallback(async () => {
-      setProcessing(true)
-      // TODO: Handle different actions depending on the type of request
+  const handleConnect = useCallback(async () => {
+    setProcessing(true)
+    // TODO: Handle different actions depending on the type of request
 
-      // Doesn't need a try/catch as handled in the function itself
-      const { result, error: requestError } =
-        await handleAcceptConnectionRequest(data)
-      if (result) {
-        setSuccess(true)
-      } else {
-        setError(true)
-        setErrorMessage(requestError?.message)
-      }
-      setProcessing(false)
-      // TODO: Handle the case where the user closes the screen before the request is processed
-    }, [handleAcceptConnectionRequest, data])
+    // Doesn't need a try/catch as handled in the function itself
+    const { result, error: requestError } =
+      await handleAcceptConnectionRequest(data)
+    if (result) {
+      setSuccess(true)
+    } else {
+      setError(true)
+      setErrorMessage(requestError?.message)
+    }
+    setProcessing(false)
+    // TODO: Handle the case where the user closes the screen before the request is processed
+  }, [handleAcceptConnectionRequest, data])
 
-    const handleToggleDetails = useCallback(() => {
-      setDetailsOpen((prevValue) => !prevValue)
-    }, [])
+  const handleToggleDetails = useCallback(() => {
+    setDetailsOpen((prevValue) => !prevValue)
+  }, [])
 
-    useEffect(() => {
-      navigation.setOptions({
-        title: 'Connection Request',
-        // TODO: Get rid of the following when properly handling a common header in the navigator
-        headerRight: () => (
-          // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
-          <ButtonNativeBase transparent onPress={handleClose}>
-            <IconNativeBase name='close' style={{ color: '#000' }} />
-          </ButtonNativeBase>
-        ),
-      })
-    }, [navigation, handleClose])
+  useEffect(() => {
+    navigation.setOptions({
+      title: 'Connection Request',
+      // TODO: Get rid of the following when properly handling a common header in the navigator
+      headerRight: () => (
+        // TODO: Get rid of native-base when we have proper base components (button, icon, etc.)
+        <ButtonNativeBase transparent onPress={handleClose}>
+          <IconNativeBase name='close' style={{ color: '#000' }} />
+        </ButtonNativeBase>
+      ),
+    })
+  }, [navigation, handleClose])
 
-    const protocols = details.protocols
-      .map((protocol) => {
-        const protocolLogo = getProtocolLogo(protocol, 16)
-        const protocolLabel = getProtocolLabel(protocol)
-        return (
-          <>
-            {protocolLogo} {protocolLabel}
-          </>
-        )
-      })
-      .reduce((prev, curr) => (
+  const protocols = details.protocols
+    .map((protocol) => {
+      const protocolLogo = getProtocolLogo(protocol, 16)
+      const protocolLabel = getProtocolLabel(protocol)
+      return (
         <>
-          {prev}
-          {', '}
-          {curr}
+          {protocolLogo} {protocolLabel}
         </>
-      ))
-
-    return (
+      )
+    })
+    .reduce((prev, curr) => (
       <>
-        <StatusBar barStyle='light-content' />
-        <View
-          style={[
-            styles.wrapper,
-            {
-              paddingBottom: insets.bottom,
-              paddingRight: insets.right,
-              paddingLeft: insets.left,
-            },
-          ]}>
-          <ScrollView
-            style={styles.container}
-            contentContainerStyle={styles.containerContent}>
-            {!processing && !error && !success ? (
-              <>
-                <AppLogo // TODO: Define the best logo placeholder
-                  url={logo || null}
-                  style={styles.logo}
+        {prev}
+        {', '}
+        {curr}
+      </>
+    ))
+
+  return (
+    <>
+      <StatusBar barStyle='light-content' />
+      <View
+        style={[
+          styles.wrapper,
+          {
+            paddingBottom: insets.bottom,
+            paddingRight: insets.right,
+            paddingLeft: insets.left,
+          },
+        ]}>
+        <ScrollView
+          style={styles.container}
+          contentContainerStyle={styles.containerContent}>
+          {!processing && !error && !success ? (
+            <>
+              <AppLogo // TODO: Define the best logo placeholder
+                url={logo || null}
+                style={styles.logo}
+              />
+              {details.url ? (
+                <Text style={styles.url}>{details.url}</Text>
+              ) : null}
+              <Text style={styles.connectMessage}>{`Connect to ${name}`}</Text>
+              {details.message ? (
+                <View style={styles.message}>
+                  <Text>{`"${details.message}"`}</Text>
+                </View>
+              ) : null}
+              <TouchableOpacity
+                onPress={handleToggleDetails}
+                style={styles.detailsButton}>
+                <Text style={styles.detailsButtonLabel}>Request details</Text>
+                <Feather
+                  name={detailsOpen ? 'chevron-up' : 'chevron-down'}
+                  size={16}
+                  style={styles.detailsButtonLabelIcon}
                 />
-                {details.url ? (
-                  <Text style={styles.url}>{details.url}</Text>
-                ) : null}
-                <Text
-                  style={styles.connectMessage}>{`Connect to ${name}`}</Text>
-                {details.message ? (
-                  <View style={styles.message}>
-                    <Text>{`"${details.message}"`}</Text>
+              </TouchableOpacity>
+              {detailsOpen ? (
+                <View style={styles.detailsContainer}>
+                  <View>
+                    <Text
+                      style={
+                        styles.detailsPropertyLabel
+                      }>{`Requested on`}</Text>
+                    <Text style={styles.detailsPropertyValue}>
+                      {(details.timestamp
+                        ? new Date(details.timestamp)
+                        : new Date()
+                      ).toLocaleString()}
+                    </Text>
                   </View>
-                ) : null}
-                <TouchableOpacity
-                  onPress={handleToggleDetails}
-                  style={styles.detailsButton}>
-                  <Text style={styles.detailsButtonLabel}>Request details</Text>
-                  <Feather
-                    name={detailsOpen ? 'chevron-up' : 'chevron-down'}
-                    size={16}
-                    style={styles.detailsButtonLabelIcon}
-                  />
-                </TouchableOpacity>
-                {detailsOpen ? (
-                  <View style={styles.detailsContainer}>
-                    <View>
-                      <Text
-                        style={
-                          styles.detailsPropertyLabel
-                        }>{`Requested on`}</Text>
-                      <Text style={styles.detailsPropertyValue}>
-                        {(details.timestamp
-                          ? new Date(details.timestamp)
-                          : new Date()
-                        ).toLocaleString()}
-                      </Text>
-                    </View>
-                    <View style={styles.detailsPropertySpacing}>
-                      <Text style={styles.detailsPropertyLabel}>{`From`}</Text>
-                      <Text style={styles.detailsPropertyValue}>
-                        {details.requesterId}
-                      </Text>
-                    </View>
-                    <View style={styles.detailsPropertySpacing}>
-                      <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
-                      <Text style={styles.detailsPropertyValue}>
-                        {protocols}
-                      </Text>
-                    </View>
+                  <View style={styles.detailsPropertySpacing}>
+                    <Text style={styles.detailsPropertyLabel}>{`From`}</Text>
+                    <Text style={styles.detailsPropertyValue}>
+                      {details.requesterId}
+                    </Text>
                   </View>
-                ) : null}
-              </>
-            ) : (
-              <StatusInfo
-                style={styles.statusContainer}
-                statusType={
-                  processing ? 'processsing' : success ? 'success' : 'error'
-                }
-                title={
-                  processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
-                }
-                subtitle={
-                  processing
-                    ? 'Please wait a moment, we are securely setting up the connection.'
-                    : success
+                  <View style={styles.detailsPropertySpacing}>
+                    <Text style={styles.detailsPropertyLabel}>{`Via`}</Text>
+                    <Text style={styles.detailsPropertyValue}>{protocols}</Text>
+                  </View>
+                </View>
+              ) : null}
+            </>
+          ) : (
+            <StatusInfo
+              style={styles.statusContainer}
+              statusType={
+                processing ? 'processsing' : success ? 'success' : 'error'
+              }
+              title={
+                processing ? 'Connecting...' : success ? 'Success!' : 'Error!'
+              }
+              subtitle={
+                processing
+                  ? 'Please wait a moment, we are securely setting up the connection.'
+                  : success
                     ? `You are successfully connected to ${name}.`
                     : erroMessage || 'Something went wrong. Try again later.'
-                }
-              />
+              }
+            />
+          )}
+        </ScrollView>
+        <View style={styles.footer}>
+          {polygonIdNotReady ? (
+            <Alert type='warning' style={styles.footerAlert}>
+              <Text style={styles.footerAlertContent}>
+                The Polygon ID engine is not ready yet. Please wait a moment
+              </Text>
+            </Alert>
+          ) : null}
+          <View style={styles.footerActionsContainer}>
+            {/* TODO: Ensure the buttons have a background */}
+            {processing || error || success ? (
+              <>
+                <Button
+                  onPress={handleClose}
+                  style={styles.actionButton}
+                  disabled={processing}>
+                  Close
+                </Button>
+              </>
+            ) : (
+              <>
+                <Button
+                  onPress={handleClose}
+                  color='grey'
+                  disabled={processing}
+                  style={[styles.actionButton, styles.mr]}>
+                  Decline
+                </Button>
+                <Button
+                  onPress={handleConnect}
+                  disabled={processButtonDisabled}
+                  style={[styles.actionButton, styles.ml]}>
+                  Connect
+                </Button>
+              </>
             )}
-          </ScrollView>
-          <View style={styles.footer}>
-            {polygonIdNotReady ? (
-              <Alert type='warning' style={styles.footerAlert}>
-                <Text style={styles.footerAlertContent}>
-                  The Polygon ID engine is not ready yet. Please wait a moment
-                </Text>
-              </Alert>
-            ) : null}
-            <View style={styles.footerActionsContainer}>
-              {/* TODO: Ensure the buttons have a background */}
-              {processing || error || success ? (
-                <>
-                  <Button
-                    onPress={handleClose}
-                    style={styles.actionButton}
-                    disabled={processing}>
-                    Close
-                  </Button>
-                </>
-              ) : (
-                <>
-                  <Button
-                    onPress={handleClose}
-                    color='grey'
-                    disabled={processing}
-                    style={[styles.actionButton, styles.mr]}>
-                    Decline
-                  </Button>
-                  <Button
-                    onPress={handleConnect}
-                    disabled={processButtonDisabled}
-                    style={[styles.actionButton, styles.ml]}>
-                    Connect
-                  </Button>
-                </>
-              )}
-            </View>
           </View>
         </View>
-      </>
-    )
-  }
+      </View>
+    </>
+  )
+}
 
 // TODO: Use the them when proper typography is available
 const createStyles = (theme: Theme) =>

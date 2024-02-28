@@ -49,8 +49,8 @@ export const ScreenWrapper: React.FunctionComponent<ScreenWrapperProps> = (
   const resolvedSafeAreaEdges = noSafeArea
     ? []
     : allSafeAreaEdges
-    ? ['top', 'bottom', 'left', 'right']
-    : safeAreaEdges
+      ? ['top', 'bottom', 'left', 'right']
+      : safeAreaEdges
 
   return (
     <View

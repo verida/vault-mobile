@@ -40,131 +40,132 @@ export type AddVeridaOneCustomLinkScreenParams = {
 type AddVeridaOneCustomLinkScreenProps =
   MainStackScreenProps<'AddVeridaOneCustomLink'>
 
-export const AddVeridaOneCustomLinkScreen: React.FC<AddVeridaOneCustomLinkScreenProps> =
-  (props) => {
-    const {
-      navigation,
-      route: { params },
-    } = props
-    const {
-      screenName,
-      title,
-      label,
-      url,
-      mode,
-      originalValue,
-      submitButtonLabel = 'Save',
-    } = params
+export const AddVeridaOneCustomLinkScreen: React.FC<
+  AddVeridaOneCustomLinkScreenProps
+> = (props) => {
+  const {
+    navigation,
+    route: { params },
+  } = props
+  const {
+    screenName,
+    title,
+    label,
+    url,
+    mode,
+    originalValue,
+    submitButtonLabel = 'Save',
+  } = params
 
-    const styles = useThemeAwareStyle(createStyles)
-    const { bottom } = useSafeAreaInsets()
-    const [labelInput, setLabelInput] = useState(originalValue?.label ?? '')
-    const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
+  const styles = useThemeAwareStyle(createStyles)
+  const { bottom } = useSafeAreaInsets()
+  const [labelInput, setLabelInput] = useState(originalValue?.label ?? '')
+  const [urlInput, setUrlInput] = useState(originalValue?.url ?? '')
 
-    const saveValue = async () => {
-      try {
-        Keyboard.dismiss()
+  const saveValue = async () => {
+    try {
+      Keyboard.dismiss()
 
-        const val = { label: labelInput, url: urlInput }
+      const val = { label: labelInput, url: urlInput }
 
-        emitter.emit('SAVE_GENERIC_PROPERTY', {
-          screenName,
-          title,
-          value: val,
-          mode,
-          originalValue,
-        })
+      emitter.emit('SAVE_GENERIC_PROPERTY', {
+        screenName,
+        title,
+        value: val,
+        mode,
+        originalValue,
+      })
 
-        navigation.goBack()
-      } catch (error) {
-        logger.error(error)
-      }
+      navigation.goBack()
+    } catch (error) {
+      logger.error(error)
     }
-
-    const isEditMode = () => !isEmpty(label) && !isEmpty(url)
-
-    return (
-      <Screen withKeyboardAvoidingView>
-        <NavigationHeader
-          title={isEditMode() ? 'Edit Link' : 'Add New Link'}
-          left={{
-            icon: 'close',
-          }}
-          right={
-            isEditMode()
-              ? {
-                  icon: <TrashBinIcon />,
-                  action: () => {
-                    Alert.alert(
-                      'Are you sure you want to delete this link?',
-                      undefined,
-                      [
-                        {
-                          text: 'Cancel',
-                          style: 'cancel',
-                        },
-                        {
-                          text: 'Delete',
-                          style: 'destructive',
-                          onPress: () => {
-                            emitter.emit('SAVE_GENERIC_PROPERTY', {
-                              screenName,
-                              title,
-                              value: originalValue,
-                              mode: PublicProfileEditMode.DeleteCustomURL,
-                              originalValue,
-                            })
-                            navigation.goBack()
-                          },
-                        },
-                      ]
-                    )
-                  },
-                }
-              : undefined
-          }
-        />
-        <View style={[styles.constainer, { marginBottom: bottom }]}>
-          <View style={{ flexDirection: 'column' }}>
-            <FormInput
-              label='Label'
-              placeholder='Enter label'
-              autoComplete='off'
-              autoCorrect={false}
-              value={labelInput}
-              onChangeText={(text) => setLabelInput(text)}
-            />
-            <FormInput
-              style={{ marginTop: 16 }}
-              label='URL'
-              autoCapitalize='none'
-              autoComplete='off'
-              autoCorrect={false}
-              keyboardType='url'
-              value={urlInput}
-              onChangeText={(text) => setUrlInput(text)}
-              placeholder='Enter URL'
-            />
-
-            <Button
-              color='transparent-link'
-              onPress={async () => {
-                const text = await Clipboard.getString()
-                setUrlInput(text)
-              }}>
-              <View style={styles.clipboardPasteButton}>
-                <ClipboardIcon />
-                <Text style={styles.clipboardPasteButtonText}>
-                  Paste from clipboard
-                </Text>
-              </View>
-            </Button>
-          </View>
-          <Button onPress={saveValue}>{submitButtonLabel}</Button>
-        </View>
-      </Screen>
-    )
   }
+
+  const isEditMode = () => !isEmpty(label) && !isEmpty(url)
+
+  return (
+    <Screen withKeyboardAvoidingView>
+      <NavigationHeader
+        title={isEditMode() ? 'Edit Link' : 'Add New Link'}
+        left={{
+          icon: 'close',
+        }}
+        right={
+          isEditMode()
+            ? {
+                icon: <TrashBinIcon />,
+                action: () => {
+                  Alert.alert(
+                    'Are you sure you want to delete this link?',
+                    undefined,
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'cancel',
+                      },
+                      {
+                        text: 'Delete',
+                        style: 'destructive',
+                        onPress: () => {
+                          emitter.emit('SAVE_GENERIC_PROPERTY', {
+                            screenName,
+                            title,
+                            value: originalValue,
+                            mode: PublicProfileEditMode.DeleteCustomURL,
+                            originalValue,
+                          })
+                          navigation.goBack()
+                        },
+                      },
+                    ]
+                  )
+                },
+              }
+            : undefined
+        }
+      />
+      <View style={[styles.constainer, { marginBottom: bottom }]}>
+        <View style={{ flexDirection: 'column' }}>
+          <FormInput
+            label='Label'
+            placeholder='Enter label'
+            autoComplete='off'
+            autoCorrect={false}
+            value={labelInput}
+            onChangeText={(text) => setLabelInput(text)}
+          />
+          <FormInput
+            style={{ marginTop: 16 }}
+            label='URL'
+            autoCapitalize='none'
+            autoComplete='off'
+            autoCorrect={false}
+            keyboardType='url'
+            value={urlInput}
+            onChangeText={(text) => setUrlInput(text)}
+            placeholder='Enter URL'
+          />
+
+          <Button
+            color='transparent-link'
+            onPress={async () => {
+              const text = await Clipboard.getString()
+              setUrlInput(text)
+            }}>
+            <View style={styles.clipboardPasteButton}>
+              <ClipboardIcon />
+              <Text style={styles.clipboardPasteButtonText}>
+                Paste from clipboard
+              </Text>
+            </View>
+          </Button>
+        </View>
+        <Button onPress={saveValue}>{submitButtonLabel}</Button>
+      </View>
+    </Screen>
+  )
+}
 
 const createStyles = (theme: Theme) =>
   StyleSheet.create({

@@ -105,7 +105,7 @@ export type BlockchainRequestHandlerCallback<Context> = (
 
 export type BlockchainRequestHandlers<
   T extends string | number | symbol,
-  Context
+  Context,
 > = {
   readonly [key in T]: BlockchainRequestHandlerCallback<Context>
 }
