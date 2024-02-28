@@ -78,6 +78,7 @@ export function useWalletConnectSessionRequestHandlersEip155(): EthereumSessionR
                 web3wallet,
               }),
               params: request.params.request.params,
+              chainId: request.params.chainId,
             }),
         ])
       ) as unknown as EthereumSessionRequestHandlers,
