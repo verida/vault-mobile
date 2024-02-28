@@ -24,6 +24,8 @@ const TransactionFailure = React.memo(
 
     const error = errorMessage.includes('INSUFFICIENT_FUNDS')
       ? 'Not enough funds for the transaction and/or the gas fees.'
+      : errorMessage.includes('REPLACEMENT_UNDERPRICED')
+      ? 'There is a pending transaction and the gas fee specified is not high enough to replace the pending transaction.'
       : errorMessage
 
     const titleText = 'Ooops..'
