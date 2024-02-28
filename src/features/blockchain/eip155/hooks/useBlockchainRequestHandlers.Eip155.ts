@@ -172,7 +172,7 @@ export function useBlockchainRequestHandlersEip155(): BlockchainRequestHandlersE
   )
 }
 
-async function getGasFees(chainId: string) {
+async function getGasFees(chainId?: string) {
   const gasStationURL =
     chainId === 'eip155:137'
       ? 'https://gasstation.polygon.technology/v2'
