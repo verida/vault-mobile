@@ -1,4 +1,5 @@
 import { Web3WalletTypes } from '@walletconnect/web3wallet'
+import axios from 'axios'
 import { ethers } from 'ethers'
 import { SupportedBlockchainNamespace } from 'features/blockchain/@types/enums'
 import { useChainMetadatasCustom } from 'features/blockchain/hooks'
@@ -147,9 +148,15 @@ export function useBlockchainRequestHandlersEip155(): BlockchainRequestHandlersE
       [Eip155RpcMethod.ETH_SEND_TRANSACTION]: async ({
         context: wallet,
         params,
+        chainId,
       }) => {
+        const gasData = await getGasFees(chainId)
+
         const transactionToSend = await adjustTransactionData({
-          transaction: params[0],
+          transaction: {
+            ...params[0],
+            ...gasData,
+          },
         })
 
         const tx = await wallet.sendTransaction(transactionToSend)
@@ -163,4 +170,42 @@ export function useBlockchainRequestHandlersEip155(): BlockchainRequestHandlersE
     }),
     [addCustomNetworks]
   )
+}
+
+async function getGasFees(chainId?: string) {
+  const gasStationURL =
+    chainId === 'eip155:137'
+      ? 'https://gasstation.polygon.technology/v2'
+      : chainId === 'eip155:80001'
+      ? 'https://gasstation-testnet.polygon.technology/v2'
+      : null
+
+  if (!gasStationURL) {
+    return {}
+  }
+
+  try {
+    const { data } = await axios({
+      method: 'get',
+      url: gasStationURL,
+    })
+
+    const maxFeePerGas = data?.fast?.maxFee
+      ? ethers.utils.parseUnits(Math.ceil(data.fast.maxFee) + '', 'gwei')
+      : ethers.BigNumber.from('40000000000')
+
+    const maxPriorityFeePerGas = data?.fast?.maxPriorityFee
+      ? ethers.utils.parseUnits(
+          Math.ceil(data.fast.maxPriorityFee) + '',
+          'gwei'
+        )
+      : ethers.BigNumber.from('50000000000')
+
+    return {
+      maxFeePerGas,
+      maxPriorityFeePerGas,
+    }
+  } catch {
+    // ignore
+  }
 }
