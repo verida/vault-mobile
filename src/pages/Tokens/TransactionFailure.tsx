@@ -22,8 +22,12 @@ const TransactionFailure = React.memo(
 
     const { errorMessage } = useParams<TransactionFailureScreenProps>()
 
+    const error = errorMessage.includes('INSUFFICIENT_FUNDS')
+      ? 'Not enough funds for the transaction and/or the gas fees.'
+      : errorMessage
+
     const titleText = 'Ooops..'
-    const descriptionText = `Transaction failed: ${errorMessage}`
+    const descriptionText = `Transaction failed: ${error}`
     const buttonLabel = 'Back'
 
     return (
