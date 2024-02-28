@@ -200,6 +200,7 @@ export function useLazyConfirmTransaction(): Stateful<ConfirmTransactionCallback
             minifiedBlockchainAccount,
             rpc,
             decimals,
+            chainId: chainId.toString(),
           })
 
         default:

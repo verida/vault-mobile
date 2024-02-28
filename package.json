@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "scripts": {
     "new:clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && rm -rf node_modules yarn.lock ios/build ios/Podfile.lock && yarn",
     "clean": "rm -rf $TMPDIR/react-* && watchman watch-del-all && yarn",
@@ -16,6 +16,9 @@
     "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/Wallet/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",
+    "codepush:android": "appcenter codepush release-react -a verida.io/Vault-Android --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
+    "codepush:android:staging": "yarn codepush:android -d Staging",
+    "codepush:android:production": "yarn codepush:android -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
     "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx jetify && npx pod-install && yarn build:webapp && yarn storybook:generate",
@@ -235,6 +238,7 @@
     "@types/url-parse": "^1.4.4",
     "@typescript-eslint/eslint-plugin": "^4.29.0",
     "@typescript-eslint/parser": "^4.29.0",
+    "axios-mock-adapter": "^1.22.0",
     "babel-jest": "^26.6.3",
     "babel-loader": "^8.3.0",
     "eslint": "^7.32.0",
