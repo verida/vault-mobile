@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "@verida/vault-mobile",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "scripts": {
     "clean": "rm -rf $TMPDIR/react-* && rm -rf node_modules ios/pods ios/build android/app/build && watchman watch-del-all && yarn",
     "pod:install": "cd ios && pod install && cd ..",
@@ -15,6 +15,9 @@
     "codepush:ios": "appcenter codepush release-react -a verida.io/Vault -p ios/Wallet/Info.plist --xcode-project-file=\"./ios/Verida Vault.xcodeproj/project.pbxproj\" --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
     "codepush:ios:staging": "yarn codepush:ios -d Staging",
     "codepush:ios:production": "yarn codepush:ios -d Production",
+    "codepush:android": "appcenter codepush release-react -a verida.io/Vault-Android --description $(git rev-parse --short HEAD) -m  --sourcemap-output --output-dir ./build",
+    "codepush:android:staging": "yarn codepush:android -d Staging",
+    "codepush:android:production": "yarn codepush:android -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "lint:fix": "yarn lint --fix",
     "build-android": "cd android && ./gradlew assembleStagingRelease",
