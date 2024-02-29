@@ -30,13 +30,13 @@ async function builder(code, options) {
       },
       printErrorMessage: function () {
         errStr += getMessage() + '\\n'
-        // console.error(getMessage());
+        log('warn', getMessage()) // TODO: Check the right way to log this
       },
       writeBufferMessage: function () {
         const msg = getMessage()
         // Any calls to \`log()\` will always end with a \`\\n\`, so that's when we print and reset
         if (msg === '\\n') {
-          console.log(msgStr)
+          log('debug', msgStr) // TODO: Check the right way to log this
           msgStr = ''
         } else {
           // If we've buffered other content, put a space in between the items
@@ -54,14 +54,6 @@ async function builder(code, options) {
   })
 
   const sanityCheck = options
-  //        options &&
-  //        (
-  //            options.sanityCheck ||
-  //            options.logGetSignal ||
-  //            options.logSetSignal ||
-  //            options.logStartComponent ||
-  //            options.logFinishComponent
-  //        );
 
   return new WitnessCalculator(instance, sanityCheck)
 
@@ -304,6 +296,7 @@ function fnvHash(str) {
   const uint64_max = BigInt(2) ** BigInt(64)
   let hash = BigInt('0xCBF29CE484222325')
   for (var i = 0; i < str.length; i++) {
+    // eslint-disable-next-line no-bitwise
     hash ^= BigInt(str[i].charCodeAt())
     hash *= BigInt(0x100000001b3)
     hash %= uint64_max
@@ -345,9 +338,10 @@ function log(level, message, data) {
 }
 
 window.addEventListener('message', async (message) => {
+  let taskId = undefined
   try {
     const data = JSON.parse(message.data)
-
+    taskId = data.id
     if (data.event === 'REQUEST') {
       const binary = base64ToArrayBuffer(data.binary)
       const build = await builder(binary)
@@ -355,12 +349,18 @@ window.addEventListener('message', async (message) => {
       const result = arrayBufferToBase64(witnessCalculation)
 
       window.ReactNativeWebView.postMessage(
-        JSON.stringify({ result, event: 'RESULT' })
+        JSON.stringify({ event: 'RESULT', id: taskId, result })
       )
     }
   } catch (error) {
     window.ReactNativeWebView.postMessage(
-      JSON.stringify({ error, event: 'ERROR' })
+      JSON.stringify({
+        event: 'ERROR',
+        id: taskId,
+        error: JSON.parse(
+          JSON.stringify(error, Object.getOwnPropertyNames(error))
+        ), // HACK: to properly pass the error object
+      })
     )
   }
 })

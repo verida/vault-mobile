@@ -99,6 +99,7 @@ export const config = {
   polygonId: {
     common: {
       circuitsDownloadUrl: envVars.POLYGON_ID_CIRCUITS_DOWNLOAD_URL,
+      witnessCalculationTimeout: 5000, // The witness calculation should be a fraction off a second, so timing out after 5 seconds
       blockchain: PolygonId.Blockchain.Polygon,
       didMethod: PolygonId.DidMethod.PolygonId,
       revocationType: CredentialStatusType.Iden3ReverseSparseMerkleTreeProof,

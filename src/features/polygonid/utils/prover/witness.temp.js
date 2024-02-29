@@ -56,14 +56,6 @@ async function builder(code, options) {
   })
 
   const sanityCheck = options
-  //        options &&
-  //        (
-  //            options.sanityCheck ||
-  //            options.logGetSignal ||
-  //            options.logSetSignal ||
-  //            options.logStartComponent ||
-  //            options.logFinishComponent
-  //        );
 
   return new WitnessCalculator(instance, sanityCheck)
 
@@ -348,9 +340,10 @@ function log(level, message, data) {
 }
 
 window.addEventListener('message', async (message) => {
+  let taskId = undefined
   try {
     const data = JSON.parse(message.data)
-
+    taskId = data.id
     if (data.event === 'REQUEST') {
       const binary = base64ToArrayBuffer(data.binary)
       const build = await builder(binary)
@@ -358,12 +351,18 @@ window.addEventListener('message', async (message) => {
       const result = arrayBufferToBase64(witnessCalculation)
 
       window.ReactNativeWebView.postMessage(
-        JSON.stringify({ result, event: 'RESULT' })
+        JSON.stringify({ event: 'RESULT', id: taskId, result })
       )
     }
   } catch (error) {
     window.ReactNativeWebView.postMessage(
-      JSON.stringify({ error, event: 'ERROR' })
+      JSON.stringify({
+        event: 'ERROR',
+        id: taskId,
+        error: JSON.parse(
+          JSON.stringify(error, Object.getOwnPropertyNames(error))
+        ), // HACK: to properly pass the error object
+      })
     )
   }
 })

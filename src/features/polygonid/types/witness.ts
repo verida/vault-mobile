@@ -9,6 +9,7 @@ export type CalculateWitnessFunction = (
 
 export const WitnessResultMessageSchema = z.object({
   event: z.literal(WitnessOutgoingEvent.RESULT),
+  id: z.string(),
   result: z.string(),
 })
 
@@ -25,6 +26,7 @@ export type WitnessLogMessage = z.infer<typeof WitnessLogMessageSchema>
 
 export const WitnessErrorMessageSchema = z.object({
   event: z.literal(WitnessOutgoingEvent.ERROR),
+  id: z.string().optional(),
   error: z.record(z.unknown()),
 })
 
@@ -41,7 +43,17 @@ export type WitnessOutgoingMessage = z.infer<
 >
 
 export type WitnessRequestMessage = {
+  id: string
   event: WitnessIncomingEvent.REQUEST
   binary: string
   inputs: JSON
+}
+
+export type HandleWitnessResultFunction = (result: string) => void
+
+export type HandleWitnessErrorFunction = (error: unknown) => void
+
+export type WitnessResponseHandlers = {
+  handleResult: HandleWitnessResultFunction
+  handleError: HandleWitnessErrorFunction
 }

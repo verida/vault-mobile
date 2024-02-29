@@ -6,11 +6,15 @@ import WebView, { WebViewMessageEvent } from 'react-native-webview'
 import { WitnessIncomingEvent, WitnessOutgoingEvent } from '../constants'
 import {
   CalculateWitnessFunction,
+  HandleWitnessErrorFunction,
+  HandleWitnessResultFunction,
   WitnessLogMessage,
   WitnessOutgoingMessageSchema,
   WitnessRequestMessage,
+  WitnessResponseHandlers,
 } from '../types'
 import { polygonIdLogger as logger, witnessCode } from '../utils'
+import { config } from 'config'
 
 export type PolygonIdWitnessContextType = {
   isLoading: boolean
@@ -24,16 +28,12 @@ export const PolygonIdWitnessContext =
 export const PolygonIdWitnessProvider: React.FC = (props) => {
   const { children } = props
 
-  // TODO: Optimise communication between the witness and the app
-  // - Create a logger for the communication between the webview and the app
-  // - Create a ref to store a map for the promises
-  // - Create a random id for every execution
-  // - Create a Promise for every execution
-  // - Store the Promise in the ref map with the id as the key
-  // - When receiving the result, resolve the promise with the id
-
   const webViewRef = useRef<WebView | null>(null)
-  const resolveMethodRef = useRef<(result: string) => void>()
+
+  // This map keeps track of each witness calculation request and how to handle the response
+  const witnessResponseHandlers = useRef(
+    new Map<string, WitnessResponseHandlers>()
+  )
 
   const [isReady, setIsReady] = React.useState<boolean>(false)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
@@ -72,30 +72,52 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
       const message = validationResult.data
 
       switch (message.event) {
-        case WitnessOutgoingEvent.RESULT: {
-          logger.debug('Received witness execution result')
-          if (!resolveMethodRef.current) {
-            logger.warn('No resolve method found for the witness result')
-            return
-          }
-
-          resolveMethodRef.current(message.result)
-          break
-        }
         case WitnessOutgoingEvent.LOG: {
           logWitnessMessage(message)
           break
         }
-        case WitnessOutgoingEvent.ERROR: {
-          const cause =
-            typeof message.error.message === 'string'
-              ? new Error(message.error.message)
-              : undefined
-          logger.error(
-            new Error('Error while executing the witness', { cause })
-          )
+
+        case WitnessOutgoingEvent.RESULT: {
+          logger.debug('Received witness execution result')
+          const handlers = witnessResponseHandlers.current.get(message.id)
+
+          if (!handlers) {
+            // Can happen if the message is received after the timeout, which would have cleared the handlers
+            logger.warn('No handler found for the witness result')
+            return
+          }
+
+          handlers.handleResult(message.result)
           break
         }
+
+        case WitnessOutgoingEvent.ERROR: {
+          logger.debug('Received witness execution error')
+
+          const error =
+            typeof message.error.message === 'string'
+              ? new Error(message.error.message)
+              : new Error('Unknown error')
+          logger.error(
+            new Error('Error while calculating the witness', { cause: error })
+          )
+
+          const handlers = message.id
+            ? witnessResponseHandlers.current.get(message.id)
+            : undefined
+          // If no id is provided, the error is not related to a specific request.
+          // Can happen if the WebView fails to parse the message and can't get the id, it will throw an error and send it back without an id
+
+          if (!handlers) {
+            // Can happen if the message is received after the timeout, which would have cleared the handlers
+            logger.warn('No handler found for the witness error')
+            return
+          }
+
+          handlers.handleError(error)
+          break
+        }
+
         default: {
           // Should only happen if the message is valid but handled in the switch cases, hence the 'any' on message as typescript thinks it's never otherwise
           logger.warn('Unhandled message from the witness WebView', {
@@ -109,23 +131,59 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
 
   const calculateWitness: CalculateWitnessFunction = useCallback(
     async (wasm: Uint8Array, inputs: JSON) => {
-      logger.info('Calculating witness...')
+      return new Promise<string>((resolve, reject) => {
+        logger.info('Calculating witness...')
 
-      if (!webViewRef.current || !isReady) {
-        throw new Error('Polygon ID witness not ready')
-      }
+        if (!webViewRef.current || !isReady) {
+          reject(new Error('Polygon ID witness not ready'))
+          return
+        }
 
-      const request: WitnessRequestMessage = {
-        event: WitnessIncomingEvent.REQUEST,
-        binary: fromByteArray(wasm),
-        inputs,
-      }
+        // Get an ID to identify the request later on
+        const id = Math.random().toString().replace('0.', '')
 
-      logger.debug('Sending message to the witness WebView')
-      webViewRef.current.postMessage(JSON.stringify(request))
+        // Prepare the request
+        const request: WitnessRequestMessage = {
+          id,
+          event: WitnessIncomingEvent.REQUEST,
+          binary: fromByteArray(wasm),
+          inputs,
+        }
 
-      return new Promise<string>((resolve) => {
-        resolveMethodRef.current = resolve
+        // Timeout the witness calculation, prevent the promise being stuck unfulfilled in case anything happen in the WebView
+        const timeout = setTimeout(() => {
+          logger.warn(`Witness calculation timeout`, { id })
+          // Clear the handlers
+          witnessResponseHandlers.current.delete(id)
+          // Reject the promise for the consumer
+          reject(new Error('Polygon ID witness calculation timeout'))
+        }, config.polygonId.common.witnessCalculationTimeout)
+
+        // Build the response handlers
+
+        const handleResult: HandleWitnessResultFunction = (result) => {
+          logger.debug('Handling witness result', { id })
+          clearTimeout(timeout)
+          witnessResponseHandlers.current.delete(id)
+          resolve(result)
+        }
+
+        const handleError: HandleWitnessErrorFunction = (error) => {
+          logger.warn('Handling witness error', { id })
+          clearTimeout(timeout)
+          witnessResponseHandlers.current.delete(id)
+          reject(error)
+        }
+
+        // Store the handlers for the response
+        witnessResponseHandlers.current.set(id, {
+          handleResult,
+          handleError,
+          // TODO: Maybe have a clearTimeout to be called in the cleanup function of a useEffect, so that any remaining timeouts are cleared if the component is unmounted
+        })
+
+        logger.debug('Sending message to the witness WebView', { id })
+        webViewRef.current.postMessage(JSON.stringify(request))
       })
     },
     [isReady]
@@ -150,10 +208,8 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
           html: `
                 <html>
                   <head>
-                    <meta name="viewport" content="width=device-width, initial-scale=1" />
                   </head>
                   <body>
-                    <h1>Silver area is a Webview</h1>
                   </body>
                 </html>
               `,
