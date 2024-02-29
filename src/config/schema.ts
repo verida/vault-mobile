@@ -31,6 +31,7 @@ export const EnvVarsSchema = z
     POLYGON_ID_TESTNET_RPC_URL: z.string().url(),
     POLYGON_ID_MAINNET_RPC_URL: z.string().url(),
     POLYGON_ID_REVOCATION_BASE_URL: z.string().url(),
+    POLYGON_ID_CIRCUITS_DOWNLOAD_URL: z.string().url(),
 
     // WalletConnect
     WALLETCONNECT_PROJECT_ID: z.string(),
