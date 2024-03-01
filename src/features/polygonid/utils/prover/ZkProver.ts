@@ -55,10 +55,16 @@ export class ZkProver implements IZKProver {
         throw new Error(`Wasm file doesn't exist for circuit ${circuitId}`)
       }
 
+      if (!circuitData.provingKey) {
+        throw new Error(
+          `Proving key file doesn't exist for circuit ${circuitId}`
+        )
+      }
+
       logger.debug('Executing prove method to get proof...')
       const proof = await prove(
         inputs,
-        circuitData.provingKey as Uint8Array,
+        circuitData.provingKey,
         circuitData.wasm,
         this.calculateWitness
       )

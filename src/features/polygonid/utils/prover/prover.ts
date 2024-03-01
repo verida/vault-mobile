@@ -1,12 +1,10 @@
 import { byteDecoder } from '@0xpolygonid/js-sdk'
 import { ZKProof } from '@iden3/js-jwz'
-import { NativeModules } from 'react-native'
+import { groth16Prove } from '@iden3/react-native-rapidsnark'
 import { fromByteArray } from 'react-native-quick-base64'
 
 import { CalculateWitnessFunction } from '../../types'
 import { polygonIdLogger as logger } from '../logger'
-
-const rapidsnark = NativeModules.Rapidsnark
 
 export const prove = async (
   inputs: Uint8Array,
@@ -25,12 +23,12 @@ export const prove = async (
   }
   logger.debug('Witness calculator successfully executed')
 
-  logger.debug('Execute groth16 prover with rapidsnark')
-  const { proof, pub_signals } = await rapidsnark.groth16_prover(
+  logger.debug('Executing groth16Prove...')
+  const { proof, pub_signals } = await groth16Prove(
     fromByteArray(provingKey),
     witness
   )
-  logger.debug('Groth16 prover executed successfully')
+  logger.debug('groth16Prove executed successfully')
 
   return {
     proof: JSON.parse(proof),
