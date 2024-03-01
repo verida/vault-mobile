@@ -340,7 +340,7 @@ function log(level, message, data) {
 }
 
 window.addEventListener('message', async (message) => {
-  let taskId = undefined
+  let taskId
   try {
     const data = JSON.parse(message.data)
     taskId = data.id

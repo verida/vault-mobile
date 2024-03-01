@@ -1,3 +1,4 @@
+import { config } from 'config'
 import React, { createContext, useCallback, useMemo, useRef } from 'react'
 import { StyleSheet } from 'react-native'
 import { fromByteArray } from 'react-native-quick-base64'
@@ -14,7 +15,6 @@ import {
   WitnessResponseHandlers,
 } from '../types'
 import { polygonIdLogger as logger, witnessCode } from '../utils'
-import { config } from 'config'
 
 export type PolygonIdWitnessContextType = {
   isLoading: boolean
@@ -38,18 +38,18 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
   const [isReady, setIsReady] = React.useState<boolean>(false)
   const [isLoading, setIsLoading] = React.useState<boolean>(false)
 
-  const handleLoadStart = useCallback(() => {
+  const handleWebViewLoadStart = useCallback(() => {
     logger.debug('Polygon ID WebView loading...')
     setIsLoading(true)
   }, [])
 
-  const handleLoaded = useCallback(() => {
+  const handleWebViewLoaded = useCallback(() => {
     logger.info('Polygon ID WebView loaded')
     setIsLoading(false)
     setIsReady(true)
   }, [])
 
-  const handleError = useCallback(() => {
+  const handleWebViewError = useCallback(() => {
     setIsLoading(false)
     setIsReady(false)
     // TODO: Get the error from the handler
@@ -220,9 +220,9 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
         allowUniversalAccessFromFileURLs
         allowFileAccess
         startInLoadingState={true}
-        onLoadStart={handleLoadStart}
-        onLoad={handleLoaded}
-        onError={handleError}
+        onLoadStart={handleWebViewLoadStart}
+        onLoad={handleWebViewLoaded}
+        onError={handleWebViewError}
       />
       {children}
     </PolygonIdWitnessContext.Provider>
