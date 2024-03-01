@@ -4,6 +4,7 @@ import { ZKProof } from '@iden3/js-jwz'
 import { CalculateWitnessFunction } from '../../types'
 import { polygonIdLogger as logger } from '../logger'
 import { prove } from './prover'
+import { verify } from './verifier'
 
 export class ZkProver implements IZKProver {
   constructor(
@@ -26,13 +27,11 @@ export class ZkProver implements IZKProver {
         )
       }
 
-      // TODO: Implement ZK proof verification
+      logger.debug('Executing verify method on ZK proof...')
+      const isValid = await verify(zkp, circuitData.verificationKey)
+      logger.debug('Verify method executed successfully')
 
-      logger.warn(
-        'ZK proof verification not implemented, returning true by default'
-      )
-
-      return true
+      return isValid
     } catch (error) {
       logger.error(
         new Error('Error while verifying ZK proof', {

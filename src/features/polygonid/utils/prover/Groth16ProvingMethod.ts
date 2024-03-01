@@ -3,6 +3,7 @@ import { ProvingMethod, ProvingMethodAlg, ZKProof } from '@iden3/js-jwz'
 import { CalculateWitnessFunction } from '../../types'
 import { polygonIdLogger as logger } from '../logger'
 import { prove } from './prover'
+import { verify } from './verifier'
 
 export class Groth16ProvingMethod implements ProvingMethod {
   constructor(
@@ -22,11 +23,11 @@ export class Groth16ProvingMethod implements ProvingMethod {
 
   async verify(
     _messageHash: Uint8Array,
-    _proof: ZKProof,
-    _verificationKey: Uint8Array
+    proof: ZKProof,
+    verificationKey: Uint8Array
   ): Promise<boolean> {
-    logger.warn('Verifying with Groth16ProvingMethod not implemented')
-    throw new Error('Method not implemented')
+    logger.info('Verifying with Groth16ProvingMethod...')
+    return verify(proof, verificationKey)
   }
 
   async prove(
