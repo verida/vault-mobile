@@ -20,9 +20,7 @@
     "codepush:android:production": "yarn codepush:android -d Production",
     "lint": "eslint src --ext=.js,.jsx,.ts,.tsx",
     "lint:fix": "yarn lint --fix",
-    "build-android": "cd android && ./gradlew assembleStagingRelease",
     "postinstall": "patch-package && scripts/fix-node-modules.js && rn-nodeify --install --hack --yarn && npx pod-install && yarn storybook:generate",
-    "release:android": "yarn android --variant=stagingRelease",
     "wc": "npx ts-node scripts/wc",
     "pay": "npx ts-node scripts/pay",
     "storybook": "yarn storybook:generate && npx ts-node scripts/storybook",
@@ -214,7 +212,8 @@
     "vm-browserify": "0.0.4",
     "web3": "1.8.1",
     "zod": "^3.22.4",
-    "zod-validation-error": "^1.5.0"
+    "zod-validation-error": "^1.5.0",
+    "jsc-android": "294992.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
