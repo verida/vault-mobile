@@ -121,4 +121,31 @@ export class Logger {
   public debug(message: string, data?: Record<string, unknown>) {
     this.log('debug', message, data)
   }
+
+  public startTimer(label: string) {
+    if (config.dev.devMode) {
+      this.debug(`Starting timer: ${label}`)
+      console.time(label)
+    }
+    return () => this.endTimer(label)
+  }
+
+  public logTimer(label: string, ...extra: string[]) {
+    if (config.dev.devMode) {
+      console.timeLog(label, extra)
+    }
+  }
+
+  public endTimer(label: string) {
+    if (config.dev.devMode) {
+      console.timeEnd(label)
+      this.debug(`Timer ended: ${label}`)
+    }
+  }
+
+  public table(data: unknown[], properties?: string[]) {
+    if (config.dev.devMode) {
+      console.table(data, properties)
+    }
+  }
 }
