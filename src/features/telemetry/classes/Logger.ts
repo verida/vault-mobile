@@ -58,6 +58,10 @@ export class Logger {
     Logger.hideStackTraces = hide
   }
 
+  private shouldSkipPrint(level: LogLevel) {
+    return levelOrder.indexOf(level) > Logger.currentLevelIndex
+  }
+
   private formatMessage(message: string) {
     return `${new Date().toISOString()} - [${this.category}] ${message}`
   }
@@ -68,7 +72,7 @@ export class Logger {
     data?: Record<string, unknown>,
     error?: Error | unknown
   ) {
-    if (levelOrder.indexOf(level) > Logger.currentLevelIndex) {
+    if (this.shouldSkipPrint(level)) {
       return
     }
 
@@ -145,29 +149,33 @@ export class Logger {
   }
 
   public startTimer(label: string) {
-    if (config.dev.devMode) {
-      this.debug(`Starting timer: ${label}`)
-      console.time(label)
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return () => this.endTimer(label)
     }
+    this.debug(`Starting timer: ${label}`)
+    console.time(label)
     return () => this.endTimer(label)
   }
 
   public logTimer(label: string, ...extra: string[]) {
-    if (config.dev.devMode) {
-      console.timeLog(label, extra)
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return
     }
+    console.timeLog(label, extra)
   }
 
   public endTimer(label: string) {
-    if (config.dev.devMode) {
-      console.timeEnd(label)
-      this.debug(`Timer ended: ${label}`)
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return
     }
+    console.timeEnd(label)
+    this.debug(`Timer ended: ${label}`)
   }
 
   public table(data: unknown[], properties?: string[]) {
-    if (config.dev.devMode) {
-      console.table(data, properties)
+    if (!config.dev.devMode || this.shouldSkipPrint('debug')) {
+      return
     }
+    console.table(data, properties)
   }
 }
