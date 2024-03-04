@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 import type { CaptureContext } from '@sentry/types'
 import { config } from 'config'
 import { LogLevel, Sentry } from 'features/telemetry'
@@ -63,26 +64,27 @@ export class Logger {
       return
     }
 
-    const formattedMessage = this.formatMessage(message)
+    let formattedMessage = this.formatMessage(message)
+
+    if (error instanceof Error && error.stack && !config.hideStackTracesInLog) {
+      formattedMessage += `\nStack trace:`
+      formattedMessage += `\n${error.stack}`
+    }
 
     const extra = []
     if (data) extra.push(data)
 
-    // eslint-disable-next-line no-console
     console[level](formattedMessage, ...extra)
 
-    if (error instanceof Error && error.stack) {
-      // eslint-disable-next-line no-console
-      console[level](error.stack)
-    }
-
     if (error instanceof Error && error.cause) {
+      console.group('Caused by:')
       this.log(
         level,
-        `Caused by: ${error.cause instanceof Error ? error.cause.message : ''}`,
+        error.cause instanceof Error ? error.cause.message : '',
         undefined,
         error.cause
       )
+      console.groupEnd()
     }
   }
 
