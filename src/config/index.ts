@@ -25,7 +25,7 @@ export const config = {
   logLevel: envVars.LOG_LEVEL,
   dev: {
     devMode: __DEV__,
-    disableLogBox: envVars.DISABLE_LOG_BOX,
+    disableLogBox: false, //envVars.DISABLE_LOG_BOX,
     enableClipboardInQrCodeScanner: envVars.ENABLE_CLIPBOARD_IN_QR_CODE_SCANNER,
   },
   sentry: {
