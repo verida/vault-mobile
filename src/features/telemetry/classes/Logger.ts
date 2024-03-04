@@ -4,7 +4,6 @@ import { config } from 'config'
 import { LogLevel, Sentry } from 'features/telemetry'
 
 const levelOrder: LogLevel[] = ['error', 'warn', 'info', 'debug']
-const currentLogLevelIndex = levelOrder.indexOf(config.logLevel)
 
 const sentryLevelMapping = {
   error: 'error',
@@ -25,6 +24,12 @@ const sentryLevelMapping = {
  * For `logger.error`, the error will be captured with `Sentry.captureException`.
  */
 export class Logger {
+  // Static properties
+  private static currentLevelIndex: number = levelOrder.indexOf(config.logLevel)
+  private static hideStackTraces: boolean = config.hideStackTracesInLog
+  private static instances = new Map<string, Logger>()
+
+  // Instance properties
   private readonly category: string
 
   /**
@@ -34,6 +39,23 @@ export class Logger {
    */
   constructor(category: string) {
     this.category = category
+  }
+
+  static create(category: string) {
+    if (Logger.instances.has(category)) {
+      return Logger.instances.get(category)!
+    }
+    const logger = new Logger(category)
+    Logger.instances.set(category, logger)
+    return logger
+  }
+
+  static setLogLevel(level: LogLevel) {
+    Logger.currentLevelIndex = levelOrder.indexOf(level)
+  }
+
+  static setHideStackTraces(hide: boolean) {
+    Logger.hideStackTraces = hide
   }
 
   private formatMessage(message: string) {
@@ -46,7 +68,7 @@ export class Logger {
     data?: Record<string, unknown>,
     error?: Error | unknown
   ) {
-    if (levelOrder.indexOf(level) > currentLogLevelIndex) {
+    if (levelOrder.indexOf(level) > Logger.currentLevelIndex) {
       return
     }
 
@@ -66,7 +88,7 @@ export class Logger {
 
     let formattedMessage = this.formatMessage(message)
 
-    if (error instanceof Error && error.stack && !config.hideStackTracesInLog) {
+    if (error instanceof Error && error.stack && !Logger.hideStackTraces) {
       formattedMessage += `\nStack trace:`
       formattedMessage += `\n${error.stack}`
     }
