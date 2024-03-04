@@ -32,15 +32,15 @@ export class Logger {
   // Instance properties
   private readonly category: string
 
+  private constructor(category: string) {
+    this.category = category
+  }
+
   /**
    * Creates a new instance of the logger.
    *
    * @param category Used to prefix the message in the console. For instance, set "Polygon ID" for everything related to Polygon ID. Note, the category is also pass into the Sentry breadcrumb, so avoid filename and/or function names, stay high level, by feature.
    */
-  constructor(category: string) {
-    this.category = category
-  }
-
   static create(category: string) {
     if (Logger.instances.has(category)) {
       return Logger.instances.get(category)!

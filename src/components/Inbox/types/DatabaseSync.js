@@ -7,7 +7,7 @@ import AccountManager from 'api/AccountManager'
 
 import RequestDetailsLayout from '../RequestDetailsLayout'
 
-const logger = new Logger('Components/Inbox/types/DatabaseSync')
+const logger = Logger.create('Components/Inbox/types/DatabaseSync')
 
 export default ({ item, inboxItem, type, navigation }) => {
   const [currentAction, setCurrentAction] = useState(null)

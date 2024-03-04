@@ -29,7 +29,7 @@ import {
 } from '../utils'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
-const logger = new Logger('useLazyConfirmTransaction')
+const logger = Logger.create('useLazyConfirmTransaction')
 
 type ConfirmTransactionCallbackParams<T extends AggregateWalletBannerBalance> =
   {

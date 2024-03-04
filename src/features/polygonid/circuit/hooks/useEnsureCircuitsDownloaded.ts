@@ -6,7 +6,7 @@ import * as React from 'react'
 import { useDownloadCircuit } from './useDownloadCircuit'
 import { useIsCircuitsDownloaded } from './useIsCircuitsDownloaded'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export function useEnsureCircuitsDownloaded(
   maybeCircuitIds: readonly `${CircuitId}`[]

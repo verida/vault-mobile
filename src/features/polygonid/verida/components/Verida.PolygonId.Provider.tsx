@@ -11,7 +11,7 @@ import {
   useFileServer,
 } from '../../server'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 export const VeridaPolygonIdProvider = ({
   children,

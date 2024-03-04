@@ -12,7 +12,7 @@ import { Stateful } from '../../@types'
 import { PolygonIdConfig, PolygonIdManagerConfig } from '../@types'
 import { usePolygonContext } from '../contexts'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 type PolygonIdPartialConfig = Omit<PolygonIdConfig, 'polygonIdPrivateKey'>
 

@@ -7,7 +7,7 @@ import { DataList } from 'components/Data'
 import LoadingView from 'components/LoadingView'
 import { TabsScreenProps } from 'navigation/types'
 
-const logger = new Logger('Pages/Data/DataTabScreen')
+const logger = Logger.create('Pages/Data/DataTabScreen')
 
 export type DataTabScreenParams = undefined
 

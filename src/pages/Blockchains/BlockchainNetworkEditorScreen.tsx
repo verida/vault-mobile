@@ -26,7 +26,7 @@ const attemptedToModifyDisabledNetworkError = () =>
     'Attempted to modify a network that is not permitted for modification.'
   )
 
-const logger = new Logger('BlockchainNetworkEditorScreen')
+const logger = Logger.create('BlockchainNetworkEditorScreen')
 
 export type BlockchainNetworkEditorScreenParams = {
   readonly title: string

@@ -14,7 +14,7 @@ import LoadingView from 'components/LoadingView'
 import Text from 'components/Text'
 import { NUNITO_SANS_BOLD } from 'constants/text'
 
-const logger = new Logger('Components/Data/SchemasList')
+const logger = Logger.create('Components/Data/SchemasList')
 
 export type SchemasListProps = Omit<ViewProps, 'children'> & {
   schemas: string[]

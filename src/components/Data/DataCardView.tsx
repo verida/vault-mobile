@@ -8,7 +8,7 @@ import { useMainNavigation } from 'navigation/hooks'
 
 import { DataCardList } from './DataCardList'
 
-const logger = new Logger('Components/Data/DataCardView')
+const logger = Logger.create('Components/Data/DataCardView')
 
 export type DataCardViewProps = {
   folder: Folder

@@ -20,7 +20,7 @@ import type {
 import { useCreatePolygonIdManager, usePolygonContext } from '../polygon'
 import { getEntityMetadata, parsePolygonIdMessage } from '../utils'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 type PolygonIdContextType = {
   isReady: boolean

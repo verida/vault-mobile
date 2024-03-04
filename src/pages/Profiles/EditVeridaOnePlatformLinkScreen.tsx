@@ -22,7 +22,7 @@ import { Theme } from 'styles/types'
 
 import { PublicProfileEditMode } from './PublicProfileScreen'
 
-const logger = new Logger('Pages/Profiles/EditPlatformLink')
+const logger = Logger.create('Pages/Profiles/EditPlatformLink')
 
 export type EditVeridaOnePlatformLinkScreenParams = {
   screenName: string

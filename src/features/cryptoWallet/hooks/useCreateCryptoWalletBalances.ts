@@ -10,7 +10,7 @@ import {
 import { fetchCryptoWalletBalances } from '../utils'
 import { useSelectedMinifiedBlockchainAccounts } from './useSelectedMinifiedBlockchainAccounts'
 
-const logger = new Logger('useCreateCryptoWalletBalances')
+const logger = Logger.create('useCreateCryptoWalletBalances')
 
 const DEFAULT_CRYPTO_WALLET_BALANCES: CryptoWalletBalances = {}
 

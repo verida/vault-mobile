@@ -2,7 +2,7 @@ import { useProtocolHandlers } from 'features/protocols/hooks'
 import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
-const logger = new Logger('ProtocolsContext')
+const logger = Logger.create('ProtocolsContext')
 
 export type ProtocolsContextType = {
   processDeepLink: (url: string) => boolean

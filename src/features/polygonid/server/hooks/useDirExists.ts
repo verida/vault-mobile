@@ -4,7 +4,7 @@ import RNBlobUtil from 'react-native-blob-util'
 
 import { Stateful } from '../../@types'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 const loadingState = (): Stateful<boolean> => ({
   loading: true,

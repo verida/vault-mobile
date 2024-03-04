@@ -17,7 +17,7 @@ import AccountManager from 'api/AccountManager'
 
 import { WALLET_SCHEMA_0_2_0_URI } from '../constants'
 
-const logger = new Logger('WalletManager')
+const logger = Logger.create('WalletManager')
 
 const bip39 = require('bip39')
 

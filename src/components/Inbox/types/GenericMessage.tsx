@@ -17,7 +17,7 @@ import { MainStackParams } from 'navigation/types'
 
 import Text from '../../Text'
 
-const logger = new Logger('Component/GenericMessage')
+const logger = Logger.create('Component/GenericMessage')
 
 type GenericMessageProps = {
   inboxItem: any

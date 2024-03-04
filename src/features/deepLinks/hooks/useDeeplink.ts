@@ -5,7 +5,7 @@ import parse from 'url-parse'
 
 import { MainStackParams } from 'navigation/types'
 
-const logger = new Logger('DeepLinks')
+const logger = Logger.create('DeepLinks')
 
 // TODO: To be handled as a protocol handler (for the Verida Connect part) or in Navigation linking configuration for pure screens navigation
 

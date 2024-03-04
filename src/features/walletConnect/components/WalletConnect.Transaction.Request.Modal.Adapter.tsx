@@ -29,7 +29,7 @@ const getTitleForRequest = (request: Web3WalletTypes.SessionRequest) => {
   return 'Smart Contract Call'
 }
 
-const logger = new Logger('WalletConnect')
+const logger = Logger.create('WalletConnect')
 
 export const WalletConnectTransactionRequestModalAdapter = React.memo(
   function WalletConnectTransactionRequestModalAdapter({

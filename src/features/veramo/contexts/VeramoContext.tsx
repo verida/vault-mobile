@@ -25,7 +25,7 @@ import { getResolver as getVdaDidResolver } from '@verida/vda-did-resolver'
 import { Logger } from 'features/telemetry'
 import React, { createContext } from 'react'
 
-const logger = new Logger('Veramo')
+const logger = Logger.create('Veramo')
 
 const cheqdMainnetProvider = new CheqdDIDProvider({
   defaultKms: '',

@@ -1,4 +1,4 @@
-import { Logger } from 'ethers/lib/utils'
+import { Logger } from 'features/telemetry'
 import { Container } from 'native-base'
 import React, { useEffect, useState } from 'react'
 import { Alert } from 'react-native'
@@ -32,7 +32,7 @@ const getHeaderTitle = (type) => {
   }
 }
 
-const logger = new Logger('InboxItem')
+const logger = Logger.create('InboxItem')
 
 // TODO: refactor and convert to Typescript
 const InboxItem = (props) => {

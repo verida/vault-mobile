@@ -6,7 +6,7 @@ import { CircuitSpecificDownloadStates } from '../@types'
 import { useCircuitContext } from '../contexts'
 import { isCircuitDownloaded } from '../utils'
 
-const logger = new Logger('Polygon ID')
+const logger = Logger.create('Polygon ID')
 
 // Defines whether all circuits in the array have been successfully cached
 // to the local device.
