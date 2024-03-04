@@ -29,7 +29,6 @@ if (__DEV__) {
       'EventEmitter.removeListener',
       'Unrecognized WebSocket connection option',
       'Setting a timer for a long period of time',
-      // 'ViewPropTypes will be removed from React Native',
       'AsyncStorage has been extracted from react-native',
       "exported from 'deprecated-react-native-prop-types'.",
       'VirtualizedLists should never be nested inside plain ScrollViews',
