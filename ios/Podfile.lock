@@ -159,9 +159,6 @@ PODS:
     - FlipperKit/Core
     - FlipperKit/FlipperKitNetworkPlugin
   - fmt (6.2.1)
-  - GCDWebServer (3.5.4):
-    - GCDWebServer/Core (= 3.5.4)
-  - GCDWebServer/Core (3.5.4)
   - glog (0.3.5)
   - GoogleAppMeasurement/WithoutAdIdSupport (8.15.0):
     - GoogleUtilities/AppDelegateSwizzler (~> 7.7)
@@ -537,9 +534,6 @@ PODS:
     - React-Core
   - react-native-sqlite-2 (3.6.2):
     - React-Core
-  - react-native-static-server (0.5.0):
-    - GCDWebServer (~> 3.0)
-    - React
   - react-native-udp (4.1.7):
     - CocoaAsyncSocket
     - React-Core
@@ -795,7 +789,6 @@ DEPENDENCIES:
   - react-native-safe-area-context (from `../node_modules/react-native-safe-area-context`)
   - "react-native-slider (from `../node_modules/@react-native-community/slider`)"
   - react-native-sqlite-2 (from `../node_modules/react-native-sqlite-2`)
-  - react-native-static-server (from `../node_modules/react-native-static-server`)
   - react-native-udp (from `../node_modules/react-native-udp`)
   - react-native-webview (from `../node_modules/react-native-webview`)
   - React-NativeModulesApple (from `../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
@@ -858,7 +851,6 @@ SPEC REPOS:
     - Flipper-PeerTalk
     - FlipperKit
     - fmt
-    - GCDWebServer
     - GoogleAppMeasurement
     - GoogleDataTransport
     - GoogleUtilities
@@ -982,8 +974,6 @@ EXTERNAL SOURCES:
     :path: "../node_modules/@react-native-community/slider"
   react-native-sqlite-2:
     :path: "../node_modules/react-native-sqlite-2"
-  react-native-static-server:
-    :path: "../node_modules/react-native-static-server"
   react-native-udp:
     :path: "../node_modules/react-native-udp"
   react-native-webview:
@@ -1103,7 +1093,6 @@ SPEC CHECKSUMS:
   Flipper-PeerTalk: 116d8f857dc6ef55c7a5a75ea3ceaafe878aadc9
   FlipperKit: 2efad7007d6745a3f95e4034d547be637f89d3f6
   fmt: ff9d55029c625d3757ed641535fd4a75fedc7ce9
-  GCDWebServer: 2c156a56c8226e2d5c0c3f208a3621ccffbe3ce4
   glog: 04b94705f318337d7ead9e6d17c019bd9b1f6b1b
   GoogleAppMeasurement: 4c19f031220c72464d460c9daa1fb5d1acce958e
   GoogleDataTransport: 57c22343ab29bc686febbf7cbb13bad167c2d8fe
@@ -1149,7 +1138,6 @@ SPEC CHECKSUMS:
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   react-native-sqlite-2: 21c4a9d439e92193a8712c68492731c014671b53
-  react-native-static-server: 201b2a945a35096be3ae7f43e367c65bcbd61343
   react-native-udp: df79c3cb72c4e71240cd3ce4687bfb8a137140d5
   react-native-webview: bdc091de8cf7f8397653e30182efcd9f772e03b3
   React-NativeModulesApple: 6f63747fd6e237b646c61957a8f877a2713617af
