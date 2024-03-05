@@ -1,6 +1,5 @@
 export * from './circuits'
 export * from './key'
-export * from './logger'
 export * from './message'
 export * from './polygonid'
 export * from './PolygonIdManager'

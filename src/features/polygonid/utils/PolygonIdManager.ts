@@ -16,10 +16,10 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { Context } from '@verida/client-rn'
 import Axios, { AxiosRequestConfig } from 'axios'
+import { Logger } from 'features/telemetry'
 import { VAULT_SCHEMA_CREDENTIAL_BASE_0_2_0 } from 'features/vault'
 
 import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
-import { polygonIdLogger as logger } from './logger'
 import {
   buildCredentialWallet,
   buildDataStorage,
@@ -30,6 +30,8 @@ import {
   migratePolygonIdData,
 } from './polygonid'
 import { getVeridaDatastore } from './storage'
+
+const logger = Logger.create('PolygonId')
 
 export class PolygonIdManager {
   private config: PolygonIdConfig

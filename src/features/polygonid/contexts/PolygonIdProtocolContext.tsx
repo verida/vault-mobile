@@ -5,6 +5,7 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { useNavigation } from '@react-navigation/native'
 import { NativeStackNavigationProp } from '@react-navigation/native-stack'
+import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo } from 'react'
 
 import { MainStackParams } from 'navigation/types'
@@ -14,11 +15,9 @@ import type {
   ProofRequestScreenParams,
 } from 'pages/Requests'
 
-import {
-  getEntityMetadata,
-  parsePolygonIdMessage,
-  polygonIdLogger as logger,
-} from '../utils'
+import { getEntityMetadata, parsePolygonIdMessage } from '../utils'
+
+const logger = Logger.create('PolygonId')
 
 export type PolygonIdProtocolContextType = {
   handleDeepLinkUrl: (url: string) => void

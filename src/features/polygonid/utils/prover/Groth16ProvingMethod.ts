@@ -1,9 +1,11 @@
 import { ProvingMethod, ProvingMethodAlg, ZKProof } from '@iden3/js-jwz'
+import { Logger } from 'features/telemetry'
 
 import { CalculateWitnessFunction } from '../../types'
-import { polygonIdLogger as logger } from '../logger'
 import { prove } from './prover'
 import { verify } from './verifier'
+
+const logger = Logger.create('PolygonId')
 
 export class Groth16ProvingMethod implements ProvingMethod {
   constructor(

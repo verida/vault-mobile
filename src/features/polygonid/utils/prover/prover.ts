@@ -1,10 +1,12 @@
 import { byteDecoder } from '@0xpolygonid/js-sdk'
 import { ZKProof } from '@iden3/js-jwz'
 import { groth16Prove } from '@iden3/react-native-rapidsnark'
+import { Logger } from 'features/telemetry'
 import { fromByteArray } from 'react-native-quick-base64'
 
 import { CalculateWitnessFunction } from '../../types'
-import { polygonIdLogger as logger } from '../logger'
+
+const logger = Logger.create('PolygonId')
 
 export const prove = async (
   inputs: Uint8Array,

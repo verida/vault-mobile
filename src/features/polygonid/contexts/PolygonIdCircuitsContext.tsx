@@ -1,15 +1,14 @@
 import { CircuitStorage } from '@0xpolygonid/js-sdk'
 import { config } from 'config'
+import { Logger } from 'features/telemetry'
 import React, { createContext, useEffect, useMemo } from 'react'
 
 import { REQUIRED_CIRCUIT_IDS } from '../constants'
 import { usePolygonIdCircuitStates } from '../hooks'
 import { CircuitStates } from '../types'
-import {
-  createCircuitStorage,
-  initCircuitStorage,
-  polygonIdLogger as logger,
-} from '../utils'
+import { createCircuitStorage, initCircuitStorage } from '../utils'
+
+const logger = Logger.create('PolygonId')
 
 const circuitStorage = createCircuitStorage()
 

@@ -1,4 +1,5 @@
 import { CircuitId } from '@0xpolygonid/js-sdk'
+import { Logger } from 'features/telemetry'
 import { useCallback, useEffect, useMemo, useState } from 'react'
 
 import { CircuitStatus, UpdateStateCallback } from '../types'
@@ -9,8 +10,9 @@ import {
   getCircuitStates,
   getInitialCircuitStates,
   PolygonIdCircuitStorage,
-  polygonIdLogger as logger,
 } from '../utils'
+
+const logger = Logger.create('PolygonId')
 
 export function usePolygonIdCircuitStates(
   circuitStorage: PolygonIdCircuitStorage,

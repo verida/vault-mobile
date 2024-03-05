@@ -1,16 +1,15 @@
 import { Context } from '@verida/client-rn'
 import { config } from 'config'
+import { Logger } from 'features/telemetry'
 import React, { useEffect, useMemo, useState } from 'react'
 
 import AccountManager from 'api/AccountManager'
 
 import { usePolygonIdCircuits, usePolygonIdWitness } from '../hooks'
 import { PolygonIdConfig } from '../types'
-import {
-  getPolygonIdPrivateKey,
-  polygonIdLogger as logger,
-  PolygonIdManager,
-} from '../utils'
+import { getPolygonIdPrivateKey, PolygonIdManager } from '../utils'
+
+const logger = Logger.create('PolygonId')
 
 export const polygonIdTestnetConfig: PolygonIdConfig = {
   polygonIdBlockchain: config.polygonId.common.blockchain,

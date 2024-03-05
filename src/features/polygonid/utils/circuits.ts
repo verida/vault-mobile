@@ -1,4 +1,5 @@
 import { CircuitData, CircuitId, CircuitStorage } from '@0xpolygonid/js-sdk'
+import { Logger } from 'features/telemetry'
 
 import {
   CircuitComponentPaths,
@@ -8,8 +9,9 @@ import {
   CircuitStatus,
   UpdateStateCallback,
 } from '../types'
-import { polygonIdLogger as logger } from './logger'
 import { PolygonIdCircuitDataSource, PolygonIdCircuitStorage } from './storage'
+
+const logger = Logger.create('PolygonId')
 
 export function createCircuitStorage() {
   logger.info('Creating circuit storage')

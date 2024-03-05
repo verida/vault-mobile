@@ -1,4 +1,5 @@
 import { config } from 'config'
+import { Logger } from 'features/telemetry'
 import React, { createContext, useCallback, useMemo, useRef } from 'react'
 import { StyleSheet } from 'react-native'
 import { fromByteArray } from 'react-native-quick-base64'
@@ -17,8 +18,9 @@ import {
 import {
   getWitnessExecutionStaticCode,
   getWitnessExecutionTriggerCode,
-  polygonIdLogger as logger,
 } from '../utils'
+
+const logger = Logger.create('PolygonId')
 
 /**
  * This context provides a way to calculate a witness using the Polygon ID library.

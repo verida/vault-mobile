@@ -1,9 +1,11 @@
 import { Context } from '@verida/client-rn'
 import { DatabaseOpenConfig, DatastoreOpenConfig } from '@verida/types'
+import { Logger } from 'features/telemetry'
 
-import { polygonIdLogger as logger } from '../logger'
 import { PolygonIdVeridaDataSource } from './PolygonIdVeridaDataSource'
 import { PolygonIdVeridaMerkleTreeDataSource } from './PolygonIdVeridaMerkleTreeDataSource'
+
+const logger = Logger.create('PolygonId')
 
 /**
  * Open a Verida datastore.

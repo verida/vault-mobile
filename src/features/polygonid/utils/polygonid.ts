@@ -35,6 +35,7 @@ import {
 } from '@0xpolygonid/js-sdk'
 import { proving, ProvingMethod, ProvingMethodAlg } from '@iden3/js-jwz'
 import { Context } from '@verida/client-rn'
+import { Logger } from 'features/telemetry'
 import { VeridaRecord } from 'features/verida'
 
 import {
@@ -45,7 +46,6 @@ import {
   POLYGON_ID_PROFILE_DATABASE_NAME,
 } from '../constants'
 import { CalculateWitnessFunction, PolygonIdConfig } from '../types'
-import { polygonIdLogger as logger } from './logger'
 import { Groth16ProvingMethod, ZkProver } from './prover'
 import {
   buildPolygonIdVeridaDataSource,
@@ -54,6 +54,8 @@ import {
   PolygonIdVeridaMerkleTreeStorage,
   PolygonIdVeridaPrivateKeyStore,
 } from './storage'
+
+const logger = Logger.create('PolygonId')
 
 export async function buildDataStorage(
   veridaContext: Context,
