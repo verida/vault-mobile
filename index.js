@@ -4,7 +4,7 @@
 Object.assign(navigator || {}, { product: 'ReactNative' })
 
 import '@walletconnect/react-native-compat'
-import './shim'
+import './polyfills/shim'
 import 'react-native-get-random-values'
 import '@ethersproject/shims'
 import 'react-native-crypto'
@@ -12,6 +12,7 @@ import 'text-encoding-polyfill'
 import 'intl'
 import 'intl/locale-data/jsonp/en'
 import 'react-native-gesture-handler'
+import './polyfills/rn-deprecated-view-props-types-polyfill'
 
 import { AppRegistry, LogBox } from 'react-native'
 
@@ -28,7 +29,6 @@ if (__DEV__) {
       'EventEmitter.removeListener',
       'Unrecognized WebSocket connection option',
       'Setting a timer for a long period of time',
-      'ViewPropTypes will be removed from React Native',
       'AsyncStorage has been extracted from react-native',
       "exported from 'deprecated-react-native-prop-types'.",
       'VirtualizedLists should never be nested inside plain ScrollViews',
