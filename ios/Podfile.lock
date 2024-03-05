@@ -526,7 +526,7 @@ PODS:
     - React-Core
   - react-native-randombytes (3.6.1):
     - React-Core
-  - react-native-rapidsnark (0.0.1-alpha.0):
+  - react-native-rapidsnark (0.0.1-alpha.2):
     - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - react-native-restart (0.0.27):
@@ -543,7 +543,8 @@ PODS:
   - react-native-udp (4.1.7):
     - CocoaAsyncSocket
     - React-Core
-  - react-native-webview (12.4.0):
+  - react-native-webview (13.8.1):
+    - RCT-Folly (= 2021.07.22.00)
     - React-Core
   - React-NativeModulesApple (0.72.7):
     - React-callinvoker
@@ -1143,14 +1144,14 @@ SPEC CHECKSUMS:
   react-native-quick-base64: 777057ea4286f806b00259ede65dc79c7c706320
   react-native-quick-crypto: 455c1b411db006dba1026a30681ececb19180187
   react-native-randombytes: 421f1c7d48c0af8dbcd471b0324393ebf8fe7846
-  react-native-rapidsnark: f32803905aaec03e809cb19382db82bd80a1e38d
+  react-native-rapidsnark: ad8abbbe8b2f752348339e3ccae383a6f272a759
   react-native-restart: 7595693413fe3ca15893702f2c8306c62a708162
   react-native-safe-area-context: b97eb6f9e3b7f437806c2ce5983f479f8eb5de4b
   react-native-slider: 1cdd6ba29675df21f30544253bf7351d3c2d68c4
   react-native-sqlite-2: 21c4a9d439e92193a8712c68492731c014671b53
   react-native-static-server: 201b2a945a35096be3ae7f43e367c65bcbd61343
   react-native-udp: df79c3cb72c4e71240cd3ce4687bfb8a137140d5
-  react-native-webview: 65f1143983cfeaedf02fd25b2621d3f4a37075de
+  react-native-webview: bdc091de8cf7f8397653e30182efcd9f772e03b3
   React-NativeModulesApple: 6f63747fd6e237b646c61957a8f877a2713617af
   React-perflogger: 31ea61077185eb1428baf60c0db6e2886f141a5a
   React-RCTActionSheet: 392090a3abc8992eb269ef0eaa561750588fc39d

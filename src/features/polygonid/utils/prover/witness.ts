@@ -1,4 +1,5 @@
-export const witnessCode = `
+export function getWitnessExecutionStaticCode() {
+  return `
 async function builder(code, options) {
   options = options || {}
 
@@ -323,7 +324,9 @@ function arrayBufferToBase64(buffer) {
   for (var i = 0; i < len; i++) {
     binary += String.fromCharCode(bytes[i])
   }
-  return window.btoa(binary)
+
+  const base64 = window.btoa(binary)
+  return base64
 }
 
 function log(level, message, data) {
@@ -337,20 +340,28 @@ function log(level, message, data) {
   )
 }
 
-window.addEventListener('message', async (message) => {
-  let taskId = undefined
+async function handleMessage(message) {
+  let taskId
   try {
-    const data = JSON.parse(message.data)
+    const data = JSON.parse(message)
     taskId = data.id
-    if (data.event === 'REQUEST') {
-      const binary = base64ToArrayBuffer(data.binary)
-      const build = await builder(binary)
-      const witnessCalculation = await build.calculateWTNSBin(data.inputs)
-      const result = arrayBufferToBase64(witnessCalculation)
+    log('debug', 'Received message', { id: taskId })
+    switch (data.event) {
+      case 'REQUEST': {
+        const binary = base64ToArrayBuffer(data.binary)
+        const build = await builder(binary)
+        const witnessCalculation = await build.calculateWTNSBin(data.inputs)
+        const result = arrayBufferToBase64(witnessCalculation)
 
-      window.ReactNativeWebView.postMessage(
-        JSON.stringify({ event: 'RESULT', id: taskId, result })
-      )
+        log('debug', 'Returning result', { id: taskId })
+        window.ReactNativeWebView.postMessage(
+          JSON.stringify({ event: 'RESULT', id: taskId, result })
+        )
+        break
+      }
+      default: {
+        throw new Error('Unknown event type')
+      }
     }
   } catch (error) {
     window.ReactNativeWebView.postMessage(
@@ -363,5 +374,32 @@ window.addEventListener('message', async (message) => {
       })
     )
   }
+}
+
+// Not used as postMessage seems deprecated on React Native side
+window.addEventListener('message', (event) => {
+  handleMessage(event.data)
 })
+
+log('debug', 'Witness execution static code loaded')
 `
+}
+
+export function getWitnessExecutionTriggerCode(request: string) {
+  return `
+  try {
+    void handleMessage('${request}');
+    true;
+  } catch (error) {
+    window.ReactNativeWebView.postMessage(
+      JSON.stringify({
+        event: 'ERROR',
+        error: JSON.parse(
+          JSON.stringify(error, Object.getOwnPropertyNames(error))
+        ), // HACK: to properly pass the error object
+      })
+    );
+    true;
+  }
+  `
+}

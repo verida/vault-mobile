@@ -14,8 +14,19 @@ import {
   WitnessRequestMessage,
   WitnessResponseHandlers,
 } from '../types'
-import { polygonIdLogger as logger, witnessCode } from '../utils'
+import {
+  getWitnessExecutionStaticCode,
+  getWitnessExecutionTriggerCode,
+  polygonIdLogger as logger,
+} from '../utils'
 
+/**
+ * This context provides a way to calculate a witness using the Polygon ID library.
+ *
+ * As the witness calculation requires WebAssembly, it is done in a WebView. This context's provider will create a WebView and handle the communication with it.
+ *
+ * The static code for calculating the witness is injected in the WebView at launch, then each call to `calculateWitness` will inject the request in the WebView and wait for the result.
+ */
 export type PolygonIdWitnessContextType = {
   isLoading: boolean
   isReady: boolean
@@ -58,8 +69,6 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
 
   const handleMessage = useCallback(
     ({ nativeEvent: { data } }: WebViewMessageEvent) => {
-      logger.debug('Received message from the witness WebView')
-
       const parsedData = JSON.parse(data)
       const validationResult =
         WitnessOutgoingMessageSchema.safeParse(parsedData)
@@ -182,8 +191,26 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
           // TODO: Maybe have a clearTimeout to be called in the cleanup function of a useEffect, so that any remaining timeouts are cleared if the component is unmounted
         })
 
-        logger.debug('Sending message to the witness WebView', { id })
-        webViewRef.current.postMessage(JSON.stringify(request))
+        logger.debug('Preparing message to inject in the witness WebView', {
+          id,
+        })
+
+        const injectedJavaScript = getWitnessExecutionTriggerCode(
+          JSON.stringify(request)
+        )
+
+        logger.debug('Injecting message in the witness WebView', { id })
+        try {
+          // Using injectJavaScript instead of postMessage as it seems deprecated by the WebView library and already doesn't work on Android devices
+          webViewRef.current.injectJavaScript(injectedJavaScript)
+        } catch (error) {
+          logger.error(
+            new Error(
+              'Error while injecting the message in the witness WebView',
+              { cause: error }
+            )
+          )
+        }
       })
     },
     [isReady]
@@ -205,20 +232,20 @@ export const PolygonIdWitnessProvider: React.FC = (props) => {
         style={styles.hidden}
         containerStyle={styles.hidden}
         source={{
+          // We pass the witness execution code here so it's not overwritten by the `injectJavaScript` when triggerring the witness calculation
           html: `
                 <html>
                   <head>
                   </head>
                   <body>
+                    <script>
+                      ${getWitnessExecutionStaticCode()}
+                    </script>
                   </body>
                 </html>
               `,
         }}
-        injectedJavaScriptBeforeContentLoaded={witnessCode}
         onMessage={handleMessage}
-        allowFileAccessFromFileURLs
-        allowUniversalAccessFromFileURLs
-        allowFileAccess
         startInLoadingState={true}
         onLoadStart={handleWebViewLoadStart}
         onLoad={handleWebViewLoaded}
