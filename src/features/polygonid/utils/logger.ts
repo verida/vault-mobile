@@ -1,3 +1,3 @@
 import { Logger } from 'features/telemetry'
 
-export const polygonIdLogger = new Logger('PolygonId')
+export const polygonIdLogger = Logger.create('PolygonId')

@@ -24,7 +24,7 @@ import LoadingView from 'components/LoadingView'
 import { MainStackScreenProps } from 'navigation/types'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('MigrateIdentityExecutionScreen')
+const logger = Logger.create('MigrateIdentityExecutionScreen')
 
 const defaultMigrationStepStatus: Array<
   StatusListItem & { key: MigrateIdentityStep }

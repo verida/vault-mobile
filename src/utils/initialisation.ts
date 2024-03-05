@@ -7,7 +7,7 @@ import { initializeMMKVFlipper } from 'react-native-mmkv-flipper-plugin'
 
 import { reduxStorage } from 'reduxStore/utils/mmkvPersistStorage'
 
-const logger = new Logger('Initialisation')
+const logger = Logger.create('Initialisation')
 
 /**
  * Global initialisation of the application

@@ -8,7 +8,7 @@ import Icon from 'react-native-vector-icons/Ionicons'
 
 import { Theme } from 'styles/types'
 
-const logger = new Logger('CopyToClipboardButton')
+const logger = Logger.create('CopyToClipboardButton')
 
 export type CopyToClipboardButtonProps = {
   content: string

@@ -9,7 +9,7 @@ import { Linking } from 'react-native'
 
 import AccountManager from './AccountManager'
 
-const logger = new Logger('DataConnectorsManager')
+const logger = Logger.create('DataConnectorsManager')
 
 const DATA_CONNECTION_SCHEMA =
   'https://vault.schemas.verida.io/data-connections/connection/v0.1.0/schema.json'

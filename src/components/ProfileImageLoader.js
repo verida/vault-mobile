@@ -17,7 +17,7 @@ import { IdentityAvatar } from 'components/Images'
 import PhotoCameraSvg from '../assets/photo-camera.svg'
 import { ShimmerPlaceholder } from './ShimmerPlaceholder'
 
-const logger = new Logger('Components/ProfileImageLoader')
+const logger = Logger.create('Components/ProfileImageLoader')
 
 function ProfileImageLoader(props) {
   const { publicProfileData } = props

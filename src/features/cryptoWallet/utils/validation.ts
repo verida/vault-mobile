@@ -7,7 +7,7 @@ import { ImportedSeedPhrase } from '../@types'
 
 const bip39 = require('bip39')
 
-const logger = new Logger('validation')
+const logger = Logger.create('validation')
 
 const validateNearAddress = (address: string) => {
   if (address.includes('.') && address.length >= 2 && address.length <= 64) {

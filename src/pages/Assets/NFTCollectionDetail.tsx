@@ -16,7 +16,7 @@ import { Theme } from 'styles/types'
 
 import { IMAGE_WIDTH, NUMBER_OF_COLUMNS } from './constants'
 
-const logger = new Logger('Pages/NFTCollectionDetail')
+const logger = Logger.create('Pages/NFTCollectionDetail')
 
 type NFTCollectionDetailRouteProp = RouteProp<
   MainStackParams,

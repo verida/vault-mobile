@@ -6,7 +6,7 @@ import Folder from 'api/VaultCommon/managers/data/folder'
 
 import { DataGridList } from './DataGridList'
 
-const logger = new Logger('Components/Data/DataListView')
+const logger = Logger.create('Components/Data/DataListView')
 
 export type DataListViewProps = {
   folder: Folder

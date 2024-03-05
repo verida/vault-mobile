@@ -13,7 +13,7 @@ import {
   NOTIFICATION_CATEGORY,
 } from '../constants'
 
-const logger = new Logger('Notifications')
+const logger = Logger.create('Notifications')
 
 const androidNotificationIconStyle = {
   largeIcon: 'ic_launcher',

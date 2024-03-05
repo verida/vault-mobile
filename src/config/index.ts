@@ -18,6 +18,7 @@ const { data: envVars } = envVarsCheckResult
 
 export const config = {
   logLevel: envVars.LOG_LEVEL,
+  hideStackTracesInLog: envVars.HIDE_STACK_TRACES_IN_LOG,
   dev: {
     devMode: __DEV__,
     disableLogBox: envVars.DISABLE_LOG_BOX,

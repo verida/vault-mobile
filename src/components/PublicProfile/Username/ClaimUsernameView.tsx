@@ -19,7 +19,7 @@ import { Title } from 'components/Typography/Title'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Components/ClaimUsernameView')
+const logger = Logger.create('Components/ClaimUsernameView')
 
 export interface ClaimUsernameViewRefProps {
   claimUsername: (username: string) => void

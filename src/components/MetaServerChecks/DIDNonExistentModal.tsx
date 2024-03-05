@@ -34,7 +34,7 @@ import { useAuth } from 'hooks/useAuth'
 import { useThemeAwareStyle } from 'hooks/useThemeAwareStyle'
 import { Theme } from 'styles/types'
 
-const logger = new Logger('Component/DIDNonExistentModal')
+const logger = Logger.create('Component/DIDNonExistentModal')
 
 type Props = {
   dismissModal: () => void

@@ -53,7 +53,7 @@ import { VERIDA_VAULT_CONTEXT_NAME } from 'constants/application'
 import { CONFIG_DB_NAME, SEED_PHRASE_BACKED_UP_CONFIG } from 'features/settings'
 import { getDidClientConfigForNetwork } from 'features/verida'
 
-const logger = new Logger('AccountManager')
+const logger = Logger.create('AccountManager')
 
 class AccountManager extends EventEmitter {
   // public selectedChain: string = DEFAULT_CHAIN

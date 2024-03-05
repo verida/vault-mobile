@@ -81,7 +81,7 @@ import { Theme } from 'styles/types'
 
 // TODO: We absolutely have to refactor and breakdown this page!
 
-const logger = new Logger('Pages/Profiles/PublicProfile')
+const logger = Logger.create('Pages/Profiles/PublicProfile')
 
 export enum PublicProfileEditMode {
   EditWalletPublicLabel,

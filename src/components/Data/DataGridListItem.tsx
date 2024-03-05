@@ -18,7 +18,7 @@ import Folder from 'api/VaultCommon/managers/data/folder'
 // TODO: Factorise this (or part of it) as it's also used in CredentialDataItem
 import VeridaSvg from 'assets/icons/verida.svg'
 
-const logger = new Logger('Components/Data/DataGridListItem')
+const logger = Logger.create('Components/Data/DataGridListItem')
 
 export type DataGridListItemProps = {
   // TODO: Add stronger typing
